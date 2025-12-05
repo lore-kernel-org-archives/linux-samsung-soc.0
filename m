@@ -1,210 +1,254 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CD935771C
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Dec 2025 21:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F91199E94
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 01:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764882404; cv=none; b=JGX4tcf/LJtBwbOxTOkrt9rj/P+pz/Ce6x5D87yszGgAkW6SgbD+GmRJXZeHVl6ZG0BkhHbmTiNfNFIZcgC2Lbhz9kmSmND9FLMwfIZIuyyWI0/6N9gINqKxXA1NACvHgd+vuL6P0hsQ4qZctUmFLi3jEX51hOTnzWw3DGb4NxQ=
+	t=1764897034; cv=none; b=euEbFR4SjLcTY/Z+Z0+ZDJIXnftnihiM/bitSRnnaWHyUaz5zCcSbJs1i8kMlprf/XBjuQGfz7UPzERgy4oiOp1OQVs9WWeWfC2eqb6nEAKekyBuIxA/bVFRPWI3gp1jAlv3P7FU97g4Mi7JqWHxXFwCIlS4jMFwQLSxnG0c7jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764882404; c=relaxed/simple;
-	bh=4gvVbQE7D0PuHRtcnXsG0f97rNAS/tXWI1ikykCyHu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9bGvjJx2dCqdHHRPADgIgWPaCm2ZjyUJPYUfkVyrPfaT4FJIdolbt5Cn4/Ma4tVQz2rG15qBLcba8proGB0U3oAibJ0V1mf4hQlJGzo9SrcQRpN2T2ly4BVRAw7H0hTRBFkCfNF7k7L+wXqz91yLwCJyZgw+n20KdreGXfWcFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=djqu+2Vm; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1764897034; c=relaxed/simple;
+	bh=M78wMYaAgXvl3a5b31zlM86Eip3VnZGZaQ9q2XGwANQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PTkgPbj/0f7t9zZkUuuWTEo6hx++cgjFuP0vBPJBa+wfDea1TjeYcuxg76AGEQ5wfmFFJKKVgaTsGBRykyEMxqqpfuLXBn3sA4TQ0ScjJTp0o/SYrDqBHBRZnOcqqMbf7S9QkNaPc4LdSWYat+2//wkaYjEcGh7TbO9cMU1wDrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JixRd30B; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="djqu+2Vm"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7b8e49d8b35so1641166b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2025 13:06:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JixRd30B"
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2980ef53fc5so33358795ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2025 17:10:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764882402; x=1765487202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cEywpXmQqNwB/TS6CB+654YlLSBuSDJ8XZY6ihxAXlI=;
-        b=djqu+2VmnFSX1eNkLgMcZSC76MyQqZJwykltkAiEH9TEDyBHxUj+wsPz+0imNjTNFh
-         tArfYbDVmjQ0qhybhEQ/SvjVa0g/j+CO2nIOiMU+FM2a/a/51FRvgonQvVNoKxI2XB5b
-         mjnfZeXwZLpra7NH/B9wtV2kPmMPVPvnhL6+bXNHGYUxGtsphW+Y6soTDEd13ESvp3+D
-         ewgdb0+iGv5wQZwyWbRHD5Ninq8frMBqqGE8xM6Jki7K2SouOq5nTrzMTMYZJZUI7lh9
-         56yvp1OJbSw6olQLmwzqwax6W94vovgJUIXIO3amNxs/L0VjFypqsbQy/FgLh5WRTHCT
-         rjAA==
+        d=google.com; s=20230601; t=1764897032; x=1765501832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0a9BcMIreCW4+XPCC79kC21m2v3SL+rHpTmsJgeu1lI=;
+        b=JixRd30Bj04X4yIqrlglUDYQWp5q1GoV3A6f9vRlil9TD3VTDa8/XsvpHl28aFWB08
+         c9wi9FpmVsSRUFWe8uBaOpLDHnt/LKJtHSSJyqw+/gTAzggehy/2ts91O9sjXyeB8X/o
+         M8T0bA5RnmhM2bobN/d6txBXiFD2S5geJj8vc99DKt5f1tV5w81PDCiQ/aHyyz5/ANNZ
+         23Fd6Io6yNe2oJYXxD1rGeDt38Wvmw7+Dvsuv16CxiBitLswyUkS+jyUNqR6mKlDVaia
+         K9jigBdLWVNr0AP8ktVL/zm+fk48kbl3fkF5bJL8THPjLmyBSDmaesEsyJnBzSFPilcR
+         9MSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764882402; x=1765487202;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEywpXmQqNwB/TS6CB+654YlLSBuSDJ8XZY6ihxAXlI=;
-        b=IOV7n4sqHndwTNpIpIktbeGrCCSWviWCikAcHWqxakDigyevJQm95jWzspWv9i3BZf
-         2Fn+N4uVqNLsY7O2HxkvRxBkgl2SnpkwDtFC4q9q/Cwmfxi58ApvhUj2c16JpL//R7dA
-         ++G2slGtHxmlS2Z3ltPqQ7h31vcmvjjLFUNPJHU7h10eMi32ynh+3IVbo9p4G8KSXaiF
-         TtbAw35fanuvB+oEc0mYakWzABzYCbBdAHXOcTFFgJP0DIZy5Ha8eJkyJPQCJms3SkIb
-         NyAVw6iOqv3ZJRCZQtkNbDwSIBM2i9mwuJwZXFZS71MvsvKPdPpso07j/Ucd/XpfEEn1
-         hm8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXY7cR5cdl/QZ8pjJM7poldh1t2sNDN7fB5JjWWK/Jt96SNUZ1lLdMIgu6AhsRF9dvckd3WRJe+sEmGRT7YoyQ/vQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqQsSJdo6Qjsdn6tUflh7wjq12850ztXgm6osFkw4lZ5ZDbsVg
-	0QHHQOXCsSOF9NX2L60m1aPup3W+9Oi/Jksp3iArXKfkjlGXTyDMefyf+xUSdCj6XA==
-X-Gm-Gg: ASbGnctzsu6HqEKHiGpQZ9wCSAaUublYZJRTlWIPaAb1UxlXeWkqOGmx//uS1ZhSyUS
-	GTNz/fA+DXTS1pf4wEcQpl/jBBcf+dGSRQd7NwE9ATVXeJVBsd5N5esxbiyf3Fh0UkjQjINUjH6
-	87+fWpDYnPkLHHTFEzIbN0MpYWCvC+CDqMKQmXPhB4OneoRIhxOtIhfkPtzy75W8A2CUwNBSKhM
-	mypVZeJx3JkV8cJpPS1UbQMMWzi1SJOWOyNZGO5Ii0vE0gFPIDXRKB2kbvknnrZuYesHpnWnw6X
-	3boLoKWMC+OMZC6PIiOqArZGI3xziR3S7WucGec0/Ic0efKndrZQHCMqYqzeCGc1T885ExW6IdC
-	9Tn53IDB7KJWk/E9b6o3XgGEi5I8Fl0JuXAeCWE3z0ony5Hk7NeCsLiM7laZQFlUjTY2siis91p
-	E2cHbH9Uv4DeEwlHIvN99RJ834EpRekGyH2Qq9iybs/M+iMgIqXUWz3frBD6seefzbgwoJFu6dn
-	gWWAkkRcMC50Q==
-X-Google-Smtp-Source: AGHT+IHnjdg9J5Dv3DjKTAgPlUY1x6NH1Rmw5oo9i+e3bENd1vNzyqMp5aLbF57/RFRsp96OPvtSGQ==
-X-Received: by 2002:a05:6a20:12ca:b0:347:9ae1:cffb with SMTP id adf61e73a8af0-363f5db7158mr9697293637.24.1764882401346;
-        Thu, 04 Dec 2025 13:06:41 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:d11d:bcc2:2743:bf88? ([2a00:79e0:2e7c:8:d11d:bcc2:2743:bf88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bf817c3e6c3sm1857768a12.17.2025.12.04.13.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Dec 2025 13:06:40 -0800 (PST)
-Message-ID: <19e501f4-da1b-4a91-8681-da78922bc302@google.com>
-Date: Thu, 4 Dec 2025 13:06:39 -0800
+        d=1e100.net; s=20230601; t=1764897032; x=1765501832;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0a9BcMIreCW4+XPCC79kC21m2v3SL+rHpTmsJgeu1lI=;
+        b=wAATuq+J0hFBnDfa0c3+OQVyBVRSYw1Hn+r4Zn6o3ivP8dZ0zoXU/zDAivYvXkUtHY
+         mdgpfplGXyFVDpbCgBHTTpKNLUs9WCJpbghfVFvEkKyctxWiOBzTmL8rMONoctvaA4IA
+         md9ziGTu3lmYEFqu6WWyJE7/Upwpu5xT1/7c3AAKLzA5zkO5wsGXbzudisqlnrTfbqdo
+         +KzPO0SuUOuoRkbbsV4Ky2vWI04uhOM50kNCZFkO/HqWqiXy1x7Bkm9znMKonTb3XSYL
+         nQZwdPWQUkbnE0Kn/nKOkbM2f2kGPjKgBwg/weMQhuKHitQNAYggkzNA/w1OD1pKvAmj
+         f+nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7ifoRtjVN+MMASdDmpEgU//8uwuejXWohcgqAhP0N+vtFzeRDuDNhCA/4OJGWpbunXZtvYQF8aftEDfO/Qlc2Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu57FAnTuzFzc2bHUJBRrLzTbPmxk2J0gl24m+uNuHgYADA9vP
+	fC1aqlM6L87Ct4cg2aTa4LrrMIegcYCizYXHrEKVT6PirzxG7EHLqFgm3WRXB2HJtMSaBDhZzi0
+	QV3VjgI+kxHGaT31hvRtgsyf1QfZkuQ==
+X-Google-Smtp-Source: AGHT+IEjP0N5xs+xBNnphbRYDosC8i2Rg8/XLir7yaw0gap7gjtVgDvzQj6P8ZnliWmsUFtD4fTKRgqtbH2Nw+M58n0=
+X-Received: from plhz18.prod.google.com ([2002:a17:902:d9d2:b0:29a:1de:14aa])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:40cb:b0:295:ac6f:c899 with SMTP id d9443c01a7336-29d683ae56fmr95984665ad.47.1764897031708;
+ Thu, 04 Dec 2025 17:10:31 -0800 (PST)
+Date: Fri,  5 Dec 2025 01:10:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: power: supply: Add Maxim MAX77759
- charger
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com>
- <20251123-max77759-charger-v1-1-6b2e4b8f7f54@google.com>
- <d4455f4b-2a0f-4bc0-b897-14f2e27af3ea@kernel.org>
- <c9b059f8-9219-4219-95c8-23a3733fea58@google.com>
- <20251125-amorphous-bobcat-of-whirlwind-afdab1@kuoka>
- <7ad91325-e881-461d-b39e-6ff15d98b3c5@google.com>
- <076777c3-b238-4d1d-a11b-602027348ee4@kernel.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <076777c3-b238-4d1d-a11b-602027348ee4@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.52.0.223.gf5cc29aaa4-goog
+Message-ID: <20251205011027.720512-1-willmcvicker@google.com>
+Subject: [PATCH v7 0/6] Add module support for Arm64 Exynos MCT driver
+From: Will McVicker <willmcvicker@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
+	Rob Herring <robh@kernel.org>, John Stultz <jstultz@google.com>, 
+	Youngmin Nam <youngmin.nam@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, "Russell King (Oracle)" <linux@armlinux.org.uk>, 
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+This series adds support to build the Arm64 Exynos MCT driver as a module.
+This is only possible on Arm64 SoCs since they can use the Arm architected
+timer as the clocksource. Once the Exynos MCT module is loaded and the devi=
+ce
+probes, the MCT is used as the wakeup source for the arch_timer to ensure t=
+he
+device can wakeup from the "c2" idle state.
 
-On 12/2/25 5:00 AM, Krzysztof Kozlowski wrote:
-> On 26/11/2025 00:48, Amit Sunil Dhamne wrote:
->> On 11/25/25 1:56 AM, Krzysztof Kozlowski wrote:
->>> On Sun, Nov 23, 2025 at 06:34:05PM -0800, Amit Sunil Dhamne wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On 11/23/25 1:28 AM, Krzysztof Kozlowski wrote:
->>>>> On 23/11/2025 09:35, Amit Sunil Dhamne via B4 Relay wrote:
->>>>>> From: Amit Sunil Dhamne <amitsd@google.com>
->>>>>>
->>>>>> Add bindings for Maxim max77759 charger device.
->>>>>>
->>>>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>>>>> ---
->>>>>>    .../power/supply/maxim,max77759-charger.yaml       | 36 ++++++++++++++++++++++
->>>>>>    1 file changed, 36 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml
->>>>>> new file mode 100644
->>>>>> index 000000000000..71f866419774
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml
->>>>>> @@ -0,0 +1,36 @@
->>>>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id: http://devicetree.org/schemas/power/supply/maxim,max77759-charger.yaml#
->>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>> +
->>>>>> +title: Maxim Integrated MAX77759 Battery charger
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Amit Sunil Dhamne <amitsd@google.com>
->>>>>> +
->>>>>> +description: |
->>>>>> +  This module is part of the MAX77759 PMIC. For additional information, see
->>>>>> +  Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
->>>>>> +
->>>>>> +  The Maxim MAX77759 is a dual input switch mode battery charger for portable
->>>>>> +  applications. It supports wired and wireless charging and can operate in buck
->>>>>> +  and boost mode.
->>>>>> +
->>>>>> +allOf:
->>>>>> +  - $ref: power-supply.yaml#
->>>>>> +
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    const: maxim,max77759-charger
->>>>>> +
->>>>> This should be just folded into parent node, no need for separate
->>>>> charger device or is just incomplete.
->>>> Thanks for the review! You are right, the binding is incomplete. This
->>>> charger block actually listens on its own I2C address, distinct from the
->>>> main PMIC.
->>>>
->>>> I will update v2 to include the reg property. I will also add the
->>> AFAIK, the main (parent) device schema does not reference children via
->>> any sort of addressing, so reg here would not be suitable.
->> I agree that currently nvmem and gpio devices (which are children of
->> PMIC device) are not referenced using any address. But I was guessing
->> that's because they share the i2c client id with the PMIC and sharing
->> its address space (implied).
->>
->> The charger device while being part of the MAX77759 PMIC package has
->> it's own i2c client id and address space that's why I proposed "reg".
->> The underlying assumption I made was separate client id implies that a
->> "reg" property required. But maybe that's incorrect.
->>
->> I can understand the argument against having a "reg" property. As the
->> i2c client id will remain same for a max77759 charger device (as it's a
->> chip property and not a board property) it will always remain a
->> constant. I will drop the "reg" proposal.
->>
->>
->>>> standard properties `constant-charge-current-max-microamp` and
->>>> `constant-charge-voltage-max-microvolt` to configure the hardware
->>>> limits, as this charger device does not manage the battery profile
->>>> directly (that is handled by a separate fuel gauge).
->>> Well, still, what's the benefit for the bindings to have it as a
->>> separate child? Kind of depends on your example, which is quite small -
->>> one regulator and supply. Grow the example with battery and other
->>> independent resources (if they are) to justify it. Or show arguments why
->>> this is re-usable.
->> The primary reasons for keeping the charger as a distinct child node are
->> to model the hardware topology for the power supply subsystem and to
-> You do not need children for that at all.
+These patches are originally from the downstream Pixel 6 (gs101) kernel fou=
+nd
+at [1] and have been adapted for upstream. Not only has the Exynos MCT driv=
+er
+been shipping as a module in the field with Android, but I've also tested t=
+his
+series with the upstream kernel on my Pixel 6 Pro.
 
-Actually what you said makes sense. I will fold the charger's schema 
-into mfd/maxim,max77759's schema.
+To the driver changes (both as built-in and as module) on Pixel 6 Pro, I ra=
+n
+these tests:
 
+# cat /proc/interrupts | grep -E "mct|arch_timer"
+ 23:       6823      10938       7795       5607       8935      12828     =
+ 21947       2200    GICv3  30 Level     arch_timer
+104:          1          0          0          0          0          0     =
+     0          0    GICv3 785 Level     mct_comp_irq
+105:        547          0          0          0          0          0     =
+     0          0    GICv3 789 Level     mct_tick0
+106:          0       1333          0          0          0          0     =
+     0          0    GICv3 790 Level     mct_tick1
+107:          0          0       1467          0          0          0     =
+     0          0    GICv3 791 Level     mct_tick2
+108:          0          0          0        583          0          0     =
+     0          0    GICv3 792 Level     mct_tick3
+109:          0          0          0          0        206          0     =
+     0          0    GICv3 793 Level     mct_tick4
+110:          0          0          0          0          0        153     =
+     0          0    GICv3 794 Level     mct_tick5
+111:          0          0          0          0          0          0     =
+    13          0    GICv3 795 Level     mct_tick6
+112:          0          0          0          0          0          0     =
+     0         87    GICv3 796 Level     mct_tick7
+
+# cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+arch_sys_counter
+
+When built and loaded as a module, you can verify via:
+
+# lsmod | grep exynos_mct
+exynos_mct             20480  9
+
+I also compile tested for ARCH=3DARM DEFCONFIG=3Dmulti_v7_defconfig with th=
+e
+following debug configs to ensure the section mismatches are fixed:
+  CONFIG_DEBUG_SECTION_MISMATCH=3Dy
+  # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+
+Any additional testing is much appreciated!
 
 Thanks,
+Will
 
-Amit
+Note1, instructions to build and flash a Pixel 6 device with the upstream
+kernel can be found at [2].
 
->> house the OTG regulator provided by the charger block.
->> The charger needs to be referenced by the Fuel Gauge (which handles the
->> battery profile) via power-supplies. Additionally, the charger block
->> provides a regulator for USB OTG VBUS, which is cleaner to represent as
->> a child node of the charger rather than mixing it into the top-level
->> PMIC node.
-> Sorry but argument that you need a child device to be able to construct
-> a phandle is just wrong. You can create phandles on every other way as well.
->
->
-> Best regards,
-> Krzysztof
+Note2, this series is based off of krzk/for-next commit bca42080637c (Merge
+branch 'next/drivers-late' into for-next).
+
+[1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-r=
+aviole-5.10-android12-d1
+[2] https://gitlab.com/LinaroLtd/googlelt/pixelscripts/-/blob/clo/main/READ=
+ME.md?ref_type=3Dheads
+
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Changes in v7:
+- Dropped v6 patch 1/6 that removed __init from register_current_timer_dela=
+y()
+- Refactored the init function in patch 4/7 to handle the case of registeri=
+ng
+  the timer delay function for ARM 32-bit systems from an __init tagged fun=
+ction.
+  This addresses the original section mismatch issues reported in v4.
+- Rebased series onto base commit bca42080637c (Merge branch
+  'next/drivers-late' into for-next).
+
+Changes in v6:
+- Updated module support to only register the MCT driver as a platform driv=
+er
+  for ARM64 to ensure ARM 32-bit SoCs continue to probe the MCT driver very
+  early.
+- Squashed the percpu fix suggested by Marek Szyprowski in
+  https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung=
+.com/
+  together with patch 3/6.
+
+Changes in v5:
+- Fixed section mismatch issues.
+- Addressed Arnd's concerns regarding potential issues with unloading and/o=
+r
+  unbinding the driver.
+- Fixed SoB concerns to clarify the development chain from AOSP to Linux.
+- Pulled in https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprows=
+ki@samsung.com/
+  to limit percpu interrupts only for ARM64.
+
+Changes in v4:
+- Missed the "v3" string in the previous series for the actual patches
+- Re-generated patches with --base a15edf91668beefdb5171c53fa698c9b43dd1e0d
+  for kernel test robot.
+
+Changes in v3:
+- Rebased on top of Daniel's timer modularization prep series [3] and
+  krzk/for-next commit a15edf91668b ("Merge branch 'next/dt64' into
+  for-next")
+- Added owner references to Exynos MCT clocksource and clockevent objects.
+- Dropped #ifdef MODULE conditional section in favor of just using
+  module_platform_driver() which will properly handle setting up the
+  of_device_id table based on if the driver is built-in or a module.
+- Update commit message for patch 2 based on John's feedback.
+- Dropped DT change from v2 as it was picked up by Krzysztof for CPU Idle.
+
+Changes in v2:
+- Re-worked patch v1 5 based on Rob Herring's review to use the compatible
+  data for retrieving the mct_init function pointer.
+- Updated the Kconfig logic to disallow building the Exynos MCT driver as
+  a module for ARM32 configurations based on Krzysztof Kozlowski's findings=
+.
+- Added comments and clarified commit messages in patches 1 and 2 based on
+  reviews from John Stultz and Youngmin Nam.
+- Fixed an issue found during testing that resulted in the device getting
+  stuck on boot. This is included in v2 as patch 5.
+- Collected *-by tags
+- Rebased to the latest linux-next/master.
+---
+
+Donghoon Yu (1):
+  clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+    arm64
+
+Hosung Kim (1):
+  clocksource/drivers/exynos_mct: Set percpu local timer interrupts for
+    ARM64
+
+Will McVicker (4):
+  clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+  clocksource/drivers/exynos_mct: Refactor driver init
+  clocksource/drivers/exynos_mct: Add module support for ARM64
+  arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+
+ arch/arm64/Kconfig.platforms     |   1 -
+ drivers/clocksource/Kconfig      |   3 +-
+ drivers/clocksource/exynos_mct.c | 255 ++++++++++++++++++++++---------
+ 3 files changed, 182 insertions(+), 77 deletions(-)
+
+
+base-commit: bca42080637ce3a21092fc0f7d5411e853b0c3b3
+--=20
+2.52.0.223.gf5cc29aaa4-goog
+
