@@ -1,55 +1,55 @@
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE58217648
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 01:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C84B2192F2
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 01:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764897045; cv=none; b=tUb3SnUV+HqxKs6W/nxUB5XPNC8J3BW0CwQ3rp8tc8SCggl7VjcBnrtLS5m7qEHopmlBI6wBcnlYtt6o0+207YH9niQPlLL22JjDpRp6W6l4NAp0oG740t7F9hezdFfzw4aGEYTUE6lVLtpNSjlMEr4fL7fyV6NrgWEE+941N+A=
+	t=1764897046; cv=none; b=YqzaOFeC0j41lvodYOSUEyXfPkc3t8Pwxc/iQL1IyEtZRpiGQ4uI4cTucGyjZ/JFLOZEtHuq9QJltUO49HYcl5zEp1yUU070sNUpi2XixseB/FTUtLYnknx/6c2S0xCxVSqmcNC9yMshrN9Ggc4MpVEcYIhj33Cun+PawmdniKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764897045; c=relaxed/simple;
-	bh=Hwdo00LYq/W0Ty8jCTvhJDZgMMgq57QIobHm/2r5IG4=;
+	s=arc-20240116; t=1764897046; c=relaxed/simple;
+	bh=DUKQ48f45DCoRbynorykc9RwkPByZWAUVU5Q2dM0yYU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C3xIUcUjJ1YbLd7TQ9D/G6z6Og6MrFzAESrdF9xWaH05HhDNo2DBdZyOSvh4zviCouT+/wJ8RYWqUH6JmJiqBwGBXMgqtt9KQ437QFgs4gPs9WkffxpxrO5fqGToYXS8KH5paDxR4opSf5nXddLzdCWisPkCPvkv8ltzi6USwZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tScFXyIt; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=d6lIvPT/mfhgO1GlswHo7eBTMmW8BQhoqdfsA2K/kHOVKeJSOx6e3ZBhU1Y8hG3XYGWIyHkD6v/kguVP8w5aQpye4osfnJrvk1QubhvLOiTLCI7VSd5D4IPGFBA94ICeqFa+sxF+QQ3EN14K+8tFMHC3HXYF8gbToHoU6cmjSyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1xLFyaS; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tScFXyIt"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-34740cc80d5so2992366a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2025 17:10:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1xLFyaS"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-34566e62f16so1775238a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2025 17:10:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764897043; x=1765501843; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1764897045; x=1765501845; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXKo9jae8GPx/nkXX05Y0xFfBHYzG41JeWrmmml+Pic=;
-        b=tScFXyItRhniu2aYGYktjHQod0BslGTbBgVPGVcesTOlnKYob8hfR56zRrY8kvM49F
-         PvTPYMVxuxoKz9ak0RjK3fcFzYXHKcrC9Avv2ER19NJvneOtnKiE7nhmzK+qqwXn2vk8
-         ynoiG7z96FW+W+wH8XPREbvqFUIhW1oGmpeG5vAJUADqn5U9jWC89RRCoELV5uit9/js
-         qXSTQZIi4hF35h2PhFVqceF1IvT+9uzJjDjV1Bm3tBPxHqxRYhDeZl9ZvHkyvFdJlvjG
-         fJOc0pqxJzEnGvhIuiJV5de9Z7f1BMCP+vwIhiMGtwO5lpzakFRTeSViCdCW6ardgz1O
-         FpFA==
+        bh=VGzNZAgSmf1hKexSS7kscyRDWNyrH6DCvG9Q4nvREV0=;
+        b=f1xLFyaS83hrh9IgoKE7YZxX4HCtNWXz7JJa6W9N6JJ+yZB+zRZeVVy63dQASV7sWK
+         YLleEKq//rc6m4PujVYxgmwzF5YLyl/jNQUVY/No2xbJx3LZFHTEoyrNj7rqHex7urF8
+         q7058RXUU2jttx5UBwHw1zRe0pe4dSX5k+DTETs2oONJIn2bSGLGIcyA84ZGcHN7GleP
+         IafkmbkTsx0NxpbYBiqVkexSPEEHywF+QKKmtnS+oKzsdtOqgfwYWKwiRJGp2WR918jo
+         DHiD+cXfiluZqnpJ2PZNvr6Kq0ZO/L1ATpLFjJS6SdQhi3j0z9ivRAYCMpMW/1SUfzK0
+         irtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764897043; x=1765501843;
+        d=1e100.net; s=20230601; t=1764897045; x=1765501845;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXKo9jae8GPx/nkXX05Y0xFfBHYzG41JeWrmmml+Pic=;
-        b=KxK2aduYaHX2lRYiwEoKAWbQ8MPbb/Jafzr+0k66dYWlIc43MVwA8kxadMFw3gNYpk
-         QpR/B8a9TNz6+ZbBk/beYtVXXnKZ5pYncTxFHrilxThpBTSksQS3lI7Quo5Q5+kFmTPk
-         HvFRqQZ77iADxBUtCDnimL5vAy8RxTJXSD2mrc3x77Ap+M5VNQcdvwwS28sU9qPFKlmg
-         xdL0sGPHZHpjf77nJCUTgHjyCHz5HvnDbBs3HksbZ5dKKBBRwZm0V5PB5mD2sjM1NP4k
-         s8wHs2EHCOJix7412+1y/dZPsLOP6nn8hqw32kvbDwcfm7lI8cSaf/ePajd6kONABcX1
-         BfJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCtVtsT4nFm9kV9XJdvRGIEADQRULFIzIQEugAUQ74rYwGkAtMtTj7Yf0vBihuotq4J6TJqEZkSJWE1jdygtyByg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMOj7iFsGAhUiqMeEWZ4BXENJRFQST2oVk6sHoO9lTTXqCvg9B
-	5uEYmbXb3Oahpz935RWEOxhcKc/PA5g/iolN5Y8+WZIgrbk4ffxye51BfDnynq7cP/wr8GV9LKJ
-	t9Md0VF6iAR5ECoFGqSIH1fJamUVzPA==
-X-Google-Smtp-Source: AGHT+IGYFV6MU4YB63AJyKdvva+eVU8KUbYz33XJWjAtkBwDnomi6wq1povsUBPPhQoD986KcORpY779p4tk4+RsEF0=
-X-Received: from pjbie17.prod.google.com ([2002:a17:90b:4011:b0:33b:dccb:b328])
+        bh=VGzNZAgSmf1hKexSS7kscyRDWNyrH6DCvG9Q4nvREV0=;
+        b=CYWoBuOM3R9qRCVmcoeu+fX9VCTE8mmWc/uNWcEh9T/ePKIkxZXfDLRH9CgiNVQ+pm
+         X4h85Oo97EnzzOpZuPQBiUVneKAgTmF8YT1Piq5RnUAh1bazed40iRRqlEgliMzo9KvO
+         Pm9BooRyTLcDkwbcoMdU+UoEWqWpPvnqXmVB5g2rz3bDDB22BeR5ZEVlR4VGyOk5M48l
+         Md3CS2RXUvVIi0qotTI7UfjsJWY27q7ZpTID5NflizUFKMtfKml5AolTvWSCFoGJqFSC
+         xdD5J/UjeE681Ta9NU92j/FIfNUCkDphEfpbPgRH4A73POf8Mr0irPnfX8Rz0Dznnsu7
+         k1Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU64AGbyFaV/NbjD8WiwsJ6a1/o4QNdKjzTR7+9ZZmojpudysph+aCUQk8z5B6KmzPaAFaB7gQoTrOZN671ZXU71w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqlgtPxpFipt1e0OP7wbYTeFUaOsFBs2zYRQ2I3AFpdU595F7B
+	JjGm/flvdKc/MvvfmDacX4jC6OUEjZXjpFJfAJuzB1O801C/GIsLG01GIA94h2mun0Pt6yFucxf
+	oiXaM0fUlfB3pmY7r7EWp/OIPdv1MRg==
+X-Google-Smtp-Source: AGHT+IEshhpLrp+m+z5Lio7zTtyyfuyj3rt2WlZv8C9AbKaTeKWuFxioSmKqiZC+EdgZW5b6KBHOwrLop22uhDqYJzo=
+X-Received: from pjbmt14.prod.google.com ([2002:a17:90b:230e:b0:33b:d40a:d93a])
  (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2f83:b0:349:2125:be60 with SMTP id 98e67ed59e1d1-3492125c2b9mr7143191a91.8.1764897042691;
- Thu, 04 Dec 2025 17:10:42 -0800 (PST)
-Date: Fri,  5 Dec 2025 01:10:18 +0000
+ 2002:a17:90a:9f84:b0:340:e8e9:cc76 with SMTP id 98e67ed59e1d1-349125d3475mr6578882a91.11.1764897044574;
+ Thu, 04 Dec 2025 17:10:44 -0800 (PST)
+Date: Fri,  5 Dec 2025 01:10:19 +0000
 In-Reply-To: <20251205011027.720512-1-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251205011027.720512-1-willmcvicker@google.com>
 X-Mailer: git-send-email 2.52.0.223.gf5cc29aaa4-goog
-Message-ID: <20251205011027.720512-6-willmcvicker@google.com>
-Subject: [PATCH v7 5/6] clocksource/drivers/exynos_mct: Add module support for ARM64
+Message-ID: <20251205011027.720512-7-willmcvicker@google.com>
+Subject: [PATCH v7 6/6] arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
 From: Will McVicker <willmcvicker@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
 	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
@@ -75,175 +75,31 @@ Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Arm64 platforms the Exynos MCT driver can be built as a module. On
-boot (and even after boot) the arch_timer is used as the clocksource and
-tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-source for the arch_timer.
+Since the Exynos MCT driver can be built as a module for some Arm64 SoCs
+like gs101, drop force-selecting it as a built-in driver by ARCH_EXYNOS
+and instead depend on `default y if ARCH_EXYNOS` to select it
+automatically. This allows platforms like Android to build the driver as
+a module if desired.
 
-Note, this commit was derived from
-https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
-Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
+Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
+Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
 Signed-off-by: Will McVicker <willmcvicker@google.com>
 ---
- drivers/clocksource/Kconfig      |  3 +-
- drivers/clocksource/exynos_mct.c | 51 ++++++++++++++++++++++++++++----
- 2 files changed, 47 insertions(+), 7 deletions(-)
+ arch/arm64/Kconfig.platforms | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index ffcd23668763..9450cfaf982f 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
- 	  Support for Timer Counter Blocks on Atmel SoCs.
- 
- config CLKSRC_EXYNOS_MCT
--	bool "Exynos multi core timer driver" if COMPILE_TEST
-+	tristate "Exynos multi core timer driver" if ARM64
-+	default y if ARCH_EXYNOS || COMPILE_TEST
- 	depends on ARM || ARM64
- 	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
- 	help
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 922c2b519a39..d9a888607726 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -15,9 +15,11 @@
- #include <linux/cpu.h>
- #include <linux/delay.h>
- #include <linux/percpu.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
- #include <linux/clocksource.h>
- #include <linux/sched_clock.h>
- 
-@@ -232,6 +234,7 @@ static struct clocksource mct_frc = {
- 	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
- 	.resume		= exynos4_frc_resume,
-+	.owner		= THIS_MODULE,
- };
- 
- /*
-@@ -256,7 +259,7 @@ static cycles_t exynos4_read_current_timer(void)
- }
- #endif
- 
--static int __init exynos4_clocksource_init(struct mct_context *ctx, bool frc_shared)
-+static int __init_or_module exynos4_clocksource_init(struct mct_context *ctx, bool frc_shared)
- {
- 	/*
- 	 * When the frc is shared, the main processor should have already
-@@ -343,6 +346,7 @@ static struct mct_clock_event_device mct_comp_device = {
- 		.set_state_oneshot	= mct_set_state_shutdown,
- 		.set_state_oneshot_stopped = mct_set_state_shutdown,
- 		.tick_resume		= mct_set_state_shutdown,
-+		.owner			= THIS_MODULE,
- 	},
- };
- 
-@@ -484,6 +488,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
- 			CLOCK_EVT_FEAT_PERCPU;
- 	evt->rating = MCT_CLKEVENTS_RATING;
-+	evt->owner = THIS_MODULE;
- 
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
- 
-@@ -520,7 +525,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static int __init exynos4_timer_resources(struct mct_context *ctx,
-+static int __init_or_module exynos4_timer_resources(struct mct_context *ctx,
- 					  struct device_node *np)
- {
- 	struct clk *mct_clk, *tick_clk;
-@@ -549,7 +554,7 @@ static int __init exynos4_timer_resources(struct mct_context *ctx,
-  * @local_idx: array mapping CPU numbers to local timer indices
-  * @nr_local: size of @local_idx array
-  */
--static int __init exynos4_timer_interrupts(struct mct_context *ctx,
-+static int __init_or_module exynos4_timer_interrupts(struct mct_context *ctx,
- 					   struct device_node *np,
- 					   const u32 *local_idx,
- 					   size_t nr_local)
-@@ -662,7 +667,7 @@ static int __init exynos4_timer_interrupts(struct mct_context *ctx,
- 	return err;
- }
- 
--static int __init mct_init_dt(struct mct_context *ctx, struct device_node *np)
-+static int __init_or_module mct_init_dt(struct mct_context *ctx, struct device_node *np)
- {
- 	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
- 	u32 local_idx[MCT_NR_LOCAL] = {0};
-@@ -722,7 +727,9 @@ static const struct of_device_id exynos4_mct_match_table[] = {
- 	{ .compatible = "samsung,exynos4412-mct", .data = &exynos4412_mct_data, },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
- 
-+#if defined(CONFIG_ARM)
- /* Note, legacy ARM 32-bit systems depend on the MCT as the only clocksource
-  * which requires this driver to be initialized very early. We need to keep this
-  * special condition until we can transparently support modular and early init
-@@ -748,13 +755,11 @@ static int __init mct_of_declare_init(struct device_node *np)
- 	if (ret)
- 		goto out_ctx;
- 
--#if defined(CONFIG_ARM)
- 	sched_clock_register(exynos4_read_sched_clock, 32, ctx->clk_rate);
- 
- 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
- 	exynos4_delay_timer.freq = ctx->clk_rate;
- 	register_current_timer_delay(&exynos4_delay_timer);
--#endif
- 
- 	return 0;
- 
-@@ -764,3 +769,37 @@ static int __init mct_of_declare_init(struct device_node *np)
- }
- TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_of_declare_init);
- TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_of_declare_init);
-+#else
-+static int exynos4_mct_probe(struct platform_device *pdev)
-+{
-+	struct mct_context *ctx;
-+	struct device *dev = &pdev->dev;
-+
-+	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->drvdata = of_device_get_match_data(dev);
-+	if (!ctx->drvdata)
-+		return -EINVAL;
-+
-+	return mct_init_dt(ctx, dev->of_node);
-+}
-+
-+static struct platform_driver exynos4_mct_driver = {
-+	.probe		= exynos4_mct_probe,
-+	.driver		= {
-+		.name	= "exynos-mct",
-+		.of_match_table = exynos4_mct_match_table,
-+	},
-+};
-+
-+static int __init exynos_mct_init(void)
-+{
-+	return platform_driver_register(&exynos4_mct_driver);
-+}
-+module_init(exynos_mct_init);
-+
-+MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
-+MODULE_LICENSE("GPL");
-+#endif /* CONFIG_ARM */
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 13173795c43d..fc6026c368ca 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -128,7 +128,6 @@ config ARCH_CIX
+ config ARCH_EXYNOS
+ 	bool "Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+-	select CLKSRC_EXYNOS_MCT
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select EXYNOS_PMU
+ 	select PINCTRL
 -- 
 2.52.0.223.gf5cc29aaa4-goog
 
