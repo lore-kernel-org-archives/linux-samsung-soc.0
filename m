@@ -1,114 +1,233 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F6A3161A0
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 08:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71030FF30
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 09:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764923454; cv=none; b=nHmIKY52++nbGvHecYndO6jtgEmLNf3JdEqJoveVa7oRas6Bww6rwL9tKNyqfzzPC1uIa76RYd47seb12PRc72+Sed9ausH7jqNuVKnjCy6wY67acWFkRWvQjrGlyXcK+FTTRIDq7P5+2AecG7RH1A4PiMp4xdUpy+QYvcJeyZE=
+	t=1764928542; cv=none; b=ecFnFwrrAKEzXIMID9DS7SXP8ecyzaUVM0lcKAc46F+Qo4hD/KS7s4VPZPVt3FhFHhrkKk4xmfsNOVUhBbl7nKeQx0dwCkuzOhKruOlsmZ1fLcjZpW2cYVhHSVwLmdUPnLcwOyEuSOA9Mg16Ler8qtGClURCkYdkO60ajBlNYng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764923454; c=relaxed/simple;
-	bh=/HKbrueeav0hfVFCXbRIEc+ezn+SuJvusACsWP8Bipg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fAGEToKwdsPeh25I3hDptDK6nl7nmQzS6rzIar+FmxuST/Uvo8iSBduf6LsqzzOl4ie2soKCnB39v4xlCBEYMlaict4BHiD0dC2DUX02bhNmg+NY5cCRaUotKNdVG2nX0/pC9xJJqRwXugJWbUwgpkYLAM3zH+bbB6Y7iOM6/m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHj5Chww; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1764928542; c=relaxed/simple;
+	bh=qeq1qeVNiTWcW+ifjVUFDSx11aCp8cvIw+ibrb5M9JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Vx5Cz7d69NvwUneYqGtWI3C/+vsbtTX3JbRYywcPafi4YLOD31YBnZhAlExcOfgPjzowHQMLM+IyyHpkqlP/e75HD8yVyccT88H574k28kbuAzQybdgMqdArEJh9YTzalCo019CzphWL/fXWn0JwT2Wsjnu9K3I/Q36670aNGCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rjzlEPSs; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHj5Chww"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64149f78c0dso2679863a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Dec 2025 00:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764923445; x=1765528245; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V+dVo2JNAn7MsrQQRK8VE52kJO6dog4ObFIZQRBPJw8=;
-        b=FHj5Chww/xTk1hudNMq+l3Yg2nCR1m4Zfb/RxXjJuAwi+kUxlPdj1Jeu90bX7j9zHq
-         OsQYyHSiBwBFGUAOmYBCoTPm1yuP7NcslWC975lwEJ1bqiAZdWt2TphMnzmJvrU+tFTF
-         cGc6QBjhF6MnjOM3xSw2sfKiigr/4sk0yvecOGAtDfWNIWmVEM6P+hCddnwQwI0ezzEd
-         O32JxbthsLnvFIkKPBVFQjSONP54FTdpJE8Wwb5YmU1BIlwK8Eq5nIHJ5z2LxNCG8NRN
-         Pgt2yLktB/HIAipqB+raTFVZJ4FT//W60o+udsRdy7/pOSMsqYn/2AdEO0Miy1ngyobP
-         Z5xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764923445; x=1765528245;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V+dVo2JNAn7MsrQQRK8VE52kJO6dog4ObFIZQRBPJw8=;
-        b=YRDgqTg08U/GOYOScWPuOm7pJ/gddP/cwe4F6jlwM+GSeOmMEnTY1AhCpNy713L+RB
-         OnQGJWW69g+85XjVlLrBU+EFviZotcwRXy8G5XGEJxlLUkDwbNL1TlAaSs60G7sjXxRv
-         dBfuD/MjrBeLt3155iCxmt2h8NOJf0aNa4cy1+CUnmMP2WxIYuh2qsGlFvmuPEs5PMG5
-         ygJmET7llCzCnalLCk2kIJmNF9LOux9kM7v+yxeoaK0fppgSPAbJjW0jpMdFLAz+3PqY
-         CT9Bb7SznOZD53qj2q0XRt6Tn7/P9ONE2bD0YK5vD6hRGKKThA/Rl80I9FTuTiudC+Ay
-         9U0A==
-X-Forwarded-Encrypted: i=1; AJvYcCV5PcrhpEXlpDGQ2xl69IDRNIYFMkq7MGrQO/FXgGOQ39Mm6rC+CaF+nbNN+V3CJwfINPJE1tGY/+k0gQnuAoP99g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjTG/uIU9eg33iNPJij5fYCzilU3rUUQUAgr1SjVJcpnApafwP
-	rNfody0i9nY5CztgZYnfWT8Jh2py4ecJg+ecL2z+s18gOUnPKjk7t1aBdSDK6j3Obegs6fsdZYQ
-	riCxhd7GJuV6r7Q4wmjamERaLw9XY6XU=
-X-Gm-Gg: ASbGncv5zc95p0N5ghhocFjh7JtSZJDqZHQKRlz/2j/Pl12ECo/WNw/A9w/wQ1+YSOm
-	ypzryR5ETD2kdY+wS930NGTN82139grJSVMk3eWCdkW5glnB8N9R1VyQ2ZvCj4Winizer5tLEaw
-	fDFmBrzT3tiXK7hB5KSJpfKEfwC3Nee05qPhiRUWE26RAAoQOGxSUdFBt4cMqIclRS9APB/9jWW
-	pYeCimVxQrgzwZuOk7raHTX1gP5ZalAXxoUDWNdpYS4A7WmMdL9zkDKPLRVE4p/Nuc8cg==
-X-Google-Smtp-Source: AGHT+IHyhPhO5ji1Udtkp6jlBiDNdS1nJUTysDiG/BFsQGzVGkOYuq8S0+wdBeVac/yGVlo5iFM2k5xQ7B6Gl1w0/Sw=
-X-Received: by 2002:a17:907:3fa1:b0:b76:5b73:75fb with SMTP id
- a640c23a62f3a-b79dbe72a9emr795463366b.9.1764923445456; Fri, 05 Dec 2025
- 00:30:45 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rjzlEPSs"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251205095524euoutp01a276d0e085428e935ea4438058535e85~_SSR0_ttK1464014640euoutp01H
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 09:55:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251205095524euoutp01a276d0e085428e935ea4438058535e85~_SSR0_ttK1464014640euoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764928524;
+	bh=oG/e/R0PPkHFkI16XoV2QWWbc7zrzT3YMNu3HZYjOic=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=rjzlEPSsHHG8uoafhi2ejOyAj4OELE5NqS6odMWOQ6JKvpAMJ2z/deM/NLCeAceyN
+	 FkFzcaKBfl4YUtvbqEunNz2SInCMmDW/Z5v+EbuF7qfeAOGzBy6cCsxNb+awTWgjuu
+	 rjuAhz+zyxRsXvfoHSTekBm/Kkl+rwelBQCynlZM=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251205095524eucas1p185064dd92492fc4a6cc45221d660a74b~_SSRM4e5W2892728927eucas1p1Q;
+	Fri,  5 Dec 2025 09:55:24 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251205095522eusmtip1651c1628e115cd65bbb8e9696d67370b~_SSPT2f-b2241422414eusmtip16;
+	Fri,  5 Dec 2025 09:55:22 +0000 (GMT)
+Message-ID: <b81adc49-6e8a-49a6-9377-acd304ccfbc4@samsung.com>
+Date: Fri, 5 Dec 2025 10:55:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813131007.343402-1-linux.amoon@gmail.com>
-In-Reply-To: <20250813131007.343402-1-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Fri, 5 Dec 2025 14:00:29 +0530
-X-Gm-Features: AQt7F2qxbYSQuCXsYlo3s2RghAVsnJFzDr1A7ezZUPavGedOu8ugG3TEr0d0Qp4
-Message-ID: <CANAwSgRqFsRvCzrK7NXfqa91xhQLLVU_u2irLBBrRcpiK9gGkA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Exynos Thermal code improvement
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
-Cc: Mateusz Majewski <m.majewski2@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v7 0/6] Add module support for Arm64 Exynos MCT driver
+To: Will McVicker <willmcvicker@google.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
+	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>, John
+	Stultz <jstultz@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, Peter
+	Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+	<andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, "Russell
+ King (Oracle)" <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org,
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251205011027.720512-1-willmcvicker@google.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251205095524eucas1p185064dd92492fc4a6cc45221d660a74b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251205011037eucas1p2bfaec27d78550b53099ebb0ca8713b2f
+X-EPHeader: CA
+X-CMS-RootMailID: 20251205011037eucas1p2bfaec27d78550b53099ebb0ca8713b2f
+References: <CGME20251205011037eucas1p2bfaec27d78550b53099ebb0ca8713b2f@eucas1p2.samsung.com>
+	<20251205011027.720512-1-willmcvicker@google.com>
 
-Hi All,
+On 05.12.2025 02:10, Will McVicker wrote:
+> This series adds support to build the Arm64 Exynos MCT driver as a module.
+> This is only possible on Arm64 SoCs since they can use the Arm architected
+> timer as the clocksource. Once the Exynos MCT module is loaded and the device
+> probes, the MCT is used as the wakeup source for the arch_timer to ensure the
+> device can wakeup from the "c2" idle state.
+>
+> These patches are originally from the downstream Pixel 6 (gs101) kernel found
+> at [1] and have been adapted for upstream. Not only has the Exynos MCT driver
+> been shipping as a module in the field with Android, but I've also tested this
+> series with the upstream kernel on my Pixel 6 Pro.
+>
+> To the driver changes (both as built-in and as module) on Pixel 6 Pro, I ran
+> these tests:
+>
+> # cat /proc/interrupts | grep -E "mct|arch_timer"
+>   23:       6823      10938       7795       5607       8935      12828      21947       2200    GICv3  30 Level     arch_timer
+> 104:          1          0          0          0          0          0          0          0    GICv3 785 Level     mct_comp_irq
+> 105:        547          0          0          0          0          0          0          0    GICv3 789 Level     mct_tick0
+> 106:          0       1333          0          0          0          0          0          0    GICv3 790 Level     mct_tick1
+> 107:          0          0       1467          0          0          0          0          0    GICv3 791 Level     mct_tick2
+> 108:          0          0          0        583          0          0          0          0    GICv3 792 Level     mct_tick3
+> 109:          0          0          0          0        206          0          0          0    GICv3 793 Level     mct_tick4
+> 110:          0          0          0          0          0        153          0          0    GICv3 794 Level     mct_tick5
+> 111:          0          0          0          0          0          0         13          0    GICv3 795 Level     mct_tick6
+> 112:          0          0          0          0          0          0          0         87    GICv3 796 Level     mct_tick7
+>
+> # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+> arch_sys_counter
+>
+> When built and loaded as a module, you can verify via:
+>
+> # lsmod | grep exynos_mct
+> exynos_mct             20480  9
+>
+> I also compile tested for ARCH=ARM DEFCONFIG=multi_v7_defconfig with the
+> following debug configs to ensure the section mismatches are fixed:
+>    CONFIG_DEBUG_SECTION_MISMATCH=y
+>    # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+>
+> Any additional testing is much appreciated!
+>
+> Thanks,
+> Will
+>
+> Note1, instructions to build and flash a Pixel 6 device with the upstream
+> kernel can be found at [2].
+>
+> Note2, this series is based off of krzk/for-next commit bca42080637c (Merge
+> branch 'next/drivers-late' into for-next).
+>
+> [1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-raviole-5.10-android12-d1
+> [2] https://gitlab.com/LinaroLtd/googlelt/pixelscripts/-/blob/clo/main/README.md?ref_type=heads
+>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Donghoon Yu <hoony.yu@samsung.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: John Stultz <jstultz@google.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Youngmin Nam <youngmin.nam@samsung.com>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Cc: André Draszik <andre.draszik@linaro.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: kernel-team@android.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-On Wed, 13 Aug 2025 at 18:40, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi All,
->
-> This patch series is a rework of my previous patch series [1],
-> where the code changes were not adequately justified.
->
-> In this new series, I have improved the commit subject
-> and commit message to better explain the changes.
->
-> v7: Integrated my RFC patch which improves the IRQ framework
->     for all the SoC link below.
->     [6] https://lore.kernel.org/all/20250616163831.8138-1-linux.amoon@gmail.com/
->
-> v6: Add new patch to use devm_clk_get_enabled
->     and Fix few typo in subject as suggested by Daniel.
-> v5: Drop the guard mutex patch
-> v4: Tried to address Lukasz review comments.
->
-> I dont have any Arm64 device the test and verify
-> Tested on 32 bit Arch Odroid U3 amd XU4 SoC boards.
-> Build with clang with W=1 enable.
->
-> Please sare the feedback on this.
+Works fine on ARM Exynos 32bit based boards.
 
-Can you review the first 5 patches of this series?
-Do you want me to resend
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Thanks
--Anand
+
+> ---
+>
+> Changes in v7:
+> - Dropped v6 patch 1/6 that removed __init from register_current_timer_delay()
+> - Refactored the init function in patch 4/7 to handle the case of registering
+>    the timer delay function for ARM 32-bit systems from an __init tagged function.
+>    This addresses the original section mismatch issues reported in v4.
+> - Rebased series onto base commit bca42080637c (Merge branch
+>    'next/drivers-late' into for-next).
+>
+> Changes in v6:
+> - Updated module support to only register the MCT driver as a platform driver
+>    for ARM64 to ensure ARM 32-bit SoCs continue to probe the MCT driver very
+>    early.
+> - Squashed the percpu fix suggested by Marek Szyprowski in
+>    https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
+>    together with patch 3/6.
+>
+> Changes in v5:
+> - Fixed section mismatch issues.
+> - Addressed Arnd's concerns regarding potential issues with unloading and/or
+>    unbinding the driver.
+> - Fixed SoB concerns to clarify the development chain from AOSP to Linux.
+> - Pulled in https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/
+>    to limit percpu interrupts only for ARM64.
+>
+> Changes in v4:
+> - Missed the "v3" string in the previous series for the actual patches
+> - Re-generated patches with --base a15edf91668beefdb5171c53fa698c9b43dd1e0d
+>    for kernel test robot.
+>
+> Changes in v3:
+> - Rebased on top of Daniel's timer modularization prep series [3] and
+>    krzk/for-next commit a15edf91668b ("Merge branch 'next/dt64' into
+>    for-next")
+> - Added owner references to Exynos MCT clocksource and clockevent objects.
+> - Dropped #ifdef MODULE conditional section in favor of just using
+>    module_platform_driver() which will properly handle setting up the
+>    of_device_id table based on if the driver is built-in or a module.
+> - Update commit message for patch 2 based on John's feedback.
+> - Dropped DT change from v2 as it was picked up by Krzysztof for CPU Idle.
+>
+> Changes in v2:
+> - Re-worked patch v1 5 based on Rob Herring's review to use the compatible
+>    data for retrieving the mct_init function pointer.
+> - Updated the Kconfig logic to disallow building the Exynos MCT driver as
+>    a module for ARM32 configurations based on Krzysztof Kozlowski's findings.
+> - Added comments and clarified commit messages in patches 1 and 2 based on
+>    reviews from John Stultz and Youngmin Nam.
+> - Fixed an issue found during testing that resulted in the device getting
+>    stuck on boot. This is included in v2 as patch 5.
+> - Collected *-by tags
+> - Rebased to the latest linux-next/master.
+> ---
+>
+> Donghoon Yu (1):
+>    clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+>      arm64
+>
+> Hosung Kim (1):
+>    clocksource/drivers/exynos_mct: Set percpu local timer interrupts for
+>      ARM64
+>
+> Will McVicker (4):
+>    clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+>    clocksource/drivers/exynos_mct: Refactor driver init
+>    clocksource/drivers/exynos_mct: Add module support for ARM64
+>    arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+>
+>   arch/arm64/Kconfig.platforms     |   1 -
+>   drivers/clocksource/Kconfig      |   3 +-
+>   drivers/clocksource/exynos_mct.c | 255 ++++++++++++++++++++++---------
+>   3 files changed, 182 insertions(+), 77 deletions(-)
+>
+>
+> base-commit: bca42080637ce3a21092fc0f7d5411e853b0c3b3
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
