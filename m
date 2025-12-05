@@ -1,225 +1,111 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356C0280A29
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 20:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546A2273D73;
+	Fri,  5 Dec 2025 23:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764965979; cv=none; b=HG15cMF2Radfu0n+AEyr7WTMt8aSL7IOlY6NfU6bCJofprrfFrmZ41o+b8jaj4a3mzWmmawORwEMOwDeR8iSlwSpfUBz19W0kAtw4N7q1IHMgnOfRbpKh5Eh2mKTWos/bWyJSoxp2tyG1dX2Qow3pxIBmi4cxlwM/pmUTSmaPRE=
+	t=1764977317; cv=none; b=PePU29+DS1PTUFT6JeoY2wGL4cl4Iv2NKojvSHpoXGIbmtXad4xLtKEyLx63RCJnB8InX8WJVkdnqDsFECR2HvijRNCaZiedANRQeD66LInpYSEHnaPpolsUQKAW/h8ISLNpR9L2b1PQr0YmDIan9KAKpcFlm7f7DPNZQIiYARM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764965979; c=relaxed/simple;
-	bh=QvV5ac3UPAUOpNjnIM4GRf8TjdDG2xguqUsq832Ab1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UN+LPM5ZxylPkMesoD04WX0LiW7o0x1xHsOl0oZsYyWVNq8WLaCL9sW57/G+nZaZKsX6Uj/qasLjZLGk7iHeDnaDUNwYpXqG6W4HMtJ76db1wAGJPMGDiZkvsIBdPJ/+tPFAC9M5LgMvosHqz5kULY5HfiiFUQdvABhbq8jWCho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DjbUlgjX; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1764977317; c=relaxed/simple;
+	bh=06GVYZhezTLwymxE0BBOOw8R+VWOzdpCWMmOUljCHSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndBH8HfitLQE9frkodyrr5zHajOrc3zsPbTifXZQASy0FH+CLMpnBWg6XCnRl4txAaXymTxI5bb1rXgZ0dxpObv6YYMB1T3LWDaXGAIIQZJ1Hp5r641R9uuhcyur7Bxc61/wN6phreHf5NJNHkqrARmj9O4SYHjKX7q0/aJfBms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZiCww/5j; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DjbUlgjX"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-298145fe27eso38146065ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Dec 2025 12:19:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1764965976; x=1765570776; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QvV5ac3UPAUOpNjnIM4GRf8TjdDG2xguqUsq832Ab1Q=;
-        b=DjbUlgjXYXJj4lHFUdRr0YqPIWG4dB0mWJEF8W4TmQGSJDq8ox+rqq3fpN2VfuwNpY
-         2gY//vvDyCP01xsqROTifzAbCW3p+xh0tV+Q3m9D7nZogxCVOVPS82UHGy7Fc0WD+R5m
-         cxAKjF1jo5ivIkvgttn6qRHsKVsR9hx4idmOhCd3jiNWjjjU1Ph3MxDt+hF4waWozMzn
-         XeW0svASfeSAV9uhI/JC+4ijgaPwsnChyb7AU08wXeg+H6jDfYytfIcfPe3B4pzkAVsd
-         Zrlc2+gos+TI5pGvP+z1plZNLAnvOvTKlx+GaMVjWGE4xXDrLVgRSNmS6phSYF2sa9D8
-         qkUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764965976; x=1765570776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QvV5ac3UPAUOpNjnIM4GRf8TjdDG2xguqUsq832Ab1Q=;
-        b=M+OqkC6ANKuz7fOkMhZ1K8S1+N0x5dIfsV4r6hApDxZSJ4GorTFwaZaZSXp0fXpw4o
-         KdjaJTWug5cB3LUT8m6VgOWrqCTFUboMI7h6OCB3wloB8kwaXgj80zfhNS99JI00rZ0k
-         TS7SxmqNsCXRFXdSYQAgmI/uch8N28UgZqxr9aS92dhifuXsWiB1dbv5fP3MmF94+8+A
-         Z6EkGMqBHb6El9RnWLB7FIDMd9Mxb0yYiYj1yRfWWQt4+059kwVENaDZ+frJid3vwb0T
-         oR0HMcMzjqG42JhgzBgPoZvt+66YNRJOSLg7EN44BPL6CuWlH5INpQD2tlaNYLrp2sL0
-         udlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDSrF5D6VjOu9RibtTmXm3KqPG46u/fuZuroR3takavYiBAyhNBTnlC2mg1/HpO5WVX182WDThbUgLGQZgvHQLcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvdRKP/hkIcp2DNk83mwTabKjcV6B3+076RH/v0iiv8eF0yVGA
-	Upcih8QjGmsKIeDVEYWy7YMfDZkOQDJOuGkF07rY4k5MtzYdhdQFtu/noKjfKsWsfvDYHwSZxlX
-	I1cHTVxcUvLwr7kChseAg1ImaWCmDCjH2+gmRU+VE
-X-Gm-Gg: ASbGncv3sCunNr/Fz2T8f7RYcc1NMO7lbXddTeboHXbFhLjsM3ejoi0+iYzj/fkUmOy
-	dEVUCr4jDXVU5eZLSx1zFt+6kwdgBcjnlisCdFUt98bcUuJEWLjbyGzmuqoKN1a06XBaOLx2HjK
-	uy+Na2b2MF5jQgZWDiKa+gvXjCFvYv4U+1dfLcZyG2bFsJg9jQ56hI77EZIAcAAKTJopaxvvWhO
-	GQYzEMmsnCMLxrBs8iQd/AgQUNbnanLd2J9u9nEcvSu1BgLzoOcKJu2NUAmxTBy3hcbBmMmR8VL
-	1kZ7s5yXZAtQYEsbyhrCf9Q04WY=
-X-Google-Smtp-Source: AGHT+IGbi66b69isMZCCE2vWfm2l3aWjIU/6Jm7GoDCB7TYGbRrZY7LzGOWLW8ndmCQQy2C2xov9C9hN/n0jZy26kcQ=
-X-Received: by 2002:a05:7022:b95:b0:119:e56b:c74a with SMTP id
- a92af1059eb24-11e0315aa31mr278198c88.15.1764965975826; Fri, 05 Dec 2025
- 12:19:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZiCww/5j"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764977315; x=1796513315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=06GVYZhezTLwymxE0BBOOw8R+VWOzdpCWMmOUljCHSE=;
+  b=ZiCww/5jj42Is8I0d0ZeKByrFkPFueZT2JAtRYLCKQFptEvFZxeOJlUA
+   7eSRZC+Xuu4OLsvuhR5kMertnXQOm7Hy7RmXQIGcK2pK2azvSqrdK0QDo
+   AOm5ZSdRdMxlPxv9/cyrG2v7S6Km4FCgnIW9urQ9HdKiwXFOLbYlJDZ3/
+   2EvjXJyEOANcIUt4/nPeRGsKG95qh75L36qjt97u9n8awRz6/wa05J7TO
+   rSuMur9xUQKFIKPFpwGcLsML1YGOvpo9r7XnNUZXgKJNS8h18DyfsG/k3
+   Pz5td6UkNJo3tiYZ5sxTsaKOb4iskVbIRCeK4s7CzC1AIGIz2yWWSZHsO
+   g==;
+X-CSE-ConnectionGUID: 2A4vtRjPRryXShjATR3HmQ==
+X-CSE-MsgGUID: lgyBKWZKRfucDr6OMvx+cw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11633"; a="70633849"
+X-IronPort-AV: E=Sophos;i="6.20,253,1758610800"; 
+   d="scan'208";a="70633849"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2025 15:28:34 -0800
+X-CSE-ConnectionGUID: VRBZGpVlTEKrNLGb2AjDVQ==
+X-CSE-MsgGUID: jdVY+2RWT8y8YlhD9KahRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,253,1758610800"; 
+   d="scan'208";a="195857387"
+Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Dec 2025 15:28:28 -0800
+Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vRfDt-00000000Feb-3xD7;
+	Fri, 05 Dec 2025 23:28:25 +0000
+Date: Sat, 6 Dec 2025 07:27:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Will McVicker <willmcvicker@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Will McVicker <willmcvicker@google.com>,
+	Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
+	John Stultz <jstultz@google.com>,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/6] clocksource/drivers/exynos_mct: Add module
+ support for ARM64
+Message-ID: <202512060730.wBnpCnQv-lkp@intel.com>
+References: <20251205011027.720512-6-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251205-phyb4-v8-0-c59ea80a4458@google.com> <20251205-phyb4-v8-1-c59ea80a4458@google.com>
- <18eeb1c5-d21b-4505-b6a4-472f6e191864@kernel.org> <CA+zupgwa+m8Pa=+8shORaOA1OO6zoo6zYEojFS2UDuP0doBq7A@mail.gmail.com>
- <f32e0810-56f9-417e-abf6-0cc7b361bd15@kernel.org> <CA+zupgyxQisYBnLj9_3DtcN3R1Ugfv+-p-wimFp-hnqkhrrgyA@mail.gmail.com>
- <988b3fcb-44db-45ca-823b-5ab13206bd04@kernel.org>
-In-Reply-To: <988b3fcb-44db-45ca-823b-5ab13206bd04@kernel.org>
-From: Roy Luo <royluo@google.com>
-Date: Fri, 5 Dec 2025 12:18:59 -0800
-X-Gm-Features: AWmQ_bkSdeahcfk9MTu5RJ__-7yt4YnGMQ_a-ehzxXaIp_XrZSBLGUDbWDooSxE
-Message-ID: <CA+zupgzi55svWK4gHsFtdQSD9jFKbxHx_0GE2R1R5DafmYyGNA@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Badhri Jagan Sridharan <badhri@google.com>, Doug Anderson <dianders@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251205011027.720512-6-willmcvicker@google.com>
 
-On Fri, Dec 5, 2025 at 11:26=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 05/12/2025 20:11, Roy Luo wrote:
-> > On Fri, Dec 5, 2025 at 10:52=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 05/12/2025 19:47, Roy Luo wrote:
-> >>> On Fri, Dec 5, 2025 at 9:13=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>>>
-> >>>> On 05/12/2025 04:54, Roy Luo wrote:
-> >>>>> Document the device tree bindings for the USB PHY interfaces integr=
-ated
-> >>>>> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> >>>>> generation (Laguna). The USB PHY on Tensor G5 includes two integrat=
-ed
-> >>>>> Synopsys PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort c=
-ombo
-> >>>>> PHY IP.
-> >>>>>
-> >>>>> Due to a complete architectural overhaul in the Google Tensor G5, t=
-he
-> >>>>> existing Samsung/Exynos USB PHY binding for older generations of Go=
-ogle
-> >>>>> silicons such as gs101 are no longer compatible, necessitating this=
- new
-> >>>>> device tree binding.
-> >>>>>
-> >>>>> Signed-off-by: Roy Luo <royluo@google.com>
-> >>>>
-> >>>> Why intentionally dropping the tag? How are you handling this patchs=
-et?
-> >>>> Rewrite every time from scratch?
-> >>>
-> >>> Hi Krzysztof,
-> >>>
-> >>> I dropped the tag because a new file is being modified in this versio=
-n,
-> >>> Although it's just MAINTAINER file but I thought you might also want
-> >>> to take a look. I wasn't sure if modifying a new file qualifies as
-> >>> "substantial" so I erred on the side of caution. I should've called i=
-t
-> >>> out specifically in the change log. Sorry for the inconvenience.
-> >>
-> >> 1. so just squeeze that change into second patch and no need to ask fo=
-r
-> >> re-review
-> >
-> > That's a fair point. I will be more mindful of the review overhead
-> > going forward.
-> >
-> >> 2. You did not read my complain fully, look:
-> >>
-> >>>
-> >>> Regards,
-> >>> Roy Luo
-> >>>
-> >>>>
-> >>>> <form letter>
-> >>>> This is a friendly reminder during the review process.
-> >>>>
-> >>>> It looks like you received a tag and forgot to add it.
-> >>>>
-> >>>> If you do not know the process, here is a short explanation:
-> >>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new vers=
-ions
-> >>>> of patchset, under or above your Signed-off-by tag, unless patch cha=
-nged
-> >>>> significantly (e.g. new properties added to the DT bindings). Tag is
-> >>>> "received", when provided in a message replied to you on the mailing
-> >>>> list. Tools like b4 can help here. However, there's no need to repos=
-t
-> >>>> patches *only* to add the tags. The upstream maintainer will do that=
- for
-> >>>> tags received on the version they apply.
-> >>>>
-> >>>> Please read:
-> >>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/proc=
-ess/submitting-patches.rst#L577
-> >>>>
-> >>>> If a tag was not added on purpose, please state why and what changed=
-.
-> >>
-> >> Where did you address this? You dropped the tag silently.
-> >
-> > Why: a new file is being modified.
-> > What changed: MAINTAINER
-> > What's not changed:
-> > Documentation/devicetree/bindings/phy/google,lga-usb-phy.yaml
->
-> I don't know if you still did not get the problem or you think that I
-> really need that clear answer. So no, I do not need that clear answer, I
-> understood with first reply, but you kept explaining instead of
-> admitting that your changelog needs fixes. So I still do not believe you
-> understood the problem here and you might repeat the mistake.
+Hi Will,
 
-I admitted that my changelog needs fixes in my first reply.
-"I should've called it out specifically in the change log. Sorry for the
-inconvenience.".
-Maybe you think I didn't read through because my reply was placed
-before the <form letter> section, but that's a misunderstanding.
-I did read through the paragraph, that's why I mentioned the
-changelog in my first reply.
+kernel test robot noticed the following build warnings:
 
-I also misunderstood your question of "Where did you address
-this?". If you were asking where this should have been addressed,
-obviously the answer is to address it in the changelog,
-but I thought that was already made clear in the first reply and
-you might be asking for a clear answer.
+[auto build test WARNING on bca42080637ce3a21092fc0f7d5411e853b0c3b3]
 
->
-> I think you need someone in Google to coach in this process, because I
-> even gave you the exact link describing the process and what was
-> expected. I even pointed specific paragraph, so you don't need to read
-> entire file!
+url:    https://github.com/intel-lab-lkp/linux/commits/Will-McVicker/clocksource-drivers-exynos_mct-Don-t-register-as-a-sched_clock-on-arm64/20251205-091403
+base:   bca42080637ce3a21092fc0f7d5411e853b0c3b3
+patch link:    https://lore.kernel.org/r/20251205011027.720512-6-willmcvicker%40google.com
+patch subject: [PATCH v7 5/6] clocksource/drivers/exynos_mct: Add module support for ARM64
+config: arm64-randconfig-004-20251205 (https://download.01.org/0day-ci/archive/20251206/202512060730.wBnpCnQv-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 14bf95b06a18b9b59c89601cbc0e5a6f2176b118)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251206/202512060730.wBnpCnQv-lkp@intel.com/reproduce)
 
-I appreciate you pointing out the specific paragraph, I understand
-you're going above and beyond here. I did read and understand
-what should've been done instead for this patch.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512060730.wBnpCnQv-lkp@intel.com/
 
->
-> I assume you understood what should be done instead in this patchset.
-> Anyway, my previous tag applies if there were no bindings changes, but I
-> wasted too much time here to care anymore. The expectation from big
-> companies is they do not ask community to coach on basic submission
-> process. It's quite unfair to my spare, personal time after work,
-> considering how much big company is making. Big company should invest in
-> this coaching.
->
->
-> Best regards,
-> Krzysztof
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-Thank you for the feedback. I understand your frustration, and I
-apologize for taking up your time. I will be sure to be more thorough
-in the future.
+>> WARNING: modpost: vmlinux: section mismatch in reference: exynos4_mct_probe+0x70 (section: .text.exynos4_mct_probe) -> mct_init_dt (section: .init.text)
 
-Thanks,
-Roy Luo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
