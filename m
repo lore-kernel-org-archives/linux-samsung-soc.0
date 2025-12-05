@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA9E2D8DC2;
-	Fri,  5 Dec 2025 17:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041F7346786;
+	Fri,  5 Dec 2025 17:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764954813; cv=none; b=D19wh9zJwa892MAQkpZ12dpRxsG1gxecCcMF5kPe01bU+w3Mex4ITQhazR7PyAugqh4qWAFCqXiSZNCWvkOh9p/7gsECXi6lX9Ow+zNG7QIsLyzBfuUBLh10AEwFBBPHY+p4IuWdGt2sMYcSWX/aD5yENKjDy6r1otyQL8vbCbQ=
+	t=1764954859; cv=none; b=SzT7N9sTocPezRIPmLGOqUTi5xrF63a9kFjucUxdQBSGrXSI5TMdLiCHOSi21WkI5I+OdQ4eIER9bv/Qhvzz7j627ibr5iGW6OXakfaLBZwnxKF1NDmfmiQhD1bCaQq18wICsEmPqHRWMFQFjz1MDHXXBlLZBk7X6ipWcjpBOoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764954813; c=relaxed/simple;
-	bh=4G9Kt5ZYk1+ldZzyiWEvbKsl4PYFjTqYeP0O5U3nRXc=;
+	s=arc-20240116; t=1764954859; c=relaxed/simple;
+	bh=YJjyGQz0Nz3xraq+jlWUz8KnKNvRmuemEX+3ryqyk9k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NAWbA+pxJ7VdJNYp6tJ4osP3wSv3v+0AAf7jzLe8ut9r6WhoUPs7s7QVwPJHgle5CC5dQZdlF5UA/1sROOlFKlzWl+CE+ZHXVecXbigm6VJjbqcCAAQUks3Gb0CV8+jvTAKp61dcU1m6jgB85/TcV7Da0omzZa80hDaOg7KVjQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tz5VUxI8; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=T8NCbSnLEc2cQGS08eXRjPqOi6PIVV7YnDoUoxdSd6wJHxZoO0YvG7MYnp2bd2v+vrAkFG182WC4SAHV38mUetS6KnLolo5QRAqW+jHDsWDKoscatKkyco4f/GNxlqp6LAsJWTi6p0S1FKoB/UBzfD1ygYsQYyww4c8G0lgqwIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=of9s4N0q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tz5VUxI8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 387F1C4CEF1;
-	Fri,  5 Dec 2025 17:13:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="of9s4N0q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77752C4CEF1;
+	Fri,  5 Dec 2025 17:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764954812;
-	bh=4G9Kt5ZYk1+ldZzyiWEvbKsl4PYFjTqYeP0O5U3nRXc=;
+	s=k20201202; t=1764954858;
+	bh=YJjyGQz0Nz3xraq+jlWUz8KnKNvRmuemEX+3ryqyk9k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tz5VUxI8+BlhSRztOKjfn1mfVx7a6K/JOnY5Ika35qmAUFzeT8rxr9/WEgljk9GQ6
-	 CMlkvdoXHsjMMp9JoeBx9RWWq74t3sY2nDibM/MjtHSNE4ceU3M2DCSMiqOx9qDRJl
-	 6yipdpqsN2m8b7BADwmcIqBYIKPLBxnNaa8say2bjt37ld0nzyuwsm5FbVkTBD82aK
-	 QjGX/NWfi1auS2D6KHKQKe60INfhl4pRI2E2xWP2LNDHSJhYd9PY1DvlE2Sf72tt1Q
-	 f5PAVNswaw1vRwMK6XcVApZlPCnSnJKccml0uQcmlSS1QvRyDS0DBBCiTclxB1jGV2
-	 SdW+5yveQ1CQQ==
-Message-ID: <18eeb1c5-d21b-4505-b6a4-472f6e191864@kernel.org>
-Date: Fri, 5 Dec 2025 18:13:26 +0100
+	b=of9s4N0q4VytYO41lvIyE2WraQ3oxI+GXU40ul5tiYhP20CAMdkewEDs+dKCRGyM/
+	 VFVtETNjewnbhj0q3K6hqtz4sue5cXClJ4EQrFWSVneBOvnZc9EHwVikHkNuFYi8TE
+	 tVafy5ACXQ0mYXsP3MKar0exwy/qT0aCwlC78em/csrQ3t4oy9YUc2Og/CT8jFG26y
+	 HUbnRh8uvr1x5RGGA9rNbeYjjR3LsYbijDjCzyzpHcHDkgjS1Ng4ga9WknaUn2DIkD
+	 WRuVM69sIF9WekMTHAT90qzs57m04CqvvfmBWWWGN9B1U4Sq/1jIh+NOLPy9ituuC6
+	 nQ5FZ5f8msYGw==
+Message-ID: <3b367841-326c-4697-9fe9-041a32001d94@kernel.org>
+Date: Fri, 5 Dec 2025 18:14:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,22 +35,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
+Subject: Re: [PATCH v9 1/2] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+To: Roy Luo <royluo@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
  Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Badhri Jagan Sridharan <badhri@google.com>,
- Doug Anderson <dianders@google.com>, linux-phy@lists.infradead.org,
+ Doug Anderson <dianders@google.com>, linux-usb@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
-References: <20251205-phyb4-v8-0-c59ea80a4458@google.com>
- <20251205-phyb4-v8-1-c59ea80a4458@google.com>
+References: <20251205-controller-v9-0-9f158b18f979@google.com>
+ <20251205-controller-v9-1-9f158b18f979@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,26 +96,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251205-phyb4-v8-1-c59ea80a4458@google.com>
+In-Reply-To: <20251205-controller-v9-1-9f158b18f979@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/12/2025 04:54, Roy Luo wrote:
-> Document the device tree bindings for the USB PHY interfaces integrated
-> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> generation (Laguna). The USB PHY on Tensor G5 includes two integrated
-> Synopsys PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo
-> PHY IP.
+On 05/12/2025 03:26, Roy Luo wrote:
+> Document the device tree bindings for the DWC3 USB controller found in
+> Google Tensor SoCs, starting with the G5 generation (codename: laguna).
 > 
-> Due to a complete architectural overhaul in the Google Tensor G5, the
-> existing Samsung/Exynos USB PHY binding for older generations of Google
-> silicons such as gs101 are no longer compatible, necessitating this new
-> device tree binding.
+> The Tensor G5 silicon represents a complete architectural departure from
+> previous generations (like gs101), including entirely new clock/reset
+> schemes, top-level wrapper and register interface. Consequently,
+> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
+> this new device tree binding.
+> 
+> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
+> Dual-Role Device single port with hibernation support.
 > 
 > Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+>  .../devicetree/bindings/usb/google,lga-dwc3.yaml   | 140 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 141 insertions(+)
+> 
 
-Why intentionally dropping the tag? How are you handling this patchset?
-Rewrite every time from scratch?
+Nothing explains reason to ignore review. I am not doing same work
+twice, please respect maintainers' time.
 
 <form letter>
 This is a friendly reminder during the review process.
