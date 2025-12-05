@@ -1,246 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A377081E;
-	Fri,  5 Dec 2025 03:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF101A9FBD
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Dec 2025 03:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764906773; cv=none; b=JW5fu21H1hUt84d216iQyFoWoeMx4tOMYygm5BghwzMaYKr98EsYNv0HHPCNT3/56Sxlo9QQtVeD80nSjP4pOFGWfV5bV7ElZ9lW7pcohuq5+oV1XcQNdzNmlC0LjFIvXqndQMMeT4ZiNzJcK88/EcyBACXoRm3hRnue84ZKBNA=
+	t=1764906859; cv=none; b=X3sKSTf83/2jKnHhysM00epWI21HtXQLtgrl2cQhh3FFuzkcsVDM2u0QG1a2cWPgBJYvocrR4czdR/tz+1ID5qtCY0tpPf26qcRO97QfKz6gTMHDU1F5KAJ0qdz8YdqDGSiySj2kAfnwAdbsi9zCYk6OdgVAsyVhga/SdxzLdQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764906773; c=relaxed/simple;
-	bh=aCnktdb+wTVLC3gj9nec1duNC0hS3OcJnFItNItmnAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VOtP9RnA+DhhfJUgkg4BuBQPQrH+7Jjtgr5zw4MSdKcpTGoFkdE0lIlSUCGOLLKenRbJUUMe2R7yKlvLAm9QlSYYAz1JRivTFg9bzdWBoZ996doP8tJhev/WcYMqAp1z9mYwsEc59PvB6YMTEWMVAi03k4KfTH4yfRTnOHAqmzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2RxtvSM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764906859; c=relaxed/simple;
+	bh=2tc2ueK5yCrImLff3UraB+poQHbzXwYCQ4YuwSh4gbU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=o7uCNfEdd42LsmVwk5nJUxuqUFlSvofE7cI8I8qpfNlFAE92EDEe6Usch3pZCs+xEo1ietEu6eVGW6ZDfKuBlUr3PmyNuHOTrFrOpuub19x79Y5EUeYnbpyP1umsTOTrhiSKw9vQ/iQf3SPCBskxk/GyqgZnzfKYXzWeIFRBwy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sT5SNHbL; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2RxtvSM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18DCC116B1;
-	Fri,  5 Dec 2025 03:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764906773;
-	bh=aCnktdb+wTVLC3gj9nec1duNC0hS3OcJnFItNItmnAQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T2RxtvSMdslKaWhoOtZaHjmqC/MSnyHnAd9TLVevkydFuHJVs0P4nxWnDAhkzIvKl
-	 zVdbFFUVq4w5tVg3ormyLggB4Xp8OujJMTUsUcvrQgIqSTdUsPhD+pVSUxqgqoJ3b1
-	 wrp1x4EU4NiaWo6qeFVTyQWTOVH9qullRl+codpIW8Iqf1ihXhQN5iS2ndBdzSdRUS
-	 edzNBDushAKlMltIAmRH4lpJTAHMgg1OBWX9WTYlPadxktRcuSWmKofDfe3r+lNUK6
-	 r+DJWrvEP4bHqydVtgwq2vW8IxvfHqlP6UHaPSL/GIWAWTpBbx8V4hG0XYZ4KHI3WH
-	 QKKmEma42gNKA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Shuhao Fu <sfual@cse.ust.hk>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
-	krzk@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.18-5.10] cpufreq: s5pv210: fix refcount leak
-Date: Thu,  4 Dec 2025 22:52:34 -0500
-Message-ID: <20251205035239.341989-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251205035239.341989-1-sashal@kernel.org>
-References: <20251205035239.341989-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sT5SNHbL"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-ba4c6ac8406so1408360a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2025 19:54:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1764906857; x=1765511657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l7o0+wFB0fxZrZrqPCxWWUrX5bGrJiIWd93CpaGi7BI=;
+        b=sT5SNHbLgYb7S3WTC+Pgm88yIHMJb4G9nH+6J6x3datrcGAixBxR3DB4lNq1sNyUoh
+         Wu9W+jRB6kh4Mt+m1CQj54FSmVqjxq9fJ5NJAsy4lxWf75hr7kfspSnvZ4yH1cCtZxGP
+         DPpjLvmmZi7rRiQlJ3jXl6qLwKi4DtjeLuTEfC1mUN7qO9u/2s4w7/LYf77nBpyfeEur
+         dXQ5tLawja1PYsopjniNKHvyKNyzZMha3cxMDAXwD/R2QTpqLL8RD1UC3KO/d+9KM88Z
+         K7VwX90hnlA6XmOCShjKXmz2/ulbUWpImKqT8npHnw6HAPBg0w9cH0BZbpjNhH58cKI1
+         Xzqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764906857; x=1765511657;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l7o0+wFB0fxZrZrqPCxWWUrX5bGrJiIWd93CpaGi7BI=;
+        b=M4J98HWE87hJRWrKgV8rrhB9cVH0KwU4MDoG39wre0Xk5FH6KALrZM9nrv6Lxgm6AB
+         JhN0H86dCC9NnqWFp6/YRL50QMZKsWnIMMXNzs+LLLHIyehwaz0ITexRxBeaYVXSC5YY
+         07ixTYGS4dd3u6XGEk+cSk5Ox+XbVI0OIZiYimsmJn0FT9spob/WM2c+X6lJJRc9LjY1
+         wajjHL/PQbkqsqHZYIGGqPcwYEt49D6D+SVBKyL5YAYQRUJO5RgZ0RLToOZzx+C3FDtu
+         S78gK+tiM62cPW8M61igohT+nEQEYZsGZ6QwPUi5zmvI9N/9Nz2ntqeQC1spAHxDZ92n
+         oUOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXvMFDTgHKSb+qhpq6yC72MqK1vJ7Rbl6NGKZHVNJxDp2k/bA1HcSn581E0skh3Dq8VXRdGoI7YBjyyiXCGB39pg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3L5okflN9UuV/vnkR0QDI+CKH1qZLCasBXa2mYOQISyQrH1n/
+	lfCPgGkiKVgh+WUZi/BF6PzN9kvwIHpejHKO/by+zef/pvMNDdk0S3HNqx+b+PHerwvRucGePRz
+	FifoP6Q==
+X-Google-Smtp-Source: AGHT+IH/A0OAPzxz4CmbNcZZUtF8cAw99r376uPh69pJveO0mGRkFLKzTyCIyHvM349SWS0rV0K4DyG164A=
+X-Received: from dlii13.prod.google.com ([2002:a05:7022:418d:b0:11a:5223:14ab])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:4591:b0:119:e56b:91f2
+ with SMTP id a92af1059eb24-11df0c3db04mr5952111c88.35.1764906857360; Thu, 04
+ Dec 2025 19:54:17 -0800 (PST)
+Date: Fri, 05 Dec 2025 03:54:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGJXMmkC/1WOQQ6CMBBFr0K6tqQzlAKuvIdxUcoUmog1RYmEc
+ HcLwajLn8x7b2Y2UHA0sGMys0CjG5y/xVEeEmY6fWuJuyZuhgJzAKj4vZtqyZFEpgsjZWUki7f
+ 3QNa9Ns/5ErcNvuePLpD+0gIrBCkyTDMoclTAgQc/XZ/+1HrfXik1vl9lnRsePkzbT6NalXsex Z4fFRe8VqqSBFYYbX8Na38sfjH4YEXEGquktFohlOIPW5blDWlfJXMPAQAA
+X-Change-Id: 20251119-phyb4-2e03a7c449c4
+X-Developer-Key: i=royluo@google.com; a=ed25519; pk=nTq1n8WcJActRWe1s8jdcy+TzpTK4a+IYRCIWvQfq5k=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1764906855; l=5157;
+ i=royluo@google.com; s=20251120; h=from:subject:message-id;
+ bh=2tc2ueK5yCrImLff3UraB+poQHbzXwYCQ4YuwSh4gbU=; b=YojkW60N+NQkCkHwVLnMl4R03inzTaOCjroXExlpWISnRrpm+AXiY7T2V3KtLHv4XXhd3XQTR
+ /m+a8NOa9+IAkbxt94mvHmeS4IkHloJK5WV1R629yUFgzlVOfStluTQ
+X-Mailer: b4 0.14.2
+Message-ID: <20251205-phyb4-v8-0-c59ea80a4458@google.com>
+Subject: [PATCH v8 0/2] Add Google Tensor SoC USB PHY support
+From: Roy Luo <royluo@google.com>
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, 
+	"=?utf-8?q?Andr=C3=A9_Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Badhri Jagan Sridharan <badhri@google.com>, Doug Anderson <dianders@google.com>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Shuhao Fu <sfual@cse.ust.hk>
+This series introduces USB PHY support for the Google Tensor G5
+SoC (codename: Laguna), a new generation of Google silicon first
+launched with Pixel 10 devices.
 
-[ Upstream commit 2de5cb96060a1664880d65b120e59485a73588a8 ]
+The Tensor G5 represents a significant architectural overhaul compared
+to previous Tensor generations (e.g., gs101), which were based on Samsung
+Exynos IP. Although the G5 still utilizes Synopsys IP for the USB
+components, the custom top-level integration introduces a completely new
+design for clock, reset scheme, register interfaces and programming
+sequence, necessitating new drivers and device tree bindings.
 
-In function `s5pv210_cpu_init`, a possible refcount inconsistency has
-been identified, causing a resource leak.
+The USB subsystem on Tensor G5 integrates a Synopsys DWC3 USB 3.1
+DRD-Single Port controller with hibernation support, and a custom PHY
+block comprising Synopsys eUSB2 and USB 3.2/DP combo PHYs. The controller
+support is sent as a separate patch series.
 
-Why it is a bug:
-1. For every clk_get, there should be a matching clk_put on every
-successive error handling path.
-2. After calling `clk_get(dmc1_clk)`, variable `dmc1_clk` will not be
-freed even if any error happens.
-
-How it is fixed: For every failed path, an extra goto label is added to
-ensure `dmc1_clk` will be freed regardlessly.
-
-Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Co-developed-by: Joy Chakraborty <joychakr@google.com>
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+Co-developed-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Roy Luo <royluo@google.com>
 ---
+Changes in v8:
+- Update the Kconfig dependency to depends on ARCH_GOOGLE || COMPILE_TEST
+  Note that ARCH_GOOGLE does not exist yet but will eventually
+  be there when the following patch lands
+  https://lore.kernel.org/r/20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid/
+- Mention SoC codename Laguna in Kconfig description.
+- Sort the header alphabetically and sort the variables using the
+  reverse christmas tree ordering.
+- Add driver and binding files to the Tensor SoC MAINTAINER entry.
+- Add detailed comment for phy_mutex
+Link to v7: https://lore.kernel.org/r/20251121-phyb4-v7-0-df644fa62180@google.com
 
-LLM Generated explanations, may be completely bogus:
+Changes in v7:
+- Change the device tree binding example node name to usb-phy to follow
+ the hyphen-separated naming convention and remove label.
+Link to v6: https://lore.kernel.org/r/20251120-phyb4-v6-0-b6694e1f0caf@google.com
 
-## Analysis
+Changes in v6:
+- Use "lga" as SoC name instead of "gs5" to align with Tensor G5 device
+  tree https://lore.kernel.org/lkml/20251111192422.4180216-1-dianders@chromium.org 
+- Add "usb2_core" to the reg property to define the MMIO space for
+  the eUSB 2.0 PHY IP.
+- Rename "usb3_top" reg as "usbdp_top" and update the description to
+  reflect its nature as a top-level wrapper and align with internal
+  documentation.
+- Use syscon to access the "usb2_cfg" MMIO space.
+- Remove minItems for clocks and resets, making all listed clocks and
+  resets (including USB3) mandatory.
+Link to v5: https://lore.kernel.org/linux-phy/20251029214032.3175261-1-royluo@google.com
 
-### 1. COMMIT MESSAGE ANALYSIS
+Changes in v5:
+- Add usb3 registers/clks/resets to binding as suggested by Krzysztof
+  Kozlowski. This ensures completeness of the binding, though the
+  driver has not yet ultilized the resources. The usb3 clks and resets
+  are optional if usb2-only operation is desired, this is denoted by
+  minItems and descriptions in the clocks and resets properties.
+  Additionally, rename existing binding entries for consistency and to
+  better differntiate between usb2 and usb3.
+- Move the description of the phy select to phy-cells in binding as
+  suggested by Krzysztof Kozlowski.
+Link to v4: https://lore.kernel.org/linux-phy/20251017235159.2417576-1-royluo@google.com
 
-The commit message describes a refcount leak:
-- Subject: "cpufreq: s5pv210: fix refcount leak"
-- Explains the bug: `dmc1_clk` is not freed on error paths
-- Explains the fix: adds a new `out:` label to ensure cleanup
-- Signed-off-by: Shuhao Fu and Viresh Kumar (cpufreq maintainer)
+Changes in v4:
+- Separate controller and phy changes into two distinct patch series.
+- Remove usb2only mode configuration and the corresponding usb_top_cfg
+  reg (moved to controller)
+- Add more descriptions to dp_top reg to indicate it's not DP specific.
+- Add u2phy_apb clk/reset
+Link to v3: https://lore.kernel.org/linux-usb/20251010201607.1190967-1-royluo@google.com
 
-Missing tags:
-- No "Cc: stable@vger.kernel.org"
-- No "Fixes:" tag pointing to the commit that introduced the bug
-  (4911ca1031c2ad from 2011)
+Changes in v3:
+- Align binding file name with the compatible string
+- Simplify the compatible property in binding to a single const value.
+- Add descriptive comments and use item list in binding.
+- Rename binding entries for clarity and brevity.
+Link to v2: https://lore.kernel.org/linux-usb/20251008060000.3136021-1-royluo@google.com
 
-### 2. CODE CHANGE ANALYSIS
+Changes in v2:
+- Reorder patches to present bindings first.
+- Update dt binding compatible strings to be SoC-specific (google,gs5-*).
+- Better describe the hardware in dt binding commit messages and
+  descriptions.
+- Adjust PHY driver commit subjects to use correct prefixes ("phy:").
+- Move PHY driver from a subdirectory to drivers/phy/.
+Link to v1: https://lore.kernel.org/linux-usb/20251006232125.1833979-1-royluo@google.com/
 
-The bug:
-- In `s5pv210_cpu_init()`, after `dmc1_clk = clk_get(...)` succeeds, two
-  error paths jump to `out_dmc1`:
-  1. `policy->cpu != 0` (line 521)
-  2. Unsupported memory type (line 533)
-- `out_dmc1` only frees `dmc0_clk` and `policy->clk`, not `dmc1_clk`,
-  causing a refcount leak.
+---
+Roy Luo (2):
+      dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+      phy: Add Google Tensor SoC USB PHY driver
 
-The fix:
-- Adds a new `out:` label that calls `clk_put(dmc1_clk)`
-- Changes the two error paths to `goto out;` instead of `goto out_dmc1;`
-- `out:` falls through to `out_dmc1` for the rest of cleanup
+ .../bindings/phy/google,lga-usb-phy.yaml           | 133 ++++++++++
+ MAINTAINERS                                        |   2 +
+ drivers/phy/Kconfig                                |  11 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-google-usb.c                       | 295 +++++++++++++++++++++
+ 5 files changed, 442 insertions(+)
+---
+base-commit: 43dfc13ca972988e620a6edb72956981b75ab6b0
+change-id: 20251119-phyb4-2e03a7c449c4
 
-Change size: 4 lines added, 2 lines modified (minimal change)
-
-### 3. CLASSIFICATION
-
-- Bug fix: fixes a resource leak
-- Not a feature addition
-- Not a new API
-- Standard error handling pattern
-
-### 4. SCOPE AND RISK ASSESSMENT
-
-- Scope: single function, error paths only
-- Risk: low
-  - Only affects error paths
-  - Standard cleanup pattern
-  - No logic changes beyond cleanup
-- Subsystem: cpufreq (mature)
-- Dependencies: none; self-contained
-
-### 5. USER IMPACT
-
-- Affected users: systems using the S5PV210/S5PC110 cpufreq driver
-- Severity: resource leak (not a crash, but still a bug)
-- Trigger conditions:
-  1. `policy->cpu != 0` (non-zero CPU)
-  2. Unsupported memory type (not LPDDR/LPDDR2)
-- Impact: clock reference leak on error paths
-
-Historical context:
-- Driver introduced in v2.6.37 (2010)
-- Bug introduced in commit 4911ca1031c2ad (2011-06-06)
-- Present in all stable trees since 2011
-
-### 6. STABILITY INDICATORS
-
-- Tested: no "Tested-by:" tag
-- Reviewed: signed by Viresh Kumar (maintainer)
-- Age: commit is recent (Oct 2025), but the bug is old
-
-### 7. DEPENDENCY CHECK
-
-- No dependencies
-- Code exists in stable trees (driver present since v2.6.37)
-- Fix applies cleanly to stable trees
-
-### 8. COMPARISON WITH SIMILAR FIXES
-
-Similar refcount leak fixes in cpufreq:
-- `cpufreq: nforce2: fix reference count leak` (9600156bb9985)
-- `cpufreq: mediatek: fix device leak on probe failure` (ebc4ed14a4dbf)
-- `cpufreq: qcom-nvmem: fix memory leaks in probe error paths`
-  (e3fd01a810537)
-
-These follow the same pattern and are appropriate for stable.
-
-### 9. STABLE KERNEL RULES COMPLIANCE
-
-- Obviously correct: yes — standard cleanup pattern
-- Fixes a real bug: yes — resource leak
-- Important issue: moderate — resource leak, not a crash
-- Small and contained: yes — 6 lines changed
-- No new features: yes — only fixes cleanup
-- Applies cleanly: yes — no dependencies
-
-### 10. RISK VS BENEFIT TRADE-OFF
-
-Benefits:
-- Fixes a long-standing bug (14 years)
-- Prevents resource leaks
-- Low risk, small change
-- Standard pattern
-
-Risks:
-- Minimal — only touches error paths
-- No functional changes
-
-Concerns:
-- No explicit stable request tag
-- Driver targets older ARM SoCs (may have limited current use)
-- Leak only occurs on error paths
-
-### FINAL ASSESSMENT
-
-This is a valid bug fix that meets stable criteria:
-1. Fixes a real resource leak
-2. Small, contained change
-3. Low risk
-4. No new features
-5. Standard error handling pattern
-
-The lack of a "Cc: stable" tag is not a blocker; maintainers may add it,
-or it may have been missed. The fix is appropriate for stable backport.
-
-**YES**
-
- drivers/cpufreq/s5pv210-cpufreq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 4215621deb3fe..ba8a1c96427a1 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -518,7 +518,7 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
- 
- 	if (policy->cpu != 0) {
- 		ret = -EINVAL;
--		goto out_dmc1;
-+		goto out;
- 	}
- 
- 	/*
-@@ -530,7 +530,7 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
- 	if ((mem_type != LPDDR) && (mem_type != LPDDR2)) {
- 		pr_err("CPUFreq doesn't support this memory type\n");
- 		ret = -EINVAL;
--		goto out_dmc1;
-+		goto out;
- 	}
- 
- 	/* Find current refresh counter and frequency each DMC */
-@@ -544,6 +544,8 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
- 	cpufreq_generic_init(policy, s5pv210_freq_table, 40000);
- 	return 0;
- 
-+out:
-+	clk_put(dmc1_clk);
- out_dmc1:
- 	clk_put(dmc0_clk);
- out_dmc0:
+Best regards,
 -- 
-2.51.0
+Roy Luo <royluo@google.com>
 
