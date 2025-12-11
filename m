@@ -1,111 +1,423 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE5329BDAB;
-	Sun,  7 Dec 2025 08:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C263161A0
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Dec 2025 17:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765096960; cv=none; b=HR471L5/kmieA3Q5yC0Mx8D2lkPR6lH3VkMQqFz1YVk7E3nuwM7ODHslwUWWtYROjIi95s2pQr1SGrln1dhCNyDDS6XmuLUqqhcJpyzWs5/SikgsqiVKGvowW6KXdAxTLUyAgGqXQpZvA4Wo+YaWlcI5jzHBnHbepDzTOKQ9H78=
+	t=1765475280; cv=none; b=j/UJqMt6wpQ/e4ZRQP9gk/JA6PJj3F2+iETu3zSal8gqpkw1dMStDkb5eE/DPtJ3tzD5OKyGu35nqQy5E4QUA9e+WAxNtWQ+b14ZmKvIUTfTChc0IBDA5ZiUhbMpEKwlYn45t7mkISNcknGc4S0C7jVA2kGBwK79BRm4er4Muag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765096960; c=relaxed/simple;
-	bh=81fHP63wwjUBO7vufHEqW2i1/EwDrAJK5Nz166GaB5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtI1QuiIlRd86nUEWPeE2Ji07XfYvdqMzSe0jghTwvCogoGg6YYpvZ2kQfnn+dQqe4tY7Rr9g+9NPaltn3pDCtAt4Mna1yHOW/B8e8Ey71TMNuDjWdx8Crp1bGL9yhXUqVaZplAbC6+2zpPagqfQBCKHzFB+M4aX40mpX4U46eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TwISr634; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1765475280; c=relaxed/simple;
+	bh=dsF8RGp5glf/VfVjFvrLaSzUdBFfSt20bHRviutgPQ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=NbEkTkqeswBqVxkyOPKd0iHWv4dKPN/pxsE4+L3G1qII7Z5PmHVQ3dWdKr7HML25AtACZNB6gX1EosDgzmjy9kxmfcvlTZFgDtxCvdSZwId26HOlPcMSizUZ8MtkoVQqnpSZ9HQ/knERY0xLNqwqotqfMWdXNI9CQqHajfEITL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m8MCNjzP; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TwISr634"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1765096958; x=1796632958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=81fHP63wwjUBO7vufHEqW2i1/EwDrAJK5Nz166GaB5w=;
-  b=TwISr634oJMpLZzEHMU2CwUGJEhxPxY+oW/lDF1jrxeh1rgI6UShtbCc
-   kTcClPFOleIWfYntKnmY8QsxwJ/KIcLzMASHEeElPfU5jS1OAsF1daKkp
-   RacMQiLWJZ0yPelwHUT1d5WGPVIldK9HkEcUc40SIMn8sOo1ZmEZ7YyLj
-   K9TyMhUXfFw+EaVT4G30fgY4foeO1UmWPQD7/AmSlSS8JtecpEs6PU6Rj
-   i7Xa59xipTu+IHODm75HKTZZcsv1R7aeS25SzeS1pr7dr06JIjjLcH/r2
-   MrrZ9xtCH81+FHIjjtFr/8IUt92mCXsGUth14JPzYlL2zlltmUfNNo4a9
-   A==;
-X-CSE-ConnectionGUID: bOToLW3ITKqSq0a0RwTEVQ==
-X-CSE-MsgGUID: tYI4ZxZiSDKOrDKTdgkopA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11634"; a="78426772"
-X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; 
-   d="scan'208";a="78426772"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2025 00:42:37 -0800
-X-CSE-ConnectionGUID: WhjFVEa8S4Gn1dyYhP97Ng==
-X-CSE-MsgGUID: 85q/K6LiQPKuPr83qGUJFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,256,1758610800"; 
-   d="scan'208";a="195738405"
-Received: from lkp-server01.sh.intel.com (HELO 4664bbef4914) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 07 Dec 2025 00:42:32 -0800
-Received: from kbuild by 4664bbef4914 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vSALd-00000000J8r-1pzF;
-	Sun, 07 Dec 2025 08:42:29 +0000
-Date: Sun, 7 Dec 2025 16:42:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Will McVicker <willmcvicker@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Will McVicker <willmcvicker@google.com>,
-	Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
-	John Stultz <jstultz@google.com>,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/6] clocksource/drivers/exynos_mct: Add module
- support for ARM64
-Message-ID: <202512071659.We0N43XW-lkp@intel.com>
-References: <20251205011027.720512-6-willmcvicker@google.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m8MCNjzP"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 858284E41B82;
+	Thu, 11 Dec 2025 17:47:54 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3D1D8606AD;
+	Thu, 11 Dec 2025 17:47:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B6EF103C8DE1;
+	Thu, 11 Dec 2025 18:47:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1765475271; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Wqw40H+Vm9Y5oI9K9Rp0HKQlWck9rHZPfvPPZg1VHac=;
+	b=m8MCNjzPFbMAmZm0eMVxUIOoNElHUFrH8nyMvKc5xtRd2ijg7CRH5rMIeZLqar6ncVe7n5
+	APtVS8ac7DJ/H7J+55K/L4Wr+HBbPuxbx7nMO1nf1H7mNWJ4THsvBKZpK7Vlwv3WeyNS8d
+	x7Hx/KCZV9jWzI/xpclQ2y0iVPrHusoXY7RdZZMV8DbeJyANl15uVv7axpW6eEG1W1ov8g
+	nMNlV8SU4poCekV3+QcFRA0Skf+plqDwI5x2l8fAmp8ClMHZnlEl4FTsawTILq93OS7U2+
+	KQRb7aff2DVem9qRl449QJO7UNAKIB89H8/OP7ZxLj0UqLhOVeVFnsKDDelbyQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251205011027.720512-6-willmcvicker@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Dec 2025 18:47:37 +0100
+Message-Id: <DEVKQWH8GU0D.2NWQ1U7IOIEHI@bootlin.com>
+Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Jonathan Corbet" <corbet@lwn.net>, "Alexey Brodkin"
+ <abrodkin@synopsys.com>, "Phong LE" <ple@baylibre.com>, "Liu Ying"
+ <victor.liu@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Adrien
+ Grassein" <adrien.grassein@gmail.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Anitha Chrisanthus"
+ <anitha.chrisanthus@intel.com>, "Edmund Dea" <edmund.j.dea@intel.com>,
+ "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
+ <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+To: "Maxime Ripard" <mripard@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com> <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com> <hs44z4b2dgisemuewgtvl4epjcqqilg6cy36po25pubaog4hmq@33qgl4o3hwoa> <DEH2CVQV21Z2.25PJBAQAKFJSG@bootlin.com> <20251201-thick-jasmine-oarfish-1eceb0@houat>
+In-Reply-To: <20251201-thick-jasmine-oarfish-1eceb0@houat>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Will,
+Hi Maxime,
 
-kernel test robot noticed the following build warnings:
+On Mon Dec 1, 2025 at 5:51 PM CET, Maxime Ripard wrote:
+> On Mon, Nov 24, 2025 at 05:25:39PM +0100, Luca Ceresoli wrote:
+>> Hi Maxime,
+>>
+>> On Mon Nov 24, 2025 at 11:39 AM CET, Maxime Ripard wrote:
+>> > On Wed, Nov 19, 2025 at 02:05:37PM +0100, Luca Ceresoli wrote:
+>> >> Several drivers (about 20) follow the same pattern:
+>> >>
+>> >>  1. get a pointer to a bridge (typically the next bridge in the chain=
+) by
+>> >>     calling of_drm_find_bridge()
+>> >>  2. store the returned pointer in the private driver data, keep it un=
+til
+>> >>     driver .remove
+>> >>  3. dereference the pointer at attach time and possibly at other time=
+s
+>> >>
+>> >> of_drm_find_bridge() is now deprecated because it does not increment =
+the
+>> >> refcount and should be replaced with drm_of_find_bridge() +
+>> >> drm_bridge_put().
+>> >>
+>> >> However some of those drivers have a complex code flow and adding a
+>> >> drm_bridge_put() call in all the appropriate locations is error-prone=
+,
+>> >> leads to ugly and more complex code, and can lead to errors over time=
+ with
+>> >> code flow changes.
+>> >>
+>> >> To handle all those drivers in a straightforward way, add a devm vari=
+ant of
+>> >> drm_of_find_bridge() that adds a devm action to invoke drm_bridge_put=
+()
+>> >> when the said driver is removed. This allows all those drivers to put=
+ the
+>> >> reference automatically and safely with a one line change:
+>> >>
+>> >>   - priv->next_bridge =3D of_drm_find_bridge(remote_np);
+>> >>   + priv->next_bridge =3D devm_drm_of_find_bridge(dev, remote_np);
+>> >>
+>> >> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> >>
+>> >> ---
+>> >>  drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
+>> >>  include/drm/drm_bridge.h     |  5 +++++
+>> >>  2 files changed, 35 insertions(+)
+>> >>
+>> >> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridg=
+e.c
+>> >> index 09ad825f9cb8..c7baafbe5695 100644
+>> >> --- a/drivers/gpu/drm/drm_bridge.c
+>> >> +++ b/drivers/gpu/drm/drm_bridge.c
+>> >> @@ -1446,6 +1446,36 @@ struct drm_bridge *drm_of_find_bridge(struct d=
+evice_node *np)
+>> >>  }
+>> >>  EXPORT_SYMBOL(drm_of_find_bridge);
+>> >>
+>> >> +/**
+>> >> + * devm_drm_of_find_bridge - find the bridge corresponding to the de=
+vice
+>> >> + *			     node in the global bridge list and add a devm
+>> >> + *			     action to put it
+>> >> + *
+>> >> + * @dev: device requesting the bridge
+>> >> + * @np: device node
+>> >> + *
+>> >> + * On success the returned bridge refcount is incremented, and a dev=
+m
+>> >> + * action is added to call drm_bridge_put() when @dev is removed. So=
+ the
+>> >> + * caller does not have to put the returned bridge explicitly.
+>> >> + *
+>> >> + * RETURNS:
+>> >> + * drm_bridge control struct on success, NULL on failure
+>> >> + */
+>> >> +struct drm_bridge *devm_drm_of_find_bridge(struct device *dev, struc=
+t device_node *np)
+>> >> +{
+>> >> +	struct drm_bridge *bridge =3D drm_of_find_bridge(np);
+>> >> +
+>> >> +	if (bridge) {
+>> >> +		int err =3D devm_add_action_or_reset(dev, drm_bridge_put_void, bri=
+dge);
+>> >> +
+>> >> +		if (err)
+>> >> +			return ERR_PTR(err);
+>> >> +	}
+>> >> +
+>> >> +	return bridge;
+>> >> +}
+>> >> +EXPORT_SYMBOL(devm_drm_of_find_bridge);
+>> >
+>> > That's inherently unsafe though, because even if the bridge is removed
+>> > other parts of DRM might still have a reference to it and could call
+>> > into it.
+>> >
+>> > We'd then have dropped our reference to the next bridge, which could
+>> > have been freed, and it's a use-after-free.
+>>
+>> I think you refer to this scenario:
+>>
+>>   1. pipeline: encoder --> bridge A --> bridge B --> bridge C
+>>   2. encoder takes a reference to bridge B
+>>      using devm_drm_of_find_bridge() or other means
+>>   3. bridge B takes a next_bridge reference to bridge C
+>>      using devm_drm_of_find_bridge()
+>>   4. encoder calls (bridge B)->foo(), which in turns references
+>>      next_bridge, e.g.:
+>>
+>>        b_foo() {
+>>            bar(b->next_bridge);
+>>        }
+>>
+>> If bridges B and C are removed, bridge C can be freed but B is still
+>> allocated because the encoder holds a ref. So when step 4 happens, 'b->c=
+'
+>> would be a use-after-free (or NULL deref if b.remove cleared it, which i=
+s
+>> just as bad).
+>
+> Yep.
+>
+>> If I got you correctly, then I'm a bit surprised by your comment. This
+>> series is part of the first chapter of the hotplug work, which does not =
+aim
+>> at fixing everything but rather at fixing one part: handle dynamic
+>> _allocation_ lifetime of drm_bridges by adding a refcount and
+>> drm_bridge_get/put().
+>>
+>> Chapter 2 of the work is adding drm_bridge_enter/exit/unplug() [1] and
+>> other changes in order to avoid code of drivers of removed bridges to
+>> access fields they shouldn't. So the above example at point 4 would beco=
+me:
+>>
+>>        b_foo() {
+>>            if (!drm_bridge_enter())
+>>                return;
+>>            bar(b->c);
+>>            drm_bridge_exit();
+>>        }
+>>
+>> And that avoids 'b->c' after bridge B is removed.
+>>
+>> Does that answer your remark?
+>
+> Not really. I wasn't really questionning your current focus, or the way
+> you laid out the current agenda or whatever.
+>
+> What I am questionning though is whether or not we want to introduce
+> something we will have to untangle soon, and even more so when we're not
+> mentioning it anywhere.
+>
+>> > It's more complicated than it sounds, because we only have access to t=
+he
+>> > drm_device when the bridge is attached, so later than probe.
+>> >
+>> > I wonder if we shouldn't tie the lifetime of that reference to the
+>> > lifetime of the bridge itself, and we would give up the next_bridge
+>> > reference only when we're destroyed ourselves.
+>>
+>> I'm afraid I'm not following you, sorry. Do you refer to the time betwee=
+n
+>> the bridge removal (driver .remove) and the last bridge put (when
+>> deallocation happens)?
+>>
+>> In that time frame the struct drm_bridge is still allocated along with a=
+ny
+>> next_bridge pointer it may contain, but the following bridge could have
+>> been deallocated.
+>>
+>> What do you mean by "give up the next_bridge"?
+>
+> What I was trying to say was that if we want to fix the problem you
+> illustrated about, we need to give up the reference at __drm_bridge_free
+> time. So each bridge having a reference to a bridge would need to do so
+> in its destroy hook.
+>
+> Since it's quite a common pattern, it would make sense to add a
+> next_bridge field to drm_bridge itself, so the core can do it
+> automatically in __drm_bridge_free if that pointer is !NULL.
+>
+> But...
+>
+>> > Storing a list of all the references we need to drop is going to be
+>> > intrusive though, so maybe the easiest way to do it would be to create=
+ a
+>> > next_bridge field in drm_bridge, and only drop the reference stored
+>> > there?
+>> >
+>> > And possibly tie the whole thing together using a helper?
+>> >
+>> > Anyway, I'm not sure it should be a prerequisite to this series. I we =
+do
+>> > want to go the devm_drm_of_find_bridge route however, we should at lea=
+st
+>> > document that it's unsafe, and add a TODO entry to clean up the mess
+>> > later on.
+>
+> ... I *really* don't consider it something you need to work on right now.
+>
+>> Do you mean the drm variant is unsafe while the original
+>> (drm_of_find_bridge() in this series, might be renamed) is not? I
+>> don't see how that can happen. If the driver for bridge B were to use
+>> drm_of_find_bridge(), that driver would be responsible to
+>> drm_bridge_put(b->next_bridge) in its .remove() function or earlier.
+>> So the next_bridge pointing to bridge C would equally become subject
+>> to use-after-free.
+>
+> No, I was saying that both are equally unsafe. But we're adding a new,
+> broken, helper, and we don't mention anywhere that it is. So what I was
+> saying is mostly do we really want to introduce some more broken code
+> when we know it is. And if we do, we should be really clear about it.
+>
+>> devm does not make it worse, on the opposite it postpones the
+>> drm_bridge_put(next_bridge) as late as possible: just after
+>> b.remove().
+>
+> Which doesn't really change anything, does it? I'd expect the window
+> between the remove and final drm_bridge_put to be much wider than the
+> execution time of remove itself.
+>
+>> One final, high-level thought about the various 'next_bridge' pointers t=
+hat
+>> many bridge drivers have. Most of them do:
+>>
+>>  0. have a 'struct drm_bridge next_bridge *' in their private struct
+>>  1. take the next_bridge reference during probe or another startup phase
+>>  2. store it in their private driver struct
+>>  3. use it to call drm_bridge_attach
+>>  4. (pending) put the reference to it in their .remove or earlier
+>>
+>> I'm wondering whether we could let the DRM bridge core do it all, by
+>> removing items 0, 1, 2 and 4, and change 3 as:
+>>
+>> -     drm_bridge_attach(encoder, me->next_bridge, &me->bridge, flags);
+>> +  drm_of_bridge_attach(encoder, &me->bridge, dev->of_node, 1, -1, flags=
+);
+>>
+>> where dev->of_node and the following integers are the same flags passed =
+to
+>> devm_drm_of_get_bridge() and the like, i.e. the endpoint info needed to
+>> walk the DT graph and reach the next bridge.
+>>
+>> This would allow the core to take care of all locking and lifetime of th=
+e
+>> next bridge, and most (all?) bridges would never access any pointers to =
+the
+>> next bridge. The idea is to let the core do the right thing in a single
+>> place instead of trying to make all drivers do the right thing (and
+>> touching dozen files when needing to touch the logic).
+>>
+>> That is more a long-term ideal than something I'd do right now, but havi=
+ng
+>> opinions would be very interesting.
+>
+> That was pretty much my point, yeah.
+>
+> Maxime
 
-[auto build test WARNING on bca42080637ce3a21092fc0f7d5411e853b0c3b3]
+Let me recap this discussion, because there are various aspects and I need
+to clarify by view on it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Will-McVicker/clocksource-drivers-exynos_mct-Don-t-register-as-a-sched_clock-on-arm64/20251205-091403
-base:   bca42080637ce3a21092fc0f7d5411e853b0c3b3
-patch link:    https://lore.kernel.org/r/20251205011027.720512-6-willmcvicker%40google.com
-patch subject: [PATCH v7 5/6] clocksource/drivers/exynos_mct: Add module support for ARM64
-config: arm64-randconfig-001-20251207 (https://download.01.org/0day-ci/archive/20251207/202512071659.We0N43XW-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project a805147ac1ba123916de182babb0831fbb148756)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251207/202512071659.We0N43XW-lkp@intel.com/reproduce)
+First: the problem you discuss is about drm_of_find_bridge() introduced in
+patch 1. The devm variant is just equally affected.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202512071659.We0N43XW-lkp@intel.com/
+You proposed adding a next_bridge field in struct drm_bridge so there is an
+automated, common call to drm_bridge_put() (and setting it to NULL). It
+would remove some burden on individual drivers of course, but I don't think
+it would solve the problem. In the same scenario we are discussing
+(i.e. encoder --> bridge A --> bridge B --> bridge C, then B+C get removed)
+B's next_bridge would be automatically put, but the encoder could still
+call B->foo(), which could still do B->next_bridge.
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+Additionally, as a matter of fact there are currently drivers storing
+bridge pointers. The next_bridge is the most common case. Code using
+drm_bridge_connector_init() for example can store up to eight of them, but
+individual drivers are the hardest to hunt for.
 
->> WARNING: modpost: vmlinux: section mismatch in reference: exynos4_mct_probe+0x84 (section: .text) -> mct_init_dt (section: .init.text)
+I can see these (potential) tools to handle this (not mutually exclusive):
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ 1. remove drm_bridge pointers pointing to other bridges
+ 2. check whether a bridge (say B) still exists before any dereference
+    to B->another_bridge: that's drm_bridge_enter/exit()
+ 3. let owners of bridge pointers be notified when a bridge is unplugged,
+    so they can actively put their reference and clear their pointer
+
+For item 1, I think the drm_of_bridge_attach() idea quoted above would
+work, at least for the simple cases where bridge drivers use the
+next_bridge only for attach. A next_bridge pointer in struct drm_bridge is
+not even needed in that case, the pointer would be computed from OF when
+needed and not stored. I can do an experiment and send a first series, do
+you think it would be useful?
+
+For item 2, I still think it would just work for cases not (or not yet)
+covered by item 1. Given the same example as above:
+
+        b_foo() {
+            if (!drm_bridge_enter())
+                return;
+            bar(b->c);
+            drm_bridge_exit();
+        }
+
+drm_bridge_enter() will prevent doing anything on b->whatever, including
+any stale pointers. The idea is "I, bridge B, have been unplugged, my
+resources are not reliably usable, keep out!". No?
+
+However item 2 won't prevent the caller from keeping the pointer for a long
+time, especially if b_foo() is a void function so it cannot return anything
+saying "I was unplugged, I'm no longer theree". And that's where item 3
+(notifiers) might come in useful: upon receiving a bridge removal
+notification any driver or other code is in a position to actively put its
+reference to the bridge and clear its pointer. I had proposed something in
+[0], which can likely be improved, but it is useful in my current draft
+solution.
+
+I'd like to know your opinions about the above points, so we can
+progressively clarify the path forward.
+
+PS: I just realized about a fourth option: a revocable [1] (thanks Laurent
+who pointed me to it). That's basically a wrapper around a pointer that
+allows to guard from accessing it when the pointed object is gone. To me it
+looks somewhat equivalent to drm_bridge_enter/exit() but with very
+different APIs. I still haven't looked at the details.
+
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-12-9d6f2c9c=
+3058@bootlin.com/
+[1] https://lore.kernel.org/lkml/20251016054204.1523139-2-tzungbi@kernel.or=
+g/#t
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
