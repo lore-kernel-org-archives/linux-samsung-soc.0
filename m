@@ -1,28 +1,32 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F877314D0E;
-	Mon, 15 Dec 2025 15:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38A7334C08;
+	Mon, 15 Dec 2025 15:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765811148; cv=none; b=CV+ztKNPr11mNovoGpwRaHuk1aZUmXPgzPTRAWxCT9U6n3A9zfZ+fn5qRBLDysEy4fOJfhLoFj9VjKajJ24Zm9SOorQcr0wgucw5LfEUs/jXWeW7eJd36KNNGmZUxMpb2H/DwBoj+yVc1sYw3q07NdjPeeTRwd5k0lPZe+JQXqk=
+	t=1765811149; cv=none; b=W16pX9FEQrxyZmUg2Ob/32OymqbbwSGLlkHKQHroVZruqiAnjt/X4o3F3GGE3/zz+hVdIe0inW/Sb+hpitZUZkRALK+SC44YAfLkJynYzV4i54NwdPIXetD3zjaS1upfoC1+7n7n/NvLEm3+vfpff/k4Lxnqcz8y0Y3KUIupGc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765811148; c=relaxed/simple;
-	bh=r3suQozgcCgmmzPjxsON2tfMubesauxQ51FUd0nhCDQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LCFuGWNq8lUiD7Yj+oBGUZFjEpzPwe/3tUpIbPMICq+P+YBqDqU66uhkepdHDUpXoC5SLHBZhNULrKCb6QvGZ1Djqpcrw5BT4BR7SL5Y/vRIOf3UFzMUac6W8Ukrlml0mma1G8EehDgW5BUZqmy+Org5JOu6vkS0KIDXKA7EvOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.151
+	s=arc-20240116; t=1765811149; c=relaxed/simple;
+	bh=x1v0MJUWK9BMlzbS3/wVIg7Szywnt4X4hx4pJPzYhGk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BjGsn9SZWfEPqp2vF+E0n+7gP1DksDlqAn3sihDKKIbzkO3jmlaIr4gb224mQpfbXf0+VZ5bXYgiLDPVJTfjgbWJ8gdTV+bx0HkEvHy9GFjD1/SHbKdY9bFuT16ie40Hc01qrFovAee14HhLNNq/sdMXQxo3W5FhjtuxOjDcwT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4dVNfT20K4z9ss9;
-	Mon, 15 Dec 2025 16:05:37 +0100 (CET)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dVNfY418Kz9tk0;
+	Mon, 15 Dec 2025 16:05:41 +0100 (CET)
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=linux@timmermann.space
 From: Lukas Timmermann <linux@timmermann.space>
-Subject: [PATCH v3 0/3] Add support for exynos5250-manta (Google Nexus 10)
-Date: Mon, 15 Dec 2025 16:05:21 +0100
-Message-Id: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
+Date: Mon, 15 Dec 2025 16:05:22 +0100
+Subject: [PATCH v3 1/3] dt-bindings: ARM: samsung: Add Google Manta (Nexus
+ 10)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -31,10 +35,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALEjQGkC/x3MTQqAIBBA4avIrBNSsb+rRAvJyQbCwpEIwrsnL
- b/Fey8wJkKGSbyQ8CamM1aYRsC6uxhQkq8G3WqrtLLycNlwlpxdoBikH9dRd35wvd2gRlfCjZ5
- /OC+lfBhQT4BgAAAA
-X-Change-ID: 20251215-lat3st-staging-d9c926d8a75f
+Message-Id: <20251215-lat3st-staging-v3-1-2e4914b64dd8@timmermann.space>
+References: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
+In-Reply-To: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
@@ -42,49 +45,31 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  phone-devel@vger.kernel.org, Lukas Timmermann <linux@timmermann.space>, 
  Alexandre Marquet <tb@a-marquet.fr>
+X-Rspamd-Queue-Id: 4dVNfY418Kz9tk0
 
-This patch series adds initial support for the google-manta board, known
-as Google Nexus 10 to users. The device is powered by
-the Exynos 5250 SoC. The bindings for the notification led are already 
-in the kernel mailing list, got recently applied and can be found here:
-https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
+From: Alexandre Marquet <tb@a-marquet.fr>
 
-The first two patches add the necessary device tree files and
-bindings, while the last patch makes a small modification to
-allow CPU1 to boot, as it requires a call to it's underlying firmware.
+Add the Google Nexus 10 board to documentation.
 
-This first iteration only provides basic support to get the board
-up and running and usable via UART and with WiFi support. We will upstream additional 
-features in future patches. All patches have been tested on real hardware.
-
-Changes in v3:
- - Added a better patch description for firmware patch. (@krzk)
- - Reorganized nodes in DT. (@krzk)
- - Fixed memory node to use separate entries. (@krzk)
- - Renamed pwrseq node. (@krzk)
- - Fixed firmware checking for old dt compatible string. (@pavel)
- - Link to v2: https://lore.kernel.org/all/20251125-google-manta-v2-0-0f097cfff39c@timmermann.space/
-Changes in v2:
- - Renamed to google-manta (@krzk)
- - Link to v1: https://lore.kernel.org/all/20251120144018.961604-2-linux@timmermann.space/
-
+Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
 Signed-off-by: Lukas Timmermann <linux@timmermann.space>
 ---
-Alexandre Marquet (3):
-      dt-bindings: ARM: samsung: Add Google Manta (Nexus 10)
-      ARM: dts: exynos: Add Google Manta (Nexus 10)
-      ARM: samsung: exynos5250: Allow CPU1 to boot
+ Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/arm/samsung/samsung-boards.yaml       |   1 +
- arch/arm/boot/dts/samsung/Makefile                 |   1 +
- arch/arm/boot/dts/samsung/exynos5250-manta.dts     | 511 +++++++++++++++++++++
- arch/arm/mach-exynos/firmware.c                    |   4 +-
- 4 files changed, 515 insertions(+), 2 deletions(-)
----
-base-commit: d5f0e9098499869354aacb5b080f602f0399d396
-change-id: 20251215-lat3st-staging-d9c926d8a75f
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index f8e20e602c20..13d97257f070 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -117,6 +117,7 @@ properties:
+       - description: Exynos5250 based boards
+         items:
+           - enum:
++              - google,manta                    # Google Manta (Nexus 10)
+               - google,snow-rev5                # Google Snow Rev 5+
+               - google,spring                   # Google Spring
+               - insignal,arndale                # Insignal Arndale
 
-Best regards,
 -- 
-Lukas Timmermann <linux@timmermann.space>
+2.52.0
 
