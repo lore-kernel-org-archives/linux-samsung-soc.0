@@ -1,108 +1,191 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFEB31E0EB;
-	Tue, 16 Dec 2025 13:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9521F364EB9;
+	Tue, 16 Dec 2025 13:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765892955; cv=none; b=JmWaKfXzvVTPFXm0K0clfHj0CKnArM/cJBz2T3vORkaMH7iTHIEfvbAAnZWd28mhQi5Egyv6qVhHDEAJy7d6dBLvsBVhK5MHbmlUEyONvFOe1dfFbO/RURef2S32hEmK/iHaasegYv0Ua8WqvOwmiqRSfpE8aPpxEvwHrE5E4XI=
+	t=1765892983; cv=none; b=YlQc8l0B0BuraV+zdTdEg6MaNniLj2pqmhhwW5eAFti6sIYDf9hb70BsXgywfWioE53Kvea9DtCyO1JP0F9fv3jvO3e8X5+MfVBnrc12zhsCgqdjvqIdleSGTu0+HeC4HxFRMgKgfKyrTLpn7T5JKv5MXy6W4BIB3fPncpjRMso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765892955; c=relaxed/simple;
-	bh=sFLsYOIToyI1CYsLfOe9PNPAZa7SMcZGDRLeye3TkV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W6ITLo9p0HnXAzwN99Ii4I/trYKulM4t+eFuRtE6CYPz/G9bY4LRYfOnJK7oGwaOkfDMsLpaaebFkJH++se0rg44h6JX16Q/q6IUI9bPQZNOttL/4VnEaRDfuXyADEqb2G8mvPSa8Kl2scTZJmx7/b4xJb6YFqmAW97usFLv/GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1cVIG/eg; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1765892983; c=relaxed/simple;
+	bh=YfLQ27amlUSOROYLrmwTzJ9E/8AgqpTLSS/yS8wBt6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0ptojQa2xDAmxVJuUBW6xsrcghTRaBVDb7Kt6yZL3Uwf1ENPoOyFxLfQs1ZmFRqS/F8WRwP0B6V08KM6mbAaS7MvkAGUeqzN4sG90vt6f1UeHTptiZgXbO6a8DlMXOGPo89Pk+9L2O2ruzf/zOPfa1HxSak0zvz1K0av91PLaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms/EcseV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1cVIG/eg"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=sFLsYOIToyI1CYsLfOe9PNPAZa7SMcZGDRLeye3TkV4=; b=1cVIG/eg7I6sS8hSAue2feSosa
-	fs9JYZLPNZbpWOz+5uum2rewSRjwJieZr8xzpUV4bVReoRWYTT+mHCMkrJwoHhPQSGGR4sPYkzGME
-	RDsFsScNiP6CEnjPay7NzFuwIgrFnlWdjIBcjNaVq8fDUXuIaKOW1yPFJct87k4LnqJiex01iAtJC
-	+Fz+7SV96+v9afwrM24tqAFdJ6qSg/CFjF9ANZ2MwSKnE6OQY6GWDS9sX+mM66a1RGHlrF4XCy4eq
-	tmRZp4LuDiR8emPv9NnninxunaM3+fUtsB+aMFPl4oLO0sv1kYMOkT8HpqoosgGfpuXJ0fkaxQjwv
-	m+v2sXhw==;
-Received: from [141.76.253.243] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vVVPc-0004Lk-DA; Tue, 16 Dec 2025 14:48:24 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Damon Ding <damon.ding@rock-chips.com>
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
- dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject:
- Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last bridge
- determines EDID/modes detection capabilities
-Date: Tue, 16 Dec 2025 14:48:23 +0100
-Message-ID: <3351986.usQuhbGJ8B@phil>
-In-Reply-To: <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
-References:
- <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
- <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms/EcseV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A093C4CEF1;
+	Tue, 16 Dec 2025 13:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765892983;
+	bh=YfLQ27amlUSOROYLrmwTzJ9E/8AgqpTLSS/yS8wBt6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ms/EcseV+s20wmc1lLhYwDx89gIvClg2PrymIGMeUbwNDiD4SnOmW78o0LBiCBxlO
+	 BdxeF2Dz7vNPLlHk6H9c/Loage+PF2nosiRONlDlgQCWHyIinBjfz+mmT27iulavfd
+	 BuE/G7U+oUbo+mnBfw6ESY6cd3Q41neeo7IYkgSIPk07g5OM0wIZnaF/AK+WLm6cgJ
+	 GmCyNXU3kAhE/wGxDlMtotwE9co/euW0U0pWBSlyqKeVL94wQyOekYMU9/93Cs6rqR
+	 ujWcxuOybxnttG5mv4zj6LB+Bfu8R3ei8lyxE/EthGDt30dEmVf0CTtlhobbfgREOI
+	 OXMYvMAHdg9pw==
+Date: Tue, 16 Dec 2025 14:49:39 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Phong LE <ple@baylibre.com>, Liu Ying <victor.liu@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Adrien Grassein <adrien.grassein@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+	Edmund Dea <edmund.j.dea@intel.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
+Message-ID: <20251216-cute-bandicoot-of-authority-3c492a@penduick>
+References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com>
+ <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com>
+ <hs44z4b2dgisemuewgtvl4epjcqqilg6cy36po25pubaog4hmq@33qgl4o3hwoa>
+ <DEH2CVQV21Z2.25PJBAQAKFJSG@bootlin.com>
+ <20251201-thick-jasmine-oarfish-1eceb0@houat>
+ <DEVKQWH8GU0D.2NWQ1U7IOIEHI@bootlin.com>
+ <DEW6XHD12EY4.1THDR9UMJOTAN@bootlin.com>
+ <20251215-mottled-dexterous-marmot-c69ad3@penduick>
+ <DEYUNHVYCKYJ.2HU878WBYCJMV@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="65zjs456orcupskh"
+Content-Disposition: inline
+In-Reply-To: <DEYUNHVYCKYJ.2HU878WBYCJMV@bootlin.com>
+
+
+--65zjs456orcupskh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
+MIME-Version: 1.0
 
-Am Mittwoch, 22. Oktober 2025, 03:15:52 Mitteleurop=C3=A4ische Normalzeit s=
-chrieb Damon Ding:
-> Hi Luca,
+On Mon, Dec 15, 2025 at 03:11:21PM +0100, Luca Ceresoli wrote:
+> Hi Maxime,
 >=20
-> On 10/21/2025 6:31 PM, Luca Ceresoli wrote:
-> > Hello Damon,
-> >=20
-> > On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
-
-> >=20
-> > This does not apply on current drm-misc-next, due to the patch I mentio=
-ned
-> > in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/displ=
-ay:
-> > bridge_connector: get/put the stored bridges").
-> >=20
-> > However I'm sorry I have to mention that patch turned out being buggy, =
-so
-> > I've sent a series to apply a corrected version [0]. I suggest watching=
- the
-> > disucssion about the fix series, and if that gets approved rebase on to=
-p of
-> > that and adapt your changes.
-> >=20
-> > Sorry about the mess. :(
-> >=20
-> > [0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-c=
-onnector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
-> >=20
-> >=20
+> On Mon Dec 15, 2025 at 11:35 AM CET, Maxime Ripard wrote:
+> [...]
+> >> > Additionally, as a matter of fact there are currently drivers storing
+> >> > bridge pointers. The next_bridge is the most common case. Code using
+> >> > drm_bridge_connector_init() for example can store up to eight of the=
+m, but
+> >> > individual drivers are the hardest to hunt for.
+> >> >
+> >> > I can see these (potential) tools to handle this (not mutually exclu=
+sive):
+> >> >
+> >> >  1. remove drm_bridge pointers pointing to other bridges
+> >> >  2. check whether a bridge (say B) still exists before any dereferen=
+ce
+> >> >     to B->another_bridge: that's drm_bridge_enter/exit()
+> >> >  3. let owners of bridge pointers be notified when a bridge is unplu=
+gged,
+> >> >     so they can actively put their reference and clear their pointer
+> >> >
+> >> > For item 1, I think the drm_of_bridge_attach() idea quoted above wou=
+ld
+> >> > work, at least for the simple cases where bridge drivers use the
+> >> > next_bridge only for attach. A next_bridge pointer in struct drm_bri=
+dge is
+> >> > not even needed in that case, the pointer would be computed from OF =
+when
+> >> > needed and not stored. I can do an experiment and send a first serie=
+s, do
+> >> > you think it would be useful?
+> >>
+> >> I had a look and, while the implementation should be simple, only a few
+> >> drivers could benefit right now. The majority fall into one of these
+> >> categories:
+> >>
+> >>  * drivers using drm_of_find_panel_or_bridge() or *_of_get_bridge()
+> >>    (maybe 60-80% of all drivers, those will have to wait for the panel
+> >>    improvements)
+> >>  * drivers using the next_bridge pointer for more than just attach
+> >>  * drivers doing more complicated stuff
+> >>
+> >> I think your "put next_bridge in __drm_bridge_free" idea would fit wel=
+l the
+> >> 2nd category and perhaps also the 1st one. For the 3rd category we'd n=
+eed
+> >> something different, e.g. a per-driver .destroy callback.
+> >
+> > Yep, that's fine. We should optimize for the common case, with an escape
+> > hatch. That's exactly what we are talking about here.
 >=20
-> I saw your fix patches before sending this series. I think your patches=20
-> will likely be merged relatively quickly, so I plan to wait until the=20
-> other patches in my patch series are confirmed to be fine, then submit=20
-> v8 version based on the latest bridge_connector driver. :-)
+> Not sure why, but it's taking a while before I grasp your ideas about this
+> series and meld them with mine. I hopefully got a clear POV now, so based
+> on it my plan is to rework this series to:
+>=20
+>  * keep drm_of_find_bridge() but renamed to of_drm_get_bridge(), and keep
+>    patches 1-5 (with the changes suggested by you and Louis, nothing big
+>    and all already sent in v2)
 
-I think with 6.19-rc1 out, now is a great time for v8? :-)
+I don't think we should use that name, but on principle, yes.
 
-Heiko
+>  * not add devm_drm_of_find_bridge()
 
+Yep.
 
+>  * add next_bridge pointer to struct drm_bridge and call
+>    drm_bridge_put(bridge->next_bridge) in __drm_bridge_free, document it
+
+We don't have to at this point, you can add next_bridge to the
+drm_bridge pointer if you want, but I don't consider it a prerequisite.
+If we don't we would have to create drm_bridge_funcs->destroy
+implemnentations to give up the driver pointer reference though. Your
+call.
+
+>  * convert patches 7-26 to use bridge->next_bridge where applicable,
+>    or to do something different when needed
+
+Depending on your decision above, we'd need to either convert them to
+use drm_bridge->next_bridge or create a destroy hook for them. Either
+way is fine for me.
+
+>  * maybe remove part of patches 7-26 just to reduce spam and rework effort
+>    in case of further iterations, to send them separately once the approa=
+ch
+>    is accepted
+>=20
+> Does it look OK?
+
+Yep
+
+Maxime
+
+--65zjs456orcupskh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaUFjcwAKCRAnX84Zoj2+
+dgzkAYDvA9yfAoN5qn3Uuq31rvBMPARdeaGJP/R7L/afEIqfYpW00Xnt3rcpsKVt
+DvfNFYwBf0vpoxbPBiXv/KJmjkwFaLmGNHmvjyicK5vGQGOUo5Kn5EA6cWvB5aoe
+s/Mjb6G3Dw==
+=yqem
+-----END PGP SIGNATURE-----
+
+--65zjs456orcupskh--
