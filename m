@@ -1,160 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271CB31DD90;
-	Tue, 16 Dec 2025 16:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C169823371B;
+	Tue, 16 Dec 2025 16:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765902031; cv=none; b=oMHwHJhW7AoGkZR3syHE2dpJ8NXv+4/H5xJjuundAblOzy1LuslZ+4GpG74hFIXi5UPWz3bvsj6iiS1aJtVqvw2Kp0fRroEOwzyAwdLeAR5VhEWIySWhUh8i0HkkItHenCJJBRGfa+zo8lyoOYMNGgYTjv4nGdryXRzseMtzzbY=
+	t=1765902988; cv=none; b=mw66p4vvbbNf2fnnrssKlcUmGpfti0n0pP+ZuNJqMMzKfqffC6M8NnHyzY8JfBRMtwYagJ1i2EEElZkL+FQYqfmZGxSj2SXBauZIgs544moHSPE6buBA+q9LxbFwQfAZQwDljr+JyKV+uO60MKJZWJ4Bb2oV0puUAdNXvN82BrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765902031; c=relaxed/simple;
-	bh=88Io3/dEnsh7J9mzKOUPUWY7WtjcW6vC0ycmDPe6/LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IW44DBtMcvojBEQegstGwjArXZPd+S3y9R4PpouvulxKN0hdTKyfLnmqvxNA9ev3Sa42vYH53BFvmIZ1OI/IarkgJXqhfNCMv+1EXCPA4zmfa2oqlKSNprZHmLd/iU8StcNqCz85VYowgM0HT3MUsGY55TiEmtK6MvseFdHlWGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8pVkjwM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765902988; c=relaxed/simple;
+	bh=oFjVZa6cQDUNg1q8/naTH9lAAeiTjOcFhVLNBZ1HADw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=qFbJ2dTfoE5yepWacRSi6zwRW6ogua6H0FMjbqAuOVe2sHafTwEewggt7nLTsI1g1e79pvkIBDSRZVHYqf6O7v3GgHVGDMQyc+LVCpQTl+HFZoiqrIAqQx0GDoR1PwqBURFGthqPQfuI2JRMec1z3u41bmwk/X7qUpTReueMjvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hxcp1qe0; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8pVkjwM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE598C4CEF1;
-	Tue, 16 Dec 2025 16:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765902030;
-	bh=88Io3/dEnsh7J9mzKOUPUWY7WtjcW6vC0ycmDPe6/LQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p8pVkjwMcYgI5x+cY3Z1C93MjU0pBEi/EtR2zfplBPMG3mcXgBNqND36HWiV6qcbe
-	 +rDac8spLkPiOQ8mg8OqWCEvMbYOpxgPFM0W2jFiKGzpJq0pQipX0D7xAyFv0EMWXq
-	 jRimw/OyQfriGLM1Td4xiPnbyZLcXqnm3xH2rORmyr+DWyAFFkEIxOXD/hKLYiLH8E
-	 2f+E1Rqc46CqI+D9Z9/0zvbi/H4X94LOAFHfRFg761a+/0I0+vtVaFab1iu7Pv19b+
-	 yIy8LV03DJZQ215Uw96aVMzwqsOhT76APvq8d1F05Kiu/J1O1yv1R9TMVSd6LaIbIT
-	 0aNO256AdOfKQ==
-Date: Tue, 16 Dec 2025 16:20:24 +0000
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>,
-	Douglas Anderson <dianders@chromium.org>, kernel-team@android.com,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Samsung mfd/rtc driver alarm IRQ simplification
-Message-ID: <20251216162024.GI9275@google.com>
-References: <20251120-s5m-alarm-v2-0-cc15f0e32161@linaro.org>
- <20251126112935.GA3070764@google.com>
- <20251126140409.GC3070764@google.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hxcp1qe0"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id E962E1A223D;
+	Tue, 16 Dec 2025 16:36:24 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A76266071C;
+	Tue, 16 Dec 2025 16:36:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F316C119A904B;
+	Tue, 16 Dec 2025 17:36:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1765902982; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=PzhR0G4mBnm/z0O1Hfgh44ISCPhT1HMJphLOZLV+TY0=;
+	b=Hxcp1qe0jp9L+ZP5B2CcjRugnzvNJMFJ/9uLnc/dPwH5UC2kAbZKmRyiMLwCIMY3l1rGeB
+	r1i0PJRzjjFJ9grjtuxiAKvLXLVgaYVMvrqPir01kIYE5+3GlMEUdCh/SeWGh8FfSmc4dD
+	BQCAl/r7vtgA55arSrrcGj571k5Y7jabJyHmtN3hyRh7HvY9LH9G+IEVTIcBK5YF8EbLdi
+	mePmspCgWnZbPbX9OJXUW7hcaIiZlm5vXCzrPfRFRz3YSxNhCgjgDAJf2WLsdzNMJz7Sdl
+	go01yz6G44JOyfuUCxKxAYqzeeuqGpt1lByELY1A2jHL5QL1gBe/telVFa0/Cw==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251126140409.GC3070764@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 16 Dec 2025 17:36:07 +0100
+Message-Id: <DEZSCVYVCZ71.1BRL4LGVYAZAX@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH 06/26] drm/bridge: add devm_drm_of_find_bridge
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Jonathan Corbet" <corbet@lwn.net>, "Alexey Brodkin"
+ <abrodkin@synopsys.com>, "Phong LE" <ple@baylibre.com>, "Liu Ying"
+ <victor.liu@nxp.com>, "Shawn Guo" <shawnguo@kernel.org>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Adrien
+ Grassein" <adrien.grassein@gmail.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Anitha Chrisanthus"
+ <anitha.chrisanthus@intel.com>, "Edmund Dea" <edmund.j.dea@intel.com>,
+ "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
+ <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+To: "Maxime Ripard" <mripard@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-0-0db98a7fe474@bootlin.com> <20251119-drm-bridge-alloc-getput-drm_of_find_bridge-v1-6-0db98a7fe474@bootlin.com> <hs44z4b2dgisemuewgtvl4epjcqqilg6cy36po25pubaog4hmq@33qgl4o3hwoa> <DEH2CVQV21Z2.25PJBAQAKFJSG@bootlin.com> <20251201-thick-jasmine-oarfish-1eceb0@houat> <DEVKQWH8GU0D.2NWQ1U7IOIEHI@bootlin.com> <DEW6XHD12EY4.1THDR9UMJOTAN@bootlin.com> <20251215-mottled-dexterous-marmot-c69ad3@penduick> <DEYUNHVYCKYJ.2HU878WBYCJMV@bootlin.com> <20251216-cute-bandicoot-of-authority-3c492a@penduick>
+In-Reply-To: <20251216-cute-bandicoot-of-authority-3c492a@penduick>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 26 Nov 2025, Lee Jones wrote:
+Hi Maxime,
 
-> On Wed, 26 Nov 2025, Lee Jones wrote:
-> 
-> > On Thu, 20 Nov 2025, André Draszik wrote:
-> > 
-> > > Hi,
-> > > 
-> > > With the attached patches the Samsung s5m RTC driver is simplified a
-> > > little bit with regards to alarm IRQ acquisition.
-> > > 
-> > > The end result is that instead of having a list of IRQ numbers for each
-> > > variant (and a BUILD_BUG_ON() to ensure consistency), the RTC driver
-> > > queries the 'alarm' platform resource from the parent (mfd cell).
-> > > 
-> > > Additionally, we can drop a now-useless field from runtime data,
-> > > reducing memory consumption slightly.
-> > > 
-> > > The attached patches must be applied in-order as patch 2 without 1 will
-> > > fail at runtime, and patch 3 without 2 will fail at build time. I would
-> > > expect them all to go via the MFD tree. Alternatively, they could be
-> > > applied individually to the respective kernel trees during multiple
-> > > kernel release cycles, but that seems a needless complication and
-> > > delay.
-> > > 
-> > > Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> > > ---
-> > > Changes in v2:
-> > > - rebase on top of https://lore.kernel.org/r/20251114-s2mpg10-chained-irq-v1-1-34ddfa49c4cd@linaro.org
-> > > - return struct regmap_irq_chip_data * in sec_irq_init() (Lee)
-> > > - collect tags
-> > > - Link to v1: https://lore.kernel.org/r/20251114-s5m-alarm-v1-0-c9b3bebae65f@linaro.org
-> > > 
-> > > ---
-> > > André Draszik (3):
-> > >       mfd: sec: add rtc alarm IRQ as platform device resource
-> > >       rtc: s5m: query platform device IRQ resource for alarm IRQ
-> > >       mfd: sec: drop now unused struct sec_pmic_dev::irq_data
-> > > 
-> > >  drivers/mfd/sec-common.c         | 45 ++++++++++++++++++++--------
-> > >  drivers/mfd/sec-core.h           |  2 +-
-> > >  drivers/mfd/sec-irq.c            | 63 ++++++++++++++++++----------------------
-> > >  drivers/rtc/rtc-s5m.c            | 21 +++++---------
-> > >  include/linux/mfd/samsung/core.h |  1 -
-> > >  5 files changed, 71 insertions(+), 61 deletions(-)
-> > 
-> > The MFD parts look okay to me.
-> > 
-> > Once we have the RTC Ack, I'll merge this and send out a PR.
-> 
-> Ah, I see it.  Apologies.
-> 
-> It's too late in the cycle to take this now anyway.
-> 
-> It's on my radar for when -rc1 is released.
+On Tue Dec 16, 2025 at 2:49 PM CET, Maxime Ripard wrote:
+[...]
+>> Not sure why, but it's taking a while before I grasp your ideas about th=
+is
+>> series and meld them with mine. I hopefully got a clear POV now, so base=
+d
+>> on it my plan is to rework this series to:
+>>
+>>  * keep drm_of_find_bridge() but renamed to of_drm_get_bridge(), and kee=
+p
+>>    patches 1-5 (with the changes suggested by you and Louis, nothing big
+>>    and all already sent in v2)
+>
+> I don't think we should use that name, but on principle, yes.
 
-This does not seem to apply well on v6.19-rc1.
+OK about the rename. I just had sent this email before you requested the
+rename. v3 is in the works with the of_drm_find_and_get_bridge() name.
 
-Please rebase and send as a [RESEND].
+>>  * not add devm_drm_of_find_bridge()
+>
+> Yep.
+>
+>>  * add next_bridge pointer to struct drm_bridge and call
+>>    drm_bridge_put(bridge->next_bridge) in __drm_bridge_free, document it
+>
+> We don't have to at this point, you can add next_bridge to the
+> drm_bridge pointer if you want, but I don't consider it a prerequisite.
+> If we don't we would have to create drm_bridge_funcs->destroy
+> implemnentations to give up the driver pointer reference though. Your
+> call.
 
------
+There's a destroy finc already, so I'm adding the next_bridge pointer in v3
+along with some driver conversions, including one where the destroy hook is
+needed.
 
-% cat drivers/mfd/sec-irq.c.rej
-diff a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c	(rejected hunks)
-@@ -302,27 +304,28 @@ static int sec_irq_init_s2mpg1x(struct sec_pmic_dev *sec_pmic)
- 		chained_pirq = S2MPG10_COMMON_IRQ_PMIC;
- 		break;
- 	default:
--		return dev_err_probe(sec_pmic->dev, -EINVAL, "Unsupported device type %d\n",
--				    sec_pmic->device_type);
-+		return dev_err_ptr_probe(sec_pmic->dev, -EINVAL, "Unsupported device type %d\n",
-+					sec_pmic->device_type);
- 	};
- 
- 	regmap_common = dev_get_regmap(sec_pmic->dev, "common");
- 	if (!regmap_common)
--		return dev_err_probe(sec_pmic->dev, -EINVAL, "No 'common' regmap %d\n",
--				    sec_pmic->device_type);
-+		return dev_err_ptr_probe(sec_pmic->dev, -EINVAL, "No 'common' regmap %d\n",
-+					sec_pmic->device_type);
- 
- 	ret = devm_regmap_add_irq_chip(sec_pmic->dev, regmap_common, sec_pmic->irq, IRQF_ONESHOT, 0,
- 				      irq_chip, &irq_data);
- 	if (ret)
--		return dev_err_probe(sec_pmic->dev, ret, "Failed to add %s IRQ chip\n",
--				    irq_chip->name);
-+		return dev_err_ptr_probe(sec_pmic->dev, ret, "Failed to add %s IRQ chip\n",
-+					irq_chip->name);
- 
- 	return s2mpg1x_add_chained_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic, chained_pirq,
--					   irq_data, chained_irq_chip, &sec_pmic->irq_data);
-+					   irq_data, chained_irq_chip);
- }
- 
--int sec_irq_init(struct sec_pmic_dev *sec_pmic)
-+struct regmap_irq_chip_data *sec_irq_init(struct sec_pmic_dev *sec_pmic)
- {
-+	struct regmap_irq_chip_data *sec_irq_chip_data;
- 	const struct regmap_irq_chip *sec_irq_chip;
- 	int ret;
+>>  * convert patches 7-26 to use bridge->next_bridge where applicable,
+>>    or to do something different when needed
+>
+> Depending on your decision above, we'd need to either convert them to
+> use drm_bridge->next_bridge or create a destroy hook for them. Either
+> way is fine for me.
+>
+>>  * maybe remove part of patches 7-26 just to reduce spam and rework effo=
+rt
+>>    in case of further iterations, to send them separately once the appro=
+ach
+>>    is accepted
+>>
+>> Does it look OK?
 
--- 
-Lee Jones [李琼斯]
+Cool, thanks for acking. v3 is just a testing round away from being sent.
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
