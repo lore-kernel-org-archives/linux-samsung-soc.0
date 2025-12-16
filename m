@@ -1,136 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF47E3596EE;
-	Tue, 16 Dec 2025 13:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFEB31E0EB;
+	Tue, 16 Dec 2025 13:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765890714; cv=none; b=ZVF9ivcLAGz+2sQUhdEKT2aVJJaq6tTFf8wbDwc2AxzHSqZ/L0HNePrRbmba1PDul1gWr54hz+Gr/MXqhGu5JbP2w+Hayh90lkwn9euiPYSq2tepnlFaN4VjclTTIXRvc6vJq0zM3T1twaUIA/W6kFXmjx7qQX60pR61PUgotlY=
+	t=1765892955; cv=none; b=JmWaKfXzvVTPFXm0K0clfHj0CKnArM/cJBz2T3vORkaMH7iTHIEfvbAAnZWd28mhQi5Egyv6qVhHDEAJy7d6dBLvsBVhK5MHbmlUEyONvFOe1dfFbO/RURef2S32hEmK/iHaasegYv0Ua8WqvOwmiqRSfpE8aPpxEvwHrE5E4XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765890714; c=relaxed/simple;
-	bh=42Q51V+DJ8mxB4c2XkCdjem/RxmNhxIK1HpVUzeDmMI=;
-	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=aBTnh3PZ1ID93t7FlyX18ornZUSNmWM2vDfnCG8rZcNykwKIb6MdfHuaIJiM02SX/F1/nlSlrH4c7wHj3KJnEURpszLPKgeGWR79jzxzehiPJjJW+Rwo0jbqWJqgjFdP0VP2Or1hlwGn4vNfFxa64jii0yCrcy3gTJRa665Q6hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8z9QTrV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765892955; c=relaxed/simple;
+	bh=sFLsYOIToyI1CYsLfOe9PNPAZa7SMcZGDRLeye3TkV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W6ITLo9p0HnXAzwN99Ii4I/trYKulM4t+eFuRtE6CYPz/G9bY4LRYfOnJK7oGwaOkfDMsLpaaebFkJH++se0rg44h6JX16Q/q6IUI9bPQZNOttL/4VnEaRDfuXyADEqb2G8mvPSa8Kl2scTZJmx7/b4xJb6YFqmAW97usFLv/GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1cVIG/eg; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8z9QTrV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548DCC4CEF1;
-	Tue, 16 Dec 2025 13:11:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765890712;
-	bh=42Q51V+DJ8mxB4c2XkCdjem/RxmNhxIK1HpVUzeDmMI=;
-	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
-	b=X8z9QTrVJZUmlEAkWh4GWVBCWEvZsvMHxe3nkMdV1ZElRVXL5LBWGe4+1hK7zLDmk
-	 4Ck6h1FHwlQoHvxdNl3iV/6x+v86yZ6GQC4yKTAxL8WaYFROFWjSIF/kWkWk9ebvJM
-	 htyimtyCz/C+MhyD1zH5Ga6jOIm57OanH5HZny9ThNlosjvXvg3BeBCJEO/6tgnh7a
-	 YqFrWDwF2kUusXGpKk7pTW+Y5Vuc6qVKfjzBpf5/IKC/dMTulDs2JxCnhIlMQnhfPZ
-	 Mu9HY+rLnpjU7gz/9GpLnz3Q7bG+XmpoIjBWs95x09OD9XTs99ZhfXCfYtdUND/c5b
-	 VBXGvlpJcWh9Q==
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 16 Dec 2025 07:11:51 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1cVIG/eg"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=sFLsYOIToyI1CYsLfOe9PNPAZa7SMcZGDRLeye3TkV4=; b=1cVIG/eg7I6sS8hSAue2feSosa
+	fs9JYZLPNZbpWOz+5uum2rewSRjwJieZr8xzpUV4bVReoRWYTT+mHCMkrJwoHhPQSGGR4sPYkzGME
+	RDsFsScNiP6CEnjPay7NzFuwIgrFnlWdjIBcjNaVq8fDUXuIaKOW1yPFJct87k4LnqJiex01iAtJC
+	+Fz+7SV96+v9afwrM24tqAFdJ6qSg/CFjF9ANZ2MwSKnE6OQY6GWDS9sX+mM66a1RGHlrF4XCy4eq
+	tmRZp4LuDiR8emPv9NnninxunaM3+fUtsB+aMFPl4oLO0sv1kYMOkT8HpqoosgGfpuXJ0fkaxQjwv
+	m+v2sXhw==;
+Received: from [141.76.253.243] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vVVPc-0004Lk-DA; Tue, 16 Dec 2025 14:48:24 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Damon Ding <damon.ding@rock-chips.com>
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
+ dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last bridge
+ determines EDID/modes detection capabilities
+Date: Tue, 16 Dec 2025 14:48:23 +0100
+Message-ID: <3351986.usQuhbGJ8B@phil>
+In-Reply-To: <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
+References:
+ <20251021023130.1523707-1-damon.ding@rock-chips.com>
+ <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
+ <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Cc: Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Marquet <tb@a-marquet.fr>, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-In-Reply-To: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
-References: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
-Message-Id: <176589052399.1815190.7793235081822033570.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] Add support for exynos5250-manta (Google Nexus
- 10)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
+Am Mittwoch, 22. Oktober 2025, 03:15:52 Mitteleurop=C3=A4ische Normalzeit s=
+chrieb Damon Ding:
+> Hi Luca,
+>=20
+> On 10/21/2025 6:31 PM, Luca Ceresoli wrote:
+> > Hello Damon,
+> >=20
+> > On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
 
-On Mon, 15 Dec 2025 16:05:21 +0100, Lukas Timmermann wrote:
-> This patch series adds initial support for the google-manta board, known
-> as Google Nexus 10 to users. The device is powered by
-> the Exynos 5250 SoC. The bindings for the notification led are already
-> in the kernel mailing list, got recently applied and can be found here:
-> https://lore.kernel.org/linux-leds/20251125114015.355487-1-linux@timmermann.space/
-> 
-> The first two patches add the necessary device tree files and
-> bindings, while the last patch makes a small modification to
-> allow CPU1 to boot, as it requires a call to it's underlying firmware.
-> 
-> This first iteration only provides basic support to get the board
-> up and running and usable via UART and with WiFi support. We will upstream additional
-> features in future patches. All patches have been tested on real hardware.
-> 
-> Changes in v3:
->  - Added a better patch description for firmware patch. (@krzk)
->  - Reorganized nodes in DT. (@krzk)
->  - Fixed memory node to use separate entries. (@krzk)
->  - Renamed pwrseq node. (@krzk)
->  - Fixed firmware checking for old dt compatible string. (@pavel)
->  - Link to v2: https://lore.kernel.org/all/20251125-google-manta-v2-0-0f097cfff39c@timmermann.space/
-> Changes in v2:
->  - Renamed to google-manta (@krzk)
->  - Link to v1: https://lore.kernel.org/all/20251120144018.961604-2-linux@timmermann.space/
-> 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> ---
-> Alexandre Marquet (3):
->       dt-bindings: ARM: samsung: Add Google Manta (Nexus 10)
->       ARM: dts: exynos: Add Google Manta (Nexus 10)
->       ARM: samsung: exynos5250: Allow CPU1 to boot
-> 
->  .../bindings/arm/samsung/samsung-boards.yaml       |   1 +
->  arch/arm/boot/dts/samsung/Makefile                 |   1 +
->  arch/arm/boot/dts/samsung/exynos5250-manta.dts     | 511 +++++++++++++++++++++
->  arch/arm/mach-exynos/firmware.c                    |   4 +-
->  4 files changed, 515 insertions(+), 2 deletions(-)
-> ---
-> base-commit: d5f0e9098499869354aacb5b080f602f0399d396
-> change-id: 20251215-lat3st-staging-d9c926d8a75f
-> 
-> Best regards,
-> --
-> Lukas Timmermann <linux@timmermann.space>
-> 
-> 
-> 
+> >=20
+> > This does not apply on current drm-misc-next, due to the patch I mentio=
+ned
+> > in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/displ=
+ay:
+> > bridge_connector: get/put the stored bridges").
+> >=20
+> > However I'm sorry I have to mention that patch turned out being buggy, =
+so
+> > I've sent a series to apply a corrected version [0]. I suggest watching=
+ the
+> > disucssion about the fix series, and if that gets approved rebase on to=
+p of
+> > that and adapt your changes.
+> >=20
+> > Sorry about the mess. :(
+> >=20
+> > [0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-c=
+onnector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
+> >=20
+> >=20
+>=20
+> I saw your fix patches before sending this series. I think your patches=20
+> will likely be merged relatively quickly, so I plan to wait until the=20
+> other patches in my patch series are confirmed to be fine, then submit=20
+> v8 version based on the latest bridge_connector driver. :-)
 
+I think with 6.19-rc1 out, now is a great time for v8? :-)
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: base-commit d5f0e9098499869354aacb5b080f602f0399d396 not known, ignoring
- Base: attempting to guess base-commit...
- Base: tags/next-20251215 (exact match)
- Base: tags/next-20251215 (use --merge-base to override)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/samsung/' for 20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space:
-
-arch/arm/boot/dts/samsung/exynos5250-manta.dtb: /soc/i2c@12c70000/led-controller@42: failed to match any schema with compatible: ['ams,as3668']
-arch/arm/boot/dts/samsung/exynos5250-manta.dtb: rtc@101e0000 (samsung,s3c6410-rtc): clock-names: ['rtc'] is too short
-	from schema $id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml
-arch/arm/boot/dts/samsung/exynos5250-manta.dtb: rtc@101e0000 (samsung,s3c6410-rtc): clocks: [[2, 337]] is too short
-	from schema $id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml
-
-
-
+Heiko
 
 
