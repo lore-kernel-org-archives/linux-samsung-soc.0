@@ -1,103 +1,114 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC4F34B198
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 12:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7A734A79E;
+	Wed, 17 Dec 2025 13:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765975665; cv=none; b=C4e95nXOrQpCrPN0R+pHwBy16oyQPpHovuQaEGzAAwW9Zs9Lo2zFeEfpH/2YhfecfvmplzcLjSabheg/xz9y6aQE8AEZdU8lih2/R8LUII3M6EW4xxt/dAPtise/hFAR0MzM+cGRi+MkaaKCmS72becFh2kmB0Qyt3XEzQFYRqo=
+	t=1765977871; cv=none; b=ZLySV/3JXM2ju4iw6+VK0CHxZW+PvzFUetqHcet7wQRjdhmP6ZBlmsrJnoFTPkWJdjOFU0m3kS22piIrcqMHBFOwBG50CvQmZhsnjb98bOVVV+1gDw+CYDq5O+By9q7Btdz67VGmVbjTMGACFjABHdLbUEj4rKfokipnAqE6hWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765975665; c=relaxed/simple;
-	bh=4gR7l5NomvQrZ9PhUm8tiv2Zgb0LTNdrEzzIwrM2YNo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=qUS0ov408fUGV7uNmYT/+crk65z+M6VdJd3/ayGROWYnnyXfuHxkdj1FAWstBqrNU+0hwlplVhcmXi3+Wnwsnp2RBFcq6tb6yLnjH9GAbMjkC+kclRbwmv7DIizjrjE4VABTrFImUhbvwb3BrVYAzdfb0NILZit9oJvYvtw2gBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DactHyrv; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1765977871; c=relaxed/simple;
+	bh=S4mO0XF+32E7SFhkQwowz/nXG8YSqhpXqW4U5Y8ZoMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2tgiqPwCSGj13YQuIC6XfbtCpdIszFZKu7whd4BD3IqqG+o0mGCW7pzVOO8XpIrctZmRAiDfr6ABiRJgmLU8rnNio9ouD6KCEUcrZo9dRoi7Otr8ULvyBs97nl4arKl0W+aI0n8/45tQNjtIrSJt0eoqMEnayja+UAmIElK2ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nbny4sEA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DactHyrv"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251217124741epoutp015add3f5e85b96d033ee8421c31915a0b~CAYIKfVpW2116221162epoutp01T
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 12:47:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251217124741epoutp015add3f5e85b96d033ee8421c31915a0b~CAYIKfVpW2116221162epoutp01T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1765975661;
-	bh=YrrOmhiyiOq4yDJCEVzWpuHvN8KFfb2K+eM0p+8fJ70=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=DactHyrvwkaASRA+9HuxX9PhTjnxnphj8NJUKFheXEq/6ot+Z4PIPsog9Q1DYWXlE
-	 qleM7jfZR6yJ8ttUaLeBxyG8QRc1qNsBIVI8WJK13HT6nyLO3j/vVwNafFl3LKFRZi
-	 IeWtE6SEK9QKCyTr/O6Cesua6mqPRBOB7DUDuhdg=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20251217124740epcas5p3a5b1b2050b6c3d8e3e9e6d5dedff6f6f~CAYHSVT7Y0703507035epcas5p3Q;
-	Wed, 17 Dec 2025 12:47:40 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4dWYVM706Cz6B9m5; Wed, 17 Dec
-	2025 12:47:39 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251217124738epcas5p4eb8ba44b348c02adf77fddc8ac38a7c9~CAYFG2oVJ0801908019epcas5p4V;
-	Wed, 17 Dec 2025 12:47:38 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251217124732epsmtip1b0e3f2327a7b0a6251274a38d05cf3d8~CAX-p-MpQ1194311943epsmtip1L;
-	Wed, 17 Dec 2025 12:47:32 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <sunyeal.hong@samsung.com>, <shin.son@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
-	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
-In-Reply-To: <20251119114744.1914416-4-raghav.s@samsung.com>
-Subject: RE: [PATCH 3/3] arm64: dts: exynosautov920: add CMU_MFD clock DT
- nodes
-Date: Wed, 17 Dec 2025 18:17:29 +0530
-Message-ID: <139b01dc6f53$534e6e90$f9eb4bb0$@samsung.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nbny4sEA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F5AC4CEF5;
+	Wed, 17 Dec 2025 13:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1765977870;
+	bh=S4mO0XF+32E7SFhkQwowz/nXG8YSqhpXqW4U5Y8ZoMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nbny4sEAa3vtjAV51VCdRhWNa3o885gFfxTIyISmrDt3HSxaTS3uTncYjewmC2+SJ
+	 FoiodPOp8/dKAZn/a4e5o7la/5iqh4pYt5+7+hl3i2nAPSjysY/eF9WqnI8vOilh4e
+	 BKiZFGXmZl4A/J36w6g2xZo2FwivWFSzXC/4Qdoc=
+Date: Wed, 17 Dec 2025 14:24:27 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Roy Luo <royluo@google.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Doug Anderson <dianders@google.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>
+Subject: Re: [PATCH v9 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+Message-ID: <2025121728-reliably-crabgrass-2601@gregkh>
+References: <20251205-controller-v9-0-9f158b18f979@google.com>
+ <20251205-controller-v9-2-9f158b18f979@google.com>
+ <2025120553-suffrage-divisive-5890@gregkh>
+ <CA+zupgzL7v5MZDpxKDQQCqAZaqTdHbiG9-xTr+8RnigMFZJ_7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH7EhboaEaVd13SrnoN6ZCnkjrAPAJkRUHKAfQSjhO0xb9t8A==
-Content-Language: en-us
-X-CMS-MailID: 20251217124738epcas5p4eb8ba44b348c02adf77fddc8ac38a7c9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251119113935epcas5p33c4cac5a961ce334bde5988ef74b09ed
-References: <20251119114744.1914416-1-raghav.s@samsung.com>
-	<CGME20251119113935epcas5p33c4cac5a961ce334bde5988ef74b09ed@epcas5p3.samsung.com>
-	<20251119114744.1914416-4-raghav.s@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+zupgzL7v5MZDpxKDQQCqAZaqTdHbiG9-xTr+8RnigMFZJ_7Q@mail.gmail.com>
 
-Hello Raghav
-
-> -----Original Message-----
-> From: Raghav Sharma <raghav.s@samsung.com>
-> Sent: Wednesday, November 19, 2025 5:18 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; conor+dt@kernel.org; sunyeal.hong@samsung.com;
-> shin.son@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; chandan.vn@samsung.com;
-> dev.tailor@samsung.com; karthik.sun@samsung.com; Raghav Sharma
-> <raghav.s@samsung.com>
-> Subject: [PATCH 3/3] arm64: dts: exynosautov920: add CMU_MFD clock DT
-> nodes
+On Thu, Dec 04, 2025 at 11:14:39PM -0800, Roy Luo wrote:
+> On Thu, Dec 4, 2025 at 10:05 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Dec 05, 2025 at 02:26:38AM +0000, Roy Luo wrote:
+> > > +config USB_DWC3_GOOGLE
+> > > +     tristate "Google Platform"
+> > > +     depends on ARCH_GOOGLE || COMPILE_TEST
+> >
+> > There is no ARCH_GOOGLE in the tree now, so how is this supposed to
+> > work?  Shouldn't tools that check for "invalid config options" trigger
+> > on this?
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> Add required dt node for cmu_mfd block, which provides clocks for MFD IP
+> Hi Greg,
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> The menuconfig looks like the following and it doesn't complain:
+> | Symbol: ARCH_GOOGLE [=ARCH_GOOGLE]
+> | Type  : unknown
+> |
+> | Symbol: PHY_GOOGLE_USB [=y]
+> | Type  : tristate
+> | Defined at drivers/phy/Kconfig:104
+> |     Prompt: Google Tensor SoC USB PHY driver
+> |     Depends on: ARCH_GOOGLE || COMPILE_TEST [=y]
+> 
+> According to Kconfig documentation [1], the unknown symbol
+> would simply be evaluated as an "n", which is what we want.
+> "Convert the symbol into an expression. Boolean and tristate
+> symbols are simply converted into the respective expression
+> values. All other symbol types result in ‘n’."
+> 
+> In a different Kconfig documentation, an environment variable
+> "KCONFIG_WARN_UNKNOWN_SYMBOLS" is there to detect
+> undefined symbols in the "config input", but I can't find one that
+> catches undefined symbols in the Kconfig tree itself.
+> 
+> That is, the tool seems to allow this.
+> However, if this turns out to be a major problem. I think we
+> can either:
+> - Remove ARCH_GOOGLE and leave COMPILE_TEST as
+>   the only dependency. Then add ARCH_GOOGLE back
+>   later once it's in the tree.
 
+Please do this.  I do not want to take patches that purposfully add
+dependencies on config options that might, or might not, appear in the
+future.  Please just remove all of the dependancies for now, as they are
+not needed, right?
 
+thanks,
+
+greg k-h
