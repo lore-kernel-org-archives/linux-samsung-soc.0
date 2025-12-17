@@ -1,124 +1,154 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C41A1DF723
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 04:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C71336ED5;
+	Wed, 17 Dec 2025 08:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765947231; cv=none; b=Qzd6Cgyj11sYm/o7JE1eQDInvqdWFPcfYUhTvbNki3YK67DyQn5TSOeusOIOwMKUGkO/z1IqYL1eztO4JxFuA67Y5E++3lvSeXc84aPw2g66xoDeWzv/kiWCyIm3ApO000ldco8801+/BSMgouPXMGhEN9+SKr4WjAcrFk0PfFk=
+	t=1765959378; cv=none; b=OorGGpwNXFnIJjfqGP0/dx8AvLA1+jom4DHOn4myJfZRPE5feeMmBgbRe73ZbixzAAiMWEDtaDMTHMQXTxbocOx4cnWlf3cRzq25bp9aGI+iwhaKBkeRI8b3Ud0BwJNJ8/BFEd4aliuROtposR4SIJ6kGMumbdmnC2x2ItljkCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765947231; c=relaxed/simple;
-	bh=RSCL3+CVIHsJNsiOFSZveVboNJX+DWT4v6gr+2w4XpY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=gFLCS9mSXGGMWQxq9AVenx7kLYfVtntD1SkuJuvHHqmJBqblwOFmIWnqtKYg9KW33PT3dqX7Y0ehvh5Vpdl+kXDzvmF6wz0YgiEmDu5DC/h6tMmd8/yuj3HSpDUc2nRsr+PUjKjRsIU3/qn1C4J9VsIDVmE4NDPxH/lkr54yq30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uq3zEgJc; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1765959378; c=relaxed/simple;
+	bh=K/OkgzUT7VmdZSGn5RyTgWoV59PXWiPM+6lt/Aikx4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=lCm7g4+8ss/ARLYh2zWJSnOazLyYUd4BBJp4SHpDE2pxh4LUeBVW9SJDvLyYsNSH5C2Z768AZmSaR/5KyDr+n/aH/Ccco8ciljke4wJDWp+aEola1BXY+H5zEWsYOyXC5NSaQ8t+nHAYC0WCEmNkx5v5qCTzegLQmeZW47iQjJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ayn6HVBx; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uq3zEgJc"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251217045346epoutp02ce02b41a3ccd4f86f0166bc3a7f67bee~B56VZf5Xt0593805938epoutp02h
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 04:53:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251217045346epoutp02ce02b41a3ccd4f86f0166bc3a7f67bee~B56VZf5Xt0593805938epoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1765947226;
-	bh=gwMQFbuii6OFTcgrFdkJAKQYDxCd7chG2CDPC72TD5A=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=uq3zEgJcxfA0KYJ+2W/wfrcmgpRhiw3dwweN34dYNJEBAX9c4XhU80UOOGndMq4tv
-	 ZAnCegS3EIZZh/rTANaRSm9e1BoSl1zcGOQwEv8kAvV+EvzUlWxTWLprppf6jxUMTV
-	 RKlaC56uHP9Zv8YnGb2jR8lGwD0dNTa+3nlkdXn8=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20251217045345epcas5p4a03712a3b5ba5d381ea11a76fb4c1a33~B56U3zm0r2314923149epcas5p4f;
-	Wed, 17 Dec 2025 04:53:45 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4dWLzX48Bxz6B9m6; Wed, 17 Dec
-	2025 04:53:44 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251217045343epcas5p42b5288f51ac3b36862605f0a4b6e1281~B56SvsDZr3255232552epcas5p4p;
-	Wed, 17 Dec 2025 04:53:43 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251217045341epsmtip15abe4c870d785544f9f672b775006566~B56QzUVqU1277712777epsmtip1F;
-	Wed, 17 Dec 2025 04:53:41 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Youngmin Nam'" <youngmin.nam@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
-	<peter.griffin@linaro.org>, <semen.protsenko@linaro.org>,
-	<ivo.ivanov.ivanov1@gmail.com>
-Cc: <ryu.real@samsung.com>, <d7271.choe@samsung.com>,
-	<shin.son@samsung.com>, <jaewon02.kim@samsung.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20251202093613.852109-6-youngmin.nam@samsung.com>
-Subject: RE: [PATCH v3 5/5] pinctrl: samsung: rename gs101_pinctrl_* to
- exynos9_pinctrl_*
-Date: Wed, 17 Dec 2025 10:23:40 +0530
-Message-ID: <12a701dc6f11$1e9412a0$5bbc37e0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ayn6HVBx"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 44A334E41C50;
+	Wed, 17 Dec 2025 08:16:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E824A6072F;
+	Wed, 17 Dec 2025 08:16:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9B75111950295;
+	Wed, 17 Dec 2025 09:15:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1765959364; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ujozvAR/egQa+0OwQ9Aeym97mJvVMjkPUclMUt6mE28=;
+	b=Ayn6HVBxPDFZQPsofDALTubSwQYYhWe28r/JxNzT2jwfqVPYB7L1I838PbDqUA2VUIhOqj
+	T/p4Xd7+cEZfKoKVw2hurXHe5vkPMT19dkYgFzdXbeOY64a8mz9tBTIzqiLJh+GRQDwPsD
+	VjAj9SUjWDu+mnsDdX0xgZ/mlF+pzcRkZRkq2CszNx2kC9Ltjs6UjvGcm1OTBOr2Np/bLn
+	NV1CdrC5Y70iuSm3WZgQtjFIEPVbj0wIEJonCx4y0ASyFHkHSoAirTeo3ptVJUHuNJrcDq
+	2uOgFYfMi01DRPjYnMRS09aqCaxaU09vJzqAbOE6JqfuzC65rEyPdzG9DDpNlg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQF3wuMlGH6lOpjjwF0q/fgc3qftgQH6Vff4AS6bXfS11VMO8A==
-Content-Language: en-us
-X-CMS-MailID: 20251217045343epcas5p42b5288f51ac3b36862605f0a4b6e1281
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251202093029epcas2p19224bab81f8ed2b9f63613fdd010ab57
-References: <20251202093613.852109-1-youngmin.nam@samsung.com>
-	<CGME20251202093029epcas2p19224bab81f8ed2b9f63613fdd010ab57@epcas2p1.samsung.com>
-	<20251202093613.852109-6-youngmin.nam@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 17 Dec 2025 09:15:48 +0100
+Message-Id: <DF0CCD6EW5DR.3CYNK65T1GSAO@bootlin.com>
+Subject: Re: [PATCH v2 17/26] drm/meson: encoder_*: use
+ devm_of_drm_get_bridge() to put the next bridge
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Alexey Brodkin" <abrodkin@synopsys.com>, "Phong
+ LE" <ple@baylibre.com>, "Liu Ying" <victor.liu@nxp.com>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Adrien Grassein" <adrien.grassein@gmail.com>,
+ "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Tomi
+ Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Anitha Chrisanthus" <anitha.chrisanthus@intel.com>, "Inki Dae"
+ <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
+ Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Hui Pu"
+ <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Louis Chauvet"
+ <louis.chauvet@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+To: "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-0-88f8a107eca2@bootlin.com> <20251128-drm-bridge-alloc-getput-drm_of_find_bridge-v2-17-88f8a107eca2@bootlin.com> <CAFBinCCQjeUu7pgfwViH6b0-M6S_sKgfvz9VAP1hpqLRj=bL_g@mail.gmail.com> <DEZNGU4VJFK8.Y1LKWVTD7O8K@bootlin.com> <CAFBinCBaXRNBHpY2uYy4FxyAOnRA4NxJtHbraG0=j_U6Dzz2=A@mail.gmail.com>
+In-Reply-To: <CAFBinCBaXRNBHpY2uYy4FxyAOnRA4NxJtHbraG0=j_U6Dzz2=A@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Youngmin
+Hello Martin,
 
-> -----Original Message-----
-> From: Youngmin Nam <youngmin.nam=40samsung.com>
-> Sent: Tuesday, December 2, 2025 3:06 PM
-> To: krzk=40kernel.org; s.nawrocki=40samsung.com; alim.akhtar=40samsung.co=
-m;
-> linus.walleij=40linaro.org; peter.griffin=40linaro.org;
-> semen.protsenko=40linaro.org; ivo.ivanov.ivanov1=40gmail.com
-> Cc: ryu.real=40samsung.com; d7271.choe=40samsung.com;
-> shin.son=40samsung.com; jaewon02.kim=40samsung.com; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
-> gpio=40vger.kernel.org; linux-kernel=40vger.kernel.org; Youngmin Nam
-> <youngmin.nam=40samsung.com>
-> Subject: =5BPATCH v3 5/5=5D pinctrl: samsung: rename gs101_pinctrl_* to
-> exynos9_pinctrl_*
->=20
-> The suspend/resume helpers named gs101_pinctrl_=7Bsuspend,resume=7D are
-> not GS101-specific. They implement the generic save/restore sequence used
-> by Exynos9-style controllers that have EINT filter configuration
-> (eint_fltcon) to preserve.
->=20
-> Rename them to exynos9_pinctrl_=7Bsuspend,resume=7D and update all users:
->   - exynos2200, exynos9810, exynos8895, exynos7885, exynos7870,
->     exynosautov9, fsd, and gs101 controller tables
->   - prototypes in pinctrl-exynos.h
->   - definitions in pinctrl-exynos.c
->=20
-> This aligns naming with the earlier macro/doc cleanups (e.g. using
-> EXYNOS9_PIN_BANK_* and describing eint_fltcon as Exynos9-specific) and
-> makes the helpers clearly reusable by other Exynos9-like SoCs.
->=20
-> Signed-off-by: Youngmin Nam <youngmin.nam=40samsung.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko=40linaro.org>
-> Reviewed-by: Peter Griffin <peter.griffin=40linaro.org>
-> Tested-by: Peter Griffin <peter.griffin=40linaro.org> (tested on Pixel6/g=
-s101)
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+On Wed Dec 17, 2025 at 1:01 AM CET, Martin Blumenstingl wrote:
+> Hi Luca,
+>
+> On Tue, Dec 16, 2025 at 1:46=E2=80=AFPM Luca Ceresoli <luca.ceresoli@boot=
+lin.com> wrote:
+> [...]
+>> > What I'm not sure about is how this series interacts with
+>> > devm_drm_of_get_bridge() which is why I'm asking before cooking a
+>> > patch.
+>>
+>> Apologies for the long delay in getting back to you. You might have noti=
+ced
+>> some discussion about the overall approach, and I waited for it to settl=
+e.
+> That hasn't gone unnoticed!
+>
+>> About devm_drm_of_get_bridge(), it is a very different function so it do=
+es
+>> not affect this series. The name similarity is confusing indeed, but
+>> devm_of_drm_get_bridge() has been removed from my approach, so one less
+>> source of confusion.
+> I have to confess that I'm still confused. drivers/gpu/drm/drm_bridge.c s=
+tates:
+> "Display drivers are responsible for linking encoders with the first brid=
+ge
+>  in the chains. This is done by acquiring the appropriate bridge with
+>  devm_drm_of_get_bridge(). Once acquired, the bridge shall be attached to=
+ the
+>  encoder with a call to drm_bridge_attach().
+>
+>  Bridges are responsible for linking themselves with the next bridge in t=
+he
+>  chain, if any. This is done the same way as for encoders, with the call =
+to
+>  drm_bridge_attach() occurring in the &drm_bridge_funcs.attach operation.=
+"
+> Does this mean your series effectively deprecates devm_drm_of_get_bridge(=
+)?
 
-Tested this series on Exynosautov920 sadk
+Well spotted! I theory yes, my series kind of implicitly deprecates other
+functions based on it, including drm_of_find_panel_or_bridge() and
+*_of_get_bridge(), which are problematic in case of bridge removal. But
+before explicitly deprecating them we need a good alternative. Which in
+turn depends on the rework of the panel_bridge lifetime, which was also
+discussed with Maxime in the same thread.
 
-Tested-by: Alim Akhtar <alim.akhtar=40samsung.com>
+Bottom line: for now *_of_get_bridge() usage is still OK, but stay
+tuned. :-)
 
+>> I'm soon sending v3, and I have updated my patch to
+>> eson_encoder_{cvbs,dsi,hdmi}.c, actually splitting it in 3. I'd be grate=
+ful
+>> if you could reviewd and/ot test them when I send v3. But I don't think
+>> there is a need for you to send any patches related to this topic.
+> Regardless of the questions I still have around
+> devm_drm_of_get_bridge(): I'll give your patches a go in the next
+> days.
 
+Thank you, v3 is there awaiting you!
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
