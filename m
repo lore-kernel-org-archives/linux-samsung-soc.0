@@ -1,108 +1,143 @@
-Received: from mail-m21473.qiye.163.com (mail-m21473.qiye.163.com [117.135.214.73])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D324427462;
-	Wed, 17 Dec 2025 03:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D272D0C6C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 04:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765942142; cv=none; b=j6C9S748hqaL+OOj9Ov/HM45ErkTchziYMeIDiDSQa4He91K0qor6MZBDIIFgQ2VpbGgNvSj+A9rCSiHPYfJbZwjt/ziqBBRiyyZHaO0VyA503tgP1e3v9YfbV7GcUV9qJ7JXNdE5WSlPp2Nu9iysewoNHCo/zkglY4zyfRfcd0=
+	t=1765945703; cv=none; b=ng3yF/otVLuJYtcM9oN6bRTSbkthL/twvm4mWTY265mXSc4JR3T376LpREaU5JJ6OhhZ/dkMNp86Luft/FKWm8SUmhqrhk7hOyVIhFRusyQvJKebFamUUr5T+lX4FeXHvsL2z08UTScjIiJORV3t+eFWupv6uecertZhtImQ4KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765942142; c=relaxed/simple;
-	bh=F+Hqvi/3zbb2gFqymRHobHY3XvRA27ryve2YkXl3g9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvfdOnI45l2KrT3kJSqXpc8yjClkzldHaD9oIK1N/uZyH2F4kmSFwp57vj86aC3yqj1XUi+G6BQroJKEhds/4gHBzznZADaldje4rw+TjlKX8ydCSt6TVDGApqO+cFgJizn/B5yR/5+RIJCs1J/IEjwFsBdTtSj4qlV5AhjyW/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ApUr7K7j; arc=none smtp.client-ip=117.135.214.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1765945703; c=relaxed/simple;
+	bh=A1rvxwqNcczbfDxGrW7fYWBd4rykqdw6NntlmEoyf5k=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=a9wLNsHDvgeFWL/3CfIkQ3rgLXfdTzH2yJ1Zcum1fJwfh/TWx0IiPcdRbt3oQrB8FaWGzZBrtY39y0YS4Jpz34K+y7wenPrkcwS1aoIXZqKDTh9piUF7B0PcWJJ0fDI3t7hnve56FiYA9j3RoXrAUsRw02LCzrVX16Dv6rV+Iag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oNZkn66d; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ApUr7K7j"
-Received: from [172.16.12.43] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2d82b3408;
-	Wed, 17 Dec 2025 10:53:29 +0800 (GMT+08:00)
-Message-ID: <49580dcf-28ec-47e1-83a0-65e16e3d7cdc@rock-chips.com>
-Date: Wed, 17 Dec 2025 10:53:27 +0800
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oNZkn66d"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20251217042818epoutp02c93a1899c3e79ecfedc114ad0e4e9680~B5kGGRSWg1358813588epoutp02h
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 04:28:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20251217042818epoutp02c93a1899c3e79ecfedc114ad0e4e9680~B5kGGRSWg1358813588epoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1765945698;
+	bh=/MLdaOBVFsd/izW/TfLsuG1WooZaOmcXkxRbIL5DuhU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=oNZkn66d2du3qczkRk5avXr6T2yY4+VNv1oidNdrPcgup1tnBmYmFwusmIifqmP02
+	 +Pma9uQ+9T0iBeGFbYgzM71UpfY1eqEO7+1xRJob3ZkO0wdNdIms0EQOz6v5P7n7D+
+	 4EO7k5vWtLE0hwOXIPArI10EWr7ka4e4wDw6fsjs=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20251217042817epcas5p4d5b2133483b819fec15422a08f151ccb~B5kFYj5AG0716707167epcas5p4V;
+	Wed, 17 Dec 2025 04:28:17 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4dWLQ81B5Kz6B9m7; Wed, 17 Dec
+	2025 04:28:16 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20251217042815epcas5p422dc94c78156fe4dd27a55bf5a3d77e2~B5kD0_GeO0716707167epcas5p4T;
+	Wed, 17 Dec 2025 04:28:15 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20251217042811epsmtip2748351ac61ebf74c6fb34be3fb116b2a~B5j-nm8bu0203802038epsmtip2P;
+	Wed, 17 Dec 2025 04:28:10 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Youngmin Nam'" <youngmin.nam@samsung.com>, <krzk@kernel.org>,
+	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
+	<peter.griffin@linaro.org>, <semen.protsenko@linaro.org>,
+	<ivo.ivanov.ivanov1@gmail.com>
+Cc: <ryu.real@samsung.com>, <d7271.choe@samsung.com>,
+	<shin.son@samsung.com>, <jaewon02.kim@samsung.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20251202093613.852109-2-youngmin.nam@samsung.com>
+Subject: RE: [PATCH v3 1/5] pinctrl: samsung: Consolidate pin-bank macros
+ under EXYNOS9_* and pass bank_type explicitly
+Date: Wed, 17 Dec 2025 09:58:08 +0530
+Message-ID: <12a301dc6f0d$8fea7ec0$afbf7c40$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 01/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-To: Heiko Stuebner <heiko@sntech.de>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
- dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20251021023130.1523707-1-damon.ding@rock-chips.com>
- <DDNXIYL494D2.2N8L1J7XTBT4S@bootlin.com>
- <ff65f453-68a9-41fc-b9e3-02733bba96e3@rock-chips.com>
- <3351986.usQuhbGJ8B@phil>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <3351986.usQuhbGJ8B@phil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9b2a3a18bd03a3kunmcb0179dc4d924
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0pCT1ZPT0NLHkMZQ01IGkxWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=ApUr7K7j4T/yGlwwgAFrpOxVUqFD/a1yndvUn+XdRj6uUCvdFSb+qUOyjtg4AxNbCr3sfJ5FIcABvkAm3hUXM4VBCtxaeaMuzferaCWkxK+C8uF5Q6QTdk7/uHHjULqNPliiS7WICt3+vT3RMmm0GoRA4TxExa+pe8xL8JlwV0o=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=ORkOGU2sYY0sjXmEYnHmp1Vc7q0DwAfMuZhejaTUoas=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQF3wuMlGH6lOpjjwF0q/fgc3qftgQDpeEtOAnYPzUS105ikcA==
+Content-Language: en-us
+X-CMS-MailID: 20251217042815epcas5p422dc94c78156fe4dd27a55bf5a3d77e2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251202093026epcas2p28ddfd32305695df996841fd73b231b6b
+References: <20251202093613.852109-1-youngmin.nam@samsung.com>
+	<CGME20251202093026epcas2p28ddfd32305695df996841fd73b231b6b@epcas2p2.samsung.com>
+	<20251202093613.852109-2-youngmin.nam@samsung.com>
 
-Hi Heiko,
+Hello Youngmin,
 
-On 12/16/2025 9:48 PM, Heiko Stuebner wrote:
-> Am Mittwoch, 22. Oktober 2025, 03:15:52 Mitteleuropäische Normalzeit schrieb Damon Ding:
->> Hi Luca,
->>
->> On 10/21/2025 6:31 PM, Luca Ceresoli wrote:
->>> Hello Damon,
->>>
->>> On Tue Oct 21, 2025 at 4:31 AM CEST, Damon Ding wrote:
+> -----Original Message-----
+> From: Youngmin Nam <youngmin.nam@samsung.com>
+> Sent: Tuesday, December 2, 2025 3:06 PM
+> To: krzk@kernel.org; s.nawrocki@samsung.com; alim.akhtar@samsung.com;
+> linus.walleij@linaro.org; peter.griffin@linaro.org;
+> semen.protsenko@linaro.org; ivo.ivanov.ivanov1@gmail.com
+> Cc: ryu.real@samsung.com; d7271.choe@samsung.com;
+> shin.son@samsung.com; jaewon02.kim@samsung.com; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> gpio@vger.kernel.org; linux-kernel@vger.kernel.org; Youngmin Nam
+> <youngmin.nam@samsung.com>
+> Subject: [PATCH v3 1/5] pinctrl: samsung: Consolidate pin-bank macros under
+> EXYNOS9_* and pass bank_type explicitly
 > 
->>>
->>> This does not apply on current drm-misc-next, due to the patch I mentioned
->>> in a previous iteration, now applied as commit 2be300f9a0b6 ("drm/display:
->>> bridge_connector: get/put the stored bridges").
->>>
->>> However I'm sorry I have to mention that patch turned out being buggy, so
->>> I've sent a series to apply a corrected version [0]. I suggest watching the
->>> disucssion about the fix series, and if that gets approved rebase on top of
->>> that and adapt your changes.
->>>
->>> Sorry about the mess. :(
->>>
->>> [0] https://lore.kernel.org/r/20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com
->>>
->>>
->>
->> I saw your fix patches before sending this series. I think your patches
->> will likely be merged relatively quickly, so I plan to wait until the
->> other patches in my patch series are confirmed to be fine, then submit
->> v8 version based on the latest bridge_connector driver. :-)
+> Modern Exynos platforms have several near-duplicate pin-bank macro
+> families (EXYNOS850_*, EXYNOS8895_*, EXYNOS7870_*), which makes
+> tables verbose and harder to share across SoCs that differ only by
+> bank_type (alive/off) layout.
 > 
-> I think with 6.19-rc1 out, now is a great time for v8? :-)
+> This patch unifies them into one EXYNOS9_* macro family and makes the
+> bank_type an explicit argument. The common 850-era bank types are also
+> renamed to 'exynos9_bank_type_{alive,off}' to reflect their reuse on
+> later Exynos 9xxx-generation parts.
 > 
+> Naming rationale:
+> - Use of the EXYNOS9_* prefix indicates that these macros target
+>   current Exynos generations sharing the same register layout and
+>   EINT wiring model. Compared to SoC-specific prefixes
+>   (EXYNOS850_*, EXYNOS8895_*),
+>   EXYNOS9_* is clearer and more future-proof for modern parts.
+> 
+> Key changes:
+> - Introduce:
+>   - 'EXYNOS9_PIN_BANK_EINTN(bank_type, pins, reg, id)'
+>   - 'EXYNOS9_PIN_BANK_EINTG(bank_type, pins, reg, id, offs)'
+>   - 'EXYNOS9_PIN_BANK_EINTW(bank_type, pins, reg, id, offs)'
+> - Rename:
+>   - 'exynos850_bank_type_alive'-> 'exynos9_bank_type_alive'
+>   - 'exynos850_bank_type_off'  -> 'exynos9_bank_type_off'
+> - Convert pin-bank tables for:
+>   - Exynos2200, 7870, 7885, 850, 990, 9810, 8890, 8895,
+>     AutoV9, AutoV920, FSD
+> - Update GS101/EXYNOSV920 helpers to reference 'exynos9_bank_type_*'
+>   instead of the old exynos850 names.
+> - Standardize on EXYNOS9_* macros while keeping SoC-specific
+>   '*_bank_type_*' when layouts differ (e.g., 7870/8895).
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+Thanks for consolidating this.
+Feel free to add
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Agreed! Luca's patches have been merged. I will reconfirm these commits 
-on the latest branch and update v8 in a few day. :-)
+Also tested on SADK based on Exynosautov920, GPIO EINT works fine. 
 
-Best regards,
-Damon
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
 
