@@ -1,89 +1,88 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2934D346A11
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0473451CB
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765965127; cv=none; b=sl5gy2LJ+r2+4t+1AcYUOWryJcW/BcSJ9no/uNjOSIkvDgvCpDO8Z37Ky6BkN6xSW93AgEkpv68QOBjMc2YZ12LVebqDhqafe0BFQbHWGAoPR9SbmHLDpvxOpaJciI2LvUFcdSDL/WgO9uJsxbOP+KuQALItu3A0Xrnvl1hahwk=
+	t=1765965129; cv=none; b=aSL2NrjlQmMUjp75xIsoUUOVPxcv1gYIP3TR29vMw8v3fhdMnAE4v050o3t7lTo5TN86Ov0IMnPciBpDviK8uF9C+TlZ/KH3MQGE8BdxQtxmo+JFBjLR3lWm+F2NMnpo68fu0S4WOx20I3XsZFUq5w475GwVDvIVk3cyCI1hVTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765965127; c=relaxed/simple;
-	bh=SX21PhGZicijazZ9aMiqBXstGUcTFn/+qwMSgUuCSYs=;
+	s=arc-20240116; t=1765965129; c=relaxed/simple;
+	bh=tfUVqfSUN7/loUc0Y2WZXc/4Aj4HFepsvMYbIp4rXe4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BwN+LtbiEe0H/0IbvKagjvUPkVPs49H+ItE+neqS9z85/W8nKD6OdmyKaxfE3J1SEuy5ZYeCtCAq1Px//1wZgU7PHgZ7Q5TEPh/CkHEEHpIH3eNJzA2fxcjz75uUZTl5GdnV+WwWL1cEpEX8P3i462MXgvtJlC/fwb5P8HWj4fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MQHdIe9S; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JvSCW+WF; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=dJf0jauVKKkUuECQ/FNUWip11KqQNise1O40MHPC7POaVstfWY25t2ZDi9YNdHK8Hjtz+G8XT911lKvmocGqw2K2/tdawWGddV3cDssQ1eF/qIcrGl38pM+1KY6TrjQbb6DNaf3NcHrrBW+sD84clLe4zbYjlxK9DlQwF9/mNR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bFdkvJ8V; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jGHm4sB/; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MQHdIe9S";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JvSCW+WF"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BH3F5jO1501258
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:04 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bFdkvJ8V";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jGHm4sB/"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BH3F27e1872023
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H9yfz5VWJzjGgs2tjdJmygWfZrktON+3CXq/+Js3i0o=; b=MQHdIe9Se7dZvplx
-	MjH9W40zW1fX6er/eKkIGhtY89dyda0YX+1xufWLqGIMTJpZVfIgw25mVOlq9/Hk
-	uT9WDyIRfO6qd9/+zFvWq7x1zrPdFY9PUFUkT7thUu5XCCsbFHraDDYJBUHchIWP
-	stzzKQtIzYkjEDtwS+qlSjFOhVuc40NU4bA2KCapDEqVyucr3D35km/lZYx0RG1k
-	KFOFshuQriqyoTL30rUcQ3k2/pkwwJrPzwKJgShQS3y3bmYhoKbaAKQ1vA3/g2MK
-	z8qi8mh0wqohHpmh676f6YzIXpgHcr4fYlq+rwaTZFX1x7+Tbbn7D02S6kvM6MZB
-	/pnMeQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b3kkesb08-1
+	5Ps9zzlmwajZdK6WVYvUFwmHm1zDHy3alwitBecy758=; b=bFdkvJ8V86WJnu+b
+	7O1dd9CUY8wuek248dutRBEu5fpmHqABaPWNqT7DDNSNdsHCGP1h2FEYoNiNYYhH
+	fC1BJsbfxCvxyi+gukYQRs0+95qq5uhsezsXcByHGXI8mD7qJoQ2NQrK6cMYMsww
+	CrhFKyGVt/xG/qBhpjOjsqGZNURG7Xi5AAItMw0RKjpilnqRnFHJvlosTLYV7MuO
+	uuUDFOtOT+GeVDg/Rczd+WfxbiwGuBi1whEM7nBV7rQsvPw5b93sM0Dq0bJRiLw8
+	VHC8z4gXU+H0H6PDUH1SANEvFMpu1wgknZw1xbw789S2T8cU85xS1aztA20MMhpz
+	kNFGYw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b3jgq9g3v-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:04 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ee41b07099so66360971cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 01:52:04 -0800 (PST)
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 09:52:05 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b286006ffaso1468156885a.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 01:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1765965123; x=1766569923; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1765965125; x=1766569925; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H9yfz5VWJzjGgs2tjdJmygWfZrktON+3CXq/+Js3i0o=;
-        b=JvSCW+WFD/k2tSCGc42faolsGD72D2prMMmT6XrTvGeKEjjV6j166BnmQ/wzci0Wmm
-         Rn8qFACimdNDNLQrNpgJ6nauc55tr/KVFiN7aI/Kq2qw/QRkrV0FI+QxSl8CVZuNaevs
-         EzWfjs8byyEWbQBJOMYAkPJ21mFHTjfVT2lt+Ggxuzi9/q/0EuVDozEZg5N9V0pOv8Vc
-         s9qRG+lGjLAC0WYD7U4iuQerBGnEVlD8X1eHHRRsoFYvSC3oCNPodSij1qfgGlOTpmNS
-         J0Zf64puuloqYXHinT/PSLheekaRcLE2cALOn9pnbR8hW21zEuvQomwQvmUQuNBA6yrN
-         G1IQ==
+        bh=5Ps9zzlmwajZdK6WVYvUFwmHm1zDHy3alwitBecy758=;
+        b=jGHm4sB/rDv68SGR0cOlnVq6nXT9bEphzgJSbxTzP76ljO6ua+vF4T35pYJA5v5NCA
+         GhYiPJ7i4eWqhQsSWNKgwwc31QUhERiaxZjDS1jXzjHHA5mOeDqpqbNe9vBhyrb42Yr4
+         ZS82Fyy18MCdIjBJpe95gjtgZZekAdGQcRhw5HHnT+l+YIUcCm9xYC590pK9/EQHx324
+         7EZBunYJO7CRdEmJ/wcB49rj4emkAlbzbfe7bL6SJnRRYSAxUywuUY1U6d3N7+LwboHQ
+         Tr8AG0j11FZP3aTKWPSD9FR5c5qu1/NHzcax4YGu1wRgl6j+55s4OBPPvDf6nfQe12db
+         Z8zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765965123; x=1766569923;
+        d=1e100.net; s=20230601; t=1765965125; x=1766569925;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=H9yfz5VWJzjGgs2tjdJmygWfZrktON+3CXq/+Js3i0o=;
-        b=H4TAsdJDQsjHxb9Q8E7Ltkp31pb+zQ7qbTsicuSLvOuWe0BtRWdZadb810htGB+Ka1
-         wOcgzvZxaLmlfv63SD03dpeqMlXGkQYuTNv5X4mqFJrEefJzCFsY7UxCNNNLfzxQWLbB
-         xuiq18dApJigpWQgbPRLxCHVRQf+3Ozez9C1bYbaCAdE/canWcH+mGCfDvyyV1f5aci5
-         4lj+akGhNZRNUfEQ0uwZcPatED16ouAPeHaYKxe+t/uZ4XtZo+UgqLm2rceU4MWM5pcT
-         0fjd6Q5c6PMv/8JDTA9uOvD0Q77BO1o3Pc1FukhDD51KF7IHtE8olMZKO6VDV9bg/UEJ
-         elGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnYAZRPvlP2VyfMyUoUHWS3Hvn7sneHcTCIw1+6I2KI2pEe7uho7vI/lZXeeSNiuZYROwfewEk+zoUYJd2wtit8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1vNERBrMF1JiZQzmy+6DfRqxvJfGBJqveraC0ZlX3N9/P6wSz
-	9v5Gm9ZzatE58jXohMlDjQKGDWZkbn/cQe5J0mDm08bMgO0j5Q4dy1X4f6BC4/aTZLlfjzGTw8z
-	VpxetOMqAMZgJySsjRPQljm/mYvgl2IrZdADowx9gmg9aYiEy0tHydvkEsPgEqcBLVgGAVMajtw
+        bh=5Ps9zzlmwajZdK6WVYvUFwmHm1zDHy3alwitBecy758=;
+        b=tTGli294TReZGFfiUPNXg36g4eXGCdn0PSphK1P7WmdSJuY/Cc8x58P9Z8kxmJ7Fdk
+         h8J3fJt8HAd984eIsd17RQdcM6kiac/IU0cZYaNmWnyo+u+BhsPf8H4MZF9TFQrkhlJU
+         t6p2NS/iz/s3snerKErvQOkBQaZYvI6zhL/O0muiBYkawEIsi+D8DqquFw/eOCKk0YVt
+         LWHtt7fOAN+GukScgYUXuNqOY6HYSWtPLr+P176ttloMzC0A2YjGr8zksE8dJmoTBHbQ
+         9slg0/+8LquaL4de6JKYBgX04E93bnru1WNtWvKjsO2etwkVzQNPmNzsHXS/RZmpSjc0
+         Chyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkXftFFX8KzJTDDuDy+B0UyBLOMx3ud3B791/pBnNbw3gEmEcdnkmZOzqJRYo5pCQ0QlJhOng9wLBZh0cQTbQdkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkfeJ03JB7ycNODdLM6YvTlabsWBFDeP6cl71TdNy7jCk+s+Re
+	Kk0dZxOvpveppLrNiVHUi3VBPHnk0yddHjg8jVcQ3QtG0CR8mGxaJ8p6IJR4Q2h0zwACC5CgMWZ
+	8b1QCW4ndObjJ0g3TH+jOiro2F9oJWXwLfc5+4bd/mRp9KTDHudQhZXJCveuuAhVCAk1EVyuSnw
 	==
-X-Gm-Gg: AY/fxX7yduSoWTIaUnurAOdSRVoFjty3OmJFvhlu1qRjC+I1Coy+jQwMXXkw/JeiUv5
-	t2EeY0I8cWV7BzQtPGc5+de48MQCyplWQ7mXY3lrfzHTsUlttU8pa7zeAH3ACpTWekF0yK97iyr
-	4cU1wuWMnuhT9OrME6gSUIANKC8NzJne1Zu8Hvvm3V8QnFQq1KCFE8/hmk2A4drh/kyCmTKW5i1
-	N0VEME9MxSe0txdHEfOHIlgfsc0wjkrFxkyVottJ3Fo+5Gf/SIWOEdbicILu5MGMYQsokPHIJRR
-	lcbhPu3YykmU21FT37K48iEcOIOSb93dLj64Obv5rnkwZxbisJCEyczfxI+1bC828wh3yBN2jb7
-	hffgp+sDbVKAT6kReU57XDdItHWvtJqG8
-X-Received: by 2002:a05:622a:1c17:b0:4ee:4512:4a24 with SMTP id d75a77b69052e-4f1d063632fmr227963181cf.72.1765965123218;
-        Wed, 17 Dec 2025 01:52:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXkNSdNnHweEKikyXzlt4EEB+42BULtBSNK+x5JvVI709mhaYmQtx7shg/iQQ5h9VEtm7Axw==
-X-Received: by 2002:a05:622a:1c17:b0:4ee:4512:4a24 with SMTP id d75a77b69052e-4f1d063632fmr227963001cf.72.1765965122786;
-        Wed, 17 Dec 2025 01:52:02 -0800 (PST)
+X-Gm-Gg: AY/fxX71uBTWy1jgymJ2aBNHzis5oxLsqGPVZLhJOFF9ZrG0xC5v59LUKRKthztvURz
+	XCZHtImF4bO0MIl5V/qYSiJoxjNcBLBqExhjwQqj4blbywEx/DMPrWIY50LAOjGgPMvi1o0Qvbp
+	n/zZdpaX6k3xk4dHEaS9kdL73e8vIger3oOW4vO5QOn3dyMMH4FMVYPWfQlLfnpESv8BDnnBoKM
+	36qOtsKGZ1BWlj+9rd3OGKJzGlauD6g2zC7xku68X/4DxlJbAKS+Oer0+FsIp7mbMdkDsIvbBLd
+	0aXuOnW/OfVafD11eIt646MPfP4vKjz9xC4lnO8H2/5C0Oah+6XxE+bktcgvGQX9ofqxK2lA/C3
+	V5THbvwzew3NIwAUMoIoXNupH5z5Di49v
+X-Received: by 2002:a05:622a:2443:b0:4ed:67bc:50de with SMTP id d75a77b69052e-4f1d04bfe5fmr242556811cf.24.1765965124964;
+        Wed, 17 Dec 2025 01:52:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE+3hMiRP+attklLgtgofiK57yoL5Ct382xF3L33kH87mVyl7+crPmgYIhkbQpPG7pV+dpESg==
+X-Received: by 2002:a05:622a:2443:b0:4ed:67bc:50de with SMTP id d75a77b69052e-4f1d04bfe5fmr242556561cf.24.1765965124521;
+        Wed, 17 Dec 2025 01:52:04 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b3f5630easm1981969a12.22.2025.12.17.01.52.01
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b3f5630easm1981969a12.22.2025.12.17.01.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 01:52:01 -0800 (PST)
+        Wed, 17 Dec 2025 01:52:03 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Wed, 17 Dec 2025 10:51:54 +0100
-Subject: [PATCH v2 1/4] dt-bindings: watchdog: samsung-wdt: Define cluster
- constraints top-level
+Date: Wed, 17 Dec 2025 10:51:55 +0100
+Subject: [PATCH v2 2/4] watchdog: s3c2410_wdt: Drop S3C2410 support
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -92,7 +91,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251217-watchdog-s3c-cleanup-v2-1-79d8caf65ec3@oss.qualcomm.com>
+Message-Id: <20251217-watchdog-s3c-cleanup-v2-2-79d8caf65ec3@oss.qualcomm.com>
 References: <20251217-watchdog-s3c-cleanup-v2-0-79d8caf65ec3@oss.qualcomm.com>
 In-Reply-To: <20251217-watchdog-s3c-cleanup-v2-0-79d8caf65ec3@oss.qualcomm.com>
 To: Wim Van Sebroeck <wim@linux-watchdog.org>,
@@ -106,78 +105,131 @@ Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1270;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2896;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=SX21PhGZicijazZ9aMiqBXstGUcTFn/+qwMSgUuCSYs=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpQn08GwVfAzRVxrZFPlAs3C1xZM/0gJe0MU5Rm
- pLwZ1LKZcKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaUJ9PAAKCRDBN2bmhouD
- 1ySMEACKiUoyvl8N31YiC7Iz57fK+ZWem9zh/ehs6hC79j8z2BJMFD1WY6h+VsBUOa1i6StrfZK
- 9gcn40aqruCyr2iRSPoZimiiCu558JKaSMdBO/uzpPu5Jd7/1Zlrr5E/onbXQycM8SDKLU5AywG
- jPrxcLzc2sexP1Ccv7Q4ZYnq4k8Q+SVTlCEzqK9t5X1eR2rTcsmZF4kX8e6DFAFU85aAWpF4kX/
- ynSmTHh/1KM+t2RLlOV5W3eAOEWrNltqHkeQPqhCNl5NQNgTUWGPNysXwo22vvjJF4Hx1EwExwh
- 82f7KRcmJTfp6qahAl/TZ8pDgZ5eNpHEoaUNl3wdzHrVhsCU8VoA/zCnQQRFW3AHgq8Ef22UJ8K
- GtD0qS0YQklDbnJVN6b+lye2t2A9cis21XBQCwuxTRGyi+SJ86TeATwHCUFkJ96ckwh5sC9WHjH
- E4OuszXo2CIYLDEwHfWM20bgLHr6ZKCq+YqZfnajhxK8GhNkzu51CRqEvZbSko06X4TbCjCFjrm
- clS6nXAxJZOkbj6902q4GTmrnDkiLx6zjX46FomgCdsfkRxskANzHz8xmStMjQiMNxGx5FOlfI8
- 7ccWbgzlS+g/QSChJ9WF/36l+Mwvtn8GKTkkDgySthLAZrh5WLBVE0z8u5pUWlpt3uTxugkHRv+
- GyfMQFtOBD5bv6w==
+ bh=tfUVqfSUN7/loUc0Y2WZXc/4Aj4HFepsvMYbIp4rXe4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpQn08njWbvBo4bxgkg+4rCp+eaWZdetCYgwez4
+ treNRcnbtyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaUJ9PAAKCRDBN2bmhouD
+ 11A1D/4+bDgyvQQSOxP+Hj15yNATRPRad5DXeWoPM2D+tS6/0Rpv9Yc4KbVCS4adhcHgqhA9lRm
+ +UcnY425ViAFzPCwFWGFE6kYPCBmpOI7VYQHxPmeC2egbN8GahfFVqgT1BtsTwxm13//rymFAKJ
+ wnoCM5HS1OLhF7T8JDbL5qsL2jB+0J1FXSnZSgO5ICa8mxU5fX3nCp+Wh1O1NFHnOpxo3ujKm5w
+ YRMj/b/dcekLaDDUn9nlm3v524UDYLOa4hj9sthCq7SRRjJRFp8aDZ9GesI4+RkEyn+AVumNz0x
+ I23Jz8aCyCIuwFkGVZk4iOCfNwRfJVR8PBhpeIpuj4CWGlIeL+rZ5xjaYjkI4m9dNeCpt2fx2G3
+ +9tK6dTzvukYgIRI9BqzYbkUAeKdYn1RXn2/4e+lo9BpAQe3PQbIV7c/fm+bSejhRin9qLx6I9G
+ 7/lrByx36rHradlyHcM7ZjCH2EKKZ2I9z76+ZUBAYKZBD05TrhNpKDwb+1u7nfKiqB7Umcy03lp
+ eifr/o3mNtV/4bdZnpgRc5KU6RX8YsNdW/fBwOtKLUpwmMsQ+tiXDaBlEbZpXUHrgdJka7lwAab
+ sDut9Pl8T8eYwMfmS/I+tXamqv1NXv/NJ7YIb8NIKSVVqqxwzO51lE+PbsR5yWObyQ526tP+Xmg
+ j/hk5m2Xqvwp0gA==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA3OCBTYWx0ZWRfXzuyTZ6coArBJ
- Nu7HcHORaFTjliU0ZIA1x+iT0DFp7OQKhHs2qgbl3BmYjD62P8eWBoLOPspBYW46/Xq99/WY5z3
- dEfFd29WgOPnY8oJHNtidsZnTV6IOv1IunguCSFnnWSNAkO+cQI2yxq41aE9nhKGMBB4R4xFGvh
- 4pCkRe/se3UADl84PInPPgiP63+nbrAftf3SHLdvPDSI1QI5U+3O5WJHn1AGxsr9jkpF6Jw4ocG
- hRX/qkdLWluS+xEv1yfr0jCPVoFgx1+Qxzhcxqvo0gWWG2nyBNYbPOh6KB4F3N7AGT49n3ZMVqp
- MLvGll/5zNH3lA31aWEMityhqiDqFCStflh5WHku6rR48Du1LRq23EGPC1Jl/bn12ZHh3PJAmaa
- IBji/sRyFBCQpx8Nd3cSBeUf/zHZbg==
-X-Proofpoint-GUID: 0mqjqaVLKHt_CZpRkGdC0AVVTg6ghMJJ
-X-Authority-Analysis: v=2.4 cv=Fcw6BZ+6 c=1 sm=1 tr=0 ts=69427d44 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=hmARNUlj3OVxZ3RlbIsQyw==:17
+X-Authority-Analysis: v=2.4 cv=VLjQXtPX c=1 sm=1 tr=0 ts=69427d45 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=hmARNUlj3OVxZ3RlbIsQyw==:17
  a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=_jlGtV7tAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=RUZyBBiHXQlI0l-aNaAA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=_jlGtV7tAAAA:8 a=EUspDBNiAAAA:8
+ a=SrvLU9wFeIYBZhyLgqUA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
  a=nlm17XC03S6CtCLSeiRr:22
-X-Proofpoint-ORIG-GUID: 0mqjqaVLKHt_CZpRkGdC0AVVTg6ghMJJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDA3OCBTYWx0ZWRfX/s0q9GXkTjjc
+ vrVPve0KI8thFJf/asNUBdP4RadILZDFW9UocJ1uHOJsXe2B7GP4jv2Aud26PUOxE4QRHvfV7Tb
+ 6Ze3QUP5RqdJl7o7QFhN8jYQnIgRFsOeKBQUjJvlvK8BhtBpQrj8CWGtmPzLkD5OODOwbxcrSeq
+ hJ4C6ffIub1RK9654dQ6uy7DBxgWomU3rMwy+pK9sW6zxIbUTsQsq5M6aQrzbqXdGHT7mfqAsOQ
+ WeHTyoXUDhE1kOauw7SjMfHWTJYYWNyB6d7ly4VC6RzUA/237ibmMOTgW3zqhIZu6qRGhqFcVco
+ 9M87UGPlAGoQNsMqM6YlJjyt0lFJTvyKJnz0kqCBnM7EPRQcs6HaVgnKo1RBxBOElouCh/tIL+J
+ jdesFB7guqJYIB3pyb37HZBx4R4cqw==
+X-Proofpoint-ORIG-GUID: O8zL_dlgFbHvuFgi2p3pU9Bf2V7gFyhv
+X-Proofpoint-GUID: O8zL_dlgFbHvuFgi2p3pU9Bf2V7gFyhv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-12-17_01,2025-12-16_05,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170078
+ spamscore=0 adultscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ priorityscore=1501 impostorscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2512170078
 
-Properties should be always constrained in top-level part of the
-bindings, so move the samsung,cluster-index constrain from if: block.
+Samsung S3C2410 SoC was removed from Linux kernel in the
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+2023.  There are no in-kernel users of samsung,s3c2410-wdt compatible
+and s3c2410-wdt platform device name, so drop both.  This leaves the
+driver boundable only via compatibles, so drop any CONFIG_OF ifdefs.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/watchdog/s3c2410_wdt.c | 22 +---------------------
+ 1 file changed, 1 insertion(+), 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-index 53fc64f5b56d..445c5271879f 100644
---- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-@@ -49,6 +49,7 @@ properties:
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index b774477190b6..e31f93db0509 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -208,11 +208,6 @@ struct s3c2410_wdt {
+ 	u32 max_cnt;
+ };
  
-   samsung,cluster-index:
-     $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2]
-     description:
-       Index of CPU cluster on which watchdog is running (in case of Exynos850,
-       Exynos990 or Google gs101).
-@@ -104,8 +105,6 @@ allOf:
-           items:
-             - const: watchdog
-             - const: watchdog_src
--        samsung,cluster-index:
--          enum: [0, 1, 2]
-       required:
-         - samsung,cluster-index
-     else:
+-static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
+-	.quirks = 0
+-};
+-
+-#ifdef CONFIG_OF
+ static const struct s3c2410_wdt_variant drv_data_s3c6410 = {
+ 	.quirks = QUIRK_HAS_WTCLRINT_REG,
+ };
+@@ -378,8 +373,6 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "google,gs101-wdt",
+ 	  .data = &drv_data_gs101_cl0 },
+-	{ .compatible = "samsung,s3c2410-wdt",
+-	  .data = &drv_data_s3c2410 },
+ 	{ .compatible = "samsung,s3c6410-wdt",
+ 	  .data = &drv_data_s3c6410 },
+ 	{ .compatible = "samsung,exynos5250-wdt",
+@@ -399,16 +392,6 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+-#endif
+-
+-static const struct platform_device_id s3c2410_wdt_ids[] = {
+-	{
+-		.name = "s3c2410-wdt",
+-		.driver_data = (unsigned long)&drv_data_s3c2410,
+-	},
+-	{}
+-};
+-MODULE_DEVICE_TABLE(platform, s3c2410_wdt_ids);
+ 
+ /* functions */
+ 
+@@ -720,7 +703,6 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 			   platform_get_device_id(pdev)->driver_data;
+ 	}
+ 
+-#ifdef CONFIG_OF
+ 	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
+ 	if (variant == &drv_data_exynos850_cl0 ||
+ 	    variant == &drv_data_exynosautov9_cl0 ||
+@@ -756,7 +738,6 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
+ 		}
+ 	}
+-#endif
+ 
+ 	wdt->drv_data = variant;
+ 	return 0;
+@@ -949,11 +930,10 @@ static DEFINE_SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops,
+ static struct platform_driver s3c2410wdt_driver = {
+ 	.probe		= s3c2410wdt_probe,
+ 	.shutdown	= s3c2410wdt_shutdown,
+-	.id_table	= s3c2410_wdt_ids,
+ 	.driver		= {
+ 		.name	= "s3c2410-wdt",
+ 		.pm	= pm_sleep_ptr(&s3c2410wdt_pm_ops),
+-		.of_match_table	= of_match_ptr(s3c2410_wdt_match),
++		.of_match_table	= s3c2410_wdt_match,
+ 	},
+ };
+ 
 
 -- 
 2.51.0
