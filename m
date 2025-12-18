@@ -1,129 +1,184 @@
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3060D191F98
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2025 19:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB13304BB4
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2025 19:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766085601; cv=none; b=oVovM+B9MJnhln/kgt6LLF8hWu51eWfgmy/DVOfMa9rDMYM4cHDl7i4v81nuhLxxvZzXjzkBn8Po10MMpzUaA6wu8lOKTAu4YhtpXdsXf8JEjhYhtYO+ezzdXuXt78eOYICg7X7kjJCewhlkcKwciVxY66WnXNCLQIZznJW5Ydo=
+	t=1766085859; cv=none; b=Ksww9HCSN/lzs/1U6tWhyQM/LDXaq5TP6tfgkyu0es2gtcqZ2BHNbMIUzDONcvg49/qWDZmI2C47cXN/PpIc+mwggM8VJA1lOGyV2hp1aizXmJs18LwUmE6N2S8P6xzpUK6sfmav4XaHWqCNxlwgVN+TXweBlMM0N5AhUyuoDD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766085601; c=relaxed/simple;
-	bh=DPw3MEKEDTj6hhZJV240070qZUesK7eMmHDzezoTDnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sOJJiH4TENGy0Zb3qdx8EceizESsN74S1jf957lsyrYRFvANK5ME2AlT4CQ3leGfHTFtjTsrxRr949vn54x66Zdmm8iciIU5r08BdM9tz23ItdLgAFP5gShDsA9toXlbiQtW0ieh6Y8tJyJf9eKZ5nBz1CLmsxvcyRgc25X8eKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=ayQeIOYW; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1766085859; c=relaxed/simple;
+	bh=r2nfcgE9H5Zw6cGRbY0dMONGUMXhlb7voPYvTZk/85g=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nzNU+YWXXsdMQZUywz+3Vde5/BWKZfeeKZbNmehUv2Rfr26P0Byd4lPIn3onJXg9wx7U7QtoSR6sfCYAEbVzbDth7q5iBHid6zJt8t6ZBQ08IKM1QnfMCxQzA3ePAaTSAKX8Jz0A8OAk3aelFNnqDyRzXuziEpNLk9wpi9y2ZZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4pZInPmQ; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="ayQeIOYW"
-Date: Thu, 18 Dec 2025 20:19:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1766085588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jMI8gahPCkzfyAYCyt7orDE3Hlig6obQSOnVubX38hw=;
-	b=ayQeIOYWIhuWrcl1GyU8FZ8BHEhQhUVd/Pw/svHsWCKBWgvEJNIymCmuaxZq4bYlXCavMY
-	+2JWoQDVXxj5qLtJNKgjsyeVtYjouI7V/IiDsneJK4ULcIFqa4EXnd5DnMnlZ61q6VCupa
-	Hml87eBKtAduyqvV/5JOJNL01d7J14w=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-	Alexandre Marquet <tb@a-marquet.fr>
-Subject: Re: [PATCH v3 3/3] ARM: samsung: exynos5250: Allow CPU1 to boot
-Message-ID: <20251218191944.GA63330@l14.localdomain>
-References: <20251215-lat3st-staging-v3-0-2e4914b64dd8@timmermann.space>
- <20251215-lat3st-staging-v3-3-2e4914b64dd8@timmermann.space>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4pZInPmQ"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-ba4c6ac8406so841929a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2025 11:24:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1766085857; x=1766690657; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZrezF05hBTPlyoc9tTvkwXhrzwuC5VZE33OKqww2y+o=;
+        b=4pZInPmQZ/xLsVOBKqLQrn3gEEaE//UJ6ff1olTxqeDrBqNqpvc4Lyw9THOFAEVRzM
+         2SuBiJW+/ufBswz5PMITpisr1UhSPRqmGdGp6QCMOaTywigXyqjXHbF4KvGBYy4ZHItL
+         f6PgjjrCynx1OFjrYusEJXwM+UB4BDbVyxByt/llqe7eZ1x9PAvKP51a6e4IrhZYOfJJ
+         ymzr6cWoHTs5xb9Xp0qAWUY07RsTjqKFXDtcPrfJpe89u9DPiY0feO3tHThjfx6LmoXv
+         uMyG6eZAFynMtLJ+973bbkAcg8oA/jnnNiDzK+Wkd9D7mmvhQG3gJu24sksB5FKbbNyN
+         5dsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766085857; x=1766690657;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZrezF05hBTPlyoc9tTvkwXhrzwuC5VZE33OKqww2y+o=;
+        b=KixKvCiQYNYGGKbSj/tJ4uNthbw0mm5PGa4ncL+p9/KEIfPWC1eK6VHoMnk+qmLEPD
+         saaovMWyWbixCXaUauM+SUojv+eNGZ7/AlHBk2O0GhvrxSRXtlCfUEU6zYe09M2IKQps
+         ifyJAM+hubKFeZU7TiZnr18n18WxSMdU7C/tzETbFuQ2Cyrq8ie39T1U+/Vb+dgG5MMx
+         0JOgmlhsJdM3UbQKNr6hiyUoiOwMDi6k0Gf0P5jGL1XooSJUfx+hpvBoTqWKNTlKgUbw
+         ipbicg5Sth2EgX9dLtfx3a98e054QvSb9j3AUQnEh+wssOvnRyHOBkh5LVfZND8/naEr
+         DrKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP5gRN5e3CVM6PI0G6qeDhPLVkvzAzIEYIEfArp5Kx6qKqLRvGIMLfVzIgAeVjIr6PtCJscAbeUdq+Or24zXRtOA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTKm1NJ7ks/i+7XwPU43N0XlX/CpcmtiAk8VXN54wt9aNSqjVO
+	Drl8rtr7Kl+duyaie9J3vCtvYr74Z7c6f5LyeBykRSdW7Yeli3O4CD9+WySIyrUFBLBGnF9TnBe
+	3DULaaA==
+X-Google-Smtp-Source: AGHT+IFa+6SmGfUkIqFcWYkM71AGyzleptfMzh2HOJNU/e7vccjigezYG+iRc0Hs9V5FciCCNY21d7DzDfs=
+X-Received: from dybgx3.prod.google.com ([2002:a05:7301:2403:b0:2b0:15ff:44c8])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:4185:b0:11e:3e9:3ea1
+ with SMTP id a92af1059eb24-121723022e4mr297799c88.50.1766085857216; Thu, 18
+ Dec 2025 11:24:17 -0800 (PST)
+Date: Thu, 18 Dec 2025 19:23:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251215-lat3st-staging-v3-3-2e4914b64dd8@timmermann.space>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJ1URGkC/22OzQrCMBAGX6XkbCSJTZP15HuIh/5s2kDblW0ti
+ vTdTb2oIHv6FmaYp5iQI07imD0F4xKnSGMaWu0yUXfl2KKMTXoIo4zV2hhZ0zgz9T2y1AYq1TT
+ WlS4XCbgyhnh/286XtAPTIOeOsfxSaFBwcDnsDaQrpJZMj/5Gp5ao7XFf07C5ujjNxI932OI34 9+ExUsl0dnCoGpCYf23ZmtY4MMaZX9YSCwEbX2lfQAHP+y6ri+vdSAOHgEAAA==
+X-Change-Id: 20251122-controller-129b0dd57a74
+X-Developer-Key: i=royluo@google.com; a=ed25519; pk=nTq1n8WcJActRWe1s8jdcy+TzpTK4a+IYRCIWvQfq5k=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1766085855; l=4872;
+ i=royluo@google.com; s=20251120; h=from:subject:message-id;
+ bh=r2nfcgE9H5Zw6cGRbY0dMONGUMXhlb7voPYvTZk/85g=; b=9tR7mlclTjSkDEjA2dTpWxvMt66/rqatgrSFSBP81dwqat5HpqCGmSCYQH9KHthQZ5pIjoKWv
+ GJsMpkbyDCYAWNbICVWhqVkg0wTf5A1IpNz7pz6vp1bBSBYWqJkulPf
+X-Mailer: b4 0.14.2
+Message-ID: <20251218-controller-v10-0-4047c9077274@google.com>
+Subject: [PATCH v10 0/2] Add Google Tensor SoC USB controller support
+From: Roy Luo <royluo@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, 
+	"=?utf-8?q?Andr=C3=A9_Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Badhri Jagan Sridharan <badhri@google.com>, Doug Anderson <dianders@google.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi Lukas,
+This series introduces USB controller support for the Google Tensor G5
+SoC (codename: Laguna), a new generation of Google silicon first
+launched with Pixel 10 devices.
 
-On Mon, Dec 15, 2025 at 04:05:24PM +0100, Lukas Timmermann wrote:
-> From: Alexandre Marquet <tb@a-marquet.fr>
-> 
-> The firmware trustzone needs a special call to bring up the secondary
-> cpu core on the Manta board. This seems to be not needed on other
-> exynos5 boards and comes down to the available firmware on
-> a particular board.
-> 
-> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+The Tensor G5 represents a significant architectural overhaul compared
+to previous Tensor generations (e.g., gs101), which were based on Samsung
+Exynos IP. Although the G5 still utilizes Synopsys IP for the USB
+components, the custom top-level integration introduces a completely new
+design for clock, reset scheme, register interfaces and programming
+sequence, necessitating new drivers and device tree bindings.
 
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
+The USB subsystem on Tensor G5 integrates a Synopsys DWC3 USB 3.1
+DRD-Single Port controller with hibernation support, and a custom PHY
+block comprising Synopsys eUSB2 and USB 3.2/DP combo PHYs. The PHY
+support is sent as a separate patch series.
 
-I had a look at the manta bootloader, but have not been able to
-pinpoint where the smc calls are handled. Nevertheless, Seems like
-manta might be the only Exynos 5 android device that needs CPU1BOOT. I
-tried to track down exynos5250-arndale's tzsw to compare with, but
-seems like it is no longer available anywhere unfortunately.
+Co-developed-by: Joy Chakraborty <joychakr@google.com>
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+Co-developed-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Naveen Kumar <mnkumar@google.com>
+Signed-off-by: Roy Luo <royluo@google.com>
+---
+Changes in v10:
+- Per Greg's feedback, remove Kconfig dependency on ARCH_GOOGLE || COMPILE_TEST. 
+  Remove ARCH_GOOGLE as it's not yet in the kernel, and COMPILE_TEST is no longer needed without it.
+Link to v9: https://lore.kernel.org/r/20251205-controller-v9-0-9f158b18f979@google.com
 
-Here's a summary of my findings from looking at sboot/the tzsw from
-various devices, where `CPU1BOOT SMC is handled == yes` means that the
-device needs the SMC call.
+Changes in v9:
+- Update the Kconfig dependency to depends on ARCH_GOOGLE || COMPILE_TEST
+  Note that ARCH_GOOGLE does not exist yet but will eventually
+  be there when the following patch lands
+  https://lore.kernel.org/r/20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid/
+- Mention SoC codename Laguna in Kconfig description.
+- Sort the header alphabetically.
+- Add driver and binding files to the Tensor SoC MAINTAINER entry.
+Link to v8: https://lore.kernel.org/r/20251122-controller-v8-0-e7562e0df658@google.com
 
-.----------------------.--------------.--------------.--------------.
-| Device (exynos-)     | Similar tzsw | CPU1BOOT SMC | sboot/tzsw   |
-|                      | to odroidxu? | is handled?  |   source     |
-.----------------------.--------------.--------------.--------------.
-  4212-tab3            | yes          | yes          | T310XXSBQB2
-  4412-i9300           | yes          | yes          | I9300XXUGPE1
-  4412-i9305           | yes          | yes          | I9305XXUFPB1
-  4412-odroid{x,x2,u3} | yes          | yes          | wiki.odroid.com/_media/en/boot.tar.gz
-  4412-origen          | no           | don't know   | Linaro's origen hwpack 20130130
-  5260-hllte (SM-N7505)| no           | don't know   | N7505XXSDRI2
-  5410-odroidxu        | yes          | no           | github.com/hsnaves/exynos5410-firmware
-  5410-ja3g            | no           | don't know   | I9500XXUHPK1
-  5420-chagall-wifi    | no           | no           | T800XXU1CRJ1
-  5420-arndale-octa    | yes          | no           | Linaro's arndale-octa hwpack 20140323
-  5422-odroid-xu{3,4}  | yes          | no           | Hardkernel's u-boot 2020.01 branch
-  5422-samsung-k3g     | no           | don't know   | G900HXXU1CVG7
+Changes in v8:
+- Add COMPILE_TEST to dependencies for build coverage.
+- Drop redundant default n in Kconfig.
+- Update Kconfig help text to explicitly state the module name.
+- Use container_of_const() in the to_dwc3_google() macro for type safety.
+Link to v7: https://lore.kernel.org/linux-usb/20251119093749.292926-1-royluo@google.com
 
-As can be seen none of the Exynos 5 devices in the list have been
-confirmed to need/handle CPU1BOOT.
+Changes in v7:
+- Follow driver naming convention and rename the driver as "dwc3-google".
+Link to v6: https://lore.kernel.org/linux-usb/20251112123257.3755489-1-royluo@google.com
+
+Changes in v6:
+- Use "lga" as SoC name instead of "gs5" to align with Tensor G5 device
+  tree https://lore.kernel.org/lkml/20251111192422.4180216-1-dianders@chromium.org
+Link to v5: https://lore.kernel.org/linux-usb/20251111130624.3069704-1-royluo@google.com
+
+Changes in v5:
+- Use syscon to access host_cfg and usbint_cfg MMIO space per
+  discussion in https://lore.kernel.org/linux-phy/89733ddf-8af3-42d0-b6e5-20b7a4ef588c@kernel.org
+- Make warn logs in dwc3_google_resume_irq() dev_dbg.
+Link to v4: https://lore.kernel.org/linux-usb/20251017233459.2409975-1-royluo@google.com
+
+Changes in v4:
+- Separate controller and phy changes into two distinct patch series.
+- Rename dwc3 core interrupt as "core".
+- Remove u2phy_apb clk/reset (moved to PHY)
+- Configure usb2only mode when usb3 phy is not present.
+- Adopt pm_ptr PM macros to fix build warnings.
+Link to v3: https://lore.kernel.org/linux-usb/20251010201607.1190967-1-royluo@google.com
+
+Changes in v3:
+- Align binding file name with the compatible string
+- Simplify the compatible property in binding to a single const value.
+- Add descriptive comments and use item list in binding.
+- Rename binding entries for clarity and brevity.
+Link to v2: https://lore.kernel.org/linux-usb/20251008060000.3136021-1-royluo@google.com
+
+Changes in v2:
+- Reorder patches to present bindings first.
+- Update dt binding compatible strings to be SoC-specific (google,gs5-*).
+- Better describe the hardware in dt binding commit messages and
+  descriptions.
+- Adjust PHY driver commit subjects to use correct prefixes ("phy:").
+- Move PHY driver from a subdirectory to drivers/phy/.
+Link to v1: https://lore.kernel.org/linux-usb/20251006232125.1833979-1-royluo@google.com/
+
+---
+Roy Luo (2):
+      dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+      usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+
+ .../devicetree/bindings/usb/google,lga-dwc3.yaml   | 140 +++++
+ MAINTAINERS                                        |   2 +
+ drivers/usb/dwc3/Kconfig                           |  11 +
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/dwc3-google.c                     | 628 +++++++++++++++++++++
+ 5 files changed, 782 insertions(+)
+---
+base-commit: ea1013c1539270e372fc99854bc6e4d94eaeff66
+change-id: 20251122-controller-129b0dd57a74
 
 Best regards,
-Henrik Grimler
+-- 
+Roy Luo <royluo@google.com>
 
-
-> ---
->  arch/arm/mach-exynos/firmware.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index a5e22678e27b..e9b0ed07bb90 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -61,10 +61,10 @@ static int exynos_cpu_boot(int cpu)
->  	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
->  	 * because Exynos3250 removes WFE in secure mode.
->  	 *
-> -	 * On Exynos5 devices the call is ignored by trustzone firmware.
-> +	 * On most Exynos5 devices the call is ignored by trustzone firmware.
->  	 */
->  	if (!soc_is_exynos4210() && !soc_is_exynos4212() &&
-> -	    !soc_is_exynos4412())
-> +	    !soc_is_exynos4412() && !of_machine_is_compatible("google,manta"))
->  		return 0;
->  
->  	/*
-> 
-> -- 
-> 2.52.0
-> 
-> 
