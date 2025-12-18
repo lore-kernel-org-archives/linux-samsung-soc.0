@@ -1,174 +1,182 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208081A9FAA
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 20:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7B6246BBA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2025 01:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766004604; cv=none; b=I4KnW5c9Dz1/JPYPJEzlVbMqXmC7DnlNyR7o5NPl/rd+q4eyuVTIDfErFB4OcgWpEWKIV7i/UyoeNgsZTHIyH3hQEI4tn7oqKT/goBYPEJVnwWpU0hzb7xwPdqbnlgVZC61wAN2KWHybhPFOz+uugilK6Wj8foCBR5YrwRYHrnU=
+	t=1766021716; cv=none; b=cd3X9oMVDwLuimGzmjwEZ4oqmTL6TEdqfYwDWPosjqQtGEYLfnBXyMQP2fvcLsc9Wm1GgCG4QHnQxp3G19jeOLpsk0MhsUrqTw6jomwrj6nR1Qw10nzTBc63dau8Zh+v8PtRfLB32Ev2C/j9f2ElpbKsd3Eb60U4RUPT3EaihHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766004604; c=relaxed/simple;
-	bh=uZmeU6/lH+Oyx+HJkcBRoHj9KuSaQoSzqyS+vqTlh18=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mZ4yNa9ofRRS4J15ntabGPfT4MUI1L6KsSjDzRexGHOCtphtoI+uPM+0bhLmBSHx9+nElPtP9vJ1bavXb/ncRxoRwEnRTuv8QgcqbRIfcdZiNRjbbVkQh6PXqp8BIiqRtEgTEZYrKOLxsKfEm7kcbhpT2Q95Te6UUBGzgGSuhns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQAnPx7B; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766021716; c=relaxed/simple;
+	bh=4OIfYeRjyIluIN6mXlTgKbEzj1gZ3VU1A0xxCANr4Bg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CglxOylTOPw0ex/+UKL6+Zej7maPkZ58+pihw50ZpAkBjTYOELObIFQwWGv4CJb9NUK+zfRKs7/YQJB5VK+gpGoSVDHD3qoWxZ3QXHyAdtWrfz522wDnoc9NLKhEnZOFnn/d1bEs/3yuCWzSXqNXnKUqakfnEjMqLhdktC4pjUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m+3tcswS; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQAnPx7B"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-34aa62f9e74so7814093a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 12:50:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m+3tcswS"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2a0f3f74587so1444715ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2025 17:35:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766004602; x=1766609402; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Vqf2Irqa47r0MODYS/qJupfOYkoqLvIbxbr/hC0OZI=;
-        b=kQAnPx7BigFTGUF9lbe3jYFGWCvd7IeQBoFWIs6m/bYzVtPLwnNxBfo0zxYPQfHmRE
-         YeTyHLXvBmUqEOU61Ys2Utx2zXsB/F38zEi8bc9Pn+Ezb8RHiOKC1nXt+jCp+RDq5l7k
-         dc5bK+3lFlT5NyWfSQ/dKekToBlFCsJaxRPzP6dbfh3OBgaiLJME0x/juG4121hKPN4S
-         AOQS8B8kXn3rcD0pB0RBHFp7YyIRakHrToggdHv33mYG4qTY07VcTuTmsuE4kQUxVZbv
-         47bzw9HmQD1mw2i6k6jv8FIBrPYjzB5AkEq+ps1IAocy9eg0Cz3EdEVhjOOG1SuC5lmr
-         NWew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766004602; x=1766609402;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1766021714; x=1766626514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9Vqf2Irqa47r0MODYS/qJupfOYkoqLvIbxbr/hC0OZI=;
-        b=l8Oi1jdDY4yIaXvVlqqi2W/UvaFbTJG/RX+qlyOyZT845F9WKy0BbRK9d4PTVg8qIe
-         Lja2jMqUlPs06YYxwg3E/Nhl8bYh0a06OnIpKbbEOm8auJ67d6GIR8fGxq/9RE+ipO09
-         ApOFLNnipfQOirmh2fqUG6l5tsN8kKBuBm43A2YyohV4pwL2j9+jITYr0yv/FwJLRTxN
-         gxXmqo1nW8mQKVyPnBAbJtzBrLDzvWbY6HNgntE0m1wA26mYEQXdT26ydblqwf5PVh+A
-         MN8CElxx4bsaCTAvp7DwS6jgpyJ8vRWtv+NTs50rHqT8Br1MK0P3Yvh/vdRJZlECJTbV
-         QtCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvv+W6ziJUzNbRFWyBR7s7ZPr/RLuIwL1mZP0L3JjYuSNeAR8K/JNVAIdctno1X6iXYxrYDKoNgcgboxp6Fc0cQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3BMi/oX7D9YKZHtm5bv2u+xkflc+8i5rtBaMPDRdWCuVh3HjX
-	Hb3ndSu8OLE7aahiRdUiy70vK37wg+uX/JBmibx/qto8l2vS4lWPUlh+
-X-Gm-Gg: AY/fxX5/E9YRXjN5Mg21AJPXx9j/cVN3ajjmEKfl9uM0WGHhBKOq7wMQWe9SKzJOnGA
-	rn2sexHdxhHLBeVdePzWfJaM080xzPJHzQRhIlnYcyGkUq8OGVkceS+MuMWSrVMXzrwd/Zv32p0
-	3AQp3H6KUzbjj9Umrq5LLuOFL6BK0JqO8KYjC0n+Q+h+CJQj2LhpSlkU6qKbs5rc2OPvbk6akWU
-	JIRgfAwIWiuEcBFNpMxGcKZDRvDWzPvYapBi96RDpS8MJ5Z3ej3H7JGH05cVPQLCRPD9r0lDqeK
-	2BQ5icbDJciZfWO8qsJVAZ4Icf7nROLVD0+EUzC1xZIHVM4YxPGoz7fOuRk1FPJxmFg/2bwFtQs
-	6c+131mHyxWpTjCVvaACSKUkr2e0tJwEGoBEpJea8npQztsGU2xZf20jsGQ==
-X-Google-Smtp-Source: AGHT+IGUYpYXdBuUIy2BGU5YINHw7vHPbEi5/3qNwcr/8j7+nQe807tukrqvmnkcXYlc9GyRKCPBGA==
-X-Received: by 2002:a17:90b:3f4f:b0:34a:4cc0:9e38 with SMTP id 98e67ed59e1d1-34abd71f4dfmr17296990a91.10.1766004602462;
-        Wed, 17 Dec 2025 12:50:02 -0800 (PST)
-Received: from ryzen ([2601:644:8000:8e26::ea0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e70dcc7bcsm434558a91.13.2025.12.17.12.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Dec 2025 12:50:01 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] i2c: exynos5: simplify probe with devm
-Date: Wed, 17 Dec 2025 12:49:44 -0800
-Message-ID: <20251217204944.10862-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.52.0
+        bh=+3lPJkHRSCmKfOfDwhUgx/Hppf9Vk27dkhOuGa4j0X8=;
+        b=m+3tcswSXE7mPLhypN6oDMTWOsQHb5FL+5ywg+UOzUiOpUr1Hs0c50swf3yDHmspE4
+         u949zUW1tVQn1kMw1J5WTN9H+C/3/oTjpFQwdPcJ1IsC53tq5e1CdQXltdof7eG253X/
+         kTYjk8gl/o/fr08qSIIYd7HVUcl9BHf0OJsrjLhNwbWdURpTmQX14vr8Ko4vlHQC/BtK
+         Wh24tfdugnPeEG8pLS/VB+ldYUXbk/qi7t9xXIfWUz6iqS+m/7d/ZOp6YAOAPw5Cfyxj
+         5Gfz49ShYk6FOav5dQHwCxg1UekrR4kwFhE7rVjfF//O0/28XXG+W+W5rLKh/Pzs6kTP
+         1U8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766021714; x=1766626514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+3lPJkHRSCmKfOfDwhUgx/Hppf9Vk27dkhOuGa4j0X8=;
+        b=UdWvzBuqCdeSUaEH27NjaS94YjLWe5zDt7zpXqqfa9T2FpR/UCkfFCHWbfyRG6ajEz
+         k/HawhMs/6kInx/E8y63Dl1ukhlWLJDE6jM6k+5f2kHTNX/0aEJbk93Iw5TO6UK7VJQ0
+         vNzQ/GyXUpE6JYe8u9En+kxCCLacmvkOf5czW8KbaIaDxC07cYPSAH1dBuL3MxZ3WqQD
+         7be1zlnpLyYml/d0MwvqI7UOOI0c16UOIDi8hLj/MDgBvCXAkw6a+Zt4F2aYIP+SaBuS
+         KmJlX57eI+p05clQeOID3TTacAQiwiTI/gBwMFD83/i2ojU6nv+Ji6Ob1EGPUxBETq+G
+         ihVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpF3Ue735Yg22CsGCk7rNJDVMyza4Wp65rSRDPP+e772timVvOPjlMp6qO16G2LOTSLmgqevGsWe3B76dMxdk3Kg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyot2bfDqAzFRfM8pnCznQ7l0HPjif4brNnTAoBJkzEUif4Pxod
+	UW8CaaKvCgzIE/OxI4hIl+GsQTIBNAk8jmQv6xVhGx15osnXRRnTiDZbqaGluf9VvIpvKk/VpIm
+	nX0anHLJRwEtitT2X9k6dIxcwlGu4ZKrbLaz9agbM
+X-Gm-Gg: AY/fxX72Zxc/vxb09X5lFumQiuNF6FYBPuZAeYQ0AMp/VJC9bmajRkJ083Xqi56Bh9p
+	Agk4wP8rRF2gR1G7WVwJ/3vMloBNcq1Vi62mohqv54gWlWyCtd5lj1QDgQT5/2dme1FNCtC+gdy
+	PazqcmXTCfp0o1WuitjdAxQXQ0+vHAS9e2Du7cLQvDwrtSQpvjSw+k+Ie9+YDvgEroCsJOHGzoo
+	cz5KMex8dxInCCeSiTgd3o7pk0iEVB2mP7vJsuyH/wpBtxmddJOyyX9ttujNPX9JZL7JX35QLAO
+	RKSjvrRelGO4ZrfqisZ11cGtmw==
+X-Google-Smtp-Source: AGHT+IGvcyO+atFMG40EK+LXFzuEE58sYgxepefDuuFDeJNb4XXiKi+RzM8fyWk9RSGm3Ityaatl5SIXnMbRo8k0DJM=
+X-Received: by 2002:a05:7022:f686:b0:119:e569:fba9 with SMTP id
+ a92af1059eb24-11f354cc907mr17457322c88.24.1766021713688; Wed, 17 Dec 2025
+ 17:35:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251205-controller-v9-0-9f158b18f979@google.com>
+ <20251205-controller-v9-2-9f158b18f979@google.com> <2025120553-suffrage-divisive-5890@gregkh>
+ <CA+zupgzL7v5MZDpxKDQQCqAZaqTdHbiG9-xTr+8RnigMFZJ_7Q@mail.gmail.com>
+ <2025121728-reliably-crabgrass-2601@gregkh> <CA+zupgxZCyNonfNPbGnFymGGOQuaWR1TsL+hujTbH4DEcfEt9Q@mail.gmail.com>
+ <CAD=FV=U63F-wxwKDo9be6_X2P2zp6aTBjNghZRbXX1rn4jFNyg@mail.gmail.com>
+In-Reply-To: <CAD=FV=U63F-wxwKDo9be6_X2P2zp6aTBjNghZRbXX1rn4jFNyg@mail.gmail.com>
+From: Roy Luo <royluo@google.com>
+Date: Wed, 17 Dec 2025 17:34:37 -0800
+X-Gm-Features: AQt7F2rkORh0Ym1VQOfQeQf2IHUEB9pEt5kMbxWWeEa9-paUYGoUbCv0CV7TpLY
+Message-ID: <CA+zupgyG4Nov0=jihSApp_3_0hy6YNZMkfOp6Q4-zmERFm10Ag@mail.gmail.com>
+Subject: Re: [PATCH v9 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+To: Doug Anderson <dianders@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cleans up probe a little bit and separates preparation from enablement.
+On Wed, Dec 17, 2025 at 12:14=E2=80=AFPM Doug Anderson <dianders@google.com=
+> wrote:
+>
+> Hi,
+>
+> On Wed, Dec 17, 2025 at 11:18=E2=80=AFAM Roy Luo <royluo@google.com> wrot=
+e:
+> >
+> > On Wed, Dec 17, 2025 at 5:24=E2=80=AFAM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Thu, Dec 04, 2025 at 11:14:39PM -0800, Roy Luo wrote:
+> > > > On Thu, Dec 4, 2025 at 10:05=E2=80=AFPM Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Fri, Dec 05, 2025 at 02:26:38AM +0000, Roy Luo wrote:
+> > > > > > +config USB_DWC3_GOOGLE
+> > > > > > +     tristate "Google Platform"
+> > > > > > +     depends on ARCH_GOOGLE || COMPILE_TEST
+> > > > >
+> > > > > There is no ARCH_GOOGLE in the tree now, so how is this supposed =
+to
+> > > > > work?  Shouldn't tools that check for "invalid config options" tr=
+igger
+> > > > > on this?
+> > > > >
+> > > > > thanks,
+> > > > >
+> > > > > greg k-h
+> > > >
+> > > > Hi Greg,
+> > > >
+> > > > The menuconfig looks like the following and it doesn't complain:
+> > > > | Symbol: ARCH_GOOGLE [=3DARCH_GOOGLE]
+> > > > | Type  : unknown
+> > > > |
+> > > > | Symbol: PHY_GOOGLE_USB [=3Dy]
+> > > > | Type  : tristate
+> > > > | Defined at drivers/phy/Kconfig:104
+> > > > |     Prompt: Google Tensor SoC USB PHY driver
+> > > > |     Depends on: ARCH_GOOGLE || COMPILE_TEST [=3Dy]
+> > > >
+> > > > According to Kconfig documentation [1], the unknown symbol
+> > > > would simply be evaluated as an "n", which is what we want.
+> > > > "Convert the symbol into an expression. Boolean and tristate
+> > > > symbols are simply converted into the respective expression
+> > > > values. All other symbol types result in =E2=80=98n=E2=80=99."
+> > > >
+> > > > In a different Kconfig documentation, an environment variable
+> > > > "KCONFIG_WARN_UNKNOWN_SYMBOLS" is there to detect
+> > > > undefined symbols in the "config input", but I can't find one that
+> > > > catches undefined symbols in the Kconfig tree itself.
+> > > >
+> > > > That is, the tool seems to allow this.
+> > > > However, if this turns out to be a major problem. I think we
+> > > > can either:
+> > > > - Remove ARCH_GOOGLE and leave COMPILE_TEST as
+> > > >   the only dependency. Then add ARCH_GOOGLE back
+> > > >   later once it's in the tree.
+> > >
+> > > Please do this.  I do not want to take patches that purposfully add
+> > > dependencies on config options that might, or might not, appear in th=
+e
+> > > future.  Please just remove all of the dependancies for now, as they =
+are
+> > > not needed, right?
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > Greg,
+> >
+> > Yes, we can remove ARCH_GOOGLE for now.
+> > To clarify, we're not removing all of the dependencies, we still want
+> > to keep COMPILE_TEST for build tests, right?
+> > Please let me know if you think otherwise.
+>
+> I think you'd just remove all of them. Normally COMPILE_TEST just
+> allows folks to compile stuff even when they don't want the ARCH. We
+> can can add ARCH_GOOGLE back in later once the config exists.
+>
+> -Doug
 
-Also use devm for i2c_add_adapter to get rid of the remove function.
+Doug,
 
-Fix return code for failed clk_get_prepared. It returns PTR_ERR.
+Thanks for chiming in. I'm hesitant to remove COMPILE_TEST
+because Greg specifically requested its inclusion in v7 [1].
+Also it seems beneficial to get some build coverage before
+ARCH_GOOGLE is officially added to the tree.
+Greg, could you clarify?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/i2c/busses/i2c-exynos5.c | 41 ++++++++------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
+[1] https://lore.kernel.org/linux-usb/2025112144-claw-recolor-49c3@gregkh/
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 9c1c5f3c09f6..fcc062910497 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -903,23 +903,20 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.retries = 3;
- 
- 	i2c->dev = &pdev->dev;
--	i2c->clk = devm_clk_get(&pdev->dev, "hsi2c");
--	if (IS_ERR(i2c->clk)) {
--		dev_err(&pdev->dev, "cannot get clock\n");
--		return -ENOENT;
--	}
-+	i2c->clk = devm_clk_get_prepared(&pdev->dev, "hsi2c");
-+	if (IS_ERR(i2c->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->clk), "cannot get clock\n");
- 
--	i2c->pclk = devm_clk_get_optional(&pdev->dev, "hsi2c_pclk");
--	if (IS_ERR(i2c->pclk)) {
-+	i2c->pclk = devm_clk_get_optional_prepared(&pdev->dev, "hsi2c_pclk");
-+	if (IS_ERR(i2c->pclk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->pclk),
- 				     "cannot get pclk");
--	}
- 
--	ret = clk_prepare_enable(i2c->pclk);
-+	ret = clk_enable(i2c->pclk);
- 	if (ret)
- 		return ret;
- 
--	ret = clk_prepare_enable(i2c->clk);
-+	ret = clk_enable(i2c->clk);
- 	if (ret)
- 		goto err_pclk;
- 
-@@ -958,35 +955,18 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 
- 	exynos5_i2c_reset(i2c);
- 
--	ret = i2c_add_adapter(&i2c->adap);
--	if (ret < 0)
--		goto err_clk;
-+	ret = devm_i2c_add_adapter(&pdev->dev, &i2c->adap);
- 
- 	platform_set_drvdata(pdev, i2c);
- 
--	clk_disable(i2c->clk);
--	clk_disable(i2c->pclk);
--
--	return 0;
--
-  err_clk:
--	clk_disable_unprepare(i2c->clk);
-+	clk_disable(i2c->clk);
- 
-  err_pclk:
--	clk_disable_unprepare(i2c->pclk);
-+	clk_disable(i2c->pclk);
- 	return ret;
- }
- 
--static void exynos5_i2c_remove(struct platform_device *pdev)
--{
--	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
--
--	i2c_del_adapter(&i2c->adap);
--
--	clk_unprepare(i2c->clk);
--	clk_unprepare(i2c->pclk);
--}
--
- static int exynos5_i2c_suspend_noirq(struct device *dev)
- {
- 	struct exynos5_i2c *i2c = dev_get_drvdata(dev);
-@@ -1036,7 +1016,6 @@ static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
- 
- static struct platform_driver exynos5_i2c_driver = {
- 	.probe		= exynos5_i2c_probe,
--	.remove		= exynos5_i2c_remove,
- 	.driver		= {
- 		.name	= "exynos5-hsi2c",
- 		.pm	= pm_sleep_ptr(&exynos5_i2c_dev_pm_ops),
--- 
-2.52.0
-
+Thanks,
+Roy
