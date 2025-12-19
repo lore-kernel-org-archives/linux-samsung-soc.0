@@ -1,122 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B6D1F30A9;
-	Fri, 19 Dec 2025 08:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955F23009C8
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Dec 2025 11:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766132356; cv=none; b=PHl1mqZJYNnG67/NoS7Zg+PuOIvsfqiZjqz/c5A9AxqcUiVOFYO+azjITzk0dlBuON37k0MQvbgtIAyMddUt34scmjhNwmj+8GGitelJ2P8KZYeRQdmNEMpgahRJCVS896cgjUqkhxjfvlh37qU3noqgIlRn2B/yutn46G6KjCY=
+	t=1766142018; cv=none; b=iorW9EdvL4SjZMeKqoYU6C+EUfJTYC267KtIb9qSFmnuPY2147frBzp+GHSVFg0rCNJthUFrzMyhflMNLvhYGFEJb5hy5B8qLVGKPeyKsUUcAcY11RATbOilD3AYd0kEpCNhAhxhBVOJMHjphADEXjvn1kbfnjDEbU1IS4iSLHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766132356; c=relaxed/simple;
-	bh=tm6PhD1Tgv4dvgUGUt7t+Wem6rV6UJT3zbZeA09Cmh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h/15nXShrLuKBafnDF5vNTcSSL7RPaGdMIHmrscfoFrjFcCOE3kkkIoz3UdvmZtGiS+ircNODECSCGr0XbQc9qkIo/n7i9ah9Gx7Qmune3Ic++H3xKO68DlR/9Siv/9hJjxAJPuDWFIi7hOjN3OlashLdU42oMqZwOiZTRHcgVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iisKiilH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766142018; c=relaxed/simple;
+	bh=s6x/oEPLhMgTTeO4Ahkv1T1HFAlTv9cJwpa6J77w+kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ae7Da8wpCvBsSqLpeZvQWLF9ign8BCVFIv7gmmNNrX6dEKdwvYhHpYdEvBi71R16ZvTKgOoYjx3RV02x2DjFKrDoiyl0CL/afHapO0YtAwyb41vvdJvsaF1MAzonfIDhGIkki74Slpz6lz6YunmIB+V3NBQlS3sH1oJ13c6I5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E3RCQUie; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iisKiilH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C79C4CEF1;
-	Fri, 19 Dec 2025 08:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766132356;
-	bh=tm6PhD1Tgv4dvgUGUt7t+Wem6rV6UJT3zbZeA09Cmh0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iisKiilHuun461TBZX9FlSuK58CW8xbUm7pFDUCKV5EhK4WRFpAZAOkbSENnh494R
-	 StqfwmXQgS+OaCRFTCkEqHs/oOxxt65w4QSHZIMNGL613a9oo7CNa4QfmSo0Q8o/LU
-	 WwEm8nwG4vq1uiRDqwJa7zy4mCSDGELMilx4LNqbSZQQMEpGb25paSxCVWyJ3VQoKw
-	 kc/YeFOQcozwUJz4jm+gCKtbrcdZWcmymAqs+hn5y5d+Jkzc/5yW4ME+NNhrqp5ogZ
-	 sCxw7hRieDhlbbCihW7ox5Nyl4F9tuzTOp8hBgxDjZNYXq6Eq/4uqdeSxl/wUWeSIL
-	 vmPpnx10oRVSQ==
-Message-ID: <90c00d57-3737-4631-a2e9-8ff2e315db14@kernel.org>
-Date: Fri, 19 Dec 2025 09:19:06 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3RCQUie"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37cef3ccb82so11675721fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Dec 2025 03:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1766142014; x=1766746814; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6x/oEPLhMgTTeO4Ahkv1T1HFAlTv9cJwpa6J77w+kw=;
+        b=E3RCQUietxOXP7mwrpVkirkAmZyYB5jGkDn+okDIuobdu/3I/+kv/BHrC84UdaD6fX
+         jnWLVxeK6bHPUL9HH2Zzjhao5cFZDe3sxqJ3ss+Qiaa1SM/me0Xk86lcIpc/sJtnS6lO
+         h5iB5tLJ5d4XfJbb4+YDd5dEewhapAmT2GKHQFY0mJnA1XHe1hT3rQa8j+C6A+bSy2i5
+         go5zcmBHO+f221QHYG6tuAVhU/uWDkYLZOf0dsWn9Ob2K5txcMXMkvYwJoWQPCjahJcD
+         GgohEK6aAoVXC9FMJ5648+A31Ail3IITdrrEiN1HM0NBgrl/BRaVEmtEF4qf7MRWnqcu
+         o9Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766142014; x=1766746814;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s6x/oEPLhMgTTeO4Ahkv1T1HFAlTv9cJwpa6J77w+kw=;
+        b=o0xn0KWPtEPQ63v0zaoa98EDGVdB3vkWkGteB24akq+qqeXxytRd4n+lXjcuTcY/5w
+         mNmmXg82mvdp+KQGLSb0jB4SynxlEESadDv0JBSDpUv35Q+Yq1KyHOpqnTNLb3lc7RYd
+         GOdd7QVPJRVlxyFUv6p4KiyYD2uW/NmoUn3lUWRQpPENoT4dZOMcvnY0plFTmPnmG0D+
+         oCNnD5VDGA+mgM1xZgftuT8vsig0k2S4fGy1/sgWtmulfQBfc851uCTlY1pjlrv6HN7z
+         2fF9EYU4XU4wYteCQjBqzjK9EpssinYILYK1IEppkE96Zfc2vHgs+2I0/xyRz5gOuAS2
+         46Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN3OfIkfhu5Ivbdn8XfYLSsyFf8GDUgAaNwri3t06zt+M9HVL+68WW+jXWGjNgHUmnzJJbr0sXb9bWww/xwlD1xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YypkF5uWfTQlsF7C4GwQ936wlyJ9hQVpVhQwAm0/5Xbj3p8sR6q
+	s66B4i9+agPtwa8HecyDgnCzD6CpjjqbaTfu7SV5n8Gf9edBxi4WJbi4xuYstiBM7DwDvQ9PY9J
+	fjr8XcrT69rNv+V4ixmhCumtwyCQy3mdmJr2oqXZ2ew==
+X-Gm-Gg: AY/fxX6zq5qPqiKPKAX81Bibp6EZGOhyFDK8anSrE7MNbBulQ+YUifiyuAzv7+fiQv2
+	Ie0iW2PDh/mwqGOxcQh7yfDV8Ve/zteB+xH6T+uI/r5XXImVCKM6BO08KAD7SUcAllhvCeTcW0f
+	Wdfh9rbPOOTJdI7MMkuKGPNcKbHFr5FXl7HRFquedvof60SXI225UyVv1JxsZsSg5w7rUNs/KmR
+	AhqN0BGMyZLnt5XuZjXro4rKAP212v+qHiHa6PwZEb7IoRDrfGm+xQkDMjJoP8NzC7XnZPr
+X-Google-Smtp-Source: AGHT+IEttooMjctn9PTkIuV8f3vwHQovTQjSbQYqje1s67e6BNM0jsY/HxweNA+t464KEMm/FbSoYdRYmcWx72TwOXs=
+X-Received: by 2002:a05:651c:211f:b0:380:c72:d495 with SMTP id
+ 38308e7fff4ca-381216e11c8mr8642701fa.32.1766142013519; Fri, 19 Dec 2025
+ 03:00:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: usb: maxim,max33359: Add supply
- property for vbus
-To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20251218-max77759-charger-v2-0-2b259980a686@google.com>
- <20251218-max77759-charger-v2-2-2b259980a686@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251218-max77759-charger-v2-2-2b259980a686@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1765885807-186577-1-git-send-email-shawn.lin@rock-chips.com>
+ <CGME20251218182343eucas1p2d8e8c97da2f3abdecd0a2f54b06c10cf@eucas1p2.samsung.com>
+ <1765885807-186577-13-git-send-email-shawn.lin@rock-chips.com> <75e28c6b-c62c-4c84-9b88-6bc8902b8c5b@samsung.com>
+In-Reply-To: <75e28c6b-c62c-4c84-9b88-6bc8902b8c5b@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 19 Dec 2025 11:59:37 +0100
+X-Gm-Features: AQt7F2oURQ4eEyNd-d-X-XErN-cMe4gNff2U9XSWa8nAnD2DQAQhIueK-BGrKpk
+Message-ID: <CAPDyKFpfU5Qxutx9WTz=4H0mbsvfsScWvTDi1KqP1Ab5_iaAjA@mail.gmail.com>
+Subject: Re: [PATCH v3 12/12] mmc: dw_mmc: Remove struct dw_mci_slot
+To: Shawn Lin <shawn.lin@rock-chips.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 18/12/2025 23:49, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
-> 
-> Add a regulator supply property for vbus. This notifies the regulator
-> provider to source vbus when Type-C operates in Source power mode,
-> while turn off sourcing vbus when operating in Sink mode or
-> disconnected.
-> 
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> ---
->  Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+On Thu, 18 Dec 2025 at 19:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> On 16.12.2025 12:50, Shawn Lin wrote:
+> > This patch sets struct dw_mci as mmc_host's private data by
+> > copying struct dw_mci passing to dw_mci_probe() in order to
+> > achieve with mminimal changes. Then we remove slot everywhere.
+> >
+> > Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>
+> This patch landed in today's linux-next as commit 926311cf3361 ("mmc:
+> dw_mmc: Remove struct dw_mci_slot"). In my tests I found that it breaks
+> DW-MMC driver operation on Hardkernel's Odroid-HC1 board. This is a bit
+> strange, as it works fine on other, similar, Exynos5422 based Odroid
+> boards. On Odroid-HC1 no MMC card is detected at all after this patch. I
+> briefly checked the code and I don't see anything suspicious besides
+> this host vs. local_host structure copying... Reverting $subject patch
+> on top of linux-next fixes this issue.
 
+Indeed that copying looks suspicious. In principle we end up with two
+different data structures for the struct dw_mci host, as the callers
+of dw_mci_probe() have already allocated one that they may operate
+upon too.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Instead of doing it like $subject patch implements, the allocation
+should be done only once, upfront by the callers of dw_mci_probe().
 
-Best regards,
-Krzysztof
+That said, I am dropping the $subject patch for now from my next branch.
+
+Shawn, please re-work the code according to the above. Even if that
+doesn't fix the problem, it's still the right thing to do.
+
+[...]
+
+Kind regards
+Uffe
