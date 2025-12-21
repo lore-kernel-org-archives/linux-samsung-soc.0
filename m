@@ -1,149 +1,118 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6589627FD71
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Dec 2025 09:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7F4219FC;
+	Sun, 21 Dec 2025 07:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766222057; cv=none; b=cSKqzPu2vKB4XMaHWSIes1IfPJ28QUhY6Ol2rDKFGjeCsPVbncrDoZIcNJOiYP5X+iDm1SVNdYDHnRZhQRB2hbE3Ctgremnon761rq7S1jlFrC40xukq1RRFnlLg1aoJL9KMfFM+Z3KMOOFpeCOkGgQiF/fpfhYjkrMgiSRJbLc=
+	t=1766302382; cv=none; b=X10QZipiG1roYsB9sXe98UlAG/NXIc+5Cu9I+HZ3mN2ek77k6m2WvMMDDwvM6WFtpm1OeCCtG0sr9RMSXBNMs4OKUYKcQ9a4Kv169tmlmGp7UP48vRZtoYaW0toJJ9G0NMH1VwVhtfLy0ohjSIfpTTedtmGKKxJfV9Vtf84yQUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766222057; c=relaxed/simple;
-	bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TDe76f6AG0RKH8cBHzwE1X0vtMRs1AY14Aqqp5GtH0u2ApL+YlszxTwOIY+BQcQe1FuBEuuU2HBzeKxuXvgqS0JgKlMNdqFVdEdGZtfJyLnBw8OXtC6jjip6y3uv5dAzAPWdwp9yvw4WWJCcM/+lfHDXTuoWLCRS+At+nar8gr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vse4xV9n; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1766302382; c=relaxed/simple;
+	bh=acLNH9XZUwJ+/RUGFg15css9I9hbu1oRWu7mAn9c4XA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/O1m9GZTOAgylmIYJYrNr0XcG+XmA1bwazlIj7TDQbXaoHpBsDGDLK9p6z+PWAJI6xQWfcIqblO7ULwT6jvnLbFS18k4ZfujWDZcitXdyV0Ca7gFO8p+/gWuuJBDXfk3+YYGvzdmawEdjk+f+LBzFWcOJc9PCAiPpyQQiYInsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RPk2S39r; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vse4xV9n"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64baaa754c6so1511696a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 20 Dec 2025 01:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766222053; x=1766826853; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-        b=vse4xV9nWGCMitSeF6h3K5bTB0XykDac81ER4edie4CGb0uSfUymnXf1ozLGmQxi1P
-         +mVOu7Ypzb9wUYow6PRc3qGKdr2N8fbfoeRfSzWJR02Lm1tV5h5joU22JNRnUdrGOLJx
-         0JvUT5h9lMf+ud+IfJYSb+9n6hGarE5Cizq22/lGnbv/d4XF/URDSTw51pTCIixfG4pS
-         4DQFgL/5dYb6Sgf150qfTiU7phumMN+w6K6MTOaJxIrmRFt+cRe4qK9hSUowylk6EJwi
-         W7oU9op+v7OMUlhOO5mUbpqlzdvUVVSndf38Epe/HYb2J1dWShYdKg+Tatx3wMbQMbYa
-         7H6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766222053; x=1766826853;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/inw8Dh0i7lSvgEv+rdg7GhciJ8+cE9trn51HAd7CVg=;
-        b=SHmvYzGE4tqXoSqa6tgazaa7/bQKiuIHvimAmKd3vO3o8xTQ3sgxB/Iav2G41k6v/p
-         xXwhwla3TXcvgs1lEIK2mHRW2aaHev6jajMOGakeVnmL24n9nEveCgFle2ZfW4AVKFpo
-         YYKrdiNol7TlBcyeOX4f6NBtL+wnR+zRBqDJfzn1a741F+aBMpRpSoNjjYbp6uzGRKeX
-         cwmnhrRbtxy8VoW71EU7xhW5FXkosU614erX/tnHW6ueYivuEvgtSkdrS5tHncocDngw
-         vkAMIhoyJzhg+xZUqD0cFvny9EMmLs3PWiBW0Qx8+evygxWXUZ4si4JvRUlIUjue2XXM
-         zHSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXqkRp6OuoQIO+t8DH5GMwWQmDqz+oZUqHLpgDX/HfLrxUZoiwYt0mnYqhD+hIBzMBI8I3Qc0zVZ9qylRuJ7+6pA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBLUgnSsWP8aCkgcYRgV80jwxes5jRW669mkOEf2/CdlALAkxK
-	QsHApAxOx6Yn2z4kXKIpo1uoUbKgFf0wNids0kBEpvBAxr5ohkzb4r6zDoOMEDm4G+TMWfEjlMS
-	J2y5GLE0JQ1GrZ3Eht7YVH8AUlICAorATE+RRAG7koA==
-X-Gm-Gg: AY/fxX5yARtP67456cLWd3PfC4oJL5qI6tKkdbRMzWmoF+g6Q3Hr1kO42KzMILD3Q8d
-	RU6pJVcCFSEy41cGPwlzItu05LZnURUdKcLvMUeFdqz7ms2aHGgW0EntA9WYG3o45IVMC9DoUJv
-	0pE/IOKY8xn+ejWrrQ/gPdnyDR2wVxCk8vjproS6lIhp2nuLwyr2BelchABRTonGNBDaDcNch5x
-	ehfZ608TqkBlOgRC5mEZP5AE3sr1o/zkmZTH0E1ZBhR7vW7NXmS6Lst68XL8tAMVCHzUA==
-X-Google-Smtp-Source: AGHT+IEi2oGHsGZXR7le6EPGgQR/lFz5KV5KMMycyOqdS3p5vqm96+TwVWyXCuuGX8CGH2LK41tImG4vOGHehFDZu9k=
-X-Received: by 2002:a05:6402:2806:b0:649:9159:243d with SMTP id
- 4fb4d7f45d1cf-64b8ec9cf53mr5203694a12.22.1766222052663; Sat, 20 Dec 2025
- 01:14:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RPk2S39r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1766302382; x=1797838382;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=acLNH9XZUwJ+/RUGFg15css9I9hbu1oRWu7mAn9c4XA=;
+  b=RPk2S39raFefSgmMNL0y5LirZF3+SeuONNQCzGK4byi/x1LEx9q474cj
+   iW56eXHfAY9AN2Bpk3B8Jw+dT2jY0FxpX9yRi8naVqlpP7FNberdU6jTi
+   FiThVkaBTMVrtAbVi7MuR/IVn4OStNVjPHUm4d6jmx/Yad0/9FFK4+ICE
+   BdaSrVKSy0OLdogdqjxiZMKjuddRQWt3d4L2zlvTSG0WZ+Yam4A2wOe+c
+   +Pmbsh/xUgYzfA3+lLMMmlUJ5OKj4XClExenhPxPyI9Fwl2a+GR61QBxk
+   UV78boy3OrzOrkyeVF0hYFeYz3YWumxzfxT1Y7h5KBN6WtyEmFuW87zpE
+   g==;
+X-CSE-ConnectionGUID: CX1f3As1SsaW36+vJQgT2g==
+X-CSE-MsgGUID: PDiZ2seDSSqobsyt3i42yg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11648"; a="72044553"
+X-IronPort-AV: E=Sophos;i="6.21,164,1763452800"; 
+   d="scan'208";a="72044553"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2025 23:33:01 -0800
+X-CSE-ConnectionGUID: WhT26M+xQ7i3MqpLrDYIvA==
+X-CSE-MsgGUID: /f0OMu86QL+ajuC4w0edDw==
+X-ExtLoop1: 1
+Received: from igk-lkp-server01.igk.intel.com (HELO 8a0c053bdd2a) ([10.211.93.152])
+  by fmviesa003.fm.intel.com with ESMTP; 20 Dec 2025 23:32:56 -0800
+Received: from kbuild by 8a0c053bdd2a with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vXDvx-000000004y0-3IUv;
+	Sun, 21 Dec 2025 07:32:53 +0000
+Date: Sun, 21 Dec 2025 08:31:59 +0100
+From: kernel test robot <lkp@intel.com>
+To: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>,
+	Amit Sunil Dhamne <amitsd@google.com>
+Subject: Re: [PATCH v2 4/5] power: supply: max77759: add charger driver
+Message-ID: <202512210844.O8gAG2p9-lkp@intel.com>
+References: <20251218-max77759-charger-v2-4-2b259980a686@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251114-automatic-clocks-v5-0-efb9202ffcd7@linaro.org>
- <20251114-automatic-clocks-v5-3-efb9202ffcd7@linaro.org> <e402ac33-c23a-46a1-b67e-097eb2ea7752@kernel.org>
-In-Reply-To: <e402ac33-c23a-46a1-b67e-097eb2ea7752@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sat, 20 Dec 2025 09:14:01 +0000
-X-Gm-Features: AQt7F2q9EnqLES2x3fb7MS0OWHPiCmq_EbCvY_7B7i_Ph5AvJoB7PQVDPtGa-S0
-Message-ID: <CADrjBPq2oTz=PomQ08rWgYiQ40ResAUiKg4QVGoYCTYX20dKNA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] clk: samsung: Implement automatic clock gating
- mode for CMUs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251218-max77759-charger-v2-4-2b259980a686@google.com>
 
-Hi Krzysztof,
+Hi Amit,
 
-On Thu, 18 Dec 2025 at 16:06, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 14/11/2025 15:16, Peter Griffin wrote:
-> > Update exynos_arm64_init_clocks() so that it enables the automatic clock
-> > mode bits in the CMU option register if the auto_clock_gate flag and
-> > option_offset fields are set for the CMU. To ensure compatibility with
-> > older DTs (that specified an incorrect CMU reg size), detect this and
-> > fallback to manual clock gate mode as the auto clock mode feature depends
-> > on registers in this area.
-> >
-> > The CMU option register bits are global and effect every clock component in
-> > the CMU, as such clearing the GATE_ENABLE_HWACG bit and setting GATE_MANUAL
-> > bit on every gate register is only required if auto_clock_gate is false.
-> >
-> > Additionally if auto_clock_gate is enabled the dynamic root clock gating
-> > and memclk registers will be configured in the corresponding CMUs sysreg
-> > bank. These registers are exposed via syscon, so the register
-> > samsung_clk_save/restore paths are updated to also take a regmap.
-> >
-> > As many gates for various Samsung SoCs are already exposed in the Samsung
-> > clock drivers a new samsung_auto_clk_gate_ops is implemented. This uses
-> > some CMU debug registers to report whether clocks are enabled or disabled
-> > when operating in automatic mode. This allows
-> > /sys/kernel/debug/clk/clk_summary to still dump the entire clock tree and
-> > correctly report the status of each clock in the system.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > Changes in v3:
-> > - Add missing 'np' func param to kerneldoc in samsung_cmu_register_clocks
-> > (0-DAY CI)
-> >
-> > Changes in v2:
-> > - Fallback to manual clock gate mode for old DTs with incorrect CMU size
-> > (added samsung_is_auto_capable()) (Krzysztof)
-> > - Rename OPT_UNKNOWN bit to OPT_EN_LAYER2_CTRL (Andre)
-> > - Rename OPT_EN_MEM_PM_GATING to OPT_EN_MEM_PWR_GATING (Andre)
-> > - Reverse Option bit definitions LSB -> MSB (Krzysztof)
-> > - Update kerneldoc init_clk_regs comment (Andre)
-> > - Fix space on various comments (Andre)
-> > - Fix regmap typo on samsung_clk_save/restore calls (Andre)
-> > - Include error code in pr_err message (Andre)
-> > - Add macros for dcrg and memclk (Andre)
-> > - Avoid confusing !IS_ERR_OR_NULL(ctx->sysreg) test (Krzysztof)
-> > - Update kerneldoc to mention drcg_offset & memclk_offset are in sysreg (Andre)
-> > - Fix 0-DAY CI randconfig warning (0-DAY CI)
-> > - Update clk-s5pv210 and clk-s3c64xx.c samsung_clk_sleep_init call sites (Peter)
-> > ---
->
-> This does not apply, please rebase entire set:
+kernel test robot noticed the following build warnings:
 
-Sure thing, I just sent a v6 rebased onto next-20251219
+[auto build test WARNING on lee-mfd/for-mfd-fixes]
+[also build test WARNING on sre-power-supply/for-next usb/usb-testing usb/usb-next usb/usb-linus v6.16-rc1 next-20251219]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Just a heads up I hit a regression in serial on linux-next that I bisected to
-24ec03cc5512 ("serial: core: Restore sysfs fwnode information")
+url:    https://github.com/intel-lab-lkp/linux/commits/Amit-Sunil-Dhamne-via-B4-Relay/dt-bindings-mfd-maxim-max77759-add-charger-child-node/20251219-065531
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-fixes
+patch link:    https://lore.kernel.org/r/20251218-max77759-charger-v2-4-2b259980a686%40google.com
+patch subject: [PATCH v2 4/5] power: supply: max77759: add charger driver
+reproduce: (https://download.01.org/0day-ci/archive/20251221/202512210844.O8gAG2p9-lkp@intel.com/reproduce)
 
-It is unrelated to this series, but I guess you may also see this in
-your exynos board farm. Now I have identified the culprit commit I see
-others are also hitting it as well
-https://lore.kernel.org/linux-serial/713aa37f-161d-4f08-9417-d7d2abdcdfd9@sirena.org.uk/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202512210844.O8gAG2p9-lkp@intel.com/
 
-Thanks,
+All warnings (new ones prefixed by >>):
 
-Peter
+   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/translations/zh_CN/how-to.rst references a file that doesn't exist: Documentation/xxx/xxx.rst
+   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/power/supply/maxim,max77759-charger.yaml
+   Warning: arch/riscv/kernel/kexec_image.c references a file that doesn't exist: Documentation/riscv/boot-image-header.rst
+   Warning: drivers/clocksource/timer-armada-370-xp.c references a file that doesn't exist: Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
+   Warning: include/rv/da_monitor.h references a file that doesn't exist: Documentation/trace/rv/da_monitor_synthesis.rst
+   Using alabaster theme
+   ERROR: Cannot find file ./include/linux/pci.h
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
