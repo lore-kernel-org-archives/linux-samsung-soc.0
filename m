@@ -1,67 +1,67 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FE7233D88
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Dec 2025 19:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADBA2BF002
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Dec 2025 19:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766603265; cv=none; b=fn9tKcD53bJ29KQCGF/SP2UUP0vjs0Jir4Hzi+wmT8o0c9aW9SjsFplAHGEtohLxafO/k4/F0ijkqMGKb4nY29/sJLZcblzB3eV095yTUIsILGrJ5YYWGW4op/Xjw6VUrjhm49Ee/m4fHAJlS+INonI6F+HZX4JH2mqiTZVK2J0=
+	t=1766603508; cv=none; b=GoYoBACfmegNHzLzePfFkuCr+DGQbyMxzDTlnAgFOQhrEB6q0K3ODGgmrXtaeVkEP1iQ7Ab8wbH6JOuKNLjZXcs35UHnrPzQIAbIAwNgBrr+PbAsPx3dwTkuZ1ge2m1yDvZZ7XdnYY+lKrhUAM+6S4h9xQotmt1YnIPadPqLXh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766603265; c=relaxed/simple;
-	bh=xGMey4A7iFVHAmrVZuSavckmgLulJhGs63Zh3metjjY=;
+	s=arc-20240116; t=1766603508; c=relaxed/simple;
+	bh=k8Byl028CgHsF3DBvdHOc7E8XGBxj49LJk7WEGiE6aI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jXmXAI5LAGrHC6lSMK1Nz6+Tl/dqw3yDFH8P73/02rO0v89/80zPrFSJFrM6P+iPpbOpn9r554tPa9+R67CpgKFbrZBTMBIvpoF/c+3KEFn1wy18GoQsHYBw4MVg4Y1O/0fb3eh28CBXNr8uP7o9O916pCTp3np7XdbXcwbM+KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jt48wwVz; arc=none smtp.client-ip=74.125.224.46
+	 In-Reply-To:Content-Type; b=kBtG38pl7SbZYT+Ix7lwMoDlymYf9Y4+jZmmjRo+U/NN4Uc30UYIxpmJgrlFJaL8JRXFBoFAF5Jsm9zDCsVrhpk2rspY2z/jp6OUtUYrroClcKpldlLRQ8BbZTDaT2dzrJy+BKxCurwRcF7fPRlTfzCtjvbPQM0JkageT/dE69E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GzfI67hK; arc=none smtp.client-ip=74.125.224.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jt48wwVz"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-64472ea7d18so4143615d50.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Dec 2025 11:07:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GzfI67hK"
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6446c924f9eso5642446d50.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Dec 2025 11:11:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1766603261; x=1767208061; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1766603505; x=1767208305; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NzIVnDZpOLjchy2wgbEcpJaoavN6zFZmqhSGhoRwcq0=;
-        b=jt48wwVzAY30EJsCgsBi7TrUZHYIH4B7dENfIKwBOgf+orFGCMZ9TbGni6VSrbHmdI
-         LPK3rS9lwcDDXS6PnM9tsNqrFgZ7p2KuWtrjQMcqMm//eCk9BKnUomcvLXovIP2xunU2
-         B6SbxvRopOesHK+AkV3hoIJG//jR3l+5+m301qKjGd44VvSJfsthjTX2uhcGj/bSFdIv
-         /RNSYyo8UUlEjlTDCeM13EDgRLXa1Am1Xyvy1AR6PHvQqG9BJn9aCjzvQPJrv6iWzFDk
-         EGY1aznIp1KannV8iZph+snCe15e2bn28pj/gkm5t81hhSPQDlAsc8A5HMnv1mP/5xq9
-         uSfg==
+        bh=oXhnYTRKWSBrdTvGbB7qy2q3xu05EvIJIuYEgLdKQ5w=;
+        b=GzfI67hKYeYlQLM5vk0CbRE07x/BJr8BLGWiDztt24R5JmN8Sy8ahJ2Fsmp0oS3QvX
+         bTvvmZtvmquMg7J9GH1SsZoI9gaff2UIWohHpfzfnTcBCXlRQL3A/eOLV3UZDY5ciGCo
+         I5KMc0ZuR9/W13MeLwgCYErKb95DsS/IMCG7fCHyTXfLyIJ5/1MhkaYB6Pb1vJBh2PIK
+         1fQHKGquv6CVuE0tzGYn7nXdGzECGonkbuc9Rsy/9epAgCtswCfD1CprXbGMWRCzKVpy
+         xm+22BTH3PFgF70Sgwaf78lpb83svr/AJpMWtytRcBWNoSmxwSnc4mL2Be0Hn9Ou6stF
+         AZtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766603261; x=1767208061;
+        d=1e100.net; s=20230601; t=1766603505; x=1767208305;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NzIVnDZpOLjchy2wgbEcpJaoavN6zFZmqhSGhoRwcq0=;
-        b=Dv0v9sf+SRg2He+jEkE7k1UBHQeDNUKv7NrlMatO0p4eklF2oRcD/8DYxUol+ArLXw
-         pCageGwpAPY09HH4VitodXF3uy1v8l7td4LZiQoHTVHW19f44WzjA4VqMjVb+9otPhLg
-         rjFiuG0QLBcQRxhZtF3bG/Q16pbwXti5+OTYcR6+ckUQe/Va746hpSof2V0l0wWBszI0
-         yIGb7VasxqtzxCAnjTAtYvl+O1K2Rc0GHHqZd7rQuIm0aPKN6Bxp4u0/SHTKc/ZKCgI/
-         75uMz1KCYt09rqEKkUndio9HJTg3H9Xa9r8dwYjp2JgP3fY33noOfOClYEv0jxP4R2JP
-         3rzw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/nLvhd7GTDuNPZfasf66otBYZbjMy+jFdfBf7672QkfeydHO0/ozSdnti2ChxoOU9kGkarRxXBiBkpDg1GTjfWQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2xsWC0nHa8PlJNV6L36V8MqnLCu8y59VEXyxAhig53Zm7C/eb
-	58L2GnayzA9pcoWWPIJCWInO+tonQiPNZkcOHfbJg/kKi2HrcKLCZppvK9Bcrm4sCg==
-X-Gm-Gg: AY/fxX5rY1jOOfp8IzjiUKSQN8ZGfwrEPFfqckFgKk4avoAbtOq0E7jGwXnKRzkeelx
-	xzF69sB/UKjt71DjgzIG5LWXCcwB9Gp44d6Wprtd3bNcCF/ugll3+gxY5M200ukHL0XDm2YJvq7
-	esJqwAFL+11dma59yzSX/N+UBQI6r5IZ4vLw8WX8vRd50ExvlXjVtWJVGpEKONXGgN9syf/0WV4
-	bTnqG0X1bS3bQDeGsL5O3P9NdCEIvON4wPRPGDFl3wEClVZyIr6/Sf+hseQCH/ONpiqt7FRdS1q
-	McwjXajPJziPCIQMWFo/qqy7tyKQt52LDExr8zMzjWRcwbHysNcY4tDcfJlFHdZq13C7F6Xb1HO
-	13Hpy+ThP3a0YVnsWqOSxWXrulAQNbt6+1Q0T+HcdSjrF/otLUE5CIcokvcxYhOGUvGoytT3K2g
-	c5k9yiFOyv2mYYhiQZ5x6N8jw1J8ngHRtQ8Uqm41F+CxwlMaY6CWzf46ZF+tE=
-X-Google-Smtp-Source: AGHT+IEY4Bkjt/yYbrhofiHe25t6FYtL51Cgg0/pcmheFBExP5e5Z7qmADlL5vL1uqS/fVBKeLgjpg==
-X-Received: by 2002:a53:bdc5:0:b0:63f:2bc7:7074 with SMTP id 956f58d0204a3-6466a8aba62mr11525267d50.60.1766603261316;
-        Wed, 24 Dec 2025 11:07:41 -0800 (PST)
+        bh=oXhnYTRKWSBrdTvGbB7qy2q3xu05EvIJIuYEgLdKQ5w=;
+        b=YFd3OTZMpq8NGHmuxA49yKFQKtdmHFJ5o/5EM4nz+m7c7z17bbS1D4VFEHxBeo1sFz
+         sRfLTRiqzxploZeDVQT/LAcXx0gc9mwT2YnsPskMU4or77UuIgJhpWmZhFJjGHkcXLe6
+         fZnQLyqP5RuL8rQuLF1gz6JHxNEDLnPbq8PP7pxC2df4T666W3MMTzXFL2LOOMb+h/Ft
+         taWbW4UEbgHPO7LdvhMBnWPl22kNn5oM9SnoLrNgiSstgq0vi5I8RLp3jrD37hUeiVbh
+         9FkRjSLln83s7TakmdR1pSzFJWnI6WcT4z6ICE5WOaFYCHBz5abrht4DMPaDH5UjRQCS
+         8Lhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkD+9vdg6HavjNYOrnejZZ7qQ+WdLsznsUlMElxfdA+fvk3j3wdRJ6l13WuEJmEap93d3DET7sNtB1drtjqq0i3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFsp7YEEzDFxyI6OAw9/nDbZYT4qIhivSwBuFGYuia0Jexcw7W
+	HxCwOIBc8eiQ4efo+Y3PtsbuOUkp6B0c+rtJV+KtYRwsVZ2czX7S88eWTkBgJmtngA==
+X-Gm-Gg: AY/fxX6G0XGCCKllwPh4SVCLc7Hcn8he4EeH4uoIH9QmBUG0Rq5+RnVypx/zk0D2tTn
+	AFMN7XV3vES8PaVmdFVKsHx4QhcfG6Tc2OQBs9ZvsWLbbBEGxwXeupoSPRSsgULUXeqlbSa3w0G
+	Z8RRG93ahS6n35mXManxXtUrroBUOVkIMLQJ+l8G+NOB7K5WEB9f8jKDH0qTF9C/vvw+6g5pQGF
+	9yFHqk7+7NiEiUBariliDCKrxiartb+RUM8OGvlK/aBOHt3PxN+BzzwZyKDJH1SPrczu1NASX+q
+	8dMTs0DJg+JyZDtcB2M+RiDyVwAObcpCuAKdUO6ujSuCGN25YJnn4KhYWHQupahTcNSe5aNFJY1
+	eq3XdYpgXqM0R7xGL/aosD7hYccS9/DzVaIqjixCCVwGKaDdgqK6zn1jGn/ZfsK3Pd1TfPaU+Oo
+	7/GLcKQXp5OOOo6/bvAU+aKDHNiAY1D65bWRdiAs360SDEmfVjXDdel1xwQi4=
+X-Google-Smtp-Source: AGHT+IF4+78/ybW8h2aFs9XZbSKza4sj6Czw5R4tW02KVHwiK1CyevWiPabB7l4R0Pz1pzDMvfJfng==
+X-Received: by 2002:a05:690e:1486:b0:63f:31f7:b956 with SMTP id 956f58d0204a3-6466a898fbbmr15286144d50.27.1766603505319;
+        Wed, 24 Dec 2025 11:11:45 -0800 (PST)
 Received: from ?IPV6:2600:1700:4570:89a0:6872:f79a:c2ff:4f4f? ([2600:1700:4570:89a0:6872:f79a:c2ff:4f4f])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6466a8b16e2sm8621687d50.2.2025.12.24.11.07.39
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6466a81d4e4sm8640178d50.0.2025.12.24.11.11.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Dec 2025 11:07:40 -0800 (PST)
-Message-ID: <c3599851-6e19-4ed9-9ce7-703746b978e7@google.com>
-Date: Wed, 24 Dec 2025 11:07:38 -0800
+        Wed, 24 Dec 2025 11:11:44 -0800 (PST)
+Message-ID: <27d2a9de-487a-409b-8807-d1d3bf9e8ee7@google.com>
+Date: Wed, 24 Dec 2025 11:11:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -89,62 +89,52 @@ Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
 References: <20251218-max77759-charger-v2-0-2b259980a686@google.com>
  <20251218-max77759-charger-v2-1-2b259980a686@google.com>
  <411802b6-517d-497e-bf7b-183e6e6d7a64@kernel.org>
+ <3d156c45-b55d-4ca4-95d6-0d06e067bbdb@kernel.org>
 From: Amit Sunil Dhamne <amitsd@google.com>
 Content-Language: en-US
-In-Reply-To: <411802b6-517d-497e-bf7b-183e6e6d7a64@kernel.org>
+In-Reply-To: <3d156c45-b55d-4ca4-95d6-0d06e067bbdb@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
 
-On 12/19/25 12:17 AM, Krzysztof Kozlowski wrote:
-> On 18/12/2025 23:49, Amit Sunil Dhamne via B4 Relay wrote:
->> From: Amit Sunil Dhamne <amitsd@google.com>
+On 12/23/25 5:32 AM, Krzysztof Kozlowski wrote:
+> On 19/12/2025 09:17, Krzysztof Kozlowski wrote:
+>> On 18/12/2025 23:49, Amit Sunil Dhamne via B4 Relay wrote:
+>>> From: Amit Sunil Dhamne <amitsd@google.com>
+>>>
+>>> The Maxim MAX77759 MFD includes a charger function. Extend the max77759
+>>> binding to include the charger. Also, update the example to include
+>>> charger.
+>>>
+>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>>> ---
+>>>  .../devicetree/bindings/mfd/maxim,max77759.yaml    | 33 ++++++++++++++++++++++
+>>>  1 file changed, 33 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+>>> index 525de9ab3c2b..1cffdf2e5776 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+>>> @@ -37,6 +37,30 @@ properties:
+>>>    nvmem-0:
+>>>      $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
+>>>  
+>>> +  charger:
+>>> +    type: object
+>>> +    description: This is a dual input switch mode battery charger for portable
+>>> +      applications. It supports wired and wireless charging and can operate in
+>>> +      buck and boost mode.
+>>> +
 >>
->> The Maxim MAX77759 MFD includes a charger function. Extend the max77759
->> binding to include the charger. Also, update the example to include
->> charger.
+>> I do not see any improvements, so same comment: this should be folded
+>> into the parent.
 >>
->> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->> ---
->>  .../devicetree/bindings/mfd/maxim,max77759.yaml    | 33 ++++++++++++++++++++++
->>  1 file changed, 33 insertions(+)
+>> Please read DTS 101 slides or writing bindings or any other talks...
 >>
->> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
->> index 525de9ab3c2b..1cffdf2e5776 100644
->> --- a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
->> @@ -37,6 +37,30 @@ properties:
->>    nvmem-0:
->>      $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
->>  
->> +  charger:
->> +    type: object
->> +    description: This is a dual input switch mode battery charger for portable
->> +      applications. It supports wired and wireless charging and can operate in
->> +      buck and boost mode.
->> +
->
-> I do not see any improvements, so same comment: this should be folded
-> into the parent.
+> No responses to my emails for a few days,so I assume discussion is done
+> and I mark it as changes requested in patchwork.
 
-I misunderstood the folding comment for merging the charger binding into
-mfd.
-
-
-> Please read DTS 101 slides or writing bindings or any other talks...
-
-This gives a lot more context. Thanks for the pointer. I also reviewed a
-few recently merged mfd (with charger being a cell) patches as well.
-
-I realize that you're asking me to remove the charger node and re-anchor
-its properties to the pmic mfd device. I will update it in the next
-revision.
-
-
-BR,
-
-Amit
+Yes please. Sorry about the delay.
 
 >
 > Best regards,
