@@ -1,68 +1,68 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AC0330308
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Dec 2025 12:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314DE32FA20
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Dec 2025 12:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766838279; cv=none; b=jwU5QfhL77BieQDOUzlJbEc16mw39uvaH7ptmjZ7u+MpjYW8lXUb2pllk6oQ1ISO6yMJOADnC21PWjxgiorjBWT849sezS1adB5RjEWjFAv4/vPPpxAeiyLQD+IsDmN4rbRazjtG2dpt2owjOlOm2ZCtxhGZwOKysjMJW+CM+DU=
+	t=1766838280; cv=none; b=eywCB3e7O5NR5D77n2LN6RKemeSxjiYkZm4UBnKY8UjgpF2uKclae3B0viIetr8Ei3XcOHGZnF4yuFulqerEfsFaIpK32ci2VPhe6eWmtlKQP10AhOyXjreunAIcuIdcxUuTuKWW92UMWzQc4UIYbiQrF95AM2rUKfwN7xdWMrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766838279; c=relaxed/simple;
-	bh=ZETZajMfvd5Cj7AwABnaIbo8YXi84LCz2hhmRM9mv6I=;
+	s=arc-20240116; t=1766838280; c=relaxed/simple;
+	bh=yZZkGzvYwGQerFFmscbOyxyRbKuF5tXIu+UVibCOYp0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jatBGavV8eYW9oZ5wV5GFDoSyGg2Q/CZ5TajLy6MJ9qS5uedjQSlYQqn7BT9InDyCaWE/XKY+jjlPdl+4cmUmTyQZ+kLVvPvonzx+zvZuUSzj3WHm0Kf8wolhVjptmpal+qo+XCGaXbjcx/fsKV4vp35u2K6fQ+eI8LwsZsmGd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JVdSOk3v; arc=none smtp.client-ip=209.85.208.47
+	 In-Reply-To:To:Cc; b=bVq0D1Ja3QIRL9HXx8XCofz4XPyd5kDhKjP/9nUqtyCco5mZpc491mCn+XpLfCwF51oxrA5XTNw3+EFd6pT7g9n75RKLoyKcLW9zz+eU88FaYT+YOKfJeS2JDMOGg6hHaZNpigwfUmjZczuc08eUIgnO5yRqfkEZwM5ou3H1anw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V6yf4uXg; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JVdSOk3v"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64d2c50f0d6so8166742a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Dec 2025 04:24:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V6yf4uXg"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64b9d01e473so10537787a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Dec 2025 04:24:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1766838273; x=1767443073; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1766838272; x=1767443072; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ydYm6Jwl4gZ6fxTGOTSVWGkOP7GwrBDA3cOK9JtPOwA=;
-        b=JVdSOk3vCMomAwy8cm71LE1sMdttZxiV6D9ZzAACcub7eaQ252VliCAxzqQrCPeezu
-         GLNKu3vWJNb6omFnwI8kXbNCaZpexqVadyvlqn+7V0bLHxxziUa0d1urTvxGHNSWqMCn
-         7vpkNm502YsFg6w/dDiIlLPrvImSHLbfZ0vFOR79xW3rHhWiTda4cAw7yoiIsB+DWWCG
-         TXW8uIWkzjS4R9YDX6mFDsrFFl2KTi/+Z3ixRRh4UaaUSU7OC3HAI34kNArNsVaz49d0
-         eQiO4p81sPLfAJN44j5/zHIyjeZ1iJNb0HTxLRGd2dFaP5yiZb998QS1b5g8p2I4+byl
-         TZww==
+        bh=KYTDA1f3xrFUlmoHbXpxr5Q98/BstkNpIFscwqGCaCw=;
+        b=V6yf4uXgSwJK2t1T/+ycUtBzwSiMYjNlu8UW/rEr05EneSZe8HLEppeNHQFnocUDN1
+         IHtz6oJHlSM/9xl93c+bQl2dSzb0uHQX6jQ9jyGsJAzKXfjRbX63itIcm32Gf22nUxG5
+         cNfx9o7ATeJoRUxp4BOtGEd1bCBeGPf9IFofTObDXB3AvPrA30YPhjA/sCOiPFrSPVjU
+         M0S/rLX61A8qUJr9Ms4d8RVNgEq6vvy3hn1BLGMNYMgi/L4mvFpGbwRUYXUlDw5lJ+YP
+         BfxyDgThEN73oApkusMnMaVsocsUdsbPyrZuh2PHohUxJR4DOg40uI+W9i4DuG2WIZhs
+         S6xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766838273; x=1767443073;
+        d=1e100.net; s=20230601; t=1766838272; x=1767443072;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ydYm6Jwl4gZ6fxTGOTSVWGkOP7GwrBDA3cOK9JtPOwA=;
-        b=wITG64eXQjlP8CePk+/CNY4MlOuWpY77//t+icTvSIJzFdRaNLcElZ/ulCl3SyMXuG
-         zZe/B06p+msLDEXNcRfAUGWWtweLBhZq9BO7G4+wGUdbAbVLvf/SUBrH9/7cgBIVWzbF
-         dhCEtIGcQaLeXd/N06UNZ/0tZPN2H0lZAEASLcRZPtWNUYTQMXHfDpD8PCnKMEk8IRWh
-         nJ3jlsQPmsOAj5Diwm9ww5oO0OX2h8aA866xnZKkfdzov1mG4PBZR6azcKBconIY0ib/
-         NkDlVY65DnCMRfHmn4ikea5dsb5GLlowMt+8EW0XVkrA2JTP7MdkiUDnU64wXKbGlcHa
-         gCPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjl4GglQXEVOtvl+LI1i0F/SyWAMhnZd8J6aPq3FCOXz80AGCf3oZPmr64Nfe7z4hDvZgrPTf+e7tMFT2iUnT+Ig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOO1AR0p50xwQct+2fd7j10/mIVMKkNnKE9KjvMgkFqgGixN6b
-	VgtaBDxHo7V/T8FrchoFIGMHTmCSwJZDhl0s7qBsZdJwGG5kH+FVPpHTI/SFn7SeeSQ=
-X-Gm-Gg: AY/fxX67V8QgEZVN2qvXLxixOnYGmg0L4onYBCSRCDPIC5ZEeuLzVeXdUHDGMHkwBcC
-	++PuWdUa+O3ExgJsYYgnDleuOAj6Rd5vCeYA3BmAqnIzYHQl+q+5qOF6pDf6MFMh5rdVmekRdgR
-	2qAzFAZAN/57Vh+nzupMNwf6nZPllQx+NxKnRzmbvKbUUt8cxtYAOqGkhOtdAj/YnnOzlfj4/Db
-	n2cVHFnevnXVu55RsDKWDMCtdV7XiU8bojSqfEK4EsWlrFKvOG9R3/gznpunETL80PRPxkZRSpu
-	aE6q6FcboyN1tsxNACIFEL2WWobLlUPeZEf1SdHPQCRWKjDtdr6XgFkiFo0784UfRnAbDPyT6XX
-	7/k39H/F9SPi6cG+TyrcUmE1WQWEQ3yVcLnYvX7br1hc9Q65RgzOhEuWJRaX4Scg6tYK1dJDgSz
-	4INaD6K1NkZnkke/2VS96RkQDJ083k5knbL/VXvEvNIQvgNpHiiZLR1UVGXYp6H3kjPvA9yxdPm
-	fMBDg==
-X-Google-Smtp-Source: AGHT+IGmVBStv7QqUeeTdiGjFu04kQuUG0+cc+BTzhSqsOpYCHbA58GXVMsLwp+XBrPv+6vtCMAYWg==
-X-Received: by 2002:a05:6402:4414:b0:64b:70cd:ac2c with SMTP id 4fb4d7f45d1cf-64b8ede3550mr23179595a12.32.1766838273410;
-        Sat, 27 Dec 2025 04:24:33 -0800 (PST)
+        bh=KYTDA1f3xrFUlmoHbXpxr5Q98/BstkNpIFscwqGCaCw=;
+        b=jqjlUraME5i62+moqkP5wYcpOUsJAydQw0kbKy1oYJVesBwUIOQGnBQ1cv+LfIc64q
+         mgF/MYHjN9GbklO8axHnn4ZkuCP/0g+96E9Ckej/ugVV2YcFphff2wkRY2IRA9QER08j
+         Y0Onco46np4WwgXRDYbIPQ93QHUS+Db6ot4HAqzAdS3ZN0vTDD3E6wpUQQ4VCcFnRAbq
+         R/ulSr7HXOASeYET/4ERVwP8UBHK97zQnHw/sOuGzHmEPOu//JOJ6CqYMGfDA+ukOFfH
+         NAIJxyUber4PhcNm1ADqDkH7riWU2eXRGohhJQOLFOQgXGz5+UPbYHrVC9fiLYA5pvOr
+         eIEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiyET10FAXxCJHiqLcrWu65CpWa4UhIYZqF0yDcv/AhA2xfNk54Bk2g1P5puZaFSHY68QWd47bFN0pQgfN/jKdiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQliNjJglKBoXIoX1jZowEQlcXuBu6kj108CZ/xnZGvQtzx4E9
+	EP8KRIRXYpq+vcZdGHywZnO7hlQvZakGkiKz/mM54miUIetPBoZ7FocRQrvR9pmETdQ=
+X-Gm-Gg: AY/fxX5gQSipGlJhavTohkjvVwBnd/c3VKIKKreEH2CJvw77SsnPw71ER0hpKpeqw5v
+	Ji6Jr1buyW8+a1Uaw25c6hhblorXnGbOrfQ+vCMgAQVUp5fnzpthqJrpzVa0CKiT553bhsDGEcA
+	q5bpYIluzzDhxNDxoxaZYnnqxHDp0SRT7x0IM2VHBMLt/XUYIg8wD5519nknrfCZoy5v3PJvIjT
+	3fkCJVI2KdyoW0b4QcuHJ4Gr0vMw0gAzr5D7LZ58jFHeB8aogcaDAu3f0t41t3bgaJAci//bDJi
+	aSb+AyjQ0SShWx83gd/b58oe7UaWEnCL+FiHTsAKBIft1Ox23Zwn7IK6po0jvLf9f3vu6Sqq+F9
+	/OtsDaZtObsVRzrev8Vc0vwdI5Vkw/lT4KQhl7IxY+DOdWctS6tmbWQcJtJXrhyGu+NBc2jdZmH
+	4O1zllH3+5K+yukR8iRrvHO0m8dmFn3oxQzd5X2j+XPU2hQgxabLSal5qPsm8Cpf9M3ph5XYjIh
+	DYwi5L7ZX6UkIeC
+X-Google-Smtp-Source: AGHT+IGgiv1HVmk75u4Im5qnyRJ6RKDBgwSFPIpeF98k10F/dq7PBbFCXsLWgPngt64eHj70jeEAyg==
+X-Received: by 2002:a05:6402:2809:b0:647:9380:103c with SMTP id 4fb4d7f45d1cf-64b8e94d9d4mr29763953a12.13.1766838272181;
+        Sat, 27 Dec 2025 04:24:32 -0800 (PST)
 Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b916adc61sm25932659a12.31.2025.12.27.04.24.32
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64b916adc61sm25932659a12.31.2025.12.27.04.24.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Dec 2025 04:24:33 -0800 (PST)
+        Sat, 27 Dec 2025 04:24:31 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Sat, 27 Dec 2025 12:24:32 +0000
-Subject: [PATCH v5 10/21] regulator: add REGULATOR_LINEAR_VRANGE macro
+Date: Sat, 27 Dec 2025 12:24:31 +0000
+Subject: [PATCH v5 09/21] mfd: sec: Add support for S2MPG11 PMIC via ACPM
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251227-s2mpg1x-regulators-v5-10-0c04b360b4c9@linaro.org>
+Message-Id: <20251227-s2mpg1x-regulators-v5-9-0c04b360b4c9@linaro.org>
 References: <20251227-s2mpg1x-regulators-v5-0-0c04b360b4c9@linaro.org>
 In-Reply-To: <20251227-s2mpg1x-regulators-v5-0-0c04b360b4c9@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -89,43 +89,1007 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-REGULATOR_LINEAR_VRANGE is similar to REGULATOR_LINEAR_RANGE, but
-allows a more natural declaration of a voltage range for a regulator,
-in that it expects the minimum and maximum values as voltages rather
-than as selectors.
+Add support for Samsung's S2MPG11 PMIC, which is a Power Management IC
+for mobile applications with buck converters, various LDOs, power
+meters, NTC thermistor inputs, and additional GPIO interfaces. It
+typically complements an S2MPG10 PMIC in a main/sub configuration as
+the sub-PMIC.
 
-Using voltages arguably makes this macro easier to use by drivers and
-code using it can become easier to read compared to
-REGULATOR_LINEAR_RANGE.
+Like S2MPG10, communication is not via I2C, but via the Samsung ACPM
+firmware.
+
+While at it, we can also switch to asynchronous probe, which helps with
+probe performance, as the drivers for s2mpg10 and s2mpg11 can probe in
+parallel.
+
+Note: The firmware uses the ACPM channel ID and the Speedy channel ID
+to select the PMIC address. Since these are firmware properties, they
+can not be retrieved from DT, but instead are deducted from the
+compatible for now.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 ---
-While this commit doesn't introduce any users, the upcoming s2mpg10 and
-s2mpg11 drivers are using it.
+Note: checkpatch suggests to update MAINTAINERS, but the new file is
+covered already due to using a wildcard.
+
+v5:
+- rebase
+- one MFD cell per PMIC, not per PMIC rail (Mark)
+- enable PROBE_PREFER_ASYNCHRONOUS
+
+v4:
+- rebase against next-20251121
 
 v3:
-- new patch
----
- include/linux/regulator/driver.h | 5 +++++
- 1 file changed, 5 insertions(+)
+- mention NTC thermistor inputs in commit message
+- one instance per actual rail, not per rail type (LDO or buck)
 
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 978cf593b6624228fe1fd9c2a3e186b53ef172f8..977755db64c6dfaea7246067eab0d9a2971caa01 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -53,6 +53,11 @@ enum regulator_detection_severity {
- #define REGULATOR_LINEAR_RANGE(_min_uV, _min_sel, _max_sel, _step_uV)	\
- 	LINEAR_RANGE(_min_uV, _min_sel, _max_sel, _step_uV)
+v2:
+- mention GPIOs in commit message
+---
+ drivers/mfd/sec-acpm.c              | 171 +++++++++++++-
+ drivers/mfd/sec-common.c            |  17 +-
+ drivers/mfd/sec-irq.c               |  85 ++++++-
+ include/linux/mfd/samsung/core.h    |   1 +
+ include/linux/mfd/samsung/irq.h     | 105 +++++++++
+ include/linux/mfd/samsung/s2mpg11.h | 434 ++++++++++++++++++++++++++++++++++++
+ 6 files changed, 807 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mfd/sec-acpm.c b/drivers/mfd/sec-acpm.c
+index 36622069a7885c9b5fc74329efec34e1e4bcc106..537ea65685bfebae205a09a9650c162721833286 100644
+--- a/drivers/mfd/sec-acpm.c
++++ b/drivers/mfd/sec-acpm.c
+@@ -13,6 +13,7 @@
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/rtc.h>
+ #include <linux/mfd/samsung/s2mpg10.h>
++#include <linux/mfd/samsung/s2mpg11.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -216,6 +217,155 @@ static const struct regmap_config s2mpg10_regmap_config_meter = {
+ 	.cache_type = REGCACHE_FLAT,
+ };
  
-+/* Initialize struct linear_range using voltages, not selectors */
-+#define REGULATOR_LINEAR_VRANGE(_offs_uV, _min_uV, _max_uV, _step_uV)	\
-+	LINEAR_RANGE(_min_uV, ((_min_uV) - (_offs_uV)) / (_step_uV),	\
-+		     ((_max_uV) - (_offs_uV)) / (_step_uV), _step_uV)
++static const struct regmap_range s2mpg11_common_registers[] = {
++	regmap_reg_range(0x00, 0x02), /* CHIP_ID_S, INT, INT_MASK */
++	regmap_reg_range(0x0a, 0x0c), /* Speedy control */
++	regmap_reg_range(0x1a, 0x27), /* Debug */
++};
 +
- /**
-  * struct regulator_ops - regulator operations.
-  *
++static const struct regmap_range s2mpg11_common_ro_registers[] = {
++	regmap_reg_range(0x00, 0x01), /* CHIP_ID_S, INT */
++	regmap_reg_range(0x25, 0x27), /* Debug */
++};
++
++static const struct regmap_range s2mpg11_common_nonvolatile_registers[] = {
++	regmap_reg_range(0x00, 0x00), /* CHIP_ID_S */
++	regmap_reg_range(0x02, 0x02), /* INT_MASK */
++	regmap_reg_range(0x0a, 0x0c), /* Speedy control */
++};
++
++static const struct regmap_range s2mpg11_common_precious_registers[] = {
++	regmap_reg_range(0x01, 0x01), /* INT */
++};
++
++static const struct regmap_access_table s2mpg11_common_wr_table = {
++	.yes_ranges = s2mpg11_common_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_common_registers),
++	.no_ranges = s2mpg11_common_ro_registers,
++	.n_no_ranges = ARRAY_SIZE(s2mpg11_common_ro_registers),
++};
++
++static const struct regmap_access_table s2mpg11_common_rd_table = {
++	.yes_ranges = s2mpg11_common_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_common_registers),
++};
++
++static const struct regmap_access_table s2mpg11_common_volatile_table = {
++	.no_ranges = s2mpg11_common_nonvolatile_registers,
++	.n_no_ranges = ARRAY_SIZE(s2mpg11_common_nonvolatile_registers),
++};
++
++static const struct regmap_access_table s2mpg11_common_precious_table = {
++	.yes_ranges = s2mpg11_common_precious_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_common_precious_registers),
++};
++
++static const struct regmap_config s2mpg11_regmap_config_common = {
++	.name = "common",
++	.reg_bits = ACPM_ADDR_BITS,
++	.val_bits = 8,
++	.max_register = S2MPG11_COMMON_SPD_DEBUG4,
++	.wr_table = &s2mpg11_common_wr_table,
++	.rd_table = &s2mpg11_common_rd_table,
++	.volatile_table = &s2mpg11_common_volatile_table,
++	.precious_table = &s2mpg11_common_precious_table,
++	.num_reg_defaults_raw = S2MPG11_COMMON_SPD_DEBUG4 + 1,
++	.cache_type = REGCACHE_FLAT,
++};
++
++static const struct regmap_range s2mpg11_pmic_registers[] = {
++	regmap_reg_range(0x00, 0x5a), /* All PMIC registers */
++	regmap_reg_range(0x5c, 0xb7), /* All PMIC registers */
++};
++
++static const struct regmap_range s2mpg11_pmic_ro_registers[] = {
++	regmap_reg_range(0x00, 0x05), /* INTx */
++	regmap_reg_range(0x0c, 0x0d), /* STATUS OFFSRC */
++	regmap_reg_range(0x98, 0x98), /* GPIO input */
++};
++
++static const struct regmap_range s2mpg11_pmic_nonvolatile_registers[] = {
++	regmap_reg_range(0x06, 0x0b), /* INTxM */
++};
++
++static const struct regmap_range s2mpg11_pmic_precious_registers[] = {
++	regmap_reg_range(0x00, 0x05), /* INTx */
++};
++
++static const struct regmap_access_table s2mpg11_pmic_wr_table = {
++	.yes_ranges = s2mpg11_pmic_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_pmic_registers),
++	.no_ranges = s2mpg11_pmic_ro_registers,
++	.n_no_ranges = ARRAY_SIZE(s2mpg11_pmic_ro_registers),
++};
++
++static const struct regmap_access_table s2mpg11_pmic_rd_table = {
++	.yes_ranges = s2mpg11_pmic_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_pmic_registers),
++};
++
++static const struct regmap_access_table s2mpg11_pmic_volatile_table = {
++	.no_ranges = s2mpg11_pmic_nonvolatile_registers,
++	.n_no_ranges = ARRAY_SIZE(s2mpg11_pmic_nonvolatile_registers),
++};
++
++static const struct regmap_access_table s2mpg11_pmic_precious_table = {
++	.yes_ranges = s2mpg11_pmic_precious_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_pmic_precious_registers),
++};
++
++static const struct regmap_config s2mpg11_regmap_config_pmic = {
++	.name = "pmic",
++	.reg_bits = ACPM_ADDR_BITS,
++	.val_bits = 8,
++	.max_register = S2MPG11_PMIC_LDO_SENSE2,
++	.wr_table = &s2mpg11_pmic_wr_table,
++	.rd_table = &s2mpg11_pmic_rd_table,
++	.volatile_table = &s2mpg11_pmic_volatile_table,
++	.precious_table = &s2mpg11_pmic_precious_table,
++	.num_reg_defaults_raw = S2MPG11_PMIC_LDO_SENSE2 + 1,
++	.cache_type = REGCACHE_FLAT,
++};
++
++static const struct regmap_range s2mpg11_meter_registers[] = {
++	regmap_reg_range(0x00, 0x3e), /* Meter config */
++	regmap_reg_range(0x40, 0x8a), /* Meter data */
++	regmap_reg_range(0x8d, 0x9c), /* Meter data */
++};
++
++static const struct regmap_range s2mpg11_meter_ro_registers[] = {
++	regmap_reg_range(0x40, 0x9c), /* Meter data */
++};
++
++static const struct regmap_access_table s2mpg11_meter_wr_table = {
++	.yes_ranges = s2mpg11_meter_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_meter_registers),
++	.no_ranges = s2mpg11_meter_ro_registers,
++	.n_no_ranges = ARRAY_SIZE(s2mpg11_meter_ro_registers),
++};
++
++static const struct regmap_access_table s2mpg11_meter_rd_table = {
++	.yes_ranges = s2mpg11_meter_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_meter_registers),
++};
++
++static const struct regmap_access_table s2mpg11_meter_volatile_table = {
++	.yes_ranges = s2mpg11_meter_ro_registers,
++	.n_yes_ranges = ARRAY_SIZE(s2mpg11_meter_ro_registers),
++};
++
++static const struct regmap_config s2mpg11_regmap_config_meter = {
++	.name = "meter",
++	.reg_bits = ACPM_ADDR_BITS,
++	.val_bits = 8,
++	.max_register = S2MPG11_METER_LPF_DATA_NTC7_2,
++	.wr_table = &s2mpg11_meter_wr_table,
++	.rd_table = &s2mpg11_meter_rd_table,
++	.volatile_table = &s2mpg11_meter_volatile_table,
++	.num_reg_defaults_raw = S2MPG11_METER_LPF_DATA_NTC7_2 + 1,
++	.cache_type = REGCACHE_FLAT,
++};
++
+ struct sec_pmic_acpm_shared_bus_context {
+ 	const struct acpm_handle *acpm;
+ 	unsigned int acpm_chan_id;
+@@ -364,10 +514,12 @@ static int sec_pmic_acpm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap_pmic))
+ 		return PTR_ERR(regmap_pmic);
+ 
+-	regmap = sec_pmic_acpm_regmap_init(dev, shared_ctx, SEC_PMIC_ACPM_ACCESSTYPE_RTC,
+-					   pdata->regmap_cfg_rtc, true);
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
++	if (pdata->regmap_cfg_rtc) {
++		regmap = sec_pmic_acpm_regmap_init(dev, shared_ctx, SEC_PMIC_ACPM_ACCESSTYPE_RTC,
++						   pdata->regmap_cfg_rtc, true);
++		if (IS_ERR(regmap))
++			return PTR_ERR(regmap);
++	}
+ 
+ 	regmap = sec_pmic_acpm_regmap_init(dev, shared_ctx, SEC_PMIC_ACPM_ACCESSTYPE_METER,
+ 					   pdata->regmap_cfg_meter, true);
+@@ -399,8 +551,18 @@ static const struct sec_pmic_acpm_platform_data s2mpg10_data = {
+ 	.regmap_cfg_meter = &s2mpg10_regmap_config_meter,
+ };
+ 
++static const struct sec_pmic_acpm_platform_data s2mpg11_data = {
++	.device_type = S2MPG11,
++	.acpm_chan_id = 2,
++	.speedy_channel = 1,
++	.regmap_cfg_common = &s2mpg11_regmap_config_common,
++	.regmap_cfg_pmic = &s2mpg11_regmap_config_pmic,
++	.regmap_cfg_meter = &s2mpg11_regmap_config_meter,
++};
++
+ static const struct of_device_id sec_pmic_acpm_of_match[] = {
+ 	{ .compatible = "samsung,s2mpg10-pmic", .data = &s2mpg10_data, },
++	{ .compatible = "samsung,s2mpg11-pmic", .data = &s2mpg11_data, },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, sec_pmic_acpm_of_match);
+@@ -408,6 +570,7 @@ MODULE_DEVICE_TABLE(of, sec_pmic_acpm_of_match);
+ static struct platform_driver sec_pmic_acpm_driver = {
+ 	.driver = {
+ 		.name = "sec-pmic-acpm",
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 		.pm = pm_sleep_ptr(&sec_pmic_pm_ops),
+ 		.of_match_table = sec_pmic_acpm_of_match,
+ 	},
+diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
+index 0021f9ae8484fd0afc2e47c813a953c91fa38546..bd8b5f9686892b286a953909c6d3c72e1ae85199 100644
+--- a/drivers/mfd/sec-common.c
++++ b/drivers/mfd/sec-common.c
+@@ -49,6 +49,12 @@ static const struct mfd_cell s2mpg10_devs[] = {
+ 	MFD_CELL_OF("s2mpg10-gpio", NULL, NULL, 0, 0, "samsung,s2mpg10-gpio"),
+ };
+ 
++static const struct mfd_cell s2mpg11_devs[] = {
++	MFD_CELL_NAME("s2mpg11-meter"),
++	MFD_CELL_NAME("s2mpg11-regulator"),
++	MFD_CELL_OF("s2mpg11-gpio", NULL, NULL, 0, 0, "samsung,s2mpg11-gpio"),
++};
++
+ static const struct resource s2mps11_rtc_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(S2MPS11_IRQ_RTCA0, "alarm"),
+ };
+@@ -104,8 +110,13 @@ static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
+ 	unsigned int val;
+ 
+ 	/* For s2mpg1x, the revision is in a different regmap */
+-	if (sec_pmic->device_type == S2MPG10)
++	switch (sec_pmic->device_type) {
++	case S2MPG10:
++	case S2MPG11:
+ 		return;
++	default:
++		break;
++	}
+ 
+ 	/* For each device type, the REG_ID is always the first register */
+ 	if (!regmap_read(sec_pmic->regmap_pmic, S2MPS11_REG_ID, &val))
+@@ -211,6 +222,10 @@ int sec_pmic_probe(struct device *dev, int device_type, unsigned int irq,
+ 		sec_devs = s2mpg10_devs;
+ 		num_sec_devs = ARRAY_SIZE(s2mpg10_devs);
+ 		break;
++	case S2MPG11:
++		sec_devs = s2mpg11_devs;
++		num_sec_devs = ARRAY_SIZE(s2mpg11_devs);
++		break;
+ 	case S2MPS11X:
+ 		sec_devs = s2mps11_devs;
+ 		num_sec_devs = ARRAY_SIZE(s2mps11_devs);
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index 11a56154d36d251d40b40e91da514db0faa15ae3..47425deae5871ce97363d4c8addf510678fe9813 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -11,6 +11,7 @@
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/irq.h>
+ #include <linux/mfd/samsung/s2mpg10.h>
++#include <linux/mfd/samsung/s2mpg11.h>
+ #include <linux/mfd/samsung/s2mps11.h>
+ #include <linux/mfd/samsung/s2mps14.h>
+ #include <linux/mfd/samsung/s2mpu02.h>
+@@ -79,6 +80,64 @@ static const struct regmap_irq s2mpg10_pmic_irqs[] = {
+ 	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH7, 5, S2MPG10_IRQ_PWR_WARN_CH7_MASK),
+ };
+ 
++static const struct regmap_irq s2mpg11_irqs[] = {
++	REGMAP_IRQ_REG(S2MPG11_COMMON_IRQ_PMIC, 0, S2MPG11_COMMON_INT_SRC_PMIC),
++	/* No documentation or other reference for remaining bits */
++	REGMAP_IRQ_REG(S2MPG11_COMMON_IRQ_UNUSED, 0, GENMASK(7, 1)),
++};
++
++static const struct regmap_irq s2mpg11_pmic_irqs[] = {
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWRONF, 0, S2MPG11_IRQ_PWRONF_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWRONR, 0, S2MPG11_IRQ_PWRONR_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PIF_TIMEOUT_MIF, 0, S2MPG11_IRQ_PIF_TIMEOUT_MIF_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PIF_TIMEOUTS, 0, S2MPG11_IRQ_PIF_TIMEOUTS_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_WTSR, 0, S2MPG11_IRQ_WTSR_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_SPD_ABNORMAL_STOP, 0, S2MPG11_IRQ_SPD_ABNORMAL_STOP_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_SPD_PARITY_ERR, 0, S2MPG11_IRQ_SPD_PARITY_ERR_MASK),
++
++	REGMAP_IRQ_REG(S2MPG11_IRQ_140C, 1, S2MPG11_IRQ_INT140C_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_120C, 1, S2MPG11_IRQ_INT120C_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_TSD, 1, S2MPG11_IRQ_TSD_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_WRST, 1, S2MPG11_IRQ_WRST_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_CYCLE_DONE, 1, S2MPG11_IRQ_NTC_CYCLE_DONE_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PMETER_OVERF, 1, S2MPG11_IRQ_PMETER_OVERF_MASK),
++
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B1S, 2, S2MPG11_IRQ_OCP_B1S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B2S, 2, S2MPG11_IRQ_OCP_B2S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B3S, 2, S2MPG11_IRQ_OCP_B3S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B4S, 2, S2MPG11_IRQ_OCP_B4S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B5S, 2, S2MPG11_IRQ_OCP_B5S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B6S, 2, S2MPG11_IRQ_OCP_B6S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B7S, 2, S2MPG11_IRQ_OCP_B7S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B8S, 2, S2MPG11_IRQ_OCP_B8S_MASK),
++
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B9S, 3, S2MPG11_IRQ_OCP_B9S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_B10S, 3, S2MPG11_IRQ_OCP_B10S_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_BDS, 3, S2MPG11_IRQ_OCP_BDS_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_BAS, 3, S2MPG11_IRQ_OCP_BAS_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_OCP_BBS, 3, S2MPG11_IRQ_OCP_BBS_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_WLWP_ACC, 3, S2MPG11_IRQ_WLWP_ACC_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_SPD_SRP_PKT_RST, 3, S2MPG11_IRQ_SPD_SRP_PKT_RST_MASK),
++
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH0, 4, S2MPG11_IRQ_PWR_WARN_CH0_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH1, 4, S2MPG11_IRQ_PWR_WARN_CH1_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH2, 4, S2MPG11_IRQ_PWR_WARN_CH2_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH3, 4, S2MPG11_IRQ_PWR_WARN_CH3_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH4, 4, S2MPG11_IRQ_PWR_WARN_CH4_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH5, 4, S2MPG11_IRQ_PWR_WARN_CH5_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH6, 4, S2MPG11_IRQ_PWR_WARN_CH6_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_PWR_WARN_CH7, 4, S2MPG11_IRQ_PWR_WARN_CH7_MASK),
++
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH0, 5, S2MPG11_IRQ_NTC_WARN_CH0_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH1, 5, S2MPG11_IRQ_NTC_WARN_CH1_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH2, 5, S2MPG11_IRQ_NTC_WARN_CH2_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH3, 5, S2MPG11_IRQ_NTC_WARN_CH3_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH4, 5, S2MPG11_IRQ_NTC_WARN_CH4_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH5, 5, S2MPG11_IRQ_NTC_WARN_CH5_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH6, 5, S2MPG11_IRQ_NTC_WARN_CH6_MASK),
++	REGMAP_IRQ_REG(S2MPG11_IRQ_NTC_WARN_CH7, 5, S2MPG11_IRQ_NTC_WARN_CH7_MASK),
++};
++
+ static const struct regmap_irq s2mps11_irqs[] = {
+ 	REGMAP_IRQ_REG(S2MPS11_IRQ_PWRONF, 0, S2MPS11_IRQ_PWRONF_MASK),
+ 	REGMAP_IRQ_REG(S2MPS11_IRQ_PWRONR, 0, S2MPS11_IRQ_PWRONR_MASK),
+@@ -186,7 +245,7 @@ static const struct regmap_irq s5m8767_irqs[] = {
+ 	REGMAP_IRQ_REG(S5M8767_IRQ_WTSR, 2, S5M8767_IRQ_WTSR_MASK),
+ };
+ 
+-/* All S2MPG10 interrupt sources are read-only and don't require clearing */
++/* All S2MPG1x interrupt sources are read-only and don't require clearing */
+ static const struct regmap_irq_chip s2mpg10_irq_chip = {
+ 	.name = "s2mpg10",
+ 	.status_base = S2MPG10_COMMON_INT,
+@@ -205,6 +264,24 @@ static const struct regmap_irq_chip s2mpg10_irq_chip_pmic = {
+ 	.num_irqs = ARRAY_SIZE(s2mpg10_pmic_irqs),
+ };
+ 
++static const struct regmap_irq_chip s2mpg11_irq_chip = {
++	.name = "s2mpg11",
++	.status_base = S2MPG11_COMMON_INT,
++	.mask_base = S2MPG11_COMMON_INT_MASK,
++	.num_regs = 1,
++	.irqs = s2mpg11_irqs,
++	.num_irqs = ARRAY_SIZE(s2mpg11_irqs),
++};
++
++static const struct regmap_irq_chip s2mpg11_irq_chip_pmic = {
++	.name = "s2mpg11-pmic",
++	.status_base = S2MPG11_PMIC_INT1,
++	.mask_base = S2MPG11_PMIC_INT1M,
++	.num_regs = 6,
++	.irqs = s2mpg11_pmic_irqs,
++	.num_irqs = ARRAY_SIZE(s2mpg11_pmic_irqs),
++};
++
+ static const struct regmap_irq_chip s2mps11_irq_chip = {
+ 	.name = "s2mps11",
+ 	.irqs = s2mps11_irqs,
+@@ -303,6 +380,11 @@ static struct regmap_irq_chip_data *sec_irq_init_s2mpg1x(struct sec_pmic_dev *se
+ 		chained_irq_chip = &s2mpg10_irq_chip_pmic;
+ 		chained_pirq = S2MPG10_COMMON_IRQ_PMIC;
+ 		break;
++	case S2MPG11:
++		irq_chip = &s2mpg11_irq_chip;
++		chained_irq_chip = &s2mpg11_irq_chip_pmic;
++		chained_pirq = S2MPG11_COMMON_IRQ_PMIC;
++		break;
+ 	default:
+ 		return dev_err_ptr_probe(sec_pmic->dev, -EINVAL, "Unsupported device type %d\n",
+ 					 sec_pmic->device_type);
+@@ -339,6 +421,7 @@ struct regmap_irq_chip_data *sec_irq_init(struct sec_pmic_dev *sec_pmic)
+ 		sec_irq_chip = &s2mps14_irq_chip;
+ 		break;
+ 	case S2MPG10:
++	case S2MPG11:
+ 		return sec_irq_init_s2mpg1x(sec_pmic);
+ 	case S2MPS11X:
+ 		sec_irq_chip = &s2mps11_irq_chip;
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index c7c3c8cd8d5f99ef0cc3188e1c3b49031f4750f2..4480c631110a6924bedb2d3a307a4fa7ddb2c87d 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -40,6 +40,7 @@ enum sec_device_type {
+ 	S2DOS05,
+ 	S2MPA01,
+ 	S2MPG10,
++	S2MPG11,
+ 	S2MPS11X,
+ 	S2MPS13X,
+ 	S2MPS14X,
+diff --git a/include/linux/mfd/samsung/irq.h b/include/linux/mfd/samsung/irq.h
+index 8402a5f8e18ab62b4bec89541d785442674adee0..6eab95de6fa8376e114dc5b347e61552a595331f 100644
+--- a/include/linux/mfd/samsung/irq.h
++++ b/include/linux/mfd/samsung/irq.h
+@@ -166,6 +166,111 @@ enum s2mpg10_irq {
+ 	S2MPG10_IRQ_NR,
+ };
+ 
++enum s2mpg11_common_irq {
++	/* Top-level (common) block */
++	S2MPG11_COMMON_IRQ_PMIC,
++	S2MPG11_COMMON_IRQ_UNUSED,
++};
++
++enum s2mpg11_irq {
++	/* PMIC */
++	S2MPG11_IRQ_PWRONF,
++	S2MPG11_IRQ_PWRONR,
++	S2MPG11_IRQ_PIF_TIMEOUT_MIF,
++	S2MPG11_IRQ_PIF_TIMEOUTS,
++	S2MPG11_IRQ_WTSR,
++	S2MPG11_IRQ_SPD_ABNORMAL_STOP,
++	S2MPG11_IRQ_SPD_PARITY_ERR,
++#define S2MPG11_IRQ_PWRONF_MASK			BIT(0)
++#define S2MPG11_IRQ_PWRONR_MASK			BIT(1)
++#define S2MPG11_IRQ_PIF_TIMEOUT_MIF_MASK	BIT(3)
++#define S2MPG11_IRQ_PIF_TIMEOUTS_MASK		BIT(4)
++#define S2MPG11_IRQ_WTSR_MASK			BIT(5)
++#define S2MPG11_IRQ_SPD_ABNORMAL_STOP_MASK	BIT(6)
++#define S2MPG11_IRQ_SPD_PARITY_ERR_MASK		BIT(7)
++
++	S2MPG11_IRQ_140C,
++	S2MPG11_IRQ_120C,
++	S2MPG11_IRQ_TSD,
++	S2MPG11_IRQ_WRST,
++	S2MPG11_IRQ_NTC_CYCLE_DONE,
++	S2MPG11_IRQ_PMETER_OVERF,
++#define S2MPG11_IRQ_INT140C_MASK	BIT(0)
++#define S2MPG11_IRQ_INT120C_MASK	BIT(1)
++#define S2MPG11_IRQ_TSD_MASK		BIT(2)
++#define S2MPG11_IRQ_WRST_MASK		BIT(5)
++#define S2MPG11_IRQ_NTC_CYCLE_DONE_MASK	BIT(6)
++#define S2MPG11_IRQ_PMETER_OVERF_MASK	BIT(7)
++
++	S2MPG11_IRQ_OCP_B1S,
++	S2MPG11_IRQ_OCP_B2S,
++	S2MPG11_IRQ_OCP_B3S,
++	S2MPG11_IRQ_OCP_B4S,
++	S2MPG11_IRQ_OCP_B5S,
++	S2MPG11_IRQ_OCP_B6S,
++	S2MPG11_IRQ_OCP_B7S,
++	S2MPG11_IRQ_OCP_B8S,
++#define S2MPG11_IRQ_OCP_B1S_MASK	BIT(0)
++#define S2MPG11_IRQ_OCP_B2S_MASK	BIT(1)
++#define S2MPG11_IRQ_OCP_B3S_MASK	BIT(2)
++#define S2MPG11_IRQ_OCP_B4S_MASK	BIT(3)
++#define S2MPG11_IRQ_OCP_B5S_MASK	BIT(4)
++#define S2MPG11_IRQ_OCP_B6S_MASK	BIT(5)
++#define S2MPG11_IRQ_OCP_B7S_MASK	BIT(6)
++#define S2MPG11_IRQ_OCP_B8S_MASK	BIT(7)
++
++	S2MPG11_IRQ_OCP_B9S,
++	S2MPG11_IRQ_OCP_B10S,
++	S2MPG11_IRQ_OCP_BDS,
++	S2MPG11_IRQ_OCP_BAS,
++	S2MPG11_IRQ_OCP_BBS,
++	S2MPG11_IRQ_WLWP_ACC,
++	S2MPG11_IRQ_SPD_SRP_PKT_RST,
++#define S2MPG11_IRQ_OCP_B9S_MASK		BIT(0)
++#define S2MPG11_IRQ_OCP_B10S_MASK		BIT(1)
++#define S2MPG11_IRQ_OCP_BDS_MASK		BIT(2)
++#define S2MPG11_IRQ_OCP_BAS_MASK		BIT(3)
++#define S2MPG11_IRQ_OCP_BBS_MASK		BIT(4)
++#define S2MPG11_IRQ_WLWP_ACC_MASK		BIT(5)
++#define S2MPG11_IRQ_SPD_SRP_PKT_RST_MASK	BIT(7)
++
++	S2MPG11_IRQ_PWR_WARN_CH0,
++	S2MPG11_IRQ_PWR_WARN_CH1,
++	S2MPG11_IRQ_PWR_WARN_CH2,
++	S2MPG11_IRQ_PWR_WARN_CH3,
++	S2MPG11_IRQ_PWR_WARN_CH4,
++	S2MPG11_IRQ_PWR_WARN_CH5,
++	S2MPG11_IRQ_PWR_WARN_CH6,
++	S2MPG11_IRQ_PWR_WARN_CH7,
++#define S2MPG11_IRQ_PWR_WARN_CH0_MASK	BIT(0)
++#define S2MPG11_IRQ_PWR_WARN_CH1_MASK	BIT(1)
++#define S2MPG11_IRQ_PWR_WARN_CH2_MASK	BIT(2)
++#define S2MPG11_IRQ_PWR_WARN_CH3_MASK	BIT(3)
++#define S2MPG11_IRQ_PWR_WARN_CH4_MASK	BIT(4)
++#define S2MPG11_IRQ_PWR_WARN_CH5_MASK	BIT(5)
++#define S2MPG11_IRQ_PWR_WARN_CH6_MASK	BIT(6)
++#define S2MPG11_IRQ_PWR_WARN_CH7_MASK	BIT(7)
++
++	S2MPG11_IRQ_NTC_WARN_CH0,
++	S2MPG11_IRQ_NTC_WARN_CH1,
++	S2MPG11_IRQ_NTC_WARN_CH2,
++	S2MPG11_IRQ_NTC_WARN_CH3,
++	S2MPG11_IRQ_NTC_WARN_CH4,
++	S2MPG11_IRQ_NTC_WARN_CH5,
++	S2MPG11_IRQ_NTC_WARN_CH6,
++	S2MPG11_IRQ_NTC_WARN_CH7,
++#define S2MPG11_IRQ_NTC_WARN_CH0_MASK	BIT(0)
++#define S2MPG11_IRQ_NTC_WARN_CH1_MASK	BIT(1)
++#define S2MPG11_IRQ_NTC_WARN_CH2_MASK	BIT(2)
++#define S2MPG11_IRQ_NTC_WARN_CH3_MASK	BIT(3)
++#define S2MPG11_IRQ_NTC_WARN_CH4_MASK	BIT(4)
++#define S2MPG11_IRQ_NTC_WARN_CH5_MASK	BIT(5)
++#define S2MPG11_IRQ_NTC_WARN_CH6_MASK	BIT(6)
++#define S2MPG11_IRQ_NTC_WARN_CH7_MASK	BIT(7)
++
++	S2MPG11_IRQ_NR,
++};
++
+ enum s2mps11_irq {
+ 	S2MPS11_IRQ_PWRONF,
+ 	S2MPS11_IRQ_PWRONR,
+diff --git a/include/linux/mfd/samsung/s2mpg11.h b/include/linux/mfd/samsung/s2mpg11.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..66daa3bafa6e55eef5831b50143e8d580bb43f72
+--- /dev/null
++++ b/include/linux/mfd/samsung/s2mpg11.h
+@@ -0,0 +1,434 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2015 Samsung Electronics
++ * Copyright 2020 Google Inc
++ * Copyright 2025 Linaro Ltd.
++ */
++
++#ifndef __LINUX_MFD_S2MPG11_H
++#define __LINUX_MFD_S2MPG11_H
++
++/* Common registers (type 0x000) */
++enum s2mpg11_common_reg {
++	S2MPG11_COMMON_CHIPID,
++	S2MPG11_COMMON_INT,
++	S2MPG11_COMMON_INT_MASK,
++	S2MPG11_COMMON_SPD_CTRL1 = 0x0a,
++	S2MPG11_COMMON_SPD_CTRL2,
++	S2MPG11_COMMON_SPD_CTRL3,
++	S2MPG11_COMMON_MON1SEL = 0x1a,
++	S2MPG11_COMMON_MON2SEL,
++	S2MPG11_COMMON_MONR,
++	S2MPG11_COMMON_DEBUG_CTRL1,
++	S2MPG11_COMMON_DEBUG_CTRL2,
++	S2MPG11_COMMON_DEBUG_CTRL3,
++	S2MPG11_COMMON_DEBUG_CTRL4,
++	S2MPG11_COMMON_DEBUG_CTRL5,
++	S2MPG11_COMMON_DEBUG_CTRL6,
++	S2MPG11_COMMON_TEST_MODE1,
++	S2MPG11_COMMON_SPD_DEBUG1,
++	S2MPG11_COMMON_SPD_DEBUG2,
++	S2MPG11_COMMON_SPD_DEBUG3,
++	S2MPG11_COMMON_SPD_DEBUG4,
++};
++
++/* For S2MPG11_COMMON_INT and S2MPG11_COMMON_INT_MASK */
++#define S2MPG11_COMMON_INT_SRC       GENMASK(2, 0)
++#define S2MPG11_COMMON_INT_SRC_PMIC  BIT(0)
++
++/* PMIC registers (type 0x100) */
++enum s2mpg11_pmic_reg {
++	S2MPG11_PMIC_INT1,
++	S2MPG11_PMIC_INT2,
++	S2MPG11_PMIC_INT3,
++	S2MPG11_PMIC_INT4,
++	S2MPG11_PMIC_INT5,
++	S2MPG11_PMIC_INT6,
++	S2MPG11_PMIC_INT1M,
++	S2MPG11_PMIC_INT2M,
++	S2MPG11_PMIC_INT3M,
++	S2MPG11_PMIC_INT4M,
++	S2MPG11_PMIC_INT5M,
++	S2MPG11_PMIC_INT6M,
++	S2MPG11_PMIC_STATUS1,
++	S2MPG11_PMIC_OFFSRC,
++	S2MPG11_PMIC_COMMON_CTRL1,
++	S2MPG11_PMIC_COMMON_CTRL2,
++	S2MPG11_PMIC_COMMON_CTRL3,
++	S2MPG11_PMIC_MIMICKING_CTRL,
++	S2MPG11_PMIC_B1S_CTRL,
++	S2MPG11_PMIC_B1S_OUT1,
++	S2MPG11_PMIC_B1S_OUT2,
++	S2MPG11_PMIC_B2S_CTRL,
++	S2MPG11_PMIC_B2S_OUT1,
++	S2MPG11_PMIC_B2S_OUT2,
++	S2MPG11_PMIC_B3S_CTRL,
++	S2MPG11_PMIC_B3S_OUT1,
++	S2MPG11_PMIC_B3S_OUT2,
++	S2MPG11_PMIC_B4S_CTRL,
++	S2MPG11_PMIC_B4S_OUT,
++	S2MPG11_PMIC_B5S_CTRL,
++	S2MPG11_PMIC_B5S_OUT,
++	S2MPG11_PMIC_B6S_CTRL,
++	S2MPG11_PMIC_B6S_OUT1,
++	S2MPG11_PMIC_B6S_OUT2,
++	S2MPG11_PMIC_B7S_CTRL,
++	S2MPG11_PMIC_B7S_OUT1,
++	S2MPG11_PMIC_B7S_OUT2,
++	S2MPG11_PMIC_B8S_CTRL,
++	S2MPG11_PMIC_B8S_OUT1,
++	S2MPG11_PMIC_B8S_OUT2,
++	S2MPG11_PMIC_B9S_CTRL,
++	S2MPG11_PMIC_B9S_OUT1,
++	S2MPG11_PMIC_B9S_OUT2,
++	S2MPG11_PMIC_B10S_CTRL,
++	S2MPG11_PMIC_B10S_OUT,
++	S2MPG11_PMIC_BUCKD_CTRL,
++	S2MPG11_PMIC_BUCKD_OUT,
++	S2MPG11_PMIC_BUCKA_CTRL,
++	S2MPG11_PMIC_BUCKA_OUT,
++	S2MPG11_PMIC_BB_CTRL,
++	S2MPG11_PMIC_BB_OUT1,
++	S2MPG11_PMIC_BB_OUT2,
++	S2MPG11_PMIC_BUCK1S_USONIC,
++	S2MPG11_PMIC_BUCK2S_USONIC,
++	S2MPG11_PMIC_BUCK3S_USONIC,
++	S2MPG11_PMIC_BUCK4S_USONIC,
++	S2MPG11_PMIC_BUCK5S_USONIC,
++	S2MPG11_PMIC_BUCK6S_USONIC,
++	S2MPG11_PMIC_BUCK7S_USONIC,
++	S2MPG11_PMIC_BUCK8S_USONIC,
++	S2MPG11_PMIC_BUCK9S_USONIC,
++	S2MPG11_PMIC_BUCK10S_USONIC,
++	S2MPG11_PMIC_BUCKD_USONIC,
++	S2MPG11_PMIC_BUCKA_USONIC,
++	S2MPG11_PMIC_BB_USONIC,
++	S2MPG11_PMIC_L1S_CTRL1,
++	S2MPG11_PMIC_L1S_CTRL2,
++	S2MPG11_PMIC_L2S_CTRL1,
++	S2MPG11_PMIC_L2S_CTRL2,
++	S2MPG11_PMIC_L3S_CTRL,
++	S2MPG11_PMIC_L4S_CTRL,
++	S2MPG11_PMIC_L5S_CTRL,
++	S2MPG11_PMIC_L6S_CTRL,
++	S2MPG11_PMIC_L7S_CTRL,
++	S2MPG11_PMIC_L8S_CTRL,
++	S2MPG11_PMIC_L9S_CTRL,
++	S2MPG11_PMIC_L10S_CTRL,
++	S2MPG11_PMIC_L11S_CTRL,
++	S2MPG11_PMIC_L12S_CTRL,
++	S2MPG11_PMIC_L13S_CTRL,
++	S2MPG11_PMIC_L14S_CTRL,
++	S2MPG11_PMIC_L15S_CTRL,
++	S2MPG11_PMIC_LDO_CTRL1,
++	S2MPG11_PMIC_LDO_DSCH1,
++	S2MPG11_PMIC_LDO_DSCH2,
++	S2MPG11_PMIC_DVS_RAMP1,
++	S2MPG11_PMIC_DVS_RAMP2,
++	S2MPG11_PMIC_DVS_RAMP3,
++	S2MPG11_PMIC_DVS_RAMP4,
++	S2MPG11_PMIC_DVS_RAMP5,
++	S2MPG11_PMIC_DVS_RAMP6,
++	/* Nothing @ 0x5a */
++	S2MPG11_PMIC_DVS_SYNC_CTRL1 = 0x5c,
++	S2MPG11_PMIC_DVS_SYNC_CTRL2,
++	S2MPG11_PMIC_OFF_CTRL1,
++	S2MPG11_PMIC_OFF_CTRL2,
++	S2MPG11_PMIC_OFF_CTRL3,
++	S2MPG11_PMIC_SEQ_CTRL1,
++	S2MPG11_PMIC_SEQ_CTRL2,
++	S2MPG11_PMIC_SEQ_CTRL3,
++	S2MPG11_PMIC_SEQ_CTRL4,
++	S2MPG11_PMIC_SEQ_CTRL5,
++	S2MPG11_PMIC_SEQ_CTRL6,
++	S2MPG11_PMIC_SEQ_CTRL7,
++	S2MPG11_PMIC_SEQ_CTRL8,
++	S2MPG11_PMIC_SEQ_CTRL9,
++	S2MPG11_PMIC_SEQ_CTRL10,
++	S2MPG11_PMIC_SEQ_CTRL11,
++	S2MPG11_PMIC_SEQ_CTRL12,
++	S2MPG11_PMIC_SEQ_CTRL13,
++	S2MPG11_PMIC_SEQ_CTRL14,
++	S2MPG11_PMIC_SEQ_CTRL15,
++	S2MPG11_PMIC_SEQ_CTRL16,
++	S2MPG11_PMIC_SEQ_CTRL17,
++	S2MPG11_PMIC_SEQ_CTRL18,
++	S2MPG11_PMIC_SEQ_CTRL19,
++	S2MPG11_PMIC_SEQ_CTRL20,
++	S2MPG11_PMIC_SEQ_CTRL21,
++	S2MPG11_PMIC_SEQ_CTRL22,
++	S2MPG11_PMIC_SEQ_CTRL23,
++	S2MPG11_PMIC_SEQ_CTRL24,
++	S2MPG11_PMIC_SEQ_CTRL25,
++	S2MPG11_PMIC_SEQ_CTRL26,
++	S2MPG11_PMIC_SEQ_CTRL27,
++	S2MPG11_PMIC_OFF_SEQ_CTRL1,
++	S2MPG11_PMIC_OFF_SEQ_CTRL2,
++	S2MPG11_PMIC_OFF_SEQ_CTRL3,
++	S2MPG11_PMIC_OFF_SEQ_CTRL4,
++	S2MPG11_PMIC_OFF_SEQ_CTRL5,
++	S2MPG11_PMIC_OFF_SEQ_CTRL6,
++	S2MPG11_PMIC_OFF_SEQ_CTRL7,
++	S2MPG11_PMIC_OFF_SEQ_CTRL8,
++	S2MPG11_PMIC_OFF_SEQ_CTRL9,
++	S2MPG11_PMIC_OFF_SEQ_CTRL10,
++	S2MPG11_PMIC_OFF_SEQ_CTRL11,
++	S2MPG11_PMIC_OFF_SEQ_CTRL12,
++	S2MPG11_PMIC_OFF_SEQ_CTRL13,
++	S2MPG11_PMIC_OFF_SEQ_CTRL14,
++	S2MPG11_PMIC_OFF_SEQ_CTRL15,
++	S2MPG11_PMIC_OFF_SEQ_CTRL16,
++	S2MPG11_PMIC_OFF_SEQ_CTRL17,
++	S2MPG11_PMIC_PCTRLSEL1,
++	S2MPG11_PMIC_PCTRLSEL2,
++	S2MPG11_PMIC_PCTRLSEL3,
++	S2MPG11_PMIC_PCTRLSEL4,
++	S2MPG11_PMIC_PCTRLSEL5,
++	S2MPG11_PMIC_PCTRLSEL6,
++	S2MPG11_PMIC_DCTRLSEL1,
++	S2MPG11_PMIC_DCTRLSEL2,
++	S2MPG11_PMIC_DCTRLSEL3,
++	S2MPG11_PMIC_DCTRLSEL4,
++	S2MPG11_PMIC_DCTRLSEL5,
++	S2MPG11_PMIC_GPIO_CTRL1,
++	S2MPG11_PMIC_GPIO_CTRL2,
++	S2MPG11_PMIC_GPIO_CTRL3,
++	S2MPG11_PMIC_GPIO_CTRL4,
++	S2MPG11_PMIC_GPIO_CTRL5,
++	S2MPG11_PMIC_GPIO_CTRL6,
++	S2MPG11_PMIC_GPIO_CTRL7,
++	S2MPG11_PMIC_B2S_OCP_WARN,
++	S2MPG11_PMIC_B2S_OCP_WARN_X,
++	S2MPG11_PMIC_B2S_OCP_WARN_Y,
++	S2MPG11_PMIC_B2S_OCP_WARN_Z,
++	S2MPG11_PMIC_B2S_SOFT_OCP_WARN,
++	S2MPG11_PMIC_B2S_SOFT_OCP_WARN_X,
++	S2MPG11_PMIC_B2S_SOFT_OCP_WARN_Y,
++	S2MPG11_PMIC_B2S_SOFT_OCP_WARN_Z,
++	S2MPG11_PMIC_BUCK_OCP_EN1,
++	S2MPG11_PMIC_BUCK_OCP_EN2,
++	S2MPG11_PMIC_BUCK_OCP_PD_EN1,
++	S2MPG11_PMIC_BUCK_OCP_PD_EN2,
++	S2MPG11_PMIC_BUCK_OCP_CTRL1,
++	S2MPG11_PMIC_BUCK_OCP_CTRL2,
++	S2MPG11_PMIC_BUCK_OCP_CTRL3,
++	S2MPG11_PMIC_BUCK_OCP_CTRL4,
++	S2MPG11_PMIC_BUCK_OCP_CTRL5,
++	S2MPG11_PMIC_BUCK_OCP_CTRL6,
++	S2MPG11_PMIC_BUCK_OCP_CTRL7,
++	S2MPG11_PMIC_PIF_CTRL,
++	S2MPG11_PMIC_BUCK_HR_MODE1,
++	S2MPG11_PMIC_BUCK_HR_MODE2,
++	S2MPG11_PMIC_FAULTOUT_CTRL,
++	S2MPG11_PMIC_LDO_SENSE1,
++	S2MPG11_PMIC_LDO_SENSE2,
++};
++
++/* For S2MPG11_PMIC_PCTRLSELx */
++#define S2MPG11_PCTRLSEL_PWREN           0x1 /* PWREN pin */
++#define S2MPG11_PCTRLSEL_PWREN_TRG       0x2 /* PWREN_TRG bit in MIMICKING_CTRL */
++#define S2MPG11_PCTRLSEL_PWREN_MIF       0x3 /* PWREN_MIF pin */
++#define S2MPG11_PCTRLSEL_PWREN_MIF_TRG   0x4 /* PWREN_MIF_TRG bit in MIMICKING_CTRL */
++#define S2MPG11_PCTRLSEL_AP_ACTIVE_N     0x5 /* ~AP_ACTIVE_N pin */
++#define S2MPG11_PCTRLSEL_AP_ACTIVE_N_TRG 0x6 /* ~AP_ACTIVE_N_TRG bit in MIMICKING_CTRL */
++#define S2MPG11_PCTRLSEL_G3D_EN          0x7 /* G3D_EN pin */
++#define S2MPG11_PCTRLSEL_G3D_EN2         0x8 /* G3D_EN & ~AP_ACTIVE_N pins */
++#define S2MPG11_PCTRLSEL_AOC_VDD         0x9 /* AOC_VDD pin */
++#define S2MPG11_PCTRLSEL_AOC_RET         0xa /* AOC_RET pin */
++#define S2MPG11_PCTRLSEL_UFS_EN          0xb /* UFS_EN pin */
++#define S2MPG11_PCTRLSEL_LDO13S_EN       0xc /* VLDO13S_EN pin */
++
++/* Meter registers (type 0xa00) */
++enum s2mpg11_meter_reg {
++	S2MPG11_METER_CTRL1,
++	S2MPG11_METER_CTRL2,
++	S2MPG11_METER_CTRL3,
++	S2MPG11_METER_CTRL4,
++	S2MPG11_METER_CTRL5,
++	S2MPG11_METER_BUCKEN1,
++	S2MPG11_METER_BUCKEN2,
++	S2MPG11_METER_MUXSEL0,
++	S2MPG11_METER_MUXSEL1,
++	S2MPG11_METER_MUXSEL2,
++	S2MPG11_METER_MUXSEL3,
++	S2MPG11_METER_MUXSEL4,
++	S2MPG11_METER_MUXSEL5,
++	S2MPG11_METER_MUXSEL6,
++	S2MPG11_METER_MUXSEL7,
++	S2MPG11_METER_LPF_C0_0,
++	S2MPG11_METER_LPF_C0_1,
++	S2MPG11_METER_LPF_C0_2,
++	S2MPG11_METER_LPF_C0_3,
++	S2MPG11_METER_LPF_C0_4,
++	S2MPG11_METER_LPF_C0_5,
++	S2MPG11_METER_LPF_C0_6,
++	S2MPG11_METER_LPF_C0_7,
++	S2MPG11_METER_NTC_LPF_C0_0,
++	S2MPG11_METER_NTC_LPF_C0_1,
++	S2MPG11_METER_NTC_LPF_C0_2,
++	S2MPG11_METER_NTC_LPF_C0_3,
++	S2MPG11_METER_NTC_LPF_C0_4,
++	S2MPG11_METER_NTC_LPF_C0_5,
++	S2MPG11_METER_NTC_LPF_C0_6,
++	S2MPG11_METER_NTC_LPF_C0_7,
++	S2MPG11_METER_PWR_WARN0,
++	S2MPG11_METER_PWR_WARN1,
++	S2MPG11_METER_PWR_WARN2,
++	S2MPG11_METER_PWR_WARN3,
++	S2MPG11_METER_PWR_WARN4,
++	S2MPG11_METER_PWR_WARN5,
++	S2MPG11_METER_PWR_WARN6,
++	S2MPG11_METER_PWR_WARN7,
++	S2MPG11_METER_NTC_L_WARN0,
++	S2MPG11_METER_NTC_L_WARN1,
++	S2MPG11_METER_NTC_L_WARN2,
++	S2MPG11_METER_NTC_L_WARN3,
++	S2MPG11_METER_NTC_L_WARN4,
++	S2MPG11_METER_NTC_L_WARN5,
++	S2MPG11_METER_NTC_L_WARN6,
++	S2MPG11_METER_NTC_L_WARN7,
++	S2MPG11_METER_NTC_H_WARN0,
++	S2MPG11_METER_NTC_H_WARN1,
++	S2MPG11_METER_NTC_H_WARN2,
++	S2MPG11_METER_NTC_H_WARN3,
++	S2MPG11_METER_NTC_H_WARN4,
++	S2MPG11_METER_NTC_H_WARN5,
++	S2MPG11_METER_NTC_H_WARN6,
++	S2MPG11_METER_NTC_H_WARN7,
++	S2MPG11_METER_PWR_HYS1,
++	S2MPG11_METER_PWR_HYS2,
++	S2MPG11_METER_PWR_HYS3,
++	S2MPG11_METER_PWR_HYS4,
++	S2MPG11_METER_NTC_HYS1,
++	S2MPG11_METER_NTC_HYS2,
++	S2MPG11_METER_NTC_HYS3,
++	S2MPG11_METER_NTC_HYS4,
++	/* Nothing @ 0x3f */
++	S2MPG11_METER_ACC_DATA_CH0_1 = 0x40,
++	S2MPG11_METER_ACC_DATA_CH0_2,
++	S2MPG11_METER_ACC_DATA_CH0_3,
++	S2MPG11_METER_ACC_DATA_CH0_4,
++	S2MPG11_METER_ACC_DATA_CH0_5,
++	S2MPG11_METER_ACC_DATA_CH0_6,
++	S2MPG11_METER_ACC_DATA_CH1_1,
++	S2MPG11_METER_ACC_DATA_CH1_2,
++	S2MPG11_METER_ACC_DATA_CH1_3,
++	S2MPG11_METER_ACC_DATA_CH1_4,
++	S2MPG11_METER_ACC_DATA_CH1_5,
++	S2MPG11_METER_ACC_DATA_CH1_6,
++	S2MPG11_METER_ACC_DATA_CH2_1,
++	S2MPG11_METER_ACC_DATA_CH2_2,
++	S2MPG11_METER_ACC_DATA_CH2_3,
++	S2MPG11_METER_ACC_DATA_CH2_4,
++	S2MPG11_METER_ACC_DATA_CH2_5,
++	S2MPG11_METER_ACC_DATA_CH2_6,
++	S2MPG11_METER_ACC_DATA_CH3_1,
++	S2MPG11_METER_ACC_DATA_CH3_2,
++	S2MPG11_METER_ACC_DATA_CH3_3,
++	S2MPG11_METER_ACC_DATA_CH3_4,
++	S2MPG11_METER_ACC_DATA_CH3_5,
++	S2MPG11_METER_ACC_DATA_CH3_6,
++	S2MPG11_METER_ACC_DATA_CH4_1,
++	S2MPG11_METER_ACC_DATA_CH4_2,
++	S2MPG11_METER_ACC_DATA_CH4_3,
++	S2MPG11_METER_ACC_DATA_CH4_4,
++	S2MPG11_METER_ACC_DATA_CH4_5,
++	S2MPG11_METER_ACC_DATA_CH4_6,
++	S2MPG11_METER_ACC_DATA_CH5_1,
++	S2MPG11_METER_ACC_DATA_CH5_2,
++	S2MPG11_METER_ACC_DATA_CH5_3,
++	S2MPG11_METER_ACC_DATA_CH5_4,
++	S2MPG11_METER_ACC_DATA_CH5_5,
++	S2MPG11_METER_ACC_DATA_CH5_6,
++	S2MPG11_METER_ACC_DATA_CH6_1,
++	S2MPG11_METER_ACC_DATA_CH6_2,
++	S2MPG11_METER_ACC_DATA_CH6_3,
++	S2MPG11_METER_ACC_DATA_CH6_4,
++	S2MPG11_METER_ACC_DATA_CH6_5,
++	S2MPG11_METER_ACC_DATA_CH6_6,
++	S2MPG11_METER_ACC_DATA_CH7_1,
++	S2MPG11_METER_ACC_DATA_CH7_2,
++	S2MPG11_METER_ACC_DATA_CH7_3,
++	S2MPG11_METER_ACC_DATA_CH7_4,
++	S2MPG11_METER_ACC_DATA_CH7_5,
++	S2MPG11_METER_ACC_DATA_CH7_6,
++	S2MPG11_METER_ACC_COUNT_1,
++	S2MPG11_METER_ACC_COUNT_2,
++	S2MPG11_METER_ACC_COUNT_3,
++	S2MPG11_METER_LPF_DATA_CH0_1,
++	S2MPG11_METER_LPF_DATA_CH0_2,
++	S2MPG11_METER_LPF_DATA_CH0_3,
++	S2MPG11_METER_LPF_DATA_CH1_1,
++	S2MPG11_METER_LPF_DATA_CH1_2,
++	S2MPG11_METER_LPF_DATA_CH1_3,
++	S2MPG11_METER_LPF_DATA_CH2_1,
++	S2MPG11_METER_LPF_DATA_CH2_2,
++	S2MPG11_METER_LPF_DATA_CH2_3,
++	S2MPG11_METER_LPF_DATA_CH3_1,
++	S2MPG11_METER_LPF_DATA_CH3_2,
++	S2MPG11_METER_LPF_DATA_CH3_3,
++	S2MPG11_METER_LPF_DATA_CH4_1,
++	S2MPG11_METER_LPF_DATA_CH4_2,
++	S2MPG11_METER_LPF_DATA_CH4_3,
++	S2MPG11_METER_LPF_DATA_CH5_1,
++	S2MPG11_METER_LPF_DATA_CH5_2,
++	S2MPG11_METER_LPF_DATA_CH5_3,
++	S2MPG11_METER_LPF_DATA_CH6_1,
++	S2MPG11_METER_LPF_DATA_CH6_2,
++	S2MPG11_METER_LPF_DATA_CH6_3,
++	S2MPG11_METER_LPF_DATA_CH7_1,
++	S2MPG11_METER_LPF_DATA_CH7_2,
++	S2MPG11_METER_LPF_DATA_CH7_3,
++	/* Nothing @ 0x8b 0x8c */
++	S2MPG11_METER_LPF_DATA_NTC0_1 = 0x8d,
++	S2MPG11_METER_LPF_DATA_NTC0_2,
++	S2MPG11_METER_LPF_DATA_NTC1_1,
++	S2MPG11_METER_LPF_DATA_NTC1_2,
++	S2MPG11_METER_LPF_DATA_NTC2_1,
++	S2MPG11_METER_LPF_DATA_NTC2_2,
++	S2MPG11_METER_LPF_DATA_NTC3_1,
++	S2MPG11_METER_LPF_DATA_NTC3_2,
++	S2MPG11_METER_LPF_DATA_NTC4_1,
++	S2MPG11_METER_LPF_DATA_NTC4_2,
++	S2MPG11_METER_LPF_DATA_NTC5_1,
++	S2MPG11_METER_LPF_DATA_NTC5_2,
++	S2MPG11_METER_LPF_DATA_NTC6_1,
++	S2MPG11_METER_LPF_DATA_NTC6_2,
++	S2MPG11_METER_LPF_DATA_NTC7_1,
++	S2MPG11_METER_LPF_DATA_NTC7_2,
++};
++
++/* S2MPG11 regulator IDs */
++enum s2mpg11_regulators {
++	S2MPG11_BUCKBOOST,
++	S2MPG11_BUCK1,
++	S2MPG11_BUCK2,
++	S2MPG11_BUCK3,
++	S2MPG11_BUCK4,
++	S2MPG11_BUCK5,
++	S2MPG11_BUCK6,
++	S2MPG11_BUCK7,
++	S2MPG11_BUCK8,
++	S2MPG11_BUCK9,
++	S2MPG11_BUCK10,
++	S2MPG11_BUCKD,
++	S2MPG11_BUCKA,
++	S2MPG11_LDO1,
++	S2MPG11_LDO2,
++	S2MPG11_LDO3,
++	S2MPG11_LDO4,
++	S2MPG11_LDO5,
++	S2MPG11_LDO6,
++	S2MPG11_LDO7,
++	S2MPG11_LDO8,
++	S2MPG11_LDO9,
++	S2MPG11_LDO10,
++	S2MPG11_LDO11,
++	S2MPG11_LDO12,
++	S2MPG11_LDO13,
++	S2MPG11_LDO14,
++	S2MPG11_LDO15,
++	S2MPG11_REGULATOR_MAX,
++};
++
++#endif /* __LINUX_MFD_S2MPG11_H */
 
 -- 
 2.52.0.351.gbe84eed79e-goog
