@@ -1,97 +1,105 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EAB2E3AF1
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Dec 2025 09:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477EF2E2F0E;
+	Wed, 31 Dec 2025 10:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767088588; cv=none; b=hB8u1kBSvM+Hl60TRWxFt3uI39xkutOiTojZHb4LwR62zSkjPKTE7FqW59g8JdswsKVT/Vh/+I4VzLZ0N80i5JfM268u0usMoVhbFGUTCM7Kc85krdGv36Ab0Ra5Oc38EdombyduYng62/OP/XnW/DQUjPtVY1JUo9WnI9pFQ18=
+	t=1767178237; cv=none; b=DgquRv8gF6Qc3ORwceUPJxXR85gBVYkoamqe7iD52N/rmoS290+CeO9xi4vJe+OQsNdBI+APk7TCz17eGdpNbNrTKtm3LMwcPbGaY0tvTp/8Z07akG9GQ3egNZcFXAOdUiicgiiTUXXrc4s3tUuDQzv1Ed23n3lUD9H+oarwpg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767088588; c=relaxed/simple;
-	bh=9CSA4RsITRmIPzLrBNLCxMgAc0tHKBMj5y/0Ba5xFWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AEq4r7dhODfiRbZoL73l+IO3mLbX3nX2JVuiwG3XilO/HyvFDEs3U8qkP18mIkAghPWTbgn8aqB7jsHf5810sOKQESrfMOIeCd4U+uR6FDE1K01yIM3Dx1GkpcJUSafo5v37wCptxgXib/8XZno+NZQZsqxz95eF6N/xk5szgS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a+ilg3ac; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1767178237; c=relaxed/simple;
+	bh=Xx0zceu5WiAjB+oX9KeH/4JL2pr/+tcP2mxgjsJCzmg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=QIefV+BzuFXGXEy0r8kSkW6B5OW9yDKnshfKR8Jl5mmnEikka7utS3mRC/7b/7wYrducdP4Cl3aCp5owXFDjWaXqoNoB3HVMkDHEcd2IQxChzB8siULt66yYrcsL4FmO70af2YjPZnJ6gHOkbGarfVFYwvKD9ppFJ9MvB0dgRj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SsqIb5ow; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a+ilg3ac"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59911cb8c3cso10866224e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Dec 2025 01:56:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1767088585; x=1767693385; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9CSA4RsITRmIPzLrBNLCxMgAc0tHKBMj5y/0Ba5xFWg=;
-        b=a+ilg3acELrwcExbB4NV0uorpuK+m51s6akVganUh+ffFQju+E/1Cm6mA/ZwBjCfgG
-         nCcEgW/2Eq3nZ3sDwgovz0r6vNTpNdjkm+v1dl1xC60hnzWiYzrW3Wy3ps07xrhIcdRY
-         FqSTgUnJNscS33xvchjovQ5+GUUVdICEdTCfN4Y3yhhJLXc0fxyNj8c/ynSlmh6+A3L6
-         cHzrHmFkqpblwJCPXazoos5KHs86hxWlDMkx6HjCQZdGCFh0P2LJoSAy4lMWakcFdzbt
-         lMbaf7oyVUjCZg6w4l/htK5m1hJpmFx4r/qCWSuXQE46hujpii+NwN1vfyCDrWWaGa6k
-         bL3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767088585; x=1767693385;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9CSA4RsITRmIPzLrBNLCxMgAc0tHKBMj5y/0Ba5xFWg=;
-        b=sIsJREp+Wxe/EhHO3bUdoBqvkoBcMsgv1MevwodemJZAv1mYek148hKbwJAFSvxmgs
-         We/zzl8u0wNAxATq9OS8SxAZpke3Rk1qAuWDY7W2Nyws4KAR2kYPLvK01NIVAG+ETP7B
-         HKDjzP1OVqKTC7GEtoiQYg+OWplJ9x1s/lUBaxQsqNBz40rqj4oMdKs0E/YOlqQVkDWd
-         HlBsjolH6mtfCQtiQbmyzbLmfzMdNVpdtRU1qrqF1KQ8vVVE0q5xsoZ7kcegxrcN8x0P
-         t85L4SgCfxWCwZn6ZoMkXZWf1ynXdB1R/ZaquRaC/8/V3/+GVGelvq25ZRbvfipxazXY
-         t0QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVm85fMKFYPFVWQzEKd8Mab0d9mlw44HEF+FtQuxQTGvMbBPOpF9TnvONYwm5WVjTBQPCpg/Bmgk50+gST0xSH5GA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmS1nk1ZKxAIRhj9uEXX9Aq4/CHgNojx5eoqkK62e9OT7pAedT
-	9FxNXeHIv8tsmWDmSLoh47vuxtGrNujO0q4u1zUZfc0HQ9I7ckrPeH1M5tffM1X8bX5ydXSdljh
-	W8RH6BGJOV/mmZ1durWpFhO7xFpotRCC8luryu3aMSQ==
-X-Gm-Gg: AY/fxX54xZbnC4RPGE20DQPUM3GX4S6KTDy/GkxoUXYZt/sVcPqtoJ35+8xJYrh8FeG
-	3kmoGDyWkLScKHWGWESRToasYIvkoe/YY7pC7PJm+VTzx65h8Z7AyhT+cjutVWFvQy4uiLeg4M0
-	9SOtcurAyEiV6VZTaVlKEGGU1BBLLrIelomh/0Vvx5Ob6rjoUXPeLdfcOb/WnlDuPIJHHXHCZ3g
-	DEcG8HqGRKVxLPqCLEec+Asd8x0c/Wzu4DDfdVW9kCl9Deob/0Be1bAx0lrL7ND1tbhN0XfQrTx
-	TKREUpfm6X+x6kio5XUjyDgqlUer
-X-Google-Smtp-Source: AGHT+IGF2+DUuPOWMyxl/m/YE1J+MpsN9z3qB0Mfg4V4PK/uMaSMEjg5JdfAVQd/YzIJO09H45JgrMZiuh+pgS8W7s0=
-X-Received: by 2002:a05:6512:110a:b0:595:909d:1af6 with SMTP id
- 2adb3069b0e04-59a17d579dcmr10690623e87.28.1767088585063; Tue, 30 Dec 2025
- 01:56:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SsqIb5ow"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 85A201A255B;
+	Wed, 31 Dec 2025 10:50:28 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4A06060744;
+	Wed, 31 Dec 2025 10:50:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 52745113B0761;
+	Wed, 31 Dec 2025 11:50:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1767178226; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=o/Z1oWMJuqMZIoKFGfzInyQtaixm68ScowVMHojeTZ4=;
+	b=SsqIb5ow7v/6UFYF34MR3rDUSBx3YczuZw7xKUxdk+tgkyoQgTiXQNv11eRgnwbhpuarKw
+	UeIQgJ1dioQ7o1MXOWuHqmtVIrpWKfvK5sqXw8geFXGwRo1gINFkN+RfKVIvRjG+HRbFNT
+	7RVR5xnIwrJ9zLALAGWwVBqa72bYwfYaH/9s8czYbZ8C97aQMKiEXHKI1WcGf1tsxNi6AW
+	h3tACyEXkQgbWLG61NjtwwWBjENblxG4eY2cmCq9ed9jeUVexoG931bT7Cx9Xt+UXBZdV1
+	d7+IE+kBV+JgFf93zyVPI/DpCiIdUX2tl4nMm0jVJT1oXZ700jLDDOVoRCqavw==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251104112923.143408-1-marco.crivellari@suse.com>
- <CAAofZF4OJi5eEfjhE12RWi6wDU+A9Rghsd2721SxZR4AC08sYg@mail.gmail.com> <CAAQKjZPVi1KHuS4p6G2uAeKMAg=PEbECj7DHW7OYNYLG-S9hmQ@mail.gmail.com>
-In-Reply-To: <CAAQKjZPVi1KHuS4p6G2uAeKMAg=PEbECj7DHW7OYNYLG-S9hmQ@mail.gmail.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 30 Dec 2025 10:56:13 +0100
-X-Gm-Features: AQt7F2oh3vqm2C9AigTf7qyt5vRvEM0_ckvr_DiAVWkRHeGhyvYiTBn7mc558-8
-Message-ID: <CAAofZF5Fi7x0JyyNm=pSh9H=qp7qCH1xawB5Ad6+=-xzwre+Ew@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: hdmi: replace use of system_wq with system_percpu_wq
-To: Inki Dae <daeinki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 31 Dec 2025 11:50:15 +0100
+Message-Id: <DFCCE8SW7MFX.ZOMBZPN1S2NX@bootlin.com>
+Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+ <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+ <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+ <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
+ <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
+ <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
+ <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
+ <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
+ <dianders@chromium.org>, <m.szyprowski@samsung.com>,
+ <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
+ <neil.armstrong@linaro.org>, <rfoss@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v8 01/18] drm/display: bridge_connector: Ensure last
+ bridge determines EDID/modes detection capabilities
+X-Mailer: aerc 0.20.1
+References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
+ <20251217093321.3108939-2-damon.ding@rock-chips.com>
+In-Reply-To: <20251217093321.3108939-2-damon.ding@rock-chips.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Dec 30, 2025 at 6:48=E2=80=AFAM Inki Dae <daeinki@gmail.com> wrote:
+On Wed Dec 17, 2025 at 10:33 AM CET, Damon Ding wrote:
+> When multiple bridges are present, EDID detection capability
+> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
+> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
+> determined by the last bridge in the chain, we handle three cases:
 >
-> Hi,
+> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
+>  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
+>    &drm_bridge_connector.bridge_edid to NULL and set
+>    &drm_bridge_connector.bridge_modes to the later bridge.
+>  - Ensure modes detection capability of the later bridge will not
+>    be ignored.
 >
-> Sorry for late reply. Merged.
+> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
+>  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
+>    &drm_bridge_connector.bridge_modes to NULL and set
+>    &drm_bridge_connector.bridge_edid to the later bridge.
+>  - Although EDID detection capability has higher priority, this
+>    operation is for balance and makes sense.
+>
+> Case 3: the later bridge declares both of them
+>  - Assign later bridge as &drm_bridge_connector.bridge_edid and
+>    and &drm_bridge_connector.bridge_modes to this bridge.
+>  - Just leave transfer of these two capabilities as before.
+>
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi,
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-No problem, thank you!
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
