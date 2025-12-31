@@ -1,128 +1,97 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from mail-4318.protonmail.ch (mail-4318.protonmail.ch [185.70.43.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7906531282E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Dec 2025 11:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C27331CA50;
+	Wed, 31 Dec 2025 12:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767179487; cv=none; b=lPuhVGPp9DF3NgMsDbnXliYK9nGg/cOH58JR/TRD7viu1Ro0RXLFKWYyf2k3cbXcms3XCC9QPk41NF277kLCw1+V1rvtYoMVGYXMptHD+RfUQ+fUwBiKtDQHZ30uytdbWYDnHr8Fa9w5EiVzKnVEwYjeR9UCu7exFJE+7zcbdAA=
+	t=1767184146; cv=none; b=QmlD8N8kfEc8fT+h4aVrKyNH3pZBBZzXB41H2ofAy/4n0/3OJ8hEjk2jrabKQfhJ8uGiYQoDLsposyjfYhCXgfsUxgXmYC3XadQFpz9qFbKWAiMUo4WOX9nwH1nZ1ObsEv1mX32N2+Bcz/ovUnQmHfu61x3Df/wVfuBfHLa9/bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767179487; c=relaxed/simple;
-	bh=MMWC0dLFr7ImsLLBrwRfsSXbM89kIqiNvA29IB0yasY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=d5H4ggDxDQB+nxu1fzMxLqZ36GdHk2N/d02O2pdv/QSY2raVYDG3cwl+uCOqpYkh4lXyQJHKZ/FodNID1Et9IKmI/WKvN4mLxb1K+pvSWdDXzQ/V3tlqn+xUGZLlewLTq2nlfLEoUpwUI8l7jrDn4D9uWVf8oRVfoye70esRneg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SV1z9pfV; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1767184146; c=relaxed/simple;
+	bh=9rLreqkh3KOaBoBE6zwFaHYZmSbkF23wTl1G/WkHYfM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WYhMHNbPzEAGTkLg89pF5mXBWqdv6akzJpfBGR6EyOJQgr6+vlydAAELwlNirFMVgjB/oVfwR6pqLRPWNkLvAB8tx7JAMeyW0EnkUkC1OIbrtoW14DfZeQ8687xDG17GfL+Vju9tQngOyY2Q7ebPmj0mBFpOJ81epHL+Q5GaONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=gW97Na2E; arc=none smtp.client-ip=185.70.43.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SV1z9pfV"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 838ACC1AE22;
-	Wed, 31 Dec 2025 11:10:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E455C60744;
-	Wed, 31 Dec 2025 11:11:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23832113B0764;
-	Wed, 31 Dec 2025 12:11:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1767179480; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=55XhYgANfix4/exU+jGGVTiGXqeuZF3yQcF00ZiG0dM=;
-	b=SV1z9pfVtcvrATQfVDliiBBq97NU2utS5KLqyYqYIEj6QCeA4MJLMV0/aD0g5Kgy2ee3tw
-	veAPFFUoIjkP14Qn16fce692SQjf3ADHMll9fqtbkPG3bp6oQWbpgBpvzE+wWPpZgT+pXV
-	eYO2QQC1jxOxq44S19F4xyBKx0SCOpxb5zQ/ly1kI4hEIm4pb7Sh+yOhXln3rGW02DunPj
-	EJQlHqWuVLbsLvvlhtnaoHXIERp1gRaD4S6ql/3Yjzy47tbZM/cCNTPWXT5qCEu53eNF1P
-	AAve6YLAB9fWQWUp/Yu9yIzJrpJV1l1SZdgRcIuzp8Ez1v7p1prS1R34TIwyLw==
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="gW97Na2E"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
+	s=protonmail2; t=1767184133; x=1767443333;
+	bh=9rLreqkh3KOaBoBE6zwFaHYZmSbkF23wTl1G/WkHYfM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=gW97Na2EOh7XeoR+ZPLRj590d53u8hvmVD5biXySbGbYF8aaTo8wu/pS4/4xzLwzi
+	 5mmO8XPtCeBJz57RtvTSKzDdV7aRQR1RVf1jVv1ys1GEL/wKlt+ORrvVP4hSwQ/+Ij
+	 rrp0cIFFJ5BcUvKcxduCVogMEfVSNuaaMA67x106ReSZSs0S0yewhxnKror9lLcrDs
+	 +MkN27KPRpKWKmBrumZqOHYMWRPfoEtbNY4a7uLb0fgzwXd7Nx0guoMQUe8bGYM3fV
+	 ee1U0WmxIUxJUzGoefq8t8UOQZVKWUBVNLsYMA+E4Fa0jzBonnivbwVl+oVeT4iWM7
+	 S3UxlorkVCk5g==
+Date: Wed, 31 Dec 2025 12:28:50 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>
+From: Alexandru Chimac <alex@chimac.ro>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: samsung: Add exynos9610-wakeup-eint node
+Message-ID: <yB5WFgsxeeqHQgi87UeNPD8K2OlQbWWC6-BovxADBtgusN3n8UOrm7Gi6jz6Th0dsMA9J-LEpx69sWjNmWTH_-jx9r7AgvXNTwR2hQW7-SM=@chimac.ro>
+In-Reply-To: <20251230-dramatic-gregarious-stallion-15bc07@quoll>
+References: <20251228-exynos9610-pinctrl-v2-0-c9bbeee4c54b@chimac.ro> <20251228-exynos9610-pinctrl-v2-2-c9bbeee4c54b@chimac.ro> <20251230-dramatic-gregarious-stallion-15bc07@quoll>
+Feedback-ID: 139133584:user:proton
+X-Pm-Message-ID: 438c4b314bd6f15975c0d8bc145d9e4161d2dfb1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 31 Dec 2025 12:11:08 +0100
-Message-Id: <DFCCU8AN0GZQ.2CYTKKV40JYLI@bootlin.com>
-To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
- <neil.armstrong@linaro.org>, <rfoss@kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v8 04/18] drm/bridge: analogix_dp: Add
- &analogix_dp_plat_data.next_bridge
-Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
- <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
- <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
- <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
- <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
- <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
- <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
- <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
- <dianders@chromium.org>, <m.szyprowski@samsung.com>,
- <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
-X-Mailer: aerc 0.20.1
-References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
- <20251217093321.3108939-5-damon.ding@rock-chips.com>
-In-Reply-To: <20251217093321.3108939-5-damon.ding@rock-chips.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Damon,
-
-On Wed Dec 17, 2025 at 10:33 AM CET, Damon Ding wrote:
-> In order to move the panel/bridge parsing and attachmenet to the
-> Analogix side, add component struct drm_bridge *next_bridge to
-> platform data struct analogix_dp_plat_data.
->
-> The movement makes sense because the panel/bridge should logically
-> be positioned behind the Analogix bridge in the display pipeline.
->
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> ---
->
-> Changes in v4:
-> - Rename the &analogix_dp_plat_data.bridge to
->   &analogix_dp_plat_data.next_bridge
-> ---
->  include/drm/bridge/analogix_dp.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analog=
-ix_dp.h
-> index cf17646c1310..582357c20640 100644
-> --- a/include/drm/bridge/analogix_dp.h
-> +++ b/include/drm/bridge/analogix_dp.h
-> @@ -27,6 +27,7 @@ static inline bool is_rockchip(enum analogix_dp_devtype=
- type)
->  struct analogix_dp_plat_data {
->  	enum analogix_dp_devtype dev_type;
->  	struct drm_panel *panel;
-> +	struct drm_bridge *next_bridge;
->  	struct drm_encoder *encoder;
->  	struct drm_connector *connector;
->  	bool skip_connector;
-
-It took a while to understand why you are adding the next_bridge pointer in
-struct analogix_dp_plat_data instead of struct analogix_dp_device, where it
-would be more natural. I found an answer in patch 16: with current code you
-need to place next_bridge in struct analogix_dp_plat_data because it is
-used by user drivers to attach, and those drivers have no access to struct
-analogix_dp_device. However patch 16 (which looks a very good cleanup BTW)
-next_bridge can be moved to struct analogix_dp_device.
-
-So I'd suggest to move patch 16 before this one if it easily doable, so
-that you can introduce next_bridge in struct analogix_dp_device from the
-beginning. Should that be impossible, you can send a separate patch to move
-next_bridge, after patch 16.
-
+On Tuesday, December 30th, 2025 at 11:51, Krzysztof Kozlowski <krzk@kernel.=
+org> wrote:
+>=20
+>=20
+> On Sun, Dec 28, 2025 at 06:05:52PM +0000, Alexandru Chimac wrote:
+>=20
+> > Add a dedicated compatible for the exynos9610-wakeup-eint node,
+> > which is compatbile with Exynos850's implementation (and the
+> > Exynos7 fallback).
+> >=20
+> > Signed-off-by: Alexandru Chimac alex@chimac.ro
+> > ---
+> > .../devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml |=
+ 2 ++
+> > 1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-=
+wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,p=
+inctrl-wakeup-interrupt.yaml
+> > index f3c433015b12..deb2730855bd 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-=
+interrupt.yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-=
+interrupt.yaml
+> > @@ -48,6 +48,7 @@ properties:
+> > - enum:
+> > - google,gs101-wakeup-eint
+> > - samsung,exynos2200-wakeup-eint
+> > + - samsung,exynos9610-wakeup-eint
+> > - samsung,exynos9810-wakeup-eint
+> > - samsung,exynos990-wakeup-eint
+> > - samsung,exynosautov9-wakeup-eint
+> > @@ -107,6 +108,7 @@ allOf:
+> > contains:
+> > enum:
+> > - samsung,exynos850-wakeup-eint
+> > + - samsung,exynos9610-wakeup-eint
+>=20
+>=20
+> This is not needed. Device has 850 fallback, no?
+It's not required, but I guess it would make the device tree look better. I=
+f this patch isn't to be merged, it doesn't functionally affect anything so=
+ it can just be dropped instead of requiring another patchset revision.
+>=20
+> Best regards,
+> Krzysztof
 Best regards,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Alexandru Chimac
