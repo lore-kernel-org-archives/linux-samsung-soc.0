@@ -1,110 +1,79 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-4318.protonmail.ch (mail-4318.protonmail.ch [185.70.43.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A182F0C48
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Jan 2026 11:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722C919F12A;
+	Fri,  2 Jan 2026 11:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767353212; cv=none; b=YtFIGC5ZxyzfOqfQ91Rg5viGCCRqamgx6hb0KKiAgQhXKEXYaJWDcTLrXTFxuWLz1mcFV3vJwxnfRVbatyNp0PmQgy/aQpPhQHP52DgmSX7mfdyDxj5FLWX2yOXp+fZvsbeSVf0Hk67+h3uBtMu2DQhTQrmUOt8SMbNJXJlEO5o=
+	t=1767353389; cv=none; b=ffWzCYcCUV+s5pZmg4xSKR+Z989j8pdctCe+v6q6rbCnC68Z7nK2AWHkg2XGiAHMdWmkBzmKZkpVvAqsS/WSdRIFht0VWBK3iEdeute8rP1nXbRv5HGlfP+GlxK9Heh6ge1tsxLlXs81od0zNYTvPL5XRVL971jxsomegwVxQcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767353212; c=relaxed/simple;
-	bh=wZCrrZeNgczJ32sMkjccG8DxRkRnphvQU666PCRG8sM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JZUNTIQGeAa/dhKhAaAfnUNRRMwBVcJXSelFmsbTdxbssy5Un7H7tqA56Un3T7PAn9LOEqqf+FU7G2bmgUck4VopVicRZATBoYq0YYcvtKzt8ItLcPAzz2ZyDsUMx9iuamLkVJNp7RbkxFMhSuxlY8Rjx0He5eQ6Oh6NSA6CAnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cc772S5a; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767353389; c=relaxed/simple;
+	bh=5FB+4nW9/S83V6EMTeFaeJC5s//Gh8HdTYG7hCgVka8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HK6x1Fc7ROc8nQoeic2OSODzoKm6dZClALQUGQxU8BPyKiBC4EpNxJo0eVmK9k6gsIIdl7COK+vZqVUBcF3TxbwG329YTtFSIIRXiafwia0JG+Qge6KLexy0b+DsDsP3GjJyOrxy1Tbq6af1fAt7wdWTRvMJEajcIOUFCLiuXtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=re7W3ZXh; arc=none smtp.client-ip=185.70.43.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cc772S5a"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b76b5afdf04so1829785066b.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jan 2026 03:26:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767353209; x=1767958009; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wZCrrZeNgczJ32sMkjccG8DxRkRnphvQU666PCRG8sM=;
-        b=cc772S5a4VMMUdVSNVwm41kkCgYEgXMQr6YIlJKkgaP4LQvrMPOpAi/v0v+JeM8XD2
-         W/8Bh5km53LMoX8TOcrXNvtU93GWDJNk6Ll005AtHiw1rjohlik6X2EKzUpGFWBh9SIV
-         CEpo4mo8H1YBusC3JR+rW5CN/yqvnim3TjoHleMXyORMq0GrzXYwUsasqN8ycpQ0WWFG
-         P/CmA86qaS1CQ6UelBIAWMtW4+V5JPO8diHsyMo+paDrq8S5NIm8J4EcBTwS47SssA5r
-         pGntSTkoAqaeHHVIjQi3fYUbGKUvbWMnTz0dxdf0+XVxRWdzJFonIXUTnWYs5EUMDcfo
-         HMnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767353209; x=1767958009;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wZCrrZeNgczJ32sMkjccG8DxRkRnphvQU666PCRG8sM=;
-        b=rsNR31q2vGHCLiDk0m7SnrNPEbTrqEiuUwhZdPEu/qk/Cqc2Lt/e7E5UFjInofECFC
-         LGdPigD1otWyrzuYZuHAcxlwW+nJYt8qWzcKLTQqdru33R/84SxThG9/qM02lra5wno9
-         FXwcrXGyx90ar8Lo6gHUoLBpCXTsw6qFyuvZx9xuJe2FldFMQ74pzCwaBA2OtScTtH5l
-         49BkcLv/s6K+OMe7HyWUrHXJE/DpGvu4RbYPpQA/wzDwpQhgadNR5IDYS4hSHpOyIcmK
-         36Ed6l3z7+95uiL2p/blq2ABcTXswRaU25o/Hrb7gaesW6HWm98JZ+yiKdlFQ42aA/fV
-         GYdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnBKUXttR1hrjtLdDI6UEIUpuM7yN6m9WRJB2LP2IUP2US6qFLJsknX4Bhi3CmIm7IaYLx4Q+UOBgMAn2yv8oFkA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ7NHVKcDRnGOhvLAHWXPtEsebs4379x8KNxYpKxPhDxlyHLvz
-	NzC54D7xatLcQwFzS8fFurz1Dde3QnfQ8PHg2PTK7XSVzdDJ8NMSt817fXDV0C+R1Ig=
-X-Gm-Gg: AY/fxX5BOxi3sq0UESw8kS2dRPZ58DnpeUjDSUYBIP/6hewJvUN+4Jnc7tPhC57b4xI
-	3OzufdCW4qJ0DT/aT6wGea4fq3HyEwiKQO1AcBUJ1JDB3nbor0NFP2yuBkdYdOSd8mYOKw8cQvd
-	VV1zKEVyuH5vCb1z117hEVt0qiorFT29Le+dzJEXHSQ8Cwn7pqcsd4ZQJ6F3LTHiVg3vi7moAX6
-	gaF/X90EO/j/AFct7mbvtzzZ/e7Qbt2S+W3yx/cPVu8zNyM1oY6c15SWqJAOXYSDzOZIDTEmOJj
-	OiwSPGR8uGixwm+YikTXnK3f1U/b4ix+G7b19uatcVFr7fLyC/ADPXMM0Kis5JG2DndB6hAy3d3
-	0+oZhne3da0YVQhGiDIPG5O+5TJEhVn4SVJMQ2O/RJNOKiusB6v5zIEg/HDlpG45NfILxuucKRa
-	ViT7lbtTMmnTeRFY2jt7FciNN4bw==
-X-Google-Smtp-Source: AGHT+IFb1cSu9KLCyJKAobmw+k0POeGJfgr/xC7uOSmUiVHIv6vit6M7ROfPJPxEhme+Gx1mdZY0qg==
-X-Received: by 2002:a17:907:7e84:b0:b79:fc57:b598 with SMTP id a640c23a62f3a-b8037153443mr3708113166b.36.1767353208658;
-        Fri, 02 Jan 2026 03:26:48 -0800 (PST)
-Received: from salami.lan ([212.129.80.79])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037ab7f7bsm4468179566b.18.2026.01.02.03.26.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Jan 2026 03:26:48 -0800 (PST)
-Message-ID: <4bfcb1420b9684f67bd4b8f583313c1a08a1616d.camel@linaro.org>
-Subject: Re: [PATCH v5 21/21] regulator: s2mps11: enable-gpios is optional
- on s2mpg1x
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>, Lee
- Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Linus Walleij
- <linusw@kernel.org>, Peter Griffin	 <peter.griffin@linaro.org>, Will
- McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Fri, 02 Jan 2026 11:26:42 +0000
-In-Reply-To: <CAMRc=Meu6-5569rMcV0zf2V+Sz_QZgShoEhmhw41k6fczULcoA@mail.gmail.com>
-References: <20251227-s2mpg1x-regulators-v5-0-0c04b360b4c9@linaro.org>
-	 <20251227-s2mpg1x-regulators-v5-21-0c04b360b4c9@linaro.org>
-	 <CAMRc=Meu6-5569rMcV0zf2V+Sz_QZgShoEhmhw41k6fczULcoA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-8 
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="re7W3ZXh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
+	s=protonmail2; t=1767353377; x=1767612577;
+	bh=gp/pH0zKhkxkA62RfQkWYKiIcEXEvhrGjKjOOk9sD+s=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=re7W3ZXhj+mdwH5csuRiJONd7iRTZyPn7ocSsb3oJWjpfmYD94lxGvYAiMokkc6Sk
+	 eOaqVe87flopn1hQJcWbJ0jZ5LxKp2aIxb6cFGLesY3B5i0OenGwoJKMwmZ5aqFhgy
+	 L+iy0gULy5lHO+Ut5uSWCiXjd0tvVpjC3oxnNtCF+iQPYT6yFdGKYG5J4u/YXxHvwp
+	 tH7AsIRrZcEM3DKhB04RpIDNbOfMB694gcyMmMLkmzn8Cbrnt2VY5QVNICqp72fsWd
+	 ks9WS5LXbeudt/Mb/FeAdSUT3AjV9V8pS5SvFY1sDa56bEjVgjWl8UiLLjsxDrGSNW
+	 mEXvpjZt2blTg==
+Date: Fri, 02 Jan 2026 11:29:30 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+From: Alexandru Chimac <alex@chimac.ro>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
+Subject: [PATCH v3 0/3] pinctrl: samsung: add Exynos9610 pinctrl support
+Message-ID: <20260102-exynos9610-pinctrl-v3-0-3f21f2cfb651@chimac.ro>
+Feedback-ID: 139133584:user:proton
+X-Pm-Message-ID: e5b2425ccbd1e6514bc36e6cf6fae9f892a47cae
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2026-01-02 at 11:19 +0100, Bartosz Golaszewski wrote:
-> On Sat, Dec 27, 2025 at 1:24=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik=
-@linaro.org> wrote:
-> >=20
-> > For s2mpg1x, enable-gpios is optional, but when not given, the driver
-> > is complaining quite verbosely about the missing property.
-> >=20
-> > Refactor the code slightly to avoid printing those messages to the
-> > kernel log in that case.
-> >=20
->=20
-> I don't get the point of this - you added this function in the same
-> series, why can't it be done right the first time it's implemented?
+This patchset adds support for the pin controller found on Exynos9610.
 
-Sure, I can merge this patch into the refactoring patch 15 - the intention
-was to have incremental changes to simplify review.
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+---
+v3:
+- Remove unnecessary addition to enum in samsung,pinctrl-wakeup-interrupt.y=
+aml
 
-Cheers,
-Andre
+v2:
+- Set proper FLTCON offsets for ALIVE, FSYS, DISPAUD, TOP pin banks
+- Define samsung_pin_bank_data structures as initialization constants
+
+---
+Alexandru Chimac (3):
+      dt-bindings: pinctrl: samsung: Add exynos9610-pinctrl compatible
+      dt-bindings: pinctrl: samsung: Add exynos9610-wakeup-eint node
+      pinctrl: samsung: Add Exynos9610 pinctrl configuration
+
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 117 +++++++++++++++++=
+++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 5 files changed, 122 insertions(+)
+---
+base-commit: 3e7f562e20ee87a25e104ef4fce557d39d62fa85
+change-id: 20251228-exynos9610-pinctrl-7d7988fd50a1
+
+Best regards,
+--=20
+Alexandru Chimac <alex@chimac.ro>
+
+
