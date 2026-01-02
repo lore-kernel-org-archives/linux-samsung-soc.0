@@ -1,127 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4760286889;
-	Fri,  2 Jan 2026 11:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB85314D0E
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Jan 2026 12:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767353548; cv=none; b=FESb9mDqKL5pRxXFZhyfbDRg1g3xY7tFEHpLJf/o7zd0puHy0mgo+KSjWztLgo+q7zyD3eAMNx5J+RlU2hGsKW737Lg0UauZpyxUwe/JRmC2VgqWOsGlV86TZ2cinSOwjUTYVbhT+1aM0e9Y9Jbp5zhC34lesIM09sw1Ix16OxM=
+	t=1767358207; cv=none; b=NK6c51i/mwCSS50ljMzoOuu/o17gxMKtjfdLZqbHzpZCrN18DZOmMG7IxxnCVvPbpvxta+M5ToKkT5OpxmifZdPbkzYUP6jXSyt9dIoGhf+ksGgq3PL6KhYF3CJ/VH8S+8l5/TdpwJwgfnMzdt/TYUFOu/S/zJi38MDplpnJUOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767353548; c=relaxed/simple;
-	bh=bC9b1N5b2q5Fb+eh0w51EhNxxZN71IpFQa6InZWQsnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MFite5Mj5TqL2xwc5rKSW9ia9uwH1L2FU10jUURtGE7z+A7ZbfNj1oaOV/viEWKQGqrhLyXcYezBwTrFskNjUH5eKQHm5L5uFyUIQFrI7MCTbf3NPmRjYs2/yvgf9y4rw5+sPP9m4YhHF18y3GW6iiVb7UMUMgcV3ZPjDk89MZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/QRuPbe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767358207; c=relaxed/simple;
+	bh=7Kxp4rafP02LArCpSg5dncCo0KyLbUptXkzMYKxwphg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pYn/ZxWUa2zyUirfvcMQcOWaEuLlxqVq6BuYmPabviDYCNY7DHNAyZXausUn2d+te16FV5ClDyWbmmvXCXK8sZVELCQ/7caTxzDKipcUIJ3NXW5ZjSmzoKp4Wdi1SGihPla6dWjpYPO9wZbvU++oQZg7uCZDsce0sHtWAn1RTDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QWsp5iE9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OrYrHRtS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/QRuPbe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8261DC116B1;
-	Fri,  2 Jan 2026 11:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767353548;
-	bh=bC9b1N5b2q5Fb+eh0w51EhNxxZN71IpFQa6InZWQsnY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m/QRuPbeKwpnnGH3LZhwMEQLRNbRRGlxJGmr8bB7mP6bZK+6IqDZxNxLKw91ef7P1
-	 dBXq53ST3j2Yoo7Msgh6GdPPjTMBSqHi30eOFQizTJU6zPouOZIbl6Hjv3MsdcCLUf
-	 Gpbf4MzKzBle7ShU9wIHY133G6KTALNmeVn/8bnFWzVQTG9A1ERLox2dnuf/dFkgtm
-	 FAdaocIIZEf8yrfru2MvZsemgDOChoEHhro2TajnEsM9L/NEMLZucnjk16lo0qx53R
-	 MbDoscT/mb67sI9wZ6sej0JPC9EHadkDsQWo0BB45XHz00YiZS33CETlNunEOcVvZA
-	 FNOeA+sGx3K+g==
-Message-ID: <4e118863-885f-4858-a6c1-8f345cae4d7e@kernel.org>
-Date: Fri, 2 Jan 2026 12:32:22 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QWsp5iE9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OrYrHRtS"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 602BnlIY1095111
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 2 Jan 2026 12:49:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=zLiUNZSnAo9t78mimXccZs/6MNf7HQaGBca
+	3M1GbB58=; b=QWsp5iE9ab8xJ597i5D7toXb901fdK12hZ33wV4DbhtU2Z9otu+
+	quK8vg2iidBwngPCsR0cKI6J1AJRw26HrB+oqJncGhYkaRNgPVILHsXoeUrZ6Gag
+	MivsT7qJ5pdhnlliRvJxGXOYGmz8Pr9emp+g7gfaqzzpD7L11fMa6n1O/O2PPyIV
+	xv7I5Rx7lskbMSLFgbwy+U9VJhsC/xcUbRi1GqYHJ+U6KHLIKDmcLC+lOlYbjxZY
+	8nl+HS5HFWMDQhVqSkQ+tzQ9djHBb6X6WakeOxSJwilaaDGmO7R0xvCg2UuQjZlr
+	qNnaJAtPYDdHHMJvRc5hpKc8BgSQrHbqd9w==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bedg4032v-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jan 2026 12:49:59 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edb6a94873so237474081cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jan 2026 04:49:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767358199; x=1767962999; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zLiUNZSnAo9t78mimXccZs/6MNf7HQaGBca3M1GbB58=;
+        b=OrYrHRtSfrnRB0a5aqFVJRBxepicERo5gRwUYEmRHAyVU3eqBEm6HXZimd3dtyG0p3
+         iIGacHa0lsDNj3QxQp3xLZ5PDViLBAlkVFrpZC0B+N5Uc41kTbWO9axstWUeH2+tuuPH
+         lv2qxW7MXgHPh+9yxgYm2kX/csxeDo2g6bxwXxxvSuGuifpb+rAfckygQ/sLkMBjSsEP
+         V4rOvwyQEzs5KJ9AWbMUKv85Qmyhlvu0h60IrDAfjyD0CB9YM25FjEDgcXbY9H7p1lHM
+         zLhT7EdaNRD4HxudZz+MU7Mekh1rzsYa7saoZ7I7i2Xfg/TXmJY5wwGrWrNkEdmEGWLa
+         yGRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767358199; x=1767962999;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zLiUNZSnAo9t78mimXccZs/6MNf7HQaGBca3M1GbB58=;
+        b=Xxs6LhJItGYUDMhk4AzKekIqiUCUmZxTZvZT8ZZqg63Fj3Fw6LW7w7t7QXp2sQhHgA
+         dhMzXk1qv0cLQed7j6Qi+Qt5e9lhQg9iSZnRLCJgwfzr5wo6aE11EAid4fRJ3FwCksmN
+         qhviQrB7SGF3UvX8edikKP0pa2hT2PKvjwuUuzxUvKOqH9b7h/Qvf5qfBYZ9caMwLHMU
+         eYzhBbrMOly5vEOdI2u25sQ5TFeNgn8ECIeFW1hy/EtlQ511EBAIPWPUdZDZ3y03TTZ5
+         pJsklm8rZvLMsS+Cc6zvdUZx1ZrYbEKz43kfSYgQbLrYMaD5ZVCvYxcGRlzCUZj019MD
+         zovA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSGrVPRyER6KJAvco/wx9MyGtV3fZZ5TsUg7VZCUDM+TXTCsZevGr0YNvty0BUCxMgX1p0I9dme0OS254EADumRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrUTthh+HdbAB52+VnFOxB+Og5+IbYnWbvPcaZ0brvAWigRmy0
+	NJfjR+Ik5CU26ltTr2rbi2QCs88ilUjcVabuoTboD2xp1cS1J2RUX/9GuuPQPUekkzsj6Y8UlVG
+	d+vhB51NHrFd+NjnNmGA26xwMm1ZOh+9BL7CE6JzCXumywQYEwUaTPHLX9/hO3Ya8Poi9q/Ac7g
+	==
+X-Gm-Gg: AY/fxX7kFgoBxIb0eEEu79jLY5r42r0OsoBuwpOguVwHnEeGYBM8AOl+Ig7TC5FSJFo
+	KGp6OEV1uQj3Zrx/9XjKGqq1EURx6ZyJAMENXMrX09u6yJJAjnYwedYnrA1WkwTg5bsBRRtdRpz
+	eY7djWbFSU3kjgMvUkma6hiPSdZ4erj8kZpPzjpxAtvWS14iTwOf/Ece1e9aGz2OkjWC7Fn2iQR
+	daWhFPqREmKzj/UiotXdx3/mKddFZO40TFgZjwu3K6h7fQvujx8gto9aQH5Uk4OZxJp8OYqLGrC
+	PPKaMK89n0QOuRE98exG6ZoJqrYPIRhP7uOVy0Jj2iygG2qieJwTdYkvy1RayQKy1pwWKn8jWgA
+	+JiQSbv7OCqpF6Oz2MkG3uhUCjQ==
+X-Received: by 2002:a05:622a:180e:b0:4ee:268f:baa2 with SMTP id d75a77b69052e-4f4abd01701mr641766251cf.27.1767358199051;
+        Fri, 02 Jan 2026 04:49:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGZagIXa4K7UiwD5qxXFieVCGwspFO5xpb5gF8sjqKgHUder8jH1otxtn+PNVNQiVr37FiqWA==
+X-Received: by 2002:a05:622a:180e:b0:4ee:268f:baa2 with SMTP id d75a77b69052e-4f4abd01701mr641766021cf.27.1767358198703;
+        Fri, 02 Jan 2026 04:49:58 -0800 (PST)
+Received: from quoll ([178.197.218.229])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4324eaa477bsm84559575f8f.36.2026.01.02.04.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Jan 2026 04:49:58 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH] media: samsung: exynos4-is: Simplify with scoped for each OF child loop
+Date: Fri,  2 Jan 2026 13:49:56 +0100
+Message-ID: <20260102124955.64904-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 21/21] regulator: s2mps11: enable-gpios is optional on
- s2mpg1x
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20251227-s2mpg1x-regulators-v5-0-0c04b360b4c9@linaro.org>
- <20251227-s2mpg1x-regulators-v5-21-0c04b360b4c9@linaro.org>
- <CAMRc=Meu6-5569rMcV0zf2V+Sz_QZgShoEhmhw41k6fczULcoA@mail.gmail.com>
- <4bfcb1420b9684f67bd4b8f583313c1a08a1616d.camel@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <4bfcb1420b9684f67bd4b8f583313c1a08a1616d.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1366; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=7Kxp4rafP02LArCpSg5dncCo0KyLbUptXkzMYKxwphg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpV77zD2hVA5D57NH58kYmrfiyJQ3QXONoILlur
+ 6D15JdueleJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaVe+8wAKCRDBN2bmhouD
+ 17PZD/9Lij+SGI18r/gFDiIrQhcXUCtmYd3oxV+HNEyfOOtGYWT5QXmo5Vc4ZPW7hLRHTYxd8z4
+ ufqwqpNHT4Bd03OrijU1h1/htWdD4OW3w007czSsAeAi4wtfMk2OrydUHW0ZJny/VB3f9tpnHPH
+ u3o6nULvSNMZaj2pzRwHOgNXajwzS8eXEQxrQZ9s3aaBCtAgF+5471vnQSZ95PoAHlnrjFi/wRt
+ DyOM5JxExVg2cxFrpC2BKIk8rtgUHMNtxU3OZJj49C1TGHmE//EZ1mTtZ0reC5lkN0D/dKVjw7C
+ WI3Vd4eXAB+yrdYhkCIvzPxM4jQ86R7lD3tv1aOTr14lsa5aZTe9UaCHyYjwUQVKC1jlwRt/TW/
+ i8BQD/1YzAgObycfzQsOytiVA+Ra/KtVZy5RmwOLfFBDD5c5F/rSVCtxz8eYbX69RxszY/vFPqf
+ xeTzfWFTodIr5hbqsod6LOYsMiOQT9vLQLLZRUtbfbtSknHzdNnXxeoAlwUtailGSFYG6TnXBFc
+ LYV8Vdhs3uS8Ji6jN7tboxFJqwyWXNWxNE9rT6hoM221vdzHRKIrEiel8t1Zs0uorXtVPPYHL5q
+ vhyb8LR0ZeiKkdZTKhFZEZXub73MILtbU3mTTMvlMyuGUQDDysTs9WfV/AfgRQuPGFSCJJovGk4 mjjujELBTaPYcWg==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: V47p4NqU4-0QFNIMbBAI9AYb2N0L4Q1n
+X-Authority-Analysis: v=2.4 cv=IssTsb/g c=1 sm=1 tr=0 ts=6957bef7 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=Eb9f15NH/cHKzfGOmZSO4Q==:17
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=i4aJ-GEgVbPWXsRE1ngA:9 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: V47p4NqU4-0QFNIMbBAI9AYb2N0L4Q1n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTAyMDExMyBTYWx0ZWRfX1j8d1EvR8yVe
+ neiRRPnJy5r8UFfiqqe/r6+T5SLM7D2yVJ/cb4x0oVMybum7FGePZo7OYevdTcFEx2xAczMMWwM
+ Xf2ahygzP+bri685VE7x3t5xaL9xBLwDQzkdt+sDzHXUGV/GrSZjYHxshw1Ks2RgzTnK0XVYu55
+ D1DfHyGOn1if9V5I9xEATHCov9DzSrfHizYbmgFKN+MegPlsgqeVQ2njyBeJ1HoEhnrHJyB/XUW
+ On1BKv805CDrgxl1pZ68vwA+/4CWDQGL2rAXBCnONCUGq92e7BdTVWEByjpqkCe7ctrrW6SVXTk
+ M1TBhOcxupyGf44gNbMX4gB6VqKmKYXGtBoQ/I++H2M2N49b1PV6PzSmMXhN4c1DkoUz/UYV05Z
+ GvONOr28bumFN5qVN0eGdMh+IiswdEJeIOet5FbZHVByRqcYrgNmipVi48DZKYSQiFLJucwUZ0R
+ ETAw/r9Fr4Ddtxco2cg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-02_01,2025-12-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601020113
 
-On 02/01/2026 12:26, André Draszik wrote:
-> On Fri, 2026-01-02 at 11:19 +0100, Bartosz Golaszewski wrote:
->> On Sat, Dec 27, 2025 at 1:24 PM André Draszik <andre.draszik@linaro.org> wrote:
->>>
->>> For s2mpg1x, enable-gpios is optional, but when not given, the driver
->>> is complaining quite verbosely about the missing property.
->>>
->>> Refactor the code slightly to avoid printing those messages to the
->>> kernel log in that case.
->>>
->>
->> I don't get the point of this - you added this function in the same
->> series, why can't it be done right the first time it's implemented?
-> 
-> Sure, I can merge this patch into the refactoring patch 15 - the intention
-> was to have incremental changes to simplify review.
+Use scoped for-each loop when iterating over device nodes to make code a
+bit simpler.
 
-When you add new code which is already wrong and you need to fix it in
-patch 21, it is not easier to review. Adding undesired code, which you
-immediately change, is making things difficult to review.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+ drivers/media/platform/samsung/exynos4-is/fimc-is.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+index 0827fdaf455a..14d84cc96831 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+@@ -200,7 +200,7 @@ static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int index,
+ 
+ static int fimc_is_register_subdevs(struct fimc_is *is)
+ {
+-	struct device_node *i2c_bus, *child;
++	struct device_node *i2c_bus;
+ 	int ret, index = 0;
+ 
+ 	ret = fimc_isp_subdev_create(&is->isp);
+@@ -208,11 +208,10 @@ static int fimc_is_register_subdevs(struct fimc_is *is)
+ 		return ret;
+ 
+ 	for_each_compatible_node(i2c_bus, NULL, "samsung,exynos4212-i2c-isp") {
+-		for_each_available_child_of_node(i2c_bus, child) {
++		for_each_available_child_of_node_scoped(i2c_bus, child) {
+ 			ret = fimc_is_parse_sensor_config(is, index, child);
+ 
+ 			if (ret < 0 || index >= FIMC_IS_SENSORS_NUM) {
+-				of_node_put(child);
+ 				of_node_put(i2c_bus);
+ 				return ret;
+ 			}
+-- 
+2.51.0
+
