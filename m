@@ -1,50 +1,67 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69879254B19;
-	Mon,  5 Jan 2026 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C731D6AA
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 15:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767620517; cv=none; b=SXFcVHYiil8Ot3x38aSLX4bcX4CD+HOGSlG76O7u5mpesom2xwTVgLUiImWSE48ZsMrc3TiZ7fxQt63Obhe2loqS0H5rU3LBpiiCS83sajnwT7+/7oam5DqBfJ0CTtsCIs+MJqXp28aL5O5yKfpG7thRwa9DhubEAJDki1GhHVU=
+	t=1767625349; cv=none; b=usxo0MNJpLI4wIelHS446SU6mwwSBRR6PaIuk6XqdLHkSniNflnBB5+M9iZIbjNqmRerB0ZkK4Yu3lIOhmR5AR/+K9ziR9nhNg3UOArGPIGsJK9R2rl0xgjN7+jeFh0WGts8yxSLI8GJDysUiUBGBRxpHvAy+Fn4bYAqNMV5h8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767620517; c=relaxed/simple;
-	bh=a3Sj0a26r3lVQlAJmFwNu/sL9HQAEQqcEw3msVeSpzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fcl+jfEMe/mNUFn6zmJq9yVULWGvO/XBC7yWTd6Arrgtdv3dchWYqSC0QwAmrN97Ka1Iltejqt3US6youl0vze6DHP7VqHh2ayS8FnFxu9P2T04IVh0FSaqR7uyO62EuM/p9niW2pnmSTPeVi7zCS8tyTR+UCfmHp1WqGCNKI4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vytZmFC1; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1767625349; c=relaxed/simple;
+	bh=hXM5D20oQxki71exwmG9Z5fOtPb37LNXSBDUTU4L/Ak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OrrS/h4d/ssTR8cL5neZX9MoxRFT6D0YnQ/Qe6bJfhwobplFX4F1nZGcEq/AmSmwfbtL6kUMre3Wni8J52Dh6y05YQHRSIIvtvlzhjU7ZkpfVwlf3tVJ0Aw3uUkWVYFCrGMLUxHm//5Oyd5eZ8+nelS+5FKpR262zeHagD/nZmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=esJWfGD5; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vytZmFC1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1767620514; x=1799156514;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=a3Sj0a26r3lVQlAJmFwNu/sL9HQAEQqcEw3msVeSpzM=;
-  b=vytZmFC1inOCa0CmBOTec6lCQHktGHtYs0j1yF+KbGznCOoobE9c0mb5
-   qbsf3pFBLtO7dpMx13/+g9lRkX5viZWKLpDIHKWUTencZzfXW0WWR2W2t
-   9SnCJu4av6vtKJ1HwGwPpeCT8+OlH4gFOiohUb5uMtIyq8I6JU6hte+Cg
-   PwSdeCtCbF5rBKYj9aTRZu+sArpltNL1v2ynSYOAXQuUgzAVeVf25gp5Y
-   1BKgmvPbJvqIVc/JvlFZBim05Hjqj+YCxpr7YChpQ/GpNN/S0iBquzoro
-   xaKjXC/fSCf5RztQgM8+G2G0yb9QTK3sXjad6g44c5rNmF7cptvFZ/Ta9
-   w==;
-X-CSE-ConnectionGUID: HBkZ5l8JRtWI55dHimVviw==
-X-CSE-MsgGUID: JZGd2c01Rd6FFUdxsxi0Mw==
-X-IronPort-AV: E=Sophos;i="6.21,203,1763449200"; 
-   d="scan'208";a="58252843"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Jan 2026 06:41:52 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 5 Jan 2026 06:41:52 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 5 Jan 2026 06:41:43 -0700
-Message-ID: <49ebaa9d-cad9-42cd-8bb9-5210fe18eeb5@microchip.com>
-Date: Mon, 5 Jan 2026 14:41:47 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="esJWfGD5"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64b4b35c812so20032902a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jan 2026 07:02:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767625346; x=1768230146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eKLhOm1EGO7KiVaRio9S3BSdKkAkAUK/rEpRWJAD0/Y=;
+        b=esJWfGD5nNDpLD5BXJgASigPf5wvgtUMTVW/tF+vOi3opoV5HF6ID6H/Il6JCIcH+O
+         SvB1l66asIsHdlHPtKFum0x7qVjryWHo3XyX49l6U0fXXnKnhpMV3HRDlmDNJGUBhfhG
+         TAE44mPmr8hR3r8GR91lCKTGifeOLxgPyM53W0S5FnZ0vsxelIIQoyjvC57kBUneq+Lx
+         fFFwjleH2omRQ09kLw9sB4j1kyhHBpRGDgtjK0GSMgdxKqeOnATZQcXzheYLNdw5UW7/
+         6JnAmbHohtZh40xzVFBeWu4JKTWlP9I5cReJn55dw7bYv/ftzhIsZi+C1oW+W5eY17aY
+         9cBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767625346; x=1768230146;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eKLhOm1EGO7KiVaRio9S3BSdKkAkAUK/rEpRWJAD0/Y=;
+        b=wqMjwv40G+eXdga869zsXtLkLf9h68KogGWiYfai0ErUoy0xXZQFYwnUIJ7OF38VYr
+         pNhJb6lJimz5gdZ21IPQ2s4x1CYDodNdZW1GAULhPdWE/rHF/TOfGtYXsnviuDGbMXeA
+         DubAQdnQF3TlUuXN9M6TdX4Sg9MlQYkB3PkV7xgWm7fSMQc3o7F/pFao4Nuf5mjHLDvg
+         gxIbeIUnuL0k2RvYiQ6W3VkaTFX32ogtIumUj7Cqb2lyHC/whge/RvpapB40Pl6cXoYF
+         eoTRwnGXcX+St3tqrjdKm8fHN3GaDssBYhNQNOmXafR+slZTIVG/rhsyWtXa85G0Ntfx
+         tHwg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5P35nSk6XCZyyObYVtomUVxWc+BZaYi/7OZpWv1KxNFrVQo6ul+x1jWdPhxcpBH0aUER+Nalqbna5JOaykYGJXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytdPq91jrBi/uv0dHahlGieGq+xeu9XhWBtsnrk4/bYRdLd6qk
+	jPO5xz4t3Pa5UVv6JWUPU4DHUNLtZAPhYnG7UmsmAmwRhKlnnC7xkOJSxadRQZDqG/E=
+X-Gm-Gg: AY/fxX46NLWuYyhJBCvv7WcSNuS7iN7ex6Xsz0VyKNarS0c0y1Y9M5lb2uq5lRqWF7W
+	pVZMcyb7wceC+1bvLHvoRrgwaHqxMZcx3YeOa/2r9NUGcfIOOlRPE64+N10AGSjS3Bmc9vWZYer
+	4rKKmesKK5qCqQkJvMvbT3Eo9vSfYlBrHZk4V3zS5s0Hld0qLsRXcqhTMWPVk2MArk9FKH5dtL+
+	391rkjVAAMkfVQPMCQZMnQv6ACOUQme7xVxwgtUUSOxbmp1LI/kGdxdpZS+cJ1d0SFf71lv0SOg
+	WtNVzFCWKNH9/hzQSaDQx6WMYxsPxN6kbjPLeM2YTUdys6Uedjyl5NNv0ILqGh9uDwv5wXaHY5Q
+	iOGutQiWx5IjOOCy9awsF8oJa3sNx/o9kjzZMjJddIsSpttvEJneFGF9P32A+FwrnVUq1p3eXIM
+	mcoDU+S/MjHlREik7lAg==
+X-Google-Smtp-Source: AGHT+IEAWpC59x+QqXtzAbU3aYnA9kRQspD4kCFsoe72YD/sq6zSK5+EWzvZxjFYxJjc+vRGaIzw+w==
+X-Received: by 2002:a05:6402:210e:b0:64d:1a1:9de4 with SMTP id 4fb4d7f45d1cf-64d01a1a027mr46987198a12.16.1767625344267;
+        Mon, 05 Jan 2026 07:02:24 -0800 (PST)
+Received: from [10.11.12.107] ([86.127.43.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65075c1b6f7sm23205a12.11.2026.01.05.07.02.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Jan 2026 07:02:24 -0800 (PST)
+Message-ID: <f8b935cf-9211-4c21-9d52-5afe92d6e955@linaro.org>
+Date: Mon, 5 Jan 2026 17:02:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -52,86 +69,31 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] ARM: at91: Simplify with scoped for each OF child
- loop
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Miguel Ojeda
-	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
-	<saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
-	<morbo@google.com>, Justin Stitt <justinstitt@google.com>, Russell King
-	<linux@armlinux.org.uk>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Madhavan Srinivasan
-	<maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
-	<npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-	<dmaengine@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-References: <20260105-of-for-each-compatible-scoped-v1-0-24e99c177164@oss.qualcomm.com>
- <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20260105-of-for-each-compatible-scoped-v1-2-24e99c177164@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] mailbox: exynos: drop unneeded runtime pointer (pclk)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Krzysztof,
 
-On 05/01/2026 at 14:33, Krzysztof Kozlowski wrote:
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
+
+On 1/5/26 2:34 PM, André Draszik wrote:
+> pclk is not needed past probe(), just drop it. This saves a little bit
+> of runtime memory.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Thanks for handling this!
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
-Best regards,
-   Nicolas
-
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > ---
-> 
-> Depends on the first patch.
-> ---
->   arch/arm/mach-at91/pm.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-> index 35058b99069c..68bb4a86cd94 100644
-> --- a/arch/arm/mach-at91/pm.c
-> +++ b/arch/arm/mach-at91/pm.c
-> @@ -982,15 +982,12 @@ static void __init at91_pm_sram_init(void)
->          struct gen_pool *sram_pool;
->          phys_addr_t sram_pbase;
->          unsigned long sram_base;
-> -       struct device_node *node;
->          struct platform_device *pdev = NULL;
-> 
-> -       for_each_compatible_node(node, NULL, "mmio-sram") {
-> +       for_each_compatible_node_scoped(node, NULL, "mmio-sram") {
->                  pdev = of_find_device_by_node(node);
-> -               if (pdev) {
-> -                       of_node_put(node);
-> +               if (pdev)
->                          break;
-> -               }
->          }
-> 
->          if (!pdev) {
-> 
-> --
-> 2.51.0
-> 
+>  drivers/mailbox/exynos-mailbox.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
+
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
