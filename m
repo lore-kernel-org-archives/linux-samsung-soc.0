@@ -1,96 +1,156 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26131A07F;
-	Mon,  5 Jan 2026 10:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F0833F8B9
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 11:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767609698; cv=none; b=d5S4aWPObcCaQMnt92JwtHAWmjjBxbA1Y17N1jw3XY/DGl6XQjC11y78JaDsHrjkpMRQgsYxYT6J1IDPiUgYlLLCf0MPoonjF7fIHQKYVQ7QioxJX3DG1WWXg0jX3lsRD/wGNal1poVwApSmSOIXYtpq0PaFHzweFkFfLc/tiKA=
+	t=1767611787; cv=none; b=WBBkrPVhZ7HD2N39Ro00l+3BIscACxF47faNWAVgrRPtFfBVhWZ72gbYR2L16bfZV1u3DGuPdsY2O94iaURH56bSPAdcXXZ69Vbq3O730AsytoY87cZM/oYfVQ4ESRAB7MXpvGuHK5dGIZ1yUhZEP67DIkdTIKybbmc7oN/5pHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767609698; c=relaxed/simple;
-	bh=O0eGpzcZBXdoUgn5aOeJ0bBOfxhqxXr16waodX4cHhQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KTeRGxY0lw7OiL8AkMpqDOb0kqrg1TrjHj03Jo7LMCQyjVBSvprw904HMdrFtcuJNY/oBY5W8qSke6iTs41F9SC/1QTThdIIuAALUFQAReaU75TOEYor4rq/uA0pkL3TUnkWbGkOsHtqioIU8xj7YUS82DnbCdwx5q1TmD6jPy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.150])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4dl9p42jYGzHnGdM;
-	Mon,  5 Jan 2026 18:41:32 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A79340539;
-	Mon,  5 Jan 2026 18:41:34 +0800 (CST)
-Received: from localhost (10.48.146.88) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 5 Jan
- 2026 10:41:33 +0000
-Date: Mon, 5 Jan 2026 10:41:31 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-CC: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, <linux-media@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: samsung: exynos4-is: Simplify with scoped for
- each OF child loop
-Message-ID: <20260105104131.00005693@huawei.com>
-In-Reply-To: <20260102124955.64904-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260102124955.64904-2-krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1767611787; c=relaxed/simple;
+	bh=jIYdpOYohHpzOw2rr8oL4LfsXYMgfwWHy4yrWd5JEfM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=EaTx0NK+bxC1+ecYd8yxtxVoaMVpqaX5kJAN5sQwdHzij9UQK9Jw1l250AKTZh6fOqG86SF3qPJUSyz3MtooAH046JUT9CujCgNB9cY5K7h/fUNtTm6jV7hhk4U5+NeLFUxK7qqv8VCy4PDSWUuoJqjmgeqDjf3BNK2OpWOQkuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eqMlEBR8; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eqMlEBR8"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260105111623epoutp013c4bb6a7db176ed188bdaece753660b1~H0Y07h3FA1817718177epoutp01a
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 11:16:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260105111623epoutp013c4bb6a7db176ed188bdaece753660b1~H0Y07h3FA1817718177epoutp01a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1767611783;
+	bh=exmRwuE3H60PBAfP7giHoY+OJrbqno0dZ6dVxdCiUeg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=eqMlEBR8yOXbCkHJAZlAEv+nUMIPi+dMNilurU0uR9Z4bZPUWHfjcvPlAO0EjVrUg
+	 dpl0D3EFU+PJGY4kAJ+gwhyXVeuip0TEPdhoK6LebLP1D8G4nM+ywyrQXofLShPl12
+	 zbtfUn3rvi4BzLKTO9vsh9Q4Vp3/mtjEmebc0iVk=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260105111622epcas5p1383de210931da80ab45999c9261978ed~H0Y0VivxP3117331173epcas5p1x;
+	Mon,  5 Jan 2026 11:16:22 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4dlBZF4XcBz6B9m9; Mon,  5 Jan
+	2026 11:16:21 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20260105111620epcas5p4b639a27284272dd7432cb4b957d5e523~H0YydzdWK1918219182epcas5p4w;
+	Mon,  5 Jan 2026 11:16:20 +0000 (GMT)
+Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260105111618epsmtip25fda3d6ff52d0d1f8ab4b76a122827d4~H0YwpBgK00868908689epsmtip2N;
+	Mon,  5 Jan 2026 11:16:18 +0000 (GMT)
+From: "Faraz Ata" <faraz.ata@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Andi Shyti'"
+	<andi.shyti@kernel.org>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <linux-i2c@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>,
+	<pritam.sutar@samsung.com>
+In-Reply-To: 
+Subject: RE: [PATCH v2] arm64: dts: exynosautov920: Add DT node for all I2C
+ ports
+Date: Mon, 5 Jan 2026 16:46:09 +0530
+Message-ID: <000001dc7e34$b809a030$281ce090$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFOiGH9IZBP/MALtVgmdgdp0NuXDgFMvpOsAcCx1FYC93HaobXRSjbAgF3h61A=
+Content-Language: en-us
+X-CMS-MailID: 20260105111620epcas5p4b639a27284272dd7432cb4b957d5e523
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251014111455epcas5p30731028365023e101dad3b9ba1f90bec
+References: <CGME20251014111455epcas5p30731028365023e101dad3b9ba1f90bec@epcas5p3.samsung.com>
+	<20251014112338.2023223-1-faraz.ata@samsung.com>
+	<2knbzksxobg2kl3aexuiwluctgafgzxblsqc5q5rcikuruuegr@cqlizryhhx4s>
+	<7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org> 
 
-On Fri,  2 Jan 2026 13:49:56 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> wrote:
+HI Krzysztof
 
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Change is fine but I wonder it it is worth going further.  See inline.
-> ---
->  drivers/media/platform/samsung/exynos4-is/fimc-is.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-> index 0827fdaf455a..14d84cc96831 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-> @@ -200,7 +200,7 @@ static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int index,
->  
->  static int fimc_is_register_subdevs(struct fimc_is *is)
->  {
-> -	struct device_node *i2c_bus, *child;
-> +	struct device_node *i2c_bus;
->  	int ret, index = 0;
->  
->  	ret = fimc_isp_subdev_create(&is->isp);
-> @@ -208,11 +208,10 @@ static int fimc_is_register_subdevs(struct fimc_is *is)
->  		return ret;
->  
->  	for_each_compatible_node(i2c_bus, NULL, "samsung,exynos4212-i2c-isp") {
-I haven't checked how frequently this would help, but at least in this case
-I'd consider adding a
-	for_each_compatible_node_scoped() following same approach as
-other scoped loops.
+I want to follow up on my I2C patches submitted.
+Please let me know if anything else needs to be done or do I have to resend=
+ the patches
 
 
-> -		for_each_available_child_of_node(i2c_bus, child) {
-> +		for_each_available_child_of_node_scoped(i2c_bus, child) {
->  			ret = fimc_is_parse_sensor_config(is, index, child);
->  
->  			if (ret < 0 || index >= FIMC_IS_SENSORS_NUM) {
-> -				of_node_put(child);
->  				of_node_put(i2c_bus);
->  				return ret;
->  			}
+
+> -----Original Message-----
+> From: Faraz Ata <faraz.ata=40samsung.com>
+> Sent: Thursday, November 6, 2025 10:49 PM
+> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Andi Shyti'
+> <andi.shyti=40kernel.org>
+> Cc: 'robh=40kernel.org' <robh=40kernel.org>; 'krzk+dt=40kernel.org'
+> <krzk+dt=40kernel.org>; 'conor+dt=40kernel.org' <conor+dt=40kernel.org>;
+> 'alim.akhtar=40samsung.com' <alim.akhtar=40samsung.com>; 'linux-
+> i2c=40vger.kernel.org' <linux-i2c=40vger.kernel.org>;
+> 'devicetree=40vger.kernel.org' <devicetree=40vger.kernel.org>; 'linux-arm=
+-
+> kernel=40lists.infradead.org' <linux-arm-kernel=40lists.infradead.org>; '=
+linux-
+> samsung-soc=40vger.kernel.org' <linux-samsung-soc=40vger.kernel.org>;
+> 'linux-kernel=40vger.kernel.org' <linux-kernel=40vger.kernel.org>;
+> 'rosa.pila=40samsung.com' <rosa.pila=40samsung.com>;
+> 'dev.tailor=40samsung.com' <dev.tailor=40samsung.com>;
+> 'pritam.sutar=40samsung.com' <pritam.sutar=40samsung.com>
+> Subject: RE: =5BPATCH v2=5D arm64: dts: exynosautov920: Add DT node for a=
+ll I2C
+> ports
+>=20
+> HI  Krzysztof
+>=20
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk=40kernel.org>
+> > Sent: Thursday, October 30, 2025 9:11 PM
+> > To: Andi Shyti <andi.shyti=40kernel.org>; Faraz Ata
+> > <faraz.ata=40samsung.com>
+> > Cc: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> > alim.akhtar=40samsung.com; linux-i2c=40vger.kernel.org;
+> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> > linux- samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> > rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> > pritam.sutar=40samsung.com
+> > Subject: Re: =5BPATCH v2=5D arm64: dts: exynosautov920: Add DT node for
+> > all I2C ports
+> >
+> > On 30/10/2025 16:34, Andi Shyti wrote:
+> > > Hi Faraz,
+> > >
+> > > On Tue, Oct 14, 2025 at 04:53:38PM +0530, Faraz Ata wrote:
+> > >> Universal Serial Interface (USI) supports three serial protocol
+> > >> like uart, i2c and spi. ExynosAutov920 has 18 instances of USI.
+> > >> Add i2c nodes for all the instances.
+> > >>
+> > >> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
+> > >
+> > > what happened to patch 1/1?
+> >
+> > Different patchset, no?
+>=20
+> In order to address your below comment
+> https://lore.kernel.org/all/000001dc39a2=242cf5e570=2486e1b050=24=40samsu=
+ng.co
+> m/
+>=20
+> I added the lore link to dt binding in v2
+> https://lore.kernel.org/all/176044840242.3094524.6549941972513295895.rob
+> h=40kernel.org/
+>=20
+> Please suggest if anything else need to be done  and via which tree this =
+patch
+> set will go
+> >
+> > Best regards,
+> > Krzysztof
 
