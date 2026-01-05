@@ -1,142 +1,109 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C192F4A19
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 12:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C024633E37D;
+	Mon,  5 Jan 2026 12:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767616480; cv=none; b=ZMJmL4j2wCA86P8uMCcSTX4NVY6SoH0sHnnlg7fm8a1coerEq2Rr9nPOljzVufbP+gUT51kCAt3DZfi1oFbk04lEYkLspBGIUPjGRdyrw+w9dvKAiinscsWim+YsQ2tymJBqnMlyxHPSNBchKf6IQYysOmMklQkTHxBvFyv1QQE=
+	t=1767617049; cv=none; b=Va2vJzcrdLlH8qaTzinJs9fVQ8ceD6mcF+YN9m3MqzKXIO6ktfe/Gn9Sx1Tw44TCQDLD4xinQ0JroK7NzWXdOxbRUrvuMZ8zulQbLW7wi7OW5GZ2fPb2Uz5t30TpW+bIWkqvPdpUEn7wPnOkA5IpnxG3kZ4XQaMxth5W/Ue76So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767616480; c=relaxed/simple;
-	bh=HqzC2VW8RCj6irT4FNr6pRiQ80sjvoO8y02jxVde2ls=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=apsP6EY7RpzRwX5OdYRScoI0LCTf5DoZwKdgDY0BjyCOUiFLionc9JMiBY+/FnD/Cv2/max7gV7LRGfwbC1LPflaCcKZEmmAn39r8TpRa6PnKm8k1zW6lJbtUVEKdKiLlHrEUHCv6tzPb2judhD8mcdinwRyMgymjBahf+Wc9/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ll2yhJ0f; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767617049; c=relaxed/simple;
+	bh=9yuehNiF5bpoPRMIpYC2M6gGBmTgnVnvTg/ORASQVzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jI+RiBoohIZc1zWR4/gdkLTbzvEv/Exgw2MwhLq9o1aYo7xA8pHVAKgfs19VA5FTaNq7rBZ8cPgkHAzVI/AVLczGpgJjO6NncX6PYbM8JC8QeScJD9/lramcTpgEvYj5g2ECqfmZnFTELiIDpSkzGYnaOidfHaZYqRt92lQ+5L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RB9iQfjA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ll2yhJ0f"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-65063a95558so367993a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jan 2026 04:34:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767616477; x=1768221277; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GbECqTLc9hkL2flK0QE57LZGXpZua63SU3JKDn7QVHs=;
-        b=Ll2yhJ0fuPDl694m3d/0I8C0Y4Ocec0aEsFnE5smFsuWN9VOLh2uKadqZAbQNKChh+
-         rEOoWOnlmd1L0p66T0FRVKXq7NfMvFqSWdqVYLNsg/KaOcpPv+4K4JHW8YjlmiKVQspb
-         k9IpzKE4PYP3F5v4gsKt52VBxGKYljT9h+KI5kj0MI10J+m9QHAHSbcOVxDp7O3Awb3M
-         EDlc0/047qNbKHfblJXRd16eLfSsDTcrUPIe69LYGo0noUHVxe+hBnLW9uW86fnkqvU2
-         nXmzNihR+86r6nenEp/DDB1lZGTWyalp9/KlCKGWjR44kaq/0qb3kjex8I51YFGnLSHs
-         ilfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767616477; x=1768221277;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbECqTLc9hkL2flK0QE57LZGXpZua63SU3JKDn7QVHs=;
-        b=Ub7A/LQP+FItEdBsVXhSZPDQm8jmqapOSKDZYn5LF6m8HTJwOq9UKYP9YU/K+tucWx
-         ZBLMfEk8FPpQQQDEqgYfhH3uZXMi7zA2T2QNaRw/Cc05L/yvZ52IDsTnLsCJl3F6opgC
-         M+lZj067KOohzpWEbFKrQwTeXZMduTabebhMmNnJYC4UlNVxUe8NC3d9jKGhSWgl52pD
-         tocSfnXVKh5+7FiDJV8t0hc+DWZlNf7E8mts8RBpcsSt/bdoSR4LepPFhEYMAYC5nnUP
-         ULVIg2YXHvsJ7ku6fnbZlcgmlQU4jw2AHPGRJLLVdn5vmm6POpywvFFsTd6tHrS1rfGS
-         sV7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSRD0uJQaI6xIGLExF1Le3Ro0R8fG9Tn6dBPCy8AVo1fwfe7N/Nyh3dKlyttNgjmz6UUlqPlcR9gwQ2u2Y4KTrEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzzK0t+TzAsX987MhnVjyZn6fG+8WwHcIBu3vcLpOqjauJGc/V
-	sJ2aANKWBzfe/JYYIKBesHJv2kBhDXO4yYZuK3DvuOzSiwrBzbp/PeEYNJkLzp4YpTc=
-X-Gm-Gg: AY/fxX7HpDg9ryCNtxcSV8f08krqhxyeb6HrdWwX5guYqTcB9BPx9MD+Pw+hGOLfnLG
-	XgU/mM+FeqeP/9s853q/VnazdVtSd4KpsMrzBHp//LYzhZskEDnub0vFdJOxdcKQqyXVPeiJsDV
-	RLb4p9f5MRwGpYSToIaBrIAA/z1JytCo2ZxrFk4+H5ziJwOSxSbIzgVaF5UdUxGpZbcaytqyw2k
-	nQctxncClAdJssPpDxaQAtoYHMBP00z1lkzLS9tO5iEFwMCh0yO/4NUtrOWvMSPvZO5XtnU99CA
-	p3m5WLRhD1RcBpNoWqQv0YuYAgAKUgg6E8SuTS3guRoKrFnmsrum/tywDl0abtrcNPC599WjWpY
-	wV/CGfa5/LI6JcahIVRNigLkvvVEJCWB/MA4YqVjPukMll2scjPxlI1Wt0sqXukk9/AQguOMINu
-	jY13T7haLTY0In6GD+OJLgNGIzoA9WgRBklOsBhMB8X3cHQ9OiTVrWE6QmUh4RpEpedeW7KL4ET
-	V0aLg==
-X-Google-Smtp-Source: AGHT+IE5r/KAj2uaww+sm4UEQ/vQ6irilbY4I/Rj/25jmRhewjMrD+2mfDGapwoYYRdj/y/4boYlFQ==
-X-Received: by 2002:a17:907:7fa5:b0:b76:d548:f85b with SMTP id a640c23a62f3a-b8036f2d2demr4611141266b.11.1767616476813;
-        Mon, 05 Jan 2026 04:34:36 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b803d3cea32sm5371678066b.34.2026.01.05.04.34.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 04:34:36 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 05 Jan 2026 12:34:35 +0000
-Subject: [PATCH] mailbox: exynos: drop unneeded runtime pointer (pclk)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB9iQfjA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E298C116D0;
+	Mon,  5 Jan 2026 12:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767617047;
+	bh=9yuehNiF5bpoPRMIpYC2M6gGBmTgnVnvTg/ORASQVzc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RB9iQfjAioQK+w31hs5ps/Xe1YI6lf1ZBQel4lBMiR2dwihjaiW2HO8E23zclGX3f
+	 FuOx6e56vLUoA0lOtE/bRU7VXn4CYd6JfaOiFQwoR7IwcbgjDHiTtU0qmY27BeZCdC
+	 C2Y/s56gGda1+f8tZQNCW6AWE+DlgrvC5q+0mJfGcoW6wdvKOXYaOHb9ytDhwVDNCh
+	 OVNEagusuWpI0n8sTDY707U+P513raqqJs8W9QJ+xH+eUNiT7SEShlGTakdQLR0Aym
+	 l8ro0YlrwfivZjjcSx0GcZ+K96p+3QhdgeWFwbNhRR9M3GDP+ohYw9Ffhjl2vviOhR
+	 Gur71KnAENMtQ==
+Message-ID: <4cebcda4-b419-4f1e-b9bb-870d1c7d769a@kernel.org>
+Date: Mon, 5 Jan 2026 13:44:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mailbox: exynos: drop unneeded runtime pointer (pclk)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
-X-B4-Tracking: v=1; b=H4sIANqvW2kC/x3MSwqAMAwA0atI1gZqtYJeRVzUGDX4K62IULy7x
- eVbzEQI7IUDtFkEz7cEOY+EIs+AFnvMjDImg1a6VoUyuFvZhvNBS25HR9uK7vJI2lDTjJaGsoL
- UOs+TPP+369/3A4d8qktnAAAA
-X-Change-ID: 20260105-mailbox-acpm-pclk-ptr-c25c99dacb34
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
 
-pclk is not needed past probe(), just drop it. This saves a little bit
-of runtime memory.
+On 05/01/2026 13:34, André Draszik wrote:
+> pclk is not needed past probe(), just drop it. This saves a little bit
+> of runtime memory.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/mailbox/exynos-mailbox.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/mailbox/exynos-mailbox.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
-index 2320649bf60c86980c0e8554f2d5fd32af218a6d..5f2d3b81c1dbec8d1a15353769b4b3a1d6ebdf21 100644
---- a/drivers/mailbox/exynos-mailbox.c
-+++ b/drivers/mailbox/exynos-mailbox.c
-@@ -35,12 +35,10 @@
-  * struct exynos_mbox - driver's private data.
-  * @regs:	mailbox registers base address.
-  * @mbox:	pointer to the mailbox controller.
-- * @pclk:	pointer to the mailbox peripheral clock.
-  */
- struct exynos_mbox {
- 	void __iomem *regs;
- 	struct mbox_controller *mbox;
--	struct clk *pclk;
- };
- 
- static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
-@@ -100,6 +98,7 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	struct exynos_mbox *exynos_mbox;
- 	struct mbox_controller *mbox;
- 	struct mbox_chan *chans;
-+	struct clk *pclk;
- 	int i;
- 
- 	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
-@@ -119,9 +118,9 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	if (IS_ERR(exynos_mbox->regs))
- 		return PTR_ERR(exynos_mbox->regs);
- 
--	exynos_mbox->pclk = devm_clk_get_enabled(dev, "pclk");
--	if (IS_ERR(exynos_mbox->pclk))
--		return dev_err_probe(dev, PTR_ERR(exynos_mbox->pclk),
-+	pclk = devm_clk_get_enabled(dev, "pclk");
-+	if (IS_ERR(pclk))
-+		return dev_err_probe(dev, PTR_ERR(pclk),
- 				     "Failed to enable clock.\n");
- 
- 	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
-
----
-base-commit: f8f97927abf7c12382dddc93a144fc9df7919b77
-change-id: 20260105-mailbox-acpm-pclk-ptr-c25c99dacb34
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Krzysztof
