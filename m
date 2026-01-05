@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9054F330B27;
-	Mon,  5 Jan 2026 11:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D88326944;
+	Mon,  5 Jan 2026 11:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767613352; cv=none; b=lzb/eEpCPOFy+aHm/O0nNW4VE53wKJ+JTjq7RR3R6cs2icAmW6xrriELeaEYxtc4ByxWrAkXoJya/8D6t4BhMT/wOctJdg0u7Y9ZydVd9o8GO1AIcLPa/S68uEtPykXcNDnvBSbvJgape0iSbo+g8L4d3+xCBFKbbqbfFQ8+A+M=
+	t=1767613386; cv=none; b=VFlKQlHzMwJtn+727/HkaDI6EvHYZfV2NMpYaTl07QqJ1nQrFUVjP0l7Bwa+/r5tlrZ1Ysyg98VVe8+ZVGlpMDplpEtPa56RhlbMfS9mud7xBedzdM9T7UAA7qA8M48jMPedgY68YoRZDH0FqaIaROxWClzn43d67fAf8wurEDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767613352; c=relaxed/simple;
-	bh=Lfq9OKSBveYeitWjDBWnDMCM9DlJ5bEI/x++ksAnupc=;
+	s=arc-20240116; t=1767613386; c=relaxed/simple;
+	bh=4DN3Pxz0Y8uO4k7E6M6VWtYnQtQ44mrFW69WYRFBdZ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T8HsFOtdSAbfUAo8fHXWSWoAoMVs0iunlm9wCF7Xf1OFmhT+b6PqiEXf4l5qnl01N6eCabz+Pr7lSOo7V1QmIWPMGrrc27MFY5yg2JK/HxTSP5gZyp0sQvzzdEh2xSVB2rso6wUcDLM06U7MSnp2wb/EtDA+sQFwsMSXcXnUMe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3N5Qiz+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=oRTh3q39Nt9z6Z+VFngsqjq0aU80FpXQeP7UtRvs3BRWpkziPJbNa4j5kfmBQ4dQcfTYUZ5YLpT0ZVAt/gooqkveYREH4u0OlBSBd4B5ukX3VsArNA7dR6EL4P/z1CwQZZqHWcSD20KiB1fusDYUdZDrpVBAnx0XPgrGx3lRLug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViJ/mwbd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3N5Qiz+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A5C4C116D0;
-	Mon,  5 Jan 2026 11:42:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViJ/mwbd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879E1C19424;
+	Mon,  5 Jan 2026 11:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767613352;
-	bh=Lfq9OKSBveYeitWjDBWnDMCM9DlJ5bEI/x++ksAnupc=;
+	s=k20201202; t=1767613385;
+	bh=4DN3Pxz0Y8uO4k7E6M6VWtYnQtQ44mrFW69WYRFBdZ8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V3N5Qiz+Qb4bo8/lKNZL3p40XKfe3CgtTlj3YFv566c4aR/Vu8jisDbbpAn8kSS3M
-	 At+91CTpceHrYDSKVIRvYz+hNJGsDIbHbxZdhb4YRiQZ0Wyl+O45w6wpByFzdXpbwC
-	 y0EbDP49sXh4MX2MlN7Wj7e+1dHn2ExxKviXq4kgct3yFhDCG7XkWAv5j4H8bJvdEI
-	 vtv+a609Zr/iJFES+x8mZ6kl0CV7e/E5fp8fO1P63VxWKLouwj9Q+noraO+ZIoWBTu
-	 R9jAYDP4S0psrmhVOEikJ0cVLOTkzk9NYNDqvWtJnsqfPBkio5WuvkHVHAJ5OQSnTv
-	 jlsGtUcIrqO0w==
-Message-ID: <83338b57-2e8e-4b77-9e93-fadfb0f6a5fc@kernel.org>
-Date: Mon, 5 Jan 2026 12:42:27 +0100
+	b=ViJ/mwbdJq3HZvmalcWXzDz3qIPZM5QwJwRRhiHifvh7M60gxCemWb4BDFRVjR1DH
+	 wrEMvJ0iTRg6Hx44s+OsUGWjCRjEnlkGz67KYc9lVI4nPa3GQR7o0AwlOShds7ILPP
+	 cgBCMwzRAYzticGwgWfdOemgR4N66zwPTZfAc3xR7qyOMxU8r4ciXv5tIIfn/1Eo+/
+	 hbdtiREmyEUBqaiCyk82Q0lQ3wecKZVY5R61HOmiRbxsIGxCv9/+fs//+ynGXEquqA
+	 9oDMTxuN4BXBViUPdEa++bNxlA+2NmPwS/FWKnp9ol7PvAfA+HLwBW/HBIGDVez2Mo
+	 YlCzItjaS59wQ==
+Message-ID: <ee6ba772-7972-4212-9658-2d6eef48848a@kernel.org>
+Date: Mon, 5 Jan 2026 12:43:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: exynosautov920: Add DT node for all I2C
- ports
-To: Faraz Ata <faraz.ata@samsung.com>, 'Andi Shyti' <andi.shyti@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, pritam.sutar@samsung.com
-References: <CGME20251014111455epcas5p30731028365023e101dad3b9ba1f90bec@epcas5p3.samsung.com>
- <20251014112338.2023223-1-faraz.ata@samsung.com>
- <2knbzksxobg2kl3aexuiwluctgafgzxblsqc5q5rcikuruuegr@cqlizryhhx4s>
- <7ba31fb7-8f1b-4277-a3cf-649a76c7dda5@kernel.org>
- <000001dc7e34$b809a030$281ce090$@samsung.com>
+Subject: Re: [PATCH] media: samsung: exynos4-is: Simplify with scoped for each
+ OF child loop
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260102124955.64904-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <20260105104131.00005693@huawei.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,18 +91,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000001dc7e34$b809a030$281ce090$@samsung.com>
+In-Reply-To: <20260105104131.00005693@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/01/2026 12:16, Faraz Ata wrote:
-> HI Krzysztof
-> 
-> I want to follow up on my I2C patches submitted.
-> Please let me know if anything else needs to be done or do I have to resend the patches
+On 05/01/2026 11:41, Jonathan Cameron wrote:
+>> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+>> index 0827fdaf455a..14d84cc96831 100644
+>> --- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+>> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+>> @@ -200,7 +200,7 @@ static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int index,
+>>  
+>>  static int fimc_is_register_subdevs(struct fimc_is *is)
+>>  {
+>> -	struct device_node *i2c_bus, *child;
+>> +	struct device_node *i2c_bus;
+>>  	int ret, index = 0;
+>>  
+>>  	ret = fimc_isp_subdev_create(&is->isp);
+>> @@ -208,11 +208,10 @@ static int fimc_is_register_subdevs(struct fimc_is *is)
+>>  		return ret;
+>>  
+>>  	for_each_compatible_node(i2c_bus, NULL, "samsung,exynos4212-i2c-isp") {
+> I haven't checked how frequently this would help, but at least in this case
+> I'd consider adding a
+> 	for_each_compatible_node_scoped() following same approach as
+> other scoped loops.
 
-There is nothing from my side, this was a correct posting. I am still
-waiting for the bindings being applied (or letting me know about that).
+yes, yes, that's on my TODO list. :)
+
+I saw it in several places already.
 
 Best regards,
 Krzysztof
