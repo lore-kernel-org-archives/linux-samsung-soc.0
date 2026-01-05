@@ -1,119 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6C433D6E7;
-	Mon,  5 Jan 2026 16:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094682BF002
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 16:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767629990; cv=none; b=Ipv4jDqgwdkDw9hVMj1DHVJupncBnuTMKHViuODOrro7MgvdPFT7fLfH/MNSaX+kXnj+ybAuqcehMgoUWgRws4yUakW4tYkHKWNIBK7vumI3NZoiMpzRJWYthAaZ81EToYbFMnqxM/rC1gM8qZ0TkiTo766XdPZMQVE2aZoOv4k=
+	t=1767630355; cv=none; b=vEIfCwCGYGWacxjyScR+8saiWqGj51SDzmVL3wLHbVFrK5FghYnK1vjFNh418XTJ1JvejSGmnmnmEFjIfWDIpWu13blOBNSjfdZQblR1h6jJIMq/KJhO4po+66OmORXVgjUv7oTTfTHT/nKurXv0lE4RtZjRk2hYKR4CNKiSUro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767629990; c=relaxed/simple;
-	bh=AtN7od0JeLsN9YbMUfbbQk/4L1P9KKm0XcoR8cmj7CA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKPLrjf/ItY5RMRjrzzH/6sollMb93DI9JiG8kx4fNJYhu8KbHjDe/drx0zYANSddQYo48jV7rSuEXuzJ0nqkBUR66iCWhgCGNje5PcOTEl9dLu9JwsTuYQ5PY5sRlJa9JqYV7Ti4srftLzRPobAbhSg8FZZGRDITk4FjFhenT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhHlARlN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767630355; c=relaxed/simple;
+	bh=lhwHD6zKtuPLFojWn2lPvVEZUebsG6dtNGfIwimggR4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ixSf1UqJmrDXMvODcWtS0BUUkJzV13dvSKm+vOmvKVMlyS1YNJUDqTlALxGyi+7KDzOAM9ENqYoAr8KFw1tMQfy9Cg56scqAYYLyWQE7raXJPOZP5RAsFN3p3FhBU1kUKcV+FGu+axoN1hwKyKqKW5fpZoJ/bJ0eRqTfHiYttdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EQmF8u9i; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhHlARlN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE25AC116D0;
-	Mon,  5 Jan 2026 16:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767629990;
-	bh=AtN7od0JeLsN9YbMUfbbQk/4L1P9KKm0XcoR8cmj7CA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KhHlARlNAGXphZOOMOLPXXdYboH6rQGoEW00D0fi7fuAHJOXGzeRgKYG5X1gpaPFj
-	 uzXh4SM8KE4Na2K2V9fmxDxkWzBKNxqKopKgrNor3jKn7aZ4gRQLdsF3X5+jLkxh4U
-	 0SjmlPwW3RkL7OZV9qDHm54Wi5IR/Al4nYVxEV392JoniVlmeAEahNMfp1JOK7ns/o
-	 liXgqtNjg/fiLGTcysf30O4NzJSIrFMFIdeHpIqm/F1jF8Uc7Kjsgi/Ihe8FPPnrY3
-	 DDJqu93pjX4IWDHcObkDD4CagtAouZaUKOTXJ3tft846K9m7kLSRbZtQZs8CYaPD91
-	 0Xn6ZM8O1egOQ==
-Date: Mon, 5 Jan 2026 17:19:38 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
-Message-ID: <aVvkmkd5mWPmxeiS@ryzen>
-References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
- <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EQmF8u9i"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64baaa754c6so67636a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jan 2026 08:25:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767630352; x=1768235152; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RWd8gGZijixy7TJB6a7o67qKbhTEBb13LWPMT6IwWdM=;
+        b=EQmF8u9ilYheAn96QEWAD3MUAQ4MduixS05Xc4nRk+ffRQ8UKseeDJz+inMyHx3xNR
+         5aNKNoYoJnGx+dFKkXGdIK+zNbIPEQSr/P+7nHGIqTlCJPqTobCZj+i1Pc3wDDva0CaB
+         N8kN8aub0tQ98gDvn4wr1VhcliH4I9NAExmyDYK8S6nB/YXk+kWsBnrCAKxpTyEO9KRI
+         3/1YGIfMQWo3X4TFhFNBeQr32ozkXXxzQOBTLw5CTez8/il6kc/kjmFic7yGJxySzkxK
+         E8IJj0+U+O39n/vnmJEqG8THzCGomag6GupnOXPCe3PsIaown1IfdsjzFuWjuBXgiUc9
+         Swyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767630352; x=1768235152;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RWd8gGZijixy7TJB6a7o67qKbhTEBb13LWPMT6IwWdM=;
+        b=OrgO4kNIo33iPEi9ohLB0nGPBQ7NdB+zzNgotvh1ZxhLB71aMdZi109I/wXfvzOIOY
+         9Tp4HM/BqdAU9YE8h+JXotBjrezkW7MJBd7u11RyTpGCuLgnuuaGxIgghZs8TEymgWfI
+         y4udRupKlEptQ9bulgFWYVj01okCABSi37h0NWmqag3FeRMtyUOhZYAPuFwqK+Mqxqpu
+         BpjNFvI3QhL9B6lMxFSN23X2PigW2nGdb5v4/Gmarv3/pS5YAzBTL2y932Yg+m3HYUMC
+         E0+lrvZkSotgjQgmdxQS1vpMtIerHvIaNzNEh4KyLDFrmkp0XBP51P6sWD5Ag96aUnpp
+         LATA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtNhzaQF6dkEgJHCSz8NHzkhx40el2w2Qma1X3MmFUFaj2z1g5Rt5yLMg65sT5/dBjr6d2g6CYTTN7fccZgyU3NQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwsFfsbXLYxbvtmOjwvllIEMNy1rlBHIYSKExwP7JDN+SBx70j
+	6mxUg8i9hNxsrPEmZESrBH+8TJdD3pCSX01TEAs49W03MLPpbN163wUfsGrefrgGIfkS8Sms2+2
+	v/94d3x4=
+X-Gm-Gg: AY/fxX4Z6uw+lXoHlP0vUr5BntPdR/L3eg1doBxLJOpe/ofTV9PJxSQRvWByieejJP/
+	LyX7tvRVDUfaKsReM6J+6kejWlhgw1i9BiTz1xRX2OXlzOXdvca0TlVlf1E2KKtjk1Y50b71vFY
+	p9iUfuQBPxzWG8GPpFzvetIHne0uAk/5FM2PQC44hlOll1fHygCg1uzcQJLh4s7NnwM/nEcuOnj
+	zA5VRnQRpcSE+LfbjtYz7Dzhp2p8Ub6D4VEhCVP4pOxXGZeOORzjkG6al9ASiHASbeX7qi8tbsI
+	1k/Eid1oOFAl6LMnESVKzjFQBzDf5FUrvKyngDb0vWTUM3E6Gu64nQL/AN5NKJ43dA3lQTtvkqU
+	S3HiMBKC7xClxQsoGNPLUOxjOZLf63UPrvHnDsHTCQdIq+ARRx1tvAK7kx6yDpeFiAORYJBwuMc
+	f2M9DzGfhg54UXD4DHfG0toJU7JI3/ofXWWg7DNXL6s9GRjWmhztHPNyWw3YKd6evtW/wnOdI4r
+	oyJgQ==
+X-Google-Smtp-Source: AGHT+IH++F1PtoRnM8tXtPdTTGiZvVCvxxgBXEVu9xsKrhG0h1XR6QkSWJu7FAaG0PBnAKq+tD8WrA==
+X-Received: by 2002:a05:6402:5108:b0:649:b4d8:7946 with SMTP id 4fb4d7f45d1cf-64b8edb3335mr42382412a12.23.1767630352240;
+        Mon, 05 Jan 2026 08:25:52 -0800 (PST)
+Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507618dca2sm170164a12.29.2026.01.05.08.25.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jan 2026 08:25:51 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Mon, 05 Jan 2026 16:25:46 +0000
+Subject: [PATCH] mfd: sec: Fix IRQ domain names duplication
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260105-s2mpg10-chained-irq-domain-suffix-v1-1-01ab16204b97@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAnmW2kC/x3NwQqDMBAE0F+RPXdhE1Aaf0V6aM0m7sGoWSqF4
+ L+79PhmYKaBchVWGLsGlU9R2YrBPTqYl3fJjBLN4MkP5KhH9eueHaG1Ujii1APjthpQvynJD2f
+ 3HChQSJ9IYDt7ZYv/H9Prum7KrxaGcwAAAA==
+X-Change-ID: 20260105-s2mpg10-chained-irq-domain-suffix-c1860909fbd0
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+ kernel-team@android.com, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Mon, Jan 05, 2026 at 05:57:55PM +0530, Sumit Kumar wrote:
-> The current DesignWare PCIe RC implementation supports only the controller
-> (Host Bridge) node for specifying the Root Port properties in an assumption
-> that the underlying platform only supports a single root Port per
-> controller instance. This limits support for multi-port controllers where
-> different ports may have different lane configurations and speed limits.
-> 
-> Introduce a separate dw_pcie_port structure to enable multi-port support.
-> Each Root Port can have independent lane count, speed limit through pcie@N
-> child nodes in device tree. Add dw_pcie_parse_root_ports()
-> API to parse these child nodes.
-> 
-> Equalization presets and link width detection currently use common DBI
-> space for all the root ports. Per-port DBI space assignment for these
-> features will be added in future.
-> 
-> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+For the S2MPG10 IRQ and chained IRQ, regmap IRQ will try to create a
+folder with the same name which is impossible and fails with:
 
-Hello Sumit,
+  debugfs: ':firmware:power-management:pmic' already exists in 'domains'
 
-Is there a reason why you represent this as a list of ports rather than a
-simple array?
+Add domain_suffix to the chained IRQ chip driver to fix it.
 
-The number of ports is known by parsing the device tree, so it should be
-static, no?
+Fixes: ee19b52c31b3 ("mfd: sec: Use chained IRQs for s2mpg10")
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/mfd/sec-irq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-At least to me, this seem similar to e.g. how a gpio_device has multiple
-gpio_descriptors "struct gpio_desc *descs":
-https://github.com/torvalds/linux/blob/master/drivers/gpio/gpiolib.h#L68C1-L68C26
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index 74ac70002d1fc54c7eeb78cfc21b6117a3e14b03..ff2671186e89f2f9b6c98583c0ebfa18d32b89b3 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -198,6 +198,7 @@ static const struct regmap_irq_chip s2mpg10_irq_chip = {
+ 
+ static const struct regmap_irq_chip s2mpg10_irq_chip_pmic = {
+ 	.name = "s2mpg10-pmic",
++	.domain_suffix = "pmic",
+ 	.status_base = S2MPG10_PMIC_INT1,
+ 	.mask_base = S2MPG10_PMIC_INT1M,
+ 	.num_regs = 6,
 
-A list is usually used for something that is dynamic.
-I don't think that the number of ports to a PCIe controller will be dynamic.
+---
+base-commit: f8f97927abf7c12382dddc93a144fc9df7919b77
+change-id: 20260105-s2mpg10-chained-irq-domain-suffix-c1860909fbd0
 
-I can see that struct qcom_pcie in pcie-qcom.c has struct list_head ports,
-but that does not necessarily mean that we need to have a list of ports in
-pcie-designware-host.c. (pcie-qcom could also be modified to have an array
-of ports if there is a desire for similar design pattern.)
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-
-Kind regards,
-Niklas
