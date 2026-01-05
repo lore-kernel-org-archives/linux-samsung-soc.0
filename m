@@ -1,69 +1,69 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE1332C92A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD3632AACF
 	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Jan 2026 09:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767603717; cv=none; b=P0np+SRR85wijp6V7Obg6KL95M9PbwD3f7Lh20bfg9YP2afqMlUqIGti2mFxJXCfPsEIqeOB48X5OBrK9Ms21ZRAP1mjeJLTgm2qLgdBUvzalxyPJFsAadWuVsuyPY7DFKVy6zo9t0whKhLv/hX+zsHvp1Cx3rxkgvBpWFEDsU4=
+	t=1767603717; cv=none; b=iQD/dq9NbsVAWva4F7PQ3rprkqm/BteBmdnNdymLH7RvfYwI0qmYM3AL9o9+w8iQ/KoFUy5vPM3f1w9apTvmNZ/sQOYZtO1jznqmgp6nswGjpN9eTlk3HtDIpqwNrx/11WkwATHsXYDTKcGdfgC5euUBGE8mP1t5/uNFgHmayDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767603717; c=relaxed/simple;
-	bh=e/SiWjAnIf9n3ju1+W9LofDtIoMCJ1iK1OR2/pq7g/4=;
+	bh=K5C3OhUoY6K0VAHET6GjBFnt0SuYQemw88dVyIhs++Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XPMJ4Qlam44xHz8omirKjiVEcxDpwWnjZK8SLlTp9V7MyCpZ8QxAypthJhZTerdT4lhBJDpfaBWahoFJDY2BOJvP2R1RN6cf983gerBwta0mVmiw2gdf0MmSw0cqyHZdscJG/rWoAUlpYuC6yAvcSjJFnYG2DbVsbyMz7zJVj6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CoIahxUW; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:To:Cc; b=mhayD8arhHeKVoKdFmN3Ck0CrxjvnDXUdcygIaqGE/bB5QUKQol+zBTPbqqW3ljlXA0OpFoT1mI3M+5uHlJz09Jf88r+lzr/pU/To+JU04kTCK6nQvY4okZSGmi4qmKyw+rBrHW00ZO1oafrojf3mDu1Orp5I1CfR3amFFM7z2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8YBi0xW; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CoIahxUW"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so3391343366b.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8YBi0xW"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b79ea617f55so2685166666b.3
         for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jan 2026 01:01:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1767603708; x=1768208508; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZoLuiqrhFtLQqv/1rhd/SpsoL8e5z9S5UPDgQu4V1bM=;
-        b=CoIahxUWEUKGXwD5wfSWlTEuehk7jV60T+EiZcDiHhgYoOCB0dRt+i8iqkk2BmcVtC
-         Iii9z3m5CyswxnKtk8XDEsg3+EuVb1JfvgscIEPg+90lWPwDfPu1tD+S7X2X+T3zAEHZ
-         4SjLuxH24xz0u6eLK9e0YjR8HicIvB8XhmQY0N0AtvbBnjSjMec3M7bGUE9BoiWrziHg
-         6S4m+QLv6dI+Kwswxhb0SoyucHjsiRONPNl8NzlA/ChebKSvqI7vy3mOR2ONpwZl2eAt
-         9v1zSv87YuFkkYSxPBgJbdodWrDcyaoh8aHenM9VPLhdon7N4V3paCyU7SQmkaoH/upX
-         RuKw==
+        bh=nusFn6aAeugE2vgG6EjhYq+miTmPM6tuO12QEUcKzwU=;
+        b=P8YBi0xWmVnwlgaBwZ4TazOLBE/i03wdMJ3IL6jKaOlGDCwS/WfNmhXvtqNYND74RV
+         JEv00lhtiIERp6abIO0Vsl/MB4P3azYXTL7PLmZ2YRlamJhNTh54zPirlnx9Gjix8vIJ
+         KQ7yTDMnoxox7tCcNy+t/hnzpjhH4K9dy8DyyXXsvNMYqRmzYgN110Tyn1Pr2o6jzG5t
+         4f3wTwx9/Ka45vmGwagdumwGnNEZSp42BzJNj5NpgOl/pvg93Oom2I+0IMhXNEGKnj08
+         AOQAur12g/BQJhPC6+OwOfr1poioNLS023N9NXRjUqcZLQJJ3YTEIO3pb6ISzQLwOJ1H
+         wMPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1767603708; x=1768208508;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ZoLuiqrhFtLQqv/1rhd/SpsoL8e5z9S5UPDgQu4V1bM=;
-        b=DzT4Z1jSEW3VDOWoQhDLGLCBCEHT0tT2Pqb6vEz7oEZhHMe6TFgEFlyCxc4JGf85EO
-         xcbTpHDx41UIJj80auOUHpSd2Ob7PeLYSTcuShNG1tLkqBw35RYqUsCl3cozJpYCAvxX
-         GPnP84GGXrN2RThGzJCDS4lp14yttZKaXFht6hd9TNm1MIsljOykDuxXtgoeRuMOapFk
-         jVAU1KC0Adm6ZA0fIE31ZTqA5sCX2DgqoyZqlTHFZ/12JRFRV4iGBVtMm9Wx+HLoI2oF
-         f+V3u+IyJj0/d1yS0ql+Sp/+VFv1TtBePuL+3Jf6+bsOWhAz6j79oBTJdogXkMrcG8DG
-         iRDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNvQVgOsSoAlVimi0J4hzE++vZjRZXquCq9k7ppbAduF4WVSR036iHTSJJpV49CXsRTtEPDgK+ihgwBk80UGJYJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzivz0Rlq0sgHpwTtPMrZNu3tVWsSAlnRQ84gI+HFnJTgRI9nUU
-	Fj40BFU4cknl8fjjbKgDWyPPCEzfEY7RrmZVNmlVs4q4sQOh3cOBCsrmFYiRoWCdy2w=
-X-Gm-Gg: AY/fxX5llEea3Un3ILVk6AI2KcIDvMe+ACKoR4fsPIbSHjmDCBbwSNVmQ1EW+cQ+HOr
-	6pu4FN2oGF2DauBnizhJdar0VXfDjaDWqfCbGb0CVN8RM9PUIAIOcX595M1mFizAQ4uYcFCbtYm
-	uxsSvvvh9gxjCa1Y8ynXMIvwyP6iYfYm22dG5GOeHH/qArAkn2xz2Y4sTghYmFenDjG81JcXmkb
-	Rc99lVqE+fWIK2UKW7/Rhl7SYQT0CaYH5s9tIZUgWI1Gfy0i+dU1Bj3bdMgw0DM4bg8uaD4wuwu
-	EzrJaqLPu2WN2Phsmz1d8tJAZ5y5f3Tbbi3nyZ3PVgHiuOm6YUveIbOXnQQFNestxn/z7r+aAWC
-	PCraiGs4017x7W4C/oZX9fuH+7/RiNpWIWN54w8M5UtyeuLy8arzhEEShE2X9qB0ZnS99tnEpkg
-	2emYjb6xHY1nfpG4TMtOkyyS+75g5VQ9zL5XB5fPjx1WlqOoNfp07QiHDf2EG7ct6/69g5Lgn5b
-	TAKWA==
-X-Google-Smtp-Source: AGHT+IG4JeAa46uy6SUlbVukzudlbhIwHtOjEK6mV3glK8apPLjD/3Y6qi1SnMN2NuRbMMnv98db7A==
-X-Received: by 2002:a17:907:94d2:b0:b84:201e:cd3f with SMTP id a640c23a62f3a-b84201ecd98mr40078366b.11.1767603707608;
-        Mon, 05 Jan 2026 01:01:47 -0800 (PST)
+        bh=nusFn6aAeugE2vgG6EjhYq+miTmPM6tuO12QEUcKzwU=;
+        b=oX/PKgzkoxUiIjq3b5tT1TY9S+oLvDWjta0KhWv5MO/7Ty5DI+qm1Y4eTh4g6O9MCy
+         z59x3AAQ4X7ghM3bcJcYd7zrw+umIncWiotM/CT/Qh4HM060hAVsqemf0jzlsBBkQcyu
+         7OmzQdbW4+tQ5mHh3hHomrGYEk3nuXLAM13F7lvy6+6RzZT7gFYLxasa4urpuJ3BGKnn
+         y2zf1CRkT8hP9+NZzAsVshQfti34ivOinxltseiuXY6MJfJFrPdn++c2GIaPHBx6HEYW
+         V4I7PSrITfS1733csFSJBbr9OPqdCGoK0RZN+RS29hlsMkUveNQZnH2V2a5kuwoOWZeO
+         eY6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVrfmzytZm9oKUxyBJUgxbpxPpTE08WR11RDTjyjz2lW7yHkL3q5mtcECCTnJyUsN7OAqK+I9sTghC4RiRnhKYMVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx62sH714bfM+LPL2Ov+dqv/3LKhKXbXtohA2VE6LVNqUOSw26o
+	fNiIvjU2cszgbIjAHWfTQYsRkGAMnuZAcy3tqGSneTEsToO9w1FXVLLAWsTE8ku6ikg=
+X-Gm-Gg: AY/fxX6NTqoc+wy+8qzeuGPvbWgX/Pp5x/LRKWO1kQRMMgKQpzpS1sWSqahESsooa2G
+	+e+Pdq5Zp6v7lX4blPDL6LOUi9n+SaW6znYVE+u24P3mRGN0ZiiRob5wNcYIxSj3qKW8c5wrXXr
+	KqGz5svYh/AeRENjX958XMoAiWEqPDRMMfm7VNTocLv6uL7drmF00zB68ZgKuCCPbWOyhM4uTyo
+	OEJkSHjOit0vpK+0SgAqfxwtWaKlFueEbNRHxyc/Wy5Z1WSTvVTV46azq+1VGJaNmpgOH2UqLOC
+	T9bI2DnPIQ4NaBPs8hpmbHfp5QvLh4AiEv0w5T/mjY7mL1X6tddw8Mbr77HC3CmAyaBAVEyFc7x
+	gzgD90WmnIfJOfHsSR/gNLOxJCs2iCLS8OIvCW6h+NioUJswSt7BxzK6k5awd0jPLF7jyowhnE5
+	emWV9Si7p6sG5Mohqih5hJLoSbjqgMG1eryKtYNyKh48VxEmVlYc9Z17T+drVDRowcwog8Z4ZnT
+	2gte9P6u+AfKXc5
+X-Google-Smtp-Source: AGHT+IFZpiiMKEoM+bNlxEzc9xDzaIxcL1vnVA9swVqdKvu61oAUboe81BV/nwzziDLPAO0mtoXPeg==
+X-Received: by 2002:a17:906:6a2a:b0:b73:845f:4432 with SMTP id a640c23a62f3a-b8037178f70mr5650773066b.32.1767603708200;
+        Mon, 05 Jan 2026 01:01:48 -0800 (PST)
 Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f0ecb9sm5384010466b.56.2026.01.05.01.01.46
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f0ecb9sm5384010466b.56.2026.01.05.01.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jan 2026 01:01:46 -0800 (PST)
+        Mon, 05 Jan 2026 01:01:47 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 05 Jan 2026 09:01:49 +0000
-Subject: [PATCH v6 13/20] regulator: s2mps11: place constants on right side
- of comparison tests
+Date: Mon, 05 Jan 2026 09:01:50 +0000
+Subject: [PATCH v6 14/20] regulator: s2mps11: update node parsing (allow
+ -supply properties)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260105-s2mpg1x-regulators-v6-13-80f4b6d1bf9d@linaro.org>
+Message-Id: <20260105-s2mpg1x-regulators-v6-14-80f4b6d1bf9d@linaro.org>
 References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 In-Reply-To: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -86,68 +86,464 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  kernel-team@android.com, linux-kernel@vger.kernel.org, 
  linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-gpio@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-For the lines being changed, checkpatch reports:
+For the upcoming S2MPG10 and S2MPG11 support, we need to be able to
+parse -supply properties in the PMIC's DT node.
 
-    WARNING: Comparisons should place the constant on the right side of the test
+This currently doesn't work, because the code here currently points the
+regulator core at each individual regulator sub-node, and therefore the
+regulator core is unable to find the -supply properties.
 
-Update the code accordingly.
+Update the code to simply let the regulator core handle all the parsing
+by adding the ::of_match and ::regulators_node members to all existing
+regulator descriptions, by adding ::of_parse_cb() to those
+regulators which support the vendor-specific samsung,ext-control-gpios
+to parse it (S2MPS14), and by dropping the explicit call to
+of_regulator_match().
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Configuring the PMIC to respect the external control GPIOs via
+s2mps14_pmic_enable_ext_control() is left outside ::of_parse_cb()
+because the regulator core ignores errors other than -EPROBE_DEFER from
+that callback, while the code currently fails probe on register write
+errors and I believe it should stay that way.
+
+The driver can now avoid the devm_gpiod_unhinge() dance due to
+simpler error handling of GPIO descriptor acquisition.
+
+This change also has the advantage of reducing runtime memory
+consumption by quite a bit as the driver doesn't need to allocate a
+'struct of_regulator_match' and a 'struct gpio_desc *' for each
+regulator for all PMICs as the regulator core does that. This saves
+40+8 bytes on arm64 for each individual regulator on all supported
+PMICs (even on non-S2MPS14 due to currently unnecessarily allocating
+the extra memory unconditionally). With the upcoming S2MPG10 and
+S2MPG11 support, this amounts to 1640+328 and 1120+224 bytes
+respectively.
+
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
 ---
-v3:
-- new patch
+v2:
+- fix commit message typos: s2mp1 -> s2mpg1
 ---
- drivers/regulator/s2mps11.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/regulator/s2mps11.c | 192 ++++++++++++++++++++++++--------------------
+ 1 file changed, 105 insertions(+), 87 deletions(-)
 
 diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 30586e9884bfb998ff07e3148813344b307506c0..8a36ab67b73e4151c7f67af0555a6465ee1e7a04 100644
+index 8a36ab67b73e4151c7f67af0555a6465ee1e7a04..88e21c90832a45547e5791b15cd1de274f81fed6 100644
 --- a/drivers/regulator/s2mps11.c
 +++ b/drivers/regulator/s2mps11.c
-@@ -1221,32 +1221,32 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	case S2MPS11X:
- 		rdev_num = ARRAY_SIZE(s2mps11_regulators);
- 		regulators = s2mps11_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps11_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps11_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPS13X:
- 		rdev_num = ARRAY_SIZE(s2mps13_regulators);
- 		regulators = s2mps13_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps13_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps13_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
+@@ -40,12 +40,6 @@ struct s2mps11_info {
+ 	 * the suspend mode was enabled.
+ 	 */
+ 	DECLARE_BITMAP(suspend_state, S2MPS_REGULATOR_MAX);
+-
+-	/*
+-	 * Array (size: number of regulators) with GPIO-s for external
+-	 * sleep control.
+-	 */
+-	struct gpio_desc **ext_control_gpiod;
+ };
+ 
+ static int get_ramp_delay(int ramp_delay)
+@@ -244,7 +238,7 @@ static int s2mps11_regulator_enable(struct regulator_dev *rdev)
  	case S2MPS14X:
- 		rdev_num = ARRAY_SIZE(s2mps14_regulators);
- 		regulators = s2mps14_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps14_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps14_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPS15X:
- 		rdev_num = ARRAY_SIZE(s2mps15_regulators);
- 		regulators = s2mps15_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps15_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps15_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPU02:
- 		rdev_num = ARRAY_SIZE(s2mpu02_regulators);
- 		regulators = s2mpu02_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mpu02_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mpu02_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPU05:
- 		rdev_num = ARRAY_SIZE(s2mpu05_regulators);
- 		regulators = s2mpu05_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mpu05_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mpu05_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	default:
- 		return dev_err_probe(&pdev->dev, -ENODEV,
+ 		if (test_bit(rdev_id, s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+-		else if (s2mps11->ext_control_gpiod[rdev_id])
++		else if (rdev->ena_pin)
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -334,6 +328,58 @@ static int s2mps11_regulator_set_suspend_disable(struct regulator_dev *rdev)
+ 				  rdev->desc->enable_mask, state);
+ }
+ 
++static int s2mps11_of_parse_cb(struct device_node *np,
++			       const struct regulator_desc *desc,
++			       struct regulator_config *config)
++{
++	const struct s2mps11_info *s2mps11 = config->driver_data;
++	struct gpio_desc *ena_gpiod;
++	int ret;
++
++	if (s2mps11->dev_type == S2MPS14X)
++		switch (desc->id) {
++		case S2MPS14_LDO10:
++		case S2MPS14_LDO11:
++		case S2MPS14_LDO12:
++			break;
++
++		default:
++			return 0;
++		}
++	else
++		return 0;
++
++	ena_gpiod = fwnode_gpiod_get_index(of_fwnode_handle(np),
++					   "samsung,ext-control", 0,
++					   GPIOD_OUT_HIGH |
++					   GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++					   "s2mps11-regulator");
++	if (IS_ERR(ena_gpiod)) {
++		ret = PTR_ERR(ena_gpiod);
++
++		/* Ignore all errors except probe defer. */
++		if (ret == -EPROBE_DEFER)
++			return ret;
++
++		if (ret == -ENOENT)
++			dev_info(config->dev,
++				 "No entry for control GPIO for %d/%s in node %pOF\n",
++				 desc->id, desc->name, np);
++		else
++			dev_warn_probe(config->dev, ret,
++				       "Failed to get control GPIO for %d/%s in node %pOF\n",
++				       desc->id, desc->name, np);
++		return 0;
++	}
++
++	dev_info(config->dev, "Using GPIO for ext-control over %d/%s\n",
++		 desc->id, desc->name);
++
++	config->ena_gpiod = ena_gpiod;
++
++	return 0;
++}
++
+ static const struct regulator_ops s2mps11_ldo_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+@@ -362,6 +408,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
+ #define regulator_desc_s2mps11_ldo(num, step) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPS11_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mps11_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -378,6 +426,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
+ #define regulator_desc_s2mps11_buck1_4(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS11_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps11_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -395,6 +445,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
+ #define regulator_desc_s2mps11_buck5 {				\
+ 	.name		= "BUCK5",				\
+ 	.id		= S2MPS11_BUCK5,			\
++	.of_match	= of_match_ptr("BUCK5"),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps11_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -412,6 +464,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
+ #define regulator_desc_s2mps11_buck67810(num, min, step, min_sel, voltages) {	\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS11_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps11_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -429,6 +483,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
+ #define regulator_desc_s2mps11_buck9 {				\
+ 	.name		= "BUCK9",				\
+ 	.id		= S2MPS11_BUCK9,			\
++	.of_match	= of_match_ptr("BUCK9"),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps11_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -502,6 +558,8 @@ static const struct regulator_ops s2mps14_reg_ops;
+ #define regulator_desc_s2mps13_ldo(num, min, step, min_sel) {	\
+ 	.name		= "LDO"#num,				\
+ 	.id		= S2MPS13_LDO##num,			\
++	.of_match	= of_match_ptr("LDO"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps14_reg_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -518,6 +576,8 @@ static const struct regulator_ops s2mps14_reg_ops;
+ #define regulator_desc_s2mps13_buck(num, min, step, min_sel) {	\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS13_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps14_reg_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -535,6 +595,8 @@ static const struct regulator_ops s2mps14_reg_ops;
+ #define regulator_desc_s2mps13_buck7(num, min, step, min_sel) {	\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS13_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps14_reg_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -552,6 +614,8 @@ static const struct regulator_ops s2mps14_reg_ops;
+ #define regulator_desc_s2mps13_buck8_10(num, min, step, min_sel) {	\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS13_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mps14_reg_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -634,6 +698,9 @@ static const struct regulator_ops s2mps14_reg_ops = {
+ #define regulator_desc_s2mps14_ldo(num, min, step) {	\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPS14_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
++	.of_parse_cb	= s2mps11_of_parse_cb,		\
+ 	.ops		= &s2mps14_reg_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -649,6 +716,9 @@ static const struct regulator_ops s2mps14_reg_ops = {
+ #define regulator_desc_s2mps14_buck(num, min, step, min_sel) {	\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPS14_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
++	.of_parse_cb	= s2mps11_of_parse_cb,			\
+ 	.ops		= &s2mps14_reg_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -725,6 +795,8 @@ static const struct regulator_ops s2mps15_reg_buck_ops = {
+ #define regulator_desc_s2mps15_ldo(num, range) {	\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPS15_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mps15_reg_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -740,6 +812,8 @@ static const struct regulator_ops s2mps15_reg_buck_ops = {
+ #define regulator_desc_s2mps15_buck(num, range) {			\
+ 	.name		= "BUCK"#num,					\
+ 	.id		= S2MPS15_BUCK##num,				\
++	.of_match	= of_match_ptr("BUCK"#num),			\
++	.regulators_node = of_match_ptr("regulators"),			\
+ 	.ops		= &s2mps15_reg_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,				\
+ 	.owner		= THIS_MODULE,					\
+@@ -835,60 +909,6 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
+ 			rdev->desc->enable_mask, S2MPS14_ENABLE_EXT_CONTROL);
+ }
+ 
+-static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+-		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+-{
+-	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
+-	unsigned int i;
+-	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
+-		S2MPS14_LDO12 };
+-
+-	for (i = 0; i < ARRAY_SIZE(valid_regulators); i++) {
+-		unsigned int reg = valid_regulators[i];
+-
+-		if (!rdata[reg].init_data || !rdata[reg].of_node)
+-			continue;
+-
+-		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
+-				of_fwnode_handle(rdata[reg].of_node),
+-				"samsung,ext-control",
+-				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+-				"s2mps11-regulator");
+-		if (PTR_ERR(gpio[reg]) == -ENOENT)
+-			gpio[reg] = NULL;
+-		else if (IS_ERR(gpio[reg])) {
+-			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
+-				reg, rdata[reg].name);
+-			gpio[reg] = NULL;
+-			continue;
+-		}
+-		if (gpio[reg])
+-			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
+-				reg, rdata[reg].name);
+-	}
+-}
+-
+-static int s2mps11_pmic_dt_parse(struct platform_device *pdev,
+-		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11,
+-		unsigned int rdev_num)
+-{
+-	struct device_node *reg_np;
+-
+-	reg_np = of_get_child_by_name(pdev->dev.parent->of_node, "regulators");
+-	if (!reg_np) {
+-		dev_err(&pdev->dev, "could not find regulators sub-node\n");
+-		return -EINVAL;
+-	}
+-
+-	of_regulator_match(&pdev->dev, reg_np, rdata, rdev_num);
+-	if (s2mps11->dev_type == S2MPS14X)
+-		s2mps14_pmic_dt_parse_ext_control_gpio(pdev, rdata, s2mps11);
+-
+-	of_node_put(reg_np);
+-
+-	return 0;
+-}
+-
+ static int s2mpu02_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ {
+ 	unsigned int ramp_val, ramp_shift, ramp_reg;
+@@ -946,6 +966,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_ldo1(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPU02_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -961,6 +983,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_ldo2(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPU02_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -976,6 +1000,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_ldo3(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPU02_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -991,6 +1017,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_ldo4(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPU02_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -1006,6 +1034,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_ldo5(num) {		\
+ 	.name		= "LDO"#num,			\
+ 	.id		= S2MPU02_LDO##num,		\
++	.of_match	= of_match_ptr("LDO"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_ldo_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -1022,6 +1052,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_buck1234(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPU02_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mpu02_buck_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -1038,6 +1070,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_buck5(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPU02_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mpu02_ldo_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -1054,6 +1088,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_buck6(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPU02_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mpu02_ldo_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -1070,6 +1106,8 @@ static const struct regulator_ops s2mpu02_buck_ops = {
+ #define regulator_desc_s2mpu02_buck7(num) {			\
+ 	.name		= "BUCK"#num,				\
+ 	.id		= S2MPU02_BUCK##num,			\
++	.of_match	= of_match_ptr("BUCK"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mpu02_ldo_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -1125,6 +1163,8 @@ static const struct regulator_desc s2mpu02_regulators[] = {
+ #define regulator_desc_s2mpu05_ldo_reg(num, min, step, reg) {	\
+ 	.name		= "ldo"#num,				\
+ 	.id		= S2MPU05_LDO##num,			\
++	.of_match	= of_match_ptr("ldo"#num),		\
++	.regulators_node = of_match_ptr("regulators"),		\
+ 	.ops		= &s2mpu02_ldo_ops,			\
+ 	.type		= REGULATOR_VOLTAGE,			\
+ 	.owner		= THIS_MODULE,				\
+@@ -1156,6 +1196,8 @@ static const struct regulator_desc s2mpu02_regulators[] = {
+ #define regulator_desc_s2mpu05_buck(num, which) {	\
+ 	.name		= "buck"#num,			\
+ 	.id		= S2MPU05_BUCK##num,		\
++	.of_match	= of_match_ptr("buck"#num),	\
++	.regulators_node = of_match_ptr("regulators"),	\
+ 	.ops		= &s2mpu02_buck_ops,		\
+ 	.type		= REGULATOR_VOLTAGE,		\
+ 	.owner		= THIS_MODULE,			\
+@@ -1254,22 +1296,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 				     s2mps11->dev_type);
+ 	}
+ 
+-	s2mps11->ext_control_gpiod = devm_kcalloc(&pdev->dev, rdev_num,
+-			       sizeof(*s2mps11->ext_control_gpiod), GFP_KERNEL);
+-	if (!s2mps11->ext_control_gpiod)
+-		return -ENOMEM;
+-
+-	struct of_regulator_match *rdata __free(kfree) =
+-		kcalloc(rdev_num, sizeof(*rdata), GFP_KERNEL);
+-	if (!rdata)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < rdev_num; i++)
+-		rdata[i].name = regulators[i].name;
+-
+-	ret = s2mps11_pmic_dt_parse(pdev, rdata, s2mps11, rdev_num);
+-	if (ret)
+-		return ret;
++	device_set_of_node_from_dev(&pdev->dev, pdev->dev.parent);
+ 
+ 	platform_set_drvdata(pdev, s2mps11);
+ 
+@@ -1279,15 +1306,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	for (i = 0; i < rdev_num; i++) {
+ 		struct regulator_dev *regulator;
+ 
+-		config.init_data = rdata[i].init_data;
+-		config.of_node = rdata[i].of_node;
+-		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+-		/*
+-		 * Hand the GPIO descriptor management over to the regulator
+-		 * core, remove it from devres management.
+-		 */
+-		if (config.ena_gpiod)
+-			devm_gpiod_unhinge(&pdev->dev, config.ena_gpiod);
+ 		regulator = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+ 		if (IS_ERR(regulator))
+@@ -1296,7 +1314,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 					     regulators[i].id,
+ 					     regulators[i].name);
+ 
+-		if (config.ena_gpiod) {
++		if (regulator->ena_pin) {
+ 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
+ 							      regulator);
+ 			if (ret < 0)
 
 -- 
 2.52.0.351.gbe84eed79e-goog
