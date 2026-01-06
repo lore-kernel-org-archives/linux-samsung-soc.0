@@ -1,124 +1,119 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF9135CBB0
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 17:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CED134F257
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 20:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767721655; cv=none; b=WCTvwrXTsqLBhGE8/0GO/bJ7bJLirLFEoB/FMswcY4tlGcbtc1heDx5DkEqvZ0AmiEgHGISiLZVyKxRIndOsfVhMRfxBF+J9GuN69J5oK4rk42wVsaHoVpzXaLJ841tlh/syIe1MhErfNy81oONnfWDX9om/ibor1g27XzdHP3w=
+	t=1767729817; cv=none; b=nyhJ32RyBUMOiMUKH84Bb7iaPeC2veBcqgJj0bTHIsEh6KlTvIphSGv+SXPocdCKiRIdVz/IQKi9yc2SSa+aIOQsM0YlVDgsKUJD/e+yw5Z9osnSczK39jbx3PCNitaEDpJPCFjigeLOVwMN/ErWDIYnn4wMU7+fLhAa/1hXgLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767721655; c=relaxed/simple;
-	bh=MbVFYzKb3p55yAB5esiLZ2t69mWojzLGTDb2pjZ9IBo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=BRheH7xTSxD5GhEFTMIJmxehzhOiPA23HtJupr30OJlKy/izjvHzC6nQYMOjciqqAzVB+TLZsv4AIF7I2w8oZy/2n3xlxiSf0iETr6689UQdvyTZ6eAY/SjwnYqD7bguAdEDtzn/GK6e6McWX8vPWP+TAmbWy10c0VjiwY8MGkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=G7UGRfUH; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1767729817; c=relaxed/simple;
+	bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PtAty9MYwVwgQ4h80WbrCkcouiAiMmyOMoEh4I671GMVDDOQtR1s/TYAiiDPa2HRhvvHO5CWgQ11j+vum1VPsxVmUsWnd/jB+cAQqzEgo8GbiWhxL8Hscgczxua7qFFzAEUlzsmptpc4BwOanwzU0p9tuYOCPNGptzbPBmtinXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aooa5/e+; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G7UGRfUH"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260106174724epoutp02269f48fddebe11059df1b873f292f259~INXhXcmyg0803508035epoutp02i
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 17:47:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260106174724epoutp02269f48fddebe11059df1b873f292f259~INXhXcmyg0803508035epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1767721644;
-	bh=1SqUiju7JTdymTLUcCbYNFwbrvaMPwFX7LS7wmO+6Ho=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=G7UGRfUHUAvO1gj600K007nX0IGVnyUCf2F1+N0FSyR+z1uUF7D7h5IBC3riAqaED
-	 5qgMuTLhEqoCC3teLE8wXagNlsi+sUTApLKdBegHkSbx8HLkV4H+uePf/B/hnFmQlQ
-	 eOCK8nfLQ9rkPiM22dWHuPmWRmvRZMXrXKTN1vYg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260106174723epcas5p1165352a485d67b66d18fffe3500895f1~INXgVPH7i2622426224epcas5p1M;
-	Tue,  6 Jan 2026 17:47:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4dlzBy42Kzz6B9m4; Tue,  6 Jan
-	2026 17:47:22 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260106174722epcas5p16f744ceb5059e7695cca08317f6e8c62~INXe6Llxa2622426224epcas5p1L;
-	Tue,  6 Jan 2026 17:47:22 +0000 (GMT)
-Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260106174719epsmtip2257206d5a8046c710d6d9f8795ccb86d~INXcqoSLM1550115501epsmtip2C;
-	Tue,  6 Jan 2026 17:47:18 +0000 (GMT)
-From: "Faraz Ata" <faraz.ata@samsung.com>
-To: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>
-Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<pritam.sutar@samsung.com>, <dev.tailor@samsung.com>
-In-Reply-To: <20250904072844.358759-1-faraz.ata@samsung.com>
-Subject: RE: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
- compatible
-Date: Tue, 6 Jan 2026 23:17:04 +0530
-Message-ID: <00c001dc7f34$828b0c90$87a125b0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aooa5/e+"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b79af62d36bso247095266b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jan 2026 12:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767729812; x=1768334612; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+        b=aooa5/e+oWtRhdnfriJHRmLDfHXFrjiStkLph4hzhtEIcCzaBC6Xfu23rVY5BU61Ml
+         lbBJHjQsFhdRLXhzbm+MeS42mVr9XnE7jQppW97EVjngfGSNg05grlaQYdnt8k+j0ErW
+         PSoo+pI6OI3hGTwDI7AAgvhXkIh/w5HlhpJ4LA7k4mj1b6/8lp6jBa8q6i4ydH5uw1Si
+         fT0H35xJ8bixUVvfxne+LI31dCpR3tDx2wjNegh3X0S+N153PMCL0Rb+sxiEdgrmlMny
+         AG9PHTHY4K2J2Z+eI7cSp8oeud/DN4mmdXFccnHGMOPX/z5LE0pZOWRk6TiXDIoLA0zN
+         M+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767729812; x=1768334612;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
+        b=WInVVGzEzLnj6x09hAeSmikArrjyL7beryvPpDnLojLdOR5zyeZ5ew5PrVV8bWkyey
+         QhhV11XSgrXVMwKZJhR2DF0MqjnwoylL6fcV6JH9wEkM61WVxkMwhvxq7Po9RhFBWA0c
+         NNxALPr3/9O/5/QB6gdM+SJ7lpKCCAbDoBa8OkygslDKDKfCaRDDe8xPvy6Ad22L+TWK
+         ZDuKfPXLoNDoAGDA9zr5TGYAVW/YG+7a90at8f2/sNroDdzuLDtasExZNP8QwGHIb9q6
+         KWdpAY0Mb4N63AwngZOYP1YgTEhmINSsVU3SUYUdsQIrnYzOn7+mbmNfL1xt8LtG5KRe
+         TnvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk4UqxgZAnpJzNPtjAbJo6YCX/6ca9rbJ/hoSIA678dJio6zNP/Oyg2mENGBonEagDUsyVuY2QNODwSQ3UpY2h/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAiVX5psX6KuVwIypOg+wd4Tggm7lARziWTQ01ttYPHPceeU5l
+	HsUdUTACWexnnYJiIHSXI33n7RKv45Th9YndWcgcs82pt2eDTZM/N0slOCNOtyY6ZRDtpBauFCP
+	l11f/WQM9qAcV3Om6xSlPkx66jXv9JOXWfL3QGsBgeg==
+X-Gm-Gg: AY/fxX5HcMSxd2pdoP/qGyVb+SORpbWkrYnBWSbFHhDJnfx9JOwNZd/2ywY9klP5p4r
+	g2IAj8LWNPCKeOFBRE4E9fQqDGdJ9ygI2ajs9pbgKXcqx2CTQnk8ys04YK/4V71EHUZr/qdrV+U
+	Hi7REkSF3lISd5s/iB9V4N+KLl0NnhVdGaRC/YBgx+RK2sO9WYT9zCtzikcESiIR0z9KGmqn1aC
+	6jqNB5lCnDVVd8MMKwxEk1DAqZ10EEK2aqUDnnzXsvVlnGypHuDGUUeUatJMirhIWp0vN4n
+X-Google-Smtp-Source: AGHT+IEmmXc6X3lklLmC0mCRNpoBur3TPS2BGNaDYr/bqjA6QRWH7eFRQJKdL8KVJ+yPvHwZtBcG2RvEv+KputuzJWc=
+X-Received: by 2002:a17:907:96a1:b0:b6d:9576:3890 with SMTP id
+ a640c23a62f3a-b8444f9664fmr26102366b.45.1767729811848; Tue, 06 Jan 2026
+ 12:03:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMyl6jZ32DHOO134xOI05SqoiCOxQG1dU1GsosmcDA=
-Content-Language: en-us
-X-CMS-MailID: 20260106174722epcas5p16f744ceb5059e7695cca08317f6e8c62
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
-References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
-	<20250904072844.358759-1-faraz.ata@samsung.com>
+References: <20251222-automatic-clocks-v7-0-fec86fa89874@linaro.org> <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
+In-Reply-To: <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 6 Jan 2026 20:03:20 +0000
+X-Gm-Features: AQt7F2oLfa1exLAxy6kjOxPF0LQxcKRjhYroQ-B3HvTQJnB9vgg9Cr5KITN-rwA
+Message-ID: <CADrjBPocyZFz--xCaZahyUA9wwuS7P0E9Gt4Z=53rbT-nEQ7ng@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Implement hardware automatic clock gating (HWACG)
+ for gs101
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-HI Andi/Rob
+Hi Krzysztof,
 
-I want to follow up on the below dt-binding patch submitted.
-Please let me know if the patch is under review or anything else needs to b=
-e done.
+On Mon, 22 Dec 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 22/12/2025 11:22, Peter Griffin wrote:
+> > Hi folks,
+> >
+> > This series addresses an issue with Samsung Exynos based upstream clock driver
+> > whereby the upstream clock driver sets all the clock gates into "manual mode"
+> > (which uses a bit that is documented as reserved in the gate registers).
+> >
+>
+> Applied.
 
-Reference  - https://lore.kernel.org/all/83338b57-2e8e-4b77-9e93-fadfb0f6a5=
-fc=40kernel.org/
+Thanks.
 
-> -----Original Message-----
-> From: Faraz Ata <faraz.ata=40samsung.com>
-> Sent: Thursday, September 4, 2025 12:59 PM
-> To: andi.shyti=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; alim.akhtar=40samsung.com
-> Cc: linux-i2c=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; rosa.pila=40samsung.com;
-> pritam.sutar=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com
-> Subject: =5BPATCH=5D dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
-> compatible
->=20
-> Add =22samsung,exynosautov920-hsi2c=22 dedicated compatible for HSI2C fou=
-nd
-> in ExynosAutov920 SoC.
->=20
-> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml =7C 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> index 7ae8c7b1d006..207b95e392e5 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-> =40=40 -38,6 +38,7 =40=40 properties:
->                - google,gs101-hsi2c
->                - samsung,exynos2200-hsi2c
->                - samsung,exynos850-hsi2c
-> +              - samsung,exynosautov920-hsi2c
->            - const: samsung,exynosautov9-hsi2c
->        - const: samsung,exynos5-hsi2c    =23 Exynos5250 and Exynos5420
->          deprecated: true
-> --
-> 2.34.1
+ There were several checkpatch notices/less important warnings
+> of which most were result of existing code but few were introduced.
+> Please be sure you do not introduce new warnings NEXT TIME.
 
+Will do.
 
+>
+> Also, DTS cannot be in the middle of the patchset. It's almost always
+> wrong, like in this case as well. This was raised, also by me, multiple
+> times on the lists and it is explicitly documented in submitting
+> patches. Putting it in the middle suggests you try to fix up broken
+> unbisectable things by reordering patches, but you cannot.
+
+Noted. Thanks for pointing this out. I suppose the last time I read
+submitting-patches.rst must have been before Feb 25th 2025 when you
+documented this rule in b31cc6af1bb1 ("docs: dt: submitting-patches:
+Document sending DTS patches")
+
+regards,
+
+Peter
