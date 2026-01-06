@@ -1,166 +1,220 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010055.outbound.protection.outlook.com [52.101.84.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD830C60D;
-	Tue,  6 Jan 2026 13:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767705085; cv=none; b=LubNjq0+T1lWN66DbymIkecvzhvQ6fmyzEZocwQQVZwHh+W5yAtXhmzpsZxyVAFLTE/jORt9+OUeUmJoevTZevi3oyJux/gR2MDEUEBbfQFvA+EnRntnaQgOG/Jtvkcgdg6CtPFT6y/qTOEQf4EKovZJBstcGfY8Hq4rckQ4FTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767705085; c=relaxed/simple;
-	bh=up2iff1BZxa94kRdGC8JpHKlWbcnvKvXoZYjbXT7JJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqhGKYaUpTxXn5YIZiLPjyQtVH6B3x2js4LXmJv/Qgk588aE2WeTFuiua2gPbMTREjGZAmkgKaZ3o0q9KEj1pBqLCEhYCof9b2m0QCOgzzugnFwOMtkPAsgKXByAetUF6UzwjQQBfvz+dEzsQUgFe3yM7F4TzODxdDWuWrCssb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9VSxyA6; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E803346AF;
+	Tue,  6 Jan 2026 14:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767711259; cv=fail; b=YKUaRD87pEJrwORpzklsgUcDhrl21Epu26v35mN81bMMLwAp+T3uf2gFAETEihvFWDnyBRw+iNTlu9+d41bbhAn0yAt4D8Cd9p8OJQC7re5B9qcx4ZCr825x8mXm3yldmOlS71XFYasJDYvgZhM5gL0g8/UZo/OgwH2AO2uRlg0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767711259; c=relaxed/simple;
+	bh=xPQPRK4fRdcmDO6AV4bwoI3rLUeyj6bx0O+0PpVaroQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UqXuGZ3WkjkZ49dSAWsxyWedp3iuKvHWA6zqccJDPKYNRaFvlr/KT/QtfTuLFM4oYFxURro6ZiSGVc9ySWBJ4QcSCWSQiAri+RwQYqt2wfKY8o5LzX3DryFnp4xqXTx9lekJSE1Wp7YLzc4BAY/RJdIar1QbQT9B3DPZ0HDWGYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LC72UMxW; arc=fail smtp.client-ip=52.101.84.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9VSxyA6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B83DC116C6;
-	Tue,  6 Jan 2026 13:11:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767705084;
-	bh=up2iff1BZxa94kRdGC8JpHKlWbcnvKvXoZYjbXT7JJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n9VSxyA6dLZYidFmR3YKrnuiZmFCzcB/BXSKq32qKyENyNq4aYaGeJAl6It6ZWDae
-	 fNHETbHe0yBHeHjen+HujqOr71J0UL8kKlDhPZPwBXLp5KOJzvtamRwgbC1dTWtzoU
-	 dU8zDzs8a3uCTCqPdqAaHawnWUWhg0/LDiK9aM5Vnv5eyd/YlNschdxUR68oCwFSuq
-	 lsb+Yem3dGUbajGYyEcIG1jGg3tb4MFgBauIq1kXi/bjkYNnEjRcZYahTuLaT6sg8S
-	 43n3wc587dSole11rjV87w4Lq2gF90tg+wVYlie+AZg/u/3/SL0a3CFyoH3K0toWyp
-	 KnseknnkVQXOg==
-Date: Tue, 6 Jan 2026 18:41:09 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Pratyush Anand <pratyush.anand@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
-Message-ID: <5gne3bureusi45sy4zqr2zrfvt4ba4uxgnsfdnjeh2eno5zspe@ldvhq2nilsan>
-References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
- <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
- <aVvkmkd5mWPmxeiS@ryzen>
- <m5ukeugo2lazipljqpubyvm7j3xk2j5o7i2xgdbkkhii57xmyk@lh32qdzjhe4n>
- <aVzqMqTUWIuKhgmC@fedora>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LC72UMxW"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DB59Dc+NzpwOrQpN7K5WwWaD7QxQ6kMJoBeFcNAFkE6nMJ9ZrOacCiy3Dn134v3QUJFb1D9rwgu1krLqpbTMYODMIbbMfLZgIdO7XnAgBhto8cf2abAHQTQwzsCz0ixu17T9l8o6/v9KvUO1bQgs63cP/KgvTfVFCBsyti1M0lklrNV2wY2KAYvycxdvGFSzaAGZsmgHmZvlqZdFS04pAYJj4ss8t/0WPIxIRCdYbGDy/+4us31r553hm9AZvKV/YmvstvEHd0MLD6H14Yui8JskU51Y22ssFleTM8wU5ugmsGtZG/+b0o+llNVAA6l54C616RwsufWGuatAbXl9lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1hDdH1nu5arQYKvg2xWz+eTPsfNJIvS8YOlNjVUI5CI=;
+ b=y1sLd9A1tk7+kkGRUYlHFkxFYBBWDmw3E3BTuCCA1rEpRaGhQL4ApYXoxsrQ5WE7bYl/lP/Uhw5s0rMwBWW1GGhSlCh19QXxYtI682t/d/airwFbK/wt7sBG5+YG5sjTv9Qr7LeA6YvtSkm0GmQUDXqfnCEJfoUWLnDe0tmlD9niV+rkBYm2ylN5ybTE00fa0C9gYczQeWPubmYdTRZjPCWot/JfAs5t0Ek+RqtmZFnEtOUbnOzlAIPlNgDik7M+d0IgSfTWwL1G6dzzh+IygWLNr7wJnHrL7GNz5mcMOhpwfHV3zmQoT9t7w//JQcnVInoLRjCg0GbPWHRRWvJ6zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1hDdH1nu5arQYKvg2xWz+eTPsfNJIvS8YOlNjVUI5CI=;
+ b=LC72UMxWorV8ZN/pQBMl1KJzTHQ1PdTOR9VCygXnkqPmp2f7Y7FBVFTKeVFmiamKyuYHjMPplYcS0Gedajh+vNhPmC8YHuRcSpaH5vQQaOFgXsxPy6tka8rhhHa2tOlVZ+pxPBFFve0z/PU/pBsk/ND4gyM7ia/tgG9T9nQ6HmWQX88tEc5Rqvwb8eyfYDkgMi9yD+htdDyPYxE+1INhx1cVnBWvIMfU6ZgqGDtIQUJ84FMGBGjhTeN74ZXZgPPqtQ73x66avGD5+s8rLRs2o5qpmpJp6fpl9457BBO1Fle2Ao3wh8qeYp5T9j9lCJf0ppjWzAZ/1aJVjieEvfasJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8951.eurprd04.prod.outlook.com (2603:10a6:10:2e2::22)
+ by AS1PR04MB9333.eurprd04.prod.outlook.com (2603:10a6:20b:4df::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Tue, 6 Jan
+ 2026 14:54:14 +0000
+Received: from DU2PR04MB8951.eurprd04.prod.outlook.com
+ ([fe80::753c:468d:266:196]) by DU2PR04MB8951.eurprd04.prod.outlook.com
+ ([fe80::753c:468d:266:196%4]) with mapi id 15.20.9478.004; Tue, 6 Jan 2026
+ 14:54:14 +0000
+Date: Tue, 6 Jan 2026 09:54:00 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	llvm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 07/11] clk: imx: imx27: Simplify with scoped for each
+ OF child loop
+Message-ID: <aV0iCGjODqJI5F5U@lizhi-Precision-Tower-5810>
+References: <20260106-of-for-each-compatible-scoped-v2-0-05eb948d91f2@oss.qualcomm.com>
+ <20260106-of-for-each-compatible-scoped-v2-7-05eb948d91f2@oss.qualcomm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260106-of-for-each-compatible-scoped-v2-7-05eb948d91f2@oss.qualcomm.com>
+X-ClientProxiedBy: BYAPR07CA0038.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::15) To DU2PR04MB8951.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e2::22)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aVzqMqTUWIuKhgmC@fedora>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8951:EE_|AS1PR04MB9333:EE_
+X-MS-Office365-Filtering-Correlation-Id: f076a4b1-7815-4f38-51b8-08de4d337558
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|52116014|7416014|376014|1800799024|366016|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3l223IbWcfeLB/rL9w7WKDhPNDwGQkHUqBkTKbjUGTXK3zXmL0qgkc5tJSnK?=
+ =?us-ascii?Q?wo9qbvgUvnUZLTF0WJVlGcqQuZSpB+ki3/62eOqwMjSwqZcoP3HCNYvSsNeb?=
+ =?us-ascii?Q?XbHg73uBbdZFfEHETb8m3XL/Cnn9r1uLm2W9Vw9396QdJJOHQo3fQ3aUSNOQ?=
+ =?us-ascii?Q?GUBVXcAQamgojTs0xro4vbr+K77csbwXHwKM8TXvi1mtvXmkrVaRAFrcULdA?=
+ =?us-ascii?Q?Yz++L1iEyFB1xOW9O4XNXDsJMFthmE6ybY9zSRwDZDrC9upRiVzMvyCCD2jp?=
+ =?us-ascii?Q?Fjncqi260512pmaS8OzJ/dynCZBtVSfYj5mActYF0crfOVGi7Y9IcgZNWM/8?=
+ =?us-ascii?Q?3CvGma+ZvaI8tnVoUFFF5Ghj9Bs43gjmWt6yqwd3PyUMX/RbDcLMTtEJ4WLw?=
+ =?us-ascii?Q?fIICH3wRboFbJQW46r+i2trkg26jGJDsE4k6gP80AZCQ6ddrS4ktC/ZYdrJp?=
+ =?us-ascii?Q?D4gT1BZyXLPkV9J/Ek+kkqYhBW7psaRHfkb0CGFYTOUB/Mzh39e3g36qNs2X?=
+ =?us-ascii?Q?XWxDQ0G6aR2c4OyqpjkhSfNuNRx39bonwZKNukYfR1hMdcUwRDVB9FBp2J9b?=
+ =?us-ascii?Q?vo5FSKFMrkKDCD9TeAxrnG6YclxR4VP1xoS2DjjBryiqpPpw7F46XQN4vzb5?=
+ =?us-ascii?Q?+hCZT3gTjlgqTq+68VgeXxUWUMEzpJ7jWxYmVmGfDDWfi8k3z/Xf7gFB79O6?=
+ =?us-ascii?Q?WU5tInmXwYTsHci990QbtX7MphfAfh9kfy7pxOmwPSwHXZbzoN7q1Fabo38i?=
+ =?us-ascii?Q?XfDBdxCIvUUuIcMTpd3dg9hX4g3S/7OcK06uAANqF9hlzeYYzr/Nlyf09DtY?=
+ =?us-ascii?Q?89bN9ADzIMO3xtjgIBEsz7sJx/8jlKUj3ELzQyi5sulb/mEQqe+9Qtzs1s/s?=
+ =?us-ascii?Q?58qgoArdJkMaWlB/v2wsugIS1fYL/8TNY8jqVFYrTWeWPI8O9VYUIC65bo7/?=
+ =?us-ascii?Q?bxFs6OQZANcg/z1Rl7P39CnHGCbdrDWeTGGTjZAelmkzXJaQvGtp7XGMMNuR?=
+ =?us-ascii?Q?jvJ9X2K9fAOg54iJYtZFmeuoVu4jBNH19gQ/QoTyfcwZVVUgXdUh29reRC1a?=
+ =?us-ascii?Q?/ByxO6CQ1fCVXGYD+mnypnW54xdwoyKhjuMCGnZwe6Yi5R5G7AgulK3+eOGp?=
+ =?us-ascii?Q?ZY9caDwVaRwsT1zHg/T179U3Nf7sF/TvvW7Ujt8z1XgWXzlHJzM8XZM9JTtj?=
+ =?us-ascii?Q?DqN2Y4knNuvs2kYS37H+Emk5sVNLQHVnHgtcSV9Hyhepj8/rV99mE/gFIlho?=
+ =?us-ascii?Q?uT3/wlSw58DGwf6Ti/YRKQyE3SwXZjNd+hbw0GHh/2YWUpKLcX7fi6BnwsBT?=
+ =?us-ascii?Q?8QVM93WAc9x7AyFP5mJwC0DLCeowOrcfOFLhd1kmFb67ReXwzPzyxKOlHlQh?=
+ =?us-ascii?Q?OMwS/u97B9n+0l0kliQt1T9abRvI/QRxL+3YWYQa4fkdcL8i5x38oWjFu69w?=
+ =?us-ascii?Q?Sm9soaPzH3oGpXcjjV9dZI0NDzQBVkv7HlrOPUuBxKCwG4xuZQUuFVdybAPs?=
+ =?us-ascii?Q?qLWxbWmP1awtQiooo+LrALaBh+oHhjQvIe1I?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8951.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DKql+K3RO2qkLqbE0siTOvCdTn00z4GcG5Hxb0hm9Tpoqc0+sAdYC5rjW+uV?=
+ =?us-ascii?Q?ifQTLG9UZVBiwKIARP7pi0IGs3XWgn9CmpOUkkJxh/2mdOYk8fwc/2IIaeOY?=
+ =?us-ascii?Q?SrMnMdDIBZGtBoEPLshHdYDf535v/ALekiZzYTSfcMpaiE/3Gax5z0q1e9Uz?=
+ =?us-ascii?Q?ti3fBDnieHXnmGv2tNhj6yqATY3welxmqV4qavtoAUNsz60VfAvsQUJJkvpP?=
+ =?us-ascii?Q?F7qLQYdKRBzzjcw23v2gtyHZYjbAdaDfTfLanQffYF2PKWOgr0Gk1zPnjCXX?=
+ =?us-ascii?Q?nvc2+xDS1QcTFHnKbwTbcdxA4B7yFIOGGEKqMC8mP0pToRzuBFfiUsz/6b8n?=
+ =?us-ascii?Q?l+NtXtEFYU0rxVlGhh0wyZjg9PCaHU9DPovTLVU2iBgt/9/ZNVtUeXk6NH25?=
+ =?us-ascii?Q?86jPJH6fon2b1refgRH1S1fOaZtD7IsfVqXlUO5idCLGYp/bN0HOznFmc8ch?=
+ =?us-ascii?Q?r1VGE7N2i9j8SV5M0k5oxft9KnxgOinVBgkscxFR84Wc+FAbEERxOUfWmZ+J?=
+ =?us-ascii?Q?RQ6UjlJ5s2c3MhaKh3zu3S/OuYeSUw+iR5SA+AE0Khsb+75Q8GUlejFJTpsW?=
+ =?us-ascii?Q?EYGr+myHlmwBWcH0SXrkrLsGEb7enu2tUSuScyytANa2ikuiLW/d6Dltn9Hd?=
+ =?us-ascii?Q?agOeXtKnzPFNVLj8Am0veO5tzZk22xrKxvP3CtKptswtfO7cdo21e8cO8jTH?=
+ =?us-ascii?Q?2qOUOxsWhVwbdFRQKEdOKAiRfn8Pd545GfXMth0GsXeNZxYuDFrutCa6XqAV?=
+ =?us-ascii?Q?Wt3P00boarvrnreWMZePMn+zp+s5LoBzmKl3es4d3ffTjvccu6v2/BoAhrvW?=
+ =?us-ascii?Q?Pwgphc3MCa5XMO4z0iukVCa9uQLVth0RIDQOMjWPi85ePlSlLzFQo40lR64G?=
+ =?us-ascii?Q?ge3vU+L4xBGkfHr8WqByeQprtiwkGoAGzOKucx31ND7Y4AvZK+P4CirEzkUW?=
+ =?us-ascii?Q?XF/6wrGmPaUOlD8lEWmOEP8YtLs4dgHu6hPT+06kOghYZtYpWbtAWjkKfLNq?=
+ =?us-ascii?Q?ksMpXQgOzS9nonV+3IzzHlCPaQU7KmGsK6W5yEggDzgKz+76lHBZAjY9nQKa?=
+ =?us-ascii?Q?YAr9T2u1R8SfYqeFQ75hB5oU4hSdPWXRdUhVkRZd9xiMA5XGM84Dbon+GEyr?=
+ =?us-ascii?Q?iKQFG4G1UL3PYFhNwthH7eEgQjE5mfv5DDT0uX+ZxfpSxB8/6Cc58gs8oqPw?=
+ =?us-ascii?Q?IIu/qnNhZIc9IC6RF913wYq2bFIch6zqULNgWNgyTRanNFVEsR/j8IQvnz8a?=
+ =?us-ascii?Q?+J1zWeSisDOsRCQlsV++qVAYCgQ4q6cFMQxAqY0kK6fbqxJY1U+URrv/Ev1z?=
+ =?us-ascii?Q?rrEHzV1UfjJvMEQjrzg9BCkFHaTGRxYfivIwRPsDqHA3mFhzDEDTmAUblood?=
+ =?us-ascii?Q?aVrrbuvAQLzpfZDJoRYbs8Cl8G4AZNqgh9/m8yOKci1SiPYxvdDgraiqFpNB?=
+ =?us-ascii?Q?cqPVvq3ZQuLqkGNnuEu4pMUGejFDfgpyR5hRP2H3bYv/tsmiGtLY3spfuHDT?=
+ =?us-ascii?Q?Uuu0inQf+7uXIZ8OPEb3+5+Y8qnzXkFA66NbJ++aGe2x3XGMWzh5Z1kEaY5c?=
+ =?us-ascii?Q?EO5qDU5UQMfJBrehlGfVoGRA6eMT570U1W+WIUCS72LahoaoWJxaNn+LJMJB?=
+ =?us-ascii?Q?r3CRyxv0KWELIN6BSPsNmx/88paONNJVVsinYvvNG9l7Sn1ms4A9RD28hM8j?=
+ =?us-ascii?Q?NrZx3ZJtmuasVJdTw2y/kT2JDYXsmQxh+RSKTj2oRdpyfLfF?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f076a4b1-7815-4f38-51b8-08de4d337558
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8951.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2026 14:54:14.1939
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pr8KLBxxGK0fupajo5m50geFyijAeUfJJa2W55y1q0jsMRsem15SpbYYN9oThVEIQcaBT9BQhITAZOrp4X22tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9333
 
-On Tue, Jan 06, 2026 at 11:55:46AM +0100, Niklas Cassel wrote:
-> On Tue, Jan 06, 2026 at 10:49:19AM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Jan 05, 2026 at 05:19:38PM +0100, Niklas Cassel wrote:
-> > > On Mon, Jan 05, 2026 at 05:57:55PM +0530, Sumit Kumar wrote:
-> > > > The current DesignWare PCIe RC implementation supports only the controller
-> > > > (Host Bridge) node for specifying the Root Port properties in an assumption
-> > > > that the underlying platform only supports a single root Port per
-> > > > controller instance. This limits support for multi-port controllers where
-> > > > different ports may have different lane configurations and speed limits.
-> > > > 
-> > > > Introduce a separate dw_pcie_port structure to enable multi-port support.
-> > > > Each Root Port can have independent lane count, speed limit through pcie@N
-> > > > child nodes in device tree. Add dw_pcie_parse_root_ports()
-> > > > API to parse these child nodes.
-> > > > 
-> > > > Equalization presets and link width detection currently use common DBI
-> > > > space for all the root ports. Per-port DBI space assignment for these
-> > > > features will be added in future.
-> > > > 
-> > > > Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-> > > 
-> > > Hello Sumit,
-> > > 
-> > > Is there a reason why you represent this as a list of ports rather than a
-> > > simple array?
-> > > 
-> > > The number of ports is known by parsing the device tree, so it should be
-> > > static, no?
-> > > 
-> > > At least to me, this seem similar to e.g. how a gpio_device has multiple
-> > > gpio_descriptors "struct gpio_desc *descs":
-> > > https://github.com/torvalds/linux/blob/master/drivers/gpio/gpiolib.h#L68C1-L68C26
-> > > 
-> > > A list is usually used for something that is dynamic.
-> > > I don't think that the number of ports to a PCIe controller will be dynamic.
-> > > 
-> > > I can see that struct qcom_pcie in pcie-qcom.c has struct list_head ports,
-> > > but that does not necessarily mean that we need to have a list of ports in
-> > > pcie-designware-host.c. (pcie-qcom could also be modified to have an array
-> > > of ports if there is a desire for similar design pattern.)
-> > > 
-> > 
-> > Only reason why I went with lists in pcie-qcom is flexibility. There are useful
-> > helpers available for traversing the lists and they seem much more elegant to
-> > use rather than manually traversing the array in C.
-> > 
-> > But to be frank, I don't really care which one is used as there is going to be
-> > only a handful of ports at max anyway and there is not much overhead.
-> 
-> Personally, when I see lists, I automatically think of something that is
-> dynamic, so using lists for something static just looks a little bit out of
-> place IMHO.
-> 
-> Technically, the difference is speed. If we want a specific element, we
-> will need to traverse the list. With an array, we can access the element
-> directly. However, looking at the current patch, it seems like it never
-> looks for a specific port, it always does an operation for all ports.
-> So from a speed perspective, it doesn't matter, at least not for now.
-> 
+On Tue, Jan 06, 2026 at 10:15:17AM +0100, Krzysztof Kozlowski wrote:
+> Use scoped for-each loop when iterating over device nodes to make code a
+> bit simpler.
+>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-Yes. I don't envision the driver doing element based lookup even in the future.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-> 
-> One advantage I can see, instead of doing:
-> 
-> +	struct dw_pcie_port *port = list_first_entry(&pci->pp.ports,
-> +						struct dw_pcie_port, list);
-> +	return dw_pcie_wait_for_link(pci, port);
-> 
-> for drivers with only one port (most drivers), we could just instead do:
-> 
-> +	return dw_pcie_wait_for_link(pci, pci->pp.port);
-> 
-> To simply get the first element in the array. No need to sprinkle
-> list_first_entry() everywhere in all the drivers if they just have one port.
-> 
-> 
-> For iterating, to avoid manually traversing the array, we could do like
-> libata and create a simple macro, e.g. ata_qc_for_each():
-> https://github.com/torvalds/linux/blob/v6.19-rc4/drivers/ata/libata-eh.c#L851-L854
-> https://github.com/torvalds/linux/blob/v6.19-rc4/include/linux/libata.h#L1657-L1659
-> 
-
-I specifically do not want to introduce custom helpers. That's one of my primary
-motivation for using lists :)
-
-> And at least personally, I think my brain will parse dw_pcie_port_for_each() { }
-> faster than it parses list_for_each_entry(port, &pcie->ports, list) { },
-> since it is more unique, but perhaps I am the weird one here :)
-> 
-
-Arrays for sure will allow us to do O(1) lookups, but considering that we will
-only be traversing the ports from the start, I still prefer using lists.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>
+> Depends on first patch.
+> ---
+>  drivers/clk/imx/clk-imx27.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx27.c b/drivers/clk/imx/clk-imx27.c
+> index 99618ded0939..f2f0d3fe5c52 100644
+> --- a/drivers/clk/imx/clk-imx27.c
+> +++ b/drivers/clk/imx/clk-imx27.c
+> @@ -171,17 +171,14 @@ static void __init _mx27_clocks_init(unsigned long fref)
+>
+>  static void __init mx27_clocks_init_dt(struct device_node *np)
+>  {
+> -	struct device_node *refnp;
+>  	u32 fref = 26000000; /* default */
+>
+> -	for_each_compatible_node(refnp, NULL, "fixed-clock") {
+> +	for_each_compatible_node_scoped(refnp, NULL, "fixed-clock") {
+>  		if (!of_device_is_compatible(refnp, "fsl,imx-osc26m"))
+>  			continue;
+>
+> -		if (!of_property_read_u32(refnp, "clock-frequency", &fref)) {
+> -			of_node_put(refnp);
+> +		if (!of_property_read_u32(refnp, "clock-frequency", &fref))
+>  			break;
+> -		}
+>  	}
+>
+>  	ccm = of_iomap(np, 0);
+>
+> --
+> 2.51.0
+>
