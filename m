@@ -1,119 +1,127 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CED134F257
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 20:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE4F296BBF;
+	Tue,  6 Jan 2026 21:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767729817; cv=none; b=nyhJ32RyBUMOiMUKH84Bb7iaPeC2veBcqgJj0bTHIsEh6KlTvIphSGv+SXPocdCKiRIdVz/IQKi9yc2SSa+aIOQsM0YlVDgsKUJD/e+yw5Z9osnSczK39jbx3PCNitaEDpJPCFjigeLOVwMN/ErWDIYnn4wMU7+fLhAa/1hXgLE=
+	t=1767734230; cv=none; b=ct7l0FEIOZOj1Z8y1kphmDowpNanySuv6cbFplLli4eAAELFpXQ4RPv9ENsdkj/mqrbmCTV5z7BXxE+/k8Ttcdjdk9kN/0XOJ2wbgGzguqMlehz0trKnpcRTXPSA06m0Uoe1zzYnafeor5REEme3svsjkbIk6f8nWgjGDL9WjqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767729817; c=relaxed/simple;
-	bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PtAty9MYwVwgQ4h80WbrCkcouiAiMmyOMoEh4I671GMVDDOQtR1s/TYAiiDPa2HRhvvHO5CWgQ11j+vum1VPsxVmUsWnd/jB+cAQqzEgo8GbiWhxL8Hscgczxua7qFFzAEUlzsmptpc4BwOanwzU0p9tuYOCPNGptzbPBmtinXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aooa5/e+; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767734230; c=relaxed/simple;
+	bh=QLjWo0t79X6kihc/yxh2M5ASDv7kRQJ7SHHK2+hjnB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yi9ezBw5q1oSh7K5QqeptwMjyYy7QsFLuJvfPGvbDuEgI6R8sFfZtLsAJgxoDHXgKbcHQEHVn5zmwH8esSJy70EZL2sgkSAw8P4nf98MXCY+wRUyFEm/BuXURN+WAdVYzb7mkZJwXKYIDQi+/T8Qa3BhY5RCukyud2yGwktM41c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ/EMUWx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aooa5/e+"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b79af62d36bso247095266b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jan 2026 12:03:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767729812; x=1768334612; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-        b=aooa5/e+oWtRhdnfriJHRmLDfHXFrjiStkLph4hzhtEIcCzaBC6Xfu23rVY5BU61Ml
-         lbBJHjQsFhdRLXhzbm+MeS42mVr9XnE7jQppW97EVjngfGSNg05grlaQYdnt8k+j0ErW
-         PSoo+pI6OI3hGTwDI7AAgvhXkIh/w5HlhpJ4LA7k4mj1b6/8lp6jBa8q6i4ydH5uw1Si
-         fT0H35xJ8bixUVvfxne+LI31dCpR3tDx2wjNegh3X0S+N153PMCL0Rb+sxiEdgrmlMny
-         AG9PHTHY4K2J2Z+eI7cSp8oeud/DN4mmdXFccnHGMOPX/z5LE0pZOWRk6TiXDIoLA0zN
-         M+2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767729812; x=1768334612;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDKC/3noErk1Q8ZsV7ssZTkXWKMDpO84KVg5itJCTxs=;
-        b=WInVVGzEzLnj6x09hAeSmikArrjyL7beryvPpDnLojLdOR5zyeZ5ew5PrVV8bWkyey
-         QhhV11XSgrXVMwKZJhR2DF0MqjnwoylL6fcV6JH9wEkM61WVxkMwhvxq7Po9RhFBWA0c
-         NNxALPr3/9O/5/QB6gdM+SJ7lpKCCAbDoBa8OkygslDKDKfCaRDDe8xPvy6Ad22L+TWK
-         ZDuKfPXLoNDoAGDA9zr5TGYAVW/YG+7a90at8f2/sNroDdzuLDtasExZNP8QwGHIb9q6
-         KWdpAY0Mb4N63AwngZOYP1YgTEhmINSsVU3SUYUdsQIrnYzOn7+mbmNfL1xt8LtG5KRe
-         TnvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk4UqxgZAnpJzNPtjAbJo6YCX/6ca9rbJ/hoSIA678dJio6zNP/Oyg2mENGBonEagDUsyVuY2QNODwSQ3UpY2h/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAiVX5psX6KuVwIypOg+wd4Tggm7lARziWTQ01ttYPHPceeU5l
-	HsUdUTACWexnnYJiIHSXI33n7RKv45Th9YndWcgcs82pt2eDTZM/N0slOCNOtyY6ZRDtpBauFCP
-	l11f/WQM9qAcV3Om6xSlPkx66jXv9JOXWfL3QGsBgeg==
-X-Gm-Gg: AY/fxX5HcMSxd2pdoP/qGyVb+SORpbWkrYnBWSbFHhDJnfx9JOwNZd/2ywY9klP5p4r
-	g2IAj8LWNPCKeOFBRE4E9fQqDGdJ9ygI2ajs9pbgKXcqx2CTQnk8ys04YK/4V71EHUZr/qdrV+U
-	Hi7REkSF3lISd5s/iB9V4N+KLl0NnhVdGaRC/YBgx+RK2sO9WYT9zCtzikcESiIR0z9KGmqn1aC
-	6jqNB5lCnDVVd8MMKwxEk1DAqZ10EEK2aqUDnnzXsvVlnGypHuDGUUeUatJMirhIWp0vN4n
-X-Google-Smtp-Source: AGHT+IEmmXc6X3lklLmC0mCRNpoBur3TPS2BGNaDYr/bqjA6QRWH7eFRQJKdL8KVJ+yPvHwZtBcG2RvEv+KputuzJWc=
-X-Received: by 2002:a17:907:96a1:b0:b6d:9576:3890 with SMTP id
- a640c23a62f3a-b8444f9664fmr26102366b.45.1767729811848; Tue, 06 Jan 2026
- 12:03:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ/EMUWx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654D4C116C6;
+	Tue,  6 Jan 2026 21:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767734229;
+	bh=QLjWo0t79X6kihc/yxh2M5ASDv7kRQJ7SHHK2+hjnB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJ/EMUWx5xOJ6jpzJjm0a8IJNcQXZ0IMgt5F25rQqG1hlEHkjqG5BZPoexNzSRB8n
+	 ICw7PV+KEBh86ODxQ5AoDVhaagYgn4YkBkB7CinZ0kCJNIsvVJNgoQ24oai3nms+oY
+	 DGjicaEv3qk8rwdLUAR52lasyYpCOLODRpkmPpw8N9jw46UqQsJ4dN1c+wRHkh4w0w
+	 vAWV3JJqa5D5ZWBys99/vUGTlSTYxtlq91mFh/GizjZCkTWeLyK7i0hMO9WYJMcptw
+	 bYIqbO0v07rxEjX/JKZpJcj9Gb/MCwfYETeSB1I2AacmE+ZRsN55wlYVEi1ec6R8lK
+	 z4a5G4ksV4N9Q==
+Date: Tue, 6 Jan 2026 22:16:56 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/2] PCI: dwc: Add multi-port controller support
+Message-ID: <aV17yIhuOFLGYi8r@fedora>
+References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
+ <20260105-dt-parser-v1-2-b11c63cb5e2c@oss.qualcomm.com>
+ <aVvkmkd5mWPmxeiS@ryzen>
+ <m5ukeugo2lazipljqpubyvm7j3xk2j5o7i2xgdbkkhii57xmyk@lh32qdzjhe4n>
+ <aVzqMqTUWIuKhgmC@fedora>
+ <5gne3bureusi45sy4zqr2zrfvt4ba4uxgnsfdnjeh2eno5zspe@ldvhq2nilsan>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251222-automatic-clocks-v7-0-fec86fa89874@linaro.org> <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
-In-Reply-To: <c0eeae31-6951-47ca-8651-868db18d349e@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 6 Jan 2026 20:03:20 +0000
-X-Gm-Features: AQt7F2oLfa1exLAxy6kjOxPF0LQxcKRjhYroQ-B3HvTQJnB9vgg9Cr5KITN-rwA
-Message-ID: <CADrjBPocyZFz--xCaZahyUA9wwuS7P0E9Gt4Z=53rbT-nEQ7ng@mail.gmail.com>
-Subject: Re: [PATCH v7 0/4] Implement hardware automatic clock gating (HWACG)
- for gs101
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5gne3bureusi45sy4zqr2zrfvt4ba4uxgnsfdnjeh2eno5zspe@ldvhq2nilsan>
 
-Hi Krzysztof,
+On Tue, Jan 06, 2026 at 06:41:09PM +0530, Manivannan Sadhasivam wrote:
+> > One advantage I can see, instead of doing:
+> > 
+> > +	struct dw_pcie_port *port = list_first_entry(&pci->pp.ports,
+> > +						struct dw_pcie_port, list);
+> > +	return dw_pcie_wait_for_link(pci, port);
+> > 
+> > for drivers with only one port (most drivers), we could just instead do:
+> > 
+> > +	return dw_pcie_wait_for_link(pci, pci->pp.port);
+> > 
+> > To simply get the first element in the array. No need to sprinkle
+> > list_first_entry() everywhere in all the drivers if they just have one port.
+> > 
+> > 
+> > For iterating, to avoid manually traversing the array, we could do like
+> > libata and create a simple macro, e.g. ata_qc_for_each():
+> > https://github.com/torvalds/linux/blob/v6.19-rc4/drivers/ata/libata-eh.c#L851-L854
+> > https://github.com/torvalds/linux/blob/v6.19-rc4/include/linux/libata.h#L1657-L1659
+> > 
+> 
+> I specifically do not want to introduce custom helpers. That's one of my primary
+> motivation for using lists :)
 
-On Mon, 22 Dec 2025 at 11:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 22/12/2025 11:22, Peter Griffin wrote:
-> > Hi folks,
-> >
-> > This series addresses an issue with Samsung Exynos based upstream clock driver
-> > whereby the upstream clock driver sets all the clock gates into "manual mode"
-> > (which uses a bit that is documented as reserved in the gate registers).
-> >
->
-> Applied.
+You are the maintainer.
 
-Thanks.
+IMO it would still be nice if we could avoid sprinkling:
 
- There were several checkpatch notices/less important warnings
-> of which most were result of existing code but few were introduced.
-> Please be sure you do not introduce new warnings NEXT TIME.
++struct dw_pcie_port *port = list_first_entry(&pci->pp.ports,
++                                             struct dw_pcie_port, list);
 
-Will do.
+all over the glue drivers somehow, especially those that will only have a
+single port. Perhaps by introducing a macro?
 
->
-> Also, DTS cannot be in the middle of the patchset. It's almost always
-> wrong, like in this case as well. This was raised, also by me, multiple
-> times on the lists and it is explicitly documented in submitting
-> patches. Putting it in the middle suggests you try to fix up broken
-> unbisectable things by reordering patches, but you cannot.
+In case you don't like the idea of introducing a macro to get the first
+port...
+Since most glue drivers only seem to use the port when calling
+dw_pcie_wait_for_link(), perhaps we could introduce an alternate version
+of dw_pcie_wait_for_link(), that can be called by glue drivers that only
+have a single port.
 
-Noted. Thanks for pointing this out. I suppose the last time I read
-submitting-patches.rst must have been before Feb 25th 2025 when you
-documented this rule in b31cc6af1bb1 ("docs: dt: submitting-patches:
-Document sending DTS patches")
 
-regards,
-
-Peter
+Kind regards,
+Niklas
