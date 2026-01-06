@@ -1,165 +1,124 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD92A2EBDEB
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 17:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF9135CBB0
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 17:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767720876; cv=none; b=joR5UqF7sY8l/eaqMcNVmGz3qI5sW86MQzoFFGZ78JFofmxe7PbTkSaHDEtjscQqxmHul2QNst81o71wX6rYwVGQ+WzZgB2He86XoXxE3lqgwZVNLLjxmL08Yhml9C4R+cSRhYhxZsd5fEmc3CQVJiwPguA5tDJZHFlYPgF62J8=
+	t=1767721655; cv=none; b=WCTvwrXTsqLBhGE8/0GO/bJ7bJLirLFEoB/FMswcY4tlGcbtc1heDx5DkEqvZ0AmiEgHGISiLZVyKxRIndOsfVhMRfxBF+J9GuN69J5oK4rk42wVsaHoVpzXaLJ841tlh/syIe1MhErfNy81oONnfWDX9om/ibor1g27XzdHP3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767720876; c=relaxed/simple;
-	bh=4uAAVaBUqR7XbgPYM+b3TErNU92wyGwrj6qD+m/4Eys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJx6k/alYgAHy7b6EE7I+TqBmltD6KMgZqz0w7fi3Bq1EcJEeHmONJRabImdx3JThmF6DfDxx+uARQ3aL94+G0/0JfZA2ED5O7EoYCD+TwXuqGFYbG6UowRPkJCqtkRf77VW6rvg75j+WfbE/jHTNA1qaiAJXZDFmJRscHLTn2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jh0WVdvT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Nz4sZcfa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1767721655; c=relaxed/simple;
+	bh=MbVFYzKb3p55yAB5esiLZ2t69mWojzLGTDb2pjZ9IBo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=BRheH7xTSxD5GhEFTMIJmxehzhOiPA23HtJupr30OJlKy/izjvHzC6nQYMOjciqqAzVB+TLZsv4AIF7I2w8oZy/2n3xlxiSf0iETr6689UQdvyTZ6eAY/SjwnYqD7bguAdEDtzn/GK6e6McWX8vPWP+TAmbWy10c0VjiwY8MGkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=G7UGRfUH; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jh0WVdvT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Nz4sZcfa"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 606GqKIi3888892
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 6 Jan 2026 17:34:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jzSTS8fbRs1wSAGF7WUmIraz
-	4oEVJgEJtLyxFPfHdeY=; b=jh0WVdvT/iHJCW9ccrMMRQSXa8S7RznjJF2rwsEN
-	YKwyXrzMt1PfUGji8KYBTIfsqkOYc3GpQakVO9XP2+xjmyL6iXyXAFfb71sInSdv
-	kWR7WbHq4o4RAv6mIDMxZHsbokci3U62YI6Paaf3X2NngzaBz4EKYYB4U667tyq7
-	fn1r6oK0Nid52Eg2ESQNbj+OEW++qF/UfR9bcvHyZIrWkZcaUrFsLyPAiE/LR2Pd
-	sydRPjtTZOWB7NNLg+Yzs9VHBMmrEhJ8R9K14MnudQhdrTihKF8rlaiHEKxKmnro
-	t1+GLHOBC15gk5klSTnDod8Ij2r5Jn4z9szjZqTb4BWpoQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bh6a0g4ba-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jan 2026 17:34:32 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4f4d60d1fbdso53989641cf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jan 2026 09:34:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767720872; x=1768325672; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzSTS8fbRs1wSAGF7WUmIraz4oEVJgEJtLyxFPfHdeY=;
-        b=Nz4sZcfadxHAci8TJaPY7PKYE2OPXJu9G0hJXPaa4bTg6uE4Ezd9zERwAKNQa4lBTR
-         6LATPjCSwvJYDdd7GHGAh5ZbuyUeZDYQzcCe0tKaVSWjDAZaTKZYjwg7IbaY0C59JJg4
-         60jtQqTPYnQVgzR8cRk5eJHh9M/bCuT7k+WeN9YNwFTtMBY1jZtlgaybbBcXzmWOS3k3
-         84sB1Cw1OmKumjscHgQPSzZ4jhMosQJn6YLafe8GqAoufxLhp0lZcvj6lrp4+5XsgKIt
-         GK4fctpw3GyoiZ/jR3PEmwsBEY39Jd0ZyzOAGJBALWIS04MF/7JiotqCHd0hUPfLJ/Dv
-         ZxqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767720872; x=1768325672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jzSTS8fbRs1wSAGF7WUmIraz4oEVJgEJtLyxFPfHdeY=;
-        b=rorItDs+bfzCImUQKg/3YF8Ets8+V7PydsGoERtcSzZOP6nd0r421Ov24YRepMNJjo
-         oeknCicGXXPG40xzspCSyvCDfgRqaVhhLNySBPGqPOENJBZ7qAsiWkyhbolfxUSxrXhq
-         iwoWBeFd3Ax0USfMWBktQHVZ5iG4BiuSuNFmPl0A1A+yrRSXN0rLHUwAgpOOPPAmx+/C
-         uwBcB3UPAMrgY2bByBWSFUbY5CvkEPcNGuGnZ3bUE2aCA1YBveRrwFgDoXtnuNl4XT+2
-         f3MHvrSbtkPOwuT1Etj/VsCmp11wWNFerK2aaYzFe4FKthKIV5N3jkO5UU0n67TfQ5O1
-         f0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSxvc2qVA7Vp0qlCYt1/QojJ4RQZtGKg/uVmgg2EBwNK2+wZIR8n4SI4Rii01kqqgR9tBUlfu68n41YcELr2oytA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5PIPCHFG2/iU5XRnUPHm6DWrpoeNsCdnktdNqQKfHLYcExv4
-	yghEcfjtXzDnxW1xMheJ2vV0YmcmajA11QO95wpUAvgo1uHRmk/kXX0bqDuZMW5kQVmqEC7hKhA
-	mZG9/fPuO3RVyrhERdXvvM9/s4mb0iFJYK8Ka2QgGoX2bhFt0Bl7l9OW3AnxaS/eTMT5ZPH01hg
-	==
-X-Gm-Gg: AY/fxX44vi3T+4tT7yT/MwJEhShq5C5DHg9TOHEncdxm9UPXV913Z1n5610VtLT8O22
-	DQCHSNUM5punkblkZvwdQ5HHA+NB0lUrId4Hze+s1o49irCFyvSRP+ohsln0vJ4BCqMwfmYqp3G
-	jzLENGnKegSdKK47cluegManqvVWIOpjdQZsG6VkriPkRjxKcbPHUPmht5jpkQYRi3blIQn6Ndq
-	N2LYUNY0DQenuRz2etSb/c8AkVBzBeXQCaYvVJp0UDne9kjYT/oBsu2DXW4WCy0P2FxpKDUAE5T
-	jwVE0KXcCrAGARq20uRbLON0QQUZEQgpT4BdukhmExqRpcQL+ETX07JvJXU0zaQi+LRlmz4Xr0t
-	YK5WKhsdQX1kiP5Ddf9Aj
-X-Received: by 2002:ac8:57cb:0:b0:4f1:b9fc:eeda with SMTP id d75a77b69052e-4ffa77597abmr57402911cf.37.1767720871929;
-        Tue, 06 Jan 2026 09:34:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFsS5Q8M4Ax4uLqCekfjuM/TS7dC5bAY2/2l4KJvBIfjf+72ZUp+kPt+lte2C5fe//DuAlvyA==
-X-Received: by 2002:ac8:57cb:0:b0:4f1:b9fc:eeda with SMTP id d75a77b69052e-4ffa77597abmr57402111cf.37.1767720871283;
-        Tue, 06 Jan 2026 09:34:31 -0800 (PST)
-Received: from oss.qualcomm.com ([86.121.7.10])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507bf6d5absm2551707a12.33.2026.01.06.09.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jan 2026 09:34:30 -0800 (PST)
-Date: Tue, 6 Jan 2026 19:34:28 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-        Nipun Gupta <nipun.gupta@amd.com>,
-        Nikhil Agarwal <nikhil.agarwal@amd.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Vinod Koul <vkoul@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, llvm@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, imx@lists.linux.dev,
-        dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 07/11] clk: imx: imx27: Simplify with scoped for each
- OF child loop
-Message-ID: <pbmxwpyohpq3pi552pjwwgfe5wcj7qq7fx6lofpod5mq4bvmwj@sn4yfn74sgiz>
-References: <20260106-of-for-each-compatible-scoped-v2-0-05eb948d91f2@oss.qualcomm.com>
- <20260106-of-for-each-compatible-scoped-v2-7-05eb948d91f2@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G7UGRfUH"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260106174724epoutp02269f48fddebe11059df1b873f292f259~INXhXcmyg0803508035epoutp02i
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Jan 2026 17:47:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260106174724epoutp02269f48fddebe11059df1b873f292f259~INXhXcmyg0803508035epoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1767721644;
+	bh=1SqUiju7JTdymTLUcCbYNFwbrvaMPwFX7LS7wmO+6Ho=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=G7UGRfUHUAvO1gj600K007nX0IGVnyUCf2F1+N0FSyR+z1uUF7D7h5IBC3riAqaED
+	 5qgMuTLhEqoCC3teLE8wXagNlsi+sUTApLKdBegHkSbx8HLkV4H+uePf/B/hnFmQlQ
+	 eOCK8nfLQ9rkPiM22dWHuPmWRmvRZMXrXKTN1vYg=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260106174723epcas5p1165352a485d67b66d18fffe3500895f1~INXgVPH7i2622426224epcas5p1M;
+	Tue,  6 Jan 2026 17:47:23 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4dlzBy42Kzz6B9m4; Tue,  6 Jan
+	2026 17:47:22 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260106174722epcas5p16f744ceb5059e7695cca08317f6e8c62~INXe6Llxa2622426224epcas5p1L;
+	Tue,  6 Jan 2026 17:47:22 +0000 (GMT)
+Received: from INBRO000519 (unknown [107.122.1.150]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260106174719epsmtip2257206d5a8046c710d6d9f8795ccb86d~INXcqoSLM1550115501epsmtip2C;
+	Tue,  6 Jan 2026 17:47:18 +0000 (GMT)
+From: "Faraz Ata" <faraz.ata@samsung.com>
+To: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>
+Cc: <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rosa.pila@samsung.com>,
+	<pritam.sutar@samsung.com>, <dev.tailor@samsung.com>
+In-Reply-To: <20250904072844.358759-1-faraz.ata@samsung.com>
+Subject: RE: [PATCH] dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+ compatible
+Date: Tue, 6 Jan 2026 23:17:04 +0530
+Message-ID: <00c001dc7f34$828b0c90$87a125b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260106-of-for-each-compatible-scoped-v2-7-05eb948d91f2@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: _klZ675cb8Uad7EIWmiUYtSGfdSEaIK1
-X-Proofpoint-GUID: _klZ675cb8Uad7EIWmiUYtSGfdSEaIK1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA2MDE1MiBTYWx0ZWRfX+EZdA4DFG4/U
- HPOuNG0XKqK9+YGq9qrmVrj1m8tHoot66fydke0fHQKQcRN1/EBzM6jC6ZKhgPJjoIGH5UkVzhQ
- ufNMM31ZExROumiwmlHboj5ydFR33kr66LH6VyquV2RNXnDm7597om2M70d/0wpAOGxiPAJwZBH
- kpVPBvU02XVizY73JflfYB5WQLlsUOlQTYdFDYHSqURWFuG0Vzk4f3/PU2lA058N/aqRqNGW8OH
- dIjEQ6LTUvdYLWi9hb2pSM8DUnbqOGID+Dvn0Y2bq2NsHtni8x1NxSmXsuArMY/yDUCiL6UMHnl
- IFm8yruU8gNRScGr5h2mpD9VYTZTzgm4Exour22aNs1uqLAPislG1KQ4EmeJeT49PXjbsQVMHW8
- sbbECANnwJw7qtExj/S2aCRYD3C72miIvaUbG+g65Jq1XK4BecYlcSfdaibgaEDqpHzS6BbEAZp
- Gr7RiK3PjkYK+U5zwfw==
-X-Authority-Analysis: v=2.4 cv=MtdfKmae c=1 sm=1 tr=0 ts=695d47a8 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=hZ5Vz02otkLiOpJ15TJmsQ==:17
- a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=8AirrxEcAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=_Ixbbux_C5oTi3JCwyIA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-06_01,2026-01-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 phishscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 clxscore=1011 impostorscore=0 spamscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
- definitions=main-2601060152
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMyl6jZ32DHOO134xOI05SqoiCOxQG1dU1GsosmcDA=
+Content-Language: en-us
+X-CMS-MailID: 20260106174722epcas5p16f744ceb5059e7695cca08317f6e8c62
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1
+References: <CGME20250904071941epcas5p1ffa00f3f1cb69f7a10d08c1e96174cf1@epcas5p1.samsung.com>
+	<20250904072844.358759-1-faraz.ata@samsung.com>
 
-On 26-01-06 10:15:17, Krzysztof Kozlowski wrote:
-> Use scoped for-each loop when iterating over device nodes to make code a
-> bit simpler.
-> 
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+HI Andi/Rob
 
-Acked-by: Abel Vesa <abelvesa@kernel.org>
+I want to follow up on the below dt-binding patch submitted.
+Please let me know if the patch is under review or anything else needs to b=
+e done.
+
+Reference  - https://lore.kernel.org/all/83338b57-2e8e-4b77-9e93-fadfb0f6a5=
+fc=40kernel.org/
+
+> -----Original Message-----
+> From: Faraz Ata <faraz.ata=40samsung.com>
+> Sent: Thursday, September 4, 2025 12:59 PM
+> To: andi.shyti=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; alim.akhtar=40samsung.com
+> Cc: linux-i2c=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; rosa.pila=40samsung.com;
+> pritam.sutar=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com
+> Subject: =5BPATCH=5D dt-bindings: i2c: exynos5: add exynosautov920-hsi2c
+> compatible
+>=20
+> Add =22samsung,exynosautov920-hsi2c=22 dedicated compatible for HSI2C fou=
+nd
+> in ExynosAutov920 SoC.
+>=20
+> Signed-off-by: Faraz Ata <faraz.ata=40samsung.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml =7C 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+> b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+> index 7ae8c7b1d006..207b95e392e5 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+> =40=40 -38,6 +38,7 =40=40 properties:
+>                - google,gs101-hsi2c
+>                - samsung,exynos2200-hsi2c
+>                - samsung,exynos850-hsi2c
+> +              - samsung,exynosautov920-hsi2c
+>            - const: samsung,exynosautov9-hsi2c
+>        - const: samsung,exynos5-hsi2c    =23 Exynos5250 and Exynos5420
+>          deprecated: true
+> --
+> 2.34.1
+
+
