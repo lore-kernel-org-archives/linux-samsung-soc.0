@@ -1,96 +1,122 @@
-Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DE93A0B0F;
-	Wed,  7 Jan 2026 16:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE563A0B39
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 17:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767805069; cv=none; b=jaN9efhGxOLiepUUYB3i2foCKEZnyjQS2+eMstMQ2oEI4Q4g/9B5FeqxGkQ/sQWigD0kpIHj7OWrkYH9VvaF9V/YMLjf6fWq3/IFFu3fhbR4MpHYYZSwKXCxzYcyrUvJ9yD/sFSYX+9Z0/KgXKYMNC1+B6iTox78sDvZ5XTmMXA=
+	t=1767805403; cv=none; b=P/6J8OcKNrcLdx+bzfs7ZqBory18lVA2RkrVxm+W5x/AhiUogDq+rBhvEy36BRv6LsUUe9daoMVfazeHZZJBSKFQsaqtGqos7t0DFlp0Df+mhs8g3Sb1XL7YG8Fte/VstLSpjQS2FDJXs7evdgDV95nMumJknFrUpvgswZTrFdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767805069; c=relaxed/simple;
-	bh=rAw+5LZd/B4jlChyb9rk74sfa3DPqho5L0M51lDHHJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c/shTQRWo2DYDKsS4jysUuZf/ZfC+w5EfpP2U0RllFfNlPnfHKGtiX6G9kLAVyi+xishFnrBKHF3zh3zFz3KIqQLCQeT9mVu/20yR3AJ01R+xWfZjB0xB4CRWc72GPsKoNRJZt1vpILey0aPAzb+WO2Os9MfPL2IMYclUzYpLrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=4Gz+qQLU; arc=none smtp.client-ip=199.89.1.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1767805403; c=relaxed/simple;
+	bh=oL8OL55SBSSa/kcNiHr9aDvahiZID2IDb22M/LLl2lw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=J4IIdxu4dEULfrwVA1Vs4+8jUYLewEUqi8ny43P7Vj+TOeLQTa6nVJaRL0HAyqXmfpUnNnnRB1brfV7MmaDoNLOyoBBFvptBSrcOnnIPZxZlJIV9kWJLKCpxUbFBZWRhKhaRkAiDDTKB39anIpzkxtaSjo70v419XMZl8hZk9cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qjl+IH9e; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="4Gz+qQLU"
-Received: from localhost (localhost [127.0.0.1])
-	by 013.lax.mailroute.net (Postfix) with ESMTP id 4dmZ302H1KzlkMXq;
-	Wed,  7 Jan 2026 16:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1767805049; x=1770397050; bh=otEyuX3K80BYoIYcGZRsH2ma
-	7v0aBo0pa0q/PC9OwEc=; b=4Gz+qQLUWeQghZ89CLQ7HDYP9UBzHMpIxZxNjLGV
-	eF/OXUHveY0GAGbgGzeKaFF+8MJqQ7Sn/QYFZ1COR7UaltAm/Ie13ySSdUn8A247
-	M4+0vuftzuSUc/GySb8DJQ0jGwDIrSsQ0977F+zaes1+hN3OVnNDqYZhMiLJdV4N
-	VUuY3XT+WK6iud72WiPrsTgtM8NiCzdXjxw/FnwuVfoSXAFd57Stsx4OheJQBs39
-	dFaTdA5MC/NUg1Q8Mky0sdnVSJYccU/7v6aL1lpKVFrkgqWlSvubshF0IKCfdFLz
-	UADbbFmwoQh8q7Ou2dacubHK9wicONo7ElVA7u+6zTZ59w==
-X-Virus-Scanned: by MailRoute
-Received: from 013.lax.mailroute.net ([127.0.0.1])
- by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id DYajElaLYGq5; Wed,  7 Jan 2026 16:57:29 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4dmZ2t4N9Yzm73Bk;
-	Wed,  7 Jan 2026 16:57:26 +0000 (UTC)
-Message-ID: <7c3c2687-12c8-452d-86d7-78b3168a8f01@acm.org>
-Date: Wed, 7 Jan 2026 08:57:25 -0800
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qjl+IH9e"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 03CC04E41FDF;
+	Wed,  7 Jan 2026 17:03:18 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A6BA7606F8;
+	Wed,  7 Jan 2026 17:03:18 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E9A49103C821A;
+	Wed,  7 Jan 2026 18:03:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1767805397; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=vT259SsZbBCgS5jej5uTjBYNLE5xMiwzYalV9DvjFlw=;
+	b=qjl+IH9e6WT/WJbluQMom7WhOSZz91qsguJk+YcCF1ezNfyjR88kSE3TKuk68Dg37xmHw6
+	XCEK9Mppq0OQq3vc09h0WDsUQxgQoZKm+M/+U+3MgdY0Eb/MK9G6UG+ZlB8NXiAEBbZ6Pi
+	xP9Oxci+bX3nmJSR9oU2MukZpebnHYoGLphjaIxE7AW3mpS/83hzxfcjIax6cip9cRD7lZ
+	Uex/OGHArOy4i/tiS6i8OdbUklSoD4vZR2GIC0hRgcGA3SbizduiTm0dV2HMFCrUGQiGZt
+	cUleZVAvrJ72aqzu/SfKPKbcZV9e9srbSuH73i8GFot6Kr2H131NFf/nJYQ26g==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: exynos: call phy_notify_state() from
- hibern8 callbacks
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com, andre.draszik@linaro.org, willmcvicker@google.com,
- tudor.ambarus@linaro.org, jyescas@google.com
-References: <20260107-ufs-exynos-phy_notify_pmstate-v2-1-2b823a25208b@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260107-ufs-exynos-phy_notify_pmstate-v2-1-2b823a25208b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 07 Jan 2026 18:03:05 +0100
+Message-Id: <DFIIPIQDRAXW.3FOJY73IY5UZ9@bootlin.com>
+Subject: Re: [PATCH 3/6] drm/imx/dw-hdmi: convert to
+ of_drm_find_and_get_bridge()
+Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>
+To: "Philipp Zabel" <p.zabel@pengutronix.de>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Kevin Hilman"
+ <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Inki Dae"
+ <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
+ Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com> <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-3-ef48a517828e@bootlin.com> <3e87a26d067de694273daaf011a50f1a2e7718f1.camel@pengutronix.de>
+In-Reply-To: <3e87a26d067de694273daaf011a50f1a2e7718f1.camel@pengutronix.de>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 1/7/26 5:51 AM, Peter Griffin wrote:
-> +	union phy_notify phystate = {
-> +		.ufs_state = PHY_UFS_HIBERN8_EXIT
-> +	};
+Hello Philipp,
 
-Should this be declared 'static const'?
+On Wed Jan 7, 2026 at 5:34 PM CET, Philipp Zabel wrote:
+> On Mi, 2026-01-07 at 17:22 +0100, Luca Ceresoli wrote:
+>> of_drm_find_bridge() is deprecated. Move to its replacement
+>> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure i=
+t
+>> is put when done.
+>>
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> ---
+>>  drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c b/drivers/gpu/drm/i=
+mx/ipuv3/dw_hdmi-imx.c
+>> index 07e5f96202d4..95f629d97bce 100644
+>> --- a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
+>> +++ b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
+>> @@ -241,7 +241,7 @@ static int dw_hdmi_imx_probe(struct platform_device =
+*pdev)
+>>  	if (IS_ERR(hdmi->hdmi))
+>>  		return PTR_ERR(hdmi->hdmi);
+>>
+>> -	hdmi->bridge =3D of_drm_find_bridge(np);
+>> +	hdmi->bridge =3D of_drm_find_and_get_bridge(np);
+>>  	if (!hdmi->bridge) {
+>>  		dev_err(hdmi->dev, "Unable to find bridge\n");
+>>  		dw_hdmi_remove(hdmi->hdmi);
+>
+> The component_add() error path below this is missing a
+> drm_bridge_put().
 
-> +		phy_notify_state(ufs->phy, phystate);
+Right! Thanks for reviewing, fix queued for v2.
 
-Can you please ask the maintainer of include/linux/phy/phy.h why
-phy_notify is a union since it only has a single member? From that
-header file:
+Luca
 
-union phy_notify {
-	enum phy_ufs_state ufs_state;
-};
-
-> +	union phy_notify phystate = {
-> +		.ufs_state = PHY_UFS_HIBERN8_ENTER
-> +	};
-
-Same question here: should this be declared 'static const'?
-
-Thanks,
-
-Bart.
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
