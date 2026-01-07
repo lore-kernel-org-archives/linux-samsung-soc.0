@@ -1,41 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2CD379962;
-	Wed,  7 Jan 2026 16:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3280637F75B
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 16:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767802964; cv=none; b=vA/DGLEhxBkglhOHZTSO4SLSF2/e3jPfX6fOhqPq1uQOEp6c1Y/i3eqoTcsgWPqMHxI2Tb29Kc4cZbhoT27Enm5v3g79zTCFmTLfamdDUyzhqQypw5NV+SRTTYFv99aI5Ot5g2iW30ZHykNDlzbdiRTKDHe70wizjeVckOiMRs4=
+	t=1767802968; cv=none; b=Dw0hx8H6MdFmiCsfrMcT7hTTS7tw/S64WtP4mGxqKUsLeDHpXqJ4Obzv+LJZncGdtkhU/ZkqwCXLoDGHOKOnbK+8KF8IuC7jqq9ZgqJmw2tmI0tEJr/18DoVsdh/FdhEipRBN0zs+cn4l50jVkA8DmWVLUWNz+5c5ZKz1rHyfw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767802964; c=relaxed/simple;
-	bh=0WnxvGR7dNcQV8FWGN9plU+h4WhCklUUdW0/lgwyyHY=;
+	s=arc-20240116; t=1767802968; c=relaxed/simple;
+	bh=tTr16A4fMk0FdaOST7KPcVrXKxgV56mrAwdvXFEtKxU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TkpuinPTPpOeT1cqosrVYld0Hs+PkkzsxytSdfneBUAkcfK6Lug0z6b0RoBwPhLbZOdTnwgWVWYJsUI0sb47qSoyLUAkFiYa7vH60UJG6IysQmaufIYweydrwi54KDMiGr//CV7sGhn/L+H2esGqqBqo0nfiyFN3+Es0rjanLdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bzDLu4ho; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=NFatlZfclfjHtIPsHnxaqjtNZcuW024FtdUrzJtu3dwcTnKsyoK79ov0SkgkR83bEVSYpKXw7NPUkG83FH7YMy53J9DdYoDHDpPK2OUY3L373Bb4ve3OHJxNru25TRXJ7RJRxd/aFZxLXW9GiQpoMKK5MrTPt0oM6w1Sse9Sq5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fsd7Ll44; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bzDLu4ho"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fsd7Ll44"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id F230F4E41FE1;
-	Wed,  7 Jan 2026 16:22:29 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id A94F7C1EC96;
+	Wed,  7 Jan 2026 16:22:08 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BDBE56072B;
-	Wed,  7 Jan 2026 16:22:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5DAA0103C87C7;
-	Wed,  7 Jan 2026 17:22:23 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C6770606F8;
+	Wed,  7 Jan 2026 16:22:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8CEA7103C87C8;
+	Wed,  7 Jan 2026 17:22:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1767802948; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1767802953; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=qkiR0P62QEUb1PCOEii1nVoSK2mCmCTz+ERz0qbz4sk=;
-	b=bzDLu4hog3Yzapu+FCJaa75iEPEgDSakBa2bewsdNrO75fp1ds4LOGxHwDe7EK4GeGSQhJ
-	l9ijvmCRCnj+9qfTD2679M1ipP3NBnXdgBMYGAud8sUuPBztTSS+Cs1CzC/w1APFIhguw8
-	V2WVK0uZU8nZ2/mgFTNxxwsnxzVPsYW7MrWu7TF42BAOtRrvqPMjwj8VDRGYA9H6hzDBMd
-	ORN05jWhnTBgKBmXhTqTHtMlUCsTzAKGn9EN/JdOOHv1Bcpu4h8PJJzxGuJOmMyswQZtLO
-	X3PdwDEEQe+ZgynJ6865m0cZAIlwFoPQYmii3B/XEmsWX+WIc301Hkj56NUGNg==
+	bh=PorJeqSllb/CeY5X2ouyWtuaeRz7QMdsAMLS+BtwxPM=;
+	b=Fsd7Ll44d23Z9IVJW46aIyRwPX8fnZduxoWFXuyzWXYAu0xGh2sVIzVvkwh8JS/L6EWcYs
+	4+pfVQ09Wnl+ERuF1W9Ry4kwYsLuxMf/+KOqHqdUhX28F+QWe9tRpueIJ6ApM//ZvHu+H8
+	I510fcYnG81stb3WA7EYF8Qpxypai/d6A2dAbuQnhpBvlwQKXbR/so/Q6JPemijpZuYP9m
+	fSg+sTKzBzNom+3/KWALE1klWCehOpdMjp1ofIjEJQ3YZGO/GlVgRxH8kwg2IC1wOgc2Mw
+	u7aMezTnG5ytAKy12YIxf2gJ+BxL84IxtR3nHUapnUlifn4ZfvG0P/ro4LZGvg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 07 Jan 2026 17:22:00 +0100
-Subject: [PATCH 2/6] drm/meson/dw-hdmi: convert to
+Date: Wed, 07 Jan 2026 17:22:01 +0100
+Subject: [PATCH 3/6] drm/imx/dw-hdmi: convert to
  of_drm_find_and_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-2-ef48a517828e@bootlin.com>
+Message-Id: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-3-ef48a517828e@bootlin.com>
 References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
 In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -86,41 +86,32 @@ of_drm_find_bridge() is deprecated. Move to its replacement
 of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
 is put when done.
 
-dw_hdmi->bridge is used only in dw_hdmi_top_thread_irq(), so in order to
-avoid potential use-after-free ensure the irq is freed before putting the
-dw_hdmi->bridge reference.
-
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index 0d7c68b29dff..fef1702acb14 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -778,7 +778,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	if (IS_ERR(meson_dw_hdmi->hdmi))
- 		return PTR_ERR(meson_dw_hdmi->hdmi);
+diff --git a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
+index 07e5f96202d4..95f629d97bce 100644
+--- a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
+@@ -241,7 +241,7 @@ static int dw_hdmi_imx_probe(struct platform_device *pdev)
+ 	if (IS_ERR(hdmi->hdmi))
+ 		return PTR_ERR(hdmi->hdmi);
  
--	meson_dw_hdmi->bridge = of_drm_find_bridge(pdev->dev.of_node);
-+	meson_dw_hdmi->bridge = of_drm_find_and_get_bridge(pdev->dev.of_node);
+-	hdmi->bridge = of_drm_find_bridge(np);
++	hdmi->bridge = of_drm_find_and_get_bridge(np);
+ 	if (!hdmi->bridge) {
+ 		dev_err(hdmi->dev, "Unable to find bridge\n");
+ 		dw_hdmi_remove(hdmi->hdmi);
+@@ -261,6 +261,7 @@ static void dw_hdmi_imx_remove(struct platform_device *pdev)
  
- 	DRM_DEBUG_DRIVER("HDMI controller initialized\n");
- 
-@@ -789,8 +789,12 @@ static void meson_dw_hdmi_unbind(struct device *dev, struct device *master,
- 				   void *data)
- {
- 	struct meson_dw_hdmi *meson_dw_hdmi = dev_get_drvdata(dev);
-+	struct platform_device *pdev = to_platform_device(dev);
-+	int irq = platform_get_irq(pdev, 0);
- 
-+	devm_free_irq(dev, irq, meson_dw_hdmi);
- 	dw_hdmi_unbind(meson_dw_hdmi->hdmi);
-+	drm_bridge_put(meson_dw_hdmi->bridge);
+ 	component_del(&pdev->dev, &dw_hdmi_imx_ops);
+ 	dw_hdmi_remove(hdmi->hdmi);
++	drm_bridge_put(hdmi->bridge);
  }
  
- static const struct component_ops meson_dw_hdmi_ops = {
+ static struct platform_driver dw_hdmi_imx_platform_driver = {
 
 -- 
 2.52.0
