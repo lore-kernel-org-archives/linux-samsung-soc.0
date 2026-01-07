@@ -1,122 +1,126 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE563A0B39
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 17:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171B730CD91
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 19:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767805403; cv=none; b=P/6J8OcKNrcLdx+bzfs7ZqBory18lVA2RkrVxm+W5x/AhiUogDq+rBhvEy36BRv6LsUUe9daoMVfazeHZZJBSKFQsaqtGqos7t0DFlp0Df+mhs8g3Sb1XL7YG8Fte/VstLSpjQS2FDJXs7evdgDV95nMumJknFrUpvgswZTrFdY=
+	t=1767815303; cv=none; b=UE+MNvBusFYk+otiuyS4fVGEqozDdjyOVqxaR5VWQZjW3LmqJJckjwXYFwCeweoqX/dC2U6NTQOiI9Uq75fe17Yn0y10yYM2n7J1yAzzdQ2PAzYlIWBHGDlqjFToD8jtAsDFPz0/mUQ690jaMHTBkw24pT85cF8/LMEwVDWlX6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767805403; c=relaxed/simple;
-	bh=oL8OL55SBSSa/kcNiHr9aDvahiZID2IDb22M/LLl2lw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=J4IIdxu4dEULfrwVA1Vs4+8jUYLewEUqi8ny43P7Vj+TOeLQTa6nVJaRL0HAyqXmfpUnNnnRB1brfV7MmaDoNLOyoBBFvptBSrcOnnIPZxZlJIV9kWJLKCpxUbFBZWRhKhaRkAiDDTKB39anIpzkxtaSjo70v419XMZl8hZk9cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qjl+IH9e; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1767815303; c=relaxed/simple;
+	bh=Lc2T1gdxupIb0389vEGtq7pPhjXyCJ3fX+przIH5LjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=McAYfpYybh88F4/H8k2n735PRUuI00jhH5pvosWh1ra/KIVBhNsEfHZ+rrelyTVYa0+YUawYxMtkeOjfo4xIHhqPdyaz5HQCNqoMBrIV3+u2qy7+uz/GMOzrYisfLgsEZ66A/cN5cRbN+OXHqeBItEDCPOe+7ky/CJwFcSd/tlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHHEkQE7; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qjl+IH9e"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 03CC04E41FDF;
-	Wed,  7 Jan 2026 17:03:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A6BA7606F8;
-	Wed,  7 Jan 2026 17:03:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E9A49103C821A;
-	Wed,  7 Jan 2026 18:03:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1767805397; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=vT259SsZbBCgS5jej5uTjBYNLE5xMiwzYalV9DvjFlw=;
-	b=qjl+IH9e6WT/WJbluQMom7WhOSZz91qsguJk+YcCF1ezNfyjR88kSE3TKuk68Dg37xmHw6
-	XCEK9Mppq0OQq3vc09h0WDsUQxgQoZKm+M/+U+3MgdY0Eb/MK9G6UG+ZlB8NXiAEBbZ6Pi
-	xP9Oxci+bX3nmJSR9oU2MukZpebnHYoGLphjaIxE7AW3mpS/83hzxfcjIax6cip9cRD7lZ
-	Uex/OGHArOy4i/tiS6i8OdbUklSoD4vZR2GIC0hRgcGA3SbizduiTm0dV2HMFCrUGQiGZt
-	cUleZVAvrJ72aqzu/SfKPKbcZV9e9srbSuH73i8GFot6Kr2H131NFf/nJYQ26g==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHHEkQE7"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7a02592efaso412454266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Jan 2026 11:48:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767815288; x=1768420088; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/K6KAgx2Put0DT9sjsubOZBw59h5KUnRoaOh5hbz8NI=;
+        b=pHHEkQE74Oa/GB9+qYVDeUbr2d76YtBWK0tJsy6ZjwttFDpdSGo8CkGx6MLIovKZ6q
+         ewcG+0JU+/jmfSHt0lqmNpb1GIvdWmJJF88E7yRKRW450FopEpBGqQ5KHRbOeHVrNdfj
+         8DJpZzpQjwO8TUhxAe2sSWehtSJ2pWlSq2ELV5TwfJB0D2XJvKO+1ETQErv2NEvmnuHu
+         tyzyTAAdzoA4h8ta5eXu9Na9BDvoj5n6csPsQbfuVVLEvetDkaLn578BcfMG0ivlfiyz
+         2od8aKMZUXEXtHG/FOIW0LpBwDYMf371rOGfHC1DHonID6KcpL77/YV2427C2rn7jxgF
+         qBsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767815288; x=1768420088;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/K6KAgx2Put0DT9sjsubOZBw59h5KUnRoaOh5hbz8NI=;
+        b=dxHVX4FE62+fbX2APKi01gLnLoxrWjDWDrO0qoK4htiRRRFEgo4i+JEyp/kl0MilQq
+         PgcUH0RXD/M4bO6w9Fli1VB6VzMFvs+wy4SLKOqGkt0Gy/Vv5GW0ZxIf4To/3G8zb1pR
+         CsiqAdhRu9oSEvUgvzb6qpm0F/SUyQoPVybbsgjRWGx6fOXQlgk62zEjosEOdBERnoa6
+         mD5KRAs60lxt3tbyIQLA2/feVkqVK11/6o8ytu7DNOl7wozAH5F/qC/Glqyxa35tugTO
+         YUfVVephCnqcDd+hlrlADLFu0qaUdmaDeX/dD3DTkiyA4sbSaWHbd82kaZoKRFLnjA9y
+         b/YA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqYIzUTQfkMPpdY++I3klP6wq+4KR2EatXucURFjLomPYX1guuroXBtBVq92+QRqfI2UbXP1KI6zyTrV3INpaPRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ/3dAjwLAtnFd0gwHd+a9KcqWmSGyXZ3WN2oZm5NatMF7sUcR
+	Jam6eerUKTxUKiCEQumXILaljaKF02yTDBvXEykJ1T/KLVf7nHSJYwW8r0wj3mg8DN7whfP33NP
+	zr+imTWJaJlB9XGgZwXPoakukJ41OFt9AkBnUHPnsJA==
+X-Gm-Gg: AY/fxX5naISvPX3qBaT26yT0qrmKU2QmsJIHkBvbsq2Xh7E2Ax0vqKWILziIGzqnGLK
+	lMQggUZ9ho9lN0vD9LH7lt6WDy6ZVSdiO+CO1WZ+bBaa1oJWMadiind9SFuFf6pCjFI5lNCAMLX
+	ZCDYJjbbWbkFK7YbkF0+c3VVF/oY3rq9JxuNXWw99/C1UiyGT0dd1nbcleRT2CxCxi8BcdYtJMM
+	+u5/LpPa3g0ZPgNdAnAqnq8L/R+hcFSXNOScgi25dzRZJuiuhyQmGYZdoDadGLA+Ji1JaB6
+X-Google-Smtp-Source: AGHT+IFS8rYL/AwaODNRa7WfZUsg/Y0giyG2o55Sn1z5plGBNfdHP68B1+vhS5dmZFmSvNPRKxpxiwnrMPyF8mdrh24=
+X-Received: by 2002:a17:907:6d10:b0:b83:246c:d125 with SMTP id
+ a640c23a62f3a-b8444f4afa7mr340640866b.41.1767815288230; Wed, 07 Jan 2026
+ 11:48:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 07 Jan 2026 18:03:05 +0100
-Message-Id: <DFIIPIQDRAXW.3FOJY73IY5UZ9@bootlin.com>
-Subject: Re: [PATCH 3/6] drm/imx/dw-hdmi: convert to
- of_drm_find_and_get_bridge()
-Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
- <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>
-To: "Philipp Zabel" <p.zabel@pengutronix.de>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Kevin Hilman"
- <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>, "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>, "Shawn Guo"
- <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Matthias
- Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Inki Dae"
- <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
- Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>, "Laurent Pinchart"
- <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
- <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com> <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-3-ef48a517828e@bootlin.com> <3e87a26d067de694273daaf011a50f1a2e7718f1.camel@pengutronix.de>
-In-Reply-To: <3e87a26d067de694273daaf011a50f1a2e7718f1.camel@pengutronix.de>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+References: <20260107-ufs-exynos-phy_notify_pmstate-v2-1-2b823a25208b@linaro.org>
+ <7c3c2687-12c8-452d-86d7-78b3168a8f01@acm.org>
+In-Reply-To: <7c3c2687-12c8-452d-86d7-78b3168a8f01@acm.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 7 Jan 2026 19:47:56 +0000
+X-Gm-Features: AQt7F2p6LRb1LMUUf4aCL3KFPPbvN25P8eOfMmuUIQfOW1bNMu_kGMWDfFVqouI
+Message-ID: <CADrjBPrAr2QKej+aVQQua=DKEWNdkdLtPV_7L95Hj7L+kTv-Hg@mail.gmail.com>
+Subject: Re: [PATCH v2] scsi: ufs: exynos: call phy_notify_state() from
+ hibern8 callbacks
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-scsi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	andre.draszik@linaro.org, willmcvicker@google.com, tudor.ambarus@linaro.org, 
+	jyescas@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Philipp,
+Hi Bart,
 
-On Wed Jan 7, 2026 at 5:34 PM CET, Philipp Zabel wrote:
-> On Mi, 2026-01-07 at 17:22 +0100, Luca Ceresoli wrote:
->> of_drm_find_bridge() is deprecated. Move to its replacement
->> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure i=
-t
->> is put when done.
->>
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> ---
->>  drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c b/drivers/gpu/drm/i=
-mx/ipuv3/dw_hdmi-imx.c
->> index 07e5f96202d4..95f629d97bce 100644
->> --- a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
->> +++ b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
->> @@ -241,7 +241,7 @@ static int dw_hdmi_imx_probe(struct platform_device =
-*pdev)
->>  	if (IS_ERR(hdmi->hdmi))
->>  		return PTR_ERR(hdmi->hdmi);
->>
->> -	hdmi->bridge =3D of_drm_find_bridge(np);
->> +	hdmi->bridge =3D of_drm_find_and_get_bridge(np);
->>  	if (!hdmi->bridge) {
->>  		dev_err(hdmi->dev, "Unable to find bridge\n");
->>  		dw_hdmi_remove(hdmi->hdmi);
+Thanks for your review feedback.
+
+On Wed, 7 Jan 2026 at 16:57, Bart Van Assche <bvanassche@acm.org> wrote:
 >
-> The component_add() error path below this is missing a
-> drm_bridge_put().
+> On 1/7/26 5:51 AM, Peter Griffin wrote:
+> > +     union phy_notify phystate = {
+> > +             .ufs_state = PHY_UFS_HIBERN8_EXIT
+> > +     };
+>
+> Should this be declared 'static const'?
 
-Right! Thanks for reviewing, fix queued for v2.
+Yes, good point, I can update that.
 
-Luca
+>
+> > +             phy_notify_state(ufs->phy, phystate);
+>
+> Can you please ask the maintainer of include/linux/phy/phy.h why
+> phy_notify is a union since it only has a single member? From that
+> header file:
+>
+> union phy_notify {
+>         enum phy_ufs_state ufs_state;
+> };
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Originally in v1 it was proposed as an enum. Some feedback from Mani
+was to have it as an 'int state' and let drivers pass their own link
+state values to support multiple peripherals. Vinod (phy maintainer)
+wanted to lock it down to stop any API abuse (see
+https://lore.kernel.org/all/aICKM-ebp9SMAkZ_@vaman/). So we ended up
+on a union with peripheral specific values (of which currently UFS is
+the only member, but the expectation is more will be added for other
+peripheral types).
+>
+> > +     union phy_notify phystate = {
+> > +             .ufs_state = PHY_UFS_HIBERN8_ENTER
+> > +     };
+>
+> Same question here: should this be declared 'static const'?
+
+Will update to 'static const'.
+
+Thanks,
+
+Peter
