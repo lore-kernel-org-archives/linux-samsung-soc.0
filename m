@@ -1,41 +1,41 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3280637F75B
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 16:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC476378D80
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Jan 2026 16:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767802968; cv=none; b=Dw0hx8H6MdFmiCsfrMcT7hTTS7tw/S64WtP4mGxqKUsLeDHpXqJ4Obzv+LJZncGdtkhU/ZkqwCXLoDGHOKOnbK+8KF8IuC7jqq9ZgqJmw2tmI0tEJr/18DoVsdh/FdhEipRBN0zs+cn4l50jVkA8DmWVLUWNz+5c5ZKz1rHyfw8=
+	t=1767802982; cv=none; b=hFfYTOpBPVmDmwfA4Gfmj4XdPgk58TnrOYR5s3hMNCOQDa8OprYqYCYtGPpa2yJEt50wrYEs3E9JeUSEt/6uRId44+mtw4Cd0JQvXfdS3YcxbRyyd01QBVu8LW6AS7JMIpgpgXPU+A1ADbp59z4PWZmhxPQp989cE3Rc+YkvVzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767802968; c=relaxed/simple;
-	bh=tTr16A4fMk0FdaOST7KPcVrXKxgV56mrAwdvXFEtKxU=;
+	s=arc-20240116; t=1767802982; c=relaxed/simple;
+	bh=TlE3YDvy+t5RtC+Km6LkK0CiyIuQKjYCOd/3ddkTIKk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NFatlZfclfjHtIPsHnxaqjtNZcuW024FtdUrzJtu3dwcTnKsyoK79ov0SkgkR83bEVSYpKXw7NPUkG83FH7YMy53J9DdYoDHDpPK2OUY3L373Bb4ve3OHJxNru25TRXJ7RJRxd/aFZxLXW9GiQpoMKK5MrTPt0oM6w1Sse9Sq5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fsd7Ll44; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=eJk4RlDYD1q7IJkuB7fqRuxqrg8N2FJHYENBV901Qqyxhi5nUL6rnSELN+TGys2c3PAhxigtfWrsgTfAUy2ARG1HnDdMttjQYgsazQhQgL1dt/7UiyHQelnJqg7Nu4UfWAiG3j8KnDr5WF7y/oC3aHJ6GP2pocS7V7KH40ietMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=0PBXQU1I; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fsd7Ll44"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="0PBXQU1I"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A94F7C1EC96;
-	Wed,  7 Jan 2026 16:22:08 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id A7BE51A26E6;
+	Wed,  7 Jan 2026 16:22:50 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C6770606F8;
-	Wed,  7 Jan 2026 16:22:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8CEA7103C87C8;
-	Wed,  7 Jan 2026 17:22:28 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7C448606F8;
+	Wed,  7 Jan 2026 16:22:50 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA559103C821A;
+	Wed,  7 Jan 2026 17:22:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1767802953; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1767802968; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=PorJeqSllb/CeY5X2ouyWtuaeRz7QMdsAMLS+BtwxPM=;
-	b=Fsd7Ll44d23Z9IVJW46aIyRwPX8fnZduxoWFXuyzWXYAu0xGh2sVIzVvkwh8JS/L6EWcYs
-	4+pfVQ09Wnl+ERuF1W9Ry4kwYsLuxMf/+KOqHqdUhX28F+QWe9tRpueIJ6ApM//ZvHu+H8
-	I510fcYnG81stb3WA7EYF8Qpxypai/d6A2dAbuQnhpBvlwQKXbR/so/Q6JPemijpZuYP9m
-	fSg+sTKzBzNom+3/KWALE1klWCehOpdMjp1ofIjEJQ3YZGO/GlVgRxH8kwg2IC1wOgc2Mw
-	u7aMezTnG5ytAKy12YIxf2gJ+BxL84IxtR3nHUapnUlifn4ZfvG0P/ro4LZGvg==
+	bh=SA0cq6vwDyGvyP6SIBlq9HJkNg1w6ZLReUneEYt+F+A=;
+	b=0PBXQU1IufSv9OAninwcHSoJr31ZcYtsGaC0anMJOqmxGaJiXaUsN7KM3zbRJlmgQ/00cN
+	2rozTMU32C/x2p83caDuDJtst5RQQL6r9XKMCkeYActN2bR5+sagZOR/Cw3VkgZ/26Pk2u
+	2iZKtRENzWlZf4JWjtnx7FvPTQrBEVuRRoPYW/CGOYHIezJxXcgz4KneTFZNAVpIP0pjDJ
+	+24Mk1qaBmnA/usF75Sj7y2oXum8CDyme0KNsBfl5B1AvnjQW9RN/LSYJiJVzIl59oTWNN
+	6V2A+y8X+LGvZNLzzscItdC2jdgJuwEGmWOPpp6IFlC3nl7ett+ZgnqJ1LrnCA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 07 Jan 2026 17:22:01 +0100
-Subject: [PATCH 3/6] drm/imx/dw-hdmi: convert to
+Date: Wed, 07 Jan 2026 17:22:04 +0100
+Subject: [PATCH 6/6] drm: rcar-du: lvds: convert to
  of_drm_find_and_get_bridge()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-3-ef48a517828e@bootlin.com>
+Message-Id: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-6-ef48a517828e@bootlin.com>
 References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
 In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -86,32 +86,50 @@ of_drm_find_bridge() is deprecated. Move to its replacement
 of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
 is put when done.
 
+Since the companion bridge pointer is used by .atomic_enable, putting its
+reference in the remove function would be dangerous. Use .destroy to put it
+on final deallocation.
+
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
-index 07e5f96202d4..95f629d97bce 100644
---- a/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
-+++ b/drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c
-@@ -241,7 +241,7 @@ static int dw_hdmi_imx_probe(struct platform_device *pdev)
- 	if (IS_ERR(hdmi->hdmi))
- 		return PTR_ERR(hdmi->hdmi);
- 
--	hdmi->bridge = of_drm_find_bridge(np);
-+	hdmi->bridge = of_drm_find_and_get_bridge(np);
- 	if (!hdmi->bridge) {
- 		dev_err(hdmi->dev, "Unable to find bridge\n");
- 		dw_hdmi_remove(hdmi->hdmi);
-@@ -261,6 +261,7 @@ static void dw_hdmi_imx_remove(struct platform_device *pdev)
- 
- 	component_del(&pdev->dev, &dw_hdmi_imx_ops);
- 	dw_hdmi_remove(hdmi->hdmi);
-+	drm_bridge_put(hdmi->bridge);
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
+index 001b3543924a..227818e37390 100644
+--- a/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
+@@ -633,6 +633,13 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
+ 	return true;
  }
  
- static struct platform_driver dw_hdmi_imx_platform_driver = {
++static void rcar_lvds_destroy(struct drm_bridge *bridge)
++{
++	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
++
++	drm_bridge_put(lvds->companion);
++}
++
+ static int rcar_lvds_attach(struct drm_bridge *bridge,
+ 			    struct drm_encoder *encoder,
+ 			    enum drm_bridge_attach_flags flags)
+@@ -648,6 +655,7 @@ static int rcar_lvds_attach(struct drm_bridge *bridge,
+ 
+ static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
+ 	.attach = rcar_lvds_attach,
++	.destroy = rcar_lvds_destroy,
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+ 	.atomic_reset = drm_atomic_helper_bridge_reset,
+@@ -740,7 +748,7 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+ 		goto done;
+ 	}
+ 
+-	lvds->companion = of_drm_find_bridge(companion);
++	lvds->companion = of_drm_find_and_get_bridge(companion);
+ 	if (!lvds->companion) {
+ 		ret = -EPROBE_DEFER;
+ 		goto done;
 
 -- 
 2.52.0
