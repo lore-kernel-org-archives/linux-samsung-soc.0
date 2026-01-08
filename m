@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87230399A58;
-	Thu,  8 Jan 2026 08:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29D93A9DB7;
+	Thu,  8 Jan 2026 08:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767859834; cv=none; b=Hdb2liEhSqBupEw0V6Gl5toaDKLvDuurEjFiyS08n/VMfATd3+vC5yecLi8R+UCFqqlkSj5V8rYdlu0Jn3xwfg27rfGx82BlKcsQpKFMyvr6t8tRh0LR8cqT3S7L3sHl0ZMM0CK+bu0R2O0YndwzvUx9f87LNotEXawN2UXkzQI=
+	t=1767859991; cv=none; b=SAzH5qj0r1tvjqRfhp6rjWNokC86G7eZ//gJFYroPrBH2VyQu4tPlfq+1j/s/dVoSHhVNCIwS3g/0u4Vz6zYT/QJDJb7vF7OMtzBPyd+o/B6ejCCmhMiMMcLAsp4tcZpfaQaxsQj0BEiU0nmIKNSiyWlS+5U8sYTxBQQzdEWPeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767859834; c=relaxed/simple;
-	bh=QyxVBielfRt7QoT2djRMAtoZYxObbBanp6fSs7b5E6M=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=ZH8OtxAO62Bvgt0ZtsyvM0s22Xz96A8e2mqRr8w7akKlPlTfsr6+iAVr945ZG7hsd15IIaMDBt1B0rHuFxLCf+WoWuzCQaKeanvfl1w9cdbJM3D3JmD1CvdYUOT40d9vhMgToc8NbxFbBI5EliFk0EF/owkKrRleTAHkw8C5MRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoTm/hXL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767859991; c=relaxed/simple;
+	bh=zKx0mVwbH19vuBhzvaR+1yZmiHRKxSzYZXrkt7qWcIc=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Tqlqggfc5iB/2FpHRltes7iIJ7K+mqfPzEGpG8FYP/2gPh311SKZCvzUwmi6K1MuSDW20n2qvzJFQL+xhcCaAaQl/Cbi7A2taMTNrLSh/RUGzAWB/FZV9OoEU6xBWnr8LdzLwrvAorA5qTYGRbFXJVXDdS8j3ysrYwIFz3Aiur4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcK59WjK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoTm/hXL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396F9C116C6;
-	Thu,  8 Jan 2026 08:10:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcK59WjK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A5DC116C6;
+	Thu,  8 Jan 2026 08:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767859832;
-	bh=QyxVBielfRt7QoT2djRMAtoZYxObbBanp6fSs7b5E6M=;
+	s=k20201202; t=1767859990;
+	bh=zKx0mVwbH19vuBhzvaR+1yZmiHRKxSzYZXrkt7qWcIc=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=NoTm/hXLit+bYrXYayh5ntXK2wAUkji9dEUrvFNEECrctoK7XqGErv9cYfyNer7a9
-	 1eahUfLJ1h0wDZfcYkkk2ZVEP12XfWLk5mhwQD5yIaFSnVaf+usm4itXWj1YmCA11K
-	 dc1dSJATno+oWOs5pjUjp/0OihvVmjGNTjSX/cTE1gB134O3kQMPsekHL4V093CsPO
-	 lYZyEynMujMlPCXbdRWH4pfHUhQhX6cWHBVz+FpJ80dmAwWgoLtE9/bIfXQrIYrma2
-	 5VpRgCR/j5W9I+C/+yUT+jcAy4qhClEwNAXmg+6wM16nFt0RrW6S/B1mVev8jeWuTd
-	 gPV+bj8jVkz4A==
-Message-ID: <41224d79e893e5460e01809df14b824b@kernel.org>
-Date: Thu, 08 Jan 2026 08:10:29 +0000
+	b=gcK59WjK6IwUT12wechfhjhX6s021QUj4wR7GFRWe/KHrOOI3w1Ng2AHChaciqJyk
+	 84J6i7OP5B4eBbukfnRtk1mcnlTmicyXHcH7d0B9Y/9fuds5G/84Wn4KhDPu2V3C5n
+	 YIwklbf//9x22qXMeYp3ZifHW1tJ9vP/hnDRZWAWI6eJSoCAc3he9cRGeMO+K+ekpt
+	 k/mfqIsnh1JOoXYQOxoEstfHecTbd+Zr+ysnpOT3EVU2FrT6Rv5yiDCo50IQDk6XCJ
+	 BL3RXp8kntOF+PxwjWBcAcQRUuEIn8irecdDRYyHoZUz6lztsTu4W1kjoHK9/xo2TT
+	 umoQWDPjU5gpw==
+Message-ID: <3d61916afc22b4ef596cee46473a29dd@kernel.org>
+Date: Thu, 08 Jan 2026 08:13:07 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 1/6] drm/bridge: dw-hdmi: convert to
+Subject: Re: [PATCH 2/6] drm/meson/dw-hdmi: convert to
  of_drm_find_and_get_bridge()
-In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-1-ef48a517828e@bootlin.com>
-References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-1-ef48a517828e@bootlin.com>
+In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-2-ef48a517828e@bootlin.com>
+References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-2-ef48a517828e@bootlin.com>
 Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Alim
  Akhtar" <alim.akhtar@samsung.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "AngeloGioacchino
  Del Regno" <angelogioacchino.delregno@collabora.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "David
@@ -58,12 +58,12 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-On Wed, 7 Jan 2026 17:21:59 +0100, Luca Ceresoli wrote:
+On Wed, 7 Jan 2026 17:22:00 +0100, Luca Ceresoli wrote:
 > of_drm_find_bridge() is deprecated. Move to its replacement
 > of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-> is put when done by using the drm_bridge::next_bridge pointer.
+> is put when done.
 >=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> dw_hdmi->bridge is used only in dw_hdmi_top_thread_irq(), so in order to
 >=20
 > [ ... ]
 
