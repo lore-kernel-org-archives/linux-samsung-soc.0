@@ -1,176 +1,109 @@
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8D530CD9E
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jan 2026 11:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F70835B137;
+	Fri,  9 Jan 2026 13:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767958832; cv=none; b=Sm19o7mGoHL736me/Tpa9cU2kmWDafMMxTrdViAMrSfS9aPTN3QtxJTRQIRTTbuKJfRd6j7SgyUnQBSRq4gbNHtvnj4HCBKyS+Hm26BILDkK9qjxZe90gVl+hc62W1BEjrL/f/y8F2jTPkw/60oqXcAGX7A3iQuplvdG1b3cks8=
+	t=1767964514; cv=none; b=eKNEzL67CMWEetkSLWZwrAbS5j8AJlCWzOCCXuzyMGBUeeJC36Y0/RkUx33UK07QcYW9m9Ys4kPp0GukR7SF8Rfvhsnya69Qk35Eh6/MIAVuHxzTal9VUdyMuur6lP7ROhyVbO2w2GxNdn7DE6MNCJE9wJMMKKp42/ik5njo3EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767958832; c=relaxed/simple;
-	bh=oLaz/UPrpvvVLvgT2gPEOxUMrZw3BlciMhOBrJEZYCc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cCQFx6bC1DUauVvLweKktTOluy2eA8SZnlVjB03M71sUT6kFajL5deb5MaIDjIDvBScMxIp/rr2D4OC/pQYmhcLvwMWucfIwTeVWOkl0h3jU3NluKWJhkCalGmxxmZeBsreeODsBdvxzgsy0EXo9a6E7XKlH3E0spvF1FIJrU7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnfGJXU6; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767964514; c=relaxed/simple;
+	bh=MJStCIZmQ7PngNhFtsuW1zFBiSqzPLcTWAfWV/VvXr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfaKgNAicGji1cS2f4ayTlxFHYg4m2B3sz1PXM8AgrZhetxqQTzr89lGOEFiKiW4XiAbnyXFaWwdbz7SQIQstO+zrHYYsb9+jMNmwVw45PTx14yJ8vEGzcPTLckVUDV/peJod5yTmjkbKAyRztifnSelBU69r2WrLZI5E9SHVOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Js9LxSzO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnfGJXU6"
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-432d256c2e6so1189847f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2026 03:40:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767958829; x=1768563629; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5J5FE2rV7ygCFlHLBwb5hCWqtsTpEMKY5DEUv0AXHWs=;
-        b=JnfGJXU6i6jStRqSBg5w1tkCWStK66fva4n84d0a+JY6j0usvZunxFonpu8VBlpHYR
-         Ejz1Jl/d8rpRE9HrdP1wUoboJZjejIqa7eldOJk9pjTVlTdNuv6mJYmgfLf/ZTqaQJy2
-         3Z08Ld7Vz4v6AUjHUEVbfdVezPU4OoHp/bGNLWpjsV4AFX/jiIndZB++zid5dpuE6KcW
-         RqZql8WbOmu1xdwLOmfbRHU7j+Mj3auxkinr7tAlZ9eMAkOFhkbrUxzIRGGRaEbCWaNG
-         zTYcNFQOZrw3cJmKorLZ2SgHFc8UD94Wn19bV86UCdH0v0QUY7F7Cg/NdCnULtWkd5Yc
-         fUdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767958829; x=1768563629;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5J5FE2rV7ygCFlHLBwb5hCWqtsTpEMKY5DEUv0AXHWs=;
-        b=fLbZdVxsC49RLdAV2yY1qIg8WeXyON5CoCAr2Ec6u0DI69YnAMFsL4KlpfL+wakmuB
-         HbbAot32VUahQ28Qrs0SpPNSjlkmgKcCZalTDS/R1PRmGxYkTjKQe7lUBihg0a102O8m
-         ez6SNbk1C0pMEkD0KtyMG2+p16L9BwlrHC2a+Y+lUz2hs56+5tWXgvpTjuGZS4R4gMnk
-         irTzvOOl0HzHePCaobgP3vpu7MDGGb1cexPWgu5kxjNv9dxvhGsi3TeacQZU+XbhiyH7
-         6zTVL0CRv9JA6h7b35dLX2qpbfB4hzw7dszmcZ5J+Ay6OU2k+CLX3gI+zEdWX2JVfcyB
-         4dvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFXlQGqS2/RECg4AOPOai1wHkBbmARRVM++PWFBoN/8cJfP3MMtWHNkvcqBIye6coJVdStuKFXFUNvvRU6YGPdLw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWGGlS1W8WOIOmf951P/FGkt2rIvh5jgZPR6uE7l71+u0pzTAR
-	7OQ1+bf3DSS6jYJeIJjDQ4hm8jev/sbcLZSZzh3OT9QKAhevyKtZ/ZZ8nFDiAi0Z0abKNRxgc6J
-	plWGfQpA=
-X-Gm-Gg: AY/fxX7+8zrSdQCSLboqMJr9okExhdsz6CsRc6HdiRAi0td+Z4kVLNBEqLJ5giYj4Ph
-	d7c3gQjsEsxIeJSouMtftpx6Nme7keBheLp9UF4wV+lqYqzAlAufcht3hPOM94oXk3kkN6n5ixp
-	8Ff2qwZxva/ztRLiqFmIMJ/8P3ZsgY2oKM+U+dbLLVk/jU4G8AJDRB7X1XoZU8qiP44RrjKu3YI
-	kJBsWjAxOiQxCuJD6lOg3G+4dAEzkH+9cyOurRP2eTleHD80MrbBal3Bakg6k241qlqkKPHr7Ac
-	9LrpNWkg5WBBcQW8XhRa8E2zuRMoaDeuCkWyvbEFH2I4Qv3IbSufuD0kJe9oX7taP3TgQgRTkVO
-	cdRDkZNyPKma29wSoAajcCYcnl4Jm0EyzWCl5OZq72+RPAMjZTjmALEUAlrY6P5N6CUF/aX90w8
-	iY+tZTJbNfklcJhEjrInARnwEYA1GNJTu+foCqeT+u0rM=
-X-Google-Smtp-Source: AGHT+IELE5v41GM1z995DCq/Vq26mXGNxF7McIPtRrpLDzdmNXt9k6T//iVWMpCwb1VhSb6sunaZeQ==
-X-Received: by 2002:a05:6000:310d:b0:431:7a0:dbc3 with SMTP id ffacd0b85a97d-432c37983eamr11401803f8f.29.1767958828730;
-        Fri, 09 Jan 2026 03:40:28 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([2a00:23c7:3122:c601:1e1:d32d:b1c0:70fe])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd0daa78sm22039102f8f.6.2026.01.09.03.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 03:40:28 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 09 Jan 2026 11:40:14 +0000
-Subject: [PATCH v3] scsi: ufs: exynos: call phy_notify_state() from hibern8
- callbacks
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Js9LxSzO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1767964512; x=1799500512;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MJStCIZmQ7PngNhFtsuW1zFBiSqzPLcTWAfWV/VvXr8=;
+  b=Js9LxSzOVhNCBDHPHcWElKq58eXEipE7+RWlMqInLDK/9LlXgVKm4hPB
+   tqzom4AF0BRFNFgWGPBGkp35JgMrNjAm49m2nf0761Rtf/iRhbe4TNg5Z
+   Ock+p3mLowhVGxQLycmMbv0afzFm4Sf2gWpBWSAX8zlZt8tOAB3gCbPsC
+   4P22oypY0e2T53RU1LQ/cLzZQK7W8GsxU2EUVrMikCBuKUXu4urEuXl9/
+   FEaBlt1EcQ5UPmOm3yWK8d6CtxLoyqrrXBC93t1/e33Kw/Htp+ojprAoX
+   C+Vw5twXo/GPYgVTE/0N1nnr19bBAysAZXOEenodbqw9GpWgxsC+jNIIv
+   g==;
+X-CSE-ConnectionGUID: ymK+dPm3RACeICPKSPQ2YQ==
+X-CSE-MsgGUID: heJOkgSIT+WPcpO52eAxMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11666"; a="71920545"
+X-IronPort-AV: E=Sophos;i="6.21,212,1763452800"; 
+   d="scan'208";a="71920545"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2026 05:15:11 -0800
+X-CSE-ConnectionGUID: 08MobHMCRUqmHqgXvw+L8g==
+X-CSE-MsgGUID: Yah7IGNCQyidLxn0wPz3gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,212,1763452800"; 
+   d="scan'208";a="203384669"
+Received: from khuang2-desk.gar.corp.intel.com (HELO kuha) ([10.124.223.90])
+  by fmviesa006.fm.intel.com with SMTP; 09 Jan 2026 05:15:05 -0800
+Received: by kuha (sSMTP sendmail emulation); Fri, 09 Jan 2026 15:14:44 +0200
+Date: Fri, 9 Jan 2026 15:14:44 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: amitsd@google.com
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Subject: Re: [PATCH v3 5/5] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
+ setting charger mode
+Message-ID: <aWD_RIPp1ULH9St1@kuha>
+References: <20251227-max77759-charger-v3-0-54e664f5ca92@google.com>
+ <20251227-max77759-charger-v3-5-54e664f5ca92@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260109-ufs-exynos-phy_notify_pmstate-v3-1-7eb692e271af@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAB3pYGkC/43OTQ6CMBQE4KuQrq1pH/+uvIcxpMADmmiLbSEQw
- t0tGGNc6XJm8c0sxKKRaMkpWIjBUVqplQ/hISBVJ1SLVNY+E2AQs5SFdGgsxWlW2tK+mwulnWz
- mor9bJxzSimFel3ksqiQh3ugNNnLa/cv1lQ0+Bj/jPmUnrdNm3j+MfGv/nRs55TTKoyip0yyGm
- p9vUgmjj9q0ZKNHeHMJ4yz9xYHnoMwgFBADy8ovbl3XJ0YmBW0vAQAA
-X-Change-ID: 20250703-ufs-exynos-phy_notify_pmstate-c0e9db95ac66
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-team@android.com, andre.draszik@linaro.org, willmcvicker@google.com, 
- tudor.ambarus@linaro.org, jyescas@google.com, bvanassche@acm.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2460;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=oLaz/UPrpvvVLvgT2gPEOxUMrZw3BlciMhOBrJEZYCc=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpYOkrHReCSBWEN/TSNB6WKtGTGJD7Ov8Gz4YEB
- gvVHdsEOMOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaWDpKwAKCRDO6LjWAjRy
- upYYEACZnZyKTZmwQfiAtYvOWkCyYxJZ/KNCLdxulf5MEB9TQcdgJPXm2lSC+TVjNbk0mqpwnpN
- WvTDw1mEeO3y5fYOJJSfDQJ+wywTFR6s9iqY9nK6OYg5hJU36KR7aL831JB5cj0D9EYLGW/Q8p5
- ylTTPbyfXWqyKkp9CM3+hdEcHHUyF1V0Dr7W1ftouPkX2RmnTa/1/DJaA028s33tfFuOt+NZoxN
- 3M+Q9Sp+7KtyDJNsDzTciiZzce/R5uu56lfFGoWRS460/wRNMtDLhimdz1u4qY4X4bb/0bYsG5y
- jLjCNHCLLapTSzmCNtDoEpbL1de+l22NmhZjPJTnD1+rFqE2GjWVlTkRELM3H26PARMI3NGTSaB
- Gss8PVUjhXnEu4gX4MqgtIlTGC8kt6cjj5o8GC7oSRSPjWP1t6XXfbshv3htiCCbz1mpjAjq+hp
- QOVHyTbLBRPvEIpDXFJ2XW3AhhzHd7MoMEJNRtwER2JXkwtJKs0TeEwTeMf1WgjBE8TApVU3P3F
- nMk/93wGYaqnLB0W3pIpLyW3A9VllLKB8iHiaS8zFIcdddWd/GL7FV/zFqXrecSPWg8ZrgW689U
- ytnksczMBLuvSW23pK3ux7WliK0khF8I/0YL6jLW2AzqMGIBgJ2F0G4NcycVMWOtSPVL8alwBX9
- VGjzmjsQlsfw8mA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251227-max77759-charger-v3-5-54e664f5ca92@google.com>
 
-Notify the ufs phy of the hibern8 link state so that it can program the
-appropriate values.
+Hi,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-Note: The phy_notify_state() API is part of v6.19-rc1 and onwards.
----
-Changes in v3:
-- Add 'static const' (Bart)
-- Drop Barts reviewed-by tag for now
-- Link to v2: https://lore.kernel.org/r/20260107-ufs-exynos-phy_notify_pmstate-v2-1-2b823a25208b@linaro.org
+> +	if (source) {
+> +		if (!regulator_is_enabled(chip->vbus_reg))
+> +			ret = regulator_enable(chip->vbus_reg);
+> +	} else {
+> +		if (regulator_is_enabled(chip->vbus_reg))
+> +			ret = regulator_disable(chip->vbus_reg);
+> +	}
 
-Changes in v2:
-- Collect up tags
-- Rebased onto next-20260106
-- Update phy_notify_pmstate() to phy_notify_state()
-- Link to v1: https://lore.kernel.org/r/20250703-ufs-exynos-phy_notify_pmstate-v1-1-49446d7852d1@linaro.org
----
- drivers/ufs/host/ufs-exynos.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+It looks like you have to do one more round, so can drop the
+regulator_is_enabled() checks and just always enable/disable it
+unconditionally.
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 70d195179ebaa01f38331faaee6f8349211c4c3b..76fee3a79c77b7117a2c02f380f8c78d702ad173 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1568,12 +1568,17 @@ static void exynos_ufs_pre_hibern8(struct ufs_hba *hba, enum uic_cmd_dme cmd)
- {
- 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
- 	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
-+	static const union phy_notify phystate = {
-+		.ufs_state = PHY_UFS_HIBERN8_EXIT
-+	};
- 
- 	if (cmd == UIC_CMD_DME_HIBER_EXIT) {
- 		if (ufs->opts & EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL)
- 			exynos_ufs_disable_auto_ctrl_hcc(ufs);
- 		exynos_ufs_ungate_clks(ufs);
- 
-+		phy_notify_state(ufs->phy, phystate);
-+
- 		if (ufs->opts & EXYNOS_UFS_OPT_USE_SW_HIBERN8_TIMER) {
- 			static const unsigned int granularity_tbl[] = {
- 				1, 4, 8, 16, 32, 100
-@@ -1600,12 +1605,17 @@ static void exynos_ufs_pre_hibern8(struct ufs_hba *hba, enum uic_cmd_dme cmd)
- static void exynos_ufs_post_hibern8(struct ufs_hba *hba, enum uic_cmd_dme cmd)
- {
- 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
-+	static const union phy_notify phystate = {
-+		.ufs_state = PHY_UFS_HIBERN8_ENTER
-+	};
- 
- 	if (cmd == UIC_CMD_DME_HIBER_ENTER) {
- 		ufs->entry_hibern8_t = ktime_get();
- 		exynos_ufs_gate_clks(ufs);
- 		if (ufs->opts & EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL)
- 			exynos_ufs_enable_auto_ctrl_hcc(ufs);
-+
-+		phy_notify_state(ufs->phy, phystate);
- 	}
- }
- 
+        if (source)
+		ret = regulator_enable(chip->vbus_reg);
+	else
+		ret = regulator_disable(chip->vbus_reg);
 
----
-base-commit: 6cd6c12031130a349a098dbeb19d8c3070d2dfbe
-change-id: 20250703-ufs-exynos-phy_notify_pmstate-c0e9db95ac66
+I don't think you need the check in any case, but if I've understood
+this correctly, you should not use that check when the regulator does
+not support that check because then the API claims it's always
+enabled. So I guess in that case "if (!regulator_is_enabled())" may
+not work as expected, and you may actually be left with a disabled
+regulator. This may not be a problem on current platforms, but who
+knows what happens in the future.
 
-Best regards,
+thanks,
+
 -- 
-Peter Griffin <peter.griffin@linaro.org>
-
+heikki
