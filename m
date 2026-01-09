@@ -1,267 +1,291 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B0366565
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jan 2026 17:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034322E92A2
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jan 2026 19:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767979652; cv=none; b=RfjTNE2eBT9XjX1kV2s9H5Ut94nJr6qLL7BEoNulTEKTph965yqKtabi3vP9Dh1mIZV464sm3xTYOEFDRLJVQw/kfPQVfrXNKZkLUU62PtqYqhLRLZp+S6WS/4i07xLbOSf4WCmZGXMP6uP9Ajb4v2snMBrA+xmWIuh+mOQoLQI=
+	t=1767987545; cv=none; b=rXhMf59NNQisHJ5/ynZIXJc4sdlJ3AJw7NOgqvQpXflyK11qvZWPK1wXXASL2d9CZKLxl7lmS3GYvbWluh7SV+BddhHVZEJLciz6lhxia1xppFlzDizO4apxPTna6Uq2T5UjPmE+t7JqbbkSYeGpi5rQKzflkvRGX1vRJMLDQ5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767979652; c=relaxed/simple;
-	bh=3XB3rMBEqCsmj4gX8Pmw1bT8hVT6cvRuYvHSnPFCz3s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M+f7h5c4538NlMYKI533pt1bqbkNLvwTn67uJ2KZrb/VaXDADKu8YfOQDmBlETrNzZqU1u5JzxzHCHl5/QtCH5lOu2hSkiVW3Zxhlt6WvL3Rfcadz6AOyXhUnc7P9Q+pY+805CvoGl/Kn3jxoSdwkS0UgaHRQStOn+sBOtIadUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+cVGiwz; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1767987545; c=relaxed/simple;
+	bh=d1DGpLfo3y61DwtSMrJZrf703SB7Y0AswV+bK07iw+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LbiwdYpSqOOPhKdZSnZbzy1FTmunKK7pnOI0DZtR0LunMupwz0qsKuKG71VOGd8XIAKhaXVRMC5pK9eH44O8gqemB7lNjEFAerVxkJDbN+Q5nEEDRwy7c8EqtxMY1idwcDR0H0hIvqEc1BjqHs+yY9QLzXjY2cs6CoroUztRyoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TnI0SIzu; arc=none smtp.client-ip=209.85.214.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+cVGiwz"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6505cbe47d8so7198990a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2026 09:27:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767979648; x=1768584448; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CzsMqHkuItNSEK91yT7JYcig8ensUusvETOGKZjIn/o=;
-        b=m+cVGiwzVy50HHFWafJpfKkxDqnIPk+pUvXyS2WvfbbXXInByQrC/jlLyrRgLyZCZt
-         b82s5RDkS8r82mnQw2RZtNelsxUswh0dtGojFu0FeEpaPCq63eN2nw/ski21gruNTQ4x
-         FaXtETwUjiUXZgOnrWBXNFTG1ggOtEjAQq07zs2jOL4IlgvbWAy1/y0rlEzR8AdOa2kT
-         tKueycSnmrqo/Wz8dD9n0ZMXVshPAJAuH0W7qZQcjx/H8qmXpPP2iZ/XF7gl5Goh+SeK
-         6C7fCUrciAnvVFs4wt1KheQ3p9T1EmjEFdO9aQ8kxdZpjxub9ChMV5J9vanZlvVyC/DD
-         Y43g==
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TnI0SIzu"
+Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-2a0bb2f093aso33646115ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2026 11:39:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767979648; x=1768584448;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CzsMqHkuItNSEK91yT7JYcig8ensUusvETOGKZjIn/o=;
-        b=H12m8xO3B++bHpOa/35e2XiZBTm17c2dK9FwsnqjNIiLYlTTwFBva1b+vXHQZ84ZEC
-         4IuYLgBVApEvxk707AFSvFfCbMAj/APy7REWScWc5QMcqBAfR4og4JM45sQHM0NKzBol
-         eUGvXSz4EWTm9F2p5UQZVhCCiYYwGpnpB6S5cledqs6bRWQNKtcXz7azoPYKrYPr2lUa
-         lMczxQeFWmolovNErtFWnyH5r31x5YqUxN7fGfWfYQyF9sThoQJpKWzIbc6Pq40zL1ok
-         2bzCvG/MTsLEtKV/Yo4OC4Y5rt+0X6419XgCkMa8DSNCF4C/ZIQC1yvPwNDdRrtEAt53
-         h5NA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzdMfXlp8dLeFvbvdqoA9fpQ3Dw5/GQ1jPIJozmWoYuYPOJUBDZl9ioASPGYit53uJ8qiEBFbfBj7hJsYASJEHBA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJkINkmjPLPZQ/hCF9KNy3TJCX6be1rwL3lYXgSOWcauTDQ0Sp
-	FGQfe+sVEWD6UM6qX05tw6aLhx3QXqYI8/jRBJM47VXZ/ZSvDbdHVDRrXbal+qXj7es=
-X-Gm-Gg: AY/fxX4Tx5Q07p15RD/1/Mr3A4f+1b6Scr80NyZJecsDY11ttfKkS7kkbf1InXTY8Cy
-	Ry2oS0TWg+2yuPC0V8T8CrZxgtaKZU19+oOsVal3L8mfhNcelCn8VsxfSb9jpTH0wu5TsP/EuEz
-	qU5S88cnlDbCVpnhjZF48RkWxp8ldcQvUpUd3KEjNhbP5ob4ZqPcZdBIKwQYWwGnaK6VSa+oAHt
-	+BtiQJX/r8gFLlL5hfvFnoW09JfTn1TUahYAg2n6+hEGNXFdZyQ4HJTRKBc8T2V+FVY2LU3kaci
-	auFhvfuR7kAt1u1KJW33f8Mk2gB/AKuNr+xUdMfe/mBwvnn4wC1RxjHgVK3uh8/EJs0wNvwfFzO
-	EwybBUEC1HNTUn9O8rxHcOpuawQVNexjI1iZuSfSkvaTdT19knYjCd1pZo3Xz7TVz9hUIdW31Kz
-	SsNxB/AJYOK70uKoEc9zbGwLHbfarEY6Pxs5Ktuz5Kw6N8w1sEyGYKU/bWwsED0WAGMFTMv2IFV
-	6i7pw==
-X-Google-Smtp-Source: AGHT+IHfU+cxEUkm2kF/kOQsRd2ooDJ4uR4ri7MEIyFQqUrf3Okb1axWOyo618duvh8QSiexZtQrng==
-X-Received: by 2002:a05:6402:13cd:b0:64d:1ce9:54b7 with SMTP id 4fb4d7f45d1cf-65097e4cf0amr8994867a12.18.1767979648255;
-        Fri, 09 Jan 2026 09:27:28 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507be651a4sm10642182a12.16.2026.01.09.09.27.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jan 2026 09:27:27 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 09 Jan 2026 17:27:25 +0000
-Subject: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock gating
+        d=1e100.net; s=20230601; t=1767987543; x=1768592343;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a6+gZRjJjZdlpEFhcq5ZcW4GQbvww7E6JEQYHAIvqgs=;
+        b=kg9ikPDWLRfrsVVUTw0j2tWBBBIKgjsgzuUoi2z+xzVQvhjHvsmdtnz6Gwlu2Anbib
+         8aQYlOI/6ZdBFvo4Tp2P6Vu64G0hw2x4I39WXWDxTyo9O5oLJI572pHnAPdMjftpEHq+
+         9Pdn36lMSK3Uld2qN0SnADUd+JN/IaMOvIbKbHxH0nPR44A+FJiRA/Wo70pkBLYe/Sz8
+         JXPOmk7QOm76ZIXDrgqZQ843mgcl4wCUi5alE3KorOspEU4ENO7dilSbp42m6so8FVHF
+         omz/L2M0gH2qz54zg1SF6T82C8lox1B5+y5ZeOz1U4ht0mgqeGGHWbiHe5u80M0E7qcz
+         aCsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMKiN/B95L/vxOOMnHxma4Gmnp55ZdV9q/afp3gwHFf0p3imkPsYX3v6/Wa1Tl88Ez0h1vAxn8iDAgSuLuiLRWEQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRKcpvoPoJEt/FHQdtntoG9/vBxm/NH9FmaTXVehMuLefG9tr8
+	PygPDB5jdaYnXjQzaB/5lsyYwoOgfJLTBR9z31Mrq6dI41VqGOGM1WanTRCwYREV2mxbd5NsQAp
+	vqmMufoVHw/cH16kouC8BAGbrBBh7rJmMHNqZ7pPGOyF69YtxSYJzKOG42kJwf3wEfV0dZ7k/nn
+	+sHnvafYzzZc8o/LUa5HVbcdxE48cPU9p4odMXtbU7KhqgYRwmm+HR6jArHWZUo0v1wETWWpdLL
+	Sd4FLHp71fp2cffxkHLo/4d2eI=
+X-Gm-Gg: AY/fxX6Z9ESs0/wES/OHBYpC+YA/H942OJKR4KBBvt429eBI4S0JTIK4Kx5J2FCE8p+
+	cC0xUOB6C1NMCbelrXqUX+CF1lG/lVAKkWH/m8XwoCeBTVcSPMQXI2rLaJrGaW5C/PENSsn8ZBa
+	zriZAgCbYednz+uZZtBjG8DfNUbqOZaclLGNLK+qgpZJ+rdgon165ShuKLqPIgw52mG04FMqrrk
+	KNuSWMcGReYu5x8qn7Dqupf5ty4AHeFdYx8wf6B3wHpaevppt3gX/3XYMd5fS4L3tLUVetdbRyR
+	cJFmDTwp5ISW87183LNBfzkb4sxoQcKCdNOkqjookYyLwy1WQCdvkHdGbyjQ1iEMn1rQm+qfyYV
+	ir0BUBoranO+zsoyVRVYLcZl/SZwDu0VbnFC+jynkQeY3RjEUz4ebXn4hE/CgajYxZPChm7vZu4
+	Ns24P/nIS8X1v3abJ9ekgh300B6OsyLiujcuEiuGI+Tw0=
+X-Google-Smtp-Source: AGHT+IHkMs4N68MZZWa5mAOq38I4rcdfxPaVYDJ0qf/Zz8QftV0Tuj2jRnC8THmur3PQVr2I4yaMl4igAa6u
+X-Received: by 2002:a17:902:ebcb:b0:2a0:c84f:412c with SMTP id d9443c01a7336-2a3ee4e2e12mr108247005ad.57.1767987542861;
+        Fri, 09 Jan 2026 11:39:02 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-2.dlp.protect.broadcom.com. [144.49.247.2])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-2a3e3c3bd11sm13554115ad.5.2026.01.09.11.39.02
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Jan 2026 11:39:02 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-6465127c7fcso6911726d50.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2026 11:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1767987541; x=1768592341; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a6+gZRjJjZdlpEFhcq5ZcW4GQbvww7E6JEQYHAIvqgs=;
+        b=TnI0SIzujOpPeuoKY7wTr/rqRtc9dxDJrv00LvuQL5wA6KB4tnI5C8yvjdXaXGDeWV
+         XRtBa/bXRlOA76G+E/BV7yliiYzjM4/ksBnAos2Qw4nf+OxTqg84BOmjw9rvTYOrexhf
+         XZ8wWQStlRbT/XBXc/llPMLX0Zrs5GjGSxOvQ=
+X-Forwarded-Encrypted: i=1; AJvYcCW2s/BSyvSk28OH0S3QUOwQ2q2rYcupDESK3WlQqI2nZUf6tU3CRte539tjMxd4eQAl6ozbXCzuw7s0x9q7+ZWRYw==@vger.kernel.org
+X-Received: by 2002:a05:690e:4144:b0:644:542b:bd1d with SMTP id 956f58d0204a3-64716bdddb3mr9118064d50.35.1767987540815;
+        Fri, 09 Jan 2026 11:39:00 -0800 (PST)
+X-Received: by 2002:a05:690e:4144:b0:644:542b:bd1d with SMTP id
+ 956f58d0204a3-64716bdddb3mr9118016d50.35.1767987540200; Fri, 09 Jan 2026
+ 11:39:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
-References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
-In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com> <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260108203004.3538449-3-andriy.shevchenko@linux.intel.com>
+From: William Zhang <william.zhang@broadcom.com>
+Date: Fri, 9 Jan 2026 11:38:47 -0800
+X-Gm-Features: AQt7F2o8X8Xj_NOFtZVg_Hcxw0SZNIT9PhYo78d7wF0xmsiqYolLWyxYYTpJkbc
+Message-ID: <CAHi4H7FUaek5XhA=uu0uZMrwQzA=fxfWVwv6p2N0s9Sfsupvxw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] spi: Drop duplicate of_node assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Varshini Rajendran <varshini.rajendran@microchip.com>, 
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sunny Luo <sunny.luo@amlogic.com>, 
+	Janne Grunau <j@jannau.net>, Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, 
+	CL Wang <cl634@andestech.com>, Manikandan Muralidharan <manikandan.m@microchip.com>, 
+	David Lechner <dlechner@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>, Jun Guo <jun.guo@cixtech.com>, 
+	Philipp Stanner <phasta@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+	Shiji Yang <yangshiji66@outlook.com>, James Clark <james.clark@linaro.org>, 
+	Jonathan Marek <jonathan@marek.ca>, Carlos Song <carlos.song@nxp.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+	Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
+	Sergio Perez Gonzalez <sperezglz@gmail.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>, 
+	Rosen Penev <rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Longbin Li <looong.bin@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+	Alessandro Grassi <alessandro.grassi@mailbox.org>, Chen-Yu Tsai <wens@kernel.org>, 
+	Darshan R <rathod.darshan.0896@gmail.com>, Aaron Kling <webgeek1234@gmail.com>, 
+	Vishwaroop A <va@nvidia.com>, Haixu Cui <quic_haixcui@quicinc.com>, 
+	Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, Sven Peter <sven@kernel.org>, 
+	Neal Gompa <neal@gompa.dev>, =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Ryan Wanner <ryan.wanner@microchip.com>, 
+	Michael Hennerich <michael.hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Kamal Dasu <kamal.dasu@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Kursad Oney <kursad.oney@broadcom.com>, 
+	Anand Gore <anand.gore@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, Jean-Marie Verdun <verdun@hpe.com>, 
+	Nick Hawkins <nick.hawkins@hpe.com>, Yang Shen <shenyang39@huawei.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Lixu Zhang <lixu.zhang@intel.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Avi Fishman <avifishman70@gmail.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+	Benjamin Fair <benjaminfair@google.com>, Han Xu <han.xu@nxp.com>, 
+	Yogesh Gaur <yogeshgaur.83@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+	Heiko Stuebner <heiko@sntech.de>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>, 
+	Masahisa Kojima <masahisa.kojima@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000006397db0647f9add1"
 
-When automatic clock gating is enabled, runtime PM (RPM) isn't entered
-even if enabled for a CMU if a sysreg clock exists and is provided by
-this CMU (as is generally the case).
+--0000000000006397db0647f9add1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The reason is that this driver acquires a CMU's sysreg registers using
-syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
-clock. Given the sysreg clock is provided by this CMU, this CMU's usage
-count is therefore bumped and RPM can not be entered as this CMU never
-becomes idle.
+On Thu, Jan 8, 2026 at 12:30=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> The SPI core provides the default of_node for the controller,
+> inherited from the actual (parent) device. No need to repeat it
+> in the driver.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/spi/spi-bcm63xx-hsspi.c      | 1 -
+>  drivers/spi/spi-bcm63xx.c            | 1 -
+>  drivers/spi/spi-bcmbca-hsspi.c       | 1 -
 
-Switch to using device_node_to_regmap() which doesn't handle resources
-(the clock), leaving the CMU's usage count unaffected.
+Reviewed-by: William Zhang <william.zhang@broadcom.com>
 
-Note1: sysreg clock handling is completely removed with this commit
-because sysreg register access is only required during suspend/resume.
-In the runtime suspend case, we would have to enable the clock to read
-the registers, but we can not do that as that would cause a resume of
-this driver which is not allowed. This is not a problem because we
-would only need to handle the clock manually if automatic clock gating
-wasn't enabled in the first. This code is only relevant if automatic
-clock gating is enabled, though.
+--0000000000006397db0647f9add1
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/clk/samsung/clk.c | 92 +++++++++++++++++++++++++++++++++++------------
- drivers/clk/samsung/clk.h |  2 ++
- 2 files changed, 71 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f5262843e67575f6a4e0dda 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -9,11 +9,13 @@
-  */
- 
- #include <linux/slab.h>
-+#include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/regmap.h>
- #include <linux/syscore_ops.h>
-@@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
- 		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
- }
- 
-+static int samsung_get_sysreg_regmap(struct device_node *np,
-+				     struct samsung_clk_provider *ctx)
-+{
-+	struct device_node *sysreg_np;
-+	struct clk *sysreg_clk;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	sysreg_np = of_parse_phandle(np, "samsung,sysreg", 0);
-+	if (!sysreg_np)
-+		return -ENODEV;
-+
-+	sysreg_clk = of_clk_get(sysreg_np, 0);
-+	if (IS_ERR(sysreg_clk)) {
-+		ret = PTR_ERR(sysreg_clk);
-+		/* clock is optional */
-+		if (ret != -ENOENT) {
-+			pr_warn("%pOF: Unable to get sysreg clock: %d\n", np,
-+				ret);
-+			goto put_sysreg_np;
-+		}
-+		sysreg_clk = NULL;
-+	}
-+
-+	regmap = device_node_to_regmap(sysreg_np);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		pr_warn("%pOF: Unable to get CMU sysreg: %d\n", np, ret);
-+		goto put_clk;
-+	}
-+
-+	ctx->sysreg_clk = sysreg_clk;
-+	ctx->sysreg = regmap;
-+
-+	of_node_put(sysreg_np);
-+	return 0;
-+
-+put_clk:
-+	clk_put(sysreg_clk);
-+put_sysreg_np:
-+	of_node_put(sysreg_np);
-+	return ret;
-+}
-+
- /* Each bit enable/disables DRCG of a bus component */
- #define DRCG_EN_MSK	GENMASK(31, 0)
- #define MEMCLK_EN	BIT(0)
-@@ -499,32 +545,32 @@ void samsung_en_dyn_root_clk_gating(struct device_node *np,
- 				    const struct samsung_cmu_info *cmu,
- 				    bool cmu_has_pm)
- {
-+	int ret;
-+
- 	if (!ctx->auto_clock_gate)
- 		return;
- 
--	ctx->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
--	if (IS_ERR(ctx->sysreg)) {
--		pr_warn("%pOF: Unable to get CMU sysreg\n", np);
--		ctx->sysreg = NULL;
--	} else {
--		/* Enable DRCG for all bus components */
--		regmap_write(ctx->sysreg, ctx->drcg_offset, DRCG_EN_MSK);
--		/* Enable memclk gate (not present on all sysreg) */
--		if (ctx->memclk_offset)
--			regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
--					  MEMCLK_EN, 0x0);
--
--		if (!cmu_has_pm)
--			/*
--			 * When a CMU has PM support, clocks are saved/restored
--			 * via its PM handlers, so only register them with the
--			 * syscore suspend / resume paths if PM is not in use.
--			 */
--			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
--							cmu->sysreg_clk_regs,
--							cmu->nr_sysreg_clk_regs,
--							NULL, 0);
--	}
-+	ret = samsung_get_sysreg_regmap(np, ctx);
-+	if (ret)
-+		return;
-+
-+	/* Enable DRCG for all bus components */
-+	regmap_write(ctx->sysreg, ctx->drcg_offset, DRCG_EN_MSK);
-+	/* Enable memclk gate (not present on all sysreg) */
-+	if (ctx->memclk_offset)
-+		regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
-+				  MEMCLK_EN, 0x0);
-+
-+	if (!cmu_has_pm)
-+		/*
-+		 * When a CMU has PM support, clocks are saved/restored via its
-+		 * PM handlers, so only register them with the syscore
-+		 * suspend / resume paths if PM is not in use.
-+		 */
-+		samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
-+						cmu->sysreg_clk_regs,
-+						cmu->nr_sysreg_clk_regs,
-+						NULL, 0);
- }
- 
- /*
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index b1192ca03db5035cc485771ff5597cf132234a2a..deb426fbb0942f21b63c583f0ad55738239b04e4 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -21,6 +21,7 @@
-  * @reg_base: virtual address for the register base
-  * @dev: clock provider device needed for runtime PM
-  * @sysreg: syscon regmap for clock-provider sysreg controller
-+ * @sysreg_clk: clock for sysreg access, if required
-  * @lock: maintains exclusion between callbacks for a given clock-provider
-  * @auto_clock_gate: enable auto clk mode for all clocks in clock-provider
-  * @gate_dbg_offset: gate debug reg offset. Used for all gates in auto clk mode
-@@ -33,6 +34,7 @@ struct samsung_clk_provider {
- 	void __iomem *reg_base;
- 	struct device *dev;
- 	struct regmap *sysreg;
-+	struct clk *sysreg_clk;
- 	spinlock_t lock;
- 	bool auto_clock_gate;
- 	u32 gate_dbg_offset;
-
--- 
-2.52.0.457.g6b5491de43-goog
-
+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
+PRi27wH/XHTDMdyL0Org+kxniXue6MSNJvcQwaLO/UQrmgTygBlVGa+Qg9ZFfS00xvuqeYH7tImO
+48WiXeu9rgn5KTH0IWP1+R74KIgxJQ+65la+caZvxwC9V3ik5p/LOGA2qS4GEjGuaYF8QKhRTR4h
+/QBSktqZLbzVxpjJXrqFTA2BLlYRp9hPhqNxbn46WuLufpMWhFtjUoQi/8fRRWRsMAY0o1J0f+kB
+6EI8FoxPTOpvuLRonqHIWMHk5YRnDdqJ3G5Oc8zmV+UCAwEAAaOCAd4wggHaMA4GA1UdDwEB/wQE
+AwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDov
+L3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5Bggr
+BgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUG
+A1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUF
+BwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDag
+NKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwJQYD
+VR0RBB4wHIEad2lsbGlhbS56aGFuZ0Bicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQw
+HwYDVR0jBBgwFoAUACk2nlx6ug+vLVAt26AjhRiwoJIwHQYDVR0OBBYEFHjI7pbQZurVKsSRE/a9
+7gUEyVCkMA0GCSqGSIb3DQEBCwUAA4ICAQCFA4fU1GnG8sY7kyUXp5tle+VeWveoWb272jPauU5R
+w+udkhVXmnR0Kg7RgkCD00PLTKHNRyegXXDMArs3N9NhO3s9eSp9KjDh+h3WuQWCJH3QBHLGW0qE
+fyV87wUtBIy/QsHwO4S8OlOZiXECR7V1EGIF6t3s0W+3UzgYeHL+Ttuhda+2wIVY0EbS0eNH9Vob
+4YG17VTBBe7hyobXFpd9d1JGENFzIWncPUshOE0Wv7KlkrRc6aBOpL4p5xO1pHi9h9w8utyHkMoV
+nefXixkn5YVHnuV/jbSF/IM4Mlqt0E+n/TRp2c0eR+1AauZKENV2syNBo4aMa0BkmikBjLSnDjt/
+TYQdwHNWdV495n71idvueWwTFUhUsnudYcnh42eZENopBOYjVu2WhsffyrNz0hsuR85LriqSuBbf
+drd9DMo3DgtfJ7hh4sEAhSw/x/Br86rfLBftZMU02htlnkOI9Tp1QuDsr9+MsqY6AjKeXAy67m7H
+TVAZ9uyO9N20yU0p7igESOWKR1ccL1TPA1jrSHK18Y75ot5199FNWeE/UKoDKSML39iPZho9XPh/
+/RlsfRFiVOPrI5Gwi4YfIfi0jjEWf310/CYEmA5jrp5gUQSdo/+FgfXLKDFiEHCf5b3B1l70r6bR
+WkDCNNacYJWZtSp87i6jmw+l5xx7OkEJ9DGCAlcwggJTAgEBMGIwUjELMAkGA1UEBhMCQkUxGTAX
+BgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gR0NDIFI2IFNNSU1F
+IENBIDIwMjMCDD2ooFIye/WiO3KgZTANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg
+Dyh0YlTomMactN776EX8jLZwBkaLlOkKK3W3dojNl7swGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+ATAcBgkqhkiG9w0BCQUxDxcNMjYwMTA5MTkzOTAxWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFl
+AwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEARbPlVvZgHG9n+YrlOGlRTGXWn8eaOHNZENGt
+t2zLMfF/9G+7VSNsm8ez6fNDQSCFWEGre1e/XRvqQheRLf8vtfLCF28O+JNsiEQpdVPmwwjppac7
+y59sMjotzMfypO2MUh4b/GEAo+JsH9oovvTQ+gcgbVFm2T7Ax+0rBKg/ZUtHpgmSMJD3JOhXZ5fu
+xPNkFBCH1iorMcpPJzUzgeyfn+Ag/I7iIRVjAbhlY7eo9T2/ghbriDLPVHpr1bGW7tmfa7XIGggr
+GgCUdKOpwNM7o1sXtZEI7LZV6OzJ8SCTg57SsRRp9Ytq5yJAk9nx6TecFgHY9dAFkNH8gkM83My+
+zA==
+--0000000000006397db0647f9add1--
