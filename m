@@ -1,69 +1,68 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA97366554
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jan 2026 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B0366565
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Jan 2026 17:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767979652; cv=none; b=UJfCE13idJQOJ4it2F2Lfd8IueLn7auImrSu8Lkgio3xv37zC+5f3AIndXP3ejgTII56PN6/MVaWkGsuiRcIdv1WFNs5j6qgCAQNlkeQWrO3AGY8TGRpUhC6q1pFgS2RsR/4xJYStocp848dVcUmbu72WC2frCsOvRnxdOQLuno=
+	t=1767979652; cv=none; b=RfjTNE2eBT9XjX1kV2s9H5Ut94nJr6qLL7BEoNulTEKTph965yqKtabi3vP9Dh1mIZV464sm3xTYOEFDRLJVQw/kfPQVfrXNKZkLUU62PtqYqhLRLZp+S6WS/4i07xLbOSf4WCmZGXMP6uP9Ajb4v2snMBrA+xmWIuh+mOQoLQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1767979652; c=relaxed/simple;
-	bh=Gq7DIsn/2JzXC4PuN08mJjpFhzbLLnk+bWpmyG+0b3c=;
+	bh=3XB3rMBEqCsmj4gX8Pmw1bT8hVT6cvRuYvHSnPFCz3s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fnUwM4DVPejbrybx0XKwDA8EDIisoiaHySuMT60bpuSoCNRGqdCt0FFdxXtG/eFP3w+jIa6+uVOVdG3ItSbTchmu1Gy/ltrcdX8temONIseidYv5cwlr7MDmBP1zmbhrckt5sfuC/+Nt4J7AWA9dW7xU7Yk1j0qI9Xb61Tr34m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XL0VXO97; arc=none smtp.client-ip=209.85.208.44
+	 In-Reply-To:To:Cc; b=M+f7h5c4538NlMYKI533pt1bqbkNLvwTn67uJ2KZrb/VaXDADKu8YfOQDmBlETrNzZqU1u5JzxzHCHl5/QtCH5lOu2hSkiVW3Zxhlt6WvL3Rfcadz6AOyXhUnc7P9Q+pY+805CvoGl/Kn3jxoSdwkS0UgaHRQStOn+sBOtIadUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+cVGiwz; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XL0VXO97"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64fabaf9133so7968162a12.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+cVGiwz"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6505cbe47d8so7198990a12.1
         for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2026 09:27:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1767979648; x=1768584448; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=T7Hmg5PdIFiKNjesvbLQf4CxxIUooCirMgEw2O+Jp7k=;
-        b=XL0VXO9705xHRmz45eFMsGuPd+7R6BDZsbXT4Qj6+GLZvtQRIxeErBz3Xt+vDY6wCB
-         R1RpDml/kTM0jsyOw9EfbGinnXUyJ5WB9y16Wp1HX/U1M0stdwFjrTxO/s9dOtpe8odP
-         d5LSRD/uqYglYNFlScDJR5/ZOIBuAxsrjdYJH1ZCs66+2+Zd508Uc6OY+TvUknwMWZvt
-         +mD7ka+H/3SLPPJDd1wV2uw/5A7oQCcNidK6pVTQ6h1mDmG3Q9nrkd4qLHD+pQXokZ20
-         EpMd7wAQ2BNPgolH6o31f2ncUzQzUeyDkTNzuv/XkCa014jm4FoBJbQ9jRgxLJBFlwpb
-         lStQ==
+        bh=CzsMqHkuItNSEK91yT7JYcig8ensUusvETOGKZjIn/o=;
+        b=m+cVGiwzVy50HHFWafJpfKkxDqnIPk+pUvXyS2WvfbbXXInByQrC/jlLyrRgLyZCZt
+         b82s5RDkS8r82mnQw2RZtNelsxUswh0dtGojFu0FeEpaPCq63eN2nw/ski21gruNTQ4x
+         FaXtETwUjiUXZgOnrWBXNFTG1ggOtEjAQq07zs2jOL4IlgvbWAy1/y0rlEzR8AdOa2kT
+         tKueycSnmrqo/Wz8dD9n0ZMXVshPAJAuH0W7qZQcjx/H8qmXpPP2iZ/XF7gl5Goh+SeK
+         6C7fCUrciAnvVFs4wt1KheQ3p9T1EmjEFdO9aQ8kxdZpjxub9ChMV5J9vanZlvVyC/DD
+         Y43g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1767979648; x=1768584448;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=T7Hmg5PdIFiKNjesvbLQf4CxxIUooCirMgEw2O+Jp7k=;
-        b=Ylm31wQgYfguX3z5ATEKcaZMckeq/Tj4COVX177/kHPcz4twxu3vUxitaOdX1G5XQl
-         h5JV1cpOgxWM08AWw8wJ210vq3PqMMago/KOwfqsgdDCr1WII8pitNe14al7s+3UMJdy
-         zQmWRM3L00NyFNzYYxnHV+AgQ8yZ/fXmYqUJ8Jl+Ot72YwlL11JPsPBmqBQZ5SLxYoo9
-         xA+1/OWEfg2HWgUR6EfxsT6kNWymmEe917irGdsZtXa64gRcEVAjdP+fQBGd0pZgwNhN
-         pIDPyiIBwGckXaLgaihSm2EmVc0t9oaT5Ww3e8JhHXOT5b9aQux1ebH9nhcruIeaQPlr
-         YLLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNrMbnrkehdI+OdtNeflh09nqzIUujczrRUDUZLnjO7vTCTCp69qyytkSFqKrTLKFoRSohttR9Xw2BzOpxbfkN8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU5CKlQBcpTSDEr1Gjdt4sl19tzfpN+rK24vXn7r5ojUmEp/LP
-	INDNiTgree4gHWfAGo6zafGKGBCacul02gZ9aFmivBUakE5KfNYuK8SQXqv6cbEKnAw=
-X-Gm-Gg: AY/fxX7ekZaLJ5WwjfpIWZKr+PvRyquErVxk7hxXKcKkIYvIHG38LLHA3V/OjEVCg0F
-	MofpChNAoTtYl7I2W4yU+MJVNjPGJolc+XPFSBI64TB8kXP1+3uVEIrZaXUTsba0A4VuuBoORtl
-	lKI6sh0e2ycAfn7D9w5lZ+tcVFyYrfnDcKhjY5alaoXFAZqnb48YbbWRQuMsZYOUkTMvZ2WqZoG
-	oS8RSh4vQstTMsXd/1XiVfp8bqqC2XK2xU402YIv0cka3ByB/qMnIaFLJUasYYCe2vEWRAtwG+d
-	PomA+IPxBhTdR+qPFZpCJf6UEPbr6vDxUSQ18qceVKsor2RyWpoCwiWzBfy8ddOz1Qb81r1UnGu
-	3umWomCr+05RhCP4rDDzn+9M7Ry1TDIwccEmga0n2MyOgeZAhdQUYbdb/teUavf3959bgXJFAYp
-	oPdvkCAtJM3clwMaX74CgeoeblerBOQGdh/JzkzAr3NFA1tLBsb3XxLyoCNu945AU1g0HBSm80E
-	pYVzQ==
-X-Google-Smtp-Source: AGHT+IHlzZvKQ1vGaBuCrNMWiF2l/TnTFiSG49QjgLu/wfS2dioTQUU95+p1/w0tLKgtkLx/PQjBDg==
-X-Received: by 2002:a05:6402:2554:b0:64b:7f98:c7e with SMTP id 4fb4d7f45d1cf-65097dc6375mr8749976a12.1.1767979647762;
-        Fri, 09 Jan 2026 09:27:27 -0800 (PST)
+        bh=CzsMqHkuItNSEK91yT7JYcig8ensUusvETOGKZjIn/o=;
+        b=H12m8xO3B++bHpOa/35e2XiZBTm17c2dK9FwsnqjNIiLYlTTwFBva1b+vXHQZ84ZEC
+         4IuYLgBVApEvxk707AFSvFfCbMAj/APy7REWScWc5QMcqBAfR4og4JM45sQHM0NKzBol
+         eUGvXSz4EWTm9F2p5UQZVhCCiYYwGpnpB6S5cledqs6bRWQNKtcXz7azoPYKrYPr2lUa
+         lMczxQeFWmolovNErtFWnyH5r31x5YqUxN7fGfWfYQyF9sThoQJpKWzIbc6Pq40zL1ok
+         2bzCvG/MTsLEtKV/Yo4OC4Y5rt+0X6419XgCkMa8DSNCF4C/ZIQC1yvPwNDdRrtEAt53
+         h5NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzdMfXlp8dLeFvbvdqoA9fpQ3Dw5/GQ1jPIJozmWoYuYPOJUBDZl9ioASPGYit53uJ8qiEBFbfBj7hJsYASJEHBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJkINkmjPLPZQ/hCF9KNy3TJCX6be1rwL3lYXgSOWcauTDQ0Sp
+	FGQfe+sVEWD6UM6qX05tw6aLhx3QXqYI8/jRBJM47VXZ/ZSvDbdHVDRrXbal+qXj7es=
+X-Gm-Gg: AY/fxX4Tx5Q07p15RD/1/Mr3A4f+1b6Scr80NyZJecsDY11ttfKkS7kkbf1InXTY8Cy
+	Ry2oS0TWg+2yuPC0V8T8CrZxgtaKZU19+oOsVal3L8mfhNcelCn8VsxfSb9jpTH0wu5TsP/EuEz
+	qU5S88cnlDbCVpnhjZF48RkWxp8ldcQvUpUd3KEjNhbP5ob4ZqPcZdBIKwQYWwGnaK6VSa+oAHt
+	+BtiQJX/r8gFLlL5hfvFnoW09JfTn1TUahYAg2n6+hEGNXFdZyQ4HJTRKBc8T2V+FVY2LU3kaci
+	auFhvfuR7kAt1u1KJW33f8Mk2gB/AKuNr+xUdMfe/mBwvnn4wC1RxjHgVK3uh8/EJs0wNvwfFzO
+	EwybBUEC1HNTUn9O8rxHcOpuawQVNexjI1iZuSfSkvaTdT19knYjCd1pZo3Xz7TVz9hUIdW31Kz
+	SsNxB/AJYOK70uKoEc9zbGwLHbfarEY6Pxs5Ktuz5Kw6N8w1sEyGYKU/bWwsED0WAGMFTMv2IFV
+	6i7pw==
+X-Google-Smtp-Source: AGHT+IHfU+cxEUkm2kF/kOQsRd2ooDJ4uR4ri7MEIyFQqUrf3Okb1axWOyo618duvh8QSiexZtQrng==
+X-Received: by 2002:a05:6402:13cd:b0:64d:1ce9:54b7 with SMTP id 4fb4d7f45d1cf-65097e4cf0amr8994867a12.18.1767979648255;
+        Fri, 09 Jan 2026 09:27:28 -0800 (PST)
 Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6507be651a4sm10642182a12.16.2026.01.09.09.27.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 09 Jan 2026 09:27:27 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 09 Jan 2026 17:27:24 +0000
-Subject: [PATCH 2/3] clk: samsung: fix sysreg save/restore when PM is
- enabled for CMU
+Date: Fri, 09 Jan 2026 17:27:25 +0000
+Subject: [PATCH 3/3] clk: samsung: allow runtime PM with auto clock gating
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260109-clk-samsung-autoclk-updates-v1-2-2394dcf242a9@linaro.org>
+Message-Id: <20260109-clk-samsung-autoclk-updates-v1-3-2394dcf242a9@linaro.org>
 References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
 In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -88,175 +87,180 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-Currently, sysreg registers of a CMU that has PM and automatic clock
-gating enabled are not saved / restored during runtime PM (RPM) or
-s2idle. During normal suspend, they are accessed too late, after the
-CMU (and potentially power domain) have been shut down, causing an
-SError.
+When automatic clock gating is enabled, runtime PM (RPM) isn't entered
+even if enabled for a CMU if a sysreg clock exists and is provided by
+this CMU (as is generally the case).
 
-The reason is that these registers are registered to be saved/restored
-via a syscore suspend handler which doesn't run during RPM or s2idle.
-During normal suspend, this handler runs after the CMU has been shut
-down. This registration happens as part of
-samsung_clk_extended_sleep_init() via samsung_en_dyn_root_clk_gating().
+The reason is that this driver acquires a CMU's sysreg registers using
+syscon_regmap_lookup_by_phandle() which ends up preparing the sysreg
+clock. Given the sysreg clock is provided by this CMU, this CMU's usage
+count is therefore bumped and RPM can not be entered as this CMU never
+becomes idle.
 
-When PM is enabled for a CMU, registers must be saved/restored via
-exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() respectively
-instead. These use their own data structures and are unrelated to
-anything that samsung_clk_extended_sleep_init() does. Calling it
-unconditionally from samsung_en_dyn_root_clk_gating() therefore isn't
-useful.
+Switch to using device_node_to_regmap() which doesn't handle resources
+(the clock), leaving the CMU's usage count unaffected.
 
-Update the code to prepare sysreg save / restore in a similar way to
-how it handles other clock registers in the PM case already.
-exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() already handle
-sysreg save/restore, just the setup was incorrect.
+Note1: sysreg clock handling is completely removed with this commit
+because sysreg register access is only required during suspend/resume.
+In the runtime suspend case, we would have to enable the clock to read
+the registers, but we can not do that as that would cause a resume of
+this driver which is not allowed. This is not a problem because we
+would only need to handle the clock manually if automatic clock gating
+wasn't enabled in the first. This code is only relevant if automatic
+clock gating is enabled, though.
 
 Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos-arm64.c | 32 ++++++++++++++++++++++++++------
- drivers/clk/samsung/clk.c              | 19 +++++++++++++------
- drivers/clk/samsung/clk.h              |  3 ++-
- 3 files changed, 41 insertions(+), 13 deletions(-)
+ drivers/clk/samsung/clk.c | 92 +++++++++++++++++++++++++++++++++++------------
+ drivers/clk/samsung/clk.h |  2 ++
+ 2 files changed, 71 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-index 11e4d49f2390ba714eff5a329bb1f427cd6437b9..35d4de233cc1b4aa25490ff20d0f0372b8d3d0d6 100644
---- a/drivers/clk/samsung/clk-exynos-arm64.c
-+++ b/drivers/clk/samsung/clk-exynos-arm64.c
-@@ -174,7 +174,7 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
- 		const struct samsung_cmu_info *cmu)
- {
- 	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
--	int i;
-+	int i, ret;
- 
- 	data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
- 						    cmu->nr_clk_regs);
-@@ -182,8 +182,22 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
- 		return -ENOMEM;
- 
- 	data->nr_clk_save = cmu->nr_clk_regs;
-+
-+	if (cmu->nr_sysreg_clk_regs) {
-+		data->clk_sysreg_save =
-+			samsung_clk_alloc_reg_dump(cmu->sysreg_clk_regs,
-+						   cmu->nr_sysreg_clk_regs);
-+		if (!data->clk_sysreg_save) {
-+			ret = -ENOMEM;
-+			goto free_clk_save;
-+		}
-+
-+		data->nr_clk_sysreg = cmu->nr_sysreg_clk_regs;
-+	}
-+
- 	data->clk_suspend = cmu->suspend_regs;
- 	data->nr_clk_suspend = cmu->nr_suspend_regs;
-+
- 	data->nr_pclks = of_clk_get_parent_count(dev->of_node);
- 	if (!data->nr_pclks)
- 		return 0;
-@@ -191,23 +205,29 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
- 	data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
- 				   GFP_KERNEL);
- 	if (!data->pclks) {
--		kfree(data->clk_save);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_sysreg_save;
- 	}
- 
- 	for (i = 0; i < data->nr_pclks; i++) {
- 		struct clk *clk = of_clk_get(dev->of_node, i);
- 
- 		if (IS_ERR(clk)) {
--			kfree(data->clk_save);
- 			while (--i >= 0)
- 				clk_put(data->pclks[i]);
--			return PTR_ERR(clk);
-+			ret = PTR_ERR(clk);
-+			goto free_sysreg_save;
- 		}
- 		data->pclks[i] = clk;
- 	}
- 
- 	return 0;
-+
-+free_sysreg_save:
-+	kfree(data->clk_sysreg_save);
-+free_clk_save:
-+	kfree(data->clk_save);
-+	return ret;
- }
- 
- /**
-@@ -305,7 +325,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
- 	samsung_cmu_register_clocks(data->ctx, cmu, np);
- 	samsung_clk_of_add_provider(dev->of_node, data->ctx);
- 	/* sysreg DT nodes reference a clock in this CMU */
--	samsung_en_dyn_root_clk_gating(np, data->ctx, cmu);
-+	samsung_en_dyn_root_clk_gating(np, data->ctx, cmu, true);
- 	pm_runtime_put_sync(dev);
- 
- 	return 0;
 diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 417ec1786b5e77e17dda4022b417c1c6b79c59ab..9f68f079fd552f8dfb6898dbfb47dec0e84c626c 100644
+index 9f68f079fd552f8dfb6898dbfb47dec0e84c626c..6515df81fcbc79b90f5262843e67575f6a4e0dda 100644
 --- a/drivers/clk/samsung/clk.c
 +++ b/drivers/clk/samsung/clk.c
-@@ -496,7 +496,8 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
- /* Enable Dynamic Root Clock Gating (DRCG) of bus components */
- void samsung_en_dyn_root_clk_gating(struct device_node *np,
- 				    struct samsung_clk_provider *ctx,
--				    const struct samsung_cmu_info *cmu)
-+				    const struct samsung_cmu_info *cmu,
-+				    bool cmu_has_pm)
+@@ -9,11 +9,13 @@
+  */
+ 
+ #include <linux/slab.h>
++#include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/mod_devicetable.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/regmap.h>
+ #include <linux/syscore_ops.h>
+@@ -489,6 +491,50 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+ 		samsung_clk_register_cpu(ctx, cmu->cpu_clks, cmu->nr_cpu_clks);
+ }
+ 
++static int samsung_get_sysreg_regmap(struct device_node *np,
++				     struct samsung_clk_provider *ctx)
++{
++	struct device_node *sysreg_np;
++	struct clk *sysreg_clk;
++	struct regmap *regmap;
++	int ret;
++
++	sysreg_np = of_parse_phandle(np, "samsung,sysreg", 0);
++	if (!sysreg_np)
++		return -ENODEV;
++
++	sysreg_clk = of_clk_get(sysreg_np, 0);
++	if (IS_ERR(sysreg_clk)) {
++		ret = PTR_ERR(sysreg_clk);
++		/* clock is optional */
++		if (ret != -ENOENT) {
++			pr_warn("%pOF: Unable to get sysreg clock: %d\n", np,
++				ret);
++			goto put_sysreg_np;
++		}
++		sysreg_clk = NULL;
++	}
++
++	regmap = device_node_to_regmap(sysreg_np);
++	if (IS_ERR(regmap)) {
++		ret = PTR_ERR(regmap);
++		pr_warn("%pOF: Unable to get CMU sysreg: %d\n", np, ret);
++		goto put_clk;
++	}
++
++	ctx->sysreg_clk = sysreg_clk;
++	ctx->sysreg = regmap;
++
++	of_node_put(sysreg_np);
++	return 0;
++
++put_clk:
++	clk_put(sysreg_clk);
++put_sysreg_np:
++	of_node_put(sysreg_np);
++	return ret;
++}
++
+ /* Each bit enable/disables DRCG of a bus component */
+ #define DRCG_EN_MSK	GENMASK(31, 0)
+ #define MEMCLK_EN	BIT(0)
+@@ -499,32 +545,32 @@ void samsung_en_dyn_root_clk_gating(struct device_node *np,
+ 				    const struct samsung_cmu_info *cmu,
+ 				    bool cmu_has_pm)
  {
++	int ret;
++
  	if (!ctx->auto_clock_gate)
  		return;
-@@ -513,10 +514,16 @@ void samsung_en_dyn_root_clk_gating(struct device_node *np,
- 			regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
- 					  MEMCLK_EN, 0x0);
  
--		samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
--						cmu->sysreg_clk_regs,
--						cmu->nr_sysreg_clk_regs,
--						NULL, 0);
-+		if (!cmu_has_pm)
-+			/*
-+			 * When a CMU has PM support, clocks are saved/restored
-+			 * via its PM handlers, so only register them with the
-+			 * syscore suspend / resume paths if PM is not in use.
-+			 */
-+			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
-+							cmu->sysreg_clk_regs,
-+							cmu->nr_sysreg_clk_regs,
-+							NULL, 0);
- 	}
+-	ctx->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
+-	if (IS_ERR(ctx->sysreg)) {
+-		pr_warn("%pOF: Unable to get CMU sysreg\n", np);
+-		ctx->sysreg = NULL;
+-	} else {
+-		/* Enable DRCG for all bus components */
+-		regmap_write(ctx->sysreg, ctx->drcg_offset, DRCG_EN_MSK);
+-		/* Enable memclk gate (not present on all sysreg) */
+-		if (ctx->memclk_offset)
+-			regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
+-					  MEMCLK_EN, 0x0);
+-
+-		if (!cmu_has_pm)
+-			/*
+-			 * When a CMU has PM support, clocks are saved/restored
+-			 * via its PM handlers, so only register them with the
+-			 * syscore suspend / resume paths if PM is not in use.
+-			 */
+-			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
+-							cmu->sysreg_clk_regs,
+-							cmu->nr_sysreg_clk_regs,
+-							NULL, 0);
+-	}
++	ret = samsung_get_sysreg_regmap(np, ctx);
++	if (ret)
++		return;
++
++	/* Enable DRCG for all bus components */
++	regmap_write(ctx->sysreg, ctx->drcg_offset, DRCG_EN_MSK);
++	/* Enable memclk gate (not present on all sysreg) */
++	if (ctx->memclk_offset)
++		regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
++				  MEMCLK_EN, 0x0);
++
++	if (!cmu_has_pm)
++		/*
++		 * When a CMU has PM support, clocks are saved/restored via its
++		 * PM handlers, so only register them with the syscore
++		 * suspend / resume paths if PM is not in use.
++		 */
++		samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
++						cmu->sysreg_clk_regs,
++						cmu->nr_sysreg_clk_regs,
++						NULL, 0);
  }
  
-@@ -548,7 +555,7 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
- 	samsung_clk_of_add_provider(np, ctx);
- 
- 	/* sysreg DT nodes reference a clock in this CMU */
--	samsung_en_dyn_root_clk_gating(np, ctx, cmu);
-+	samsung_en_dyn_root_clk_gating(np, ctx, cmu, false);
- 
- 	return ctx;
- }
+ /*
 diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index a56aa3be54d817cd24bf2bc29427e783a1a9a859..b1192ca03db5035cc485771ff5597cf132234a2a 100644
+index b1192ca03db5035cc485771ff5597cf132234a2a..deb426fbb0942f21b63c583f0ad55738239b04e4 100644
 --- a/drivers/clk/samsung/clk.h
 +++ b/drivers/clk/samsung/clk.h
-@@ -476,7 +476,8 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
- 
- void samsung_en_dyn_root_clk_gating(struct device_node *np,
- 				struct samsung_clk_provider *ctx,
--				const struct samsung_cmu_info *cmu);
-+				const struct samsung_cmu_info *cmu,
-+				bool cmu_has_pm);
- 
- struct clk_hw *samsung_register_auto_gate(struct device *dev,
- 		struct device_node *np, const char *name,
+@@ -21,6 +21,7 @@
+  * @reg_base: virtual address for the register base
+  * @dev: clock provider device needed for runtime PM
+  * @sysreg: syscon regmap for clock-provider sysreg controller
++ * @sysreg_clk: clock for sysreg access, if required
+  * @lock: maintains exclusion between callbacks for a given clock-provider
+  * @auto_clock_gate: enable auto clk mode for all clocks in clock-provider
+  * @gate_dbg_offset: gate debug reg offset. Used for all gates in auto clk mode
+@@ -33,6 +34,7 @@ struct samsung_clk_provider {
+ 	void __iomem *reg_base;
+ 	struct device *dev;
+ 	struct regmap *sysreg;
++	struct clk *sysreg_clk;
+ 	spinlock_t lock;
+ 	bool auto_clock_gate;
+ 	u32 gate_dbg_offset;
 
 -- 
 2.52.0.457.g6b5491de43-goog
