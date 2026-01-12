@@ -1,178 +1,154 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F413327E054;
-	Mon, 12 Jan 2026 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF5124503B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 14:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768227101; cv=none; b=MuF0OMYQnTgpXI4mMQezNVvbiNopYL08xpUoiSEZeGRKgBHGOjcG4DCzhwlmf564vVkSgF+uaePZdnHsi2BZRsWM/Oci6JzxtaJx1QNVCqKhRy3rvVelLVRR+p0vI7WBczaSK+JaYB8FpjZZlmxV7CuJuOksKl/ARM78hOJmJfA=
+	t=1768227422; cv=none; b=iJhw94sxqVrtmNJMqgjcDFAS4wOTHmeFDBJR+z6rwBGcB308K7S9Y7nPXBQyoU+6B8rWFw0o3JyU2l+/RDpyhdWDjFUVEwUNJhdW4mg4DVB2RXuWRb74eoNZhyHpPFO+th2TYPRvwC9UzbfmHo+PdeytJxLmHjKgby4WhlKVXis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768227101; c=relaxed/simple;
-	bh=bgJaNUM5VIgE3jmg2aRlC1+4Tim4pBQlk9u6DJ16NrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lldfFWVv5mMhtqAgDVHr2qJ/OuLOewpFGXDSMWS4qJm3KOsbScMeCQkJsBmkpIm+3hp1STz8Z4lE5LqAhRbpqasI2fxLwxXIyOextQP2QW14kIBAFTw9RCHHahcLr3GeWYM+BJ/RfhAz0Ls/hwe07bluxknEHR3uByZPS+gxuEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CakAumhF; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1768227422; c=relaxed/simple;
+	bh=JgfZ7b5grfSFrY2uNGn7XAOdObSUV8Hdp8wFhFtHqAs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hhsuNvQFma6x01QC7APujMar1hjSaf3axbbQ52lXmwslQUFoy5SO/iY5JQTu4vFiaAnU3295e+gIATZ9xGDnZrBNvpEEV+qGaG0JhTNu6OW2GbDkthiIPoJJxO1YeJPUtRy7fLAw+oEE9IgwbcAXayCrXnLE//riGoEMoN5iPdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kgubh25k; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CakAumhF"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 9C2B7C2086A;
-	Mon, 12 Jan 2026 14:11:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0D1FB6074A;
-	Mon, 12 Jan 2026 14:11:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 736BF103C8C61;
-	Mon, 12 Jan 2026 15:10:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768227090; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=S8c2ARP9HcnV+reUeOF4Vcg2quHBkPmCAqYrhfyr6c0=;
-	b=CakAumhFpasu+3ZI3BaB812kdRiuu+v1Tg/Sp3TTEi8pdVKDZEtVO84AoLEgEc1xrnFluT
-	i+SAwVNTU/VK298rD4GgfOlbL1x1IRBq+LMtmjrslvr8iNw/wqHBq7SowNZ+1bxrqAdaPR
-	ziVMPo032s+fSJqG9mpYJmDIazpKyi53yb/qGj1zj4VwwbAj77lJfzPnCy7GfnRvSCaoiG
-	VLNhV0T9IC//MbbHQG1tnGAF03XNmqvN+K3xG6/Renyw+hJ5Ia+fO3n6d7mTvuZI7e4oUm
-	CIup66ln9btW8iWglHRpKXcMS5I6EydGAat63GN0yLYYuyDF497mBLdXxOQ06g==
-From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
-To: Mark Brown <broonie@kernel.org>,
- Varshini Rajendran <varshini.rajendran@microchip.com>,
- Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sunny Luo <sunny.luo@amlogic.com>, Janne Grunau <j@jannau.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, CL Wang <cl634@andestech.com>,
- Manikandan Muralidharan <manikandan.m@microchip.com>,
- David Lechner <dlechner@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>,
- Jun Guo <jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Bartosz Golaszewski <brgl@kernel.org>, Shiji Yang <yangshiji66@outlook.com>,
- James Clark <james.clark@linaro.org>, Jonathan Marek <jonathan@marek.ca>,
- Carlos Song <carlos.song@nxp.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Huacai Chen <chenhuacai@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
- Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>,
- Sergio Perez Gonzalez <sperezglz@gmail.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>,
- Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>,
- Rosen Penev <rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Longbin Li <looong.bin@gmail.com>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- =?UTF-8?B?Q2zDqW1lbnQ=?= Le Goffic <clement.legoffic@foss.st.com>,
- Alessandro Grassi <alessandro.grassi@mailbox.org>,
- Chen-Yu Tsai <wens@kernel.org>, Darshan R <rathod.darshan.0896@gmail.com>,
- Aaron Kling <webgeek1234@gmail.com>, Vishwaroop A <va@nvidia.com>,
- Haixu Cui <quic_haixcui@quicinc.com>,
- Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
- linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, imx@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
- Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
- =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Michael Hennerich <michael.hennerich@analog.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- William Zhang <william.zhang@broadcom.com>,
- Kursad Oney <kursad.oney@broadcom.com>, Anand Gore <anand.gore@broadcom.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins <nick.hawkins@hpe.com>,
- Yang Shen <shenyang39@huawei.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>,
- Yinbo Zhu <zhuyinbo@loongson.cn>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Daire McNamara <daire.mcnamara@microchip.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
- Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Heiko Stuebner <heiko@sntech.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
- Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>,
- Masahisa Kojima <masahisa.kojima@linaro.org>,
- Jassi Brar <jaswinder.singh@linaro.org>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>,
- Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH v1 4/4] spi: Drop duplicate device_set_node() call
-Date: Mon, 12 Jan 2026 15:10:36 +0100
-Message-ID: <2776743.vuYhMxLoTh@benoit.monin>
-In-Reply-To: <20260108203004.3538449-5-andriy.shevchenko@linux.intel.com>
-References:
- <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
- <20260108203004.3538449-5-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kgubh25k"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42fbc3056afso3681593f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 06:17:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768227419; x=1768832219; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wi9ORL6/u5L+ri+CyR1PVolHDXmhzE6rUlvUG8jfWHo=;
+        b=kgubh25kPyRol3oQ4+C5HJFAgg3a859QUlV95flFiM42ktVN6DWa0SzfHJU+SJQ6NK
+         fN5TeMXN2mWDtXEggIvI8cX2NVmakd9TywV07EAipIhYMsaIKxpOTJiuZHW+W+O48JiI
+         MqUpdihBhH84ZYnjsdhFvuEd1EB4rr8mHnJ/9IbJj4U4b2pg7SU1+8x/zvGh3+uklZ2M
+         cw+zvxh+Db/TGvpPv++JOjP0KbKXPc2u2caFL45uegMmw4AQA8ix1Gzm/jHMyCJjM8gy
+         U6rIunPrlO1LDqXykNw7tDz/Bq5v0sT9j9inwqSJprA0ZnPI5jffx7OCJ3DHMJapwwvG
+         DsDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768227419; x=1768832219;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wi9ORL6/u5L+ri+CyR1PVolHDXmhzE6rUlvUG8jfWHo=;
+        b=OeaAQWMas9zoX2lDMc0TBSB1YheSFf7A9QteBqf+OvAZt2+9ccn2I3tOeTwGQ1Wtwk
+         eFhPeIYjI0jtQ3u505V+etQ9NMDdfKXLQ77y/rSFS3QU5Tl14xcIKYidyCOrYdd+dHM5
+         7lT0dWEN97Yxp9MS/qHiCHayQd5tFz5EDxgynqeapoQS6zi2BdUKgdviy1WButDB85RK
+         8aZZPTfTki6Uoq6pmlvu2qEkXJO9iA5EwtncTw6izrY7HovBLgVGmZ1yiQhEiVhmQ/HF
+         jR0LnE7hil0WAFU0L7qIuF4O7nryBXPARBqmgF6P4AtUms3x7ScvgS7B4M8iiBHF+cKG
+         H2rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWlFiq3LCUjvlRrkySfy1LWWvCUYoNxnXg0GMBfyDgaOrhnWDXrVlfIFFPSiKBh3+z8iqLZQVsorGHMgo+2jSWLA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxClw4+dU6Yot6Xkh5bJqCEtII63FEBTDFCkU7ro4vAgw+cOTLd
+	fjVluKvsAFnpsN03jAG3BCSkxYwFrtCvSco3ZDQuYdDspECcMGmcCfMsse/b8u+b0LI=
+X-Gm-Gg: AY/fxX56dIGJvuC3R6i2d2zbzmEGeTz28g9BRbQ/kQCbFvCz2LPuZJW18KOrRD8wQRw
+	52p/wV8PxEDJcQmNlN4Bn57jtgrpk3TZzftf3iylqi1wH/BMZT9wwaJR8pw4L885mFpcnFaE3HD
+	JEZs9hQhEQjDtaz5xJ74WCXRib7RVuWxs+av9oLlayvMxkb600WqF+QiNenRm8Ca+O3C7h6+kHM
+	QhbIlYVh12gZG3hdgncfzZgF5xngNIQjY94Kcj/iYZCd0zvO4ZsoHrP9Cr2AfObMF51Udqd1ND+
+	MxcJ+YzUcGZa8WWFsG8RYeylGEhHP4F0oGeguPggWcX8FiCJqtGHKE5L2N7G5MGj0+weWKO8PIg
+	psRUk4Zu/huo0gfNAnDOEgq82daTEmEmNigfbrWhSPOSVnrPaf03T+jC3fYARQ2RgNbsKx6kIn7
+	OuC4Okh1/Q1UIOa8tX8/fz4wbFXrx01y7z+5iD15P5+i7CPot64fiCo+g=
+X-Google-Smtp-Source: AGHT+IHQ2+tO7amZ1Hd3lau7QeebQejhPMBwIfPvu9lcXcu5kw8U72PL8snBAclb+6f2qXS65G5ttA==
+X-Received: by 2002:a05:6000:2586:b0:431:752:6737 with SMTP id ffacd0b85a97d-432c375b134mr20238261f8f.30.1768227418552;
+        Mon, 12 Jan 2026 06:16:58 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([2a00:23c7:3122:c601:4c43:39e0:348c:a72e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-432bd5dfa07sm38705096f8f.25.2026.01.12.06.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 06:16:58 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/5] gs101: Add support for Display Process Unit (DPU)
+ clocks
+Date: Mon, 12 Jan 2026 14:16:47 +0000
+Message-Id: <20260112-dpu-clocks-v2-0-bd00903fdeb9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE8CZWkC/22NQQ6CMBBFr0Jmbc20saFx5T0MiwIjTCQUp9BoC
+ He34sKNy/eS//4KkYQpwrlYQShx5DBmMIcCmt6PHSluM4NBY7U2qNppUc0QmntUZe2MbdE6LD3
+ kwSR04+ceu1ZfFnosuTn/ZM9xDvLaD5P+2L/tpBUqrS06tCfytbsMPHoJxyAdVNu2vQHcK/OAu
+ gAAAA==
+X-Change-ID: 20251120-dpu-clocks-7b825d05807a
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ kernel-team@android.com, Will McVicker <willmcvicker@google.com>, 
+ Juan Yescas <jyescas@google.com>, Doug Anderson <dianders@google.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1578;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=JgfZ7b5grfSFrY2uNGn7XAOdObSUV8Hdp8wFhFtHqAs=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpZQJUgcJ1b1TNz39ppcyhnd3oPqJ4xJI7Lt6DD
+ I5Z+HiKa4eJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaWUCVAAKCRDO6LjWAjRy
+ uiRZD/4uni/IFLPMrxZSAE+mLtncreOXd32tYdFVDOlRFulzcXvfJdY1b//zNAbEf5c1WZLk/m5
+ TA/sVbReP0+peU9IAlVlSLvkdHhtAWsvkyHlzTENmIv2TUwJY0+/nbefuWNvLUwv98d8ZwJiXRo
+ iNrbrqy7mn/zwsRR2WSmji9Tx/dE/tCZB5Q9EbD3w5yACc3DNJT78YFX9QKIgQozwM9JV6yZAiE
+ cQyeok8cqr9Zz2S9tKfoxfKIWAxAjCDhiDPX+Nb1sOEDxDxuqV8NXTYCiC+efQC/cMttsnBLh7M
+ i+3JqDtOcWPN0WnnBUAD3hB7QO/fWGJRG5zGbH7pPNyLauaAF9D14Thz1yywZ3hUN71oI0XS3kP
+ +Zq9jMz7LkQGAwzpFgQwnCau1K9j3KxNPcW5WY6T9/3QQ0iCGfWLg3pB4Dy7+Q56l+IQJegI2bF
+ OPpyighroZX36Wh8S1qoFTxfqrElMz3jgdPZu65vnrxzSrjjXDP5gDMRRZ8Zft9gz2Qdkre81FU
+ rivsDSPvxBRI//sZ3Py2MXzQRCkADN5ApC7YsBZcFtK4HMPWMgq/c+Xfo3s9vdUOT8Eneg2TkHa
+ 8ib8hXHMdavuwNAE0hSBWLp2BER4E9FPn7o1mLDoQz7yig9vBTl8CZYuX7hqolfQHXfFWpQ0Gdp
+ vj5nzkmRDIFB2Sw==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Thursday, 8 January 2026 at 21:23:41 CET, Andy Shevchenko wrote:
-> The SPI core provides the default fwnode for the controller,
-> assigned by device_set_node(). No need to repeat it in the driver.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi folks,
 
->  drivers/spi/spi-dw-core.c           | 2 --
->=20
-Works fine on Mobileye EyeQ6Lplus SoC in both host and target mode.
+This series adds support for the Display Process Unit (DPU) Clock
+Management Unit (CMU) aka CMU_DPU found on gs101. These will be used for
+the IOMMU and display enablement.
 
-Tested-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com> # dw mobileye
+As all the patches will go via Krzysztof tree it has been sent as one
+series.
 
-Thanks,
-=2D-=20
-Beno=C3=AEt Monin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+regards,
 
+Peter.
 
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v2:
+- Fix alphanumeric ordering (Krzysztof)
+- Update gout_dpu_dpu_pclk to gout_dpu_gpc_dpu_pclk (Peter)
+- Fix dout_dpu_busp parent (Peter)
+- Rebased onto next-20260109
+- Link to v1: https://lore.kernel.org/r/20251120-dpu-clocks-v1-0-11508054eab8@linaro.org
+
+---
+Peter Griffin (5):
+      dt-bindings: clock: google,gs101-clock: fix alphanumeric ordering
+      dt-bindings: clock: google,gs101-clock: Add DPU clock management unit
+      dt-bindings: samsung: exynos-sysreg: add gs101 dpu compatible
+      clk: samsung: gs101: add support for Display Process Unit (DPU) clocks
+      arm64: dts: exynos: gs101: add cmu_dpu and sysreg_dpu dt nodes
+
+ .../bindings/clock/google,gs101-clock.yaml         |  25 +-
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |   2 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  17 ++
+ drivers/clk/samsung/clk-gs101.c                    | 283 +++++++++++++++++++++
+ include/dt-bindings/clock/google,gs101.h           |  36 +++
+ 5 files changed, 360 insertions(+), 3 deletions(-)
+---
+base-commit: f417b7ffcbef7d76b0d8860518f50dae0e7e5eda
+change-id: 20251120-dpu-clocks-7b825d05807a
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
