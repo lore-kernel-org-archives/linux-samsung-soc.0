@@ -1,134 +1,206 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B692D9784;
-	Mon, 12 Jan 2026 13:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38FD35B15A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 13:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768224084; cv=none; b=qN9gzv/6j4FxR9Obcf8ooylkUjIcpU+9n2Js3j63IoROJ+5tCLx4aE3at0wMPVF9HjRhNQPtXIH+YlDo/21Gz6XA30jql1hxMh04UtL56rUsz0AESGXmHJIUU4TQ5A1Tz6k1u2c0gwvHb/uJ8x0zlGyEdK41L4BjtF5c0AstSC0=
+	t=1768225599; cv=none; b=ZKE3EWW/itb3pecNyLftnqEdQITkTyMSdn+FEXlFY0Y8Yzs3by9o35r1AIFD7vwJKcbmOrVsKGdUhL8YLLVqX/SM8aGWkprp2laoR8znvxZQQYxcp/rWMFXgqsDIb6M2df0aPtsXsE+uBceNhnR5KFCZPrmJufagpN2dauvTmPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768224084; c=relaxed/simple;
-	bh=dYBaoZSy4sn/OXpQRGQxS/cy6FPFm3kwjKBIX2vR0+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o34Qxi+ljJS2JkCuIZJtEPVaNoA5ehSEHmbTr2r+QLhJNqSTzA7FMHD744oAygSKlICm6vJnH/YFlrhLugdZTrmILOMdQGk7QZq47Qq7ssFmjqZ2XojtSQmKCLRCxSG7HZ4hx3E3XF+vsmts8BnKQpMANJQ0XeFpIpMtWSRV6qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mT87Ntba; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1768225599; c=relaxed/simple;
+	bh=JQnT37UZBBv4j+bw5gvfT5ZfWm5AQfI3JrknLC8ZdPA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FIKUHlabyM7SOzeGRrhT25NQeq5HjZYnZbVj8tc/d2+gxost+QI9tlsxzoMTOTZIyWbxQf5HTWqrgRXFSc7q5NKrdFynM2q6/PXixX+iDmMGO5S59F47P3223vOogjbP8699CeXPeKUC4jSwRqxS3cFa0PlDW6ylpYiNAQ+DI8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0QcilST; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mT87Ntba"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1768224083; x=1799760083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dYBaoZSy4sn/OXpQRGQxS/cy6FPFm3kwjKBIX2vR0+g=;
-  b=mT87Ntba4af/Sg2XviDOa0YCXK0IhSd0f0aH6DWQ0whFleJE1mwy5J06
-   AXamFz58/LhaAQPw1SelUvDcLiNkY8nqAH9nfIuwsIKLXZgCHs/VqABKG
-   UXPn0afe0DxjNSjfXfyztkjk57nxQnv8W9wFrb0RIjNycz/vOAT2LW+DK
-   HDEDT70p46WpS5gY6zDG4X/UZAgcLotSFhq/jZtpWVb+TCRSqAfmqaHfE
-   E+gyGU1hBjwmdRCICBk2tybILR6e1T9lurUcB+WeUN7mf7L3NGYNaHYp2
-   Mxlf9UL9xDDdeyi8g0Ln4DhwSGp9s3GrFkB8fRQE0JRCI3SrVYP0BAIZ/
-   w==;
-X-CSE-ConnectionGUID: dVFKc87wTIeoirPjjmibhA==
-X-CSE-MsgGUID: 1Q4vr0AaS6aViPR64y7+Kg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11669"; a="68501058"
-X-IronPort-AV: E=Sophos;i="6.21,221,1763452800"; 
-   d="scan'208";a="68501058"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2026 05:21:23 -0800
-X-CSE-ConnectionGUID: 56w8+M7ZTsuqAhpz10IJ5A==
-X-CSE-MsgGUID: O7xf8PsOSzaiQQK5gKXM4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,221,1763452800"; 
-   d="scan'208";a="209164543"
-Received: from jjgreens-desk21.amr.corp.intel.com (HELO kuha) ([10.124.223.232])
-  by orviesa005.jf.intel.com with SMTP; 12 Jan 2026 05:21:16 -0800
-Received: by kuha (sSMTP sendmail emulation); Mon, 12 Jan 2026 15:20:54 +0200
-Date: Mon, 12 Jan 2026 15:20:54 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Subject: Re: [PATCH v3 5/5] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
- setting charger mode
-Message-ID: <aWT1NgxDSaU7LL2g@kuha>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0QcilST"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8b2f2c5ec36so725188685a.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 05:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768225596; x=1768830396; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JQnT37UZBBv4j+bw5gvfT5ZfWm5AQfI3JrknLC8ZdPA=;
+        b=X0QcilSTiBziYmVxVDA2HzEqI3et468mJ1K185Epuch6RD5cSAh5lgh83Jlt36q6Yb
+         DrAtV5Lh4dNIyiXPQDnw774hlGmrsd2qUANG8HRBQkVir5rB7a8s2WIbVR/tdifJpdgR
+         ZMVF4btWSPU4eCWK/KNUoXQW3xU0Ph7QAJxWFfMoUZr+qqlSiETSnPM0c0yxdqczQN2w
+         KxxLsRFWctXRQ0q7qVFaAyFmpCN6RAE6GcXuyk7d0GUgnrRY7or0lVb8nDzRKf34uNx7
+         vCmNcChwJekjgHzvmOJD8ruUyC0k8iJ4sW6YVhHemaPHlRZa2RFeuSuSnD2yRassaTqc
+         zH5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768225596; x=1768830396;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JQnT37UZBBv4j+bw5gvfT5ZfWm5AQfI3JrknLC8ZdPA=;
+        b=poRLgKb902bDCisbo8ALjGJTe7Dsc68qToChAkqI30Gy1lYZcGaZOTphQex9by9liT
+         oXkHMYv5jsLOfiiGOmuCYpIUmQfZjnZwhWZ/emNx8G/F4ZZhlczDxqX+4Ntk0P0AxQV0
+         4iI+WyOOS20qSMbeRqgNFfkMt0ZIOiDLX4w9XWl8Nghwb7efv5Z8+QfVstM9xG65A3Ph
+         P/T8jCjVjxUUaoQRoKIwIs0wgsYg4LFVw2v9CtHnGWflUKEA5CXKpuLfNuxI2EI6qxZb
+         jyAjoia5OwL5eXltoSWmTc6wkdNqL1a43GuaCCsEY0N14T7PuiffR78JNf06lsm2fqBH
+         NtIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfn45oInvNtoqmLwtzHvR3M7szPTuFh8ThhejcHK0PpLhtvE+9/5z5D+xdgtckPr0ome+y+TGwGGROU3vxgKn9bw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw47TrGTQZOTC6SPEgf9qIykfbHwMpkXU1cRGwpMzPCm8CcWbZl
+	GZpW6U3zTpNbDo6BY/sQmOEw0Y9m7kxWyHaT7Gsg4nQHBiYvM4K+mvWJlJSH09rqjLo=
+X-Gm-Gg: AY/fxX4scesiHHJqA6309wtu8LDI0LC3DQnBXvgB7jlXugnIoGBpXlirOiVGfYXqpQM
+	cevtVd+gnBWxInphMN1PsXFZxLDnNPX7qXmFEHBBZiTpJdvaGWvMQTLViFnuHlYAgqfRfLBTEDt
+	GuQNU+trlT/rE/pPIyTZs3e5x8CbYIOElrmguD+eKPbOL9CDTHLQDYigV2wLvbWYtkojfFRHT0m
+	kmcX4dYtU6QtPyYfvUUS4OEYxTBH4rupork7i+iDRgg8ki71tLD4Dyg4DhB35S18X8IMxu02v2B
+	K3er6uFoL+2LLE3H7s3JWFdJRE8Y6jLHI4iu3Cu1gS7X1J7uW1+S4IThHCnwCCag6WSIqhtcF+q
+	4JaPVuaoC06vWl6lXC9Pgl+FFE4GPSkx1eHqaLRK/vehBsue1cZRfo/dyLEibThJjsIq6sc0tTM
+	GCCQvamffV4ogaVdoW
+X-Google-Smtp-Source: AGHT+IG31NYG+AAMbXiciSTHwir8DbiWnqbFPpl0WS7rz5lNjd1hETy3FhMv6H1NKdch14tiCMTiMA==
+X-Received: by 2002:a05:620a:bd3:b0:8a3:cd9e:e404 with SMTP id af79cd13be357-8c389400554mr2655171085a.68.1768225595576;
+        Mon, 12 Jan 2026 05:46:35 -0800 (PST)
+Received: from draszik.lan ([212.129.79.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c37f51d06fsm1477599385a.32.2026.01.12.05.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jan 2026 05:46:35 -0800 (PST)
+Message-ID: <2869d309358f27652289c40810ca36b2ec155d1d.camel@linaro.org>
+Subject: Re: [PATCH v3 4/5] power: supply: max77759: add charger driver
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Amit Sunil Dhamne <amitsd@google.com>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Lee Jones
+ <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Badhri
+ Jagan Sridharan	 <badhri@google.com>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>,  Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim
+ Akhtar	 <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, RD
+ Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Date: Mon, 12 Jan 2026 13:47:12 +0000
+In-Reply-To: <255d7726-6758-43ed-b35f-db14726bcc9b@google.com>
 References: <20251227-max77759-charger-v3-0-54e664f5ca92@google.com>
- <20251227-max77759-charger-v3-5-54e664f5ca92@google.com>
- <aWD_RIPp1ULH9St1@kuha>
- <9f94993e-dd69-4c9e-b467-aad6031c83d4@google.com>
+	 <20251227-max77759-charger-v3-4-54e664f5ca92@google.com>
+	 <298ca35590d2180fdcf334f94964b6110e17c606.camel@linaro.org>
+	 <50c29a62-1fdb-4de2-8887-0d551eee5ec0@google.com>
+	 <255d7726-6758-43ed-b35f-db14726bcc9b@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f94993e-dd69-4c9e-b467-aad6031c83d4@google.com>
 
-Fri, Jan 09, 2026 at 06:16:57PM -0800, Amit Sunil Dhamne kirjoitti:
-> Hi Heikki,
-> 
-> Thanks for the review!
-> 
-> On 1/9/26 5:14 AM, Heikki Krogerus wrote:
-> > Hi,
-> >
-> >> +	if (source) {
-> >> +		if (!regulator_is_enabled(chip->vbus_reg))
-> >> +			ret = regulator_enable(chip->vbus_reg);
-> >> +	} else {
-> >> +		if (regulator_is_enabled(chip->vbus_reg))
-> >> +			ret = regulator_disable(chip->vbus_reg);
-> >> +	}
-> > It looks like you have to do one more round, so can drop the
-> > regulator_is_enabled() checks and just always enable/disable it
-> > unconditionally.
-> >
-> >         if (source)
-> > 		ret = regulator_enable(chip->vbus_reg);
-> > 	else
-> > 		ret = regulator_disable(chip->vbus_reg);
-> 
-> The regulator framework uses refcounting on the number of enables. If
-> the number of times regulator is disabled > enabled, a warning will be
-> thrown. Also, I don't want to call regulator_enable more than once for
-> the same refcounting reason (will have to call disable those many number
-> of times to actually disable).
-> 
-> > I don't think you need the check in any case, but if I've understood
-> > this correctly, you should not use that check when the regulator does
-> > not support that check because then the API claims it's always
-> > enabled. So I guess in that case "if (!regulator_is_enabled())" may
-> > not work as expected, and you may actually be left with a disabled
-> > regulator. This may not be a problem on current platforms, but who
-> > knows what happens in the future.
-> 
-> I don't think this should be an issue in the future as this driver is
-> specifically meant for max77759_tcpci device and should only be used
-> with max77759 charger (they both exist only in the same package). And
-> that the max77759_charger driver does implement the callback. However,
-> if you think that regulator_is_enabled() is unreliable, I could track
-> the state within the tcpci driver instead of calling
-> regulator_is_enabled() and call enable/disable regulator accordingly.
-> 
-> Let me know wdyt and I'll update the next revision accordingly.
+Hi Amit,
 
-Let's go with this then as is.
+On Tue, 2026-01-06 at 17:14 -0800, Amit Sunil Dhamne wrote:
+>=20
+> On 1/6/26 3:41 PM, Amit Sunil Dhamne wrote:
+> > Hi Andre',
+> >=20
+> > On 1/5/26 9:32 AM, Andr=C3=A9 Draszik wrote:
+> > > Hi Amit,
+> > >=20
+> > > I haven't done a full review, but a few things caught my eye.
+> > >=20
+> > > On Sat, 2025-12-27 at 00:04 +0000, Amit Sunil Dhamne via B4 Relay wro=
+te:
+> > > >=20
+> > > > diff --git a/drivers/power/supply/Makefile=20
+> > > > b/drivers/power/supply/Makefile
+> > > > index 4b79d5abc49a..6af905875ad5 100644
+> > > > --- a/drivers/power/supply/Makefile
+> > > > +++ b/drivers/power/supply/Makefile
+> > > > [...]
+> > > > +
+> > > > +static irqreturn_t irq_handler(int irq, void *data)
+> > > > +{
+> > > > +=C2=A0=C2=A0=C2=A0 struct max77759_charger *chg =3D data;
+> > > > +=C2=A0=C2=A0=C2=A0 struct device *dev =3D chg->dev;
+> > > > +=C2=A0=C2=A0=C2=A0 u32 chgint_ok;
+> > > > +=C2=A0=C2=A0=C2=A0 int i;
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 regmap_read(chg->regmap, MAX77759_CHGR_REG_CHG_=
+INT_OK,=20
+> > > > &chgint_ok);
+> > > You might want to check the return value and return IRQ_NONE if it=
+=20
+> > > didn't
+> > > work?
+> > >=20
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ARRAY_SIZE(irqs); i++) {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (irqs[i] =3D=3D irq)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ break;
+> > > > +=C2=A0=C2=A0=C2=A0 }
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0 switch (i) {
+> > > > +=C2=A0=C2=A0=C2=A0 case AICL:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "AICL mode=
+: %s",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_AICL));
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHGIN:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "CHGIN inp=
+ut valid: %s",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHGIN));
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHG:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "CHG statu=
+s okay/off: %s",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHG));
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case INLIM:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Current L=
+imit reached: %s",
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_INLIM));
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case BAT_OILO:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Battery o=
+ver-current threshold crossed");
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CC:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Charger r=
+eached CC stage");
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CV:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Charger r=
+eached CV stage");
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_TO:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Charger r=
+eached TO stage");
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_DONE:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "Charger r=
+eached TO stage");
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > Are the above debug messages really all needed?
+>=20
+> I forgot to respond to this comment in my previous email.
+>=20
+> I think we can keep AICL, BAT_OILO, INLIM. They're either special=20
+> conditions (AICL) or faulty conditions (like BAT_OILO) and we can in=20
+> fact keep them at dev_info level. Rest can be removed and a=20
+> power_supply_changed() is sufficient.
+>=20
+> Let me know what you think?
 
-thanks,
+I don't think dev_info() in an interrupt handler is appropriate. At
+least it should be ratelimited.
 
--- 
-heikki
+If it's something special / unexpected that needs attention, having
+a dev_dbg() message only will usually not be visible to anybody.
+
+Also will the call to power_supply_changed() down below handle the
+special conditions (e.g. convey to upper levels)? If not, can it be
+made to do so?
+
+Cheers,
+Andre
+
