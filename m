@@ -1,137 +1,213 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B7F2397AA
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 15:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2913246FD
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 19:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768230416; cv=none; b=r4ENY9nBhdpiBQXIRk5DgBHEwl1RjExZ10Knb+oE5gDD3WE09Z6exZGcZvHukCTrD/iuguK4wr1do3d50FMDmYaWDWjW6q0XzO9adgwhuYTfuvtAX0hr4bo6dbQ+S6tjh7k2AqK5z7c9Wcdb6gQ5rKF7Z0hIkKEWEsGyScdapxE=
+	t=1768246666; cv=none; b=VkRhja2wb1y1O+Xl+6+Nki0NJAMfpulh9/3JlHqDjk8n69Wm8ej+nJ9BhQLZsRPk+bwneYqSj/ktjuCYQkNBcNwLF9jo3weFIfLRyGRcLc1GZirwyTmfFtZAf3jzXnx6rsMIzDvFVyoAgkrZdXhKM75mjZ9OgWYpFme558a2WxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768230416; c=relaxed/simple;
-	bh=75MQjJBAxr5y5jIsOd2DHhXFNZlk3zoenuPM48yKilI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W3izdoe7KCckkAMdNBDagIrmU821W4WzfLVUf0Uq9h33y58+RP5HmpD62c97tNYM8rxChJBdwVAEMC3YwzXYQCVmY9CovQbquXDA9XWqmFf/ybtqXDGi281HAcTHVIW30Ee57Vkw43Ipm9QEIQLl0FCCW+07QE6wSjE/WtHSe9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OnZtIzO4; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768246666; c=relaxed/simple;
+	bh=kCNuLKa3OcBY6DWrPNqUq+zuzLUQGDhG7wkIuXt18dM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1DOqUnf7rXKiy4vO2kBrHY1JVZyc6oG7L+p627Q6Tg1cFtUFKJaXa/vQGfHlznxe2rHLegJdgneyzjlpv4LEjIyV4V1vis+OwZshaGU4CKEgCOawgxCMqSVj8RQYM2Izd46Be1RkkFLzg18zZgB/8tm7NBm5UtuylxijmqEzfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=30Hqqb/Q; arc=none smtp.client-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OnZtIzO4"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-81f3d6990d6so823746b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 07:06:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="30Hqqb/Q"
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-2b19939070fso6576991eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 11:37:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768230414; x=1768835214; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HP6AkMvuLhfF7BdOoI9QTFT1HBmcbloV9tH4WSSJF80=;
-        b=OnZtIzO4kGV2h899ADR0q8KyLPcBMXJot72RWGn6yRyRwRmpW/bcGjHlUvfeoqU71o
-         QQnojS4gL7dYJZeShxPnQhDdMteungeiKCI9Wz2Uao/ZMPkf4c22eHNp3lHwbfMOm78t
-         dRxblA/rTeYzsK6JJw2DfyY1uioMZO8EeCEy5Z8fLRU6xWFjYEH0X3nApD1h4F5/rU5J
-         z34Ibz7ok8FM8GIoV3IK7Jw+sLNNO+dz1eVAs98qYPH6RUx2RZ0gNMNQsvXmHo2DBA0+
-         UVPaG4/udrG22ZuLc6XJgsYwDbcRWiBAffNbzS7cjl9meh/9l4gO/X4fkwm/jovYxeTv
-         BzHA==
+        d=google.com; s=20230601; t=1768246663; x=1768851463; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MMKzD4neKMQA/a71hLZaF9K+onAvp6LuTb7/ocIRVF8=;
+        b=30Hqqb/Qg2M/DClti7RHUsO+bjKz5um6j/PP38je7T6hzY+F81eKQdpUUe90FNkYZ9
+         K6NxlxJuym74IBjIuqdT6q5bBk55d042HV7DOfmdi5BxtX8UhsYUagRCVGpdbF+4e/xo
+         wsRwEjty5yIG/FyYbaqul+TVca/ukDii1i7ExgICs9o7I6RribQekPjhJyNx5eZcUSbo
+         cRdBcXSZfQQ+KTyiFN9ACq6VmBunxro3WsuH6vasiw1tC3pBfIhGyPk+qOFaME5eMMvw
+         6Bnwfy8uIqF9++ZkPerBWdrBrLXYBfy0Vc8SPfS8TWv7FYXmbhqFD2bMx4cECL2icqg+
+         XlQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768230414; x=1768835214;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HP6AkMvuLhfF7BdOoI9QTFT1HBmcbloV9tH4WSSJF80=;
-        b=Ezm4tuRpsXXRvv89Zmx8iq0of8bX2SvHdPM+fTlrYBTOP4PBR/mv0IxzGePIPl6gCO
-         4QAwSh+JRU8+U1Lwnk+Ag8seV+r+x48UJof8p6AVH2FNl9036I0e0y/jGYTzVICRWrhE
-         Eq/UTRVnup5mxs89TF/MqN+QZPJqoGF+8nJhTEopMYmm7/Ey2f+1rpCgb1gH/EqxQKM9
-         lk2/hUK+OFxEkolt7WDWUS1ZYIGUI6rYfooc+Dkq/JJETrLbOoMRkB3KVHiUioFncHXc
-         fio8gAt/Pd1nzQtbkxaMBsCvpARALA5SRh+6piRA0/Y4d3NooYSWbqCAhW9x0VJvZKnJ
-         lHMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfKCsSVZ7V4vvqvNSnd/wfG8P2yKgyH7YLCnmGDuYUXHddoSAeezi9izYVjXE8OIrStlpyX+jzoyvQlvpqP7fnIw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayWTojK30GnKqQbdtCEgdGgy8PFU/lmXMDPkdk31PmUsyh7eY
-	D8u7RyfU5Eb68RAzTEPUlunS2K30txQZjTUIV3NT/24+9WM5u9rfam0UGD6prfQENiY=
-X-Gm-Gg: AY/fxX7786pemUXUybYFuRgVqa+njn9uszlrsU/of1N0B9NMH/izTzVLQ9URKhlxtHQ
-	bsejmKozaWiGfuiBkJnMA5uhSTgLHJA6qeg78X00SUcmgRYhiz3hv9ocrMpBA6hQ9mDVsf2ad4J
-	2mAPo2WTeBp1VhhvyVmuurqU3fxMWMEGqQ0Z7qjcos9rTlnLIivsaV3w2pNWyHwzXsvvT1Uqxth
-	RDvKZN6zNEn5REXfxwlNRZvbwuXCmcbdWGK+pgpge5/3cMUKKrjwo1nodQBA+5htWmgJvHsj7XU
-	tbfwDI9BVDcuUnceRNeqb2SmJNUSNveb/pDS1Drc++jd8u3xKwrY8A4pv1Vk+4xvUtPTSODggOI
-	8S3gshOoT+oWNFvT4QXECmsOLKgE9m/dYzhFbW7fAYV8RgZZFT4WPZ8KowbwVaHyCeZlu7ONOmG
-	5sm+q/xaBQolDrTqSV
-X-Google-Smtp-Source: AGHT+IEPMgDPCYjsxat+foxE0Th9ljcBX6K2Ppfj2CK2lZL+CCALz+VFGZbGbJZ0pdZjm8CcOhAGug==
-X-Received: by 2002:a05:6a00:90a6:b0:7e8:4398:b34f with SMTP id d2e1a72fcca58-81b7f7e226fmr16141102b3a.34.1768230413899;
-        Mon, 12 Jan 2026 07:06:53 -0800 (PST)
-Received: from draszik.lan ([212.129.79.54])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81e6c8199f4sm6182089b3a.68.2026.01.12.07.06.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jan 2026 07:06:53 -0800 (PST)
-Message-ID: <7097507636282e4613d324ff5acb74eb747d519b.camel@linaro.org>
-Subject: Re: [PATCH v2 4/5] clk: samsung: gs101: add support for Display
- Process Unit (DPU) clocks
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki	
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	kernel-team@android.com, Will McVicker <willmcvicker@google.com>, Juan
- Yescas	 <jyescas@google.com>, Doug Anderson <dianders@google.com>
-Date: Mon, 12 Jan 2026 15:07:20 +0000
-In-Reply-To: <20260112-dpu-clocks-v2-4-bd00903fdeb9@linaro.org>
-References: <20260112-dpu-clocks-v2-0-bd00903fdeb9@linaro.org>
-	 <20260112-dpu-clocks-v2-4-bd00903fdeb9@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        d=1e100.net; s=20230601; t=1768246663; x=1768851463;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MMKzD4neKMQA/a71hLZaF9K+onAvp6LuTb7/ocIRVF8=;
+        b=VQz8kw09WlPRPLOr3y5cjpjRxwwmy2PaIDfWCDzKuJfV5+kjilTlRWZXDsyOsJwaMx
+         VsdiNWSVs9qUzp73wtqUNVE0fvJYNkjo+fvs90q4AF2FICKJYnIRJM8R3H5XhqMmENE6
+         7urLQ1wZksb6wvB5qVYp2PXnkXLwy+3Wt3Ch7JQBA7a5p0i/8oWQUSTfZcJ7/3PxuB80
+         YUeIplK1I5x8rckUh7reAS6C8MRPPE2V5bOFulBe40yNO5APqbiNHrnKDT/k0RPZRn5b
+         z5w8TIxD8MMsanKP9ToSX/rFc+qX1HGdfL3iOH+mfmWTRSjvDfQ554gNTrk4zy7fWJGT
+         ayfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBqKh7uaju0EP6ycyUq/CyypN+8PQ/IQD25kBmi5j6GCmYSOh74Io4xZG9xQwvkZWPUQVTkoJlVR6PYgpGLbn0nA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBO1pyFXuflCJ2XWNWzuJV41Mz/ITHt7yLefAIjoZBz8iNX/t2
+	wkWhjADnLgnjiJNmHEwLxkMvF5rI1xfoRP9di6aG0scyc0EOnjjKjVpa97hNCGEZLQ==
+X-Gm-Gg: AY/fxX66DYK3KXG/+xC1akRc/F3ghZpoRKf6i7wV8GzZNpuvfQMgZibrvcnWer9GQCK
+	W042o9RwkwKA6fP9D1tc3btclIN5NFWUK8MAvwFM1Lum9+RAbj5hk3qmCqIwrn5nbA0rnaiTrh1
+	ZaiHkDMye8lJuKfdsz0Sjsrn3i+L/gYh//lmeKp+diJfDmR69q2VSDEUdN0rLAUCmmbtZwzj6aJ
+	uKSUFZxzzYqILNPK5M3Sw6zTgkoDUQkOHIigqabDINyEaUjHz3dEC4BV4zGyWY3nJnNQyFxXUps
+	xAnBLNpRc+BQR3FAcjk0JRzKmw3249dJ1H0cgkvWXbygerFfJ4oNespWcDkkeerzGO56ayarNob
+	9cuSuqdNaq3x98uRlT+waQgpVPNY4Oo/T64rOeLuM6POgnGSbIxaYeDMKpRwDJ/ismDPUM4Ukz7
+	qX66CGMm2v5Fbqqxop8oO8RIQPc+eo/hIN3PBg57nr9zX4obpi7S2Hcr8kovQlX+n4IzlP/ggwi
+	EO5LFxSNg+p4g==
+X-Google-Smtp-Source: AGHT+IEmezECFIaAtAhii/tXhYAvteHOsxJwusDFq7+Qy4kltOc3o9BThd5irNt42thvcdsfukrSaA==
+X-Received: by 2002:a05:7301:29a5:b0:2b0:3d03:37db with SMTP id 5a478bee46e88-2b17d2e2b29mr11583342eec.35.1768246663076;
+        Mon, 12 Jan 2026 11:37:43 -0800 (PST)
+Received: from ?IPV6:2a00:79e0:2e7c:8:8e84:2c31:d2b4:9c1f? ([2a00:79e0:2e7c:8:8e84:2c31:d2b4:9c1f])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b17078d818sm15886663eec.21.2026.01.12.11.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jan 2026 11:37:42 -0800 (PST)
+Message-ID: <bb9b9afa-0bfa-428e-9372-549d9ba8603c@google.com>
+Date: Mon, 12 Jan 2026 11:37:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] power: supply: max77759: add charger driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+References: <20251227-max77759-charger-v3-0-54e664f5ca92@google.com>
+ <20251227-max77759-charger-v3-4-54e664f5ca92@google.com>
+ <298ca35590d2180fdcf334f94964b6110e17c606.camel@linaro.org>
+ <50c29a62-1fdb-4de2-8887-0d551eee5ec0@google.com>
+ <255d7726-6758-43ed-b35f-db14726bcc9b@google.com>
+ <2869d309358f27652289c40810ca36b2ec155d1d.camel@linaro.org>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <2869d309358f27652289c40810ca36b2ec155d1d.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2026-01-12 at 14:16 +0000, Peter Griffin wrote:
-> cmu_dpu is the clock management unit used for the Display Process Unit
-> block. It generates clocks for image scaler, compressor etc.
->=20
-> Add support for the muxes, dividers and gates in cmu_dpu.
->=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> Changes in v2:
-> =C2=A0- Update gout_dpu_dpu_pclk to gout_dpu_gpc_dpu_pclk (Peter)
-> =C2=A0- Fix dout_dpu_busp parent (Peter)
-> ---
-> =C2=A0drivers/clk/samsung/clk-gs101.c | 283 +++++++++++++++++++++++++++++=
-+++++++++++
-> =C2=A01 file changed, 283 insertions(+)
->=20
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
-> index 8551289b46eb88ec61dd1914d0fe782ae6794000..b38c6c8749aae42319d2004ff=
-5ffbc9a19320cac 100644
-> --- a/drivers/clk/samsung/clk-gs101.c
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -25,6 +25,7 @@
-> =C2=A0#define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
-> =C2=A0#define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> =C2=A0#define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> +#define CLKS_NR_DPU	(CLK_GOUT_DPU_SYSREG_DPU_PCLK + 1)
+Hi Andre',
 
-Between APM and HSI0 to keep alphabetic ordering :-)
+On 1/12/26 5:47 AM, André Draszik wrote:
+> Hi Amit,
+>
+> On Tue, 2026-01-06 at 17:14 -0800, Amit Sunil Dhamne wrote:
+>> On 1/6/26 3:41 PM, Amit Sunil Dhamne wrote:
+>>> Hi Andre',
+>>>
+>>> On 1/5/26 9:32 AM, André Draszik wrote:
+>>>> Hi Amit,
+>>>>
+>>>> I haven't done a full review, but a few things caught my eye.
+>>>>
+>>>> On Sat, 2025-12-27 at 00:04 +0000, Amit Sunil Dhamne via B4 Relay wrote:
+>>>>> diff --git a/drivers/power/supply/Makefile
+>>>>> b/drivers/power/supply/Makefile
+>>>>> index 4b79d5abc49a..6af905875ad5 100644
+>>>>> --- a/drivers/power/supply/Makefile
+>>>>> +++ b/drivers/power/supply/Makefile
+>>>>> [...]
+>>>>> +
+>>>>> +static irqreturn_t irq_handler(int irq, void *data)
+>>>>> +{
+>>>>> +    struct max77759_charger *chg = data;
+>>>>> +    struct device *dev = chg->dev;
+>>>>> +    u32 chgint_ok;
+>>>>> +    int i;
+>>>>> +
+>>>>> +    regmap_read(chg->regmap, MAX77759_CHGR_REG_CHG_INT_OK,
+>>>>> &chgint_ok);
+>>>> You might want to check the return value and return IRQ_NONE if it
+>>>> didn't
+>>>> work?
+>>>>
+>>>>> +
+>>>>> +    for (i = 0; i < ARRAY_SIZE(irqs); i++) {
+>>>>> +        if (irqs[i] == irq)
+>>>>> +            break;
+>>>>> +    }
+>>>>> +
+>>>>> +    switch (i) {
+>>>>> +    case AICL:
+>>>>> +        dev_dbg(dev, "AICL mode: %s",
+>>>>> +            str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_AICL));
+>>>>> +        break;
+>>>>> +    case CHGIN:
+>>>>> +        dev_dbg(dev, "CHGIN input valid: %s",
+>>>>> +            str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHGIN));
+>>>>> +        break;
+>>>>> +    case CHG:
+>>>>> +        dev_dbg(dev, "CHG status okay/off: %s",
+>>>>> +            str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHG));
+>>>>> +        break;
+>>>>> +    case INLIM:
+>>>>> +        dev_dbg(dev, "Current Limit reached: %s",
+>>>>> +            str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_INLIM));
+>>>>> +        break;
+>>>>> +    case BAT_OILO:
+>>>>> +        dev_dbg(dev, "Battery over-current threshold crossed");
+>>>>> +        break;
+>>>>> +    case CHG_STA_CC:
+>>>>> +        dev_dbg(dev, "Charger reached CC stage");
+>>>>> +        break;
+>>>>> +    case CHG_STA_CV:
+>>>>> +        dev_dbg(dev, "Charger reached CV stage");
+>>>>> +        break;
+>>>>> +    case CHG_STA_TO:
+>>>>> +        dev_dbg(dev, "Charger reached TO stage");
+>>>>> +        break;
+>>>>> +    case CHG_STA_DONE:
+>>>>> +        dev_dbg(dev, "Charger reached TO stage");
+>>>>> +        break;
+>>>> Are the above debug messages really all needed?
+>> I forgot to respond to this comment in my previous email.
+>>
+>> I think we can keep AICL, BAT_OILO, INLIM. They're either special
+>> conditions (AICL) or faulty conditions (like BAT_OILO) and we can in
+>> fact keep them at dev_info level. Rest can be removed and a
+>> power_supply_changed() is sufficient.
+>>
+>> Let me know what you think?
+> I don't think dev_info() in an interrupt handler is appropriate. At
+> least it should be ratelimited.
+>
+> If it's something special / unexpected that needs attention, having
+> a dev_dbg() message only will usually not be visible to anybody.
 
-> =C2=A0
-> =C2=A0#define GS101_GATE_DBG_OFFSET 0x4000
-> =C2=A0#define GS101_DRCG_EN_OFFSET=C2=A0 0x104
-> @@ -4426,6 +4427,285 @@ static const struct samsung_cmu_info peric1_cmu_i=
-nfo __initconst =3D {
-> =C2=A0	.drcg_offset		=3D GS101_DRCG_EN_OFFSET,
-> =C2=A0};
-> =C2=A0
-> +/* ---- CMU_DPU --------------------------------------------------------=
------ */
-
-I'll do a full review later, but this new block should also be between
-existing CMU_APM and CMU_HSI0 blocks to keep alphabetic ordering.
+I agree. I can change the prints to dev_info_ratelimited for the stuff 
+we care about.
 
 
-Cheers,
-Andre'
+>
+> Also will the call to power_supply_changed() down below handle the
+> special conditions (e.g. convey to upper levels)? If not, can it be
+> made to do so?
+
+Yes it does, as I can see a call to kobject_uevent() inside 
+power_supply_changed_work(). Also, power_supply_changed() also notifies 
+other subsystems that have registered their notifiers downstream of this 
+power_supply object. So I believe we're good there.
+
+If all the above sounds good, I will proceed with sending the next 
+revision including the fixes  :).
+
+
+BR,
+
+Amit
+
+>
+> Cheers,
+> Andre
+>
