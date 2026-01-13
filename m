@@ -1,110 +1,123 @@
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355E346ADB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 11:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F813D3B3
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768303867; cv=none; b=VOmZDeHCUcszqJHC7JvWA5jlIvbjfb+nn69AeVYaOVbH48SjE2e3tBFcQi8tLudXNyrlim4l4MwysKYLZTsk9xcwO1DLPOXPS7LRwbYClXL4AFZGXDN8VHUln4a8jwXPZIqSJnq4jVi0YZbHSGBTzwYtdZDAVlxyM6cSN6LeJ8w=
+	t=1768308603; cv=none; b=VGM/6x+b9J6eqf3AzliiUm0mNRL+i6UGV7Uv4+YO9dLjw2JOKnYdN3dK88XjiGCYA5gvWRXsJ9pkg0XCuqfwHr+y3XHSB2IjLw+lF14+wevTdBAuy9MZfGVmylF0dh5uiT9LRO8L034+p147T4P0EtJVa83jH1DA7GHUPx9Lbqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768303867; c=relaxed/simple;
-	bh=f4wVU9QaczKT/9p32vT2mvG6pfkyMA13UZGXDs37Bbs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cj9a4/+o+7VknUuLyWrygA5e0nDc1r0XBHeXSRewc9kz8a018gk9glGFvOR0EaksxkwVOgW3TFzap9fqsnw9q9SVPfoWs2ERJwv/ImV+O7UViPqc/301hLlZRHKEMKuKoBKwD/vj/NXsaDpY4yc0pGTrbZ/lvLtdG3grGSs79zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypiZBYLJ; arc=none smtp.client-ip=74.125.82.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768308603; c=relaxed/simple;
+	bh=+9icRJM878guDktkvKRdV7M11E818HdtxnWGnfxrGmU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B0X1+aVA9U0nnGbjTSLZwZ6+HC6G9TRPeHXfI/WHjF/tAgD6zWm757Hu7kxRGRxHisopFBoAcp21J/fkNV39S/w7DaTEV8GOhpdDeYsRmAeErq1nHFbbbZJLo8Mv0rMMlDtvVt/NMlmsIAxCZrp3FGliBN58MvLA6pXu12gZfy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=Ki1HAdCq; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypiZBYLJ"
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-2ae57f34e22so7486366eec.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 03:30:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768303853; x=1768908653; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f4wVU9QaczKT/9p32vT2mvG6pfkyMA13UZGXDs37Bbs=;
-        b=ypiZBYLJwq4M61y/wA3xFHM25YVqCiYHbmqaVnS/UQwheMZI2xbR9i3AKLbSwNVj6j
-         t7xOHInIbvA4VQ2NB/2OCtrlwqpkXuSTBOG+Hbi6Ctt+SO/u9swUACxHJbqWN+v/BhsL
-         Q7ovqaNQyVDLLFTg6e2ly+RaAr/Yq6zeIeSfBq5FywtC2EKoAYoWTxXjuDekTBWHNoCE
-         3osTqAeAtdXugZAzSDZzbNeCe8ii6Pw6MWKOlkXdEF+ZMAWV/07XMFXGTa+CX8dY4Pll
-         /gII+WoWN3Eq1suql8MfTa7gl3UX+zyNJoB02iaATV4hIblqcb33Ayuk0EiXFDNZVOul
-         xaWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768303853; x=1768908653;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4wVU9QaczKT/9p32vT2mvG6pfkyMA13UZGXDs37Bbs=;
-        b=BDy8sTP1qY2/Znfju0FF4U4hTkP88GBRDsFIsZhQBeOzwlKeheRq8QR6C8GR+LIl7/
-         iT03fqLvCAyW2NenBuvgZOkT6gYi/znrTGGD3rNzpsqrw5hon1XY4ALk+j2wslFJcvx4
-         bBKZB6cDGzV15HghU6yuCDfxGgU7bFNCnR2VPwv8KCiEgdlZf+D5RyZLq4dRvIAIfFAx
-         YXsWx/qRsRobXQhQGyeTU5zqYmLL8aVkmbXsKtkvgCpRxyL1rwqvoMDSxmUe33Tgw3ch
-         Usf650a6YXLRpdThFGLilC6vlm/oAL5jNbbM914O0pLPgMd9Lbpe3h5MnBJDcsEl1SUH
-         8h7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnH9ZPuklgsVMV7xhCcmw05UT4x2RhtRCl0YaPu8Ph1ieSp9wc5YVqUMeksg8UmVwtSHOCWVn5lfPP8evdpIflbw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZNI/KFEdkNdr6EE+jGLjyXfsMv9IJE9mKSl+pYgcgvRw5Jol9
-	HQay3Ok1deV8hpGTbUUjUQjyrIpuMc7mC3rQahUO6l1lPAiGDB1HQAcvc9O891OrjPY=
-X-Gm-Gg: AY/fxX7RahfX6xeYB/vkJOuriKlcBcSaDx2q33D/cNdoe9QmVJISM+I3726J6U7CTYn
-	kM/UNxPSXnF/vh+iF7jVutqkjnFKC2H4YRzhszcQMZMWf/8ZHuJ6yWc/N7mVbmYt3hzzXC1Sgko
-	IMuZycuZwe1iQdJXT+htYYNbPJrh0VUWfY0ECZM+9e+7tVWEoVky1UoySZcolxBOxP3Cs7yppXh
-	s5DxNR7Kl1umKFTj5aPZl9oXN5RgVndwZ1X7TcbeV5hMbJoAHfCyu8/S0f0ER1Ziz5T5JqxJ2v0
-	ZmqoGcrg4fQSFiI55xAmnKOYTTPUORj2qtEsANwRzy9tEaEuaqQwSPQ8Yy8qVeU6/OAG7azUzHM
-	JzF1JHhsOIUeK2MEFWzdalJ79sfM8L87t5082Ze7fyUA6vURupNCENfQhmuwdT4Kf2oFdh3MvUe
-	kUoUB41eK2t1CDcH6I6bj+ExJSHTM=
-X-Google-Smtp-Source: AGHT+IE2PQGkBRDHh0wt/RR1JmU3vgEQYzdNyA0r5cB4mfroq+TTyqSFY3sc0gpnweUJAe3hVTED4Q==
-X-Received: by 2002:a05:7300:cb07:b0:2b0:3d03:37d4 with SMTP id 5a478bee46e88-2b17d1e4d38mr24451146eec.3.1768303852511;
-        Tue, 13 Jan 2026 03:30:52 -0800 (PST)
-Received: from draszik.lan ([212.129.80.26])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b17078d9b1sm19000610eec.18.2026.01.13.03.30.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 03:30:52 -0800 (PST)
-Message-ID: <ca6de8e5aa0dbd99c74481a9dba9ea9f1ac61a1f.camel@linaro.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: google,gs101-clock: Add DPU
- clock management unit
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki	
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	kernel-team@android.com, Will McVicker <willmcvicker@google.com>, Juan
- Yescas	 <jyescas@google.com>, Doug Anderson <dianders@google.com>
-Date: Tue, 13 Jan 2026 11:31:28 +0000
-In-Reply-To: <20260113-dpu-clocks-v3-2-cb85424f2c72@linaro.org>
-References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
-	 <20260113-dpu-clocks-v3-2-cb85424f2c72@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="Ki1HAdCq"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1768308598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ifzs265vUAPV6IFIZqod6woQ6e3KxesGPyzpRuY/iQY=;
+	b=Ki1HAdCqqKBaK15MOgTWKFwgvoe4O1HRO6+Mj3xlA5tV4Hx2joKK1RolVMOxqwkWzlOAE0
+	s/ImAGc8EaMUlaZp3Ov0OL3HhBf/duX9ugvAEqWXnI5d9U7TC+sn+1b4TiK5gdmQEHbQS3
+	/L98D5ouUf0M9yEHyoOHRfSJFmFSXPo=
+From: Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH v4 0/3] drm/bridge: sii9234: use extcon to detect cable
+ attachment
+Date: Tue, 13 Jan 2026 13:49:28 +0100
+Message-Id: <20260113-exynos4-sii9234-driver-v4-0-6e8c0ac14f84@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/33OwQrCMAyA4VeRnq00aWarJ99DPEybaUA3aaUoY
+ +9ut4uK6PEP5Et6lTgKJ7We9SpyliRdW4LmM3U41e2RtYTSCg1aQPCa74+2S6STyAot6RAlc9T
+ Bgwu0rwBCpcryNXIj9wne7kqfJN26+JjuZBinI1kZh/CLzKCNRibHwWCzdG5zjHI5c1wkVqOZ8
+ d2hnw4Wp6mZkaiBQObLsS/H/3FscbzxtGIHy9p+/jMMwxMQonxoTQEAAA==
+X-Change-ID: 20231218-exynos4-sii9234-driver-d817d4b511d5
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
+ linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2044; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=+9icRJM878guDktkvKRdV7M11E818HdtxnWGnfxrGmU=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBpZj9mvaR4IAPwmtcAYazzSD8ToTudKzzOhAXmU
+ lhUfGm8+FeJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaWY/ZgAKCRCwB25JC3Fh
+ a74AB/9GAGkrx/DO009mUlBXkmbzwe9ybgsLcjgJzBdtu7e/ZevZBiZI4afBlqfi6dehvtL5BuY
+ z/oy0HhLgUlGFx4RvXNpWrGGQ4L7aCRmZgV4G+9xkTY4uEY1bkXCdyTO226C8cPgSd8CleAZAzM
+ 8c6zBfSDFBbkQGUJ6dJtjkoRE6o2NXwgh9Ed7Zzadtg4wvs4tJzT06Y3VHOPY0H/805G2QQB3r1
+ cPmMAc6pi0aZUUAZwZFnNCGcXiGhkCuw5Mc63rIpyMNONnaIOCATlxT3m7uLG77n7I13Qoz2tO1
+ gTmw8ZvokF+7nXB5mWsgaE9c99hi/GRiPZ8ce3JFTlBUQaNr
+X-Developer-Key: i=henrik@grimler.se; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 2026-01-13 at 10:58 +0000, Peter Griffin wrote:
-> Add dt schema documentation and clock IDs for the Display Process Unit
-> (DPU) clock management unit (CMU). This CMU feeds IPs such as image scale=
-r,
-> enhancer and compressor.
->=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> Changes in v3
-> =C2=A0- alphanumeric in gs101.h header (Andre)
-> Changes in v2
-> =C2=A0- alphanumeric placement (Krzysztof)
-> ---
-> =C2=A0.../bindings/clock/google,gs101-clock.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 19 ++++++++++++
-> =C2=A0include/dt-bindings/clock/google,gs101.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 36 ++++++++++++++++++++++
-> =C2=A02 files changed, 55 insertions(+)
+Hi,
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+This series fixes so HDMI through the sii9234 MHL chip works when
+cable is hotplugged, by making the MHL chip use extcon cable detection
+functions. Patch 3, that actually implements the extcon parts, is heavily
+inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
+cable detection logic to detect MHL") by Maciej Purski.
+
+Before these changes, HDMI only worked if cable was plugged in before
+booting. If no cable was connected, then wlr-randr still showed HDMI
+as connected, with 0x0 px, which confused at least some UIs (phosh)
+and caused problems:
+https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
+
+Tested on exynos4412-i9305.
+
+Best regards,
+Henrik Grimler
+
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
+---
+Changes in v4:
+- Collect tags
+- Link to v3: https://lore.kernel.org/r/20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se
+
+Changes in v3:
+- Fix return of dev_err_probe in patch 2 and patch 3, spotted by
+  Dmitry and Marek respectively.
+- Change to depends on EXTCON || !EXTCON instead of select
+- Collect tags for patch 1 (not 3 since there were (minor) changes)
+- Link to v2: https://lore.kernel.org/r/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se
+
+Changes in v2:
+- Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
+- Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
+
+---
+Henrik Grimler (3):
+      drm/bridge: sii9234: fix some typos in comments and messages
+      drm/bridge: sii9234: use dev_err_probe where applicable
+      drm/bridge: sii9234: use extcon cable detection logic to detect MHL
+
+ drivers/gpu/drm/bridge/Kconfig   |   1 +
+ drivers/gpu/drm/bridge/sii9234.c | 124 +++++++++++++++++++++++++++++++--------
+ 2 files changed, 102 insertions(+), 23 deletions(-)
+---
+base-commit: a87fef0880c4f52769b5a3c2fc1b2d73aaa04eb3
+change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
+
+Best regards,
+-- 
+Henrik Grimler <henrik@grimler.se>
+
