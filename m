@@ -1,133 +1,148 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843702B2D7
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 22:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822363876C1
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 09:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768256529; cv=none; b=OQjKIZNSyTzi6IMtvDV54A9YwKjleRgYlTADZG0Qj3cD56Ty6o7M1Wr/dTyuj2HRXiaYqdQLosxPs2uHbZqpaaEHZnV553MWhO4axZY2NuVxfGWedsE21TW6defEMoY5cyWbhUJ0KgK1mAy+I1yy+I0ecLAH3TeJjeWeIsZaUiY=
+	t=1768295652; cv=none; b=UOMG6EbXB2FXO/LrGdpoxEkYtw8SvoNK0i3AlgTozK7V0hwbZiGFrJGzg9U/v8nxJWja21lqtlz2Bn4ZK6qhZzvWihb95AaAf2P3bsOg3YwS0cP4Xq40fQmBfkv/8wwK9gIEpdppKI3I4J7zO/cfyR++de4FVnwcfTmDIszFqkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768256529; c=relaxed/simple;
-	bh=PpVle6805UxjTJzUzVBlFwx6MAaoWGvgWT0ChdYxX5s=;
+	s=arc-20240116; t=1768295652; c=relaxed/simple;
+	bh=xqGpVB7r89YsbJUHXZJjT54kH83zTdXiwx5zs/NAmxc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I1xinpKUaNRNQxQcxracY1vDCicce3B8w9APqmdzFQMsW2s1MbG9droUFgn4Wzb+3z5JwahWkcoJc809wELYE1kK1bfBrKueQI4uyYzrw+83hN6J4eFaWyCN2ZFuN/aJ9BxHkUCeEN9JB0dkjqL15FYQPFJ156RtPyTTmb24Vac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=F0MEmqUH; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	 To:Cc:Content-Type; b=iVovdZHs411SIOhOtPGSmiFfTbtikB4kPfqMVtAjenad9BrYA48MvjgYhT8HZ44AakHR6w+SieXrtN70uv7r26JwONRlTAHW6wS0a3Qe1nTx4DVf3fJ0fIo4XRN8ajiQ9AM1/J4iwC38/C8xI7WdF/9K5mqOr1wS4wHP5eu36OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AHu5DkFt; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="F0MEmqUH"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2a110548cdeso47286465ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2026 14:22:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AHu5DkFt"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6505cac9879so12380438a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 01:14:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1768256528; x=1768861328; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1768295647; x=1768900447; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4w19gL9Si5xuUOM+xx0Gkc/M1vHSFtlbSnI9ldzTAww=;
-        b=F0MEmqUHc3EZA8tY2aVOLln/LK9m8xtaNwR5J7Se+7So/dXVydjQeTYG5kP6EygojM
-         c844usz2fPEFMbjsk+UXVX53cEChUCMylUE2gMhkPsuvw7jVl9h8yHvQPhM+7Y8e8APE
-         31A8vtwSOAR64KMZVccBf8BDKYEG1Pyy9gi44RF5lum0WaDS2v7DuPliUBURaICx13Ai
-         HAfOV3QuIsVGbyH0LNUc4dTSkAvfp76fBQyPe5waN88Ci5Foixiartzdsw4dLND2+emf
-         2A0LkK6bdo99ATxmNJ6D4SiXnXyJsw3Nv/WWAoHMzbyIl++EBvS4SM8bdpt0jWcmzyDq
-         eNjQ==
+        bh=Bn5NX0zVHIadFPbViV8yMvWD/kdQPjminzNjM4/y1Bk=;
+        b=AHu5DkFtrB5y5doJltu1DuEV7iX0jCJ2eB3NoH3VI3UpLMgP79e+Dwn740++a5A8RQ
+         d1o3my1h5U0p2BSQRW3PWeUcPaFidmWGeYDp6Rkroo4rZI5qCH5mb/8H9ZC6cE7P3Pme
+         sUwo2AS4YlXe7eVM9QkJ+/qKTcjlBt5bEtF2T6KpBFbu+cAte+fwi/e9Z3zBVIagpJHq
+         ptw+j1pwH2deF4XQknX5jcX+04Qu9qNJVPsybw85UPzcrAM+w75pBJ9FW/mtazH7IYlo
+         ACxzjY1pTDtMFKSP3p9tavM+fG3Q5z+vXdpDp1nFRsfFsQ7ryv/qhwZheE3n8GzOv0lx
+         idNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768256528; x=1768861328;
+        d=1e100.net; s=20230601; t=1768295647; x=1768900447;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=4w19gL9Si5xuUOM+xx0Gkc/M1vHSFtlbSnI9ldzTAww=;
-        b=q8pQeiQzjDaPSNZ6Fux2/yJOQM2DI6F/obGF+9vln0xSFvWz2WX13bHGHy8Gi8orqX
-         +rADMbjXQio8UPxTb0Zs0wEEAdzfMmcEdWMklSg4XEDFHjElJbuRVXMJbNlT/Yg5zUa4
-         j7+28kGwPqUH5Vrxr0x+Bx0jF3P1hhCIdOozHDdRj32J/7CuqJSHFXv1mwo9iS1dZsui
-         wQz5RBqr4WLSLWIkIk8h1GYjdpox1DYak9rWsa53jxnFTSPJdA6HWC2smNYu+gWLSI6a
-         jZzp+Cpn6hIBq9Na4yAUeAvSz5cC+ajZk/lk+AKvUBEgznhgXNOaoCTcr4rqc1Wk7azB
-         UTqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCDUVDldbNf2Rm3BDkwbQH31I3CBsKJ0dxJWliNcShoLzpcg6iNv9OIVopxG1YpxZbuch9IC3xonhiaHNEp1PrMw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlzrxbIwwSAVbHByQZVZDFexy41k3rZzHUGSQZIao2JtRaTU2S
-	6oxFctI/WTfsECHBMi6jZfuWXxNG5zRmFaSJQN4DDYp4s6c+NabNHga0/QjeP7M7CeBSlWERSNh
-	BXB9z4Pp8LjbOga6mGyM9WF/zKO5IVO8=
-X-Gm-Gg: AY/fxX4OY8hU5TGZraLXNivf4LsFt/fvXAdgmZ7nhibwdSernt5PTyQW8mpGx5PlWSk
-	yw6q4xJFe6j+3cqd0wxyAcXPmlSSxWx3Zx5cagKSNARVeXB6epAGltCRuXlbDQ9pO/CrOz3WQ4U
-	MGYdVhNRiSfFIc4Ge4jUbUDiD9nZosLtkG7yfIAwJZsJf/tq/W+yVyJ6FXLb0+Ic0YAYF3eGGh1
-	xoPGWtv2pLxyrvP5lzWWYpQrHedSxoV5QOvzR9Vt8caIEMcuzPBnVFbWOT6qwBtiTAQ9Ty390x3
-	q8p7tQGMUdaDyVJzX7wavocQY3w1
-X-Google-Smtp-Source: AGHT+IF7+Y5y+W1I/oKu3PaWNvUb9K8PSy+WoJh05TRnlBlC82+qzM+GksYGzWHyPWmgmkdzBXyTwo91e0gYk9qAGBM=
-X-Received: by 2002:a17:903:40ca:b0:295:592e:7633 with SMTP id
- d9443c01a7336-2a3ee4c0fb5mr187274885ad.29.1768256527834; Mon, 12 Jan 2026
- 14:22:07 -0800 (PST)
+        bh=Bn5NX0zVHIadFPbViV8yMvWD/kdQPjminzNjM4/y1Bk=;
+        b=B2mFh6ISpnOf4XVRTWCbRHhMmci32r/l4xe8Xl1xw2jyBX/pFMxkGP+j9Ta77O7vBg
+         KG3ktguyg0ZHuYxCAglqTYWrwYc8PaoWix++M/pVTJWpA3x6ccw3ExrlMN3ywFbogHCB
+         c17C6VJk13BJXrAjuUZLTJ3xrWIhYNUeIkyKOUsR+lFK26dyDknEDvVRhDHmay8RD5Q3
+         97m+bhYTnS+nVe6OQPn6Oin3jkXaCCnXg9qxeQLHJEDtKxcXzdUqD5jM3XQAOQ8UMXpp
+         9B3X5D9lsA39dcqdcm65wIvvaxrohl9Sh5C2ciIn6L34eKCIfClSmhmbgXtgz6YUnraf
+         Cvqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvlkBxgiof9PXJqLuB/V6IbXt0dOHERy1XFlGy8AtS6mzY1euK5pgGyxgSoOrrkt3O/e36SRkLTbnbFgfV1PEvDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRwzfrAnSgr56WRXeI32b1fGf8Ec5N8qxnbN5NJcIENccI2r29
+	D+/WlW+viDz0+j0IbNbNAA74aBIJTQ38Nd6IAl8XIvCfrZbHtLjFwdaHvwOBZAHHl5Zcz3Nbfsi
+	idAk1SHE360icwm9LYJ6M/pd/jPrN6jx3Vi76yVu0tg==
+X-Gm-Gg: AY/fxX5+VR4V2y0V+/BlzrycxI23NDBmvbxamD37IVYoX0Pv9CNE9tOP2kAuHiFb3F1
+	Cvrg7i5jY2SpaY4s+qXUUjy/uu4xuCNByuudyCNNlp+Goql80NQA344Ho5cXtav3z1eYFfm11wN
+	lcZsZP3Np6YVqm/aC8Ob3HtH0snGeX6fBSRID57S9nXHfO23VjAClVnJLTlSDnbAUXmuoG1yS3t
+	zpRZ0URMvdezJXgXqQhRZCQXVJ+xY0vvK3oz3bX/H70evIVYpY09zlQV319gKEByJa0p8X51mdn
+	ygJIgHp0Bed78r4tC+v9DLBOFwqktiSaYx2eIqQ=
+X-Google-Smtp-Source: AGHT+IF/uMz8MYijvgNH6EAmeQTRc6aRXVQ6Ac2y4GTApWuNrbNhRowJgw1xPnWbWQMx4L4kzhRYmGW628wrmJp9buE=
+X-Received: by 2002:a05:6402:524c:b0:647:9380:103c with SMTP id
+ 4fb4d7f45d1cf-65097df5672mr20320306a12.13.1768295646934; Tue, 13 Jan 2026
+ 01:14:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
- <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-2-8d7a3dbacdf4@bootlin.com>
-In-Reply-To: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-2-8d7a3dbacdf4@bootlin.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 12 Jan 2026 23:21:56 +0100
-X-Gm-Features: AZwV_Qj9tssGMaPejz2Zl0XwPzPqVqwiSQM5-St_AAUm7gwon2Sgi9P4XfkbVUU
-Message-ID: <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] drm/meson/dw-hdmi: convert to of_drm_find_and_get_bridge()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
+References: <20260112-dpu-clocks-v2-0-bd00903fdeb9@linaro.org>
+ <20260112-dpu-clocks-v2-1-bd00903fdeb9@linaro.org> <ba585515010ab9a9b417d000ba744f8178ca9e24.camel@linaro.org>
+In-Reply-To: <ba585515010ab9a9b417d000ba744f8178ca9e24.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 13 Jan 2026 09:13:55 +0000
+X-Gm-Features: AZwV_QjDqNTFOct4T-rP7w13f_DSbKkRMZMwlRNVBJ9q5uu_3B70MKV9_itceMo
+Message-ID: <CADrjBPomC-QaL8aR4QsEPm+Uu5_QoWQZUomLMZt+09-ywH3wjA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: google,gs101-clock: fix
+ alphanumeric ordering
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com, 
+	Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+	Doug Anderson <dianders@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Luca,
+Hi Andr=C3=A9,
 
-On Fri, Jan 9, 2026 at 11:03=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
-n.com> wrote:
+On Mon, 12 Jan 2026 at 14:26, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> of_drm_find_bridge() is deprecated. Move to its replacement
-> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-> is put when done.
+> On Mon, 2026-01-12 at 14:16 +0000, Peter Griffin wrote:
+> > Fix the places that don't have correct alphanumeric ordering. This will
+> > make reasoning about where to add future entries more straightforward.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 6 ++=
++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock=
+.yaml b/Documentation/devicetree/bindings/clock/google,gs101-
+> > clock.yaml
+> > index 09e679c1a9def03d53b8b493929911ea902a1763..a8176687bb773ae90800b9c=
+256bcccebfdef2e49 100644
+> > --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> > @@ -27,13 +27,13 @@ description: |
+> >  properties:
+> >    compatible:
+> >      enum:
+> > -      - google,gs101-cmu-top
+> >        - google,gs101-cmu-apm
+> > -      - google,gs101-cmu-misc
+> >        - google,gs101-cmu-hsi0
+> >        - google,gs101-cmu-hsi2
+> > +      - google,gs101-cmu-misc
+> >        - google,gs101-cmu-peric0
+> >        - google,gs101-cmu-peric1
+> > +      - google,gs101-cmu-top
 >
-> dw_hdmi->bridge is used only in dw_hdmi_top_thread_irq(), so in order to
-> avoid potential use-after-free ensure the irq is freed before putting the
-> dw_hdmi->bridge reference.
->
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> If we keep 'top' at the top as one outlier, it'd reflect that it is the
+> top unit and all other CMUs are children of it.
 
-[...]
-> @@ -789,8 +789,12 @@ static void meson_dw_hdmi_unbind(struct device *dev,=
- struct device *master,
->                                    void *data)
->  {
->         struct meson_dw_hdmi *meson_dw_hdmi =3D dev_get_drvdata(dev);
-> +       struct platform_device *pdev =3D to_platform_device(dev);
-> +       int irq =3D platform_get_irq(pdev, 0);
+Thanks for the review. I opted to just keep it alphanumeric so it's
+(hopefully) obvious what all future ordering should be.
+
 >
-> +       devm_free_irq(dev, irq, meson_dw_hdmi);
-I have one question (so I can understand things better):
-is there a particular reason why you went with free'ing the IRQ
-instead of "just" masking it (so the hardware won't fire anymore of
-those IRQs)?
+> >
+> >    clocks:
+> >      minItems: 1
+> > @@ -70,8 +70,8 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > -              - google,gs101-cmu-top
+> >                - google,gs101-cmu-apm
+> > +              - google,gs101-cmu-top
+>
+> And here.
+>
+> Either way, I don't mind:
+> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
+regards,
 
-Best regards,
-Martin
+Peter
