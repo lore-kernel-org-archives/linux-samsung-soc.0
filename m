@@ -1,119 +1,144 @@
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69B2EBDC8
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 17:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE9B1DC985
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 17:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768325274; cv=none; b=sq1+PQdstVprMzNLwutBGS6PDX2vUmmJ9+NhQqz7MKZZpfb31Z6sF87cLxsvjxnt57GU8mV4zLsloKemiC0NDtgTwWrB38TOS1u4xuIm9Z/gp+YCPsIXkPSyVADd+3/JexPFK4BOGnGx3AZMxElgxkSMpiriLLq1jJoQCjzFkn0=
+	t=1768325476; cv=none; b=jHJssKVkh+0nfXER3INWZP2yu7ti1isdHcYm4c5xFbK35GyOc5HOX2wNkq9xtd0LxSTlrEWYrO33QUwVVJT5AUpx6QtFzp7sG641qCQxdO4T3vsdVIOZQbyu+qjosyEAmlP7z/MZ8JZ9A5RgfeXnUIY3uJYQsrCK6hwWPBOitiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768325274; c=relaxed/simple;
-	bh=frju41CddkaBY4Kzofa1mx3Txjlx1h9nbA7zsFc4BMM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jHFgHGbnFRnuJMvSgAEElJRJIxgG03SB7ld/FNk9cwwk4g+iW14aLem5w6EO42weiLzPP/20DRGBrq/KZQLvdyFuEXG9JVzGUutr/VbYdfSsrsm9Pzlqryxhr0PosvejwcU08+uCcO2Co/JzO3aKzbuCwr3eS1L/xLEuqD4sRcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fMgNnZah; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768325476; c=relaxed/simple;
+	bh=xiQuj7dIdAYhRuOpndzUxPTm1DTPZHyZFRRtiPvKkQw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=A7m7P6J3tX6Jw0gSbkbkBBl22O8fPgd+dqjVW7oIn3L+gp4n2KSt6U5XEdIvrrNu9wkB5Xn098ciAZhP/vpASkX/IswvpQnVD20N49+KkREiPphbauKXYCgTrXDlLGjuA61oHGw37Fue/UaPwug+Vp0fMKXmLFo56FAhIycFt2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SbsgZNDg; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMgNnZah"
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-81f3fcdb556so1643744b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 09:27:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768325272; x=1768930072; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=frju41CddkaBY4Kzofa1mx3Txjlx1h9nbA7zsFc4BMM=;
-        b=fMgNnZah+tRAxSaJewPIFrosBRbo01e9/jZaE9ir/CH03hixdrLA8IZKctOPryUPKu
-         1wEbM6o/hRJuE2eD37Z6LuOCykY+6TujYzSGu93mSarbbDtDNYQdcB1yH781RnW2KLrr
-         e+RHhJIcS5LRIVFlI+vBUUg8kFtyiMMzfmk6qhoo7epDjLfu9DZbFp5FT3lu1XQTsrIK
-         fdjG+oOx7x2IyKkdqe5Xy+P6VprdupsiqmBjUareDBv/fg+JCPAjkKFlKujsN0cZc0hR
-         B3e3jlip0DNZ5BjOIObaKWNfTf1XWPt2vh4fWu7qBl4Mz1cQ+3kxdzOltuTZJGpi1iWy
-         4KeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768325272; x=1768930072;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=frju41CddkaBY4Kzofa1mx3Txjlx1h9nbA7zsFc4BMM=;
-        b=kEOFlffkNgIl1mQCzfy1B3NlDilh/rXvy4Lyu5D43R6C6vmG2JmLlscLaGy03ZbsuD
-         hn+TdDrCN/1I2hBQMudXjTP1LYhBn2COMTiPWbsoMaEUhsLr7jy69twlMo12V50ajFih
-         izrJ2+4Q1wApE6N62iuoJNTwAwykU7Tlq7sXHfloU9VTrRG9+uFRtB36kouB9EqKu8cJ
-         5uL+dkKmMJxxvMfhmckTT0WS/s66Y1bek+Zl6ZWaOTCXpSWNjr0ykgAffPWU5og9AvgW
-         mApmgypWhiKgV22VOpKUrZS5AirwCkL55HC8tvxSSTQPMXtFfXv7U+jY1CWwZgoJJvxa
-         fGkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWs5NkHRhHhMDuEFssVxVp/qtZAhF//o+ExFxC3zlLyU109bhINCbX78eHEmsc2dgIi7omkEe6ohzMQhjcVBMdJ6w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWZ8nbP25+nxfuTbWeE5N/PJZaJIYH4UkwYMHo/PuAtqmPvjy3
-	LY78DFrpWiqCUB3XsQ6sclTB/cyIN4+tx4CRTKd5Rr2jHMxgSRB5idEFsPcPTJdUiZY=
-X-Gm-Gg: AY/fxX4zO5ZxA0blL+4cvNgKjRwGwU8LYZ0aS5sJX3F58EyGjVXbs9yDIFozLN7uTlW
-	v9zo/0AaK8PyDCvt0H7kd569K13/OQqf7QW06TXMVaIqUKNMcs2I2E/RdzzFA2O7p6RyhUmHOeI
-	q6/OwAve5v+niUPk3VDxwFQ2UTQoGiGOJb/9l5pJu7oRR3EcCJiGNBLNiGXmhJsUpRu6iupJiO9
-	jVE4/raWogZmorAM6dB0V+OSRG7F8tDoFe4H0PT702U1RxywlTz8doRVJ8I5u78Sc8K5D/TF4kn
-	KCW8tn0raL3BkiCQ16Sc9ICf8UgobWX38jwTkZ5ZBRV1mBrlsjJK5D4DqQ8BYaUT47Xyek7dIWm
-	LOh1CBOlkVQb7pS3z8Jdqb/WpfvdoUNA9Zt3QSZlx+5w0hbNIgapnR+15XIlMyoSCX6SX+6AY7s
-	H+CyWBvna55W+5amoR
-X-Google-Smtp-Source: AGHT+IG41cDPOQCdX3XgrEWI3F6tVAXs0IS7rlseRYjYEyKPvHunMkGKaXtqLwq05QF3FCKe9goC/w==
-X-Received: by 2002:a05:6a20:2583:b0:366:14ac:e204 with SMTP id adf61e73a8af0-3898fa57649mr17093420637.66.1768325272156;
-        Tue, 13 Jan 2026 09:27:52 -0800 (PST)
-Received: from draszik.lan ([212.129.80.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-81f44a94e98sm5809433b3a.69.2026.01.13.09.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 09:27:51 -0800 (PST)
-Message-ID: <4502ece1dc8e949e23f971a93dc06dab2d4f0bf7.camel@linaro.org>
-Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
- drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij	
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Peter Griffin	
- <peter.griffin@linaro.org>, Will McVicker <willmcvicker@google.com>, Juan
- Yescas <jyescas@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org, Bartosz
- Golaszewski	 <bartosz.golaszewski@oss.qualcomm.com>
-Date: Tue, 13 Jan 2026 17:28:20 +0000
-In-Reply-To: <6ace23c4-d858-4bdf-9987-104e706190cd@sirena.org.uk>
-References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
-	 <20260113112244.GE1902656@google.com>
-	 <6ace23c4-d858-4bdf-9987-104e706190cd@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SbsgZNDg"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D72B5C1EC94;
+	Tue, 13 Jan 2026 17:30:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 43C8360701;
+	Tue, 13 Jan 2026 17:31:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 089C0103C81D3;
+	Tue, 13 Jan 2026 18:30:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1768325470; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ArN+gzNluv41ve7tNs9bCuLTGUt8HRF4hQp5onhOiSg=;
+	b=SbsgZNDgkfZHCx/r34yGumijNEEAujBA1Asley4Zy9v924+EMnfgnRIOcSjOdM5mvGqWPR
+	lWsq+4rbWv1be42TFPaquIJOTEqiazGpexh6KgVqdj/vsp21Futc53PdAYnOxHNcXKfXWM
+	UPMA6t4YXAPOUmX4w/xDnACUO3E4LMeMErPwCMH1EWAjKXwOnIsQ28a7Nib3ZS84y0pFQm
+	0r3v24ZarNzuyfppzipCFobDWeOQLNpJc0/4gSmi7B9gJ2tirl0htm/b1q7gv8HVWCGTPs
+	rlMphTDPohwx9XlNXbinFpmLjBit+nuMZZCTpdBFpyRuhJNgeuQUSxvN+fm7cQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 13 Jan 2026 18:30:58 +0100
+Message-Id: <DFNN251V4JL9.2ECEDGOKN8I4F@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v2 2/6] drm/meson/dw-hdmi: convert to
+ of_drm_find_and_get_bridge()
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Kevin
+ Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Inki Dae"
+ <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
+ Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <linux-amlogic@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
+ <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>
+To: "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+X-Mailer: aerc 0.20.1
+References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com> <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-2-8d7a3dbacdf4@bootlin.com> <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com>
+In-Reply-To: <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Mark, Lee,
+Hello Martin,
 
-On Tue, 2026-01-13 at 16:20 +0000, Mark Brown wrote:
-> On Tue, Jan 13, 2026 at 11:22:44AM +0000, Lee Jones wrote:
->=20
-> > MFD pieces look okay to me.
->=20
-> > Once Mark provides his AB, I can merge the set.
->=20
-> Given that the bulk of the series is regulator changes I'd been
-> expecting to take it?
+On Mon Jan 12, 2026 at 11:21 PM CET, Martin Blumenstingl wrote:
+> Hi Luca,
+>
+> On Fri, Jan 9, 2026 at 11:03=E2=80=AFAM Luca Ceresoli <luca.ceresoli@boot=
+lin.com> wrote:
+>>
+>> of_drm_find_bridge() is deprecated. Move to its replacement
+>> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure i=
+t
+>> is put when done.
+>>
+>> dw_hdmi->bridge is used only in dw_hdmi_top_thread_irq(), so in order to
+>> avoid potential use-after-free ensure the irq is freed before putting th=
+e
+>> dw_hdmi->bridge reference.
+>>
+>> Acked-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>
+> [...]
+>> @@ -789,8 +789,12 @@ static void meson_dw_hdmi_unbind(struct device *dev=
+, struct device *master,
+>>                                    void *data)
+>>  {
+>>         struct meson_dw_hdmi *meson_dw_hdmi =3D dev_get_drvdata(dev);
+>> +       struct platform_device *pdev =3D to_platform_device(dev);
+>> +       int irq =3D platform_get_irq(pdev, 0);
+>>
+>> +       devm_free_irq(dev, irq, meson_dw_hdmi);
+> I have one question (so I can understand things better):
+> is there a particular reason why you went with free'ing the IRQ
+> instead of "just" masking it (so the hardware won't fire anymore of
+> those IRQs)?
 
-Just FYI:
-1) I just noticed I have to rebase/resend this mainly due to
-patch context of the binding updates.
+One reason is symmetry: _bind requests the irq, so _unbind does the
+reverse.
 
-2) this series depends on another MFD series of mine
-https://lore.kernel.org/all/20260113-s5m-alarm-v3-0-855a19db1277@linaro.org=
-/
-(again only due to patch context) which is still pending.
+Another is I don't have the hardware, so I wanted my changes to be as small
+and clear as possible.
 
-I was under the (perhaps incorrect) impression that changes that touch
-MFD always go via the MFD tree. I guess that's not the case. I'll update
-the relevant phrasing in the cover letter with whatever you two decide :-)
+In principle one could request/free the irq in probe/remove and then
+enable/disable it in bind/unbind. Whether it would be a good or bad idea I
+don't know, but surely it would be more complex and I wouldn't want to do
+it without any chance to test it on hardware.
 
+Also, that would only optimize the case of multiple bind/unbind cycles,
+which are not quite realistic without bridge hotplug. And brigde hotplug
+does not exist yet in mainline, and when it will arrive it will be used
+only for a few use cases.
 
-Cheers,
-Andre'
+I hope this answers your question.
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
