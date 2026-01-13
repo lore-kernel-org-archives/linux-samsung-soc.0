@@ -1,144 +1,81 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE9B1DC985
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 17:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B9332ED30;
+	Tue, 13 Jan 2026 21:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768325476; cv=none; b=jHJssKVkh+0nfXER3INWZP2yu7ti1isdHcYm4c5xFbK35GyOc5HOX2wNkq9xtd0LxSTlrEWYrO33QUwVVJT5AUpx6QtFzp7sG641qCQxdO4T3vsdVIOZQbyu+qjosyEAmlP7z/MZ8JZ9A5RgfeXnUIY3uJYQsrCK6hwWPBOitiI=
+	t=1768340182; cv=none; b=BnjTm47cYiQshwhgiIuRxdnF0kA9ug+kD09LX5qYs6iHYN6mV3XH5jLhDb22A75SsNL+0Kk/vhProzaBiHZtegbgVrNEXtQea3fFFrijkH93WJzhhzWb2Jfh18WDsDdvaz1+7ZYydUn1zOo0T+WdxORgy98l9b+clLEcmrQzr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768325476; c=relaxed/simple;
-	bh=xiQuj7dIdAYhRuOpndzUxPTm1DTPZHyZFRRtiPvKkQw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=A7m7P6J3tX6Jw0gSbkbkBBl22O8fPgd+dqjVW7oIn3L+gp4n2KSt6U5XEdIvrrNu9wkB5Xn098ciAZhP/vpASkX/IswvpQnVD20N49+KkREiPphbauKXYCgTrXDlLGjuA61oHGw37Fue/UaPwug+Vp0fMKXmLFo56FAhIycFt2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SbsgZNDg; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1768340182; c=relaxed/simple;
+	bh=FEkMizbDSsQypYg+svblccChMUIqdyLjDJVlgTL1oeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/mTC91Kq1uXK0tM4seaxrI0YUTp4WwbSqg8yt+CBcwcXnwDQfB2lCj/skESQe1xtxZUMrMt7mBoSIBbWf4DguFYFgafOoUuU5gyyjiNh8tSuU+EPO9LAJjd9TZgqZbX1YqXEzRZlalkNSJ2GYl3J4MpZiQLEBSkgCanAO7mAH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKYTYVTY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SbsgZNDg"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D72B5C1EC94;
-	Tue, 13 Jan 2026 17:30:45 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 43C8360701;
-	Tue, 13 Jan 2026 17:31:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 089C0103C81D3;
-	Tue, 13 Jan 2026 18:30:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1768325470; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ArN+gzNluv41ve7tNs9bCuLTGUt8HRF4hQp5onhOiSg=;
-	b=SbsgZNDgkfZHCx/r34yGumijNEEAujBA1Asley4Zy9v924+EMnfgnRIOcSjOdM5mvGqWPR
-	lWsq+4rbWv1be42TFPaquIJOTEqiazGpexh6KgVqdj/vsp21Futc53PdAYnOxHNcXKfXWM
-	UPMA6t4YXAPOUmX4w/xDnACUO3E4LMeMErPwCMH1EWAjKXwOnIsQ28a7Nib3ZS84y0pFQm
-	0r3v24ZarNzuyfppzipCFobDWeOQLNpJc0/4gSmi7B9gJ2tirl0htm/b1q7gv8HVWCGTPs
-	rlMphTDPohwx9XlNXbinFpmLjBit+nuMZZCTpdBFpyRuhJNgeuQUSxvN+fm7cQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKYTYVTY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36014C16AAE;
+	Tue, 13 Jan 2026 21:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768340182;
+	bh=FEkMizbDSsQypYg+svblccChMUIqdyLjDJVlgTL1oeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lKYTYVTY2nqg+BQH/i5PvS6FoyoODvwBzij8SP8vPrb4+MurhvFUSXQbPuG1U1rzW
+	 LVyclwmUIVHDVYlUrAwI5//tA8K58bumt/c/yr+D0c/wwaUyWfljPr2fqfb1wdQk3P
+	 fJNqdTFqU391Ncj5t1QNEuz8fZzeunfYG0cxN9FBc0GCzA9GVftZtzXEqS9HcL4RyN
+	 YY7rVG4kp6QHVyjD9702xOXOIGSqkyV5mTM8yTz2xhyiQ8xvHTwzTxB4I7MWAAlMBs
+	 jZc9xZ+zkJ6E/K933mOi6U+wH1/s/xbGPOO38WCWQq6PKQ+Lv27SN3eLsLkJsMyL+k
+	 pU9FmDJkUpgdQ==
+Date: Tue, 13 Jan 2026 15:36:21 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Juan Yescas <jyescas@google.com>, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Doug Anderson <dianders@google.com>, kernel-team@android.com
+Subject: Re: [PATCH v3 1/5] dt-bindings: clock: google,gs101-clock: fix
+ alphanumeric ordering
+Message-ID: <176834017914.197388.17009547252471169772.robh@kernel.org>
+References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
+ <20260113-dpu-clocks-v3-1-cb85424f2c72@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 13 Jan 2026 18:30:58 +0100
-Message-Id: <DFNN251V4JL9.2ECEDGOKN8I4F@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v2 2/6] drm/meson/dw-hdmi: convert to
- of_drm_find_and_get_bridge()
-Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Kevin
- Hilman" <khilman@baylibre.com>, "Jerome Brunet" <jbrunet@baylibre.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Shawn Guo"
- <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Matthias
- Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Inki Dae"
- <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
- Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>, "Laurent Pinchart"
- <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
- <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <linux-amlogic@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
- <linux-mediatek@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>
-To: "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
-X-Mailer: aerc 0.20.1
-References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com> <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-2-8d7a3dbacdf4@bootlin.com> <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com>
-In-Reply-To: <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260113-dpu-clocks-v3-1-cb85424f2c72@linaro.org>
 
-Hello Martin,
 
-On Mon Jan 12, 2026 at 11:21 PM CET, Martin Blumenstingl wrote:
-> Hi Luca,
->
-> On Fri, Jan 9, 2026 at 11:03=E2=80=AFAM Luca Ceresoli <luca.ceresoli@boot=
-lin.com> wrote:
->>
->> of_drm_find_bridge() is deprecated. Move to its replacement
->> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure i=
-t
->> is put when done.
->>
->> dw_hdmi->bridge is used only in dw_hdmi_top_thread_irq(), so in order to
->> avoid potential use-after-free ensure the irq is freed before putting th=
-e
->> dw_hdmi->bridge reference.
->>
->> Acked-by: Maxime Ripard <mripard@kernel.org>
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->
-> [...]
->> @@ -789,8 +789,12 @@ static void meson_dw_hdmi_unbind(struct device *dev=
-, struct device *master,
->>                                    void *data)
->>  {
->>         struct meson_dw_hdmi *meson_dw_hdmi =3D dev_get_drvdata(dev);
->> +       struct platform_device *pdev =3D to_platform_device(dev);
->> +       int irq =3D platform_get_irq(pdev, 0);
->>
->> +       devm_free_irq(dev, irq, meson_dw_hdmi);
-> I have one question (so I can understand things better):
-> is there a particular reason why you went with free'ing the IRQ
-> instead of "just" masking it (so the hardware won't fire anymore of
-> those IRQs)?
+On Tue, 13 Jan 2026 10:58:58 +0000, Peter Griffin wrote:
+> Ensure children of cmu_top have alphanumeric ordering. Top is special as it
+> feeds all the other children CMUs. This ordering then matches the
+> clk-gs101.c file.
+> 
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> Changes in v3:
+>  - keep 'top' first and alphanumeric for cmu_top children (André)
+> ---
+>  Documentation/devicetree/bindings/clock/google,gs101-clock.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-One reason is symmetry: _bind requests the irq, so _unbind does the
-reverse.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Another is I don't have the hardware, so I wanted my changes to be as small
-and clear as possible.
-
-In principle one could request/free the irq in probe/remove and then
-enable/disable it in bind/unbind. Whether it would be a good or bad idea I
-don't know, but surely it would be more complex and I wouldn't want to do
-it without any chance to test it on hardware.
-
-Also, that would only optimize the case of multiple bind/unbind cycles,
-which are not quite realistic without bridge hotplug. And brigde hotplug
-does not exist yet in mainline, and when it will arrive it will be used
-only for a few use cases.
-
-I hope this answers your question.
-
-Best regards,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
