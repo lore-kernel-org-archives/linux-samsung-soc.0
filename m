@@ -1,92 +1,105 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E5E38BDBD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 11:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23DC350A1E;
+	Tue, 13 Jan 2026 11:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768303310; cv=none; b=lUV6hNNT5ebtSBic/b1cCixLixJ4BNA4BmwMAeolJIWja0nVDFAGeLTWxIPcxFECSDQ42ls3kGTGfCGRSSl98DA509rCK5HPHhT6XKRHRmpEXSjt23huKxbyvuBQYkhPoT8XphR9BS2svNz1gxhJJNt4HfvzLgdmk/prZQt+VCg=
+	t=1768303371; cv=none; b=j8BtUc5uHrUrucQhq5ksCAppKD9WiNgbVn7eeVs9D6L33YDOPGDxpdGkP/M7L55mtsmoG8GVAWmTYI8/mwDFly9k6KyObWAg1IxCnGNRyaAsZfQrE9IubHA/aMI6sTznF4Hg2z05CQj4LaVT1zHS8UNOetyp+DCXOdCW7Je7Weo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768303310; c=relaxed/simple;
-	bh=qgaNMlo0ecxDk7l7zB9QRZDOYv3w+8Edx+hFHzajMuE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tgEd/m9mDzNPxEjqHSENCUPKUk5nRib5jbqiZlEFWENaJw598gwZN1otaOIKIxssHpwuDb74hzpfl3IbPTAgRCtHsnoGZgt4tJhCHq5BGo/1BRlB1UWpm3PlzJLcvJceHRMRmaS+H7CVS+BnwyPywEvH12L92KPf9UeyDtlaQCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vfcSL-00066d-2T; Tue, 13 Jan 2026 12:21:01 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vfcSI-000PhR-1E;
-	Tue, 13 Jan 2026 12:20:57 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vfcSH-0000000051r-2Pxl;
-	Tue, 13 Jan 2026 12:20:57 +0100
-Message-ID: <a2d639102780d45eede4fa8a2c74b72b2ce3ac7a.camel@pengutronix.de>
-Subject: Re: [PATCH v2 3/6] drm/imx/dw-hdmi: convert to
- of_drm_find_and_get_bridge()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Andrzej Hajda	
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman	 <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl	
- <martin.blumenstingl@googlemail.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam	 <festevam@gmail.com>, Chun-Kuang Hu
- <chunkuang.hu@kernel.org>, Matthias Brugger	 <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>, Inki
- Dae <inki.dae@samsung.com>,  Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski	
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Laurent Pinchart	
- <laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen	
- <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham	
- <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven	
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Hui Pu	
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Date: Tue, 13 Jan 2026 12:20:57 +0100
-In-Reply-To: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-3-8d7a3dbacdf4@bootlin.com>
-References: 
-	<20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
-	 <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-3-8d7a3dbacdf4@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1768303371; c=relaxed/simple;
+	bh=oc6rbIhLu0947i6MU1E3FFCo0BLhniry+Tepq+2kJZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HODvJrQSCju5mxOxChSwQRGbeAkpemcOjokShXT9RQlzjTDO5u5yB7zdwEjaY03C9038udVLXF7dEY1Azd94zIsYDvasTgrAlD6JnCJ6bNBDRskBP8ZqiPl7edGoENrQn29pkliafqkBytZNhcigTtt8fpyWsRZtfUBZP0oKH1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgGZ20Jm; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgGZ20Jm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C99C19425;
+	Tue, 13 Jan 2026 11:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768303371;
+	bh=oc6rbIhLu0947i6MU1E3FFCo0BLhniry+Tepq+2kJZc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DgGZ20JmLTJ8/zk/Kw8qsc1eANt3U8MbMDMef/Blvm0FEDIXdL32FN134RIv0gdFE
+	 cUOuhH4mZIbPaADniOY8Mg7APmE/sP3OXhsc1E33caaYLCdcubNuQWiMqc5c6nKMMC
+	 vx1Ii8ZaJz2L69dcybQPNcQ2lexf4EA7aWzUZ/c+5Q5loJklwH1vRuoUjXur0P1j5p
+	 7isIIp3u08K3cLosjcoeOThnLD1N0aCejeZthW0mXMsZ12VviitChatBFKXOeYlCbN
+	 zKWJHzDr4vIfbBwsPe6VU4uR8Ar5M94MBRrPLxlQdQVwuI+cYfJW89V53fq1CXJ2ii
+	 qIg0vbaVravig==
+Date: Tue, 13 Jan 2026 11:22:44 +0000
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
+ drivers
+Message-ID: <20260113112244.GE1902656@google.com>
+References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 
-On Fr, 2026-01-09 at 11:02 +0100, Luca Ceresoli wrote:
-> of_drm_find_bridge() is deprecated. Move to its replacement
-> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-> is put when done.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On Mon, 05 Jan 2026, André Draszik wrote:
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> This series extends the existing S2MPG10 PMIC driver to add support for
+> the regulators, and adds new S2MPG11 core and regulator drivers.
+> 
+> --- dependency note ---
+> This series must be applied in-order, due to the regulator drivers
+> depending on headers & definitions added by the bindings and core
+> drivers. I would expect them all to go via the MFD tree.
+> 
+> The MFD patches in this series also depend on my Samsung MFD patches
+> due to patch context:
+> https://lore.kernel.org/all/20251217-s5m-alarm-v2-0-b7bff003e94c@linaro.org/
+> 
+> While these patches compile, regulator probe will only be successful
+> with my deferrable regulators patches from
+> https://lore.kernel.org/r/20251227-regulators-defer-v1-0-3104b22d84cb@linaro.org
+> --- end ---
+> 
+> The patches are kept together in one series, due to S2MPG11 and its
+> regulators being very similar to S2MPG10.
+> 
+> The Samsung S2MPG11 PMIC is a Power Management IC for mobile
+> applications with buck converters, various LDOs, power meters, and
+> additional GPIO interfaces. It typically complements an S2MPG10 PMIC in
+> a main/sub configuration as the sub-PMIC and both are used on the
+> Google Pixel 6 and 6 Pro (oriole / raven).
+> 
+> A DT update for Oriole / Raven to enable these is required which I will
+> send out separately.
+> 
+> Cheers,
+> Andre'
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-regards
-Philipp
+MFD pieces look okay to me.
+
+Once Mark provides his AB, I can merge the set.
+
+[...]
+
+-- 
+Lee Jones [李琼斯]
