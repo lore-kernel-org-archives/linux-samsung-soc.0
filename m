@@ -1,243 +1,308 @@
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F9838F95B
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 12:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4387838F944
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768308617; cv=none; b=rFYnVAOBr14tUv2qBVMn6K/QSy2Sg4g1drkfMpUw49F20xezTo9u5Yf7R8+1fXb3eb0dfstOqIIaoATNeeuuaFvTLLcvMIJy6D6/XVHm5i5EginGjqB+HaQSPyzZjQoLvVY/DUeu6hcQU7BgWD/mmGv1If6JkTJbqselYjreAac=
+	t=1768312088; cv=none; b=rvJk5QRIyeFNzWvlqN5qIr3i2vefDWz2tRnflPDcwSHbaq01JqxUUTwO0Ai+cuLu9JsAfVvSDKrEj/BrRvDE/J86dRMKwY24SkwH1/a6OBkEfGoVyO2HNKSLgHCbSxrPPEgUhdfQXqDId5J3Ah7+Ll0og/rhQ6bHylEJK2y7vF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768308617; c=relaxed/simple;
-	bh=pldzOsbv7vqhDc1HP8HwsXxb+ROaOBWObRlyCIAfto0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BrFxMwhv9EnG5igH3hn6CT2AdCZpqct7EkyDn2i1ykA1ya5v65CeiOeeJ0N9vNFFYji4bH9pNaP9VxsssD/z2n6SwbzQh0P5chY0Lpqkv3+c12QbhUqTj2RHnySX2gLNPDRmQOli36aXLQXfVuggvN8WjGJwoIzzgEJJuY8WTyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=eOtdakCj; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1768312088; c=relaxed/simple;
+	bh=vYdy+ons5VJFgXftP+MxcQtM1iizr7HoJy+lPu4vEQc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q37YwUXvdZ9+5Fs0YB9L8MiGizJhv5TGvRaIliF2jh5gtDXpe6aqa5PRrZawJoLqT88PXwtHTQdq2X650963pamAhB9wdQSfpF2auO4r2cRsGq7MURxTeMX/kjONaPzoS6UAtzFs2VVzZ2lkGH5m5U4zBDuaJnnGgdfJnJASuFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iZcLiv4y; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="eOtdakCj"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1768308606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b5HYdsqnn7iZNMGRXG9w9QT0yjmplZ77lGq34gX7Onw=;
-	b=eOtdakCjzzdNvMvJRBjAwgYBYrJaLOoETJO/bBpZMWfdEZImS4wR9IAOPAU0iivX3bfLn9
-	YULvRA+NsbsEnJVR01Pig4gZ7kcMeg6Jmu0Isuz9dZTtRiKTLDlaWSfbIIY7t61yfNl9DV
-	J0bYPilkb+G55ZAPXKMhi6Tsc+Ix/58=
-From: Henrik Grimler <henrik@grimler.se>
-Date: Tue, 13 Jan 2026 13:49:31 +0100
-Subject: [PATCH v4 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iZcLiv4y"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c3e921afad1so3152985a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2026 05:48:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1768312085; x=1768916885; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uLg+IuEqdWVCpF7uB5dpjBwkCvGq5aQKIvOco8dtWnY=;
+        b=iZcLiv4yRL8DvjGD3yEhR1Sf8YfRZFxK26qhFg6uu2LxSK5CY+pxkDetxeXaQODNDU
+         lpCSC/scmhPP/LVgWI9IC3GR5wxEkY9kZQVn6JwW6rpeXEAx2RxvTUzkweIcoEajsr6d
+         6/vFYljhPCXvJ3jk+i6L555OmVUL1EJDunILOQTHxfBpGNAvgadceMZM3xnvj35TYFcE
+         IsgP8zKUmtT0z5y/UbX9Wst9mxA1cyP34Jn8N75xUf0/JI/8TGolJzx4j+lJ2N0NnnSC
+         XmfxRfZPL+U/2AUH4qvEH/7rPPDlN8dY3KNjxT2KtJC+3dmA2wGemrLMPN7+A0mKWRVh
+         TVDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768312085; x=1768916885;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uLg+IuEqdWVCpF7uB5dpjBwkCvGq5aQKIvOco8dtWnY=;
+        b=LS8OO/8amSm/CyFqBAFeeAu99YY2zZfzy6J9bIT2XhTvkY7f7Mv0z+izsQqpTvJZ7s
+         jWzo5LDnIIHXRethgQWaHijujSlMl6VlG6Ivl4enB989kLIol3ZrQlmWa1CEQtk3nm7p
+         rfE/5eNgBCsRmkd571JlKhCHOewiFwldUvxND234P0hvlOzBXrarVMbJBFgS1tWr53Tl
+         IhgWzsIIwXTXMbNpFwpsbhYoC3/WoF0+85xf1U08oCRYSUgfLE6Qkr9luq2CegpZ7KSL
+         LAV7aftxCQ9CBs5dfUwj53vZVlr5hVHCjWRo/Rcq95tqb0oNJ4vNuLa6G7NOeKCIS3QM
+         7dPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXrRwKem5muxYKtGdw3fIHdtI9xOSXKGAVMl4+3814iJWwtmiGBgUzrqvYw6JMT9e9jZS8mEEWlsDvPb9vzaeLjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzto7MAtVBckpQ75HCgtNZK7CQ6+JHvChcjzlj/v4u117NBtLo0
+	95FfqMK6NolDwUPzXu0B8UOljGK8Ut9h7i23iMPtrvsVGkKnWZ0uTbOVDGfL1HHn6/Q=
+X-Gm-Gg: AY/fxX6pbecdOIQMAsvtrK51EvdD15vtJqhF3uDmcXJQMB8FgX8c4gvjPc4kHJzmo6D
+	5kT/L9TVxKFpQrIQadO6glOIyeTkYJlEjoA98b4r1wAbFgKZK+YJBTG6PMGLddjBE7dJ4CUn4ko
+	C+aF1lhEdV3/jOF1CryTzcqjGjs2jfRj2EWKybMbzPtwGVJq0l54XNmOEnSQXdnPshnvPG3qrD0
+	k/5r76kwRClfqtsqqt1EDivFTQeRwgR2DUbC3DLYPboGp5W+zf0L5D0WulX7niG91wAQyI34xeh
+	rXTxAlGb0uRr7sL3KAuTTgELeGgW9e7eULf/fEDkAtrO9ix6eWM/gQOtWspNjzA4IPdp7c5k1ep
+	yn0vIwzZTfvCT6ML57SZsntR7BKdO3hfwnIuPLCXoh31zCCDYWT+qbu3di6WalLnS+eZX7Fgf3N
+	A8Ucm8RzYjcYNBCTce
+X-Google-Smtp-Source: AGHT+IFeQSct5UA3N1AFmGf5sMYHox3bg3cZpGk+UB6+tvysQdsZKND+0klTKDmYW2n2Whd5IVwbpg==
+X-Received: by 2002:a17:90b:2587:b0:340:c179:365a with SMTP id 98e67ed59e1d1-34f68a29d18mr17579960a91.0.1768312085387;
+        Tue, 13 Jan 2026 05:48:05 -0800 (PST)
+Received: from draszik.lan ([212.129.80.26])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34f5fb64d68sm7978211a91.12.2026.01.13.05.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jan 2026 05:48:05 -0800 (PST)
+Message-ID: <fd0136e17af78dc9960fdff215022fa6ea89f116.camel@linaro.org>
+Subject: Re: [PATCH RESEND v2 3/3] mfd: sec: drop now unused struct
+ sec_pmic_dev::irq_data
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni	
+ <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker
+ <willmcvicker@google.com>, Juan Yescas	 <jyescas@google.com>, Douglas
+ Anderson <dianders@chromium.org>, 	kernel-team@android.com, Kaustabh
+ Chakraborty <kauschluss@disroot.org>, 	linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, 	linux-rtc@vger.kernel.org
+Date: Tue, 13 Jan 2026 13:48:36 +0000
+In-Reply-To: <20260109104534.GF1118061@google.com>
+References: <20251217-s5m-alarm-v2-0-b7bff003e94c@linaro.org>
+	 <20251217-s5m-alarm-v2-3-b7bff003e94c@linaro.org>
+	 <20260109104534.GF1118061@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260113-exynos4-sii9234-driver-v4-3-6e8c0ac14f84@grimler.se>
-References: <20260113-exynos4-sii9234-driver-v4-0-6e8c0ac14f84@grimler.se>
-In-Reply-To: <20260113-exynos4-sii9234-driver-v4-0-6e8c0ac14f84@grimler.se>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
- linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4934; i=henrik@grimler.se;
- h=from:subject:message-id; bh=pldzOsbv7vqhDc1HP8HwsXxb+ROaOBWObRlyCIAfto0=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBpZj9wNYYO4aHtNT011nHB2qQoDPj/pSBnWbTZu
- Z5WMbPfmQ2JATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaWY/cAAKCRCwB25JC3Fh
- a1uUCADHNLW62WImxg6gvZXfbWFpbv6ZGxgwXO3dpOSUpmzEGUl06pv3irk+zD+6By5HGHh9+Jt
- fTpR0J9gv5bY8vOKxWQo5Pi3uYmskWlAOBE0UWDLoAb+f0ZN2nUNe8+j28z4c/9nYMAbvHm8m4Q
- xgzclQPhfWixVXBkQgzCxxeibGfucYFP3DE+XaEpcs3bLjxuHAGLeKPT+RC0hNhj1bFyz/EwjsX
- GZmDv2LO4orIpF9MQhWn/AZNV+DvZUl37BLQepQFMY+ATNS+B8ot0dpA06fRiRa47ozGW368kpB
- fJjLVdymtvrm7NC8pHsD508TBgcxTzglzmOWNtjU+m9H9QqO
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
 
-To use MHL we currently need the MHL chip to be permanently on, which
-consumes unnecessary power. Let's use extcon attached to MUIC to enable
-the MHL chip only if it detects an MHL cable.
+Hi Lee,
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
-v4: collect tags
-v3: add missing return in error path, spotted by Marek
-    Use depends on EXTCON || !EXTCON instead of select
-v2: add dependency on extcon. Issue reported by kernel test robot
-    <lkp@intel.com>
----
- drivers/gpu/drm/bridge/Kconfig   |  1 +
- drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 87 insertions(+), 3 deletions(-)
+Thanks for your review.
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 39385deafc68..a8343df2d424 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -310,6 +310,7 @@ config DRM_SII902X
- config DRM_SII9234
- 	tristate "Silicon Image SII9234 HDMI/MHL bridge"
- 	depends on OF
-+	depends on EXTCON || !EXTCON
- 	help
- 	  Say Y here if you want support for the MHL interface.
- 	  It is an I2C driver, that detects connection of MHL bridge
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index e43248e515b3..72c6aeed6e12 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -19,6 +19,7 @@
- 
- #include <linux/delay.h>
- #include <linux/err.h>
-+#include <linux/extcon.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -26,6 +27,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -170,8 +172,12 @@ struct sii9234 {
- 	struct drm_bridge bridge;
- 	struct device *dev;
- 	struct gpio_desc *gpio_reset;
--	int i2c_error;
- 	struct regulator_bulk_data supplies[4];
-+	struct extcon_dev *extcon;
-+	struct notifier_block extcon_nb;
-+	struct work_struct extcon_wq;
-+	int cable_state;
-+	int i2c_error;
- 
- 	struct mutex lock; /* Protects fields below and device registers */
- 	enum sii9234_state state;
-@@ -863,6 +869,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	return 0;
- }
- 
-+static void sii9234_extcon_work(struct work_struct *work)
-+{
-+	struct sii9234 *ctx =
-+		container_of(work, struct sii9234, extcon_wq);
-+	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-+
-+	if (state == ctx->cable_state)
-+		return;
-+
-+	ctx->cable_state = state;
-+
-+	if (state > 0)
-+		sii9234_cable_in(ctx);
-+	else
-+		sii9234_cable_out(ctx);
-+}
-+
-+static int sii9234_extcon_notifier(struct notifier_block *self,
-+			unsigned long event, void *ptr)
-+{
-+	struct sii9234 *ctx =
-+		container_of(self, struct sii9234, extcon_nb);
-+
-+	schedule_work(&ctx->extcon_wq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sii9234_extcon_init(struct sii9234 *ctx)
-+{
-+	struct extcon_dev *edev;
-+	struct device_node *musb, *muic;
-+	int ret;
-+
-+	/* Get micro-USB connector node */
-+	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-+	/* Then get micro-USB Interface Controller node */
-+	muic = of_get_next_parent(musb);
-+
-+	if (!muic) {
-+		dev_info(ctx->dev,
-+			 "no extcon found, switching to 'always on' mode\n");
-+		return 0;
-+	}
-+
-+	edev = extcon_find_edev_by_node(muic);
-+	of_node_put(muic);
-+	if (IS_ERR(edev)) {
-+		return dev_err_probe(ctx->dev, PTR_ERR(edev),
-+			      "invalid or missing extcon\n");
-+	}
-+
-+	ctx->extcon = edev;
-+	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-+	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-+	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-+	if (ret) {
-+		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
- 					 const struct drm_display_info *info,
- 					 const struct drm_display_mode *mode)
-@@ -915,12 +985,17 @@ static int sii9234_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = sii9234_extcon_init(ctx);
-+	if (ret < 0)
-+		return ret;
-+
- 	i2c_set_clientdata(client, ctx);
- 
- 	ctx->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ctx->bridge);
- 
--	sii9234_cable_in(ctx);
-+	if (!ctx->extcon)
-+		sii9234_cable_in(ctx);
- 
- 	return 0;
- }
-@@ -929,7 +1004,15 @@ static void sii9234_remove(struct i2c_client *client)
- {
- 	struct sii9234 *ctx = i2c_get_clientdata(client);
- 
--	sii9234_cable_out(ctx);
-+	if (ctx->extcon) {
-+		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-+					   &ctx->extcon_nb);
-+		flush_work(&ctx->extcon_wq);
-+		if (ctx->cable_state > 0)
-+			sii9234_cable_out(ctx);
-+	} else {
-+		sii9234_cable_out(ctx);
-+	}
- 	drm_bridge_remove(&ctx->bridge);
- }
- 
+On Fri, 2026-01-09 at 10:45 +0000, Lee Jones wrote:
+> On Wed, 17 Dec 2025, Andr=C3=A9 Draszik wrote:
+>=20
+> > This was used only to allow the s5m RTC driver to deal with the alarm
+> > IRQ. That driver now uses a different approach to acquire that IRQ, and
+> > ::irq_data doesn't need to be kept around anymore.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0drivers/mfd/sec-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 9 +++---
+> > =C2=A0drivers/mfd/sec-core.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > =C2=A0drivers/mfd/sec-irq.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 63 ++++++++++++++++++----------------------
+> > =C2=A0include/linux/mfd/samsung/core.h |=C2=A0 1 -
+> > =C2=A04 files changed, 35 insertions(+), 40 deletions(-)
+> >=20
+> > diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
+> > index 77370db52a7ba81234136b29f85892f4b197f429..0021f9ae8484fd0afc2e47c=
+813a953c91fa38546 100644
+> > --- a/drivers/mfd/sec-common.c
+> > +++ b/drivers/mfd/sec-common.c
+> > @@ -163,6 +163,7 @@ sec_pmic_parse_dt_pdata(struct device *dev)
+> > =C2=A0int sec_pmic_probe(struct device *dev, int device_type, unsigned =
+int irq,
+> > =C2=A0		=C2=A0=C2=A0 struct regmap *regmap, struct i2c_client *client)
+> > =C2=A0{
+> > +	struct regmap_irq_chip_data *irq_data;
+> > =C2=A0	struct sec_platform_data *pdata;
+> > =C2=A0	const struct mfd_cell *sec_devs;
+> > =C2=A0	struct sec_pmic_dev *sec_pmic;
+> > @@ -187,9 +188,9 @@ int sec_pmic_probe(struct device *dev, int device_t=
+ype, unsigned int irq,
+> > =C2=A0
+> > =C2=A0	sec_pmic->pdata =3D pdata;
+> > =C2=A0
+> > -	ret =3D sec_irq_init(sec_pmic);
+> > -	if (ret)
+> > -		return ret;
+> > +	irq_data =3D sec_irq_init(sec_pmic);
+> > +	if (IS_ERR(irq_data))
+> > +		return PTR_ERR(irq_data);
+> > =C2=A0
+> > =C2=A0	pm_runtime_set_active(sec_pmic->dev);
+> > =C2=A0
+> > @@ -240,7 +241,7 @@ int sec_pmic_probe(struct device *dev, int device_t=
+ype, unsigned int irq,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 sec_pmic->device_type);
+> > =C2=A0	}
+> > =C2=A0	ret =3D devm_mfd_add_devices(sec_pmic->dev, -1, sec_devs, num_se=
+c_devs,
+> > -				=C2=A0=C2=A0 NULL, 0, regmap_irq_get_domain(sec_pmic->irq_data));
+> > +				=C2=A0=C2=A0 NULL, 0, regmap_irq_get_domain(irq_data));
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > diff --git a/drivers/mfd/sec-core.h b/drivers/mfd/sec-core.h
+> > index 92c7558ab8b0de44a52e028eeb7998e38358cb4c..8d85c70c232612d1f7e5fb6=
+1b2acd25bf03a62e0 100644
+> > --- a/drivers/mfd/sec-core.h
+> > +++ b/drivers/mfd/sec-core.h
+> > @@ -18,6 +18,6 @@ int sec_pmic_probe(struct device *dev, int device_typ=
+e, unsigned int irq,
+> > =C2=A0		=C2=A0=C2=A0 struct regmap *regmap, struct i2c_client *client);
+> > =C2=A0void sec_pmic_shutdown(struct device *dev);
+> > =C2=A0
+> > -int sec_irq_init(struct sec_pmic_dev *sec_pmic);
+> > +struct regmap_irq_chip_data *sec_irq_init(struct sec_pmic_dev *sec_pmi=
+c);
+> > =C2=A0
+> > =C2=A0#endif /* __SEC_CORE_INT_H */
+> > diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+> > index d992e41e716dcdc060421e1db8475523842a12be..96f53c3617da4cb54f650f9=
+b98c0b934b823ceda 100644
+> > --- a/drivers/mfd/sec-irq.c
+> > +++ b/drivers/mfd/sec-irq.c
+> > @@ -268,26 +268,28 @@ static const struct regmap_irq_chip s5m8767_irq_c=
+hip =3D {
+> > =C2=A0	.ack_base =3D S5M8767_REG_INT1,
+> > =C2=A0};
+> > =C2=A0
+> > -static int s2mpg1x_add_chained_irq_chip(struct device *dev, struct reg=
+map *regmap, int pirq,
+> > -					struct regmap_irq_chip_data *parent,
+> > -					const struct regmap_irq_chip *chip,
+> > -					struct regmap_irq_chip_data **data)
+> > +static struct regmap_irq_chip_data *
+> > +s2mpg1x_add_chained_irq_chip(struct device *dev, struct regmap *regmap=
+, int pirq,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap_irq_chip_data *parent,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0 const struct regmap_irq_chip *chip)
+> > =C2=A0{
+> > +	struct regmap_irq_chip_data *data;
+> > =C2=A0	int irq, ret;
+> > =C2=A0
+> > =C2=A0	irq =3D regmap_irq_get_virq(parent, pirq);
+> > =C2=A0	if (irq < 0)
+> > -		return dev_err_probe(dev, irq, "Failed to get parent vIRQ(%d) for ch=
+ip %s\n", pirq,
+> > -				=C2=A0=C2=A0=C2=A0=C2=A0 chip->name);
+> > +		return dev_err_ptr_probe(dev, irq, "Failed to get parent vIRQ(%d) fo=
+r chip %s\n",
+> > +					 pirq, chip->name);
+> > =C2=A0
+> > -	ret =3D devm_regmap_add_irq_chip(dev, regmap, irq, IRQF_ONESHOT | IRQ=
+F_SHARED, 0, chip, data);
+> > +	ret =3D devm_regmap_add_irq_chip(dev, regmap, irq, IRQF_ONESHOT | IRQ=
+F_SHARED, 0, chip,
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &data);
+> > =C2=A0	if (ret)
+> > -		return dev_err_probe(dev, ret, "Failed to add %s IRQ chip\n", chip->=
+name);
+> > +		return dev_err_ptr_probe(dev, ret, "Failed to add %s IRQ chip\n", ch=
+ip->name);
+> > =C2=A0
+> > -	return 0;
+> > +	return data;
+> > =C2=A0}
+> > =C2=A0
+> > -static int sec_irq_init_s2mpg1x(struct sec_pmic_dev *sec_pmic)
+> > +static struct regmap_irq_chip_data *sec_irq_init_s2mpg1x(struct sec_pm=
+ic_dev *sec_pmic)
+> > =C2=A0{
+> > =C2=A0	const struct regmap_irq_chip *irq_chip, *chained_irq_chip;
+> > =C2=A0	struct regmap_irq_chip_data *irq_data;
+> > @@ -302,27 +304,28 @@ static int sec_irq_init_s2mpg1x(struct sec_pmic_d=
+ev *sec_pmic)
+> > =C2=A0		chained_pirq =3D S2MPG10_COMMON_IRQ_PMIC;
+> > =C2=A0		break;
+> > =C2=A0	default:
+> > -		return dev_err_probe(sec_pmic->dev, -EINVAL, "Unsupported device typ=
+e %d\n",
+> > -				=C2=A0=C2=A0=C2=A0=C2=A0 sec_pmic->device_type);
+> > +		return dev_err_ptr_probe(sec_pmic->dev, -EINVAL, "Unsupported device=
+ type %d\n",
+> > +					 sec_pmic->device_type);
+> > =C2=A0	};
+> > =C2=A0
+> > =C2=A0	regmap_common =3D dev_get_regmap(sec_pmic->dev, "common");
+> > =C2=A0	if (!regmap_common)
+> > -		return dev_err_probe(sec_pmic->dev, -EINVAL, "No 'common' regmap %d\=
+n",
+> > -				=C2=A0=C2=A0=C2=A0=C2=A0 sec_pmic->device_type);
+> > +		return dev_err_ptr_probe(sec_pmic->dev, -EINVAL, "No 'common' regmap=
+ %d\n",
+> > +					 sec_pmic->device_type);
+> > =C2=A0
+> > =C2=A0	ret =3D devm_regmap_add_irq_chip(sec_pmic->dev, regmap_common, s=
+ec_pmic->irq, IRQF_ONESHOT, 0,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irq_chip, &irq_data);
+> > =C2=A0	if (ret)
+> > -		return dev_err_probe(sec_pmic->dev, ret, "Failed to add %s IRQ chip\=
+n",
+> > -				=C2=A0=C2=A0=C2=A0=C2=A0 irq_chip->name);
+> > +		return dev_err_ptr_probe(sec_pmic->dev, ret, "Failed to add %s IRQ c=
+hip\n",
+> > +					 irq_chip->name);
+> > =C2=A0
+> > =C2=A0	return s2mpg1x_add_chained_irq_chip(sec_pmic->dev, sec_pmic->reg=
+map_pmic, chained_pirq,
+> > -					=C2=A0=C2=A0=C2=A0 irq_data, chained_irq_chip, &sec_pmic->irq_dat=
+a);
+> > +					=C2=A0=C2=A0=C2=A0 irq_data, chained_irq_chip);
+>=20
+> That's a shame.
+>=20
+> By keeping irq_data, you could have cleaned-up a bunch of these ugly
+> calls by simply passing around sec_pmic or better yet dev (then extract
+> sec_pmic from there).
+>=20
+> Thus:
+>=20
+> =C2=A0=C2=A0=C2=A0 return s2mpg1x_add_chained_irq_chip(sec_pmic->dev, sec=
+_pmic->regmap_pmic, chained_pirq,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 irq_data, chained_irq_chip, &sec_pmic->irq_data);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 irq_data, chained_irq_chip);
+>=20
+> Becomes:
+>=20
+> =C2=A0=C2=A0=C2=A0 return s2mpg1x_add_chained_irq_chip(dev, chained_pirq,=
+ irq_data, chained_irq_chip);
 
--- 
-2.52.0
+s2mpg1x_add_chained_irq_chip() was modelled to be consistent with other
+drivers doing a similar setup:
+    drivers/mfd/intel_soc_pmic_bxtwc.c
+    drivers/mfd/max77759.c
 
+Maybe they're not good examples, but then maybe they also should be changed=
+,
+to ensure people don't copy from them.
+
+As-is, it can easily be extended for additional chained chips, as the relev=
+ant
+arguments are parameters and it can be used as a template for the benefit o=
+f
+other (new) drivers (writers).
+
+It slightly diverged from above two drivers in v2 since you requested for i=
+t
+to 'return' 'struct regmap_irq_chip_data *' instead of having=C2=A0
+'struct regmap_irq_chip_data **' an additional argument in v1, though.
+
+With your proposed change it won't be able to serve as example code as
+easily. I see benefit in having similar code for similar setup. Anyway,
+I'll change it again.
+
+
+Cheers,
+Andre'
