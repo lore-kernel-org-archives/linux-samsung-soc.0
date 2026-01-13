@@ -1,74 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1BE2F0C49;
-	Tue, 13 Jan 2026 15:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC962E2852;
+	Tue, 13 Jan 2026 16:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768319156; cv=none; b=K1JRs/521E1lEusnChojshmkOsad0GB6XOl9E1OlNxqgn87Y7Zc1EEt03uJjBrshY58WrKtCsQDTmoyQEgFKYtB2+H8zIE4RXJvFwBuzeA7sj+c91K+mzFQU1accmoL0jF7SQoTizZjHQb+U1a4hCE0ZvWRrpT6svH8QzqDeIxk=
+	t=1768321260; cv=none; b=s5/Ds2vKHT8e06cQ86ZunXXoPeNg5e+eP9w7TbKWHRl0Vqn3ykFu3OtB0lJmmjV/jLM9M4PrdXf8gLLRgxnZhEq49bM/dUw8OG/mbYZbgTMFj3BLT+biYSNCc/UUcWtVAWEsGYpvadTrL76Wplyd9Qc81PHpojKE2bHuihO9d18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768319156; c=relaxed/simple;
-	bh=h+Xm2qMGnA5x7FszB8uRvS9zkV/vE1jZSaeLyHnYWl8=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=toDVnUXHeKmHL3nDgcFLSNPA9oHfFpslWe36osGkYUxW6gvXLbGaOddB8Xp8QVDK6VHRV/R2hl+UarFpzTvBm3rPtEqkEIkyFkYPESUy2JUIsVI/M1RqC6f7e2MbENpBScA9L+WFvEAN3ua+bmus2eON9M5dg7w4paocDV/GuXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMyBMdgK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768321260; c=relaxed/simple;
+	bh=mEatuWTFMJ7opE9HJSdwyGc6dGCQ/DdKDKcWkmz23oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BN+8zDVNliWinRP5+kgSYKYK85wCzSg7TW/2nvoUsw6Ri/hcv0vnNJHgKFOtt75XvQq9SFJuFuLzDjSU6Lv89bIpUxKa/kNWtE+bIWg2UGtAq8kbqAXKxt1nVqea2RV/2tB6pKAOojAZM1XPzVtSIU1/yDRu9ryHcpVT1f+V9FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KV3SosWT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMyBMdgK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C339AC116C6;
-	Tue, 13 Jan 2026 15:45:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KV3SosWT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74168C116C6;
+	Tue, 13 Jan 2026 16:20:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768319156;
-	bh=h+Xm2qMGnA5x7FszB8uRvS9zkV/vE1jZSaeLyHnYWl8=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=HMyBMdgK8BXz+mo5Mwd2Kqeek8eYBxL+YibX03/VBOFChyul9JzNXslmZumjgxUbb
-	 8kfX6ODB7lXircFx3eLcfbFCDB+8RJLTsVQHRBiXcLjXyDj4tx95cZdOd7cEJEInTW
-	 hDtaYfiGImcMOzG3RthcWeQ/XY0tToCYAVDln6P7gAiZ+HELZNV9e6QHToEtuvWkzj
-	 wUj820GdMq2tuDMOCZMzHXMqGaPgkUZzYTNY4O/2g6MGluLFf+K00uetORWg+ruDtH
-	 PKL1+uVYOFpBrV484prKk1StFnUAN78ptPSrru3FZgTzmy70QOgj8T9ElZELEvMeW9
-	 Zm0Gk9BEpvaKQ==
-Message-ID: <891932fbbb8fdb13285ac2055685eaec@kernel.org>
-Date: Tue, 13 Jan 2026 15:45:53 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v2 6/6] drm: rcar-du: lvds: convert to
- of_drm_find_and_get_bridge()
-In-Reply-To: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-6-8d7a3dbacdf4@bootlin.com>
-References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-6-8d7a3dbacdf4@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "AngeloGioacchino
- Del Regno" <angelogioacchino.delregno@collabora.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "David
- Airlie" <airlied@gmail.com>, "Fabio Estevam" <festevam@gmail.com>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Inki
- Dae" <inki.dae@samsung.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jerome
- Brunet" <jbrunet@baylibre.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Kevin
- Hilman" <khilman@baylibre.com>, "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Krzysztof
- Kozlowski" <krzk@kernel.org>, "Kyungmin Park" <kyungmin.park@samsung.com>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Magnus Damm" <magnus.damm@gmail.com>, "Marek
- Szyprowski" <m.szyprowski@samsung.com>, "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>, "Matthias
- Brugger" <matthias.bgg@gmail.com>, "Maxime Ripard" <mripard@kernel.org>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Robert Foss" <rfoss@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Shawn
- Guo" <shawnguo@kernel.org>, "Simona Vetter" <simona@ffwll.ch>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tomi
- Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Transfer-Encoding: quoted-printable
+	s=k20201202; t=1768321260;
+	bh=mEatuWTFMJ7opE9HJSdwyGc6dGCQ/DdKDKcWkmz23oM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KV3SosWT8JeFdPcEbo6t0sHaI6/MrFynZil+wdvBRH/e9ybAXcDK+HUiBqGQevaIO
+	 HItQFdBqE0bP9uxxGQEVLH6OziEw7by6gN+B3EpPXGpsDXd1UbK+xCW4sPxlrPYsX1
+	 bNtCDfLWJcYHK48WFRhSkHsD/8azi7Ro0cgaIe4YtDj87DPDvQ+dmJWsLCrjX3HdF9
+	 vdVZzfj/AFKGn7bd0TZ+wxrzwdqPtGmMBfR3cFkvYs13JHUzo/d0fYaX80qnFBj5e+
+	 PfudDhEF1f/zxJhZH2Wu6msqTxLjoJdHqU5FHp2cLckKGSA3YzLY9PSgSTe+hAq3Yl
+	 x+76XK9Kp28CA==
+Date: Tue, 13 Jan 2026 16:20:53 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
+ drivers
+Message-ID: <6ace23c4-d858-4bdf-9987-104e706190cd@sirena.org.uk>
+References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
+ <20260113112244.GE1902656@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Yd7U/Fz06TPcBCPq"
+Content-Disposition: inline
+In-Reply-To: <20260113112244.GE1902656@google.com>
+X-Cookie: All models over 18 years of age.
 
-On Fri, 9 Jan 2026 11:02:55 +0100, Luca Ceresoli wrote:
-> of_drm_find_bridge() is deprecated. Move to its replacement
-> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-> is put when done.
->=20
-> Since the companion bridge pointer is used by .atomic_enable, putting its
->=20
-> [ ... ]
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+--Yd7U/Fz06TPcBCPq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks!
-Maxime
+On Tue, Jan 13, 2026 at 11:22:44AM +0000, Lee Jones wrote:
+
+> MFD pieces look okay to me.
+
+> Once Mark provides his AB, I can merge the set.
+
+Given that the bulk of the series is regulator changes I'd been
+expecting to take it?
+
+--Yd7U/Fz06TPcBCPq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlmcOQACgkQJNaLcl1U
+h9DkDAf/aXUdb/ij0NeG8LB1f9KJZA+1JBPDJ+37zcJtQxZa6HVv2KPIZzP6pd5v
+8v2VpOQJ9KvRq3TADwBeVrBDQdJFmG7C6+HN7BcgVsVXsF+0OCgCAyZ0XJaXpmct
+8eyl2jpvQyvtsKzfrMfDrIY2vDVoiqI4U90nfkHP2+HYuUCuym2JEogjTfNp8eHE
+GWEI8a3hBwph0Y334Z0oLZSvbAnV6UpAn/AWa3DBCNpWnOzH0uxuodJTKxg5uivj
+zpOTBhsBWjQ7vWc5ABMV+m2THd1K75xsXbnq5bPB+jTAnVfBp7D/G/o0oJTqmFQn
+xgEWkGl/QJol2+w9orGmnAd/2cJXfg==
+=zs0M
+-----END PGP SIGNATURE-----
+
+--Yd7U/Fz06TPcBCPq--
