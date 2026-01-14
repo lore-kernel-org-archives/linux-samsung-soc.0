@@ -1,82 +1,89 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B315238A9B1
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781D3559DD
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768385327; cv=none; b=hwWkY7cO2Wun+PJ+NWdKu/YlLroAfTBY5jZXtgMCLqUE54yscxDOhYUkqHdPF/2+ikSxbfrv4GvZ3Dx9h7Q3P6k/6jhdxbJnHGVLYzZs814dtODEWiYFxQWKoFJZfGgucf0YW4HrJBo7Kitdm0UDn207c66ZHchenObSRMWXpAk=
+	t=1768385986; cv=none; b=ibNrf2CrUOVXu9jojKS+5ljy3XtWdqTjrN+GPLPIofIky89ssC6ct46dGNKlr9JbxtRAgkp/ZjR95Um8IP6bqnxUgT37dgSoMjj4TNswS29T0mHV+PuNILXCeWLMOHGbi6RoYPc9bS9EVdqwR5WFxOmOcrPLuT6cV5J0jlGds10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768385327; c=relaxed/simple;
-	bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
+	s=arc-20240116; t=1768385986; c=relaxed/simple;
+	bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AXNs9QDYvuMzXO1uCIHinDCraauiurK+iWlXUJjHFZapQgbAfeAwVXWHbOS0uqyrpRhqX4TNN70rpcCN9oa6ffV7uoBTK0BuZQjmRO5mRXHZ3DqABu4sPykaeujIj5D9S2Cye2cYsabINLK/EL0nYXxavD4CuyQxMf+DTjmqHpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ghupxcdT; arc=none smtp.client-ip=74.125.82.175
+	 Content-Type:MIME-Version; b=g/qs139s6NpwE6Kdidl9Du7p5sFH/6sPIXK4z8eKVvZrJU3xWgvr1i4jIB++aBiJQnegVLLF0X3QXsHH0lnpYjlwNBb95RiG1JgaD8PsyJizLJjKmHWLz07yGC5R6CQZv85osQZjiD87Mw+cqvKA7A5bApGGQSH1BIVkJ6HynPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UC6xqira; arc=none smtp.client-ip=74.125.82.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ghupxcdT"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2ac3d5ab81bso6402028eec.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:08:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UC6xqira"
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2b04a410f42so7631406eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:19:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768385324; x=1768990124; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1768385984; x=1768990784; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
-        b=ghupxcdT/aeHjf39mpyt5EcQaM6/SMavCFYJkPV3iqxOvscTht/DQNCF8XpBuKX0OL
-         4dCm4+Xpc6pL0zNpm2sNbj0C9A7k4UyYH1TNm1FGRoo2cHlV01XOYAqYW6j1gTV6tgrq
-         bYNXc82y4LdmyjeNxAYCmig+5ZUEeIuBe/pEswyWFcll+gqgg2Y2HzWId7D77SpA2Kle
-         IBM1RUOF94aIlOWB+E+Z0MipQW1QchLHE1yoh23nMF0CukXbbEDEWXRxmCUcHLeAxHJL
-         Gkw/eKwcsihF1W2axNw17An/0HOioTLhOD5nMXPkOvWTHY4DN7zjHQnHOeLoRzOXXdXK
-         vK6w==
+        bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
+        b=UC6xqirahJ9gIyGufYimhxLA6Qge3YzR1jHRVEXuZM51fue2fvFOv8G5b9KYJ5bO4c
+         BPx99f6iUwAgMmT6Ng9+Dflyc3QW/gdhkF0Tuly113EhLxRKFOkI/cEpN5Ioq5OFqKNq
+         rQfAk0MDMTpXeQSJGQ7ZNZUR2BPm1M5jWhPoRKO2TUGNR8g1EprTBwT1g+GiB2wZF0AG
+         /LyJjIhtaNqplsPIQVsadRu/wBFgTaIvyJf+LbzedsazhGGn4Ap8caKW4ch6eYC65zkk
+         xDKNyBoqfhT1Kb3hXv5BIIdqqeoNNz1Bx4pMljmJtgqyGVE41J0E1qyvGF7X6qvaGW9D
+         DFhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768385324; x=1768990124;
+        d=1e100.net; s=20230601; t=1768385984; x=1768990784;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VVV4Ijmp3Ls2wh1WtR/yQpGrW85l4Zba4/iPpipd0s=;
-        b=QNmmvmeNy7AxjBsuiDg6EykcjRJlg5JpG8NWQ+DhNIdFPoy7J5vHHyP7ZfPLT2FSsJ
-         BihJIM8ttadNR7R5hSOecfuZmjbGt5GAZXwNM4fVUrRmtFqFmcALJEm3O25b9U3CIAqS
-         ySI7F/nK/e53Q3DRskMreFSrHG667m0YHCSRr+F3fuoo1+mZBgJTIA57/CIyXQKa3PEG
-         NO1Dequnh9Q8I0PlVL/iXwGSHBo1QSuMx72rDlKlMZFCQl75Uu6MsK8PA0CLKrXRRkbc
-         g8DfzZMOFwJ7YwQX45ONRZya4jJxoq20x61utv+ZincHkOuNWBv0in9YtQ6wXUnVdcTP
-         pJcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsnCFuR0oFDp+3hDtd4StUrUhLemS6/V5nW8Ye5E8wPW705q8xcESkp1bE4JxkesevQmiGg1hR9h2qEnvQXZ4u2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YycRxFRBJNGVVqZQmXTwn+CxDTHx92iLsQcc2z7dXrpSVX54Hq8
-	bxef8QYvipXzXMoCqgsFbiq+Q6Ou9DlENRcq0QFQ26NGXFWp+FhYu8zSM2jrCoqA7lA=
-X-Gm-Gg: AY/fxX4CQL5bTDFdlABeH/vGPA2HCRG4+POnEdfKJ1lBDmWw3/btCsGQSdZM/NhLuHa
-	pKpuFEuyQjJYxxRPVHA1jVAeSEBbaoNYdGPXeb0dqcfvn1IOaYGcMFdefayXRB/gi/VUZhf4tn/
-	ZtFPrLP0waLk2zFHeTt9xuhubEh2PUhrRDGHz5jmuwfKpbuPlMlhy6ZyIz3nEUurdVBigmpj8SS
-	roZWmJQTMymJ9W2UgWlGR2xOvUzgbfMQByy9GRV/MuiGVpT/C2NuumQCEVu/zJyODnj+vdIou8x
-	0iagrGWBukkgVR4qaegAiYSLDRxtLObY+NkbngzmPh4UjlJpWlTcYgdYF6KjAySj/mDd0QYdi+E
-	bLXXwUnLN6krebjUhVyE0hGznBuH3WGmZwsiqOJ9A3O6Tq81N9MrHg6+fJvMKF/9aBs9zfuoW+k
-	FOeiN/i/YB7S12ASxS
-X-Received: by 2002:a05:7301:4e08:b0:2ac:1c5a:9950 with SMTP id 5a478bee46e88-2b4871eb693mr2526439eec.34.1768385323644;
-        Wed, 14 Jan 2026 02:08:43 -0800 (PST)
+        bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
+        b=IFzHFtQgm2l6kFVvfhJz5B58/O7HowNqbyy8mhEa/1b5S20ITak++bwH1hF4eGYrqu
+         ZNlOEyV4NWH0wsnU8fLYrEUQBenmJdReWLo6IlD8Mv5Eybk8zfEWm5aDdvOvTaMB2ys5
+         NxQ7Agkhaxz57F1CLy74BoQ4kyX2D2b6n4TM6899Az0HkBHlGMz+ztpCjVfgjEkzH4be
+         R5iwXJ7TjruPk/PwlDrDQAU7gaYTzw6sjWuF13i1AvYn+4n6VIANAcG23kuBOJh/FdgP
+         HZZTFxRhhc90zYqF3LpRZO65Xn51qsuMoMtjoRwsbjtR/jdGeWT3WCh1LSumbEBtIXgm
+         cM3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ/3TFH///Se/r7nFbCOWUALkO5p6dD6xzFWYajBUDpJFTs1BWMMtgyW7lB3uFo5Nbd6n8K9qINxUqnQl+n4gdZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHhiXhUS8WHUKqR3PG3VeNIZiJz/twJn7tqPR8qh6IFeFSgfTe
+	g1y4MwT1hF/n6kpoaeVl5XZWrsfGt0ohzCRN49qvEpw05zQcLgo7KW79ac6mCjn3sMY=
+X-Gm-Gg: AY/fxX50g5muYQAHSGEdS1Zqakz+L41o/1LnzLMYSDnFcV6If0UXSxqaKIVdoyY4L/l
+	9omYrRkUKRr17RlA1WRgaX7d7nlSZhrtCaWD+YqiBBTGaLKXa2MfR9ZX9K+Gs0mjs6wxgyEk73k
+	hegaQafJYC01GL1v9LT/6l3LL0phvx2F1tHfnsocxATqoUSHOiluBVkvNvyOvZgVcvuPF3O4oer
+	96sxPyE7yPgE726Ip34LS7sOKegfgC1oshqWwjiPGMQ1vqD3RsNGCg8zTobjjptJdMW26vhnJWk
+	KnyPQ1GP1ocT4b0M2Ad1SVCb0I4Kl2L2qTbzAI9XrxV99G5qE49CI213rbG954ZqwTY/YfVEIgw
+	gQE6I/NkvgGD7r+HfldBpkOYeuY1/Rbt8DdCxChbKpNH3fQLqCzBFszB4UwrnKCy9Pb9uVR8Nqx
+	PhvMm4wGbAxWNNUBDE
+X-Received: by 2002:a05:693c:3008:b0:2a4:3593:ddf3 with SMTP id 5a478bee46e88-2b4871d0cc3mr3162205eec.32.1768385983766;
+        Wed, 14 Jan 2026 02:19:43 -0800 (PST)
 Received: from draszik.lan ([212.129.75.26])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b1707d60b1sm19790893eec.31.2026.01.14.02.08.39
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b170673b2esm19824293eec.6.2026.01.14.02.19.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 02:08:43 -0800 (PST)
-Message-ID: <c449218000258224fd9460e898b9705c1d0d415e.camel@linaro.org>
-Subject: Re: [PATCH v3 4/5] clk: samsung: gs101: add support for Display
- Process Unit (DPU) clocks
+        Wed, 14 Jan 2026 02:19:42 -0800 (PST)
+Message-ID: <48d52ef389ee0e878c36184efbfaa85071f5549a.camel@linaro.org>
+Subject: Re: [PATCH v3 4/5] power: supply: max77759: add charger driver
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki	
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	kernel-team@android.com, Will McVicker <willmcvicker@google.com>, Juan
- Yescas	 <jyescas@google.com>, Doug Anderson <dianders@google.com>
-Date: Wed, 14 Jan 2026 10:09:20 +0000
-In-Reply-To: <20260113-dpu-clocks-v3-4-cb85424f2c72@linaro.org>
-References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
-	 <20260113-dpu-clocks-v3-4-cb85424f2c72@linaro.org>
+To: Amit Sunil Dhamne <amitsd@google.com>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Lee Jones
+ <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Badhri
+ Jagan Sridharan	 <badhri@google.com>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>,  Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim
+ Akhtar	 <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, RD
+ Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+Date: Wed, 14 Jan 2026 10:20:17 +0000
+In-Reply-To: <378ee786-2b44-44e7-a3f6-0cd1db3c0481@google.com>
+References: <20251227-max77759-charger-v3-0-54e664f5ca92@google.com>
+	 <20251227-max77759-charger-v3-4-54e664f5ca92@google.com>
+	 <298ca35590d2180fdcf334f94964b6110e17c606.camel@linaro.org>
+	 <50c29a62-1fdb-4de2-8887-0d551eee5ec0@google.com>
+	 <255d7726-6758-43ed-b35f-db14726bcc9b@google.com>
+	 <2869d309358f27652289c40810ca36b2ec155d1d.camel@linaro.org>
+	 <bb9b9afa-0bfa-428e-9372-549d9ba8603c@google.com>
+	 <6b37b88e9b7ee57eb1c006916fd995c813ab5e6e.camel@linaro.org>
+	 <378ee786-2b44-44e7-a3f6-0cd1db3c0481@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-2+build3 
@@ -87,23 +94,182 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2026-01-13 at 10:59 +0000, Peter Griffin wrote:
-> cmu_dpu is the clock management unit used for the Display Process Unit
-> block. It generates clocks for image scaler, compressor etc.
+On Tue, 2026-01-13 at 16:47 -0800, Amit Sunil Dhamne wrote:
+> Hi Andre',
 >=20
-> Add support for the muxes, dividers and gates in cmu_dpu.
+> On 1/13/26 2:02 AM, Andr=C3=A9 Draszik wrote:
+> > Hi Amit,
+> >=20
+> > On Mon, 2026-01-12 at 11:37 -0800, Amit Sunil Dhamne wrote:
+> > > Hi Andre',
+> > >=20
+> > > On 1/12/26 5:47 AM, Andr=C3=A9 Draszik wrote:
+> > > > Hi Amit,
+> > > >=20
+> > > > On Tue, 2026-01-06 at 17:14 -0800, Amit Sunil Dhamne wrote:
+> > > > > On 1/6/26 3:41 PM, Amit Sunil Dhamne wrote:
+> > > > > > Hi Andre',
+> > > > > >=20
+> > > > > > On 1/5/26 9:32 AM, Andr=C3=A9 Draszik wrote:
+> > > > > > > Hi Amit,
+> > > > > > >=20
+> > > > > > > I haven't done a full review, but a few things caught my eye.
+> > > > > > >=20
+> > > > > > > On Sat, 2025-12-27 at 00:04 +0000, Amit Sunil Dhamne via B4 R=
+elay wrote:
+> > > > > > > > diff --git a/drivers/power/supply/Makefile
+> > > > > > > > b/drivers/power/supply/Makefile
+> > > > > > > > index 4b79d5abc49a..6af905875ad5 100644
+> > > > > > > > --- a/drivers/power/supply/Makefile
+> > > > > > > > +++ b/drivers/power/supply/Makefile
+> > > > > > > > [...]
+> > > > > > > > +
+> > > > > > > > +static irqreturn_t irq_handler(int irq, void *data)
+> > > > > > > > +{
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 struct max77759_charger *chg =3D data;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 struct device *dev =3D chg->dev;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 u32 chgint_ok;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 int i;
+> > > > > > > > +
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 regmap_read(chg->regmap, MAX77759_CHGR_=
+REG_CHG_INT_OK,
+> > > > > > > > &chgint_ok);
+> > > > > > > You might want to check the return value and return IRQ_NONE =
+if it
+> > > > > > > didn't
+> > > > > > > work?
+> > > > > > >=20
+> > > > > > > > +
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ARRAY_SIZE(irqs); i++=
+) {
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (irqs[i] =3D=
+=3D irq)
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 }
+> > > > > > > > +
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 switch (i) {
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case AICL:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "A=
+ICL mode: %s",
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_AICL));
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHGIN:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+HGIN input valid: %s",
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHGIN));
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+HG status okay/off: %s",
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHG));
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case INLIM:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+urrent Limit reached: %s",
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_INLIM));
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case BAT_OILO:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "B=
+attery over-current threshold crossed");
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CC:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+harger reached CC stage");
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CV:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+harger reached CV stage");
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_TO:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+harger reached TO stage");
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_DONE:
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
+harger reached TO stage");
+> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > > > > > Are the above debug messages really all needed?
+> > > > > I forgot to respond to this comment in my previous email.
+> > > > >=20
+> > > > > I think we can keep AICL, BAT_OILO, INLIM. They're either special
+> > > > > conditions (AICL) or faulty conditions (like BAT_OILO) and we can=
+ in
+> > > > > fact keep them at dev_info level. Rest can be removed and a
+> > > > > power_supply_changed() is sufficient.
+> > > > >=20
+> > > > > Let me know what you think?
+> > > > I don't think dev_info() in an interrupt handler is appropriate. At
+> > > > least it should be ratelimited.
+> > > >=20
+> > > > If it's something special / unexpected that needs attention, having
+> > > > a dev_dbg() message only will usually not be visible to anybody.
+> > > I agree. I can change the prints to dev_info_ratelimited for the stuf=
+f
+> > > we care about.
+> > If it's an erroneous condition, maybe warn or even err are more appropr=
+iate?
+> >=20
+> > But then, what is the expectation upon the user observing these message=
+s?
+> > What can or should they do? Who is going to look at these and can do
+> > something sensible based on them?
 >=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> Changes in v3
-> =C2=A0- Alpabetic ordering for all cmu_top children (Andr=C3=A9)
+> The logging will help in postmortem analysis which may or may not=20
+> possible with just publishing uevents to userspace hoping that they log=
+=20
+> the psy properties. Illustrating a situation:
 >=20
-> Changes in v2:
-> =C2=A0- Update gout_dpu_dpu_pclk to gout_dpu_gpc_dpu_pclk (Peter)
-> =C2=A0- Fix dout_dpu_busp parent (Peter)
-> ---
-> =C2=A0drivers/clk/samsung/clk-gs101.c | 283 +++++++++++++++++++++++++++++=
-+++++++++++
-> =C2=A01 file changed, 283 insertions(+)
+> 1. Over current situation happened where the Battery to System current=
+=20
+> exceeds the BAT_OILO threshold. This would also generate an interrupt.
+>=20
+> 2. The MAX77759 takes protective measures if the condition lasts for a=
+=20
+> certain specified time and reset. Resetting will cause Vsys to collapse=
+=20
+> to 0 if the system is only battery powered.
+>=20
+> 3. It'd be better that the BAT_OILO interrupt is logged in dmesg,=20
+> instead of just delegating it to user space as user can debug this=20
+> condition by looking at last_kmsg or pstore.
+>=20
+> 4. This signal can help the user debug conditions such as moisture (this=
+=20
+> signal + contaminant detection) or indicative of a mechanical failure.
+>=20
+> I do agree though that this is a hypothetical or very rare situation and=
+=20
+> if you have a strong opinion against this I am okay with removing the=20
+> prints completely.
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Thanks for details. OK, they sound useful in this case, but should still
+be warn, not dbg.
+
+> > >=20
+>=20
+>=20
+> >=20
+> > Also, I just noticed there is a max77705 charger driver. It seems quite
+> > similar to this one, maybe it can be leveraged / extended?
+>=20
+> Thanks for the feedback. I reviewed the max77705 charger driver. .
+>=20
+> Here is a breakdown of why I believe a separate driver may be a better=
+=20
+> approach:
+
+[...]
+
+Thanks for the analysis, I agree with your conclusion. Mainly I noticed tha=
+t
+as part of AICL interrupt handling that driver does a bit of work, while he=
+re
+we don't. I am wondering if that is applicable here is well.
+
+Cheers,
+Andre'
