@@ -1,275 +1,64 @@
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781D3559DD
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E768A39525F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 10:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768385986; cv=none; b=ibNrf2CrUOVXu9jojKS+5ljy3XtWdqTjrN+GPLPIofIky89ssC6ct46dGNKlr9JbxtRAgkp/ZjR95Um8IP6bqnxUgT37dgSoMjj4TNswS29T0mHV+PuNILXCeWLMOHGbi6RoYPc9bS9EVdqwR5WFxOmOcrPLuT6cV5J0jlGds10=
+	t=1768388253; cv=none; b=q8KzXfvl9D7Yp8/OxQNJl4mneYjZA84PxhTCrsRl9r9TaErmCku2UerP4XxVqTupeu3ir48HlLX8Pf9Rruo9SKa2452uBaX55pZs6zcXgFtPvn8Cb331L01JzjHE8YP8qF9Z7ssUh7X9vd5aG1Pu9m1e5ka9DYXYCwKfN566Dhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768385986; c=relaxed/simple;
-	bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g/qs139s6NpwE6Kdidl9Du7p5sFH/6sPIXK4z8eKVvZrJU3xWgvr1i4jIB++aBiJQnegVLLF0X3QXsHH0lnpYjlwNBb95RiG1JgaD8PsyJizLJjKmHWLz07yGC5R6CQZv85osQZjiD87Mw+cqvKA7A5bApGGQSH1BIVkJ6HynPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UC6xqira; arc=none smtp.client-ip=74.125.82.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1768388253; c=relaxed/simple;
+	bh=SLQWpSAl5g4iziudfBqu2+69O5MMdguWGtFvQeZxn1s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Fr6tPp6pBoirldfbj/FubZ7JdVnl9k4CUbijs7lO7G7R9+XXioRs00KNLMVobTi70JfY1UtMwlEA2V/1agYrV5LbITbEP51yW4bw1jHzhYbyxJFP3JAL0hDgcaj438LfYFA1b/o5seGQhdK96c+Qg2cYa60rX1Loh22u4JSMRVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9odwutN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UC6xqira"
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2b04a410f42so7631406eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2026 02:19:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768385984; x=1768990784; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
-        b=UC6xqirahJ9gIyGufYimhxLA6Qge3YzR1jHRVEXuZM51fue2fvFOv8G5b9KYJ5bO4c
-         BPx99f6iUwAgMmT6Ng9+Dflyc3QW/gdhkF0Tuly113EhLxRKFOkI/cEpN5Ioq5OFqKNq
-         rQfAk0MDMTpXeQSJGQ7ZNZUR2BPm1M5jWhPoRKO2TUGNR8g1EprTBwT1g+GiB2wZF0AG
-         /LyJjIhtaNqplsPIQVsadRu/wBFgTaIvyJf+LbzedsazhGGn4Ap8caKW4ch6eYC65zkk
-         xDKNyBoqfhT1Kb3hXv5BIIdqqeoNNz1Bx4pMljmJtgqyGVE41J0E1qyvGF7X6qvaGW9D
-         DFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768385984; x=1768990784;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8eibjd2N5XiVRRI4N4yeokngezFp8SvzkItH6b1iECM=;
-        b=IFzHFtQgm2l6kFVvfhJz5B58/O7HowNqbyy8mhEa/1b5S20ITak++bwH1hF4eGYrqu
-         ZNlOEyV4NWH0wsnU8fLYrEUQBenmJdReWLo6IlD8Mv5Eybk8zfEWm5aDdvOvTaMB2ys5
-         NxQ7Agkhaxz57F1CLy74BoQ4kyX2D2b6n4TM6899Az0HkBHlGMz+ztpCjVfgjEkzH4be
-         R5iwXJ7TjruPk/PwlDrDQAU7gaYTzw6sjWuF13i1AvYn+4n6VIANAcG23kuBOJh/FdgP
-         HZZTFxRhhc90zYqF3LpRZO65Xn51qsuMoMtjoRwsbjtR/jdGeWT3WCh1LSumbEBtIXgm
-         cM3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ/3TFH///Se/r7nFbCOWUALkO5p6dD6xzFWYajBUDpJFTs1BWMMtgyW7lB3uFo5Nbd6n8K9qINxUqnQl+n4gdZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHhiXhUS8WHUKqR3PG3VeNIZiJz/twJn7tqPR8qh6IFeFSgfTe
-	g1y4MwT1hF/n6kpoaeVl5XZWrsfGt0ohzCRN49qvEpw05zQcLgo7KW79ac6mCjn3sMY=
-X-Gm-Gg: AY/fxX50g5muYQAHSGEdS1Zqakz+L41o/1LnzLMYSDnFcV6If0UXSxqaKIVdoyY4L/l
-	9omYrRkUKRr17RlA1WRgaX7d7nlSZhrtCaWD+YqiBBTGaLKXa2MfR9ZX9K+Gs0mjs6wxgyEk73k
-	hegaQafJYC01GL1v9LT/6l3LL0phvx2F1tHfnsocxATqoUSHOiluBVkvNvyOvZgVcvuPF3O4oer
-	96sxPyE7yPgE726Ip34LS7sOKegfgC1oshqWwjiPGMQ1vqD3RsNGCg8zTobjjptJdMW26vhnJWk
-	KnyPQ1GP1ocT4b0M2Ad1SVCb0I4Kl2L2qTbzAI9XrxV99G5qE49CI213rbG954ZqwTY/YfVEIgw
-	gQE6I/NkvgGD7r+HfldBpkOYeuY1/Rbt8DdCxChbKpNH3fQLqCzBFszB4UwrnKCy9Pb9uVR8Nqx
-	PhvMm4wGbAxWNNUBDE
-X-Received: by 2002:a05:693c:3008:b0:2a4:3593:ddf3 with SMTP id 5a478bee46e88-2b4871d0cc3mr3162205eec.32.1768385983766;
-        Wed, 14 Jan 2026 02:19:43 -0800 (PST)
-Received: from draszik.lan ([212.129.75.26])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b170673b2esm19824293eec.6.2026.01.14.02.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 02:19:42 -0800 (PST)
-Message-ID: <48d52ef389ee0e878c36184efbfaa85071f5549a.camel@linaro.org>
-Subject: Re: [PATCH v3 4/5] power: supply: max77759: add charger driver
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Amit Sunil Dhamne <amitsd@google.com>, Sebastian Reichel
- <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Lee Jones
- <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Badhri
- Jagan Sridharan	 <badhri@google.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>,  Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim
- Akhtar	 <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, RD
- Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Date: Wed, 14 Jan 2026 10:20:17 +0000
-In-Reply-To: <378ee786-2b44-44e7-a3f6-0cd1db3c0481@google.com>
-References: <20251227-max77759-charger-v3-0-54e664f5ca92@google.com>
-	 <20251227-max77759-charger-v3-4-54e664f5ca92@google.com>
-	 <298ca35590d2180fdcf334f94964b6110e17c606.camel@linaro.org>
-	 <50c29a62-1fdb-4de2-8887-0d551eee5ec0@google.com>
-	 <255d7726-6758-43ed-b35f-db14726bcc9b@google.com>
-	 <2869d309358f27652289c40810ca36b2ec155d1d.camel@linaro.org>
-	 <bb9b9afa-0bfa-428e-9372-549d9ba8603c@google.com>
-	 <6b37b88e9b7ee57eb1c006916fd995c813ab5e6e.camel@linaro.org>
-	 <378ee786-2b44-44e7-a3f6-0cd1db3c0481@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9odwutN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A05F7C4CEF7;
+	Wed, 14 Jan 2026 10:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768388252;
+	bh=SLQWpSAl5g4iziudfBqu2+69O5MMdguWGtFvQeZxn1s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=P9odwutNFGfCx5HcX10K4SmWcOVWkbgGJn5kp3wM1W0CNLeCHVtjmua+kNu+Rkycb
+	 /vrOo6DyOfwdzhWR/6WouJPZWFewvjfsG82x++D4ryy6GXbdlWbc5Nq2cg1Kz/BDz1
+	 YhLBGwqI+JNEGCBjRzR6ycxY2eekMzKRwB97dfT3uLzC3Kw23bbHw6rmuPL/iIjnTA
+	 dtTdC0k3+BFg/8fJEKaKOWoOqtCnfd5/PIqVK9dLZE6Cl/q1OZZEqyI2XKrDNPx7LG
+	 Mqa1PcvG/zwmnJaYzD1eSUPUeJuHCoPOG3tQvOjKrzjVB5Ljuv7jrYf2dhKDVSy8sn
+	 mU6A2fH9jEkKg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20260112211554.3755188-1-vz@mleia.com>
+References: <20260112211554.3755188-1-vz@mleia.com>
+Subject: Re: [PATCH] ARM: s3c: remove a leftover hwmon-s3c.h header file
+Message-Id: <176838825137.154403.3766025208225807155.b4-ty@kernel.org>
+Date: Wed, 14 Jan 2026 11:57:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Tue, 2026-01-13 at 16:47 -0800, Amit Sunil Dhamne wrote:
-> Hi Andre',
->=20
-> On 1/13/26 2:02 AM, Andr=C3=A9 Draszik wrote:
-> > Hi Amit,
-> >=20
-> > On Mon, 2026-01-12 at 11:37 -0800, Amit Sunil Dhamne wrote:
-> > > Hi Andre',
-> > >=20
-> > > On 1/12/26 5:47 AM, Andr=C3=A9 Draszik wrote:
-> > > > Hi Amit,
-> > > >=20
-> > > > On Tue, 2026-01-06 at 17:14 -0800, Amit Sunil Dhamne wrote:
-> > > > > On 1/6/26 3:41 PM, Amit Sunil Dhamne wrote:
-> > > > > > Hi Andre',
-> > > > > >=20
-> > > > > > On 1/5/26 9:32 AM, Andr=C3=A9 Draszik wrote:
-> > > > > > > Hi Amit,
-> > > > > > >=20
-> > > > > > > I haven't done a full review, but a few things caught my eye.
-> > > > > > >=20
-> > > > > > > On Sat, 2025-12-27 at 00:04 +0000, Amit Sunil Dhamne via B4 R=
-elay wrote:
-> > > > > > > > diff --git a/drivers/power/supply/Makefile
-> > > > > > > > b/drivers/power/supply/Makefile
-> > > > > > > > index 4b79d5abc49a..6af905875ad5 100644
-> > > > > > > > --- a/drivers/power/supply/Makefile
-> > > > > > > > +++ b/drivers/power/supply/Makefile
-> > > > > > > > [...]
-> > > > > > > > +
-> > > > > > > > +static irqreturn_t irq_handler(int irq, void *data)
-> > > > > > > > +{
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 struct max77759_charger *chg =3D data;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 struct device *dev =3D chg->dev;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 u32 chgint_ok;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 int i;
-> > > > > > > > +
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 regmap_read(chg->regmap, MAX77759_CHGR_=
-REG_CHG_INT_OK,
-> > > > > > > > &chgint_ok);
-> > > > > > > You might want to check the return value and return IRQ_NONE =
-if it
-> > > > > > > didn't
-> > > > > > > work?
-> > > > > > >=20
-> > > > > > > > +
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ARRAY_SIZE(irqs); i++=
-) {
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (irqs[i] =3D=
-=3D irq)
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 }
-> > > > > > > > +
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 switch (i) {
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case AICL:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "A=
-ICL mode: %s",
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_AICL));
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHGIN:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-HGIN input valid: %s",
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHGIN));
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-HG status okay/off: %s",
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 str_yes_no(chgint_ok & MAX77759_CHGR_REG_CHG_INT_CHG));
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case INLIM:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-urrent Limit reached: %s",
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 str_no_yes(chgint_ok & MAX77759_CHGR_REG_CHG_INT_INLIM));
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case BAT_OILO:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "B=
-attery over-current threshold crossed");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CC:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-harger reached CC stage");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_CV:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-harger reached CV stage");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_TO:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-harger reached TO stage");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > > +=C2=A0=C2=A0=C2=A0 case CHG_STA_DONE:
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_dbg(dev, "C=
-harger reached TO stage");
-> > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > Are the above debug messages really all needed?
-> > > > > I forgot to respond to this comment in my previous email.
-> > > > >=20
-> > > > > I think we can keep AICL, BAT_OILO, INLIM. They're either special
-> > > > > conditions (AICL) or faulty conditions (like BAT_OILO) and we can=
- in
-> > > > > fact keep them at dev_info level. Rest can be removed and a
-> > > > > power_supply_changed() is sufficient.
-> > > > >=20
-> > > > > Let me know what you think?
-> > > > I don't think dev_info() in an interrupt handler is appropriate. At
-> > > > least it should be ratelimited.
-> > > >=20
-> > > > If it's something special / unexpected that needs attention, having
-> > > > a dev_dbg() message only will usually not be visible to anybody.
-> > > I agree. I can change the prints to dev_info_ratelimited for the stuf=
-f
-> > > we care about.
-> > If it's an erroneous condition, maybe warn or even err are more appropr=
-iate?
-> >=20
-> > But then, what is the expectation upon the user observing these message=
-s?
-> > What can or should they do? Who is going to look at these and can do
-> > something sensible based on them?
->=20
-> The logging will help in postmortem analysis which may or may not=20
-> possible with just publishing uevents to userspace hoping that they log=
-=20
-> the psy properties. Illustrating a situation:
->=20
-> 1. Over current situation happened where the Battery to System current=
-=20
-> exceeds the BAT_OILO threshold. This would also generate an interrupt.
->=20
-> 2. The MAX77759 takes protective measures if the condition lasts for a=
-=20
-> certain specified time and reset. Resetting will cause Vsys to collapse=
-=20
-> to 0 if the system is only battery powered.
->=20
-> 3. It'd be better that the BAT_OILO interrupt is logged in dmesg,=20
-> instead of just delegating it to user space as user can debug this=20
-> condition by looking at last_kmsg or pstore.
->=20
-> 4. This signal can help the user debug conditions such as moisture (this=
-=20
-> signal + contaminant detection) or indicative of a mechanical failure.
->=20
-> I do agree though that this is a hypothetical or very rare situation and=
-=20
-> if you have a strong opinion against this I am okay with removing the=20
-> prints completely.
 
-Thanks for details. OK, they sound useful in this case, but should still
-be warn, not dbg.
+On Mon, 12 Jan 2026 23:15:54 +0200, Vladimir Zapolskiy wrote:
+> The last user of defined structures s3c_hwmon_pdata and s3c_hwmon_chcfg
+> was removed in commit 0d297df03890 ("ARM: s3c: simplify platform code"),
+> thus the platform data header file itself can be removed also.
+> 
+> 
 
-> > >=20
->=20
->=20
-> >=20
-> > Also, I just noticed there is a max77705 charger driver. It seems quite
-> > similar to this one, maybe it can be leveraged / extended?
->=20
-> Thanks for the feedback. I reviewed the max77705 charger driver. .
->=20
-> Here is a breakdown of why I believe a separate driver may be a better=
-=20
-> approach:
+Applied, thanks!
 
-[...]
+[1/1] ARM: s3c: remove a leftover hwmon-s3c.h header file
+      https://git.kernel.org/krzk/linux/c/900131320bc9a9ec1d84702b2694b813c11c91b7
 
-Thanks for the analysis, I agree with your conclusion. Mainly I noticed tha=
-t
-as part of AICL interrupt handling that driver does a bit of work, while he=
-re
-we don't. I am wondering if that is applicable here is well.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
 
-Cheers,
-Andre'
