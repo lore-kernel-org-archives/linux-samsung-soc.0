@@ -1,101 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECE539E6E2;
-	Wed, 14 Jan 2026 16:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BE53A6409;
+	Wed, 14 Jan 2026 16:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768406534; cv=none; b=MH1vxNoE7pjdMnuRgfGybmCY+Gq/fCzXZs7z+bw4XxAX1giIMVyUSkwQ9+EcfCRMdJq6BLWMq2xQMgffwoj7Fzof57xjcXxp4Zix+H9XWUyc8F05c61rvaunaIbLEFJBhHr6pUvpRJ15gNT7r/5Xt3yzNjqXtfzyOWIwiUC9bOE=
+	t=1768409527; cv=none; b=RiYjIEX6LZTctwDrnJph3FsNSaqWXDNdCVLwv3URDWUtYO6H63SwrGGEZYzz8FXsrZmBiZLsJYMsWmK9Iash8p4mF6EyLfOBLFoREX64hphshaLuWYpMmRdamRcb6dBdXN6C2ef3iXhUEsWtRhNwclZVzRjD1hXqpoYD5q5P8jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768406534; c=relaxed/simple;
-	bh=FK5r/eruOjqTcJeKWxc+VkGWRoHylO78FiANFJ2/F5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ctnHHpJp0+MwirCjbSCpnfajJPVZP5ESUm22fIgq4qfbP+m1z8j0IxO7doGFEdn47aFfP4T05bBUfSB23/wQF0yPwFdOokQ/4/x6zzH0dOOWtlVcrVskFcSubsj3dGPEKG4yzMKTzzNmGlgzVeHsCL408xnrXWs+6W2m1EVDIqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kvz6IhCI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768409527; c=relaxed/simple;
+	bh=UNYfWTgs2Wu0kYNxydtgUIcaXgFHmwIxZQCk0gOPwM0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VEAc+exMXoaglMCxBYlvN5D32uMaHEhxn9McxT1EvyxqfxBg5sEtsfNFbgzfiR4Eh4ULluI6hFUzv1KWwkZgE16xlOo1LO4a5dXdnPVgdetHXGVNdjuTgKBADg42ADUz9hqAH/3ksCPECs6v550WMQmrFLQJK93OzBRimNgpAEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCDZ5kcy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kvz6IhCI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82910C4CEF7;
-	Wed, 14 Jan 2026 16:02:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCDZ5kcy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B5EC4CEF7;
+	Wed, 14 Jan 2026 16:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768406534;
-	bh=FK5r/eruOjqTcJeKWxc+VkGWRoHylO78FiANFJ2/F5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kvz6IhCI/iKQ3aCzByh5yu4QJqn51REAWz93ozl52tF0groNrJ06igRODbT5OcCZM
-	 S7M2sVx0GGwalTEAPv3f/DPA2tYT11i3xttdW02U2VVkuMhWJY6i5uW7/Jlzsb95AS
-	 hXwS1nQKqhV4rC4vmtNCWGwWJJ8CWh1m/a0XXeU+XwH6wRXnn/q0e0xvu6LjDmWl1Z
-	 DtHcIncf8zcAjNjQHFZshD2NM5akoR4+kz3Zx7c17DNag3B7R5O2VgCpBvBSUD7sBs
-	 l0rtFwe5ojkJblG20x8Y6AWB6jnRl73qb8/UDn9cY7KhbIlN6weIXH0CuKZ9L5Xjw6
-	 o2N+1EnjEeq+Q==
-Date: Wed, 14 Jan 2026 16:02:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
- drivers
-Message-ID: <b9df01e9-c4ba-4e2c-b458-bc93663ab78e@sirena.org.uk>
-References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
- <20260113112244.GE1902656@google.com>
- <6ace23c4-d858-4bdf-9987-104e706190cd@sirena.org.uk>
- <20260114155011.GC2842980@google.com>
+	s=k20201202; t=1768409527;
+	bh=UNYfWTgs2Wu0kYNxydtgUIcaXgFHmwIxZQCk0gOPwM0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=LCDZ5kcyZcLkuJBrwbw9oNMtXV5ea2Rxx/LOEwxzgyDHPNn8fXQGdLGge4grZWutn
+	 1FgeDa8FsHPk5bIrMvfqyNAl/8ZgWgdb/SDWRKRo0i7CU720s5//HUeVlT2dzeystu
+	 phuWpamonrsqKCqmamppizZ4i7jN0658W0KP2xLNIAYEwhEv5OWG1H78L4Gspb/pUo
+	 ddB8mp8J+ZkUrLEHcqcz7mXIInkYHmUcJjG0jQAxQHG4nbhF10ZPD9Q0wIQqMEFS5X
+	 u+aKzkO5hqm0yT1E192TnszKiM9iuNAVzyk8gPx0SP58x8EPWkR5IZT53BCQ1HzX2D
+	 k5IsO8ASysBEg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Roy Luo <royluo@google.com>
+Cc: Badhri Jagan Sridharan <badhri@google.com>, 
+ Doug Anderson <dianders@google.com>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20251227-phyb4-v10-0-e8caf6b93fe7@google.com>
+References: <20251227-phyb4-v10-0-e8caf6b93fe7@google.com>
+Subject: Re: [PATCH v10 0/2] Add Google Tensor SoC USB PHY support
+Message-Id: <176840952204.979558.17473922474901235501.b4-ty@kernel.org>
+Date: Wed, 14 Jan 2026 22:22:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sP0C4lxuJbobslsN"
-Content-Disposition: inline
-In-Reply-To: <20260114155011.GC2842980@google.com>
-X-Cookie: Absence makes the heart grow frantic.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
---sP0C4lxuJbobslsN
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 27 Dec 2025 00:53:27 +0000, Roy Luo wrote:
+> This series introduces USB PHY support for the Google Tensor G5
+> SoC (codename: Laguna), a new generation of Google silicon first
+> launched with Pixel 10 devices.
+> 
+> The Tensor G5 represents a significant architectural overhaul compared
+> to previous Tensor generations (e.g., gs101), which were based on Samsung
+> Exynos IP. Although the G5 still utilizes Synopsys IP for the USB
+> components, the custom top-level integration introduces a completely new
+> design for clock, reset scheme, register interfaces and programming
+> sequence, necessitating new drivers and device tree bindings.
+> 
+> [...]
 
-On Wed, Jan 14, 2026 at 03:50:11PM +0000, Lee Jones wrote:
-> On Tue, 13 Jan 2026, Mark Brown wrote:
+Applied, thanks!
 
-> > Given that the bulk of the series is regulator changes I'd been
-> > expecting to take it?
+[1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+      commit: 876dc58c3fa532e38cd1b287a7b8143a1a4c5dc7
+[2/2] phy: Add Google Tensor SoC USB PHY driver
+      commit: cbce66669c82ee9ae0e26523c0fcd3c721fcfe85
 
-> I have no issues with that, providing you offer a succinct immutable
-> branch containing just this set for me to pull from.
+Best regards,
+-- 
+~Vinod
 
-> Failing that, I have the machinery in place to offer you the same.
 
-Yeah, given what Andr=E9 said about dependencies if you could apply the
-MFD commits and send a PR that'd be great.
-
---sP0C4lxuJbobslsN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlnvf4ACgkQJNaLcl1U
-h9Cp1gf+OZ6fMIplgRtBgwqPYPb5uS6hZEcun26WBH76uuVBF7Cr+M7qHAuKj0I9
-YKrrf/wm3fEA51yXKdniN6DnwYFx7yockoUuIMOK+ounuw1gJ3L0FZyXe2EpiiFy
-4symRoAStI8qV49Ex9UOc0E7LRRQTr85fmAJ0FmWNG5xE7QR2mv4vxzPQcWFeeCW
-fOw9Iya57+RAt85lSj5tUdU9oV9ENBBz6daMm8yykGFOKRas4ahqRJ/uF0PheSfH
-JdzhtPnHVmsPh1Axb49xvRb61ZHRFef5o6qFl2wfp8odiurZ0Hng32TFNLzGIi0i
-Y2sFv6GmSGj4KqGX2PHPRffLa1jGuw==
-=sBc4
------END PGP SIGNATURE-----
-
---sP0C4lxuJbobslsN--
