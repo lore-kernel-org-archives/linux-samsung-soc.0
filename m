@@ -1,85 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BE53A6409;
-	Wed, 14 Jan 2026 16:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45539339B4E;
+	Wed, 14 Jan 2026 18:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768409527; cv=none; b=RiYjIEX6LZTctwDrnJph3FsNSaqWXDNdCVLwv3URDWUtYO6H63SwrGGEZYzz8FXsrZmBiZLsJYMsWmK9Iash8p4mF6EyLfOBLFoREX64hphshaLuWYpMmRdamRcb6dBdXN6C2ef3iXhUEsWtRhNwclZVzRjD1hXqpoYD5q5P8jI=
+	t=1768416304; cv=none; b=Sf8O1zxS34qvpJTGT3J2nl9BNDOtV3sh4a8MeYBSH2AMHvPpvR0btd3TdOHymJLox/d+mH8dzt2ytH9uAfy1u5AIDzj83a5C0A0AeIKn8a8CV3bWCj/W1wiSayLzeZJk1Rt04oaDgQr1sANi69l89RwunUOpl8T3qpQ3GmWu5FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768409527; c=relaxed/simple;
-	bh=UNYfWTgs2Wu0kYNxydtgUIcaXgFHmwIxZQCk0gOPwM0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VEAc+exMXoaglMCxBYlvN5D32uMaHEhxn9McxT1EvyxqfxBg5sEtsfNFbgzfiR4Eh4ULluI6hFUzv1KWwkZgE16xlOo1LO4a5dXdnPVgdetHXGVNdjuTgKBADg42ADUz9hqAH/3ksCPECs6v550WMQmrFLQJK93OzBRimNgpAEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCDZ5kcy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768416304; c=relaxed/simple;
+	bh=bMymUs+O/5UOcoxAv9q1fwdIIJzCE9BopK7FUY1gQ9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AUreCXJxN5ExYeePy6eMhchE9H16Hxzjncwy4ymx+cLnLFLbUa8JFJz4DxJfD32YumJHEgYQu3dTKCYU/7gUCD9xNdZwlM98hDR1cL6fZEvI9tReek2r0jImzhe1eCsdddJcxEBrjcHnbEzXyiCbfl6pH2Nmk549a9O6K3xVu0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3ADvw6ri; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCDZ5kcy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B5EC4CEF7;
-	Wed, 14 Jan 2026 16:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768409527;
-	bh=UNYfWTgs2Wu0kYNxydtgUIcaXgFHmwIxZQCk0gOPwM0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LCDZ5kcyZcLkuJBrwbw9oNMtXV5ea2Rxx/LOEwxzgyDHPNn8fXQGdLGge4grZWutn
-	 1FgeDa8FsHPk5bIrMvfqyNAl/8ZgWgdb/SDWRKRo0i7CU720s5//HUeVlT2dzeystu
-	 phuWpamonrsqKCqmamppizZ4i7jN0658W0KP2xLNIAYEwhEv5OWG1H78L4Gspb/pUo
-	 ddB8mp8J+ZkUrLEHcqcz7mXIInkYHmUcJjG0jQAxQHG4nbhF10ZPD9Q0wIQqMEFS5X
-	 u+aKzkO5hqm0yT1E192TnszKiM9iuNAVzyk8gPx0SP58x8EPWkR5IZT53BCQ1HzX2D
-	 k5IsO8ASysBEg==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Roy Luo <royluo@google.com>
-Cc: Badhri Jagan Sridharan <badhri@google.com>, 
- Doug Anderson <dianders@google.com>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20251227-phyb4-v10-0-e8caf6b93fe7@google.com>
-References: <20251227-phyb4-v10-0-e8caf6b93fe7@google.com>
-Subject: Re: [PATCH v10 0/2] Add Google Tensor SoC USB PHY support
-Message-Id: <176840952204.979558.17473922474901235501.b4-ty@kernel.org>
-Date: Wed, 14 Jan 2026 22:22:02 +0530
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3ADvw6ri"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4drw5p4sfkz1XM0p5;
+	Wed, 14 Jan 2026 18:45:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1768416300; x=1771008301; bh=bMymUs+O/5UOcoxAv9q1fwdI
+	IJzCE9BopK7FUY1gQ9A=; b=3ADvw6ric/ZO7GZQI82meuEPExf+FCEdP0UMrUs6
+	GSm44RsjZvEV5W6FRi0SEp+Ihz73nXi/IGdehBiRL8mNeazQdyqZ/GQhLD6sIBUB
+	L9FxUXASoqcb8rn+eaSFYWsav5MfWNalPbS1keuj1WGBeUPI9/jw7L+hfv/sdw34
+	9wzle8lL0bItLzheqRTunEt8ykDioiLt/KF4hcKcHmeVb65LOOvXynNxZeXBGH1J
+	NfJP2VOZ9A9aqqm0/PwYP0U1AAUEVXE8zwYIHVkp9I3ZidtMiydczKbubtX9A9Th
+	iSDf1qMJcFFo5cBNCxK4BWNpxY+xRfhw9BtIXAAykvpIWw==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id KfrL4izFLC9j; Wed, 14 Jan 2026 18:45:00 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4drw5j0zTLz1XM6J4;
+	Wed, 14 Jan 2026 18:44:56 +0000 (UTC)
+Message-ID: <14f96dc6-bcea-4343-82c8-f321e6367aba@acm.org>
+Date: Wed, 14 Jan 2026 10:44:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] scsi: ufs: exynos: call phy_notify_state() from
+ hibern8 callbacks
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-team@android.com, andre.draszik@linaro.org, willmcvicker@google.com,
+ tudor.ambarus@linaro.org, jyescas@google.com
+References: <20260109-ufs-exynos-phy_notify_pmstate-v3-1-7eb692e271af@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20260109-ufs-exynos-phy_notify_pmstate-v3-1-7eb692e271af@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-
-On Sat, 27 Dec 2025 00:53:27 +0000, Roy Luo wrote:
-> This series introduces USB PHY support for the Google Tensor G5
-> SoC (codename: Laguna), a new generation of Google silicon first
-> launched with Pixel 10 devices.
-> 
-> The Tensor G5 represents a significant architectural overhaul compared
-> to previous Tensor generations (e.g., gs101), which were based on Samsung
-> Exynos IP. Although the G5 still utilizes Synopsys IP for the USB
-> components, the custom top-level integration introduces a completely new
-> design for clock, reset scheme, register interfaces and programming
-> sequence, necessitating new drivers and device tree bindings.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
-      commit: 876dc58c3fa532e38cd1b287a7b8143a1a4c5dc7
-[2/2] phy: Add Google Tensor SoC USB PHY driver
-      commit: cbce66669c82ee9ae0e26523c0fcd3c721fcfe85
-
-Best regards,
--- 
-~Vinod
-
-
+On 1/9/26 4:40 AM, Peter Griffin wrote:
+> Notify the ufs phy of the hibern8 link state so that it can program the
+> appropriate values.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
