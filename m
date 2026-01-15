@@ -1,74 +1,89 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45539339B4E;
-	Wed, 14 Jan 2026 18:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FE123ABBF;
+	Thu, 15 Jan 2026 02:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768416304; cv=none; b=Sf8O1zxS34qvpJTGT3J2nl9BNDOtV3sh4a8MeYBSH2AMHvPpvR0btd3TdOHymJLox/d+mH8dzt2ytH9uAfy1u5AIDzj83a5C0A0AeIKn8a8CV3bWCj/W1wiSayLzeZJk1Rt04oaDgQr1sANi69l89RwunUOpl8T3qpQ3GmWu5FM=
+	t=1768444733; cv=none; b=pgsMd4q/L3Q/4B5RXDHN656wp2iS4zEWpEkIIgZ6q/v6/L8uKyytg0FupqsZ0toEwYX+sPPcgmi6PYM8eyWXUZmus6MRKVGHNL+YMKho9yItye9y5M4UuHfsjmZkqlVMLVSdv8hYqS23WjT8h2PvTsvt3wIIArcoqsJqamBsIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768416304; c=relaxed/simple;
-	bh=bMymUs+O/5UOcoxAv9q1fwdIIJzCE9BopK7FUY1gQ9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AUreCXJxN5ExYeePy6eMhchE9H16Hxzjncwy4ymx+cLnLFLbUa8JFJz4DxJfD32YumJHEgYQu3dTKCYU/7gUCD9xNdZwlM98hDR1cL6fZEvI9tReek2r0jImzhe1eCsdddJcxEBrjcHnbEzXyiCbfl6pH2Nmk549a9O6K3xVu0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3ADvw6ri; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3ADvw6ri"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4drw5p4sfkz1XM0p5;
-	Wed, 14 Jan 2026 18:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1768416300; x=1771008301; bh=bMymUs+O/5UOcoxAv9q1fwdI
-	IJzCE9BopK7FUY1gQ9A=; b=3ADvw6ric/ZO7GZQI82meuEPExf+FCEdP0UMrUs6
-	GSm44RsjZvEV5W6FRi0SEp+Ihz73nXi/IGdehBiRL8mNeazQdyqZ/GQhLD6sIBUB
-	L9FxUXASoqcb8rn+eaSFYWsav5MfWNalPbS1keuj1WGBeUPI9/jw7L+hfv/sdw34
-	9wzle8lL0bItLzheqRTunEt8ykDioiLt/KF4hcKcHmeVb65LOOvXynNxZeXBGH1J
-	NfJP2VOZ9A9aqqm0/PwYP0U1AAUEVXE8zwYIHVkp9I3ZidtMiydczKbubtX9A9Th
-	iSDf1qMJcFFo5cBNCxK4BWNpxY+xRfhw9BtIXAAykvpIWw==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id KfrL4izFLC9j; Wed, 14 Jan 2026 18:45:00 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4drw5j0zTLz1XM6J4;
-	Wed, 14 Jan 2026 18:44:56 +0000 (UTC)
-Message-ID: <14f96dc6-bcea-4343-82c8-f321e6367aba@acm.org>
-Date: Wed, 14 Jan 2026 10:44:55 -0800
+	s=arc-20240116; t=1768444733; c=relaxed/simple;
+	bh=oENn12gp4biMpZo2V0vvyFxTaL+EjIOxeloVatFB0K0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=povpnXMy+aZhYRiNAttFIpVe0zz/eO/WSvtnssSEL+wGR7RV949fY2my70AlqVkptpWUpTWXhpA4XtPGlxzUWsuWxiNKzlJ1ZplmjhDKDpTINJVh86XMQxhGjkqIHaAOF7I25LzCt7Tb9FXCzAr6mq0IEtm46zNZUW50H8bHjjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowABXZMsuU2hpD2YxBQ--.43886S2;
+	Thu, 15 Jan 2026 10:38:38 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: peter.griffin@linaro.org,
+	andre.draszik@linaro.org,
+	tudor.ambarus@linaro.org,
+	Thinh.Nguyen@synopsys.com,
+	gregkh@linuxfoundation.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] usb: dwc3: google: Remove redundant dev_err()
+Date: Thu, 15 Jan 2026 10:38:00 +0800
+Message-Id: <20260115023800.4142416-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] scsi: ufs: exynos: call phy_notify_state() from
- hibern8 callbacks
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com, andre.draszik@linaro.org, willmcvicker@google.com,
- tudor.ambarus@linaro.org, jyescas@google.com
-References: <20260109-ufs-exynos-phy_notify_pmstate-v3-1-7eb692e271af@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260109-ufs-exynos-phy_notify_pmstate-v3-1-7eb692e271af@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXZMsuU2hpD2YxBQ--.43886S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JF1xtry3JF1ktw4kGryUZFb_yoWDCrX_C3
+	48CrZ2k3yDA398tryjvr43ZrWUur4rZFy8uF1qqa47KFyUGayUXry0gF95Ga4xZrW29ryD
+	urs8Crya9r93AjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
+	W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWrXVW3AwAv7VC2z280aVAFwI0_GcC_XcWlOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUbEfoUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 1/9/26 4:40 AM, Peter Griffin wrote:
-> Notify the ufs phy of the hibern8 link state so that it can program the
-> appropriate values.
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+The platform_get_irq_byname() function already prints an error message
+internally upon failure using dev_err_probe(). Therefore, the explicit
+dev_err() is redundant and results in duplicate error logs.
+
+Remove the redundant dev_err() call to clean up the error path.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/usb/dwc3/dwc3-google.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/usb/dwc3/dwc3-google.c b/drivers/usb/dwc3/dwc3-google.c
+index a19857bd6b13..2105c72af753 100644
+--- a/drivers/usb/dwc3/dwc3-google.c
++++ b/drivers/usb/dwc3/dwc3-google.c
+@@ -228,10 +228,8 @@ static int dwc3_google_request_irq(struct dwc3_google *google, struct platform_d
+ 	int irq;
+ 
+ 	irq = platform_get_irq_byname(pdev, irq_name);
+-	if (irq < 0) {
+-		dev_err(google->dev, "invalid irq name %s\n", irq_name);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_threaded_irq(google->dev, irq, NULL,
+-- 
+2.25.1
+
