@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15B4298CB7;
-	Sat, 17 Jan 2026 19:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8D243956;
+	Sat, 17 Jan 2026 19:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768678751; cv=none; b=A3YyFMmPBB3UatxUB732VpHCh46MX+gJEcQ6BQUh2RxtnNvxL3y7y/++mvdwQpmJlURNUqLvOsu4QOvPJbgzVeblYLSlKRBnJYUgFF5r1vdjHNPPVKviCYFzMdq9XvIwFCxoqBk5id/lOvYfrFTkjje/PTn3eSIFq62f5p/oCwY=
+	t=1768679207; cv=none; b=DJ7c0eyVM8tCykQw5WcfRcDJR2U16QsCd8My2b58EWmk4JpZP3WkJjszmLgl0g4kkEGqcYZEFs192uSQdRC89VxHSZISRpZ5gOOd2+HisgJTpJ6ZTmvetyoZCuUUemYjBT+wNcAAgw2NXDBSpWXauyiWl1rOvhTpbTzOswd5oBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768678751; c=relaxed/simple;
-	bh=WfdVREWAjm3wmFHJfOt6lBof4DnZmNo3EknaZqWo6uA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MwG5i8GzdxirOes55n4DGeO8iermOvUxzuRlMgP8jyxWRR4WWr0kYXRT6DlpO5Nd6doorXvu3G+8N6gpF2FynRBH+IxVKuZAhUpwOD6y0rYXZRkqdWiwZzVKUckIGoYTWaBN3fYmvX9sMC+vUJZxfJHcg76W73la0cirl9MhLsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQC1RuUd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768679207; c=relaxed/simple;
+	bh=WKuPy8oQuQpUfbDwmqW+GQnhYHEbWcUdiOTNZ27rSVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nf/asd44NYsxa2HoniaCJFs8/5TmqlOhnhmINt89XHDsgdeTLc+bPJzCqeWD1d1EpjoSJWc1BDkOhXtYsuBDtTgxR29NI4hcJdQigFZmwzL0Edj9Zn/9WQqcCvauFdlFycdS+WChXnalCnihgsx5kStcPQtF48Igr2o+pjBRURI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgHBLd/z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQC1RuUd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A19BC4CEF7;
-	Sat, 17 Jan 2026 19:39:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgHBLd/z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D81C4CEF7;
+	Sat, 17 Jan 2026 19:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768678750;
-	bh=WfdVREWAjm3wmFHJfOt6lBof4DnZmNo3EknaZqWo6uA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=iQC1RuUdV6bYm8RdxX6kK6NWZGddLCCHNX1+KECEHPu1hvQChsJKlxTLU9UeXizqm
-	 Vu660LukGXJb2T/+1um8VX4N2deHX/aVt9BzbgxjoxEEJMSjZlsfwQ6Jl0UnGi5fwG
-	 18H3lokyBfKlYBEGxrL+/J9vZxRNlP8GntshR0A5HXgGO0HCeSA59x9LW/Vya1FwT2
-	 x/old48mQStSVcCYVq58hwn/0rVYmAwWKyIlMeWFSkSm4MNYYpqTgolCuh8aV66q1d
-	 xuPGgp8CXaEGIA14By1w+4HM5DQZP/1qSvMO2c6N8Qtj2bQYnXzRWuuO134aeMEo2E
-	 E7AnTQQV0LUlQ==
-Message-ID: <ee06d78b-0bfe-4839-b851-bbd871f5f75c@kernel.org>
-Date: Sat, 17 Jan 2026 20:39:04 +0100
+	s=k20201202; t=1768679206;
+	bh=WKuPy8oQuQpUfbDwmqW+GQnhYHEbWcUdiOTNZ27rSVE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cgHBLd/zsytt0LZE4t0AHBx4ItXOlLQm2VKWubI+35kqpde/BM04y6rW9tQuC5IGy
+	 66nyQgIHFrK+sP2tOKj1OI9K7fy8ta843Wtyl1IWS4GeF2uMXaPXpkgAJVlmq0HA2j
+	 w+FH5n4ZTkChXUeuPvPJalCnrEzBlcvWYvtXF8jwu1do3QcoznhGqHWMQpQVW+ELRI
+	 v96N86pelWz4S7WKEG0eNGAX5C8TEwPiic8LXxkMsutNJg3lm3+CweBQeAlq/KcOnt
+	 bIkQ0S3Jc7R+U8xs8EhQG8GBG1vmvXhLDr5evvx2gDxdI/fkx2YuzV+1F2SIjjfN1m
+	 jfhPELCoxBgqQ==
+Message-ID: <3aedb4fa-442f-4893-9547-5069b9d0e19b@kernel.org>
+Date: Sat, 17 Jan 2026 20:46:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,25 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v3 0/5] gs101: Add support for Display Process
- Unit (DPU) clocks
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 0/3] clk: samsung: auto clock gating fixes for PM
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
  Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
- Doug Anderson <dianders@google.com>
-References: <20260113-dpu-clocks-v3-0-cb85424f2c72@linaro.org>
- <176867848098.124121.13465976483676296810.b4-ty@kernel.org>
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -98,28 +92,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <176867848098.124121.13465976483676296810.b4-ty@kernel.org>
+In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/01/2026 20:34, Krzysztof Kozlowski wrote:
+On 09/01/2026 18:27, André Draszik wrote:
+> Hi,
 > 
-> On Tue, 13 Jan 2026 10:58:57 +0000, Peter Griffin wrote:
->> This series adds support for the Display Process Unit (DPU) Clock
->> Management Unit (CMU) aka CMU_DPU found on gs101. These will be used for
->> the IOMMU and display enablement.
->>
->> As all the patches will go via Krzysztof tree it has been sent as one
->> series.
->>
->> [...]
+> The attached patches fix issues when CMUs have PM enabled and also a
+> needless warning message on older Exynos platforms relating to
+> automatic clock gating as reported by Marek.
 > 
-> Applied, thanks!
+> Without these it's impossible to enable PM for a CMU when automatic
+> clock gating is also enabled. While currently no platform uses both,
+> patches to enable PM on gs101 are in the works but things stopped
+> working after the auto clock gating changes. I've verified that with
+> the patches here PM and runtime PM work again.
 > 
-> [5/5] arm64: dts: exynos: gs101: add cmu_dpu and sysreg_dpu dt nodes
->       https://git.kernel.org/krzk/linux/c/024d8f4aa35970c4563c6ef0c4170133719b2103
+> I've opted to add Fixes: tags to the PM-related patches even though no
+> current platform uses both, auto clock gating and PM, to ensure the
+> code is correct nevertheless. Please let me know if that's not desired.
+> 
+> Cheers,
+> Andre'
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
 
-1-4 also applied, I should have sent b4 TY letters earlier.
+Here I got also not a correct b4 TY letter, so confirming - applied only
+#1 and #2. For the 3/3 I left comment.
 
 Best regards,
 Krzysztof
