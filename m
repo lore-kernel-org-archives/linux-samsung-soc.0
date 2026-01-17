@@ -1,128 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0501726E6F4;
-	Sat, 17 Jan 2026 18:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7870C2D5935;
+	Sat, 17 Jan 2026 18:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768674084; cv=none; b=lAW4W4Ioy7dLcXic8mDQ4DsnV8EFJYAllvZzblqo0iCJK5a0VxYbpb/v1tvTbfxpbSCUuW1s+ZKXGK/UYkvRX5nb57YszWa6PYShl9UJ2AKECLwdvzcCRDapEENGVslAKDTdszGy4lGOJPJn8hGVIC1IBuJHsCk3LDd56VVLWb4=
+	t=1768674086; cv=none; b=U0N70OyKd/72TqOhSE345qvBw7sC36re6Kujm3CNnEQUy6qrkHMQvfttFu75PqlFiZLTVhq6PgZ95fNy1EJ2n6CMQnfEeYFuUTuASjmATWEpRptas/NBNM0Xx/ykNQM1DcuDhtj0SolXadKHF+iTyFTCvN0KBeAKj84IvStSZvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768674084; c=relaxed/simple;
-	bh=JQzl6UvvwOgf72EnstNOsIrbBj/Ch7DRk+QpYHs8w9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cvicgcgRAH8R/Mmr6knoTURLAeRdxilNqv0NS5y+wE+1268Rp/ED6By+s/ITP9eDDscsGVRhdTYa8T5qu5FTfXs50l7CPKfPNq33CEEEHt3MpSGdA9HtfTsCW0jIX+o/7/ZQGwx5O80NTiioEmwp5Pm8XYqeW4m5BKvMhv9yOBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdxU46sr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768674086; c=relaxed/simple;
+	bh=zeRua86JJ89hp7UiCqJzAqyltlIlf9UdKVhSRxl7hlk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RUjgtY3qf+IvtNZZJlxYp9U5cSvVU2mBJ/iqRiufm29JV3IK3sD2ra7b+NAXYeszy8d8cJktU/S+xRFugMyT+QFsk+Ku8KmUVLG3EkV4aX2VYsUXRIMq1bMOHint2tAi9PmB9mgGJXERYKoPLNh8H4bw45d4/d4CTdwwGxkMhpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqvUkQ1+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdxU46sr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3E0C4CEF7;
-	Sat, 17 Jan 2026 18:21:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqvUkQ1+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8372C4CEF7;
+	Sat, 17 Jan 2026 18:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768674083;
-	bh=JQzl6UvvwOgf72EnstNOsIrbBj/Ch7DRk+QpYHs8w9U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JdxU46sr9AT92vuL1OwSTDdJuCsNd56T0FqBwxgLFWaEi1CrMwyuYMBjD4FK915PS
-	 /wUUaApvJsyfYcwVoXT2HrKKLXkBBwb1/qRwpZl23SqJ1U7jaFC+4Qbq7sgSozOh1B
-	 Q8UYK/TkdaNS8WG63pi779p34RqdHVH0yVnnw/POuaRD8hl2EuZiY/73iPBAW5QLaZ
-	 K2kNkfSI97lfvxW6lZM6FeEvSwQNiB8p0Q/174N4VpF6qOj/xXOhB0RS8TnVXCg1Hh
-	 ldBWMOzJSKOe7ADoLN2paXcXtSMjSMx/gxIZwuOhghMiw+sSoGdIFNd3Kwj2R0Kd8t
-	 HJbeaaYgEvb4Q==
+	s=k20201202; t=1768674086;
+	bh=zeRua86JJ89hp7UiCqJzAqyltlIlf9UdKVhSRxl7hlk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aqvUkQ1+SgHeI0Amg6pNkgsy7D6ekl/qZN1xCY9O5ESc97WKkDdsE4sFQgSNKk5qb
+	 qteclBkJdJIY2Qu35NG13mvXlmqATeZZNNhDJUksJJHixLzUPPhG1PO9WcP33ka78Q
+	 lhfmVlc6EK64jOdYly1pKgvxnJW8R0L+zD+HSJVga04c6dblUpXpg1QmS4FlnC5tSE
+	 UjDrHtB5PTRLtcbUrW9cKmfAj2AVLAYek26e01p7FGVJdDk+VvuerP7f2EbVdURHOh
+	 q4SG1UzlXC/4D69IZdipnRNxGvoz/Z1/vtQTtGkS7Wu2MWY/eR8BHMAXOqxD5Fm7tr
+	 zng6D6/XeTZHw==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>,
 	soc@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 1/2] arm64: dts: cleanup for v6.20/v7.0
-Date: Sat, 17 Jan 2026 19:21:16 +0100
-Message-ID: <20260117182117.14483-3-krzk@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 2/2] ARM: dts: nuvoton: Minor whitespace cleanup
+Date: Sat, 17 Jan 2026 19:21:17 +0100
+Message-ID: <20260117182117.14483-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260117182117.14483-3-krzk@kernel.org>
+References: <20260117182117.14483-3-krzk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3480; i=krzk@kernel.org; h=from:subject; bh=JQzl6UvvwOgf72EnstNOsIrbBj/Ch7DRk+QpYHs8w9U=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpa9MdLYg4n00K5c0zA06+EGuiS4gf9c4KjA0AI 7/cvC5gmDuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaWvTHQAKCRDBN2bmhouD 1w7UD/444wPOwaabumifUG9tsJQrJaAe4LDo8s7YvgBMlahXka0m2Ec+iNNsJ3McScUpnjDiWPn 4GKFsRAp9DSiMBeFCs6kYBbksm/yzr1HolM7psCHlY4WcXhFmNUOHPDKYW8qX7oS9OROsNGNmrC 63pzlXMLZvBtsIVn+6pooDS7O8/jqWypMZQFcBbAyN1DlnErKy51IK5jQrKsbDB5Ra878kVAlqQ Q+F6Pef+ZRWQwZs3kMGJzNOSkK7+y4fF8N6nTpV0eXxKg2COoNYb+Vop91wKo0j7jLN14SmfYp/ NIMk/X4/u6H59O4f4Q0qrlMLhXLbs5JqPP57sEYEDsQLdwjKStppZQqt4+wstQKmmz91GwNIHWD UQhOaf1dZBGd9V6GYYsU99Ml6bgoOPZ+S4pzp8LcN88e9bYWXvUjjNYzqp1u8n0UOpfhdhevg6E h1QDfTFDBRgccgl9jy5VPIJQg/XFkVHLz3BcuZydFcK7HpRJDZ3FGFizVKnFs32P2mbGJfwhKM/ IoDmEkFE+wLz4IRGtjfX7TTFdH7ZCpEvxVhnwUTATb/d1HQRfaeFMidaMydpZyXBRXUvcCTom2q 9kWvcQeZReikhwMmDCgxIXLmHyotHSyfZ/NrbeFnIuRbieGf+hZIeQPdJ2MD5cq593M6jj1Zg/O Afb7kmeqnzepUTg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1351; i=krzk@kernel.org; h=from:subject; bh=AbbknVFh8S8FlxeJ3lbLs0kMqrPQzMvQ5ZEv69l+2wo=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpa9Mea+eSwBtkO+3hco1lfMxKmaKiK6hVbFVAw P+Abk5xyzOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaWvTHgAKCRDBN2bmhouD 1169D/0XvbN3TfqU5y4QKjMtxZeUgAPbFgXfXeP4RepEW2eDowFu4J3sjy9vGQo1AuUT7Lc67+D 7KbcBwDSTE/aWDI4Z/HB9PK6F+cuw4wd8RTWbmLIwe05oga4Az+RRCtY7hw7R46MCeKQZUhXPgU REWrVEDDj8MaXA6tlZPfpbjgqacQ0J0Lv4fDIvPUPtgfn62Y6v9N60ZR+ue5MdLa72JD1Lpcuno WX5LyudJ/l2LWLXaDxJdXXbCEmvzwZtDT8++tfcaA9xSRpJwCH0fO6FKSqNYmHmLUa5HbW2jbDn 3Op3UlaYut5r3aH+KSrLQJ9jOtdY701vfBigFypuDKOJO+xMeheHUis0ex7/gkZnqvPJBw1mzdg l2l3cKeqUagnOCYE4DeB9A8WbEFdihT+E4zE3eO+tR4T9Nmli/6hmmrPfW1Q3ulU7oxtyAG5tvE GCR/Wc4FhTUmXvyTYJzlPzn0YE9oxet0apLLvU5h/Pbj8oyx1C0XhIZEvSpQ05s2aDlktxmKB6V eMglluXTNzLvlOlBzidRiJXYz/JAqVqsjBDEnR1nGTh93jvSJiHl0BXdJoudBsSVpJdl4LSNopR ZJriXbKmUwVyFnZvaZD5KNpfYjG+N7liwZLrUoIriEFD29/6z4Phz/iND4cCRwlNZQoW8Bdxd4+ rG6mh++MwxxQwYw==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Hi Arnd and SoC folks,
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Various cleanups and minor fixes, some acked by respective maintainers, some
-just missed (platform is in poor shape).
+The DTS code coding style expects exactly one space around '='
+character.
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://patch.msgid.link/20250819131725.86770-3-krzysztof.kozlowski@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+index 98c35771534e..ab3c3c5713ae 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+@@ -154,7 +154,7 @@ sdmmc: mmc@f0842000 {
+ 			status = "disabled";
+ 			reg = <0xf0842000 0x200>;
+ 			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks =  <&clk NPCM7XX_CLK_AHB>;
++			clocks = <&clk NPCM7XX_CLK_AHB>;
+ 			clock-names = "clk_mmc";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&mmc8_pins
+@@ -166,7 +166,7 @@ sdhci: mmc@f0840000 {
+ 			status = "disabled";
+ 			reg = <0xf0840000 0x200>;
+ 			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks =  <&clk NPCM7XX_CLK_AHB>;
++			clocks = <&clk NPCM7XX_CLK_AHB>;
+ 			clock-names = "clk_sdhc";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&sd1_pins>;
+-- 
+2.51.0
 
-The following changes since commit 8f0b4cce4481fb22653697cced8d0d04027cb1e8:
-
-  Linux 6.19-rc1 (2025-12-14 16:05:07 +1200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.20
-
-for you to fetch changes up to 5cd532f7f017460395836d8f129ad3ee5ae63110:
-
-  arm64: dts: apm: Drop "dma" device_type (2025-12-22 11:05:32 +0100)
-
-----------------------------------------------------------------
-Minor improvements in ARM64 DTS for v6.20
-
-Several minor cleanups for Nuvoton, LG, Spreadtrum, Toshiba, Cavium, ARM
-and APM SoCs:
-
-1. Switch to recommended node names by fixing style
-   (s/lowercase/hyphen/), using generic naming and adhering to DT
-   bindings.
-
-2. Use consistent whitespaces around.
-
-3. Add missing properties like UART clocks (Cavium Thunder 88xx) or
-   "reg" (APM).
-
-4. Drop incorrect or long time deprecated propeties.
-
-5. Correct clock cells to 0 for fixed-factor-clock clocks.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      arm64: dts: toshiba: tmpv7708: Align node names with DT bindings
-      arm64: dts: nuvoton: npcm845: Minor whitespace cleanup
-
-Rob Herring (Arm) (10):
-      arm64: dts: lg: Use recommended simple-bus node name
-      arm64: dts: sprd: Use recommended node names
-      arm64: dts: toshiba: Use recommended node names
-      arm64: dts: cavium: thunder-88xx: Add missing PL011 "uartclk"
-      arm64: dts: cavium: Drop thunder2
-      ARM: dts: vexpress/v2m-rs1: Use documented arm,vexpress,config-bus child node names
-      arm64: dts: apm/shadowcat: More clock clean-ups
-      arm64: dts: apm: Use recommended i2c node names
-      arm64: dts: apm: Add "reg" to "syscon-reboot" and "syscon-poweroff"
-      arm64: dts: apm: Drop "dma" device_type
-
- arch/arm/boot/dts/arm/vexpress-v2m-rs1.dtsi        |   8 +-
- arch/arm64/boot/dts/apm/apm-merlin.dts             |   1 +
- arch/arm64/boot/dts/apm/apm-mustang.dts            |   1 +
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi         |  20 +--
- arch/arm64/boot/dts/apm/apm-storm.dtsi             |   4 +-
- arch/arm64/boot/dts/cavium/Makefile                |   1 -
- arch/arm64/boot/dts/cavium/thunder-88xx.dtsi       |   8 +-
- arch/arm64/boot/dts/cavium/thunder2-99xx.dts       |  30 -----
- arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi      | 144 ---------------------
- arch/arm64/boot/dts/lg/lg131x.dtsi                 |   2 +-
- arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi   |   4 +-
- arch/arm64/boot/dts/sprd/sc9860.dtsi               |   7 +-
- arch/arm64/boot/dts/sprd/sc9863a.dtsi              |   4 +-
- arch/arm64/boot/dts/sprd/sharkl64.dtsi             |   2 +-
- arch/arm64/boot/dts/sprd/whale2.dtsi               |   8 +-
- arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dts   |   2 +-
- .../boot/dts/toshiba/tmpv7708-visrobo-vrb.dts      |   2 +-
- .../boot/dts/toshiba/tmpv7708-visrobo-vrc.dtsi     |   2 +-
- arch/arm64/boot/dts/toshiba/tmpv7708.dtsi          |   4 +-
- arch/arm64/boot/dts/toshiba/tmpv7708_pins.dtsi     |   2 +-
- 20 files changed, 42 insertions(+), 214 deletions(-)
- delete mode 100644 arch/arm64/boot/dts/cavium/thunder2-99xx.dts
- delete mode 100644 arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
