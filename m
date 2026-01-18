@@ -1,126 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8D243956;
-	Sat, 17 Jan 2026 19:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1708E306D40
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Jan 2026 20:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768679207; cv=none; b=DJ7c0eyVM8tCykQw5WcfRcDJR2U16QsCd8My2b58EWmk4JpZP3WkJjszmLgl0g4kkEGqcYZEFs192uSQdRC89VxHSZISRpZ5gOOd2+HisgJTpJ6ZTmvetyoZCuUUemYjBT+wNcAAgw2NXDBSpWXauyiWl1rOvhTpbTzOswd5oBc=
+	t=1768769712; cv=none; b=Kr4vlHw45EuiwXMlCDWZBsi84OncyuDCufvXZskAAf1QvoJ1xAHHewBp7CFM5mlReKM1d7K0DZwgxae/FHWdCzMogkmVrjbyuL5DcG4ck/lPzwxK+TVQF83b9PL4ghg8wA4wnntlJvPMpWIXsleDLFJRzO9DH47uPgEN9vT4LjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768679207; c=relaxed/simple;
-	bh=WKuPy8oQuQpUfbDwmqW+GQnhYHEbWcUdiOTNZ27rSVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nf/asd44NYsxa2HoniaCJFs8/5TmqlOhnhmINt89XHDsgdeTLc+bPJzCqeWD1d1EpjoSJWc1BDkOhXtYsuBDtTgxR29NI4hcJdQigFZmwzL0Edj9Zn/9WQqcCvauFdlFycdS+WChXnalCnihgsx5kStcPQtF48Igr2o+pjBRURI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgHBLd/z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768769712; c=relaxed/simple;
+	bh=i0slpHsOkoHDgBqcCGvUcIOPgBfiHJ/g9Q2QUHLiqMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FWHzttSJt+yxSl+rdeKQqQE4zuaVoIQcYaaIO1augRhKRIDYSpya4yGgZzuiuPDNap0RPtC7aQNXTd5Wc6OOk9YgU+wrEbj2txF49USOzx+LkyvjLWgxhZM0QVwHLvQPSX6SGUf87QzyI3lUJmy5mlwAW0YvEBh6yRR/I2NO/pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i84SEvKi; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgHBLd/z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D81C4CEF7;
-	Sat, 17 Jan 2026 19:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768679206;
-	bh=WKuPy8oQuQpUfbDwmqW+GQnhYHEbWcUdiOTNZ27rSVE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cgHBLd/zsytt0LZE4t0AHBx4ItXOlLQm2VKWubI+35kqpde/BM04y6rW9tQuC5IGy
-	 66nyQgIHFrK+sP2tOKj1OI9K7fy8ta843Wtyl1IWS4GeF2uMXaPXpkgAJVlmq0HA2j
-	 w+FH5n4ZTkChXUeuPvPJalCnrEzBlcvWYvtXF8jwu1do3QcoznhGqHWMQpQVW+ELRI
-	 v96N86pelWz4S7WKEG0eNGAX5C8TEwPiic8LXxkMsutNJg3lm3+CweBQeAlq/KcOnt
-	 bIkQ0S3Jc7R+U8xs8EhQG8GBG1vmvXhLDr5evvx2gDxdI/fkx2YuzV+1F2SIjjfN1m
-	 jfhPELCoxBgqQ==
-Message-ID: <3aedb4fa-442f-4893-9547-5069b9d0e19b@kernel.org>
-Date: Sat, 17 Jan 2026 20:46:41 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i84SEvKi"
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-45c7a71ba20so824002b6e.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Jan 2026 12:55:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1768769710; x=1769374510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xrgl77zcKnWLxzpIMhQvmyDGsnBn1orcJjdPE5SYcOM=;
+        b=i84SEvKifb6C04d2/IC8msO7J4Fq4UBJ22QgSHTE6ozDzKz5fFaGVacd/gfy+dnGhD
+         q3sISUN/Janue4Xvjzmpxo2//qDBc4Doy82RPJ/2rxvnC5dH/iKuUgkIevSeSET5jP0e
+         bf23/pYq+73V0I/GQLK4AfbRWyRPBYxOXpn+VVX11QFkgGUZrSo4LDqIwQhmevyjm+hw
+         2CXYHDAM8SLG5G9PZZliU3fLetzxK2eGfdNO7ZVhMnqsRkuXUFWI7o9+7RfdWEqBdX3Q
+         bR2PYyJ1nHI7ieKxtQomJzjHRxeSTZgZHtJwEHQo1RcO7l6GJHOX/I4UeIjTK5aXEyd1
+         v+qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768769710; x=1769374510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xrgl77zcKnWLxzpIMhQvmyDGsnBn1orcJjdPE5SYcOM=;
+        b=d+dcUfAK4OUd8zwI9q4WtnS02uqcMzC573+8+8+xZcFCirQTwhbgq2NXO+L7HNZQU1
+         emsb8vkem1oyda7m9Ots5+U+rEHXsnXMxJeZ3GVnukPe54Q4saJUSztLhz39ZB/27Sfr
+         uwzasmn3Z5EmubLPbJZG2aWyoWvepWrJHH6+CuIm34LPR5QlkB0fd7uzdgtOXHaujCG8
+         XqNZz+uygjixYE3V64Bpk/ZLt069Ft/CJk1ibUnXWH8wGICFGB4Y/dwbOFxj+iMmvKVy
+         ZhEPYwa2/a9dln7QaCF9iWcLMu/D5Qr3Jm7jz5s/8Nwaf5ao7gcWC/G38cd7AaxMnFX2
+         8PCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAAPNoicnsKUzSLQqN7df9nOrycFA+fhKHWBvBeCJi5L2bmlZQaY9P5gsQzNeIM4LPxSDwud6EkLIkUvgZHO4kxQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQxWoiUFKotSGTcKcM8ynGIboCWyQv4mAtiPrepuTTBXHxLxeW
+	AVcyGK+Bjmy78+RKzK9+FxPMSUBm9i657bR3QrLFrFASBRjtPOrNtN37X2I9SbN53WfeWG0oK0r
+	mhquu96MmwcCRUznkld3M2r76ZCdbamk=
+X-Gm-Gg: AY/fxX4d+INRa7s0AlFpoRRNDut9hJcGHrBhIUareRm9e83XMJyNjlGtUr5MxqcJp01
+	gaQfmGtViYV61nQlKLfAn65j1OS3r8hQCUPFUToBO0ghPAiQpLoNH8gybzdViPif0DwD39vYbfG
+	rG4GKP9Tpu6fUqP3kd+5+Chga51bFKvkpFXxJlsILkDsyWZ9aBFcCSwL1heIEpjpvm+KKDrMpgs
+	y3+OZmW2tR4x3CgtAdGrq8zZaBFRnDFP8Nd62KQo7y0xzpwyO4jBZ+dRJCtZedURBZFDnyD
+X-Received: by 2002:a05:6808:1796:b0:44f:ff2c:f65 with SMTP id
+ 5614622812f47-45c9c14fd09mr3833538b6e.38.1768769710061; Sun, 18 Jan 2026
+ 12:55:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] clk: samsung: auto clock gating fixes for PM
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260109-clk-samsung-autoclk-updates-v1-0-2394dcf242a9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+In-Reply-To: <20260105-mailbox-acpm-pclk-ptr-v1-1-8474de8c4584@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 18 Jan 2026 14:54:58 -0600
+X-Gm-Features: AZwV_QjtmoWR7zpXN6PxwxPWVnylbaevwQAzHArvG4i3Nw7LDMwRySbg8e6wc08
+Message-ID: <CABb+yY0YVfWi5sUOn=LWndy9Xpo8ws+cSJ5LYXagJ2uOA0B=LA@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: exynos: drop unneeded runtime pointer (pclk)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/01/2026 18:27, André Draszik wrote:
-> Hi,
-> 
-> The attached patches fix issues when CMUs have PM enabled and also a
-> needless warning message on older Exynos platforms relating to
-> automatic clock gating as reported by Marek.
-> 
-> Without these it's impossible to enable PM for a CMU when automatic
-> clock gating is also enabled. While currently no platform uses both,
-> patches to enable PM on gs101 are in the works but things stopped
-> working after the auto clock gating changes. I've verified that with
-> the patches here PM and runtime PM work again.
-> 
-> I've opted to add Fixes: tags to the PM-related patches even though no
-> current platform uses both, auto clock gating and PM, to ensure the
-> code is correct nevertheless. Please let me know if that's not desired.
-> 
-> Cheers,
-> Andre'
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+On Mon, Jan 5, 2026 at 6:34=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
+naro.org> wrote:
+>
+> pclk is not needed past probe(), just drop it. This saves a little bit
+> of runtime memory.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
-
-Here I got also not a correct b4 TY letter, so confirming - applied only
-#1 and #2. For the 3/3 I left comment.
-
-Best regards,
-Krzysztof
+>  drivers/mailbox/exynos-mailbox.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-ma=
+ilbox.c
+> index 2320649bf60c86980c0e8554f2d5fd32af218a6d..5f2d3b81c1dbec8d1a1535376=
+9b4b3a1d6ebdf21 100644
+> --- a/drivers/mailbox/exynos-mailbox.c
+> +++ b/drivers/mailbox/exynos-mailbox.c
+> @@ -35,12 +35,10 @@
+>   * struct exynos_mbox - driver's private data.
+>   * @regs:      mailbox registers base address.
+>   * @mbox:      pointer to the mailbox controller.
+> - * @pclk:      pointer to the mailbox peripheral clock.
+>   */
+>  struct exynos_mbox {
+>         void __iomem *regs;
+>         struct mbox_controller *mbox;
+> -       struct clk *pclk;
+>  };
+>
+>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+> @@ -100,6 +98,7 @@ static int exynos_mbox_probe(struct platform_device *p=
+dev)
+>         struct exynos_mbox *exynos_mbox;
+>         struct mbox_controller *mbox;
+>         struct mbox_chan *chans;
+> +       struct clk *pclk;
+>         int i;
+>
+>         exynos_mbox =3D devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNE=
+L);
+> @@ -119,9 +118,9 @@ static int exynos_mbox_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(exynos_mbox->regs))
+>                 return PTR_ERR(exynos_mbox->regs);
+>
+> -       exynos_mbox->pclk =3D devm_clk_get_enabled(dev, "pclk");
+> -       if (IS_ERR(exynos_mbox->pclk))
+> -               return dev_err_probe(dev, PTR_ERR(exynos_mbox->pclk),
+> +       pclk =3D devm_clk_get_enabled(dev, "pclk");
+> +       if (IS_ERR(pclk))
+> +               return dev_err_probe(dev, PTR_ERR(pclk),
+>                                      "Failed to enable clock.\n");
+>
+>         mbox->num_chans =3D EXYNOS_MBOX_CHAN_COUNT;
+>
+> ---
+> base-commit: f8f97927abf7c12382dddc93a144fc9df7919b77
+> change-id: 20260105-mailbox-acpm-pclk-ptr-c25c99dacb34
+>
+> Best regards,
+> --
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+Applied to mailbox/for-next.
+Thanks.
