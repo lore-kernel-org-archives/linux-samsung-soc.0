@@ -1,126 +1,150 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FD528D830;
-	Mon, 19 Jan 2026 16:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768838842; cv=none; b=bn5ViY1nTqZxgbAMm0ZSsNHBLVd0VjjDxOR9ajLsylf/QkDKbEPb7yasBKbLzUB6YTzLwDA771it0RI2RsUoNfpmE3s1ZCE+77LrAsTJIwOwt8MDLCawE8dRD3BsQ58yQmbkKT+1JIxsBEw3LwQ0rJwECdSl9sug39bYvTaCfiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768838842; c=relaxed/simple;
-	bh=FNOVC7smJ25SH7Gdtg7GStcPGWpINi+mo/0Q6qqpZ7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P7nB2rO2aHhTR9xEz0h52fOI6tABO+4KSs6RpbX2HJNvyWgpOkY2KfQL8jiQ3yawxB4utKdty4wr5egwMkrqvlL5KiPBJKmDhV8UlvNCZbN8ox9QLIQ5AR4eDkptJfwNhkAagKkCg5ekg+qq5OTwktSuaRGfnkALt5YfhASLbXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NCLAf0Gy; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FD2F83CB
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2026 21:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1768857869; cv=pass; b=LgvaoacH+mh9RlW3Na+qjldfs0TipxI9aL1SR/3vMarw3sNfvAaQM+KlzIF1lOuOKOPgfRZd1deGvsb0suGCU/qZsGymaz1ZeALcgsCKjsNR8UQ+/tt9nckzHrJeKTrF/5vi3zhC5lT4rsahfEP8zAuVzTDZfmAkLIusO+3iDv0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1768857869; c=relaxed/simple;
+	bh=P564zifxGq7gpIAXiYMGNHPdZBZ6qjwcGkLD/d5fbQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Js2E4THjBN9iwRyrdxpf6xSM/mTgOMjAlTraC3puBLHQRcPonehBkbNplfn7oc9HVyHSV1Dfg32VVEdB9ICqrS3SFEfwgfZmVE4OKbcWxpzwgBi4NzZe1XuxF+uc8KmD+Hd6U+qd1NxDCF4ADBwVJR4EfBeCGtI2CNhbvwXd+ZM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=e8U1dkI6; arc=pass smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NCLAf0Gy"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=8pPZdQPY4l/E6Ki51s+kyYAdtveDcn2eRM82KhpKvEs=; b=NCLAf0GyaclQZPdMNf4kV+ydak
-	6AOdai735qQfi6T1UQ3K+ccjB1uImgyZUNmG93Tm03D3La8nM6AWcjwQNRgGIpoZCVP9XmqhH2eG8
-	cHedeNeY7IC4dYd0GYcW/QrLJxQ6jfW+7/H8ffARoq4O4fi3ye8TpQJheeEObtEde1vOd25ED51B/
-	/BlMHAiDjORwBRjW9/ZR+4UDHdN+ZMJ3YQoKyYzy8O92PBa8FrpqzhuVDHd2BBtAQH3LqiA3utzWH
-	s5GZF2eLd1PC5rgjvkWZ+xeBBkYm8asn/ll956TTgFVtFl/6vJSrvBBpzwFUCdc0NWg2VJaf5Q6YB
-	Endu1X2g==;
-Received: from i53875a9c.versanet.de ([83.135.90.156] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vhrmB-0037VG-F4; Mon, 19 Jan 2026 17:06:48 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Damon Ding <damon.ding@rock-chips.com>
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
- dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
- jani.nikula@intel.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Damon Ding <damon.ding@rock-chips.com>
-Subject:
- Re: [PATCH v8 00/18] Apply drm_bridge_connector and panel_bridge helper for
- the Analogix DP driver
-Date: Mon, 19 Jan 2026 17:06:46 +0100
-Message-ID: <6571983.R56niFO833@diego>
-In-Reply-To: <20251217093321.3108939-1-damon.ding@rock-chips.com>
-References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="e8U1dkI6"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a0c09bb78cso35897475ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2026 13:24:27 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1768857867; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RV2EhtkSp/iGabV5vqRwFjT6cXbajutSZCdcS+Te6WzX9t10e/8TgwhrS25gMCszfT
+         RYWcIfVPJOjny2dPdPQir5X0rt5hekuCuJbV1QrHaN3q5rxZKhTk+2AjoZMYLGQAnXQr
+         gXA7pkIfPNS1kH5pQhpIOrBR63Y+at7K4wKv7pFF7DhOTgzoAG8wsmxjGKO0nKGr5FNy
+         KWmdkEwPSmmsgvDZfSwpZ25ZepsdoJirW4ODiLtBnyeCZBMOukdG5T5c+sN1QFO3a5uA
+         RZQHoLWsYdOxg4IkO9EOqGzd0EDsZDns2FyHpmkwN+Prax8ND0J0vzMr9pe4NkYz2f8B
+         dPNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=AP5uij4auzaarNTMKGDAE5deLZectmAWZbcZ2tCl4Wo=;
+        fh=oufAVdDAvcDbVoqRS7cM8SJ4kwRfM7qGzBBEq0Oplfw=;
+        b=lMyZzmxfeOiFXHIBFYBM2d74DH1VIydPx8itmVoucAIbPbZUw2znEZn+vuaP9fB/jv
+         KRtBDrtG5dBZ19IsnFxoav9C1iUqa4lYm1J6fD+niHwn8ke2BqqWd/Fj57G9f2jJSY+U
+         8KXBkbZmfSRDSuxV8zqp+3BN0+pZgTiRXZV9j2eE+ua8y2TTJVclZFXy+ugEIeVk2C9m
+         M9uzM+LCXil4kTxpYb7ATLZS05XapftZwmauzgH4iOidONc5d/oDQ4o/Z8UdTYEwVD9O
+         clA2ZyPkhuwCSUdjSc9wm5Qa3uXFxrtLrTaLPh8ybB5j0C8Ocn9eCexI8QQSKDmfzrip
+         iXww==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1768857867; x=1769462667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AP5uij4auzaarNTMKGDAE5deLZectmAWZbcZ2tCl4Wo=;
+        b=e8U1dkI6DB5g9Ud3jh7ZrVTy4kw65DnWzVP6Eg4qIVVcEXKISsqB52ybMQZcBeUMaD
+         LZcu9F7ziqGrw0ASdoTyshMRjZNopbTbORYTCZVfbedPCpv1wtO1FEGdp89jxauvib4q
+         3NJsuTh1Exd1N5WmpEmSYzjFR7ibNu/WySddB74fntO4v7GMBCOcu6NaNKlpzglTgCJM
+         Hja+JOnzt0nxeenK6VADbOvv+eUdJ+EAkJ9LMUsUyoVzHp9dPVcXTC+8kCBwWtZdZWvb
+         SByNFCkjyctX8XolJEzbXChwNJkHp5Z4lGYvpqnsbuiU6ewHLSdneSLreUERv8RBlC9Z
+         tbtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1768857867; x=1769462667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AP5uij4auzaarNTMKGDAE5deLZectmAWZbcZ2tCl4Wo=;
+        b=IZgztv6kV5YIhSs0dK2zYmQb583zP4nTlHQGAJwQPjcofKO2Wl2sNeMUuQJywMhSzT
+         swTZNTefnmItjBd02w+428j/Ro4BsFo2ZOfjOsEDT9Nd5Xl9uyHd5reWdKybWmhJChqW
+         CUCG86STXEIQnZRw4X98BXiT/D4lSK6cLzyVMdY9TFm/2q94yDw9IQdNp6mmcGV7/pBk
+         oLXbnsqs+3ow5p6pDVDTOSoWUSbCYyjYJ44PIvYYnuAhFFe4EXiGd1cbAkv3ocsJUD17
+         6fPUefDoynvdr02xpD5LkHITs3ZP2IivMrlE59Pn5Zr0rL14nQdo8JTJ7nbmQc0d9SAU
+         8Esg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVi6hDl0xoLdTkY31gOky3KWvQv0u6I5giXJy33GVzzSP6UN4x5VeXL1opaKxzj2OY36dGdZ/llDs+VBF2UVpelw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAID3QVJ/DiTL++0Ek523fgKdFh4KCM4+0dVVPSp7+waFpNa9x
+	M+v6M4a+rtNbUWmcKgOqOBK90nyLg6ZNpm6dGL5XyR8FYUHu9mOahUiKbcJ3n+KUKWYzdZuleZp
+	+IN8ouLsu/L34z0P5TC+/Al5pgN/t5+g=
+X-Gm-Gg: AZuq6aIT9xevAasJa9JdzjbCXhJLpz2X6tYm1N3Ipk+ekRf/3SMmEROA4sBynyeiZp4
+	Te0TjZMFidwrYWLgGti66rb6AgcMQePop8ldg9OUHKxVkL3PLo+kh7uchZM9DE1UDlNMNWczouw
+	AAcEGvWLR5ksx+Qg2wLfxThQw17Sb57csr2+FWYb6IhhX2DRHhMwnwvcolgg4rjZlCIfkaY5fkH
+	V0X1W1aIlilSPuXSKkIwjfDf1SSfV7wDVKy/tj5mRIXREQWzR6u2WSpL9lyXenuhpnPFcZ/9hhj
+	3fLMVUMXqz8KU9F2qSZ+GKzAtWXAPzLquI50D1Q=
+X-Received: by 2002:a17:902:e787:b0:2a0:fb1c:144e with SMTP id
+ d9443c01a7336-2a700990c98mr136201155ad.7.1768857866821; Mon, 19 Jan 2026
+ 13:24:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
+ <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-2-8d7a3dbacdf4@bootlin.com>
+ <CAFBinCBWUXNwEDCJNEmdCtOcGO9eVFfZFC9p9fpdRTesZ7xBSQ@mail.gmail.com> <DFNN251V4JL9.2ECEDGOKN8I4F@bootlin.com>
+In-Reply-To: <DFNN251V4JL9.2ECEDGOKN8I4F@bootlin.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 19 Jan 2026 22:24:15 +0100
+X-Gm-Features: AZwV_QgxI3L9klOeJM7lsCljCRIK_bf05uJfhQMd5VWt4KtGJ4pArfXR_EjKQn4
+Message-ID: <CAFBinCCz+MobtXYdiyWRBBFBDo77iULLOZ1p2i4fAVnpJ1NzJw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] drm/meson/dw-hdmi: convert to of_drm_find_and_get_bridge()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi Damon,
+Hi Luca,
 
-Am Mittwoch, 17. Dezember 2025, 10:33:03 Mitteleurop=C3=A4ische Normalzeit =
-schrieb Damon Ding:
-> PATCH 1 is to ensure the last bridge declares OP_EDID or OP_MODES or both.
-> PATCH 2 is a small format optimization for struct analogid_dp_device.
-> PATCH 3 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-> PATCH 4 is to add a new parameter to store the point of next bridge.
-> PATCH 5 is to make legacy bridge driver more universal.
-> PATCH 6-11 are preparations for apply drm_bridge_connector helper.
-> PATCH 12 is to apply the drm_bridge_connector helper.
-> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
-> PATCH 16 is to attach the next bridge on Analogix side uniformly.
-> PATCH 17-18 are to apply the panel_bridge helper.
+On Tue, Jan 13, 2026 at 6:31=E2=80=AFPM Luca Ceresoli <luca.ceresoli@bootli=
+n.com> wrote:
+[...]
+> >> @@ -789,8 +789,12 @@ static void meson_dw_hdmi_unbind(struct device *d=
+ev, struct device *master,
+> >>                                    void *data)
+> >>  {
+> >>         struct meson_dw_hdmi *meson_dw_hdmi =3D dev_get_drvdata(dev);
+> >> +       struct platform_device *pdev =3D to_platform_device(dev);
+> >> +       int irq =3D platform_get_irq(pdev, 0);
+> >>
+> >> +       devm_free_irq(dev, irq, meson_dw_hdmi);
+> > I have one question (so I can understand things better):
+> > is there a particular reason why you went with free'ing the IRQ
+> > instead of "just" masking it (so the hardware won't fire anymore of
+> > those IRQs)?
+>
+> One reason is symmetry: _bind requests the irq, so _unbind does the
+> reverse.
+>
+> Another is I don't have the hardware, so I wanted my changes to be as sma=
+ll
+> and clear as possible.
+Understood, thanks!
 
-On top of all the recent bridge-related commits, this series still works
-on my rk3588-eDP board - when the display is plugged in on boot.
-
-As that is the current state we also had before, this series:
-Tested-by: Heiko Stuebner <heiko@sntech.de> on rk3588
-
-
-=3D=3D=3D=3D=3D=3D
-!!! The following should not hold up this series though, because the
-analogix-dp not handling hotplug, is also the current state already!!!
-=3D=3D=3D=3D=3D=3D
-
-However, actually hotplugging the device does not seem to work.
-
-With the hpd-gpio inside a dp-connector node.
-
-
-(1) When booting connected and unplugging the display I get:
-
-[   42.725888] rockchip-dp fdec0000.edp: Rx Max Link Rate is abnormal :0 !
-[   42.733325] rockchip-dp fdec0000.edp: Rx Max Lane count is abnormal :0 !
-[   42.764853] rockchip-dp fdec0000.edp: LT link start failed!
-[   42.771105] rockchip-dp fdec0000.edp: eDP link training failed (-110)
-[   42.778329] rockchip-dp fdec0000.edp: unable to do link train, ret=3D-110
-[   42.785747] [drm:analogix_dp_bridge_atomic_enable] *ERROR* dp commit err=
-or, ret =3D -110
-( ... repeasts a bunch of times ... )
-[   43.284897] rockchip-dp fdec0000.edp: failed to set bridge, retry: 4
-[   43.292045] rockchip-dp fdec0000.edp: too many times retry set bridge, g=
-ive it up
-
-plugging the eDP back in reenables the display successfully though.
-
-(2) Booting with the display unplugged
-
-Same messages as above, but plugging the display in for the first time
-does not create an output.
-
-I'll try to dig more, but if you have an idea, what I should look at, I'd,
-be really grateful.
+> In principle one could request/free the irq in probe/remove and then
+> enable/disable it in bind/unbind. Whether it would be a good or bad idea =
+I
+> don't know, but surely it would be more complex and I wouldn't want to do
+> it without any chance to test it on hardware.
+>
+> Also, that would only optimize the case of multiple bind/unbind cycles,
+> which are not quite realistic without bridge hotplug. And brigde hotplug
+> does not exist yet in mainline, and when it will arrive it will be used
+> only for a few use cases.
+>
+> I hope this answers your question.
+Yes, I was curious whether you considered devm_free_irq() as the only
+"correct" approach (in this case I would have recommended a comment)
+or whether other approaches are fine too.
+This is useful knowledge for me in case we ever need to restructure the dri=
+ver.
 
 
-Thanks
-Heiko
-
-
-
+Best regards,
+Martin
