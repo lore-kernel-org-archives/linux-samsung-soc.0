@@ -1,66 +1,33 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC92C35E52F
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2026 12:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337EB279DB1;
+	Mon, 19 Jan 2026 12:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768826714; cv=none; b=q6GR8t/2JvCRGFl76VPnaYbiBCWBggGbl61nBkNX5FneqwSefyEiwrIqX7ISdMQx+Hrlpk2bOdah5YnXmNfAQfPiohz1U+5yq2v7i+x+UAWO0WvkrQUMip26S89U7PuG78xs9024S+l+CS+F4ZFg8KqF96mTKJbQamZ+M84VfPA=
+	t=1768827434; cv=none; b=kNc4wd82qNUr3E/WQPatHE9NiPDILYVNXc97WlEwnTMMybYaJFQtliFv9F7pj6Hb5X6V8/yGfJOLd+napqvk33pDfx2wY65cV/mapSkLYGu0SF4zZ4pRY/wGCiforkjQdFMyDjOsyfevhuuGHlwUhv8qtkUrP+XzS3qS2814Fo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768826714; c=relaxed/simple;
-	bh=58zqf0QRhFos7cRmq8vTrHcguHAy4GxQXQGtoEUAomg=;
+	s=arc-20240116; t=1768827434; c=relaxed/simple;
+	bh=OgMNjOdhoMX2w+/5F+CC4YSnzMuGIrDO2lOdsq5Jm7w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TMTCiTdiamXYPl+vjSv+Dd8FvJ62XTpb6HxxzikqWXlGW5lLnzKyGsPLr8ekx5vmZm2U15QesKchklY3PH8JuBLIg5rtuRM1NEFzL8KnHFPZo46YlLGKQyR79A96ZI8FYU8z3xN5RqijWaN+KKcC4N8Jc6h06p4NycgLCv6Yj4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BtWO1BDm; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=noOqSPrp8PmWQXE/LdP6lE/ysU+KhKdJYUayKvBQ7goHt9eQDBgWpNO/vaK1umCiQMAi05MIW8GLuncP9Wj1Uzc1LoiycYPiD6iYzVk2ZuHZ6EfLh67D5lml/O/CuP0v07x3ixyI23WFJYcN5OXCh1FPGiZtmWX2BLXU+QkF+kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFv1wSRM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BtWO1BDm"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47ee3da7447so26543395e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jan 2026 04:45:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1768826710; x=1769431510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jGK/JHtGxCZWFp0R8SxdcXdTEhWhNtsWilx8eiq1+lY=;
-        b=BtWO1BDmiVo2a+LE6cgUTsZ8jaxNUH9MtBX8uJ1u8xKxB38JPizBLil9z4kOjX+B57
-         wr4BaAuKf7MirYS275jTJPtH27QPbiXjHk4xAFZx/bY0HuKYE5oXctZXiW45y02/Hdwp
-         xSMBZcMaGe0a8bmC7B4nLLEZFVKX7L1SIuvTcXvZ1gfzyT/iIIDTh4g7iZnNOw0/HmcQ
-         f1TMHoR//S+BUUJ/uWNvG2Ay1vLfHYYcVeXf2MvTJ8z1QixnebAPMdyACfuAu9FglG2R
-         DQDiGe/rSLVXnlNYjtHElIVTYzuhqQaUxv1pxlXwPrEnWlPoP83GJmNCRVqeWprxu79k
-         wNPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768826710; x=1769431510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jGK/JHtGxCZWFp0R8SxdcXdTEhWhNtsWilx8eiq1+lY=;
-        b=aBJxR16QMpa3MbTyd5/PSWDYxF7LefwYpDItvGB8NpGDRaBqDBlgfP7UeQoFq6CqrM
-         2pLG5FnxwU2Cr1nbkqsqafMpLtNQ/XtJ5Pucol3mODUebxnz2WGX1ZJbGlNQjIb/KTbq
-         XPSmdScpKm2pWZprYu5fMJjWqhiVGHg9qRTpj5lmkSUpq2G/G7bgO4VsypVdprn1zFJX
-         GMJOjwiyZ5mbFXNSILjC1/njdLQjTSNLsbjOl/qdJp7TuZqU83tIDYcg6WSjmDNJidQb
-         RPoIyyqAJ4Ge3ip5tMpUVR4/zHTWwsiaLP9YE0kMOkKgRYXFEhyaM2y0gJubBhe160IK
-         svuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKxWbtBUx02D3RsDJDcf5zBMC9k2FiIUSsyTF4+MofL2GZBeVU+/tqdIFFWgT3sjNfS2K2watNN/8efmflRvRKEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvHAhktMIB1VZwoA37EKIon9WKfC2JmwQXB9zMHHB6ysQXTYyq
-	VrFLKfQATqqe+oZWVG7ChhHZgla0gU2+E9I0iNSgwXXWSEJKcCyrZgaBu21zv7LEGGI=
-X-Gm-Gg: AY/fxX5lzcXtT8ULq8XNkHSoT50zA2N7/JJ7C1fpzVXE4Gok8lILug0HV1QMiYei9gm
-	N2PtqLfgc0jqforDufYsJqqlT0RwIOIGQWPnol7JFRds4huUK4SH/S6A37/MZWY9gIBfwMOZd42
-	M04gmzLrERkzc/yBQtMwJKmnb2qddhyK4epy/DUFEORFlrKTKokvCGWghO6xY6ua45TVxx3Sx/e
-	/9E1FA8qL5ni7t9s085iAaqmYveOYkk2WX8qrW96JZQatv3AnKRn0BEFkKSNbOeRcQoju4E6TmI
-	KGn5K06JmqziqaJ40rm+aO7D40arbhpKV3fBwmexemt5PEjLWngBM+jSVqQ3tUoCVtxPQ/Bh4YO
-	pP86iLtF/JHUMtsNWjfjZgYJJamkkczG9VgjAFUqIv/aSMR0hbQBR+MgyT/6/X3kKevseB746F6
-	r6DzHR5Oh/CQIlrVk7E8xgO1JPNSvJKTuNtQ==
-X-Received: by 2002:a05:600c:6098:b0:480:3a72:5238 with SMTP id 5b1f17b1804b1-4803a7253d1mr13426025e9.30.1768826710239;
-        Mon, 19 Jan 2026 04:45:10 -0800 (PST)
-Received: from [10.255.242.87] ([109.166.183.49])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4801e86c197sm193288675e9.1.2026.01.19.04.45.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jan 2026 04:45:09 -0800 (PST)
-Message-ID: <10cb51ae-9cec-49a9-96c4-757cd1410d8a@linaro.org>
-Date: Mon, 19 Jan 2026 14:45:07 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFv1wSRM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E16C19423;
+	Mon, 19 Jan 2026 12:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1768827433;
+	bh=OgMNjOdhoMX2w+/5F+CC4YSnzMuGIrDO2lOdsq5Jm7w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eFv1wSRMYzCeDcQjHAaoP8BOAd6OVBzsPCOk7L2FN8E6SufOg0mwiLAlb7jVLDj5B
+	 WIVYtC5vOaoPnC+TGLcmtqOkW5Nr6LlCcC1FiF5hCqcShm+Tg2NxcB2q5mlBVA1FvG
+	 p2PMN7k8t0TcvQTCqcUf9Audwpi6AJm67mDQC1ivebjrEdqFPL0GhuXmeBBMtjNCHp
+	 OwrhNfQDelnBOTE2aqvzwnOJHN/FIHb66ZWBTOnMF44n2oRN84mp1zcfcI3DzF6mQb
+	 Xr8wMRGLXarovnMTxj5Id19UDeHmhDRZ+6J9yXU5ZZbnhHjnoGjrPKsMpvkMBZOa2c
+	 ylPOwdOUjgdZA==
+Message-ID: <9314be11-5a2f-47f6-a317-c085fbd5f842@kernel.org>
+Date: Mon, 19 Jan 2026 13:57:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/8] dt-bindings: thermal: Add Google GS101 TMU
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
  Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
  Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
@@ -87,107 +54,69 @@ Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
 References: <20260114-acpm-tmu-v1-0-cfe56d93e90f@linaro.org>
  <20260114-acpm-tmu-v1-1-cfe56d93e90f@linaro.org>
  <20260115-ultramarine-wildebeest-of-completion-ea1bc0@quoll>
+ <10cb51ae-9cec-49a9-96c4-757cd1410d8a@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260115-ultramarine-wildebeest-of-completion-ea1bc0@quoll>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <10cb51ae-9cec-49a9-96c4-757cd1410d8a@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 1/15/26 3:32 PM, Krzysztof Kozlowski wrote:
-> On Wed, Jan 14, 2026 at 02:16:29PM +0000, Tudor Ambarus wrote:
->> Add device tree bindings for the Google GS101 Thermal Management Unit
->> (TMU).
+On 19/01/2026 13:45, Tudor Ambarus wrote:
+>>> +  "#thermal-sensor-cells":
+>>> +    const: 1
+>>> +
 >>
->> The GS101 TMU is a hybrid thermal solution:
->> 1. Configuration (thresholds, hysteresis) is handled via the Alive
->>    Clock and Power Manager (ACPM) firmware protocol.
->> 2. Interrupt handling is handled by the kernel via direct register
->>    access.
->>
->> This binding documents the required resources, including the APB clock
->> for register access and the phandle to the associated syscon node.
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  .../bindings/thermal/google,gs101-tmu-top.yaml     | 64 ++++++++++++++++++++++
->>  1 file changed, 64 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/google,gs101-tmu-top.yaml b/Documentation/devicetree/bindings/thermal/google,gs101-tmu-top.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..ecf4a315ecf1ea0649c4e96a207d531c696282f4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/thermal/google,gs101-tmu-top.yaml
->> @@ -0,0 +1,64 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/thermal/google,gs101-tmu-top.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Google GS101 Thermal Management Unit (TMU)
->> +
->> +maintainers:
->> +  - Tudor Ambarus <tudor.ambarus@linaro.org>
->> +
->> +description: |
->> +  The Google GS101 TMU is a thermal sensor block managed via the ACPM
->> +  (Active Core Power Management) firmware. While the firmware handles
->> +  the thermal algorithm and thresholds, the kernel requires direct
->> +  access to the interrupt pending registers via a syscon interface to
->> +  acknowledge and clear thermal interrupts.
->> +
->> +properties:
->> +  compatible:
->> +    const: google,gs101-tmu-top
->> +
->> +  clocks:
->> +    maxItems: 1
->> +    description: |
->> +      Phandle to the APB peripheral clock (PCLK) required to access
->> +      the TMU registers.
+>> No supply?
 > 
-> Drop all the redundancies, so:
-> items:
->  - description: APB peripheral clock (PCLK) for TMU register access
+> It seems not. Nothing specified downstream. Couldn't find anything in the
+> schematics that I have either.
 > 
+> I addressed the rest of the feedback in v2.
 
-ack
-> 
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +    description: |
->> +      The combined thermal interrupt signal (Level High).
-> 
-> Drop description
-> 
+Then maybe it moved to power domain, because TMU always needed power...
 
-ack
-
->> +
->> +  syscon:
-> 
-> I feel like suddenly you sent something completely different than what
-> have you been working for the past 4 years.
-> 
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: |
->> +      Phandle to the device node representing the TMU System Controller
->> +      (compatible with "google,gs101-tmu-syscon"). This node provides the
->> +      regmap for INTPEND and INTCLEAR registers.
->> +
->> +  "#thermal-sensor-cells":
->> +    const: 1
->> +
-> 
-> No supply?
-
-It seems not. Nothing specified downstream. Couldn't find anything in the
-schematics that I have either.
-
-I addressed the rest of the feedback in v2.
-
-Thanks,
-ta
+Best regards,
+Krzysztof
