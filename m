@@ -1,101 +1,199 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10DD3EDAC3;
-	Tue, 20 Jan 2026 17:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0D478876;
+	Tue, 20 Jan 2026 19:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768930126; cv=none; b=OH2vIhGhr/uTXCcbOxGI7h8gg3TDiON19fQUax10K5F3Jk4gQz1Iha1Cx3EpkIS2UQa61BEnBp1iveFGjCFksDTImGXyJPSvw2qJ3FdCwEiusL8lcdl0WiiSgpuH0F0gzsGU0rCLJSAF5nIW3UN78UbzBRsL6MLeXCdsZV2Y5TY=
+	t=1768936959; cv=none; b=a6+qCrlqUVUAn7YeBDK2lLmdbzGS/f2rU6h/xnCAPUxWzj0T7gcnWQHVO3Sjbe63wMimZpU7Lb/jN4WBenvGSVliUNKobIwHqxToBk/hB+obHLMkbS3AlFRrKqoW0sMJAFJcvXDOjMu2RhX4xoT6NCL7ehXV+3QvVReMTvb8iA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768930126; c=relaxed/simple;
-	bh=pKqgymuhOO8QU0VzDgLr0JkEV8uZG6qELdsZ1cmjOgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nApgsIBQInvVpJgUD/X7yytvs+jaetSaC6aAnEOC6HVNSycDZKmVKyDFCKuhsmVerJiEhT3XqjGcTGqbHG4HVy/xN5huP9haVFTtQ586TyHCy05N6OXem833JTFZFAH9UM0n52vGbeUAMhUF85FyRXS0AGuz8paCrRiKSEyaV38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keykpx/v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768936959; c=relaxed/simple;
+	bh=OVmbkw3k7fJ26f3GTMylBqqrvRkFQLNjf2AcM9UevMU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=spci6KxDjVDn1GUZvW3mSJy/+UvS0QNjQlktC4mtcKMfkgiNPDovvhHKOOCAXr5LMLTrqvBu71hWhjFhYwZ9wH24CCXdim/Vfh9egJ3rPR+8UkBkjL0mYsIjIbSshK+qXbdsrxle0vpu04tfbyITPt6bFwQ/bcgqzmpajIXNabc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlIDWci6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keykpx/v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C8B1C16AAE;
-	Tue, 20 Jan 2026 17:28:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlIDWci6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3BB5C19422;
+	Tue, 20 Jan 2026 19:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768930126;
-	bh=pKqgymuhOO8QU0VzDgLr0JkEV8uZG6qELdsZ1cmjOgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=keykpx/vECCN+pqOoWY1lTAiYX+7xg4gW9QpTqmyfWn7w/ACBEKhaChEVG4fy7esW
-	 UBs94g2xaq2EOnCjboLjJkSiufHceHnMN5JMYJihx+5fJM+Sczmh2DoF9AnKLlq1r2
-	 ++Fg1aloDAdYxtC71CG8DgiTYBVVx41/C3+80zndLWO1jQKTG1UwsxNpigK1H5EahW
-	 iDMtMiG8LeZoZWtazVpp0Sx4z/2nu567xutTO7QVr951kGMtYWKk1dyNb4uujivfKz
-	 an6/IJOieE3oTRZW702rM5nH2aOmpKGO0qTFOAkTk/fLYjJV9/zfdKqLLPbr1kbtin
-	 vLu98yb3kO/Tw==
-Date: Tue, 20 Jan 2026 17:28:40 +0000
+	s=k20201202; t=1768936958;
+	bh=OVmbkw3k7fJ26f3GTMylBqqrvRkFQLNjf2AcM9UevMU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YlIDWci6NaIrYvDjAq2yhQz8tWegT2Dg6owXkPTtWwCCNZy6TIGjxdkf0SjWMqrBS
+	 HZ1OYluozzxuGUb+8XWZyPhjHzhZZBTdn+x4fAQviriIGxbMX1dqT/c1f/SDma9EII
+	 glDqd9riC4rVx6B2QSNL57WNsH5WjpCsMft/TEmFUb+YsHy2dFuwVHN2w/p0QKAC/w
+	 5Sj7i2icD1/pyQOPwPNE/B2LChkgA736lCjfJaMApcMxmC8AfGe77IDEawz4zO7gsp
+	 7BnFoBJwZbhJtt0PHorTsf9ENVZR5l7hg6xF7YMzjdh3zo3J0vrT/Hr5cse6h9pQHI
+	 VNOGdReIfciTA==
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	tools@kernel.org, users@kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>,
-	Douglas Anderson <dianders@chromium.org>, kernel-team@android.com,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Samsung mfd/rtc driver alarm IRQ simplification
-Message-ID: <916995f4-60e0-47dc-abdb-8819089d103c@sirena.org.uk>
-References: <20251120-s5m-alarm-v2-0-cc15f0e32161@linaro.org>
- <176892415694.2292562.7457528145774108517.b4-ty@kernel.org>
- <20260120155241.GG1354723@google.com>
- <e9bde783-42f3-4f28-9a5e-aa65f36db9ca@sirena.org.uk>
- <20260120172405.GI1354723@google.com>
+To: Varshini Rajendran <varshini.rajendran@microchip.com>, 
+ Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sunny Luo <sunny.luo@amlogic.com>, Janne Grunau <j@jannau.net>, 
+ Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, CL Wang <cl634@andestech.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ David Lechner <dlechner@baylibre.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>, 
+ Jun Guo <jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ Shiji Yang <yangshiji66@outlook.com>, James Clark <james.clark@linaro.org>, 
+ Jonathan Marek <jonathan@marek.ca>, Carlos Song <carlos.song@nxp.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
+ Sergio Perez Gonzalez <sperezglz@gmail.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>, 
+ Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Rosen Penev <rosenp@gmail.com>, Luis de Arquer <luis.dearquer@inertim.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Longbin Li <looong.bin@gmail.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+ Alessandro Grassi <alessandro.grassi@mailbox.org>, 
+ Chen-Yu Tsai <wens@kernel.org>, Darshan R <rathod.darshan.0896@gmail.com>, 
+ Aaron Kling <webgeek1234@gmail.com>, Vishwaroop A <va@nvidia.com>, 
+ Haixu Cui <quic_haixcui@quicinc.com>, 
+ Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
+ linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, 
+ Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+ =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Ryan Wanner <ryan.wanner@microchip.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Kamal Dasu <kamal.dasu@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ Anand Gore <anand.gore@broadcom.com>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins <nick.hawkins@hpe.com>, 
+ Yang Shen <shenyang39@huawei.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>, 
+ Yinbo Zhu <zhuyinbo@loongson.cn>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+ Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
+ Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, 
+ Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>, 
+ Masahisa Kojima <masahisa.kojima@linaro.org>, 
+ Jassi Brar <jaswinder.singh@linaro.org>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+ Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
+In-Reply-To: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
+References: <20260108203004.3538449-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/4] spi: Make SPI core to take care of fwnode
+ assignment
+Message-Id: <176893693352.778248.9155805475563647239.b4-ty@kernel.org>
+Date: Tue, 20 Jan 2026 19:22:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5C+JAuLDUkP13/M9"
-Content-Disposition: inline
-In-Reply-To: <20260120172405.GI1354723@google.com>
-X-Cookie: Slippery when wet.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-47773
 
+On Thu, 08 Jan 2026 21:23:37 +0100, Andy Shevchenko wrote:
+> It seems all of the SPI drivers want to propagate fwnode (or of_node)
+> of the physical device to the SPI device. Make sure we don't duplicate
+> it over and over in each new driver (+2 in this cycle) by making core
+> to take care of that. Note, similar is done already by IIO and
+> I²C subsystems.
+> 
+> There is one noticeable and quite specific case that is taken care in
+> the first patch and would be nice to have a confirmation from Cirrus
+> that everything is okay. The rest is just a mechanical conversion.
+> 
+> [...]
 
---5C+JAuLDUkP13/M9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to
 
-On Tue, Jan 20, 2026 at 05:24:05PM +0000, Lee Jones wrote:
-> On Tue, 20 Jan 2026, Mark Brown wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-> > If you fetch a series but don't delete it from the database then (with
-> > b4 ty -d) then b4 will remember it and if any commits in what gets
-> > applied match it'll generate a mail for b4 ty -a.  Usually that's when
-> > some commits didn't get changed.
+Thanks!
 
-> The last attempt to apply this failed with conflicts.
+[1/4] spi: Propagate default fwnode to the SPI controller device
+      commit: f2d1a3318eb1ec860999db48cb8d13b43261624d
+[2/4] spi: Drop duplicate of_node assignment
+      commit: 3974a585be78a1dc90a19d5cf1846a99954e3842
+[3/4] spi: Drop duplicate fwnode assignment
+      commit: 103c510e1c6832720059756d155dd13a42baa7ab
+[4/4] spi: Drop duplicate device_set_node() call
+      commit: 37fbc1ab0f225d23f0839260a11375b4f1f7cf8c
 
-> I wonder why b4 stored that as a success?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Are you using b4 shazam?  I wonder if under the hood it's a mailbox
-fetch then an apply.  I download a mailbox then script my own
-application after the fact so it's not so surprising that it happens for
-me, b4 knows nothing about the patches actually being applied until I
-tell it to go look to send thanks.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---5C+JAuLDUkP13/M9
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmlvu0gACgkQJNaLcl1U
-h9BQ4gf/XS3VtYI5SKVmR5yt/y9gEltvUnMufTkTSFHl1BIop9/1VCqW+0k6lE/k
-DHhUhX8WVpflfrtZZFXtw6Vb95kv+eicMQJcNaTJOL/P6MV0gjr7G87Ad+RPFiDh
-TbBJr8VdEKNlKHUawvtSN1wAzJTnAhC+DQmcfg9NXriQ7Eu5Q4TIyLbzYKtDqXtn
-DEkW36O/LCTpvfh7uF9TLwco7K+s2Te/O6zxtFwRY+JO3fNPpl9CiRzb1CZ6jcVs
-+ZQpixL7YAwGBB3fhTiO3JLIEoYnnoT5cO3UbQq2WvW+RKZDJoQCk8nJL3xKgKAB
-BRy0DaghPpF60fODGw4z9BSazWMROA==
-=dEjf
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---5C+JAuLDUkP13/M9--
