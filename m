@@ -1,92 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395AE3382CE;
-	Wed, 21 Jan 2026 08:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB183126DE
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jan 2026 13:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768985342; cv=none; b=aw1rTBo7PmtTK0QpjcbGJd/9g7Gz0S0oqhifyJLqSooTnA0sAJyBBX6u/pieKdXo89ZtsFZhqwTMuX8GSkr8OaNrU2mYqzFLn6Dc6SSapjqfxdt55gwpD/xn5noiBXaGjWDwnOa5sUs6O7B/kjc603p/PCFjOG7yV7zFDhZ0GiU=
+	t=1769000993; cv=none; b=D8obN+CSEpISeeAkx771177WELBN7IxJKJFGnZ+FZIXV7yMnp4BuDkCyfmZJbNMRdw4KX/EvlwmhZyGt6ZH1jOFrD9rSiVwn9JAtPkn+yak84R0oFHOyEfEdq9jBwPc/9836VhjTTTvsozjQh5XoEdImqEddkLmWdZZ+PyOYfp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768985342; c=relaxed/simple;
-	bh=AROUgoK5JKmkeY3ZuULwQ5Ymuu6lMrVUbdjp1Hj43wY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XA73HHvIraPZo9GyTv98N/eqTx1JyyX2JfMfxf6VlIr9GAGM+ZBCfp7fiQL9UgNOSfk5PNm6wE+AnBfQS4d815AZ4NFYrBykwIbRK02f4Gy/KDa6z6Dct6Lmdk0PdZilY79CobwcUuYODPo4k/onsbF6VH6HBqkT6qKnZ9jbgM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKE0goIT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769000993; c=relaxed/simple;
+	bh=3enFVxpsJ0ZAQNX9shyEl/w+8bES5Y3UL9aVUuyBjTE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IafDLvSxCb4nfG7qvqWSmtXxtnJHZRrYi7DyZBwBgDnvK0xrWGGTKitHTfBph6+UE8fRtXR5TRuhtwjNFWErBeEWv/5M3oTgXX7mKcDxfGGwmxRsTnmQe1xhuW+uRkcJbHe5DnofQ7v1G81bY5/qHfzZiBMGI5hsKDe+2O7Ig/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=y60xwBm3; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKE0goIT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F4EC116D0;
-	Wed, 21 Jan 2026 08:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768985341;
-	bh=AROUgoK5JKmkeY3ZuULwQ5Ymuu6lMrVUbdjp1Hj43wY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kKE0goITgY7yd6fIQWK9OC79EzjJDbvGbDemvIKMBveyaAdvcMfXlHAxq8Awq70RF
-	 roG79/IG/MRyDhHao32o1n/ou3j5mTrzfpQShkqG+paA6j6C1sO4imiwZwdHVzsQ3c
-	 NKMbfRC5BGgrQxWv3v8yy2La6kdKEZYgT+fho8SxOnr/jRzx2hKHcRFWdr9FJLmxkJ
-	 YIqOZg0JBmtRMokppohHydrfOkvf6V+sFo7oYnHNOzBMWJTyZfk0jGP/49vxmxbfXX
-	 C89V8TGKnu9qH+68EMj8mS3kdggfQFQUd/GnzwQR+Q/EHBV8afYdSTbx6tqeIXLWMr
-	 LMkytRBJOGnhg==
-Date: Wed, 21 Jan 2026 08:48:53 +0000
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	tools@kernel.org, users@kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>,
-	Douglas Anderson <dianders@chromium.org>, kernel-team@android.com,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Samsung mfd/rtc driver alarm IRQ simplification
-Message-ID: <20260121084853.GB2367337@google.com>
-References: <20251120-s5m-alarm-v2-0-cc15f0e32161@linaro.org>
- <176892415694.2292562.7457528145774108517.b4-ty@kernel.org>
- <20260120155241.GG1354723@google.com>
- <e9bde783-42f3-4f28-9a5e-aa65f36db9ca@sirena.org.uk>
- <20260120172405.GI1354723@google.com>
- <916995f4-60e0-47dc-abdb-8819089d103c@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="y60xwBm3"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2607E4E421C5;
+	Wed, 21 Jan 2026 13:09:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E831E6070A;
+	Wed, 21 Jan 2026 13:09:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C1864119B12B0;
+	Wed, 21 Jan 2026 14:09:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1769000986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=wZQftdk2nD+KUg1koynnm115h0ip7JWIlzvZWrt2KVA=;
+	b=y60xwBm3xBqZIT8UiYIEJC1jmdN8HJp50cHs3G3ihI5ZArfnGhhrDedj2MG09NvX+QDlQX
+	upp0ldCVvnWrEUjJvZvWNWKylSt1StNKVf4xwz58pIChVXAs1jOd6c9DZKq+W1K34lsE9g
+	//T7Ds7Mv74Xu/O+cc4S5vJn1tUFJ/575ztvoEjJm3J2Csz8vdr5SOEk5nawaVwhwzf7m0
+	AML5lo5TXHe6QOVd+hlDkDYvp5/oqwOh/TW7bZQcLCwod2zaw5CoFmhRd+I3kB4EJWMDot
+	HOA/Lx1NGRnjvTnTln6ZLrP6ZWSsFCJv/uCjkTCWpinzCFD1A7hA1gsnoxcqFQ==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
+References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
+Subject: Re: [PATCH v2 0/6] drm/bridge: convert users of
+ of_drm_find_bridge(), part 3
+Message-Id: <176900097537.2193756.17458623342246187982.b4-ty@bootlin.com>
+Date: Wed, 21 Jan 2026 14:09:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <916995f4-60e0-47dc-abdb-8819089d103c@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 20 Jan 2026, Mark Brown wrote:
 
-> On Tue, Jan 20, 2026 at 05:24:05PM +0000, Lee Jones wrote:
-> > On Tue, 20 Jan 2026, Mark Brown wrote:
+On Fri, 09 Jan 2026 11:02:49 +0100, Luca Ceresoli wrote:
+> This series converts many DRM drivers from the now deprecated
+> of_drm_find_bridge() to its replacement of_drm_find_and_get_bridge() which
+> allows correct bridge refcounting. Where applicable it also converts
+> per-driver "next_bridge" pointers to the unified drm_bridge::next_bridge
+> which puts the reference automatically on bridge deallocation.
 > 
-> > > If you fetch a series but don't delete it from the database then (with
-> > > b4 ty -d) then b4 will remember it and if any commits in what gets
-> > > applied match it'll generate a mail for b4 ty -a.  Usually that's when
-> > > some commits didn't get changed.
+> This is part of the work to support hotplug of DRM bridges. The grand plan
+> was discussed in [0].
 > 
-> > The last attempt to apply this failed with conflicts.
-> 
-> > I wonder why b4 stored that as a success?
-> 
-> Are you using b4 shazam?  I wonder if under the hood it's a mailbox
-> fetch then an apply.  I download a mailbox then script my own
-> application after the fact so it's not so surprising that it happens for
-> me, b4 knows nothing about the patches actually being applied until I
-> tell it to go look to send thanks.
+> [...]
 
-Not using shazam.  This is my abbreviated workflow:
+Applied, thanks!
 
- b4.sh am -3 -slt ${PATCHES} -o - ${id} > ${MBOX}
- cat ${MBOX} | formail -ds ./scripts/checkpatch.pl || true
- cat ${MBOX} | git am -3 --reject
- kitty -o font_size=12 git rebase -i HEAD~${NOPATCHES}
- b4.sh ty -aS --me-too --since=1.day
+[1/6] drm/bridge: dw-hdmi: convert to of_drm_find_and_get_bridge()
+      commit: 4e7fd5aa3f3939dfcd8b0578de57f1cc00d6c31c
+[2/6] drm/meson/dw-hdmi: convert to of_drm_find_and_get_bridge()
+      commit: 9afbf7a9cce584e3ce7b709ea5654f2721b00694
+[3/6] drm/imx/dw-hdmi: convert to of_drm_find_and_get_bridge()
+      commit: 6dfebeee296cbb3296f06c28f3b2d053ec8374e7
+[4/6] drm/mediatek: mtk_hdmi*: convert to of_drm_find_and_get_bridge()
+      commit: 4ace6fbcd25f5ef275c91b93424e715f96197e50
+[5/6] drm/exynos: hdmi: convert to of_drm_find_and_get_bridge()
+      commit: 2db0d298f22d685e0c9f7f66ab6470f12a0255b6
+[6/6] drm: rcar-du: lvds: convert to of_drm_find_and_get_bridge()
+      commit: 95d628c9e4738c070ba780488efbab894e583646
 
+Best regards,
 -- 
-Lee Jones [李琼斯]
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
