@@ -1,148 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC358303C87;
-	Tue, 20 Jan 2026 19:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30E11DFD96;
+	Wed, 21 Jan 2026 01:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768936984; cv=none; b=teDMDnyOGKs9WZ3x8X8RUAtpVr0UzCWCsitGUPSkEFmSYrh8eyKpcrUNmU4b7sgEuqEVFpJE4lPcMOoD6YR4Q7jiqLjDX7EM8+TNcJTDER2YkgFBjvpoGh/ip/hJydgsYPZUB6ar/SdBO1kIkOqrwQUj1kZrleJkZhJeCs4DSSo=
+	t=1768957214; cv=none; b=jf57ElDMUYQ2oAbKMXzKia9VLGwZAk/b17CXE0A7hmTAkmQCz21lxc1FnAvcUiuI6eZqttDCLsQUpZDsts1p+WSH0nRInws6jI9xWCvzRVMtMFR3GKxFeoGc+499jCiK18OyhyIDc1lDCO/+3wtPxQ6E5UCMZWWqBuj7nXUf/WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768936984; c=relaxed/simple;
-	bh=8rZs4ctIFUWV+s7flKGQlMaVzkDSCztd/ihtff8Ht6w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=G7Eiee9cOQ7+u1BNFsUax/4KwwNrloQeR9+EXUPBiJB+58yb/xZao0fPVJmdr7NzQfekOpcl4sEWeSpR4j2Q3AA+hZPRMKpQYbspgG4HskHfENCg9QEXW6u8SFbSslNR34AVlljEMDLkCO0JfmRzK6geu5/LyrjkWtL2n2J/VZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgX58MKi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768957214; c=relaxed/simple;
+	bh=SFo9t6l3/bhf9aZgOhzuecaeoOY+SMMUkhye3rCxRng=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QIvfxBiD1JX2lKQjr00gTx8HgABgYZ45w8SVpHt71bTYbCw3d21gkjDPYRx/QVbZIDdHCN/oJVgJQkbPjFveWRbzjMGS1WBefPvA9WlRFUdvNzZLgksH3JVlwb50323gcuu2pwvsNNQtL+NHgHOp8kEZiqSewbfNmP4qDsVxkSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4eRzsAb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgX58MKi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA9BC16AAE;
-	Tue, 20 Jan 2026 19:22:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4eRzsAb"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D997C16AAE;
+	Wed, 21 Jan 2026 01:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768936983;
-	bh=8rZs4ctIFUWV+s7flKGQlMaVzkDSCztd/ihtff8Ht6w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jgX58MKi+zjgv/xDIQx4cHK0wTdbY5WHIpWy6zaWGiyru1YA6cG7Qbw7G8M9RhL3S
-	 SSiru+ZKHzsLIh6rtTpzRanq5020WDpXXkfsUjC/Hil6perlOH41PXAjqsRSipdXvS
-	 IPP61htVkOsCqcy9Pqn5fLS8BPsTMosoZ9eOUO70Q6cEURtv9hoJC0lOmTM5QlYWiG
-	 wz6tqUkz/prRaWfMAFRhQ1iN0dHrXg8oROA8glqKMy/5Onkhv0z+Jp0+qs66q2UQYi
-	 BzO1NPQx1qqbWombFmTG5JqwfCmxs4g31+tAPZmi39pA4KsUWJBmYbw0vvIV/lZYxv
-	 FMvcuLOxsC4SQ==
-From: Mark Brown <broonie@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>, 
- Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Haotian Zhang <vulab@iscas.ac.cn>, Sunny Luo <sunny.luo@amlogic.com>, 
- Janne Grunau <j@jannau.net>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Chen-Yu Tsai <wens@kernel.org>, 
- Amelie Delaunay <amelie.delaunay@foss.st.com>, 
- Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, CL Wang <cl634@andestech.com>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Heiko Stuebner <heiko@sntech.de>, 
- William Zhang <william.zhang@broadcom.com>, 
- =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
- Manikandan Muralidharan <manikandan.m@microchip.com>, 
- David Lechner <dlechner@baylibre.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Jonas Gorski <jonas.gorski@gmail.com>, Hang Zhou <929513338@qq.com>, 
- Jun Guo <jun.guo@cixtech.com>, Philipp Stanner <phasta@kernel.org>, 
- Charles Keepax <ckeepax@opensource.cirrus.com>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- Shiji Yang <yangshiji66@outlook.com>, James Clark <james.clark@linaro.org>, 
- Jonathan Marek <jonathan@marek.ca>, Carlos Song <carlos.song@nxp.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Huacai Chen <chenhuacai@kernel.org>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>, 
- Sergio Perez Gonzalez <sperezglz@gmail.com>, 
- Qianfeng Rong <rongqianfeng@vivo.com>, Haibo Chen <haibo.chen@nxp.com>, 
- Gabor Juhos <j4g8y7@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Rosen Penev <rosenp@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
- Luis de Arquer <luis.dearquer@inertim.com>, 
- Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Longbin Li <looong.bin@gmail.com>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
- Alessandro Grassi <alessandro.grassi@mailbox.org>, 
- Darshan R <rathod.darshan.0896@gmail.com>, 
- Aaron Kling <webgeek1234@gmail.com>, Vishwaroop A <va@nvidia.com>, 
- Haixu Cui <quic_haixcui@quicinc.com>, 
- Darshan Rathod <darshanrathod475@gmail.com>, linux-spi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-rpi-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
- patches@opensource.cirrus.com, imx@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>, 
- Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Ryan Wanner <ryan.wanner@microchip.com>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Kamal Dasu <kamal.dasu@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Kursad Oney <kursad.oney@broadcom.com>, 
- Anand Gore <anand.gore@broadcom.com>, 
- =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
- Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins <nick.hawkins@hpe.com>, 
- Yang Shen <shenyang39@huawei.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Lixu Zhang <lixu.zhang@intel.com>, 
- Yinbo Zhu <zhuyinbo@loongson.cn>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Daire McNamara <daire.mcnamara@microchip.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
- Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
- Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Chris Packham <chris.packham@alliedtelesis.co.nz>, 
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
- Andi Shyti <andi.shyti@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, Li-hao Kuo <lhjeff911@gmail.com>, 
- Masahisa Kojima <masahisa.kojima@linaro.org>, 
- Jassi Brar <jaswinder.singh@linaro.org>, 
- Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
- Michal Simek <michal.simek@amd.com>, Max Filippov <jcmvbkbc@gmail.com>
-In-Reply-To: <20260112203534.4186261-1-andriy.shevchenko@linux.intel.com>
-References: <20260112203534.4186261-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 0/4] spi: Make SPI core to take care of fwnode
- assignment
-Message-Id: <176893695845.778248.8132133480043006428.b4-ty@kernel.org>
-Date: Tue, 20 Jan 2026 19:22:38 +0000
+	s=k20201202; t=1768957214;
+	bh=SFo9t6l3/bhf9aZgOhzuecaeoOY+SMMUkhye3rCxRng=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=S4eRzsAbzwvs2ntfsdUs7fjUzEWQkhWjk1Qy3l3lhk53nh1gUoOFyzNQvA1ODK+FJ
+	 QF/RFmUn1CwLEuoE2RTboul244TNTUKkV0IoLyWsRCqdrblBKYqj+WwlazaN0L8ET4
+	 pMc8pgOyTE0a9Pm6xefiaZnZZ6sDLGj8IbXNbrERp55JN4j/HRIuGnkj8vj7cW+o65
+	 M5cmG3mR3K4tOKXYI1pnSna9PZnLSB7ZysVtyLR1mrNo7Gm70Uudu8K07fFFXWdjjR
+	 ajmO3iR5VAb+mTdLVmN4jLOfUlRVgSRQ6IvM9GLdkVSwvZy1XcNjQfAzKb55BpxyLT
+	 GfgVZlbodDgzg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B3BD262AF;
+	Wed, 21 Jan 2026 01:00:14 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Subject: [PATCH v4 0/5] Introduce MAX77759 charger driver
+Date: Wed, 21 Jan 2026 00:59:34 +0000
+Message-Id: <20260121-max77759-charger-v4-0-694234c8ded1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -151,54 +40,115 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-47773
+X-B4-Tracking: v=1; b=H4sIAPYkcGkC/23NwQ6CMAyA4VcxOzvDytYNT76H8TCgwBJhZhiCI
+ by7g5iogePfpl8n1lNw1LPzYWKBBtc738WQxwMrGtvVxF0Zm0ECSohE8daOWmuV8bgONQVuFOQ
+ IWCIKy+LZI1DlxpW83mI3rn/68Fo/DGKZfjBIt9ggeMIxB5K5qXSl5KX2vr7TqfAtW7QBvgIIs
+ yNAFCAHlWUmsWhwI6Q/AugdIY2CkoQoK1XYDP6EeZ7fnDUeDTUBAAA=
+X-Change-ID: 20251105-max77759-charger-852b626d661a
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
+ Amit Sunil Dhamne <amitsd@google.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768957213; l=3693;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=SFo9t6l3/bhf9aZgOhzuecaeoOY+SMMUkhye3rCxRng=;
+ b=g5zA+uB4d1Wa/5ShS5DQUoY2BLnVMD4oc3yrZDuqc8GmN5IkqD3Qy22CuDGsNfBTSRi5mXIzJ
+ tKPFsrYfD+sDOlg+u2VTYxFR8sMRxpc90iDxyqIEcPjqMqU/CdECDiI
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-On Mon, 12 Jan 2026 21:21:22 +0100, Andy Shevchenko wrote:
-> It seems all of the SPI drivers want to propagate fwnode (or of_node)
-> of the physical device to the SPI device. Make sure we don't duplicate
-> it over and over in each new driver (+2 in this cycle) by making core
-> to take care of that. Note, similar is done already by IIO and
-> I²C subsystems.
-> 
-> There is one noticeable and quite specific case that is taken care in
-> the first patch and now we have a confirmation from Cirrus that everything
-> is okay.  The rest is just a mechanical conversion after checking that
-> the parent device is assigned to the same that provides the respective
-> fwnode.
-> 
-> [...]
+MAX77759 PMIC is used in Pixel 6 and 6 Pro (Oriole/Raven) boards.
+One of the functions of the MAX77759 PMIC is a battery charger. This
+patchset introduces a driver for this function. One of the unique
+features of this charger driver is that it works with a USB input where
+the Type-C controller is TCPCI based.
 
-Applied to
+Changes to the board files will follow soon once this patchset is reviewed.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+For reference to the MAX77759 MFD based patchset (present in upstream):
+https://lore.kernel.org/all/20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org/
 
-Thanks!
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+---
+Changes in v4:
+- Removed a stray tabspace in mfd/max77759.h. (André Draszik)
+- Fixed the following issues in Patch 4/5 (André Draszik):
+  - Re-order Kconfig entry
+  - Refactored to not use global variable
+  - Use of clamp() to clamp values instead of duplicating logic
+  - Return IRQ_NONE for unhandled irqs or error conditions
+  - Remove debug messages in irq handler
+  - Refactor code to use dev_err_probe in *_init_irqhandler()
+  - Remove unneeded irq_flags
+  - Check return values of regmap ops
+  - Other nits like newlines, not using greedy init, using print stmnts
+- Link to v3: https://lore.kernel.org/r/20251227-max77759-charger-v3-0-54e664f5ca92@google.com
 
-[1/4] spi: Propagate default fwnode to the SPI controller device
-      commit: f2d1a3318eb1ec860999db48cb8d13b43261624d
-[2/4] spi: Drop duplicate of_node assignment
-      commit: 3974a585be78a1dc90a19d5cf1846a99954e3842
-[3/4] spi: Drop duplicate fwnode assignment
-      commit: 103c510e1c6832720059756d155dd13a42baa7ab
-[4/4] spi: Drop duplicate device_set_node() call
-      commit: 37fbc1ab0f225d23f0839260a11375b4f1f7cf8c
+Changes in v3:
+- Had incorrectly folded the charger sub-device with the pmic parent.
+  Corrected it. (Krzysztof Kozlowski)
+- Link to v2: https://lore.kernel.org/r/20251218-max77759-charger-v2-0-2b259980a686@google.com
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Changes in v2:
+- Fold charger binding in maxim,max77759-charger.yaml to its parent
+  node. (Krzysztof Kozlowski)
+- Renamed regulator supplier & consumer. (Krzysztof Kozlowski & Heikki
+  Krogerus)
+- Removed explicit setting of irq trigger types in max77759 driver.
+  (André Draszik & Krzysztof Kozlowski)
+- Complete bit definitions for IRQ registers. (André Draszik)
+- Consolidate all bit definitions for charger IP in mfd/max77759.h.
+  (André Draszik)
+- Modify the handling of charger IRQs such that regmap IRQ chip handles
+  masking, de-mux and acking of interrupts. (André Draszik)
+- Remove unused macro definitions relating to Charger modes in tcpci
+  maxim driver (André Draszik)
+- Add dependency on Regulator class in Kconfig definition for max77759
+  chg. (Kernel Test Robot)
+- Link to v1: https://lore.kernel.org/r/20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+---
+Amit Sunil Dhamne (5):
+      dt-bindings: mfd: maxim,max77759: reference power-supply schema and add regulator property
+      dt-bindings: usb: maxim,max33359: Add supply property for vbus
+      mfd: max77759: add register bitmasks and modify irq configs for charger
+      power: supply: max77759: add charger driver
+      usb: typec: tcpm/tcpci_maxim: deprecate WAR for setting charger mode
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  16 +-
+ .../devicetree/bindings/usb/maxim,max33359.yaml    |   4 +
+ MAINTAINERS                                        |   6 +
+ drivers/mfd/max77759.c                             |  91 ++-
+ drivers/power/supply/Kconfig                       |  11 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/max77759_charger.c            | 737 +++++++++++++++++++++
+ drivers/usb/typec/tcpm/tcpci_maxim.h               |   1 +
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c          |  54 +-
+ include/linux/mfd/max77759.h                       | 202 +++++-
+ 10 files changed, 1064 insertions(+), 59 deletions(-)
+---
+base-commit: b71e635feefc852405b14620a7fc58c4c80c0f73
+change-id: 20251105-max77759-charger-852b626d661a
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Best regards,
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
 
-Thanks,
-Mark
 
