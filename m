@@ -1,117 +1,115 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f201.google.com (mail-dy1-f201.google.com [74.125.82.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB183126DE
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jan 2026 13:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA3D31B83B
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jan 2026 22:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769000993; cv=none; b=D8obN+CSEpISeeAkx771177WELBN7IxJKJFGnZ+FZIXV7yMnp4BuDkCyfmZJbNMRdw4KX/EvlwmhZyGt6ZH1jOFrD9rSiVwn9JAtPkn+yak84R0oFHOyEfEdq9jBwPc/9836VhjTTTvsozjQh5XoEdImqEddkLmWdZZ+PyOYfp0=
+	t=1769034119; cv=none; b=e47KgSt10tK2sXX1d69oBSW1IhCwkSCw3gF+p4fRFhRFMrxavFWv8MHCzDbBjfHSilCo9a8ICKrTrtJBrowaFFZUdIjWn42svh6GLeuASbjyEwvEPqbbCrH4njOY1EypasZ9bG8SBF+CgrmEaUX20dHxuLao/Jx66ggMQ6bTyNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769000993; c=relaxed/simple;
-	bh=3enFVxpsJ0ZAQNX9shyEl/w+8bES5Y3UL9aVUuyBjTE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IafDLvSxCb4nfG7qvqWSmtXxtnJHZRrYi7DyZBwBgDnvK0xrWGGTKitHTfBph6+UE8fRtXR5TRuhtwjNFWErBeEWv/5M3oTgXX7mKcDxfGGwmxRsTnmQe1xhuW+uRkcJbHe5DnofQ7v1G81bY5/qHfzZiBMGI5hsKDe+2O7Ig/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=y60xwBm3; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1769034119; c=relaxed/simple;
+	bh=F06bzrwrKY1rSDEzs1cPBYIVqqftHmJQ7diTsid8rvM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=b/tCGam3ofq9jjNW9ArQBO2z6bINyvmPMudIJiMxqLNt+4Q4DTUB19AZMZCyvK1xoR/seAoNfvJZ8VNyIM7r8AB3e3VBWZ4u9MwrYxUTIZyH++dTG53eSXTxtTuO9O3OvhFiIqz5vJxmQCp2NrN6L+JgMS2kxJNIXpubTBTwTt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yx5Nsfz3; arc=none smtp.client-ip=74.125.82.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="y60xwBm3"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 2607E4E421C5;
-	Wed, 21 Jan 2026 13:09:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E831E6070A;
-	Wed, 21 Jan 2026 13:09:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C1864119B12B0;
-	Wed, 21 Jan 2026 14:09:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1769000986; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wZQftdk2nD+KUg1koynnm115h0ip7JWIlzvZWrt2KVA=;
-	b=y60xwBm3xBqZIT8UiYIEJC1jmdN8HJp50cHs3G3ihI5ZArfnGhhrDedj2MG09NvX+QDlQX
-	upp0ldCVvnWrEUjJvZvWNWKylSt1StNKVf4xwz58pIChVXAs1jOd6c9DZKq+W1K34lsE9g
-	//T7Ds7Mv74Xu/O+cc4S5vJn1tUFJ/575ztvoEjJm3J2Csz8vdr5SOEk5nawaVwhwzf7m0
-	AML5lo5TXHe6QOVd+hlDkDYvp5/oqwOh/TW7bZQcLCwod2zaw5CoFmhRd+I3kB4EJWMDot
-	HOA/Lx1NGRnjvTnTln6ZLrP6ZWSsFCJv/uCjkTCWpinzCFD1A7hA1gsnoxcqFQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
-References: <20260109-drm-bridge-alloc-getput-drm_of_find_bridge-3-v2-0-8d7a3dbacdf4@bootlin.com>
-Subject: Re: [PATCH v2 0/6] drm/bridge: convert users of
- of_drm_find_bridge(), part 3
-Message-Id: <176900097537.2193756.17458623342246187982.b4-ty@bootlin.com>
-Date: Wed, 21 Jan 2026 14:09:35 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yx5Nsfz3"
+Received: by mail-dy1-f201.google.com with SMTP id 5a478bee46e88-2b70c92f404so531346eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jan 2026 14:21:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1769034116; x=1769638916; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rtnDcpt83urSnEkoGJAnSaHfcKiF5w4G5JkFsSE44zM=;
+        b=yx5Nsfz3uhebEUGVAp5UzUQzsrCJb9jh92avK6R46qiQTnw78KjGC8inAXgYO2wsu2
+         Eoi4sZL9DyRF0odkGKoctsMW0emBkAATbFE37GkdaTZylOSsI8Fde9hXDCqmuYCmdC74
+         uqQRX10L7i3CRzNVowQxDLTFz2P1O4y5fYCikBEct6iQxH9RB1esLCUkTm6zE3nOYkxb
+         il8MhoNVIDYLrg+hoZ92anjiOr5ZGYW1HrA25nsQNl1R1qVzthSru4mLfcR4oAvNtsgq
+         zReXP3ktPMZgT8XqVacHHTl4CHHBRvsQ0b/wM5tTYf9GvdteYYyINGBOocqqQLLia2qv
+         rGig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769034116; x=1769638916;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rtnDcpt83urSnEkoGJAnSaHfcKiF5w4G5JkFsSE44zM=;
+        b=oRni4w9QadIT0WyQ64R5c5XZy5U++w3T/CsJUQ02mnrd2dLXrfOa6zo7DxfQHI+ijR
+         yy9+wr6JxiIjc6QWxvMghFF2IudeGbXYos2IMogIiUxSQ8bY0v9FOo4D20puhshua8ni
+         ZXrfFFzFF1TsQJ6pCmFOr2EcFBJMPtxqjtVlSM6jWTzh3m9IIcboe9xnh3q3DF3AqPmU
+         qcKdUGTxAb8dL/6GH3Yqj3l+R1+EVVgaQ8Yz3g0HvJNkfwWDiwyW8lY+qsPDa8s8AzDb
+         YCOoN7snuJhalzEsRW5cRZPlCnoqX3zgMphG3e62GJsd3k00+5TPFxq4N7N0QGD9nbqn
+         WsqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjMj/mRcfdyWa1DLB1UfJYmSUrVhC/RIUexArXEqx+f26BocmBL0i2Pfv/TWRrn4eBvZNRd0NeaiIoi39usLia1g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS1HBnkdsho9PVOFeEPzVcelpGzmMCV25qHPd1ubgkg7s5hS4W
+	cHmiF3vVNwPh2H0S81SUjs3xN1HEs3sDtjZVvoIy9f87iXo4R1fSx/nu9oJLjPtO7rrbLzflhrU
+	hzbbkvQ==
+X-Received: from dycoz10.prod.google.com ([2002:a05:7301:fc8a:b0:2b7:2358:5b16])
+ (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7300:df4c:b0:2ae:5db9:f32c
+ with SMTP id 5a478bee46e88-2b6b40f34cdmr12582763eec.26.1769034116342; Wed, 21
+ Jan 2026 14:21:56 -0800 (PST)
+Date: Wed, 21 Jan 2026 22:21:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAG1RcWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDQyND3bzUihLdJEsTS0MLy+TE5DQTJaDSgqLUtMwKsDHRSiAVSrG1tQA 37UCWXAAAAA==
+X-Change-Id: 20260121-next-b949189cacf4
+X-Developer-Key: i=royluo@google.com; a=ed25519; pk=nTq1n8WcJActRWe1s8jdcy+TzpTK4a+IYRCIWvQfq5k=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1769034114; l=1355;
+ i=royluo@google.com; s=20251120; h=from:subject:message-id;
+ bh=F06bzrwrKY1rSDEzs1cPBYIVqqftHmJQ7diTsid8rvM=; b=ikH3G/1gJWuSsn1ES9rUIQWPKBJIvgAS08dh4f0vn+tdcYO2Ps2/dtYWDFK1qXN2Ng1NP+g2A
+ lSWhYVr/JBqDxzvA7x7Zn6t/4BJ2IcCcEcaorPdQyviKCwvn2CnJeai
+X-Mailer: b4 0.14.2
+Message-ID: <20260121-next-v1-1-c18068b091b9@google.com>
+Subject: [PATCH next] phy: google: fix build dependency for Google Tensor USB PHY
+From: Roy Luo <royluo@google.com>
+To: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, 
+	"=?utf-8?q?Andr=C3=A9_Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, Roy Luo <royluo@google.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
+The Google Tensor USB PHY driver uses the Type-C switch framework to
+handle orientation changes. However, the Kconfig did not specify a
+dependency on the TYPEC framework, leading to undefined reference
+errors when building for architectures or configurations where
+CONFIG_TYPEC is disabled or configured as a module.
 
-On Fri, 09 Jan 2026 11:02:49 +0100, Luca Ceresoli wrote:
-> This series converts many DRM drivers from the now deprecated
-> of_drm_find_bridge() to its replacement of_drm_find_and_get_bridge() which
-> allows correct bridge refcounting. Where applicable it also converts
-> per-driver "next_bridge" pointers to the unified drm_bridge::next_bridge
-> which puts the reference automatically on bridge deallocation.
-> 
-> This is part of the work to support hotplug of DRM bridges. The grand plan
-> was discussed in [0].
-> 
-> [...]
+Add 'depends on TYPEC' to the PHY_GOOGLE_USB entry to ensure all
+required symbols are available during linking.
 
-Applied, thanks!
+Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202601210825.ELrpQeED-lkp@intel.com/
+Signed-off-by: Roy Luo <royluo@google.com>
+---
+ drivers/phy/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1/6] drm/bridge: dw-hdmi: convert to of_drm_find_and_get_bridge()
-      commit: 4e7fd5aa3f3939dfcd8b0578de57f1cc00d6c31c
-[2/6] drm/meson/dw-hdmi: convert to of_drm_find_and_get_bridge()
-      commit: 9afbf7a9cce584e3ce7b709ea5654f2721b00694
-[3/6] drm/imx/dw-hdmi: convert to of_drm_find_and_get_bridge()
-      commit: 6dfebeee296cbb3296f06c28f3b2d053ec8374e7
-[4/6] drm/mediatek: mtk_hdmi*: convert to of_drm_find_and_get_bridge()
-      commit: 4ace6fbcd25f5ef275c91b93424e715f96197e50
-[5/6] drm/exynos: hdmi: convert to of_drm_find_and_get_bridge()
-      commit: 2db0d298f22d685e0c9f7f66ab6470f12a0255b6
-[6/6] drm: rcar-du: lvds: convert to of_drm_find_and_get_bridge()
-      commit: 95d628c9e4738c070ba780488efbab894e583646
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 142e7b0ef2efb9209781800ee47b820a91b115ae..5531ff31d8156cb164c32e3e52d4a57b26a62d8d 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
+ 
+ config PHY_GOOGLE_USB
+ 	tristate "Google Tensor SoC USB PHY driver"
++	depends on TYPEC
+ 	select GENERIC_PHY
+ 	help
+ 	  Enable support for the USB PHY on Google Tensor SoCs, starting with
+
+---
+base-commit: 8bb92fd7a04077925c8330f46a6ab44c80ca59f4
+change-id: 20260121-next-b949189cacf4
 
 Best regards,
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+Roy Luo <royluo@google.com>
 
