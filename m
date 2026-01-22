@@ -1,125 +1,143 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914F3ECBCD
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 10:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF4C3F075E;
+	Thu, 22 Jan 2026 10:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769078346; cv=none; b=IJRLa1WEmFnyQVKResBqE9iww4CczZ40OxNy+4z4cDVlgwKYPrbmjwTvuW4LfzF9mwxZk7nLfPKeb9chl9I9XAXNTcMrnvEwezUDbWCfzxME7NOfd752UIcz0F/2+irBrdlZvtCKewDrLbyIavIbMO19SMW3RP/3ayzCIOdcFvw=
+	t=1769078417; cv=none; b=kumCv6o3TlN3pGTORXYl8xSxyZw+dVE2Q6WBx3I/w2toWQm1obniHzibI1WvD/7LmfuXYahCBDDeFiT3DjHhsePXJLe+zBwM9QxrQECXoBpqFc7im5ns6Zj0Un4mKe1TEmPZiCQZsfK3rZAY6iG86MDSVeLtXetofTBaWw+o738=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769078346; c=relaxed/simple;
-	bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RQdDUCSlLt7VLRF/CoA0/QwHBGYkxU0sgDmFzNVvwZ3l9tDUagV4t5CQQKS6QPnfaQXBjeMDISaLTrTrvPcehX6ksZIfvDjruSH4ymthXZChfAWL/K0okNdpq8VmzhaJmACjlmoge/c58Wb9JprB6i3U1A9wN0DN14Gfu2vM6gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfdK09cM; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1769078417; c=relaxed/simple;
+	bh=BEb1I6PIOTPD2IpDmM2BMQdP4KohSu2acuASYega7Ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdgpHk9jVy2ehDM+P6mQ0s+nF1dpP9qsb3jP4bw+LtyuUHyPL7iVh4+uldZFezRvqc0jG7W9YY5KLn7tr8xojwpiV2CV4CMyEoYcZvQ9HaX6BFhuHxjsoUDzE2sEUjBHKDeeoEY4yFxfcWsL+xPgUN7cWD18Wi3Gm3ZPv0t1H00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIZQ1rWf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfdK09cM"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-435a517be33so513356f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 02:39:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769078342; x=1769683142; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
-        b=sfdK09cMA2aGNzP4RDKOZtaMkShYkVW2uduv/39f2Wcnh5/stkNdN0dtUTm1dtMnZE
-         kzOGTEfuVOzhUka8b/zQJ+hM5KQRaNl2jVEayOLTzrm3MdqwOhcsu7hx1c7+fKqUhIs5
-         izyJSDk1DYZOIcOmC0p73g2XIayEHBrwOHG3vUP7ZnqMEx9w6v2veToLsOjHRMZxQcZ7
-         eeEMuPjw9wmBd76fzM/2ug0g6q9+SB5YfYbpqBHxLm+0PI70GVpAaV1yhPkQSpMEXDX1
-         f+nO6VAO5MhzKZtit0nzQfWjo/0EQC3keHl2DOqtv3683Wy9kqYnukxo/wARYMutxUr6
-         71og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769078342; x=1769683142;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
-        b=bRqcOO2IZsz4C0rjBpKVoGXE1WB6MHKvxWRNzRKFhX1WkyY1lPmX51g/0JZywoPAUw
-         1Xw2FRmYm985pSoieBlX9LjJaoVvMRYwxuOZrYz4UPvFFwrcF/igtFo41ZVv2WN4ujyC
-         YARYjSAA1dA2X2blA2EZ1SWsbYGVn+sczIYRUMJBocNoYIK9lTao9pckVXFPqDchOiK6
-         U0o2UXyEWJrYwHW9ZcPNqrvrD7d+AmRGIpjgjX/yf7Y/eU4MyLoSTlfeqyoiyp751ByD
-         appMi5Y3p8rInxKwpe/xJeHL8f4mIgsI6+metkWyrH1yWV0lbgr8IrZcPAVYwQcFcfA3
-         b88w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtQAwkKyhBOxtF8XeqkX84SqPu/ijedZuBS/KPrNlotHSXEa0nPk8edwUnJhUoUrdEASFoT1EhILFDF1PMhVzGpA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK94EBJygZVESV7eICjCZYr26Z3w03uUK04ai08lNFf7sP4XhJ
-	5guEfYVUSvK67cufvyGzwHezwC9X2/zrVzzFG6ix5TbITgNRFtUt7KvIhugdQiORnfo=
-X-Gm-Gg: AZuq6aI9+s1ruadObzjvrowutMZGEAcUw+Vi+FOUqnEgeJhHPA3hX+Y/nnEzIwfQJfR
-	ysUlDNpNImzlsAultmykFC2bJvMcuzpMCArDgYzccibfv3XaGErG/hXbF30acMQ48Wj+WF/d0FW
-	aZOH3vS8Lo5ThFeMQh7bOb1IPYOmZ0KciDW1WW2EX+EMOxKzN3/mTvBCTrN9LgBDbzlQcUGLuYA
-	BSXPrFZZNO7Dfrs9ngEedeFJfovf85+Jfns7aPEfAV1++QdUKxzq+SbKEGYURLW+rnGf+QrGNeX
-	LiRc4ZMTLXFu0SDqc/s+BJPmLhUnOh7kurmF5vHqJPY0mjtP+4jSpHj4m49g0aKjqkNTbb6Adcl
-	K8xfTLlB2y/xbK6D9d7Q5qAtgdgZqkLWKBgVa/ype0V67T57BNYYdImZc00cd1w37cRVxsvyreg
-	DoM6/bg1cy/FetWAokeg==
-X-Received: by 2002:a05:6000:ece:b0:435:a7fa:24ae with SMTP id ffacd0b85a97d-435a7fa2607mr2707643f8f.18.1769078342064;
-        Thu, 22 Jan 2026 02:39:02 -0800 (PST)
-Received: from draszik.lan ([212.129.87.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997e6cdsm45475978f8f.31.2026.01.22.02.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jan 2026 02:39:01 -0800 (PST)
-Message-ID: <7c78f9da40022e7bbf850ae8989c617bdc30cc95.camel@linaro.org>
-Subject: Re: [PATCH next] phy: google: fix build dependency for Google
- Tensor USB PHY
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>, Neil
- Armstrong	 <neil.armstrong@linaro.org>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Joy
- Chakraborty <joychakr@google.com>, Naveen Kumar	 <mnkumar@google.com>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel test robot
-	 <lkp@intel.com>
-Date: Thu, 22 Jan 2026 10:39:01 +0000
-In-Reply-To: <20260121-next-v1-1-c18068b091b9@google.com>
-References: <20260121-next-v1-1-c18068b091b9@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIZQ1rWf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D96EC16AAE;
+	Thu, 22 Jan 2026 10:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769078417;
+	bh=BEb1I6PIOTPD2IpDmM2BMQdP4KohSu2acuASYega7Ps=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kIZQ1rWf21P9xdtR/xYmgNR1wnN2cvRYzRWNnUEoEARNQIwxFNbB8ZoAubFnqjVu4
+	 aPIyUZ2k2pjseF7D0FU//xYtpAAVtNwHfkAkLBf9A+sp0a+z7eKVYn7Z6dFgrrVJVZ
+	 bxo3NwzZuPeIRGVM0PJtk7DO8+myRLr5ikUMl/7RtxczJi7xy+3iWr6quyHYYLHOiY
+	 IJ4u/0yy3CIPb/OZFh0trFrCvHHdhvkWqT91BWCF4aLMOiBzLYLUL46W5E37q1yHGe
+	 SM73QA1lad5bqE/wlG0gLBN+ph/k34vN/qqUlHlmpBpkI3oVvmknqRu97x7Kjafe0C
+	 SrY9xFmC/sDzQ==
+Message-ID: <15119728-7a22-4e2c-8716-9b0c9def24ae@kernel.org>
+Date: Thu, 22 Jan 2026 11:40:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add and enable USB nodes for ExynosAutov920 SoC
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
+ muhammed.ali@samsung.com, selvarasu.g@samsung.com
+References: <CGME20251024114018epcas5p4e09ca8ea47ff2295a08a162864a47284@epcas5p4.samsung.com>
+ <20251024114845.2395166-1-pritam.sutar@samsung.com>
+ <000001dc8b8a$543269d0$fc973d70$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <000001dc8b8a$543269d0$fc973d70$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Roy,
+On 22/01/2026 11:31, Pritam Manohar Sutar wrote:
+> Hi All, 
+> 
+>> -----Original Message-----
+>> From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+>> Sent: 24 October 2025 05:19 PM
+>> To: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+>> alim.akhtar@samsung.com
+>> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> rosa.pila@samsung.com; dev.tailor@samsung.com; faraz.ata@samsung.com;
+>> muhammed.ali@samsung.com; selvarasu.g@samsung.com;
+>> pritam.sutar@samsung.com
+>> Subject: [PATCH 0/3] Add and enable USB nodes for ExynosAutov920 SoC
+>>
+>> This SoC has 2 USB typeC and 2 typeA ports those are DWC3 DRD controllers and
+>> amoung them, one is USB3.1 DRD combo phy and three
+>> USB2.0 phy controllers. This patchset adds and enables USB and USB-PHY nodes
+>> in dts.
+>>
+>> PMIC driver is not implmented yet, we rely on USB LDOs being enabled by the
+>> bootloader and used dummy regulators for now.
+>>
+>> To drive vbus for host mode, it needs GPIO pin to enable vbus regulator.
+>> GPIO expander is present in the dts, we used it to enable the vbus regulator
+>> using GPIO.
+>>
+>> USB ports are configured as OTG, and default mode is configured as peripheral.
+>> These configurations might be changed based on requirements.
+>>
+>> This patchset has dependancy on schema and driver implementation[1] and role
+>> switch control from userspace[2] patches.
+>> [1]: https://lore.kernel.org/linux-phy/20251010070912.3758334-1-
+>> pritam.sutar@samsung.com/
+>> [2]: https://lore.kernel.org/linux-usb/20251024085455.789555-1-
+>> pritam.sutar@samsung.com/
 
-On Wed, 2026-01-21 at 22:21 +0000, Roy Luo wrote:
-> The Google Tensor USB PHY driver uses the Type-C switch framework to
-> handle orientation changes. However, the Kconfig did not specify a
-> dependency on the TYPEC framework, leading to undefined reference
-> errors when building for architectures or configurations where
-> CONFIG_TYPEC is disabled or configured as a module.
->=20
-> Add 'depends on TYPEC' to the PHY_GOOGLE_USB entry to ensure all
-> required symbols are available during linking.
->=20
-> Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202601210825.ELrpQeED-lkp@i=
-ntel.com/
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
-> =C2=A0drivers/phy/Kconfig | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 142e7b0ef2efb9209781800ee47b820a91b115ae..5531ff31d8156cb164c32e3e5=
-2d4a57b26a62d8d 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
-> =C2=A0
-> =C2=A0config PHY_GOOGLE_USB
-> =C2=A0 tristate "Google Tensor SoC USB PHY driver"
-> + depends on TYPEC
+This wasn't even a dependency...
 
-Can you make this
+> 
+> Above dependent patches are merged, can you please review the patchset? 
 
-depends on TYPEC || COMPILE_TEST
+I closed my tree few days ago, so next cycle, but please resend, because
+this is three months old now. I dropped it from my queue long time ago.
 
-to allow some better test coverage?
-
-Cheers,
-Andre
+Best regards,
+Krzysztof
