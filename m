@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE4267B89;
-	Thu, 22 Jan 2026 13:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B622EA172;
+	Thu, 22 Jan 2026 13:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769088860; cv=none; b=TvXr+CfiC+UllRZiMYen2JojbVUJINf/H/Fo+2UsCBW4kWO6g4TeznG7llBYO4NMTBrJJ7ODIdlBA/8o3ZFENoJJ46mMpOHlk4b1s+iVuM50oofZ409tK4fHvdOWA/b2x/Wof3S9H3Aq4BGqL16naWyQY+5E4LqGrzjCL7NoRhs=
+	t=1769088908; cv=none; b=LThvjB4jHjWnHcRKGJ6vdfUeF9qNUmRTFuSY1ouXfx86fZv99rxBz39bJZMxqNANnuBuewTU9ojRFHlHsAebni9Hwr2wul/IHsd2mnNoQMpYr2B6n+XdJnCnrC7CvjvZdjDqSfEgXnVhL87za3Jk9ZaO5sx++4i8dPECymWXbiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769088860; c=relaxed/simple;
-	bh=zWiQ3SNcuVdPxhgKUEH1rDpOVehdotU6DFx5//kK7Tk=;
+	s=arc-20240116; t=1769088908; c=relaxed/simple;
+	bh=XJVVzUmbgccKTiKeI6G8HcIyONgARROMaR5qVigFL88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmTZwNzfs1TN3KWtFT9XGWrWBw0pThSerb+2GxP+23YCvStO6o1IuHTxRwhL6CG8s4D5N46QxsA7ds09lOGgStruAyD5z1mEgZqlSNx6aVtnosMTbI/LePRpUFdbo4te7BaiQbUC7ugkKE/kqjn+S9bF06rwphvuKHTHRVHVjfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsjwXoQ1; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=esqPMdR3cjKycrw2fBJlURy0vCg7x5SOX+hE53cJEXwOZeTT8ec6zYbD2uKbzENEOS3JI7NDuxWTxNcyyWtt4iLwnp9oyxhddKYPb9GPOhpZThzh1taXLUF5ucf+SNw6dFS4hOp7araq4nOxu9zsltq0jAFuREeLhr1kJl0AHvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDdeg5Wg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsjwXoQ1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925C2C116C6;
-	Thu, 22 Jan 2026 13:34:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDdeg5Wg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B54EC116C6;
+	Thu, 22 Jan 2026 13:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769088859;
-	bh=zWiQ3SNcuVdPxhgKUEH1rDpOVehdotU6DFx5//kK7Tk=;
+	s=k20201202; t=1769088908;
+	bh=XJVVzUmbgccKTiKeI6G8HcIyONgARROMaR5qVigFL88=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gsjwXoQ1yygl91LqCmlVqAzT7XG3AfEN8CTHI/VrCnTXaADlMLO/zBqHNOPA8KOVG
-	 pODZCvPVvBjWzfp5CQ8ULQtzW3qLA2BsHtlnXE5Yqlc3a51+caZBZIa9YK4gEVgI/O
-	 e9ullBLjUZz/u9D5XlRdifIub+Mu0ZiUNshhnq86GOHPmibsIxdIt7tZS1kyn1xMaM
-	 nXGuwobgXbN6dTdlPyDLxtOXyj3iTEvlgoCMLuilmli1qKua/UlihIFPEka1Ic2PdJ
-	 4XuWCQQudQy8dAb7SghsH0a30rP5M4x7SYdPq5/15C9IgQ10U3QPfbPNOfOIPHgTMU
-	 4kszq0Qaj1IMw==
-Message-ID: <352427f4-144a-4a43-a2f3-dd959302939f@kernel.org>
-Date: Thu, 22 Jan 2026 14:34:14 +0100
+	b=HDdeg5Wgp5WvK4y62GWB2he9P3jl1hMNi+s4XnG5ey7TyGKbTuvtl0MZKILX6bGP1
+	 1xXqhMJz99FQA/56KTLHtSg6RbMmU9TP/UcTFHSj1jEUfHqC1jrIgabdsmphvPDNLd
+	 N0yAvhA2ef1H/+ysMt7t6EoG+dOKA0UPvo6tv85Ml1p22K+uUUCfMlKvXP3EjczrMK
+	 JKj8jYBF1SThoG01z3+pu5Bc5XWl+KpC9oAdDVOnkEclRTB3qihduA93LuZ7t4bWws
+	 KNY6A4Gw4JKQN1kBhdhG9bOOaM+OJKC2A/ibY2cyI8lmco5lOidafGF1KxFSbU8hVW
+	 BYbyyLNHEzkaw==
+Message-ID: <6f381f88-3a51-4fc8-844c-41b167b07628@kernel.org>
+Date: Thu, 22 Jan 2026 14:35:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: ExynosAutov920: Add regulators
- for the USB
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
+ nodes
 To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -44,8 +44,8 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
  muhammed.ali@samsung.com, selvarasu.g@samsung.com
 References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125134epcas5p36625b7ac70b8dfba9430831a11955682@epcas5p3.samsung.com>
- <20260122130721.205664-3-pritam.sutar@samsung.com>
+ <CGME20260122125136epcas5p2db0fa3d04671ddc915e60ae8c5bcfb98@epcas5p2.samsung.com>
+ <20260122130721.205664-4-pritam.sutar@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,88 +91,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260122130721.205664-3-pritam.sutar@samsung.com>
+In-Reply-To: <20260122130721.205664-4-pritam.sutar@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
-> Add dummy regulator for USB and PHY supplies.
-> 
-> Add vbus regulator that is enabled by GPIO pin.
+> Enable USB PHY and DWC3 USB controllers' nodes.
 > 
 > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
 > ---
->  .../boot/dts/exynos/exynosautov920-sadk.dts   | 139 ++++++++++++++++++
->  1 file changed, 139 insertions(+)
+>  .../boot/dts/exynos/exynosautov920-sadk.dts   | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index a397f068ed53..f90f7704597c 100644
+> index f90f7704597c..5896dd69334a 100644
 > --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
 > +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -52,6 +52,76 @@ memory@80000000 {
->  		      <0x8 0x80000000 0x1 0xfba00000>,
->  		      <0xa 0x00000000 0x2 0x00000000>;
->  	};
-> +
-> +	/* TODO: Remove this once PMIC is implemented  */
-> +	dummy_regulator: regulator-0 {
-> +		 compatible = "regulator-fixed";
-> +		 regulator-name = "dummy_regulator";
-> +	};
-> +
-> +	usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
+> @@ -160,15 +160,20 @@ &xtcxo {
+>  &usbdrd31_ssphy {
+>  	dvdd-supply = <&dummy_regulator>;
+>  	vdd18-supply = <&dummy_regulator>;
+> +	status = "okay";
 
-Please use name for all fixed regulators which matches current format
-recommendation: 'regulator-[0-9]v[0-9]'
+You just added the node in the previous patch, so why it cant be enavled
+there?
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
+>  };
+>  
+>  &usbdrd31_hsphy {
+>  	dvdd-supply = <&dummy_regulator>;
+>  	vdd18-supply = <&dummy_regulator>;
+>  	vdd33-supply = <&dummy_regulator>;
+> +	status = "okay";
+>  };
+>  
+>  &usbdrd31_dwc3 {
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+> +	role-switch-default-mode = "peripheral";
 
-None of the regulators are called like you wrote. Really NONE.
-
-Also, carefully follow DTS coding style.
-
-> +	       compatible = "regulator-fixed";
-> +	       regulator-name = "usbdrd31_dwc3-vbus";
-> +	       regulator-min-microvolt = <5000000>;
-> +	       regulator-max-microvolt = <5000000>;
-> +	       enable-active-high;
-> +	       regulator-always-on;
-> +	       gpio = <&gpp2 0 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	/* Use gpio for enabling vbus regulator */
-> +	usb_phy0: usb-phy0 {
-
-usb-phy-0
-
-> +		compatible = "usb-nop-xceiv";
-> +		vbus-supply = <&usbdrd31_dwc3_vbus>;
-
-That's pretty incomplete. Why do you need such node - just to toggle
-regulator?
-
-> +	};
-
-...
-
-> +&usbdrd20_phy2 {
-> +	dvdd-supply = <&dummy_regulator>;
-> +	vdd18-supply = <&dummy_regulator>;
-> +	vdd33-supply = <&dummy_regulator>;
-> +};
-> +
-> +&usbdrd20_dwc3_2 {
-> +	maximum-speed = "high-speed";
-> +	usb-phy = <&usb_phy3>;
-> +};
-> +
-> +&usbdrd20_2 {
-> +	vdd10-supply = <&dummy_regulator>;
-> +	vdd33-supply = <&dummy_regulator>;
-> +};
-
-That's a bit too much of dummies. This is heavily incomplete. You need
-to bring back the PMIC first.
+Why did you add incomplete node in previous commit?
 
 
 Best regards,
