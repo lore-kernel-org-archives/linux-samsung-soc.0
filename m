@@ -1,140 +1,125 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E7B34F246
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 10:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914F3ECBCD
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 10:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769077931; cv=none; b=sXqF3CRAcIhHR0wtt0XJcYWrD7zikgKmkXwS2TR0V/k4XdXlmBYDPI3q8HKPSsqdGGyOLTTMXS3XhVLq8GkWhOLEUHB/549HlIvK73VuiHozZRuJCaqaLZZEbsee7kE0v+Qghg5I6HwUiyKptwWQLzHkAlgALC+3m/oqL5odG8w=
+	t=1769078346; cv=none; b=IJRLa1WEmFnyQVKResBqE9iww4CczZ40OxNy+4z4cDVlgwKYPrbmjwTvuW4LfzF9mwxZk7nLfPKeb9chl9I9XAXNTcMrnvEwezUDbWCfzxME7NOfd752UIcz0F/2+irBrdlZvtCKewDrLbyIavIbMO19SMW3RP/3ayzCIOdcFvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769077931; c=relaxed/simple;
-	bh=4HGEOJdYofceavveyNvK694CLL+JytPY9nkr/yVGMk0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=VxMSMkZmpZLoN/4V45j/gj64N5oWNz2SrkFqbU86QAk6f5jq74gTn2inB/cuOifDb84QIzlzMEM+4XFgMhVNfhUBkd89zC/7jZB0YHVRpfSZ+5+xRpx/pPkIFUGtrY3d2rCclgqtFa7+TeBWyx7QRQ9c8QXRWcb8euouMrlmV7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qt1l22qt; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1769078346; c=relaxed/simple;
+	bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RQdDUCSlLt7VLRF/CoA0/QwHBGYkxU0sgDmFzNVvwZ3l9tDUagV4t5CQQKS6QPnfaQXBjeMDISaLTrTrvPcehX6ksZIfvDjruSH4ymthXZChfAWL/K0okNdpq8VmzhaJmACjlmoge/c58Wb9JprB6i3U1A9wN0DN14Gfu2vM6gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfdK09cM; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qt1l22qt"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260122103200epoutp01d0c4aa75689cc730be68b92514465ced~NBv72GBNX1470214702epoutp01c
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 10:32:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260122103200epoutp01d0c4aa75689cc730be68b92514465ced~NBv72GBNX1470214702epoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1769077920;
-	bh=tnRCYwReWiwurhPWhltxwYGFpC/0m//wbHgfZbzv9Kk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=qt1l22qtdWEmi6By166P8BM1Bt4oRzDLCZNeTMSjLVGjwnM+vcKoYqhxgoMNVr9y3
-	 IRHYW5/yQez6zyEWQDj/luX+fwWuxnbbPEd+3uRQ8VLt1iFtHyXMUT4IA73Cd3aW+a
-	 ukcOhlfg+b5gF+3GSKqy2pfTUX81GU93R6gw6XCY=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20260122103159epcas5p30f2fcd4a52671b2b064775d618b9dc94~NBv7EUo_I3092930929epcas5p32;
-	Thu, 22 Jan 2026 10:31:59 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4dxcnC0Vd2z6B9m9; Thu, 22 Jan
-	2026 10:31:59 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260122103158epcas5p4e3fdf02aa0032bde16aefcf8f7896ef9~NBv5zye7J2850828508epcas5p4P;
-	Thu, 22 Jan 2026 10:31:58 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260122103156epsmtip14657583bd1d596454c150368232302b9~NBv4DErW82162221622epsmtip1U;
-	Thu, 22 Jan 2026 10:31:56 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <20251024114845.2395166-1-pritam.sutar@samsung.com>
-Subject: RE: [PATCH 0/3] Add and enable USB nodes for ExynosAutov920 SoC
-Date: Thu, 22 Jan 2026 16:01:51 +0530
-Message-ID: <000001dc8b8a$543269d0$fc973d70$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfdK09cM"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-435a517be33so513356f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 02:39:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1769078342; x=1769683142; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
+        b=sfdK09cMA2aGNzP4RDKOZtaMkShYkVW2uduv/39f2Wcnh5/stkNdN0dtUTm1dtMnZE
+         kzOGTEfuVOzhUka8b/zQJ+hM5KQRaNl2jVEayOLTzrm3MdqwOhcsu7hx1c7+fKqUhIs5
+         izyJSDk1DYZOIcOmC0p73g2XIayEHBrwOHG3vUP7ZnqMEx9w6v2veToLsOjHRMZxQcZ7
+         eeEMuPjw9wmBd76fzM/2ug0g6q9+SB5YfYbpqBHxLm+0PI70GVpAaV1yhPkQSpMEXDX1
+         f+nO6VAO5MhzKZtit0nzQfWjo/0EQC3keHl2DOqtv3683Wy9kqYnukxo/wARYMutxUr6
+         71og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769078342; x=1769683142;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=knv3eV/uPl+lWimlwaG5qjUbDF4tZn6R2q3+oaVVNBg=;
+        b=bRqcOO2IZsz4C0rjBpKVoGXE1WB6MHKvxWRNzRKFhX1WkyY1lPmX51g/0JZywoPAUw
+         1Xw2FRmYm985pSoieBlX9LjJaoVvMRYwxuOZrYz4UPvFFwrcF/igtFo41ZVv2WN4ujyC
+         YARYjSAA1dA2X2blA2EZ1SWsbYGVn+sczIYRUMJBocNoYIK9lTao9pckVXFPqDchOiK6
+         U0o2UXyEWJrYwHW9ZcPNqrvrD7d+AmRGIpjgjX/yf7Y/eU4MyLoSTlfeqyoiyp751ByD
+         appMi5Y3p8rInxKwpe/xJeHL8f4mIgsI6+metkWyrH1yWV0lbgr8IrZcPAVYwQcFcfA3
+         b88w==
+X-Forwarded-Encrypted: i=1; AJvYcCWtQAwkKyhBOxtF8XeqkX84SqPu/ijedZuBS/KPrNlotHSXEa0nPk8edwUnJhUoUrdEASFoT1EhILFDF1PMhVzGpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK94EBJygZVESV7eICjCZYr26Z3w03uUK04ai08lNFf7sP4XhJ
+	5guEfYVUSvK67cufvyGzwHezwC9X2/zrVzzFG6ix5TbITgNRFtUt7KvIhugdQiORnfo=
+X-Gm-Gg: AZuq6aI9+s1ruadObzjvrowutMZGEAcUw+Vi+FOUqnEgeJhHPA3hX+Y/nnEzIwfQJfR
+	ysUlDNpNImzlsAultmykFC2bJvMcuzpMCArDgYzccibfv3XaGErG/hXbF30acMQ48Wj+WF/d0FW
+	aZOH3vS8Lo5ThFeMQh7bOb1IPYOmZ0KciDW1WW2EX+EMOxKzN3/mTvBCTrN9LgBDbzlQcUGLuYA
+	BSXPrFZZNO7Dfrs9ngEedeFJfovf85+Jfns7aPEfAV1++QdUKxzq+SbKEGYURLW+rnGf+QrGNeX
+	LiRc4ZMTLXFu0SDqc/s+BJPmLhUnOh7kurmF5vHqJPY0mjtP+4jSpHj4m49g0aKjqkNTbb6Adcl
+	K8xfTLlB2y/xbK6D9d7Q5qAtgdgZqkLWKBgVa/ype0V67T57BNYYdImZc00cd1w37cRVxsvyreg
+	DoM6/bg1cy/FetWAokeg==
+X-Received: by 2002:a05:6000:ece:b0:435:a7fa:24ae with SMTP id ffacd0b85a97d-435a7fa2607mr2707643f8f.18.1769078342064;
+        Thu, 22 Jan 2026 02:39:02 -0800 (PST)
+Received: from draszik.lan ([212.129.87.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4356997e6cdsm45475978f8f.31.2026.01.22.02.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 02:39:01 -0800 (PST)
+Message-ID: <7c78f9da40022e7bbf850ae8989c617bdc30cc95.camel@linaro.org>
+Subject: Re: [PATCH next] phy: google: fix build dependency for Google
+ Tensor USB PHY
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>, Neil
+ Armstrong	 <neil.armstrong@linaro.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Joy
+ Chakraborty <joychakr@google.com>, Naveen Kumar	 <mnkumar@google.com>
+Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ kernel test robot
+	 <lkp@intel.com>
+Date: Thu, 22 Jan 2026 10:39:01 +0000
+In-Reply-To: <20260121-next-v1-1-c18068b091b9@google.com>
+References: <20260121-next-v1-1-c18068b091b9@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJC10xQ5cnsV5/dezQFmmCfFyZ4QgFqW1wVtIYQSwA=
-Content-Language: en-in
-X-CMS-MailID: 20260122103158epcas5p4e3fdf02aa0032bde16aefcf8f7896ef9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251024114018epcas5p4e09ca8ea47ff2295a08a162864a47284
-References: <CGME20251024114018epcas5p4e09ca8ea47ff2295a08a162864a47284@epcas5p4.samsung.com>
-	<20251024114845.2395166-1-pritam.sutar@samsung.com>
 
-Hi All,=20
+Hi Roy,
 
-> -----Original Message-----
-> From: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Sent: 24 October 2025 05:19 PM
-> To: robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com
-> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;=
- linux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> rosa.pila=40samsung.com; dev.tailor=40samsung.com; faraz.ata=40samsung.co=
-m;
-> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com;
-> pritam.sutar=40samsung.com
-> Subject: =5BPATCH 0/3=5D Add and enable USB nodes for ExynosAutov920 SoC
+On Wed, 2026-01-21 at 22:21 +0000, Roy Luo wrote:
+> The Google Tensor USB PHY driver uses the Type-C switch framework to
+> handle orientation changes. However, the Kconfig did not specify a
+> dependency on the TYPEC framework, leading to undefined reference
+> errors when building for architectures or configurations where
+> CONFIG_TYPEC is disabled or configured as a module.
 >=20
-> This SoC has 2 USB typeC and 2 typeA ports those are DWC3 DRD controllers=
- and
-> amoung them, one is USB3.1 DRD combo phy and three
-> USB2.0 phy controllers. This patchset adds and enables USB and USB-PHY no=
-des
-> in dts.
+> Add 'depends on TYPEC' to the PHY_GOOGLE_USB entry to ensure all
+> required symbols are available during linking.
 >=20
-> PMIC driver is not implmented yet, we rely on USB LDOs being enabled by t=
-he
-> bootloader and used dummy regulators for now.
+> Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202601210825.ELrpQeED-lkp@i=
+ntel.com/
+> Signed-off-by: Roy Luo <royluo@google.com>
+> ---
+> =C2=A0drivers/phy/Kconfig | 1 +
+> =C2=A01 file changed, 1 insertion(+)
 >=20
-> To drive vbus for host mode, it needs GPIO pin to enable vbus regulator.
-> GPIO expander is present in the dts, we used it to enable the vbus regula=
-tor
-> using GPIO.
->=20
-> USB ports are configured as OTG, and default mode is configured as periph=
-eral.
-> These configurations might be changed based on requirements.
->=20
-> This patchset has dependancy on schema and driver implementation=5B1=5D a=
-nd role
-> switch control from userspace=5B2=5D patches.
-> =5B1=5D: https://lore.kernel.org/linux-phy/20251010070912.3758334-1-
-> pritam.sutar=40samsung.com/
-> =5B2=5D: https://lore.kernel.org/linux-usb/20251024085455.789555-1-
-> pritam.sutar=40samsung.com/
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 142e7b0ef2efb9209781800ee47b820a91b115ae..5531ff31d8156cb164c32e3e5=
+2d4a57b26a62d8d 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
+> =C2=A0
+> =C2=A0config PHY_GOOGLE_USB
+> =C2=A0 tristate "Google Tensor SoC USB PHY driver"
+> + depends on TYPEC
 
-Above dependent patches are merged, can you please review the patchset?=20
+Can you make this
 
->=20
-> Pritam Manohar Sutar (3):
->   arm64: dts: exynos: ExynosAutov920: Add USB and USB-phy nodes
->   arm64: dts: exynos: ExynosAutov920: Add regulators for the USB
->   arm64: dts: exynos: ExynosAutov920: Enable USB nodes
->=20
->  .../boot/dts/exynos/exynosautov920-sadk.dts   =7C 160 +++++++++++++++++
->  .../arm64/boot/dts/exynos/exynosautov920.dtsi =7C 162 ++++++++++++++++++
->  2 files changed, 322 insertions(+)
->=20
-> --
-> 2.34.1
+depends on TYPEC || COMPILE_TEST
 
-Thank you,=20
+to allow some better test coverage?
 
-Regards,
-Pritam=20
-
-
+Cheers,
+Andre
