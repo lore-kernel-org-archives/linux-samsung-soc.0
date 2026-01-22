@@ -1,68 +1,68 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5478644A707
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 15:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD3544CF25
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 15:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769096640; cv=none; b=jjMaYhfu+NXV6ZDeE2A4zot698HJ28KNw4/XV80xj0E570Rmrl8izOsVXOo2CDu0yM18nofFbQKXi7zvgX6rkxbDJ45LlL1uJHw1GLS/n6Sz88VeC1XIjveuVGLwtndH9byjKv856bw3dwW1hEmYCpuK/XYgoYI86wltnFNJjQI=
+	t=1769096642; cv=none; b=cJW58YfB9fFpvTDtyxg86g4t5CfHG9ySXWFKMzlRiK8wrcdpi2vQz9WjlgGDEt415Z4kTzCgKFU8CD266S2iUKM6ZSkwwFLFezObFnfmPchWIjOliWFFPj/achEnH3MtXJt3xPyPaviKX89gwJ75sJyjBms36vS7Mfo4iguwXYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769096640; c=relaxed/simple;
-	bh=nXl8zH7iFzy229o62R7F4gj8miBQeEJTl9anBMuQRqI=;
+	s=arc-20240116; t=1769096642; c=relaxed/simple;
+	bh=wZmkgKDnx+gLs+hVAjzPq8Ts28TSMZhJDdmeEe4ghKo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F+q2xmRqXF3BXgbidEgqNF/rTuy71Z6zBtUq93sMe2RpbFvmSxfq6J+OyUByJ0m1c+Mape+AMdjP65WRR+V7jyGBrnZZyVY0MOfKnL04Sq8rEeipa3Se1yNE/Es2krBopr2gBZ3kinHhkuaPccFFIs2w03vrC75gJHJOAeEYWo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tO2LSVuG; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:To:Cc; b=RLx0Lo0Po1Z11qVQr8L1VI+lWYeBClqnbQv9wWrWW6Jecko5XYEnEXuEAmQE8zwhxCp6EmGpF6ZqBRpHqlfpTYoJoTlPngeFrU2eJwCgzbfhqKPVBk451O9tfukCfA+o3eFuyorKz9oFWyE7rmyYXH3HwumnoASo2np+jRAY+rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UbQTwfBd; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tO2LSVuG"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b883787268fso131203366b.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 07:43:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbQTwfBd"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-64b92abe63aso2315401a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jan 2026 07:43:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769096625; x=1769701425; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1769096624; x=1769701424; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tXknWTh3C9IVP1+uTVL0nex1jtU7FLYUPa9Q3sm6Lzo=;
-        b=tO2LSVuGx5cP1FioAQVwAi0naXXshHkUE5pkByQqralZGQ/nhKQ9Pb3nEPMPB7qc3Y
-         MOPAN8rDcaIh9bS7TxU9mm3YDfmZn6WzMP9xFQzutOBdf1xHmAicpbiSlUiaeZYrFmLd
-         cdX/oFZW3Bl0oprKRuilltjCkuhd6H1qoAY9t3iRIYUC2X8nDO21OxNeWo843PyI3Ali
-         sDg+fo4WYKlJInY7UUvHQN/QzmeiwWNO2KCiHJx4aBcBEGGZe6tJVG7xzOGLMX0YEif4
-         GCfGwGyfGsY836+mdkIGvAmtHQXG6lqQOPBbc5hkx9p6AfwBSe8dEOE2gILP+/2ZOVDY
-         Ih8A==
+        bh=hFHwW2bdepIoOkuLol6lBUlgXwxd7Z9UOUy1vWjRyW8=;
+        b=UbQTwfBdZb9doROzA8I17uUkU+CXostUYYsbS9z50MVXeJYl8CsD43wk04GlqAyoSh
+         9MpxhLSxXaEiRkRLKh2zV2nuQOOBFYUhmBg02hhRcLJD4XW9gO0pRLeUC3S/dk1stWtA
+         WG0oIOuR+yNPGRTKn0bEGKpzzlEfEeHHuqpnzH3Lpg0MRx+ySE542AFXSr22Th5wDzoo
+         upTzLC2rpTaZamVS694rIFqJiW0OwqbOjaKjnh/IT4nQqvRwz0LEvcmiaXbGafphHmI0
+         d7D18Jxhlju6VgrD3PXx4agWXHoZjNPiO+L6vsVn0iVBuBxeHZbBNO2olNhE38qg0lt0
+         l9XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769096625; x=1769701425;
+        d=1e100.net; s=20230601; t=1769096624; x=1769701424;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=tXknWTh3C9IVP1+uTVL0nex1jtU7FLYUPa9Q3sm6Lzo=;
-        b=MQa701lwGiUX6q01geg7iYh7TMS87kgfgyLmrE00gf2b3PZfhFFow+PUSfaEvTTlE0
-         GWBU2vH5kJL3iP/K2GiMmuhZjsGM6gn7kDdAp/UWzEzd4FnuU5E6xkM8lzwTz5qIXaim
-         af/FAxLvXwjn0zDTmVMzMUVs8HwQB7tY64wxaAAtiK/5Bc9rCxfTwoITAubufGprg+G+
-         /4xIEW2sxQBpEGy/W2vbAV6PQPSrVO9S+vRNJDi8ivFNmfTYFqZmb0fJ+oZqUUiXYklH
-         clHatklSrfoXCJQ2oNiWA39uuowuFmKVs9vQmBksxCQlhFiooij3BohyaAM/zSC9mbUn
-         r5WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaMC8CGuc2SNahsop1jcHmzH4g29AhBPT6NV1uEtt+UQcrI7rMF7qdBQCxeb1kbRbPdoVZT+MBJGLbJKiZCwP6sA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKlmc2BIlpgHACYeTl9OntH+G5uQe9grsyfvul/9XMpUOIXUZ/
-	EyxIyykdVYXri2KL93FDIuoICaxWzldgtkTG/sMilAqjPbFZl0/61uooHE650ap+BKE=
-X-Gm-Gg: AZuq6aIhg5+Ie5tEuRJiGOV64Vz7fXmy4Q0hE16LT94NKlN8hj3brZe7ZVJQJ9mywgR
-	PfURQAZ81OAc2JrM4eqnrEBCNwtWSkgFKM5tHkjEwfN2m/rNDfGPh0lo9jf0g4v5bdSikMdrRl+
-	nAX2XBamAIf1GubQL31QEwHIbnv2wgw1Cj60Vz4YrxSeIdPL1rHRVmhJRp9xzHByM/0Nsgw/GYn
-	kw/ILswgR8jly9l3RVKUYqsYmRlqzYJjjS2VQCf2g5K71h/9Ri7K3ph62m7ZZrBAYL04LjMmJxr
-	Cw87GcPTb9SBxYy1dmZNXGUZifDehJZeZpJ6Sd3p01tdew/Vo+FSvosQOtPXQ/PSBjvp2xOoDoy
-	sCrh7SDEDekDcCP2dFwtOEpqqm8P2jiC0J8MixJd7X+iG5QnRhqLQl4hqyblX83XRd1F6crsI43
-	nYTlvCA79UWEC7ujjZyTtr0ddVSDLqmWYhOvREfHSsUx2uf5XRs70hNdOAcu/vhHHw5uEZD+z2W
-	zfoH6HSmmZrvAXD
-X-Received: by 2002:a17:907:724e:b0:b88:47b4:7626 with SMTP id a640c23a62f3a-b8847b48388mr122935766b.27.1769096625207;
-        Thu, 22 Jan 2026 07:43:45 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-654535c49f4sm16334363a12.31.2026.01.22.07.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=hFHwW2bdepIoOkuLol6lBUlgXwxd7Z9UOUy1vWjRyW8=;
+        b=YkMOyPhXE/vB3/PVQ6jV3rAgAPW68LDmuKBTaCySzExNSK3FQH4FdYGpboGy2tZCo7
+         Ymrx0dNC+YkadA+sD4Ns2l/iwyuGqJDaIwZQgehRrgISn6KTloO2d8bNO9jy6D+TQoY7
+         H5hNg9VH6CLxvkKuqpH0HZudWf3SeIctQZi12eJ44hDSd4IlW/htIbbic2aPqDSvWY1r
+         5VUl/BVIwZAb2O8EE4u5sLhZjNKNxhituBWs42HrUxuXFtqHXwau2wv3RZ3/NeJpkS3X
+         TgHT4wsofRWWzGaZeHMLtg+xK9qmG119GNqHnBs064d9EPrAIyGq3oywggHHdUMp3Qh0
+         rOmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZPYV6AsfRcSaLu5QFDh0L505jGGArxOviEs0RX2fwyS0v4x3LJc74Hu0S8daNsGbN5w3oUECIFMeGVFrXgRaLtw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1rUEgqg21+Lnp/NjNSHqK7BSB+6+FitmDJ/kBNmsMtxuvVvfT
+	mVYo+FlxeNLly4Nc+HPHwJmzW7tFAM9avxmsQb1iZnrAS4HHFAmrr/rRyGn6LDNOdDo=
+X-Gm-Gg: AZuq6aK5QSSZNcU8UYzX01x4ILdCkr54LAfQqIfcGE9oplQV7ml3IvOCT3zZTTktTNx
+	5cg9BT8vDUXVSjtIeKU+05IQl54DZUKf+q/tKCKV2Snbi4nAzFb8jU5bCoc9cBT4PAdszOyL1lN
+	f10OfemTmQqKo2GkMwb/DtRGIbKWff4o3J51nKTPbEs+SD3oH/siSEUu37xLGmzNh+CGwbov/1Y
+	GJAOqWaFY6cLP6DD3DYqcN5xuIDw/47l2djxUben8yXWmu4PX3v8ojlvBxITgf4Oi6e/eVomQ3w
+	g9J9nDdOpCww25xWHedc33Uao7QKFfnAbVSyBNEsFpcYEwMg6QqWA0SpqwasmZKvpLoZWpZk/yh
+	VBaHQzMkov4FeuxMLIOeFiH8WotNh4NBxHy0Os8120LVq3Z3ox+/AMqNSSX3P2ZQO9CjPMRXs+r
+	1skOuMvZESU4tTgCO2l0NsMHRY7s8JNe9rvTGCtDMQRZ9EeoUDwl4nqDl4nqmwQxeMVY/Ee2B3g
+	+0eSA==
+X-Received: by 2002:a05:6402:1d50:b0:64b:3225:b771 with SMTP id 4fb4d7f45d1cf-6584874e664mr45457a12.6.1769096624145;
         Thu, 22 Jan 2026 07:43:44 -0800 (PST)
+Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-654535c49f4sm16334363a12.31.2026.01.22.07.43.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Jan 2026 07:43:43 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 22 Jan 2026 15:43:40 +0000
-Subject: [PATCH v7 13/20] regulator: s2mps11: place constants on right side
- of comparison tests
+Date: Thu, 22 Jan 2026 15:43:38 +0000
+Subject: [PATCH v7 11/20] regulator: s2mps11: drop two needless variable
+ initialisations
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260122-s2mpg1x-regulators-v7-13-3b1f9831fffd@linaro.org>
+Message-Id: <20260122-s2mpg1x-regulators-v7-11-3b1f9831fffd@linaro.org>
 References: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
 In-Reply-To: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
@@ -90,64 +90,33 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  Krzysztof Kozlowski <krzk@kernel.org>
 X-Mailer: b4 0.14.2
 
-For the lines being changed, checkpatch reports:
-
-    WARNING: Comparisons should place the constant on the right side of the test
-
-Update the code accordingly.
+The initialisations being removed are needless, as both variables are
+being assigned values unconditionally further down. Additionally, doing
+this eager init here might lead to preventing the compiler from issuing
+a warning if a future code change actually forgets to assign a useful
+value in some code path.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-v3:
-- new patch
----
- drivers/regulator/s2mps11.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/regulator/s2mps11.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 30586e9884bfb998ff07e3148813344b307506c0..8a36ab67b73e4151c7f67af0555a6465ee1e7a04 100644
+index 04ae9c6150bd5ae9dba47b9b3cfcfb62e4698b6d..1f51fbc6c7b6e158f9707c04d9f030b9eee5e842 100644
 --- a/drivers/regulator/s2mps11.c
 +++ b/drivers/regulator/s2mps11.c
-@@ -1221,32 +1221,32 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	case S2MPS11X:
- 		rdev_num = ARRAY_SIZE(s2mps11_regulators);
- 		regulators = s2mps11_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps11_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps11_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPS13X:
- 		rdev_num = ARRAY_SIZE(s2mps13_regulators);
- 		regulators = s2mps13_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps13_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps13_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPS14X:
- 		rdev_num = ARRAY_SIZE(s2mps14_regulators);
- 		regulators = s2mps14_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps14_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps14_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPS15X:
- 		rdev_num = ARRAY_SIZE(s2mps15_regulators);
- 		regulators = s2mps15_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mps15_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mps15_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPU02:
- 		rdev_num = ARRAY_SIZE(s2mpu02_regulators);
- 		regulators = s2mpu02_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mpu02_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mpu02_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	case S2MPU05:
- 		rdev_num = ARRAY_SIZE(s2mpu05_regulators);
- 		regulators = s2mpu05_regulators;
--		BUILD_BUG_ON(S2MPS_REGULATOR_MAX < ARRAY_SIZE(s2mpu05_regulators));
-+		BUILD_BUG_ON(ARRAY_SIZE(s2mpu05_regulators) > S2MPS_REGULATOR_MAX);
- 		break;
- 	default:
- 		return dev_err_probe(&pdev->dev, -ENODEV,
+@@ -1207,8 +1207,8 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
+ 	struct s2mps11_info *s2mps11;
+-	unsigned int rdev_num = 0;
+-	int i, ret = 0;
++	unsigned int rdev_num;
++	int i, ret;
+ 	const struct regulator_desc *regulators;
+ 
+ 	s2mps11 = devm_kzalloc(&pdev->dev, sizeof(struct s2mps11_info),
 
 -- 
 2.52.0.457.g6b5491de43-goog
