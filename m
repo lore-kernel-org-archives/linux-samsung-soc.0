@@ -1,137 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B622EA172;
-	Thu, 22 Jan 2026 13:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122D32BF43;
+	Thu, 22 Jan 2026 15:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769088908; cv=none; b=LThvjB4jHjWnHcRKGJ6vdfUeF9qNUmRTFuSY1ouXfx86fZv99rxBz39bJZMxqNANnuBuewTU9ojRFHlHsAebni9Hwr2wul/IHsd2mnNoQMpYr2B6n+XdJnCnrC7CvjvZdjDqSfEgXnVhL87za3Jk9ZaO5sx++4i8dPECymWXbiI=
+	t=1769094401; cv=none; b=kyDCtSao1m4K4os+O6MXL6xVSOJ/9g8Q3TxUTs0kcVK06Gvfftze9YRM2HDavdsQ6iv1WUfi4D9AYn620Lgddl5xUEnCKLNGA7E3wMoySkl2sDHCi4uUQv1pMqJEqFKc1gVWqb0vUqYi0ALreJ3O2ZXV0dn1gGKfCzNZKHh0gHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769088908; c=relaxed/simple;
-	bh=XJVVzUmbgccKTiKeI6G8HcIyONgARROMaR5qVigFL88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=esqPMdR3cjKycrw2fBJlURy0vCg7x5SOX+hE53cJEXwOZeTT8ec6zYbD2uKbzENEOS3JI7NDuxWTxNcyyWtt4iLwnp9oyxhddKYPb9GPOhpZThzh1taXLUF5ucf+SNw6dFS4hOp7araq4nOxu9zsltq0jAFuREeLhr1kJl0AHvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDdeg5Wg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769094401; c=relaxed/simple;
+	bh=grnlzAExfoV6G9ahrdpKeaFu1Zp25XCBFXmtxypYY1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jbh1skCh/s7E4ULUFkgk+UyHNwO3bm73XK4G96BOB1mW6J4voOm6fh0ybFtRUmAdavJdGrv2tHb/n94Jx8KpvHBRzMTN5J095yKt6RK5k2vqyz2Q8rpe+9lux1PMMf7Tw59gFTwXdx3GEXNTLv9d1+sk6o/o0J6l+p9NUNt52SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUMTE2jl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDdeg5Wg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B54EC116C6;
-	Thu, 22 Jan 2026 13:35:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUMTE2jl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15BA2C116C6;
+	Thu, 22 Jan 2026 15:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769088908;
-	bh=XJVVzUmbgccKTiKeI6G8HcIyONgARROMaR5qVigFL88=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HDdeg5Wgp5WvK4y62GWB2he9P3jl1hMNi+s4XnG5ey7TyGKbTuvtl0MZKILX6bGP1
-	 1xXqhMJz99FQA/56KTLHtSg6RbMmU9TP/UcTFHSj1jEUfHqC1jrIgabdsmphvPDNLd
-	 N0yAvhA2ef1H/+ysMt7t6EoG+dOKA0UPvo6tv85Ml1p22K+uUUCfMlKvXP3EjczrMK
-	 JKj8jYBF1SThoG01z3+pu5Bc5XWl+KpC9oAdDVOnkEclRTB3qihduA93LuZ7t4bWws
-	 KNY6A4Gw4JKQN1kBhdhG9bOOaM+OJKC2A/ibY2cyI8lmco5lOidafGF1KxFSbU8hVW
-	 BYbyyLNHEzkaw==
-Message-ID: <6f381f88-3a51-4fc8-844c-41b167b07628@kernel.org>
-Date: Thu, 22 Jan 2026 14:35:03 +0100
+	s=k20201202; t=1769094401;
+	bh=grnlzAExfoV6G9ahrdpKeaFu1Zp25XCBFXmtxypYY1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RUMTE2jlvNOo76xSxS65vqSRwG4ztLTz5IIzNF6k/k8JshLCqUyf87eG3oVTdIgi5
+	 S2aPE0aWCPVaKzRG6jkxJShzFB5LTvTQWXDbs0gIQ6AEwN+IHJyoYq8sQmoxfXJM3G
+	 ScYX2nQKbnEAFsjD8HqJCij0WgMQ5WX+LZlH3mkGof7IAZl3fKb6mq+qe41MT+yvPV
+	 PNQ/UvAJEDco6i0ZklZfTWubZg3ANkYNfzXKhGytYQE38Ajye128u3ZUzDzqx7uZRj
+	 nzY40lUO/cQApEK0VfBMH2JlDA7jWziOlKgdJB64N5IjdeIggAUqQwXS7IYFzFIELs
+	 19Jt/A/1AC++w==
+Date: Thu, 22 Jan 2026 15:06:34 +0000
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
+ drivers
+Message-ID: <20260122150634.GK3831112@google.com>
+References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
- nodes
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125136epcas5p2db0fa3d04671ddc915e60ae8c5bcfb98@epcas5p2.samsung.com>
- <20260122130721.205664-4-pritam.sutar@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260122130721.205664-4-pritam.sutar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
 
-On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
-> Enable USB PHY and DWC3 USB controllers' nodes.
+On Mon, 05 Jan 2026, André Draszik wrote:
+
+> This series extends the existing S2MPG10 PMIC driver to add support for
+> the regulators, and adds new S2MPG11 core and regulator drivers.
 > 
-> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
-> ---
->  .../boot/dts/exynos/exynosautov920-sadk.dts   | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
+> --- dependency note ---
+> This series must be applied in-order, due to the regulator drivers
+> depending on headers & definitions added by the bindings and core
+> drivers. I would expect them all to go via the MFD tree.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index f90f7704597c..5896dd69334a 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -160,15 +160,20 @@ &xtcxo {
->  &usbdrd31_ssphy {
->  	dvdd-supply = <&dummy_regulator>;
->  	vdd18-supply = <&dummy_regulator>;
-> +	status = "okay";
+> The MFD patches in this series also depend on my Samsung MFD patches
+> due to patch context:
+> https://lore.kernel.org/all/20251217-s5m-alarm-v2-0-b7bff003e94c@linaro.org/
+> 
+> While these patches compile, regulator probe will only be successful
+> with my deferrable regulators patches from
+> https://lore.kernel.org/r/20251227-regulators-defer-v1-0-3104b22d84cb@linaro.org
+> --- end ---
+> 
+> The patches are kept together in one series, due to S2MPG11 and its
+> regulators being very similar to S2MPG10.
+> 
+> The Samsung S2MPG11 PMIC is a Power Management IC for mobile
+> applications with buck converters, various LDOs, power meters, and
+> additional GPIO interfaces. It typically complements an S2MPG10 PMIC in
+> a main/sub configuration as the sub-PMIC and both are used on the
+> Google Pixel 6 and 6 Pro (oriole / raven).
+> 
+> A DT update for Oriole / Raven to enable these is required which I will
+> send out separately.
+> 
+> Cheers,
+> Andre'
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-You just added the node in the previous patch, so why it cant be enavled
-there?
+Applying patch(es)
+Applying: dt-bindings: mfd: samsung,s2mps11: Split s2mpg10-pmic into separate file
+Applying: dt-bindings: mfd: samsung,s2mpg10-pmic: Link to its regulators
+Applying: dt-bindings: mfd: Add samsung,s2mpg11-pmic
+Applying: mfd: sec: s2mpg10: reorder regulators for better probe performance
+Applying: mfd: sec: Add support for S2MPG11 PMIC via ACPM
+error: invalid object 100644 11a56154d36d251d40b40e91da514db0faa15ae3 for 'drivers/mfd/sec-irq.c'
+error: Repository lacks necessary blobs to fall back on 3-way merge.
+Patch failed at 0005 mfd: sec: Add support for S2MPG11 PMIC via ACPM
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
 
->  };
->  
->  &usbdrd31_hsphy {
->  	dvdd-supply = <&dummy_regulator>;
->  	vdd18-supply = <&dummy_regulator>;
->  	vdd33-supply = <&dummy_regulator>;
-> +	status = "okay";
->  };
->  
->  &usbdrd31_dwc3 {
-> +	dr_mode = "otg";
-> +	usb-role-switch;
-> +	role-switch-default-mode = "peripheral";
+Doesn't apply to `for-mfd-next` or `ib-mfd-rtc-v6.20`.
 
-Why did you add incomplete node in previous commit?
+Please rebase.
 
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones [李琼斯]
