@@ -1,124 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85AD3D9F20;
-	Thu, 22 Jan 2026 16:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4A936CE04;
+	Thu, 22 Jan 2026 17:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769099949; cv=none; b=Cntnh+v4gMw3YC9rrHNC04ALSeOUVJGOCzzGnEG0WIqLqMVtgL8Bkq2CsimTXLl8wpMqj4mHEfYa5xE0irHwM7KLXOyfdha8eP6UZM4dUeCdi5boCKT/zMLzJ8RGKND5lv7DPfL7DOqBVoTK7jyZHG1jns7oss25AXNmYDCZT+k=
+	t=1769102141; cv=none; b=VX66WQpIsEPHrh02BFHKrM7D4g+rjNsaoEbg609kOtaPGsLqtrK4Ha3EBFTfR6kB9/4++MNj2AwSxaIKF1BTX0kowEwCHbzJHOCu4is8iiUmgDNlMtl5W71vRQYd2RbqgqeB1jEILaIQpISoBTX3iXMQnRqkxTqc2fVwXWdLxdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769099949; c=relaxed/simple;
-	bh=uVH7rNg9ewRBRQMIGyLml+s35IF3fTqXJq4VrmSDSv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/pamwyv/7ue5sY3hcLyrv8NoUsr1cAOP8BYIO25quBlcz/1ux3DidjUQ3PVCsH7MV68AkcDJb2jta+42ua3TvLyo/ByS1qjoAceFCqDKcS1eoZc0zfq8wtjLdKv+LTSk6u2N0wiNsP0KZv5DOCR168f+4w5ppZiuydedFWKzXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYUpiWbj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769102141; c=relaxed/simple;
+	bh=Y3D9E7japclI7UuExtcL6bPuCRUqGKopPtgcI3tpo7Y=;
+	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=QCnNHd66kCM2CODr6fdrAPNnhhtgTxzUXVo5p4Z3Lk3pEPJsrQKi4WDT+ufxX68qQ5qusQ8+I999gOtT/1PSYD9+u1mMsE1FasXB/U5qZ1vyArTD0N4cJ6JZDgg5NLFfx1Y054ZpOiBLQP0H2GlORzIlpS2FmvlGFgt2v0f8CnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTQTg8Gu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYUpiWbj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 591B4C116C6;
-	Thu, 22 Jan 2026 16:39:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTQTg8Gu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC466C116C6;
+	Thu, 22 Jan 2026 17:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769099947;
-	bh=uVH7rNg9ewRBRQMIGyLml+s35IF3fTqXJq4VrmSDSv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYUpiWbjWUAXKYC1XfIoeVunaq3DHD2NB+z1x1KZTHq99g4J0IJz1B29CBE4qbzbU
-	 eyaya2vaB8qA4O83vwZqGvlyskGHvfUn6au5LlUStJgqTZX55qNve8HJvZh0LwcYYg
-	 kjNfVCVzQNiT5RxPjDOyuAf4mhUweGYG3mmnDljm/7BRJSasz5neRSsTN2C6R56Inj
-	 3Es41HVfdIRcL0KeEUoqKZolHNZFOh309PYszqIuZcC8OoGTcA1bd+6CHMUB6xQuM7
-	 Oof/mugsRHcM1ldfE41XlKEkzcd9NlhUaVNRhooSYKbo9kWleY6GhnntMa/tayF9zj
-	 O1M0WDkIaVxQQ==
-Date: Thu, 22 Jan 2026 16:39:00 +0000
-From: Lee Jones <lee@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v6 00/20] Samsung S2MPG10 regulator and S2MPG11 PMIC
- drivers
-Message-ID: <20260122163900.GN3831112@google.com>
-References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
- <176909970391.4046298.17325200147518692917.b4-ty@kernel.org>
+	s=k20201202; t=1769102139;
+	bh=Y3D9E7japclI7UuExtcL6bPuCRUqGKopPtgcI3tpo7Y=;
+	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
+	b=jTQTg8Gu2G1yoe/UvGnuAwgLgBGxCYlqGnyfSceJG959OW2YlVwhPsA/PR0l2qA9w
+	 8zdYytO9RmmHcwx7lGtPhbxjvtUszkOMmSk1gGd6xSGHTwNbK0/jXMHjM9ZgqksdNJ
+	 zOoWhDmtS6HdKUpqyb4zk5SwropokIu3Y5vEX2eWIbg82ohHpB8RHiVQaa8qtSK7GG
+	 OkB7ha3F1qdqLg2DlrHm76NbY4Guja+oBX3TWdgSnvlH2THT/rCgYDER3Kv3JSPVmX
+	 vGrfH7RiYDRIWz5zden6QseDozqL/maNI66WE4Y73NorzzXTGu3KGnglxL4eU8yLgP
+	 wg6bKKvp7MGgQ==
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 22 Jan 2026 11:15:38 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <176909970391.4046298.17325200147518692917.b4-ty@kernel.org>
+Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, rosa.pila@samsung.com, 
+ selvarasu.g@samsung.com, linux-samsung-soc@vger.kernel.org, 
+ muhammed.ali@samsung.com, faraz.ata@samsung.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ dev.tailor@samsung.com
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+In-Reply-To: <20260122130721.205664-1-pritam.sutar@samsung.com>
+References: <CGME20260122125130epcas5p4ac37f540c609f3016ff02f5708e897a2@epcas5p4.samsung.com>
+ <20260122130721.205664-1-pritam.sutar@samsung.com>
+Message-Id: <176910209177.2703219.7993114273484886473.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] Add and enable USB nodes for ExynosAutov920 SoC
 
-On Thu, 22 Jan 2026, Lee Jones wrote:
 
-> On Mon, 05 Jan 2026 09:01:36 +0000, André Draszik wrote:
-> > This series extends the existing S2MPG10 PMIC driver to add support for
-> > the regulators, and adds new S2MPG11 core and regulator drivers.
-> > 
-> > --- dependency note ---
-> > This series must be applied in-order, due to the regulator drivers
-> > depending on headers & definitions added by the bindings and core
-> > drivers. I would expect them all to go via the MFD tree.
-> > 
-> > [...]
+On Thu, 22 Jan 2026 18:37:18 +0530, Pritam Manohar Sutar wrote:
+> This SoC has 2 USB typeC and 2 typeA ports those are DWC3 DRD
+> controllers and among them, one single USB3.1 DRD combo phy and three
+> USB2.0 only phy controllers. This patchset adds and enables USB and
+> USB-PHY nodes in dts.
 > 
-> Applied, thanks!
+> PMIC is not implemented yet, we rely on USB LDOs being enabled by the
+> bootloader and used dummy regulators for now.
 > 
-> [01/20] dt-bindings: firmware: google,gs101-acpm-ipc: convert regulators to lowercase
->         (no commit info)
-> [02/20] regulator: dt-bindings: add s2mpg10-pmic regulators
->         (no commit info)
-> [03/20] regulator: dt-bindings: add s2mpg11-pmic regulators
->         (no commit info)
-> [04/20] dt-bindings: mfd: samsung,s2mps11: Split s2mpg10-pmic into separate file
->         commit: c19ccbf37758f90064f7b1e32ec291954d97b426
-> [05/20] dt-bindings: mfd: samsung,s2mpg10-pmic: Link to its regulators
->         commit: ac1068790221a421e7bc4dacadfe8d39d6bec3a9
-> [06/20] dt-bindings: mfd: Add samsung,s2mpg11-pmic
->         commit: d0cd9ded4bdef73303e65abbeae47b00b7288059
-> [07/20] dt-bindings: firmware: google,gs101-acpm-ipc: add S2MPG11 secondary PMIC
->         (no commit info)
-> [08/20] mfd: sec: s2mpg10: reorder regulators for better probe performance
->         (no commit info)
-> [09/20] mfd: sec: Add support for S2MPG11 PMIC via ACPM
->         commit: 8e6c6e8ef5e241385eff14d4c8b8e45d5e762e84
-> [10/20] regulator: add REGULATOR_LINEAR_VRANGE macro
->         (no commit info)
-> [11/20] regulator: s2mps11: drop two needless variable initialisations
->         (no commit info)
-> [12/20] regulator: s2mps11: use dev_err_probe() where appropriate
->         (no commit info)
-> [13/20] regulator: s2mps11: place constants on right side of comparison tests
->         (no commit info)
-> [14/20] regulator: s2mps11: update node parsing (allow -supply properties)
->         (no commit info)
-> [15/20] regulator: s2mps11: refactor handling of external rail control
->         (no commit info)
-> [16/20] regulator: s2mps11: add S2MPG10 regulator
->         (no commit info)
-> [17/20] regulator: s2mps11: refactor S2MPG10 ::set_voltage_time() for S2MPG11 reuse
->         (no commit info)
-> [18/20] regulator: s2mps11: refactor S2MPG10 regulator macros for S2MPG11 reuse
->         (no commit info)
-> [19/20] regulator: s2mps11: add S2MPG11 regulator
->         (no commit info)
-> [20/20] regulator: s2mps11: more descriptive gpio consumer name
->         (no commit info)
+> To drive vbus for host mode, it needs GPIO pin to enable vbus regulator.
+> GPIO expander is present in the dts, we used it to enable the regulator
+> using GPIO.
+> 
+> USB ports are configured as OTG, and default mode is configured as
+> peripheral. It will be changed based on requirements.
+> 
+> changelog
+> ----------
+> Changes in v2:
+> - As v1 was pushed 3 months back, resending this patchset.
+> - Since dependencies are merged, removed links from coverletter.
+>   link for v1: https://lore.kernel.org/linux-devicetree/20251024114845.2395166-1-pritam.sutar@samsung.com/
+> 
+> Pritam Manohar Sutar (3):
+>   arm64: dts: exynos: ExynosAutov920: Add USB and USB-phy nodes
+>   arm64: dts: exynos: ExynosAutov920: Add regulators for the USB
+>   arm64: dts: exynos: ExynosAutov920: Enable USB nodes
+> 
+>  .../boot/dts/exynos/exynosautov920-sadk.dts   | 160 +++++++++++++++++
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 162 ++++++++++++++++++
+>  2 files changed, 322 insertions(+)
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
 
-b4 is having another moment!
 
-I applied patches; 4, 5, 6, 8 and 9 from the v7 set.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
--- 
-Lee Jones [李琼斯]
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20260121 (exact match)
+ Base: tags/next-20260121 (use --merge-base to override)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20260122130721.205664-1-pritam.sutar@samsung.com:
+
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy0 (usb-nop-xceiv): '#phy-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/usb-nop-xceiv.yaml
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy1 (usb-nop-xceiv): '#phy-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/usb-nop-xceiv.yaml
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy2 (usb-nop-xceiv): '#phy-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/usb-nop-xceiv.yaml
+arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy3 (usb-nop-xceiv): '#phy-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/usb/usb-nop-xceiv.yaml
+
+
+
+
+
