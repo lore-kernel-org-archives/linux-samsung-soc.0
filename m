@@ -1,183 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29BD3385BF;
-	Fri, 23 Jan 2026 08:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E0D33D518
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2026 09:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769155552; cv=none; b=ZBokRA+3o7i2uF5C431Db2AOjoHK/XNQKAARhmJ62xeMHcwiopydrejnfCMrJjUfx0DJPsWPn4cvpSk+r0qGHvOafAcTGQc6ulMi/WvomKTkjt3OoLHSpdJnqeZ64EB4ENgYXFmWtsX/AFCATkYcCqnWj6VtlKmjbI9mMgit8AI=
+	t=1769161149; cv=none; b=h75lC4MquwXB1aUnh+DH+Fk+/Txr17cKnBtqCQBK9l+o0z99jgnhH5SIsQShFOkfo2IWgrhArpAzf3mVVmyia37T2+cZCyG/rMIT3mYLxGNFVXt3Z0lv5/nfnT3jLLmGBpiFPXDwuErgXM52besDTLcq1lHliepBwLyg7T+thLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769155552; c=relaxed/simple;
-	bh=V1FdaZ25aGYeOty1rl0AuBOmbBydQ/xQQKiBVhm8jIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=POhYz1+YP96YuuZinzHdtDIFJ0yIhwRtlhapFDmyiidfLLu7WgrWw/61EUJxtvRvVzsRo8+WaEkpG6IPg2zv9u4QlGcE0FZ3nMtK3qf57UkXYQCvBrEDUOGtKbI7SjZCBWSvJTwlFpjGeB2Y7Vj5L9T5Pr3+mxxdfW0phiHnLrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRswF+Ha; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769161149; c=relaxed/simple;
+	bh=1InEW1W4c/YN1YNZ7twlVHXHgi9spzvj4pl49gkLuYs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=adTNYDYgzYUgQwrDszAtPdEsxnGf2hz2OOtuuRzBmIOigqGaHHWG9sU36Jm7a/1e+64o+0fH3jg+LGQlsQqtYYfxwGhTKbJeIHV9N1grI0CjW0bc27mZJKpQKckrzuDoMWbrh2a/OxYz2zibEF0K9kYzxahay9V4FYtQb9E3cIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YWGfAurk; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRswF+Ha"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C90D9C2BC86;
-	Fri, 23 Jan 2026 08:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769155552;
-	bh=V1FdaZ25aGYeOty1rl0AuBOmbBydQ/xQQKiBVhm8jIk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XRswF+HacCGFheH5cfJumV2FCUBc1FpKzhxR+J3SYOxUW5BGT9GHbeoJfp5lLYLZp
-	 B/ma6+utU2AaWszUwNJMCV+a+dP9ZI5GlciUAcNP2h/pEYxuvKZILLr5hjGfC4Uwzx
-	 hFXCCnmCLmnI21rJ3u2Td5beZ9quK43cOrkdCAP8GEmCgfTeza6O/ZeCinixU2oj3L
-	 EX/r7v1NdSgYbzDNP3P/5L/K9S+DR8zxfu9fqTITMy7UfNJDCJlYAYr0AoDt3NjIf2
-	 hSTJhYUW1a59X/Aaqvvi7vQ28Cnr5nvr5SPIs79T6hnO7ZBKNY/hi9Skw4d1+4kT8P
-	 lnk7945jTZRrw==
-Message-ID: <15e8aac4-6633-49b0-87fb-4b29f62afb2f@kernel.org>
-Date: Fri, 23 Jan 2026 09:05:46 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YWGfAurk"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47d6a1f08bbso9580445e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Jan 2026 01:39:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1769161140; x=1769765940; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1InEW1W4c/YN1YNZ7twlVHXHgi9spzvj4pl49gkLuYs=;
+        b=YWGfAurkiMJUJwm/BOEr3KwVBQIgxTI/teVtUulMd8ForjGUn9O5hconJZ539QTcrc
+         EfktOTkpkabQstqIOheIQtGcCsIARZat+rV7toFjDnQxeA3/XRo5+ohObo8g9G5b0daR
+         XKKCRsH7oNewPHacHo5w1ksdNQw+X8jO3FBZYTNuoilml0wzWWHSjwQMbkPCdhwWqvqs
+         yge0dZ6bwKwioWgzXGTD8uvELYFDc6WZGVcSl1QpPkPDaJwNBLRrn5g5aYsM8dLByI4V
+         oqrlIT7BRAeo1wFc/+4uk1tjlaaEyBXoiTT3zJ/k5/MpIxHHYflnl6fE6WEf6fB/ngHp
+         Qeag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769161140; x=1769765940;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1InEW1W4c/YN1YNZ7twlVHXHgi9spzvj4pl49gkLuYs=;
+        b=vAf5YTt9XgtccHEAKvZhUccsIGJEYmv6irhV0Yy+h+/W37bYFlFejD7TIz/DGjZqd/
+         TI0czjRUFD4r9igcxdNaVuB0orWhvohdy5OzwhTu1jWO9RU0ArDNtA7aiVLF+fjVuqKo
+         fq7ouv3VJAYUtaLRw9h6PNnfnoAJ4DwNClKcQBAL9fC0c3MtTgk1TYlNOPctQtjqrzdD
+         WhunjUV7TLIW5xSh7hJFYj4Lbvwj+HGrHj2PtFwKayYqxJlDkwwPM5QiUyx+E6+JX2uU
+         QrUIJ8B2v9mvcGggnBDkBMFZTVn4pP/Rat9hKi9RZtXcSzGZNzpJ+XeGbtB7KiIYoE6b
+         oYow==
+X-Forwarded-Encrypted: i=1; AJvYcCVKIqJNj/46zEDzRs4g0eIPby5JXPvWmfboTh+gQNcRcaMR3+e1UZyBOkpsfH3dTVnWmCRxgXy493+5IwODN4c0mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6fUE1WDn06pUMLNz7Hu8JEfDOcV3klyj0vwRoai8B1b5/kMjq
+	1+bqMbXuSiZYAi4huTmPIQ91fxIwUi7rJIT6A74+MqeQ8SaPWsqzpPrhYlXghvQlzLA=
+X-Gm-Gg: AZuq6aIiw6Yeyx26nTK0lgJlwyUy0hQq0hS5ZR8sP2xgKEf2OBo4ToflBw0DKCOrTJo
+	xjtqeKI7uyDkqWziLINttO3cO5YPvj4oHxVJ+zk96BNg1q3Jgb3Q1yTEEJY+I32Rlo3swActQnP
+	Fv0GQN7ooEKwT70IUeNaTJmHDznegoabgosDe/8qavOZ7qZP/pcX+bbPV8uE6aOEcmVoKOuRkOQ
+	IE6c2lct1G96kozj3oxwHlmj6InEYdWwcMWqMVniKZGB854MGv/Uapw7AddBrEIvZRybeQqdKnE
+	+korHRKU6r/opwe4c2blqCIdoyVOTrM6utD+d/hq9U1eS9KOZlcGNulPGyT0aBXZ+e/MJYn1jve
+	W1/3gB8Jm+dihwpgdlDyINReuokRY8BWOvHbw07klIOHdjpNtEoHTbyqaa/zVaZyrxYoIYEiLWy
+	hs7I816DXzxTtieutCxA==
+X-Received: by 2002:a05:600c:6215:b0:477:5897:a0c4 with SMTP id 5b1f17b1804b1-4804c94156emr41349285e9.4.1769161139974;
+        Fri, 23 Jan 2026 01:38:59 -0800 (PST)
+Received: from draszik.lan ([212.129.79.190])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-480470cf385sm122548615e9.13.2026.01.23.01.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jan 2026 01:38:59 -0800 (PST)
+Message-ID: <0b4c5e699ce1d8211314a2bb28d7b6566e577037.camel@linaro.org>
+Subject: Re: (subset) [PATCH v7 00/20] Samsung S2MPG10 regulator and S2MPG11
+ PMIC drivers
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Lee Jones <lee@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,  Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>,  Bartosz Golaszewski	 <brgl@bgdev.pl>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij	
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
+	 <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Bartosz Golaszewski
+	 <bartosz.golaszewski@oss.qualcomm.com>
+Date: Fri, 23 Jan 2026 09:39:00 +0000
+In-Reply-To: <176909970862.4046298.23888884171864307.b4-ty@kernel.org>
+References: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
+	 <176909970862.4046298.23888884171864307.b4-ty@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
- nodes
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125136epcas5p2db0fa3d04671ddc915e60ae8c5bcfb98@epcas5p2.samsung.com>
- <20260122130721.205664-4-pritam.sutar@samsung.com>
- <6f381f88-3a51-4fc8-844c-41b167b07628@kernel.org>
- <000f01dc8c3e$2b6dcf30$82496d90$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000f01dc8c3e$2b6dcf30$82496d90$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 23/01/2026 08:59, Pritam Manohar Sutar wrote:
-> Hi Krzysztof,
-> 
-> Thank you for your feedback. 
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 22 January 2026 07:05 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com
->> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
->> nodes
->>
->> On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
->>> Enable USB PHY and DWC3 USB controllers' nodes.
->>>
->>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->>> ---
->>>  .../boot/dts/exynos/exynosautov920-sadk.dts   | 21
->> +++++++++++++++++++
->>>  1 file changed, 21 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> index f90f7704597c..5896dd69334a 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> @@ -160,15 +160,20 @@ &xtcxo {
->>>  &usbdrd31_ssphy {
->>>  	dvdd-supply = <&dummy_regulator>;
->>>  	vdd18-supply = <&dummy_regulator>;
->>> +	status = "okay";
->>
->> You just added the node in the previous patch, so why it cant be enavled
->> there?
->>
->>>  };
->>>
->>>  &usbdrd31_hsphy {
->>>  	dvdd-supply = <&dummy_regulator>;
->>>  	vdd18-supply = <&dummy_regulator>;
->>>  	vdd33-supply = <&dummy_regulator>;
->>> +	status = "okay";
->>>  };
->>>
->>>  &usbdrd31_dwc3 {
->>> +	dr_mode = "otg";
->>> +	usb-role-switch;
->>> +	role-switch-default-mode = "peripheral";
->>
->> Why did you add incomplete node in previous commit?
-> 
-> The commit was added to align with the existing convention of separating 
-> node addition and enabling logic in USB configurations. This approach is 
+Hi Lee,
 
-There was never such convention for Qualcomm or Samsung. Do not make up
-fake conventions.
+On Thu, 2026-01-22 at 16:35 +0000, Lee Jones wrote:
+> On Thu, 22 Jan 2026 15:43:27 +0000, Andr=C3=A9 Draszik wrote:
+> > This series extends the existing S2MPG10 PMIC driver to add support for
+> > the regulators, and adds new S2MPG11 core and regulator drivers.
+> >=20
+> > --- dependency note ---
+> > This series must be applied in-order, due to the regulator drivers
+> > depending on headers & definitions added by the bindings and core
+> > drivers.
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [04/20] dt-bindings: mfd: samsung,s2mps11: Split s2mpg10-pmic into separa=
+te file
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commit: c19ccbf37758f90064f7b1=
+e32ec291954d97b426
+> [05/20] dt-bindings: mfd: samsung,s2mpg10-pmic: Link to its regulators
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commit: ac1068790221a421e7bc4d=
+acadfe8d39d6bec3a9
+> [06/20] dt-bindings: mfd: Add samsung,s2mpg11-pmic
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commit: d0cd9ded4bdef73303e65a=
+bbeae47b00b7288059
 
-> referenced from commits such as:
+Thanks for queuing these, but FYI, I think leaving out patches 1 to 3 will
+give validation errors.
 
-No, it is not.
+As mentioned in cover letter, the patches must be applied in order, for
+bindings particularly the mfd-binding patches depend on the regulator-
+binding updates, specifically patches 4 and 5 reference files added in
+patches 2 and 3 respectively.
 
-> 
-> https://lore.kernel.org/all/20250710-resends-july-exynos990-dt-v2-5-55033f73d1b0@mentallysanemainliners.org/
-> https://lore.kernel.org/all/20240429-usb-dts-gs101-v2-2-7c1797c9db80@linaro.org/
+Also, without patch 1, I'd say there will be validation errors from the
+example DTS that patch 1 updates in preparation for patch 4.
 
-Just look at these commits - they add complete node override to DTS. Not
-half node now and half node later to the DTS file!
+Maybe that's all OK while things are being merged via different trees, but
+I just wanted to point it out.
 
-> 
-> Please let me know if this commit to be merged in previous commit.
-
-Just look at the commits there.
-
-> 
-
-
-Best regards,
-Krzysztof
+Cheers,
+Andre'
