@@ -1,408 +1,172 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E83520E6E2
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2026 01:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769476091; cv=none; b=lnGdrk1SPkbXPMpZH0yTRKy9O3X3MPZ1f+vtk5hdRqnvbEkgh0JJMU4IowbcVvSZ5B0dMND6rtMgSrHDp5W5lBV/KwVcYScNWov5A3UsLS78rZfpedcfHikVEK+upHTP2HdjaF+jKM0Oi2D+rKYojTVFt3LD+hHn/VpClDmGEKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769476091; c=relaxed/simple;
-	bh=kTC8SpEnQvbvmgYcHhwJO/QuVdlOgR21+GrsFAyhgvM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=neFrVW6X6+4dnFN0JeGhxQDo6HilB5zGoooOfA08eqnRG4xnEgyeEZuU1Pb641UiXvixmtLa12zH+1e6dAoR7a5h+7Vam0AmFXjxihn9kAftpxVFslimwGGfno52Dq443+5jSTz58ahBnL3XoYQ2/mEL29cuPuhsra3tdr1gCbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YSOrMhnw; arc=none smtp.client-ip=74.125.82.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803D7139D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2026 02:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769481290; cv=pass; b=OsZq0w0/A6UZrM5bugXNN+QkAxxgHRdPfWK9xM8TfnHnb3oD1M1C16EDEXKSmXSP9cUldcoeVyQr7vAaC9Rr5S/y+MeZ8SpaxFWseQa1KOIw4hJTKAhD00byvsE5K8VroMWYhrWNQMm5kjRwOeIPEUSswoO6ksxYPJay6d59AM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769481290; c=relaxed/simple;
+	bh=JFip2kLExDGxMI3IhhLYqAjmWzM0b5u9zb5Bf6gXzsc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T9J5Dydp82JlG+gQbUmSpdYsQOyD5pgnaDd+vYij3J5aNogpUNXDyx5C3G5kxVnlWVmMX1o65fD0biP+XN0asvl8MwlvDzhvdHUG5KFoAos3heUBmxJyntHr6x5tLA2aK/leJovJtEOEtK2X8AckZydjkWGKNpvA0YxnK+iQaFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=evJhXu9P; arc=pass smtp.client-ip=74.125.82.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YSOrMhnw"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-1248d27f293so4784403c88.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jan 2026 17:08:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="evJhXu9P"
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-1248d27f293so4938283c88.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jan 2026 18:34:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769481288; cv=none;
+        d=google.com; s=arc-20240605;
+        b=QAHbgxX1DK87Dj+ZkoGgsray4GOO/GNTG2o4JTTDZa9sMglOaBXpKZv1KyQpN8rpDC
+         PAuYjbVxS7uDpT2Egp4ezp6ZLgD8Y0hIcvTCfmTO3z1bJkJJtYWi2nO6BLcEIl+JTHkm
+         sfX6WnnUDq/xRE3nwaoBL0OPSevoo1QyQ5n1LRlRMNONeAh2lSQlplJzmsnuHrX33dQd
+         vKmUWPbNuuVZwcaQoX626vjmC7IAbLTAmKai+LCOPZE3D1JkKZkoN9BrTvl5sdDrlOSW
+         D3N0ITE5w14dn9RfYJSQiK8i0ZhMjACWvjuDOSLmt7dZs5LMF3nGxUBvS2Hzn/4mwe23
+         iM/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=JFip2kLExDGxMI3IhhLYqAjmWzM0b5u9zb5Bf6gXzsc=;
+        fh=BYVuxeb6rDs2P4/k9b+ikR9oZ/LiZcWnIDxRk/KS63E=;
+        b=jBjiDFQVWBbbpkJqdDN5JqcVr+JUz6Kbwxp5BQVneJ9KerSyg0Yah3/OCVQ6TCBnyt
+         g0Ksw8T23fzqwmkBdDPB7EQc35MSlKzdu9tr0VJEgryWiNVGwOBnx9b5eD/sVLRnY34O
+         5YrNf3q6zAWooGB5OWOkUC404PxIZ+AppjvBxUHfSmMVhfno9Pl8h+PbYzSfDMCRmf2V
+         jqoxHl82mvEHHYWjWg72lE+R48NC1TdvcqzDJBXfDqVo1+x7jTNp9rfIZln7PlFh5lB3
+         6yBrKkVUr7FenhXI2MrA6p1nyKJwTWHlZaS0B4xGxL+oqlmtHh96OdpKsqpDfDmbCeMy
+         Rh7g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1769476088; x=1770080888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NuNdTfBRKHbZs0pq9qEm16VabkampCsi8zuWM9+u4LA=;
-        b=YSOrMhnw4E/BMO/EfyPvtiWjYKOormU/OGz9KOUfIljwdqArjfVmepH1wYXTmhvqzK
-         QGKAiPmNdeswBnYxsGFy/os+cNnzSXIzUqtWDeoFqFV3fqpVjgOuvGZTlWgW70+41GtQ
-         UulE/eEZGSINWSqN+dzjgKhsGQX1WCQ94KpdY3+FUZWU4xtrhECii/xgD4YdZJJ8+fMU
-         jB6guD0AodBjKhbL0D6DEkN2vRLqg3sA8/3CWU6bOlthzWYTLteR9MmnGeKiYWETvmLq
-         FwKyHLTiwqLPDyyulXS+vibPzK9WkCsEpkpDVJuX+pP0l8gE4cAzHwXthzvdQ3foWJzH
-         TC4w==
+        d=google.com; s=20230601; t=1769481288; x=1770086088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JFip2kLExDGxMI3IhhLYqAjmWzM0b5u9zb5Bf6gXzsc=;
+        b=evJhXu9PS/fdI6JnH8kIISVPOphrn2epAGCfyjpTfMfRaQXqB8Taoxh5e1mKelAPy9
+         Y0hdQAk7CVcvioP+l08SUe420xnEzCkC89bl7h+u6pArw51tNo7ErjtxXmxJa6AkZsoo
+         WZNuMA9kRvmLprrc/hd1/AYhCWBOw19WIBJeW4OtWsnNFVtnwXV0m/JjSPBSQCPpM3DV
+         w2svhMY2NzaJXTKR8NVhbGU15VNZfIpTi8R6/RCinHsg4g9Oeo4evtBLztzdh+bgMrpp
+         ph7IEuOQkYA+rZFx3HrdOI0t36NTZEfi/J4m8ZCwQ1YDf7BCQIBt6G+PsxjhOhpdHkfe
+         M87A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769476088; x=1770080888;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NuNdTfBRKHbZs0pq9qEm16VabkampCsi8zuWM9+u4LA=;
-        b=GuvJmpvFvCGXGc17qqcFcwJp9xCU51jHILBr17UcFRMyJOk0tuxRyPY0i7jZAYgrx4
-         xtwei/jT9K/TErPJ5aq+oBvl7dcJ1GQpOBwDbAPZFINBIPpNKVyoWgAP36TchD+kWUR0
-         RakH/NowN3yuIiY63aoOGcEbM0i1sG2wTiadaISXAB9mSmgMx7LRgkPFOGkfpdrJjjEQ
-         SVm+BFcnPxtR8DZjzl8fVhzY802FwhxfIWLyvlVonV1KvcaZW8vXPIzfh12DuFNkG+92
-         WF3htAXZ7llREDoxTOUzTOIU4pdWYW1+Ho0M5plApOdNp4h8iAPBluQ72suLb1NWHaWW
-         qhCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXusJwdYUccsa5jyJjhHTlEFEpGhWqjR8uTQpXmCagOBNTf+zEu5SSImB+5Y2iaZDPtWmjNlpKR760wpkha4p4Fiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoYyALKKrzlg40w6vWMx7iMslJgEsrriPIcgFwXXGm//akRCXS
-	BEg4N/ycLZpOTozbvfzBDYFCy0NoSDzHB5LgyCune9TBWUaS7XeHWPPtTCfwtslgkA==
-X-Gm-Gg: AZuq6aL3MB9W75707fxv2s62nwpkK8kU8Y5B8dAEy2wn4FRL7xFOU/qFjg1FOdJpG6e
-	Yr//hodf/Wfz1IkcXtwwi1debYl1gNrTwuAdlpK8zS5mW8zvAHZeY8QCqcXEXuEEfwzY1rrW8Yy
-	TBwrcHsMdVz+QdyM+rPhQ/7Gk6mM8+IaHDJhmxUF2hHHTLM651c7d/9fgL+Air8akefy1U73DcH
-	LrD1w7S+qPejkrVYrNtWdDph4LCsLFqYLaj96MIEPOFi46zRzLO81PQrCkWGlRr14AQwNbgYy5/
-	/LCi27QNnan9v4K0DdZfAHWqcT71dKvYB5eReqP9O34XsFp216kYqmN9rbZioYx4FOQun7GO2vX
-	+t+vFWpu0VU1LSLuoFWlYFEN/RD0SRpBx0w8D2jSQ4x3T/5H4k4lWBDzXXgmoV0TRjy+eWSl2nc
-	GjJLZwZQIqv0ot3CGs7da4IgPeQasSoEJt3NjMV2PCF/Zu+5qUrxpF1e0K2SfTBmc1GRAdmt3m/
-	9kWPg6AVP/Now==
-X-Received: by 2002:a05:7022:2485:b0:119:e56b:c73d with SMTP id a92af1059eb24-124a006801fmr22088c88.2.1769476087269;
-        Mon, 26 Jan 2026 17:08:07 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:8902:a6ab:edb7:522b? ([2a00:79e0:2e7c:8:8902:a6ab:edb7:522b])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1247d91c52bsm22164484c88.6.2026.01.26.17.08.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jan 2026 17:08:06 -0800 (PST)
-Message-ID: <ff8d1c62-3bb3-4026-b69e-db26e939aa28@google.com>
-Date: Mon, 26 Jan 2026 17:08:04 -0800
+        d=1e100.net; s=20230601; t=1769481288; x=1770086088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JFip2kLExDGxMI3IhhLYqAjmWzM0b5u9zb5Bf6gXzsc=;
+        b=YDQdYqiwTP1zcJFNQfJwO+ZLqoP+Olq290DJ8ueGFUTGwKWnD/u7YhI/da3h4Niaj0
+         QfNqQvhliQ5PwiWBZgMtPkg76XECSssLcPpEMMfg68pvxVgTjyjFqQYqFWwRhos2gY3Y
+         HjiQX3e+TOV3nPbNXpEBO5XRG71wkTii+Xn8mcsWiziKWLb30nfK1/YyScRYIf3Y8fYy
+         8o15eSuqE11OKhqngHnoIeBj1nzohSLQB1TCJGKc+wkNmc6w1iMWmwFLAdqDcJA5R1WJ
+         Cvq2pt5ZPDt1BFNqfe0POHLnQTwyeIiZsftbA7qfM4LtAfrREbRO/fXGqcwrgt8HkyRd
+         Mypw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcmuFo4HFYzBK4MEhzo9zElMOvw9HJi7I/50bgJhL9zSNoie9SrsOzr6P4UEMMg1DlEbu3BEyUuL0K+mXA4bO20A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWPNu/IVC5t/JyvBLy3X8ZSb9UsFW5HczTJAE++QgG8xBx/wN+
+	3rFlb1lf1kpRaT+/qXcljIvSKR1vF1JtA6F5hSRBmtflIlbiXftrmndwW2y9hAUW/WvFz9qMTjj
+	i7AySd/t0wdwqK0t7ZJL2pkbrIbKQvuYhQr/VOVmW
+X-Gm-Gg: AZuq6aLvv1aLLZ22peRj+6VHz7As0lqvYOTLpgtTLroFUBQFnc9rFp5VEilKuQxD3gq
+	FwtzueZRnFQzViwntwvyTIuZOrXAGIkVYm8TQUaYCMke75JOVPOG3z2EHvogdw0gxPGnck4oyec
+	kR73eknpB6K9FqywsPoqY/0qQJM7h2bQ3F8LPJgp2HiWljYJkinZB+xgxQg9kieXmorFz/C35Dg
+	hsSCm8YBb7XDCPLhDnRQldk3zxmIXtHfOhy0YkO3ExdCQILyhoO/mnQNZAuZk90ruacP1oaSS1U
+	3NHFtMI1kKjImMnRrVFn6TWjHs/Q
+X-Received: by 2002:a05:701a:c94e:b0:119:e56b:c75b with SMTP id
+ a92af1059eb24-124a00c7356mr169215c88.32.1769481287984; Mon, 26 Jan 2026
+ 18:34:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] power: supply: max77759: add charger driver
-From: Amit Sunil Dhamne <amitsd@google.com>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20260121-max77759-charger-v4-0-694234c8ded1@google.com>
- <20260121-max77759-charger-v4-4-694234c8ded1@google.com>
- <71d816c5ed4ee2d13ec63b8fd4acd49f4e418284.camel@linaro.org>
- <bf3bd5f7-28e1-4fe3-afca-34f12b2cede8@google.com>
-Content-Language: en-US
-In-Reply-To: <bf3bd5f7-28e1-4fe3-afca-34f12b2cede8@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260121-next-v1-1-c18068b091b9@google.com> <7c78f9da40022e7bbf850ae8989c617bdc30cc95.camel@linaro.org>
+ <CA+zupgw5H5rumo+DxaTfA_=bcvjbBOivm6R+Pw31jgE-sMyEtw@mail.gmail.com>
+ <f956ccd3f5f694de7a634819da3f790a8dce132b.camel@linaro.org>
+ <CA+zupgwEWM4c9yK1f-Y_Cv5gk=0zYNuUb3kZyZ6O3FDRbPPvKw@mail.gmail.com> <eebefae5273bccce2d0fcd97afe3ea28bedf27cd.camel@linaro.org>
+In-Reply-To: <eebefae5273bccce2d0fcd97afe3ea28bedf27cd.camel@linaro.org>
+From: Roy Luo <royluo@google.com>
+Date: Mon, 26 Jan 2026 18:34:11 -0800
+X-Gm-Features: AZwV_QhhJrxrvzBO-TQhPiIPXuGUoaw8HO-KdRUINuCSkmnzos1YfxT_-yBlkN4
+Message-ID: <CA+zupgztBHTJwNPEOfXjdw9TpcpiVGO=hdFBYk3PUo-0Vf95mg@mail.gmail.com>
+Subject: Re: [PATCH next] phy: google: fix build dependency for Google Tensor
+ USB PHY
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andre',
+On Fri, Jan 23, 2026 at 10:52=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@=
+linaro.org> wrote:
+>
+> Hi Roy,
+>
+> On Fri, 2026-01-23 at 15:51 -0800, Roy Luo wrote:
+> > On Thu, Jan 22, 2026 at 10:28=E2=80=AFPM Andr=C3=A9 Draszik <andre.dras=
+zik@linaro.org> wrote:
+> > >
+> > >
+> > > COMPILE_TEST is not limited to ARCH_xxx. It allows drivers to be
+> > > compile tested even if the current build doesn't enable whatever
+> > > option (like TYPEC).
+> > >
+> > > See also https://www.kernel.org/doc/html/latest/kbuild/kconfig-langua=
+ge.html#compile-testing
+> >
+> > "If a config symbol has a dependency, but the code controlled by the
+> > config symbol can still be compiled if the dependency is not met",
+> > TYPEC doesn't fall into this category as it's mandatory for compiling
+> > PHY_GOOGLE_USB.
+> > With "depends on TYPEC || COMPILE_TEST", this very build error
+> > would resurface when TYPEC=3Dn, COMPILE_TEST=3Dy and
+> > PHY_GOOGLE_USB=3Dy. Please let me know if I missed anything.
+>
+> No it wouldn't. If you look at the build log & .config from the reported
+> failure, the error was because:
+>
+> CONFIG_PHY_GOOGLE_USB=3Dy
+> CONFIG_TYPEC=3Dm
 
-On 1/22/26 4:07 PM, Amit Sunil Dhamne wrote:
-> Hi Andre',
->
-> On 1/22/26 4:47 AM, André Draszik wrote:
->> Hi Amit,
->>
->> Thanks for your patches, just a few minor comments below.
->
-> Thanks for your feedback!
->
->
->>
->> On Wed, 2026-01-21 at 00:59 +0000, Amit Sunil Dhamne via B4 Relay wrote:
->>> From: Amit Sunil Dhamne <amitsd@google.com>
->>>
->>> Add support for MAX77759 battery charger driver. This is a 4A 1-Cell
->>> Li+/LiPoly dual input switch mode charger. While the device can support
->>> USB & wireless charger inputs, this implementation only supports USB
->>> input. This implementation supports both buck and boost modes.
->>>
->>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>> ---
->>>   MAINTAINERS                             |   6 +
->>>   drivers/power/supply/Kconfig            |  11 +
->>>   drivers/power/supply/Makefile           |   1 +
->>>   drivers/power/supply/max77759_charger.c | 737 
->>> ++++++++++++++++++++++++++++++++
->>>   4 files changed, 755 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 
->>> 0d044a58cbfe0f2b97f3682a86708e1ece108e9f..38354964a85c34611b1b54e20651b360f3b9c11e 
->>> 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -15546,6 +15546,12 @@ F:    drivers/mfd/max77759.c
->>>   F:    drivers/nvmem/max77759-nvmem.c
->>>   F:    include/linux/mfd/max77759.h
->>>   +MAXIM MAX77759 BATTERY CHARGER DRIVER
->>> +M:    Amit Sunil Dhamne <amitsd@google.com>
->>> +L:    linux-kernel@vger.kernel.org
->>> +S:    Maintained
->>> +F:    drivers/power/supply/max77759_charger.c
->>> +
->>>   MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
->>>   M:    Javier Martinez Canillas <javier@dowhile0.org>
->>>   L:    linux-kernel@vger.kernel.org
->>> diff --git a/drivers/power/supply/Kconfig 
->>> b/drivers/power/supply/Kconfig
->>> index 
->>> 92f9f7aae92f249aa165e68dbcd4cebb569286ea..3a2cdb95c98e44324151ac2b86d740ae2923ee77 
->>> 100644
->>> --- a/drivers/power/supply/Kconfig
->>> +++ b/drivers/power/supply/Kconfig
->>> @@ -631,6 +631,17 @@ config CHARGER_MAX77705
->>>       help
->>>         Say Y to enable support for the Maxim MAX77705 battery charger.
->>>   +config CHARGER_MAX77759
->>> +    tristate "Maxim MAX77759 battery charger driver"
->>> +    depends on MFD_MAX77759 && REGULATOR
->>> +    default MFD_MAX77759
->>> +    help
->>> +      Say M or Y here to enable the MAX77759 battery charger. MAX77759
->>> +      charger is a function of the MAX77759 PMIC. This is a dual input
->>> +      switch-mode charger. This driver supports buck and OTG boost 
->>> modes.
->>> +
->>> +      If built as a module, it will be called max77759_charger.
->>> +
->>>   config CHARGER_MAX77976
->>>       tristate "Maxim MAX77976 battery charger driver"
->>>       depends on I2C
->>> diff --git a/drivers/power/supply/Makefile 
->>> b/drivers/power/supply/Makefile
->>> index 
->>> 4b79d5abc49a7fd1e37a26d0c89f94d9fe3a916f..6af905875ad5e3b393a7030405355b9a975870f6 
->>> 100644
->>> --- a/drivers/power/supply/Makefile
->>> +++ b/drivers/power/supply/Makefile
->>> @@ -128,3 +128,4 @@ obj-$(CONFIG_CHARGER_SURFACE)    += 
->>> surface_charger.o
->>>   obj-$(CONFIG_BATTERY_UG3105)    += ug3105_battery.o
->>>   obj-$(CONFIG_CHARGER_QCOM_SMB2)    += qcom_smbx.o
->>>   obj-$(CONFIG_FUEL_GAUGE_MM8013)    += mm8013.o
->>> +obj-$(CONFIG_CHARGER_MAX77759)    += max77759_charger.o
->>> diff --git a/drivers/power/supply/max77759_charger.c 
->>> b/drivers/power/supply/max77759_charger.c
->>> new file mode 100644
->>> index 
->>> 0000000000000000000000000000000000000000..34b5ea0967eb7b4716e81ee1a55227ac872493b0
->>> --- /dev/null
->>> +++ b/drivers/power/supply/max77759_charger.c
->>> @@ -0,0 +1,737 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * max77759_charger.c - Battery charger driver for MAX77759 charger 
->>> device.
->>> + *
->>> + * Copyright 2025 Google LLC.
->>> + */
->>> +
->>> +#include <linux/bitfield.h>
->>> +#include <linux/cleanup.h>
->>> +#include <linux/device.h>
->>> +#include <linux/devm-helpers.h>
->>> +#include <linux/interrupt.h>
->>> +#include <linux/irq.h>
->>> +#include <linux/math64.h>
->>> +#include <linux/mfd/max77759.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mod_devicetable.h>
->>> +#include <linux/mutex.h>
->>> +#include <linux/of.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/power_supply.h>
->>> +#include <linux/regmap.h>
->>> +#include <linux/regulator/driver.h>
->>> +#include <linux/string_choices.h>
->>> +
->>> +/* Default values for Fast Charge Current & Float Voltage */
->>> +#define CHG_CC_DEFAULT_UA            2266770
->>> +#define CHG_FV_DEFAULT_MV            4300
->>> +
->>> +#define FOREACH_IRQ(S)            \
->>> +    S(AICL),            \
->>> +    S(CHGIN),            \
->>> +    S(CHG),                \
->>> +    S(INLIM),            \
->>> +    S(BAT_OILO),            \
->>> +    S(CHG_STA_CC),            \
->>> +    S(CHG_STA_CV),            \
->>> +    S(CHG_STA_TO),            \
->>> +    S(CHG_STA_DONE)
->>> +
->>> +#define GENERATE_ENUM(e)        e
->>> +#define GENERATE_STRING(s)        #s
->>> +
->>> +enum {
->>> +    FOREACH_IRQ(GENERATE_ENUM)
->>> +};
->>> +
->>> +static const char *const chgr_irqs_str[] = {
->>> +    FOREACH_IRQ(GENERATE_STRING)
->>> +};
->>> +
->>> +#define NUM_IRQS            ARRAY_SIZE(chgr_irqs_str)
->>> +
->>> +struct max77759_charger {
->>> +    struct device *dev;
->>> +    struct regmap *regmap;
->>> +    struct power_supply *psy;
->>> +    struct regulator_dev *chgin_otg_rdev;
->>> +    struct notifier_block nb;
->>> +    struct power_supply *tcpm_psy;
->>> +    struct work_struct psy_work;
->>> +    int irqs[NUM_IRQS];
->>> +    struct mutex lock; /* protects the state below */
->>> +    enum max77759_chgr_mode mode;
->>> +};
->>> +
->>> +static inline int regval_to_val(int reg, int reg_offset, int step, 
->>> int minval)
->>> +{
->>> +    return ((reg - reg_offset) * step) + minval;
->>> +}
->>> +
->>> +static inline int val_to_regval(int val, int minval, int step, int 
->>> reg_offset)
->>> +{
->>> +    s64 dividend;
->>> +
->>> +    if (unlikely(step == 0))
->>> +        return reg_offset;
->> Does it really make an impact on performance to specify unlikely? 
->> Also, I seem to
->> remember that the if branch is treated as unlikely anyway, but can't 
->> find any hard
->> evidence on that right now.
->
-> I was hoping it's performance improving even if negligible, though I 
-> don't have evidence to support either arguments. In any case, I kept 
-> it for readability.
->
->
->>
->>> +
->>> +    dividend = (s64)val - minval;
->>> +    return DIV_S64_ROUND_CLOSEST(dividend, step) + reg_offset;
->>> +}
->> For these two functions above, have you considered using the APIs from
->> include/linux/linear_range.h instead of duplicating in this driver? The
->> implementations of the above match linear_range_get_value() and
->> linear_range_get_selector_low() quite nicely.
->
-> I think it looks useful, will check it out.
->
->
->>> +
->>> +static inline int unlock_prot_regs(struct max77759_charger *chg, 
->>> bool unlock)
->>> +{
->>> +    return regmap_update_bits(chg->regmap, 
->>> MAX77759_CHGR_REG_CHG_CNFG_06,
->>> +                  MAX77759_CHGR_REG_CHG_CNFG_06_CHGPROT, unlock
->>> +                  ? MAX77759_CHGR_REG_CHG_CNFG_06_CHGPROT : 0);
->>> +}
->>> +
->> [...]
->>
->>> +static irqreturn_t irq_handler(int irq, void *data)
->>> +{
->>> +    struct max77759_charger *chg = data;
->>> +    struct device *dev = chg->dev;
->>> +    int i;
->>> +
->>> +    for (i = 0; i < NUM_IRQS && chg->irqs[i] != irq; i++)
->>> +        ;
->>> +
->>> +    if (i == NUM_IRQS) {
->>> +        dev_err(dev, "Unable to handle irq=%d", irq);
->>> +        return IRQ_NONE;
->>> +    } else if (i == BAT_OILO) {
->>> +        dev_warn(dev, "Battery over-current threshold crossed");
->>> +    }
->> Generally, no 'else' is required after return.
->
-> I will refactor it in the next rev.
->
->
->>> +
->>> +    power_supply_changed(chg->psy);
->>> +    return IRQ_HANDLED;
->>> +}
->>> +
->> [...]
->>
->>> +static void psy_work_item(struct work_struct *work)
->>> +{
->>> +    struct max77759_charger *chg =
->>> +        container_of(work, struct max77759_charger, psy_work);
->>> +    union power_supply_propval current_limit, online;
->>> +    int ret;
->>> +
->>> +    ret = power_supply_get_property(chg->tcpm_psy,
->>> +                    POWER_SUPPLY_PROP_CURRENT_MAX,
->>> +                    &current_limit);
->>> +    if (ret) {
->>> +        dev_err(chg->dev,
->>> +            "Failed to get CURRENT_MAX psy property, ret=%d",
->>> +            ret);
->>> +        return;
->>> +    }
->>> +
->>> +    ret = power_supply_get_property(chg->tcpm_psy, 
->>> POWER_SUPPLY_PROP_ONLINE,
->>> +                    &online);
->>> +    if (ret) {
->>> +        dev_err(chg->dev,
->>> +            "Failed to get ONLINE psy property, ret=%d",
->>> +            ret);
->>> +        return;
->>> +    }
->>> +
->>> +    if (online.intval && current_limit.intval) {
->>> +        ret = set_input_current_limit(chg, current_limit.intval);
->>> +        if (ret)
->>> +            dev_err(chg->dev,
->>> +                "Unable to set current limit, ret=%d", ret);
->>> +
->>> +        charger_set_mode(chg, MAX77759_CHGR_MODE_CHG_BUCK_ON);
->>> +    } else {
->>> +        charger_set_mode(chg, MAX77759_CHGR_MODE_OFF);
->>> +    }
->> For all the possible errors in this function, should the driver try a 
->> bit
->> harder, even if unlikely to occur?
->
-> Maybe we can do this:
->
-> On failure of either of the power_supply_get_property() calls or 
-> set_input_current_limit(), we should first turn off the charger (as 
-> that's the safest choice) and reschedule this work for a certain 
-> number of times (maybe 3). Obviously, if we recover from this state, 
-> we reset the error limit and don't reschedule this work anymore. Do 
-> you concur?
->
->
->> What if the current limit needed to be
->> reduced, e.g. due to thermal or any other reasons?
->
-> This specific piece of code is for setting current limit that is 
-> driven by USB Type-C subsystem. If the Type-C subsystem re-negotiates 
-> a PD contract this piece of code will re-run as this subsystem will be 
-> re-notified by TCPM. For cases where we need to cap the current limit 
-> due to thermal management, that's a hardware driven feature. It is 
-> enabled by enabling JEITA management. That's not in the scope atm.
->
->
->>
->> Could rescheduling the work be something to consider?
->>
-> Responded in the previous comment.. 
-
-
-Following up on this comment, in case you missed it :)
-
+You're right about the cause of the build error and sorry I gave
+the wrong example. Let's look at this build error scenario with
+"depends on TYPEC || COMPILE_TEST":
+Given COMPILE_TEST=3Dy and CONFIG_TYPEC=3Dm, the
+"depends on" would be evaluated as max(y,m) =3D y.
+Hence, CONFIG_PHY_GOOGLE_USB is allowed to be
+set to y, m or n. When it's set to y, the exact build error
+would be introduced. I also tested this locally and saw
+the build error.
 
 Thanks,
+Roy
 
-Amit
-
+>
+> built-in code can not link against code from a module.
+>
+> The typec APIs are all stubbed out when TYPEC=3Dn.
+>
+> Cheers,
+> Andre'
+>
+>
+>
+> >
+> > Thanks,
+> > Roy
+> >
+> > >
+> > > Cheers,
+> > > Andre'
+> > >
+> > >
+> > > >
+> > > > [1] https://lore.kernel.org/all/CA+zupgwgfKwPYqj8G2tNf4pEXNEWA+vL2W=
+YJPhJ16xExgko7Dw@mail.gmail.com/
+> > > >
+> > > > Regards,
+> > > > Roy
