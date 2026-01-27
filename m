@@ -1,135 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246071F2B8D;
-	Tue, 27 Jan 2026 04:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81C427F00A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2026 14:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769489084; cv=none; b=F6kZcoJCDnkt72FS+5svpbdLMSCCTLswYO2bF5ALbut6UkYBl7c8JIZutHKVse6e4Rxh6JBZk0FI+geD7bgu39lkr9/FUxFresD2DwblTL0GhdHMbV6JBbMlSdwU63g8X587n17Jhb5MNkFfh0RvtcdgKBRQZ3a2hPUX3ujFdcc=
+	t=1769522947; cv=none; b=SAw3u4JRs7tDuCj/zbvFUFfVElEWGt6qa8RX1ux2jGIvTS6xqauphxxblFmsGuKuSZzH1NwHQScYkaIDcIpSaFiyL9tfQM5mamPS9uv2Wn63FLmiCfmdah7vKii1xA73wz34WUZsNtq0ooe3mILkhuAl+FbFgX1mO5Y1/+10r2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769489084; c=relaxed/simple;
-	bh=N4/dTgsSkKgyPM4oXZP0ylgXW3yR83HN4AMrwnF75aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbZ5EVseRActX1YCtzwsBEVAFpDuxvQsZYMz1F3BdI1J5Jdbba8O8njQi+kYVluZKq6csyqogbzQi5+tMq6GH88l3W+ueRRVo092B41NfHlu7vUMDYoI1rVFIo1D1e1vVcvGcgjW8i3j2dZfKBcHEuuk+eFuC4f/0SEr3KQ1aEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WF5Kbspl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769522947; c=relaxed/simple;
+	bh=9tpzeg8ZLstmijxn+vULudJ7ok11y38DOfncDTdOhvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tn53y90IPQOSpTdZpu0qbE6bZBm4WJai5SawV5LsR91p7TNqsH1yYNj5M1TBwvUKITFBNZ7/NidUiJawSnlrVqqNGrNt8qU/3+QwCXQXBL/2L/jjoptzZyCZRlW+nWU1lfWNKMNcF2qNE5Vc0oQkVmW03QnuYnH5YHYRuTvwlXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0zI5YGx; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WF5Kbspl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF17FC116C6;
-	Tue, 27 Jan 2026 04:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769489083;
-	bh=N4/dTgsSkKgyPM4oXZP0ylgXW3yR83HN4AMrwnF75aw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WF5KbspleVHuga8JwYh3EeefwmK+a6HDYpdOtJsIEhYhKi7SjlC1BWgGttTO8iTES
-	 pnKiYzRN97JT9hPs+Xudm2RzaPx98OGJgd+B3CBaqga4r97b7UtC15r35QPKKKbGic
-	 g02pRSd4SNV7lnfw0eCqPWJw6Ah31X1pRK9m2IP1udWZfsqBjAeOeTtyE+qzVFfxk2
-	 6ACAOnIzIBkZ1r8gU/Fx2cWitvXT0Fr1JhoPMmBvXFRBnky5QC6k1Z0MSkoaI88pA1
-	 xd/3vU1teyEqQuJhZpxRloBEM7oHKMRQHGs7yXbdPxjH1TaTVN+qPqm1+G1+MYw7bc
-	 HP4pwwMayARyw==
-Date: Tue, 27 Jan 2026 10:14:25 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
-	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Christopher Ruehl <chris.ruehl@gtsys.com.hk>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Vincent Huang <vincent.huang@tw.synaptics.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix emails with spaces or missing brackets
-Message-ID: <2pmaiz2yvgtmfjg6wtduoksjr34znalkvapr3dn3v6fqlxcdde@xkmnuvww7v37>
-References: <20260126164724.2832009-1-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0zI5YGx"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-8230c2d3128so2480717b3a.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jan 2026 06:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769522945; x=1770127745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=HkjARj9793yyLvFYRomWRk5mF/ci3njF8EYRL/lgLi0=;
+        b=e0zI5YGxfwU40zakYq9bfEe/otP++w66LixynS2yWtSEhl2autBKl+2DiW7LT2VI+A
+         HIVz+7tOZ/UqX9OVIwKxRxTUK+GzIWMGP4hDRAKQgSnUzmojrD8ub5d1Ch8ugqUaR6By
+         BCJnNZE1nMTJY6xd92HHzMpM12PAuGiPV31XNieUfEIbhm1azU1+vME2HQ5IHtSOvIW7
+         GEvkykFUvg/3ME9VnG7eQnyM4CVOE3n0EW5HLlQXyMX5wMrJXEh9toleCPx4/GQENxwO
+         CvONIhgMuFrWxbLdW1aH5tl3RH3BikfhD7YDeK5nkbL4P+5FEfe47h9clawEq08LHW8H
+         Mu5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769522945; x=1770127745;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HkjARj9793yyLvFYRomWRk5mF/ci3njF8EYRL/lgLi0=;
+        b=BTLGonDFbSUFNwbYAt+QlLWbAbQ/ifyywcmGYSLRvGwjd/fswXwpMctktSVZyIVY+e
+         uNX4bpzKJz/U81HwNMO2wlZjfF428BU1xC1O9ExVF8HN2ZrG3kxw9ZGoQiVzqLRnnazs
+         cUYnJssFBMsnJfEmuNzAT5/rL0FvwF74FNCD/4dHCg8he5fpcIeisfzt5EOeS9m4eBYE
+         J5s44BFTUUjDJtD7q9iKfGgjyXhYWhupT4LfjkiofMygr/1Sat7UmldHOyBvT6S7hAO9
+         c37ndh44AEoVw0QocCCERpLsFLlwqlY2/uSfL5lVmqqaFBBPTHCjDre4VimKc9dDq2t1
+         O7CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0CJlH+asZJhPp7KVrkNWsQo8lax8USxWuUQi0nUpSyjFPISz1z+1VdcNJzwuWLRyfOKgc+WxwaPUGzWZqjB+cag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgIDBZH56EeRAKIZNWrvq5pUF/5ZUzCl5AmnLnI2ZgyxHMWNMy
+	wNt+7QYjaBjqXlMD3ci9Q8TYOaQcNSinBKr/0Uqy159+uKCxZ8x/ZLVl18TU81dI
+X-Gm-Gg: AZuq6aKZkKD/y4VeKPR1T3hWnZXTN1V1uVFQYjRPYwbLbi3SSuOyjfNuYoiqd2GqCEE
+	WnkeNrkc4DMxq2znfLAsSsHp5133p9WVPdsx7uuiuCeJD4T/fyGDa628boPeAgoSM/Pw53ZskRk
+	u1uHw+rvAPzycy6i6B6+mtXdmRkJvLJ3gk2k0gdfiPdAQbIR/NoiJNVlB2DExcQoiyXpakHh6kO
+	wJFXtFPlbc+CIAnuZvBl6Q3VngItv0WssDcfWagTGLdCKXHlQ4CyzZuPvhee9JECnAPPvrDqW2i
+	CJz4hKv0t5iyqRPCj9rmo59R2ZSerfQGc4Xy7XcszVs/8Sl30+rBrqRx6jiwPTUyBu7qsN/qBiO
+	QJnlViQIMyKpDMCKUznMKU2kIPuUMJCDpq196PGcrfqUJWMmP2CRRruMUccyuw51NrOdlC/Zki0
+	4YtrRWS2u3Y4eJDfMPqaUg/nuRZGMsXeEPYWgiCeOXzRwP7LarYJbyLOkWJju4wikhZw==
+X-Received: by 2002:a05:6a00:1d9b:b0:821:a7b6:10a3 with SMTP id d2e1a72fcca58-823692af2a3mr1729625b3a.34.1769522944865;
+        Tue, 27 Jan 2026 06:09:04 -0800 (PST)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82318663d82sm12363616b3a.21.2026.01.27.06.09.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jan 2026 06:09:04 -0800 (PST)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-misc-next
+Date: Tue, 27 Jan 2026 23:09:00 +0900
+Message-Id: <20260127140900.31856-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260126164724.2832009-1-robh@kernel.org>
 
-On Mon, Jan 26, 2026 at 10:47:22AM -0600, Rob Herring (Arm) wrote:
-> Fix email addresses with spaces or missing brackets. A pending
-> dtschema meta-schema change will check for these.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml    | 2 +-
->  Documentation/devicetree/bindings/input/syna,rmi4.yaml          | 2 +-
->  .../devicetree/bindings/media/samsung,exynos5250-gsc.yaml       | 2 +-
->  Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml     | 2 +-
+Hi Dave and Daniel,
 
-For PCI controllers,
+  Just fix the regression introduced by the bridge chain reorder[1].
 
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
+Please kindly let me know if there is any problem.
 
-- Mani
+[1] commit-id : c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain ...")
 
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml b/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
-> index 3d14d5fc96c5..7b38f2182ffa 100644
-> --- a/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/sensirion,shtc1.yaml
-> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Sensirion SHTC1 Humidity and Temperature Sensor IC
->  
->  maintainers:
-> -  - Christopher Ruehl chris.ruehl@gtsys.com.hk
-> +  - Christopher Ruehl <chris.ruehl@gtsys.com.hk>
->  
->  description: |
->    The SHTC1, SHTW1 and SHTC3 are digital humidity and temperature sensors
-> diff --git a/Documentation/devicetree/bindings/input/syna,rmi4.yaml b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> index f369385ffaf0..8685ef4481f4 100644
-> --- a/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> +++ b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> @@ -8,7 +8,7 @@ title: Synaptics RMI4 compliant devices
->  
->  maintainers:
->    - Jason A. Donenfeld <Jason@zx2c4.com>
-> -  - Matthias Schiffer <matthias.schiffer@ew.tq-group.com
-> +  - Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
->    - Vincent Huang <vincent.huang@tw.synaptics.com>
->  
->  description: |
-> diff --git a/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-> index 878397830a4d..9196cf5dac0f 100644
-> --- a/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-> +++ b/Documentation/devicetree/bindings/media/samsung,exynos5250-gsc.yaml
-> @@ -9,7 +9,7 @@ title: Samsung Exynos SoC G-Scaler
->  maintainers:
->    - Inki Dae <inki.dae@samsung.com>
->    - Krzysztof Kozlowski <krzk@kernel.org>
-> -  - Seung-Woo Kim <sw0312.kim@samsung.com
-> +  - Seung-Woo Kim <sw0312.kim@samsung.com>
->  
->  description:
->    G-Scaler is used for scaling and color space conversion on Samsung Exynos
-> diff --git a/Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml b/Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml
-> index d286b77921e0..8f5d33050348 100644
-> --- a/Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/mbvl,gpex40-pcie.yaml
-> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Mobiveil AXI PCIe Host Bridge
->  
->  maintainers:
-> -  - Frank Li <Frank Li@nxp.com>
-> +  - Frank Li <Frank.Li@nxp.com>
->  
->  description:
->    Mobiveil's GPEX 4.0 is a PCIe Gen4 host bridge IP. This configurable IP
-> -- 
-> 2.51.0
-> 
+Thanks,
+Inki Dae
 
--- 
-மணிவண்ணன் சதாசிவம்
+The following changes since commit bda4b9b8cc2f4850af52fb35abf8ead434ba38dd:
+
+  drm/rcar-du: dsi: Clean up VCLK divider calculation (2026-01-27 12:13:09 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-misc-next-for-v6.20
+
+for you to fetch changes up to 89f51ab5fa69db4ce2aeec80987befd1a60c6b68:
+
+  drm/bridge: samsung-dsim: Fix init order (2026-01-27 22:48:07 +0900)
+
+----------------------------------------------------------------
+Fix one regression
+. Fix a regression introduced by the reordered DRM bridge pre-enable/enable
+  callbacks. It moves DSI initialization to atomic_enable() so clocks and
+  PLL refclk are configured after the display controller is fully set up.
+  The DSI is reinitialized if it was previously initialized to ensure
+  correct operation when the refclk rate changes.
+
+----------------------------------------------------------------
+Tomi Valkeinen (1):
+      drm/bridge: samsung-dsim: Fix init order
+
+ drivers/gpu/drm/bridge/samsung-dsim.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
