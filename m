@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D304086A;
-	Wed, 28 Jan 2026 07:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A745C2DC798;
+	Wed, 28 Jan 2026 10:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769585914; cv=none; b=cfeMuz9YR+oC7HYZ14KNDuE147GqzoN4YUl+LYHDjiy6o8bQTs31p5EysQ4Rk7IWn+u0/M6zTZ8tnL9hcyFbGsENBD/ElG1/kr1zdoB1ZT6afCjbh0BS2xY2aLoNnuhZqCvSxyS8hPIHgcQwG9vbRWjtq/JelscXOkNAZJS1zsc=
+	t=1769597899; cv=none; b=gFF3XL+03Xi1FRR2UwymFhKkQo6agr5yrHumJfu3z6hWckellRmQCpyxNVMkEQbOQD3Thp61jieCuXqE54QDONxcSXS8TPSn+UJrBod8UUJv1rxIMzig+M9BSIVb5oSVkqKrK5mUJKjGAfoEnsXQfflsV4p4vYP1IBYfqInoE3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769585914; c=relaxed/simple;
-	bh=CxYkdbtO+4+3Z/EXJUvu0H4KA1l87G+n2kMTlUXO36U=;
+	s=arc-20240116; t=1769597899; c=relaxed/simple;
+	bh=yX9uJyvvHBgb5atLiB3p0mcLtf07NaZ+JbN9vi8aOUs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXNnp2O+xjdKV48Je+8gSl4bQCe4uqga/N5HcrTRnwHxHJmxpLndq+6ywTTVd9X7Xmw5InPHHEosREseZKl28n1wNGlH/7f4/QuJS3Aa/+5FctrnZl6sW8bu0swOcxQgTODDr9I1PKPcn9BJJyrR8zBmyeJTzNljJj/N49RVuLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RF07kkSS; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=NyUjVezMdjMl0Ub3BN1aJlGk0Xh2t90kVWE55e/hzUqKiFYyjexxeUkCMR1LMDyJPXvvYPrXEW45y5MxywkCNLblShYh2cLXrd+UdoxYhpMBg/WVw3qZJdnmuWkUlzqUamcA1I5dW3VbaA1+U5tjuuiDxA/NTHrXHdfEXplmmmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzy8ljFS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RF07kkSS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E8F6C4CEF1;
-	Wed, 28 Jan 2026 07:38:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzy8ljFS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A61E0C4CEF1;
+	Wed, 28 Jan 2026 10:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769585914;
-	bh=CxYkdbtO+4+3Z/EXJUvu0H4KA1l87G+n2kMTlUXO36U=;
+	s=k20201202; t=1769597899;
+	bh=yX9uJyvvHBgb5atLiB3p0mcLtf07NaZ+JbN9vi8aOUs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RF07kkSSmjiJNPiek0Wu3h5KuLOAHGvQ+kJhV9O774T/vcgXc0ujy3hf0fk3IXOxC
-	 U5MBZgygXiN/FWRiG7Y6YIJQCc6j0pm4dC7AtENSIvmVF7AvqugkWBDyOZgi9EXDM9
-	 0E5p/JkElIvhRfBme9fgZ5R11ukln1NlRTYBAKxihi1LQNgT0nameti2wLivgk/3yQ
-	 hiW4TbQ+EVg24aMjQoNYSfQ3/BOpsDZVsxBeYsF4PUapz5GqsuLbXA3HBKPw5I0k8v
-	 ejFT8xi4ghrcgtoT5bnRYs61Qcka28gyWAk/PgN129aGQPyLV3rT+k7QKfXlqiMr9N
-	 0hf+/lj6z/peQ==
-Message-ID: <5d3a2dac-ef86-4855-9978-79f0815e2c01@kernel.org>
-Date: Wed, 28 Jan 2026 08:38:26 +0100
+	b=dzy8ljFScUzYuX2hGHMdGB8+0uOftaDh8qrsudDq+6MZTU2OXmEk2JCq5TuIsRF1Q
+	 b94L2u4VVuFly9ceSJB9j+9C4EIy3QPF53/R0yR2r3j4acAbvFoCZEdRJhw3ydGSRW
+	 GnPoWH1/cajSeWLCLmp8W7pk1R0u3fWaEp54rpEYyYSuKTdE3mHoa+0kZUL6pUnehj
+	 Chnen9sXwVfuKn5NxLfe95k8TlUXbiiJHhRfU4tyKO/K9XEaZmS+piUyJ7SFuHAGgi
+	 0L6/x1cEvdVcYCrbEn9rqRlWl2ISUJskstl+NLGpqiPBp5YAWhjwvbFSOChJUuiLXp
+	 lNnrXYAM2xmTQ==
+Message-ID: <277537d2-9b4f-41b9-94e2-9ff45db6c970@kernel.org>
+Date: Wed, 28 Jan 2026 11:58:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Add and enable USB nodes for ExynosAutov920 SoC
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
- 'Rob Herring' <robh@kernel.org>
-Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, rosa.pila@samsung.com,
- selvarasu.g@samsung.com, linux-samsung-soc@vger.kernel.org,
- muhammed.ali@samsung.com, faraz.ata@samsung.com,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- dev.tailor@samsung.com
-References: <CGME20260122125130epcas5p4ac37f540c609f3016ff02f5708e897a2@epcas5p4.samsung.com>
- <20260122130721.205664-1-pritam.sutar@samsung.com>
- <176910209177.2703219.7993114273484886473.robh@kernel.org>
- <000001dc8c30$d83ce2e0$88b6a8a0$@samsung.com>
+Subject: Re: [PATCH v4 0/3] Add support for exynos5250-manta (Google Nexus 10)
+To: Lukas Timmermann <linux@timmermann.space>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, Alexandre Marquet <tb@a-marquet.fr>,
+ Henrik Grimler <henrik@grimler.se>
+References: <20260127-lat3st-staging-v4-0-797469aaaf9d@timmermann.space>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,48 +89,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000001dc8c30$d83ce2e0$88b6a8a0$@samsung.com>
+In-Reply-To: <20260127-lat3st-staging-v4-0-797469aaaf9d@timmermann.space>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 23/01/2026 07:23, Pritam Manohar Sutar wrote:
+On 27/01/2026 21:40, Lukas Timmermann wrote:
+> This patch series adds initial support for the google-manta board, known
+> as Google Nexus 10 to users. The device is powered by
+> the Exynos 5250 SoC. The bindings for the notification led are already 
+> in the linux-next tree and can be found here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/leds/ams,as3668.yaml
 > 
-> Apologize for any inconvenience caused by the issues you’ve identified. 
-> Below, Have outlined the changes, will implement to address the warnings 
-> and ensure the patch set aligns with the required standards.
+> The first two patches add the necessary device tree files and
+> bindings, while the last patch makes a small modification to
+> allow CPU1 to boot, as it requires a call to it's underlying firmware.
 > 
-> Proposed Changes:
-> 1. Will include #phy-cells = <0>; in the USB PHY nodes 
->   (usb_phy0, usb_phy1, usb_phy2, and usb_phy3) 
-> This is a crucial addition to avoid compilation warnings and ensure compatibility.
+> This first iteration only provides basic support to get the board
+> up and running and usable via UART and with WiFi support. We will upstream additional 
+> features in future patches. All patches have been tested on real hardware.
 > 
-> Example:
-> usb_phy0: usb-phy0 {    
->     compatible = "usb-nop-xceiv";    
->     #phy-cells = <0>;    
->     vbus-supply = <&usbdrd31_dwc3_vbus>;    
-> };    
-> 
-> 2. The errors were not caught by the make dt_binding_check and make dtbs_check 
->   commands 
->   make -j ARCH=arm64 dt_binding_check dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
->   make -j ARCH=arm64 dt_binding_check dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-> 
-> 3. Once the above changes are verified and tested, I will incorporate them into the
->   next version of the patch set (v3).
-> 
-> Questions:
-> 1. Are the Proposed Changes Correct?
->   Please confirm if the inclusion of #phy-cells = <0>; in the USB PHY nodes is the correct 
->   fix for the issue. If there are additional changes required, kindly let me know.
-> 
-> 2. Why Warnings Were Not Captured During Initial Checks?
->   The make dt_binding_check and make dtbs_check commands did not flag the warnings,
->   which suggests the schema or bindings might not be comprehensive enough. Could you 
->   provide insights or recommendations on how to improve the schema to catch such issues
->   in the future?
 
-Please explain, why are we talking through microslop ChatGPT?
+
+Thank you for the patch. My tree is currently closed for new features
+till the end of the merge window. I will review and/or apply the patch
+then. If I misjudged this patch and this is a fix, please let me know.
+
 
 
 Best regards,
