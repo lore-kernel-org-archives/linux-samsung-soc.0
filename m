@@ -1,113 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C04329D273;
-	Wed, 28 Jan 2026 10:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from twinsen.zall.org (twinsen.zall.org [109.74.194.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E560221DB5;
+	Wed, 28 Jan 2026 11:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.74.194.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769597917; cv=none; b=gOZrjAj+cxE4MD7XoW2R4m/q8HNNCtGCNR2FRU9Ygx7q9e2SXsg71fgIJEDmPMNPE1ORAP8haRReqPrUuoFoKDb+y+b62pBceGbpvX3YilRCKm5WToYMZZMaW97nw7F8E8wsMh0mgI830PYrYYJ1QWDhp/UWrPN6kvyzIEDF4cs=
+	t=1769600108; cv=none; b=qYnPd0oBXZnf7KVmwNw+/4dvigWvbOXy3Ut580/JZM4RH18vSfoFXTfasIm7sHnOBTcPBc3qWeBunbYmR0X3RwrbbzRDulR8F4mcVyYI4bOmpNRBx7ug5AIl9XYQR4onjz/JtHGwjIIS/UPAc7kEHbBmm66MrJAfEoLYX4CMtgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769597917; c=relaxed/simple;
-	bh=RjpmbzPXUM3KQzrs7x5nxZliNBnmviDdTU24X98Nhw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtYho0y1Z/VqqR7uyPoPCtTrcxkIbmZCcNrF74Pb2/lEt21qQgChvX9swl/ZROb9FVg0FhmNk8KrzGNp3/LDBn5ZPsaYZygHYx2t3ezJYd/MRiE7xdinr5ulldh7Io2trnzMcpzvHMjx7mzujxZ9vsaTucgRJHKAoi7cc7e/vSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqcnM+5x; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqcnM+5x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AF1C4CEF1;
-	Wed, 28 Jan 2026 10:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769597917;
-	bh=RjpmbzPXUM3KQzrs7x5nxZliNBnmviDdTU24X98Nhw0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sqcnM+5xKA/HrnS+5UmAZzQ5nj15UjfZqbN45JKvDDzBOhH2BVX3qlvQLnV5t4tYs
-	 IJOeAEkEvqm8VBdzJpxBNVXYdrb4vMbODCMeC1j5u/BpL6JuQ2gZs8VutJmnszZ9lw
-	 vH5n7bbafp1Xf1W7XWICkERB8Xeq4nfoWwg0RWEqLSL/gRPgAv0m7WFzhS8geNDJHJ
-	 hqI4v87OPWjCnosuYj0jTnicvFqNV6xl+iL4pAltRMt7UWnjLCH745I2pkKxnsfRNQ
-	 zeySl7SfBH84F4DdYeldW6sqNvgGHmm0zSYpxtb1sSuABxTWonq7BNmfBcUwA9UUmX
-	 1zMr0UT/rKGOQ==
-Message-ID: <abc5995e-3b29-4e0f-a091-40797f1b6abf@kernel.org>
-Date: Wed, 28 Jan 2026 11:58:31 +0100
+	s=arc-20240116; t=1769600108; c=relaxed/simple;
+	bh=pWF/AjDwYIl1fzngFOeAyCmY0tpTpu9uKImTzC0XgX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bhr3I0nNhVkA6dV6Th7aFkrSAWeVik48gi91JtguqHbMry7Lr/021aSii8hH6DgxVmXg4hXqaBC7UUDQoed2RfKwuNmSz2W02TRoG0uBq0i98HmWhI+aGIBTCtV0FB8C0FPbXYHiaRRa86TqBPMP8MGiuo/RQ2jfZjBmsNtCZYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zall.org; spf=pass smtp.mailfrom=zall.org; arc=none smtp.client-ip=109.74.194.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zall.org
+Received: by twinsen.zall.org (Postfix, from userid 1000)
+	id C76786E3F; Wed, 28 Jan 2026 11:28:54 +0000 (UTC)
+Date: Wed, 28 Jan 2026 11:28:54 +0000
+From: Alyssa Milburn <amilburn@zall.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Faraz Ata <faraz.ata@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Alyssa Milburn <amilburn@zall.org>
+Subject: [PATCH] tty: serial: samsung_tty: avoid dev_dbg deadlock
+Message-ID: <aXny9km6N1v9eoXU@zall.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add device tree for Samsung Galaxy J7 (2016)
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rayan Marzouk <rayanmarzouk743@gmail.com>,
- bluebunny <kalorin.bok084@passinbox.com>
-References: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 
-On 24/01/2026 21:05, Kaustabh Chakraborty wrote:
-> This series introduces the device tree for a new Samsung Exynos 7870
-> device – Samsung Galaxy J7 (2016).
-> 
-> I have acquired permission from the authors of this patch to upstream
-> this on their behalf.
+commit a05025d0ce72 ("tty: serial: samsung_tty: use standard
+debugging macros") changed the debug prints to dev_dbg, which can
+result in deadlocks:
 
+s3c24xx_serial_set_termios can be called with the port lock, and then
+calls dev_dbg, which needs the console mutex. At the same time,
+s3c24xx_serial_console_write can be called with the console lock
+(e.g., inside console_unlock), and needs the port lock.
 
-Thank you for the patch. My tree is currently closed for new features
-till the end of the merge window. I will review and/or apply the patch
-then. If I misjudged this patch and this is a fix, please let me know.
+To avoid this, move one dev_dbg call and just delete the other.
 
+Signed-off-by: Alyssa Milburn <amilburn@zall.org>
+---
+ drivers/tty/serial/samsung_tty.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 563688c50751..4a82779a4c38 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1582,12 +1582,12 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 		ulcon |= S3C2410_LCON_PNONE;
+ 	}
+ 
+-	uart_port_lock_irqsave(port, &flags);
+-
+ 	dev_dbg(port->dev,
+ 		"setting ulcon to %08x, brddiv to %d, udivslot %08x\n",
+ 		ulcon, quot, udivslot);
+ 
++	uart_port_lock_irqsave(port, &flags);
++
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
+ 
+@@ -1607,12 +1607,6 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	if (ourport->info->has_divslot)
+ 		wr_regl(port, S3C2443_DIVSLOT, udivslot);
+ 
+-	dev_dbg(port->dev,
+-		"uart: ulcon = 0x%08x, ucon = 0x%08x, ufcon = 0x%08x\n",
+-		rd_regl(port, S3C2410_ULCON),
+-		rd_regl(port, S3C2410_UCON),
+-		rd_regl(port, S3C2410_UFCON));
+-
+ 	/*
+ 	 * Update the per-port timeout.
+ 	 */
+-- 
+2.52.0
 
-Best regards,
-Krzysztof
