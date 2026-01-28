@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A745C2DC798;
-	Wed, 28 Jan 2026 10:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C04329D273;
+	Wed, 28 Jan 2026 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769597899; cv=none; b=gFF3XL+03Xi1FRR2UwymFhKkQo6agr5yrHumJfu3z6hWckellRmQCpyxNVMkEQbOQD3Thp61jieCuXqE54QDONxcSXS8TPSn+UJrBod8UUJv1rxIMzig+M9BSIVb5oSVkqKrK5mUJKjGAfoEnsXQfflsV4p4vYP1IBYfqInoE3Y=
+	t=1769597917; cv=none; b=gOZrjAj+cxE4MD7XoW2R4m/q8HNNCtGCNR2FRU9Ygx7q9e2SXsg71fgIJEDmPMNPE1ORAP8haRReqPrUuoFoKDb+y+b62pBceGbpvX3YilRCKm5WToYMZZMaW97nw7F8E8wsMh0mgI830PYrYYJ1QWDhp/UWrPN6kvyzIEDF4cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769597899; c=relaxed/simple;
-	bh=yX9uJyvvHBgb5atLiB3p0mcLtf07NaZ+JbN9vi8aOUs=;
+	s=arc-20240116; t=1769597917; c=relaxed/simple;
+	bh=RjpmbzPXUM3KQzrs7x5nxZliNBnmviDdTU24X98Nhw0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NyUjVezMdjMl0Ub3BN1aJlGk0Xh2t90kVWE55e/hzUqKiFYyjexxeUkCMR1LMDyJPXvvYPrXEW45y5MxywkCNLblShYh2cLXrd+UdoxYhpMBg/WVw3qZJdnmuWkUlzqUamcA1I5dW3VbaA1+U5tjuuiDxA/NTHrXHdfEXplmmmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzy8ljFS; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rtYho0y1Z/VqqR7uyPoPCtTrcxkIbmZCcNrF74Pb2/lEt21qQgChvX9swl/ZROb9FVg0FhmNk8KrzGNp3/LDBn5ZPsaYZygHYx2t3ezJYd/MRiE7xdinr5ulldh7Io2trnzMcpzvHMjx7mzujxZ9vsaTucgRJHKAoi7cc7e/vSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqcnM+5x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzy8ljFS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A61E0C4CEF1;
-	Wed, 28 Jan 2026 10:58:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqcnM+5x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AF1C4CEF1;
+	Wed, 28 Jan 2026 10:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769597899;
-	bh=yX9uJyvvHBgb5atLiB3p0mcLtf07NaZ+JbN9vi8aOUs=;
+	s=k20201202; t=1769597917;
+	bh=RjpmbzPXUM3KQzrs7x5nxZliNBnmviDdTU24X98Nhw0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dzy8ljFScUzYuX2hGHMdGB8+0uOftaDh8qrsudDq+6MZTU2OXmEk2JCq5TuIsRF1Q
-	 b94L2u4VVuFly9ceSJB9j+9C4EIy3QPF53/R0yR2r3j4acAbvFoCZEdRJhw3ydGSRW
-	 GnPoWH1/cajSeWLCLmp8W7pk1R0u3fWaEp54rpEYyYSuKTdE3mHoa+0kZUL6pUnehj
-	 Chnen9sXwVfuKn5NxLfe95k8TlUXbiiJHhRfU4tyKO/K9XEaZmS+piUyJ7SFuHAGgi
-	 0L6/x1cEvdVcYCrbEn9rqRlWl2ISUJskstl+NLGpqiPBp5YAWhjwvbFSOChJUuiLXp
-	 lNnrXYAM2xmTQ==
-Message-ID: <277537d2-9b4f-41b9-94e2-9ff45db6c970@kernel.org>
-Date: Wed, 28 Jan 2026 11:58:14 +0100
+	b=sqcnM+5xKA/HrnS+5UmAZzQ5nj15UjfZqbN45JKvDDzBOhH2BVX3qlvQLnV5t4tYs
+	 IJOeAEkEvqm8VBdzJpxBNVXYdrb4vMbODCMeC1j5u/BpL6JuQ2gZs8VutJmnszZ9lw
+	 vH5n7bbafp1Xf1W7XWICkERB8Xeq4nfoWwg0RWEqLSL/gRPgAv0m7WFzhS8geNDJHJ
+	 hqI4v87OPWjCnosuYj0jTnicvFqNV6xl+iL4pAltRMt7UWnjLCH745I2pkKxnsfRNQ
+	 zeySl7SfBH84F4DdYeldW6sqNvgGHmm0zSYpxtb1sSuABxTWonq7BNmfBcUwA9UUmX
+	 1zMr0UT/rKGOQ==
+Message-ID: <abc5995e-3b29-4e0f-a091-40797f1b6abf@kernel.org>
+Date: Wed, 28 Jan 2026 11:58:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Add support for exynos5250-manta (Google Nexus 10)
-To: Lukas Timmermann <linux@timmermann.space>,
+Subject: Re: [PATCH 0/2] Add device tree for Samsung Galaxy J7 (2016)
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, Alexandre Marquet <tb@a-marquet.fr>,
- Henrik Grimler <henrik@grimler.se>
-References: <20260127-lat3st-staging-v4-0-797469aaaf9d@timmermann.space>
+ Rayan Marzouk <rayanmarzouk743@gmail.com>,
+ bluebunny <kalorin.bok084@passinbox.com>
+References: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,25 +91,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260127-lat3st-staging-v4-0-797469aaaf9d@timmermann.space>
+In-Reply-To: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/01/2026 21:40, Lukas Timmermann wrote:
-> This patch series adds initial support for the google-manta board, known
-> as Google Nexus 10 to users. The device is powered by
-> the Exynos 5250 SoC. The bindings for the notification led are already 
-> in the linux-next tree and can be found here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/leds/ams,as3668.yaml
+On 24/01/2026 21:05, Kaustabh Chakraborty wrote:
+> This series introduces the device tree for a new Samsung Exynos 7870
+> device – Samsung Galaxy J7 (2016).
 > 
-> The first two patches add the necessary device tree files and
-> bindings, while the last patch makes a small modification to
-> allow CPU1 to boot, as it requires a call to it's underlying firmware.
-> 
-> This first iteration only provides basic support to get the board
-> up and running and usable via UART and with WiFi support. We will upstream additional 
-> features in future patches. All patches have been tested on real hardware.
-> 
+> I have acquired permission from the authors of this patch to upstream
+> this on their behalf.
 
 
 Thank you for the patch. My tree is currently closed for new features
