@@ -1,84 +1,78 @@
 Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85E52FF178
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 19:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D473009D2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 20:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769630236; cv=none; b=Oeb3hEbge4xudn5OyWG9y3r3bADgbTkBEJz56/I9svvwcY+HjEOXdfzeHmdSCd6YtAFGAKjGJ9rEAqFip3AczViSb0hvxnYYP/6TDXpoe6sx/pof/TPXrbMo9klGQD6yrc6ItgHKr2QPzsi+hcvCGMvmcagaMr+ahar4YoWvRVE=
+	t=1769630611; cv=none; b=mcxmiF2BOxlYU5bmCHKFuscOPbVAG7+5N93eC7B7DJL4gH8N3GsXPsXoEEnw5EDgWEECWmHJlcU33GGyIZkBZDl+kR2I+IYAyZnSCmjBSDHTEX9TdHnSIi48v2cyWkgsWcGqfXlqKGdKr2ns3VAMrCj3OK2R40G6yFqa7MOWLlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769630236; c=relaxed/simple;
-	bh=QWXVTrWWSL0uRDUDAgPurGbnp5Ffp2t05SD0ZhbJZ+8=;
+	s=arc-20240116; t=1769630611; c=relaxed/simple;
+	bh=XUkUT6LBku13mYTEfvUUPRvgsUlp0EEMZv51VMbnBdA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bug+CGyvzqFh0HhFIUtz8auYT28odr2Sk5mLIxtTEasM+6qB9zRS2bYkAlAgOsVEhgRcuRU4iTNSk420NeZvduUIrEb+hNb5ksYRKG8qO/K5SsMLmomi+axUrdtCCal3BPwLFvQM4PU6YpD8XQYED+oZc+W1xTM8SgizZN4uPhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q+VYJcXV; arc=none smtp.client-ip=209.85.221.47
+	 Content-Type:MIME-Version; b=kHQW7JzgmTX/FwBN/H1beIYwVlE5dC0kGuY+8PaGqFDiLZ1vFVBAM+5p8+IbwRxggF7k6r4o08VDiUzO1LtidwtW6H4JOT4v7qK64ZUf/nrsBpb7DZ0wJ/13GG7udetOe+PfF6YSqSRpcerfLIUaAO9rAOMY2byiH/zk8pxx4l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pr549iXG; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q+VYJcXV"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42fb5810d39so153586f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 11:57:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pr549iXG"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4359249bbacso898550f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 12:03:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769630233; x=1770235033; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1769630609; x=1770235409; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=QWXVTrWWSL0uRDUDAgPurGbnp5Ffp2t05SD0ZhbJZ+8=;
-        b=q+VYJcXVME3MguFklPvKh++C+3vxtNrKLyLmby8ZgvXvPP4hopbxzeC3IPA2qRQXAs
-         aqZZyp+3Qvm4MB22270lZtsF4aLkZBYUbCEVvNTk6T3hocgH1rjxtyBfpCOCssCKIZ5S
-         J4iocL+WD9aSmPnT9XbXf6RvVQ2LUv/iDxp+JdPZJdeqTayN97oa0Fpg+hjDRy3MX6+5
-         YU3aOo5HfMPlGjSpr3heFI5dQvDY9Q710oEYD4AfFjfmLxm/SFgGkd+laxOZIXMfYWCZ
-         oHd1v2fbdlvQ398iUobuKr/CmTeZq2nelABk1XHDbZNsgeC1oOaTBMoL0TQeyurFsu3P
-         7j1g==
+        bh=xfDqLnr78jrG2/XLP9Dn27y+jadR+KNn5dnX37UWvRM=;
+        b=pr549iXGj0SqzRa8OWQDJwjHMdttIpeROiSZg3cSeQD1NeroZzStObo/6wy2G1WVMC
+         vmDpw71OKojU1g8It8XVd4O/ow2M/ESkH+NTFhE4YBxImElagxoueMiMibu7RjMXw7Ou
+         8gftAcwIqK8gYtIDCxjlNFu6C6Jjv/qoLP2NOGDAnsEte7WoJhhin2Za7pzvoSH1l1E0
+         RackL/jzbpxe5qaCUYI4VFJohM21TkytqOUzlcFFSpxqqEp/fTbw7LHCv5fKycsKFpOw
+         S8Vs8L+x6HW0W/PIqaN0AV1g3fy+2/yYuVIZtG5754Db3KrLFUvP58e/tVmiOzQWyeRJ
+         U9dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769630233; x=1770235033;
+        d=1e100.net; s=20230601; t=1769630609; x=1770235409;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWXVTrWWSL0uRDUDAgPurGbnp5Ffp2t05SD0ZhbJZ+8=;
-        b=FsV0LSWjLWhUgLb7RB9ktNfHnAmd6BIgn6ZLKSPvIuHySiqkn266ps+JRhhLjis5lO
-         IvYWL7oWleNo/E/skp/UbBiLysuruo0s22ccTV4hSc7rYsidDdPV99q/61jMxVKbfXy/
-         0n9GT6P0dKUThz8GJ2712M7d0yBHdv2ctn0y5I2h277q7kWNnmqv9YioIibGJWskcgsf
-         /n/y/P2Mx6GoYitn5BqbNaFVw0j3ss5REHLYKLZyPt6e8Sxhw2rYH0Plq2w7ErkDzd3K
-         HMOcDdWVwMiQeblmQa17HKUuQgOhYgCIiPujcuCufiSnbL02nWRv6lK0ntucq43y+/Fg
-         wLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpT4NJrN9hBo/o8tlF0/tEsFznVwWKurG92DksHfb2mGzEAHI/nvKSVBbRAWUAY+OZqvyUYbyd3TqLwM2nmKp1Iw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJxfaBNVo/CGc+nSOjKjTU88co+k29nPk3KcFbOOldnWReVzef
-	IGt2hSZ3jfDmAh1TZwrlkZdKjRsGmWrYPfFwDlN8plfZ+NmMPV7kTElxsAR7Y7iH5nQ=
-X-Gm-Gg: AZuq6aKyrpB9INxPfLzFUeJwJauR54AyEixBdRPihPyHzGSL3euEoELwYXU11G4Kfwv
-	2pgtIVnHp1ta3wk1DpCmqM1UCmFW3L1jQ6RjRHgyqCzbFgiEa4Fg2syPGbtWiKd4/p/abVZt2A8
-	F6rZthYytFp16saq9D3uYlIHg5btxtktu6z87K9EcSPjpNbXSYl1f5dXGufmgyhtPkcZ7XcRQr6
-	H8xRO8U0akM2WqItW7ZAJk227P3cCb7H7WDSUKdG4vqX6xut2+0cIyLD/ETJ65xy4nZhTO7eTVy
-	oCxW34bRM6uzFtKcwRAgdlKvTjtC6xrXovRN2904SLXAubiYV88ZDI9156JhhRxKukoNaE8zIe5
-	psH/BPTef7fOrEUrugzt9zNJWv1QdP+V3GcWfS1HOPfqQFD8Gz8ppME9aHasfpqciYUq1Vvcunt
-	ehwqflpv2PjEJ8MgKC8N2dvbI=
-X-Received: by 2002:a05:600c:6995:b0:477:7af8:c8ad with SMTP id 5b1f17b1804b1-48069c92c03mr92248975e9.31.1769630233039;
-        Wed, 28 Jan 2026 11:57:13 -0800 (PST)
-Received: from [192.168.235.30] ([80.233.74.245])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48066c40e04sm149805675e9.13.2026.01.28.11.57.11
+        bh=xfDqLnr78jrG2/XLP9Dn27y+jadR+KNn5dnX37UWvRM=;
+        b=lcLkzV1irwopUr7uKUGRF9KYLVsvO85KKuQS+2A1E6OiyTdli26Jx9f5SIy2rD7k96
+         ctlM8x00rbc7hCPIFgTeMiUS02mW3vlRxqq9vxbVq1MD21O2s8I2s8ecYoc/0vsgnGz/
+         fbSBfBX8dd3KJk962fIV3x9+ONarue3y+7p+AJz0khS93PyBlp26s5K5tItROF6GxyTx
+         UBMKwsxTl33MvOelzr9N2aHdEsPf6I5B+3xCe57wqzH4k2TQjs8qnqzfNaRUhkFEbxdf
+         OBvKy6U0R+vZSb9z/AU+jm3z9USBFeWxGyQivluMS+95CSoxulxvKX2QEZet5EFGlrQw
+         q8eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHeDdLGPScqVRUQ/Sy7naT9cnAmr0NZTBovhCGrjNyOHskuj2y2QmTQDFxJQwdi8m44zcHY8NkLRJg6RfOEzv4yw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbJs6+/t29vvy+f6yWdC3kv6OItJWw7DMvsFoFm0cNfacB2Lrs
+	dq8RJSHxHsaihdqs4spUJelGmHMu+oBJfzMzbbRpl3Yg0DRHWEy0i+1/xCap7yf73OI=
+X-Gm-Gg: AZuq6aInNc4+I7rSI5u/xfXrZC1rTx8rl+uKJKttPA2Ka4xJLlRVVOCzwWYOqNfmThN
+	yfU7Pex0xYT82uC2F1ob5VlcUpgCseZTKIV7wynrAOClHtHe3iNKxsw5pbSnJELer5yKsbzb2qo
+	z+5IVCT1RQq1cC87WronRuE0lnl55Sao4FpYaFD8RfuveRYEiPIrQ7d5dFtPB41hfI1vL3ofiPb
+	Nhsv5aj6qNvc2V8kmRbUcKtqQpdOrhOGIVw0NPGQxaBZ8c5RvKojFqRb2PRNtcHkkTiP/D23Qo7
+	ssbyAmiHCU4eX1MrUbPeuKhICBfue0Be2XqoGKKi0zGiPyG7gAJBgdX937h5L7+AH40711nzxeX
+	6Ya2tEvkUIx9vJw+JNdA394DTLgtEvFZNJ7J8GGOplzCvGBt4+h8lMtMRe2gsLkF+Cfq6g9dwQF
+	hiTaN1XHq/ge5UysJ0UlLhfNc=
+X-Received: by 2002:a05:6000:4011:b0:435:db9b:5885 with SMTP id ffacd0b85a97d-435ea0672c8mr948788f8f.10.1769630608753;
+        Wed, 28 Jan 2026 12:03:28 -0800 (PST)
+Received: from [192.168.235.30] ([80.233.75.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e1322dc7sm9169904f8f.37.2026.01.28.12.03.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 11:57:12 -0800 (PST)
-Message-ID: <f13cf27da2d1d7d8a54448391c16a8eae349e8a5.camel@linaro.org>
-Subject: Re: [PATCH next] phy: google: fix build dependency for Google
- Tensor USB PHY
+        Wed, 28 Jan 2026 12:03:28 -0800 (PST)
+Message-ID: <e955868c06547ac62d34d594d45dd07aa19e361b.camel@linaro.org>
+Subject: Re: [PATCH] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>,  Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty	
- <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel test robot	 <lkp@intel.com>
-Date: Wed, 28 Jan 2026 19:57:09 +0000
-In-Reply-To: <CA+zupgztBHTJwNPEOfXjdw9TpcpiVGO=hdFBYk3PUo-0Vf95mg@mail.gmail.com>
-References: <20260121-next-v1-1-c18068b091b9@google.com>
-	 <7c78f9da40022e7bbf850ae8989c617bdc30cc95.camel@linaro.org>
-	 <CA+zupgw5H5rumo+DxaTfA_=bcvjbBOivm6R+Pw31jgE-sMyEtw@mail.gmail.com>
-	 <f956ccd3f5f694de7a634819da3f790a8dce132b.camel@linaro.org>
-	 <CA+zupgwEWM4c9yK1f-Y_Cv5gk=0zYNuUb3kZyZ6O3FDRbPPvKw@mail.gmail.com>
-	 <eebefae5273bccce2d0fcd97afe3ea28bedf27cd.camel@linaro.org>
-	 <CA+zupgztBHTJwNPEOfXjdw9TpcpiVGO=hdFBYk3PUo-0Vf95mg@mail.gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Vinod Koul
+ <vkoul@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Naveen Kumar <mnkumar@google.com>, Roy Luo	
+ <royluo@google.com>, Joy Chakraborty <joychakr@google.com>, Arnd Bergmann	
+ <arnd@arndb.de>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 28 Jan 2026 20:03:25 +0000
+In-Reply-To: <0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
+References: 
+	<0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-8 
@@ -89,22 +83,47 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi Roy,
+Hi Geert,
 
-On Mon, 2026-01-26 at 18:34 -0800, Roy Luo wrote:
-> the wrong example. Let's look at this build error scenario with
-> "depends on TYPEC || COMPILE_TEST":
-> Given COMPILE_TEST=3Dy and CONFIG_TYPEC=3Dm, the
-> "depends on" would be evaluated as max(y,m) =3D y.
-> Hence, CONFIG_PHY_GOOGLE_USB is allowed to be
-> set to y, m or n. When it's set to y, the exact build error
-> would be introduced. I also tested this locally and saw
-> the build error.
+On Tue, 2026-01-27 at 20:12 +0100, Geert Uytterhoeven wrote:
+> The Google Tensor SoC USB PHY is only present on Google Tensor G5
+> (Laguna) SoCs.=C2=A0 Hence add a dependency on ARCH_GOOGLE, to prevent as=
+king
+> the user about this driver when configuring a kernel without Google
+> Tensor SoC support.
+>=20
+> Fixes: cbce66669c82ee9a ("phy: Add Google Tensor SoC USB PHY driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> ARCH_GOOGLE is not yet upstream, but that doesn't hurt.
 
-Thanks for trying Roy. In that case, it should be written as
+I can see your point, and have no objection, but for context, Greg
+had asked to not add dependencies on a config option that might or
+might not get added in the future - ARCH_GOOGLE:
 
-depends on TYPEC || (TYPEC=3Dn && COMPILE_TEST)
+https://lore.kernel.org/all/2025121728-reliably-crabgrass-2601@gregkh/
+
+Maybe an alternative would be to make it default=3Dn, and change that
+default once ARCH_GOOGLE gets added?
 
 
 Cheers,
 Andre'
+
+> ---
+> =C2=A0drivers/phy/Kconfig | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 142e7b0ef2efb920..3ceda9a20d571038 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
+> =C2=A0
+> =C2=A0config PHY_GOOGLE_USB
+> =C2=A0	tristate "Google Tensor SoC USB PHY driver"
+> +	depends on ARCH_GOOGLE || COMPILE_TEST
+> =C2=A0	select GENERIC_PHY
+> =C2=A0	help
+> =C2=A0	=C2=A0 Enable support for the USB PHY on Google Tensor SoCs, start=
+ing with
