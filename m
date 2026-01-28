@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C14F4086A;
-	Wed, 28 Jan 2026 07:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D304086A;
+	Wed, 28 Jan 2026 07:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769585828; cv=none; b=UO6YZRug7JmmihP/UCKB4HUSsMSrfXp2ps02gtk0O6QvGA9x7sUGi8HcEXRUSUJQhVhIgusCJnyC2sGJarjn2u0Ycv1NkR6/eHp+PtvDOnFysNNGoIxHcJCT+09KkS9wp2eob8hMUNsJeeIQ9v6fuPpTjXhSfK5LxWcQl216dkc=
+	t=1769585914; cv=none; b=cfeMuz9YR+oC7HYZ14KNDuE147GqzoN4YUl+LYHDjiy6o8bQTs31p5EysQ4Rk7IWn+u0/M6zTZ8tnL9hcyFbGsENBD/ElG1/kr1zdoB1ZT6afCjbh0BS2xY2aLoNnuhZqCvSxyS8hPIHgcQwG9vbRWjtq/JelscXOkNAZJS1zsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769585828; c=relaxed/simple;
-	bh=HpHwEOk+kbnxBkHrgpKVXyvkLiomsQWIMoos1EbNhFc=;
+	s=arc-20240116; t=1769585914; c=relaxed/simple;
+	bh=CxYkdbtO+4+3Z/EXJUvu0H4KA1l87G+n2kMTlUXO36U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nBEMn0ml8kVeL/TI4J96cVLDcORR0NUSRddLemK1bMn6yNO0QBVehKhCDzf4gNv+1tFAQY54Z2FcxPy6/r0+5IB/sMIBSs307gHf3gRagOEZewt52k3XvWZuaFV/i1JZzIvdGcM7DQ7wLSKJPbEjAOgDJEATdOoMtFbXkRHVVwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxfwe6bK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=CXNnp2O+xjdKV48Je+8gSl4bQCe4uqga/N5HcrTRnwHxHJmxpLndq+6ywTTVd9X7Xmw5InPHHEosREseZKl28n1wNGlH/7f4/QuJS3Aa/+5FctrnZl6sW8bu0swOcxQgTODDr9I1PKPcn9BJJyrR8zBmyeJTzNljJj/N49RVuLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RF07kkSS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxfwe6bK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66839C4CEF1;
-	Wed, 28 Jan 2026 07:37:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RF07kkSS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E8F6C4CEF1;
+	Wed, 28 Jan 2026 07:38:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769585828;
-	bh=HpHwEOk+kbnxBkHrgpKVXyvkLiomsQWIMoos1EbNhFc=;
+	s=k20201202; t=1769585914;
+	bh=CxYkdbtO+4+3Z/EXJUvu0H4KA1l87G+n2kMTlUXO36U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bxfwe6bKxW1PfzT30N/p0O01AqeQqoIW+4O2wMPj/pwfKl43GvoTHNZ7XOxTMP3Bo
-	 qbgym8Hs0YKuANygjIo4t8HCMAbozNXNZGay/eYtJuHjm0OQNe5GnucjuNYOjA1mgt
-	 D+ZdoNzZQ4LGkqKpd22dvNndDRDb1cqEPAyywpcLhjgWezWsY6m9KX7nnssodgEnNj
-	 t75akRoMpJzW8nAQZPgMem1QHPFAb20InpwC7vEUO9IBHN2PIOacz6jd91peQwlqce
-	 LHIZ5NoNSd012i5Y7pn87v6uuVwTfWPgdhnlV/im6puONE0KeDrsbn/ElgNA4LGp6R
-	 acEs20xoQMtWg==
-Message-ID: <91adfc3d-1612-4bc8-8f4e-525141fd9e67@kernel.org>
-Date: Wed, 28 Jan 2026 08:36:59 +0100
+	b=RF07kkSSmjiJNPiek0Wu3h5KuLOAHGvQ+kJhV9O774T/vcgXc0ujy3hf0fk3IXOxC
+	 U5MBZgygXiN/FWRiG7Y6YIJQCc6j0pm4dC7AtENSIvmVF7AvqugkWBDyOZgi9EXDM9
+	 0E5p/JkElIvhRfBme9fgZ5R11ukln1NlRTYBAKxihi1LQNgT0nameti2wLivgk/3yQ
+	 hiW4TbQ+EVg24aMjQoNYSfQ3/BOpsDZVsxBeYsF4PUapz5GqsuLbXA3HBKPw5I0k8v
+	 ejFT8xi4ghrcgtoT5bnRYs61Qcka28gyWAk/PgN129aGQPyLV3rT+k7QKfXlqiMr9N
+	 0hf+/lj6z/peQ==
+Message-ID: <5d3a2dac-ef86-4855-9978-79f0815e2c01@kernel.org>
+Date: Wed, 28 Jan 2026 08:38:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
- nodes
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125136epcas5p2db0fa3d04671ddc915e60ae8c5bcfb98@epcas5p2.samsung.com>
- <20260122130721.205664-4-pritam.sutar@samsung.com>
- <6f381f88-3a51-4fc8-844c-41b167b07628@kernel.org>
- <000f01dc8c3e$2b6dcf30$82496d90$@samsung.com>
+Subject: Re: [PATCH v2 0/3] Add and enable USB nodes for ExynosAutov920 SoC
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
+ 'Rob Herring' <robh@kernel.org>
+Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, rosa.pila@samsung.com,
+ selvarasu.g@samsung.com, linux-samsung-soc@vger.kernel.org,
+ muhammed.ali@samsung.com, faraz.ata@samsung.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ dev.tailor@samsung.com
+References: <CGME20260122125130epcas5p4ac37f540c609f3016ff02f5708e897a2@epcas5p4.samsung.com>
+ <20260122130721.205664-1-pritam.sutar@samsung.com>
+ <176910209177.2703219.7993114273484886473.robh@kernel.org>
+ <000001dc8c30$d83ce2e0$88b6a8a0$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,79 +93,49 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000f01dc8c3e$2b6dcf30$82496d90$@samsung.com>
+In-Reply-To: <000001dc8c30$d83ce2e0$88b6a8a0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/01/2026 08:59, Pritam Manohar Sutar wrote:
-> Hi Krzysztof,
+On 23/01/2026 07:23, Pritam Manohar Sutar wrote:
 > 
-> Thank you for your feedback. 
+> Apologize for any inconvenience caused by the issues you’ve identified. 
+> Below, Have outlined the changes, will implement to address the warnings 
+> and ensure the patch set aligns with the required standards.
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 22 January 2026 07:05 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com
->> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: ExynosAutov920: Enable USB
->> nodes
->>
->> On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
->>> Enable USB PHY and DWC3 USB controllers' nodes.
->>>
->>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->>> ---
->>>  .../boot/dts/exynos/exynosautov920-sadk.dts   | 21
->> +++++++++++++++++++
->>>  1 file changed, 21 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> index f90f7704597c..5896dd69334a 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> @@ -160,15 +160,20 @@ &xtcxo {
->>>  &usbdrd31_ssphy {
->>>  	dvdd-supply = <&dummy_regulator>;
->>>  	vdd18-supply = <&dummy_regulator>;
->>> +	status = "okay";
->>
->> You just added the node in the previous patch, so why it cant be enavled
->> there?
->>
->>>  };
->>>
->>>  &usbdrd31_hsphy {
->>>  	dvdd-supply = <&dummy_regulator>;
->>>  	vdd18-supply = <&dummy_regulator>;
->>>  	vdd33-supply = <&dummy_regulator>;
->>> +	status = "okay";
->>>  };
->>>
->>>  &usbdrd31_dwc3 {
->>> +	dr_mode = "otg";
->>> +	usb-role-switch;
->>> +	role-switch-default-mode = "peripheral";
->>
->> Why did you add incomplete node in previous commit?
+> Proposed Changes:
+> 1. Will include #phy-cells = <0>; in the USB PHY nodes 
+>   (usb_phy0, usb_phy1, usb_phy2, and usb_phy3) 
+> This is a crucial addition to avoid compilation warnings and ensure compatibility.
 > 
-> The commit was added to align with the existing convention of separating 
-> node addition and enabling logic in USB configurations. This approach is 
-> referenced from commits such as:
+> Example:
+> usb_phy0: usb-phy0 {    
+>     compatible = "usb-nop-xceiv";    
+>     #phy-cells = <0>;    
+>     vbus-supply = <&usbdrd31_dwc3_vbus>;    
+> };    
 > 
-> https://lore.kernel.org/all/20250710-resends-july-exynos990-dt-v2-5-55033f73d1b0@mentallysanemainliners.org/
-> https://lore.kernel.org/all/20240429-usb-dts-gs101-v2-2-7c1797c9db80@linaro.org/
+> 2. The errors were not caught by the make dt_binding_check and make dtbs_check 
+>   commands 
+>   make -j ARCH=arm64 dt_binding_check dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+>   make -j ARCH=arm64 dt_binding_check dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
 > 
-> Please let me know if this commit to be merged in previous commit.
+> 3. Once the above changes are verified and tested, I will incorporate them into the
+>   next version of the patch set (v3).
+> 
+> Questions:
+> 1. Are the Proposed Changes Correct?
+>   Please confirm if the inclusion of #phy-cells = <0>; in the USB PHY nodes is the correct 
+>   fix for the issue. If there are additional changes required, kindly let me know.
+> 
+> 2. Why Warnings Were Not Captured During Initial Checks?
+>   The make dt_binding_check and make dtbs_check commands did not flag the warnings,
+>   which suggests the schema or bindings might not be comprehensive enough. Could you 
+>   provide insights or recommendations on how to improve the schema to catch such issues
+>   in the future?
 
+Please explain, why are we talking through microslop ChatGPT?
 
-BTW, don't ever use AI to write code or code justifications. I will make
-note of it.
 
 Best regards,
 Krzysztof
