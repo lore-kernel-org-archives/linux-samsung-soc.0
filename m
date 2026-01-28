@@ -1,216 +1,85 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0855D314D1F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 16:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBC3225390;
+	Wed, 28 Jan 2026 17:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769616665; cv=none; b=giPmIM3StEsg5Y3RXeF/WcQD2PCpZ0jOCUG1cUU0tqw+U3dDgNUHRY0DhkR082mxoxKOCC7qzTHaKIvY+uou6t3Fy5umAb8dhscJjYhpV7JIpwurhYHnu8dEmU+HSDFQmZAm1Mb8z36Ei1uMTm9R0J4tFWUBWP5q9uFG7ilvtlQ=
+	t=1769620678; cv=none; b=LDWgCLmKZTQpp9q7UMdSrT4AVj3WZ1m78TTna50q/W8g/wUmk4RmP0Mk+8muZidf5AoyVmmlZ6REOAl9/hxFeEO3qdWhEWmcFQilh0D+SacUlNc8cYRSGRd4ot//9AT2ITJShFWa5k8w5tdC+iHa09dUEoUJUzyVfUmUHylc/OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769616665; c=relaxed/simple;
-	bh=JnjfvK+MHgibmXdj8c8QyUL8Q5i+pDFvx54OCA4Mehc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m5MLTp+Sp4JB2bQ7eBwNcVMtozXJ/u78UVClfMNGUHNpym2RFZyiJbiIBhEt5At+k7XpziyQa5cdZpS4OGWG0OX5F9wV9dQg+lXAWmo0QLy45Hk8KITc0FRw+mKf0f2ObqbXRQ/YJd3bHyplQVvSHpMTFf4rSgojC8uJg/LVGIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M1a+HWFu; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1769620678; c=relaxed/simple;
+	bh=2CMFkKWYqAiPJqedGOMih8yrSq49djeQXlILBKYzmzI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DKv7vj/kIbcuab4cZk1g7EgYybw2Kwq2Pomaa2LNzVzQkG4DJC2O5jdvf7YDW0c0xEOC1P4nCOtbWhUywQHCV6u36M3+dioqiJv10xRKRLHOs6S1oHpnsJd2CO4KWV7927Psr+ycsdPK9FgYLxfn6OsSprt+iXE3W4ONmpHwg0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FnH6M/LE; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1a+HWFu"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b883787268fso1101093166b.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 08:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769616658; x=1770221458; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kov2pn4auGP7KnNGCEIBpS1LmUNVpZnSgM4Kim/Xeow=;
-        b=M1a+HWFu6T15gKjZ0K74uqkZreQ+DrsmvCWoA/WiSiJ67d5lxxS68++U8Y87bc0Reo
-         /j2HMN4IEqnEzIcitkAwT/TDHqq34PqB0RRrAV4E5sb5UXLno70/DbsKlnDpe6TWiatV
-         fulSoIZceU3LaWGnhk+uX7nwvlC/lCKr5bC36O1+7kg78ZkhXeNSMTG5nEvAimTRpMH7
-         +dGsT0qHqopLXizz+DUcZBLPvuGXxHSwEUfIzLL6amtbjxkgJgQVXRtO47pxJlhMv/KE
-         abK9pj7RTXzzyspIAjSjfuFGVLtojLQSGeQZYWoc7hd+NXLBduB5kmxi26e2XpnOh/jg
-         ik+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769616659; x=1770221459;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kov2pn4auGP7KnNGCEIBpS1LmUNVpZnSgM4Kim/Xeow=;
-        b=I2WPrUlvsQrujpGOaXLgHrza/mOArA04e8uOTbAfBlMdEBnwC8R16VM9bAQbqjcyIZ
-         C3b3ZC7YOP4XA3bm+ErpRPYWbziRnrl5RZp4eldCaA1vxLgOf1zFuxDZPYGsDjQYA4po
-         f8EYuVNt6rfOcQqQvWsvhZzYHWc9pn44x01X0o8wqB74z6MiIPsToKTIpBmp0UQB7LNi
-         iuuX+Ofj9zpxOILo13yIAhZJMpicpY4xZzsjY3xqfjr4d/xNZMK+1ufRNHl96fhCbiHF
-         Np2RXMKv6fFYmMRwo1skw7xPRKUryD0LeyIN5/xQf2euBfAsziWGAToL+DFOA9RcLlwC
-         Rr0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrdz/9DGWeGpuleOiSCP/rzVJw/4hXFj64Wi0RQJIUsjRgc9xzNCf6EUWkj08I0tMEzCVQXAKPRFhhp21Hbpdiyw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfBxmq1hZIaMqvPOBJ3lxMCVEwX4d7z2ryA85uCBphAD0UaC3
-	UMaQtCHeRKBxeFQy60874BFP9KDvlXOyb+RN1WucYr01/SXyh5CQq+dLycPP33sSUYo=
-X-Gm-Gg: AZuq6aKHtqPxWcgRlfW6Qw9O9dT5HaB3vPAFBLZYDOWfvmZW1rwvVV6MyfAgSPBLFOi
-	OqcsHzVStVgkLhD7U0qPwzxBSt1fnJuqFySEeE1TEfCVrT2NAEetFkBqt3NFchqI1WSG65cQwfU
-	3+2zYLVQcdc50jJbkwnNHCOpHUzSazFEtzMC06Dr4pVLyuaCHh0S71dFSNuI0pFAA/KEW5Iu42t
-	nr0AhjObjUlFAENrOa1vBKW5ciPdavZFqzRX2kCZ/SiEpSUaRvxmMPa0JX0SmvJXQLz+KQHb6c1
-	zON5QW/MgOBdCS5PF3wYJNqhB6JCx7KdZMKWvMdpf4vSCrsOCbqsgyyWY6EExFhZvHRAGOA2aBy
-	+Sd1cd36uNhChqUU/rTWOnWnqvl6h1YzGKROJ9+SFYqTT3hcuE457UAL/5rlxJYK4eDdid7Wwbl
-	72x8dtYo5iminq55Y4V6AVFR4/Od0Crz9122xIVodZ9RpdU+OvehJyCBBMOIVtks+Drn9Ts9Lik
-	8Ee1A==
-X-Received: by 2002:a17:907:94c4:b0:b87:2780:1b29 with SMTP id a640c23a62f3a-b8dab32edfdmr423420166b.37.1769616658444;
-        Wed, 28 Jan 2026 08:10:58 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8dbf1c021fsm148553366b.49.2026.01.28.08.10.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 08:10:58 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 28 Jan 2026 16:10:59 +0000
-Subject: [PATCH v4 10/10] pmdomain: samsung: implement domain-supply
- regulator
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FnH6M/LE"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id EAF64279C4;
+	Wed, 28 Jan 2026 18:17:47 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id JSSomJ4dRYpG; Wed, 28 Jan 2026 18:17:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1769620667; bh=2CMFkKWYqAiPJqedGOMih8yrSq49djeQXlILBKYzmzI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=FnH6M/LE6xRvSd3BCxukBrBdzw9jV5ENDKtDMtHsNFgtczSxak0z1Vgj2MIXluCJ2
+	 DfnsSqIXb5Fvbcdr9BB++GU84i466rHHEkJ7A5G0234h7xBsfIBEIXQCZIA87ctQt8
+	 9E/gq9/BZ8BnTtFuQre3vA3bvHTy/xxWNBB3LBDyjNUvAhSPYSUnZhR8RRkokbAdM/
+	 a/xpyiXZPJxPKBidcQVS6wHOBJNWvuXhbbxz7EcJESEXSCFvQ8w6Wqy784F/iiY6i2
+	 xif2IYytwsuS6DOgS8r39Jc8+mYgPqir56vni7MZ2lJkF6VXjRS1VChwk6JHvq0ous
+	 gtxLEsJBJpO9g==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260128-gs101-pd-v4-10-cbe7bd5a4060@linaro.org>
-References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
-In-Reply-To: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 Jan 2026 22:47:38 +0530
+Message-Id: <DG0E63PNXEGU.1MAVGEG49ZV87@disroot.org>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Rayan Marzouk"
+ <rayanmarzouk743@gmail.com>, "bluebunny" <kalorin.bok084@passinbox.com>
+Subject: Re: [PATCH 0/2] Add device tree for Samsung Galaxy J7 (2016)
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Kaustabh Chakraborty"
+ <kauschluss@disroot.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Rob
+ Herring" <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Kees Cook" <kees@kernel.org>,
+ "Tony Luck" <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>
+References: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
+ <abc5995e-3b29-4e0f-a091-40797f1b6abf@kernel.org>
+In-Reply-To: <abc5995e-3b29-4e0f-a091-40797f1b6abf@kernel.org>
 
-Some power domains on Exynos are fed by a regulator rail and therefore
-regulator control needs be implemented for Exynos power domains.
+On 2026-01-28 11:58 +01:00, Krzysztof Kozlowski wrote:
+> On 24/01/2026 21:05, Kaustabh Chakraborty wrote:
+>> This series introduces the device tree for a new Samsung Exynos 7870
+>> device =E2=80=93 Samsung Galaxy J7 (2016).
+>>=20
+>> I have acquired permission from the authors of this patch to upstream
+>> this on their behalf.
+>
+>
+> Thank you for the patch. My tree is currently closed for new features
+> till the end of the merge window. I will review and/or apply the patch
 
-On Google gs101, HSI0 (USB) is one example of such a power domain.
+It's alright, I did not intend to have it picked up in v6.19 release anyway=
+.
 
-While at it, add a to_exynos_pd() to avoid direct use of
-container_of() in various additional places, and update existing code
-to use it.
+> then. If I misjudged this patch and this is a fix, please let me know.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 5 deletions(-)
+It is indeed, not a fix.
 
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index f59986b56213dfcc470d9cccc61a36a81954bdcc..ed7a5807555bcf86e4ec88166bfd5f6c06c9322c 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -20,12 +20,15 @@
- #include <linux/of_address.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- #define EXYNOS_SMC_CMD_PREPARE_PD_ONOFF		0x82000410
- #define EXYNOS_GET_IN_PD_DOWN			0
- #define EXYNOS_WAKEUP_PD_DOWN			1
- #define EXYNOS_RUNTIME_PM_TZPC_GROUP		2
- 
-+#define to_exynos_pd(gpd) container_of_const(gpd, struct exynos_pm_domain, pd)
-+
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
- 	u32 local_pwr_cfg;
-@@ -39,6 +42,7 @@ struct exynos_pm_domain_config {
- struct exynos_pm_domain {
- 	struct regmap *regmap;
- 	struct device *dev;
-+	struct regulator *supply;
- 	struct generic_pm_domain pd;
- 	const struct exynos_pm_domain_config *cfg;
- 	u32 configuration_reg;
-@@ -64,12 +68,10 @@ static int exynos_pd_access_controller_power(struct exynos_pm_domain *pd,
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- {
--	struct exynos_pm_domain *pd;
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
- 	u32 timeout, pwr;
- 	int err;
- 
--	pd = container_of(domain, struct exynos_pm_domain, pd);
--
- 	if (!power_on) {
- 		err = exynos_pd_access_controller_power(pd, power_on);
- 		if (err) {
-@@ -126,14 +128,45 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	return err;
- }
- 
-+static int exynos_pd_regulator_enable(struct regulator *supply)
-+{
-+	return supply ? regulator_enable(supply) : 0;
-+}
-+
-+static int exynos_pd_regulator_disable(struct regulator *supply)
-+{
-+	return supply ? regulator_disable(supply) : 0;
-+}
-+
- static int exynos_pd_power_on(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, true);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_regulator_enable(pd->supply);
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos_pd_power(domain, true);
-+	if (ret)
-+		exynos_pd_regulator_disable(pd->supply);
-+
-+	return ret;
- }
- 
- static int exynos_pd_power_off(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, false);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_power(domain, false);
-+	if (ret)
-+		return ret;
-+
-+	/* Ignore regulator errors - the domain was disabled after all. */
-+	exynos_pd_regulator_disable(pd->supply);
-+
-+	return 0;
- }
- 
- static const struct exynos_pm_domain_config exynos4210_cfg = {
-@@ -283,6 +316,16 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	/* get the domain power supply if required */
-+	pd->supply = devm_regulator_get_optional(dev, "domain");
-+	if (IS_ERR(pd->supply)) {
-+		if (PTR_ERR(pd->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(pd->supply),
-+					     "failed to get domain supply");
-+
-+		pd->supply = NULL;
-+	}
-+
- 	/*
- 	 * Some Samsung platforms with bootloaders turning on the splash-screen
- 	 * and handing it over to the kernel, requires the power-domains to be
-
--- 
-2.52.0.457.g6b5491de43-goog
+>
+>
+>
+> Best regards,
+> Krzysztof
 
