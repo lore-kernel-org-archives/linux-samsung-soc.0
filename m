@@ -1,81 +1,85 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C21D34106D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 22:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29196366048
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 07:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769639676; cv=none; b=gX2wABP3sjn0lKXMyUgmcXJeUvurlLy6BGh0AP/vsFqxlsWphdbxoHy9qDWuIqI3kCbTg8Ra9tse0YBAKI8ZTzfH0eIcmfv5Ed+10y3kDYAS7fKLMaqHsawkUX6Jbg1mTMOmGXSo0E5A4etfz6GMBZl9hBo2GKgtLoWz8KCgp88=
+	t=1769673183; cv=none; b=hDeM6NPKSdn0nHqRHphfy9nqhWFdFLJpU++MInEF6KB5OuhD+p0hqEgV3KIGc/OU4nLwR1/piWew3ZpGMRQJy3Gl/j2Opmi4TxJD93UYxQDGJPhm7hBO6csX8aXOnAqf2hkXwTElnttYQwmMlNNWxTbxYg0EvOZaMpt4im6rPuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769639676; c=relaxed/simple;
-	bh=mnUDiJDYQRPq0HtYELggvMNOjTwVFLClGtpo/kjL3E8=;
+	s=arc-20240116; t=1769673183; c=relaxed/simple;
+	bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F52wGuJfjrNoeO3QBp4RjT45EdK9JoKQEMtJxy30P3jVas96okdkpm9NyEBYT4PYumyoY8HjkVTP8EzfvhrQw5aMEEIKi95huXu5iG2uuHg48sRej086c8gvUIjfZ+PQtxly9bFwb630IBikeV6cZjDOBMNPbNzrNyuRl+9WwSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r9naq3UO; arc=none smtp.client-ip=209.85.221.54
+	 Content-Type:MIME-Version; b=LSTG6GTgnnAvfqOrtwAmk8kMZZfPXg4TGfSohV44pQXYbDUY4Eg5LaTxEQdcdV5zdfbCjEU3zHBViauiTG1ogNAEp4rJc+ioxxhocrK4gVQbX5qC+eXGAvbKy2/aPcCS8Pa8oqD2q8U3OOiLjcuo3AFBqwIbWIij6z9aOjgKnfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hITg21l2; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r9naq3UO"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-432d2c7dd52so312933f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 14:34:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hITg21l2"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47d59da3d81so12292025e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 23:53:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769639673; x=1770244473; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1769673179; x=1770277979; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=mnUDiJDYQRPq0HtYELggvMNOjTwVFLClGtpo/kjL3E8=;
-        b=r9naq3UOKrKXa6qySYkwnk7Mm4vPW8RexFcy/Ej148Qua446jUKMSrE2A7A7UmCoA1
-         ufqeiF5MvqCij1z40Ji4KrEuZjZRVdOp+YkU8xMQTRVgULL1KWxUDkh9XHrdcZ5xbdLY
-         rx9HRVF3iY9eBxtUhHqWn//e4HRUlqZl2AtIWCxJW1uFtnfodORFTpDorN/HKxqk5HhA
-         yrjFTvHkD2lm+SskblVDURqEgIrL+JaPti/Zpiikn5do4rLtAWAjkqA12sSTbl3zEQ7U
-         4nWgBORyc52hkVhRFMfMV1gVFAmtQW4L5dSV9Q4Hbkz52+4UqmeWudpbTtAUEWA7eLCf
-         g1Uw==
+        bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
+        b=hITg21l2RRszOmIciwQjy2uAj0jupjwwklVg+fvb3B7bBd58xF/oWBM4QRvWZu07N1
+         L+xjAlc0SoxWIv1dued1hCfn/9RgC+RpO4ggr1yTuUTuyr2kpZfARFF8G/yzbVd5jLLQ
+         FXpRGxp4RyEBMdc7yC2y2KkTYGY5WQS0wfM4ED5hBEEadYh2sfp1x3qvSSxFIxlomM7D
+         cOiIQgw3/PrqNclCYEkuypajUxcanDP+vk/HS90xsH62ESbSNXExOtwjBJwAzMNn7O2R
+         AmOdAgmjWUY6ojcn5HQU3jY9WJPERuJmrA2so7Ip8zNhSwbMB+W6PWD5ltFG48CZKSKx
+         odiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769639673; x=1770244473;
+        d=1e100.net; s=20230601; t=1769673179; x=1770277979;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnUDiJDYQRPq0HtYELggvMNOjTwVFLClGtpo/kjL3E8=;
-        b=Soc7Y4R9kfXxkbAu4+E5A56XD+OxmQDTmHzj3NMq5HuoIyp9OnfL3s7j3LsKVI78sz
-         pR+/f2XILRQaSGG1i0PGsI7eFxonJlOMASMD+YukxjgUbaUwhAFsQ+MGmGp383ZmPCUN
-         sHizlfVlpXWp9LxpmCD+ZGlLcy0y8QXyy2g/zRK9quOJP8ztY+u4qycKKAMVykcWKLu5
-         0tFpqvZdiU1mwI4UJR0PEgcGwwOYR508Z8LPz4s2GgL6uGYsTv5muwe18KiClLsC77zO
-         Yi51KMxP/krKpFNIv18FnMLVR88dh2NPKTN9w+D4oveBAs5WIsZhtP6uRmqHyKwUV1tv
-         O4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhRCj6Ybfv/dKr71V1JWQS1vyYuBvN41GpkEQiHKpHEXJZRRqOYXFp0kDTFFH+l0X2rWouDbeQWgvpKzUrr8xdGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNrf4Etoc/xis6X4JPgtF3Gt1gquq60TarE7w7+DiubTq7rUis
-	7kCsjStxKzrzX0gO+0HDSlZjjrbzo5NuZ2UOIpcO/or0x6+UlhS7Xw+xi8fKvQ54EmQ=
-X-Gm-Gg: AZuq6aKyyLlt1kn/9OFOmSd8jwA6o5URBkHYh/RAI19W4JEyqcAruikv8PBZaFPuJFg
-	T57qBBee2pjifn08PAmTl+E6A+KSktHnXpuHyCPpjd7M0CbzMnznw60doLiF/Oc+X2tObUHY1EU
-	6OvKGIibMNXQzIIisWseWANVD2ttOaHzeuWOU0e/jeMglXon2XiFchwNATVCkDGbJrpZvq5b6Zt
-	WvtVqNjWeBc3WicDxY/fcJPhqE1i+yJ4wyTLXBl5q/BF0vS/zp6ygANmKLGLtEkdANTgyFi9CAg
-	TqxWlmywF3hqxCEdPHwLGCYBZeKl6qYJYw11bDzJ4Oh+w33nKOceWPP9xEKNBcA6CIt6aetwr0V
-	1dElb3GTSSGPastqt9F8okvt0Tr3KR0QISyFIaL+O1IztwbY1gpn4pdrM3x7sSKY1y8MW27mzB9
-	ZqbWOlepQhfq6fSeWHhxwFg6bdnfge58o0pw==
-X-Received: by 2002:a05:6000:186e:b0:430:f40f:61ba with SMTP id ffacd0b85a97d-435dd1c0df0mr10119608f8f.41.1769639673349;
-        Wed, 28 Jan 2026 14:34:33 -0800 (PST)
-Received: from [192.168.235.30] ([212.129.85.73])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e131cfc9sm9819343f8f.21.2026.01.28.14.34.32
+        bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
+        b=eK/P6enbyf9dLDpnGOF7eg2ZVTaGRz97Tl4c5lEfmQoVP1OH9zhKMTsnYk2L/XGTI6
+         wAf95FfXOh7IHJhd3JY4ZULb9Q/gfjKNUg0To5K28Coew0AqZxQw6HK7jlBMCyjXmsik
+         P/fXIJjw5FSdhOKAlDgTOrIBoIqa/rkZSgE+SsTVmADSXuUlHHd59U/1bx/FTdn9hA3s
+         aJJAaJDALBF1yVCMj5W29073/x98Yh94f+T5xRxYQsYlxS9rp36lrT6Tif0vorOZ84vl
+         SUofh5lyzSWu6VJIP9BDV0dwIj8ln4v4WjCsVY9QI3Unca5r0Pa7PQiB3Q14Luh9P/ke
+         bs0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdZU5I/ttdxSdzZ9N6BPdIZgB843680os2GqJeKbxmAc+ndX9kiI9CBAAdZLJu5PHVwuOkKjOiI48mFhNYI6tK3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww80EOEeStLrGexUKOhIfLiPoYTUZ9SB6Q1PKXo1HpVjEMbfHv
+	aGrlVQTHHPmoWh/Yz4oysI8aaSBEtE85WtlC2dsZlRBBL68uwHrFWamm60dP6WTF0wY=
+X-Gm-Gg: AZuq6aKZznRtUJH3D3xUP6+ELxIZhb+j1mniyKEut+CpBzccbsT5K1q4uxrYYTDatdW
+	M/rTNEdxzCeX129o3ZxrYGv2x847USeFY5CS0FEIFYv2n7ZfpF/HoiNw+lZh/2wCeFghc28EcCL
+	zrAmNFMA9ehE8s9QCcqFBjuUEfD2s3w7Fz/0gCgpzlVs+2cgAzIr4sZxHvyIDVl00eWJQIuR4aZ
+	tFZMp6g8lc1Qc6jjHb7AkBwZB488B+0+LUZm5oyvFLdUhLRy7N0t/W3Vx+WNjcQpi8vSlbL6i2M
+	rxdE0qMO6YbfALFZyvGuXeCmfHaNSgGG+4sFT0ZBGtYEo9XZP55trcc5OFBr1TPtKeGGq/mdVew
+	SDKA9iF7RvRhqVe3WBfWkp1M2iY9dgI8G4pk4jWqnteYyF1fOg8YvDWLGBaxeH8Fzvsr2xS76+M
+	v8swlDmECzG1+KEk8JZQ==
+X-Received: by 2002:a05:600c:450c:b0:47d:6c36:a125 with SMTP id 5b1f17b1804b1-480829beec9mr29095775e9.17.1769673178631;
+        Wed, 28 Jan 2026 23:52:58 -0800 (PST)
+Received: from draszik.lan ([212.129.82.147])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-481a5d31756sm4253955e9.2.2026.01.28.23.52.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 14:34:33 -0800 (PST)
-Message-ID: <9936b5bd5f1e19f65c199d36ce54bb0af0e44b85.camel@linaro.org>
-Subject: Re: [PATCH next v2] phy: google: fix build dependency for Google
- Tensor USB PHY
+        Wed, 28 Jan 2026 23:52:58 -0800 (PST)
+Message-ID: <3471955c681a8f9fb0ddf2dd421e1b4552dfbea5.camel@linaro.org>
+Subject: Re: [PATCH v4 10/10] pmdomain: samsung: implement domain-supply
+ regulator
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>, Neil
- Armstrong	 <neil.armstrong@linaro.org>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Joy
- Chakraborty <joychakr@google.com>, Naveen Kumar	 <mnkumar@google.com>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+To: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Ulf
+ Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
+	 <willmcvicker@google.com>, kernel-team@android.com, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel test robot
-	 <lkp@intel.com>
-Date: Wed, 28 Jan 2026 22:34:31 +0000
-In-Reply-To: <20260128-next-v2-1-624bdae8e6d0@google.com>
-References: <20260128-next-v2-1-624bdae8e6d0@google.com>
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Date: Thu, 29 Jan 2026 07:53:10 +0000
+In-Reply-To: <20260128-gs101-pd-v4-10-cbe7bd5a4060@linaro.org>
+References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
+	 <20260128-gs101-pd-v4-10-cbe7bd5a4060@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-8 
+User-Agent: Evolution 3.56.2-2+build3 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -83,35 +87,24 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2026-01-28 at 21:22 +0000, Roy Luo wrote:
-> The Google Tensor USB PHY driver uses the Type-C switch framework to
-> handle orientation changes. However, the Kconfig did not specify a
-> dependency on the TYPEC framework, leading to undefined reference
-> errors when building for architectures or configurations where
-> CONFIG_TYPEC is configured as a module while CONFIG_PHY_GOOGLE_USB
-> is configured as built-in.
+On Wed, 2026-01-28 at 16:10 +0000, Andr=C3=A9 Draszik wrote:
+> Some power domains on Exynos are fed by a regulator rail and therefore
+> regulator control needs be implemented for Exynos power domains.
 >=20
-> Add 'depends on TYPEC' to the PHY_GOOGLE_USB entry to ensure all
-> required symbols are available during linking, and 'COMPILE_TEST'
-> to expand test coverage.
+> On Google gs101, HSI0 (USB) is one example of such a power domain.
 >=20
-> Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202601210825.ELrpQeED-lkp@i=
-ntel.com/
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Signed-off-by: Roy Luo <royluo@google.com>
+> While at it, add a to_exynos_pd() to avoid direct use of
+> container_of() in various additional places, and update existing code
+> to use it.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
-> Changes in v2:
-> - Add '(TYPEC=3Dn && COMPILE_TEST)' to build dependency to expand test
-> =C2=A0 coverage as suggested by Andr=C3=A9 Draszik <andre.draszik@linaro.=
-org>
-> - Keep Peter's Reviewed-by tag because the change suggested by Andr=C3=A9
-> =C2=A0 is a trivial improvement.
-> - Link to v1: https://lore.kernel.org/r/20260121-next-v1-1-c18068b091b9@g=
-oogle.com
-> ---
-> =C2=A0drivers/phy/Kconfig | 1 +
-> =C2=A01 file changed, 1 insertion(+)
+> =C2=A0drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++=
+++++++++---
+> =C2=A01 file changed, 48 insertions(+), 5 deletions(-)
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Looks like I forgot to include the binding patch for this, will
+do a v5 shortly.
+
+Cheers,
+Andre'
