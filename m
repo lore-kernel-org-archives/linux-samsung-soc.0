@@ -1,110 +1,132 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29196366048
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 07:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C883237BE9F
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 08:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769673183; cv=none; b=hDeM6NPKSdn0nHqRHphfy9nqhWFdFLJpU++MInEF6KB5OuhD+p0hqEgV3KIGc/OU4nLwR1/piWew3ZpGMRQJy3Gl/j2Opmi4TxJD93UYxQDGJPhm7hBO6csX8aXOnAqf2hkXwTElnttYQwmMlNNWxTbxYg0EvOZaMpt4im6rPuk=
+	t=1769675576; cv=none; b=RJVi2JzjiZ4Y5Wr+vYxylz9UfqweJaKafN4sFaxiCQLH296viRFmSs0jLghR7KdOtSjY3cpZFzBf4NZZxsjV0GD8OPTAu3qRnJLaymXJ5/3+nx3dCXa8J4A5V5OOUnmoOLDiM3ZC5buuDafhBGUBNZeNj7KnkHWSxMYEClyLh7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769673183; c=relaxed/simple;
-	bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LSTG6GTgnnAvfqOrtwAmk8kMZZfPXg4TGfSohV44pQXYbDUY4Eg5LaTxEQdcdV5zdfbCjEU3zHBViauiTG1ogNAEp4rJc+ioxxhocrK4gVQbX5qC+eXGAvbKy2/aPcCS8Pa8oqD2q8U3OOiLjcuo3AFBqwIbWIij6z9aOjgKnfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hITg21l2; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hITg21l2"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47d59da3d81so12292025e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Jan 2026 23:53:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1769673179; x=1770277979; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
-        b=hITg21l2RRszOmIciwQjy2uAj0jupjwwklVg+fvb3B7bBd58xF/oWBM4QRvWZu07N1
-         L+xjAlc0SoxWIv1dued1hCfn/9RgC+RpO4ggr1yTuUTuyr2kpZfARFF8G/yzbVd5jLLQ
-         FXpRGxp4RyEBMdc7yC2y2KkTYGY5WQS0wfM4ED5hBEEadYh2sfp1x3qvSSxFIxlomM7D
-         cOiIQgw3/PrqNclCYEkuypajUxcanDP+vk/HS90xsH62ESbSNXExOtwjBJwAzMNn7O2R
-         AmOdAgmjWUY6ojcn5HQU3jY9WJPERuJmrA2so7Ip8zNhSwbMB+W6PWD5ltFG48CZKSKx
-         odiA==
+	s=arc-20240116; t=1769675576; c=relaxed/simple;
+	bh=MOFX1PqCGn8QyFW2rZucUtXQa6pqWk8qi8TtHid8dwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FUHi4lCUibrDLBxjZVVXV9QLWte0I+wc8uaOrX/9OC1IKnb+EFlufqOgGUcHzVrArEafgk5JCgTlSBs4u7t3f42xS+nZ9sY3UoGYlEOJ0Rtinz66ga3si3Mg0DSdVawBBySdDgAcFQADQS4Ty/ZYiZM5OToXold4wPNRmCtWUWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5f5418c40daso1486715137.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 00:32:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769673179; x=1770277979;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TreBPbYcd+qcEfeyzd9gSmsPnjmGM3aP8CkrKuGABXo=;
-        b=eK/P6enbyf9dLDpnGOF7eg2ZVTaGRz97Tl4c5lEfmQoVP1OH9zhKMTsnYk2L/XGTI6
-         wAf95FfXOh7IHJhd3JY4ZULb9Q/gfjKNUg0To5K28Coew0AqZxQw6HK7jlBMCyjXmsik
-         P/fXIJjw5FSdhOKAlDgTOrIBoIqa/rkZSgE+SsTVmADSXuUlHHd59U/1bx/FTdn9hA3s
-         aJJAaJDALBF1yVCMj5W29073/x98Yh94f+T5xRxYQsYlxS9rp36lrT6Tif0vorOZ84vl
-         SUofh5lyzSWu6VJIP9BDV0dwIj8ln4v4WjCsVY9QI3Unca5r0Pa7PQiB3Q14Luh9P/ke
-         bs0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUdZU5I/ttdxSdzZ9N6BPdIZgB843680os2GqJeKbxmAc+ndX9kiI9CBAAdZLJu5PHVwuOkKjOiI48mFhNYI6tK3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww80EOEeStLrGexUKOhIfLiPoYTUZ9SB6Q1PKXo1HpVjEMbfHv
-	aGrlVQTHHPmoWh/Yz4oysI8aaSBEtE85WtlC2dsZlRBBL68uwHrFWamm60dP6WTF0wY=
-X-Gm-Gg: AZuq6aKZznRtUJH3D3xUP6+ELxIZhb+j1mniyKEut+CpBzccbsT5K1q4uxrYYTDatdW
-	M/rTNEdxzCeX129o3ZxrYGv2x847USeFY5CS0FEIFYv2n7ZfpF/HoiNw+lZh/2wCeFghc28EcCL
-	zrAmNFMA9ehE8s9QCcqFBjuUEfD2s3w7Fz/0gCgpzlVs+2cgAzIr4sZxHvyIDVl00eWJQIuR4aZ
-	tFZMp6g8lc1Qc6jjHb7AkBwZB488B+0+LUZm5oyvFLdUhLRy7N0t/W3Vx+WNjcQpi8vSlbL6i2M
-	rxdE0qMO6YbfALFZyvGuXeCmfHaNSgGG+4sFT0ZBGtYEo9XZP55trcc5OFBr1TPtKeGGq/mdVew
-	SDKA9iF7RvRhqVe3WBfWkp1M2iY9dgI8G4pk4jWqnteYyF1fOg8YvDWLGBaxeH8Fzvsr2xS76+M
-	v8swlDmECzG1+KEk8JZQ==
-X-Received: by 2002:a05:600c:450c:b0:47d:6c36:a125 with SMTP id 5b1f17b1804b1-480829beec9mr29095775e9.17.1769673178631;
-        Wed, 28 Jan 2026 23:52:58 -0800 (PST)
-Received: from draszik.lan ([212.129.82.147])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-481a5d31756sm4253955e9.2.2026.01.28.23.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jan 2026 23:52:58 -0800 (PST)
-Message-ID: <3471955c681a8f9fb0ddf2dd421e1b4552dfbea5.camel@linaro.org>
-Subject: Re: [PATCH v4 10/10] pmdomain: samsung: implement domain-supply
- regulator
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Ulf
- Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Date: Thu, 29 Jan 2026 07:53:10 +0000
-In-Reply-To: <20260128-gs101-pd-v4-10-cbe7bd5a4060@linaro.org>
-References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
-	 <20260128-gs101-pd-v4-10-cbe7bd5a4060@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build3 
+        d=1e100.net; s=20230601; t=1769675568; x=1770280368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iWSiH0vErBGaTqnZZjDiFHXh+s+0x/2ewRQpe7UFdYM=;
+        b=wDIZupBOBJv/XYV4EV+moUj1GyOFo36onUirvEFVtq43CMHVhAH70pGaZJ5mnhSy4G
+         6vxd6lERE7PNHIgruv3EpFdhm3SnCcsNzc4BsMjCNXYqJzuH2Daklly8BNaF3SQt9An6
+         je7BdVYJKqB3MxY7xWCEVVhhxpnlMl9WK8fQt9JsWqmyWf74mzVG2J6yZXF7PjH4oqJX
+         RFxBCnzohUbls0FCj7bG6xnnCfY7GLDCn1eHJuUVEzFY+3zISgYGerJFbUoDoacf9Gl6
+         75WQ/XFAWjJjYZtsQVXbZY9ioqLNJ2vwg6TifaKutHHoGCQE+ovA3F9e8ch6hm/RNky/
+         10BA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOg84t4CM+zgtH6B5j5HRER5Dy2d3J/Sj6eYGHJKStoTtlu6jzXRMUzCXaC5xaPMsFui26NL2f109LZ7nmo3Tcmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbqoIERMmt0pQg+VjtCJ5CD5fsXzEiSSqa4dUs0rEoIHVR3NcC
+	BiavNqgNkUTPrUUkAFEGEfroj+zsPDRW+IuHRrYSXiqN0zmRBVehPUNdYbmhFN4N
+X-Gm-Gg: AZuq6aKqfVx1VfnAaKBN6DXSMbXhtIO+xoTQ8tzca7TjmS3zh91M8XxtVjMwJRu9IZG
+	K/X4+5MUKpmstcD4G6jCPuQJGZmPibopyG3GAa1gxv0OXanjPDl4k29kpNFxfbIuBddjZG601EH
+	LhviQJqgNotLsorjH4nRQEnPR6rUt27kQ72rq9SBo5Fv0NAMg31jxg4XUpDhfU6OV7O9i9dFqTs
+	IrVlkxrnO2cNW8FM0hoJIsFg3ACTGiE8uEQknir1USDHW9KaQN2y2G+yAC8qPLte4TGeAu8Fame
+	os0+R9liPsM7S5ZU6nvcmy+OkLLcEUBi+JBlmlCenxj0Rv+H9n/jNZB91ZgNFi5BBkpmV58iAuP
+	pV8qxOdHIzRZRnNbyELfkck2+xjN50xj701zCMYcNz2DwDrJjH9NXJc9OmXOJlEsFZNvIFrKYtX
+	+blyOlitJxh9CAEGA/JHAs0LoWO8nRig7sUn9cuJD19WEuIOjjTVUzmvYIcs4=
+X-Received: by 2002:a05:6102:3747:b0:5f1:5be2:114b with SMTP id ada2fe7eead31-5f8cdc7b02dmr722296137.20.1769675568346;
+        Thu, 29 Jan 2026 00:32:48 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-948723a9746sm1055718241.1.2026.01.29.00.32.47
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Jan 2026 00:32:47 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5f5418c40daso1486696137.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 00:32:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDOBr3Ajf3dHxKuF1zTizPzZRLyFELU+xNieY9ctCf/MjJtrqhfnwiO9NwQRoOSbKlqUfGAXOchMQM3FlFqIJqRA==@vger.kernel.org
+X-Received: by 2002:a05:6102:358a:b0:5f1:b59d:a824 with SMTP id
+ ada2fe7eead31-5f8cdbcdd58mr660134137.10.1769675567174; Thu, 29 Jan 2026
+ 00:32:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
+ <e955868c06547ac62d34d594d45dd07aa19e361b.camel@linaro.org>
+In-Reply-To: <e955868c06547ac62d34d594d45dd07aa19e361b.camel@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Jan 2026 09:32:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUWgrA9Z3d8pzRpuWJ=_P+JtQyUvOoT0eVpOp7Cikzj0A@mail.gmail.com>
+X-Gm-Features: AZwV_QhDAZHfDa69lcwIjPEMriVTWX2j2mEpl3sREl4ukbpmMZGKeuh-Z80oSWU
+Message-ID: <CAMuHMdUWgrA9Z3d8pzRpuWJ=_P+JtQyUvOoT0eVpOp7Cikzj0A@mail.gmail.com>
+Subject: Re: [PATCH] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Naveen Kumar <mnkumar@google.com>, 
+	Roy Luo <royluo@google.com>, Joy Chakraborty <joychakr@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2026-01-28 at 16:10 +0000, Andr=C3=A9 Draszik wrote:
-> Some power domains on Exynos are fed by a regulator rail and therefore
-> regulator control needs be implemented for Exynos power domains.
->=20
-> On Google gs101, HSI0 (USB) is one example of such a power domain.
->=20
-> While at it, add a to_exynos_pd() to avoid direct use of
-> container_of() in various additional places, and update existing code
-> to use it.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
-> =C2=A0drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++=
-++++++++---
-> =C2=A01 file changed, 48 insertions(+), 5 deletions(-)
+Hi Andr=C3=A9,
 
-Looks like I forgot to include the binding patch for this, will
-do a v5 shortly.
+On Wed, 28 Jan 2026 at 21:03, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+> On Tue, 2026-01-27 at 20:12 +0100, Geert Uytterhoeven wrote:
+> > The Google Tensor SoC USB PHY is only present on Google Tensor G5
+> > (Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent askin=
+g
+> > the user about this driver when configuring a kernel without Google
+> > Tensor SoC support.
+> >
+> > Fixes: cbce66669c82ee9a ("phy: Add Google Tensor SoC USB PHY driver")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > ARCH_GOOGLE is not yet upstream, but that doesn't hurt.
+>
+> I can see your point, and have no objection, but for context, Greg
+> had asked to not add dependencies on a config option that might or
+> might not get added in the future - ARCH_GOOGLE:
 
-Cheers,
-Andre'
+The exact name may indeed still be under discussion.  But we all know
+there _will_ be a config option (unless the platform is abandoned before
+upstreaming, and this driver will be removed again anyway ;-).
+
+> Maybe an alternative would be to make it default=3Dn, and change that
+> default once ARCH_GOOGLE gets added?
+
+It already defaults to disabled, as "default=3Dn" is the default.
+
+> > --- a/drivers/phy/Kconfig
+> > +++ b/drivers/phy/Kconfig
+> > @@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
+> >
+> >  config PHY_GOOGLE_USB
+> >       tristate "Google Tensor SoC USB PHY driver"
+> > +     depends on ARCH_GOOGLE || COMPILE_TEST
+> >       select GENERIC_PHY
+> >       help
+> >         Enable support for the USB PHY on Google Tensor SoCs, starting =
+with
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
