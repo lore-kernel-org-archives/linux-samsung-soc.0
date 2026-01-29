@@ -1,132 +1,139 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C883237BE9F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 08:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49133F8DA;
+	Thu, 29 Jan 2026 16:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769675576; cv=none; b=RJVi2JzjiZ4Y5Wr+vYxylz9UfqweJaKafN4sFaxiCQLH296viRFmSs0jLghR7KdOtSjY3cpZFzBf4NZZxsjV0GD8OPTAu3qRnJLaymXJ5/3+nx3dCXa8J4A5V5OOUnmoOLDiM3ZC5buuDafhBGUBNZeNj7KnkHWSxMYEClyLh7M=
+	t=1769705732; cv=none; b=HDFiZsci65vc1mtKoue+dX07YXm5gnLje6EvJuvNDXgfl+jxfcmF06YOPO+7KtZL3Sb0qxeKFvSbV6arEntLE6p7gzgp1wsqg2qcYlRXuF3UKskNBVh7qubatVJKZ6TffcrFFZ+nVEuO/V5nvY0nPHTzWY5FhyuNQqHxP93zPx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769675576; c=relaxed/simple;
-	bh=MOFX1PqCGn8QyFW2rZucUtXQa6pqWk8qi8TtHid8dwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FUHi4lCUibrDLBxjZVVXV9QLWte0I+wc8uaOrX/9OC1IKnb+EFlufqOgGUcHzVrArEafgk5JCgTlSBs4u7t3f42xS+nZ9sY3UoGYlEOJ0Rtinz66ga3si3Mg0DSdVawBBySdDgAcFQADQS4Ty/ZYiZM5OToXold4wPNRmCtWUWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5f5418c40daso1486715137.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 00:32:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769675568; x=1770280368;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=iWSiH0vErBGaTqnZZjDiFHXh+s+0x/2ewRQpe7UFdYM=;
-        b=wDIZupBOBJv/XYV4EV+moUj1GyOFo36onUirvEFVtq43CMHVhAH70pGaZJ5mnhSy4G
-         6vxd6lERE7PNHIgruv3EpFdhm3SnCcsNzc4BsMjCNXYqJzuH2Daklly8BNaF3SQt9An6
-         je7BdVYJKqB3MxY7xWCEVVhhxpnlMl9WK8fQt9JsWqmyWf74mzVG2J6yZXF7PjH4oqJX
-         RFxBCnzohUbls0FCj7bG6xnnCfY7GLDCn1eHJuUVEzFY+3zISgYGerJFbUoDoacf9Gl6
-         75WQ/XFAWjJjYZtsQVXbZY9ioqLNJ2vwg6TifaKutHHoGCQE+ovA3F9e8ch6hm/RNky/
-         10BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOg84t4CM+zgtH6B5j5HRER5Dy2d3J/Sj6eYGHJKStoTtlu6jzXRMUzCXaC5xaPMsFui26NL2f109LZ7nmo3Tcmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbqoIERMmt0pQg+VjtCJ5CD5fsXzEiSSqa4dUs0rEoIHVR3NcC
-	BiavNqgNkUTPrUUkAFEGEfroj+zsPDRW+IuHRrYSXiqN0zmRBVehPUNdYbmhFN4N
-X-Gm-Gg: AZuq6aKqfVx1VfnAaKBN6DXSMbXhtIO+xoTQ8tzca7TjmS3zh91M8XxtVjMwJRu9IZG
-	K/X4+5MUKpmstcD4G6jCPuQJGZmPibopyG3GAa1gxv0OXanjPDl4k29kpNFxfbIuBddjZG601EH
-	LhviQJqgNotLsorjH4nRQEnPR6rUt27kQ72rq9SBo5Fv0NAMg31jxg4XUpDhfU6OV7O9i9dFqTs
-	IrVlkxrnO2cNW8FM0hoJIsFg3ACTGiE8uEQknir1USDHW9KaQN2y2G+yAC8qPLte4TGeAu8Fame
-	os0+R9liPsM7S5ZU6nvcmy+OkLLcEUBi+JBlmlCenxj0Rv+H9n/jNZB91ZgNFi5BBkpmV58iAuP
-	pV8qxOdHIzRZRnNbyELfkck2+xjN50xj701zCMYcNz2DwDrJjH9NXJc9OmXOJlEsFZNvIFrKYtX
-	+blyOlitJxh9CAEGA/JHAs0LoWO8nRig7sUn9cuJD19WEuIOjjTVUzmvYIcs4=
-X-Received: by 2002:a05:6102:3747:b0:5f1:5be2:114b with SMTP id ada2fe7eead31-5f8cdc7b02dmr722296137.20.1769675568346;
-        Thu, 29 Jan 2026 00:32:48 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-948723a9746sm1055718241.1.2026.01.29.00.32.47
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jan 2026 00:32:47 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5f5418c40daso1486696137.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jan 2026 00:32:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVDOBr3Ajf3dHxKuF1zTizPzZRLyFELU+xNieY9ctCf/MjJtrqhfnwiO9NwQRoOSbKlqUfGAXOchMQM3FlFqIJqRA==@vger.kernel.org
-X-Received: by 2002:a05:6102:358a:b0:5f1:b59d:a824 with SMTP id
- ada2fe7eead31-5f8cdbcdd58mr660134137.10.1769675567174; Thu, 29 Jan 2026
- 00:32:47 -0800 (PST)
+	s=arc-20240116; t=1769705732; c=relaxed/simple;
+	bh=mZs03WYD4uRFTip8el8/SaAOaPr/KLn2tNNfr3ADzqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDn28Y0Q8gHfRdCQXq9ZdCcEDjc48OsExuYGt+bgAleGOIHm8rk8lmGSjIUj3BrWJjpTweeaMEbwrtBQc5XsEWc8Tw0md+rS3Ab6bTQ2sW4KiWHtMP5ptIf82nP8K47TLtId+f0qL+AqwmeU6zNAaaHEeWAQDc1jcpFYR9OkDzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZ9zKXPr; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZ9zKXPr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2388DC4CEF7;
+	Thu, 29 Jan 2026 16:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769705732;
+	bh=mZs03WYD4uRFTip8el8/SaAOaPr/KLn2tNNfr3ADzqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nZ9zKXPrUoLdPcQT07k41nF6WLFtAZZe85ruwQmm2Z6RUd7uI19PFYB+1ygycb4+M
+	 sNCytqXi9y3Yl5Rb0q7B1wy1J+Zf+bZbyrUT78u17Tt5sefiGwO5vzgAQOZsFmDWt4
+	 XopdtXorOrT50Q/a0g3gO2NgU3+P/zLd4y0BZr3B1SiNTxEw2h6ptRyVgpvGLwllX3
+	 BhgOzt+uetn51K+48rjGu/HaNDaolUvnMJfo5ufAUzH3x/dkCNxmTSxeg4rMso2fAr
+	 /3haGHrGsIPWwslXr3sdWoGcmN2aIIgvJ1QpRE0smIEE4lBIGhJTMYVYznTNnyTr2N
+	 aBTvmwwndhT5w==
+Date: Thu, 29 Jan 2026 10:55:31 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Juan Yescas <jyescas@google.com>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] dt-bindings: soc: google: add google,gs101-dtzpc
+Message-ID: <20260129165531.GA1269692-robh@kernel.org>
+References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
+ <20260128-gs101-pd-v4-1-cbe7bd5a4060@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
- <e955868c06547ac62d34d594d45dd07aa19e361b.camel@linaro.org>
-In-Reply-To: <e955868c06547ac62d34d594d45dd07aa19e361b.camel@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Jan 2026 09:32:35 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUWgrA9Z3d8pzRpuWJ=_P+JtQyUvOoT0eVpOp7Cikzj0A@mail.gmail.com>
-X-Gm-Features: AZwV_QhDAZHfDa69lcwIjPEMriVTWX2j2mEpl3sREl4ukbpmMZGKeuh-Z80oSWU
-Message-ID: <CAMuHMdUWgrA9Z3d8pzRpuWJ=_P+JtQyUvOoT0eVpOp7Cikzj0A@mail.gmail.com>
-Subject: Re: [PATCH] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Naveen Kumar <mnkumar@google.com>, 
-	Roy Luo <royluo@google.com>, Joy Chakraborty <joychakr@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260128-gs101-pd-v4-1-cbe7bd5a4060@linaro.org>
 
-Hi Andr=C3=A9,
+On Wed, Jan 28, 2026 at 04:10:50PM +0000, André Draszik wrote:
+> The Exynos Distributed TruztZone Protection Control (D_TZPC) provides
+> an interface to the protection bits that are included in the TrustZone
+> design in a secure system. It configures each area of the memory as
+> secure or non-secure.
 
-On Wed, 28 Jan 2026 at 21:03, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
-> On Tue, 2026-01-27 at 20:12 +0100, Geert Uytterhoeven wrote:
-> > The Google Tensor SoC USB PHY is only present on Google Tensor G5
-> > (Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent askin=
-g
-> > the user about this driver when configuring a kernel without Google
-> > Tensor SoC support.
-> >
-> > Fixes: cbce66669c82ee9a ("phy: Add Google Tensor SoC USB PHY driver")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > ARCH_GOOGLE is not yet upstream, but that doesn't hurt.
->
-> I can see your point, and have no objection, but for context, Greg
-> had asked to not add dependencies on a config option that might or
-> might not get added in the future - ARCH_GOOGLE:
+This sounds like what access-controllers binding is for. Does that work 
+here?
 
-The exact name may indeed still be under discussion.  But we all know
-there _will_ be a config option (unless the platform is abandoned before
-upstreaming, and this driver will be removed again anyway ;-).
-
-> Maybe an alternative would be to make it default=3Dn, and change that
-> default once ARCH_GOOGLE gets added?
-
-It already defaults to disabled, as "default=3Dn" is the default.
-
-> > --- a/drivers/phy/Kconfig
-> > +++ b/drivers/phy/Kconfig
-> > @@ -49,6 +49,7 @@ config GENERIC_PHY_MIPI_DPHY
-> >
-> >  config PHY_GOOGLE_USB
-> >       tristate "Google Tensor SoC USB PHY driver"
-> > +     depends on ARCH_GOOGLE || COMPILE_TEST
-> >       select GENERIC_PHY
-> >       help
-> >         Enable support for the USB PHY on Google Tensor SoCs, starting =
-with
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  .../bindings/soc/google/google,gs101-dtzpc.yaml    | 42 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a8c61ce069d6910c47753bf14a792eb58e6ae182
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/google/google,gs101-dtzpc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos Distributed TruztZone Protection Control.
+> +
+> +description:
+> +  Distributed TrustZone Protection Control (D_TZPC) provides an interface to the
+> +  protection bits that are included in the TrustZone design in a secure system.
+> +  It configures each area of the memory as secure or non-secure.
+> +
+> +maintainers:
+> +  - André Draszik <andre.draszik@linaro.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: google,gs101-dtzpc
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/google,gs101.h>
+> +
+> +    dtzpc_hsi0: dtzpc@11010000 {
+> +      compatible = "google,gs101-dtzpc";
+> +      reg = <0x11010000 0x10000>;
+> +      clocks = <&cmu_hsi0 CLK_GOUT_HSI0_D_TZPC_HSI0_PCLK>;
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a56f8f00aebb938aa765a8a6d66dfeb7f062dac8..98b2ef47c809ac0232e6941c9483b19d7c798bb4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10833,6 +10833,7 @@ P:	Documentation/process/maintainer-soc-clean-dts.rst
+>  C:	irc://irc.oftc.net/pixel6-kernel-dev
+>  F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>  F:	Documentation/devicetree/bindings/phy/google,lga-usb-phy.yaml
+> +F:	Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+>  F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
+>  F:	Documentation/devicetree/bindings/usb/google,lga-dwc3.yaml
+>  F:	arch/arm64/boot/dts/exynos/google/
+> 
+> -- 
+> 2.52.0.457.g6b5491de43-goog
+> 
