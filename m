@@ -1,38 +1,38 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ECF241665
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Feb 2026 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAEB23184A;
+	Tue,  3 Feb 2026 11:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770113528; cv=none; b=DLcuwudlZGeQF67jMNa63tASNG/GxMlW1boq6jtQ0ONoqnT4axvv7Qe9BSe4fLat64IRqkZpUf/fN9GjYfXNtDxHxLRTZI5d2L8k8wm50AoWYlB7A8RC1w6sNZ9vha0P4ffVlMp880XzepnG3UwVtPGpeiPxJ2y6Gb8K+3ujlNc=
+	t=1770117132; cv=none; b=oYi4YYSkCTT0UrfsCisa1aVF2THsK5TDdg/DZ/AtnZfv4W7Qspvnjl6M/nKXS1dshqRKyZrRmFgdQRruAokIgV9ixTRbuFKf/tjENOMOQ+w/TG5EUfjrDzIPlsHFYb6+7+LNau+uS7kT6tbYGmwbOfvXnMoCICKm+yNX0mhR21s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770113528; c=relaxed/simple;
-	bh=kaxurYH+pSZiT55rBegAYaKI+3y+ZBTAe+5LlaGS5Qc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=TaZAMt3IDMq8Cpc92mbDvUUbImgoGSj8L8MS6MSx1Pn9Os9XEcXzHRZNBuBuPpnVQJrG2IOgdF9xsU6LylVsX2RiWV1MwDw7pDIiDuahd+rDNgfvTpMifYrHUEo2xSSJuGY/aDQ26DPs4K7dMWuC6y221JsTOZZfvRHmu3uecL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=soDBBG2b; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1770117132; c=relaxed/simple;
+	bh=ntEqjZ4vPtV9eWcEMUAr5LrB5oLRPrI5bgg2M4/Hgg4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=rHhGd3uerwm2NsPpsmU7hE1mdfPrfj/9mipK1H+ZF3KbDCN4ED9YYHx9ygjqyRHpLlMYNYoZzSZzlAaIAAPMo5ucy5tyOW3PivBaqcq7YpbfebGgqktHFaV6JvNgTmOnB5t2wT+Ah7zkrnJ2Ht2qVs7p6s/gxeWxxUluYTtwDWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DPoX7rqx; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="soDBBG2b"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DPoX7rqx"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 381854E423E2;
-	Tue,  3 Feb 2026 10:12:03 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 88BF4C211DD;
+	Tue,  3 Feb 2026 11:12:12 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0765E60728;
-	Tue,  3 Feb 2026 10:12:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7C634119A8888;
-	Tue,  3 Feb 2026 11:11:51 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4351F60728;
+	Tue,  3 Feb 2026 11:12:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49DDD119A8888;
+	Tue,  3 Feb 2026 12:11:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1770113521; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1770117125; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=kaxurYH+pSZiT55rBegAYaKI+3y+ZBTAe+5LlaGS5Qc=;
-	b=soDBBG2bgMR8f2LbgIrwrYZOZzYJcpbUWVYRItBu2O1PQqna30rioLkNHxmoqkhNvMoty+
-	if15F8cH7NZWu28bObiIMmjSXkf/cYBNUhfuBPoO76QtFqb1UQUMLfLDYevJwW/p1Kl7Lu
-	+I3G0dxG+J6RhTJVOFeRfdIz+h/B9NG/cjr+thEijncqEHuyHKZUwYUANoWLQg294fKT8y
-	TDLWlGQamhmukciHP6cONfNmeBtpmJaloA59+nUyzJxHvdVhD6JznC5KaF3u+dPqNNeDk7
-	seesqobwi6ZjgtZhhsyn/aWw21kF+XuG5pXLFvYh5MYavI/tXRZlfn3DYpa2Fg==
+	bh=szFGRLlVCEwZRRovS/jad1iKZfVKQX8FqT/CwFCFTuw=;
+	b=DPoX7rqxJKZUDYyaRDR7/S+6t9BTtJqy8WOm0KmHCdu7fbDoA48IJeL5CmMiKa5CyLOhPX
+	1m04Tm1xnpB+4RqSBdn7YL51+pYU3mHNquNAHCkDuVG/s86TDceDYJ9NzVKwqMLOP+ckgr
+	l5IyZPCe6xDcieA1XnO/XkU+hCgZUUoC71wA9QWyEwKGBoUn6jkxFv+oPWNTwgiVXpO+3X
+	zROF2ReXs0saPeDrmiua4EgvrIFBe8Jc+tbqSIiRARGUc+JofQISJrkPs/wocHLOBMIBdh
+	sPveengo3QMRO55rX/CBQjMu9HRt0XLeznsH2BnuNRYnSdvxUSFDSepExnD74A==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -41,10 +41,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 03 Feb 2026 11:11:50 +0100
-Message-Id: <DG58VCQ54OZA.2QHGR8JFIATY2@bootlin.com>
-Subject: Re: [PATCH v8 05/18] drm/bridge: Move legacy bridge driver out of
- imx directory for multi-platform use
+Date: Tue, 03 Feb 2026 12:11:53 +0100
+Message-Id: <DG5A5BNULPQX.HRWTJLN9UQ2W@bootlin.com>
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+ "Damon Ding" <damon.ding@rock-chips.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v8 00/18] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
 Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
  <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
  <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
@@ -52,115 +56,52 @@ Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
  <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
  <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
  <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
- <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
- <andy.yan@rock-chips.com>, <dianders@chromium.org>,
+ <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <andy.yan@rock-chips.com>,
+ <dmitry.baryshkov@oss.qualcomm.com>, <dianders@chromium.org>,
  <m.szyprowski@samsung.com>, <jani.nikula@intel.com>,
  <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
  <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
  <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
-To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
- <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
- <dmitry.baryshkov@oss.qualcomm.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
 X-Mailer: aerc 0.20.1
 References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
- <20251217093321.3108939-6-damon.ding@rock-chips.com>
- <DG2S064XPGXL.1MQDAKWZEK50K@bootlin.com>
- <7256ecf9-b10b-428c-a1a6-e35e80a686ed@rock-chips.com>
- <9e1da672-a52d-4ec3-a20a-fe6f8ca15496@rock-chips.com>
-In-Reply-To: <9e1da672-a52d-4ec3-a20a-fe6f8ca15496@rock-chips.com>
+ <6571983.R56niFO833@diego>
+In-Reply-To: <6571983.R56niFO833@diego>
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Damon,
+Hello Heiko, Damon,
 
-On Tue Feb 3, 2026 at 2:31 AM CET, Damon Ding wrote:
-> Hi,
+On Mon Jan 19, 2026 at 5:06 PM CET, Heiko St=C3=BCbner wrote:
+> Hi Damon,
 >
-> On 2/2/2026 10:54 AM, Damon Ding wrote:
->> Hi Luca,
->>
->> On 1/31/2026 8:33 PM, Luca Ceresoli wrote:
->>> Hello Damon, Dmitry,
->>>
->>> On Wed Dec 17, 2025 at 10:33 AM CET, Damon Ding wrote:
->>>> As suggested by Dmitry, the DRM legacy bridge driver can be pulled
->>>> out of imx/ subdir for multi-platform use. The driver is also renamed
->>>> to make it more generic and suitable for platforms other than i.MX.
->>>>
->>>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>
->>>> ---
->>>>
->>>> Changes in v7:
->>>> - Rename legacy-bridge to of-display-mode-bridge.
->>>> - Remove unnecessary API drm_bridge_is_legacy().
->>>
->>> ...
->>>
->>>> --- a/drivers/gpu/drm/bridge/Kconfig
->>>> +++ b/drivers/gpu/drm/bridge/Kconfig
->>>> @@ -244,6 +244,16 @@ config DRM_NXP_PTN3460
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NXP PTN3460 eDP-LVDS bridge=
- chip driver.
->>>>
->>>> +config DRM_OF_DISPLAY_MODE_BRIDGE
->>>> +=C2=A0=C2=A0=C2=A0 tristate
->>>> +=C2=A0=C2=A0=C2=A0 depends on DRM_BRIDGE && OF
->>>> +=C2=A0=C2=A0=C2=A0 help
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This is a DRM bridge implementation th=
-at uses
->>>> of_get_drm_display_mode
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to acquire display mode.
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Newer designs should not use this brid=
-ge and should use proper
->>>> panel
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 driver instead.
->>>
->>> "Newer designs should not use this bridge", but in patch 8 you are
->>> introducing a new use ot devm_drm_of_display_mode_bridge(). Shouldn't y=
-ou
->>> instead "use proper panel driver instead" in patch 8?
->>>
->>> Can you point to the conversation where the converstaion where Dmitry
->>> suggested this change? Maybe it already contains the answer to my
->>> qustion. Also adding a link to that conversation in the commit message
->>> woule be useful.
->>>
->>
->> First of all, thanks for your reviews on this patch series.
->>
->> link: https://lore.kernel.org/all/
->> xwenycscalzdlpuxytorbiyvej3k7pv3lhxwtadilxq65ipwsv@x5rxm53w5e22/
->>
->> I think it may be a misleading issue caused by directly copying the
->> previous Kconfig description. Now that the new
->> devm_drm_of_display_mode_bridge() helper has been added, drivers using
->> the panel-bridge framework can rely on it to maintain compatibility with
->> legacy display mode parsing.
-
-Ah, I think I got the point: the mode description in device tree is legacy,
-but the driver itself is not legacy and will be current until we need to
-support legacy device tree. Correct?
-
-If that's correct, this patch looks OK to me with a new Kconfig help text.
-
->> It would be better to update the comment as follows:
->>
->> This is a DRM bridge implementation that uses of_get_drm_display_mode to
->> acquire display mode.
->>
->> It exists for compatibility with legacy display mode parsing, in order
->> to conform to the panel-bridge framework.
->>
+> Am Mittwoch, 17. Dezember 2025, 10:33:03 Mitteleurop=C3=A4ische Normalzei=
+t schrieb Damon Ding:
+>> PATCH 1 is to ensure the last bridge declares OP_EDID or OP_MODES or bot=
+h.
+>> PATCH 2 is a small format optimization for struct analogid_dp_device.
+>> PATCH 3 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>> PATCH 4 is to add a new parameter to store the point of next bridge.
+>> PATCH 5 is to make legacy bridge driver more universal.
+>> PATCH 6-11 are preparations for apply drm_bridge_connector helper.
+>> PATCH 12 is to apply the drm_bridge_connector helper.
+>> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
+>> PATCH 16 is to attach the next bridge on Analogix side uniformly.
+>> PATCH 17-18 are to apply the panel_bridge helper.
 >
-> Dmitry, what's you take on this?
+> On top of all the recent bridge-related commits, this series still works
+> on my rk3588-eDP board - when the display is plugged in on boot.
+>
+> As that is the current state we also had before, this series:
+> Tested-by: Heiko Stuebner <heiko@sntech.de> on rk3588
 
-Dmitry's opinion would be much more relevant than mine. I don't know much
-myself about this driver.
+I'm appplying patches 1-3 and got a checkpatch warning for each patch:
+
+  WARNING: Unexpected content after email: 'Heiko Stuebner <heiko@sntech.de=
+> on rk3588', should be: 'Heiko Stuebner <heiko@sntech.de> (on rk3588)'
+
+I'm fixing it while applying those 3 patches.
+
+Damon, can you fix that for the remaining patches before sending a new
+iteration?
 
 Luca
 
