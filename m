@@ -1,251 +1,145 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m3277.qiye.163.com (mail-m3277.qiye.163.com [220.197.32.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D133624D4
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Feb 2026 11:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2598222B594;
+	Tue,  3 Feb 2026 01:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770031972; cv=none; b=ZvTndPxHLSfNq2kgwyEutH9FYYXiTtMO4aflahCqbb++pjShgpSKUm6yEo1eTj6EQ65UI191CmbfnsPo/zl4+U1PkCmVxUVDBu2fHcyfDswqQTuux6s2y/V5KqTOlDm1E3w84bKwuc9EpMmAIQF9/LHEzrReGveOzGb+53W6/xw=
+	t=1770082277; cv=none; b=J/zBDo7RnKlsMf7bUFYBZHx5+DhSLyRvokq/VcH0pTrp9FGAjyHsHfkDopc45YRJxuNFCTrikRQt0M78FzWQryWRou5/58LLcEcrBfHgKGoASORO+bGhTqOYew+yGfljpRYLMG22MGNwvbrWLIb4bJ8tM9/b1SoRJjeIQV4bcAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770031972; c=relaxed/simple;
-	bh=bnB73CudNO/ibm5Iqjxo8bfSR2hjaY2bLMkBRovZU7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dj6ka6rvQ1uGUl/pHoBbD3LQdSyZ7jNUjFFORd+JwjZ6KF8UcltsDkecHcEzpyMDxLd8adth5HeP4qJDyAvAx2tj4scCLaonT+fyhJK8pF1QCKVwN36Uk5kX/r/Jh8uTvLUBScvDgHK8IfBCvnA3xE7AkqBja39s5jZxowx0JCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePycUsjR; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770082277; c=relaxed/simple;
+	bh=kKgVz+SvpsBDnJ6OuqexchxFrqTsqJTgg4pHTFqqgTg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z2+EulqSlmtX9ItS78AGbcMjb/n+nIVaQtKkPLNY4A5DGGYUPO+IizBcXOvayKF5+p08sUBEq5TzAQVuWVqss1jncvvL8fnzRY/5oLi0w5uGTF2MkdhHKuUep6fhkTQDnYK4xxCAgIOCVdHtkInbN2R2wrQw06Wm8yqja9Img9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PNeLKk6I; arc=none smtp.client-ip=220.197.32.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePycUsjR"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8230c33f477so1888399b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Feb 2026 03:32:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770031970; x=1770636770; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NiX6sc+bte0/E+dFVuNXwgpx22zYYyWdASCMsSYGK9c=;
-        b=ePycUsjR/pFvvLPWnrRlkEcsf4C79k5532Op1A733jWgYOBfXEkiVZaWyAXUTwWzuu
-         LNfdmVCLaNPcIYAZrQVEAjSPLDGE2TGsAI/P8P7GnOlXb/QM7tSYIZ90tHrDkS5NCsrH
-         OnjJAQS1tx6ym8djw6inHLNJDkrcw/13fHWGW9dRKgSPZ9/a3FhE4mgU6dNBKRGzEv4z
-         lzBGgWlqpRIlM0bAO8onOlN3Lzzn0IB7NJgL8zUJNu5Jm5J406LUe8NeP7pv0+gc2QOq
-         3SZ8RTijf+k9LJEPa0h1IlA27QNdQ/f7T4bYdytbg4rWuA12Hrl7+uNj09wbpkg/Es/W
-         EqSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770031970; x=1770636770;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=NiX6sc+bte0/E+dFVuNXwgpx22zYYyWdASCMsSYGK9c=;
-        b=fUM37kze84PR6yHinjeyeGpwMzXxjUO1MzelV8suwwcVCV0w5130iS9cpUGNfUIH6S
-         ByIr5QfnF4J+QlePUwTSPqfgvWCh6UZio+FDq9iaoB+uGYMHD46N60zW+D6kf9V/67pw
-         kl8kaROCSC0oiBMlNKr2HZxBnadIBZArA/iutFedWyedVMe4XL7jH4xqkmAXsuV5hAFu
-         RxFQ0LUSBqm5vfOSdq5EjvOZG7NqH1yO9M543IIUZ9n0FlZ/BbiSB+iQVemTIl/wLdvR
-         DK37tRQkTSyV6JODGKQo6R1kawxpKwoOEilp2AUoRrE9ewWE5Pi7RxDYfzEDjhftyDog
-         3Hpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVM1tahudmn9QLaVVlCGIr5LFP2Pl33olP9yRFY9d+8bNnsUELZioZmQFiG1aFwT2iNNudQiweYRctfd5shf9EJew==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+w66D7d8AYAOSoUnyLT7GUYa/8XW9Y5pdd1ZCS4JJQyY7DFKD
-	Nw1XbSl3WEKyH+GrUxHKfKbx0KNtAv6pZR4GDr91LXi2Q3KIr0z542No
-X-Gm-Gg: AZuq6aKETbQevsQS7Zccps7mhTnyvSkNXO1ZCUu9hKyD3dNbftxd+oMwTTkd3+FAnV3
-	8b/BLz2AVE9qwI4Cs3IMCW5lWsfFQvUKp+nQl6061ylkTQd/+UvRfAdKpP+wQ+UFXCpnKRgG/iW
-	CBL6ZSotAnnDopIFydcF5MgxDCQHHDwu/qQyaffJSSBW4/bA2tz0vtbuYKkIFZiM1qAD2dJYXjP
-	z2tuHm0NSu/8UAb/UM+lLjCxB6BhJvOuNZpgx1nrDF8mJGyaSgXHY+EbH7C6C8eUPUeyaCvRUBM
-	kr2lWrk+CwK3KqJqUXHVGGhI4XcMW7aX1BqtdWzSeHH+kSWmIxrMDs7baf5cHYdwpJ0+u4yo9V+
-	ud3FJ9cG/ddkMuOvjaODMOVs5WMOcLFer0Yc3JqHwhi34LFJtvEBqr+M+iv8xtMQ3HJonf2YKs1
-	/hd9UJqfLpuZ2tSimIbBpAkRrzIxIGcxC0jU+IoA==
-X-Received: by 2002:a05:6a21:483:b0:366:19c9:b6b6 with SMTP id adf61e73a8af0-392e0000539mr10085643637.11.1770031970541;
-        Mon, 02 Feb 2026 03:32:50 -0800 (PST)
-Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c642a9f539dsm13743190a12.26.2026.02.02.03.32.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 03:32:50 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH 3/3 v2] drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free
-Date: Mon,  2 Feb 2026 20:32:34 +0900
-Message-Id: <20260202113234.183393-4-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260202113234.183393-1-aha310510@gmail.com>
-References: <20260202113234.183393-1-aha310510@gmail.com>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PNeLKk6I"
+Received: from [172.16.12.43] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 32e1603b0;
+	Tue, 3 Feb 2026 09:31:06 +0800 (GMT+08:00)
+Message-ID: <9e1da672-a52d-4ec3-a20a-fe6f8ca15496@rock-chips.com>
+Date: Tue, 3 Feb 2026 09:31:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 05/18] drm/bridge: Move legacy bridge driver out of imx
+ directory for multi-platform use
+From: Damon Ding <damon.ding@rock-chips.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
+ m.szyprowski@samsung.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
+ <20251217093321.3108939-6-damon.ding@rock-chips.com>
+ <DG2S064XPGXL.1MQDAKWZEK50K@bootlin.com>
+ <7256ecf9-b10b-428c-a1a6-e35e80a686ed@rock-chips.com>
+Content-Language: en-US
+In-Reply-To: <7256ecf9-b10b-428c-a1a6-e35e80a686ed@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9c211febb503a3kunmdf9f046968496a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0waTVYaHxlIHUhDGEJNGEJWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=PNeLKk6IXR55KNlke+4USCf5fom3f/N3+2kARL8pH0JwEPUlW60pXl+rtEoTZiX5O8yGuHc/m5vU/SaCJ1Gp07bJlpVKV7LVXgo8PO9QLI5HrJU160XWWzJRmQP51/j2tw/tfdjC+39EH3iKM0kT7IBxukZVeDjGby7EtvavdRI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=80iknK13Kq+wx2P2fwBcvk34JAYKQJmD7fJDTp2xaOU=;
+	h=date:mime-version:subject:message-id:from;
 
-Exynos Virtual Display driver performs memory alloc/free operations
-without lock protection, which easily causes concurrency problem.
+Hi,
 
-For example, use-after-free can occur in race scenario like this:
-```
-	CPU0				CPU1				CPU2
-	----				----				----
-  vidi_connection_ioctl()
-    if (vidi->connection) // true
-      drm_edid = drm_edid_alloc(); // alloc drm_edid
-      ...
-      ctx->raw_edid = drm_edid;
-      ...
-								drm_mode_getconnector()
-								  drm_helper_probe_single_connector_modes()
-								    vidi_get_modes()
-								      if (ctx->raw_edid) // true
-								        drm_edid_dup(ctx->raw_edid);
-								          if (!drm_edid) // false
-								          ...
-				vidi_connection_ioctl()
-				  if (vidi->connection) // false
-				    drm_edid_free(ctx->raw_edid); // free drm_edid
-				    ...
-								          drm_edid_alloc(drm_edid->edid)
-								            kmemdup(edid); // UAF!!
-								            ...
-```
+On 2/2/2026 10:54 AM, Damon Ding wrote:
+> Hi Luca,
+> 
+> On 1/31/2026 8:33 PM, Luca Ceresoli wrote:
+>> Hello Damon, Dmitry,
+>>
+>> On Wed Dec 17, 2025 at 10:33 AM CET, Damon Ding wrote:
+>>> As suggested by Dmitry, the DRM legacy bridge driver can be pulled
+>>> out of imx/ subdir for multi-platform use. The driver is also renamed
+>>> to make it more generic and suitable for platforms other than i.MX.
+>>>
+>>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>
+>>> ---
+>>>
+>>> Changes in v7:
+>>> - Rename legacy-bridge to of-display-mode-bridge.
+>>> - Remove unnecessary API drm_bridge_is_legacy().
+>>
+>> ...
+>>
+>>> --- a/drivers/gpu/drm/bridge/Kconfig
+>>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>>> @@ -244,6 +244,16 @@ config DRM_NXP_PTN3460
+>>>       help
+>>>         NXP PTN3460 eDP-LVDS bridge chip driver.
+>>>
+>>> +config DRM_OF_DISPLAY_MODE_BRIDGE
+>>> +    tristate
+>>> +    depends on DRM_BRIDGE && OF
+>>> +    help
+>>> +      This is a DRM bridge implementation that uses 
+>>> of_get_drm_display_mode
+>>> +      to acquire display mode.
+>>> +
+>>> +      Newer designs should not use this bridge and should use proper 
+>>> panel
+>>> +      driver instead.
+>>
+>> "Newer designs should not use this bridge", but in patch 8 you are
+>> introducing a new use ot devm_drm_of_display_mode_bridge(). Shouldn't you
+>> instead "use proper panel driver instead" in patch 8?
+>>
+>> Can you point to the conversation where the converstaion where Dmitry
+>> suggested this change? Maybe it already contains the answer to my
+>> qustion. Also adding a link to that conversation in the commit message
+>> woule be useful.
+>>
+> 
+> First of all, thanks for your reviews on this patch series.
+> 
+> link: https://lore.kernel.org/all/ 
+> xwenycscalzdlpuxytorbiyvej3k7pv3lhxwtadilxq65ipwsv@x5rxm53w5e22/
+> 
+> I think it may be a misleading issue caused by directly copying the 
+> previous Kconfig description. Now that the new 
+> devm_drm_of_display_mode_bridge() helper has been added, drivers using 
+> the panel-bridge framework can rely on it to maintain compatibility with 
+> legacy display mode parsing.
+> 
+> It would be better to update the comment as follows:
+> 
+> This is a DRM bridge implementation that uses of_get_drm_display_mode to 
+> acquire display mode.
+> 
+> It exists for compatibility with legacy display mode parsing, in order 
+> to conform to the panel-bridge framework.
+> 
 
-To prevent these vulns, at least in vidi_context, member variables related
-to memory alloc/free should be protected with ctx->lock.
+Dmitry, what's you take on this?
 
-Cc: <stable@vger.kernel.org>
-Fixes: b73d12303ecf ("drm/exynos: added virtual display driver.")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 38 ++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 6 deletions(-)
+Best regards,
+Damon
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 601406b640c7..37733f2ac0e7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -186,29 +186,37 @@ static ssize_t vidi_store_connection(struct device *dev,
- 				const char *buf, size_t len)
- {
- 	struct vidi_context *ctx = dev_get_drvdata(dev);
--	int ret;
-+	int ret, new_connected;
- 
--	ret = kstrtoint(buf, 0, &ctx->connected);
-+	ret = kstrtoint(buf, 0, &new_connected);
- 	if (ret)
- 		return ret;
--
--	if (ctx->connected > 1)
-+	if (new_connected > 1)
- 		return -EINVAL;
- 
-+	mutex_lock(&ctx->lock);
-+
- 	/*
- 	 * Use fake edid data for test. If raw_edid is set then it can't be
- 	 * tested.
- 	 */
- 	if (ctx->raw_edid) {
- 		DRM_DEV_DEBUG_KMS(dev, "edid data is not fake data.\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto fail;
- 	}
- 
-+	ctx->connected = new_connected;
-+	mutex_unlock(&ctx->lock);
-+
- 	DRM_DEV_DEBUG_KMS(dev, "requested connection.\n");
- 
- 	drm_helper_hpd_irq_event(ctx->drm_dev);
- 
- 	return len;
-+fail:
-+	mutex_unlock(&ctx->lock);
-+	return ret;
- }
- 
- static DEVICE_ATTR(connection, 0644, vidi_show_connection,
-@@ -243,11 +251,14 @@ int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&ctx->lock);
- 	if (ctx->connected == vidi->connection) {
-+		mutex_unlock(&ctx->lock);
- 		DRM_DEV_DEBUG_KMS(ctx->dev,
- 				  "same connection request.\n");
- 		return -EINVAL;
- 	}
-+	mutex_unlock(&ctx->lock);
- 
- 	if (vidi->connection) {
- 		const struct drm_edid *drm_edid;
-@@ -281,14 +292,21 @@ int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
- 					  "edid data is invalid.\n");
- 			return -EINVAL;
- 		}
-+		mutex_lock(&ctx->lock);
- 		ctx->raw_edid = drm_edid;
-+		mutex_unlock(&ctx->lock);
- 	} else {
- 		/* with connection = 0, free raw_edid */
-+		mutex_lock(&ctx->lock);
- 		drm_edid_free(ctx->raw_edid);
- 		ctx->raw_edid = NULL;
-+		mutex_unlock(&ctx->lock);
- 	}
- 
-+	mutex_lock(&ctx->lock);
- 	ctx->connected = vidi->connection;
-+	mutex_unlock(&ctx->lock);
-+
- 	drm_helper_hpd_irq_event(ctx->drm_dev);
- 
- 	return 0;
-@@ -303,7 +321,7 @@ static enum drm_connector_status vidi_detect(struct drm_connector *connector,
- 	 * connection request would come from user side
- 	 * to do hotplug through specific ioctl.
- 	 */
--	return ctx->connected ? connector_status_connected :
-+	return READ_ONCE(ctx->connected) ? connector_status_connected :
- 			connector_status_disconnected;
- }
- 
-@@ -326,11 +344,15 @@ static int vidi_get_modes(struct drm_connector *connector)
- 	const struct drm_edid *drm_edid;
- 	int count;
- 
-+	mutex_lock(&ctx->lock);
-+
- 	if (ctx->raw_edid)
- 		drm_edid = drm_edid_dup(ctx->raw_edid);
- 	else
- 		drm_edid = drm_edid_alloc(fake_edid_info, sizeof(fake_edid_info));
- 
-+	mutex_unlock(&ctx->lock);
-+
- 	drm_edid_connector_update(connector, drm_edid);
- 
- 	count = drm_edid_connector_add_modes(connector);
-@@ -482,9 +504,13 @@ static void vidi_remove(struct platform_device *pdev)
- {
- 	struct vidi_context *ctx = platform_get_drvdata(pdev);
- 
-+	mutex_lock(&ctx->lock);
-+
- 	drm_edid_free(ctx->raw_edid);
- 	ctx->raw_edid = NULL;
- 
-+	mutex_unlock(&ctx->lock);
-+
- 	component_del(&pdev->dev, &vidi_component_ops);
- }
- 
---
