@@ -1,95 +1,159 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70F334685
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Feb 2026 11:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7033A63ED;
+	Tue,  3 Feb 2026 14:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770119630; cv=none; b=d1wPfAfQmOZjdVBa7DPZ+FM+11qv3jbRoL1f1M473wyIY6TpohrnDOTukofoOOdRQV6f69YZvOzn3sEvmwGnCj95kn062rpAFuAniJsva6NlZqV7Jz3j30bfDd90d+ivYHsrVWYidex/jd3UQsw/ZndP8dFc45JR+YgscoQ8Azo=
+	t=1770127792; cv=none; b=n/grUVotOMmjDrotiTx0L8zGdRU0XNVAcndx0cdQhOqTbpOmwFdEcsSWRcHRzcoriTAAbwJLm0vEezncWV48OHQmSCDvcip7UnMdXIjVZmI0rejPNR5KWjy6Fc7mCRHbXO9TpbjEKJznCSKbPQtY5lLpX+AoeDPF4aRK9lt3XHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770119630; c=relaxed/simple;
-	bh=I12JpYU8SFoYG9LY5HYJxv0gaZoRlGInnne5CRnqgZE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jftEu0yVuIoyS+0/4arnFl/jIol2GNGHMx4w/QnZqdhTJVX3wCtvJfNvMJ87yoej1Y54/nyw4u36tCy2yxCb6scburbf0tPEOySSaItUBy1iCrBMUZqAYloTHQ/TwN9jQ/gkkKy0996C7G4lB9irteK6vYx8+p/Qh1gpSNcxglI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pGLrDq0F; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1770127792; c=relaxed/simple;
+	bh=Rv0gnZrGTVnHq8ksG/uGGrkDZi1zIa4ztL46UEkonLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5pr2h+H8qY3YPAettQ37iRF843xPMmKaYVHeQmXexE1LQxNZ9Oc5kGrJUhGSyA09q/05f1ljiUZOFoAiQN3oYkHKtUSn6z42l/dx5qh2kTJ1vW9YeQmG1kpmEgjjDDzzq9dJ/hofE8RqCkpvBzs85k37C1dvfY5thEnWgzZ3Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QP1vaF/q; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pGLrDq0F"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 35D15C211EB;
-	Tue,  3 Feb 2026 11:53:52 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EED3760728;
-	Tue,  3 Feb 2026 11:53:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42835119A8888;
-	Tue,  3 Feb 2026 12:53:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1770119615; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=czGxAqtWlC7CiVBQnNcTBd7QV+mqCq2IlCe+hizwtH0=;
-	b=pGLrDq0FDlC6TZPzDwz+Q/LbCPms3wDALSsrNFAGRXrrJUMWn/+VlSWQN2QR1wDRN5t7R/
-	4dzoNl826W3u5sMZpiUnAdxPkKb84cPrxTMxNDLahXGpiwPNmn9eS5238/Jp+bC+ex8+vX
-	vbDhkjVeUStK9q7btu0T2fx76OX81Ua0754MhEjiyODMlnM/R7O8S56hvlNuX01P0qZM+G
-	nlwC3jJMJKjoHhH2sq8CMgGpUNdNEwPZhhN6u26MXXTEcHuZ+OoKdCgPnRYERLalsXIgXs
-	ne+a7qepIg13lOceMckrlU+BJr2gXQ4vfi5Pi4HuB/tssJGozFElfoz4tOiY2A==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
- Damon Ding <damon.ding@rock-chips.com>
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, 
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, 
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com, 
- heiko@sntech.de, andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com, 
- dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-In-Reply-To: <20251217093321.3108939-1-damon.ding@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QP1vaF/q"
+Received: from killaraus.ideasonboard.com (2001-14ba-703d-e500--2a1.rev.dnainternet.fi [IPv6:2001:14ba:703d:e500::2a1])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AA6CA5B2;
+	Tue,  3 Feb 2026 15:09:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1770127745;
+	bh=Rv0gnZrGTVnHq8ksG/uGGrkDZi1zIa4ztL46UEkonLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QP1vaF/qoOoTBXHPASYDi3HJe2FmO+pobt2RlBUxJF0hAgilkmQ+sAxpCisOQR058
+	 rAIBf/hU7mmVDZi2gn8Ik0+Yc/jrD75aLWjNNQRrF1W6XRBxbiGTYTsI4HjC/LdrFE
+	 s/P/zP/t+p4sFm/xjtW23cZZu9j6yFOfaUuQzi/0=
+Date: Tue, 3 Feb 2026 16:09:45 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	dmitry.baryshkov@oss.qualcomm.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
+	sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+	alim.akhtar@samsung.com, jingoohan1@gmail.com,
+	p.zabel@pengutronix.de, hjc@rock-chips.com, heiko@sntech.de,
+	andy.yan@rock-chips.com, dianders@chromium.org,
+	m.szyprowski@samsung.com, jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v8 05/18] drm/bridge: Move legacy bridge driver out of
+ imx directory for multi-platform use
+Message-ID: <20260203140945.GC12013@killaraus>
 References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
-Subject: Re: (subset) [PATCH v8 00/18] Apply drm_bridge_connector and
- panel_bridge helper for the Analogix DP driver
-Message-Id: <177011960346.1855144.4866699055858398856.b4-ty@bootlin.com>
-Date: Tue, 03 Feb 2026 12:53:23 +0100
+ <20251217093321.3108939-6-damon.ding@rock-chips.com>
+ <DG2S064XPGXL.1MQDAKWZEK50K@bootlin.com>
+ <7256ecf9-b10b-428c-a1a6-e35e80a686ed@rock-chips.com>
+ <9e1da672-a52d-4ec3-a20a-fe6f8ca15496@rock-chips.com>
+ <DG58VCQ54OZA.2QHGR8JFIATY2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DG58VCQ54OZA.2QHGR8JFIATY2@bootlin.com>
 
-
-On Wed, 17 Dec 2025 17:33:03 +0800, Damon Ding wrote:
-> PATCH 1 is to ensure the last bridge declares OP_EDID or OP_MODES or both.
-> PATCH 2 is a small format optimization for struct analogid_dp_device.
-> PATCH 3 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-> PATCH 4 is to add a new parameter to store the point of next bridge.
-> PATCH 5 is to make legacy bridge driver more universal.
-> PATCH 6-11 are preparations for apply drm_bridge_connector helper.
-> PATCH 12 is to apply the drm_bridge_connector helper.
-> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
-> PATCH 16 is to attach the next bridge on Analogix side uniformly.
-> PATCH 17-18 are to apply the panel_bridge helper.
+On Tue, Feb 03, 2026 at 11:11:50AM +0100, Luca Ceresoli wrote:
+> On Tue Feb 3, 2026 at 2:31 AM CET, Damon Ding wrote:
+> > On 2/2/2026 10:54 AM, Damon Ding wrote:
+> >> On 1/31/2026 8:33 PM, Luca Ceresoli wrote:
+> >>> On Wed Dec 17, 2025 at 10:33 AM CET, Damon Ding wrote:
+> >>>> As suggested by Dmitry, the DRM legacy bridge driver can be pulled
+> >>>> out of imx/ subdir for multi-platform use. The driver is also renamed
+> >>>> to make it more generic and suitable for platforms other than i.MX.
+> >>>>
+> >>>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> >>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> >>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >>>>
+> >>>> ---
+> >>>>
+> >>>> Changes in v7:
+> >>>> - Rename legacy-bridge to of-display-mode-bridge.
+> >>>> - Remove unnecessary API drm_bridge_is_legacy().
+> >>>
+> >>> ...
+> >>>
+> >>>> --- a/drivers/gpu/drm/bridge/Kconfig
+> >>>> +++ b/drivers/gpu/drm/bridge/Kconfig
+> >>>> @@ -244,6 +244,16 @@ config DRM_NXP_PTN3460
+> >>>>       help
+> >>>>         NXP PTN3460 eDP-LVDS bridge chip driver.
+> >>>>
+> >>>> +config DRM_OF_DISPLAY_MODE_BRIDGE
+> >>>> +    tristate
+> >>>> +    depends on DRM_BRIDGE && OF
+> >>>> +    help
+> >>>> +      This is a DRM bridge implementation that uses
+> >>>> of_get_drm_display_mode
+> >>>> +      to acquire display mode.
+> >>>> +
+> >>>> +      Newer designs should not use this bridge and should use proper
+> >>>> panel
+> >>>> +      driver instead.
+> >>>
+> >>> "Newer designs should not use this bridge", but in patch 8 you are
+> >>> introducing a new use ot devm_drm_of_display_mode_bridge(). Shouldn't you
+> >>> instead "use proper panel driver instead" in patch 8?
+> >>>
+> >>> Can you point to the conversation where the converstaion where Dmitry
+> >>> suggested this change? Maybe it already contains the answer to my
+> >>> qustion. Also adding a link to that conversation in the commit message
+> >>> woule be useful.
+> >>>
+> >>
+> >> First of all, thanks for your reviews on this patch series.
+> >>
+> >> link: https://lore.kernel.org/all/
+> >> xwenycscalzdlpuxytorbiyvej3k7pv3lhxwtadilxq65ipwsv@x5rxm53w5e22/
+> >>
+> >> I think it may be a misleading issue caused by directly copying the
+> >> previous Kconfig description. Now that the new
+> >> devm_drm_of_display_mode_bridge() helper has been added, drivers using
+> >> the panel-bridge framework can rely on it to maintain compatibility with
+> >> legacy display mode parsing.
 > 
-> [...]
+> Ah, I think I got the point: the mode description in device tree is legacy,
+> but the driver itself is not legacy and will be current until we need to
+> support legacy device tree. Correct?
+> 
+> If that's correct, this patch looks OK to me with a new Kconfig help text.
 
-Applied, thanks!
+The devm_drm_of_display_mode_bridge() function needs documentation
+though, with a warning that tells it must not be used in new drivers.
+Catching new users in checkpatch.pl (or somewhere else) would be ideal.
 
-[01/18] drm/display: bridge_connector: Ensure last bridge determines EDID/modes detection capabilities
-        commit: 3c05e956b85e70cbd5042e03f615b23ca4635385
-[02/18] drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
-        commit: 10a2694fde68ba214eca7d24229094fc2427fddd
-[03/18] drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to &drm_bridge_funcs.atomic_enable
-        commit: cff3f89ffbdd4b6c43a117c01aaf5b290ff80803
+I would also not create a separate module for this and move the function
+to drm_bridge.c, but I don't mind that much if the consensus is that a
+separate module is better.
 
-Best regards,
+> >> It would be better to update the comment as follows:
+> >>
+> >> This is a DRM bridge implementation that uses of_get_drm_display_mode to
+> >> acquire display mode.
+> >>
+> >> It exists for compatibility with legacy display mode parsing, in order
+> >> to conform to the panel-bridge framework.
+> >>
+> >
+> > Dmitry, what's you take on this?
+> 
+> Dmitry's opinion would be much more relevant than mine. I don't know much
+> myself about this driver.
+
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+Regards,
 
+Laurent Pinchart
