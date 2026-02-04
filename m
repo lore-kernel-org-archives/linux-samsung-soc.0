@@ -1,47 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309E2D5926;
-	Wed,  4 Feb 2026 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C7021ABC9;
+	Wed,  4 Feb 2026 15:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770218309; cv=none; b=F24vqk9uL22lilOoLeEkhz+MW20fmjx2ehziyoD6M6ebrswF/YH0gcOasYchHEg90eLZBUg6ERZaXx/rU39jA+qUvCQq3SCkGAyC8z6emj/fqKIu9V7R85Yxrc89aolmiyDvR8gNVQ44IScLFhgH63UIhyvf/WVRNZGe+kEEjag=
+	t=1770218390; cv=none; b=cqS/XetOgSdt0MJslC99kBVRpCl3j3k1bKoj22YfME6kfgMYZwED73gbXru7SjszhSnpFkG7kxYA/EB6GWokAQi1PV2+BjOGDOz+8zJoMaUH197A33N4asB6wToXCWaPBJG4sRj/Uqx+R3vjDJfD+Sj2vpFqQ+jPVjW+XGNTurM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770218309; c=relaxed/simple;
-	bh=Szm3QfQ7X3rGQRtzylMpLb3hyGhSDTXlCFdPG6u0Zxc=;
+	s=arc-20240116; t=1770218390; c=relaxed/simple;
+	bh=N4W2OOT8cuSzttgJEnK8vKEf+348a62A9tEzp7vo3Ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/9PGox3Iv7+NHce3vwzKp2HcsScGtO/IFYxKa2to9xPhMCeUB6DZYhn2hdIC+rWFxKM1Mkiqptcs8Mpqz8EidKeWCWVuldlpenkg/Egj2uIDg3wY++lMZ4Z+FquFFxMyvZv8vBFmAlkErtRNIouvJOEEMNdxmze4nepw/SrioY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmM4w6y7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHQdSFB6QApouxbb/F1oG1pcHDH0sx+XjvEoY5x8hNS8g8Pu0P2kFONUObV09S/PKKj3rErU3zTrgNmpUtsQbffzv4jcQRRHBE91FbwUZY3uzJ3cyfrPZx9eYPXzLUFUOPWUudXxwpsVdPYQS2EbcQFCbJunQvG9J9GRf3Nh4eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9ulbJ6q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmM4w6y7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F2AAC4CEF7;
-	Wed,  4 Feb 2026 15:18:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9ulbJ6q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B0D7C4CEF7;
+	Wed,  4 Feb 2026 15:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770218308;
-	bh=Szm3QfQ7X3rGQRtzylMpLb3hyGhSDTXlCFdPG6u0Zxc=;
+	s=k20201202; t=1770218390;
+	bh=N4W2OOT8cuSzttgJEnK8vKEf+348a62A9tEzp7vo3Ps=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmM4w6y7cvT7G7CYPX5cNC5pjGLzQp3+GvqHRzVdTS/DSi5+z+en3IeUQkeyXXTB9
-	 FqHye+/2TsHXMr7kVsBBwVIGJmFlXJbFfcuKOYF07iLFgFnO8mcVKS2aR1XxRvFIwX
-	 IpaHzLRJ9K49A469JoTitXYDqi6JZsmCkNKlqTaIDM5xUMU+OkzRA/+Ey+bhUim+Nx
-	 ivhW2HdLYJuWdLcDKk83Tbfb91YvsL2Yd4Re8fiq9xP6t4YwhzGsJaxY64u4c4hMZv
-	 ipY9J5Ebz7idqQB6/WB2fY/u7a8ZXhQL5UDd77/aGB26zgw+toNWokd/eLTk/cBVvz
-	 zJjpRiQg41Q1w==
-Date: Wed, 4 Feb 2026 20:48:25 +0530
+	b=e9ulbJ6qOpc4xNBiJGXL8gkDbLeGEd9b7MOQttgU3G5s9yvqUco6mWldHw0DI10Qx
+	 qIa3MBBLsXyDetRivVLC+l2HpKSSKc85yMDDtitbiWO+dXBHwwMRW9O9tu1vTjTw7W
+	 FnQXOQkBzj3yUQcYxA1mpyPreGmT5m+BF8h73uGo4s6jY6qQ4HJa0ax7JmtMfKYNEW
+	 /r2v1a16eeQvATA0t5Js9VLcsUR6RyaAKe9Ac0k32w0fXgOfWZn6sKyYuitFqUaxKs
+	 tg5T2PvEgkk+rA2Om+HiRuymg55ForoA9r2S1ADvOt7BJn5IpvSjYpCOQkaIilUW+a
+	 JHmoJwk1e1tFA==
+Date: Wed, 4 Feb 2026 20:49:46 +0530
 From: Vinod Koul <vkoul@kernel.org>
-To: Roy Luo <royluo@google.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
 	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>,
 	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH next v2] phy: google: fix build dependency for Google
- Tensor USB PHY
-Message-ID: <aYNjQfXATNAx6reM@vaman>
-References: <20260128-next-v2-1-624bdae8e6d0@google.com>
+	Arnd Bergmann <arnd@arndb.de>, linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
+Message-ID: <aYNjkj0RYh3VszTn@vaman>
+References: <0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,22 +49,18 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260128-next-v2-1-624bdae8e6d0@google.com>
+In-Reply-To: <0caa3c449b0c3d64944da3f1003d9389bdc13f98.1769541083.git.geert+renesas@glider.be>
 
-On 28-01-26, 21:22, Roy Luo wrote:
-> The Google Tensor USB PHY driver uses the Type-C switch framework to
-> handle orientation changes. However, the Kconfig did not specify a
-> dependency on the TYPEC framework, leading to undefined reference
-> errors when building for architectures or configurations where
-> CONFIG_TYPEC is configured as a module while CONFIG_PHY_GOOGLE_USB
-> is configured as built-in.
-> 
-> Add 'depends on TYPEC' to the PHY_GOOGLE_USB entry to ensure all
-> required symbols are available during linking, and 'COMPILE_TEST'
-> to expand test coverage.
+Hi Geert,
 
-Thanks for the fix, looking at three patches for this, I like Arnd's fix
-better and have applied that now
+On 27-01-26, 20:12, Geert Uytterhoeven wrote:
+> The Google Tensor SoC USB PHY is only present on Google Tensor G5
+> (Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent asking
+> the user about this driver when configuring a kernel without Google
+> Tensor SoC support.
+
+I have three patches for this :-) Looking at it, I prefer Arnd's
+approach and not to depend on unknown symbol.
 
 -- 
 ~Vinod
