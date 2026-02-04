@@ -1,199 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m3274.qiye.163.com (mail-m3274.qiye.163.com [220.197.32.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2732374758;
-	Tue,  3 Feb 2026 22:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5FF27A47F;
+	Wed,  4 Feb 2026 02:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770159076; cv=none; b=pgUDfrSqbXoT4aR+6iSx4uiSOZd+AkSm5FW5w/2ttREcaHwZ/M+71bjTHAqZ/kvXarwvUac61nzsjGCAMGyPRAMEkZfJSsTjwMF34fBYOJw3qs3KNHcCpsIUk5qz0hwrJ+VxITQudjW45d4pP99cB/Y/muBZYvc2EtMJ5CGE1QA=
+	t=1770172075; cv=none; b=Lp8RQYQouffnwMCYaJBJAr7YvDzQd04BknynwkrvBA53wRj6HyNxKoM4CEUPjWEIHWeis2x2FQnAEFAt9lsuq/Vnk2uD+l899+vmnFHSYYPR2J7vFVv7miAU2yTRWq/WALVe3pbTTIx9zmZzxYaFxmn9n4PdO2Xx+kzF2dPZUj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770159076; c=relaxed/simple;
-	bh=x5l6L76bIyObE98V1AMZSCPiXBprN9x6wKcuM4vyGCs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qz58mHroMLRsPLfOz8DYxlRxUpX9WG9rgTdmRUtlfl6DOKCaGgxhoht1TVrXP02V75NCuDpw0Jw1JCB8Xct8pl/Oy2lgCmwKD7HXxNCVeguRgtLOZH9dS1rAv2y+hx3yyRd3DGGZwYbmYuY+ls/k9O+2+MhQf5z0CaXzs0rld84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZx1Iq7h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770172075; c=relaxed/simple;
+	bh=d97ZjiRn7WBC6MC2ERTatwpVYX2UWe4s594iBFUoe+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPBYd4tYmFgWfuQzTdXcs4zSSaPiSPi9qoIY8x2SICAHHLOdgM19/e0p66rt4ouabYrlp24MYET7l0wETOwKOXr5aG/cQLnZsV4El3Umglh9z3oqInuQFPKh0/zyjKslWK+ZeQn8l0mPHdmI8zy0PTRN/4dIJQH+Yatn28YOYKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KgtiUAp3; arc=none smtp.client-ip=220.197.32.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZx1Iq7h"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 95631C19425;
-	Tue,  3 Feb 2026 22:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770159076;
-	bh=x5l6L76bIyObE98V1AMZSCPiXBprN9x6wKcuM4vyGCs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZZx1Iq7hdeQwip2aOnYmX4gspMBunrojV4zhw1+QkWgVCCXcY2HcMO2f3RLDPV6e5
-	 tjfufeZyyziUvcectEsxuubPaUoEDwuUPvJREJ8eLra51BeLjQeaINLxj+QdvSJ818
-	 9XDecjIv69F0XvWW6u26ketPyk45rZDcy8R3tATDJQrQ0Vf+BvkeTN1taNJfVhh6LW
-	 wE7grJ1hWVxdJI1La9hkHOyFkI9mYnvv13x5HXh9BhrvCp3YomjHutB4V4+OjfHWDz
-	 D5TdNpRvhlNNazCcQvONvbCHDtddgfco6K0iTnLXEvRv+DMMFPt7+eXo+/GAcubPS0
-	 b0EQSySoUVU3Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85722E8B37E;
-	Tue,  3 Feb 2026 22:51:16 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Tue, 03 Feb 2026 22:50:31 +0000
-Subject: [PATCH v5 5/5] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
- setting charger mode
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KgtiUAp3"
+Received: from [172.16.12.43] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 330683486;
+	Wed, 4 Feb 2026 09:52:14 +0800 (GMT+08:00)
+Message-ID: <0b7e39bd-a403-45e4-93fd-701ab092525c@rock-chips.com>
+Date: Wed, 4 Feb 2026 09:52:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 00/18] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com,
+ dianders@chromium.org, m.szyprowski@samsung.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20251217093321.3108939-1-damon.ding@rock-chips.com>
+ <6571983.R56niFO833@diego> <DG5A5BNULPQX.HRWTJLN9UQ2W@bootlin.com>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <DG5A5BNULPQX.HRWTJLN9UQ2W@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260203-max77759-charger-v5-5-b50395376a5f@google.com>
-References: <20260203-max77759-charger-v5-0-b50395376a5f@google.com>
-In-Reply-To: <20260203-max77759-charger-v5-0-b50395376a5f@google.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Badhri Jagan Sridharan <badhri@google.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
- Amit Sunil Dhamne <amitsd@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1770159075; l=4047;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=DVhKKtAmFJeTde3lBLRKS7iTM2jYoSejns4c8Q7KrrM=;
- b=b0GO3q1YufX0GQelLtqZNXAOGw6l83elJv47namzZa5QOjjUjJ2hMMY/Pbsbe0+J0pd85DTbg
- 3NPQKZB5AevBcaCB7cBaBEI7zOGiBDb0w89cvkYwb/OQ3kuzCU8lDH7
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+X-HM-Tid: 0a9c2659a20003a3kunme960d4ef73ad41
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkwZGVYaGR1NSE9NTE4ZTkhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=KgtiUAp3ditdHJKw+YuPPmNedi6wR8b12xUSPp9hcUoCRAF7xNzEH3nZxGzbDeVSwJ93E6fDJ4Vl+9dnwKTJZG+vl+h1p5MWiMW8N/vLgv/Gn6vfD3J5HwbqagBHelnTeZk/XowaXaNkj1TqDjoeCz7JqI3qjrAMILEPUybjYuI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=qDNxEGFKLTcQaAxSN3kPzeWr8ZRpCLzvyWFyoP3CJgQ=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Amit Sunil Dhamne <amitsd@google.com>
+Hi Luca,
 
-TCPCI maxim driver directly writes to the charger's register space to
-set charger mode depending on the power role. As MAX77759 chg driver
-exists, this WAR is not required.
+On 2/3/2026 7:11 PM, Luca Ceresoli wrote:
+> Hello Heiko, Damon,
+> 
+> On Mon Jan 19, 2026 at 5:06 PM CET, Heiko Stübner wrote:
+>> Hi Damon,
+>>
+>> Am Mittwoch, 17. Dezember 2025, 10:33:03 Mitteleuropäische Normalzeit schrieb Damon Ding:
+>>> PATCH 1 is to ensure the last bridge declares OP_EDID or OP_MODES or both.
+>>> PATCH 2 is a small format optimization for struct analogid_dp_device.
+>>> PATCH 3 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>> PATCH 4 is to add a new parameter to store the point of next bridge.
+>>> PATCH 5 is to make legacy bridge driver more universal.
+>>> PATCH 6-11 are preparations for apply drm_bridge_connector helper.
+>>> PATCH 12 is to apply the drm_bridge_connector helper.
+>>> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
+>>> PATCH 16 is to attach the next bridge on Analogix side uniformly.
+>>> PATCH 17-18 are to apply the panel_bridge helper.
+>>
+>> On top of all the recent bridge-related commits, this series still works
+>> on my rk3588-eDP board - when the display is plugged in on boot.
+>>
+>> As that is the current state we also had before, this series:
+>> Tested-by: Heiko Stuebner <heiko@sntech.de> on rk3588
+> 
+> I'm appplying patches 1-3 and got a checkpatch warning for each patch:
+> 
+>    WARNING: Unexpected content after email: 'Heiko Stuebner <heiko@sntech.de> on rk3588', should be: 'Heiko Stuebner <heiko@sntech.de> (on rk3588)'
+> 
+> I'm fixing it while applying those 3 patches.
+> 
+> Damon, can you fix that for the remaining patches before sending a new
+> iteration?
+> 
 
-Instead, use a regulator interface to source vbus when typec is in
-source power mode. In other power modes, this regulator will be turned
-off if active.
+Yes, will fix in v9.
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/usb/typec/tcpm/tcpci_maxim.h      |  1 +
- drivers/usb/typec/tcpm/tcpci_maxim_core.c | 54 +++++++++++++++++++------------
- 2 files changed, 34 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
-index b33540a42a953dc6d8197790ee4af3b6f52791ce..b314606eb0f67ddbc80d8760244aa6dee61bebc1 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim.h
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
-@@ -60,6 +60,7 @@ struct max_tcpci_chip {
- 	struct tcpm_port *port;
- 	enum contamiant_state contaminant_state;
- 	bool veto_vconn_swap;
-+	struct regulator *vbus_reg;
- };
- 
- static inline int max_tcpci_read16(struct max_tcpci_chip *chip, unsigned int reg, u16 *val)
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-index 19f63865079658fb2a446dc390262d141b940e9a..e9e2405c5ca036e28c307088d4b785726834e71f 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-@@ -10,6 +10,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/usb/pd.h>
- #include <linux/usb/tcpci.h>
- #include <linux/usb/tcpm.h>
-@@ -35,12 +36,6 @@
-  */
- #define TCPC_RECEIVE_BUFFER_LEN				32
- 
--#define MAX_BUCK_BOOST_SID				0x69
--#define MAX_BUCK_BOOST_OP				0xb9
--#define MAX_BUCK_BOOST_OFF				0
--#define MAX_BUCK_BOOST_SOURCE				0xa
--#define MAX_BUCK_BOOST_SINK				0x5
--
- static const struct regmap_range max_tcpci_tcpci_range[] = {
- 	regmap_reg_range(0x00, 0x95)
- };
-@@ -202,32 +197,49 @@ static void process_rx(struct max_tcpci_chip *chip, u16 status)
- 	tcpm_pd_receive(chip->port, &msg, rx_type);
- }
- 
-+static int get_vbus_regulator_handle(struct max_tcpci_chip *chip)
-+{
-+	if (IS_ERR_OR_NULL(chip->vbus_reg)) {
-+		chip->vbus_reg = devm_regulator_get_exclusive(chip->dev,
-+							      "vbus");
-+		if (IS_ERR_OR_NULL(chip->vbus_reg)) {
-+			dev_err(chip->dev,
-+				"Failed to get vbus regulator handle");
-+			return -ENODEV;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int max_tcpci_set_vbus(struct tcpci *tcpci, struct tcpci_data *tdata, bool source, bool sink)
- {
- 	struct max_tcpci_chip *chip = tdata_to_max_tcpci(tdata);
--	u8 buffer_source[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SOURCE};
--	u8 buffer_sink[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SINK};
--	u8 buffer_none[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_OFF};
--	struct i2c_client *i2c = chip->client;
- 	int ret;
- 
--	struct i2c_msg msgs[] = {
--		{
--			.addr = MAX_BUCK_BOOST_SID,
--			.flags = i2c->flags & I2C_M_TEN,
--			.len = 2,
--			.buf = source ? buffer_source : sink ? buffer_sink : buffer_none,
--		},
--	};
--
- 	if (source && sink) {
- 		dev_err(chip->dev, "Both source and sink set\n");
- 		return -EINVAL;
- 	}
- 
--	ret = i2c_transfer(i2c->adapter, msgs, 1);
-+	ret = get_vbus_regulator_handle(chip);
-+	if (ret) {
-+		/*
-+		 * Regulator is not necessary for sink only applications. Return
-+		 * success in cases where sink mode is being modified.
-+		 */
-+		return source ? ret : 1;
-+	}
-+
-+	if (source) {
-+		if (!regulator_is_enabled(chip->vbus_reg))
-+			ret = regulator_enable(chip->vbus_reg);
-+	} else {
-+		if (regulator_is_enabled(chip->vbus_reg))
-+			ret = regulator_disable(chip->vbus_reg);
-+	}
- 
--	return  ret < 0 ? ret : 1;
-+	return ret < 0 ? ret : 1;
- }
- 
- static void process_power_status(struct max_tcpci_chip *chip)
-
--- 
-2.53.0.rc2.204.g2597b5adb4-goog
-
+Best regards,
+Damon
 
