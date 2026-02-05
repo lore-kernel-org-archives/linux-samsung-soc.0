@@ -1,124 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF343A9DAE;
-	Thu,  5 Feb 2026 11:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770289522; cv=none; b=PUsHKGLk47nDYU9TfeRt/Es/6D74AKqyLIbP6CULV476DvfHDl9bof3DuC0C1KLGP4R6uA6L3QB7x/cblIXO/jOK9VrYiGTVk+dhW8riPmQhUYMHRSZHKcgoJ2PO0BYFqMU5zo17idWGXIrdVPZ+QU9Rom0PYi0adKbaNMf027c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770289522; c=relaxed/simple;
-	bh=3yroB5EuHT5Z0jDLlKLrB2U9tRJzVfP4UmJKpgI5erE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TrgoNr8ESIMmXFdpvyeyU5O2kCj5WmPVtb5u6vR0l4/oSlcq7n/5zlLzXft5Oe9KKiPR1DQEOXQYacuCiUPFcUexKEoxbxkp14sq5ZOiJEwa03bdzc9SXITBsD9ihFM2irp8RvX+ZBrp9k7BRGQxehdiVtqmosxr+8u3Dh2g6N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joYiMl9q; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624403ACEE6
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 12:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770293182; cv=pass; b=bfyIPjdMzgi5y+liDlvr73umunx7ewL8DuhElX+2zkPJhpk0qANNVJFp3nszf7/7qQIc6j9V5l1pzd06WcJlH77w0druF6U4+KBXCIM1q055z6em1x0uk9D8DSNVYvtoXEWF0XC/6SCslTwbyqqSAV9FvfkDVV3PBRk/zkrqoGU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770293182; c=relaxed/simple;
+	bh=epTizwofu6tUIWScFsKfhBb6Vw+PqSxYlpupgsKdrEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mbH93XmrqWVXBYxi+XTVN9vj0yghuCTemC35V37u/WbIkjMrxEkw3YnH0+6tgNgQIn0RV/fRDCXSuyyFlB6ATonymUabn78O/CAa6i8O0RbHeH5DveD1sHpFaSSHgWWkD3tzljMsGIeNlJhSl+H/lZDwMI4vVnhdqFwLkqcrrJE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aairm6CY; arc=pass smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joYiMl9q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D73C2BC87;
-	Thu,  5 Feb 2026 11:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770289522;
-	bh=3yroB5EuHT5Z0jDLlKLrB2U9tRJzVfP4UmJKpgI5erE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=joYiMl9qM8KAhoeKBW9E1QMN8hk8eaOGjyAspS/0YUOoYlm0oDqAZvM1HXPNxZ6P5
-	 6XZj/cIuiOEIN6D2RLHuCD01Xi0euxEJbdErB9BqhDu68UI005Seg7omuampRDhwbU
-	 7mUqkoQOwfo6wLLYZ6InUByDoDdRceZWk54jNwgojwHvcLKqEkEgdbO7bb2izLRQzf
-	 XOu9J79HkoivhwY2sT4eDWBwNgjSDJiSDwyqgUVlIPmLTICpTJU2wXtyR5uTlJmEoj
-	 yfdsextotM0IpC6UUcu0XrLBbHwkPp+zbJBuRVkU4fJjVJv22vEWumSRbQBKsRvzlg
-	 fmC+Up4g2M99g==
-From: Mark Brown <broonie@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
-References: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
-Subject: Re: (subset) [PATCH v7 00/20] Samsung S2MPG10 regulator and
- S2MPG11 PMIC drivers
-Message-Id: <177028951856.8936.9455009190205034946.b4-ty@kernel.org>
-Date: Thu, 05 Feb 2026 11:05:18 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aairm6CY"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59dd9aef51eso1084154e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 04:06:22 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770293180; cv=none;
+        d=google.com; s=arc-20240605;
+        b=g5tdVnxqL8fNi2tmm/LDqsMW8ZzAtkIQQbliDInx/EVQCYEkdp1pO7MlsIsww7dEGm
+         /vu7kOJ1M4BY27wrOqq/L+Oj0caL8cYiCpVtJncOeaAzjVV+lrmmF/arOHljNOqDg5HF
+         if5FBQeLtsG14pS5ltz28IoYQqnmGYtEYPiAizZerttR9VwGzVM5L+ax7u+7aoKgFm7b
+         aQs/1tdNYg6jYbToS7ILu+MtUjpTcmQtHlL8mXGE4/wp9+Vb0ER1UryU2NkSBzQef7lu
+         GJgCf9doPx32yNEYPzLsAGctjTG4upfXLBI4SByFNqnV998r57MZcZlNPpmABOnhwceY
+         rjRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
+        fh=lZUx67i/2iJbAEBBpmW7D1TbxyokQUlFDVC2alt5F/8=;
+        b=X1MqcEzbA3B98v1OF6nmn1a+pYvbyAkRnceEAL2gtQSVMhFpGoAG26+AtevnpXhWIm
+         HSPTDlq2mlUfFrvV5ah5TnoYJVtRDeeMsYcs2NScKdABZc4EPqh1ygih56AUOmPQJh56
+         yLfxYnj9ZcrcLFeVHhy3MPzTY1cMWD5slLAE+0Pj5QfHelpc5rz8MxRP/2paL+6VOwG8
+         yhy7JwP3ZVQIHE5KSVseb+1TB8hRkugussOnio/IgdVXOqFBJNVHNfk6Ezty/wcoWPCH
+         quUTmPmYe2OZS0Th63rXWxJQ+0jkUsHlVnNXT0AnS0qXR/XX6fu8Jm8dXx1l42wdTa/J
+         hwFA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770293180; x=1770897980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
+        b=aairm6CYrP5gbN7adLgwmLaStWmc5LLpMxrDDWJwMASwSVvhYYiAfHD7jyQFa3bIZ6
+         1pMdfMb033FVhAMlatLotidw/wGkIrrCEMXp7mSuUxL61cU1pVr5KEuoaKAQvfsH1bHZ
+         mntNuXS1UGNs/n01EZTtTNQKoq8/Py67Xvc8jby00DCpLtWFhhbh6F+w79x7kJGV1eR3
+         ryJHjBrVuL8qzWlABW3t9VDRH7s1IYMdOkjJdDKKFhKfA24QPLjCwmuKAHCxUv0KqcOK
+         6dsZ+lVGfbXAuh8p7MUFfv5wkVX3CECmsVOk7GMyFHltmrMQDiSbY3zozUzoEal1/ch8
+         VWjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770293180; x=1770897980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
+        b=RCKr0B+2zeVhJkrHViakUm7ekiHj/6x3gzXac4VfscVtry6Vhv+dbipS5E2LbjwG/7
+         X1bRvMesP2H3k1Ga18N4xNu1ffWVILcKLB1bbbHPBqkDmdNAc8KdQif+x00HDom6Nf9I
+         CUG+P4aPd9CwkpUq5MBbc4NhtK/S3rTSvw/Eh8gwvxkFClxcLdTjCchrkwz7i4dBGH9l
+         OZl3nSc8YfhAct1MzMkKNJJDuX+RnsmSE6XYICIQDpIs8KmEpj0QE7APJIZamR6sdY33
+         5Fy8F45FCKqkRWiFdeWsG0srSJ9qO9jpdERJKEWciHdaS0mhKUPGFJuGU50rX4WP6MA6
+         8WvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyMl3ZqA6KRO88N3JKZqC46D4vf8ANlMGjQ3R2iB1hRl9dsfrpLhucwkUoISU4qwG52uxgKlkDyuG5W3hxrXGMVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0OQQGUwpzPtYX6uLinXpoezJ6KbGlb6kJlm4cWWkEw7bKwzd7
+	T7zb0iEsaX2HuIDJiNh+nQI37vbljx+Uo1/onH4wFrGMM2O6KQeZFzytp5VdCyVQ9CXUfDbz8w9
+	cu01N/KGpdRQ4DpWQZvhjKQXxZ4XfqZwz7sa5DhS3MA==
+X-Gm-Gg: AZuq6aIeowGDqcb3gq1YV4KP5FDoW8vCtd2+2FBUxwVgZyDL9mOJgKO/i7HN48HfsxK
+	yP2v+uFc+t+C94FcKz6CA2AVzbLRY7xU/njBKwDCPyZXq7Qv8DmDQTSvik27iKZdtQoCuDQx+JE
+	jQ/IIlRQkOFzrqzXfEXUsRbonkckVex0rpLEQtlG7Rf6G0EXXWq2+zUhH003Nz928QtKDeAKGdo
+	tHs4HNu4ZEs/agj8+lGQIOgJd54k2E982N6I2d6WDcD1MqN4Et1w80TE0gg0YXCpH70aHDb
+X-Received: by 2002:a05:6512:10ce:b0:59d:ea35:bc8e with SMTP id
+ 2adb3069b0e04-59e38c2955bmr2270537e87.24.1770293180225; Thu, 05 Feb 2026
+ 04:06:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-47773
+References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
+In-Reply-To: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 5 Feb 2026 13:05:44 +0100
+X-Gm-Features: AZwV_Qio0mUxbt1hdbXGSjmWyyPdwpqKntqpt17Vt_Fu987EJSjXGSrypfMmYU0
+Message-ID: <CAPDyKFoRXaiZiZw0NmmgnJzfw3sCYi1cNAuLHUU6fyF-4gxDuA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] pmdomain: samsung: add support for Google GS101
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 22 Jan 2026 15:43:27 +0000, André Draszik wrote:
-> This series extends the existing S2MPG10 PMIC driver to add support for
-> the regulators, and adds new S2MPG11 core and regulator drivers.
-> 
-> --- dependency note ---
-> This series must be applied in-order, due to the regulator drivers
-> depending on headers & definitions added by the bindings and core
-> drivers.
-> 
-> [...]
+On Wed, 28 Jan 2026 at 17:10, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> Hi,
+>
+> This series adds support for the power domains on Google GS101.
+>
+> There are a few differences compared to SoCs already supported by this
+> driver:
+> * register access does not work via plain ioremap() / readl() /
+>   writel().
+>   Instead, the regmap created by the PMU driver must be used (which
+>   uses Arm SMCC calls under the hood).
+> * DTZPC: a call needs to be made before and after power domain off/on,
+>   to inform the EL3 firmware of the request.
+> * power domains can and are fed by a regulator rail and therefore
+>   regulator control needed be implemented.
+>
+> Bullet points 2 and 3 are new compared to previous versions of this
+> series, and related changes are in patches 1, 2, 9, and 10. I can merge
+> patch 9 (SMC call) into the gs101 patch (patch 7) if preferred, but for
+> now I kept them independent to make it easier to see changes compared
+> to previous versions of this series, and because patch 8 actually
+> applies to not only gs101, but to many newer Exynos SoCs, and to make
+> the two patches themselves easier to review and reason about.
+>
+> The DT update to add the new required properties on gs101 will be
+> posted separately.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+> Changes in v4:
+> - drop unneeded or already merged patches
+> - drop patch "pmdomain: samsung: convert to regmap_read_poll_timeout()"
+>   as Marek reported issues on some platforms
+> - rebase
+> - DTZPC related changes
+> - Link to v3: https://lore.kernel.org/r/20251016-gs101-pd-v3-0-7b30797396=
+e7@linaro.org
+>
+> Changes in v3:
+> - use additionalProperties, not unevaluatedProperties in patch 2
+> - fix path in $id in patch 2 (Rob)
+> - drop comment around 'select' in patch 2 (Rob)
+> - collect tags
+> - Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af=
+39@linaro.org
+>
+> Changes in v2:
+> - Krzysztof:
+>   - move google,gs101-pmu binding into separate file
+>   - mark devm_kstrdup_const() patch as fix
+>   - use bool for need_early_sync_state
+>   - merge patches 8 and 10 from v1 series into one patch
+> - collect tags
+> - Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea=
+7b@linaro.org
+>
+> ---
+> Andr=C3=A9 Draszik (10):
+>       dt-bindings: soc: google: add google,gs101-dtzpc
+>       dt-bindings: power: samsung: add google,gs101-pd
+>       dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate=
+ binding
+>       dt-bindings: soc: google: gs101-pmu: allow power domains as childre=
+n
+>       pmdomain: samsung: convert to using regmap
+>       pmdomain: samsung: don't hard-code offset for registers to 0 and 4
+>       pmdomain: samsung: add support for google,gs101-pd
+>       pmdomain: samsung: use dev_err() instead of pr_err()
+>       pmdomain: samsung: implement SMC to save / restore TZ config
+>       pmdomain: samsung: implement domain-supply regulator
+>
+>  .../devicetree/bindings/power/pd-samsung.yaml      |  29 ++-
+>  .../bindings/soc/google/google,gs101-dtzpc.yaml    |  42 ++++
+>  .../bindings/soc/google/google,gs101-pmu.yaml      |  97 ++++++++
+>  .../bindings/soc/samsung/exynos-pmu.yaml           |  20 --
+>  MAINTAINERS                                        |   2 +
+>  drivers/pmdomain/samsung/exynos-pm-domains.c       | 254 +++++++++++++++=
++++---
+>  6 files changed, 395 insertions(+), 49 deletions(-)
+> ---
+> base-commit: e3b32dcb9f23e3c3927ef3eec6a5842a988fb574
+> change-id: 20251001-gs101-pd-d4dc97d70a84
+>
+> Best regards,
+> --
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
 
-Applied to
+I have looked through the series and it looks good to me. I will be
+awaiting a new version and to get the DT patches acked, before I
+continue to apply patches.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[01/20] dt-bindings: firmware: google,gs101-acpm-ipc: convert regulators to lowercase
-        commit: e4691f356b2c24467eadc8b20f267e9e046f74cd
-[02/20] regulator: dt-bindings: add s2mpg10-pmic regulators
-        commit: 71bc6adae4102550717a8eeaa21d3f76f5149ac6
-[03/20] regulator: dt-bindings: add s2mpg11-pmic regulators
-        commit: 030158c0528d1cbfbe9eebed09bad604f6135734
-[10/20] regulator: add REGULATOR_LINEAR_VRANGE macro
-        commit: 7d33c0a4c6a3356db2b2f599820baf75d3753d44
-[11/20] regulator: s2mps11: drop two needless variable initialisations
-        commit: 0809d3dcc0dd8f597adbcd4d881063eb1b437987
-[12/20] regulator: s2mps11: use dev_err_probe() where appropriate
-        commit: 6430d65d7b74712e9ff60e270687d66265dad6f2
-[13/20] regulator: s2mps11: place constants on right side of comparison tests
-        commit: 223cefd021fa6ef5687159836871907aa3084fe2
-[14/20] regulator: s2mps11: update node parsing (allow -supply properties)
-        commit: 5b3c95739d674794730fbf3c678206f302609d27
-[15/20] regulator: s2mps11: refactor handling of external rail control
-        commit: 0042c880e43c54c9bf19c24a72e54eeea37995e3
-[16/20] regulator: s2mps11: add S2MPG10 regulator
-        commit: a2b8b9f33ce30ab51b33b52dc52e55d6930b9a02
-[17/20] regulator: s2mps11: refactor S2MPG10 ::set_voltage_time() for S2MPG11 reuse
-        commit: 8f23cfbe4463c3de2e552aed106e179c0c932b6e
-[18/20] regulator: s2mps11: refactor S2MPG10 regulator macros for S2MPG11 reuse
-        commit: 102dd11fc98261675a0664de1466616d7dad8d91
-[19/20] regulator: s2mps11: add S2MPG11 regulator
-        commit: 979dd8da76eb98b212f4e8cafc3c4019cfa3d93d
-[20/20] regulator: s2mps11: more descriptive gpio consumer name
-        commit: fe8429a2717fc01082502b0adf680a50b230eff7
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Kind regards
+Uffe
