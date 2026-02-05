@@ -1,66 +1,67 @@
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA9D32F764
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 21:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D83B332918
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 21:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770327754; cv=none; b=syEq0mxv3t7nHzGtoDt9tuXY8vNWYtYJyGHi6xfnWZ8R3HK18nctaGv+3Pcqmvis0QR5LAy74sbOTYnGuugiyRz+soeaZE70fzkatB3+v1UfbS2bG5DlAeDCmpwxbrEMK0IX0BY/PlspgvJEd0TixhHLw7//guMf/dPi0/Pvnic=
+	t=1770327754; cv=none; b=bnDf7NOGGoNgHL00Oje+3fcd+oZZ0gUlUUND4uBqwW/pesRZzeSPUsHmdeoJWTSuaYp7CB5HAlcaieKc1fMliroMMkP1D9AaZnmwat8MYoSl5haUEA0NDirLcUJcA96icfB//eP+d6P1zvjegMbc0c+8SHyPbbapIZooD5Fe8Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1770327754; c=relaxed/simple;
-	bh=RG/479Qxl4EQWx4UO+uB67bqkziiDabgau+g461xf5w=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Caza/2vcSBdcuKl4vFacIHbLB2Jen+VSiQ84v7aJcJD3pCfwzc0066z5qn9AIOsr/UMyG/cZCZZuBYfq+D0KV5COB7AZao7CRqxe6BpwY63H/mL69ZJaClQ3GDQr8dPFav3ucRM6W3uRCtYYN++I1DvA7MPko6U2FEjZB6+hhg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QQQjYSYJ; arc=none smtp.client-ip=209.85.218.67
+	bh=8zHh24Y4fV58aGGijAkWV1Y30FrSoWjyJKGi5X71ITA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mElnZ1Jp+tkiXlwM3P1/oDXtwOEApFGSLv3KI0gmG7dB4lZip1BUwIncphHi56zwLnGXZ/7y4Jk7JrZOsCNnLKHTC+T0LdYqYFe+qDTVEM3HApEaSpw9S7rM5Nh3ExrPtbjUDThLOG+LORloaNNROdnY8OKGSQHx8yBuV0IFBEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uqa5GMcC; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQQjYSYJ"
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b8845cb5862so204171366b.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 13:42:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uqa5GMcC"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6594382a264so2929072a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 13:42:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770327752; x=1770932552; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXPRumbBfZZxqaCk0CZTR3vdblmJxj3Gzg1b+SHujwo=;
-        b=QQQjYSYJHAYWVPWUfdKdJtdBS5H1BcSqGuNOzOLSC0q1ycUHmpxNtMLHnnhRbDWBSY
-         FqrBbRyj15sEx4fFtejjfZgWm1Y/CC5VO1XyU0PXBDn4UMqo+s3RyppE/jil4JULQf4R
-         IIZEHvLBFaDm5uKjfZlKdJ3I9YJY9n74+ZmwCC0MFdAoBoed2lkhowxg3jjFtA3RAkSo
-         gvH/xk/lbfR0bubyqGPES0qvY8t/vh3YzRFyGJKmS2MwKOJVPptR6MO4nqoGqhry3yfN
-         O2bWBdqnob6z4VQ/x9ul1jRBNB/pDi8+dTOlRXs55kW3eD5zlIQftPSaG1bNffDEDxCk
-         7f5w==
+        d=linaro.org; s=google; t=1770327753; x=1770932553; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=82wBgeiecw8diioZs9d1L/8/7KXtnNKqceYMhdMY7vA=;
+        b=uqa5GMcC9a9gG6XSFYDOpv/E61h8KL2rFnfGC6gNGNJoodFEojfsY3JjtECewJfJK4
+         Ton5rOMwrH0g1fMN7tm6maIrSiWlCxSnq2cyeDvZ5Ye5GNYMntmKfqkhsVZosejsNwdk
+         8+SsIzPcbQMClLRkEeV/p3ZCCCKqn/8reaus5C/3R6m0p0KqFIl5i/5bGYLOK7KN7E4D
+         cotUcaivP7XekcpUCmMC76wNiIwemtvtoN1PtsdZFov6Ho/7vRHIYGMvdZLNkTm/O/AN
+         Z/m2jxOHwjxS+/ghVYdrJuoq/3uJJWi2H4Tn1Shw79TDqCQGT5L8Iy5ZEj4aZctjyIu6
+         mhHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770327752; x=1770932552;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qXPRumbBfZZxqaCk0CZTR3vdblmJxj3Gzg1b+SHujwo=;
-        b=EcKvosK9qlyke2CAYrnsNT5gZWJ2RvQC5zzDS3Pe9QRWiObPiCHRCVl7mYSvbIFt2Z
-         48qr6KBLkoOcxK6dAPcSWyBd95ZrmVuE/ldgbw9C5OdueqZPuXnDbVXbjxKnWQz96gJM
-         YKGuaz2WCl/ZW9X4hvBmIhqbUTGfN3LhQ892BaZ7cagPMUjZWkS0nc4+aN35xzgLOlzn
-         2kw+AzDecZ/2agPCM3pQLexjD8bvD1v3dAit1xGFbmoM0dMVp6kZ7RGQ4Sd/p94n+jgb
-         A/XKF/83jbsHnez1yBsuuiP4OPfqQSNRClLKQbQtK2TmMYXpQEzlHAS1WZwoCR42nM86
-         XLYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUA4lhh7agvDXBA1hX/O4tg+IU7eGjPFPylguMTohN3YAl9VKAZby1JMnRB5DGfjkgtVUCyqpovmzFzV4tF1K/bjQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/z/JQ5kGHFg75TXsGDSroSGUzmMe5xzU/w2RxYNtDpJ+LG28v
-	Hn/pYvxVfCvTlKUVMAzYmtMpWtjXJXfdM9ihaamixqEmJcWiKCEW8lO/c7XL+7L8FxE=
-X-Gm-Gg: AZuq6aKoBgxGE3/pZktfgqgmz57rwwxVDByj7Fykcx0eDuUIAH2rtDh4zcCoO3/Y1HU
-	3oQ97deZiNoRjJxTDIpudCYoLZdN13/byjLdWlh6ofUt7CToRCmTyLVIGCoQy7D+onfLcXf9iVz
-	m6xELUaZOrkEI657Y986HOGFpszPJIaepijU4WmEabFAidbF10qQnqx6juDYj2K8QgVq5EJrN9x
-	yny9bOk9wSQ6jl20OQa8qRe9S0tci8d5ilYf9Ts4fS5D+v5niCkS6ShzLJqsIysfyjMajyZr/AZ
-	ylbnDKm3I2GVb5DqHgYFGNxDzsMC3h+Ad2JeBdvXqfehycJY3iszco1D4Ia6X9IgoRou8RY7giJ
-	wzw/cfsMD9os0p0E8qQpIHachEYCE0EpfBrVsHbipjytb4fSk3bEDE1JY2nWfVQtV5WOpvL/z9Z
-	0ozJLn6+O18TwJnLb0dWd6b79HnzuoDmx2SV3KBfDv+hQ+HV5/I04zye1MXPuxrbaJRVXfNjO4d
-	uHZ+w==
-X-Received: by 2002:a17:907:a4c:b0:b88:637d:aa75 with SMTP id a640c23a62f3a-b8edf378326mr26959066b.30.1770327752121;
+        d=1e100.net; s=20230601; t=1770327753; x=1770932553;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=82wBgeiecw8diioZs9d1L/8/7KXtnNKqceYMhdMY7vA=;
+        b=l3xm/vKH9Knwy+8otZ5uquLrqcIZ9Z8cjoDa3YBnuqNtPw2yMCz/Ji9k/v+5vLix1e
+         3x+99AK9sFaFw0RoW1GD0pvUuSu0zbyV89FeK4L3MkRrUsAMVP3cLvlvNyUvEVNLg4J8
+         kEFQdJRsS4Rt+HLa95xDBIp+FWM+to1GzXjbmeoehLmperIiz0eHGUmVFAATl8LKf53R
+         Lz3ezsqUJ6qv6MmnmV7ef9X5c27pnhdnrcGazZFYfErZH7VAKnc2v0VqGuJmA8rtak6H
+         PjRuI93snP7uambXDKoMp+W9uuNpNt5rdxQbOW6ihuEkK9eEUCGomBQvj1VxghJZ8cQ1
+         ur1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWVReAsJ17Dmur1J8r+VhIgpscMmsRZDuwv/ncbbStu+0XkDubm+lx01LwhhHSsXJR09MQsKZ3Jjo1FDPbUW73AJg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWtoFobCvASjLozSSMhWBh52wRaQ+95/sE8exySoDo0Ulknpa4
+	vlAi3FCyRGRWhwiltQG9v4izzLCT0Zodd5HcBmLI0jZvjrGlV9JSJjA3qx4TGzArqiQ=
+X-Gm-Gg: AZuq6aKeafPICMMKoGu7U59NKIxl5dBjnraSBf8TpedWMBQCyUbmVbTRsdEw1W5Bdqu
+	Egf84W8Z1GBua7iUnqJaeMqOGZjNAF7xGCjIVQhuKDlLoP3A/bfj29wUItal2m/178O/py/bIPz
+	NF5r9QlWKT7ZoNwzJV3fANlNLQOF4SJVYE8x5V96vMStSvnpgFu6h8lt1BU0lYKSbFTLR0bgcth
+	Hm6FjcccNFmvARdGMaoOHKj1fo0kS5x1GAXqotOxGeGv1iQXQl/ugABgz+PB/KfGiriuqWs0S53
+	KN30ZhR/+ce+IexuuvLnRC6xif2RZV/mQYo9IxD1yapNmYjekXnu8HqvgxW/p+UNmtXuoUsQH2T
+	utfKXsbWzxOER2ooY259NKHDsgeoKAIFVWPnuJT5mu8dR4kTTVyYEfWj7uFBDxm8hFpZnqIXsw/
+	Xw4jPyK/z7NYZ1Eg+CseQSajkYW0DsKp45lHZ18wVcaNjYd/R/CEAlRZesaOHgqx7sHmhcUeMcN
+	D56SQ==
+X-Received: by 2002:a17:907:3d4b:b0:b88:6542:86a0 with SMTP id a640c23a62f3a-b8edf36813amr26650466b.54.1770327752702;
         Thu, 05 Feb 2026 13:42:32 -0800 (PST)
 Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8eda7a0074sm21859966b.18.2026.02.05.13.42.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8eda7a0074sm21859966b.18.2026.02.05.13.42.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 13:42:31 -0800 (PST)
+        Thu, 05 Feb 2026 13:42:32 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v5 00/10] pmdomain: samsung: add support for Google GS101
-Date: Thu, 05 Feb 2026 21:42:28 +0000
-Message-Id: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
+Date: Thu, 05 Feb 2026 21:42:29 +0000
+Subject: [PATCH v5 01/10] dt-bindings: soc: google: add google,gs101-dtzpc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,11 +70,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAMUOhWkC/2XN3QqDIByH4VsZHs/x9yPNHe0+xg78qoRRoSM2o
- nufBTFHJ8JPfF5nlHwMPqHraUbRTyGFoc+jOp+Q7XTfehxc3ogCrQgAwW0i+RwddtxZJZ0EXXO
- Un4/RN+G9pe6PvLuQXkP8bOWJrLd7RPwiE8GAG7AGLBCvpbk9Q6/jcBlii9bKREupCkmzZA3Xw
- hmqG6YOkhWSlH+yLKVhIJVkSnh5kHyXAgitC8mztMZL4yrNQcCfXJblCyIOtptPAQAA
-X-Change-ID: 20251001-gs101-pd-d4dc97d70a84
+Message-Id: <20260205-gs101-pd-v5-1-ede49cdb57a6@linaro.org>
+References: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
+In-Reply-To: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -86,92 +85,81 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-Hi,
-
-This series adds support for the power domains on Google GS101.
-
-There are a few differences compared to SoCs already supported by this
-driver:
-* register access does not work via plain ioremap() / readl() /
-  writel().
-  Instead, the regmap created by the PMU driver must be used (which
-  uses Arm SMCC calls under the hood).
-* DTZPC: a call needs to be made before and after power domain off/on,
-  to inform the EL3 firmware of the request.
-* power domains can and are fed by a regulator rail and therefore
-  regulator control needed be implemented.
-
-Bullet points 2 and 3 are new since version 4 of this series, and
-related changes are in patches 1, 2, 9, and 10. I can merge patch 9
-(SMC call) into the gs101 patch (patch 7) if preferred, but for now I
-kept them independent to make it easier to see changes compared to
-previous versions of this series, and because patch 9 actually applies
-to not only gs101, but to many newer Exynos SoCs, and to make patches 9
-and 10 themselves easier to review and reason about.
-
-The DT update to add the new required properties on gs101 will be
-posted separately.
+The Exynos Distributed TruztZone Protection Control (D_TZPC) provides
+an interface to the protection bits that are included in the TrustZone
+design in a secure system. It configures each area of the memory as
+secure or non-secure.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v5:
-- add domain-supply to binding (patch 2)
-- Link to v4: https://lore.kernel.org/r/20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org
+ .../bindings/soc/google/google,gs101-dtzpc.yaml    | 42 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 43 insertions(+)
 
-Changes in v4:
-- drop unneeded or already merged patches
-- drop patch "pmdomain: samsung: convert to regmap_read_poll_timeout()"
-  as Marek reported issues on some platforms
-- rebase
-- DTZPC related changes
-- Link to v3: https://lore.kernel.org/r/20251016-gs101-pd-v3-0-7b30797396e7@linaro.org
+diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a8c61ce069d6910c47753bf14a792eb58e6ae182
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+@@ -0,0 +1,42 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/google/google,gs101-dtzpc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos Distributed TruztZone Protection Control.
++
++description:
++  Distributed TrustZone Protection Control (D_TZPC) provides an interface to the
++  protection bits that are included in the TrustZone design in a secure system.
++  It configures each area of the memory as secure or non-secure.
++
++maintainers:
++  - André Draszik <andre.draszik@linaro.org>
++
++properties:
++  compatible:
++    const: google,gs101-dtzpc
++
++  clocks:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/google,gs101.h>
++
++    dtzpc_hsi0: dtzpc@11010000 {
++      compatible = "google,gs101-dtzpc";
++      reg = <0x11010000 0x10000>;
++      clocks = <&cmu_hsi0 CLK_GOUT_HSI0_D_TZPC_HSI0_PCLK>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 900fc00b73e6d17443f7cee12fa7589b56facaaa..7fc1964b6beaf835a398a9bcee4ded191034d2e3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10855,6 +10855,7 @@ P:	Documentation/process/maintainer-soc-clean-dts.rst
+ C:	irc://irc.oftc.net/pixel6-kernel-dev
+ F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+ F:	Documentation/devicetree/bindings/phy/google,lga-usb-phy.yaml
++F:	Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
+ F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
+ F:	Documentation/devicetree/bindings/usb/google,lga-dwc3.yaml
+ F:	arch/arm64/boot/dts/exynos/google/
 
-Changes in v3:
-- use additionalProperties, not unevaluatedProperties in patch 2
-- fix path in $id in patch 2 (Rob)
-- drop comment around 'select' in patch 2 (Rob)
-- collect tags
-- Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org
-
-Changes in v2:
-- Krzysztof:
-  - move google,gs101-pmu binding into separate file
-  - mark devm_kstrdup_const() patch as fix
-  - use bool for need_early_sync_state
-  - merge patches 8 and 10 from v1 series into one patch
-- collect tags
-- Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org
-
----
-André Draszik (10):
-      dt-bindings: soc: google: add google,gs101-dtzpc
-      dt-bindings: power: samsung: add google,gs101-pd
-      dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate binding
-      dt-bindings: soc: google: gs101-pmu: allow power domains as children
-      pmdomain: samsung: convert to using regmap
-      pmdomain: samsung: don't hard-code offset for registers to 0 and 4
-      pmdomain: samsung: add support for google,gs101-pd
-      pmdomain: samsung: use dev_err() instead of pr_err()
-      pmdomain: samsung: implement SMC to save / restore TZ config
-      pmdomain: samsung: implement domain-supply regulator
-
- .../devicetree/bindings/power/pd-samsung.yaml      |  33 ++-
- .../bindings/soc/google/google,gs101-dtzpc.yaml    |  42 ++++
- .../bindings/soc/google/google,gs101-pmu.yaml      |  97 ++++++++
- .../bindings/soc/samsung/exynos-pmu.yaml           |  20 --
- MAINTAINERS                                        |   2 +
- drivers/pmdomain/samsung/exynos-pm-domains.c       | 254 ++++++++++++++++++---
- 6 files changed, 399 insertions(+), 49 deletions(-)
----
-base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
-change-id: 20251001-gs101-pd-d4dc97d70a84
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.53.0.rc2.204.g2597b5adb4-goog
 
