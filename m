@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775EE34F27B;
-	Thu,  5 Feb 2026 11:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF343A9DAE;
+	Thu,  5 Feb 2026 11:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770289518; cv=none; b=JIUZFbgSlZ2Z12uf0ipTns1ChTuqbXX2IhnPnYBWXZI5GcgMfxhtQLjDsDoODXXnPGYFY/5xVK5/eaSOTMsuu0z2daQ42Isp2EFvd2otejF+hKzwNQA0/yX2+jrXWHI5byKuoJhp2+XTDjHHZhqxBpYsLecTTrObMBefuZ0zpKc=
+	t=1770289522; cv=none; b=PUsHKGLk47nDYU9TfeRt/Es/6D74AKqyLIbP6CULV476DvfHDl9bof3DuC0C1KLGP4R6uA6L3QB7x/cblIXO/jOK9VrYiGTVk+dhW8riPmQhUYMHRSZHKcgoJ2PO0BYFqMU5zo17idWGXIrdVPZ+QU9Rom0PYi0adKbaNMf027c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770289518; c=relaxed/simple;
-	bh=suyIuqg+KTxdcWb2X5y7+eGvbERM9TmGzZPsZFEkI+8=;
+	s=arc-20240116; t=1770289522; c=relaxed/simple;
+	bh=3yroB5EuHT5Z0jDLlKLrB2U9tRJzVfP4UmJKpgI5erE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cA2MqO+OrDWsBgDbc1/yaU/LCaKQaT551Nx6AMgsaobjHXJWQQqKY1WvGnaeZs1zYXaxX2cBCFmZ7mh0MqT/09K68fQTUmqQeuCiFMndfMRNcnOnFHSWFxWYnbVSDcc33URf8Cerfnh5IARPCmam1DDixPzzTdkP1U+gb1mjaB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krmQ41wa; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=TrgoNr8ESIMmXFdpvyeyU5O2kCj5WmPVtb5u6vR0l4/oSlcq7n/5zlLzXft5Oe9KKiPR1DQEOXQYacuCiUPFcUexKEoxbxkp14sq5ZOiJEwa03bdzc9SXITBsD9ihFM2irp8RvX+ZBrp9k7BRGQxehdiVtqmosxr+8u3Dh2g6N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joYiMl9q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krmQ41wa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE961C4CEF7;
-	Thu,  5 Feb 2026 11:05:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joYiMl9q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D73C2BC87;
+	Thu,  5 Feb 2026 11:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770289518;
-	bh=suyIuqg+KTxdcWb2X5y7+eGvbERM9TmGzZPsZFEkI+8=;
+	s=k20201202; t=1770289522;
+	bh=3yroB5EuHT5Z0jDLlKLrB2U9tRJzVfP4UmJKpgI5erE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=krmQ41wasR2nlBi0SjvFLQT4DhDmqm7MxQOfqSbSwktjZmdroN1uEyOn1PyQOnJfk
-	 fjgQWr3u5ouVRJaY7NkO0Dgfn9HsQuAu3soao3D7/yHGczHaMbXoDRgkI6RaqhXMJR
-	 gauhMpW4CNiz3quynPJ0DbDiQQNG1ETl1UYBSluaAk8jUUqLmoX22XAJnfWH1As9W4
-	 2vr94osS1YX1/je6zqRgbt7OvpROh/2oZdXDkGXzlcnhWstHKIqvrAzSaiBSmeJttt
-	 t/aIJ9tO1j532LJomtyifvshdjPQMK6UI5uwdrm+Bh0/4xlSZDiGJgJYjoYabqCSwD
-	 ue9DRtcLxoIKg==
+	b=joYiMl9qM8KAhoeKBW9E1QMN8hk8eaOGjyAspS/0YUOoYlm0oDqAZvM1HXPNxZ6P5
+	 6XZj/cIuiOEIN6D2RLHuCD01Xi0euxEJbdErB9BqhDu68UI005Seg7omuampRDhwbU
+	 7mUqkoQOwfo6wLLYZ6InUByDoDdRceZWk54jNwgojwHvcLKqEkEgdbO7bb2izLRQzf
+	 XOu9J79HkoivhwY2sT4eDWBwNgjSDJiSDwyqgUVlIPmLTICpTJU2wXtyR5uTlJmEoj
+	 yfdsextotM0IpC6UUcu0XrLBbHwkPp+zbJBuRVkU4fJjVJv22vEWumSRbQBKsRvzlg
+	 fmC+Up4g2M99g==
 From: Mark Brown <broonie@kernel.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -41,12 +41,12 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  linux-gpio@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
  Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
-References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
-Subject: Re: (subset) [PATCH v6 00/20] Samsung S2MPG10 regulator and
+In-Reply-To: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
+References: <20260122-s2mpg1x-regulators-v7-0-3b1f9831fffd@linaro.org>
+Subject: Re: (subset) [PATCH v7 00/20] Samsung S2MPG10 regulator and
  S2MPG11 PMIC drivers
-Message-Id: <177028951465.8936.7820400020144729535.b4-ty@kernel.org>
-Date: Thu, 05 Feb 2026 11:05:14 +0000
+Message-Id: <177028951856.8936.9455009190205034946.b4-ty@kernel.org>
+Date: Thu, 05 Feb 2026 11:05:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,14 +57,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-47773
 
-On Mon, 05 Jan 2026 09:01:36 +0000, André Draszik wrote:
+On Thu, 22 Jan 2026 15:43:27 +0000, André Draszik wrote:
 > This series extends the existing S2MPG10 PMIC driver to add support for
 > the regulators, and adds new S2MPG11 core and regulator drivers.
 > 
 > --- dependency note ---
 > This series must be applied in-order, due to the regulator drivers
 > depending on headers & definitions added by the bindings and core
-> drivers. I would expect them all to go via the MFD tree.
+> drivers.
 > 
 > [...]
 
@@ -74,6 +74,8 @@ Applied to
 
 Thanks!
 
+[01/20] dt-bindings: firmware: google,gs101-acpm-ipc: convert regulators to lowercase
+        commit: e4691f356b2c24467eadc8b20f267e9e046f74cd
 [02/20] regulator: dt-bindings: add s2mpg10-pmic regulators
         commit: 71bc6adae4102550717a8eeaa21d3f76f5149ac6
 [03/20] regulator: dt-bindings: add s2mpg11-pmic regulators
