@@ -1,204 +1,177 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CC0392814;
-	Thu,  5 Feb 2026 16:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA9D32F764
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 21:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770308786; cv=none; b=uee30+yfvq3ff6xxrYI/Y/0KhOawkaC5NosZTjaYtvVseZAETuTVcQCAgZWP4Ni1UFFLUHBBLMghHFvlZEATwZdw+kJVFRxg/O3EnWO4sTwHd5b1k3EyG79Q6fQYjT5ZQrJsNscDdVaLSZjYL4LDGPSStkRBwYG4tp7gY0Vpdj8=
+	t=1770327754; cv=none; b=syEq0mxv3t7nHzGtoDt9tuXY8vNWYtYJyGHi6xfnWZ8R3HK18nctaGv+3Pcqmvis0QR5LAy74sbOTYnGuugiyRz+soeaZE70fzkatB3+v1UfbS2bG5DlAeDCmpwxbrEMK0IX0BY/PlspgvJEd0TixhHLw7//guMf/dPi0/Pvnic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770308786; c=relaxed/simple;
-	bh=KXMU8vm2s788X7BoVkEDHomQesKLcsAueBWcMpywyIk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RDIla/2ByOLH1Dknb3F6cpjcAKJ3T8ubTXUPSacuafA+t5BmQUOAoSCtGgNmSQv0G3KzqM9968tcJsnOzltUaeaHA68LW/2V1u5NR7xJqgGVDXxOThL3Xzk85FhpF8AFG7cuPwq6tdawQ79s1ETLLEUwlZx5PUva+qa4JMb2P4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=f0Pbr3yS; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1770327754; c=relaxed/simple;
+	bh=RG/479Qxl4EQWx4UO+uB67bqkziiDabgau+g461xf5w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Caza/2vcSBdcuKl4vFacIHbLB2Jen+VSiQ84v7aJcJD3pCfwzc0066z5qn9AIOsr/UMyG/cZCZZuBYfq+D0KV5COB7AZao7CRqxe6BpwY63H/mL69ZJaClQ3GDQr8dPFav3ucRM6W3uRCtYYN++I1DvA7MPko6U2FEjZB6+hhg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QQQjYSYJ; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="f0Pbr3yS"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 02DFF26500;
-	Thu,  5 Feb 2026 17:26:24 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id O10XIGeS0c6f; Thu,  5 Feb 2026 17:26:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1770308783; bh=KXMU8vm2s788X7BoVkEDHomQesKLcsAueBWcMpywyIk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=f0Pbr3ySc7YFgI3Ouz8AdCoamV6SAlvwNv1okHqPmVa//1DLGDgARy21RWuARGNa8
-	 qmSbdCIBtVrMcRwumIuABS1BW9G202oJJlT7IORxQw/S4/nVIT/uX5nSZSrCHuRfTn
-	 qevOySS8blRynzLP3tL/M6qxV41KraxGovGZoNX1BYWvqBtoicAsILBaSxZQMr98qf
-	 5gWxWvVgGf/ARrFpyFThlk/K9aK5fJgzI6HJPRALt4HzEKW4hkD8g9+hOwbxuvjW6N
-	 NxBb5QN1YHfRFjLIoTuVOBiCm+oLZoCCyaYgQ77KCctuMhfK8BSH+yKUmvhnu/x6KS
-	 wn1PKRtlq1y5Q==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQQjYSYJ"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b8845cb5862so204171366b.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 13:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770327752; x=1770932552; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qXPRumbBfZZxqaCk0CZTR3vdblmJxj3Gzg1b+SHujwo=;
+        b=QQQjYSYJHAYWVPWUfdKdJtdBS5H1BcSqGuNOzOLSC0q1ycUHmpxNtMLHnnhRbDWBSY
+         FqrBbRyj15sEx4fFtejjfZgWm1Y/CC5VO1XyU0PXBDn4UMqo+s3RyppE/jil4JULQf4R
+         IIZEHvLBFaDm5uKjfZlKdJ3I9YJY9n74+ZmwCC0MFdAoBoed2lkhowxg3jjFtA3RAkSo
+         gvH/xk/lbfR0bubyqGPES0qvY8t/vh3YzRFyGJKmS2MwKOJVPptR6MO4nqoGqhry3yfN
+         O2bWBdqnob6z4VQ/x9ul1jRBNB/pDi8+dTOlRXs55kW3eD5zlIQftPSaG1bNffDEDxCk
+         7f5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770327752; x=1770932552;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qXPRumbBfZZxqaCk0CZTR3vdblmJxj3Gzg1b+SHujwo=;
+        b=EcKvosK9qlyke2CAYrnsNT5gZWJ2RvQC5zzDS3Pe9QRWiObPiCHRCVl7mYSvbIFt2Z
+         48qr6KBLkoOcxK6dAPcSWyBd95ZrmVuE/ldgbw9C5OdueqZPuXnDbVXbjxKnWQz96gJM
+         YKGuaz2WCl/ZW9X4hvBmIhqbUTGfN3LhQ892BaZ7cagPMUjZWkS0nc4+aN35xzgLOlzn
+         2kw+AzDecZ/2agPCM3pQLexjD8bvD1v3dAit1xGFbmoM0dMVp6kZ7RGQ4Sd/p94n+jgb
+         A/XKF/83jbsHnez1yBsuuiP4OPfqQSNRClLKQbQtK2TmMYXpQEzlHAS1WZwoCR42nM86
+         XLYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA4lhh7agvDXBA1hX/O4tg+IU7eGjPFPylguMTohN3YAl9VKAZby1JMnRB5DGfjkgtVUCyqpovmzFzV4tF1K/bjQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/z/JQ5kGHFg75TXsGDSroSGUzmMe5xzU/w2RxYNtDpJ+LG28v
+	Hn/pYvxVfCvTlKUVMAzYmtMpWtjXJXfdM9ihaamixqEmJcWiKCEW8lO/c7XL+7L8FxE=
+X-Gm-Gg: AZuq6aKoBgxGE3/pZktfgqgmz57rwwxVDByj7Fykcx0eDuUIAH2rtDh4zcCoO3/Y1HU
+	3oQ97deZiNoRjJxTDIpudCYoLZdN13/byjLdWlh6ofUt7CToRCmTyLVIGCoQy7D+onfLcXf9iVz
+	m6xELUaZOrkEI657Y986HOGFpszPJIaepijU4WmEabFAidbF10qQnqx6juDYj2K8QgVq5EJrN9x
+	yny9bOk9wSQ6jl20OQa8qRe9S0tci8d5ilYf9Ts4fS5D+v5niCkS6ShzLJqsIysfyjMajyZr/AZ
+	ylbnDKm3I2GVb5DqHgYFGNxDzsMC3h+Ad2JeBdvXqfehycJY3iszco1D4Ia6X9IgoRou8RY7giJ
+	wzw/cfsMD9os0p0E8qQpIHachEYCE0EpfBrVsHbipjytb4fSk3bEDE1JY2nWfVQtV5WOpvL/z9Z
+	0ozJLn6+O18TwJnLb0dWd6b79HnzuoDmx2SV3KBfDv+hQ+HV5/I04zye1MXPuxrbaJRVXfNjO4d
+	uHZ+w==
+X-Received: by 2002:a17:907:a4c:b0:b88:637d:aa75 with SMTP id a640c23a62f3a-b8edf378326mr26959066b.30.1770327752121;
+        Thu, 05 Feb 2026 13:42:32 -0800 (PST)
+Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8eda7a0074sm21859966b.18.2026.02.05.13.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Feb 2026 13:42:31 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v5 00/10] pmdomain: samsung: add support for Google GS101
+Date: Thu, 05 Feb 2026 21:42:28 +0000
+Message-Id: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 05 Feb 2026 21:56:07 +0530
-Message-Id: <DG7630P5V7QZ.1FLAW5QKEV4BZ@disroot.org>
-Cc: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2 07/12] mfd: sec: store hardware revision in
- sec_pmic_dev and add S2MU005 support
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "Kaustabh Chakraborty" <kauschluss@disroot.org>,
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Lee Jones"
- <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "MyungJoo Ham" <myungjoo.ham@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>, "Sebastian Reichel"
- <sre@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>, "Alexandre
- Belloni" <alexandre.belloni@bootlin.com>, "Jonathan Corbet"
- <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>
-References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
- <20260126-s2mu005-pmic-v2-7-78f1a75f547a@disroot.org>
- <f6d1340062448cf52e4c034d250524e030877898.camel@linaro.org>
- <DG69QZBG97G3.1458CJYT0YG9C@disroot.org>
-In-Reply-To: <DG69QZBG97G3.1458CJYT0YG9C@disroot.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMUOhWkC/2XN3QqDIByH4VsZHs/x9yPNHe0+xg78qoRRoSM2o
+ nufBTFHJ8JPfF5nlHwMPqHraUbRTyGFoc+jOp+Q7XTfehxc3ogCrQgAwW0i+RwddtxZJZ0EXXO
+ Un4/RN+G9pe6PvLuQXkP8bOWJrLd7RPwiE8GAG7AGLBCvpbk9Q6/jcBlii9bKREupCkmzZA3Xw
+ hmqG6YOkhWSlH+yLKVhIJVkSnh5kHyXAgitC8mztMZL4yrNQcCfXJblCyIOtptPAQAA
+X-Change-ID: 20251001-gs101-pd-d4dc97d70a84
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
 
-On 2026-02-04 20:35 +05:30, Kaustabh Chakraborty wrote:
-> On 2026-02-04 14:17 +00:00, Andr=C3=A9 Draszik wrote:
->> Hi Kaustabh,
->>
->> On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
->>> The device revision matters in cases when in some PMICs, the correct
->>> register offsets very in different revisions. Instead of just debug
->>
->> s/very/vary
->>
->>> printing the value, store it in the driver data struct.
->>
->> Please mention that you're not doing that for s2mpg1x, though.
->>
->>>=20
->>> Unlike other devices, S2MU005 has its hardware revision ID in register
->>> offset 0x73. Allow handling different devices and add support for S2MU0=
-05.
->>>=20
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>> ---
->>> =C2=A0drivers/mfd/sec-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 41 ++++++++++++++++++++++++++++++----------
->>> =C2=A0include/linux/mfd/samsung/core.h |=C2=A0 1 +
->>> =C2=A02 files changed, 32 insertions(+), 10 deletions(-)
->>>=20
->>> diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
->>> index bc2a1f2c6dc7a..069a1ba9aa1f1 100644
->>> --- a/drivers/mfd/sec-common.c
->>> +++ b/drivers/mfd/sec-common.c
->>> @@ -16,6 +16,7 @@
->>> =C2=A0#include <linux/mfd/samsung/irq.h>
->>> =C2=A0#include <linux/mfd/samsung/s2mps11.h>
->>> =C2=A0#include <linux/mfd/samsung/s2mps13.h>
->>> +#include <linux/mfd/samsung/s2mu005.h>
->>> =C2=A0#include <linux/module.h>
->>> =C2=A0#include <linux/of.h>
->>> =C2=A0#include <linux/pm.h>
->>> @@ -111,17 +112,38 @@ static const struct mfd_cell s2mu005_devs[] =3D {
->>> =C2=A0	MFD_CELL_OF("s2mu005-rgb", NULL, NULL, 0, 0, "samsung,s2mu005-rg=
-b"),
->>> =C2=A0};
->>> =C2=A0
->>> -static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
->>> +static int sec_pmic_store_rev(struct sec_pmic_dev *sec_pmic)
->>> =C2=A0{
->>> -	unsigned int val;
->>> +	unsigned int reg, mask, shift;
->>> +	int ret;
->>> =C2=A0
->>> -	/* For s2mpg1x, the revision is in a different regmap */
->>> -	if (sec_pmic->device_type =3D=3D S2MPG10)
->>> -		return;
->>> +	switch (sec_pmic->device_type) {
->>> +	case S2MPG10:
->>> +		/* For s2mpg1x, the revision is in a different regmap */
->>> +		return 0;
->>> +	case S2MU005:
->>> +		reg =3D S2MU005_REG_ID;
->>> +		mask =3D S2MU005_ID_MASK;
->>> +		shift =3D S2MU005_ID_SHIFT;
->>> +		break;
->>> +	default:
->>> +		/* For other device types, the REG_ID is always the first register. =
-*/
->>> +		reg =3D S2MPS11_REG_ID;
->>> +		mask =3D ~0;
->>> +		shift =3D 0;
->>> +	}
->>> +
->>> +	ret =3D regmap_read(sec_pmic->regmap_pmic, reg, &sec_pmic->revision);
->>> +	if (ret) {
->>> +		dev_err(sec_pmic->dev, "Failed to read PMIC revision (%d)\n", ret);
->>> +		return ret;
->>> +	}
->>> +
->>> +	sec_pmic->revision &=3D mask;
->>> +	sec_pmic->revision >>=3D shift;
->>> =C2=A0
->>> -	/* For each device type, the REG_ID is always the first register */
->>> -	if (!regmap_read(sec_pmic->regmap_pmic, S2MPS11_REG_ID, &val))
->>> -		dev_dbg(sec_pmic->dev, "Revision: 0x%x\n", val);
->>> +	dev_dbg(sec_pmic->dev, "Revision: 0x%x\n", sec_pmic->revision);
->>> +	return 0;
->>> =C2=A0}
->>> =C2=A0
->>> =C2=A0static void sec_pmic_configure(struct sec_pmic_dev *sec_pmic)
->>> @@ -262,9 +284,8 @@ int sec_pmic_probe(struct device *dev, int device_t=
-ype, unsigned int irq,
->>> =C2=A0		return ret;
->>> =C2=A0
->>> =C2=A0	sec_pmic_configure(sec_pmic);
->>> -	sec_pmic_dump_rev(sec_pmic);
->>> =C2=A0
->>> -	return ret;
->>> +	return sec_pmic_store_rev(sec_pmic);
->>> =C2=A0}
->>> =C2=A0EXPORT_SYMBOL_GPL(sec_pmic_probe);
->>> =C2=A0
->>> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsu=
-ng/core.h
->>> index 43e0c5e55f5d3..56aa33d7e3d60 100644
->>> --- a/include/linux/mfd/samsung/core.h
->>> +++ b/include/linux/mfd/samsung/core.h
->>> @@ -70,6 +70,7 @@ struct sec_pmic_dev {
->>> =C2=A0
->>> =C2=A0	int device_type;
->>> =C2=A0	int irq;
->>> +	unsigned int revision;
->>
->> kerneldoc needs to be updated.
->
-> Seems like it needs cleanup anyway, I will send a patch for that
-> separately (if this patch gets dropped in the next rev, see below).
->
->>
->> Given the LED driver is the only driver & device so far which needs the
->> PMIC revision, maybe for now that driver could determine the revision
->> itself instead of adding this new member for everybody?
->
-> Hmm, implementing that would make this patch redundant. I'll do so.
+Hi,
 
-It however seems weird to not handle it here; we're already reading the
-revision value; it also makes sense to store it in the MFD driver
-itself.
+This series adds support for the power domains on Google GS101.
 
-Either way, the patch won't be redundant, because the reading part at
-least needs to be implemented here.
+There are a few differences compared to SoCs already supported by this
+driver:
+* register access does not work via plain ioremap() / readl() /
+  writel().
+  Instead, the regmap created by the PMU driver must be used (which
+  uses Arm SMCC calls under the hood).
+* DTZPC: a call needs to be made before and after power domain off/on,
+  to inform the EL3 firmware of the request.
+* power domains can and are fed by a regulator rail and therefore
+  regulator control needed be implemented.
 
->
->>
->> Cheers,
->> Andre'
->>
->>> =C2=A0};
->>> =C2=A0
->>> =C2=A0struct sec_platform_data {
+Bullet points 2 and 3 are new since version 4 of this series, and
+related changes are in patches 1, 2, 9, and 10. I can merge patch 9
+(SMC call) into the gs101 patch (patch 7) if preferred, but for now I
+kept them independent to make it easier to see changes compared to
+previous versions of this series, and because patch 9 actually applies
+to not only gs101, but to many newer Exynos SoCs, and to make patches 9
+and 10 themselves easier to review and reason about.
+
+The DT update to add the new required properties on gs101 will be
+posted separately.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v5:
+- add domain-supply to binding (patch 2)
+- Link to v4: https://lore.kernel.org/r/20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org
+
+Changes in v4:
+- drop unneeded or already merged patches
+- drop patch "pmdomain: samsung: convert to regmap_read_poll_timeout()"
+  as Marek reported issues on some platforms
+- rebase
+- DTZPC related changes
+- Link to v3: https://lore.kernel.org/r/20251016-gs101-pd-v3-0-7b30797396e7@linaro.org
+
+Changes in v3:
+- use additionalProperties, not unevaluatedProperties in patch 2
+- fix path in $id in patch 2 (Rob)
+- drop comment around 'select' in patch 2 (Rob)
+- collect tags
+- Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org
+
+Changes in v2:
+- Krzysztof:
+  - move google,gs101-pmu binding into separate file
+  - mark devm_kstrdup_const() patch as fix
+  - use bool for need_early_sync_state
+  - merge patches 8 and 10 from v1 series into one patch
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org
+
+---
+André Draszik (10):
+      dt-bindings: soc: google: add google,gs101-dtzpc
+      dt-bindings: power: samsung: add google,gs101-pd
+      dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate binding
+      dt-bindings: soc: google: gs101-pmu: allow power domains as children
+      pmdomain: samsung: convert to using regmap
+      pmdomain: samsung: don't hard-code offset for registers to 0 and 4
+      pmdomain: samsung: add support for google,gs101-pd
+      pmdomain: samsung: use dev_err() instead of pr_err()
+      pmdomain: samsung: implement SMC to save / restore TZ config
+      pmdomain: samsung: implement domain-supply regulator
+
+ .../devicetree/bindings/power/pd-samsung.yaml      |  33 ++-
+ .../bindings/soc/google/google,gs101-dtzpc.yaml    |  42 ++++
+ .../bindings/soc/google/google,gs101-pmu.yaml      |  97 ++++++++
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  20 --
+ MAINTAINERS                                        |   2 +
+ drivers/pmdomain/samsung/exynos-pm-domains.c       | 254 ++++++++++++++++++---
+ 6 files changed, 399 insertions(+), 49 deletions(-)
+---
+base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
+change-id: 20251001-gs101-pd-d4dc97d70a84
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
