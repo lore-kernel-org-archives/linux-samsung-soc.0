@@ -1,158 +1,122 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D103A9630
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 10:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775EE34F27B;
+	Thu,  5 Feb 2026 11:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770288839; cv=none; b=WHBHSjtPANb4t44ib3qHbGvUa42RD3gYtNtyoxrzidSX/XNL4kE8x+CqYoPPn93FQWzSLe5euutf3saQRiF6Fa3d9ejjhgGmMyzwI5hdRg64HAtpOGHpZi+LvE5UncgbE+BDp9ubPfzeucaVHBmHnlxveT8iLI4F1zOC09MXWuc=
+	t=1770289518; cv=none; b=JIUZFbgSlZ2Z12uf0ipTns1ChTuqbXX2IhnPnYBWXZI5GcgMfxhtQLjDsDoODXXnPGYFY/5xVK5/eaSOTMsuu0z2daQ42Isp2EFvd2otejF+hKzwNQA0/yX2+jrXWHI5byKuoJhp2+XTDjHHZhqxBpYsLecTTrObMBefuZ0zpKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770288839; c=relaxed/simple;
-	bh=dxFq6aqpPeZS/KnlY9gG7jWe91WmosMBfsS9OGUv+zA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OsF2e0yBUXESBnRac5XsuX729v6gvtClaXGFVfX37XQvoMaqFkiGYs1wl8PpH16Zt8703YxDYmDXQ9GFDOSyyFgecsiYMh1TE77UQup0ddVuKBwc/zqOqhoa4GZXm0+WuWJPoyf09EEWiLveBZJqP/e7roa7bUBhMfUJxZjfSzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y7wVITrd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1770289518; c=relaxed/simple;
+	bh=suyIuqg+KTxdcWb2X5y7+eGvbERM9TmGzZPsZFEkI+8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cA2MqO+OrDWsBgDbc1/yaU/LCaKQaT551Nx6AMgsaobjHXJWQQqKY1WvGnaeZs1zYXaxX2cBCFmZ7mh0MqT/09K68fQTUmqQeuCiFMndfMRNcnOnFHSWFxWYnbVSDcc33URf8Cerfnh5IARPCmam1DDixPzzTdkP1U+gb1mjaB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krmQ41wa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y7wVITrd"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47edd9024b1so6354395e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 02:53:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770288837; x=1770893637; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5MpsejmhVxhP6NeQbHNzOvF3lV3oAS4n7Jzmwih0cw4=;
-        b=Y7wVITrd4H2B2VrYNm16a5O9nGvyzthwy9v1r9BUHq9OC7edUAU5W9PmGyeBEsABvk
-         EFPcJu2+Ed3JzR3zaFkQniktMvPfwSZ8H5p/9WCv+G+ity1CyJ6sF68T402KDojqSLfY
-         sJHm6DsckdO3soPvxoUby+kVKiDrCTnG2YKy2Rk/Hd7hcXCv1K+syLIQESU4GJLZ+oPg
-         WDTIbTiaISw4Ha6dAqn7lVixg4V1UqLsHH09CY9GU6cjOOvJ3YgNyPyRxlTOBhfk8Qgi
-         yQUl1QIZ92Rypj+Q2euwEiRfVBn0CyIwlcPeMmffpMIkhrPSOaA2U3x/THTXrtWgaugr
-         Aiew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770288837; x=1770893637;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5MpsejmhVxhP6NeQbHNzOvF3lV3oAS4n7Jzmwih0cw4=;
-        b=dyN1UtgyhLbjLyZFF7Xy/Xi6XrnveBTATts3ASK8vWvntFztriaShg773QLVy3EsLC
-         7W0xg6v16tI81/4tYGP+NUZrUObbO8f9++T7l/QilGTTJMpQn4nw62Z+VbR4gQ5zxneP
-         6YOxZCvpZHlWCnPqpeXYuhA8M7jUNFCcneSzhdKntzG+nYyDdzjBvfDQa/uGr70pX98c
-         frXLQgBwiNuhLEowbEuzk7NffQTmuH+czB8w9fnqCOJc5G8iGKv8+7amYgVwlboksUzT
-         cbtq5I9Br2O0JSd0QbOE5UWeDI4WORuJ2xD/xEZcVgf5cqxocfSOCTlbz7eSyp/NNtrR
-         kkNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV09g3oKaPsHRqPoYF5Q0p8t6ghpfIxfZUNp3xnU4uVOLwS+IJShadzqoBZn3Jqv5FTDQcX+qpbepRSF0+R41Um4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0BhVPvEoOuUSdsua0BeK4fps7vN9X7JtbPriUAw4pPPHsB5LC
-	LFsZrwE8snongrQ7mPJOtauWnJBdflV1H2+50IYLPRGYwsIBs5kU6E3BiiQjRZNg6eI=
-X-Gm-Gg: AZuq6aL2rmsMjZjTglMuhIJk4IbcVcd0ygt4IwrPc3635nInt62IronL8ctCa1vy5K1
-	uV1CG/o2RvNwOavDSE9vzpYiTK76urdRJItCU9k9IDNVuC3YPFFWsyK3dwGdmgIsWtjFqndx5UM
-	8whP0/ozn/YOjLcO8RkJvbJUnBYtkwo2KRdWG5DJVioSY9gTGOig+2FXhIlF9kU4sBDMYh2qe+b
-	hjcfZFjsXt08OhtVj4/m7oFgCPkZLqfOwmwTWWcRjUntQFW7vhdTYkrSJ1B8vwxt0ZrGmeRSOWO
-	AHR8z2rs8st6O/zdB6RFlQi3RBEAFS7bLMo5r9NxCymyT3JTgZmSBxMAjvOBbjSsv5pCht88S+L
-	PHnSUFWRJto9N4/u2p5tzFaBk5Uz0dMh875NeBUq+hkitAsF1sBeoOsi4CcbfmG5qjtc1dF4rIt
-	HxEFudLsG1uT55SY7pXQ==
-X-Received: by 2002:a05:600c:6290:b0:47e:e20e:bbb7 with SMTP id 5b1f17b1804b1-4830e990a83mr75256515e9.25.1770288837395;
-        Thu, 05 Feb 2026 02:53:57 -0800 (PST)
-Received: from draszik.lan ([212.129.81.185])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48317d4a6b1sm50273325e9.11.2026.02.05.02.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 02:53:56 -0800 (PST)
-Message-ID: <09c1ac114ab108d5f186ee581617a524b9651e96.camel@linaro.org>
-Subject: Re: [PATCH v2 08/12] leds: flash: add support for Samsung S2M
- series PMIC flash LED device
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, Lee Jones
- <lee@kernel.org>,  Pavel Machek <pavel@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo
- Choi	 <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Jonathan Corbet	 <corbet@lwn.net>, Shuah
- Khan <skhan@linuxfoundation.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Date: Thu, 05 Feb 2026 10:54:16 +0000
-In-Reply-To: <20260126-s2mu005-pmic-v2-8-78f1a75f547a@disroot.org>
-References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
-	 <20260126-s2mu005-pmic-v2-8-78f1a75f547a@disroot.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build4 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krmQ41wa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE961C4CEF7;
+	Thu,  5 Feb 2026 11:05:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770289518;
+	bh=suyIuqg+KTxdcWb2X5y7+eGvbERM9TmGzZPsZFEkI+8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=krmQ41wasR2nlBi0SjvFLQT4DhDmqm7MxQOfqSbSwktjZmdroN1uEyOn1PyQOnJfk
+	 fjgQWr3u5ouVRJaY7NkO0Dgfn9HsQuAu3soao3D7/yHGczHaMbXoDRgkI6RaqhXMJR
+	 gauhMpW4CNiz3quynPJ0DbDiQQNG1ETl1UYBSluaAk8jUUqLmoX22XAJnfWH1As9W4
+	 2vr94osS1YX1/je6zqRgbt7OvpROh/2oZdXDkGXzlcnhWstHKIqvrAzSaiBSmeJttt
+	 t/aIJ9tO1j532LJomtyifvshdjPQMK6UI5uwdrm+Bh0/4xlSZDiGJgJYjoYabqCSwD
+	 ue9DRtcLxoIKg==
+From: Mark Brown <broonie@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+ kernel-team@android.com, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
+References: <20260105-s2mpg1x-regulators-v6-0-80f4b6d1bf9d@linaro.org>
+Subject: Re: (subset) [PATCH v6 00/20] Samsung S2MPG10 regulator and
+ S2MPG11 PMIC drivers
+Message-Id: <177028951465.8936.7820400020144729535.b4-ty@kernel.org>
+Date: Thu, 05 Feb 2026 11:05:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-47773
 
-Hi,
+On Mon, 05 Jan 2026 09:01:36 +0000, André Draszik wrote:
+> This series extends the existing S2MPG10 PMIC driver to add support for
+> the regulators, and adds new S2MPG11 core and regulator drivers.
+> 
+> --- dependency note ---
+> This series must be applied in-order, due to the regulator drivers
+> depending on headers & definitions added by the bindings and core
+> drivers. I would expect them all to go via the MFD tree.
+> 
+> [...]
 
-On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
+Applied to
 
-[...]
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-> diff --git a/drivers/leds/flash/leds-s2m-flash.c b/drivers/leds/flash/led=
-s-s2m-flash.c
-> new file mode 100644
-> index 0000000000000..1be2745c475bf
+Thanks!
 
-[...]
+[02/20] regulator: dt-bindings: add s2mpg10-pmic regulators
+        commit: 71bc6adae4102550717a8eeaa21d3f76f5149ac6
+[03/20] regulator: dt-bindings: add s2mpg11-pmic regulators
+        commit: 030158c0528d1cbfbe9eebed09bad604f6135734
+[10/20] regulator: add REGULATOR_LINEAR_VRANGE macro
+        commit: 7d33c0a4c6a3356db2b2f599820baf75d3753d44
+[11/20] regulator: s2mps11: drop two needless variable initialisations
+        commit: 0809d3dcc0dd8f597adbcd4d881063eb1b437987
+[12/20] regulator: s2mps11: use dev_err_probe() where appropriate
+        commit: 6430d65d7b74712e9ff60e270687d66265dad6f2
+[13/20] regulator: s2mps11: place constants on right side of comparison tests
+        commit: 223cefd021fa6ef5687159836871907aa3084fe2
+[14/20] regulator: s2mps11: update node parsing (allow -supply properties)
+        commit: 5b3c95739d674794730fbf3c678206f302609d27
+[15/20] regulator: s2mps11: refactor handling of external rail control
+        commit: 0042c880e43c54c9bf19c24a72e54eeea37995e3
+[16/20] regulator: s2mps11: add S2MPG10 regulator
+        commit: a2b8b9f33ce30ab51b33b52dc52e55d6930b9a02
+[17/20] regulator: s2mps11: refactor S2MPG10 ::set_voltage_time() for S2MPG11 reuse
+        commit: 8f23cfbe4463c3de2e552aed106e179c0c932b6e
+[18/20] regulator: s2mps11: refactor S2MPG10 regulator macros for S2MPG11 reuse
+        commit: 102dd11fc98261675a0664de1466616d7dad8d91
+[19/20] regulator: s2mps11: add S2MPG11 regulator
+        commit: 979dd8da76eb98b212f4e8cafc3c4019cfa3d93d
+[20/20] regulator: s2mps11: more descriptive gpio consumer name
+        commit: fe8429a2717fc01082502b0adf680a50b230eff7
 
-> +
-> +static int s2m_fled_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct sec_pmic_dev *pmic_drvdata =3D dev_get_drvdata(dev->parent);
-> +	struct s2m_fled *priv;
-> +	struct fwnode_handle *child;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-[...]
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> +
-> +	device_for_each_child_node(dev, child) {
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-If you switch to device_for_each_child_node_scoped(), you can get rid
-of the goto and the struct fwnode_handle *child declaration at the top,
-and you plug your leak in your early error return a few lines below.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> +		u32 reg;
-> +
-> +		if (fwnode_property_read_u32(child, "reg", &reg))
-> +			goto next_child;
-> +
-> +		if (reg >=3D spec->num_channels) {
-> +			dev_warn(dev, "channel %d is non-existent\n", reg);
-> +			goto next_child;
-> +		}
-> +
-> +		if (priv[reg].dev) {
-> +			dev_warn(dev, "duplicate node for channel %d\n", reg);
-> +			goto next_child;
-> +		}
-> +
-> +		priv[reg].dev =3D dev;
-> +		priv[reg].regmap =3D regmap;
-> +		priv[reg].channel =3D (u8)reg;
-> +		priv[reg].spec =3D spec;
-> +		priv[reg].pmic_revision =3D pmic_drvdata->revision;
-> +
-> +		ret =3D devm_mutex_init(dev, &priv[reg].lock);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "failed to create mutex lock\n");
-> +
-> +		ret =3D s2m_fled_init_channel(dev, child, &priv[reg]);
-> +		if (ret < 0)
-> +			dev_warn(dev, "channel init failed (%d)\n", ret);
-> +
-> +next_child:
-> +		fwnode_handle_put(child);
-> +	}
-> +
-> +	return 0;
-> +}
+Thanks,
+Mark
 
-Cheers,
-Andre'
