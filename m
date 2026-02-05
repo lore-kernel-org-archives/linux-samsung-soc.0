@@ -1,198 +1,133 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624403ACEE6
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Feb 2026 12:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770293182; cv=pass; b=bfyIPjdMzgi5y+liDlvr73umunx7ewL8DuhElX+2zkPJhpk0qANNVJFp3nszf7/7qQIc6j9V5l1pzd06WcJlH77w0druF6U4+KBXCIM1q055z6em1x0uk9D8DSNVYvtoXEWF0XC/6SCslTwbyqqSAV9FvfkDVV3PBRk/zkrqoGU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770293182; c=relaxed/simple;
-	bh=epTizwofu6tUIWScFsKfhBb6Vw+PqSxYlpupgsKdrEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mbH93XmrqWVXBYxi+XTVN9vj0yghuCTemC35V37u/WbIkjMrxEkw3YnH0+6tgNgQIn0RV/fRDCXSuyyFlB6ATonymUabn78O/CAa6i8O0RbHeH5DveD1sHpFaSSHgWWkD3tzljMsGIeNlJhSl+H/lZDwMI4vVnhdqFwLkqcrrJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aairm6CY; arc=pass smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496443E8C51;
+	Thu,  5 Feb 2026 15:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770305589; cv=none; b=topdOd64QHXC6E9WJkRyPM+GgGXOROxadyxyc6laWdqJMEtKQbsXLdxKaxk5K+yCrKteYZYMGwUODIR+PgcvIvu7jTMr3PV6h8DP9TcWqf6YxW2WxC08AHiDYVJ0EcYGeYm7fUvM4TzDYzMZIVlmK64sijVHacGF/QHdQLEo7DM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770305589; c=relaxed/simple;
+	bh=d/ARjMgSP9G3NH4cyP+2JNA1MGSoHi33QTSADO5xKvU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=g5AGMeT0jG1lPS/MOpBNzDcidLQ6+rX9Snxh7VSOYYPQOkUj5MaB63/EEOaDYjUmMjHO3tAs4vXQAHZ4BvVhjO9a7j+2vBxIlnyzBsPOzkJdtv5+0gYaf6mwbT78ZBXfsdX6XeAkHLsGfMMeUXqhGN1/FTrmqcVPgKnoRGtAWMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=brUCCggK; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aairm6CY"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59dd9aef51eso1084154e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Feb 2026 04:06:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770293180; cv=none;
-        d=google.com; s=arc-20240605;
-        b=g5tdVnxqL8fNi2tmm/LDqsMW8ZzAtkIQQbliDInx/EVQCYEkdp1pO7MlsIsww7dEGm
-         /vu7kOJ1M4BY27wrOqq/L+Oj0caL8cYiCpVtJncOeaAzjVV+lrmmF/arOHljNOqDg5HF
-         if5FBQeLtsG14pS5ltz28IoYQqnmGYtEYPiAizZerttR9VwGzVM5L+ax7u+7aoKgFm7b
-         aQs/1tdNYg6jYbToS7ILu+MtUjpTcmQtHlL8mXGE4/wp9+Vb0ER1UryU2NkSBzQef7lu
-         GJgCf9doPx32yNEYPzLsAGctjTG4upfXLBI4SByFNqnV998r57MZcZlNPpmABOnhwceY
-         rjRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
-        fh=lZUx67i/2iJbAEBBpmW7D1TbxyokQUlFDVC2alt5F/8=;
-        b=X1MqcEzbA3B98v1OF6nmn1a+pYvbyAkRnceEAL2gtQSVMhFpGoAG26+AtevnpXhWIm
-         HSPTDlq2mlUfFrvV5ah5TnoYJVtRDeeMsYcs2NScKdABZc4EPqh1ygih56AUOmPQJh56
-         yLfxYnj9ZcrcLFeVHhy3MPzTY1cMWD5slLAE+0Pj5QfHelpc5rz8MxRP/2paL+6VOwG8
-         yhy7JwP3ZVQIHE5KSVseb+1TB8hRkugussOnio/IgdVXOqFBJNVHNfk6Ezty/wcoWPCH
-         quUTmPmYe2OZS0Th63rXWxJQ+0jkUsHlVnNXT0AnS0qXR/XX6fu8Jm8dXx1l42wdTa/J
-         hwFA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770293180; x=1770897980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
-        b=aairm6CYrP5gbN7adLgwmLaStWmc5LLpMxrDDWJwMASwSVvhYYiAfHD7jyQFa3bIZ6
-         1pMdfMb033FVhAMlatLotidw/wGkIrrCEMXp7mSuUxL61cU1pVr5KEuoaKAQvfsH1bHZ
-         mntNuXS1UGNs/n01EZTtTNQKoq8/Py67Xvc8jby00DCpLtWFhhbh6F+w79x7kJGV1eR3
-         ryJHjBrVuL8qzWlABW3t9VDRH7s1IYMdOkjJdDKKFhKfA24QPLjCwmuKAHCxUv0KqcOK
-         6dsZ+lVGfbXAuh8p7MUFfv5wkVX3CECmsVOk7GMyFHltmrMQDiSbY3zozUzoEal1/ch8
-         VWjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770293180; x=1770897980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cdO9CFNu6vQJNd/2WSszJmp2jWHwNCxretKor7RUNos=;
-        b=RCKr0B+2zeVhJkrHViakUm7ekiHj/6x3gzXac4VfscVtry6Vhv+dbipS5E2LbjwG/7
-         X1bRvMesP2H3k1Ga18N4xNu1ffWVILcKLB1bbbHPBqkDmdNAc8KdQif+x00HDom6Nf9I
-         CUG+P4aPd9CwkpUq5MBbc4NhtK/S3rTSvw/Eh8gwvxkFClxcLdTjCchrkwz7i4dBGH9l
-         OZl3nSc8YfhAct1MzMkKNJJDuX+RnsmSE6XYICIQDpIs8KmEpj0QE7APJIZamR6sdY33
-         5Fy8F45FCKqkRWiFdeWsG0srSJ9qO9jpdERJKEWciHdaS0mhKUPGFJuGU50rX4WP6MA6
-         8WvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyMl3ZqA6KRO88N3JKZqC46D4vf8ANlMGjQ3R2iB1hRl9dsfrpLhucwkUoISU4qwG52uxgKlkDyuG5W3hxrXGMVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0OQQGUwpzPtYX6uLinXpoezJ6KbGlb6kJlm4cWWkEw7bKwzd7
-	T7zb0iEsaX2HuIDJiNh+nQI37vbljx+Uo1/onH4wFrGMM2O6KQeZFzytp5VdCyVQ9CXUfDbz8w9
-	cu01N/KGpdRQ4DpWQZvhjKQXxZ4XfqZwz7sa5DhS3MA==
-X-Gm-Gg: AZuq6aIeowGDqcb3gq1YV4KP5FDoW8vCtd2+2FBUxwVgZyDL9mOJgKO/i7HN48HfsxK
-	yP2v+uFc+t+C94FcKz6CA2AVzbLRY7xU/njBKwDCPyZXq7Qv8DmDQTSvik27iKZdtQoCuDQx+JE
-	jQ/IIlRQkOFzrqzXfEXUsRbonkckVex0rpLEQtlG7Rf6G0EXXWq2+zUhH003Nz928QtKDeAKGdo
-	tHs4HNu4ZEs/agj8+lGQIOgJd54k2E982N6I2d6WDcD1MqN4Et1w80TE0gg0YXCpH70aHDb
-X-Received: by 2002:a05:6512:10ce:b0:59d:ea35:bc8e with SMTP id
- 2adb3069b0e04-59e38c2955bmr2270537e87.24.1770293180225; Thu, 05 Feb 2026
- 04:06:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="brUCCggK"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AEE6D267E6;
+	Thu,  5 Feb 2026 16:32:59 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id SU4LjUO_09gW; Thu,  5 Feb 2026 16:32:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1770305579; bh=d/ARjMgSP9G3NH4cyP+2JNA1MGSoHi33QTSADO5xKvU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=brUCCggKgzGG2eNnDc1T6EUWCHaax+pAh8pB1BwkFnmuIDMARX++5ODah3INRlgiR
+	 f331TSaZ/H9w6Bt3+4K8CIsWFb/wSeIve10yAmp+vnucHfqHslmoLq8hs9tkyH5fUl
+	 d1E7H0wUjrTujU2pZmCgVuDlTxKrV+BstniJrH/wr59Z6fdwokOyysn67W6oBBh9va
+	 GrkD5/2tlC+Rca16Yq3YL/rI1sg20I2gn7kSJgPEK3Zqr2pGzwiqR+RyBw74vtUiye
+	 3jGaaupHcjyMIvo86AlYcKN3v9XSHVP6+Tfg+ZxPyBBUUMLBLKU57KqYWj+GWk2kXQ
+	 szIlacAlk2Lgg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
-In-Reply-To: <20260128-gs101-pd-v4-0-cbe7bd5a4060@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 5 Feb 2026 13:05:44 +0100
-X-Gm-Features: AZwV_Qio0mUxbt1hdbXGSjmWyyPdwpqKntqpt17Vt_Fu987EJSjXGSrypfMmYU0
-Message-ID: <CAPDyKFoRXaiZiZw0NmmgnJzfw3sCYi1cNAuLHUU6fyF-4gxDuA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] pmdomain: samsung: add support for Google GS101
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 05 Feb 2026 21:02:41 +0530
+Message-Id: <DG74Y3QSCLIO.32Q8ZKCTISXXB@disroot.org>
+Cc: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 06/12] mfd: sec: add support for S2MU005 PMIC
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Kaustabh
+ Chakraborty" <kauschluss@disroot.org>, "Lee Jones" <lee@kernel.org>, "Pavel
+ Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "MyungJoo Ham" <myungjoo.ham@samsung.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Sebastian Reichel" <sre@kernel.org>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <skhan@linuxfoundation.org>
+References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
+ <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
+ <69e2c1b1a2f3d2ed5e5da995cc5ee49bb3627597.camel@linaro.org>
+In-Reply-To: <69e2c1b1a2f3d2ed5e5da995cc5ee49bb3627597.camel@linaro.org>
 
-On Wed, 28 Jan 2026 at 17:10, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
+On 2026-02-04 15:23 +00:00, Andr=C3=A9 Draszik wrote:
 > Hi,
 >
-> This series adds support for the power domains on Google GS101.
+> On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
+>> Samsung's S2MU005 PMIC includes subdevices for a charger, an MUIC (Micro
+>> USB Interface Controller), and flash and RGB LED controllers.
+>>=20
+>> S2MU005's interrupt registers can be properly divided into three regmap
+>> IRQ chips, one each for the charger, flash LEDs, and the MUIC.
+>>=20
+>> Add initial support for S2MU005 in the PMIC driver, along with it's thre=
+e
+>> interrupt chips.
+>>=20
+>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> ---
+>> =C2=A0drivers/mfd/sec-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 ++
+>> =C2=A0drivers/mfd/sec-i2c.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 ++
+>> =C2=A0drivers/mfd/sec-irq.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 74 ++++++++
+>> =C2=A0include/linux/mfd/samsung/core.h=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1=
+ +
+>> =C2=A0include/linux/mfd/samsung/irq.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 66=
+ ++++++++
+>> =C2=A0include/linux/mfd/samsung/s2mu005.h | 328 ++++++++++++++++++++++++=
+++++++++++++
+>> =C2=A06 files changed, 497 insertions(+)
+>>=20
+
+[...]
+
+>> diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
+>> index 3132b849b4bc4..3f1d70cc3292b 100644
+>> --- a/drivers/mfd/sec-i2c.c
+>> +++ b/drivers/mfd/sec-i2c.c
+>> @@ -17,6 +17,7 @@
+>> =C2=A0#include <linux/mfd/samsung/s2mps14.h>
+>> =C2=A0#include <linux/mfd/samsung/s2mps15.h>
+>> =C2=A0#include <linux/mfd/samsung/s2mpu02.h>
+>> +#include <linux/mfd/samsung/s2mu005.h>
+>> =C2=A0#include <linux/mfd/samsung/s5m8767.h>
+>> =C2=A0#include <linux/mod_devicetable.h>
+>> =C2=A0#include <linux/module.h>
+>> @@ -130,6 +131,11 @@ static const struct regmap_config s2mpu05_regmap_co=
+nfig =3D {
+>> =C2=A0	.val_bits =3D 8,
+>> =C2=A0};
+>> =C2=A0
+>> +static const struct regmap_config s2mu005_regmap_config =3D {
+>> +	.reg_bits =3D 8,
+>> +	.val_bits =3D 8,
+>> +};
 >
-> There are a few differences compared to SoCs already supported by this
-> driver:
-> * register access does not work via plain ioremap() / readl() /
->   writel().
->   Instead, the regmap created by the PMU driver must be used (which
->   uses Arm SMCC calls under the hood).
-> * DTZPC: a call needs to be made before and after power domain off/on,
->   to inform the EL3 firmware of the request.
-> * power domains can and are fed by a regulator rail and therefore
->   regulator control needed be implemented.
->
-> Bullet points 2 and 3 are new compared to previous versions of this
-> series, and related changes are in patches 1, 2, 9, and 10. I can merge
-> patch 9 (SMC call) into the gs101 patch (patch 7) if preferred, but for
-> now I kept them independent to make it easier to see changes compared
-> to previous versions of this series, and because patch 8 actually
-> applies to not only gs101, but to many newer Exynos SoCs, and to make
-> the two patches themselves easier to review and reason about.
->
-> The DT update to add the new required properties on gs101 will be
-> posted separately.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
-> Changes in v4:
-> - drop unneeded or already merged patches
-> - drop patch "pmdomain: samsung: convert to regmap_read_poll_timeout()"
->   as Marek reported issues on some platforms
-> - rebase
-> - DTZPC related changes
-> - Link to v3: https://lore.kernel.org/r/20251016-gs101-pd-v3-0-7b30797396=
-e7@linaro.org
->
-> Changes in v3:
-> - use additionalProperties, not unevaluatedProperties in patch 2
-> - fix path in $id in patch 2 (Rob)
-> - drop comment around 'select' in patch 2 (Rob)
-> - collect tags
-> - Link to v2: https://lore.kernel.org/r/20251009-gs101-pd-v2-0-3f4a6db2af=
-39@linaro.org
->
-> Changes in v2:
-> - Krzysztof:
->   - move google,gs101-pmu binding into separate file
->   - mark devm_kstrdup_const() patch as fix
->   - use bool for need_early_sync_state
->   - merge patches 8 and 10 from v1 series into one patch
-> - collect tags
-> - Link to v1: https://lore.kernel.org/r/20251006-gs101-pd-v1-0-f0cb0c01ea=
-7b@linaro.org
->
-> ---
-> Andr=C3=A9 Draszik (10):
->       dt-bindings: soc: google: add google,gs101-dtzpc
->       dt-bindings: power: samsung: add google,gs101-pd
->       dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separate=
- binding
->       dt-bindings: soc: google: gs101-pmu: allow power domains as childre=
-n
->       pmdomain: samsung: convert to using regmap
->       pmdomain: samsung: don't hard-code offset for registers to 0 and 4
->       pmdomain: samsung: add support for google,gs101-pd
->       pmdomain: samsung: use dev_err() instead of pr_err()
->       pmdomain: samsung: implement SMC to save / restore TZ config
->       pmdomain: samsung: implement domain-supply regulator
->
->  .../devicetree/bindings/power/pd-samsung.yaml      |  29 ++-
->  .../bindings/soc/google/google,gs101-dtzpc.yaml    |  42 ++++
->  .../bindings/soc/google/google,gs101-pmu.yaml      |  97 ++++++++
->  .../bindings/soc/samsung/exynos-pmu.yaml           |  20 --
->  MAINTAINERS                                        |   2 +
->  drivers/pmdomain/samsung/exynos-pm-domains.c       | 254 +++++++++++++++=
-+++---
->  6 files changed, 395 insertions(+), 49 deletions(-)
-> ---
-> base-commit: e3b32dcb9f23e3c3927ef3eec6a5842a988fb574
-> change-id: 20251001-gs101-pd-d4dc97d70a84
->
-> Best regards,
-> --
-> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> No cache? And what is the .max_register value?
 >
 
-I have looked through the series and it looks good to me. I will be
-awaiting a new version and to get the DT patches acked, before I
-continue to apply patches.
+This was in the previous revision, but I ended up removing it because
+(at least I thought at that time) interfered with interrupts firing in
+some way. The actual issue was unrelated, so I will add it back.
 
-Kind regards
-Uffe
+However, there is also another thing I see in logs:
+
+sec-pmic-i2c 2-003d: using zero-initialized flat cache, this may cause unex=
+pected behavior
+
+This is due to REGCACHE_FLAT, I am not sure if I should just ignore
+this.
