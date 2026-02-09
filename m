@@ -1,67 +1,69 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ED81A2545
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 15:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2609637E2F1
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 15:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770649671; cv=none; b=H3bgcAFxSCA51ZQRPesj5F9+i6qWKFaHxod+AkgagQ2SmzY5r4MdNwzAXcc5RD4KDy/sCarJmeMZBElQXq+rwZ9tXCgpI3okmXXWK1pZw4j5DeUAYHj+URNLLwrmOnT8EPWPK1mG+0nYAF2V15Vhdcx/vb4oU9YVSYkThJVZ+Do=
+	t=1770649671; cv=none; b=Zlnzs/a+ua7GX7Yhl8GfWqkG05GnFmIc4uunCvGsUzthOHnfPHIH/nKAMxK7Iz5n7sgKvIow5SmRaBHsmJzNgMKnDYOADEyiFU8CItUSl/g5xQkCYcOumpfH0Ng8ptxakxDUevzH2UyZWORKgoJ4CFT9c0YOtLOzniv3yB2m2wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1770649671; c=relaxed/simple;
-	bh=1aMw8Is6xzQAjKxx8Y/fAWaHPHVx99dGNHrMrCe7gRM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bPm5d33PEiZ/YapDoyn0jgyDFKlsMYOX4GGLdoGGtst2yTXqRu30y6s+yUPg7s7JvdtQPWmv0jXCzqrUtaYWk7W+/q7giEeRXmMRr5TKHBcbBtqGt24DTdCmlnefgeT1KbZmvVmXuqNwqgiId2MM7O1RaPTrtgI4vrgtJPzJCY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSWlUUfH; arc=none smtp.client-ip=209.85.218.54
+	bh=C7mQCeEr/HdbKguNqig8yEGFQ8i0l7imyEakSsdZ4wU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nGYEB/zrU2vpkCRq06h6+jasdZa2a58A98Nc15clkJ1J8r2GleNO4T+h+dGubGHZDXwj99BILXDo3YcQEIQkcrwvpzvaWalWT1r1Lu+VYbOlUykgRMLaPs1rLmH4SK95+UL3PsInA+1q0zgE/RA3DWDeRkLo5vPN+BeoE+0WAk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Px7pYXIz; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSWlUUfH"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b885e8c6727so465212766b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Px7pYXIz"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b885e8c679bso411890366b.1
         for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2026 07:07:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1770649669; x=1771254469; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GbFUaZFDyeM7KDy2ACOiFFmkLeiKzMZPJyF2qbC0XgA=;
-        b=fSWlUUfH/c24DrJWoq3e9Aczk+hvXoMdrp2jFdJj0Yqc/og62ToaN/+cPmawXfOfIk
-         2UD7DJPrmDerttWeSWMo5whJnz+IoXEP9HyMjcypYvyQxKx+WX9YlNYLU2srvpO48Yjp
-         p2y1RM00+9P68WfO+3JVW38CSUs+1YVTEq0N9gZAjH9+wJ238ezCnqQWFI3CSSijJ5SY
-         tDFdXTlDc+05Dn2zcxXB9AZfq9+WBOejzZ3M9QKKSKpIVlt0z5HmQ2m+kC4wOSUcm36f
-         y01D1PzUH/PQbHOWQfA4rs+dgql9fEgQyUalVUpK8qWJ8V6p2YmEaJXC/QA15b8xLYol
-         LdOA==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XegibK6nZtE74LWspbesvNEx78XvtPq2jMKaE0vnzoI=;
+        b=Px7pYXIzNoRnX6/1nw7mMSYxejRIeX4YBej3uecoRzNR1dyjl0tnSDP+3U3DP3pLiq
+         Q7+gZqG3DjviAJbXJj3tCZiiz4R8KX23Me0cGJfIgOervpu+A+6ilwtdYb89ss1MtEuy
+         NMQ+1pKkPuM4xlGlAVW5IeS94Zq9b9vf7ioM9rYQEL4xngcJX8YbXTFmoSa9fZ1To1IS
+         KvFFl5F8/uqbt22tTpJHdFo243IAn/+ppaXH4efpNCLINiRmt+Pmn0lQbhRmwNph4onc
+         8dLLi9xa/3kANVv+KDjdS/stNFIt85e5tUdGSTIgZ1L0iZhBFLVrxyGZ7rbCM4GaxRq3
+         J0xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1770649669; x=1771254469;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbFUaZFDyeM7KDy2ACOiFFmkLeiKzMZPJyF2qbC0XgA=;
-        b=LMu+tNBUvdjAQSHkJunuKZ8fhHgHlnngMFfH4Zrery8V0EX9JQ3+mNzA1Ts2kEXy1X
-         17nyWzBL3sZaN7gsMJ+U2iDJtLPOePOOp9G2KV8+Cimne3miOmZqEX1QTmThwB9JWKxn
-         FjwdlvGG+V0Crc0BDyWxtZQ4sOrYp1jUKqpUbgkcpMN6GHtDEPYQdOKGw0BJu1va9TBQ
-         3C28YWmNhcoOgQwGMK/4m15GGl6KfnvXxV2Dh6ZpXz1heuROVXPL9eHdOFu5xQb5T+W9
-         L9rSToEPARqMQf53FiOytE+CymRTnqK3Tails+vIx4NmIDC6x/y7n1jXh1Xr2b/VOpwe
-         plGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Q7+gyXEbGadXqhiWk5VPOzmy3uoErC0ai2VAKsUA5lmzHkACyAMY4kHky8XaXORg8fJSf7nblWp4WbS3qJXT1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrhonkclkmAfav1oOd5EobOPkco3ILADSzRoT6Ym+yxXnSAxQu
-	dV2XdsZB6cWNODGuAhDg9cs9Q0u/r9JK6jyz2l//Ag2kObBIzxg3AZTfC0LLN34Bsanhdm7xLyt
-	91m9gWOk=
-X-Gm-Gg: AZuq6aKF7B8kcA7MZLlkWc1YUyn2W6mQ+UWweU0u9Sl4YpTTjX83UyLS7IOuuZgPEDP
-	kECOFhw40BOnq/j1L1kuFd/gCN/MkQjZ65wrYfua6rCoG+fQbI1UMfBUw0HImnC8o+4deA/8QgZ
-	UO4bDeORnopCnRW8+Zb3/ZvTa+0yI0BqiSBkig1oTn9YWe0MSi+Zm29Do3HuGQaMVfnuUPm+LfD
-	OqLPOKnJ/HJ8ZdxLiQvdu0zuSapiN4U7bDy7GidOSZ1jKMNbJ1gjvdqPmkkbMOIgBp2U8EnQsz0
-	ah6wtVJE1erK5gTb4HUn6IhzH3kD2A1JCDJa9LZsAgGuc+VnGNnj5aniRczqrzKKO+awV4aJT9K
-	XSeNP1XJX8YSufUuc2OwXIThB34fTPyWyGQuSsX9xXV4yaL2srxoQTpV5++9REP2sNZFhVP6Ihp
-	heris7ErGISCebV/7CmwxgiTdGsgaXI6owq03RAYKMLoShAiQZ7m4MD4yBxjMH4UKCfcdl/wovz
-	rk3EXnAfo+kOdTA
-X-Received: by 2002:a17:907:2da3:b0:b8e:380:5669 with SMTP id a640c23a62f3a-b8eba2a5a66mr870164466b.32.1770649668905;
-        Mon, 09 Feb 2026 07:07:48 -0800 (PST)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XegibK6nZtE74LWspbesvNEx78XvtPq2jMKaE0vnzoI=;
+        b=X3OLZkMmXRglhJEGmF/z9//VuF5BJDEy9A7pIj1lvIEkjfE+IjctZhM14ENKot8+5V
+         3b6yIrSziOvbZhaHnMGgDkv7gcSYKZRFrpX1l6H/9TAe4xIrGkwgJiSLtJk9dU51lk7b
+         JbcxakgVs7+HCGzEmIEBvB1865ZWj90kmXcEuLI429exd6ZYbj87uXXuU6i7SjxI0AcW
+         QN7JjxJrEPHvCqjePdmhOtFOEKAztNL6IdsW9+fSqC4jAeI3aQVSv2IxZ2RSGL9CK/Ki
+         m/7P+xevGuMZlohLI5vtQszAOwQQdOfN5BOhXVEAPBlfDTkQDWW0vZ72f9f3HnXqXnyE
+         l4Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLoZAWgK+GdpsxWIHDMEVDr8aO6ROIejZGeJZDNDieSX5gJLy0rKMcnDSEVOxlr3bFveMR8Q0PwajGKdSiupxNjw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7LnBqrsQw3sgaQPhOwMYI5z60pg59OpXks5pykQKol4xNb6ih
+	KnLSvUVeybvd4C2huOvUqgxaNlvrDvxao4DhyA4QyaoMYI8LcE36bua+6/BXtHI+CHts1ChO408
+	zJb5UAp0=
+X-Gm-Gg: AZuq6aJ5Ge9caJmDkUSq1rKGAFLdDx70PIAApS5/xiJUqHyucjmPaVIqbPSa22nu63r
+	98n1ROnnrhiH3ytcWEam/231suwh03xOgApPJtLr4tWq13NOMvSZdYK9L9cjcqDHyYYmzQDe58k
+	4FjXH0ObSup62GmI0YtSXUmjV6wc5mqsK5GQGikQHt5W1ucDnjJyl/MqfUf7AL+zPPBOaALzLNS
+	jYfKLs23EiIt7XWtbBz+jNvhQ1um5YsGr9Ux1eJZtdNbipdK66ksiRlCRn30sCTldU0GHi0/KEX
+	8K3pFBDFzBUSUMU+rYko+mwofFU306qshFIYoA5iLQreLagfaPjMJKnh5sMyn5yDECjjLgKoAeK
+	0Wota1IjTp6vWF+kiye2bPG7tFvf9MOixVjf1dU8bq1gQ1pDgaBXpVeY84QD0cEKiANVTyEJle1
+	YvEJODsnxPxGXPY7JWblrHD8jAJGoitftpT7z8TvGzVMSaCIe1wx5s++OBKj5HFg3j+Yb2VxGO1
+	kLYKg==
+X-Received: by 2002:a17:907:72c7:b0:b88:505d:2ac with SMTP id a640c23a62f3a-b8edf14ca75mr556288166b.1.1770649669481;
+        Mon, 09 Feb 2026 07:07:49 -0800 (PST)
 Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8edae6fa84sm393516366b.67.2026.02.09.07.07.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8edae6fa84sm393516366b.67.2026.02.09.07.07.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 07:07:48 -0800 (PST)
+        Mon, 09 Feb 2026 07:07:49 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH 0/2] regulator: s2mps11: two small bug fixes (s2mpg1x)
-Date: Mon, 09 Feb 2026 15:07:46 +0000
-Message-Id: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
+Date: Mon, 09 Feb 2026 15:07:47 +0000
+Subject: [PATCH 1/2] regulator: s2mps11: drop redundant sanity checks in
+ s2mpg10_of_parse_cb()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,10 +72,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAEL4iWkC/x3LSwqFMAxA0a1Ixi9QI/jbirxB0bQG/JGoCOLeL
- Q4Pl3uDsQobtNkNyqeYrEtC/sugH/0SGWVIBnJUOnINGs1bzC9Ujsfk91UNg1xsSK6ugg+eirq
- BtG/KX0h393+eFyyslnxqAAAA
-X-Change-ID: 20260209-s2mpg1x-regulators-fixes-2087fafa2389
+Message-Id: <20260209-s2mpg1x-regulators-fixes-v1-1-ead348e64e14@linaro.org>
+References: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
+In-Reply-To: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
@@ -81,25 +82,44 @@ Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  Dan Carpenter <dan.carpenter@linaro.org>
 X-Mailer: b4 0.14.2
 
-These two patches fix some code quality / legibility issues in the
-newly added s2mpg1x support. Behaviour should not change.
+The sanity checks being removed in this commit are useless as earlier
+code checks for out-of-bounds conditions already. They also are
+incorrect (as they're off-by-one).
 
-Cheers,
-Andre'
+Simply remove this incorrect code.
 
+No functional change.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/aYmsu8qREppwBESH@stanley.mountain/
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-André Draszik (2):
-      regulator: s2mps11: drop redundant sanity checks in s2mpg10_of_parse_cb()
-      regulator: s2mps11: fix pctrlsel macro usage in s2mpg10_of_parse_cb()
+ drivers/regulator/s2mps11.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
- drivers/regulator/s2mps11.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
----
-base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
-change-id: 20260209-s2mpg1x-regulators-fixes-2087fafa2389
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 2d5510acd0780ab6f9296c48ddcde5efe15ff488..2d67c5c16f487506a2e9e4b119f33faa846269f7 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -478,8 +478,6 @@ static int s2mpg10_of_parse_cb(struct device_node *np,
+ 			return -EINVAL;
+ 		}
+ 
+-		if (ext_control > ARRAY_SIZE(ext_control_s2mpg10))
+-			return -EINVAL;
+ 		ext_control = ext_control_s2mpg10[ext_control];
+ 		break;
+ 
+@@ -503,8 +501,6 @@ static int s2mpg10_of_parse_cb(struct device_node *np,
+ 			return -EINVAL;
+ 		}
+ 
+-		if (ext_control > ARRAY_SIZE(ext_control_s2mpg11))
+-			return -EINVAL;
+ 		ext_control = ext_control_s2mpg11[ext_control];
+ 		break;
+ 
 
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.53.0.rc2.204.g2597b5adb4-goog
 
