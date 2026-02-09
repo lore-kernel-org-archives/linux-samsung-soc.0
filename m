@@ -1,123 +1,105 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9772EDD7E
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 14:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ED81A2545
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 15:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770646030; cv=none; b=Xy5DEVCP/4DR+bKHGHnZ/X+ajxfXCTJhbT0EkGz+14StmeYVreelezQsRWqe6DhzBG82USJQIo6pkKnvjDlOjMN0BC9kirKjGwtKn24wDMqE+dJnWvRYOGgQE2fHCDfLLSit7M+e1iUAZlXC8OQnPIdOFFGVU5REIHIlLGEeDcs=
+	t=1770649671; cv=none; b=H3bgcAFxSCA51ZQRPesj5F9+i6qWKFaHxod+AkgagQ2SmzY5r4MdNwzAXcc5RD4KDy/sCarJmeMZBElQXq+rwZ9tXCgpI3okmXXWK1pZw4j5DeUAYHj+URNLLwrmOnT8EPWPK1mG+0nYAF2V15Vhdcx/vb4oU9YVSYkThJVZ+Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770646030; c=relaxed/simple;
-	bh=gGVQD4ar0VlOkG/DUP3JIs46G4+cGF27Hj36Z3a631s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FqKgMOc/y1eDEmCfCzJP5OjXlaGFxOaYx9Zhi/fqHidHq/JK3dulehG5E05mi6botnmTKDKCthiQrVWrVRYIBmUaGxoyVoe9thQTKpNtwCKtdesqIzfrUwEGcOOlfSNlwBy7UEL7Rez8DcDYEvEdFX4KobcplYl/tJo3c9IiFKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ek1MZjwp; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1770649671; c=relaxed/simple;
+	bh=1aMw8Is6xzQAjKxx8Y/fAWaHPHVx99dGNHrMrCe7gRM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bPm5d33PEiZ/YapDoyn0jgyDFKlsMYOX4GGLdoGGtst2yTXqRu30y6s+yUPg7s7JvdtQPWmv0jXCzqrUtaYWk7W+/q7giEeRXmMRr5TKHBcbBtqGt24DTdCmlnefgeT1KbZmvVmXuqNwqgiId2MM7O1RaPTrtgI4vrgtJPzJCY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSWlUUfH; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ek1MZjwp"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b884a84e622so781770466b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2026 06:07:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSWlUUfH"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b885e8c6727so465212766b.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2026 07:07:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770646028; x=1771250828; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gGVQD4ar0VlOkG/DUP3JIs46G4+cGF27Hj36Z3a631s=;
-        b=Ek1MZjwpVawAAMBuQFXxJ+brhPAsXqbPB7bMSTFCt2zrfoL2dkcXei8wgXFlsF2AwQ
-         1PiYBGJYw25qVFX6P5jGPOyqBDUHxZMlUSBSVo9g6fSd81TKiq4ga6rofsr2MmjnpjiV
-         TnrLfOMDRbUeW1l5Sd6BJpcu6fWUp+hcViC7vTrrWRvdeGk3/XWGEfMtQ/WLdatbr9BX
-         gN711CoZe+BCJXY2wrs5qSVGqe0ZPb8lFlOId1Gh/7YeA7XdZK3JQ/iw7/OAN/lNShoV
-         zi5f55C1UhJjyiBdzjbB22KAllIErNl6vqjJX1ggREqhVd9345V054AqXSlPsBMAe4Pk
-         q6AA==
+        d=linaro.org; s=google; t=1770649669; x=1771254469; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbFUaZFDyeM7KDy2ACOiFFmkLeiKzMZPJyF2qbC0XgA=;
+        b=fSWlUUfH/c24DrJWoq3e9Aczk+hvXoMdrp2jFdJj0Yqc/og62ToaN/+cPmawXfOfIk
+         2UD7DJPrmDerttWeSWMo5whJnz+IoXEP9HyMjcypYvyQxKx+WX9YlNYLU2srvpO48Yjp
+         p2y1RM00+9P68WfO+3JVW38CSUs+1YVTEq0N9gZAjH9+wJ238ezCnqQWFI3CSSijJ5SY
+         tDFdXTlDc+05Dn2zcxXB9AZfq9+WBOejzZ3M9QKKSKpIVlt0z5HmQ2m+kC4wOSUcm36f
+         y01D1PzUH/PQbHOWQfA4rs+dgql9fEgQyUalVUpK8qWJ8V6p2YmEaJXC/QA15b8xLYol
+         LdOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770646028; x=1771250828;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGVQD4ar0VlOkG/DUP3JIs46G4+cGF27Hj36Z3a631s=;
-        b=vL9/StsjRKJUwGX4YGFwxaOmiqtoy68EOkweHC+t6T7NWcgvdb9gXOmK/FD/TUQze8
-         lkD/QfAFWmUXl0YMTBPrmsnFif9QuwImsa/9M1PO5+IbkzptEjb0/cllvUa6CWQSmT/z
-         iaQS/mog4cL+mYLUbSFgI1nlxVQZ99NhPC6mBU/5LPHSUkuSaAzAxEKUr51nElgY6pae
-         In0kc4YDgQH9ZzwTouQ5mWdHpVpiPAsBx+rH+oWjs4p4fQSykVz3ThxQp6gEDNADA/rb
-         trx1i+yt5Gs8+CKHkwxHlnHQEbQUdqlmriJNyYg5//zY9n6mBs7fRXG8pzpa9nW1lizF
-         y7tw==
-X-Gm-Message-State: AOJu0Yzaz6t9o1LnDAaUGNa4V2LacPodZad87xakqC6Llc5yixiRcDyw
-	FZChu7yUkphEqcH2GNZk1rR+zW0LxTssyNp2YT4VQHaTYiKc3W+xL1B+FNU/BEK3a4UL0o2iaNv
-	EjELl
-X-Gm-Gg: AZuq6aKdIaEmDOlfvmvyJFfu7FzlpnAsU/cJvzugywlmRBZkAXn3OIGxNoJDegdYZob
-	FfNfnIvsVspwHOTVF8F8MuBIyRBFIH3Xh5EyzH496ytzUm320KFguW+s9mZzl3vzQYCd4s19eSA
-	3/qLh1kyOJU6m+DdTGmuPZZAwsQbArZ8SJp+PHdwBNvtw0so9sw/fwo8l/gas0MhRQkh+58SDfz
-	l+lxuV/0e8taGJZjsxHeU541O/aYh5AOkc71UEXPmk017sq3Mm7RDHd+7kAFNUb/aqiBbH4zMmi
-	tQtrg/EMvsgJoEoN6kVLSNFz4VpuVr9KYvPpB8eeVEHvxo/zR4GRspYPB4fxbzatuOks+twHJdz
-	jCHAn/JhSvBjN9t44R3OzZeBsr5/P/Iem80p7C/pDmvRbJTiV6tgEOt+Z80vWWwMmpwL+j7Lkyj
-	wA2e3hN8W6ZAxXFxMmaw==
-X-Received: by 2002:a17:907:a4d:b0:b87:6:3727 with SMTP id a640c23a62f3a-b8edf3556cfmr654809066b.48.1770646028080;
-        Mon, 09 Feb 2026 06:07:08 -0800 (PST)
-Received: from draszik.lan ([212.129.87.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8edacb18c5sm409293766b.43.2026.02.09.06.07.07
+        d=1e100.net; s=20230601; t=1770649669; x=1771254469;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GbFUaZFDyeM7KDy2ACOiFFmkLeiKzMZPJyF2qbC0XgA=;
+        b=LMu+tNBUvdjAQSHkJunuKZ8fhHgHlnngMFfH4Zrery8V0EX9JQ3+mNzA1Ts2kEXy1X
+         17nyWzBL3sZaN7gsMJ+U2iDJtLPOePOOp9G2KV8+Cimne3miOmZqEX1QTmThwB9JWKxn
+         FjwdlvGG+V0Crc0BDyWxtZQ4sOrYp1jUKqpUbgkcpMN6GHtDEPYQdOKGw0BJu1va9TBQ
+         3C28YWmNhcoOgQwGMK/4m15GGl6KfnvXxV2Dh6ZpXz1heuROVXPL9eHdOFu5xQb5T+W9
+         L9rSToEPARqMQf53FiOytE+CymRTnqK3Tails+vIx4NmIDC6x/y7n1jXh1Xr2b/VOpwe
+         plGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Q7+gyXEbGadXqhiWk5VPOzmy3uoErC0ai2VAKsUA5lmzHkACyAMY4kHky8XaXORg8fJSf7nblWp4WbS3qJXT1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrhonkclkmAfav1oOd5EobOPkco3ILADSzRoT6Ym+yxXnSAxQu
+	dV2XdsZB6cWNODGuAhDg9cs9Q0u/r9JK6jyz2l//Ag2kObBIzxg3AZTfC0LLN34Bsanhdm7xLyt
+	91m9gWOk=
+X-Gm-Gg: AZuq6aKF7B8kcA7MZLlkWc1YUyn2W6mQ+UWweU0u9Sl4YpTTjX83UyLS7IOuuZgPEDP
+	kECOFhw40BOnq/j1L1kuFd/gCN/MkQjZ65wrYfua6rCoG+fQbI1UMfBUw0HImnC8o+4deA/8QgZ
+	UO4bDeORnopCnRW8+Zb3/ZvTa+0yI0BqiSBkig1oTn9YWe0MSi+Zm29Do3HuGQaMVfnuUPm+LfD
+	OqLPOKnJ/HJ8ZdxLiQvdu0zuSapiN4U7bDy7GidOSZ1jKMNbJ1gjvdqPmkkbMOIgBp2U8EnQsz0
+	ah6wtVJE1erK5gTb4HUn6IhzH3kD2A1JCDJa9LZsAgGuc+VnGNnj5aniRczqrzKKO+awV4aJT9K
+	XSeNP1XJX8YSufUuc2OwXIThB34fTPyWyGQuSsX9xXV4yaL2srxoQTpV5++9REP2sNZFhVP6Ihp
+	heris7ErGISCebV/7CmwxgiTdGsgaXI6owq03RAYKMLoShAiQZ7m4MD4yBxjMH4UKCfcdl/wovz
+	rk3EXnAfo+kOdTA
+X-Received: by 2002:a17:907:2da3:b0:b8e:380:5669 with SMTP id a640c23a62f3a-b8eba2a5a66mr870164466b.32.1770649668905;
+        Mon, 09 Feb 2026 07:07:48 -0800 (PST)
+Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8edae6fa84sm393516366b.67.2026.02.09.07.07.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 06:07:07 -0800 (PST)
-Message-ID: <13e12c2bf5e5396e3971137e4ab74e15b38d4b78.camel@linaro.org>
-Subject: Re: [bug report] regulator: s2mps11: add S2MPG10 regulator
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 09 Feb 2026 14:07:35 +0000
-In-Reply-To: <aYmsu8qREppwBESH@stanley.mountain>
-References: <aYmsu8qREppwBESH@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.2-2+build4 
+        Mon, 09 Feb 2026 07:07:48 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/2] regulator: s2mps11: two small bug fixes (s2mpg1x)
+Date: Mon, 09 Feb 2026 15:07:46 +0000
+Message-Id: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEL4iWkC/x3LSwqFMAxA0a1Ixi9QI/jbirxB0bQG/JGoCOLeL
+ Q4Pl3uDsQobtNkNyqeYrEtC/sugH/0SGWVIBnJUOnINGs1bzC9Ujsfk91UNg1xsSK6ugg+eirq
+ BtG/KX0h393+eFyyslnxqAAAA
+X-Change-ID: 20260209-s2mpg1x-regulators-fixes-2087fafa2389
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+X-Mailer: b4 0.14.2
 
-SGkgRGFuLAoKT24gTW9uLCAyMDI2LTAyLTA5IGF0IDEyOjQ1ICswMzAwLCBEYW4gQ2FycGVudGVy
-IHdyb3RlOgo+IFsgU21hdGNoIGNoZWNraW5nIGlzIHBhdXNlZCB3aGlsZSB3ZSByYWlzZSBmdW5k
-aW5nLiAjU2FkRmFjZQo+IMKgIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9hVGFpR1NiV1o5
-REphR283QHN0YW5sZXkubW91bnRhaW4vwqAtZGFuIF0KPiAKPiBIZWxsbyBBbmRyw6kgRHJhc3pp
-aywKPiAKPiBDb21taXQgYTJiOGI5ZjMzY2UzICgicmVndWxhdG9yOiBzMm1wczExOiBhZGQgUzJN
-UEcxMCByZWd1bGF0b3IiKQo+IGZyb20gSmFuIDIyLCAyMDI2IChsaW51eC1uZXh0KSwgbGVhZHMg
-dG8gdGhlIGZvbGxvd2luZyBTbWF0Y2ggc3RhdGljCj4gY2hlY2tlciB3YXJuaW5nOgo+IAo+IAlk
-cml2ZXJzL3JlZ3VsYXRvci9zMm1wczExLmM6NDgzIHMybXBnMTBfb2ZfcGFyc2VfY2IoKQo+IAl3
-YXJuOiBvZmYgYnkgb25lICdleHRfY29udHJvbCcgPT0gQVJSQVlfU0laRSgpPwo+IAo+IGRyaXZl
-cnMvcmVndWxhdG9yL3MybXBzMTEuYwo+IMKgwqDCoCA0NTjCoMKgwqDCoMKgwqDCoMKgIGlmIChv
-Zl9wcm9wZXJ0eV9yZWFkX3UzMihucCwgInNhbXN1bmcsZXh0LWNvbnRyb2wiLCAmZXh0X2NvbnRy
-b2wpKQo+IMKgwqDCoCA0NTnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4g
-MDsKPiDCoMKgwqAgNDYwIAo+IMKgwqDCoCA0NjHCoMKgwqDCoMKgwqDCoMKgIHN3aXRjaCAoczJt
-cHMxMS0+ZGV2X3R5cGUpIHsKPiDCoMKgwqAgNDYywqDCoMKgwqDCoMKgwqDCoCBjYXNlIFMyTVBH
-MTA6Cj4gwqDCoMKgIDQ2M8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN3aXRjaCAo
-ZGVzYy0+aWQpIHsKPiDCoMKgwqAgNDY0wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-Y2FzZSBTMk1QRzEwX0JVQ0sxIC4uLiBTMk1QRzEwX0JVQ0s3Ogo+IMKgwqDCoCA0NjXCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjYXNlIFMyTVBHMTBfQlVDSzEwOgo+IMKgwqDCoCA0
-NjbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjYXNlIFMyTVBHMTBfTERPMyAuLi4g
-UzJNUEcxMF9MRE8xOToKPiDCoMKgwqAgNDY3wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIGlmIChleHRfY29udHJvbCA+IFMyTVBHMTBfRVhUQ1RSTF9UQ1hP
-X09OMikKPiDCoMKgwqAgNDY4wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gLUVJTlZBTDsKPiDCoMKgwqAgNDY5wqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+IMKg
-wqDCoCA0NzAgCj4gwqDCoMKgIDQ3McKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNh
-c2UgUzJNUEcxMF9MRE8yMDoKPiDCoMKgwqAgNDcywqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChleHRfY29udHJvbCA8IFMyTVBHMTBfRVhUQ1RSTF9M
-RE8yME1fRU4yIHx8Cj4gwqDCoMKgIDQ3M8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGV4dF9jb250cm9sID4gUzJNUEcxMF9FWFRDVFJMX0xE
-TzIwTV9FTikKPiDCoMKgwqAgNDc0wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gLUVJTlZBTDsKPiDCoMKgwqAgNDc1
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+
-IMKgwqDCoCA0NzYgCj4gwqDCoMKgIDQ3N8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGRlZmF1bHQ6Cj4gwqDCoMKgIDQ3OMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCByZXR1cm4gLUVJTlZBTDsKPiDCoMKgwqAgNDc5wqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfQo+IMKgwqDCoCA0ODAgCj4gwqDCoMKgIDQ4McKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChleHRfY29udHJvbCA+IEFSUkFZX1NJWkUoZXh0X2Nv
-bnRyb2xfczJtcGcxMCkpCj4gCj4gVGhpcyBzaG91bGQgYmUgPj0gQVJSQVlfU0laRSgpLsKgIEFs
-dGhvdWdoIHRoZSBlYXJsaWVyIGNoZWNrcyBwcmV2ZW50IGFuCj4gb3V0IG9mIGJvdW5kcyBhY2Nl
-c3MsIGl0J3Mgc3RpbGwgd29ydGggZml4aW5nIHRoZSBzYW5pdHkgY2hlY2suCgpUaGFua3MsIHll
-cy4gQWx0aG91Z2ggdGhpcyB3YXMgb24gcHVycG9zZSB0byBhdm9pZCBkdXBsaWNhdGVkIGNoZWNr
-cy4gSSdkIHNheQp0aGlzIHRlc3QgY291bGQgYmUgcmVtb3ZlZCBhbHRvZ2V0aGVyIGFzIGl0J3Mg
-anVzdCBjb25mdXNpbmcgYW5kIHVzZWxlc3MuCgpDaGVlcnMsCkFuZHJlJwo=
+These two patches fix some code quality / legibility issues in the
+newly added s2mpg1x support. Behaviour should not change.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (2):
+      regulator: s2mps11: drop redundant sanity checks in s2mpg10_of_parse_cb()
+      regulator: s2mps11: fix pctrlsel macro usage in s2mpg10_of_parse_cb()
+
+ drivers/regulator/s2mps11.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
+---
+base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
+change-id: 20260209-s2mpg1x-regulators-fixes-2087fafa2389
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
