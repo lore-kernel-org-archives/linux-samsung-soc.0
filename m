@@ -1,130 +1,143 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F83636404D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 09:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F09366040
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 09:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770630336; cv=none; b=QrUB9djq+hysm8MyGi+AASJgo3Iw77v1fA/7DogV6BfII5imlv4WLSQQHY+aM0emtFtMNicxytT3zQAxMA6f2DUwqNjFwsIGVHTw/Gb/TpHOPKkNt4yvfuDiJDoAV+7b1HgZWPdWWcZ788MNNmg2/+GZ+aXxu550uqoNtgyJDHo=
+	t=1770630974; cv=none; b=dkeJnts6gUtqLkwOYquWTBhda0CPOK8Tr+bYeiXpvAe4qHgWYanlggHx9WH0QmVfs8oE47/a4SKwoUARctmOgv2O8FPfXEoOZ2I9rLTjAvzSKEo3NoxcAo73ii+tuAjH8dxrwnRL+QtTxev/+kKj4sT50Cx37G6BJ/Zjab0MiGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770630336; c=relaxed/simple;
-	bh=d5v5sYKE5uBTBj3WsVS7a66C/AspYAMAsAPNRcySbJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MZ/RvanIIRkGt+a9jHzZr/aCes9fJ439H9HmW53G3CgbnvE4ggvdhUgfVpfIacNfnHt/B/xQ+BMotgje8Chx7j/zEMa7wGD8gajSb5yTAL4TJN29rDGKL3ySf2IfjW095ON1RLANQ/ofk7p3laoBfCT2cf43yNbXRYpeagcPrQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PJf/Mu2y; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1770630974; c=relaxed/simple;
+	bh=Xnhz3h8XvqboqUflpGjiP4XMV0lZE7h7GD2kPZi/uOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k8hL9s7n35bkiIYTaOrRv5pXkF6WwH0/RYGdczdFu/qSkfpkmiAAEPXNr80vOe3aOAr+njEtRF2kywKUw/TzPIHewSRyYW6L8mCHVmDMtwG2EXL58zPFPc0Hy6M+d67oTYgtraEvWTlEOmNvvNbOikxc4MTAiDSvvYCJWtbAHXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BcY3j6H7; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJf/Mu2y"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-47ee0291921so25624885e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2026 01:45:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BcY3j6H7"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48068ed1eccso42203465e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Feb 2026 01:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770630334; x=1771235134; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JVQlXmDuk96Q/iD1SNElHM3wEluIaQ7AteOxPLd9wsU=;
-        b=PJf/Mu2yyVs8NuHFd+25Q0bKwyOyEeFKLeA9eDqEDCPtYRYa1G7pjX12uS1yF7aszv
-         EsHg/Qw768AzWes3tUrznpITwtJFihGjK7CPx69BzqbgT8K0Wq9X2xJfpEFTXcSEUXvH
-         PyZliOSFxi8TDcpo1mTIezW+aJ3RrAgiJOTVDwi3zhN62/tAtenUAPBi0shDeUJDT84z
-         FqvstoThxzIxuYKwBfcxlK/+JkHKdR6Zr+zHv+f/LDO8/fHmaEGQY+UmjDTWyN+L6/n6
-         gTjVxoXzMGFOAmoBFS2u0d6iEhC4C1/27aZ+JPVoU+b2nDwZ5C1QfPvhJZRPz86kNRGy
-         4q7Q==
+        d=gmail.com; s=20230601; t=1770630973; x=1771235773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IVgv/ApvtPT8cTKfn6etBvdAtAGXr656rVlWgGYQDx4=;
+        b=BcY3j6H73TpgyrfQyQ35IVz4TCMOOaiFlnXYf4NFyT+MKx+pvEr0yiOe4KUjHmvCnm
+         mp6D0TQK9uOsoLS7VXH4qi2t3Qlmy3U6YCNDkf6Aqtmz9bXLjFVszkF7HnrQAN4Kgswl
+         M9/HkJH/ie05iGwqUQ2Q6WbhORT0JG2r4YwQHRxjijkyqeGvfDMme2dTJQ9N0Nyd5w3M
+         8qs8r7RGJqOAKYjT0AayAc4jf6npykbz7iisoFJMgbrZv0558GYSc6rPLcH0NfB3VAlM
+         zjyLQu2A+8Sq5QYtSLZGzBGTu4Fnew0XzqdI3G90jlVjf4Eb5ftvh4JhwtSv5j8o0yr4
+         mduA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770630334; x=1771235134;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JVQlXmDuk96Q/iD1SNElHM3wEluIaQ7AteOxPLd9wsU=;
-        b=qzvw8OVMzFg4t9LI4QFJb5IkvHTMwDafdoIMJYb52gTl1A9BEcaRiB3LduV7i/uGOt
-         QGrbR1wTpR2dHrRvemGplWTNuK262Z4HpuaULxcNBFAzOZXjzco287vpikQvxPkwrD55
-         BlefkTFZtQ0XnE3WMmL00QYrN3TU63fP2cev6NVsyFW8p4FcvvU3KVW201ijbpo7VCjC
-         o9NXrjBnPO1X5fB2KBItUREqlHv4j925wCocLtrgpaxR0n94a4KwLIBeep7TE/RK5Kd3
-         3yjWpqu+X3v9WpC4/SY/NXQQsHadneWa6cKtqo19A78AzPYmz/3l+ZSoSo2shu0Iw12w
-         w2EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYUzSqhtsNVMzAWCkidmCu+IpzGB6zmGFCvN8JeAqcdwZCSBC92pz8npyBRx96ycAjuo2wkdZj9jqvHe21XScdfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOhS3rR6zmyvfSbd94FEsmwvuCAEFUp23ZQRosvtrOkoAnZpii
-	g18eYY6VUU3tcKPdEzyBdtvX59q40EsqtdTtSDG4PaNX6EeXbFWG5J19Bffj1kilMfw=
-X-Gm-Gg: AZuq6aJMjJw/oJjN1Hs9Xfm9YUA71d5IezM8e41GBoG/PvLePQG6ww4erAVNKd7wkOl
-	NF5iOYBlcIh0QeVj7aptblbDKy75gwNje++rUBkiQQ6U+4+nKCsE3qcHuMxEVcuWOwqD2Cd4wSZ
-	P27Vi7Ho1wIdqmTWMFKA28ryHWms4KVZMdOlrHJqK/Elcr+rrbH9KFAei8IYFjbXbANNNOzQ3eF
-	zvfXx770SyRBUDNxnYxiQR9RWaZm2I8hcxFpFTGewijB1By4C062wh+OIOAOFD1eNyHK33K4egH
-	FSaS24ZvqgcNw+vThZaZ/DGRYC4ozcAeU6wCd2ngtUblACaJEg8qC/YuzgIE6TQXmxR2SnWGetJ
-	XEBg9caGWkQhCWVMWYKBYp0ZD7K2MX0u0f9qGW+ONQnvdk64DvDF1NhYVBQLzxiM+E3nN7Yqu5S
-	DxuX762rtlK0WCr2Kd
-X-Received: by 2002:a05:600c:1d01:b0:480:1a9a:e571 with SMTP id 5b1f17b1804b1-48320213a37mr159671545e9.22.1770630334378;
-        Mon, 09 Feb 2026 01:45:34 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48317d7a99asm340006885e9.11.2026.02.09.01.45.33
+        d=1e100.net; s=20230601; t=1770630973; x=1771235773;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IVgv/ApvtPT8cTKfn6etBvdAtAGXr656rVlWgGYQDx4=;
+        b=cBQr/Am1AW3BNWE3TLogMAXK5Imd4EmgSiX7GBLpY6qBMFZt9BGW1enOd0ucjBPrgS
+         hFQdMzL0cdthKdAM5u5ST1QVHyLkSfJwDWVD34gYUvM6OnmBDjt7OBex7xunUEgCbzCv
+         ofKmORoYLn7sZvt2vty1ag/Rd4553WhWMByXljdLyvC0zoj3shTbQqNGISgyXrYIcg4U
+         lcK23w4jQnwlMCBY9v71Pvx8S44GqoziwaBSCLXO7aNkxivc9v13aqnSfLLjnYiiwjAC
+         9vIQg4Glj4RxQMJ0Bw4qUcq8RAuAIPFc+v+Ffjv/jRCIyPE1IDEU/yg1QVXD0aXTiKua
+         E/gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0BhmV++QQxzLxr+RdJuBmS6NYYQijCtm9kkgXAaG3nO732jL6aVXnt9QVk71y0YKeP7y8ipVfx+qti4CgyhVUw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ9F54ApRUebeegcceKKRmC68af1l4d94wwDcxV7I/oK3gPZBg
+	2dCRXz4Kys7GbAMmKwm8d7NXkGUeR5Pjw8LTVYb13BUTYB+o7V8Ndtq+
+X-Gm-Gg: AZuq6aKp3iqM1XnN0lqHuV7HlE8qOJO3cRVh59qYGtXljjfXEIM8wJPIUbmNRLE8DgB
+	TwGKb/wpIUMP7qk9a9oGCIG/1pC4M3gurgUV/gerUxFyp7Mwui4sn5HjPFiL6K7xat84A/FlR4K
+	DOzCttJFcgp5qSy7X/9/PhUk5owR2bK/iK5dcrldU27w0C7oVUe6+nnshvMpGqieeAOT2tNahqS
+	JSM1AuhWLrcMOtvL+9lRzaf//1Mh9bcrm3tY4Q507DhAoemcppcbB61LRBAis1xpA/Xwe+oXx36
+	0Ch1mxUa3XZHIsDYW6v0lg/yBqhNSniEHMFW6h0hthlJaGzUEd2ZZrBY6S79P2d7BPDJpQHFb8Z
+	9QLInTeQPrEhRA2cvvBvoDyoQquLgX9lhpkwi13OTEyOXLgPMdr0WdxgBETP9ACDRd4v2sMLZLU
+	3bRg35eya+LoP49zfmQw6HSw0xlvyKqL2jio8vJWTP+eI8LN0tOWJd
+X-Received: by 2002:a05:600c:474c:b0:482:ef72:5778 with SMTP id 5b1f17b1804b1-483201dc4efmr164588285e9.8.1770630972561;
+        Mon, 09 Feb 2026 01:56:12 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48320728774sm224222235e9.14.2026.02.09.01.56.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 01:45:33 -0800 (PST)
-Date: Mon, 9 Feb 2026 12:45:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [bug report] regulator: s2mps11: add S2MPG10 regulator
-Message-ID: <aYmsu8qREppwBESH@stanley.mountain>
+        Mon, 09 Feb 2026 01:56:12 -0800 (PST)
+Date: Mon, 9 Feb 2026 09:56:11 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: =?UTF-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?= <kernel@lvkasz.us>
+Cc: Lee Jones <lee@kernel.org>, Kaustabh Chakraborty
+ <kauschluss@disroot.org>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, =?UTF-8?B?QW5kcsOp?= Draszik
+ <andre.draszik@linaro.org>
+Subject: Re: [PATCH FIX] mfd: sec-irq: fix non-constant case labels in
+ s2mu005_irq_get_reg
+Message-ID: <20260209095611.12e4d438@pumpkin>
+In-Reply-To: <20260209040358.2123413-1-kernel@lvkasz.us>
+References: <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
+	<20260209040358.2123413-1-kernel@lvkasz.us>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <caa37f28-a2e8-4e0a-a9ce-a365ce805e4b@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-[ Smatch checking is paused while we raise funding. #SadFace
-  https://lore.kernel.org/all/aTaiGSbWZ9DJaGo7@stanley.mountain/ -dan ]
+On Mon,  9 Feb 2026 05:03:58 +0100
+=C5=81ukasz Lebiedzi=C5=84ski <kernel@lvkasz.us> wrote:
 
-Hello André Draszik,
+> Case labels must be compile-time constants,
 
-Commit a2b8b9f33ce3 ("regulator: s2mps11: add S2MPG10 regulator")
-from Jan 22, 2026 (linux-next), leads to the following Smatch static
-checker warning:
+They must be 'integer constant expressions' which it stronger than
+'compile time constant'.
 
-	drivers/regulator/s2mps11.c:483 s2mpg10_of_parse_cb()
-	warn: off by one 'ext_control' == ARRAY_SIZE()?
+> but the original
+> implementation used array element values like irqf_regs[0], causing
+> a compilation error:
+>=20
+>   drivers/mfd/sec-irq.c:218:9: error: case label does not reduce to
+>   an integer constant
+>=20
+> Replace array-based case labels with explicit S2MU005_REG_* defines
+> for all four interrupt status and mask registers, preserving the
+> original logic.
+>=20
+> This addresses an issue in the S2MU005 PMIC support patches [1].
 
-drivers/regulator/s2mps11.c
-    458         if (of_property_read_u32(np, "samsung,ext-control", &ext_control))
-    459                 return 0;
-    460 
-    461         switch (s2mps11->dev_type) {
-    462         case S2MPG10:
-    463                 switch (desc->id) {
-    464                 case S2MPG10_BUCK1 ... S2MPG10_BUCK7:
-    465                 case S2MPG10_BUCK10:
-    466                 case S2MPG10_LDO3 ... S2MPG10_LDO19:
-    467                         if (ext_control > S2MPG10_EXTCTRL_TCXO_ON2)
-    468                                 return -EINVAL;
-    469                         break;
-    470 
-    471                 case S2MPG10_LDO20:
-    472                         if (ext_control < S2MPG10_EXTCTRL_LDO20M_EN2 ||
-    473                             ext_control > S2MPG10_EXTCTRL_LDO20M_EN)
-    474                                 return -EINVAL;
-    475                         break;
-    476 
-    477                 default:
-    478                         return -EINVAL;
-    479                 }
-    480 
-    481                 if (ext_control > ARRAY_SIZE(ext_control_s2mpg10))
+Makes one wonder how the patches were tested.
 
-This should be >= ARRAY_SIZE().  Although the earlier checks prevent an
-out of bounds access, it's still worth fixing the sanity check.
+>=20
+> Link: https://lore.kernel.org/all/20260126-s2mu005-pmic-v2-6-78f1a75f547a=
+@disroot.org/#Z31drivers:mfd:sec-irq.c [1]
+> Signed-off-by: =C5=81ukasz Lebiedzi=C5=84ski <kernel@lvkasz.us>
+> ---
+>  drivers/mfd/sec-irq.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+> index 44a1eb074a08..73a611ba0502 100644
+> --- a/drivers/mfd/sec-irq.c
+> +++ b/drivers/mfd/sec-irq.c
+> @@ -215,9 +215,15 @@ static unsigned int s2mu005_irq_get_reg(struct regma=
+p_irq_chip_data *data,
+>  	};
+> =20
+>  	switch (base) {
+> -	case irqf_regs[0]:
+> +	case S2MU005_REG_CHGR_INT1:
+> +	case S2MU005_REG_FLED_INT1:
+> +	case S2MU005_REG_MUIC_INT1:
+> +	case S2MU005_REG_MUIC_INT2:
+>  		return irqf_regs[index];
+> -	case mask_regs[0]:
+> +	case S2MU005_REG_CHGR_INT1M:
+> +	case S2MU005_REG_FLED_INT1M:
+> +	case S2MU005_REG_MUIC_INT1M:
+> +	case S2MU005_REG_MUIC_INT2M:
+>  		return mask_regs[index];
+>  	}
 
-    482                         return -EINVAL;
---> 483                 ext_control = ext_control_s2mpg10[ext_control];
-    484                 break;
-    485 
-    486         case S2MPG11:
-    487                 switch (desc->id) {
-    488                 case S2MPG11_BUCK1 ... S2MPG11_BUCK3:
+That looks as though it ought to be an if statement (or two).
 
-regards,
-dan carpenter
+	David
+
+> =20
+
