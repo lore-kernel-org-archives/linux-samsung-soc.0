@@ -1,162 +1,95 @@
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+Received: from v5244.v57ae4e16.euw1.send.eu.mailgun.net (v5244.v57ae4e16.euw1.send.eu.mailgun.net [161.38.204.244])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D441EEE6
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  8 Feb 2026 13:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0004421770B
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Feb 2026 04:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.38.204.244
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770555954; cv=none; b=sQ7FpNt66BVAuDXPo90Dv05M13Yoo50r5VapV8WR+oABxMkhvJJAVBx3zPZOJjFD5npiyiAJyeWBqLa2Prt2qinOLr5+FbtqQ+k/FxgeJEz03ekhv6jC3CL5rGrmyBZBmBXcYqEh3A2H3n+FE7ohJgqryIB6bf8jEekJQhQgMXU=
+	t=1770609852; cv=none; b=oToahrmGauGWMBgtHYQNVSo5VIcpbN2YQg5jf/Lq8JaercXhl9czLexJAP2X+VC8f2dwCR3/IEc/8ZB+jnbzsqUFQ0nCZKEpomEtYG6IFHXeCMxIP8zc2kIRHo6kroZ1HgLJYqrZU6iJSJbo1TwdqNzSD5eizy5e+jjncAKaRus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770555954; c=relaxed/simple;
-	bh=osT0EUva0gXZ1pK88EukUzwSiu7f4mThiV/KwigTGzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LkseUiRZ2SapQ19qIFxgyZ1qL8r/0k2Zqp4YetK99+J1Y4l8M1aI0Xn5QDEn0ctSh9cxI21oB/u6E3zv6AzKZXC1hfGg9dg2ATwNKMmw3SC7VuRQAVzjAJlwSDEZ8mbFYgzR98uzzScVG04avAeO2pFDOngYNJZIj9Kz6njZIe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7EhQkTh; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770609852; c=relaxed/simple;
+	bh=w5ul6MViOpfJt+Z315j6OqUJHAeVUTaHG+zQThTFf0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YfEHzoml+Vk5oJQxCP45g0Lhpb//aDDznyAqFu/zdXvoPaCbNrnIu94cggQt76LGHY5N2BJrSPKN4kichMIXG6t+bvCed7SDYiXC/rg/FLVDa7af7SXCUJdr+r8uvN+C5AXKgALBJVn2DGBr09nTp1n3oXFtyvUxnGOoZFPnm3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us; spf=pass smtp.mailfrom=lvkasz.us; dkim=pass (1024-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b=MHzzkk79; arc=none smtp.client-ip=161.38.204.244
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lvkasz.us
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7EhQkTh"
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-47ee76e8656so55280595e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Feb 2026 05:05:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770555953; x=1771160753; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S6ZaHSw9LpRz01vg6acbUDvWM+cc8+yuVQwbsTXMnoc=;
-        b=J7EhQkThA2l+rof3AOzI/crRVbSKPsQ3H1oU5Cl77W8vHcmN64O4AW36/L0bBRuYao
-         QA1NJCRLmSI7GzB51Sz1funRAp2CG3svzIxhcwGgnGFkx51hK+drRRm6aEagZYEZvBh8
-         FgoJFbogl6kj7vZ88/Qg+r2GfszxFt2Eh5YPT7L2rZbtll8h5oEOuJT2pWOQuBX5dniJ
-         W+3ZgdEuSqtruad4O3g75HBhtOWYQFXCfUzp9oyaGfkpmpEyDhmgEvNNSulny1rj5vd3
-         xlLpRusLQNtvNGtiDwAr6zWXveOzhbRNtCmvfGKLeQugIS1CWKAk/6BdjmBR/a4ZFE4A
-         TzTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770555953; x=1771160753;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S6ZaHSw9LpRz01vg6acbUDvWM+cc8+yuVQwbsTXMnoc=;
-        b=rQqH2uUiBAhnkqUbDp1exiaz4OB/qRrHz2sSPVppKQHuCfk1qjQxGR6vvFQ5fFcrjj
-         a8KM5frALicFulAwLnZEr1MM5MTbIgODwmZoPQADITXX/tU3euAl7BFVTahnHE23LRcZ
-         zkSB+0qn1tAyvgERrOcYicCP64wEWOsek+u+9HBGm/pMU2yX5xbRp4x7wqiaT6qdEP0d
-         k4om2S3p8xLdievggmtsXjLiVlalcZHoIKYZhYGcHB5GD65sfhbyWoEnfyG/WZc5Mp1p
-         ijnugPNUXislq5sSapL6EPvPWMzeahI5BXqSE98Vgi+YKdvNjPNShaymY1pfnEdbkwff
-         kq1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnKSUscQw7r4DsUIkIipPv8u/7lshnS7pQCC8lbVYwgD2CCqcA06rg+VpMWzOv6a1GXzcVgsXh+OaVGyPXDANpKA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw64r0jDrIm4UIRtuwNOb4dBf2BY8JkJ7h7WtgCK2HFCnu4l/3V
-	0xyxHut/s8oAs3HIMryUcxsYl1PjjIoGFB0pZfYNtEN77iT3JW5mtYDA
-X-Gm-Gg: AZuq6aJT2ezG9tRRd63HZeoS/iF8sNSA9Ix9vKQa3rw0l61+RrXoAD/37B2vv2mK/dU
-	qvx8JEPPKfHtXMBwUDUs/kcIthDL928i/aaEIXwrby6U2vZ1rhYTWZd/WdaAsFtyAyLBkhfv4nI
-	wBWCa+U4geE4PG5jDBw7ePDlS93tZQxEY28tywuMXMH8lqxtrZKh4r/40PMkXJCL+z3Ine0a5HI
-	E+3gXj4GdcXOLrbyIqbenkR9zV9KWxAY0SbcD+rbwJRbMDTeZb8rzaGg9m5k/wKFSRHV0JTEx+t
-	kV1lYzEUb7DB2+eOtA6VW5tGrdM4NagU4H6iUzPYmVEkPhZsy6hKwxOPapFPinJ3utP3yRmrPO9
-	vQSLGXZC2iqNSKxwI8C7eVpuKd3SEX9bj9omsNK9wFPeZ18yy/Q+nAlhtwfRcSEMqV8u6qJUzog
-	0wjyMOv13ri6o6uIRa0aUaV4M=
-X-Received: by 2002:a05:600c:4f54:b0:47d:403e:9cd5 with SMTP id 5b1f17b1804b1-4832020df4emr103964445e9.11.1770555952781;
-        Sun, 08 Feb 2026 05:05:52 -0800 (PST)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436296b2110sm19201164f8f.3.2026.02.08.05.05.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Feb 2026 05:05:52 -0800 (PST)
-Message-ID: <0033b0b2-1eb3-4486-abe4-62d25f10b22c@gmail.com>
-Date: Sun, 8 Feb 2026 14:05:50 +0100
+	dkim=pass (1024-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b="MHzzkk79"
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=lvkasz.us; q=dns/txt; s=mta; t=1770609850; x=1770617050;
+ h=Content-Transfer-Encoding: Content-Type: MIME-Version: References: In-Reply-To: Message-ID: Date: Subject: Subject: Cc: To: To: From: From: Sender: Sender;
+ bh=HKQeOGFpMmrwu4yHYiRCmHa7Pqx2vqHzDFG/d6in2VU=;
+ b=MHzzkk79R2PhnbwNtMO4xdb+s+nyfDNsDE+9SpAOKO/9lS9U4zn62inzxirAgoqM9pKO7rD8yUl67TvNGURzB5UKGXSnRofv8Usy2YB/UBZck9nsG1/1PdOuuSev+Z0bKgdCVR1QPtMey3Zy+8hzbMIRLvS4YCVBbs+qOAy4ZUk=
+X-Mailgun-Sid: WyI3NmU2OCIsImxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZyIsImRjNzRiIl0=
+Received: from msi (5.185.72.109.ipv4.public.orange.pl [5.185.72.109]) by
+ 9fd7231a5c61cbac2e381b8639e4b8fc9d01b70453e48563643f27cc8fa9d90c with SMTP id
+ 69895cb9017cb293c926c3b3 (version=TLS1.3, cipher=TLS_AES_128_GCM_SHA256);
+ Mon, 09 Feb 2026 04:04:09 GMT
+X-Mailgun-Sending-Ip: 161.38.204.244
+Sender: kernel@lvkasz.us
+From: =?UTF-8?q?=C5=81ukasz=20Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+To: Lee Jones <lee@kernel.org>
+Cc: Kaustabh Chakraborty <kauschluss@disroot.org>,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	=?UTF-8?q?=C5=81ukasz=20Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+Subject: [PATCH FIX] mfd: sec-irq: fix non-constant case labels in s2mu005_irq_get_reg
+Date: Mon,  9 Feb 2026 05:03:58 +0100
+Message-ID: <20260209040358.2123413-1-kernel@lvkasz.us>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
+References: <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/12] dt-bindings: leds: document Samsung S2M series
- PMIC RGB LED device
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
- <20260126-s2mu005-pmic-v2-2-78f1a75f547a@disroot.org>
- <20260206133837.GA157817-robh@kernel.org>
- <DG7XJ6T9I7HU.1UVHH2QWX31O1@disroot.org>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <DG7XJ6T9I7HU.1UVHH2QWX31O1@disroot.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Kaustabh,
+Case labels must be compile-time constants, but the original
+implementation used array element values like irqf_regs[0], causing
+a compilation error:
 
-On 2/6/26 14:56, Kaustabh Chakraborty wrote:
-> On 2026-02-06 07:38 -06:00, Rob Herring wrote:
->> On Mon, Jan 26, 2026 at 12:37:09AM +0530, Kaustabh Chakraborty wrote:
->>> Certain Samsung S2M series PMICs have a three-channel LED device with
->>> independent brightness control for each channel, typically used as
->>> status indicators in mobile phones. Document the devicetree schema from
->>> this device.
->>>
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>> ---
->>>   .../bindings/leds/samsung,s2mu005-rgb.yaml         | 34 ++++++++++++++++++++++
->>>   1 file changed, 34 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/samsung,s2mu005-rgb.yaml b/Documentation/devicetree/bindings/leds/samsung,s2mu005-rgb.yaml
->>> new file mode 100644
->>> index 0000000000000..6806b6d869ff7
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/leds/samsung,s2mu005-rgb.yaml
->>> @@ -0,0 +1,34 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/leds/samsung,s2mu005-rgb.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: RGB LED Controller for Samsung S2M series PMICs
->>> +
->>> +maintainers:
->>> +  - Kaustabh Chakraborty <kauschluss@disroot.org>
->>> +
->>> +description: |
->>> +  The Samsung S2M series PMIC RGB LED is a three-channel LED device with
->>> +  8-bit brightness control for each channel, typically used as status
->>> +  indicators in mobile phones.
->>> +
->>> +  This is a part of device tree bindings for S2M and S5M family of Power
->>> +  Management IC (PMIC).
->>> +
->>> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
->>> +  additional information and example.
->>> +
->>> +allOf:
->>> +  - $ref: common.yaml#
->>
->> This looks a bit lacking. Don't you need 3 child nodes for each or
->> reference to the multi-color schema?
-> 
-> 	rgb {
-> 		compatible = "samsung,s2mu005-rgb";
-> 		label = "notification:rgb:indicator";
-> 		color = <LED_COLOR_ID_RGB>;
-> 		function = LED_FUNCTION_INDICATOR;
-> 		linux,default-trigger = "pattern";
-> 	};
+  drivers/mfd/sec-irq.c:218:9: error: case label does not reduce to
+  an integer constant
 
-Having label together with color and function doesn't make sense.
-Please read label documentation in [0].
+Replace array-based case labels with explicit S2MU005_REG_* defines
+for all four interrupt status and mask registers, preserving the
+original logic.
 
-[0] Documentation/devicetree/bindings/leds/common.yaml
+This addresses an issue in the S2MU005 PMIC support patches [1].
 
+Link: https://lore.kernel.org/all/20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org/#Z31drivers:mfd:sec-irq.c [1]
+Signed-off-by: Łukasz Lebiedziński <kernel@lvkasz.us>
+---
+ drivers/mfd/sec-irq.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+index 44a1eb074a08..73a611ba0502 100644
+--- a/drivers/mfd/sec-irq.c
++++ b/drivers/mfd/sec-irq.c
+@@ -215,9 +215,15 @@ static unsigned int s2mu005_irq_get_reg(struct regmap_irq_chip_data *data,
+ 	};
+ 
+ 	switch (base) {
+-	case irqf_regs[0]:
++	case S2MU005_REG_CHGR_INT1:
++	case S2MU005_REG_FLED_INT1:
++	case S2MU005_REG_MUIC_INT1:
++	case S2MU005_REG_MUIC_INT2:
+ 		return irqf_regs[index];
+-	case mask_regs[0]:
++	case S2MU005_REG_CHGR_INT1M:
++	case S2MU005_REG_FLED_INT1M:
++	case S2MU005_REG_MUIC_INT1M:
++	case S2MU005_REG_MUIC_INT2M:
+ 		return mask_regs[index];
+ 	}
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.53.0
 
