@@ -1,127 +1,129 @@
-Received: from mail-m49216.qiye.163.com (mail-m49216.qiye.163.com [45.254.49.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDAB340280;
-	Tue, 10 Feb 2026 09:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9BB33FE30
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 09:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770716113; cv=none; b=iONY4u0zs7rv4VwotB3xHtetdqEcmhDVB7fSec1zOjbQUBThZLb9R+/09ZMddZLpYXbK+x29RtrTTh5f2T3FTgtFfyE8bhZC7M4b6ImUywLykRPePtFCn2CDovNappc/o1YAxTJe3ZGdYH7eeb2iNCay37u2N44keXirb3Hm/K0=
+	t=1770716255; cv=none; b=uTykGqIIfxGJHb2hZVv16M4ADj6b13N8hkPK+ncfFbZkbDKxGp4xyxUylRDgaK9qSxGsHrxZjrsK5w2YiMiqBavFlsEKe5wJAq/aMN0bm5Bdpwx6T8wv0R/knuzNRiQ62aZvxzgp0EmfUU6O6eweUs7soha1KR/j99rwAb5X8JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770716113; c=relaxed/simple;
-	bh=/79zM8oFHyOFVl27np1x4CiORucckveQXvkRV5olPj0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=japUbwi5UFJyavEpe7NowP4U+9jbzYYAOwErf5wv29Ic+46wfJRI27geGCwlay9Y+E8m+qRzbxRFZyu9CzMPbtLS07nFTnOSs9EDGZyNfvwBq1yyAS+LGSQp+nKP01MO2LCbxLqQ2aO6hOTJlC8l98N6sVbs3iuUTpnla7OI+B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=dUgImSU5; arc=none smtp.client-ip=45.254.49.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1770716255; c=relaxed/simple;
+	bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HbOE6XFFmJ8FQ88nktP1cZb0R66UTJfRfs/6V4qkv2QoXKIDWEMiE3AmnbnHFyQRH7l9rIxRfBc2muzDefmHWb5FCDdjcP7if2EUZKKts0gQr3ADqHYhVWVZg/DFpC48nRq71VBYsK6jVifjT/3RZ9fQIKobwtzB0T3Qw/ZUn9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJC9lWKu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="dUgImSU5"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 33b530b48;
-	Tue, 10 Feb 2026 15:12:46 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v9 04/15] drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
-Date: Tue, 10 Feb 2026 15:12:14 +0800
-Message-Id: <20260210071225.2566099-5-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260210071225.2566099-1-damon.ding@rock-chips.com>
-References: <20260210071225.2566099-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJC9lWKu"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-483487335c2so13255945e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 01:37:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770716252; x=1771321052; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
+        b=HJC9lWKuwufyEOyXeojsEu7DUvK3XfzX733Do+b8W59uE6tPLVMoNNdsZu/stjza81
+         rwzIOpA/a1HC7giEUKjXEvS8j4QdoGW31l+/5r/IEe1ExBi+kKcrlaPBS1MVrRp8k1PR
+         LhmWIm+zhlmp1EQwhHcLFwolMt3eA4GpU/uPPxDzJtgevawsahmKEUdHpMnxwqI5eotw
+         EFa3HbE3B0Ij84z92nEYif3Dw+peJuucOywU04qgfFdMGXBttnNU6PsEfjdPnnwpqqzI
+         5x03SAiS37tZPTGC0M24QQF+Le+7QUXBi8skMCWi2begBhxdPCc2jrG3JorA8CEkeYaP
+         Xbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770716252; x=1771321052;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
+        b=C0I/r0W5erZShBuNk3hH4Nxicw1M7/fRNbsNQbw0nD0OfUxfneVXnp1jRrSVhBQGrI
+         trFqtbDqMmaDtx6FjNJsP8YrCUxA7MVcLMCKniGI8E25qVpGQGAAlTO6I4lWh9Q2f54j
+         d8A9rZF8RD+dZ4U8Iakf0GgBs5sod0vI+2Q/gjCkZKWxgonSRTENvB5YRXRX+DFdCxZR
+         2knT5PTIt7Sc+RGH5gCrSVVblbcTyissS5Fljj2YrNfN8GRkpB4WDV+A910QDHP9a7A7
+         r+XwXjGma9UfkuOwTFV7d2VJnxUDBtKQ1XgJu8bMaos14NI01SAGca22V6MMBEdbhtik
+         rfig==
+X-Forwarded-Encrypted: i=1; AJvYcCXHQHiPEhbXwnv5Ekh/rUtXD2sElX27mfz1XMs12Sa8YqsNx3fRx/A5EyPaqp/E5Ij+6waStsE2sZBXOo7mx+S6yQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YztrXSv8bk5zdkEizyRrZwttRnn4C1691Issqkno6nRmv+gcrbo
+	ENbi7LHYjJVMybfAaqcCslPA6yl4LFlP+8czMa7nYycn6vO51LBMEIIlgVUNbCNdQdR6DbrDckR
+	0wcY/fLE=
+X-Gm-Gg: AZuq6aLdxTU+Ul4mKwScjysZ3HhSkf3fNINcNA00xX4rSLuv8SuNoCtnrGCJzmt5cvT
+	SeCi01jAkAdr4mAgK0fySUCJrkr+X3i6KFNMDUjsdNG3+uZAPkTkep+2vjVKmK7zdDU8MUYcK36
+	MpxJxlxykovNhV7uOUD9VJlD179asOeMrkWCc3Z3cIQf4bDBJG01UwgWTYHrD8tj5TuSkYidYQP
+	C+mMd9DDjuE05h62h3zw1Nogo3ytEDeG5fqK4usAFZxvvYZ02gn/nrPFUl+J4aI92qXH0Ljxy20
+	a7/VQduQnae2rR6yFrnqKF6uLlbweVJG7ZCNRTSI6a2OiPueOI36p1yyOkGfD2j17YA0zW9h2S+
+	ThUyTOMYM6E8P5mvAAqhTteYbjpNwwHN6N9kgEdh4X+am+gLNjKZmUG8+yG9miCnennLNGgXRxO
+	ipcPJAsWmjWoebwT8tRAU9dtHrz6ZTHg==
+X-Received: by 2002:a05:600c:6592:b0:47e:e7e5:ff32 with SMTP id 5b1f17b1804b1-483209c6dd4mr218940985e9.34.1770716252254;
+        Tue, 10 Feb 2026 01:37:32 -0800 (PST)
+Received: from draszik.lan ([212.129.79.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d7e64b0sm57319715e9.11.2026.02.10.01.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 01:37:31 -0800 (PST)
+Message-ID: <0ee40d36397bfd4c04aea6ead07e42848203e9d6.camel@linaro.org>
+Subject: Re: [PATCH 1/2] regulator: s2mps11: drop redundant sanity checks in
+ s2mpg10_of_parse_cb()
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dan
+ Carpenter <dan.carpenter@linaro.org>
+Date: Tue, 10 Feb 2026 09:37:59 +0000
+In-Reply-To: <1e8ee0ae-a74d-418a-80b1-4d2379614548@kernel.org>
+References: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
+	 <20260209-s2mpg1x-regulators-fixes-v1-1-ead348e64e14@linaro.org>
+	 <170a820d-b987-4fd7-acca-ac88bab9e243@kernel.org>
+	 <4f1b1d857c0ee17436cd61e97219f508bd89f917.camel@linaro.org>
+	 <1e8ee0ae-a74d-418a-80b1-4d2379614548@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9c46653ed403a3kunm1f53a888aef98c
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtKGFYfGBpIH09MHRlPGEhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=dUgImSU5UBmkXN2HvuOewqGZvnVMXTBQ+6orECmXHMTG3Zf7FNiGIYwbSB3S9+9oYLp4MqhhIq3bCslF/oeBPBh+inWd8DsFL6ye+bEAS46hmU+hQsHgOr7uj/8LI3fVTO4z+fmkc0s2C9jPcxHO/iNL82Pm6y4VFf4ZaP5/Dxg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=0ZOi30iqvElH92jG4uV8QMY3iphYINqvrpBWAIBZe3M=;
-	h=date:mime-version:subject:message-id:from;
 
-The &exynos_dp_device.connector is assigned in exynos_dp_bridge_attach()
-but never used. It should make sense to remove it.
+Hi Krzysztof,
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
+On Tue, 2026-02-10 at 08:28 +0100, Krzysztof Kozlowski wrote:
+> On 10/02/2026 06:59, Andr=C3=A9 Draszik wrote:
+> > Hi Krzysztof,
+> >=20
+> > On Mon, 2026-02-09 at 17:09 +0100, Krzysztof Kozlowski wrote:
+> > > On 09/02/2026 16:07, Andr=C3=A9 Draszik wrote:
+> > > > The sanity checks being removed in this commit are useless as earli=
+er
+> > > > code checks for out-of-bounds conditions already. They also are
+> > > > incorrect (as they're off-by-one).
+> > > >=20
+> > > > Simply remove this incorrect code.
+> > > >=20
+> > > > No functional change.
+> > >=20
+> > > If they are incorrect then how it could be "no functional change"? To=
+ me
+> > > original code looks buggy and this is a fix. Fix must have functional
+> > > change...
+> >=20
+> > Earlier code already checks for all conditions, including all error cas=
+es.
+> > So the code being removed here has no effect, as any potential error it
+> > could catch will already have been caught by earlier code. Removing it
+> > therefore doesn't change behaviour or functionality.
+> >=20
+> > I can reword to 'incomplete test' instead of 'incorrect code' if you th=
+ink
+> > that's more clear?
+>=20
+> Perhaps you should mention which "one" in off-by-one that it has no impac=
+t.
 
----
+OK.
 
-Changes in v5:
-- Fix the 'drm/bridge' to 'drm/exynos' in commit message.
+> I also wonder why you left the second - ext_control_s2mpg11 - untouched.
 
-Changes in v9:
-- Add Reviewed-by and Tested-by tags.
----
- drivers/gpu/drm/exynos/exynos_dp.c | 3 ---
- 1 file changed, 3 deletions(-)
+Could you point me to it please? I'm not sure I see what you mean.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f469ac5b3c2a..e20513164032 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -35,7 +35,6 @@
- 
- struct exynos_dp_device {
- 	struct drm_encoder         encoder;
--	struct drm_connector       *connector;
- 	struct drm_device          *drm_dev;
- 	struct device              *dev;
- 
-@@ -102,8 +101,6 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
- 	struct exynos_dp_device *dp = to_dp(plat_data);
- 	int ret;
- 
--	dp->connector = connector;
--
- 	/* Pre-empt DP connector creation if there's a bridge */
- 	if (plat_data->next_bridge) {
- 		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
--- 
-2.34.1
-
+Cheers,
+Andre'
