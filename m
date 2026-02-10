@@ -1,79 +1,84 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9BB33FE30
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 09:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B421E342534
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 09:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770716255; cv=none; b=uTykGqIIfxGJHb2hZVv16M4ADj6b13N8hkPK+ncfFbZkbDKxGp4xyxUylRDgaK9qSxGsHrxZjrsK5w2YiMiqBavFlsEKe5wJAq/aMN0bm5Bdpwx6T8wv0R/knuzNRiQ62aZvxzgp0EmfUU6O6eweUs7soha1KR/j99rwAb5X8JU=
+	t=1770717291; cv=none; b=H9rxQPG103cwME9A3QxJVgHjvfGCBibHmh2ykoSZq5QXhhbURh03wdnfE0h+wARqWg5XdrGC4JZScTxHVXcAWuoUD8IMOtwoPGm980A4ZmmiLlw6ZFaZ6KHht1zFAZRCrZlVDUvoM6Pojx6EjEFEm7YFk8XD9SdDxQlgpzZ3DoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770716255; c=relaxed/simple;
-	bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
+	s=arc-20240116; t=1770717291; c=relaxed/simple;
+	bh=HxxenadFwN0QecO/VcAoIcmjFPcwyrISlXCM0v/oOYo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HbOE6XFFmJ8FQ88nktP1cZb0R66UTJfRfs/6V4qkv2QoXKIDWEMiE3AmnbnHFyQRH7l9rIxRfBc2muzDefmHWb5FCDdjcP7if2EUZKKts0gQr3ADqHYhVWVZg/DFpC48nRq71VBYsK6jVifjT/3RZ9fQIKobwtzB0T3Qw/ZUn9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJC9lWKu; arc=none smtp.client-ip=209.85.128.50
+	 Content-Type:MIME-Version; b=NlKDjTMocsIz4pLMDPi6qpXfqJ3/1YEJrLuH5pSurGdqWkxaMTjmPieoc2dOHfl6FyDR/J11tQFf+e1F5L09QRahHQjwCeRdrVPmHEdcChFALcCWxAaEf+mXIi6MFSNKOv/59p2zSTusfvFLxUr9F/bivUZ0jpSQ0M2wDm85M5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQz7nBck; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJC9lWKu"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-483487335c2so13255945e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 01:37:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQz7nBck"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4807068eacbso5560305e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 01:54:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770716252; x=1771321052; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1770717288; x=1771322088; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
-        b=HJC9lWKuwufyEOyXeojsEu7DUvK3XfzX733Do+b8W59uE6tPLVMoNNdsZu/stjza81
-         rwzIOpA/a1HC7giEUKjXEvS8j4QdoGW31l+/5r/IEe1ExBi+kKcrlaPBS1MVrRp8k1PR
-         LhmWIm+zhlmp1EQwhHcLFwolMt3eA4GpU/uPPxDzJtgevawsahmKEUdHpMnxwqI5eotw
-         EFa3HbE3B0Ij84z92nEYif3Dw+peJuucOywU04qgfFdMGXBttnNU6PsEfjdPnnwpqqzI
-         5x03SAiS37tZPTGC0M24QQF+Le+7QUXBi8skMCWi2begBhxdPCc2jrG3JorA8CEkeYaP
-         Xbaw==
+        bh=8HYdS+zrmd+b3Wrxo0gB3qyloTrSaCZ1qSRZuELJtL4=;
+        b=ZQz7nBckSlVgz3NphooJaa4UG/JHDyLHzGwmCJrkG3TW0W46js5oASREoep3pjUDeX
+         hY98/9Qvbt9lVdm9We9DLBc1PNR+mlInuHdl/4Wwi9mGrNgrz+S5vPy7Grw9dsEJs1vi
+         YVSpbsP3xvFbPHVz19ui1gt1/tH6oRt/FMAmyq68Pm9V1+bcKvQ+pAmJ3whgwbRpF/go
+         iNGy/EhkvHhDFT9kEwrXIWpF14HZrCgeddPgNGBMQkfq7XBuiNoYS95dsYM1JFFO4095
+         u6su+gUqs5ZGHINTxlZiLKwFsMVne/PaglGpr+SNkALVS/SkgRUtGeuSH/lVD8Bb6LhR
+         iSgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770716252; x=1771321052;
+        d=1e100.net; s=20230601; t=1770717288; x=1771322088;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1pBCYnHFsgic841R37PpD+tVqAXLXnxjHHtGtlF68x0=;
-        b=C0I/r0W5erZShBuNk3hH4Nxicw1M7/fRNbsNQbw0nD0OfUxfneVXnp1jRrSVhBQGrI
-         trFqtbDqMmaDtx6FjNJsP8YrCUxA7MVcLMCKniGI8E25qVpGQGAAlTO6I4lWh9Q2f54j
-         d8A9rZF8RD+dZ4U8Iakf0GgBs5sod0vI+2Q/gjCkZKWxgonSRTENvB5YRXRX+DFdCxZR
-         2knT5PTIt7Sc+RGH5gCrSVVblbcTyissS5Fljj2YrNfN8GRkpB4WDV+A910QDHP9a7A7
-         r+XwXjGma9UfkuOwTFV7d2VJnxUDBtKQ1XgJu8bMaos14NI01SAGca22V6MMBEdbhtik
-         rfig==
-X-Forwarded-Encrypted: i=1; AJvYcCXHQHiPEhbXwnv5Ekh/rUtXD2sElX27mfz1XMs12Sa8YqsNx3fRx/A5EyPaqp/E5Ij+6waStsE2sZBXOo7mx+S6yQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztrXSv8bk5zdkEizyRrZwttRnn4C1691Issqkno6nRmv+gcrbo
-	ENbi7LHYjJVMybfAaqcCslPA6yl4LFlP+8czMa7nYycn6vO51LBMEIIlgVUNbCNdQdR6DbrDckR
-	0wcY/fLE=
-X-Gm-Gg: AZuq6aLdxTU+Ul4mKwScjysZ3HhSkf3fNINcNA00xX4rSLuv8SuNoCtnrGCJzmt5cvT
-	SeCi01jAkAdr4mAgK0fySUCJrkr+X3i6KFNMDUjsdNG3+uZAPkTkep+2vjVKmK7zdDU8MUYcK36
-	MpxJxlxykovNhV7uOUD9VJlD179asOeMrkWCc3Z3cIQf4bDBJG01UwgWTYHrD8tj5TuSkYidYQP
-	C+mMd9DDjuE05h62h3zw1Nogo3ytEDeG5fqK4usAFZxvvYZ02gn/nrPFUl+J4aI92qXH0Ljxy20
-	a7/VQduQnae2rR6yFrnqKF6uLlbweVJG7ZCNRTSI6a2OiPueOI36p1yyOkGfD2j17YA0zW9h2S+
-	ThUyTOMYM6E8P5mvAAqhTteYbjpNwwHN6N9kgEdh4X+am+gLNjKZmUG8+yG9miCnennLNGgXRxO
-	ipcPJAsWmjWoebwT8tRAU9dtHrz6ZTHg==
-X-Received: by 2002:a05:600c:6592:b0:47e:e7e5:ff32 with SMTP id 5b1f17b1804b1-483209c6dd4mr218940985e9.34.1770716252254;
-        Tue, 10 Feb 2026 01:37:32 -0800 (PST)
+        bh=8HYdS+zrmd+b3Wrxo0gB3qyloTrSaCZ1qSRZuELJtL4=;
+        b=J6CuYUCoRYHLFYnyuCbiIYUhkhovdjmIrHaZbhwXve8aRJ0KJp2bq0EUknzSLZ9+7D
+         ie6T7rxtlqcDM+zJp3pbAGPynX3X2a3N9BLNIpwbyKMPdxXF2DSzXCQNaxRmeKrEAIqR
+         qL24YfpmAyWgzjqdW7ARPThAfGGZO8hVb95wy5bdmhlsm1AjFws3hSPDnTH4uTRI4P3x
+         OX/Z5yFLOP6+yur+DoCJe+Nmuaw8HIiGFJdRT+xZCNGG0ekadlXeBHBELeX3qJ5jqoBf
+         yqaGc0yHFXq4JWATAdePXxmkaIexkS/VaeQEvEJ2AESfJhhsaA0ciJudytn4hEj/v6sj
+         IWNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC1WXQ7pBKPvGBClfNlJIQtMC1qC1qsA7FPFyirAwljxOEm+dUQSwILP0R1tOsVN8gwjdxSN2GjwCiu9r3SlmUHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBgmyjHbQzS3sQ35Vwt3WIxg8yJ1BEUuk8YJUrcV2SJezfqpGA
+	WX48llgHfQNwp9rRHDwcZYoLbE5aIfEhz2TaGqIIM8W0zNEM+B/JeF1lom0VTB5wPgg=
+X-Gm-Gg: AZuq6aIZYh9gB8y0MdliryNcO+3ya/EVWZnqY2AOkWZJElpGMd5QaE3wa1UtsKKx+mu
+	3KxgaqJrhhOx930SGJaM3v5MWf2jjNxevNsXBr1bT/OTiZUX9wUyIWLD5NPtqZG91WoCKjg0iEY
+	9sxgdn5+BExY9y7GeN88ubc5X8kRMIfAJKBa31gN86I0bIGiCLn6FtWDOwb6VR+Lls9dQGrVaFC
+	CkRfilNCvPBFgYmblujRCTzTyHS8NIlyon0RFog/QRn4Aftrtx7Wv4Smf1VIpfTFLYeygCGglDY
+	m2YRY1j8i7zRYJjWdHKYpqLZ418PdpGBXLBRmn5g/V5G0YNsbZRDtmAZ8EHkeERhYpaa/jlIBEQ
+	vOBMlzl40IfMO/bKh6cHzNzdytfBUNafDtpxftgOIMGOTu1RxeXOm6m2Yh0QsdEpU7gFMe/c97P
+	HJ5eVXqJpU9QpoMAVRYWyv+55w0peVs+4MSLv8SF2x
+X-Received: by 2002:a05:600c:3509:b0:477:a9e:859a with SMTP id 5b1f17b1804b1-4832021604amr182180095e9.22.1770717288054;
+        Tue, 10 Feb 2026 01:54:48 -0800 (PST)
 Received: from draszik.lan ([212.129.79.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d7e64b0sm57319715e9.11.2026.02.10.01.37.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48320961701sm214759035e9.5.2026.02.10.01.54.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 01:37:31 -0800 (PST)
-Message-ID: <0ee40d36397bfd4c04aea6ead07e42848203e9d6.camel@linaro.org>
-Subject: Re: [PATCH 1/2] regulator: s2mps11: drop redundant sanity checks in
- s2mpg10_of_parse_cb()
+        Tue, 10 Feb 2026 01:54:47 -0800 (PST)
+Message-ID: <6cb639e1b655efb68aebc8b21ae34450b8936830.camel@linaro.org>
+Subject: Re: [PATCH v2 06/12] mfd: sec: add support for S2MU005 PMIC
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Dan
- Carpenter <dan.carpenter@linaro.org>
-Date: Tue, 10 Feb 2026 09:37:59 +0000
-In-Reply-To: <1e8ee0ae-a74d-418a-80b1-4d2379614548@kernel.org>
-References: <20260209-s2mpg1x-regulators-fixes-v1-0-ead348e64e14@linaro.org>
-	 <20260209-s2mpg1x-regulators-fixes-v1-1-ead348e64e14@linaro.org>
-	 <170a820d-b987-4fd7-acca-ac88bab9e243@kernel.org>
-	 <4f1b1d857c0ee17436cd61e97219f508bd89f917.camel@linaro.org>
-	 <1e8ee0ae-a74d-418a-80b1-4d2379614548@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>, Lee Jones
+ <lee@kernel.org>,  Pavel Machek <pavel@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo
+ Choi	 <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Jonathan Corbet	 <corbet@lwn.net>, Shuah
+ Khan <skhan@linuxfoundation.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Date: Tue, 10 Feb 2026 09:55:14 +0000
+In-Reply-To: <DG74Y3QSCLIO.32Q8ZKCTISXXB@disroot.org>
+References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
+	 <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
+	 <69e2c1b1a2f3d2ed5e5da995cc5ee49bb3627597.camel@linaro.org>
+	 <DG74Y3QSCLIO.32Q8ZKCTISXXB@disroot.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-2+build4 
@@ -84,46 +89,85 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi Krzysztof,
-
-On Tue, 2026-02-10 at 08:28 +0100, Krzysztof Kozlowski wrote:
-> On 10/02/2026 06:59, Andr=C3=A9 Draszik wrote:
-> > Hi Krzysztof,
+On Thu, 2026-02-05 at 21:02 +0530, Kaustabh Chakraborty wrote:
+> On 2026-02-04 15:23 +00:00, Andr=C3=A9 Draszik wrote:
+> > Hi,
 > >=20
-> > On Mon, 2026-02-09 at 17:09 +0100, Krzysztof Kozlowski wrote:
-> > > On 09/02/2026 16:07, Andr=C3=A9 Draszik wrote:
-> > > > The sanity checks being removed in this commit are useless as earli=
-er
-> > > > code checks for out-of-bounds conditions already. They also are
-> > > > incorrect (as they're off-by-one).
-> > > >=20
-> > > > Simply remove this incorrect code.
-> > > >=20
-> > > > No functional change.
+> > On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
+> > > Samsung's S2MU005 PMIC includes subdevices for a charger, an MUIC (Mi=
+cro
+> > > USB Interface Controller), and flash and RGB LED controllers.
 > > >=20
-> > > If they are incorrect then how it could be "no functional change"? To=
- me
-> > > original code looks buggy and this is a fix. Fix must have functional
-> > > change...
-> >=20
-> > Earlier code already checks for all conditions, including all error cas=
-es.
-> > So the code being removed here has no effect, as any potential error it
-> > could catch will already have been caught by earlier code. Removing it
-> > therefore doesn't change behaviour or functionality.
-> >=20
-> > I can reword to 'incomplete test' instead of 'incorrect code' if you th=
-ink
-> > that's more clear?
+> > > S2MU005's interrupt registers can be properly divided into three regm=
+ap
+> > > IRQ chips, one each for the charger, flash LEDs, and the MUIC.
+> > >=20
+> > > Add initial support for S2MU005 in the PMIC driver, along with it's t=
+hree
+> > > interrupt chips.
+> > >=20
+> > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> > > ---
+> > > =C2=A0drivers/mfd/sec-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 ++
+> > > =C2=A0drivers/mfd/sec-i2c.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 ++
+> > > =C2=A0drivers/mfd/sec-irq.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 74 ++++++++
+> > > =C2=A0include/linux/mfd/samsung/core.h=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 1 +
+> > > =C2=A0include/linux/mfd/samsung/irq.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 66 ++++++++
+> > > =C2=A0include/linux/mfd/samsung/s2mu005.h | 328 +++++++++++++++++++++=
++++++++++++++++
+> > > =C2=A06 files changed, 497 insertions(+)
+> > >=20
 >=20
-> Perhaps you should mention which "one" in off-by-one that it has no impac=
-t.
+> [...]
+>=20
+> > > diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
+> > > index 3132b849b4bc4..3f1d70cc3292b 100644
+> > > --- a/drivers/mfd/sec-i2c.c
+> > > +++ b/drivers/mfd/sec-i2c.c
+> > > @@ -17,6 +17,7 @@
+> > > =C2=A0#include <linux/mfd/samsung/s2mps14.h>
+> > > =C2=A0#include <linux/mfd/samsung/s2mps15.h>
+> > > =C2=A0#include <linux/mfd/samsung/s2mpu02.h>
+> > > +#include <linux/mfd/samsung/s2mu005.h>
+> > > =C2=A0#include <linux/mfd/samsung/s5m8767.h>
+> > > =C2=A0#include <linux/mod_devicetable.h>
+> > > =C2=A0#include <linux/module.h>
+> > > @@ -130,6 +131,11 @@ static const struct regmap_config s2mpu05_regmap=
+_config =3D {
+> > > =C2=A0	.val_bits =3D 8,
+> > > =C2=A0};
+> > > =C2=A0
+> > > +static const struct regmap_config s2mu005_regmap_config =3D {
+> > > +	.reg_bits =3D 8,
+> > > +	.val_bits =3D 8,
+> > > +};
+> >=20
+> > No cache? And what is the .max_register value?
+> >=20
+>=20
+> This was in the previous revision, but I ended up removing it because
+> (at least I thought at that time) interfered with interrupts firing in
+> some way. The actual issue was unrelated, so I will add it back.
+>=20
+> However, there is also another thing I see in logs:
+>=20
+> sec-pmic-i2c 2-003d: using zero-initialized flat cache, this may cause un=
+expected behavior
+>=20
+> This is due to REGCACHE_FLAT, I am not sure if I should just ignore
+> this.
 
-OK.
+I think the error might be because you should also specify num_reg_defaults=
+_raw:
 
-> I also wonder why you left the second - ext_control_s2mpg11 - untouched.
+.max_register =3D xxx,
+.num_reg_defaults_raw =3D xxx + 1,
 
-Could you point me to it please? I'm not sure I see what you mean.
 
 Cheers,
 Andre'
