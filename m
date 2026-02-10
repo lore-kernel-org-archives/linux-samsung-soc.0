@@ -1,128 +1,203 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF3238A714
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 17:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F362DAFDD;
+	Tue, 10 Feb 2026 18:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770744235; cv=none; b=Q5+mNO9De3zwcL6aVmnp3X8l5lEzCNpujsf4PPk4bzlLle5LPKoiA1CTcok4MjASxa947ShGnRroTXqm823TpaKnNfT7S8+z2K7LmlM8dT2zfJxN2JbKS9UbQqtVI6LvS2wj0mFcFmiX9OyRLK81qcbbY+LUJ6duciSRDWDjasE=
+	t=1770748695; cv=none; b=YoCdDMcA0TlzM5H/YH6Gy/Kp7M6ngcdyqmZAKj6G9ow6UCOgR0oyTqwZLRNgixIKJ8dipROHKrFBh295YFQU/EXUQNn2zxCIK4d80TUyw38ql+245Kg14AikS++8q5eQ7CkreooazNTbvV7o1bDSsfqaX5nM8xUGWh0bG0aelfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770744235; c=relaxed/simple;
-	bh=V8OfhvBu1qNdN0KD4nFF3ROMtpeDRLHG6GJmQmeUi2M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rvwHRylVRrXl12Bg+r91kKXMXlRqKFvErC+Xr6epQOV1dCPEgWC9WGJmmVSqo2alvuc9GKSxF5cyiUUivKtgyt1De/OS7TiU825f0jJhOPi8cQwShtGRwRpPdiBgbZ4hbFaS8zQNwGBRtgcLyq+VHX9nQmYgZMu95QsoYI9QAQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ElN3SjIc; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1770748695; c=relaxed/simple;
+	bh=0S3RJow1qD7PFdkhzxVnh4+LwnKI1lU+DZNFvWp386o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=IEMU4ezDBk+Vbxh/DBdeT43dXi0lGeDejK/E2XZFs+34CtvYMdyQwhA9lDpI6FyW8irZHco7BmovELi7LWOwWPQxA1TAKGtbsILUhRMQiQCzqS1QEMMavSBGY4SubMFmDSsv5rdvEVBcEEq/8yLE9T3A3Okw/ldy9xHT0WnT0+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QJaR+wE+; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElN3SjIc"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-658078d6655so7837349a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Feb 2026 09:23:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770744233; x=1771349033; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iQDNu+LBE5AULrwMKg6yBqocyEp3U+FKLIXmvE5hWBs=;
-        b=ElN3SjIcYnKvykj0s2ap5fU++kJbA+OynAbOndMA7afksu7Q32aBvK94jtztl5W2oD
-         o9PobOUHK/OBtmTy6QinZSgigX+l3c76lzGSEJvvkydm/+lOiGgeLQKXLJFMe4i+KLwT
-         S+vaKek142k9XpWiAzpMqNbc1v3ph3RREWyeqXb+mvJfLxg8JwA+YYWKSglxjRWcioow
-         e9k6BjjStWRR6fqu5LXufLRHC8VUMhy+7gQjKLIKttmJDEKWwPiIQx3OuznP4Erzst6L
-         wqpGpKgloxLXcyO52KKInwuaR7tk2fJqdlrgCzMn1knRQa0yan5VUhu8kDddDosemDNJ
-         Aonw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770744233; x=1771349033;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iQDNu+LBE5AULrwMKg6yBqocyEp3U+FKLIXmvE5hWBs=;
-        b=NSQDer0Sj0mpJDvl0jXAT6Gs22T2jJvoNcg+0xB1rkGgt/wo+WUwsu9EWadtOBWK1b
-         DvmUEim7269irY8XFLRpjd+NFrm/+9vUQHNd+z6VbXDAdo+qJZ/94X/UeGpuEY73c/iH
-         A3pzvyAJClVMhJAKW6fV2k4DB0WJEEeqd6uuyEf7Ry85duT+f1L6kaSLcsdL6bac9jJ8
-         /gOkJP25t3OsM9J1R7ziSQSukEAJTRRZpYxdI8Z0jr696pDzjTU0i3Ou8OVegagyruwD
-         qGu7VzlvwhDSFyTlEx1Xy+ASr1/nA5fHZaxHlHLkHOKDT7BiWfMWwp5wWNVL11P31EUn
-         +z6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbBl8A70vzYd6IynMRLkqwshzvd2LGqo9NPQqMXTuBpeogUzdPFMS6DwnnaRsgY3czX7JM4sJRz+wOiucvVXpRlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPpYRfftuQkS5xKjEJK1UgSXmiB53sr5kE41kp4TLE9ztOQGqD
-	VSE49SJicTJBcXqjIoHOli1V8LiUn8ClZwG8mPIshDcBKWz6yx0aqC1j1pgi6IfczDHcyTefvAN
-	QSo+RvsU=
-X-Gm-Gg: AZuq6aIcZoBG+ecwK2xWeRHbnIhe3CmPSMcLFsJkx+gIXK/4nuv3hZeFg32kvPzKpvB
-	qZ+MnhnVyrXXYdXsklincdtO59TGahVhaoVim71/U8+P2UZApDNBpMNwEi4kDu4FyMJyjK43pHy
-	UQWo5KktDc5BOdhxz2fa/Sv7dszjb6c8hqLllCCuDBV/ys03yiCdiQvOsvYwzUxEWavlJKYNJgy
-	NPpqbjfYWZrR/97ng3hMAqt4oFfJ5ppFLMqocVTJINZUyUaeV3dI5fbt8NUqZKUJgNHl2mAvWVL
-	+6AJY20s+HQW5hks6XI3ogUX96fkjKPMJJAkbxEuBDBmUpNgpXqBkEeEzOkPp71CwOirKKdXaCP
-	zr7g4VqZ4maQmILVYi3VhSgeRW7s6Be2uhHTpGTU5kK0hOH/fBmylSKTJiiLn7y3XOZ8GyhQjfg
-	jEmL5k15QtpTsg/bCXfFcA8Q3sXELizXzZAVWoeiZWGr6gAX8jK3M6jKMk2LWwmk1o9ZHKmJa2l
-	dXUdLmwcvNXOVtqyTOlAgRKZ6cH
-X-Received: by 2002:a17:907:6d0f:b0:b88:713e:78a5 with SMTP id a640c23a62f3a-b8edf25ccebmr891244466b.28.1770744232655;
-        Tue, 10 Feb 2026 09:23:52 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8edae3ae99sm565533666b.60.2026.02.10.09.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 09:23:52 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 10 Feb 2026 17:23:51 +0000
-Subject: [PATCH v2 2/2] regulator: s2mps11: fix pctrlsel macro usage in
- s2mpg10_of_parse_cb()
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QJaR+wE+"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 65D9826E45;
+	Tue, 10 Feb 2026 19:38:05 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id hxMFZOdYNC1j; Tue, 10 Feb 2026 19:38:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1770748684; bh=0S3RJow1qD7PFdkhzxVnh4+LwnKI1lU+DZNFvWp386o=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=QJaR+wE+1zXkxKP4PgxVfqx8aPct1wMFu6bp0neQIu2LEWMCyFNZBTq6TEW5EAsMu
+	 e1JBYnTsrnXckubEcRNki6Jci1tPDUrr+DLpjDmNaIBJc3AIqgNnI2j0bOtqMyjliQ
+	 3Mq2G1Vl/K6xwoGHbmkN+Ar/re1/CKwQZUaGbnBlu1Yai9OOBhvk+l9zrmEOt0SnCU
+	 o8dU44CF7kTCn8xQ92CFCmUob9CxQ5r+XYzYDGs9xTLCUj6RwUHeEZB252FDEDVAXC
+	 Ds+Mc89LfdcrpXGs+nqEexg1J/p5qoe5b7tW3XprZQSUuvJbUPBGWK41S959DanCBF
+	 4ZkcqIcVWvGPA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260210-s2mpg1x-regulators-fixes-v2-2-ab3d3457f1ae@linaro.org>
-References: <20260210-s2mpg1x-regulators-fixes-v2-0-ab3d3457f1ae@linaro.org>
-In-Reply-To: <20260210-s2mpg1x-regulators-fixes-v2-0-ab3d3457f1ae@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Feb 2026 00:07:50 +0530
+Message-Id: <DGBI0L4E59ZY.24OGXR0XUDH4Z@disroot.org>
+Cc: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 08/12] leds: flash: add support for Samsung S2M
+ series PMIC flash LED device
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Kaustabh
+ Chakraborty" <kauschluss@disroot.org>, "Lee Jones" <lee@kernel.org>, "Pavel
+ Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "MyungJoo Ham" <myungjoo.ham@samsung.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Sebastian Reichel" <sre@kernel.org>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <skhan@linuxfoundation.org>
+References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
+ <20260126-s2mu005-pmic-v2-8-78f1a75f547a@disroot.org>
+ <e34d429e27392eba894b9592724a77fa82fc8009.camel@linaro.org>
+ <DG75VP6IIUXD.1VA6YSMNTPJQ6@disroot.org>
+ <9dad174d88c814d3ad2086a31e8dfc222fd431e4.camel@linaro.org>
+In-Reply-To: <9dad174d88c814d3ad2086a31e8dfc222fd431e4.camel@linaro.org>
 
-Commit 979dd8da76eb ("regulator: s2mps11: add S2MPG11 regulator")
-incorrectly ended up using macros for S2MPG10 in the S2MPG11 case. They
-happen to end up giving the same result, but for clarity, the correct
-macros should be used.
+On 2026-02-10 10:03 +00:00, Andr=C3=A9 Draszik wrote:
+> On Thu, 2026-02-05 at 21:46 +0530, Kaustabh Chakraborty wrote:
+>> On 2026-02-04 16:55 +00:00, Andr=C3=A9 Draszik wrote:
+>> > Hi,
+>> >=20
+>> > On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
+>> > > Add support for flash LEDs found in certain Samsung S2M series PMICs=
+.
+>> > > The device has two channels for LEDs, typically for the back and fro=
+nt
+>> > > cameras in mobile devices. Both channels can be independently
+>> > > controlled, and can be operated in torch or flash modes.
+>> > >=20
+>> > > The driver includes initial support for the S2MU005 PMIC flash LEDs.
+>> > >=20
+>> > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> > > ---
+>> > > =C2=A0drivers/leds/flash/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 12 ++
+>> > > =C2=A0drivers/leds/flash/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+>> > > =C2=A0drivers/leds/flash/leds-s2m-flash.c | 410 ++++++++++++++++++++=
+++++++++++++++++
+>> > > =C2=A03 files changed, 423 insertions(+)
+>> > >=20
+>> > > diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
+>> > > index 5e08102a67841..be62e05277429 100644
+>> > > --- a/drivers/leds/flash/Kconfig
+>> > > +++ b/drivers/leds/flash/Kconfig
+>> > > @@ -114,6 +114,18 @@ config LEDS_RT8515
+>> > > =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the=
+ module
+>> > > =C2=A0	=C2=A0 will be called leds-rt8515.
+>> > > =C2=A0
+>> > > +config LEDS_S2M_FLASH
+>> > > +	tristate "Samsung S2M series PMICs flash/torch LED support"
+>> > > +	depends on LEDS_CLASS
+>> > > +	depends on MFD_SEC_CORE
+>> > > +	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+>> > > +	select REGMAP_IRQ
+>> > > +	help
+>> > > +	=C2=A0 This option enables support for the flash/torch LEDs found =
+in
+>> > > +	=C2=A0 certain Samsung S2M series PMICs, such as the S2MU005. It h=
+as
+>> > > +	=C2=A0 a LED channel dedicated for every physical LED. The LEDs ca=
+n
+>> > > +	=C2=A0 be controlled in flash and torch modes.
+>> > > +
+>> > > =C2=A0config LEDS_SGM3140
+>> > > =C2=A0	tristate "LED support for the SGM3140"
+>> > > =C2=A0	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+>> > > diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefi=
+le
+>> > > index 712fb737a428e..44e6c1b4beb37 100644
+>> > > --- a/drivers/leds/flash/Makefile
+>> > > +++ b/drivers/leds/flash/Makefile
+>> > > @@ -10,6 +10,7 @@ obj-$(CONFIG_LEDS_MAX77693)	+=3D leds-max77693.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_QCOM_FLASH)	+=3D leds-qcom-flash.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_RT4505)	+=3D leds-rt4505.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_RT8515)	+=3D leds-rt8515.o
+>> > > +obj-$(CONFIG_LEDS_S2M_FLASH)	+=3D leds-s2m-flash.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_SGM3140)	+=3D leds-sgm3140.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_SY7802)	+=3D leds-sy7802.o
+>> > > =C2=A0obj-$(CONFIG_LEDS_TPS6131X)	+=3D leds-tps6131x.o
+>> > > diff --git a/drivers/leds/flash/leds-s2m-flash.c b/drivers/leds/flas=
+h/leds-s2m-flash.c
+>> > > new file mode 100644
+>> > > index 0000000000000..1be2745c475bf
+>> > > --- /dev/null
+>> > > +++ b/drivers/leds/flash/leds-s2m-flash.c
+>> > > @@ -0,0 +1,410 @@
+>> > > +// SPDX-License-Identifier: GPL-2.0
+>> > > +/*
+>> > > + * Flash and Torch LED Driver for Samsung S2M series PMICs.
+>> > > + *
+>> > > + * Copyright (c) 2015 Samsung Electronics Co., Ltd
+>> > > + * Copyright (c) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
+>> > > + */
+>> > > +
+>> > > +#include <linux/container_of.h>
+>> > > +#include <linux/led-class-flash.h>
+>> > > +#include <linux/mfd/samsung/core.h>
+>> > > +#include <linux/mfd/samsung/s2mu005.h>
+>> > > +#include <linux/module.h>
+>> > > +#include <linux/of.h>
+>> > > +#include <linux/platform_device.h>
+>> > > +#include <linux/regmap.h>
+>> > > +#include <media/v4l2-flash-led-class.h>
+>> > > +
+>> > > +#define MAX_CHANNELS	2
+>> > > +
+>> > > +struct s2m_fled {
+>> > > +	struct device *dev;
+>> > > +	struct regmap *regmap;
+>> > > +	struct led_classdev_flash cdev;
+>> > > +	struct v4l2_flash *v4l2_flash;
+>> > > +	struct mutex lock;
+>> >=20
+>> > Please add a (brief) comment describing what the mutex protects.
+>>=20
+>> The mutex object prevents the concurrent access of flash control
+>> registers by the LED and V4L2 subsystems. -- will add this.
+>>=20
+>> > > +
+>> > > +	/*
+>> > > +	 * Get the LED enable register address. Revision EVT0 has the
+>> > > +	 * register at CTRL4, while EVT1 and higher have it at CTRL6.
+>> > > +	 */
+>> > > +	if (priv->pmic_revision =3D=3D 0)
+>> > > +		reg_enable =3D S2MU005_REG_FLED_CTRL4;
+>> > > +	else
+>> > > +		reg_enable =3D S2MU005_REG_FLED_CTRL6;
+>> >=20
+>> > You could REG_FIELD() and friends for this and everywhere else with
+>> > similar if / else.
+>> >=20
+>>=20
+>> REG_FIELD(), from what I understood, is for selecting a bit field inside
+>> a single register. However this code chooses between two separate
+>> registers. I believe your interpretation was incorrect? Please clarify.
+>
+> The first argument to REG_FIELD is the register itself, so reg fields can
+> be used to describe this difference. See e.g. drivers/leds/rgb/leds-mt637=
+0-rgb.c
+> Of course, you could have a member variable instead to hold the register
+> index if all bits are the same in both revisions. Either way would avoid
+> having to constantly check the revision during runtime.
 
-No functional change.
+Wow, this is a great way of abstraction, thanks. I will try to implement
+this in all drivers, let's see.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/regulator/s2mps11.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 2d67c5c16f487506a2e9e4b119f33faa846269f7..81cfd60460f8bb35a460f44753abfbb745121322 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -440,15 +440,15 @@ static int s2mpg10_of_parse_cb(struct device_node *np,
- 		[S2MPG10_EXTCTRL_LDO20M_EN] = S2MPG10_PCTRLSEL_LDO20M_EN,
- 	};
- 	static const u32 ext_control_s2mpg11[] = {
--		[S2MPG11_EXTCTRL_PWREN] = S2MPG10_PCTRLSEL_PWREN,
--		[S2MPG11_EXTCTRL_PWREN_MIF] = S2MPG10_PCTRLSEL_PWREN_MIF,
--		[S2MPG11_EXTCTRL_AP_ACTIVE_N] = S2MPG10_PCTRLSEL_AP_ACTIVE_N,
--		[S2MPG11_EXTCTRL_G3D_EN] = S2MPG10_PCTRLSEL_CPUCL1_EN,
--		[S2MPG11_EXTCTRL_G3D_EN2] = S2MPG10_PCTRLSEL_CPUCL1_EN2,
--		[S2MPG11_EXTCTRL_AOC_VDD] = S2MPG10_PCTRLSEL_CPUCL2_EN,
--		[S2MPG11_EXTCTRL_AOC_RET] = S2MPG10_PCTRLSEL_CPUCL2_EN2,
--		[S2MPG11_EXTCTRL_UFS_EN] = S2MPG10_PCTRLSEL_TPU_EN,
--		[S2MPG11_EXTCTRL_LDO13S_EN] = S2MPG10_PCTRLSEL_TPU_EN2,
-+		[S2MPG11_EXTCTRL_PWREN] = S2MPG11_PCTRLSEL_PWREN,
-+		[S2MPG11_EXTCTRL_PWREN_MIF] = S2MPG11_PCTRLSEL_PWREN_MIF,
-+		[S2MPG11_EXTCTRL_AP_ACTIVE_N] = S2MPG11_PCTRLSEL_AP_ACTIVE_N,
-+		[S2MPG11_EXTCTRL_G3D_EN] = S2MPG11_PCTRLSEL_G3D_EN,
-+		[S2MPG11_EXTCTRL_G3D_EN2] = S2MPG11_PCTRLSEL_G3D_EN2,
-+		[S2MPG11_EXTCTRL_AOC_VDD] = S2MPG11_PCTRLSEL_AOC_VDD,
-+		[S2MPG11_EXTCTRL_AOC_RET] = S2MPG11_PCTRLSEL_AOC_RET,
-+		[S2MPG11_EXTCTRL_UFS_EN] = S2MPG11_PCTRLSEL_UFS_EN,
-+		[S2MPG11_EXTCTRL_LDO13S_EN] = S2MPG11_PCTRLSEL_LDO13S_EN,
- 	};
- 	u32 ext_control;
- 
-
--- 
-2.53.0.rc2.204.g2597b5adb4-goog
+>
+> Cheers,
+> Andre'
 
