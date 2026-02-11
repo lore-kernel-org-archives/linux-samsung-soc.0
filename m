@@ -1,203 +1,74 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F362DAFDD;
-	Tue, 10 Feb 2026 18:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CBE1CF7D5;
+	Wed, 11 Feb 2026 20:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770748695; cv=none; b=YoCdDMcA0TlzM5H/YH6Gy/Kp7M6ngcdyqmZAKj6G9ow6UCOgR0oyTqwZLRNgixIKJ8dipROHKrFBh295YFQU/EXUQNn2zxCIK4d80TUyw38ql+245Kg14AikS++8q5eQ7CkreooazNTbvV7o1bDSsfqaX5nM8xUGWh0bG0aelfw=
+	t=1770843540; cv=none; b=omyHrTkZeVYfXsZiVG2akhCxD35zcTtWTPaFttTSEIaAvQSik6bZNY/TFnTMo7HzoFkMR+uVSK1Legxdrox7T+YHr3udY9pWoULWjyfUg0IkswBYF/FOwHCYNWHBfARqvbiflXX+8fmzZp4uTfnKQxxifGa15Fnu4IFYUZoKw3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770748695; c=relaxed/simple;
-	bh=0S3RJow1qD7PFdkhzxVnh4+LwnKI1lU+DZNFvWp386o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IEMU4ezDBk+Vbxh/DBdeT43dXi0lGeDejK/E2XZFs+34CtvYMdyQwhA9lDpI6FyW8irZHco7BmovELi7LWOwWPQxA1TAKGtbsILUhRMQiQCzqS1QEMMavSBGY4SubMFmDSsv5rdvEVBcEEq/8yLE9T3A3Okw/ldy9xHT0WnT0+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QJaR+wE+; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1770843540; c=relaxed/simple;
+	bh=qdCaHBM1vsBZYUsiwQrhAgP75Pv4fk+r6MNmnFrGo58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkO9BN6kMpgld/cyayeaGNoZjVsevBW+kxSugwAS89x61MZhuk8a6nwehCef8LBEauCy7ZkLXUyS3jhJtMROxGNMR/PxaVZYAGV4Nckz4UPw+UtvRjzzuOeW3F/VNBJrvda9pZfLdxp9QcOG4jW9pldXBZjkKP3FxFjIG282C4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYLfzg7j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QJaR+wE+"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 65D9826E45;
-	Tue, 10 Feb 2026 19:38:05 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id hxMFZOdYNC1j; Tue, 10 Feb 2026 19:38:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1770748684; bh=0S3RJow1qD7PFdkhzxVnh4+LwnKI1lU+DZNFvWp386o=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=QJaR+wE+1zXkxKP4PgxVfqx8aPct1wMFu6bp0neQIu2LEWMCyFNZBTq6TEW5EAsMu
-	 e1JBYnTsrnXckubEcRNki6Jci1tPDUrr+DLpjDmNaIBJc3AIqgNnI2j0bOtqMyjliQ
-	 3Mq2G1Vl/K6xwoGHbmkN+Ar/re1/CKwQZUaGbnBlu1Yai9OOBhvk+l9zrmEOt0SnCU
-	 o8dU44CF7kTCn8xQ92CFCmUob9CxQ5r+XYzYDGs9xTLCUj6RwUHeEZB252FDEDVAXC
-	 Ds+Mc89LfdcrpXGs+nqEexg1J/p5qoe5b7tW3XprZQSUuvJbUPBGWK41S959DanCBF
-	 4ZkcqIcVWvGPA==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYLfzg7j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A15EBC4CEF7;
+	Wed, 11 Feb 2026 20:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770843539;
+	bh=qdCaHBM1vsBZYUsiwQrhAgP75Pv4fk+r6MNmnFrGo58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qYLfzg7jzD96tci/rXKGqs/81bavX1iBCE8FR3GapJZKETE91rDNxGzZAkP1gcQAy
+	 KRP4yVtBb+MKhsg8yZrKYgtRqqLlJk024qEdA+TRD8fYD4IlboKPho+v70yGX8WO1W
+	 48zKlPnlele6pP6oFcsDSYSvQ3xPPgIF4VrNGg0+k/mu7ILJqHSecm+shFQ/Hhnb2l
+	 6Ojgtfjm6fRd54LLgcafgpDOrI1bnOQfF2gYAi0yacGPJEWrs6F5HsTViJvgJRZ5SR
+	 okQvEx1A7b6ESa+RWBMSDTjUQ9XwJ0fXuz1CPHqfZ+rn5UCTzQZaB6w8yTWhX1FBZO
+	 Hy6kBhDpCCejA==
+Date: Wed, 11 Feb 2026 14:58:53 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, kernel-team@android.com,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Juan Yescas <jyescas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v5 01/10] dt-bindings: soc: google: add google,gs101-dtzpc
+Message-ID: <177084353310.3872540.16740879904970139914.robh@kernel.org>
+References: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
+ <20260205-gs101-pd-v5-1-ede49cdb57a6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 11 Feb 2026 00:07:50 +0530
-Message-Id: <DGBI0L4E59ZY.24OGXR0XUDH4Z@disroot.org>
-Cc: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2 08/12] leds: flash: add support for Samsung S2M
- series PMIC flash LED device
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Kaustabh
- Chakraborty" <kauschluss@disroot.org>, "Lee Jones" <lee@kernel.org>, "Pavel
- Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "MyungJoo Ham" <myungjoo.ham@samsung.com>, "Chanwoo Choi"
- <cw00.choi@samsung.com>, "Sebastian Reichel" <sre@kernel.org>, "Krzysztof
- Kozlowski" <krzk@kernel.org>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
- Khan" <skhan@linuxfoundation.org>
-References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
- <20260126-s2mu005-pmic-v2-8-78f1a75f547a@disroot.org>
- <e34d429e27392eba894b9592724a77fa82fc8009.camel@linaro.org>
- <DG75VP6IIUXD.1VA6YSMNTPJQ6@disroot.org>
- <9dad174d88c814d3ad2086a31e8dfc222fd431e4.camel@linaro.org>
-In-Reply-To: <9dad174d88c814d3ad2086a31e8dfc222fd431e4.camel@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260205-gs101-pd-v5-1-ede49cdb57a6@linaro.org>
 
-On 2026-02-10 10:03 +00:00, Andr=C3=A9 Draszik wrote:
-> On Thu, 2026-02-05 at 21:46 +0530, Kaustabh Chakraborty wrote:
->> On 2026-02-04 16:55 +00:00, Andr=C3=A9 Draszik wrote:
->> > Hi,
->> >=20
->> > On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
->> > > Add support for flash LEDs found in certain Samsung S2M series PMICs=
-.
->> > > The device has two channels for LEDs, typically for the back and fro=
-nt
->> > > cameras in mobile devices. Both channels can be independently
->> > > controlled, and can be operated in torch or flash modes.
->> > >=20
->> > > The driver includes initial support for the S2MU005 PMIC flash LEDs.
->> > >=20
->> > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> > > ---
->> > > =C2=A0drivers/leds/flash/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 12 ++
->> > > =C2=A0drivers/leds/flash/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
->> > > =C2=A0drivers/leds/flash/leds-s2m-flash.c | 410 ++++++++++++++++++++=
-++++++++++++++++
->> > > =C2=A03 files changed, 423 insertions(+)
->> > >=20
->> > > diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
->> > > index 5e08102a67841..be62e05277429 100644
->> > > --- a/drivers/leds/flash/Kconfig
->> > > +++ b/drivers/leds/flash/Kconfig
->> > > @@ -114,6 +114,18 @@ config LEDS_RT8515
->> > > =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the=
- module
->> > > =C2=A0	=C2=A0 will be called leds-rt8515.
->> > > =C2=A0
->> > > +config LEDS_S2M_FLASH
->> > > +	tristate "Samsung S2M series PMICs flash/torch LED support"
->> > > +	depends on LEDS_CLASS
->> > > +	depends on MFD_SEC_CORE
->> > > +	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
->> > > +	select REGMAP_IRQ
->> > > +	help
->> > > +	=C2=A0 This option enables support for the flash/torch LEDs found =
-in
->> > > +	=C2=A0 certain Samsung S2M series PMICs, such as the S2MU005. It h=
-as
->> > > +	=C2=A0 a LED channel dedicated for every physical LED. The LEDs ca=
-n
->> > > +	=C2=A0 be controlled in flash and torch modes.
->> > > +
->> > > =C2=A0config LEDS_SGM3140
->> > > =C2=A0	tristate "LED support for the SGM3140"
->> > > =C2=A0	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
->> > > diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefi=
-le
->> > > index 712fb737a428e..44e6c1b4beb37 100644
->> > > --- a/drivers/leds/flash/Makefile
->> > > +++ b/drivers/leds/flash/Makefile
->> > > @@ -10,6 +10,7 @@ obj-$(CONFIG_LEDS_MAX77693)	+=3D leds-max77693.o
->> > > =C2=A0obj-$(CONFIG_LEDS_QCOM_FLASH)	+=3D leds-qcom-flash.o
->> > > =C2=A0obj-$(CONFIG_LEDS_RT4505)	+=3D leds-rt4505.o
->> > > =C2=A0obj-$(CONFIG_LEDS_RT8515)	+=3D leds-rt8515.o
->> > > +obj-$(CONFIG_LEDS_S2M_FLASH)	+=3D leds-s2m-flash.o
->> > > =C2=A0obj-$(CONFIG_LEDS_SGM3140)	+=3D leds-sgm3140.o
->> > > =C2=A0obj-$(CONFIG_LEDS_SY7802)	+=3D leds-sy7802.o
->> > > =C2=A0obj-$(CONFIG_LEDS_TPS6131X)	+=3D leds-tps6131x.o
->> > > diff --git a/drivers/leds/flash/leds-s2m-flash.c b/drivers/leds/flas=
-h/leds-s2m-flash.c
->> > > new file mode 100644
->> > > index 0000000000000..1be2745c475bf
->> > > --- /dev/null
->> > > +++ b/drivers/leds/flash/leds-s2m-flash.c
->> > > @@ -0,0 +1,410 @@
->> > > +// SPDX-License-Identifier: GPL-2.0
->> > > +/*
->> > > + * Flash and Torch LED Driver for Samsung S2M series PMICs.
->> > > + *
->> > > + * Copyright (c) 2015 Samsung Electronics Co., Ltd
->> > > + * Copyright (c) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
->> > > + */
->> > > +
->> > > +#include <linux/container_of.h>
->> > > +#include <linux/led-class-flash.h>
->> > > +#include <linux/mfd/samsung/core.h>
->> > > +#include <linux/mfd/samsung/s2mu005.h>
->> > > +#include <linux/module.h>
->> > > +#include <linux/of.h>
->> > > +#include <linux/platform_device.h>
->> > > +#include <linux/regmap.h>
->> > > +#include <media/v4l2-flash-led-class.h>
->> > > +
->> > > +#define MAX_CHANNELS	2
->> > > +
->> > > +struct s2m_fled {
->> > > +	struct device *dev;
->> > > +	struct regmap *regmap;
->> > > +	struct led_classdev_flash cdev;
->> > > +	struct v4l2_flash *v4l2_flash;
->> > > +	struct mutex lock;
->> >=20
->> > Please add a (brief) comment describing what the mutex protects.
->>=20
->> The mutex object prevents the concurrent access of flash control
->> registers by the LED and V4L2 subsystems. -- will add this.
->>=20
->> > > +
->> > > +	/*
->> > > +	 * Get the LED enable register address. Revision EVT0 has the
->> > > +	 * register at CTRL4, while EVT1 and higher have it at CTRL6.
->> > > +	 */
->> > > +	if (priv->pmic_revision =3D=3D 0)
->> > > +		reg_enable =3D S2MU005_REG_FLED_CTRL4;
->> > > +	else
->> > > +		reg_enable =3D S2MU005_REG_FLED_CTRL6;
->> >=20
->> > You could REG_FIELD() and friends for this and everywhere else with
->> > similar if / else.
->> >=20
->>=20
->> REG_FIELD(), from what I understood, is for selecting a bit field inside
->> a single register. However this code chooses between two separate
->> registers. I believe your interpretation was incorrect? Please clarify.
->
-> The first argument to REG_FIELD is the register itself, so reg fields can
-> be used to describe this difference. See e.g. drivers/leds/rgb/leds-mt637=
-0-rgb.c
-> Of course, you could have a member variable instead to hold the register
-> index if all bits are the same in both revisions. Either way would avoid
-> having to constantly check the revision during runtime.
 
-Wow, this is a great way of abstraction, thanks. I will try to implement
-this in all drivers, let's see.
+On Thu, 05 Feb 2026 21:42:29 +0000, André Draszik wrote:
+> The Exynos Distributed TruztZone Protection Control (D_TZPC) provides
+> an interface to the protection bits that are included in the TrustZone
+> design in a secure system. It configures each area of the memory as
+> secure or non-secure.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  .../bindings/soc/google/google,gs101-dtzpc.yaml    | 42 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 43 insertions(+)
+> 
 
->
-> Cheers,
-> Andre'
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
