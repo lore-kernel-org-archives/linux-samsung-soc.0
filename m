@@ -1,117 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85CD34EEF1;
-	Wed, 11 Feb 2026 21:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF5C1531E8
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 08:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770844350; cv=none; b=BUfN69jwPJP0mvSzeAcyKCvxGuaCI0Co5wT9xFRAByOBzTYcLODIQdPs730wB8gfCh03+par6bLCtIVJsC9QQWL8miQUiSeNbpYZzlPznk7Z2aU2jo3L2X+XkLRUFgPMvoSIa8TKgXeMWTQjCkZXfIhc2lGY7svsxFTOSEUhDCM=
+	t=1770884206; cv=none; b=hb4c9R8J3LhF6tok+jvp70Bfn0ltzrR+lFDUmkztCSgcjev5n14k+zJf22evuTglwaEy4UgTXmuKbV5oaApejblU2paScP3JkQ3P3sZtlovwfZUwHGaqW5/pP3IykAlSGcBu8xjyUYQW1yTnv0xDXDyPzSnEauudHTgSLDk4la0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770844350; c=relaxed/simple;
-	bh=ZsXDR+ZmQZgcAFLTOvK08pR/QTvXK90/KVWwSRiQC3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPapCDSUJLLNaodytB7gM5MMqxBKdjDglNI1Rwv/h+wtZfZjjY8++AhSZxVz6Y9tvDEa2uPHOyOfJYhlhS/dRYKv9P3KNeOfHGEdtaW7I+1IcNnyRT15uPK0/PWd1/2J1OqoKP08f1L+wnubSr2wxn0o02bCHD2g2atlgdcmEpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4gBczgv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770884206; c=relaxed/simple;
+	bh=v/5qMrdIXjRmEOGy1fxpbfXdM8SXsCe8TcNwkmpAdT0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=qnpH93LQsa/OqKR+g67MI0b/iR8GbY9k3P1OW91WGA6EbL/bOW/0Alpy9U+jNDsjCjdm/1H1B3brawV5B3KrZCPP4k7eeRwnJHME+3sC/LGcB9H5qQQJ2HCYLaDZKj/Nhlvkj+b2AfHQakK8SP852EqLTer3SVsg2Mai+Vhg0sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KyIhY3oK; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4gBczgv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 321B6C4CEF7;
-	Wed, 11 Feb 2026 21:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770844350;
-	bh=ZsXDR+ZmQZgcAFLTOvK08pR/QTvXK90/KVWwSRiQC3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N4gBczgv0CRF9wWjRyBcZ6sr4hzPtVjbbyR/fWi2KJF0JCap73Xh9p8TZkXVH/z6B
-	 cIS5py2CePVPSyb+xh36Kw+IHHulK4SxFFhPy6vnv4bnGW5UcSvYcdpmGCRPsXwTF6
-	 +9trG//gb98jf1b+MKRjoIoMWl8O3SDHUDSQcZIN2lGvas6QeTnDbCKziKkEq+TyDe
-	 jDf9z8ZgWtrQplxsQReN2izQTI0yRTkD3kgAAmjrGsVyFil96U5u6denXcHrnPIqNr
-	 bKyI8UwcokiGnYxz73fIkAwr3JWWYpzNkYCUIN+lL3OENK0YzAWJ9A6cXBesd2GJT1
-	 uLvTBtDxxqoWQ==
-Date: Wed, 11 Feb 2026 15:12:29 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Juan Yescas <jyescas@google.com>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 04/10] dt-bindings: soc: google: gs101-pmu: allow
- power domains as children
-Message-ID: <20260211211229.GA3882182-robh@kernel.org>
-References: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
- <20260205-gs101-pd-v5-4-ede49cdb57a6@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KyIhY3oK"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260212081642epoutp037d7a1b709e074483c4c652a3cc21f841~TcczRKfU60637806378epoutp03j
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 08:16:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260212081642epoutp037d7a1b709e074483c4c652a3cc21f841~TcczRKfU60637806378epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1770884203;
+	bh=fYXLMUq51ld2S/ccOGRxNiqqyw4cWbXp17P8AE98wuM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=KyIhY3oKGhmqh6YT15Bd+37kr9x243c0YtJKPHmHkBRNCgNyFp5E2ciTJczDwzSsd
+	 iyXXpASMrnz+G1vwWk4h3dRocTKnSZpzib0hyhiO04ni9OIGPBmr3ZCtoejh0oC4NL
+	 e6+qroj+K65Kx8PIVakpsOZ6drSrN2pNtajKRfZk=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260212081642epcas2p14f5b709689d0447523bed621d50b7443~TccymksnI1103211032epcas2p1J;
+	Thu, 12 Feb 2026 08:16:42 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.38.205]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4fBSnP5hPLz3hhT4; Thu, 12 Feb
+	2026 08:16:41 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260212081641epcas2p18a5bad8edf23c5a35c1562245ee2224f~TccxhWPdl1102611026epcas2p1L;
+	Thu, 12 Feb 2026 08:16:41 +0000 (GMT)
+Received: from KORCO118486 (unknown [12.80.208.104]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260212081641epsmtip2ce95176f21ce81ae846c45bf83f14e93~TccxdL9P02450824508epsmtip2L;
+	Thu, 12 Feb 2026 08:16:41 +0000 (GMT)
+From: "Sanghoon Bae" <sh86.bae@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <vkoul@kernel.org>, <alim.akhtar@samsung.com>,
+	<kishon@kernel.org>
+Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<sowon.na@samsung.com>
+In-Reply-To: <474a7e3d-a506-4f4a-8bfb-fa6d203707cd@kernel.org>
+Subject: RE: [PATCH 1/1] dt-bindings: soc: samsung: exynos-sysreg: add hsi0
+ for ExynosAutov920
+Date: Thu, 12 Feb 2026 17:16:36 +0900
+Message-ID: <000d01dc9bf7$eaa23a80$bfe6af80$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260205-gs101-pd-v5-4-ede49cdb57a6@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFOtjm7Fjd07XGZZ5ZMM+QG6R8EygIDKRClAfmnLMoCGtr0xrZpxQyw
+Content-Language: ko
+X-CMS-MailID: 20260212081641epcas2p18a5bad8edf23c5a35c1562245ee2224f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251117085146epcas2p303931d9501af51f08639b17ab7cbe34b
+References: <20251117085134.289371-1-sh86.bae@samsung.com>
+	<CGME20251117085146epcas2p303931d9501af51f08639b17ab7cbe34b@epcas2p3.samsung.com>
+	<20251117085134.289371-2-sh86.bae@samsung.com>
+	<474a7e3d-a506-4f4a-8bfb-fa6d203707cd@kernel.org>
 
-On Thu, Feb 05, 2026 at 09:42:32PM +0000, André Draszik wrote:
-> The power domains are a property of / implemented in the PMU. As such,
-> they should be modelled as child nodes of the PMU.
+> On 17/11/2025 09:51, Sanghoon Bae wrote:
+> > Add hsi0 compatible for ExynosAutov920 PCIe settings for:
+> > - PCIe PHY power control
+> > - PLL settings for PCIe
+> > - PCIe device direction (RC/EP)
+> >
+> > Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+> > ---
+> >  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
+> >  1 file changed, 1 insertion(+)
 > 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
-> v4:
-> - consistent quoting using " (Krzysztof)
-> - add samsung,dtzpc to example
-> 
-> Note: Ideally, the newly added properties (ranges, etc.) should only be
-> 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
-> as they're needed only in that case. As-is, this patch now causes
-> warnings for existing DTs as they don't specify the new properties (and
-> they shouldn't need to). 
+> You miss an user for this binding.
+Will add the dt node for samsung,exynosautov920-hsi0-sysreg in the patchset.
 
-We can't have warnings added if they aren't valid.
-
-> Only if DTs are updated to include
-> power-domains, such an update should also add the new properties.
-> 
-> I've not been able to come up with the correct schema syntax to achieve
-> that. dependencies, dependentRequired, and dependentSchemas don't seem
-> to support patterns. Similarly,
->   - if:
->       required:
->         - ...
->     then:
->       required:
->         - ...
-> 
-> doesn't allow patterns in the 'if' block (or I didn't get the syntax
-> right).
-> 
-> Rob said in
-> https://lore.kernel.org/all/20251010141357.GA219719-robh@kernel.org/
-> that this is a known limitation in json-schema.
-
-For a given compatible, you should either have child nodes or you don't. 
-The h/w is not variable. So something like this should work:
-
-if:
-  properties:
-    compatible:
-      contains:
-        const: foo,bar
-
-then:
-  required:
-    - ranges
-    - '#address-cells'
-    - '#size-cells'
-
-Rob
