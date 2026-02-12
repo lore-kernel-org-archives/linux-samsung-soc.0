@@ -1,260 +1,269 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648312EFD8F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 11:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A27D346779
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 12:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770896933; cv=none; b=VgGhe6iwAoU16XehoYQjsf1GPx7An0My5BTIe97ducIlVPZv2d1zk/K613LF+2DLprlPGxft55Pvuo8t7DCvbR+9hKq8dyuZHbpljfQX1MEY5xr95XABvl12cZUFgcUZgcqSu4h3HtaQ7IOlRfdiI7XQjoL8zYTxFev8hCL7wmI=
+	t=1770897819; cv=none; b=WjRojOknO6BXq5ufHYngHrj+MXyWF5fTz5SGowzhs6SikhQ3QhIflWNPYGnq/gcgara6juhASbwNE/+PDJoQ6TN6oS0vqyte6wjB73p44eoPfDcVxSyNtLOMkeas6FgSnd16ZAhdJ8VDwkA9LTov9llWwBQW+E9CXeIs4HsYXe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770896933; c=relaxed/simple;
-	bh=Y7oS27WsfhSOay2q5h6kGU3w05SjPN5GatFYPC0+cAA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=bKNIT/YKAXHnSf0xGG14Q95ZOuYimaKtphHDrL+kZsu6LssF33zACkfCfiUMcG8FSK2GKkr9W/S+3Xg6jFyoP6Uv6RSLDXpBwQDhctmLTNiBY4H7VErdd6IEwVLWtPSZEqcNKTeQFWmkMFi7CUmQ0Di3j2W2+CEnqaRl7p1Uka0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hYfkVxIQ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1770897819; c=relaxed/simple;
+	bh=orrgARdRVXY24gkPcC6wmruEl81dP2QFKl4esYE/FQM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DiM0Khtwu6b8HOzTvR+4GcV8eGq/NGOAGc4clwKFEjUoa9Iq7HiGAcRsOq8zhlswMm8+ogIw+uob4gQKhRMToKZ/iecwa+l9xSjA71DqyFOeQcBORjR8jw6s5rEIA2a6EgR5YgoyYnZe5gSiC5y4acIR3fihCRr88A4SmSUo4mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hPevaUBM; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hYfkVxIQ"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260212114849epoutp047fa1fb12dd675c17aa4d9ece4fcbbad6~TfV-d9cI92041020410epoutp04M
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 11:48:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260212114849epoutp047fa1fb12dd675c17aa4d9ece4fcbbad6~TfV-d9cI92041020410epoutp04M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1770896929;
-	bh=jyl3AxqX9Tq3PeJ2Lu8gJJZ6ed5Wpcv+H3JcsKlDbVE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=hYfkVxIQmXL2QQiVcqLJtJ2rONwjk3zJ7m/RhRc30INOUxBU+8tichWF9mssSUAWk
-	 Hr58eINTPN+9Fuk78ncccfG6oFoQCnKboyav46vlRoAxDHK1pLCE0/KqRVIrO7vb0/
-	 eC5ZvNpD8kBLIpHL2x/9n/U1/LRLC6WpDCAaNB4Y=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20260212114848epcas5p3ae68f5890f0cba77251bdda61750f3db~TfV_oyQL61067810678epcas5p3P;
-	Thu, 12 Feb 2026 11:48:48 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4fBYV72FpTz6B9m6; Thu, 12 Feb
-	2026 11:48:47 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260212114846epcas5p16d130a5688ae2732ff5b38e0b856bc3b~TfV9KNMUP2225822258epcas5p17;
-	Thu, 12 Feb 2026 11:48:46 +0000 (GMT)
-Received: from INBRO007194 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260212114844epsmtip18d7db7a4756a8505234fe3cea1ecae8d~TfV7XeT9R1842418424epsmtip1J;
-	Thu, 12 Feb 2026 11:48:44 +0000 (GMT)
-From: <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Rob Herring'"
-	<robh@kernel.org>
-Cc: <alim.akhtar@samsung.com>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <rosa.pila@samsung.com>,
-	<selvarasu.g@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
-	<muhammed.ali@samsung.com>, <faraz.ata@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dev.tailor@samsung.com>
-In-Reply-To: <6ac69d62-6b14-4010-9c66-764b7dc2e610@kernel.org>
-Subject: RE: [PATCH v2 0/3] Add and enable USB nodes for ExynosAutov920 SoC
-Date: Thu, 12 Feb 2026 17:18:43 +0530
-Message-ID: <000301dc9c15$8b5bfca0$a213f5e0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hPevaUBM"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-436e8758b91so2957318f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Feb 2026 04:03:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1770897817; x=1771502617; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IPXBLe0yJUYbIoGyT5kMiHrz15M67LzrqjA/DC/nqFM=;
+        b=hPevaUBMTdCmjZpAIUz7m6NyBYoypy0QXWXugrn8NpEoAZXFHNDiiVOl2Smyqm4YPk
+         duPm5qjppAE7oLpC8XXBzbDWq60ZRcG12QbaR2uXf7ONwcFatznIFD+oNs4fpUh2Ui8E
+         xlgvLjnhdqxdRlZSIPTM9nCFj4AY0/En66eOiSDmMGrA0z4qIhRjtp+cGju6MOgub0d8
+         F2mg7IFc+KbfPOAI8mt/PwHDSYaDxlWkX2hA7gjiivtVKrQ4xD5WSMGQLJkQjeAHaFcM
+         APc/D+5Wdu4XdpcFQhN7B6YXPd4088r7i6+fHkw42j0DTzABWXajFLe+BzuFDXBda3ZH
+         KDqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770897817; x=1771502617;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPXBLe0yJUYbIoGyT5kMiHrz15M67LzrqjA/DC/nqFM=;
+        b=e99ZQzFbT4XxZ0MoQFGErG1LtEila7BkiCuljflnK6fBZGvojovTPvhYtW9TYUE41B
+         D6tC8TEKSq6ByiwN/MKOxgpFQcX9DzJ0MuRMS7WNVHPFdeh0VGh1gLhxOSLLhLabzPE9
+         bfQGUSGjXSJ65tX67Bj6R4c+8Wp9nJFp7PJp4p/UHFq/ov4aUT2HE59Cw1LgO+WeDW1F
+         UZOOLh72Wpmh0To5Y15qeOyyJ0a0rn7ThFNKKAtSar+QYuxwQnDsnAiuTrLIYeabXSlL
+         2cWEZ4do97ZjHSIl1a+riK3G5p255f6NK4bxKTltYEbp/bIBc/09YCau/dWtqa7glhFQ
+         WIxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRmyR9eV5f6IbHY7M6EFNTYG3rHcLLQbwaMHvEQrj+CkVHevoCRYV7T/ThOyMRf5aY2BEZrk3kzhi2bQJPRUKz4w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgRHQ/nCPIjtXuBaa5q2kVVumVWF/ufPSWm6PKeBeVZ4JhlCon
+	XQYqOnlxQnuNodSn3dRfUO/7sREyuF8E+HIx1jjxt0I/p9Nc12a7kAscEcXC2TZD+vI=
+X-Gm-Gg: AZuq6aL4uuPvyuHdGfpv832oBUKTwbaG9yaqGpPnHwtJ2Mee+MtVJ6l6hAHS4CTN5M/
+	INtAhrJ4tjgupIjcjH5oA2m7kdE84LLu5968ntRAAcrzCwMZUGoRijOfloT0D6/H7RjsdjESrrA
+	jMccQWIpN4zhHgulDYIS/mcKa1D+6SDG6nCiRmeQ3MmyLSsFcwlz0A4QHrG0cV9zdb+zDtr3iTg
+	8y6GkfHYV8ZlPm5VHisTpHS83Rq+mSElA6VbbhEj4LH8CKj306+FTI6Q66PSv8PhCKr+UWW7HFP
+	WRIKIvU/9pHTOmehsE0dy1FQxE/m2EhGuUZQFYGmu/WgJMBZI9EYdLQwnCo6mICfIsRvkKypZ0V
+	fUbpbMO/j2DNvfWI0mAZ0JYqYDqMA0fW0zHVw8/5wnknZXT+1xLvIT+r+jaokP9JEM5aiRFCcmC
+	gHbH+CFI/B2UjllcrLmCEBXwSesUU1Jipa5+/ihGOR
+X-Received: by 2002:a05:6000:2901:b0:436:233c:c7c2 with SMTP id ffacd0b85a97d-4378aa0c732mr4446267f8f.16.1770897816772;
+        Thu, 12 Feb 2026 04:03:36 -0800 (PST)
+Received: from draszik.lan ([212.129.82.233])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43783dfc8b9sm11365172f8f.24.2026.02.12.04.03.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Feb 2026 04:03:36 -0800 (PST)
+Message-ID: <b5078af810a681333043f64d71b7d6ea55ff44bb.camel@linaro.org>
+Subject: Re: [PATCH v5 04/10] dt-bindings: soc: google: gs101-pmu: allow
+ power domains as children
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Ulf Hansson	 <ulf.hansson@linaro.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
+	 <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Thu, 12 Feb 2026 12:03:38 +0000
+In-Reply-To: <20260211211229.GA3882182-robh@kernel.org>
+References: <20260205-gs101-pd-v5-0-ede49cdb57a6@linaro.org>
+	 <20260205-gs101-pd-v5-4-ede49cdb57a6@linaro.org>
+	 <20260211211229.GA3882182-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHZrJ6Mjzaw1gIwj373G9ghj88fmQEa27yOAk8cNCcDW2nXuwFvkMg7tUMp5zA=
-Content-Language: en-us
-X-CMS-MailID: 20260212114846epcas5p16d130a5688ae2732ff5b38e0b856bc3b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260122125130epcas5p4ac37f540c609f3016ff02f5708e897a2
-References: <CGME20260122125130epcas5p4ac37f540c609f3016ff02f5708e897a2@epcas5p4.samsung.com>
-	<20260122130721.205664-1-pritam.sutar@samsung.com>
-	<176910209177.2703219.7993114273484886473.robh@kernel.org>
-	<000001dc8c30$d83ce2e0$88b6a8a0$@samsung.com>
-	<6ac69d62-6b14-4010-9c66-764b7dc2e610@kernel.org>
 
-Hi Krzysztof,
+Hi Rob,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Friday, January 23, 2026 1:02 PM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Rob Herring'
-> <robh=40kernel.org>
-> Cc: alim.akhtar=40samsung.com; conor+dt=40kernel.org; krzk+dt=40kernel.or=
-g;
-> linux-arm-kernel=40lists.infradead.org; rosa.pila=40samsung.com;
-> selvarasu.g=40samsung.com; linux-samsung-soc=40vger.kernel.org;
-> muhammed.ali=40samsung.com; faraz.ata=40samsung.com; linux-
-> kernel=40vger.kernel.org; devicetree=40vger.kernel.org;
-> dev.tailor=40samsung.com
-> Subject: Re: =5BPATCH v2 0/3=5D Add and enable USB nodes for ExynosAutov9=
-20
-> SoC
+On Wed, 2026-02-11 at 15:12 -0600, Rob Herring wrote:
+> On Thu, Feb 05, 2026 at 09:42:32PM +0000, Andr=C3=A9 Draszik wrote:
+> > The power domains are a property of / implemented in the PMU. As such,
+> > they should be modelled as child nodes of the PMU.
+> >=20
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > v4:
+> > - consistent quoting using " (Krzysztof)
+> > - add samsung,dtzpc to example
+> >=20
+> > Note: Ideally, the newly added properties (ranges, etc.) should only be
+> > 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
+> > as they're needed only in that case. As-is, this patch now causes
+> > warnings for existing DTs as they don't specify the new properties (and
+> > they shouldn't need to).=20
 >=20
-> On 23/01/2026 07:23, Pritam Manohar Sutar wrote:
-> > Hi Rob,
-> >
-> > Thank you for your feedback on the patch series.
-> >
-> >> -----Original Message-----
-> >> From: Rob Herring <robh=40kernel.org>
-> >> Sent: 22 January 2026 10:46 PM
-> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> >> Cc: alim.akhtar=40samsung.com; conor+dt=40kernel.org;
-> krzk+dt=40kernel.org;
-> >> linux-arm-kernel=40lists.infradead.org; rosa.pila=40samsung.com;
-> >> selvarasu.g=40samsung.com; linux-samsung-soc=40vger.kernel.org;
-> >> muhammed.ali=40samsung.com; faraz.ata=40samsung.com; linux-
-> >> kernel=40vger.kernel.org; devicetree=40vger.kernel.org;
-> >> dev.tailor=40samsung.com
-> >> Subject: Re: =5BPATCH v2 0/3=5D Add and enable USB nodes for
-> >> ExynosAutov920 SoC
-> >>
-> >>
-> >> On Thu, 22 Jan 2026 18:37:18 +0530, Pritam Manohar Sutar wrote:
-> >>> This SoC has 2 USB typeC and 2 typeA ports those are DWC3 DRD
-> >>> controllers and among them, one single USB3.1 DRD combo phy and
-> >>> three
-> >>> USB2.0 only phy controllers. This patchset adds and enables USB and
-> >>> USB-PHY nodes in dts.
-> >>>
-> >>> PMIC is not implemented yet, we rely on USB LDOs being enabled by
-> >>> the bootloader and used dummy regulators for now.
-> >>>
-> >>> To drive vbus for host mode, it needs GPIO pin to enable vbus regulat=
-or.
-> >>> GPIO expander is present in the dts, we used it to enable the
-> >>> regulator using GPIO.
-> >>>
-> >>> USB ports are configured as OTG, and default mode is configured as
-> >>> peripheral. It will be changed based on requirements.
-> >>>
-> >>> changelog
-> >>> ----------
-> >>> Changes in v2:
-> >>> - As v1 was pushed 3 months back, resending this patchset.
-> >>> - Since dependencies are merged, removed links from coverletter.
-> >>>   link for v1:
-> >>> https://lore.kernel.org/linux-devicetree/20251024114845.2395166-1-pr
-> >>> it
-> >>> am.sutar=40samsung.com/
-> >>>
-> >>> Pritam Manohar Sutar (3):
-> >>>   arm64: dts: exynos: ExynosAutov920: Add USB and USB-phy nodes
-> >>>   arm64: dts: exynos: ExynosAutov920: Add regulators for the USB
-> >>>   arm64: dts: exynos: ExynosAutov920: Enable USB nodes
-> >>>
-> >>>  .../boot/dts/exynos/exynosautov920-sadk.dts   =7C 160
-> >> +++++++++++++++++
-> >>>  .../arm64/boot/dts/exynos/exynosautov920.dtsi =7C 162
-> >>> ++++++++++++++++++
-> >>>  2 files changed, 322 insertions(+)
-> >>>
-> >>> --
-> >>> 2.34.1
-> >>>
-> >>>
-> >>>
-> >>
-> >>
-> >> My bot found new DTB warnings on the .dts files added or changed in
-> >> this series.
-> >>
-> >> Some warnings may be from an existing SoC .dtsi. Or perhaps the
-> >> warnings are fixed by another series. Ultimately, it is up to the
-> >> platform maintainer whether these warnings are acceptable or not. No
-> >> need to reply unless the platform maintainer has comments.
-> >>
-> >> If you already ran DT checks and didn't see these error(s), then make
-> >> sure dt- schema is up to date:
-> >>
-> >>   pip3 install dtschema --upgrade
-> >>
-> >>
-> >> This patch series was applied (using b4) to base:
-> >>  Base: attempting to guess base-commit...
-> >>  Base: tags/next-20260121 (exact match)
-> >>  Base: tags/next-20260121 (use --merge-base to override)
-> >>
-> >> If this is not the correct base, please add 'base-commit' tag (or use
-> >> b4 which does this automatically)
-> >>
-> >>
-> >> New warnings running 'make CHECK_DTBS=3Dy for
-> >> arch/arm64/boot/dts/exynos/' for 20260122130721.205664-1-
-> >> pritam.sutar=40samsung.com:
-> >>
-> >> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy0 (usb-
-> >> nop-xceiv): '=23phy-cells' is a required property
-> >> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3D91401ba9-
-> >> cedb2354-914190e6-000babff317b-0af64cc1fcd35e1a&q=3D1&e=3De0bf9bed-
-> >> 20f5-431c-9a8f-
-> >>
-> ded53e46a366&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fu
-> >> sb-nop-xceiv.yaml
-> >> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy1 (usb-
-> >> nop-xceiv): '=23phy-cells' is a required property
-> >> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3Db208eda5-
-> >> ed93d558-b20966ea-000babff317b-f6650041a1e910a7&q=3D1&e=3De0bf9bed-
-> >> 20f5-431c-9a8f-
-> >>
-> ded53e46a366&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fu
-> >> sb-nop-xceiv.yaml
-> >> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy2 (usb-
-> >> nop-xceiv): '=23phy-cells' is a required property
-> >> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3Dce686cfd-
-> >> 91f35400-ce69e7b2-000babff317b-ccbf1b3c353ecfc0&q=3D1&e=3De0bf9bed-
-> 20f5-
-> >> 431c-9a8f-
-> >>
-> ded53e46a366&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fu
-> >> sb-nop-xceiv.yaml
-> >> arch/arm64/boot/dts/exynos/exynosautov920-sadk.dtb: usb-phy3 (usb-
-> >> nop-xceiv): '=23phy-cells' is a required property
-> >> 	from schema =24id: https://protect2.fireeye.com/v1/url?k=3D633aebf3-
-> >> 3ca1d30e-633b60bc-000babff317b-ef5a169bc853eddb&q=3D1&e=3De0bf9bed-
-> >> 20f5-431c-9a8f-
-> >>
-> ded53e46a366&u=3Dhttp%3A%2F%2Fdevicetree.org%2Fschemas%2Fusb%2Fu
-> >> sb-nop-xceiv.yaml
-> >
-> > Apologize for any inconvenience caused by the issues you=E2=80=99ve=20i=
-dentified.=0D=0A>=20=0D=0A>=20It=20means=20you=20did=20not=20test=20the=20p=
-atches=20before=20sending=20and=20I=20find=20it=20very=0D=0A>=20wasteful=20=
-of=20my=20time.=0D=0A>=20=0D=0A>=20>=20Below,=20Have=20outlined=20the=20cha=
-nges,=20will=20implement=20to=20address=20the=0D=0A>=20>=20warnings=20and=
-=20ensure=20the=20patch=20set=20aligns=20with=20the=20required=20standards.=
-=0D=0A>=20>=0D=0A>=20>=20Proposed=20Changes:=0D=0A>=20>=201.=20Will=20inclu=
-de=20=23phy-cells=20=3D=20<0>;=20in=20the=20USB=20PHY=20nodes=0D=0A>=20>=20=
-=20=20(usb_phy0,=20usb_phy1,=20usb_phy2,=20and=20usb_phy3)=20This=20is=20a=
-=20crucial=0D=0A>=20>=20addition=20to=20avoid=20compilation=20warnings=20an=
-d=20ensure=20compatibility.=0D=0A>=20>=0D=0A>=20>=20Example:=0D=0A>=20>=20u=
-sb_phy0:=20usb-phy0=20=7B=0D=0A>=20>=20=20=20=20=20compatible=20=3D=20=22us=
-b-nop-xceiv=22;=0D=0A>=20>=20=20=20=20=20=23phy-cells=20=3D=20<0>;=0D=0A>=
-=20>=20=20=20=20=20vbus-supply=20=3D=20<&usbdrd31_dwc3_vbus>;=0D=0A>=20>=20=
-=7D;=0D=0A>=20>=0D=0A>=20>=202.=20The=20errors=20were=20not=20caught=20by=
-=20the=20make=20dt_binding_check=20and=20make=0D=0A>=20dtbs_check=0D=0A>=20=
->=20=20=20commands=0D=0A>=20>=20=20=20make=20-j=20ARCH=3Darm64=20dt_binding=
-_check=20dtbs_check=0D=0A>=20DT_SCHEMA_FILES=3DDocumentation/devicetree/bin=
-dings/phy/samsung,usb3=0D=0A>=20-drd-phy.yaml=0D=0A>=20>=20=20=20make=20-j=
-=20ARCH=3Darm64=20dt_binding_check=20dtbs_check=0D=0A>=20>=0D=0A>=20DT_SCHE=
-MA_FILES=3DDocumentation/devicetree/bindings/usb/samsung,exyn=0D=0A>=20os-d=
-=0D=0A>=20>=20wc3.yaml=0D=0A>=20=0D=0A>=20This=20is=20not=20the=20command=
-=20you=20are=20supposed=20to=20run=21=20You=20MUST=20CHECK=20YOUR=0D=0A>=20=
-DTS=20WITH=20ALL=20THE=20BINDINGS.=20Why=20would=20you=20run=20only=20two=
-=20of=20them=20and=0D=0A>=20ignore=20the=20rest=20which=20you=20still=20use=
-?=20What=20is=20the=20logic=20behind=20-=20I=20will=20use=20phy-=0D=0A>=20n=
-op=20binding,=20but=20not=20test=20against=20it?=0D=0A>=20=0D=0A>=20A=20hin=
-t=20-=20if=20your=20patches=20are=20not=20being=20picked=20up,=20maybe=20be=
-cause=20you=20send=0D=0A>=20buggy=20code=20and=20I=20am=20bored=20to=20repl=
-y=20-=20test=20finally,=20because=20I=20am=20not=20your=0D=0A>=20testing=20=
-service.=0D=0A=0D=0ASorry=20for=20the=20inconvenience.=20will=20take=20care=
-=20of=20this=20in=20future=20to=20consider=20=0D=0Aall=20bindings=20rather=
-=20than=20taking=20what=20are=20updated=20for=20this=20SoC.=0D=0A=0D=0A>=20=
-=0D=0A>=20Best=20regards,=0D=0A>=20Krzysztof=0D=0A=0D=0AThank=20you,=0D=0A=
-=0D=0ARegards,=0D=0APritam=0D=0A=0D=0A
+> We can't have warnings added if they aren't valid.
+>=20
+> > Only if DTs are updated to include
+> > power-domains, such an update should also add the new properties.
+> >=20
+> > I've not been able to come up with the correct schema syntax to achieve
+> > that. dependencies, dependentRequired, and dependentSchemas don't seem
+> > to support patterns. Similarly,
+> > =C2=A0 - if:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ...
+> > =C2=A0=C2=A0=C2=A0 then:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ...
+> >=20
+> > doesn't allow patterns in the 'if' block (or I didn't get the syntax
+> > right).
+> >=20
+> > Rob said in
+> > https://lore.kernel.org/all/20251010141357.GA219719-robh@kernel.org/
+> > that this is a known limitation in json-schema.
+>=20
+> For a given compatible, you should either have child nodes or you don't.=
+=20
+> The h/w is not variable. So something like this should work:
+>=20
+> if:
+> =C2=A0 properties:
+> =C2=A0=C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: foo,bar
+>=20
+> then:
+> =C2=A0 required:
+> =C2=A0=C2=A0=C2=A0 - ranges
+> =C2=A0=C2=A0=C2=A0 - '#address-cells'
+> =C2=A0=C2=A0=C2=A0 - '#size-cells'
+>=20
+
+Thanks Rob, yes, that works in general, but unfortunately in this case exis=
+ting
+DTs don't specify ranges etc for the google,gs101-pmu compatible. (This bin=
+ding
+is specifically for google,gs101-pmu only anyway).
+
+The above suggestion will cause the same validation warnings for existing D=
+Ts
+which is no different to just adding those properties to the top-level requ=
+ired:
+as my patch is doing. Unless I misunderstood your suggestion.
+
+The compatible doesn't change with these patches. So I'm not sure how to ma=
+ke
+your suggestion work without causing warnings for existing DTs. We can eith=
+er
+have an old incomplete DT+binding:
+
+	pmu_system_controller: system-controller@17460000 {
+		compatible =3D "google,gs101-pmu";
+		reg =3D <0x17460000 0x10000>;
+	};
+
+or the new one:
+
+	pmu_system_controller: system-controller@17460000 {
+		compatible =3D "google,gs101-pmu";
+		reg =3D <0x17460000 0x10000>;
+		ranges;
+		#address-cells =3D <1>;
+		#size-cells =3D <1>;
+
+		power-domain@1c00 {
+			compatible =3D "google,gs101-pd";
+			reg =3D <0x1c00 0x80>;
+			#power-domain-cells =3D <0>;
+			label =3D "eh";
+			samsung,dtzpc =3D <&dtzpc_eh>;
+		};
+	};
+
+I.e. in the old case (when binding + DT were incomplete) ranges etc. are
+not 'required' (and shouldn't be), while with the power-domain@[0-9a-f]+
+child node(s) added, ranges etc must be specified.=20
+
+If power-domain@[0-9a-f]+ wasn't a pattern, it'd be easy, but I really want
+it to be a pattern, not least because there are so many instances.
+
+What works (at the top level) is:
+
+    dependentRequired:
+      power-domain@1e00: [ranges]
+
+but it would require spelling out all the instances instead of a pattern. T=
+he
+following (or various variations I've tried) doesn't:
+
+    dependentRequired:
+      power-domain@.*: [ranges]
+
+I've also tried to come up with something involving dependentSchemas:, but =
+to no
+avail.
+
+Similarly,
+
+    allOf:
+      - if:
+          anyOf:
+            - required: [power-domain@1e00]
+            - required: [power-domain@2000]
+        then:
+          required:
+            - ranges
+
+works, but when using a regex, it doesn't:
+
+    allOf:
+      - if:
+          anyOf:
+            - required: [power-domain@.*]
+        then:
+          required:
+            - ranges
+
+I've also tried:
+
+    allOf:
+      - if:
+          required:
+            - "^power-domain@[0-9a-f]+$"
+        then:
+          required:
+            - ranges
+
+and
+
+    anyOf:
+      - required:
+          - power-domain@1e00
+          - ranges
+          - reg
+      - required:
+          - reg
+
+and
+
+    anyOf:
+      - required:
+          - "^power-domain@[0-9a-f]+$"
+          - ranges
+          - reg
+      - required:
+          - reg
+
+None of these seem to do what I would like (even the non-regex one).
+
+
+Cheers,
+Andre'
