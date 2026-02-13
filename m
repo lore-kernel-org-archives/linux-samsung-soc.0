@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0ED349B10;
-	Fri, 13 Feb 2026 10:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B9C350D5F;
+	Fri, 13 Feb 2026 10:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770977242; cv=none; b=SpQkVF1YNXkdn+VDkvDPshAB41RoFsrxaT1A0KOr6DSRq/Hkdx8t1VrIu9DowusS61/IDmMN/HvSOy9CwAMQUm4oGDcPSAKBvi96P/mRq7L6rv66hJwOWj38rkz9dUieUV3N8IW5NAYhD3WaqBUXw19m1flfDrl5KH0oU7wWLYQ=
+	t=1770977498; cv=none; b=T/RXZW/O5DK4Kald+Ze6Li8pRDGtBxT3odI/k4r3NBchoHLH8OA/l8ydmEGd4sfUtDIZjKVJEgBmOQ9E5twPte/CVhA8q/WzD4G6/WkYy+G4GUL+aoxp4J7hHkxTMjTsqzIuwqPYxvS0F5eLZsdgVMS1oBGk6++tgfdt3S6nDnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770977242; c=relaxed/simple;
-	bh=4izkljU4I3LY/KnZKMk+b6Qzs+PaWjNGVlnMukyD7tg=;
+	s=arc-20240116; t=1770977498; c=relaxed/simple;
+	bh=SHPUymrUpb83eRmEalKKYl0ZBPV1Z4ReKCKK1ADCPs0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hK6DPt3h+F2hUPOfX9SrY4Bx7lioV15ufms6+8mDKbFnf8eWPpERPJoXwG2S+VDrx0tIhwyODp3Q45FtL7yB9mTvkCiLRt7A7/dbijgBwAQgDo2HKSwot9R5gbQLghEmCrjjvGYA+LPz1u9E1DE9uTpqNWRRKDit9z7peDHr6c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyZ9ZB+r; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ArgjU5ilgl5+KRdO9ZqNa9BZHv3if5aQJylOZ8omptzQUCjwHOVpeQGbnOcnFj2lGZWj4S01CzStwZPshCndAMalr9qec7z+HDvU91N6DyEcZiQeDIhw35RQTH0fkYXGx+ZFQw05+f3uqkoQA/bU+9k8g5ncrppHdb+pONGgiX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T00IpjBT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyZ9ZB+r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FADFC116C6;
-	Fri, 13 Feb 2026 10:07:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T00IpjBT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30685C19424;
+	Fri, 13 Feb 2026 10:11:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770977241;
-	bh=4izkljU4I3LY/KnZKMk+b6Qzs+PaWjNGVlnMukyD7tg=;
+	s=k20201202; t=1770977497;
+	bh=SHPUymrUpb83eRmEalKKYl0ZBPV1Z4ReKCKK1ADCPs0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lyZ9ZB+rAydeskXNFKx0tyJeseRIDRTEEDYx+jbkyaONpSry6vNI66K1DL6EsAE7F
-	 gvjg/Bvkx8zfeHToRADiEaPn3TFJ/rWFg90ef6dSphDa2B7ZFfsqoXZj/ZxAimAjjQ
-	 +j3v+5gGYAUydyuaph05hWZ1XvT4halKyurLqxNwtyjJ8bIa/dE5YODK+x/WHouiRn
-	 XQ6B7Uq/SDQSyu1od6wohU0eZSLdeUIjPzEtD70DVJrCgQJacGIU6yTX4d9NNTD0Pl
-	 RllAm8uMeagIEcptWYf4mCfMZIPxl1D30z4vqH2C8LgZtnfDflXtDqfvDQLCcv7wEA
-	 Dt1QuEtN4WgNw==
-Message-ID: <4f7571ee-53a6-4144-817e-831bbb9d55cf@kernel.org>
-Date: Fri, 13 Feb 2026 11:07:15 +0100
+	b=T00IpjBTDuqx1kp6RyQUKTwgJOt4gf+wtU1uiV53/PIRFUwG51eIqcY+mK21PF+HH
+	 ZemI6V5JYQ8ynYLIfVO4z6nRU9rkhjB0mYjwEyZE9Pbh0YE5FparGLe09lpUknCskA
+	 LToDvM7Hy/NMcM7iCmHtSIhH6Vut53ep0LYtsJmpGhBJzoaxqtMG/+aapKUMcwMZCy
+	 WfOnB3ViSUjcE6rSdREafiFV+d6iPTR9XbzTSWO02ZaRS4G/DhTRgc+xFqCAtafhQF
+	 LQJ481HPWYe1OkPk06aY/BSHSc5btWl7WUymgA3jBbqOAaWLgBVt0zEqOILBttp6uj
+	 MoV/ydG4t7qag==
+Message-ID: <9cc741e5-e710-4c89-b0e0-dc12ac7d8e3d@kernel.org>
+Date: Fri, 13 Feb 2026 11:11:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] firmware: samsung: acpm: Add TMU protocol support
+Subject: Re: [PATCH v2 4/7] thermal: samsung: Add support for GS101 TMU
 To: Tudor Ambarus <tudor.ambarus@linaro.org>,
  "Rafael J. Wysocki" <rafael@kernel.org>,
  Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
@@ -51,7 +51,7 @@ Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
  linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org
 References: <20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org>
- <20260119-acpm-tmu-v2-2-e02a834f04c6@linaro.org>
+ <20260119-acpm-tmu-v2-4-e02a834f04c6@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,31 +97,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260119-acpm-tmu-v2-2-e02a834f04c6@linaro.org>
+In-Reply-To: <20260119-acpm-tmu-v2-4-e02a834f04c6@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 19/01/2026 13:08, Tudor Ambarus wrote:
-> The Thermal Management Unit (TMU) on the Google GS101 SoC is managed
-> through a hybrid model shared between the kernel and the Alive Clock
-> and Power Manager (ACPM) firmware.
+> Add the thermal driver for the Google GS101 SoC.
 > 
-> Add the protocol helpers required to communicate with the ACPM for
-> thermal operations, including initialization, threshold configuration,
-> temperature reading, and system suspend/resume handshakes.
+> The GS101 TMU utilizes a hybrid management model shared between the
+> Application Processor (AP) and the ACPM (Alive Clock and Power Manager)
+> firmware. The driver maintains direct memory-mapped access to the TMU
+> interrupt pending registers to identify thermal events, while delegating
+> functional tasks - such as sensor initialization, threshold configuration,
+> and temperature acquisition - to the ACPM firmware via the ACPM IPC
+> protocol.
 > 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  drivers/firmware/samsung/Makefile                  |   1 +
->  drivers/firmware/samsung/exynos-acpm-tmu.c         | 212 +++++++++++++++++++++
->  drivers/firmware/samsung/exynos-acpm-tmu.h         |  33 ++++
->  drivers/firmware/samsung/exynos-acpm.c             |  12 ++
->  .../linux/firmware/samsung/exynos-acpm-protocol.h  |  24 +++
->  5 files changed, 282 insertions(+)
+>  drivers/thermal/samsung/Kconfig    |  16 +
+>  drivers/thermal/samsung/Makefile   |   2 +
+>  drivers/thermal/samsung/acpm-tmu.c | 643 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 661 insertions(+)
 
-I understood from the cover letter this should go via thermal tree, so:
+I did not perform full review, but after quick glance:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
