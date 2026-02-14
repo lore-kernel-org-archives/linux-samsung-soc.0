@@ -1,63 +1,63 @@
 Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4D12E285C
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Feb 2026 18:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4742FD673
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Feb 2026 18:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771093188; cv=none; b=ADn+ffBrnbMR8jSwJfaLt/hiGO0Q8rZRfTPKtsFkGidPh2L0l1fdY9isH5QaXioSWMaRQEPDnXxK9Nz8aI6seOmhR6tZx1ysCbPTYmhHtG1uIByNkmJ/KWpAN42PchasKeREz9eOmTV7SXNc5h+PeWe39G6fZOMO0pE1wO1w22Y=
+	t=1771093195; cv=none; b=H2AR6yfTlghR0GYtb4V742qyguyN5w9jiCFQBSMM4i42+uXs6crSYEBq0IoptkWfcOjH/c26w7iyCyPrnB9wxaCVUZtoYG6tQR4LhBMAufl7r5NCsxqJa6AfFspvba9vd2KsFmSNrUosL/f0Cn72GE6/ADrfkwICCLUjnklyBe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771093188; c=relaxed/simple;
-	bh=qdjAMl7pVZLzrJY8XhRsX1huAGzjKOhJ/3DLSBciWKY=;
+	s=arc-20240116; t=1771093195; c=relaxed/simple;
+	bh=pErvtY3ihK17Sb6LHbdNsewtgB3895221qeOyAaYxy0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MTClfSmbQT+3/WDrH7E2JfqkYAVoAA+xgdMN5SyhudHqSmnHdAbHWA3v48xNGH67jjRVqe6FwTki6Nfdt7sMfD5bX3rT/VtA9TPDg13CGzS5MKSskCz4sB9tAUwcL2nTg/ApHdUPbHS4uQgB7+yCqvenYSZdGADwGVz/6rvBd5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IP6qGDr8; arc=none smtp.client-ip=209.85.214.193
+	 MIME-Version; b=kVcEORiwVCET5UT4QvIQdajFPPEcfXfGxQupiXUa3MYzJi4zqmZ1/eZzgud7cM6LH98tqjyAcKOQxePQNtsDAhc+mecmV9xLOdO5bP3+do4QyZSGU7YCApTD3d7pcD6jyJoOlJ3wAljAV1x1u4Go9dVZq2eSe5nNmHU3Jv3yTgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqFX+ODh; arc=none smtp.client-ip=209.85.214.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IP6qGDr8"
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2a871daa98fso14201515ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Feb 2026 10:19:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqFX+ODh"
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2ab232cc803so9070695ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Feb 2026 10:19:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771093186; x=1771697986; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771093193; x=1771697993; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GBz/VS0n7QHhwwTW/twbu0ESsUBq5BIV+GsuXlYuLBc=;
-        b=IP6qGDr82tSPBUHJVoAiWUBM3kbAl4bL6mB0fBf6WjtnwCYk++XeF1kbZfKoDmpJYm
-         isijt1KCNOVs8o/wsoWq5vocrdOTqEGMZ+HbWQyttawLLO/UHUPNaqEfIVPYwhIGU3IM
-         yNNgS0IMbzhGxTBm/GDTVret6gEbYcLrpQ31HCT+RgWzMa62w9eTKWn7CAUg1vxw2pzj
-         iq1QsxrJ7i4S12uJesjjwy7T2SOBUS3wsHnnZqL8FL1b97crLUmQG0Z0gq2U2WOllcx4
-         MQNQQ01ku99ahDK4yabU3yi4qEH890SPAlG7eb7JZzxDvMoSyC8lbT5TvVjs2myAd5Fj
-         2p4Q==
+        bh=af3N+2yRmzcUJywzp/ZUMgm21c6Xt/FcL9OpDD1I9wg=;
+        b=KqFX+ODh2sbu4S6ALbYF0n3BXe5Q7aTS7KbA0tI4vUMxSO163cd8gLFaYcdIbsdu/1
+         Klxua+Fc3QK98dP9Qm7T48tpZhE734vXnnNFVdnTQ/d6XigMh7cNqd+ERV3mILf9D+gl
+         g0ft1T5aCTwN0xyRFyU7IONAyd9Z47haiPq9FGI/q0BR8dLyNxlXmdXsXyUnr5w49+U4
+         i4Yc4GgzrdSfEq9ybP2x0oQtY+C41yzLKq8AuH22j4AG5i2PR/owtlTPVkLgVAdj1A6X
+         E4ky7Q+uXDRn8oJqkYsNJzKfO0OzKNpFlPWeGqSdR/DlYwihcJH29eTovw0zqCahIe7M
+         CXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771093186; x=1771697986;
+        d=1e100.net; s=20230601; t=1771093193; x=1771697993;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=GBz/VS0n7QHhwwTW/twbu0ESsUBq5BIV+GsuXlYuLBc=;
-        b=oLYlXNuh/qfbRBXgjTXSdtNRG4dvz94CC5Xc9yXHO1MoN0qqiOcf8/OPzwUd4k8PjO
-         5YM7c00Av7Vtv+/aLvQo0E5BWHtFSqMzEx3xuovQH0zAYna5kHrX7BwSgJ2x62zkp2RD
-         SmKU/RkP9wr1rc+kwEC3N4iPLgzTu1GoJjLKPg1BWIwqFaBF4hRd0nphF5uhVyhNzZkp
-         pKu8RrtLuaXejVH91+QmGpddaeABUQ97Wcu1hk7U+yVoJd76G51tFsgdBnT0aeKmbxxs
-         +XTeHX+NC/9ObkNob1BFFETIs+tQZBP13Y7dEKMFWExlAHmHW/fNyXriFEpFodeusdUC
-         Fuug==
-X-Forwarded-Encrypted: i=1; AJvYcCXDevn91a6mOBHQjLWCe6BOGbtWqhAZHfUBkuLJveKrvVEtnnI8V/HHYYaX+/4jdK3P2/fxql2NHWiNywejSsud/w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrT6x4Nq8lW+QJIKiblCHtuX4798aNdzV7OOpx6F9/wHRzAsSz
-	nmWC1DYr1segK6dHjJQ6wiEJoFO8UHwu/IobC7bpdUz03FtSH+2Ljghz
-X-Gm-Gg: AZuq6aJ1y9RqcomKZkIV6+M/ZpztKRDdwf0q8gP6rak2wTJBqewKMUHHgjiYk+3iiG8
-	JBL112yWnyrL+/+y9vZS0c0o5REr2XQKOgqUk25x8lPqfjTUzVA48wJTkDKZnqNv1Hzudq8KTxh
-	2Sru3eFjOl+Isd/NJLfzT5saTf/zZho+LwL0TiQZT4vcQ1Oee+wYaMFDDW48rHnkWey5Qi6g6LH
-	SQqah2Kr/avNIKQWOHcGsxZLQCkXu/dnceVQnfozvZvRzMeBrkGnj8CRGnc33x+JkHuSoQ0Sr2u
-	hvx16+SCEGX/lNohfk9UZxLSqzYGHJ46QX5i8hfFvWT++GLW6YoRiKWYHYQbtM2QvYg0sOJ5XV5
-	AdiGiORqigmzX8eKWH8wGl35AUW8GjsHdDK01INrJbxxPogNsw14C+NH+P4uh1t7O/t0YRiBVAe
-	LjZWkKLM1oHdNBhC/yumQ=
-X-Received: by 2002:a17:902:e5cc:b0:2a9:db7:446a with SMTP id d9443c01a7336-2ad1743398cmr29145525ad.9.1771093186513;
-        Sat, 14 Feb 2026 10:19:46 -0800 (PST)
+        bh=af3N+2yRmzcUJywzp/ZUMgm21c6Xt/FcL9OpDD1I9wg=;
+        b=Cm09wUcTNeo5/bsoQs1vqkBirFr/xdjwEi19wal31NKeH9K82C8As2UZygknD+i/YS
+         FI+OXEWExGDPA8h5CrVGHKsm66zhXUVA2KBjRYT35oTqbJ8rXdZ4h7kSLQzawS+w09CT
+         wAPNihc5xFSB2xw/fie4sg+OzHxmFWJilrCznoFlr0/XkR7SmPksM62zvUyUQBFaelrv
+         oqs46ffo3qvuyaNgehAFvZwwBX+26Z4TdxE1VBfeo3dt7uJjSY0Krhb+THEsl92mOVdV
+         /uOhtYZ3jlCAC2n0iivQdVr6Xu2rK1qX2nMSZ7ijLJGtMD+QUd1gFTnoogT31nSLQdBT
+         amsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJol92gI78urDP6Jcv+qqMzmvMyYXQp6yn0VTHUb4sQzIyStvmGFER7s2Ioot56dP544mzayRvRCri69KUH3twfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jiSwzXpTU5oO88w9zJVOI5giqhXB27BD70HLsKNP8AMYn6q/
+	124bmA7i8VcTNJkEkEPyGzR3hEt3O3ykwuGaM4TDKvDiMH6IfE1c9Lys
+X-Gm-Gg: AZuq6aKLAJgQzHMKOqmbjPV8V64rGWR6OShBE3pkZkHaCNnDUtU/mcQRubyvtfIOhzr
+	hsDll2uIvGY+Og5zdocUCxUaTm6uIwucD2slv3ztiK25dk+guX53RxUKTsx0p64VxkmEWXkKg5w
+	u+GzJfgG+9rDepWAWSSS2FnzeYA3Ud056mLGlZI7gVlgra3XrAiAjQNEpM3OQH9jvgkF5XOJFz5
+	iJ8LTCMz4qfz8h1jZeQeTa2YEfPE2O6Bg7JrjwLpohOLh6hnwYJtOD5HaSCaLyQbz2iMU45ET3w
+	I4wQTDjSGgqMPRr+IvojNwhcra+qBl8UIi+1i9Q+qEjyWypKcd7cngQORryBtu0b0Jlw5tZFd8n
+	H9jsddKsApc0vXQUkeyxAV8NZD/vIT5aJgehAXQAp1LBSsW80Afg5C95LYUSpaEaHVxQKSwsXym
+	OJXuUqyKWo9AQqvYmHU20=
+X-Received: by 2002:a17:903:1ad0:b0:2aa:e3d1:1438 with SMTP id d9443c01a7336-2ad17431b9amr32756855ad.12.1771093193179;
+        Sat, 14 Feb 2026 10:19:53 -0800 (PST)
 Received: from rockpi-5b ([45.112.0.78])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a9d5e06sm28406615ad.50.2026.02.14.10.19.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a9d5e06sm28406615ad.50.2026.02.14.10.19.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Feb 2026 10:19:45 -0800 (PST)
+        Sat, 14 Feb 2026 10:19:52 -0800 (PST)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -71,9 +71,9 @@ To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
 	linux-kernel@vger.kernel.org (open list)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v8 1/9] thermal/drivers/exynos: Refactor clk_sec initialization inside SOC-specific case
-Date: Sat, 14 Feb 2026 23:48:58 +0530
-Message-ID: <20260214181930.238981-2-linux.amoon@gmail.com>
+Subject: [PATCH v8 2/9] thermal/drivers/exynos: Use devm_clk_get_enabled() helpers
+Date: Sat, 14 Feb 2026 23:48:59 +0530
+Message-ID: <20260214181930.238981-3-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260214181930.238981-1-linux.amoon@gmail.com>
 References: <20260214181930.238981-1-linux.amoon@gmail.com>
@@ -85,97 +85,137 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refactor the initialization of the clk_sec clock to be inside the
-SOC_ARCH_EXYNOS5420_TRIMINFO case. It ensures that the clk_sec clock
-is only initialized for the specified SOC and not for other SOCs,
-thereby simplifying the code. The clk_sec clock is used by the TMU
-for GPU on the Exynos 542x platform.
+Use devm_clk_get_enabled() helper instead of calling devm_clk_get() and
+then clk_prepare_enable(). It simplifies the error handling and makes
+the code more compact.
 
-Removed redundant IS_ERR() checks for the clk_sec clock since error
-handling is already managed internally by clk_unprepare() functions.
-
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-v8: None
 v7: None
-v6: Add Rb Lukasz and try to address Daniel review coments.
-v5: None
-v4: Fix the aligment of code clk for clk_prepare in proper if/else block.
-    update the commit for clk_sec used.
-    checked to goto clean up all the clks are proper.
-    drop IS_ERR() check for clk_sec.
-v3: improve the commit message.
+v6: New patch as per Daniel request.
 ---
- drivers/thermal/samsung/exynos_tmu.c | 36 +++++++++++++---------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 77 ++++++++--------------------
+ 1 file changed, 20 insertions(+), 57 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 47a99b3c5395..04517d52afbd 100644
+index 04517d52afbd..aa0726b33c84 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1040,26 +1040,26 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->clk))
- 		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+@@ -1036,65 +1036,41 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
--	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
--	if (IS_ERR(data->clk_sec)) {
--		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
--			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
--					     "Failed to get triminfo clock\n");
--	} else {
--		ret = clk_prepare(data->clk_sec);
--		if (ret) {
--			dev_err(dev, "Failed to get clock\n");
--			return ret;
--		}
+-	data->clk = devm_clk_get(dev, "tmu_apbif");
++	data->clk = devm_clk_get_enabled(dev, "tmu_apbif");
+ 	if (IS_ERR(data->clk))
+-		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
+-
+-	ret = clk_prepare(data->clk);
+-	if (ret) {
+-		dev_err(dev, "Failed to get clock\n");
+-		return ret;
 -	}
 -
- 	ret = clk_prepare(data->clk);
+-	switch (data->soc) {
+-	case SOC_ARCH_EXYNOS5420_TRIMINFO:
+-		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
+-		if (IS_ERR(data->clk_sec)) {
+-			ret = dev_err_probe(dev, PTR_ERR(data->clk_sec),
+-					    "Failed to get clk_sec clock\n");
+-			goto err_clk;
+-		}
+-		ret = clk_prepare(data->clk_sec);
+-		if (ret) {
+-			dev_err(dev, "Failed to prepare clk_sec clock\n");
+-			goto err_clk_sec;
+-		}
+-		break;
+-	case SOC_ARCH_EXYNOS5433:
+-	case SOC_ARCH_EXYNOS7:
+-		data->sclk = devm_clk_get(dev, "tmu_sclk");
+-		if (IS_ERR(data->sclk)) {
+-			ret = dev_err_probe(dev, PTR_ERR(data->sclk), "Failed to get sclk\n");
+-			goto err_clk;
+-		} else {
+-			ret = clk_prepare_enable(data->sclk);
+-			if (ret) {
+-				dev_err(dev, "Failed to enable sclk\n");
+-				goto err_clk;
+-			}
+-		}
+-		break;
+-	default:
+-		break;
++		return dev_err_probe(dev, PTR_ERR(data->clk),
++				     "Failed to get clock\n");
++
++	if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
++		data->clk_sec = devm_clk_get_enabled(dev, "tmu_triminfo_apbif");
++		if (IS_ERR(data->clk_sec))
++			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
++					     "Failed to get clk_sec clock\n");
++	} else if (data->soc == SOC_ARCH_EXYNOS5433 ||
++		   data->soc == SOC_ARCH_EXYNOS7) {
++		data->sclk = devm_clk_get_enabled(dev, "tmu_sclk");
++		if (IS_ERR(data->sclk))
++			return dev_err_probe(dev, PTR_ERR(data->sclk),
++					     "Failed to get sclk\n");
+ 	}
+ 
+ 	ret = exynos_tmu_initialize(pdev);
  	if (ret) {
- 		dev_err(dev, "Failed to get clock\n");
--		goto err_clk_sec;
+ 		dev_err(dev, "Failed to initialize TMU\n");
+-		goto err_sclk;
 +		return ret;
  	}
  
- 	switch (data->soc) {
-+	case SOC_ARCH_EXYNOS5420_TRIMINFO:
-+		data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
-+		if (IS_ERR(data->clk_sec)) {
-+			ret = dev_err_probe(dev, PTR_ERR(data->clk_sec),
-+					    "Failed to get clk_sec clock\n");
-+			goto err_clk;
-+		}
-+		ret = clk_prepare(data->clk_sec);
-+		if (ret) {
-+			dev_err(dev, "Failed to prepare clk_sec clock\n");
-+			goto err_clk_sec;
-+		}
-+		break;
- 	case SOC_ARCH_EXYNOS5433:
- 	case SOC_ARCH_EXYNOS7:
- 		data->sclk = devm_clk_get(dev, "tmu_sclk");
-@@ -1112,11 +1112,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
+ 						  &exynos_sensor_ops);
+ 	if (IS_ERR(data->tzd)) {
+-		ret = dev_err_probe(dev, PTR_ERR(data->tzd), "Failed to register sensor\n");
+-		goto err_sclk;
++		return dev_err_probe(dev, PTR_ERR(data->tzd),
++				     "Failed to register sensor\n");
+ 	}
  
- err_sclk:
- 	clk_disable_unprepare(data->sclk);
-+err_clk_sec:
-+	clk_unprepare(data->clk_sec);
- err_clk:
- 	clk_unprepare(data->clk);
+ 	ret = exynos_thermal_zone_configure(pdev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to configure the thermal zone\n");
+-		goto err_sclk;
++		return ret;
+ 	}
+ 
+ 	ret = devm_request_threaded_irq(dev, data->irq, NULL,
+@@ -1104,30 +1080,17 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 					dev_name(dev), data);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to request irq: %d\n", data->irq);
+-		goto err_sclk;
++		return ret;
+ 	}
+ 
+ 	exynos_tmu_control(pdev, true);
+-	return 0;
+ 
+-err_sclk:
+-	clk_disable_unprepare(data->sclk);
 -err_clk_sec:
--	if (!IS_ERR(data->clk_sec))
--		clk_unprepare(data->clk_sec);
+-	clk_unprepare(data->clk_sec);
+-err_clk:
+-	clk_unprepare(data->clk);
  	return ret;
  }
  
-@@ -1128,8 +1127,7 @@ static void exynos_tmu_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(data->sclk);
- 	clk_unprepare(data->clk);
--	if (!IS_ERR(data->clk_sec))
--		clk_unprepare(data->clk_sec);
-+	clk_unprepare(data->clk_sec);
+ static void exynos_tmu_remove(struct platform_device *pdev)
+ {
+-	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+-
+ 	exynos_tmu_control(pdev, false);
+-
+-	clk_disable_unprepare(data->sclk);
+-	clk_unprepare(data->clk);
+-	clk_unprepare(data->clk_sec);
  }
  
  #ifdef CONFIG_PM_SLEEP
