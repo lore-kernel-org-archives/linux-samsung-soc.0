@@ -1,238 +1,247 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B24A246766;
-	Sun, 15 Feb 2026 08:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E38C280308;
+	Sun, 15 Feb 2026 10:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771145842; cv=none; b=rNX0RAFmqdLBBHRVu7uP6QT7TQpuTYojLsQ+zboAXMaNrPkwSXdc8ufGxSY4uj2GYPReVUm7TMOX9qdAL2oZb6lxuddbeForcIWM0up1F5BRWsLom6PBhW/yYNcaQaEwEk5HPFxfYRugjrtYh6wY+hrAXMAaF2xi96W4vD6DpFo=
+	t=1771149758; cv=none; b=RDLNR70rNekUwkPccKfGTWueMY/dJEkp/7YTc3NYYnzd8l4LcafW4lTFYEMf06Ggj6cs0kjJAHL6V6JV7mpPhMFEdEOscDq97B6AD5xoDXWKSLxFLQOQQScGPrOx5Tg4Gg3Vc4wCpzKd07+bl5e4fT3alclkC1+XDRrgNipgga0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771145842; c=relaxed/simple;
-	bh=UnIhEyFqsBzxtq7irrv/xJVxAo0Al4iv+ZsfkLBUjhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IhrHr2xHL2MvzvVJxH8MtSsJyY7JuGj1cOkjPDPsi5FMqib1YlUQ+DpMsH2wH1y9peliN8XmzTH+CcZx6hlM/EvrvVyM/RBSmD2TJFABNtAcm13hAFMo97ZsFfww7RE11YVc7ztgtgED3awXfGO2t8RiGiX6V2rnRAhWONm9tL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i24gR8Ni; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771149758; c=relaxed/simple;
+	bh=rqX/hYgmpeWpQhyUc1faR9/+n8bX8YL0ob3h4O4i5KA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K5tLqCkaU6/Z0pbN23EaEGJIlBH8D2Ao9xpA6QSZmJgd90eXzJ3XzDLZFXbF6cpSqTBm2N1LjY4b79ejHtbWJLx1xIxNFUTtPzPI651EUMU1Yo/NQM5RGOGG2Fq9yYHxmmF5jHVT4E1iK3WH+7q3FE6I1F+hj7GFGcflsLGSyWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=B9UjE9Sz; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i24gR8Ni"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1191C19422;
-	Sun, 15 Feb 2026 08:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771145841;
-	bh=UnIhEyFqsBzxtq7irrv/xJVxAo0Al4iv+ZsfkLBUjhs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i24gR8NiM8nE5iYedl+X34eE0MSZeMQD0sBpdDZNET0FyK4QEv7UIj8oRZ9jWpASI
-	 CkkbFYKdiqWn6l5yn06D5RtfaGB7ZPgC/h24y/sY1Y3oIaNy11QSgEzKQAVFL0Q9mp
-	 lJiBExqG/q3A5B5AAZzjjNVNHXKYh2mvDy75/i4gx26SiMr4V/Up3V0w2QADbZ8aIR
-	 pC+blAj12mgSge6cB/ojugUGLkglYOGNBI7KfHWuaGw9fN6yr77W8ryGbdSmiV5Pkj
-	 m9Oficby5XjjDwXPpj0ahh69NQ4AxjzIP+N7vwxbC8ehMEIAbvJ+iTD6RJoAazkZpb
-	 IwWM2fdPzOTqA==
-Message-ID: <2edff611-76bb-45aa-922e-f96581dd0525@kernel.org>
-Date: Sun, 15 Feb 2026 09:57:16 +0100
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="B9UjE9Sz"
+Received: from mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net [IPv6:2a02:6b8:c17:2010:0:640:2180:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id C762280C19;
+	Sun, 15 Feb 2026 13:02:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 02U6OQUG14Y0-rqjbwYxY;
+	Sun, 15 Feb 2026 13:02:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1771149745;
+	bh=EK56X4yUyK6p90PJP+pf1u3MX2f+sfz3TRR04+2G4T8=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=B9UjE9SzXK5scnpObCqr7CuifSEFqaFsMpm86WX89Sf1FM6OjeTWgWmEl5Uc/IX/1
+	 k2hRFfCdjZ6yTOm17+R2SxqNFY3wsYET9Rtzh6lN3nbUrIIBAEkPKKRLRc3/anF3jw
+	 YpvpfGJW/Y6mrAB3bLVLw0tpe6E+UurPtKGuJEks=
+Authentication-Results: mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Steven Price <steven.price@arm.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH v1 0/2] arm64: dts + drm/panthor: require explicit GPU sram-supply
+Date: Sun, 15 Feb 2026 13:01:56 +0300
+Message-ID: <20260215100156.135374-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: ExynosAutov920: Add regulators
- for the USB
-To: pritam.sutar@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125134epcas5p36625b7ac70b8dfba9430831a11955682@epcas5p3.samsung.com>
- <20260122130721.205664-3-pritam.sutar@samsung.com>
- <352427f4-144a-4a43-a2f3-dd959302939f@kernel.org>
- <000001dc9c13$ea305520$be90ff60$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000001dc9c13$ea305520$be90ff60$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/02/2026 12:37, pritam.sutar@samsung.com wrote:
-> Hi Krzysztof,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Thursday, January 22, 2026 7:04 PM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; robh@kernel.org;
->> krzk+dt@kernel.org; conor+dt@kernel.org; alim.akhtar@samsung.com
->> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: ExynosAutov920: Add
->> regulators for the USB
->>
->> On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
->>> Add dummy regulator for USB and PHY supplies.
->>>
->>> Add vbus regulator that is enabled by GPIO pin.
->>>
->>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
->>> ---
->>>  .../boot/dts/exynos/exynosautov920-sadk.dts   | 139
->> ++++++++++++++++++
->>>  1 file changed, 139 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> index a397f068ed53..f90f7704597c 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
->>> @@ -52,6 +52,76 @@ memory@80000000 {
->>>  		      <0x8 0x80000000 0x1 0xfba00000>,
->>>  		      <0xa 0x00000000 0x2 0x00000000>;
->>>  	};
->>> +
->>> +	/* TODO: Remove this once PMIC is implemented  */
->>> +	dummy_regulator: regulator-0 {
->>> +		 compatible = "regulator-fixed";
->>> +		 regulator-name = "dummy_regulator";
->>> +	};
->>> +
->>> +	usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
->>
->> Please use name for all fixed regulators which matches current format
->> recommendation: 'regulator-[0-9]v[0-9]'
->>
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/
->> Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
->>
->> None of the regulators are called like you wrote. Really NONE.
->>
-> 
-> Thank you for the references. Will bring changes for regulator's name 
-> and labels as 
-> 			
-> -       usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
-> +       reg_usbdrd31_dwc3_vbus: regulator-1 {
+Hi all,
 
-Did you read the binding? That's not what I asked.
+This series follows the discussion around panthor's SRAM regulator handling
+and the DT expectations for mali GPU nodes.
+
+Today, if sram-supply is missing in the DT file, panthor falls back to
+a dummy regulator with a warning. This implicit behavior hides missing
+DT wiring behind regulator core fallback.
+
+As discussed in [1], the agreed direction is:
+- Update DTs to explicitly provide sram-supply, when no separate SRAM
+  rail exists, use the same regulator as mali-supply.
+- Make panthor to treat sram-supply as mandatory for all compatibles
+  except mt8196-mali (as that SoC manages SRAM outside panthor).
 
 
-> 
->> Also, carefully follow DTS coding style.
->>
-> 
-> Sorry for that. Checking the code and will update in next 
-> patchset version (v3).
-> 
->>> +	       compatible = "regulator-fixed";
->>> +	       regulator-name = "usbdrd31_dwc3-vbus";
->>> +	       regulator-min-microvolt = <5000000>;
->>> +	       regulator-max-microvolt = <5000000>;
->>> +	       enable-active-high;
->>> +	       regulator-always-on;
->>> +	       gpio = <&gpp2 0 GPIO_ACTIVE_HIGH>;
->>> +	};
->>> +
->>> +	/* Use gpio for enabling vbus regulator */
->>> +	usb_phy0: usb-phy0 {
->>
->> usb-phy-0
->>
->>> +		compatible = "usb-nop-xceiv";
->>> +		vbus-supply = <&usbdrd31_dwc3_vbus>;
->>
->> That's pretty incomplete. Why do you need such node - just to toggle
->> regulator?
->>
-> 
-> There is no external controller to detect or switch the USB modes 
-> automatically rather it is switched using userspace control 
-> (sysfs attributes) for this SoC.  GPIO pins are required to enable 
-> vbus regulators. Existing phy-generic and fixed regulator are used to 
-> avoid making any USB driver changes for the same purpose and it is 
-> referenced from below -
-> 				
-> https://lore.kernel.org/r/20230825215445.28309-3-semen.protsenko@linaro.org
-> a12af1c20751340ab6e449a5ef78b37d31123aca: ARM64: dts: marvell: armada-3720-db: Add phy for USB3
-> 		
->>> +	};
->>
->> ...
->>
->>> +&usbdrd20_phy2 {
->>> +	dvdd-supply = <&dummy_regulator>;
->>> +	vdd18-supply = <&dummy_regulator>;
->>> +	vdd33-supply = <&dummy_regulator>;
->>> +};
->>> +
->>> +&usbdrd20_dwc3_2 {
->>> +	maximum-speed = "high-speed";
->>> +	usb-phy = <&usb_phy3>;
->>> +};
->>> +
->>> +&usbdrd20_2 {
->>> +	vdd10-supply = <&dummy_regulator>;
->>> +	vdd33-supply = <&dummy_regulator>;
->>> +};
->>
->> That's a bit too much of dummies. This is heavily incomplete. You need to
->> bring back the PMIC first.
->>
-> 
-> Presently, relying on USB LDOs being enabled by the bootloader in this
-> automotive SoC. However, we understand the concern and it is added in case 
-> if anyone wants to use implemented PMIC in future. For now, would like 
-> to proceed with the dummy regulators to enable the required USB features. 
+- First patch applies the DT updates across affected files.
+- Second patch makes panthor to treat sram-supply as mandatory
+  except mt8196-mali.
 
-And I don't see the point of these dummies. Solves nothing.
+[1]: https://lore.kernel.org/all/20260213155937.6af75786@nimda/
 
-> Dummy regulators are clearly marked so that they will be replaced once 
-> the PMIC driver is fully up.
-> 
+BR,
+Onur
 
+Onur Özkan (2):
+  arm64: dts: add missing sram-supply to mali gpu nodes
+  drm/panthor: treat sram as mandatory except mt8196
 
-Best regards,
-Krzysztof
+ .../boot/dts/allwinner/sun50i-h313-tanix-tx1.dts    |  1 +
+ arch/arm64/boot/dts/allwinner/sun50i-h313-x96q.dts  |  1 +
+ .../boot/dts/allwinner/sun50i-h6-beelink-gs1.dts    |  1 +
+ .../boot/dts/allwinner/sun50i-h6-orangepi-3.dts     |  1 +
+ .../boot/dts/allwinner/sun50i-h6-orangepi.dtsi      |  1 +
+ .../arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts |  1 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6-tanix.dtsi  |  1 +
+ .../dts/allwinner/sun50i-h616-bigtreetech-cb1.dtsi  |  1 +
+ .../dts/allwinner/sun50i-h616-orangepi-zero2.dts    |  1 +
+ .../boot/dts/allwinner/sun50i-h616-x96-mate.dts     |  1 +
+ .../dts/allwinner/sun50i-h618-longan-module-3h.dtsi |  1 +
+ .../dts/allwinner/sun50i-h618-orangepi-zero2w.dts   |  1 +
+ .../dts/allwinner/sun50i-h618-orangepi-zero3.dts    |  1 +
+ .../dts/allwinner/sun50i-h618-transpeed-8k618-t.dts |  1 +
+ .../allwinner/sun50i-h700-anbernic-rg35xx-2024.dts  |  1 +
+ .../boot/dts/allwinner/sun55i-a527-cubie-a5e.dts    |  1 +
+ .../boot/dts/allwinner/sun55i-h728-x96qpro+.dts     |  1 +
+ .../boot/dts/allwinner/sun55i-t527-avaota-a1.dts    |  1 +
+ .../boot/dts/allwinner/sun55i-t527-orangepi-4a.dts  |  1 +
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi      |  1 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts     |  1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts         |  1 +
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi      |  1 +
+ arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts     |  1 +
+ arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi    |  1 +
+ arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi     |  1 +
+ arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi    |  1 +
+ arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi     |  1 +
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts         |  1 +
+ .../boot/dts/mediatek/mt8390-genio-common.dtsi      |  1 +
+ .../boot/dts/mediatek/mt8390-grinn-genio-sbc.dtsi   |  1 +
+ .../boot/dts/mediatek/mt8395-genio-common.dtsi      |  1 +
+ .../dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts   |  1 +
+ .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts      |  1 +
+ arch/arm64/boot/dts/renesas/r9a07g044l2-remi-pi.dts |  1 +
+ .../boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts     |  1 +
+ .../boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts     |  1 +
+ arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi    |  1 +
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi   |  1 +
+ arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/px30-cobra.dtsi        |  1 +
+ arch/arm64/boot/dts/rockchip/px30-evb.dts           |  1 +
+ .../boot/dts/rockchip/px30-firefly-jd4-core.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi       |  1 +
+ arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts     |  1 +
+ .../boot/dts/rockchip/rk3326-anbernic-rg351m.dtsi   |  1 +
+ .../boot/dts/rockchip/rk3326-gameforce-chi.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3326-odroid-go.dtsi  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3328-a1.dts          |  1 +
+ arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi        |  1 +
+ arch/arm64/boot/dts/rockchip/rk3328-rock64.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-eaidk-610.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-evb-ind.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-firefly.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi        |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts  |  1 +
+ .../arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-leez-p710.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-orangepi.dts    |  1 +
+ .../arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts |  1 +
+ .../boot/dts/rockchip/rk3399-pinephone-pro.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi       |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi     |  1 +
+ .../arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi   |  1 +
+ .../arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts |  1 +
+ .../arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi     |  1 +
+ .../boot/dts/rockchip/rk3566-anbernic-rgxx3.dtsi    |  1 +
+ .../boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-lckfb-tspi.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-nanopi-r3s.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts  |  1 +
+ .../arm64/boot/dts/rockchip/rk3566-orangepi-3b.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi   |  1 +
+ .../boot/dts/rockchip/rk3566-powkiddy-rk2023.dtsi   |  1 +
+ .../arm64/boot/dts/rockchip/rk3566-powkiddy-x55.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi  |  1 +
+ .../boot/dts/rockchip/rk3566-radxa-zero-3.dtsi      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi   |  1 +
+ .../boot/dts/rockchip/rk3568-9tripod-x3568-v4.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts    |  1 +
+ .../boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi    |  1 +
+ .../arm64/boot/dts/rockchip/rk3568-hinlink-opc.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-qnap-tsx33.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-radxa-cm3i.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts     |  1 +
+ .../boot/dts/rockchip/rk3568-wolfvision-pf5.dts     |  1 +
+ .../boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts  |  1 +
+ .../arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dts    |  1 +
+ .../boot/dts/rockchip/rk3576-luckfox-core3576.dtsi  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3576-nanopi-m5.dts   |  1 +
+ arch/arm64/boot/dts/rockchip/rk3576-nanopi-r76s.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-armsom-lm7.dtsi |  1 +
+ .../arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-h96-max-v58.dts |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi  |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts  |  1 +
+ .../boot/dts/rockchip/rk3588-rock-5b-5bp-5t.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts  |  1 +
+ .../boot/dts/rockchip/rk3588s-gameforce-ace.dts     |  1 +
+ .../boot/dts/rockchip/rk3588s-indiedroid-nova.dts   |  1 +
+ .../boot/dts/rockchip/rk3588s-khadas-edge2.dts      |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-odroid-m2.dts  |  1 +
+ .../arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-roc-pc.dts     |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dts    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts    |  1 +
+ drivers/gpu/drm/panthor/panthor_devfreq.c           | 13 +++++++++----
+ 138 files changed, 146 insertions(+), 4 deletions(-)
+
+-- 
+2.51.2
+
