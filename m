@@ -1,187 +1,149 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336A027CB02
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Feb 2026 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D38632549E;
+	Mon, 16 Feb 2026 15:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771250314; cv=none; b=uVTTyi1GobpZm9XoZ0kZVPVY4qCewC4QHCP5WyLH6dLOon7tItkk1OInsdh88jlz6yWKg3e97vP5nXJnn4kdoaqHMU8HSDi13g3He6vIan5ScFgJdn1g/VaIP4RpoP72NHMEUpkxm7EvGr1fvT7cL8v2nmW0VGX0Q9C6imLIJjg=
+	t=1771255335; cv=none; b=V0mF8SoGHaaueXTuJH0k8DjkbWZ2b8FNXZBHik4Uu9tOXdoyWbVMyvGOK9pm8bKbgQcKR7lZIHtG8EpTBNfMk11Kv/anoqc+B0FNMR8/rLC1iQNnBmbr7Xd2JZIUqoMF8MZx1F9C41gWHwH8MsWM7+ubwSigp2BO62tPx2CEjfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771250314; c=relaxed/simple;
-	bh=JudCYDKTAao9yvz1obQeEFLjpJHRjDhkH80IAq3x6uY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHbgfJIkAk4Uo3FIllUgKhzSMvyAOjlhWzR4I5tycBG3Tep3PL7UE1ZRHdlNVz/wofkBUuxG6wQ3rHAcAVwmoUkBy5vFS6SwFFyAVoD7isTieyx8EkuZjKXq3+vd4s4np9yQwpFCf5uuVemOD0BJr+ztm67gdYCuZeNZhfglxhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Orl3VpCZ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1771255335; c=relaxed/simple;
+	bh=+AXEKgqENXU9fJ8gY4Qy3D4BbMROQCeB1cT+WULKFsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQfEJpr1qM0mevO7CbsEVhs0dVnktzMSnTMTQkOGdWqh+U9JM7M5fmgUlhvj2ByzTaJGXSxJqE22ndpv5j3/kwcf+LvQBkwBHUWzKsN8N+RGu+KTibkPUghhUL9vSXClfHHG/CzM3Q6y/fPnVEAvkkLXowtrg942XIs/LGszitE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVke98TK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Orl3VpCZ"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59e6b7b11ebso3553302e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Feb 2026 05:58:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771250311; x=1771855111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rUcAGLQZkv/PTBs//eYKKwXahaszOterbl1vVyU8vuo=;
-        b=Orl3VpCZVgtxL7MpZh1NnWlx2fyQTWtrIKVH6nsudChRBkNWr52BLzHjewFb5rb7pN
-         HubWuhvIET2AZmou4zCDw210uFqVfcuH209nQuWT3wKo318bb2jWFzmRN/mplBEPQE8O
-         J+AIN3NaN0Tyy9367E9yuKF9bus9tUPDTIZVEsmksjb4WnpF/G1Q6B4JMeRi9E5WLate
-         q1jCL8jtPY1PynwXqrTlDx2HbtzBgR4zc9qSYs8WuWL7bF8b7h/EEXOsuyGuaeRpsLOu
-         5XTN/OIYNYSllIFsYDHuOGlAVo/ZU5fCcjorQnbtIoLnkcJcu064QyRdIVbpiPGBhK5B
-         IknQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771250311; x=1771855111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rUcAGLQZkv/PTBs//eYKKwXahaszOterbl1vVyU8vuo=;
-        b=A3g8I6Gfpp4flTDiWH2/i+EoVwGUkdsJ3sPUNPT3IzyzhvtkHA1j9URJYzIj5L+K+5
-         vUEimTjMlXFkj8/jTWsOJrbN6JqIkgIisFKLG4YI6FtN5tXH0s34iCIO/779zxYJR1RS
-         XZB4SsaN8Ljdwm64KNAzJoecEtPjR+txLH0Bysok7nz9Kjky+CnYFR3mVx3gWXMnd4LI
-         r6Wh/00gyG7o/IV+S/YuWd6pK8PToBuUrUW8PXihr1r5QLIBrzXpzIk0RjmZdyzNXU3Q
-         v2jFwjmis0ot1TsM5fbz9uLzORsA49ZiRwLSJ/pnjKbfyKxsPoAFNyOFBOD/FynzMX3x
-         fauA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhZxF/VRsCOaAICg76+ibELfOkR+cOpDBUCi/ot6m+yUsIXHkG4yYUyXEb6VbsDyTA+miFuMYLDV0twxTjIC8wUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+QT+3fmWPUzR+7oH5tXTKQsNvFsgBHRfLeW4a+DOYcBcA23Hu
-	yNA3bzdKEsVoq/dKj0465fpQUzVSRbIgXD8lQ7sdpE/OSXMzUOU7VheF
-X-Gm-Gg: AZuq6aJ3/RZ1d1uxAZdb1D3JQ/OjJQJR5or7PcLHZVpxHaAZG8MZZqxE5vb9z9aEgku
-	+v/jO69P3N5j16ocOoRcEu5Wp9/gsHuM+Ph9UvmpuyHG3T8O+7bUWnNwu9BuuRJ6lH+vvEqP+P1
-	wuDXfNzMHMvYmsHug/YKfyBjXRWA2zrcu48dfXb+EPDmCus46dYq1ygma3iw8cdgoKzAzPaYSzu
-	rMO8QWU76tAYIhlFw0NK+yspXXX4Fu/Nx9C0j9ThSPWE7flk04Zd6qYDlKH7ZMw/Hchc2bstm3j
-	NKOFOhN7TpXn/0fskeGmGAodWyP0qrROcRS6lTDrQLsL9HxA5w9EIeneYRz3YF9f9kZbG8azeh2
-	tvMptGEAQyVovnAsbmi0ci3cDzqaThiYFWO1FWdZSdZJMtOKhk/6S6TCeq2MGRLBjbXA4Pui0jy
-	OH6AxF2cbuffOAKomGo3T1li27253X3Ih3SRO7w65+Fho=
-X-Received: by 2002:a05:6512:145a:10b0:59f:6db3:1526 with SMTP id 2adb3069b0e04-59f6db316f1mr1715840e87.10.1771250311130;
-        Mon, 16 Feb 2026 05:58:31 -0800 (PST)
-Received: from [10.38.18.54] ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e5f5b2223sm3224103e87.79.2026.02.16.05.58.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Feb 2026 05:58:30 -0800 (PST)
-Message-ID: <5d889f66-7697-4a39-beed-33ace693a1ef@gmail.com>
-Date: Mon, 16 Feb 2026 15:58:28 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVke98TK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B5FC116C6;
+	Mon, 16 Feb 2026 15:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771255335;
+	bh=+AXEKgqENXU9fJ8gY4Qy3D4BbMROQCeB1cT+WULKFsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bVke98TKQHCmPp7aYCSq+FzJJwd1N7cDuLhGNulVsi3kDISO5a7AJFBm3a7kNw1Zs
+	 5Iw5iKyil96Yjb2kaa996XtcP99USdiZnGFwboQyf93SxLti2oOp6RGusQa6tt0bF4
+	 0vFtMznN3MpwWhSDzdS8LxrL4xOzXYaj2wJ8GWUrAJQmsxB/Oz7vODRYewD2J5wMOt
+	 n/r6PbRevelbv2CgDMGB0hBJqf0/kttTTaqCaKmPDvRwbv46S7eNobKjhJZnoznYuD
+	 xBCbX73IzTj1XGCShRVaUjJ2yNu4RTgdTUiUhws1iLJYbGP9PhfuNu3gDI2EgmCiUz
+	 8W3J0k0Pz4V9A==
+Date: Mon, 16 Feb 2026 20:51:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Greentime Hu <greentime.hu@sifive.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
+	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Pratyush Anand <pratyush.anand@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/2] PCI: API changes for multi-port controller support
+Message-ID: <qoz2odrfe5w47ibjskg2fa3bkgtqd3ctkqqeua446sfjrc2e2m@tg4vynyonu3r>
+References: <20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com>
+ <20260105-dt-parser-v1-1-b11c63cb5e2c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] lib/linear_ranges: Add
- linear_range_get_selector_high_array
-To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20260214-max77759-charger-v6-0-28c09bda74b4@google.com>
- <20260214-max77759-charger-v6-4-28c09bda74b4@google.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20260214-max77759-charger-v6-4-28c09bda74b4@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260105-dt-parser-v1-1-b11c63cb5e2c@oss.qualcomm.com>
 
-On 14/02/2026 05:12, Amit Sunil Dhamne via B4 Relay wrote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
+On Mon, Jan 05, 2026 at 05:57:54PM +0530, Sumit Kumar wrote:
+> For multi-port controllers, equalization preset properties should be
+> specified in individual root port nodes rather than the controller node,
+
+s/root port/Root Port
+
+- Mani
+
+> allowing each port to have its own configuration.
 > 
-> Add a helper function to find the selector for a given value in a linear
-> range array. The selector should be such that the value it represents
-> should be higher or equal to the given value.
+> Change of_pci_get_equalization_presets() to accept a device_node pointer.
+> This allows parsing equalization presets from any device tree node,
+> which is needed for multi-port PCIe controllers.
 > 
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
 > ---
->   include/linux/linear_range.h |  3 +++
->   lib/linear_ranges.c          | 36 ++++++++++++++++++++++++++++++++++++
->   2 files changed, 39 insertions(+)
+>  drivers/pci/of.c  | 6 ++++--
+>  drivers/pci/pci.h | 2 ++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/linear_range.h b/include/linux/linear_range.h
-> index 2e4f4c3539c0..0f3037f1a94f 100644
-> --- a/include/linux/linear_range.h
-> +++ b/include/linux/linear_range.h
-> @@ -57,5 +57,8 @@ void linear_range_get_selector_within(const struct linear_range *r,
->   int linear_range_get_selector_low_array(const struct linear_range *r,
->   					int ranges, unsigned int val,
->   					unsigned int *selector, bool *found);
-> +int linear_range_get_selector_high_array(const struct linear_range *r,
-> +					 int ranges, unsigned int val,
-> +					 unsigned int *selector, bool *found);
->   
->   #endif
-> diff --git a/lib/linear_ranges.c b/lib/linear_ranges.c
-> index a1a7dfa881de..c85583678f6b 100644
-> --- a/lib/linear_ranges.c
-> +++ b/lib/linear_ranges.c
-> @@ -241,6 +241,42 @@ int linear_range_get_selector_high(const struct linear_range *r,
->   }
->   EXPORT_SYMBOL_GPL(linear_range_get_selector_high);
->   
-> +/**
-> + * linear_range_get_selector_high_array - return linear range selector for value
-> + * @r:		pointer to array of linear ranges where selector is looked from
-> + * @ranges:	amount of ranges to scan from array
-> + * @val:	value for which the selector is searched
-> + * @selector:	address where found selector value is updated
-> + * @found:	flag to indicate that given value was in the range
-> + *
-> + * Scan array of ranges for selector for which range value matches given
-> + * input value. Value is matching if it is equal or higher than given value
-> + * If given value is found to be in a range scanning is stopped and @found is
-> + * set true. If a range with values greater than given value is found
-> + * but the range min is being greater than given value, then the range's
-> + * lowest selector is updated to @selector and scanning is stopped.
-
-Is there a reason why the scanning is stopped here? What ensures that 
-the rest of the ranges wouldn't contain a better match?
-
-The logic is now different from the 
-linear_range_get_selector_low_array(), and I would like to understand 
-why? It'd be nice if these APIs were 'symmetric' to avoid confusion. 
-Hence, I would like to know rationale behind making them different.
-
-> + *
-> + * Return: 0 on success, -EINVAL if range array is invalid or does not contain
-> + * range with a value greater or equal to given value
-> + */
-> +int linear_range_get_selector_high_array(const struct linear_range *r,
-> +					 int ranges, unsigned int val,
-> +					 unsigned int *selector, bool *found)
-> +{
-> +	int i;
-> +	int ret;
-> +
-> +	for (i = 0; i < ranges; i++) {
-> +		ret = linear_range_get_selector_high(&r[i], val, selector,
-> +						     found);
-> +		if (!ret)
-> +			return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(linear_range_get_selector_high_array);
-> +
->   /**
->    * linear_range_get_selector_within - return linear range selector for value
->    * @r:		pointer to linear range where selector is looked from
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index 3579265f119845637e163d9051437c89662762f8..d09eff40b523c920c9ca3eaa64f784765b3c5bf8 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -971,6 +971,7 @@ EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
+>   * of_pci_get_equalization_presets - Parses the "eq-presets-Ngts" property.
+>   *
+>   * @dev: Device containing the properties.
+> + * @node: Device tree node containing the properties.
+>   * @presets: Pointer to store the parsed data.
+>   * @num_lanes: Maximum number of lanes supported.
+>   *
+> @@ -981,6 +982,7 @@ EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
+>   * errno otherwise.
+>   */
+>  int of_pci_get_equalization_presets(struct device *dev,
+> +				    struct device_node *node,
+>  				    struct pci_eq_presets *presets,
+>  				    int num_lanes)
+>  {
+> @@ -988,7 +990,7 @@ int of_pci_get_equalization_presets(struct device *dev,
+>  	int ret;
+>  
+>  	presets->eq_presets_8gts[0] = PCI_EQ_RESV;
+> -	ret = of_property_read_u16_array(dev->of_node, "eq-presets-8gts",
+> +	ret = of_property_read_u16_array(node, "eq-presets-8gts",
+>  					 presets->eq_presets_8gts, num_lanes);
+>  	if (ret && ret != -EINVAL) {
+>  		dev_err(dev, "Error reading eq-presets-8gts: %d\n", ret);
+> @@ -998,7 +1000,7 @@ int of_pci_get_equalization_presets(struct device *dev,
+>  	for (int i = 0; i < EQ_PRESET_TYPE_MAX - 1; i++) {
+>  		presets->eq_presets_Ngts[i][0] = PCI_EQ_RESV;
+>  		snprintf(name, sizeof(name), "eq-presets-%dgts", 8 << (i + 1));
+> -		ret = of_property_read_u8_array(dev->of_node, name,
+> +		ret = of_property_read_u8_array(node, name,
+>  						presets->eq_presets_Ngts[i],
+>  						num_lanes);
+>  		if (ret && ret != -EINVAL) {
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 34f65d69662e9f61f0c489ec58de2ce17d21c0c6..72fa6db95b8a75f6e69b8019d1eb2262b6a46c13 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -965,6 +965,7 @@ void pci_release_bus_of_node(struct pci_bus *bus);
+>  int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge);
+>  bool of_pci_supply_present(struct device_node *np);
+>  int of_pci_get_equalization_presets(struct device *dev,
+> +				    struct device_node *node,
+>  				    struct pci_eq_presets *presets,
+>  				    int num_lanes);
+>  #else
+> @@ -1013,6 +1014,7 @@ static inline bool of_pci_supply_present(struct device_node *np)
+>  }
+>  
+>  static inline int of_pci_get_equalization_presets(struct device *dev,
+> +						  struct device_node *node,
+>  						  struct pci_eq_presets *presets,
+>  						  int num_lanes)
+>  {
 > 
-
+> -- 
+> 2.34.1
+> 
 
 -- 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+மணிவண்ணன் சதாசிவம்
