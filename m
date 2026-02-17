@@ -1,66 +1,65 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01F333C52F
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 12:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDFF361DBE
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 13:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771331406; cv=none; b=ZXEEPvJokAHyP9YUpxgKrtfEcC6FyJLXy984VDJItQbKtNF+VSdfEXyVPX2kshXFGrhbT8hNB/MCBZa+04FPwLgOXA4Pp8NHTt7IGIG9SQclOGOFHzNr6TkMy5PqIco4b2bzC7fXbGozEcRk52aNTkR2kckJAgjTxgI4cDrHyGw=
+	t=1771334040; cv=none; b=ucLNx9t0BUdhMEOlx+Cjpf/HXdEtjBPWf82GQUTTzqv2JdZb+eBlInK0DBjjXIKoUHXaeMe7Bb7G3IsShGP5BogEEHxI9eCHDmllvYEVmAd7pp4I6UjtNlOfL4opOly+WyOmpqmOl24wBXfwgLTe+fmKr9dJxjvNWfNBPvt2uQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771331406; c=relaxed/simple;
-	bh=veW04ITIm+kS0Va3WwG1j5wGlLSf3zAowo/9T/TxpYk=;
+	s=arc-20240116; t=1771334040; c=relaxed/simple;
+	bh=ghiYn5zctv6YevvmbOXMIchikB5+PZqKiOLbd6hIvi0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H/ajWbzFfWDqX6SlPhI65ymK1LVBHJlYR5viVk4mOcVZ4sh1/nY6vJRnEV9QW5Oqd+MXlofRB5ZujfOh38WLR7QUdK3mxPFi0qCzXyiSa00qW8S519LkZQFh/VjtM011xUog+rdo6d0yJ+Aau+3XAek8xTkA45tlv73huyp615A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VVaqjOUl; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:MIME-Version; b=aRFRwYjtBAPTVjD3X3XrBIgmR93CReUuo6iTS9K+ph+dqqcv0YwzjIQLDcwHMXe4LLIOjInjmB7hxP2dz1lUFgDct4REaUbN4mT2PPRey0QKzO9TdEjMO/kDGDBTmt4tmDH70uUXIpLH5wFdLaAkNQ8prIyYsqe2oo1A/tV9Oeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OAPNoYdu; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VVaqjOUl"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-48371119eacso38972855e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 04:30:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAPNoYdu"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-658b6757f7fso7942375a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 05:13:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1771331399; x=1771936199; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1771334035; x=1771938835; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=veW04ITIm+kS0Va3WwG1j5wGlLSf3zAowo/9T/TxpYk=;
-        b=VVaqjOUlEnbQTJphLvsPvgl4lkEKSy4SyceAemvE1XVLVwgZW65D6T8/t5uU+loLX5
-         RSu4hZ8sXzUlckC3vMKUTvP6unNvI1IC4pkil2Vz7YWZ0LklilbHqY3gq9/HZJtevgWK
-         kF1oLzDGjFwhTgbnafuDz+XwySMKwyGDr8zGuEMvUwFZFZZGUCZo+GiCiidzMVCzVoue
-         QouAVgMpfofzxLSJKRq3xmU+eBi4RKYEPX/B1GkwuYufz299O4VeZU3/OpnK0biO8FU5
-         FM1lIDdJoWkrog+qhsrBpp0OylUGNdbzWF1mRQ6MiP0IM1Su+TDXzBjfWUMNmKCdHB3b
-         KmSg==
+        bh=x1C0IPnydug6rw3V3fM8YPHePn3LBKfIJJtqgR74b5I=;
+        b=OAPNoYduWYQSL32nmW69nrWuR03uaN696N+g+GsecDLfcQGnKikRKlnwjFXm7jZIvC
+         VoUbx7IkICPpby2qPD748XaG4VJS0thzOiDW5SBPdgEdPEKLH1Q+W+yf75nnkHf68qN7
+         JEQloHR++epOZTLfmKq90FhtXesttZPXg8/S2nFvytEY1oyGxqS1EsW0P3n89H77zDaA
+         M+HtcBqQX1L0pNaoiIeMDg00dLoF0r3BhFlL6hmkeqN4bWToklocg6n6hiBKVShGqr+P
+         Vsvc0o2lFLkLYbnhoulvgEESi2/EFr5uHYV66j/ChgtXBh+MXCpJDl0XtChzUdEssfOT
+         xD4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771331399; x=1771936199;
+        d=1e100.net; s=20230601; t=1771334035; x=1771938835;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=veW04ITIm+kS0Va3WwG1j5wGlLSf3zAowo/9T/TxpYk=;
-        b=FDjnu37BrSBwyBe7q8EogrnF8IwJs0rTb1L/F93KJ3bn3szuinxLSCb1mj69sDAAKx
-         nnjI16UhRDiukyX/fas909mju4dLpjZR0oiXDASTkI6r0+H/yQCAZrIfXqopKc3ek/wo
-         NDOp9Kwrgp2eCkl7lnqFNbYSaVCVyk+cXiym3LZcybjaxpYvsUk98W4HLX52ydd30rN6
-         ksHBr3pKr354zz4/VIPZp4dslakX7oLne5LZH3A2prvGWi7srEE+uHv7D/LA3bO4l3jY
-         D1JsLLizL5u8qJX/oN31JFej0mpW4XHaKZ9fePhhhS4Hoc1COAp8E3rQwi+LJd2/O1Zw
-         2E7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+xsEm/exMcBfr12d/BvwUAcvjAF3brtmUD3fj+o3N9gb8lDzEDWnsULnUTjTRmvyDTe1a7J6gFWGMAf5CjQYglw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpyRUQn26RWWJsGMWFtAbq89UEmcVH6XaLw4IKDk/z9eSp+ubM
-	SMDZz7yNhwYAfnELB0XC9O2wJgrfpoOO5JYw20CJosqde0KnFVTyWSJ1r9R+y2hRP6U=
-X-Gm-Gg: AZuq6aLuPRC5wu/Idn1EVlAD/f9q8A1PrdBhdhvsLgu6iK6+4nbz+SNJKozLyFj7XY7
-	AhOI2oflp5xejr5z4TIdkq8h2FN6uF4F22tDiCWaRu2i4PH8lYj0g9JL2oH8nocDSDk8Mc3jL5V
-	SKYF6xE5LMU2lqqnmN30KQzFa19PLTPsLam2W6HWi81L7cXGIkKnanRyjKuAe3Cj1p5ln3mN7h2
-	hJ86FxuqzUeKfdFKfa3CNKuHCRMz1sv34fNYyDvrmI91vdcLBIjWqwRhpFzc/4flkIxHVaV6Fun
-	JdPBSHpDCHeoE5w9x8rIxybDfuq90wXEfUa5K/fhGsNTSelhb66XrPho/AN103jzEMMA7ukuZNM
-	1xhz2kYxb3WBZd/JDpZG+jCvfKyu2HP2uUHajlrgbuW68QaiazvMwmJdTFfpsx48emUCWzqen6D
-	mEpMeho7nPumMVXpN3hiSVKff2I4I=
-X-Received: by 2002:a05:600c:1381:b0:483:4a95:66da with SMTP id 5b1f17b1804b1-48373a1ad50mr231637905e9.13.1771331398916;
-        Tue, 17 Feb 2026 04:29:58 -0800 (PST)
+        bh=x1C0IPnydug6rw3V3fM8YPHePn3LBKfIJJtqgR74b5I=;
+        b=Jez0Ny6+ty/rzK4MkEwolyAgswQMgiTNX9rq/xHIfMktkS6w6ipL22+KxOujZ2oTbB
+         p2zmxii239Kf31TKbc9tL86g0sSveGXWAMDd23VUith3lG+/Sd8NIGVnLaNyVa5IULcE
+         EEiXjN4HxzX1HNDuM9CgvUMjal41o4grTgbjPmdsJ8FU3HI9jnPlASmH3RYLHL3KcZVd
+         LrPg4my1VvNeVlLOxIT1tB4q+zTINR4GxlNVHjLYLoJHGp3cFv1KQaZrAo4dCVqXa+5D
+         8UIHQ8XprsCIHUbguLb4qnpUTJaVRsmMlqJO2vhYwXfbQvR+QA7uPhO6HcapNKBft90k
+         jwxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAB0CEIDtQmt9eNbjR+66al5tq2RyTJrGZfXZuKh2IxYB0QKdTbghk+lP8P7iltDXO5om9ZFpII89sSGCz/JGswA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJwoXMeKrj8T/fXVDgkpWLmPyAYwyQN4F4U1El/83hmwKlx5/S
+	IB9gMDOaL/3rDluA6Mka7vRYCTyXXeqmyRJ9ggOW85dFWZiVvYGuOJILFlSG8R9KN0w=
+X-Gm-Gg: AZuq6aLKDzCWxf/0QAy+SAtaw600CUpSz+Yga3vCePRco3oBNtkQLH466LQB1/VpRfb
+	IW19vLZ7R4JmnMWjhpJWWnVsU/3zFMHNWb1wTx5GpYcC7YIXIAqFK6YG6hBbYapT8nRTyCC+P1T
+	DNLXKQHhLi5ZGoHnplr0ysjAU02Gv/+f81+FEshvOQSqbZn7C+JwRfh0Y58p1r609gFnUIyZcBB
+	GDbwgzAeHLAestlHLngi9YgfkSYcrDdd/VvrlVsdYR+1CZrrF8jXBQdIBCxhTGbqWhj8ulVbZL2
+	XA8nl4gujNVMdd6AaCsVwnwPQhlVjgzS+FgyA3wCIfVfMwZ6WA7w+MuNjHGLkDNsiD+LnTRo913
+	vXgRfmUYmbFnz37cu6lbGj/CqiZe0aqHr5ZnWZ7lWSqmvNbRii9ODIDUD1YGD8Ubq5uYwDoJGFf
+	CoquHSKdGs4/qwRg4uTiaKQdvMgHY=
+X-Received: by 2002:aa7:d719:0:b0:641:88ff:10ad with SMTP id 4fb4d7f45d1cf-65bc4298c44mr4741148a12.14.1771334035506;
+        Tue, 17 Feb 2026 05:13:55 -0800 (PST)
 Received: from draszik.lan ([212.129.84.5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48371a44ae0sm99721435e9.29.2026.02.17.04.29.57
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65bad4fa7c7sm2473768a12.31.2026.02.17.05.13.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 04:29:58 -0800 (PST)
-Message-ID: <9ac93f5456adb209bbc0e750434c356000eec6d6.camel@linaro.org>
-Subject: Re: [PATCH v6 3/6] mfd: max77759: add register bitmasks and modify
- irq configs for charger
+        Tue, 17 Feb 2026 05:13:55 -0800 (PST)
+Message-ID: <0b6e7cb7223e553d9b53df464959e97fd3d1ce43.camel@linaro.org>
+Subject: Re: [PATCH v6 5/6] power: supply: max77759: add charger driver
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: amitsd@google.com, Sebastian Reichel <sre@kernel.org>, Rob Herring	
  <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
@@ -75,10 +74,10 @@ Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, RD
  Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Date: Tue, 17 Feb 2026 12:30:17 +0000
-In-Reply-To: <20260214-max77759-charger-v6-3-28c09bda74b4@google.com>
+Date: Tue, 17 Feb 2026 13:14:14 +0000
+In-Reply-To: <20260214-max77759-charger-v6-5-28c09bda74b4@google.com>
 References: <20260214-max77759-charger-v6-0-28c09bda74b4@google.com>
-	 <20260214-max77759-charger-v6-3-28c09bda74b4@google.com>
+	 <20260214-max77759-charger-v6-5-28c09bda74b4@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-2+build4 
@@ -89,20 +88,142 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
+Hi Amit,
+
+All below comments are only minor, feel free to ignore them.
+
 On Sat, 2026-02-14 at 03:12 +0000, Amit Sunil Dhamne via B4 Relay wrote:
 > From: Amit Sunil Dhamne <amitsd@google.com>
 >=20
-> Add register bitmasks for charger function.
-> In addition split the charger IRQs further such that each bit represents
-> an IRQ downstream of charger regmap irq chip. In addition populate the
-> ack_base to offload irq ack to the regmap irq chip framework.
+> Add support for MAX77759 battery charger driver. This is a 4A 1-Cell
+> Li+/LiPoly dual input switch mode charger. While the device can support
+> USB & wireless charger inputs, this implementation only supports USB
+> input. This implementation supports both buck and boost modes.
 >=20
 > Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 > ---
-> =C2=A0drivers/mfd/max77759.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-91 ++++++++++++++++++++--
-> =C2=A0include/linux/mfd/max77759.h | 176 ++++++++++++++++++++++++++++++++=
-++++-------
-> =C2=A02 files changed, 230 insertions(+), 37 deletions(-)
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +
+> =C2=A0drivers/power/supply/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 11 +
+> =C2=A0drivers/power/supply/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/power/supply/max77759_charger.c | 768 +++++++++++++++++++++=
++++++++++++
+> =C2=A04 files changed, 786 insertions(+)
+
+[...]
+
+> diff --git a/drivers/power/supply/max77759_charger.c b/drivers/power/supp=
+ly/max77759_charger.c
+> new file mode 100644
+> index 000000000000..d4e02764ba04
+> --- /dev/null
+> +++ b/drivers/power/supply/max77759_charger.c
+> @@ -0,0 +1,768 @@
+
+[...]
+
+> +
+> +/* USB input current limits (in uA) */
+> +static const struct linear_range chgin_ilim_ranges[] =3D {
+> +	LINEAR_RANGE(100000, 0x3, 0x7F, 25000),
+> +};
+
+Shouldn't this one also have a entry for 0x00...0x02:
+	LINEAR_RANGE(100000, 0x0, 0x2, 0),
+
+Then you can also drop the umax() call in get_input_current_limit().
+
+Ah, I see now there is no linear_range_get_selector_within_array(),
+meaning the code is fine as-is, unless you want to add that as
+well :-)
+
+
+[...]
+
+> +static int max77759_charger_init(struct max77759_charger *chg)
+> +{
+> +	struct power_supply_battery_info *info;
+> +	u32 regval, fast_chg_curr, fv;
+> +	int ret;
+> +
+> +	ret =3D regmap_read(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_00, &regval=
+);
+> +	if (ret)
+> +		return ret;
+> +
+> +	chg->mode =3D FIELD_GET(MAX77759_CHGR_REG_CHG_CNFG_00_MODE, regval);
+> +	ret =3D charger_set_mode(chg, MAX77759_CHGR_MODE_OFF);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (power_supply_get_battery_info(chg->psy, &info)) {
+> +		fv =3D CHG_FV_DEFAULT_MV;
+> +		fast_chg_curr =3D CHG_CC_DEFAULT_UA;
+> +	} else {
+> +		fv =3D info->constant_charge_voltage_max_uv / 1000;
+> +		fast_chg_curr =3D info->constant_charge_current_max_ua;
+> +	}
+> +
+> +	ret =3D set_fast_charge_current_limit(chg, fast_chg_curr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D set_float_voltage_limit(chg, fv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D unlock_prot_regs(chg, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Disable wireless charging input */
+> +	ret =3D regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_12,
+> +				 MAX77759_CHGR_REG_CHG_CNFG_12_WCINSEL, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_18,
+> +				 MAX77759_CHGR_REG_CHG_CNFG_18_WDTEN, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return unlock_prot_regs(chg, false);
+
+Should early error returns here try to lock the protection again? Something
+like:
+
++	ret =3D unlock_prot_regs(chg, true);
++	if (ret)
++		return ret;
++
++	/* Disable wireless charging input */
++	ret =3D regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_12,
++				 MAX77759_CHGR_REG_CHG_CNFG_12_WCINSEL, 0);
++	if (ret)
++		goto relock;
++
++	ret =3D regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_18,
++				 MAX77759_CHGR_REG_CHG_CNFG_18_WDTEN, 0);
++	if (ret)
++		goto relock;
++
++	return unlock_prot_regs(chg, false);
++
++relock:
++	(void) unlock_prot_regs(chg, false);
++	return ret;
+
+I guess if one of the regmap_update_bits() failed, then locking the
+registers might not work either, so I have no strong opinion on
+adding that.
+
+With or without updates:
 
 Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+
+
+Cheers,
+Andre'
