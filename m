@@ -1,182 +1,300 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AD548EE
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 08:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CA62FA0DF
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771402633; cv=none; b=VmiuQ0j+OobFzk8xJ2UrnWguocQW82mAZkl5t8piRyxRYaqrrMZ6VAQ08UtkVpB4qXZHQOJjs8+oR5NBYeRpvhVaUar15l64+0EX16yJf4xGZ5LoMcRUJ8FLkvCY4o4O9rmZWJuuykSGXmfCefMT++F3xY8HubIdzqY5m+6tgmk=
+	t=1771406928; cv=none; b=dZcll7gfgM2efpTIY9f4JC0DBswoV+PhQkzMWdpfco+M4C0Z/j4L92tVVjrJ8FJBRXwvdzgFjvzf+ahDK2uIk0ojYTg2U/9F6Ih0IAWV+SApi1QTvVFCBMZAc2L2vznLafQzoqTEpuBW1H2fSNWBo+Ch5rlEOJKSM1Hjnqy+A5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771402633; c=relaxed/simple;
-	bh=9moeBSWAnG3dtSIbdW4ZnD0x20PyiAy3DOWv8ETJgx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDIM31MPFEcImUtc70aj5aZLhrucr+k+GWVPNBe/dM3tcKGEBTRHeXP2IBcXN84cpT6eO24a4kCA8EsjRDDfAKXamfyV/nqaPvqz2DnOtaEwgp4buThgagsZQRKostdNXBlf3ZYoKz7msFnr2vl4rKhwyQcnFm4BWc2bHANpZnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTx7qOme; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1771406928; c=relaxed/simple;
+	bh=hjgDR+M62i3dLJJ3R+9MFvTcATxJrvJQve1Wk5thDsI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Eoop8bT+T5EPLfVdEu4/VSLDnR1+IeMEKqd4mQUYLQVy7FVe9jtcwxcn8gEtil5OvnIbd6HI8TVNAFgE9YsqCHNhZmE3dGrjup8HprUJBzkm9JZiQAlmtclk9t561K2W7sPBSKt0JRUG01cMICO2Kbb0i2HE5sU4VaoXm8dulr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D90tF9GN; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTx7qOme"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59dd4bec4ecso6269353e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 00:17:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771402629; x=1772007429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5r0xdr1WGpCeGTUqLANRfTri1dCqx5zok5lpbzySRko=;
-        b=nTx7qOmeum236BXFrq/lI95npYcbZdRkmrsYpw6z44rQeeD2T//+MtGlF4miv5w2A3
-         973XqBQSOtxZaws0YxAmu+XEEJNfeGXkBlZFU5Z+lKYprZhMNfCc/i0gIofqZCTjnUn/
-         vVKH4KurYSpHbro3gpWg8JEiIu6tPOrKkEyhgu0fVuyXnNMQTtY8kYWz6F7X002VpCx0
-         VI0Gq1zYb0an31wBKti3j8ihdTIBaDKT6QjtbmQjIBr8z4GPRYyxbPS6qdw/kdbxdOWb
-         Xmwf48ZWRjNGLbJS23hhX4iX20jPRH8xdAg3+1VlzLeqSvVxnb/78oDeP5vADrvsirma
-         BKzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771402629; x=1772007429;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5r0xdr1WGpCeGTUqLANRfTri1dCqx5zok5lpbzySRko=;
-        b=Xcc6gbFGVWhomBMbyy8zBidM7MFN25H0LIIKMy+hK8yPH5NPA+Rr+1bMV4x1yWxkuC
-         R8XumHQ2vbUdzigDDJZYQ7knv7S8QdZFkPRelCAuCgeZjbMSQm2Mtzjeh9wUAgMhSapN
-         5EjphhpghJ0LIHHnOvc1PhN6mqyGoswJ+0NfyuisYZ1TROlPx5GH0jGRbC8rQ/rX6ufu
-         99ovr6IrvXt6ugDiBI0JOtWsxIdlW32otmUL4y69daL+xa+vtJwtLeN9e4Fvpdq2DJP1
-         tm+7GJkeGalB2WPcvmlaTJ1uaBSkIgnyD8KusRQgOiI889YL9zK+0tRMfiV2Hc/ZUw8K
-         RlpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV63DDP+neYHrRe7U6SWfe0iWZXVfq/3I1ddCxT9VPzsgSgMFyMIak/MTFsBWCN2KYbXeb4mIc3yVesVApe+JPKLw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2OAwVNYUIzX8hjeAvXLeMMppr9gl28A+30V0bcUuOHuzvzP6/
-	VWN/FIifjIxZgQh443M8LJzbOk0KcMFXBe4x+eunCVHAzE1wr2a/I1UZ
-X-Gm-Gg: AZuq6aJzkPU8tr07lAGkPTYpcp+4akEuBU7o2h5e73TIdGk6b+2Kx1DvRkIgJswIelh
-	LtFWwwCOJNFRbHQ3/Y00t6BSb42ZS/qKflohfRtD8e7OO7H+qABqvqBynxhJcwARjwcWdSCiD1A
-	ctV57Ze/mw2FpVoHC27nOLgtNXsR8aeL3Xfcl6F/SSuCxujZvjRyDWwGdh9OKi+q6b9wlAYUuqU
-	S/SXOpHET4VrJkcyeovKqA7+sV5g9yBRJ3194eGgoHnLTc/iil3Y7EdxcOaJWln3QRPf4cHd4RN
-	M2+DVLXIt2LpzHTYw34UvAjvDkU4tPm5lcBTmxSRbzSzOIsSw9EyRplQi1Jnusktx7LwDQQ7rpf
-	qIuFmAx5lwyEZ4wQmJSG9hMZww+0Yyc78SaHrInjefqmTvIQAHW24voKfW/PHbWYGiNMpaLnB/S
-	i9SHpFs/ogJTp7bDJVXpF4r0BrAKILI+jFK5RvNDbjuIveLY3r6u5idb5WNs0dxOeXPPD72a9Mu
-	2743a94m8OUhX0swgw=
-X-Received: by 2002:a05:6512:1150:b0:59e:6c24:3f91 with SMTP id 2adb3069b0e04-59f83bbcd19mr369556e87.34.1771402628519;
-        Wed, 18 Feb 2026 00:17:08 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e5f56867fsm4391846e87.24.2026.02.18.00.17.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Feb 2026 00:17:07 -0800 (PST)
-Message-ID: <66dab64b-ca3e-4ae0-81d6-0500899757e5@gmail.com>
-Date: Wed, 18 Feb 2026 10:17:06 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D90tF9GN"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260218092842epoutp013c8fb37e5bcfaa415a8bb059b7c6d4ab~VTTXtIfCQ2081820818epoutp01g
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 09:28:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260218092842epoutp013c8fb37e5bcfaa415a8bb059b7c6d4ab~VTTXtIfCQ2081820818epoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1771406922;
+	bh=4e3tv1xNKbYMfR4tMSvH4s7rnaxHOgZeeoPQiSoUN0M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=D90tF9GNDWl5e5prLf2vxxB1ScK/jOBQvdhfCp9mHbJ0+MRJ65NqG9srgh2rdBuUg
+	 5Z7DHIAg5N4bmn2ZwMP9zGNJLn9ZlkRHoTgngp1pjkQFWpASLJXVDR99IBWSbFcxZw
+	 kIBo72YUbKaNOMmMyAczVEDYooKZYfmi/HhSFu0E=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260218092841epcas5p22642078f78df8fd20e61ec3d7c41bf79~VTTW8I5zp0869308693epcas5p2c;
+	Wed, 18 Feb 2026 09:28:41 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4fGB5h4bSdz6B9m5; Wed, 18 Feb
+	2026 09:28:40 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260218092839epcas5p114565db47fc89a2a06f4b1fbfc8f2bb7~VTTVKpjoh3202332023epcas5p1r;
+	Wed, 18 Feb 2026 09:28:39 +0000 (GMT)
+Received: from INBRO007194 (unknown [107.122.3.105]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260218092837epsmtip256210e6c41614d4b1be8376b87ab5716~VTTTWhBSz0044900449epsmtip2B;
+	Wed, 18 Feb 2026 09:28:37 +0000 (GMT)
+From: <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>
+Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <2edff611-76bb-45aa-922e-f96581dd0525@kernel.org>
+Subject: RE: [PATCH v2 2/3] arm64: dts: exynos: ExynosAutov920: Add
+ regulators for the USB
+Date: Wed, 18 Feb 2026 14:58:36 +0530
+Message-ID: <019001dca0b8$f709e640$e51db2c0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] lib/linear_ranges: Add
- linear_range_get_selector_high_array
-To: Amit Sunil Dhamne <amitsd@google.com>, Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20260214-max77759-charger-v6-0-28c09bda74b4@google.com>
- <20260214-max77759-charger-v6-4-28c09bda74b4@google.com>
- <5d889f66-7697-4a39-beed-33ace693a1ef@gmail.com>
- <b1df24fd-bbb6-4991-be52-dc1ef694db25@google.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <b1df24fd-bbb6-4991-be52-dc1ef694db25@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQEa27yOGkcSyej7W4JCG0x5iKXFKwI+5auhAd1pMcUC7yIEuAId+/jbAjLLeay2sNbGsA==
+X-CMS-MailID: 20260218092839epcas5p114565db47fc89a2a06f4b1fbfc8f2bb7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260122125134epcas5p36625b7ac70b8dfba9430831a11955682
+References: <20260122130721.205664-1-pritam.sutar@samsung.com>
+	<CGME20260122125134epcas5p36625b7ac70b8dfba9430831a11955682@epcas5p3.samsung.com>
+	<20260122130721.205664-3-pritam.sutar@samsung.com>
+	<352427f4-144a-4a43-a2f3-dd959302939f@kernel.org>
+	<000001dc9c13$ea305520$be90ff60$@samsung.com>
+	<2edff611-76bb-45aa-922e-f96581dd0525@kernel.org>
 
-On 18/02/2026 03:45, Amit Sunil Dhamne wrote:
-> 
-> On 2/16/26 5:58 AM, Matti Vaittinen wrote:
->> On 14/02/2026 05:12, Amit Sunil Dhamne via B4 Relay wrote:
->>> From: Amit Sunil Dhamne <amitsd@google.com>
+Hi Krzysztof,
 
-// snip
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Sunday, February 15, 2026 2:27 PM
+> To: pritam.sutar=40samsung.com; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; alim.akhtar=40samsung.com
+> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;=
+ linux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v2 2/3=5D arm64: dts: exynos: ExynosAutov920: Add
+> regulators for the USB
+>=20
+> On 12/02/2026 12:37, pritam.sutar=40samsung.com wrote:
+> > Hi Krzysztof,
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: Thursday, January 22, 2026 7:04 PM
+> >> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>;
+> robh=40kernel.org;
+> >> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com
+> >> Cc: devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.o=
+rg;
+> >> linux- samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> >> rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com;
+> >> muhammed.ali=40samsung.com; selvarasu.g=40samsung.com
+> >> Subject: Re: =5BPATCH v2 2/3=5D arm64: dts: exynos: ExynosAutov920: Ad=
+d
+> >> regulators for the USB
+> >>
+> >> On 22/01/2026 14:07, Pritam Manohar Sutar wrote:
+> >>> Add dummy regulator for USB and PHY supplies.
+> >>>
+> >>> Add vbus regulator that is enabled by GPIO pin.
+> >>>
+> >>> Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
+> >>> ---
+> >>>  .../boot/dts/exynos/exynosautov920-sadk.dts   =7C 139
+> >> ++++++++++++++++++
+> >>>  1 file changed, 139 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> >>> b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> >>> index a397f068ed53..f90f7704597c 100644
+> >>> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> >>> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+> >>> =40=40 -52,6 +52,76 =40=40 memory=4080000000 =7B
+> >>>  		      <0x8 0x80000000 0x1 0xfba00000>,
+> >>>  		      <0xa 0x00000000 0x2 0x00000000>;
+> >>>  	=7D;
+> >>> +
+> >>> +	/* TODO: Remove this once PMIC is implemented  */
+> >>> +	dummy_regulator: regulator-0 =7B
+> >>> +		 compatible =3D =22regulator-fixed=22;
+> >>> +		 regulator-name =3D =22dummy_regulator=22;
+> >>> +	=7D;
+> >>> +
+> >>> +	usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus =7B
+> >>
+> >> Please use name for all fixed regulators which matches current format
+> >> recommendation: 'regulator-=5B0-9=5Dv=5B0-9=5D'
+> >>
+> >> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
+> >> t/tree/
+> >> Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
+> >>
+> >> None of the regulators are called like you wrote. Really NONE.
+> >>
+> >
+> > Thank you for the references. Will bring changes for regulator's name
+> > and labels as
+> >
+> > -       usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus =7B
+> > +       reg_usbdrd31_dwc3_vbus: regulator-1 =7B
+>=20
+> Did you read the binding? That's not what I asked.
+>=20
 
->>> --- a/lib/linear_ranges.c
->>> +++ b/lib/linear_ranges.c
->>> @@ -241,6 +241,42 @@ int linear_range_get_selector_high(const struct 
->>> linear_range *r,
->>>   }
->>>   EXPORT_SYMBOL_GPL(linear_range_get_selector_high);
->>>   +/**
->>> + * linear_range_get_selector_high_array - return linear range 
->>> selector for value
->>> + * @r:        pointer to array of linear ranges where selector is 
->>> looked from
->>> + * @ranges:    amount of ranges to scan from array
->>> + * @val:    value for which the selector is searched
->>> + * @selector:    address where found selector value is updated
->>> + * @found:    flag to indicate that given value was in the range
->>> + *
->>> + * Scan array of ranges for selector for which range value matches 
->>> given
->>> + * input value. Value is matching if it is equal or higher than 
->>> given value
->>> + * If given value is found to be in a range scanning is stopped and 
->>> @found is
->>> + * set true. If a range with values greater than given value is found
->>> + * but the range min is being greater than given value, then the 
->>> range's
->>> + * lowest selector is updated to @selector and scanning is stopped.
->>
->> Is there a reason why the scanning is stopped here? What ensures that 
->> the rest of the ranges wouldn't contain a better match?
->>
->> The logic is now different from the 
->> linear_range_get_selector_low_array(), and I would like to understand 
->> why? It'd be nice if these APIs were 'symmetric' to avoid confusion. 
->> Hence, I would like to know rationale behind making them different.
-> 
-> 
-> The rationale for this being asymmetric is to find the tightest upper 
-> bound for `value` < minimum value across the linear range array.
-> 
-> To better illustrate this with an example. I have 2 entries in the 
-> linear range array [ [4, 8], [11, 15] ]. Let's assume I pass a value of 
-> "2".
-> 
-> Based on my current approach, the call to get_selector_high() would 
-> successfully return with `found`=false and a selector value 
-> corresponding to "4".
-> 
-> However, if I continued to search, I would end up the selector 
-> corresponding to "11". A selector corresponding to "4" is much closer/ 
-> tighter than "2".
-> 
-> For values higher than the highest value in any range, this would keep 
-> iterating and end up returning an -EINVAL.
-> 
-> For in range values this would work as expected.
-> 
-> This implementation assumes that the linear ranges are provided in 
-> sorted order, an assumption that I believe already underlies the 
-> existing *_low_array() logic.
+Yes.=20
+Sorry for misinterpreting above comment. Is it expected as below?
 
-Ah. I think ... I didn't think. :)
+This is based on our understanding by referring binding and other vendor dt=
+s.
 
-It definitely makes sense to stop scanning if the range_min already was 
-greater than the given target value. Thanks for the patience and for 
-adding this missing piece :)
+--- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
++++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+=40=40 -59,7 +59,7 =40=40 dummy_regulator: regulator-0 =7B
+                 regulator-name =3D =22dummy_regulator=22;
+        =7D;
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+-       usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus =7B
++       reg_usb_vbus0: regulator-5v0-vbus0 =7B
+               compatible =3D =22regulator-fixed=22;
+               regulator-name =3D =22usbdrd31_dwc3-vbus=22;
+               regulator-min-microvolt =3D <5000000>;
+=40=40 -75,7 +75,7 =40=40 usb_phy0: usb-phy0 =7B
+                vbus-supply =3D <&usbdrd31_dwc3_vbus>;
+        =7D;
 
+-       usbdrd20_dwc3_0_vbus: usbdrd20_dwc3_0-vbus =7B
++       reg_usb_vbus1: regulator-5v0-vbus1 =7B
+               compatible =3D =22regulator-fixed=22;
+               regulator-name =3D =22usbdrd20_dwc3_0-vbus=22;
+               regulator-min-microvolt =3D <5000000>;
+=40=40 -91,7 +91,7 =40=40 usb_phy1: usb-phy1 =7B
+                vbus-supply =3D <&usbdrd20_dwc3_0_vbus>;
+        =7D;
 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+-       usbdrd20_dwc3_1_vbus: usbdrd20_dwc3_1-vbus =7B
++       reg_usb_vbus2: regulator-5v0-vbus2 =7B
+               compatible =3D =22regulator-fixed=22;
+               regulator-name =3D =22usbdrd20_dwc3_1-vbus=22;
+               regulator-min-microvolt =3D <5000000>;
+=40=40 -107,7 +107,7 =40=40 usb_phy2: usb-phy2 =7B
+                vbus-supply =3D <&usbdrd20_dwc3_1_vbus>;
+        =7D;
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+-       usbdrd20_dwc3_2_vbus: usbdrd20_dwc3_2-vbus =7B
++       reg_usb_vbus3: regulator-5v0-vbus3 =7B
+               compatible =3D =22regulator-fixed=22;
+               regulator-name =3D =22usbdrd20_dwc3_2-vbus=22;
+               regulator-min-microvolt =3D <5000000>;
+
+>=20
+> >
+> >> Also, carefully follow DTS coding style.
+> >>
+> >
+> > Sorry for that. Checking the code and will update in next patchset
+> > version (v3).
+> >
+> >>> +	       compatible =3D =22regulator-fixed=22;
+> >>> +	       regulator-name =3D =22usbdrd31_dwc3-vbus=22;
+> >>> +	       regulator-min-microvolt =3D <5000000>;
+> >>> +	       regulator-max-microvolt =3D <5000000>;
+> >>> +	       enable-active-high;
+> >>> +	       regulator-always-on;
+> >>> +	       gpio =3D <&gpp2 0 GPIO_ACTIVE_HIGH>;
+> >>> +	=7D;
+> >>> +
+> >>> +	/* Use gpio for enabling vbus regulator */
+> >>> +	usb_phy0: usb-phy0 =7B
+> >>
+> >> usb-phy-0
+> >>
+> >>> +		compatible =3D =22usb-nop-xceiv=22;
+> >>> +		vbus-supply =3D <&usbdrd31_dwc3_vbus>;
+> >>
+> >> That's pretty incomplete. Why do you need such node - just to toggle
+> >> regulator?
+> >>
+> >
+> > There is no external controller to detect or switch the USB modes
+> > automatically rather it is switched using userspace control (sysfs
+> > attributes) for this SoC.  GPIO pins are required to enable vbus
+> > regulators. Existing phy-generic and fixed regulator are used to avoid
+> > making any USB driver changes for the same purpose and it is
+> > referenced from below -
+> >
+> > https://lore.kernel.org/r/20230825215445.28309-3-semen.protsenko=40lina=
+r
+> > o.org
+> > a12af1c20751340ab6e449a5ef78b37d31123aca: ARM64: dts: marvell:
+> > armada-3720-db: Add phy for USB3
+> >
+> >>> +	=7D;
+> >>
+> >> ...
+> >>
+> >>> +&usbdrd20_phy2 =7B
+> >>> +	dvdd-supply =3D <&dummy_regulator>;
+> >>> +	vdd18-supply =3D <&dummy_regulator>;
+> >>> +	vdd33-supply =3D <&dummy_regulator>; =7D;
+> >>> +
+> >>> +&usbdrd20_dwc3_2 =7B
+> >>> +	maximum-speed =3D =22high-speed=22;
+> >>> +	usb-phy =3D <&usb_phy3>;
+> >>> +=7D;
+> >>> +
+> >>> +&usbdrd20_2 =7B
+> >>> +	vdd10-supply =3D <&dummy_regulator>;
+> >>> +	vdd33-supply =3D <&dummy_regulator>; =7D;
+> >>
+> >> That's a bit too much of dummies. This is heavily incomplete. You
+> >> need to bring back the PMIC first.
+> >>
+> >
+> > Presently, relying on USB LDOs being enabled by the bootloader in this
+> > automotive SoC. However, we understand the concern and it is added in
+> > case if anyone wants to use implemented PMIC in future. For now, would
+> > like to proceed with the dummy regulators to enable the required USB
+> features.
+>=20
+> And I don't see the point of these dummies. Solves nothing.
+>=20
+
+Are you expecting details as mentioned in above section in commit message?=
+=20
+However, we have mentioned these details in cover letter.
+
+if not, please provide more details on this comment.
+
+> > Dummy regulators are clearly marked so that they will be replaced once
+> > the PMIC driver is fully up.
+> >
+>=20
+>=20
+> Best regards,
+> Krzysztof
+
+Thank you,
+
+Regards,
+Pritam
+
