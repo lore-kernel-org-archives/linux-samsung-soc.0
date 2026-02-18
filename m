@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3DA34845C;
-	Wed, 18 Feb 2026 19:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C366283FC5
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 20:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771444467; cv=none; b=nwafn5ETu0rkeVKZiF5e6DSKvRgvnZcWuXIltrC8B5U5o537Oxcr5Mip0TRTP8G4vgBvzaiy/lszyK3ptqk8msXYuJ3x0LGDvKR8HwPxiPKzuY/vRv/xxerYJZgBkILR1256uxZ9OcGfVJBXbt+7v335MrrO7qsur9jy/6ng6q8=
+	t=1771445137; cv=none; b=MHo8vT3ByctO7Q9aGyoRLnhjDyPD+SA32lspv/mhdXsM1DwD7Ia4wfSLsQLofDFMzvTD2Gb5pEAexCo5L/w4zP/hUmrEqZtvhlNDtvWRl+TXK+66wr7Hpk/ik8u9fWvRoPmgNHTKdscscM9+f0FN7xJsiJV4fYPqY6eMdgmqmAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771444467; c=relaxed/simple;
-	bh=KwR7Qx4Tq8mj28cxomJ98ZhpYCkpEiUTX7F8Mbj2A2A=;
+	s=arc-20240116; t=1771445137; c=relaxed/simple;
+	bh=Eb8WztYruLPtpbjUq44P2hChG8R4NOCFEJN+uEHJMMk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRQwN2aSJ5y7q8txFsUJAbkMNo9TewYnT18nhYt756eFMRnhGmflItxoxV59HeHfW+SpQS0eB9Bzcd68HBzSaz/l7OZIxEKe7AdsUTJKHgve6kWvDB32d8LnLP19lJvt2DOmcSqF7IjqfEZ4/NCyabWDvAAz8/l70nnXIPHBIOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ki7KQPRd; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=itInlR05F+dEkXW/Jqs47nOXh6RiSYLuhqYOodd8ehfbOm2c7qWZh4O991AKosTY4bOV1sYXCyAMDd5A1M3UarEuJiflqsyf/xmkdEbs1QQKK1NRN8CjHwQzTZ/0eVhlwaoA0rLdktXvJxJH24Symz6zhkJB8EW25Mtri8Q4gXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dRPrj7he; arc=none smtp.client-ip=74.125.82.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ki7KQPRd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C6EC2BCC7;
-	Wed, 18 Feb 2026 19:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771444467;
-	bh=KwR7Qx4Tq8mj28cxomJ98ZhpYCkpEiUTX7F8Mbj2A2A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ki7KQPRdWlKE0bmrbUS/r2tfQj+AkwZ5a9iIPQzv92suGsOvMofkIYijaJm1g6Qcd
-	 llrzML/R0DDF2wXn/3q6haV9J9bcPBhBpavm47scHegTWUsbjiyxSftDD/nIiqci4I
-	 u4IprFFzva5neIkWvP/s2r0J1iLe6qG0EIfyXHnpoFYsaz3mTChHk6+BW5NnFd4kJP
-	 jPUL1zdemKv9T2gotJqfmaP5n2Vd8ZQbr6kzfREWu11lP/7VERP2//XBJNpxWSCw+I
-	 HBZEwxCPLzqzWUn4x/QbOxBNXZ4n1FfL+/8axbqWHZkFD5g0RM0OcUrlCQ9vLf6c5X
-	 eXFj/7TfGAihg==
-Message-ID: <a7c5c5df-28d9-4b4e-87f0-572b7f637d26@kernel.org>
-Date: Wed, 18 Feb 2026 20:54:22 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dRPrj7he"
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-2b86ce04c5cso335063eec.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 12:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771445136; x=1772049936; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ruwMDgtbpwkbLzJMSDs2l3vNnZLc2ZiEeFBqv+MGVhg=;
+        b=dRPrj7heC/vfUsmGojrAEh7xjifEi2K+5ikryz/EC9J7P9XlzGI3qouVczByYM1bGd
+         yTSj+o7bCuk6WcccyIG3fu+Qvr8BYPYzEY/rp2tc9+LtVIELy3ewyj5gLQqx/ttugou2
+         0kkowdferefjOvocOP+WvlEyCgQ7ThxJ6i/Oo7fBIJ8Kk3CEGvEeNe+x3TBwi5rl8XnR
+         Ulepf87PwFOUUQTO3AB/y0T87WU81BSx+ioby/YFLsiSmLZE3n6NlzPUauHKHAnbKZSG
+         RaKVr/l+aLWp/KiH4qiVdYH4EEZoqfLlmIZITWaC5hzCNUgWKyQZTPwjPzUU5gOJc6NV
+         4hVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771445136; x=1772049936;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ruwMDgtbpwkbLzJMSDs2l3vNnZLc2ZiEeFBqv+MGVhg=;
+        b=XMkIJ7wh2Naz59Xh+Y7ZEc7tD58WYhS/jmY+oolSPX5Q1oS6wKYHU94jmGDZdLIN2W
+         bkecKplbsYFhEcL4iIZF5UkXptrVLdri0YB7He0cCqF3hxn+ZVRfquEwrNxhDHr//1kE
+         wcz+lCfsH7xgnqargTnIXHK+Vn1TXfF3VGwYKL5RtSrEY3RNJJpzzjvgaEpitJHh1Szr
+         KNbtmgH2O5WLCmWRUEOhLm0BhjckaMQXxzSLwLmQENcaQt0WunLA4f6VgPWALC8WWycB
+         7mt1NUWKULKpMgUB7lStkb38luoUZB4VPf9ibef1ynw5uh24Q97New/C/chIRKJxmEm1
+         KqPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaHGxGMtiVP49JPnmXO6QliYwlCxLdQyANZ/sZYuugx0R/bxmyohyK/01afBQBY+HW7YO7VLBrpXZbc3+JJedjbw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRz+Be1/SMOy3ofVbcKLzDlWpV5VQQAc9uZxXZsb2t2f1pFehx
+	tJKhVm4+/9589DCBsF4Sl1qj1PreBCgqHAX7km86D7bL3f5IC2pqpgkQnhAlJ0Sc/A==
+X-Gm-Gg: AZuq6aKN8A3jqhCVwYvI+pWl7fcDpkjsu+lAm1SWbWLPskpng51wNHYQMUZyvy1W16K
+	232jFuHls0ac5XxeBwsdPMRR2MsDeEjHVoZMcDnYlsj4zFZlvJlSscN7cHRRtEB4KaFIlRSN9Bd
+	9dO9hOeZAzMVu7Yr7bXux6e14vUrxpXws+tfooV+H80wZzwyY369d3a/JOLHeE44aK83cfHpXg0
+	R3q98E0TBZkW//Ez6EAF8tOiZz/TEtXrm9eLq/L3SbcyAk0qWm7bLPj1OyOvC60jFsW8yKsrYPa
+	lJj6qSc/1x4GylfDGdv5psrRLkk92lZCv9nuOGm/0y4Z4RfPZAGHSXv6JLIgR1FwRPB1ArWrDuu
+	vh+ir9ZxkD9820/DBOBaGnsjU+4ykwCJko/23pmGesF/UqQ3AboTEWMIKCkuGMnXpDmVpiNcN/E
+	bpLlk7BNQxqDX2bvHm55OOGK0xZc2/V3VYLCN1DZBax+gcChS87HYsMOkclKSMAZMW/prT5wDiV
+	yN7pHtlzgbBhW3vgXYJ8HlpaQ==
+X-Received: by 2002:a05:7301:100e:b0:2ba:a04a:8353 with SMTP id 5a478bee46e88-2babc44eb66mr9413193eec.27.1771445135121;
+        Wed, 18 Feb 2026 12:05:35 -0800 (PST)
+Received: from ?IPV6:2a00:79e0:2e7c:8:c8f1:53bf:725c:563b? ([2a00:79e0:2e7c:8:c8f1:53bf:725c:563b])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bacb543e8dsm19410069eec.5.2026.02.18.12.05.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Feb 2026 12:05:34 -0800 (PST)
+Message-ID: <e9a353aa-1194-4c87-b902-c533e52c264e@google.com>
+Date: Wed, 18 Feb 2026 12:05:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,152 +69,127 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: ExynosAutov920: Add regulators
- for the USB
-To: pritam.sutar@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
- muhammed.ali@samsung.com, selvarasu.g@samsung.com
-References: <20260122130721.205664-1-pritam.sutar@samsung.com>
- <CGME20260122125134epcas5p36625b7ac70b8dfba9430831a11955682@epcas5p3.samsung.com>
- <20260122130721.205664-3-pritam.sutar@samsung.com>
- <352427f4-144a-4a43-a2f3-dd959302939f@kernel.org>
- <000001dc9c13$ea305520$be90ff60$@samsung.com>
- <2edff611-76bb-45aa-922e-f96581dd0525@kernel.org>
- <019001dca0b8$f709e640$e51db2c0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 4/6] lib/linear_ranges: Add
+ linear_range_get_selector_high_array
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Badhri Jagan Sridharan <badhri@google.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
+References: <20260214-max77759-charger-v6-0-28c09bda74b4@google.com>
+ <20260214-max77759-charger-v6-4-28c09bda74b4@google.com>
+ <5d889f66-7697-4a39-beed-33ace693a1ef@gmail.com>
+ <b1df24fd-bbb6-4991-be52-dc1ef694db25@google.com>
+ <66dab64b-ca3e-4ae0-81d6-0500899757e5@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <019001dca0b8$f709e640$e51db2c0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <66dab64b-ca3e-4ae0-81d6-0500899757e5@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 18/02/2026 10:28, pritam.sutar@samsung.com wrote:
->>>>> +	usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
->>>>
->>>> Please use name for all fixed regulators which matches current format
->>>> recommendation: 'regulator-[0-9]v[0-9]'
->>>>
->>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
->>>> t/tree/
->>>> Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
->>>>
->>>> None of the regulators are called like you wrote. Really NONE.
->>>>
+
+On 2/18/26 12:17 AM, Matti Vaittinen wrote:
+> On 18/02/2026 03:45, Amit Sunil Dhamne wrote:
+>>
+>> On 2/16/26 5:58 AM, Matti Vaittinen wrote:
+>>> On 14/02/2026 05:12, Amit Sunil Dhamne via B4 Relay wrote:
+>>>> From: Amit Sunil Dhamne <amitsd@google.com>
+>
+> // snip
+>
+>>>> --- a/lib/linear_ranges.c
+>>>> +++ b/lib/linear_ranges.c
+>>>> @@ -241,6 +241,42 @@ int linear_range_get_selector_high(const 
+>>>> struct linear_range *r,
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(linear_range_get_selector_high);
+>>>>   +/**
+>>>> + * linear_range_get_selector_high_array - return linear range 
+>>>> selector for value
+>>>> + * @r:        pointer to array of linear ranges where selector is 
+>>>> looked from
+>>>> + * @ranges:    amount of ranges to scan from array
+>>>> + * @val:    value for which the selector is searched
+>>>> + * @selector:    address where found selector value is updated
+>>>> + * @found:    flag to indicate that given value was in the range
+>>>> + *
+>>>> + * Scan array of ranges for selector for which range value matches 
+>>>> given
+>>>> + * input value. Value is matching if it is equal or higher than 
+>>>> given value
+>>>> + * If given value is found to be in a range scanning is stopped 
+>>>> and @found is
+>>>> + * set true. If a range with values greater than given value is found
+>>>> + * but the range min is being greater than given value, then the 
+>>>> range's
+>>>> + * lowest selector is updated to @selector and scanning is stopped.
 >>>
->>> Thank you for the references. Will bring changes for regulator's name
->>> and labels as
+>>> Is there a reason why the scanning is stopped here? What ensures 
+>>> that the rest of the ranges wouldn't contain a better match?
 >>>
->>> -       usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
->>> +       reg_usbdrd31_dwc3_vbus: regulator-1 {
+>>> The logic is now different from the 
+>>> linear_range_get_selector_low_array(), and I would like to 
+>>> understand why? It'd be nice if these APIs were 'symmetric' to avoid 
+>>> confusion. Hence, I would like to know rationale behind making them 
+>>> different.
 >>
->> Did you read the binding? That's not what I asked.
 >>
-> 
-> Yes. 
-> Sorry for misinterpreting above comment. Is it expected as below?
-> 
-> This is based on our understanding by referring binding and other vendor dts.
-> 
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -59,7 +59,7 @@ dummy_regulator: regulator-0 {
->                  regulator-name = "dummy_regulator";
->         };
-> 
-> -       usbdrd31_dwc3_vbus: usbdrd31_dwc3-vbus {
-> +       reg_usb_vbus0: regulator-5v0-vbus0 {
-
-Yes, that's better.
-
-Only under the assumption these are actually dedicated single-enable-pin
-regulators, not pins going to the PMIC.
-
->                compatible = "regulator-fixed";
->                regulator-name = "usbdrd31_dwc3-vbus";
->                regulator-min-microvolt = <5000000>;
-> @@ -75,7 +75,7 @@ usb_phy0: usb-phy0 {
->                 vbus-supply = <&usbdrd31_dwc3_vbus>;
->         };
-> 
-
-...
-
->>>>
->>>> That's a bit too much of dummies. This is heavily incomplete. You
->>>> need to bring back the PMIC first.
->>>>
->>>
->>> Presently, relying on USB LDOs being enabled by the bootloader in this
->>> automotive SoC. However, we understand the concern and it is added in
->>> case if anyone wants to use implemented PMIC in future. For now, would
->>> like to proceed with the dummy regulators to enable the required USB
->> features.
+>> The rationale for this being asymmetric is to find the tightest upper 
+>> bound for `value` < minimum value across the linear range array.
 >>
->> And I don't see the point of these dummies. Solves nothing.
+>> To better illustrate this with an example. I have 2 entries in the 
+>> linear range array [ [4, 8], [11, 15] ]. Let's assume I pass a value 
+>> of "2".
 >>
-> 
-> Are you expecting details as mentioned in above section in commit message? 
-> However, we have mentioned these details in cover letter.
+>> Based on my current approach, the call to get_selector_high() would 
+>> successfully return with `found`=false and a selector value 
+>> corresponding to "4".
+>>
+>> However, if I continued to search, I would end up the selector 
+>> corresponding to "11". A selector corresponding to "4" is much 
+>> closer/ tighter than "2".
+>>
+>> For values higher than the highest value in any range, this would 
+>> keep iterating and end up returning an -EINVAL.
+>>
+>> For in range values this would work as expected.
+>>
+>> This implementation assumes that the linear ranges are provided in 
+>> sorted order, an assumption that I believe already underlies the 
+>> existing *_low_array() logic.
+>
+> Ah. I think ... I didn't think. :)
+>
+> It definitely makes sense to stop scanning if the range_min already 
+> was greater than the given target value. Thanks for the patience and 
+> for adding this missing piece :)
+>
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-No, I am expecting proper PMIC to be represented here. One dummy
-regulator during the fast development phase is okay. Dummy added by
-community contributors without resources and schematics would also fly.
 
-But Samsung, with all the resources, schematics doing development since
-2023 and still adding 20 dummies to every device? Nope, no, sorry.
-
-Please start doing this properly. Look how entire new SoC was upstreamed
-by Linaro:
-https://lore.kernel.org/all/20231121-topic-sm8650-upstream-dt-v3-0-db9d0507ffd3@linaro.org/
-
-Or something newer by Qualcomm:
-https://lore.kernel.org/linux-arm-msm/?q=s%3Aglymur
+Thanks for the review! :)
 
 
-Best regards,
-Krzysztof
+Regards,
+
+Amit
+
+>
+>
+> ---
+> Matti Vaittinen
+> Linux kernel developer at ROHM Semiconductors
+> Oulu Finland
+>
+> ~~ When things go utterly wrong vim users can always type :help! ~~
