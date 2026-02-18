@@ -1,67 +1,67 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CD127A461
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 01:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4752E1F11
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Feb 2026 05:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771379146; cv=none; b=fR8hP6pQ6CQ1XSxrJNvYPnaq/hVULp2Qy7lirvJRbsbaokYNOcik/gvbTX4oVRI4o2LvKwvBy+C7Sq4ZpDoZMBWBM1zACLdI/3XTybkA0gTMl3Q7mFrvkzjgfPjCaZfUGIPr823uhyGpC6J6vxsrYFFS8nLDwI03MjZm2qI0BME=
+	t=1771392906; cv=none; b=jvQ5prVzHX/dQPrb6G6Ylr1j9wfBcoT6kozC8WMpn/nH5bKvcusyR3EkUMAFeYNmW62PXVDec8TKHtPcQf0l8pjDKrp6Y7ym0GPfyk0H1VEh4JWaauGyB0rO7fYYIlJUiomJW+CAGUSLlBI4bnfpAmPtAStylgwaFDzO6OLOIEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771379146; c=relaxed/simple;
-	bh=yQeoW4MqfwzTgrBMlSHdUdLyFckPUP27F2W5vrcbNCg=;
+	s=arc-20240116; t=1771392906; c=relaxed/simple;
+	bh=ykMbeLkM3JFjjAT+X4RiA986+vadbys1IX+AMjB2BRI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S1PrNHMHsJ54YmGXr+AM1/uVSDZ5P4erQgj4fh6x3wpd5Iog1BUu2yd3YA8ymhnmRgHs+rYdEqu2YGFWesCDsSOJNgd3JxbyfZZk8TMPtYeBJR/QlMXoEG9kZx++qZrxy9yjWG2ATmhMnZvtL56y9MQZ9LIXIC7hleL2Ew9vxM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=deKmsegR; arc=none smtp.client-ip=74.125.82.175
+	 In-Reply-To:Content-Type; b=Idu9QZIgUD+4v4fcE0c/GDq//ivk9mqJmnKlixU6l4kjb2sw7LeE0zca+gIAeXaGkLnstyLMoam87v7QPWvfbB+ZrFLnzALnOzVrj6010OsTCgKUTByShdN2WV1+qPVm/7qHtCH4ZXNS+1PIhqQ2cV5Hi5zG0DM9WC7crif1Zac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpPDybR2; arc=none smtp.client-ip=74.125.224.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="deKmsegR"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2ba9c484e5eso4831601eec.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 17:45:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpPDybR2"
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-64ae222d978so4812722d50.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Feb 2026 21:35:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771379144; x=1771983944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=google.com; s=20230601; t=1771392904; x=1771997704; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=SzRez6id0tGCW3l1fRGMuvRJWCHYhvgSDSCiIHHHPic=;
-        b=deKmsegRLQHlKTeYYjEyqOZDbPT9lm7vvpbOJK0dKQ3JSLSddLlEw9hR7WNK3PnB+S
-         nPQZeipF+m1Tozp8onOYCJC6VqhdPdeNMmwiLNkzK8LiU2sI3D8ZlNySIsJ1Qs3TtxEq
-         PTKwqw/RLTdnZHjvUXUJ4YRmH2yyo6gsVnvsniD5M0BFBb4M9KGx6CfSyCIC8Gr6o4Az
-         NHipjdp+8+odThpoYB/EEyucN+Pj3E/Tfg/cipnbQoavXiD+0EIgDooLWweQNFImS6R1
-         VrhIxRWUtVWGAOYjXala7kefYl82R9MHK2ArB/PowIPHcSI/RubWYLiYj6vj0P8FPrml
-         m7fg==
+        bh=j2gS7QPW0Vau0TRfECG0tWh0O+TEzQcOd404Ys3R6dI=;
+        b=wpPDybR2cORDQVafAWe7BXkFmwQuCta0yMTOIiGfpyTI1Kso5yESnbSJrYU7kkvfOK
+         ZSnbQ4omaYiXQ5KNpbsusz2zSH9wgLZ40oleczu6olQ/x57OWB6sHlJNc9fE+HK4m3EQ
+         7j4jzv9zG/IzhGiujueJSKuhT2X55c1UAhsDHFc4Uo87YK1iyKDMBuPSWsf4EfX4rtjS
+         oFqS5O1A2jUrNT6p0WWik/05BqRt4HyKwDnVh6NZwKwS6uHySim/rSwTk+TBhjr5JHWo
+         +8lsX0bMPPvlou+a4HorwLemRqctNq5i5LeVHUdA1vG0c/zHHCFVzFCfcQB0LCcN+JU/
+         X/bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771379144; x=1771983944;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1771392904; x=1771997704;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SzRez6id0tGCW3l1fRGMuvRJWCHYhvgSDSCiIHHHPic=;
-        b=FzOh0STY12VOfnqY4RNuC8Pf+IX2XYXbsevjW6iI0IOOxCgO2gddj11g9nO6o5GEHt
-         isk7kFb9Ttj6P+V2SZYxgprpAJ9sswADHxwQRk+vT82Q61rWFxGC5Aa+1LLTTg1Ir3Hk
-         CVtSv+y6zKDP/woOCrskfXtB9kc3AgCQb+2tjn6wwHWBA7pjY+Vbn0Inp5uYUr7ANPw4
-         DNwtEcNzVyYUA8z/HMfbrht3lPKeVEPmUT0bWfBmLHwwmUD1bU1MFU7ontSAN1pI4voE
-         jH7Vv1aXDTxhBcKPSO4oMoeWHS1CJut92qfqCUyWeuHJczfULGAMg9gKnspj0I04f9Fz
-         AM9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWB1xVzrsptoQb487owHbFP46nSuTB67mbUlGblXa87w7nX1SMNH0ukWCAhzIcsvCuUM2sTBCe9RVJySYPs9m2PTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YznDs9lH0EjwYA2gCJC3sG8UzfArDkCnxsOf23O0nXCWIr4BRpl
-	Jo2OJP/yop3Q8CY8S4IZ2FP9ArR1ACKGd94tONvcFE0ZIR/IQ8ihgNpFO49DtL1+Ug==
-X-Gm-Gg: AZuq6aI7Ln9X1+yTeS3+Wr/gQvlChpDhwbnNKReeWGCMf264jXX9TpbPRfDGLVi+5R8
-	2D6fLCATkuENomwtptr1gv/gorryopwCNx7n28yGn1IDq45CsaFd6z6S3rW+sVl5N+jgLzUuX1+
-	Z2FezZl90KdNRlRaa+Xgg5LIvNqOTQVwsXSqlyaG6umYXTkfzihi25ml/RnODczakbIhvTelHhS
-	iix7+9jRGOZlJJek8Rp/Vqj1P7bsfQdXhjbmYTRKihU91cIJpjO5Ekk4mLChJaI0SEQ/PTmsDSw
-	8ytGrvcgx/SM+NINm5bt95h8bSsQBD6JoCZrckT4Y8WT/G7eFTyj7w7agGXIu63yLlpMqM1rNZS
-	13G3MpBDMNSIjvcIVon2mjiF/yl045IYg9QJSu78k1BVAB6Ml8GdVtqIq6Sli8NsUtQWDm6rpUC
-	dRr8U62WSQ2vFCuvrcNkO1MLB9TV+Z3rh8rBv037VQVayXYC8dQqc+J7GJOvElV1zTYLUhzR1+6
-	kUQuqhlrzspfCv0rUcIvjQriA==
-X-Received: by 2002:a05:7301:2b06:b0:2ba:964f:fa67 with SMTP id 5a478bee46e88-2bac97ad329mr5688952eec.24.1771379143326;
-        Tue, 17 Feb 2026 17:45:43 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:c8f1:53bf:725c:563b? ([2a00:79e0:2e7c:8:c8f1:53bf:725c:563b])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742cba192sm15951817c88.13.2026.02.17.17.45.41
+        bh=j2gS7QPW0Vau0TRfECG0tWh0O+TEzQcOd404Ys3R6dI=;
+        b=UNcJykXOmQpi1ZN1jGYxjATEMNiPh5Deg+sZk72hV3+fzaB0ayywNqUV0tXuHegEy+
+         6GKLKrsLlcCMYBOl9M76wSUKpnC8T/ki8N59YEu8oMDtghQluhSDvl/uPa0bqomwLaIO
+         nEWAlwqXhtFLTrxiD7tIXrAD2/oURWjCjx7ywY4sIFkR+mN9inxEZmX54VYexsnojR/s
+         7Me2sPHiIH8Cqf2bPJMGe5EEE4uyAPhWkUjkvMJAlFGcrEHa+1u0jU02BQHYFwAugxyd
+         nC5CGwmSxD7o/i8nh3u1AqgigaxBachuvgfRV4rZ9SOpRPYTsZVx0Mjbn7z+mY49FjN3
+         nXng==
+X-Forwarded-Encrypted: i=1; AJvYcCXf/OMhBkajXOlobm8Em+vJ+M/o4Hmbw7nf2Vf7tafpTKjL3XivJQlYwzmtgLRQFQTQ+1KVdPAD/itcwP6xrjw0RA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7OXPOzrgeZ27LXiWkisyYPllYJjEUCHZ7XHbG00OOi9HG4Sw6
+	jWlP7MzTRVRZh8BQ+igAchAaq0ZSsTIu5USvkPWxZnmLG/M/f6CpKoKcgEh/sC0YcQ==
+X-Gm-Gg: AZuq6aIwhqmMHZ/XQoV53cOqlDoYbhjfA615A2zliW6irTMcPWH4jND4Q5m7+M/Klrv
+	p/RzKRKVi5/7tAiSq6oQtocFN2LKhCN1B2tHM5XGULAZbEXSBjCgPgF/Kj4TOD6tldZWU57mN/X
+	oNFVCDdTIZXk9cj02Evx2mml773AL3nDie3Q5W42B42ylElnTP1sWXRYIuCAioTJgoinHqW3mUm
+	5j6dAoR+bxKLO0uPOLbKpjaeVk/2aMhOOX2JDq5wKMwa9MQ9UqwffhPU0KXj9FQSODY5W+8COsF
+	Ts20hdAwn5TEmALr0xzNAhLcYhLW9oJvQe8LlrQeH/a1r++7kayY6kUib69SHjQDdZ4/9n5twqC
+	jn0wvGoxAtYPhgBtfWOcRyq1RO7BVMx4+EFymOUhEz12b/cfL5MEBb18vdDMA/tEf4ERPBMYuQl
+	AZYqnHf38xwxoaKwgACpFceXVp2FNtvj9oY60IP55U51hAnqKakz+K9CtQyYJB74HhLYed5Iqk0
+	Cbd
+X-Received: by 2002:a05:690e:4005:b0:649:3b9:924e with SMTP id 956f58d0204a3-64c555942aamr701484d50.22.1771392903977;
+        Tue, 17 Feb 2026 21:35:03 -0800 (PST)
+Received: from ?IPV6:2600:1700:4570:89a0:b4:5cb3:5345:8019? ([2600:1700:4570:89a0:b4:5cb3:5345:8019])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64c22f8fa1fsm5666809d50.15.2026.02.17.21.35.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 17:45:42 -0800 (PST)
-Message-ID: <b1df24fd-bbb6-4991-be52-dc1ef694db25@google.com>
-Date: Tue, 17 Feb 2026 17:45:40 -0800
+        Tue, 17 Feb 2026 21:35:03 -0800 (PST)
+Message-ID: <7103a273-f066-4c1b-ad14-7e8fd7ba002a@google.com>
+Date: Tue, 17 Feb 2026 21:35:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,155 +69,178 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] lib/linear_ranges: Add
- linear_range_get_selector_high_array
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
+Subject: Re: [PATCH v6 5/6] power: supply: max77759: add charger driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>,
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Badhri Jagan Sridharan <badhri@google.com>,
  Heikki Krogerus <heikki.krogerus@linux.intel.com>,
  Peter Griffin <peter.griffin@linaro.org>,
  Tudor Ambarus <tudor.ambarus@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
 References: <20260214-max77759-charger-v6-0-28c09bda74b4@google.com>
- <20260214-max77759-charger-v6-4-28c09bda74b4@google.com>
- <5d889f66-7697-4a39-beed-33ace693a1ef@gmail.com>
-Content-Language: en-US
+ <20260214-max77759-charger-v6-5-28c09bda74b4@google.com>
+ <0b6e7cb7223e553d9b53df464959e97fd3d1ce43.camel@linaro.org>
 From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <5d889f66-7697-4a39-beed-33ace693a1ef@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+In-Reply-To: <0b6e7cb7223e553d9b53df464959e97fd3d1ce43.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Hi André,
 
-On 2/16/26 5:58 AM, Matti Vaittinen wrote:
-> On 14/02/2026 05:12, Amit Sunil Dhamne via B4 Relay wrote:
+
+On 2/17/26 5:14 AM, André Draszik wrote:
+> Hi Amit,
+>
+> All below comments are only minor, feel free to ignore them.
+>
+> On Sat, 2026-02-14 at 03:12 +0000, Amit Sunil Dhamne via B4 Relay wrote:
 >> From: Amit Sunil Dhamne <amitsd@google.com>
 >>
->> Add a helper function to find the selector for a given value in a linear
->> range array. The selector should be such that the value it represents
->> should be higher or equal to the given value.
+>> Add support for MAX77759 battery charger driver. This is a 4A 1-Cell
+>> Li+/LiPoly dual input switch mode charger. While the device can support
+>> USB & wireless charger inputs, this implementation only supports USB
+>> input. This implementation supports both buck and boost modes.
 >>
 >> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 >> ---
->>   include/linux/linear_range.h |  3 +++
->>   lib/linear_ranges.c          | 36 ++++++++++++++++++++++++++++++++++++
->>   2 files changed, 39 insertions(+)
->>
->> diff --git a/include/linux/linear_range.h b/include/linux/linear_range.h
->> index 2e4f4c3539c0..0f3037f1a94f 100644
->> --- a/include/linux/linear_range.h
->> +++ b/include/linux/linear_range.h
->> @@ -57,5 +57,8 @@ void linear_range_get_selector_within(const struct 
->> linear_range *r,
->>   int linear_range_get_selector_low_array(const struct linear_range *r,
->>                       int ranges, unsigned int val,
->>                       unsigned int *selector, bool *found);
->> +int linear_range_get_selector_high_array(const struct linear_range *r,
->> +                     int ranges, unsigned int val,
->> +                     unsigned int *selector, bool *found);
->>     #endif
->> diff --git a/lib/linear_ranges.c b/lib/linear_ranges.c
->> index a1a7dfa881de..c85583678f6b 100644
->> --- a/lib/linear_ranges.c
->> +++ b/lib/linear_ranges.c
->> @@ -241,6 +241,42 @@ int linear_range_get_selector_high(const struct 
->> linear_range *r,
->>   }
->>   EXPORT_SYMBOL_GPL(linear_range_get_selector_high);
->>   +/**
->> + * linear_range_get_selector_high_array - return linear range 
->> selector for value
->> + * @r:        pointer to array of linear ranges where selector is 
->> looked from
->> + * @ranges:    amount of ranges to scan from array
->> + * @val:    value for which the selector is searched
->> + * @selector:    address where found selector value is updated
->> + * @found:    flag to indicate that given value was in the range
->> + *
->> + * Scan array of ranges for selector for which range value matches 
->> given
->> + * input value. Value is matching if it is equal or higher than 
->> given value
->> + * If given value is found to be in a range scanning is stopped and 
->> @found is
->> + * set true. If a range with values greater than given value is found
->> + * but the range min is being greater than given value, then the 
->> range's
->> + * lowest selector is updated to @selector and scanning is stopped.
+>>  MAINTAINERS                             |   6 +
+>>  drivers/power/supply/Kconfig            |  11 +
+>>  drivers/power/supply/Makefile           |   1 +
+>>  drivers/power/supply/max77759_charger.c | 768 ++++++++++++++++++++++++++++++++
+>>  4 files changed, 786 insertions(+)
+> [...]
 >
-> Is there a reason why the scanning is stopped here? What ensures that 
-> the rest of the ranges wouldn't contain a better match?
+>> diff --git a/drivers/power/supply/max77759_charger.c b/drivers/power/supply/max77759_charger.c
+>> new file mode 100644
+>> index 000000000000..d4e02764ba04
+>> --- /dev/null
+>> +++ b/drivers/power/supply/max77759_charger.c
+>> @@ -0,0 +1,768 @@
+> [...]
 >
-> The logic is now different from the 
-> linear_range_get_selector_low_array(), and I would like to understand 
-> why? It'd be nice if these APIs were 'symmetric' to avoid confusion. 
-> Hence, I would like to know rationale behind making them different.
+>> +
+>> +/* USB input current limits (in uA) */
+>> +static const struct linear_range chgin_ilim_ranges[] = {
+>> +	LINEAR_RANGE(100000, 0x3, 0x7F, 25000),
+>> +};
+> Shouldn't this one also have a entry for 0x00...0x02:
+> 	LINEAR_RANGE(100000, 0x0, 0x2, 0),
+>
+> Then you can also drop the umax() call in get_input_current_limit().
+>
+> Ah, I see now there is no linear_range_get_selector_within_array(),
+> meaning the code is fine as-is, unless you want to add that as
+> well :-)
+>
+>
+> [...]
+
+I would go with the code being as is for now.  :-)
 
 
-The rationale for this being asymmetric is to find the tightest upper 
-bound for `value` < minimum value across the linear range array.
+>
+>> +static int max77759_charger_init(struct max77759_charger *chg)
+>> +{
+>> +	struct power_supply_battery_info *info;
+>> +	u32 regval, fast_chg_curr, fv;
+>> +	int ret;
+>> +
+>> +	ret = regmap_read(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_00, &regval);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	chg->mode = FIELD_GET(MAX77759_CHGR_REG_CHG_CNFG_00_MODE, regval);
+>> +	ret = charger_set_mode(chg, MAX77759_CHGR_MODE_OFF);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (power_supply_get_battery_info(chg->psy, &info)) {
+>> +		fv = CHG_FV_DEFAULT_MV;
+>> +		fast_chg_curr = CHG_CC_DEFAULT_UA;
+>> +	} else {
+>> +		fv = info->constant_charge_voltage_max_uv / 1000;
+>> +		fast_chg_curr = info->constant_charge_current_max_ua;
+>> +	}
+>> +
+>> +	ret = set_fast_charge_current_limit(chg, fast_chg_curr);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = set_float_voltage_limit(chg, fv);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = unlock_prot_regs(chg, true);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Disable wireless charging input */
+>> +	ret = regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_12,
+>> +				 MAX77759_CHGR_REG_CHG_CNFG_12_WCINSEL, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_18,
+>> +				 MAX77759_CHGR_REG_CHG_CNFG_18_WDTEN, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return unlock_prot_regs(chg, false);
+> Should early error returns here try to lock the protection again? Something
+> like:
+>
+> +	ret = unlock_prot_regs(chg, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Disable wireless charging input */
+> +	ret = regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_12,
+> +				 MAX77759_CHGR_REG_CHG_CNFG_12_WCINSEL, 0);
+> +	if (ret)
+> +		goto relock;
+> +
+> +	ret = regmap_update_bits(chg->regmap, MAX77759_CHGR_REG_CHG_CNFG_18,
+> +				 MAX77759_CHGR_REG_CHG_CNFG_18_WDTEN, 0);
+> +	if (ret)
+> +		goto relock;
+> +
+> +	return unlock_prot_regs(chg, false);
+> +
+> +relock:
+> +	(void) unlock_prot_regs(chg, false);
+> +	return ret;
+>
+> I guess if one of the regmap_update_bits() failed, then locking the
+> registers might not work either, so I have no strong opinion on
+> adding that.
 
-To better illustrate this with an example. I have 2 entries in the 
-linear range array [ [4, 8], [11, 15] ]. Let's assume I pass a value of "2".
+Nice catch!
 
-Based on my current approach, the call to get_selector_high() would 
-successfully return with `found`=false and a selector value 
-corresponding to "4".
+I need to send a next revision to keep the Linux Test Robot happy. I
+will address this issue in that.
 
-However, if I continued to search, I would end up the selector 
-corresponding to "11". A selector corresponding to "4" is much 
-closer/tighter than "2".
 
-For values higher than the highest value in any range, this would keep 
-iterating and end up returning an -EINVAL.
-
-For in range values this would work as expected.
-
-This implementation assumes that the linear ranges are provided in 
-sorted order, an assumption that I believe already underlies the 
-existing *_low_array() logic.
+>
+> With or without updates:
+>
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+>
+LGTM! Thanks!
 
 
 Regards,
 
 Amit
 
->
->> + *
->> + * Return: 0 on success, -EINVAL if range array is invalid or does 
->> not contain
->> + * range with a value greater or equal to given value
->> + */
->> +int linear_range_get_selector_high_array(const struct linear_range *r,
->> +                     int ranges, unsigned int val,
->> +                     unsigned int *selector, bool *found)
->> +{
->> +    int i;
->> +    int ret;
->> +
->> +    for (i = 0; i < ranges; i++) {
->> +        ret = linear_range_get_selector_high(&r[i], val, selector,
->> +                             found);
->> +        if (!ret)
->> +            return 0;
->> +    }
->> +
->> +    return -EINVAL;
->> +}
->> +EXPORT_SYMBOL_GPL(linear_range_get_selector_high_array);
->> +
->>   /**
->>    * linear_range_get_selector_within - return linear range selector 
->> for value
->>    * @r:        pointer to linear range where selector is looked from
->>
->
->
+> Cheers,
+> Andre'
