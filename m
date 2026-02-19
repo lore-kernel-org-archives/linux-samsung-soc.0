@@ -1,201 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1873335097;
-	Wed, 18 Feb 2026 21:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9672BD01B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 10:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771451964; cv=none; b=MNYXbkS49noA8gWSnhOdZNZdEznlZm0gyBw0jqynMmHHwvSK1Bb4UHe5pmo4i2OT/RioCx4eivOukf2TWBzgBeH7wvzM3wkHb3h5vNFYsMS8nXifoWfhxS2Io3w5zDxH3hYbs0eoVzrTlQG9vJdr0rU1EeV0Zs1nfh7u8FHOD5E=
+	t=1771496187; cv=none; b=KijKikn2LyQNqMXvhF9EK31yqJG28thv/NqlbQe8U0kJ+pqXkhHlMWUKHGTnAgG3IiWSYGnCgsl80KU00eBvODxGG3PBFixEYu8vQr88cuJW3sKdf4cFpKYoFUz2Stilne1LUDk23f2uMmNhYgibg5+I/IC9YVx5FUnUHLUHWZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771451964; c=relaxed/simple;
-	bh=5U7L/WTZmt9SXXIboQvo6iEiAWNT+LVn722PCjM2SoE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mggMmIqQXIH0ss6SDC3WtYc8LzNN7ZGE/uOXcpX8ZehGXsP/obx4UOgd1WnEkJXGPSqDb5gACDzeq94A0ojsHNVtqloDMZoseCYC1Rnh6ia4rzjZ/jN5Ik7v0jOqUzNZ2rvHgC6NLwMjLEyd738mW8mPNEaMt7eDZ56iqUrsHuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1uJsEtO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771496187; c=relaxed/simple;
+	bh=w0okaFhRI38jPOXfvOe7745j7gtMsdJt2nwM9DZt5TA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLfm19a16bxtVFrtgAD4lZ6ByyNRLrQ8qebwhIqEopxZlLQGzdgihXrwgOsqbzcgkgpsExOOjkIjCSrbPvtO+LAXbg4jp6G68BdKClxHQ5kMzg6DbEzIxb1rjKimdzF0opPTHX4HwAHKQ5o4PjIOpKhcgLfLERuzxXXzHb/oDew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6UkpHf7; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1uJsEtO"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A1EF7C2BCB0;
-	Wed, 18 Feb 2026 21:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771451963;
-	bh=5U7L/WTZmt9SXXIboQvo6iEiAWNT+LVn722PCjM2SoE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Z1uJsEtO0EqgdXIukzCGscuT20ArcTKsdxYihd+r/E2X744i49ey9sKa7xEl4WurC
-	 sOwIQNDrHHzH1fdyCh4M/fAHO+CY7UkpEO0rSE/37aPoTrGSDBEGdqRDd8X6/cCCVs
-	 MWz+XwWqH3+kG4Ol6G4r9Uc2thpW8oprWQZZ8PvRLiREZRgSApjBD4eugb4xr9og7r
-	 M5hb4/uOAadw+Le5rdNOOCPoikllsCPTjvqueUhekFZnB+zWS9NdvunV618G0HQD1Z
-	 s/eQyd85pLpXRq+uRP5kLJ6PaOwfWx359Q/0ZyZAKUXuCgohho+0GJB+xXW8Thn0ka
-	 3g1xEGICbawcQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ED1E9A04E;
-	Wed, 18 Feb 2026 21:59:23 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Wed, 18 Feb 2026 21:59:14 +0000
-Subject: [PATCH v7 6/6] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
- setting charger mode
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6UkpHf7"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-436e8758b91so584949f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 02:16:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1771496185; x=1772100985; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AcSCzwxqg7VWiur4dwM2dEy5lv+NIQcB10C1LX2/4m4=;
+        b=n6UkpHf77W0SruUKqA3W4jRm5DrjGtCSIWH7M3IioQs4An+DD9DsS1VM9INOBhbIAK
+         OO78lmnYt3ZcKsZ1An31eCytLquwqM535WxbcvN8qBwuZ8GvqHx/PUwioAzGKU0GwnIF
+         mJajMsmYkLisFB20x64vdKgW73oksxZy5Z5Fzy+ef9sIHb4HbXdXbopaMloDkLDRXu5L
+         wkn/2sIuIH4ZPQOQGnjFXt7iPZOFZ5ZZqit72Nq6MyMR+0eyOtWS+W8ccMHHONuV3G9G
+         sd10WGDqePgOZz9+YnKJmfY2cn6vdnPNqir/S/AgKN1Ea8o8nNK3BPiiVU40k6eu/ljE
+         wSkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771496185; x=1772100985;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AcSCzwxqg7VWiur4dwM2dEy5lv+NIQcB10C1LX2/4m4=;
+        b=p0GJJs7bSfkP/iKTduZEQdhg1sX9ATjfI+x4RMVWrta8wEthZL2YyomL5Y4raeKB2V
+         yHOeM2j7vBSaeKUX8zaup7mqKuOBpSvs5eKmK1L3pb861uh+BSEuLCav4yAZgpLuDZfD
+         Xh9E0GwYxTJe98yqJS6zMc0k/JMc/zy/LZ4TrxOmsD/G206Al1+omn0uethWQmldfj4b
+         0xD65pd0+18mucLwJ7dJvruquARZxHNmjA9kPY/oNmGkWzZFa7hM9ccUtMrsQoYmLabL
+         lp7bJdFf0PPuTWBCqnIs4IAV5FOUF86KhVJl4S57PUXIRM/fMxJ5KIhf20SfUgx/ATyJ
+         c7fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj5/RRQSNvuE6s7LN1wdsyvDgUgF7V9scGeUoRDiPnF+CcMbSsw0eplBqc0mq2E+9kXqKVkd5bhehbB/FU2MV04A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDHafapB1iAw27T/H/GgdVedsqKPQsyA702J4gXhywYg8wLeKb
+	0xVudOmBS9bIHZgsJWE4mrIFqiZ/splc5AKLgc9GY/T0U7SzPF8uPiuuoc1jb5lzhp4=
+X-Gm-Gg: AZuq6aLkZbtPRYlHXPEjBXNwU0f+49J/bCzuRI6EtAXEYzmj6WKySHWSaQDrkWHxMOF
+	A1x6jX/u2YCIT2tlGdL9iK14ikubq0JtrlD+Ks5o6i/AEwBF8I/vFFxNcLr2pSvAY+zSSH8jqRO
+	nODQ+EExshlmJj5JRiBKfnR+8RCsYihnzMz8AZZQxVU47t0z2ma7k8h2TRUDiKGedrS/5sINNsA
+	ucQfjPUfbgZI2seBY+avxL1pkEsSSt1tj93MkI+QXj79SANMb5BjDb1WePNWVV63dx2+3bv8Ecv
+	xuw54W1duRn73eWuIbsi55EUmX+VUmpGcDFf5FB7HDcQX/7Q+u0J6vleOXYMMqXHZm8GX8v4VkG
+	l/DMUK9DtkipiWrGqe/2b0sjwSuuK3sZbZeu+1/ePZ10uxojORxg0W9sfO41yr08sO3LD4PmhNt
+	LXDyNV27Nu6oe/FrqV2iMtbucBfqqZdAHE
+X-Received: by 2002:a05:6000:4305:b0:437:68d5:f167 with SMTP id ffacd0b85a97d-4379db9859fmr33226037f8f.44.1771496184734;
+        Thu, 19 Feb 2026 02:16:24 -0800 (PST)
+Received: from [10.11.12.108] ([79.115.63.134])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439567aad3csm14050703f8f.36.2026.02.19.02.16.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Feb 2026 02:16:24 -0800 (PST)
+Message-ID: <17020b22-6e80-49a2-8890-b16917586b49@linaro.org>
+Date: Thu, 19 Feb 2026 12:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260218-max77759-charger-v7-6-e8d907ce69c5@google.com>
-References: <20260218-max77759-charger-v7-0-e8d907ce69c5@google.com>
-In-Reply-To: <20260218-max77759-charger-v7-0-e8d907ce69c5@google.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Badhri Jagan Sridharan <badhri@google.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
- Amit Sunil Dhamne <amitsd@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1771451962; l=4043;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=uZk9qfSWv4kN+EgweqrzKq0M0KWOUf2Zux+k8glvduw=;
- b=LeyfbPuzzBsNlLUcBhWOWYjV9+YmIEFHOJUKs3FfJS/UY+lAYFSPdVjfZWRgQ+N8tq6KlONMX
- kmdtEnvnyuMAlwAlFnq6YwQCDoGtsaYeBjudIGEQRbV5qgT4pgoQ4MW
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT 1/3] firmware: exynos-acpm: Use unsigned int for
+ acpm_pmic_linux_errmap index
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20260214-firmare-acpm-counted-v1-0-32af5735470e@oss.qualcomm.com>
+ <20260214-firmare-acpm-counted-v1-1-32af5735470e@oss.qualcomm.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260214-firmare-acpm-counted-v1-1-32af5735470e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Amit Sunil Dhamne <amitsd@google.com>
 
-TCPCI maxim driver directly writes to the charger's register space to
-set charger mode depending on the power role. As MAX77759 chg driver
-exists, this WAR is not required.
 
-Instead, use a regulator interface to source vbus when typec is in
-source power mode. In other power modes, this regulator will be turned
-off if active.
+On 2/14/26 2:39 PM, Krzysztof Kozlowski wrote:
+> acpm_pmic_to_linux_err() uses an unsigned integer obtained from messages
+> as index of array to map them to error codes.  Array index cannot be
+> negative, so make that explicit.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/usb/typec/tcpm/tcpci_maxim.h      |  1 +
- drivers/usb/typec/tcpm/tcpci_maxim_core.c | 54 +++++++++++++++++++------------
- 2 files changed, 34 insertions(+), 21 deletions(-)
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
-index b33540a42a953dc6d8197790ee4af3b6f52791ce..b314606eb0f67ddbc80d8760244aa6dee61bebc1 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim.h
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
-@@ -60,6 +60,7 @@ struct max_tcpci_chip {
- 	struct tcpm_port *port;
- 	enum contamiant_state contaminant_state;
- 	bool veto_vconn_swap;
-+	struct regulator *vbus_reg;
- };
- 
- static inline int max_tcpci_read16(struct max_tcpci_chip *chip, unsigned int reg, u16 *val)
-diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-index 19f63865079658fb2a446dc390262d141b940e9a..e9e2405c5ca036e28c307088d4b785726834e71f 100644
---- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-+++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
-@@ -10,6 +10,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/usb/pd.h>
- #include <linux/usb/tcpci.h>
- #include <linux/usb/tcpm.h>
-@@ -35,12 +36,6 @@
-  */
- #define TCPC_RECEIVE_BUFFER_LEN				32
- 
--#define MAX_BUCK_BOOST_SID				0x69
--#define MAX_BUCK_BOOST_OP				0xb9
--#define MAX_BUCK_BOOST_OFF				0
--#define MAX_BUCK_BOOST_SOURCE				0xa
--#define MAX_BUCK_BOOST_SINK				0x5
--
- static const struct regmap_range max_tcpci_tcpci_range[] = {
- 	regmap_reg_range(0x00, 0x95)
- };
-@@ -202,32 +197,49 @@ static void process_rx(struct max_tcpci_chip *chip, u16 status)
- 	tcpm_pd_receive(chip->port, &msg, rx_type);
- }
- 
-+static int get_vbus_regulator_handle(struct max_tcpci_chip *chip)
-+{
-+	if (IS_ERR_OR_NULL(chip->vbus_reg)) {
-+		chip->vbus_reg = devm_regulator_get_exclusive(chip->dev,
-+							      "vbus");
-+		if (IS_ERR_OR_NULL(chip->vbus_reg)) {
-+			dev_err(chip->dev,
-+				"Failed to get vbus regulator handle");
-+			return -ENODEV;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int max_tcpci_set_vbus(struct tcpci *tcpci, struct tcpci_data *tdata, bool source, bool sink)
- {
- 	struct max_tcpci_chip *chip = tdata_to_max_tcpci(tdata);
--	u8 buffer_source[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SOURCE};
--	u8 buffer_sink[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_SINK};
--	u8 buffer_none[2] = {MAX_BUCK_BOOST_OP, MAX_BUCK_BOOST_OFF};
--	struct i2c_client *i2c = chip->client;
- 	int ret;
- 
--	struct i2c_msg msgs[] = {
--		{
--			.addr = MAX_BUCK_BOOST_SID,
--			.flags = i2c->flags & I2C_M_TEN,
--			.len = 2,
--			.buf = source ? buffer_source : sink ? buffer_sink : buffer_none,
--		},
--	};
--
- 	if (source && sink) {
- 		dev_err(chip->dev, "Both source and sink set\n");
- 		return -EINVAL;
- 	}
- 
--	ret = i2c_transfer(i2c->adapter, msgs, 1);
-+	ret = get_vbus_regulator_handle(chip);
-+	if (ret) {
-+		/*
-+		 * Regulator is not necessary for sink only applications. Return
-+		 * success in cases where sink mode is being modified.
-+		 */
-+		return source ? ret : 1;
-+	}
-+
-+	if (source) {
-+		if (!regulator_is_enabled(chip->vbus_reg))
-+			ret = regulator_enable(chip->vbus_reg);
-+	} else {
-+		if (regulator_is_enabled(chip->vbus_reg))
-+			ret = regulator_disable(chip->vbus_reg);
-+	}
- 
--	return  ret < 0 ? ret : 1;
-+	return ret < 0 ? ret : 1;
- }
- 
- static void process_power_status(struct max_tcpci_chip *chip)
-
--- 
-2.53.0.371.g1d285c8824-goog
-
+> ---
+>  drivers/firmware/samsung/exynos-acpm-pmic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+> index 961d7599e422..44265db34ae6 100644
+> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
+> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+> @@ -41,7 +41,7 @@ static const int acpm_pmic_linux_errmap[] = {
+>  	[2] = -EACCES, /* Write register can't be accessed or issues to access it. */
+>  };
+>  
+> -static int acpm_pmic_to_linux_err(int err)
+> +static int acpm_pmic_to_linux_err(unsigned int err)
+>  {
+>  	if (err >= 0 && err < ARRAY_SIZE(acpm_pmic_linux_errmap))
+>  		return acpm_pmic_linux_errmap[err];
+> 
 
