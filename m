@@ -1,178 +1,102 @@
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619C324B1B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 20:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A5B2DAFA4
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Feb 2026 03:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771533544; cv=none; b=p5k61A2jTR9/5B/t8OKdVYD3lqvxETi5/evTEQDHSBJeWYmYmWiXLtnYKmSfcU4aNLHBhGZA/Z8c36+UErKWM4eMtZi4J/l6fasdAVMT6EzoNXn1MMR3cIekh1V3zXidXX+EvMFXqcWgVtDhyar9XmogeZiS/KELWCjWqeVXTsI=
+	t=1771558556; cv=none; b=j/BQkXf9c3GYqWPfVBr8iIUwGPLX0eVsDYLEqpRaam58vdKkVxEEAO47S/pPCP0EVJah7PtOULl1wOeBJh6DxqeACEphrPYs5Sckz/4TDWh+EMP12m9la5XbaJqWFa1O/fHwtMpfdixvr7JDyKKYXHe1a4TCmw8ca54NcGntwfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771533544; c=relaxed/simple;
-	bh=+8WdIeayvQwTa1EO0ctLm8O+l21nYzdUf7o4bczyCAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DH4MBt2gLmb7muO4b0Jg/ef9/T2oP6kQ8I5r3yyx5WX7MPl27s25Ff/Ax6R02T43x8C7tVk+bQIJafmS9NR4W0JYTqHPzO9dU5gxZJNM2h8wW+FLdKaMY/3Oy+nS19iSIAq7hrVD03lAJggHmrRzN+n/L6aMS3Cdqh0myMPx1Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5smHirx; arc=none smtp.client-ip=74.125.82.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1771558556; c=relaxed/simple;
+	bh=u7qtzELmU0xOUlRYfq6pmRVDkEceHJiG781cdFj6Mmc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QBxULmhkNuqbqqoahL/XlagMw3UBEUzHlGEKkbIY40DDJBNkujvn0eVHM9TH0jqyPTuniDvX9wbKstBE4E8leF0iM3PV/aZ39yQ+HTRfxK3+sODv3LwIBc/KJtbxLfBanu9akkYRZjbJ0OHOtRZLtlV0EnfvMn1JFLdV7hFRbpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZvGhKYG; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5smHirx"
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-2baa098ffc6so1285108eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 12:39:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZvGhKYG"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2a91215c158so11415415ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 19:35:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771533542; x=1772138342; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SI/A7iNXCicM0eX7PESju9pA0T4gNBVRW7g2h/AnymA=;
-        b=V5smHirx/j0NvvcbaYqORRLcRESItsM/vtuSDTRrrSoczn0CRNE6ZTCY6evAwGfnAE
-         iiJRCptNclwdWCN6pHCo6VWu8LhC9sDERKGhghvt+LeDGclNmjmgeAgS036Pq1cUJUMK
-         dIzbGmWx+LDUrvkxgTjsPR7gbcVabsaJl8OpWKTsYUYNtAq03hwew6bjyjlGlI2UkxyX
-         tTlitqIHHv3oHyZYcSQKSRSDT7aSt7jIuLkcJCU/WnwJngzL4hN3DP1WDXeRwMY4c90s
-         rBqyQR/SzjQZC4/7ND+6AseYNIynUaV3kTtzGu5eJJyLSp2XKowA8I3n1u/AFk/vcAeb
-         zw0g==
+        d=gmail.com; s=20230601; t=1771558555; x=1772163355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9RtH3VDdHvCGowWw21cotg2dMzVihzJvU6s07yH8n4=;
+        b=fZvGhKYGSnES7v0nmEJblKj17+c7Z5b44xuBiUQ8cB/SHTl+jw0bOHH7FytkKv/ACY
+         NZ7XIHEchhpzMlGFMWViLpV5ddi8ZvTdtOrvnZ8gWBjRuBksiXmBrc+gvVBmtKZXMSjG
+         tLJaRTJ2xmUHkY+wJELoG7h/bMcK4dzYCSLNebBagORXTmtDGX1x9kgRoOvtUaSM18AI
+         zK7wu71/mOWi0wGQY8AYS9fkpXIohvOr9ugqCC46FARpJJR2JL4P5JqDO5rKtzgpaQee
+         HLaj6L7yL8yT67eTCdZr20gYh1IkVCN7lpDvoj8jCIlN55jj6ohqrI7GPdffLhEr4AXR
+         WH/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771533542; x=1772138342;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SI/A7iNXCicM0eX7PESju9pA0T4gNBVRW7g2h/AnymA=;
-        b=qEXcX7J1ti8T88yTKJeqLiBe4lSFFjcDfPAvS99MYvqJ1uOhEv/w3Ql4jSyAygVjOB
-         w2BsVRSuuBGKsVoPLhMQjozCkfTokUSMgHeB7mhbUGDsmjJ/+/vDWPN+K+PBY8aaF2aI
-         GvuafRXwXF1PDK5N4x9S+oKOFC9r5exq5NIeFfs638PWIhI3VGszqypzPLi1iyh19cg/
-         DARXNbzkoB6/T5zEhZbmhszywDKYkQ5ysRrZ3T613hEKu0vHIVbuIwSFjXz415JE3d7q
-         QRkRU3/827WRRnci4OatP29+i/JT90ObFl2O6lwSgljoBq6RbNhDWT/0mUTBhyjEKvv5
-         NUUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+u0uI4wz0oQBndmXjaj0LKKQ9wdB5ye4v5z1Tq7uMUctnA8a2vgd0XVVZ8TaRqvdmcOJBoBmgC7P7yEu3Xo1HYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPp+easKIXTrkwyiSoEL/BENXZVdP0ty4qCvYHTw6HdiJvU6x9
-	gI//ZqhC6SuvTkvlBRet+9euViZoUG0rX0gfQ4DD4tyviiRNdlpAhjWeIfF6CzgezA==
-X-Gm-Gg: AZuq6aLCkU4Ll+97468CoAv52DaljgpDO4K94ntKxa/AS9CmtxGeuV2kigc9K39hKKO
-	X9dkC9y+KWJJhUP2Ivpdb2TsSFGzkg8jTdWe/oy/0ceGwKibzE+w7UAKqPiIyA5qrDzrIiaMJtJ
-	gfYS91QMo8tdSp2/e8oqc+vcu6TH0xs20PpAM7sdCiU5CGY8gOo4Xysv4G9ClB2Xvqjt8yooSmS
-	8a+TY6QQjU0ho3jgn7WvrTpOfNCUdDeEjpyyZ3N5PtalrxZWFH6QJbhDmLputLFTjaLdXcRmzfc
-	273cugAoUFc2uCKnYnbSmlF/KkmwYRuT3PJFO7xh4s1rp4Mp4IDrpdRR8jQvryE9E44RtaYjxuu
-	u/DAS0x3jv6RQk7ue0iqWw9AIUrJLJuWen3iwlZAyW9PcX/vVr1I8xgF8ALn6iFllTY6uMRJIKR
-	0fW3YNPmuZWgYhUaXkk53FdmP6ZRdUy42ORG1lvYqhO6y/ggkT5NHicCV8fBRDaubuETPykXeYL
-	6ntc0Ns2PCGKrCafqPYKawj0A==
-X-Received: by 2002:a05:7300:cb15:b0:2b0:48f7:837d with SMTP id 5a478bee46e88-2baba03cffcmr6411860eec.11.1771533541615;
-        Thu, 19 Feb 2026 12:39:01 -0800 (PST)
-Received: from ?IPV6:2a00:79e0:2e7c:8:748f:1ebc:e491:46c0? ([2a00:79e0:2e7c:8:748f:1ebc:e491:46c0])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bacb658544sm24546429eec.17.2026.02.19.12.39.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Feb 2026 12:39:01 -0800 (PST)
-Message-ID: <5bcc02b3-2785-4fc4-ab58-2dd94ea7b00a@google.com>
-Date: Thu, 19 Feb 2026 12:38:59 -0800
+        d=1e100.net; s=20230601; t=1771558555; x=1772163355;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U9RtH3VDdHvCGowWw21cotg2dMzVihzJvU6s07yH8n4=;
+        b=FK7edjn/wNSRUGp4MLsOtn5wklmLLgBSMwSCdFa3v2YvK0EGlr633iIaUIMgk0UKEe
+         bI/yglADYbp//7hp8o+ZrmgZmzPq6AV+YHDYVRVid2s39uXNZWyNBf0NGBSrN4BWVUj2
+         TvaHJMDXHQQU9ckwhN7zOslIX86203FyO7ZalrZM0+EovyGfIX2QDAa1B7zF6pomAdle
+         1IxW5IErOriG1KPf6WrhIGOlepUCOHdn6GF1j/rcUjIrXUK8YNXeu8kfWPXHo9m5QLhN
+         Q/6OsNQgp/NBGEF4iNSiit8RX0WjfFGnSezHKEWnivoZ1/45k9+tAEl+uNqFexyFzpE1
+         OVAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD6oCu1zebMFAVDVzpdNDtAvRrsxsCx3GDZJ17zZQaS8J4NTGfAxqJkj7W4oxo3VwRkKZcPKExiK3zPn9ImeGZjQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/y31tSc/3yWDZn9k4262wSGem08l+3SZXCxULymeltUaL3HER
+	3VZkwuEliwx+lnXHCjWI905UwLYSlVy7QCo7mNtDEATW9gRW1III39uj
+X-Gm-Gg: AZuq6aJunXI27Y6KhL6dKJ+rSvKbYo332pldGXVr6t/wBIUNbnZhb9juDOvEpbvpjLi
+	s+DF4BT0lvnmJSVFpV4Ao389G59iI2e3soe35swmgYBgz56KGa5ZnZoqD660PUzJkbOU961ypMf
+	83Xt31bssf93IV0w7ncJMWNmW7gaY5PCfSqUGvq9fCZ2i1YruaB0wp5ZfOVqPzL5emTOXtTNyNC
+	l4Z/Hv7m+U4GNpxqhuJhLJOVBeoEMYonX+DsBLAjPZ+y7YCxahmnxTnLojrla2aRsYX20+YhJyJ
+	vK/F5OOz7r0H0bVVd/QH6EnO5vMsr+78pBigK3TwuyzzW+gWC1zFekO0NVb8AWlNlA4L4nwmjaX
+	erbQVzXGzFLjCaJbOhDMayjp7x7fhUA6/5CPuGZWrmVQqxofwHwsDULkQ7VkTF/wCM1WkdReUXA
+	2U69w3ue1Z2Vbx9APVe0Pklj8owTZV5QcNscJDCjY7EuQfEQ0dpiioFCFRDrTS
+X-Received: by 2002:a17:903:2a8f:b0:2aa:e285:f249 with SMTP id d9443c01a7336-2ad50e757a5mr67786975ad.1.1771558554897;
+        Thu, 19 Feb 2026 19:35:54 -0800 (PST)
+Received: from name2965-Precision-7820-Tower.. ([121.185.236.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a9d5cf8sm177143675ad.52.2026.02.19.19.35.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Feb 2026 19:35:54 -0800 (PST)
+From: Jeongjun Park <aha310510@gmail.com>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH 6.19.y 6.18.y 0/2] drm/exynos: vidi: fix various memory corruption bugs
+Date: Fri, 20 Feb 2026 12:35:48 +0900
+Message-Id: <20260220033550.124346-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/6] power: supply: max77759: add charger driver
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-References: <20260218-max77759-charger-v7-0-e8d907ce69c5@google.com>
- <20260218-max77759-charger-v7-5-e8d907ce69c5@google.com>
- <f46fa180198ec103aeb1e1c06286c6a2a0fb8b7f.camel@linaro.org>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <f46fa180198ec103aeb1e1c06286c6a2a0fb8b7f.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Andre',
+This backport patch should have been backported along with commit 52b330799e2d
+("drm/exynos: vidi: use ctx->lock to protect struct vidi_context member
+variables related to memory alloc/free"), but was written separately because
+some commits were missing.
 
-On 2/19/26 7:52 AM, André Draszik wrote:
-> Hi Amit,
->
-> I was trying out your series and noticed a few things that I didn't before:
->
-> On Wed, 2026-02-18 at 21:59 +0000, Amit Sunil Dhamne via B4 Relay wrote:
->
-> [...]
->
->> diff --git a/drivers/power/supply/max77759_charger.c b/drivers/power/supply/max77759_charger.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..035f16822d85de94c7707ce11c49345c714cd559
->> --- /dev/null
->> +++ b/drivers/power/supply/max77759_charger.c
-> [...]
->
->> +		dev_err(chg->dev, "Invalid mode transition from %d to %d",
->> +			chg->mode, mode);
-> All your format strings are missing the final \n throughout this patch.
+https://lore.kernel.org/all/20260119082553.195181-1-aha310510@gmail.com/
 
-Sorry will fix. I think this is because of my muscle memory from writing 
-`tcpm_log` (which doesn't require an escape character).
+After this patch is backported, we plan to write additional patches to
+backport to the remaining longterm kernels.
 
+Jeongjun Park (2):
+  drm/exynos: vidi: use priv->vidi_dev for ctx lookup in vidi_connection_ioctl()
+  drm/exynos: vidi: fix to avoid directly dereferencing user pointer
 
->
-> [...]
->
->> +static int max77759_charger_probe(struct platform_device *pdev)
->> +{
->> +	struct regulator_config chgin_otg_reg_cfg;
->> +	struct power_supply_config psy_cfg;
->> +	struct device *dev = &pdev->dev;
->> +	struct max77759_charger *chg;
->> +	int ret;
->> +
->> +	device_set_of_node_from_dev(dev, dev->parent);
->> +	chg = devm_kzalloc(dev, sizeof(*chg), GFP_KERNEL);
->> +	if (!chg)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, chg);
->> +	chg->dev = dev;
->> +	chg->regmap = dev_get_regmap(dev->parent, "charger");
->> +	if (!chg->regmap)
->> +		return dev_err_probe(dev, -ENODEV, "Missing regmap");
->> +
->> +	ret = devm_mutex_init(dev, &chg->lock);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to initialize lock");
->> +
->> +	ret = devm_mutex_init(dev, &chg->retry_lock);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Failed to initialize retry_lock");
->> +
->> +	psy_cfg.fwnode = dev_fwnode(dev);
->> +	psy_cfg.drv_data = chg;
->> +	chg->psy = devm_power_supply_register(dev, &max77759_charger_desc,
->> +					      &psy_cfg);
->> +	if (IS_ERR(chg->psy))
->> +		return dev_err_probe(dev, -EPROBE_DEFER,
->> +				     "Failed to register psy, ret=%ld",
->> +				     PTR_ERR(chg->psy));
-> Why are you returning -EPROBE_DEFER here instead of the original error? This
-> is quite unusual.
-
-Will fix. The original thought was that the 
-power_supply_check_supplies() (run as part of power_supply_register()) 
-wasn't deferring probe if it didn't find its provider device but I was 
-mistaken.
-
-
-Regards,
-
-Amit
-
->
-> Cheers,
-> Andre'
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 36 +++++++++++++++++++++++++++++++-----
+ 2 files changed, 32 insertions(+), 5 deletions(-)
