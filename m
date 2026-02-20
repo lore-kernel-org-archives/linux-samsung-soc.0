@@ -1,142 +1,128 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7572DCF58
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Feb 2026 03:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37E42EA169
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Feb 2026 16:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771558563; cv=none; b=inLttiXos/f5bR8VoD7EL0EaS4ldw+8hSUFClHfx4TlB/ljzVH+iSAtblEgNnJatXjCezwN4J3CaGZZ3f84JyCP4kqme/iwQnUm1q8roHhMwCdhRvm1+LS3ZlUjyT8TTBqfQo7lV0n+m6Py/g3eISJE6vyb5+fCff3wFblsK5AQ=
+	t=1771606587; cv=none; b=I199F8ceik1kKwkAkOe7QgBHJlFQMGBVgcF0ChTWP9ZplT33UzSeCUzOn3YIvwn127iJwghIFh+xNqDlhuZhA/0978+GeGd+5cWg8pK34UMJ2O6Rw15I0fskxxTZx991TYToqFATAYUAFgridvTxGk4Uuc7SQ8U26OTiwvNhL5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771558563; c=relaxed/simple;
-	bh=14tp/ZbiHhc9fo6I3d3q5B/zYDGp7+QSAvy5xrmzM58=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HMHEjC18z73Q7sG75Wmc/6xxjm8aRfin8P2fLTJA0Rn+3jQBSfQN0fIZ8LtHW0CThPdRJa1UWVA9mRxuaWbndA6EATtIWDy+Iy6lmgdO2E/F1BZfvyrHsr2yrpi1tMi8W1OvX78MrXeRVqxImyN9s8A4SPue7DWlJEBmaEMmDgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kg0gSW/M; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1771606587; c=relaxed/simple;
+	bh=8D9Y1XXC2qdEK5lv2ngWbb8ZY8WcwD0gpYfssancm0A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WfyP1V3Q6q7vXfDoR4to/tNSB6PS7YdQxxDNFLgNAuMmivNWF0YudmAbXeJIhy/DIPCs3B+CTkZ23t83ejHS/CYj/7Dq0VkEN949jIkkT3/+El/d0z/p1hbmd5+YZGp0bC8N8ZqWtK6iMxyI1Ts5zgBHPmt2WLGNvLAQNH/4w5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=Wl8EkULE; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kg0gSW/M"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c6f306faaffso647873a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Feb 2026 19:36:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771558561; x=1772163361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3SNYtFmJqSV95moRlaJ0QYmUhL+TICukmgmBhi3zA4c=;
-        b=kg0gSW/MXrjrrzq9iQGnNOuOjnn29PekJPPoWL1aoMTMyzkREyf8YthxbKs6phcxHx
-         DBNiXnmIaNuAhr1z+9Ui4sKwHQWeePTgPfU6RdEVp+nPL0K0AZ8+ll9lLOcjDDLFMGnf
-         n9dcA0XqdICkJ/gH0XVKE9G779SwyJBcai8UiWa51z041IfXKhlAgFvTtK5lG6Bzoq8L
-         y7lHU1kMWBg/joEkYn+vLOu8xPEyNvppe+p+WSDVvqmjkODxKTM69ybb8gO541vKYzqL
-         PgB2JrS+UnVFCzs8K3oMT0+IUbKsLECJIZVN9AA3+sZfSaBl+DEA5rONAX9FfbULqoU0
-         eg3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771558561; x=1772163361;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3SNYtFmJqSV95moRlaJ0QYmUhL+TICukmgmBhi3zA4c=;
-        b=dKQl4IzZKBy2bTelQISR/+8PZhopOtJRhEVVKBIZIpPUQvyAxgerbMj12nKAQUyc0g
-         JKLU+snpLDLZd8eyPmcClfQ/Ceq8NCXEXP6xmtiVrVLt2xJsZXKaOTNkL9FfKGwZMKkS
-         rR/KX7YWDYCCYY8e1j3bTTvZAtlXzFqlNxy5xtO2si0wh0XsmJR5VqGEOickTwSOv/bo
-         yVtMRjGgjTAnFSDHIHB4RdzV4qxEqpY/A8o3KMTJvMc9BRRb73gSxJeP/QmphF9chNot
-         Jz5YWtrqGkiA+vH2m0HDsFIFZG9WmMJYU5QPVVflFCP9iWwQwEenUg1KNEByhOQ48CpU
-         IcWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6tpfatvEvsIjCMMmWxR/glvaFOzDqb7B0IzuTlhmj50TiQlbtavCxuM3ctD/Z6wcda8EP7+AprKqs5o8OU5qpqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl8az34H/i/9ygtrCi4p4NwZnRP7xsRxRW0ZweW+6yKTElm/O/
-	S7g8cEsxOYbvZtOna7Tf4q4r5dzssWIketFMjEliAtChMc7ofDM/o/PC
-X-Gm-Gg: AZuq6aJADwIYHR3FTFbgo+WS0JSafi3dsCK1hHZxiH5rvs+lWYXmqHUKqfa3U8nFEUo
-	yS9KuezD+sWVxE8kiky0GuP6N+xaUOYFDsYMX2cEDmt7R9WrNkN55IyMSB3ol2qQbCEyg6ZQlBh
-	WI21KYJEtbjfR/65Vg81l8cN0lc6suU2/GEQmKNqWgdMC+NtNpHoTvGgvUe/Q7/KOzhfHdoQJwV
-	o9lIEmY2MrROWzNlK4XdVhmmUwn5Re3Ld5xoHq8AHrJb37GrFNdBCUVbf79Cta3ZUhDL6AfwEmc
-	CaYwUN9/Cx/OuUIz3bj34bXDQU3DQSfOIqQa8mwhmNCrw/hdqLsqCBFnKt9FlPtifp45c1Ua3Y3
-	vIi0oChRNFUiwvuLj3EWibzr64rC0Gj1fwMFpHwDj8KobdAdIZQL9KzEAR0eaVMRfroRY1OXVri
-	6cWZgAIydqMNtNgnsv3MiTChbGRoduo3AzuB/S5VkJC/JPejNZrvGfwYbidGTF
-X-Received: by 2002:a17:902:da8d:b0:2a7:80ac:85b0 with SMTP id d9443c01a7336-2ad17431c2bmr182977825ad.2.1771558561498;
-        Thu, 19 Feb 2026 19:36:01 -0800 (PST)
-Received: from name2965-Precision-7820-Tower.. ([121.185.236.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a9d5cf8sm177143675ad.52.2026.02.19.19.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Feb 2026 19:36:01 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH 6.19.y 6.18.y 2/2] drm/exynos: vidi: fix to avoid directly dereferencing user pointer
-Date: Fri, 20 Feb 2026 12:35:50 +0900
-Message-Id: <20260220033550.124346-3-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260220033550.124346-1-aha310510@gmail.com>
-References: <20260220033550.124346-1-aha310510@gmail.com>
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="Wl8EkULE"
+Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 5DA0B6E86D9;
+	Fri, 20 Feb 2026 17:56:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1771606584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J0lld6vPE30NQltxwTbPT1iVmbe7L/OOthusNPaOsLo=;
+	b=Wl8EkULECxUNWFwP0xk/j1XeHstIdG7Zvpg4HpIoQyf8y/2LFS6WWIY0KlWnGY3YXlPUAP
+	ESbwKUfHUVIJRKVBlqZYUrIpDnnMnSvhnKZS1KMV5imA7mmM9Jat9yGzRXNhEjU212VEEc
+	1CPlZ19uDBa8naXSKQ/AATLbodr8NKksYlWPEHEa0DNdbUcWIu8lBJlsrF7GvhbCtpo5Dc
+	5pbNtFyrGpWnja5OmpOUDh1dEDrqHX9O8kmjIudTc88NB7118VifEtgp1mH+LuqTZIgjHK
+	gYe2a0ru+srsKHnx287wEHeiGi+C1LRxCsBQJVyCY4+K9QsnXd/EkWZOACJdmw==
+Message-ID: <4cf24e281fac45637fedf40944d8b5230c0e22d9.camel@svanheule.net>
+Subject: Re: [PATCH v2 06/12] mfd: sec: add support for S2MU005 PMIC
+From: Sander Vanheule <sander@svanheule.net>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,  =?ISO-8859-1?Q?Andr=E9?=
+ Draszik	 <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>, Pavel
+ Machek	 <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ MyungJoo Ham	 <myungjoo.ham@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Alexandre Belloni	
+ <alexandre.belloni@bootlin.com>, Jonathan Corbet <corbet@lwn.net>, Shuah
+ Khan	 <skhan@linuxfoundation.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Date: Fri, 20 Feb 2026 17:56:22 +0100
+In-Reply-To: <DG74Y3QSCLIO.32Q8ZKCTISXXB@disroot.org>
+References: <20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org>
+	 <20260126-s2mu005-pmic-v2-6-78f1a75f547a@disroot.org>
+	 <69e2c1b1a2f3d2ed5e5da995cc5ee49bb3627597.camel@linaro.org>
+	 <DG74Y3QSCLIO.32Q8ZKCTISXXB@disroot.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-[ Upstream commit d4c98c077c7fb2dfdece7d605e694b5ea2665085 ]
+Hi,
 
-In vidi_connection_ioctl(), vidi->edid(user pointer) is directly
-dereferenced in the kernel.
+On Thu, 2026-02-05 at 21:02 +0530, Kaustabh Chakraborty wrote:
+> On 2026-02-04 15:23 +00:00, Andr=C3=A9 Draszik wrote:
+> > On Mon, 2026-01-26 at 00:37 +0530, Kaustabh Chakraborty wrote:
+> > > +static const struct regmap_config s2mu005_regmap_config =3D {
+> > > +	.reg_bits =3D 8,
+> > > +	.val_bits =3D 8,
+> > > +};
+> >=20
+> > No cache? And what is the .max_register value?
+> >=20
+>=20
+> This was in the previous revision, but I ended up removing it because
+> (at least I thought at that time) interfered with interrupts firing in
+> some way. The actual issue was unrelated, so I will add it back.
+>=20
+> However, there is also another thing I see in logs:
+>=20
+> sec-pmic-i2c 2-003d: using zero-initialized flat cache, this may cause
+> unexpected behavior
+>=20
+> This is due to REGCACHE_FLAT, I am not sure if I should just ignore
+> this.
 
-This allows arbitrary kernel memory access from the user space, so instead
-of directly accessing the user pointer in the kernel, we should modify it
-to copy edid to kernel memory using copy_from_user() and use it.
+Sorry to be late to the party, but I'm somewhat responsible for that warnin=
+g, so
+allow me to chime in :-)
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+What you are might have been seeing is REGCACHE_FLAT giving you "cached" va=
+lues
+of 0x0, while the hardware actually has something else. This can cause omit=
+ted
+writes, existing (bootloader) config to overwritten, etc.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 1fe297d512e7..601406b640c7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -251,13 +251,27 @@ int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
- 
- 	if (vidi->connection) {
- 		const struct drm_edid *drm_edid;
--		const struct edid *raw_edid;
-+		const void __user *edid_userptr = u64_to_user_ptr(vidi->edid);
-+		void *edid_buf;
-+		struct edid hdr;
- 		size_t size;
- 
--		raw_edid = (const struct edid *)(unsigned long)vidi->edid;
--		size = (raw_edid->extensions + 1) * EDID_LENGTH;
-+		if (copy_from_user(&hdr, edid_userptr, sizeof(hdr)))
-+			return -EFAULT;
- 
--		drm_edid = drm_edid_alloc(raw_edid, size);
-+		size = (hdr.extensions + 1) * EDID_LENGTH;
-+
-+		edid_buf = kmalloc(size, GFP_KERNEL);
-+		if (!edid_buf)
-+			return -ENOMEM;
-+
-+		if (copy_from_user(edid_buf, edid_userptr, size)) {
-+			kfree(edid_buf);
-+			return -EFAULT;
-+		}
-+
-+		drm_edid = drm_edid_alloc(edid_buf, size);
-+		kfree(edid_buf);
- 		if (!drm_edid)
- 			return -ENOMEM;
- 
---
+As Andr=C3=A9 suggested, using .num_reg_defaults_raw is a possibility, but =
+then you
+have to remember that the register defaults are taken to be what the hardwa=
+re
+state is at that moment, including pre-probe changes. These defaults are us=
+ed to
+seed the cache (so far, so good), but this may break the contract of
+regmap_sync() if you ever want to use that after actually resetting the PMI=
+C.
+
+If you want to use the flat cache, I would suggest you use REGCACHE_FLAT_S,
+which will track what has already been read from/written to hardware. You w=
+ill
+also need to specifiy .max_register.
+
+I see the other regmap_config-s in this driver also use REGCACHE_FLAT, so y=
+ou
+may want to consider switching those over as well if these are also showing=
+ the
+new warning.
+
+
+Best,
+Sander
