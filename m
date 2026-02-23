@@ -1,79 +1,87 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA972F12D4;
-	Mon, 23 Feb 2026 15:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29132727FC;
+	Mon, 23 Feb 2026 17:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771861254; cv=none; b=IvSVGd4uEpMWOQJ5MEzw4txE4MbyIMqFsYnynIFpjffbcnhAI/LJScXG/GmOGObfm6PU9j4bqXYpLxGqNriAZN289mmjVAH7mTm2l7GnfcAJl5ynIdEiEt26Uhc8wBPfMX1yS8KcUNaja9yl8EHZ6KBLELCz5KMNpMEdLBL/bZ8=
+	t=1771866348; cv=none; b=CK45ZuJlZceGnO289hagjrVMmRp3r3db1cP/m0wqMLEexScSXLwwOLxwE15P+y+5iP9fxODMdcjLZ1Tm1B9v3d81FXKgeBgmuK97H9xXVaLzBtsnQPs4e0wOL0k5d1BqJt6/7BLmHRDjVkjiRxj65ZLTMZW9fLFGmc7Q4HqzOf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771861254; c=relaxed/simple;
-	bh=/1NaQHJmVGU1g0v75CluKA7ItCVEBbvmW+UborRK4Ww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BBhjK04H2CEt2d2m37UhEDrk5cRJzRd8oNZaVfLYpc9qyNJh0N9TsEdlsKjHpZSMsc+P8nY7W3lRCFt9spaw/RcJedqKtn7QZQuCSvRXG2Nj+oR3pYW4LxLVzqH/plyIfKtO/Oo1Ly3IyZXF2Lf381yQQ+AaXn4zuC8jIrYKklQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4fKQ6h0Cyhz9vGR;
-	Mon, 23 Feb 2026 16:40:44 +0100 (CET)
-From: Lukas Timmermann <linux@timmermann.space>
-Date: Mon, 23 Feb 2026 16:40:28 +0100
-Subject: [PATCH RESEND v4 3/3] ARM: samsung: exynos5250: Allow CPU1 to boot
+	s=arc-20240116; t=1771866348; c=relaxed/simple;
+	bh=LVFzllSloWoOaF21bDE/8kEXnUUxiA/Ig/7YIS6Bvlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OPMDr6VCiqIuP1KV5cHzwyiXkFkA5jt4Vwyf5O5R4yLcxixC3sSVy4nliTXEEp0+EXH2sZsFH2Ej+3LxiUPcwnyyMIHnQziED2k1IvtpFid39tjlfD1+PegJ4Anh/TqN8AoIh+D1XEBBXHER31gxiajgqyPpngmvNQhQQMyyojQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PesqEyqR; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PesqEyqR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4310BC116D0;
+	Mon, 23 Feb 2026 17:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1771866347;
+	bh=LVFzllSloWoOaF21bDE/8kEXnUUxiA/Ig/7YIS6Bvlw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PesqEyqRg+siu8i4WJqokKfppcs3B6vrvvTYnp2IohSwb5sdovPCH5tghmE4SvGUR
+	 0yXwKHyZ3/5ccqzQhm7AtE/H/SsbQv5Zf8IuFWdrM1PQQCkkHjPnkhGuUe3bIvz0Ob
+	 WI3llk7u8WUoosEb311o5gtZle05+GJ6gZsHOJs8=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	stable <stable@kernel.org>
+Subject: [PATCH] i2c: s3c24xx: check the size of the SMBUS message before using it
+Date: Mon, 23 Feb 2026 18:05:15 +0100
+Message-ID: <2026022314-rely-scrubbed-4839@gregkh>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260223-lat3st-staging-v4-3-219638defb01@timmermann.space>
-References: <20260223-lat3st-staging-v4-0-219638defb01@timmermann.space>
-In-Reply-To: <20260223-lat3st-staging-v4-0-219638defb01@timmermann.space>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- phone-devel@vger.kernel.org, Lukas Timmermann <linux@timmermann.space>, 
- Alexandre Marquet <tb@a-marquet.fr>, Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1434; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=LVFzllSloWoOaF21bDE/8kEXnUUxiA/Ig/7YIS6Bvlw=; b=owGbwMvMwCRo6H6F97bub03G02pJDJlzOk6pGV9pq+u8vc0l4qbNkTRxUUX/DD0HubIH0nda/ DJFlP90xLIwCDIxyIopsnzZxnN0f8UhRS9D29Mwc1iZQIYwcHEKwESeNzLMj56/N3D7vyPTy81u uTdOlpzus92/j2HBEjWTv3b6phLbplvPFD/Zv1BV4QYzAA==
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-From: Alexandre Marquet <tb@a-marquet.fr>
+The first byte of an i2c SMBUS message is the size, and it should be
+verified to ensure that it is in the range of 0..I2C_SMBUS_BLOCK_MAX
+before processing it.
 
-The firmware trustzone needs a special call to bring up the secondary
-cpu core on the Manta board. This seems to be not needed on other
-exynos5 boards and comes down to the available firmware on
-a particular board.
+This is the same logic that was added in commit a6e04f05ce0b ("i2c:
+tegra: check msg length in SMBUS block read") to the i2c tegra driver.
 
-Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
-Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>
+Cc: stable <stable@kernel.org>
+Assisted-by: gkh_clanker_2000
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-exynos/firmware.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index a5e22678e27b..e9b0ed07bb90 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -61,10 +61,10 @@ static int exynos_cpu_boot(int cpu)
- 	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
- 	 * because Exynos3250 removes WFE in secure mode.
- 	 *
--	 * On Exynos5 devices the call is ignored by trustzone firmware.
-+	 * On most Exynos5 devices the call is ignored by trustzone firmware.
- 	 */
- 	if (!soc_is_exynos4210() && !soc_is_exynos4212() &&
--	    !soc_is_exynos4412())
-+	    !soc_is_exynos4412() && !of_machine_is_compatible("google,manta"))
- 		return 0;
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 8138f5ef40f0..15e14a6fe6dc 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -503,8 +503,13 @@ static void i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
+ 		i2c->msg->buf[i2c->msg_ptr++] = byte;
  
- 	/*
-
+ 		/* Add actual length to read for smbus block read */
+-		if (i2c->msg->flags & I2C_M_RECV_LEN && i2c->msg->len == 1)
++		if (i2c->msg->flags & I2C_M_RECV_LEN && i2c->msg->len == 1) {
++			if (byte == 0 || byte > I2C_SMBUS_BLOCK_MAX) {
++				s3c24xx_i2c_stop(i2c, -EPROTO);
++				break;
++			}
+ 			i2c->msg->len += byte;
++		}
+  prepare_read:
+ 		if (is_msglast(i2c)) {
+ 			/* last byte of buffer */
 -- 
 2.53.0
 
