@@ -1,333 +1,157 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-dl1-f66.google.com (mail-dl1-f66.google.com [74.125.82.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1333ACA42;
-	Tue, 24 Feb 2026 19:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2C33B6ED
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Feb 2026 21:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771960612; cv=none; b=LMhCFRFpi5tIkT2yCduHtSL/k+/MvdCezpm5JRADmTRSUGAN0OZtu9o65BmUikVKmRqQCmk0veDKvZ5EFtD0m8oHbNJIc5K11sXylSQyCyPgkdS3S2sBXfEi+GqcN6ZraC6cfGAAglmLw2R82hV5D6E5KoRoValbK1g9U/JOUhY=
+	t=1771968530; cv=none; b=OmnUGCkBOVOAR9+Xn4d1kwZtbMHBsRBtu0UJNAqJ9cmlUpGGDqZheXYrS8cBj2BjyTkSJmsZHVCT9ETQ7sQJSwtyxxHisJHjgI8diGRPwrnfmnrfcGtoqGSbFVspckoNywcEI7YM42y6eerMtYXjq95vJEyYaXPU1/xbVzv88Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771960612; c=relaxed/simple;
-	bh=eUwB1Jan41bDQ5eE7wi0+KgVhna1qKY10VE1yGICQVI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ka7mfFAEPiRb+8uMB3Anqw5/PYEcOfRFGEyT4zxO8odiTAYuy2OukXiTWJH6Mp2/8CvqGBTjkWYAWOivIilPZnH7p+pqr74Rub79cSFi0ngkuF+0c2r86J+W44QvD6820UoNDHbQgGvtO7u6fKM04cpF6SG8p+9hwschUvuoK7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Oqzfwme4; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1771968530; c=relaxed/simple;
+	bh=htTvdtaSYWfRahiauDhevYDzpS+gGQW68oZKpwXdYA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GxZjS0/DW/8ky9E8gO2sO1QGMv2FTbt9r392HRlkDKTSUvVcw0AZL9rQ43U4hdaQZw9wgUoEym99PsEQA/XRZLq83KrewuDZhoys5Xgt1BJSVhET1zcZeHyF4CoZzqWa7gNWRS652mTuQqUoj9rzx/1f8ZJMa8X2963yqfwSW58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3CBYaaxe; arc=none smtp.client-ip=74.125.82.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Oqzfwme4"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 16B69262AA;
-	Tue, 24 Feb 2026 20:16:49 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id b2kp0Hw9a_T8; Tue, 24 Feb 2026 20:16:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1771960608; bh=eUwB1Jan41bDQ5eE7wi0+KgVhna1qKY10VE1yGICQVI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Oqzfwme4pPHcZ/n/VaR51MBEmiJGOxrF0rqTAnetqQO7CMPeYbn3GAkjyIXW9tLIm
-	 1d+jgl72aOg2o9NJgxyQ/WuFiwbT4ZxXd6/p2IsoYyVgeGv3Y7joduHqmKn1TWz3vR
-	 TGFWiN4EP3LDRmuOjIgLjQW1pkmjoLPdEUnzlYnZmF9pIEQrWT4XtVMm/ZjWKAq53y
-	 +fUdKfRqs0nUOYGQLCryrOsv/ILT6XXZVfoHWwrUooj82/zMYp0Aq51v1AUgmz369M
-	 /KCg9JxU9a3i1BzEZydCbbNoXquk62cRYIVoLfA5HFN2Gp2LDNrh9EUBPDr03xaeFQ
-	 eocc3gjPfsOsg==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Wed, 25 Feb 2026 00:45:15 +0530
-Subject: [PATCH v3 13/13] power: supply: add support for Samsung S2M series
- PMIC charger device
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3CBYaaxe"
+Received: by mail-dl1-f66.google.com with SMTP id a92af1059eb24-12776bebe9fso1218622c88.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Feb 2026 13:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771968528; x=1772573328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yDayGCTx715bDzSgsBZo6/sacRFjwz6HQIrmD08ogXA=;
+        b=3CBYaaxerIG9p2ZCYSHXTQ3uqCQLkFJHwuibcdwVooSAEZCOC5+YALSm47xkLnIUd2
+         zHJ8YID7my43p0XoBnOUcHZRXLvdFJk2bva1c0FA+GfFF8DxWzi5yGwuH68libltVMbZ
+         tS3U+OtgoUNSVST3q/q+/HChHN0PPQ0roDsdmPR8DNpsUULm7/U37kb6AeW7AMrz2SPz
+         inrb+O/rrLvZFw3HZbZQsMRc9xWm9PqtePSGr4PutrbW3s07aKmathtHpEBArvneQV5J
+         fKtdI/mP86r+EBL6whcNNVvbs44C3xJscikgQjiKVyH2j8QU9G+ADl4GhK6wGFqy+RQS
+         4l2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771968528; x=1772573328;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yDayGCTx715bDzSgsBZo6/sacRFjwz6HQIrmD08ogXA=;
+        b=rMFyLIgJ7uxNAQjzIkTMXMNuIAYq7GZF4j1PKJfJaUMUCOfrx0ILql7W0CjThwiQxA
+         t6m0Rp4fjC0fFrOnoJnCBWdHIJNKxXJQIIq9GOlw5SiMwKHGdLQLAcE3HKJ52Ltt1/Zy
+         d2sk/EbRUhd1vj6UKWdf3r92zVcLZVKPOvWYDMbQNbY4fg82lMl1WzcZfMDoMqcZEkX7
+         /ahbMuVtU62qrBBo6VsbS8BVTbY1S0hTsPcfhPpo12aCgdomReeIpb7wlXJvujmyH3pZ
+         +rwtNYXsVOl9KdtMkauXJJ+jwTggC8ObBpQVt5Ix7zbWfIV0pHL7fpsDYjfbajYpBTkY
+         GiFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxnWTSMaAIjY+sCUJB5vyAWPI4+qWL2DYJ4qeVcwijub3wAnwLjj4d0SGrKpoNU04up2ypeR1s2n7wU83cNVgT2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn6ewkI4RpEsXWmq1NFcHb0037XOAskHGmr06nAVatTGVYxU2q
+	vIscs0Ek7sRX4GtYtgQzNR7s/KyUfRqaDva2VkoqAdeeUz+yKWTgn5YrDytcMy/kvQ==
+X-Gm-Gg: AZuq6aIAb1P4W+UjN4GCkSTG9UubCbF4fLxGd2R6UUHzGHt/8kK0lqR+CplD1zwIWPD
+	BR2sdeLenveLodqb3LkbCqyhyq1qOJ+VsilMmejxJmITIEtxi6pkwhomTddiMq5IE4ArCf3QG9O
+	Tdc1zwwuewqSX7gm1Laza530S8Cjkgnoyp94Ze/PVBV1swzJWzpUcqOwlxHHUfQGeUt/ID7l9vM
+	PBg9AFhdLpv+zDn2iIVLTgklOuBir2Wk4H8RVKEyD8qxzgcbBl0L88teW5168PbKRKxlicZS6W9
+	z/u0A6U2BmGVE6vpUv11TDT8R19Hw9AcHrvSVrTSmOJIjkYZMVV72PkheahDds59fa++yg/GpGA
+	e39b0IVFUkD3lwDvbdsrqIdU2thJT1Yy8D195xWW6f7ARUis9/po+gBNcNxMKDIzXfNFmIGPBMu
+	oTQhkWwS3QMv3oS57bODTmDBWPomRCpl5HoBEzUyPVoyDRTLHqrvqTCVQqphGddS8x3HZa/U5wT
+	vgryZaHOSb8PlamorJYkR+NZQ==
+X-Received: by 2002:a05:7022:1285:b0:127:33c5:5390 with SMTP id a92af1059eb24-12781e0aac0mr52023c88.11.1771968527891;
+        Tue, 24 Feb 2026 13:28:47 -0800 (PST)
+Received: from ?IPV6:2a00:79e0:2e7c:8:665e:550c:2a20:8866? ([2a00:79e0:2e7c:8:665e:550c:2a20:8866])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1276af207d6sm12385902c88.5.2026.02.24.13.28.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Feb 2026 13:28:47 -0800 (PST)
+Message-ID: <fa253e2f-bdb5-4ad0-9308-ba2f9bb97596@google.com>
+Date: Tue, 24 Feb 2026 13:28:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: exynos: gs101-pixel-common: add supply and
+ regulator properties
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Badhri Jagan Sridharan <badhri@google.com>
+References: <20260224-max77759-charger-dts-v1-1-b443545c04aa@google.com>
+ <48d5eb8e-834f-4e87-a59c-d05add0dfda7@kernel.org>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <48d5eb8e-834f-4e87-a59c-d05add0dfda7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260225-s2mu005-pmic-v3-13-b4afee947603@disroot.org>
-References: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
-In-Reply-To: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
- Nam Tran <trannamatk@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
- linux-doc@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
 
-Add a driver for charger controllers found in certain Samsung S2M series
-PMICs. The driver has very basic support for the device, with only
-charger online reporting working.
 
-The driver includes initial support for the S2MU005 PMIC charger.
+On 2/23/26 11:01 PM, Krzysztof Kozlowski wrote:
+> On 24/02/2026 06:03, Amit Sunil Dhamne via B4 Relay wrote:
+>> From: Amit Sunil Dhamne <amitsd@google.com>
+>>
+>> Add power supply and regulator properties to the MAX77759 pmic. The
+>> usb-typec device will reference the regulator provided by the pmic as
+>> it supplies vbus to the typec device when operating in power source mode.
+>>
+>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>> ---
+>> This patch depends on the patchset [1].
+>> [1] https://lore.kernel.org/all/20260224-max77759-charger-v8-0-eb86bd570e9c@google.com/
+>> ---
+>>   arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+>> index 93892adaa679..2cc00d34dda8 100644
+>> --- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+>> @@ -142,12 +142,13 @@ &hsi2c_12 {
+>>   	status = "okay";
+>>   	/* TODO: add the devices once drivers exist */
+>>   
+>> -	usb-typec@25 {
+>> +	maxtcpci: usb-typec@25 {
+>>   		compatible = "maxim,max77759-tcpci", "maxim,max33359";
+>>   		reg = <0x25>;
+>>   		interrupts-extended = <&gpa8 2 IRQ_TYPE_LEVEL_LOW>;
+>>   		pinctrl-0 = <&typec_int>;
+>>   		pinctrl-names = "default";
+>> +		vbus-supply = <&chgin_otg_reg>;
+>>   
+>>   		connector {
+>>   			compatible = "usb-c-connector";
+>> @@ -236,6 +237,11 @@ pmic@66 {
+>>   		interrupt-controller;
+>>   		#interrupt-cells = <2>;
+>>   
+>> +		power-supplies = <&maxtcpci>;
+> Missing blank line. Please follow DTS coding style.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/power/supply/Kconfig       |  11 ++
- drivers/power/supply/Makefile      |   1 +
- drivers/power/supply/s2m-charger.c | 213 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 225 insertions(+)
+Sorry, will fix.
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 92f9f7aae92f2..8276964793c1b 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -834,6 +834,17 @@ config CHARGER_RK817
- 	help
- 	  Say Y to include support for Rockchip RK817 Battery Charger.
- 
-+config CHARGER_S2M
-+	tristate "Samsung S2M series PMIC battery charger support"
-+	depends on EXTCON_S2M
-+	depends on MFD_SEC_CORE
-+	select REGMAP_IRQ
-+	help
-+	  This option enables support for charger devices found in
-+	  certain Samsung S2M series PMICs, such as the S2MU005. These
-+	  devices provide USB power supply information and also required
-+	  for USB OTG role switching.
-+
- config CHARGER_SMB347
- 	tristate "Summit Microelectronics SMB3XX Battery Charger"
- 	depends on I2C
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index 4b79d5abc49a7..6e787cdc10ce9 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -106,6 +106,7 @@ obj-$(CONFIG_CHARGER_BQ25890)	+= bq25890_charger.o
- obj-$(CONFIG_CHARGER_BQ25980)	+= bq25980_charger.o
- obj-$(CONFIG_CHARGER_BQ256XX)	+= bq256xx_charger.o
- obj-$(CONFIG_CHARGER_RK817)	+= rk817_charger.o
-+obj-$(CONFIG_CHARGER_S2M)	+= s2m-charger.o
- obj-$(CONFIG_CHARGER_SMB347)	+= smb347-charger.o
- obj-$(CONFIG_CHARGER_TPS65090)	+= tps65090-charger.o
- obj-$(CONFIG_CHARGER_TPS65217)	+= tps65217_charger.o
-diff --git a/drivers/power/supply/s2m-charger.c b/drivers/power/supply/s2m-charger.c
-new file mode 100644
-index 0000000000000..e6417018daa24
---- /dev/null
-+++ b/drivers/power/supply/s2m-charger.c
-@@ -0,0 +1,213 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Battery Charger Driver for Samsung S2M series PMICs.
-+ *
-+ * Copyright (c) 2015 Samsung Electronics Co., Ltd
-+ * Copyright (c) 2025 Kaustabh Chakraborty <kauschluss@disroot.org>
-+ */
-+
-+#include <linux/devm-helpers.h>
-+#include <linux/extcon.h>
-+#include <linux/mfd/samsung/core.h>
-+#include <linux/mfd/samsung/s2mu005.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/power_supply.h>
-+#include <linux/regmap.h>
-+
-+struct s2m_chgr {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct power_supply *psy;
-+	struct extcon_dev *extcon;
-+	struct work_struct extcon_work;
-+	struct notifier_block extcon_nb;
-+};
-+
-+static int s2mu005_chgr_get_online(struct s2m_chgr *priv, int *value)
-+{
-+	u32 val;
-+	int ret = 0;
-+
-+	ret = regmap_read(priv->regmap, S2MU005_REG_CHGR_STATUS0, &val);
-+	if (ret < 0) {
-+		dev_err(priv->dev, "failed to read register (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	*value = !!(val & S2MU005_CHGR_CHG);
-+
-+	return ret;
-+}
-+
-+static int s2mu005_chgr_get_property(struct power_supply *psy,
-+				     enum power_supply_property psp,
-+				     union power_supply_propval *val)
-+{
-+	struct s2m_chgr *priv = power_supply_get_drvdata(psy);
-+	int ret = 0;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		ret = s2mu005_chgr_get_online(priv, &val->intval);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static void s2mu005_chgr_extcon_work(struct work_struct *work)
-+{
-+	struct s2m_chgr *priv = container_of(work, struct s2m_chgr,
-+						 extcon_work);
-+	int ret;
-+
-+	if (extcon_get_state(priv->extcon, EXTCON_USB_HOST) == true) {
-+		ret = regmap_update_bits(priv->regmap, S2MU005_REG_CHGR_CTRL0,
-+					 S2MU005_CHGR_OP_MODE,
-+					 FIELD_PREP(S2MU005_CHGR_OP_MODE,
-+						    S2MU005_CHGR_OP_MODE_OTG));
-+		if (ret < 0)
-+			dev_err(priv->dev, "failed to set operation mode to OTG (%d)\n",
-+				ret);
-+
-+		goto psy_update;
-+	}
-+
-+	if (extcon_get_state(priv->extcon, EXTCON_USB) == true) {
-+		ret = regmap_update_bits(priv->regmap, S2MU005_REG_CHGR_CTRL0,
-+					 S2MU005_CHGR_OP_MODE,
-+					 FIELD_PREP(S2MU005_CHGR_OP_MODE,
-+						    S2MU005_CHGR_OP_MODE_CHG));
-+		if (ret < 0)
-+			dev_err(priv->dev, "failed to set operation mode to charging (%d)\n",
-+				ret);
-+
-+		goto psy_update;
-+	}
-+
-+	ret = regmap_clear_bits(priv->regmap, S2MU005_REG_CHGR_CTRL0,
-+				S2MU005_CHGR_OP_MODE);
-+	if (ret < 0)
-+		dev_err(priv->dev, "failed to clear operation mode (%d)\n", ret);
-+
-+psy_update:
-+	power_supply_changed(priv->psy);
-+}
-+
-+static const enum power_supply_property s2mu005_chgr_properties[] = {
-+	POWER_SUPPLY_PROP_ONLINE,
-+};
-+
-+static const struct power_supply_desc s2mu005_chgr_psy_desc = {
-+	.name = "s2mu005-charger",
-+	.type = POWER_SUPPLY_TYPE_USB,
-+	.properties = s2mu005_chgr_properties,
-+	.num_properties = ARRAY_SIZE(s2mu005_chgr_properties),
-+	.get_property = s2mu005_chgr_get_property,
-+};
-+
-+static int s2m_chgr_extcon_notifier(struct notifier_block *nb,
-+					unsigned long event, void *param)
-+{
-+	struct s2m_chgr *priv = container_of(nb, struct s2m_chgr, extcon_nb);
-+
-+	schedule_work(&priv->extcon_work);
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int s2m_chgr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sec_pmic_dev *pmic_drvdata = dev_get_drvdata(dev->parent);
-+	struct s2m_chgr *priv;
-+	struct device_node *extcon_node;
-+	struct power_supply_config psy_cfg = {};
-+	const struct power_supply_desc *psy_desc;
-+	work_func_t extcon_work_func;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+	priv->dev = dev;
-+	priv->regmap = pmic_drvdata->regmap_pmic;
-+
-+	switch (platform_get_device_id(pdev)->driver_data) {
-+	case S2MU005:
-+		psy_desc = &s2mu005_chgr_psy_desc;
-+		extcon_work_func = s2mu005_chgr_extcon_work;
-+		break;
-+	default:
-+		return dev_err_probe(dev, -ENODEV,
-+				     "device type %d is not supported by driver\n",
-+				     pmic_drvdata->device_type);
-+	}
-+
-+	psy_cfg.drv_data = priv;
-+	priv->psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
-+	if (IS_ERR(priv->psy))
-+		return dev_err_probe(dev, PTR_ERR(priv->psy),
-+				     "failed to register power supply subsystem\n");
-+
-+	/* MUIC is mandatory. If unavailable, request probe deferral */
-+	extcon_node = of_get_child_by_name(dev->parent->of_node, "extcon");
-+	priv->extcon = extcon_find_edev_by_node(extcon_node);
-+	if (IS_ERR(priv->extcon))
-+		return -EPROBE_DEFER;
-+
-+	ret = devm_work_autocancel(dev, &priv->extcon_work, extcon_work_func);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to initialize extcon work\n");
-+
-+	priv->extcon_nb.notifier_call = s2m_chgr_extcon_notifier;
-+	ret = devm_extcon_register_notifier_all(dev, priv->extcon, &priv->extcon_nb);
-+	if (ret)
-+		dev_err_probe(dev, ret, "failed to register extcon notifier\n");
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id s2m_chgr_id_table[] = {
-+	{ "s2mu005-charger", S2MU005 },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, s2m_chgr_id_table);
-+
-+/*
-+ * Device is instantiated through parent MFD device and device matching
-+ * is done through platform_device_id.
-+ *
-+ * However if device's DT node contains proper compatible and driver is
-+ * built as a module, then the *module* matching will be done through DT
-+ * aliases. This requires of_device_id table. In the same time this will
-+ * not change the actual *device* matching so do not add .of_match_table.
-+ */
-+static const struct of_device_id s2m_chgr_of_match_table[] = {
-+	{
-+		.compatible = "samsung,s2mu005-charger",
-+		.data = (void *)S2MU005,
-+	}, {
-+		/* sentinel */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, s2m_chgr_of_match_table);
-+
-+static struct platform_driver s2m_chgr_driver = {
-+	.driver = {
-+		.name = "s2m-charger",
-+	},
-+	.probe = s2m_chgr_probe,
-+	.id_table = s2m_chgr_id_table,
-+};
-+module_platform_driver(s2m_chgr_driver);
-+
-+MODULE_DESCRIPTION("Battery Charger Driver For Samsung S2M Series PMICs");
-+MODULE_AUTHOR("Kaustabh Chakraborty <kauschluss@disroot.org>");
-+MODULE_LICENSE("GPL");
 
--- 
-2.52.0
+BR,
 
+Amit
+
+>
+>> +		chgin_otg_reg: chgin-otg-regulator {
+>> +			regulator-name = "chgin-otg";
+>> +		};
+>> +
+>>   		gpio {
+>>   			compatible = "maxim,max77759-gpio";
+>>   
+>>
+>> ---
+>> base-commit: 8bf22c33e7a172fbc72464f4cc484d23a6b412ba
+>> change-id: 20260224-max77759-charger-dts-23493398e77c
+>>
+>> Best regards,
+>
+> Best regards,
+> Krzysztof
