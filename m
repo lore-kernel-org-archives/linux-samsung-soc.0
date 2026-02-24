@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D8E37D116;
-	Tue, 24 Feb 2026 11:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD437D116;
+	Tue, 24 Feb 2026 11:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771933109; cv=none; b=uHa65n6F7BcU/rgflQQtv2vyY3SC3AXJMPLcCHOPVXWtNigjq8GeXq3THAdrLrCL+fiI2RyEzT4SdpzQvowqV8YxxhMdOuFXWLsN26dak2mUysv3UOJvzdbAyltIC5VvawU3zCkyluKayrOI72W+F80dAys4u5mDo60Fwnd9Q/0=
+	t=1771933179; cv=none; b=GLcWCLR9s783zEj0yGeNQa4fbuKVEa36NW8NOcCRz+kIYmQupmYt56Hm4l3wxeOio4q5H6BRmsOrNrp5V/esSRGc7M/4rweQYK1bUC3qk6FAnx0iXIlL7aU51euAh9G6glvdL6Ts0eyjbjd3fgzZZ1zUwPw4owHonfzti6ZIcUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771933109; c=relaxed/simple;
-	bh=QS7CNJiQG7B9ALbJjQUVylSiRh7zGL57LuSxHqmBi4g=;
+	s=arc-20240116; t=1771933179; c=relaxed/simple;
+	bh=XciIbqU0M6TfQN6a2di9ZkjY1Gufztdl8IPqFNkmZUc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O3iwE05sP0S7Bth7c4PfW7ElP6T+Fgj6m1TDtKrI9z69M+a7oWDBR1hMQfUVvtyOoqSYdXTjjqx/P0Xjg4kDvCP6UAM4y9GGkZTH1HNuIBHyEEP9UxR6Ie9sp+HWVPCmGok4JA2BgAsaNlJWTAjZEEyNTeH7DoUtdkX/phihCKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uzzkmfv9; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=tJ758BgMOni34zko16ic0YTEMk4Nc8iuhnnbnjWTwhMQwt64bPEIg/Zky0SVQybMqizSkfUCwJiP1FJb9F3aHdpYb3yNWWH8SGahDkiItgfpN1Zp18la4orvQs/J+71FfTh3trjav1f38CvhMD8Ig+wtk0uCnsT2MSjKW0nLg7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McI+sIPd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uzzkmfv9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86878C116D0;
-	Tue, 24 Feb 2026 11:38:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McI+sIPd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D86C116D0;
+	Tue, 24 Feb 2026 11:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771933109;
-	bh=QS7CNJiQG7B9ALbJjQUVylSiRh7zGL57LuSxHqmBi4g=;
+	s=k20201202; t=1771933178;
+	bh=XciIbqU0M6TfQN6a2di9ZkjY1Gufztdl8IPqFNkmZUc=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Uzzkmfv9bpJw09ktqybI8ICbNfnuTktHHxwRhi04Y1J6PsGW8WbVaybZVCjX8ew6V
-	 DY4cNvK6ZLnzyFuYtMktlLe+GuDpUgHOqc3M4EFt1ibnbV7CgW2b9p26co/D5ACXJf
-	 xw8TQqmSY0T1n14XTCKiK25sBkG2P2j38JJMX13rUJJrbOoll5GgtH7CToUNQ4/qFj
-	 k/ZF9UggSm2nZjFEtAU6GR3x0yobir3FAJvXwcEyZtD/Gb8KivZHv6b9AWT0gL7FR9
-	 fQ/TBtTXhaUDBtry4Y3U07gDQLxpOaEWdYFPkZJBH726qnOqZ0aDGWhkc/w0gBXWpv
-	 jEr75bdsf+SPg==
+	b=McI+sIPdYrfgC2TLM3Fs+Rp3irXWV6tfxny4WrfQg13JtnWuR0lxbzDTnpjwQ3ZR9
+	 0sR5DDieMj5azyqWLtuY7cP01GqJP/xyH+tysMBoLXfvTIzj0jwGfSPuM21uPm7VmH
+	 21AxkcPTuVHTMgktpctk8jk+OrOZf4fHDSrNViX6MXLpbDWElKvUXPXD2BnJ+QCCty
+	 T6soimrym5fSFipWCgmzuemIA6WkzoZhxB7cq9TIUqaSW0zw/5JOF2bLlXmqtLsBXO
+	 26d4JtUmXx2ceBRs1ZQI7tL/kSoCVxT0/XqBNmZ0EqQK3HrZcjO4+BWo0EEeEengcw
+	 d27S60t/SkeVQ==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
  jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com, 
@@ -38,14 +38,14 @@ Cc: ksk4725@coasia.com, smn1196@coasia.com, linux-arm-kernel@axis.com,
  bread@coasia.com, jspark@coasia.com, limjh0823@coasia.com, 
  lightwise@coasia.com, hgkim05@coasia.com, mingyoungbo@coasia.com, 
  shradha.t@samsung.com, swathi.ks@samsung.com, kenkim@coasia.com
-In-Reply-To: <20251029130731.51305-2-ravi.patel@samsung.com>
+In-Reply-To: <20251029130731.51305-3-ravi.patel@samsung.com>
 References: <20251029130731.51305-1-ravi.patel@samsung.com>
- <CGME20251029130826epcas5p180506ff38fb57ecca0e33b2f5c57ed6c@epcas5p1.samsung.com>
- <20251029130731.51305-2-ravi.patel@samsung.com>
-Subject: Re: (subset) [PATCH v3 1/4] dt-bindings: clock: Add ARTPEC-9 clock
- controller
-Message-Id: <177193310325.54679.15908657347853584387.b4-ty@kernel.org>
-Date: Tue, 24 Feb 2026 12:38:23 +0100
+ <CGME20251029130841epcas5p404125f4d8ee865275a73b3bf9ae6cf52@epcas5p4.samsung.com>
+ <20251029130731.51305-3-ravi.patel@samsung.com>
+Subject: Re: (subset) [PATCH v3 2/4] clk: samsung: Add clock PLL support
+ for ARTPEC-9 SoC
+Message-Id: <177193317288.54984.11991926930863142214.b4-ty@kernel.org>
+Date: Tue, 24 Feb 2026 12:39:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,28 +57,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Wed, 29 Oct 2025 18:37:28 +0530, Ravi Patel wrote:
-> Add dt-schema for Axis ARTPEC-9 SoC clock controller.
+On Wed, 29 Oct 2025 18:37:29 +0530, Ravi Patel wrote:
+> Add below clock PLL support for Axis ARTPEC-9 SoC platform:
+> - pll_a9fracm: Integer PLL with mid frequency FVCO (800 to 6400 MHz)
+>              This is used in ARTPEC-9 SoC for shared PLL
 > 
-> The Clock Management Unit (CMU) has a top-level block CMU_CMU
-> which generates clocks for other blocks.
-> 
-> Add device-tree binding definitions for following CMU blocks:
-> - CMU_CMU
-> - CMU_BUS
-> - CMU_CORE
-> - CMU_CPUCL
-> - CMU_FSYS0
-> - CMU_FSYS1
-> - CMU_IMEM
-> - CMU_PERI
+> - pll_a9fraco: Integer/Fractional PLL with mid frequency FVCO
+>              (600 to 2400 MHz)
+>              This is used in ARTPEC-9 SoC for Audio PLL
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
-      https://git.kernel.org/krzk/linux/c/6974ae5aa23b7f37182da6b66d7f58313a55a88e
+[2/4] clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+      https://git.kernel.org/krzk/linux/c/f051dc5bc8e785b221d2e69094e774507c3a52dd
 
 Best regards,
 -- 
