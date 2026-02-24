@@ -1,135 +1,212 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD3924C692;
-	Mon, 23 Feb 2026 19:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA80478F4A;
+	Tue, 24 Feb 2026 01:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771876518; cv=none; b=RuKQxfRIR1kIibNaEskik7kkoCcvSRNnQ3l562mz7Cjwb2U+kavTma3yCKRDL52Fg4t3vLXCNoT7g0SdlJmjNjnYLDXO39Sb9ddma1KN9t6XICB9kDi7gabFHfLkyKOABqo4F9tIS4PUPParxyoBDbqCPgbOxqpqBMH5vEwh+WM=
+	t=1771897549; cv=none; b=ESQETeCVtyHVH1HSSgvYmhSRea4QZMH8MzjdGz0KVkcMkWjbt335yzwDXnjqF27ZwjNbs5pt3qES8YvNnubBzvU3ffn6kCqstZlxtWPciHJ1ghTb8oqGo2f4NQR/5w6sKJfHW5iC1afPLLbboWiW82dSm3zo3X9/qC+s/hAEydI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771876518; c=relaxed/simple;
-	bh=EzRTpn7SStmQR6adoeUhLcxNBw1WrKVexjwB3Z8Jb2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tiFhB2S1KjYpEXGCCHe9XoDBkFyPeLohDTnMaPIgHCr0jmorIlp1IgNty6TAarwZU2jDYmzJ/t6w+yRMv3Ous3FsT8w3mIQAUqtWmu4hZFi9ROtztSUFFAZpbudk4EnNfOtyIUAzFg/cPUO45HSDtSMN3px1qXtv6NjCsv0Njls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLgQYtzj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771897549; c=relaxed/simple;
+	bh=UvPQEr//jccCvelVCDAFXMcH/Vr87bNsb7Go+1stfTI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BAgCAh+kyfHlX5+nvwudHDlV7s+udc7xQKS3aaLXil+35onN8C77eJWW1Cep6DLcsN0AbrSx21j/OHdGW7RL6RAy1gkVhMU6mBcuigPSLF9W/0bUxyvnE7pT0iXIZrcsMRYfiyG2s0rJlBUCSA/5BJvxup9PIn11BOWo9ChzLVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQLgxSK5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLgQYtzj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA70C19421;
-	Mon, 23 Feb 2026 19:55:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQLgxSK5"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C5E7C116C6;
+	Tue, 24 Feb 2026 01:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771876517;
-	bh=EzRTpn7SStmQR6adoeUhLcxNBw1WrKVexjwB3Z8Jb2A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mLgQYtzjl7m489aHT5PFS4KCwD++7m9HmbTt4vvtX+sCykeMxSZ64jrtyvg7sbNKq
-	 KX+qpL3vv0E39vVIGWtsmYHjtSTzPKbCptWoe5NxbNF4RUWbpEka3BftzEwWXvhlYd
-	 9lgHPWTH0ny73tjL5YusnLP3K2sgpu6f3UVbgPxSOhpuYsKWQaFvlPLk4edktO+BQi
-	 tWVDy0vIQM1iEzPfPtgNC1/L9XuYe4Qf5F69rXZEEOs89jNdZgQ+8J6XhopTR7mPq1
-	 c7DVymskANhTAza7xuDVMc/ebN+d4TsktX89VLMPNqHsvy/V7wLaBcUKXGif2tl94l
-	 SL/VSv5CcDjQw==
-Message-ID: <f44fa4d8-93de-4010-b1ee-d4e44d1d797a@kernel.org>
-Date: Mon, 23 Feb 2026 20:55:14 +0100
+	s=k20201202; t=1771897549;
+	bh=UvPQEr//jccCvelVCDAFXMcH/Vr87bNsb7Go+1stfTI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=fQLgxSK5pCbO/KwZbwTcz8QcRnmnmgvgu201dlbZkBLnriYWyy5X7us1+dwBzJ9YL
+	 66Vuaja86S7ZiJMW1PwNtx5Yp7LoRXd5vvakaaXX0jRBjwo45MAKt1bjsEQ7ZEjlY/
+	 wc1I+OF+MQdddziqgUemkvR9J3YOXzvg+5zBI5jHuoiHjr6FE7Cuc5Ts9DSUA50IOQ
+	 oAKag3l471Z+uJdSQT9cVTWuZh+rX/+qGn69XEgPVYUoXrGUKmtu1V12PoSLxQkmKf
+	 dqEKAgMVwE7zuXqFwS0kz2eXne7KvtFs2z4i8gA+8Dl0oHsB98k1MANoGB7dhDPh78
+	 396jBilE7JjEw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB96EEC2BD;
+	Tue, 24 Feb 2026 01:45:49 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Subject: [PATCH v8 0/6] Introduce MAX77759 charger driver
+Date: Tue, 24 Feb 2026 01:45:30 +0000
+Message-Id: <20260224-max77759-charger-v8-0-eb86bd570e9c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: exynos-acpm: Drop fake 'const' on handle
- pointer
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org
-References: <20260223193416.532231-2-krzysztof.kozlowski@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260223193416.532231-2-krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALoCnWkC/23QTW7DIBAF4KtErEsFAzNAV71H1QV/diw1cYUrK
+ 1XkuxdHrZIKlg/EN8y7siWXKS/s5XBlJa/TMs3nGuzTgcWjP4+ZT6lmBgJQSoH85C/GGHS8Xpc
+ xF24RAgElIulZffZZ8jBdbuTbe83Hafmay/dtwir3018MVIutkgtOAbIOdjAD6tdxnseP/BznE
+ 9u1Fe4CSNsRoAoQAJ2zwpOlRlAPApiOoKqAOhPpAaN30Aj6TyBRP9ER9L6F06B0tCkn2Qh4F0D
+ 0esAqBBTKoTLkcWgEehCk7gi092CjcCF5o0PbpHkUek2aKmSbnDAxk4v4T9i27Qe4baNJPQIAA
+ A==
+X-Change-ID: 20251105-max77759-charger-852b626d661a
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Badhri Jagan Sridharan <badhri@google.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Mark Brown <broonie@kernel.org>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
+ Amit Sunil Dhamne <amitsd@google.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1771897548; l=6235;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=UvPQEr//jccCvelVCDAFXMcH/Vr87bNsb7Go+1stfTI=;
+ b=UAfLgVGwjj3KWzJTmhzrhKypraWk8suhzXV+fUP/Ygqml1Yire8sg0i1fIcMFZ51hwW2e22sX
+ A7SwqM1svgPAkC1IgxZIyIEB5H0PFY3SD8ca9iiyFSiJcph2QdDcjG9
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-On 23/02/2026 20:34, Krzysztof Kozlowski wrote:
-> All the functions operating on the 'handle' pointer are claiming it is a
-> pointer to const thus they should not modify the handle.  In fact that's
-> a false statement, because first thing these functions do is drop the
-> cast to const with container_of:
-> 
->   struct acpm_info *acpm = handle_to_acpm_info(handle);
-> 
-> And with such cast the handle is easily writable with simple:
-> 
->   acpm->handle.ops.pmic_ops.read_reg = NULL;
-> 
-> The code is not correct logically, either, because functions like
-> acpm_get_by_node() and acpm_handle_put() are meant to modify the handle
-> reference counting, thus they must modify the handle. They could not
-> work with handle being pointer to const.
-> 
-> The code does not have actual visible bug, but incorrect 'const'
-> annotations could lead to incorrect compiler decisions.
-> 
-> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
-> ---
-> 
-> I will have more patches for more drivers like TI, ARM SCMI...
-> ---
->  drivers/firmware/samsung/exynos-acpm-dvfs.c   |  4 +-
->  drivers/firmware/samsung/exynos-acpm-dvfs.h   |  4 +-
->  drivers/firmware/samsung/exynos-acpm-pmic.c   | 10 ++---
->  drivers/firmware/samsung/exynos-acpm-pmic.h   | 10 ++---
->  drivers/firmware/samsung/exynos-acpm.c        | 16 ++++----
->  drivers/firmware/samsung/exynos-acpm.h        |  2 +-
->  .../firmware/samsung/exynos-acpm-protocol.h   | 40 ++++++++-----------
->  7 files changed, 41 insertions(+), 45 deletions(-)
+MAX77759 PMIC is used in Pixel 6 and 6 Pro (Oriole/Raven) boards.
+One of the functions of the MAX77759 PMIC is a battery charger. This
+patchset introduces a driver for this function. One of the unique
+features of this charger driver is that it works with a USB input where
+the Type-C controller is TCPCI based.
 
-I forgot about clocks, so there will be a v2.
+Changes to the board files will follow soon once this patchset is reviewed.
+
+For reference to the MAX77759 MFD based patchset (present in upstream):
+https://lore.kernel.org/all/20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org/
+
+Dependency list for patches (directionality indicates depends on):
+[6] -> [5] -> [4] & [3]
+
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+---
+Changes in v8:
+- Add an newline char at the end of dev_* prints. (André Draszik)
+- Return PTR_ERR() instead of -EPROBE_DEFER when devm_power_supply_register()
+  fails in max77759 charger probe. (André Draszik)
+- Link to v7: https://lore.kernel.org/r/20260218-max77759-charger-v7-0-e8d907ce69c5@google.com
+
+Changes in v7:
+- Add register relock for protected registers in fail path. (André Draszik)
+- Switch to usage of scoped_guard instead of guard. (LKP test bot)
+- Link to v6: https://lore.kernel.org/r/20260214-max77759-charger-v6-0-28c09bda74b4@google.com
+
+Changes in v6:
+-  Linear Range usage (André Draszik):
+  - Dedicate individual arrays for inlim, chgcc & chg_cv_prm to simplify
+    code.
+  - Use numerical values instead of macros for linear_range array init.
+  - Remove macros defining current and voltage limits due to above.
+  - Didn't use Reviewed-by tag for Patch 3 due to the above.
+  - Add new linear_ranges api to leverage it for obtaining selector
+    values.
+  - Improve voltage and current getters and setters functions by leveraging
+    existing and new linear_ranges API.
+- IRQ related changes (André Draszik)
+  - Dedicated names for individual irqs.
+  - Refactor irq handlers.
+  - Ratelimit prints
+- Retry mechanism (André Draszik):
+  - Initialize error retry counter to 0 when psy work is scheduled on a
+    new notifier event.
+  - Protect the counter using a lock.
+  - Add appropriate prints.
+- Link to v5: https://lore.kernel.org/r/20260203-max77759-charger-v5-0-b50395376a5f@google.com
+
+Changes in v5:
+- Use linear_range library instead of reinventing it. (André Draszik)
+  - This requires a selector_max value so modified mfd/max77759.h to
+    include it for CHGCC and CHG_ILIM.
+  - Removed "reviewed-by" for Patch 3 (mfd) due to above
+- Use asnyc probe type. (André Draszik)
+- Retry mechanism for psy_work. (André Draszik)
+- Minor nits (André Draszik):
+  - Use named initializers for instantiating structs.
+  - Use static qualifier for `psy_name` variable.
+  - Refactor if-else ladder to remove else handling if return in prior
+    "if" loop.
+  - Remove redundant `unlikely`.
+- Link to v4: https://lore.kernel.org/r/20260121-max77759-charger-v4-0-694234c8ded1@google.com
+
+Changes in v4:
+- Removed a stray tabspace in mfd/max77759.h. (André Draszik)
+- Fixed the following issues in Patch 4/5 (André Draszik):
+  - Re-order Kconfig entry
+  - Refactored to not use global variable
+  - Use of clamp() to clamp values instead of duplicating logic
+  - Return IRQ_NONE for unhandled irqs or error conditions
+  - Remove debug messages in irq handler
+  - Refactor code to use dev_err_probe in *_init_irqhandler()
+  - Remove unneeded irq_flags
+  - Check return values of regmap ops
+  - Other nits like newlines, not using greedy init, using print stmnts
+- Link to v3: https://lore.kernel.org/r/20251227-max77759-charger-v3-0-54e664f5ca92@google.com
+
+Changes in v3:
+- Had incorrectly folded the charger sub-device with the pmic parent.
+  Corrected it. (Krzysztof Kozlowski)
+- Link to v2: https://lore.kernel.org/r/20251218-max77759-charger-v2-0-2b259980a686@google.com
+
+Changes in v2:
+- Fold charger binding in maxim,max77759-charger.yaml to its parent
+  node. (Krzysztof Kozlowski)
+- Renamed regulator supplier & consumer. (Krzysztof Kozlowski & Heikki
+  Krogerus)
+- Removed explicit setting of irq trigger types in max77759 driver.
+  (André Draszik & Krzysztof Kozlowski)
+- Complete bit definitions for IRQ registers. (André Draszik)
+- Consolidate all bit definitions for charger IP in mfd/max77759.h.
+  (André Draszik)
+- Modify the handling of charger IRQs such that regmap IRQ chip handles
+  masking, de-mux and acking of interrupts. (André Draszik)
+- Remove unused macro definitions relating to Charger modes in tcpci
+  maxim driver (André Draszik)
+- Add dependency on Regulator class in Kconfig definition for max77759
+  chg. (Kernel Test Robot)
+- Link to v1: https://lore.kernel.org/r/20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com
+
+---
+Amit Sunil Dhamne (6):
+      dt-bindings: mfd: maxim,max77759: reference power-supply schema and add regulator property
+      dt-bindings: usb: maxim,max33359: Add supply property for vbus
+      mfd: max77759: add register bitmasks and modify irq configs for charger
+      lib/linear_ranges: Add linear_range_get_selector_high_array
+      power: supply: max77759: add charger driver
+      usb: typec: tcpm/tcpci_maxim: deprecate WAR for setting charger mode
+
+ .../devicetree/bindings/mfd/maxim,max77759.yaml    |  16 +-
+ .../devicetree/bindings/usb/maxim,max33359.yaml    |   4 +
+ MAINTAINERS                                        |   6 +
+ drivers/mfd/max77759.c                             |  91 ++-
+ drivers/power/supply/Kconfig                       |  11 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/max77759_charger.c            | 774 +++++++++++++++++++++
+ drivers/usb/typec/tcpm/tcpci_maxim.h               |   1 +
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c          |  54 +-
+ include/linux/linear_range.h                       |   3 +
+ include/linux/mfd/max77759.h                       | 176 ++++-
+ lib/linear_ranges.c                                |  36 +
+ 12 files changed, 1114 insertions(+), 59 deletions(-)
+---
+base-commit: 8bf22c33e7a172fbc72464f4cc484d23a6b412ba
+change-id: 20251105-max77759-charger-852b626d661a
 
 Best regards,
-Krzysztof
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
+
+
