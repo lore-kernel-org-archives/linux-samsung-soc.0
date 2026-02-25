@@ -1,87 +1,77 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6324369A;
-	Wed, 25 Feb 2026 04:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B6A38F946;
+	Wed, 25 Feb 2026 10:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771993824; cv=none; b=DEr3tM2hyoUpEfC49W4kHbwXLmDdXPy5Wuea+eNCcR6k+uyJHSD82+bhlRlDXYoY2K4+oPVTdDkfnn3sNsIt6wgjHATyvzDbrqDz5QwqNxnFGY/935q3ikrjBSzwPDF5grIH0ynw5C+LtAB6ysnQszyB2KxjUa1Lkw6Bt02dJAM=
+	t=1772016289; cv=none; b=glo6dKXy1Dt8C8FmB4uuvRmKH9gBSoqURFrYPn5qbTT2Y9LR00k44L8BBXsEZegeuhNGYvwH1mzz/Veu8VQV+0xcOhJPPxBLNbbtNEyKdr/V/kUv3dPJtBT0+m7ykzG9jGuYRgFcDgr85z0uWtKd93PWW2TO2nX8Zduby6McwCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771993824; c=relaxed/simple;
-	bh=uuNz0M9WBkItf7D1SEjgMLlBY5QrhLH+7WlBomk+924=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ibmMva1mdmUl3niJIynE4CG28e7IapOl39K4+yiH6XYfTbz+4E5Gac5cNdrWga5ljeelb0YTSUzscuGotMusND/TY9pkok1wXPES59pe4YN94WLAu1P/rZQiDQFirsgD10y4epQHrm2XJHyPT2UmEduxtZQDkLIaVe8Br7/fVM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bA7IWNSX; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1772016289; c=relaxed/simple;
+	bh=KyCLMU3AVldJTAilKqpLlpOgqYOCYCEaaZ7788+5WuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTGzZRnc+BhPstS5UCPo6uVnFtQQeB8mhHbL22or920lP4ExGqqUvw4ScAlPgwPDZkO0y8dbjAuKkfQbOEjVP+J6ckcUNGgnt5paXpcLl4JpAx8/KO7cbmvBMz96KYoUYkmzV8wt3f7usa8GQXlKT3PzT4tVH+XWQl7u4efx82M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlVqE54u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bA7IWNSX"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E37B126726;
-	Wed, 25 Feb 2026 05:30:19 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id OcC-zT7sxKQm; Wed, 25 Feb 2026 05:30:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1771993819; bh=uuNz0M9WBkItf7D1SEjgMLlBY5QrhLH+7WlBomk+924=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=bA7IWNSXuxq9cLSSxbWjAk5ujiAduUFug6RLBCgZXwgfbcccZlh/xsZH42iEZU7XR
-	 4BFNG4mP0X4QGhRkYj47c/7y0VqPRzQkdCGi7qHnqqQFC7YBmspc8Sco7TlLKAX/aW
-	 2E9Xko1TebrdVBWaTrzUdvH9QmzxntuRlOyvwPyO28CZteadOqSc+TYwK0ogYC1xaX
-	 sG0eLsCcWCQWtLrJBWJA+RywgEONg+3szUhMuFuwNba08mmVQ1aQ+s+029MGgGT04R
-	 uBlNl00dDN0G+KGK67SWHRfnRkWzAtgr4TiQRAed6l+SKdT2l698gXVah82S52yfQs
-	 8skxxwcVya5IA==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlVqE54u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36CDC116D0;
+	Wed, 25 Feb 2026 10:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772016289;
+	bh=KyCLMU3AVldJTAilKqpLlpOgqYOCYCEaaZ7788+5WuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YlVqE54ukITA0aDTd8VxkGNArXaXsfsan4niE0yvhPtNYg8YE0zoKR2vGZa864lmQ
+	 fcfsjVPzN0CEKBLqaXr5arlX18IO8g0vQ4vp6gbyoOhd10j0mcx98409m8N3ulX/xM
+	 lcDiDSt/ZVpM+9s3Z8VEh61vEtcy3qUrP488XNMge0f+3/tdVqgbxx4OLMqLhENMOX
+	 xSNGRqcx3VQi74lehWIEgMw8XoLFpCX07AoKUo7yGjdf3J1tI5AufxSguTSUQDDOzG
+	 x8Wl601lTLfubip+dMuyTrh13zBS55aHPv5psqMk7s2GCg76OXPKCfEv5x7Wmni7eN
+	 ct3oopxr12Xnw==
+Date: Wed, 25 Feb 2026 11:44:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Nam Tran <trannamatk@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] dt-bindings: power: supply: document Samsung
+ S2M series PMIC charger device
+Message-ID: <20260225-secret-amusing-cuttlefish-d3bee5@quoll>
+References: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
+ <20260225-s2mu005-pmic-v3-4-b4afee947603@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 25 Feb 2026 10:00:09 +0530
-Message-Id: <DGNRDQ5886K7.3NSLKILM1GDWR@disroot.org>
-Cc: <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Rayan Marzouk"
- <rayanmarzouk743@gmail.com>, "bluebunny" <kalorin.bok084@passinbox.com>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: add initial support for Samsung
- Galaxy J7 (2016)
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Kaustabh Chakraborty"
- <kauschluss@disroot.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Rob
- Herring" <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Kees Cook" <kees@kernel.org>,
- "Tony Luck" <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>
-References: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
- <20260125-exynos7870-j7xelte-v1-2-5cacc3042c42@disroot.org>
- <7cdeb30e-13b9-4c7d-95b4-f6bb6cf15ae8@kernel.org>
-In-Reply-To: <7cdeb30e-13b9-4c7d-95b4-f6bb6cf15ae8@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260225-s2mu005-pmic-v3-4-b4afee947603@disroot.org>
 
-On 2026-02-24 12:20 +01:00, Krzysztof Kozlowski wrote:
-> On 24/01/2026 21:05, Kaustabh Chakraborty wrote:
->> From: Rayan Marzouk <rayanmarzouk743@gmail.com>
->>=20
->> Add initial devicetree support for Samsung Galaxy J7 (2016) (codename:
->> j7xelte), an Exynos7870 device.
->>=20
->> Signed-off-by: Rayan Marzouk <rayanmarzouk743@gmail.com>
->> Co-developed-by: bluebunny <kalorin.bok084@passinbox.com>
->> Signed-off-by: bluebunny <kalorin.bok084@passinbox.com>
->
-> I cannot take anonymous contributions (see submitting patches). Please
-> resend or confirm that I should drop above Co-dev and SoB.
+On Wed, Feb 25, 2026 at 12:45:06AM +0530, Kaustabh Chakraborty wrote:
+> +
+> +  This is a part of device tree bindings for S2M and S5M family of Power
+> +  Management IC (PMIC).
+> +
+> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> +  additional information and example.
+> +
+> +allOf:
+> +  - $ref: power-supply.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,s2mu005-charger
 
-Please drop the tags and accept, this has been endorsed by the
-co-author. Thank you.
+Review from v1 still applies. I think you ignored several reviews, so I
+will mark entire patchset as changes requested.
 
->
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->
->
-> Best regards,
-> Krzysztof
+Best regards,
+Krzysztof
 
