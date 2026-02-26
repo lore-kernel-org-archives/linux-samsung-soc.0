@@ -1,101 +1,110 @@
-Received: from mail-dl1-f74.google.com (mail-dl1-f74.google.com [74.125.82.74])
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FB338A73C
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 06:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA6238947D
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 06:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772086259; cv=none; b=U3xHO/rPEnVupAq2w8KQ7lhP/jK2nmuoZu0ymvPz5UwRSkmNW/fSQAnK+PjjVD2AWppwpU5/awRP7AI/5BIo08iZ5YJmh5gZSSeLjRATo8Iyu6sJyp2CML1a/tI2xiX3wOF3TngOpBdZwdbiAoMYc5Uc3fDbace/juryLy6wSHQ=
+	t=1772088648; cv=none; b=SWy0M9ST6SCELHbcjxTw8PovjTog5XoIXtHT/zNC0BBd7U1isRFCCx7jB9aKUgza6dxxKqVx60BJ12gpDewhL7m+cq6+Jr/53fFj8WwdLDC0OqzfqpFvVOeEYR9lJCeVlxSv7ci0ghhWvERKpHkpvyWHF7ufxnOEhc9IG8iq9I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772086259; c=relaxed/simple;
-	bh=pFZiHnkBN5Lio39P41U18guYn6en/j6L+UEYS0RuXNI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uGCKqsaHbwvuJXUPIP+gD5AZ5ODGitZyvywOJ2z3kXI5bo/ZCDUBavqqPg9K1MYvKgNpnC9MxWCAuEcRm9fJKD5J7CP/awvw5EeGqhrGUSnv08pNGvpoi5tnFCPc0oO04i+XAxptfd0AFqFVHfxwjj0EpzqznXFhRhsFWUzzTNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oM4YYV13; arc=none smtp.client-ip=74.125.82.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
+	s=arc-20240116; t=1772088648; c=relaxed/simple;
+	bh=tzgM7zmQUR0Nygxy2CGjYQcMUHvYZw/GgfIvFJp40ww=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uhr/SHh86GysV9vDQ0O8YHaP7ekCAJzwGR3et0svmiAtk9D4fyXGxvhe1Q0aTCxo63n2+XwPFA8IbakcBHOWNMi9YUEyO7rUwQh9umPwGEk4orPLeIEcmadQmuUFcpPfUOMesj43i793Kw0ZcpRpuJjFbC2qfuLg6WpozN2nNvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cx1qxDPH; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oM4YYV13"
-Received: by mail-dl1-f74.google.com with SMTP id a92af1059eb24-1276e71652fso860390c88.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Feb 2026 22:10:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cx1qxDPH"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so5960825e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Feb 2026 22:50:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772086257; x=1772691057; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+        d=linaro.org; s=google; t=1772088646; x=1772693446; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=fcVZ4BQFpRmLHwxh/g2dVLrCTqrD1Ac4Q97XzCkzEyk=;
-        b=oM4YYV1366RmzHXAG590ORLBCEGHT/jeSsUvZTWYnL/y4rT13mPnrwEkC+mSSvM2iC
-         5X+ahGExCMxOqsSLKES83mxnIzjz9Ln9JKVAEgwY35ijtXL4Q9FzijuthWTACM4eiA0w
-         XbtIzeSrsuzjoi7epR3XKscWGgZNYURY6H6vAoCvaZ8hL0dSW0KH0hNw3qK7oonCH3UA
-         XeTP3N2CKf4s9Fgti/8VzcyYQJg/rx92QdmUnNQlZnk9lVnLoH8QMURVDC77sp9F6QJ0
-         IjqowKHq3oD1I9QGwaB9/xAsxnDYu92diSzdcGiUlxHQnJRXtXhEje8lIYvXZIyLyBPS
-         KL9w==
+        bh=tzgM7zmQUR0Nygxy2CGjYQcMUHvYZw/GgfIvFJp40ww=;
+        b=cx1qxDPHxIYQwea0jTUE/AQk/hbYKDBDV74+wz6Zv2Ux+oyNbp7nYgeGDnDu2/hELr
+         SqzasT38ogd7nDKaoEp2WygRMX82Lv8vARwVhcvQn7/e1QvTw0YvPwkZpAQAb/5w8tEh
+         qozt61WiVLUL0+BBMqEfXwagxT+1Ddy1rnG15MFO2GI/tY7y2Zz1zgnJAThj+x05IIF7
+         wo3ivkJlXy/iMhgQvV7hAbBJchJ34EdNJ/Fst3uaC7Zmuu4Dj+koxNFpECFhQTSxWQu+
+         DWyyBtz3ir0aQYcP7735s+oO1CLBv99R9XRSNu4rnpA8jsul1v2cyAF1LTvW1V02rbd2
+         dbLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772086257; x=1772691057;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fcVZ4BQFpRmLHwxh/g2dVLrCTqrD1Ac4Q97XzCkzEyk=;
-        b=JkB9YD3GRWCvBFghCOce32FMxnRoVTemWWMpM6FCIbzOR5UcOWXiIDKDawrDI6mrH2
-         Hrtg/FGo6RcNv0I4MAizs4PhMLhXAgrAW6Ob8x17JGbahkv3UOEeJPV1oYAWXZW/W7oD
-         1YyLUbtPrqYAI9KTFS9JALV2PIJlT1KUL5jOJ8HtjDhKpgYOj37Pc7s97HyDDO1p2KOV
-         5Q9ouCNdJ0PItWIMQHQm798OhI5ZivEypYDiOu+7LoFXIgy4sYQfvSMHJDmeC+tckvZU
-         VvMo8ALBV/xXWPdbSzCNvuP/Ap9ZDNP8UcLYKxIRwBSrSlkj+MRqaHefuoXH+LM0zs0r
-         WNiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgPh45LXeFNVB0OHk6f3QWl8E/Z5IZ3xHqGPc5JgwKXGwyz0k4ZKwtipMmgcPpa3BtO3lmphEE+44TIl/lYfDHSg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDFxm9NjD/ILrpltSZCeWfCzstZd6bA7Bnqe2/ofKG/n6Dam/s
-	5XW8gfxP1CKo+jmJ4Qt1NpvUcg00E9yqekwFwmn0L9UF/hhIp5XkKOlLRT6Beyd+yseLI5YBkE+
-	FCclTIA==
-X-Received: from dlbur21-n1.prod.google.com ([2002:a05:7022:ea55:10b0:127:8aee:c50c])
- (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:11c:b0:119:e569:f61b
- with SMTP id a92af1059eb24-12786963bc9mr1496401c88.20.1772086256595; Wed, 25
- Feb 2026 22:10:56 -0800 (PST)
-Date: Thu, 26 Feb 2026 06:10:53 +0000
+        d=1e100.net; s=20230601; t=1772088646; x=1772693446;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzgM7zmQUR0Nygxy2CGjYQcMUHvYZw/GgfIvFJp40ww=;
+        b=mHsuJ+amEBrqIZ/cAUUeN+zxmgqExwYVmcfjB35Q30s3CMW4RStHaim+ImZ+wKG6fb
+         tjx7IR7Yv0EF/65eOgx8cJciOh7MMuN0IddjI51LYcg7Vmw0dLCxihSPUVnn7bcOco69
+         hcqm7HSsM4OuKJEmB6WOAs7fChqJIhLews9wJv71G0+4HtgpuTgQnQ1FgKBRTNP1GjUo
+         MMmKv/KkKIGEMyCvfF9X0OZwqy1a38iiiMU9wK3F5Uq9nYU8Cg4Tqsn5zhz2oshDcemL
+         49NKPzXOn2Pea3V9m+43UhnbGPMpNuOLnmZmbLg4340kThqUA4yOIJttf/Rk7VwXiD+4
+         rEeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5evz78aJzHAHYP2wnaqgshSOD6leug6oMw+P40JPCkdoiSeGfrKPtEAx4TIf2Cq3nB443snI5QwN7ttTYiczf5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyfRs7EKPHyWD1nCdSLzjxLB2AxAB1Kbji71QI3IHny/d6xfSj
+	FpdIz1c7z0EBmhsEuWBtaPXjnr0ka+Ef53YppIpDH8YdNlMqQ80eM7ao+WVRRSPn+fw=
+X-Gm-Gg: ATEYQzws4taseDn3k8rspXF6vzUyIDuwWLTKHZVW1y+c8mXNd/S1SZS1yTMAr8DLTzv
+	RgiWliYc2pdz/RvIgM3tf3TV9y+hT5IdcQBFaO7NSByd9YYsVhGv4iIgo+V6h+9EjeOnVKFBtXI
+	+ZCFV7nlG4E8e/X7Y/DmxSjjLrtoVjh95WuSPU+JaUb/1RR1e2VCHcbUUMuo2Yhwg4sOFsXCASE
+	u6W5tczOUUa6EIUQkXIpVv1ALINerxYt/TLHneVKcMqBNScgMxx2nMpjtlhYrAJp3wxzcDhCtuC
+	ad+0MikQwPbb/uAOItSTNMMWHCM5eEAcNE8MGaDd1OkeRYtl7B/3T0HDXtswXu1md2xbCLKYLYh
+	dZxgEv29ucJWY+9JoP22vpYP1TNRKdFx7m4EHjk6THlvLLZcWd0cV/mj/F30y9Ntg8JbjaIkcut
+	mNeLjnrkq69g6pAifO2tdBNoDBRo81fA==
+X-Received: by 2002:a05:600c:4f11:b0:482:eec4:74c with SMTP id 5b1f17b1804b1-483c3de3a31mr15029275e9.22.1772088645594;
+        Wed, 25 Feb 2026 22:50:45 -0800 (PST)
+Received: from draszik.lan ([212.129.82.143])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483c3b89c99sm22518055e9.15.2026.02.25.22.50.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Feb 2026 22:50:45 -0800 (PST)
+Message-ID: <d8fe362e12af7a4e076babbca8a8be9b51f58ec3.camel@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: exynos: gs101-pixel-common: add supply
+ and regulator properties
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: amitsd@google.com, Peter Griffin <peter.griffin@linaro.org>, Tudor
+ Ambarus	 <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Badhri Jagan
+ Sridharan	 <badhri@google.com>
+Date: Thu, 26 Feb 2026 06:51:32 +0000
+In-Reply-To: <20260224-max77759-charger-dts-v2-1-983265ac8e63@google.com>
+References: <20260224-max77759-charger-dts-v2-1-983265ac8e63@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.53.0.414.gf7e9f6c205-goog
-Message-ID: <20260226061053.2596167-1-badhri@google.com>
-Subject: [PATCH v1] arm64: dts: exynos: gs101: Enable AVS APDO
-From: Badhri Jagan Sridharan <badhri@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Amit Sunil Dhamne <amitsd@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Badhri Jagan Sridharan <badhri@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 
-Enable USB PD SPR AVS for gs101 by adding SPR AVS APDO to the sink caps
-pusblished by gs101.
+On Tue, 2026-02-24 at 23:30 +0000, Amit Sunil Dhamne via B4 Relay wrote:
+> From: Amit Sunil Dhamne <amitsd@google.com>
+>=20
+> Add power supply and regulator properties to the MAX77759 pmic. The
+> usb-typec device will reference the regulator provided by the pmic as
+> it supplies vbus to the typec device when operating in power source mode.
+>=20
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> ---
+> This patch depends on the patchset [1].
+> [1] https://lore.kernel.org/all/20260224-max77759-charger-v8-0-eb86bd570e=
+9c@google.com/
+> ---
+> Changes in v2:
+> - Added a line between property and child node as per DTS coding std.
+> =C2=A0 (Krzysztof Kozlowski)
+> - Added the "power-supplies" property immediately after the prev
+> =C2=A0 property without leaving a line space.
+> - Link to v1: https://lore.kernel.org/r/20260224-max77759-charger-dts-v1-=
+1-b443545c04aa@google.com
+> ---
+> =C2=A0arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 8 +++++=
+++-
+> =C2=A01 file changed, 7 insertions(+), 1 deletion(-)
 
-Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
----
-Depends-on:https://lore.kernel.org/lkml/20260226055311.2591357-1-badhri@google.com/
-
- arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index 93892adaa679..5a689be61432 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -174,6 +174,7 @@ connector {
- 						| PDO_FIXED_HIGHER_CAP
- 						| PDO_FIXED_DUAL_ROLE))
- 				     PDO_FIXED(9000, 2200, 0)
-+				     PDO_SPR_AVS_SNK_APDO(3000, 3000)
- 				     PDO_PPS_APDO(5000, 11000, 3000)>;
- 			sink-vdos = <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
- 					     IDH_PTYPE_DFP_HOST, 2, 0x18d1)
-
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-prerequisite-patch-id: 4dacd8bc550e317d67134d030814765fb9f4c6e1
-prerequisite-patch-id: e863378fc602b6bee2e9fdd8c568003c00b2a38e
-prerequisite-patch-id: 202a9e1e9cf27a0b9ff7ebea76eb45cdac2cb581
-prerequisite-patch-id: f3817c560d0e701d7499fa1fb9ee40d22816c09e
-prerequisite-patch-id: c071913307a6eaa417d1345485d7a9c165d40834
--- 
-2.53.0.414.gf7e9f6c205-goog
-
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
