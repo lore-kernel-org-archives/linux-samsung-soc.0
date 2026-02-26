@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB0F3876AB;
-	Thu, 26 Feb 2026 06:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920C22E92A2;
+	Thu, 26 Feb 2026 06:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772088703; cv=none; b=jopIQmsqYBiyFfXt90AYojAUo1tR1W5uHT4StB3rS2od+VySCv1EBZrRMChyi152KfGmenlABK2VWuTLKTN2YG/40qkq5UG+ArBUJzZ5y+JRz0Jd0DyhHt9oP5V15ydnomwRTr+q+SdoW9VVgQByrsPiZMsYDYLe0QwLsLCff3c=
+	t=1772089115; cv=none; b=rSvWfLcnfsoAqK3gdP0/QVjG0svwjVgmTfvRL4DliWWhC33IqUgs6jQmVklBflqV586rK4R7iTob6JHTR8qHh5YGisqt+02dUT07taXZLvuiLha9B/Pg8XNDm+A/V0Gmy1QRVgk/oG5hjbV9+7JgGgAQvJXN8VfWMftWKFlwI70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772088703; c=relaxed/simple;
-	bh=EPcis5E6dgO1qz3kh+q3w1MutFbztm2Ji2wUIM2JyrY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VG2d/5IyemGOFHLA9bsC/2BCGL4/VtaQ6ZIcJu2kY9gRq3ySQhM28icq0vgzZhS/B+3KeUWS9ef1wPebBcy9m5cb9jMAB9TsKIvekf0tqYuh1qfrlg3Fx2XyNKDYRlzQdmTLf/XeGktMy3y6sQaRv5YXZCUnBBE0UGdjGcFAdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMO0ncZd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772089115; c=relaxed/simple;
+	bh=TQSIQMa8Rs3jscPOvjPDAEO3Yz/qmmCrhagyKGMWkOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kzQQEQCTq7+T2+LFGeyBrPDNYnwAnaedc5fWUCEjy+8PPnepnF6cSNXfMOJwV7UmIs5n2jLfwk1iB3eK5IQ43/YzWMYaum0arp7NAinFn2AmT+asLY4ca1MiX6y0eXIzP4EeQ08qwZBSwVviXRpPu/xT/kTtBUE4b9p7wZXUwDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsuIOD6v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMO0ncZd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE47C19422;
-	Thu, 26 Feb 2026 06:51:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsuIOD6v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C753CC19422;
+	Thu, 26 Feb 2026 06:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772088703;
-	bh=EPcis5E6dgO1qz3kh+q3w1MutFbztm2Ji2wUIM2JyrY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=gMO0ncZdCQmwx+IziHQEbmLEfYXdQPx6lgKgAZcoaUNht8UCQztjAFPvO1CS/19qq
-	 FyBYdl3//fxtgBUomEXCdtcY8FEuo640vrNh26GjerbGverHE7JGYesBLa0QQbFNSb
-	 8lmFNoqY0tUOw+/b/+q1vNBTwvc/pB3BULkTabOY18BQ6UqS1jIpqYxbEt1CcAeQmv
-	 P6o9Y99EFRirSUBST4BqPp9DUQsn7rB8Emd5YT6noRstY+bj1z/T0KE2Ipcfzw3AMW
-	 RoV5bRR/6KIHWKEXdcZI5OgHcSEXEu0VJXsks9g6WsmUJscRG0lPHNwFfH5Ok6ZUM7
-	 4lfx+6GeZZ9ww==
-Message-ID: <0c91fa84-dd0e-45bf-9c08-3b374daed7ba@kernel.org>
-Date: Thu, 26 Feb 2026 07:51:38 +0100
+	s=k20201202; t=1772089115;
+	bh=TQSIQMa8Rs3jscPOvjPDAEO3Yz/qmmCrhagyKGMWkOQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gsuIOD6vhCOkhCzWLGvl78xvu/7kZZj1/3OM45JpB3cAkxHZArvR5ENPHym8QQ41s
+	 /kcH9fQhJwGHQK4b4qrvdjPK974YJDwcaXr9LOgF21bu/1PX0xA3rEKSOggZEmK9Rh
+	 zRQx5s3Lt2iA3Emxyx4a4QSpO/Y4/jqXlaZ5xfPwItp1u4Mzucx6FwSWYwwHyb2jux
+	 je4742szA3TygjDp3J4RyU1qXM5ioFTxQ3CwcJf6dSzPvWNzsbhqVZItkSN4md2hSv
+	 MP2hdt7mWKMZBnV1LeV3Ad5hr308aegFMC0y5+Jet+H5ULR0Cp2q/WOSV4CBRnezq1
+	 9z/ja6siBvzNQ==
+Message-ID: <351aa49d-4485-42ad-909d-d7c339a87e43@kernel.org>
+Date: Thu, 26 Feb 2026 07:58:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: exynos: gs101: Enable AVS APDO
+Subject: Re: [PATCH] spi: s3c64xx: fix all kernel-doc warnings
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20260226051244.552959-1-rdunlap@infradead.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Badhri Jagan Sridharan <badhri@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Amit Sunil Dhamne <amitsd@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260226061053.2596167-1-badhri@google.com>
- <8eeadb7a-5075-4444-8714-45e589dda47f@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -92,50 +86,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <8eeadb7a-5075-4444-8714-45e589dda47f@kernel.org>
+In-Reply-To: <20260226051244.552959-1-rdunlap@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/02/2026 07:51, Krzysztof Kozlowski wrote:
-> On 26/02/2026 07:10, Badhri Jagan Sridharan wrote:
->> Enable USB PD SPR AVS for gs101 by adding SPR AVS APDO to the sink caps
->> pusblished by gs101.
->>
->> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
->> ---
->> Depends-on:https://lore.kernel.org/lkml/20260226055311.2591357-1-badhri@google.com/
+On 26/02/2026 06:12, Randy Dunlap wrote:
+> Add kernel-doc for one struct member and use the correct function name
+> to eliminate kernel-doc warnings:
 > 
-> Really, how? If it depends on that, it is wrong and cannot be applied.
-> DTS cannot depend on the hardware. NAK.
+> Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member
+>  'polling' not described in 's3c64xx_spi_info'
+> Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype
+>  for s3c64xx_spi_set_platdata(). Prototype was for
+>  s3c64xx_spi0_set_platdata() instead
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
 
-s/hardware/drivers/ obviously...
 
-> 
->>
->>  arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
->> index 93892adaa679..5a689be61432 100644
->> --- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
->> @@ -174,6 +174,7 @@ connector {
->>  						| PDO_FIXED_HIGHER_CAP
->>  						| PDO_FIXED_DUAL_ROLE))
->>  				     PDO_FIXED(9000, 2200, 0)
->> +				     PDO_SPR_AVS_SNK_APDO(3000, 3000)
->>  				     PDO_PPS_APDO(5000, 11000, 3000)>;
->>  			sink-vdos = <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
->>  					     IDH_PTYPE_DFP_HOST, 2, 0x18d1)
->>
->> base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
->> prerequisite-patch-id: 4dacd8bc550e317d67134d030814765fb9f4c6e1
->> prerequisite-patch-id: e863378fc602b6bee2e9fdd8c568003c00b2a38e
->> prerequisite-patch-id: 202a9e1e9cf27a0b9ff7ebea76eb45cdac2cb581
->> prerequisite-patch-id: f3817c560d0e701d7499fa1fb9ee40d22816c09e
->> prerequisite-patch-id: c071913307a6eaa417d1345485d7a9c165d40834
-> 
-> 5 patches here. This is confusing.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
