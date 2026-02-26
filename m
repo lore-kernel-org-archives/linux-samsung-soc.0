@@ -1,85 +1,86 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1155E33261D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 18:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C0B426D0C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 18:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772129866; cv=none; b=Eh1xXuikm28CDjy7SKEeZ3sC1QHpeAcTSeV2OSN4Ah6LRyHOb6aIcBTIFsffG+AbyvC+RQ47ndd8jVzcSsn7X1jvMqTiyVDjEo83MewSjdssxYMRjQaZ6pqr53ptblLARod1boD2ulnkxjwYYSdkJcu7ELwsqotpPfMOGzpQdJM=
+	t=1772129896; cv=none; b=m+zBZ2/cW+mZ8E/shMbwLtj20rc3uhPW9c/yx8pXQL3rxJUoJkADHJ2mZ8yxM14TnFvFhzP+bJEL8NjLNNLOeGH0Z5E9wXjiqRyO/gYu94OEL7VHXXdtFTO69FsByQ0EAVAxH8h0F9aRpAAnFeNoPYWBZUogh5WMIudiQNsiIrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772129866; c=relaxed/simple;
-	bh=Nq3CMChIfPaEW53CpS7DRO/eUow2u/bScwRGHq/ah5A=;
+	s=arc-20240116; t=1772129896; c=relaxed/simple;
+	bh=EKn4D9pfsoVqno50Wtt27Q3vdRSw/o5+RFfqCp9TomM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N3V4A/gKpDxpEoQUJRcXxtmLq9cLJ7FlsXPZDH9pXdKGmKa39hRZjJZsTxdD4s4Mnnf+rLKXWr8jEWtb9aBPgFt/dvJWOIB9fOVvasv04x4ma2u/gKh8RF2TeBox4xev68W76DiUQteLwxPjpHhj7RLzYbv/yjRskpiLO6IvG8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YTLKw0Pm; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9SJhdfC; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=dPqzjz1QcaRzYftUeThFlsTgD2b4lFlwFnkkHBHETtGSuYi3W/959d4snW4VY06tNj/gmjrSyfcPAlwsnpBU4ars/AG73WxJ5VYp0lpWrvymZ/KUS4APcNJQlRHvwfJH8qCjpQf1Xlr7G24VR6ZHHsHv4kc4azgGD0HTwUShqBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gqgCwhjU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pQrubWb+; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YTLKw0Pm";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9SJhdfC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gqgCwhjU";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pQrubWb+"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772129864;
+	s=mimecast20190719; t=1772129890;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-	b=YTLKw0PmHnCkhMmHhyKIRKDj83ELoThI9ONG63S0XRyWiPCt2UiYATfXdoM/lOc4Litqv4
-	ocsj5NO/AYdx/Gz9shWA9RLeDKB3eFbix7GzEyepnShA8CCdD914zAHFcMLi5odv1p0K9f
-	SH2R+ww95EkaLUeuSRixoG79ww+hAmI=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=R8/8h7E8+kTx8XExpctGhWPiJ0TZXQbqGj0doBuTluE=;
+	b=gqgCwhjUBfEaLLTbBK+32B6lxt7UophBJNJ0IHIPpgFfhD/Yq+SKPf6/G1wJjHU1sS11sH
+	KoL76qK/TaEs4XxnDrggTz0W+timy1Hs4RvUU07G1lfzKicojEsGgAJGFCl8szdDMWG8+H
+	w+Fhw1OICiAOGZf5Y6Kk+ZRwda3UVTs=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-3-0fm4paOJPsuTIC1V46uOIA-1; Thu, 26 Feb 2026 13:17:42 -0500
-X-MC-Unique: 0fm4paOJPsuTIC1V46uOIA-1
-X-Mimecast-MFC-AGG-ID: 0fm4paOJPsuTIC1V46uOIA_1772129862
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5033b62efa7so56055831cf.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 10:17:42 -0800 (PST)
+ us-mta-646-OZeRjKyfMmGP1pxCaQkpeg-1; Thu, 26 Feb 2026 13:18:09 -0500
+X-MC-Unique: OZeRjKyfMmGP1pxCaQkpeg-1
+X-Mimecast-MFC-AGG-ID: OZeRjKyfMmGP1pxCaQkpeg_1772129889
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cb42f56c4aso1010527585a.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 10:18:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772129862; x=1772734662; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1772129889; x=1772734689; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-        b=T9SJhdfClEKo4WZ0WI7ruoV/PtvgrjwotExnIIkUGCBOmE+fxTlfvwaV1781Ckdifv
-         GRFWZ5A/95Mez8v1hWMvlyM+3X5RbQ7Klh4+1vSRCPIqHChcPyCjQgQnPKcswSyW7haJ
-         cXGpcZi/yuHCzXNOo3o5rQR6OFqqskWisDS8UAlBDo5CJDOeHqVyVLKLtd9PRrmQj4R8
-         ZsVOmZfIu3DGE5Nn4djI4HlVHczYio/sy6Qvx7blKn2FLBami4ySthpzwaex/JG/Ec/B
-         QAetdvj8Eir8CfamP7yM9BT3NiCEEgVeaD4TC2bCvXLpRspoootTd5Z/XJcbdsrvjogA
-         kVLA==
+        bh=R8/8h7E8+kTx8XExpctGhWPiJ0TZXQbqGj0doBuTluE=;
+        b=pQrubWb+5jWEM5aYtJOrfuSBBVKf6uGuJrO9aYVUr3Y1jyR268vNVQRtkeCXjA8wEb
+         kQvpRofLlDkvyMHxHD8OTpPaMfSfMoSuVepWWVx4cV9g9vHD7DdN7fA0n8HTXx0h3EEf
+         GyRMi03piGMRPpz3wzgKO2lWwHlSEpRJ0FiPup23NBLp4gmJ9LhQ77SAzh0fleMljGtd
+         ZEcwzTBg3uF0uXuHVX5rUojsd4e+W6CyNukv8UcGOGAQLaWISk/+bXAAZtXz3pds8G1r
+         FUax7il4PODzodK3JvAKPbaD/DfhWk4+T5IiSbH5RBSuoHFopu/MPLWjC5tNx1gptnyz
+         cTrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772129862; x=1772734662;
+        d=1e100.net; s=20230601; t=1772129889; x=1772734689;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=SZUTvZ638AEjm5qo1oF8P/Ro4B+EvKlMp+AWJ5ktKic=;
-        b=ixNhQ5TPwbxStRqi9Cze2ZijBAF1KmoODoQ2iAv+JNmw+GfqPSP6gyPXaJqIEs5W2Y
-         nZ3c1KjY/WW/aJQpfxrSM/F+9JFt//xC4ZAACfsTw8M4lBf+nLcs8qO0cvEgTZlqcBz6
-         Xzo2DLD55PGAut2uiLmbm0PBs66KkiuRUo6+2MmJuIjXkUzX+MhanG96F3xOAj/QUfhw
-         XGgcgzUXKvrkMzpRCgV4bg0a1tcaEGU5jnGZFMY/NtkVOyMu8zDiQgxp2kL1h2Qbfgzq
-         bkx+fUKyxux4SZB/mNobfcZL2sP7fLaetDWE9kb7xnG0yhgfbw/wZ3tTNXSjRWod9OzV
-         QFJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvK4DUezao07FzMbnYJQ4H1MezUP7sMxC6oEynzxOarQguQAollyi78A1Ug+tIt89MJeYcki31KDLVTUk4MX/slQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDmJzRbFKqP+lar6vUWoKs4wD5jj9g8y9qELHlTboKtHzlyN3d
-	v2+SAzESP4fe/MKDdE6fAHCY6+WyHcBD42pT4eBxflmEoYqo7JLWxKLmmuQdZvPi2B7Y3um6RCV
-	R3/WFKYUCSwirG8H7FmwybqBKL/h/dKW2LlCgR3ePyEYIHSFtO0F9TBqkx1DTrhUWDlbCjqCL
-X-Gm-Gg: ATEYQzwUXM5ZOsfxBhxZCT8h8+/nb+9wcogwDWH9sOq5luZkpZmhl3/Bohj+mPdBSd4
-	29QK9MrY5MqOVlTapg7EYIa/PigUKhvXX8Psb51YKUivV5BqeFfykCt3kXn9Wu7jQ+puHHiDSVL
-	3Q4vmXGqjtMAGiWE2ecohsQuIyuTzemB/XA9vswplFYLrcmAB2wbQW6F74dfXwh+BofxAlkGmlE
-	6LAGhaofsEg4Sb7fOXxu5NKPh0lsySwj8VNNzuAdZQBm81Vqpcm8IukNxDARWk85NwjZ25aWUJx
-	FuGqEmS0FngeTCsmr8yHTtC6gm3WoPVi7fusfP5L5abnjjc5/ufrhs9zPJMIoaE3n/1fkaagns1
-	ZCTGWLWtGekY0DJB5vvLHzoulB29ZbkizWz8tHUNktKGnh+tA+AJsiVTJG0E5
-X-Received: by 2002:a05:620a:1b8b:b0:8cb:c7b7:1be3 with SMTP id af79cd13be357-8cbc7b71dbfmr89299585a.38.1772129862168;
-        Thu, 26 Feb 2026 10:17:42 -0800 (PST)
-X-Received: by 2002:a05:620a:1b8b:b0:8cb:c7b7:1be3 with SMTP id af79cd13be357-8cbc7b71dbfmr89293185a.38.1772129861633;
-        Thu, 26 Feb 2026 10:17:41 -0800 (PST)
+        bh=R8/8h7E8+kTx8XExpctGhWPiJ0TZXQbqGj0doBuTluE=;
+        b=wu94cHSuOk3BzIxb61fMWvk+K0f979b2cCNBZ+0HqCVcTJjk+yEdZuOBvUEcLiQqBa
+         M9gCJ3v4hncotuuhLj7deW/kFPf/D+8nzhJld4lQiv82TsfAonyJXUVKzki5zo4Iizjd
+         OQ/0yQK7YtBkJrdzNELy2sBDq62uFaGL9b/SMlZXaMYhtqDpkAKOQAzpfV34YTRuSdr9
+         SN/XcR9xw8drgEkXFCHeqc/L4TAYF/gvjAH4uW6fTlK38xNTgShJ5QWzl2aNpE4UYFlZ
+         XFOUagEea+ZkxC18nIlu87KNBW66c8E3zsbXo83uLrsUO7r4pejHHsBTP1x3Xpi6kdLP
+         6b+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWefNVwjOAt0k9EyjTWvTyzPOASGGzGUOblbRIhnYk9Qo82yf3IExjAReJI+Iy/zBPJnUDEv3YvN1Tn87qK7A2P8g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB5eNfv8aCQyEPq82aLyiC97mvBgvHWFdlSnCWCHl3xAq+mdmE
+	uKT01nw4XeerCk0QAsee5wvH04XPRWmS/oosoiRqlERPvhQBUezfa0RXNo8WmgADXPETzcNUOVn
+	LnHBx4wBfogXFgzlWbBISP6hZrCxxljsPgLTh+2n8tTas0X04v6f8vJ8hOOl5WrEjTulWbJfU
+X-Gm-Gg: ATEYQzxrUbAVhYBXk27ChP9uJ9NoYfafdlr/IACR7Nt1uyn7lb3m23M1NW544Z3Cmd1
+	DuDXXNQYsIWdpkIWWpuL/qH1gfN5kDlDGd9d3BtC9M+iLUsKbLDIkwv6/yF8VsSGkvG7yRhSrnq
+	1W0hbbI7FZDL3Lx2dmU7Aw94wY5ycnkpd1LyD313KbC42P0c4dTqk3ABRWC+QmzA1VbFpQrrrgs
+	r26KbN3GlOq03b8trZtnQZ7G8c2tLbo634QUIWxudkAHnymP1yn/jIrse0+JbLG7HjXxp4Km3dr
+	S5BEz/Y1q2sh6OOJ4aOmF5Hb0xQb2PMMEZdC+fjyu2/XaJWg4sovdojAUdFSZWWQBxm/8Vf0nP5
+	ckEDqyCLTAQU8D/RHbAUrore/7EhWXuxtrboSu8Z19rqPLwYoRuO0sU7ZRxR6
+X-Received: by 2002:a05:620a:1929:b0:8c7:1119:2994 with SMTP id af79cd13be357-8cbc11c90edmr372520785a.64.1772129888714;
+        Thu, 26 Feb 2026 10:18:08 -0800 (PST)
+X-Received: by 2002:a05:620a:1929:b0:8c7:1119:2994 with SMTP id af79cd13be357-8cbc11c90edmr372514385a.64.1772129888155;
+        Thu, 26 Feb 2026 10:18:08 -0800 (PST)
 Received: from [192.168.1.3] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf717f2bsm247046685a.35.2026.02.26.10.17.36
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf717f2bsm247046685a.35.2026.02.26.10.18.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 10:17:40 -0800 (PST)
+        Thu, 26 Feb 2026 10:18:07 -0800 (PST)
 From: Brian Masney <bmasney@redhat.com>
-Date: Thu, 26 Feb 2026 13:16:45 -0500
-Subject: [PATCH 01/13] clk: add new flag CLK_ROUNDING_FW_MANAGED
+Date: Thu, 26 Feb 2026 13:16:56 -0500
+Subject: [PATCH 12/13] clk: samsung: acpm: drop determine_rate op and use
+ CLK_ROUNDING_FW_MANAGED flag
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -88,167 +89,87 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
+Message-Id: <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
 References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
 In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>, Abel Vesa <abelvesa@kernel.org>, 
- Andrea della Porta <andrea.porta@suse.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Sudeep Holla <sudeep.holla@kernel.org>, 
+ Brian Masney <bmasney@redhat.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-samsung-soc@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4829; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2091; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=Nq3CMChIfPaEW53CpS7DRO/eUow2u/bScwRGHq/ah5A=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIX9Gl/8Qhn3nT5sJOJp63wTebDqndvHZo401bZ3U3v9
- fUq74XtHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAExEyILhf9mh5qLnnYv6ovVZ
- BV0j136w/qzwRDRlzgWDsnBfpx13LBkZbrjNE7DY37FVRFDaqplrc1X3XEOBzF0rNoqd8tWwMzj
- MAQA=
+ bh=EKn4D9pfsoVqno50Wtt27Q3vdRSw/o5+RFfqCp9TomM=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGDIX9JnE56s1Tph83jdWa1ac1Xd1ndm6PdfP9a954bFZU
+ u7qtmrljlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACYyk4Xhn1mY9srEzJmn5rw2
+ sTu028dALKgiO9zoj86bnu7Itz0FLgx/hVjYW249tN4UzXhUxVZ7JXeVc79zU9+1uvMnjU3v3rF
+ jBAA=
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-There are some clocks where the rounding is managed by the hardware, and
-the determine_rate() clk ops is just a noop that simply returns 0. Add a
-new flag for these type of clocks, and update the clk core so that the
-determine_rate() clk op is not required when this flag is set.
+This clk driver has a noop determine_rate clk op. Drop this empty
+function, and enable the CLK_ROUNDING_FW_MANAGED flag.
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 
 ---
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
 To: Michael Turquette <mturquette@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>
-To: Abel Vesa <abelvesa@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: Bjorn Andersson <andersson@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-To: Frank Li <Frank.Li@nxp.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-To: Orson Zhai <orsonzhai@gmail.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
 Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: arm-scmi@vger.kernel.org
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: imx@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org
 ---
- drivers/clk/clk.c            | 24 +++++++++++++++++++++---
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-acpm.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fd418dc988b1c60c49e3ac9c0c44aa132dd5da28..0a522a0817411c7f7c6e9cffd6f024e672a331a8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1557,6 +1557,20 @@ static int __init clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
-+/**
-+ * clk_is_rounding_fw_managed - Check to see if clk rounding is handled by the
-+ * firmware.
-+ * @core: the clk to check
-+ *
-+ * Clks that have this flag enabled do not need to have a determine_rate() op
-+ * set, and will always return success for any rounding operation since the
-+ * firmware will deal with the rounding.
-+ */
-+static inline bool clk_is_rounding_fw_managed(struct clk_core *core)
-+{
-+	return core->flags & CLK_ROUNDING_FW_MANAGED;
-+}
-+
- static int clk_core_determine_round_nolock(struct clk_core *core,
- 					   struct clk_rate_request *req)
- {
-@@ -1589,6 +1603,8 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 		req->rate = core->rate;
- 	} else if (core->ops->determine_rate) {
- 		return core->ops->determine_rate(core->hw, req);
-+	} else if (clk_is_rounding_fw_managed(core)) {
-+		return 0;
- 	} else {
- 		return -EINVAL;
- 	}
-@@ -1673,7 +1689,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
- 
- static bool clk_core_can_round(struct clk_core * const core)
- {
--	return core->ops->determine_rate;
-+	return core->ops->determine_rate || clk_is_rounding_fw_managed(core);
+diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
+index b90809ce3f882c489114c9d7299417d7fe373749..e2dffbfcdf221e31a4302074475a42481d6a829b 100644
+--- a/drivers/clk/samsung/clk-acpm.c
++++ b/drivers/clk/samsung/clk-acpm.c
+@@ -72,18 +72,6 @@ static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
+ 					clk->mbox_chan_id, clk->id);
  }
  
- static int clk_core_round_rate_nolock(struct clk_core *core,
-@@ -3528,6 +3544,7 @@ static const struct {
- 	ENTRY(CLK_IS_CRITICAL),
- 	ENTRY(CLK_OPS_PARENT_ENABLE),
- 	ENTRY(CLK_DUTY_CYCLE_PARENT),
-+	ENTRY(CLK_ROUNDING_FW_MANAGED),
- #undef ENTRY
+-static int acpm_clk_determine_rate(struct clk_hw *hw,
+-				   struct clk_rate_request *req)
+-{
+-	/*
+-	 * We can't figure out what rate it will be, so just return the
+-	 * rate back to the caller. acpm_clk_recalc_rate() will be called
+-	 * after the rate is set and we'll know what rate the clock is
+-	 * running at then.
+-	 */
+-	return 0;
+-}
+-
+ static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			     unsigned long parent_rate)
+ {
+@@ -95,7 +83,6 @@ static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ static const struct clk_ops acpm_clk_ops = {
+ 	.recalc_rate = acpm_clk_recalc_rate,
+-	.determine_rate = acpm_clk_determine_rate,
+ 	.set_rate = acpm_clk_set_rate,
  };
  
-@@ -3906,7 +3923,7 @@ static int __clk_core_init(struct clk_core *core)
+@@ -106,6 +93,7 @@ static int acpm_clk_register(struct device *dev, struct acpm_clk *aclk,
  
- 	/* check that clk_ops are sane.  See Documentation/driver-api/clk.rst */
- 	if (core->ops->set_rate && !core->ops->determine_rate &&
--	      core->ops->recalc_rate) {
-+	      core->ops->recalc_rate && !clk_is_rounding_fw_managed(core)) {
- 		pr_err("%s: %s must implement .determine_rate in addition to .recalc_rate\n",
- 		       __func__, core->name);
- 		ret = -EINVAL;
-@@ -3920,7 +3937,8 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
+ 	init.name = name;
+ 	init.ops = &acpm_clk_ops;
++	init.flags = CLK_ROUNDING_FW_MANAGED;
+ 	aclk->hw.init = &init;
  
--	if (core->ops->set_parent && !core->ops->determine_rate) {
-+	if (core->ops->set_parent && !core->ops->determine_rate &&
-+	    !clk_is_rounding_fw_managed(core)) {
- 		pr_err("%s: %s must implement .set_parent & .determine_rate\n",
- 			__func__, core->name);
- 		ret = -EINVAL;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 1cda2c78dffaff037f0f16b0f11106b63b3a746f..187f8248a9c840c701cbbba99bb7cdeef7b654ee 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -32,6 +32,8 @@
- #define CLK_OPS_PARENT_ENABLE	BIT(12)
- /* duty cycle call may be forwarded to the parent clock */
- #define CLK_DUTY_CYCLE_PARENT	BIT(13)
-+/* clock rate rounding is managed by firmware, don't require determine_rate */
-+#define CLK_ROUNDING_FW_MANAGED		BIT(14)
- 
- struct clk;
- struct clk_hw;
+ 	return devm_clk_hw_register(dev, &aclk->hw);
 
 -- 
 2.53.0
