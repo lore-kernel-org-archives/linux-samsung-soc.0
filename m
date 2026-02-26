@@ -1,47 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B939448C;
-	Thu, 26 Feb 2026 08:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF26239447F;
+	Thu, 26 Feb 2026 08:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772095225; cv=none; b=QkKMvxQ+dTXQn6U1R78kQKtZwVupNzFgYVBLIj15e6Ebl3REb6ySUfCvNs9yEr1WXxDahERXyTMCDXrWB4pdzvA1PKAONKMBY1581c7QtWJhUoK0ojJuuafZXAMdEZc7wssLKLLNZZtHJ4MXyB3UM7T1iBNEvQxL+WPcEwHRlXQ=
+	t=1772095584; cv=none; b=IVu+eclaqAi3tddW3ihBH/HXdNlBnvXfj2B/x+nKKNDRxcu2mHe2m6Fl0Orj21fTkNQi4Dg6G8tR2dvF3zzZoc9IrJTRyyTWH8d+yEHc0X4pHGjZsJAvlbFjDNBwq+2QULpkLIifh2CfcXFINNPsgNF2Yl3AB7g8mmCrbO0sYQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772095225; c=relaxed/simple;
-	bh=03ww9eTAIOimZhGpfh2LPpkkMRKr/FXHrMGkGgHg/uw=;
+	s=arc-20240116; t=1772095584; c=relaxed/simple;
+	bh=8EKuGux5/UZ8IwnFOps1Y3r1CNwywMJO9iez4oQSWko=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uhPPHWLzIk44otYB8hSEEuL71QJqjy5wjTAwv9ojgmCRq7FJI+sXsg+Iy6K0fapf8ZFaUagIhC6ldpcaLuxgnRWDbk4mNMfgu5ykAhkeqoHOfKotUSENp8XJF6mWxSxsOY4PD2ivlRdlKw1KQeGAOrkNomaJNDVigkVqPqg4bbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThIjjoHx; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=VISvFgqEUZ2nN+DdKRVynu4e2CZheL6SupOtfEKRJKHTBG1bLRsND2DQt0mFwLElbDAQJ9kEIF2irbejm0zMSJq3q6vGhvj6mBAxpG2xqPLsIbEAp4OUMZiZbSGeGoQenEgFFcHARiI3TChwf7bToqlaKurbBsIXFMiSVeEfY6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he8d6KdB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThIjjoHx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86137C19422;
-	Thu, 26 Feb 2026 08:40:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he8d6KdB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5333C19422;
+	Thu, 26 Feb 2026 08:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772095225;
-	bh=03ww9eTAIOimZhGpfh2LPpkkMRKr/FXHrMGkGgHg/uw=;
+	s=k20201202; t=1772095583;
+	bh=8EKuGux5/UZ8IwnFOps1Y3r1CNwywMJO9iez4oQSWko=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ThIjjoHxqM636G0Cb4gnvicEzqDaWweb11h4BxNO2jwU+10Vl/Wm9iKZjaw+5VWjm
-	 ufG1bjxq4wdlIb2/8c+ESNhu4fquHv61kkdnMXhsscm6nNgZoBSDd/XFlMMIII4bta
-	 VELfeTX6NG22vMvnuPbsOfGMHKYXCUP7nOR02q5dIBc8cDrHMu8Lkq6ibO7Xp+gN6w
-	 jmkhuT6D3/c/X1KILWfAeZ72tsTAcXx9sGyAJYBB+Sm0lYnuO2MNBLkGY1kWSlkjyU
-	 fPY5MQ5RwoiBS3jeqMHMtlbIvvOrJAN5lBLFN5YvDtHrCrlCWPTE6wzCfu5zBJpgDb
-	 SsBLNBXbUPIWg==
+	b=he8d6KdBCEQd3IH+E1YdrXxljExN33iIfdqKrOdJoDTbpa09R4rvdJZBsoNxqvEz7
+	 XMbZ9rvlGsZQjR1GT8kXv6HIktqyEL1gHAjUK9wR/OWVHdpelt5c64I34n3Tt+eRvr
+	 QRohTIhAxAcAt5l9BJDDUxA9JZDP/nCWb0t0YKcb9GqnYBO1MMWffEiJIWfBCG1+AQ
+	 oSjMEHuIeBAKHUhvSS9hMH+P38tfODrCV8jfu5SNZNOY8xpyu2p2uAaewaLE1yvjjJ
+	 N++rUgW9Me9oQ1lHw3uXGCVGqf6rvNmTUz7gHM58IU5Al8fBOagBTNbDzxbdkiUbfa
+	 nLN0LPL8izs0Q==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
- Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Rayan Marzouk <rayanmarzouk743@gmail.com>, 
- bluebunny <kalorin.bok084@passinbox.com>
-In-Reply-To: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
-References: <20260125-exynos7870-j7xelte-v1-0-5cacc3042c42@disroot.org>
-Subject: Re: [PATCH 0/2] Add device tree for Samsung Galaxy J7 (2016)
-Message-Id: <177209522223.26390.6219893536178441080.b4-ty@kernel.org>
-Date: Thu, 26 Feb 2026 09:40:22 +0100
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
+ kernel-team@android.com, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <20260210-s2mpg1x-regulators-v8-1-c429d709c0e0@linaro.org>
+References: <20260210-s2mpg1x-regulators-v8-1-c429d709c0e0@linaro.org>
+Subject: Re: [PATCH v8] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ S2MPG11 secondary PMIC
+Message-Id: <177209557950.28320.174050275228667996.b4-ty@kernel.org>
+Date: Thu, 26 Feb 2026 09:46:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,22 +56,20 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.3
 
 
-On Sun, 25 Jan 2026 01:35:25 +0530, Kaustabh Chakraborty wrote:
-> This series introduces the device tree for a new Samsung Exynos 7870
-> device – Samsung Galaxy J7 (2016).
+On Tue, 10 Feb 2026 12:42:32 +0000, André Draszik wrote:
+> In a typical system using the Samsung S2MPG10 PMIC, an S2MPG11 is used
+> as a sub-PMIC.
 > 
-> I have acquired permission from the authors of this patch to upstream
-> this on their behalf.
-> 
+> The interface for both is the ACPM firmware protocol, so update the
+> binding to allow the relevant node and update the example here to
+> describe the connection for both PMICs.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: arm: samsung: add compatible for samsung-j7xelte
-      https://git.kernel.org/krzk/linux/c/be961cdb8ed3befa81dce118a6a41f0138732d10
-[2/2] arm64: dts: exynos: add initial support for Samsung Galaxy J7 (2016)
-      https://git.kernel.org/krzk/linux/c/5d692f20de6311fa507c952adc3487c641edee00
+[1/1] dt-bindings: firmware: google,gs101-acpm-ipc: add S2MPG11 secondary PMIC
+      https://git.kernel.org/krzk/linux/c/f2e83070febf61fc72765cdc28d2a45c89b77ce4
 
 Best regards,
 -- 
