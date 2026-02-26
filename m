@@ -1,50 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF26239447F;
-	Thu, 26 Feb 2026 08:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E337396B6B;
+	Thu, 26 Feb 2026 08:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772095584; cv=none; b=IVu+eclaqAi3tddW3ihBH/HXdNlBnvXfj2B/x+nKKNDRxcu2mHe2m6Fl0Orj21fTkNQi4Dg6G8tR2dvF3zzZoc9IrJTRyyTWH8d+yEHc0X4pHGjZsJAvlbFjDNBwq+2QULpkLIifh2CfcXFINNPsgNF2Yl3AB7g8mmCrbO0sYQs=
+	t=1772095587; cv=none; b=vDdCullSVdwlBMKkIIzoPNcRVG10pir5o+bRbJng0OTpZZRaQml9fBrKybQIX6660n3lhPaltRobyjr3K7ds/21DOFdilaucdPfqs4fc7jwyRwMmveMG2p8at7JOg1Dhxqicxkx8TdWWdzrjuQY11CvUvAO8tI9f8eHUyJRssbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772095584; c=relaxed/simple;
-	bh=8EKuGux5/UZ8IwnFOps1Y3r1CNwywMJO9iez4oQSWko=;
+	s=arc-20240116; t=1772095587; c=relaxed/simple;
+	bh=vT4YZ8d8+umMLaENQR7603vntqtl8mUCTTz31FhwWJg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VISvFgqEUZ2nN+DdKRVynu4e2CZheL6SupOtfEKRJKHTBG1bLRsND2DQt0mFwLElbDAQJ9kEIF2irbejm0zMSJq3q6vGhvj6mBAxpG2xqPLsIbEAp4OUMZiZbSGeGoQenEgFFcHARiI3TChwf7bToqlaKurbBsIXFMiSVeEfY6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he8d6KdB; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=vE14J69MyxS4kMUBW3qQeUq2BcXUgSRKQQ6KQ9u3PIX687pEmUwkk1bY6IaZDAOORxjblp9kAT1TEVpg4PtrhVlJYyjVHqGAnsKVxhRxrT9MOeyCGKXDiCCzO0HEVwm4GE3V5DU7j5D+mcWuruX3ZMGKCq/3xpX2TU3YcwsoR28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZN9LZrH5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he8d6KdB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5333C19422;
-	Thu, 26 Feb 2026 08:46:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZN9LZrH5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D389AC19424;
+	Thu, 26 Feb 2026 08:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772095583;
-	bh=8EKuGux5/UZ8IwnFOps1Y3r1CNwywMJO9iez4oQSWko=;
+	s=k20201202; t=1772095586;
+	bh=vT4YZ8d8+umMLaENQR7603vntqtl8mUCTTz31FhwWJg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=he8d6KdBCEQd3IH+E1YdrXxljExN33iIfdqKrOdJoDTbpa09R4rvdJZBsoNxqvEz7
-	 XMbZ9rvlGsZQjR1GT8kXv6HIktqyEL1gHAjUK9wR/OWVHdpelt5c64I34n3Tt+eRvr
-	 QRohTIhAxAcAt5l9BJDDUxA9JZDP/nCWb0t0YKcb9GqnYBO1MMWffEiJIWfBCG1+AQ
-	 oSjMEHuIeBAKHUhvSS9hMH+P38tfODrCV8jfu5SNZNOY8xpyu2p2uAaewaLE1yvjjJ
-	 N++rUgW9Me9oQ1lHw3uXGCVGqf6rvNmTUz7gHM58IU5Al8fBOagBTNbDzxbdkiUbfa
-	 nLN0LPL8izs0Q==
+	b=ZN9LZrH5lNH+uZ05yLMfBjmrU3hV9lzIb/FdgWw2O9GZ+LDzrW05X5X63TcOrLhGP
+	 7NKKxnZ1yxM4OVCZL48FnubLVyTtvfyr+zGaKir1vvZZtn+v5oQqyqzcSWPKjVmP0y
+	 w2sMZA4twrqW/NHFJ9B4SLaLYQtM08leZyTlGFLc44JLRNIrRuMN3gOiNjNSmgeTbO
+	 ogySlpxvm62c9pmWBZhOI1AAbu0bm/48eXiMhjXN3zPIld5hnUdK4iNumlhO14TwBO
+	 aWV3GUBWHeeWH7bpVVMwUoe+r7AI32aoEDCRhHUs7Q6aU1VM/uVSAqwXYBZ7n047Mk
+	 lSMBWkunqaNwg==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Juan Yescas <jyescas@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20260210-s2mpg1x-regulators-v8-1-c429d709c0e0@linaro.org>
-References: <20260210-s2mpg1x-regulators-v8-1-c429d709c0e0@linaro.org>
-Subject: Re: [PATCH v8] dt-bindings: firmware: google,gs101-acpm-ipc: add
- S2MPG11 secondary PMIC
-Message-Id: <177209557950.28320.174050275228667996.b4-ty@kernel.org>
-Date: Thu, 26 Feb 2026 09:46:19 +0100
+Cc: Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260205-clk-gs101-symbol-names-v1-1-a7d9a7a4d108@linaro.org>
+References: <20260205-clk-gs101-symbol-names-v1-1-a7d9a7a4d108@linaro.org>
+Subject: Re: [PATCH] clk: samsung: gs101: harmonise symbol names (clock
+ arrays)
+Message-Id: <177209558359.28320.7275620505231772879.b4-ty@kernel.org>
+Date: Thu, 26 Feb 2026 09:46:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,20 +54,20 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.3
 
 
-On Tue, 10 Feb 2026 12:42:32 +0000, André Draszik wrote:
-> In a typical system using the Samsung S2MPG10 PMIC, an S2MPG11 is used
-> as a sub-PMIC.
+On Thu, 05 Feb 2026 22:01:57 +0000, André Draszik wrote:
+> Most symbols for the clock descriptions (arrays) don't have a cmu_
+> prefix and all symbols have a _clks suffix where appropriate.
 > 
-> The interface for both is the ACPM firmware protocol, so update the
-> binding to allow the relevant node and update the example here to
-> describe the connection for both PMICs.
+> Update the few outliers to also fall into this same scheme for
+> consistency.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: firmware: google,gs101-acpm-ipc: add S2MPG11 secondary PMIC
-      https://git.kernel.org/krzk/linux/c/f2e83070febf61fc72765cdc28d2a45c89b77ce4
+[1/1] clk: samsung: gs101: harmonise symbol names (clock arrays)
+      https://git.kernel.org/krzk/linux/c/cdd94147fd72974eb1d118b1ba3b79e8df0ea716
 
 Best regards,
 -- 
