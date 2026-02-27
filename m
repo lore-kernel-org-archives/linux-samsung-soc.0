@@ -1,63 +1,63 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E383325498
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 03:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28624325498
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 03:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772162784; cv=none; b=GQIK9nUn1IpZFC0JefNgcVbKqaK3Ta9bonffYGN6yCch3os+EzuRMM81MgK7HUOkstm6Uj6ezdCaC9ytZvh9Wl86r4FN6uX50rLR84gHFbx1b+DvuMiaUCNpvLH/SjzVd1GRo7DmBbU4Sb9aCvVOfZEO0UBW8VN6cxGJVidL/6c=
+	t=1772162788; cv=none; b=MOJNGuJygR+8Xwpf2n4543DbvDXCYLZu9gCjXzM4F8H46jNNBwLiz+MDLvUBxi0cgH3/d50gG6Zx+y8PBF4g7oRn8GcGQkj0FK2CfWqPG2I4/eExfr7OMjBLD4U2/JVJdIIY7U0KXsMHZsvrCAYmfH4spHdoknJPIaDq81+YQHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772162784; c=relaxed/simple;
-	bh=b9b22Ozhvo19VJujzVT1horPbr1WA97i8oWgfeEATgg=;
+	s=arc-20240116; t=1772162788; c=relaxed/simple;
+	bh=14tp/ZbiHhc9fo6I3d3q5B/zYDGp7+QSAvy5xrmzM58=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q09bRh/0T/1ePjC/48rG/w6FO6oBeOleur2G9PNE4hbHCOrqStStE5b4n8msWcK+0bXWnMRwDoz16E2Mw9JJfVs/9NBsu6tm+iC+t977wWlgE+jnKIrjOaTkOVrHvMKa6ZR7L+WisfFGe9UBkld0kTkYh5o6B1Xc7BT1n7Y6r50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajYGAz0I; arc=none smtp.client-ip=209.85.216.53
+	 MIME-Version; b=BZzGDnCvkXduzvVLHXYqm1DxkvVSGx1iLUsaYRJaclimQTkaaerm5ay7NrbTIgO8oMtWFieQ6SATFTy5vO+RmXsl1XVjdxtRN8u/b/4ncET2pUynEEoJ5ruXv9UpCKFV+sxCtIXLMXdGrDhqz+Fq9aKiycdZe61IvB5YGUjX0T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DeIveTIS; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajYGAz0I"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-358ed67cd4bso584810a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 19:26:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DeIveTIS"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3590408a093so814631a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 19:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772162783; x=1772767583; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772162785; x=1772767585; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kWzBer8K/lUNOlKz33ehPBmEnMKwxXodb/hUWZrwOGc=;
-        b=ajYGAz0I3qhT2rhanUISCDGW/UeEO7QHfCqzjfJzi6o8WVSrI1I2fk3XyHEHZklCj2
-         tjgFU5SBGVTIB1wiweG0XpdK6dTgd66RH8QietSfG8qsna+R4RaWrwL5fWnTdRRQc3wq
-         0k5kLGYhw+KKY6xg1LaT0mvKuwjhLMn51xlpifxpHaO2yPr8cJHgOqlFmfdgkiCHPPlG
-         BmdhE2TPIPZ0T8n/A44uIsjYoxqg/G+ADAiX37dlFY1U3i+Bq4vu15mYQKB/jzRF+i8g
-         yRQeHCF3LzJL86hZiydqdz/LnNeTH8pne9lGv2fH6oN6jBuqfhVyGahKITyFodpP7iye
-         jYeQ==
+        bh=3SNYtFmJqSV95moRlaJ0QYmUhL+TICukmgmBhi3zA4c=;
+        b=DeIveTIS7rZ75TqpGKczy5WPewUBeKiWGUGcO4gSFVW+e6ftPxQLTFrqvClSbtSzu0
+         3S0CuPNLLsKoXjsb/1nQ6V6o6ySEsCLWwZVPp2kjeuxXzz0HBdDNCdxtBpl6Wh2d1aMk
+         AQFmSE/vtFqihP7Cg7sPrIFyB2sB4vM1rlG9zYUsi9q+FnUmrEbzBREq58sX372UrShE
+         rAnjuyvQmOqEu7FyQ1B4ewq6Il9qYtemug5tBeFR3MObJrgNfqlLQ82yXdOSXHfUKY7X
+         QbfiPRb37GiytDZ/jVyu91RzZYfpavuDPUdFDcFydh5YtLABlkH2APxilOoP7xiLRxyk
+         LLUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772162783; x=1772767583;
+        d=1e100.net; s=20230601; t=1772162785; x=1772767585;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kWzBer8K/lUNOlKz33ehPBmEnMKwxXodb/hUWZrwOGc=;
-        b=AtGdgJPpyMhy8f2rutXCE8trd6y+aCSt0PGjEI24DWJH0MkrDtRJp7/ev+J1VIrXDv
-         qWQoy8e7jBugG37P+xL8yT1ABWMuo9cgtgzmsQEIIBiwtLdIBYni65Siy6v3wCjUFtRL
-         wY2wDi8GqHYpcfBz7/cCVMEUTJ5RdZ35E54L8xRb4Sck40Vbl39eOemrGUrfNwUr3+bI
-         5QWNkGDrHRyHLBkd5P1Y2VuezJ3Ur4VExJgl8PcAf50nnW+6Ylv+UOLeayDrYmgVyGkj
-         ftDae9W1+3BeDG3weDPTE/PDT8JRapBfVWn3bhjpG67MHf/L7Z0XR927l0ewsYp5Ryly
-         wnaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF2jDupd14qN5TBzN15Op6Cio+GcOInvy282F7jMtOI2zmZf5CKaR6GIXBLawqAt43eD45zIcxymg4dNr8eKeF3w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxurwcQ6a42wMLAF4bhtNEsVi/mYL0Uu2DrXmx9xW6wnpWykJzD
-	7Q6Y2k56I5MXYemsEQibZXnOp33wJpv1I2suFPBjtXjM53TRrohoQou/
-X-Gm-Gg: ATEYQzy6XYq/FYQ/FVscQlSljpgNtu+Nhg94Z8EaIKb9k+cX/sirlgjICYD++wky+bG
-	yckvE8nFwtrNRqBaaLLG68Ew0SyNMurwhUgWb3cghbhAGdIODIu5Of4ERyc5Y298+4EbG6f/NnG
-	FgH8DrcKJ2xSE9kCsXZNUcZDqlR9mesvPPCTyzMk737IzsMPFe4jCN3cN++wDKS2kxMUqhkVOXF
-	b3nCX+AdorsTddK+B58ta2BOyg8k7kj1X4U5ICHYMa2vsnE7b19IRSs+AVQExY5XczUBD7Xs+Hw
-	A8vvBGYtsK0Pi8HMPmoWZ10j3jtuGcFQk4D3vukpej7881yqFE8WzYbYC26nE1KJQgUVdEDlvf7
-	5NZmjVl5vzYZAiFb7QL7TfhncEHdtbRG7OTqKROCsoaP+x8zc8NSYgNpVbwDyGSwAzZsv8guOS6
-	t5mpkdRR2upg14h2Wg7dOPsASANbrmCfgJ3L1XZmT13Mnnyu6aIA==
-X-Received: by 2002:a17:90a:e7cf:b0:34f:6312:f225 with SMTP id 98e67ed59e1d1-359388c4ea3mr4132576a91.14.1772162782843;
-        Thu, 26 Feb 2026 19:26:22 -0800 (PST)
+        bh=3SNYtFmJqSV95moRlaJ0QYmUhL+TICukmgmBhi3zA4c=;
+        b=Z0Q8h2Y7t8btH6J55HIddjfZhkuNCW9qpOuk0I90iwmghrz+th+8GYMvxyPEt1muN7
+         j3MyMmOhe6/VxGOAVu8FA7b535uBQw2RzEDcqnNgr7DB+78ka6v+wC7j8NmA/Q/OuEaW
+         XM3KJYf09mBcK8mjmc58YpzpUEHLA5Q679iJOI3ZhA5SXSzUvgkmGSntx2velU8VH9JL
+         /7Nxlsl8z8wRZLhowNKIu+PJH7ppUoeLEdBU/Gp21xoVzzJYCGzF/skJX3z7r9UrJd1E
+         er5Xh2+8KQ4GdPe6rhr74Eue8UxXJOUBnz6KC88EZSdya1UM1XRhfhom/vvbveSTtmSh
+         L1oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ9gn6gYfW4NahuKDun4i/VmnhthiWSA3xBBaPwFgCJMrUfMVlRdBIALDdNsEPNmKlEZE7p1yf/bYjSvaEgc5s5w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcGfJjSq3DvKad+Jb1BuqDaOhZTKeWU4hQJV3HhQtpcueW2gzb
+	5wXE4PB0opaC9JcZAyH85y3QUH4FmGJpmcnksMtk3GD6l0Mbx8T+I3Wa
+X-Gm-Gg: ATEYQzyLwKioGPfh0zz3dSVdNXzlBeoGFGHqAQucfFYmMPfS9nCE5lMj/qqJqTJ0uNE
+	nTTLuUTTqtoqzEXeSvLr8qkdUM4PMKAntmtWeeJ5T91cLjBiZ456sPUis8LhzMrABl/xrWoWlfx
+	MGCMLZbNjYkJS/3Wn7RbsSSlfRWk/DPi+sa2T+I0TnfC5hZk9r3F1gQf7Y8omfBIB86NtrZIKcC
+	IkdGo/eNM01E2skR1rtybLtUwAqyAZKA8wt7NmSQxWtqeMMASI809ajbAJFQgcYjxpfoDxi+u3f
+	TnerF+NDUz8TU/caMPPpAYnovsRrYI9jIXgVwshSuQERcBQbfaeJIcrlkHrA3YU/xNYEr1gAHSP
+	BX3clELkmklz62k4xOa/ZJ2fgo2fTVhLBM2L4xVOyPQ4F3O4/2Kn4tbNkfbf+Vn422fQsy2I20O
+	SB4Y//yqR9rExWgIcthIh5XcfNIlU3cMBGCRylHhPKxNDQlsViKw==
+X-Received: by 2002:a17:90b:3dc7:b0:359:28b9:5f64 with SMTP id 98e67ed59e1d1-35965c17095mr1275630a91.6.1772162785515;
+        Thu, 26 Feb 2026 19:26:25 -0800 (PST)
 Received: from name2965-Precision-7820-Tower.. ([175.201.112.127])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35912fbc363sm4501887a91.2.2026.02.26.19.26.20
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35912fbc363sm4501887a91.2.2026.02.26.19.26.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 19:26:22 -0800 (PST)
+        Thu, 26 Feb 2026 19:26:25 -0800 (PST)
 From: Jeongjun Park <aha310510@gmail.com>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -73,9 +73,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH 6.12.y 1/3] drm/exynos: vidi: use priv->vidi_dev for ctx lookup in vidi_connection_ioctl()
-Date: Fri, 27 Feb 2026 12:26:13 +0900
-Message-Id: <20260227032615.108139-2-aha310510@gmail.com>
+Subject: [PATCH 6.12.y 2/3] drm/exynos: vidi: fix to avoid directly dereferencing user pointer
+Date: Fri, 27 Feb 2026 12:26:14 +0900
+Message-Id: <20260227032615.108139-3-aha310510@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260227032615.108139-1-aha310510@gmail.com>
 References: <20260227032615.108139-1-aha310510@gmail.com>
@@ -87,90 +87,56 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-[ Upstream commit d3968a0d85b211e197f2f4f06268a7031079e0d0 ]
+[ Upstream commit d4c98c077c7fb2dfdece7d605e694b5ea2665085 ]
 
-vidi_connection_ioctl() retrieves the driver_data from drm_dev->dev to
-obtain a struct vidi_context pointer. However, drm_dev->dev is the
-exynos-drm master device, and the driver_data contained therein is not
-the vidi component device, but a completely different device.
+In vidi_connection_ioctl(), vidi->edid(user pointer) is directly
+dereferenced in the kernel.
 
-This can lead to various bugs, ranging from null pointer dereferences and
-garbage value accesses to, in unlucky cases, out-of-bounds errors,
-use-after-free errors, and more.
-
-To resolve this issue, we need to store/delete the vidi device pointer in
-exynos_drm_private->vidi_dev during bind/unbind, and then read this
-exynos_drm_private->vidi_dev within ioctl() to obtain the correct
-struct vidi_context pointer.
+This allows arbitrary kernel memory access from the user space, so instead
+of directly accessing the user pointer in the kernel, we should modify it
+to copy edid to kernel memory using copy_from_user() and use it.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 +
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 14 +++++++++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 23646e55f142..06c29ff2aac0 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -199,6 +199,7 @@ struct drm_exynos_file_private {
- struct exynos_drm_private {
- 	struct device *g2d_dev;
- 	struct device *dma_dev;
-+	struct device *vidi_dev;
- 	void *mapping;
- 
- 	/* for atomic commit */
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 6de0cced6c9d..b31eefb3a8b1 100644
+index 1fe297d512e7..601406b640c7 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -223,9 +223,14 @@ ATTRIBUTE_GROUPS(vidi);
- int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
- 				struct drm_file *file_priv)
- {
--	struct vidi_context *ctx = dev_get_drvdata(drm_dev->dev);
-+	struct exynos_drm_private *priv = drm_dev->dev_private;
-+	struct device *dev = priv ? priv->vidi_dev : NULL;
-+	struct vidi_context *ctx = dev ? dev_get_drvdata(dev) : NULL;
- 	struct drm_exynos_vidi_connection *vidi = data;
+@@ -251,13 +251,27 @@ int vidi_connection_ioctl(struct drm_device *drm_dev, void *data,
  
-+	if (!ctx)
-+		return -ENODEV;
+ 	if (vidi->connection) {
+ 		const struct drm_edid *drm_edid;
+-		const struct edid *raw_edid;
++		const void __user *edid_userptr = u64_to_user_ptr(vidi->edid);
++		void *edid_buf;
++		struct edid hdr;
+ 		size_t size;
+ 
+-		raw_edid = (const struct edid *)(unsigned long)vidi->edid;
+-		size = (raw_edid->extensions + 1) * EDID_LENGTH;
++		if (copy_from_user(&hdr, edid_userptr, sizeof(hdr)))
++			return -EFAULT;
+ 
+-		drm_edid = drm_edid_alloc(raw_edid, size);
++		size = (hdr.extensions + 1) * EDID_LENGTH;
 +
- 	if (!vidi) {
- 		DRM_DEV_DEBUG_KMS(ctx->dev,
- 				  "user data for vidi is null.\n");
-@@ -374,6 +379,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct vidi_context *ctx = dev_get_drvdata(dev);
- 	struct drm_device *drm_dev = data;
-+	struct exynos_drm_private *priv = drm_dev->dev_private;
- 	struct drm_encoder *encoder = &ctx->encoder;
- 	struct exynos_drm_plane *exynos_plane;
- 	struct exynos_drm_plane_config plane_config = { 0 };
-@@ -381,6 +387,8 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
- 	int ret;
++		edid_buf = kmalloc(size, GFP_KERNEL);
++		if (!edid_buf)
++			return -ENOMEM;
++
++		if (copy_from_user(edid_buf, edid_userptr, size)) {
++			kfree(edid_buf);
++			return -EFAULT;
++		}
++
++		drm_edid = drm_edid_alloc(edid_buf, size);
++		kfree(edid_buf);
+ 		if (!drm_edid)
+ 			return -ENOMEM;
  
- 	ctx->drm_dev = drm_dev;
-+	if (priv)
-+		priv->vidi_dev = dev;
- 
- 	plane_config.pixel_formats = formats;
- 	plane_config.num_pixel_formats = ARRAY_SIZE(formats);
-@@ -426,8 +434,12 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
- static void vidi_unbind(struct device *dev, struct device *master, void *data)
- {
- 	struct vidi_context *ctx = dev_get_drvdata(dev);
-+	struct drm_device *drm_dev = data;
-+	struct exynos_drm_private *priv = drm_dev->dev_private;
- 
- 	del_timer_sync(&ctx->timer);
-+	if (priv)
-+		priv->vidi_dev = NULL;
- }
- 
- static const struct component_ops vidi_component_ops = {
 --
