@@ -1,111 +1,101 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-dl1-f74.google.com (mail-dl1-f74.google.com [74.125.82.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C183859DF
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 08:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E94322C77
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 08:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772180232; cv=none; b=n23bXDCFOXU0LqdV9XpF1RvK1ulfVhEHTVxWjzj2DRosH05z2P/hUcVhbmfBl4Ld1oBWxkCXroSpSI923UqqZzWeFFaScuAc5R/xbbTZ3zI8j6hOw8HHwsCr54+MpTujl++MSe6arEN/ybGLY84Oh6YR2RIoa4GApBIy7eB2s/M=
+	t=1772181602; cv=none; b=SY36p4/mdaqWUP6hTKPfE1YCHuEvRFIAmScgsu526iNPJQ3pEyMqq1wySdtPncejfJTMK85EyZ9Av0weckjZm9TzE3LNokk69VdNsaQGZfzHCnATNDPLaEbFHvfnJpU9SiNes39vf0GssArC3IPgSin980ZyVe84Nydez49t9k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772180232; c=relaxed/simple;
-	bh=m1v1NON76PMqrwAK+QogHbEEQapfrZUSwmgoYwLysaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LVknN60dnCbLy6FkmjSK+wxFHfYwPXMMlOMJ19JT8q2XInUHNvAjNSDleD/8+sMfVqzAgL2SFCVgR5c6C3JE2dIcqKXBUJH9IwZXB3iQvveD1rEOiXvzHflDZDYGWXyc8qugSKa60S0a1pXtiKUlx/KaOqWU55MJ6w2urikGx10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-56a8da2faf4so1482469e0c.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 00:17:10 -0800 (PST)
+	s=arc-20240116; t=1772181602; c=relaxed/simple;
+	bh=NbLtPWDPx0lJhzQfbcf147KsaPcuuT6CSyua6Mp0zqw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RpTxM98I/Shfvp7k7wGveD07br41ea6qoKfeaH+7W6B9oFiOD0C5JQpLGUEtqg+mwtXzOLRdhYd7JFCBpvKJatzaLd5VeBkcSx/s9Hjq1GpttU5D3ItPZ4S6T7LcHjavNy9PWysHURIPYdHDU2pjkePBON0dSJebad/qmlvVhfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I1uD1S3A; arc=none smtp.client-ip=74.125.82.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I1uD1S3A"
+Received: by mail-dl1-f74.google.com with SMTP id a92af1059eb24-12733603eb5so36725237c88.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 00:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772181600; x=1772786400; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lhND4v1aUy9aSZclAOzKSGnysjiQszdyXIZxCYh0ppo=;
+        b=I1uD1S3AJ6oTN7/OSvUmtMSUZdpWw1KKClM6i42hJ7m1x6HSC+5PtutDC7yj9R13MR
+         IMvWORyGiVqp+u06ikR/gqtVOM5W4SPypBGm4cULDhfN2ApEYHwz4XM0E9iqcpixJt2Z
+         HSCB79RqlwK7T7gmVaVoGF1SZLRgLbnqafu3zWXJUHea+hjoelJq9+p48NnMXI1t0RXg
+         Yk62j0Bteho9gpD1jHUgt+61ggGCAxcWHWHSJ8HU/qXkj844BhSL4DapnBCa/1Vo47FC
+         pLZd8fEFzDtHlNf1SJDnil3ESP6SlMc319y2Ux9huPvsdTJT2G+QcNfZoLzLgKm2p8cD
+         0qCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772180230; x=1772785030;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BRbyV6rB0ACPTuZRlxL65vpkYib9H0d5lAlAjAED1c4=;
-        b=cChNk2gtSfs2Ik16Qe8AGRwbnoaUWUpuefvYdP0n9F9BwfQBss3IwpebzoRCAF0H6/
-         +aY0GzUUvm3POsO14xUuTlS0szpYDGbGVSmL/T/2WBr4ebEkefjdF2fPchphfXRILW/F
-         YlnCo+TB11D9rxi3JGjPujvKTowzF0Jz5wgqwN27zZFWYo1s3IGmdWFKfLSAxeQ7eWWZ
-         49YSYyGhRR8AyID8jba5t7opJVIlumrNTJ+r0vPd4sbqnDBSVFgMGVsfQwkDiKgMjOJL
-         YuB3tnwW8fGrkmMyP1gMWkQIroWN4d/hwBjget97La3GhZltdgF2Y+wtyQZJ+BxdkXOW
-         YKnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSk9W3pT5QhKmEl+6KsUjY9lYOR4pEFPDjvvFR0Ri176TWKclhKlJdLqmNIdECQBzHJfRpSasb6hKC+0f+hJuBLg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR1qCHsz463g11jmkSnGsrqAgwE1QfBo3VkiT8JdpXAdAANt1Z
-	nGUJ5LFEDOTByxi5gBGrhIN7EW5bJVPXuYBR21vWHnpxkxCZCP0gYS8PLyyJkh0ZHpk=
-X-Gm-Gg: ATEYQzxWugaCR0BJX4weLKP9QKg72a3bgBRDDS9Kj+71RRcOoFNvCuqEf5LQZ2UB6Jg
-	yvEm+uKNbxueg3zIL23abBiYBSCRxddUIg0RJmwcCPFok0CrcgBXYqtXfBgV+qw78+QGVG2FYDE
-	geZnS2l6YiTAaIMT63loN8YoyyIdnjG9srtrKYCYN9IFZNkkLvOwxGUScV2mFAfjsp3WckxsExS
-	x3lXsmZGm6tqJau47D51y8zL0uv7q6HWeYWEmhH7U2FZ8oiuL/Wq+58C6u7II1Xtfjrvll5vRwS
-	pm3HWz478n1ISlPY/L+ABj6sgX+TAVHggApqZE0CXqJIaoX8d1zGxF8HxcwXyXMYz7zrRULIqcK
-	fWmtVzHW7DRtPgfVixaGGGd8EcLcYFtCwEQwxJBx8/fkWeaI6MKyC6Zj9Vu7l1Y3a0PabRD1k6X
-	xQH96qhdmy+O1ePCw2gIZ9jna/iPrsqrNQltCXsEM+AcdsA9VY3y4DEbBT4SkD
-X-Received: by 2002:a05:6122:20a5:b0:559:ed61:4693 with SMTP id 71dfb90a1353d-56aa0a78973mr1339789e0c.10.1772180229902;
-        Fri, 27 Feb 2026 00:17:09 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56a9228d776sm5350606e0c.18.2026.02.27.00.17.08
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Feb 2026 00:17:09 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5ff1703cb94so1017469137.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 00:17:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVPCqPEcdKMZsaRaArOKnKA6UXwLp+b8dlj3Ll8/izGEuIPhw6z8gyB59kGZNW0vV9KZMsaficZ+7KL4+QrWKr5gg==@vger.kernel.org
-X-Received: by 2002:a05:6102:3747:b0:5f5:3619:8bd1 with SMTP id
- ada2fe7eead31-5ff32494193mr1107329137.25.1772180228608; Fri, 27 Feb 2026
- 00:17:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772181600; x=1772786400;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lhND4v1aUy9aSZclAOzKSGnysjiQszdyXIZxCYh0ppo=;
+        b=afYg3TKKIuEq+mgkYN3HDg7zwD+WCekM28YNyVd92sKtMTNIBcjAvBiXObjl76LqNP
+         pU/R7Xv+Ko1BIPKYvRxSH3e4VQvcU0TxUc9T4GouIZdhN9OltSc/M+mftF6MFsqACAy8
+         zIEazRWnSxKOareB/aAbgrVAIzBCMKrmL13C/D4H7cUGhgay2oQRbiuE7+qQzf1NEdOj
+         ORkA4gP0Fzaq3a3rHCV7cV6GvAuGhU3Cub1adjHjFNrRo0XoH6ALAyi6Cpm0wVCzu70h
+         jD8COmhuuG1OGaUiEdc3aJq+vRBk8D8EYbv2DoccTKf82mVlQnxkLd95p95WJzm0SAlH
+         d6cw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ZxT6Ti5kAWNQa5sYAF3JJkl9FCGE3g73P7Mfnv8/dXhddoIqLHJQmtrCaibA+ooatKa/+GPooVKGuLYgXElBBg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9noZH46vc6kUFO6D30RoY8C2rxXISkujbHG0O2HQqF5WfQpnY
+	e6HkqnzfINy5am2g1PctUqodbKBT/95d5Ci+8GS2lLI9NG4eB362KQrfEYeZvMb3nthb3YT1sd7
+	MEp5Qaw==
+X-Received: from dlg18.prod.google.com ([2002:a05:7022:792:b0:127:93b2:e6d4])
+ (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a05:7022:4590:b0:11b:c4ee:66b
+ with SMTP id a92af1059eb24-1278fd6e09bmr954659c88.37.1772181599531; Fri, 27
+ Feb 2026 00:39:59 -0800 (PST)
+Date: Fri, 27 Feb 2026 08:39:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com> <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Feb 2026 09:16:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXfPPs26ZUnWd+_+xUU0DJ44ewTMrtbzco3J2Bs165+Xw@mail.gmail.com>
-X-Gm-Features: AaiRm52todzA8Sr5byokA4vkDZ2E-x17wtaWy3OW25tgrEahH799QvmVZU00ayM
-Message-ID: <CAMuHMdXfPPs26ZUnWd+_+xUU0DJ44ewTMrtbzco3J2Bs165+Xw@mail.gmail.com>
-Subject: Re: [PATCH 01/13] clk: add new flag CLK_ROUNDING_FW_MANAGED
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
-	Andrea della Porta <andrea.porta@suse.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Sudeep Holla <sudeep.holla@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
+Message-ID: <20260227083954.3529857-1-badhri@google.com>
+Subject: [PATCH v2] arm64: dts: exynos: gs101: Enable AVS APDO
+From: Badhri Jagan Sridharan <badhri@google.com>
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: "=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, amitsd@google.com, 
+	Badhri Jagan Sridharan <badhri@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Brian,
+Enable USB PD SPR AVS for gs101 by adding SPR AVS APDO to the sink caps
+pusblished by gs101.
 
-Thanks for your patch!
+Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+---
+Depends-on: https://lore.kernel.org/lkml/20260226055311.2591357-2-badhri@google.com/
 
-On Thu, 26 Feb 2026 at 19:17, Brian Masney <bmasney@redhat.com> wrote:
-> There are some clocks where the rounding is managed by the hardware, and
+Changes since v1:
+- Fixed Depends-on
+- Patch rebased on top of git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+- Link to v1: https://lore.kernel.org/lkml/20260226061053.2596167-1-badhri@google.com/ 
+---
+ arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-s/hardware/firmware/
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+index 93892adaa679..5a689be61432 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+@@ -174,6 +174,7 @@ connector {
+ 						| PDO_FIXED_HIGHER_CAP
+ 						| PDO_FIXED_DUAL_ROLE))
+ 				     PDO_FIXED(9000, 2200, 0)
++				     PDO_SPR_AVS_SNK_APDO(3000, 3000)
+ 				     PDO_PPS_APDO(5000, 11000, 3000)>;
+ 			sink-vdos = <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
+ 					     IDH_PTYPE_DFP_HOST, 2, 0x18d1)
 
-You got me totally confused, also/especially in the cover letter! ;-)
-
-> the determine_rate() clk ops is just a noop that simply returns 0. Add a
-> new flag for these type of clocks, and update the clk core so that the
-> determine_rate() clk op is not required when this flag is set.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+base-commit: 5d692f20de6311fa507c952adc3487c641edee00
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.53.0.473.g4a7958ca14-goog
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
