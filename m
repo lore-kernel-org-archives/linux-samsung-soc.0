@@ -1,151 +1,162 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E341F33263F
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 06:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772173351; cv=none; b=aBpTL7bgLF/4Hu7pNQTpSh2UL86I9LxwsCllI9U8YUFHIbJdbGDfweRaTMp9DoWVjA5Hk1kqui4auWcnFjBCvWTZbLROgg/CdyZ+vVIa2euwrDvcDPNvNp2RWBgH5bUIl1FPfxSG8XwZ3uJA/BL7m0e/c79lWRyjWCpNVE5+Rxc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772173351; c=relaxed/simple;
-	bh=gNOuJ460SFNkmJpVXZXHfL9zScGnWSGktr92RCyUGPo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YuBNsze8voR4zUONOp3ddMzBfiBIPM4vg0vKM2xnDbBqKp2a3ckQobgysSALM3lSX6+nd6+yUS/Beu+llG2r6ABKbxMskMbKR85mE+qepzpNaWQIwe0qefuDKGuvpk960p32Mo+MEhulBJrQhW46Sl0Rtg97BrnsvASZBJnzX9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fWWaMz83; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965B11D5151
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 06:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772175128; cv=pass; b=Z1c+yaX7JQe6FRqhc5oJaoNsFx/KGUF1UPUywxU1XrfjxMKB3/rQR+5+TRXfmpKwFh9I33YpAMeAEYRs+2tDUlIDQ0w6I58jAvPzCOvOMg685DYAzGQzO/wg0yUiqBpZhm8ZaXH5b/FxyZEnn4PwBu6avsnvxD7U4jc1RS/qDp0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772175128; c=relaxed/simple;
+	bh=g9wHoPkDzs7dsMviLr9ahhhO07mSBUmi2+nWedJpil4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ho8z63pegTbKZfB5c8DbcYGQyfNDa4Ym8A18DRokE37D0BOiIWG+2zhoC7i5LChN4neI2AEvVPfaO83fYISherr6aJi8MwZOHu7lj/ViLeeGO6p5E551taNoLOnzNbYT1Gsl1LtA8k0/FNhMSFQfptugoRTDAzWJLs26NGlu2zc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=di+605jT; arc=pass smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fWWaMz83"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b9360037cdfso216303566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 22:22:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="di+605jT"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7d4c12ff3d5so1778677a34.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 22:52:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772175125; cv=none;
+        d=google.com; s=arc-20240605;
+        b=g8YgQMHt5ezetXe2zli4NOlza75Ka6x6v7O99aUEuRqEkcrxG1/T1mlbtxczVR5uIY
+         6Wir5/l/rRtmTP8oJfO5fL+TpqV6wQkjCmKkL5UdrFXoSFP6PVuHR6DpnLd8aVX2gmQ2
+         /2QBkMIJ5NJFf+lIK4DH9tIXidybU+6jq/2J5Fd4pW8dTBDVOR4W7dfAkWCtZ/oDhNzK
+         ePovkxbJsQJJJTaz3lMX+iZuOPgcTaqckZXgIFXHU7sx6PzHDWRCtqhOdVHH1fFk0QfZ
+         vHeI7Q4RJ79/NXrsqMGJuX3sNUU99Pxr+beH7iWuoZK6SWUzdpTApA4nQhfmxRZkozhS
+         MdfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=W+hpkMHQxm9A5ILtjnEVwOWZsFYHiCVwtuiqtCxtlTQ=;
+        fh=ykriJNwXhoT7I6cfBGc60ftda4++Y+9SkCrogcHgjhY=;
+        b=TB17d1vJWa68+7gSBDl4U0UT0hHDjmiNbLMXE4JM23ymusJlmtrmD4knXx/3qXtxlr
+         GONfLZhwanY+3fyWcT+A3AV4INvBGevCA5mdIsq/a9jBt8wOzndloozErxodcLdJEzrp
+         rY+fvHHnXtDsg+1dXBMy8Eb0gDO9qHHUIuzkCS08sFKwidNuPDtIyho8XH/2dyQL5fjt
+         chX2SOVePu7pecwZm+IPNJmlzcQWvVzIetIbuyhj//bF5NnXGaSHmuZN8lyk5a0eHfYd
+         wceCvJAiI52Ses7QvR0m5U12oD0/IgMnzPClnQDR8Ud2O5oges6+/wXWDL1ymI9x54wV
+         H11A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772173348; x=1772778148; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G5LPcgnHDezYmAmQJ8ddEK0GxF+9IPAjtDeRxnNjo3E=;
-        b=fWWaMz83DlUm5pfyKyq1xA2ikGyDoF8m8uIzut7P7bzurlEOvo0EbCqCrssLTFWXIx
-         f4a4yurlPeXhCu5jm1tOCtgaJZH6AJ4kdsuhCO7jXnP1Np2Ccs+uumdis5BoGo1N1hB1
-         2aBFRz7U/NPbms6t9D5K8E1W4/FK13UaPdNtlBk6F7EJ1p5GLIqW8hFVpHSqhgDpcRyi
-         12MrXDiPHasT2arpa/Bta7yJXLOobM7Bi85vINrrH8D0cbt4167MYmOP/Grw1scb5yNl
-         688jX7Vra3sVjtm4Pg77cq84fG/xAGyx9H8eEUALDTXXcnxHeOb5qhkAai+j2e3mbJ3X
-         hoJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772173348; x=1772778148;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1772175125; x=1772779925; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G5LPcgnHDezYmAmQJ8ddEK0GxF+9IPAjtDeRxnNjo3E=;
-        b=FYznS4Z3GXRBMzNnu072lX0dd6nzTcCpGiBiy+bHMGdYPdKbhuaAqKVPZ3notMKH2U
-         8IHIy8OKnan70WlV14MaHy92/wS+l+6TO3ZFbWtUBTICbvlusHiG3Q07TnRiRBxI9elE
-         6cSSJ9SOLD9Mkd1JrK2Ygj94PhtzW1OEUAr3SWv0AfLCtwK1ng/Z9ix1UGzb8exuYEss
-         dk6gfybck3mO4N5nyKaCznBv3Xoif4ZEz8yILkornor2lYBZXwnENkSvgE3yOUNpJWzc
-         s+Y0cIaA1pMbPkETP4jTNk7O+sXZkw603SWjUx/ECwjlt6YL7J9MlTjpxe+lt6L95pdX
-         Syhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDFz2DL2QY6NCpOJohKC71qN5Mrx34HFrJhywJL2SW2SKgm0R8YRbG4QfLjt2DqlPXGWBf2nau1Ux/Qjo97gZOxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv4PeYzXCmBdB/65WQ4oWeAHoevfvHFwEnMEp2y0dewuZX5/BM
-	P8+BxjsjR+o0L7x5bwu67VdUhmgYi81B20MwYeUstWXG7IMlvdtZMf/ux0F37X4JGOk=
-X-Gm-Gg: ATEYQzzmMaJU03vLaLT8ELtZvHU1VHkfl+XbRhnKbmirvXInQL6DwV6MtTq9SLd5g56
-	9Tp7iVzlF6MGj6JS+aQeSUKOpB1twyCQq+BrPareoYVq5klJqZX9bX6vN5aIunlamxRZL2CXOCS
-	KumUViRX6YbTAmXIWSEgnuOrVS2gEEfA2xX0vQik/bGFkn05A3/nIuLn/IX3BB5Zvhp5j2jGWgP
-	7rTrJBOy0a1ZybwvIHL03loJKZmAyWYu3iwse4MBKveZi+OxgzHcOCQBP0HeQIb3zTZal/zWKMS
-	dpc/uzgXvvKQuJrcmU/hD2Yf2zRVFs9HPzMiKMJRTU9RAn/XG++S/qhdrXBl9y4nVZ2JEAUiSeL
-	Y2HKcJTe3+2Tvk2rzO9c4ve3jMa9djIVJmlz/Ye1t/1ETNcqvz6vJ5qsS8QDieKiRr87g0CxQBZ
-	p/RkTb6UzC1RAOu6gLDmFnEUiZgfPtXwuEAxNMM2hHfjiMBS3hp/z+Vodu6+3aPFjm+ElUO1Me9
-	UTFwgJGaeeESI739w==
-X-Received: by 2002:a17:907:847:b0:b93:5ad2:c6b3 with SMTP id a640c23a62f3a-b9376365c9cmr103968666b.2.1772173348221;
-        Thu, 26 Feb 2026 22:22:28 -0800 (PST)
-Received: from puffmais2.c.googlers.com (244.175.141.34.bc.googleusercontent.com. [34.141.175.244])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935ae61474sm118432166b.44.2026.02.26.22.22.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Feb 2026 22:22:27 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 27 Feb 2026 06:22:23 +0000
-Subject: [PATCH] arm64: dts: exynos: gs101-pixel-common: add Maxin MAX77759
- fuel gauge
+        bh=W+hpkMHQxm9A5ILtjnEVwOWZsFYHiCVwtuiqtCxtlTQ=;
+        b=di+605jTT5XFpMfGTWj5xroP0Prd6GqMdnGS1F7yEqPXRUT+0/8Bqo6j0ig1t0UwO2
+         mEUk+mvz538w/bsX7urJ3LOF+K+eKAnKbBjEcfftUipA2yRsPo9lUiV8hvY4XFoIhRY5
+         N0YE9VE1ehfamKwFhHEngHgwP5xSLn7lXXwLhb+lkou68qx4XOfX92D4EO1GWkIDFAQY
+         ioDZhVauUR7rhI05ev8gsnRfMA8p/yiN8hx2ORU5s/uDcKubHaKDnDv6aKaSL5G2T94E
+         Cp6kY+hQGqBoezBRGREmCrgHtjm0INPaeGBMAzQR3C4d/P/E4hjVF3Io33AxbZryosHM
+         uDsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772175125; x=1772779925;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=W+hpkMHQxm9A5ILtjnEVwOWZsFYHiCVwtuiqtCxtlTQ=;
+        b=rDHvQa7txc8V9uJJRMJ9lOIy4PPSMCiz9At0EUAnQSC8kQp7CoufyJvr4rHzp7UAkw
+         V9828Vk8X420bwZzEA1ngzE8FBwlm2eMIOuk0+Ciam0CkZVuXcg90YoJ+gKxFr6s4wPb
+         RDhi3U0QgWVJEfUL/y8mEVnaAAt3MO85K6eWLCBdBDppWN+GJ2LX0G6sJE9M6D2no8tT
+         f28sU8yGgTEQqDX+rxkhIwerR3fWACkitAbgWCp9gaZyW47N/mInxm5LqllfpJbwjujD
+         gXy+uCt0iYqtKB7THEyjTPPgp4KRiq9NUPBnkvrG/k5ZLiCjK+4Zl0rAu7QuT0pJj+c/
+         SMQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+2M9bSLFh3brbwSEMRbbY1ARWa4QTFKTOp7pDtcS+61UYcyVWKdpxjVt9ceB8vIx0iE5ftcugvOsBVWurdyLoYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDF3HeqiqlU/WUfDx0oUXTfi1ypUK5QH5E0xCaz/HmRzzklSG1
+	TNSIKcpinf+uKzy2Iq6PLEtY4hwQTD3BIzF4ynUf9G9d5Nzja7TSLrQU/f2KTEewdFEIu37zkzg
+	vzrT92QAiKvNjzf7FJWU/5bvJOaeU3kZwkGNOwNtu
+X-Gm-Gg: ATEYQzymxFby1zG80muMoWKUUnAkEohDZ54CX2ajoJIpXZ4pp6sfkXuSMYJHVilV/NH
+	QN4ycNf2Ehq/26qNzyFI38Jx2h/JB9EiAU8dZTuQa0q1zijR+LYZlYrnXuHpexiOPl4s0b61hHK
+	rWhS1de4XjII0BKi1s6njDfP926C2hLGNLP5/HnAvJ5gHyMNW6OgaFSP1ekCph5OPbfmX3noXKy
+	ApRgWoOjiOegWi3IWL/6LQucUBTMClRQM1UX9BXg+QtV16l4OCjYDd+TlvX0WtjK/Pvd84Jjs+Z
+	J9RS8elLHRI+0RB54HRGoPfB0sZW/PB147Fw8PDZNHL798mFjDs=
+X-Received: by 2002:a05:6830:83bc:b0:7cf:d18e:706e with SMTP id
+ 46e09a7af769-7d591b237bemr1327887a34.5.1772175125157; Thu, 26 Feb 2026
+ 22:52:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260227-max77759-fg-dts-v1-1-16c5733e946c@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAB44oWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDIyNz3dzECnNzc1NL3bR03ZSSYt0kQ6PUpBTTREuDJGMloK6CotS0zAq
- widGxtbUAi+pzGWEAAAA=
-X-Change-ID: 20260227-max77759-fg-dts-b12ebd5a90b3
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Juan Yescas <jyescas@google.com>, Amit Sunil Dhamne <amitsd@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.3
+References: <20260226061053.2596167-1-badhri@google.com> <8eeadb7a-5075-4444-8714-45e589dda47f@kernel.org>
+ <0c91fa84-dd0e-45bf-9c08-3b374daed7ba@kernel.org>
+In-Reply-To: <0c91fa84-dd0e-45bf-9c08-3b374daed7ba@kernel.org>
+From: Badhri Jagan Sridharan <badhri@google.com>
+Date: Thu, 26 Feb 2026 22:51:28 -0800
+X-Gm-Features: AaiRm50NTve-AmaddguPfEtEJC8GabDksFfWp4neLtEZ19nDLqFIv74vF5-ygN0
+Message-ID: <CAPTae5KuLGcK1TE2HcJHT9X_fXef=JSyoCSf4TF41_oTc2Lpuw@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: exynos: gs101: Enable AVS APDO
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Amit Sunil Dhamne <amitsd@google.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Pixel 6 (and Pro), a MAX77759 companion PMIC for USB Type-C
-applications is used, which contains four functional blocks (at
-distinct I2C addresses):
-  * top (including GPIO & NVMEM)
-  * charger
-  * fuel gauge
-  * TCPCi
+On Wed, Feb 25, 2026 at 10:51=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On 26/02/2026 07:51, Krzysztof Kozlowski wrote:
+> > On 26/02/2026 07:10, Badhri Jagan Sridharan wrote:
+> >> Enable USB PD SPR AVS for gs101 by adding SPR AVS APDO to the sink cap=
+s
+> >> pusblished by gs101.
+> >>
+> >> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+> >> ---
+> >> Depends-on:https://lore.kernel.org/lkml/20260226055311.2591357-1-badhr=
+i@google.com/
+> >
+> > Really, how? If it depends on that, it is wrong and cannot be applied.
+> > DTS cannot depend on the hardware. NAK.
+>
+> s/hardware/drivers/ obviously...
+>
+> >
+> >>
+> >>  arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi=
+ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> >> index 93892adaa679..5a689be61432 100644
+> >> --- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> >> +++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> >> @@ -174,6 +174,7 @@ connector {
+> >>                                              | PDO_FIXED_HIGHER_CAP
+> >>                                              | PDO_FIXED_DUAL_ROLE))
+> >>                                   PDO_FIXED(9000, 2200, 0)
+> >> +                                 PDO_SPR_AVS_SNK_APDO(3000, 3000)
+> >>                                   PDO_PPS_APDO(5000, 11000, 3000)>;
+> >>                      sink-vdos =3D <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
+> >>                                           IDH_PTYPE_DFP_HOST, 2, 0x18d=
+1)
+> >>
+> >> base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+> >> prerequisite-patch-id: 4dacd8bc550e317d67134d030814765fb9f4c6e1
+> >> prerequisite-patch-id: e863378fc602b6bee2e9fdd8c568003c00b2a38e
+> >> prerequisite-patch-id: 202a9e1e9cf27a0b9ff7ebea76eb45cdac2cb581
+> >> prerequisite-patch-id: f3817c560d0e701d7499fa1fb9ee40d22816c09e
+> >> prerequisite-patch-id: c071913307a6eaa417d1345485d7a9c165d40834
+> >
+> > 5 patches here. This is confusing.
 
-This change adds the fuel gauge.
+Apologies for the confusion Krzysztof. This DTS change depends only on
+the binding defined in the topic:
+https://lore.kernel.org/lkml/20260226055311.2591357-1-badhri@google.com/).
+I will drop the  prerequisite-patch-id and will add the following in
+V2 where just the binding from topic is marked depends-on by this
+patch. i.e.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-For DT validation purposes, this patch depends on the binding updates
-from https://lore.kernel.org/r/20260226-max77759-fg-v1-0-ff0a08a70a9f@linaro.org
-They have been ACKed, but not merged yet.
----
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi     | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Depends-on: https://lore.kernel.org/lkml/20260226055311.2591357-2-badhri@go=
+ogle.com/
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index 93892adaa679..c01fec7c867d 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -225,6 +225,17 @@ usbc0_role_sw: endpoint {
- 		};
- 	};
- 
-+	fuel-gauge@36 {
-+		compatible = "maxim,max77759-fg";
-+		reg = <0x36>;
-+
-+		pinctrl-0 = <&if_pmic_fg_int>;
-+		pinctrl-names = "default";
-+		interrupts-extended = <&gpa9 3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		shunt-resistor-micro-ohms = <5000>;
-+	};
-+
- 	pmic@66 {
- 		compatible = "maxim,max77759";
- 		reg = <0x66>;
-@@ -317,6 +328,13 @@ pmic_int: pmic-int-pins {
- 		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
- 	};
- 
-+	if_pmic_fg_int: if-pmic-fg-int-pins {
-+		samsung,pins = "gpa9-3";
-+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
-+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
-+	};
-+
- 	key_power: key-power-pins {
- 		samsung,pins = "gpa10-1";
- 		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-
----
-base-commit: 877552aa875839314afad7154b5a561889e87ea9
-change-id: 20260227-max77759-fg-dts-b12ebd5a90b3
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+>
+> Best regards,
+> Krzysztof
