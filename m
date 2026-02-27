@@ -1,71 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E730E0EF;
-	Thu, 26 Feb 2026 21:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3696A3242D7
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 03:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772140447; cv=none; b=SB3vSm3ItfSGW5pKt5JRgJ6Iiz+8J5w1XTbY84gLKeq0PGNondoOTbOAxjlcJq8y8IwRGPxl9XbNMQVFIoR0VXw4bGbKgbj1DnmiJY7Nz2QssEzmZ9pNXqp74GDE+KaDU2ynLb+sYz0gjG8vOKCVUc/W+FwcLpsWdMS2pjId/R0=
+	t=1772162781; cv=none; b=QSZX78os85mrtGP4w3i0UoR4iSiFZr9EvHmXGP3L58aioSnRDvbDYWzgLJZAMLOwp2FTxrtQ3bBc3kUhjVINo/YnV9Jy/OrBwjVTlklIo9DlnGZwIUxynROihVId20nFtv6qMGOYytTjk8N8LwAXTThBv91zYoLB2zyAq1+Fx1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772140447; c=relaxed/simple;
-	bh=p+nQrqubGpHurZZtPn/aeXXk5EP9EA2Ye/VBiS7O1B4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HiSLlvW5uYx6VksiAmplWXGliOIJ7izInxDqd45lOdShJlI7noWCYwjpVYaiT5SHJ19tMc7yCMaZlCt7CyLqf58vfEjg/rZx941BQgToCcc52Hvox4pVr0MjR/OAh1DhF2wjDpYC0/qMqcyCkjHg8YZcoBTGPUVrvAiIkgCSbFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiBoyLAJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772162781; c=relaxed/simple;
+	bh=QWLWSQDE2DlrRwx+dqEKdl3/Tl9WTFbrGA0f4dFKP/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oNgI7KIEIWbo2o4DCTlA/iTleGL+qC2qs0OkohZZQnoK8FeIQS5Z1UFBZu/UBrJHAxgwWJRfbpKYtv3qcWuZ7HWpPGq1GHSDgg74+7JMCNiCeMR3YNmcQHAiwgJLAZpL8h2PylNtgc4bFQb4Q9i9mJ5Cwq7soT/d5MjGEMkB8PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RePI658p; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiBoyLAJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD30DC116C6;
-	Thu, 26 Feb 2026 21:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772140447;
-	bh=p+nQrqubGpHurZZtPn/aeXXk5EP9EA2Ye/VBiS7O1B4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IiBoyLAJL/7A6Efk4sZ/y12JwNyLCShAKaVtiZgkMf5gBJ9vWuKVuTXsS1ZF5xvi3
-	 saumJkI6E4CstJQiu+gEeOw6DA3YiXHUfXui3fKuX9qi6iG7yt3Z/S1poo0bJXrnXs
-	 /LaBC2rWj+xdMrHKVBLbfV6ZNU5UzjSOAAWSPX+OHPhlB7Z1glEkEMDEaaaRJNA2Gc
-	 2b4J8Q1FdICKtea8990pQk4OwfojD0OKO+ol0uWLUNKR9z3ImwrsX3ZCFwc8Wv0klx
-	 xWd8BaTPqd4p/JqwtQN/WfvMw7wbcqlYsDGSQYOZNIwy3pdGD1tMFWXK56TmKAt+5l
-	 ln+Ch/diVv5eg==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Lukas Timmermann <linux@timmermann.space>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- phone-devel@vger.kernel.org, Alexandre Marquet <tb@a-marquet.fr>, 
- Henrik Grimler <henrik@grimler.se>
-In-Reply-To: <20260127-lat3st-staging-v4-3-797469aaaf9d@timmermann.space>
-References: <20260127-lat3st-staging-v4-0-797469aaaf9d@timmermann.space>
- <20260127-lat3st-staging-v4-3-797469aaaf9d@timmermann.space>
-Subject: Re: (subset) [PATCH v4 3/3] ARM: samsung: exynos5250: Allow CPU1
- to boot
-Message-Id: <177214044450.341643.10542668846868518849.b4-ty@kernel.org>
-Date: Thu, 26 Feb 2026 22:14:04 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RePI658p"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-354a18c48b5so1376849a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Feb 2026 19:26:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772162779; x=1772767579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lm2AcOtnsuA4yjZovdWg5px8aIMhZ3rKhw+QF/SygYI=;
+        b=RePI658pxkXlB5qI6MyYp7qj0wNj2DbXsTdLwWj55e+jT/bVK201o9wnn6a9Y8DTjn
+         WwIBS/WePlXl/gClEw+set8M++pAoIACZVv1fzZdm6o+ARmEGrvFjLUQk6rUPfAzTsas
+         YOUuQ6Z/o741fuos20dYlZ3HJLmNMgRwRNNcnLJfr/AMMUNpqYQUlXyG9fgJSbPFAsHb
+         ljP/OAWsz0tu5bkjDRQDY00KO9pSezplKYnL8cL/Vj2A1vj5LsUNdFhMPl6F8OGyoeI2
+         iBFqpF0722rskBR7pdwWydUJgzXnJ7CeoZfkwv5i6kE68SCyEN5L0Da0HLdco3ihot7X
+         XA2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772162779; x=1772767579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lm2AcOtnsuA4yjZovdWg5px8aIMhZ3rKhw+QF/SygYI=;
+        b=nx8mmxupwoNn0nzMVt8qhLFFzSYCOOuowmhmGu3bmkQFg96VZb+wpxCWECqM2fV1AI
+         aa5+95f5+D4wzI2pgsZ3YV8ZJuD2681vIyMZc3d46j0BC4gUsdvd211oPMgNI0iDeELM
+         qEAwhYZCV+E9XWgQFPcaZ7gdwqxltqx8DrEQFkbVQOOQIzIwNCyhlpRFinzneqVm0MjZ
+         Ftpl16lC1TM6Slk4QxtnY7d3YZPJNbvisDdM5WIIYIoeBTpT6N6ir+m6zD2fvqoZuUBd
+         Wf18f8V+qZEC4GrO9IoqduFalKr16BxIEN44QRj4MlEazkM6L9/hKA7xZIA8cYiSKd88
+         ch6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQpiVXdwGztv+iF1QDZ7NicUSdhksP8HoyZlOghU7Kn/MCNBeoUx36QRsRPYqS1lx8jh//tZplYrSuxaBdegvGpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC0IYv68PeAgYv/hshn8OAzgCZmzo+rk02GKyiCodJoC+UFNsm
+	BmfdDkQsfyFeP2O4T0+K6Mw5gaqW/L6ANIqB6Y1NX8AeTD92okpLbCAP
+X-Gm-Gg: ATEYQzyHiv+gSI0YEJKFC7UuZTqMipl+0UQRfSq0FKbgew6mTXoR/91YRXzIkikDMzA
+	zMr6rY6ivY2c3ycCtY/zmp0HyWgj0HO5lw5vx7HVS70Zor+HIG4L+u+mOC9tE/3Oa7f//f4B6Fr
+	oTo+ij46oXd8NJ6KA43WWLG4KfoHZZAxoH05HkfK713D/Wn6iYuAd7M2BqzHE/SoswNNm5Fczo7
+	mS3xtmaRe6dcy9jcLO5YxjpNGsepX6KxO+KAH7ZxQqrCG+T8yARPHChrul9uzlEm6ZjihYv4net
+	u19irwjlrfIi7/uR3O+bwJZcfA40B7jlgIhQEtlbBxtnG6ClnBhMOvlYR3Oh8J6S3jenFqhdke6
+	TdNHfkcqtb206OSU998v7lC+QWyT99uorYYClfS+1EwtQMXDibSspq4Eowd6xtU1SG+f/WFhi1o
+	lC9uZ5F5zgcXG1d5RKuNq+3ENE+ZUFBSqTs6MWVUUhH4waGZAPUA==
+X-Received: by 2002:a17:90b:1d4e:b0:354:999f:1b27 with SMTP id 98e67ed59e1d1-35965ce1427mr1089567a91.31.1772162779536;
+        Thu, 26 Feb 2026 19:26:19 -0800 (PST)
+Received: from name2965-Precision-7820-Tower.. ([175.201.112.127])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35912fbc363sm4501887a91.2.2026.02.26.19.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Feb 2026 19:26:19 -0800 (PST)
+From: Jeongjun Park <aha310510@gmail.com>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH 6.12.y 0/3] drm/exynos: vidi: fix various memory corruption bugs
+Date: Fri, 27 Feb 2026 12:26:12 +0900
+Message-Id: <20260227032615.108139-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+This backport patch is for 6.12.y only and fixes a bug in the
+Exynos VIDI driver.
 
-On Tue, 27 Jan 2026 21:40:58 +0100, Lukas Timmermann wrote:
-> The firmware trustzone needs a special call to bring up the secondary
-> cpu core on the Manta board. This seems to be not needed on other
-> exynos5 boards and comes down to the available firmware on
-> a particular board.
-> 
-> 
+https://lore.kernel.org/all/20260119082553.195181-1-aha310510@gmail.com/
 
-Applied, thanks!
+Jeongjun Park (3):
+  drm/exynos: vidi: use priv->vidi_dev for ctx lookup in vidi_connection_ioctl()
+  drm/exynos: vidi: fix to avoid directly dereferencing user pointer
+  drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free
 
-[3/3] ARM: samsung: exynos5250: Allow CPU1 to boot
-      https://git.kernel.org/krzk/linux/c/32d4b991f25eeffac7568ef51367f924394fbdc5
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 64 insertions(+), 11 deletions(-)
