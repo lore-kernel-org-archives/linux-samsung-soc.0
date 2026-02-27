@@ -1,146 +1,131 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434D734888A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 16:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8440355F2F;
+	Fri, 27 Feb 2026 19:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772210331; cv=none; b=Nx9uXkZspwdeyrHUsMGC2bYYjVMgGXzS3taH0q99a9r+KShzVhBlM51a4RyGzuaDol+bVhY4P85PaFDf9o2ZoCaGmxdRJN4KBCWw4NOk24AZpa8YZDoY8MAp9qhNdtfbYSfcv/CjHXRsLdLsl404c0/7os2hbZAk+LC4HtLKnzI=
+	t=1772220695; cv=none; b=ftEG2h25dHmusrhq8+9Yhbsy/Ei+r1R8BfBGT44C3CykeELVrbgabo0MLzOH1HE7LYVcEzx0+FIEkeyGVFpBrwWQJtfawej9EKdg0gRWz7ArbWnDgCBu3Xb5RPIH2Ce0N0lEQEvNH9QiItG4EbhY3Lvudph8BaodDuvtaCkO2x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772210331; c=relaxed/simple;
-	bh=nR+w4zGkLQzjRTIc7kjY/q5/CbnV6sRdNO5FlWgP6N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/L/Xtl3mdI8SOMuiOOAgOATI5HGm3yIEy+q5rxigaUYn6bDpBMlHagss5Bx8ZJtefeAKWI+6xWcgYPHSk7XujToWgjQyTm/3FKpNbOQwU9s1QCiiyO29kMktlhfoV7LtCYPIDV9a/nTzQCzDv6+pxUtH0C8Os7vFltn42aYVCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=faqXkrrx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SrXfSlS+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772220695; c=relaxed/simple;
+	bh=gcUwh0qPFw5GdQRQKa/RuurbIQBpHHkCJD7079f3Oq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PPWeYaWYUQJmmIOaVgk1HFPPbQvjEz85L6UDYi+ehLpMN0wfq4kHltyZgDzNUQ1V5VTl01SlO9ZJW1tpFpp++V0jS/e4gfUacYpNUmqt647beWSFXvPTbSpHEFDuQSd9Lg2eXPpPnJ/eoLhhOWnkTnPGQkU7a+QKC+uOXI57XM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BId/d7GQ; arc=none smtp.client-ip=199.89.1.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="faqXkrrx";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SrXfSlS+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772210328;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4eN+vouZzrt2RU3yojqU84OifC1c0sqNvd03CXYM2zE=;
-	b=faqXkrrxX9jDebOGqPS4po+d59RE5auZS4BLM5bIDiAroSemkTkgOwuETJGDwDftOpubpk
-	8Br+cI9O8i5FtY2BxMGZYywT3OUxeM2e00hE0buMYnzatoMLaGfWOR+K4u1JHtdetEbX3U
-	X/pOeYi/ulTDWhbANC1pLtbQuS9zZ3k=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-6z_lCHO_MLW7B6qawuErvA-1; Fri, 27 Feb 2026 11:38:47 -0500
-X-MC-Unique: 6z_lCHO_MLW7B6qawuErvA-1
-X-Mimecast-MFC-AGG-ID: 6z_lCHO_MLW7B6qawuErvA_1772210326
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-899b4ce513cso214688586d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Feb 2026 08:38:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772210326; x=1772815126; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4eN+vouZzrt2RU3yojqU84OifC1c0sqNvd03CXYM2zE=;
-        b=SrXfSlS+H0dalfq8l9T4Lj/ORePVPXj2NP2c0yYmqmAPH3AWVlwzZifxXgRHMHTgo5
-         FFDRggYKjP2kp/bPhMOLKG9BqrYzyaKe7zoXcTgcKvWBx6VXg7+l9XwHPLksoolLeU2/
-         PlylD5Wj4Ln/FIkA5GBQAATzVrK+382+eEpEZnMgIvtY/VkRkCKL4o3ZIhuAZUp17U8Y
-         t6J3MQufJWHNq6uL56CvZ7n5Z68IUEFsCS3uthxke2WUfv0hhy81cc7uJoMAk20SVnKX
-         6FUny2U8rFu8e7SMQ58W6fzSSUEn8pWAVPd83ZvVMlkpWUY4wUHHIUxmya8QvApqHy5d
-         IQ4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772210326; x=1772815126;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4eN+vouZzrt2RU3yojqU84OifC1c0sqNvd03CXYM2zE=;
-        b=cUnd7q6IRrJH5ZurJIEWpbLBAYJY3Dr78eaEduGJgiIMMfCK14CCBvqJ+i5P7wA9Bg
-         JwapCA1eP1nHkYTX0y+93WJAHjsRxMRMPhtfrSZYTXxEbaR+QSTEIHpuyaWkZQXiSjAr
-         4IRoBW87No80iX4u/V7KsRmKF067RXnWHuN/pr53XACSBEalkeWQHXYaph7BcDdPX1fs
-         XPLP/P7MppwjlPOfpk5eFeTsllQmot3FITsJEBRyncNuIEnF+hDKYU9ItCOdIO2TRpPd
-         EA784E9MhABxGvmt+EGvKX4cflS5/Y46p2vpRNrXerMaBNDXgN4hrhuzrkkTa9ZQJ/Xb
-         ZCuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyXySQxy+SoLrieEv1wxmXVC444eN0yQ1wXWnyFJGG0un9eg9N2E9v3TWBqi+ifaVBEJ42VcA6NzJeSVTH87DGbw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGqU/VZrzMJX9JzTDhN//rELTqPqAXT16GfkkLrd0sQeOB3cZc
-	5H5wO4JmEYR5xLIE6ZpOhWnEjXTY7efwbWR13Nh40zGZq++sgSTu/V0yW8iSnMj5FXgxKc1majU
-	nP9Pdts5hHUB4JTpLtHmnalKt3VeC6LORrGg6p3NG2SAwyp6LczSy7QWBP+CcL1S6/OxGS+nb
-X-Gm-Gg: ATEYQzzG1TiB0fA4my/T+WNbOAMkywpK7JjHlVBaaEU8oPpZ3+EPS5Llbk81O/cISRc
-	ZDWhuEncKNyNzA36AtX4Qj1mty+3EgZfBlVb0nn1v3t37fsuS6ftxpxjLuReYuO6F6UJefsEYbI
-	8q1d0fnR5ANuMHEs6NLBazrwociFSsRwfBjhDwfoWBE+1KURGbUZ1ObnUwsQ4MhID1USqG23XNO
-	DxCldxIb3XW0ATjKQH9xxmsjMi+UPGRNjSiwn9PA34f6MM6bjD/oDd9r8NzK9Yiuv0/hPKAdLaM
-	6zwiil6urOPz13u/mDFUe7DKWAtuKYAYjwXxWW7JDB2qaI9rbGIJHJSnehpA7pgp4wF6cClckDT
-	KfEw7k/rclnqCGBnLKbWqzTrAURyjRxWaxiYR82WpKYtJFRAhoP9UTb70
-X-Received: by 2002:a05:6214:21c6:b0:899:a57e:887a with SMTP id 6a1803df08f44-899d1d84730mr49660336d6.8.1772210326407;
-        Fri, 27 Feb 2026 08:38:46 -0800 (PST)
-X-Received: by 2002:a05:6214:21c6:b0:899:a57e:887a with SMTP id 6a1803df08f44-899d1d84730mr49659456d6.8.1772210325713;
-        Fri, 27 Feb 2026 08:38:45 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50751256df4sm24041401cf.16.2026.02.27.08.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Feb 2026 08:38:44 -0800 (PST)
-Date: Fri, 27 Feb 2026 11:38:42 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abelvesa@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 01/13] clk: add new flag CLK_ROUNDING_FW_MANAGED
-Message-ID: <aaHIkpuK7AFXbeM-@redhat.com>
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
- <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BId/d7GQ"
+Received: from localhost (localhost [127.0.0.1])
+	by 013.lax.mailroute.net (Postfix) with ESMTP id 4fMz391N4VzlfgS0;
+	Fri, 27 Feb 2026 19:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1772220680; x=1774812681; bh=KMd0qDawP3LtnNVvdXu0EXZ0
+	bVclYbc/s4g1QlOu6ME=; b=BId/d7GQJieiPJXeB15F3xR7jTlrDEn6whU05ToR
+	lVQj5w9r6atacQ/ykKhH8hZNvihgIKl5O1jVgbWVBbNpWMWiCmqg4ufzhpGKNtET
+	OlazOYWfWmhvjn/CYoIx37rTUIhKoCEFSMkxWTsrqAXMok9hNkwnWluCFCOecQEf
+	NrcduviqoDilLdkeXcUWJMSl6oRgkYTxWfrje0243cgJjlT5r+GXPliCRXE3h7D4
+	L+1XR9167R4wFe2XJ8jP1fzl1XyC4c4WmtjG+FEIdMyPK3SuQvRK/SR956bRoS4s
+	ecSNPm+/sCSSxJvwJ3yrWoLLIDSDs+7KoxFhufzWgu/zqA==
+X-Virus-Scanned: by MailRoute
+Received: from 013.lax.mailroute.net ([127.0.0.1])
+ by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id F69mF0ONa_jO; Fri, 27 Feb 2026 19:31:20 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4fMz2n0mQrzlfgRw;
+	Fri, 27 Feb 2026 19:31:12 +0000 (UTC)
+Message-ID: <9d975881-7570-495d-94ea-085e2012a9af@acm.org>
+Date: Fri, 27 Feb 2026 11:31:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/11] scsi: ufs: core: Introduce a new ufshcd vops
+ negotiate_pwr_mode()
+To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
+ beanhuo@micron.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+ Ajay Neeli <ajay.neeli@amd.com>, Peter Griffin <peter.griffin@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Peter Wang <peter.wang@mediatek.com>,
+ Chaotian Jing <chaotian.jing@mediatek.com>,
+ Stanley Jhu <chu.stanley@gmail.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Archana Patni <archana.patni@intel.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-samsung-soc@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-mediatek@lists.infradead.org>,
+ "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-arm-msm@vger.kernel.org>
+References: <20260227160809.2620598-1-can.guo@oss.qualcomm.com>
+ <20260227160809.2620598-2-can.guo@oss.qualcomm.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20260227160809.2620598-2-can.guo@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 26, 2026 at 01:16:45PM -0500, Brian Masney wrote:
-> There are some clocks where the rounding is managed by the hardware, and
-> the determine_rate() clk ops is just a noop that simply returns 0. Add a
-> new flag for these type of clocks, and update the clk core so that the
-> determine_rate() clk op is not required when this flag is set.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> 
-...
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 1cda2c78dffaff037f0f16b0f11106b63b3a746f..187f8248a9c840c701cbbba99bb7cdeef7b654ee 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -32,6 +32,8 @@
->  #define CLK_OPS_PARENT_ENABLE	BIT(12)
->  /* duty cycle call may be forwarded to the parent clock */
->  #define CLK_DUTY_CYCLE_PARENT	BIT(13)
-> +/* clock rate rounding is managed by firmware, don't require determine_rate */
-> +#define CLK_ROUNDING_FW_MANAGED		BIT(14)
+On 2/27/26 8:07 AM, Can Guo wrote:
+> Before power mode change to a target power mode, TX Equalzation Training
 
-Based on a conversation in the Renesas driver change, I think we should
-rename this flag to CLK_ROUNDING_NOOP. Let me know if there are any
-objections, or suggestions for a better name. I'll let let this sit out
-there for about a week or so before sending a v2.
+"Equalzation" -> "Equalization"
 
-Brian
+> (EQTR) needs be done for that target power mode. In addition, before TX
+> EQTR we need to change the power mode to HS-G1. These cannot happen
+> before the vops pwr_change_notify(PRE_CHANGE) because we don't know the
+> negotiated target power mode yet. It is neither approprite if all these
+> happen post the vops pwr_change_notify(PRE_CHANGE) as we are going to
+> change the power mode to HS-G1 for TX EQTR.
 
+approprite -> appropriate
+
+Additionally, if "neither" occurs in a sentence, "nor" should occur in
+the same sentence. I don't see "nor" in the above sentence?
+
+> Introduce a new ufshcd vops negotiate_pwr_mode(), so that TX EQTR can be
+> done after vops negotiate_pwr_mode() and before vops pwr_change_notify().
+
+This patch does much more than only introducing a new vendor operation.
+Please make sure the patch description is complete.
+
+> -	return -ENOTSUPP;
+> +	return -EOPNOTSUPP;
+
+Why has ENOTSUPP been changed into EOPNOTSUPP?
+
+> -static int ufshcd_change_power_mode(struct ufs_hba *hba,
+> -			     struct ufs_pa_layer_attr *pwr_mode)
+> +static int __ufshcd_change_power_mode(struct ufs_hba *hba,
+> +				      struct ufs_pa_layer_attr *pwr_mode)
+>   {
+>   	int ret;
+
+The double underscore prefix is typically used in the Linux kernel to
+indicate that the caller holds a lock. That is not the case here. Please
+choose another name for this function, e.g.
+ufshcd_dme_change_power_mode().
+
+Thanks,
+
+Bart.
