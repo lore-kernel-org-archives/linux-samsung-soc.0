@@ -1,48 +1,33 @@
-Received: from 013.lax.mailroute.net (013.lax.mailroute.net [199.89.1.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8440355F2F;
-	Fri, 27 Feb 2026 19:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B377284694;
+	Sat, 28 Feb 2026 13:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772220695; cv=none; b=ftEG2h25dHmusrhq8+9Yhbsy/Ei+r1R8BfBGT44C3CykeELVrbgabo0MLzOH1HE7LYVcEzx0+FIEkeyGVFpBrwWQJtfawej9EKdg0gRWz7ArbWnDgCBu3Xb5RPIH2Ce0N0lEQEvNH9QiItG4EbhY3Lvudph8BaodDuvtaCkO2x4=
+	t=1772285512; cv=none; b=Vx+2Hbi/yVNQV88WmVSAtG5JKsy7+sZeyGLE6MjMrKLmijLWepjujjNmfENxMTxwKBl/IvIxwMSejLAfftzQE49RbPHz5liShVrYsvEk3Jrn2nye3bkV4L/0wNB3xncJ5LuqlXAO5HFbhdDAp4jeFXjK725o2EAJhl0YbDeN+Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772220695; c=relaxed/simple;
-	bh=gcUwh0qPFw5GdQRQKa/RuurbIQBpHHkCJD7079f3Oq8=;
+	s=arc-20240116; t=1772285512; c=relaxed/simple;
+	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PPWeYaWYUQJmmIOaVgk1HFPPbQvjEz85L6UDYi+ehLpMN0wfq4kHltyZgDzNUQ1V5VTl01SlO9ZJW1tpFpp++V0jS/e4gfUacYpNUmqt647beWSFXvPTbSpHEFDuQSd9Lg2eXPpPnJ/eoLhhOWnkTnPGQkU7a+QKC+uOXI57XM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BId/d7GQ; arc=none smtp.client-ip=199.89.1.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	 In-Reply-To:Content-Type; b=iqB7J7jSa4qxSeToZ+0Strvb9N0g2URto1HB7YbNxC7US5aFiX20Sy61B8+MShDgZB/leh2t/Dj6RxC2+YXe6KxkaTNN9xUBH1kHXyzSaaJuNNQOfKmRiwssoNbA252z79V28KqTgEnTnXOVUnWJ9FwfinifU9nxP3ZSpcLi8VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI8LoTrS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BId/d7GQ"
-Received: from localhost (localhost [127.0.0.1])
-	by 013.lax.mailroute.net (Postfix) with ESMTP id 4fMz391N4VzlfgS0;
-	Fri, 27 Feb 2026 19:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1772220680; x=1774812681; bh=KMd0qDawP3LtnNVvdXu0EXZ0
-	bVclYbc/s4g1QlOu6ME=; b=BId/d7GQJieiPJXeB15F3xR7jTlrDEn6whU05ToR
-	lVQj5w9r6atacQ/ykKhH8hZNvihgIKl5O1jVgbWVBbNpWMWiCmqg4ufzhpGKNtET
-	OlazOYWfWmhvjn/CYoIx37rTUIhKoCEFSMkxWTsrqAXMok9hNkwnWluCFCOecQEf
-	NrcduviqoDilLdkeXcUWJMSl6oRgkYTxWfrje0243cgJjlT5r+GXPliCRXE3h7D4
-	L+1XR9167R4wFe2XJ8jP1fzl1XyC4c4WmtjG+FEIdMyPK3SuQvRK/SR956bRoS4s
-	ecSNPm+/sCSSxJvwJ3yrWoLLIDSDs+7KoxFhufzWgu/zqA==
-X-Virus-Scanned: by MailRoute
-Received: from 013.lax.mailroute.net ([127.0.0.1])
- by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id F69mF0ONa_jO; Fri, 27 Feb 2026 19:31:20 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4fMz2n0mQrzlfgRw;
-	Fri, 27 Feb 2026 19:31:12 +0000 (UTC)
-Message-ID: <9d975881-7570-495d-94ea-085e2012a9af@acm.org>
-Date: Fri, 27 Feb 2026 11:31:11 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI8LoTrS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBE0C2BC86;
+	Sat, 28 Feb 2026 13:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772285512;
+	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bI8LoTrSprxbDUPFo2Cp2Dzsi8+oSnSttKBKqScn5MJZX4VMmlp+D5HxnsteJlnUs
+	 Eb2lSDt9xYLKQaEPfHhXNJTUCyHLYS28Cm2zyMWzFpBuX1y8A3/PoPwbRE4Zsuv14Y
+	 +4FMz/Xd8T9TWhlfdqxU+ERkpwRksl28V+3zWZLErYaBiSSLKC+IswTTMcrzAcDbo4
+	 YbK68z0hpVzDdppmi086/n63dfSr4+lv9zgt92F9QEw6O/NetpruROINb3tXPWpMTT
+	 F7Jz/y+S04yjgst21OqsT/so5r4M9BQUoT0lW0o4PDVJQNZwJnvSqCerTKt8yDAhAD
+	 PObw7sWnO3UCg==
+Message-ID: <8a7d21bf-6867-4d5f-8376-6f988d89c969@kernel.org>
+Date: Sat, 28 Feb 2026 14:31:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,82 +35,77 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/11] scsi: ufs: core: Introduce a new ufshcd vops
- negotiate_pwr_mode()
-To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
- beanhuo@micron.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- Ajay Neeli <ajay.neeli@amd.com>, Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Peter Wang <peter.wang@mediatek.com>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Stanley Jhu <chu.stanley@gmail.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Archana Patni <archana.patni@intel.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-mediatek@lists.infradead.org>,
- "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-arm-msm@vger.kernel.org>
-References: <20260227160809.2620598-1-can.guo@oss.qualcomm.com>
- <20260227160809.2620598-2-can.guo@oss.qualcomm.com>
+Subject: Re: [PATCH 12/13] clk: samsung: acpm: drop determine_rate op and use
+ CLK_ROUNDING_FW_MANAGED flag
+To: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org
+References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
+ <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260227160809.2620598-2-can.guo@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2/27/26 8:07 AM, Can Guo wrote:
-> Before power mode change to a target power mode, TX Equalzation Training
+On 26/02/2026 19:16, Brian Masney wrote:
+> This clk driver has a noop determine_rate clk op. Drop this empty
+> function, and enable the CLK_ROUNDING_FW_MANAGED flag.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> 
+> 
 
-"Equalzation" -> "Equalization"
 
-> (EQTR) needs be done for that target power mode. In addition, before TX
-> EQTR we need to change the power mode to HS-G1. These cannot happen
-> before the vops pwr_change_notify(PRE_CHANGE) because we don't know the
-> negotiated target power mode yet. It is neither approprite if all these
-> happen post the vops pwr_change_notify(PRE_CHANGE) as we are going to
-> change the power mode to HS-G1 for TX EQTR.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-approprite -> appropriate
 
-Additionally, if "neither" occurs in a sentence, "nor" should occur in
-the same sentence. I don't see "nor" in the above sentence?
-
-> Introduce a new ufshcd vops negotiate_pwr_mode(), so that TX EQTR can be
-> done after vops negotiate_pwr_mode() and before vops pwr_change_notify().
-
-This patch does much more than only introducing a new vendor operation.
-Please make sure the patch description is complete.
-
-> -	return -ENOTSUPP;
-> +	return -EOPNOTSUPP;
-
-Why has ENOTSUPP been changed into EOPNOTSUPP?
-
-> -static int ufshcd_change_power_mode(struct ufs_hba *hba,
-> -			     struct ufs_pa_layer_attr *pwr_mode)
-> +static int __ufshcd_change_power_mode(struct ufs_hba *hba,
-> +				      struct ufs_pa_layer_attr *pwr_mode)
->   {
->   	int ret;
-
-The double underscore prefix is typically used in the Linux kernel to
-indicate that the caller holds a lock. That is not the case here. Please
-choose another name for this function, e.g.
-ufshcd_dme_change_power_mode().
-
-Thanks,
-
-Bart.
+Best regards,
+Krzysztof
