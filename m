@@ -1,111 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B377284694;
-	Sat, 28 Feb 2026 13:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1704932B9B1;
+	Sat, 28 Feb 2026 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772285512; cv=none; b=Vx+2Hbi/yVNQV88WmVSAtG5JKsy7+sZeyGLE6MjMrKLmijLWepjujjNmfENxMTxwKBl/IvIxwMSejLAfftzQE49RbPHz5liShVrYsvEk3Jrn2nye3bkV4L/0wNB3xncJ5LuqlXAO5HFbhdDAp4jeFXjK725o2EAJhl0YbDeN+Dg=
+	t=1772289814; cv=none; b=Nqq1Mb6u5YQYwIPuMI2VBNL4TjNewF6BUjNBzZPT+andczBynq54uHZEpOcxIv6mwFUdML5Ix/9TavSkUzYYwcqyjWPhuVycHneXns51PxYjhXc9uPafauqWE/JI/Gx3ykca3wmBPlJ3hNlWjYGPH5tOmiLQR+1Y3UCZ1lPSVxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772285512; c=relaxed/simple;
-	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqB7J7jSa4qxSeToZ+0Strvb9N0g2URto1HB7YbNxC7US5aFiX20Sy61B8+MShDgZB/leh2t/Dj6RxC2+YXe6KxkaTNN9xUBH1kHXyzSaaJuNNQOfKmRiwssoNbA252z79V28KqTgEnTnXOVUnWJ9FwfinifU9nxP3ZSpcLi8VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bI8LoTrS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772289814; c=relaxed/simple;
+	bh=DxlsWt8JrSJgLLW+czcpjK+QrBU8SMywKLQVpxZEYNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VqqjJF/ed4nvLO+kS8Fsr926SDmCvqjsiA+RWhYDcPhX/MnEC/5FGrzWRDv5XBkBCpkUEZQlKtpojKn/obR7nMhtQxiS9exCH0VcpiLzOCtBnuTYLxdyCi1wmYpEkGGi7fpNvAUAGV3+wCAqzCJwey0jp9OO/EwL2AS3spMLMuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi43zS/h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bI8LoTrS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBE0C2BC86;
-	Sat, 28 Feb 2026 13:31:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi43zS/h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2236C19421;
+	Sat, 28 Feb 2026 14:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772285512;
-	bh=m1ZrWjHvg5njNw84EH0oDrYxVzwQZhLacGTCELlESTQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bI8LoTrSprxbDUPFo2Cp2Dzsi8+oSnSttKBKqScn5MJZX4VMmlp+D5HxnsteJlnUs
-	 Eb2lSDt9xYLKQaEPfHhXNJTUCyHLYS28Cm2zyMWzFpBuX1y8A3/PoPwbRE4Zsuv14Y
-	 +4FMz/Xd8T9TWhlfdqxU+ERkpwRksl28V+3zWZLErYaBiSSLKC+IswTTMcrzAcDbo4
-	 YbK68z0hpVzDdppmi086/n63dfSr4+lv9zgt92F9QEw6O/NetpruROINb3tXPWpMTT
-	 F7Jz/y+S04yjgst21OqsT/so5r4M9BQUoT0lW0o4PDVJQNZwJnvSqCerTKt8yDAhAD
-	 PObw7sWnO3UCg==
-Message-ID: <8a7d21bf-6867-4d5f-8376-6f988d89c969@kernel.org>
-Date: Sat, 28 Feb 2026 14:31:47 +0100
+	s=k20201202; t=1772289813;
+	bh=DxlsWt8JrSJgLLW+czcpjK+QrBU8SMywKLQVpxZEYNo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Zi43zS/heJJsjx8xD5CvT1NRMRViVtJGHmPcYbdsLKPOkA4kgvPuBIc6eHi3FYHNu
+	 tKU1DY2o72t7cdJ85/8qLCfrTPKsjc2I0w0IqLRHk+Of69MnALJWE1nzCmnkz8fXPy
+	 sEuAnCesSKNISU0tLU9aGVEIQaVldt+UahGx/Sj+7Sd78a4q27SyezNs/cdxpQ4u9r
+	 uwOU1+GOmCXPRXR4M4U7QKn4Tw5bYAiJ/vzYE/rFaacKlsJ+0CrmDbncafKhc7e/NU
+	 sXr1UkDQvz+RBz1TzBTlmnCP5ENZlloBy1Omt9vThLGReYdukXtQhY5IolHn4X07Wt
+	 tB29snDc15nsQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	sunyeal.hong@samsung.com,
+	shin.son@samsung.com,
+	Raghav Sharma <raghav.s@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	chandan.vn@samsung.com,
+	dev.tailor@samsung.com,
+	karthik.sun@samsung.com
+Subject: Re: (subset) [PATCH 1/3] dt-bindings: clock: exynosautov920: add G3D clock definitions
+Date: Sat, 28 Feb 2026 15:43:21 +0100
+Message-ID: <177228975881.54431.6677380218613505033.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260202103555.2089376-2-raghav.s@samsung.com>
+References: <20260202103555.2089376-1-raghav.s@samsung.com> <CGME20260202101954epcas5p27735b03488efceba5d7f970931905ec5@epcas5p2.samsung.com> <20260202103555.2089376-2-raghav.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] clk: samsung: acpm: drop determine_rate op and use
- CLK_ROUNDING_FW_MANAGED flag
-To: Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
- <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-12-4421dd2f6dc6@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=359; i=krzk@kernel.org; h=from:subject:message-id; bh=BJphhyUvycG85ma5KiuFViDXgyFJrR33M1MzhR+Y77M=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpov8J8SkbXScdOWTrVFJmnCLf50v3D3l/X2Fku d5SPKzffhGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaaL/CQAKCRDBN2bmhouD 10CoD/wLDDrPPVk8HYtoavOY2eDXT/oFhSPX6oi2KVGzlzFii8DoOQ3XddBN0UpoaLGYxx1Xz7g w3DLym2bRUJBHma0SrdsRgTUdj1jhYXfv24T0iyuehPfvtVrbT+Iat3cDSBaZ2bMlP5b3So93/W GpXeXRGBjLpbP2ei/bZiLFMl1xDpmXyCZdaAcaQQlqzErlXLMRNKoUZvYhgorPedAVA9xFJqxra yjUzhC5lNXAoCf8VYWW7m/M4+qvUqRjtKt2w4L0f7fsd4DEYMLESLCszLsNGLM4vCoAtBpiBRdx kED9HDXv2iOMHlO9qXKqKDId20D8VnOgyN+KJbokks4a/MiZo92D87jrSQ3mv2FJy2ZK4Dj32HU QPLTNnyrebFcAq51Tj0PY4eEwaFAtwSPXLF9tT9hNPXtgeuwX12ie0e/ZannXGpzDMPMtoMIR1T GSwB2bUaiWSAFp8NPVFHcqkH3V5WRqMt+1J61isK3rqz2wEY/cEjibWiNjAG4aGVAEoqd58YAHG Mv/LWEtTKPL652h07w5C8gVtMRlX84bXD3HJK6H8EUVfQkoKzfm2paxXYB4J5lRVsEYhwHJ9mih NLkQoj/eyepRBNNa85ILYbKTziaFcetm1od5QuOn8KQqT5UFCUXTkiipEm5VDeiGXfYW2fAYHit Y9R1xJHBqpWHa1A==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 26/02/2026 19:16, Brian Masney wrote:
-> This clk driver has a noop determine_rate clk op. Drop this empty
-> function, and enable the CLK_ROUNDING_FW_MANAGED flag.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+
+On Mon, 02 Feb 2026 16:05:53 +0530, Raghav Sharma wrote:
+> Add device tree clock binding definitions for CMU_G3D
 > 
 > 
 
+Applied, thanks!
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
+[1/3] dt-bindings: clock: exynosautov920: add G3D clock definitions
+      https://git.kernel.org/krzk/linux/c/6e5913328102f818303b01e854df37fa9f251a47
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
