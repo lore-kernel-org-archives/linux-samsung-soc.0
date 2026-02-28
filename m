@@ -1,71 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E345230F93C;
-	Sat, 28 Feb 2026 14:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C98C41C2E6;
+	Sat, 28 Feb 2026 14:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772289854; cv=none; b=gYMDWeuVHjvnBaDagd4IJywGgXxtVPRnRn+27YZL39MAIt78tBfua6jOFQ1paT7ysDSsgC2iK5qcjhjHaw0r7yifCnr6jXNZVBKnJEIJcXGuaM03xWeY0pRc1G/kq/rI3kW0rFVaNwavYvLHT1r5HnyWV/vMA89LneoYzOKD94Q=
+	t=1772289960; cv=none; b=K/GcRSeMD7ZZU+kKb+qCwtC0kt5jZ/uWsUs9J6i3pNQzj7J/ZWVR8iVFAG/dO69gNzbDvRSLPP81IuFVH7qSqmY6v0jSvjcLg5OOx0G5qx2ueJrltpCsqXq5G5a+F2MS2Ed7p/zKaFAIO85a5t3lVSdXjPFdrjOZazu5V5Gq5wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772289854; c=relaxed/simple;
-	bh=8uBL+lM1E6r1mevBWfyFVMB3IGUpvr/djhVuaXmKqhc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m7ZVpDB1QbE4JMqDS+MdGZHC+KLfv/4w3VeiWbYazBh5z6X2VJMd44fYfoxpF82FAduuAiNOCs2l5cpFF5d24yPbwuUtopGoy/Z6bv3j7Ov0Betsi+SK86LoN5nzAkU1q9c93CIgsbYe+PnDTyNoz0w3f46dz1LJoQg8AdLg46A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6Vkf1du; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772289960; c=relaxed/simple;
+	bh=WQbRkgcn5OMMUdD1MQ+fwxepba97Vxjidwr1/Ijr39Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayX3OGaK+r/3tiklelSqmRkS+yNtxFY6gHzEipT7bYXq5CGyoSW/2rGxODOha1cyPhHBPxtRwo+VIluxYgjZg3gc6jye7ci+k6WCeyThn2XzGYNpca+R2N29WqyfMJofi3dImxwwWeeNADh7ZKTSepQH2PlIo/cG1UigDpJlsrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEhPPWTW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6Vkf1du"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682B2C2BC87;
-	Sat, 28 Feb 2026 14:44:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEhPPWTW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E1CC116D0;
+	Sat, 28 Feb 2026 14:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772289853;
-	bh=8uBL+lM1E6r1mevBWfyFVMB3IGUpvr/djhVuaXmKqhc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=I6Vkf1du4xFWzgVNJFeMdki+NgnDQO3zCAagEE+lfQSxyCfK2iMEWPQmN5s1g9y/O
-	 9Ak2srQ+Cn4n+YSfya//t3dBNG7mbBRwavZDRTGYXeFZ9ZoAgnVyyo32qSvkGZ8mc+
-	 R7RhnVjJkHOGyRwH6kykbtkWSAjabGfbuoH5Sj3miqthZvr/SaeYIH49nod7gQmkAw
-	 xgMeCDTnHqErF4Kb4bsibeEMFmSc7gAzYcUYVh+E9ddB8yd5dRiQUqS7rS9sbBXZBA
-	 04gooO4UPBFz5Cm2QhtniFC8K3xwUkxi5vkSXdPF9ySEqDIr9y/oNceIl83dnLxGbA
-	 qyreKpnpOPtBQ==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
- conor+dt@kernel.org, sunyeal.hong@samsung.com, shin.son@samsung.com, 
- Raghav Sharma <raghav.s@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, chandan.vn@samsung.com, 
- dev.tailor@samsung.com, karthik.sun@samsung.com
-In-Reply-To: <20260202103555.2089376-4-raghav.s@samsung.com>
-References: <20260202103555.2089376-1-raghav.s@samsung.com>
- <CGME20260202102001epcas5p4ebe15ce1cec50c6ca024464ffdbe9d79@epcas5p4.samsung.com>
- <20260202103555.2089376-4-raghav.s@samsung.com>
-Subject: Re: (subset) [PATCH 3/3] arm64: dts: exynosautov920: add CMU_G3D
- clock DT nodes
-Message-Id: <177228985014.54920.4826846692131993586.b4-ty@kernel.org>
-Date: Sat, 28 Feb 2026 15:44:10 +0100
+	s=k20201202; t=1772289959;
+	bh=WQbRkgcn5OMMUdD1MQ+fwxepba97Vxjidwr1/Ijr39Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KEhPPWTWVliyjqWwsH/SE5YTKh+CTfJOm07NzqieVsdCBvq/BeskmI6XpxQzGn8dZ
+	 xHSQFFncJSjhargCtsVDrJ69zRyq7gn1ad9P04hhB7d49FNbcnwpdqBCdtqvlPqhlu
+	 /+ZTn3vWOSZ1mV1ls8t5gV9i7vkWbPT698zWgsDzSC741rDBlU8X+w00E4ylmscEix
+	 +TAM7G8ugZvh7pNJO1jLq0IfbogkF5vvYMWkI4QrKNmmHnveAeFYWrklODN86e8GDP
+	 JOpHwBchdq56KCO6np7dg9NwCf/mvj0+XF+FQuc5+/30roOOALVqgJjdRSTuQEsygQ
+	 1BBq3hkNzRivQ==
+Message-ID: <af259780-2d8f-4780-ac21-015f48e46a2e@kernel.org>
+Date: Sat, 28 Feb 2026 15:45:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: samsung: exynos-sysreg: Add hsi0
+ for ExynosAutov920
+To: Sanghoon Bae <sh86.bae@samsung.com>, robh@kernel.org,
+ conor+dt@kernel.org, vkoul@kernel.org, alim.akhtar@samsung.com,
+ kishon@kernel.org
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ sowon.na@samsung.com
+References: <20260212082105.1878720-1-sh86.bae@samsung.com>
+ <CGME20260212082119epcas2p34791b0d7ad5ea3b50c6bcfe03cf0f16a@epcas2p3.samsung.com>
+ <20260212082105.1878720-2-sh86.bae@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260212082105.1878720-2-sh86.bae@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
 
-
-On Mon, 02 Feb 2026 16:05:55 +0530, Raghav Sharma wrote:
-> Add required dt node for cmu_g3d block, which provides
-> clocks for G3D IP
+On 12/02/2026 09:21, Sanghoon Bae wrote:
+> Add hsi0 compatible on samsung,exynos-sysreg
+> To support ExynosAutov920 PCIe settings:
+> - PCIe PHY power control
+> - PLL settings for PCIe
+> - PCIe device direction (RC/EP)
 > 
-> 
+> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+> ---
 
-Applied, thanks!
-
-[3/3] arm64: dts: exynosautov920: add CMU_G3D clock DT nodes
-      https://git.kernel.org/krzk/linux/c/a94b4c84ae9294e4f2e398c61d94bedd56162785
+Does not apply, please rebase.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
-
+Krzysztof
