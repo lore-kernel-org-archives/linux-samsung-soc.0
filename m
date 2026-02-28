@@ -1,76 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D76744BCBA;
-	Sat, 28 Feb 2026 14:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF61175A61;
+	Sat, 28 Feb 2026 20:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772290737; cv=none; b=UfhwtTn1gacp7GZfAZjawA1KO6oxrZlysEINYcHt3ls92jlok7mcQ/y7VzRA0L9K4Paa0QNgdUd2Zk1yXiaT1gPFjW+AmUh0cSTlrH7tPQlAlO+UNe8wySoP2CeODP4/sSALEvrBr2Glswit9VltKpVaiZI2AL3hWozKsjRR2TA=
+	t=1772309755; cv=none; b=QA1CKrttktVgpR2Bn0aFWKPcG6vg+PTlsR9a9ymoxfRSarDCvR7ObMJtHnyAVw7Jkui9GrRAXfZHth63J2hNIG3nqLIW6O6GWClmm9T0uxvR/Cd/3DruvZP1TE++w268LQEhhePhpEeQHeFD8TRpb4bKnFsoaC7NxSiJjWcskvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772290737; c=relaxed/simple;
-	bh=d6iFnyQbVgxrxtB4rzRtx5IRIwiZBC0IZg9Vsy+ctmg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dHHNnd4Ps+NVNk545TzTrxg71bo99RL/UmGZpztswYuhJPrBbebJwwnDjgwk7Z2p+GB+Zjw45oGAZairGWBJxoyy6rz6ut7tefYEe3bZzWyEW3UW8KZt+5Ny8zKuMqnHd7alECu6GreqKblibRMdD+DfA7V1fgIGmFzdRm6EOPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uD/2/SgO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772309755; c=relaxed/simple;
+	bh=Pf2ZqDiNTaVpou8OCsl9k0nAKVHkTrsQ8rYWDuqHje8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxLDLOmgiZDf7yvNLtwE2zxjwhPTjTpt52LznqaCyAJeLMuHKgjnN3uccbgb9Uidt0t/MWosuNXG8MLFtMUDjEIuILIHT19MPhBGL2+3x3XV4S42tLsTsBKBwMcx4IpTq7PpLvFDkGiNDVA/MpduOOFK/yoe3rUh1rX1WYwO+O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W6XiScxm; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uD/2/SgO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C494AC2BC86;
-	Sat, 28 Feb 2026 14:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772290737;
-	bh=d6iFnyQbVgxrxtB4rzRtx5IRIwiZBC0IZg9Vsy+ctmg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uD/2/SgO5kr1fwgvwdIDJhGI2A9LxSiRnVMgQd4xqddhEJ0h+xhE9uMYXx20eCUZ0
-	 urZFK7cEoJvO/oYbvgSso0KtcnXuDYNkNoVdy/AtOtYuu4WtiHxe1/7OaJ4bGUypWr
-	 cgY8xsKkewPxA6wbBW1ERP9oihka+pqzyWgtkeJn5HQNyV0lpPgahxQ+fp7vlK3uO7
-	 P3JqdymI+M2POyg2wkCGdKLo9dCXB/LImFBhugooM/j1ANO6lNeI/viJ8wH8oQl8Y/
-	 1B/nownGGT+odYMJuPbLWdDu42/C3cYgPbZvuC3P4OT0htbsZOEXBcNTBPcqKszmdA
-	 G096hNZo6inAA==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, GyoungBo Min <mingyoungbo@coasia.com>, 
- Kyunghwan Kim <kenkim@coasia.com>, Ravi Patel <ravi.patel@samsung.com>, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: kernel test robot <lkp@intel.com>
-In-Reply-To: <20260226205445.336839-3-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260226205445.336839-3-krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] clk: samsung: pll: Fix possible truncation in
- a9fraco recalc rate
-Message-Id: <177229073452.58647.7962287404150012481.b4-ty@kernel.org>
-Date: Sat, 28 Feb 2026 15:58:54 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W6XiScxm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1772309754; x=1803845754;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Pf2ZqDiNTaVpou8OCsl9k0nAKVHkTrsQ8rYWDuqHje8=;
+  b=W6XiScxmEOz2bHSeC6zCjlHfu3o9oRI6AafLrmzeu2xxYVLN0t/trisy
+   GOZmoPo7M14BzRZwPkOZkJgwIfOgs1oOhy4/TxR5o3Pc1By1svIdCx1OD
+   J5n0vHmyH6vlcCaGtIij/aalIZn6E4EK4ALt54ZMFtp5omNCy3+K+aKGQ
+   2Mnx9nWRqaHnVip7+7FFxyQxFRBPnbN9LEY/7CaKc5QF1qc83KWHw1+dx
+   xcKr4WAQX4AycP9B7yKzy0tkfQKBpEZZ12Sp57K7Cb4Dj4zLFm4xNjzQj
+   yrKz2KP+EIUCjf/5ni4VE5Ub1PDqxl4TUmlyysIhrpVVYSbJAu+2ME4ju
+   A==;
+X-CSE-ConnectionGUID: ijS5lK04QcGQKP+ykBsPeg==
+X-CSE-MsgGUID: BZAdaNeKT3qRNPlHP0nxoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11715"; a="84001425"
+X-IronPort-AV: E=Sophos;i="6.21,316,1763452800"; 
+   d="scan'208";a="84001425"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2026 12:15:53 -0800
+X-CSE-ConnectionGUID: +7+h/CCuRO2AFQu/kS6OeQ==
+X-CSE-MsgGUID: ekF6cjXETo6a1NGSKrOlSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,316,1763452800"; 
+   d="scan'208";a="214980288"
+Received: from lkp-server01.sh.intel.com (HELO 59784f1c7b2a) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 28 Feb 2026 12:15:50 -0800
+Received: from kbuild by 59784f1c7b2a with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vwQj5-0000000009v-0A1G;
+	Sat, 28 Feb 2026 20:15:47 +0000
+Date: Sun, 1 Mar 2026 04:15:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Badhri Jagan Sridharan <badhri@google.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, amitsd@google.com,
+	Badhri Jagan Sridharan <badhri@google.com>
+Subject: Re: [PATCH v2] arm64: dts: exynos: gs101: Enable AVS APDO
+Message-ID: <202603010422.kDnbXirr-lkp@intel.com>
+References: <20260227083954.3529857-1-badhri@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260227083954.3529857-1-badhri@google.com>
 
+Hi Badhri,
 
-On Thu, 26 Feb 2026 21:54:46 +0100, Krzysztof Kozlowski wrote:
-> samsung_a9fraco_recalc_rate(), unlike other functions in the unit, is
-> the first case dividing u64 by u64, thus it should rather use div64_u64
-> to avoid possible truncation.  Note that the original code did not
-> use remainder.
-> 
-> This fixes Coccinelle warning:
-> 
-> [...]
+kernel test robot noticed the following build errors:
 
-Applied, thanks!
+[auto build test ERROR on 5d692f20de6311fa507c952adc3487c641edee00]
 
-[1/2] clk: samsung: pll: Fix possible truncation in a9fraco recalc rate
-      https://git.kernel.org/krzk/linux/c/b8d1706ab3d99c1f96d0c9ed7d16d29b8a178d4c
-[2/2] clk: samsung: Use %pe format to simplify
-      https://git.kernel.org/krzk/linux/c/01df1dd3ebe0a16023138f0dc70f5decd513f32e
+url:    https://github.com/intel-lab-lkp/linux/commits/Badhri-Jagan-Sridharan/arm64-dts-exynos-gs101-Enable-AVS-APDO/20260227-164153
+base:   5d692f20de6311fa507c952adc3487c641edee00
+patch link:    https://lore.kernel.org/r/20260227083954.3529857-1-badhri%40google.com
+patch subject: [PATCH v2] arm64: dts: exynos: gs101: Enable AVS APDO
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20260301/202603010422.kDnbXirr-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260301/202603010422.kDnbXirr-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603010422.kDnbXirr-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   Lexical error: arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:177.10-30 Unexpected 'PDO_SPR_AVS_SNK_APDO'
+   Error: arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi:177.35-36 syntax error
+>> FATAL ERROR: Unable to parse input tree
+
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
