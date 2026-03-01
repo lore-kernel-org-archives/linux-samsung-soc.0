@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5D8274B42;
-	Sun,  1 Mar 2026 01:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652452D3EEA;
+	Sun,  1 Mar 2026 01:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328300; cv=none; b=i3ddva7JYHP1w49O33rUe/SixUSg8Va5s9IgoUrI4QyF4rqLMyMB8EsACR8PCnDX17wNwgSB7ZdB4d3FJplhpX27m8Yr5J08PGNv1ZucbjH+c/kEJHtxAiFa8B3YXTOJTVpnkGZzYwG51h8+lr50+pvTBxGeGg/OSQEgSlg1SM4=
+	t=1772328947; cv=none; b=tnZQJ1j38VbR2pHnen0yUrnWhuOnVvJwEpMSyrqd0PVLwl63cCi2hXJCktnh5PbUAbZmwT27akRmi6fkMIbIjZOayg6t2D0dk8t6KzX0uFmcVMQuXDuBWtjA/Xofrr61KJUBEdA8/Cep3O53h6YWvVnBm4qZFG1EeWKA61Q8cOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328300; c=relaxed/simple;
-	bh=rRSh1/DAJbQXSr7bDILUoxZnB5otAxKreUpqr3iT4sk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzupK7WLJMkz8WQ5jKit2gcBSPcfEMS6ShKRYhi62gw2aN7HbpNIJTSXp808xDTpHcFPUiqxnHTUIXhQ7OEuk2ExzhTOdfKTdpCD4ggFTRLNJZEav4092/NXr59H/hgEspYzUt7n9u9s9MYrHGWgvak/9oYWzF2kFfVIrMeHb9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShJeIHwZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328947; c=relaxed/simple;
+	bh=0NBsgjaFxCs79o5ZlkI2SzjkYxkJ5mT+tLDZeA+D23c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OTnyHktljZA8UekKCLfnyV3VXCzKyXea4CwKwvJw4qKcW2G4af4bJhifFhXRdi8Ow/yRAep14EosJi6ez2bheM1Wgbj5P69SjQz/xJXW1ZYVwzX4UyyX9UOi2X3oi0mNenz5Oa06UaSSv+Y27X1wo0xmjFDMRZ+FkAHBCXVTrUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWLSnn8e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShJeIHwZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA830C19424;
-	Sun,  1 Mar 2026 01:24:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWLSnn8e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27F0C19421;
+	Sun,  1 Mar 2026 01:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328300;
-	bh=rRSh1/DAJbQXSr7bDILUoxZnB5otAxKreUpqr3iT4sk=;
+	s=k20201202; t=1772328947;
+	bh=0NBsgjaFxCs79o5ZlkI2SzjkYxkJ5mT+tLDZeA+D23c=;
 	h=From:To:Cc:Subject:Date:From;
-	b=ShJeIHwZ02tlTFp0aXaO9X1KvSQ7xsZ1RtDUIka4/iJxq56i+4TF7w089/P0kg4b1
-	 1GDYIFAVDowR71OXt8+MzRyqQxXfHSTJrsL3IDy/xQJd8ixrMoeHr228SkMY7yXSr8
-	 81GXNPvPTJN0jz1A/0/9xkXR8nw2qBq4TwUPVJMJLOA6rAxeDdLQsie+lmhFvDixBB
-	 4Bti7MhP18QU2F+aZlOCMi0kY7mCOFbtPvK3gJBEaqyJ9Lp6Mb/bbdENvCYJU3pJKV
-	 iP23tUqYXLWHxTmAmQeiGahDhSpWZjmFIpRJNLaotQe3NQvVaw3PR2DOE2fMF69tE9
-	 nLZICA3CAqmYg==
+	b=mWLSnn8ec1dP5xWoEXfaCFUwOYhGayeDbqCtE13g9cfj2ltpl7mB84Dz5a/W9fzkf
+	 bwndIhaUGUW6F4GF+3zTxTVWm1eYK7uuAplSBHDYXFExmuIyl4KTc1UPPrl9M3SAB8
+	 KjUn/VUJGjxMzTjBbjaY3qM9+IaDF9oMPdCD9JeQAjYfWWetxaBAIVnuVejlU2Q/1c
+	 lDQ54nFSIo9FptNVSw955GyjmrFsaeM6OOxQgAZqIxtWjHhv4PdWcnoDkaiZWS66sk
+	 CYg7LYE0Z0p8HaEwmPf8/EI+C4Ywog1on8BQgXwWH2xj1TQOze8dDtFcMZApkG3Bin
+	 JR+EsfkoSlx3g==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	aha310510@gmail.com
@@ -32,9 +32,9 @@ Cc: Inki Dae <inki.dae@samsung.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: FAILED: Patch "drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:24:58 -0500
-Message-ID: <20260301012458.1681957-1-sashal@kernel.org>
+Subject: FAILED: Patch "drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free" failed to apply to 6.6-stable tree
+Date: Sat, 28 Feb 2026 20:35:45 -0500
+Message-ID: <20260301013545.1695549-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -46,7 +46,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 6.12-stable tree.
+The patch below does not apply to the 6.6-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
