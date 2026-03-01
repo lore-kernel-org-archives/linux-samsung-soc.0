@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A722BEFE8;
-	Sun,  1 Mar 2026 01:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B33E26D4F9;
+	Sun,  1 Mar 2026 01:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772329488; cv=none; b=f52xUa6ASj02qPvA+SwCUTQTan7zRrWsr3v5GGdgrilJDqoLS5W6sL+GeONDZxEZsZ3skUEeNAO1n+AZ7O4pz7do71S0SgGTdSfqUnbyy6NNFrSKlnLUaeq5oCynsM++vmAmVrzqw/6SIMNzEE9cCl1DxnHT4eRvJrHtq6KvpqE=
+	t=1772329981; cv=none; b=Ii53Oo1ww36b8T0NFbml7yI1amJZ+2v8SdjzpI/8nGyboVYhF0MbqIdyZD6jrA1E1IpsqUCdIDwJknOf5GBqqjMiOKN6JWkKQrHKnGWgCrkQ8ZkvT8IIm+dgpnb6YfmOOAEqe/XyBrclUPsfz3fBcT5cEx89mmZumnAXtkSiw6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772329488; c=relaxed/simple;
-	bh=6Qr32JUggNVDbkyRobRS6It2MxBWU98aEjzFhAbP4wE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h8cUunLjovk+8q0Ar4oQNa0U3HpssLbTXpKHKtDVcNXNIQ9AuEu1mGkj1cEciEsihOKJgmHa4nrFUgmZNG2GeLiQ156/znZv6dB/xxmOkAAIU2mY5NRV6JrNk9Tm3vRZC/M2ddZCXXX9mcTD9Qcenwifr/HO8FZ9Kt4kaE3Pu9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2CgJoCx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772329981; c=relaxed/simple;
+	bh=dRiM/jMq63CqjnghMz7kY/a3is23bLOBjy69MzwgtEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKl8PhRYGl5B6WlqdCZQ5uEd6HVLrApXnpPbyQomYLumhuTOFqv4si1wLvonr5q/TfkI+MiLqh/kl6cUJh2fQp6WyAzQEZ4AOf4oZNzG442pQ66RyWq/c6tPMJq72b1qlngLfMMsbZIGr405VOHQFtpgFBzYKhL6/1lrkYK4jt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RipAhqhE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2CgJoCx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769F0C19421;
-	Sun,  1 Mar 2026 01:44:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RipAhqhE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647C3C19421;
+	Sun,  1 Mar 2026 01:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772329488;
-	bh=6Qr32JUggNVDbkyRobRS6It2MxBWU98aEjzFhAbP4wE=;
+	s=k20201202; t=1772329981;
+	bh=dRiM/jMq63CqjnghMz7kY/a3is23bLOBjy69MzwgtEY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=V2CgJoCxldeY/DUAiV61i6AsD9JUgj7eeH2YgDElt8Ttocw6Vskv7UBWEggcdbclY
-	 1Idp8U3VjzgFXWQS0cxoTdzuD1qtrfDwyxRjlROUk1cHYf1sf6LbCPjNaGfbjB8nLy
-	 qD0COy9KgU5MY4jDrBpBAXQHcKTg3M5B7XQ1ckWM1VfR71dRFYva9u1Q/yflCXGJGt
-	 Cd87lT9QfVrUmFEftvje3TQRY1M1ZVT4p7xOt7hZkA6RkhOAx8pQb8+ig9dSauH7Cs
-	 Bv6cr2PbG7vxc2rdf+AiLjHYcFKwdWzihkUjfk01rGY8jOaBruQ4ST5NiwaUM0h1i+
-	 1/wLZeBGQrpuQ==
+	b=RipAhqhEjPRebsUg5qOMbOkms2XbdcDTfDj0v38aTueHVmnSMNogaS1drjMgFDMyh
+	 c1Vn6RdrfYFq7RvJg7UcLwkI3ZkzxFWgecWXWvuLy0eoCvfMMDU7PrXg1je6Mc4sYY
+	 cZY7AqXIQyKrMLR4DDreN59aF/1In5g1tl5fW7rpysdQ834A4SUyI+j/eAhkEVWdsi
+	 DsgEPlGDX8ziTFdClEjL8qi15ImnAdT8BDQsT3ckYFy0WJmyUy/IGhvimuJwCIEEDL
+	 9tPGR/IVYnKc2t5P2hy5iHkO8yf2gwxRVlgcHoYjcQ7UX1UA88glpJk6bVoX4qL9gA
+	 IJcUX3f9V36Sw==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	aha310510@gmail.com
@@ -32,9 +32,9 @@ Cc: Inki Dae <inki.dae@samsung.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: FAILED: Patch "drm/exynos: vidi: fix to avoid directly dereferencing user pointer" failed to apply to 6.1-stable tree
-Date: Sat, 28 Feb 2026 20:44:46 -0500
-Message-ID: <20260301014446.1707199-1-sashal@kernel.org>
+Subject: FAILED: Patch "drm/exynos: vidi: fix to avoid directly dereferencing user pointer" failed to apply to 5.15-stable tree
+Date: Sat, 28 Feb 2026 20:52:58 -0500
+Message-ID: <20260301015259.1719632-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -46,7 +46,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 6.1-stable tree.
+The patch below does not apply to the 5.15-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
