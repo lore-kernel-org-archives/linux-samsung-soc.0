@@ -1,98 +1,117 @@
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A3835898;
-	Sun,  1 Mar 2026 16:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F5A59;
+	Sun,  1 Mar 2026 17:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772381946; cv=none; b=U0Li8vGTGVzbUrN0s+ZE2NkCYF5AnGE98SSZJM4wYuYl1+01EDoT67p6gaDwIHsFQs0LDuJFs3DMwbnvU+nwIFUOmp/SWJOq/Uti4kKnzuEGBM3mbT1xRdSkiflRGKoft62u2MBAG/G/pHygQ/GN3RHeL9l8psCVAEh+enmUtsg=
+	t=1772387515; cv=none; b=lv2M/qaQbo8yvEpQMntGRC07Sq0z8oEIrP6zbtvBx4yIKRrqPmWRIePdinC3thVypBk0+H6j5KrtczfHPMk7Vuc1jg2smQnrWA3FLY90bFhoPkMbE2lTqa5NY3uCZw5Gb3vetcu+j4S1C1T4E8iscJ7I65eJhjYVmI6NaeFB3w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772381946; c=relaxed/simple;
-	bh=5yuS5D2GHI72hmBDy2FnZlO1xF2YklbN9kEZHI8kakU=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=XK6soICSwEjYf8bLXqt51RQa+Npn6cae9G4ZPk82OHGBDbzk+wiK5wQq1hf5bzYsBIxcO+sJpVM00IA+FBlfsU5wfXbKAXeLf+0t64PSgd1AfjBpcYPJuuPqEVu6bPSEX0I+8HsHVmodRqn2sNjEPaXMhp/4R13iX4gh+oO/Xjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=f6KVdx4g; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1772387515; c=relaxed/simple;
+	bh=gBxMJaUKa1C9JEFX2ZaVz3QyDUnGEtOPQuNCPOMH3xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7Jv2GIl/SPm7WPJ/O+kp8hPKmnYRo3LguXR5T7NyRrQiq6yMLfIvHFg1xU9Y3CJS8kzssoUqltYYuCBtfzdmDBJswM8cC2jqLH6/unbYJKswWIx3VyqJRuzpDEIU/bkgSpDlIC3/eBUDvvbhTwLST0RXcW7DMr9SBNZTIGOrZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BNwluevo; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="f6KVdx4g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1772381939; bh=5liPz02K/lYoLFf1mUMxvj4T0v/e7rdsEUFCIuzEG0s=;
-	h=From:To:Cc:Subject:Date;
-	b=f6KVdx4gYAYfZLto6SEQyJam876MjZ7P4rbQnNNco/b7+2aDUlsyNMHDjBhVT6uQC
-	 ecl7jArbOXRx1YbkaPXJdVc3u6tPXKBszw6JgsqWAQP/il7IVV+KRUe7lVAqcRFAjY
-	 K0m8paZw6R8qXtWPDmDXNJPUtQeE56gw5PShOXRw=
-Received: from admin.. ([2001:da8:205:20a0:6eeb:b6ff:fe15:94a7])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 4B8274F8; Mon, 02 Mar 2026 00:18:56 +0800
-X-QQ-mid: xmsmtpt1772381936tjjb1lzzu
-Message-ID: <tencent_416C0B949035FA7EF2B7F614AFEFC0D64807@qq.com>
-X-QQ-XMAILINFO: MJf32pulH481em/5h9D47rkL+37KUrbISGmIWj/owSIF7ixbNkHqy6/UnHNWk1
-	 Br+U9A8s+islJ6EOlSu1DFZVDIb6i/0K8mWQBB5ekdU07rm01+5kUyhxYViVXUDIBGSm4+1HXPM+
-	 ae0A/yQ0c8dX4ax2Rp7kLVtJxL0fPXIfiIhv/EEFBItEU/twF1XduH3h2Jbjwt/Ix8dN+lIXb94C
-	 83tMcIFYiLtZBBIpsoNfaOzPw6iTdUQxddwxXhUXgq1ot8nrr98mtUkbXXXoODiElfHllPT7hfrj
-	 nQ27loWW1tt3vHVpj8h59kjhMb5SEsj6LvyEAPMxuw9DKiWQz++3qlkuyDozp7X+XswqVLvTZ98b
-	 mbZwyGRIMA+RazxIVqH3A46HY6R2UTZfU8MoveKodoCkCjp3PZGVgLvEy7L2NqvmLF6C2o95PS08
-	 yaaEWMkMCWofzHuDpDYMAOskfQumWCvvWk63YVCx0fIez0JQj7yzid0K6w6+WawtZqtfWyCqPWuM
-	 nn3mwCDX614jdYnGFprV8oepbHdVYguV3uF3O0MGJfrR2/6AXA0doGORRrO78PT4auWWzIbrdgtm
-	 9lt65xqlVe6FNPB6Wh8J8yyx9tAQLFNxdsYvkZ0UvM6mRGI4a0V8cLXi0Yvru+hZA1bjRJZTjTQl
-	 81DASkGyIJSOQGPYJfNfGLmgevfFWN+XSBTOog06GKqBoi6Eo4I/nIj9ZchxQmDw/Y+f1SH5NYqX
-	 28tvnqLn8tjTbrFcyczZ2LSUtK752MWWKWOA/vQufofrM0AQLzytX2xieak9IsgzHEnz+Ebsa+3A
-	 dCrX07gBjArMxbSfmDjNoqUIW6QgLTxozBrR5/X99igiAFGCFTQUCQzR7jHzkPFXd73tUj/gOhFN
-	 JK0XoSfLUINLL874SRxOTaDw/P9pVn+kB903N2SmVq8xxS6v+z8/fO6WLyKq+lsfFDx3+0g8924n
-	 LPFo+ThtvuOFGCxlqanCGVo6f19MW9DgW+DSBzSpKraX5/URwn+Fv004nqMxBSSJpFBCZgqpEUpl
-	 9RcygpInzr1LQelPbtOIXmBTCH4qD980Xu4q6oj6+nW/GnvhHw4td0qllja+3nGF19c69cIg==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
-From: Zhaoyang Yu <2426767509@qq.com>
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoyang Yu <2426767509@qq.com>
-Subject: [PATCH] media: fimc: check return value of clk_enable in runtime_resume" -m "In fimc_runtime_resume(), the return value of clk_enable(fimc->clock[CLK_GATE]) was not checked. If enabling the clock fails, subsequent register accesses (fimc_hw_reset() and capture/m2m resume) may trigger a bus error or undefined behavior.
-Date: Sun,  1 Mar 2026 16:18:54 +0000
-X-OQ-MSGID: <20260301161854.266277-1-2426767509@qq.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BNwluevo"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4fP8l76g1fz1XM31H;
+	Sun,  1 Mar 2026 17:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1772387495; x=1774979496; bh=gBxMJaUKa1C9JEFX2ZaVz3Qy
+	DUnGEtOPQuNCPOMH3xw=; b=BNwluevo8QwQgftfHB+DAqTk9ymT2rv4ZQaRtkv1
+	fEE+STVCIEETCbEGDy6mPRz/sGX18yEGYpRhqFMzOGhGTN2IeFLZUb2xX5fByOva
+	HSPj3fQYRzfbH8s99Gojromm8NSb7kZqaVqPqiRcwFpg0igO7/hef9tgIxeT1dUi
+	6s/15zHh1tkYNv9+Ck+Jaa7msTHuvX1wexjljDqKd5CGnECL/W8Ueahcos4OV1rt
+	k2Ub1EtAEcCNTTF6F6XWyjlYJmmStvxNYUokguq1Ocp3+fsvoTwY+RBUu7MIzxQS
+	MB8AcL9iv6pLSpoLjF0H+Q4bgEu1UABPn13zEmAVM8AF1w==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id G5Djf-GxRJGn; Sun,  1 Mar 2026 17:51:35 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4fP8kk4Xv4z1XM5jn;
+	Sun,  1 Mar 2026 17:51:26 +0000 (UTC)
+Message-ID: <3abcef32-f872-4aa5-a7e1-c99286f426aa@acm.org>
+Date: Sun, 1 Mar 2026 09:51:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/11] scsi: ufs: core: Introduce a new ufshcd vops
+ negotiate_pwr_mode()
+To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
+ beanhuo@micron.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+ Ajay Neeli <ajay.neeli@amd.com>, Peter Griffin <peter.griffin@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Peter Wang <peter.wang@mediatek.com>,
+ Chaotian Jing <chaotian.jing@mediatek.com>,
+ Stanley Jhu <chu.stanley@gmail.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Archana Patni <archana.patni@intel.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-samsung-soc@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-mediatek@lists.infradead.org>,
+ "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-arm-msm@vger.kernel.org>
+References: <20260227160809.2620598-1-can.guo@oss.qualcomm.com>
+ <20260227160809.2620598-2-can.guo@oss.qualcomm.com>
+ <9d975881-7570-495d-94ea-085e2012a9af@acm.org>
+ <5a2961af-dada-44f3-8e57-119076f10750@oss.qualcomm.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <5a2961af-dada-44f3-8e57-119076f10750@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by checking the return value. If clk_enable() fails, return the
-error immediately, preventing unsafe hardware access.
+On 3/1/26 6:26 AM, Can Guo wrote:
+> On 2/28/2026 3:31 AM, Bart Van Assche wrote:
+>> On 2/27/26 8:07 AM, Can Guo wrote:
+>>> -=C2=A0=C2=A0=C2=A0 return -ENOTSUPP;
+>>> +=C2=A0=C2=A0=C2=A0 return -EOPNOTSUPP;
+>>
+>> Why has ENOTSUPP been changed into EOPNOTSUPP?
+> I got a warning from checkpatch.pl when I add the new vops, so I change=
+d=20
+> the same for
+> ufshcd_vops_pwr_change_notify() too.
+>=20
+> WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
+Hi Can,
 
-Signed-off-by: Zhaoyang Yu <2426767509@qq.com>
----
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+SUSv4 =3D Single UNIX Specification, Version 4. This is a standard that
+defines how system calls should behave. Hence, ENOTSUPP must not be
+returned as an error value by e.g. sysfs callbacks. As far as I know the
+ufshcd_vops_pwr_change_notify() return value is never returned to user
+space and hence returning ENOTSUPP from inside this function is fine.
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index 2c9edd0a559b..57e573949e54 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -1020,11 +1020,15 @@ static int fimc_probe(struct platform_device *pdev)
- static int fimc_runtime_resume(struct device *dev)
- {
- 	struct fimc_dev *fimc =	dev_get_drvdata(dev);
-+	int ret;
- 
- 	dbg("fimc%d: state: 0x%lx", fimc->id, fimc->state);
- 
- 	/* Enable clocks and perform basic initialization */
--	clk_enable(fimc->clock[CLK_GATE]);
-+	ret = clk_enable(fimc->clock[CLK_GATE]);
-+	if (ret)
-+		return ret;
-+
- 	fimc_hw_reset(fimc);
- 
- 	/* Resume the capture or mem-to-mem device */
--- 
-2.34.1
+If you want to keep this change in ufshcd_vops_pwr_change_notify()
+please make it a separate patch.
 
+Thanks,
+
+Bart.
