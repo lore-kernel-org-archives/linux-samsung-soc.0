@@ -1,117 +1,160 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCE72D8385
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Mar 2026 17:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772471288; cv=none; b=gXQxmb3OQeOkuWLvuZr07sTTg77OJYG8FLCO7hwC2+vjF7Z6UkCjwM03t0b3sd3FdN2JrfchjNzIWYS4sulJ9ntGPr0M937ixLia4Pks9q4tkiund+0vKFZz8v136Aa6GA9pqQQLTfTHbNXIz91JjaSYIbax2GrSHNg6KYDxY3Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772471288; c=relaxed/simple;
-	bh=EE7A7r52l/m10LhtXfpLL33RfDMVWAzlQYs9t7L0ma8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpcwSxhFAU6MlLKgI7yWGpHS1q5gbInBG3QMDntVv5kEro0AkpqLNLLWsxO/c3cW9mkT1qwXq+QWh/ZaaYNR+DGX+HkLRLU0Zuk1m4bN3VkoLrB6FA1hjJI8TvmIoiB+I31Ucz1PTEgC/Abis7cm02R40y9DuOHSgtjz21unO10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YnHFPXGJ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IdiwRi16; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEEC306D26
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Mar 2026 18:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772476269; cv=pass; b=mkvyQR+kqCsl4tR6z6smbfh9Zmtv6MF93Gb2WNqVVaxFIgM2qdwFsmhrRYoWyvVGan9S65YOQX0SAMcX2KnCRUiVAW2rXvx1K8gqLQrR5yqiN0ywpguU49Ko31msRXrzS/paJlRNOYv7IY9E3Lz+ah3NGHnB6K4rKevLPQJMQXs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772476269; c=relaxed/simple;
+	bh=kt2T9iC2Y/wd08xI3GU9gJHg4i4C2OvrhJg73KQ4pds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KeaNplEc+S1Z9J+pBsCMWY2Z4/zwPgZsCmmFaMhxpXb8vwyH0Lk0dAeMrX3EkforhxBRiLPgb9bdd+IWkBZZ/jF2lAJU4HmpezM1YrrFKfkoJzRVtIYAzSYbLzUmB7vxE3zmXcOPruiiPtpEAE++5czG+jqnqTThNSkc2cp0CBA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IsfZWYW4; arc=pass smtp.client-ip=74.125.224.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YnHFPXGJ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IdiwRi16"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772471286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6brGvw3JACE3nh9BUDtId9Pcx2DeTaNYx1CllHdzjc=;
-	b=YnHFPXGJDU9yof+QT6OuSyX10HcSxdrswfe0Z/fs7JGmoAUEQNYKMyI/oRU7VxT/qg0Jqq
-	LSvnopkFXWOjPhR0PA3oVNuuUw3+ddCauwcId2ksiomU/8agDx9h/rVCN8jcSRfcNWtfgo
-	0SbT1JFI4G1uHz94j0te9tmsFyDvNKE=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-8Svvdy9iO5qpXiOZI_5svw-1; Mon, 02 Mar 2026 12:08:05 -0500
-X-MC-Unique: 8Svvdy9iO5qpXiOZI_5svw-1
-X-Mimecast-MFC-AGG-ID: 8Svvdy9iO5qpXiOZI_5svw_1772471285
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cb403842b6so4094469385a.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2026 09:08:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IsfZWYW4"
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-64c97997b0fso3256525d50.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2026 10:31:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772476266; cv=none;
+        d=google.com; s=arc-20240605;
+        b=ZBH5ZmhMKuRSDmzhPZhQMF0JPWlvt+7Qdbu8PvzHybLrk5FE422htH6wVyI5+gbiqM
+         QFhvvW8OM1V/FlyetcjBz2HnMiXSIB3Q/VgU4DTtgfHmKyWCMQ4f2wfQcQ+hXlFDL6YO
+         6II9u3vgn45EeVYdEiKKeNzD4H8eTqRXk0uheLqoNEc4f91rn1r1Izu1M9lglSEmNQxz
+         2t7SdMCVjqP7i8AMD+6S/bG6w8aLhxiVRcoSXkMdVGmRdqLVKRo9CNyWv4Fsjv+pt72U
+         FbqsjnOGha4Rc/BS158FbG6W3a5/YRWHSzC0ySzSbhL5Yrp5zTtSZx8t4+NzVizUzMoZ
+         ZHkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=81g1AQ9LUBvNGZAcgE0oE1RFZWKZ81udvij0ADF9Goc=;
+        fh=sA/DMeCVoZkGgjpeecPl5sg5hNYLuW130vVBN7Kr0EM=;
+        b=e8vc44VMJ4wiaP7FifGT34vRiFEPyuk2vKdjQvxSvs2SPA0HGCphqCIoqRvnQUbmH8
+         2nU+LhjwdNq3T2caMllJLS5cln97PAx04s44uxFQlI9PLVnrfnwtZYTQPNomc7GizJ4H
+         sHXzqgs8I2G4m4F2zpAp5NBby4a7rQ7mgraMrXYH2XWj4dygJHMrMo6uRIsnr91+ge94
+         w6qX5vHqGZCWYITqANthQnDaRrrwe0wYqZp0fLB62OBwdTZiiIZSMg2DSd3pVd+TlnvP
+         Py3IpRofWqk3KREFWsq/dLL639+VSkpbCDqukQw3QuITiOV9JOzYpbqGbJ2n84PNzJSh
+         ze/w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1772471285; x=1773076085; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g6brGvw3JACE3nh9BUDtId9Pcx2DeTaNYx1CllHdzjc=;
-        b=IdiwRi16INKvOFz3Nn39xb3Z3VZ1ugkBwTLGTunzH9lpImcuvPDdOA64U/E6JyR+hL
-         P2x5jrFnPtkUdagjBmPyVHXxIJ6qAHA053/zPTN5mHvGfuKlRpGPkSAfLdq1wfi+4vbg
-         JjTkNLKp9Gx4sj5Ybqpc7OUOOknGfze8gnk200Iyl5tzsCEZ/AWr7mxLPgHxhsTzZ93G
-         l6IFsNPRp0Hp9eLJlDOxcKru3VYFQvROqanD79k//dQBEzzIpEThig/2Z32QKQXgcL9c
-         tUwKQbcXT1oo33kMNREzffiQxgSHPyJiPY7M52+6tOhh919W8sZsTBDcUzv8eiwf+0Xx
-         Q3rg==
+        d=linaro.org; s=google; t=1772476266; x=1773081066; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=81g1AQ9LUBvNGZAcgE0oE1RFZWKZ81udvij0ADF9Goc=;
+        b=IsfZWYW4jZJ0ZN6TNJlkST4AU6gR+cnISCt1N6NZwSy40N2iZ+pY5KinFwN+vZUyEU
+         DqmETpflSKqPtOnA2Dx0q2Be7tRAqv28/eouzOON68SCBUQwa1m50LEquroKh+jSSvkw
+         JtDPAhSAW/L8akw/EJUKgH6BLJBPJ5lUN2eucqN+qsWqXlVJVLappLXdpl2YKgfzWk7C
+         6RInREWG/HWugItMpcTiwTcVWaNcoSxF1x2utlSnMvjeQn2MK4xa0MoJugW3OtkOqi+I
+         UlWf99I0+NY5idT6SgvJxVhJ5Xr0hOJihlbk4XedAKm6DexdTVUOV7cz927PWArNn3cI
+         BXlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772471285; x=1773076085;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=g6brGvw3JACE3nh9BUDtId9Pcx2DeTaNYx1CllHdzjc=;
-        b=dDVrNGldYWjnJLYkHXMab5j/QfW5xCW2bwY2gHIIYwbxh6RgmeYleOgi/2+CDzGFpg
-         IGHpbxrO3tXoFxyRqnZjEYv/RDpVOEKzCe3tf0DZNhERwqtRMr/JxRdRevXg87m+50a5
-         TKISMjUiHVlnqXEgnQILRmYM/ti3RQ+IJBsNwLRHtHBIOjMfUJwLFGrUkAS2cPXg6ktL
-         drdadatsJdzXSIQ304DFSgMZJBBMz/aG7s3qXuAyDtubEXmyl+6qj0orCZRFdhsOiSlK
-         dWzERx/jEuOn/0miRuTam31gFdd0Gy6KLjCCcjjnFUiobgGYTL+ruGMg9F7nY8pRHhY3
-         FfGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Q1yYkHV9eTJVfohPwsuf1uHgJrhq3w1wJ1HLarh6Oa5vKM82Ca/uX55pp0Y8iexu+vqlTMo5kTKevF0NDgI20A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG/liTCvFh4O5URiv8z4lLMv0tShdAOgUynnGTfIhwtsSVFPUK
-	iNX/ZqfDAoDbfC9ffyiLSVh06cK9kQVR3gQ7w5QNZlFEv/HXp5UitYG1UG4bZ1hHnQWZpbU9kXR
-	1ycIQc1rp3gJbES11lphFZWc3Q2ayZgLILLYfbjLVXSkueqyuxiTAfZ8Fyy0yM21ejy/shVSW
-X-Gm-Gg: ATEYQzz1rk2cwlctNs9dDY4AEOpuNKSTWRiU6PvgQNpdUD2UyvPzz7Y0hX/bBaYFJVQ
-	xNDTIjMEf8s46ASrRSknfmxvCvri0rhUVtDY1vRV4BJS0TZuMuA7SaZhi9+fLknvhlV/JykgTlI
-	UwCM5e0jHvox53uvAgRmmxXfwr5D7vLcOwnfHyRA1Ud04+lIOy5Tn3ilWia8qrnPCTa+7vRrWFi
-	AkCjeGnrIBIEuz+fHfUP5aXHBciPYeAOo9xBxhclRjwIcbWiBJugMXNFN9UaanOVlk5xnknTByl
-	gvAJxsd1k3mdncRHSc1XH+ze3EjoNuBwSj5EtKLNm3/xL6ohHkPG7rRwLOO0LCcR3iPCRljFQZ0
-	IyECIniL72SBebF1uhDLCabBXAQwLvhti8dUlKX0MKRiXlRJmmrKV9H3b
-X-Received: by 2002:a05:620a:444e:b0:8ca:2baa:6658 with SMTP id af79cd13be357-8cbc8f40abdmr1511585485a.70.1772471284569;
-        Mon, 02 Mar 2026 09:08:04 -0800 (PST)
-X-Received: by 2002:a05:620a:444e:b0:8ca:2baa:6658 with SMTP id af79cd13be357-8cbc8f40abdmr1511579585a.70.1772471284069;
-        Mon, 02 Mar 2026 09:08:04 -0800 (PST)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cbbf65921bsm1178674185a.1.2026.03.02.09.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2026 09:08:03 -0800 (PST)
-Date: Mon, 2 Mar 2026 12:08:02 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	GyoungBo Min <mingyoungbo@coasia.com>,
-	Kyunghwan Kim <kenkim@coasia.com>,
-	Ravi Patel <ravi.patel@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: samsung: Use %pe format to simplify
-Message-ID: <aaXD8h4cuG8I3Bh2@redhat.com>
-References: <20260226205445.336839-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260226205445.336839-4-krzysztof.kozlowski@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1772476266; x=1773081066;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81g1AQ9LUBvNGZAcgE0oE1RFZWKZ81udvij0ADF9Goc=;
+        b=h2IHwW6F8O2iKFd5/pKYTkZ1ogwco20diZecC6k+o7Rqt5cprkUaM0stGFG+vLVmIE
+         TVPnMv7WP1wSJhQdl281eaIVgMAn7z5S8mIobpW9Z1+OSd3gpjy4iQZn+Dm/MMZPDyCl
+         AlKA/w3AoN7VUADyl+NQVZjYHAfsPcEZqgKVGKDhnTgFfYM9EhFKo36DriEgS6unJ20I
+         Jfio8j5tVloeWqmcDBYT7o15QCc7jDV8X2CXEmCAGm8NV2N5Tbv1Kjr4VV6J6PSPHTam
+         7927KPiiRPYJGaHWyJiT2Dg72E/AQTstKslDVHrDhnIdATS9pH2weohrFLvelCk7ag69
+         KxaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkuZb8B8H/YZNzZI/YU+X9P75wXn8pR/HVT+4mDBkhXgOwc2JbhWghZK/PjYbZo9c3gcmpwiGlIVjUIvX1NMfVuw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWln3lydzr/U1Yke1IkTloObWyMXXFCWRdAu1b+X13kRbaYb8a
+	e4RTD+Ma41n/iAGGpGibyewTeJ2L4GVuPkHQUS0eqfRNsY2oRL7UOAyS4zaCv/7tbatH+Ktdln1
+	iizJnSYxXvRkWHXs7tymi5IwOJrleagV7EJgxBysBFw==
+X-Gm-Gg: ATEYQzzNIX5BtlGUw4m9TxxeKwprTCHAeNctXKM2qBOhFmLGP02wqHhzADpAX5zfjF+
+	wzVqchEYpKhAl9cTqeLSg/yELDJicqKh1ExThI2qxqmofr39044RsutHV3jqeULS5Y+i/MYyHgA
+	2nbCxVjk2pE3tHqYa7AlvGYg5ZuZBFuoSXEo9GP5zJceR+BYESrs50tPUo8PhEaXDaj7PB91alL
+	WNw913hK9V4OsHdHxxAYLGf/oJ5u5RtMRhF7gV9qxDqgbY8zednASP75z8gXkjintsBZGJnS+t5
+	vfbXKjndgNFq3LWW4sQ2pm2jLYSRsxHira+mPPjtr+yrj3J5bVKTHkUIw6o8YpjSXQ==
+X-Received: by 2002:a05:690e:2060:b0:64a:e1de:e830 with SMTP id
+ 956f58d0204a3-64cc2025a5cmr8768669d50.16.1772476265235; Mon, 02 Mar 2026
+ 10:31:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260226205445.336839-4-krzysztof.kozlowski@oss.qualcomm.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+References: <20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org>
+In-Reply-To: <20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org>
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Mon, 2 Mar 2026 18:30:54 +0000
+X-Gm-Features: AaiRm515e3WzwnsMys39sfPXCKSu89p0-qrgz1al4LhQ_1OobhhtPkQJhg_LdoM
+Message-ID: <CANgGJDpjsyoCnuXuMMi1L3nWNJsM4aMs6C=NvBcTkWeC3NFadQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] thermal: samsung: Add support for Google GS101 TMU
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Feb 26, 2026 at 09:54:47PM +0100, Krzysztof Kozlowski wrote:
-> Make code printing pointer error value a bit simpler and fix coccinelle
-> suggestion:
-> 
->   clk.c:363:16-23: WARNING: Consider using %pe to print PTR_ERR()
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Hi Tudor,
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+On Sun, 1 Mar 2026 at 02:26, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 
+[...]
+
+> ---
+> Tudor Ambarus (7):
+>       dt-bindings: thermal: Add Google GS101 TMU
+>       firmware: samsung: acpm: Add TMU protocol support
+>       firmware: samsung: acpm: Add devm_acpm_get_by_phandle helper
+>       thermal: samsung: Add support for GS101 TMU
+>       MAINTAINERS: Add entry for Samsung Exynos ACPM thermal driver
+>       arm64: dts: exynos: gs101: Add thermal management unit
+>       arm64: defconfig: enable Exynos ACPM thermal support
+>
+>  .../bindings/thermal/google,gs101-tmu-top.yaml     |  67 +++
+>  MAINTAINERS                                        |   8 +
+>  arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi   | 209 +++++++
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  18 +
+>  arch/arm64/configs/defconfig                       |   1 +
+>  drivers/firmware/samsung/Makefile                  |   1 +
+>  drivers/firmware/samsung/exynos-acpm-tmu.c         | 212 +++++++
+>  drivers/firmware/samsung/exynos-acpm-tmu.h         |  33 ++
+>  drivers/firmware/samsung/exynos-acpm.c             |  35 ++
+>  drivers/thermal/samsung/Kconfig                    |  16 +
+>  drivers/thermal/samsung/Makefile                   |   2 +
+>  drivers/thermal/samsung/acpm-tmu.c                 | 643 +++++++++++++++++++++
+>  .../linux/firmware/samsung/exynos-acpm-protocol.h  |  30 +
+>  13 files changed, 1275 insertions(+)
+> ---
+> base-commit: e2211f5d980086dd9fbdab3bcd86b715e12cae13
+> change-id: 20260113-acpm-tmu-27e21f0e2c3b
+
+JFYI, the series doesn't clearly apply on today's linux-next:
+
+Grabbing thread from
+lore.kernel.org/all/20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 18 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Analyzing 20 code-review messages
+Checking attestation on all messages, may take a moment...
+
+Base: using specified base-commit e2211f5d980086dd9fbdab3bcd86b715e12cae13
+Applying: dt-bindings: thermal: Add Google GS101 TMU
+Applying: firmware: samsung: acpm: Add TMU protocol support
+Patch failed at 0002 firmware: samsung: acpm: Add TMU protocol support
+error: patch failed: include/linux/firmware/samsung/exynos-acpm-protocol.h:40
+error: include/linux/firmware/samsung/exynos-acpm-protocol.h: patch
+does not apply
+
+Was it done against mainline?
+
+Thanks,
+Alexey
