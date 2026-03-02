@@ -1,81 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DA435F607;
-	Mon,  2 Mar 2026 11:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AC036D9E5
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Mar 2026 12:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772450853; cv=none; b=JRTZOY6ZDW/JErDHQcAyOSwZTZgyP1TctiNqcEcdE3hxpO601tywzt47QHBvO9t59hEYJkwfQQQiB8LfHTuqy3gFMVi7mGDf0FHEMi3JMIoJ2WmNuvFcuf4ksMwEjF7RxP0QASif+RAW+rue6/fWAxNkv8yhuJGzKLgO3vJwrzI=
+	t=1772454926; cv=none; b=qfjZawCD7OtUxQNnxqjGHfqorYA+VPEJl0pYC+5bnWPCXOSim4BBnMdodASrexzjmw5Ttq4OhoxmvEAjpylh6/nDwg4juLHPV5sCwtgdDfThJh2tXgL2lfsb4C9SFjo3fQgqvsD7nFZIn2/3xHhyhPai2EkDMC8LEUQPpqLIR2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772450853; c=relaxed/simple;
-	bh=nF1QXwyCcdzGFo2JvN07s6YZSCOpZ7lAk4rFgnXi0BI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yg6NWQgx7rvuu7O2RdE4T8MXdhG2hCUwEgEHyjwKGbq5NkIztk6XjdDuHdusLZWE1UlwIG/jYgTdudrDIB3wmrFZkGdjsO8g45SrHXOtxnRw+oCFyg01LT5eeUheEcsgTpsxfM4l32yQZggCeW57b3XFveeTOtCckG4h5bXYZMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV2/KBa/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772454926; c=relaxed/simple;
+	bh=W9fZ2b52wwosErryye9t8dYBv8NiSHFLIJOzm0GsXs4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D64uCq8J8ciDFp9XXwiy58Sok9agu0gqyEXOA1EK0K6RFKydajwQi1xAsnQj2U1KPgsIqIh89KsfNlhg9OvECKs/rITshn5+ynCls71xKHnIILTXwa7wcE8yNz9/k+pChKbmftPnc+1/fuGaYqLuqGj6vRzwdwgVCsJvhLj7Zfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oaYK+QnP; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV2/KBa/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90344C19423;
-	Mon,  2 Mar 2026 11:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772450853;
-	bh=nF1QXwyCcdzGFo2JvN07s6YZSCOpZ7lAk4rFgnXi0BI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RV2/KBa/aVpQN1rZuC+QHybsJmtBOZHtLSOLCleLU/mPUh5ywWZ/WoTdQ0IR2dAV7
-	 iN9Ozj4IDJNMkh7PXwlzMX9D+BsOTEXX0haStS4xEUoiQMkESL873KekrqN26CtIZ4
-	 P4giwdE8HztLsznI/U1EFkTUzGpGbX8LghbzQtGf+KgF7ywRVMJS8A7zQQJYpk0/tI
-	 4QUXxMw5QeVwr/SruuX61oMNYDobiHjsVyFXSGmhPRuSsdYrbTN9cLrod79z+OCDxP
-	 g8gyRRr2I7N85GUR+XTvdOzwSJFQujOXuHdCZ+6Q9xIqKzzWlJwwSwb6Q4gngskgM/
-	 sXV2QaSoCC7qw==
-Date: Mon, 2 Mar 2026 11:27:26 +0000
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 01/13] clk: add new flag CLK_ROUNDING_FW_MANAGED
-Message-ID: <20260302-conscious-obedient-dormouse-0f65a0@sudeepholla>
-References: <20260226-clk-det-rate-fw-managed-v1-0-4421dd2f6dc6@redhat.com>
- <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oaYK+QnP"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-65bf2f59d64so5508718a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Mar 2026 04:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772454923; x=1773059723; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rDUb9e+S6LVzbXGDafH6Ju6lYi+mwgweBRhLhcVRjo=;
+        b=oaYK+QnPX/p1Pq9pH+beU6fC+HyE9Y6EKuXeXq8feTK4SOPdO20UQhTrxNYXKVirsU
+         sf8Ydq7/M5Sxa8+ELk9Gug9In9HhlYseX9t2RNVTwVmN75pgqGl3tf6goBj+PiWMJC3f
+         8g7tbVOzuX9f4ARsafZRuFfFhts9t4mISaGrFhutlCNbRJhdz2YM2oUwCc99TKnncb43
+         I3i1ZvXa4lLVzwdoYEFT+CfTWgivpp5cw/ZXSwyStmWmIwsk5MEyqsSiXX4T/7GUHqQb
+         uxfD6OY7GN1KdUfA42xgfzptJNV/ISXT36VQhHi/nRzbwoL2gof2f8vowGD7/+UQ33xX
+         9yiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772454923; x=1773059723;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2rDUb9e+S6LVzbXGDafH6Ju6lYi+mwgweBRhLhcVRjo=;
+        b=SP2KdeC4Jf8PmyccsllBwSi723okKXcG9JdDmMgkrc1p86V93xQSjQHvIvoFKFT0gr
+         NlCdSEFBacokmJS2OPW3y6gBshCBrWEGbRilCSI84d/ZohUwkPQvBzfaql6Ecu9eHBhV
+         FdDavABhw2OP5aZwGQPZvijpdBdgzjpkDTDonkwte3ODGbJ4kv2fnQwmYOUvqccdrUCV
+         26vEHTU90yPhbkcpNvhrTybSpT1lxz228KJ1mhqsZU7PoEWDzL0pX0eO9ZojoricomD4
+         3J+z3X6zQazvIo9hEQpfJ+AYKzMnrek/Qv64t2ZliT0QpXW3BblFYrIHr3vP0a571c52
+         3UwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfG2zF/Agd3hJx/K7jo++GmiYGIL7fZr05jhiPeTBRmmOCjEPW00qgXZZvP+4qRJhQXUA1htB7hVFoVapYDig2gA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh5QL42aaROLyF4/h2RUqqUo7gMIXEqpGFmQnoRolzA4/y8cb6
+	QuHmaesIQg9eX62r2rGKK7HID7y02xDJKaZYik0fGDiZE3kgdVFSWCGiV9u5YrBpiB0=
+X-Gm-Gg: ATEYQzwNcGBn0xMw8oUSSvN+peigr18PtLx8hXdZBQNYy0OVtHLNOWixutvqJUCQMcN
+	kOXpk1jK+4KW3BsVp3srWZdL7yqT4czaLvzbLk+E6GXt3eX8cw7zVt2is7k1SEehh9mSYdrFjen
+	Mo6lTwEMnNbubxdiZw5qFU0sZq4gKTEEbPSDvDMnix8YckNpMgB7JMuiZc2v1ExSLzildnXVilH
+	k5EImIlUxTAKucdpw8ACsOwOOmZO5maEdDi9A7e4ytp/1VPWS78oSqQsVYcWlPkUstMwqf5gKKT
+	SFL2wi+PlH+i2oXB4hTj/PEOHArClF4pVM7cm0Q9c2Avkn1I6WUUI0EvUUxsy39G4CNXUPAcU2U
+	zoOk897FxcjLjliXn2rp/GPma1Yn1XLYVhK5Dte7Ok6ftMXRUtJkvrYV8KtNjAybGR3/+fGihla
+	eVFxdJTeLurTCyRqDmuy4oS6SWIPBy3534kMDtrWSi3GmyNw5Q9DUMpQOPzkBbFFiJKhFO9WvDz
+	RIUyC8gCEBhj90=
+X-Received: by 2002:a05:6402:e8a:b0:65f:a9fa:cbab with SMTP id 4fb4d7f45d1cf-65fde0e6110mr6740003a12.32.1772454923452;
+        Mon, 02 Mar 2026 04:35:23 -0800 (PST)
+Received: from puffmais2.c.googlers.com (221.210.91.34.bc.googleusercontent.com. [34.91.210.221])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-660057835e2sm1979643a12.18.2026.03.02.04.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 04:35:23 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Mon, 02 Mar 2026 12:35:22 +0000
+Subject: [PATCH v2] arm64: dts: exynos: gs101-pixel-common: add Maxim
+ MAX77759 fuel gauge
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260226-clk-det-rate-fw-managed-v1-1-4421dd2f6dc6@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260302-max77759-fg-dts-v2-1-12f1109a6fee@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAmEpWkC/3WNQQrDIBRErxL+uhajjWJXvUfJQpMf86GNQYOkB
+ O9em32Z1RuYNwckjIQJ7s0BETMlCksFcWlgmO3ikdFYGQQXiguh2dvuWuvOsMmzcUvMtQLd2Fn
+ DnYS6WiNOtJ/GZ195prSF+DkPcvtr/7tyy2rU0Gkp0dzU8HjRYmO4huihL6V8AeyWI0mvAAAA
+X-Change-ID: 20260227-max77759-fg-dts-b12ebd5a90b3
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Juan Yescas <jyescas@google.com>, Amit Sunil Dhamne <amitsd@google.com>, 
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.3
 
-On Thu, Feb 26, 2026 at 01:16:45PM -0500, Brian Masney wrote:
-> There are some clocks where the rounding is managed by the hardware, and
-> the determine_rate() clk ops is just a noop that simply returns 0. Add a
-> new flag for these type of clocks, and update the clk core so that the
-> determine_rate() clk op is not required when this flag is set.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> 
+On Pixel 6 (and Pro), a MAX77759 companion PMIC for USB Type-C
+applications is used, which contains four functional blocks (at
+distinct I2C addresses):
+  * top (including GPIO & NVMEM)
+  * charger
+  * fuel gauge
+  * TCPCi
 
-Acked-by: Sudeep Holla <sudeep.holla@kernel.org>
+This change adds the fuel gauge.
 
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- typo Maxin -> Maxim in subject
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20260227-max77759-fg-dts-v1-1-16c5733e946c@linaro.org
+---
+For DT validation purposes, this patch depends on the binding updates
+from https://lore.kernel.org/r/20260226-max77759-fg-v1-0-ff0a08a70a9f@linaro.org
+They have been ACKed, but not merged yet.
+---
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi     | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+index 93892adaa679..c01fec7c867d 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+@@ -225,6 +225,17 @@ usbc0_role_sw: endpoint {
+ 		};
+ 	};
+ 
++	fuel-gauge@36 {
++		compatible = "maxim,max77759-fg";
++		reg = <0x36>;
++
++		pinctrl-0 = <&if_pmic_fg_int>;
++		pinctrl-names = "default";
++		interrupts-extended = <&gpa9 3 IRQ_TYPE_LEVEL_LOW>;
++
++		shunt-resistor-micro-ohms = <5000>;
++	};
++
+ 	pmic@66 {
+ 		compatible = "maxim,max77759";
+ 		reg = <0x66>;
+@@ -317,6 +328,13 @@ pmic_int: pmic-int-pins {
+ 		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+ 	};
+ 
++	if_pmic_fg_int: if-pmic-fg-int-pins {
++		samsung,pins = "gpa9-3";
++		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
++		samsung,pin-pud = <GS101_PIN_PULL_UP>;
++		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
++	};
++
+ 	key_power: key-power-pins {
+ 		samsung,pins = "gpa10-1";
+ 		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+
+---
+base-commit: 3fa5e5702a82d259897bd7e209469bc06368bf31
+change-id: 20260227-max77759-fg-dts-b12ebd5a90b3
+
+Best regards,
 -- 
-Regards,
-Sudeep
+André Draszik <andre.draszik@linaro.org>
+
