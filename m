@@ -1,68 +1,85 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3722F1FFC
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 06:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965A2175D53
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 06:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772691126; cv=none; b=mi+DZYTgIGLo7PcT0oWexBGpB6mnkRNL6zs7Nd6DnYyMxScGlt2UA2n6do8nHVakTnjGXlP9sRc+NPNtpX6hP3QyRNnmUEXkhK0EF3b73EOtpuJ/99SpysjoxKybxfP2IOJlTSTlieueD683aI+m0HSQVRJwPk871aq7K71hwBc=
+	t=1772691655; cv=none; b=kmVUUDu+3+s99LmPd06A3miVDMq6kzY5eKlWwVNcJIJg2fKyQhqy8mKpi/mq77eleeFhapo/C+TFBzEvZitHMOINMQlrIpbYpZeR1Ckpc62u2x18f58MXYOorTeNXj6oA+sRlfViLsNWzk20vVeTlEE4/hkDeytKdDW2Y/Y4EyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772691126; c=relaxed/simple;
-	bh=NS+1Od4aVlTq9Wx7bCSooHKRSz+R9G4t7LsBp+nXiI4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CmOqgT65kDXhI2i90m8mAveoDTtmQHj5q6ypAVgf4N9W1T6dV/pob8TkiX44PFoEaxY3Vk093gKGPsuJiB7+jiOA9Rfn4g2oDskHtIEwztiKNU9sFnsG1KL5/l0bSY3x5D2vqqqWer6x9MvxOE69tugMZSxADkfZpHZ5LAt6Yn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QXm4wPsv; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1772691655; c=relaxed/simple;
+	bh=pEc/tNwHOsDbqggAZEgpmAYE5s4SuUbHuqybzx9zRvo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AVFkzKkHKpvF4domI7qaERjq0IG3ib2pK7S4AyH8p3iAYPkL85EkwFQ5iHGtxOib+FP16m1817PLjyUCLSCm/PhlMC7VzbI12F7yXr7hyil2bcDS0pk8atYwmVhIeFVbYPx2bUfBK5w1RFAO/J70kstdd/DztNIu+90oWbnhQnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AD5xkbI9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KYhNMk3Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QXm4wPsv"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b9358dd7f79so217829166b.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2026 22:12:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AD5xkbI9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KYhNMk3Z"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6251Bm743604211
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 5 Mar 2026 06:20:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zvXOPXCbQlaXN8adhJ+Ra5
+	kF6Tz5uWjU0aflLiqlQuE=; b=AD5xkbI9PgWUA3qQDSOVYh7+ftEHbxze0S45yF
+	v+S+cN46Y+BxytsEZczdxVlWr9L/TsdO4+K/vepzinK0cJAPVrHTVN+S8+YuuQdy
+	WTEjkVaAuUpLBbWaTMPOUTJhtwt6R/d5oSDp+Cn+FGw3Zm/gg6cJ0dPqxmgfoqdT
+	Jb8aZGJOCkIcTwZuZmmYEzqGb0Y1H7kdK6zbfMGixNnmKYafidNyygRJFWlusOzF
+	IUTMHH7XBf0IN6wGRgYXnk9vurPMi8/KV3m1bcsXDxEHG70a9m5AvOQHroZGinxB
+	swa3Veeq9QbfhGe/0AYUzFVE6WFjJ1IBZpSJ/gZIuywdh1dA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cps0wa147-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 06:20:52 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-35845fcf0f5so8720902a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2026 22:20:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772691123; x=1773295923; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
-        b=QXm4wPsv2/EY1cXyWOoY3DJWs/gUjFeuO9Dbv3CoE02OJHZSdVBOpKZrRocLc1yqF8
-         wn2j21FltlDQ51XGK3q4jtRq9nVhlmTgcVabSuhQUbw/QaHDuvIpMFS+BXMx5qTMChiP
-         eMSYw56zQWR62jf7EHoerkUdA7U45jwJkEPT4jLlZoogOcselA5lyUMRHZ21+adAJhZ0
-         GV9Wej7a/e6yfhl77+JQlI1WiK1whHxg8W52Y8m9MD7jW8+9qNjMXbKWiWEiK6UD+Jr2
-         Jnk0weGlN7grynWio2busyLAHmCpZqungxbelCHgaDU+h55kpUIA6Za/N+nhuoQLVQS7
-         xomw==
+        d=oss.qualcomm.com; s=google; t=1772691652; x=1773296452; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zvXOPXCbQlaXN8adhJ+Ra5kF6Tz5uWjU0aflLiqlQuE=;
+        b=KYhNMk3ZH+Jqo/IDboj7dPdcHnDJnLnERPnzw9NbItD06R1QGKCyAAjjbvZPYyTZRR
+         qOp4Ep+jiBbSGIk/Astyq+LfuCM8E51sdKGwEKjMyID6w0O5X8xZjDS18SbTb0YYbZof
+         N/2Yy9+wmz0zZH4qNWlhA/mn2Syx/9uktzXy7FPEkJst5EB9JIo6lzPAmOqbj78sI3SG
+         XqITIb18XSLNGQ6rpdpHS2IaeRtQQWhSaozg/LzPYLaE9eYuaMaQVTf1t64tOpmbj27f
+         TO7oOdoXMMN7pGB/6JnrxAijqHLDgA7lytfYkvpP52DU1YO7Bpz5as07qGzKvp+ZuxxD
+         T31Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772691123; x=1773295923;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
-        b=K2EkI6jsdDLx4VVl1YC2vLZiUDoMrQPWzkfM8PNMCgTqZ4Tsit6yZS2gkPxgz3KIZO
-         7dxjVlK80jMb6q8l9MurGTkAB2ZqKAGY25n+Usr4ru8l8qDOqkvx0PME95174dEX80ma
-         vXyNmbBkdrN0xp+YXnjUxNi6qOEwpyQHexjGoiwKAmjhgEpyd+FQkyQIfnrOrmOmYVlj
-         /WJM3gX5xvASKi2PfbnjuwUFlzbPoDnanjNE4TKkgZuVEmJU/13fNLubEmvHgQwXMPAd
-         DdX+VyBTWkOAjV1TrciIGM7ljMtUzlwWs5Ty4QgPNUFsWQrw53vluB2mmsBCozuGNNw/
-         6gmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpOP/412OuyT/EXbZvlYRtxNLEr/VGxeI81nqE9xzg7kaRGtnqkEzQiV52btYiWgNmv4NowoAi7Gz0EqhDFwjl5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDwqFXV0E9iNGUXCa7kghZZ2h4uqWCYrnkacui8JsH89DivKaU
-	qXIR0trsah++qUia4slMBrv7l4Of5bnZtbFqQvEHm9OOLjgszTf3GjclaJ/TpZmXDfs=
-X-Gm-Gg: ATEYQzyp63fNFoRhPM/8oR2AeKLgQc2vthiyNI7xsQNJJcR/rvz0eSxfy3W+GTBQsQi
-	yi3uETbB++CyzeyoRpzp6RH5e7a9/0YDDODg9f0BDBF+v2RbJSh6MWWvnrlX1zgRMXRrzdnDs69
-	r0B4tBmUK9Hoz2YLoApbo3nCXKh6P5MQgeG50jU1Hq8cg1TtlYVOItRrf3FbJqjfGXR4sCTDsjC
-	95YQqlGBei6/k68b/dtac1BdxZyrPfXYJYG8nAUxNFFSM7SF7OJi+lA/w8nzh0gT4ydQUqJwHrM
-	uARqHMQaDELgtzKJq3kkKtdPJrK61vPuhsG6lrphO/1fXQf+Yvt4EzZvcNWD/2f8NQNrAD4zq8S
-	t2s/6MZLGyL+uhJKmJ8W8Wur17iVDZHoN38jY7+WNhCkWR0hjqLl27fmYcL0oFN46d4kZSTKzBU
-	Ok+JeMe6M6bnRHDlexGTJ2BjF6WiOUsehl7mnQ7uWoDIDNHWLEMyHuiW0N2i3X7y7mUOClkKr6x
-	Q/qU3aZUq9d8i52RCj8KPd7Rw==
-X-Received: by 2002:a17:906:6a1b:b0:b8f:8cf4:adf9 with SMTP id a640c23a62f3a-b93f115f763mr262528766b.6.1772691122762;
-        Wed, 04 Mar 2026 22:12:02 -0800 (PST)
-Received: from puffmais2.c.googlers.com (221.210.91.34.bc.googleusercontent.com. [34.91.210.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935aec3243sm849355966b.53.2026.03.04.22.12.01
+        d=1e100.net; s=20230601; t=1772691652; x=1773296452;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zvXOPXCbQlaXN8adhJ+Ra5kF6Tz5uWjU0aflLiqlQuE=;
+        b=REcOv6/wEJ/CMfgyxXYpcvEpLYJb9+/PEL8EjI8BkTUEc4OHbu33Xo2WXrhDa8LNYm
+         Juxd3yGCwtBDJ71Vuzo9YCJ1jtbBfbR/dgacE6FdF2Qc99/LG8GfHlamVot5cdM3G7wT
+         VscFPtLlfBn61k9MANKqFXqFP/lftudRJKgpTD+9JLUHwvae39mAPwMBpSKM20eK+c0U
+         zBTQGBdhWAweeQ2bHHoKYxIYlovhrUpF/L+OmbD+X9yuuD7Nza+3E2mSsxt9ZnnZLVd+
+         Gk7D0xttr6PcmxKWPA2AOLO1y0euvEr/JX9H8drm9SPMQRfEIRfratBnP8scvBuYylCn
+         TNFA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5thP0my1g2e10OGaJ2Iom82P2iixdAoE5Bpwnbba8cowJIl6RNze13/Ba76o6LFBs33dO0RD89Ty3zAXi95WFpQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt29D1ErblQvQkHsFrvoeIsB3y/el+ZYoSZaz6u3177Gf8ucbf
+	cilULEuo8HvH2EeMY1VpgUh5iRJU4JJ4D3IXilXJLJBJnWjK/rB1w78mp9+DHpopzQEncl8SxsL
+	ezyMz7H8kbxKLdi6jw/vQbRy7Xk/qhWoYjaW+J0WoNKNBJafzQba9uN2iovXkqjvO+T25v+FYzw
+	==
+X-Gm-Gg: ATEYQzznEumTTT7Fb4dB4Q+ySXACg5ni8nbzXFPur/VG4EDWtoXucijcPx0Piw80OWK
+	IM7gOIVtqlzbs4nxe/D48/2zUQPsrr9nGyK57ugU5LSOAi5tjp2iWgOqh2EL1wcVAqIdLKUYtMc
+	cLjN9LV0xksW+NgCqfyhI/J8nDDg/MR1XfHJH7lYZGEgCB/F2CjFECcx6Mx8MrOTm9FEUNgjwma
+	RiqiZXbZmDX7KRHXFWfQqUWU96gE1fdypcuhChqVDcG4ck/trkEnRnNHrfwFzWXgLvwrNjh+PfT
+	bt/OSiRiUFfd+fUPk171h/3V0kQCYUTt7Eu+N7WZacHhPjI1keywN7EfQXbOfYwJmhUabYdWtR1
+	a41FGiFwiYyLhVrzzne6sPuAnRZX8AMFPtkQX+BYk6bMb5Kk=
+X-Received: by 2002:a17:90a:c107:b0:359:84a3:1942 with SMTP id 98e67ed59e1d1-359b1c31203mr1234067a91.13.1772691652238;
+        Wed, 04 Mar 2026 22:20:52 -0800 (PST)
+X-Received: by 2002:a17:90a:c107:b0:359:84a3:1942 with SMTP id 98e67ed59e1d1-359b1c31203mr1234022a91.13.1772691651634;
+        Wed, 04 Mar 2026 22:20:51 -0800 (PST)
+Received: from hu-sumk-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-359b2d38ab8sm843378a91.1.2026.03.04.22.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 22:12:01 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 05 Mar 2026 06:11:59 +0000
-Subject: [PATCH v6 10/10] pmdomain: samsung: implement domain-supply
- regulator
+        Wed, 04 Mar 2026 22:20:51 -0800 (PST)
+From: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] PCI: dwc: Add multi-port controller support
+Date: Thu, 05 Mar 2026 11:50:35 +0530
+Message-Id: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,147 +87,127 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260305-gs101-pd-v6-10-8cb953c1a723@linaro.org>
-References: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
-In-Reply-To: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALMgqWkC/32OQU7DMBBFr1J5jSvP2GPirrgHYmFPJtQSbUpcI
+ lCVu+OUBSFQNpa+Ne/9f1FFhixF7TYXNciYS+6PNeDdRvE+Hp9F57ZmhQYJDBjdnvUpDpXSoUl
+ kWKDpGFS9Pw3S5fer6/Gp5n0u5374uKpHmH+/LABuYRlBG91YpNZyB/dJHvpStq9v8YX7w2Fbn
+ 9ldQV/bcQ0y+RhicIlc9x9IazABsLecSJB/g/P8Eb8n489mnJud55iErEC6IbBLgV0KbBXYltA
+ SExL5W9NnMKxBR0QSvJPQ/DV9mqZP/33nPNYBAAA=
+X-Change-ID: 20251010-dt-parser-98b50ce18fc1
+To: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@Amlogic.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Samuel Holland <samuel.holland@sifive.com>,
+        Chuanhua Lei <lchuanhua@maxlinear.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Pratyush Anand <pratyush.anand@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772691640; l=2442;
+ i=sumit.kumar@oss.qualcomm.com; s=20250409; h=from:subject:message-id;
+ bh=pEc/tNwHOsDbqggAZEgpmAYE5s4SuUbHuqybzx9zRvo=;
+ b=t+bdKd9rpg456k4BQVhND8q7IgX2Q/VxxdegM8QDbAtfYkujEJcMPuMBnFidboo8oaraGHI+l
+ fGr4D6tEANDBwAWNqyzdV633zxWT7xdh5IMhQ6/B5lDsMAcYO7jFdNS
+X-Developer-Key: i=sumit.kumar@oss.qualcomm.com; a=ed25519;
+ pk=3cys6srXqLACgA68n7n7KjDeM9JiMK1w6VxzMxr0dnM=
+X-Proofpoint-GUID: PWvyzuy8BUyx7Cwpvs3LtESeIxTmqb3V
+X-Authority-Analysis: v=2.4 cv=BNK+bVQG c=1 sm=1 tr=0 ts=69a920c4 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=s_SlZju52n3xP1ZgpLgA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDA0NyBTYWx0ZWRfX4tyH8++v2m9s
+ 9SX7Jw5Qn8Sir1bME7EPzmW1wQ4/I8Dxs4BcdkPnMJcMk8pGQeii+vru+qXn8Am66nlSOBazBOB
+ vMrU1RaHCRpywYpV7oj6yI+ifUfzgY52NS68c470165bjgeKp0LQqBnmJ94ktK38OmVtygpggVT
+ nRvYt9mj73pNwlYkEJjx72OqK/bNikcnNYot80eJiZv07hruVFhamGxgfVsXi1gY8LKmxg40z7n
+ GvflkZY5aGANKWiKWbRNvc8Uy6xYdPrkAqzTots/h19rRBoVfSPh4FSLjIxH/f7QdtlkDQoANVh
+ De0StrA0Nz/GNRJH9eBV+vywHy1Z08E+3LvMaH08aQhPyduWdeAeMAVy+flmSzlkZ1t2DYoGksr
+ QB5l8KxIo2vd0PUPFH2LVxdonvtP/h+2TJ6dcvbx0D6QcW6V1VJNZeSZo1JYHLyNzAwcSS/ZrSY
+ vyjdA9p/+wad12JKk1g==
+X-Proofpoint-ORIG-GUID: PWvyzuy8BUyx7Cwpvs3LtESeIxTmqb3V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-05_01,2026-03-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 spamscore=0 clxscore=1011 impostorscore=0
+ adultscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050047
 
-Some power domains on Exynos are fed by a regulator rail and therefore
-regulator control needs be implemented for Exynos power domains.
+This series adds support for multi-port PCIe controllers in the DesignWare
+driver. Currently, the driver only supports a single Root Port with
+controller-level properties, which doesn't work for multi-port controllers
+where each port may have different configurations.
 
-On Google gs101, HSI0 (USB) is one example of such a power domain.
+This series introduces a per-port structure and parsing API that allows 
+each Root Port to be configured independently via pcie@N child nodes in
+device tree, while maintaining backward compatibility with existing 
+single-port bindings.
 
-While at it, add a to_exynos_pd() to avoid direct use of
-container_of() in various additional places, and update existing code
-to use it.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
 ---
- drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 5 deletions(-)
+Changes in v2:
+- Fix error code preservation in dw_pcie_resume_noirq() to return actual
+  error from dw_pcie_wait_for_link() instead of hardcoded -ETIMEDOUT (Mani).
+- Initialize ret variable to -ENOENT in dw_pcie_parse_root_ports() (Mani).
+- dw_pcie_host_init(): Remove -ENOENT error skipping to make parsing
+  failures fatal for now, add TODO comment about making properties
+  optional later (Mani).
+- Link to v1: https://lore.kernel.org/r/20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com
 
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index f59986b56213..ed7a5807555b 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -20,12 +20,15 @@
- #include <linux/of_address.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- #define EXYNOS_SMC_CMD_PREPARE_PD_ONOFF		0x82000410
- #define EXYNOS_GET_IN_PD_DOWN			0
- #define EXYNOS_WAKEUP_PD_DOWN			1
- #define EXYNOS_RUNTIME_PM_TZPC_GROUP		2
- 
-+#define to_exynos_pd(gpd) container_of_const(gpd, struct exynos_pm_domain, pd)
-+
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
- 	u32 local_pwr_cfg;
-@@ -39,6 +42,7 @@ struct exynos_pm_domain_config {
- struct exynos_pm_domain {
- 	struct regmap *regmap;
- 	struct device *dev;
-+	struct regulator *supply;
- 	struct generic_pm_domain pd;
- 	const struct exynos_pm_domain_config *cfg;
- 	u32 configuration_reg;
-@@ -64,12 +68,10 @@ static int exynos_pd_access_controller_power(struct exynos_pm_domain *pd,
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- {
--	struct exynos_pm_domain *pd;
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
- 	u32 timeout, pwr;
- 	int err;
- 
--	pd = container_of(domain, struct exynos_pm_domain, pd);
--
- 	if (!power_on) {
- 		err = exynos_pd_access_controller_power(pd, power_on);
- 		if (err) {
-@@ -126,14 +128,45 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	return err;
- }
- 
-+static int exynos_pd_regulator_enable(struct regulator *supply)
-+{
-+	return supply ? regulator_enable(supply) : 0;
-+}
-+
-+static int exynos_pd_regulator_disable(struct regulator *supply)
-+{
-+	return supply ? regulator_disable(supply) : 0;
-+}
-+
- static int exynos_pd_power_on(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, true);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_regulator_enable(pd->supply);
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos_pd_power(domain, true);
-+	if (ret)
-+		exynos_pd_regulator_disable(pd->supply);
-+
-+	return ret;
- }
- 
- static int exynos_pd_power_off(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, false);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_power(domain, false);
-+	if (ret)
-+		return ret;
-+
-+	/* Ignore regulator errors - the domain was disabled after all. */
-+	exynos_pd_regulator_disable(pd->supply);
-+
-+	return 0;
- }
- 
- static const struct exynos_pm_domain_config exynos4210_cfg = {
-@@ -283,6 +316,16 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	/* get the domain power supply if required */
-+	pd->supply = devm_regulator_get_optional(dev, "domain");
-+	if (IS_ERR(pd->supply)) {
-+		if (PTR_ERR(pd->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(pd->supply),
-+					     "failed to get domain supply");
-+
-+		pd->supply = NULL;
-+	}
-+
- 	/*
- 	 * Some Samsung platforms with bootloaders turning on the splash-screen
- 	 * and handing it over to the kernel, requires the power-domains to be
+---
+Sumit Kumar (2):
+      PCI: API changes for multi-port controller support
+      PCI: dwc: Add multi-port controller support
 
+ drivers/pci/controller/dwc/pci-exynos.c           |   4 +-
+ drivers/pci/controller/dwc/pci-imx6.c             |  15 +-
+ drivers/pci/controller/dwc/pci-meson.c            |   1 -
+ drivers/pci/controller/dwc/pcie-designware-host.c | 175 ++++++++++++++++++----
+ drivers/pci/controller/dwc/pcie-designware.c      |  32 ++--
+ drivers/pci/controller/dwc/pcie-designware.h      |  17 ++-
+ drivers/pci/controller/dwc/pcie-fu740.c           |   6 +-
+ drivers/pci/controller/dwc/pcie-intel-gw.c        |  13 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c     |   5 +-
+ drivers/pci/controller/dwc/pcie-qcom-ep.c         |   4 +-
+ drivers/pci/controller/dwc/pcie-qcom.c            |   4 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  13 +-
+ drivers/pci/controller/dwc/pcie-spear13xx.c       |   5 +-
+ drivers/pci/controller/dwc/pcie-tegra194.c        |   4 +-
+ drivers/pci/of.c                                  |   6 +-
+ drivers/pci/pci.h                                 |   2 +
+ 16 files changed, 232 insertions(+), 74 deletions(-)
+---
+base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
+change-id: 20251010-dt-parser-98b50ce18fc1
+
+Best regards,
 -- 
-2.53.0.473.g4a7958ca14-goog
+Sumit Kumar <sumit.kumar@oss.qualcomm.com>
 
