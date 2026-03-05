@@ -1,154 +1,328 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE09137AA63
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 09:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510583783C2
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 09:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772703223; cv=none; b=JFSp3wOkVeaQ9dXI1R9bf4QoF8wogV7EASRh1bCCslHXG72ys477NUrgViIVShqPMQhDVkJqM03ZQfSfTD62h2WzegqfM4jA6opBS/JVX2g8raJbMKca915xbHeqY1CDUQ6Hun3fEYhKb6rUZXdZ6oU6itK/KjPswnYVcKxvsRI=
+	t=1772703396; cv=none; b=pbECbtLLGQ4xh56EeXpJJE4j7spmHhwFZAPE/qa2j2ZYW3ieynVB1JuvxCSxFow43G0GOnoG86rggOMBhw2N6wrB88Kf4odT7oTJ7ttRObGDOs3fqxL3ryG15ePLkSwWgl49kE5eIF1pW7XsnLXB5kMdZLuV+VD0xJFkp89BZbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772703223; c=relaxed/simple;
-	bh=HOFCRWjfrMQ86SS6aNSy6MkJAPJRhPPCTc1Ev4hVuSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bMa3fnjiWIfEYgZXZOxynrXcK83wz76u2IRK5aQ6pBVkDjt7hdPtdujFyx7UsqUnry7EtSXeihey1hl+yKQ3ZkXgyuHt6eguchw7ILCXVxiYR1ZWwu2revSHVd0SCCYX49Tcy9GOkJbjAcibMkNX7rUWzIM1ichOt2Z4j3GcZCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SzbctnVq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ATZKfuuf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1772703396; c=relaxed/simple;
+	bh=CMgXM6u7309Wn3e+oqvoc7hX9vYREWTZOtF5JH1MCY8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=PI04G8AKXAxreUovAppPMokaxG3y86CnibPtjYNLxDcpV9oAbV8u9H+bRo6R/kS61T+3KDOWA7HcGMZDWnRfoBVBKnItvtAWYkD7gHDURnWoEpm4WDa08a6IRxT8aGoL3OGa89pnsvcugZIJzbwJVC+dqyF7qUFXzaS+iV6cYe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r8n3aZlu; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SzbctnVq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ATZKfuuf"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62590ZMs3473599
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 5 Mar 2026 09:33:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SDHdZ6o2rq8MSXktK3BRPGVCbkpy9MyaMTwLEiYLbeQ=; b=SzbctnVqNSZ+NFa5
-	KZNgrd87lqL1C4EWwyQX3KRCSqm4AR1CtRNPJmQQtSDMvdXfmaYnmP1uJ9mcoU39
-	x5oHt1CxUbWXIScr5LqJGXtUzjCR3EYOjo2JeJIVt2bcNqLBumFoF2xCHxj8HJ8p
-	3uVKCn8YTKDR50zX3M+04OETB2mKG0qWZNedQEdQDbDZb0bLJzOCAmlar5/bjaut
-	YMjVGHQb1+qtI0EAX15PuyQtZJgJfRzxhNIuefwEoIPI+6NkaOq+T0x/MsEecMhn
-	ShB8NHHzJIhEeKGVmnCBE1EO3Fsny1DEDi9Ymkt7u8i8x3T9dawWdfRZXVHjFv7c
-	+rn9/A==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cpj18458v-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 09:33:40 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8cb456d53a5so613599085a.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 01:33:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r8n3aZlu"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-439c92a193bso1573184f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 01:36:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772703220; x=1773308020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SDHdZ6o2rq8MSXktK3BRPGVCbkpy9MyaMTwLEiYLbeQ=;
-        b=ATZKfuufR3uvkuhUERGJHSMRgrIUAJjOmwORCZ4HmuImcI9xBZcPVAWNrKsKOHBh2I
-         N2Eay+ZjEaXlKu6EGzTD3aDcQhFYei4NjhtRiZmBQ38Ue0Ls8bp/xIAUNcJd4ESz4/4C
-         w8ok9VblRFiqfib/yTqRE3Zur5OyakLCryNGeAIb5OcADKxQbE1sK9ke+Ayjg5jX3v9w
-         QFQ8UiT2QII/5hxCO2RMKj5goiNn8QV8CK96kkvs9abJN0zvpbQqKmS8o3brPOrIqcv6
-         MoEcyepRiTknpHsSNePPmv4I+dE32vzNxWATQrHXobq1VG7SdRDuA4HYmzz6iLLXD7+k
-         KVmg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1772703385; x=1773308185; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mbidr/A9XxccdAFsJsVKLL2bBtmGRz8XUrt7LUMLgOs=;
+        b=r8n3aZluVhBTCfb7BQuBR7rtMDtwMt/hhUveTeZDZQAO4wJxkqYdVnWInamwTvoasd
+         njRsc4y1mlFqY6e8h+MrxsQmTwUtFPEr4bGcC2jwn78y+TT5X2hBUAy+EkXK3GfkPnMc
+         efI7YRWZmXX4iWMH3mdtVwJdLQgh9b+NgkxQAUiokU1kYqlHFgrFqn8X6Kh54oqNRJvL
+         W9KF9PgfXi06d+0sZ2isvDvqnFTaI47uFjf39desDXwhsR9fNqaB6S1RhpTym+6cBpi7
+         37SVpkS6dpjv/ggxoqRfyQPvFp9lVwc3QY78bUWB4dZgVEV/oWO3UY/ChIwfz5zMSHTu
+         wMIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772703220; x=1773308020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SDHdZ6o2rq8MSXktK3BRPGVCbkpy9MyaMTwLEiYLbeQ=;
-        b=S0n3jSEGbwiDm7W3hBm11N6QtGMsrPJPhoMIwxhHsbyK+TneZAsOt/ug4UWMFuUQXR
-         YXDVWgBzU364sAsPRcYQ+hzM88L+F3QwXUMIXa0xhQvkM/wKk/pqrpbUP06TdlLcFBVx
-         /SrAERmDa8GrZlkc6Pag/maaKL0qW8k79KVZY2sI9ERVZaIqj4Te4lzcTteHk6Ctde+2
-         7ndgsQiGz+529tFapqY7uX+yTV5wsQfbzze3IJetHNeFtnYIzYRUi6glytRMrc/ATXZ6
-         8BWmVaX50BvE159htGBtELbSq0s3KtsK38WgKC0Q+S0WGgTEKk7KSq+XbbjahVIiFntq
-         w+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCU0oMcNbcG6c0CHs1sp1/2SIgsaFiYbbSJvtQUlASIwJ5VZwE/xbGW2LShf7Wo69dls0KSq/ZG+q1/+53OqxbpI2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT389w5k5zkCJJpI+LutQLT7zZE4GDMWEJOnLMvJAGgMiC8xqN
-	PoqEOFO5lQAK47l7vPIEU5v2y89HqK2v529ACAXjpcM1ShlvTTl+StA73wVZ6tFkJooGnMi3boR
-	cdArL4wCOMI1rbhqvwkbcOEyySfKlWJlFxcjmTaRNYdYgsiNlZ1Zuj7enB+c/eaPyL1tbGY9Zaw
-	==
-X-Gm-Gg: ATEYQzy9AiDMd62n7y8f8rL6he7nCkdhH9ib+Fg4umhfDAvjO2Cb3a2D1hhdArTGFG9
-	NMa699irpPkHdR9r3tS08qKcTVGtrrNmRcOFhgUGz2we4m/th7bSjJlkGc9zljUMxnDIt72lyXd
-	Dq86/BfTLDQzW1hKKJoL1ayP+8HBNKqAvUhxGsLt+BIbJ9vYZ3t7KTFdqHAI8Yh4U2bVJISm3DX
-	+OXO0bjZ6bibSaHsZdsBQG3uhtSuebFFQvaXur50B+clYjDxU6X7u4ZSjaBN//KNXxqnuR0TNVL
-	wPFqCLOpWmv/xwCcqWjMBs+/HmH8Dd6yGmJ47Gz+GFEaB1ET/5MJQVHY+9RYvUp5sPTXeoIPlw5
-	sM03NNYZF3D2qrhTdSjPI4geFqD48l24rcQDLbszHdkVor1kqBX3psGuSSx5sBnmRAmOl0R9m/L
-	Neef4=
-X-Received: by 2002:a05:620a:c55:b0:8c9:fefa:89d5 with SMTP id af79cd13be357-8cd5afde9cemr462863685a.10.1772703220106;
-        Thu, 05 Mar 2026 01:33:40 -0800 (PST)
-X-Received: by 2002:a05:620a:c55:b0:8c9:fefa:89d5 with SMTP id af79cd13be357-8cd5afde9cemr462859985a.10.1772703219701;
-        Thu, 05 Mar 2026 01:33:39 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935ae65662sm884380166b.41.2026.03.05.01.33.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Mar 2026 01:33:38 -0800 (PST)
-Message-ID: <ee2980af-e37c-4b4d-86c2-32467d2af454@oss.qualcomm.com>
-Date: Thu, 5 Mar 2026 10:33:35 +0100
+        d=1e100.net; s=20230601; t=1772703385; x=1773308185;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mbidr/A9XxccdAFsJsVKLL2bBtmGRz8XUrt7LUMLgOs=;
+        b=axPYumcI0/sYWfw03cg+vn1tt+xPRn/264sFpnhyFJ2GyhkPsLBcO9OYuEjqNyA+Vo
+         eBNjde21w7SD4dvugjsujPQZuvYe+KBGWRKEyYf8q2MN4BA8RE104MsXZy8phnqHbWHt
+         5IioVQ19vYPOuHB/33mu/xZcz5JwnVfXQ5jSebmWODzvyzq+KnGmzysN4SaecXYkMVZ/
+         Cy1FRLkieLUNaDukbKVduBpghvDGJJx63LGi+kOukN4X3xW92Pin9jCh6kD1KoDReskC
+         PmT9iekNxra4Rz8cPeu+9WMLxTG6uHzNWTYjKinZ+udnAluqn33PQZN6ZsouyBTxeBmv
+         ShNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJKR7h3pWlsHhGH2dTsvCRvAebTxNouREUDS5PSUaKZzdBu/y76zWdG1cmDd+tj8OPwEydQRiWLRgZ/7L6sTC64Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOQ9yi5rSktoDVp4gjiuHXjxbCEqa/gP8HLyVJ/kgF5wSXTv9P
+	3yAyCiWcmp2jlpuNGkieOSBDhF8aJhlUuQBrC0modGyknkQD7pFvTuRRY6FrfGMVUqU=
+X-Gm-Gg: ATEYQzxGChGQV8A5ppKOM19fj1TlGlw/3hn2KQwP+qL1fezyADPCVgMQJrm9g4u0Bay
+	sSVdRWZ083gWsjoorsF1cDJn5csLk0j4tle7+XrhX16ezz3DepvybuoW8wFxChd2tZiRhrKHepR
+	RgKeKHPAo4rEXE86Lhf6VTGYiE44CZCGxD3+XnNwblrIV3WG9FKN2gNJJ9xFr2qmx96XBULmYFk
+	L7qpabSRHJnprFqnwekF1AhE8qEnhZ75lD0gANwYAfKnSjoqBLAuO1QYNNZFhqoqIwc6QBAgtYy
+	GfSlucrhU1QNeyMHeY4va1+5Jn9yhHdiWu/oL3X/KxFHIZ6BezkVp9ZZhzFEJsLXTe6ryqBnXYX
+	hCWnNFedvMs3m0gQaUES5++9/a0Vl19LWztacOZ5vwJyVyDUSvAoU+V+ITKMcB1qoq+dYfqJFVU
+	7lwb04J2OKovHtSrs=
+X-Received: by 2002:a05:6000:144f:b0:439:b564:7a6c with SMTP id ffacd0b85a97d-439c7f6a2c9mr9158913f8f.4.1772703384539;
+        Thu, 05 Mar 2026 01:36:24 -0800 (PST)
+Received: from localhost ([195.52.25.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439c2f7eca1sm14966458f8f.11.2026.03.05.01.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 01:36:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] arm64: dts: Drop CPU masks from GICv3 PPI interrupts
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>, Frank Li <Frank.Li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1772643434.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <cover.1772643434.git.geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 05 Mar 2026 10:36:14 +0100
+Message-Id: <DGUQWFYCPRQZ.17SO07GXW2DYA@baylibre.com>
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Vladimir Oltean" <vladimir.oltean@nxp.com>,
+ <linux-phy@lists.infradead.org>
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, <dri-devel@lists.freedesktop.org>,
+ <freedreno@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-can@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <spacemit@lists.linux.dev>,
+ <UNGLinuxDriver@microchip.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Marc Kleine-Budde" <mkl@pengutronix.de>,
+ "Vincent Mailhol" <mailhol@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, "Markus Schneider-Pargmann" <msp@baylibre.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
+ <magnus.damm@gmail.com>
+Subject: Re: [PATCH phy-next 13/22] phy: introduce phy_get_max_link_rate()
+ helper for consumers
+X-Mailer: aerc 0.21.0
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+ <20260304175735.2660419-14-vladimir.oltean@nxp.com>
+In-Reply-To: <20260304175735.2660419-14-vladimir.oltean@nxp.com>
+
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: w268nIAg2j9mHUktFkk0QGUcU7orjbwO
-X-Proofpoint-ORIG-GUID: w268nIAg2j9mHUktFkk0QGUcU7orjbwO
-X-Authority-Analysis: v=2.4 cv=Ed7FgfmC c=1 sm=1 tr=0 ts=69a94df4 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=QiSWx1vRvZ7C5zKyDnUA:9 a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDA3NiBTYWx0ZWRfX1aLyOFwmuLB8
- BBbqNSJBO4It3DPrm8RsEmzTQRy3DmVSaGml9lUC7m4KGN9M2nyEH4rlp7CxkS5AK+Lj3gET3Yi
- KfAzrYTLDFjlNR7tmaZx4d3O5nqWM97m0R9/WY8lQGiK7xmAMbw+eICl6GJHT7DbmsEhhR4zCle
- QCdw+xPTtHb0QsWIBye64k/eXLODXF49B4RCU+446nk/biznuK96vhGCxt8DJapbvYn/MUgudJo
- 66KY6f34V2ao5XfQQ2YEYjMiJ2P6O3RMWwQalCt0nkrIZbeQEpg/SJxKnyulSGy0W7qMNn2OHfK
- tCeZfS/7aLv1Xi/n2dO0AmxFj//K7shuePZ0Mkhlpi6T1kd6GeNlXsR+cwDEUSd2bhCohmOSmLa
- v5OYa9buuj4T46TYj0foy667r6zHPP/Lp7TsRzARVU9fr51Ub+DJdadu754dBaaXcbqbRy4drCI
- 85pfu9wRFgZjZKVyHGw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-05_02,2026-03-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050076
 
-On 3/4/26 6:10 PM, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> Unlike older GIC variants, the GICv3 DT bindings do not support
-> specifying a CPU mask in PPI interrupt specifiers.  Hence this patch
-> series drop all such masks where they are still present.
+Hi,
 
-I'm having trouble finding where that's used on pre-v3 even.. does
-that actually get processed on the older iterations?
+On Wed Mar 4, 2026 at 6:57 PM CET, Vladimir Oltean wrote:
+> Consumer drivers shouldn't dereference struct phy, not even to get to
+> its attributes.
+>
+> We have phy_get_bus_width() as a precedent for getting the bus_width
+> attribute, so let's add phy_get_max_link_rate() and use it in DRM and
+> CAN drivers.
+>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Robert Foss <rfoss@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: Vincent Mailhol <mailhol@kernel.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> ---
+>  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 4 ++--
+>  drivers/gpu/drm/bridge/synopsys/dw-dp.c             | 2 +-
+>  drivers/net/can/at91_can.c                          | 2 +-
+>  drivers/net/can/flexcan/flexcan-core.c              | 2 +-
+>  drivers/net/can/m_can/m_can_platform.c              | 2 +-
+>  drivers/net/can/rcar/rcar_canfd.c                   | 2 +-
+>  drivers/phy/phy-core.c                              | 6 ++++++
+>  include/linux/phy/phy.h                             | 6 ++++++
+>  8 files changed, 19 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/driver=
+s/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> index a8b6ae58cb0a..ed7ed82ddb64 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> @@ -1300,7 +1300,7 @@ static u32 cdns_mhdp_get_training_interval_us(struc=
+t cdns_mhdp_device *mhdp,
+> =20
+>  static void cdns_mhdp_fill_host_caps(struct cdns_mhdp_device *mhdp)
+>  {
+> -	unsigned int link_rate;
+> +	u32 link_rate;
+> =20
+>  	/* Get source capabilities based on PHY attributes */
+> =20
+> @@ -1308,7 +1308,7 @@ static void cdns_mhdp_fill_host_caps(struct cdns_mh=
+dp_device *mhdp)
+>  	if (!mhdp->host.lanes_cnt)
+>  		mhdp->host.lanes_cnt =3D 4;
+> =20
+> -	link_rate =3D mhdp->phy->attrs.max_link_rate;
+> +	link_rate =3D phy_get_max_link_rate(mhdp->phy);
+>  	if (!link_rate)
+>  		link_rate =3D drm_dp_bw_code_to_link_rate(DP_LINK_BW_8_1);
+>  	else
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/br=
+idge/synopsys/dw-dp.c
+> index 4ab6922dd79c..79c72ee8e263 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> @@ -536,7 +536,7 @@ static int dw_dp_link_parse(struct dw_dp *dp, struct =
+drm_connector *connector)
+> =20
+>  	link->revision =3D link->dpcd[DP_DPCD_REV];
+>  	link->rate =3D min_t(u32, min(dp->plat_data.max_link_rate,
+> -				    dp->phy->attrs.max_link_rate * 100),
+> +				    phy_get_max_link_rate(dp->phy) * 100),
+>  			   drm_dp_max_link_rate(link->dpcd));
+>  	link->lanes =3D min_t(u8, phy_get_bus_width(dp->phy),
+>  			    drm_dp_max_lane_count(link->dpcd));
+> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+> index 58da323f14d7..b56db253f02d 100644
+> --- a/drivers/net/can/at91_can.c
+> +++ b/drivers/net/can/at91_can.c
+> @@ -1126,7 +1126,7 @@ static int at91_can_probe(struct platform_device *p=
+dev)
+>  	can_rx_offload_add_timestamp(dev, &priv->offload);
+> =20
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	if (at91_is_sam9263(priv))
+>  		dev->sysfs_groups[0] =3D &at91_sysfs_attr_group;
+> diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/fle=
+xcan/flexcan-core.c
+> index f5d22c61503f..3a4307bc1d61 100644
+> --- a/drivers/net/can/flexcan/flexcan-core.c
+> +++ b/drivers/net/can/flexcan/flexcan-core.c
+> @@ -2211,7 +2211,7 @@ static int flexcan_probe(struct platform_device *pd=
+ev)
+>  	priv->transceiver =3D transceiver;
+> =20
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_IRQ_3) {
+>  		priv->irq_boff =3D platform_get_irq(pdev, 1);
+> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_c=
+an/m_can_platform.c
+> index 56da411878af..73525be6566b 100644
+> --- a/drivers/net/can/m_can/m_can_platform.c
+> +++ b/drivers/net/can/m_can/m_can_platform.c
+> @@ -132,7 +132,7 @@ static int m_can_plat_probe(struct platform_device *p=
+dev)
+>  	}
+> =20
+>  	if (transceiver)
+> -		mcan_class->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		mcan_class->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	priv->base =3D addr;
+>  	priv->mram_base =3D mram_addr;
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
+r_canfd.c
+> index eaf8cac78038..645d5671705d 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -1885,7 +1885,7 @@ static int rcar_canfd_channel_probe(struct rcar_can=
+fd_global *gpriv, u32 ch,
+>  	priv->channel =3D ch;
+>  	priv->gpriv =3D gpriv;
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+>  	priv->can.clock.freq =3D fcan_freq;
+>  	dev_info(dev, "can_clk rate is %u\n", priv->can.clock.freq);
+> =20
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index a1aff00fba7c..89f7410241aa 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -640,6 +640,12 @@ void phy_set_bus_width(struct phy *phy, int bus_widt=
+h)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_set_bus_width);
+> =20
+> +u32 phy_get_max_link_rate(struct phy *phy)
+> +{
 
-Konrad
+All of the can drivers that would use this function are checking phy
+before assigning the max_link_rate:
+
+  if (transceiver)
+          priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+
+Would it be reasonable to have
+
+  if (!phy)
+          return 0;
+
+in this function to be able to drop these individual checks of the
+drivers? This would be similar to clk_get_rate() which does the same
+check and return 0 for convenience.
+
+Best
+Markus
+
+> +	return phy->attrs.max_link_rate;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_get_max_link_rate);
+> +
+>  /**
+>   * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+>   * @np: device_node for which to get the phy
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 36307e47760d..af9c3e795786 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -57,6 +57,7 @@ int phy_notify_disconnect(struct phy *phy, int port);
+>  int phy_notify_state(struct phy *phy, union phy_notify state);
+>  int phy_get_bus_width(struct phy *phy);
+>  void phy_set_bus_width(struct phy *phy, int bus_width);
+> +u32 phy_get_max_link_rate(struct phy *phy);
+>  #else
+>  static inline struct phy *phy_get(struct device *dev, const char *string=
+)
+>  {
+> @@ -256,6 +257,11 @@ static inline int phy_get_bus_width(struct phy *phy)
+>  static inline void phy_set_bus_width(struct phy *phy, int bus_width)
+>  {
+>  }
+> +
+> +static inline u32 phy_get_max_link_rate(struct phy *phy)
+> +{
+> +	return 0;
+> +}
+>  #endif /* IS_ENABLED(CONFIG_GENERIC_PHY) */
+> =20
+>  #endif /* __PHY_CONSUMER_H */
+
+
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaalOjxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPc
+SwEAt3Fg0ly9qnS+HJQv96JGhcc9ssPHPspnN0LcoiUH76oBAJJ1UWuuXcnIsBb3
+namewJQN1U0nDnFUFRtJbSq49LcK
+=6g8b
+-----END PGP SIGNATURE-----
+
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430--
