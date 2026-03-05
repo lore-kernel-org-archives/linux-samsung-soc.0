@@ -1,146 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C505A2417C3;
-	Thu,  5 Mar 2026 12:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC5372EE0
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 13:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772715192; cv=none; b=KPfmsdMcxbECmP5VamOknZTSXKFSGiDUnET/uE6U2Om/eByYeZMXgKL+QOKYrf9y97LuuwuSLcQnf2ESST22J6nEbO+8MEROsdNhKKRm+P4Ptec3LGQ56CLgtw+wUzmuZO1f/sf9Ynq5EQ7s5rDpBzrXUwLryxDGrv9e+/mGkLU=
+	t=1772715713; cv=none; b=mn6BEWubKjzQ+0O2N/I0FM+iFgCSviusRbTVmoHDogTABVrjP5ag41IIOrgVDXSYIGzcsNzwJTzaDGxaQJYi+mz/eEo5kLUv3B8WwTssO9aAL/IG8hRVFd/RGJNvknEBSK7AJyYuxw/w3ZfgFt1Qs+er4638poukQzF5URrMmqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772715192; c=relaxed/simple;
-	bh=HC3ImAffQz2/Rc4pyxeGvgYfktxpl4PIzI7YMaMJdCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5s3sWE6OQd/NGgFj08tjh8j/bwohjLdJHTm1CfEhpzgXkGNfRX+hTfeU90EbeM5PoATDN2oLe0aXW+xiMzX2Y7KpDMIiyVTgUsCV7o1cEtJjxHa+7PStdHSAkwzL6fdJFRmdpFnJgb0AMpOujgQyoYhUMXDLzo0RFNtOy+6wkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5N42Giz; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5N42Giz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF200C116C6;
-	Thu,  5 Mar 2026 12:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772715192;
-	bh=HC3ImAffQz2/Rc4pyxeGvgYfktxpl4PIzI7YMaMJdCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P5N42GizqvT7lJhrIx5mwWhuQTjWlqI1S1fafCB7yhJ+i+IKjcRyi3mwdhkpP2lDR
-	 4UcX0luEBzDED4N582qXmA+h+lQm0pGsXADoti4GEvuoJoeRJxF93UCmvNNZrQjk/7
-	 hDbGw44iuQcF3/bNqmcJDn1dvoomDuOkT+Q9VSW+SkMhq4tUjewsYIa4vNdVIaDFev
-	 PErvDqXBsl4lmGqYIMNmw4ZpwRoinhy8/Ld3TG3Cs2kwJoADlBxJS3GuhemgrWcfZb
-	 Nc63EJvQLb1Kef4EyBmXcbBX5AZxLRKWs9NV52uAnuNGXsomLfaFXwr6MmBUcXqN4t
-	 thPTFdWqg3KYg==
-Message-ID: <8bfda6d7-f802-4b44-858a-f52ac8c051ac@kernel.org>
-Date: Thu, 5 Mar 2026 13:53:04 +0100
+	s=arc-20240116; t=1772715713; c=relaxed/simple;
+	bh=mzxuHFEBJ8rIbeR5gmZexUBLMULkEpRVqRmwwCFyU/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SdXfxmNg5b3UesVlPAvwn18zFUYQ5l1HPFeEbB/eCEkZYWA92Hu7BemczR8n1KQ/AUGevbJuVRyeqLHoPG/Pxa8VPEy9J3JqIgNj7SI41QpXWn4eWryIGhp7MBxsdycUQv5jwI8gFBJv5yQahqShyxs1WCoyUC/+D3VENxCV8ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2aae146b604so60896635ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 05:01:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772715712; x=1773320512;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7IxpxVkGnClS/pzWnTPcTEx+bl+pPZR21vGpLksfVXc=;
+        b=uOIpxjPYbTTzYqgQoY8pYqW5EnopIH/pugbD9tiGcq85rSfdT++c1cCKKy55aiJSbb
+         jRD79fBt4He2C6OqBS+j2UPUxfWEeQ2qxZv46mMzUSTWVWhoRpPNMHcb3ZjRjGMMo9hk
+         TLcy9H5Iwrvv65X7z6HYkmGLa2Av/kR94B9fP8fxIhEYWARpyZjzUdfAYVVES/KaOYhB
+         pg1uSu4ap66LY8SugDd1dcYch4x0StK6r/lwPc+AbqyLvaboODUb5gkTCArae78v8N6G
+         hDJvPUBbYLHXu7iOGzYqgBH8sXLBoLVJNXQUYP+8jK2lZcjDjBLMbNUyYFKtnqtDHXLz
+         UPpg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+UNlljZ7WGwlDiqu72eT+h0BbT6wqf8IFM6y7HGhU5CYr8pGWwnnSSFUhpALMxGWGXWwILX2l+oZhaLSp2oNHtA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb3qOdg+P42Kd34WnU+ZCqbTEHNHudp8M1lZIgEnan+lqRZSfS
+	G0XEYIExAfknMpAVmhtveIPIOrcc/b03WliQL3S4iylUQ+k6ALSl/51D
+X-Gm-Gg: ATEYQzwgZph9PfPyrCzoGhU1841ok6iCdqnTBeiH0tBXcZeWIhd2loxCNtSd5hjc2xZ
+	nzyzyXmVXoA9acDf9mDNeEYaqBUqU/NuQLoL7KWptCGm9lChvsxPuBqR72fQ8mx/91/74iLXfes
+	F7UpxJmL/WAwbjghqG3wFJFjezVJpBqqDcU2am91ZPsfY4nocyKQvPfbpyZGlOCzXwWRAxcDdbl
+	k/JutShuPwQGYz1G4RJ8OLx/J/1VGVe91we1Ha1HHpCbI57pnn841HC6I34qj9KwMTwfRlR6qzb
+	qcmCRuvK4PaDFC94dfOtId2GGHNLZyYRAAf7L6EeDAwUsDH1dQZEIcFMcc2cV34wPG4/NWDMEib
+	co1HSOFx+YTUNRPeATVxlksnAJuNUuuDbtt2+zf4CRGavcYwAATwgXgpmh8xUk/Ao6u8kUMQyvQ
+	y34W6UuACbEkdHH/fDr6/rewz8e7VM1A26y9m4T8uZgNFKPYlqJCtDsrP4eYF4aJdAZKtS/UfJJ
+	ZHjiLBeLxsqU+9GS0+FLD5vaF8c+UpFhmq1XjHCK1MFMtM5k3RQOzrNPDtAgg==
+X-Received: by 2002:a17:902:ce03:b0:2ae:5b52:3818 with SMTP id d9443c01a7336-2ae6a9deb2amr60551085ad.8.1772715711782;
+        Thu, 05 Mar 2026 05:01:51 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae54136b28sm115696425ad.73.2026.03.05.05.01.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 05:01:50 -0800 (PST)
+Date: Thu, 5 Mar 2026 22:01:49 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Joe Perches <joe@perches.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org, spacemit@lists.linux.dev,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH phy-next 22/22] MAINTAINERS: add regex for linux-phy
+Message-ID: <20260305130149.GA1659133@rocinante>
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+ <20260304175735.2660419-23-vladimir.oltean@nxp.com>
+ <a8fee1cd-1e69-4a9e-8533-c0988c480fb9@oss.qualcomm.com>
+ <20260305085148.7cwo3yflp7vcfldf@skbuf>
+ <f3a5aa3df78553ffc0fd0024f5fd36a4e2158c88.camel@perches.com>
+ <20260305114352.2f7btqixg4tu5bzl@skbuf>
+ <20260305121532.GA1649635@rocinante>
+ <20260305122957.GA1652563@rocinante>
+ <20260305123956.ojkt4k3ly64xz7fu@skbuf>
+ <aal6kWDx_3XRGB4K@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] scsi: ufs: core: Introduce a new ufshcd vops
- negotiate_pwr_mode()
-To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
- bvanassche@acm.org, beanhuo@micron.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- Ajay Neeli <ajay.neeli@amd.com>, Peter Griffin <peter.griffin@linaro.org>,
- Peter Wang <peter.wang@mediatek.com>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Stanley Jhu <chu.stanley@gmail.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Archana Patni <archana.patni@intel.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-mediatek@lists.infradead.org>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>
-References: <20260304135313.413688-1-can.guo@oss.qualcomm.com>
- <20260304135313.413688-2-can.guo@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260304135313.413688-2-can.guo@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aal6kWDx_3XRGB4K@shell.armlinux.org.uk>
 
-On 04/03/2026 14:53, Can Guo wrote:
->  {
->  	int ret;
->  
-> @@ -4747,6 +4745,22 @@ static int ufshcd_change_power_mode(struct ufs_hba *hba,
->  	return ret;
->  }
->  
+Hello,
 
-Missing kerneldoc.
+> > > For content match, it could also be:
+> > > 
+> > >   K:    phy
+> > > 
+> > > I believe this would match everything of interest?
+> > 
+> > Yeah, and way more. Think USB PHY, network PHY, etc. Don't want to drown
+> > the linux-phy mailing list in unrelated patches, either.
+> 
+> Also phylink, any memory management / DMA stuff that happens to mention
+> "physical", and probably numerous other examples.
 
-> +int ufshcd_change_power_mode(struct ufs_hba *hba,
-> +			     struct ufs_pa_layer_attr *pwr_mode)
-> +{
-> +	int ret;
-> +
-> +	ufshcd_vops_pwr_change_notify(hba, PRE_CHANGE, pwr_mode);
-> +
-> +	ret = ufshcd_dme_change_power_mode(hba, pwr_mode);
-> +
-> +	if (!ret)
-> +		ufshcd_vops_pwr_change_notify(hba, POST_CHANGE, pwr_mode);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(ufshcd_change_power_mode);
-> +
+Makes sense!  Sorry for the commotion here, then. :)
 
-
-Best regards,
-Krzysztof
+	Krzysztof
