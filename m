@@ -1,67 +1,67 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDCB225397
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 06:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D92829A32D
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2026 06:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772691117; cv=none; b=VSK/iJo3bRN+kFV/r3GRbM9tksB5pnmEurofBEq0PeHuWOkK2sHH8pW3do4rq6XbWulabfVeyyMPK0aFumo/9Z67VdklpU5MDiwViY+/eTNrDUnlRQ5fMLmhiEPP3wEMbcSQfbHKxbNpqy2l+UEhCm4I0Yo1XfV7LJmHMwgbzBo=
+	t=1772691117; cv=none; b=PJzcYCU6J/rS63MXlhsziMfdl7Rpvu7LJJ220Fc9mykUIWXLhMKyF1d8oWSgREY3iid3JWUKwZW6KxrXpbHK5OIq1T4Jt7K68eTE/SjQNtaD+YyViyS7F2EWqclAMoMNJ8w8bYf63nOzxrTJI/7EgxtuOOVDwyqNIMgPOz6tAxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772691117; c=relaxed/simple;
-	bh=VXqNGlqX3hZoD8cv8P59wyGVL5FoVdrO7llV2dEVFW0=;
+	bh=iALQKe1s8XYCZQRBPu9whaNUYAS1mnLDVYkgTcpyPr8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i3eLoZFJ6MPZi8Q6Q1AzxAV208/ct2t/iy/bNs/6SjYxNI8hNRjb0nrTXV7tKgeA6rKoOQy2aUAZdJvzyswIlX7XpGg4TaaMD6yoGi21I/MNrrvLRGF7AiTEmxAfIIvRUaNxNOpXMx7A8pGWAQiY+kLAWDTivqUtp88sqULNwzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C3Kz3SJr; arc=none smtp.client-ip=209.85.218.48
+	 In-Reply-To:To:Cc; b=cqfZbw902df01v1XvXdoVI90ZX8VheJgXBWBfOgZaAMlTgV53jfMM1A/oRVaSLHK5p5FufjuxvL3tGOD0uN6w0raS0dneuAlQDflPn23G9TBHjeMfySWYWWajwmlGimPYyjpVMD/WZ1NlDRp6xgMDArrsMQXFEX1IvaqFwCQFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V61lqGK9; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C3Kz3SJr"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b93695f7cdcso976855466b.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2026 22:11:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V61lqGK9"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65fac0b51baso7293206a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Mar 2026 22:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772691113; x=1773295913; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1772691115; x=1773295915; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4gPeJxyuGY5/8F9b5AqNdyg2EFBWflmTDpqYPujzuFU=;
-        b=C3Kz3SJrqqMDzFHma2oUYgsEw7i1exAQFHIJ19ZxXh/DPLmTNanpfy46sWA/llsLpf
-         rbzwTG0BKjN19O9FTEnVJxai/eX8gS6tGLPsgdA49ihfa4dZ6L7ovdYONKW/uqKZS4Rj
-         vLiZVqEK1WqwAJl4c5KY8WDPf5pCztb7BNaKu0eCVv81b2sOizm6MbP52mIiZWqUbe+7
-         d9+pzsQRwj81nl8PYXJlCJmcyuLggsdZ+LSnih8KOXmYdsadsYzgo1DSAIy7taHEegdw
-         /gTQGwbJuFTe0m/kJC9xhXrVgb4H0OQ9fxKS10RG10FRq8a64DmFZRWKEb37pvsHTz6g
-         N1Kg==
+        bh=3FUcP5CBZJQtkRrAcWORzv320QMtIf9elaWuqQIxzig=;
+        b=V61lqGK9WTWnm29tSJDXxDUta9HQFJN1mC4P88K541f4zwmN/huESi8fzi7oiuSftM
+         uQvQncjvWZzd/U7odh3wc3Zt4vZsIyb0dkHhkkCt141K5aQJBNgmBjErmXJtjwPn3ioE
+         /mkQc2o0Kj5mMP82UyEC6XESEYlNkQSV38rlAkzztSrTrCUi0cCpJb5wDMEZvaaMwA1S
+         qCjsfq5RD46hmlajAcmW3VijtPvrZCFAqqHiBx1ilQ0N0StHsQqGIuTypTjKA7mcZzYA
+         jjYnBbX/oR7/iPL61eI9DtZloQdEQ4dd/aNFN7/HUunsp7FX2fmAl0UJcePvNN+bvTrj
+         WFkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772691113; x=1773295913;
+        d=1e100.net; s=20230601; t=1772691115; x=1773295915;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=4gPeJxyuGY5/8F9b5AqNdyg2EFBWflmTDpqYPujzuFU=;
-        b=o16Qmx9TTw52e9+F5LNwIR5Ic0Dd4EC/xGA9p85lXTabSkTKsNNvuqOwGK7pYup9CR
-         ITw+uleggIYszp+YwgcTsl5h9QKyTJlUJCeE/isLoflMi+2CLcSDq7YKt+u0Gl6lYblM
-         jCygY3Av1R8uguv7x6h/FrDhMVP6S2ka/6mYtv9j0W1zKYGZXnqsOig3Rt4te9FOSUS3
-         bmZupvHWhoM7NIDiJem/emXKV9aHAIxkUta9ETeXLSLfo7LcIHv3pb6sMWfACyUFw5+u
-         h0ODhGHGLAFo3ZZqO74jHrmEoTRbA5CBdLPnzFvX8MWWyDNGj5wRm/KUj4LOt9FMATFN
-         2jrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9xRan4uSvuWIzZvvZ3et65R8lPiqJ4b3TLXcLV2r5TEZ/oqdMmXSfzhYHIHwFt1si6UoDwAw8/D+adMwMUlKmjA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOdDXvTqoTR2jPRpiL15P+u7Q1KJ/9Is9bvCIBkEkIi16Y1ERt
-	RGUbolTCOxTk6a4tCjHrww0w/lAV/UMx0jzj9pIWEtJaURtm2x5lmy6wtr/6oqvopso=
-X-Gm-Gg: ATEYQzyi/U084wSio/SVPpRteSVvTLcFe4JT0XfzcOvI4biM8Xrzy7XZSA/QMXzVHCS
-	eWTiQt/h6pYMAWWb05vfsBjrwM4YxOKzO65/uzIoSyawtELgkr/+Q5Y9ILjbQzddTyavvDCyrEF
-	zsZSK078G8joZAizokEys/w+bObHWL1T7NB8q73v9LbEfhXRB6t6jT4fk4SGAURgCoNA8M/pzRn
-	2JQNeDH39YmUeH7njTCdObUlX+tkVWnP/5qxiPJ1yAuvIthCotVz1kwUfzk7RLwiPqGqr51XkQY
-	i8milyhEqJ+o1QYCcgXTROljBcpGHAU6LG8wMODpOSipMAnlQjAVxddwxbU8oVv8ig9oFe9/Myg
-	D4FiO8ZxvWMrRdIw5r/j3c2NxKpcdWJQQUyRbqHjmIrr4d7/tStOG/pesAeKSeaPOhuO6NcBp6e
-	ZuO3fKkH/kbZjdDh/maihrloPan5Eg/hSOrccKWlAN7vBld5YXMPD0BIJ0zHvnEPAmOHtUDNdjW
-	i2WgWVG+k2H23s=
-X-Received: by 2002:a17:907:6d28:b0:b88:47b4:7626 with SMTP id a640c23a62f3a-b93f11c65e4mr280686866b.27.1772691113364;
-        Wed, 04 Mar 2026 22:11:53 -0800 (PST)
+        bh=3FUcP5CBZJQtkRrAcWORzv320QMtIf9elaWuqQIxzig=;
+        b=m5gbrYbFcuALuE5iJfrXo9DVBNhoXNG6I9f8fGvzRTPtlu8EC1hQOLbWfK/hYaz+o6
+         TlUTRKiMbwmUgmzPms90XquUY3XsVwKzFOfYaDN/gLh6t6su0lEkQhFHbiTRhugJAJb4
+         MRBj/9ZFLvaq9zMzURLMoynC/AVjJSz+Q8+cfeeRgTkLcJFChB0/vgw8Emcv4GsF/VW6
+         /sg/34Yy1ad2vitcczABTUQBN0Q920MwN5lpAEyTlXONjVK+sF7+GrLKP8AVuhM/iSzu
+         b4n4Y/XysQhWZVRpevC/EpD1Qf/6EB88YdTidEOhiZ8cvMdcaKTQDnRHFI1UpAQ3VLnF
+         RtEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1P/ngm2vVp/ChJ5Kuc/1k3cfY0DXu4e1PWlGzEYpIpJCqHqL6kbs9xFS+tTS+RvpV09Ws8Cnv+DOLMgZ4kg9Jew==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2p9JK4++qFjczmpXvRGFuXj1TLz7C/9PUj5J6W5yhSRLmwuxE
+	u+IdxLGm77OW2ZSHITZFzL0wXBolf0qCcFqK8Hr4mXzOTHUWGvd82sJBcrLk/iBDoCQ=
+X-Gm-Gg: ATEYQzysVOKwPrii22WLUqp8YbQVbbhIvU/7gNHFXXmTJUl0AhK/MNAr2yzEXrF66vz
+	UxfQiT3MJEQCQEuYS3XB6ONwnU3KMT+E9AzKNpZtEND27GJJDYmtJBxxEo2tonf619sa5m/riAV
+	/zG2E9+/o5650qSLhUmHwiuFKrbG4mYt4wC2fjyoyUJqOtys1QMbMZ4K+pLYmkme0mJ8YdJFz06
+	aQZ4JpQZehuaF+BHoEcOeAQTyVLFSYdo2vhKJKDUS9N1SsEeTwb60yp3gEBc6pyxcC3UAedJLzR
+	6nFYYfaR3HZoT3q9u/1kVb9TZepZChTNOXG9avBBAa7c++riJmvSj6vHZKI6ZkKLfD1dLEBWqqS
+	zIAPNg0Q6dOXMUTaJ7P1kWGG5b+4fPScbDdwPOKna+8oFELPfB0FUfK1AB2sf0lQeIoUCDdWuT7
+	7PhaQ+8n3gD8kCoajuOw5XeNHfdq8PaxQBM+uW2ZNQ8SMa8IShC+zvQdkIDQMb6ij3SmJVGZkcJ
+	jtH8/chTvmoM8k=
+X-Received: by 2002:a17:907:7f93:b0:b93:5a2b:bcda with SMTP id a640c23a62f3a-b9409ef2b9cmr62071366b.29.1772691114572;
+        Wed, 04 Mar 2026 22:11:54 -0800 (PST)
 Received: from puffmais2.c.googlers.com (221.210.91.34.bc.googleusercontent.com. [34.91.210.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935aec3243sm849355966b.53.2026.03.04.22.11.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935aec3243sm849355966b.53.2026.03.04.22.11.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 04 Mar 2026 22:11:53 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 05 Mar 2026 06:11:50 +0000
-Subject: [PATCH v6 01/10] dt-bindings: soc: google: add google,gs101-dtzpc
+Date: Thu, 05 Mar 2026 06:11:51 +0000
+Subject: [PATCH v6 02/10] dt-bindings: power: samsung: add google,gs101-pd
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260305-gs101-pd-v6-1-8cb953c1a723@linaro.org>
+Message-Id: <20260305-gs101-pd-v6-2-8cb953c1a723@linaro.org>
 References: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
 In-Reply-To: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -88,78 +88,100 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.3
 
-The Exynos Distributed TruztZone Protection Control (D_TZPC) provides
-an interface to the protection bits that are included in the TrustZone
-design in a secure system. It configures each area of the memory as
-secure or non-secure.
+Add support for the Google gs101 version of the Exynos power domains. A
+new compatible is needed because register fields have changed and
+because power domain operations involve interfacing with the TrustZone
+protection control on newer Exynos SoCs.
+
+Power domains can also have a power supply linked to them, so add
+optional support for that, too. It is believed that all (existing)
+platforms could benefit from this, hence it's not being limited to
+gs101-pd.
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- .../bindings/soc/google/google,gs101-dtzpc.yaml    | 42 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
-new file mode 100644
-index 000000000000..a8c61ce069d6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/google/google,gs101-dtzpc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+---
+v5:
+- add domain-supply and update commit message
+
+v4:
+- add new vendor property samsung,dtzpc
+- drop previous tags due to that
+---
+ .../devicetree/bindings/power/pd-samsung.yaml      | 33 ++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+index 9c2c51133457..3f1a2dc17862 100644
+--- a/Documentation/devicetree/bindings/power/pd-samsung.yaml
++++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+@@ -13,12 +13,10 @@ description: |+
+   Exynos processors include support for multiple power domains which are used
+   to gate power to one or more peripherals on the processor.
+ 
+-allOf:
+-  - $ref: power-domain.yaml#
+-
+ properties:
+   compatible:
+     enum:
++      - google,gs101-pd
+       - samsung,exynos4210-pd
+       - samsung,exynos5433-pd
+ 
+@@ -33,6 +31,9 @@ properties:
+     deprecated: true
+     maxItems: 1
+ 
++  domain-supply:
++    description: domain regulator supply.
 +
-+title: Samsung Exynos Distributed TruztZone Protection Control.
+   label:
+     description:
+       Human readable string with domain name. Will be visible in userspace
+@@ -44,11 +45,28 @@ properties:
+   power-domains:
+     maxItems: 1
+ 
++  samsung,dtzpc:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Distributed TrustZone Protection Control (DTZPC) node.
 +
-+description:
-+  Distributed TrustZone Protection Control (D_TZPC) provides an interface to the
-+  protection bits that are included in the TrustZone design in a secure system.
-+  It configures each area of the memory as secure or non-secure.
+ required:
+   - compatible
+   - "#power-domain-cells"
+   - reg
+ 
++allOf:
++  - $ref: power-domain.yaml#
++  - if:
++      not:
++        properties:
++          compatible:
++            contains:
++              const: google,gs101-pd
++    then:
++      properties:
++        samsung,dtzpc: false
 +
-+maintainers:
-+  - André Draszik <andre.draszik@linaro.org>
+ unevaluatedProperties: false
+ 
+ examples:
+@@ -66,3 +84,12 @@ examples:
+         #power-domain-cells = <0>;
+         label = "MFC";
+     };
 +
-+properties:
-+  compatible:
-+    const: google,gs101-dtzpc
-+
-+  clocks:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/google,gs101.h>
-+
-+    dtzpc_hsi0: dtzpc@11010000 {
-+      compatible = "google,gs101-dtzpc";
-+      reg = <0x11010000 0x10000>;
-+      clocks = <&cmu_hsi0 CLK_GOUT_HSI0_D_TZPC_HSI0_PCLK>;
++    power-domain@2080 {
++        compatible = "google,gs101-pd";
++        reg = <0x2080 0x80>;
++        #power-domain-cells = <0>;
++        label = "hsi0";
++        domain-supply = <&ldo7m>;
++        samsung,dtzpc = <&dtzpc_hsi0>;
 +    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0b879760b6e..611fa8fb9f8f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10883,6 +10883,7 @@ P:	Documentation/process/maintainer-soc-clean-dts.rst
- C:	irc://irc.oftc.net/pixel6-kernel-dev
- F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
- F:	Documentation/devicetree/bindings/phy/google,lga-usb-phy.yaml
-+F:	Documentation/devicetree/bindings/soc/google/google,gs101-dtzpc.yaml
- F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
- F:	Documentation/devicetree/bindings/usb/google,lga-dwc3.yaml
- F:	arch/arm64/boot/dts/exynos/google/
 
 -- 
 2.53.0.473.g4a7958ca14-goog
