@@ -1,92 +1,225 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F1D22A7E6
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 12:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7A2273816
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 12:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772800562; cv=none; b=G8A/wgIhcfOC31vuiR1KUUos3FBLaYNI+cZTAfy010w8AagEFOMQrRsaLJUCJQZW+/g7AXKRGfVdd9A8+930eQ9FK71i2+xixmJDhbLynulypF37XT9F42c51nP1adDyd39p7cmsp7oZd1mbR4a23qPJNThVGjFURWd0o039fkk=
+	t=1772800881; cv=none; b=spMnMrWiw8RMQ8/8NEh5vvhZ9g/2QYZmMA30jDlj1zduhm4dRfrC5FSSI1Qh7YTKkqkIAUw7WnrEH1l7+T3O6EtoxPzU0q0U9yAX5xHrx1lGilbwCOU7wpbYtLdTG/xObILjAdPr01FFBYE+lgXOfSnaEtQblsbIsvqEyE1Un7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772800562; c=relaxed/simple;
-	bh=gegZ9SG2L3nOQJJmvEQTFjDNAgWMFAacpiJJTUXKdvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=KchusDsy/21JbTz4HOGw331WNxx5BMbt4wLPQq+yut738B5hD9WwS75n2VUwQ9zgMFVmj28cxLk0flqgpXQ/EC86X1AhmQpNtzlMiM7IZ0aWsYlyF2m6o/wlU+bMn2d+wRaBR9qwtL152eMzRV4lQodZf7lii7rDkIpF9RIvA+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sLaiao33; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1772800881; c=relaxed/simple;
+	bh=uF7FeyQrYMijCgWbj69YdKgeI/mux8GE7Fl7Q+vaG4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o9aNYg9ieTd8Q0YxgE3QJs9XTEabr6J3E2YBBcltYL46AbzOCKvQsJF4o4+H7pw52XLFMQwmQqKOEGkpR11D4Q0tQMEX469Ivhq3saISH+jxs71JHZxRS+SOIa+85qln3sdYoXHkALFbFJWC1Jefe8DSRcxXCRXBcghdPGUtyNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g0mRvaQH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=V5Mw/wv5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sLaiao33"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260306123558euoutp010c34fe9b06ea2452e642b8d29218f489~aQLcMIo5w2299322993euoutp01V
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 12:35:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260306123558euoutp010c34fe9b06ea2452e642b8d29218f489~aQLcMIo5w2299322993euoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1772800558;
-	bh=gegZ9SG2L3nOQJJmvEQTFjDNAgWMFAacpiJJTUXKdvI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sLaiao33xhUOgGnDGBAnaOEIpORJl6kQOkBg+H5o1IQDzTP99ueXcBg9Zjn6EykTP
-	 JtxxU5K9H82tphiwb+ji+BnS9OjIZH0WKHAeZvNdy6CqNa3PgHtwRaS8D3gLDCAax3
-	 IqiB9WMz02wupUBKdm7p46fppFApRj2wvPTAWs3w=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260306123557eucas1p1f4157568a9856c4fbe0b08e6c1a11548~aQLbsktHx1284812848eucas1p11;
-	Fri,  6 Mar 2026 12:35:57 +0000 (GMT)
-Received: from AMDC4515.digital.local (unknown [106.120.51.28]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260306123556eusmtip1874801b0bb1d934e665cc7522deb78ed~aQLazW1zx1557315573eusmtip11;
-	Fri,  6 Mar 2026 12:35:56 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Mateusz Majewski <m.majewski2@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz
-	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
-	Moon <linux.amoon@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v4 0/7] Add initial Exynos850 support to the thermal
- driver
-Date: Fri,  6 Mar 2026 13:35:42 +0100
-Message-ID: <20260306123543.1748910-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20260303090211.673143-1-m.majewski2@samsung.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g0mRvaQH";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="V5Mw/wv5"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 626Bb8Qa1189151
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 6 Mar 2026 12:41:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	th1itqMbs74IRL2O00rpVuDnvWp8kNZ4S6kCMjIQqT0=; b=g0mRvaQH2xLIkVxe
+	O9x4vc6XXRUqObKh92tHzLbIrRL2E7QmZrfqFRVVCF6aCKy5AIRWaVa9y1qwFI7z
+	GA5SQrKqhbVR+6jNNhdz9XD8+bCNye8mZOtHi56gxhf5211y6EX5AUQM5ysKhdKG
+	bdHfyKIkeHQxi4PJ53kzbKSgGp3XXJivm19ShidNUgzBWysgISHh6exBlCvMdnL+
+	bMyNjB3EjgtOkw0GB1okKC00l7yF9E83K0bDRhn4uDLq2KGuewZ2UIcV2K4Ka86w
+	lVW2wsJFCzMEYcshQZp5P6bE8VHqrdIpwgckSrY7KTDFVt9D6R83db9lfR5UDN4Y
+	xsfJ8A==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqx14g6vy-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 12:41:19 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-c503d6be76fso33942325a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 04:41:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1772800878; x=1773405678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=th1itqMbs74IRL2O00rpVuDnvWp8kNZ4S6kCMjIQqT0=;
+        b=V5Mw/wv5dVHiI2YmR3NnC4ADnHryC+44ZF2ecXt2u86iD2nDLWM3+BtPmFMzKNeBZp
+         QXHyv75hxn4pViTaezct0yUyA/Lzn/A6FHCmXW3v+9zuJrybjk3bIo4N6/JUPxovbN5l
+         eeDZpBwsgzlQ3FzehlWFLl2NQLgdTnGPsEbA+u1jM8a9QHg2HomemUHViUCSs0zHeuX6
+         PkiKVkyjHBDWIjsM8LbztW7Y6hYlYcMVoCQnvO9/Es4Tv8J6A+OIx8grwt4Mmn5UkPAH
+         CSFMFJTUeiqwgBwF32I/19UPoN6Py8E5PSHtsglb9iO3Z1+ix1nKsUAbw8jGKVCvFyHf
+         P61w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772800878; x=1773405678;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=th1itqMbs74IRL2O00rpVuDnvWp8kNZ4S6kCMjIQqT0=;
+        b=rnXbEMIx+oS8DN/EytslTrBCoQdVVpMEiwmio58YU011NwobCXvPJ+Rccc9JjOMW6U
+         nw9RcYVBab46dXSlEtSy8AjddiC6iY1e4Ke3eQGpbZyJh4Fwwkp+01NYt3Q4rgwo2/xH
+         iCCMks5PWWY1bNSgC9WG7AfDhBuSzNhewO0GCokSORxQJhoxP2YoUkg47I7a8RCLmlQm
+         S+nQ4XbmMryytYBvLrCZEt3Eaj8bdp5EgaOOw7dpsgunZLwoV2ZuYAM4ehjQ7hTZCYcZ
+         wZrBlslc1FVfUlKLAFyFmSCnBOD5q6dcC0XLveeB3+jfI/dxjHVNeNFHFLNdxhE3vC0T
+         xicw==
+X-Forwarded-Encrypted: i=1; AJvYcCVg0vvbqu1zDfHM/r4jZ/75l102hWqwktOtuNvH9XXMj/2wRdimXa+lEWM+QBQU/8xwJamYxRMmNj8+2ad+FxvqPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9LFEzNKkHJj4bXrUEzX5PdwU6IzKwkdVXqYghramsvuV7ZI/U
+	JEiBtvD8/sLgLy/sBvoDe9oPUwViTndiR8g1WLy6+14HnNZth5WXEZrL+lPr0zT7FP23B6tHUAX
+	7r9l240TTjkSeUm/UgnIzrdcjKmkZPeZfhttKAiGLW6O9/vsAmd3cg5TFyANeOhgBIwQ/b2eUKw
+	==
+X-Gm-Gg: ATEYQzzFkBMVcsaa2QWiqeUwOduqi9RMrM7Ot6Af6IXAIREk4mgpMpinTPeFeGM066y
+	D9TnxQ2mBLvXM0CHNjnVKLIwj80tVBmCHUrOB1L6JAhOPzjjTBJEL6B+kP1I2AWW3JWTNXp4OcJ
+	Iqt5UiW5PV1fy9Jd08aaj6LEaqQh2vNhpsc3ySE1HmdSzJIpKMCT7nFtZpzozBEk4+1jxbpbRmV
+	DihDXyiBm62NAfps+BDJ6P2odo2uaKqBF50xykgPUx/LWoOUbAIB0JGvmMtaMz46T3wDVJeNAKW
+	XSwh+VMUqOtMnzqlZ7CmpCgu7Zj5YrYn+EODCXpWeg/bpCiOdEg55d1zH4o2W99FlAYGigoAl+5
+	2mVAOzSOHC9lfo3TdRcnqDmZOwve/7/LURaZs/D9cCf9zEv2mZfC9LO0wMJgBFPWGRPe2DqJW3A
+	DuTIRApgyBxrk=
+X-Received: by 2002:a05:6a21:498:b0:366:14ac:e1df with SMTP id adf61e73a8af0-398590e0f3dmr2322248637.69.1772800878395;
+        Fri, 06 Mar 2026 04:41:18 -0800 (PST)
+X-Received: by 2002:a05:6a21:498:b0:366:14ac:e1df with SMTP id adf61e73a8af0-398590e0f3dmr2322211637.69.1772800877795;
+        Fri, 06 Mar 2026 04:41:17 -0800 (PST)
+Received: from [10.133.33.226] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c739e0f15f5sm1673727a12.15.2026.03.06.04.41.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 04:41:17 -0800 (PST)
+Message-ID: <1609ae14-888f-46b5-9e8c-1aaa50b803c2@oss.qualcomm.com>
+Date: Fri, 6 Mar 2026 20:41:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] scsi: ufs: core: Introduce a new ufshcd vops
+ negotiate_pwr_mode()
+To: Bean Huo <beanhuo@iokpp.de>, avri.altman@wdc.com, bvanassche@acm.org,
+        beanhuo@micron.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+        Ajay Neeli <ajay.neeli@amd.com>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Wang <peter.wang@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Stanley Jhu <chu.stanley@gmail.com>,
+        Manivannan Sadhasivam
+ <mani@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Archana Patni <archana.patni@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-mediatek@lists.infradead.org>,
+        "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>
+References: <20260304135313.413688-1-can.guo@oss.qualcomm.com>
+ <20260304135313.413688-2-can.guo@oss.qualcomm.com>
+ <15d49cfb52990dea46596c2eb0cbdc7db9c44ab1.camel@iokpp.de>
+Content-Language: en-US
+From: Can Guo <can.guo@oss.qualcomm.com>
+In-Reply-To: <15d49cfb52990dea46596c2eb0cbdc7db9c44ab1.camel@iokpp.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260306123557eucas1p1f4157568a9856c4fbe0b08e6c1a11548
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183
-X-EPHeader: CA
-X-CMS-RootMailID: 20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183
-References: <CGME20240911121149eucas1p29b9ccf99a545cfaa924b122cd8dd3183@eucas1p2.samsung.com>
-	<20240911121136.1120026-1-m.majewski2@samsung.com>
-	<DGIAUIFPUHN8.35B5MNEUK1JW5@linaro.org>
-	<20260303090211.673143-1-m.majewski2@samsung.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA2MDEyMSBTYWx0ZWRfXycyIP5xoPEAE
+ USJYeL4tiQyB0nSPcaBxc0PDz/nSuMRHm8RwVd3wG/X/zbH5rrxB5zm8mWqi5iWX2lKtR8wVag9
+ WfzCg5M2h7UAHntQq2MeW2k5VmBlW7VSqauWMyalR604yhuQAJVm/fWWN5chFvV67StCC/shmJc
+ 6e8TQ303WdHNoVeFlasdNi2XKiYWmYMCD3xbeKsDIG8YUyNGWmkhWc69B1g6enxGjVqVQcpOsj1
+ 3WoWuTgFzIve1awxV/m9MN6WSlxqC8FXTc1B2T1jMJsk9WtOslSwrun15W4gsqetqcXIeGHSQS2
+ 7P1QVaNlYXSPPXyOvE/uiTVs4cZcoOm7+rrLJj4g+UdCFGFjCSAjmgALzyvxA5qlzrUVAmEIKZr
+ Ufje7VzJgFNvDB07v+X5sCDL2URRoTwh5U0OSgx1M00bylnXJrDge/9n9Teijj4WbUEALPQdh2/
+ 9WX5jYlflnBJQHp6K9g==
+X-Proofpoint-GUID: 08qsXFsxvykeJeyZA5jIaYHdJzKuVEJP
+X-Proofpoint-ORIG-GUID: 08qsXFsxvykeJeyZA5jIaYHdJzKuVEJP
+X-Authority-Analysis: v=2.4 cv=e/MLiKp/ c=1 sm=1 tr=0 ts=69aacb6f cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=o_XSaaT3ieLpCecdYGcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-06_04,2026-03-06_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 adultscore=0 clxscore=1015 spamscore=0
+ phishscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603060121
 
-> Honestly not sure. If any other patches are merged that conflict with
-> this series, I definitely can resolve the commits (for now it applies
-> just fine to next-20260227, though I haven't compiled the result yet).
-> Correct me if I am wrong, but I don't recall anything to be done in this
-> series otherwise. If there is interest in this series, I can retest this
-> on the other boards and re-submit this later this week.
+Hi Bean,
 
-I see that others are working on different SoCs actively and that my
-series conflict with theirs. Probably would make more sense to
-re-submit/rebase when the dust settles, unless somebody wants to use
-these patches now (I am assuming that you are just cleaning up the
-review queue for now).
+On 3/6/2026 5:03 AM, Bean Huo wrote:
+> On Wed, 2026-03-04 at 05:53 -0800, Can Guo wrote:
+>> @@ -4747,6 +4745,22 @@ static int ufshcd_change_power_mode(struct ufs_hba
+>> *hba,
+>>          return ret;
+>>   }
+>>   
+>> +int ufshcd_change_power_mode(struct ufs_hba *hba,
+>> +                            struct ufs_pa_layer_attr *pwr_mode)
+>> +{
+>> +       int ret;
+>> +
+>> +       ufshcd_vops_pwr_change_notify(hba, PRE_CHANGE, pwr_mode);
+>
+> ufshcd_change_power_mode() calls pwr_change_notify(PRE_CHANGE) but ignores its
+> return, this can continue with invalid vendor prep? I saw there is checkup
+> before, do you think adding check result?
+pwr_change_notify(PRE_CHANGE) was used by most vendor-specific 
+implementations
+to negotiate Power Mode negotiation, if pwr_change_notify(PRE_CHANGE) is not
+implemented (returns -ENOTSUPP) or Power Mode negotiation returns error, 
+the error
+check was there in order to call the memcpy() to copy the desired Power 
+Mode as the
+final power mode, that is, an error return from 
+pwr_change_notify(PRE_CHANGE) won't
+lead to skipping the ufshcd_change_power_mode().
 
-(Also, I somehow managed to break threading by sending my previous
-message with only In-Reply-To: and without References:. Sorry about
-that...)
+So, to introduce the new vops negotiate_pwr_mode() and keep the logic 
+same as before,
+in this patch, the error check and its error handling are kept and 
+coming after the call to
+ufshcd_vops_negotiate_pwr_mode():
 
-Kind regards,
-Mateusz Majewski
+int ufshcd_config_pwr_mode(struct ufs_hba *hba,
+                 struct ufs_pa_layer_attr *desired_pwr_mode)
+{
+         struct ufs_pa_layer_attr final_params = { 0 };
+         int ret;
+
+         ret = ufshcd_vops_negotiate_pwr_mode(hba, desired_pwr_mode,
+                                              &final_params);
+         if (ret)
+                 memcpy(&final_params, desired_pwr_mode, 
+sizeof(final_params));
+
+         return ufshcd_change_power_mode(hba, &final_params);
+}
+
+I hope your question is answered.
+
+Thanks,
+Can Guo.
+>
+>> +
+>> +       ret = ufshcd_dme_change_power_mode(hba, pwr_mode);
+>> +
+>> +       if (!ret)
+>> +               ufshcd_vops_pwr_change_notify(hba, POST_CHANGE, pwr_mode);
+>> +
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(ufshcd_change_power_mode);
+>
+> Kind regards,
+> Bean
+
