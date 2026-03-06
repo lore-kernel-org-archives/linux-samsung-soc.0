@@ -1,217 +1,190 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83EF37EFFB
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64355329C7F
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 12:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772793011; cv=none; b=dgF0aR5jHwzp3dbdKJjZtih7e6z5N8aGBWzPnvudkTyuadU3IvUqbEJNlF2dC1goXN60hqWtKU7ySCilWLZki+JcG6r+Xg8H+LG5pNb8nIyQZrkTM9xGcew1R1cTSlI7A71F/OXBCoHz81zpF5iKbQ5zAYBvmKJz7pIv6bLp1Yc=
+	t=1772799949; cv=none; b=p3ZFB72tfSbg7hKI1NN+TBg/pzxJY/HFy2FVRfPqzPEliLFCwWoo6lrAh7jtoYsTywJRxEJs1qT4VQiCi5cx5Xr4KwINh3MdOOLHqtPUI6JJjKZpiFgFy01wVL4LGkK0KlDUdKwSJEpYT+sOjyimr7PmTW9BS0JNUX5ouM3ia+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772793011; c=relaxed/simple;
-	bh=NS+1Od4aVlTq9Wx7bCSooHKRSz+R9G4t7LsBp+nXiI4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TNqreO1o5wDrJu3UpnAJRZFKzL0CGKSqO4HyYkSiRxALkxQ9Q/swc1hPsiPZsMbU/3N6E/celWWbSqO76asajIPwZlsLf6EKQiwVccqkDkrPunsNd3VEovXbnOCvIESr6r1NOMr+9I5WbkFq4W0rRBbOb1XuoBhnzUIVp+RwKU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kd3VvyYW; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1772799949; c=relaxed/simple;
+	bh=q1mpQNuvkguIV3yJYO03VFzF6mQ49ojmlZq1IbYRwws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P4Kb2E+l0AlNCcLa86UTO8g+LfHXgbyTJNujpsOXCOXlDEXnBJyJHylNgVsF9pPYUxHlh5bsnFVTURGUiUtsF7VYuGtCpv0Q20KP6QdGP91C6Q445yL/XXR1jhvHVklENdag80aZj5QsEnSMEOjCHlCW2UNAkkOYtfTAfSTZ3v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eLCnNkmL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fddOS3wE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kd3VvyYW"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b9431300833so63369966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 02:30:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eLCnNkmL";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fddOS3wE"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 626BauID864940
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 6 Mar 2026 12:25:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NUkRbAo0c0S2TlWvB7t+iwi/GOepW+rNCNuvKtI+MXU=; b=eLCnNkmLsPJYxYtg
+	qdJjU55/C4Mu8i+8CIxARztWS2jZUyolOBZ+nrPYrQFKlh62Im5f1/+YO5gzJER8
+	jQ9kXAJVS5N00YlYWuzMa9yjLabWlSw4OS6VUjSSbKaWSZ8O/HRSNI50q6waRQkj
+	uBSo0noKVLjeGoe9rPUedr668o0PBV/t/FJ1it0dbYuWvPGqg6oS33rOUJZdJRg4
+	FjtmB6HGIBk3WSqx+fo5KZSppwIbyp+2t7YJmUXRkNBp3sG6NkAJEwWym8EBiEsX
+	VvswcYq8jUmZ/bpwPTh66Pzig/sCmPA72DVhfEeyTDE+Um/Nd+KBDdVFHK+/DFAl
+	BzSMzA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqrf5scj2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 12:25:47 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2ae4f27033cso56995995ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 04:25:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772793000; x=1773397800; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
-        b=kd3VvyYWfgTIZljFCayYYyW27MR5lMv1Y9tXR/l0Y22CxXXBuiiuhKWVsYJ5UgKgkn
-         2PyZV7X/8pOzdzZEVX+m99zJL/l+l7zJ3rTS8mh8hUFog/a4xTp9gWTj9kNUH0KfoNWs
-         SX8DrchN2PeZTtICDSiVFKufVGNiBLk8V+Kvz9A2Gl0x6K361REAh0zikTVZUHZ9KgB7
-         QhuXdF+iZ5V3/4rzBRomQgPfus9RTFGj5R18nrkbC2YF7Ycj5r/iRCzbfOPtZ4Y1b5d/
-         DgyQwb/B0+mcojCD1JrLbqmzNxjANPKsn6b35jCoIwl/C+GUwsdBRZJ232ClR+Y2bCIL
-         zi0Q==
+        d=oss.qualcomm.com; s=google; t=1772799946; x=1773404746; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NUkRbAo0c0S2TlWvB7t+iwi/GOepW+rNCNuvKtI+MXU=;
+        b=fddOS3wEeZmTc69zuagJBDroXx9CGW1CfAbhxENcpnI1vCkuIbDQNq6GoFvk2EblXf
+         jTZqqKWNrPU/gVkWPRrxXa2mjuT6Sm10zlLe6iXNL3lWcUx3Z853J1/6535Kt9PHmcL4
+         nQpvSnYrk6RNCm191JEpW3kF+oHY26w+9pYY9xGickFGC82qfPFS2W+6ARxyJUYw8wdi
+         rbvUHcEa/xsImNyVV81rIFrQETbl3CRHMpRLT1+xdvUr4q7r7VNCrH+FuJu77vATv1Qa
+         cu1it421P1efquylEKxadAHwX5GRP+0nzaRubTZw8MvyIk7ezvA/P0aHVxO8jRXBdp3F
+         8q4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772793000; x=1773397800;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
-        b=ljw8WQQxCl2B6razu2rp+CGYqs6F6dR1f0Iep5kxObgYzobPLb9ToyDCKYeAsBr6Tg
-         R8uZCeBLmOltvvaEvCIOiqh+jFWMH6tFehRjo1qP8M7XqEn9vQVaYndiWYj+liSFQ01h
-         4wHv99nP32vFlBgQ6IeMfdSXg7gGVidYzp5pU7CB1bwzqTUwwX1DPjijuupDds0tE3Eq
-         CIJpCtZJzfpadt69MySagX2slJdT6s0sJCpNMOFKtXZSQsUPw8TmDGfc4yVmSbfu5b8q
-         r0DKPThC++CjP45sfJusfqmTqPp1IgipWrpY/TFioXaDQyHRdIaZ+X8u//+Bhi+Un02F
-         WUJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCKIWbtQm0evQkalhf12i8bqgDETgRhdAfJS3uKDWUXzc7Y9nlylWQy8hQ5TM3OK5/m5+B9+Bed8ehtVj7wEtagw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6iGYnOlQ1p2/9aOxSOfLATTppWx8XUOYa0K6dhh9EUvQN3Sdl
-	w9J7bPP7Cc2IiyQd1/bZNK7G8HF130PGXV4SX9QVOZZOAUnFmaBT1Bh+dH/ogqSbxRsSE/zjL0W
-	gKCG5CqYngQ==
-X-Gm-Gg: ATEYQzxKFX8YRY34pJz6IBSkSJ/ngzX3jvwEyMjcHlIDkB2ykmYYPkPrUg2yj8ZhmbT
-	0Y5kmZgdBSUHeG0uqEHunVk9NGOmPP/J/U4I//d1lo4nKHJVgH+13iZoAd5kOKwxCaQNVhFKnBA
-	C9A+sdd844MBau51Lk23mSPEDD02LiKtg74sljl2crBbIynfc0uiela6cEAcVVJjLrucwR5y4CE
-	Ba7Dp1qd1s1lTtcPL2k7FiLBf0tMWE8INOMO5hfZvoPkqhCq8ffvP04SWwJjYB1HMCGIyREbILE
-	8nwy3kMOsuWqn9b9aOtPwOeeQOW2E/eo4sVl3zteHNxNivthi7uX4pmSjX4yEOzCBWQ5jMYYznS
-	+EaweCNIHVfqHR8HusRiquUE/2Ja48ZEL0HzweCNGTy2HyBgzeN0yL/cbzE1a13bCBGqrUt7xnY
-	VHAn8StBRR4ImRsmOskAXe4spWOFl4NLmUNgBlOjDZfIbTIyrW6mVsh9Bbfo5mNHL9lnwMb72oO
-	U39jMpIY0PW0LU=
-X-Received: by 2002:a17:906:f59a:b0:b93:4d73:e8af with SMTP id a640c23a62f3a-b942e0315e5mr100179566b.58.1772793000481;
-        Fri, 06 Mar 2026 02:30:00 -0800 (PST)
-Received: from puffmais2.c.googlers.com (221.210.91.34.bc.googleusercontent.com. [34.91.210.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b942ef8c95csm42907266b.21.2026.03.06.02.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 02:30:00 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Mar 2026 10:30:01 +0000
-Subject: [PATCH v7 10/10] pmdomain: samsung: implement domain-supply
- regulator
+        d=1e100.net; s=20230601; t=1772799946; x=1773404746;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NUkRbAo0c0S2TlWvB7t+iwi/GOepW+rNCNuvKtI+MXU=;
+        b=h5Ts67+rKofvy0vvoiHFQCzvTAMJFzAE99IHKstVaITRrfbBHbE5v5uB+xebhxA38T
+         Ya8l14cSpHDeADBjxvVgk8wGnS+hBJpqheUyLO06fsxqWU1Zn6WYMrGe7URyBALzmjpE
+         wn9W/1PpUVhpvSdFTov6h9iTw0B8YiE4l3INdNVFEN+2uS73TJAq2vEyNnDxEykXP0bo
+         FVcngBXMriutu8eAT84HXk8wAand6c7U3LctAeh1GhBmNjtvUt+6O3HGWc4rkNnD3Uw0
+         XKWtLYiWRXBp6Ks2rG7bSLmOWxSEhYwH4S/WX5lPp3ExoO7GGvcXdFMGXVRh5vMTX9VS
+         +V2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqxbiJS0LI2bAQgVPKlOYBzeTf8N9VTUNaG8DtjWp3NVQl6rPN490kB/EnVV46uF/0jt5e0OH8+5amkm90ItZhNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+9ClE7vI8Dls5sR1iGDKGL+kzHOvi865HzsBpDD77XuKzTCnx
+	IVNNka7k62RMrUsvQNcXN/fPla8H09sgHFLO/IYrzhke1B3uJ/wP/DLIBbq8zRNhDhHrtEPp9zP
+	RwiLMBT6dEn9XmUJgCiFepDypvhQE0X/OxdmTv5UC2zlcVhWLuRnTAMFW+mz7gwwBtKKF59+dHQ
+	==
+X-Gm-Gg: ATEYQzzTEfDPZC3tHFCkMNcP3FgRbGBYGmDykPJrNhuDy7gGDzE8u5rtdWxNqe4Np0F
+	ovnbNxQUsYog0tjFk9Cjc7e1pHapg8TjlddoTxWKNr9q8qO5izs2asl7Uo0OzuTGA+gc94TVYAG
+	AAIzG5OKrSxzP8qRRW8pe3zSBjiVUDvn3zv8vhKiuEdvABVFx9bqieLQWCXG3/oAT22Na8BaDvX
+	wFROTmTxR2ZogVWupftC0p1FO8Zxy1BDmSg31q179XQ8u3qmCZIHF1hDR8WGXnwpnbOLVQxRuJ4
+	y7ne4riZ5V/zKGr/N8wFpzE8U8shtIlM0bXfwznJcRpHR7m5IHCpFVEzhPux+QQeB6NqHGqU9Mb
+	LOQChdiP666I9K0HJsnVLp/zNeQPpCsU4dHTBNe7jHKnVKNGBg2laKR7xWBlhqCGTiGfW9PED2j
+	0r5DRQBjn8poY=
+X-Received: by 2002:a17:903:f86:b0:2ae:3f3f:67b8 with SMTP id d9443c01a7336-2ae82382430mr20485435ad.15.1772799945438;
+        Fri, 06 Mar 2026 04:25:45 -0800 (PST)
+X-Received: by 2002:a17:903:f86:b0:2ae:3f3f:67b8 with SMTP id d9443c01a7336-2ae82382430mr20484965ad.15.1772799944923;
+        Fri, 06 Mar 2026 04:25:44 -0800 (PST)
+Received: from [10.133.33.226] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae83f74e4fsm18940945ad.58.2026.03.06.04.25.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 04:25:44 -0800 (PST)
+Message-ID: <2ffc06fa-002a-4058-a78f-9ff60da9ed22@oss.qualcomm.com>
+Date: Fri, 6 Mar 2026 20:25:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260306-gs101-pd-v7-10-03f7c7965ba5@linaro.org>
-References: <20260306-gs101-pd-v7-0-03f7c7965ba5@linaro.org>
-In-Reply-To: <20260306-gs101-pd-v7-0-03f7c7965ba5@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] scsi: ufs: core: Introduce a new ufshcd vops
+ negotiate_pwr_mode()
+To: Krzysztof Kozlowski <krzk@kernel.org>, avri.altman@wdc.com,
+        bvanassche@acm.org, beanhuo@micron.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+        Ajay Neeli <ajay.neeli@amd.com>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Peter Wang <peter.wang@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Stanley Jhu <chu.stanley@gmail.com>,
+        Manivannan Sadhasivam
+ <mani@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Archana Patni <archana.patni@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-samsung-soc@vger.kernel.org>,
+        "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
+ <linux-mediatek@lists.infradead.org>,
+        "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>
+References: <20260304135313.413688-1-can.guo@oss.qualcomm.com>
+ <20260304135313.413688-2-can.guo@oss.qualcomm.com>
+ <8bfda6d7-f802-4b44-858a-f52ac8c051ac@kernel.org>
+Content-Language: en-US
+From: Can Guo <can.guo@oss.qualcomm.com>
+In-Reply-To: <8bfda6d7-f802-4b44-858a-f52ac8c051ac@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: v-xbnkKf7PqmTR1QFQgz_Eegkf7t-_WS
+X-Proofpoint-GUID: v-xbnkKf7PqmTR1QFQgz_Eegkf7t-_WS
+X-Authority-Analysis: v=2.4 cv=L+oQguT8 c=1 sm=1 tr=0 ts=69aac7cb cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=bBPRlu2x3IQPgS2CUtEA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA2MDExNyBTYWx0ZWRfX/Jzz/3GawvGv
+ fqocNOMv1pRylykLpEHDifTJmpnp5TNyShO32vWj9rrLFhzdLC95kh7cXYdCsh0ftI7jwoSZHks
+ 056112Uc+6cjYqSXkvwaMoqe8hYlNOaNcZ2pQWWgk60d22VqSUjxB2JYY9wja9j38uPD7VzwDUL
+ QyyLYKPN1WorHfA2agSjALMc40UXx1tacIybjs7l4d0EaRkQTdvw3pVCYPTcLeuu4R5W4t36nMv
+ vyxgUIFpcTqdwyezyJwQjHEUq03PPsBcijePvqOOerAsxFtKjbkdRMejeE4tUAkUY+jzRR7C6yD
+ lBzkhDmfEBCFYnpB6zMLt19DO9FuZD2pvB9AnrCI+RN8RGM1pVYIbbjLaMhdQEfMoQp+pltHh9o
+ ASg8kgw/GIwO5YOwlOyR7G+N/rM+I6y0vjfjhpRdXSYST3rf9TnhDNIbp5ByiOtGiFacBqkbUca
+ 0Wa+KKgE49gsZOJqysQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-06_04,2026-03-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603060117
 
-Some power domains on Exynos are fed by a regulator rail and therefore
-regulator control needs be implemented for Exynos power domains.
 
-On Google gs101, HSI0 (USB) is one example of such a power domain.
+On 3/5/2026 8:53 PM, Krzysztof Kozlowski wrote:
+> On 04/03/2026 14:53, Can Guo wrote:
+>>   {
+>>   	int ret;
+>>   
+>> @@ -4747,6 +4745,22 @@ static int ufshcd_change_power_mode(struct ufs_hba *hba,
+>>   	return ret;
+>>   }
+>>   
+> Missing kerneldoc.
+Will add in next version.
 
-While at it, add a to_exynos_pd() to avoid direct use of
-container_of() in various additional places, and update existing code
-to use it.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index f59986b56213..ed7a5807555b 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -20,12 +20,15 @@
- #include <linux/of_address.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- #define EXYNOS_SMC_CMD_PREPARE_PD_ONOFF		0x82000410
- #define EXYNOS_GET_IN_PD_DOWN			0
- #define EXYNOS_WAKEUP_PD_DOWN			1
- #define EXYNOS_RUNTIME_PM_TZPC_GROUP		2
- 
-+#define to_exynos_pd(gpd) container_of_const(gpd, struct exynos_pm_domain, pd)
-+
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
- 	u32 local_pwr_cfg;
-@@ -39,6 +42,7 @@ struct exynos_pm_domain_config {
- struct exynos_pm_domain {
- 	struct regmap *regmap;
- 	struct device *dev;
-+	struct regulator *supply;
- 	struct generic_pm_domain pd;
- 	const struct exynos_pm_domain_config *cfg;
- 	u32 configuration_reg;
-@@ -64,12 +68,10 @@ static int exynos_pd_access_controller_power(struct exynos_pm_domain *pd,
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- {
--	struct exynos_pm_domain *pd;
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
- 	u32 timeout, pwr;
- 	int err;
- 
--	pd = container_of(domain, struct exynos_pm_domain, pd);
--
- 	if (!power_on) {
- 		err = exynos_pd_access_controller_power(pd, power_on);
- 		if (err) {
-@@ -126,14 +128,45 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	return err;
- }
- 
-+static int exynos_pd_regulator_enable(struct regulator *supply)
-+{
-+	return supply ? regulator_enable(supply) : 0;
-+}
-+
-+static int exynos_pd_regulator_disable(struct regulator *supply)
-+{
-+	return supply ? regulator_disable(supply) : 0;
-+}
-+
- static int exynos_pd_power_on(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, true);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_regulator_enable(pd->supply);
-+	if (ret)
-+		return ret;
-+
-+	ret = exynos_pd_power(domain, true);
-+	if (ret)
-+		exynos_pd_regulator_disable(pd->supply);
-+
-+	return ret;
- }
- 
- static int exynos_pd_power_off(struct generic_pm_domain *domain)
- {
--	return exynos_pd_power(domain, false);
-+	struct exynos_pm_domain *pd = to_exynos_pd(domain);
-+	int ret;
-+
-+	ret = exynos_pd_power(domain, false);
-+	if (ret)
-+		return ret;
-+
-+	/* Ignore regulator errors - the domain was disabled after all. */
-+	exynos_pd_regulator_disable(pd->supply);
-+
-+	return 0;
- }
- 
- static const struct exynos_pm_domain_config exynos4210_cfg = {
-@@ -283,6 +316,16 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	/* get the domain power supply if required */
-+	pd->supply = devm_regulator_get_optional(dev, "domain");
-+	if (IS_ERR(pd->supply)) {
-+		if (PTR_ERR(pd->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(pd->supply),
-+					     "failed to get domain supply");
-+
-+		pd->supply = NULL;
-+	}
-+
- 	/*
- 	 * Some Samsung platforms with bootloaders turning on the splash-screen
- 	 * and handing it over to the kernel, requires the power-domains to be
-
--- 
-2.53.0.473.g4a7958ca14-goog
+Thanks,
+Can Guo.
+>
+>> +int ufshcd_change_power_mode(struct ufs_hba *hba,
+>> +			     struct ufs_pa_layer_attr *pwr_mode)
+>> +{
+>> +	int ret;
+>> +
+>> +	ufshcd_vops_pwr_change_notify(hba, PRE_CHANGE, pwr_mode);
+>> +
+>> +	ret = ufshcd_dme_change_power_mode(hba, pwr_mode);
+>> +
+>> +	if (!ret)
+>> +		ufshcd_vops_pwr_change_notify(hba, POST_CHANGE, pwr_mode);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(ufshcd_change_power_mode);
+>> +
+>
+> Best regards,
+> Krzysztof
 
