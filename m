@@ -1,150 +1,134 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A15127F4F5
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 21:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CCB349B02
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 21:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772831846; cv=pass; b=die96MB2STEJdMKFILBelqaMvA8X6PFTVau4y3npeSEPKA8OTlNxxtusBFWzJbOIhSzHr+2wwP0EtURV8VsBc/1VqDiymzSfqKDZVQiPFbgOZyauHRZjffoQF0LjeYoLCGTmWTrIogsIK+edU/cQ0LJ9Et/fIevDMhZTJ3WcCOw=
+	t=1772834148; cv=pass; b=W+DTyGaFVq9L1miCMa1EkfmWDBFBstUKbx69TA5g18CUS1PlUIGBpiOnQEdYsht6Sh808GsvZVnlNt6xOfiAZVzoQ5b9V/VMyld+h2fZ1knS8BkrJsEUl/XbP+pLe9l5Mlx+tT/WmKqKyylyjoJ729LyyUuyhMnCk50hXaoPbv8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772831846; c=relaxed/simple;
-	bh=xV+j6NHdrp5oM/A9ZIFLXQt2swBLQm+aDHDolhtd6Kg=;
+	s=arc-20240116; t=1772834148; c=relaxed/simple;
+	bh=xhG9hJVGCwxvhBOCI8BEdtl9CEQQcCjqSQegYbtplPY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bS/sU8NhN08AK4+apOqsyho7VItls0Qh11xgDB4JebsxX39ugusmjA+LLpYODTzZPdw/zKN4sQqCWnUlpEwtGmom/gpfUO+VANA2/DWiEHwGgLSOEszoCVpKQyq18X6LZS17e4WFlaRo1PP48kYQH0c48PZuxJLihAdOxCUyhpQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Miy2l5Yw; arc=pass smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=RpjF6T5aIIZRP8VppG2tpI3RwlEsYjyMyId6n25EkBEVw0o7aMtRV7lW0282QDTUL86nG/tyRMXpjm6Kam56WRL8pUZ9TYQEiPfhi5dzlmE78UYgGGoQxZHgE8or6t+lZsukIIjWH/ziSCrDkKJzN9GFdlJmjodx/LZJHpUC+qg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xf+ZQVrV; arc=pass smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Miy2l5Yw"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6610bd5f322so5542119a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 13:17:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772831844; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xf+ZQVrV"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-661b08b04deso974434a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 13:55:45 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772834144; cv=none;
         d=google.com; s=arc-20240605;
-        b=JYNByDiD9WJ1zKGfcacX3yQfYrQQxB6EbFAFX/3o7Rv1vm/eSMk1A6OISMBIqOcsTW
-         oCzSZFmaMrwigzrPMKKh9daZq3r1HUJd75GjNavlWMOKMO9ix9f6U72TjDqYQ75GichK
-         sAcU87E307t9/N1QBB5fwTijhM4rb9+yd2GV2tpAao1SpJJtdJYP4NozmQIej/+Rjvgm
-         bEnJx8cJODv5xWklK3zSFSP1qF1kSt4SiBYp1tEtzooqWAZietjUiuXRXRsOnyJhHT1N
-         nfu3pt8wC2W9/RaJB4ceEsuojpAUUZeEjW1+DpPXjm/PJOe90QgM/2az9eE8kMy7Hkmq
-         TdmQ==
+        b=Fpe8CMSE6W3f0pfqR3fOH97JEtsB090tgLQ0+uKcvyhmkg2yiw3gbLRAcIy+ZK4T48
+         uVbAiDZeFrC9zM1E0kWfkhaRFn1aRoCkQYhL/VukHd9OYBIVECz2MeIf4P/AV6U99Cfi
+         wSqQPczDYQWgBGSS1CEss7HhPYvvabzOg0akyJ7JeG91TMS8RvaRTvEt/4emb6mZtD4a
+         UmnjKSuwdpKJdnZ4CCbcRbERpnR4geZJ9njH9SkAOS/raGT+lJY9w7F7DY8XrcX7N2WP
+         woAu4HuIAsc1+em6kKdFN6FnfO3gdauV9cNULX6I1otkqs0VZ0Jm4h0ST6LEqeqxQmWL
+         BMTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=Y14EKX3r2NZEaQlK0jcqQywAmjLktS244ugWnhJ7Cns=;
-        fh=V2A9y3/oxHGuyhHA1+CQyc87R1e6Mq4F/9LWUIbM4k4=;
-        b=izhIZ4a5fUPJIIQf4kYHK43WKZxt/n3reyvUQI5qn7b8/bb0kUUh9MpOoSgFIa6tdU
-         S1jGcssN2G/vTXw75tyzvClvMBpFeWOexGXXHV8gI/BbOlbKEG6hQ82DZNzDI4XCD5PW
-         QdZlUNaS1hCQbzM9V9ATI3o/ah4PJzU8cLOV5F/GWPb/yTerawor7abNQqwcr0Wam57q
-         1G8sED3jHFqWbZGAFJmwj5LMmj2rHi3zVt4sbcmQ68C2006rm6ZXY3e87jr2/pMvMp3y
-         aTza0ZN9vYj6xQf79fTjs2KbNNQyhgjmkQBmZO5STLJ76zCNpDAj8MpJf9LUCGa0cccl
-         i19g==;
+        bh=xhG9hJVGCwxvhBOCI8BEdtl9CEQQcCjqSQegYbtplPY=;
+        fh=MYrPO54rGFyYl6CBGww2EnXFaf9OYObd7yhL0NABHPc=;
+        b=URkCaKbdckRdQBsWB0b3lilfAz2lEH+rDf9DKpCeJkOf1U5y5NnLDZ1H8roRSjNLMT
+         pSswElELEo3Uut0nTUghE9+IVZk8xlQkeBUCLu8yHxdZL43EgSbMjLujSbnMWt0Bt9Hi
+         Dl/DNKhgcukoho1JGq4i741xF7ey/HsJo0fzrXNEXe/wb/C8K5JTEGeg9W7qM5pUdC5t
+         9m6xdfXGt64nJRIVPgOCmTOFW4m+xkmjV9PVxUzG9ZdXT4/eSy6Pp689F6vqP0ObLUeh
+         +h1uPI8gGWaHTCan54KouIpRznWHg0EbfVL7lqs4jtyWlt0M1xPStxdsIrEJvZ47CzI7
+         ieOA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772831844; x=1773436644; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1772834144; x=1773438944; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y14EKX3r2NZEaQlK0jcqQywAmjLktS244ugWnhJ7Cns=;
-        b=Miy2l5Ywr0bstXjaUsgVwz68NheYRYqa2VBo91wKPoOEB/eWfI6sM1ZXAUVIBAGyNU
-         nWrILuk/mCJGZyWyq/DE8Qct5cbuGUtuFKg4vx+NTlP+eTsDt/Z9O92EJlJFgR2+UU90
-         OLMGUAprXwe3h4Dp6IGlXsgPvuPaM5PNp93jOHe5+i/7DmKeQ1TGeZcYCH83HT6B+D19
-         e2kI0tsM5Md9zZPFQShd2pG0qaxG7nWofsVbbo5ZIQ8cupKL3KcvJkb5H/6Wv79942Af
-         J/3A+I0kkJPl9mwrQGjoYr+kMDu3AyRCTx/BhXdyA97KOpecD6uHbKpaWjtKqk/GEgWR
-         ckfQ==
+        bh=xhG9hJVGCwxvhBOCI8BEdtl9CEQQcCjqSQegYbtplPY=;
+        b=xf+ZQVrVylrn1ciQwh6ZrN28d8zJVHiVFFokjYypCrYbinN8+60kbj5bxds4+lQht6
+         1WkHD/d+8qCA2kQaM6pPDQ2Pwb11vbP0zzeA6TPnlQQkMQo9gjhemEoedcNa+h7c46YD
+         OO4CvuzZtg9si8Vf+WBK5vjVVBHydzLdc7AKzQtsTi8bKTPm5nvpcsbEJggF0gP2YG9K
+         52RXxnBjyouOSXbHIz35mIt4ZkOPupqR+NxUst483RU3rC3tEaKwPPFuK574kmr6HT6S
+         p40rosK31JLxOX8dN+KTVCbAcYPvGD9LM6STj47SyuUNQVEFtdJdO0yP27GQNeZuGuK4
+         STWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772831844; x=1773436644;
+        d=1e100.net; s=20230601; t=1772834144; x=1773438944;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y14EKX3r2NZEaQlK0jcqQywAmjLktS244ugWnhJ7Cns=;
-        b=eg1fgNxZB1xYyp+BYHWymSUF/aGL6khM66d7R3LN2iOC6j9sFmNnwl0cblXnMRN+TV
-         RVUZPRPq3K5ZfY9gccR7ECayGXbwJuEwdZHn+yvMaXhbOfqlaclWcpb0YBPzBfYUmN/6
-         r+TGcvHRhzzq1t8gqpOq+Io/lavcLEgshYiQ54lNt/AxZj+R3FHlFRx2e6SyURIN9Mnh
-         KaK6Vb+VlsGpHjr/PIwp4Oz6SOu1El1uX9kZHT3yDp8GwYWCKomgN3Ye9rj2sdjs3CIQ
-         ufGZ6ddy07h/oJ5G0hx3uoJOa+0g6mRdbASfQDv23XNAS5CrfSFHO3IYk0E7u9c+oNbk
-         zLzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL++/fkAYnHjTfkuTmQIP5Ggl368gLRNP7mjZkuFXdbsbj3evWgTpuyS3iJEJrn9r/UcmqjTs9Wr/2I+4Ahb4P+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQTDyC959BvkOpa44Z6Al4kfi0AulvFB7BTQB2+XnECwNwuTAM
-	9ux9cPve/pt7KtlfaSRuL7Axn6mGaPMWENB3W06vCb4QjWGihnynfeptRduhKxrEyCIZ/CmfvF7
-	6ZF4HnjExoBoWJiMq9MQqR+rViqJlVndYiSJyOW3ScA==
-X-Gm-Gg: ATEYQzz3k0ZxL4zlyQ6FdjzI4fRwiWjKE3VAf/lDdW/lw/iwHu1JbYVvhT2ZKsRMNPG
-	LRJRWXNheObPc5dE2ZWjOtEnw/QTFgsPPkBAbRL+ICmhL5PrJBaIqpJtq7+cXm4DXaPtwRA1RiO
-	1rMyze8QD5dfPk8ayJZC9J19PKJjlfGKW7Nw1SfXDYsfzoBLM2MlemrV8zWcgcfXzhl4Y33CJwq
-	aFdf/MmSbuyt+W7q/YowPmBBngOfCU4XgOMiMkQ8YGHgym316+R7rnZr72QDZoFVmGJ0JTXa/Ha
-	eyMYol+wvXTCD1mGQTUkmsxRNOx7g2ysQ7t5G6F23Q==
-X-Received: by 2002:a05:6402:5212:b0:658:3972:3a3d with SMTP id
- 4fb4d7f45d1cf-6619d4e398bmr1927227a12.15.1772831843780; Fri, 06 Mar 2026
- 13:17:23 -0800 (PST)
+        bh=xhG9hJVGCwxvhBOCI8BEdtl9CEQQcCjqSQegYbtplPY=;
+        b=t/YQEkAHid0N/DNeBbGbZYuud74l89Hvtr0sE3nsYvdXMgGUjSXMB9zR20Z4Q+GVEW
+         YRtAnrgPMt8MjUuEPJRpoCavIiPOgw+RmQrW+UTsRmsKnDVE7tP6VdySe3hlAYylBeM3
+         Wo9mgrb5w+D1/IpwjSWy7GJLPZZB9vpGna5iZ1PIZOre1L7BRdJwKs8649LMGysYDDBq
+         rmimBXX5H0WRtDI5Yl8KSIJtsOgi0UkVlrs68DxPsM1aknD8PalEbnKc+rroRk1C/0nR
+         eFOvPP4ksp76UtWJSVL0I7L7nc0mzSMlKryncZ6RPGO7oeRYanV6pl3tXOsqjLSDsCwV
+         8+aA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6KXbkBilHn9dJEAIR3LoREkLjalFdW74IaetOE/DtFfRvF0MO/ybqhH5jVVY3bUgOA8lv3XQfzmq7av19HsTRjg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiH5TPool4yYho1pfnWYStZ8JL8dI0OTQtCyDgQx6teLgB9UfQ
+	wwaGtEwc0CwdZjGcyubuz1rIDakxWe6l4J47bSi2+HZFZidEyFnZLCraql8iKQBec7Be+dmen66
+	ETPxx43R1f8cVV/7eM4uMKm7+33WJk58RFFQIidlTMg==
+X-Gm-Gg: ATEYQzxvJRQ4Ny4aA8HhZWkKsag6rJI5vDFHo/RSMUtIS8GUnWI9HAB9+Q+MEtR1JfQ
+	vduwbBLDgeSTz9tb2V8eg+eCU3wAOKXeStqOU34SqU54us3lvRxoipee38qwa0Oru+GhqKBpZ3x
+	3kXBsskCPKVwk/DbPZzF/2Xee3JLKgSSaLwcXT0XGmqjCWJ+mP1iB1uzLnFKsJkK6PoijzyvEjX
+	+vt4iXiUqSNlJdhOwbXtaQ3cXNlDE0ccLEfHmSYkGuZplF/Ds3XOnHZOHEtKxHal40FWYL2AZ8p
+	53xVLTD5QUkPmSyuAW8Zx18j+A2wPi8awcF+WaCWhw==
+X-Received: by 2002:a05:6402:270a:b0:658:b837:7953 with SMTP id
+ 4fb4d7f45d1cf-6619d4d3cccmr1959565a12.12.1772834144140; Fri, 06 Mar 2026
+ 13:55:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20251202093027epcas2p24adbd3226dd50b2780baceee6588f3ba@epcas2p2.samsung.com>
- <20251202093613.852109-1-youngmin.nam@samsung.com> <20251202093613.852109-3-youngmin.nam@samsung.com>
-In-Reply-To: <20251202093613.852109-3-youngmin.nam@samsung.com>
+References: <20251202093613.852109-1-youngmin.nam@samsung.com>
+ <CGME20251202093028epcas2p456b6a2bfebfc76384f706a9962266fcf@epcas2p4.samsung.com>
+ <20251202093613.852109-4-youngmin.nam@samsung.com> <39a6dce9-ea6e-4a43-9bbc-54d822118db4@kernel.org>
+In-Reply-To: <39a6dce9-ea6e-4a43-9bbc-54d822118db4@kernel.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 6 Mar 2026 21:17:11 +0000
-X-Gm-Features: AaiRm53SUdPof_w4nrcD9oxrYObtPjzHD4ttJpdhJJCx0aq8VDLK-ZgvyeHdAs8
-Message-ID: <CADrjBPqYT9h_UJKSxBJ_KMQ4yQv4yyTuHaPYjC+K1-6TZj+PXg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] pinctrl: samsung: fix incorrect pin-bank entries
- on Exynos2200/7885/8890/8895
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: krzk@kernel.org, s.nawrocki@samsung.com, alim.akhtar@samsung.com, 
-	linus.walleij@linaro.org, semen.protsenko@linaro.org, 
+Date: Fri, 6 Mar 2026 21:55:33 +0000
+X-Gm-Features: AaiRm50JsSJm1gZbJFNlFIJjOXEWjxFKWFy2GaNbHIFXw94f1BU7JG5q4xDsnDI
+Message-ID: <CADrjBPrLYx=Se8bLrmm+3UEhvsr9Wm0tUi7SLyQnUYa5yPV_YA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] pinctrl: samsung: add per-bank FLTCON offset to
+ EXYNOS9_PIN_BANK_* and fix tables
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>, s.nawrocki@samsung.com, 
+	alim.akhtar@samsung.com, linus.walleij@linaro.org, semen.protsenko@linaro.org, 
 	ivo.ivanov.ivanov1@gmail.com, ryu.real@samsung.com, d7271.choe@samsung.com, 
 	shin.son@samsung.com, jaewon02.kim@samsung.com, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Youngmin,
+Hi Youngmin & Krzysztof,
 
-On Tue, 2 Dec 2025 at 09:30, Youngmin Nam <youngmin.nam@samsung.com> wrote:
+On Sun, 28 Dec 2025 at 11:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> This patch corrects wrong pin bank table definitions for 4 SoCs based on
-> their TRMs.
+> On 02/12/2025 10:36, Youngmin Nam wrote:
+> > Several Exynos9-era pin-bank tables were implicitly assuming that the
+> > filter control (FLTCON) registers are laid out contiguously from the
+> > EINT base offset. Per the TRMs this is not always true. FLTCON can live
+> > at a separate per-bank offset, and the current tables cause the driver
+> > to program the wrong FLTCON addresses for some banks.
 >
-> Exynos2200
-> - gpq0/1/2 were using EXYNOS_PIN_BANK_EINTN(), which implies a
->   'bank_type_off' layout (.fld_width = {4,1,2,2,2,2}).
-> - Per the SoC TRM these banks must use the 'alive' layout
->   (.fld_width = {4,1,4,4}).
-> - Switch them to EXYNOS9_PIN_BANK_EINTN(exynos9_bank_type_alive, ...).
->
-> Exynos7885
-> - etc0, etc1: update bank type to match the SoC TRM.
-> - gpq0 is a non-wakeup interrupt bank; change EINTW -> EINTN accordingly.
->
-> Exynos8890
-> - Per the SoC TRM, rename bank ect0 to gpb3 and mark it as
->   a non-external interrupt bank.
-> - gpi1, gpi2: update bank type to match the SoC TRM.
->   exynos8895_bank_type_off (.fld_width = {4,1,2,3,2,2}) ->
->   exynos5433_bank_type_off (.fld_width = {4,1,2,4,2,2})
-> - Per the SoC TRM, mark etc1 as a non-external interrupt bank.
-> - apply lower case style for hex numbers.
->
-> Exynos8895
-> - gpa4 is a non-wakeup interrupt bank per the SoC TRM.
->   change EINTW -> EINTN. (The bank_type itself was correct and is kept
->   unchanged.)
-> - apply lower case style for hex numbers.
->
-> This aligns the pin-bank tables with the documented bitfield layouts and
-> wakeup domains. No DT/ABI change.
->
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+> "Can live" or "Does live"? Adding unused offset is not improving the
+> code. The implicit offset is fine, if it is correct.
 
-This patch contains some worthwhile fixes for multiple Exynos SoCs. Do
-you plan to re-send it? I think it would be good to get this merged
-(even if there isn't broad agreement around renaming the pinctrl
-macros to EXYNOS9_)
+I saw the same issue Youngmin outlines here on gs101 SoC. The current
+implicit offset calculation sometimes results in programming an
+incorrect register (if you're lucky). I also saw Serror if it turns
+out to be a nonexistent register (which kills the system).
+
+As Youngmin mentioned "Exynos9-era" in the commit description, I
+suspect (but can't say for sure) that all the SoCs mentioned in this
+patch are the same as gs101, and the implicit offset calculation is
+incorrect. IIRC this code path is only triggered on suspend/resume
+paths which likely explains why nobody noticed the bug previously.
+
+IMO, resending this patch would be good, as it should bring these SoCs
+one small step closer to functional suspend/resume. It's probably also
+worthwhile splitting this into separate commits, and adding Fixes
+tags.
 
 Thanks,
 
-Peter
+Peter.
