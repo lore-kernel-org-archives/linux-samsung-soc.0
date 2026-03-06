@@ -1,119 +1,129 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB0336C0A6
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 07:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1161E221540;
+	Fri,  6 Mar 2026 07:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772780513; cv=none; b=jxynHRm2CfYeSfrPwnWebB2fAOpQyQTQINI0C9BkwiDornX2Fb9HZnNvmFbZVXuTrRehSxtDVsuR7B+GO/76DX4/OeVbfu6DtIfJ+c9tgbS3ApFs3jZ1HdMW+4UM85Aby0JKUsSlYc7Uw2e3WqO91CvBBruPWQMRD5BcuwIFu/c=
+	t=1772782613; cv=none; b=KtS21G8brkDPmRd4FjbpW4nxggRyag1P0ZFOi2TvaFAkj3pMtSlFTgBGskTtEZ+Rb1oCpiAzeNbj0rW0hCZn7a6e/OlmkGSLwvPJRCys06sEzLX+yW+9S/OlWQe4zRTFPSD5QgKOZv38poQAk2ZXNrOlX47x2ftoPl4H1ATU884=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772780513; c=relaxed/simple;
-	bh=U5ovtFZGT6J0/COcDYCmDClaijQmWD3Zbr+hgB175wI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UPn7+TqlAPIILP9k9jgam+zj1eSMVg/WSglGrGu3JQrg2voQc36i9xj4/KbVaxhd167cw5V6Vxt7kYk5+FqDECSV15+7/vnr58W8jvl3dE072OdatZG96QGLUjEXeMieLxz7mW/Uetpk1LE5L9EwCif/nLxmxm6+4vS4W+EA3J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E4T4ajbW; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1772782613; c=relaxed/simple;
+	bh=ODvio30d2U39SOyQE9o3r70lLsCN1rTtdRiiHLywxLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=meqO7yZhl8K051qAO31v3brH0XpR0vdewesG8o+HArEo9+kLWBWNPWZm/w94kZvq70JVFdNTFj3AG4A6Tw53USnoT4MByBpA3bWpWfH4jYtBd0LwvEcwnuMAWWU5DO2z5NjaEE2NT2Bm6OF0J8myEsbEi5PVkF1rZt46FdIZp98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkFDc5bM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E4T4ajbW"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439c56e822eso3098040f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Mar 2026 23:01:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1772780510; x=1773385310; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=g/Izo1I7P2lYa0tqmXpdAdhxEzYAi9jVGmrjmB9VLPo=;
-        b=E4T4ajbWUTWlFMArKhQ6V7XMrb5b2K4Skb3GX6ke3CeDTdq3BOs5CkdvPyOwoUoCYi
-         gFltKAZML+LKYgacr9grDe7rklDT2EkfpUgMCfs2m68QlzKJSERfTsdq9vVBnGNQNxnD
-         Edxm8qvuUpq43O4yKhsLmzu6OwNIW58mIDXibMJAkBb/im6Kf38EimmUo9oCFtBYdx/r
-         ELc/gJQUSG0VB5ONcK2psBkqf1zZuTvi9Si01FLfj4E8da1be8XGIKjINLzoDEdSmbtO
-         GeS17bHx32jn/ZFqkIbn8zAua8xJIDoC3YtWageqBL1JbvyKxon49CnwpRq+I3ZwRLvZ
-         93vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772780510; x=1773385310;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g/Izo1I7P2lYa0tqmXpdAdhxEzYAi9jVGmrjmB9VLPo=;
-        b=P9LURm42n/DcV++MlECZepmitJbfnkNvwRrNLcwxIE97uYPNxuPTStyPwk9eqbSn0T
-         DffIwu427AHJbpCe7cihZ9jIkxL4mfH0rfP5eOlt9Di9wo0IYdQVwK+gn0AR3ph6bTHh
-         u6mGGn7Zkkw+gK+4KFnA+op7wR9yIHDJDXdBbYl5KbkPPSOE9+nswgfigvgIMaOmYPhZ
-         uaFzQzG2+nFr/3qHFdt72wfbcRrlXA1eTr9rizqGtrNy+FZY/wwI0iw7sscNtwnV4wJt
-         waaECp9fjMM4x+h1mv8aquj66sYFTv0LK6OIq+6D5Ge+cc6lkpVJF4YKMJWDNHiPKHHk
-         ZENw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGmzYqeFb0SDkh3bsdoyQBoRNJqyvoJV/NP+o+sa74rBg+bJu5J80TxmCPFqGNNcVFIMQy7oGDUdGjBLWwpt4sbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7CgfM43zhUPOR7ivlONC5w8Vi3NZ8OpfCGhssIWxXox2VZuFB
-	4DiajmUpbDgLoj3k8ACKJURwEWW0DVSQAnsmS1LlX9J/TxkdYYkdeKgd6ctD3WmwgCg=
-X-Gm-Gg: ATEYQzwI1qMYk+STle3dXGOMa28/BAcxpVEGj5HNL/XB+schriMWGPVo4RFhkf1aN+n
-	kZgGFSz+tE77uZ381O/2Ja/Je9k6Ake7MNYUXKaQB8/UAyP1eJ3ZJkgDrTF4CL1bURhS8gF3RuP
-	PqreMSTgnKcWdnU5+KJ1VDp3YihKFgrexC+wu+a4x0fxeodMPJW4qky4Hqf1p4kYwKf6Ufn+LbO
-	yuBFJ0Uup4rmqFUWoroESmZ/RQLhq/T6IvPGWbJ4lWAx9oJapRr1kNj4UfuGSMygLG4TKiIMIr5
-	WvfieX779xyZ3XM3zFfvG+mBjpdMRqY7E6/ypmeMUe/vW06AhnNKrRHCBc40Di1LuLvu1rU6mU0
-	vGAaoSxqy1Iy7ODcksE9So9Yy9EE8CCNi42J4Gor1/zUmzWQD1bk7/6fSVFcd3U8mIMPl6sqkTT
-	/iyUGFFv7pcZJn34g0Y84CgDRQBylj
-X-Received: by 2002:a05:6000:2c03:b0:439:bd70:610f with SMTP id ffacd0b85a97d-439da890077mr1657657f8f.44.1772780509950;
-        Thu, 05 Mar 2026 23:01:49 -0800 (PST)
-Received: from draszik.lan ([212.129.78.78])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2ba06sm1713784f8f.24.2026.03.05.23.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2026 23:01:49 -0800 (PST)
-Message-ID: <198f569078f4a6e3b4e8ad080a94cd336c1e39bf.camel@linaro.org>
-Subject: Re: [PATCH v3 07/13] mfd: sec: set DMA coherent mask
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, Lee Jones
- <lee@kernel.org>,  Pavel Machek <pavel@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo
- Choi	 <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Jonathan Corbet	 <corbet@lwn.net>, Shuah
- Khan <skhan@linuxfoundation.org>, Nam Tran	 <trannamatk@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Date: Fri, 06 Mar 2026 07:03:10 +0000
-In-Reply-To: <20260225-s2mu005-pmic-v3-7-b4afee947603@disroot.org>
-References: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
-	 <20260225-s2mu005-pmic-v3-7-b4afee947603@disroot.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2+build4 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkFDc5bM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1943AC4CEF7;
+	Fri,  6 Mar 2026 07:36:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772782612;
+	bh=ODvio30d2U39SOyQE9o3r70lLsCN1rTtdRiiHLywxLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HkFDc5bMXNYfmBMwQaaWuqd0OKTasExEF96N5g5MPImBTRBZfbKnC7a93tBaV/kTJ
+	 uLoOANJ2eldrtDywnk0Hq0mrDL7JLveGXWRrpwRf2i+QLheux5xswai6e+6aJHNOtM
+	 pUQd/sp8g5L/kxNhwLfzlHKY1XM0Zam9sBaXyviFYO6oX21Vb14VFzxl62KEAya62l
+	 WuCKcXC88+yKXPjZcv0mOC8Xr+AUCczmgVdhvCQGhnCnn6UzohFPLh5d+CshHclIub
+	 LlMkK3KGAzw4rwa07LbV3tQ6NDkGivS/6/vHfVlHJo7n9rM4IFvzsTgdmMNHMHeCwS
+	 nxqd+L3/aQxzA==
+Date: Fri, 6 Mar 2026 08:36:50 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v6 04/10] dt-bindings: soc: google: gs101-pmu: allow
+ power domains as children
+Message-ID: <20260306-hopeful-amusing-sawfly-e60c6d@quoll>
+References: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
+ <20260305-gs101-pd-v6-4-8cb953c1a723@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260305-gs101-pd-v6-4-8cb953c1a723@linaro.org>
 
-On Wed, 2026-02-25 at 00:45 +0530, Kaustabh Chakraborty wrote:
-> Kernel logs are filled with "DMA mask not set" messages for every
-> sub-device. The device does not use DMA for communication, so these
-> messages are useless. Disable the coherent DMA mask for the PMIC device,
-> which is also propagated to sub-devices.
+On Thu, Mar 05, 2026 at 06:11:53AM +0000, Andr=C3=A9 Draszik wrote:
+> The power domains are a property of / implemented in the PMU. As such,
+> they should be modelled as child nodes of the PMU.
 >=20
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+It is impossible to test a binding in a meaning of "tests", thus you
+should not add Marek's tags to bindings patches.
+
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
-> =C2=A0drivers/mfd/sec-i2c.c | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
+> v4:
+> - consistent quoting using " (Krzysztof)
+> - add samsung,dtzpc to example
 >=20
-> diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
-> index d8609886fcc80..9fa1449a4f6eb 100644
-> --- a/drivers/mfd/sec-i2c.c
-> +++ b/drivers/mfd/sec-i2c.c
-> @@ -177,6 +177,9 @@ static int sec_pmic_i2c_probe(struct i2c_client *clie=
-nt)
-> =C2=A0		return dev_err_probe(&client->dev, PTR_ERR(regmap_pmic),
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "regmap init failed\n");
-> =C2=A0
-> +	client->dev.coherent_dma_mask =3D 0;
-> +	client->dev.dma_mask =3D &client->dev.coherent_dma_mask;
+> Note:
+> Because the properties added are 'required', this commit breaks DT
+> validation of the existing DT for Pixel 6, but a) that's simply because
+> the DT is incomplete and b) a DT update will be posted once the binding
+> is accepted.
+> It is not possible to write the binding such that it supports old
+> (incomplete) DTs in addition to the full version, but as per above
+> it's not required to keep supporting old DTs.
+> ---
+>  .../bindings/soc/google/google,gs101-pmu.yaml      | 41 ++++++++++++++++=
+++++++
+>  1 file changed, 41 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pm=
+u.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> index a06bd8ec3c20..c1ee9575092a 100644
+> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> @@ -16,6 +16,14 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> +  "#address-cells":
+> +    const: 1
 > +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+>    reboot-mode:
+>      $ref: /schemas/power/reset/syscon-reboot-mode.yaml
+>      type: object
+> @@ -39,9 +47,23 @@ properties:
+>      description:
+>        Phandle to PMU interrupt generation interface.
+> =20
+> +patternProperties:
+> +  "^power-domain@[0-9a-f]+$":
+> +    type: object
+> +    description: Child node describing one power domain within the PMU
+> +
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: google,gs101-pd
+> +
+>  required:
+>    - compatible
+>    - reg
+> +  - '#address-cells'
+> +  - '#size-cells'
 
-This should probably move into sec-common.c as it should apply to all
-transports.
+I don't see improvements about quotes.
 
-Cheers,
-A.
+Best regards,
+Krzysztof
 
