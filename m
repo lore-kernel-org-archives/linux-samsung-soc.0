@@ -1,69 +1,69 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBDD37E312
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 10:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83EF37EFFB
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 10:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772793008; cv=none; b=pRiRKIAKNyWR6hUpNgq6+EAGHd4KlCEVXQPanb/Mq/fNNSXMvXsT/P5nIaKBKWb84jO/wEJGouhIw8aIbZz9Wn9F6L0a7qhFRYqiBNvLbeYBDHL2OqrlRD6cSev8/Kc60/diVM8moWsaTTULOskoTd2JLsd23CEAbh1/FZ5r6uU=
+	t=1772793011; cv=none; b=dgF0aR5jHwzp3dbdKJjZtih7e6z5N8aGBWzPnvudkTyuadU3IvUqbEJNlF2dC1goXN60hqWtKU7ySCilWLZki+JcG6r+Xg8H+LG5pNb8nIyQZrkTM9xGcew1R1cTSlI7A71F/OXBCoHz81zpF5iKbQ5zAYBvmKJz7pIv6bLp1Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772793008; c=relaxed/simple;
-	bh=U+pgoXFtqVjylMufxL+ijffy+ks+RYDFMMjRK6SVUv8=;
+	s=arc-20240116; t=1772793011; c=relaxed/simple;
+	bh=NS+1Od4aVlTq9Wx7bCSooHKRSz+R9G4t7LsBp+nXiI4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IwSp00vmJ//HVQJnXrtqeAvj5RefOBr5Ui+NmSSWa/Le8zfLk8nEgBKwDhE+Zl5pVFqmfugeBWFWjjBX1vGUUV5Gukha4KMy7G+sGzTp/lPm5UPTbMNWd0XzoT2F8Wpq39mwwIO2Wg1K2Lwt7Y2ip4pq+Lm/ilDD25ddk2eQl6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bIOpDDAQ; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:To:Cc; b=TNqreO1o5wDrJu3UpnAJRZFKzL0CGKSqO4HyYkSiRxALkxQ9Q/swc1hPsiPZsMbU/3N6E/celWWbSqO76asajIPwZlsLf6EKQiwVccqkDkrPunsNd3VEovXbnOCvIESr6r1NOMr+9I5WbkFq4W0rRBbOb1XuoBhnzUIVp+RwKU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kd3VvyYW; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bIOpDDAQ"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b9419139eb7so179912466b.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 02:30:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kd3VvyYW"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b9431300833so63369966b.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 02:30:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1772793000; x=1773397800; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=v9aOQtXPMrRyOq0vhd4Vrs9+A7t+qYPDJvOzQNfneMs=;
-        b=bIOpDDAQ+JzFAP+qM4P3B1GLGFG2OlUp0NqRAlxx6gywg7bFh1magOolomZhAg+fYT
-         /FYUolzlEn83bouOGXUXWFyF8+qTGwGUPypXFUGr7gIKWcfX6f47IKeiisRc1lemyYES
-         qjXF0z8gHXr6h6DhBPboFxQfc8a/EErTieQ8nD/e6Hn3EarSgXCpLcY4s2ABhS7K/TPA
-         5uuLrmf4YNuqL3mZ2yTkpfGUtBqmjjbF0J2lwIYtKfP1Inl2mUHImp0x2iITsH2OGuLw
-         N8O9fiWkaz7YGVhDwoPcD8TO6VIVsOGR0i5IxuNfWqezEAo8t7STGGjTFZy1ntfL0IRB
-         oq/Q==
+        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
+        b=kd3VvyYWfgTIZljFCayYYyW27MR5lMv1Y9tXR/l0Y22CxXXBuiiuhKWVsYJ5UgKgkn
+         2PyZV7X/8pOzdzZEVX+m99zJL/l+l7zJ3rTS8mh8hUFog/a4xTp9gWTj9kNUH0KfoNWs
+         SX8DrchN2PeZTtICDSiVFKufVGNiBLk8V+Kvz9A2Gl0x6K361REAh0zikTVZUHZ9KgB7
+         QhuXdF+iZ5V3/4rzBRomQgPfus9RTFGj5R18nrkbC2YF7Ycj5r/iRCzbfOPtZ4Y1b5d/
+         DgyQwb/B0+mcojCD1JrLbqmzNxjANPKsn6b35jCoIwl/C+GUwsdBRZJ232ClR+Y2bCIL
+         zi0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1772793000; x=1773397800;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=v9aOQtXPMrRyOq0vhd4Vrs9+A7t+qYPDJvOzQNfneMs=;
-        b=ZLKFdR/3aTEzDHlyseIju/m33LS27zS6xMp+Hw+YFUK1j5P6MIdFQplPZrT2gKJZMj
-         oyUicR8G36F6JbWObbl7jPv6yyI3HOwFbX/OI1Mfai+yHBTAJi6ZRdOwWszLbyic9qMN
-         cVJ6VF+qPw6+y7EIKEibtsYBDZJOAus5I3SMM0OPpcDCJ5zk7pmbYF5h1fT01h0Z8Edk
-         FU4JCCq4Zb/AinGATe8QuAISFH397V65yV3qbDYunF0Uy1wEmUX74EF3V8zI2ZIK1b/j
-         tCltYJgS4nzwpJN/L9gkqZtYT+UQFk+W7ZnGBLjDkrRsZt64Y0nqA8xz/KDQru/1X9KH
-         YwcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW133ageHXhZNLzJ6YrMEXGPR+u9sHoiyM1xaeS0luTW8ZgU9ZzkXmUCLNEqp5j0oP3N6qVuWTz3cNuc9Jhe5v1hA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8KcdT6NalxSVYscRPx5L56/VuL0x11rTRx0HLKarOn1uHlDXD
-	V+Vdgg1ItfkoRP8iGO2y23/jZfpc0hqcEPa9cd+a7Z81E/0UQTqy14zY5Kv7wkIOU6p3l3IX5We
-	AlkuQvpB7Mw==
-X-Gm-Gg: ATEYQzxgnNG+OhvPyX+QQZomImgroFvcCRkMpD4mg9OnxtPMGWnxnZfVv01sV90DrRW
-	ak18q1BorkEufabM6A1tHit715jjn7gmYNxZKAEfhh0NnM6R1C+zSCQQTy2mB4EMLr9ROh0oAqu
-	6a7ZG8S1qYdHOtG1ZQNR9BkpLDaZWZSPVolCBgZsW1uEUMvUK3XlrBntxEG3ZrN2aM7vrqQkf0t
-	tzMiXjpkew+5Eb0lS3fGp5aXXONjC8hyNdy7+uuOoMUT/UeTXmufWyW/KLZE7qVrjbd5OxKhmiK
-	MM7qBX9JqFY8PZ4GWivuAbNFGz7nHCv1BVbDhp98riKvYSSkFbJzGbxvrWr9PtvgA7oHq3EvW6D
-	QtY78DanEzZd4gb9V77HEReE80aIT538kHsgIQ/uoS727fM4O0/XwdJfDYhyFdGA22KanrQjb3Y
-	WvEI6EOEJ0JWSTL+lnEoDa/9KAE7hN3AB8wtrLYfNynn1gQ/a3js9B3PIO6KE2eAlERUA+9B0eg
-	Fh2Qgsf/YIHeYI=
-X-Received: by 2002:a17:907:3f87:b0:b94:2d07:6c3e with SMTP id a640c23a62f3a-b942ddf6c53mr95330966b.27.1772792999960;
-        Fri, 06 Mar 2026 02:29:59 -0800 (PST)
+        bh=Z+RpBQOuQW07kF7dgJNXDXfeT4g3XJJZS09GBpqTzzg=;
+        b=ljw8WQQxCl2B6razu2rp+CGYqs6F6dR1f0Iep5kxObgYzobPLb9ToyDCKYeAsBr6Tg
+         R8uZCeBLmOltvvaEvCIOiqh+jFWMH6tFehRjo1qP8M7XqEn9vQVaYndiWYj+liSFQ01h
+         4wHv99nP32vFlBgQ6IeMfdSXg7gGVidYzp5pU7CB1bwzqTUwwX1DPjijuupDds0tE3Eq
+         CIJpCtZJzfpadt69MySagX2slJdT6s0sJCpNMOFKtXZSQsUPw8TmDGfc4yVmSbfu5b8q
+         r0DKPThC++CjP45sfJusfqmTqPp1IgipWrpY/TFioXaDQyHRdIaZ+X8u//+Bhi+Un02F
+         WUJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCKIWbtQm0evQkalhf12i8bqgDETgRhdAfJS3uKDWUXzc7Y9nlylWQy8hQ5TM3OK5/m5+B9+Bed8ehtVj7wEtagw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6iGYnOlQ1p2/9aOxSOfLATTppWx8XUOYa0K6dhh9EUvQN3Sdl
+	w9J7bPP7Cc2IiyQd1/bZNK7G8HF130PGXV4SX9QVOZZOAUnFmaBT1Bh+dH/ogqSbxRsSE/zjL0W
+	gKCG5CqYngQ==
+X-Gm-Gg: ATEYQzxKFX8YRY34pJz6IBSkSJ/ngzX3jvwEyMjcHlIDkB2ykmYYPkPrUg2yj8ZhmbT
+	0Y5kmZgdBSUHeG0uqEHunVk9NGOmPP/J/U4I//d1lo4nKHJVgH+13iZoAd5kOKwxCaQNVhFKnBA
+	C9A+sdd844MBau51Lk23mSPEDD02LiKtg74sljl2crBbIynfc0uiela6cEAcVVJjLrucwR5y4CE
+	Ba7Dp1qd1s1lTtcPL2k7FiLBf0tMWE8INOMO5hfZvoPkqhCq8ffvP04SWwJjYB1HMCGIyREbILE
+	8nwy3kMOsuWqn9b9aOtPwOeeQOW2E/eo4sVl3zteHNxNivthi7uX4pmSjX4yEOzCBWQ5jMYYznS
+	+EaweCNIHVfqHR8HusRiquUE/2Ja48ZEL0HzweCNGTy2HyBgzeN0yL/cbzE1a13bCBGqrUt7xnY
+	VHAn8StBRR4ImRsmOskAXe4spWOFl4NLmUNgBlOjDZfIbTIyrW6mVsh9Bbfo5mNHL9lnwMb72oO
+	U39jMpIY0PW0LU=
+X-Received: by 2002:a17:906:f59a:b0:b93:4d73:e8af with SMTP id a640c23a62f3a-b942e0315e5mr100179566b.58.1772793000481;
+        Fri, 06 Mar 2026 02:30:00 -0800 (PST)
 Received: from puffmais2.c.googlers.com (221.210.91.34.bc.googleusercontent.com. [34.91.210.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b942ef8c95csm42907266b.21.2026.03.06.02.29.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b942ef8c95csm42907266b.21.2026.03.06.02.30.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 02:29:59 -0800 (PST)
+        Fri, 06 Mar 2026 02:30:00 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Mar 2026 10:30:00 +0000
-Subject: [PATCH v7 09/10] pmdomain: samsung: implement SMC to save /
- restore TZ config
+Date: Fri, 06 Mar 2026 10:30:01 +0000
+Subject: [PATCH v7 10/10] pmdomain: samsung: implement domain-supply
+ regulator
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260306-gs101-pd-v7-9-03f7c7965ba5@linaro.org>
+Message-Id: <20260306-gs101-pd-v7-10-03f7c7965ba5@linaro.org>
 References: <20260306-gs101-pd-v7-0-03f7c7965ba5@linaro.org>
 In-Reply-To: <20260306-gs101-pd-v7-0-03f7c7965ba5@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -90,216 +90,127 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.3
 
-Newer Exynos platforms have a Distributed Trust Zone Protection Control
-(DTZPC) linked to each power domain. It controls the access permissions
-to various registers from secure and non-secure world. An SMC call is
-required to instruct the firmware that the power domain is about to be
-turned off and again once it was turned on. This allows the firmware to
-save and restore the DTZPC configuration. Without, register access to
-various registers becomes impossible from Linux (causing SError), as
-the PoR configuration doesn't allow access.
+Some power domains on Exynos are fed by a regulator rail and therefore
+regulator control needs be implemented for Exynos power domains.
 
-Neither the requirement for the SMC call, nor its arguments appear to
-be specific to gs101, as at least Exynos E850 also uses the same as can
-be seen in [1], hence prefix the new macros simply with EXYNOS_.
+On Google gs101, HSI0 (USB) is one example of such a power domain.
 
-At least on gs101, this SMC call isn't implemented for all power
-domains (e.g. it's missing for HSI2 (UFS)), therefore we issue a test
-SMC to store the configuration during probe, and if it fails we mark a
-domain as always-on to avoid the SErrors and to avoid unnecessarily
-retrying for each domain on/off.
+While at it, add a to_exynos_pd() to avoid direct use of
+container_of() in various additional places, and update existing code
+to use it.
 
-Link: https://lore.kernel.org/all/20230308233822.31180-4-semen.protsenko@linaro.org/ [1]
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/pmdomain/samsung/exynos-pm-domains.c | 96 ++++++++++++++++++++++++++--
- 1 file changed, 90 insertions(+), 6 deletions(-)
+ drivers/pmdomain/samsung/exynos-pm-domains.c | 53 +++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index 41a232b3cdaf..f59986b56213 100644
+index f59986b56213..ed7a5807555b 100644
 --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
 +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -9,6 +9,7 @@
- // conjunction with runtime-pm. Support for both device-tree and non-device-tree
- // based power domain support is included.
- 
-+#include <linux/arm-smccc.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -16,12 +17,19 @@
- #include <linux/pm_domain.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
+@@ -20,12 +20,15 @@
+ #include <linux/of_address.h>
  #include <linux/pm_runtime.h>
  #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
  
-+#define EXYNOS_SMC_CMD_PREPARE_PD_ONOFF		0x82000410
-+#define EXYNOS_GET_IN_PD_DOWN			0
-+#define EXYNOS_WAKEUP_PD_DOWN			1
-+#define EXYNOS_RUNTIME_PM_TZPC_GROUP		2
+ #define EXYNOS_SMC_CMD_PREPARE_PD_ONOFF		0x82000410
+ #define EXYNOS_GET_IN_PD_DOWN			0
+ #define EXYNOS_WAKEUP_PD_DOWN			1
+ #define EXYNOS_RUNTIME_PM_TZPC_GROUP		2
+ 
++#define to_exynos_pd(gpd) container_of_const(gpd, struct exynos_pm_domain, pd)
 +
  struct exynos_pm_domain_config {
  	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
  	u32 local_pwr_cfg;
-+	u32 smc_offset;
- 	bool use_parent_regmap;
- };
- 
-@@ -32,11 +40,28 @@ struct exynos_pm_domain {
+@@ -39,6 +42,7 @@ struct exynos_pm_domain_config {
+ struct exynos_pm_domain {
  	struct regmap *regmap;
  	struct device *dev;
++	struct regulator *supply;
  	struct generic_pm_domain pd;
--	u32 local_pwr_cfg;
-+	const struct exynos_pm_domain_config *cfg;
+ 	const struct exynos_pm_domain_config *cfg;
  	u32 configuration_reg;
- 	u32 status_reg;
-+	phys_addr_t ac_pa;
- };
+@@ -64,12 +68,10 @@ static int exynos_pd_access_controller_power(struct exynos_pm_domain *pd,
  
-+static int exynos_pd_access_controller_power(struct exynos_pm_domain *pd,
-+					     bool power_on)
-+{
-+	struct arm_smccc_res res;
-+
-+	if (!pd->ac_pa || !pd->cfg->smc_offset)
-+		return 0;
-+
-+	arm_smccc_smc(EXYNOS_SMC_CMD_PREPARE_PD_ONOFF,
-+		      power_on ? EXYNOS_WAKEUP_PD_DOWN : EXYNOS_GET_IN_PD_DOWN,
-+		      pd->ac_pa + pd->cfg->smc_offset,
-+		      EXYNOS_RUNTIME_PM_TZPC_GROUP, 0, 0, 0, 0, &res);
-+
-+	return res.a0;
-+}
-+
  static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
  {
- 	struct exynos_pm_domain *pd;
-@@ -45,7 +70,17 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+-	struct exynos_pm_domain *pd;
++	struct exynos_pm_domain *pd = to_exynos_pd(domain);
+ 	u32 timeout, pwr;
+ 	int err;
  
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 
--	pwr = power_on ? pd->local_pwr_cfg : 0;
-+	if (!power_on) {
-+		err = exynos_pd_access_controller_power(pd, power_on);
-+		if (err) {
-+			dev_err(pd->dev,
-+				"SMC for power domain %s %sable failed: %d\n",
-+				domain->name, power_on ? "en" : "dis", err);
-+			return err;
-+		}
-+	}
-+
-+	pwr = power_on ? pd->cfg->local_pwr_cfg : 0;
- 	err = regmap_write(pd->regmap, pd->configuration_reg, pwr);
- 	if (err) {
- 		dev_err(pd->dev,
-@@ -60,7 +95,7 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		unsigned int val;
- 
- 		err = regmap_read(pd->regmap, pd->status_reg, &val);
--		if (err || ((val & pd->local_pwr_cfg) != pwr)) {
-+		if (err || ((val & pd->cfg->local_pwr_cfg) != pwr)) {
- 			cpu_relax();
- 			usleep_range(80, 100);
- 			continue;
-@@ -72,9 +107,21 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	if (!timeout && !err)
- 		/* Only return timeout if no other error also occurred. */
- 		err = -ETIMEDOUT;
--	if (err)
-+	if (err) {
- 		dev_err(pd->dev, "Power domain %s %sable failed: %d\n",
- 			domain->name, power_on ? "en" : "dis", err);
-+		return err;
-+	}
-+
-+	if (power_on) {
-+		err = exynos_pd_access_controller_power(pd, power_on);
-+		if (err) {
-+			dev_err(pd->dev,
-+				"SMC for power domain %s %sable failed: %d\n",
-+				domain->name, power_on ? "en" : "dis", err);
-+			return err;
-+		}
-+	}
- 
+-	pd = container_of(domain, struct exynos_pm_domain, pd);
+-
+ 	if (!power_on) {
+ 		err = exynos_pd_access_controller_power(pd, power_on);
+ 		if (err) {
+@@ -126,14 +128,45 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
  	return err;
  }
-@@ -99,6 +146,7 @@ static const struct exynos_pm_domain_config exynos5433_cfg = {
  
- static const struct exynos_pm_domain_config gs101_cfg = {
- 	.local_pwr_cfg		= BIT(0),
-+	.smc_offset		= 0x0204,
- 	.use_parent_regmap	= true,
- };
- 
-@@ -126,6 +174,38 @@ static const char *exynos_get_domain_name(struct device *dev,
- 	return devm_kstrdup_const(dev, name, GFP_KERNEL);
- }
- 
-+static int exynos_pd_get_access_controller(struct exynos_pm_domain *pd)
++static int exynos_pd_regulator_enable(struct regulator *supply)
 +{
-+	struct device_node *ac_np;
-+	struct resource ac_res;
-+	int ret;
-+
-+	ac_np = of_parse_phandle(pd->dev->of_node, "samsung,dtzpc", 0);
-+	if (!ac_np)
-+		return 0;
-+
-+	ret = of_address_to_resource(ac_np, 0, &ac_res);
-+	of_node_put(ac_np);
-+	if (ret)
-+		return dev_err_probe(pd->dev, ret,
-+				     "failed to get access controller\n");
-+
-+	pd->ac_pa = ac_res.start;
-+
-+	/*
-+	 * For some domains, TZ save/restore might not be implemented. If that
-+	 * is the case, simply mark it as always on, as otherwise a power cycle
-+	 * will lead to lost TZ configuration, making it impossible to access
-+	 * registers from Linux afterwards.
-+	 */
-+	if (exynos_pd_access_controller_power(pd, false) == -ENOENT) {
-+		pd->ac_pa = 0;
-+		pd->pd.flags |= GENPD_FLAG_ALWAYS_ON;
-+	}
-+
-+	return 0;
++	return supply ? regulator_enable(supply) : 0;
 +}
 +
- static int exynos_pd_probe(struct platform_device *pdev)
++static int exynos_pd_regulator_disable(struct regulator *supply)
++{
++	return supply ? regulator_disable(supply) : 0;
++}
++
+ static int exynos_pd_power_on(struct generic_pm_domain *domain)
  {
- 	const struct exynos_pm_domain_config *pm_domain_cfg;
-@@ -195,10 +275,14 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 
- 	pd->pd.power_off = exynos_pd_power_off;
- 	pd->pd.power_on = exynos_pd_power_on;
--	pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
-+	pd->cfg = pm_domain_cfg;
- 	pd->configuration_reg += 0;
- 	pd->status_reg += 4;
- 
-+	ret = exynos_pd_get_access_controller(pd);
+-	return exynos_pd_power(domain, true);
++	struct exynos_pm_domain *pd = to_exynos_pd(domain);
++	int ret;
++
++	ret = exynos_pd_regulator_enable(pd->supply);
 +	if (ret)
 +		return ret;
++
++	ret = exynos_pd_power(domain, true);
++	if (ret)
++		exynos_pd_regulator_disable(pd->supply);
++
++	return ret;
+ }
+ 
+ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+ {
+-	return exynos_pd_power(domain, false);
++	struct exynos_pm_domain *pd = to_exynos_pd(domain);
++	int ret;
++
++	ret = exynos_pd_power(domain, false);
++	if (ret)
++		return ret;
++
++	/* Ignore regulator errors - the domain was disabled after all. */
++	exynos_pd_regulator_disable(pd->supply);
++
++	return 0;
+ }
+ 
+ static const struct exynos_pm_domain_config exynos4210_cfg = {
+@@ -283,6 +316,16 @@ static int exynos_pd_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	/* get the domain power supply if required */
++	pd->supply = devm_regulator_get_optional(dev, "domain");
++	if (IS_ERR(pd->supply)) {
++		if (PTR_ERR(pd->supply) != -ENODEV)
++			return dev_err_probe(dev, PTR_ERR(pd->supply),
++					     "failed to get domain supply");
++
++		pd->supply = NULL;
++	}
 +
  	/*
  	 * Some Samsung platforms with bootloaders turning on the splash-screen
  	 * and handing it over to the kernel, requires the power-domains to be
-@@ -212,7 +296,7 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to read status");
- 
--	on = val & pd->local_pwr_cfg;
-+	on = val & pd->cfg->local_pwr_cfg;
- 
- 	pm_genpd_init(&pd->pd, NULL, !on);
- 	ret = of_genpd_add_provider_simple(np, &pd->pd);
 
 -- 
 2.53.0.473.g4a7958ca14-goog
