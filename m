@@ -1,123 +1,96 @@
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429101448E0;
-	Thu,  5 Mar 2026 21:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772744974; cv=pass; b=p/+lJS0WcVoHriFS8N71n0VDO8vFEiIGkrW9JXqD0McyyDvc/C2dteT72T/wVucm9J7CtFMQLG1smKwd4Ro0ySUKm18a7yRyg/06iJpJYFbeEw3iYLu+SzbCMaVswyNU3iBrkqIMMGiuu4uaBtSOx2RdbWJdCZmF7Y+w74S5xkM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772744974; c=relaxed/simple;
-	bh=Yx4pFGq+U2fz4UG6x4F5rdwJg0eTjQaePUmLPxRD42g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AjvJmwhgbJPbidZphLQXG3+lEVmc9CFa9fVb8jd6PjaC2gmbLAzjMbzbtGlwexdF908suukt+peOCzWn+VGtjXDB1S07zFafkc418qrO9VuyRbCMyPqiDFxWEovTtXukZgpO9fc7nuj4FLPvWCXplrxgyLoQqR8dc9Cw349Z8TY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=epPf6aRM; dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=QEnaNmvE; arc=pass smtp.client-ip=85.215.255.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975952DC334;
+	Fri,  6 Mar 2026 00:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772758259; cv=none; b=ZNXyAS5Q2Q6ncOkWCztU90Ud2ilG2E5oMQdFsDMh9zjrXISsG/1AvpQJIGVmWiYMdTk1G1YJe2JKygRv/0sgpfbJBIJ3RBNfYxkL6/u11X4QYGqWytr4LPwCzzHxXA1dEcvWCajv7acqBLFer1TXMjuM3t0/8oKh3+DXGUlsmo0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772758259; c=relaxed/simple;
+	bh=rqLpQNdsN3bFAosqutwLfQ4hCid22S/GwXAsl9MyJZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jea0qfDnToc9J76JmSTXlR5KEuHXvSxOlwiPAr87apujv4OBPcrXuIgk3ugDieYZMnPsRbPDVaI4E245LZecHL7RkR8rRaPNasBR/UI5H8WWwf8CcD4kXdEpo+J1zWBKgW3sGIQpkFTJfQOADq0HouO0/pOZLu7l+RgLn8rbCog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uY0qC/VE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="epPf6aRM";
-	dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="QEnaNmvE"
-ARC-Seal: i=1; a=rsa-sha256; t=1772744598; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=XLB+plORjjwdonK5xvMsENRrqBB53SzB5cMQHIBO7lEjFuTDaSHxmIWdtg+Ao1Obh4
-    iKZJNBprdYEAIZTT0tfSu96/m5PY8zPsm3hErv44Rf3LFnNWQGsrGHy5Q2FboNlgk9Kf
-    Wp/xOw/PwL9BDVqqoQF7sQgk5kP4Iw+8nrB6hx08P3Car1P3W7jqssJw0ia276FKHvLr
-    6/1jO1qrGUjQz3DwZ0CLMF0mmKhZINqdUmtkGCBnc6FSNVqqMb4K93S03+vcdinmxmvA
-    oK2ZQQ570YZmSk3+hT4B5j0alYggMH0ThrVNu0sc9cqoA1mPnq4I9iJkDCEclsL780AM
-    F13Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1772744598;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Yx4pFGq+U2fz4UG6x4F5rdwJg0eTjQaePUmLPxRD42g=;
-    b=p6aD7dW21DxwngeXqNWYWK8OdEa6zPFWiAqhJWMuaM8GtElpPyECJRed5Lxm3nnoun
-    oWDhbr9UZb1FYCnYg3UpWJGd4QLN0EJuDlELwIQszR4lIMHQWiXhgcQQu+ZsUPaiPvF1
-    IMoQnRwa4UvtkcFxCHpfcjX14MXdvYZ6HUhIYcR5Lyk+ry0zRLlMkuWC/UKFikl5sQ3q
-    +TOvBVtW0Ohor5aRYyRWUPKewm5Fhz3NTSnZyDNDxa5rPZOPdPh3DlYBdfiq0Wm+ScL1
-    PTPWl+ewLIc213d6O1DeJgH3OO4n9oLdvSA0/4HyXT3yV1MCGf5VYphsdYQ/yPeL5o0Z
-    R1rA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1772744598;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Yx4pFGq+U2fz4UG6x4F5rdwJg0eTjQaePUmLPxRD42g=;
-    b=epPf6aRM0co0gjVfIz63J+hgTBgdg76E+9k0wrJqzS/2hoKpLyaxjd59UVifC0w3S2
-    gVkIPfSjdDYlvQ35H4bgbnun+Y0woiNlwQe1H4u8nJK+S4BmU2ipTrAD9NiFc9W5xXkv
-    9yzmjT6TDXrBGqlEebr0A84R4+puSyl/V4C8BmhFrxz/d1CiY5IoNYiITmZ8WjtGJZRk
-    Bl5+R+IOlQDGiq3PJTeJgFF75pQDtFUHVDb6DbHe7aw5L4saI+q5XAcq48U8Wbq7Rq1J
-    IJBo/mopmtDl/sYlTp3rttgcTXfR2siU7Idj3mEtEEq7h8OEx/fRxPXZkrFD/rhH+AwO
-    nzQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1772744598;
-    s=strato-dkim-0003; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=Yx4pFGq+U2fz4UG6x4F5rdwJg0eTjQaePUmLPxRD42g=;
-    b=QEnaNmvEE1Gz2soV99MDcdGfrKTxP4eGMNq1bUdwgstKdqcJWgGHKB5lQ4SBEqXrBR
-    rajzeivLC4sZqqBg8LBw==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0zNriHg+YfT0rGSTpN/lG4EkH1OcwzJ11G3m+XGf4kwpD3TrkAw="
-Received: from p200300c58703fb9bfc647aebea4a424d.dip0.t-ipconnect.de
-    by smtp.strato.de (RZmta 55.0.1 AUTH)
-    with ESMTPSA id z79345225L3G7LL
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 5 Mar 2026 22:03:16 +0100 (CET)
-Message-ID: <15d49cfb52990dea46596c2eb0cbdc7db9c44ab1.camel@iokpp.de>
-Subject: Re: [PATCH v2 01/11] scsi: ufs: core: Introduce a new ufshcd vops
- negotiate_pwr_mode()
-From: Bean Huo <beanhuo@iokpp.de>
-To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
- bvanassche@acm.org,  beanhuo@micron.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Sai Krishna
- Potthuri <sai.krishna.potthuri@amd.com>, Ajay Neeli <ajay.neeli@amd.com>,
- Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Peter Wang <peter.wang@mediatek.com>, Chaotian Jing
- <chaotian.jing@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang
- <zhang.lyra@gmail.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,  "Bao
- D. Nguyen" <quic_nguyenb@quicinc.com>, Adrian Hunter
- <adrian.hunter@intel.com>, Archana Patni <archana.patni@intel.com>, open
- list <linux-kernel@vger.kernel.org>, "open list:UNIVERSAL FLASH STORAGE
- HOST CONTROLLER DRIVER..." <linux-samsung-soc@vger.kernel.org>, "moderated
- list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>, "moderated list:UNIVERSAL FLASH
- STORAGE HOST CONTROLLER DRIVER..." <linux-mediatek@lists.infradead.org>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>
-Date: Thu, 05 Mar 2026 22:03:16 +0100
-In-Reply-To: <20260304135313.413688-2-can.guo@oss.qualcomm.com>
-References: <20260304135313.413688-1-can.guo@oss.qualcomm.com>
-	 <20260304135313.413688-2-can.guo@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uY0qC/VE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12201C116C6;
+	Fri,  6 Mar 2026 00:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772758259;
+	bh=rqLpQNdsN3bFAosqutwLfQ4hCid22S/GwXAsl9MyJZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uY0qC/VEaN2Yqj1KTuKX/T0rVcCP9sTMbZJLJcUIIJszbR0nY3u6B1L3MwV12ChyX
+	 WkL1GK89L321Qcg0iCrR6sm7KnFtj4Xg89RZdSHcawcPti/JfT54MAPjjXtU/IzgXN
+	 8m4vR/khFxXs+3ooRBtTS3STo+s4VyaJE5/Rii25vLOOPgc3zwTsYJLGlYMyny8XmA
+	 chvmRzjueyfwpsuwXekgT5+T1FX4LAaz4W+SdYFr1ENULxcUR9rOONHWWQGYeQKYVI
+	 PsbtdKYo8ceI9e6hBaOTt9jTKWBSLCwP5EHxrEVl0Injyq1Ywcp6SiQoYIgo0tO2Ne
+	 oI8x+badEIpcw==
+Date: Thu, 5 Mar 2026 18:50:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Nam Tran <trannamatk@gmail.com>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] dt-bindings: power: supply: document Samsung
+ S2M series PMIC charger device
+Message-ID: <20260306005057.GA877725-robh@kernel.org>
+References: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
+ <20260225-s2mu005-pmic-v3-4-b4afee947603@disroot.org>
+ <20260225-secret-amusing-cuttlefish-d3bee5@quoll>
+ <DGPTBRX09EU5.1D1ZSR7EUV7AT@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DGPTBRX09EU5.1D1ZSR7EUV7AT@disroot.org>
 
-T24gV2VkLCAyMDI2LTAzLTA0IGF0IDA1OjUzIC0wODAwLCBDYW4gR3VvIHdyb3RlOgo+IEBAIC00
-NzQ3LDYgKzQ3NDUsMjIgQEAgc3RhdGljIGludCB1ZnNoY2RfY2hhbmdlX3Bvd2VyX21vZGUoc3Ry
-dWN0IHVmc19oYmEKPiAqaGJhLAo+IMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0Owo+IMKgfQo+
-IMKgCj4gK2ludCB1ZnNoY2RfY2hhbmdlX3Bvd2VyX21vZGUoc3RydWN0IHVmc19oYmEgKmhiYSwK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHN0cnVjdCB1ZnNfcGFfbGF5ZXJfYXR0ciAqcHdyX21vZGUpCj4gK3sKPiArwqDCoMKgwqDCoMKg
-wqBpbnQgcmV0Owo+ICsKPiArwqDCoMKgwqDCoMKgwqB1ZnNoY2Rfdm9wc19wd3JfY2hhbmdlX25v
-dGlmeShoYmEsIFBSRV9DSEFOR0UsIHB3cl9tb2RlKTsKCgp1ZnNoY2RfY2hhbmdlX3Bvd2VyX21v
-ZGUoKSBjYWxscyBwd3JfY2hhbmdlX25vdGlmeShQUkVfQ0hBTkdFKSBidXQgaWdub3JlcyBpdHMK
-cmV0dXJuLCB0aGlzIGNhbiBjb250aW51ZSB3aXRoIGludmFsaWQgdmVuZG9yIHByZXA/IEkgc2F3
-IHRoZXJlIGlzIGNoZWNrdXAKYmVmb3JlLCBkbyB5b3UgdGhpbmsgYWRkaW5nIGNoZWNrIHJlc3Vs
-dD8KCj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJldCA9IHVmc2hjZF9kbWVfY2hhbmdlX3Bvd2VyX21v
-ZGUoaGJhLCBwd3JfbW9kZSk7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGlmICghcmV0KQo+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1ZnNoY2Rfdm9wc19wd3JfY2hhbmdlX25vdGlmeSho
-YmEsIFBPU1RfQ0hBTkdFLCBwd3JfbW9kZSk7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBy
-ZXQ7Cj4gK30KPiArRVhQT1JUX1NZTUJPTF9HUEwodWZzaGNkX2NoYW5nZV9wb3dlcl9tb2RlKTsK
-CgpLaW5kIHJlZ2FyZHMsCkJlYW4K
+On Fri, Feb 27, 2026 at 07:56:58PM +0530, Kaustabh Chakraborty wrote:
+> On 2026-02-25 11:44 +01:00, Krzysztof Kozlowski wrote:
+> > On Wed, Feb 25, 2026 at 12:45:06AM +0530, Kaustabh Chakraborty wrote:
+> >> +
+> >> +  This is a part of device tree bindings for S2M and S5M family of Power
+> >> +  Management IC (PMIC).
+> >> +
+> >> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> >> +  additional information and example.
+> >> +
+> >> +allOf:
+> >> +  - $ref: power-supply.yaml#
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    enum:
+> >> +      - samsung,s2mu005-charger
+> >
+> > Review from v1 still applies. I think you ignored several reviews, so I
+> > will mark entire patchset as changes requested.
+> 
+> Somehow I missed this one... anyways I address them here:
+> 
+>   Why do you need a dedicated child node for this? It's got one property,
+>   other than the compatible, that you're using. It could easily just go
+>   in the parent without a dedicated node etc.
+> 
+> The dt node also references a simple-battery node, that's why it's
+> required.
 
+That can go in the parent.
+
+Rob
