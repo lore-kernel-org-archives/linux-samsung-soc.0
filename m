@@ -1,111 +1,128 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE0734D915;
-	Fri,  6 Mar 2026 09:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BE335BDB7
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Mar 2026 10:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772791007; cv=none; b=V9QSwx5EPstEGFXJb3PgZ3Ol+T3rY9qusyFA1CbKcriN/uoCsdaDzA4bP+LvJS+RaOjNzN8MM/F6HdXARZ4Ej+0cQeYh/p4RdXekk7+fOBTvi8cs12pJmI4O7r/oXXeTFaDwgbW1KBued60E9H7fxqVfzBpA6X1NND6N1pLzTG4=
+	t=1772791620; cv=none; b=eEsdzwEnqHgP7pUTu9IeKneaSX4SejzsTIvq+QAFrcUY59jw1kswKWNQZKBnkUbmSyu5O+zLexGaVAW3d+1wGQ9YCUIfJsvGFxraw3Qvlo/birCAHamBHoC6VVwNU7PCaAKiGq8XLL7DFn5AhIim/xWAXxPMltit9nGMzRfSF1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772791007; c=relaxed/simple;
-	bh=M0XofkcuBdV1zkdsuj7RJ1maZEJbks9g3VqYv60iJnU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ea1+hzL+QxNHhc4NtkXjce7NRYEPUt7SEScJMnDDVSgt1WO7VwDxTfQZ6lC+uKKm7Mapo8x3lUsbLwvvFmKw+/+ksx5Ntnsb66twL7erxoY5VVCbkSx3L/C64b1yDTIUUFY5Y5asIiMHZ5I1Xlj6vhhvqoLzq3Gw6Om8WSMTLY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zKN16av/; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1772791620; c=relaxed/simple;
+	bh=gEDlrhwnbLHEqntSSkEsQEo7gWXaJKYcg2RkMc37BfE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t6GBLZQmbcIRNlYAv9udjfcpzNBlUWAlEROpmMHByEB1IQKDOQw+UAQ7iraEt/W3q354JivOihIfbWu7IsYUc0vAoO2/bqY1BJdIV8FZZyi017j1w++7bTgw2kl582Ey6aNGmeDMlXxKJrWHLKnZQ568AZv9OVnRH/O6+D3OHiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HL4FI8Jf; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zKN16av/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1772791005; x=1804327005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M0XofkcuBdV1zkdsuj7RJ1maZEJbks9g3VqYv60iJnU=;
-  b=zKN16av/YcO/gYHjYaU16mSlJXQ6p8l1+9SLEVylGTpIj/UUfrvtXmdU
-   tIDzYrUw2kzuJQUrZxG6H0zx3Tu7WgCu/QWT4ns5+NNhGFoN66mZrPBow
-   I3/Siw34DF23sIXntNqI43ZmqpI9T4ZM5TvEyZ6ZwfhOdkwyZCHAlm93t
-   ARqOmyQnDoje5m8zxU4ltfRHWqOaZDj1KEdIMcrBCIGjSQted+Gbb3M7w
-   2rpcnbqrQMG9iLcisYRqkaXdNT+KC5bI8IUNnH2pLhTDa4oYgycdBWYO1
-   5COuiQr+77VAHpvbv09JIVJiBN9H+vkuVmRzCfa97IrV9/qGKW3hr2WEf
-   Q==;
-X-CSE-ConnectionGUID: kkklftjzTt+tmC5CjQykRw==
-X-CSE-MsgGUID: y9hzzWGpTbWY5hyCt1eJ5w==
-X-IronPort-AV: E=Sophos;i="6.23,104,1770620400"; 
-   d="scan'208";a="54313383"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Mar 2026 02:56:43 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 6 Mar 2026 02:56:27 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 6 Mar 2026 02:56:22 -0700
-Date: Fri, 6 Mar 2026 10:56:22 +0100
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: <linux-phy@lists.infradead.org>, Vinod Koul <vkoul@kernel.org>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, <dri-devel@lists.freedesktop.org>,
-	<freedreno@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-can@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-ide@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <spacemit@lists.linux.dev>,
-	<UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>
-Subject: Re: [PATCH phy-next 07/22] net: lan969x: include missing <linux/of.h>
-Message-ID: <20260306095622.rh3sje3wnexbdsqb@DEN-DL-M70577>
-References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
- <20260304175735.2660419-8-vladimir.oltean@nxp.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HL4FI8Jf"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-483bd7354efso118492425e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Mar 2026 02:06:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772791617; x=1773396417; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gEDlrhwnbLHEqntSSkEsQEo7gWXaJKYcg2RkMc37BfE=;
+        b=HL4FI8Jfk7jr5aKtIyJG4muLLEqLp8oio8ZHdAYDQORAEkQGfmWBK0sk/oj06dlDyD
+         FFi3ZVi+cTQu8n+32z72pgC5FqI30npYQvefJ9eyKpIMaXQR0dgizZDtw2uWmvTcwStO
+         +hm0QmsHHFFGvjpKGEDl0K8dmU7SlzMIkJoP0r0/DmQr7MrJ/Ysd8xwAjGxGvZJcKLiT
+         oI9TXtphw+eLeFKb30H5p/jp0f9tevtLEizCwQZbGVV5YQBRTaP04WdPnWe3K3JbBbFO
+         xbFmNfetjRIuJj2IPZIl7S0LosHru3i0gwnFYJAs8rMUV3ZZUFrRHCYVzVNatWc9FjUC
+         RsQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772791617; x=1773396417;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gEDlrhwnbLHEqntSSkEsQEo7gWXaJKYcg2RkMc37BfE=;
+        b=XMi07Cl5KYKM89Iy1TbftneLIGOJDKEySYO6jKWbccIrk9TYL+/2cfy/feMPunMc3T
+         7EyzGFC5bTyE3cRakgKU5FVBWrk7Zun81IAkxkxfUzFDVEWTBcDyOsBwu7iFOhDsknQu
+         JvS75HZMhHfNQz7Dy/2qSkhV23zfCp3qu0yoelB+s5Dg4HZjqiMm7nhhF/vqfm9Ose8G
+         7AM95bVFUrG0aD+5/pejJOHnI1U77YuH7Y2s35qLCz1KPJL0StGWZog+tIHIii+YpRtq
+         zGDiqX039HXEkH2Zuv8G9GCIRBigKvSsgLFbpH0xKXIXY5/vdF6IWmWDe1GMjl/erZhH
+         ujrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNjgnK6cYs3EanjL43rsxPx9iN298Oqz07onHv/Xl/hyVZSHWLWjCZXBYBfrybMnZZ/23+pNjrGOdHbXqnFkHQMw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhp6QobsMHXAkrKnj9/EOnlmQFRmFOPWQYrlnjh2+Tin+/MEAs
+	Y7XF1cggkc3duztv5ignk4Uo6c22DYTJ83lIENiTpMDn6JAUyiOT8lIrQCh/9f+QTPo=
+X-Gm-Gg: ATEYQzy+VvY5yCSNU0TeD5Q0hbwAp8VAOPbZ7QCIWP4h0d7Ml2IHBK0Khcyi65LzeyP
+	gCjdY4FqTC5DizJms/ArQALxQWzn13Sc9drnmK8Wglp/9xptbWFUa6QLsx9gm4NIKIxRiDKfcU2
+	wXL+129AGsIlJG0EXLsjjA9vJ1h9KYruMenvelXtDkQJAebH9RXXu/ZKrqJq6POGZAqcNYwy06V
+	Rn+d/FKAcbBMmqdYF/V9gFzT5Zja/DSuCP3Z0AsIEosmUgPhc5/y8OG6ca60g/+QTNNKUMzn8N9
+	dkoeosyWROZcfTokWisM04GKY+yH1dLOXodwO2VMgrwgaIYJbrUbKA18A5sTie/jVPnhTgQswCk
+	626ak5W54I1FH/GicXPayyfjkoPmpH4/tqVglDOXSSKI3I93u7qAA35hYdOEbBxUHXubRA6aKyK
+	IMoae/1ErHqTlcHDUkF7LcO4nOenlR
+X-Received: by 2002:a05:600c:1986:b0:475:dde5:d91b with SMTP id 5b1f17b1804b1-4852695b649mr24350965e9.17.1772791617341;
+        Fri, 06 Mar 2026 02:06:57 -0800 (PST)
+Received: from draszik.lan ([212.129.78.78])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4852378ea07sm15919135e9.0.2026.03.06.02.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Mar 2026 02:06:56 -0800 (PST)
+Message-ID: <a03bd4a3c457cd3ade735b087fadedd1920c842b.camel@linaro.org>
+Subject: Re: [PATCH v6 04/10] dt-bindings: soc: google: gs101-pmu: allow
+ power domains as children
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Ulf Hansson	 <ulf.hansson@linaro.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus	 <tudor.ambarus@linaro.org>, Juan
+ Yescas <jyescas@google.com>, Will McVicker	 <willmcvicker@google.com>,
+ kernel-team@android.com, 	linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-pm@vger.kernel.org, Marek Szyprowski
+ <m.szyprowski@samsung.com>
+Date: Fri, 06 Mar 2026 10:08:18 +0000
+In-Reply-To: <20260306-hopeful-amusing-sawfly-e60c6d@quoll>
+References: <20260305-gs101-pd-v6-0-8cb953c1a723@linaro.org>
+	 <20260305-gs101-pd-v6-4-8cb953c1a723@linaro.org>
+	 <20260306-hopeful-amusing-sawfly-e60c6d@quoll>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-2+build4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260304175735.2660419-8-vladimir.oltean@nxp.com>
 
-> This file is calling of_property_read_u32() without including the proper
-> header for it. It is provided by <linux/phy/phy.h>, which wants to get
-> rid of it.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
-> Cc: Daniel Machon <daniel.machon@microchip.com>
-> Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Steen Hegelund <Steen.Hegelund@microchip.com>
-> ---
->  drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c b/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c
-> index 4e422ca50828..249114b40c42 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c
-> +++ b/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2024 Microchip Technology Inc. and its subsidiaries.
->   */
-> 
-> +#include <linux/of.h>
->  #include "lan969x.h"
-> 
->  /* Tx clock selectors */
-> --
-> 2.43.0
->
+On Fri, 2026-03-06 at 08:36 +0100, Krzysztof Kozlowski wrote:
+> On Thu, Mar 05, 2026 at 06:11:53AM +0000, Andr=C3=A9 Draszik wrote:
+> > The power domains are a property of / implemented in the PMU. As such,
+> > they should be modelled as child nodes of the PMU.
+> >=20
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>=20
+> It is impossible to test a binding in a meaning of "tests", thus you
+> should not add Marek's tags to bindings patches.
 
-Acked-by: Daniel Machon <daniel.machon@microchip.com>
+Apologies, I think it was due to b4 applying to the series and this one
+slipped by me. Will remove.
+
+>=20
+> > +patternProperties:
+> > +=C2=A0 "^power-domain@[0-9a-f]+$":
+> > +=C2=A0=C2=A0=C2=A0 type: object
+> > +=C2=A0=C2=A0=C2=A0 description: Child node describing one power domain=
+ within the PMU
+> > +
+> > +=C2=A0=C2=A0=C2=A0 additionalProperties: true
+> > +
+> > +=C2=A0=C2=A0=C2=A0 properties:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: google,gs101-pd
+> > +
+> > =C2=A0required:
+> > =C2=A0=C2=A0 - compatible
+> > =C2=A0=C2=A0 - reg
+> > +=C2=A0 - '#address-cells'
+> > +=C2=A0 - '#size-cells'
+>=20
+> I don't see improvements about quotes.
+
+Odd, I'm sure I fixed them at some point. Let me respin this.
+
+Thanks,
+Andre'
