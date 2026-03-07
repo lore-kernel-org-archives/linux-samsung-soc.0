@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B5B32BF5D;
-	Sat,  7 Mar 2026 17:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D819C332EBA;
+	Sat,  7 Mar 2026 17:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772903038; cv=none; b=rm7UionlhrJ0esMbo40pDxOT2Xb8SVFvGZ/eu05NwGoQoHAk98ClghDw4zPY2+/xX4MUy7FRQyW79SkmPBiqWIciD9nj5hkT40gL1xdmFqnoQ2rnFiXPlwkIOuGo+GZUi1W56GptSRNFEUEAhCFSyoBfu+AO7AwCFRYwqynKisI=
+	t=1772903307; cv=none; b=irGvCSFhxOdmAIyP0gmdDFUd+McUXGx99cqyMUHI1OKvXqkOMnssGrHBxPVuBNaPJMqC3oeLMxtdHuhvCGW3OZilk0DNULWzmO8Lm8DTn26q9sp8AYIG2qHv+LVw9BTzqtMv57+Y5NHDTYWbHsbk6sfLJptVslZVmYW+ZaNSevI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772903038; c=relaxed/simple;
-	bh=5mPlRe/ZYZnl/VdSxSulrqJu0MPlNaPz6Ia1xin693w=;
+	s=arc-20240116; t=1772903307; c=relaxed/simple;
+	bh=zHdXTHyyk2vi+C1bcP47zDEPYePkWdmIb3cveX025YQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gt/J+jF+Pk/78t4Unrpi/xXsUPfPxjIxCa6rxcVPITSi+uXLc7xu0tVHv9cva1lwDSXZVdk2pQXC/SQ0187604MQAi87kFzwdh/lre14+1bx0p6aRyUJYmeHSWv2MIn0W7gz1/iqqwfP3WQp16+yeDCwAIoHD/yKd1zBS9h0NPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDc1bDBJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=X3nS98jMBHaAQ+1B7C43XOfAFpJ3YekgDEU/9wGXSrkhX3Rhxp0chjcdaZVc7V5YNPs9nqLi4sAmfJzZUx0Z8XFyPncIpcLyBg+loQqCvnVL4YlSPApIBvrEPMo8JIKvcCcgDPmETc01lNK+Cwp8Tzd5EfyT3aUFuEeCUcG/BZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXOW0+kL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDc1bDBJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB3FC19422;
-	Sat,  7 Mar 2026 17:03:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXOW0+kL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC06C19422;
+	Sat,  7 Mar 2026 17:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772903037;
-	bh=5mPlRe/ZYZnl/VdSxSulrqJu0MPlNaPz6Ia1xin693w=;
+	s=k20201202; t=1772903307;
+	bh=zHdXTHyyk2vi+C1bcP47zDEPYePkWdmIb3cveX025YQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cDc1bDBJYAXvHI+R5aY2f3El3zDD5Uu8YvIDvKPVJRZfJPT0LKMJkkt1YhFMU3Eo2
-	 akuB65qlZba0U9FXMa/MnIx45otcK7dxBzR41bk+7++iu7vM0DxPctUVi7nbA8b9EB
-	 WSFOBYuJYDBcuuEdmGAyjhzb4xEIioAEIhtgT4lDdMpxUXdEnr9R5FoM3Oikocn3an
-	 f8KXe1SmQ2tmGq1dPpYGoHztpBKDUlt1z7tS1XHKYWnOAMfuIhWu/THhb3f5LaAN8u
-	 vBWubZ0MKZXWZJnBRcqpqGLYtijlyfo7YUMG364EJkm1k+9OgJVGV4Oi6dxTHHGK6l
-	 2rQxc0s6HJoUw==
-Message-ID: <b02f06e1-dac7-4521-bf5e-471b5575467d@kernel.org>
-Date: Sat, 7 Mar 2026 18:03:53 +0100
+	b=NXOW0+kLczVp+JwSsnU0n0ShVN4+OfEH/Cdg/eFgRjX7a/pnjHNQ1QLlVuNNeSmHJ
+	 KRnNli7/vxCcEwm73/6FXcEotPMOg8uPVTSJCL7kEGXiBBDDbSJFX0nBXuKjvbcwuU
+	 f4Zzbh24y2fuhc4bmhX7RvBQPUjSEJYaHV8TU1boXbyOkciYOqlofkCOWHMLgSKPLr
+	 VKSkBLiqsOdb2BfepKsI5AuXo2fokILQ3AeWJpG9001qLy0Puvu0n6Zjpu2syslZqO
+	 +0RljUxSu4bWlY3y2htllobPpM6P+TY2gG3ikKNQfq23AGe2MehPouhdGnCd/hnP2Z
+	 rZltj5x9J6NnQ==
+Message-ID: <20175026-1576-468f-b68e-4af18d22b875@kernel.org>
+Date: Sat, 7 Mar 2026 18:08:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/8] dt-bindings: soc: move and rename
- google,gs101-pmu-intr-gen schema under soc/samsung/
+Subject: Re: [PATCH RFC 8/8] arm64: dts: exynos850: add PMU interrupt
+ generation node
 To: Alexey Klimov <alexey.klimov@linaro.org>,
  Sam Protsenko <semen.protsenko@linaro.org>,
  linux-samsung-soc@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
@@ -47,7 +47,7 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260226-exynos850-cpuhotplug-v1-0-71d7c4063382@linaro.org>
- <20260226-exynos850-cpuhotplug-v1-1-71d7c4063382@linaro.org>
+ <20260226-exynos850-cpuhotplug-v1-8-71d7c4063382@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,43 +93,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260226-exynos850-cpuhotplug-v1-1-71d7c4063382@linaro.org>
+In-Reply-To: <20260226-exynos850-cpuhotplug-v1-8-71d7c4063382@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/02/2026 16:47, Alexey Klimov wrote:
-> The GS101 PMU interrupts generation block is actually a standard Samsung
-> Exynos IP block found in older SoCs like the Exynos 850 and others and
-> not exclusive to Google SoCs. Thus, renaming to
-> samsung,exynos850-pmu-intr-gen, moving the schema file to soc/samsung
-> directory to reflect its origin, since Exynos850 predates GS101 SoCs,
-> and preparing for adding Exynos850 description.
+> Add pmu_intr_gen node for Exynos850. This hw block is required
+> for different power management routines like CPU hotplug and
+> different sleep and idle states.
+> Also reference this node from main PMU node.
 > 
 > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
->  .../samsung,exynos850-pmu-intr-gen.yaml}                              | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos850-pmu-intr-gen.yaml
-> similarity index 80%
-> rename from Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
-> rename to Documentation/devicetree/bindings/soc/samsung/samsung,exynos850-pmu-intr-gen.yaml
-> index 2be022ca6a7d..f9b40f3fd165 100644
-> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos850-pmu-intr-gen.yaml
-> @@ -1,10 +1,10 @@
->  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/soc/google/google,gs101-pmu-intr-gen.yaml#
-> +$id: http://devicetree.org/schemas/soc/samsung/samsung,exynos850-pmu-intr-gen.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> index cb55015c8dce..e3f4fe6ee118 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> @@ -211,9 +211,15 @@ gic: interrupt-controller@12a01000 {
+>  						 IRQ_TYPE_LEVEL_HIGH)>;
+>  		};
 >  
-> -title: Google Power Management Unit (PMU) Interrupt Generation
-> +title: Samsung Power Management Unit (PMU) Interrupt Generation
+> +		pmu_intr_gen: syscon@11870000 {
 
-Rename is fine if you add here compatible, otherwise the name does not
-match the compatible.
+Does not look ordered. Randomness of this file does not make it easier,
+so assuming this will be resorted someday we come with a tool, please
+place it after @11800000.
 
 Best regards,
 Krzysztof
