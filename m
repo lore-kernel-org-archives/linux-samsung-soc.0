@@ -1,95 +1,118 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F45236C0C4;
-	Sun,  8 Mar 2026 12:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AD8186E58;
+	Sun,  8 Mar 2026 12:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772971325; cv=none; b=dVpGj7ZKq3p/q3j8J1hKywYehkfVy7WuWEokYHNkBGeVuSfuhGEbTRLrgRZ7WvMCusJrf5ZjmrLt9tDX1Ls+ycLExN1v7TfdHTB+kW3QiI9p6ySbA/jBF5Dxx9IcOUVg52ytESkSqV9JcmHi1RockLh/ApA4A3C/ZF/djvGfjz4=
+	t=1772972041; cv=none; b=DueR3ubEq0LlLcQQnRfBF886q/hcnuD4FKGC+DB32GLdsZDAJcUop7R6NmK/5VvaNkLFN2YpEx7L74YwJTPrRyaPjJI3yVucJJIieVQvMe751pMf53a2GCFFE6iM/UjRHidVxl02XyZt+5FYqyJmOSmFLm1igT5SBQ47TSPdXd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772971325; c=relaxed/simple;
-	bh=Bq7Wkz/Cpwn1dgha1SO/prRohbZTrXxPYbLnSfgU+/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bD7dDMpVFszWvyrcajM6dQaSWRydPCJ6VlgIzppqiaWuHkfxgCLas9vmAQMdXiOYg0o2fiR6GNTX/Ydb+dQMBwi/p3Maq/2xO3BkBXDEzeqWSqQgx7lWV+jWwkP4233ntQrqHBov6HzVUgkwoF+02u4BsCY21Y9rcSDjOZe0Fkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FFzDtZuY; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1772972041; c=relaxed/simple;
+	bh=KlM4hl1KhneCR8S8wwL3AsgMH81tqTiQtLEzLpcTFB8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=SBsPfs4FrCayHhapXCVBQUEDjxEmog6qY4Wwwq/F9gdQCiA/Ga5aaO5K9se67+cr2Wn4tpxnZ6PIduqC0SmUXXpjgqRHcGcgAkCeOPzJdb1/VzqLdr8zadmfUXCkM7icEulraJ50qj+XPYs7Lo4w5t3K6j7sgGvGPVXr4LlhiMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KyjIBFlh; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FFzDtZuY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=g77KuUu7tZV2EWc/eRT4uXRlFQCkO7bU5cTH+0cVCG0=; b=FFzDtZuYkC0DnUyz163rl2C0J7
-	BlNREDfLbFSqsCDGG7wyqYQIkW9dVN3DggsHpt6BqHwHaaJCJYr5hlnQvXRkPPQ41ar85DzFhMEmB
-	gFC6oC5eK9H+7BsTfL2Qaie+4PSNMBteqELve/Q0cUSwwEHPGq6uEDlwML0R5lJ8E5ebW00T/Vzut
-	DuJXep+nuwECH8QlUkCKWVPiRO/PGZMUciO0bD5lSEzEqQr2CySIpJWpeB2FiLZRSgN1aKy5u1pjb
-	388/H2D8TPVbJxV+5QHfwZsd8BBR1NJAj5Afn5lTxCrADySNQUKbR+nvc2uheAu2RvUMjRHBcPj35
-	vAoAoQ0w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57616)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vzCpK-000000002nH-1IFO;
-	Sun, 08 Mar 2026 12:01:42 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vzCpF-000000003JS-0B1B;
-	Sun, 08 Mar 2026 12:01:37 +0000
-Date: Sun, 8 Mar 2026 12:01:36 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: vladimir.oltean@nxp.com
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, spacemit@lists.linux.dev,
-	UNGLinuxDriver@microchip.com,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v2 phy-next 22/24] phy: include PHY provider header (2/2)
-Message-ID: <aa1lIBO3j_apIPjb@shell.armlinux.org.uk>
-References: <20260308114009.2546587-1-vladimir.oltean@nxp.com>
- <20260308114009.2546587-23-vladimir.oltean@nxp.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KyjIBFlh"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id DDFE326EFE;
+	Sun,  8 Mar 2026 13:13:49 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0qODxsH7oPNB; Sun,  8 Mar 2026 13:13:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1772972029; bh=KlM4hl1KhneCR8S8wwL3AsgMH81tqTiQtLEzLpcTFB8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=KyjIBFlhaggFLByg0qYTM3R9UKdLN4gTJoVWxYMGCTO1AiAcHGG3puAma8c7K7iBm
+	 P9ZyoJYeYwgWy6noq0JJD18uvLOh1I1iPAvkF2IpxFmh2brEhVsF3antyOKShJKK8J
+	 UynPrM1MMQsLSkCEdxnvBxfyvZZhaMkW/FFMd/Zlvm3vkvzURROeTGX9bkw41grD8d
+	 xzFD2lu6n52eR3qGpUMPs8Xh0CKIVtObiwABALQnVhItYrEb3+6lL4ZTEXP4mt7ZNI
+	 m0G0IFI8jwnlkexuJbdlCb50yBqBShATich6U79uyfer27E0ydBBFrHKr+KXUVf+F9
+	 39sDGFV1tNhcA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260308114009.2546587-23-vladimir.oltean@nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 08 Mar 2026 17:43:34 +0530
+Message-Id: <DGXE4J5UJKGM.2R9HM21UDP13L@disroot.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Pavel Machek" <pavel@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "MyungJoo Ham"
+ <myungjoo.ham@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Sebastian Reichel" <sre@kernel.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <skhan@linuxfoundation.org>, "Nam Tran" <trannamatk@gmail.com>,
+ <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v3 04/13] dt-bindings: power: supply: document Samsung
+ S2M series PMIC charger device
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Rob Herring" <robh@kernel.org>, "Kaustabh Chakraborty"
+ <kauschluss@disroot.org>
+References: <20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org>
+ <20260225-s2mu005-pmic-v3-4-b4afee947603@disroot.org>
+ <20260225-secret-amusing-cuttlefish-d3bee5@quoll>
+ <DGPTBRX09EU5.1D1ZSR7EUV7AT@disroot.org>
+ <20260306005057.GA877725-robh@kernel.org>
+In-Reply-To: <20260306005057.GA877725-robh@kernel.org>
 
-On Sun, Mar 08, 2026 at 01:40:07PM +0200, vladimir.oltean@nxp.com wrote:
-> diff --git a/drivers/phy/qualcomm/phy-qcom-sgmii-eth.c b/drivers/phy/qualcomm/phy-qcom-sgmii-eth.c
-> index 5b1c82459c12..4f8ffc6524ab 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-sgmii-eth.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-sgmii-eth.c
-> @@ -7,10 +7,11 @@
->  #include <linux/ethtool.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> -#include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  
-> +#include "../phy-provider.h"
-> +
+On 2026-03-05 18:50 -06:00, Rob Herring wrote:
+> On Fri, Feb 27, 2026 at 07:56:58PM +0530, Kaustabh Chakraborty wrote:
+>> On 2026-02-25 11:44 +01:00, Krzysztof Kozlowski wrote:
+>> > On Wed, Feb 25, 2026 at 12:45:06AM +0530, Kaustabh Chakraborty wrote:
+>> >> +
+>> >> +  This is a part of device tree bindings for S2M and S5M family of P=
+ower
+>> >> +  Management IC (PMIC).
+>> >> +
+>> >> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yam=
+l for
+>> >> +  additional information and example.
+>> >> +
+>> >> +allOf:
+>> >> +  - $ref: power-supply.yaml#
+>> >> +
+>> >> +properties:
+>> >> +  compatible:
+>> >> +    enum:
+>> >> +      - samsung,s2mu005-charger
+>> >
+>> > Review from v1 still applies. I think you ignored several reviews, so =
+I
+>> > will mark entire patchset as changes requested.
+>>=20
+>> Somehow I missed this one... anyways I address them here:
+>>=20
+>>   Why do you need a dedicated child node for this? It's got one property=
+,
+>>   other than the compatible, that you're using. It could easily just go
+>>   in the parent without a dedicated node etc.
+>>=20
+>> The dt node also references a simple-battery node, that's why it's
+>> required.
+>
+> That can go in the parent.
 
-As we know, this will conflict with my patch in net-next. I guess Vinod
-hasn't (yet?) merged the commit that Jakub provided.
+So the parent MFD has the following?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+  allOf:
+    - $ref: power-supply.yaml#
+
+I'm kind of not sold on this one.
+
+Moreover, I was planning to introduce a port to/from the MUIC in the
+next revision so that would've been included here too.
+
+>
+> Rob
+
