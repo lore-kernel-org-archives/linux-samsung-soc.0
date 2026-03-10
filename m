@@ -1,178 +1,124 @@
-Received: from mail-m32100.qiye.163.com (mail-m32100.qiye.163.com [220.197.32.100])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8BD392C23;
-	Tue, 10 Mar 2026 02:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029993ACA46
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Mar 2026 02:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773110267; cv=none; b=iqt/ERTvhdqgWaHeTl2TBgZq4Sz5engtOe3zd7OHEgs0QmNCC2cSkolBbAcUpukjF181U5LQFrlA68kNZEqogRlXpGP0TphJRGEeQiIdKWTYMSM2bY5U9skA9bMxYtsZqxINSGsolPlEBTILVK+gSxDoeBO4xU/nS6BpNJNfWmQ=
+	t=1773110716; cv=none; b=EGjdVM36u5yvEjsgEqgV4OAgJxkKkzyp4HEMbyKW69RzVIFl3jJz74IdwtNgLhzGJc0GpcNo/0aL7i/9pvlHN/bZblAGI6cIZvzH1R8DvqrxNMYtAN/PqXs/snPICogS1v1xOVAR2FPEg3RR5xTmLcnwmjxnvngh+PYwnH4UkeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773110267; c=relaxed/simple;
-	bh=83MZYQGP/EiZrs3txRlHrMkjOzCa4Z3MEL+BskI2kmo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IHWfoaSu23bEoRt6YErFcypKrwjcSUHLzCq7jod0/YyP3edqGFE87uNzaS8lMmuHf/Ppqwa9lJfHPA4gFSBAnubAR+CAJ2jGFVP4VxzEuyKf52JP3d2zdxPwKKYTbxpk6nBLS+B+loBRVd35zRFQf7h9DRG21qzUoVwR7DYivmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Fe+rzJgB; arc=none smtp.client-ip=220.197.32.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1773110716; c=relaxed/simple;
+	bh=AiuSbGc4gyF+r0NsVvYBegnqTPdAIt4V0L/szs51RLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A1yGtiQVYW2piZ0m4Bfqtv7i+3Sw/pCAuKW+9ec/73CPQ0tHInggCb0fjuGUkhdX2yIAZYdR2NqKc9HvlRvzH84Dl0lAxOQcupCg9PXRj/87N4u6QJEAYl6Z4vsBVpjSdxpfM9m7NiYSVuKxP3RobTu3D4G7NnhfTz/oRP5d6H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYQ4GzGr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Fe+rzJgB"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 36552935b;
-	Tue, 10 Mar 2026 10:02:13 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v10 16/18] drm/bridge: analogix_dp: Attach the next bridge in analogix_dp_bridge_attach()
-Date: Tue, 10 Mar 2026 10:00:27 +0800
-Message-Id: <20260310020029.178314-3-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260310020029.178314-1-damon.ding@rock-chips.com>
-References: <20260310012458.169272-1-damon.ding@rock-chips.com>
- <20260310020029.178314-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYQ4GzGr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C25C4CEF7
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Mar 2026 02:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773110715;
+	bh=AiuSbGc4gyF+r0NsVvYBegnqTPdAIt4V0L/szs51RLs=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=OYQ4GzGrjp8DJFWsl2mM6ocePlwxv12ixt2gG1IoJH8dIMcy2K9jYlYp0xrXUr1hj
+	 vdJ1Hmp0SjmxQ+VCPPiqJlGt8YHvrtJ6IjbgXtVQ4LMZbCg9LwXbL8lu4+PBO7sjsL
+	 4s38j0P9Pc/iUqjSuchyjIAcNbjA/RLX+hPcWwe8rEaxzhE3zj7CNgU19ws9MZxPyz
+	 jVvlhgVmpbBARm+YBqB5I7YjjmX/kwY2NwSC8hyTJgVaSFIJVMQTWw9r0B2mnIUaZ+
+	 dgdQe+dNt9cNuRA9+q+H8NVNiXnbOpLUOvVf27C6ZPPIJpRz4lQ5Rxab9sF8pu86xC
+	 ckfjVXnxFH4qg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3870778358aso121133691fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Mar 2026 19:45:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDp0l/xgILCiNV9PjjUhH05+SqgApjVoEKt8YrxmmI6Q3fSn88A9wmszSaFfSCNX3R9XJWdQx/J8KVQRa/8v14eg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8iBD0p26cdQ2wuOh0/95ZzAvD1lJU6hh+FyeQKV/VCq/j6HRH
+	373m/zp/XrkTVrO6c67VR3pCFC6LTM79k1u04Ml1DLT3JTsgVSSBkzh90HLgDjpEohKqFrr8NQ3
+	1gHwOcHm30at0WdjBQAUOci08iHb6R5M=
+X-Received: by 2002:a05:651c:1104:b0:385:c21f:37e1 with SMTP id
+ 38308e7fff4ca-38a40b6a2d2mr40186201fa.15.1773110714064; Mon, 09 Mar 2026
+ 19:45:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9cd57afe7203a3kunm3b4bef74315e50
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkIdSFYaSUpNGh9DHkoeSENWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=Fe+rzJgBeITXcm6Wf5aGQuURDznBoAy/BwbrINOlbq4dv1mbzdvr2jPPVGgBqvICBfubtBCJPpF3IBDSiriYItCLcORNkEntB2KR1dSZjm4PQJFSCLHtlzVdKuXppvpxUe15QQvve0+6KS5InP/NUOOos0tU9IDGwS6MLQbkr9M=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=xAQwUNkR+/xTSp5wXdunj1lCMKlBVVVuN9hC34BIUhQ=;
-	h=date:mime-version:subject:message-id:from;
+References: <20260309190842.927634-1-vladimir.oltean@nxp.com> <20260309190842.927634-18-vladimir.oltean@nxp.com>
+In-Reply-To: <20260309190842.927634-18-vladimir.oltean@nxp.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 10 Mar 2026 10:45:01 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65surpnqrmv4tbH4TSrx6SaTpdbsQtCsNqwse5xwdb8fA@mail.gmail.com>
+X-Gm-Features: AaiRm535EaFxYtCAjq5FIkHiBmgOxc7_e434rO98DZfg5NrM7RTttw3IOCzqW1Y
+Message-ID: <CAGb2v65surpnqrmv4tbH4TSrx6SaTpdbsQtCsNqwse5xwdb8fA@mail.gmail.com>
+Subject: Re: [PATCH v3 phy-next 17/24] media: sunxi: a83-mips-csi2: include
+ PHY provider header
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev, 
+	UNGLinuxDriver@microchip.com, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Uniformly, move the next bridge attachment to the Analogix side
-rather than scattered on Rockchip and Exynos sides. It can also
-help get rid of the callback &analogix_dp_plat_data.attach() and
-make codes more concise.
+On Tue, Mar 10, 2026 at 3:10=E2=80=AFAM Vladimir Oltean <vladimir.oltean@nx=
+p.com> wrote:
+>
+> The introduction commit 576d196c522b ("media: sunxi: Add support for the
+> A83T MIPI CSI-2 controller") says:
+>
+>     This implementation splits the protocol and D-PHY registers and
+>     uses the PHY framework internally. The D-PHY is not registered as a
+>     standalone PHY driver since it cannot be used with any other
+>     controller.
+>
+> However, this does not matter, and is not the only instance of tight PHY
+> provider <-> consumer pairing. According to Vinod Koul, having PHY
+> provider drivers outside of drivers/phy/ is discouraged, although it
+> would be difficult for me to address a proper movement here.
+>
+> So just include the private provider API header from drivers/phy/ and
+> leave a FIXME in place.
+>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
+Acked-by: Chen-Yu Tsai <wens@kernel.org>
 
-------
-
-Changes in v6:
-- Move the next bridge attachment to the Analogix side rather than
-  scattered on Rockchip and Exynos sides.
-
-Changes in v9:
-- Add Tested-by tag.
----
- .../gpu/drm/bridge/analogix/analogix_dp_core.c |  7 ++++---
- drivers/gpu/drm/exynos/exynos_dp.c             | 18 ------------------
- include/drm/bridge/analogix_dp.h               |  1 -
- 3 files changed, 4 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index b112df52cabf..b66fd3062e41 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -930,10 +930,11 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 		return -EINVAL;
- 	}
- 
--	if (dp->plat_data->attach) {
--		ret = dp->plat_data->attach(dp->plat_data, bridge);
-+	if (dp->plat_data->next_bridge) {
-+		ret = drm_bridge_attach(dp->encoder, dp->plat_data->next_bridge, bridge,
-+					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 		if (ret) {
--			DRM_ERROR("Failed at platform attach func\n");
-+			dev_err(dp->dev, "failed to attach following panel or bridge (%d)\n", ret);
- 			return ret;
- 		}
- 	}
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 6126820aad3b..6884ea6d04eb 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -68,23 +68,6 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
- 	return exynos_dp_crtc_clock_enable(plat_data, false);
- }
- 
--static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
--				   struct drm_bridge *bridge)
--{
--	struct exynos_dp_device *dp = to_dp(plat_data);
--	int ret;
--
--	/* Pre-empt DP connector creation if there's a bridge */
--	if (plat_data->next_bridge) {
--		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
--					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
--		if (ret)
--			return ret;
--	}
--
--	return 0;
--}
--
- static void exynos_dp_mode_set(struct drm_encoder *encoder,
- 			       struct drm_display_mode *mode,
- 			       struct drm_display_mode *adjusted_mode)
-@@ -195,7 +178,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.dev_type = EXYNOS_DP;
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
--	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.ops = &exynos_dp_ops;
- 
- out:
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index bae969dec63a..854af692229b 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -34,7 +34,6 @@ struct analogix_dp_plat_data {
- 
- 	int (*power_on)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
--	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *);
- };
- 
- int analogix_dp_resume(struct analogix_dp_device *dp);
--- 
-2.34.1
-
+> ---
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Chen-Yu Tsai <wens@kernel.org>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+>
+> v1->v3: none
+> ---
+>  .../media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_dphy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t=
+_dphy.c b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_dphy=
+.c
+> index 24bbcc85013d..1143feeb4fcb 100644
+> --- a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_dphy.c
+> +++ b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_dphy.c
+> @@ -4,9 +4,9 @@
+>   * Author: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>   */
+>
+> -#include <linux/phy/phy.h>
+>  #include <linux/regmap.h>
+>
+> +#include "../../../../phy/phy-provider.h" /* FIXME */
+>  #include "sun8i_a83t_dphy.h"
+>  #include "sun8i_a83t_mipi_csi2.h"
+>
+> --
+> 2.43.0
+>
