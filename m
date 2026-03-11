@@ -1,155 +1,146 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAAF3D9035
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Mar 2026 11:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773229952; cv=none; b=Dkml6h0H4dcxKS52Wh6k/YADJNvZEwDjc4JfU4PMSlhpOmsJfMZTSBdVzR5clyY2H/gBAQQf4zIGUQq+5PdSgTt1nnCJwzssB32458ChPMlZuEwK+70XSKSPg/grTMBPQm8ugttuvi9SUOBgh0HJWBhu+kM/hMPOQwqXs5jaSs4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773229952; c=relaxed/simple;
-	bh=zmuII2CE089b9W7EKhXMtxf7CJ6EjO42fT346EMkFXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qw4XopJrqv9VXGvLVD4AgmVyU6wldy9QjpfENF11wvx7BzQeH1ZZkjWgIV5irzjaJjE8ovML4yIEJ0O87CkxyOI20jLdiZrzs9oR5jzYJZZxAGmpcQIzzewTrURkujNydUHoPSJWe8/Jl/3NX0yOPDVeyZNfRw8WrW2ehQf3GAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KpuloH/9; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBE31AA1D2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Mar 2026 13:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773234085; cv=pass; b=CDXs1VARUqjnCwSA5LuOyD7TkeBToqVc2mgq81ImcCllRefinwtz8ysFHpJMzH5vwNB43Olz92wqD0PzvunZf1holziXOSBX4EScOyR1lsD+8cFQ5Pi1X7X/gs1EuEWyyYFiy//RuS6P0yJtfruKdOAahGXqX7tGxSNKWAaEf1o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773234085; c=relaxed/simple;
+	bh=5omYf3UBejq4qWG7tPFgWTcjtBLBdAAToujIJ2lCAvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AevV22K16Rsi8mSTPIQ3klehHRxBkD+HrhkkdyB+5a0gJFeS2lyIHWUiOB5ZCqc6iQGt6pS3mOS2rPWHKIDrTNq1j9ezx8f5Pq8R3JHXaSv6QH0qsrRnuXnkIDf5dRS+OIvcSPvlcQzyYHyJM4AUOiicWgsi9YjB+mDkO7VFr1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B+GKw1pA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=R71LJmsv; arc=pass smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KpuloH/9"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4852e09e23dso37592835e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Mar 2026 04:52:30 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B+GKw1pA";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="R71LJmsv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1773234083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5omYf3UBejq4qWG7tPFgWTcjtBLBdAAToujIJ2lCAvg=;
+	b=B+GKw1pA+dQl+hjnXRjRS98FG5AkSiwY+8OOm5a9Yyf7PmIuLg1XT6B5TuRS/B0Bu5x5CL
+	Ti7dePdvkWxkZyP8t8I4z38rFc0e0zSZna8jI2Epu8KlHKbxMVgPYqbMGYZ2yo5000Cpnv
+	1IVFavua0tsZnEiB6gTZrH5PlV+S6cU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-27--mkiNKM8OKWtdXTjvK64PQ-1; Wed, 11 Mar 2026 09:01:17 -0400
+X-MC-Unique: -mkiNKM8OKWtdXTjvK64PQ-1
+X-Mimecast-MFC-AGG-ID: -mkiNKM8OKWtdXTjvK64PQ_1773234076
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b96f2608592so319345466b.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Mar 2026 06:01:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773234076; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Ze820mmKKHftwDxwXYKa2pUHZkVwf1r2yNWLP/P1ylcNXljGpmsKDy13eQ+XGPenLE
+         8pXZVFXI0UdAs6O7I5sBFI+aDO0TRG6R59fcoOCk+X0WmwEmAffYLXezRNc/HwKxNJ4Q
+         OUivtZuFpx8yUr9D7EOagVrPxpocv/YYxa1Rqq+R7sBtQdjWeQWX3ZAEgCBt89KllUCP
+         Ln0ZWX+IR3RPqwMBiUpw5ibcJPeVHooyZvVWpKWIgJBOaec2W2W2WKduiK3VFMQD5vwR
+         1AuqzjO9LdWbMWR3zSX94iQCXhvbOQTUgTQf4K8jdqeJd+//CfF4pFhnMrodXTv3Av37
+         jclQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5omYf3UBejq4qWG7tPFgWTcjtBLBdAAToujIJ2lCAvg=;
+        fh=/40j+KmIeI6YfJZCRQCJoS5+XXL1J/O+MlSTnkgacE8=;
+        b=SgvBsb0x+lPhtmMKjhMl2ng4RojdQiVgTJpLGuievq/nfrvphbXS38JYkV5wCj48e3
+         kMU2xMBFBIhFT75+Ej8VK3hHUgAOqQIJvPtUinGvgipDFZVnCT+42nAfYaSVBWM7K3di
+         0PG6q6/nPFKLPe4VBxKv9kT95WQgKkKsvxb+L9+7CxIsRIaTxaPu2Wf3VpgAtPKxTdkk
+         nEx/zcB9fWmRHdw5Xx1nwqA2fMa2dplBw8U/hq7FAqgNX9EEf8+uWH/pS86c0ZSqcmvi
+         ZhQhH1nvRKTEO+ewGivlVsNFLbNabbTR7/sKCi/zI4wE7XVPH7KWaMj3Nxd0EDLx/anF
+         88uw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773229949; x=1773834749; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vww4V7//t3HQWzLUIJi03/VKV6aq+Kc1duLsEXpUW8E=;
-        b=KpuloH/967lU1lXWeZpjaIOBgxutQUb4sf0BnkpVewDcl33teo5Yq1cbp27+AXHL01
-         HYO2v+v/8zb82KjOVtbhlCqmUqJiWMeBH90MRvCRHde0Grr4vkkS9nX+q762RZaUTfqR
-         lF1Y3zFEWGK6rfIrC2HrLscRaarnFovLH5uELH7TM6IbP7NZEpAUw26iWzCrwOpcjjgD
-         o73y++M9EWMxGr5rYn/IXtywDP40hxj6ahdOh90yjeF9tn7TPOW1v+kKm0pSqNLbjfe7
-         e71No1eRz4zutCTv5GPlVmQkAJcjZhVnsJJvMI97wJ8CCgB9OsuGgkihPVt1GB6DPhl8
-         CX4w==
+        d=redhat.com; s=google; t=1773234076; x=1773838876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5omYf3UBejq4qWG7tPFgWTcjtBLBdAAToujIJ2lCAvg=;
+        b=R71LJmsvDoGTZvb0JwLD4qFTsSwb4UVVFK3SuL7qvti11COXCeLaEOIzry8wYazr/y
+         ikp00ZMOp1JHxB2Izfa/4nCOd35Q97UNuboTaNqFDr2lUNY6FlEgAyq+4g5lN13pHwJg
+         7H7icD/Im1a+6ZPvyBXegMmCiz6vW6V8voJObK7xoHxzxBJxy/lt5ujguyC6yX3NBjZW
+         nn0A9GEjlb8X4C5pbsPVVLwQxD5Daf6EmqljjqgsHM7lZd+BJ0rnIkQxmwllJNHtWsmC
+         T6ALdhnd0ONm3ywBDnf2onV6Oj6K48tgm8GyRAL2S8ulnHLHBDnAIHhJmHVhOqtVwXKu
+         6Zcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773229949; x=1773834749;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vww4V7//t3HQWzLUIJi03/VKV6aq+Kc1duLsEXpUW8E=;
-        b=EycW32VAfi77DORDAU7DQH+kEFBhw5scDjQK4fx/KUtZeFNE5pxzTaRFRQFIY3MGMm
-         GXW59iUA122DWWOsxD3inO7jemZ4rd49nN9AxkbChmasTK79ZP6y7Iu9lF3U0Ht/lOfg
-         wNK2w47GAQe9wGgNuKvXuTCT5GW52RdTJag3Ah+Gy//xKw7P8E+TeszGTIg/X5CtpkL7
-         FdFlAlpyImpWg9/HZJ0OHvnuA6rq3qUZ1Qag/RUT88aPCZbzMM4BqoGeD3PR48VOqS7O
-         RVjmeNpfw0wOhrSq4CY0vbGVjPU47IiY48uiepPlrHvw0pILwv3pWFbcD5I6PXPP9pgF
-         ZMBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCfLwsJ7Na905ScX+SMT0L15VdtXSPPeS2O9ulq9tFM0PRNt8z2WqRgcfew3RVAaNugDJAFgNl8ujjapLPdPTkmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSxwErpS7Q7CieB1YGMdUkqd9etteBeA1pHwH/H3aAi8qvMtY3
-	TVP1L0gClOyhPt5Z4ewTSlac6ULRqg2gGDvSwRfPoab+/Yabp1ZZXhXAyGCYsyROkpI=
-X-Gm-Gg: ATEYQzw9b3tx0Y1SdICc5q/9UEIi0S32qRS6OwIBHpiFCUBsA2sUBDYPCSeJJwpPv2O
-	WCR0iLv2quF6CRK4/SZ/Pympcib3iZB3vTuQCB/oTSLVg/motq92jiYGWlZfVmY3W/NepltFTSw
-	xgMW6cEX9Lv3pF1/LZ1yK8fOdf3JpeDxnkWDzSIDxp5vF6lkWo6DOYXLlWGmx8tvz8nipcEkTid
-	7eyq8B3ZmsRFH7SSZre1JmN4r9ySauLKN47hr4W9DZkUuDuldYPapMcXqFIQjFildIESc73tRga
-	ON2z1zKfjoSF5Wd33DJf628jMmc4MrYksXPp0CnEYzTf2WyGCJL0HNeNf2dtqMe6DbtzVRxaYU6
-	xyXpBBTB3cn7I9R/Byxi0+nuneUXbGVONcvFAHBJlIkFFKGcn3nTebQaTVGS9/6MX7qUU1j+/Pf
-	38uFj5HEEVcmxFdCRYYZnRDVaBA18MgYE=
-X-Received: by 2002:a05:600c:3b18:b0:485:3d00:f0a with SMTP id 5b1f17b1804b1-4854b0b329bmr37910965e9.8.1773229949065;
-        Wed, 11 Mar 2026 04:52:29 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.77])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854a307bc4sm31082345e9.3.2026.03.11.04.52.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 04:52:28 -0700 (PDT)
-Message-ID: <30142b6f-4578-4472-bbbb-2574f1c0288a@linaro.org>
-Date: Wed, 11 Mar 2026 13:52:27 +0200
+        d=1e100.net; s=20230601; t=1773234076; x=1773838876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5omYf3UBejq4qWG7tPFgWTcjtBLBdAAToujIJ2lCAvg=;
+        b=ChC+tqEPW0xojV3agLvG+NHg7my8BqQNr40mW9ebUXFk1TAU9FN1cpbS6NPprSE4cY
+         sp3lYVLCx11C2WO2VGyE8ph1EivHXCHnFEt5wLnmt7k/g2crp5dwYR296Wzg3f0TEngp
+         PWNRDRLYs9y8d7z+vRDWKZ9iiyVC3cKacDxCfiqI+g17N+OXvqQikAyKbTUJ92dUwQ1E
+         sUF2ZvuRwb96eCvXb3gTKKN8I2yt4BWHkjD8zHwDGSokhvip7nWLa3PW9OQ3mdQppPl2
+         5CRVxquCaPWtmrk13FixOLCri/MaGKf5a3Q1Ctw7XlI/MlY4LzaXV/QZqlIgqcH4V0x6
+         sHKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdQJDwFplmti2WAdfPrDNhvaBxACtrq9iy51sIHfhhzZDDlph8NUOpBUbHpNsas/kwyEXdUOCHmG1hYDCjbkEzEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUDRbRnv0xzDxY3ZKyvR4Y4yV3Cs1sKXVnfF+pyH+RCYDphCUv
+	tiWnfeXqJ8MagqzC3SUITLOFoUZusJkkHw3EWItxatXUAcUOCnGIRemDgQb9ym0o7SS0gRE6cjk
+	I8tjg7cseSaxLVqFRd/zqD6COFJGMd7vzXr1WlCXkFirgdskN+kOHNm1U9ctPXBHct+KmGHfMRj
+	p0/Y2FIBFhLkOjDCyo+b+7qS/hgrzzTjfUh3x+ocNaCXOmplA=
+X-Gm-Gg: ATEYQzxLKjOOO1wZ5QzJhJT5wyn07mhF7zy2CmUIc2+jN6OP4Yr8c4nDO5C5evlaZze
+	ySnYv/zV341McuJWxiWw/AwTtBTCiXgojxlRy2MzTwGs+aEyAXFl3/I1/4O1SHKBo5x2zDWLuIe
+	gNF2d10BruqCpUuuP5RnopTtz5amWV2fD6SKaU7vsssONnM9gIAeMQ9667qub2926FSiN68dD9V
+	QMldg==
+X-Received: by 2002:a17:906:7314:b0:b93:edc0:e2e8 with SMTP id a640c23a62f3a-b972e6069a2mr143083566b.48.1773234075118;
+        Wed, 11 Mar 2026 06:01:15 -0700 (PDT)
+X-Received: by 2002:a17:906:7314:b0:b93:edc0:e2e8 with SMTP id
+ a640c23a62f3a-b972e6069a2mr143080266b.48.1773234074508; Wed, 11 Mar 2026
+ 06:01:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] clk: samsung: acpm: drop determine_rate op and
- use CLK_ROUNDING_NOOP flag
-To: Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-samsung-soc@vger.kernel.org
-References: <20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com>
- <20260309-clk-det-rate-fw-managed-v2-11-c48ef5a3100a@redhat.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260309-clk-det-rate-fw-managed-v2-11-c48ef5a3100a@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com> <c7d47b6d-caf7-426b-944e-7debb7d69045@linaro.org>
+In-Reply-To: <c7d47b6d-caf7-426b-944e-7debb7d69045@linaro.org>
+From: Brian Masney <bmasney@redhat.com>
+Date: Wed, 11 Mar 2026 09:01:02 -0400
+X-Gm-Features: AaiRm52EdqmkwN8CGi7SEvZrCO9M1f6Y7hYTKKNfjOzM3D3aXhP9MAnWBZaRjqI
+Message-ID: <CABx5tqKC_KocCp+_uJ-t7AhJNa9MZOG=5Dry4UoZXzUvSryiFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] clk: add new flag CLK_ROUNDING_NOOP
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Orson Zhai <orsonzhai@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	arm-scmi@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 11, 2026 at 7:51=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+> On 3/9/26 4:38 PM, Brian Masney wrote:
+> > Note this series depends on 3 previously-posted patches in this git pul=
+l
+> > to Stephen for v7.1.
+> > https://lore.kernel.org/linux-clk/aZuK4-QJCXUeSxtL@redhat.com/
+>
+> There's no tags/clk-remove-deprecated-apis-v7.1 on
+> https://github.com/masneyb/linux
 
+It is here, unless I am missing something?
 
-On 3/9/26 4:38 PM, Brian Masney wrote:
-> This clk driver has a noop determine_rate clk op. Drop this empty
-> function, and enable the CLK_ROUNDING_NOOP flag.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+https://github.com/masneyb/linux/releases/tag/clk-remove-deprecated-apis-v7=
+.1
 
-Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-> ---
-> To: Tudor Ambarus <tudor.ambarus@linaro.org>
-> To: Krzysztof Kozlowski <krzk@kernel.org>
-> To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> To: Chanwoo Choi <cw00.choi@samsung.com>
-> To: Michael Turquette <mturquette@baylibre.com>
-> To: Stephen Boyd <sboyd@kernel.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/samsung/clk-acpm.c | 14 +-------------
->  1 file changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-> index b90809ce3f882c489114c9d7299417d7fe373749..b79d973eaa0c275c508a51926ecde5349f00feba 100644
-> --- a/drivers/clk/samsung/clk-acpm.c
-> +++ b/drivers/clk/samsung/clk-acpm.c
-> @@ -72,18 +72,6 @@ static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
->  					clk->mbox_chan_id, clk->id);
->  }
->  
-> -static int acpm_clk_determine_rate(struct clk_hw *hw,
-> -				   struct clk_rate_request *req)
-> -{
-> -	/*
-> -	 * We can't figure out what rate it will be, so just return the
-> -	 * rate back to the caller. acpm_clk_recalc_rate() will be called
-> -	 * after the rate is set and we'll know what rate the clock is
-> -	 * running at then.
-> -	 */
-> -	return 0;
-> -}
-> -
->  static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  			     unsigned long parent_rate)
->  {
-> @@ -95,7 +83,6 @@ static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  static const struct clk_ops acpm_clk_ops = {
->  	.recalc_rate = acpm_clk_recalc_rate,
-> -	.determine_rate = acpm_clk_determine_rate,
->  	.set_rate = acpm_clk_set_rate,
->  };
->  
-> @@ -106,6 +93,7 @@ static int acpm_clk_register(struct device *dev, struct acpm_clk *aclk,
->  
->  	init.name = name;
->  	init.ops = &acpm_clk_ops;
-> +	init.flags = CLK_ROUNDING_NOOP;
->  	aclk->hw.init = &init;
->  
->  	return devm_clk_hw_register(dev, &aclk->hw);
-> 
+Brian
 
