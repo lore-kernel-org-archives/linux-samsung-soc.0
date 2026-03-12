@@ -1,98 +1,171 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0043A23BCED;
-	Thu, 12 Mar 2026 13:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28863C1966;
+	Thu, 12 Mar 2026 15:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773321049; cv=none; b=SJq8VzpOvitOMQd3Ljea6LKSs63XAP5S6DA76bPAEUO2WtIu69vNkNY9UjECduzZ/zLOYTdCg6lkrfZZ/rsR+tm7o3e+m16c0u9CaswqVceUhKe94B8bpm2s9EN83LfRg7dMh0NzEaXPaH1Tf5nO/7diOX1J4KfJHVWqMl0BYck=
+	t=1773328350; cv=none; b=Mof5pHBAB76LroKlR56H0TwuaZ+icLj90rsfSj7E6rFamGg/jQsasPPjknWkjAcYvmUW0jKLs0sekv288P3G4jPxtsd5SwWiMLe5y2GKkPUwGgZlJK0Uj45pH6vkgN7E3FUUnEc9LJaOivd6XpSMSbZjFVeRVZZleOTomzLWZM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773321049; c=relaxed/simple;
-	bh=knQrS10xE8pCiFxKeddUKvT0NROChU5ox+YUb1+I4Jk=;
+	s=arc-20240116; t=1773328350; c=relaxed/simple;
+	bh=OFQkSwxZOQTDuacP85eO/H76W4BsofYz+Vr8zvUhZss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDpMnPa2WKWn+I1wyc22jCV5SRSeo+QzVfpVxKbVT8b6mXDiekGsRLX5FNeqrduRmR0omP40kvVVZ4bA/tWAkoKSHTuTDCbys4yuyGTx1bVs8C5B0jMYJ9KnxMSa9VJLOpppw8ljFr4idVSO8cYVtWV9rL+9n7UWAQkUBexQ/Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/PFIyj9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNqzb/CE8Kwme9sGejW0oGq4Z8gZ2LSum9iDQjA9+JVoah6xkXFpt2NTO+XEup/Nfg42L+/Xo0m7oUX8ZArPquu6SgkruT2j/hiKMFSTDld0xiOFhH3v3OvBIX9B2WTgSS+f43gZiT2ajGHKZVVq4lswrwYImKqABbu+w7ATaUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo506PWq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/PFIyj9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87868C2BC86;
-	Thu, 12 Mar 2026 13:10:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo506PWq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE37C2BC86;
+	Thu, 12 Mar 2026 15:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773321048;
-	bh=knQrS10xE8pCiFxKeddUKvT0NROChU5ox+YUb1+I4Jk=;
+	s=k20201202; t=1773328349;
+	bh=OFQkSwxZOQTDuacP85eO/H76W4BsofYz+Vr8zvUhZss=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D/PFIyj91n4cjwbkmFrtz1Zp7ltSngsuz/KUHloIpRJcdahbkIMAiUXROd+gGnVOb
-	 Iw1Iwc0yAYWvNNZj178FpoLhC5TYOP7Pmp1fvWRDqKAhRMDg2WEuxAeCb6MGSU+Egk
-	 73pdalxpbDWCtEsQSVXUKwDlYH4Y0Kha4cPztJa4sDX6hpbUPusZIkB1784SyljfPI
-	 4ghgvGGPrpjQ8jiHYiC6WIp9P/SdZcDym9Br0ffyKZF1aEOJDShPudm+SEdxa1e666
-	 oUO3wjvTpZz7btpB1PIgJk2lhCAtBhOW9K/0XQJ0gA1R51AQv5NUJOana1FjpgzVs1
-	 R1gBn/o3oM87A==
-Date: Thu, 12 Mar 2026 13:10:41 +0000
-From: Mark Brown <broonie@kernel.org>
-To: amitsd@google.com
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	b=bo506PWqIcT26ISjH6rrBUPGkXjhgqjAHzoarDnOYVpQsajPlcZiwwN/9V76E6z0u
+	 LHZZXtz207GTup8BM5hEvD1fNuZ+bsa0maUCc01JFbscA1fGZo7Ndu34koaw7NS4nW
+	 OsZXqmq5ByCJGcgcKY5inFwW+7p3k3cZ3HgDuPqVhfgcMGnawXSP0MEJo65OLa/mb7
+	 7DqNOMSD7EyKmxloJzEk8iJxCS+dXWm85d8sIn2RsmdE1p0hnXaDLsTZsrQmeqw/yZ
+	 dcuHyKTYnDhNF8A+9m7kjkj6DmSmjDtzmh1AlIv7uph1rGH9XYcADRTAC/LvfGtczf
+	 TdA50RewHETyg==
+Date: Thu, 12 Mar 2026 10:12:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+	Juan Yescas <jyescas@google.com>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Subject: Re: [PATCH v8 4/6] lib/linear_ranges: Add
- linear_range_get_selector_high_array
-Message-ID: <500e053a-9919-4c63-a042-30a5e5f09c6f@sirena.org.uk>
-References: <20260224-max77759-charger-v8-0-eb86bd570e9c@google.com>
- <20260224-max77759-charger-v8-4-eb86bd570e9c@google.com>
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 04/10] dt-bindings: soc: google: gs101-pmu: allow
+ power domains as children
+Message-ID: <20260312151228.GA3136988-robh@kernel.org>
+References: <20260306-gs101-pd-v7-0-03f7c7965ba5@linaro.org>
+ <20260306-gs101-pd-v7-4-03f7c7965ba5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z6vnm6QHpA1WTayS"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260224-max77759-charger-v8-4-eb86bd570e9c@google.com>
-X-Cookie: I feel better about world problems now!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260306-gs101-pd-v7-4-03f7c7965ba5@linaro.org>
+
+On Fri, Mar 06, 2026 at 10:29:55AM +0000, André Draszik wrote:
+> The power domains are a property of / implemented in the PMU. As such,
+> they should be modelled as child nodes of the PMU.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> v7:
+> - really be consistent with quoting (Krzysztof)
+> - drop invalid tested-by tag (Krzysztof)
+> 
+> v4:
+> - consistent quoting using " (Krzysztof)
+> - add samsung,dtzpc to example
+> 
+> Note:
+> Because the properties added are 'required', this commit breaks DT
+> validation of the existing DT for Pixel 6, but a) that's simply because
+> the DT is incomplete and b) a DT update will be posted once the binding
+> is accepted.
+> It is not possible to write the binding such that it supports old
+> (incomplete) DTs in addition to the full version, but as per above
+> it's not required to keep supporting old DTs.
+
+This information needs to go in the commit msg.
+
+> ---
+>  .../bindings/soc/google/google,gs101-pmu.yaml      | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> index a06bd8ec3c20..dfe6f87e5949 100644
+> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
+> @@ -16,6 +16,14 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges: true
+> +
+>    reboot-mode:
+>      $ref: /schemas/power/reset/syscon-reboot-mode.yaml
+>      type: object
+> @@ -39,9 +47,23 @@ properties:
+>      description:
+>        Phandle to PMU interrupt generation interface.
+>  
+> +patternProperties:
+> +  "^power-domain@[0-9a-f]+$":
+> +    type: object
+> +    description: Child node describing one power domain within the PMU
+> +
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      compatible:
+> +        const: google,gs101-pd
+> +
+>  required:
+>    - compatible
+>    - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+>    - google,pmu-intr-gen-syscon
+>  
+>  additionalProperties: false
+> @@ -51,6 +73,25 @@ examples:
+>      system-controller@17460000 {
+>          compatible = "google,gs101-pmu";
+>          reg = <0x17460000 0x10000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges;
+>  
+>          google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
+> +
+> +        pd_g3d: power-domain@1e00 {
+> +            compatible = "google,gs101-pd";
+> +            reg = <0x1e00 0x80>;
+
+I'm assuming 0x1e00 is an offset from 0x17460000. That's not what ranges 
+says though. It says both addresses are in the same address space 
+(system-controller@17460000 parent's address space). You need:
+
+ranges = <0x0 0x17460000 0x10000>;
 
 
---z6vnm6QHpA1WTayS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 24, 2026 at 01:45:34AM +0000, Amit Sunil Dhamne via B4 Relay wr=
-ote:
-> From: Amit Sunil Dhamne <amitsd@google.com>
->=20
-> Add a helper function to find the selector for a given value in a linear
-> range array. The selector should be such that the value it represents
-> should be higher or equal to the given value.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---z6vnm6QHpA1WTayS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmmyu1EACgkQJNaLcl1U
-h9BlIgf/WMBGgptFYb7yIkxGUKOn+mEm5q45nldetnrV4TDR6/fAFjQxqU/GOzxS
-+RPqXEnr6F/3iDWu5WJimjJi9gjJmxkw52yeg39ccZj3DOA2IrooBLGMRFMOqaj6
-CVnKmk6oOv71y0xclOYuRpt3je4UIYAwViaJds5ASxPTi2qnDSmjDVez2iBwbuwr
-FJZKbzW7hqrcGiRLLkU5TS1+BzMSP/G1ErzLcduQ24Vtc5zwys6wpnkny7ma8URw
-eQVUJX+avpSiNGQxBSlOcFUypkh9ISW7OVo67fk76i9MfPiIJZw+g9YtwPKmq7pG
-2YWuApGAT4LC24MHQDEFu9Umvmuvqg==
-=sJI6
------END PGP SIGNATURE-----
-
---z6vnm6QHpA1WTayS--
+> +            #power-domain-cells = <0>;
+> +            label = "g3d";
+> +            samsung,dtzpc = <&pd_g3d>;
+> +        };
+> +
+> +        power-domain@2000 {
+> +            compatible = "google,gs101-pd";
+> +            reg = <0x2000 0x80>;
+> +            #power-domain-cells = <0>;
+> +            power-domains = <&pd_g3d>;
+> +            label = "embedded_g3d";
+> +        };
+>      };
+> 
+> -- 
+> 2.53.0.473.g4a7958ca14-goog
+> 
