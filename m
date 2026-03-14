@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F0945BE3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F5418DB26;
 	Sat, 14 Mar 2026 21:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773524158; cv=none; b=EXU1ySxFC2c/z5R4Yw83q3/xuIfx+Nj9NTZGKGTS03I9ld4yJgp1mEsZgFIvPdGe3OLwfxZk4k/tkxUtJJA1HVQTfVJdz1o1fare2GvxdGZIzTaBYkTxuKRSonBPApSFU4UoBajd3Bue0wxndCNAuB+sC08XEtKYnSoCGyTPIrs=
+	t=1773524158; cv=none; b=jlkPPUhwZ6g6MtXXungJ0cJwdLoKNldLYeMdBXRaFYaEMlXgJq/xeXeudUcQI/1WFUMGdkR+B99huslHXtKl5OlT6nHqgPrX1V82RPudosi50kpUJxZwJCIu5GaYQ1FPXOJ287aTYgIO2b0r+5fRItL0HqTk7MtCrhinJM/qQ9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773524158; c=relaxed/simple;
-	bh=f00uJrynLNBeq1fp8KKlN/A/GMn2B9ae1DulfzNwyPQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DVWlxdHcGiQWFxBIon9df67Ps1GY++PQZkz6kkd2g/CfT1TVrPJRwTU6o5H4KsHV7WR8tqi/i2SALlGli7LDIGbjkW3h6B2prqeQvszpJgV5I4jplz/8llx4O31+GwPWyGD3WQ2I7pYsNRCG382LOYqqVu4/GlxGcN8hdwC+B5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIClaUQE; arc=none smtp.client-ip=10.30.226.201
+	bh=K5jKc+bfoQGgPh8KBEr0OLcmp06yl8CI1lJPLqzYbkM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KkbpHkwWrfPScr0gUEDAN0mqtXPCB85itOTmbF/5hB4QC34m1PCcApPVJmEmPdTuDHACrHGrLqGo6aXqJwUbsoh8mKxbmCmALHBprzqA8jlwNOsvduhB6Vywv+Kt/ZZhDFjtaMxxlmnwxJEzG8bvFAeSKQM58I/qUH8CBsJ3oo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekVHG2xf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIClaUQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 69E33C116C6;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekVHG2xf"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9A876C2BC9E;
 	Sat, 14 Mar 2026 21:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1773524158;
-	bh=f00uJrynLNBeq1fp8KKlN/A/GMn2B9ae1DulfzNwyPQ=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=CIClaUQEzC26KSF8J5klewJyfr4hElKW2N5QG9B9wE6BbShuU6xVOx4Q5cX4rUO5P
-	 zOKbfBSDji8iVODllzi6HnBbcVYVsD03Nh3w9ILXFbYOOtKO54hJKgZt+OdMW1JIAg
-	 GTyLj0mcSXM3lIGMrdLLgEPNFXQwaTpijArVB3RADvDq1evUO6Pm51p1tEebzvmGbM
-	 BN0DS+4kCEM9WhZ71xIuFAjenaZ/h4ZNU94l4cdfZzlkggxHwjW3YSc3lHXSs0ylJs
-	 Qc3nDKuu8s6s9QoRyOxvVysWzkE6C0Dx1Y/i0e04rDmyrxCsNvqpxsyzEsIhcRv9hl
-	 ToGFYwPEhSr0w==
+	bh=K5jKc+bfoQGgPh8KBEr0OLcmp06yl8CI1lJPLqzYbkM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=ekVHG2xfPVlP43cP3OdQM/ab0bf1Wn3bo60nUhUoS9IJGQc0zfW2rhS5/iAeR9Xqj
+	 pvj/xoQEMmfSJGrtVrR57H7MvZmiDSBlOHGtreqM4GvkrwdPTsgPQXv+6Bc9VMC2a6
+	 KhcxlLkLSm/uIM8izh0fLIhpPtSX6GDYeZTuJld7pjOJ34RzW0gX4/igIzmcy1EsRp
+	 ZuTXJjHnKE2cziVH62jDMRqr9dwCy8dn+0TBZfKECEN3hWw/xip0gX3oiLzVvC7jCP
+	 4l4sYJ4U67lqDbHJIA4shT7wl6KEE2C45G6JcfQuXZBHt9Rt2OF6fwy+nlOF42Gqgl
+	 A/ZXr+xnWFF1Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0D910854AB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F2310854AE;
 	Sat, 14 Mar 2026 21:35:58 +0000 (UTC)
 From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Subject: [PATCH RESEND v8 0/6] Introduce MAX77759 charger driver
-Date: Sat, 14 Mar 2026 21:35:35 +0000
-Message-Id: <20260314-max77759-charger-v8-0-226ca5f8c7d2@google.com>
+Date: Sat, 14 Mar 2026 21:35:37 +0000
+Subject: [PATCH RESEND v8 2/6] dt-bindings: usb: maxim,max33359: Add supply
+ property for vbus
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,14 +40,10 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAKfUtWkC/23QTU/DMAwG4L8y5UxR4sZOwokDu3KAI+KQr3aR2
- IpaVA1N/e9kRWhFydG28th5L2yKY4oTe9hd2BjnNKXhlAt9t2P+YE99bFLINQMOKATH5mjPSik
- 0TR6PfRwbjeAIKBAJy/KzzzF26bySb+xl/7p/fmLvuX9I09cwfq+bZrFOf1FoS3QWDW/IQZROd
- 6pD+dgPQ/8R7/1wXLUZbgIIXREgC+AAjdHckqZCaDcCqIrQZgFlJJIdemugEOSfQDwfURHk9Rd
- GQiu9DjGIQsCbALyWA2bBIW8NtoosdoVAG0HIikDXHLTnxgWrpCuTVFuhlqTKQtTBcOUjGY+Fo
- DcC1G7QV8FpcgEVj8b/E5Zl+QHMNJU7hwIAAA==
-X-Change-ID: 20251105-max77759-charger-852b626d661a
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260314-max77759-charger-v8-2-226ca5f8c7d2@google.com>
+References: <20260314-max77759-charger-v8-0-226ca5f8c7d2@google.com>
+In-Reply-To: <20260314-max77759-charger-v8-0-226ca5f8c7d2@google.com>
 To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -66,11 +63,11 @@ Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
  Amit Sunil Dhamne <amitsd@google.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773524157; l=6377;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773524157; l=1272;
  i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=f00uJrynLNBeq1fp8KKlN/A/GMn2B9ae1DulfzNwyPQ=;
- b=ssMe57JsMYjZhRJG94pjcao4tZCTKY8Mq7ojocIgx7mxddfSwIjQtomYQV/mztDOv1g/OwMue
- 6QqQQrAEkwvAtSOyVAB4sxh63NX7RVuE5y/UyUQU8D5hTphX6StBE5c
+ bh=Hb4ezO3qv6ucXWhfGdtXpd/bi+P5qgWzJCv96jR/Yc4=;
+ b=UOC4XbekIsphNyGleCB6JCZ2Zm2kfUcUr/8O8J5wdvWnLoM/8qTWDDsXgO3hJgp5pv04ZsoZ0
+ nzQXUgEAibmBxvLH3ekE8HHOOTMh6zRDB4SgVx3RBLVnH5qj8DTUKXe
 X-Developer-Key: i=amitsd@google.com; a=ed25519;
  pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
 X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
@@ -78,138 +75,43 @@ X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
 X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
 Reply-To: amitsd@google.com
 
-MAX77759 PMIC is used in Pixel 6 and 6 Pro (Oriole/Raven) boards.
-One of the functions of the MAX77759 PMIC is a battery charger. This
-patchset introduces a driver for this function. One of the unique
-features of this charger driver is that it works with a USB input where
-the Type-C controller is TCPCI based.
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-Changes to the board files will follow soon once this patchset is reviewed.
-
-For reference to the MAX77759 MFD based patchset (present in upstream):
-https://lore.kernel.org/all/20250509-max77759-mfd-v10-0-962ac15ee3ef@linaro.org/
-
-Dependency list for patches (directionality indicates depends on):
-[6] -> [5] -> [4] & [3]
-
-The changes need to be applied in order. In this case this probably
-would be the USB subsystem as that's the leaf in the dependency list.
+Add a regulator supply property for vbus. This notifies the regulator
+provider to source vbus when Type-C operates in Source power mode,
+while turn off sourcing vbus when operating in Sink mode or
+disconnected.
 
 Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
-Changes in v8:
-- Add an newline char at the end of dev_* prints. (André Draszik)
-- Return PTR_ERR() instead of -EPROBE_DEFER when devm_power_supply_register()
-  fails in max77759 charger probe. (André Draszik)
-- Link to v7: https://lore.kernel.org/r/20260218-max77759-charger-v7-0-e8d907ce69c5@google.com
+ Documentation/devicetree/bindings/usb/maxim,max33359.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes in v7:
-- Add register relock for protected registers in fail path. (André Draszik)
-- Switch to usage of scoped_guard instead of guard. (LKP test bot)
-- Link to v6: https://lore.kernel.org/r/20260214-max77759-charger-v6-0-28c09bda74b4@google.com
+diff --git a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+index 3de4dc40b791..e652a24902ea 100644
+--- a/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
++++ b/Documentation/devicetree/bindings/usb/maxim,max33359.yaml
+@@ -32,6 +32,9 @@ properties:
+     description:
+       Properties for usb c connector.
+ 
++  vbus-supply:
++    description: Regulator to control sourcing Vbus.
++
+ required:
+   - compatible
+   - reg
+@@ -53,6 +56,7 @@ examples:
+             reg = <0x25>;
+             interrupt-parent = <&gpa8>;
+             interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++            vbus-supply = <&chgin_otg_reg>;
+ 
+             connector {
+                 compatible = "usb-c-connector";
 
-Changes in v6:
--  Linear Range usage (André Draszik):
-  - Dedicate individual arrays for inlim, chgcc & chg_cv_prm to simplify
-    code.
-  - Use numerical values instead of macros for linear_range array init.
-  - Remove macros defining current and voltage limits due to above.
-  - Didn't use Reviewed-by tag for Patch 3 due to the above.
-  - Add new linear_ranges api to leverage it for obtaining selector
-    values.
-  - Improve voltage and current getters and setters functions by leveraging
-    existing and new linear_ranges API.
-- IRQ related changes (André Draszik)
-  - Dedicated names for individual irqs.
-  - Refactor irq handlers.
-  - Ratelimit prints
-- Retry mechanism (André Draszik):
-  - Initialize error retry counter to 0 when psy work is scheduled on a
-    new notifier event.
-  - Protect the counter using a lock.
-  - Add appropriate prints.
-- Link to v5: https://lore.kernel.org/r/20260203-max77759-charger-v5-0-b50395376a5f@google.com
-
-Changes in v5:
-- Use linear_range library instead of reinventing it. (André Draszik)
-  - This requires a selector_max value so modified mfd/max77759.h to
-    include it for CHGCC and CHG_ILIM.
-  - Removed "reviewed-by" for Patch 3 (mfd) due to above
-- Use asnyc probe type. (André Draszik)
-- Retry mechanism for psy_work. (André Draszik)
-- Minor nits (André Draszik):
-  - Use named initializers for instantiating structs.
-  - Use static qualifier for `psy_name` variable.
-  - Refactor if-else ladder to remove else handling if return in prior
-    "if" loop.
-  - Remove redundant `unlikely`.
-- Link to v4: https://lore.kernel.org/r/20260121-max77759-charger-v4-0-694234c8ded1@google.com
-
-Changes in v4:
-- Removed a stray tabspace in mfd/max77759.h. (André Draszik)
-- Fixed the following issues in Patch 4/5 (André Draszik):
-  - Re-order Kconfig entry
-  - Refactored to not use global variable
-  - Use of clamp() to clamp values instead of duplicating logic
-  - Return IRQ_NONE for unhandled irqs or error conditions
-  - Remove debug messages in irq handler
-  - Refactor code to use dev_err_probe in *_init_irqhandler()
-  - Remove unneeded irq_flags
-  - Check return values of regmap ops
-  - Other nits like newlines, not using greedy init, using print stmnts
-- Link to v3: https://lore.kernel.org/r/20251227-max77759-charger-v3-0-54e664f5ca92@google.com
-
-Changes in v3:
-- Had incorrectly folded the charger sub-device with the pmic parent.
-  Corrected it. (Krzysztof Kozlowski)
-- Link to v2: https://lore.kernel.org/r/20251218-max77759-charger-v2-0-2b259980a686@google.com
-
-Changes in v2:
-- Fold charger binding in maxim,max77759-charger.yaml to its parent
-  node. (Krzysztof Kozlowski)
-- Renamed regulator supplier & consumer. (Krzysztof Kozlowski & Heikki
-  Krogerus)
-- Removed explicit setting of irq trigger types in max77759 driver.
-  (André Draszik & Krzysztof Kozlowski)
-- Complete bit definitions for IRQ registers. (André Draszik)
-- Consolidate all bit definitions for charger IP in mfd/max77759.h.
-  (André Draszik)
-- Modify the handling of charger IRQs such that regmap IRQ chip handles
-  masking, de-mux and acking of interrupts. (André Draszik)
-- Remove unused macro definitions relating to Charger modes in tcpci
-  maxim driver (André Draszik)
-- Add dependency on Regulator class in Kconfig definition for max77759
-  chg. (Kernel Test Robot)
-- Link to v1: https://lore.kernel.org/r/20251123-max77759-charger-v1-0-6b2e4b8f7f54@google.com
-
----
-Amit Sunil Dhamne (6):
-      dt-bindings: mfd: maxim,max77759: reference power-supply schema and add regulator property
-      dt-bindings: usb: maxim,max33359: Add supply property for vbus
-      mfd: max77759: add register bitmasks and modify irq configs for charger
-      lib/linear_ranges: Add linear_range_get_selector_high_array
-      power: supply: max77759: add charger driver
-      usb: typec: tcpm/tcpci_maxim: deprecate WAR for setting charger mode
-
- .../devicetree/bindings/mfd/maxim,max77759.yaml    |  16 +-
- .../devicetree/bindings/usb/maxim,max33359.yaml    |   4 +
- MAINTAINERS                                        |   6 +
- drivers/mfd/max77759.c                             |  91 ++-
- drivers/power/supply/Kconfig                       |  11 +
- drivers/power/supply/Makefile                      |   1 +
- drivers/power/supply/max77759_charger.c            | 774 +++++++++++++++++++++
- drivers/usb/typec/tcpm/tcpci_maxim.h               |   1 +
- drivers/usb/typec/tcpm/tcpci_maxim_core.c          |  54 +-
- include/linux/linear_range.h                       |   3 +
- include/linux/mfd/max77759.h                       | 176 ++++-
- lib/linear_ranges.c                                |  36 +
- 12 files changed, 1114 insertions(+), 59 deletions(-)
----
-base-commit: ecc64d2dc9ff9738d2a896beb68e02c2feaf9a02
-change-id: 20251105-max77759-charger-852b626d661a
-
-Best regards,
 -- 
-Amit Sunil Dhamne <amitsd@google.com>
+2.53.0.851.ga537e3e6e9-goog
 
 
