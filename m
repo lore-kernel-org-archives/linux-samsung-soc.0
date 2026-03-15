@@ -1,341 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D140E2772D;
-	Sat, 14 Mar 2026 22:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE8F40DFD6;
+	Sun, 15 Mar 2026 08:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773529016; cv=none; b=TBx0Dn7c9yQHoHAM3Wx//KDH/jk1lTQeytVoA8rYd4NL6aL/D42Onz6L0VIiB8U5vxuwKyXu43JeHXLLiw0POlitbxTtq3kEk1NvYqmOEE4tO1V1u4JZBzWFk97FwY99nani/Vd9rSYzDx0xEaV0Zzj3X/HdKjTZxiFb9O4Be8s=
+	t=1773563754; cv=none; b=KMnoPv1rjuhUIzkbbd/j9ZZnaa055+vWeKHqyxCBRMNVH6sYzosh1rJOuGL8/PLE5H5PZmA0uPiF0RH2BxfgWtesbV8ZNdqDn7bMr6M97LwmrOeAV3bOv+NZ++J79Im+5azxhQjtMOZCQlMo97qhYB2d4v3DhhweZr3x8PhTfSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773529016; c=relaxed/simple;
-	bh=HTBn76J+zrddAYfE5QCFlT+eHYur3YWWbRorIKZsH3E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c6KU7TWSGcqHA1NJYGc5C5jjQVbfb9vp8H03qZlgPG0Bnmer5nYaiq38jULxXqbIc6L2m6ac6/2+Bi6EJStQEaHJ7cXl0DYurB+2yflc7dLB21G4WqSTmvIJQZ7LglTFL3ikQyDQiQOipgPFBbKoxhmQxcOvnDZI7tK4Bqt9PHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCKFpXVh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773563754; c=relaxed/simple;
+	bh=rASGD/IG59PWpEwpkp0F5276h1uqLe8dRNT7iXMUvbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdKyYUftGC9JDp37wzFA7M5XMFPr8IpIWfq3uxap3SSRcfAmr5ZAqzOItTWs9nGX650G0R5Z7rZr5DqHIRnXYxp5sYi4OtA8l2tsoFKdkEPrtMqp9YozygN5RdU4028qRieCbaSzfI4/fevYoIYaNljGktvUs+ClQVjKf++n8/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzg930Pc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCKFpXVh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0A79C116C6;
-	Sat, 14 Mar 2026 22:56:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzg930Pc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B52C4CEF7;
+	Sun, 15 Mar 2026 08:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773529015;
-	bh=HTBn76J+zrddAYfE5QCFlT+eHYur3YWWbRorIKZsH3E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=cCKFpXVhrNM4vpHStdRLyUwRCcHinaMyRfIlmaNFrnFYhoInqLWPnjhD1aM0oYZXc
-	 zF9RQkrDXn3jLoPAFp116s/mxwS5Y9RFoambA3UZbcO1sUJyGFM8hMd5hRqG21IV4U
-	 bFLAlB7QNYl0NnICYleSn+EBhq1Zw5RBTEQpsAGINE4/KqRAUXC4+c2jQ8F4k9sMYk
-	 hYAurn7BOeKpoWUfeDQ8yUcmwOOKSXcSrMG983aUc0s6yCT0fpdtFX35rtusFxoWZh
-	 BCfsmOD9jaCUDGT4UYmOSDBFLTd2rW+MJGheQ3lWXnANtJkneQFsUA0eErYJWLyYfP
-	 31TArudNLM8HQ==
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 14 Mar 2026 23:56:49 +0100
-Subject: [PATCH] ASoC: codec: arizona: Convert to use GPIO descriptors
+	s=k20201202; t=1773563754;
+	bh=rASGD/IG59PWpEwpkp0F5276h1uqLe8dRNT7iXMUvbA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jzg930PcIWhnj9Hsq3jOcZC/L2BaJJhiTPxRPsbxkZLsK5khA5kXouuBayW2XqXx1
+	 MUvjIBM3yrFk5LnZJ9h7FKsgtvQzIbMIsH9sh58Jny7KVH0gI5wm8GvnMbIUEY7zxa
+	 5WseFAR9+fC9oxeTGACtnBTKu2rVUrr3rb8O8MpG5bFSpGvsVc1VZs0mIr4sNyNORK
+	 HM7/LrCYNYuFCgyqCS403ZpMiiyomCnhCRCxfMF0VvG67/EEff+gGNPUpwyTc2sEsm
+	 Udcikv7kw9lhlIg/8UvJt98fHKX5cYGddlWb0oV3FIWN2f1ZMHZkmnvjUgScLLV1yC
+	 dG+xAwCowz/tg==
+Message-ID: <219d11df-4d30-4f90-b410-024d1cc20c90@kernel.org>
+Date: Sun, 15 Mar 2026 09:35:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: codec: arizona: Convert to use GPIO descriptors
+To: Linus Walleij <linusw@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDY0MT3cTi/GTdxKLMqvy8RF1LCxMLc2Nj85RU8yQloJaCotS0zAqwcdG
- xtbUAAfs3+V4AAAA=
-X-Change-ID: 20260314-asoc-arizona-98487337de7b
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Linus Walleij <linusw@kernel.org>
-X-Mailer: b4 0.14.3
 
-This converts the Arizona driver to use GPIO descriptors
-exclusively, deletes the legacy code path an updates the
-in-tree user of legacy GPIO.
+On 14/03/2026 23:56, Linus Walleij wrote:
+> This converts the Arizona driver to use GPIO descriptors
+> exclusively, deletes the legacy code path an updates the
+> in-tree user of legacy GPIO.
+> 
+> The GPIO lines for mic detect polarity and headphone ID
+> detection are made exclusively descriptor-oriented. The
+> headphone ID detection could actually only be used by
+> the legacy GPIO code, but I converted it to use a
+> descriptor if someone would actually need it so we don't
+> just drop useful code.
+> 
+> The compatible "wlf,hpdet-id-gpio" is not in the device
+> tree bindings and only intended to be used by software
+> nodes if any. If someone insists I can try to add a
+> binding for it, but I doubt there is any real user so
+> it seems pointless.
+> 
+> Signed-off-by: Linus Walleij <linusw@kernel.org>
+> ---
+> This patch hits all over the place, but I think merging it to
+> the ASoC tree would be the best.
+> ---
+>  arch/arm/mach-s3c/mach-crag6410-module.c |  6 +-
 
-The GPIO lines for mic detect polarity and headphone ID
-detection are made exclusively descriptor-oriented. The
-headphone ID detection could actually only be used by
-the legacy GPIO code, but I converted it to use a
-descriptor if someone would actually need it so we don't
-just drop useful code.
-
-The compatible "wlf,hpdet-id-gpio" is not in the device
-tree bindings and only intended to be used by software
-nodes if any. If someone insists I can try to add a
-binding for it, but I doubt there is any real user so
-it seems pointless.
-
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
-This patch hits all over the place, but I think merging it to
-the ASoC tree would be the best.
----
- arch/arm/mach-s3c/mach-crag6410-module.c |  6 +-
- include/linux/mfd/arizona/pdata.h        | 10 ----
- sound/soc/codecs/arizona-jack.c          | 95 ++++++++++----------------------
- sound/soc/codecs/arizona.h               |  1 +
- 4 files changed, 34 insertions(+), 78 deletions(-)
-
-diff --git a/arch/arm/mach-s3c/mach-crag6410-module.c b/arch/arm/mach-s3c/mach-crag6410-module.c
-index 4ffcf024b09d..14b0f9cc103e 100644
---- a/arch/arm/mach-s3c/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c/mach-crag6410-module.c
-@@ -239,7 +239,6 @@ static struct gpiod_lookup_table wm8994_gpiod_table = {
- static struct arizona_pdata wm5102_reva_pdata = {
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
--	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
- 	.micd_rate = 6,
- 	.gpio_defaults = {
- 		[2] = 0x10000, /* AIF3TXLRCLK */
-@@ -265,6 +264,8 @@ static struct gpiod_lookup_table wm5102_reva_gpiod_table = {
- 	.table = {
- 		GPIO_LOOKUP("GPION", 7,
- 			    "wlf,ldoena", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("arizona", 4,
-+			    "wlf,micd-pol", GPIO_ACTIVE_HIGH),
- 		{ },
- 	},
- };
-@@ -272,7 +273,6 @@ static struct gpiod_lookup_table wm5102_reva_gpiod_table = {
- static struct arizona_pdata wm5102_pdata = {
- 	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
--	.micd_pol_gpio = CODEC_GPIO_BASE + 2,
- 	.gpio_defaults = {
- 		[2] = 0x10000, /* AIF3TXLRCLK */
- 		[3] = 0x4,     /* OPCLK */
-@@ -297,6 +297,8 @@ static struct gpiod_lookup_table wm5102_gpiod_table = {
- 	.table = {
- 		GPIO_LOOKUP("GPION", 7,
- 			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("arizona", 2,
-+			    "wlf,micd-pol", GPIO_ACTIVE_HIGH),
- 		{ },
- 	},
- };
-diff --git a/include/linux/mfd/arizona/pdata.h b/include/linux/mfd/arizona/pdata.h
-index f72e6d4b14a7..d465dcd8c90a 100644
---- a/include/linux/mfd/arizona/pdata.h
-+++ b/include/linux/mfd/arizona/pdata.h
-@@ -117,11 +117,6 @@ struct arizona_pdata {
- 	/** Check for line output with HPDET method */
- 	bool hpdet_acc_id_line;
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
--	/** GPIO used for mic isolation with HPDET */
--	int hpdet_id_gpio;
--#endif
--
- 	/** Channel to use for headphone detection */
- 	unsigned int hpdet_channel;
- 
-@@ -131,11 +126,6 @@ struct arizona_pdata {
- 	/** Extra debounce timeout used during initial mic detection (ms) */
- 	unsigned int micd_detect_debounce;
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
--	/** GPIO for mic detection polarity */
--	int micd_pol_gpio;
--#endif
--
- 	/** Mic detect ramp rate */
- 	unsigned int micd_bias_start_time;
- 
-diff --git a/sound/soc/codecs/arizona-jack.c b/sound/soc/codecs/arizona-jack.c
-index 303c1d44ebd8..a9063bac2752 100644
---- a/sound/soc/codecs/arizona-jack.c
-+++ b/sound/soc/codecs/arizona-jack.c
-@@ -11,7 +11,6 @@
- #include <linux/interrupt.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
--#include <linux/gpio.h>
- #include <linux/input.h>
- #include <linux/pm_runtime.h>
- #include <linux/property.h>
-@@ -459,11 +458,6 @@ static int arizona_hpdet_do_id(struct arizona_priv *info, int *reading,
- 			       bool *mic)
- {
- 	struct arizona *arizona = info->arizona;
--#ifdef CONFIG_GPIOLIB_LEGACY
--	int id_gpio = arizona->pdata.hpdet_id_gpio;
--#else
--	int id_gpio = 0;
--#endif
- 
- 	if (!arizona->pdata.hpdet_acc_id)
- 		return 0;
-@@ -474,9 +468,8 @@ static int arizona_hpdet_do_id(struct arizona_priv *info, int *reading,
- 	 */
- 	info->hpdet_res[info->num_hpdet_res++] = *reading;
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
- 	/* Only check the mic directly if we didn't already ID it */
--	if (id_gpio && info->num_hpdet_res == 1) {
-+	if (info->hpdet_id_gpio && info->num_hpdet_res == 1) {
- 		dev_dbg(arizona->dev, "Measuring mic\n");
- 
- 		regmap_update_bits(arizona->regmap,
-@@ -486,13 +479,12 @@ static int arizona_hpdet_do_id(struct arizona_priv *info, int *reading,
- 				   ARIZONA_ACCDET_MODE_HPR |
- 				   info->micd_modes[0].src);
- 
--		gpio_set_value_cansleep(id_gpio, 1);
-+		gpiod_set_value_cansleep(info->hpdet_id_gpio, 1);
- 
- 		regmap_update_bits(arizona->regmap, ARIZONA_HEADPHONE_DETECT_1,
- 				   ARIZONA_HP_POLL, ARIZONA_HP_POLL);
- 		return -EAGAIN;
- 	}
--#endif
- 
- 	/* OK, got both.  Now, compare... */
- 	dev_dbg(arizona->dev, "HPDET measured %d %d\n",
-@@ -514,7 +506,7 @@ static int arizona_hpdet_do_id(struct arizona_priv *info, int *reading,
- 	/*
- 	 * If we measure the mic as high impedance
- 	 */
--	if (!id_gpio || info->hpdet_res[1] > 50) {
-+	if (!info->hpdet_id_gpio || info->hpdet_res[1] > 50) {
- 		dev_dbg(arizona->dev, "Detected mic\n");
- 		*mic = true;
- 		info->detecting = true;
-@@ -533,9 +525,6 @@ static irqreturn_t arizona_hpdet_irq(int irq, void *data)
- {
- 	struct arizona_priv *info = data;
- 	struct arizona *arizona = info->arizona;
--#ifdef CONFIG_GPIOLIB_LEGACY
--	int id_gpio = arizona->pdata.hpdet_id_gpio;
--#endif
- 	int ret, reading, state, report;
- 	bool mic = false;
- 
-@@ -591,10 +580,8 @@ static irqreturn_t arizona_hpdet_irq(int irq, void *data)
- 
- 	arizona_extcon_hp_clamp(info, false);
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
--	if (id_gpio)
--		gpio_set_value_cansleep(id_gpio, 0);
--#endif
-+	if (info->hpdet_id_gpio)
-+		gpiod_set_value_cansleep(info->hpdet_id_gpio, 0);
- 
- 	/* If we have a mic then reenable MICDET */
- 	if (state && (mic || info->mic))
-@@ -1325,58 +1312,33 @@ int arizona_jack_codec_dev_probe(struct arizona_priv *info, struct device *dev)
- 		regmap_update_bits(arizona->regmap, ARIZONA_GP_SWITCH_1,
- 				ARIZONA_SW1_MODE_MASK, arizona->pdata.gpsw);
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
--	if (pdata->micd_pol_gpio > 0) {
--		if (info->micd_modes[0].gpio)
--			mode = GPIOF_OUT_INIT_HIGH;
--		else
--			mode = GPIOF_OUT_INIT_LOW;
--
--		ret = devm_gpio_request_one(dev, pdata->micd_pol_gpio,
--					    mode, "MICD polarity");
--		if (ret != 0) {
--			dev_err(arizona->dev, "Failed to request GPIO%d: %d\n",
--				pdata->micd_pol_gpio, ret);
--			return ret;
--		}
--
--		info->micd_pol_gpio = gpio_to_desc(pdata->micd_pol_gpio);
--	} else
--#endif
--	{
--		if (info->micd_modes[0].gpio)
--			mode = GPIOD_OUT_HIGH;
--		else
--			mode = GPIOD_OUT_LOW;
-+	if (info->micd_modes[0].gpio)
-+		mode = GPIOD_OUT_HIGH;
-+	else
-+		mode = GPIOD_OUT_LOW;
- 
--		/* We can't use devm here because we need to do the get
--		 * against the MFD device, as that is where the of_node
--		 * will reside, but if we devm against that the GPIO
--		 * will not be freed if the extcon driver is unloaded.
--		 */
--		info->micd_pol_gpio = gpiod_get_optional(arizona->dev,
--							 "wlf,micd-pol",
--							 mode);
--		if (IS_ERR(info->micd_pol_gpio)) {
--			ret = PTR_ERR(info->micd_pol_gpio);
--			dev_err_probe(arizona->dev, ret, "getting microphone polarity GPIO\n");
--			return ret;
--		}
-+	/* We can't use devm here because we need to do the get
-+	 * against the MFD device, as that is where the of_node
-+	 * will reside, but if we devm against that the GPIO
-+	 * will not be freed if the extcon driver is unloaded.
-+	 */
-+	info->micd_pol_gpio = gpiod_get_optional(arizona->dev,
-+						 "wlf,micd-pol",
-+						 mode);
-+	if (IS_ERR(info->micd_pol_gpio)) {
-+		ret = PTR_ERR(info->micd_pol_gpio);
-+		dev_err_probe(arizona->dev, ret, "getting microphone polarity GPIO\n");
-+		return ret;
- 	}
- 
--#ifdef CONFIG_GPIOLIB_LEGACY
--	if (arizona->pdata.hpdet_id_gpio > 0) {
--		ret = devm_gpio_request_one(dev, arizona->pdata.hpdet_id_gpio,
--					    GPIOF_OUT_INIT_LOW,
--					    "HPDET");
--		if (ret != 0) {
--			dev_err(arizona->dev, "Failed to request GPIO%d: %d\n",
--				arizona->pdata.hpdet_id_gpio, ret);
--			gpiod_put(info->micd_pol_gpio);
--			return ret;
--		}
-+	info->hpdet_id_gpio = gpiod_get_optional(arizona->dev,
-+						 "wlf,hpdet-id-gpio",
-+						 mode);
-+	if (IS_ERR(info->hpdet_id_gpio)) {
-+		ret = PTR_ERR(info->hpdet_id_gpio);
-+		dev_err_probe(arizona->dev, ret, "getting headphone detect ID GPIO\n");
-+		return ret;
- 	}
--#endif
- 
- 	return 0;
- }
-@@ -1385,6 +1347,7 @@ EXPORT_SYMBOL_GPL(arizona_jack_codec_dev_probe);
- int arizona_jack_codec_dev_remove(struct arizona_priv *info)
- {
- 	gpiod_put(info->micd_pol_gpio);
-+	gpiod_put(info->hpdet_id_gpio);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(arizona_jack_codec_dev_remove);
-diff --git a/sound/soc/codecs/arizona.h b/sound/soc/codecs/arizona.h
-index ecd8890eefc1..0703182d87b3 100644
---- a/sound/soc/codecs/arizona.h
-+++ b/sound/soc/codecs/arizona.h
-@@ -100,6 +100,7 @@ struct arizona_priv {
- 	struct snd_soc_jack *jack;
- 	struct regulator *micvdd;
- 	struct gpio_desc *micd_pol_gpio;
-+	struct gpio_desc *hpdet_id_gpio;
- 
- 	u16 last_jackdet;
- 
-
----
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
-change-id: 20260314-asoc-arizona-98487337de7b
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com> # s3c
 
 Best regards,
--- 
-Linus Walleij <linusw@kernel.org>
-
+Krzysztof
