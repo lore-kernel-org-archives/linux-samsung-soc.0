@@ -1,110 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDEC301004;
-	Mon, 16 Mar 2026 17:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14F5347512;
+	Mon, 16 Mar 2026 18:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773683236; cv=none; b=PZNMVJOWRJd8c2tfbzb2fQc3L+iaenpYOSPVlkjNFqGqOgf5yDJxELEPWnsw7D0aYVOvSdtp3Us6RCuSaDlrsiJtjZadxUVSdBrraY0Qgk030WklKuwrlZDIDA/xe3kKhar095cHT+ANMa7aEkCi3T8W+XEAzQxETz3zcjfRL1U=
+	t=1773684921; cv=none; b=BvDxGkHF80n8hLGz/RdNkqgGTaxn/wSkcPP9AaIxGqBOQveWz12/rspQwSt41efrGsn/ADJHNrbVoN7SA2cjgAwht86UhRrF3n9tLI/4PIagiiDGM6Xq0H87zaLETGx5V2efQp7P/OACytfT7hNY8Fnu6lCiANxTB7wxgYMBWFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773683236; c=relaxed/simple;
-	bh=dnDuwXGZ1btx0I9ScP/HNHG9vbVZo5zMOWlpux0W4WY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKYnYDcaw+SDrnUf28nY8aLKqQ0nsaGcIvwVDOQSsoomeslzFZOdPvvXuqQVvkCwhH+3Wa4izg2Xwyd9JVZwCEh+qG3GbvvPQC9CMAbq8J9Gu0pR/W9EjVC3nIGQ+EUxEpU7sJUel/xeWW+IzTS3C9ZPeroKJWiEqvrlR5y0+84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRBXa2ov; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773684921; c=relaxed/simple;
+	bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kPUAN3xJ7vPDrOkncr+eKKQItUcjXxch1b22c2eMN7fNZ0taYSjiUC9Pvx2uyjMKo1CklH1c+YdFZONyB5fnyRQvaTA8KSY+f5lAzPlcTFUQHFdcLzFF1HEVRTdMninhjeiKtb5qOCLhIjh4UYyaYe6N6nWAtYDLevgIM/d8Liw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzKGWr8Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRBXa2ov"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BFCC19421;
-	Mon, 16 Mar 2026 17:47:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzKGWr8Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C11B9C19421;
+	Mon, 16 Mar 2026 18:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773683236;
-	bh=dnDuwXGZ1btx0I9ScP/HNHG9vbVZo5zMOWlpux0W4WY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sRBXa2ovvjPnWmoWwcUZlUb/RfNIKCBxJYUgGqWYE+olH5e/05xmKOMn3PMn3Bxq8
-	 Sm0RPOKtJgrFA4Nkna/SfM63GmGOjUcqhNOYPE5XT8hDbTrlYcVkWZ5EzY+jprOrRV
-	 l4Viqa7XAxFuU+rATnPUZYB48xFh6rMSI83W27iHNJjWLHREjypaENdzy/QzPBAdK3
-	 qOABTEsGsrgj3ajoNm0Gg6WLlNHu9IvYa+UNT73TeY7utnqPEN+vZG0sDR9BaOi8QA
-	 0XJU1kq/TxMTtEfK9n13gvkI74v1W4TiIWlCMY0nyY+YEx6zNL3h/lJ3umTM3hkX5Y
-	 cEen2C1izEUvA==
-Date: Mon, 16 Mar 2026 17:47:06 +0000
+	s=k20201202; t=1773684921;
+	bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=IzKGWr8Y8bdgCgHypXlfL7L9UV40MqCWXpx5ZSbdhR5Q5tWfPFkU9dSlXVdQYIXQb
+	 1wYDtUv+a972HzgsVtl7FAa+e+txxzuYmtlbfCfvVx3YlgXYvcocfs6UIeyEGZ/XiA
+	 nhF2mPRTC8FBQ8xjydvB9cZu6uXzm1uAMS2632VGrAbSErdVy4OibypDG+7fPfkS2o
+	 mN6e9PQANA2VjNx+QI/G1uoEkMFx22+odi0zRIDPVv6KWwfD3veWnT6aoLdlzmhlel
+	 C/o6UHeSN7PJpcmzlBUXFbYK8u3BOh4yWMiu2IL+HhoOgiSYzjwGF335J0h118bLSp
+	 o1z9toqrSkDgg==
 From: Mark Brown <broonie@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Saenz Julienne <nsaenz@kernel.org>, Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
-	Jerome Neanne <jerome.neanne@baylibre.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Joseph Chen <chenjh@rock-chips.com>,
-	Chris Zhong <zyw@rock-chips.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Lubomir Rintel <lkundrak@v3.sk>, Julien Panis <jpanis@baylibre.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Alexander Kurz <akurz@blala.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 04/15] dt-bindings: regulator: act8x: Use generic
- power-controller schema
-Message-ID: <fd6b7103-2a72-4cae-8e92-44ee9586a953@sirena.org.uk>
-References: <20260316-power-controller-v1-0-92c80e5e1744@nxp.com>
- <20260316-power-controller-v1-4-92c80e5e1744@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+ Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+References: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+Subject: Re: [PATCH] ASoC: codec: arizona: Convert to use GPIO descriptors
+Message-Id: <177366676762.65215.4887426822529961456.b4-ty@kernel.org>
+Date: Mon, 16 Mar 2026 13:12:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xItI8zXtmIATo4FR"
-Content-Disposition: inline
-In-Reply-To: <20260316-power-controller-v1-4-92c80e5e1744@nxp.com>
-X-Cookie: Excellent day to have a rotten day.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c239c
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1125; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=f0V1XGDt0iDrlPiBc61XqhTfjDwAfM87xKlHzbkj1xE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpuEi15VIkFVpfbMENWG7miE5Gedb2iYkZYDVb1
+ KFLtDV0u0+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCabhItQAKCRAk1otyXVSH
+ 0IgrB/92YGzRsgyzung8/Uf95Fkw5+Sp6uPvpKX9cgrxQQRVvUxp2sn8CyRWH4rZAmWcDWzWwm8
+ Gh189w3kcUSHzn5m/UsBkhTxjY6q28jCKIoz4pHCCQHVfjcIl5QePpXPieDQqyAIlDQXJrOHD2/
+ b7z6c5xXHinWj95Bppag4PO849BbIzLNqCbvPWrx9QWtIYN2fkpJ/FmK4vL+KY6ZiSHwjyDrCuq
+ 47tKIGArH6xApc5sAjvYQe4t2EHsyCQ28rIilRiEt8CyhoJkWpYz+jNWAsIet107yCp5s44WrwA
+ ddPZ5/n2jfWSGnnOAbgEvbtQbYigf0+quY/T4uOU5Kw8W8NA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+On Sat, 14 Mar 2026 23:56:49 +0100, Linus Walleij wrote:
+> ASoC: codec: arizona: Convert to use GPIO descriptors
 
---xItI8zXtmIATo4FR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Mon, Mar 16, 2026 at 10:47:39PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Convert the binding to use the generic power-controller schema instead by
-> referencing power-controller.yaml and removing the local
-> `system-power-controller` property definition.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.1
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Thanks!
 
---xItI8zXtmIATo4FR
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/1] ASoC: codec: arizona: Convert to use GPIO descriptors
+      https://git.kernel.org/broonie/sound/c/cb15d8e6cbe8
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmm4QhoACgkQJNaLcl1U
-h9ACOQf+JqpHS2vvWDBGmTprNgfkrZ9Q44lgSNbWZMnktfJE13q21QKHK5kSnDrO
-X40ZRgtewonmiGVIcifBtNjgoqkmY98pJvPnhgJjgP3fmBlFL/WCxYwUjF/JQCkg
-LrlVyB6IdKDWWAmUUVULvowVdo1TyiYZ2dlrvVwjGuMZJDgRFAz85fobiqkW9hIb
-5Z6Wdof4lcERkIE0dsbXctCTU4GJTupsC6duor8XTKC+wIL9sx02un+kINcyGwnP
-FwEkgvpfw9H/r9/jBuxTEQh7QcJPvlx36Ub2mFuBlF3OCJApRlm+j+vz9btoTkX4
-XZN3mowbqzv9xO9cSelYbJCV/FMs2Q==
-=SWwQ
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---xItI8zXtmIATo4FR--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
