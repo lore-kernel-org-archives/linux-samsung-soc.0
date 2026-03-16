@@ -1,150 +1,138 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4021ACEDE;
-	Mon, 16 Mar 2026 11:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591533921E3
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2026 13:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773661182; cv=none; b=Xpn7glUyonzs/lDSuWyTpw8JR/TXzG7XLJVHO5aT14s4x4LeWJiP18ASplt9rjXv2chIsw0oeXf0B3metMy6f7DR8kedhWx14OWMFSrc7D4ZOB1OV72c/ir9XwYrHb0Nqbz1ftT+FV6RBWIYxyl6mQ3/f4V1KgsypMFFQy4mz5E=
+	t=1773666694; cv=none; b=RoCPtRSzpNoAuf5IlZuYdFoPC6MRkG2Wb0u3lJ/htC+6Hbo6aDF+Z7p/U0cZ3urVF8J4sFaUjtjd7rDewMlz131T2R94YPIum4PYv6p3XKK50mO9yDq03KL86gQepqjyYMPyHNoB2VtEhyHJ2in0kR+W60cPhMrFN8Oyc14H9dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773661182; c=relaxed/simple;
-	bh=AddVb/baHLx6v1m31dqQ10HQcGs1I2SXvvs0Bkdi6fM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=E3lb47yD8OObbdHWA+u+ua/zLc4MF6hboxbrBUDbBKIh7nIVDER+lheHO3i1WUwTMMAIwZDcEp+wyN5YPthwqnHxCTQ2732dc9nSrphhiAJNTdOfckPZhQpMh6A6pRxTubXsnzGjsT1Fir+KUluC4tL7PAizdsfoTg35zoPpGSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YrywEDwd; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1773666694; c=relaxed/simple;
+	bh=grNch3YEfme4XX2YLfL8Yx6byNhRmXe/JTenfdWfyZA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ugyU4u18x3o7f7jWpMfFblq7lKfX3RHTmW4BbkhAmgvxACiTyIWymIufChdjEQ40ZTM7BC/b6e11RHIU0KnT1w9XLhSQHMWWgGz9BwZ6cELY7LwVjc1IX48Cp/tz/2SgjTaxEokiL/Vr1H8bFOIRbCgiTz7qyObw3VLZX3MgW8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzMp1t8F; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YrywEDwd"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id EE851C4158D;
-	Mon, 16 Mar 2026 11:40:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4EB815FC4A;
-	Mon, 16 Mar 2026 11:39:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DF5310369E73;
-	Mon, 16 Mar 2026 12:39:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1773661176; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9LLjJ8Qd6wNXbg06pYIRYcPmRb/RcOo68671SJw5PZI=;
-	b=YrywEDwd/DzMcHZz4wMx/qDUUpvovYoTrhVPGEOmyWw/GimO4aRGWgjfaRUp096SdfisEu
-	fL7fyiN9g5ShHiC0bJ1HLcSiRmmromhJMWEGykRppDiKWCfJyd8CE9upne8c7MS4veJl9C
-	F2567Jh16wPZp2rva8ZWs5sa/ktvOyV7GgKVD1l9lwwqvogkfchCWNn0uiaK9l1+o4CsY/
-	8XM9Y78ODDYhIPF3fR5xInhUpzGGiyzeH9/8xsONdMXOwnDHMCWJaUzPBNzQ9Pm/aZwkh+
-	4jh1gU77n4mMk8A8bpwAPpZU8p6RPatwWYKsvXQsYdR0qnmwUDqWFz4JFrOonQ==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzMp1t8F"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2b05761bec1so3995165ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2026 06:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773666693; x=1774271493; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1b1jbbseevrfxoqPkF+lAWkN6R2Yw+sAuGiH3k9yEI=;
+        b=RzMp1t8FYSB9MrbafAUwN6ckheYov7KMXIT63vQngsz848FSAsPLasOuMnIqkOL5Xv
+         /OgeppB9yqzmvnprIjHMWwBmfCRRn9D703KJKy+GulolC0aTAk+BtuPYOfAQ8kWed716
+         5JcYKJ7K//UEFsVCHYvtqhS1WoO0U98OIFnc96hnIhHOKWzNWpzIrc52G9v5rsucZQSs
+         E+BPR27tXOlU+J474QrTxae+spCO0u+PnI7md0bZVfHu7EqBEoHqw79sKHIW+FiF+GGE
+         WVJw9PZgG+KOEx8e+30Ed0FrImNMk5N8Px1iJK/QwUDRw15SN5I6vr85ntW4CGZ0/FJI
+         ZBxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773666693; x=1774271493;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F1b1jbbseevrfxoqPkF+lAWkN6R2Yw+sAuGiH3k9yEI=;
+        b=pVMJ+PDABiGamaBWVhp6tUuXIalmebtq2ByLzBmejeYIZRhOUFqS24VKEn+KO48qsQ
+         AQhC74Ovn2JRWjfx4U2oDlPnOQbt0+ygYMGpZpK8pScOniAbwPZZeU6rDQb57KpGJRmN
+         cexbJCKi832lyfSlI2l73k3YuniLUHEBQyAHiELfzpL01IRdF0bGYeMFPsyaMpGis89b
+         YVFHYwHPNbi6oUlG9BohrPJjrMLpM3bmzZEiTvryEAREsnEdQ9Fvh1W5BcaqKaGotrer
+         FxyXTcKSB6sKjfArXvr19bwjwXVpTeVZF9Az4RqT5lAE/OXjTmNpbQOTWWs22HC6r9la
+         TBDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFB0k/lUPUex95QK6zf9r3I5WxutZoI8pAY0ODvgFzw4R1lgYoLFA1b23znd8Kbdqa3TmhA7DASJNW59NYstQlrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkrieLT5eCooF9wliE5oLCR8K4cW+sw9oQ+7EMTbgSbbgN+Jqr
+	Ivica/sus6S5/7olC1UwPfV5oCl7uTd65GzMf8fR6wkveFv5l2ykbbN9tUOcZWI1BBo=
+X-Gm-Gg: ATEYQzw3fb8HCz2llpdld9snA8tZcYUXSbzif3cLMfVORskdAa1rCJpTOWePb2yk3aJ
+	jo2kzq/BqkOaCrBcl6DsQ89eXeRlJAg7JPI0JQpX5yOxpLazdrfT0fyHE5q1y9l6UQEXGIvkRJS
+	BztaJW0rTxeyXYFXogOzCx4x3rRGwEazlgeEIgIdGHd3R1oHD72bZUl/BTn0hmiUcq5JBhVuYpM
+	1Qm20MQY1c6Xtw+bIRIMYLHMogcbtCvVKAc2Pjl0fBM3dArJr2evvd2sRliNDeEgjtNusWRX7mJ
+	7wQtsFDm3sIfQeUVsxV53ggDkRTEUXTLWZ7tfp74gUOqdoG7tSzYleuVNhkt0pnlZFJOOn/oVw1
+	P32/r/SeOu5yEJOKybrglEif/xrBk9mK5tcsZT4fqSj+CBGKAJTbTuvpdoxUZ8I29anV0ILuiJE
+	oOFStXQDh4WYherqVbnPOv8yAgBaFdbpLg5lcF
+X-Received: by 2002:a17:903:1a0b:b0:2b0:4d7d:fb9a with SMTP id d9443c01a7336-2b04d7e03famr53040625ad.26.1773666692409;
+        Mon, 16 Mar 2026 06:11:32 -0700 (PDT)
+Received: from junjungu-PC.localdomain ([223.167.147.240])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ee3d6sm110144905ad.57.2026.03.16.06.11.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2026 06:11:31 -0700 (PDT)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Mon, 16 Mar 2026 21:11:26 +0800
+Subject: [PATCH] phy: google-usb: Fix runtime PM cleanup on probe failure
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 16 Mar 2026 12:39:24 +0100
-Message-Id: <DH46EQM1PED9.2BVW9DWVIMEJZ@bootlin.com>
-Subject: Re: [PATCH v10 11/18] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
- <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
- <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
- <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
- <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
- <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
- <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
- <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
- <dianders@chromium.org>, <m.szyprowski@samsung.com>,
- <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
-To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
- <neil.armstrong@linaro.org>, <rfoss@kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20260310012458.169272-1-damon.ding@rock-chips.com>
- <20260310012458.169272-12-damon.ding@rock-chips.com>
- <DH1TKWREZMFK.3BY4NY36BXLXG@bootlin.com>
- <bebadd3b-2fd1-404e-bc64-205c8b44880c@rock-chips.com>
-In-Reply-To: <bebadd3b-2fd1-404e-bc64-205c8b44880c@rock-chips.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260316-google-v1-1-30a034e87a2a@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAH0BuGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDY0Mz3fT8/PScVF3jxOS0RKM045RUyxQloOKCotS0zAqwQdGxtbUAer6
+ 7BVgAAAA=
+X-Change-ID: 20260316-google-3acfa2f3de9d
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Naveen Kumar <mnkumar@google.com>, Joy Chakraborty <joychakr@google.com>, 
+ Roy Luo <royluo@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773666688; l=1551;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=grNch3YEfme4XX2YLfL8Yx6byNhRmXe/JTenfdWfyZA=;
+ b=sP8QxL06sH+Slw6m9BD5RTi2uMzfGj1T1foGh8SmtqPEkOB/2wc388Tqw4bIOUUQbOdBNIIz3
+ MNRj8JVFU+DCPWHNmwF36TX1jYZZ07sf5SJyoMTTGKZqzD3RY82YNH+
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-On Mon Mar 16, 2026 at 4:17 AM CET, Damon Ding wrote:
-> Hi Luca,
->
-> On 3/14/2026 1:10 AM, Luca Ceresoli wrote:
->> Hello Damon,
->>
->> On Tue Mar 10, 2026 at 2:24 AM CET, Damon Ding wrote:
->>> Initialize bridge_connector for both Rockchip and Exynos encoder sides.
->>> Then, make DRM_BRIDGE_ATTACH_NO_CONNECTOR mandatory for Analogix bridge
->>> side, as the private &drm_connector is no longer created.
->>>
->>> The previous &drm_connector_funcs and &drm_connector_helper_funcs APIs
->>> are replaced by the corresponding &drm_bridge_funcs APIs:
->>>
->>> analogix_dp_atomic_check() -> analogix_dp_bridge_atomic_check()
->>> analogix_dp_detect()       -> analogix_dp_bridge_detect()
->>> analogix_dp_get_modes()    -> analogix_dp_bridge_get_modes()
->>>                                analogix_dp_bridge_edid_read()
->>>
->>> Additionally, the compatibilities of Analogix DP bridge based on whethe=
-r
->>> the next bridge is a 'panel'. If it is, OP_MODES and OP_DETECT are
->>> supported; If not (the next bridge is a 'monitor' or a bridge chip),
->>> OP_EDID and OP_DETECT are supported.
->>>
->>> The devm_drm_bridge_add() is placed in analogix_dp_bind() instead of
->>> analogix_dp_probe(), because the type of next bridge (the panel, monito=
-r
->>> or bridge chip) can only be determined after the probe process has full=
-y
->>> completed.
->>>
->>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
->>
->> ...
->>
->>> @@ -73,15 +72,12 @@ static int exynos_dp_bridge_attach(struct analogix_=
-dp_plat_data *plat_data,
->>>   				   struct drm_bridge *bridge)
->>>   {
->>>   	struct exynos_dp_device *dp =3D to_dp(plat_data);
->>> -	enum drm_bridge_attach_flags flags =3D 0;
->>>   	int ret;
->>>
->>>   	/* Pre-empt DP connector creation if there's a bridge */
->>>   	if (plat_data->next_bridge) {
->>> -		if (dp->has_of_bridge)
->>> -			flags =3D DRM_BRIDGE_ATTACH_NO_CONNECTOR;
->>> -
->>> -		ret =3D drm_bridge_attach(&dp->encoder, plat_data->next_bridge, brid=
-ge, flags);
->>> +		ret =3D drm_bridge_attach(&dp->encoder, plat_data->next_bridge, brid=
-ge,
->>> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
->>
->> Should this be 'flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR' to be future-pro=
-of?
->>
->
-> Aha, the exynos_dp_bridge_attach() and even
-> &analogix_dp_plat_data.attach() have been removed in [PATCH v10 16/18]
-> for consistency and simplification. Since the only bridge flag supported
-> right now is DRM_BRIDGE_ATTACH_NO_CONNECTOR, let=E2=80=99s leave this as =
-is for
-> now. ;-)
+In google_usb_phy_probe(), if typec_switch_register() fails,
+pm_runtime_disable() is not called, leading to an unbalanced
+runtime PM state on probe failure.
 
-As you are going to send v11, I'd do that change. It is the right thing do
-to, it's cheap, and in case patches up to 11/18 but not (yet) up to 16/18
-we avoid ending up with unoptimal code until patch 16/18 is applied.
+Switch to devm_pm_runtime_enable() to ensure that runtime PM is
+automatically disabled both on probe failure and during driver
+removal.
 
-Luca
+Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+---
+ drivers/phy/phy-google-usb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
+index ab20bc20f19e..79480f8b110e 100644
+--- a/drivers/phy/phy-google-usb.c
++++ b/drivers/phy/phy-google-usb.c
+@@ -251,7 +251,9 @@ static int google_usb_phy_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(phy_provider),
+ 				     "failed to register phy provider\n");
+ 
+-	pm_runtime_enable(dev);
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+ 
+ 	sw_desc.fwnode = dev_fwnode(dev);
+ 	sw_desc.drvdata = gphy;
+@@ -271,7 +273,6 @@ static void google_usb_phy_remove(struct platform_device *pdev)
+ 	struct google_usb_phy *gphy = dev_get_drvdata(&pdev->dev);
+ 
+ 	typec_switch_unregister(gphy->sw);
+-	pm_runtime_disable(&pdev->dev);
+ }
+ 
+ static const struct of_device_id google_usb_phy_of_match[] = {
+
+---
+base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
+change-id: 20260316-google-3acfa2f3de9d
+
+Best regards,
+-- 
+Felix Gu <ustc.gu@gmail.com>
+
