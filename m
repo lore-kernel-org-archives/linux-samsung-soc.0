@@ -1,175 +1,150 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8509D4A35;
-	Mon, 16 Mar 2026 09:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773653835; cv=fail; b=kTrXPn1h6ho1xxd+8hOhgVMX1fY8DzAK2FGr0shyCOxWuHD5lu8c5B8M/u2wSM/Xmk+vMkmlnqxB58YW5mJblJdLh2Y4PQo4dfx9h1QR4WVPacY8sshVX/s9sb94JM0gOD1I0xytu+hc0Ypfb2fJxHuskc5C3Jup91U7T7wj8ig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773653835; c=relaxed/simple;
-	bh=dI6NdrHzqPO559e2EzMD4PQkqg7wCsrJ85/Zegm2X08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9JJOIxBTIaRsbjBmmgAnlgZ217aaljn15HUb0Y8zmZ3mGb5F8BkaspL2jXMbPKCtW6WD5MdhbsN8g2rp8ArfeO3IQmAZUcm/aH4GVIOikiXrjREqKG4sTb2VWSwiiOYOYERm+aySvxd2Bmap2EJmnhzto5C5Zj9RSZAauGsrqY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=nkhtzvZ0; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=kpAS2y0n; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4021ACEDE;
+	Mon, 16 Mar 2026 11:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773661182; cv=none; b=Xpn7glUyonzs/lDSuWyTpw8JR/TXzG7XLJVHO5aT14s4x4LeWJiP18ASplt9rjXv2chIsw0oeXf0B3metMy6f7DR8kedhWx14OWMFSrc7D4ZOB1OV72c/ir9XwYrHb0Nqbz1ftT+FV6RBWIYxyl6mQ3/f4V1KgsypMFFQy4mz5E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773661182; c=relaxed/simple;
+	bh=AddVb/baHLx6v1m31dqQ10HQcGs1I2SXvvs0Bkdi6fM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=E3lb47yD8OObbdHWA+u+ua/zLc4MF6hboxbrBUDbBKIh7nIVDER+lheHO3i1WUwTMMAIwZDcEp+wyN5YPthwqnHxCTQ2732dc9nSrphhiAJNTdOfckPZhQpMh6A6pRxTubXsnzGjsT1Fir+KUluC4tL7PAizdsfoTg35zoPpGSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YrywEDwd; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="nkhtzvZ0";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="kpAS2y0n"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62G7rAqc836156;
-	Mon, 16 Mar 2026 04:36:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=81Y86rXJbCDKq8rR7q
-	4ptcjLklZkuPxAaYAuaihIemw=; b=nkhtzvZ0tjygl3WEiKQy2uoJFwllBZInOv
-	fJ8upGsbmoLR38IQoeh/y5fexKEow3F7Kq3c8sNY7EfydW3nuUKdPOdSTVl9wetT
-	k2ZJaWKfVA8/2KnBE37CB9qnOGXIYLZAuohWKSX71sz8FRQ4x3qpj07sE6/tt1XJ
-	xANyS5cUprMCsfBJXEejbiJbAfb5WlX4ADzf2cCIDyGBg2D21N+RZve5uksR0FIo
-	f4C/sVgkELAJnoGoS5DnrQXyAJo8jFxZLafFLnA3WL+5oz1NGoM/oumyLajo2vxd
-	6/Q89M8tVw6WqW/8lRaaolqh9kirzT5qfzJA4u3dV6GO126ekwZw==
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11023090.outbound.protection.outlook.com [40.93.201.90])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4cw52v1tbt-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 16 Mar 2026 04:36:40 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dLY+9R9pITCuc8CwQ/FeZ0i7pYCO/nCH4//+HRoZQo91UzH42kqfhwKpk1FS11x/7ccr+44U9DOofORKeZuEBfKfH0JUs4VbihTLi+ox2tlk86VNGi4UNt5SnzQlookYrdWFF9v4WzFO08zZqTZH7x4Mz6jU6EUBTykemmEY6v625p/BzcAuz4zlDzMRFz9AGleWppsVjZCexhBAZdJqGY5g/F7lvLrLsHKCkVC+BdaGG7W61kjtFE63GFqRDQJKAXNn/Q8LA6wSZYIpPy4pb87iSikVd8xiIF74L09LZ20bf0oiNXyXj5o4Zgw1IM34Rzme9Goru4HuY0Z7UgAr/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=81Y86rXJbCDKq8rR7q4ptcjLklZkuPxAaYAuaihIemw=;
- b=T89K3ge1p5UJtI0ux1jL8ZzSYHnC7HpDBAix05FmjOqaCzhfTUghSy+JnJYWaXm8GRdaHGZZYqNIy9nB75M6NQ7rLXtaNTV0Yg9o5zAm97cHHdz2BemE8cRpWkDsleY+JgOWbDszs+wgDHx3ZFs2tq7JL6sOBbBEHTi03Af5bgQlJ9rw3uiLBJQYqC1vWhu33HwXtfsbomBDc5Oxp3s7w0k5j0CUwf+oU47DgTu9wrZEaeCqNEhv1tFtXSzF7K+VSa8BvELBcovGz22cvzQJR+PaZaFshzN3XebRnoBnXyBnpCATukW3+6tswExUSteOHx4n45dV8RqL6yL2sflwrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 84.19.233.75) smtp.rcpttodomain=armlinux.org.uk
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=81Y86rXJbCDKq8rR7q4ptcjLklZkuPxAaYAuaihIemw=;
- b=kpAS2y0nHqPtk8DriQZVEz/swfo2fw+1QGdZ6vTfPObxhUtATLrvozV5lbbV3GPD8QH5XiS0ikkZaADiIMYAiqEl/Zo/WbW47DQoq6ZhNXjCDirzY+4RwYQJFAEw0G5kj+3ikPO1fe+s8JcFnIGiw8mGLg3O6QEN7AmdaPLiYYY=
-Received: from SN7PR04CA0039.namprd04.prod.outlook.com (2603:10b6:806:120::14)
- by LV0PR19MB9573.namprd19.prod.outlook.com (2603:10b6:408:326::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Mon, 16 Mar
- 2026 09:36:36 +0000
-Received: from SN1PEPF0002529D.namprd05.prod.outlook.com
- (2603:10b6:806:120:cafe::dd) by SN7PR04CA0039.outlook.office365.com
- (2603:10b6:806:120::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.24 via Frontend Transport; Mon,
- 16 Mar 2026 09:36:36 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- opensource.cirrus.com discourages use of 84.19.233.75 as permitted sender)
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SN1PEPF0002529D.mail.protection.outlook.com (10.167.242.4) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.17
- via Frontend Transport; Mon, 16 Mar 2026 09:36:35 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 78C17406542;
-	Mon, 16 Mar 2026 09:36:34 +0000 (UTC)
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 6144D820247;
-	Mon, 16 Mar 2026 09:36:34 +0000 (UTC)
-Date: Mon, 16 Mar 2026 09:36:33 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Bartosz Golaszewski <brgl@kernel.org>, patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] ASoC: codec: arizona: Convert to use GPIO  descriptors
-Message-ID: <abfPIZyk8Gch5rxT@opensource.cirrus.com>
-References: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YrywEDwd"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EE851C4158D;
+	Mon, 16 Mar 2026 11:40:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4EB815FC4A;
+	Mon, 16 Mar 2026 11:39:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DF5310369E73;
+	Mon, 16 Mar 2026 12:39:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773661176; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=9LLjJ8Qd6wNXbg06pYIRYcPmRb/RcOo68671SJw5PZI=;
+	b=YrywEDwd/DzMcHZz4wMx/qDUUpvovYoTrhVPGEOmyWw/GimO4aRGWgjfaRUp096SdfisEu
+	fL7fyiN9g5ShHiC0bJ1HLcSiRmmromhJMWEGykRppDiKWCfJyd8CE9upne8c7MS4veJl9C
+	F2567Jh16wPZp2rva8ZWs5sa/ktvOyV7GgKVD1l9lwwqvogkfchCWNn0uiaK9l1+o4CsY/
+	8XM9Y78ODDYhIPF3fR5xInhUpzGGiyzeH9/8xsONdMXOwnDHMCWJaUzPBNzQ9Pm/aZwkh+
+	4jh1gU77n4mMk8A8bpwAPpZU8p6RPatwWYKsvXQsYdR0qnmwUDqWFz4JFrOonQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260314-asoc-arizona-v1-1-ecc9a165307c@kernel.org>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529D:EE_|LV0PR19MB9573:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c6785cb-b657-4ab6-361e-08de833f8476
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|61400799027|36860700016|82310400026|22082099003|16102099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	RMD0GKziH9JzRy1oYlZ7u8Uedh2YVspPYZ7r69tWCQxFpj0lTWibaLO3ovWC9ctqhUoXjZW67BjKHWlsPc3QXjM3JGNyD8KuJyWwp+snqZUetBmBm8UJXGeV41AfdhonMsA80iAD/8by3CofX7cj2s8ecTr1G/FZbPLTuOdc8+iYeEndYbuELoikQ/u2NEcNZvH/LJo+OiNYrnCqUGPrRK1RbO0XxDDmqGYNopmXPsz4N1xglQ3OiHFoOVGzS9LuBmEL13ZsPK3avF+2RpJHVN3wL/6RH1gwUwgS+WUkErfPxo5B9onC5L73LbtYccysmiM7vBnovzaOi34HQRN33yOxbx96Tl0eds9bgfZXTSG0KVWUv81rJulNdchHgdc8oU1Aof3oWXI9/dL4NOh2/644yAYQaWG5tuSbGvIWfLE9i9yZCh8fF+ZQ/TT6GsC+MnOPWoSQG7U5CUXGx3/3ghfuTz0wPIQdsfKTmo8w9WjMaFLS9kloL0fW1YeTk3q8jKOFdNFtXW4Fxzxtpdpa9To0tastH4K7hThjtn8IuddjRnHeztB450gVjA9zfovqFNRtmChcl53ZhUuuTruFkcUWn9mii0cJxZfHDwbKkbUEkKUcjyYkORSxAbZImWUvE8itSOuOcMC/8QYlqG7np2IweFr7g3l01k7Uyumgw4wI5HiYi2QQ/q82GrVHOZUcOuc65cU2+ghMup1G2L+iDFB/6gD3JcZcU+3+AuDFmsYegiMUbgrhRXde5psOSXNiP/ZfZbAgFjZAOZ+hncNrHQ==
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(61400799027)(36860700016)(82310400026)(22082099003)(16102099003)(56012099003)(18002099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	yrDhD/4QHdwqY/TkPGa0Cj9KWPJgA5MK0jt9+jOcuwPVSD/XndngRzLZRciO43HoSiqclb+vcF9TiYag43zvBWAVU9M/vdCxFomc9v3ALAn97Ajc1Qah2XGis20rM5ym5/KBZbW0gYEHtNi393SiKCwXRUzm04HrFRPBhOImtDEYB7F7uF81QToi1Kd7nzhSaY9ewi9e8JmMo13qL8hIiW5aXgSeDPccSqE/SunJSTURQfVLFeq+yBzywO2YRG7k0h04POxrxvebMq66nQwFKF+VZZ3483gy1ry35rh8zRFggAs/UW0XLekcciJ8481UXES3QGyAb2jkt25m7ngYyot4ZtH/sZilgnOYjDCfW5ipa5FgjJBweLkBypecqrPyxPbIviyrtaTc21iuJ83JwOHdJtYavTFnnotbsJjz4G31oIwIGhy6P5qUcLkMxWN6
-X-Exchange-RoutingPolicyChecked:
-	rXnIgIOkXU8qAGvMIR7yEnVtLbjt/YuHbIg0a2PmXgzQPmY3He4T5XmhuIJcQ0Er1yxcTWOyq0a1gzY27S4EWVSZx6cIfuiTnrsHNZFbg8YcnCVlqD0Yq8uwRoBkwLHzW1yf8p2qEFE9QLEHGLuTT+PIy6/OBgqr0KcAR1fQgCZAvcrYHqqagdFqqPr135FQFB4r8hEFPE7UIbF2lMoe80gUPJ++ryJsRwWWq8kbdrgUxl3gngtr/5eXVWnzK6bhgOZxEk7w50FdTBbh1T5x/TVUXg8DQyRn/KUND5rFXK/Slf6lZ6LFxQtwyjyCwTM3xG86PORQvHwQequfYCuisA==
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 09:36:35.8902
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c6785cb-b657-4ab6-361e-08de833f8476
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SN1PEPF0002529D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV0PR19MB9573
-X-Proofpoint-GUID: gQqcs9RopwTNSOOXMEV89CIqqIu71EkS
-X-Authority-Analysis: v=2.4 cv=MpZfKmae c=1 sm=1 tr=0 ts=69b7cf28 cx=c_pps
- a=krMX4SE5d8na1K7/klQVLg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=iX4cTi3TZMoOKdANLEfx:22 a=Dj2-6B8FqX4mGL0U3gbX:22
- a=VwQbUJbxAAAA:8 a=w1d2syhTAAAA:8 a=PApNQ4Y_GqTqzXxjRcUA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: gQqcs9RopwTNSOOXMEV89CIqqIu71EkS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE2MDA3MyBTYWx0ZWRfX04vLvoN0MsPC
- hv2vZHprYNtcaV1yPbabPpy617AZd+jBV+C9g9lAgRNuEmx0bMkkJ4srVM8IJFeNcmUTFjF+vPs
- ghhFLsH7hn+dZXboSLn53P3URKUeifL9qlaPN8zSseIQCasT3LrYNDxKnOppl2nya+fZ0JazDxI
- Qg6imNoPYc5yeKyOmX9rBLXTbq1Hn9cAE2P/8zVSJrDRS7wcDbe8wQdN0oIYoERgON4uLn8Uy63
- +n2sCZmi5kHFr0bQMsgnjWOfGTVP1i51+fMX6b/MC7UACWNYW3yIwmvhddR/3ixHwgchyR9Zfx4
- 5aNVkstMwrlazXxniTYK9VOnzLsXBJ4vm4RPZh2sy2X8USYjn1fGOlTR0Y7APXyjTAviAbXb+59
- KM7skkGl4CdGE3/r5gpAWZnSc1iF6JtY/KFrs6yUKDuN5/ebd2Pd6RqCkeNI07jmrjqYOtWZHEd
- zVFWHh7/tx1a3oQJoSA==
-X-Proofpoint-Spam-Reason: safe
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 16 Mar 2026 12:39:24 +0100
+Message-Id: <DH46EQM1PED9.2BVW9DWVIMEJZ@bootlin.com>
+Subject: Re: [PATCH v10 11/18] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+ <jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+ <simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+ <kernel@pengutronix.de>, <festevam@gmail.com>, <inki.dae@samsung.com>,
+ <sw0312.kim@samsung.com>, <kyungmin.park@samsung.com>, <krzk@kernel.org>,
+ <alim.akhtar@samsung.com>, <jingoohan1@gmail.com>,
+ <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
+ <andy.yan@rock-chips.com>, <dmitry.baryshkov@oss.qualcomm.com>,
+ <dianders@chromium.org>, <m.szyprowski@samsung.com>,
+ <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
+ <neil.armstrong@linaro.org>, <rfoss@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20260310012458.169272-1-damon.ding@rock-chips.com>
+ <20260310012458.169272-12-damon.ding@rock-chips.com>
+ <DH1TKWREZMFK.3BY4NY36BXLXG@bootlin.com>
+ <bebadd3b-2fd1-404e-bc64-205c8b44880c@rock-chips.com>
+In-Reply-To: <bebadd3b-2fd1-404e-bc64-205c8b44880c@rock-chips.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat, Mar 14, 2026 at 11:56:49PM +0100, Linus Walleij wrote:
-> This converts the Arizona driver to use GPIO descriptors
-> exclusively, deletes the legacy code path an updates the
-> in-tree user of legacy GPIO.
-> 
-> The GPIO lines for mic detect polarity and headphone ID
-> detection are made exclusively descriptor-oriented. The
-> headphone ID detection could actually only be used by
-> the legacy GPIO code, but I converted it to use a
-> descriptor if someone would actually need it so we don't
-> just drop useful code.
-> 
-> The compatible "wlf,hpdet-id-gpio" is not in the device
-> tree bindings and only intended to be used by software
-> nodes if any. If someone insists I can try to add a
-> binding for it, but I doubt there is any real user so
-> it seems pointless.
+On Mon Mar 16, 2026 at 4:17 AM CET, Damon Ding wrote:
+> Hi Luca,
+>
+> On 3/14/2026 1:10 AM, Luca Ceresoli wrote:
+>> Hello Damon,
+>>
+>> On Tue Mar 10, 2026 at 2:24 AM CET, Damon Ding wrote:
+>>> Initialize bridge_connector for both Rockchip and Exynos encoder sides.
+>>> Then, make DRM_BRIDGE_ATTACH_NO_CONNECTOR mandatory for Analogix bridge
+>>> side, as the private &drm_connector is no longer created.
+>>>
+>>> The previous &drm_connector_funcs and &drm_connector_helper_funcs APIs
+>>> are replaced by the corresponding &drm_bridge_funcs APIs:
+>>>
+>>> analogix_dp_atomic_check() -> analogix_dp_bridge_atomic_check()
+>>> analogix_dp_detect()       -> analogix_dp_bridge_detect()
+>>> analogix_dp_get_modes()    -> analogix_dp_bridge_get_modes()
+>>>                                analogix_dp_bridge_edid_read()
+>>>
+>>> Additionally, the compatibilities of Analogix DP bridge based on whethe=
+r
+>>> the next bridge is a 'panel'. If it is, OP_MODES and OP_DETECT are
+>>> supported; If not (the next bridge is a 'monitor' or a bridge chip),
+>>> OP_EDID and OP_DETECT are supported.
+>>>
+>>> The devm_drm_bridge_add() is placed in analogix_dp_bind() instead of
+>>> analogix_dp_probe(), because the type of next bridge (the panel, monito=
+r
+>>> or bridge chip) can only be determined after the probe process has full=
+y
+>>> completed.
+>>>
+>>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
+>>
+>> ...
+>>
+>>> @@ -73,15 +72,12 @@ static int exynos_dp_bridge_attach(struct analogix_=
+dp_plat_data *plat_data,
+>>>   				   struct drm_bridge *bridge)
+>>>   {
+>>>   	struct exynos_dp_device *dp =3D to_dp(plat_data);
+>>> -	enum drm_bridge_attach_flags flags =3D 0;
+>>>   	int ret;
+>>>
+>>>   	/* Pre-empt DP connector creation if there's a bridge */
+>>>   	if (plat_data->next_bridge) {
+>>> -		if (dp->has_of_bridge)
+>>> -			flags =3D DRM_BRIDGE_ATTACH_NO_CONNECTOR;
+>>> -
+>>> -		ret =3D drm_bridge_attach(&dp->encoder, plat_data->next_bridge, brid=
+ge, flags);
+>>> +		ret =3D drm_bridge_attach(&dp->encoder, plat_data->next_bridge, brid=
+ge,
+>>> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>>
+>> Should this be 'flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR' to be future-pro=
+of?
+>>
+>
+> Aha, the exynos_dp_bridge_attach() and even
+> &analogix_dp_plat_data.attach() have been removed in [PATCH v10 16/18]
+> for consistency and simplification. Since the only bridge flag supported
+> right now is DRM_BRIDGE_ATTACH_NO_CONNECTOR, let=E2=80=99s leave this as =
+is for
+> now. ;-)
 
-Yeah probably fine, this was also on the definitely more
-esoteric end of the driver features. Although again there
-were definitely some out of tree users in the distant past.
+As you are going to send v11, I'd do that change. It is the right thing do
+to, it's cheap, and in case patches up to 11/18 but not (yet) up to 16/18
+we avoid ending up with unoptimal code until patch 16/18 is applied.
 
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
-> ---
+Luca
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
