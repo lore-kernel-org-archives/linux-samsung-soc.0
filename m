@@ -1,138 +1,214 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011032.outbound.protection.outlook.com [40.107.130.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591533921E3
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2026 13:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773666694; cv=none; b=RoCPtRSzpNoAuf5IlZuYdFoPC6MRkG2Wb0u3lJ/htC+6Hbo6aDF+Z7p/U0cZ3urVF8J4sFaUjtjd7rDewMlz131T2R94YPIum4PYv6p3XKK50mO9yDq03KL86gQepqjyYMPyHNoB2VtEhyHJ2in0kR+W60cPhMrFN8Oyc14H9dY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773666694; c=relaxed/simple;
-	bh=grNch3YEfme4XX2YLfL8Yx6byNhRmXe/JTenfdWfyZA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ugyU4u18x3o7f7jWpMfFblq7lKfX3RHTmW4BbkhAmgvxACiTyIWymIufChdjEQ40ZTM7BC/b6e11RHIU0KnT1w9XLhSQHMWWgGz9BwZ6cELY7LwVjc1IX48Cp/tz/2SgjTaxEokiL/Vr1H8bFOIRbCgiTz7qyObw3VLZX3MgW8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzMp1t8F; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BD09460;
+	Mon, 16 Mar 2026 14:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773672382; cv=fail; b=E+YUWdJbUtUNWzoVgDg6de5S06AhdPStRiSU2m26GFIJZx+1nlkmKPWWbUwVPEeKijj/mdAfkPjQhbkx9EsYDg4+80ZjYT44ejV3nbdsFhGfNGAeY1nyxL4T/jTJoXxsQWzk4oC6Wn4+YwXSdWbM3dzHL60TJDQx01To+5kv4t4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773672382; c=relaxed/simple;
+	bh=MqHAD5JkWhUKxNthXWukd5yK2hMf58GP8lwufSkyEu8=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=HXh2LK7NcPFJMIwvvsMeKu5rbNxDI6IHDyI/l4sRlkcUQbOn844jI6QhlpYyZ4qdHtOr6y1anEENgBZjBC1i3tnLP3g+Jas31J8jYz+nhWjoSCi8CnXT7lvpkqYVJNPMDxd8FAivhdqsYNVwzbjshVPzADquyx8XaAM1QVL+FVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=SGJINcix; arc=fail smtp.client-ip=40.107.130.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzMp1t8F"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2b05761bec1so3995165ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2026 06:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773666693; x=1774271493; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F1b1jbbseevrfxoqPkF+lAWkN6R2Yw+sAuGiH3k9yEI=;
-        b=RzMp1t8FYSB9MrbafAUwN6ckheYov7KMXIT63vQngsz848FSAsPLasOuMnIqkOL5Xv
-         /OgeppB9yqzmvnprIjHMWwBmfCRRn9D703KJKy+GulolC0aTAk+BtuPYOfAQ8kWed716
-         5JcYKJ7K//UEFsVCHYvtqhS1WoO0U98OIFnc96hnIhHOKWzNWpzIrc52G9v5rsucZQSs
-         E+BPR27tXOlU+J474QrTxae+spCO0u+PnI7md0bZVfHu7EqBEoHqw79sKHIW+FiF+GGE
-         WVJw9PZgG+KOEx8e+30Ed0FrImNMk5N8Px1iJK/QwUDRw15SN5I6vr85ntW4CGZ0/FJI
-         ZBxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773666693; x=1774271493;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F1b1jbbseevrfxoqPkF+lAWkN6R2Yw+sAuGiH3k9yEI=;
-        b=pVMJ+PDABiGamaBWVhp6tUuXIalmebtq2ByLzBmejeYIZRhOUFqS24VKEn+KO48qsQ
-         AQhC74Ovn2JRWjfx4U2oDlPnOQbt0+ygYMGpZpK8pScOniAbwPZZeU6rDQb57KpGJRmN
-         cexbJCKi832lyfSlI2l73k3YuniLUHEBQyAHiELfzpL01IRdF0bGYeMFPsyaMpGis89b
-         YVFHYwHPNbi6oUlG9BohrPJjrMLpM3bmzZEiTvryEAREsnEdQ9Fvh1W5BcaqKaGotrer
-         FxyXTcKSB6sKjfArXvr19bwjwXVpTeVZF9Az4RqT5lAE/OXjTmNpbQOTWWs22HC6r9la
-         TBDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFB0k/lUPUex95QK6zf9r3I5WxutZoI8pAY0ODvgFzw4R1lgYoLFA1b23znd8Kbdqa3TmhA7DASJNW59NYstQlrw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkrieLT5eCooF9wliE5oLCR8K4cW+sw9oQ+7EMTbgSbbgN+Jqr
-	Ivica/sus6S5/7olC1UwPfV5oCl7uTd65GzMf8fR6wkveFv5l2ykbbN9tUOcZWI1BBo=
-X-Gm-Gg: ATEYQzw3fb8HCz2llpdld9snA8tZcYUXSbzif3cLMfVORskdAa1rCJpTOWePb2yk3aJ
-	jo2kzq/BqkOaCrBcl6DsQ89eXeRlJAg7JPI0JQpX5yOxpLazdrfT0fyHE5q1y9l6UQEXGIvkRJS
-	BztaJW0rTxeyXYFXogOzCx4x3rRGwEazlgeEIgIdGHd3R1oHD72bZUl/BTn0hmiUcq5JBhVuYpM
-	1Qm20MQY1c6Xtw+bIRIMYLHMogcbtCvVKAc2Pjl0fBM3dArJr2evvd2sRliNDeEgjtNusWRX7mJ
-	7wQtsFDm3sIfQeUVsxV53ggDkRTEUXTLWZ7tfp74gUOqdoG7tSzYleuVNhkt0pnlZFJOOn/oVw1
-	P32/r/SeOu5yEJOKybrglEif/xrBk9mK5tcsZT4fqSj+CBGKAJTbTuvpdoxUZ8I29anV0ILuiJE
-	oOFStXQDh4WYherqVbnPOv8yAgBaFdbpLg5lcF
-X-Received: by 2002:a17:903:1a0b:b0:2b0:4d7d:fb9a with SMTP id d9443c01a7336-2b04d7e03famr53040625ad.26.1773666692409;
-        Mon, 16 Mar 2026 06:11:32 -0700 (PDT)
-Received: from junjungu-PC.localdomain ([223.167.147.240])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ee3d6sm110144905ad.57.2026.03.16.06.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 06:11:31 -0700 (PDT)
-From: Felix Gu <ustc.gu@gmail.com>
-Date: Mon, 16 Mar 2026 21:11:26 +0800
-Subject: [PATCH] phy: google-usb: Fix runtime PM cleanup on probe failure
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="SGJINcix"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h5ngDvKApDHJTa+2G0ghSna2JY9KIbYn+y2rIhGfwCO85rigQZ4v2ztIpQpkC8vXcYOgWthLcTophN44OHjSvJKa/q3Yv50IMxWUzQ+OYFgQszp20cKZvRrr8oHYhzQB8XH7q60X3P4e62V2kF4B5uCJryuvME7aiLbEhsT+oobEGig3i75WytVKYwHOjdu/0O3HQ542KI0yB9Mn6XzmzmR4wzJ0UmuXys5E+bawwJpL59L+1Z5Wj8YIZNAjDsu2Pi8nmP9OKVBnRunoeLOvTFGoClEge6fDysY2RGNJrJbtME76qhE+Zp/kJA8dzD9LDcbWp4c5RyekoJQJp+Z8WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WDLQt1VrjLnwWeruoLBjmJG1S8OATSfvQJp6P6yNuEI=;
+ b=TzmyUaE+QqA/OmNG1hgYyg0bTiu5RU/JBkem9O4MqBq0octiEgaPST1YMb/K8APN/0JJ4FSdFKVOyXPvpguhMNEMW7PzrlJASA/B6loRKxY86k1dBpQpZJf/nvU8FskFbN2vJ3b5iBpkf9G/cFOcUijfXM9b3PTxZUIpYsM6KexYtx5O2ZjqKesxL0QZYCGR+D0sUUP/DZM2nyiq9rSo7CClK/mVwQPxAfBLdJn+vWQj815u9LqNylHhp+HWKQtrGeZ2SMxIaOY4VQMSiUY3FKoSxNSfwxnYA75Sq+Qw+7imXdlQ/AAYMjMyfNxVyZNc5zJqPv011kNx93SRV4wRsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WDLQt1VrjLnwWeruoLBjmJG1S8OATSfvQJp6P6yNuEI=;
+ b=SGJINcixF/GsBLaJpAEaYI9CBR85Zjvwj9P4dtsI/XHY5LHWdi4bewb2GB+h2AkR5ECXsVQVptQ89lk907efd5HKDRK76frcY0OOPurNLNeShnWJmkWkmQZ4csYs3SxGjfqe6UbyzU82jCjjrJv126k+tEaoHf7LyEUSoTWI7VFUZt3wzCfKDNceEDwyjJc0ICW9Uw/F91B57hd9oTb6DVgA5PsBTVRFXM8Pko3gIM0qt3ZHnjpkPRR1koBaTCC9+/h4FBtjJk6R0CLLy5baz4YGDVBEc6zNWW3yI0aEaQYVTz0eaM9vlk7EjwBPMLiouRdGLE5u5ScGswbRjZX7uw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PAWPR04MB9909.eurprd04.prod.outlook.com (2603:10a6:102:385::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Mon, 16 Mar
+ 2026 14:46:14 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9700.022; Mon, 16 Mar 2026
+ 14:46:16 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH 00/15] Convert power-controller to dt-schema and update
+ various yaml file to referencing it
+Date: Mon, 16 Mar 2026 22:47:35 +0800
+Message-Id: <20260316-power-controller-v1-0-92c80e5e1744@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAcYuGkC/x2MywqAIBAAfyX2nKBmBv1KdOix1YJorFGB+O9Jt
+ 5nDTIKITBihrxIw3hQp+CKqrmA5Jr+joLU4aKmtbJQRZ3iQxRL8xcG5gq1d7Ww6bZSxULKTcaP
+ 3Xw5jzh/JHU/NYgAAAA==
+X-Change-ID: 20260314-power-controller-56d6b4724146
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Saenz Julienne <nsaenz@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Jerome Neanne <jerome.neanne@baylibre.com>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Dmitry Osipenko <digetx@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Joseph Chen <chenjh@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, 
+ Zhang Qing <zhangqing@rock-chips.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Andreas Kemnade <andreas@kemnade.info>, 
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Julien Panis <jpanis@baylibre.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, Alexander Kurz <akurz@blala.de>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rtc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:195::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260316-google-v1-1-30a034e87a2a@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAH0BuGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDY0Mz3fT8/PScVF3jxOS0RKM045RUyxQloOKCotS0zAqwQdGxtbUAer6
- 7BVgAAAA=
-X-Change-ID: 20260316-google-3acfa2f3de9d
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Naveen Kumar <mnkumar@google.com>, Joy Chakraborty <joychakr@google.com>, 
- Roy Luo <royluo@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Felix Gu <ustc.gu@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773666688; l=1551;
- i=ustc.gu@gmail.com; h=from:subject:message-id;
- bh=grNch3YEfme4XX2YLfL8Yx6byNhRmXe/JTenfdWfyZA=;
- b=sP8QxL06sH+Slw6m9BD5RTi2uMzfGj1T1foGh8SmtqPEkOB/2wc388Tqw4bIOUUQbOdBNIIz3
- MNRj8JVFU+DCPWHNmwF36TX1jYZZ07sf5SJyoMTTGKZqzD3RY82YNH+
-X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
- pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAWPR04MB9909:EE_
+X-MS-Office365-Filtering-Correlation-Id: 525c7252-aaf1-4afe-1295-08de836ac6f0
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006|52116014|921020|38350700014|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	hPItXkQULlzlYLfRRe+0pOoo9RQR3pB/sAJDLi57LokgggTxVZcHHYumc1FWfAfbyZKRG3NW3tfJpB5T97+bC0BRgrYCwB65FRhShnohZAEHKFTN1IdfMPgqCB8OmEsjYVYrjt/7huaGvpVlG2gRkTuuazEmvLlYpJOlHSDjvtMfIpln81yhEmO0GVNGz1CBo8rozIz8A7YzfNmj19JIWvGjO7E+bb814t+TKC9w2vCHVLwg5i5svidH7V5EboL3dxjKUh2ciaPYHvf+u4BoxwkesmGORBRMSZDTHLLQfxK8C/pxQV/Ym9hNi77MxoYWQ62d9y5mDq1CXFU+IFJfdN3dgJocVzelGwEC+kfTni8Y8X/NmxK1/8tIrSbhnlglShHs00tGyCIGo7kPXE4ckF6xfi+QWPG4mVmJ4z6G7K0zrAMQg1TYXqZ/HvMd0X4SuYnJtqlESAekax9GIXrk4dU3eL650I0hqu5OYZZTFLa6Aa9kFRbuuqkKa7zyFIj89xmHAZSPkSNVxq354bdPB8XNIRSLdvigR7pF0fO7ADLwRyMqm4Qk/LRDCW9YjtGlevfd4Ns0HAY9FeUIYrz/1pSnaLQoR8JlyKy+OXeUhyG7L6nzh91ic22TRw+sVTeNZW90fW8l0ZslLnF9tpCVYMM2A/jCs2z9XrDAQ6lZYcOdZFIwjj3VU8l3YbmCUxV4/qUHtXTDRaqLZyFMVLL78k5eh4H3v44PlCdPJFSpP5epQ+WXMyW2zuJ43XB2yuFaygygMhhjaMSJ3bsnofAIPQqcDsVp74ikUZub9YJXbe+GoleaekbtSSMJEDAwMlyz
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006)(52116014)(921020)(38350700014)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z1N6ZXBYK054d014VmIrZXkxMldRMURTV2F2T05rUlJqNUUyNDF6b1FLTDVD?=
+ =?utf-8?B?dkdSRHdhZmJKVCt3dmFsQVJYTzNVOTFhTzFJc3BKcEw4Q2lsT0tYTUxEdjdt?=
+ =?utf-8?B?dlAzNitnejk2bFRDM2hQOEVuSmxCVm9wSFNVOHZOckF1NVN2L3F2MllwSlJZ?=
+ =?utf-8?B?dXZlbnNTUWVmNW1jbEg2M1hhQmZKcU4vQ09aeDVJUWZ6Yno3TkJPdnhRcjcy?=
+ =?utf-8?B?UXdocVB6Q0xiWUl6RngzKytHSEN3N1d2cXMvR1EvT1ppUWZsNHR6cnFzRS9T?=
+ =?utf-8?B?c3RnL0c2eFRsQm9LZWNPeUVuOE9oY3hhK1VvdzBmbEZuaGJUNldjRHJDZEtY?=
+ =?utf-8?B?R3pCYWtLaFNZcXFiUTB3bHFPdDByMldXa0tRMVRkWVllc091MDZIMHJkM2lO?=
+ =?utf-8?B?ZnBySnBpc3F5a2k4Z3ljcEh0MjNxekFwam1uKzFVaE1EZjRWV2t6NFoxNGdX?=
+ =?utf-8?B?UGluOVJ0ZXlaRnNyVng0UEtPb1dQR3lBSm5rMG9pSlkvNHdhTG8vVGk5UVh3?=
+ =?utf-8?B?ZUlMNkI0Zkk0T0NNczVidnFQNE1yQ2xMSnJiaVRISE5BMkp3WGkxbkxVc2hF?=
+ =?utf-8?B?bVZxQTA1c3lEaVUrNGFweC9nbU82ZlBibDB1N1o4V0hKOTNiUVpNYlgzb2lo?=
+ =?utf-8?B?blNnbjJHV3BnU1dxalh0TlJZTG9hSElWaGRsOUlKdlk3dXNHdDEvYlRjRXdE?=
+ =?utf-8?B?a3pkaUxnNGU1blk0SFU3QTVTTEd2RitET2RQY3pUa01mUncrdzhPcUxpdmJm?=
+ =?utf-8?B?U2M5RGtGMHhGVkRLSkV6TVNraXAzZllGV3prRjFWekpDdTJnalRzVXV5aU4z?=
+ =?utf-8?B?R2lJdmV6enAwbjhCNFpNM251TjhpL2NSdERnRm1QWmdrV3pXcFZLOTZOYmNZ?=
+ =?utf-8?B?elVGSllDalFhUWVRRmJWSE1lY2JtNlQrcWtPSHJXSHpKNklhL05DZlZaQVRB?=
+ =?utf-8?B?cHFwMXhGandDQ2owWHVoN0pNemhuTjkzSVZmTzliQlQxelBYU3VqQjdsZU1h?=
+ =?utf-8?B?ejZYbWo2WXJUdE14WTJUbldwOGk0QlcwNmJvY0JaYU11dG95NUxmNFVWVGR2?=
+ =?utf-8?B?SWQ4Q01UVWlESll4QkJ0RGpBOTdLZ3hTWkJXZUkyQk9HYmdKLzVxLzlyT3Yv?=
+ =?utf-8?B?Qmt5Yy9QblhIYW5hM1BBU0RSY091dVE1VHkwcGRaL09YZGJBYXVValhTQ3Jj?=
+ =?utf-8?B?SmNGTWxPRTdpZHo2S1V3RjhQVFBXejRyZFhTRzc4SVp2ZHYvS2tlRkQ4MTNT?=
+ =?utf-8?B?bEU5ZEZxcWdiV1BZSFQ3VVkzVU9COWRGeFlKL2tobTFkTTFHaHJRVExWbkRO?=
+ =?utf-8?B?YXFGZWlBZXJLOVRqOWRIbVhwKzlTTkdLVzBZbElNVWN6SzlJZVM2eU9UbTdG?=
+ =?utf-8?B?eEUvZlBUalhML1VLWWVTa3RyOUM4Y0NJK2h1dTBOZ3VmQlFmSVlJcjg3c0lB?=
+ =?utf-8?B?Q2FTb0FYS2h5UWJ3UXdaQWMwYVFHT3NlNU5FblMwUklZUk8yYXFtNFNYc1Rh?=
+ =?utf-8?B?N2JUZE1zYk9hbjh0NDIyWEZxaDdRdk4zS0l1K2FWaXlUeTlkaTd2aEk1UkFN?=
+ =?utf-8?B?MURNM2pEU0t2bys1ZkpVRU1wbGNjdmwvZnJpNnp1OTZibzhKWkc5cDdHQmJ3?=
+ =?utf-8?B?UFFaNXdtSEdnSDJHREJzWnFvNHl1dm5sQlQwM3J1WlJXYWc3NEF2NFhYdFJk?=
+ =?utf-8?B?M0pUbVQ1WjhPOW8yaGNSM20wQytOSTVmWkQ2aS9nSmJoWitTTEM5Y2FHa3o2?=
+ =?utf-8?B?cXdEN21MOXkvcGRidlREY1p4em5Zb0I3aEwwSDlwNVVReUFheHhjdE1yWnVR?=
+ =?utf-8?B?clBjWlFZWnBhTFRhNStsTmZBMUZ5M21SRm5vc3Vmb2gwOGp5UGpFL0sveFVC?=
+ =?utf-8?B?T2JkaTlIZllLMjA3cm04T3dxNmFaY0dZSkVoaExUaVozdHFzUjlkTmx0K25X?=
+ =?utf-8?B?NFNvWGtGSmVDM1lKV0VPWWg1TmV1bHJoMWFKczd0NUhlV1h3VWFBKysrVEZz?=
+ =?utf-8?B?ZFRINFVCcGgzOURleVZuY0xJbGVnTUtBMURLcnlPVEVNWmpUUmhRRFpFYnhJ?=
+ =?utf-8?B?UXhyWFJtWkNXejhqMHRmbllPelg5SmtmMXAxN203OExwU3pIZVN4Y285YWhG?=
+ =?utf-8?B?QTF4TUxBUEg2VHBQajZZNldyUERpOTgyaStGYzRpNS9DdnVXanVFTWNHVFJm?=
+ =?utf-8?B?QzN4dmR3SWo5cTBHMDkrNURidTUwcjhvYkM4b0NrZmtYYmthWmJzMEtwdkRI?=
+ =?utf-8?B?ejljRUR5LzdDZmYra2MvR1N5OXNLdnloa2ZiSC9WczVpcUx5QXRIT2Zod2tU?=
+ =?utf-8?B?VmVSdW92dUEvVEEwWDZBYlFuY0tCdWs2Ykt1cGRqTTl2TzgxanRkdz09?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 525c7252-aaf1-4afe-1295-08de836ac6f0
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 14:46:16.2926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l03xJAY92FLOqEbD0dwuxr4ubGYYZt83V7t8ixDU+ODL6K61uUk6viu+oggv1Kx/KUbvJT/Y9nJ7TLD7yr4svw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9909
 
-In google_usb_phy_probe(), if typec_switch_register() fails,
-pm_runtime_disable() is not called, leading to an unbalanced
-runtime PM state on probe failure.
+Convert power-controller.txt to dt-schema
+Update various dt-bindings to use generic power-controller.yaml without
+defining local property.
 
-Switch to devm_pm_runtime_enable() to ensure that runtime PM is
-automatically disabled both on probe failure and during driver
-removal.
-
-Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
-Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/phy/phy-google-usb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Peng Fan (15):
+      dt-bindings: power: power-controller: Convert to yaml format
+      dt-bindings: soc: bcm2835-pm: Use generic power-controller schema
+      dt-bindings: regulator: ti,tps65219: Use generic power-controller schema
+      dt-bindings: regulator: act8x: Use generic power-controller schema
+      dt-bindings: rtc: ingenic,rtc: Use generic power-controller schema
+      dt-bindings: mfd: ene-kb[3]930: Use generic power-controller schema
+      dt-bindings: mfd: ti,tps65910: Use generic power-controller schema
+      dt-bindings: mfd: rockchip,rk8x: Use generic power-controller schema
+      dt-bindings: mfd: ricoh,rn5t618: Use generic power-controller schema
+      dt-bindings: mfd: netronix,ntxec: Use generic power-controller schema
+      dt-bindings: mfd: ti,twl: Use generic power-controller schema
+      dt-bindings: mfd: ti,tps6594: Use generic power-controller schema
+      dt-bindings: mfd: rohm,bd71828-pmic: Use generic power-controller schema
+      dt-bindings: mfd: fsl,mc13xxx: Use generic power-controller schema
+      dt-bindings: mfd: samsung,s2mpg10-pmic: Use generic power-controller schema
 
-diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
-index ab20bc20f19e..79480f8b110e 100644
---- a/drivers/phy/phy-google-usb.c
-+++ b/drivers/phy/phy-google-usb.c
-@@ -251,7 +251,9 @@ static int google_usb_phy_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(phy_provider),
- 				     "failed to register phy provider\n");
- 
--	pm_runtime_enable(dev);
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
- 
- 	sw_desc.fwnode = dev_fwnode(dev);
- 	sw_desc.drvdata = gphy;
-@@ -271,7 +273,6 @@ static void google_usb_phy_remove(struct platform_device *pdev)
- 	struct google_usb_phy *gphy = dev_get_drvdata(&pdev->dev);
- 
- 	typec_switch_unregister(gphy->sw);
--	pm_runtime_disable(&pdev->dev);
- }
- 
- static const struct of_device_id google_usb_phy_of_match[] = {
-
+ .../devicetree/bindings/mfd/ene-kb3930.yaml        |  7 ++---
+ .../devicetree/bindings/mfd/ene-kb930.yaml         |  6 ++---
+ .../devicetree/bindings/mfd/fsl,mc13xxx.yaml       |  5 ++--
+ .../devicetree/bindings/mfd/netronix,ntxec.yaml    |  9 +++----
+ .../devicetree/bindings/mfd/ricoh,rn5t618.yaml     |  8 ++----
+ .../devicetree/bindings/mfd/rockchip,rk801.yaml    | 10 +++-----
+ .../devicetree/bindings/mfd/rockchip,rk805.yaml    |  7 +++--
+ .../devicetree/bindings/mfd/rockchip,rk806.yaml    |  3 +--
+ .../devicetree/bindings/mfd/rockchip,rk808.yaml    |  9 ++++---
+ .../devicetree/bindings/mfd/rockchip,rk816.yaml    | 10 +++-----
+ .../devicetree/bindings/mfd/rockchip,rk817.yaml    |  5 ++--
+ .../devicetree/bindings/mfd/rockchip,rk818.yaml    |  9 ++++---
+ .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml |  7 ++---
+ .../bindings/mfd/samsung,s2mpg10-pmic.yaml         |  7 ++---
+ .../devicetree/bindings/mfd/ti,tps65910.yaml       |  6 +++--
+ .../devicetree/bindings/mfd/ti,tps6594.yaml        |  7 ++---
+ Documentation/devicetree/bindings/mfd/ti,twl.yaml  |  3 +--
+ .../devicetree/bindings/power/power-controller.txt | 17 ------------
+ .../bindings/power/power-controller.yaml           | 30 ++++++++++++++++++++++
+ .../bindings/regulator/active-semi,act8600.yaml    | 11 +++-----
+ .../bindings/regulator/active-semi,act8846.yaml    | 11 +++-----
+ .../bindings/regulator/active-semi,act8865.yaml    | 11 +++-----
+ .../bindings/regulator/active-semi,act8945a.yaml   | 11 +++-----
+ .../devicetree/bindings/regulator/ti,tps65219.yaml |  8 ++----
+ .../devicetree/bindings/rtc/ingenic,rtc.yaml       |  7 +----
+ .../bindings/soc/bcm/brcm,bcm2835-pm.yaml          |  6 ++---
+ 26 files changed, 107 insertions(+), 123 deletions(-)
 ---
-base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
-change-id: 20260316-google-3acfa2f3de9d
+base-commit: 5c9e55fecf9365890c64f14761a80f9413a3b1d1
+change-id: 20260314-power-controller-56d6b4724146
 
 Best regards,
 -- 
-Felix Gu <ustc.gu@gmail.com>
+Peng Fan <peng.fan@nxp.com>
 
