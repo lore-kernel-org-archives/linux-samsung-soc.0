@@ -1,26 +1,26 @@
-Received: from mail-m1973188.qiye.163.com (mail-m1973188.qiye.163.com [220.197.31.88])
+Received: from mail-m3284.qiye.163.com (mail-m3284.qiye.163.com [220.197.32.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D97296BD6;
-	Mon, 16 Mar 2026 02:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED4F2248A0;
+	Mon, 16 Mar 2026 03:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773629166; cv=none; b=GGPllLGhXkbUmccErFMwPWRgLNQhNLObdksbyoku0amOV5Gak9oGv9aououRATlQRJZhB4QU9gxoZV8HQxEtGG3gTsWTnryVp3Eo1rksq86jXktIFHyfl55izfXAEfknPGUKft8Js7A2uTot/4lSspA0srOe25zMh9qrUN8pgus=
+	t=1773633190; cv=none; b=uLKd+yeCPOFWHm9hnhIVW50TYwWZWdxYgY1AG7rehFViwn7RAQDo8nKFf8X5oqfF/LNiPzgidDoGzXSbT6t/h9tRbGyDRKHDy20I3h++XLD48fRJsFVhIZUXrL6QaTkKQoB98yDbIAkl+etzHrUWzPltQaRI/HswGsfcHeUCP7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773629166; c=relaxed/simple;
-	bh=4GvveEtCH7edKzMH2Dn4ZCZoNJ9AMCDcUaCM0zfrm2s=;
+	s=arc-20240116; t=1773633190; c=relaxed/simple;
+	bh=4z8V0kOOv9muegthwBM7k/aG/oynOm9gpX8DPKIeMIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DRy/jV7ZDhSADHqkxMlTOBJ5Tbl8X5jIWQmm++ah4mAliV+1twTzMa4RmAlQnVYfLDsZmR9Er5c1LZx5KB22anoWGJ6lO4ygJTcJrdpWxFqa4PvqqmsxkeWo6Zo581V1ZE0cjBkB/QRaw3XP2znPQaNEV0zZESjFA2xjGJ68RxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Cy9WSrpN; arc=none smtp.client-ip=220.197.31.88
+	 In-Reply-To:Content-Type; b=NWkbL2UAveltBZKQn1krJeiM/aytp9ndvv8bBNbFALCD1oVdUMNSEckifFiGWFcx4aQyz5vcRC7nNNtvQsweII4qR1j2ifRXsOZvXkwZpZucKn5Mq+VVfQ1ooF+g651Y/mvyakJo0/Yu/aI293ddCz5jDcm9jNmTMN0doztcjp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BnqeoqLs; arc=none smtp.client-ip=220.197.32.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Cy9WSrpN"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BnqeoqLs"
 Received: from [172.16.12.43] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 37099b5a3;
-	Mon, 16 Mar 2026 10:45:51 +0800 (GMT+08:00)
-Message-ID: <a60a6435-ee62-4788-8dbe-85cce13f2d69@rock-chips.com>
-Date: Mon, 16 Mar 2026 10:45:50 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id 370ae76b1;
+	Mon, 16 Mar 2026 11:17:30 +0800 (GMT+08:00)
+Message-ID: <bebadd3b-2fd1-404e-bc64-205c8b44880c@rock-chips.com>
+Date: Mon, 16 Mar 2026 11:17:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -28,8 +28,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 12/18] drm/bridge: analogix_dp: Remove unnecessary
- &analogix_dp_device.connector
+Subject: Re: [PATCH v10 11/18] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
 To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
  neil.armstrong@linaro.org, rfoss@kernel.org
 Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
@@ -45,38 +45,82 @@ Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
 References: <20260310012458.169272-1-damon.ding@rock-chips.com>
- <20260310012458.169272-13-damon.ding@rock-chips.com>
- <DH1TLZT5696T.2XAQIND6F9YS3@bootlin.com>
+ <20260310012458.169272-12-damon.ding@rock-chips.com>
+ <DH1TKWREZMFK.3BY4NY36BXLXG@bootlin.com>
 Content-Language: en-US
 From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <DH1TLZT5696T.2XAQIND6F9YS3@bootlin.com>
+In-Reply-To: <DH1TKWREZMFK.3BY4NY36BXLXG@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9cf489172b03a3kunmea86f0cd190659
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9cf4a612fb03a3kunm3b3e64f61969b4
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx1JH1YaGUNDSEJCTk0eGBhWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkpLSFZMThlITR4aQx8eHh9WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=Cy9WSrpN8R7G3q+DpLjNtJcxR9Rfmh/Uw9G/ysOtP84TmMj/x6CzlL9UeA6hPyGqz/TzXs6Y4L32fWY23llQHRqZ9CIz7GHJSV2gfREmMNFDEkOgCZmGwbsqBld4AEmsv24+Wk+fnoEsY5oPxYEI21QfSNHI4bNxhYPZeLCtxdg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=hG5rWW1tvZoHBRwfgexg2zqSAF2tcsPwI8XnBrBCp6Y=;
+	b=BnqeoqLsGb84BqtPqXiW77m3kBjYMloScvhA6p+8X+sHkdC6G2lBx0K6yTjyx2Pd+6UWnlkIoQZFCKdzbWmIIexPdLKAY2fA5Z0jwBTHiGasgpMISS4eqkCCCA+fPdJ/F+0mi5Gxidvpe/xNvUK/wY8tWC6CoTyvjZ0pFwGHc0A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=euD4SQJWyl0XJtyrMHkwNbP+gc8j+sYgCcDACn9mPo4=;
 	h=date:mime-version:subject:message-id:from;
 
 Hi Luca,
 
-On 3/14/2026 1:12 AM, Luca Ceresoli wrote:
+On 3/14/2026 1:10 AM, Luca Ceresoli wrote:
+> Hello Damon,
+> 
 > On Tue Mar 10, 2026 at 2:24 AM CET, Damon Ding wrote:
->> After adapting to the bridge connector framework, the private
->> drm_connector is no longer required.
+>> Initialize bridge_connector for both Rockchip and Exynos encoder sides.
+>> Then, make DRM_BRIDGE_ATTACH_NO_CONNECTOR mandatory for Analogix bridge
+>> side, as the private &drm_connector is no longer created.
+>>
+>> The previous &drm_connector_funcs and &drm_connector_helper_funcs APIs
+>> are replaced by the corresponding &drm_bridge_funcs APIs:
+>>
+>> analogix_dp_atomic_check() -> analogix_dp_bridge_atomic_check()
+>> analogix_dp_detect()       -> analogix_dp_bridge_detect()
+>> analogix_dp_get_modes()    -> analogix_dp_bridge_get_modes()
+>>                                analogix_dp_bridge_edid_read()
+>>
+>> Additionally, the compatibilities of Analogix DP bridge based on whether
+>> the next bridge is a 'panel'. If it is, OP_MODES and OP_DETECT are
+>> supported; If not (the next bridge is a 'monitor' or a bridge chip),
+>> OP_EDID and OP_DETECT are supported.
+>>
+>> The devm_drm_bridge_add() is placed in analogix_dp_bind() instead of
+>> analogix_dp_probe(), because the type of next bridge (the panel, monitor
+>> or bridge chip) can only be determined after the probe process has fully
+>> completed.
 >>
 >> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 > 
-> This should be folded in the previous patch, where all usages of this field
-> are removed.
+> ...
+> 
+>> @@ -73,15 +72,12 @@ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+>>   				   struct drm_bridge *bridge)
+>>   {
+>>   	struct exynos_dp_device *dp = to_dp(plat_data);
+>> -	enum drm_bridge_attach_flags flags = 0;
+>>   	int ret;
+>>
+>>   	/* Pre-empt DP connector creation if there's a bridge */
+>>   	if (plat_data->next_bridge) {
+>> -		if (dp->has_of_bridge)
+>> -			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
+>> -
+>> -		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
+>> +		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+>> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> 
+> Should this be 'flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR' to be future-proof?
 > 
 
-Will fix in v11.
+Aha, the exynos_dp_bridge_attach() and even 
+&analogix_dp_plat_data.attach() have been removed in [PATCH v10 16/18] 
+for consistency and simplification. Since the only bridge flag supported 
+right now is DRM_BRIDGE_ATTACH_NO_CONNECTOR, let’s leave this as is for 
+now. ;-)
 
 Best regards,
 Damon
