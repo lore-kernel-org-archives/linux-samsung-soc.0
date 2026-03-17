@@ -1,184 +1,130 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013018.outbound.protection.outlook.com [40.107.159.18])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4441F29D287;
-	Tue, 17 Mar 2026 05:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773726227; cv=fail; b=idHNNQwS7D+yGHfovRpHwNF6vuiCEBYOWP03fZqTIK7jIS+Ch98W2eTAELbEEQykboqASP7H1IRNZxXLO1w4n9ePxgv4ORN3ZxR2EGgTwuF5WG9Jy8LXAG7mQZ2rtwW+MEt0TrSUi64bGdrKdx9HEZ4s+XxVEoT7qLk1hpyMmOY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773726227; c=relaxed/simple;
-	bh=xfkkpwRXPY2606ZJIjYOHluTAEQRTV92ck0tjoI5ia8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KztS6RerM8tOmcVQtUw7yj85WRPPIAhDPfR1tc4CsKJuy1r0fpMaKte+BTgx2tFfN1K6n3cAHJZXdhmXeeiWPfFGA8SEYt098oRUHvzkd0XZd+Yus5w1LSilVhY6LAP7fzE9jgLWIrni53GukbXI+Jh2QN8cLzYSmYeQUYw42k8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=nDYSDtlz; arc=fail smtp.client-ip=40.107.159.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763DE85C4A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2026 08:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773734742; cv=none; b=fdPEP6DQMU7y3SCFomxaiTuo1dJL4iqIsJFDYdu5s/C8Mwr645jN5WG0UpXulHxTtZz/BF6kPnI6YG7HDaDjRWyAK2wQFv6Kqdx0FzRn9R3paicKxgya/vfHT04hJ7s4yjXkTAmjnll0TKHDYDBNhyMAPIbYvg4yOYnpoprP8+8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773734742; c=relaxed/simple;
+	bh=UoBHFDV6KAty38YDok17qJnO2LdtWNfLIBSm6hgsh8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwurG81guvZWhdTkGf0c5PomdcNlwcYTegcomNUbGg/pKsGlM7VlTOOKOhcgwzzbjJG1eKpJBtY9dRGECvxA2mnxTQLg2wUa6i6bfva2dlGx9eTFENqlGlaQAPrRxfkkdtvEtumKf2ldTiQXLMiASzWFkXv/U1eqZLRs6+Tj3ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mOFEVgzQ; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="nDYSDtlz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jAJMDkqjp7aq1VIpnaqx6B1LdgJwm2vs3t6k+9jHU8SWh/V3kco0CERQzqUOhFAssUxjyAY1lLV+WA+DDo2wFIt7ILDUYmm2PxJosymDVTF64hBAUzx9XpY996KlN5TNe+QOaX3tQeW6ByYAQAFsI13wgftgbf5XA+/Jx5mKqA3UZUxGHTHst2zPod2K8XUp1h1zaShS7wh8F1b8MEVeBOPNN5B96MBUfEbOBHH2wDhuOKeX9MxPaKZ0qJ5eIDQdwrI8fBFC93077nkF0ZX/FjIQhzLDJSdz0A9rxK5zbkqpQmbojqVNZVbKf2p+gNzQBqcwK+ucxZMc960HaBtbbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G3wW+mEIbWLg2+crk/OQdVurPAquWFO4CgtUPerFlBQ=;
- b=fRl257c8QZr4qmOYnlzRGAsq31Pqaj3BFuyQhNLHoXLbRnVnNBhFk2H/bd2jM3rpxvcgi0Akzz0LdSat5F5wtQ0TesVFC/UWRzEasft0N9jqIlN4tDcNzT9ULEs4GDx39/JbhuilXYTnxFar4mZFE4u/jSA4je2cEW+eHU64Q1xUMuK23SiCj+dOEDTcnePSL9YFAjBNBZgv5QRrZx8Iv7rhaREKQrTB0IvjE8DEZioyAu0f9gyb5zWUdfyuOMEy0WgayWWj+Gf2KV4eo47ZzzmUkazEMG80PlRzYiEIonH/HFXI7/vJUZ+WKKdOvUT5/AZ6A4k4EDgdiR3V74VqGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G3wW+mEIbWLg2+crk/OQdVurPAquWFO4CgtUPerFlBQ=;
- b=nDYSDtlzjc5F1iiq4O65zsZaegmx+778M/ww0HYpCB7qmP9jbGifaetQXP7xCKSxqEPC+Egqwb4SkF+MvhanWCvuL0RikVq4gYegx+ta24A+T8VNKETvmqs9IlAPyzF62EnxCFh2AONZT9P2ppB7aQmXWV+nYI71qjWyU5HPGVhagfAALdeqgcUmro2rJIk4xGNy3bc8VMi3qB8kFP/Yz0HtRGutWZ+rQBAbERx/M0E6nV8HC/EuAgM11XUufmratYnn4YBWAZNgQUmBqR42vAk7c3YxNUXAgVtDQLSo3VXE7tlWlWAqZDZjLoD8pEe29xl+nhFTxUQfhQlCn5Ra2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8426.eurprd04.prod.outlook.com (2603:10a6:102:1ca::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Tue, 17 Mar
- 2026 05:43:41 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9700.022; Tue, 17 Mar 2026
- 05:43:40 +0000
-Date: Tue, 17 Mar 2026 13:45:41 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Saenz Julienne <nsaenz@kernel.org>, Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
-	Jerome Neanne <jerome.neanne@baylibre.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Joseph Chen <chenjh@rock-chips.com>,
-	Chris Zhong <zyw@rock-chips.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Lubomir Rintel <lkundrak@v3.sk>, Julien Panis <jpanis@baylibre.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Alexander Kurz <akurz@blala.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 00/15] Convert power-controller to dt-schema and update
- various yaml file to referencing it
-Message-ID: <abjqhZh0CpVTNGsW@shlinux89>
-References: <20260316-power-controller-v1-0-92c80e5e1744@nxp.com>
- <f329f1b4-787e-4c8c-ba26-e419a047023b@sirena.org.uk>
- <20260316170034.31bee485@kemnade.info>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260316170034.31bee485@kemnade.info>
-X-ClientProxiedBy: SG2PR03CA0088.apcprd03.prod.outlook.com
- (2603:1096:4:7c::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mOFEVgzQ"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1773734738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fddtB/Fpq+ZR9FjEtMR4zVfNk8SwKdnpXOvIRqb90N4=;
+	b=mOFEVgzQN8xhFn5Hs8cqyrc60Xhu6VJfL75095SgyFIiy84Y+Kw83dPqirSCZDTb1vB5eh
+	i8nNZyas24EJcsLX08X2x8mgC/YDT/W3cT4ESZmArD3zTsaDiIRx0OrPF7qn8iARad7gf4
+	uy2rnSZwhuZWP4d6dyEeDD5bD2PvJJ4=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-crypto@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: s5p-sss - use unregister_{ahashes,skciphers} in probe/remove
+Date: Tue, 17 Mar 2026 09:04:52 +0100
+Message-ID: <20260317080450.1054742-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAXPR04MB8426:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ae5dc1f-0f8c-405d-6896-08de83e824b6
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|19092799006|18002099003|56012099003|22082099003|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	nyLNM6JUwC0ro5BuRcdQjPVQuHeWqx5MhPNFmoic3tAGMEB242JerUCuMqRF6iDieZEAU2EQcAJrh3EnkYzIvpEmppzDFpdu34q4qsKqssmy6twE0iHdtI6wIrj7PdQ3zKZcF4oxt4nCkIGxNqdKp63U53VGH2IgMmfona88JB5pdlWcDjJNiKmAyznoH1IC1Ks2hD8UqPfYdIG/0i/qOQWD8QD8NP5but1kMNWkJHoNhXXcGgmCPWUkx46cPdP2dzqwsD3WStq+C3Hezgpazjy6FtBpESEzLUqdYPiI+QkhtamqQ+6robn9t5eEf4yyscKPm9eCqaUeVgmOBt2ampPZhIRbXfaAd+NueXOVkzdhL5qjyObDml8XkbIuytMpBw/l3YNQzY/nWq0UPHSKuGIIhbCyjClpbIkleJeaJ7OAcVhGtN9ukFb9nCThgjBkRbn7BE+yPkAVdJClsgtGdBgwxc/l8n6+ms8tK4YuUQ/e6BLUJU39RYDSTWdilIGIgQ2gRYjRXCFqtJlqJ3yQbCraxOB9PffIhVkaVbLiLyo7o1sKCcBIdOqsVcmINFsgt0sVsjaYvJO1SN8JiyXr5KoT43gO/JiYDhbIBEQI8rRiJNl0hQuHSsKsRSXQ9cAuCe5+Jah/QaAFYqtl9Z0CtB1c1lNsR0piWDm0ylhKzKEsbHo8k/konGkvbBDlOUmCpz8Jnv5BWjhJjXR5fsrZTcTA4T/wCZneBXo8RGW2vvFcbPWeGnZTSblkMOhNolLYLs/WzkiNccVwjbXslcZ4idspG2EZ57Bf8v81APrIEOQ=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(19092799006)(18002099003)(56012099003)(22082099003)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Fx/UgCKEUsXgr806srW/Vi2lra8ymUV2G24bH+igwJvUNYy3DHmHus4hevD0?=
- =?us-ascii?Q?m21e/lLGjslo1a0R/vU1jT0nzgjZ2e2YhOW4vjYN77RR2H00xpztV/R9yUPa?=
- =?us-ascii?Q?NhAsH+EogQ+VcpzPlOrTvjDHDYLcsi/idtgQAVsNb4pvzTA/AhPHSCMXORy6?=
- =?us-ascii?Q?NZkEn5y5gmBiTyqzllVHAi0t1IpghuCUtM8F0ovk1dHAH0IdBDc1pDVqjj8r?=
- =?us-ascii?Q?d+JVuTqqaBmxREbE7oQVO9KUEAGOrlElhjA+W5ZL0jEqGF+rMIGDC6aG2eON?=
- =?us-ascii?Q?Z9JYAi2PeXq9FbC+hC1OcfPWcLO/Nnyjp9PUzeqdWyTrLmErlOWkMZdRjneC?=
- =?us-ascii?Q?bFWJc+bxocojOyTKtOyFBQBTrNPNhKrfm9z55OkxOu8k4MOWTuYdK/TR1KuV?=
- =?us-ascii?Q?L8mwpQtTorQNaRY1aflE3yFXUJMJHTizYu6jiB3R6h/0+v/2YCJrUwBB4lGm?=
- =?us-ascii?Q?b58azCGeZPR+xt2QlBdO0+tyc2Zm8AJN1atTkVy/g6bW4lzHyAHXjONM53GL?=
- =?us-ascii?Q?eXtDu2Kp06bG9QgfMnddTdHiU8uO8SRM03InVbeNk4k0TSQcBgNXx4qrZa7I?=
- =?us-ascii?Q?NN22MR658K6O4OkQNI9eI45mjafI4WOcJ1s4bW8MnornNcVI19XjdNY+gNBa?=
- =?us-ascii?Q?b702gDDQc5e6P30aDCgF2wEUofJpEKNJHhi1BKmhHFvEGU5+IKk1DPuqCkTV?=
- =?us-ascii?Q?cmLHdq7HDln6E4GIcxMLoSrh5DGom9yoyXsS4Vb2Yju8NcMDDBDTbcvF0GM2?=
- =?us-ascii?Q?Cj/0yqCrBmlW/N6ylse9kRZKDb8Z1egAYGxk9AhGrTNbM4I9HXSdtobm94di?=
- =?us-ascii?Q?8UbtOvZ9Wus7rwUB2EGVBtOuu5dh9N1x/lxMCXotoJDqSnbO5Jzkj7AKuXLj?=
- =?us-ascii?Q?GZ3hbwjb9R8oTE+i9m0p20ENyCG3TAeSULuYM92Za3misjlQAPiOO9cIn6N8?=
- =?us-ascii?Q?Qqy6TG9R6GaRaRWrx/V/0h6d3VTiMp+xyEvY3ehLY1QWPcqk1+On7OEqiftN?=
- =?us-ascii?Q?D0BiESWsLxCT6LiVKgWqM2v15Dja8cCdO4Os1qEj0G9azSY90Iu2pRL+dhVJ?=
- =?us-ascii?Q?1XN97YelhQYlx6BrpqxfLR6ISdpPIXrgMONmQ+sd8xjMbokxsv39QqKzzd1V?=
- =?us-ascii?Q?p+iHC2pStDVPjFKEYr24lYc+M0AQpmcJFh7CnhXnP8EwStscnJeO7hNluJXc?=
- =?us-ascii?Q?4SOwZlwMElx07nO4FrjwnZwH+xo2d6no4HZI02eo3HTXzOLEe8c/KCFxRCVJ?=
- =?us-ascii?Q?u9CvgPBNQe+8xlRCCqZ2SE0+c2LY+gRLya4eeTNw/V1GmOpI7DQlT4k5fu1i?=
- =?us-ascii?Q?kSETtD/16HYQflaOIfmnjmVQXEb4nj+ivkad2BUBwL6EzM2yTxSd9oNZzukG?=
- =?us-ascii?Q?Bb3HU+H6kHwClqlD4HT2EmpYFYyK/MbpnGviYTgMqPlYyBny5+ONV07f3+qy?=
- =?us-ascii?Q?JT9+7nLER3ShI+++QiL+xuocIVhYgymSb8dbe9DbPHcGqEw7uAFPjGwAgG8O?=
- =?us-ascii?Q?Z6arFZ29ARPTDjkDw5LRn3dE5qNr1OFt4u8RjCUvVfzAZCcFhowiXw56Uv7x?=
- =?us-ascii?Q?Krt5WZ3PhM/mx3sT/l7MZHh7uvDC6HMEUpmxl7Z9q7QwuOzpt8QNpvlZGU79?=
- =?us-ascii?Q?az7KKpXLaMK3qYgNiA4z7nVadRtasQ4QIcbT0r13fOc7gEIL6tvz+g1L57aO?=
- =?us-ascii?Q?fKyNbjfNUI8nD7Qpp21GGelwyuwaGFHRDvOfjGBOUymKPuzTc31/pnhuSbz1?=
- =?us-ascii?Q?DH17AhYi7A=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae5dc1f-0f8c-405d-6896-08de83e824b6
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 05:43:40.8485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OjdJ7IWLYUrVWSLxmx0LEdQDScUDEjGHYivKTqdhretQK63QPfq2omPzlVNHa8CAkQnA2GVhMXFqmZ4Ad3GsRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8426
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2610; i=thorsten.blum@linux.dev; h=from:subject; bh=UoBHFDV6KAty38YDok17qJnO2LdtWNfLIBSm6hgsh8M=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDJk7uZVkT3Gt8pqbwq4x6Y5H6hnvVInyzMe7BKN9Lb599 s9PnTSho5SFQYyLQVZMkeXBrB8zfEtrKjeZROyEmcPKBDKEgYtTACbic4vhn80krqLN1sVvTjFr VPx/90wmKd/veEzvwT1/Snw+zP61cCsjw7Maawn1xW9kj0+vtn+psLaI735o8sI3Jo7ewhW75+z /xQUA
+X-Developer-Key: i=thorsten.blum@linux.dev; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 16, 2026 at 05:00:34PM +0100, Andreas Kemnade wrote:
->On Mon, 16 Mar 2026 14:55:21 +0000
->Mark Brown <broonie@kernel.org> wrote:
->
->> On Mon, Mar 16, 2026 at 10:47:35PM +0800, Peng Fan (OSS) wrote:
->> > Convert power-controller.txt to dt-schema
->> > Update various dt-bindings to use generic power-controller.yaml without
->> > defining local property.  
->> 
->> Are there any dependencies here?  It doesn't look like it.  In general
->> please don't send a single series covering multiple subsystems unless
->> there are actual dependencies, it just makes it harder to figure out how
->> to handle things.  Send a separate series to each subsystem instead.
->
->It seems that everything depends on Patch 1.
+Replace multiple for loops with calls to crypto_unregister_ahashes() and
+crypto_unregister_skciphers().
 
-Krzysztof had similar comments. I reply here.
+If crypto_register_skcipher() fails in s5p_aes_probe(), log the error
+directly instead of checking 'i < ARRAY_SIZE(algs)' later.  Also drop
+now-unused local index variables.  No functional changes.
 
-Yes, depends on patch 1, sorry for not being clear in cover-letter. I just
-created a PR to dt-schema in github.
-https://github.com/devicetree-org/dt-schema/pull/187
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/crypto/s5p-sss.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
-After that PR is merged, I will separate this patchset for each subsystem.
-
-Thanks,
-Peng
-
->
->Regards,
->Andreas
->
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index eece1ff6c62f..bdda7b39af85 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -2131,7 +2131,7 @@ static struct skcipher_alg algs[] = {
+ static int s5p_aes_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	int i, j, err;
++	int i, err;
+ 	const struct samsung_aes_variant *variant;
+ 	struct s5p_aes_dev *pdata;
+ 	struct resource *res;
+@@ -2237,8 +2237,11 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(algs); i++) {
+ 		err = crypto_register_skcipher(&algs[i]);
+-		if (err)
++		if (err) {
++			dev_err(dev, "can't register '%s': %d\n",
++				algs[i].base.cra_name, err);
+ 			goto err_algs;
++		}
+ 	}
+ 
+ 	if (pdata->use_hash) {
+@@ -2265,20 +2268,12 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_hash:
+-	for (j = hash_i - 1; j >= 0; j--)
+-		crypto_unregister_ahash(&algs_sha1_md5_sha256[j]);
+-
++	crypto_unregister_ahashes(algs_sha1_md5_sha256, hash_i);
+ 	tasklet_kill(&pdata->hash_tasklet);
+ 	res->end -= 0x300;
+ 
+ err_algs:
+-	if (i < ARRAY_SIZE(algs))
+-		dev_err(dev, "can't register '%s': %d\n", algs[i].base.cra_name,
+-			err);
+-
+-	for (j = 0; j < i; j++)
+-		crypto_unregister_skcipher(&algs[j]);
+-
++	crypto_unregister_skciphers(algs, i);
+ 	tasklet_kill(&pdata->tasklet);
+ 
+ err_irq:
+@@ -2294,15 +2289,13 @@ static int s5p_aes_probe(struct platform_device *pdev)
+ static void s5p_aes_remove(struct platform_device *pdev)
+ {
+ 	struct s5p_aes_dev *pdata = platform_get_drvdata(pdev);
+-	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(algs); i++)
+-		crypto_unregister_skcipher(&algs[i]);
++	crypto_unregister_skciphers(algs, ARRAY_SIZE(algs));
+ 
+ 	tasklet_kill(&pdata->tasklet);
+ 	if (pdata->use_hash) {
+-		for (i = ARRAY_SIZE(algs_sha1_md5_sha256) - 1; i >= 0; i--)
+-			crypto_unregister_ahash(&algs_sha1_md5_sha256[i]);
++		crypto_unregister_ahashes(algs_sha1_md5_sha256,
++					  ARRAY_SIZE(algs_sha1_md5_sha256));
+ 
+ 		pdata->res->end -= 0x300;
+ 		tasklet_kill(&pdata->hash_tasklet);
