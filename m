@@ -1,165 +1,228 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013002.outbound.protection.outlook.com [52.101.83.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC86B2F28EA
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2026 16:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773763314; cv=none; b=MMowMKGcEtIkdqJtNhH5htpTVNqo38atc5xc1tMNclwR2JvgMKEYh3DrNzQmcK4ZafzaD4ibwwrqDPgrpRyAVixWIoix8PCAAVXk/nN1vEJOP5lqWB7deaki8ciGHfBDbk3DJvwqrJSxZIbUGmGoQw73iAo9Fkb42iDLHn1RQPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773763314; c=relaxed/simple;
-	bh=sIXRyKcBB8QlxcJr7L52j/3CiZELN2iAHmA6Aw4pzm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKugETwazDxN2GKKVSzGK5bf9Ds3CBfyyki6zGnyDdXaf0yWyLty5ESmomiPS4nyQbkPTPsKkoCpn/et86PmlzXpXyvLRbi9JSMt9vxUi3ALX2G5k3gJ+TezEezvCF/IYgFzrp0fwAgTyze2ElRHZWwZZOgMVLL+qus+U+HbiQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5a278b4c1a5so269288e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2026 09:01:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773763311; x=1774368111;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=twLG+LiXs44QUcz9Iwy6OkpeTFkusmg+ejXI1TbxJ+E=;
-        b=dlqkHeoa+3xdFnlr32YbU9zHxUYQV41F91lZn3w+2SyBb7bzk5OXwEWn6ydLn/OYB6
-         lGAMdX8XfSUJGdMxqGfHCfvNyTVHa9nlCTPKmJKonHepjS7Ps5pg0DdctijzTfaiyftL
-         FFzRkIzbyBrjHI3pLVwmWthaFUqhpjg3uBgct0rxzPUN7p9b4FCmgX+7OYxWGBdOnEW/
-         4K2dOPehzu6swBCrtAqv4+phx5acHkzecqJ2Q4USzERemeKSO9zu3FsxiGQy9SFPrTni
-         PbvdSU21cN2Safb4VPjOy+IWDL+FyEJsiVimdLYXPqO88zot0n7me2sqOT40n8ElX5p/
-         PAfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvM/46ivGG+hi27+Rm4ovB3Rf50oObDfj6amrIXE+06NmYIyfPEM9MSqmN8EA+QkjtF72kdHwHsRVixbo+yxi3gQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqyep/D/dLOGrb1RZa79tI32eln3CfTv+j7RzgCUZizZ44b5fE
-	FCL+/PUASx5y9KvM27zciALnqPUVK9oovOP/W7dRuHCNkGTIXx14KV7lNWxXVFgs6UM=
-X-Gm-Gg: ATEYQzzdNwsIq1estyMDdWS5EnJA7m19pxFh85fJm4GBZSMAQV9mI62k/2GWgm5tQ5v
-	xKTvndUePlyvGA5W5/EoMoOFKDQbpfzjTSm2/sVnrplpsLVxS3Qs7n/1CsFdqgslbuapKtFoCg9
-	1okyuKVZSP+ab2YvFq1spa8GGH2AjnfsUaN55CIVNRI6hMpD7EoCp7n72YajJ1plvGbi1eELm++
-	ZdQvsX1bNnayY6RiXFWaBVKSNAE92goMktQP7PH9aCGVZosPypBZk1GoxkZqNvXCqklr7u7yyqz
-	zkgwYwIFK4MZyjxKfGiEEgJ6/CaWGzybK2YhOGYs0LztWjJ25QtAiDcnuE+wsF1zBEtheu88rMJ
-	wO5vAoiiXOQkALSON4q4+rSL6N8E2tEqI59Qpw2fYfVRhnL3QT6SrkdtIqfeiZvyUWLdrvcZF1W
-	E5r1Z8wBcXudxAGTztJImcxttbOc8BsXo/V8aSZZAQOCtJE0HoKZRRVwhQk4CP
-X-Received: by 2002:a05:6512:40d0:20b0:59e:1880:2ef7 with SMTP id 2adb3069b0e04-5a279588459mr27938e87.11.1773763310767;
-        Tue, 17 Mar 2026 09:01:50 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a27730b8ebsm335103e87.37.2026.03.17.09.01.49
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2026 09:01:50 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5a107b387a5so7529085e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Mar 2026 09:01:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWAXcAaYO7+3qd0cAegbYoI/Dnbbdd3fxsI+clcUwBD1UHHYZWTf87dxudMvr4FQcze3vhZiShREyeqo1KxBOiwKw==@vger.kernel.org
-X-Received: by 2002:a17:907:d1e:b0:b94:1d92:7eb with SMTP id
- a640c23a62f3a-b976505a45fmr1113540866b.18.1773762847178; Tue, 17 Mar 2026
- 08:54:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095F11C8634;
+	Tue, 17 Mar 2026 23:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773788717; cv=fail; b=m98VUYwYuFtp67QeTaPFpvqDxBjbgeT7kcJMdTyOIXaP0qNK3IbKcuyU59jpPycfEmJzEE1iBfvmXwBleQwEHBs/zhTZ4iju93ROSiYUd+5mGtRLgey6brP7FLJtAzD5lb5//uuWLueyECySOkPQhoN317cQZyJmCibafJ1OoRE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773788717; c=relaxed/simple;
+	bh=hPNyFOqwf4V8RFx7/kXBxpZ5ZPN9yy3bm1MCI3N6PU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jbuzXhbYPjc+mXon+pycxyOKXJCV68b99Owm7LA5SLvuvlZLW+ayPMF01psFTCS/TEu2E2N+Pq8zME4+0BN+0A5342ROCvY/oTrKQ2CFiQgFFNZYDVwHbYtAWI6Hh1wLh51lI1xpstBU/kJuX2C6EeAr0yH6amGmhUiz5DrwpdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=k5N2AqLy; arc=fail smtp.client-ip=52.101.83.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="k5N2AqLy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nYn+k8gV3EQGqCL3mCCIIYAtoyT3A06gzqmU8ftXAT9hinC1e1UWTResI5Mf6s0NrJhLOWCUarV/x/ynuwTz17y3g5HmIu/o5CX+0jVVBzJ0ednCsjzOQePqIb5DXqmCEw/ETAg//aLoqslESSln0FZpI859y7vIth5aPduXLmcP6OQXEUMjYqJKFxLjpfQ6dr42Brs9X6A+Mlmhc2E8xNfq6Y1gvgSUifof0hbWTsf/ATJrHRo3DGjrrv2r7vHxo/X0twjs5mrqiw9YN3oI4Vw0tw0xBTncRMycd3u0rKS+SwJZx97QMq99TlQ9OafG6RamfbY6Er4Pq82qTrs5MA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qPWhNEkrCqRZ+00OtaPJbnAsfNJUYl3B1RyQ7BFHr+s=;
+ b=js2cZv7wf39DceRjeL27RKS7Ce4kOOf0QXe0/Bs58TRnRpHp4kss2VuKwTJIbuTbRhRz2oR7Im/L6jVjGcD0E69sK7f5/jwAE1cuFmLYBH8UkhmcDPexrrmg5itCvE8pWhviwpZtihkc3YiJ+pJvRcpgYiJgwVVRgmcScAI85in17PMLrKAK8Qsq5C8byZI0Q3I8MdBe96UcJxPAnPV58DAkoIfAQzZSHJ6GWsSLQXCyW5rhcP4NzGU3u1EHqB2RVqSPXxjZo3SRHF2VqJ5jTP5WqXyWwpmoF9qJngUgXq0oX6i17fiUNqG/KXnj653JFbgHJzROuOsGyIDJ1PywPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qPWhNEkrCqRZ+00OtaPJbnAsfNJUYl3B1RyQ7BFHr+s=;
+ b=k5N2AqLydeJo1Yuts9MGW3tbhIUcTeHjsQI6b1StuD8Pi96IzwhX61+J630vaWE7wfvqqMEsliOy+kuqYvjNKMjnYVFKURJW2VFDzV94E4UqHLtSN6VRMIpYKdON2ED6O7EOWdYhcdpqxVl1J6njPukXj+E7OPfkJEjFBMnDJRJ4JdreqZCiIyS0tkrjLv0ibA1gQiIggYSutVqOgJqcbLlE6lhaBT7QaAVLs4E0GP35N0YOw94P7XBhq0gLNcWOnUWIGIbbZ7MVwREov3Os4HM95U+PJAVVCvdHAXas5X24hAkQPj+9MsWYHifrwsWkEy9kPLHkOlTWWsbJm2Jg5w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com (2603:10a6:20b:438::13)
+ by VI0PR04MB12032.eurprd04.prod.outlook.com (2603:10a6:800:311::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.27; Tue, 17 Mar
+ 2026 23:05:14 +0000
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4]) by AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4%4]) with mapi id 15.20.9700.022; Tue, 17 Mar 2026
+ 23:05:12 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	UNGLinuxDriver@microchip.com,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: [PATCH v4 phy-next 01/24] ata: add <linux/pm_runtime.h> where missing
+Date: Wed, 18 Mar 2026 01:04:37 +0200
+Message-ID: <20260317230500.2056077-2-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260317230500.2056077-1-vladimir.oltean@nxp.com>
+References: <20260317230500.2056077-1-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VIXP296CA0007.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:2a9::17) To AM9PR04MB8585.eurprd04.prod.outlook.com
+ (2603:10a6:20b:438::13)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260317-arm_defconf_cleanup-v1-0-8eecb7fdd24d@kernel.org> <20260317-arm_defconf_cleanup-v1-3-8eecb7fdd24d@kernel.org>
-In-Reply-To: <20260317-arm_defconf_cleanup-v1-3-8eecb7fdd24d@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Mar 2026 16:53:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV50nOT06wKfj_X5LU2z=1XZZGd6Gac0C41qWWNZHRLXg@mail.gmail.com>
-X-Gm-Features: AaiRm53kA4BcUnu8DzmJWc_bmCImw2GJpSjbqTP7vNJFqk2-PxsMkq0NOVh2FgU
-Message-ID: <CAMuHMdV50nOT06wKfj_X5LU2z=1XZZGd6Gac0C41qWWNZHRLXg@mail.gmail.com>
-Subject: Re: [PATCH 3/9] configs: remove obsolete assignments to CONFIG_NFS_V4_1
-To: "Vincent Mailhol (Arm)" <mailhol@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Magnus Lindholm <linmag7@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Pablo Neira Ayuso <pablo@netfilter.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
-	Alexandre Gonzalo <alexandre.gonzalo@arm.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, openbmc@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8585:EE_|VI0PR04MB12032:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b37fc59-8dc9-4638-f784-08de8479a444
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|376014|19092799006|7416014|366016|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	8K7h0VYCJTZLGONOGjWSRwObQMh3V61aBhMQXRkiiquKedM6Qffn92wPvHrzBzj+I/SomwfSAhKnQPaIbk5blEd7ui5FlQcGDLN9IAIGv40gf6UWtlQIM0fPjUzdKlli3tOHJKBaEpVfx/dcI7FPscU4KCCu11Wmyx26DbYJyBYR5yKmzRXSXofuLWZj7/3PwBB8pAmQxuRJARjvBA9oRhKV/u8BPPrdBbzMHVMZsCaB/iETypjBycXd38LmfoV/tK1Ww91AaWxG6lPzGBUEuRDXwyfyUnmuhG4+dQ3PhUeiOrqA4t/Mks7P90wuC5fvALzKrOue+Uvjtne/x2Xue0k/MhkLDa2EXlwOvj79GzJMZNDFx+hHOB7ApjFcu4/ITanjaP45GoTsJSvnK2xgHfuqipmdX62fd6ZZ7W/0KCsVK4ByWi5WS/M/iKhLhjwC8QFZWSmdJfu3g8/LCK0Z9/h/Yy/1PBHuCfLdAR74/f3ZD566FvumC8fGk3qM4hyMcYI6Z+whVTy6J/XilO+h5LK8YaWMX2t/jME9lbZWd5p8DrOlQRHzYLHhoeCkgKnyZZPlLeTYre6+awDi1DYce7A3oomRF3IpQLwhbou0UUhpK65i5Dm3VkTGmjMTPD2cGpBO/gfFfXPYVo+C3Xtr4qcRbGxB22JK22TqITPojZzkl+/wHskyS6s5rghW1q9e0Cz02Ls5Xi1h9wEvEiUahwWbR2vEk7PFTG2flq5Cxzo=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8585.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(19092799006)(7416014)(366016)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Izc5M0BnBMoft74ZVgbAMBoa0bmYi+fRlVWLKkjqRiQyegBVsaUSqTeBdcf7?=
+ =?us-ascii?Q?g0ifvoC8MfnYJRrOIgi/sNwChvumtsFEBVKS000xEYZWfXTLlMKGQLy+FlTo?=
+ =?us-ascii?Q?EEM2/RNvFHmvsz9tLi487bDyPxnvFMY9z3DvtnkxyFE0W8aPXTmje62ynOA2?=
+ =?us-ascii?Q?aqGoeEMCyTo82G0SylwrXkV0s6BdkNJl+1lp13q4wDkPTREEkTQ9QLLOJ1os?=
+ =?us-ascii?Q?TVF6bFmMD0t5Igy1lBHX9B1WSmORnxRkCxMi+/9C6jrwHyzSqCcGqakwH+Ay?=
+ =?us-ascii?Q?FXOiqKL7HbLlpmfURcN76RU+lgg6U88jOkE7UvvvVUiyki4bqsAGXe27T0cS?=
+ =?us-ascii?Q?o1nFYuvDSSxqGnUR5i3pc56APe1bdD/KbpcWicBrORNFBOa1LlaRfVASd/KF?=
+ =?us-ascii?Q?uifpr15rjXrdMvup0R54RhOLHpyM0Z0M0DYEP9r1MBEJG1oXYbfGFsD1ej1E?=
+ =?us-ascii?Q?FgvsYx6cE1Q6qS2UzK90Le4UOZiZt9OfXonC3LnsrHXwLn7/NSEG3LC1JFX3?=
+ =?us-ascii?Q?W3Y86gqWJZ4n/t+cdvDpg/lQEI2yMsDIhH8HZjYmSq3uqgFs6nzu6pPNg2TW?=
+ =?us-ascii?Q?lSr0lHr/jZCjpzD80k8Bt6gcSqG16lfP7gys175O2a0CTe9tJ8Tjlvj/UgJr?=
+ =?us-ascii?Q?Y4OIdZahIfk0DABgLZdXqjokgtGB9f7nObirzY5so385cM9lWQ53aN0KOC1E?=
+ =?us-ascii?Q?+tjiWUot9YgadUL2sM8vXZNGJ4jyN3+zrCpyzkGQEk2P/CMLR/My0zpfrcF3?=
+ =?us-ascii?Q?kRJmv2RvKRb2A9rUSPcXfnnMXQWpE9MwQzoHxvBi0XX3VDtQbEoPmr97szmq?=
+ =?us-ascii?Q?sOiUbxYddNe/P4BJJxbHSTuBs5gPWaKqAV3+J8YmQAy5YSfcyLX0IbNKfU7a?=
+ =?us-ascii?Q?PcqYHbgsldEiJaXy7bQ7rOO6v6zmmcEPV5wNsxG7xUpPFM4N1SIjJmv7lTku?=
+ =?us-ascii?Q?X2uNjnvNBeMmIhZWxVBOvc6DdJ7oyZbIiAmnWwfbJJ6r0Az4Mi4MOQtBu+7+?=
+ =?us-ascii?Q?5x9H6HXKzFrisOgdYyBeuafLG9gZlJj8HB+B0Zau8eRaL2hkq7/J9PFwW2eO?=
+ =?us-ascii?Q?4M1Owc3r03deJwVqS5zJEQ7Y7jSYq+FchFkZtBwbPpyKiYbXc2D5FDHsBcdN?=
+ =?us-ascii?Q?4CqP0lNHUDrumOuzZXdytrexYOLjKIKTEOvTVk7N9pMsd1CCZo/6FTuhkWX3?=
+ =?us-ascii?Q?CpktG9UKGqL5iqo38+4QD1eMM8n0sodxX3nxXgwOq+AA0neG+Y7oTgAGsi9J?=
+ =?us-ascii?Q?b94sbcBRA9+at/xjC6oFsWafM0YRJ4gWf/eXd4q+vbftTe+hiNfJHSLEzJJ5?=
+ =?us-ascii?Q?nkNBwjMVEnDbAIlt/zEtwoRBa5PbVJ8XmkMXOY5X/ebVjvUjTfaWRwEsa6Fl?=
+ =?us-ascii?Q?y/C53WT4Bx3XliZhYqQaDAch3yFl1vecME1GomtaeQPjuxwLYDbAZqFmNpa5?=
+ =?us-ascii?Q?+XjJt6nAIoejSkFLJL3wednWSnmZcODwXFvRcrfBQBR5nA9cks/aTdgv1s/7?=
+ =?us-ascii?Q?cGUWxrhZGPjmaP/bU7gUzF5+JfWoZXhzv0A4EfEJb9wN9dW6RP1ofQZPOTPJ?=
+ =?us-ascii?Q?lP8UdwkZpCyfMnzB90mxZtt/gC8+1ZKSU8fHm2C+gm/drkfBvcRlNDjBTjtT?=
+ =?us-ascii?Q?fycgE68QqbAakELNOXHKLytUD43Cpbgy1rQ8MbQ49ndnsZVcp+ylaf9CcM5S?=
+ =?us-ascii?Q?ylV4VUuMU9W7i55UPSJPYv0Yz0CyXi9awe6PRUdbxOvzgytLa5dpdeF/QjFf?=
+ =?us-ascii?Q?6FtEIk5l0/uJKcbnGLwOGiNrWHYzOYQNQU5AQCNLw48Hv143taiZpw5bj88O?=
+X-MS-Exchange-AntiSpam-MessageData-1: Xbs0XP8Yosa5tnzQLkvw/znr+OnyaHKrVKU=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b37fc59-8dc9-4638-f784-08de8479a444
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8585.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 23:05:11.9272
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6DZQvE8XIZGGctXeu1lb1Nkhw5kSPnmgv62H48eVCVdNYT770Lcx77cfoyFc+OoeYTqYSxwaZnkasj5K3+qdWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12032
 
-Hi Vincent,
+It appears that libahci.c, ahci.c as well as the ahci_brcm, ahci_ceva
+and ahci_qoriq drivers are using runtime PM operations without including
+<linux/pm_runtime.h>. This header is somehow being indirectly provided
+by <linux/phy/phy.h>, which would like to drop it (none of the functions
+it exports need it).
 
-On Tue, 17 Mar 2026 at 10:16, Vincent Mailhol (Arm) <mailhol@kernel.org> wrote:
-> CONFIG_NFS_V4_1 was revomed in commit 7537db24806f ("NFS: Merge
-> CONFIG_NFS_V4_1 with CONFIG_NFS_V4"). However, some defconfigs are
-> still referring the old configuration.
->
-> Clean-up all the leftover references to CONFIG_NFS_V4_1.
->
-> FYI, the suppressions were done using:
->
->   git grep -z -l '^CONFIG_NFS_V4=' -- 'arch/*/configs/*defconfig' |\
->     xargs -0 sed -i -E '/^CONFIG_NFS_V4_1=/d'
->
-> CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN and CONFIG_NFS_V4_1_MIGRATION
-> were not in scope of the renaming and still use V4_1 in their name, so
-> keep those two untouched.
->
-> Fixes: 7537db24806f ("NFS: Merge CONFIG_NFS_V4_1 with CONFIG_NFS_V4")
-> Signed-off-by: Vincent Mailhol (Arm) <mailhol@kernel.org>
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
+---
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>
 
-Thanks for your patch!
+v2->v4: none
+v1->v2: collect tag
+---
+ drivers/ata/ahci.c       | 1 +
+ drivers/ata/ahci_brcm.c  | 1 +
+ drivers/ata/ahci_ceva.c  | 1 +
+ drivers/ata/ahci_qoriq.c | 1 +
+ drivers/ata/libahci.c    | 1 +
+ 5 files changed, 5 insertions(+)
 
-> --- a/arch/arm/configs/shmobile_defconfig
-> +++ b/arch/arm/configs/shmobile_defconfig
-> @@ -217,7 +217,6 @@ CONFIG_TMPFS=y
->  CONFIG_NFS_FS=y
->  CONFIG_NFS_V3_ACL=y
->  CONFIG_NFS_V4=y
-> -CONFIG_NFS_V4_1=y
->  CONFIG_ROOT_NFS=y
->  CONFIG_NLS_CODEPAGE_437=y
->  CONFIG_NLS_ISO8859_1=y
-
-Already done, cfr. commit 8c6cccefb33e2022 ("ARM: shmobile: defconfig:
-Refresh for v7.0-rc1") in next-20260309 and later.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 931d0081169b..aa3c4949c4ab 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -26,6 +26,7 @@
+ #include <linux/device.h>
+ #include <linux/dmi.h>
+ #include <linux/gfp.h>
++#include <linux/pm_runtime.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
+index 29be74fedcf0..48460e515722 100644
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/string.h>
+ 
+diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
+index 2d6a08c23d6a..3938bf378341 100644
+--- a/drivers/ata/ahci_ceva.c
++++ b/drivers/ata/ahci_ceva.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include "ahci.h"
+ 
+diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+index 0dec1a17e5b1..409152bfefb6 100644
+--- a/drivers/ata/ahci_qoriq.c
++++ b/drivers/ata/ahci_qoriq.c
+@@ -14,6 +14,7 @@
+ #include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/libata.h>
+ #include "ahci.h"
+ 
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index c79abdfcd7a9..e0de4703a4f2 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -30,6 +30,7 @@
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+ #include <linux/pci.h>
++#include <linux/pm_runtime.h>
+ #include "ahci.h"
+ #include "libata.h"
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
