@@ -1,129 +1,104 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1842980A8;
-	Thu, 19 Mar 2026 13:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4064A3EF67B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 15:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773928044; cv=none; b=QhXZVfBLf0XX9Kakwe2USZJeCykzoB0Ndq0TLwnlaqQNQVoHS6+JVZGDTSbHy/imSwwPYVkZEVVK7uEmdG9HR5vf60lFsAQLl4Vaq4X+R4JajRIskjVSs5fusxgRV2tl8T/RZhqYDV+GvM/uVZqsJMAI74tXPMgXlmSinEPVIRo=
+	t=1773935872; cv=none; b=a5bLwf7R/lxse1qYN3DC7SIEAgnxjsgZ5Y25KaiOYvz3ttZ4VNAXqf2y+Fv9iemHZIgJoyuzeaBknl6KB5UtQlKReVsFmUJcGJjLgj0IH1o1k24e2+E/dDvxkZoRm7D+T9/3RI5lcbpS7ELwVfznQWTlVzgkDGcErJRdQmkqVVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773928044; c=relaxed/simple;
-	bh=ksvyivwMMcfAco4JH1SNvzalhs1WV6ffPUpIeWy4SQ8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 MIME-Version:Date; b=QrXcxpxjp7KPIuM1SXp1U/6YyvY8utgtYFvuX6GdzNmdFW9GmmhUpI7EogPU1tyOyOsyATJ9dH/Npow7WCIfaGqPB79suyFi/sNOvK3ApjqRlDiqBXzjPtDRK1d2Rn4H+PPDc527e3Nuz8+xHlnOVV9VrIty6+hENMBvRF2z1hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=Wjg+5HA2; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1773935872; c=relaxed/simple;
+	bh=U4GRtIXlAPJ+N8RHPzdWujLWnJfkTsO356fGf3wS/pQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=e9CjRTZkpJIddKIWn4skwKDEzdzJhTNqGsSYbj1VhMZaG709Jc1MeIPQv2ijWyKaH88dRAYqnSF5PQUZT7+xjM0sgtVzntaloNh23xwDlPESNkbb/Kr9PYaGz0Yaeq5pDtLcezUDvYPO9IyNfzTy/sVW+DNG9Ra228hWyCrVehM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a4hGFMUj; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Wjg+5HA2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crapouillou.net;
-	s=mail; t=1773927515;
-	bh=ksvyivwMMcfAco4JH1SNvzalhs1WV6ffPUpIeWy4SQ8=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=Wjg+5HA2DcTy7ImzDCfL/hiwNCW3P+AT+sac3h1AcSSNPOrO713uAzTj+LGFyQIFN
-	 qZw7s81n5YdPRSxoA+qWuuOqKcdY5sAKCEH1+bgXIPB6PDV/AKYCjaJZ38qyuU8n+E
-	 +NbUAIZRrQvXeRWqEhXISlJM+aOu9BAoOryWWTIM=
-Message-ID: <5a390e368fa74f7f96bcceefea34af306d768929.camel@crapouillou.net>
-Subject: Re: [PATCH 05/15] dt-bindings: rtc: ingenic,rtc: Use generic
- power-controller schema
-From: Paul Cercueil <paul@crapouillou.net>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J. Wysocki"	 <rafael@kernel.org>, Ulf
- Hansson <ulf.hansson@linaro.org>, Florian Fainelli	
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list	
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott
- Branden <sbranden@broadcom.com>, Saenz Julienne <nsaenz@kernel.org>, Lee
- Jones <lee@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>,  Jerome
- Neanne <jerome.neanne@baylibre.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Dmitry Osipenko <digetx@gmail.com>, Heiko
- Stuebner <heiko@sntech.de>, Joseph Chen <chenjh@rock-chips.com>,  Chris
- Zhong <zyw@rock-chips.com>, Zhang Qing <zhangqing@rock-chips.com>,
- Sebastian Reichel	 <sebastian.reichel@collabora.com>, Andreas Kemnade
- <andreas@kemnade.info>,  Jonathan =?ISO-8859-1?Q?Neusch=E4fer?=	
- <j.neuschaefer@gmx.net>, Lubomir Rintel <lkundrak@v3.sk>, Julien Panis	
- <jpanis@baylibre.com>, Matti Vaittinen <mazziesaccount@gmail.com>,
- Alexander Kurz <akurz@blala.de>, Krzysztof Kozlowski <krzk@kernel.org>,
- =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- 	linux-rtc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-In-Reply-To: <20260316-power-controller-v1-5-92c80e5e1744@nxp.com>
-References: <20260316-power-controller-v1-0-92c80e5e1744@nxp.com>
-	 <20260316-power-controller-v1-5-92c80e5e1744@nxp.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a4hGFMUj"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260319155748euoutp0205645f283e7e844d7ab535de5a5736cd~eSUYLfpUT3029030290euoutp02-
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 15:57:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260319155748euoutp0205645f283e7e844d7ab535de5a5736cd~eSUYLfpUT3029030290euoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1773935868;
+	bh=/SkmenYWfG03cyx26DQI0pNUhnOeHCO/bc9QSsDFeFI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=a4hGFMUjZQrJxLGlAv0a6Xv+ed/hDSCUPEp52Q1Tvit5ZroQsw4ct7+vBiyJJ/Pxf
+	 KU/6zpu34PEJZXyXo7ze3AsA/qQSBfgxu4byZA1hsdUe9fN02d9xE98rtFPe5YAzoL
+	 5ax71jDAP2+NQbUl51yNA0aGombxO+2o/gEupCCM=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260319155748eucas1p2b5301f0df591382d4f9d11bd0154335a~eSUX0VwA80213702137eucas1p2V;
+	Thu, 19 Mar 2026 15:57:48 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260319155746eusmtip21015fbb23aff1c944126bee28a18b8b0~eSUW1P7_r0967109671eusmtip2G;
+	Thu, 19 Mar 2026 15:57:46 +0000 (GMT)
+Message-ID: <4809918d-fdf1-48c0-bc10-fcf75837cb81@samsung.com>
+Date: Thu, 19 Mar 2026 16:57:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 19 Mar 2026 12:12:52 +0100
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v8 05/10] pmdomain: samsung: convert to using regmap
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam
+	Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter
+	Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
+	<willmcvicker@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <ae31c62c940e99077d44e1935465dce7db0e4c06.camel@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260319155748eucas1p2b5301f0df591382d4f9d11bd0154335a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba
+X-EPHeader: CA
+X-CMS-RootMailID: 20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba
+References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
+	<20260318-gs101-pd-v8-5-241523460b10@linaro.org>
+	<CGME20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba@eucas1p2.samsung.com>
+	<CAPDyKFrprMSLOBMB_BHbi=j6UXV4dXBn-H8M1BsqDWNSCJwvuA@mail.gmail.com>
+	<c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
+	<ae31c62c940e99077d44e1935465dce7db0e4c06.camel@linaro.org>
 
-Hi,
+On 19.03.2026 12:58, André Draszik wrote:
+> On Thu, 2026-03-19 at 11:29 +0100, Marek Szyprowski wrote:
+>> On 19.03.2026 11:13, Ulf Hansson wrote:
+>>> As a follow-up patch on top, please consider converting the open-coded
+>>> polling loop above into a readx_poll_timeout_atomic().
+>> This has been tried and it doesn't work in all cases required for power
+>> domain driver:
+>>
+>> https://lore.kernel.org/all/5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.com/
+>>
+>> Probably a comment about that could be added directly to this code to
+>> avoid such conversion and breakage in the future.
+> I am planning to revisit this in the future and am hoping that we can
+> figure out what goes wrong when using regmap_read_poll_timeout().
+>
+> Hopefully such a comment would only be short-lived, so maybe not really
+> worth it? I can add it, though, if you prefer.
 
-Le lundi 16 mars 2026 =C3=A0 22:47 +0800, Peng Fan (OSS) a =C3=A9crit=C2=A0=
-:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Convert the binding to use the generic power-controller schema
-> instead by
-> referencing power-controller.yaml and removing the local
-> `system-power-controller` property definition.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Well, I think I've already pointed what goes wrong with 
+regmap_read_poll_timeout() in the above mentioned thread. You would need 
+to use regmap_read_poll_timeout_atomic() and modify it the same way as 
+commit 7349a69cf312 did for read_poll_timeout_atomic().
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Cheers,
--Paul
-
-> ---
-> =C2=A0Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml | 7 +------
-> =C2=A01 file changed, 1 insertion(+), 6 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
-> b/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
-> index
-> de9879bdb3175a7e0f24304b5a084a8faa233c46..415566d8dba564ebad976689596
-> bbcd699ed6021 100644
-> --- a/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
-> @@ -11,6 +11,7 @@ maintainers:
-> =C2=A0
-> =C2=A0allOf:
-> =C2=A0=C2=A0 - $ref: rtc.yaml#
-> +=C2=A0 - $ref: /schemas/power/power-controller.yaml#
-> =C2=A0=C2=A0 - if:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 not:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> @@ -53,12 +54,6 @@ properties:
-> =C2=A0=C2=A0 "#clock-cells":
-> =C2=A0=C2=A0=C2=A0=C2=A0 const: 0
-> =C2=A0
-> -=C2=A0 system-power-controller:
-> -=C2=A0=C2=A0=C2=A0 description: |
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Indicates that the RTC is responsible for=
- powering OFF
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the system.
-> -=C2=A0=C2=A0=C2=A0 type: boolean
-> -
-> =C2=A0=C2=A0 ingenic,reset-pin-assert-time-ms:
-> =C2=A0=C2=A0=C2=A0=C2=A0 minimum: 0
-> =C2=A0=C2=A0=C2=A0=C2=A0 maximum: 125
