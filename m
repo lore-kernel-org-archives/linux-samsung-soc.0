@@ -1,241 +1,117 @@
-Received: from mail-m32105.qiye.163.com (mail-m32105.qiye.163.com [220.197.32.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9A03AD536;
-	Thu, 19 Mar 2026 11:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4355D3A544A
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 11:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773919038; cv=none; b=mVDRQx8AjtXj1kf4DRS7ZEzWuB9FSEa5iWWjLp562Yftx/P0bcZCDa9QjgpFNENi49Hli6cSrp2rTirTA0SvOlSYrj7RFQMe1OEFucld+72Cy8QyNoIUiq333+EXogOjS2CRW8sePooqoqzmDcz/sZJof/AgyUOemc3Xa8Unlgo=
+	t=1773921476; cv=none; b=GU8y0hvLZFLqnyyDJArCxgKI4kZnXFeAWLDgH2+Qs0OgHWAZ/rXzzMiMT9h4aBjmDN39+2xocGDAcWTgYLGAwpwhxtxMKEzyaVju0iHBDPuzBjKic0Br5LxQEepSUt8D0aEjoPzZb6UKdzRAbTB1gX4G2mKSBA7uSiBr2cV8Vpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773919038; c=relaxed/simple;
-	bh=91ZYDpH2SSucAC7pPLtkHTrWAsU01vIAXwb2xQhDkw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=spsRtpAocJHvC32hYdcUNXM0MlmeGQwi+AopsEjMFCB/kSdw7wkBu3T4KhSu3EbsnlNZgtgfnpzquSdGTRIh8hRFvWOAOBcT33wuUnzqdyQuIutOoCNlbbP+hYU9+fEJLY5ReK8P8vr3aJe3/eakeSWMWpB4y/4JABa3xzNF6dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PpVWFD10; arc=none smtp.client-ip=220.197.32.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1773921476; c=relaxed/simple;
+	bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EAEaziU9vbWGyarRIBsT+oFfP3h1hK6HX3ZZnsUJzIH2iUwYwEwuayI6GFLa0kLibeKwom3O4p4w/W1+IoawSiZZxQQBfsuWyabGN5BKTLJEAU8NtqYf/tVBftCIEcJeP0JxFsxvffnJJw5bsMyKoMDoEVB4kzjcJOvImNt96/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N3+croW1; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PpVWFD10"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3789bd6a8;
-	Thu, 19 Mar 2026 15:47:58 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	victor.liu@nxp.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	alim.akhtar@samsung.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	luca.ceresoli@bootlin.com,
-	nicolas.frattaroli@collabora.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v11 17/17] drm/bridge: analogix_dp: Apply panel_bridge helper
-Date: Thu, 19 Mar 2026 15:47:44 +0800
-Message-Id: <20260319074744.1965918-4-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260319074744.1965918-1-damon.ding@rock-chips.com>
-References: <20260319071452.1961274-1-damon.ding@rock-chips.com>
- <20260319074744.1965918-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3+croW1"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4856cd3f1ffso8866825e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 04:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1773921470; x=1774526270; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
+        b=N3+croW1c7ST5J6EHCB6cZhFtMCt3CFujblmcv9rU+YpIk5XbBR7diwuQ9dh88r5Ea
+         s3gpqHoWW/GSSXNBsouH2LvA8pngRkWNIs2r20VG9PggrPD0vNOSaFMq3rN/QVG+As5l
+         wMaSiQStyFr0Jn7eIup6GYOlWjWol6h7EBW9ET0Kwn4QNrqch89DBtvndzZb68YUUejZ
+         1TSRsHd2hNlmRIuTCrnOvIzO3cHXU5gUQmRdoTAnlYn2CXegZolOwJgphhcl4uU+mQR2
+         /Vd7L58+mMQ7pFJl/q4fEDrjyMQnTdXH6MrY4FgYc5wDz5EzvW3AqRxoZEgbK49bya/N
+         rZpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773921470; x=1774526270;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
+        b=FrVtYaxf4qS0qOCArWikT1fBfeZvjqcmexytz8fwiOJbMta1ovQxBxLi0CKhxjV8U2
+         r1sh0Jst5sWEHKuuwuKUyN6fnKwnvDCOX/GOpbhTfWaQCF1+HXfMaQrYOszkrELy0jat
+         SotNbCllSu5VoRwI+lNOha7GDx0NW0rdclbyWboRN4ecu2VarZDwnwkJHlGa+A1Fs4qN
+         /lgOm7t670k6y1/iI+z1CE4L5CCJeUP/9G2EqtC8otSaMbegq7qL5LyZtZuP0KUXzdob
+         CweH1SyO7sAAEKmh7WZCuSFx3Mf6eBvVkguCQjYLGfSHWcSS2PU8fwh0jwBC930dIrwL
+         RSIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYqA/m82p0PNlmjattO1nJ4cYezU5ScOdipq+uC9g2puirw22yjxjZNoHvwxeS+EOw2i+Unv0jFG+0IpiNCmIlPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUAwdBOOIOKAHv9CQzp50xo6lSvxaJ/I965MmLgt42gkG4P4Tq
+	eSrW5uwspzmg164HzQHDroTMUurrPW5Eu8yHrv7QMwl5Sa9wbEhEqb0pmBbdCWHGDr8=
+X-Gm-Gg: ATEYQzzBC2XPjbl5/AQGd02TjmFd7yBh+SOivDV2AmKMmWxvv+OAJoLn4n5MKEMdsw9
+	PazJPkIH7MJyX+UGe6dmBFaO45dCvRIb6EVMNBn+44l7PmX4yTfy8FulJQ4SnxSoKD1I15QRDYY
+	8IfTTWUvp0LkfU/Jc4S59JUpgsOBi6yD8rGIpVcojDTIHQCZBt73AOZWvk4Ba1P20LIYGhTISmq
+	DypBiY3pd7SWEOYWM7FdNorn9QeVbO5UiLe5sle1OkEbh1rr5fLtoYg7Wqu1fvn9sNTtoDqfGcV
+	r1/8YCjKIhJ9HZdSc4EC0t5tOZryAG1kaghgyJl0B8uwNmjKMsjSrajzz7MZU9194pNWpzFK/jg
+	lpTWMIODXVT5ysVEp6i9VikGL84oLIclNXMQG2AYKfQn/82/L55GaWlmC5IvA9Hl0+AG+Cz6sn5
+	cXKrvluF8RI48BeBflbDmY5GP4oo0=
+X-Received: by 2002:a05:600c:1992:b0:486:fad0:b166 with SMTP id 5b1f17b1804b1-486fad0b2c8mr30813105e9.17.1773921470276;
+        Thu, 19 Mar 2026 04:57:50 -0700 (PDT)
+Received: from draszik.lan ([212.129.73.9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f8bd5f7csm65030485e9.0.2026.03.19.04.57.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2026 04:57:49 -0700 (PDT)
+Message-ID: <ae31c62c940e99077d44e1935465dce7db0e4c06.camel@linaro.org>
+Subject: Re: [PATCH v8 05/10] pmdomain: samsung: convert to using regmap
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson
+	 <ulf.hansson@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>,  Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
+	 <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Date: Thu, 19 Mar 2026 11:58:45 +0000
+In-Reply-To: <c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
+References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
+		<20260318-gs101-pd-v8-5-241523460b10@linaro.org>
+		<CGME20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba@eucas1p2.samsung.com>
+		<CAPDyKFrprMSLOBMB_BHbi=j6UXV4dXBn-H8M1BsqDWNSCJwvuA@mail.gmail.com>
+	 <c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-8+build1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9d0510c64503a3kunmf4d8b30239c808
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ08dGFZNHkwYQhgYSE0aQ0lWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=PpVWFD10m6PLJsWFCQ4m/nGwbtRYT8mIkCRYOrzk7Q4vBsYUO2wcjqUWUYZpgk8uXzlOwCB30s4mnEYkwVIX2AmZLACeBbvEVdndTUEgd5XmN9W2qo9V5kcOy4D3+ONncQwIzFMLKBWH5MRmhi7nPvNX0+D3UN/JrAiD6j32iAI=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=UBM7dL1OUA4VGkwXGmpRQ7M0XsEe3xz5uWZVRc/9PSw=;
-	h=date:mime-version:subject:message-id:from;
 
-In order to unify the handling of the panel and bridge, apply
-panel_bridge helpers for Analogix DP driver. With this patch, the
-bridge support will also become available.
+Hi Marek,
 
-The following changes have ben made:
-- Apply plane_bridge helper to wrap the panel as the bridge.
-- Remove the explicit panel APIs calls, which can be replaced with
-  the automic bridge APIs calls wrapped by the panel.
-- Remove the unnecessary analogix_dp_bridge_get_modes().
+On Thu, 2026-03-19 at 11:29 +0100, Marek Szyprowski wrote:
+> On 19.03.2026 11:13, Ulf Hansson wrote:
+> > As a follow-up patch on top, please consider converting the open-coded
+> > polling loop above into a readx_poll_timeout_atomic().
+>=20
+> This has been tried and it doesn't work in all cases required for power=
+=20
+> domain driver:
+>=20
+> https://lore.kernel.org/all/5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.=
+com/
+>=20
+> Probably a comment about that could be added directly to this code to=20
+> avoid such conversion and breakage in the future.
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
+I am planning to revisit this in the future and am hoping that we can
+figure out what goes wrong when using regmap_read_poll_timeout().
 
----
+Hopefully such a comment would only be short-lived, so maybe not really
+worth it? I can add it, though, if you prefer.
 
-Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
-
-Changes in v5:
-- Move panel_bridge addition a little forward.
-- Move next_bridge attachment from Analogix side to Rockchip/Exynos
-  side.
-
-Changes in v6
-- Remove the unnecessary analogix_dp_bridge_get_modes().
-- Not to set DRM_BRIDGE_OP_MODES if the next is a panel.
-- Squash [PATCH v5 15/17]drm/bridge: analogix_dp: Remove panel
-  disabling and enabling in analogix_dp_set_bridge() into this
-  commit.
-- Fix the &drm_bridge->ops to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
-
-Changes in v9:
-- Add Tested-by tag.
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 41 +++++--------------
- 1 file changed, 11 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 8bb248e44c26..fe7158d9edde 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -749,9 +749,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- {
- 	int ret;
- 
--	/* Keep the panel disabled while we configure video */
--	drm_panel_disable(dp->plat_data->panel);
--
- 	ret = analogix_dp_train_link(dp);
- 	if (ret) {
- 		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
-@@ -771,9 +768,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 		return ret;
- 	}
- 
--	/* Safe to enable the panel now */
--	drm_panel_enable(dp->plat_data->panel);
--
- 	/* Check whether panel supports fast training */
- 	ret = analogix_dp_fast_link_train_detection(dp);
- 	if (ret)
-@@ -858,17 +852,6 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
- 	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
- }
- 
--static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
--{
--	struct analogix_dp_device *dp = to_dp(bridge);
--	int num_modes = 0;
--
--	if (dp->plat_data->panel)
--		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
--
--	return num_modes;
--}
--
- static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
- 							   struct drm_connector *connector)
- {
-@@ -909,7 +892,7 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
- 	struct analogix_dp_device *dp = to_dp(bridge);
- 	enum drm_connector_status status = connector_status_disconnected;
- 
--	if (dp->plat_data->panel || dp->plat_data->next_bridge)
-+	if (dp->plat_data->next_bridge)
- 		return connector_status_connected;
- 
- 	if (!analogix_dp_detect_hpd(dp))
-@@ -995,8 +978,6 @@ static void analogix_dp_bridge_atomic_pre_enable(struct drm_bridge *bridge,
- 	/* Don't touch the panel if we're coming back from PSR */
- 	if (old_crtc_state && old_crtc_state->self_refresh_active)
- 		return;
--
--	drm_panel_prepare(dp->plat_data->panel);
- }
- 
- static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
-@@ -1168,16 +1149,12 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
--	drm_panel_disable(dp->plat_data->panel);
--
- 	disable_irq(dp->irq);
- 
- 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 
- 	pm_runtime_put_sync(dp->dev);
- 
--	drm_panel_unprepare(dp->plat_data->panel);
--
- 	dp->fast_train_enable = false;
- 	dp->psr_supported = false;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
-@@ -1252,7 +1229,6 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
- 	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
- 	.atomic_check = analogix_dp_bridge_atomic_check,
- 	.attach = analogix_dp_bridge_attach,
--	.get_modes = analogix_dp_bridge_get_modes,
- 	.edid_read = analogix_dp_bridge_edid_read,
- 	.detect = analogix_dp_bridge_detect,
- };
-@@ -1498,17 +1474,22 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		return ret;
- 	}
- 
--	if (dp->plat_data->panel)
--		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
--	else
--		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
--
-+	bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
- 	bridge->of_node = dp->dev->of_node;
- 	bridge->type = DRM_MODE_CONNECTOR_eDP;
- 	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
- 	if (ret)
- 		goto err_unregister_aux;
- 
-+	if (dp->plat_data->panel) {
-+		dp->plat_data->next_bridge = devm_drm_panel_bridge_add(dp->dev,
-+								       dp->plat_data->panel);
-+		if (IS_ERR(dp->plat_data->next_bridge)) {
-+			ret = PTR_ERR(bridge);
-+			goto err_unregister_aux;
-+		}
-+	}
-+
- 	ret = drm_bridge_attach(dp->encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret) {
- 		DRM_ERROR("failed to create bridge (%d)\n", ret);
--- 
-2.34.1
-
+Cheers,
+Andre'
