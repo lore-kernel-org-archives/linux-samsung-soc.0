@@ -1,117 +1,129 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from aposti.net (aposti.net [185.119.170.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4355D3A544A
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 11:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1842980A8;
+	Thu, 19 Mar 2026 13:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773921476; cv=none; b=GU8y0hvLZFLqnyyDJArCxgKI4kZnXFeAWLDgH2+Qs0OgHWAZ/rXzzMiMT9h4aBjmDN39+2xocGDAcWTgYLGAwpwhxtxMKEzyaVju0iHBDPuzBjKic0Br5LxQEepSUt8D0aEjoPzZb6UKdzRAbTB1gX4G2mKSBA7uSiBr2cV8Vpc=
+	t=1773928044; cv=none; b=QhXZVfBLf0XX9Kakwe2USZJeCykzoB0Ndq0TLwnlaqQNQVoHS6+JVZGDTSbHy/imSwwPYVkZEVVK7uEmdG9HR5vf60lFsAQLl4Vaq4X+R4JajRIskjVSs5fusxgRV2tl8T/RZhqYDV+GvM/uVZqsJMAI74tXPMgXlmSinEPVIRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773921476; c=relaxed/simple;
-	bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EAEaziU9vbWGyarRIBsT+oFfP3h1hK6HX3ZZnsUJzIH2iUwYwEwuayI6GFLa0kLibeKwom3O4p4w/W1+IoawSiZZxQQBfsuWyabGN5BKTLJEAU8NtqYf/tVBftCIEcJeP0JxFsxvffnJJw5bsMyKoMDoEVB4kzjcJOvImNt96/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N3+croW1; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1773928044; c=relaxed/simple;
+	bh=ksvyivwMMcfAco4JH1SNvzalhs1WV6ffPUpIeWy4SQ8=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=QrXcxpxjp7KPIuM1SXp1U/6YyvY8utgtYFvuX6GdzNmdFW9GmmhUpI7EogPU1tyOyOsyATJ9dH/Npow7WCIfaGqPB79suyFi/sNOvK3ApjqRlDiqBXzjPtDRK1d2Rn4H+PPDc527e3Nuz8+xHlnOVV9VrIty6+hENMBvRF2z1hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=Wjg+5HA2; arc=none smtp.client-ip=185.119.170.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3+croW1"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4856cd3f1ffso8866825e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 04:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773921470; x=1774526270; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
-        b=N3+croW1c7ST5J6EHCB6cZhFtMCt3CFujblmcv9rU+YpIk5XbBR7diwuQ9dh88r5Ea
-         s3gpqHoWW/GSSXNBsouH2LvA8pngRkWNIs2r20VG9PggrPD0vNOSaFMq3rN/QVG+As5l
-         wMaSiQStyFr0Jn7eIup6GYOlWjWol6h7EBW9ET0Kwn4QNrqch89DBtvndzZb68YUUejZ
-         1TSRsHd2hNlmRIuTCrnOvIzO3cHXU5gUQmRdoTAnlYn2CXegZolOwJgphhcl4uU+mQR2
-         /Vd7L58+mMQ7pFJl/q4fEDrjyMQnTdXH6MrY4FgYc5wDz5EzvW3AqRxoZEgbK49bya/N
-         rZpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773921470; x=1774526270;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yC6Ijh7vCR3XdkIrIV9yo00I9p5DCq5XZe85XCd2G6Q=;
-        b=FrVtYaxf4qS0qOCArWikT1fBfeZvjqcmexytz8fwiOJbMta1ovQxBxLi0CKhxjV8U2
-         r1sh0Jst5sWEHKuuwuKUyN6fnKwnvDCOX/GOpbhTfWaQCF1+HXfMaQrYOszkrELy0jat
-         SotNbCllSu5VoRwI+lNOha7GDx0NW0rdclbyWboRN4ecu2VarZDwnwkJHlGa+A1Fs4qN
-         /lgOm7t670k6y1/iI+z1CE4L5CCJeUP/9G2EqtC8otSaMbegq7qL5LyZtZuP0KUXzdob
-         CweH1SyO7sAAEKmh7WZCuSFx3Mf6eBvVkguCQjYLGfSHWcSS2PU8fwh0jwBC930dIrwL
-         RSIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYqA/m82p0PNlmjattO1nJ4cYezU5ScOdipq+uC9g2puirw22yjxjZNoHvwxeS+EOw2i+Unv0jFG+0IpiNCmIlPw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUAwdBOOIOKAHv9CQzp50xo6lSvxaJ/I965MmLgt42gkG4P4Tq
-	eSrW5uwspzmg164HzQHDroTMUurrPW5Eu8yHrv7QMwl5Sa9wbEhEqb0pmBbdCWHGDr8=
-X-Gm-Gg: ATEYQzzBC2XPjbl5/AQGd02TjmFd7yBh+SOivDV2AmKMmWxvv+OAJoLn4n5MKEMdsw9
-	PazJPkIH7MJyX+UGe6dmBFaO45dCvRIb6EVMNBn+44l7PmX4yTfy8FulJQ4SnxSoKD1I15QRDYY
-	8IfTTWUvp0LkfU/Jc4S59JUpgsOBi6yD8rGIpVcojDTIHQCZBt73AOZWvk4Ba1P20LIYGhTISmq
-	DypBiY3pd7SWEOYWM7FdNorn9QeVbO5UiLe5sle1OkEbh1rr5fLtoYg7Wqu1fvn9sNTtoDqfGcV
-	r1/8YCjKIhJ9HZdSc4EC0t5tOZryAG1kaghgyJl0B8uwNmjKMsjSrajzz7MZU9194pNWpzFK/jg
-	lpTWMIODXVT5ysVEp6i9VikGL84oLIclNXMQG2AYKfQn/82/L55GaWlmC5IvA9Hl0+AG+Cz6sn5
-	cXKrvluF8RI48BeBflbDmY5GP4oo0=
-X-Received: by 2002:a05:600c:1992:b0:486:fad0:b166 with SMTP id 5b1f17b1804b1-486fad0b2c8mr30813105e9.17.1773921470276;
-        Thu, 19 Mar 2026 04:57:50 -0700 (PDT)
-Received: from draszik.lan ([212.129.73.9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f8bd5f7csm65030485e9.0.2026.03.19.04.57.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2026 04:57:49 -0700 (PDT)
-Message-ID: <ae31c62c940e99077d44e1935465dce7db0e4c06.camel@linaro.org>
-Subject: Re: [PATCH v8 05/10] pmdomain: samsung: convert to using regmap
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Ulf Hansson
-	 <ulf.hansson@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter
- Griffin <peter.griffin@linaro.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Date: Thu, 19 Mar 2026 11:58:45 +0000
-In-Reply-To: <c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
-References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
-		<20260318-gs101-pd-v8-5-241523460b10@linaro.org>
-		<CGME20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba@eucas1p2.samsung.com>
-		<CAPDyKFrprMSLOBMB_BHbi=j6UXV4dXBn-H8M1BsqDWNSCJwvuA@mail.gmail.com>
-	 <c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Wjg+5HA2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crapouillou.net;
+	s=mail; t=1773927515;
+	bh=ksvyivwMMcfAco4JH1SNvzalhs1WV6ffPUpIeWy4SQ8=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=Wjg+5HA2DcTy7ImzDCfL/hiwNCW3P+AT+sac3h1AcSSNPOrO713uAzTj+LGFyQIFN
+	 qZw7s81n5YdPRSxoA+qWuuOqKcdY5sAKCEH1+bgXIPB6PDV/AKYCjaJZ38qyuU8n+E
+	 +NbUAIZRrQvXeRWqEhXISlJM+aOu9BAoOryWWTIM=
+Message-ID: <5a390e368fa74f7f96bcceefea34af306d768929.camel@crapouillou.net>
+Subject: Re: [PATCH 05/15] dt-bindings: rtc: ingenic,rtc: Use generic
+ power-controller schema
+From: Paul Cercueil <paul@crapouillou.net>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Rafael J. Wysocki"	 <rafael@kernel.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Florian Fainelli	
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list	
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott
+ Branden <sbranden@broadcom.com>, Saenz Julienne <nsaenz@kernel.org>, Lee
+ Jones <lee@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>,  Jerome
+ Neanne <jerome.neanne@baylibre.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Dmitry Osipenko <digetx@gmail.com>, Heiko
+ Stuebner <heiko@sntech.de>, Joseph Chen <chenjh@rock-chips.com>,  Chris
+ Zhong <zyw@rock-chips.com>, Zhang Qing <zhangqing@rock-chips.com>,
+ Sebastian Reichel	 <sebastian.reichel@collabora.com>, Andreas Kemnade
+ <andreas@kemnade.info>,  Jonathan =?ISO-8859-1?Q?Neusch=E4fer?=	
+ <j.neuschaefer@gmx.net>, Lubomir Rintel <lkundrak@v3.sk>, Julien Panis	
+ <jpanis@baylibre.com>, Matti Vaittinen <mazziesaccount@gmail.com>,
+ Alexander Kurz <akurz@blala.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ 	linux-rtc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20260316-power-controller-v1-5-92c80e5e1744@nxp.com>
+References: <20260316-power-controller-v1-0-92c80e5e1744@nxp.com>
+	 <20260316-power-controller-v1-5-92c80e5e1744@nxp.com>
+Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
+ keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
+ LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
+ FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
+ z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
+ +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
+ 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
+ 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
+ 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
+ dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
+ 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
+ rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
+ lBwgAhlGy6nqP7O3u7q23hRU=
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-8+build1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Thu, 19 Mar 2026 12:12:52 +0100
 
-Hi Marek,
+Hi,
 
-On Thu, 2026-03-19 at 11:29 +0100, Marek Szyprowski wrote:
-> On 19.03.2026 11:13, Ulf Hansson wrote:
-> > As a follow-up patch on top, please consider converting the open-coded
-> > polling loop above into a readx_poll_timeout_atomic().
+Le lundi 16 mars 2026 =C3=A0 22:47 +0800, Peng Fan (OSS) a =C3=A9crit=C2=A0=
+:
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> This has been tried and it doesn't work in all cases required for power=
-=20
-> domain driver:
+> Convert the binding to use the generic power-controller schema
+> instead by
+> referencing power-controller.yaml and removing the local
+> `system-power-controller` property definition.
 >=20
-> https://lore.kernel.org/all/5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.=
-com/
->=20
-> Probably a comment about that could be added directly to this code to=20
-> avoid such conversion and breakage in the future.
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-I am planning to revisit this in the future and am hoping that we can
-figure out what goes wrong when using regmap_read_poll_timeout().
-
-Hopefully such a comment would only be short-lived, so maybe not really
-worth it? I can add it, though, if you prefer.
+Acked-by: Paul Cercueil <paul@crapouillou.net>
 
 Cheers,
-Andre'
+-Paul
+
+> ---
+> =C2=A0Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml | 7 +------
+> =C2=A01 file changed, 1 insertion(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
+> b/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
+> index
+> de9879bdb3175a7e0f24304b5a084a8faa233c46..415566d8dba564ebad976689596
+> bbcd699ed6021 100644
+> --- a/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
+> @@ -11,6 +11,7 @@ maintainers:
+> =C2=A0
+> =C2=A0allOf:
+> =C2=A0=C2=A0 - $ref: rtc.yaml#
+> +=C2=A0 - $ref: /schemas/power/power-controller.yaml#
+> =C2=A0=C2=A0 - if:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 not:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> @@ -53,12 +54,6 @@ properties:
+> =C2=A0=C2=A0 "#clock-cells":
+> =C2=A0=C2=A0=C2=A0=C2=A0 const: 0
+> =C2=A0
+> -=C2=A0 system-power-controller:
+> -=C2=A0=C2=A0=C2=A0 description: |
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Indicates that the RTC is responsible for=
+ powering OFF
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the system.
+> -=C2=A0=C2=A0=C2=A0 type: boolean
+> -
+> =C2=A0=C2=A0 ingenic,reset-pin-assert-time-ms:
+> =C2=A0=C2=A0=C2=A0=C2=A0 minimum: 0
+> =C2=A0=C2=A0=C2=A0=C2=A0 maximum: 125
