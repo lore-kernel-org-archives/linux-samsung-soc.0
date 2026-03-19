@@ -1,48 +1,51 @@
-Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
+Received: from mail.mleia.com (mleia.com [178.79.152.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DE2DFA5B;
-	Thu, 19 Mar 2026 17:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493BA4207A;
+	Thu, 19 Mar 2026 20:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773940509; cv=none; b=OPTemgyt749x37dKsPXhKQk26t1kRsci5XHM6vX4CZcYXvbL+bxxP9Nuv8a9btOqVWkaoGxkaiAwlbMHpjcb0L37zU0axLhBETDbkacfptnZMcutNjtnfofgHsSKQlMMqboTrYnR/nT3XdrzjlfdradCgfhDFmZc4EZziRIf23E=
+	t=1773951101; cv=none; b=RGiBIGUKXp+Sx6YTtGU+9Z6ZzfAT/8e70X+f9jVVwTixFd1/T0DwpM7hehkIT7d71tWFujVHdUMdQaFbaZL0/VYQpI7fBqyVySokwra2c9+N6KAI/p0lnlqs9MHqWGOT40G0YDWGk1HVxyvPAQt+Ucr+SzzxxqYRWHwzGiWWvz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773940509; c=relaxed/simple;
-	bh=UHJsWGTSlJTfY7QnX97XerQUNMUaLpd7tP4C0EEZkzg=;
+	s=arc-20240116; t=1773951101; c=relaxed/simple;
+	bh=2ZMfgru5e+oaaVUtTskdQMdWf7MszLERUhG3AuSPlNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jgysmc9L+qDQBccbN/eoymwLldbrsbi262YHAoobvJZRp6Vzf+5qJglERs1JSWtpse6hfFEaqLa5E1QIadJODbo7F0OJHa3IwAaRfoNFALLdADBDWw67SlOaF2HTAyaPlBUyZPld7rjM2ZlR9c6qa1yY27CbAoyhp5zjcqM1UvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dFKmxQsx; arc=none smtp.client-ip=199.89.1.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	 In-Reply-To:Content-Type; b=SzNpJyEhIi1d2wz7RHaiFuh+gFdn4CrKitFrkBbqX/d9ED5eRfHDrA5m+bvW4VP0cJDBaGMTPUwdM2o0BnlIQnW6loDeYfiRagY0m5ZLJ9zzh4DPFyzywyn/myARCj08Cr1vS+1g/xJLkL+6ppdno5jWjBEvXd6a7mDCCzjILOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=sD12KLNB; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=YmOmkxvJ; arc=none smtp.client-ip=178.79.152.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dFKmxQsx"
-Received: from localhost (localhost [127.0.0.1])
-	by 011.lax.mailroute.net (Postfix) with ESMTP id 4fcC4X1zKzz1XM5kY;
-	Thu, 19 Mar 2026 17:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1773940495; x=1776532496; bh=UHJsWGTSlJTfY7QnX97XerQU
-	NMUaLpd7tP4C0EEZkzg=; b=dFKmxQsxM8O2hO+PntnmCfQmA2VsxQt1I9BWP45v
-	e99xashdlvnQ0iqpzna366213RNXzYUgf1v3+givoQ4OAgp6jhkArR0HgCsDDvLP
-	5u4QOdYjX9pUJlOX2DE3toANf60hlf5yDeqMcuMD1kjAv9XaSRRnHc2imlEmPZqQ
-	YiM5s2CDkWV6Mdk4AFzavdqTRL89qGFkfAxKt3lZ3gbdurzVjr4dSZvtrHFIkz0p
-	eIImjdzfLZxX4edUA95TsTfOxQ31EJmzDgr27Ispq2YeMv+HqZqSJu2XoNuEf+ZO
-	v8YxxK8gPLxPwbUnDpqGfT41WYhoPLQKKf/Ytf8IZrNWLA==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id kgNEXQsIxXTY; Thu, 19 Mar 2026 17:14:55 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="sD12KLNB";
+	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="YmOmkxvJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1773950562; bh=2ZMfgru5e+oaaVUtTskdQMdWf7MszLERUhG3AuSPlNc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sD12KLNB/moWCavZypcj/p7C/JEM+sHHgLusfDwHVus7ODDdVE/WfxndwBFrxU/7i
+	 gxTl19vjz6T0ofPe77MnajxyhOMxFy8disY/6uwxApo4zEPLcoio/qtLlThU050YoA
+	 fWdQ36DvLTx7z8wy/EDLUXDXVMoUoeZHPLFNvNI8LqRxybl+Xqkev6ln1n5VWA8f/i
+	 Q3/rjercZyO/FO36yyziUOSRpjrZfiASwZgE9+VwL2B+/EI0QqcxgEs6P4nqG+OXqA
+	 DLFNc4jhEjYLb9ihgxnIImKsv64QoPn5G1lj+ybMa3UAwRc37EFsEclOH49L7FoVA9
+	 ipCYTy47LACVw==
+Received: from mail.mleia.com (localhost [127.0.0.1])
+	by mail.mleia.com (Postfix) with ESMTP id 1A48F2E;
+	Thu, 19 Mar 2026 20:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+	t=1773950561; bh=2ZMfgru5e+oaaVUtTskdQMdWf7MszLERUhG3AuSPlNc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YmOmkxvJ42zO7xx/x846/tUjtNrTNcsNjorj2mFKTysfYssaqluQwx5gxPXEPHU/G
+	 iFb9D4efRGqMfrd+8zZ080Kme9e3vrSlvuI6osRzqCFb7/szBKGcfxDPJXCOBVGnuV
+	 VLrfs7i4OBSTdDuKNjYAl39SpSwXMSR2RaWEsW5mI6N8+sLax6uyg9NSJLaT0jV+hG
+	 OrzDVtSurAmin78oL+f09X/c67F7YAAoB6+DHHpL9BKpKSyDr8F/UWOeb4VlC2cycU
+	 0cH/e5yoL+dkChCUvSs0gkqYjpZkjWvhndm/fq4Nd5IWZaooqgk8SZFogBqVkYlQMd
+	 M+X9CIYnd/Pvg==
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi [91.159.24.186])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4fcC482cLFz1XM5kW;
-	Thu, 19 Mar 2026 17:14:48 +0000 (UTC)
-Message-ID: <ea7a5729-3df0-49ef-ab8d-47ade75cc393@acm.org>
-Date: Thu, 19 Mar 2026 10:14:47 -0700
+	by mail.mleia.com (Postfix) with ESMTPSA id 9E6FE2B;
+	Thu, 19 Mar 2026 20:02:41 +0000 (UTC)
+Message-ID: <f0aad48c-3ddf-487e-9514-933851b2368f@mleia.com>
+Date: Thu, 19 Mar 2026 22:02:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,37 +53,35 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 phy-next 09/24] ufs: exynos: stop poking into struct
- phy guts
-To: Vladimir Oltean <vladimir.oltean@nxp.com>, linux-phy@lists.infradead.org
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev,
- UNGLinuxDriver@microchip.com, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Chanho Park <chanho61.park@samsung.com>
-References: <20260309190842.927634-1-vladimir.oltean@nxp.com>
- <20260309190842.927634-10-vladimir.oltean@nxp.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20260309190842.927634-10-vladimir.oltean@nxp.com>
+Subject: Re: [PATCH] crypto: s5p-sss - use unregister_{ahashes,skciphers} in
+ probe/remove
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-crypto@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260317080450.1054742-3-thorsten.blum@linux.dev>
+From: Vladimir Zapolskiy <vz@mleia.com>
+In-Reply-To: <20260317080450.1054742-3-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20260319_200242_123877_E61D40BC 
+X-CRM114-Status: UNSURE (   8.42  )
+X-CRM114-Notice: Please train this message. 
 
-On 3/9/26 12:08 PM, Vladimir Oltean wrote:
-> The Exynos host controller driver is clearly a PHY consumer (gets the
-> ufs->phy using devm_phy_get()), but pokes into the guts of struct phy
-> to get the generic_phy->power_count.
+On 3/17/26 10:04, Thorsten Blum wrote:
+> Replace multiple for loops with calls to crypto_unregister_ahashes() and
+> crypto_unregister_skciphers().
+> 
+> If crypto_register_skcipher() fails in s5p_aes_probe(), log the error
+> directly instead of checking 'i < ARRAY_SIZE(algs)' later.  Also drop
+> now-unused local index variables.  No functional changes.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+
+-- 
+Best wishes,
+Vladimir
