@@ -1,24 +1,24 @@
-Received: from mail-m1973190.qiye.163.com (mail-m1973190.qiye.163.com [220.197.31.90])
+Received: from mail-m49209.qiye.163.com (mail-m49209.qiye.163.com [45.254.49.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0773296BA4;
-	Thu, 19 Mar 2026 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FF93A5439;
+	Thu, 19 Mar 2026 07:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773906652; cv=none; b=YBsN3mO6EWtaN1HteCwjzFwV9RSkubvXYX9mlSHWBLDoQcxDKc+ymexA6ywkoD6pWaXaiNQd7cGQT9GB/A8WlxvZZHJjcdJT9UCNuPtR5HIqlrK8rmRRk1K1BgQBGYu2AmucAMGI8ITSMb9KpqsS3pf1EALw2zBpLLocFgqbtXo=
+	t=1773906657; cv=none; b=I0rJS+3zoMBuHZD22y0v6ETg/lk25Ng52WJi1UTluC1Fjwu6Ok8TFdaApOdi8ilV5NK2ZejbERoLVqQsv23Nx5oMhpROJ02fMPOesfOCZaYpJCi1eY8tChXTGT9vXF3Q38KorPvn6FqbuNvU57L8hvVLy0/tsxs5eangOSJg8TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773906652; c=relaxed/simple;
-	bh=O7RzHCzDaB7q7ZccfTgUrHJSSd1farFQEKVuGjb3swg=;
+	s=arc-20240116; t=1773906657; c=relaxed/simple;
+	bh=592g1KerMmBsAnFJ7EycDooZsikdG+qSRVP9bDf9pj0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RDshlY8IY9jbjsPHuG7uO/ltAI0Mi4Ir4qCVk9sKup4ceBGFalhD2ZB9FIfCVfsce3YXKIsUfTHA1pwVj3q6iwTlQZGcxy0vcl2jy/W1Of+FLYQdU1AUR4iX1rCRmXIBSRB0KUObjgRCUMSosHl1KvkI2N55SeZPhUlbQ/OZwkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CRH4QCN8; arc=none smtp.client-ip=220.197.31.90
+	 MIME-Version; b=R5i79u23P1DmgBwd4m20f83cYf9RgDr4Mgwfij1IVnV+IZesK8nZyR8ZW6Qx42b5KKuEasO0CvQYOA8KqWeD7boBwqeRWFH5awyXiWf/SFhO+7bKDNjzT7cgyMWHmiJKGVzhohPVolHRlXFJs0vSd+fM+FXBtVehWtDCj9Q50ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TP2prYiO; arc=none smtp.client-ip=45.254.49.209
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CRH4QCN8"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TP2prYiO"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3788743b4;
-	Thu, 19 Mar 2026 15:15:11 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3788743f3;
+	Thu, 19 Mar 2026 15:15:21 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -58,9 +58,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v11 01/17] drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
-Date: Thu, 19 Mar 2026 15:14:36 +0800
-Message-Id: <20260319071452.1961274-2-damon.ding@rock-chips.com>
+Subject: [PATCH v11 05/17] drm/exynos: exynos_dp: Apply of-display-mode-bridge to parse the display-timings node
+Date: Thu, 19 Mar 2026 15:14:40 +0800
+Message-Id: <20260319071452.1961274-6-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260319071452.1961274-1-damon.ding@rock-chips.com>
 References: <20260319071452.1961274-1-damon.ding@rock-chips.com>
@@ -71,54 +71,194 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9d04f2c1a303a3kunm86e540ee396488
+X-HM-Tid: 0a9d04f2e88a03a3kunm86e540ee396534
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0MYSVZLT04aTUsfQ0tLGBpWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk8fSlZCTUtOGE9JS0tNT0xWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=CRH4QCN8yD3JR2u9I+6o6U+yUf8WZS1qMIo8ORgmWY7CaBpP6UQ9I7B4MdzFiF41OnlHtYDPf1SwPl84aRGzsc+dDUp7JBPl+vXa3ZHB5ah6NuVcShJyEHZe2ztvm5tJVPab4LGNEWpG4Uj5CraA4a2UPh+lqLqfm3+lEcycrwM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=1qcQ7gNd/FYZLVi0CLYQ36BgxuUYuY4ez1oRTlI1iEA=;
+	b=TP2prYiOAtW7rM+zdWhQrZ0d+TiQILPxpTqAIbZzvC64fa4xHLswk1nsu0gnGB9B/R3p1vJLcdpDVYJd5TctIvC7P8Lz0lc5t/9TJlXV2Aznjs2JBgcqprfFB3YEVG4fOLfB1z6tq5rozT2zuTdn9lro6niws0HErB4f+bEwo6w=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=4jjUtOQS2hhLqscqTpFB1ivEjA0Z337r9k/VMXez/3g=;
 	h=date:mime-version:subject:message-id:from;
 
-In order to move the panel/bridge parsing and attachmenet to the
-Analogix side, add component struct drm_bridge *next_bridge to
-platform data struct analogix_dp_plat_data.
+If there is neither a panel nor a bridge, the display timing can be
+parsed from the display-timings node under the dp node.
 
-The movement makes sense because the panel/bridge should logically
-be positioned behind the Analogix bridge in the display pipeline.
+In order to get rid of &analogix_dp_plat_data.get_modes() and make
+the codes more consistent, apply DRM of-display-mode-bridge to parse
+display timings.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 
----
+------
 
-Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge
+Changes in v6:
+- Apply DRM legacy bridge to parse display timings instead of
+  implementing the same codes only for Exynos DP.
+
+Changes in v7:
+- Use temporary flag &exynos_dp_device.has_of_bridge, which will be
+  removed in the following patch, instead of applying API
+  drm_bridge_is_legacy().
+- Remove exynos_dp_legacy_bridge_init() and inline API
+  devm_drm_of_display_mode_bridge().
 
 Changes in v9:
-- Add Reviewed-by and Tested-by tags.
----
- include/drm/bridge/analogix_dp.h | 1 +
- 1 file changed, 1 insertion(+)
+- Add Tested-by tag.
 
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index cf17646c1310..582357c20640 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -27,6 +27,7 @@ static inline bool is_rockchip(enum analogix_dp_devtype type)
- struct analogix_dp_plat_data {
- 	enum analogix_dp_devtype dev_type;
- 	struct drm_panel *panel;
-+	struct drm_bridge *next_bridge;
- 	struct drm_encoder *encoder;
- 	struct drm_connector *connector;
- 	bool skip_connector;
+Changes in v10:
+- Add Reviewed-by tag.
+---
+ drivers/gpu/drm/exynos/Kconfig     |  1 +
+ drivers/gpu/drm/exynos/exynos_dp.c | 66 ++++++++----------------------
+ 2 files changed, 17 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 0d13828e7d9e..380d9a8ce259 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -72,6 +72,7 @@ config DRM_EXYNOS_DP
+ 	select DRM_ANALOGIX_DP
+ 	select DRM_DISPLAY_DP_HELPER
+ 	default DRM_EXYNOS
++	select DRM_OF_DISPLAY_MODE_BRIDGE
+ 	select DRM_PANEL
+ 	help
+ 	  This enables support for DP device.
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index e20513164032..ac16138a22fe 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -19,6 +19,7 @@
+ #include <video/videomode.h>
+ 
+ #include <drm/bridge/analogix_dp.h>
++#include <drm/bridge/of-display-mode-bridge.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
+@@ -38,9 +39,10 @@ struct exynos_dp_device {
+ 	struct drm_device          *drm_dev;
+ 	struct device              *dev;
+ 
+-	struct videomode           vm;
+ 	struct analogix_dp_device *adp;
+ 	struct analogix_dp_plat_data plat_data;
++
++	bool has_of_bridge;
+ };
+ 
+ static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+@@ -67,44 +69,20 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+ 	return exynos_dp_crtc_clock_enable(plat_data, false);
+ }
+ 
+-static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+-			       struct drm_connector *connector)
+-{
+-	struct exynos_dp_device *dp = to_dp(plat_data);
+-	struct drm_display_mode *mode;
+-
+-	if (dp->plat_data.panel)
+-		return 0;
+-
+-	mode = drm_mode_create(connector->dev);
+-	if (!mode) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed to create a new display mode.\n");
+-		return 0;
+-	}
+-
+-	drm_display_mode_from_videomode(&dp->vm, mode);
+-	connector->display_info.width_mm = mode->width_mm;
+-	connector->display_info.height_mm = mode->height_mm;
+-
+-	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+-	drm_mode_set_name(mode);
+-	drm_mode_probed_add(connector, mode);
+-
+-	return 1;
+-}
+-
+ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 				   struct drm_bridge *bridge,
+ 				   struct drm_connector *connector)
+ {
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
++	enum drm_bridge_attach_flags flags = 0;
+ 	int ret;
+ 
+ 	/* Pre-empt DP connector creation if there's a bridge */
+ 	if (plat_data->next_bridge) {
+-		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+-					0);
++		if (dp->has_of_bridge)
++			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
++
++		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -129,19 +107,6 @@ static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
+ 	.disable = exynos_dp_nop,
+ };
+ 
+-static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+-{
+-	int ret;
+-
+-	ret = of_get_videomode(dp->dev->of_node, &dp->vm, OF_USE_NATIVE_MODE);
+-	if (ret) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed: of_get_videomode() : %d\n", ret);
+-		return ret;
+-	}
+-	return 0;
+-}
+-
+ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+@@ -151,12 +116,6 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	dp->drm_dev = drm_dev;
+ 
+-	if (!dp->plat_data.panel && !dp->plat_data.next_bridge) {
+-		ret = exynos_dp_dt_parse_panel(dp);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
+@@ -223,6 +182,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0, &panel, &bridge);
++	if (ret == -ENODEV) {
++		dp->plat_data.next_bridge = devm_drm_of_display_mode_bridge(dp->dev,
++									dp->dev->of_node,
++									DRM_MODE_CONNECTOR_eDP);
++		ret = IS_ERR(dp->plat_data.next_bridge) ? PTR_ERR(dp->plat_data.next_bridge) : 0;
++		if (!ret)
++			dp->has_of_bridge = true;
++	}
+ 	if (ret)
+ 		return ret;
+ 
+@@ -233,7 +200,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.power_on = exynos_dp_poweron;
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.attach = exynos_dp_bridge_attach;
+-	dp->plat_data.get_modes = exynos_dp_get_modes;
+ 	dp->plat_data.skip_connector = !!bridge;
+ 
+ out:
 -- 
 2.34.1
 
