@@ -1,157 +1,227 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mail-m21468.qiye.163.com (mail-m21468.qiye.163.com [117.135.214.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B13A16AD
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 10:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930F231ED91;
+	Thu, 19 Mar 2026 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773916198; cv=none; b=myofFsRgnqKCxWLS17LigK3fIxi7K/fGWsaCNHd44axYuK2T3NY4ldtJi14CCpr2/YtSx/6nbtyPj+SX5umjZxpQddgFHalqhmdftJYLt7zbS6YzC0gkpnaB53BnD7Zjm5b2VwQJLmel5bON9BdnoEcRmYkpQTjORQPTGXRGqYQ=
+	t=1773917098; cv=none; b=U95IkdE95M9Fvgc80C0Zar/ArhmqoNGOluF9answItyrhL+ujtYV1kR4UJ8azTMiydcSBp66IHIw3GqSzqOubZG0XFbVduexizPCLxlaJHRp7CvqhVRtomAZDcP90qIuyxiNxzaMpaiGYIIYJ1y4If2OK5vQOLU8UDDyINGsUDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773916198; c=relaxed/simple;
-	bh=DkSFWv460eF+SLnywqG+PsmtAxUHLUKrZGMYJd32AFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=g5dHVF9zmhpw8vpTH6XoYsHWgLlmq6396ef0Q3Ymrzk9cnoWWkWB3/h9FFfu1+w97uX0skObpe8hqUdr8qGT6QNkVVFAflHoYe3XWOWw6xkEokzdr252O5yOeGdV4WFnu/NGQoOpAZq+yBdo4c9vmpRQfPyYSRTcwP/crExK55c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=C7xqy6Xa; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1773917098; c=relaxed/simple;
+	bh=x2yu7UY6Yola+1bq0Oh1KpCr9cE9t0DIXdTggUxeBMo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=njpJjpjIcoZep2vzFzEPp7vSTTNow6KuRJjoNFj2yB5OQg5PpBZVuXEHLCU4jUn9ZKvv2XZq/BC7WmUy9jFtQeKtIG10EuO01kLwz3bBF/fAhI67yS8RIzPAaEJNda8mFcoyx2hCEgOgd07kY79WaiKG+nprUOISdGph37TRmb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=IqtFGomJ; arc=none smtp.client-ip=117.135.214.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C7xqy6Xa"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260319102949euoutp026274843c1695c58079d2c93ec9e16f54~eN2AWePxp1756417564euoutp02B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2026 10:29:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260319102949euoutp026274843c1695c58079d2c93ec9e16f54~eN2AWePxp1756417564euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1773916189;
-	bh=uKAPmcA2X9Bm9pJ7T+wzs/NFBFfUIopHAZt+of0O0TE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=C7xqy6XartaJebAc/mio76XJgysOea9Dhzs17asXEowNuhnl4+zZPcqEs2aitk7Dw
-	 rx9J3fgwC7hVscoeFHjVoqHtn7LNCEL6lP6m2NHLhc/iouWTgywbvvbRGo6O6wySyS
-	 ADC4nFYUa7UILv6G6+6jFPm9zHvZNkSXdkjjWl+8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260319102948eucas1p19b0586ca5935a60f9d5bcea3bbbccdac~eN1-1Tym32451224512eucas1p1g;
-	Thu, 19 Mar 2026 10:29:48 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260319102947eusmtip1f9e65f8316f14e8d08a56aea54338db7~eN1_23p1d2191621916eusmtip1f;
-	Thu, 19 Mar 2026 10:29:47 +0000 (GMT)
-Message-ID: <c5ba58fb-50f1-4067-a099-97169ea81f68@samsung.com>
-Date: Thu, 19 Mar 2026 11:29:46 +0100
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="IqtFGomJ"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 378874458;
+	Thu, 19 Mar 2026 15:15:38 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	victor.liu@nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	jingoohan1@gmail.com,
+	p.zabel@pengutronix.de,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	alim.akhtar@samsung.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	luca.ceresoli@bootlin.com,
+	nicolas.frattaroli@collabora.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v11 12/17] drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+Date: Thu, 19 Mar 2026 15:14:47 +0800
+Message-Id: <20260319071452.1961274-13-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260319071452.1961274-1-damon.ding@rock-chips.com>
+References: <20260319071452.1961274-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v8 05/10] pmdomain: samsung: convert to using regmap
-To: Ulf Hansson <ulf.hansson@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
-	<andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam
-	Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter
-	Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>, Will McVicker
-	<willmcvicker@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAPDyKFrprMSLOBMB_BHbi=j6UXV4dXBn-H8M1BsqDWNSCJwvuA@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260319102948eucas1p19b0586ca5935a60f9d5bcea3bbbccdac
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba
-X-EPHeader: CA
-X-CMS-RootMailID: 20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba
-References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
-	<20260318-gs101-pd-v8-5-241523460b10@linaro.org>
-	<CGME20260319101424eucas1p2d5dca06240e8760046fb40507ffb3bba@eucas1p2.samsung.com>
-	<CAPDyKFrprMSLOBMB_BHbi=j6UXV4dXBn-H8M1BsqDWNSCJwvuA@mail.gmail.com>
+X-HM-Tid: 0a9d04f32d1c03a3kunm86e540ee39662d
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ00fSlZKHx5OQ0xCQkNCGExWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=IqtFGomJvTLVZcftRkJbItBXFIr/UYScIkjcMIAvW3vCCV7QnC32ERsxQR/vVXVTwxGWuV4+KEJnxfeiRbMdX/vQ6ky8fq+b8BmNE+nft1VyDCvh4jpuIbbJR9pjFx7eOSIA0RukkSUPR0ANWGmswHGJFnTT336qffOAqm184k0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=SjS5hoz5lALYwIBYUHhAR12nD30o7Vp6mbmnlUx69mY=;
+	h=date:mime-version:subject:message-id:from;
 
-On 19.03.2026 11:13, Ulf Hansson wrote:
-> On Wed, 18 Mar 2026 at 16:28, André Draszik <andre.draszik@linaro.org> wrote:
->> On platforms such as Google gs101, direct mmio register access to the
->> PMU registers doesn't necessarily work and access must happen via a
->> regmap created by the PMU driver instead.
->>
->> In preparation for supporting such SoCs convert the existing mmio
->> accesses to using a regmap wrapper.
->>
->> With this change in place, a follow-up patch can update the driver to
->> optionally acquire the PMU-created regmap without having to change the
->> rest of the code.
->>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> [...]
->
->> @@ -36,31 +35,42 @@ struct exynos_pm_domain {
->>   static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
->>   {
->>          struct exynos_pm_domain *pd;
->> -       void __iomem *base;
->>          u32 timeout, pwr;
->> -       char *op;
->> +       int err;
->>
->>          pd = container_of(domain, struct exynos_pm_domain, pd);
->> -       base = pd->base;
->>
->>          pwr = power_on ? pd->local_pwr_cfg : 0;
->> -       writel_relaxed(pwr, base);
->> +       err = regmap_write(pd->regmap, 0, pwr);
->> +       if (err) {
->> +               pr_err("Regmap write for power domain %s %sable failed: %d\n",
->> +                      domain->name, power_on ? "en" : "dis", err);
->> +               return err;
->> +       }
->>
->>          /* Wait max 1ms */
->>          timeout = 10;
->> -
->> -       while ((readl_relaxed(base + 0x4) & pd->local_pwr_cfg) != pwr) {
->> -               if (!timeout) {
->> -                       op = (power_on) ? "enable" : "disable";
->> -                       pr_err("Power domain %s %s failed\n", domain->name, op);
->> -                       return -ETIMEDOUT;
->> +       while (timeout-- > 0) {
->> +               unsigned int val;
->> +
->> +               err = regmap_read(pd->regmap, 0x4, &val);
->> +               if (err || ((val & pd->local_pwr_cfg) != pwr)) {
->> +                       cpu_relax();
->> +                       usleep_range(80, 100);
->> +                       continue;
->>                  }
->> -               timeout--;
->> -               cpu_relax();
->> -               usleep_range(80, 100);
->> +
->> +               break;
->>          }
->>
-> [...]
->
-> As a follow-up patch on top, please consider converting the open-coded
-> polling loop above into a readx_poll_timeout_atomic().
+Since the panel/bridge should logically be positioned behind the
+Analogix bridge in the display pipeline, it makes sense to handle
+the panel/bridge parsing on the Analogix side. Therefore, we add
+a new API analogix_dp_finish_probe(), which combines the panel/bridge
+parsing with component addition, to do it.
 
-This has been tried and it doesn't work in all cases required for power 
-domain driver:
+In order to process component binding right after the probe completes,
+the &analogix_dp_plat_data.ops is newly added to pass &component_ops,
+for which the &dp_aux_ep_device_with_data.done_probing() of DP AUX bus
+only supports passing &drm_dp_aux.
 
-https://lore.kernel.org/all/5c19e4ef-c4fd-4bf5-88b3-46c86751b14e@samsung.com/
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 
-Probably a comment about that could be added directly to this code to 
-avoid such conversion and breakage in the future.
+---
 
-> That said, the series looks ready to me, but I am awaiting an ack from
-> a DT maintainer on patch4 before applying.
+Changes in v4:
+- Rename the &analogix_dp_plat_data.bridge to
+  &analogix_dp_plat_data.next_bridge.
+- Remame API analogix_dp_find_panel_or_bridge() to
+  analogix_dp_finish_probe().
 
-Best regards
+Changes in v5:
+- Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP.
+
+Changes in v9:
+- Add Tested-by tag.
+
+Changes in v10:
+- Fix to use dev_err_probe() in analogix_dp_finish_probe().
+- Expand the commit message.
+---
+ drivers/gpu/drm/bridge/analogix/Kconfig       |  1 +
+ .../drm/bridge/analogix/analogix_dp_core.c    | 46 +++++++++++++++++++
+ include/drm/bridge/analogix_dp.h              |  2 +
+ 3 files changed, 49 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
+index 4846b2e9be7c..964122b5bd39 100644
+--- a/drivers/gpu/drm/bridge/analogix/Kconfig
++++ b/drivers/gpu/drm/bridge/analogix/Kconfig
+@@ -29,6 +29,7 @@ config DRM_ANALOGIX_ANX78XX
+ config DRM_ANALOGIX_DP
+ 	tristate
+ 	depends on DRM
++	select DRM_DISPLAY_DP_AUX_BUS
+ 
+ config DRM_ANALOGIX_ANX7625
+ 	tristate "Analogix Anx7625 MIPI to DP interface support"
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 81c6e81dd352..b112df52cabf 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -20,12 +20,14 @@
+ #include <linux/platform_device.h>
+ 
+ #include <drm/bridge/analogix_dp.h>
++#include <drm/display/drm_dp_aux_bus.h>
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_edid.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+@@ -1581,6 +1583,50 @@ struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp)
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_get_aux);
+ 
++static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
++{
++	struct analogix_dp_device *dp = to_dp(aux);
++	struct analogix_dp_plat_data *plat_data = dp->plat_data;
++	int port = plat_data->dev_type == EXYNOS_DP ? 0 : 1;
++	int ret;
++
++	/*
++	 * If drm_of_find_panel_or_bridge() returns -ENODEV, there may be no valid panel
++	 * or bridge nodes. The driver should go on for the driver-free bridge or the DP
++	 * mode applications.
++	 */
++	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, port, 0,
++					  &plat_data->panel, &plat_data->next_bridge);
++	if (ret && ret != -ENODEV)
++		return ret;
++
++	return component_add(dp->dev, plat_data->ops);
++}
++
++int analogix_dp_finish_probe(struct analogix_dp_device *dp)
++{
++	int ret;
++
++	ret = devm_of_dp_aux_populate_bus(&dp->aux, analogix_dp_aux_done_probing);
++	if (ret) {
++		/*
++		 * If devm_of_dp_aux_populate_bus() returns -ENODEV, the done_probing() will
++		 * not be called because there are no EP devices. Then the callback function
++		 * analogix_dp_aux_done_probing() will be called directly in order to support
++		 * the other valid DT configurations.
++		 *
++		 * NOTE: The devm_of_dp_aux_populate_bus() is allowed to return -EPROBE_DEFER.
++		 */
++		if (ret != -ENODEV)
++			return dev_err_probe(dp->dev, ret, "failed to populate aux bus\n");
++
++		return analogix_dp_aux_done_probing(&dp->aux);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(analogix_dp_finish_probe);
++
+ MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
+ MODULE_DESCRIPTION("Analogix DP Core Driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index 3428ffff24c5..bae969dec63a 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -30,6 +30,7 @@ struct analogix_dp_plat_data {
+ 	struct drm_bridge *next_bridge;
+ 	struct drm_encoder *encoder;
+ 	struct drm_connector *connector;
++	const struct component_ops *ops;
+ 
+ 	int (*power_on)(struct analogix_dp_plat_data *);
+ 	int (*power_off)(struct analogix_dp_plat_data *);
+@@ -49,5 +50,6 @@ int analogix_dp_stop_crc(struct drm_connector *connector);
+ 
+ struct analogix_dp_plat_data *analogix_dp_aux_to_plat_data(struct drm_dp_aux *aux);
+ struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp);
++int analogix_dp_finish_probe(struct analogix_dp_device *dp);
+ 
+ #endif /* _ANALOGIX_DP_H_ */
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.34.1
 
