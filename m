@@ -1,93 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EED1A6827
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960424207A;
+	Sun, 22 Mar 2026 14:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774188806; cv=none; b=gxrTEdNhHvlPK0ex+NRJNQSC9pAvKkSmrzK/yOsexlbBlcHNpFfmpoXJTS6cH6kCPqAfGA9hqxg+XKSgJB5eNyodLz0+P1hWWP2E+IYR//oAPtkaprXCz/OdCYOAuDhhn6lLThWZDLwo6AKGavdt+NhYKT5rIr27qf0m3E5lM/c=
+	t=1774188968; cv=none; b=afTG3v+rlfarNw1oNa2++CL/JkHUIf7WJO98df0kegwiYDP4/Hj4IePEjIO9sxzwD+eA2JELKGkkHlwdjzPUFlIfnQ5jELm4c55WwhR/B72t25ngFCMASvOUpMCLWv/snsH4o1O5M4+47jM7L9Bnu3IXqJpWPE7dLFIzyIigmwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774188806; c=relaxed/simple;
-	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y5hHDI+cQydzxfu1jh5+yr+o7913Cvu/DmeMbu606fEFfivNUl7S7Jm1D1JFdCFBl7kmU05H6GRX9zpEaCklZZ6d2RckjrWG3otiDG2q0OqZhwxA3BJHKjDqD2ycrd8AQ3Jw22aBRiWXI98OTH+vNoQavkNwAWOd7s8970mLKzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fES34vzJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774188968; c=relaxed/simple;
+	bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgC7wXyigLZZjVHnIUNENG3bFtLtshatil0famnLdqjnLqAAh8NE7IiVN1phcx58ki5RQ8sER2caqFprgBETyh+KpLEQLKqPbulk0REiBxHM9Yj1wfnWUSwHnWcEHHXtgG9w8iGubtcAlHVUVzt0wyQty4gexsPEooXYgeBgUKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IMrZqHVJ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fES34vzJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC742C19424
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774188805;
-	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fES34vzJMEYYVAt8hQ0aANzSxdlkzIOHfmj+7nanxSLwbMTbQkGxy//ZnXBw0OWUb
-	 c3Q8dtX9iDVT3EYwTYt4sLYywOkYNYl8q5jBDxw000R7Sn5m4zQjzMqVZNdSuItR8P
-	 U0QM88PrrS+e4jL4613IBn3LYcbu90qM5oJ++SN799TDhqXuRPs3AYmDG0GyeqaJIN
-	 CJcljyPGGLhjR63osauACWw/8AFvhDQX7gTwjRNnsMxwSJjY+ErkCQQh6ViDu0bpHM
-	 tUIenUzDHCUY+VwozRzhzzsaoFbuGc0LpTyHK/7u/o9dYuMdZcM5RSAdrcZ68LQYL0
-	 MIKn3kzCYbCpg==
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-12a695044a4so2646185c88.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 07:13:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7xRrE/ULNw8EUUhP5rRBtgJHMZcQAZK7IKmb97eASjEgbrWnL4EEvy7ks/a0NbrPpGSJnjBnpFj7UXEzbf3O/4Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3f3hFuYOxlS/mS7inyYO8GiEcQGMjKK1fe88yYdMbCYMWx/u6
-	SgSe/TcC9OGVKAupEgUYKeUah4/Lvv6HcGYGWfSHwt8AfFYa1LaptePTRGMHGQpA/nKGpt3InV4
-	Zo+pWKlUJF5bPX6WCnDmFYSdJfnao2g==
-X-Received: by 2002:a05:7022:629f:b0:11b:9386:7ecd with SMTP id
- a92af1059eb24-12a726e3eadmr3908663c88.42.1774188804941; Sun, 22 Mar 2026
- 07:13:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IMrZqHVJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774188965; x=1805724965;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IigGF6U3blVwl7+mttTv8ABlCNI5lUMx+1rU3nKGGxA=;
+  b=IMrZqHVJZjaR/bflI2oII5lxH9nN5Zx5BVl7azFfZo+mqa8zpR77xY2S
+   THH3eFQMiy42y/AIVSpINQI6OoOYjr5h8H7OMSQ+OzbneO0WCmxr4ZhxN
+   +yA16RdMXvcDECc9QnYBiztwHm+guVSiB02d0CRt/uCFJUc5ahk/XC4OY
+   pVLRC4bxX9C3GH5Tu+bQsQNf2SZvGhZL1aB7uGQQsibks5g6BLS5SLE4V
+   3LfLgRqbmLwuSMUrNZWozYW8G955qX35sCp0gS8oRAAtSHMLCiTJ6m9+8
+   gWEICpCPAiC/bQKsfQLu3AiLF3bUKilkz32d6f+anSqikc6NXWvDQJJys
+   w==;
+X-CSE-ConnectionGUID: 9n5tJ6l/RbWI9d5VFq6CeQ==
+X-CSE-MsgGUID: WjXgmqJ9Se6+mv+bNrGQCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="62765356"
+X-IronPort-AV: E=Sophos;i="6.23,135,1770624000"; 
+   d="scan'208";a="62765356"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2026 07:16:05 -0700
+X-CSE-ConnectionGUID: JRLBnVVlSqa6fLyDLAUY4Q==
+X-CSE-MsgGUID: qbzVjqmzRUKzhYMJv9+fAA==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO d7fefbca0d04) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 22 Mar 2026 07:16:00 -0700
+Received: from kbuild by d7fefbca0d04 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w4Jav-000000002Dx-1Ld7;
+	Sun, 22 Mar 2026 14:15:57 +0000
+Date: Sun, 22 Mar 2026 22:15:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>
+Subject: Re: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
+Message-ID: <202603222239.JTuBxs7K-lkp@intel.com>
+References: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
- <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
-In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Sun, 22 Mar 2026 14:13:12 +0000
-X-Gmail-Original-Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
-X-Gm-Features: AaiRm5108rX0H_CDRkg1jedFrdyn5bPiHycKlLMUICMJdSqU48gN54_ILYySwo8
-Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
-Subject: Re: [PATCH 4/6] drm/mediatek: mtk_hdmi*: convert to of_drm_find_and_get_bridge()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc@linaro.org>
 
-Luca Ceresoli <luca.ceresoli@bootlin.com> =E6=96=BC 2026=E5=B9=B41=E6=9C=88=
-7=E6=97=A5=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:22=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> of_drm_find_bridge() is deprecated. Move to its replacement
-> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
-> is put when done by using the drm_bridge::next_bridge pointer.
+Hi Alexey,
 
-Acked-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+kernel test robot noticed the following build warnings:
 
->
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
-> 2.52.0
->
+[auto build test WARNING on 785f0eb2f85decbe7c1ef9ae922931f0194ffc2e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Klimov/dt-bindings-clock-exynos850-Add-APM_AP-MAILBOX-clock/20260322-085441
+base:   785f0eb2f85decbe7c1ef9ae922931f0194ffc2e
+patch link:    https://lore.kernel.org/r/20260320-exynos850-ap2apm-mailbox-v1-4-983eb3f296fc%40linaro.org
+patch subject: [PATCH 4/5] mailbox: exynos: Add support for Exynos850 mailbox
+config: x86_64-buildonly-randconfig-004-20260322 (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260322/202603222239.JTuBxs7K-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603222239.JTuBxs7K-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
+>> Warning: drivers/mailbox/exynos-mailbox.c:60 struct member 'irq_mask_value' not described in 'exynos_mbox_driver_data'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
