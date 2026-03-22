@@ -1,179 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96BE2F1FEA;
-	Sat, 21 Mar 2026 19:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EED1A6827
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774120482; cv=none; b=MwKP7O521MhKUq5v4VAW9eThueTwQHQB2JoS0O8VARuh5bt4azU8lCr73E/wjW+b0MADnTEB9E5kgAW2tSc/Pv6OGSA7744W8m9AP7eWnlyDN2uaSUKYIqq31Fs0Rw7DhNXhIRXKoh14QZQTojPPovJuQStgu4qsMZlEXuU2dio=
+	t=1774188806; cv=none; b=gxrTEdNhHvlPK0ex+NRJNQSC9pAvKkSmrzK/yOsexlbBlcHNpFfmpoXJTS6cH6kCPqAfGA9hqxg+XKSgJB5eNyodLz0+P1hWWP2E+IYR//oAPtkaprXCz/OdCYOAuDhhn6lLThWZDLwo6AKGavdt+NhYKT5rIr27qf0m3E5lM/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774120482; c=relaxed/simple;
-	bh=OvJDdKNF1JerQZH4dHMIIA81barlvSsrPlVTzp4FDsI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M8FUyrZ50kdt+zLemIkMOg+bR2C5A3ROBSjxFiD3nHEmVksYQou+MZrbJJv7t4tRioXCjn5P2pIredlm7wyWewwvjByp9rDowvF6y713cJdmKQBDj3JEzgOkkmZxagyIAZeqtdmpxlECaprZyYJWHF/d0lvkSCBiGtHKtRxwoYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUba/2n2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774188806; c=relaxed/simple;
+	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y5hHDI+cQydzxfu1jh5+yr+o7913Cvu/DmeMbu606fEFfivNUl7S7Jm1D1JFdCFBl7kmU05H6GRX9zpEaCklZZ6d2RckjrWG3otiDG2q0OqZhwxA3BJHKjDqD2ycrd8AQ3Jw22aBRiWXI98OTH+vNoQavkNwAWOd7s8970mLKzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fES34vzJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUba/2n2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F9CC19421;
-	Sat, 21 Mar 2026 19:14:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fES34vzJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC742C19424
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 14:13:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774120482;
-	bh=OvJDdKNF1JerQZH4dHMIIA81barlvSsrPlVTzp4FDsI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tUba/2n28OrmiKCB3pcIDLMTDjicUTkVYcEoIETfqqmPDmaridoOyQ9nUWAR44n//
-	 7ckj+aMvnEhxUTDrkAjEqPCQN7MLNvQ2uCvMDQAt7abvHK4cRVWV11e43t70B9bm0P
-	 pX/OG1dN6dN+dn5SLtO4QAVJgPYIP4ZnM30JWPipgAqaFzyoijl2F7jIa3AQM/4w4Z
-	 oJHpkTTX0J+aZUGYnSxaIwBkEWRQHLQowgY/1MKT25Uwu9OGXOQQ8t04WWqR4F+94a
-	 0ciHMeq8QWbPNl57fFAwIm0j07x7qGsRQXtekas5WCVvhNGJOJyNmCurRIKj4NXgNJ
-	 SxjkR2psFTn8Q==
-Message-ID: <355b2f8f-0a3e-4209-8b1e-10600c2b3df9@kernel.org>
-Date: Sat, 21 Mar 2026 20:14:36 +0100
+	s=k20201202; t=1774188805;
+	bh=6WyenFkskQRviNgIdSNi6d7LvQNFj/WN1yDFKmE61aM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fES34vzJMEYYVAt8hQ0aANzSxdlkzIOHfmj+7nanxSLwbMTbQkGxy//ZnXBw0OWUb
+	 c3Q8dtX9iDVT3EYwTYt4sLYywOkYNYl8q5jBDxw000R7Sn5m4zQjzMqVZNdSuItR8P
+	 U0QM88PrrS+e4jL4613IBn3LYcbu90qM5oJ++SN799TDhqXuRPs3AYmDG0GyeqaJIN
+	 CJcljyPGGLhjR63osauACWw/8AFvhDQX7gTwjRNnsMxwSJjY+ErkCQQh6ViDu0bpHM
+	 tUIenUzDHCUY+VwozRzhzzsaoFbuGc0LpTyHK/7u/o9dYuMdZcM5RSAdrcZ68LQYL0
+	 MIKn3kzCYbCpg==
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-12a695044a4so2646185c88.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Mar 2026 07:13:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7xRrE/ULNw8EUUhP5rRBtgJHMZcQAZK7IKmb97eASjEgbrWnL4EEvy7ks/a0NbrPpGSJnjBnpFj7UXEzbf3O/4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3f3hFuYOxlS/mS7inyYO8GiEcQGMjKK1fe88yYdMbCYMWx/u6
+	SgSe/TcC9OGVKAupEgUYKeUah4/Lvv6HcGYGWfSHwt8AfFYa1LaptePTRGMHGQpA/nKGpt3InV4
+	Zo+pWKlUJF5bPX6WCnDmFYSdJfnao2g==
+X-Received: by 2002:a05:7022:629f:b0:11b:9386:7ecd with SMTP id
+ a92af1059eb24-12a726e3eadmr3908663c88.42.1774188804941; Sun, 22 Mar 2026
+ 07:13:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/10] dt-bindings: soc: google: gs101-pmu: allow power
- domains as children
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Juan Yescas <jyescas@google.com>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
- <20260318-gs101-pd-v8-4-241523460b10@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260318-gs101-pd-v8-4-241523460b10@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-0-ef48a517828e@bootlin.com>
+ <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
+In-Reply-To: <20260107-drm-bridge-alloc-getput-drm_of_find_bridge-3-v1-4-ef48a517828e@bootlin.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Sun, 22 Mar 2026 14:13:12 +0000
+X-Gmail-Original-Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
+X-Gm-Features: AaiRm5108rX0H_CDRkg1jedFrdyn5bPiHycKlLMUICMJdSqU48gN54_ILYySwo8
+Message-ID: <CAAOTY_9PH4yV-mDFZ+mkNRT7R9qoZOtjQhhqmyWjx1LWSu=giw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] drm/mediatek: mtk_hdmi*: convert to of_drm_find_and_get_bridge()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/03/2026 16:27, André Draszik wrote:
-> The power domains are a property of / implemented in the PMU. As such,
-> they should be modelled as child nodes of the PMU.
-> 
-> Note:
-> Because the properties added are 'required', this commit breaks DT
-> validation of the existing DT for Pixel 6, but a) that's simply because
-> the DT is incomplete and b) a DT update will be posted once the binding
-> is accepted.
-> It is not possible to write the binding such that it supports old
-> (incomplete) DTs in addition to the full version, but as per above
-> it's not required to keep supporting old DTs.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Luca Ceresoli <luca.ceresoli@bootlin.com> =E6=96=BC 2026=E5=B9=B41=E6=9C=88=
+7=E6=97=A5=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:22=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> of_drm_find_bridge() is deprecated. Move to its replacement
+> of_drm_find_and_get_bridge() which gets a bridge reference, and ensure it
+> is put when done by using the drm_bridge::next_bridge pointer.
+
+Acked-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+
+>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > ---
-> v8:
-> - move comment from commit message footer into body (Rob)
-> - fix incorrect use of ranges in example (Rob)
-> 
-> v7:
-> - really be consistent with quoting (Krzysztof)
-> - drop invalid tested-by tag (Krzysztof)
-> 
-> v4:
-> - consistent quoting using " (Krzysztof)
-> - add samsung,dtzpc to example
-> ---
->  .../bindings/soc/google/google,gs101-pmu.yaml      | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
-> index a06bd8ec3c20..52c47252b801 100644
-> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
-> +++ b/Documentation/devicetree/bindings/soc/google/google,gs101-pmu.yaml
-> @@ -16,6 +16,14 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges: true
-> +
->    reboot-mode:
->      $ref: /schemas/power/reset/syscon-reboot-mode.yaml
->      type: object
-> @@ -39,9 +47,23 @@ properties:
->      description:
->        Phandle to PMU interrupt generation interface.
->  
-> +patternProperties:
-> +  "^power-domain@[0-9a-f]+$":
-> +    type: object
-> +    description: Child node describing one power domain within the PMU
-> +
-> +    additionalProperties: true
-> +
-> +    properties:
-> +      compatible:
-> +        const: google,gs101-pd
-> +
->  required:
->    - compatible
->    - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-
-This causes warnings, so I dropped the patches. I really do not
-understand how this is organized. This is not a dependency for pm
-domains driver but it is included here. It is a soft dependency for DTS,
-but that is nowhere to be found.
-
-Best regards,
-Krzysztof
+> 2.52.0
+>
