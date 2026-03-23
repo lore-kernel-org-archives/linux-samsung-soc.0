@@ -1,141 +1,137 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9B63B585E
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 15:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFB5282F0C
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 15:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774280287; cv=none; b=ajGw3t6BB4RoZN0du723cU4f4SMiFay7Ig9pVJx2xE39jJcoZFvJG/fbvNtn/63h8YUCFnN0Cj3Ol45G8dc+U4y/Yej5+53j7nmHoIQFsZ74TgC55ihHChr1pwI5VukwaxLWIc+q46hORx4wJP2NHxhUYCBVZ++pZ9EQzZ0rQ6o=
+	t=1774280549; cv=none; b=QvPxpUVDWLP3jqo3Dg6hDRghM2LsNTOOzJC1zWHHn+HCcgJzu61H+q8SB4dCCTFh1JaBxHW4pT6Zt7H3HmpaQKzKGh5HSFTUVCcEyvGbW8jpBraJIrwinJiSIasedzjo1hBnJKE0jtUAbgTcTPGrPk4H9VfriU1T2rtOfM8BGz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774280287; c=relaxed/simple;
-	bh=vToF1UbNvL4l1OkVwlOI7+XcnxHkjKZMzjHswh/EJ+k=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=kzfm7YwHYdrYW2Jzwm+IaAzJNBdjtDLW/PSB5T/BOP98Q3bi/cru4eBnDfV1d5YB18qLkpshVVfF2NAPsReMOyvy9NLl9J7lKRsBrVtWizwdaDE0RSZsk0miy3maflExjQrKZ7jGRLLqEheDDBQpVuZ0EqDsxSlym2sVDX1IPlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mgU9aFrC; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1774280549; c=relaxed/simple;
+	bh=rRhxVK/c/+wH2KhlKu+QUVmINgMaPr8vrZEfbRxuvmc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=pck3cEYkc5g+VROl5PdvGEa+9K+lkxocyi6S0hG1UJM9OpryJ/nyP004vEM/oMb8S3LRI+0EUfMweQgQ/OPXIhc0h1XWlXkpip/X8CUG9J38nX40yuTPjC11ZAOzBaVjnA2jBAic7On5RC+HAuhKrGs/IAUZHpwPGKIog23+iOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C0E8TlYL; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mgU9aFrC"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260323153802epoutp02364cf7c70d1f0661e6369396608034bd~fgoREB2Cq1734917349epoutp02n
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 15:38:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260323153802epoutp02364cf7c70d1f0661e6369396608034bd~fgoREB2Cq1734917349epoutp02n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1774280282;
-	bh=MYU9K1BczlLtBMfJPDu28QIk9pzoA+hXl3yf17nC2HI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=mgU9aFrC+5Kx+21CCBQ48vtUtevP0XGV5aHjupTGFTw7s0wbx2FYZ7piHu2gEGNx9
-	 7FiJ9iRzTsn7N6OtZVcQFwqx9+/yRy1FbPgDJReQh76dJWCUi3xQdbS9llr9OgF8ia
-	 3KFTDuksHm5/ZDwJUU6SICm8wW+RY1yai4quNiMM=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260323153802epcas5p1bb1e979594c5257c037cdf6411e7a177~fgoQZrLX82373723737epcas5p1t;
-	Mon, 23 Mar 2026 15:38:02 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ffckf0KMvz3hhT4; Mon, 23 Mar
-	2026 15:38:02 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20260323123542epcas5p349d0e7c45d02ccaa06c84dbdf1777126~feJElRtj12139221392epcas5p34;
-	Mon, 23 Mar 2026 12:35:42 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260323123538epsmtip2099c850de3b514ee4ac3f5a0092dd02a~feJAkDKG92361023610epsmtip2P;
-	Mon, 23 Mar 2026 12:35:38 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Vladimir Oltean'" <vladimir.oltean@nxp.com>, "'Martin K. Petersen'"
-	<martin.petersen@oracle.com>
-Cc: <linux-phy@lists.infradead.org>, "'Vinod Koul'" <vkoul@kernel.org>,
-	"'Neil	Armstrong'" <neil.armstrong@linaro.org>,
-	<dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-can@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <spacemit@lists.linux.dev>,
-	<UNGLinuxDriver@microchip.com>, "'Bart Van Assche'" <bvanassche@acm.org>,
-	"'Peter Griffin'" <peter.griffin@linaro.org>, "'James E.J. Bottomley'"
-	<James.Bottomley@HansenPartnership.com>, "'Krzysztof	Kozlowski'"
-	<krzk@kernel.org>, "'Chanho Park'" <chanho61.park@samsung.com>
-In-Reply-To: <20260323115848.ghdu4sbk75tvggfb@skbuf>
-Subject: RE: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
- struct phy guts
-Date: Mon, 23 Mar 2026 18:05:36 +0530
-Message-ID: <1891546521.01774280282025.JavaMail.epsvc@epcpadp2new>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0E8TlYL"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-439cd6b0aedso2916436f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 08:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774280545; x=1774885345; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d+UUACqAEvJ8nDbjPv0hUOrpaSay71+UWgCtj8ajV1Q=;
+        b=C0E8TlYLgYBI/zxAOfx6N/xW2+JHbRv5nPy6Q6X1ASDNtyWsRP0lwFOB+LotUS0rLe
+         NQAZGj5XFdtKu+YjnwIBHeDzU6LsaEvUXaX14Yb/Mf4YPd2PPwKqloGAyiB4RwEl1QRO
+         WRut9tOIAiD4bhOFAIu0J1EEhnb7kotCg6xMFJWoASSPQbHWA5gurFl9Z0RA8A+2vPCF
+         f+LVcYytx8vNu7DB5thHsIDlczbIv8npWyHMPMu9oPxl1g4QqE1rlv+BgGrZcOI2RRcN
+         YyEwz1Xz6bKHVqCbvBJT2MwV9DZ9+s0suRBx2Bu64FgOGUzR58eeyltSHnLPn5Z3MGjs
+         Qpxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774280545; x=1774885345;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d+UUACqAEvJ8nDbjPv0hUOrpaSay71+UWgCtj8ajV1Q=;
+        b=A/fnpGygGM1lWRZE8ZdzZf/VBgfASZpfkhK4ZJRcgb77/Ug2arHunyXP7Gbyqvyp0T
+         PPbqGt82ZrvoREPdmF5iDyTPM+U5h97J+6Rd2DVkTEoDDlwvUZkAcKu+x1C04BBB1hQB
+         qBEfBzZgTK34+WXeWL1eIt116ZBwCtO6+rMhW8toJax2eQ9c8BnIUQo7biPFXeT2dFxR
+         s5XZGo71JLddMZfuWMHFtoVBuCBI6QLJVKyT6DXG8AatKk0o7xiD1Ciz2aufbigpEWw3
+         yY1bmqBCxP7t764a+GdmHhnZQGGBSv43VkABxW9EFbjy7ndvA22tUevat7ChxekbVy0O
+         Ucjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUngIhex/+kD4iNmdvCkomS2WDFPAjePXkm6i3LLG/ec1bKWVLchYUV2bU6eKOKtZ5lT/iYlsRXQYmVwV/IZHq3WA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyovkOr1u5Eh8CCnLI217oPgPoGKQRhEoB0XbWO0q2kWdvwsV3/
+	CcHgQB1i+b4Y1pDwKsd5N/okgOs5qbxI/6DWlVLquo8l1UywRcYVFJsfvCCnKNrkTZ0=
+X-Gm-Gg: ATEYQzwYo0fByBzNEtD3TOSRLhGI+/RFfkWec/bwuk5uFEbPSEj19dRb59xxwRlOA/q
+	qVY+bi1nZJltepmZYrA8OcINuavIMtjkBI/6PNTptKqwxWe5e3S4Q/6A5jBrTOUxEE/LXQ8MCY3
+	k2UuJBCC/E8/Bbr9eXd9lNW68CcTBFkfsoCVK0SB6dzZ0i0bx3Y8/GgknP7jSyuMphp8FqOyGEE
+	6Q2aM76sqv3jx2KL1laKf2hCTDMCwT5AgQaBtw+3GI0NCkn1fTmZN8rxXoxa3M+WARU9Smh1f8N
+	Yjr6508us+juSzx4UiG9tdbGJhQB+CxSgjWyUPN0Co2YfEMALPWiaWp9p+O7m7s5rywNJnh46Ac
+	l+FkuGSobx/ijm8UabYabw7o1hexQuFrmWa/Bs/OGgY/ECVDN8CDtY+tPBdGSpRdJbvjBg1g88o
+	CqCgnlBnfpPvkd6WSF1Ge7enHqtN/MDaTjs9NG70IUCXG4sugTDTjGoMmgMsW6bsW95jK7BR4p/
+	Bn63HNThV0C
+X-Received: by 2002:a5d:5f53:0:b0:439:be04:13c4 with SMTP id ffacd0b85a97d-43b6423d85bmr18780048f8f.4.1774280545056;
+        Mon, 23 Mar 2026 08:42:25 -0700 (PDT)
+Received: from localhost ([94.4.193.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b644acb52sm32068966f8f.7.2026.03.23.08.42.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Mar 2026 08:42:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJoz1sM+EbPjkyDopxrfJVWkMJWdwI9AyWpAaSC6pgB9ZOp/gJXIgBltGJxFXA=
-Content-Language: en-us
-X-CMS-MailID: 20260323123542epcas5p349d0e7c45d02ccaa06c84dbdf1777126
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20260323115859epcas5p10177db12a2e8aee9578271ff1411137b
-References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
-	<20260319223241.1351137-10-vladimir.oltean@nxp.com>
-	<yq1a4w3l04g.fsf@ca-mkp.ca.oracle.com>
-	<CGME20260323115859epcas5p10177db12a2e8aee9578271ff1411137b@epcas5p1.samsung.com>
-	<20260323115848.ghdu4sbk75tvggfb@skbuf>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 23 Mar 2026 15:42:23 +0000
+Message-Id: <DHA9YL83GF3E.VOMD4KV10NLW@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Alexey Klimov"
+ <alexey.klimov@linaro.org>, "Sam Protsenko" <semen.protsenko@linaro.org>,
+ <linux-samsung-soc@vger.kernel.org>, "Peter Griffin"
+ <peter.griffin@linaro.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>
+Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC 1/8] dt-bindings: soc: move and rename
+ google,gs101-pmu-intr-gen schema under soc/samsung/
+X-Mailer: aerc 0.21.0
+References: <20260226-exynos850-cpuhotplug-v1-0-71d7c4063382@linaro.org>
+ <20260226-exynos850-cpuhotplug-v1-1-71d7c4063382@linaro.org>
+ <b02f06e1-dac7-4521-bf5e-471b5575467d@kernel.org>
+In-Reply-To: <b02f06e1-dac7-4521-bf5e-471b5575467d@kernel.org>
 
-Hi Vladimir
+On Sat Mar 7, 2026 at 5:03 PM GMT, Krzysztof Kozlowski wrote:
+> On 26/02/2026 16:47, Alexey Klimov wrote:
+>> The GS101 PMU interrupts generation block is actually a standard Samsung
+>> Exynos IP block found in older SoCs like the Exynos 850 and others and
+>> not exclusive to Google SoCs. Thus, renaming to
+>> samsung,exynos850-pmu-intr-gen, moving the schema file to soc/samsung
+>> directory to reflect its origin, since Exynos850 predates GS101 SoCs,
+>> and preparing for adding Exynos850 description.
+>>=20
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> ---
+>>  .../samsung,exynos850-pmu-intr-gen.yaml}                              |=
+ 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/soc/google/google,gs101-p=
+mu-intr-gen.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,ex=
+ynos850-pmu-intr-gen.yaml
+>> similarity index 80%
+>> rename from Documentation/devicetree/bindings/soc/google/google,gs101-pm=
+u-intr-gen.yaml
+>> rename to Documentation/devicetree/bindings/soc/samsung/samsung,exynos85=
+0-pmu-intr-gen.yaml
+>> index 2be022ca6a7d..f9b40f3fd165 100644
+>> --- a/Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr=
+-gen.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos850-pm=
+u-intr-gen.yaml
+>> @@ -1,10 +1,10 @@
+>>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>  %YAML 1.2
+>>  ---
+>> -$id: http://devicetree.org/schemas/soc/google/google,gs101-pmu-intr-gen=
+.yaml#
+>> +$id: http://devicetree.org/schemas/soc/samsung/samsung,exynos850-pmu-in=
+tr-gen.yaml#
+>>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>> =20
+>> -title: Google Power Management Unit (PMU) Interrupt Generation
+>> +title: Samsung Power Management Unit (PMU) Interrupt Generation
+>
+> Rename is fine if you add here compatible, otherwise the name does not
+> match the compatible.
 
-> -----Original Message-----
-> From: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Sent: Monday, March 23, 2026 5:29 PM
-> To: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: linux-phy@lists.infradead.org; Vinod Koul <vkoul@kernel.org>; Neil
-> Armstrong <neil.armstrong@linaro.org>; dri-devel@lists.freedesktop.org;
-> freedreno@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-arm-msm@vger.kernel.org; linux-can@vger.kernel.org; linux-
-> gpio@vger.kernel.org; linux-ide@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-media@vger.kernel.org; linux-
-> pci@vger.kernel.org; linux-renesas-soc@vger.kernel.org; linux-
-> riscv@lists.infradead.org; linux-rockchip@lists.infradead.org;
-linux-samsung-
-> soc@vger.kernel.org; linux-scsi@vger.kernel.org;
-linux-sunxi@lists.linux.dev;
-> linux-tegra@vger.kernel.org; linux-usb@vger.kernel.org;
-> netdev@vger.kernel.org; spacemit@lists.linux.dev;
-> UNGLinuxDriver@microchip.com; Bart Van Assche <bvanassche@acm.org>;
-> Alim Akhtar <alim.akhtar@samsung.com>; Peter Griffin
-> <peter.griffin@linaro.org>; James E.J. Bottomley
-> <James.Bottomley@HansenPartnership.com>; Krzysztof Kozlowski
-> <krzk@kernel.org>; Chanho Park <chanho61.park@samsung.com>
-> Subject: Re: [PATCH v5 phy-next 09/27] scsi: ufs: exynos: stop poking into
-> struct phy guts
-> 
-> On Thu, Mar 19, 2026 at 10:15:17PM -0400, Martin K. Petersen wrote:
-> > Vladimir,
-> >
-> > > The Exynos host controller driver is clearly a PHY consumer (gets
-> > > the
-> > > ufs->phy using devm_phy_get()), but pokes into the guts of struct
-> > > ufs->phy
-> > > to get the generic_phy->power_count.
-> >
-> > Ah, newer version. Would still like an ack from Samsung.
-> >
-> > And I hit the wrong key, I did not actually apply this...
-> 
-> I will have to resend v6 because of an armv7 build error I've caused for
-ufs-
-> qcom.c (which doesn't #include <linux/interrupt.h>, and relies on a
-transitive
-> inclusion from <linux/phy/phy.h>). It would be nice to get the ack from
-> Samsung, but I'll send the next version in the upcoming hours regardless.
-Will review and possibly test on one of the board later tonight
+Thanks, I'll rearrange commits then to make it sane in the next submission.
 
-
-
+BR,
+Alexey
