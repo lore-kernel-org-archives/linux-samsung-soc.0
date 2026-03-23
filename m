@@ -1,138 +1,160 @@
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AF2386546;
-	Mon, 23 Mar 2026 09:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D03394476
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 11:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774257069; cv=pass; b=ikGBn9y5mMWXH3Y+HDxr4ZARJ893tX4AWNQd0P3MXZ8BHRcHWNMvjzTfoZwb913r6cDesfQZ4Hv1QOmYMNHn0jLztDtpbjbLgUUXSDpsZVjRyl6WwUrAnmm1XNglBUnOm3qOzPBFgqqEeeapoTvZKILYWhdmYUGgc4JG+KKjunE=
+	t=1774264468; cv=pass; b=D5K0cvuJ17Ejze0dU2hUhhB3ffoi21umtZgcbu7/XMT8Z0aZPWROCvaGd+FWK/JRIXXEaiZTXOdL5dvFEYmSr2EDgoFmowQYejc57DchfHm/hzaCsS5cSHxWnMeS6HSKrfWSQ+hFg4JDhJ8ZI3vFzz0jC3p8qWvsEPjZhaY2hcA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774257069; c=relaxed/simple;
-	bh=suw9KHLI1LNKkl/PCLrf2qkeUAqtRJBNl4/N/e6MHDw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hcKGZcWuy9nGrI/hlBZH4XwFWKizI0IEvBpSxOy/71+NBdlnhvLA3c+yCHmf84ZrWgFEunhPYVaSGCbFMts3YlcyH7a1W66GjwRnQKvDievLBWvMCRoypV+QAoKLCMEJj1EAGBwfDrNlWkafcrAb/op15DLhH8DiH6DWsi3sFHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=oB5MUOcw; dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=OxctGTOo; arc=pass smtp.client-ip=85.215.255.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+	s=arc-20240116; t=1774264468; c=relaxed/simple;
+	bh=YsJoLrLCtXBI6DtmBAjdk5zdQPkh2dEYsn5jbiErAYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LlpCR4DPJo8/AuFHPNY/KfYOcwGFsVBFo9qc13C4BT36zQXDfMY7SGoN0lj0snRqNMTOoLuMVo2A/sdCm/DL6dyZ7C3d/rKxWwGmJuDa477vSfayb3Ihh/ls/HXI8wMt7pAoi+WQmmYq5rM+Jkkq3/x20zMsLqCw32sch9NU9Ec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bn82Ql8b; arc=pass smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="oB5MUOcw";
-	dkim=permerror (0-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="OxctGTOo"
-ARC-Seal: i=1; a=rsa-sha256; t=1774257016; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=fCnQxOjBHWAvciIhvDWKGSu1LEvxeGBq1dtQMwfQ/6WAAJnAx3Yp4cEn/ZabU9x/sM
-    GIgqdDNxbQutsjV8oO8lPOLn0DpOb3Bkoq8I0uKtoF4cqWGt+gTdB6X0ByylvHnf8gUR
-    JMKimUSb+RNCcx2n245u3T+748iW+y08/SRCUhsrhZuz7IWewgetlkXiKpxFeF9OMaWA
-    804UyV/Q/Q9RAubQsnrfP2ieNJ40fkzT5ZJXl/ctRCmY30+9x5QrfVBfPbAKgeoc/nuo
-    dQvcgEg8VW1iU4gK4sOFBovJLylMa5bx9O1TpWqp/V4s5NLxvAvR/ejnFPQbpcDJeibg
-    mPoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1774257016;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=suw9KHLI1LNKkl/PCLrf2qkeUAqtRJBNl4/N/e6MHDw=;
-    b=j44P6oh9KjaapEvWeWAxinrm23dGpzGc6zQgz8zReYtOa8RQO1OZtijvbstav8i6TH
-    y+e9aUAZguwnx0WsGDuoMcYVUX5ylEtlgqztFbRc8KybT5ARjQynxC4UA7LeXPElPkqr
-    wC1AVGXoNo/vsaKHiJE9i20B3Kr/VSvUMtPkZT3YFWr79PoMgfshTB8yJamJoNXAdAo4
-    Vks/GHstO1/+Ff+kWLQUyNUbqK03RupBrRmd+PHiMZbqvG03lpDg71c2dg869GrHeBwB
-    7ILalUn4LJCoSg7K30giTEp1xd4ooKQGr/A3zDJpaxAxSuik5QrqD3SdHKefIB1xqfub
-    PxCQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1774257016;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=suw9KHLI1LNKkl/PCLrf2qkeUAqtRJBNl4/N/e6MHDw=;
-    b=oB5MUOcwnL8wCWZIvUbSF+n2tSmvY2PVB1F2iP1KO29zhSuG8WjCJd7fd9BCHBLaoO
-    hCZji4UZWVbHd/cymJEyO1S+ozjz244YJBfyKb9vafioRhTGzelXhX4OzKC6kK5nhtL4
-    YQR79nLITuX5GloZVPJoO/UpMz3kMEQO92qhPnTcL6pc37pfKMniHYxAQAZfa0t7YL1Z
-    S1L3kuaFutU7wdHOboPeeVPCX/vhOxSEJR9ndUkN4paxKvvTF6X72S4NxJju1E+/ZgG5
-    Z9NH3rqjY80KOT4BKWf7AYDRjw3oVY2qlgM2m1rS0eSuQi0Z8yn0yYbBvO6roGjoWV3Z
-    Vs2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1774257016;
-    s=strato-dkim-0003; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=suw9KHLI1LNKkl/PCLrf2qkeUAqtRJBNl4/N/e6MHDw=;
-    b=OxctGTOoYRuBaiR748PWHh5Zf8TwSpWRVyedcUgy/m2eZ9JYyuKBf0kvDe4ia1Uls5
-    cUNnrJp25Kfa9ukmmCBQ==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0DBslXBtZUxPOub3IZqk"
-Received: from [10.176.235.211]
-    by smtp.strato.de (RZmta 55.0.1 AUTH)
-    with ESMTPSA id z7934522N9ADQJ7
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 23 Mar 2026 10:10:13 +0100 (CET)
-Message-ID: <d74ef14d2376d6b4ca819eccb4570120f658caeb.camel@iokpp.de>
-Subject: Re: [PATCH v4 01/12] scsi: ufs: core: Introduce a new ufshcd vops
- negotiate_pwr_mode()
-From: Bean Huo <beanhuo@iokpp.de>
-To: Can Guo <can.guo@oss.qualcomm.com>, avri.altman@wdc.com,
- bvanassche@acm.org,  beanhuo@micron.com, peter.wang@mediatek.com,
- martin.petersen@oracle.com,  mani@kernel.org
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Sai Krishna
- Potthuri <sai.krishna.potthuri@amd.com>, Ajay Neeli <ajay.neeli@amd.com>,
- Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Chaotian Jing <chaotian.jing@mediatek.com>, Stanley Jhu
- <chu.stanley@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  "Bao D. Nguyen"
- <quic_nguyenb@quicinc.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Archana Patni <archana.patni@intel.com>, open list
- <linux-kernel@vger.kernel.org>, "open list:UNIVERSAL FLASH STORAGE HOST
- CONTROLLER DRIVER..." <linux-samsung-soc@vger.kernel.org>, "moderated
- list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>, "moderated list:UNIVERSAL FLASH
- STORAGE HOST CONTROLLER DRIVER..." <linux-mediatek@lists.infradead.org>,
- "open list:UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER..."
- <linux-arm-msm@vger.kernel.org>
-Date: Mon, 23 Mar 2026 10:10:12 +0100
-In-Reply-To: <20260321031021.1722459-2-can.guo@oss.qualcomm.com>
-References: <20260321031021.1722459-1-can.guo@oss.qualcomm.com>
-	 <20260321031021.1722459-2-can.guo@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2.1 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bn82Ql8b"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5a13a06fc85so2843750e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Mar 2026 04:14:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774264462; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IeQvzqb2rfH4ko729OOZQ+mgdea76bLbOk7In2GMGo9hSInGdhSdjRwtO9+yaQlMIX
+         tBpIR+LJ8gTW691T/oDdO8YFrDEoyZF5rxPN9wrARlPya97BJxbmG5K9LVx8YbBrOvjs
+         955I8s88EbZlU7kVQAOL0YmwzuyonJ229ZnZF39PXcZ63AvS4oKjB8MKsFe/m7ow+CZt
+         F/5SKxskYtEsckR2rBiOZhb+DoDQTnoVQYteb+H1rkN+ZJXZpOMk2EDv3qh6UzeDUYI4
+         gWWGm5tbBuJyDygvfln1Hukk3dhAsQH6Tl5z0uFQLXOHlzFWm73RIcPkhIJXWSo45lKc
+         AXCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+IJUWFVuRtnRrcxOAe+qH0nHesEXlr9bnFCdCu3nBCU=;
+        fh=0BxYMn4PsY81AHs/0mmt/MlReMGxnpUCFr+Cjlbtg5Q=;
+        b=U82nBHy5ElagevQLP4wJXXygZshR8D7l0Y0u1GwueNCSXRZe5IppCP4jzdOkEUxkuT
+         gEudvskK7rjGdCG+tggS0czXG4ZPQwnzz8lpVIpK0f9ym1e6AeC8uEuHRqJEY8Ufu7Kl
+         g8P1/EAsh3+a1uYqSf0MHqnua4u6SOazbeQ99OabgKRrPsURfE6PCertVb6+Mv1mOKGt
+         up7mXdLQrV3pKelCOT4a77ZrcPfvYxphSzubvcXFuVM4C6SXc1ZqesO1wyl5my+o3V9J
+         qj3s3KiA3nDePTRFlHWa1unpOMzxk7OtZ1dXJKZWvgQuJEXi5Km35uokz7nSdQxRhOsS
+         dA1Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774264462; x=1774869262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+IJUWFVuRtnRrcxOAe+qH0nHesEXlr9bnFCdCu3nBCU=;
+        b=Bn82Ql8bEbzB7ovYrS2cyKJ7rqnYq5cuNEGH8ulsVoNTcEZ3cTXKEoNT2IH9h6RTF0
+         7jZGxZSi1sN30QazDNR5Y9JpYA01kKZhXFxN26S2LOJv4xR4z6oTxQVs4qFTqgizm71O
+         UBoj7hDw2QnR2iKLbKF7xec1NC/Olc2cCY4m+dLf+7cPHr7KLwU3zGdRL06RydJmTYUW
+         CVTXAMMna7cDto7DWo0QrTV6Qki/b0DvMVVlTmFbVBAspDh+b0CmzQMy1O8DDxRn8Iao
+         GL54wek7J00SOpMExdOYoAz1/jm0/R2EpodH3WLal9z9sECTSFWbAC1+ppymJuyIdz99
+         6yaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774264462; x=1774869262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+IJUWFVuRtnRrcxOAe+qH0nHesEXlr9bnFCdCu3nBCU=;
+        b=c2MQBlc3QpkBl6CZ3Qm93aTN9R2WhTfQmuY44p8fTWscLRnS137NBeHBdjT5VFuP8H
+         1IykwPJY3nnkqHT9VwAG8gfAICV83RtikNxg5LjqUXybgQu0qZ9cN3Qevwp5IapKW5u7
+         hKjlit6GYXS1IavVOkEPE+zcI9ad7PYipWHdNWFITMhoc9AIwhgg2bouFOXqwq3uap3i
+         lfW6/NeFMr/8iI4Xg0r2jLg5drnLNBUYkdj8I6EVx4NyGhcYwOhAtcSaFMWi2pFqDak2
+         tv9HU4MsWzO12bG7JQVs5HsLpOgvJ9jH9Sd+GSv/zxGuxhicClNTflHQ7NUo+7z3FOpq
+         pOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvUfZIRdHuySjMTHk3mMqoG7VjPv4QVD9eirpJlv5uSidH51mz4LePoRwjWD5QJUr4Ex+2TD8hV6kP2ib0DpSFZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhFPI9skeal1wH7R6y4Cg7MCxIZrG+5B9n/mzxjFf7bw5T8xTN
+	bVjLSTouPcepaOYf4KcsFOI6couEcE3c3MU7guMdsxUZw8g5pruXyX2a1Aj3FiX+4k2trys9ULR
+	pF8EQhdEBrrA+kBUYmU/+QNEaK9POILN0ogeersgTFg==
+X-Gm-Gg: ATEYQzxTfiZB9W+0/bxTCzlrnKOi41OXgOfRMGo2C9/XBuW2Ihs+gny5VBxEf9wmwwz
+	uYrGx9S/9skPgvuVtl05ElUHiBzQ5RaF3AEW/2yp+6WkJhB/rlF6rmhXeqrH8yanRrtbR+35ZNc
+	Z3fZqaDtsmmnIjNRludzcXUixfF6V6ukth3P/wwkagHeWT+P5K/YG9FKaazOWKC7fE3teIgSWfk
+	e6XfK1s2ltL1ycLQzoCRnh5ZcTlQk7/++k207j6yFMzarBPvskL0qFlA5byFx5m4cb6cYjzu4Rq
+	qOy43gTM
+X-Received: by 2002:a05:6512:10cf:b0:5a1:2b2b:479d with SMTP id
+ 2adb3069b0e04-5a285b6125fmr4577456e87.31.1774264462090; Mon, 23 Mar 2026
+ 04:14:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org> <177409907930.268981.5882592990447577348.b4-ty@b4>
+In-Reply-To: <177409907930.268981.5882592990447577348.b4-ty@b4>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 23 Mar 2026 12:13:46 +0100
+X-Gm-Features: AQROBzDb0FyhDsEJ4InmRtciuv9Wo1DbFap7YBMqRE1Hh3qfHVm60c1Z9Vi7vPA
+Message-ID: <CAPDyKFoz-sm0pfvn5iSYFY0mrW38vaGRZsFvrVPqsv7BsYxeWQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v8 00/10] pmdomain: samsung: add support for
+ Google GS101
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Juan Yescas <jyescas@google.com>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2026-03-20 at 20:10 -0700, Can Guo wrote:
-> Most vendor specific implemenations of vops pwr_change_notify(PRE_CHANGE)
-> are fulfilling two things at once:
-> - Vendor specific target power mode negotiation
-> - Vendor specific power mode change preparation
->=20
-> When TX Equalization is added into consideration, before power mode chang=
-e
-> to a target power mode, TX Equalization Training (EQTR) needs be done for
-> that target power mode. In addition, UFSHCI spec requires to start TX EQT=
-R
-> from HS-G1 (the most reliable High Speed Gear).
->=20
-> Adding TX EQTR before pwr_change_notify(PRE_CHANGE) is not applicable
-> because we don't know the negotiated power mode yet.
->=20
-> Adding TX EQTR post pwr_change_notify(PRE_CHANGE) is inappropriate
-> because pwr_change_notify(PRE_CHANGE) has finished preparation for a powe=
-r
-> mode change to negotiated power mode, yet we are changing power mode to
-> HS-G1 for TX EQTR.
->=20
-> Add a new vops negotiate_pwr_mode() so that vendor specific power mode
-> negotiation can be fulfilled in its vendor specific implementations.
-> Later on, TX EQTR can be added post vops negotiate_pwr_mode() and before
-> vops pwr_change_notify(PRE_CHANGE).
->=20
-> Signed-off-by: Can Guo <can.guo@oss.qualcomm.com>
+Hi Krzysztof,
 
-Looks good to me. Let=E2=80=99s move forward!
+On Sat, 21 Mar 2026 at 14:18, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+>
+> On Wed, 18 Mar 2026 15:27:45 +0000, Andr=C3=A9 Draszik wrote:
+> > This series adds support for the power domains on Google GS101.
+> >
+> > There are a few differences compared to SoCs already supported by this
+> > driver:
+> > * register access does not work via plain ioremap() / readl() /
+> >   writel().
+> >   Instead, the regmap created by the PMU driver must be used (which
+> >   uses Arm SMCC calls under the hood).
+> > * DTZPC: a call needs to be made before and after power domain off/on,
+> >   to inform the EL3 firmware of the request.
+> > * power domains can and are fed by a regulator rail and therefore
+> >   regulator control needed be implemented.
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [01/10] dt-bindings: soc: google: add google,gs101-dtzpc
+>         https://git.kernel.org/krzk/linux/c/10084aeadadfab72648f6ed1cc78f=
+7cd87b861ba
+> [03/10] dt-bindings: soc: samsung: exynos-pmu: move gs101-pmu into separa=
+te binding
+>         https://git.kernel.org/krzk/linux/c/3ec3c42b426fe5e2b48ff19c551de=
+c50bc78788c
+> [04/10] dt-bindings: soc: google: gs101-pmu: allow power domains as child=
+ren
+>         https://git.kernel.org/krzk/linux/c/c8229a5160eea145b796f54317d6e=
+659cec9b080
+>
+> Best regards,
 
-Reviewed-by: Bean Huo <beanhuo@micron.com>
+Usually I pick up the power-domain related changes for the DT bindings
+and host them via an immutable branch called "dt". If needed, SOC
+maintainers can pull it to apply/test the corresponding DTS changes.
+
+That said, I am open to whatever you think is best here. Perhaps it's
+easier if you can drop the DT patches and provide your acks instead or
+if you can share them via an immutable branch for me to pull?
+
+Kind regards
+Uffe
+
+
+
+
+
+
+> --
+> Krzysztof Kozlowski <krzk@kernel.org>
+>
