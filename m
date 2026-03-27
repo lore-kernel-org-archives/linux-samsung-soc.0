@@ -1,164 +1,90 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088E53BC681
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABB9309EE7
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 15:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774620286; cv=none; b=ScOOqXxhLblVdHarJ5X4D4UwqPI+ZCFSfqCDmoliIyd0rSpxIthedmmZAWG2Yem/QqMyeY9XdrsBAnReP1EyVOCbmzP0LhpPnQeUO7HT8QAAtLizAJTxxR8BcS0wwg54Ceh6PEAYS6R8fS8cgdBxva/0WYrxObfxq0RaP8YuE5Y=
+	t=1774624419; cv=none; b=cKynjqF4SZJg35LKbjks8AWIdEZIu6AhnUUMtt2nDEQeNAylzRke7YBUQQg5QZRl4fQ114q7AMV5UnejnW/oBc4eHo2CNWqimdg5Lqc467UevjogfE6pCcly2IiWUpnTKMWD3iPUyUwvl/g09LV0ORc/beMniObpk0qSPdkz9RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774620286; c=relaxed/simple;
-	bh=q9V97Tr+6k2fCh537AkmCOo0/qg1EEGC6ygs46eoSNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWH0bVsPQVAeWsg7ejI2Picce3RK4b+OWt9fEh1mLWcLKz20TxPiX7Epa+uh3DqKIxrEuZuXuIB3klq6dNo1JR89eBFaw1jcSjtDO5kLtLexEHrbro8WFJzzs0TrsZ5E1zgg2h8sHeL0F3pCEOXK47aFYNhyxGjsMlJFHxQ9+qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oTCSg6E1; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1774624419; c=relaxed/simple;
+	bh=iN1raRxQ2qcF/ep1luk3AQflduCS+ipQOkFu+lrDcuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvJD2hlJnrs4ZJvtk0SzDknitxPDHjHZwSREamYVfAcKWNh4iNjCQ+MP9E9d3hx5Z4Parm2EdWne/Q0VkQvQKTUr6EieLh/KRt9QWwvIc4o23JUCL7N8F75kiyn9znIoDsotpnTzaOxRo+AYWWA3w3uYoyA49pVdw9gfczbULoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iFk7N04c; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oTCSg6E1"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48540d21f7dso24053145e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 07:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774620283; x=1775225083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TnwOxiQgTrY2GQTcPVQdPC36P8UQNWjAuceWpM/pOE8=;
-        b=oTCSg6E1R8Drfgc/vnfQmcQJJZ5t4RwdAYzyvKsj2uVb6Q8woIlTPSShPn8E1ni2J/
-         bwW532e3faPT1djMherB3fiU6V0SHnuTpAF1NSdl2fLyeKv1LGdG2h2BOzGj0XfPEYxZ
-         WwbzKxXFtaovCGEQXSp/9/D3ebskF2IWVKZFwNThkRP8pi4v2kaYccrBfCe3FPMTRuRP
-         6EIU/zy+QI4BlCtX5Dk4fDUtaQbxgmqoO5oQP5dpUiZzPvsinCPTxeQBdbxvVA9JPgKc
-         6bN1tRPevSRHVWvh22pnXzthftR5j5igXSIMKm+WamfFDVFgiuCZlZDUcQ4gxt9lybma
-         LKUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774620283; x=1775225083;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TnwOxiQgTrY2GQTcPVQdPC36P8UQNWjAuceWpM/pOE8=;
-        b=Nv99EYBIfFn20z/kkwu05xm1a0cPXY7c1a++GhPFA1iuskExF+nJdGcjzBlPdDtEKK
-         nuZ9/uK/s9YN4wKOuMMbF80gGnO5bd2n3isIib/asLPdd2TaM9WW/Ve8S86fdQsT1MvR
-         8oG0kjmH7jO270Zb1KNmXxES/kGQXLEveF64x7qx0B76IyzYjcTjiQ6VXRzH4CG8mqkq
-         uy1/2u0d6Fp/MJksMeGPgRN0Ik5ItCp3lqrBmo1FGOfeZM7OT7IUGW4lMJDEdH8IyfsM
-         H7Q9gDMzoflF/1ep/IJ76+NSHW3ltGKilVuyPyoN9EZZP3Z/bCs4hkbnHfryLduJJd/6
-         ixEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAlchKPdyTpzd2jzEHNCEaU2nc1U4RklfXIOyeEgc2KU+YKIgdH3j5ySPvr3NgMQPoQ0+0UusUebUOg6HL4k5CVw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMGqjtuFC2rQr2lYCS5wGNjGZ8d7pH26+e3opB9aIrpx38Hb0
-	vYOUb5p0XQ3o1CxgREXyzjDzv8n3SzmBavHHecBNZip20bvXSS6ONG6Uj/exMj+zzjI=
-X-Gm-Gg: ATEYQzyte82LLQZi5kKnrI+w7OdLWRxQB3r2j74C0XZ1FKEcjHRqbeffRNLubSBmxXf
-	pZSnzcahVts0YZf+lBMMkLKQiSCKhpvPK2PVJtvvtZXQ+4l17vw6Yq1tA5SbGZvsXD8xIX63Nwb
-	UYYAjC1tjbPBoHIoFexN2wsVE53NI6QIF4g6L7F2NGOuw1P9CKw7Ds1fJgrt50vThzySFEDOWtQ
-	ANy+CyUwylOcUtbOkFNmO85dFAaveIIrdgBd1YHgbGJAdR5vvQ36FvKQF7sRzPV/RNXr8vnLgmJ
-	h6DdYVhDguF5c9lM/gQ9rXq1Ef76tPlBE57vSAXIhHYTDgKpbollW4w/aw8qb9mhTsEaUBw0nGd
-	1yb+1mrqMCO9aph04lUNvL/Cb6FPjGoYYsuW+Gxt7a5J18bjtfEIbCqkfJhRYlDz+pmjW2pDeNI
-	NQIN0JDR0KjS9Ff2EYLBGVMYetFJdsV03tfbMN8GiQ+t/gNt8zc8AElzh5RS01oNXzmcdmMaT3e
-	0/naXigA0auK0KWIK9rNxA=
-X-Received: by 2002:a05:600c:3f16:b0:486:fdba:f5db with SMTP id 5b1f17b1804b1-48727c86862mr44979375e9.0.1774620283136;
-        Fri, 27 Mar 2026 07:04:43 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:106d:1080:81c2:60b3:ff00:9a5e? ([2a01:e0a:106d:1080:81c2:60b3:ff00:9a5e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48725eb5417sm27114795e9.3.2026.03.27.07.04.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2026 07:04:42 -0700 (PDT)
-Message-ID: <7d9675e6-3f02-49e8-b65a-9785d5b6a7c7@linaro.org>
-Date: Fri, 27 Mar 2026 15:04:39 +0100
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iFk7N04c"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=QbkRIDt0qoYiA3
+	XO98bAEG4jglboobxHd9T2H+sRSRo=; b=iFk7N04cl8TO6mkuDYPYVsx2O8GzUR
+	UzXdbVmAxbwiFbu++SIoVEWvSBJZnYY7bBPK6O6r6niT+pv7IJv5pnNzpBhB6cCp
+	v7x398eH4gOGpO+IPsafqbTcI4zPhBQCuEKhJWEvOlVewo45GFxU6moJSISYmp7y
+	eF8mo9yIGRGpzLTo+aMXpo///wke5tjj/VNhSDCVFLWnEpsysyqc1j57BMw4WmNK
+	Y/iZkz2hvv1LMSpLUOQpUwejlwAPNMer2647xxfHfqynH8J7qB2VnUM5UoZZXUfg
+	F42N6wK+8wLO3ChhEworuX8mjVGgYaXN0WAfXqsUzP4ixzcNE+NaW7fg==
+Received: (qmail 235509 invoked from network); 27 Mar 2026 16:13:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Mar 2026 16:13:35 +0100
+X-UD-Smtp-Session: l3s3148p1@Ugjk8QJOXuxUhsJN
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] mailbox: exynos: drop superfluous mbox setting per channel
+Date: Fri, 27 Mar 2026 16:12:46 +0100
+Message-ID: <20260327151332.5425-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] PCI: dwc: Add multi-port controller support
-To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@Amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Greentime Hu <greentime.hu@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Chuanhua Lei <lchuanhua@maxlinear.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Pratyush Anand <pratyush.anand@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-GB
-In-Reply-To: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 05/03/2026 à 07:20, Sumit Kumar a écrit :
-> This series adds support for multi-port PCIe controllers in the DesignWare
-> driver. Currently, the driver only supports a single Root Port with
-> controller-level properties, which doesn't work for multi-port controllers
-> where each port may have different configurations.
-> 
-> This series introduces a per-port structure and parsing API that allows
-> each Root Port to be configured independently via pcie@N child nodes in
-> device tree, while maintaining backward compatibility with existing
-> single-port bindings.
-> 
-> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Fix error code preservation in dw_pcie_resume_noirq() to return actual
->    error from dw_pcie_wait_for_link() instead of hardcoded -ETIMEDOUT (Mani).
-> - Initialize ret variable to -ENOENT in dw_pcie_parse_root_ports() (Mani).
-> - dw_pcie_host_init(): Remove -ENOENT error skipping to make parsing
->    failures fatal for now, add TODO comment about making properties
->    optional later (Mani).
-> - Link to v1: https://lore.kernel.org/r/20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com
-> 
-> ---
-> Sumit Kumar (2):
->        PCI: API changes for multi-port controller support
->        PCI: dwc: Add multi-port controller support
-> 
->   drivers/pci/controller/dwc/pci-exynos.c           |   4 +-
->   drivers/pci/controller/dwc/pci-imx6.c             |  15 +-
->   drivers/pci/controller/dwc/pci-meson.c            |   1 -
->   drivers/pci/controller/dwc/pcie-designware-host.c | 175 ++++++++++++++++++----
->   drivers/pci/controller/dwc/pcie-designware.c      |  32 ++--
->   drivers/pci/controller/dwc/pcie-designware.h      |  17 ++-
->   drivers/pci/controller/dwc/pcie-fu740.c           |   6 +-
->   drivers/pci/controller/dwc/pcie-intel-gw.c        |  13 +-
->   drivers/pci/controller/dwc/pcie-qcom-common.c     |   5 +-
->   drivers/pci/controller/dwc/pcie-qcom-ep.c         |   4 +-
->   drivers/pci/controller/dwc/pcie-qcom.c            |   4 +-
->   drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  13 +-
->   drivers/pci/controller/dwc/pcie-spear13xx.c       |   5 +-
->   drivers/pci/controller/dwc/pcie-tegra194.c        |   4 +-
->   drivers/pci/of.c                                  |   6 +-
->   drivers/pci/pci.h                                 |   2 +
->   16 files changed, 232 insertions(+), 74 deletions(-)
-> ---
-> base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
-> change-id: 20251010-dt-parser-98b50ce18fc1
-> 
-> Best regards,
+The core initializes the 'mbox' field exactly like this, so don't
+duplicate it in the driver.
 
-Tested on meson-pci (boot log https://gitlab.com/amlogic-foss/abcd-linux-test/-/jobs/13677061036)
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Changes since v1:
+* rebased to 7.0-rc5
+* add tags (Thanks, Tudor!) and dropped RFT
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # On Bananapi M2S
+ drivers/mailbox/exynos-mailbox.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Thanks,
-Neil
+diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+index 5f2d3b81c1db..d2355b128ba4 100644
+--- a/drivers/mailbox/exynos-mailbox.c
++++ b/drivers/mailbox/exynos-mailbox.c
+@@ -99,7 +99,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	struct mbox_controller *mbox;
+ 	struct mbox_chan *chans;
+ 	struct clk *pclk;
+-	int i;
+ 
+ 	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
+ 	if (!exynos_mbox)
+@@ -129,9 +128,6 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	mbox->ops = &exynos_mbox_chan_ops;
+ 	mbox->of_xlate = exynos_mbox_of_xlate;
+ 
+-	for (i = 0; i < EXYNOS_MBOX_CHAN_COUNT; i++)
+-		chans[i].mbox = mbox;
+-
+ 	exynos_mbox->mbox = mbox;
+ 
+ 	platform_set_drvdata(pdev, exynos_mbox);
+-- 
+2.51.0
+
