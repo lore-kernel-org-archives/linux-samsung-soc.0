@@ -1,127 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A12BE7BB;
-	Fri, 27 Mar 2026 06:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FD63A7835;
+	Fri, 27 Mar 2026 10:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774594384; cv=none; b=ESnt93odZ5ccH6QecTRpZez+pzGT89aWC5NqsSD8Fhcz/j3N18YOpxXVT0+bixAVPmssGaNK2zDc0HvmLkXEMzWwqty9HsdNmXprVtVgMdG2+G+T5L5RQWwWNWpCSTFW4enPEy2xpyRC3lru1cdjUBoELDq43oS19HqYbTfoCEg=
+	t=1774605954; cv=none; b=RH3gnoi4YY1VlB4RqgMVpMS+blyxMcPdH08Bdw+NSUhn342Mzva/di8SZwl18McDoCvfo4CA2uFd207sZekwpwkdwOeIFgU1OEasu1GPksEbq0WvMJq2rkCE+AbTCtJzC00we6OlNlx4rys1zO/kWamE/bO+wf6v+eXGyGWR3fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774594384; c=relaxed/simple;
-	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
+	s=arc-20240116; t=1774605954; c=relaxed/simple;
+	bh=SD4WIoInSUxzJ8yu61IfNBavLwrXW6dfemh5da9t/mk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maY8VjJ4M8ub7rY6gutpF8eIFQyvtYi1+++x2DcJwHGfOX0f41dZIGa/Utm0EM31BBTovbZ3+CXl08C+ydUVpxWWk/i4kcyZ5hKkqJpgD7zVyXn0oEDR9CpUbgRk9lHRqxSD+owzeafQuMEczQJ88UbSl9Lvv+cLesXXTneo4VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uM9tWBQS; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjbCtF4NtIdg+4SFLJBDX8rdiz+pI7hLzY/jX3YVZSdHK7BsYxomLsufJQi43aB6csLwZrWn5tuQIt7yXlHcGfK2qAmSxZ2SrhGQ0ih93q/CU3MQEmjSz5bcIMhb5CSVHhAYrqtJKDHNR9KyH58vrAkpvLTAP28LzATctD++vAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=iDzQtWr4; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uM9tWBQS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5247EC19423;
-	Fri, 27 Mar 2026 06:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774594383;
-	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uM9tWBQSBzeOskmqaDM0QvWoV4jUNiC4DsBlIKIFg7In21qbXcrgvL+npIdvVsRu4
-	 qrE69iQ+kiDSqXlcivHy16z+fEY80xVdn90vInQTF9nPU0Nfe7+PBampXS2wO/gG+p
-	 NgAISEoCyX1+VSpZjmfa/Wk2xePLkgGitS5duT/iqLt2Xz6gmhtYoyq/3bAsUtsGq+
-	 2OtE88H/kNHCxHKSKe13LzCtkcFHYUQtieBVLEZ/RgfH2fMVrGZXCU2jVD0wDWvbDI
-	 /UHVNy1S2RfsSIT/lKpdHdy0Vk/hccjI1KCqeAffyJ+BOUCNvP4IiTCz7QCM5HVlUz
-	 YXDRsPrcv0reg==
-Date: Fri, 27 Mar 2026 12:22:46 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
-	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: Re: [PATCH v5 phy-next 10/27] scsi: ufs: qcom: keep parallel track
- of PHY power state
-Message-ID: <gq4sswslkjaoe5hhxe2mz6z57uiumotqknkryadvfsstj4srx4@qgenqekgrqv4>
-References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
- <20260319223241.1351137-11-vladimir.oltean@nxp.com>
- <ezrcjjwtg5n76w4m65l27szu5mywx66ti3xuprkfcp3x6quvbf@2rew4zrnnbt2>
- <20260325114309.3k7xkfrffpxp5xq4@skbuf>
- <vu3cxpynr5mu2fzkrtmjcwijc5jz323wlnbc3r7lp2wxqmhydx@z5xhgf4myw2d>
- <20260325115731.genmq2yew2p4dvbs@skbuf>
- <20260326080444.gbesciaa5zwvcgoy@skbuf>
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="iDzQtWr4"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=qVbhFv/XcO9+q78HxV+iWik4JkdOB4EYBnC2TiYyTeI=; 
+	b=iDzQtWr4IfsM0iDPFDs8gE99OVtNG98vjhv//ZcF0n81EU2YNuj4WpyKDyLdR5grsWclZTu7V0K
+	7tWJVw0W0+l9zX8RF5dOAKzWbFTW6id1rAHJaQ+E3BmfnuEwuBdpIl+SNfTBT3fFNoLQ2yTmZeyiA
+	wAKmxCUO9aq4j8QaOOYV+AuvuRH9LVYfuogqhOP2m6ExqD4K+i6Tja2Uq+kdjGsDOIaga5q3rwoKa
+	iuXIefTjwAMwTa2fH7HVFgt/Seb8ZAoCfuwUWJjVlQl2w4YcLC42APfQwKNEDxNNaX0CtlJFDC1Ya
+	KmQGIy22oFPYLINxaENTv26ltlWLLXngBGFw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1w63ep-001bkz-0d;
+	Fri, 27 Mar 2026 18:05:31 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 27 Mar 2026 19:05:30 +0900
+Date: Fri, 27 Mar 2026 19:05:30 +0900
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: s5p-sss - use unregister_{ahashes,skciphers} in
+ probe/remove
+Message-ID: <acZWaiutqd-z8YR7@gondor.apana.org.au>
+References: <20260317080450.1054742-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260326080444.gbesciaa5zwvcgoy@skbuf>
+In-Reply-To: <20260317080450.1054742-3-thorsten.blum@linux.dev>
 
-On Thu, Mar 26, 2026 at 10:04:44AM +0200, Vladimir Oltean wrote:
-> On Wed, Mar 25, 2026 at 01:57:31PM +0200, Vladimir Oltean wrote:
-> > On Wed, Mar 25, 2026 at 05:21:14PM +0530, Manivannan Sadhasivam wrote:
-> > > I believe I added the power_count check for phy_exit(). But since that got
-> > > moved, the check becomes no longer necessary.
-> > 
-> > FYI, the power_count keeps track of the balance of phy_power_on() and
-> > phy_power_off() calls, whereas it is the init_count keeps track of
-> > phy_init() and phy_exit() calls. They are only related to the extent
-> > that you must respect the phy_init() -> phy_power_on() -> phy_power_off()
-> > -> phy_exit() sequence. But in any case, both should be considered
-> > PHY-internal fields. The "Order of API calls" section from
-> > Documentation/driver-api/phy/phy.rst mentions the order that I just
-> > described above, and consumers should just ensure they follow that.
+On Tue, Mar 17, 2026 at 09:04:52AM +0100, Thorsten Blum wrote:
+> Replace multiple for loops with calls to crypto_unregister_ahashes() and
+> crypto_unregister_skciphers().
 > 
-> Ok, so we can close this topic of "checking the power_count not needed"
-> by linking to the conversation which spun off here:
-> https://lore.kernel.org/lkml/20260325120122.265973-1-manivannan.sadhasivam@oss.qualcomm.com/
+> If crypto_register_skcipher() fails in s5p_aes_probe(), log the error
+> directly instead of checking 'i < ARRAY_SIZE(algs)' later.  Also drop
+> now-unused local index variables.  No functional changes.
 > 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/crypto/s5p-sss.c | 27 ++++++++++-----------------
+>  1 file changed, 10 insertions(+), 17 deletions(-)
 
-Sure.
-
-> Mani, I spent some more time to figure out what's really going on with
-> this unexpected phy_power_off() call. Do you think you could
-> regression-test the patch attached?
-> 
-
-I tested the patch. But it fails ufs_qcom_power_up_sequence() if PHY was already
-powered on:
-
-[   31.513321] qcom-qmp-ufs-phy 1d87000.phy: phy initialization timed-out
-[   31.513335] ufshcd-qcom 1d84000.ufshc: Failed to calibrate PHY: -110
-[   31.565273] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
-
-Funny thing is, it didn't affect the functionality since the UFS core retries
-ufshcd_hba_enable() and in the error path of ufs_qcom_power_up_sequence(),
-phy_power_off() gets called and that causes the next try to succeed. So it is
-evident that, if PHY was already powered ON, it should be powered off before
-ufs_qcom_phy_power_on(). And due to the UFS driver design,
-ufs_qcom_power_up_sequence() can get called multiple times. So we cannot just
-remove phy_power_off().
-
-Below diff on top of your patch fixes the issue:
-
-```
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index ed067247d72a..2c9fe03f349e 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -567,6 +567,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
-        if (ret)
-                return ret;
- 
-+       ufs_qcom_phy_power_off(host);
-+
-        ret = ufs_qcom_phy_set_gear(host, mode);
-        if (ret) {
-                dev_err(hba->dev, "%s: phy_set_mode_ext() failed, ret = %d\n",
-```
-
-- Mani
-
+Patch applied.  Thanks.
 -- 
-மணிவண்ணன் சதாசிவம்
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
