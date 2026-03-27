@@ -1,133 +1,127 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008CF1F3FED
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 05:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774590256; cv=pass; b=dCga0/oZrroQyC8vf4pG55OsmdZExfKmpS+YxJAcArMu9wM3zRbHejAwORmh1uDMBtTy/epr1skzDL/JeMHUZnh8r6owhYMFRVd8FpEIo0ih6ZQgcX2EKj7XpGDn9ELNLV1jGDpbFy82Eo3b6KoQtsGlYlbQ8zzUNPb1xdAsArA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774590256; c=relaxed/simple;
-	bh=8RK1T++eGDo44pfAsFeCc9ygxXLTrYUPd5f3lemslCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cOYYAIKKfp+Z5Koiyjwq8WRizEurlanjrCC/kW9bOJz9qbqQykwrQiO2EiYPFoGxI+dXcOgAcb2WbZDvDogYTexdr9utJRY/u+GX72vjk2S2Ja9Aub0bsleHf2EFCPEDxD+PjU9D8uw/wV5LiFyLRB034tVLxQa5a/8CmRQklOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RLuoPXTg; arc=pass smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A12BE7BB;
+	Fri, 27 Mar 2026 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774594384; cv=none; b=ESnt93odZ5ccH6QecTRpZez+pzGT89aWC5NqsSD8Fhcz/j3N18YOpxXVT0+bixAVPmssGaNK2zDc0HvmLkXEMzWwqty9HsdNmXprVtVgMdG2+G+T5L5RQWwWNWpCSTFW4enPEy2xpyRC3lru1cdjUBoELDq43oS19HqYbTfoCEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774594384; c=relaxed/simple;
+	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=maY8VjJ4M8ub7rY6gutpF8eIFQyvtYi1+++x2DcJwHGfOX0f41dZIGa/Utm0EM31BBTovbZ3+CXl08C+ydUVpxWWk/i4kcyZ5hKkqJpgD7zVyXn0oEDR9CpUbgRk9lHRqxSD+owzeafQuMEczQJ88UbSl9Lvv+cLesXXTneo4VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uM9tWBQS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RLuoPXTg"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a2967e5de4so2286617e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2026 22:44:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774590252; cv=none;
-        d=google.com; s=arc-20240605;
-        b=WvjRUrW1J/SaLmYCBMCQHRm6rtO7grnBnc9u2w+N2aGSnNiTPMzT4/ZpmZHFiCfNay
-         w4yC0rZr9KLPCW7qPnQ+cUkXLsSjygchxlWgt4/gL+LeXZbGcM9o+5Vl3yoGekZ+Il6X
-         4Wtya73ofT/D7Yb1+s8JDmxHyHKjnzAqPb+8+OantE28/hpentsQ5smPA+wYKiMqLL5W
-         T5+DkblRyFlIUI/s76CszQp+C7IW06ZcjEZdRxSZXbvxWU7rp9FgsZxh9Ro3x5SHnwkF
-         S4xy25QpllrplHAfuWjYZvcWxlyQuUnJ//vDQJzyXWfzRkN0lP28lhhLdH6z1Ow7Q7w6
-         kKkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=55gQ8UIqNu/4Lu8sOqkpH3txb+MxNaA75AvyR+3jJZk=;
-        fh=+4dXeS6Htk7Seyn37nK8Ki7JN7IAUnQviXnhlVxY+c0=;
-        b=K7szzzZlAAMfrNRzKAerUI5SHJcXPvJETJf5zBhfp+ZxF9yfHjAZk3j+KqLwGIoz5A
-         /Kl53l1GIYBbyjdAj6jzVpxgaghPGrx5rA3pinJPF4rZV3ir5GLmdhBghvQSVjSeksAk
-         TXu8hFEnojaU1iSjnXzNPz/siK+n8/v8erHYN/ISO1ccBobIXg1+xzAeX0tMfldQiM/r
-         6nziX8bBiuZUvqBuwCsemCEUeLhhtR21w+YhV5us7gvVRg7lj6CX0RMFcbreL7FgQnvZ
-         M6rHGzBid6kYecs1hM3QeY3Y2wtu/SbggjwGcsY+9DJT4qhksQ+MhK+wA9C+stR0Pw8h
-         0q1A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1774590252; x=1775195052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=55gQ8UIqNu/4Lu8sOqkpH3txb+MxNaA75AvyR+3jJZk=;
-        b=RLuoPXTgiP3M6lMA7SBXA+OAC6QIHXBD2Kk9tpBxMMHLqN2oszfa0ceWe9koxqtymi
-         M9EphK6BYY2etjLWZauIjdbWQm/IVYG9TzfhedOwKn5E43E9KIWldE8w4WH/28D5iKiM
-         C8iFRFRz9agEgVa5nK415EDSWAu6bPD3Bs6TY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774590252; x=1775195052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=55gQ8UIqNu/4Lu8sOqkpH3txb+MxNaA75AvyR+3jJZk=;
-        b=BHCBSvrnXpmnBRbWYrlfm4SU4lPqi+Dx5znVnHJ0VkihNnQvcgfaHuHa55vmraGFx3
-         xElwmNIfrrnOrcxFOBsgMGvv2IREsFxtGKWEK54NWm+zEWasZWCcLER4E9uDsqsvH4KF
-         QrSpxX0xMSPOojWm4vevAwI41U8jGgzH/Eaf99xLbfO0IGqdKGP6+uIJLY8c36fVtUFs
-         3szhXINPshun5ecTHyqAFDUHjQ5RHlgX/oVCWIG3bunQrfwixP5c2CXJ+n92alxaH76a
-         xjfppbasMkI7zekCTta7t4znXbnNiKx95o47Cb3pq8EZs4UxzvakMdZuuKas+4XpzC0w
-         aYzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMlaHWgXjjdAe1Np/30Dw0aJmFi0KjnrDoR8UtZ6srMVudIx/sCdvTjpEInPO6QbyfD0x7LImR8zeDiQnKwhm90g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGNJwNbYEiagGqZhUC1Mx0fnmJErmkXd0/d3tcn+BdeTdDxsl9
-	DBNMu82ZsJHCevvyRFy9BnhWGrOy/P2sakNeelZcRB7P4/OqD1QVtYPHocRI7pxCmW3hM27BNv+
-	lbHteuPeh7x8pMUdtKVCDdmmtXAXdEJgIYzEcy1M1DHAdfBveDfM=
-X-Gm-Gg: ATEYQzyEU/93EAqlFpqu+aAc1wEwZlRuyZqZ3O7J2AD4caAR3rbGnhXujrcgSJwr4Bf
-	3PFtH7mM7rCsa5JCdKFpR/cSrD8h/WTZ/oJiMoKBHJfMHJnD41CqckRZqZQ1JzWtLsUiYPvzlwm
-	grpEQgDAuRIndqJaJg1UGeVw2dkASb+MTVblA1cBWwUWU0jjuz5AM9ZJTIrXL9wpWHzSuztPOXt
-	BKiVO9ujAEqGSK3Rhnkiv3QZirpG0h7RqIvzMs5F+hK2bKlczUSpdEY2lBFihNCvj5Kho0mn986
-	tc44A5jh+2KZu2FofJwyJP/4TvD1wtfNvh1XZzlcDhe84K8f
-X-Received: by 2002:a05:6512:2242:b0:5a2:a36f:3ef4 with SMTP id
- 2adb3069b0e04-5a2ab928fe7mr379815e87.31.1774590252148; Thu, 26 Mar 2026
- 22:44:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uM9tWBQS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5247EC19423;
+	Fri, 27 Mar 2026 06:52:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774594383;
+	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uM9tWBQSBzeOskmqaDM0QvWoV4jUNiC4DsBlIKIFg7In21qbXcrgvL+npIdvVsRu4
+	 qrE69iQ+kiDSqXlcivHy16z+fEY80xVdn90vInQTF9nPU0Nfe7+PBampXS2wO/gG+p
+	 NgAISEoCyX1+VSpZjmfa/Wk2xePLkgGitS5duT/iqLt2Xz6gmhtYoyq/3bAsUtsGq+
+	 2OtE88H/kNHCxHKSKe13LzCtkcFHYUQtieBVLEZ/RgfH2fMVrGZXCU2jVD0wDWvbDI
+	 /UHVNy1S2RfsSIT/lKpdHdy0Vk/hccjI1KCqeAffyJ+BOUCNvP4IiTCz7QCM5HVlUz
+	 YXDRsPrcv0reg==
+Date: Fri, 27 Mar 2026 12:22:46 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: Re: [PATCH v5 phy-next 10/27] scsi: ufs: qcom: keep parallel track
+ of PHY power state
+Message-ID: <gq4sswslkjaoe5hhxe2mz6z57uiumotqknkryadvfsstj4srx4@qgenqekgrqv4>
+References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+ <20260319223241.1351137-11-vladimir.oltean@nxp.com>
+ <ezrcjjwtg5n76w4m65l27szu5mywx66ti3xuprkfcp3x6quvbf@2rew4zrnnbt2>
+ <20260325114309.3k7xkfrffpxp5xq4@skbuf>
+ <vu3cxpynr5mu2fzkrtmjcwijc5jz323wlnbc3r7lp2wxqmhydx@z5xhgf4myw2d>
+ <20260325115731.genmq2yew2p4dvbs@skbuf>
+ <20260326080444.gbesciaa5zwvcgoy@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260326094308.1161335-1-wenst@chromium.org>
-In-Reply-To: <20260326094308.1161335-1-wenst@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 27 Mar 2026 13:44:01 +0800
-X-Gm-Features: AQROBzCaR6O-grRzEn_50j3NpZXhobkBat-wP0370vcp2B9JGLmH6YnTu6gaOu8
-Message-ID: <CAGXv+5G2H3CSic5hCSd2g6RrfGyNSbpYS7Z9uo-XUn6No3a4Rw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] drm/exynos: Random cleanups
-To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260326080444.gbesciaa5zwvcgoy@skbuf>
 
-On Thu, Mar 26, 2026 at 5:43=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> Hi,
->
-> Here are some cleanups for the exynos drm driver. This was done as part
-> of the conversion of the driver to GEM DMA helpers. These patches have
-> no dependency, unlike the actual conversion, so I am sending them
-> separately for inclusion now.
->
-> Please take a look.
+On Thu, Mar 26, 2026 at 10:04:44AM +0200, Vladimir Oltean wrote:
+> On Wed, Mar 25, 2026 at 01:57:31PM +0200, Vladimir Oltean wrote:
+> > On Wed, Mar 25, 2026 at 05:21:14PM +0530, Manivannan Sadhasivam wrote:
+> > > I believe I added the power_count check for phy_exit(). But since that got
+> > > moved, the check becomes no longer necessary.
+> > 
+> > FYI, the power_count keeps track of the balance of phy_power_on() and
+> > phy_power_off() calls, whereas it is the init_count keeps track of
+> > phy_init() and phy_exit() calls. They are only related to the extent
+> > that you must respect the phy_init() -> phy_power_on() -> phy_power_off()
+> > -> phy_exit() sequence. But in any case, both should be considered
+> > PHY-internal fields. The "Order of API calls" section from
+> > Documentation/driver-api/phy/phy.rst mentions the order that I just
+> > described above, and consumers should just ensure they follow that.
+> 
+> Ok, so we can close this topic of "checking the power_count not needed"
+> by linking to the conversation which spun off here:
+> https://lore.kernel.org/lkml/20260325120122.265973-1-manivannan.sadhasivam@oss.qualcomm.com/
+> 
 
-I should add that these patches were only compile tested.
+Sure.
 
-> Thanks
-> ChenYu
->
-> Chen-Yu Tsai (4):
->   drm/exynos: Internalize exynos_drm_gem_free_object()
->   drm/exynos: Use DRM core dedicated DMA device tracking facility
->   drm/exynos: Drop exynos_drm_gem.size field
->   drm/exynos: Drop MAX_FB_BUFFER in favor of DRM_FORMAT_MAX_PLANES
->
->  drivers/gpu/drm/exynos/exynos_drm_dma.c | 11 +++---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |  1 -
->  drivers/gpu/drm/exynos/exynos_drm_drv.h |  9 -----
->  drivers/gpu/drm/exynos/exynos_drm_fb.c  |  6 +--
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 13 ++++---
->  drivers/gpu/drm/exynos/exynos_drm_gem.c | 50 +++++++++++--------------
->  drivers/gpu/drm/exynos/exynos_drm_gem.h |  8 ----
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_ipp.h |  4 +-
->  9 files changed, 41 insertions(+), 63 deletions(-)
->
-> --
-> 2.53.0.1018.g2bb0e51243-goog
->
+> Mani, I spent some more time to figure out what's really going on with
+> this unexpected phy_power_off() call. Do you think you could
+> regression-test the patch attached?
+> 
+
+I tested the patch. But it fails ufs_qcom_power_up_sequence() if PHY was already
+powered on:
+
+[   31.513321] qcom-qmp-ufs-phy 1d87000.phy: phy initialization timed-out
+[   31.513335] ufshcd-qcom 1d84000.ufshc: Failed to calibrate PHY: -110
+[   31.565273] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
+
+Funny thing is, it didn't affect the functionality since the UFS core retries
+ufshcd_hba_enable() and in the error path of ufs_qcom_power_up_sequence(),
+phy_power_off() gets called and that causes the next try to succeed. So it is
+evident that, if PHY was already powered ON, it should be powered off before
+ufs_qcom_phy_power_on(). And due to the UFS driver design,
+ufs_qcom_power_up_sequence() can get called multiple times. So we cannot just
+remove phy_power_off().
+
+Below diff on top of your patch fixes the issue:
+
+```
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index ed067247d72a..2c9fe03f349e 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -567,6 +567,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+        if (ret)
+                return ret;
+ 
++       ufs_qcom_phy_power_off(host);
++
+        ret = ufs_qcom_phy_set_gear(host, mode);
+        if (ret) {
+                dev_err(hba->dev, "%s: phy_set_mode_ext() failed, ret = %d\n",
+```
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
