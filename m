@@ -1,245 +1,147 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59DF37D128
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 20:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86E414F70
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Mar 2026 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774643051; cv=pass; b=AQFEDsaIy1yIVoejo7sQpcVasvCgpJ6VsnWUOdQ12L8hq5zOUs+s2YVZF9x+pFskeg2SdvA9DApjjWfEqp5/EwtlruWuRY0GAA8chcHh+GwML2gIqkLkox27aYqINH5pounaLwv+xfwewRFIqxXix3AkG/Qs0JkFOwqHbyvSe3o=
+	t=1774801098; cv=pass; b=FMouCNOpZwQYdy2tLeWocEc8SyyE0WzrvJctfSHKePc4i6Sfhd90eQyxvre+3FifW5mJvumoTXPP1aJgrXnXZW/nPNHdDmBrgNTYponNaTIVZ6DuHJAzivasKUfwOnORgxplo2yGIFQ6fRTQm2aL/6baVf7ZDmpmWFqMcO6y6BI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774643051; c=relaxed/simple;
-	bh=fe8HYEgNDSZEJwtPnP9d7rdRK4mOuzWO1Arb10bM66I=;
+	s=arc-20240116; t=1774801098; c=relaxed/simple;
+	bh=Q0e5aMLXLi724TnMUUc6wx+dZgqkYFlmPsiJaRjV/6E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yb6NcVfovtm+xS+fstGOiPLxB8KOZ968Ob9iE740ihXvaQjip5d7a+JyNVdfiWbIlji82pjfZJtQuHR6rs6ffpxI6XVSIcXhHrs9Xz9xUBFdQx+/YQYyab1srduhz9Ewnt87i9WOQKjlCaULMA27QxME/W914Nt2JSHDnnwUYK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VuqQy0dF; arc=pass smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=I+g1gUx947oFf/XG7iSSstwgApLT7d9n0yBPorKZ8A1SwVV4s8f7ADPl1o69wSs5YQZScNPIJovAIimslig8DaA3lpNi8GTpuNV9Fkfxa1IVxmN3EQLvKaKb8qxbJ7fMSJwBKNYq6VtjGbjrdvbpeLo1TLAVhmrc7vfQ0P9lHTk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9V6OFpo; arc=pass smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VuqQy0dF"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-65c4152313fso3291121a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2026 13:24:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774643047; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9V6OFpo"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-662efd1bdd4so2119729eaf.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Mar 2026 09:18:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774801096; cv=none;
         d=google.com; s=arc-20240605;
-        b=YTBILPYHq2fHAORqrg2kbIXJpfAdzITLcdxsWYXmUHmKynQ2psIfgQuUDgo5yXIGNL
-         bgacc5Nu9cndMEtgLUDsbJNNbTDDgClYCAhI57DzxTjEtzdiQCNkSb5t3QbvHCgXnnQV
-         nacZtZXF1LkDnw3iBaee4z4jcMW/gob5nMZvRdJoMP4xaN1J/H5TDBmAU/C0kwWO+Sil
-         e+0pCWv5fpIXAWCiUOa83cu4vQ76tlocvITZ8Bgz4wpnOe+BJIC0UXW2wJfKzFEL1gn1
-         S8kk5Thr3ztBXcqZMxVu0jRUCl9qHGnIizD7/yt2/mUSLdFsl1SP3nX12hvmmB1K7gdk
-         d58g==
+        b=fGBxwrN+vpicvr++iy6iiCberH7Wai/XZyM9PUDrd1pNTuKBZPUKf4+HIh1g6HYAlV
+         mOoF+0Yh0OUezug6M/ldD03jTABnwcSaU7+f7athUXnRSSaykvPIzTAfN+tXuBjcqF7D
+         z15V64QvgDqjdcj42VAKhE1LLIb7Qm5CJ/7/z1kzebvc4SUBqdp1SozUeaC6DglxYBh4
+         KnMgePygxp1uawEL7faW0g0SY6EHytdNmmiPTsRL6nsTaEvuViQr8q4cKdi13DWKHCu8
+         W8mwbrVTcstUXpOmabVdsJlNQZtTJobK0Al1x4awKKd8o5PEiu+KHjxAVXF10nb2Wjlt
+         Igpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=9WeOtA6rLKd2feImk1nWk/a5NsEeM0kN8oqqyEId0bQ=;
-        fh=D1SWJWcWPcqgRZu0Ud7ac9DS99VJWet14M+yUGOZn4U=;
-        b=lK2yZIZUZtBp3MTl4rm4uyGCmglM2hng1LIBZ3USdliDAbA1E8ougopLNFe3j8Z1cP
-         vMu++R0Pw2WE+qYtEkmgqxk3BkWS4FqegReDjCYG7QnIaC7B0plWV4TJa+LzU+ZfMG76
-         jreRLAyeqUPJJASkDf4LBgWa42o1ezSNH40ymfnjnP/Xhu9BUa51GTupkXhUMm6FjBxx
-         vhbHHD6UqWJsH7b0qvve3Hd/gI6dDUhPMohwqSd9yOGPxCzK6Kd/mLMV7+BZzOPiQSqy
-         zaZIMRWNQbgRQdNPTscqSFaFO0TJdCaRaMB1MqI1twikh5aaq0CLwz7QKcC3Jl6rh25x
-         5vEw==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ln0AFKtiiOyd1awiSLR+/ZLVgvpXDVIqEDEAuJIpGl4=;
+        fh=hq64CU0F6HSlmO6GGb5boYPu/4RlABd42WBPXm51oUM=;
+        b=TMzgpbHrtxTuOqhor3hIcifwvhrXVRajXessf/thHLej1XaOsg6c9MKLkkNvQ3cVbU
+         VIr4R2na4e0jW3on0qa6tPIk1tluXULEM6tXt1RtmesGAFnpVTqQHHiqwA8BM0z38hbK
+         36LI3gMPr4p+GKZjALMA8+rQwmlpPI1t9C7yDCZoHPWOV2REoSjpjvifAUYK51+TH91h
+         e6yE8VbZkN2Z0HfeWXDLDq/XwsuKZLtApEU0KJCFvYq1yNqfnhKItuRxFh4hKND4QUho
+         DW7t81Jb5/mULWhzjQK6K1qAxktE/fUeyxfIOFktW8EUEGM6I24FmlwBmMy6Qh0NAHMs
+         dWZA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774643047; x=1775247847; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WeOtA6rLKd2feImk1nWk/a5NsEeM0kN8oqqyEId0bQ=;
-        b=VuqQy0dFFUKCW5LFnvEaxGiKsvA7wZMtgk9MpLPdPYNG0CjRWontr06l/oScJ9SlL1
-         r9wEtzgkdnjKi0jIFmkCWVMcUt1DKXUUnD7yfUC1jgsUScQbM2/1SadvK6JBbSkmQYv4
-         qSJ68sbS0T6VZPCTKM6GaMbq+iX9Q7TUrvklbvVXtraoXJ2iQJiNf1CCxINzF8kNLKwP
-         NOvf4x8hp0t8wrVujWooo56OYrlQ2VJYEsTv/8AoqFdQu5mfMcrvLthjlYiwU3SoH/Us
-         hlNdeZy9StxdLBHAoU7DXMvu0AqipWs5uVJE/jJHuiXn0PFfRmPiYl7JPpxJvKz+0G7z
-         /5RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774643047; x=1775247847;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1774801096; x=1775405896; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9WeOtA6rLKd2feImk1nWk/a5NsEeM0kN8oqqyEId0bQ=;
-        b=SK1+0grMcUgF4fcwMF2nlInlLrV5bIdtE4S8V7rPsbV+wXSsp4JmpBtuNr1/a9W2W7
-         cXmidqKAFZ5M8/DlsLNOT1HrHwghES9gDitqOUyllgx16vYwyRr5hjZMUAghnDJUxEhp
-         PuTa2myMbzyptXK1+iGYzc/69Od5DQoX96Jed7mZCVIbjSAYkYDAuBfrYtGsw7aw5hYU
-         8v6bItK/8sYfn3GLPva/kuZMllwaqwynrCyA4L5LQYeFLzsFd96ihrLR049gpmsLkqhm
-         P6TKPmv7Pbbjv0I8bQawokKAwpYDXf48V3htp4qFnZfb7fKr5KPgvu5Gy45QoTdPctRU
-         lhMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjNcu84hI7kjOaTXhwJOQbbbO+jrt0WEKjRJZEH0A+5nDBqwtjAbXyYn1JyWMuoqC1Uab6dB5B5ums9KW6YGi6mA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCL04PWTvGhJqL2oWfeh7+F1bHAH5TNS4ZDxTaIIIek5WxVX6M
-	BwG/c0nhENB4a2E5G85pEADja4ZDdSGTQX/7Bba930eqc163yyeb+DEB2MAo1EvxbR2EvLGGV9u
-	rYhnCybnyyEUfXBmdIHE5fJa0wVnx04AzjpPDuwgHxg==
-X-Gm-Gg: ATEYQzzxytS91jcweli9wlSKB2yU47XXIJJxeHs3syf8pUyJt24BO1oFMqNzZRFEGH+
-	bOx+tA07YAcsq0fGAkBz/nVwoiLeGhgYrMwy/QUpvqPSPXuzWQvEt2toX8tRdzKNYAZMhP/66fT
-	hWSjkEE1e1Q1Lgebpy7S8VvcQ60ZtfjlnujLXmweoGmEy6TXNcI4kxhzGSDjujXo9GFiUjAQhxV
-	L/o+lukVXQJwQEDMlB7Y9mbvzAFmXEydkQ3mh57XJ7IAfl77gVVM5Mfm0Gxyc1irIMZOS0qlap9
-	H6E0mMgsSZxcxmo59z3h7c3CchF7jPCT5Beas9a4
-X-Received: by 2002:a05:6402:46db:b0:66a:199d:138 with SMTP id
- 4fb4d7f45d1cf-66b28c66cbemr2039826a12.20.1774643046839; Fri, 27 Mar 2026
- 13:24:06 -0700 (PDT)
+        bh=ln0AFKtiiOyd1awiSLR+/ZLVgvpXDVIqEDEAuJIpGl4=;
+        b=W9V6OFpojV6eK03dA9D/Y1Joo0yzm6hY1w8kTQkcYtZImpwpl53ErZQeaRYzDL6uH2
+         DQDX88t1Vcp9mcEk3p5RjrbpWBNEFrQvKeXhNubRJJznr3tYbf2HzBrh5YMx2ikMmEe4
+         +CXRqjNtMsWksBSjBas1GCgwlwBHCfxd7VGV9fnKB9YUP+CZJ3VeQZ3HX1PM5HbiaYUM
+         lPhCZGNz2NQOX3T8mpt+NVnf8dM1h9BbSwGGSyLjiexQ6zcFVA60tWQ1W9ggmBNawFzZ
+         tfOQ7Vo2DYPZIpzSRcqtRPclPAFkfdHC5pt7UlXZoS/qs2uYjeKxHiRJrQqYUy1RgmpW
+         xRbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774801096; x=1775405896;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ln0AFKtiiOyd1awiSLR+/ZLVgvpXDVIqEDEAuJIpGl4=;
+        b=kFsSJAg3y3WJJ9CDllGFydkd76GXbBcAlYn+peB137Rp6yC/r+A7TN1vcBbOfXiAFh
+         euPYSWFN4j9f+GYS9Bu1KEDdQUXER3tX4g7L/3AqAGar/C+kR9tAZon00cAkeSK6dfWH
+         xM7XCdv+HMnbLNWmR6ILgPeqPT4yb6Fr7hdoOkkoGuFVv36vo3V1t2UyIpUNz1Ye06M0
+         xjKU+fV8nBBwwDvYPwJSqkYExQ7YpCveJ86I3Vztvk4iYCq9ozKJei+svW9lq1AheVqs
+         2ntIdyxZ6nHjXRs3iJjMUB7jNwRQx5vUutMZPBmrRGvykRr7EVPDMPZC0cVqPDzvkHJj
+         UsYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo8vBSEqnEq8nl1yjag/T9GnO90XDeiV0ql8YK6jBKryUHodazOU637EN+sPALoA2l6fB8bzC7nuiA8trFiCsgOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYDz/Ea4uBGEQ2EhBWQB5W4bJmupxRHQz5JdO4SRWuvucPDPAQ
+	4h+PiXL93q17MGse2j/zz2ei6BccjGZmbx05QDICCNBKkdpU01utR8SZelVkydlCKZOmVmofNR1
+	FHee64pOzU2cc1oBvyFc3UYtc6dYA+I5A4Zpt
+X-Gm-Gg: ATEYQzzEv5Cc31JAfLgHQ1J56OOKbbT3v32IOlUPEj7jHHrZpoAJbVc8EUxmwENJk9m
+	UyWAazcNKvx/V7i30LYIIsSERfrzTQV9Db5LqO8e3TPtinv7akVIQ6G1mBqdLYgYDmPgw8fBoBp
+	ro6vwY44sl7zGio87HOrRQvEMfgaSawkVFaXzKSErrouBCTld39iaB9hZxLgXprhPU+1fkyS8DH
+	5nD9EEScgvuPDEASK8XlFOlpI/XUci6HzKVTQLu3QGNP27E4Z+O5qeu57CjtW+zEw2muwTv2TFO
+	lZsrXbr4
+X-Received: by 2002:a05:6820:992:b0:67b:a85e:6ca5 with SMTP id
+ 006d021491bc7-67e195bd41fmr4231270eaf.18.1774801095746; Sun, 29 Mar 2026
+ 09:18:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260327184706.1600329-1-vladimir.oltean@nxp.com> <20260327184706.1600329-10-vladimir.oltean@nxp.com>
-In-Reply-To: <20260327184706.1600329-10-vladimir.oltean@nxp.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 27 Mar 2026 20:23:54 +0000
-X-Gm-Features: AQROBzCjrloDfUGTlNvOpQXdM4anVOjHCl2P0WQRB2XbIrpLYVg7AhYSjcExBJI
-Message-ID: <CADrjBPqMwtrae7LB9A8xipg6R0rHGewe69awQ_jJnsf=2c=eTw@mail.gmail.com>
-Subject: Re: [PATCH v6 phy-next 09/28] scsi: ufs: exynos: stop poking into
- struct phy guts
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev, 
-	UNGLinuxDriver@microchip.com, Bart Van Assche <bvanassche@acm.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Chanho Park <chanho61.park@samsung.com>
+References: <20260327151332.5425-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260327151332.5425-2-wsa+renesas@sang-engineering.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 29 Mar 2026 11:18:04 -0500
+X-Gm-Features: AQROBzCYhRSHffyuIz40Wf6kh2CMkJkh3NmTLvlG_EffDBSm87x8_smNNQuGVlo
+Message-ID: <CABb+yY0KOk4ASTwomuiJC_XBGvpoAXEV3GhHYpWAbgQiOXZTLQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mailbox: exynos: drop superfluous mbox setting per channel
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 27 Mar 2026 at 18:48, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
+On Fri, Mar 27, 2026 at 10:13=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> The Exynos host controller driver is clearly a PHY consumer (gets the
-> ufs->phy using devm_phy_get()), but pokes into the guts of struct phy
-> to get the generic_phy->power_count.
+> The core initializes the 'mbox' field exactly like this, so don't
+> duplicate it in the driver.
 >
-> The UFS core (specifically ufshcd_link_startup()) may call the variant
-> operation exynos_ufs_pre_link() -> exynos_ufs_phy_init() multiple times
-> if the link startup fails and needs to be retried.
->
-> However ufs-exynos shouldn't be doing what it's doing, i.e. looking at
-> the generic_phy->power_count, because in the general sense of the API, a
-> single Generic PHY may have multiple consumers. If ufs-exynos looks at
-> generic_phy->power_count, there's no guarantee that this ufs-exynos
-> instance is the one who previously bumped that power count. So it may be
-> powering down the PHY on behalf of another consumer.
->
-> The correct way in which this should be handled is ufs-exynos should
-> *remember* whether it has initialized and powered up the PHY before, and
-> power it down during link retries. Not rely on the power_count (which,
-> btw, on the writer side is modified under &phy->mutex, but on the reader
-> side is accessed unlocked). This is a discouraged pattern even if here
-> it doesn't cause functional problems.
->
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
-
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Chanho Park <chanho61.park@samsung.com>
+> Changes since v1:
+> * rebased to 7.0-rc5
+> * add tags (Thanks, Tudor!) and dropped RFT
 >
-> v5->v6: collect tags from Alim Akhtar
-> v4->v5: collect tag, add "scsi: " prefix to commit title
-> v3->v4: none
-> v2->v3:
-> - add Cc Chanho Park, author of commit 3d73b200f989 ("scsi: ufs:
->   ufs-exynos: Change ufs phy control sequence")
-> v1->v2:
-> - add better ufs->phy_powered_on handling in exynos_ufs_exit(),
->   exynos_ufs_suspend() and exynos_ufs_resume() which ensures we won't
->   enter a phy->power_count underrun condition
-> ---
->  drivers/ufs/host/ufs-exynos.c | 24 ++++++++++++++++++++----
->  drivers/ufs/host/ufs-exynos.h |  1 +
->  2 files changed, 21 insertions(+), 4 deletions(-)
+>  drivers/mailbox/exynos-mailbox.c | 4 ----
+>  1 file changed, 4 deletions(-)
 >
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index 76fee3a79c77..274e53833571 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -963,9 +963,10 @@ static int exynos_ufs_phy_init(struct exynos_ufs *ufs)
+> diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-ma=
+ilbox.c
+> index 5f2d3b81c1db..d2355b128ba4 100644
+> --- a/drivers/mailbox/exynos-mailbox.c
+> +++ b/drivers/mailbox/exynos-mailbox.c
+> @@ -99,7 +99,6 @@ static int exynos_mbox_probe(struct platform_device *pd=
+ev)
+>         struct mbox_controller *mbox;
+>         struct mbox_chan *chans;
+>         struct clk *pclk;
+> -       int i;
 >
->         phy_set_bus_width(generic_phy, ufs->avail_ln_rx);
+>         exynos_mbox =3D devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNE=
+L);
+>         if (!exynos_mbox)
+> @@ -129,9 +128,6 @@ static int exynos_mbox_probe(struct platform_device *=
+pdev)
+>         mbox->ops =3D &exynos_mbox_chan_ops;
+>         mbox->of_xlate =3D exynos_mbox_of_xlate;
 >
-> -       if (generic_phy->power_count) {
-> +       if (ufs->phy_powered_on) {
->                 phy_power_off(generic_phy);
->                 phy_exit(generic_phy);
-> +               ufs->phy_powered_on = false;
->         }
+> -       for (i =3D 0; i < EXYNOS_MBOX_CHAN_COUNT; i++)
+> -               chans[i].mbox =3D mbox;
+> -
+>         exynos_mbox->mbox =3D mbox;
 >
->         ret = phy_init(generic_phy);
-> @@ -979,6 +980,8 @@ static int exynos_ufs_phy_init(struct exynos_ufs *ufs)
->         if (ret)
->                 goto out_exit_phy;
->
-> +       ufs->phy_powered_on = true;
-> +
->         return 0;
->
->  out_exit_phy:
-> @@ -1527,6 +1530,9 @@ static void exynos_ufs_exit(struct ufs_hba *hba)
->  {
->         struct exynos_ufs *ufs = ufshcd_get_variant(hba);
->
-> +       if (!ufs->phy_powered_on)
-> +               return;
-> +
->         phy_power_off(ufs->phy);
->         phy_exit(ufs->phy);
->  }
-> @@ -1728,8 +1734,10 @@ static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
->         if (ufs->drv_data->suspend)
->                 ufs->drv_data->suspend(ufs);
->
-> -       if (!ufshcd_is_link_active(hba))
-> +       if (!ufshcd_is_link_active(hba) && ufs->phy_powered_on) {
->                 phy_power_off(ufs->phy);
-> +               ufs->phy_powered_on = false;
-> +       }
->
->         return 0;
->  }
-> @@ -1737,9 +1745,17 @@ static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
->  static int exynos_ufs_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->  {
->         struct exynos_ufs *ufs = ufshcd_get_variant(hba);
-> +       int err;
->
-> -       if (!ufshcd_is_link_active(hba))
-> -               phy_power_on(ufs->phy);
-> +       if (!ufshcd_is_link_active(hba) && !ufs->phy_powered_on) {
-> +               err = phy_power_on(ufs->phy);
-> +               if (err) {
-> +                       dev_err(hba->dev, "Failed to power on PHY: %pe\n",
-> +                               ERR_PTR(err));
-> +               } else {
-> +                       ufs->phy_powered_on = true;
-> +               }
-> +       }
->
->         exynos_ufs_config_smu(ufs);
->         exynos_ufs_fmp_resume(hba);
-> diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
-> index abe7e472759e..683b9150e2ba 100644
-> --- a/drivers/ufs/host/ufs-exynos.h
-> +++ b/drivers/ufs/host/ufs-exynos.h
-> @@ -227,6 +227,7 @@ struct exynos_ufs {
->         int avail_ln_rx;
->         int avail_ln_tx;
->         int rx_sel_idx;
-> +       bool phy_powered_on;
->         struct ufs_pa_layer_attr dev_req_params;
->         struct ufs_phy_time_cfg t_cfg;
->         ktime_t entry_hibern8_t;
+>         platform_set_drvdata(pdev, exynos_mbox);
 > --
-> 2.43.0
+> 2.51.0
 >
+Applied to mailbox/for-next
+Thanks
+Jassi
