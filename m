@@ -1,67 +1,65 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722C93BADBA
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2026 10:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6E2391848
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2026 10:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774867934; cv=none; b=fpqEsTPKfj6NIrtIo4UFF4EP3NSCSs26NpelfimGhy/6UmyEzktuET0mVZEJ44vvvRQL4uVMIhxwtpy1ZAJtIQsz3Lo6vlh6rq2sEEEuy1nxiAy/Nl76doHm94/inyLHCrfMuAlGKZSfIH1OhLNL2RJ5IGnPYnG/u1Y3T6+Q3X8=
+	t=1774867987; cv=none; b=Do/maOuc+mYlNDOzbA3fN+HwkqF/YIRdUR6oT9MTiUqpFruTNsCZJNyrwL0l5tkzf4v7raO3ImxqlKjXDtszrVtyj3LlSHjZaJiW/risWwnNJOwuz6NsUrlWj3/7In9YtudK18dFSF/TE3OeGJ8UPmeZf2NkbC+LX7Z2bnsH7oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774867934; c=relaxed/simple;
-	bh=8tGCl9H2u0kxygEigoVcToA6cJ97rZF07Am4vKOJmbs=;
+	s=arc-20240116; t=1774867987; c=relaxed/simple;
+	bh=BNYWE4ZNfeLRGblM3h9jfVP9WIaSB0fZFyHZKbb2/BY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y9DIzAuSBP2wRK/BHP6buNww3PjM5bMGEb4bps2BrJbnqfux+QzKNFvPS1FHWmIuDDg/BNVCykHXuMAWOCatlHHTOIei/Bey0GvsyRSFiL7RCXLWzumIB5A/SRNOitkhoEDEwuWRJBAmpmWRI7ddh2Nb8Fi+CvH+ZzqO6Ui5RJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VCvcQwNg; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:MIME-Version; b=PeIijloVliaAIXtlT1ZappzHunBTgjt3iQid2Wndz6doVwBQFnzDJpb3VPs3eiRMWvWulLAB2o5D89j3NJCcPF5B5UsRqYh0XCRTGQ4+GkQZBH2S9wnQabKHnmHplZNePAKz50c/uKZT06BnyO35lYpFLlZOAGh97mk2EY0RpYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TATXPP8o; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VCvcQwNg"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-487012ce896so26179145e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2026 03:52:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TATXPP8o"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43d04fc3bf2so225003f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Mar 2026 03:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774867931; x=1775472731; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1774867983; x=1775472783; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=8tGCl9H2u0kxygEigoVcToA6cJ97rZF07Am4vKOJmbs=;
-        b=VCvcQwNgAwvtg6k5HaKlSk/DWAF287dpGwC0Rn8Ss871lQXbEI2DnRHtdW2xQXmJGh
-         1n0yxr/aQ7X9PEd4x3a4rdhGLkK8/yVBNvq/kuJYFQ/MqrzWYRoAMq0xX/DVTmC4Ef4G
-         Ytn4u/JkAGZur15HRZCJ9Q9rd2wC1JarucW9f8TKbKsDHtZcFgFZ0ziNyBOcbbhK+8At
-         QJ/v1XvY0HOiHEfB7VRo3ZltFUZatWUXSOcapmU7lLnuSArdccf/tC+4RBLE2i4MmZW9
-         Zwrac2m2GafZGJRLTfO56KACyfl0NUTm6Wm28CV/gxR9yv4YqTGJ/1i/uWgHcUK5SVtI
-         TWYA==
+        bh=nzbPas/zVRhWvMIP9KSmda2kkwwqeTULljeMJhCNvcc=;
+        b=TATXPP8oQZLLpCL5KsAbv7XDn7cKmg9nSldOrFdSaePhsGrjiYktxRxakmzU3qRWsw
+         diGnL0KCwMdRNb7Y1dbl0Jbzg56l/L40ZsBuiXIg4bIJsq+BJQPmpxeRrpZWzaWP0DmC
+         XMB05gv3bTPzZKNxjqS01cAcNiOzBzIVKVDvWsWqgy0GIRRD8pI9rCvIK228Bc4+e0Hp
+         u12CZLOVWdxGJOnAEeccPFC9mhaEDyNIoY6hJIpOOp4WA0Cpgby51JjrA0gYuQnTq8bO
+         SOpvtVO8U9wEycMtYHDp0Plko4SZ0hbUAHWeWg4iChXZ+t+kH0cPUEvov2yD0c4kP/ia
+         q5Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774867931; x=1775472731;
+        d=1e100.net; s=20251104; t=1774867983; x=1775472783;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tGCl9H2u0kxygEigoVcToA6cJ97rZF07Am4vKOJmbs=;
-        b=KI8dPe3vl5KLreCjAgXfS4E9AzBVqUUPhF9Nx+XihGnQg8/hNyKJUlEhGY9zKBPewr
-         xc2aTrRJlInqutTTD99530zIjAxqpxyY7JsV3Vlj1JqFkVFscwScdeXQqswRmcS4x/Vg
-         NDbFM1xBbW6XJ0KP4Q+nRUWCb1KVNlPqlUOlZBsx5ARQUkdbPzbf+QfuhhLv932sXhp5
-         4qaRghSWhLNlH50hplsPOrUka2OV6F62ZwX6ZPnX/VNPfZY42f1Ezbp2bvh2JQJhjbsS
-         AeUAe5CDej250FOirfNpfgSY2U5IV15Azj38b7EIscvULVHYwJwLff0LR05z5bXIpL78
-         uIiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhkSJaiRMX7PSdWxoLj0vRYbBpeyBF5jfCU4Tq3VHW4taGToortn3li1ONjDWDN2eBHmRyxpuQw5H1K19k6QeT3A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz888+vlRSGFZH2yAFaF294LjwnIBhcgk62oeGPQAwnZf4IpVXB
-	lAeQBDSr3NxWilwnRzkVn7OdxPlV5TMjM5L/Ueph7kLPnXllFe79bqFUX4vmVvAoSKgmSa810Na
-	w+jio2CU=
-X-Gm-Gg: ATEYQzyDD2zfIoWEgSPaOhcfHl2slOilmjfaI1SeYA4mDXhfuidv1qXjsURTgFpY46j
-	kxmQQ4zxoutckTx6VpUfu3UuyB/d1nQ/fULH5+fN3xEGhzISs2/eLfqs5bs/oT9s4KsJOoSaLBn
-	wmXTqgUUUGiXIZZnDisgW1lF/ALBjei2B7V0JiJ0Y95DfugbyACmd/h9l4/KlGIR1tj0495+wBJ
-	4VJhn0LMBlY/fblQpJjKpuDFUEXwJWJ3V+6pv5Q1HYPF49dhE4DftvoEbyGCmVT5aTkJElxCDSv
-	HXGfrQZh7+F8KhwBOBQ/6j9+TahqPHtzCEnnQ6a/pTe+OZkGUq/sULOzSaZxhZ9vwfjXFSFT3lA
-	hZ//rzCXo8PDx3ZvjEQ0sz2WKBNcv6gFb6Z+FyIoj8Gbsv2COQ9vjnfGyO9HjfFh0Ymb2dFSA8h
-	VkmhHd9F9DAj/xrwvcj2QaxquKDgyC
-X-Received: by 2002:a05:600c:a108:b0:485:3a27:a961 with SMTP id 5b1f17b1804b1-48727c82082mr167788605e9.0.1774867930830;
-        Mon, 30 Mar 2026 03:52:10 -0700 (PDT)
+        bh=nzbPas/zVRhWvMIP9KSmda2kkwwqeTULljeMJhCNvcc=;
+        b=PZTZFYr782j4QIjk455MiFlNEKDntQNscoeWvHUdxlkSTmgO6MXqyopdag2n4dF7sL
+         AxdDkRxDRY+hPhiFEdkg2T38DtVMik8jure45JnHzVi8zYNgafM5VkmZE88ZS5xGjJ0H
+         vto0vFx/CEjniJqFcb9XH1ocy/42tqiEJfDaHFJneXoKdOVakqslzTNi8N87LzZhVX6j
+         6qy5TGRSHkgjJi+43qbfM/7eIWJ7yKuxU0RNTbKonKTCdIBp5WXgR96GSTh00zf1FuCI
+         ZBFadB6pzsYFX28OULV7Ut8jjyWU47mxtXTjIivoPnb4RUPS+naUykkDXWSfvTH6pZzO
+         A40w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEviDnGqPRe3o2KmTERtEW6+Wfmnr/LHVQuEGr6Th4ZRYznzVlj0BB0jSGwKtoobSznub8zkFFO4rKg2bmfVGYQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUHGZS7Lih9gsnkuRSdyhRtE/8OSM/NR+zyHD3UATQLjQybgfW
+	vPuLc4qPKW6QnVK4afVqBA/lspkp+kX+F6//JCgxeQ4/rRfFX3nGrjPGMx+2qfMrOrU=
+X-Gm-Gg: ATEYQzySMWKs8SHVAStpMokIpW86Jqa2kuUBtDZYCYiAQ1GBoGN8KytpSHhZkvu8dUc
+	OzjNkvAgOpwOz/fNwWp4QfDB8nGA1m9M1leEimXq4wff/LaOyanelOdzHufb3mvmGNCQ6Op8hs6
+	9h/PKqPP3w29LLg4AHVEVWDhV6Wx9E+WAJ0fu8q5eKGHIkvZw/0Qwadszn5rX4lTXLpMkv2wI/Q
+	y3O0mys58gyYLpKvHteoBHtxifdsGkx6y2eXLM/5fm4Gx3h8xbQdLjNkGQgwuWC4GiPQKLg131q
+	q/C6Y9Tby9Gu82duwNfunyzYHcciTdPi/L8nIC8FjeuImJRC9XV2QuF2HkHOCTizP45z402VNGt
+	9xG5zCqEWLo6Xn5qGC8wCEWvSZSenAz+3RxhveuFIFexEtly9Qifx5UF2/5ws4PCCQdzzZ1UY4C
+	apJ3Hpago0t2D/9Ru6DORHQSiud+sP
+X-Received: by 2002:a5d:64e6:0:b0:43b:8fa4:1937 with SMTP id ffacd0b85a97d-43b9e9d5ea1mr20787372f8f.5.1774867983379;
+        Mon, 30 Mar 2026 03:53:03 -0700 (PDT)
 Received: from draszik.lan ([212.129.78.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4873ab203e9sm78932785e9.0.2026.03.30.03.52.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf330872asm16354366f8f.17.2026.03.30.03.53.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 03:52:10 -0700 (PDT)
-Message-ID: <6f0be0a71c74e7a7959e9ad02e93aff1cb8ef712.camel@linaro.org>
-Subject: Re: [PATCH v8 02/10] dt-bindings: power: samsung: add
- google,gs101-pd
+        Mon, 30 Mar 2026 03:53:02 -0700 (PDT)
+Message-ID: <61f4ba09a77a255008078a8655e8f4791e4c87ff.camel@linaro.org>
+Subject: Re: [PATCH v8 05/10] pmdomain: samsung: convert to using regmap
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
@@ -72,12 +70,13 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
  Yescas <jyescas@google.com>, Will McVicker	 <willmcvicker@google.com>,
  kernel-team@android.com, 	linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-pm@vger.kernel.org
-Date: Mon, 30 Mar 2026 11:52:08 +0100
-In-Reply-To: <177409897339.266364.69715997034739052.b4-review@b4>
+ linux-kernel@vger.kernel.org, 	linux-pm@vger.kernel.org, Marek Szyprowski
+ <m.szyprowski@samsung.com>
+Date: Mon, 30 Mar 2026 11:53:03 +0100
+In-Reply-To: <177409897341.266364.2957933304869869135.b4-review@b4>
 References: <20260318-gs101-pd-v8-0-241523460b10@linaro.org>
-	 <20260318-gs101-pd-v8-2-241523460b10@linaro.org>
-	 <177409897339.266364.69715997034739052.b4-review@b4>
+	 <20260318-gs101-pd-v8-5-241523460b10@linaro.org>
+	 <177409897341.266364.2957933304869869135.b4-review@b4>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-8+build1 
@@ -88,43 +87,27 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi Krzysztof,
-
-
 On Sat, 2026-03-21 at 14:16 +0100, Krzysztof Kozlowski wrote:
-> On Wed, 18 Mar 2026 15:27:47 +0000, Andr=C3=A9 Draszik <andre.draszik@lin=
+> On Wed, 18 Mar 2026 15:27:50 +0000, Andr=C3=A9 Draszik <andre.draszik@lin=
 aro.org> wrote:
-> > diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/=
-Documentation/devicetree/bindings/power/pd-samsung.yaml
-> > index 9c2c51133457..3f1a2dc17862 100644
-> > --- a/Documentation/devicetree/bindings/power/pd-samsung.yaml
-> > +++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
-> > @@ -44,11 +45,28 @@ properties:
-> > =C2=A0=C2=A0 power-domains:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > =C2=A0
-> > +=C2=A0 samsung,dtzpc:
-> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/phandle
-> > +=C2=A0=C2=A0=C2=A0 description:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Distributed TrustZone Protection Contro=
-l (DTZPC) node.
+> > diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmd=
+omain/samsung/exynos-pm-domains.c
+> > index 5c3aa8983087..68b1e7ba8729 100644
+> > --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
+> > +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> > @@ -120,9 +140,26 @@ static int exynos_pd_probe(struct platform_device =
+*pdev)
+> > [ ... skip 20 lines ... ]
+> > +
+> > +	reg_config.max_register =3D resource_size(res) - reg_config.reg_strid=
+e;
+> > +	pd->regmap =3D devm_regmap_init_mmio(dev, base, &reg_config);
+> > +	if (IS_ERR(pd->regmap))
+> > +		return dev_err_probe(dev, PTR_ERR(base),
+> > +				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to init regmap\n");
 >=20
-> For what purpose?
+> PTR_ERR(pd->regmap)
 
-It is part of the domain.
+Thanks!
 
-Furthermore, TZ configuration is lost as part of power-domain power
-cycle, so this allows a driver to take necessary actions (inform the
-EL3 firmware). I believe this handle to be similar to e.g. the existing
-samsung,sysreg
-
-> Your patchset is organized in odd way - first patch for me, then not for
-> me, then again two patches for me. Please keep it consistent. Or better,
-> decouple since there are no dependencies according to cover letter.
-
-I'll update the cover letter to describe the dependencies. 4 depends on 2,
-and 2 depends on 1, hence the ordering.
-
-
-Cheers,
-Andre
+A.
