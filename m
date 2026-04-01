@@ -1,24 +1,24 @@
-Received: from mail-m49235.qiye.163.com (mail-m49235.qiye.163.com [45.254.49.235])
+Received: from mail-m32123.qiye.163.com (mail-m32123.qiye.163.com [220.197.32.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9213D3332;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D913D1CD1;
 	Wed,  1 Apr 2026 09:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.235
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775034948; cv=none; b=N0YvQAUQXa0RC83w//wANt7Kv2y0+OvjcwXZzb5fAF6atGoT2efy6+dMrCsNViXF0X6vSjQATduKG/IzQxPRcXzkX0ZkeG3klp5nyWxQ/MmVMilhN2pl3IdMC2TKrZhmctwqc3i27D2ClPZCV2vz4o0XWMerKSghwhlqD2vS+Pw=
+	t=1775034948; cv=none; b=ALs4ONmPRvohCZE8/Qxi3xLfpYM2ua0en9JpA/ePtFh5oEwICR+zQYrbr/I1q7TZmtnhDaVtMcDdenR/35qyY/Xg7rJ9ORYX7lndc6y0zPi1SQ9nS02uLghaeDAM4CVhefPGmUgeTCzVT8dGhLRP5jVVvIcjz1tj5+NytdI34ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1775034948; c=relaxed/simple;
-	bh=fYiL5xAaF9o6BilI2+Y05gJkjFe/8LqCeJiRie4+l8c=;
+	bh=592g1KerMmBsAnFJ7EycDooZsikdG+qSRVP9bDf9pj0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B/zHuBzwUZCe8OU5dHtnAopN7W+cgVIpAYxkSn7yLUhEsyXuQQ93AdnDPiEXOkSlD+759Kz+dB+lP3u1oPaMQwFjmha7RL4+J7Mg4DmyX3+tneXamNFpuNI5o5VouRmFGtnWfZU2DaOwMLL+WxRAkMOFMokhWbiNtyb2eNh8Dvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VUuR0z6e; arc=none smtp.client-ip=45.254.49.235
+	 MIME-Version; b=XGEkv5MxhN4fRjYPbmWAQbBlR+IkyqqhfR9YFEAKJQrN1B90Mx939jXscACb/21kV7VbytPRsNE+QzbvH+BaJg0pg3XzNAyFYgKq/PKSljEPNW1woRiAa3/p2AYGH6k4JZW9e6h1/tL7eojT0fTa8ifDTowJR7fF9inMOziYDnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=DfZGWiVq; arc=none smtp.client-ip=220.197.32.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VUuR0z6e"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="DfZGWiVq"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3923a2fca;
-	Wed, 1 Apr 2026 17:15:40 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3923a2fb8;
+	Wed, 1 Apr 2026 17:15:35 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -58,9 +58,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v12 07/17] drm/bridge: analogix_dp: Move the color format check to .atomic_check() for Rockchip platforms
-Date: Wed,  1 Apr 2026 17:14:44 +0800
-Message-Id: <20260401091454.25730-8-damon.ding@rock-chips.com>
+Subject: [PATCH v12 05/17] drm/exynos: exynos_dp: Apply of-display-mode-bridge to parse the display-timings node
+Date: Wed,  1 Apr 2026 17:14:42 +0800
+Message-Id: <20260401091454.25730-6-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260401091454.25730-1-damon.ding@rock-chips.com>
 References: <20260401091454.25730-1-damon.ding@rock-chips.com>
@@ -71,99 +71,194 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9d4853bbad03a3kunm479af8c3b32dd5
+X-HM-Tid: 0a9d4853a82e03a3kunm479af8c3b32dab
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUsfTVZDT0kZTUsfQx5DSElWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkNKSlZKSk5MQ0JISh4aTx5WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=VUuR0z6eDDx+3vwi5BkwuzVB0BL055b56nj6t+wbet1Mr9Q2OWlZSd4KOzmgRMgNFTP6BGLbM+y5MgRtpsw37vQMLu4LaNc6N8PB5Ecl90pltx6U17QJGhI3rRN0kkjhRa/i0LinXEtqBTH/Hg0Wzy5hNmB+HkSXvaMmUHNpNKY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=3rkQ8jPKQUXQ5Fcb5jzjcMRfHXjYelN4FuQCG5UEL4g=;
+	b=DfZGWiVq3UgdLDcifm0Wmcp6nJGEH9CqljFUbDDLLN1QQiDYIkZvFdWx9vlM8XsapF+qu16RogSZDblfUab3BVsSSEMVqMXu8M+jPwLaVu9DIDOxDKn2HuyLzeOkbPaoJ3xpF6QrdL7mMrwVWCTrcrVZ//WEkT0u24prSZCNjcA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=4jjUtOQS2hhLqscqTpFB1ivEjA0Z337r9k/VMXez/3g=;
 	h=date:mime-version:subject:message-id:from;
 
-For Rockchip platforms, the YUV color formats are currently unsupported.
-This compatibility check was previously implemented in
-&analogix_dp_plat_data.get_modes().
+If there is neither a panel nor a bridge, the display timing can be
+parsed from the display-timings node under the dp node.
 
-Moving color format check to &drm_connector_helper_funcs.atomic_check()
-would get rid of &analogix_dp_plat_data.get_modes() and be more
-reasonable than before.
+In order to get rid of &analogix_dp_plat_data.get_modes() and make
+the codes more consistent, apply DRM of-display-mode-bridge to parse
+display timings.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 
----
+------
+
+Changes in v6:
+- Apply DRM legacy bridge to parse display timings instead of
+  implementing the same codes only for Exynos DP.
+
+Changes in v7:
+- Use temporary flag &exynos_dp_device.has_of_bridge, which will be
+  removed in the following patch, instead of applying API
+  drm_bridge_is_legacy().
+- Remove exynos_dp_legacy_bridge_init() and inline API
+  devm_drm_of_display_mode_bridge().
 
 Changes in v9:
 - Add Tested-by tag.
----
- .../gpu/drm/bridge/analogix/analogix_dp_core.c | 11 +++++++++++
- .../gpu/drm/rockchip/analogix_dp-rockchip.c    | 18 ------------------
- 2 files changed, 11 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 4606ecc3f480..5bf41b364aba 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -894,8 +894,19 @@ static int analogix_dp_atomic_check(struct drm_connector *connector,
- 				    struct drm_atomic_state *state)
- {
- 	struct analogix_dp_device *dp = to_dp(connector);
-+	struct drm_display_info *di = &connector->display_info;
- 	struct drm_connector_state *conn_state;
- 	struct drm_crtc_state *crtc_state;
-+	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
-+
-+	if (is_rockchip(dp->plat_data->dev_type)) {
-+		if ((di->color_formats & mask)) {
-+			DRM_DEBUG_KMS("Swapping display color format from YUV to RGB\n");
-+			di->color_formats &= ~mask;
-+			di->color_formats |= DRM_COLOR_FORMAT_RGB444;
-+			di->bpc = 8;
-+		}
-+	}
+Changes in v10:
+- Add Reviewed-by tag.
+---
+ drivers/gpu/drm/exynos/Kconfig     |  1 +
+ drivers/gpu/drm/exynos/exynos_dp.c | 66 ++++++++----------------------
+ 2 files changed, 17 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index 0d13828e7d9e..380d9a8ce259 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -72,6 +72,7 @@ config DRM_EXYNOS_DP
+ 	select DRM_ANALOGIX_DP
+ 	select DRM_DISPLAY_DP_HELPER
+ 	default DRM_EXYNOS
++	select DRM_OF_DISPLAY_MODE_BRIDGE
+ 	select DRM_PANEL
+ 	help
+ 	  This enables support for DP device.
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index e20513164032..ac16138a22fe 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -19,6 +19,7 @@
+ #include <video/videomode.h>
  
- 	conn_state = drm_atomic_get_new_connector_state(state, connector);
- 	if (WARN_ON(!conn_state))
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index fdab71d51e2a..70fe5ae69e2e 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -166,23 +166,6 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
- 	return 0;
+ #include <drm/bridge/analogix_dp.h>
++#include <drm/bridge/of-display-mode-bridge.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
+@@ -38,9 +39,10 @@ struct exynos_dp_device {
+ 	struct drm_device          *drm_dev;
+ 	struct device              *dev;
+ 
+-	struct videomode           vm;
+ 	struct analogix_dp_device *adp;
+ 	struct analogix_dp_plat_data plat_data;
++
++	bool has_of_bridge;
+ };
+ 
+ static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+@@ -67,44 +69,20 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+ 	return exynos_dp_crtc_clock_enable(plat_data, false);
  }
  
--static int rockchip_dp_get_modes(struct analogix_dp_plat_data *plat_data,
--				 struct drm_connector *connector)
+-static int exynos_dp_get_modes(struct analogix_dp_plat_data *plat_data,
+-			       struct drm_connector *connector)
 -{
--	struct drm_display_info *di = &connector->display_info;
--	/* VOP couldn't output YUV video format for eDP rightly */
--	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
+-	struct exynos_dp_device *dp = to_dp(plat_data);
+-	struct drm_display_mode *mode;
 -
--	if ((di->color_formats & mask)) {
--		DRM_DEBUG_KMS("Swapping display color format from YUV to RGB\n");
--		di->color_formats &= ~mask;
--		di->color_formats |= DRM_COLOR_FORMAT_RGB444;
--		di->bpc = 8;
+-	if (dp->plat_data.panel)
+-		return 0;
+-
+-	mode = drm_mode_create(connector->dev);
+-	if (!mode) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed to create a new display mode.\n");
+-		return 0;
 -	}
 -
+-	drm_display_mode_from_videomode(&dp->vm, mode);
+-	connector->display_info.width_mm = mode->width_mm;
+-	connector->display_info.height_mm = mode->height_mm;
+-
+-	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+-	drm_mode_set_name(mode);
+-	drm_mode_probed_add(connector, mode);
+-
+-	return 1;
+-}
+-
+ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+ 				   struct drm_bridge *bridge,
+ 				   struct drm_connector *connector)
+ {
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
++	enum drm_bridge_attach_flags flags = 0;
+ 	int ret;
+ 
+ 	/* Pre-empt DP connector creation if there's a bridge */
+ 	if (plat_data->next_bridge) {
+-		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
+-					0);
++		if (dp->has_of_bridge)
++			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
++
++		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -129,19 +107,6 @@ static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
+ 	.disable = exynos_dp_nop,
+ };
+ 
+-static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+-{
+-	int ret;
+-
+-	ret = of_get_videomode(dp->dev->of_node, &dp->vm, OF_USE_NATIVE_MODE);
+-	if (ret) {
+-		DRM_DEV_ERROR(dp->dev,
+-			      "failed: of_get_videomode() : %d\n", ret);
+-		return ret;
+-	}
 -	return 0;
 -}
 -
- static bool
- rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
- 				   const struct drm_display_mode *mode,
-@@ -481,7 +464,6 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.dev_type = dp->data->chip_type;
- 	dp->plat_data.power_on = rockchip_dp_poweron;
- 	dp->plat_data.power_off = rockchip_dp_powerdown;
--	dp->plat_data.get_modes = rockchip_dp_get_modes;
+ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
+@@ -151,12 +116,6 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
  
- 	ret = rockchip_dp_of_probe(dp);
- 	if (ret < 0)
+ 	dp->drm_dev = drm_dev;
+ 
+-	if (!dp->plat_data.panel && !dp->plat_data.next_bridge) {
+-		ret = exynos_dp_dt_parse_panel(dp);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+ 
+ 	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
+@@ -223,6 +182,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0, &panel, &bridge);
++	if (ret == -ENODEV) {
++		dp->plat_data.next_bridge = devm_drm_of_display_mode_bridge(dp->dev,
++									dp->dev->of_node,
++									DRM_MODE_CONNECTOR_eDP);
++		ret = IS_ERR(dp->plat_data.next_bridge) ? PTR_ERR(dp->plat_data.next_bridge) : 0;
++		if (!ret)
++			dp->has_of_bridge = true;
++	}
+ 	if (ret)
+ 		return ret;
+ 
+@@ -233,7 +200,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->plat_data.power_on = exynos_dp_poweron;
+ 	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.attach = exynos_dp_bridge_attach;
+-	dp->plat_data.get_modes = exynos_dp_get_modes;
+ 	dp->plat_data.skip_connector = !!bridge;
+ 
+ out:
 -- 
 2.34.1
 
