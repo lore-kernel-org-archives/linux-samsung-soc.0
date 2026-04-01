@@ -1,24 +1,24 @@
-Received: from mail-m3269.qiye.163.com (mail-m3269.qiye.163.com [220.197.32.69])
+Received: from mail-m3274.qiye.163.com (mail-m3274.qiye.163.com [220.197.32.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394163D649B;
-	Wed,  1 Apr 2026 09:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4633CF664;
+	Wed,  1 Apr 2026 09:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775034950; cv=none; b=tnJB9eai5kNc6dgZPlHIrOHHkQ2uaVD91Yg35yiM5fVO/7cfsPOAEt+8jX4nHKNw95J/A5m/Vw3kqc0wzdrBiQloc93eQj5Ursn8ODRhuw9dwuZGV4flEKB7neKpChDo7oHUK9/vybIkVvRG2UX2i/wnLQ/H96R9jvkvnGizBaM=
+	t=1775034958; cv=none; b=nPDFkerlCoO83onSI2RhQnof5TNRDapgA7foMgBTe579wnQvzPwhSoxSDOQsx/UScG3A4CzE8WRVIZ1pt9d4Dh7MiBFIkIUWblp3WDDTY8LPFj2Dds7m+8y8s+0+vw9A58u4eaBQaPMnuwl7mziw5Ma3yN8AA3G00Z4C3Z6lwrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775034950; c=relaxed/simple;
-	bh=pDXwxWagWY8PFSsOqTb5CCgQ3O22LqwcvmpvzpfLccI=;
+	s=arc-20240116; t=1775034958; c=relaxed/simple;
+	bh=JrGLdxiDsrBuzXzlxAA5X5aXR8Cu+BuZGVbKbWW6m/k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZTCfrljkv9vclIkiudu06/e3RBBkkWz1KcwCS3jRN9Iil/gG5p1NbRIZjUJU8Pf0h9TGS5FDFrXHRFYEw+lG8CTU/oXyvNu9EObpQfa+aYMjwcPoud6/EFUtrwsRwDZ9h4i5WGi/C+bv7ahtTdAOECKPqbTix+yR/0aF96Ph4d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=gaOs1Y9u; arc=none smtp.client-ip=220.197.32.69
+	 MIME-Version; b=CjNF/LsSoWt7lZeppLo2a5pvTEtNyM2yO4kqLTL6SJA+s7l4kcxxeD8Mg9NVWeuOaSrgjkJe8rlOoy3HrF8PWkxwh6liA2cODYwbSvZTGSL8Atm/DVpNs82UgwwYJzgDcKd52AcBLFqeWtZjEnyEU8RKUouw4f0c2To35Et2JHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TdZvSRg6; arc=none smtp.client-ip=220.197.32.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="gaOs1Y9u"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TdZvSRg6"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3923a2fc7;
-	Wed, 1 Apr 2026 17:15:37 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3923a2ff5;
+	Wed, 1 Apr 2026 17:15:45 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -58,9 +58,9 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v12 06/17] drm/bridge: analogix_dp: Remove redundant &analogix_dp_plat_data.skip_connector
-Date: Wed,  1 Apr 2026 17:14:43 +0800
-Message-Id: <20260401091454.25730-7-damon.ding@rock-chips.com>
+Subject: [PATCH v12 09/17] drm/bridge: analogix_dp: Remove unused struct drm_connector* for &analogix_dp_plat_data.attach()
+Date: Wed,  1 Apr 2026 17:14:46 +0800
+Message-Id: <20260401091454.25730-10-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260401091454.25730-1-damon.ding@rock-chips.com>
 References: <20260401091454.25730-1-damon.ding@rock-chips.com>
@@ -71,83 +71,76 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9d4853b20f03a3kunm479af8c3b32dcd
+X-HM-Tid: 0a9d4853cf6903a3kunm479af8c3b32e33
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0tNHVYdHkNPGR5LTB1NHR5WFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxlOHlYeSkhPQktCT0MaTx1WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=gaOs1Y9uo+/y96xrScYBvDqd3q4DZ3kDCCb+BiypLzVLDf8KN89taJtB/68/eTyPyh/NCU8sjtAkeMbbQXt2MbG9YcxdfkbcMnJABsSrtsMuASv5dT7SLVNudcx+s8X8guOQ5xhFk7lBVQJxp0R8UWJKOWJm71/lzxDhALUANjs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=3nkXOtBYCoKZ8DUEewtXlIs54JzYHKoIvjjx04fnf4U=;
+	b=TdZvSRg6EcF1vJD2kyD0pxhffVgMz25GjNqIt6zdU/0563neVtTn22ih6teSN4FuJc6UnY4sYjxahL+YiSCSzb7p96WV327W7MXK0xtC4FMz0zJKgKcG1BL5GWpQWMYbXjsSpwzlGkDoa0qWi/W0dr07VLrab8oOzdz4bLSrU6A=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=m9rP/6T8wS0WFvkiIQi5p+4aXm4qKKkCjrdy98mzVxk=;
 	h=date:mime-version:subject:message-id:from;
 
-The &analogix_dp_plat_data.skip_connector related check can be replaced
-by &analogix_dp_plat_data.bridge.
+For both Rockchip and Exynos sides, the struct drm_connector* is
+never used in callback &analogix_dp_plat_data.attach(). After
+applying drm_bridge_connector helper, this parameter will no longer
+be used at all.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 
-------
+-----
 
-Changes in v3:
-- Squash the Exynos side commit and the Analogix side commit together.
-
-Changes in v4:
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
-
-Changes in v9:
-- Add Tested-by tag.
-
-Changes in v10:
+Changes in v11:
 - Add Reviewed-by tag.
 ---
  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- drivers/gpu/drm/exynos/exynos_dp.c                 | 1 -
- include/drm/bridge/analogix_dp.h                   | 1 -
- 3 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_dp.c                 | 3 +--
+ include/drm/bridge/analogix_dp.h                   | 3 +--
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3caa47d31649..4606ecc3f480 100644
+index b0bc96693fdb..3efd910ea463 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -959,7 +959,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 		return -EINVAL;
- 	}
- 
--	if (!dp->plat_data->skip_connector) {
-+	if (!dp->plat_data->next_bridge) {
- 		connector = &dp->connector;
- 		connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
+@@ -991,7 +991,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+ 	 * point after plat attached.
+ 	 */
+ 	if (dp->plat_data->attach) {
+-		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
++		ret = dp->plat_data->attach(dp->plat_data, bridge);
+ 		if (ret) {
+ 			DRM_ERROR("Failed at platform attach func\n");
+ 			return ret;
 diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index ac16138a22fe..1eeb0b15f99a 100644
+index 1eeb0b15f99a..71a00ee97782 100644
 --- a/drivers/gpu/drm/exynos/exynos_dp.c
 +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -200,7 +200,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
--	dp->plat_data.skip_connector = !!bridge;
+@@ -70,8 +70,7 @@ static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+ }
  
- out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+ static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
+-				   struct drm_bridge *bridge,
+-				   struct drm_connector *connector)
++				   struct drm_bridge *bridge)
+ {
+ 	struct exynos_dp_device *dp = to_dp(plat_data);
+ 	enum drm_bridge_attach_flags flags = 0;
 diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 582357c20640..f06da105d8f2 100644
+index 3301392eda5f..3428ffff24c5 100644
 --- a/include/drm/bridge/analogix_dp.h
 +++ b/include/drm/bridge/analogix_dp.h
-@@ -30,7 +30,6 @@ struct analogix_dp_plat_data {
- 	struct drm_bridge *next_bridge;
- 	struct drm_encoder *encoder;
- 	struct drm_connector *connector;
--	bool skip_connector;
+@@ -33,8 +33,7 @@ struct analogix_dp_plat_data {
  
  	int (*power_on)(struct analogix_dp_plat_data *);
  	int (*power_off)(struct analogix_dp_plat_data *);
+-	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
+-		      struct drm_connector *);
++	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *);
+ };
+ 
+ int analogix_dp_resume(struct analogix_dp_device *dp);
 -- 
 2.34.1
 
