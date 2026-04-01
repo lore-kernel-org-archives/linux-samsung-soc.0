@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F19466B73;
-	Wed,  1 Apr 2026 14:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016C12AD0C;
+	Wed,  1 Apr 2026 14:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775053599; cv=none; b=QvRwkc8hS9vDywemWo2cf4aYSJvThUuCBh15agXRgjTh6tcK6bYMnQUf/zpeTE/cX9o0TN2qzB2Dfw3ONHyoSaXA4KnsG28jtQQ3jRV9+ieCwbOUwVujxb+P0MHyQQ8FUamURQLSUtQOXGIN9eWSganEL7vge792n1wFD5YHq6k=
+	t=1775053687; cv=none; b=DQEKOUDAZHMIzJh/m0EwVs0iI8nHKlHuCOPwgRcvWPX3PFV8XJWvPxPEhYr8qV27X5zISC6m7mPvYB1R8aVMCK0vboPH3e3x4qnVm2/kZLfxo5MWYmLpmExCUT+RRBS3i0lcocPnRR8BwVwJSjuG0h/4T7qKKm1G08Ol/G+oUV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775053599; c=relaxed/simple;
-	bh=ZGWzdnKgMsboETVWlPiCa0cazcIv2YHx3DbAU8ORuHA=;
+	s=arc-20240116; t=1775053687; c=relaxed/simple;
+	bh=QG9O4ZfL5Zg9AKp+sYOMsrUsn0jNocGGOvxQbb6EijE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ITbSj+QcfsexzBcw92Y2EuImSHPQZO+eRbrBtMSAuVB1mOErNhevJn9yl+MxSitu05OVpLmxZsAc/vbvqZFl5pME0hFxffo9rbZFiocCgFxytbUWR5kq/INoH5hFsjFzQlLA4isAvmauGaPXGzCMG/+4mxXHbSD+lVPCiS9/9YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDboP/eF; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=LVWs33D1+TEm0B1hwCfWGLVLfUrJXexBhZBnCiTmA+946Ur7hK5FhO6tU28sDFcU2NNobGOWKa3yvOBDBBQOJLL0A7NfRMajmPHKSmqZIpxv3K00feOaG+R//rOmP+obj5o6ERFcTKYECn6dovwc8yq7uJTstSkEGN0Ok2hO4GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGIsjTl2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDboP/eF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7F9C19421;
-	Wed,  1 Apr 2026 14:26:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGIsjTl2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4AFC4CEF7;
+	Wed,  1 Apr 2026 14:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775053599;
-	bh=ZGWzdnKgMsboETVWlPiCa0cazcIv2YHx3DbAU8ORuHA=;
+	s=k20201202; t=1775053686;
+	bh=QG9O4ZfL5Zg9AKp+sYOMsrUsn0jNocGGOvxQbb6EijE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jDboP/eFwygzeYT4mc7EtjE0rOdhYdq+t/S7uf6f6HPJiQzbGFcUFndzd75FLyF4w
-	 UluPdrjVuxMSIYpmk778ZkamFiywN/lGMK5JAPkU66Q9RYw70L+ZhngTxeIb6BdM+W
-	 AhKFP+v92d4AtgflklZwHwrFmT9vPDoZsVD7pFjKvl+WrKfVoWSDtdEbGFx00z4/05
-	 MFZrMOItqSrdVHRCFEkOYdTBmMG1WmPNjgclDULYWQdugiDTq3O5njt9pjt8/F68Pe
-	 HcQLAk1AV8lrLEHx3C9rnNrUNjv9Dar7QyHiT6F6IIhoHiI++xTm2CtVfjuql9nMJ4
-	 ALvIM8MmKw5ZQ==
-Message-ID: <9b7aed42-154c-4ef7-aff2-b05d038ffea0@kernel.org>
-Date: Wed, 1 Apr 2026 16:26:34 +0200
+	b=kGIsjTl2RZ8iuE9vmtGX/pWw73L+PK8hWgAqUprHybULOne9UnzA040UVUn9KZxAI
+	 +7tRAIie3sGJVhA3UEBbcfKdzQldS7jlbvsAGrKhU9Eh3Czy9Sx9yG52VCvSwU7DTR
+	 1JeMwWrnQJHL8Oyfl+n2jSDI1/BJeIqg8KwLvUg0da7cwtUjuj8mxYTFlrOv1ZW70h
+	 Bwakq0BhIKzYPhxIE8As8BCV6XiKL6Bp3OmjAKYRYWxkBy6JHpG1c9W7Xig3B9Cspa
+	 Z8rtzsaNhcOq1bxCyzHNsd0u6DXs+1OsCUi9cxFJ8eqKHGlIyOnOAY5dnplRm7kwbN
+	 d1h3nqsx1jYMg==
+Message-ID: <f73173b4-f44a-4d01-abec-3366b6561332@kernel.org>
+Date: Wed, 1 Apr 2026 16:28:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] soc: samsung: exynos-pmu: add Exynos850 CPU
- hotplug support
+Subject: Re: [PATCH v2 6/7] MAINTAINERS: add exynos850-pmu.c to Exynos850
+ entry
 To: Alexey Klimov <alexey.klimov@linaro.org>,
  Sam Protsenko <semen.protsenko@linaro.org>,
  linux-samsung-soc@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
@@ -47,7 +47,7 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
- <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
+ <20260401-exynos850-cpuhotplug-v2-6-c5a760a3e259@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,35 +93,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
+In-Reply-To: <20260401-exynos850-cpuhotplug-v2-6-c5a760a3e259@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 01/04/2026 06:51, Alexey Klimov wrote:
-> +	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
-> +			   mask, (0 << cpu));
-> +
-> +	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_UPEND, &reg);
-> +
-> +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_CLEAR,
-> +		     reg & mask);
-> +
-> +	regmap_update_bits(pmu_context->pmureg,
-> +			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
-> +			   1 << 3, 0 << 3);
-> +	return 0;
-> +}
-> +
-> +const struct exynos_pmu_data exynos850_pmu_data = {
-> +	.pmu_cpuhp = true,
-> +	.cpu_pmu_offline = exynos850_cpu_pmu_offline,
-> +	.cpu_pmu_online = exynos850_cpu_pmu_online,
-> +};
-> +
+> Update Exynos850 entry to include new file
+> drivers/soc/samsung/exynos850-pmu.c. Add myself as M
+> there.
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e14e6f874e05..4b28e92b4d9b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23601,6 +23601,7 @@ F:	include/dt-bindings/clock/samsung,exynos2200-cmu.h
+>  
+>  SAMSUNG EXYNOS850 SoC SUPPORT
+>  M:	Sam Protsenko <semen.protsenko@linaro.org>
+> +M:	Alexey Klimov <alexey.klimov@linaro.org>
 
-Unnecessary blank line.
+I am surprised to see this because I did not find many reviews from your
+side before.
 
-
+Please first engage in reviewing of this platform, before assigning
+yourself as a maintainer.
 
 Best regards,
 Krzysztof
