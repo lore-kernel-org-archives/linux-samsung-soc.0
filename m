@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981DD451052;
-	Wed,  1 Apr 2026 14:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F19466B73;
+	Wed,  1 Apr 2026 14:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775053419; cv=none; b=hNCDFf4jEVziVoCiilFD1n5tO8WstTMDMDmYUoA7SeKFUkgtWubgyLyKccHeRdFbX/KdIVGOBPkURoVb70k12B6cK4fu7yJO2tBYXUJfWEFgFy+sEqLjxZlwQtGtwpMGMXARjH9yMAEXJdyLeji2OMA4v+3wZYuALCHwh6VSGGM=
+	t=1775053599; cv=none; b=QvRwkc8hS9vDywemWo2cf4aYSJvThUuCBh15agXRgjTh6tcK6bYMnQUf/zpeTE/cX9o0TN2qzB2Dfw3ONHyoSaXA4KnsG28jtQQ3jRV9+ieCwbOUwVujxb+P0MHyQQ8FUamURQLSUtQOXGIN9eWSganEL7vge792n1wFD5YHq6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775053419; c=relaxed/simple;
-	bh=OsjeM4lsmj7za+4+lBM4Pv5So3xWzZBMwniXvTdJdJk=;
+	s=arc-20240116; t=1775053599; c=relaxed/simple;
+	bh=ZGWzdnKgMsboETVWlPiCa0cazcIv2YHx3DbAU8ORuHA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T/t4IjhVcw1IHHv0EKLKIzhevBZ5TGypFK4pF9/dw21tTq7S7l3zgQV/JmujGYrcIrv7uZkbL40PTlPH5/oIHYzyjPpWfvw7AnwTqfXnZsuqwHBQOIQ70IaAag2Mu4B1t0yHYX/XZF/7C/XR4hya3EuBNfibFemskPpEEKBE70U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxRe/WlU; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ITbSj+QcfsexzBcw92Y2EuImSHPQZO+eRbrBtMSAuVB1mOErNhevJn9yl+MxSitu05OVpLmxZsAc/vbvqZFl5pME0hFxffo9rbZFiocCgFxytbUWR5kq/INoH5hFsjFzQlLA4isAvmauGaPXGzCMG/+4mxXHbSD+lVPCiS9/9YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDboP/eF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxRe/WlU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D15C4CEF7;
-	Wed,  1 Apr 2026 14:23:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDboP/eF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F7F9C19421;
+	Wed,  1 Apr 2026 14:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775053419;
-	bh=OsjeM4lsmj7za+4+lBM4Pv5So3xWzZBMwniXvTdJdJk=;
+	s=k20201202; t=1775053599;
+	bh=ZGWzdnKgMsboETVWlPiCa0cazcIv2YHx3DbAU8ORuHA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lxRe/WlUHaAKVE4mdR5fgE+zG4ZLuGNYlZrTLFgflk2ok1mt5HoQ3EoUHMBclwXSl
-	 B1phxBUaSVL+f2hmqEj+LZBc/v4cQSP202n/2exkj2saxkoqvbZKPxt7OKpBBY6lLY
-	 RSEjNTfO2x/mvSXlKWR9DQ7d/O8WGkj1yEz+dZMWdmNZr3tw2S2W/KI4O0UQ39Iu6s
-	 d4+iIRPVZ0RSdxz2z5JEZXexz/Y7VDahgHX5UafyAq0VmQF2/w8hGjJ1Koz7b12IAt
-	 BW2Cbj7KU9+PQaTz22QvTIoZ7OqXjbH2ZcuzCxm9vkLmUF2ZuETXuxBWE46zB9ewyd
-	 tZjAE3z3vuhiw==
-Message-ID: <4e6913df-5a13-4732-9789-86bd0a836788@kernel.org>
-Date: Wed, 1 Apr 2026 16:23:34 +0200
+	b=jDboP/eFwygzeYT4mc7EtjE0rOdhYdq+t/S7uf6f6HPJiQzbGFcUFndzd75FLyF4w
+	 UluPdrjVuxMSIYpmk778ZkamFiywN/lGMK5JAPkU66Q9RYw70L+ZhngTxeIb6BdM+W
+	 AhKFP+v92d4AtgflklZwHwrFmT9vPDoZsVD7pFjKvl+WrKfVoWSDtdEbGFx00z4/05
+	 MFZrMOItqSrdVHRCFEkOYdTBmMG1WmPNjgclDULYWQdugiDTq3O5njt9pjt8/F68Pe
+	 HcQLAk1AV8lrLEHx3C9rnNrUNjv9Dar7QyHiT6F6IIhoHiI++xTm2CtVfjuql9nMJ4
+	 ALvIM8MmKw5ZQ==
+Message-ID: <9b7aed42-154c-4ef7-aff2-b05d038ffea0@kernel.org>
+Date: Wed, 1 Apr 2026 16:26:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] dt-bindings: soc: samsung: exynos-pmu: deprecate
- google,pmu-intr-gen-syscon
+Subject: Re: [PATCH v2 5/7] soc: samsung: exynos-pmu: add Exynos850 CPU
+ hotplug support
 To: Alexey Klimov <alexey.klimov@linaro.org>,
  Sam Protsenko <semen.protsenko@linaro.org>,
  linux-samsung-soc@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
@@ -47,7 +47,7 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
- <20260401-exynos850-cpuhotplug-v2-3-c5a760a3e259@linaro.org>
+ <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,25 +93,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260401-exynos850-cpuhotplug-v2-3-c5a760a3e259@linaro.org>
+In-Reply-To: <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 01/04/2026 06:51, Alexey Klimov wrote:
-> The generic property samsung,pmu-intr-gen-syscon should be used
-> by default for Samsung Exynos PMU hardware blocks. Update binding
-> document to add deprecated flag for google,pmu-intr-gen-syscon
-> property.
-> While at this, also add dependency to not allow usage of both
-> above mentioned properties in the same time.
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> +	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
+> +			   mask, (0 << cpu));
+> +
+> +	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_UPEND, &reg);
+> +
+> +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_CLEAR,
+> +		     reg & mask);
+> +
+> +	regmap_update_bits(pmu_context->pmureg,
+> +			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
+> +			   1 << 3, 0 << 3);
+> +	return 0;
+> +}
+> +
+> +const struct exynos_pmu_data exynos850_pmu_data = {
+> +	.pmu_cpuhp = true,
+> +	.cpu_pmu_offline = exynos850_cpu_pmu_offline,
+> +	.cpu_pmu_online = exynos850_cpu_pmu_online,
+> +};
+> +
 
-This should be squashed. Otherwise you add incorrect code - duplicated
-property - which only later you adjust/correct.
+Unnecessary blank line.
+
+
 
 Best regards,
 Krzysztof
