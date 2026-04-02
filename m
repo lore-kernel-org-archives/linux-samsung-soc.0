@@ -1,133 +1,118 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACA63C455E
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 08:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEEA277C88
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775119727; cv=none; b=GTlY3+Xpyz4K+Ml9jSSDSGdOdWJLBe9FecfCBAYRsQSEGfokg7pVYus0v1XDaLb1ujsrESa8A1QWJWgAxgIAR0iTnpXiZh2KPU7F0DsHjM1P6FEZ7wt8iMkQkeuq+hShT6fTnnpuGFE/MYvuiMpRKkKLl8ZOJz5t9bj0YdpT7Pw=
+	t=1775136609; cv=none; b=U/4yNy5K4OgrQ6BySbxeU619a0D3pYyFi549dchccbdpgMs1ZaCWMzaRalp9wSSG+21mhl7Fa5x2XUqpi2L5jN0wmQX2XcGAAtLsH7PfeDOB8MvacfpnWrUw9xd1fAqd+2FfX+vCpYQNytT0z8h9aGlifcS2pryiy3znmusqeyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775119727; c=relaxed/simple;
-	bh=EeUB2cb/q1piHZca/onlXUaq+LBqrgeNV1GhGqOS9D0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BfohMNvGvG/nMED2ggIwe6GIaFor2VTjuW8rn22ZQ2C8zwumYtWh/KPmB4oM+nl60a7Bble/s34yZ1o960Ewon8JhPpywBgo1yl0ZlAfvTroypeL2csi4lEDue1uXZy4ABAmrAis4Ps7vU58K3WWuEAKswS+YoQTxtlUn+yxeqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QH92+j9N; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1775136609; c=relaxed/simple;
+	bh=mBTUXQ3PD2dZuBmcg7mtDUejMVNBN4mR3Nsq6fwUhdE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cTCABBOCSVKoGI9D/HEQrVNtWtEpqxE67Vxp7qu0aDv8AsvD6U0vAG1NXfiSwKE/28iRO8Vk7YNd+BlG5A5sW1mjiEp+LJNCZa1UCMfsEqfjmGH3byYFUpqsex7qmXuQBYnbEzZPTOm/qGi2i71fE8HiZhsdHyBM3lwnDGrAox8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kJSykyLd; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QH92+j9N"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43cf7683a28so375502f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2026 01:48:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kJSykyLd"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48891776099so7939915e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2026 06:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775119725; x=1775724525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1GIru3ZjVDgno/c6eBjpiuQOVd+IOE1T821J/rtKRzE=;
-        b=QH92+j9N5HdsxjTswqLhwMh5DkoXkoW5HIUI6dMDH26eKMXP7OpXKfoUfb/yv0k9nn
-         ktcigONQRnj1m/9U0+2PjofBUCqIosFS3CIWpHTBXxeyEbXt83rSeKoyYcU62ZlK1BSS
-         tbvx4I0WxCJHK3Bd+hfDSJy7bUkl0FUKkwCTjQVTrjNchlFeThMI+ZGXAAJgF9uvZ5T1
-         BCxXocRgMva4PcdAF+gvlYQF6sXKJl5Cj6Tm1vAVEAtbG5Irdr2ue27Z19Sw/WMVqcD0
-         R97cd5VTJMr0mG45FHR0foRKTHJ05rd8T12CttMTOIc9b6fFddi4BewOD74p5y048ioU
-         hhkg==
+        d=linaro.org; s=google; t=1775136606; x=1775741406; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8WxgO0tK9ltbloE4Oc/9lVYcELxtyYhqEk3PbV+jR6E=;
+        b=kJSykyLdApeIzmSaNWXOBQqUuLBtHsUCO3rY7BNGCQeBsOzXxKMfu3f4mT9Szv2izV
+         ASWHp4nozx4QWwwe2m7MQjvfKd2rcODsePNdDdwZ6dg2j+NpPMy0N8dID7vOPyu/fSBZ
+         spPV3vf5217uIQMoxdHh8GYPd/V19IesbLT20RZr0CBHoHaH0OHTfGdsLyW7Oad1S9+o
+         Cag81tcCj4nzHGJOeWXD62W6QzN0MDdWTQCGREMThnvTlpDDwJkR0mPTp4UI1QVZ4YW1
+         NQHhZjfiGbZloLIQnhZtnWw4U0tE8HrCLSfp+tbZ22c8XJOB3/roqVvKy5N8maecQQcg
+         Jj5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775119725; x=1775724525;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1GIru3ZjVDgno/c6eBjpiuQOVd+IOE1T821J/rtKRzE=;
-        b=lkuJLOu4eBaxwOcdoOqwuMJPXs4we9JaB82NLay9vS4Upfhik1WExB1tvuDdYJtY3J
-         +oMAFLliQr+Zig2EjOzAyziJd4eKMEbB+aafxlY0+3B4uYe4C/0OE5wsxa7MkGd5/bD1
-         dDWYulRlqWcvmDcn6XkICqQ4ALnGDvaYClhc8wPK1d6bMmqj3NjVNKXYXfqkCRXJPwfe
-         nNKfPdaqMyVKJnu6kbLgtoyft6eVyHl0A9rAqNIM049RyqlBFYakpXrzghyLu3PB1Afa
-         hlcSxfO+tX/2Oa/47nXWe0UONSHoR3lD9J1gj8KGF2p7LLDqxImL4VLbz9KCsvPam8Yp
-         +hEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs0lNquGiq0ML00UrDoVcXZjhAgrJI2sF2uudSdHIFaEuUzXNBPc6Y1EwmiwzXgXqt5AQYEXbITuMIfl4s2XgyMQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOdRJqUT7deWjnU9uMCJSYSyc3UfrZKs2VKGM2w7/fPGjJn3nr
-	S5w0FBWQ15n3mPumiMvvZc0+Drxe7+Dj9EukWaq2Y1YsWyju/2fDrOzD9Bv5x/H8AQI=
-X-Gm-Gg: ATEYQzyLGzM0zyJtHgSZS1o0HSRjaKELVhjbiD1xffF2bNQVMZL2FYfkSL/pBl+rpMo
-	lRCa9IufnhlGqt5pmz1bxA3fN7TylqC5yIwILs6hudAgEEOrXRfQZXQhKO7Onk7DH2y4DoUQk4T
-	RcfFOgfAwa0PYXdABttYiYqII9t31xlQHXutwq4Zx1022eP3q2pnIjI87UsB3CV84JE4gjclhFH
-	V9wsD+DIapsXk8mOMVX56TAy4AaSCsmg6tCq4DtRShYTvOWZ2DkVJqFHZO1Z2O0I40qgT4B6wxz
-	WYhM5IzhzJXRUdX6jvxI5pL8pw601tvZMf5ffrK1/g2aRjQk9aXcKvdGSXkYCGRMdREtke8ETK1
-	JywoWyjPu0qpu3tqCla+wHpzzwqzH4XL2pFkDk/G2GhfWYpvlrNGB2d46Rihq4GlSXmk/jSVUKA
-	nehp4pT2PpyP0n6V417YWOmeCsGZWBul0=
-X-Received: by 2002:adf:f5d0:0:b0:43d:1c7a:8b5e with SMTP id ffacd0b85a97d-43d1c7a8c46mr6458921f8f.35.1775119724871;
-        Thu, 02 Apr 2026 01:48:44 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.48])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d28a5sm5139022f8f.20.2026.04.02.01.48.43
+        d=1e100.net; s=20251104; t=1775136606; x=1775741406;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8WxgO0tK9ltbloE4Oc/9lVYcELxtyYhqEk3PbV+jR6E=;
+        b=s7ks/Cpf1PrvTsvbibqku9oX4ZbLd6I2AmigSsfFtMBzY39Pcnmfrvd3J/d/XbHyVC
+         +W08OyYWHYFkE9NQMWst2H+ZBOebuMw7oPYruOzNlA5XFntwDwHIV4wq8u5fDW5QBwYr
+         HidkGC3aE0R1SXYaSEyaUwqACKJFLM5lDVlOZMUcuO2O+/iWxPH5fZdUlMfxh7Y8VMnZ
+         47nbY7qmxjh1Yod7d0OTD7ab0wPQkZKpnvauvwzPYx6gfnmzxOGoqGi/JvPRqyQBDc+3
+         PagjY7KNaJSkoqTkFP3ylCZCu9ENBPFSYbXlqZnwWP4EqVyik0e50pSLdeQkxzFwz9nz
+         9ySw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz50NA7MGPxNae/5CdhfYGgNzRMwAyqkHQoASskBJzd5qC5sxsfr9AZWuydWNvR6Cum1gEhhDgkdJZRmLyNtu5eA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0TNungozflg7fzdj1MbXY0kQU4fKYEBl9IfKh0bCZjfOHrPJz
+	rhPHx8v5X5X62V7LgyWD7mb2TiFWrZniPRgXkkOX+0PnZSmniHAP3RwfQ5SHHiDsgcg=
+X-Gm-Gg: ATEYQzz25LGt87vf/xTqgPhOFugKm4W5zPbzJXFv+SOfEnuqRR9w2Q2rfSbC5crQT+H
+	Fl61oySvd9YWhNyHnkxKL+Cw1nOno7tDMWI5h6j4l2k4mjIefmSRFaJUkWt66FFY3dkftGiGrbE
+	1N9Qg+uYg9duNumQgYnvPioueVpOy3aMwbLooGDEznH7KMd8MQu1j3QWYJOgP8E/Pp0iqwYafy+
+	uAScEA0I2KcS4Y+bslmsbJmlJ7voxXVUPF/PHfX/vzkJIBajOAgLE+/jdbekaZeKJc5pfaCbAOP
+	40vSYx7tnM9Me/nTX1lmzsCQ/75x7wS9xvfbrVgyYB3zivMvkP3K6WMZbh4rhPHY21076g0qdMp
+	i3Wm9cjG2enwj27EFeAh2OftvTTWlFpUF+yWvzaT2QNAhaLWfFsd1JyWGw3piLCzfalEAiS/Dc0
+	JrUO4+zQKTRK4lmYDJEUL/CpiawJtk1hx+JVGhyXPvzQ5PhrS1oYHrhmoV3YYlPV7YIHFcQL0dY
+	w/8/EwSncX5e7mg
+X-Received: by 2002:a05:600c:a10f:b0:488:81b1:ae36 with SMTP id 5b1f17b1804b1-4888b78657bmr38517325e9.23.1775136605817;
+        Thu, 02 Apr 2026 06:30:05 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:a0c1:4037:aafe:5dc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887ad8d28bsm85916235e9.10.2026.04.02.06.30.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Apr 2026 01:48:44 -0700 (PDT)
-Message-ID: <56c0daaa-4290-48ae-83e3-40ecc4ba59bc@linaro.org>
-Date: Thu, 2 Apr 2026 11:48:40 +0300
+        Thu, 02 Apr 2026 06:30:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Apr 2026 14:30:04 +0100
+Message-Id: <DHIPEQ4XDUI6.297HDXTP84FFP@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Sylwester Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sam
+ Protsenko" <semen.protsenko@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Jassi Brar" <jassisinghbrar@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Peter Griffin"
+ <peter.griffin@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2 3/3] arm64: dts: exynos850: Add ap2apm mailbox
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: aerc 0.20.0
 References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
  <20260402-exynos850-ap2apm-mailbox-v2-3-ca5ffdff99d4@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260402-exynos850-ap2apm-mailbox-v2-3-ca5ffdff99d4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20260402-free-foamy-gibbon-acad72@quoll>
+In-Reply-To: <20260402-free-foamy-gibbon-acad72@quoll>
 
+On Thu Apr 2, 2026 at 9:01 AM BST, Krzysztof Kozlowski wrote:
+> On Thu, Apr 02, 2026 at 03:20:16AM +0100, Alexey Klimov wrote:
+>> Add mailbox node that describes AP-to-APM mailbox, that can be
+>> used for communicating with APM co-processor on Exynos850 SoCs.
+>>=20
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 9 +++++++++
+>
+> What DTS is doing in the middle of the patchset? If there is going to be
+> resend, then fix the order. If the order is intended, then most likely
+> NAK but I need somewhere explanation (but I really do not see the need
+> for it).
+>
+> Please read submitting patches (both documents).
 
+The dts change goes last in this series, the commit 3 out of 3.
+There is no DTS changes in the middle of the patchset as far as I can
+trust my eyes.
 
-On 4/2/26 5:20 AM, Alexey Klimov wrote:
-> Add mailbox node that describes AP-to-APM mailbox, that can be
+If the order in this series is NACK, please explain why.
+I suspect that potential confusion is because 2 clock patches from
+prev series were accepted/merged, so dts change shifted from its 5th
+place to 3-rd place.
 
-okay so here it's AP-to-APM mailbox.
-
-> used for communicating with APM co-processor on Exynos850 SoCs.
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos850.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> index cb55015c8dce..fcb665ccc7ae 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> @@ -298,6 +298,15 @@ cmu_apm: clock-controller@11800000 {
->  			clock-names = "oscclk", "dout_clkcmu_apm_bus";
->  		};
->  
-> +		ap2apm_mailbox: mailbox@11900000 {
-> +			compatible = "samsung,exynos850-mbox";
-> +			reg = <0x11900000 0x1000>;
-> +			clocks = <&cmu_apm CLK_GOUT_MAILBOX_APM_AP_PCLK>;
-> +			clock-names = "pclk";
-> +			interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-> +			#mbox-cells = <0>;
-> +		};
-> +
-
-
-lgtm:
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
->  		cmu_cmgp: clock-controller@11c00000 {
->  			compatible = "samsung,exynos850-cmu-cmgp";
->  			reg = <0x11c00000 0x8000>;
-> 
+BR,
+Alexey.
 
