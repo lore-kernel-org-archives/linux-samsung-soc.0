@@ -1,134 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD9D2FFF88;
-	Thu,  2 Apr 2026 13:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2A0310655
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 13:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775136733; cv=none; b=aU40RRIO4EWmli4Y7mVCh+BFvUEeigvj+bNK3rZ1cuiAUflMIjbqNw8Aac/724NB4t/LP/jbMQLpAi6iTTWoNL/FgeQOvQ8vpLMk2qwk0hXi/FPj0gDwTWuCNG5HRiQsgl5MwbQbffb+UkUOwO6/Wxqw96EFm0zF+vTSibjG8DY=
+	t=1775138235; cv=none; b=Zp0ZY5MkUrTLlB2vAB/4lLt2gpWGyFKxmgahYhomgt0AgiMPgWScKUesMQY677oqrmyEKDL9uM/QjCo6c1da13WODJygCrH3P06GygJoqOMTcrUKZ0mJoR6WNLRQFr59KUn7xN2P8vC5JPjrPaN39hWL9H6B3KkRlqULXFeuV8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775136733; c=relaxed/simple;
-	bh=rl13s/RfVOAm7FGfk3Hd7WMsyj9yfIdyS81uGytrujI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlA7q8BS/LEqU2NbRMlHT3Uawc4R0p1PFP1obFoTuXcKSy+tn/khrg7rdVnYM1aNO10CfI7pmvmaQLfxfaVX9rfjR1AjklHMycXgk3LHkgoIhYvQgrSzeSCs2OyG14BIMq9nbvfXEvM9PMbQP+JbNYSXcQf8Vqo4dlwDDPNfqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMvZ0ms5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775138235; c=relaxed/simple;
+	bh=FW6ux+5Npv72H+2EYDVr7T1TV5Jv3vXfaDQl4sqmvUM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=MT/aX0kkxIyJHwhBceN3+3DEqqunKZH8F/u/HTvb6+2dKjk9ZgtDDBtXCvlpr4QTrD8vkz9EteA3NbpyweKU5fw9xHO/xRkgo4ZihLMovmKZf8GupMOLPBlghCMi0ivivW5Xo5MEGvfqqveXglwxT0fi5svWO2Dk/Z0bcVAYjL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wOLUQV9h; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMvZ0ms5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4FFBC116C6;
-	Thu,  2 Apr 2026 13:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775136733;
-	bh=rl13s/RfVOAm7FGfk3Hd7WMsyj9yfIdyS81uGytrujI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lMvZ0ms5RdOH36+5tuVW/5n9uEbREQr43ELpwEMhA77FspFWOryGPXBDxIYzPgJsy
-	 03rOaQAeCrONiSN/6NZXwNkkgqeEGYtbQFx0usYm9JY4HbZMH+G0vrV4jShTiNjkEe
-	 OH8zolahsjy6v2EXfco/3OTBz9ZidNJjfDym4i/u757WNUvIYWtattiU9Xn2lRM5cZ
-	 WcFKQ/meEZjPmnheB+uCN6ahNBAIa0Oluomi1TcluKRnNgfql8utWtzVRB2GZ5p2cI
-	 1rNvMaa+EOmMza8XnNk3QZlrZ5ouDF6V2ygeP8VGuErM0jgtkdo95gB/XSJzOnfOft
-	 it+1LQsez6m3g==
-Message-ID: <dbacbd87-a5fe-4b47-9f82-6f3986d53011@kernel.org>
-Date: Thu, 2 Apr 2026 15:32:08 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wOLUQV9h"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4852b81c73aso8207285e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Apr 2026 06:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775138233; x=1775743033; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HlqXtAWJ1GByy64qGazEk71FC5c2hQMAqngLM9hJtdA=;
+        b=wOLUQV9hNeSqlDvI8/v7gcHCkJWi/Q7V/JdagLubvKDwKLyy8H8CjOFGzIP//tdjJH
+         Oi1c9rPzs9W5dJOFN0U5AyTFt9lsVg232obxLjrIErcdYn2KpauetjjciO7hu8l40DaQ
+         ZfjFXdaSMjDcp6/NQdeI4GG83o6oVE0c6TxRUCi5I+fKy/BzRy0mzDj6pbBiFoJePTB3
+         35DdoVIeec5S9A8IKNUP3wvsds/Trqbir1VUj834INQ4VF3tTo6FlKh1n4Bo6oMhCIWu
+         RQMD4of5pds0ofS00SQhwdOiZ0IUhfzuvsmzNi/YbTxW9Yj9NJv8sdFElkjBdhcD1/E5
+         tD4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775138233; x=1775743033;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HlqXtAWJ1GByy64qGazEk71FC5c2hQMAqngLM9hJtdA=;
+        b=EWNdoc0FVwaFvPZeKQ585JCQEIKRz9Wc7nNnj3G9HsR/7KZ8dZ58jjZq3guQs3cyj7
+         0buFMzbXvxhwT3s7OveKexoekYunVrLTj3221OImMLJE8v8dcfK1oKIJq3Ud9TUK/y3l
+         u363AdLKJBsjnKOIEYP1kbZjrSitk1obmdwW+KFLTWumhEgdmIAHq4aKenS9uFXg19BZ
+         LklTythS0aeUZHljTBu+1w1wqBbzWzur8GiDJ6CoPJg7VssVk3hRwqpd1clJdDcFiBsY
+         aYVHhxTEA+eKh70zDfkq2pR26ebEhU86Bzomb8XgcU1L8HR/0Hxf+0UE9a6YNmcuKf0p
+         sFlA==
+X-Gm-Message-State: AOJu0YwTG+hgodSE61CKdtMqo/vN0O16h8uyDXsOoNMFeWXiwNsPuFgp
+	fP4CVxYuU0V3/oNySFVKKfB6Cle4e/6Y0QouFzOfRrRJjFgVpe7vVdaAQUMxNpun1OA=
+X-Gm-Gg: ATEYQzyy78/X+yck7UVEg0/Sho32oCY42XTa/jg0DRnUXMFImq5xu/YrfsNpYRtY+X5
+	0sP8U3QSOLW/Jj+FGZKS4By4ev7wOW1mn8hEe39nPF3fGtaEPEgaKSGR+VYT8fJB8CkOonhCdHp
+	k0QJgaQKObJ+rRcF0+8uIphQk0yMtiSwlq7n8DPwIuDl+ZnvbGhCelgE8CPXzx6InM2f1OO9aUg
+	X7xuflOvjsOxvm8WftYHvO2vYa/04eHaG6COvtgw/4GKCmjA2xOOWlqEwqPGjeXauAxZNZ92pVn
+	86X6YhVrRNXJG3iIGVhCGP+oFV0IvLTQujSYjpMFBoZrJcps+uNxB5oXCNZmpZNIBoH/Muchjz6
+	sOGKC80ITXM1XCevzyMRlv/CRdtS6UmF/MSwEJX/2pCByuy9NXoi6G9KhOmE+itbBpF9pnoy5ug
+	CnbYpDCAHJ/wcoOUl1CWHPnsBEpE7POWJ4zIQ5xnKD3+0bn7OsuNwVHYbDPmwT3h4PJ1paTqLcU
+	tPaKoSTHmtN63F9
+X-Received: by 2002:a05:600c:8488:b0:486:f4d2:eac6 with SMTP id 5b1f17b1804b1-488835682c8mr136632325e9.13.1775138232539;
+        Thu, 02 Apr 2026 06:57:12 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:a0c1:4037:aafe:5dc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2c5253sm7388752f8f.9.2026.04.02.06.57.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Apr 2026 06:57:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos850: Add ap2apm mailbox
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
- <20260402-exynos850-ap2apm-mailbox-v2-3-ca5ffdff99d4@linaro.org>
- <20260402-free-foamy-gibbon-acad72@quoll>
- <DHIPEQ4XDUI6.297HDXTP84FFP@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DHIPEQ4XDUI6.297HDXTP84FFP@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 02 Apr 2026 14:57:11 +0100
+Message-Id: <DHIPZHI8BC0M.1GLYIDLUP5SF5@linaro.org>
+Subject: Re: [PATCH v2 6/7] MAINTAINERS: add exynos850-pmu.c to Exynos850
+ entry
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Sam Protsenko" <semen.protsenko@linaro.org>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, "Peter Griffin"
+ <peter.griffin@linaro.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
+ <20260401-exynos850-cpuhotplug-v2-6-c5a760a3e259@linaro.org>
+ <f73173b4-f44a-4d01-abec-3366b6561332@kernel.org>
+ <CAPLW+4=H_UkjwY2RJFPD9ekJh05MyuhKrymeuUYC4dX1WzF0wg@mail.gmail.com>
+In-Reply-To: <CAPLW+4=H_UkjwY2RJFPD9ekJh05MyuhKrymeuUYC4dX1WzF0wg@mail.gmail.com>
 
-On 02/04/2026 15:30, Alexey Klimov wrote:
-> On Thu Apr 2, 2026 at 9:01 AM BST, Krzysztof Kozlowski wrote:
->> On Thu, Apr 02, 2026 at 03:20:16AM +0100, Alexey Klimov wrote:
->>> Add mailbox node that describes AP-to-APM mailbox, that can be
->>> used for communicating with APM co-processor on Exynos850 SoCs.
->>>
->>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 9 +++++++++
+On Wed Apr 1, 2026 at 5:16 PM BST, Sam Protsenko wrote:
+> Hi Krzysztof,
+>
+> On Wed, Apr 1, 2026 at 9:28=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
 >>
->> What DTS is doing in the middle of the patchset? If there is going to be
->> resend, then fix the order. If the order is intended, then most likely
->> NAK but I need somewhere explanation (but I really do not see the need
->> for it).
+>> On 01/04/2026 06:51, Alexey Klimov wrote:
+>> > Update Exynos850 entry to include new file
+>> > drivers/soc/samsung/exynos850-pmu.c. Add myself as M
+>> > there.
+>> >
+>> > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>> > ---
+>> >  MAINTAINERS | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> >
+>> > diff --git a/MAINTAINERS b/MAINTAINERS
+>> > index e14e6f874e05..4b28e92b4d9b 100644
+>> > --- a/MAINTAINERS
+>> > +++ b/MAINTAINERS
+>> > @@ -23601,6 +23601,7 @@ F:    include/dt-bindings/clock/samsung,exynos=
+2200-cmu.h
+>> >
+>> >  SAMSUNG EXYNOS850 SoC SUPPORT
+>> >  M:   Sam Protsenko <semen.protsenko@linaro.org>
+>> > +M:   Alexey Klimov <alexey.klimov@linaro.org>
 >>
->> Please read submitting patches (both documents).
-> 
-> The dts change goes last in this series, the commit 3 out of 3.
-> There is no DTS changes in the middle of the patchset as far as I can
-> trust my eyes.
-> 
-> If the order in this series is NACK, please explain why.
-> I suspect that potential confusion is because 2 clock patches from
-> prev series were accepted/merged, so dts change shifted from its 5th
-> place to 3-rd place.
+>> I am surprised to see this because I did not find many reviews from your
+>> side before.
+>>
+>
+> It was me who advised Alexey to add himself on the list, as he's doing
+> a lot of Exynos850 related work nowadays, and we expect him to
+> continue doing that. If you think it's too early, let's get back to
+> this once there are more patches submitted under his name.
+>
+> Thanks!
+>
+>> Please first engage in reviewing of this platform, before assigning
+>> yourself as a maintainer.
 
-Oops, It is at the end! mutt does not order them by default when loaded
-via b4, so it appeared in the middle and I did not pay attention enough.
+Okay, so it was done after Sam's advice. I can do one of these options:
+- drop this patch;
+- move it into separate entry in maintainers file;
+- something else, please suggest.
+
+I don't fancy having loose files (first option).
 
 Best regards,
-Krzysztof
+Alexey.
+
