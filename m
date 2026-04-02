@@ -1,51 +1,33 @@
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DFC1850A4
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 03:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B627A4D8CE;
+	Thu,  2 Apr 2026 06:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775099600; cv=none; b=Men+Uv8Q2rs0A7lQP5RpgaS9QDLUYQn/Ax0/lGt16loZmNgGXBHvu1124wQdzOM08urcZexu2ZCrgwiiYO4lRlrf0NkGcnP1Pc0RVOwy/+2XYnjX9hyLo4kCbIspKCLmoL5rY03X/0on9C9H7pVrojNTu1ECs4FrHtnDmqeUTsY=
+	t=1775112216; cv=none; b=pIccImkg7NqRbiCsmx66tG4e0Y6oHwkE7XkAK6wN4ywVbkoHFmiD73qWOvo1mo+CNzRCU+mYCWa2eTRD1KhGAQxyso+5jNI6VEezqvZj/r05Lu229v+NF/WDoFqM3tzEYDlni9/ofZJyOybhD3wB8UrSJ5jbz0eJsmd0i+LCez8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775099600; c=relaxed/simple;
-	bh=qRqErW3371HFJSW9X/ggRuPG1UXb0WJ9Li8I6Mn4B+4=;
+	s=arc-20240116; t=1775112216; c=relaxed/simple;
+	bh=5pJvsUEGXVB/eFmV7VyV1t/gS5WHF4vfE98KTHWbssU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nlHPsUHxyMF3Fa0lGZr7y6lHMr9m3P1T2no9N0acb4US6nFRjdngZ1QwxFH7vc3+cwayPbVwPdy03G7wER7XHwxzTLfu5BEc2Z8M31xWk42UFkR36oXtHV9LxRwmiL4LLQssQB0JAJc3yhwAcTiMqlCuWtOOJKF2aPyf/RxAdDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=n2Z3F2YO; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	 In-Reply-To:Content-Type; b=rbh4ugNn25tTh4FGrPTg63Zw0OCmGKXRDWtQ2m7W/a8W+y2pOcCB/LrP+FTh2Z2J9vmY8y30ijRAqtML4oIAevW9lRtQ5kPsvhmm37KDTdDCvJHR2nAmj+ZFu+M9I4tbuWP9kvKpqBUmkN4OynJFdudu3kqUNwpHITcCXJG5Ic0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+NXctNS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="n2Z3F2YO"
-Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
-	by cmsmtp with ESMTPS
-	id 7vCLw43U4jw8Y88UbwNBJ6; Thu, 02 Apr 2026 03:13:13 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 88UawsKFaOPYd88UbwjRQX; Thu, 02 Apr 2026 03:13:13 +0000
-X-Authority-Analysis: v=2.4 cv=QbNmvtbv c=1 sm=1 tr=0 ts=69cddec9
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=k5Y5iPg+dmTXVWgYE/XtfQ==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=7T7KSl7uo7wA:10
- a=1UXpIvhHyTCAxuUnJfYA:9 a=QEXdDO2ut3YA:10 a=2aFnImwKRvkU0tJ3nQRT:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RbxD/uaBTE/UxOFohHNJ+4K/78k2KwubLxJhAG9BMh0=; b=n2Z3F2YOklIG9l1rwGNsUWn7K2
-	MSeX/ux0P2G/4T+1kamEq7dsAX9qZaGSOTQbUzphSOdpciTaP8N3uk0AmEEW0/3nzMIlNUV7DTnqa
-	ZGZQCrHVT2Rx1EmkOprzadhVPqcADr3+hCXsHNy3mwP6PZfKWZibYpwznvoIVr6q4306nElpo94+l
-	/iRWPkgyb6w9K/uOAL4u6ovAJJoUn85HC0L9EQAdBiuJVEK16Wr4sYCHgaPB41/DuTofZZIdShNEZ
-	RIrtTpAfJcK6rsLfvtfPwXkgSMJfc9t0I6U18x3xY9aSMICa8FgQKSaGm/bLQwKynxzf0hhK5Du7T
-	G4BJKhZQ==;
-Received: from [177.238.16.13] (port=51198 helo=[192.168.0.104])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.99.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1w88UZ-000000003t7-2IzI;
-	Wed, 01 Apr 2026 22:13:12 -0500
-Message-ID: <f6945a16-d726-4666-9bc8-1067a7422a81@embeddedor.com>
-Date: Wed, 1 Apr 2026 21:11:52 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+NXctNS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D27C19423;
+	Thu,  2 Apr 2026 06:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775112216;
+	bh=5pJvsUEGXVB/eFmV7VyV1t/gS5WHF4vfE98KTHWbssU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F+NXctNSIZ3dexgIyYgK3nTjZk2WUqV3LFGl+7Vhvdg2IlOgU3TK+Yc4fCrY+wVO6
+	 Rz7tKqXQT/zOJiE6Hlcwf0/MVOORW202DfV8/zNGzxmy57DJbXyJAgqKRpDLoSGTik
+	 FYprEwPySdRvnebamot9Ur6jkJw+vhmDccrql7wTSSfSengejWwBJukB8G/6EyNU6f
+	 scHvcmHshEuCqdFXakL7JcabtixPQkobn49NPJNTSkT20GcVxdzevVlp0i5qU90pEo
+	 C9xKSL12Y8CQb53qOI0LC6fSSztTtDR7ixOimWd1Wzl7YgjhIaw0sSqDNZVaJU13ib
+	 UZ5RdCoeoYs5Q==
+Message-ID: <5d645bb0-22cd-4e96-b8b6-15c4bb83d87d@kernel.org>
+Date: Thu, 2 Apr 2026 08:43:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,58 +35,105 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] clk: samsung: use kzalloc_flex
-To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Subject: Re: [PATCH 0/5] Exynos850 APM-to-AP mailbox support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- open "list:KERNEL" HARDENING "(not" covered by other
- "areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
-References: <20260402030432.101066-1-rosenp@gmail.com>
- <20260402030432.101066-2-rosenp@gmail.com>
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260320-exynos850-ap2apm-mailbox-v1-0-983eb3f296fc@linaro.org>
+ <20260321-beautiful-garnet-magpie-de4fbd@quoll>
+ <DHIB5E66SP7A.110YA5R1OOQHS@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20260402030432.101066-2-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DHIB5E66SP7A.110YA5R1OOQHS@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.16.13
-X-Source-L: No
-X-Exim-ID: 1w88UZ-000000003t7-2IzI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.104]) [177.238.16.13]:51198
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfIWbzUdD+XPT8bq/FKbMrlaOVP1VcPsTmr4JoDRtkzmJohWWzm60WLxy6QMJcboKbC0IFUKkgaOS8stFsQmApFJPZQKZMvb90LMXLhUc+cENwr0nSum9
- ZQ5fhqPdNSQdT/L24KW8yrxjznxEpIzYzYKAJBNvBOFp5pZ5Jwtz5mNUVgoUbOMLN3dzb7D3eZG+soWmBb0JicwXDOpirAj8LeYwhqsgmPgFj9v80G2mmhrZ
 
-
-
-On 4/1/26 21:04, Rosen Penev wrote:
-> Simplify allocation by using kzalloc_flex with a flexible array member
-> to combine allocations.
+On 02/04/2026 04:19, Alexey Klimov wrote:
+> On Sat Mar 21, 2026 at 10:44 AM GMT, Krzysztof Kozlowski wrote:
+>> On Fri, Mar 20, 2026 at 09:15:12PM +0000, Alexey Klimov wrote:
+>>> Hi all,
+>>>
+>>> This patch series introduces support for the APM-to-AP mailbox on the 
+>>> Exynos850 SoC. This mailbox is required for communicating with the APM 
+>>> co-processor using ACPM.
+>>>
+>>> The Exynos850 mailbox operates similarly to the existing gs101 
+>>> implementation, but the register offsets and IRQ mask bits differ. 
+>>> This series abstracts these differences into platform-specific data 
+>>> structures matched via the device tree.
+>>>
+>>> Also, it requires APM-to-AP mailbox clock in CMU_APM block.
+>>>
+>>> In theory this can be split into two series with correct dependecies:
+>>> device tree node requires clock changes to be merged. The suggestion
+>>> is to let this go through Samsung SoC tree with corresponding acks
+>>> if it is okay.
+>>
+>> I don't understand why this cannot be split into two seris
+>> *practically*. What is exactly the dependency between mailbox and DTS,
+>> that it had to be combined here?
 > 
-> Add __counted_by for extra runtime analysis. Move the counting variable
+> Do you suggest to send 3 single patches with proper dependencies
+> description? DT bindings change first, then mailbox change that specifically
+> depends on dt-bindings change and then dts update (which will depend on both)?
+> 
+> I thought that mbox driver change depends implicitly on bindings update?
 
-> assignment right after allocation as required ny __counted_by.
+Please don't answer to a question with a question. Actually three
+questions. If you cannot give argument why there is a dependency, feels
+to me like you send something you do not understand.
 
-As commented in another thread, this is not true.
-
-(The same applies to changelog text in patch 3/3)
-
--Gustavo
+Best regards,
+Krzysztof
