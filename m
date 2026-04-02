@@ -1,186 +1,125 @@
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE61C258CE5
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 01:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D5321A453
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Apr 2026 02:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775093161; cv=none; b=fvsNgbgTOXP906u7s1UXz77qGmF2l3a0q9BhBBELiIMI0KP2QXCBC2PeMwSnIX2xb+GySV8c13dwZG9hganKq9Fs1zZ5QZ6DXSpNKMV4Q3GRcI12Ck5PHrJ3I/jYvcldC/DuxsEUM50K5bgVz1pIlCr3sP+5B+/jMYsOys9QO44=
+	t=1775096383; cv=none; b=Em1hqRrw+xcPZwZGd55ZhC3VfzudEBUuXsj9G7gdVaRmvP7PukaM+aWzFhUAWFqcvf00k0uRzKCvDYLvVcANEVBHc5FBYYNPWFf+HigdYwzeEY0o7piKqfrOF7aYeu3jVeo/jEorexwrDUkXY6uXJr/VFfgWkLLwmIkbTpFWeJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775093161; c=relaxed/simple;
-	bh=evfYIKJkPHZ9+yUV/8inPLH60gyR9XmPjdvpEZbmVHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TGgdj9vMzT/CuX5O6An48MlBpcdqi4gn02M2uHFgn+vizmTpUQXaoq7XdgXSvVW5kqv7XTpKdgt/xoAvZYk6dnL9EGMjSNyN6J9xKYpfFpYI8yOl6azhpvWBCJ7ZRyx39xcIHt1di+w+NH7kMDdbDQzvhwENbkLR+g4nXnqe39Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pWvMSrP3; arc=none smtp.client-ip=74.125.82.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1775096383; c=relaxed/simple;
+	bh=HYGP2hISTZIOwm7KcS+DDptEEs44HrRNLaMy7aCvf7A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=VQSafLLBiskhSgy6tUhpRM6v+lZ/Eo/x61CN0gkGYM4bzmSan/hyBvuHuulSzd0FCFbMbamqTfkZ3G5hvL47HohLY6KAzHKy745riRdtxf5b/kapna8yM4KB4aRJdpUkUmaUfjRudf+Iv82YpOSKi1ryisafxILUeIlZaG3wJvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GAPMwA4f; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pWvMSrP3"
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-2c18af885c0so775243eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Apr 2026 18:25:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GAPMwA4f"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43cfe71e5d3so335920f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Apr 2026 19:19:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775093159; x=1775697959; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w0TTSvzfniH028lzX8No8jAcQ7PnQHkFWjL5CrlFmII=;
-        b=pWvMSrP3g3ebFOk9pjA+H3/BmMbMXn55mhxlpTneELsRD5dm9b3Z13QXPMg2wNxWJj
-         peOALi5jY/t49jCgxJCk+Awr2EJypLlL+IuRnVWsUidtpceq7KW5crNXY51Rg15XzMXq
-         ubwZ12FgnPQK8HJSLDyOfbblGV/s1rTXWnbNkkRusbXqqz7ozQXGIILiDH6LeyQAMCtR
-         L2gj/QAR1elR9jjdD0Ow+6pdw/WC/MsdXUwIe4KpBjpixkgr6JQGK5mqjH65hzEZrrh1
-         adc7CbKr1xMzgVqNgyjFULbvlFGSo0h38K2UYEmGZJpTThgOrVNwnefrb5r9pttNX0Re
-         Fw0g==
+        d=linaro.org; s=google; t=1775096380; x=1775701180; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HYGP2hISTZIOwm7KcS+DDptEEs44HrRNLaMy7aCvf7A=;
+        b=GAPMwA4fGw5vhwXgL138EKOPqA9xLfPo3PLJuDSG1bMAgMWCsVP31Ky3rH6wM1UbaB
+         bSlcPv3PQYr5bVLaeeA1vjLH1R7oIjnzIkBaXmzwnmSj1uXSpj3jcd7J2jdpKgpbnVmW
+         TPi+6nF3Azh1UhCIBx2oOCLHZQke83U1+kNRa4pDgvPKHZlaMyTScpq9N0sLtpZ1NwW8
+         3LpM8cGzxH0sK7dcfdbv/N1s1usnkPnAJR4fCppGYQJC8kz7SFUH+Nkkme5ciWpT7ICZ
+         2T944cIwhqVlkmOAbBFEhlNgu1X9X6NdZ+ywfPNOcj1LAJ5OuwrwW7VSxeY9PnspOj/x
+         luYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775093159; x=1775697959;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w0TTSvzfniH028lzX8No8jAcQ7PnQHkFWjL5CrlFmII=;
-        b=Utycyy2x1oWDbvvrpF7H1b9fqEdc2PWNHQj0WFGLK575ux1SOjiX4Rz01dE9exlavQ
-         +LNqBYLXU0324QQc1bR6b+pmS0ozQ3DD0OhTbyaoNNuI15U2pKCQeo5KUJhR+xlZmr6R
-         DVJ0Nww92NX+EGQ4fqPnzkaRZ2DopMAP43TMNyRrpcb3Beyvg51n56n+DLK4zVO2nbP0
-         VUuIUWaoSOiF0JIQN7KhAmiTje0CWZYTSRYmcTzLnGavUxwOp4PZpz3k+LKt9+9VrOXj
-         MXby/MNKYnjos+1IoRWhsu9Pkepr94CXduMgb/MXxKYay4qkzUkAG7CbBZV6ZDKZvsPN
-         yHfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+9vr1szkHOGyi/a2dFVfRkaWPX6A0BWB5eyj2PIbspqPGjUJqNQ7Syxtd2Urc3J9EfR5+z01xWJt87qPQhdSIJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDN+s7wuys4ILEQPwYjO1+KkxOwLorOil+I0zLzDm/qx15oJkQ
-	CEe2x0dxPePa6wVbBhhBzF6pS+nM6qC79zefygMNTGYHQdkr8CyT3d/79mXi2EYgdg==
-X-Gm-Gg: ATEYQzxV62ndomJIeMwEt1mCiyA73pdxMGNKsPII8Dm1Krwc2dsvCm/gZOoTpuCiONi
-	OyqYd6j0D2/Xud1hs4N5y9xQjUbs8gLYkZnSshJo1n7vd282Zzs35el+pMWhzqdXh+ZEYMaY77W
-	TkjhPOqQEbq7b5kVGk8/xaELSjovFICBZNejQzP0iLPN27wdRXwyLz9Sphz7UxLQL4/Sj2MWRvc
-	bYkta2lsHDTofY6I6GcFQGp4pZ4zyy5e5yIk72TjqWYbbKXgwwf85yC5rb46wmI1StOSMXcxoQi
-	BXUtnFeiMUbjgUpaquO3/2A/coGG9wncdWsNUdksSDjQW0Yz1H8yFGMxN9QFLFFR6o9F0umvQh3
-	ev9qd0c6O8z2qQ2dK7rg0TgEdebf46I/RQ6aFe4WoStAWr3lHJMwMw/Um0ye7qQiNQj5PShtvMO
-	aPqTLYdSnCYwEn9ufXomAinRjrlhkVJVpwnteSS61XnzvJbPNJYjSD+MWDXriRZ4g6wc7DsWaUT
-	2dCQl6qDg+p5MLSWnFFihbpoQ==
-X-Received: by 2002:a05:7301:fa0d:b0:2c1:6676:5ebd with SMTP id 5a478bee46e88-2c930e6b1fbmr3100327eec.10.1775093158301;
-        Wed, 01 Apr 2026 18:25:58 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e7c:9:862b:f392:67fb:ffb1? ([2a00:79e0:2e7c:9:862b:f392:67fb:ffb1])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ca7cf1271asm1676362eec.26.2026.04.01.18.25.56
+        d=1e100.net; s=20251104; t=1775096380; x=1775701180;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HYGP2hISTZIOwm7KcS+DDptEEs44HrRNLaMy7aCvf7A=;
+        b=PxO5QmWhrqATVH664mmq7RI/ZADckux31YIe6bAkMOsJpkuPCFQ446Jk5LiccfwHPp
+         eiYOpue8ZNHfGhICA7jmnr1JctCzQDgVmrVTfz4UN2NZnRTBz9DGZ72REJy7Ry8zMo4w
+         bSjN26PsqoKPdnD3t9LQpwQHyq53rXq32NklE1bSOPDoAt1NYXIjG3c668nTcAas3TMa
+         d549pqYZHigMUtZFgiX/HipztuNh/fMoLGNg1YfY2VETfYfrJAxWdDfCIfRSvFlYc7oE
+         Iqpbz9xpnEFiARa6j99QPPM+Pc+z1uN1qv64lU25bHuy8Zl9VKhuGb8DZiBJQJh4xd/t
+         aoFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm8v11u1rPtMl+WLeZTbw44AwNr8fYvOQWB7NEM9HxYEulU0g8mibz5MJsN3j/+GgHZmxCr9VywTgFm6PMTv533g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyREB8B/XQ76QainfwgwEILioSdqtDJIES7fVQG7xPyop0Qm3YN
+	xPaDKV/vgwoMxEpvQfjC8xOiLVfVTt2nH+pnbrntz8VU4C2gPXvYj4adHyu0uKAheoE=
+X-Gm-Gg: ATEYQzyfFTHuN3MiGli0yVgANzqsIHldM5sub6VHRahvntTUjBj7WGyF1D2zDE6na9d
+	dH8QQ0x1rJeJFGv5RKKhQfKEN3HI1xA3+H9qX4Zd6WTX938o3+Oe8a3dELR46ZhwoO9MBPTOtWF
+	kHvbhcbZ8OUDvzA/pCjPV1nFEWB03cJnRZPf/tLcCvRCunoShiPtqrIl6NPtOiuAgZsLVGcdDjI
+	V8Kj30pgz4zHfNuLctyGpYUztmAthZNIymXWB3kq8sxBhg24QtBnC2yUk6H8yTv35EM3gKGYd9n
+	E697s3sRzA9qpp8P7msg5PqG7FjRO0iIpYwxxMp5f/PVsHlLdmVRS7lSh647y9MG1bW2xAJybGl
+	TOU39MQovDWoNScNVJ/TkrMrVE5VhRihvYSHXJptHZq+lZrzjC/UXK9jdS2CQp2fk94k0DL6Ln1
+	vxN6/i/aaq3tKouiF3nzH+7GnTJEQW1JTYz9vUxZ5NPagiv8f+jh7EUm0BYxUl2F06Y8dTZdNX6
+	zltD1xNhOpl+A==
+X-Received: by 2002:a05:6000:2303:b0:439:beb9:5a96 with SMTP id ffacd0b85a97d-43d150e8ba7mr11084985f8f.31.1775096380493;
+        Wed, 01 Apr 2026 19:19:40 -0700 (PDT)
+Received: from localhost ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2c3a01sm3815604f8f.12.2026.04.01.19.19.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2026 18:25:57 -0700 (PDT)
-Message-ID: <dc670de4-2dae-4d5e-bf15-ac52c5a0868a@google.com>
-Date: Wed, 1 Apr 2026 18:25:55 -0700
+        Wed, 01 Apr 2026 19:19:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 5/6] power: supply: max77759: add charger driver
-To: Sebastian Reichel <sre@kernel.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jagan Sridharan <badhri@google.com>, Mark Brown <broonie@kernel.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20260331-max77759-charger-v10-0-76f59233c369@google.com>
- <20260331-max77759-charger-v10-5-76f59233c369@google.com>
- <ac2jYUA2F5oQsA2g@venus>
-From: Amit Sunil Dhamne <amitsd@google.com>
-Content-Language: en-US
-In-Reply-To: <ac2jYUA2F5oQsA2g@venus>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 02 Apr 2026 03:19:37 +0100
+Message-Id: <DHIB5E66SP7A.110YA5R1OOQHS@linaro.org>
+Cc: "Sylwester Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sam
+ Protsenko" <semen.protsenko@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Jassi Brar" <jassisinghbrar@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Peter Griffin"
+ <peter.griffin@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] Exynos850 APM-to-AP mailbox support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Alexey Klimov"
+ <alexey.klimov@linaro.org>
+X-Mailer: aerc 0.21.0
+References: <20260320-exynos850-ap2apm-mailbox-v1-0-983eb3f296fc@linaro.org>
+ <20260321-beautiful-garnet-magpie-de4fbd@quoll>
+In-Reply-To: <20260321-beautiful-garnet-magpie-de4fbd@quoll>
 
-Hi Sebastian,
-
-Thanks for the review!
-
-On 4/1/26 4:17 PM, Sebastian Reichel wrote:
-> Hi,
+On Sat Mar 21, 2026 at 10:44 AM GMT, Krzysztof Kozlowski wrote:
+> On Fri, Mar 20, 2026 at 09:15:12PM +0000, Alexey Klimov wrote:
+>> Hi all,
+>>=20
+>> This patch series introduces support for the APM-to-AP mailbox on the=20
+>> Exynos850 SoC. This mailbox is required for communicating with the APM=
+=20
+>> co-processor using ACPM.
+>>=20
+>> The Exynos850 mailbox operates similarly to the existing gs101=20
+>> implementation, but the register offsets and IRQ mask bits differ.=20
+>> This series abstracts these differences into platform-specific data=20
+>> structures matched via the device tree.
+>>=20
+>> Also, it requires APM-to-AP mailbox clock in CMU_APM block.
+>>=20
+>> In theory this can be split into two series with correct dependecies:
+>> device tree node requires clock changes to be merged. The suggestion
+>> is to let this go through Samsung SoC tree with corresponding acks
+>> if it is okay.
 >
-> On Tue, Mar 31, 2026 at 11:22:20PM +0000, Amit Sunil Dhamne via B4 Relay wrote:
->> +/* Charge Termination Voltage Limits (in mV) */
->> +static const struct linear_range chg_cv_prm_ranges[] = {
->> +	LINEAR_RANGE(3800, 0x38, 0x39, 100),
->> +	LINEAR_RANGE(4000, 0x0, 0x32, 10),
->> +};
-> Let me quote from include/linux/power_supply.h:
->
->  * All voltages, currents, charges, energies, time and temperatures in uV,
->  * µA, µAh, µWh, seconds and tenths of degree Celsius unless otherwise
->  * stated. It's driver's job to convert its raw values to units in which
->  * this class operates.
->
-> What makes you think that CONSTANT_CHARGE_VOLTAGE_MAX is
-> special?
->
-> [...]
+> I don't understand why this cannot be split into two seris
+> *practically*. What is exactly the dependency between mailbox and DTS,
+> that it had to be combined here?
 
-It was an oversight, I will fix it.
+Do you suggest to send 3 single patches with proper dependencies
+description? DT bindings change first, then mailbox change that specificall=
+y
+depends on dt-bindings change and then dts update (which will depend on bot=
+h)?
 
+I thought that mbox driver change depends implicitly on bindings update?
 
->
->> +static int max77759_charger_get_property(struct power_supply *psy,
->> +					 enum power_supply_property psp,
->> +					 union power_supply_propval *pval)
->> +{
->> +	struct max77759_charger *chg = power_supply_get_drvdata(psy);
->> +	int ret;
->> +
->> +	switch (psp) {
->> +	case POWER_SUPPLY_PROP_ONLINE:
->> +		ret = get_online(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_PRESENT:
->> +		ret = charger_input_valid(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_STATUS:
->> +		ret = get_status(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_CHARGE_TYPE:
->> +		ret = get_charge_type(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_HEALTH:
->> +		ret = get_health(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
->> +		ret = get_fast_charge_current(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX:
->> +		ret = get_float_voltage(chg);
->> +		break;
->> +	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
->> +		ret = get_input_current_limit(chg);
->> +		break;
->> +	default:
->> +		ret = -EINVAL;
->> +	}
->> +
->> +	pval->intval = ret;
->> +	return ret < 0 ? ret : 0;
-> As people like to use existing drivers as reference this definitely
-> needs a comment, that none of the properties used by this driver
-> support negative values. This is not a general thing as e.g. the
-> CHARGE current may be negative depending on the battery being
-> charged or discharged (OTG mode).
-
-Ah okay, thanks for letting me know. I will add a comment.
-
-
-As these patches are already in flight and part of usb-next of the usb
-tree, I can send the suggested improvements as a separate patch, if that
-works for you and Greg.
-
-
-BR,
-
-Amit
-
->
-> Greetings,
->
-> -- Sebastian
+Best regards,
+Alexey
