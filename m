@@ -1,136 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A39438237A;
-	Thu,  2 Apr 2026 21:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDB239E6F5
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Apr 2026 10:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775166741; cv=none; b=jrV8Wi4AL68755IDZGL/yvQkqblhMeOnBa95fmp0I8w7p0a+uBoxSxj3J6eaoz4aFvMAKWADFJG7LiMFA8FQ10bL+nM+fnIZX/UBI/oHyJ4QKORoBCcrmrMw0TbDiEI/BOg37+sLVarolpZZYBD6zW5L5nS0hv6LyxQrIj04efY=
+	t=1775211466; cv=none; b=uXDmh3HvC7exfb0ggRfHX7K8b0yzsf07tMBGYfhHjGwJa8vcltvRSs7SH4S4qoRh4naZbEoM7r6J6ycxnyZjakssM0xOTVOaKIHDV+qhGKZahifzGBLuDY5CBKIEutPWsciHEB/O91q2ttrHLtrzZj7TMD+q1Zpukb64JrP1XVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775166741; c=relaxed/simple;
-	bh=v9zJEeNVmz7NcsMkpOPkdYk7q2EoPoCfcmjxBRbg/Gw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kST9lBUpPAwcUljsn4/TDzTuqhzA0G7DHv178sWvx+ViQBDLJO58/07ikIzQQjU7egA4SB5DqziBWqmHlR58m6mdSsrdMsMpnaSly7Ru75MvO01yTwSt7kca/3vGaN7p+nO3bbmHMeP/JdwSXwwPtl9wEgzczEUOXKquKdJzfnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTB78iuK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775211466; c=relaxed/simple;
+	bh=d/v4XeoiWFEOFAaH3W/eNFweATx6olzCtwWK+dE1fQE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jmpc18whcu8XWT1+4h29aUnlaO18eQUl9J2bpYrH8j6xqEddga1dU2zC5AhbbKQWplZYh9uaKs2XBvOgxG8nYMnC+Sne0hqdYaMU6py91yC4zFIgAZbMQoMOVwfWIKy7iBYD8I4P2cyqJycuF5E6+N74fe+TS2mXcMC2MY1mfUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aDInQkxx; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTB78iuK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9D9C116C6;
-	Thu,  2 Apr 2026 21:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775166740;
-	bh=v9zJEeNVmz7NcsMkpOPkdYk7q2EoPoCfcmjxBRbg/Gw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=PTB78iuKGtB1jnCLkrdAAEbFdUBu6bIVdFt5Wka6j9T73o4DOPCGZwiNrnq4PiEr6
-	 mBFN0TFFR6noe6wbi63LOXrgXpdD106UW3pCqKSxrNzj8GxdtV8MQyp2Vy1SAsdp3d
-	 M6xKXlZbCh0YABGR2JZ5uus7RZzPqgGZDTd9cRTDxhbH89DrUCD35i7ucql2BdpP2E
-	 7ULjB46nbQkz0boFssqZvNz1786uWfD+aGTkjAGmooYiXv+ruQ7/oxb1SnuN7wMHKS
-	 dZy72w3QSkA4WUNCLllLtT+k1bSnFq6cedLa+/KrtjYL9V2SlHZOhBUsWcX1NjRLrv
-	 DcESm7m/FmPPA==
-Date: Thu, 2 Apr 2026 15:52:15 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: "Vincent Mailhol (Arm)" <mailhol@kernel.org>
-cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
-    Mikko Rapeli <mikko.rapeli@linaro.org>, 
-    Richard Henderson <richard.henderson@linaro.org>, 
-    Matt Turner <mattst88@gmail.com>, Magnus Lindholm <linmag7@gmail.com>, 
-    Russell King <linux@armlinux.org.uk>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-    Andreas Kemnade <andreas@kemnade.info>, 
-    Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-    Tony Lindgren <tony@atomide.com>, Huacai Chen <chenhuacai@kernel.org>, 
-    WANG Xuerui <kernel@xen0n.name>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
-    Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
-    Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-    Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-    Alexander Gordeev <agordeev@linux.ibm.com>, 
-    Christian Borntraeger <borntraeger@linux.ibm.com>, 
-    Sven Schnelle <svens@linux.ibm.com>, 
-    Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-    John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-    Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-    Clark Williams <clrkwllms@kernel.org>, 
-    Steven Rostedt <rostedt@goodmis.org>, 
-    Pablo Neira Ayuso <pablo@netfilter.org>, 
-    Krzysztof Kozlowski <krzk@kernel.org>, 
-    Alim Akhtar <alim.akhtar@samsung.com>, Frank Li <Frank.Li@nxp.com>, 
-    Sascha Hauer <s.hauer@pengutronix.de>, 
-    Pengutronix Kernel Team <kernel@pengutronix.de>, 
-    Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-    Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-    Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    Geert Uytterhoeven <geert+renesas@glider.be>, 
-    Magnus Damm <magnus.damm@gmail.com>, 
-    Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-    Gregory CLEMENT <gregory.clement@bootlin.com>, 
-    =?ISO-8859-15?Q?Th=E9o_Lebrun?= <theo.lebrun@bootlin.com>, 
-    "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-    Helge Deller <deller@gmx.de>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
-    =?ISO-8859-15?Q?Jonathan_Neusch=E4fer?= <j.neuschaefer@gmx.net>, 
-    Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, Arnd Bergmann <arnd@arndb.de>, 
-    Heiko Stuebner <heiko@sntech.de>, 
-    Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-    Mark Brown <broonie@kernel.org>, Eric Biggers <ebiggers@kernel.org>, 
-    Ard Biesheuvel <ardb@kernel.org>, 
-    Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-    Bjorn Andersson <andersson@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-    Guenter Roeck <linux@roeck-us.net>, 
-    Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
-    "Rob Herring (Arm)" <robh@kernel.org>, 
-    Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Anna Schumaker <anna.schumaker@oracle.com>, 
-    Alexandre Gonzalo <alexandre.gonzalo@arm.com>, 
-    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-omap@vger.kernel.org, loongarch@lists.linux.dev, 
-    linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-    linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-    linux-sh@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-    linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-    linux-renesas-soc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-    openbmc@lists.ozlabs.org
-Subject: Re: [PATCH 3/9] configs: remove obsolete assignments to
- CONFIG_NFS_V4_1
-In-Reply-To: <20260317-arm_defconf_cleanup-v1-3-8eecb7fdd24d@kernel.org>
-Message-ID: <2a5bb9cf-3f0c-6069-6412-cd4c5c4e8b78@kernel.org>
-References: <20260317-arm_defconf_cleanup-v1-0-8eecb7fdd24d@kernel.org> <20260317-arm_defconf_cleanup-v1-3-8eecb7fdd24d@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDInQkxx"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d029f346eso1669227f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Apr 2026 03:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775211461; x=1775816261; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d/v4XeoiWFEOFAaH3W/eNFweATx6olzCtwWK+dE1fQE=;
+        b=aDInQkxxkCYy0vyDhVJGYB38p/hCgGUxQ0BaaP3++gpOMAwLy0bAWC8wKjKuf6IRJJ
+         1eNB5vJUUQlPdA3bZuvi4X4oS4TWlLw+UScaQ5qeTkq2vDUHiePR9wluVtqCSQ9vCWuA
+         8uj2LtvbfPbe7k4ncMf5JkQOpEUy4Jc57qsnCNRzE+prgF6UlYnaDk/r4mflompe6C/l
+         Xzafc3ZBfy31q1iWSJrdp03govsQUwrMvqlqpsRFCMJdshWqFZktFhe+YuOgG+JBXUgY
+         GoMROXUYtYAWklQFA4X8jie6+Kw3Fo751h6eHZ+y0wCeqA+P9wNra0betG3CheRfl/Rh
+         2Y1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775211461; x=1775816261;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/v4XeoiWFEOFAaH3W/eNFweATx6olzCtwWK+dE1fQE=;
+        b=XwrXafSYD78F273S6ZnECmR1C1Ps+Gd3IzleTpF4uPZLRRjdEz7RxbRBrqfn/qItun
+         9TsvS5swfDsaykkYUtBchWDKcG2UI3RFgpUtKxCq07ZodRu4SZG0LhKbnncDitA8uc9f
+         b8afgG2jp369pS07MsTCzI6QFZSvAV0haWjeOGX9nbG819vcCSkUNu51FfMghlae83i+
+         9CZfVd5GV7MP3lJeogfi2gzYq8IxPBStmgJAzOobaOTNxVLaqW/VnipkexL/2Xu6XnQ7
+         0FplJveoT6qZbpEnyfBHEhgLjRjc/lMyp0THXumpWS/Nlfdn3HH2Lxizc2MRVJ6JRduc
+         qsfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGY8YDzIAVD+8BEYuFkHB8RNEjV7Xy8vl02mqBlmIUwk8Ltqbzfy40N/yk2CfQz7Bva2PhHOAAQUx5u6xxXjMB1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEu8DB6aCy/tXw/OzCwNtX7fIXnFNEe3MnrxaaDaIT26r6jQST
+	PE9+o0qKAC1WFjPukqtRknCKtIe2xf8d2gGxVDWE6tFnHWGNXP9iZmOI8yY9EN6L0xY=
+X-Gm-Gg: AeBDiesBppESU+JtLT4kZRcQIrlyLXAAYvb3kjHv0mK5gc+NBqplVUM+0yHG4dGNFq4
+	nw9qbyhm4vp7DmgBKL5l29Q2Ur7BuEplXh2g0DbjwN0R445hSOUdpiQhQ7K4xqetbjIPwsaQ3/H
+	oUvoWYEwRRuoaLIs0kmfKCatzmbkDSkGUagXuUjl7oKFDRj7U0aPLHiTKTiyRS2GKsW8WsqWsRe
+	W++XUTs1abpfTmdC8578HW/3CwZrgkZWBHsILwmtwj/0HXvJwYAlwFZlxqsfHLbjzVGVB3I1ash
+	cGm83C0cPjQH24N3vNc6/qlyDaB8GiEf2Kmh8BNIo/F1N2cBY0kMbsW3gGE+eh64LcPUEfxesFh
+	NcTX7Q36kXJsbE+kQqcRyEEUxcleq6CoGa8UEpKd1tLzLE/9JiBO8isA76wRMOjHxZg+T0as0XE
+	D6BNrgLFMwZb2HoCY0VORJuhigZE3k
+X-Received: by 2002:a05:6000:4201:b0:43c:f976:b8ee with SMTP id ffacd0b85a97d-43d292dab19mr3932897f8f.26.1775211460610;
+        Fri, 03 Apr 2026 03:17:40 -0700 (PDT)
+Received: from draszik.lan ([212.129.76.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2a71f7sm16791493f8f.1.2026.04.03.03.17.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2026 03:17:40 -0700 (PDT)
+Message-ID: <01ffe5d3aca040edcedb084386ab6e195cb93013.camel@linaro.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: soc: samsung: exynos-pmu: add
+ samsung,pmu-intr-gen phandle
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>, Sam Protsenko	
+ <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof
+ Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ Conor Dooley	 <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 03 Apr 2026 11:17:47 +0100
+In-Reply-To: <20260401-exynos850-cpuhotplug-v2-2-c5a760a3e259@linaro.org>
+References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
+	 <20260401-exynos850-cpuhotplug-v2-2-c5a760a3e259@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-8+build1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-On Tue, 17 Mar 2026, Vincent Mailhol (Arm) wrote:
+Hi Alexey,
 
-> CONFIG_NFS_V4_1 was revomed in commit 7537db24806f ("NFS: Merge
-> CONFIG_NFS_V4_1 with CONFIG_NFS_V4"). However, some defconfigs are
-> still referring the old configuration.
-> 
-> Clean-up all the leftover references to CONFIG_NFS_V4_1.
-> 
-> FYI, the suppressions were done using:
-> 
->   git grep -z -l '^CONFIG_NFS_V4=' -- 'arch/*/configs/*defconfig' |\
->     xargs -0 sed -i -E '/^CONFIG_NFS_V4_1=/d'
-> 
-> CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN and CONFIG_NFS_V4_1_MIGRATION
-> were not in scope of the renaming and still use V4_1 in their name, so
-> keep those two untouched.
-> 
-> Fixes: 7537db24806f ("NFS: Merge CONFIG_NFS_V4_1 with CONFIG_NFS_V4")
-> Signed-off-by: Vincent Mailhol (Arm) <mailhol@kernel.org>
+On Wed, 2026-04-01 at 05:51 +0100, Alexey Klimov wrote:
+> Some Exynos-based SoCs, for instance Exynos850, require access
+> to the pmu interrupt generation register region which is exposed
+> as a syscon. Update the exynos-pmu bindings documentation to
+> reflect this.
 
-Acked-by: Paul Walmsley <pjw@kernel.org> # arch/riscv
+You could mention that this is similar to the existing google,...
+one due to same requirement, hence a new and more general property.
 
+>=20
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+> =C2=A0.../devicetree/bindings/soc/samsung/exynos-pmu.yaml=C2=A0=C2=A0=C2=
+=A0 | 18 ++++++++++++++++++
+> =C2=A01 file changed, 18 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yam=
+l b/Documentation/devicetree/bindings/soc/samsung/exynos-
+> pmu.yaml
+> index 76ce7e98c10f..92acdfd5d44e 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> @@ -110,6 +110,11 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0 description:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Node for reboot method
+> =C2=A0
+> +=C2=A0 samsung,pmu-intr-gen-syscon:
+> +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/phandle
+> +=C2=A0=C2=A0=C2=A0 description:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Phandle to PMU interrupt generation inter=
+face.
+> +
+> =C2=A0=C2=A0 google,pmu-intr-gen-syscon:
 
-- Paul
+Please keep alphabetical order of vendors.
+
+Cheers,
+Andre'
