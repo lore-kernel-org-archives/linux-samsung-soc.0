@@ -1,119 +1,94 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB93AA516;
-	Tue,  7 Apr 2026 12:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA76318BA8;
+	Tue,  7 Apr 2026 12:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775564736; cv=none; b=UKA1SC+FeUyOOYN5tr3dxRH/LfKeUKboLgN8x/q0CwdYnKlGPkEJzoNwkR1qLwouHrWWVEarffRkn1F6hryrCgHw6xZuGdaEDDE6sTalPx4cukpmlis+mnDZAbZNr/Oi/xVKXPFLcRP8nROc61iw0/m54MMTSKxePWRwB2T+eeI=
+	t=1775565729; cv=none; b=EJzxdOarpd65kf9a9LaKN/SsgRaLBplCDpGwGajiIHV5DQyk3uEIkI9ORie28EJ/zF9crQ+d3OgKr563quboqFoD/VN+t8+KIyxgaXPWi9w+ZZBDqwsA1/nC3VdTGL/1X2qJtX4FD1HRPsaauojKEZb3Qw8yi0lux9ZGrbepKJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775564736; c=relaxed/simple;
-	bh=WnUj41HY436U/PRRPWD3UEcJnw1euxhOP0IoV/BAZZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMe4LysZ9/lpR0YdLxfwB1Ww+CPYlElnSggduKXf7cX0Ch/Jl0uIsK4SHyhH1g+fCqg1kN6NSlfZsMD8bR0m/vZVqLYsqKzrOTPCENL0AB0H+ogsMkqmHQV8vcSO26neswXpXaAiIGm2mtVCfi+f5oCyPZedRUqVKtJ1tymT23E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTeuxXTH; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1775565729; c=relaxed/simple;
+	bh=vcedrkOtzHl62iyJPmO/Gxl0CAOri1Qj6wGgCI+TYVE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=eRw7plqF7ctqkwsWFOvQ4p0ziYuWG7injJyLK0RYklIIZ1R7Q3wr3mYawNi/FSSTsqbrMoee/UHgml34C/Tj2jReR08051iWzBo8UUeTDk4RA52uUeI/O6vdNNMNn/H7U+VaILP1aptWEUj/WSKRw5D0ZckEdJA4E6qy5vz4lZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QWObEjzc; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTeuxXTH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1775564735; x=1807100735;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WnUj41HY436U/PRRPWD3UEcJnw1euxhOP0IoV/BAZZI=;
-  b=lTeuxXTHjWuQ8dzBpV3x6oi8ds9hm/Nx6OX/mVCBfVR40ln6YKsUF5tg
-   Yy8Ya838o7qd4NFDwHN9N4OY9bnh4wbc/IxnfAdja1z/1HF3Ed9O/3aMj
-   R3tl8TGzrBCiv59cuM2DNfNSp717/15169QVGnneb6Lp0xhTsue59MU6Z
-   AQ5ZdPf7l0LvNIKC3NsdRkZfad3cAsRpgYyXEEGxI1LuTBVJKMcnUUIab
-   Uldt9zPJGo0S1ILJQWK1XB9oGtTnLDnK4eTY4GN8xDAObUoOgAic3sny5
-   K/1NTLRJn4u5qevPseTIqzHH3lfMjF5Nqrv1k5Gq5+chUT27FiwDtVukK
-   Q==;
-X-CSE-ConnectionGUID: 4D+9sY+eTquFoRzuUqdw5g==
-X-CSE-MsgGUID: fqyEj6xOQASGLGyZbXkCug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11752"; a="99153069"
-X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; 
-   d="scan'208";a="99153069"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2026 05:25:35 -0700
-X-CSE-ConnectionGUID: Kru5kzBKQKa8am7+6ZIQUw==
-X-CSE-MsgGUID: ikCDASAQRvSVrMMGtgyLbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; 
-   d="scan'208";a="227158213"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa006.jf.intel.com with ESMTP; 07 Apr 2026 05:25:30 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1008)
-	id 12E7295; Tue, 07 Apr 2026 14:25:29 +0200 (CEST)
-Date: Tue, 7 Apr 2026 15:24:39 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jagan Sridharan <badhri@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>
-Subject: Re: [PATCH v10 6/6] usb: typec: tcpm/tcpci_maxim: deprecate WAR for
- setting charger mode
-Message-ID: <adT3h8ZEQh_mFi5j@kuha>
-References: <20260331-max77759-charger-v10-0-76f59233c369@google.com>
- <20260331-max77759-charger-v10-6-76f59233c369@google.com>
- <ac5-OzwQkczTWtMg@kuha>
- <017b8552-87e2-4409-ae34-9a3ab7365a68@google.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QWObEjzc"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 33B711A31CB;
+	Tue,  7 Apr 2026 12:42:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F3E30603C7;
+	Tue,  7 Apr 2026 12:42:05 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC75E10450234;
+	Tue,  7 Apr 2026 14:41:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1775565723; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=vcedrkOtzHl62iyJPmO/Gxl0CAOri1Qj6wGgCI+TYVE=;
+	b=QWObEjzcAPn4hL/LE8n//pQeBSv34y2P95ZUmzx9n17rGZps5XPsUSZmDkE2GfD9JgW4lv
+	os3X9wKZDJg92uLot0YHkmMDmfvgadfOR0Zys79QZf5Ocw/vQqyP0u0SYmW2Pvmj9VF0ob
+	b8A4gbpSdyQjg47I7jz/r82S26e7SGmzgLjep0liwUrfHAKkV8da4Ve5fSpAUQAjgEfKHP
+	seImPKiR3YDKzYkVzBeoM0y78Gv4b0M0uFZGKKY4je1b5KwEMv60imU5UKyc6lc47otl8g
+	w34N94qEXeOxMUfkWyVzW9v0oC4NqSGBaegSEa/tkp7/nILJGwyGaDBwutTYUg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <017b8552-87e2-4409-ae34-9a3ab7365a68@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 Apr 2026 14:41:52 +0200
+Message-Id: <DHMXIJKO62F2.3JVF0Y6L7DI0I@bootlin.com>
+Subject: Re: [PATCH v12 02/17] drm/bridge: Move legacy bridge driver out of
+ imx directory for multi-platform use
+Cc: <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+ <jernej.skrabec@gmail.com>, <kernel@pengutronix.de>, <festevam@gmail.com>,
+ <alim.akhtar@samsung.com>, <dmitry.baryshkov@oss.qualcomm.com>,
+ <nicolas.frattaroli@collabora.com>, <dianders@chromium.org>,
+ <m.szyprowski@samsung.com>, <linux-kernel@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>
+To: "Damon Ding" <damon.ding@rock-chips.com>, <andrzej.hajda@intel.com>,
+ <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <victor.liu@nxp.com>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+ <inki.dae@samsung.com>, <sw0312.kim@samsung.com>,
+ <kyungmin.park@samsung.com>, <krzk@kernel.org>, <jingoohan1@gmail.com>,
+ <p.zabel@pengutronix.de>, <hjc@rock-chips.com>, <heiko@sntech.de>,
+ <andy.yan@rock-chips.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20260401091454.25730-1-damon.ding@rock-chips.com>
+ <20260401091454.25730-3-damon.ding@rock-chips.com>
+In-Reply-To: <20260401091454.25730-3-damon.ding@rock-chips.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Amit,
+Hello Damon,
 
-On Thu, Apr 02, 2026 at 11:47:30AM -0700, Amit Sunil Dhamne wrote:
-> Hi Heikki,
-> 
-> On 4/2/26 7:33 AM, Heikki Krogerus wrote:
-> > Hi Amit,
-> > 
-> > > +static int get_vbus_regulator_handle(struct max_tcpci_chip *chip)
-> > > +{
-> > > +	if (IS_ERR_OR_NULL(chip->vbus_reg)) {
-> > > +		chip->vbus_reg = devm_regulator_get_exclusive(chip->dev,
-> > > +							      "vbus");
-> > Sorry to go back to this, but why can't you just get the regulator in
-> > max_tcpci_probe()?
-> 
-> Thanks for calling this out. This was an intentional design decision to
-> break a circular dependency.
-> 
-> The charger driver is guaranteed to probe after the TCPC driver due to a
-> power supply dependency (the TCPC is a supplier of power for the Battery
-> Charger). However, the charger driver is also the regulator provider for
-> VBUS out (when Type-C goes into source mode).
-> 
-> Because of this, the regulator handle will not be available during the TCPC
-> driver's probe. If we tried to fetch it in max_tcpci_probe() and returned
-> -EPROBE_DEFER, it would create a probe deadlock, as the charger would then
-> never probe. Therefore, I made the decision to get the regulator handle
-> lazily and on-demand.
+On Wed Apr 1, 2026 at 11:14 AM CEST, Damon Ding wrote:
+> As suggested by Dmitry, the DRM legacy bridge driver can be pulled
+> out of imx/ subdir for multi-platform use. The driver is also renamed
+> to make it more generic and suitable for platforms other than i.MX.
+>
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Heiko Stuebner <heiko@sntech.de> (on rk3588)
 
-Got it. Thanks for the explanation!
+I tried applying patchs 1-9 to drm-misc-next but patch 2 does not apply due
+to conflicts in the Kconfig file. Can you please rebase and send a new
+iteration?
 
--- 
-heikki
+Luca
 
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
