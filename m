@@ -1,141 +1,127 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD1939183D
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Apr 2026 12:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200753BA22E
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Apr 2026 12:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775736481; cv=none; b=Onfpa2bVlRdmNYG5FjHU+siyzrDaxc401OI3EnQXW+S8bVRJe1SPxFZV6dXxCwlZAWgeH5Q/CU7/co075C72V33RekgwLbvivs/bk9BKdzCHEhRvNh6zaR8cbz13Uud/pY9uRMqKmaz674nN7oENvIkpXvxTmi3j0/kR7cRnlag=
+	t=1775737386; cv=none; b=GWVH6/D1SSZ6y32sxK6DcI7ZneRu1tIhYoExe+Vv0AcUH3I/zLIWWqIz+etSq7CBYXFJglbu4wahV/Ni3Y09hpRHghvlcQkrh2MkozdHxaOLHcc077Ch6yZomDKkvmx/bR3NHf21GAzaIwVJxvl7STNAUuOHIGJL0T4o92c+hAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775736481; c=relaxed/simple;
-	bh=ir1VdmviffzXBZPmE93/M0r5Z01m2FdEOc1nRHQQYMM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=K+IZ4/rhAcWOd+S0H4VbngPmrl6OnyrU8mgpbUan8zgO9HhzUlnIM/+Na0o9wvg8JZwyJndgXVamb1QeXaOBF0776dLy2TGcyVPHJj7PHLHhmOp3LOvBTUNYJKlLPQuLwSAkxiBvm2EYeOWdudAA+6aUV+DhlOxH+O+3ZqeURaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzfztKj7; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1775737386; c=relaxed/simple;
+	bh=8ha08POWCdts2kcxBytAF07AGORB5Xw+1RHSI50iK3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SZ2n0tzqsa9/GBT4XCfcU18eSx3XvrOe+A9PfWMX7rVUWGlqkAJKdEABv3Kc4TIbb8C91bu2eCEK1H+8+Nd01G9kW2IC13ya0ovtjxKoJp/4dIEV7efW23IDq+n9Edyz7tXKBisUaEIlrxctfsaWcZj3pBbhrXHeEIizrZ9mFlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OEiGXjJT; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzfztKj7"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-43cfbd17589so572707f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Apr 2026 05:07:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OEiGXjJT"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4889e045bc6so8649565e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Apr 2026 05:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775736477; x=1776341277; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C159+BoCf0JeccgPtowgYy9MrOmnFdOSeFm140he7+U=;
-        b=LzfztKj7xiXIaFfy+V5Zg064uDxB8CrD+BmlL+NOkrDbp8qXNkWgRpaplSCw5aYrPE
-         8O9AKOv7WqxuCrUUdS88N0SSIuJTi6B0wLswV3BYOed6BMdJU16nXjHzlOIQxAoMCpuu
-         Lild9e0VgwP508J9OZROOhmfh1Uo3DupTUH36G/VVWX7cW5+DAZ0e8gIUAfpd4aBItJq
-         5pT3/ObsrmMd/JslfdF+PaBsf3Ou3rtcps5ZCpCpZBbXdPfPH71bAdCK27GvKe9/zr92
-         Ng6orys/52s8biAMRZuk5ZuHbYUbwlz5ecObGXSyNHrASHo8+4XM/mjZCcKjrDYNcRKw
-         N9CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775736477; x=1776341277;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+        d=linaro.org; s=google; t=1775737383; x=1776342183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=C159+BoCf0JeccgPtowgYy9MrOmnFdOSeFm140he7+U=;
-        b=CwWox9ErUQgUY1hKb+eEFp+/jwtXv4myJGCp2Dgd37JpuxVmndNa8fj4hHvdc72sRy
-         rmH8ABtT71IESxEXJKT4rdN98wKyXWozOUoegpiQQeHwXJ/uqD+7T9hRN1HZR6Myoz6g
-         ZJ7b1Elov0YwbYZ+ViSSBYW2Lawq0lG1Wnyi6fHaiTu3bELQcNM+tepjX9qiDc36ox2Q
-         uWY6tqcIv/dO7flw3ERn9xW4LVetH5ZREx0gT35kTQkkdJBof4igdAJf8j1JlFSXwD8Y
-         KRX7MhtVoaBeT7Uc53LyOalD/EGPoSIAdVjJz6TuUnkVH6E8rWmTzzvESp+Tr/fmmP4D
-         GknA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCXsQllqsODU/mO0s7QtSSEUAMxl6xzmhl3ffUa5wfx7gIByy/v+3myhXZS7dc5CLmyHjS3KQHmRGH/cEFvyJVpw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5+UiF9nnOLENpRnFCwIeIQOVdw/jYNdBjZmOPMspsnAkTZRyI
-	fyla1lLFu5O7bL/233e5h2GgR3MJazzh9cZ3nhQTtGhu26SEgxNsCbuLemnUJ/GTLd4wPvG1s9u
-	EJn8V
-X-Gm-Gg: AeBDietnuJzQX2ex/ioqKt/VEPIto5hSe0tZ7xuFof7p5SVmIccRbbCHjJZ7MBfnZo/
-	r3irq6Vw5ocz4LX2Yj47ZqrKV4KFBgA71LvR4OVkgFeygtFRtOlrQnVplbCDseBZ0Fn2slwv4uM
-	FqfHnlLJiElSYu4nhmnCGjxEfMGrhaRKpCYe13Y7cjuibURtb5jEhrs/cj+WlX5GvFh4GY3Qg6k
-	PnLsUrk4cjcTiC9Mb4uiE8YlnOhk5AORHH5pTobcrh8KQwxt+lhhvPe5bnS1kl9rfMBGAlA5kRk
-	5+1aHNQU5rgOaoKHmXyBeAJaMWPffU2fvJUjeAHL6lkX1n8PPXgEIRVpMcDJemlYt7oaBwcdDq0
-	MYZTjrkaNIsFL6WydjGBpaNlxQmUABnee7yEeBKKpOjcYnZwX6tDt1j8Tn6ksfjHsNjR4n3mtTf
-	9YL73VZHzmCbjBJ8Rg8EcEMPTXc+sasSTeELGN0s3u1hu1tPIi9FAgIFI1u7oGg3ipFTuA9H0rg
-	UOZKar8cEpIZE9jEMREaQ+Ugzqq
-X-Received: by 2002:a05:6000:2086:b0:43d:309b:f2db with SMTP id ffacd0b85a97d-43d5a126f8dmr4358618f8f.7.1775736476554;
-        Thu, 09 Apr 2026 05:07:56 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:e6b4:ab32:911e:de1c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d2971sm66154263f8f.22.2026.04.09.05.07.55
+        bh=bNUR+AEM+0xI0nm5DHe+rKxaeNx6oASLbxq9t2PiLlQ=;
+        b=OEiGXjJTi57weYjl+rhiQNvazHT2ysm2cUX3YIA27lwwzCFHaPZbsXpndWn60MGp0o
+         DVrrw+VtarCCVRX96UvNaBAu2z9v6pwvm+cQ84aZeFSTzzhdfGLmG4sbjVu91ih06F02
+         YG1IWyi0Do33dl02HAxtBzlzteHp0xEOeh8yGzl4Ys+cc6vNPH2ndFLwmdi+zEfs8CQC
+         7tjsLu1PQhReACU1uqhDjCumpcos7kWg+98w+V1ZE0kuM760A5m47y2gX+xDG5mqWEoJ
+         ypTwtmZGODY09vjY0t4Gn7Qgg3Zs6KTrGMeKXyYeB+QM8446mAstDGV3Uq0Oxp8mPf4L
+         9P5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775737383; x=1776342183;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bNUR+AEM+0xI0nm5DHe+rKxaeNx6oASLbxq9t2PiLlQ=;
+        b=saQ+JJI7dQCWSyAwpDOJTXrpXvQtjG7wvQaqCsHMKVxSYQhsc6s239WTEB5mjbno1b
+         TNupkwjMWOOfq0JkD2FNT/lNMCnPcw281ptSPOZfD1SmqIowBxuhNsAEz8hdNiiuF1mL
+         3n8T0VbYr3VI0WPlHPBoNdFNO2xjq4ulzE/OETVjdUt83Iwc21xGbP+l2ypCWqzHqIWX
+         O6LJb4c4rOS4d/VCDyPjKr/5JSAS6IHLvCVYkzDUty2s3NVTanBl5UxzacWDrC0PQOEp
+         ipookiq0TL6xQL5wIlJQDj8oeGJoTWcQoFJaVJ1dQbGDkB4PayfuSSXWFfyFFzEUP6+n
+         dANQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFMROGI36kLo68g1Z6AN+eXe06uVdCUJfsqVCYGtrI2OctiIeA85TYNLs2U/QM4baeNhuwUXiNDe9bvrs/IiE1Ig==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXJ/5k0cjgPsMd7tp/wkczxoq75Jh3MoUSvimeLSgbmrvlvPRc
+	qU77DIDUNAp4TkCtnZxB/IJ1p//CTr++g7xo9VblDs/VN0Sh0aY0+j4wZvGsGYy+h6s=
+X-Gm-Gg: AeBDieuFDtYFk6KR8THnEtm4e2458gBjjrvizMkc2yCdrYnjJJgxgQQlTe5qmRQsbNF
+	GJlGsTSUIeKf67EpEwERLvMU31mEE3JSuuzSDjzndreCdQtQYhsb8n9rdDh5lKNgZ0QeJ0WyEQ5
+	FWKdj3sYeDRZ8nQ8LCfF0qJODqQyLTP7vf1vKFKI6X+WMtVyuo0HHX+ePkjaFxARDVXe1eKhWC+
+	DRj3NeokoMEXtSmXgWo1pcyGSmuyAZDs/Ae91BmH1aaMNPH3v8GFb94HU87ffyPlDLN0Tio0eRi
+	5LNgsNn70XArbmtI5PRCBHzTPsN5G5cXP6i/7gNPw34fNEnC7Swve8J35uKLE0JWvoNcyf0J7kj
+	/uUNmwkV8jI8ZNNDcO5BpD9Tmc5E9jd6hTMOYQMQI4xz10CTtNvEzNratcYYkYmASOqNCft4dkS
+	x+Z0RoMBKx7T6njmGfoghqKk7/ap8ECYGQ1SoK4Fz3yA==
+X-Received: by 2002:a05:600c:1554:b0:488:a639:b787 with SMTP id 5b1f17b1804b1-488ccfb7907mr47873215e9.11.1775737383421;
+        Thu, 09 Apr 2026 05:23:03 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.48])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488cd21b604sm69928745e9.10.2026.04.09.05.23.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Apr 2026 05:07:55 -0700 (PDT)
+        Thu, 09 Apr 2026 05:23:03 -0700 (PDT)
+Message-ID: <63087cad-a8d1-4ff0-870a-6e1a738ff8b8@linaro.org>
+Date: Thu, 9 Apr 2026 15:22:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] thermal: samsung: Add support for Google GS101 TMU
+To: Alexey Klimov <alexey.klimov@linaro.org>, daniel.lezcano@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org
+References: <20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org>
+ <DHNUUPQPD5DR.18P18VV0LNTI8@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DHNUUPQPD5DR.18P18VV0LNTI8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 09 Apr 2026 13:07:54 +0100
-Message-Id: <DHOM1MT2MQON.3F5MF0V2RYSFJ@linaro.org>
-Subject: Re: [PATCH v2 5/7] soc: samsung: exynos-pmu: add Exynos850 CPU
- hotplug support
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Henrik Grimler" <henrik@grimler.se>
-Cc: "Sam Protsenko" <semen.protsenko@linaro.org>,
- <linux-samsung-soc@vger.kernel.org>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>,
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Tudor
- Ambarus" <tudor.ambarus@linaro.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
- <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
- <20260409115630.GA15706@localhost>
-In-Reply-To: <20260409115630.GA15706@localhost>
+Content-Transfer-Encoding: 7bit
 
-Hi Henrik,
 
-On Thu Apr 9, 2026 at 12:57 PM BST, Henrik Grimler wrote:
-> Hi Alexey,
->
-> This patch breaks compilation for arm(32) exynos devices. Compiling
-> with exynos_defconfig I get:
->
-> [ ... ]
->   CC      drivers/soc/samsung/exynos850-pmu.o
->   CC [M]  fs/squashfs/page_actor.o
-> ../drivers/soc/samsung/exynos850-pmu.c:17:21: error: call to undeclared f=
-unction 'MPIDR_AFFINITY_LEVEL'; ISO C99 and later do not support implicit f=
-unction declarations [-Wimplicit-function-declaration]
->    17 |         u32 this_cluster =3D MPIDR_AFFINITY_LEVEL(read_cpuid_mpid=
-r(), 2);
->       |                            ^
-> ../drivers/soc/samsung/exynos850-pmu.c:17:42: error: call to undeclared f=
-unction 'read_cpuid_mpidr'; ISO C99 and later do not support implicit funct=
-ion declarations [-Wimplicit-function-declaration]
->    17 |         u32 this_cluster =3D MPIDR_AFFINITY_LEVEL(read_cpuid_mpid=
-r(), 2);
->       |                                                 ^
-> ../drivers/soc/samsung/exynos850-pmu.c:48:21: error: call to undeclared f=
-unction 'MPIDR_AFFINITY_LEVEL'; ISO C99 and later do not support implicit f=
-unction declarations [-Wimplicit-function-declaration]
->    48 |         u32 this_cluster =3D MPIDR_AFFINITY_LEVEL(read_cpuid_mpid=
-r(), 2);
->       |                            ^
-> ../drivers/soc/samsung/exynos850-pmu.c:48:42: error: call to undeclared f=
-unction 'read_cpuid_mpidr'; ISO C99 and later do not support implicit funct=
-ion declarations [-Wimplicit-function-declaration]
->    48 |         u32 this_cluster =3D MPIDR_AFFINITY_LEVEL(read_cpuid_mpid=
-r(), 2);
->       |                                                 ^
-> 4 errors generated.
-> make[6]: *** [../scripts/Makefile.build:289: drivers/soc/samsung/exynos85=
-0-pmu.o] Error 1
-> make[5]: *** [../scripts/Makefile.build:548: drivers/soc/samsung] Error 2
-> make[4]: *** [../scripts/Makefile.build:548: drivers/soc] Error 2
-> make[3]: *** [../scripts/Makefile.build:548: drivers] Error 2
-> make[3]: *** Waiting for unfinished jobs....
-> [ ... ]
 
-Thank you! My bad.
-I will check for the next series what I missed.
+On 4/8/26 5:49 PM, Alexey Klimov wrote:
+> On Mon Jan 19, 2026 at 12:08 PM GMT, Tudor Ambarus wrote:
+>> Add support for the Thermal Management Unit (TMU) on the Google GS101
+>> SoC.
+>>
+>> The GS101 TMU implementation utilizes a hybrid architecture where
+>> management is shared between the kernel and the Alive Clock and
+>> Power Manager (ACPM) firmware.
+> 
+> Do you plan to update or work on this series? If, by some reason,
 
-Thanks,
-Alexey
+I'd like to resubmit, but I got derailed by other tasks.
 
+> this series is postphoned I can rebase it and re-send, for example.
+> IIRC it needs a clean rebase as a minimial change.
+> 
+
+No, it's more than that. When I talked with Daniel about this driver, he
+suggested I shall really focus on using the .set_trips callback instead of
+.set_trip_temp. I'm not sure if it's possible given the static nature of
+the ACPM interface. So it needs a bit of investigation, which I couldn't
+do lately.
+
+If we can go initially with .set_trip_temp and then come up with an iterative
+patch about .set_trips, I can of course respin, it takes me just a few
+minutes to rebase and test. But it's Daniel to decide.
+
+Oh, and the device tree needs a little update on the trip points, but other
+than that, we're good to go.
+
+Cheers,
+ta
