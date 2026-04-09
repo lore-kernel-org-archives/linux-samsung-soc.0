@@ -1,250 +1,193 @@
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956EF3C3C1E
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Apr 2026 11:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75D3385513
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Apr 2026 12:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775735848; cv=none; b=ftt486h54VMF+wuuJoMT4/L2viTRpVjWy2Ew870IKPEVN7iK1qH2hMTIw8ATVuWRTJ04ag7hxVe55N1sOftnJkUkV0LFg+8HcbeMvRYHaYadsjSe6X13ODqTtpN4Taesj8xK1MPSwOkY7mKqECbCMnbwNW3350B7mml/Ljovjjs=
+	t=1775736299; cv=none; b=nj+zIH4/g0JE96Mb9i+e+lqVVkFg6m3khHNAEnrFSa6nMaUwQRb147oMQ80YL3s1Du2Dg1pZR6x+Pxps2w/N9amkcytMVBx/TEU/Bn6dkDI8HVKMsi1poJAt2UmW23DITNUsKxI1mpl6m2+u/1Q5Wmcqqn7YPUSqsUYgo4cYMjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775735848; c=relaxed/simple;
-	bh=Ub59K2tMA8SS3jTO9Ll/rawyPG3dIfI5Ms434oWsw9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gsk0hR4eobzhbuVZT1r6egaKZoaDSXn1+jR/9ieA0YbllUviZXXpvEW4tNNMgSE0vOAiJ5nNtCuDy/SjZ0uHk9CQF6K5QjOq+C6M3En8UvTvmoJLdnaj2bZgC5kQTnPanC4DkZG4myRzxri5HRoxr/5oMGK3//BYik7TIGNIZo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=m8px0pa4; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1775736299; c=relaxed/simple;
+	bh=y1SKITBc1nOEkuIjqqPXHMikNAW+SnUOZAXWsPdkYbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LEQZicIht3jaehZy2C3m1vZaWK5QLyvHjUy1273U5cRauRUq6IX8DU1BvinqTX8AkNPHnjSMnpiSRzHQaa/AxnBtYhtIQsw+lLRNHFN+YFRxym1HDRLavuYiuIedHaUe/TxU7o/2qrlrSQfr8xXvRw2ie/zs6DCOGqR8rLMTtvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N3bVMrOg; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="m8px0pa4"
-Date: Thu, 9 Apr 2026 13:57:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1775735843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFGPXXDO5Qs7zdZxT8hLPVa+m/HFux3xI7M/xg68NOg=;
-	b=m8px0pa4oDHJtsNk67FPcWrtxJeJL/+yzfNUBnSjINro0E7q9OFfyG/ExZxkJlUfT0UCyp
-	VIvz7jjaM5Xexsc/01v4C0OlM6g9GaD4xP1pdkLi//MzTRoUVWd3NDV5mvsG9efNPSQKW6
-	wugKQU0tfFHBsvSHy6lqhxXJR+ShYAo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] soc: samsung: exynos-pmu: add Exynos850 CPU
- hotplug support
-Message-ID: <20260409115630.GA15706@localhost>
-References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
- <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N3bVMrOg"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48374014a77so10911715e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Apr 2026 05:04:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775736296; x=1776341096; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=74KMQDyamsOqfkVKpW+KmRC64tMrk0EgM043WfdM7PY=;
+        b=N3bVMrOgA2caZm+E9dTcKVj+fJFKwzn4THIXgr2WF+xwj6l1WtxrFpZNvZLKfe++vk
+         cearJ24UMqLR6yoBVKVh/flpzj2O+R/zOeVHVgCDRiUctzgNSHMADtw2qdDVxmCAmYPN
+         ZbprktfcIFw9Q4guE2GJO93ZQuWJ5+pubkyOfd1Vy96M3zyTEUXS/GGczVNuOSlNpLBd
+         PAomU5gKAswZCLXH94PRtJkwpcye50Vdo55nUI00v0MLZSr9d3fFNq1UgTTmX4dLeYfu
+         i/DthNUPlADGkcijNG8A1e59+y0ZGMwGu9JB68s7YsVcWrLIxtTu2BDD10hYtpg+E8Om
+         qX0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775736296; x=1776341096;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=74KMQDyamsOqfkVKpW+KmRC64tMrk0EgM043WfdM7PY=;
+        b=lSBNq7D8IV83GiOVXV+FRX0sGtGPfNjpDQhFF61zD71IZ7dZbbnKQpDF27rR4R/0mv
+         P57MzIL5TO2HvApwzvtXr7ZyhnLnH3UZxSwnFP4CPEitR8C0KeFZIVQwtH0OiCNw+KSE
+         cvfuNWahcvOnZU+Bhy/tcIGesY8Lk6WuY7ojwj5Ewg4dlfHin5WTYJhcUI6VT7Uvq7AT
+         sISfSknzIEpf5Wyd90iyxB9Ed7R6L9EPO6gNSU/UYrGX9emWvBOK6Ax1CMjQmYByTCQ0
+         aZ+GKYAhFxYV7LbHXCoK6/lgFhXVaCo0vC6MwAXA8koh5o4oSnftRYUOSR4S/T+Lyz0V
+         z2Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVionhj3rFXrQNeJQXT1JwoyIxhjw3BOHPJkim84UrFZLcRimPiWehd91Gc3jHywFgJ0cXRzt/W1u/wWxCiqHEQEg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxcuzTccm06kfe69jHBblSjky1MVMjTOYsyDQYkrkyT9PsvQ3+
+	Ie0yEzURBEe2/Tyy77rUUM63gqWBoJXxXt1CLcI8ZPiE9s1SjMjPgGJ9o8WQz118BXQ=
+X-Gm-Gg: AeBDiettPBOw1ziNRANC4mlMm9F5iDVo30EFKTmXIBC7YOKuzYzCZc2UL6059L/PylD
+	LcKirLIIK2i3wlWNAhEsa36I44PWrwHX/v0uLrBYEgGGCvDBqRF6PvRae3siapmJRWxePaER0h+
+	Pn59flOnz4chO5hP/hHo1HsQ2aGsJELonRHcVE9XC2bkNnKTh5+wW42kPw9JnS2ZjgxoFYTqhkh
+	g9HKFRfh+szS4A+eeRWxsj09uBxtUFiC2beUPzc+N+yBkvl8L7CCULhDZCholfv0G7KC+dwQwGF
+	nHTHYnRSIb0eML/I/fI4EOgSVlMg6MfBMx0/5jciLQtrZOx/FELkqebeMFWf2B2ocgzNE3Z5Q0R
+	LiBYsiOKiB/yb5ztpB+u1dhIP6kjfVdjbxtwz3N8+tjJOhroS6tew9bG9qkYXYwUzkpCtMxVz0K
+	YrZEaMihS1gtENd2SEq0GfFUpMQs8mJjEO8okWWBW2Sg==
+X-Received: by 2002:a05:600c:3f08:b0:485:40db:d40c with SMTP id 5b1f17b1804b1-488996d2323mr413895265e9.3.1775736295947;
+        Thu, 09 Apr 2026 05:04:55 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.48])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488cd2181casm73225225e9.11.2026.04.09.05.04.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Apr 2026 05:04:55 -0700 (PDT)
+Message-ID: <c796e077-e061-44c4-a8e1-dbd8d3c14caa@linaro.org>
+Date: Thu, 9 Apr 2026 15:04:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260401-exynos850-cpuhotplug-v2-5-c5a760a3e259@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Juan Yescas <jyescas@google.com>
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+ <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
+ <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
+ <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alexey,
 
-This patch breaks compilation for arm(32) exynos devices. Compiling
-with exynos_defconfig I get:
 
-[ ... ]
-  CC      drivers/soc/samsung/exynos850-pmu.o
-  CC [M]  fs/squashfs/page_actor.o
-../drivers/soc/samsung/exynos850-pmu.c:17:21: error: call to undeclared function 'MPIDR_AFFINITY_LEVEL'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   17 |         u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-      |                            ^
-../drivers/soc/samsung/exynos850-pmu.c:17:42: error: call to undeclared function 'read_cpuid_mpidr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   17 |         u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-      |                                                 ^
-../drivers/soc/samsung/exynos850-pmu.c:48:21: error: call to undeclared function 'MPIDR_AFFINITY_LEVEL'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   48 |         u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-      |                            ^
-../drivers/soc/samsung/exynos850-pmu.c:48:42: error: call to undeclared function 'read_cpuid_mpidr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-   48 |         u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-      |                                                 ^
-4 errors generated.
-make[6]: *** [../scripts/Makefile.build:289: drivers/soc/samsung/exynos850-pmu.o] Error 1
-make[5]: *** [../scripts/Makefile.build:548: drivers/soc/samsung] Error 2
-make[4]: *** [../scripts/Makefile.build:548: drivers/soc] Error 2
-make[3]: *** [../scripts/Makefile.build:548: drivers] Error 2
-make[3]: *** Waiting for unfinished jobs....
-[ ... ]
+On 4/8/26 4:08 PM, Alexey Klimov wrote:
+> Hi Tudor,
 
-Best regards,
-Henrik Grimler
+Hi!
 
-On Wed, Apr 01, 2026 at 05:51:58AM +0100, Alexey Klimov wrote:
-> Add cpuhotplug support for Exynos850 platforms. This SoC requires
-> its own specific set of writes/updates to PMU and PMU interrupts
-> generation block in order to put a CPU or a group of CPUs into
-> a different sleep states or prepare these entities for a CPU_OFF
-> or wake-up out of idle state or after CPU online.
-> Without these writes/updates the CPU(s) wake-up or online fails.
-> While at this, also add description of Exynos850 PMU registers.
+>> I find it strange that the SoCs use different registers. Are you sure you're
+>> using the right direction? i.e. ring the doorbell to APM and not to AP?
 > 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  drivers/soc/samsung/Makefile                |  2 +-
->  drivers/soc/samsung/exynos-pmu.c            |  1 +
->  drivers/soc/samsung/exynos-pmu.h            |  1 +
->  drivers/soc/samsung/exynos850-pmu.c         | 78 +++++++++++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |  5 ++
->  5 files changed, 86 insertions(+), 1 deletion(-)
+> Well, I am not sure I correctly understood the questions and comment. So,
+> this all was tested with ACPM TMU code with 3 temp sensors and it seems
+> to work and sensors react in the right way.
 > 
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 636a762608c9..7f544e3c1fcc 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -7,7 +7,7 @@ exynos_chipid-y			+= exynos-chipid.o exynos-asv.o
->  obj-$(CONFIG_EXYNOS_USI)	+= exynos-usi.o
->  
->  obj-$(CONFIG_EXYNOS_PMU)	+= exynos_pmu.o
-> -exynos_pmu-y			+= exynos-pmu.o gs101-pmu.o
-> +exynos_pmu-y			+= exynos-pmu.o gs101-pmu.o exynos850-pmu.o
->  
->  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
->  					exynos5250-pmu.o exynos5420-pmu.o
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index 4e5fcc01e5e0..daa870ba88f5 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -133,6 +133,7 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
->  		.compatible = "samsung,exynos7-pmu",
->  	}, {
->  		.compatible = "samsung,exynos850-pmu",
-> +		.data = &exynos850_pmu_data,
->  	},
->  	{ /*sentinel*/ },
->  };
-> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-> index 186299a049a8..4202d3cd94c9 100644
-> --- a/drivers/soc/samsung/exynos-pmu.h
-> +++ b/drivers/soc/samsung/exynos-pmu.h
-> @@ -102,6 +102,7 @@ extern const struct exynos_pmu_data exynos5250_pmu_data;
->  extern const struct exynos_pmu_data exynos5420_pmu_data;
->  #endif
->  extern const struct exynos_pmu_data gs101_pmu_data;
-> +extern const struct exynos_pmu_data exynos850_pmu_data;
->  
->  extern void pmu_raw_writel(u32 val, u32 offset);
->  extern u32 pmu_raw_readl(u32 offset);
-> diff --git a/drivers/soc/samsung/exynos850-pmu.c b/drivers/soc/samsung/exynos850-pmu.c
-> new file mode 100644
-> index 000000000000..b3841547577a
-> --- /dev/null
-> +++ b/drivers/soc/samsung/exynos850-pmu.c
-> @@ -0,0 +1,78 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2026 Linaro Ltd.
-> + *
-> + * Exynos850 PMU support
-> + */
-> +
-> +#include <linux/soc/samsung/exynos-pmu.h>
-> +#include <linux/soc/samsung/exynos-regs-pmu.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "exynos-pmu.h"
-> +
-> +static int exynos850_cpu_pmu_offline(struct exynos_pmu_context *pmu_context, unsigned int cpu)
-> +	__must_hold(&pmu_context->cpupm_lock)
-> +{
-> +	u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-> +	u32 cluster_cpu = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
-> +	unsigned int cpuhint = smp_processor_id();
-> +	u32 reg, mask;
-> +
-> +	/* set cpu inform hint */
-> +	regmap_write(pmu_context->pmureg, EXYNOS850_CPU_INFORM(cpuhint),
-> +		     CPU_INFORM_C2);
-> +
-> +	mask = BIT(cpu);
-> +	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
-> +			   mask, BIT(cpu));
-> +
-> +	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP1_INTR_BID_UPEND, &reg);
-> +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP1_INTR_BID_CLEAR,
-> +		     reg & mask);
-> +
-> +	mask = (BIT(cpu + 8));
-> +	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP1_INTR_BID_UPEND, &reg);
-> +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP1_INTR_BID_CLEAR,
-> +		     reg & mask);
-> +
-> +	regmap_update_bits(pmu_context->pmureg,
-> +			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
-> +			   1 << 3, 1 << 3);
-> +	return 0;
-> +}
-> +
-> +static int exynos850_cpu_pmu_online(struct exynos_pmu_context *pmu_context, unsigned int cpu)
-> +	__must_hold(&pmu_context->cpupm_lock)
-> +{
-> +	u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
-> +	u32 cluster_cpu = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
-> +	unsigned int cpuhint = smp_processor_id();
-> +	u32 reg, mask;
-> +
-> +	/* clear cpu inform hint */
-> +	regmap_write(pmu_context->pmureg, EXYNOS850_CPU_INFORM(cpuhint),
-> +		     CPU_INFORM_CLEAR);
-> +
-> +	mask = BIT(cpu);
-> +
-> +	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
-> +			   mask, (0 << cpu));
-> +
-> +	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_UPEND, &reg);
-> +
-> +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_CLEAR,
-> +		     reg & mask);
-> +
-> +	regmap_update_bits(pmu_context->pmureg,
-> +			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
-> +			   1 << 3, 0 << 3);
-> +	return 0;
-> +}
-> +
-> +const struct exynos_pmu_data exynos850_pmu_data = {
-> +	.pmu_cpuhp = true,
-> +	.cpu_pmu_offline = exynos850_cpu_pmu_offline,
-> +	.cpu_pmu_online = exynos850_cpu_pmu_online,
-> +};
-> +
-> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-> index 9c4d3da41dbf..93c4d724c8ea 100644
-> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
-> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-> @@ -1015,6 +1015,11 @@
->  #define EXYNOS_GRP2_INTR_BID_UPEND				(0x0208)
->  #define EXYNOS_GRP2_INTR_BID_CLEAR				(0x020c)
->  
-> +/* Exynos850 PMU Alive */
-> +#define EXYNOS850_CPU_INFORM(cpu)		(0x0860 + ((cpu) & 7) * 4)
-> +#define EXYNOS850_CLUSTER_CPU_OFFSET(cl, cpu)	(0x1000 + ((cl * 0x400) + ((cpu) * 0x80)))
-> +#define EXYNOS850_CLUSTER_CPU_INT_EN(cl, cpu)	(EXYNOS850_CLUSTER_CPU_OFFSET(cl, cpu) + 0x44)
-> +
->  /* exynosautov920 */
->  #define EXYNOSAUTOV920_PHY_CTRL_USB20				(0x0710)
->  #define EXYNOSAUTOV920_PHY_CTRL_USB31				(0x0714)
+> Downstream clearly does the following (see also [1],[2]) when sending
+> ACPM msg:
 > 
-> -- 
-> 2.51.0
+> static void apm_interrupt_gen(unsigned int id)
+> {
+> 	/* APM NVIC INTERRUPT GENERATE */
+> 	writel((1 << id) << 16, acpm_ipc->intr + INTGR0);
+> }
+> 
+
+Indeed, it looks alright, thanks for the pointers.
+
+> I am aware that gs101 downstream uses INTGR1 in apm_interrupt_gen().
+> 
+> When I use INTGR1 for e850 then I observe acpm timeouts. Hence, out of
+> curiosity, what's the expected behaviour when/if I ring the doorbell to
+
+If you raise your own interrupt the APM remains unaware and the AP times out.
+You also have a spurious interrupt on yourself.
+
+> AP (to itself as far as I understand)? My understanding that it won't
+> work at all in such case unless APM firmware does some very fast
+> polling.
 > 
 > 
+> [1]: https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4.14-linaro/drivers/soc/samsung/acpm/acpm_ipc.c?ref_type=heads#L423
+> [2]: https://github.com/samsungexynos850/android_kernel_samsung_exynos850/blob/0af517be2336bf8e09c59d576c4c314446713101/drivers/soc/samsung/acpm/acpm_ipc.c#L426
+> 
+>>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>>>  		return -EINVAL;
+>>>  	}
+>>>  
+>>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+>>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
+>>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
+>>
+>> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask instead of
+>> a shift.
+>>
+>> I would rename irq_doorbell_offset to intgr. It aligns with the register name
+>> from the datasheet. You won't need to prepend _offset to the name, we already
+>> see it's an offset when doing the writel().
+> 
+> Sure. Thanks. Let's use FIELD_PREP.
+> 
+> "doorbell" naming was chosen for readability and maintainability reasons.
+> It seems to be more generic enough name that better reflects the workflow
+> of what's going on in ACPM+mailbox machinery. We can rename it to just
+> "doorbell" for instance.
+> 
+> From platform data it will be clear to which register it is set, INTGR0
+> or INTGR1, to align it with datasheet (which is closed anyway).
+> 
+> Regarding intgr vs doorbell name, the intgr is a bit unclear for a
+> reader if it means interrupt generation register or something else.
+
+interrupt generation registers sounds sane to me
+
+> But if you prefer, I can go with "intgr".
+
+I think I prefer intgr, yes. If you choose doorbell, you'll have:
+
+writel(FIELD_PREP(data->doorbell_mask), BIT(msg->chan_id),
+       exynos_mbox->regs + data->doorbell);
+
+or maybe s/doorbell/doorbell_reg? But that would duplicate
+exynos_mbox->regs, we already see that doorbell is a reg offset.
+Doorbell is too generic for my taste.
+
+And then how would you refer to the interrupt mask register? You
+already have a doorbell_mask in the example above. 
+
+I won't push back too hard, I'll let you choose. If you can find a good
+naming scheme for the interrupt generation reg and interrupt mask reg,
+then fine.
+
+> 
+> One more option is add a comment, smth like /* Ring the doorbell */
+> before that writel().
+
+I'm okay with such comment.
+
+Cheers,
+ta
