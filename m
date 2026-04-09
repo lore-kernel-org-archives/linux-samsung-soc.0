@@ -1,24 +1,24 @@
-Received: from mail-m15598.qiye.163.com (mail-m15598.qiye.163.com [101.71.155.98])
+Received: from mail-m3284.qiye.163.com (mail-m3284.qiye.163.com [220.197.32.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF08387576;
-	Thu,  9 Apr 2026 07:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A01D38F92D;
+	Thu,  9 Apr 2026 08:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775721596; cv=none; b=hzlxSjj1I2cezoPn/VtWqd24zNX8d3imG92YXh6fJmN6bBHMEbJ0KBCMXgEUt/0sdtYKUcX2pNRhFVlOQXyzCbS2s0CWY72dt7iBkH3mO9+aSc+568nV7HC1F45hr4pvap4vMxcOW65fusziJMPtRdi0aXQ36trJBMXLLd/oUUs=
+	t=1775722136; cv=none; b=cn/OD9pXpq/jQzQVNAWCzOOVzN6DOQ1iGAYqjQUYe5G5rsEl6PS0WmdIQ1X+9zkxbLmJsh6xNAoUm4zT1FsH8AMFl+q2rcmfCGGdDk8ei+7cUYDUkJQshFst05cN7Q1132S1kkRHebt8Fjompi1A5qTHxNyqKIenKrULEamcLIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775721596; c=relaxed/simple;
-	bh=kZ2qvx7m+kOjx0IsW7ATjWHnUkNXL5RQ4V4K7O6eT5s=;
+	s=arc-20240116; t=1775722136; c=relaxed/simple;
+	bh=g3jLuH+Je3f6kZtPbBA6hfkFjI4FdEUV06dd1D3oTC4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YVND7gHSGe9i1WKXOf/rasdjoj+oY19dFuFe9XVx+fNKWyL21Z3l+6DcYNn+GhOTFdTrPdpsv48HNZ1rOjGOAcQE+iwzpaWGD7vnWGeisSQgIEGHpTKG90JZ9AMjiOa1BNKlMKV+CkbDD0fF5aIOU7CH7dq4QUTw6oXbaM296d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=DdsZvBv7; arc=none smtp.client-ip=101.71.155.98
+	 MIME-Version; b=Gea29CviLrqiiPkUs/Dv8696AROJrBqLZFCEZuFcapLLl/muuAG/NWizjZd6mMtfD/EjDTWsXI65TNQ0HoH7eb+MTNh9sQkVYbLA3qkgfq3IhhELvEpENpg4EeUkoKFfhloyhl+9mdYfazRlklq87X8t7PZeMqIorOuV5k2xflA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QcehPbhB; arc=none smtp.client-ip=220.197.32.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="DdsZvBv7"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QcehPbhB"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3a130ab5c;
-	Thu, 9 Apr 2026 15:24:22 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3a11ab2aa;
+	Thu, 9 Apr 2026 14:53:12 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: andrzej.hajda@intel.com,
 	neil.armstrong@linaro.org,
@@ -59,13 +59,12 @@ Cc: Laurent.pinchart@ideasonboard.com,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v13 16/17] drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing in analogix_dp_unbind()
-Date: Thu,  9 Apr 2026 15:19:07 +0800
-Message-Id: <20260409071908.466294-4-damon.ding@rock-chips.com>
+Subject: [PATCH v13 02/17] drm/bridge: Move legacy bridge driver out of imx directory for multi-platform use
+Date: Thu,  9 Apr 2026 14:52:46 +0800
+Message-Id: <20260409065301.446670-3-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260409071908.466294-1-damon.ding@rock-chips.com>
+In-Reply-To: <20260409065301.446670-1-damon.ding@rock-chips.com>
 References: <20260409065301.446670-1-damon.ding@rock-chips.com>
- <20260409071908.466294-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -73,57 +72,437 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9d7120b52603a3kunm41c7027340af66
+X-HM-Tid: 0a9d71042f5403a3kunmc1f4d654403905
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkpDHlZJQ0pKGh4fHR5KHRpWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRkfTFZPT04YSx9CTUhISB9WFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
 	1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=DdsZvBv7GlXevRF4noo7Dwc/p/6z/ABBcH/fRjzXRS/22wJTe/JopdJTD+fC38ClA4+ptOhvc5IX18YIMGH2QzpOBcA0tbjIxVTJaUz5PU01rs+lVkak9lGn+MjvDGoSLUG058TqCcM1i7NI+stY4UxJErYxkqQ1bYSnvnNMv9Q=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=xFey6R1yWibLe19igTYUu2uT3scZHnKnAjb/CMQifsA=;
+	b=QcehPbhBNl8l99FsQMd9mLElELV9X+Dup65w+EyBsY+Nim1pvT+M3mn8ILX5nK7I6Rwf2DGUrlXujEKtYum6iAnVkNSifxvVyHPWGBvo93msZPPOw4JXUt+4U/YLiP0p1wNGvjQ3GswSuniNPgvSNkOi2lRpJvI6brn1U1DoiRY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=gp3Lng4fiSaDMkfRaXoGlD8kmAK7OObNPOkFAV9Otno=;
 	h=date:mime-version:subject:message-id:from;
 
-The analogix_dp_unbind() should be balanced with analogix_dp_bind().
-There are no bridge enabling and panel preparing in analogix_dp_bind(),
-so it should be reasonable to remove the bridge disabing and panel
-unpreparing in analogix_dp_unbind().
+As suggested by Dmitry, the DRM legacy bridge driver can be pulled
+out of imx/ subdir for multi-platform use. The driver is also renamed
+to make it more generic and suitable for platforms other than i.MX.
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Tested-by: Heiko Stuebner <heiko@sntech.de> # rk3588
 
 ---
 
+Changes in v7:
+- Rename legacy-bridge to of-display-mode-bridge.
+- Remove unnecessary API drm_bridge_is_legacy().
+
 Changes in v9:
+- Fix the Kconfig help text.
 - Add Tested-by tag.
 
-Changes in v11:
+Changes in v10:
 - Add Reviewed-by tag.
 
 Changes in v13:
+- Rebase after commit 02df94d98ff8 ("drm/imx: parallel-display: add
+  DRM_DISPLAY_HELPER for DRM_IMX_PARALLEL_DISPLAY")
 - Modify '(on rk3588)' to '# rk3588' for Tested-by tag.
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig                | 10 ++
+ drivers/gpu/drm/bridge/Makefile               |  1 +
+ drivers/gpu/drm/bridge/imx/Kconfig            | 10 --
+ drivers/gpu/drm/bridge/imx/Makefile           |  1 -
+ .../gpu/drm/bridge/imx/imx-legacy-bridge.c    | 91 ------------------
+ .../gpu/drm/bridge/of-display-mode-bridge.c   | 93 +++++++++++++++++++
+ drivers/gpu/drm/imx/ipuv3/Kconfig             |  4 +-
+ drivers/gpu/drm/imx/ipuv3/imx-ldb.c           |  6 +-
+ drivers/gpu/drm/imx/ipuv3/parallel-display.c  |  5 +-
+ include/drm/bridge/imx.h                      | 17 ----
+ include/drm/bridge/of-display-mode-bridge.h   | 17 ++++
+ 11 files changed, 129 insertions(+), 126 deletions(-)
+ delete mode 100644 drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
+ create mode 100644 drivers/gpu/drm/bridge/of-display-mode-bridge.c
+ delete mode 100644 include/drm/bridge/imx.h
+ create mode 100644 include/drm/bridge/of-display-mode-bridge.h
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3daf72aa643e..7d30e4184a80 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1526,10 +1526,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index c3209b0f4678..f81b566c82a1 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -262,6 +262,16 @@ config DRM_NXP_PTN3460
+ 	help
+ 	  NXP PTN3460 eDP-LVDS bridge chip driver.
  
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
--	analogix_dp_bridge_disable(&dp->bridge);
++config DRM_OF_DISPLAY_MODE_BRIDGE
++	tristate
++	depends on DRM_BRIDGE && OF
++	help
++	  This is a DRM bridge implementation that uses of_get_drm_display_mode
++	  to acquire display mode.
++
++	  It exists for compatibility with legacy display mode parsing, in order
++	  to conform to the panel-bridge framework.
++
+ config DRM_PARADE_PS8622
+ 	tristate "Parade eDP/LVDS bridge"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index beab5b695a6e..15cc821d85b7 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_DRM_LVDS_CODEC) += lvds-codec.o
+ obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
+ obj-$(CONFIG_DRM_MICROCHIP_LVDS_SERIALIZER) += microchip-lvds.o
+ obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
++obj-$(CONFIG_DRM_OF_DISPLAY_MODE_BRIDGE) += of-display-mode-bridge.o
+ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
+ obj-$(CONFIG_DRM_PARADE_PS8640) += parade-ps8640.o
+ obj-$(CONFIG_DRM_SAMSUNG_DSIM) += samsung-dsim.o
+diff --git a/drivers/gpu/drm/bridge/imx/Kconfig b/drivers/gpu/drm/bridge/imx/Kconfig
+index b9028a5e5a06..8877b9789868 100644
+--- a/drivers/gpu/drm/bridge/imx/Kconfig
++++ b/drivers/gpu/drm/bridge/imx/Kconfig
+@@ -3,16 +3,6 @@ if ARCH_MXC || COMPILE_TEST
+ config DRM_IMX_LDB_HELPER
+ 	tristate
+ 
+-config DRM_IMX_LEGACY_BRIDGE
+-	tristate
+-	depends on DRM_IMX
+-	help
+-	  This is a DRM bridge implementation for the DRM i.MX IPUv3 driver,
+-	  that uses of_get_drm_display_mode to acquire display mode.
 -
--	drm_panel_unprepare(dp->plat_data->panel);
+-	  Newer designs should not use this bridge and should use proper panel
+-	  driver instead.
 -
- 	drm_dp_aux_unregister(&dp->aux);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+ config DRM_IMX8MP_DW_HDMI_BRIDGE
+ 	tristate "Freescale i.MX8MP HDMI-TX bridge support"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/bridge/imx/Makefile b/drivers/gpu/drm/bridge/imx/Makefile
+index 8d01fda25451..69d9f9abbe36 100644
+--- a/drivers/gpu/drm/bridge/imx/Makefile
++++ b/drivers/gpu/drm/bridge/imx/Makefile
+@@ -1,5 +1,4 @@
+ obj-$(CONFIG_DRM_IMX_LDB_HELPER) += imx-ldb-helper.o
+-obj-$(CONFIG_DRM_IMX_LEGACY_BRIDGE) += imx-legacy-bridge.o
+ obj-$(CONFIG_DRM_IMX8MP_DW_HDMI_BRIDGE) += imx8mp-hdmi-tx.o
+ obj-$(CONFIG_DRM_IMX8MP_HDMI_PAI) += imx8mp-hdmi-pai.o
+ obj-$(CONFIG_DRM_IMX8MP_HDMI_PVI) += imx8mp-hdmi-pvi.o
+diff --git a/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c b/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
+deleted file mode 100644
+index 0e31d5000e7c..000000000000
+--- a/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
++++ /dev/null
+@@ -1,91 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Freescale i.MX drm driver
+- *
+- * bridge driver for legacy DT bindings, utilizing display-timings node
+- */
+-
+-#include <linux/export.h>
+-
+-#include <drm/drm_bridge.h>
+-#include <drm/drm_modes.h>
+-#include <drm/drm_probe_helper.h>
+-#include <drm/bridge/imx.h>
+-
+-#include <video/of_display_timing.h>
+-#include <video/of_videomode.h>
+-
+-struct imx_legacy_bridge {
+-	struct drm_bridge base;
+-
+-	struct drm_display_mode mode;
+-	u32 bus_flags;
+-};
+-
+-#define to_imx_legacy_bridge(bridge)	container_of(bridge, struct imx_legacy_bridge, base)
+-
+-static int imx_legacy_bridge_attach(struct drm_bridge *bridge,
+-				    struct drm_encoder *encoder,
+-				    enum drm_bridge_attach_flags flags)
+-{
+-	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int imx_legacy_bridge_get_modes(struct drm_bridge *bridge,
+-				       struct drm_connector *connector)
+-{
+-	struct imx_legacy_bridge *imx_bridge = to_imx_legacy_bridge(bridge);
+-	int ret;
+-
+-	ret = drm_connector_helper_get_modes_fixed(connector, &imx_bridge->mode);
+-	if (ret)
+-		return ret;
+-
+-	connector->display_info.bus_flags = imx_bridge->bus_flags;
+-
+-	return 0;
+-}
+-
+-struct drm_bridge_funcs imx_legacy_bridge_funcs = {
+-	.attach = imx_legacy_bridge_attach,
+-	.get_modes = imx_legacy_bridge_get_modes,
+-};
+-
+-struct drm_bridge *devm_imx_drm_legacy_bridge(struct device *dev,
+-					      struct device_node *np,
+-					      int type)
+-{
+-	struct imx_legacy_bridge *imx_bridge;
+-	int ret;
+-
+-	imx_bridge = devm_drm_bridge_alloc(dev, struct imx_legacy_bridge,
+-					   base, &imx_legacy_bridge_funcs);
+-	if (IS_ERR(imx_bridge))
+-		return ERR_CAST(imx_bridge);
+-
+-	ret = of_get_drm_display_mode(np,
+-				      &imx_bridge->mode,
+-				      &imx_bridge->bus_flags,
+-				      OF_USE_NATIVE_MODE);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	imx_bridge->mode.type |= DRM_MODE_TYPE_DRIVER;
+-
+-	imx_bridge->base.of_node = np;
+-	imx_bridge->base.ops = DRM_BRIDGE_OP_MODES;
+-	imx_bridge->base.type = type;
+-
+-	ret = devm_drm_bridge_add(dev, &imx_bridge->base);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	return &imx_bridge->base;
+-}
+-EXPORT_SYMBOL_GPL(devm_imx_drm_legacy_bridge);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_DESCRIPTION("Freescale i.MX DRM bridge driver for legacy DT bindings");
+diff --git a/drivers/gpu/drm/bridge/of-display-mode-bridge.c b/drivers/gpu/drm/bridge/of-display-mode-bridge.c
+new file mode 100644
+index 000000000000..cb15713f3a79
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/of-display-mode-bridge.c
+@@ -0,0 +1,93 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2012 Sascha Hauer, Pengutronix
++ *
++ * bridge driver for legacy DT bindings, utilizing display-timings node
++ *
++ * Author: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
++ */
++
++#include <linux/export.h>
++
++#include <drm/drm_bridge.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_probe_helper.h>
++#include <drm/bridge/of-display-mode-bridge.h>
++
++#include <video/of_display_timing.h>
++#include <video/of_videomode.h>
++
++struct of_display_mode_bridge {
++	struct drm_bridge base;
++
++	struct drm_display_mode mode;
++	u32 bus_flags;
++};
++
++#define to_of_display_mode_bridge(bridge) container_of(bridge, struct of_display_mode_bridge, base)
++
++static int of_display_mode_bridge_attach(struct drm_bridge *bridge,
++					 struct drm_encoder *encoder,
++					 enum drm_bridge_attach_flags flags)
++{
++	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int of_display_mode_bridge_get_modes(struct drm_bridge *bridge,
++					    struct drm_connector *connector)
++{
++	struct of_display_mode_bridge *of_bridge = to_of_display_mode_bridge(bridge);
++	int ret;
++
++	ret = drm_connector_helper_get_modes_fixed(connector, &of_bridge->mode);
++	if (ret)
++		return ret;
++
++	connector->display_info.bus_flags = of_bridge->bus_flags;
++
++	return 0;
++}
++
++struct drm_bridge_funcs of_display_mode_bridge_funcs = {
++	.attach = of_display_mode_bridge_attach,
++	.get_modes = of_display_mode_bridge_get_modes,
++};
++
++struct drm_bridge *devm_drm_of_display_mode_bridge(struct device *dev,
++						   struct device_node *np,
++						   int type)
++{
++	struct of_display_mode_bridge *of_bridge;
++	int ret;
++
++	of_bridge = devm_drm_bridge_alloc(dev, struct of_display_mode_bridge,
++					  base, &of_display_mode_bridge_funcs);
++	if (IS_ERR(of_bridge))
++		return ERR_CAST(of_bridge);
++
++	ret = of_get_drm_display_mode(np,
++				      &of_bridge->mode,
++				      &of_bridge->bus_flags,
++				      OF_USE_NATIVE_MODE);
++	if (ret)
++		return ERR_PTR(ret);
++
++	of_bridge->mode.type |= DRM_MODE_TYPE_DRIVER;
++
++	of_bridge->base.of_node = np;
++	of_bridge->base.ops = DRM_BRIDGE_OP_MODES;
++	of_bridge->base.type = type;
++
++	ret = devm_drm_bridge_add(dev, &of_bridge->base);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return &of_bridge->base;
++}
++EXPORT_SYMBOL_GPL(devm_drm_of_display_mode_bridge);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("DRM bridge driver for legacy DT bindings");
+diff --git a/drivers/gpu/drm/imx/ipuv3/Kconfig b/drivers/gpu/drm/imx/ipuv3/Kconfig
+index b2240998df4f..351dc65913eb 100644
+--- a/drivers/gpu/drm/imx/ipuv3/Kconfig
++++ b/drivers/gpu/drm/imx/ipuv3/Kconfig
+@@ -16,7 +16,7 @@ config DRM_IMX_PARALLEL_DISPLAY
+ 	select DRM_BRIDGE
+ 	select DRM_BRIDGE_CONNECTOR
+ 	select DRM_DISPLAY_HELPER
+-	select DRM_IMX_LEGACY_BRIDGE
++	select DRM_OF_DISPLAY_MODE_BRIDGE
+ 	select DRM_PANEL_BRIDGE
+ 	select VIDEOMODE_HELPERS
+ 
+@@ -37,7 +37,7 @@ config DRM_IMX_LDB
+ 	select DRM_BRIDGE
+ 	select DRM_BRIDGE_CONNECTOR
+ 	select DRM_PANEL_BRIDGE
+-	select DRM_IMX_LEGACY_BRIDGE
++	select DRM_OF_DISPLAY_MODE_BRIDGE
+ 	help
+ 	  Choose this to enable the internal LVDS Display Bridge (LDB)
+ 	  found on i.MX53 and i.MX6 processors.
+diff --git a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
+index 626d410d9150..730caf883e83 100644
+--- a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
++++ b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
+@@ -28,7 +28,7 @@
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+-#include <drm/bridge/imx.h>
++#include <drm/bridge/of-display-mode-bridge.h>
+ 
+ #include "imx-drm.h"
+ 
+@@ -605,8 +605,8 @@ static int imx_ldb_probe(struct platform_device *pdev)
+ 		 * checking the bus_format property.
+ 		 */
+ 		if (!channel->bridge) {
+-			channel->bridge = devm_imx_drm_legacy_bridge(dev, child,
+-								     DRM_MODE_CONNECTOR_LVDS);
++			channel->bridge = devm_drm_of_display_mode_bridge(dev, child,
++									  DRM_MODE_CONNECTOR_LVDS);
+ 			if (IS_ERR(channel->bridge)) {
+ 				ret = PTR_ERR(channel->bridge);
+ 				goto free_child;
+diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
+index a356f0b764cb..6c505becb31d 100644
+--- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
++++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
+@@ -19,7 +19,7 @@
+ #include <drm/drm_of.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+-#include <drm/bridge/imx.h>
++#include <drm/bridge/of-display-mode-bridge.h>
+ 
+ #include "imx-drm.h"
+ 
+@@ -242,7 +242,8 @@ static int imx_pd_probe(struct platform_device *pdev)
+ 	/* port@1 is the output port */
+ 	imxpd->next_bridge = devm_drm_of_get_bridge(dev, np, 1, 0);
+ 	if (imxpd->next_bridge == ERR_PTR(-ENODEV))
+-		imxpd->next_bridge = devm_imx_drm_legacy_bridge(dev, np, DRM_MODE_CONNECTOR_DPI);
++		imxpd->next_bridge = devm_drm_of_display_mode_bridge(dev, np,
++								     DRM_MODE_CONNECTOR_DPI);
+ 	if (IS_ERR(imxpd->next_bridge)) {
+ 		ret = PTR_ERR(imxpd->next_bridge);
+ 		return ret;
+diff --git a/include/drm/bridge/imx.h b/include/drm/bridge/imx.h
+deleted file mode 100644
+index b93f719fe0e7..000000000000
+--- a/include/drm/bridge/imx.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Copyright (C) 2012 Sascha Hauer, Pengutronix
+- */
+-
+-#ifndef DRM_IMX_BRIDGE_H
+-#define DRM_IMX_BRIDGE_H
+-
+-struct device;
+-struct device_node;
+-struct drm_bridge;
+-
+-struct drm_bridge *devm_imx_drm_legacy_bridge(struct device *dev,
+-					      struct device_node *np,
+-					      int type);
+-
+-#endif
+diff --git a/include/drm/bridge/of-display-mode-bridge.h b/include/drm/bridge/of-display-mode-bridge.h
+new file mode 100644
+index 000000000000..89fcfedf68d8
+--- /dev/null
++++ b/include/drm/bridge/of-display-mode-bridge.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2012 Sascha Hauer, Pengutronix
++ */
++
++#ifndef DRM_OF_DISPLAY_MODE_BRIDGE_H
++#define DRM_OF_DISPLAY_MODE_BRIDGE_H
++
++struct device;
++struct device_node;
++struct drm_bridge;
++
++struct drm_bridge *devm_drm_of_display_mode_bridge(struct device *dev,
++						   struct device_node *np,
++						   int type);
++
++#endif
 -- 
 2.34.1
 
