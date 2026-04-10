@@ -1,173 +1,111 @@
-Received: from mail-m49209.qiye.163.com (mail-m49209.qiye.163.com [45.254.49.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EBB3ACA52;
-	Fri, 10 Apr 2026 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E459A3B19AF
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Apr 2026 21:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775811462; cv=none; b=BOokutUHv1ACYXo71VMBX7SkrzTWiLG5nPuvFE+k+DUnRpMMfcEFxjMAJxLLaM4iqcdmGRrUFTj2A7o1E4Q+fPqmIORB8fXLnjWVUdtgzKbviTJerJycqoptSuitrpXj1O8XSA9sNZ6r3Xn7co7jsaYxBpmNTyWjaWCMP6n9+eY=
+	t=1775856504; cv=none; b=OhbRy4fOKuFLfkkJ93ggobbi2MQ3qUXzje5b4tjZoy+AhUzaQtz7eaorEYT0Hese8VPvqneq3W0k0Ns+8U73Enxzog3DhEliw16pQj3FPD69+1jlTepkbnQj8dFn895YWBny1evkZg2kmY6DFPuMD2tUc3Cx/Eeo7mB83DHc29s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775811462; c=relaxed/simple;
-	bh=gZN3wtgx8RYWngf+HA0tzuEgZPV3k8EPEYG5n47mvfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LfTKE9h1hD7x0awMZjvWF2xeuWYbbUaLr4EjjczIEjI7K85VS/HPWDl0xodz+Inw+diANNDGVnPRj+W9/rnEV+q+whWjlRWKRPiJIb2VexZMunT2ly4mjeshKUvSVZFLs+MXDQ83TqHU/bZ/sQXI/1ZzG1XO+/IEu4kmmThj9mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NJ6nulOP; arc=none smtp.client-ip=45.254.49.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1775856504; c=relaxed/simple;
+	bh=7bHBiz2FGouoPssWj2GGr60uUjn38M1Yrc9c0+M3U2M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=baYcZYH0zphL8gIyiIAUPmLzQ5wa8nKT8ma7dK3UyLZXmVR3w0++5LaVQirAdvb5rKXove1YuAAfbwHqQH4OOD0mDJwPrO7MawK3ppQg21Afthuk9UqDsPDxUvVC8b1NjgG6x3btxFTpGxewQ7+eUyQae9bukp+ZOnAFaqQpDIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9xI4Va9; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NJ6nulOP"
-Received: from [172.16.12.43] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 3a3da4ce0;
-	Fri, 10 Apr 2026 16:52:20 +0800 (GMT+08:00)
-Message-ID: <39a86d7c-59fc-4849-aa60-d9bc62632143@rock-chips.com>
-Date: Fri, 10 Apr 2026 16:52:18 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9xI4Va9"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43d17bb1c1dso1946300f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Apr 2026 14:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775856501; x=1776461301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3wqhCT2PYrW184+42077Vlk22WDYcJROXdpI32jLbM=;
+        b=h9xI4Va9xj8Tnwxho2l4gtf5DdsvTHXVih5ur2Z/Nygq/wvbRCWV/3M0qkqJo5/Iyd
+         iF/ibMs+ZDdThcMnM+uVUAxEIl4+qgvMSV05VvpXPLG9gVrrZqA4wBvUWXn2WnyIK1i2
+         hQv78/3PdLDnXVOaPoVDv+0oKVvqbxjkglV1lyKTobZa2dGO/hFJ2OwHwWvg8Nu9sQ7O
+         ZRichqXjHKu9jXOm9EazQlHsIw45Qcys3kMqJBv7aiMgKQS/i0C2wppMJNlKSjdoSCI+
+         h1PfzduSP4R5ICgHbBWskLNPgRMI+A1dvdzf54www1sG4DWgEyjAZeqYWIJlJmrmMabp
+         g28A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775856501; x=1776461301;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=l3wqhCT2PYrW184+42077Vlk22WDYcJROXdpI32jLbM=;
+        b=Ua47bmd6UtkahfdbFsF+TgWY+F9xgGHzw4VXn1Gje8Vk/ExcFJW1vkNSPcpE0nc+Oy
+         MJZZE0rGvslO75MDxUYuzBeZUudUbHPrEIsemP52PjeRO/nVZ+/ybNYE1ZFkq+tsaWsu
+         y4KxwwQ6Yfp/GQA5kAKRu5Vfvm2esDSNrlh7wyFDKdmNjJmu332p17IrO6HIjUrHTXUA
+         Vvl3bAn2VwmvZvYnX+BS80xw23LMMWbCENQ00VSZ4S5BckR1zAhtEJHmKhBJOlauxaJ+
+         CScm4+C5xvDllp7Wy6cRPgtjbT5GckR4j9f+S2MaRlxhswcW7ORcTErrIHHhn+a8JRfp
+         rR/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWXYDAm0/pRlzVVMjRYfryglb6K8V7Wd439mnRwheO0qaLdnw9AjV6Na64KQGdy4H+9C1yMfanwKVlz6TYbPJeuyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCqaUFWU56GyyzD1tSueb5BGnV9Yg6+Ax6S2DzG3RlMjrpHAYQ
+	M2s9ZzaDOm5yiUQ4fdXv+orXgw0gku3TPQtw1tJPvKYdaUztuwGL0cWa
+X-Gm-Gg: AeBDietkLybU0Dn1F1mpssdS1OiyNGmWoccasG/d6ARnCa/PuFM3YsDmhNAxRFhlB7J
+	iEsapJJkJk1yxYWm0PRCyQ6QTkWFBhE40fpeVYs54ftDua3xqz1UJqls+IxB/X36UXrYvVu8M6O
+	G6RKJPl0bVL4RM6FK1y7TUTlAbKP7n0DnIGU4zmyWn8aX5cFhmDb2l14QA0kMs6EaUiAsiPztAb
+	4Ic/V8kyr7nfs4aKXmOO2Ao4b1zyS0bCWEdHGUnq4TcHLCDsrLkA4FPyL9DQjzW/lhOfTr6v96j
+	d+aRUQ1NWQrRMEz5zeRuXS563ERN7Q9zvD2iWUGo13+x4uLA40yV25+O3lscFwAtvPLH8rDwUUR
+	fbkJL3QMV6D1QGXCiUPg7ow9KhxjLmoDvaSia+exbqilzbS2TOHwxVmbsW4osuSSFoC24wJP0xb
+	SrWFs6NtKjrp/cC0j/HqgZYmZsF90jgdrJ7R/9XY0PGtebNhyGQm12tUHi6nE=
+X-Received: by 2002:a05:6000:2489:b0:43b:8f04:2ee1 with SMTP id ffacd0b85a97d-43d642c4ee9mr6929982f8f.27.1775856501227;
+        Fri, 10 Apr 2026 14:28:21 -0700 (PDT)
+Received: from osama.. ([2a02:908:1b6:8980:d356:742:cb75:6153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e50015sm11205992f8f.27.2026.04.10.14.28.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2026 14:28:20 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: luca.ceresoli@bootlin.com,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH 2/3] drm/exynos: remove bridge when component_add fails
+Date: Fri, 10 Apr 2026 23:27:58 +0200
+Message-ID: <20260410212801.413827-3-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260410212801.413827-2-osama.abdelkader@gmail.com>
+References: <20260410212801.413827-2-osama.abdelkader@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 11/17] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, victor.liu@nxp.com, Frank.Li@nxp.com,
- shawnguo@kernel.org, s.hauer@pengutronix.de, inki.dae@samsung.com,
- sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- heiko@sntech.de, andy.yan@rock-chips.com
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, kernel@pengutronix.de, festevam@gmail.com,
- alim.akhtar@samsung.com, dmitry.baryshkov@oss.qualcomm.com,
- nicolas.frattaroli@collabora.com, dianders@chromium.org,
- m.szyprowski@samsung.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20260409065301.446670-1-damon.ding@rock-chips.com>
- <20260409065301.446670-12-damon.ding@rock-chips.com>
- <DHPB0K9AHVR3.33XQ35I1GV96N@bootlin.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <DHPB0K9AHVR3.33XQ35I1GV96N@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9d7697996f03a3kunm160a3efe4d69e3
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhoZS1ZPThhOS0NCTBhKSRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=NJ6nulOPfjZxPerehJRi5Y1NtCkBNPQwbAOOZphJjJqnZQcUBEd6latzMr86rU+hU3micX3Am0ufud/JcsO2wZP15qN8f5tMbYTB87QgUiVssfv/m8UjSY7qseEQ8LpNcoVD048hBzWuFmWesLnasRDM/50ymJR67Px+yh4i2+0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=FSaNZqWfDxbNZ57v4AyAy7Xb4S5mgUBeo3DUPCIrdgs=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
 
-Hi Luca,
+when component_add fails in exynos_mic_probe remove drm
+bridge before return
 
-On 4/10/2026 3:41 PM, Luca Ceresoli wrote:
-> Hello Damon,
-> 
-> On Thu Apr 9, 2026 at 8:52 AM CEST, Damon Ding wrote:
->> Initialize bridge_connector for both Rockchip and Exynos encoder sides.
->> Then, make DRM_BRIDGE_ATTACH_NO_CONNECTOR mandatory for Analogix bridge
->> side, as the private &drm_connector is no longer created.
->>
->> The previous &drm_connector_funcs and &drm_connector_helper_funcs APIs
->> are replaced by the corresponding &drm_bridge_funcs APIs:
->>
->> analogix_dp_atomic_check() -> analogix_dp_bridge_atomic_check()
->> analogix_dp_detect()       -> analogix_dp_bridge_detect()
->> analogix_dp_get_modes()    -> analogix_dp_bridge_get_modes()
->>                                analogix_dp_bridge_edid_read()
->>
->> Additionally, the compatibilities of Analogix DP bridge based on whether
->> the next bridge is a 'panel'. If it is, OP_MODES and OP_DETECT are
->> supported; If not (the next bridge is a 'monitor' or a bridge chip),
->> OP_EDID and OP_DETECT are supported.
->>
->> The devm_drm_bridge_add() is placed in analogix_dp_bind() instead of
->> analogix_dp_probe(), because the type of next bridge (the panel, monitor
->> or bridge chip) can only be determined after the probe process has fully
->> completed.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Tested-by: Heiko Stuebner <heiko@sntech.de> # rk3588
-> 
-> I noticed two issues, sorry I haven't catched them before...
-> 
->> @@ -1580,7 +1533,8 @@ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
->>
->>   int analogix_dp_start_crc(struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp;
->> +	struct drm_bridge *bridge;
->>
->>   	if (!connector->state->crtc) {
->>   		DRM_ERROR("Connector %s doesn't currently have a CRTC.\n",
->> @@ -1588,13 +1542,26 @@ int analogix_dp_start_crc(struct drm_connector *connector)
->>   		return -EINVAL;
->>   	}
->>
->> +	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
->> +	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
->> +		return -EINVAL;
->> +
->> +	dp = to_dp(bridge);
->> +
->>   	return drm_dp_start_crc(&dp->aux, connector->state->crtc);
->>   }
-> 
-> drm_bridge_chain_get_first_bridge() takes a reference, you must call
-> drm_bridge_put(bridge) before returning. Given there are two return paths I
-> suggest:
-> 
-> -	struct drm_bridge *bridge;
-> 
-> -	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
-> +	struct drm_bridge *bridge __free(drm_bridge_put) =
-> +		drm_bridge_chain_get_first_bridge(connector->encoder);
-> 
->>   EXPORT_SYMBOL_GPL(analogix_dp_start_crc);
->>
->>   int analogix_dp_stop_crc(struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp;
->> +	struct drm_bridge *bridge;
->> +
->> +	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
->> +	if (bridge->type != DRM_MODE_CONNECTOR_eDP)
->> +		return -EINVAL;
->> +
->> +	dp = to_dp(bridge);
->>
->>   	return drm_dp_stop_crc(&dp->aux);
->>   }
-> 
-> Same here:
-> 
-> -	struct drm_bridge *bridge;
-> 
-> -	bridge = drm_bridge_chain_get_first_bridge(connector->encoder);
-> +	struct drm_bridge *bridge __free(drm-bridge_put) =
-> +		drm_bridge_chain_get_first_bridge(connector->encoder);
-> 
-> With the above two changes you can add to v14:
-> 
-> +Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> 
-> 
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ah, your previous commit added this nice reference handling. Thanks for 
-the kind review.
-
-I'll fix it in v14.
-
-Best regards,
-Damon
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index 29a8366513fa..5e771b236bf0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -437,6 +437,7 @@ static int exynos_mic_probe(struct platform_device *pdev)
+ 
+ err_pm:
+ 	pm_runtime_disable(dev);
++	drm_bridge_remove(&mic->bridge);
+ err:
+ 	return ret;
+ }
+-- 
+2.43.0
 
