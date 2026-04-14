@@ -1,161 +1,139 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AA13D5228
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Apr 2026 10:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDD33D6698;
+	Tue, 14 Apr 2026 10:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776162042; cv=none; b=L9QMw2wx4yvaDiwF9gIhChCSCqa6GHdj+xZvzBTH2BHj028FvfrTSK0T691e0NSIoGr476xZknmkEoHXF6UcS7JFutbH9J8r2Rz0tYaJAtGoryBOePjF5K4ilVnOKm73ok0w/Xasx7helWyeUTU93Is9x6YY4f4TJQEkWbtzti4=
+	t=1776163809; cv=none; b=iall4SSJuDiCtS84Wk/64l88FEReiHZjG2jvaZ0e14Eemk/xlmwF0OPwP/uNBw+2ImBcezhBxb3AJbJc2bP7mQy7vNSTYbPL8Pf4PvQwcCJnhtXL/VRJF6+qeqWPelq1zuZxemouNd/546qvBYeSMaZMvQt4aifSZRvr09cnC3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776162042; c=relaxed/simple;
-	bh=2l2un2dJbMhS4rHXZeYIIG4tWC1pBRspQ9Web4LJIGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MTz1WLukCyx3hjOCjRMVyxLt+f+l55BXh4AFi/z0zOu2OJUtw8hVwl2HEallMcVfxDRTNpOrydbNhzg6iJBuOvh/B7Xe61uUl3i+4oH+Bh00ofmvjb3awIwfisxb+rMD9DtqO2v7GeWjkyEGBEmbAevjsb6gg8ugXjGWuYc4JeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CJkc4YdC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1776163809; c=relaxed/simple;
+	bh=ATR7jPCiqFhUJZWvipHfB9fQLlfRKaC77BcEuJfekz4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=aDa7rCwAYPQvxbZPwXYlyNrvJCJeWUsF0eMGAhN5p5ZNYlv421rJONeaTi2vyRfj6dzbgS+AZAGcau5sk8ivlZ7dFuYPh1vTM+uQfWBBTNDpjP5pZnDJI9wxgL1OgUQxwAoqQ4WQg8ClbxcCOHYKJvUVBo7OgmW3ciDqj+hJnII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bU5WOgvD; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CJkc4YdC"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488a8ca4aadso63163785e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Apr 2026 03:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776162037; x=1776766837; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HjjP3x2s4FAG01oUrkjM+enP8FGX1QBSjIAMGgLldEs=;
-        b=CJkc4YdCoQjH3GN88jmk+eLTvdY7mmpiML+zSvvz1oMgY8lgqrXGSUTb0E36hpjQiC
-         L5bt+ugFfq1dsRkoOZDQ8pwovasweKdeTragSRq0d4Sxiu7erlwX9aN3sbQwPiMYImZd
-         SYHLmJ81Ci6d+uC+zqJPITPmvO3HODAMBmNQ+J7Q/FQzesWANy9gFgu2m3TrMRJ4W8TZ
-         N2/L1jBOuzbu3yRMaz/s+fcxh6sYHLxV8SHmpKVlxg1iHXRWAANr1NmJkYkHcQwrgti3
-         a2iKjLlaHWYUSYhRxwwrDVjPFb+low5v+TQ7MpyMsA2FG/vPnzpFO6sSsk66pkbbDvvS
-         V3DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776162037; x=1776766837;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HjjP3x2s4FAG01oUrkjM+enP8FGX1QBSjIAMGgLldEs=;
-        b=tGyMrEyLmJp6aMclWXC7wbbd94RD9RdFIpV3SSjmOXhaHT+EtXJPgW3aldBzCQnc1W
-         Xzdhw13WMEsdqYlgcLOWCa9Otx4zLuMCMvz+imHPv3tRRqV3hrYCpljtoFKwPsBsXE8M
-         YaXCmLOrfhoLurvW4FwHZStPnQVs02346PeqdY8NCc8rvbSFq8o12h4eUJjvQjp0nSPj
-         JXl19jitDy0sZA1ouzMzdMwzG0Oa4mkem+1T4ETeOELKIjVem/x9pC/NCMLtDQMq4fre
-         FMimQAlIBNmks0pb6eHPYyeYzACDF4s9l5Ie8ZlBoSX+DmwRruStXbyaVh5w6+/xoi0X
-         uzjw==
-X-Gm-Message-State: AOJu0Yxgd4gfxaF+BwFCYm4LnRyX8MutcU6y/OwNoO46hZyNTVM6WyL9
-	bMPzClaVWLIWRk6N3ziLdCg5x2QOX0czvN15ehVLXY41XxI0PWCDFkjrRh2iaeebvnc=
-X-Gm-Gg: AeBDiev0y7WeN70q2yQ2InW7MqnKtLM7eV0H9YSxvZ6njDVnM+ouLx8ze+pvMJUFehR
-	FG2fdud/FPOEVtFkuUhmN6f/NSf2fC3R0MBTQ0swlAvDw/eEWmrOgY6ErUvKSPurNjTdZc20lJg
-	ODfY4iFPw8EHpB/TmrP1GaTejzzXi6ULa39XVnCxdfPvCjAnRMqcUgY8m3CzS6xQSuCHZW+t1we
-	q4UVqk+zjcvyE9bpw4TLDZNnVBWoqMW+jE3DZpc0x+e3ULTVngGdQZv/CSB4mGTZ0HYIn0z1s6c
-	mTZ3dnlfglKvjjdn1c6LlNueO6ZpdpWlgTOZGjXLvMqQov4aYBhdb9vluh6XMvAsxOP0W/jdRFc
-	igmAezqsym7oqTztgcLclbTlLgv/Kg30HwrwqhJhRew2WxTiEP+va9BJ3BL96Y0z1fvN15ZdzEY
-	IcNj8nbvBp2J7fctuzjKCKrVW6VSK7QKwQe/Q4X2kYTQ==
-X-Received: by 2002:a05:6000:1a8d:b0:43d:1bf6:30f3 with SMTP id ffacd0b85a97d-43d6424c4f6mr24710460f8f.14.1776162037022;
-        Tue, 14 Apr 2026 03:20:37 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.48])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d73e36e7csm20342473f8f.10.2026.04.14.03.20.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2026 03:20:36 -0700 (PDT)
-Message-ID: <5797be19-8886-45a2-bfce-eb7d5f0df6c2@linaro.org>
-Date: Tue, 14 Apr 2026 13:20:31 +0300
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bU5WOgvD"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A11F32673A;
+	Tue, 14 Apr 2026 12:50:02 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ah9wOf_RKuH4; Tue, 14 Apr 2026 12:50:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1776163801; bh=ATR7jPCiqFhUJZWvipHfB9fQLlfRKaC77BcEuJfekz4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=bU5WOgvDZTzvFknUo05leQFShBt352kJl6xDKxA//wTjNOpFR0BsbGj2lmpW4LxFo
+	 /6L+yP5O/Q+XDIAZSaQ7wgjFsc30YZYUbEFOgj6mPt03OLnnpJ6uw4nxzK5+9+obwp
+	 2ZqbjkPEtZPrbqRAjxdGO5HqbXCNboQhy2WrgyE2WVNOx8hc116sj/bfJ3XtOW4wmE
+	 PXNkMieYy1iXmiell9tTjrk1extFxAcOjyQhEguYEQCEfkf77jgyPsLxZb9f0mQCs/
+	 b1p+jWbCMMKNvyGas1o/maZmXZBOJ6M5E/jzMtoQfhwUhZHtb06n5AOKCXBUnDcEMf
+	 XXhykpnNkkWlA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos850: Add SRAM node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alexey Klimov <alexey.klimov@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Juan Yescas <jyescas@google.com>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-References: <20260413-exynos850_sram-v1-1-7fda5b7fb7d4@linaro.org>
- <2ff077e1-8983-4a41-bb21-5e4140545aa3@kernel.org>
- <DHSR70EGYY4N.2EA2HWIXJR7QR@linaro.org>
- <4c6a92e0-15a1-4f82-afc9-542f5ad9d2df@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <4c6a92e0-15a1-4f82-afc9-542f5ad9d2df@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Tue, 14 Apr 2026 16:19:52 +0530
+Message-Id: <DHSTILN3EP1X.1KGAMPFVIKXJC@disroot.org>
+Subject: Re: [PATCH v2 1/2] mmc: dw_mmc: implement option for configuring
+ DMA threshold
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Shawn Lin" <shawn.lin@rock-chips.com>, "Kaustabh Chakraborty"
+ <kauschluss@disroot.org>, "Ulf Hansson" <ulfh@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Jaehoon Chung" <jh80.chung@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>
+Cc: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>
+References: <20260414-dwmmc-dma-thr-v2-0-4058078f5361@disroot.org>
+ <20260414-dwmmc-dma-thr-v2-1-4058078f5361@disroot.org>
+ <cec99f99-5ac4-7f0d-8e2a-947edfef8930@rock-chips.com>
+In-Reply-To: <cec99f99-5ac4-7f0d-8e2a-947edfef8930@rock-chips.com>
 
-Hi!
+On 2026-04-14 16:50 +08:00, Shawn Lin wrote:
+> =E5=9C=A8 2026/04/14 =E6=98=9F=E6=9C=9F=E4=BA=8C 16:36, Kaustabh Chakrabo=
+rty =E5=86=99=E9=81=93:
+>> Some controllers, such as certain Exynos SDIO ones, are unable to
+>> perform DMA transfers of small amount of bytes properly. Following the
+>> device tree schema, implement the property to define the DMA transfer
+>> threshold (from a hard coded value of 16 bytes) so that lesser number of
+>> bytes can be transferred safely skipping DMA in such controllers. The
+>> value of 16 bytes stays as the default for controllers which do not
+>> define it. This value can be overridden by implementation-specific init
+>> sequences.
+>>=20
+>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> ---
+>>   drivers/mmc/host/dw_mmc.c | 5 +++--
+>>   drivers/mmc/host/dw_mmc.h | 2 ++
+>>   2 files changed, 5 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 20193ee7b73eb..9dd9fed4ccf49 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -40,7 +40,6 @@
+>>   				 SDMMC_INT_RESP_ERR | SDMMC_INT_HLE)
+>>   #define DW_MCI_ERROR_FLAGS	(DW_MCI_DATA_ERROR_FLAGS | \
+>>   				 DW_MCI_CMD_ERROR_FLAGS)
+>> -#define DW_MCI_DMA_THRESHOLD	16
+>>  =20
+>>   #define DW_MCI_FREQ_MAX	200000000	/* unit: HZ */
+>>   #define DW_MCI_FREQ_MIN	100000		/* unit: HZ */
+>> @@ -821,7 +820,7 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *ho=
+st,
+>>   	 * non-word-aligned buffers or lengths. Also, we don't bother
+>>   	 * with all the DMA setup overhead for short transfers.
+>>   	 */
+>> -	if (data->blocks * data->blksz < DW_MCI_DMA_THRESHOLD)
+>> +	if (data->blocks * data->blksz < host->dma_threshold)
+>>   		return -EINVAL;
+>>  =20
+>>   	if (data->blksz & 3)
+>> @@ -3245,6 +3244,8 @@ int dw_mci_probe(struct dw_mci *host)
+>>   		goto err_clk_ciu;
+>>   	}
+>>  =20
+>> +	host->dma_threshold =3D 16;
+>
+> I'd prefer to set it in dw_mci_alloc_host() instead of picking up
+> a random place to put it, for better code management.
 
-On 4/14/26 12:08 PM, Krzysztof Kozlowski wrote:
-> On 14/04/2026 11:00, Alexey Klimov wrote:
->> On Mon Apr 13, 2026 at 4:23 PM BST, Krzysztof Kozlowski wrote:
->>> On 13/04/2026 16:52, Alexey Klimov wrote:
->>>> SRAM is used by the ACPM protocol to retrieve the ACPM channels
->>>> information and configuration data. Add the SRAM node.
->>>>
->>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>> ---
->>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>> index cb55015c8dce..cf4a6168846c 100644
->>>> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>> @@ -910,6 +910,14 @@ spi_2: spi@11d20000 {
->>>>  			};
->>>>  		};
->>>>  	};
->>>> +
->>>> +	apm_sram: sram@2039000 {
->>>> +		compatible = "mmio-sram";
->>>> +		reg = <0x0 0x2039000 0x40000>;
->>>> +		#address-cells = <1>;
->>>> +		#size-cells = <1>;
->>>> +		ranges = <0x0 0x0 0x2039000 0x40000>;
->>>
->>> You miss here children.
->>
->> Thank you! I guess I should convert it to smth like this:
->>
->> apm_sram: sram@2039000 {
->> 		compatible = "mmio-sram";
->> 		reg = <0x0 0x2039000 0x40000>;
->> 		ranges = <0x0 0x0 0x2039000 0x40000>;
->> 		#address-cells = <1>;
->> 		#size-cells = <1>;
->>
->> 		acpm_sram_region: sram-section@0 {
->> 			reg = <0x0 0x40000>;
-> 
-> This covers entire block, so feels pointless. Maybe requirement of
-> children should be dropped. What's the point of having children? Why
-> does the driver need them?
-> 
->> 		};
->> 	};
->>
->> And then later reference shmem = &acpm_sram_region from acpm node.
->>
->>> Also, 'ranges' should be after 'reg'.
->>
->> Thanks, will fix this.
->>
->> FWIW this commit is a copy of commit 48e7821b26904
->> https://lore.kernel.org/r/20250207-gs101-acpm-dt-v4-1-230ba8663a2d@linaro.org
-> 
-> 
-> Huh, we should fix that one as well.
-> 
+Okay, that function is in -next I see.
 
-On gs101, likely on e850 too, ACPM parses the SRAM and discovers at runtime where
-the TX/RX queue offsets are in SRAM. So we can't define static partitions in DT.
-I remember that I thought about extending the SRAM driver to add dynamic
-partitions (clients to request the mmio-sram driver to create partitions at
-runtime), but it was just ACPM that's using SRAM, so I didn't need it.
+>
+>> +
+>>   	if (host->rstc) {
+>>   		reset_control_assert(host->rstc);
+>>   		usleep_range(10, 50);
+>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>> index 42e58be74ce09..fc7601fba849f 100644
+>> --- a/drivers/mmc/host/dw_mmc.h
+>> +++ b/drivers/mmc/host/dw_mmc.h
+>> @@ -164,6 +164,8 @@ struct dw_mci {
+>>   	void __iomem		*fifo_reg;
+>>   	u32			data_addr_override;
+>>   	bool			wm_aligned;
+>> +	/* Configurable data byte threshold value for DMA transfer. */
+>
+> No here, there is a long section of comment before struct dw_mci{ } that
+> describes each member of it, please add it there.
 
-Cheers,
-ta
+Ah, you mean the documenting comment. Shouldn't have missed in either
+way.
+
+>
+>> +	u32			dma_threshold;
+>>  =20
+>>   	struct scatterlist	*sg;
+>>   	struct sg_mapping_iter	sg_miter;
+>>=20
