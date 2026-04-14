@@ -1,37 +1,64 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDD33D6698;
-	Tue, 14 Apr 2026 10:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B1739A81B
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Apr 2026 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776163809; cv=none; b=iall4SSJuDiCtS84Wk/64l88FEReiHZjG2jvaZ0e14Eemk/xlmwF0OPwP/uNBw+2ImBcezhBxb3AJbJc2bP7mQy7vNSTYbPL8Pf4PvQwcCJnhtXL/VRJF6+qeqWPelq1zuZxemouNd/546qvBYeSMaZMvQt4aifSZRvr09cnC3E=
+	t=1776178482; cv=none; b=Nrw/fN58uIZEPLdAvPV32zebvejrdJs6313cX6K9jNKB4e2tNYc/FqmxBz85TL7/YpN39/uyHZNVhHf6l4C1WE2WXj7WV6UkaTspKAVZ8USTZg7eDV3krcqqHXO7ae4CDwin/UZNCKRGZSpwiaLfEnYylaRm/TXI0D+wwuEQ93Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776163809; c=relaxed/simple;
-	bh=ATR7jPCiqFhUJZWvipHfB9fQLlfRKaC77BcEuJfekz4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=aDa7rCwAYPQvxbZPwXYlyNrvJCJeWUsF0eMGAhN5p5ZNYlv421rJONeaTi2vyRfj6dzbgS+AZAGcau5sk8ivlZ7dFuYPh1vTM+uQfWBBTNDpjP5pZnDJI9wxgL1OgUQxwAoqQ4WQg8ClbxcCOHYKJvUVBo7OgmW3ciDqj+hJnII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bU5WOgvD; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1776178482; c=relaxed/simple;
+	bh=5NFk1FU3zQgLvOHWY85ctRP96qkII4yfyH1qndHlnw8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uVyYerevlZsqED4ZhMKsQ43ketot/QXbNusGJqrH01+E+k2YJPDvWxE9nTZas/TV1u+nEosgyy4t85Ps8UVWTuhI1AE0+BWYCqdWkPTSWvtGAMnbBg8wvsYjEvfSGwKQj0pAjsZ5lEk7AkwYcs3T8fgNpPXanyphlzsRoJLPsmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZL7SlzpL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bU5WOgvD"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A11F32673A;
-	Tue, 14 Apr 2026 12:50:02 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ah9wOf_RKuH4; Tue, 14 Apr 2026 12:50:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1776163801; bh=ATR7jPCiqFhUJZWvipHfB9fQLlfRKaC77BcEuJfekz4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=bU5WOgvDZTzvFknUo05leQFShBt352kJl6xDKxA//wTjNOpFR0BsbGj2lmpW4LxFo
-	 /6L+yP5O/Q+XDIAZSaQ7wgjFsc30YZYUbEFOgj6mPt03OLnnpJ6uw4nxzK5+9+obwp
-	 2ZqbjkPEtZPrbqRAjxdGO5HqbXCNboQhy2WrgyE2WVNOx8hc116sj/bfJ3XtOW4wmE
-	 PXNkMieYy1iXmiell9tTjrk1extFxAcOjyQhEguYEQCEfkf77jgyPsLxZb9f0mQCs/
-	 b1p+jWbCMMKNvyGas1o/maZmXZBOJ6M5E/jzMtoQfhwUhZHtb06n5AOKCXBUnDcEMf
-	 XXhykpnNkkWlA==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZL7SlzpL"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-488a8ca4aadso66553075e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Apr 2026 07:54:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1776178479; x=1776783279; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PAo7ya1UV+iUteVyqPUr+hg05LINCS2Wr9p6hmA+q2Q=;
+        b=ZL7SlzpL4lw6cNHWWZFtDY82Iw+2NnFy1h1Bsp25pbtWfADIvhOgDpCqms27LudOzh
+         +D1ycQIxgsoJ15qcrbXSyhjEEEFUa7vC0wIFRUw62TKgASrzizNOc0cljyMgpsly+EMh
+         0IWzC8hJWZGh+Y76WMjGukD/cL6RFRdcPwwQh1/xJMstBxz2yzCh8TbjnEZ3TTuwrl93
+         s2bum4hu4eHk6wElPmIjAKNmOGa5DMHKwqumMNV2pZitqcZQkPfxG+XOjMnhUj1fplae
+         Tc2vokHwgRLZ01iF2uvXcCxVpin/m8FSVEUKb6M+zsRsUSIbSJFS51GOUl/w8KEhrpkV
+         koww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776178479; x=1776783279;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PAo7ya1UV+iUteVyqPUr+hg05LINCS2Wr9p6hmA+q2Q=;
+        b=O6I6hOzS4yORJzL8kxScdBoF46oohP4OFSVSjgDlQGJ/db9tKjTsIGpDIXDy+46/Wt
+         YICrZz47gjNoRLFJc8ddMNHWNBhnrzLh/X2zIwH2ps0gcoOApL4o2THL+DG/hz1wnGRD
+         WNCxTqGmYzTlQdNis+P5Nqzx43De0Cxr+0DuGpPw8rh50qaEVTvRqXRCGBfhBeKwG0u6
+         5FXdXK7FEtWDiZfTIOHRjexm2Qimlwh6FpCZl/gLjStsur+/6rYgZkNLkrKPftHTVez+
+         TQ7r3057wiZGp451s4nyVL3/Dbl9WSzLOfC0Yln2rkYv5+TSjmSfKAcjsNgu+kthDcHa
+         6Hrg==
+X-Forwarded-Encrypted: i=1; AFNElJ9xKi65NNG8B0rRbBlZHVXDMFh/oq8UAzNVBqUCdRz+RKGxZ3c6mDFgP86QD0QnqUF+vzJCzUqgE+4DseBSswtOCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0YXCm0hBFsV+6dJY39WpamHAFhS4ff75Co9dPsZsfoiBVA4Zm
+	L4FKuYRuGYMKScBU5iMZqYJ3NPlc1RjHg9PhNJgb2QWKJ0gJ37OkTL2iEkq1vClDpyE=
+X-Gm-Gg: AeBDieu5uhpiGBwXtuKnm4k+EaMukp9nP8X8wVHBZhXJTca/cO2Tq7mrK3gVcZAN8ep
+	40gKxjjuQiadsZgRCSNx8s4XOz0VSZYykFqFgWhsSs19JGRDb6B2EemuawORSTS1VdoAGA68ETA
+	vFAJW1YekBPIs3Hntn2SyEURlIH4YiBVP150B8HI5UCEPtz7qkr2owCLVfohidoUYLP7j9o7/O+
+	8fa+knIIKwsj/537ZX5gL2lyL83YMZIDgZ739X+eKvDa+3HYWJP1xLUG/y4aBPULuTFQ9lwsW04
+	rI341mvXX8QWYYgVZuwepKeGUZ5hlqX42OXYYqcnmUa27cLKjNRvRW8iJ+BpMcagyuVoBx5flIq
+	5KUQxMKzy532Fteuxc7aWLNinvsKXeiTS34HGTcLC4LR5aGB109zcABcDt+yj29zTF+ZL7QTMJm
+	a078tMcW+8AvH750tl1lIDgXJoeKhznCGx5820ILnCepY0W3VZS4fMaNCy3cBvzR2naRtbOtn5U
+	ODzcXJnVlIIxpcJ2g==
+X-Received: by 2002:a05:600c:1391:b0:487:5c0:671f with SMTP id 5b1f17b1804b1-488d67e6a48mr259531285e9.9.1776178478697;
+        Tue, 14 Apr 2026 07:54:38 -0700 (PDT)
+Received: from localhost ([212.187.182.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d73e36e7csm22002840f8f.10.2026.04.14.07.54.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Apr 2026 07:54:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -40,100 +67,75 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 14 Apr 2026 16:19:52 +0530
-Message-Id: <DHSTILN3EP1X.1KGAMPFVIKXJC@disroot.org>
-Subject: Re: [PATCH v2 1/2] mmc: dw_mmc: implement option for configuring
- DMA threshold
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "Shawn Lin" <shawn.lin@rock-chips.com>, "Kaustabh Chakraborty"
- <kauschluss@disroot.org>, "Ulf Hansson" <ulfh@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Jaehoon Chung" <jh80.chung@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>
-Cc: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>
-References: <20260414-dwmmc-dma-thr-v2-0-4058078f5361@disroot.org>
- <20260414-dwmmc-dma-thr-v2-1-4058078f5361@disroot.org>
- <cec99f99-5ac4-7f0d-8e2a-947edfef8930@rock-chips.com>
-In-Reply-To: <cec99f99-5ac4-7f0d-8e2a-947edfef8930@rock-chips.com>
+Date: Tue, 14 Apr 2026 15:54:37 +0100
+Message-Id: <DHSYQ027GZGC.4I9F6TPPMBI5@linaro.org>
+Cc: "Sam Protsenko" <semen.protsenko@linaro.org>,
+ <linux-samsung-soc@vger.kernel.org>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>,
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: soc: samsung: exynos-pmu: add
+ samsung,pmu-intr-gen phandle
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Rob Herring" <robh@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20260401-exynos850-cpuhotplug-v2-0-c5a760a3e259@linaro.org>
+ <20260401-exynos850-cpuhotplug-v2-2-c5a760a3e259@linaro.org>
+ <20260413221638.GA3624532-robh@kernel.org>
+In-Reply-To: <20260413221638.GA3624532-robh@kernel.org>
 
-On 2026-04-14 16:50 +08:00, Shawn Lin wrote:
-> =E5=9C=A8 2026/04/14 =E6=98=9F=E6=9C=9F=E4=BA=8C 16:36, Kaustabh Chakrabo=
-rty =E5=86=99=E9=81=93:
->> Some controllers, such as certain Exynos SDIO ones, are unable to
->> perform DMA transfers of small amount of bytes properly. Following the
->> device tree schema, implement the property to define the DMA transfer
->> threshold (from a hard coded value of 16 bytes) so that lesser number of
->> bytes can be transferred safely skipping DMA in such controllers. The
->> value of 16 bytes stays as the default for controllers which do not
->> define it. This value can be overridden by implementation-specific init
->> sequences.
+On Mon Apr 13, 2026 at 11:16 PM BST, Rob Herring wrote:
+> On Wed, Apr 01, 2026 at 05:51:55AM +0100, Alexey Klimov wrote:
+>> Some Exynos-based SoCs, for instance Exynos850, require access
+>> to the pmu interrupt generation register region which is exposed
+>> as a syscon. Update the exynos-pmu bindings documentation to
+>> reflect this.
 >>=20
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 >> ---
->>   drivers/mmc/host/dw_mmc.c | 5 +++--
->>   drivers/mmc/host/dw_mmc.h | 2 ++
->>   2 files changed, 5 insertions(+), 2 deletions(-)
+>>  .../devicetree/bindings/soc/samsung/exynos-pmu.yaml    | 18 +++++++++++=
++++++++
+>>  1 file changed, 18 insertions(+)
 >>=20
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 20193ee7b73eb..9dd9fed4ccf49 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -40,7 +40,6 @@
->>   				 SDMMC_INT_RESP_ERR | SDMMC_INT_HLE)
->>   #define DW_MCI_ERROR_FLAGS	(DW_MCI_DATA_ERROR_FLAGS | \
->>   				 DW_MCI_CMD_ERROR_FLAGS)
->> -#define DW_MCI_DMA_THRESHOLD	16
->>  =20
->>   #define DW_MCI_FREQ_MAX	200000000	/* unit: HZ */
->>   #define DW_MCI_FREQ_MIN	100000		/* unit: HZ */
->> @@ -821,7 +820,7 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *ho=
-st,
->>   	 * non-word-aligned buffers or lengths. Also, we don't bother
->>   	 * with all the DMA setup overhead for short transfers.
->>   	 */
->> -	if (data->blocks * data->blksz < DW_MCI_DMA_THRESHOLD)
->> +	if (data->blocks * data->blksz < host->dma_threshold)
->>   		return -EINVAL;
->>  =20
->>   	if (data->blksz & 3)
->> @@ -3245,6 +3244,8 @@ int dw_mci_probe(struct dw_mci *host)
->>   		goto err_clk_ciu;
->>   	}
->>  =20
->> +	host->dma_threshold =3D 16;
->
-> I'd prefer to set it in dw_mci_alloc_host() instead of picking up
-> a random place to put it, for better code management.
-
-Okay, that function is in -next I see.
-
->
+>> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.ya=
+ml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+>> index 76ce7e98c10f..92acdfd5d44e 100644
+>> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+>> @@ -110,6 +110,11 @@ properties:
+>>      description:
+>>        Node for reboot method
+>> =20
+>> +  samsung,pmu-intr-gen-syscon:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      Phandle to PMU interrupt generation interface.
 >> +
->>   	if (host->rstc) {
->>   		reset_control_assert(host->rstc);
->>   		usleep_range(10, 50);
->> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
->> index 42e58be74ce09..fc7601fba849f 100644
->> --- a/drivers/mmc/host/dw_mmc.h
->> +++ b/drivers/mmc/host/dw_mmc.h
->> @@ -164,6 +164,8 @@ struct dw_mci {
->>   	void __iomem		*fifo_reg;
->>   	u32			data_addr_override;
->>   	bool			wm_aligned;
->> +	/* Configurable data byte threshold value for DMA transfer. */
+>>    google,pmu-intr-gen-syscon:
 >
-> No here, there is a long section of comment before struct dw_mci{ } that
-> describes each member of it, please add it there.
+> Does this mean the driver is just going to have to look at both=20
+> properties for the same thing? If so, just use the existing property. We=
+=20
+> don't need 2. Yeah, 'google' in Samsung SoCs is a bit weird, but that's=
+=20
+> Samsung's fault for not upstreaming support for their h/w first.
 
-Ah, you mean the documenting comment. Shouldn't have missed in either
-way.
+First question - yes, look for both properties. Using the existing
+property is even better, I don't mind at all. Thanks for pointing that
+out.
 
->
->> +	u32			dma_threshold;
->>  =20
->>   	struct scatterlist	*sg;
->>   	struct sg_mapping_iter	sg_miter;
->>=20
+Initially, I added more generic samsung,... property because I thought
+that device tree style prefers <vendor>,<property-name> semantics where
+<vendor> is actual (real) HW vendor of corresponding hw block and it
+should also refer to the first/earlier hw vendor in terms of the
+timeline.
+
+Using google,<..> is simplier and I don't need need commit that
+obsoletes that, so I'll rework the series in that way.
+
+BR,
+Alexey
+
