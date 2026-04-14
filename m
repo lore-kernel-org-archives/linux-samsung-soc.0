@@ -1,117 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6758B382F00;
-	Tue, 14 Apr 2026 07:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E537EFEB;
+	Tue, 14 Apr 2026 08:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776153511; cv=none; b=bm0DMX2ZK2U4OwcoiXJQnzndSiFCKnyQZLTKvJrdVB+N4k7O/6DVMHJMcaP2Ww3GsKJjMDdjPqB6zObOuMfqDYQgAvg/RYriPIInJQ8s5KdkvixxhFLuiTIP73rLQj0ebowbW8Dldl4ow36oa4Ss6oqymUvVMuis5a/Aw/pUh44=
+	t=1776155778; cv=none; b=FFNy+7B+v5GuR0sKnQncvKH24PVa6fgldotglg7XjeEOvsaOi8aZY9B+VM9EprAmAw/QVbYZCjM+m4FLr4fM/+s+gJcKovBvHsLBEr5ri6zOJCticUlBscFsfaEeqJgJwQ0zXkX1foGXc3qN/h2u3DneLwgH8D9isMyjtbvZj30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776153511; c=relaxed/simple;
-	bh=GnyG5msXBP+YBGkuMAE1tNpBGQFgvLOi3k5F4gox66Q=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=U+97VmpOS19LMGZMXqTcpMric9yonWDsS3cdTPEdn/3rEhTYWp5r8no6DpJK//CGe/mk8zPOefF4UBnkSAU1E+DTIpYfCjzVz1Du4IhG5Fpg2nel8lxFQE/SG5jwZqN7AjjJnmpMhzlbjJpgrScqWpy4/CguY4yLwhllK87vF5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8RdcM1Q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776155778; c=relaxed/simple;
+	bh=ghLdmmqYMIFtISlUzNAIj4ZX1t+/pLxltbPOih8nxKk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lm7rIa4QxI3xS0PI68LtcFs2ar4ohE9uA2VoGZ0PGzEgj0CHXMNhPIabMtI60w2G6CQUtRAaP0+LuqNNPxuJGPjpRQx2vVkTCzfwGy8A8N0dliLWUGOhYdJZDG6siNYJRy18ty0fNK6mnSx8fqzXMQ6VyqmQQwLtLmx5dRa8nV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=hJhQQYme; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8RdcM1Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90D0C19425;
-	Tue, 14 Apr 2026 07:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776153511;
-	bh=GnyG5msXBP+YBGkuMAE1tNpBGQFgvLOi3k5F4gox66Q=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=s8RdcM1Qay/Tt56OSH//nhypfv5U4TNTCJVbLdqBGAKCJ6urGmxk02GAezvxUr8Rb
-	 ZLCREz/03HdV9iidslkLRQZ1RF4LFlxcFdANPFaWVN2Cuq3nPthE5bemgHzFIhC2VX
-	 ULnKmnvR7ILxa/G1rGfBxowLyfpJxN9lLj4taNPmDktFIXNUSTM/lLMN3cPFD23ZcC
-	 N1eFLtrqINUhWcG0kZfqQ50hPulKskFiunX5ydZMTIaibFuJJsJOyFnAafxmItdJAN
-	 7XIGeN25xVG+zpUziqje1TRQCpIVho1yDSGhoIu7zrpBrWEyCjr403WFpUKIQJi1KY
-	 XlNQi1UKH0OiQ==
-Date: Tue, 14 Apr 2026 02:58:29 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="hJhQQYme"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A706D264BA;
+	Tue, 14 Apr 2026 10:36:13 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id X6ZzvqgFef7Y; Tue, 14 Apr 2026 10:36:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1776155772; bh=ghLdmmqYMIFtISlUzNAIj4ZX1t+/pLxltbPOih8nxKk=;
+	h=From:Subject:Date:To:Cc;
+	b=hJhQQYme8vk8dq5ZHCrGJHQRZmPLJl88kTlIWyPojIbeD9Dg5JR1YMfR5B5hNcxmY
+	 08Hwog6a35gr7qe9qGGwmiafeiecf7QWbVjarMRt1k78nQjEOxAuvOVpOiHLiogTFg
+	 5mgCaT5kVZnaEec1bEBKmXABQq+tPHOorz6m5biCvZtMSAQuTJTEo9ArWPBqJHilAx
+	 +2RvWZAFwQkcubq0I1AauXd6Q6AUI9IvHOerLX9ZfxG4L2LMhYsExIoU33XVsfNeDh
+	 wRLt8fsCkNQfy7cya/4aTtd2fqJdcQbLk8ZKaDdV2eAZAVx9WQ7pB6c58qYKH6jSMb
+	 xdg0Z2Cup34Fw==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v2 0/2] Configuring DMA threshold value for DW-MMC
+ controllers
+Date: Tue, 14 Apr 2026 14:05:59 +0530
+Message-Id: <20260414-dwmmc-dma-thr-v2-0-4058078f5361@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-rtc@vger.kernel.org, 
- linux-leds@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- Pavel Machek <pavel@kernel.org>, Nam Tran <trannamatk@gmail.com>, 
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
- linux-doc@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- linux-samsung-soc@vger.kernel.org
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-In-Reply-To: <20260414-s2mu005-pmic-v4-5-7fe7480577e6@disroot.org>
-References: <20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org>
- <20260414-s2mu005-pmic-v4-5-7fe7480577e6@disroot.org>
-Message-Id: <177615350902.422580.9843903543628073938.robh@kernel.org>
-Subject: Re: [PATCH v4 05/13] dt-bindings: mfd: s2mps11: add documentation
- for S2MU005 PMIC
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG/83WkC/3XMQQ6CMBCF4auQWTumrRaQlfcwLBo60FlAzZSgh
+ vTuVvYu/5e8b4dEwpSgq3YQ2jhxXEqYUwVDcMtEyL40GGVqddUG/WueB/SzwzUIanVTvjWtJdd
+ A+TyFRn4f3qMvHTitUT4Hv+nf+k/aNCpsrDNjbVsiutw9J4lxPUeZoM85fwFCYQFfrAAAAA==
+X-Change-ID: 20260412-dwmmc-dma-thr-1090d8285ea7
+To: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
+ Shawn Lin <shawn.lin@rock-chips.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
 
+In Samsung Exynos 7870 devices with Broadcom Wi-Fi, it has been observed
+that small sized DMA transfers are unreliable and are not written
+properly, which renders the cache incoherent.
 
-On Tue, 14 Apr 2026 12:02:57 +0530, Kaustabh Chakraborty wrote:
-> Samsung's S2MU005 PMIC includes subdevices for a charger, an MUIC (Micro
-> USB Interface Controller), and flash and RGB LED controllers.
-> 
-> Since regulators are not supported by this device, unmark this property
-> as required and instead set this in a per-device basis for ones which
-> need it.
-> 
-> Add the compatible and documentation for the S2MU005 PMIC. Also, add an
-> example for nodes for supported sub-devices, i.e. charger, extcon,
-> flash, and rgb.
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  .../devicetree/bindings/mfd/samsung,s2mps11.yaml   | 121 ++++++++++++++++++++-
->  1 file changed, 120 insertions(+), 1 deletion(-)
-> 
+Experimental observations say that DMA transfer sizes of somewhere
+around 64 to 512 are intolerable. We must thus implement a mechanism to
+fall back to PIO transfer in this case. One such approach, which this
+series implements is allowing the DMA transfer threshold, which is
+already defined in the driver, to be configurable.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Note that this patch is likely to be labelled as a workaround. These
+smaller transfers seem to be successful from downstream kernels,
+however efforts to figure out how so went in vain. It is also very
+possible that the downstream Broadcom Wi-Fi SDIO driver uses PIO
+transfers as well.
 
-yamllint warnings/errors:
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v2:
+- Remove dt-binding to set DMA threshold (Krzysztof Kozlowski)
+- Add comment to describe struct dw_mci::dma_threshold (Shawn Lin)
+- Set DMA threshold in Exynos 7870 DW-MMC driver (Krzysztof Kozlowski)
+- Link to v1: https://lore.kernel.org/r/20260412-dwmmc-dma-thr-v1-0-75a2f658eee3@disroot.org
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:241.29-39: Warning (reg_format): /example-2/i2c/pmic@3d/extcon/port/endpoint@0:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:246.29-39: Warning (reg_format): /example-2/i2c/pmic@3d/extcon/port/endpoint@1:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:240.53-243.27: Warning (avoid_default_addr_size): /example-2/i2c/pmic@3d/extcon/port/endpoint@0: Relying on default #address-cells value
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:240.53-243.27: Warning (avoid_default_addr_size): /example-2/i2c/pmic@3d/extcon/port/endpoint@0: Relying on default #size-cells value
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:245.49-248.27: Warning (avoid_default_addr_size): /example-2/i2c/pmic@3d/extcon/port/endpoint@1: Relying on default #address-cells value
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:245.49-248.27: Warning (avoid_default_addr_size): /example-2/i2c/pmic@3d/extcon/port/endpoint@1: Relying on default #size-cells value
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:240.53-243.27: Warning (graph_endpoint): /example-2/i2c/pmic@3d/extcon/port/endpoint@0: graph node '#address-cells' is -1, must be 1
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:240.53-243.27: Warning (graph_endpoint): /example-2/i2c/pmic@3d/extcon/port/endpoint@0: graph node '#size-cells' is -1, must be 0
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:245.49-248.27: Warning (graph_endpoint): /example-2/i2c/pmic@3d/extcon/port/endpoint@1: graph node '#address-cells' is -1, must be 1
-Documentation/devicetree/bindings/mfd/samsung,s2mps11.example.dts:245.49-248.27: Warning (graph_endpoint): /example-2/i2c/pmic@3d/extcon/port/endpoint@1: graph node '#size-cells' is -1, must be 0
+---
+Kaustabh Chakraborty (2):
+      mmc: dw_mmc: implement option for configuring DMA threshold
+      mmc: dw_mmc: exynos: increase DMA threshold value for exynos7870
 
-doc reference errors (make refcheckdocs):
+ drivers/mmc/host/dw_mmc-exynos.c | 1 +
+ drivers/mmc/host/dw_mmc.c        | 5 +++--
+ drivers/mmc/host/dw_mmc.h        | 2 ++
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: 1c7cc4904160c6fc6377564140062d68a3dc93a0
+change-id: 20260412-dwmmc-dma-thr-1090d8285ea7
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260414-s2mu005-pmic-v4-5-7fe7480577e6@disroot.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
