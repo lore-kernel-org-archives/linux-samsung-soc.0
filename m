@@ -1,115 +1,94 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26839FCD7;
-	Thu, 16 Apr 2026 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259DD3314D2;
+	Thu, 16 Apr 2026 22:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776341761; cv=none; b=lTPLg9oQ3gwrrazUKgODYEfCkd7jjJxAwblRxuaKKJDT95O3JNJequKS3+RhyVdrjMfHPom3RoYrh/4d9E4Ct9CRFbsoUbTkqbQQLKKAcB/jDLSHc2CqeSsvQq54wEYePWp0ZdPuAzxuNuBG8b6DOLtccQXOz5tMnGZx5XRHqBc=
+	t=1776379262; cv=none; b=jpWHMA12g53dLpwXco4PFkFHqXT/vUZDDNAdupe2AarPY+eQnkp0gf/gCunSumyTtn1MISJ7tp8GLpqTkYc2PmmG0i9Qm5U83XDg1jfNfyZWHO+Q5NmS8TU7mahjAMJHu65k4WCFMZGKl+WIVaR15OAL/sb+RDZC4v2gCs2nues=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776341761; c=relaxed/simple;
-	bh=gZLO9lN2kJhvahZVktWGr0uWFAt2YTX/UxFa5gJq4A8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=oSwzCM+QvK7GCVlyRsnBticF0MXmXzk+u1Vk/OPpp6jkJGtYFqLEvDyWPIi0HCIcYRqiymwyjiXdJM1GKnXrfkyu++VcELlMwP0w+dokA74lVkrdGsUdQjCTM9naHapg+bISksjAGn7ZMmrMurQRRN96Pdc5gqTjmAilQ+AWHR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=S7USaVxd; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1776379262; c=relaxed/simple;
+	bh=0ytys30QXawU0JZqdm/tXTMpVZzSNU6/AjGlCiDcpOk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JCMuIFsEx4+hanlW69DCrRN1JiOg0TH6akxhMUNzfaWYRJ+LNw5baFZO7FM9r9B5bxDlgZ1ExUICgEFkQ/sCxcnP6g7cIWp98K3+6MZRQTiLV14dSWzH+Ie9MD7qhjO4PvzNLrtSgqpAcaoksGF4ZTNRmhtw9UCJUzYf8gZ8MdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wa2N02/R; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="S7USaVxd"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D25DF2652E;
-	Thu, 16 Apr 2026 14:15:56 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id X6_CcIs2Vbau; Thu, 16 Apr 2026 14:15:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1776341756; bh=gZLO9lN2kJhvahZVktWGr0uWFAt2YTX/UxFa5gJq4A8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=S7USaVxd65Og3uIBkajZCPvp5uwQZmZ7aCXvg10iCZY+jeBRc/BMfVzEvDleesVkg
-	 zLq8XGpCS0tbNavffePMl5DA6RCAH0jOM3KNEmy5DCj6a0BoGV38qsN26VB1WglB7t
-	 fT2puLTOvqjZiVoA4BPCbpyKRCY7189XIxmioDYpRAAY/NN3q5RkjOBI0gRM7u6zGc
-	 +egLI8//Sm2SGNidrv5TEjS9Gga2NeNfGKOSFk/CdPDViYFLc2W7m+N52QVgB0Wml0
-	 w4rlnKVUAdQ3K9UVfY7NGHeml8SVHt8HFxkwEyJRqhYpuUgRRuJ8tdEmGnjN2t1UzP
-	 GQiJcPVvGWHEQ==
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wa2N02/R"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=ZYzUQK3HvwVrA9+IJXuQqcU5jzSAy6sh4Hl6HOc0JvY=; b=wa2N02/R4p1ygV+3qj+zYF9IFn
+	XgR43bycONwloaMTbybUOEcext1lWxjxNZo3lt+fE3TfnV1aYF1KcN06FOo+IHiRBZap2nbZhtg5E
+	sx+UpCeAj5li2MuzRxmwrQ4bYBcR+yqgANkcjCyZEZBVN07RnJJ5kypO+IaXme7nrXVHV4ecadX0Z
+	52I/BbjKS3sZrsxK9/Y9zC2lsmjch02bo9cnIGvQgbF9V1kzyKNYX0izkRaBx+qfH43NnoHuZtsdE
+	Ji+kz0dAE9KZE7bCQCAJJdSy8DAEpGNpVdoZt6RQH3P58hF54nwfF17kGHJxU7KLMWKhXsktkcrto
+	CXQsHuDg==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1wDVOL-000000039Je-11nU;
+	Thu, 16 Apr 2026 22:40:57 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] spi: s3c64xx: fix all kernel-doc warnings
+Date: Thu, 16 Apr 2026 15:40:56 -0700
+Message-ID: <20260416224056.985233-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 Apr 2026 17:45:32 +0530
-Message-Id: <DHUKLAE757OT.XQW1LJYKC2FM@disroot.org>
-Subject: Re: [PATCH v4 02/13] dt-bindings: leds: document Samsung S2M series
- PMIC RGB LED device
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Kaustabh Chakraborty"
- <kauschluss@disroot.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "MyungJoo Ham"
- <myungjoo.ham@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Sebastian Reichel" <sre@kernel.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Nam Tran" <trannamatk@gmail.com>,
- =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>,
- <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-References: <20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org>
- <20260414-s2mu005-pmic-v4-2-7fe7480577e6@disroot.org>
- <20260415-sensible-kiwi-of-argument-44d6ed@quoll>
- <DHTWNPSQ06IJ.24A9E1FL1RWER@disroot.org>
- <20260416-upbeat-archetypal-mantis-1ede48@quoll>
-In-Reply-To: <20260416-upbeat-archetypal-mantis-1ede48@quoll>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 2026-04-16 10:23 +02:00, Krzysztof Kozlowski wrote:
-> On Wed, Apr 15, 2026 at 11:00:16PM +0530, Kaustabh Chakraborty wrote:
->> On 2026-04-15 09:03 +02:00, Krzysztof Kozlowski wrote:
->> > On Tue, Apr 14, 2026 at 12:02:54PM +0530, Kaustabh Chakraborty wrote:
->> >> +description: |
->> >> +  The Samsung S2M series PMIC RGB LED is a three-channel LED device =
-with
->> >> +  8-bit brightness control for each channel, typically used as statu=
-s
->> >> +  indicators in mobile phones.
->> >> +
->> >> +  This is a part of device tree bindings for S2M and S5M family of P=
-ower
->> >> +  Management IC (PMIC).
->> >> +
->> >> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yam=
-l for
->> >> +  additional information and example.
->> >> +
->> >> +allOf:
->> >> +  - $ref: common.yaml#
->> >
->> > Rob's comment is still valid:
->> > 1. How do you address one of three LEDs in non-RGB case?
->> > 2. Where is multi-color?
->>=20
->> Yes, multi-color should have been added here.
->>=20
->> >
->> > And based on this alone without other properties, I say this should be
->> > part of top-level schema.  Separate node is fine, but no need for
->> > separate binding.
->>=20
->> BTW, for loading the sub-device driver via platform (as it won't be a
->> separate binding) the driver *must* be built-in. Although not related to
->> bindings, this seems counter-intuitive. I see the same problem with the
->
-> I don't understand that comment. If it has nothing to do with the
-> binding, what is the problem?
+Add kernel-doc for one struct member and use the correct function name
+to eliminate kernel-doc warnings:
 
-It was an unrelated user-space issue, so ignore.
+Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member
+ 'polling' not described in 's3c64xx_spi_info'
+Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype
+ for s3c64xx_spi_set_platdata(). Prototype was for
+ s3c64xx_spi0_set_platdata() instead
 
->
-> Best regards,
-> Krzysztof
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+v2: add tag; rebase & resend
 
+Cc: Andi Shyti <andi.shyti@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-spi@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+
+ include/linux/platform_data/spi-s3c64xx.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20260415.orig/include/linux/platform_data/spi-s3c64xx.h
++++ linux-next-20260415/include/linux/platform_data/spi-s3c64xx.h
+@@ -30,6 +30,7 @@ struct s3c64xx_spi_csinfo {
+  * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+  * @num_cs: Number of CS this controller emulates.
+  * @no_cs: Used when CS line is not connected.
++ * @polling: Using polling mode when %true (no 'dmas' property in devicetree)
+  * @cfg_gpio: Configure pins for this SPI controller.
+  */
+ struct s3c64xx_spi_info {
+@@ -41,7 +42,7 @@ struct s3c64xx_spi_info {
+ };
+ 
+ /**
+- * s3c64xx_spi_set_platdata - SPI Controller configure callback by the board
++ * s3c64xx_spi0_set_platdata - SPI Controller configure callback by the board
+  *				initialization code.
+  * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
+  * @num_cs: Number of elements in the 'cs' array.
