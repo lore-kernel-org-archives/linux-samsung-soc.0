@@ -1,106 +1,86 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m19731107.qiye.163.com (mail-m19731107.qiye.163.com [220.197.31.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132463ECBCC;
-	Wed, 15 Apr 2026 17:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B022F01;
+	Thu, 16 Apr 2026 00:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776274238; cv=none; b=CL/3+Fi2RKdx1VtbgipbSNGmAgrRrFz/E2oJbRr7R5/uU/Zgrdz0eMyfpQVXgUi/IQZEIRuTUJ2Lur16lDzkY4c5bDek1tL6VLF/Y10lylMe3OJU05fQNFTE87B723CJrgJEmC96Almc3r6gEkLSZ/+VzLwFVDyLnyN9QPJI84M=
+	t=1776299689; cv=none; b=So4tD/c1Vv/VOE5fEgUbHDsFP7FBeJ/L15U0rOZbnsGuoKpN4GmjS1LoT/nwmW8eDpAxgi3TkjBfU3UQOEPggbfUa/dsy5Si6s8DvdTDqlTku43VYiS6WbfulwZx0K+1F+zUrOQTWpkkem+yoaUdWJpunY2emQfyALym19ao604=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776274238; c=relaxed/simple;
-	bh=qdi/nhUMdFGJLsMXflK6dnMGj0s+20mNJIk0XH5Wevg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=T96zbJ0I4lt51GRl9TQjdqOSx/r1bbwG1ywJLooUXtoG06C/kQMSylUUkTfhq2lgSXiqHPE1m6nx2aXF9SHKs3lVpBEiNvowyTpzqfhsUm0cLNUUD/POG3sR6O17ICawDr0MJMPLi/xlU2+ktJeQPfOUd3uAA0cApL/NRhaXFBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UvIHm5KI; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1776299689; c=relaxed/simple;
+	bh=1jAoubjJnmVgq0+B2OIwZJa2GJ6034gsrMgbkfWyrjs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H7x/QJpE5rFbQFiqHs+rUDHk9CYMTRcnPZXlCNCW6Eii7X/bZbsgbLsAL77fZDTP6d+4g0sJLn+5iQzf0HVJVZlrEvwVuhB0qE3Vd9auh6yjlJ4wlLCGpzLvycIr6QysEh8H72Sr41grnMe/2bcUNsBmyaxdsKFKwgK95FkTpzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=FY4wyXPy; arc=none smtp.client-ip=220.197.31.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UvIHm5KI"
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 89C0927128;
-	Wed, 15 Apr 2026 19:30:31 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id lTlVcM1qlI08; Wed, 15 Apr 2026 19:30:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1776274230; bh=qdi/nhUMdFGJLsMXflK6dnMGj0s+20mNJIk0XH5Wevg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=UvIHm5KI2b76Drc7fvFQmjy5Wk+JLF0Ti9T4CTiQhJxmegfJueVfLSgwOcbg7skRG
-	 pWSLOPsx4Qs3bBOGwC6WezoDxaOQYGYng7wgLwvWQ2VQcRZMPGv7L/FWTaib+4xjXY
-	 +2Tp5jKqWBEeW7bFtp95T3nHB1odT2vJT8mOEfCbe3ECcsxxrHqVhrrk9DfDzeMnjs
-	 cqMFkpzWStkU1n3Eg2/mrUdnWXQrjEyUi3U6rKzUhS0pUSL/6gd3yRsgXQgHSkkiMG
-	 ZnQ+Pie2AbrGE0/zL0UfbNWNK51Z0FwPEXgnbPc8l/d7VLA20atOuhHbDaAyW+Cojt
-	 HEH1BoXDbiKyg==
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="FY4wyXPy"
+Received: from [172.16.12.17] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 3ae6eb0eb;
+	Thu, 16 Apr 2026 08:29:26 +0800 (GMT+08:00)
+Message-ID: <96fb5db4-0860-b412-11fd-ebcc0b34f887@rock-chips.com>
+Date: Thu, 16 Apr 2026 08:29:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Apr 2026 23:00:16 +0530
-Message-Id: <DHTWNPSQ06IJ.24A9E1FL1RWER@disroot.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "MyungJoo Ham"
- <myungjoo.ham@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Sebastian Reichel" <sre@kernel.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
- Khan" <skhan@linuxfoundation.org>, "Nam Tran" <trannamatk@gmail.com>,
- =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>,
- <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v4 02/13] dt-bindings: leds: document Samsung S2M series
- PMIC RGB LED device
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Kaustabh Chakraborty"
- <kauschluss@disroot.org>
-References: <20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org>
- <20260414-s2mu005-pmic-v4-2-7fe7480577e6@disroot.org>
- <20260415-sensible-kiwi-of-argument-44d6ed@quoll>
-In-Reply-To: <20260415-sensible-kiwi-of-argument-44d6ed@quoll>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Cc: shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] mmc: dw_mmc: exynos: increase DMA threshold value
+ for exynos7870
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <20260415-dwmmc-dma-thr-v3-0-31014d36b6ee@disroot.org>
+ <20260415-dwmmc-dma-thr-v3-2-31014d36b6ee@disroot.org>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20260415-dwmmc-dma-thr-v3-2-31014d36b6ee@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9d93b1580809cckunm8bc0942b1a9e90
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU1NHlZKSEhLHhlDGB8YGRhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=FY4wyXPy7pPdpC1z4Oh5qnqUOrHKOYc1xgeKUNcNddoBfDq9QScon2T9WfCqWFexbTg2oG3bTWI+kHBkfLqU45+jpDOxjlPWiTVWadVqLRSlXCyuVcEOeAZzAnwruf5tJDuawE0F794L3wUZJE/pqFtBfiC3mErYtFsi4djKqRc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=b7fNNyLnGOcPPmzEQN5mA5MPrcDctArkyQ2ZUb33EbE=;
+	h=date:mime-version:subject:message-id:from;
 
-On 2026-04-15 09:03 +02:00, Krzysztof Kozlowski wrote:
-> On Tue, Apr 14, 2026 at 12:02:54PM +0530, Kaustabh Chakraborty wrote:
->> +description: |
->> +  The Samsung S2M series PMIC RGB LED is a three-channel LED device wit=
-h
->> +  8-bit brightness control for each channel, typically used as status
->> +  indicators in mobile phones.
->> +
->> +  This is a part of device tree bindings for S2M and S5M family of Powe=
-r
->> +  Management IC (PMIC).
->> +
->> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml f=
-or
->> +  additional information and example.
->> +
->> +allOf:
->> +  - $ref: common.yaml#
->
-> Rob's comment is still valid:
-> 1. How do you address one of three LEDs in non-RGB case?
-> 2. Where is multi-color?
+在 2026/04/15 星期三 23:02, Kaustabh Chakraborty 写道:
+> Exynos 7870 compatible controllers, such as SDIO ones are not able to
+> perform DMA transfers for small sizes of data (~16 to ~512 bytes),
+> resulting in cache issues in subsequent transfers. Increase the DMA
+> transfer threshold to 512 to allow the shorter transfers to take place,
+> bypassing DMA.
+> 
 
-Yes, multi-color should have been added here.
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 
->
-> And based on this alone without other properties, I say this should be
-> part of top-level schema.  Separate node is fine, but no need for
-> separate binding.
-
-BTW, for loading the sub-device driver via platform (as it won't be a
-separate binding) the driver *must* be built-in. Although not related to
-bindings, this seems counter-intuitive. I see the same problem with the
-PMIC charger.
-
->
-> Best regards,
-> Krzysztof
-
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>   drivers/mmc/host/dw_mmc-exynos.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 261344d3a8cfe..4b76b997ddc15 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -141,6 +141,7 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>   		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7870_SMU) {
+>   		/* Quirk needed for certain Exynos SoCs */
+>   		host->quirks |= DW_MMC_QUIRK_FIFO64_32;
+> +		host->dma_threshold = 512;
+>   	}
+>   
+>   	if (priv->ctrl_type == DW_MCI_TYPE_ARTPEC8) {
+> 
