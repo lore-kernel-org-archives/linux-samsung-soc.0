@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CDA3112AD;
-	Mon, 20 Apr 2026 15:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9725C1FE471;
+	Mon, 20 Apr 2026 15:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776698324; cv=none; b=FtURpemGb/jG0ueJxwoxYrqWWbIKK6iGCu/bd5Kbus68B5HO+WN93oKq7a6DmsidN13wK4id2sw7OsaHEWxq+Q359nFE2pYemAVKORWQWO+B8Hzw58m88Tos44A17QVL1CiLp9kI9zggxGH/Jss5sqM2rDYhHTyarcmQ/tb6tpc=
+	t=1776698451; cv=none; b=sTzlxOLYyrzBRKdgcaUlaan3pqNY5sQhFJfRbvRK48HQ3klhZFfadURHdds9belCQPpfVZNmr69TstVW/UUB4CPforhmtz8WvC0tLoMopCaGKWNSWzxRlhY3Y6vY+bAQrV0fy9jwTFZwjhH7h9BFFG2I8tJYadFtxG8wyGAgBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776698324; c=relaxed/simple;
-	bh=QYHChXw76c6dJ0PIp/7R1gBDwoTeSchaSZkzCa9xByY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gtI/cImrTXF9ZreirNCD6zlskBKo3ykb2wQjdxEy1k9e+ms9VOLCiUaph72RJqI+uXH9SjrOrZzbvFAcgjhxh3qUau3ixDwex+t1YtZjp1ubUTCbHbUf+GuuJ77EYcy5Dn3hcQlJ0AUq/bx0G0EoRZGbHR83kupHkohh+2Hd+ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSD4Mvm/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776698451; c=relaxed/simple;
+	bh=nCoboZkHMjWLSJO0oket3z3iPfJsc7JH1NMHcq+p/1I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Pb71o33WXZxWw5g/pC1SFAqjG/fENS2x8iBW1fqQCQ8BoIF76LQlHNYG5DiTkpaNxfogfVBtkoWO1cdXzKHstWVVSyPJXk/KdQCLmlQKakyfLhfPVHqAWiNB/UZ7GFnpnLzIwJM8xP836ejEY+AfDUHndLTYQSp3gW61hTC4824=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UILCVWXA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSD4Mvm/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A757FC19425;
-	Mon, 20 Apr 2026 15:18:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UILCVWXA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05134C2BCB4;
+	Mon, 20 Apr 2026 15:20:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776698323;
-	bh=QYHChXw76c6dJ0PIp/7R1gBDwoTeSchaSZkzCa9xByY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PSD4Mvm/nJ8M182CkcEeNsaen3SA80oo5n7MLnMn8OfiTRsoEvYNvGWxVAL+B/FI9
-	 5deQDujlsqcj6k88z8eFpClBZN6EkBxvIw/VbRfaQKBBAaa0LGcWBE1jozYiWHEoLC
-	 H+apLIOe0E4EgO+V7W7DASVvnLa0fL5yLSqjDimrIXdfxuX6lAqZwabw7LqV1sfknZ
-	 U75IaS8OOquQ33uWFb1z2e+Xb61OTUgT58y7BZejNGL6p3kNKLqEZMPvCv8v0IFR39
-	 29+eeFnCweArxywBJ3Sx8+flafZgPBMGf8o+ctbZSnXWFT8B3pUQ8UT6RGkE/C5sVn
-	 gTFwY3GaEjECQ==
-Message-ID: <b9117d52-1a12-480b-a762-31d3eab6b827@kernel.org>
-Date: Mon, 20 Apr 2026 17:18:40 +0200
+	s=k20201202; t=1776698451;
+	bh=nCoboZkHMjWLSJO0oket3z3iPfJsc7JH1NMHcq+p/1I=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=UILCVWXAA/LtGo8aMZW/dYeEd/mgRDStiUGC9TKpznev6GY8DyoAiT/40eRYnLd7G
+	 aIXA5Lun+0esL4HyBFPBaKsfhLMU5KuhNsP/lLgh485gMMcEjXwnSkF5MmgWjNcyPg
+	 44eztQG8vzHwAOmVuYsUFRpl+PDXNs1FBdH4x4Kf6ez8np7VIkug0jJR/tJtWUNEAu
+	 isYq7sJpqJ85cfOozZNTqENNbONdg3dO7hxcADq26p71RIREpflSivz8+Tr60VUt0D
+	 oJa+ja/pOpxGUqC1nFk9xI/gffO6CBtVJQ7jBmtkYivRfk4OMuLa6oiLFGM0cs8kyZ
+	 iTNbR5uerG5Yw==
+Message-ID: <2064b5bf-68f4-4769-b161-434e34d5b0fc@kernel.org>
+Date: Mon, 20 Apr 2026 17:20:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] arm64: dts: exynos850: Add syscon-poweroff node
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Alexey Klimov <alexey.klimov@linaro.org>,
  Sam Protsenko <semen.protsenko@linaro.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>
@@ -45,7 +46,7 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Alim Akhtar <alim.akhtar@samsung.com>
 References: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
  <DHY2P02B6E6H.J79TDOADC4BS@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <b9117d52-1a12-480b-a762-31d3eab6b827@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -90,33 +91,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <DHY2P02B6E6H.J79TDOADC4BS@linaro.org>
+In-Reply-To: <b9117d52-1a12-480b-a762-31d3eab6b827@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/04/2026 17:04, Alexey Klimov wrote:
-> On Wed Mar 25, 2026 at 12:26 AM GMT, Alexey Klimov wrote:
->> Without poweroff node Exynos850-based board continue to draw current
->> (around ~60 mA with my test setup) after poweroff. Kernel also reports
->> different lockup problems and RCU stalls warnings continuosly after
->> last kernel messages about hardware being switched off.
->> Turns out we missed a write to PMU's PS_HOLD_CONTROL (PMU + 0x30c)
->> register that actually switches the SoC off.
+On 20/04/2026 17:18, Krzysztof Kozlowski wrote:
+> On 20/04/2026 17:04, Alexey Klimov wrote:
+>> On Wed Mar 25, 2026 at 12:26 AM GMT, Alexey Klimov wrote:
+>>> Without poweroff node Exynos850-based board continue to draw current
+>>> (around ~60 mA with my test setup) after poweroff. Kernel also reports
+>>> different lockup problems and RCU stalls warnings continuosly after
+>>> last kernel messages about hardware being switched off.
+>>> Turns out we missed a write to PMU's PS_HOLD_CONTROL (PMU + 0x30c)
+>>> register that actually switches the SoC off.
+>>>
+>>> Add poweroff node that implements this.
+>>>
+>>> With this change the current draw after power off is in range of few
+>>> milliampers and lockup messages are no more.
+>>>
+>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>> ---
+>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 7 +++++++
 >>
->> Add poweroff node that implements this.
->>
->> With this change the current draw after power off is in range of few
->> milliampers and lockup messages are no more.
->>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 7 +++++++
+>> Any feedback on this?
 > 
-> Any feedback on this?
+> You posted it right before closing tree, so this was waiting for a few
+> days for anyone to chime in and then tree is closed. It's merge window
+> now, so I don't review anything. Nothing new here...
 
-You posted it right before closing tree, so this was waiting for a few
-days for anyone to chime in and then tree is closed. It's merge window
-now, so I don't review anything. Nothing new here...
+... and the pull to SoC actually happened before. It's public, so you
+could check that.
 
 Best regards,
 Krzysztof
