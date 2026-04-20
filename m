@@ -1,33 +1,35 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.lvkasz.us (mail.lvkasz.us [116.203.126.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9725C1FE471;
-	Mon, 20 Apr 2026 15:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1909367F48;
+	Mon, 20 Apr 2026 16:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.126.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776698451; cv=none; b=sTzlxOLYyrzBRKdgcaUlaan3pqNY5sQhFJfRbvRK48HQ3klhZFfadURHdds9belCQPpfVZNmr69TstVW/UUB4CPforhmtz8WvC0tLoMopCaGKWNSWzxRlhY3Y6vY+bAQrV0fy9jwTFZwjhH7h9BFFG2I8tJYadFtxG8wyGAgBj4=
+	t=1776704393; cv=none; b=aSGR3Nrjy24LaPdVvmGNH9LuQKcOzwbr/TGJuck2oQn3UQ/IN3AHsyrY3UnNI8GFVKP5mk/K3afg520TQPKtn1iYX6GQX+0kPWRVA3VimGX5GvSeudNfoQFmqevoYq0A+Jx9Ty8FU56YOHcXn2S+wI36DDAPQQckRDpFQyk/XE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776698451; c=relaxed/simple;
-	bh=nCoboZkHMjWLSJO0oket3z3iPfJsc7JH1NMHcq+p/1I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Pb71o33WXZxWw5g/pC1SFAqjG/fENS2x8iBW1fqQCQ8BoIF76LQlHNYG5DiTkpaNxfogfVBtkoWO1cdXzKHstWVVSyPJXk/KdQCLmlQKakyfLhfPVHqAWiNB/UZ7GFnpnLzIwJM8xP836ejEY+AfDUHndLTYQSp3gW61hTC4824=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UILCVWXA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776704393; c=relaxed/simple;
+	bh=2IHn37+cMsbWYkDsy6cJEMCnVMxpyEd3hiZhGarHxt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IOMWaJ+Jo3H9QQhF5SDDYMy+xfDKnslhgis66ydoEzqyNl5c9B7pzTb9cym3/bxhLqvd5/n8fGlXRQWdRB5+ChEBh2bCXk4FQartaBL79dfh1XjCFv4WZ0qnrw4IE5Jec1PqPBSSTEOF+b8CVNiW99RjXIe3ylXYnDpDHG4JiQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us; spf=pass smtp.mailfrom=lvkasz.us; dkim=pass (2048-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b=gSf26RAz; arc=none smtp.client-ip=116.203.126.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lvkasz.us
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UILCVWXA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05134C2BCB4;
-	Mon, 20 Apr 2026 15:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776698451;
-	bh=nCoboZkHMjWLSJO0oket3z3iPfJsc7JH1NMHcq+p/1I=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=UILCVWXAA/LtGo8aMZW/dYeEd/mgRDStiUGC9TKpznev6GY8DyoAiT/40eRYnLd7G
-	 aIXA5Lun+0esL4HyBFPBaKsfhLMU5KuhNsP/lLgh485gMMcEjXwnSkF5MmgWjNcyPg
-	 44eztQG8vzHwAOmVuYsUFRpl+PDXNs1FBdH4x4Kf6ez8np7VIkug0jJR/tJtWUNEAu
-	 isYq7sJpqJ85cfOozZNTqENNbONdg3dO7hxcADq26p71RIREpflSivz8+Tr60VUt0D
-	 oJa+ja/pOpxGUqC1nFk9xI/gffO6CBtVJQ7jBmtkYivRfk4OMuLa6oiLFGM0cs8kyZ
-	 iTNbR5uerG5Yw==
-Message-ID: <2064b5bf-68f4-4769-b161-434e34d5b0fc@kernel.org>
-Date: Mon, 20 Apr 2026 17:20:47 +0200
+	dkim=pass (2048-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b="gSf26RAz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lvkasz.us; s=vps;
+	t=1776703920; bh=2IHn37+cMsbWYkDsy6cJEMCnVMxpyEd3hiZhGarHxt4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gSf26RAzleLxCuDaz1ZlUE6GSUTBEsw+vqGcDicob5TfGtK4hlqYFantxpgi4Q+BX
+	 hNGMlh1tqvCwWF88GDM3ZZOxdhbLq2NWlN9NYEs/QFOoaQCe3XFw+w4SOYeIvSNzj+
+	 tQ0M0F2EK3nrGwrqO8dQ/9Vw9OAe+jLY/PeAkrarK1qS2XQP2hBd+V7cqImsg+3gPi
+	 wZJhMIP92WpYu8GLvV1ryQHld3iC9UQ9KFBEM20gch8NPkHPIvfDe2KgG+r4VdyYX/
+	 PgylcGPBA3EGvcy6jEQJVWI4v/cAYbLpDxVdd9WPUFkJ6FbsNNM2xdQN5sI6m84pQJ
+	 P0cmFVvrl5xzA==
+Received: from [10.30.1.147] (5.185.72.109.ipv4.public.orange.pl [5.185.72.109])
+	by mail.lvkasz.us (Postfix) with ESMTPSA id 36A60E061C;
+	Mon, 20 Apr 2026 18:51:59 +0200 (CEST)
+Message-ID: <84f4bc8a-f94d-495e-9ab2-7997798953c2@lvkasz.us>
+Date: Mon, 20 Apr 2026 18:51:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,93 +37,51 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos850: Add syscon-poweroff node
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-References: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
- <DHY2P02B6E6H.J79TDOADC4BS@linaro.org>
- <b9117d52-1a12-480b-a762-31d3eab6b827@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b9117d52-1a12-480b-a762-31d3eab6b827@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] phy: exynos5-usbdrd: fix USB 2.0 HS PHY tuning values
+ for Exynos7870
+To: vkoul@kernel.org
+Cc: neil.armstrong@linaro.org, krzk@kernel.org, alim.akhtar@samsung.com,
+ andre.draszik@linaro.org, pritam.sutar@samsung.com, kauschluss@disroot.org,
+ johan@kernel.org, ivo.ivanov.ivanov1@gmail.com,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260406135627.234835-1-kernel@lvkasz.us>
+Content-Language: en-US, pl-PL
+From: =?UTF-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?= <kernel@lvkasz.us>
+In-Reply-To: <20260406135627.234835-1-kernel@lvkasz.us>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 20/04/2026 17:18, Krzysztof Kozlowski wrote:
-> On 20/04/2026 17:04, Alexey Klimov wrote:
->> On Wed Mar 25, 2026 at 12:26 AM GMT, Alexey Klimov wrote:
->>> Without poweroff node Exynos850-based board continue to draw current
->>> (around ~60 mA with my test setup) after poweroff. Kernel also reports
->>> different lockup problems and RCU stalls warnings continuosly after
->>> last kernel messages about hardware being switched off.
->>> Turns out we missed a write to PMU's PS_HOLD_CONTROL (PMU + 0x30c)
->>> register that actually switches the SoC off.
->>>
->>> Add poweroff node that implements this.
->>>
->>> With this change the current draw after power off is in range of few
->>> milliampers and lockup messages are no more.
->>>
->>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 7 +++++++
->>
->> Any feedback on this?
+On 4/6/26 15:56, Łukasz Lebiedziński wrote:
+> The existing PHYPARAM0 tuning values for Exynos7870 are incorrect,
+> causing the USB 2.0 PHY to fail high-speed negotiation and fall back
+> to full-speed (12Mbps) operation.
 > 
-> You posted it right before closing tree, so this was waiting for a few
-> days for anyone to chime in and then tree is closed. It's merge window
-> now, so I don't review anything. Nothing new here...
+> Fix TXVREFTUNE (transmitter voltage reference) from 14 to 3,
+> TXRESTUNE (transmitter impedance) from 3 to 2, and SQRXTUNE
+> (squelch threshold) from 6 to 5. Also explicitly set
+> TXPREEMPPULSETUNE to 0, which was previously missing from the
+> tuning table despite being included in the register mask.
+> 
+> All values are derived from the vendor kernel for the Samsung
+> Galaxy A6 (SM-A600FN), as no public hardware documentation is
+> available for the Exynos7870 USB DRD PHY. With these corrections,
+> the PHY successfully negotiates high-speed (480Mbps) operation.
+> 
+> Fixes: 588d5d20ca8d ("phy: exynos5-usbdrd: add exynos7870 USBDRD support")
+> Cc: stable@vger.kernel.org
+> Tested-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Łukasz Lebiedziński <kernel@lvkasz.us>
 
-... and the pull to SoC actually happened before. It's public, so you
-could check that.
+Friendly ping.
 
-Best regards,
-Krzysztof
+I'd also like to mention that this patch was tested on two devices:
+Samsung Galaxy A6 (SM-A600FN) by me and Samsung Galaxy J6 (SM-J600FN)
+by Kaustabh Chakraborty <kauschluss@disroot.org>.
+
+
+Regards,
+Łukasz
