@@ -1,203 +1,107 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4423EB80A;
-	Thu, 23 Apr 2026 11:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E915F3C73D0
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 12:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776945570; cv=none; b=G0KzhnIB678gD2PwkJ/bhQUzzwIABZJh1w7b40uiuyZ9sBJse7syxXY1nNvThj+qCCKpwXVKwoZSHQ9YTl24v3rLJ1TQ6xCSdyn3lbXB0U5E8dMYaCQndB4mDrZEFDrHLfo2yEXoLerh7etX0Rf5wnnkS6TWhIzSQqXIFqEYNA8=
+	t=1776947652; cv=none; b=JujBI9MhxMclqZoB7377YJF9YLX/Ef5HxWLOK9xGL74iexIPBzoZ/rOQyeFSZKaCGe3IFBaK2WGb7LeFwdKjlpKE15cMriEUhlrRyuFz6IbyUeyOU07fxSHV2SS0xK0HlT6R5JVOX7facgtF2921HTPC7kfBQ+B9B0bhbR6ueho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776945570; c=relaxed/simple;
-	bh=r400RnvBBwtf4yjnHfB5HfGRVqz7s/s46rjjt3dq68I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AO3SxlFRPAgdZwraW6ZS/cuTsBELMMFUOfm43CQejNjUEqGiDkD8mh8INyc3lepEDHOEjkGrx44nUjHIOQDbTv9CBSEDkPE12Njw/pr0oPqTZBHPJR2HHaGa7rr4kgGwISoRj5rG/LKS0TTIWEyJZio+OpDJ8wQpThnHd98AxI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WlStTxqG; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1776947652; c=relaxed/simple;
+	bh=SHt8/jDSXolzcD5Ycs/HtVeMQJoHpcSGMEeHPCWu22c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TIJA0WwSpmfj0XF/ulMLz6jIJ3R/WitgkjH3p3CCI8lh1q51L8TgfL4stPchPcsIGfwcT+3IYnZV6B68Mb/dDrUvyVJc+xogzpt9y+r/T9BHPEboOJiCtfIYFW31o9tVNH22hyco2hS8G+8uO1iLs8DBOwbDiXoEgRs5kJqaWVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OyuRrHlB; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WlStTxqG"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id AF257C5EF0E;
-	Thu, 23 Apr 2026 12:00:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 69D61604EB;
-	Thu, 23 Apr 2026 11:59:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5309B10460BF2;
-	Thu, 23 Apr 2026 13:59:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776945564; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0cIzziXQXBlswI5he/Z1p9UVN9gXfIafkur4yQLuNKM=;
-	b=WlStTxqGzva9+UFSYhFfXw4/eyvnNhgwpre83ebDV7irThXx3jpNRYnWO16QrVNcMMUvPa
-	FtqvwIEFzz1tDTi3nQMemL7s2ni2N5ABm2DKLe/xjA9s9AGh/vfXXFmQ+Ix5neYQpUggUE
-	ZkZ21Yrus5l3d9xGjFkYkOvTZpps9BvhfTY2TQgvgGgOjnl7ZVfUyrQEb88q3IfxCsNhlP
-	OFyLzhp9rcJGWmKKtalqgU7Zg963yUOKfMu+Yf0/VXh1SnUEd9dPdKa1GHuQ5iAzalT8L2
-	gWTTR+Ma0QEQnp454zzEqKiIy5BYmW0LpXZy4mqze37S9YM/iIdSVAQFxUomwQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Janne Grunau <j@jannau.net>,
-	Liu Ying <victor.liu@nxp.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Marek Vasut <marex@denx.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Michal Simek <michal.simek@amd.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
-	Ian Ray <ian.ray@gehealthcare.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 41/41] drm: renesas: shmobile: remove now-redundant call to drm_connector_attach_encoder()
-Date: Thu, 23 Apr 2026 13:55:50 +0200
-Message-ID: <20260423115550.444930-7-luca.ceresoli@bootlin.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OyuRrHlB"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488ad135063so58518285e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 05:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1776947649; x=1777552449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SHt8/jDSXolzcD5Ycs/HtVeMQJoHpcSGMEeHPCWu22c=;
+        b=OyuRrHlBpR0TcLjq11DTQNVtYQFiAa0ENCTgMudk1mmQm9bi3GjK0R+oqirFvaux56
+         tiRflDIWvLlzZ0z0VxddZifTV8BBSsdBZDJ83frSosJnARIDfSQvBCWqcDIk/20KWfF8
+         RLnCxbLa42aWvpoN3X5VBE8QCtyZUTqn5uHDT74lEb83MawzycdF5ewTBOMq8jM/GmZ9
+         EGnQyJAsjGh4MX4X2Nf+i2LlYrrwenkMWqPKmxB/1LtLVIpImd5HAvjizdmNEMlc3NMT
+         weIWR5WCAM4x+JDd3XhJW3AZ+3PILhr8/095YeW4587nwhr6XPNaIspj7jKjrWLB/rUc
+         8QFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776947649; x=1777552449;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SHt8/jDSXolzcD5Ycs/HtVeMQJoHpcSGMEeHPCWu22c=;
+        b=USIIIe5sDTPq6Ck/64xRqQNHPTcDLIWNk1RGfyo1q6bTwUbMFpxX2FA0kZ2ILlKfV8
+         PqYdE4wqnJsQBD/nwkU5vQBDAw2h4OletPX/SFvjdDmobTR3YeFLr7io1DyzYiRXsNvZ
+         sAnJITHletaXhdE9XrjX7nfG/EhubkkydMyW9Oz7LGURiyW8v6rtqVmnDBLNTnnVaH8b
+         A6QQ9gV7t4gaKKYOEQAmZf+WAAKh/rHw7Xpf1ACWsgKpGBAd5vBWrv5HKF4Smp12iuUf
+         nOvIYmomVyt/i+1/PDmf2+M5JFKRqvw7uMf3+ajsZVhWMo8WuFwDJqxHhqov0QGlw2at
+         YSyA==
+X-Forwarded-Encrypted: i=1; AFNElJ9Ore7a6ExFXjCpH4A8W2WAFuAtWIwtJO1TvyYOeJhqOd8R0/rLSAjrILJdXyMu1KaGuOAgmUMuoMOEZuaq2xZngg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqPq+aibyqLNXXejrsfiyTGOTXvMreLGcDe3X9Rv29s0OkbZYY
+	ENM8p4F6FJ3um7f5NVb+4CnO40neYG9dqlEwqdsxhEWlakHN9D4INBOhut82yplYpC8=
+X-Gm-Gg: AeBDietex1sZC/iwC8aj3Q66Dl7cut9xqpruHN2Vtnbwf2z1I9djsoXTQVVqUs/uJdx
+	FF2socKJoU8iUGNXNQozGarHR0jewwEHhycW18f2LOshhOVPnXgfRYygGmzgVvxQO2lccTDWtXb
+	9aHbTl0lXt5xUrBHMqrg1g7ObWxMkQFa7DOLfQDJJ3gRNpNqIjN0LciNutY/zq6j78js+l2iwP6
+	N7sxOYGKVP4EP54UDNQ6FwQ7iPo4rs0Xw35R/xHxuDAcV4juA8SGP6H8wjJqIrK5N/swCYN50xR
+	AJpXC4h57wFMUxkawJL7luA6RKqF2pLzIr3YQr151tQJ3e3zA1ijQPKh1TTYRhxXgo6jHcQ2GPh
+	RbkqKnSUvtIqWvgAMPcBNRHaS85FAsURwh3REHfJIrOgnpBjG9dYwYUHZqAZ7DrpRDw5nC6DNmO
+	Dllr6+lo/YIAc7TaOhRptLYD1KdmQ23afSFnt7ZFJBPSc=
+X-Received: by 2002:a05:600c:3483:b0:488:af7f:775f with SMTP id 5b1f17b1804b1-488fb77d343mr363286325e9.18.1776947649347;
+        Thu, 23 Apr 2026 05:34:09 -0700 (PDT)
+Received: from [10.11.12.108] ([86.127.43.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fc1c773fsm588535385e9.12.2026.04.23.05.34.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Apr 2026 05:34:09 -0700 (PDT)
+Message-ID: <b85c3dc6-46a7-4d08-8008-a8334262f4a1@linaro.org>
+Date: Thu, 23 Apr 2026 15:34:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/10] thermal: samsung: Add support for Google GS101
+ TMU
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-shmob_drm_connector_create() can init the connector in two ways, based on
-the 'if (sdev->pdata)':
+Hi,
 
- 1. manually in shmob_drm_connector_create(), or
- 2. delegating to drm_bridge_connector_init()
+Sashiko identified few bugs in the existing upstream acpm code.
+And two bugs for the current proposal. Preparing v4 where I
+squash all.
 
-Whichever branch is taken, drm_connector_attach_encoder() is called
-immediately after to attach the connector to the encoder.
-
-Now drm_bridge_connector_init() calls drm_connector_attach_encoder() on the
-connector so it is not needed anymore in case 2 and should be removed, but
-it is still needed in case 1. Move drm_connector_attach_encoder() from the
-common path to inside shmob_drm_connector_create() in order to get back to
-a single drm_connector_attach_encoder() in both cases.
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
----
-
-Changes in v2:
-- rewrote completely, fixing potential ERR_PTR deref and ending up with
-  a cleaner patch
-- also wrote more extensive commit message
----
- .../gpu/drm/renesas/shmobile/shmob_drm_crtc.c    | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-index 5f460b38596c..815c770147ed 100644
---- a/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-@@ -583,6 +583,13 @@ shmob_drm_connector_init(struct shmob_drm_device *sdev,
- 
- 	drm_connector_helper_add(connector, &connector_helper_funcs);
- 
-+	ret = drm_connector_attach_encoder(connector, encoder);
-+	if (ret < 0) {
-+		drm_connector_cleanup(connector);
-+		kfree(scon);
-+		return ERR_PTR(ret);
-+	}
-+
- 	return connector;
- }
- 
-@@ -594,7 +601,6 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 			       struct drm_encoder *encoder)
- {
- 	struct drm_connector *connector;
--	int ret;
- 
- 	if (sdev->pdata)
- 		connector = shmob_drm_connector_init(sdev, encoder);
-@@ -606,17 +612,9 @@ int shmob_drm_connector_create(struct shmob_drm_device *sdev,
- 		return PTR_ERR(connector);
- 	}
- 
--	ret = drm_connector_attach_encoder(connector, encoder);
--	if (ret < 0)
--		goto error;
--
- 	connector->dpms = DRM_MODE_DPMS_OFF;
- 
- 	sdev->connector = connector;
- 
- 	return 0;
--
--error:
--	drm_connector_cleanup(connector);
--	return ret;
- }
--- 
-2.53.0
-
+Thanks,
+ta
