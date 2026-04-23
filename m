@@ -1,137 +1,149 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BEC3E4C9F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 09:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911003E3C78
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 09:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776936402; cv=none; b=bEXWH7tKhtdp4DK5iJ4K95vSSxpxOw0/fXIhp6tVQ+W+BFRt0kIkcPJEMNAOs2pHhD24b7xDFG/Q1ft4uE4QnMF7uGhtiMq+2Us23vtG9C6DjUU9jDVU+TC9BN/teqi3aqR9bNCdgIIbHC1GxBa3A/FUEUtCkJnjbsV/Awy36Sg=
+	t=1776937501; cv=none; b=LoiFyde7TXqZqzv2WadF0AIh6vUHSqHJcZoB1e5QTgri4sqAnwRYrRjNsyjDfW9Snx3WLa/TasePYPiiH8vyXXbgvOyJefrnk8EFUjnkchZ8sqJkwvEagna62vEmnkktfkA8Cj7ZK6FPPOF+ejt/CZPtSSFgnHEk8HNvaeSw6Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776936402; c=relaxed/simple;
-	bh=qdphxkzpfpiFfADHURwKArsIqnvk3ona6Ydvx5rScko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ErHJmmdW1PM+/AIuokPHjFTokwUmFRpYxYkRNjm5WQB8d3nsJUP1ikQx5LvNQCT9djeUgI3mrNr7lAv5FRdKqR5unXikHrISgwnjT+RiBX70qKoztKKjOxT/3NvH9BltSAVTim7EeDHAkvpRL9wATrHaIJd2OPf+6V8/8gqzlXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MbRwzF1R; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1776937501; c=relaxed/simple;
+	bh=DgRWyGabNSCFF/RIPztrR6ijhynxHxePI6Ny4LI4GVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cIvasI0LzsmASgDECmxJJh0gwP9G0l5rP6p4UsD3rcMfBz7vqBV93GkVLLbxgu7r32oIkg+hazhWonJR3yQriTmPsiyueX/dL3OeTwg41jUURGU+AiLhnDnADtnmCHKuOU+l75X18UIrgxt8kiT8vPc7nwRw2SCiV7QFd95CeKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jpii/2zg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=080eVnNl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jpii/2zg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=080eVnNl; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MbRwzF1R"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4897D1A33BC;
-	Thu, 23 Apr 2026 09:26:40 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 13D38604EB;
-	Thu, 23 Apr 2026 09:26:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0C98910460B45;
-	Thu, 23 Apr 2026 11:26:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776936396; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Vg4xk0BL9Vx4AIBY/T0FrCStojWIiXvnfyD7V05c31A=;
-	b=MbRwzF1RKivDu9bPqrlwuig+QvzBShR5Qm4bzeer4rlUTd/VkEfPYVkgQt0dIFHTYVIxBL
-	7uy8hIGh0JcidF9EBhClpBsWLfPaSNz2P5H+pUiiSsrRrUKKls8FCitgNNTqFNxwdjuFmI
-	E8G/b5YW0whkI92QeVxeOn1CYBh+G5ryE97MzM5ozIh+dckbWCx7SO+OPydyWLQBZ87bFY
-	4rz7gtomP33u4jmQr3TfNqKG7l/WZhuUz9GPxB5TPq6H02YR0ja6XdAxWFvDWACfXL3eRV
-	HrLFE75DsWEEKPqSsr5w32y5ECCP7JRX5NuIxNTPm5AyZikOYqSJ7uAn3r7bYg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:17:28 +0200
-Subject: [PATCH v2 34/41] drm/mxsfb/lcdif: remove now-redundant call to
- drm_connector_attach_encoder()
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jpii/2zg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="080eVnNl";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jpii/2zg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="080eVnNl"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E2F986A7CA;
+	Thu, 23 Apr 2026 09:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1776937498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=11EcTwHd1wSZu9yJgTQc+hyezdl7+B3aoqPRw33PvZQ=;
+	b=Jpii/2zg4XRJPFcLVKBuQ1jIltQ+KoZGpjjIugTZI1VnTcHJSUwo8MEwAkUmhjovStqVws
+	zhy3sofEXFVJvpZUYtDz94Qc4HnsbVaMmPh2ZZYezvh1raFVT4HLfAjR3ExAlsfpCk5Qri
+	u/JfnN2BcBQ/pbEacLaG//q0d7j+ROw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1776937498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=11EcTwHd1wSZu9yJgTQc+hyezdl7+B3aoqPRw33PvZQ=;
+	b=080eVnNlkwtwhDXb17WkSrqlVh5oIvf7+u/+OnLYfBRP/a5fu2wnhHvr7mY36ApvpJyDaJ
+	ULo43n7Z61awdKCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1776937498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=11EcTwHd1wSZu9yJgTQc+hyezdl7+B3aoqPRw33PvZQ=;
+	b=Jpii/2zg4XRJPFcLVKBuQ1jIltQ+KoZGpjjIugTZI1VnTcHJSUwo8MEwAkUmhjovStqVws
+	zhy3sofEXFVJvpZUYtDz94Qc4HnsbVaMmPh2ZZYezvh1raFVT4HLfAjR3ExAlsfpCk5Qri
+	u/JfnN2BcBQ/pbEacLaG//q0d7j+ROw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1776937498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=11EcTwHd1wSZu9yJgTQc+hyezdl7+B3aoqPRw33PvZQ=;
+	b=080eVnNlkwtwhDXb17WkSrqlVh5oIvf7+u/+OnLYfBRP/a5fu2wnhHvr7mY36ApvpJyDaJ
+	ULo43n7Z61awdKCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4600593A3;
+	Thu, 23 Apr 2026 09:44:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fja0Jhrq6Wk+QwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 23 Apr 2026 09:44:58 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/5] drm/exynos: fbdev: Use client buffers
+Date: Thu, 23 Apr 2026 11:37:45 +0200
+Message-ID: <20260423094452.32665-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-34-2ae6ca69b390@bootlin.com>
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, Janne Grunau <j@jannau.net>, 
- Liu Ying <victor.liu@nxp.com>, Douglas Anderson <dianders@chromium.org>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jingoo Han <jingoohan1@gmail.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
- Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek <michal.simek@amd.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, asahi@lists.linux.dev, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[samsung.com,gmail.com,ffwll.ch,lists.freedesktop.org];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-drm_connector_attach_encoder() is now called by
-drm_bridge_connector_init().
+A client buffer holds the DRM framebuffer for an in-kernel DRM
+client. Until now, exynos created an internal ad-hoc framebuffer for
+its fbdev emulation, while by-passing the regular interfaces used by
+user-space compositors.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/mxsfb/lcdif_drv.c | 6 ------
- 1 file changed, 6 deletions(-)
+Convert exynos' fbdev emulation to use client buffers. Replacing the
+existing code with a client buffer allows for stream-lining exynos code
+and later also the fbdev helpers. The new framebuffer will be registered
+against the client's file and will support handles for GEM objects. It
+is then just another framebuffer within the DRM ecosystem.
 
-diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-index 7f07ae24e0dc..f5bb59cd5028 100644
---- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-+++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-@@ -99,12 +99,6 @@ static int lcdif_attach_bridge(struct lcdif_drm_private *lcdif)
- 			return dev_err_probe(dev, PTR_ERR(connector),
- 					     "Failed to init bridge_connector for endpoint%u\n",
- 					     of_ep.id);
--
--		ret = drm_connector_attach_encoder(connector, encoder);
--		if (ret)
--			return dev_err_probe(dev, ret,
--					     "Failed to attach connector for endpoint%u\n",
--					     of_ep.id);
- 	}
- 
- 	return 0;
+If all driver's fbdev-emulation helpers can be converted to use client
+buffers, the emulation's framebuffer handling as a whole can possibly be
+moved into shared helpers.
+
+Patch 1 first fixes a long-standing bug.
+
+Patches 2 to 4 convert exynos' fbdev emulation to client buffers. It
+still allocates a GEM object buffer tailored towards fbdev emulation,
+but size calculations now use common DRM helpers.
+
+Patch 5 cleans up symbol visibility in exynos' fb code.
+
+Thomas Zimmermann (5):
+  drm/exynos: fbdev: Remove offset into screen_buffer
+  drm/exynos: fbdev: Inline exynos_drm_fbdev_update()
+  drm/exynos: fbdev: Calculate buffer geometry with format helpers
+  drm/exynos: fbdev: Use a DRM client buffer
+  drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
+
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_fb.h    |   7 --
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 100 ++++++++++------------
+ 3 files changed, 47 insertions(+), 62 deletions(-)
 
 -- 
 2.53.0
