@@ -1,138 +1,137 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26E13AA4E7;
-	Thu, 23 Apr 2026 17:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70C30AD0A;
+	Thu, 23 Apr 2026 19:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776967180; cv=none; b=HRxqg5Cc9eGRqYvIhIo6BJQgaZX7fdDODx1nxtlP4oIrSFKVzn81+DymHnq4m+13qWYFLcu0xGR75sucUqbNF0blAeS1n9UqsmWEtsDsEBfCwF7Jm9dAuMbNZtSKf7P0BVn8cqZkPOKAzOsf0D9XOaaQogu813/rO3eDfrVP33s=
+	t=1776973800; cv=none; b=K5C13h25LSv/xroBvkWdbYNEKR1Q5rBirqFX4wwyoYm5jPQDXMg7MvW1mWmWHeIljqumgvbeborkNWx4V7B/sYPBcaaYVQJN/jP5rl5rC61oECnORAc5/MMNMPS8masSmOaoDyQXygwlKoVPnDVWR1WabodIYzEN1aYbkv/mxXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776967180; c=relaxed/simple;
-	bh=QGXWKH7JhojDk/vCfoesF6wdkbcwasz+b8TzqgsvnEY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l4edDqx79mpKVfHeDJZhrRKqXbhIXbPargs0d1QU//u/hUK54H3t7cllKaFYzpsAqzFJtFUWNeDSoSBZkhTV/oZ5hYlyBOqO4ssSu36EEwMfXuLQpjIM8MQSpTcqrw03HXb4syPLUxFFVme+oM0bEf8oTDBAUIXoU0JdrPfH1xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=VidnwjpK; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1776973800; c=relaxed/simple;
+	bh=yhg5gVajDM6Da2FgjY3mvjRRBtWbHEv5TqLXfC/zzJU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pT5kQn+o2kRHk4oF16mcjjSXGazYuvfvqB8oyn8YCZ+HkcB+y8olgBIaFJMw9RWdxunivAHLi9p15sZq7Dl1OYNc+rqpAdoN8mibewm2vi+sflfEzPTAd8HbSlJ/vydbFOGPt2dvqMDhtyDeZsB9jCVolLKloAA+ZvePiYiPedE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Gof7z4wL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="VidnwjpK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crapouillou.net;
-	s=mail; t=1776967168;
-	bh=QGXWKH7JhojDk/vCfoesF6wdkbcwasz+b8TzqgsvnEY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VidnwjpKlxAHpZXdZ5M8HqNp1+KLzj/lVqpTUjnVCvvI0AlMOvy6xLPjbVADW6Z7T
-	 zX2omNSMnvzMFu+5OaTkic3YSw0JBpTj1pMqKOxAH5KG+vq/PHkgVXLcKBhtSsGmGS
-	 Vrdc/osIcU6MzDXs3blATAtRvZpS57uE18zfDmjI=
-Message-ID: <6bdce57340942334cf7d3c7f7ed0215458717495.camel@crapouillou.net>
-Subject: Re: [PATCH v2 10/41] drm/ingenic: remove now-redundant call to
- drm_connector_attach_encoder()
-From: Paul Cercueil <paul@crapouillou.net>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Dmitry Baryshkov	
- <dmitry.baryshkov@oss.qualcomm.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart	
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Sasha Finkelstein <fnkl.kernel@gmail.com>,
- Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, Douglas
- Anderson <dianders@chromium.org>, Laurentiu Palcu	
- <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Frank
- Li	 <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Philipp Zabel	 <p.zabel@pengutronix.de>, Anitha Chrisanthus
- <anitha.chrisanthus@intel.com>,  Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Kevin Hilman
- <khilman@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Clark	
- <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang
- <jesszhan0024@gmail.com>, Sean Paul	 <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Sandy Huang <hjc@rock-chips.com>, Heiko
- =?ISO-8859-1?Q?St=FCbner?=	 <heiko@sntech.de>, Andy Yan
- <andy.yan@rock-chips.com>, Thierry Reding	 <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,  Jonathan Hunter
- <jonathanh@nvidia.com>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jingoo Han
- <jingoohan1@gmail.com>,  Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim
- <sw0312.kim@samsung.com>, Kyungmin Park	 <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar	
- <alim.akhtar@samsung.com>, Laurent Pinchart	
- <laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen	
- <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham	
- <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven	
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Biju Das	
- <biju.das.jz@bp.renesas.com>, Marek Vasut <marex@denx.de>, Stefan Agner	
- <stefan@agner.ch>, Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek	
- <michal.simek@amd.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, 	linux-mips@vger.kernel.org,
- linux-mediatek@lists.infradead.org, 	linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, 	freedreno@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, 	linux-tegra@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, 	linux-renesas-soc@vger.kernel.org
-Date: Thu, 23 Apr 2026 19:59:21 +0200
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-10-2ae6ca69b390@bootlin.com>
-References: 
-	<20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-	 <20260423-drm-bridge-connector-attach_encoder-v2-10-2ae6ca69b390@bootlin.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Gof7z4wL"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AE28B26E30;
+	Thu, 23 Apr 2026 21:49:56 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Xfdy58reHSr3; Thu, 23 Apr 2026 21:49:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1776973795; bh=yhg5gVajDM6Da2FgjY3mvjRRBtWbHEv5TqLXfC/zzJU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Gof7z4wLEw1THwcB3kYUtiAAjWyvZaXYF0Ah0mNzVq9q8HyKLHoA48eSZo3CgLSJn
+	 xq0kSgysgkdwr5iP6w2+SMjMSSkHsfQBYNJm7Ntio3X7ogDcIEn6OOvA0OqcXEnONP
+	 3fD7mPipkfHZFMYuODhk0tmaIaHJXzoogZBJxe81h7EtJMM7+0+tdgTM6uQDdZu+3m
+	 v0XKW0CamKLB76dOK9vf7P8kLzw5VbmKWe3uzJWdU3mY8XrFZZ+qFSvfJAf6dwKaW4
+	 F5b6NlRqkP7tdRNUoT2X0yO9WYZtfsGfGTNiHBBi2r9k2frpCp2W2ShQeZ8d/1x2Gg
+	 fOe0HqJMPP6+g==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Fri, 24 Apr 2026 01:09:00 +0530
+Subject: [PATCH v5 01/11] dt-bindings: leds: document Samsung S2M series
+ PMIC flash LED device
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260424-s2mu005-pmic-v5-1-fcbc9da5a004@disroot.org>
+References: <20260424-s2mu005-pmic-v5-0-fcbc9da5a004@disroot.org>
+In-Reply-To: <20260424-s2mu005-pmic-v5-0-fcbc9da5a004@disroot.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Nam Tran <trannamatk@gmail.com>, 
+ =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
 
-Hi Luca,
+Certain Samsung S2M series PMICs have a flash LED controller with
+two LED channels, and with torch and flash control modes. Document the
+devicetree schema for the device.
 
-Le jeudi 23 avril 2026 =C3=A0 11:17 +0200, Luca Ceresoli a =C3=A9crit=C2=A0=
-:
-> drm_connector_attach_encoder() is now called by
-> drm_bridge_connector_init().
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+ .../bindings/leds/samsung,s2mu005-flash.yaml       | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-Acked-by: Paul Cercueil <paul@crapouillou.net>
+diff --git a/Documentation/devicetree/bindings/leds/samsung,s2mu005-flash.yaml b/Documentation/devicetree/bindings/leds/samsung,s2mu005-flash.yaml
+new file mode 100644
+index 0000000000000..36051ab20509f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/samsung,s2mu005-flash.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/samsung,s2mu005-flash.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Flash and Torch LED Controller for Samsung S2M series PMICs
++
++maintainers:
++  - Kaustabh Chakraborty <kauschluss@disroot.org>
++
++description: |
++  The Samsung S2M series PMIC flash LED has two led channels (typically
++  as back and front camera flashes), with support for both torch and
++  flash modes.
++
++  This is a part of device tree bindings for S2M and S5M family of Power
++  Management IC (PMIC).
++
++  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
++  additional information and example.
++
++properties:
++  compatible:
++    enum:
++      - samsung,s2mu005-flash
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@[0-1]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        enum: [0, 1]
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
 
-Cheers,
--Paul
+-- 
+2.53.0
 
-> ---
-> =C2=A0drivers/gpu/drm/ingenic/ingenic-drm-drv.c | 2 --
-> =C2=A01 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> index 4068114adf8c..70088db34f69 100644
-> --- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> +++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> @@ -1330,8 +1330,6 @@ static int ingenic_drm_bind(struct device *dev,
-> bool has_components)
-> =C2=A0			ret =3D PTR_ERR(connector);
-> =C2=A0			goto err_drvdata;
-> =C2=A0		}
-> -
-> -		drm_connector_attach_encoder(connector, encoder);
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	drm_for_each_encoder(encoder, drm) {
