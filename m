@@ -1,138 +1,115 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E73236CE03;
-	Thu, 23 Apr 2026 13:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B3231717E
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 14:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776950375; cv=none; b=K/mgzBKo69fd3gn7iZifrvk7lpsF/B1+2O3/2k4ukqXXZ9/XRck2uWjZ52gNr5CX5OzkD4ndkthOlYgB0j535SDcte5BIMkMQzyWp3fFhDoUQtQ/c2V9ktkCW/w01Qw+htuSHudqZ9ZUrEX1c2NyfHc7g9ZH8uDAXMj+ojpf4Wk=
+	t=1776953950; cv=none; b=YMqHePNjV+Fa9YjPLVigzsh6O7SZ21fox3Z2nzTKwPN5mDPb/1nTQ/7niy7lyTPN+MFtY7Zmc5BHlaHP50d2MUnZWjextl8im7egLTu0Zl5baW5nRaiIGwE3pxQlQlqcRZmY1sX0NQ3NQUW/Yyhjsgqq59OQCouBw3MB53CpHMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776950375; c=relaxed/simple;
-	bh=+v1IGGwBlD7W1TrUt5/g/toItgrGx+CShEQy9dqBHjY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Hn0OZU9SXL5m3WKKdOX6NBf+kjKS547Xn+Ez8lrRO4u9bHAF3ybM9lmyypY+e0THq4pW9eewlF6OnUTfX48+X1NGrhmISahduEPgzjY/nVnBSsH01OW+TYsyl2BmPjqb/pt2eazY1xaDqFFS/MvSkBYP32NxE1cT6hAHHXh9Zj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CHffhXGz; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1776953950; c=relaxed/simple;
+	bh=Alq+UFc8DGGiXf1MTbZh93F2hTozhdw1uQQbLdnroEg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s9QRYIGf36FC9x8pOP8qsIPPf9nCZ0i9JvnqCMnd44Cg1l1syRG1U7ConEuTKM9Y/sMiI11Ae3kKEBroKXpFQh6wfo3JDgn7xNnpSYvpLWLCGysXbWgNYSWj8X//de16yuYHMXxoPfYkfCZvDNI37up9SJi+M29YrLai4mtdIFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OVmuJglw; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CHffhXGz"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9C7B91A33C5;
-	Thu, 23 Apr 2026 13:19:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6500E604EB;
-	Thu, 23 Apr 2026 13:19:30 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B727910460BC4;
-	Thu, 23 Apr 2026 15:19:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776950366; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=N0czXPTCBLd6Via7w9anQbZ1SyEjDMbKmYb2klNRSzM=;
-	b=CHffhXGzBeQ87qx+VLT/QJwCaDtokpzRnxIGgqeeBGcHmpx9dkFTQezMvWUYtBFalmt0ym
-	ZlPNQeOk5Q1kth18AWc/K+W7Raxp9+99ljR8+PbnvhlipPqpO27B6VpRihKIXQayDAqgRG
-	da/TeGo6hU5ux+mR4M6i/8AmHfkbG+YJihJqxxPpKk1ng/qYjjX625VUgLNqxJALo9M/FP
-	rIln33FBGqBltj0d5nmulxlKj/OYQmYlq0XBZlKDps6B3HZSM/rShXabOS7pnFzpExVbdP
-	stMHIMq4UYNiQX+If3xxxJ52QyUsGZwDX30+01HblvyxBtNmG2GoUDU/v0ZI4A==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OVmuJglw"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-43cfbd17589so5344332f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 07:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1776953948; x=1777558748; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+eROZPmLE7RDR7HyOBddBTk7UV5IVzr9QqgC4DMrC14=;
+        b=OVmuJglwJRfS3rzZCLqMjq1scgfn0TNZ2IbIbOY1G7xo2tpg2VfWDKUfTG+4DrA3GL
+         Xg7fBjXibKHXbUfL1mpkaMqRvZ3632EFDJ7kWeyNw2usuqgxd2xz+j5xQ93VJlsLsh5B
+         GjAzkC8PFmk5xQlQ8VR0JGF0BPQkP+aOrThw0m7I8NVCOEA1d5yCAiWI/Y/wIV4WIU2b
+         6yfDfFNfOzbaylTwgMg9oo6vpp/tYWaJDTrYTDzIJPQcBiQngjxZfhevbE2OhP+fE4MV
+         2ePXfaco50gTPza62s0Hi+9gmZTkEPTspO4OQjR9Nh7+oN+HsL0tszzd1HsjUyxqpbBv
+         qBuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776953948; x=1777558748;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+eROZPmLE7RDR7HyOBddBTk7UV5IVzr9QqgC4DMrC14=;
+        b=XcMw/deI1VVvIdzy9enbVDWhAMAf6btB9QwGFVEMr9S50Pzr9L4+uOajHtmedL739y
+         OCW6r5uo7xBepzcQMc9rb01eQ1ZIOkFWaGfqUFViXjk+P5+vB76QfCTKFEWb4+0sSVnc
+         7jAA2AccP98VhVRCjK40Iq7Mtdz9EPmVKtsms+Ycji9/hDCDqt8mFC8/dTmfVx32gIj0
+         YEMyb5EPSNzLqMir7/1+BpQNP0+3xB+nVAJbpB6bzf5muKkURYiRLi3//0nHUWNKLXoA
+         pk2cKVpt8AnN6ohHoXtbbeSemZ1BS2O/ycjhzOV4c8Z3B7KbNsDgYridb39qrY9K5+lp
+         PpAw==
+X-Forwarded-Encrypted: i=1; AFNElJ/CDwgIM0ncnWO2zmw0e1sofspnLRTsO6yyH/g6hFRaxM0jX6rkPJtO/eiDmgmu7zbsuj17pM+eu4XKWgShUJ8yXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD+af8N27JnIp7n2itcRF3Ix1nXTiwcQuCtXEE2P10Xou1smgC
+	N+OiPvGlIbnvfn46apTF+UrCHHm8SqPeNTcWgaRYcYlQXId7pMc51JRuFUiG5d1EOmw=
+X-Gm-Gg: AeBDiesT1XPkoB7tljvDFEJ4BZmhUoBXV3xvg19koX8s/L6HACtC5GCDzud/AusbCMG
+	NBEnRu7Ikd02eamOyZ9I4FdZAQglHnPFjXq2BFWTb6dEsyq39sB31oZjT9BfNSEDfsDKcba20Su
+	zki2wP+1tgkyApxczIkAXtD7dPKYR6CDYuafecssrQqrffgbwOXgEApnHRolpaewu1hC82c/D8S
+	ETHNZa9ZKb+A3MLiMwz5Tm92KGiCB5PaX4RhxIAN3BbYdmtafwjHgV5veZ+cHrNLMUbad1INmRW
+	hjuNdQIQNiT3XC/K5gu25jNA14HANqqxIJjjSQGLpa6A4IGGPCyrKki8uvTSe5883JfjumrzQG9
+	zleKS85ymDgbWY6af2tNAlLd4ry0Ls2ut/eyQfJmxyJZ9po1/SXKRdOS3aH7xTBCHvc5sR/rdpV
+	Njsf2IBk7tTTNNYHuHLwQQexk127zuE15zG5OSDBv5bUmKd9Tk0zRv/KkfR4bfXwNDC35TxnD9S
+	2vk9Y1NsE2swnOeNw==
+X-Received: by 2002:a5d:64e7:0:b0:43d:5ec9:246 with SMTP id ffacd0b85a97d-43fe3db2d0fmr42764796f8f.12.1776953947709;
+        Thu, 23 Apr 2026 07:19:07 -0700 (PDT)
+Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e4d525sm51107483f8f.31.2026.04.23.07.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2026 07:19:07 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 0/4] firmware: samsung: acpm: Various fixes for sashiko bug
+ reports
+Date: Thu, 23 Apr 2026 14:19:04 +0000
+Message-Id: <20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Apr 2026 15:19:03 +0200
-Message-Id: <DI0KBQCGJWIC.1TNNX177Z8ZNU@bootlin.com>
-Subject: Re: [PATCH 35/41] drm/rockchip: lvds: remove now-redundant call to
- drm_connector_attach_encoder()
-Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
- <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Sasha
- Finkelstein" <fnkl.kernel@gmail.com>, "Janne Grunau" <j@jannau.net>, "Liu
- Ying" <victor.liu@nxp.com>, "Douglas Anderson" <dianders@chromium.org>,
- "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
- <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, "Paul Cercueil" <paul@crapouillou.net>,
- "Anitha Chrisanthus" <anitha.chrisanthus@intel.com>, "Chun-Kuang Hu"
- <chunkuang.hu@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Kevin Hilman" <khilman@baylibre.com>, "Jerome Brunet"
- <jbrunet@baylibre.com>, "Martin Blumenstingl"
- <martin.blumenstingl@googlemail.com>, "Rob Clark"
- <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
- "Abhinav Kumar" <abhinav.kumar@linux.dev>, "Jessica Zhang"
- <jesszhan0024@gmail.com>, "Sean Paul" <sean@poorly.run>, "Marijn Suijten"
- <marijn.suijten@somainline.org>, "Tomi Valkeinen"
- <tomi.valkeinen@ideasonboard.com>, "Sandy Huang" <hjc@rock-chips.com>,
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
- <andy.yan@rock-chips.com>, "Thierry Reding" <thierry.reding@gmail.com>,
- "Mikko Perttunen" <mperttunen@nvidia.com>, "Jonathan Hunter"
- <jonathanh@nvidia.com>, "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Jingoo
- Han" <jingoohan1@gmail.com>, "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo
- Kim" <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, "Laurent Pinchart"
- <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
- <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
- Das" <biju.das.jz@bp.renesas.com>, "Marek Vasut" <marex@denx.de>, "Stefan
- Agner" <stefan@agner.ch>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Michal Simek"
- <michal.simek@amd.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
- <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
- <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
- <freedreno@lists.freedesktop.org>, <linux-rockchip@lists.infradead.org>,
- <linux-tegra@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.20.1
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com> <20260423115334.444750-1-luca.ceresoli@bootlin.com> <wapbiwxou64emxlt6oz5slst3nvcgvs35hvhpz7v3wmwp33bzc@mvdog4t7un6m>
-In-Reply-To: <wapbiwxou64emxlt6oz5slst3nvcgvs35hvhpz7v3wmwp33bzc@mvdog4t7un6m>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFgq6mkC/x2MwQqEMAwFf0VyNqBdFfFXxENXnxpEWxKRBfHft
+ 3gcmJmbDCow6rKbFJeYhCNBmWc0rv5YwDIlJle4pqjch/0Yd57lB2PztsoWWBGDnsYerv02mOq
+ 6LSkNouIVU98Pz/MHNrxb3WwAAAA=
+X-Change-ID: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776953946; l=984;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=Alq+UFc8DGGiXf1MTbZh93F2hTozhdw1uQQbLdnroEg=;
+ b=5DnC1cyhRATJzyqTxlio1EYxDf1k9YJhfl5xiAUbAVVIwIPmD7bB8J3dqNBJV0meH2h8Ki8ik
+ SFDjLBuZFdsAHwNg4R6zvzSOZ/46k36OIzRA7vcVEJFamoTEXFT2y0/
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Hi Dmitry, Geert,
+Fixes for bugs that were identified by sashiko when proposing the
+GS101 ACPM TMU addition:
+https://sashiko.dev/#/patchset/20260420-acpm-tmu-v3-0-3dc8e93f0b26%40linaro.org
 
-On Thu Apr 23, 2026 at 2:42 PM CEST, Dmitry Baryshkov wrote:
-> On Thu, Apr 23, 2026 at 01:53:28PM +0200, Luca Ceresoli wrote:
->> drm_connector_attach_encoder() is now called by
->> drm_bridge_connector_init().
->>
->> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->> ---
->>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 6 ------
->>  1 file changed, 6 deletions(-)
->>
->
-> stray duplicate
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Tudor Ambarus (4):
+      firmware: samsung: acpm: Fix cross-thread RX length corruption
+      firmware: samsung: acpm: Fix sequence number leak and infinite loop
+      firmware: samsung: acpm: Fix mailbox channel leak on probe error
+      firmware: samsung: acpm: Fix dummy stubs to return ERR_PTR
 
-Due to the long Cc list, when sending the series with b4 I hit the mail
-provider limit, so patches after 34 were not sent.
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  3 ++
+ drivers/firmware/samsung/exynos-acpm.c             | 32 +++++++++++++++-------
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |  3 +-
+ 3 files changed, 27 insertions(+), 11 deletions(-)
+---
+base-commit: 2e68039281932e6dc37718a1ea7cbb8e2cda42e6
+change-id: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581
 
-I then sent them manually using the good old git format-patch/send-email,
-but in the process I missed the v2 (heh, b4 is great at automating
-that!). So patch 35 got sent without v2, and then I resent it and the
-following ones with the v2 marker.
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Sorry about the noise!
-
-I think with Dmitry's all-series R-by this whole series can be applied at
-once (I'll wait ~1 week before applying, in case of more comments). This
-will avoid more iterations spamming lots of people.
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
