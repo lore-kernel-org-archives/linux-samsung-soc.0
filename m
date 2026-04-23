@@ -1,136 +1,137 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484CD37DEB4
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 15:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA40031DDBF;
+	Thu, 23 Apr 2026 16:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776957793; cv=none; b=j7suJqjZUs4ag3AlfNIflyL5E0DcBpN3/MSFNY5RSJ7wrdpO3CFFu4ESc/7WGfMoAef1Xo+yL8Az1Nh47DbD+luA/0fztheX6fJFzNwYOOhbYrO0KWo0cSy375h7CRh36qboJRYyMt7uv4InOmO4tC3reUFtUj4GJP1M4pKnSmI=
+	t=1776962794; cv=none; b=b+WOzGNLDTuJztz08ighGPyhH2AotMd6O69eZLEzLgCzfA2b0L+u8VZRpirygXnEaxvLARzrGEMD9nahzGmfy7dM7Pc5Yqj5/q801kJPTkjrYB03zrT3upstHIVQ+RbruxdV3pDZX+u6YMSiPjL9Uv2/3nGpkigcn6mJsaFbOBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776957793; c=relaxed/simple;
-	bh=FWU5VNsYMZRRVGYIioWPuaaPLaZNzDvKQUDpPiPlMQk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jLPg7J1ZqRgpbDA6wm4eQ7IuL3egxn1sctUGplMciD51dadNJHGytAOI8o7o+7ICOFnVdjKXQQwrgW6my+tALt25gVk9mf5VeSgJLxFub4HeGEtAjyvkIgyw6nXsUvtlXaZJWVrM9bCQeBNgs6TxZmYMAniv0I7rxksHqdhcbGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCAAZbYY; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1776962794; c=relaxed/simple;
+	bh=S05j6aseg7c7u3xV5vOsljLds3FQ6L9R3JcogXmLNZs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=o6QTSB+UIDWrJm9XCmc3jMjFM3bSjdHkm9a9FCqL6D4mZ4zTC+YfZY/UZ2ovb+MxjPAA026WAZxx/NPuK7AyFyra2c5t1usdBGfkOSNw/S9gDaYmcSRNeuCH45KnLnGUlj1nOX76exubhgXFBUQzityI48uq8f05kf552gtz1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2l2tjOxb; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCAAZbYY"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-488ab2db91aso92380935e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Apr 2026 08:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776957785; x=1777562585; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/2rw/F+vOuT6UFAdYwCBkXsXOmQ9+TggXzaKDVp2DDM=;
-        b=GCAAZbYYy/w0aeRmk5QZsvV5wURYbYWtVTwOAMINonLeq5HBbGn/Av0cd+ba/u4LTM
-         SN2iOemM1vnNT9JwCPtIvNL9WlrC1X4pRpJqEgZT0VAnHRq7podSz3q+QPuMHrVOSDLH
-         TWEEuBPfpz/3d4HqBZ2yz2Vo6tvlOX3U81by3UcDU1jcJGjqh88gaEaetY1CAtWsQOUU
-         2cN+TAJVM8/Wimal812AvM7qIoDyuQAe7/YqY4bG6Wb99um1MFIEJI6HqxrQjG2+F7dh
-         6dsR0bOh95tRe2qA39DhAiheNmE/SP+0RPwHLfGMJuCUrP/jbtZz9KhmUW+5LafOkxh1
-         iXWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776957785; x=1777562585;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/2rw/F+vOuT6UFAdYwCBkXsXOmQ9+TggXzaKDVp2DDM=;
-        b=tLefp3dQam72wdLdF+5C8Sh3Fj6oeTMfVTlLjQkRyNZ18QR0YtCMltDnDuYjpTxN+s
-         WBoUDrP4G0YiQQmCUnHyUOHaJQRHTZFQh7aM1XyyvHC15KyS5qsEB6BwOlhiMR+v3diD
-         vfDmp4ZHA1DpfH0wp//yAXrNBx6HSrirRnWwM70Za7sYuze/ANE/CIXgA2sKIJogd8R5
-         uVbcsTYr1FzCAgaODJkiD2gXiKp+s1fsSBTn+3hG9HSWZnNV/DhOOgtx+4FOYX5QDC4x
-         b2oEPvMQBXnpV44qEeczF5o6yB4DcUQjQkUtwGu4sK3m5MdBYwlBDTKWjKSy25IC1z7U
-         PvyQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/5FMDPvnmvFA81jogbYF68Tcx9WMUEKcvQ7sh/yX3VDedo5WvvY1O0L48qKStEXgliuWvS7N6KX1SZictZ1Zo3Og==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxStw2uPc4setTKRrHfkq4UrtmcTnuZ84UpL35oVQ7IDnXlTSgg
-	FTdGBvECtmC+bQBe6NyydOuWAYaGdMY9MDEqaM+VApL6TuIK24/JDNZyJEtfsYJ9DwE=
-X-Gm-Gg: AeBDietq5AvcK/Rg1AtqtyxkZCcLn3uM+lV5DtcQnUYCz8kdBa0souwvdnxTpuNM2dx
-	AecfKLQiPhVmzbfsnTsY+V2ay6/kxhG6BNrtC2iP6k8PMTaJuju+s/jbjxD2zXRPzC7MpMkWp/v
-	Mh3r/Euh8iyJ6/9RIB9Uq7awzmqffxhLoEQtYX6ad3QKdHwG34n5U8pWsMYDld5bKouwEaDilCk
-	TPj4YIWFw3S2xI77EeuPLhrvQN8CdXjXmRM5K6kn/9BwAM0xWWpTSDnk+qO9LUXmrypcuz3e372
-	1AalPlPYzfqSLysw5fHnlIoMPknBXavhfLO7MxNIxz5EVUexguzG3TIAyeOaM5wU7XWaEZy5aSX
-	LGI1MxLaltD98xUG607u2b7bjA7WfsYmAGiKki9f7tfcMGPQRuKZXdraaJ2Vyq3ItLogK9S6oxr
-	12Fj1IzuNh1HdWolI2tELmLiUe0fwo0towAHeEYl8vsvUH0NUWVROSvCusXPQcf0XxfO//FGdFv
-	2/F20IcuTFEQqNqBQ==
-X-Received: by 2002:a05:600c:4fd1:b0:488:78f2:6b0 with SMTP id 5b1f17b1804b1-488fb78ede0mr397227715e9.29.1776957785364;
-        Thu, 23 Apr 2026 08:23:05 -0700 (PDT)
-Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4891f98728dsm90550755e9.23.2026.04.23.08.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2026 08:23:05 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 23 Apr 2026 15:22:57 +0000
-Subject: [PATCH v4 09/11] MAINTAINERS: Add entry for Samsung Exynos ACPM
- thermal driver
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2l2tjOxb"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 543B84E42AD2;
+	Thu, 23 Apr 2026 16:46:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 11F65604EB;
+	Thu, 23 Apr 2026 16:46:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66CE510720005;
+	Thu, 23 Apr 2026 18:46:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1776962785; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S05j6aseg7c7u3xV5vOsljLds3FQ6L9R3JcogXmLNZs=;
+	b=2l2tjOxbp/muwVUTt1iYaIz8b7OLe+mJ2gwHjUl/Zi9B+c+A9VYP6Ja5C2fCxD7EBcL8KE
+	tj9o1FWt6yl5MwmosOaOCmM5hg14Gf6FQCD6xO4NlTRrX8rWJO7AXZiqzKJUGSdGNfq0dX
+	90/Fet3eusoHdXKPgHJviW0bm/BmWmkW8WJGQJXu+6RINWTT2CgIMhDV/YcJ+q/TJAH7GV
+	wy8CB9xvhkE+fTuzqLnN9+emGn4BkhcJVhKXnLTSZCbNekK5oVrGCbiUFXMRSBxTBCE1Lo
+	fGJwcmZCjXWgzqASXiN/aqIJ5NiJ8amWgtQeCTnheHeEOAEeGBshs0HQdugKjg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-acpm-tmu-v4-9-8b59f8548634@linaro.org>
-References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
-In-Reply-To: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org, 
- linux-clk@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1776957778; l=988;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=FWU5VNsYMZRRVGYIioWPuaaPLaZNzDvKQUDpPiPlMQk=;
- b=oGan3n0YDDTqNrNPvT5e5tY9UzUuAumcLznabKnHsbyyIVFfufKds/6MUWf1Xq0V0ycSAXT3/
- KZjDYxlqCdNAPXdbDR3RyrFMLbqE0LrVkmWv13ndxJQsDwP/6anSJj2
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 Apr 2026 18:46:00 +0200
+Message-Id: <DI0OQ6JRMPTR.1FP9UHPJBYI7M@bootlin.com>
+Subject: Re: [PATCH v2 00/41] drm/display: bridge-connector: attach encoder
+ to the connector
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Sasha
+ Finkelstein" <fnkl.kernel@gmail.com>, "Janne Grunau" <j@jannau.net>, "Liu
+ Ying" <victor.liu@nxp.com>, "Douglas Anderson" <dianders@chromium.org>,
+ "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
+ <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Paul Cercueil" <paul@crapouillou.net>,
+ "Anitha Chrisanthus" <anitha.chrisanthus@intel.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Jerome Brunet"
+ <jbrunet@baylibre.com>, "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>, "Rob Clark"
+ <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
+ "Abhinav Kumar" <abhinav.kumar@linux.dev>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Sean Paul" <sean@poorly.run>, "Marijn Suijten"
+ <marijn.suijten@somainline.org>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Sandy Huang" <hjc@rock-chips.com>,
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Thierry Reding" <thierry.reding@gmail.com>,
+ "Mikko Perttunen" <mperttunen@nvidia.com>, "Jonathan Hunter"
+ <jonathanh@nvidia.com>, "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Jingoo
+ Han" <jingoohan1@gmail.com>, "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo
+ Kim" <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Marek Vasut" <marex@denx.de>, "Stefan
+ Agner" <stefan@agner.ch>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Michal Simek"
+ <michal.simek@amd.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
+ <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+ <freedreno@lists.freedesktop.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-tegra@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com> <wanzalswb3lez6kyklprqojcnidab5fkxgu57lfka45w2rt4ic@xdatq5o7yiub>
+In-Reply-To: <wanzalswb3lez6kyklprqojcnidab5fkxgu57lfka45w2rt4ic@xdatq5o7yiub>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add a MAINTAINERS entry for the Samsung Exynos ACPM thermal driver.
+On Thu Apr 23, 2026 at 2:45 PM CEST, Dmitry Baryshkov wrote:
+> On Thu, Apr 23, 2026 at 11:16:54AM +0200, Luca Ceresoli wrote:
+>> This series simplifies using the bridge-connector by removing the need t=
+o
+>> attach the newly created connector to the encoder.
+>>
+>> =3D=3D Series description
+>>
+>> Currently all users of the bridge-connector must call
+>> drm_connector_attach_encoder() immediately after a successful
+>> drm_bridge_connector_init().
+>>
+>> This is an unnecessary burden for users. Move the call to the end of
+>> drm_bridge_connector_init() so all callers can be simplified.
+>>
+>
+> I don't know which one is more correct in this situation, but let it be
+> R-B for the series:
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>
+> Feel free to take the msm patches through drm-misc-next (A-b).
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Meaning: Acked-by on the msm patches + Reviewed-by on all the series,
+right?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c9b7b6f9828e..759c05bd0004 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23693,6 +23693,14 @@ F:	drivers/clk/samsung/clk-acpm.c
- F:	drivers/firmware/samsung/exynos-acpm*
- F:	include/linux/firmware/samsung/exynos-acpm-protocol.h
- 
-+SAMSUNG EXYNOS ACPM THERMAL DRIVER
-+M:	Tudor Ambarus <tudor.ambarus@linaro.org>
-+L:	linux-kernel@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/thermal/google,gs101-tmu-top.yaml
-+F:	drivers/thermal/samsung/acpm-tmu.c
-+
- SAMSUNG EXYNOS MAILBOX DRIVER
- M:	Tudor Ambarus <tudor.ambarus@linaro.org>
- L:	linux-kernel@vger.kernel.org
+Thank you very much!
 
--- 
-2.54.0.545.g6539524ca2-goog
+Luca
 
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
