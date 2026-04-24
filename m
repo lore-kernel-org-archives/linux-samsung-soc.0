@@ -1,133 +1,156 @@
 Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0703321DE
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2026 09:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23295BA34
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2026 10:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777024343; cv=none; b=A/BJ3JVuuWliBg/Ia9RMIPBoKdDUb6GXB/GnYmVLJ2Gh0ZCFPJLBtj1V2ww0lPcUBGbl7fKdmfiASxgnw9sCG5cMCkQs3sarN+Y2PI7aklj13fwl0vZyuQtlGRbYC5ZQLPDWKX7CbTtJGSTnH33+/8Q9XyEpHMHhAOhWO/tKH/o=
+	t=1777024928; cv=none; b=n0H6eLiGmHFKK9u+Sg1M6mFUFCP5Nej4+a5zIKNqAfz6pKI1daha+t0IiDjYwQdXeAiehmjWt71fRCqBLnImTRh4SfZYv86PD7xUZM4kgZnRYDd388sbihQSwOBrfG8K3T7s7SJdORY/LoYtsgcdhiaN6Ps+tTsBawF7WH/zjZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777024343; c=relaxed/simple;
-	bh=7+nwNe0hubPEq2tWT6cJD5lGdELFJsocZFhWYUVObOo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Ju1V08oBezLw6JzPA7+ZQU6F7oc6tgPga9o3pIiwALchhQG+Cg/s0+tp7NfTjLnVSoEyI2LKcyGTBdK9oArvcD9p64gZ12U8P3gIU7EY6P0YtH6FnuuLPK2BI2LJrOgVq/nXHJ+pFV5nbLv8J6PwW2Hy2Ub9jPtoWSQm3tnYaf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RxWygvqZ; arc=none smtp.client-ip=203.254.224.33
+	s=arc-20240116; t=1777024928; c=relaxed/simple;
+	bh=8OjXBOUx0f05cZLENr4Y3TK8cbaUmcac4eRNWrA1vAw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=AhYqLE/lF6T0qIGQiPLvg0/4maV2edS1UojAkETp0umZSxXs3n7tITwC90Po/2ZknSCTfp1kJJzRF84uGYsIIqtuZMd5pte4McUHGKUfc5aFkJNCYPuZYrYxb9Tdli+u657kZiDTYBFoue5dFeEbxJgjXLLPiV3U5yt0HS9yPfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QEBoxdjJ; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RxWygvqZ"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260424095218epoutp03f5968c2bf17f2f0e4fec14d9db3de992~pQjh9BYgo2312523125epoutp03p
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2026 09:52:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260424095218epoutp03f5968c2bf17f2f0e4fec14d9db3de992~pQjh9BYgo2312523125epoutp03p
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QEBoxdjJ"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260424100203epoutp036bd81320ccf06e06ac8dbf5191e2da0c~pQsCdHYM13227132271epoutp03E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Apr 2026 10:02:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260424100203epoutp036bd81320ccf06e06ac8dbf5191e2da0c~pQsCdHYM13227132271epoutp03E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1777024338;
-	bh=7+nwNe0hubPEq2tWT6cJD5lGdELFJsocZFhWYUVObOo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=RxWygvqZ91MbmEivtdDYymY/GcSy4zP1uQl7oJMHSd+cKKFiu1TvCJ4AmR7peNSV0
-	 +6P+YnnwzXy0N8XbjgB92Poe7piO+x9JLm9Dm3FbqF0kXJ57w/uwkKaVP/CLmXHwUF
-	 SSp5oUZDfxvFSvXtu/XOYcP0rqXM+xUBpHmXvuSA=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	s=mail20170921; t=1777024923;
+	bh=xQbZBR0vcMfkcL0qLiKFtePlkHLiiXiaHsbOVpj2MhY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=QEBoxdjJj9N808jXyo1DW1Wu2I15V4J1JzBg4JhuWWTa7VVcPo09XXHum9WLtar1H
+	 96TJu6zX3fQu8H5NnFK2MRPRSmUOCrZlt7Ld30s7Zqya19KvJdfpTk171E4iig5E8h
+	 PzQwDxVKpC+CXcJDCSzGtRAcb5290Fzubl6XZqxs=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
 	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20260424095217epcas5p2f0cf8cb26a0976167a98fbf6b8dcf11a~pQjhTUF821838618386epcas5p2B;
-	Fri, 24 Apr 2026 09:52:17 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4g27Xw28BCz6B9m7; Fri, 24 Apr
-	2026 09:52:16 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260424095215epcas5p291a4e6a42b1390cb9c21560e5c22ef57~pQjfotDis1732717327epcas5p2I;
-	Fri, 24 Apr 2026 09:52:15 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260424095213epsmtip25c4683e24d4e19f2bbdcfac925c538d6~pQjdrfLIu1913119131epsmtip2Y;
-	Fri, 24 Apr 2026 09:52:13 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <avri.altman@wdc.com>,
-	<bvanassche@acm.org>, <robh@kernel.org>, <martin.petersen@oracle.com>,
-	<krzk+dt@kernel.org>
-Cc: <sowon.na@samsung.com>, <peter.griffin@linaro.org>,
-	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"'Krzysztof	Kozlowski'" <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <f1a829c6-a612-4334-b6fc-993c51cc90de@kernel.org>
-Subject: RE: [PATCH v2 2/4] dt-bindings: ufs: exynos: add ExynosAutov920
- compatible string
-Date: Fri, 24 Apr 2026 15:22:12 +0530
-Message-ID: <31a201dcd3d0$08164dd0$1842e970$@samsung.com>
+	20260424100202epcas5p2fea86ef12b376a5469ced37ed505f434~pQsCLYnRq0299002990epcas5p2v;
+	Fri, 24 Apr 2026 10:02:02 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4g27m96VKYz3hhT3; Fri, 24 Apr
+	2026 10:02:01 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260424100201epcas5p371dd69955076938ee41ed0d823433056~pQsA91Xsb2843628436epcas5p3y;
+	Fri, 24 Apr 2026 10:02:01 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260424100200epsmtip194a9725c822bdfeaa1bb1d55b9338331~pQr--u-mZ2777227772epsmtip1L;
+	Fri, 24 Apr 2026 10:02:00 +0000 (GMT)
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: krzk@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc: linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] tty: serial: samsung: add dedicated compatible for
+ exynosauto SoCs
+Date: Fri, 24 Apr 2026 15:48:35 +0530
+Message-Id: <20260424101835.2125970-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGOvTbkBrgGLxEZFB5FxnehV1lv0gFmXzAQAmEqbtkC/V4hngLthV3ktjyR8kA=
-Content-Language: en-us
-X-CMS-MailID: 20260424095215epcas5p291a4e6a42b1390cb9c21560e5c22ef57
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260424100201epcas5p371dd69955076938ee41ed0d823433056
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-543,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260417115842epcas5p1fb06d6f1663b97b1eae3aafaa6a3de0b
-References: <20260417121452.827054-1-alim.akhtar@samsung.com>
-	<CGME20260417115842epcas5p1fb06d6f1663b97b1eae3aafaa6a3de0b@epcas5p1.samsung.com>
-	<20260417121452.827054-3-alim.akhtar@samsung.com>
-	<27b401dcce62$03bd3280$0b379780$@samsung.com>
-	<f1a829c6-a612-4334-b6fc-993c51cc90de@kernel.org>
+X-CMS-RootMailID: 20260424100201epcas5p371dd69955076938ee41ed0d823433056
+References: <CGME20260424100201epcas5p371dd69955076938ee41ed0d823433056@epcas5p3.samsung.com>
 
+Currently Exynosautov-{9,920} getting probed based on exynos850
+fallback. It is recommended to have a dedicated compatible for
+proper driver binding.
 
+Add specific platfrom_device_id and of_device_id for
+unique identification and proper driver binding.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Friday, April 17, 2026 6:25 PM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; avri.altman=40wdc.com;
-> bvanassche=40acm.org; robh=40kernel.org; martin.petersen=40oracle.com;
-> krzk+dt=40kernel.org
-> Cc: sowon.na=40samsung.com; peter.griffin=40linaro.org; linux-
-> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-samsung-
-> soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; 'Krzysztof Kozlows=
-ki'
-> <krzysztof.kozlowski=40linaro.org>
-> Subject: Re: =5BPATCH v2 2/4=5D dt-bindings: ufs: exynos: add ExynosAutov=
-920
-> compatible string
->=20
-> On 17/04/2026 14:02, Alim Akhtar wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Alim Akhtar <alim.akhtar=40samsung.com>
-> >> Sent: Friday, April 17, 2026 5:45 PM
-> >> To: avri.altman=40wdc.com; bvanassche=40acm.org; robh=40kernel.org;
-> >> martin.petersen=40oracle.com; krzk+dt=40kernel.org
-> >> Cc: sowon.na=40samsung.com; peter.griffin=40linaro.org; linux-
-> >> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-samsung-
-> >> soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; Krzysztof
-> >> Kozlowski <krzysztof.kozlowski=40linaro.org>; Alim Akhtar
-> >> <alim.akhtar=40samsung.com>
-> >> Subject: =5BPATCH v2 2/4=5D dt-bindings: ufs: exynos: add ExynosAutov9=
-20
-> >> compatible string
-> >>
-> >> From: Sowon Na <sowon.na=40samsung.com>
-> >>
-> >> Add samsung,exynosautov920-ufs compatible for ExynosAutov920 SoC.
-> >>
-> >> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> > Just noticed that this email is no longer valid, In case there is a re-=
-spin, will
-> correct this.
-> > Sorry for the noise.
->=20
-> The ack can stay wild email, it's fine. It still gives the credit to prev=
-ious
-> employer.
->=20
-Thanks Krzysztof for clarification.=20
+While at it, also declare earlycon for these SoC which is helpful
+in debugging early kernel crashes which might occures before
+serial driver initialization.
 
-> Best regards,
-> Krzysztof
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index e27806bf2cf3..49409cb6fd25 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2500,6 +2500,12 @@ static const struct s3c24xx_serial_drv_data exynos8895_serial_drv_data = {
+ 	.fifosize = { 0 },
+ };
+ 
++static const struct s3c24xx_serial_drv_data exynosauto_serial_drv_data = {
++	EXYNOS_COMMON_SERIAL_DRV_DATA,
++	/* samsung,uart-fifosize must be specified in the device tree. */
++	.fifosize = { 0 },
++};
++
+ static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
+ 	.info = {
+ 		.name		= "Google GS101 UART",
+@@ -2531,6 +2537,7 @@ static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
+ #define EXYNOS5433_SERIAL_DRV_DATA (&exynos5433_serial_drv_data)
+ #define EXYNOS850_SERIAL_DRV_DATA (&exynos850_serial_drv_data)
+ #define EXYNOS8895_SERIAL_DRV_DATA (&exynos8895_serial_drv_data)
++#define EXYNOSAUTO_SERIAL_DRV_DATA (&exynosauto_serial_drv_data)
+ #define GS101_SERIAL_DRV_DATA (&gs101_serial_drv_data)
+ 
+ #else
+@@ -2538,6 +2545,7 @@ static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
+ #define EXYNOS5433_SERIAL_DRV_DATA NULL
+ #define EXYNOS850_SERIAL_DRV_DATA NULL
+ #define EXYNOS8895_SERIAL_DRV_DATA NULL
++#define EXYNOSAUTO_SERIAL_DRV_DATA NULL
+ #define GS101_SERIAL_DRV_DATA NULL
+ #endif
+ 
+@@ -2621,6 +2629,12 @@ static const struct platform_device_id s3c24xx_serial_driver_ids[] = {
+ 	}, {
+ 		.name		= "exynos850-uart",
+ 		.driver_data	= (kernel_ulong_t)EXYNOS850_SERIAL_DRV_DATA,
++	}, {
++		.name		= "exynosautov9-uart",
++		.driver_data	= (kernel_ulong_t)EXYNOSAUTO_SERIAL_DRV_DATA,
++	}, {
++		.name		= "exynosautov920-uart",
++		.driver_data	= (kernel_ulong_t)EXYNOSAUTO_SERIAL_DRV_DATA,
+ 	}, {
+ 		.name		= "artpec8-uart",
+ 		.driver_data	= (kernel_ulong_t)ARTPEC8_SERIAL_DRV_DATA,
+@@ -2649,6 +2663,10 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
+ 		.data = S5L_SERIAL_DRV_DATA },
+ 	{ .compatible = "samsung,exynos850-uart",
+ 		.data = EXYNOS850_SERIAL_DRV_DATA },
++	{ .compatible = "samsung,exynosautov9-uart",
++		.data = EXYNOSAUTO_SERIAL_DRV_DATA },
++	{ .compatible = "samsung,exynosautov920-uart",
++		.data = EXYNOSAUTO_SERIAL_DRV_DATA },
+ 	{ .compatible = "axis,artpec8-uart",
+ 		.data = ARTPEC8_SERIAL_DRV_DATA },
+ 	{ .compatible = "google,gs101-uart",
+@@ -2826,6 +2844,10 @@ OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
+ 			s5pv210_early_console_setup);
+ OF_EARLYCON_DECLARE(exynos850, "samsung,exynos850-uart",
+ 			s5pv210_early_console_setup);
++OF_EARLYCON_DECLARE(exynosauto, "samsung,exynosautov9-uart",
++			s5pv210_early_console_setup);
++OF_EARLYCON_DECLARE(exynosauto, "samsung,exynosautov920-uart",
++			s5pv210_early_console_setup);
+ 
+ static int __init gs101_early_console_setup(struct earlycon_device *device,
+ 					    const char *opt)
+-- 
+2.34.1
 
