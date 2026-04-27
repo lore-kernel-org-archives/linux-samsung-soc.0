@@ -1,110 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C293CF042;
-	Mon, 27 Apr 2026 13:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75B73D091D;
+	Mon, 27 Apr 2026 13:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777297781; cv=none; b=DycOS2/KA55N96qiwUNAT3gEHkoLTy/g3zlwWYKARq63qb3m+lTk9MGZ+143Rv4MATz8ZddRdgYoo5no1zVTZ/0cBo1U/++EbbAJx6tZ/NJQOTLC9YHKZhLGuCBi7TsqohktTzoG5eJtbvBQ39+LS3bjPY0I5sHgrt4URX3v5T8=
+	t=1777297928; cv=none; b=epk84vDL5IZjiVCtPG/arvu9/U1UDN5NGt669EVViw0YjmDwnL50lpCgKgnXV8fmZ2sihItiKjZC+s5uSw+bYdIc6COBpnV2Gfy67jSTZY5XdIhFSvKlgbLSSiPusla3HqKPBikrNQLTH/GIye6c/lBBVdoHii0NMRNvVJVXMm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777297781; c=relaxed/simple;
-	bh=2KbPCo8VutnDTEndrERxI94xuQqQo17zeysownFnBZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jib2RFUnjJi5FOPKHO4fDaxcDDlHU1P06BEc+WtAwT2suObbDAeDM/C/SKZrx/x5i6r2V1aangXXRRPvQZ9Oyh0zg1tHSXLgUFKUhBlf7QZRj4wfXv8XwarFxvz7BH4PXAJrlGlOQbl4APlqgQ0fRPUqFvra8gh8qYR3ewi6ECw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJzGZrfq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777297928; c=relaxed/simple;
+	bh=lsJOmTUcAu0z5/TAAJg5YU30Hd+zFvlOGUzZYlCCFVk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bc+TiU0Fr9RfGp+5xseTYFI14+xA4T19JRJU5SLkLJh86adLcJhG1DizII4FdvgDPLJ3kCstnrsDdecFpJ4BoVRIYs2fDwngVZCZvxMmZu6wVn79Iv8NeEnwgdvN/KPaphqZ3Q0/fbrhHT4a6W+dI3+1OEfj7SczAaTW+RDphFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9wasWs+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJzGZrfq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A63BC19425;
-	Mon, 27 Apr 2026 13:49:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9wasWs+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447BFC19425;
+	Mon, 27 Apr 2026 13:52:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777297780;
-	bh=2KbPCo8VutnDTEndrERxI94xuQqQo17zeysownFnBZc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XJzGZrfqkSXA4TaKEkh/H8cEoEiqZ8zSpRr92I27XRWfFJpUB/G9kRStVL+ZdDVKR
-	 eGm4vav3ym5AGqihXaN3pLwa7ywxJIEOI+xL1cK1MO/D8A/bupQ66Lr9oYhcIImVEp
-	 ju3+svof8MKf33p1G0K1woBltLEM4hJxDET3Qo364gPAZP3v/Pu6QybgMm/WWQPvUH
-	 H/2U2ScU+OF/L4F8aqoz0+G2Y7DMSxXm4pddc+WdpNn+jIBOD99Svaj/H3+cJJa07C
-	 uR+hY7itAVtovNf+Xu/FQMKVsE3V9M49WxivrKUyG/SgrSTjSN4sCHL5XuW0xwiEPA
-	 Hr3nSMhWZHa/w==
-Message-ID: <653b640e-8b61-4c60-a455-63a400b308e7@kernel.org>
-Date: Mon, 27 Apr 2026 15:49:34 +0200
+	s=k20201202; t=1777297928;
+	bh=lsJOmTUcAu0z5/TAAJg5YU30Hd+zFvlOGUzZYlCCFVk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=M9wasWs+kX1157BtlmeT/XCUGBiBfBcx7VM19UG0pPhERJucZ1KbNYesnSwTdPtNo
+	 aCkDdFb4NbnO/v9JZcC/ObluckiS6MM+aHwILzKI6lR5n0HkKPN78lhxssnGCvLly6
+	 KPH2upNo+AM3S9++DAYqQaxAKmqmoPV92xXeW46IFAGjrKs7vZJTsuJeFyM66F0EfP
+	 3vYYvrjm5QSXwFFzA/0BE42ag38guhXggh5F5W8qp2Co7PP6ep51xembSFQ7VvEL1e
+	 IhRgbmY7twggmNHs50CykkTIIkXp2ZdggfXYC7DY6ZFXW40LsU8u+eKGdX8iAB/Buj
+	 8zGIJ+uTehw7A==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
+References: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
+Subject: Re: [PATCH] arm64: dts: exynos850: Add syscon-poweroff node
+Message-Id: <177729792499.37277.15065378345942727553.b4-ty@b4>
+Date: Mon, 27 Apr 2026 15:52:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: exynos: Add bluetooth support to manta
-To: Lukas Timmermann <linux@timmermann.space>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexandre Marquet <tb@a-marquet.fr>
-References: <20260408-manta-bluetooth-v1-1-b7658e78359a@timmermann.space>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260408-manta-bluetooth-v1-1-b7658e78359a@timmermann.space>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.1
 
-On 08/04/2026 13:56, Lukas Timmermann wrote:
-> Enable the bcm4330-bt device for manta boards on serial0.
-> Also adds the necessary pin definitions and interrupt handling for
-> wakeup.
+
+On Wed, 25 Mar 2026 00:26:32 +0000, Alexey Klimov wrote:
+> Without poweroff node Exynos850-based board continue to draw current
+> (around ~60 mA with my test setup) after poweroff. Kernel also reports
+> different lockup problems and RCU stalls warnings continuosly after
+> last kernel messages about hardware being switched off.
+> Turns out we missed a write to PMU's PS_HOLD_CONTROL (PMU + 0x30c)
+> register that actually switches the SoC off.
 > 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> Co-developed-by: Alexandre Marquet <tb@a-marquet.fr>
-> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
+> [...]
 
-Incomplete/incorrect DCO chain. Please do not reorder tags. Git does
-them correctly, so you HAD to change them manually.
+Applied, thanks!
 
-You send the patch or you apply the patch so you must commit with sign off.
+[1/1] arm64: dts: exynos850: Add syscon-poweroff node
+      https://git.kernel.org/krzk/linux/c/47d4dc90181c8ffa9ebcbd058e312873a46aeaca
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
+
