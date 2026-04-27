@@ -1,172 +1,129 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011017.outbound.protection.outlook.com [52.101.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4D1347500;
-	Mon, 27 Apr 2026 07:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777274433; cv=fail; b=ETW/l4LHNNZtAzoJa8QIqN5Y94gqvNBZJmFs2lTXr/GUmLY46CcJC3Ec9KQDAuxrbbSVAEdh+j2E8UtrsKO7tP0OOp/J+s5rk4rAfeL/bhYh7CVXmXrlvUxh4Q114yxlkYOJ7IZec97g4G1tvEB052jWr6c7r87WcqZXqNitN/Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777274433; c=relaxed/simple;
-	bh=AYA9KP7/rjGvvoaV7zrXVKpG/fxEopdho3BSgUyEVCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=d+nPKnEqlB5oqxc7v3AyCeJpPMb6tcmVL8xrv46fdFktHU9QxOGkwsItNV/mf5ciLLFCpcMEyN1oOFKonMAWON70vqaGq1pfEAhv/iSiAvhZ87+Tao+Rk8yWypdkASdN27fwtWHby1Rk0M7+KhIRSLJ4ODIkzvMWXbA699IVG5Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qZbHVvQj; arc=fail smtp.client-ip=52.101.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D963A255A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Apr 2026 08:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777279725; cv=none; b=iUyx3hwXCuXOHR3zWuFuyGktWnT4zqvNdaSoxmCi/+HLwxqSJD/XwgGe8bZaaYZ7LKciOmW2gG/lQDHI1LLAncNWmJf5BdNndegT+11oomliJ2xaPn2Q4j/DLnr5qs2eNgo4W5o8ROa16jgsgtNV/mVLUUCB1crJMplL49kOuD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777279725; c=relaxed/simple;
+	bh=bQSKliJdOgSghj/0j57jxwwP485TZouAqr/8lLlLuNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=juvunEf0oFgGv/To2asEoQ4+twpQuRCjlsHn3iI+RYPAXkgH/T+3R9oafAeutNxflgsrPprO0aDiXgHmrI3CjTpLuHBIhpe80PqnxR6NXmQZ6qb50UJTOwPnw8uhPNFdp204d09IFekLkKt9QCXitU83w9KFlHGs83C7SbgKMNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UKFRNcDE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qZbHVvQj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jfKrQ9XrVv+L2gYC4xCYDY9dymdJ0qC84B3UUhSFFzLO5ol6aNDqoLMIDRPp5Z1tC9iDxrXi29zqSqQkj+sb7iaZjYQPxQ26NBBzzGYdHwssStG05IDnK9Ar63W2AHA41OlL/3OP1+IFyneq489lY5IdUcZa4gev++LH5b2hZMPqafFMpqpvVacOtaXHX+HJXaede2TFx0JfzkaNANYFrAmp/IdOCSVdqnjREPGpFf0S8jRTlBoj/x78xe+RQaYJSvBiGcdAH0ALqnAIj+Qae61GJwoJpAxu5fyG4yCaoltCVHAPj6MxlbX5AxxZI2t7v7Aj6uq6qR0JM+PlRirW3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gBhaC1RBr5+6/NYOOt7Qzlu1aHl7Fqeg/S9CESwLIE4=;
- b=kB8Ls+APomvF5SGytNOccnd4YLFIc3rGtqebvUaQEk+58ydXop54/e3GoeADfS7k1lllcacMPd0QTCBIXVQg5ymsd3e7TPLryiouWmzHK2hAceTL5lkQggYYT/B6Vg0x9p5n33wGY8d6N2Zyn3nJAoIdXOOnR0ezLK0UrPjW1/18/trPMN7kdY1wCAF2xXk5FHOfd4S7T1y0U5FcnYrPiFvPU3RUz43El8vzu33vMSEoWBFjX97Kl8YPWUJR9GhVk09FlBW7UqqnmIyP820Mip7HEeItzIa5p+cUrKan11qGGIpJ05SHsGpBWJFbP9Wpul1abawCDVDZTfPI01XhCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gBhaC1RBr5+6/NYOOt7Qzlu1aHl7Fqeg/S9CESwLIE4=;
- b=qZbHVvQjwWsc5VAB5eHvIJaUqmFtFy07HZxd3D1IHIeNg5OH4UF2KWQvVq2EV3AnKyA2RvJgkrHD6nZvBrqgxU/JeaNN6/EPwgLjCVZYjCverIJYddf289rscOClfD/V0VLdkCCdsvMswFtO2rRWQdCEMSIQhJFT1rwbfYQniGy+V7zcZyoTsymWD5bcwr33LOhdsunC+i1/5Up8k+Cna8N7JYhSdvmkkwiBP8zYiOeJ2HJpftt1TNHhZ8MAEZy91TmYrrMTCUJB4PziOoxwaIZt94fq4qKdBqeg3OBt5qWgcbFVm2x8pPmFt3xCei3icy01c1rg0KJ8iRh6oU1wCg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
- by DU4PR04MB12299.eurprd04.prod.outlook.com (2603:10a6:10:62b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 27 Apr
- 2026 07:20:26 +0000
-Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
- ([fe80::3826:2706:1e81:c9e2]) by GV1PR04MB9135.eurprd04.prod.outlook.com
- ([fe80::3826:2706:1e81:c9e2%5]) with mapi id 15.20.9846.025; Mon, 27 Apr 2026
- 07:20:26 +0000
-Date: Mon, 27 Apr 2026 10:20:15 +0300
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
-	Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, 
-	Douglas Anderson <dianders@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Cercueil <paul@crapouillou.net>, 
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
-	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Michal Simek <michal.simek@amd.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 06/41] drm/imx/dcss: remove now-redundant call to
- drm_connector_attach_encoder()
-Message-ID: <ybgfrjkjwbjcpc2aw24kodcim2lf7c37qlwwh67as5otiogxp3@c2ndw3f2d6qr>
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
- <20260423-drm-bridge-connector-attach_encoder-v2-6-2ae6ca69b390@bootlin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-6-2ae6ca69b390@bootlin.com>
-X-ClientProxiedBy: FR4P281CA0433.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::15) To GV1PR04MB9135.eurprd04.prod.outlook.com
- (2603:10a6:150:26::19)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UKFRNcDE"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43cf7683a28so6602876f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Apr 2026 01:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777279722; x=1777884522; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0JA+E2OJoqNXeWdWbhpFOoKA8w/M6yXZ6Nq/L8Dy8vA=;
+        b=UKFRNcDEpPwR3Z7y8ROLx3oZWCI+WSQxkCITgNgqU5Co5zeLqYXe64KnG08Evx3v88
+         urS/fgSLxF1he8nJZBA8BGdOzUW9nc81kWvKLPXaHkTcivsRYII0fGexhUSOZkM+3VXU
+         tYC3/wsrzWsoiA/sDt4XLbjLMiktLb39mGCw1hn+llR2IO9dGX4DHa72QOn5c/wGyc0R
+         WqYDa03+7vPReJHaZo0zI8yhLNdHEaRGEddW6v/gEsppCb1cxS7pPdsr0HqpzajC1PKE
+         97kOFsEKNvbfBATP9Purc//SS3UCr82y5/FOyEtH+ajIit5flO4VhoaKoJkqgaBepjAQ
+         iDUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777279722; x=1777884522;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0JA+E2OJoqNXeWdWbhpFOoKA8w/M6yXZ6Nq/L8Dy8vA=;
+        b=ha3hYlEOKjuxu1O0+Vu9/24ZccGl7KPdgZzIvrbNYasvXyezugYbWqscOoSRdDtD2T
+         Kgp9/fxj6hTigLV2GWj6fmaezgkrC6WZWwIAdNTLXZfzpV8rRORJJb8OpwdV+rwI5Nlk
+         luFsOK3divDtblxbP+OOy1jhJjwoLoMHS/vmmCRiWCKEtQs8+W1M0PAZGg+gOlK/MJp/
+         1SV9JP2GTGJB0LKn7wXS5Cf2iF+CbP/m1NhoYhIRq6fLiMo84c+A9jytCx9u2KzkGYk0
+         AVNSi2wVoO9Ts2eM2tmJVqZYOxLcybK+Vo9mURMEznNsU+LZu/cRNrZDWPOH/kWzPsOu
+         06IA==
+X-Forwarded-Encrypted: i=1; AFNElJ+IFvhbEgouT61viiROOmaFnzs9mQGEC1OoCYHCl5vwO5s9FjOZyUDr238VQNQCqmoMxFsVTvbTYiPTLefqmRxPZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcFa3Hrn5UGYC37IoZEM03wwHJ5lZI3uckIKj++WBb6YfdcubQ
+	gjZGU4aNdgU7ab+pK9LK/d8SYgxCYjUGW0fwoCNyvoQ5PphJJpEV063jT0iArazago8=
+X-Gm-Gg: AeBDies8VBkaRDkRHErk3eVzQvA0sXu8uPhyJTJna2U1RnjBJjxi/ej9CbwmpG656Wz
+	pwJFrjf/rlUJQ9B9Nt5NAm5aMURKKESgHjeG3aCwzNQOXaKK2EJTBi+019N/mOCq8KMhYy+M/JS
+	7cbW7wnmHySrBixTTtPpg3p3OqR1WjrA2C4ou/RPnZ5IdMHk1ZKJ9/xlPZTFZajZqraExjf1fV4
+	RqLCrluLwoHdmWdSYY/4YT0y9V4nCEBB30sYzo4GD9mOaX4t6p7sVmRBdQyHp/mkKu6JTq8gNCM
+	ULc9/g0izOOkllV4DmopfYW9yADha83q2mhKHZinPYOa7YFgNvSt+Fk916McE/rJMRfT+w/vC1h
+	nRQe/83mWaZBdGpvRAPx8fXvH5ikvtOd/4in3K/UlQemV6Q8NsWZnZRQNF9Ce1HAjRnoTan7rxs
+	I7MX8s7reyR9dhDVMezHrW3BmcW049WGg2/IRydoHvk/Y=
+X-Received: by 2002:a05:6000:184e:b0:43b:9a9f:8956 with SMTP id ffacd0b85a97d-43fe3e0715dmr63483116f8f.22.1777279721576;
+        Mon, 27 Apr 2026 01:48:41 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cc2cacsm79702504f8f.13.2026.04.27.01.48.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Apr 2026 01:48:41 -0700 (PDT)
+Message-ID: <84c292d8-d2a0-4c29-bd28-cc00f66c2f43@linaro.org>
+Date: Mon, 27 Apr 2026 11:48:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|DU4PR04MB12299:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3821bb78-7613-4c75-2784-08dea42d73ba
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|19092799006|366016|7416014|376014|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
- db5x2kgA0DkMV/TxDKBe/q1GDNYIluCduHX1TZx6q+OwEo35vzqDtS0jNL3+8sSsiGlr+Lyc+X54v0ecOua+L1zIsUUU2XX0tly0B/y0f2LhDFOcnJDcz9KtgxlQCbfOgd769Y09J9gg1NPdByD9D4ir+5hj9BVkxpQ3VFkJNvDMSOOwPS079+WaCdSfvmKjmrAjWjritmwcGLBfAUk92kmm+IwZpKl+E8p4mNsERRLXuP5AGgoSR5P47ei/V8U9eAbJyuMUp0M7a/9wHVnMRiUwncBeB+4q2qi5tS4NCW7I4EvOjX0KlELlh0ljoN9x9ildugSGf3MDMrsSrtUe+VT9c0c6C8g/nWuKQ9Lu18VJvsgrldkMxeEw6FOXIBP9VjbscehehYLMCoYBdxRL9RZStXxxEwebmcuUDF/wX7dfmv//YQhd7RcY60HKfxptHx9h/hPHwJ9e4l5nc1uz1/2xzE0i5NPIpZ7XtxfLaQJL500YRfmtO23/eNH5kHZ6T7dpNjw980SqU7TFxKqOdT7S99bSpR98s3Pzoe8GdJp5EBgbF6QCaVDfMsqnLw/4wmBwOB+9YH8k3mewFu1AyItnbBo4+GnvH+anojLAQwWeZsylNvyOdIdVXLJLB/9Nytk0gMlOAbuNX7the2allNR+V/cufTRfHgRICtgc8Pxv1sQbK/XReXAEBwKTHJT2tPZ7JiXCzHYjcn5FoWP5DC2yY7CKixFFV2NTaEMMhss=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(7416014)(376014)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?9WLRojYWt9FM4ds6PakXqpZ/2Btox4BFPoY/7PrkDv72XGQeOQX5e18winbF?=
- =?us-ascii?Q?bDIWynbRD5L3+N2gvMfdM6yUaIIQ8tEZZE+RQ/ZHnZwvlCY4TlVys3DsUAtJ?=
- =?us-ascii?Q?PjcinghyI1BYDGEBaPyvqAFUj9Nc6mamszc3Hgq/rw9IBZE2QcgEBkLEIYTc?=
- =?us-ascii?Q?B9HNfDLLSIyHndp8AMbHhD1zbCMY2/GtK9WEYUZy3gqdK+LWOb143bMpgkZV?=
- =?us-ascii?Q?JX82/MfhkyQk1in6pa7epTVk7KJ8EOBpHcTNnW4Je/SzxnjVFRXZjJ1cv223?=
- =?us-ascii?Q?lb6m1fGCGVN0ryGCieWHTSAaGJotHoaLCOfO8Qxi7fpXvBD0Q8Fk2jUzmaqW?=
- =?us-ascii?Q?Wx9veG2JiQKcukhn10UKwoHInr2NhHULJkVJkvrWI3LkWNCApj2/D1/2F01L?=
- =?us-ascii?Q?Q40Qcf0gj6W+3PkmyG6+6QeHD4ROIffTCYJX4R1QQ8JDFzqfPyuZK2oWxcet?=
- =?us-ascii?Q?HIkqScKFbnRNhW1+sBjaTL32msbUlz7XT6RXNP0av7Xjao64imu19jOJoLfK?=
- =?us-ascii?Q?ltMumOQu92mn5/QOn8hU9s/dtajHauGLxfBVUVSuKl3Xg9yVuOZ77e4bJAGN?=
- =?us-ascii?Q?/jLDlhWfPd/NU5Ss3O1tVOZKxdTqjiD4rxXeR3H25YXQmFGpacxGrdvv8cVL?=
- =?us-ascii?Q?LVyuWVizkw5/Qp33w2FfvgUVz9XhPrw9TcsSJRzz80DnV4cZOstHj5Ocs02P?=
- =?us-ascii?Q?aikUnB+sNBWMP++SuEf00AXgPr38uDZRxQ1q/QWM+82U5Qa4Js+9ZlmCkpF1?=
- =?us-ascii?Q?hNWwE7kDEy50s3GVoKoBUyKRcmbaHuysTkATdxr2+auCDR/ZhFP+My7AEnD9?=
- =?us-ascii?Q?u5NlwndzSYWboMUdGCsIeY+kj74G6hiZuthbfCwuCovEB1kFzRV57pt174qI?=
- =?us-ascii?Q?n9vgbdjZ3rsNSYED2TFWhaJb/CWKPFU/z70ic9hprjpknihXiZHjSX4JdFO3?=
- =?us-ascii?Q?tsfncGNfmYHnREJnunn0cGTZ2N1RAp55e55+OcvRBthvvCl/1dmskEKpIoTQ?=
- =?us-ascii?Q?g8Wsc2Z6IXRKlmuFEVjFf1PWbTwk0a3vRexuLbYiaIs7pW4uVx+qI4Zep6Cj?=
- =?us-ascii?Q?daF90p55pIUjmY3X7KXvCkxD5gPIR4yxUtLmXbR3pC/FgYBGI6dmH2M8zgcM?=
- =?us-ascii?Q?P5xuO9JDZgXd3dLhiYkFHhHDaCLihKU/qUxeTkzisvwTSPTQaIhHJcBUkP3U?=
- =?us-ascii?Q?6hwE1HU5btuYsZ+2mPrU6FQzGu+SCvkvi+YRaWQiSvjAqusdd7wmefDdJGCV?=
- =?us-ascii?Q?pX4NrUtpombBX5YN8CB0lNwmFST1HgfWCHv+Yp31EBAXv9CZXm6eZwcdoney?=
- =?us-ascii?Q?ff2yuC8N0DuCLgY7maXfOSyf/4EBcUzJqsWjodLaZmT6OzdVr/R1UepIwAdK?=
- =?us-ascii?Q?gk8MLdEhnykQkuyWR5eGMrqZU1gf01wi46WG7JDYksX7Mwlqakm/CAEAx+W1?=
- =?us-ascii?Q?RoFP8CqVgqWUHy+GkMIoPLxnYvJ7jtvfSRA/v+ZVIarDtWrUiifRuods3dD4?=
- =?us-ascii?Q?E5p4eQrH/jzWl7gcoXSJkeMxT9raEvxJrsoOozgSFyveU9b8PR4OROz1eJI2?=
- =?us-ascii?Q?lmIAPrtoWbBHAtA/bBuFVS3ciRWx7G47+iT4n9XxQgwk5ABdwTmKntWSQ4cJ?=
- =?us-ascii?Q?6Dde5modogh6WxtPa1ZOiqCA5eOJO3RI075zqq7OuYH1HsDETASdJXD8ibPM?=
- =?us-ascii?Q?ELn376Q35sf4aL4z59bx8vOY8H1ANWeIsPUJ14fDBdoSqwoxd9Ol+iaEXuUD?=
- =?us-ascii?Q?RWHPOOWUapMPCb5MQ3AS0XSGyaUgscs=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3821bb78-7613-4c75-2784-08dea42d73ba
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 07:20:25.8524
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w8NBPTOAP+2fWpIT/IlNAsTt+NqRAYj4JNbe01eF1VaHlIR1ntfYyC/e+faaIGHZOrz/43r6IBn+j0mS7fhfPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB12299
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: samsung: fix stale response flag in
+ acpm_prepare_xfer()
+To: Titouan Ameline de Cadeville <titouan.ameline@gmail.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260426210255.73674-1-titouan.ameline@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260426210255.73674-1-titouan.ameline@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Luca,
+Hi,
 
-On Thu, Apr 23, 2026 at 11:17:00AM +0200, Luca Ceresoli wrote:
-> drm_connector_attach_encoder() is now called by
-> drm_bridge_connector_init().
+Thanks for the patch!
+
+On 4/27/26 12:02 AM, Titouan Ameline de Cadeville wrote:
+> acpm_prepare_xfer() only ever set rx_data->response to true, never
+> false. A reused sequence number slot could therefore inherit a stale
+> true from a previous transfer that expected a response, causing
+> acpm_get_rx() to enter the response-copy path for a fire-and-forget
+> transfer whose rxd is NULL.
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Unconditionally assign the correct boolean value so the slot is fully
+> reset on every reuse.
+> 
 
-Reviewed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+How did you find this?
 
--- 
-Thanks,
-Laurentiu
+Sashiko identified this too when reviewing the ACPM thermal patches.
+I sent some fixes last week, where this bug is squashed as well:
+
+https://lore.kernel.org/linux-samsung-soc/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org/T/#m1c32aa4c84ea7e3909bc8fe7599585b71e95d8b5
+
+
+Thanks!
+ta
+
+> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+> Signed-off-by: Titouan Ameline de Cadeville <titouan.ameline@gmail.com>
+> ---
+>  drivers/firmware/samsung/exynos-acpm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+> index 16c46ed60837..2fee6bb60efc 100644
+> --- a/drivers/firmware/samsung/exynos-acpm.c
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -380,8 +380,7 @@ static void acpm_prepare_xfer(struct acpm_chan *achan,
+>  	/* Clear data for upcoming responses */
+>  	rx_data = &achan->rx_data[achan->seqnum - 1];
+>  	memset(rx_data->cmd, 0, sizeof(*rx_data->cmd) * rx_data->n_cmd);
+> -	if (xfer->rxd)
+> -		rx_data->response = true;
+> +	rx_data->response = !!xfer->rxd;
+>  
+>  	/* Flag the index based on seqnum. (seqnum: 1~63, bitmap: 0~62) */
+>  	set_bit(achan->seqnum - 1, achan->bitmap_seqnum);
+
