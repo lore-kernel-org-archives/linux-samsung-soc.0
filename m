@@ -1,70 +1,134 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75B73D091D;
-	Mon, 27 Apr 2026 13:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E7D302753;
+	Mon, 27 Apr 2026 14:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777297928; cv=none; b=epk84vDL5IZjiVCtPG/arvu9/U1UDN5NGt669EVViw0YjmDwnL50lpCgKgnXV8fmZ2sihItiKjZC+s5uSw+bYdIc6COBpnV2Gfy67jSTZY5XdIhFSvKlgbLSSiPusla3HqKPBikrNQLTH/GIye6c/lBBVdoHii0NMRNvVJVXMm0=
+	t=1777300555; cv=none; b=d/Md2HW9fZU/N2vSHVS5I8qyDKR3nRp/valcuvp9CCVxwTwPqm/AiwJgYKJXnhkFT7tPY3oXD32uqm1uG5PLMU/GmIpz21mqe8NZeoqzvlJ1xsN7eZSrlwA9KBwgyUESrXhkG4buqjrsXs1j5+Ozpmrzbs0JwQJ7w+wylncp9ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777297928; c=relaxed/simple;
-	bh=lsJOmTUcAu0z5/TAAJg5YU30Hd+zFvlOGUzZYlCCFVk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bc+TiU0Fr9RfGp+5xseTYFI14+xA4T19JRJU5SLkLJh86adLcJhG1DizII4FdvgDPLJ3kCstnrsDdecFpJ4BoVRIYs2fDwngVZCZvxMmZu6wVn79Iv8NeEnwgdvN/KPaphqZ3Q0/fbrhHT4a6W+dI3+1OEfj7SczAaTW+RDphFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9wasWs+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777300555; c=relaxed/simple;
+	bh=SiWkbnIH8UOAciAE8X5BeZ7KOGlhjwpjAZNRV7KHgWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BNi3yy2U+B8j3T1gQWOl5XLTQmeAqQB0VAkmZ7gnNZJpa04BoA5MTTU1g6w9+HE8ivQyj1hIq2ZG8N30LSQylKADo09LmemIgt35/3Eh80IdAVm3Evj83ihrnbb07ZaEoQfAlAjN7JMCno4BxvwTXEqBt8mOscU8zpsQ/3M3e68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQRGkxOM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9wasWs+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447BFC19425;
-	Mon, 27 Apr 2026 13:52:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQRGkxOM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 656BDC19425;
+	Mon, 27 Apr 2026 14:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777297928;
-	bh=lsJOmTUcAu0z5/TAAJg5YU30Hd+zFvlOGUzZYlCCFVk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=M9wasWs+kX1157BtlmeT/XCUGBiBfBcx7VM19UG0pPhERJucZ1KbNYesnSwTdPtNo
-	 aCkDdFb4NbnO/v9JZcC/ObluckiS6MM+aHwILzKI6lR5n0HkKPN78lhxssnGCvLly6
-	 KPH2upNo+AM3S9++DAYqQaxAKmqmoPV92xXeW46IFAGjrKs7vZJTsuJeFyM66F0EfP
-	 3vYYvrjm5QSXwFFzA/0BE42ag38guhXggh5F5W8qp2Co7PP6ep51xembSFQ7VvEL1e
-	 IhRgbmY7twggmNHs50CykkTIIkXp2ZdggfXYC7DY6ZFXW40LsU8u+eKGdX8iAB/Buj
-	 8zGIJ+uTehw7A==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
-References: <20260325-exynos850-poweroff-v1-1-34c19c06e74d@linaro.org>
-Subject: Re: [PATCH] arm64: dts: exynos850: Add syscon-poweroff node
-Message-Id: <177729792499.37277.15065378345942727553.b4-ty@b4>
-Date: Mon, 27 Apr 2026 15:52:04 +0200
+	s=k20201202; t=1777300554;
+	bh=SiWkbnIH8UOAciAE8X5BeZ7KOGlhjwpjAZNRV7KHgWA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LQRGkxOMUS0qZpvN59yIIWKUCjorLizUI+LomxDIWqm9JrYi4NelOOwOVw6zB1d4B
+	 iAY++yUa34htxh4vcPIaWctFA4HzR9fK5L5JdC2yshYLddYoIsK3wSWmna4SHf9bXu
+	 d/tuKNDGN5AMQy7/tK6hcVQvLrq3wWgexHNJiOmrKnc8R//HHGX13aYfRFVXFnOaj6
+	 oEJ5WBSiSanifLQeEWdNrSdyTf+hCtVutLc1XbwonnqpwaFxiDCdhWZEmAMr6iTCM8
+	 acuzT4MpEbpubEyAzv9F+mFS5ICyS1R2nEA29RsdcOU/TjdL+31EiYXrydhrP97d7a
+	 RRDWsauvhaW+A==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	patches@opensource.cirrus.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: s3c: use gpio lookup table for LEDs
+Date: Mon, 27 Apr 2026 16:35:27 +0200
+Message-Id: <20260427143546.3098519-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.1
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Wed, 25 Mar 2026 00:26:32 +0000, Alexey Klimov wrote:
-> Without poweroff node Exynos850-based board continue to draw current
-> (around ~60 mA with my test setup) after poweroff. Kernel also reports
-> different lockup problems and RCU stalls warnings continuosly after
-> last kernel messages about hardware being switched off.
-> Turns out we missed a write to PMU's PS_HOLD_CONTROL (PMU + 0x30c)
-> register that actually switches the SoC off.
-> 
-> [...]
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/mach-s3c/mach-crag6410.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-Applied, thanks!
-
-[1/1] arm64: dts: exynos850: Add syscon-poweroff node
-      https://git.kernel.org/krzk/linux/c/47d4dc90181c8ffa9ebcbd058e312873a46aeaca
-
-Best regards,
+diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+index 7def8824bbc5..57176719d8a6 100644
+--- a/arch/arm/mach-s3c/mach-crag6410.c
++++ b/arch/arm/mach-s3c/mach-crag6410.c
+@@ -779,46 +779,53 @@ static struct s3c_sdhci_platdata crag6410_hsmmc0_pdata = {
+ static const struct gpio_led gpio_leds[] = {
+ 	{
+ 		.name = "d13:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 0,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d14:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 1,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d15:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 2,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d16:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 3,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d17:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 4,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d18:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 5,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d19:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 6,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ 	{
+ 		.name = "d20:green:",
+-		.gpio = MMGPIO_GPIO_BASE + 7,
+ 		.default_state = LEDS_GPIO_DEFSTATE_ON,
+ 	},
+ };
+ 
++static struct gpiod_lookup_table crag_leds_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 0, "cs", 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 1, "cs", 1, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 2, "cs", 2, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 3, "cs", 3, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 4, "cs", 4, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 5, "cs", 5, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 6, "cs", 6, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("basic-mmio-gpio", 7, "cs", 7, GPIO_ACTIVE_LOW),
++		{ },
++	},
++};
++
+ static const struct gpio_led_platform_data gpio_leds_pdata = {
+ 	.leds = gpio_leds,
+ 	.num_leds = ARRAY_SIZE(gpio_leds),
+@@ -875,6 +882,7 @@ static void __init crag6410_machine_init(void)
+ 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
+ 	platform_device_register_full(&crag6410_mmgpio_devinfo);
+ 
++	gpiod_add_lookup_table(&crag_leds_table);
+ 	gpio_led_register_device(-1, &gpio_leds_pdata);
+ 
+ 	regulator_has_full_constraints();
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
+2.39.5
 
