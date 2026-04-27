@@ -1,66 +1,33 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6C930DEA6
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Apr 2026 13:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C293CF042;
+	Mon, 27 Apr 2026 13:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777295210; cv=none; b=b3J0TnQPFjFwWSJNqFe517kOQFWCDIm27mDx6S3hShWPBuT8D4YvQVDGHHuDPAR5jowb1kITaYUstboNym1MFCP+Purdmsjl76GVuhyzORWp8hFC2TGZ4pa+wps34cWAGTXNZspnjrVoWU4MdHpCVqbuYKpVPJqP6qBAdRhf+zg=
+	t=1777297781; cv=none; b=DycOS2/KA55N96qiwUNAT3gEHkoLTy/g3zlwWYKARq63qb3m+lTk9MGZ+143Rv4MATz8ZddRdgYoo5no1zVTZ/0cBo1U/++EbbAJx6tZ/NJQOTLC9YHKZhLGuCBi7TsqohktTzoG5eJtbvBQ39+LS3bjPY0I5sHgrt4URX3v5T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777295210; c=relaxed/simple;
-	bh=IYUpsYBEN6196owDLzfH5/F1IIkOtluq3J8p6eTninc=;
+	s=arc-20240116; t=1777297781; c=relaxed/simple;
+	bh=2KbPCo8VutnDTEndrERxI94xuQqQo17zeysownFnBZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVWYgtA2sPX+sSq/85fLNqUhZIP5N7Dk4+eVsZPtaHeAUKE01FnWQUwO1wY6Pr0tNPZ/upsndlJhTcvZxvQR0fPZ/kss+CKylIEEmSCjrmjH/OziBXi7bt9yZYJnFLlLM9NZ6gtGSy6Fwp1RgqrToILloq//bOFx0CwVkY1MidE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XM3DPMVE; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=jib2RFUnjJi5FOPKHO4fDaxcDDlHU1P06BEc+WtAwT2suObbDAeDM/C/SKZrx/x5i6r2V1aangXXRRPvQZ9Oyh0zg1tHSXLgUFKUhBlf7QZRj4wfXv8XwarFxvz7BH4PXAJrlGlOQbl4APlqgQ0fRPUqFvra8gh8qYR3ewi6ECw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJzGZrfq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XM3DPMVE"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488a14c31eeso84225395e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Apr 2026 06:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777295207; x=1777900007; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IYUpsYBEN6196owDLzfH5/F1IIkOtluq3J8p6eTninc=;
-        b=XM3DPMVE+K1XOoLpa98jBTuVUCFrDSQ+RquqB+lEApwbw5/ozF2g2iFFmpvt8XJIC6
-         ib6MlNKA6UcJmXzsEsMHc+SZ6IPzkBJlN2nrdzvsgjLQn3WX2sM5x9jGWYxmTdBi5N/p
-         u529qWO50tGXl7EOfgLEnEIiUqvLxBnPTnBxEF9mUtZ7+PPRpy6VoHjC3uz097BvAMlf
-         9LmLlmHnFiqDdOppWP3TgS/L1EfoNx8pZ7ZEnIk6zVaxM7qxsiU6uWfGFe2EwXs/aekJ
-         TGDNvBkwtOfovaKxam8pVGPx3ov5t3LaSFIM/hNhXX1kIMj7lTWcNNL5P+On2i0brFZ8
-         pVRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777295207; x=1777900007;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IYUpsYBEN6196owDLzfH5/F1IIkOtluq3J8p6eTninc=;
-        b=DnHemWou85qHbfsyn1yikvpLJpJP3kozDZH/R0VlxEdDbXG2bI0da4wmtqIqcTCRgs
-         Tiy5nFnHkpPOPMIEQALBu+z6W+RMM+43TpWNkgVKcGXaIJ3YmtkHCItuD0ugVjUwQoip
-         Ng0ponh4Uab5PrmgS0EKzPcWwCmWip/W7GMZtS5b99g5p5Nwbhy4u1RPthdz902+iZbZ
-         P+umYaAMl7ckQGW2CqhS14Ni4++WMTLPzR/pwAPTAr6DtDZYfwObNbZJggkFrEzodEaX
-         bwI/Ln2MQ6jNKN16seuET4WmMjHFtmrX8NkNmHygE5CyYdk9AZC2Ogyxp4PdpnQzYaSE
-         iyRA==
-X-Forwarded-Encrypted: i=1; AFNElJ+7mY+YGmlV+tVGLLsxF7wRBwdEG/NsLwXTD/a/Y9jyR0fYYF/THA6XYVJNp1199xEtt686pxazxsycaW9d0n7/mQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQeFbroV/nyss3xVOban5F4s/xRn/eIGkHBEtCNs1bt2PGd3kh
-	YyoQVmVoc0Q1JjW9LipeEITVWkAe4jsp38Aj1Qo7+op6H9OgVGiTFci6nCJCeRk8sOI=
-X-Gm-Gg: AeBDiespSgSPkZzFudYk9l98nA/fgv9bxIVvKIQhVXkg3MmYHZ0DEm1XOTl7bL68VZk
-	NjUCXlino6oT5vOuso+JJDTnTPo/yiz1tbp4sbBl0K1w2JW1isv8Umz8idsql0aX8C/A/yM+TPL
-	TWTpIqM+tQd18x3RRDa/WiepnetBYfO3hygFQeaL/pcqKHy8SWZFDGjzv8jtSJrlimyk0+5Yj6J
-	0RuwbBKn3b573G0zain/jfvK3mMigCRqlXo4s6YnJDMU1/1DQDYiX9kiWRSgg/g7AmO2fK+KlNY
-	pzFe1Ch0tkZl4PreN3Gea22bccjOTUYW/fW1F6CsoRiCO8M8P3SsncMEmzFODCPcjOkRuTGaqZE
-	F1kimDkfFlbt1k+eom8U3o+zLdefG3WI9lwdMuHqqJKttjoo5Pz4JmxYbfs0zUecXbkwceylqgo
-	utort1uIW9/ksRs4mzmwtABfk5YkF9Vj7HrZ+AnPrWy+0u98sBJ5EsUA==
-X-Received: by 2002:a05:600c:8588:b0:489:2005:b36e with SMTP id 5b1f17b1804b1-4892005b4e9mr301808215e9.19.1777295207493;
-        Mon, 27 Apr 2026 06:06:47 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488fb78d1bcsm348440715e9.5.2026.04.27.06.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Apr 2026 06:06:47 -0700 (PDT)
-Message-ID: <29a976ae-c8a8-4a5b-85c7-f52a7901a7d2@linaro.org>
-Date: Mon, 27 Apr 2026 16:06:44 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJzGZrfq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A63BC19425;
+	Mon, 27 Apr 2026 13:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777297780;
+	bh=2KbPCo8VutnDTEndrERxI94xuQqQo17zeysownFnBZc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XJzGZrfqkSXA4TaKEkh/H8cEoEiqZ8zSpRr92I27XRWfFJpUB/G9kRStVL+ZdDVKR
+	 eGm4vav3ym5AGqihXaN3pLwa7ywxJIEOI+xL1cK1MO/D8A/bupQ66Lr9oYhcIImVEp
+	 ju3+svof8MKf33p1G0K1woBltLEM4hJxDET3Qo364gPAZP3v/Pu6QybgMm/WWQPvUH
+	 H/2U2ScU+OF/L4F8aqoz0+G2Y7DMSxXm4pddc+WdpNn+jIBOD99Svaj/H3+cJJa07C
+	 uR+hY7itAVtovNf+Xu/FQMKVsE3V9M49WxivrKUyG/SgrSTjSN4sCHL5XuW0xwiEPA
+	 Hr3nSMhWZHa/w==
+Message-ID: <653b640e-8b61-4c60-a455-63a400b308e7@kernel.org>
+Date: Mon, 27 Apr 2026 15:49:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,28 +35,76 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] firmware: samsung: acpm: Fix sequence number leak and
- infinite loop
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com,
- stable@vger.kernel.org
-References: <20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org>
- <20260423-acpm-fixes-sashiko-reports-v1-2-2217b790925e@linaro.org>
+Subject: Re: [PATCH] ARM: dts: exynos: Add bluetooth support to manta
+To: Lukas Timmermann <linux@timmermann.space>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Marquet <tb@a-marquet.fr>
+References: <20260408-manta-bluetooth-v1-1-b7658e78359a@timmermann.space>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260423-acpm-fixes-sashiko-reports-v1-2-2217b790925e@linaro.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260408-manta-bluetooth-v1-1-b7658e78359a@timmermann.space>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi!
+On 08/04/2026 13:56, Lukas Timmermann wrote:
+> Enable the bcm4330-bt device for manta boards on serial0.
+> Also adds the necessary pin definitions and interrupt handling for
+> wakeup.
+> 
+> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+> Co-developed-by: Alexandre Marquet <tb@a-marquet.fr>
+> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
 
-I need to drop this patch, as it can cause silent data corruption.
+Incomplete/incorrect DCO chain. Please do not reorder tags. Git does
+them correctly, so you HAD to change them manually.
 
-Will send a v2 dropping this patch and adding a few more fixes for bugs
-identified by sashiko.
+You send the patch or you apply the patch so you must commit with sign off.
 
-Cheers,
-ta
+Best regards,
+Krzysztof
