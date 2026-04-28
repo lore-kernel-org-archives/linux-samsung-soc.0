@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D6B381B12;
-	Tue, 28 Apr 2026 09:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096603A759A;
+	Tue, 28 Apr 2026 09:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777368366; cv=none; b=Fmv62uG/hE64eykxqJ8tm9d+5I1hd6QhMp1skuRjqy9CY0mZFh87/sws5fZPWsrhL4gWGFu9K3BkXra1Q9SOp84zZBvNWsAWSiVLjeV9I/iUlzeAfAznDf3shao3Zhf1ifgZ4QCVbBz7DPjA1TnvFCiGUoSiBvv95Cy/FeLGSD8=
+	t=1777368749; cv=none; b=jj9D1ZmGbNsHsopEtMhAkVY5UL6CvZV/r3pePehKeGyAb/TktYb01v4IZTbNoxn81VzcjfbCg/UNwak9Ekv0w+jS4PGhOEmNTAYC8+ukWAaemc41oft3tDKgsGgziRBgUPqTJP+5KIvGksCerITevE0pr9o40bDA1dnEvS5veLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777368366; c=relaxed/simple;
-	bh=uZMFcw4X6G4NyZ2AkpR/wzfhivGs4KeUY1ksxX5CYJk=;
+	s=arc-20240116; t=1777368749; c=relaxed/simple;
+	bh=fSNGOPBGa0A0LSj6PeTlCNVS7DnLh6qenN2QOZYXnKQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZUlWFyMxtaPsHi2eX3Kk/1VFNwH8cZwgaAJL/4d6d9wDzfwj9RfQ570lXk913UXWtFJZtIhZU+fJkFOBPC0nb3XN+59/v0tpTAWokaamdwXr8MehkcQqg9rbUU0vDs4+OP/52aTcpA8JlVEVKcPb3hv7zq9jiwHYKc40/oz/Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpT8hcZV; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=bS97iFcQ3YcdDcfQsiZIz6SF0mQT7yd49jImiQ7wpZAX70np9gVUMyX5p8crhZlpLNNibKxBkuqdBOkVwUxNFdjS6o7m99gmCHgb4WiaR9HFA/50XDtXFnW4mQ3AWMDxsnSp+EP0vdbgMKxk/D8JqHTullzlgao6tLFH5KrUcFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKdqO6YE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpT8hcZV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86BBC2BCAF;
-	Tue, 28 Apr 2026 09:25:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKdqO6YE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4957EC2BCAF;
+	Tue, 28 Apr 2026 09:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777368365;
-	bh=uZMFcw4X6G4NyZ2AkpR/wzfhivGs4KeUY1ksxX5CYJk=;
+	s=k20201202; t=1777368748;
+	bh=fSNGOPBGa0A0LSj6PeTlCNVS7DnLh6qenN2QOZYXnKQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KpT8hcZV0Gc1QMqlWdt6nVmZt47Mp3ucObkc8302hyQzOBtJEcfxgPqVQaCUl3RFl
-	 NUhIh76/2bSkTvKmX2h9HQjowxC5MtWQK2FnSdhW9P2ock+SupSZixrMX1bYFtqWGr
-	 EF0GnlMrjJ+zSdTzJuAlf/IvDqv+RkV4+kx8/mRk3tShOmjL4o5fUcMm9ks9Q68oMU
-	 S38f+9pdygkNLq0V9eWkD/6ZFG7N/MlyuO1eErtEp8NCSqsYtubsEbYqCIxDBcaTTp
-	 Hd6fA9a1WhactpOEwVikN7Q8fNDXyJ7Vj79Pq3SofYzb2N3MCevkNHdyYxNzLFdRW3
-	 xrwBRz4Rzjnsg==
-Message-ID: <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
-Date: Tue, 28 Apr 2026 11:25:57 +0200
+	b=lKdqO6YEw6QozffP+yWzUbIzB65pJLXLFpvxDDx2FFlj0NEvYrdhcRZXz+Mklg8IJ
+	 iVrs4r+bWXbZYQc6zkREHs264XdXRIP0hyms/qE3q1npYXXyswaMlAwzfR7REOow5P
+	 ufrs133aq8IZhS19VrQJ7t3HfTgle5R/ECXEz2cDgL5XACMoT0PnV9Mi+5h5hlYQ0D
+	 0RI5nZs/UJgZ4/JCeSntsWfU8+jMdfKtJgh3DB3ro4ByFr+dnN8hcaEfsrstnYufxH
+	 LuGscfvgUgGRtoWib2HA01kR+Ycw/6GZGX/cPlvyNjWG5JsfyEjTfrhDfUMW0B502n
+	 7W/Qb+LptBeBQ==
+Message-ID: <7d090781-4fb2-4b54-9f6c-8e9a4ec2749a@kernel.org>
+Date: Tue, 28 Apr 2026 11:32:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,29 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/11] firmware: samsung: acpm: Consolidate transfer
- initialization helper
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
- <20260423-acpm-tmu-v4-2-8b59f8548634@linaro.org>
+Subject: Re: [PATCH] firmware: samsung: fix stale response flag in
+ acpm_prepare_xfer()
+To: Titouan Ameline <titouan.ameline@gmail.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260426210255.73674-1-titouan.ameline@gmail.com>
+ <84c292d8-d2a0-4c29-bd28-cc00f66c2f43@linaro.org>
+ <CABvHBc71N5NvYZ29W8hn9-gjOo40eh-hgcTAP3Nn1jrAfrgr2A@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,39 +89,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260423-acpm-tmu-v4-2-8b59f8548634@linaro.org>
+In-Reply-To: <CABvHBc71N5NvYZ29W8hn9-gjOo40eh-hgcTAP3Nn1jrAfrgr2A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/04/2026 17:22, Tudor Ambarus wrote:
->  	acpm_dvfs_init_get_rate_cmd(cmd, clk_id);
-> -	acpm_dvfs_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
-> +	acpm_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
->  
->  	ret = acpm_do_xfer(handle, &xfer);
->  	if (ret)
-> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
-> index 0c50993cc9a8..f032f2c69685 100644
-> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
-> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
-> @@ -58,16 +58,6 @@ static inline u32 acpm_pmic_get_bulk(u32 data, unsigned int i)
->  	return (data >> (ACPM_PMIC_BULK_SHIFT * i)) & ACPM_PMIC_BULK_MASK;
->  }
->  
-> -static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
-> -			       unsigned int acpm_chan_id)
-> -{
-> -	xfer->txd = cmd;
-> -	xfer->rxd = cmd;
-> -	xfer->txcnt = cmdlen;
-> -	xfer->rxcnt = cmdlen;
-> -	xfer->acpm_chan_id = acpm_chan_id;
+On 27/04/2026 23:37, Titouan Ameline wrote:
+> I was reading through the driver code and noticed that
+> acpm_prepare_xfer() only enters the
+> 
+> if (xfer->rxd) branch to set response = true
+> with no corresponding else to reset it to false.
+> 
+> Since seqnum slots are recycled, I traced what happens when a slot
+> previously used by a response-expecting transfer gets reused by a
+> fire-and-forget one
+> 
+> -> the stale true remains and the wrong branch is taken in acpm_get_rx().
+> 
+> Le lun. 27 avr. 2026 à 10:48, Tudor Ambarus <tudor.ambarus@linaro.org> a écrit :
+>>
 
-The code is not equivalent. RX bits were always cleared. This should be
-explained in the commit msg which would also provide a proof that you
-actually analyzed if it has any impact.
-
-
+This seams to duplicate Tudor's earlier patches and his solution looks
+more complete, so I will take his work with Reported-by credits.
 
 Best regards,
 Krzysztof
