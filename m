@@ -1,170 +1,138 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D9537C0FE
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 04:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777436279; cv=pass; b=Xc89x2+JnvdcI/BDzu1YCP/+Qt5PVP6Tc+sVJmwgMycV3OtVK7i6YK8i9tnuaPlDUSK50jbPqw5vPnn48U2w/BfKz28L/XbhudB6zfBrb2dzlpJVhJRzeQAWgVBWEt3HShKeFQ17M8rDADtOD+Cfx3v/AMBZQojyYNJFk4m0rY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777436279; c=relaxed/simple;
-	bh=AzwVlyIqYxfmPExGHlhzDdBcn2kCaAcRsyV/IiibDeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9eNh448iFY17Psav4pPZ1vmPF8VnrMTqmyjE/HCAbXap6WZkxQFNRxSgHB4j1KC4962iueoqaMF33RIEZ4IuNF+em7G9IdEe3VGqiEgrV9hMJty1Ug+PULERP1SOvHYufLk+gTsR1gvOwC49kGrpv+XYVdhe/HAh/+w+lQjj2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FOYbthWP; arc=pass smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808EE3B8BD1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 09:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777453656; cv=none; b=DdxqMrH9k6sxF28LE7d2i79mVZAMBh+Rr/fhnYs3LOTyWu0AJcnJpEWqvhTQ/z6nDtouUT03GW5uiW0dvVczJdnSVBYoleiwernKYHGmUSfkktXMkBwTu5/ZQhRuUrodWqcfbpOq+62y+CHrh9lEgXpA2KuTNdBOjQrEmTuA+E4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777453656; c=relaxed/simple;
+	bh=AwZuUXPk4/WpmF+r8jDpB7wrDuVU3zFwiYudmOuTakQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSBbup4XWb/2xd9NYVmNu5D2SaX6373qt0rLNXA0Vp0AwecTdGpC3VQVCKpB+MYmf5uNSGuaB30eIigsYoRv9vOcmeznk9KemFWKLiZTLpZ2DkF3orqwYshrQv9S4K85ftX0EhvA6zE0CKJ4ebRm/7HSRAxoGd7E7zsld8E+Mtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WzlnfwAr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FOYbthWP"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a3fcb2c718so10534083e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Apr 2026 21:17:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777436274; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZxDbvqs1jFoKltOLfNQ76D44kuRQs8wG8Rn6JAYyllGzcNIrzgltb5PbsVDxRCE1+Y
-         4Iw4zx786nk5zThYMnrVGvE0bCxZB2dJf2eKax9gurJSPqrEjlUXn41Vj0lg9G+ecMTw
-         y9LpZ4xayPtimXIdlgbfnZTwqpJDq5D5gT+dSs+v545FR8ohZ2vbl2FMgoetm0FOldfc
-         5xufhhxV7L1ZjwfSJuDOE71fbJPq7C5FdUiExBE4R8B85HBVMpAOZ9OEvlSStY6W2VQj
-         xd+cQq2XlMm5yaScqXW37G9Wc2N/6W7dl7XxX4ftx0JjlW2f95s8mwEiHDZQlcRdPmyP
-         dTdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=OGT5/UW9QnYnxFplrWMvYfyGjM/y+JrwSoKrwJn5UdU=;
-        fh=9aFcqGa685CKtTEYUfxGGU4Nhl0uiakm1QEWCFFJTVs=;
-        b=es70Rj0jxS9hF4zNjLiSVQ3ySl3t3oQfptzMZNckZWH+1q7I2y1LO9HCSyAjplFhF3
-         1wA/5opUFODehGGT7EAR2frz7HS2gTtSjEkt19UBnocYOvYXswWq+MdbjUhhGvwReSzm
-         rL8+tpEyi/OqI9IYjy0DCTePdNqiH1EghgaxrPNjra1nIXJQs+DRrJ3yvvZJpGAsS3Q0
-         7XZJe4Mdke4wJF5+XcoFCP2K53IVh0JcR6NtUfJCd3y5DKl5W0dssTrCSE9c3vXJUNCS
-         yWkqEPrhQyW6Pwhq8qPo+AKfHKmARFZhZax+FsOFLS3Wn1PtxzkaqnvaHBBhT1nxsPE+
-         EB8g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WzlnfwAr"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-488a88aeec9so149819745e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 02:07:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1777436274; x=1778041074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OGT5/UW9QnYnxFplrWMvYfyGjM/y+JrwSoKrwJn5UdU=;
-        b=FOYbthWPP8lZx5mA4McOSfJeVR0BRGPHdmtlgr+cFqDyaIit578GgtZp31cw0VznxH
-         wKUndv8E0Ym7rLT/XDgblyvzj9usFKBf1rj3kFh+mLXvelnaKsP7iTgtAULRzrmny72b
-         FRk3AuvUtX08mGI610FMukA4zPRDmNgO5zMjk=
+        d=linaro.org; s=google; t=1777453653; x=1778058453; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Lj5tmUBXJFmzYH2N7Dd27gLNCll+S51FdGFIIdlW1Y=;
+        b=WzlnfwAr4DJID5MtMtZ5nD/hIInr+BJPMOmbnxGKYJdc5oZo19tk5YD9fLAkzZx6XQ
+         t3oQIb8ONLqCn/clp6+dSaUcXmlYA3KCj10APjyZq7ZodhQmXFSqwnaLOmUGNbyCleTm
+         06KP2V5WK1ba+Rto9wLX78pIU7NRQJ04Q0CVYPJrBu62F7rfNGcphlKxmE4TuIEXtKCL
+         cvgXoI3me+BsJRE8jRB9xrFiYKz/sWrAL/oJepsxfZK1x95WzrxSfx7SCcR3wacUGxKy
+         CrMfpKo5lqE5pUI2WOG5Vws/QVrqM3u92g9nBypyXlW7YbdWoFLZ72kYqIFcDXyRtY+7
+         r+6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777436274; x=1778041074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OGT5/UW9QnYnxFplrWMvYfyGjM/y+JrwSoKrwJn5UdU=;
-        b=Svrg/42CltcZpSyZcseMEgQWrDMoyZS5Qz1Y4aYk+PzPkxVVME5bG4yjWYpD0AQowQ
-         +I4cVJPOG+LgO5VBjI1Vnvags5xD1T+4HSdazuSWJr9KKjQECcxhiYsGjINGVs8rYLAp
-         +RQBwcRH1zzOPZ8KPAxosW+YT3sObnS1FDtGpFjU7wP3HuNbXxfEqu+CCNF4RkUIOYKv
-         AYS6BNWPoe1oVRc6n5B+8Jq1CyZ8O8DtOwItKtf/KcGoWZsacB72HjUe7is1r1hozbKk
-         xIlLkqHTYVScLBXhKwhHUhYxr7MBTb6x7WBNSCnHTJXQrCS33ciWm8sJ5/3E3kgtiAIs
-         1RSg==
-X-Forwarded-Encrypted: i=1; AFNElJ+Lttsd7fWnamNzj3bxLBioswShRUJPivOzeou250PjVcgx97MDmAel4+I+5sUst1GcKMmau8kitcrJy4Ur5hxZJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0hJAsYXYMsrEbBs8FOs4A8yoG5OAZVcfIiuCN7ZGGg/Y2FZpt
-	rt482hat+mwqi32ln7BsREVZbZ2j2tH9WSDrv5e2S3lKByZCZi0oMTJZa2D6Fp1agCRN3JHS6o/
-	bIY4Gx4xess59tUwELs4yBBa8yjkLVTMKa5LiL+9z
-X-Gm-Gg: AeBDieswax0yJO2uSPRvtjw7S1KVSuubvWeTtMOw/Z9/UjyeU53FGa7yIhOL7JYna3Y
-	SYRj/s8hyFk78ssVfD86ez5+F0JxQj5aEBX90pP4HyqSZ3cVgDMlxekY9IgNg+JwKjy9ceTtCNA
-	84JTeXCu15jtW6DUcEHAInIHcHOZyz7zuHMtdmsco3Ve4WNV4wJg9sTEh290cLsPduzbyMrWfvt
-	kNsTtJxpwJ1IMioSrnOmp3g7C/HDeMB1f+MdvFjb+hCd1vI3RdYVLsDKFpOXDebr3puLYRRKXrA
-	ZukMkDWO4jzE4+FBCw==
-X-Received: by 2002:a05:6512:3b21:b0:5a7:46f1:d96a with SMTP id
- 2adb3069b0e04-5a749cf6fd8mr890120e87.13.1777436274082; Tue, 28 Apr 2026
- 21:17:54 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777453653; x=1778058453;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Lj5tmUBXJFmzYH2N7Dd27gLNCll+S51FdGFIIdlW1Y=;
+        b=oadn3W7CCop66GZnydkWyVV8q998P91s6+ear1k/u0hgzyftCL6WL3qsm8M5Kp6Cd0
+         Mowok1Cpjld2qX4A8YCoE1vMKa61hETW5u7Qxbl2S0cn6ViEjJ/MdwGOSZYSSkdWsuB3
+         gj0sSnV3Ox/kb3BO1Ki1ahAVdRKSbjScRvvkWs3AVuzlP0SkA6IzAzKkALxfXmqFdXEw
+         n6ONcenTNTpw6F29/wHHkev3V9agaAY1OVb9jmrM1uyDoHcvw/+tHn87IxFz8MBleZ6e
+         tGZxKaaOvzYrLmIievb/YVXXYYJG04e85X/Kp9UIEL/mP699FJRdO1h+YwtUU1UfIoOS
+         CPfg==
+X-Forwarded-Encrypted: i=1; AFNElJ/YMwSt6wLto46Rm2YotZRUPP/5AqWM/b2NuNqzQA7wfxzhHaqxXwg8aF9jOkId8Dni2VRfKfk/PkVxSdptOGZYvA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc0Y1DSHc+Q4AzDqXC1J4eZ5yzJF9NfI4i2nUFamuvDwu2tjYT
+	UXEC5+ISILl4wMABhmxv2rX6hGOU+/zMRgeq/mqwDWMfkZ4zwufcqY+tOtOVAqRnQPE=
+X-Gm-Gg: AeBDiesKxf4YfQbuIR7A/AIM1jk7d3fR4MUL0S9jQve6fifA8hYgYHOuBDi6lQKDHwG
+	0AeMndjArE4Uo9ovJ38ZI+oUjGgfyvG4lXucuDL/8zReq/Hko2/FeOvfaGxaC1A1GZPokF2BCwQ
+	dNdFaYUER/cf5m5RqmHKBw4cluaTA4uue9ficLKiqmkfTkOVJrqUuRxJNOTAy/2m/4P4d6U+x+R
+	li3tp0KkbPNsnYftytPVPPAdIF84IST9UDj9dAIn4O9fKrWvkycP7Qq5h2E14OcdXodUfkNb0Gt
+	a7lMd8qGYQV+08IxuDpPqvPr5gTWooRln8xEeQYRsbO8fLxgfua/xxVOeh/qRN5RAMAcbpogifH
+	55xy/8QA/IaancBITR4DLih2Bt9eFYoAHFgCw9VV4bguYp5feTwx40bWQ7/RdY0sjKUX3gw3FOb
+	1qNYcjQG7Bs8gayAhYacqMlpyWxijpPR18B2OXikMUU5k=
+X-Received: by 2002:a05:600c:2e55:b0:48a:7b55:12a6 with SMTP id 5b1f17b1804b1-48a7b55131amr28563845e9.0.1777453652729;
+        Wed, 29 Apr 2026 02:07:32 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c5d1a53sm40803645e9.14.2026.04.29.02.07.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2026 02:07:32 -0700 (PDT)
+Message-ID: <6dcb5348-e973-494d-adf1-7fa2dc5655f2@linaro.org>
+Date: Wed, 29 Apr 2026 12:07:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260428200712.2660635-1-briannorris@chromium.org> <20260428200712.2660635-2-briannorris@chromium.org>
-In-Reply-To: <20260428200712.2660635-2-briannorris@chromium.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 29 Apr 2026 13:17:42 +0900
-X-Gm-Features: AVHnY4JKvPmufJ1LEj4mzB6PnqIoSu-1P7-pbmF9YGak1q31h2Rrygv9WVJBRdY
-Message-ID: <CAGXv+5EPpB92d=ttP9ezOipL6=bC6WYpQakkd5L-weDjLpkrFA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] arm64: dts: rockchip: Add #{address,size}-cells to
- Chromium-based /firmware
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, 
-	linux-arm-kernel@lists.infradead.org, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	chrome-platform@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	Julius Werner <jwerner@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mailbox: exynos: Add support for Exynos850 mailbox
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260402-exynos850-ap2apm-mailbox-v2-0-ca5ffdff99d4@linaro.org>
+ <20260402-exynos850-ap2apm-mailbox-v2-2-ca5ffdff99d4@linaro.org>
+ <a02a693e-b06e-43bf-ac5f-8253f298c83d@linaro.org>
+ <DHNSP3FVR4ZQ.1PIRHF0KJGKI5@linaro.org>
+ <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DI52JP9JH6AH.3I5OKWOZ56MIU@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 29, 2026 at 1:12=E2=80=AFPM Brian Norris <briannorris@chromium.=
-org> wrote:
->
-> Chromium/Depthcharge bootloaders may dynamically add a few device nodes
-> to a system's DTB under a /firmware node. A typical DT looks something
-> like the following:
->
->   ## From a RK3399 Gru/Kevin Chromebook:
->   # find /sys/firmware/devicetree/base/firmware
->   /sys/firmware/devicetree/base/firmware
->   /sys/firmware/devicetree/base/firmware/coreboot
->   /sys/firmware/devicetree/base/firmware/coreboot/ram-code
->   /sys/firmware/devicetree/base/firmware/coreboot/compatible
->   /sys/firmware/devicetree/base/firmware/coreboot/board-id
->   /sys/firmware/devicetree/base/firmware/coreboot/reg
->   /sys/firmware/devicetree/base/firmware/coreboot/name
->   /sys/firmware/devicetree/base/firmware/chromeos
->   /sys/firmware/devicetree/base/firmware/chromeos/readonly-firmware-versi=
-on
->   /sys/firmware/devicetree/base/firmware/chromeos/active-ec-firmware
->   /sys/firmware/devicetree/base/firmware/chromeos/firmware-version
->   /sys/firmware/devicetree/base/firmware/chromeos/nonvolatile-context-sto=
-rage
->   /sys/firmware/devicetree/base/firmware/chromeos/vboot-shared-data
->   /sys/firmware/devicetree/base/firmware/chromeos/nonvolatile-context-siz=
-e
->   /sys/firmware/devicetree/base/firmware/chromeos/nonvolatile-context-off=
-set
->   /sys/firmware/devicetree/base/firmware/chromeos/hardware-id
->   /sys/firmware/devicetree/base/firmware/chromeos/compatible
->   /sys/firmware/devicetree/base/firmware/chromeos/firmware-type
->   /sys/firmware/devicetree/base/firmware/chromeos/fmap-offset
->   /sys/firmware/devicetree/base/firmware/chromeos/name
->   /sys/firmware/devicetree/base/firmware/ranges
->   /sys/firmware/devicetree/base/firmware/name
->
-> The /firmware node has an empty 'ranges', but does not have
-> address/size-cells.
->
-> Commit 6e5773d52f4a ("of/address: Fix WARN when attempting translating
-> non-translatable addresses") started requiring #address-cells for a
-> device's parent if we want to use the reg resource in a device node.
-> This leads to errors like the following:
->
-> [    7.763870] coreboot_table firmware:coreboot: probe with driver corebo=
-ot_table failed with error -22
->
-> Add appropriate #{address,size}-cells to work around the problem.
->
-> Note that Google has also patched the Depthcharge bootloader source to
-> add {address,size}-cells [1], but bootloader updates are typically
-> delivered only via Google OS updates. Not all users install Google
-> software updates, and even if they do, Google may not produce updated
-> binaries for all/older devices.
->
-> [1] https://lore.kernel.org/all/20241209092809.GA3246424@google.com/
->     https://crrev.com/c/6051580 ("coreboot: Insert #address-cells and
->     #size-cells for firmware node")
->
-> Closes: https://lore.kernel.org/all/aeKlYzTiL0OB1y3g@google.com/
-> Fixes: 6e5773d52f4a ("of/address: Fix WARN when attempting translating no=
-n-translatable addresses")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+On 4/28/26 11:26 PM, Alexey Klimov wrote:
+> On Wed Apr 8, 2026 at 2:08 PM BST, Alexey Klimov wrote:
+> 
+> [...]
+> 
+>> On Thu Apr 2, 2026 at 9:42 AM BST, Tudor Ambarus wrote:
+>>>>  static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>>>> @@ -57,7 +104,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+>>>>  		return -EINVAL;
+>>>>  	}
+>>>>  
+>>>> -	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+>>>> +	writel(BIT(msg->chan_id) << exynos_mbox->data->irq_doorbell_shift,
+>>>> +	       exynos_mbox->regs + exynos_mbox->data->irq_doorbell_offset);
+>>>
+>>> Use FIELD_PREP from <linux/bitfield.h> please. You will use a mask instead of
+>>> a shift.
+>>>
+>>> I would rename irq_doorbell_offset to intgr. It aligns with the register name
+>>> from the datasheet. You won't need to prepend _offset to the name, we already
+>>> see it's an offset when doing the writel().
+>>
+>> Sure. Thanks. Let's use FIELD_PREP.
+> 
+> +       /* Ring the doorbell */
+> +       writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
+> +              exynos_mbox->regs + exynos_mbox->data->intgr);
+> 
+> FIELD_PREP() wants a mask as a compile-time constant. Unless you want me to
+
+Indeed, I forgot, sorry.
+
+> add switch/case for different SoCs or I misunderstood something I don't see
+> how this is gonna fly.
+
+other option is to have a .ring_doorbell callback defined in the SoC data,
+and then you can use FIELD_PREP. But it increases boilerplate code just to
+ring a doorbell. I wouldn't go via switch/case. I think we'll have to live
+with the mask and shift.
+
+Cheers,
+ta
