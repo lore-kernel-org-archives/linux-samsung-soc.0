@@ -1,147 +1,120 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEB335AC0C
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 17:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434CB423A64
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 19:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777482171; cv=none; b=aNBmP0MrIU88vHnEi7kpX3PSgIOimYyGKPX3KVIFaa41aKPESd1ogoRs9AGyjY0IvjS7u9+Nz/qtTsKXP6HpaCO2zyUh/9zAhgNwx2aWRmaCWT0FwJH+1FnM/gL6KN4+c4YUC0KriXfwH1SBRSDe6j9EWEqVyLr5h0yTFUDcJ6E=
+	t=1777489234; cv=none; b=efmtoKOKXK5Ti/qQ9q0iMXJEJ0HAjvDn4xcKhPACEHv7nqKOFmBuS9Hdocstteg1cBV6TGX4Ssj2mDpZi1LkJCj/gNrc4rQJ1c+h8+8pTw3gBhptnqEWM5HxmqoyeIbQN3d3fiHli/ZbMIq5rFuDVHEMGvLVKZZIdkBTJNLNmcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777482171; c=relaxed/simple;
-	bh=oP0CV+puQtnqAudPjWQ6eG2kcGlvGEf4j8WHFrP4gG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgpxMTslAKRu+EsIUdQRdKTqn3GCqO9oH4BDkKCYehA3K0nOmyudbWWNuwTgrmQxv/elP19MicU5j9O+86BzUMbEwxRkA969Q0tD8QuUPkk/Yjy0cFzmyZ7ynu+aRavVjH0y7/e/WtXBOI3MP99nGZ1lGcO8JpLGSj4b+bYIIZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M8ZDn9J8; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1777489234; c=relaxed/simple;
+	bh=zG+o0MhzCy1MhAPEPaaXMKj2DtTAIlj69kKyo11vWYM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Retj/Ba8pIZv3VZhmtyjvi3+RejSsPOMrA4SQKI8xB9EvQEw4k+cBvLaszhpRSjiwr9M9eoBBQ4D/vu+fEHl9QY1TxkyKSQU+MrG5R6iOyN1KrL/JLgfmProbpMNAQ+5nKC03WmeSeU29ANISanUdkd6bquw22pnK+sPbjjQVyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=olGne8yx; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8ZDn9J8"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4838c15e3cbso117983225e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 10:02:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="olGne8yx"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4891c0620bcso449455e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 12:00:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777482168; x=1778086968; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
-        b=M8ZDn9J8Msr3NDylCnVIxwOwQz08PjGveWyRb7/XjqkWB5UDx082NPsg34OU9g6aPJ
-         TqcQJpVTaakQuUf9Y2g6yj5Isf7op9kV6MbFG6wACZofFn8TMj35e5KyPoSFl5pwuuQH
-         6sBItpme8djYXD0GoY5kYPmKOhFpbKCPS4EJ17m5wVjlZBSMk+CDzN8c5Zr0jz5tJdkS
-         u9taszG5vc0LCQ2EzpSe3MoyXYj0Uv4DSNEEmOVtt5oJTf1jy6mfnPWkvb/UkjmGs/D1
-         NN3BAwVUlMXWaxesZAR6VG/PGwIDyqYgC2PevACW14bE7u61kuE0DbDN5FruguT3Y4Zz
-         Mqjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777482168; x=1778086968;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1777489230; x=1778094030; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0DSk2ikmD/TKHxP326DjLJj6TQaKaQdWjt46lW8P0oM=;
-        b=pAOaX7egKIcEKP+1qtORbU1TJK/ayipYw+4t0xuU0c0HmYAlKEnDUTL8SsyRPpnrfl
-         1X2wlP75AdRxv3pd9a2G1e1ke9YC/oRlycyEWqm0II/Xmw9LZOJ0dxQNA9mfpp+ntNVa
-         muAGUFziMMeMy3pYx1+iuzhR0SXr/v0tNExAzpr8oRRFzkxJ7v+aDfKd3/DdNJDuFWUQ
-         MdmbCr+bK6IOpDSU9t0rnNGfryMnhofmu29vYTps6a53m8uj7czVt08zc6cPz9tsErJO
-         NlVOgi1t4uujNmxlLW2/3rubTn0kTPWPVAVR0OD61hd1HZlp53tPqVXzFZM+FvNUOnTo
-         Tplw==
-X-Forwarded-Encrypted: i=1; AFNElJ/joAkiFSIP2ydzPgvyUJlAQEjet5DP0SB1TweqiEoPTQDKXiGT4qsl0p6wA1xe/BxAB5AN6rliIZcGtkdwTwnXDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNpL7cBNfyg5TcRWq/RJsIn6gXC5+dLHVsebxalm66W6dQrQqJ
-	YAO9dXbDtah028RAj0eUPDlSLjSSM83tzH+aVggbwCiBGEVyD03nuuHyzRvnhQ5oWXQ=
-X-Gm-Gg: AeBDietGhe1gj85Yl1ytpSMypLeB7hDhko8edyrolFp6V0HBYlZLZD5EJ7M0HCR67+D
-	YpkZ40vQnCDpiDAKMAHSNDIHxQKX0QVpZpR50iWnulxEzfHQ3w1spyhLh9Z8e78pBMBdLOTmz3U
-	YA35qSOw4U1rj4GxvCFPMdAO5rLvQ3rJcpIoRQlADMxgXmASjoITTMe3r5co9QOR1t8/yaX96Il
-	p03OhVMvibfdJwdMDE/J4Ljd/1oH57AoDAKqzGxX6v/ZLjOWzHL7oPD5xEY4zeKo0qbu7IomuFN
-	VoSQdNWjEXCucYTo+HTMDQEXsyWTRW65U/qXzT4f+bGfVlWdxLZt3WLPjytDmBP7pSELWgV2EGy
-	Px0TP3580SgRQOpt02yEar3DuNuiOsmbFDSy2ipa/3jmCn/1nT8DfEhfAgKysVYwMNEoDbceHU9
-	r3JtCyEOSNm4NoVkYxZj3N9kIsaPWoKujKailEAGBFJOo=
-X-Received: by 2002:a05:600c:4f0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48a77ae5386mr141380935e9.5.1777482168330;
-        Wed, 29 Apr 2026 10:02:48 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b3d481fdsm7255405f8f.8.2026.04.29.10.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 10:02:47 -0700 (PDT)
-Message-ID: <83c64dc4-6dd8-4edb-8acf-3c731048d73d@linaro.org>
-Date: Wed, 29 Apr 2026 20:02:44 +0300
+        bh=+JAhGZcmG5DTNoPpP7LuatJXcV6lbxNbVHpf0DkS0EQ=;
+        b=olGne8yxcmCXqBWeRmexhG9r2AGiZXQVItjA7r8YD7IJvxKP0pQMi2Ki62l9g9TIYK
+         W9ueDVmUiNmdm4u9TGg7SGif7Gy2We4lC0XJumLSEfHNQFb7DFQJgcuTNdxpwtjCvdmI
+         Y9PTBGkHzkGVEUw1TtVlo/sZU/VQQTQmfypUn0b1p3QqWym2gR7pg04RJDhMLv+rurK4
+         Z655C8YVdRRYWUmIaFbgE4KllW1f1K98Kjs0ixG5A74qFmOrx5AW5rOfW/CTCKOEmEJJ
+         FS8orPv/PLPQF8t71t+x06loIUIil6v+GgCe3470RviGEUwgM0uU4xFGgEIUsvZy6IqQ
+         aBXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777489230; x=1778094030;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+JAhGZcmG5DTNoPpP7LuatJXcV6lbxNbVHpf0DkS0EQ=;
+        b=ozfgsbiYKTrHangwOFpnHbQf/jHGF1GfD1JuTNMX+2ckgcOv9RiWekgXH+YV5Bd/su
+         yHJPTgc4spDiwXiWHaj6H5BuLH4Z4mVEdvNhUooOF4aGmd63aNT1rsXe7KVufxwwAbXk
+         p0A04S0vx05YB7c6nVEQKAh3EU9tKjwq/Gt2qVll5aj5XQetBYxZw9xDMWQub/N4SPgy
+         1/YloYyzAe8FPBmpyLMlW2/lsXSiTjQfeKgXTt7i6H/MC7ROTBzTkmJDZLJwP1zSnATV
+         EU9cl5k7XrjacUK/tlHGm6jjtVmwEcZfjAsTvvMxQ6mrhpaxBY4J6eY2kf8H8gBh8qoD
+         ICKA==
+X-Forwarded-Encrypted: i=1; AFNElJ/9dkdn5H4AT8MC1eD435n2hGAQ9kgm9A6by5Yo5UakJ/05WiiL8SAIhpulCQ2fWTDKK4cLEXovBXcUGfIwLE9Mxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5jd/IPYzYNq22iw/3g15E5cssDGwZyYyJb1+hBO1A0ltY39DL
+	FiXAzpNYzHBRCG/iwYxbqeVqBeG8uQJGfyvGHJ/Uje7Vh5DqJXJIHAssT7SDFOjxIiuhy/B+Wjr
+	hLOxtL5c=
+X-Gm-Gg: AeBDietjggBvTymebSrIgkEL686y1aGVX04OpOce3DxNorzwUUWh8lLDcyfM6ox7nHn
+	ZA8z1+xBXRHJfno/hIwb2RjIobgDH5dP13gGaCjQuPu4P4MRa3PH97+4oaGKZOrkjjjZyUG44vJ
+	dqKWE/V0Zd+SggExe1VVGDBx53ciATJNMukY0pcRpZSaFlQ63go9fjbv7goIWAb4HP2zjQo5xVO
+	ZdPQjVZp25eu8DKbSGpO4LEMEIzUxzIGy6LsmnvzhR60XR+rNaNFHhWoRm41csv3ab9QWlwozRv
+	xnB42bO67ez4JpEZRvlat/Fu869j0A9rhNrCiU2KqmDxSB1x+cqNNWAP/LKRjZiNhJO5tOsMcOf
+	TjRGoncFppwWMNRkCaQ5heX8uYds9358+4xmqQZN6eWkT1sqifqM/A4CmV7gAgg5uFE3yQd+LLr
+	nOjEQoo6JUoETxPPkg8jjkUdl2u3FRPkzoIsq1fjzmV50cT/mOBYSEIGyPG/OrRCvdmrhe4mxsJ
+	JFhmCyK3Yeyj9uX8dI7YUfXats=
+X-Received: by 2002:a05:600c:1396:b0:48a:5565:ec3d with SMTP id 5b1f17b1804b1-48a77b1b85fmr145395505e9.22.1777489230144;
+        Wed, 29 Apr 2026 12:00:30 -0700 (PDT)
+Received: from [127.0.1.1] ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7b900b40sm26187785e9.2.2026.04.29.12.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Apr 2026 12:00:29 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Wed, 29 Apr 2026 20:00:24 +0100
+Subject: [PATCH v3 1/2] dt-bindings: mailbox: google,gs101-mbox: Add
+ samsung,exynos850-mbox
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/11] firmware: samsung: acpm: Consolidate transfer
- initialization helper
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
- <20260423-acpm-tmu-v4-2-8b59f8548634@linaro.org>
- <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <a63d4dc7-b01a-4da2-ac1f-6679c9030db6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260429-exynos850-ap2apm-mailbox-v3-1-8e2719608c46@linaro.org>
+References: <20260429-exynos850-ap2apm-mailbox-v3-0-8e2719608c46@linaro.org>
+In-Reply-To: <20260429-exynos850-ap2apm-mailbox-v3-0-8e2719608c46@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
 
+Document support for a mailbox present on Exynos850-based platforms.
+The registers offsets are different from gs101 mailbox, but the
+workflow is similar, hence new compatible.
 
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 4/28/26 12:25 PM, Krzysztof Kozlowski wrote:
-> On 23/04/2026 17:22, Tudor Ambarus wrote:
->>  	acpm_dvfs_init_get_rate_cmd(cmd, clk_id);
->> -	acpm_dvfs_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
->> +	acpm_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, true);
->>  
->>  	ret = acpm_do_xfer(handle, &xfer);
->>  	if (ret)
->> diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
->> index 0c50993cc9a8..f032f2c69685 100644
->> --- a/drivers/firmware/samsung/exynos-acpm-pmic.c
->> +++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
->> @@ -58,16 +58,6 @@ static inline u32 acpm_pmic_get_bulk(u32 data, unsigned int i)
->>  	return (data >> (ACPM_PMIC_BULK_SHIFT * i)) & ACPM_PMIC_BULK_MASK;
->>  }
->>  
->> -static void acpm_pmic_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
->> -			       unsigned int acpm_chan_id)
->> -{
->> -	xfer->txd = cmd;
->> -	xfer->rxd = cmd;
->> -	xfer->txcnt = cmdlen;
->> -	xfer->rxcnt = cmdlen;
->> -	xfer->acpm_chan_id = acpm_chan_id;
-> 
-> The code is not equivalent. RX bits were always cleared. This should be
-> explained in the commit msg which would also provide a proof that you
-> actually analyzed if it has any impact.
-> 
-Indeed, my commit message is inaccurate because I claimed the
-acpm_pmic/dvfs_set_xfer() were identical.
+diff --git a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+index e249db4c1fbc..c109c1f7af24 100644
+--- a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+@@ -20,7 +20,9 @@ description:
+ 
+ properties:
+   compatible:
+-    const: google,gs101-mbox
++    enum:
++      - google,gs101-mbox
++      - samsung,exynos850-mbox
+ 
+   reg:
+     maxItems: 1
 
-There's no change in functionality: in the original
-`acpm_pmic_set_xfer()`, the RX parameters were unconditionally assigned
-(`xfer->rxd = cmd;` and `xfer->rxcnt = cmdlen;`). In this patch, all the
-updated PMIC call sites now pass `true` for the `response` argument.
-This ensures the unified helper takes the `if (response)` branch, which
-performs those exact same assignments, preserving the original PMIC
-behavior.
+-- 
+2.51.0
 
-Will update the commit message. And revisit the other patches when
-splitting the firmware patches into their own set.
-
-Thanks,
-ta
