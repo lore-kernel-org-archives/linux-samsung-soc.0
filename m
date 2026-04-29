@@ -1,66 +1,33 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30F337757A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 15:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BC2389119;
+	Wed, 29 Apr 2026 16:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777476059; cv=none; b=fUcv57gdKpdwsMu7p2A5rVORmPvqDdbI9onT9BKJWWPp98dwuuZED2ADcyQkIJhDcEzl8HJu+1+kA2HNOcwNa2nSPHdDT1Ac3sztbMS6EZf/RLjTHktElgxWeX951oHCMs+E9stANEkI4KRw4kV9iuPDzuxgYrFuKnWSIe6+JiY=
+	t=1777481964; cv=none; b=LNLReOfQbzFhvJWA7ryv3U7WfbwJH+c/nD9OV+iCbhR8aTWvIO1o4nxAwea9nuDwl2WY26dmupT/1FQ6ThQ7VAQh49M9i9UyF1Q1GVi3E+EhbB9rcuKvBB8vENWcCkyRSa8GlXvwvpPw9zEkyNNViSyeWpPYj4jyw6juhEdx36w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777476059; c=relaxed/simple;
-	bh=G01D3imQ7+o35Ef3KRuQfIV17JN9Pd0G6yv1+UrifFE=;
+	s=arc-20240116; t=1777481964; c=relaxed/simple;
+	bh=srCC5SrqdDk6mgaB0Zke/5smVfQ5T/io3DDEjTXMrMA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JVQEYuMYTJ3GRauDHdXgUhBi77756Tn+LB48q44UslhOqF+mZFapRBq0oSe8jlPcIEZ+o1swXtbuqXJWVj8jbiM8dN7OboqCCvLYgMh9FP3rY1TrK65AKVXEHLWN5JxAt4PRG+aOUmFiCs7JdNb7vC71GxuyVz0bQo91L5rvFK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzsNQwSE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=XDU6k2UL6yzMnFH3YWPjMLG+I9qBzufk7MnY4BwMMk1ostsTtrrraM7PfjRCFNx23Mp5/IwhqWp7vIZd/rn1s0flB4nE8pxigyMIkwOHkrkej0IYlZikQ7ylGHSeJDg6Sar2o0YV40hQX8K64LP9W8KLazAG5wFfndisTHgg8/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9U/ggJr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzsNQwSE"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488e1a8ac40so154554405e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 08:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777476056; x=1778080856; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
-        b=lzsNQwSEhng+nLmcAb+SX5pYjDtxV1pJcPLQSsS05vnrhXcquTsxitaPN2BdI9LMl7
-         r+nftcDlD6HWNI491c5hHBNXY0CC3W48sTY52d5ib4zxvhBaQsEZA//z5p5IHjD3D+/s
-         8NDlhjYuchKHpTpk2AR0KMWrCRV3TIY5QbxkkTkeGxhDotq3aWTuKAzawknPHXxs3YxV
-         rXvJ+A+xGdSR2afXoF96Wbgezi7L3HsQFdy+1L9UHraG5I/1z1sgUeSgjSRvAzPQ2R67
-         pTc1CgB5YjBThxB9OJJa0RV0wmoiu3xApBCUyNydZQCA7SBfeT+irEHpeB5//9rFibiR
-         iNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777476056; x=1778080856;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
-        b=P92pTzStgFCwP3H2XYp/4CH0sKquvggdJ6inG9xM9uT6/3hTiBYi7ETRozE79+LWiB
-         89THJYA3NwDLG0Dw0L4w1pCOcYjitJla7PcBvGY1ti7lw9JfuYpgjwtnGoXEW9qf/oGI
-         M+/pRtFIfXQvJ3H8jjb6/q8E6Sckt0Eif6nM5exhxRHldLzEprNuvMWsTQ/IQAjhnjnD
-         KRGSIYXlWOPQEYlxE/4NiUCVKvia5riARZfFDmPqa1AIbrJTOrkUjghskkFgtMpZwgL1
-         Q2u9LSxt0s5tsgRg08ANE+8PQtlwqdnnTgx7pRJHt+IwEIg1ozYeAJIymSX/PWPAMBmT
-         QKeA==
-X-Forwarded-Encrypted: i=1; AFNElJ9lTgAEPsFr0F8w9xanXZ0jL5TQVS/0IujO+NLNyh/PMgaxopwKwYIjh7XQ/5T5Cea9PrjVSst+PHhNFJYFy1urcQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3auwLbOBdruANXajrNODxlRbT2MP5S8KyPsP9ZFkW9YGyyuVi
-	TKZG/J3za44a76h8wQaiGiscEjyxIaXJM0HET/eZvsICVy3e7vuL4CWz06XEc6DkS2g=
-X-Gm-Gg: AeBDieuTd9c8PHuA9xy3+uvfHaILD+a86OUZxyy9tCqvHTBNNKT0sb1Y6fSbEHdVAGH
-	38dAPnwsUeUNkVh3zlp6TH5KIBa5dPU0Oy+NqZ2A0qIwe5U3Bc8kMn17J+Q+sBBvYDSOehGA+4l
-	Q19NgtyLkwqX/C6lLKAo8DR3j4KyRHF6/5j1i9NMdeiIF2X+RzB4idiipd/wseWu2WcMJpZlqaD
-	bROJR2xNUlc4s4/9jhW0oh3u88BrSh9JOrON4CfWl1H4HGcBjHtcECFtrObZlEnAyZH8yBtaDGw
-	7OymYBLi+WT65cnOdSritSKqlFKv7SZJIdQyvBI8GFENbomt29BspGqSl0CV4RV8smVS8Jw6Iro
-	MKNtX0PJPBMfsky5eeIxlaDkk05kqwiun72uAlXyQ6o53Wl1mULLXsRP22iJ8LmIJ0uU8n2ZLys
-	AK29tA7zNn3N2SdiTS1YZ3cUEn5aX8vw1uSWXYHtrSwRA=
-X-Received: by 2002:a05:600c:4745:b0:488:9bf8:7f17 with SMTP id 5b1f17b1804b1-48a77b054d8mr122018735e9.14.1777476056171;
-        Wed, 29 Apr 2026 08:20:56 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b76e5afesm5634461f8f.30.2026.04.29.08.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 08:20:55 -0700 (PDT)
-Message-ID: <001a226f-606a-41fe-a684-c208d8898e17@linaro.org>
-Date: Wed, 29 Apr 2026 18:20:52 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9U/ggJr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33BE4C19425;
+	Wed, 29 Apr 2026 16:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777481964;
+	bh=srCC5SrqdDk6mgaB0Zke/5smVfQ5T/io3DDEjTXMrMA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j9U/ggJrW0NAaHVjT29mNEDAgZaP0bmGoZ5mblk9XMX7YAasN9d6vSiGEtQRaLyk1
+	 ZAQcW4PSnI9MwoRkTgIMIzo5839qKqFkOEfWYmUuCZI/S/cvDS5tCTPE7/JRqHNQnJ
+	 CLR/CkYakhcnRGP0MmFj9QZdxhdsz57puTbBumYzOVG78f92XBlLXgtAHAjuoskApv
+	 pz5RweKnmKey+Ejbrkj5uRaEh91wL+vrG/bJzESPDSZpRrIBp2ji5uN4kTppZ0BfXm
+	 9lP4zAryS7h1XIek/aUN6rcJ2Vdfdrq2RNigHwRaFOmE4Jp8CLRNrxDXyzFrbmQDeZ
+	 bdsHA6qvLmi2Q==
+Message-ID: <80599996-00e9-4e6c-9215-cf1c33a861bf@kernel.org>
+Date: Wed, 29 Apr 2026 18:59:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,68 +35,106 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/11] thermal: samsung: Add support for Google GS101
- TMU
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+Subject: Re: [PATCH v10 3/6] mfd: max77759: add register bitmasks and modify
+ irq configs for charger
+To: Amit Sunil Dhamne <amitsd@google.com>, Lee Jones <lee@kernel.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jagan Sridharan <badhri@google.com>, Mark Brown <broonie@kernel.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Sebastian Reichel
+ <sre@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
  Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- linux-clk@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
- <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
+ Kyle Tso <kyletso@google.com>
+References: <20260331-max77759-charger-v10-0-76f59233c369@google.com>
+ <20260331-max77759-charger-v10-3-76f59233c369@google.com>
+ <20260424082639.GI170138@google.com>
+ <fc767096-f39d-4088-b3ad-cc85bdedf36c@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <fc767096-f39d-4088-b3ad-cc85bdedf36c@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Krzysztof,
-
-On 4/28/26 12:24 PM, Krzysztof Kozlowski wrote:
->> Dependencies
->> ============
->> - context dependency on the ACPM fixes sent at:
->>   Link: https://lore.kernel.org/linux-samsung-soc/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org/T/#t
->> - cleanup and prep firmware patches 2, 3, 4, 5, 6, 7: required by the
->>   thermal driver (patch 8).
-> Well, cleanup in one driver cannot be a dependency for other driver.
+On 29/04/2026 02:29, Amit Sunil Dhamne wrote:
+> Hi Lee,
 > 
->> - bindings (patch 1): required for DTS validation.
->> - thermal driver patch 8: required by defconfig (patch 11) - logical
->> dependency. 
-> Most of the patches should be taken before, which would leave you only
-> final new firmware interface as dependency. Creating such unnecessary
-> dependencies is not helping.
 > 
-> And the patchset even grew and will conflict with other firmware work,
-> so I will deal with firmware bits and I can provide them via stable tag
-> to thermal for the last patch.
+> Thanks for your review.
+> 
+> 
+> On 4/24/26 1:26 AM, Lee Jones wrote:
+>> On Tue, 31 Mar 2026, Amit Sunil Dhamne via B4 Relay wrote:
+>>
+>>> From: Amit Sunil Dhamne <amitsd@google.com>
+>>>
+>>> Add register bitmasks for charger function.
+>>> In addition split the charger IRQs further such that each bit represents
+>>> an IRQ downstream of charger regmap irq chip. In addition populate the
+>>> ack_base to offload irq ack to the regmap irq chip framework.
+>> Please reword this commit messages.
+>>
+>> Using 'In addition' twice in such close proximity reads a little awkwardly.
+> 
+> Thanks for pointing it out. Unfortunately, this commit is already part
+> of the linux and linux-next so I am not sure if I could fix the commit
+> message retrospectively.
 
-Sounds good, thank you!
+I don't understand why you decided to put this with USB patchset. We do
+ask not to mix subsystems all the time. You made it unnecessarily
+combination of at least three subsystems.
 
-I'll send the firmware cleanup and preparatory patches in their own patch
-set after the firmware fixes get in.
+Do not do that.
 
-Then I will resend the thermal driver once all the firmware patches are
-sorted out and a stable tag is provided.
-
-In the meantime the thermal maintainers can still check the thermal driver
-proposal.
-
-Cheers,
-ta
+Best regards,
+Krzysztof
