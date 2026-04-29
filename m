@@ -1,129 +1,79 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158F32550D5
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 11:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AD13F0A98;
+	Wed, 29 Apr 2026 11:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777460752; cv=none; b=HSdSJnJJcdZrlMkUyb3hinBWF/LjCfsqgXOw/Cay0HOxTIDC7XFDLpJDMzP0Cmp4sIRDwjOhXm7LcQq3Zj7iBnEaxtUGxu9LRrcZo4zGLjIdasGr1HUyVUx/5YAt8IgytB9maIcaNkICo/gf5UvlU81WdHpUUT66Rayl1d2V50o=
+	t=1777463028; cv=none; b=kyRESelmfO3Wr4uc++2Pww2BbhhfUS8ppLp7TvByabjwOsMhC9FzqLsWhzKSX1VEiK6CpqntI/pNCql/N0TJ1tP8W4QObUjSs+IlEDyzl84Rr958bN9nbmcwQYDEC45EnvO/2+TOpW6S3qIq6zV3o+w2GTW5bfTH6o+Lckx0uw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777460752; c=relaxed/simple;
-	bh=4XwGRnQC1kznCkI3mzdzwu79hRIMT1AKu7AFKtwugjw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LDHAlDMHKtPwC5UL9YFAO5Tqg9R0nnHkdi2YA4823aYH/rpSQKf09+6J4Lzxjt2HSasF7mmaAHDHepHL6jRygid451zUtPPOlu0VHcr29rBxKcMZ7upI1fgcO5ivuKegUEy31vy8SZEuSVuiW9393EsWwYa24LZnuIBn8tv3jFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VWYufu1s; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777463028; c=relaxed/simple;
+	bh=5C5WjMDCk4kbiTHj64gwZ34T6TJ7DSCuppc2MhbBVao=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=rkb8CCglNGyi+PXwa4MGISASgZshFr3v24Rs9tHcYSBJv2o4PiEM33js+YhQw5JXSh9j6jDPRwFOGyFIzihRqIQE/8FedfXflaM3H0UQ+ZIy/7ao88cS99fM4HnVNh/KeU2qbeiLPcoQLd6BbTDQDM4r/src3H5q9NoCMY59pKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cvcX78xV; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VWYufu1s"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488a9033b2cso130106135e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 04:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777460749; x=1778065549; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4XwGRnQC1kznCkI3mzdzwu79hRIMT1AKu7AFKtwugjw=;
-        b=VWYufu1swCOBuEEd05vaIFO4jenyEWf5BPjkF3Vu7DA3spFRBvDjBSYwSVsdtLShc5
-         tNOCcPZV+TOgDFrfcPjMIIPl+XIlo7D5l1hJ2KKyi3rN5+wih8P1Lnn6/Eb/UR1v8xoM
-         7g4JYR4qIkH138hsr3+i+IJrtffSpYF8lCMsUyLviblNPytasDBKOAOKW/cPe35DJUAI
-         afMqxck7ZhFycnsJdgf43cs2MIpgIRLbTa36CGcvM+llLIL/tpMu3PAMkO3tJrtw300S
-         5ngBvoon63E/wFl8Ead53JBukYSEu6C85wd3O3/7GB0Rr2zYvkDeZXQ6zXhx+6F/SUdD
-         J2zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777460749; x=1778065549;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XwGRnQC1kznCkI3mzdzwu79hRIMT1AKu7AFKtwugjw=;
-        b=i9UAARtLVSSSmqB+RIrO6ZYQlSfoeqYeSyuKcQlVLbxn7YSaLscIeSXGVgxaEEVogO
-         px2pFUxoFyMu8/ydBOCzc78qrElhm8eaeNUewBWpwZyNIDWiHiEqdABrDU9amFtbtuOa
-         ivLHUkHb3+14eKLslg8SJt3Ax/wopciW+Q8ska8bJiHoOmhX6myX4T5rljfvMIAMy4j2
-         krVVKuEK1jvYtAlwA0Hw2eg1VkK/SXOkJfeYnKbvc2ZtGnInLoKrcrTeTLt+i+OMFS1a
-         NZRHYXTs+WyxCHkz4RrMzAQiLf9JBaJAkAVBrBDf8E4ZJRlJSc+lMU6PhBNjrpUmXK6i
-         MTTg==
-X-Forwarded-Encrypted: i=1; AFNElJ/pDwiBN55urkVQ4wtPFJVv1ZgLFdGOQCBENzjw+kPK76nJkRIVGSTZszc7XHi4hDx/bRugF4lHT/W517udpqFldw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOC3bnvjDpabHbs3zMeqeSiC7VZ7KMJhpo24JZDgwHfFpaQwBn
-	LnDu+rUa/FeeZ/KcySgyRjig3hm7Qayt9OQQ1RjnAKeIAmfvRvkquHradAsaxHqRqkg=
-X-Gm-Gg: AeBDievCeUnn/gWqtiZPo4kDHvQd6HaaMZ32vJhMQqokNxd6BDOYYR35wnNmqGDf6Vh
-	hjG/STsABaQZJS5Th/MqObC6heWnq+CkrmJCDnsbd0ytEexMfBVqKQgJ4BsDuvUQB3yFeqEkUon
-	Qz4RREpt4weYHbDTU9HMEb7oRABpIDe7CTOgQOEqVSOLX3uHF4it/X6MQcTXYznZFA8oMhyTVe7
-	12LYaLPiSNmbGDHTkKgoIcmJ/VQtv8SLt1QZZivz5BKRpnKoa8JEQA7OBO999pfOtUbUnOvpoaZ
-	+Old/nkcAhPkYQQJsAvQ3ymAUbgZG2KEVRlqc8vfBPNTnDvJFPcGln8wXDfWMUJAiHGRWLFtIup
-	ljc4Yrwxx+XC7eoLsDhpbF8YlPaJJxXsuHWBxly/cCy1hdXH3XvnrhhmOlSy4kyv6fuFtz9oiF1
-	/MNM2ICL2csUZ4eyjt43VAcNv8tX5FZMfLxy7X7F4qzXo=
-X-Received: by 2002:a05:600c:4f92:b0:489:1ff1:74df with SMTP id 5b1f17b1804b1-48a77ae5430mr109685855e9.1.1777460749283;
-        Wed, 29 Apr 2026 04:05:49 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a7c2fb999sm23367655e9.6.2026.04.29.04.05.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Apr 2026 04:05:48 -0700 (PDT)
-Message-ID: <6d21cfc8-4686-43f2-a320-1b9505d38338@linaro.org>
-Date: Wed, 29 Apr 2026 14:05:45 +0300
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cvcX78xV"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 7EAF0C5EF22;
+	Wed, 29 Apr 2026 11:44:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 67BF6601DF;
+	Wed, 29 Apr 2026 11:43:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 338701072818D;
+	Wed, 29 Apr 2026 13:43:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1777463024; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5C5WjMDCk4kbiTHj64gwZ34T6TJ7DSCuppc2MhbBVao=;
+	b=cvcX78xVFs+rZdgta+uYUEgQ/SAm/sIgoeTFarUqiBRML5ZY/9UiWUx7+q+JQeBF8vWK+P
+	Wdgz8vkjIaJCxLrbMnVNSC5QEcjF9CPznrQytjqO+77z5lRXw+3zTar8BcBL+nV0oa3JqN
+	QxK20Tuix558dogywl6fJlAAfr099sNplQZMsVeDE8dj17uY/vSXvbe+TtGl0Nsz7Qsgqs
+	PE8WgLi0UXWMVC5q2p6MuSu/2U6DuAQs2g8cftVQU5Oohwqg9jFZD1FSi1e9nAREZ0TuHl
+	TjkLJMZcZTF+Sh/huni6gXY3usH9ZYfg+K9VsxZt4NzDZLY0eF7/WnYKcODcjw==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] firmware: samsung: acpm: Fix memory ordering race
- in RX path
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org,
- andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com,
- stable@vger.kernel.org
-References: <20260427-acpm-fixes-sashiko-reports-v2-0-1ff8de94a997@linaro.org>
- <20260427-acpm-fixes-sashiko-reports-v2-4-1ff8de94a997@linaro.org>
- <6bba950c-5527-4613-8c16-b52534bc75a5@kernel.org>
- <4421c95f-3ee7-40ac-b239-d877709b498a@linaro.org>
-Content-Language: en-US
-In-Reply-To: <4421c95f-3ee7-40ac-b239-d877709b498a@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Wed, 29 Apr 2026 13:43:38 +0200
+Message-Id: <DI5M1Y2NCMPO.1YJOI1CRHENOC@bootlin.com>
+To: "Osama Abdelkader" <osama.abdelkader@gmail.com>, "Inki Dae"
+ <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
+ Park" <kyungmin.park@samsung.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Hoegeun Kwon" <hoegeun.kwon@samsung.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 2/3] drm/exynos: remove bridge when component_add
+ fails
+Cc: <stable@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20260423200622.325076-1-osama.abdelkader@gmail.com>
+ <20260423200622.325076-2-osama.abdelkader@gmail.com>
+In-Reply-To: <20260423200622.325076-2-osama.abdelkader@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Thu Apr 23, 2026 at 10:06 PM CEST, Osama Abdelkader wrote:
+> Use devm_drm_bridge_add() so the bridge is released if probe fails after
+> registration, and drop the manual drm_bridge_remove() in remove().
+>
+> Check the return value of devm_drm_bridge_add().
+>
+> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+> Fixes: 576d72fbfb45 ("drm/exynos: mic: add a bridge at probe")
+> Cc: stable@vger.kernel.org
 
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-On 4/28/26 3:57 PM, Tudor Ambarus wrote:
-> Another thing that I thought about was about the reordering of memset
-> and set_bit in acpm_prepare_xfer(), but even there, the internal
-> execution order doesn't matter. Both are guaranteed to be completed
-> before writel (wmb).
-
-I need to correct myself here. While the wmb() inside writel() does
-prevent the hardware from seeing incomplete state, my previous
-statement was slightly misleading regarding the local CPU pipeline.
-
-The wmb() alone does not prevent the CPU from speculatively trying
-to wipe the memory before it actually finds the first zero bit in
-the bitmap.
-
-What truly prevents speculative execution here is a strict
-Address Dependency (implicit barrier). The CPU mathematically cannot
-calculate the destination pointer for the memset() until the bit in
-the bitmap is identified. I will add a comment in the code describing
-this dependency.
-
-In what concerns that set_bit() in acpm_prepare_xfer(), we only need
-to ensure it is visible before the next TX thread tries to allocate
-a sequence number. That is completely protected by the tx_lock
-boundaries. The RX thread does not care about set_bit() at all — it
-only blind-clears bits based on the rx_seqnum it gets back from the
-firmware. I'll add a comment documenting the set_bit() safety as well.
-
-Finally, regarding test_bit() and find_next_zero_bit() in
-acpm_prepare_xfer(), they are functionally equivalent. Both are
-relaxed, barrier-less reads. The non-atomic find_next_zero_bit()
-introduces zero concurrency problems because this phase is strictly
-a read-only search (if we read the bitmap just before the RX thread
-frees a bit, we simply skip to the next available one).
-
-I'll reorder the patches and put this one as last in the set, I want
-to have the find_next_zero_bit() before it, to not touch the same
-code twice.
-
-Thanks,
-ta
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
