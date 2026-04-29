@@ -1,177 +1,135 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD17317173
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 13:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30F337757A
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 15:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777470947; cv=none; b=pi25jxgEujbziYaK34wPfqtzzShA2gPr7aWMXeNp8iv+C3VKQC4LZTDVDAeA4xtTnQakvzuDWitfhyLVrmuqBCxo0S48WVqf349ri3wtxA62pmCahRxd1bhwiqNoavLC50/1d3duKU/TYn2er7n/H8dQmjaGDHuNiuao3HzsDXg=
+	t=1777476059; cv=none; b=fUcv57gdKpdwsMu7p2A5rVORmPvqDdbI9onT9BKJWWPp98dwuuZED2ADcyQkIJhDcEzl8HJu+1+kA2HNOcwNa2nSPHdDT1Ac3sztbMS6EZf/RLjTHktElgxWeX951oHCMs+E9stANEkI4KRw4kV9iuPDzuxgYrFuKnWSIe6+JiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777470947; c=relaxed/simple;
-	bh=buDqtxL5iiA+P59BL7gOogsMTPfTAbw/6u3MZ3bRXX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYDrNFPW8vOK7Ifd3qzdD3NWVD5TNgb0ohtgBazE98w/0DH1GSIcr85Y86E1R1QnjUi7DDZ1TPUrUArI3LP9z/9RRXiOOsMHbFJcGRQLEXnhIfelNPDVrvgucTyVtWOhcgZAWwdrb4BFckQdLM4c+WTjsDHXjlz4GQ9Wpuk48AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aaye5le9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aIpiukdD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1777476059; c=relaxed/simple;
+	bh=G01D3imQ7+o35Ef3KRuQfIV17JN9Pd0G6yv1+UrifFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JVQEYuMYTJ3GRauDHdXgUhBi77756Tn+LB48q44UslhOqF+mZFapRBq0oSe8jlPcIEZ+o1swXtbuqXJWVj8jbiM8dN7OboqCCvLYgMh9FP3rY1TrK65AKVXEHLWN5JxAt4PRG+aOUmFiCs7JdNb7vC71GxuyVz0bQo91L5rvFK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzsNQwSE; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aaye5le9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aIpiukdD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1777470945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-	b=aaye5le9VF60v6sPq4CiCo/9qzuijopOb5flH3s2LuBRfAMvPzMGoAoqOxQUO0Mah2s6I7
-	xZwl9Rt/ndjWlsIfBeDqIBI5tNcIpm5MaQnpq6TY6iuFhvQPjgIjN4ZmdwPGdTCf/gn/hW
-	6NQxs60dSSYqLLlGdFhQxLqCDm4jyOA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-dQJF8wC3MISyM3fo95a6Dw-1; Wed, 29 Apr 2026 09:55:44 -0400
-X-MC-Unique: dQJF8wC3MISyM3fo95a6Dw-1
-X-Mimecast-MFC-AGG-ID: dQJF8wC3MISyM3fo95a6Dw_1777470943
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8acb26fbbb2so185130696d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 06:55:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzsNQwSE"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488e1a8ac40so154554405e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 08:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1777470943; x=1778075743; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-        b=aIpiukdDtwMfeu5U8x7pAWQk1igCGTDDEl1VOIRCChHAvLkCYOLBCQMfizk5Wc6fa1
-         GOG7IQiJq7VDTj0HSc8ckVqTRf1S3/KpuB0/d32uzyX0YHIZtw7RBZqAx+ZKrN4UVTfo
-         Wk1sSJ6utW7+ydSYNVH+UhTbbxJlUjVTI7IZn1ILhR0IfiXHZB5FK1FPmbY826fn3LT0
-         VwS6vJoA4sAMMTPJlEBvIFwXLFoDtJDwsQN34h9RA3ZoKjoIjywy/A2laQ+5cpldXa7L
-         yxl2MXhjHWhVfwRurbF3kN1ap7u0rixf/xvcabi7NTBsFk9RW779MIc6azHgnNL/kLMM
-         gDcQ==
+        d=linaro.org; s=google; t=1777476056; x=1778080856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
+        b=lzsNQwSEhng+nLmcAb+SX5pYjDtxV1pJcPLQSsS05vnrhXcquTsxitaPN2BdI9LMl7
+         r+nftcDlD6HWNI491c5hHBNXY0CC3W48sTY52d5ib4zxvhBaQsEZA//z5p5IHjD3D+/s
+         8NDlhjYuchKHpTpk2AR0KMWrCRV3TIY5QbxkkTkeGxhDotq3aWTuKAzawknPHXxs3YxV
+         rXvJ+A+xGdSR2afXoF96Wbgezi7L3HsQFdy+1L9UHraG5I/1z1sgUeSgjSRvAzPQ2R67
+         pTc1CgB5YjBThxB9OJJa0RV0wmoiu3xApBCUyNydZQCA7SBfeT+irEHpeB5//9rFibiR
+         iNTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777470943; x=1778075743;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=E4gmtst5bATy4vi+nqQOmDuupzzNRv5w7Vbola4ydK4=;
-        b=l7sz2Nt3yGi6IS3DdQwaF5LSyXUlpkiPlyDwHcWKttqxvj46C+JjQc6fsUPMD91r/1
-         OQ2e4lp+SWtNyhSt8RyHyI0Lt9+JFq9kiJhk9rMvoD+NUrX7oUjiADD7QG7UPzJ5pRsx
-         r4CuURbamMhQ40XhLFNMRO8tloASbmH4vkCNETwaYw87jLqNyh8DNodadxV0vxGS+12L
-         bKG74h1lMjvP6iY3m6zJULO46LQcIHaz7xAocfidnayWZpAXGTPQE+xtfghB1fJI7WAL
-         Hp1DN9MAUbqTyigPxv4e4W6Ms+td040ML+Qzggc6hpxytTklQ1yUI4kK8UbOgv/lraqO
-         RzAA==
-X-Forwarded-Encrypted: i=1; AFNElJ9VH3yZzeS6aJ5dkFomNGtZVg6VuAm+3gRFz1etswV5JRij4uvpKHR4GR9iECVDxFnflUkFgLiMK6KonR3p9ioUDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw97JVXpu3vr89Ds0OtuJg+OLr1R8ezHBIUD6uIfJoNGu1rCCFX
-	iHG+PIPfLoGRlC7P+233iIzpuS1V+fGREvEO2Bepm2dZioSsc0IXwmZp96zAIX17ibbeaK6kp+d
-	d0N61SwvVDdTkBXNjVfXKBqVomHDI6DTBh1fWmKploVaVnGfQm0fw3jErA787lVBc5JghIN1N
-X-Gm-Gg: AeBDieueBb54ArZl9llIDz70SzFSYCtfWpxiYlJTDHbZTvDYCNFCgFWT+Te63JZ+kpM
-	8TiXxJd1iO5lGgRpcMwPDvUw20/9DzEYA0yrrFohA/Xcai932Qrf8shwqatIftGegJm0qA/vtKS
-	fBgx13xjGZfP0MTCswQsAEMcFOh5Lybb2zo4lhJGZOkbQHW057RDpPUmYFSlkGU56HqG2WcF0QN
-	dn001ajmHEs92hByyKmm9Jo4CU6w2MZ68YvKQuUEMCjJUFJ/UYlsfeREM/RsjUVpy2s6u3JNqqg
-	Br3E4hr4VakJZnROu4tuSR4tGM061qu1znVNQF0sRdSxJusLMhgfiozQC0/Y6Y0gGMLKsrAWGjq
-	+BnHspd9kc1MelLXMXcwTUcxJQa4IWUE2POwiI15ZB3vnPcNcTgJ1fYSKXJIsr/0L+g4=
-X-Received: by 2002:a05:6214:600e:b0:8ac:aeb0:2eb4 with SMTP id 6a1803df08f44-8b3ede04448mr57443776d6.45.1777470943492;
-        Wed, 29 Apr 2026 06:55:43 -0700 (PDT)
-X-Received: by 2002:a05:6214:600e:b0:8ac:aeb0:2eb4 with SMTP id 6a1803df08f44-8b3ede04448mr57443326d6.45.1777470943011;
-        Wed, 29 Apr 2026 06:55:43 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b3ef86e2f1sm21005096d6.48.2026.04.29.06.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2026 06:55:42 -0700 (PDT)
-Date: Wed, 29 Apr 2026 09:55:39 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, arm-scmi@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 01/12] clk: add new flag CLK_ROUNDING_NOOP
-Message-ID: <afIN2y_PCGofGAKD@redhat.com>
-References: <20260309-clk-det-rate-fw-managed-v2-0-c48ef5a3100a@redhat.com>
- <20260309-clk-det-rate-fw-managed-v2-1-c48ef5a3100a@redhat.com>
- <177742893645.5403.3938693995862346406@localhost.localdomain>
+        d=1e100.net; s=20251104; t=1777476056; x=1778080856;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S1mflq2JmCovYJyevIlYYXkXeU9o+ZpGv13YTJw53l4=;
+        b=P92pTzStgFCwP3H2XYp/4CH0sKquvggdJ6inG9xM9uT6/3hTiBYi7ETRozE79+LWiB
+         89THJYA3NwDLG0Dw0L4w1pCOcYjitJla7PcBvGY1ti7lw9JfuYpgjwtnGoXEW9qf/oGI
+         M+/pRtFIfXQvJ3H8jjb6/q8E6Sckt0Eif6nM5exhxRHldLzEprNuvMWsTQ/IQAjhnjnD
+         KRGSIYXlWOPQEYlxE/4NiUCVKvia5riARZfFDmPqa1AIbrJTOrkUjghskkFgtMpZwgL1
+         Q2u9LSxt0s5tsgRg08ANE+8PQtlwqdnnTgx7pRJHt+IwEIg1ozYeAJIymSX/PWPAMBmT
+         QKeA==
+X-Forwarded-Encrypted: i=1; AFNElJ9lTgAEPsFr0F8w9xanXZ0jL5TQVS/0IujO+NLNyh/PMgaxopwKwYIjh7XQ/5T5Cea9PrjVSst+PHhNFJYFy1urcQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3auwLbOBdruANXajrNODxlRbT2MP5S8KyPsP9ZFkW9YGyyuVi
+	TKZG/J3za44a76h8wQaiGiscEjyxIaXJM0HET/eZvsICVy3e7vuL4CWz06XEc6DkS2g=
+X-Gm-Gg: AeBDieuTd9c8PHuA9xy3+uvfHaILD+a86OUZxyy9tCqvHTBNNKT0sb1Y6fSbEHdVAGH
+	38dAPnwsUeUNkVh3zlp6TH5KIBa5dPU0Oy+NqZ2A0qIwe5U3Bc8kMn17J+Q+sBBvYDSOehGA+4l
+	Q19NgtyLkwqX/C6lLKAo8DR3j4KyRHF6/5j1i9NMdeiIF2X+RzB4idiipd/wseWu2WcMJpZlqaD
+	bROJR2xNUlc4s4/9jhW0oh3u88BrSh9JOrON4CfWl1H4HGcBjHtcECFtrObZlEnAyZH8yBtaDGw
+	7OymYBLi+WT65cnOdSritSKqlFKv7SZJIdQyvBI8GFENbomt29BspGqSl0CV4RV8smVS8Jw6Iro
+	MKNtX0PJPBMfsky5eeIxlaDkk05kqwiun72uAlXyQ6o53Wl1mULLXsRP22iJ8LmIJ0uU8n2ZLys
+	AK29tA7zNn3N2SdiTS1YZ3cUEn5aX8vw1uSWXYHtrSwRA=
+X-Received: by 2002:a05:600c:4745:b0:488:9bf8:7f17 with SMTP id 5b1f17b1804b1-48a77b054d8mr122018735e9.14.1777476056171;
+        Wed, 29 Apr 2026 08:20:56 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b76e5afesm5634461f8f.30.2026.04.29.08.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Apr 2026 08:20:55 -0700 (PDT)
+Message-ID: <001a226f-606a-41fe-a684-c208d8898e17@linaro.org>
+Date: Wed, 29 Apr 2026 18:20:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <177742893645.5403.3938693995862346406@localhost.localdomain>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/11] thermal: samsung: Add support for Google GS101
+ TMU
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: willmcvicker@google.com, jyescas@google.com, shin.son@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org>
+ <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <41ebf31c-89ca-497e-b206-ece332d0260e@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 28, 2026 at 07:15:36PM -0700, Stephen Boyd wrote:
-> Quoting Brian Masney (2026-03-09 07:38:40)
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index fd418dc988b1c60c49e3ac9c0c44aa132dd5da28..1187e5b1dbc123d2d2c1f43690d7dcf75a7c4ac3 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -1673,7 +1690,7 @@ EXPORT_SYMBOL_GPL(clk_hw_forward_rate_request);
-> >  
-> >  static bool clk_core_can_round(struct clk_core * const core)
-> >  {
-> > -       return core->ops->determine_rate;
-> > +       return core->ops->determine_rate || clk_is_rounding_noop(core);
-> >  }
-> >  
-> >  static int clk_core_round_rate_nolock(struct clk_core *core,
-> > @@ -3528,6 +3545,7 @@ static const struct {
-> >         ENTRY(CLK_IS_CRITICAL),
-> >         ENTRY(CLK_OPS_PARENT_ENABLE),
-> >         ENTRY(CLK_DUTY_CYCLE_PARENT),
-> > +       ENTRY(CLK_ROUNDING_NOOP),
-> >  #undef ENTRY
-> >  };
-> >  
-> > @@ -3906,13 +3924,19 @@ static int __clk_core_init(struct clk_core *core)
-> >  
-> >         /* check that clk_ops are sane.  See Documentation/driver-api/clk.rst */
-> >         if (core->ops->set_rate && !core->ops->determine_rate &&
-> > -             core->ops->recalc_rate) {
-> > +             core->ops->recalc_rate && !clk_is_rounding_noop(core)) {
-> >                 pr_err("%s: %s must implement .determine_rate in addition to .recalc_rate\n",
-> >                        __func__, core->name);
-> >                 ret = -EINVAL;
-> >                 goto out;
-> >         }
-> >  
-> > +       if (clk_is_rounding_noop(core) && core->ops->determine_rate) {
-> > +               pr_err("%s: %s cannot implement both .determine_rate and CLK_ROUNDING_NOOP\n",
-> > +                      __func__, core->name);
-> > +               goto out;
-> > +       }
-> > +
+Hi, Krzysztof,
+
+On 4/28/26 12:24 PM, Krzysztof Kozlowski wrote:
+>> Dependencies
+>> ============
+>> - context dependency on the ACPM fixes sent at:
+>>   Link: https://lore.kernel.org/linux-samsung-soc/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org/T/#t
+>> - cleanup and prep firmware patches 2, 3, 4, 5, 6, 7: required by the
+>>   thermal driver (patch 8).
+> Well, cleanup in one driver cannot be a dependency for other driver.
 > 
-> This hunk has me irked. I'd rather we export some function like
-> clk_determine_rate_noop() that just returns 0 instead of adding another
-> flag. The chance that someone can get it wrong goes down and you can
-> naturally grep for any clks that are using determine_rate() without
-> having to also include this flag in the grep. It makes it easier to
-> reason about as well because we can have code that just checks for
-> determine_rate presence instead of both (i.e. clk_core_can_round() isn't
-> changed). Plus a clk_ops structure is more self-contained because it
-> doesn't rely on the clk flags to go with it.
+>> - bindings (patch 1): required for DTS validation.
+>> - thermal driver patch 8: required by defconfig (patch 11) - logical
+>> dependency. 
+> Most of the patches should be taken before, which would leave you only
+> final new firmware interface as dependency. Creating such unnecessary
+> dependencies is not helping.
+> 
+> And the patchset even grew and will conflict with other firmware work,
+> so I will deal with firmware bits and I can provide them via stable tag
+> to thermal for the last patch.
 
-I also like the clk_determine_rate_noop() approach much better as well.
-I'll send a new version.
+Sounds good, thank you!
 
-Thanks,
-Brian
+I'll send the firmware cleanup and preparatory patches in their own patch
+set after the firmware fixes get in.
 
+Then I will resend the thermal driver once all the firmware patches are
+sorted out and a stable tag is provided.
+
+In the meantime the thermal maintainers can still check the thermal driver
+proposal.
+
+Cheers,
+ta
