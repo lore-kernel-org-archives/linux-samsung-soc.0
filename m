@@ -1,121 +1,133 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9442039D6E3
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2026 10:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AF03B4E98;
+	Thu, 30 Apr 2026 10:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777544860; cv=none; b=jXobNp7gVhpoFpmU7g/6iTb4pqbF40Yxm+7JM27JCtzcMjARg7UeTX54B6OX2mgbRNN3IllwzBIwNdzXlpNPeytsvvOJiS4UZano7nt89m6521JxRSQqzXWief+aRG7l0AhEBEIEAjzpCqzyqWjgYWtdM19iWEGEaRWfR5xGzhU=
+	t=1777546242; cv=none; b=SmqgApFYhaIWfVvbJKe2TD5mof6mDIfXMjta0VwGF+YtHakSb1OI7MnMYlUgNqo0ozROaw86dyhw94kw67EB3aIOitjMKB9U1qrv3P8/woAGTQSpovxUaiMO2FU3d/HJ1Xy9GXu98l3S/fqSWwXRxun5mc7dde7rSHKOKidmW+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777544860; c=relaxed/simple;
-	bh=vENJ+C81bb9efHvds7kbMpLjqIJ06ZgJQ3cEdIMWx6Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ICYy+5yFYvEE93LUxKXvwlPrHUoQgir/qfT0nkoSabbaO4Gz28W3PfUDhXlERAptebuVLgdpzgZTH98WifPvlkyPKdPe5b1XcA0bFbqYOM4fGaneFiTs/VvB9oKf1T9COOpWa7AQRsLeoOe073vmGkywP8zoUBK+hw2nn7a0m0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OqV6qhIX; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777546242; c=relaxed/simple;
+	bh=siVae1Cimphe5H1SAnnxAV57FwYTp1dvKGtfCXqBDN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpPtMPMUiJ+6xesQVf4R+7RCBnASdtdpa71FLeDAUTTMigOKY4VAA9WjhQEhcV06c29p6j8WJwjkZp+fVIb3Jx1iNSx8HdPZJRKhvAEKtgdLgV2R4rA57DKju4XKhT4I7/KCjggPyGjVOOtVDbfAISRpp1MzAKRM/5BTQxeyIsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUkcizY7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqV6qhIX"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4486b5fcf3cso686735f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2026 03:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777544856; x=1778149656; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qJtC8axtxZ6PlTBw/4plYqbYMGHIdhbjoFEFpeBa84g=;
-        b=OqV6qhIX3q/VcRiCHjx/JandIIOdYFpMvKdfWQGwbXzhJyfeS7nIWmOaQx3bGEjqI4
-         LRPemS7zFMMel9ZGdlB38awxOzzsYMesBQqlQtVLj6+UxHzDuTxDAdu3lzoV+CvnL/cZ
-         NT3GFnc+U19nXPIdli9RwT+1QBX1x2ucTfk1CS2fxo3mDWS9oXOr7dT6RjyhQMTr08px
-         LuXAVpJ+cDa71SoYxal5PKkxUNoiNJIQly3XgqxoSKtRN4FKKXVPZif+m6p9CFQ9v4kP
-         LDt2liBkOIYDg2bD4wrjV/uNI7pq8I5qzgFiEGJA31mI/PChjbE49g+VIjq7ik03czdJ
-         oJgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777544856; x=1778149656;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qJtC8axtxZ6PlTBw/4plYqbYMGHIdhbjoFEFpeBa84g=;
-        b=nGjUzowyVWVygN9dpXGj8PdGF2K1quz52bfP2PPJfSSAdkOefttr7ZeiIZQSNjiWZr
-         0QByAsGgXHHZP0TX1SP2UmlGtvfITkZHjnytDxGdLfNaaZnE/yECpa6H/MayNEemedvA
-         7zBsNQ50Yul+lkbmv04ojBkSjfObueNBhif3ZRriZdmwUwVyNAuqLM95fkC0n15CWpse
-         ij24sW8PeDTLwcJLt5TJL7g+iU3kXH+57j4HqbfjJ6eUHNqBSoHq1an+Zby4Cj18lzHZ
-         boI0cURRqia6JpgweeZcZBapPyNAAPYEOdowSqt5BxhNr8VslVLMcq1eCrjzb+s9aVjx
-         28rA==
-X-Forwarded-Encrypted: i=1; AFNElJ+zfZzYxVtoO9HRR5K7jFrvxVBqcKfEG+6dZ8eZsj/mir6KbzTs9Fwpntwa0nbUJwlXkAblkCNljSUaOqS7NLRVIg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRtY4YB3+bPhWQmMMztAzC3V17RrjKtkP4wDIajpW1roYQqDwo
-	mDc/tni948VLINeKjEoSFQh1yH+KWoduUYKwjyMzGupR24rPXyhisNHvjqFi5aXOWuA=
-X-Gm-Gg: AeBDiev8WT3MYFqX4BFdd3WdcsZUD/Hhv/mqkGjWnppnnMhlSGJqpGP7tsgeu/8JZ7x
-	z0zTNmVWz1+F0MyiLF1KMr6g371/9oEww+nPFLmQqGQI3nudEm9VE/ieHrOxYaSOv3gdAhYJd3w
-	8Vzw6JdrlfLl+rrlHI3ycXq4+uMVlYE6aU3Bh5CqVhKGR/gF8h+oH6XzkWaJMr9lp0m403lZRrg
-	TqvE2ZORFcXlosIuMnSxAICd0HhKqV4a2hzPZN6IngW8j2E9IoFw4qPo/bT8ReP7sORTfPBiBp1
-	0AqN+o8Ttx3Gys4fZThFzI01JwftIc73V5zmYjfKi+mqKXs71GmKD5WlL3Qz5Idj0jmvg78ESRY
-	MdFViCfuMXJhf+ooHvy/JRqG5TALlYFYGCT+z+hzwmsoo7dd6whax2RGacpE9MQL0vAi/s7V5CN
-	G/NTO1V/4rBUwlGAcnGxhkoTbVTkTJx1RP4FxwytZlgZLxdUMYcDt2uhUuzJdizj2/ntfay0yDm
-	Z7FAjYByd5TuFlLodO4cbsog0Y+
-X-Received: by 2002:a05:6000:2383:b0:43c:4810:dc4a with SMTP id ffacd0b85a97d-4493ffcb2b1mr3621503f8f.38.1777544855840;
-        Thu, 30 Apr 2026 03:27:35 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:9e61:b264:2b8d:1e57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b7218622sm12070800f8f.21.2026.04.30.03.27.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2026 03:27:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUkcizY7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C217AC2BCC4;
+	Thu, 30 Apr 2026 10:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777546241;
+	bh=siVae1Cimphe5H1SAnnxAV57FwYTp1dvKGtfCXqBDN0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kUkcizY7+9UU9pT8Leoxr+4MixBiG6H9yZ0bfkScRCiQaQwjBXo0Vv/EeeinLE3ej
+	 81k1To69LHn95RRvur3Q1NO5UrQf+vcwJljCNITuqZE26x8oXryPneRLNT10VYEs3P
+	 7M0mUXd4XUEqjjdCmypbkTtNA/IQioRTMRodMYdIyImZIEPyHUd97C8prmnkzNvTi/
+	 PqCyUcwjCL/a4P5zCTRtIyL6lF6rQ6t2Lff36by+fGd/YnSO6uF9gymmEoRyZ2M3pU
+	 yRLcJDB6yr4KbQ8FVgiTyS82hylZG1uZqWevmXmCKgr+YHFuogopcYun4wolV9CDKc
+	 VdquXMuws1Tfw==
+Message-ID: <ff478c6c-f9db-4e88-a728-333a1c5bed60@kernel.org>
+Date: Thu, 30 Apr 2026 12:50:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 03/11] dt-bindings: mfd: add documentation for S2MU005
+ PMIC
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Nam Tran <trannamatk@gmail.com>, =?UTF-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?=
+ <kernel@lvkasz.us>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20260424-s2mu005-pmic-v5-0-fcbc9da5a004@disroot.org>
+ <20260424-s2mu005-pmic-v5-3-fcbc9da5a004@disroot.org>
+ <20260428-fortunate-olive-asp-fe4f53@quoll>
+ <DI5NXS3PQ53R.L9JZEBHW5EGI@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DI5NXS3PQ53R.L9JZEBHW5EGI@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 30 Apr 2026 11:27:34 +0100
-Message-Id: <DI6F28VL7ZGX.1ZJNLS41FF55N@linaro.org>
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Alexey Klimov" <alexey.klimov@linaro.org>, "Sam Protsenko"
- <semen.protsenko@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Peter Griffin"
- <peter.griffin@linaro.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>
-Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/6] soc: samsung: exynos-pmu: add Exynos850 CPU
- hotplug support
-X-Mailer: aerc 0.20.0
-References: <20260430-exynos850-cpuhotplug-v3-0-fd6251d02a17@linaro.org>
- <20260430-exynos850-cpuhotplug-v3-4-fd6251d02a17@linaro.org>
-In-Reply-To: <20260430-exynos850-cpuhotplug-v3-4-fd6251d02a17@linaro.org>
+Content-Transfer-Encoding: 7bit
 
-On Thu Apr 30, 2026 at 2:56 AM BST, Alexey Klimov wrote:
-> Add cpuhotplug support for Exynos850 platforms. This SoC requires
-> its own specific set of writes/updates to PMU and PMU interrupts
-> generation block in order to put a CPU or a group of CPUs into
-> a different sleep states or prepare these entities for a CPU_OFF
-> or wake-up out of idle state or after CPU online.
-> Without these writes/updates the CPU(s) wake-up or online fails.
-> While at this, also add description of Exynos850 PMU registers.
->
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  drivers/soc/samsung/Makefile                |  2 +-
->  drivers/soc/samsung/exynos-pmu.c            |  1 +
->  drivers/soc/samsung/exynos-pmu.h            |  1 +
->  drivers/soc/samsung/exynos850-pmu.c         | 79 +++++++++++++++++++++++=
-++++++
+On 29/04/2026 15:12, Kaustabh Chakraborty wrote:
+> Hi Krzysztof,
+> 
+> This are no review comments here. Did you happen to miss anything?
 
-[..]
+Thanks for noticing. I mistyped.
 
-> +const struct exynos_pmu_data exynos850_pmu_data =3D {
-> +	.pmu_cpuhp =3D true,
-> +	.cpu_pmu_offline =3D exynos850_cpu_pmu_offline,
-> +	.cpu_pmu_online =3D exynos850_cpu_pmu_online,
-> +};
-> +
+> 
+> On 2026-04-28 08:01 +02:00, Krzysztof Kozlowski wrote:
+>> On Fri, Apr 24, 2026 at 01:09:02AM +0530, Kaustabh Chakraborty wrote:
+>>> Samsung's S2MU005 PMIC includes subdevices for a charger, an MUIC (Micro
+>>> USB Interface Controller), and flash and RGB LED controllers.
+>>>
+>>> Add the compatible and documentation for the S2MU005 PMIC. Also, add an
+>>> example for nodes for supported sub-devices, i.e. MUIC, flash LEDs, and
+>>> RGB LEDs. Charger sub-device uses the node of the parent.
+>>>
+>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>> ---
+>>>  .../bindings/mfd/samsung,s2mu005-pmic.yaml         | 120 +++++++++++++++++++++
+>>>  1 file changed, 120 insertions(+)
 
-Ah, sorry, I forgot to remove blank line here. Will do in the next
-update.
+Patch looks correct:
 
-BR,
-Alexey
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+Best regards,
+Krzysztof
