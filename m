@@ -1,68 +1,68 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F385299AAB
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2026 01:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BAA2BE7BA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Apr 2026 01:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777514223; cv=none; b=Q38KHbcXc7bp0hz2PFqZVuwWwFBu4VEsNYXFAhcNtTsfRAfOZYv9XPO/GifJWSCo+944d98QamJowpBz2Sv+pqEvFLPD8FovbT46cE8KTPIMRyvqWAhFDLxhFOlYpu2uwv8hz1Zj2FFh2qqZHtoQD72HKwhQwuE3LTieyalaMoI=
+	t=1777514224; cv=none; b=kozI65VQmnclSjwG8T8/OGdy8052Xumq9TzxL3r8X2R10conAwhnpimLkVtXjxjjn1V5fkwdZghHjNB/PxewN4URmop1AKLylEEI9ZtdCgX111GlZ68GvHYZjK9nnpSwyStT0nlBWOniFvS9wnbaj0bDlhhc9fySBDIsUG+nSog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777514223; c=relaxed/simple;
-	bh=wHtsskSU7dtMfLlHzUiCKrIz1BWbs2ZaiIbFnwxSGiI=;
+	s=arc-20240116; t=1777514224; c=relaxed/simple;
+	bh=jH+Uais91Yp/yfS2R1M5zj6Q63Qt9ZCT515I//ZzC/Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OaTQdbRRMce4vgzrupegnvEPA6cKf+txwksWW71Kz9lCPx44Thqa35NUtVrZNMl+XhOfGcGgD3msh/2vpOtWYbLm88HBJnH1D/98K0ohB1z1Tht+cM3e5YWVoNNOge8We4yl64sgZKMnWr2rHzmuXCm+Rc29+/Y0vDiPUUlK+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WfDvbj0O; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:To:Cc; b=DBkrPu681qJwl8RjdTxbyYXivPsUxexTtDJdNG8XnRVRR23CThMP1XnJW577LeNswx7chHiRgL3huQQkH3PF6aTvh9Tua98oxdhugGUglK2AfjnyNQeavGSjOs9MM7m+3P5iSTF1DLXaekDT2SCSmqFzqLfibE+gkz1oygwv6I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FTJx6X0+; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WfDvbj0O"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43d77f60944so262953f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 18:57:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTJx6X0+"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-43d77f60944so262967f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2026 18:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777514219; x=1778119019; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1777514221; x=1778119021; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kL3CC5EC/Effr0vMJn6LxibUc+N9RTBJkp+MYuTONWo=;
-        b=WfDvbj0O2ehC99QtgvQmBc5tE6C5wgpFxLf65nwGgv4+7WzxG61EoCwDaP9OzgXjGY
-         KGLu5VTFXrGAZaQur7bR1/CXimtzWapVHamTvl6IKvGwO3+AV1Dtx5iVjTrkEMFTvs8V
-         l3DHg4hBySgIAPMgtz9wktIsey1HpzR87w//r5xY6SqORaOgv+blhoizGtlg99l3b7gM
-         mXd+dTdzcqjehq2nnUmgpMkkg2MPNS7U9ODXDBD/n6k0s3Q8k/HHTY4RCvaKPCbrQYD1
-         JvT7g6tW5ccsxy0f7I9IME5vvIjmYtB+5mdTH15Fxw7hcBrO3W+fsq3mNKBbycgY06c8
-         92Iw==
+        bh=jQcInBWC9kq/xkmPKKPsqQgAV8Q2221mBidac2LwPQo=;
+        b=FTJx6X0+LUkKAyKBnF9MrZdNbtUBdehTqd713ursVcd4vHA8ivAkhHBZ6DH7TiVHNX
+         z3mlc3r9BDfcLxovpCQV9mLPYTj38M2fLHaElwfw6qllt8R15QVspDYWUUMqsPun3/xz
+         xWjdZBa7elKOS9h/dTAugbja6qBab4M81/zeb1SrXZyXAhkHBqlDHCv/e9H4qOl5CjNx
+         hxzqP1buGE/J6fPo/0hJdB8dio/UyjDwgmwEGELOQto1c2QZUCfM2lcj3q29dL2eSdGq
+         zN+KoY22tJamOZ59Nb1z4XRKoGOF9jHyHwcxxn/AakbHcn7cTFcStVMuXF5ijgrARDpv
+         1Vpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777514219; x=1778119019;
+        d=1e100.net; s=20251104; t=1777514221; x=1778119021;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=kL3CC5EC/Effr0vMJn6LxibUc+N9RTBJkp+MYuTONWo=;
-        b=XauVyViS16JAzytTHqJRS+fU60Hjr3XHiOBEksp6H2w4FkcjiJ0Y1WrxCl8JaT01d4
-         l6eHVoLI2ilJTuCgYfRQFUdB1N5w7jyVNtuU2hRBUpise1QEhj9eye7L48qqLzBIFcsH
-         VbJLhpz9+NJ8BimkWWFIbPKD9e3bzftneKG600wubqfVMFTweQomSZo5FsEXoDdaqm2I
-         +O59hhM77tCfJROxVXObhPh0fS9c+Uak0U9fnkhfZVT++yjyvCsIEM466gsp9N9GYDAO
-         IoY2nkp+39RnXqWqCeKlOecE9U0pv7vVYgwaEmmM4iZdRmiEGnued76OsrEAyYn2mvrC
-         1kwA==
-X-Forwarded-Encrypted: i=1; AFNElJ/5SmpH9Q3MC7/eCBu4omI9qGj2LliCu8m7FW7n2pbqlMlw0punBAds5qqY8luRLKiHQYfzsqelBF5CWaxCFz6Tqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy+qffXLn+JREMZcAJxNmBsQAbwghE+Wgp+CzLsbApsois2DE4
-	ej+euM+mlFA2CXZ/X8LUX+h5t4w5bw8hacFzGoce/F5SCiVJM/c2zqd/cLukx59ZXU8=
-X-Gm-Gg: AeBDiet13hoFKX7t79DIs4DJx4FWq7LDTOQiwPqqsFEMcd1dSiY+MnUJcVbS08wFkmo
-	1VEWuMl89+/Z3D6JhrSlA7l6htcJB5vJ4FO3zu0QUOP5+r9kfd2+tNZf64mCPBHZFEwT6pouxDA
-	AqfMhYnFepZDX97zd5j0R3xcsBv8BeRiBcGeTo3bzrCKGqYohwedgKZ/dJe/mEranJFmCc6r4VN
-	vazlfDWZOferqOmV1Plc7H7CK/Vnsb3EztqH+O/nTwp06Cqcfu5Zc9V70FJL5DebCL4NxQmLqYP
-	FT99V86rCfNkBKADgwMYXE1pRL5WnPoWpf4m9V5o1qWOxKMlurasCvODhejQVg4Rlrvqcjp0h7Y
-	OzdSiRuT9vw2f5KoS/D8lEnnKULvUEbj/wMhVmBcpk5CpayPxeFbK3zqukWRImJVghkehTnjsxx
-	E/wdsWPBgH0LjDTsftdvZx/GHCaYias0XXOJIcxAWrrR6Z8upcluJxCer1bl6N+MBoXpv19yFIN
-	NW7eg9BB4CJSRDr+TrCHgLklnA=
-X-Received: by 2002:a05:6000:2303:b0:43d:7ea1:fb53 with SMTP id ffacd0b85a97d-4493eb6c1b4mr1257686f8f.33.1777514218758;
-        Wed, 29 Apr 2026 18:56:58 -0700 (PDT)
+        bh=jQcInBWC9kq/xkmPKKPsqQgAV8Q2221mBidac2LwPQo=;
+        b=fTCxUy4+YTW8jT2qZNEJPQp0r7gl00c+yOer/TpCTKezZmGMquVtjOLPh+yRJTi937
+         y3cg1zw/EnUC/Zyo7wiMzLPp20cImeNzCGz9tQ4dKbV3Br/v/9WkAIEEuvS1g3Z4MnUm
+         5OpuQd6DhMxIBnG613qgwsJhGCcsZa8plit21xb7xFyl/TPdbPiQB0FzgPL9Kj947hSw
+         8+Glw8gAhJE0/Kf0aqwgBzr9dfQACBmKfhPp60UQUh79xAXYJ0f+rHchAwwlYnLoOe0i
+         vNDYm3rcvuUXAyJ4SUGM2Bx6+Xh+lFmUclBBd9pc+CVUfZpC/612/To88VYpFoscuCJJ
+         cflA==
+X-Forwarded-Encrypted: i=1; AFNElJ8IS3QuFtFnc9g5pbvgOima+HnbSGm+Wuxo/fWaZhSeyCBHKeMPoymuuZMOyHQT7xGY1SrjKaFJ0uz1U42cyq1umg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynLQLMcS6W/aBWUSpkasZ8NkDyOJ1bjYPK8x+DeIn35PFyND6Q
+	f9CN68aOoRObv+LK4rLI+iJwq+NeDuyzzj68xMjBQQej18GLlqHQsyb/z47pfMFjqfw=
+X-Gm-Gg: AeBDietV4I2XrtSXM9PJogq1kP80sJ/ZX9SxCXpzcy/9CYpLjseg3fts2B20n8Tl2PU
+	l9/vUIdZmxbQboB/g7WNG8md0sqGny5QYUY8AtXrNganT8RcD4mmnorgN8KFfa49TWk5jfy3SZk
+	SGx/62WbsHVMU5Mz9D9sID0wh87rqffL/InLXnEPyam64aI2UcSkffy1h8hSrqxc5ryhoYsIWc6
+	PIwG8iX5tvNg4MrdrsV0PooX8o3/2gQM27qLeK/+rNK6fM++DKV57lIkgapJeCSBKfGeIGpeEzK
+	lN9yPbiC1nNN9NZNHVvIVgnbPIP/4dOMXP2sg/0up12JkD+pR1QNQ2lG7dtxa+IMl6U9M8B7him
+	c7UDHDakgMqdH9avS1Ee+jtEslBnaUTJfB/AdoGcv9j8c2N5OR83uv79BAAKLFVlSw3twodBRgf
+	uSj+P7H9ZXUWji1XdrjZoJ2t+TQRdZoKzj3PgBP+w7nq0bNrThu3izbrvQMnPq9Dlb/l7ORaArb
+	CKlhIXz+YjtDjd+3AUHX79+jsErRCEz9zNYsA==
+X-Received: by 2002:a05:6000:24c5:b0:43f:e452:f391 with SMTP id ffacd0b85a97d-4493cb42f83mr1242615f8f.6.1777514220538;
+        Wed, 29 Apr 2026 18:57:00 -0700 (PDT)
 Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b76e5bf2sm9915013f8f.27.2026.04.29.18.56.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-447b76e5bf2sm9915013f8f.27.2026.04.29.18.56.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2026 18:56:58 -0700 (PDT)
+        Wed, 29 Apr 2026 18:57:00 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 30 Apr 2026 02:56:53 +0100
-Subject: [PATCH v3 3/6] soc: samsung: exynos-pmu: generalise gs101-specific
- cpu{idle,hotplug} for Exynos SoCs
+Date: Thu, 30 Apr 2026 02:56:54 +0100
+Subject: [PATCH v3 4/6] soc: samsung: exynos-pmu: add Exynos850 CPU hotplug
+ support
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260430-exynos850-cpuhotplug-v3-3-fd6251d02a17@linaro.org>
+Message-Id: <20260430-exynos850-cpuhotplug-v3-4-fd6251d02a17@linaro.org>
 References: <20260430-exynos850-cpuhotplug-v3-0-fd6251d02a17@linaro.org>
 In-Reply-To: <20260430-exynos850-cpuhotplug-v3-0-fd6251d02a17@linaro.org>
 To: Sam Protsenko <semen.protsenko@linaro.org>, 
@@ -85,366 +85,90 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
  linux-kernel@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
 X-Mailer: b4 0.14.3
 
-The cpuhotplug and cpuidle support for GS101-based SoCs which
-utilizes GS101 PMU interrupts generation block can be generalised
-to be (re)used for other Exynos-based SoCs. Also, the GS101 PMU
-interrupts generation block is not exclusive to Google GS101 SoCs
-and should be made more Exynos-generic.
-
-Specifically, apply the following changes:
-- rename gs101-specific calls, structs, names to be exynos-prefixed;
-- move exynos_pmu_context and CPU_INFORM_* defines into exynos-pmu.h;
-- introduce cpu_pmu_{offline,online} callbacks in driver-specific
-  exynos_pmu_data which can be used to hold PMU and PMU intr gen
-  update routines for different platforms and update cpuidle and cpuhotplug
-  support to use them;
-- add checks for the presense of cpu_pmu_{offline,online} callbacks;
-- move and rename gs101-specific cpu{offline,online} PMU updates
-  routines into gs101-pmu.c file, also removing underscore prefix;
-- update gs101_pmu_data to use newly introduced callbacks;
-- rename PMU interrupts generation GS101_INTR_* regs to EXYNOS_INTR_*.
-
-This allows other platforms to add cpuhotplug and cpuidle support in
-a similar manner, using their own platform-specific PMU and
-PMU intr gen update routines.
+Add cpuhotplug support for Exynos850 platforms. This SoC requires
+its own specific set of writes/updates to PMU and PMU interrupts
+generation block in order to put a CPU or a group of CPUs into
+a different sleep states or prepare these entities for a CPU_OFF
+or wake-up out of idle state or after CPU online.
+Without these writes/updates the CPU(s) wake-up or online fails.
+While at this, also add description of Exynos850 PMU registers.
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- drivers/soc/samsung/exynos-pmu.c            | 118 ++++++----------------------
- drivers/soc/samsung/exynos-pmu.h            |  31 ++++++++
- drivers/soc/samsung/gs101-pmu.c             |  57 ++++++++++++++
- include/linux/soc/samsung/exynos-regs-pmu.h |  10 +--
- 4 files changed, 115 insertions(+), 101 deletions(-)
+ drivers/soc/samsung/Makefile                |  2 +-
+ drivers/soc/samsung/exynos-pmu.c            |  1 +
+ drivers/soc/samsung/exynos-pmu.h            |  1 +
+ drivers/soc/samsung/exynos850-pmu.c         | 79 +++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h |  5 ++
+ 5 files changed, 87 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 636a762608c9..7f544e3c1fcc 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -7,7 +7,7 @@ exynos_chipid-y			+= exynos-chipid.o exynos-asv.o
+ obj-$(CONFIG_EXYNOS_USI)	+= exynos-usi.o
+ 
+ obj-$(CONFIG_EXYNOS_PMU)	+= exynos_pmu.o
+-exynos_pmu-y			+= exynos-pmu.o gs101-pmu.o
++exynos_pmu-y			+= exynos-pmu.o gs101-pmu.o exynos850-pmu.o
+ 
+ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+ 					exynos5250-pmu.o exynos5420-pmu.o
 diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index d58376c38179..660416c0db43 100644
+index 660416c0db43..9dddf4759ab5 100644
 --- a/drivers/soc/samsung/exynos-pmu.c
 +++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -24,22 +24,6 @@
- 
- #include "exynos-pmu.h"
- 
--struct exynos_pmu_context {
--	struct device *dev;
--	const struct exynos_pmu_data *pmu_data;
--	struct regmap *pmureg;
--	struct regmap *pmuintrgen;
--	/*
--	 * Serialization lock for CPU hot plug and cpuidle ACPM hint
--	 * programming. Also protects in_cpuhp, sys_insuspend & sys_inreboot
--	 * flags.
--	 */
--	raw_spinlock_t cpupm_lock;
--	unsigned long *in_cpuhp;
--	bool sys_insuspend;
--	bool sys_inreboot;
--};
--
- void __iomem *pmu_base_addr;
- static struct exynos_pmu_context *pmu_context;
- /* forward declaration */
-@@ -219,44 +203,8 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
--/*
-- * CPU_INFORM register "hint" values are required to be programmed in addition to
-- * the standard PSCI calls to have functional CPU hotplug and CPU idle states.
-- * This is required to workaround limitations in the el3mon/ACPM firmware.
-- */
--#define CPU_INFORM_CLEAR	0
--#define CPU_INFORM_C2		1
--
--/*
-- * __gs101_cpu_pmu_ prefix functions are common code shared by CPU PM notifiers
-- * (CPUIdle) and CPU hotplug callbacks. Functions should be called with IRQs
-- * disabled and cpupm_lock held.
-- */
--static int __gs101_cpu_pmu_online(unsigned int cpu)
--	__must_hold(&pmu_context->cpupm_lock)
--{
--	unsigned int cpuhint = smp_processor_id();
--	u32 reg, mask;
--
--	/* clear cpu inform hint */
--	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
--		     CPU_INFORM_CLEAR);
--
--	mask = BIT(cpu);
--
--	regmap_update_bits(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_ENABLE,
--			   mask, (0 << cpu));
--
--	regmap_read(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_UPEND, &reg);
--
--	regmap_write(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_CLEAR,
--		     reg & mask);
--
--	return 0;
--}
--
- /* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
--static int gs101_cpu_pmu_online(void)
-+static int exynos_cpu_pmu_online(void)
- {
- 	int cpu;
- 
-@@ -268,20 +216,20 @@ static int gs101_cpu_pmu_online(void)
- 	}
- 
- 	cpu = smp_processor_id();
--	__gs101_cpu_pmu_online(cpu);
-+	pmu_context->pmu_data->cpu_pmu_online(pmu_context, cpu);
- 	raw_spin_unlock(&pmu_context->cpupm_lock);
- 
- 	return NOTIFY_OK;
- }
- 
- /* Called from CPU hot plug callback with IRQs enabled */
--static int gs101_cpuhp_pmu_online(unsigned int cpu)
-+static int exynos_cpuhp_pmu_online(unsigned int cpu)
- {
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&pmu_context->cpupm_lock, flags);
- 
--	__gs101_cpu_pmu_online(cpu);
-+	pmu_context->pmu_data->cpu_pmu_online(pmu_context, cpu);
- 	/*
- 	 * Mark this CPU as having finished the hotplug.
- 	 * This means this CPU can now enter C2 idle state.
-@@ -292,35 +240,8 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
- 	return 0;
- }
- 
--/* Common function shared by both CPU hot plug and CPUIdle */
--static int __gs101_cpu_pmu_offline(unsigned int cpu)
--	__must_hold(&pmu_context->cpupm_lock)
--{
--	unsigned int cpuhint = smp_processor_id();
--	u32 reg, mask;
--
--	/* set cpu inform hint */
--	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
--		     CPU_INFORM_C2);
--
--	mask = BIT(cpu);
--	regmap_update_bits(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_ENABLE,
--			   mask, BIT(cpu));
--
--	regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
--	regmap_write(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_CLEAR,
--		     reg & mask);
--
--	mask = (BIT(cpu + 8));
--	regmap_read(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_UPEND, &reg);
--	regmap_write(pmu_context->pmuintrgen, GS101_GRP1_INTR_BID_CLEAR,
--		     reg & mask);
--
--	return 0;
--}
--
- /* Called from CPU PM notifier (CPUIdle code path) with IRQs disabled */
--static int gs101_cpu_pmu_offline(void)
-+static int exynos_cpu_pmu_offline(void)
- {
- 	int cpu;
- 
-@@ -338,14 +259,14 @@ static int gs101_cpu_pmu_offline(void)
- 		return NOTIFY_OK;
- 	}
- 
--	__gs101_cpu_pmu_offline(cpu);
-+	pmu_context->pmu_data->cpu_pmu_offline(pmu_context, cpu);
- 	raw_spin_unlock(&pmu_context->cpupm_lock);
- 
- 	return NOTIFY_OK;
- }
- 
- /* Called from CPU hot plug callback with IRQs enabled */
--static int gs101_cpuhp_pmu_offline(unsigned int cpu)
-+static int exynos_cpuhp_pmu_offline(unsigned int cpu)
- {
- 	unsigned long flags;
- 
-@@ -355,29 +276,29 @@ static int gs101_cpuhp_pmu_offline(unsigned int cpu)
- 	 * ACPM the CPU entering hotplug should not enter C2 idle state.
- 	 */
- 	set_bit(cpu, pmu_context->in_cpuhp);
--	__gs101_cpu_pmu_offline(cpu);
-+	pmu_context->pmu_data->cpu_pmu_offline(pmu_context, cpu);
- 
- 	raw_spin_unlock_irqrestore(&pmu_context->cpupm_lock, flags);
- 
- 	return 0;
- }
- 
--static int gs101_cpu_pm_notify_callback(struct notifier_block *self,
-+static int exynos_cpu_pm_notify_callback(struct notifier_block *self,
- 					unsigned long action, void *v)
- {
- 	switch (action) {
- 	case CPU_PM_ENTER:
--		return gs101_cpu_pmu_offline();
-+		return exynos_cpu_pmu_offline();
- 
- 	case CPU_PM_EXIT:
--		return gs101_cpu_pmu_online();
-+		return exynos_cpu_pmu_online();
- 	}
- 
- 	return NOTIFY_OK;
- }
- 
--static struct notifier_block gs101_cpu_pm_notifier = {
--	.notifier_call = gs101_cpu_pm_notify_callback,
-+static struct notifier_block exynos_cpu_pm_notifier = {
-+	.notifier_call = exynos_cpu_pm_notify_callback,
- 	/*
- 	 * We want to be called first, as the ACPM hint and handshake is what
- 	 * puts the CPU into C2.
-@@ -425,6 +346,11 @@ static int setup_cpuhp_and_cpuidle(struct device *dev)
- 		return 0;
- 	}
- 
-+	if (!pmu_context->pmu_data->cpu_pmu_offline || !pmu_context->pmu_data->cpu_pmu_online) {
-+		dev_err(dev, "PMU write/read sequence is not present for cpuhotplug and cpuidle\n");
-+		return -ENODEV;
-+	}
-+
- 	/*
- 	 * To avoid lockdep issues (CPU PM notifiers use raw spinlocks) create
- 	 * a mmio regmap for pmu-intr-gen that uses raw spinlocks instead of
-@@ -458,17 +384,17 @@ static int setup_cpuhp_and_cpuidle(struct device *dev)
- 
- 	/* set PMU to power on */
- 	for_each_online_cpu(cpu)
--		gs101_cpuhp_pmu_online(cpu);
-+		exynos_cpuhp_pmu_online(cpu);
- 
- 	/* register CPU hotplug callbacks */
- 	cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,	"soc/exynos-pmu:prepare",
--			  gs101_cpuhp_pmu_online, NULL);
-+			  exynos_cpuhp_pmu_online, NULL);
- 
- 	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "soc/exynos-pmu:online",
--			  NULL, gs101_cpuhp_pmu_offline);
-+			  NULL, exynos_cpuhp_pmu_offline);
- 
- 	/* register CPU PM notifiers for cpuidle */
--	cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
-+	cpu_pm_register_notifier(&exynos_cpu_pm_notifier);
- 	register_reboot_notifier(&exynos_cpupm_reboot_nb);
- 	return 0;
- }
+@@ -133,6 +133,7 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
+ 		.compatible = "samsung,exynos7-pmu",
+ 	}, {
+ 		.compatible = "samsung,exynos850-pmu",
++		.data = &exynos850_pmu_data,
+ 	},
+ 	{ /*sentinel*/ },
+ };
 diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-index fbe381e2a2e1..186299a049a8 100644
+index 186299a049a8..4202d3cd94c9 100644
 --- a/drivers/soc/samsung/exynos-pmu.h
 +++ b/drivers/soc/samsung/exynos-pmu.h
-@@ -13,6 +13,14 @@
+@@ -102,6 +102,7 @@ extern const struct exynos_pmu_data exynos5250_pmu_data;
+ extern const struct exynos_pmu_data exynos5420_pmu_data;
+ #endif
+ extern const struct exynos_pmu_data gs101_pmu_data;
++extern const struct exynos_pmu_data exynos850_pmu_data;
  
- #define PMU_TABLE_END	(-1U)
- 
+ extern void pmu_raw_writel(u32 val, u32 offset);
+ extern u32 pmu_raw_readl(u32 offset);
+diff --git a/drivers/soc/samsung/exynos850-pmu.c b/drivers/soc/samsung/exynos850-pmu.c
+new file mode 100644
+index 000000000000..7a1ea45810bd
+--- /dev/null
++++ b/drivers/soc/samsung/exynos850-pmu.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * CPU_INFORM register "hint" values are required to be programmed in addition to
-+ * the standard PSCI calls to have functional CPU hotplug and CPU idle states.
-+ * This is required to workaround limitations in the el3mon/ACPM firmware.
++ * Copyright 2026 Linaro Ltd.
++ *
++ * Exynos850 PMU support
 + */
-+#define CPU_INFORM_CLEAR	0
-+#define CPU_INFORM_C2		1
 +
- struct regmap_access_table;
- 
- struct exynos_pmu_conf {
-@@ -20,6 +28,22 @@ struct exynos_pmu_conf {
- 	u8 val[NUM_SYS_POWERDOWN];
- };
- 
-+struct exynos_pmu_context {
-+	struct device *dev;
-+	const struct exynos_pmu_data *pmu_data;
-+	struct regmap *pmureg;
-+	struct regmap *pmuintrgen;
-+	/*
-+	 * Serialization lock for CPU hot plug and cpuidle ACPM hint
-+	 * programming. Also protects in_cpuhp, sys_insuspend & sys_inreboot
-+	 * flags.
-+	 */
-+	raw_spinlock_t cpupm_lock;
-+	unsigned long *in_cpuhp;
-+	bool sys_insuspend;
-+	bool sys_inreboot;
-+};
++#include <linux/soc/samsung/exynos-pmu.h>
++#include <linux/soc/samsung/exynos-regs-pmu.h>
++#include <linux/regmap.h>
++#include <asm/cputype.h>
 +
- /**
-  * struct exynos_pmu_data - of_device_id (match) data
-  *
-@@ -44,6 +68,10 @@ struct exynos_pmu_conf {
-  *            used (i.e. when @pmu_secure is @true).
-  * @wr_table: A table of writable register ranges in case a custom regmap is
-  *            used (i.e. when @pmu_secure is @true).
-+ * @cpu_pmu_offline: Optional callback to be called before entering CPU offline
-+ *                   or idle state. Only valid when pmu_cpuhp set to true.
-+ * @cpu_pmu_online: Optional callback to be called after CPU onlined or after
-+ *                  exiting idle state. Only valid when pmu_cpuhp set to true.
-  */
- struct exynos_pmu_data {
- 	const struct exynos_pmu_conf *pmu_config;
-@@ -57,6 +85,9 @@ struct exynos_pmu_data {
- 
- 	const struct regmap_access_table *rd_table;
- 	const struct regmap_access_table *wr_table;
++#include "exynos-pmu.h"
 +
-+	int (*cpu_pmu_offline)(struct exynos_pmu_context *pmu_context, unsigned int cpu);
-+	int (*cpu_pmu_online)(struct exynos_pmu_context *pmu_context, unsigned int cpu);
- };
- 
- extern void __iomem *pmu_base_addr;
-diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs101-pmu.c
-index 17dadc1b9c6e..5f2a59924144 100644
---- a/drivers/soc/samsung/gs101-pmu.c
-+++ b/drivers/soc/samsung/gs101-pmu.c
-@@ -322,11 +322,68 @@ static const struct regmap_access_table gs101_pmu_wr_table = {
- 	.n_no_ranges = ARRAY_SIZE(gs101_pmu_ro_registers),
- };
- 
-+/*
-+ * gs101_cpu_pmu_ prefix functions are common code shared by CPU PM notifiers
-+ * (CPUIdle) and CPU hotplug callbacks. Functions should be called with IRQs
-+ * disabled and cpupm_lock held.
-+ */
-+static int gs101_cpu_pmu_online(struct exynos_pmu_context *pmu_context, unsigned int cpu)
++static int exynos850_cpu_pmu_offline(struct exynos_pmu_context *pmu_context, unsigned int cpu)
 +	__must_hold(&pmu_context->cpupm_lock)
 +{
-+	unsigned int cpuhint = smp_processor_id();
-+	u32 reg, mask;
-+
-+	/* clear cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
-+		     CPU_INFORM_CLEAR);
-+
-+	mask = BIT(cpu);
-+
-+	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
-+			   mask, (0 << cpu));
-+
-+	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_UPEND, &reg);
-+
-+	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_CLEAR,
-+		     reg & mask);
-+
-+	return 0;
-+}
-+
-+/* Common function shared by both CPU hot plug and CPUIdle */
-+static int gs101_cpu_pmu_offline(struct exynos_pmu_context *pmu_context, unsigned int cpu)
-+	__must_hold(&pmu_context->cpupm_lock)
-+{
++	u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
++	u32 cluster_cpu = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
 +	unsigned int cpuhint = smp_processor_id();
 +	u32 reg, mask;
 +
 +	/* set cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
++	regmap_write(pmu_context->pmureg, EXYNOS850_CPU_INFORM(cpuhint),
 +		     CPU_INFORM_C2);
 +
 +	mask = BIT(cpu);
@@ -460,40 +184,62 @@ index 17dadc1b9c6e..5f2a59924144 100644
 +	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP1_INTR_BID_CLEAR,
 +		     reg & mask);
 +
++	regmap_update_bits(pmu_context->pmureg,
++			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
++			   1 << 3, 1 << 3);
 +	return 0;
 +}
 +
- const struct exynos_pmu_data gs101_pmu_data = {
- 	.pmu_secure = true,
- 	.pmu_cpuhp = true,
- 	.rd_table = &gs101_pmu_rd_table,
- 	.wr_table = &gs101_pmu_wr_table,
-+	.cpu_pmu_offline = gs101_cpu_pmu_offline,
-+	.cpu_pmu_online = gs101_cpu_pmu_online,
- };
- 
- /*
++static int exynos850_cpu_pmu_online(struct exynos_pmu_context *pmu_context, unsigned int cpu)
++	__must_hold(&pmu_context->cpupm_lock)
++{
++	u32 this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 2);
++	u32 cluster_cpu = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
++	unsigned int cpuhint = smp_processor_id();
++	u32 reg, mask;
++
++	/* clear cpu inform hint */
++	regmap_write(pmu_context->pmureg, EXYNOS850_CPU_INFORM(cpuhint),
++		     CPU_INFORM_CLEAR);
++
++	mask = BIT(cpu);
++
++	regmap_update_bits(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_ENABLE,
++			   mask, (0 << cpu));
++
++	regmap_read(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_UPEND, &reg);
++
++	regmap_write(pmu_context->pmuintrgen, EXYNOS_GRP2_INTR_BID_CLEAR,
++		     reg & mask);
++
++	regmap_update_bits(pmu_context->pmureg,
++			   EXYNOS850_CLUSTER_CPU_INT_EN(this_cluster, cluster_cpu),
++			   1 << 3, 0 << 3);
++	return 0;
++}
++
++const struct exynos_pmu_data exynos850_pmu_data = {
++	.pmu_cpuhp = true,
++	.cpu_pmu_offline = exynos850_cpu_pmu_offline,
++	.cpu_pmu_online = exynos850_cpu_pmu_online,
++};
++
 diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index db8a7ca81080..9c4d3da41dbf 100644
+index 9c4d3da41dbf..93c4d724c8ea 100644
 --- a/include/linux/soc/samsung/exynos-regs-pmu.h
 +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -1009,11 +1009,11 @@
- #define GS101_PHY_CTRL_UFS                      0x3ec8
+@@ -1015,6 +1015,11 @@
+ #define EXYNOS_GRP2_INTR_BID_UPEND				(0x0208)
+ #define EXYNOS_GRP2_INTR_BID_CLEAR				(0x020c)
  
- /* PMU INTR GEN */
--#define GS101_GRP1_INTR_BID_UPEND				(0x0108)
--#define GS101_GRP1_INTR_BID_CLEAR				(0x010c)
--#define GS101_GRP2_INTR_BID_ENABLE				(0x0200)
--#define GS101_GRP2_INTR_BID_UPEND				(0x0208)
--#define GS101_GRP2_INTR_BID_CLEAR				(0x020c)
-+#define EXYNOS_GRP1_INTR_BID_UPEND				(0x0108)
-+#define EXYNOS_GRP1_INTR_BID_CLEAR				(0x010c)
-+#define EXYNOS_GRP2_INTR_BID_ENABLE				(0x0200)
-+#define EXYNOS_GRP2_INTR_BID_UPEND				(0x0208)
-+#define EXYNOS_GRP2_INTR_BID_CLEAR				(0x020c)
- 
++/* Exynos850 PMU Alive */
++#define EXYNOS850_CPU_INFORM(cpu)		(0x0860 + ((cpu) & 7) * 4)
++#define EXYNOS850_CLUSTER_CPU_OFFSET(cl, cpu)	(0x1000 + ((cl * 0x400) + ((cpu) * 0x80)))
++#define EXYNOS850_CLUSTER_CPU_INT_EN(cl, cpu)	(EXYNOS850_CLUSTER_CPU_OFFSET(cl, cpu) + 0x44)
++
  /* exynosautov920 */
  #define EXYNOSAUTOV920_PHY_CTRL_USB20				(0x0710)
+ #define EXYNOSAUTOV920_PHY_CTRL_USB31				(0x0714)
 
 -- 
 2.51.0
