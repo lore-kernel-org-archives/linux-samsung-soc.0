@@ -1,30 +1,30 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EE646AF2B;
-	Thu, 30 Apr 2026 16:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5F340281;
+	Thu, 30 Apr 2026 16:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777567248; cv=none; b=jt/oxwICnHkp5+MBgZKVnl3T3s+iyfVcOO7crIXVM3SMiw+7oqxUHcSxDOMybT2xpNugs23/lH7LFRj0e4La2QT1748auekW4MXy0A2xEmNb2NNxkiVUloXM1wc2GJlI36/4wUCxm8HnTbSNipmJ6EdWNCxSyipx3MEQWxw780U=
+	t=1777567250; cv=none; b=E0EcxRlb4bAiM0wDhLGDU1u6pE1QE9GCD5F0hkPDECNDBfU7gfcOeklJquoV0ioJlhbaJXve9fGfHksnSH5gCOjQlDRlMl+FBjrjAQ2rp2DBVnDuGIewslc2Qxr+GkUo+LrJKgGTIcgat8Ik8c0+0iHxza9oWNJ+YISIBcNqagU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777567248; c=relaxed/simple;
-	bh=daaboz3lT0timGg6vXzQNu6jqBf2GgW/CH3PoOFfb44=;
+	s=arc-20240116; t=1777567250; c=relaxed/simple;
+	bh=litEndzInZQlLNhJFQfIMPTNL+60r06FJMhplvXKHFY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qy3nBJ3IPJMWpPtDCiARtearHb5Q0zrvkVvSYg14B6Qki0Wyv0ALxDzykNYzJ/CBMHNdSfQOnD7Pf/slsE/ISJB9boDC+QsTLxz2APozk3P4NMlKSKUs+5xErCr9bZa2QjXBOpyUKwtf3sG2RSBdvd8JeG60dflrjAmT/LonSpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Q/S+pJtk; arc=none smtp.client-ip=220.197.31.3
+	 MIME-Version; b=FPnxeriSf3wZm//CR0oZKwVO7vITmlQNQXqXNJqfxsbpewBhkY/7Qn995rIpK2+n1q5CqqcgYEj7E0A+8/+dyQr95Z1+EV6erwZshDByofY3h72n8P/7K5+wqTB6zmW8LN9lZ7S3+LQ9+FcpU/BM4hBKeuOCqDORd8wxK8xNXA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=W0e3U/bg; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Q/S+pJtk"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="W0e3U/bg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=vS
-	LKw/EEYLKveE2xBfEMTup8/azVODA4pMSSclWxodw=; b=Q/S+pJtk04i9h8WuFE
-	0fZEh0udPon40eNurFhhR91lmf3n6abGkbo05EE7IsBvBMImfPSM1HOebmu5nvE8
-	HspkYhLaZk/lKGsSlqpTTe4nQTvnNevpd7l6/gXCIa8S8DAhL7zQTjFEyKVc9rKJ
-	9XVZ5iVvH92Xg7BBBfyXSZuxs=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=nm
+	hpT4qL3TiNhJTJA/kcqIVRxB45Z2PLUQn6pZidorQ=; b=W0e3U/bgin+AuHDDL0
+	BIQE7AKnX9pGu7MeN0X9SlxSCh4a2+z6e7KWdCDcBevH0JL6NLRJWHi5ZoEMJB/+
+	dybTTH+4RPO0CBYg5V1jNxYmicqJSF/KCZf6YlYTr+sAlxa0EyFBnT2Dk7e2AkjC
+	rovquYX589WMPKQ5gPBKI9a1E=
 Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDnUmm+hfNptZrZCg--.19910S3;
-	Fri, 01 May 2026 00:39:27 +0800 (CST)
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDnUmm+hfNptZrZCg--.19910S8;
+	Fri, 01 May 2026 00:39:32 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: Thinh.Nguyen@synopsys.com,
 	gregkh@linuxfoundation.org,
@@ -43,9 +43,9 @@ Cc: linux-usb@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 1/6] usb: dwc3: Use FIELD_MODIFY()
-Date: Fri,  1 May 2026 00:39:14 +0800
-Message-Id: <20260430163919.47372-2-18255117159@163.com>
+Subject: [PATCH 6/6] usb: typec: Use FIELD_MODIFY()
+Date: Fri,  1 May 2026 00:39:19 +0800
+Message-Id: <20260430163919.47372-7-18255117159@163.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260430163919.47372-1-18255117159@163.com>
 References: <20260430163919.47372-1-18255117159@163.com>
@@ -56,51 +56,43 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnUmm+hfNptZrZCg--.19910S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7urW7uF4xtFW5Xryktr4ruFg_yoW8XrW7pr
-	y8tr1a9an3t3WfA3s3WF4jyF1Yq348tryIga47twnrZwn8CrWUWFZxGFy5XF1UJasagFyU
-	Wa1xtry5GFZFgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piXAw-UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCxADojGnzhcDnvgAA3m
+X-CM-TRANSID:_____wDnUmm+hfNptZrZCg--.19910S8
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur17tw4fWw1UJw1Uuw43GFg_yoWkXFc_Gr
+	18C3Zayr9YvFW5A3W3Ga9akr1kta1jg3WagF1rtF1rAr1DKr18Wr45C3ykJFyjga1F9r95
+	CFn5XrykZr1fCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMTmS3UUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCxATpjWnzhcToYQAA32
 
 Use FIELD_MODIFY() to remove open-coded bit manipulation.
 No functional change intended.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
- drivers/usb/dwc3/core.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/usb/typec/tcpm/tcpci.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 58899b1fa96d..f95201470ab2 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -425,8 +425,7 @@ static void dwc3_ref_clk_period(struct dwc3 *dwc)
+diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+index 0148b8f50412..24c87dfa6b64 100644
+--- a/drivers/usb/typec/tcpm/tcpci.c
++++ b/drivers/usb/typec/tcpm/tcpci.c
+@@ -141,13 +141,10 @@ static int tcpci_set_cc(struct tcpc_dev *tcpc, enum typec_cc_status cc)
  	}
  
- 	reg = dwc3_readl(dwc, DWC3_GUCTL);
--	reg &= ~DWC3_GUCTL_REFCLKPER_MASK;
--	reg |=  FIELD_PREP(DWC3_GUCTL_REFCLKPER_MASK, period);
-+	FIELD_MODIFY(DWC3_GUCTL_REFCLKPER_MASK, &reg, period);
- 	dwc3_writel(dwc, DWC3_GUCTL, reg);
+ 	if (vconn_pres) {
+-		if (polarity == TYPEC_POLARITY_CC2) {
+-			reg &= ~TCPC_ROLE_CTRL_CC1;
+-			reg |= FIELD_PREP(TCPC_ROLE_CTRL_CC1, TCPC_ROLE_CTRL_CC_OPEN);
+-		} else {
+-			reg &= ~TCPC_ROLE_CTRL_CC2;
+-			reg |= FIELD_PREP(TCPC_ROLE_CTRL_CC2, TCPC_ROLE_CTRL_CC_OPEN);
+-		}
++		if (polarity == TYPEC_POLARITY_CC2)
++			FIELD_MODIFY(TCPC_ROLE_CTRL_CC1, &reg, TCPC_ROLE_CTRL_CC_OPEN);
++		else
++			FIELD_MODIFY(TCPC_ROLE_CTRL_CC2, &reg, TCPC_ROLE_CTRL_CC_OPEN);
+ 	}
  
- 	if (DWC3_VER_IS_PRIOR(DWC3, 250A))
-@@ -456,12 +455,9 @@ static void dwc3_ref_clk_period(struct dwc3 *dwc)
- 	decr = 480000000 / rate;
- 
- 	reg = dwc3_readl(dwc, DWC3_GFLADJ);
--	reg &= ~DWC3_GFLADJ_REFCLK_FLADJ_MASK
--	    &  ~DWC3_GFLADJ_240MHZDECR
--	    &  ~DWC3_GFLADJ_240MHZDECR_PLS1;
--	reg |= FIELD_PREP(DWC3_GFLADJ_REFCLK_FLADJ_MASK, fladj)
--	    |  FIELD_PREP(DWC3_GFLADJ_240MHZDECR, decr >> 1)
--	    |  FIELD_PREP(DWC3_GFLADJ_240MHZDECR_PLS1, decr & 1);
-+	FIELD_MODIFY(DWC3_GFLADJ_REFCLK_FLADJ_MASK, &reg, fladj);
-+	FIELD_MODIFY(DWC3_GFLADJ_240MHZDECR, &reg, decr >> 1);
-+	FIELD_MODIFY(DWC3_GFLADJ_240MHZDECR_PLS1, &reg, decr & 1);
- 
- 	if (dwc->gfladj_refclk_lpm_sel)
- 		reg |=  DWC3_GFLADJ_REFCLK_LPM_SEL;
+ 	ret = regmap_write(tcpci->regmap, TCPC_ROLE_CTRL, reg);
 -- 
 2.34.1
 
