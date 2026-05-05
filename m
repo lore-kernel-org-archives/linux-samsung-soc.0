@@ -1,68 +1,68 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B447477992
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 May 2026 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A87447885F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 May 2026 13:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777986835; cv=none; b=KtHXCveX7KrnJyJ2NuEESc3omNa5JuBUWCVCetNr8/i+TsJG1ULOsLA2WM7C8YMjAjHA5Ip/Lf5g+VHZ+6yrwszqIK4pL9FSgRm+W9FptjLTZVyG7CLjtox5ywAGpRJzEmHfi2kEPgQXx+73fW3M5WbfsBfPuS3xt1KZUfrHLfw=
+	t=1777986836; cv=none; b=ZNM4W1AnzhMlDL0TUdOwXoxzpUQJTA/isREv5g9Cyh6SGnKaSQ8wthT8IfEz4l01kkTLc/fiE29u63LNjbOwhus7KEUZ10Tm2nKOxVipnb5mRnDNValOWoCup+j/m5kseEc2C5+JiD0ZHxVuZw6inUCW05Rx89yg4iJwJagmH0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777986835; c=relaxed/simple;
-	bh=qp5oWm/4Ss+UIi29K/90SMb4FE1TJkPmkKkrbZErN7s=;
+	s=arc-20240116; t=1777986836; c=relaxed/simple;
+	bh=d7vm0U9qdAXbH4NbIyamvNnVpjWmz6WguBCwDQ3CBjQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BS9u2P6lTddJJrtrmqo9gilq+Mpscw+ylykH8i98TIFXEeCpqqHvkNEObXIviHoAs2Db7qvnmMCcv3DwRQHmYUsS1CQmVVgzDrnQP4NpIqOe9oAfOYPxzrSWmubJhqEZdtyFhEIhg3YussuQnGXkAm1Og5ZoNZlaeMXzz6129/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZ2I/YcN; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:To:Cc; b=anTW9BbxIrblZ2eW9BEHHwafgqTHu4FiHPXv9QidL38KlWY3NUgrKgdkWUBtRlsbJKyg5/7EozzzhVSg+nIn15j92jZ7CQrQq0Ykm2eK7ihSFbL3sWISVEJvft5IHByG7n7203SyI8bN4aH7U6LSpQ+JSnN3njP2lS+MCj5B5rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mRiYpGEs; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZ2I/YcN"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-488d2079582so55959485e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 May 2026 06:13:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mRiYpGEs"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48a563e4ef7so50751225e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 May 2026 06:13:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777986832; x=1778591632; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1777986833; x=1778591633; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FHmLifVz2AA9OJl2Yh6Eb2RS6GSmns6VuIWZDbFoB8c=;
-        b=pZ2I/YcNkG8R8nq8Y979yNgR61m8Fmi7YtAUz768sYSqu11IoNzZIKeXlhWe7yrHvl
-         4koG8YPJAi1wR9ekdTGYEtuR4n7puUe2309aj5qRm/0ghL8nLVcR5TfOpzzWpJ3eOoys
-         x3mdbj5HL8bTytlUHyAtkuxoU62/mDXOij4qN4fMpR+YwYI6q+6m2JOLUrCnPdZEI8HU
-         jsGMlh+wgUMpRWyDW2CzvTDjAtU3fM98mPSNUKOHKi1T5s0sJyUJuvuAWjnwEYcxWq8H
-         7BRgNK+0UY1Nw+OkAELGgbNMJZTG4e6haXILdbf8Gm6biqWNLfRbw51/v6OF/MXBHY5e
-         PEOw==
+        bh=7zXNbcb1r2bmykw+LmN/b7BGBlvkjjNT8szr48jA7Sk=;
+        b=mRiYpGEs9OyD0fQXYakYqpq+TWwvf+7E/5U0eqHe3Vk60i1xiOjt09M0Z/WYNCC9nL
+         ySuvj6j8IELZ1PPaVYqDN8D9nBdg97P4GXIKput02+/AnxSDFLMkDYelqsP0PSeXP066
+         ysPlnSP+SUtOTUYrAncX8tNcMSLzrPI/i/sTn60AkdewqQK6MRAkgIqzc7O7/cWND4Ld
+         dXRCttF5u3uUm8C0pEDN2zJuUmhcfPavqR8gZzDS5qH66cz48wlH7/TH59rlQvlerZGt
+         YnjtiDJ97tbmlLjKhyutJyB0xAkB7ONVayh/MNIdRFinw/tb12PPBjwp/jUg0T1QtrzF
+         gMPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777986832; x=1778591632;
+        d=1e100.net; s=20251104; t=1777986833; x=1778591633;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=FHmLifVz2AA9OJl2Yh6Eb2RS6GSmns6VuIWZDbFoB8c=;
-        b=s6F0qxzvwl7wglxtOkXVnd1lKHjtfUvb+2UKS7UD7HizIMKO0IHD7WIqFqhpxr5PlS
-         zpcv18dKANHQsEk9rJMho/hwIMpQyzYLBzg/wI4sjHSjHhnX1XpAl2lNyVWHSCIplBWv
-         iqNqortaNI9LsiIfsQxvySGoFocLxrrj2JottFBxcOrEck2DbfOowr8/jw7DWiKQWDCQ
-         pwQgtwws5I0G1faOduR9B8WWcDEXrJn9VNEPeN1SRzRe23N9yAeJsvEjqejOLJIF66lZ
-         Df6XXp1PNn9zk5RTR04On+wf1lngBuKfiM0NqGEY/c3d8MeceoUFEbZDSZI+8CRpNRNO
-         9gkg==
-X-Forwarded-Encrypted: i=1; AFNElJ+q1Pdog4Ps5nQh2isgjGDQwwL7+dOJdwNtUMgOrEL+n+S8Tvs4WTmT1CHWguX/FiernMgIna2WJ7u/Vjd/sv3q7w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV/oi6srvMy9srbKEBEPpZQVTHylE1MZiaAq5Rn6hFHLuqNWmj
-	4Yqda+9A+B6BoiQN4uD4xcV+o+c4uFfiezrPG3DvMhjJkgowERL90Lry+Av9+4tSDTc=
-X-Gm-Gg: AeBDiescSR74S9rwwiuZ9Gkn2cSNz9CemiNqknU9CkiNAbz49zVPnns+y9u4mYkAeJa
-	k9TmwzPQXZ5QbKydYXa8axeloJWHGcnK20wdTmyABjzr/7T2w71usfSsCXWCHbZ57N2Qxp0I9tz
-	gFMVLHp4e53XqyowiGqt4lXONV7VujJi8p5RrUvNQjvC2sVgmAXETMeDkPL3ZSHCURRfszrPbro
-	XyBbYr9MFDU4RRUCqGyGvakAk8b1qLaegEH1hf11cayyLIaZiYDb5aS8Qh/LDuAXyKsqIz+D5iB
-	9P4q6HLXhHkT/Z1is0sKba0XzDOaWRnRXO99zi3+/zaOnps1hwGIpwdwPPit/mmS0t32UszEBY4
-	eh1/cN13ec/mGZwM9BYCGS4OiqQDEjX/DUnJ2r/9ZAgUF4EAVVtRKgGIzQimG5JdLr3lHnMzmbz
-	ji6QD7CQ2+CqgsLx9uURIqFWnymbPSE8NnDzxenNYLwUC3ld1BFieWx2cWltSnf/sjII0gJh6BX
-	GcDBjEa8C2753rukA==
-X-Received: by 2002:a05:600c:4450:b0:487:4eb:d125 with SMTP id 5b1f17b1804b1-48a98639086mr210514245e9.9.1777986831930;
-        Tue, 05 May 2026 06:13:51 -0700 (PDT)
+        bh=7zXNbcb1r2bmykw+LmN/b7BGBlvkjjNT8szr48jA7Sk=;
+        b=b6/qMmOY/My4NIkbbdcYKaK9Sz8nvUYJei+xllJdMVQoyDt0hkBjZk5iS5KWgdTp26
+         lxhGihsyNjxzt6pPXGdEivP0nC34s34Eqvgn6VBFPNkfNqCh62if6QN+Zc3x5p9GQQy8
+         Y4pb5K1Wj0BIFUDytwpagqZPqAbcD82PMRF/8XLycJhCnq7LptKjokmygekHJVaoG+Lc
+         +HNTJOg4eqjwH3R4POfAil9Ae9jkIEVrM1arA/xXEMfXBL9WKWuShB5IJd0DZujRK5cK
+         eix9ogm7nsXD2VAD53epILDJahdbbTYGw39fg+vgXAAPT03L+B0tLyOMEkipwKEAVGWJ
+         M8gA==
+X-Forwarded-Encrypted: i=1; AFNElJ99SubdN+5m8jXVkab0LOyGRTin7ntXFFFsmmL0K5ot2Scs21D16Ys5ObntQROgfgvSDJj5XoST7LkBJqbWzgcn0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtzZ+ZE9lsecFSLWk4aoq6V37jQiNjUUiDvtfUGHTCv+gaAtbm
+	usp9zMUu7/lfctgkaXVfRoHqQ4NmqWNTa+aJ9auVw6eoO3+Feto9ED6MxhUG1wYEsoc=
+X-Gm-Gg: AeBDieu60hFEa+3GfIJOUcdGJrPWjdETuM6OKYSNg3ZqfR3Z/CoOIsgpdpQ7PQlIh+Z
+	YC1UDQWWwDK4R8PXWCqUdcD7mh4AbJjukPbhG7jLkq4awu4pzEzhmD91A0Q4xSHlj2AtVKJUuAU
+	4ulczEJD+Sk0ZrWs1V2owVDWyJQPSNavH9nmfrLd5OYbAXq73y/QRSyYISoGtSwxULEb9shtLcU
+	JngzEiNXStE0SB36wOB1VVLHNmQQNbVQb8F7yNoobbIihpVXvYAxFmQzcdJH3gq7zs8QvpSZVUH
+	DjVwnbT+M1qan44ecJAf2SFSc89ugQHcCpF1XJeGsuW0MTgI324AsmJECMJPQ0VC/ENZ3SNFZk9
+	TWABnmQKNiVw+IHGBfJuNG92fgdrwigirFoqIpbxc9U/AHkA/kLD7raPJ63hwkwF3u77VOajUHJ
+	0Xgc8BiNqFnczdPMq2+sHt3Jes0PJQ4I3q2Ga5S2GR0shoYvMEkvEsC3bqnOLjMEel1eI2AchbA
+	0Sc0FsT7tVEltNbaw==
+X-Received: by 2002:a05:600d:8451:b0:488:ffb1:494c with SMTP id 5b1f17b1804b1-48d187d9883mr36909545e9.12.1777986832495;
+        Tue, 05 May 2026 06:13:52 -0700 (PDT)
 Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb72a17sm366599525e9.6.2026.05.05.06.13.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb72a17sm366599525e9.6.2026.05.05.06.13.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 06:13:51 -0700 (PDT)
+        Tue, 05 May 2026 06:13:52 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 05 May 2026 13:12:58 +0000
-Subject: [PATCH v5 1/7] firmware: samsung: acpm: Fix cross-thread RX length
- corruption
+Date: Tue, 05 May 2026 13:12:59 +0000
+Subject: [PATCH v5 2/7] firmware: samsung: acpm: Fix mailbox channel leak
+ on probe error
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260505-acpm-fixes-sashiko-reports-v5-1-43b5ee7f1674@linaro.org>
+Message-Id: <20260505-acpm-fixes-sashiko-reports-v5-2-43b5ee7f1674@linaro.org>
 References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
 In-Reply-To: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -79,124 +79,80 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
  andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org, 
- Titouan Ameline <titouan.ameline@gmail.com>
+ Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777986831; l=4462;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777986831; l=2402;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=qp5oWm/4Ss+UIi29K/90SMb4FE1TJkPmkKkrbZErN7s=;
- b=M+zBRspfuC3hFP0WDaqmOFPc0NnPrbZ2+1IaK4wuqxMQOcglC63RdXe0nS80HpV3ih/G2NfvM
- MBqt0hibBmPBT47Q2PG68Gb21e5PHlh/x567ppjMiJkpeNfby4EGFdk
+ bh=d7vm0U9qdAXbH4NbIyamvNnVpjWmz6WguBCwDQ3CBjQ=;
+ b=M+kZzEMj6dEoppNgvMWoO2zl4Mo+sei7crymfmwR16IvDgC0ez/YRXM/jUFit87zge5NsxBVd
+ uPFQNsQWkvDD4wbmvIOaokkFfSWZApxlZ2CSlu0/KocvS/iEc6DU5Az
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Sashiko identified a cross-thread RX length corruption bug when
-reviewing the thermal addition to ACPM [1].
+Sashiko identified the leak at [1].
 
-When multiple threads concurrently send IPC requests, the ACPM polling
-mechanism can encounter responses belonging to other threads. To drain
-the queue, the driver saves these concurrent responses into an internal
-cache (`rx_data->cmd`) to be retrieved later by the owning thread.
+The ACPM driver allocates hardware mailbox channels using
+`mbox_request_channel()` during `acpm_channels_init()`. However, the
+driver lacked a `.remove` callback and did not free these channels on
+subsequent error paths inside `acpm_probe()`.
 
-Previously, the driver incorrectly used `xfer->rxcnt` (the expected
-receive length of the *current* polling thread) when copying data for
-*other* threads into this cache. If the threads expected responses of
-different lengths, this resulted in buffer underflows (leading to reads
-of uninitialized memory) or potential buffer overflows.
+Additionally, if `acpm_achan_alloc_cmds()` failed during the channel
+initialization loop, the function returned immediately, bypassing the
+manual cleanup and permanently leaking any channels successfully
+requested in previous loop iterations.
 
-Fix this by replacing the boolean `response` flag in
-`struct acpm_rx_data` with `rxcnt`, caching the exact expected receive
-length for each specific transaction during transfer preparation. Use
-this cached length when saving concurrent responses.
-
-Consequently, ensure that `xfer->rxcnt` is explicitly zeroed in driver
-helpers (e.g., `acpm_dvfs_set_xfer`) for fire-and-forget messages to
-prevent uninitialized stack garbage from being interpreted as a massive
-expected receive length.
+Fix this by modifying `acpm_free_mbox_chans()` to match the `devres`
+action signature and registering it via `devm_add_action_or_reset()`.
 
 Cc: stable@vger.kernel.org
 Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-Reported-by: Titouan Ameline <titouan.ameline@gmail.com>
 Closes: https://sashiko.dev/#/patchset/20260420-acpm-tmu-v3-0-3dc8e93f0b26%40linaro.org [1]
-Closes: https://lore.kernel.org/r/20260426210255.73674-1-titouan.ameline@gmail.com/
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/firmware/samsung/exynos-acpm-dvfs.c |  3 +++
- drivers/firmware/samsung/exynos-acpm.c      | 15 ++++++++-------
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ drivers/firmware/samsung/exynos-acpm.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.c b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-index 06bdf62dea1f..fdea7aa24ca0 100644
---- a/drivers/firmware/samsung/exynos-acpm-dvfs.c
-+++ b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-@@ -31,6 +31,9 @@ static void acpm_dvfs_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdlen,
- 	if (response) {
- 		xfer->rxcnt = cmdlen;
- 		xfer->rxd = cmd;
-+	} else {
-+		xfer->rxcnt = 0;
-+		xfer->rxd = NULL;
- 	}
- }
- 
 diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 16c46ed60837..e95edc350efa 100644
+index e95edc350efa..9766425a44ab 100644
 --- a/drivers/firmware/samsung/exynos-acpm.c
 +++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -104,12 +104,12 @@ struct acpm_queue {
-  *
-  * @cmd:	pointer to where the data shall be saved.
-  * @n_cmd:	number of 32-bit commands.
-- * @response:	true if the client expects the RX data.
-+ * @rxcnt:	expected length of the response in 32-bit words.
+@@ -527,10 +527,11 @@ static int acpm_achan_alloc_cmds(struct acpm_chan *achan)
+ 
+ /**
+  * acpm_free_mbox_chans() - free mailbox channels.
+- * @acpm:	pointer to driver data.
++ * @data:	pointer to driver data.
   */
- struct acpm_rx_data {
- 	u32 *cmd;
- 	size_t n_cmd;
--	bool response;
-+	size_t rxcnt;
- };
+-static void acpm_free_mbox_chans(struct acpm_info *acpm)
++static void acpm_free_mbox_chans(void *data)
+ {
++	struct acpm_info *acpm = data;
+ 	int i;
  
- #define ACPM_SEQNUM_MAX    64
-@@ -199,7 +199,7 @@ static void acpm_get_saved_rx(struct acpm_chan *achan,
- 	const struct acpm_rx_data *rx_data = &achan->rx_data[tx_seqnum - 1];
- 	u32 rx_seqnum;
+ 	for (i = 0; i < acpm->num_chans; i++)
+@@ -558,6 +559,10 @@ static int acpm_channels_init(struct acpm_info *acpm)
+ 	if (!acpm->chans)
+ 		return -ENOMEM;
  
--	if (!rx_data->response)
-+	if (!rx_data->rxcnt)
- 		return;
++	ret = devm_add_action_or_reset(dev, acpm_free_mbox_chans, acpm);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to add mbox free action.\n");
++
+ 	chans_shmem = acpm->sram_base + readl(&shmem->chans);
  
- 	rx_seqnum = FIELD_GET(ACPM_PROTOCOL_SEQNUM, rx_data->cmd[0]);
-@@ -256,7 +256,7 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer)
- 		seqnum = rx_seqnum - 1;
- 		rx_data = &achan->rx_data[seqnum];
+ 	for (i = 0; i < acpm->num_chans; i++) {
+@@ -579,10 +584,8 @@ static int acpm_channels_init(struct acpm_info *acpm)
+ 		cl->dev = dev;
  
--		if (rx_data->response) {
-+		if (rx_data->rxcnt) {
- 			if (rx_seqnum == tx_seqnum) {
- 				__ioread32_copy(xfer->rxd, addr, xfer->rxcnt);
- 				rx_set = true;
-@@ -268,7 +268,8 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer)
- 				 * clear yet the bitmap. It will be cleared
- 				 * after the response is copied to the request.
- 				 */
--				__ioread32_copy(rx_data->cmd, addr, xfer->rxcnt);
-+				__ioread32_copy(rx_data->cmd, addr,
-+						rx_data->rxcnt);
- 			}
- 		} else {
- 			clear_bit(seqnum, achan->bitmap_seqnum);
-@@ -380,8 +381,8 @@ static void acpm_prepare_xfer(struct acpm_chan *achan,
- 	/* Clear data for upcoming responses */
- 	rx_data = &achan->rx_data[achan->seqnum - 1];
- 	memset(rx_data->cmd, 0, sizeof(*rx_data->cmd) * rx_data->n_cmd);
--	if (xfer->rxd)
--		rx_data->response = true;
-+	/* zero means no response expected */
-+	rx_data->rxcnt = xfer->rxcnt;
+ 		achan->chan = mbox_request_channel(cl, 0);
+-		if (IS_ERR(achan->chan)) {
+-			acpm_free_mbox_chans(acpm);
++		if (IS_ERR(achan->chan))
+ 			return PTR_ERR(achan->chan);
+-		}
+ 	}
  
- 	/* Flag the index based on seqnum. (seqnum: 1~63, bitmap: 0~62) */
- 	set_bit(achan->seqnum - 1, achan->bitmap_seqnum);
+ 	return 0;
 
 -- 
 2.54.0.545.g6539524ca2-goog
