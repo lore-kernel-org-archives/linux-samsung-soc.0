@@ -1,139 +1,125 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC9E44A71C
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 May 2026 13:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0F3EE1C4;
+	Tue,  5 May 2026 16:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777986844; cv=none; b=ZNU+X/tMRHLHXRmctnzwvlxYE7PnuoEv1+9sZzNQ/kv6K1nzxhoXiculeBmAAvvaIw/4HMRpnAAVbbF9WYeAXaIHYskPsr8AlIeML7FBaKFdPwUcfKUZlv9z+af6E0rd1GsQTk6kf/L9l1dQh9lVcK8FW6DXVJaGijh7e1KxMw8=
+	t=1777998391; cv=none; b=b2XqrhMSx9cgqNL5aIJy/EEMCa4y7XwGuepE7hurErLXRA/YP+qllxrFRA6frgYh6ik4XxdbRKMG3XxjzkJ5CpIYcU/98fjbb+v02TWZrWiYpLGc2cW3qHOoHeERPPSI7gFQjYbtQab9wwxkU+/yVJgo2bijO+gucVg7GiOaj/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777986844; c=relaxed/simple;
-	bh=TrETAIBRtr5BpleipM5VXU32aMTdlU394IStlNmAoNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NUYx+O6E232yuZASyiXFWg5PTBbD+PWXjHCDJn/V+3IGY1SnKCbi77eMTXoNIe+3vgcV4Wv8oxGS92TbHRPVCVGfCLS0lwMUl1jiL+oGW6OsI2J1+K/zkwSxUwDZLfz9WqBUnUispNTaPbizk7bcM2p2xsaVnb5RrYm1VRR2AIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dfevylt5; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1777998391; c=relaxed/simple;
+	bh=d9oRhAaRGwydDiDuK7BhCRvRWDp8pOBlU9+d0qcoLXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YjO8IVpMtSzCXGDC2g79qdmSNbTcXozg1SPKqgVjg/MPfo+j/eJYcAoIiSrMv0yC2XUaaLSE6CFwkfpe0i40Hb0Ukrk+jajW6M67+pxCmfcbur3xRzWfG3w1C/EKjxUMVnc8yjw1nBI3bv2L42x3uN9ljDkWbOiEsxuHHHZEPM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3c57A43; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfevylt5"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4838c15e3cbso42910045e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 May 2026 06:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777986838; x=1778591638; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Mo2IeU/AaXoLyUW0cqRpgQJYVfBlAhtHpp2oMUPg6A=;
-        b=dfevylt5xDKB6pM9jMRSj1DLj/nuuwVFmfzfOHeOwGo37vPQyU7H6LgPiHKfnqWFsr
-         /6hbMPH0GGGptvfGGbBCJyu1ThmoU5UFOz9wT4pi26dx6OsiHAA1CRuKsS+yAH6GHXLM
-         rFAecZC1xcBUgm8rtL0eHIB0TK+/9wopYTWMiXRpg1Nih+L7mFnOp30og4BWPM3h+R2i
-         dd4nYXWRfz6iG2QTAHUrJ6OG1q6IHpN1oFegqLX1s61rYMwkfD2dOyYm15P/wOUfUlyV
-         P8w5Z+QmFOe9O5f5LHYJhhDCmpn7lYm4pPLW/iRIZtVylFQ/KTskyO2OdYEbxe/AkToc
-         C3/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777986838; x=1778591638;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+Mo2IeU/AaXoLyUW0cqRpgQJYVfBlAhtHpp2oMUPg6A=;
-        b=ZTbcnwM3Z4x5jutUW+50cEPi8AbX0zl4FTTqH/5mOyrpQo8+g9SmAFsL+8WMmJEAWU
-         3VFcBt9dffQXCrYkXib43apG+lRkbb7EIMYI1SBgxL3IMeaIudae6iiqID9gGXG9uSlg
-         kwUWxngM3V6PG9srNR1tidpWVv8o5CCtDc6nLgq75tl/18g4vCW22viGW45jsCQsQ/yq
-         xJp1wFBSIWMML9WV+AV1o0HMIr6n2Vfh1KWGeEn1k0DFc6BPkbOZ0ppGWq2HhJ6SMs2/
-         mhxw4UsthYHhHY/n4fx4WWVQSLA8CDkGekLYhQP3fKByagFABRPfB0+8kivLe1PIJmfF
-         Zx1A==
-X-Forwarded-Encrypted: i=1; AFNElJ9Zg1gVOLHjDRpFzNUVGhVQFGSV//y8E8QY97zAX8dDoXZQP3ASw1OwcDNlxC5ecO/vcitA6MbfItOvEejml/RskA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YymtYyoZNAKKEF18nppY7lBFwDDc9FelnV4C9jEaF/QXgp6Tw2b
-	lnWI5WFhrtjyvvkFuzI5fOOeqoYhXpdQlmjOg8LquuLOOK7QuCkThKpwb8ekeTLQrNs=
-X-Gm-Gg: AeBDiet5Rw1vrt6TH84PuVxIijfF2U0JfhZJrhkXoylfH6lH785dYQQOnRs2O8Xldij
-	v1xZa8LnNN7+CLrZ2uahMQ2wLmTCq7k/t1D2uyVrVml4/FiRL/cqZ386iq7p5pqZrwTjbUwqqGd
-	ipYdIfvs/wlj/hPRtTbNCei306I7eCP78d78IIBff/QpRnSiEVxnJ5sa5oPzAqIMt8YNnDPG8VA
-	DDWX41LNuORZKHcLTn2+XT1GwdYI1XqlNmqg/zuEkVQmAo12010aoiVHeOZ/LtCtjXR5FUBHsyD
-	3UslTuQApUZEf+QasYC4CEwRWWMs8iG/OkmoVzR24O6B6Bm6r4tomqkZTOsItI3PlL1A6IlKDoP
-	kJfyTHJmXeIYVy2/xQCh/tfgrhEFfKqM6WkMuJhHaSn+2YtOsAj2K612YKCp26XeSYbz7NWT1G5
-	ns/j5az8yzyfPHrBRiSKqh2Sg6ME1X3s3o/gTZ/WOXyhv/jcx3NobcUyukv0JbHgUA9YlWKOvHl
-	u4jytJh/zQoU2HpD6tFUSBd/Bc/
-X-Received: by 2002:a05:600c:c0c2:b0:48a:76a3:2b9b with SMTP id 5b1f17b1804b1-48a9865ea56mr172953595e9.17.1777986832975;
-        Tue, 05 May 2026 06:13:52 -0700 (PDT)
-Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb72a17sm366599525e9.6.2026.05.05.06.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 06:13:52 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 05 May 2026 13:13:00 +0000
-Subject: [PATCH v5 3/7] firmware: samsung: acpm: Fix dummy stubs to return
- ERR_PTR
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3c57A43"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D7D5C2BCB4;
+	Tue,  5 May 2026 16:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777998391;
+	bh=d9oRhAaRGwydDiDuK7BhCRvRWDp8pOBlU9+d0qcoLXY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P3c57A43Ly9U95oakv1tzSfsBDMAQvbGX3L5fDur0PPxN8g/BkGWOrF0IQ1vnb8kn
+	 q5FpFULXXt5CFm8Sy/qdB+pGfZ+595OPQ/+H2h/dpiAmaAvc14vlTx4Z7a774smhAG
+	 mRi8mWrUgi+n3TQ7klBwMiCHYz3eCKtTXeoo5Vugwd9W8wFUQWC/qxp4tUJmAVvLgS
+	 jHSgvFYD9WkXPVvCXJZvfwe/RjozMVbFHi4OoCu3mLeSQZDLHCSt79QQSlDeG2UmtL
+	 GPSyoqLckepvJjFkRnrQa3yfyKh+iIz18B0bEQzeLYkJERNnopW8hE0+mQWVZV5SLC
+	 bwYA1sJR8mQqw==
+Date: Tue, 5 May 2026 11:26:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manikandan K Pillai <mpillai@cadence.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Tom Joseph <tjoseph@cadence.com>
+Subject: Re: [PATCH v8 phy-next 01/31] PCI: cadence: Preserve all error codes
+ in cdns_plat_pcie_probe()
+Message-ID: <20260505162629.GA734488@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260505-acpm-fixes-sashiko-reports-v5-3-43b5ee7f1674@linaro.org>
-References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
-In-Reply-To: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
- andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777986831; l=1843;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=TrETAIBRtr5BpleipM5VXU32aMTdlU394IStlNmAoNo=;
- b=okAA+Mks+tiZ1s4Jc4QBMMHkSt6NGOv/LwbI22GhCddZCxVtABSB/BDAqOsUu9MonRPBBkxDN
- jHgz8DkXtR2AxY0TqFa7j6ljCUuvR6o7fs+Un23tC7Mas+3rVYEJtuK
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260505100523.1922388-2-vladimir.oltean@nxp.com>
 
-Sashiko identified a potential NULL pointer dereference [1].
+[+cc Tom, author of bd22885aa188 in case there's something subtle here]
 
-The dummy stub implementation for devm_acpm_get_by_node() returns NULL
-when CONFIG_EXYNOS_ACPM_PROTOCOL is disabled.
+On Tue, May 05, 2026 at 01:04:53PM +0300, Vladimir Oltean wrote:
+> The blamed commit functionally changed the error path of
+> cdns_pcie_host_probe(), now cdns_plat_pcie_probe().
+> 
+> When the old code path executed "goto err_get_sync", the PCIe controller
+> probe function propagated the pm_runtime_get_sync() error code. The new
+> code doesn't, and returns 0.
+> 
+> Similarly for the "goto err_init" previously triggered by
+> cdns_pcie_host_init() errors, and now triggered by
+> cdns_pcie_host_setup() and cdns_pcie_ep_setup() errors. These are not
+> propagated and will result in probing success, which is incorrect.
+> 
+> Fixes: bd22885aa188 ("PCI: cadence: Refactor driver to use as a core library")
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Manikandan K Pillai <mpillai@cadence.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
 
-However, the active implementation of this function returns an ERR_PTR
-on failure, and the consumer driver checks the return value using
-IS_ERR(). Because IS_ERR(NULL) evaluates to false, returning NULL from
-the stub tricks consumer drivers into treating the NULL return as a
-valid handle. Subsequent attempts to access handle->ops result in a
-fatal NULL pointer dereference.
+I guess this driver is orphaned.
 
-Fix this by returning ERR_PTR(-ENODEV) in the disabled configuration
-to correctly propagate the disabled state and match the API contract.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 6837c006d4e7 ("firmware: exynos-acpm: add empty method to allow compile test")
-Closes: https://sashiko.dev/#/patchset/20260420-acpm-tmu-v3-0-3dc8e93f0b26%40linaro.org [1]
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- include/linux/firmware/samsung/exynos-acpm-protocol.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> v7->v8: patch is new, issue was flagged by Sashiko
+> https://sashiko.dev/#/patchset/20260430110652.558622-1-vladimir.oltean@nxp.com
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-plat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> index b067a3296dd3..8b12a46b5601 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> @@ -126,7 +126,7 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  	while (phy_count--)
+>  		device_link_del(cdns_plat_pcie->pcie->link[phy_count]);
+>  
+> -	return 0;
+> +	return ret;
 
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index 13f17dc4443b..d4db2796a6fb 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -8,6 +8,7 @@
- #ifndef __EXYNOS_ACPM_PROTOCOL_H
- #define __EXYNOS_ACPM_PROTOCOL_H
- 
-+#include <linux/err.h>
- #include <linux/types.h>
- 
- struct acpm_handle;
-@@ -57,7 +58,7 @@ struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- static inline struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- 							struct device_node *np)
- {
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
- #endif
- 
+This affects cases where pm_runtime_get_sync(),
+cdns_pcie_host_setup(), or cdns_pcie_ep_setup() return failure.
 
--- 
-2.54.0.545.g6539524ca2-goog
+Seems right to me to fail the probe when these fail.
 
+Not all users of pm_runtime_get_sync() check for failure, but I think
+all the other controller drivers that do check return failures from
+the .probe().
+
+>  }
+>  
+>  static void cdns_plat_pcie_shutdown(struct platform_device *pdev)
+> -- 
+> 2.34.1
+> 
