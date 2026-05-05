@@ -1,68 +1,67 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A87447885F
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 May 2026 13:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5805E436372
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 May 2026 13:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777986836; cv=none; b=ZNM4W1AnzhMlDL0TUdOwXoxzpUQJTA/isREv5g9Cyh6SGnKaSQ8wthT8IfEz4l01kkTLc/fiE29u63LNjbOwhus7KEUZ10Tm2nKOxVipnb5mRnDNValOWoCup+j/m5kseEc2C5+JiD0ZHxVuZw6inUCW05Rx89yg4iJwJagmH0w=
+	t=1777986836; cv=none; b=adoCuOcR0RSx9qJPaJSn4MCyJHfrDbUajriizgThS2l2MbX1QpIM+77kdJCeyJszsYfFvswnc8eu/5a52LSqfV54KT+f6DCJbJuPH7OFwcTzFu9QtsTDwLWH+LaRGC7xEhZSZG2vbWkBD4gBTDeBYtWjpHDfjvU5flwAuxzbc9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1777986836; c=relaxed/simple;
-	bh=d7vm0U9qdAXbH4NbIyamvNnVpjWmz6WguBCwDQ3CBjQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=anTW9BbxIrblZ2eW9BEHHwafgqTHu4FiHPXv9QidL38KlWY3NUgrKgdkWUBtRlsbJKyg5/7EozzzhVSg+nIn15j92jZ7CQrQq0Ykm2eK7ihSFbL3sWISVEJvft5IHByG7n7203SyI8bN4aH7U6LSpQ+JSnN3njP2lS+MCj5B5rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mRiYpGEs; arc=none smtp.client-ip=209.85.128.46
+	bh=wivIsrOrOOiUhQN35CYh7ZIXSWFpSvCVQrdHqBKvTe8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZiOZV4ilDq+oQmS1y4woRyCsalY09oqzbd4+5F09mI0tJ4yi3qbrL2YWa+mTcn3mjPuRfaRufxtsCxE1uJk4ZYb2NdiSpcWKzcgOM4jN4wIxFO6PFHYs16uB+6AYg6/eOymkL7Evp74Xrzmuzw5RnnvXHcP6ul3uMzevfDpifD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfhiZ3/h; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mRiYpGEs"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48a563e4ef7so50751225e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 May 2026 06:13:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfhiZ3/h"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4891b0786beso35595725e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 May 2026 06:13:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777986833; x=1778591633; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7zXNbcb1r2bmykw+LmN/b7BGBlvkjjNT8szr48jA7Sk=;
-        b=mRiYpGEs9OyD0fQXYakYqpq+TWwvf+7E/5U0eqHe3Vk60i1xiOjt09M0Z/WYNCC9nL
-         ySuvj6j8IELZ1PPaVYqDN8D9nBdg97P4GXIKput02+/AnxSDFLMkDYelqsP0PSeXP066
-         ysPlnSP+SUtOTUYrAncX8tNcMSLzrPI/i/sTn60AkdewqQK6MRAkgIqzc7O7/cWND4Ld
-         dXRCttF5u3uUm8C0pEDN2zJuUmhcfPavqR8gZzDS5qH66cz48wlH7/TH59rlQvlerZGt
-         YnjtiDJ97tbmlLjKhyutJyB0xAkB7ONVayh/MNIdRFinw/tb12PPBjwp/jUg0T1QtrzF
-         gMPQ==
+        d=linaro.org; s=google; t=1777986831; x=1778591631; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WTpRXtFTscssgW//d4BsVFh1NygaJXve5EIy5ifUx0=;
+        b=sfhiZ3/hsGskmZEUcvOwYkXwVjT9Ath+se8KTso9PyfSz9khiuU3QD9RA06T1zo1zb
+         dUJ1ibDs9Gdr7Z1V0uc55wP5MfqDDqW4Bm+pGtwuuLXcDci6M6QECJdoYH1TKqKr1GLy
+         raFFK/ob4ZMLZ6RPIPaIxL8DHnBQJZfHkFfc92y1xa/2MP+4W71iYhaeak/jJUd9YThm
+         +ICRBBlr2FUqHHUsxV3vpUjuDfQSub+j4S9FZUrEPlMFotuuS2uUnjuJ7ZGnl6vlpBAy
+         ICWD7lcsLaxTyvfvPaJJ+A5X+U+CmNYcgdahdrATlJt9M4ESu5PpojedRE0N38C/qHLQ
+         gQHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777986833; x=1778591633;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7zXNbcb1r2bmykw+LmN/b7BGBlvkjjNT8szr48jA7Sk=;
-        b=b6/qMmOY/My4NIkbbdcYKaK9Sz8nvUYJei+xllJdMVQoyDt0hkBjZk5iS5KWgdTp26
-         lxhGihsyNjxzt6pPXGdEivP0nC34s34Eqvgn6VBFPNkfNqCh62if6QN+Zc3x5p9GQQy8
-         Y4pb5K1Wj0BIFUDytwpagqZPqAbcD82PMRF/8XLycJhCnq7LptKjokmygekHJVaoG+Lc
-         +HNTJOg4eqjwH3R4POfAil9Ae9jkIEVrM1arA/xXEMfXBL9WKWuShB5IJd0DZujRK5cK
-         eix9ogm7nsXD2VAD53epILDJahdbbTYGw39fg+vgXAAPT03L+B0tLyOMEkipwKEAVGWJ
-         M8gA==
-X-Forwarded-Encrypted: i=1; AFNElJ99SubdN+5m8jXVkab0LOyGRTin7ntXFFFsmmL0K5ot2Scs21D16Ys5ObntQROgfgvSDJj5XoST7LkBJqbWzgcn0Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtzZ+ZE9lsecFSLWk4aoq6V37jQiNjUUiDvtfUGHTCv+gaAtbm
-	usp9zMUu7/lfctgkaXVfRoHqQ4NmqWNTa+aJ9auVw6eoO3+Feto9ED6MxhUG1wYEsoc=
-X-Gm-Gg: AeBDieu60hFEa+3GfIJOUcdGJrPWjdETuM6OKYSNg3ZqfR3Z/CoOIsgpdpQ7PQlIh+Z
-	YC1UDQWWwDK4R8PXWCqUdcD7mh4AbJjukPbhG7jLkq4awu4pzEzhmD91A0Q4xSHlj2AtVKJUuAU
-	4ulczEJD+Sk0ZrWs1V2owVDWyJQPSNavH9nmfrLd5OYbAXq73y/QRSyYISoGtSwxULEb9shtLcU
-	JngzEiNXStE0SB36wOB1VVLHNmQQNbVQb8F7yNoobbIihpVXvYAxFmQzcdJH3gq7zs8QvpSZVUH
-	DjVwnbT+M1qan44ecJAf2SFSc89ugQHcCpF1XJeGsuW0MTgI324AsmJECMJPQ0VC/ENZ3SNFZk9
-	TWABnmQKNiVw+IHGBfJuNG92fgdrwigirFoqIpbxc9U/AHkA/kLD7raPJ63hwkwF3u77VOajUHJ
-	0Xgc8BiNqFnczdPMq2+sHt3Jes0PJQ4I3q2Ga5S2GR0shoYvMEkvEsC3bqnOLjMEel1eI2AchbA
-	0Sc0FsT7tVEltNbaw==
-X-Received: by 2002:a05:600d:8451:b0:488:ffb1:494c with SMTP id 5b1f17b1804b1-48d187d9883mr36909545e9.12.1777986832495;
-        Tue, 05 May 2026 06:13:52 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777986831; x=1778591631;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/WTpRXtFTscssgW//d4BsVFh1NygaJXve5EIy5ifUx0=;
+        b=JotgpfPDXFbAG3KK3pN8kAYoDJKpW/oo7VM9j0CPO/SzOvo/FvPgwlxyh+laH7q1xR
+         fKEymLEL6n10clHNWV/jj4be4r63VqlKhJz53EUCyIq7wPydnq69UIQ4IkSCvUwW8+jS
+         6PGzbMDCwlx6U3M+Dy7eH6VHX+WDMA1iIQTqzN2uNozZwZSmSpReBN43KpZ3kjFB/+O5
+         207eweFIs6rvfeg84Ko1gkb/QAeMikfHzGFqtZUCHmrHKgKxTBhhu/2beKW/0e5WJ/oN
+         9cfYa4tzRZPXkgoNrwgoj4sP0mUZfFonZWG5MjMSTcVT0lK7LiPnTtjJ3eCgNqjDqA1G
+         wRAQ==
+X-Forwarded-Encrypted: i=1; AFNElJ82Xg99jY0c4qgIWT2A85jEiIDYp20Jvp0Omuj+q7AzWFZNg+pKd4gSZJQBvDtHxgpQ1c45XLPdQU1fV+plAtYg3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoW+Oi4RtBe8PTJ5HSHKk9GR7Ri3nDSrhJDSI93+8i67sokadD
+	nRLNpSt06Bln31rpRHtiFxwEmCZekK1U4C9Y7yxDMsm/Hv2u5UI9FVmeUNbjKA1p+uM=
+X-Gm-Gg: AeBDieuQ0TUjrj36fAlM+bR6qxh1D+R+OacLAcqqSxOC/7aXwbW2FDZ6YwZe+rgup5G
+	CvgZVmp/qumkd7UesSyx+qxrPdemCGYqd8pNgCubgnADoDfgXc94Hlf8ALv5s1LcwNMJM/b4gy8
+	253Nnol99CGqsy+OcpHvz52NegTmQmkID0EGmXirAwMWGRQGagmJfF5DLJxroPaFgUdBzwOWEFU
+	bpq/7mljPawR2ymMHSBAIrNB43B3jk6RUPw8Ueo+am2ElrKpFaUVEX8BhXqP8P5dNWcouUSQqUL
+	vVOEvYZT8OE0yqirefudThuOciG8WhvmN3ix+FU8oKKiVEj/yAa+I/ojibxyHjBI/no6AiEwDxJ
+	rBIlNHvJ+nYPbR9mR/1IbVswF1935BzBmSm/QuOSDUN+gWzX+2rh1ALP+VgqfBGz2aA9Z/fdFzN
+	VMcM96+AEOXXKdmeOBg+BtZ2oFLCLDdxI/S9ppSWg8NsueuDvjg7humubj9DUwQFmcW82/l83zG
+	CvI3V3RjGsxfZtDXQ==
+X-Received: by 2002:a05:600c:c089:b0:48a:7965:b943 with SMTP id 5b1f17b1804b1-48a98676d56mr203077035e9.29.1777986831533;
+        Tue, 05 May 2026 06:13:51 -0700 (PDT)
 Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb72a17sm366599525e9.6.2026.05.05.06.13.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eb72a17sm366599525e9.6.2026.05.05.06.13.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 06:13:52 -0700 (PDT)
+        Tue, 05 May 2026 06:13:51 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 05 May 2026 13:12:59 +0000
-Subject: [PATCH v5 2/7] firmware: samsung: acpm: Fix mailbox channel leak
- on probe error
+Subject: [PATCH v5 0/7] firmware: samsung: acpm: Various fixes for sashiko
+ bug reports
+Date: Tue, 05 May 2026 13:12:57 +0000
+Message-Id: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,89 +70,104 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260505-acpm-fixes-sashiko-reports-v5-2-43b5ee7f1674@linaro.org>
-References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
-In-Reply-To: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANns+WkC/43NwQ6CMAyA4VcxOzuzlY0xT76H8bBBkUVlZCNEQ
+ 3h3BxcxJsTj37RfRxIxOIzkuBtJwMFF59sUcr8jZWPaK1JXpSbAIGcCMmrK7kFr98RIo4mNu3k
+ asPOhj9QgFDbHSsqCkwR0AZfFdH++pG5c7H14Lb8GPk//YgdOGQXgyirNNEg83V1rgj/4cCWzO
+ 8DaUpsWJIvXdVGhFkZr9WNla0tvWlmyhCprJYxl2lQ/lvhYkolNSyRLggaRW8wt2C9rmqY3wdj
+ k06kBAAA=
+X-Change-ID: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, peter.griffin@linaro.org, 
  andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org
+ Tudor Ambarus <tudor.ambarus@linaro.org>, stable@vger.kernel.org, 
+ Titouan Ameline <titouan.ameline@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777986831; l=2402;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777986831; l=3844;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=d7vm0U9qdAXbH4NbIyamvNnVpjWmz6WguBCwDQ3CBjQ=;
- b=M+kZzEMj6dEoppNgvMWoO2zl4Mo+sei7crymfmwR16IvDgC0ez/YRXM/jUFit87zge5NsxBVd
- uPFQNsQWkvDD4wbmvIOaokkFfSWZApxlZ2CSlu0/KocvS/iEc6DU5Az
+ bh=wivIsrOrOOiUhQN35CYh7ZIXSWFpSvCVQrdHqBKvTe8=;
+ b=aEK9MQsKZxlVWGLIEhKEu90rjntliZ7E+u0ZHa5Qd5IirP4CClxnf4EwhhYhDUcP0cM28hhtg
+ v8sZQCM/392CUw8B+mejQzCnPkBIJdPiHQ9XMjSUPzZuQvC3onGRe6c
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Sashiko identified the leak at [1].
+Fixes for concurrency and memory ordering bugs that were identified by
+the Sashiko review tool when proposing the GS101 ACPM TMU addition.
 
-The ACPM driver allocates hardware mailbox channels using
-`mbox_request_channel()` during `acpm_channels_init()`. However, the
-driver lacked a `.remove` callback and did not free these channels on
-subsequent error paths inside `acpm_probe()`.
+While these bugs are genuine flaws, we haven't hit them yet, likely
+because we don't have enough ACPM clients upstreamed to trigger the
+race conditions.
 
-Additionally, if `acpm_achan_alloc_cmds()` failed during the channel
-initialization loop, the function returned immediately, bypassing the
-manual cleanup and permanently leaking any channels successfully
-requested in previous loop iterations.
+These fixes can go in either at the -rc phase or as regular patches for
+the next merge window. If the latter, we'll need a dedicated branch, as
+these patches, together with the other ACPM thermal preparatory patches
+will be needed by the upcoming GS101 ACPM thermal driver.
 
-Fix this by modifying `acpm_free_mbox_chans()` to match the `devres`
-action signature and registering it via `devm_add_action_or_reset()`.
+Thanks,
+ta
 
-Cc: stable@vger.kernel.org
-Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-Closes: https://sashiko.dev/#/patchset/20260420-acpm-tmu-v3-0-3dc8e93f0b26%40linaro.org [1]
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/firmware/samsung/exynos-acpm.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Changes in v5:
+- updates to the ACPM polling state machine and sequence allocator
+  to resolve cross-thread Use-After-Free races, false timeouts, and
+  LKMM memory ordering violations identified during code review
+  (Sashiko)
+- add parallel credits to Titouan Ameline on patch 1.
+- Link to v4: https://lore.kernel.org/r/20260504-acpm-fixes-sashiko-reports-v4-0-529246be6b2b@linaro.org
 
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index e95edc350efa..9766425a44ab 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -527,10 +527,11 @@ static int acpm_achan_alloc_cmds(struct acpm_chan *achan)
- 
- /**
-  * acpm_free_mbox_chans() - free mailbox channels.
-- * @acpm:	pointer to driver data.
-+ * @data:	pointer to driver data.
-  */
--static void acpm_free_mbox_chans(struct acpm_info *acpm)
-+static void acpm_free_mbox_chans(void *data)
- {
-+	struct acpm_info *acpm = data;
- 	int i;
- 
- 	for (i = 0; i < acpm->num_chans; i++)
-@@ -558,6 +559,10 @@ static int acpm_channels_init(struct acpm_info *acpm)
- 	if (!acpm->chans)
- 		return -ENOMEM;
- 
-+	ret = devm_add_action_or_reset(dev, acpm_free_mbox_chans, acpm);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add mbox free action.\n");
-+
- 	chans_shmem = acpm->sram_base + readl(&shmem->chans);
- 
- 	for (i = 0; i < acpm->num_chans; i++) {
-@@ -579,10 +584,8 @@ static int acpm_channels_init(struct acpm_info *acpm)
- 		cl->dev = dev;
- 
- 		achan->chan = mbox_request_channel(cl, 0);
--		if (IS_ERR(achan->chan)) {
--			acpm_free_mbox_chans(acpm);
-+		if (IS_ERR(achan->chan))
- 			return PTR_ERR(achan->chan);
--		}
- 	}
- 
- 	return 0;
+Changes in v4:
+- Drop the SRAM boundary checks patch, incomplete band-aid.
+- Split the concurrency and memory ordering into dedicated logical
+  patches. It involved reordering of the last patches to avoid
+  modifying the same code twice.
+- Add a missing memory barrier in acpm_get_rx() to prevent weakly
+  ordered CPUs from advancing the hardware RX pointer before the
+  payload reads have completed.
+- Fix a false-timeout race in the polling path by decoupling the
+  polling thread from the global allocator bitmap.
+- Use test_and_set_bit_lock. address dependency was not enforced
+  when using the plain non-atomic read with find_next_zero_bit().
+- Fix kernel doc.
+- Link to v3: https://lore.kernel.org/r/20260429-acpm-fixes-sashiko-reports-v3-0-47cf74ab09ad@linaro.org
 
+Changes in v3:
+- validate more SRAM parameters and queue pointers (sashiko)
+- consider/fix the acquire path (Krzysztof) - patch was moved
+  last in the series to avoid touching the same code twice.
+- Link to v2: https://lore.kernel.org/r/20260427-acpm-fixes-sashiko-reports-v2-0-1ff8de94a997@linaro.org
+
+Changes in v2:
+- drop patch "firmware: samsung: acpm: Fix sequence number leak and infinite loop"
+  The patch freed sequence numbers on mailbox failures or timeouts. Because
+  the message is already in SRAM and tx.front was advanced, a delayed
+  firmware wake-up will process that abandoned message, stealing the
+  sequence number from a new thread and causing silent data corruption.
+- fix mailbox channel leak when `acpm_achan_alloc_cmds()` failed. Did it
+  by  moving the `devm_add_action_or_reset()` call.
+- new patches, last 3 in the set, they fix some more sashiko reports.
+- Link to v1: https://lore.kernel.org/r/20260423-acpm-fixes-sashiko-reports-v1-0-2217b790925e@linaro.org
+
+---
+Tudor Ambarus (7):
+      firmware: samsung: acpm: Fix cross-thread RX length corruption
+      firmware: samsung: acpm: Fix mailbox channel leak on probe error
+      firmware: samsung: acpm: Fix dummy stubs to return ERR_PTR
+      firmware: samsung: acpm: Add memory barrier before advancing RX pointer
+      firmware: samsung: acpm: Fix false timeouts and Use-After-Free in polling
+      firmware: samsung: acpm: Fix missing LKMM barriers in sequence allocator
+      firmware: samsung: acpm: Fix infinite loop on sequence number exhaustion
+
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |   3 +
+ drivers/firmware/samsung/exynos-acpm.c             | 145 ++++++++++++++-------
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |   3 +-
+ 3 files changed, 106 insertions(+), 45 deletions(-)
+---
+base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+change-id: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581
+
+Best regards,
 -- 
-2.54.0.545.g6539524ca2-goog
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
