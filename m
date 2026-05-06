@@ -1,66 +1,65 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF1A36B076
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 11:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9F1F507
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 12:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778068548; cv=none; b=b/3N3tdGj/fcuhJCwVVzJ0mx8zz3xXqM60Ovss4BU5Y8on1GevJtUJsLdxEZoqA+gCb8VDZ7NINDBA1mrd2pFnBrj+p3bIkYmPwB8tqm09NeQWIw9huY3efMAj/03HpIU1VcSX+bTPFZfjiZcv+77im+1l6gNBayzMQoazziH/w=
+	t=1778069530; cv=none; b=EjEleB5+MxFgW/N64DitBIVPB3nozRGOoPcT40eHnDCWdNNIZboTc4RB/XJn7Z7orJCcn86lnm7UGiMQCTJXqyzuTHp3wdufMhV9EYSBa5eE2cY43mwY/z0K3D+4ytH/K7ul+m7Cqu5N/WlDUslXqlGmvz3M9Sf7TDzfnKQ/8dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778068548; c=relaxed/simple;
-	bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
+	s=arc-20240116; t=1778069530; c=relaxed/simple;
+	bh=jfaWp8ixppP8eOYKh4ns9ulx+xbxaJZiancW/JSA0pI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J/GurlWvW5IX0SlxdKszGsiBatAyuLD1mDL9z0ww6Z84Y+N5V5MvN/4zdKhn27beISkEvcYChFWTXux7aFCFq5DkBGyx/p2STZG9NCqT73c/d/wcdrVgk4FI+vVupE2p/ygp8vD5oFR2QbUJBm2OtgM0PPxM1sUAj/Ojt6+oK0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PPszSXkZ; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=lzfsNoxIm+dG94XW3agB8DV8KaM+Yohu6xZ8IRvRT3Z1JDOWn7Ri6Di4GI9riaC9/jrgzIrD4eltVnx/A5gV6h0ugTOY4OCHg2ZjQmMiJ+WJFnIkJ1EG8uqXKIxHa/SbJHWnMxx5b5GA2K/7xPOXGHr5M4fxhPamzWUEvT2mcXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrJ5hFOX; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPszSXkZ"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488a8ca4aadso66916535e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 04:55:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrJ5hFOX"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d734223e4so545247f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 05:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778068546; x=1778673346; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1778069527; x=1778674327; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
-        b=PPszSXkZdHjtJzs5MjldOEAoC4JUfD38aaWzAyeJfgphJuos45Iqg4EN/pqYjtVqUD
-         oI1ofk5IVEvTqETtL0HJdpD+9tSiK+uJ4H94UGgNta74tebyQ4pYNW9b9a5dlJd3WL/0
-         0NHslSg0MSQ9EweYBd+kwNtAeIKQ5ZdvxMuE2/I5EZw2sSEBFV6PSvNoPbdpDri3E1Lr
-         4HznolFdwh0UcIvaPARDWlM2/mC7lZ5cK6vlR6zIJK+oMPEOKGQpe5T5zuq8Xf1RLS7n
-         3WCMaqrga2vkMos7Y8EQwSFoElxnoDOZ3R8QMP6X1qilw6RGJ2zHPK1izLTajWNvz5ym
-         y8pg==
+        bh=ws629W1+/OZhaFCmlUMwKh3w716Ok42C3gMHhe8mbxc=;
+        b=nrJ5hFOXuaflWcEsoXo3dxTHpuS3ftE95u7k7KXNz4zU4Actt5qBQIG762MMZa6AMF
+         ptUyu9wv2fRxgViXB2h/JD/xyEVBQhaYcLTG+w298GRJ4FkvSIyYGLhPKH2hx4oolsfd
+         RMawdbH8hJtcaSmlMPVGXsnONWoDQd28L5imB1FB0bgONq+ev3H9P35u8cTUIYDIVxUt
+         PgZjgsgHKB/HlpXwnAMSBOkcL7lNbRxwlQ1CJBZ8c30ZGiIqBNgXP24dVEfpIMpZI/u+
+         rdoUgYGfj5y8ApxZtFR2++zZlGeujcePYZdROaD372tlww6+VOAEHxHMJqmry2OhqY+h
+         9xWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778068546; x=1778673346;
+        d=1e100.net; s=20251104; t=1778069527; x=1778674327;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=15pEe5GNPxLteORBQfGrvAQ4jQMZUEhpWDnsiYVvo5o=;
-        b=SIRYKNOznlq7ADb/YsasiyKJ9OIF/S+QuyQK6XaMDzZc+Cp/amOopy6F4sZsnmrf2d
-         eQXoAhqoNrvEdihK2t2Guqs9cLHLwkQT6Ji+gCvnM6KfZtP6T+dZQgZMs3icFPYARkwF
-         jeitRILiPL95akIKEIDZH1REHldbsedMgq1SDhgLx0kpBqbNul63+UDnua6W3iEI+29d
-         8jS6FkWXIamF+z3fYBglOvBrwb9Bh1K3/N7YF0YpEeF/GSffNTVs5/pOr0RxZRVic9Pj
-         xBtQRyAkGZQugpUfiT4lCYNeB+QkTTsS3BJLkWz2Wuyq+GV/lDL+bOSqArrjw7E11QjR
-         +nWA==
-X-Forwarded-Encrypted: i=1; AFNElJ8MB6Cycx4CWsLOaPnKkstpOCAcXU+Y8CjyP1ge5sLCb61ZSwMPtRdMw67UbHhzNQOmAUDNzfHxXLdyCRUAeKNk8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/KU7Ie1tgDSTD3mUcdNAxUFfWFAy7+sUtFZ13S35S2ToSGpt
-	eXY1GHcwp/XIFBrBZsc+1mDj0V44llsA2H4JC4UaeQvX3JOlPmlkJzsCMONJuE7HJBc=
-X-Gm-Gg: AeBDietEDT0FhPdkndvutxQPuhH45pyBfKJluphzNmY4xQz63Kpcrh6o4OFW9cldAQJ
-	kHlTkDgXm98WV3hEnYic5YhRUMf6ZvbHiMOqSGqNV7EoVs4ubZwFJfcbDk1E3XIFYwmgbjlz5LK
-	xvvZ3asm1DCp9/N1oBld+k0QeYdYS6JKbSIPHDaYxvhRHmY29g2sSTJKOXl7sY7TJacXpyFOQIH
-	IgyQR5mp2AG6+d/72utrPcNbTbxuC2KzdMWAlwVgi4lSIe/DRF98Ze9z6wEiANkFdBidhkC7aYe
-	czNomFnwUanG8Tjy20gOfYogWXWKrfK74rtbBOuU+FtuZjD+bpk1VCmiykRGnqMu0K+K3fdJUSQ
-	CNciCdc4ug1VpbzQDop8bKxfRWHtFfNQ4Ojeokf5AfPRGFzqB5JINncaCPNHmpFQ+7VKDrboQtB
-	VakOi6fHpDFZQrYGTcInXV6Q+Q3ctVOqYGAoKTlazrOsk=
-X-Received: by 2002:a05:600c:8b65:b0:48a:53ea:140b with SMTP id 5b1f17b1804b1-48e51f4e5fdmr60307745e9.28.1778068545639;
-        Wed, 06 May 2026 04:55:45 -0700 (PDT)
+        bh=ws629W1+/OZhaFCmlUMwKh3w716Ok42C3gMHhe8mbxc=;
+        b=IoQPdIpVUtnMjWdIJtMsUa39TR+2+EesREvv40FQ0JRaOGpEsivMl4Jl8xCVqq0R5a
+         dyTf2m3gTu8BUHyT23JV2LGhKW8urHDIz6yxf/zQfGU6kSRbprnR2mmE7m5Xis0nH4sO
+         iWkdRrY+IOypjHZ6nQ3GPPpEQE0GosfhOvUDs34BoileSxi8CBbTaja/XryNZfJOh9Oh
+         SVXOogtB5KijtDwK7Yui8be+UxocsV/z9vA2/TJSPxEYXZpbG0M2VnHhRxDPInqh/mX0
+         GhxpVapp4uN/xTkYdiBEBP0oWGdsgXusl5ZmukbO2F4ztt0NqQb1CnZK2i2yNPcId/Ez
+         u8Mw==
+X-Gm-Message-State: AOJu0YyQw3PegFd78OF8lefxRADjov6C74zu9IZ8ADGOccrnNZBQHoe6
+	s7IAleYV2wy26hKjEDKeIA6z8xjPaPQEO178phS8bOO02y5aHYK0eTa9B87mHbgEyI4=
+X-Gm-Gg: AeBDievsyX7zQS01FyZOobTTBkvsTCU1E9gHqZZPkGsj8co/Oxe2wmaKVKaZHrZKtNm
+	tTgNLe6cofwM4VbXu3by+OIUTlPI2NBQkUxJf/qlY0uUBdjVuf0vCsbn4IrF6vTxkW8Xo65OLq7
+	1iw/lPlzcU9nURPC35zPinohGJy7e+LLUqjJB+ZikmX7cF7tqwnlwbI7KxcrQWAM0UJrwMl2ud/
+	0jWn/W5SILKF5R4XwP4C3Um+K29PV1ogjPf02TCyyUeY9NHW3Li/nasGGhkGaQdLUWKqqY/mdgP
+	6enQ2bg3oM2h9Ts0fspLRM98tio5xw7N9W3QJmCDUnrYgLwORAuXPttLLCV+hvMs0Yny6sfKRBV
+	wMgBGo+hAM5n5SFCXT2rDOeG+slEVEsAUEld1E4aKQf4Xa1HvTzM61IC1aXDS2QUoSKte1LA4Ur
+	bQR5aDIZ9wpphUv87Vljev+KDef3iZeRaLUQ8BF+JU8Os=
+X-Received: by 2002:a5d:64c5:0:b0:43e:a75e:352 with SMTP id ffacd0b85a97d-45162570080mr4694269f8f.4.1778069526968;
+        Wed, 06 May 2026 05:12:06 -0700 (PDT)
 Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538d2878sm69999385e9.15.2026.05.06.04.55.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45052a488d8sm12000365f8f.12.2026.05.06.05.12.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 04:55:45 -0700 (PDT)
-Message-ID: <f094b0e2-3c45-42fe-9228-3a3eb2b90185@linaro.org>
-Date: Wed, 6 May 2026 14:55:42 +0300
+        Wed, 06 May 2026 05:12:06 -0700 (PDT)
+Message-ID: <b7657812-3afc-4b13-a579-6f07d061e2d9@linaro.org>
+Date: Wed, 6 May 2026 15:11:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,24 +67,88 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/15] clk: samsung: acpm: use
- clk_determine_rate_noop()
-To: Brian Masney <bmasney@redhat.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-samsung-soc@vger.kernel.org, Juan Yescas <jyescas@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
- <20260505-clk-determine-rate-noop-v3-10-f3f829fbacdf@redhat.com>
+Subject: Re: [PATCH] arm64: dts: exynos850: Add SRAM node
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <20260413-exynos850_sram-v1-1-7fda5b7fb7d4@linaro.org>
+ <2ff077e1-8983-4a41-bb21-5e4140545aa3@kernel.org>
+ <DHSR70EGYY4N.2EA2HWIXJR7QR@linaro.org>
+ <4c6a92e0-15a1-4f82-afc9-542f5ad9d2df@kernel.org>
+ <DI6LNH2F0DP5.H1ZM8MTSDQJR@linaro.org>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260505-clk-determine-rate-noop-v3-10-f3f829fbacdf@redhat.com>
+In-Reply-To: <DI6LNH2F0DP5.H1ZM8MTSDQJR@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
-Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+On 4/30/26 6:37 PM, Alexey Klimov wrote:
+> On Tue Apr 14, 2026 at 10:08 AM BST, Krzysztof Kozlowski wrote:
+>> On 14/04/2026 11:00, Alexey Klimov wrote:
+>>> On Mon Apr 13, 2026 at 4:23 PM BST, Krzysztof Kozlowski wrote:
+>>>> On 13/04/2026 16:52, Alexey Klimov wrote:
+>>>>> SRAM is used by the ACPM protocol to retrieve the ACPM channels
+>>>>> information and configuration data. Add the SRAM node.
+>>>>>
+>>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 8 ++++++++
+>>>>>  1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+>>>>> index cb55015c8dce..cf4a6168846c 100644
+>>>>> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+>>>>> @@ -910,6 +910,14 @@ spi_2: spi@11d20000 {
+>>>>>  			};
+>>>>>  		};
+>>>>>  	};
+>>>>> +
+>>>>> +	apm_sram: sram@2039000 {
+>>>>> +		compatible = "mmio-sram";
+>>>>> +		reg = <0x0 0x2039000 0x40000>;
+>>>>> +		#address-cells = <1>;
+>>>>> +		#size-cells = <1>;
+>>>>> +		ranges = <0x0 0x0 0x2039000 0x40000>;
+>>>>
+>>>> You miss here children.
+>>>
+>>> Thank you! I guess I should convert it to smth like this:
+>>>
+>>> apm_sram: sram@2039000 {
+>>> 		compatible = "mmio-sram";
+>>> 		reg = <0x0 0x2039000 0x40000>;
+>>> 		ranges = <0x0 0x0 0x2039000 0x40000>;
+>>> 		#address-cells = <1>;
+>>> 		#size-cells = <1>;
+>>>
+>>> 		acpm_sram_region: sram-section@0 {
+>>> 			reg = <0x0 0x40000>;
+>>
+>> This covers entire block, so feels pointless. Maybe requirement of
+>> children should be dropped. What's the point of having children? Why
+>> does the driver need them?
+> 
+> Thinking further about this. I was looking at the schema file and
+> different commits and it the right approach could be:
+> 
+> - add separate compatible for mmio-sram region for this case. Similar
+> to scmi and scpi, i'd say it should be "exynos,acpm-sram" or
+> "samsung,acpm-sram";
+> 
+> - update schema sram.yaml to exclude requirement for having child nodes
+> and properties like ranges, address and size cells
+> Similar like in commit, for instance, git show d0fe6491ddd22
+> (or git show 2d4a22e79a5fd).
+
+this works fine, but only if the sram is consumed as a whole, and only by
+ACPM. Is this the case for exynos850?
+
+Cheers,
+ta
