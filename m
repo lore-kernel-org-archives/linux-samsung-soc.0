@@ -1,154 +1,188 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9F1F507
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 12:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBB614B977;
+	Wed,  6 May 2026 12:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778069530; cv=none; b=EjEleB5+MxFgW/N64DitBIVPB3nozRGOoPcT40eHnDCWdNNIZboTc4RB/XJn7Z7orJCcn86lnm7UGiMQCTJXqyzuTHp3wdufMhV9EYSBa5eE2cY43mwY/z0K3D+4ytH/K7ul+m7Cqu5N/WlDUslXqlGmvz3M9Sf7TDzfnKQ/8dw=
+	t=1778069770; cv=none; b=W3rfhIq9vxUODQJF3DTDr2itiaFSDDaja/cja/vQAIMQNUTuteOgUfPXP0tdxZI88NHauh4K+Wfyr5fyCUbLTpzH4xuhODIf9yZvxHO95/Eumt4acGzCy0WUZah4EXbNFff24nrxH1EeRGU5B7znD/QnYuQeOIBG5aA5bkZDoVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778069530; c=relaxed/simple;
-	bh=jfaWp8ixppP8eOYKh4ns9ulx+xbxaJZiancW/JSA0pI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzfsNoxIm+dG94XW3agB8DV8KaM+Yohu6xZ8IRvRT3Z1JDOWn7Ri6Di4GI9riaC9/jrgzIrD4eltVnx/A5gV6h0ugTOY4OCHg2ZjQmMiJ+WJFnIkJ1EG8uqXKIxHa/SbJHWnMxx5b5GA2K/7xPOXGHr5M4fxhPamzWUEvT2mcXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrJ5hFOX; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1778069770; c=relaxed/simple;
+	bh=x+Bc1kuWG1hcJxmVzrQn0qSYj0iUKEhtmICqJ94J7uo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r/TLj9ulTaYXaTmVXz355fLziJvgL3JPX8DOrng6NQuqjfxLcJsqjwxx7600k0M4LqbHavVKKorTDlr8Aizwsr/73967PEkFR8KMrPKhVPrGjpx7PziX69hGt56ECfjE4aOsqbCUl43AB2sttWm7Ha43Qab49lPZCRatrVRZjDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KEZNfb6a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HDAiL6vd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrJ5hFOX"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d734223e4so545247f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 05:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778069527; x=1778674327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ws629W1+/OZhaFCmlUMwKh3w716Ok42C3gMHhe8mbxc=;
-        b=nrJ5hFOXuaflWcEsoXo3dxTHpuS3ftE95u7k7KXNz4zU4Actt5qBQIG762MMZa6AMF
-         ptUyu9wv2fRxgViXB2h/JD/xyEVBQhaYcLTG+w298GRJ4FkvSIyYGLhPKH2hx4oolsfd
-         RMawdbH8hJtcaSmlMPVGXsnONWoDQd28L5imB1FB0bgONq+ev3H9P35u8cTUIYDIVxUt
-         PgZjgsgHKB/HlpXwnAMSBOkcL7lNbRxwlQ1CJBZ8c30ZGiIqBNgXP24dVEfpIMpZI/u+
-         rdoUgYGfj5y8ApxZtFR2++zZlGeujcePYZdROaD372tlww6+VOAEHxHMJqmry2OhqY+h
-         9xWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778069527; x=1778674327;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ws629W1+/OZhaFCmlUMwKh3w716Ok42C3gMHhe8mbxc=;
-        b=IoQPdIpVUtnMjWdIJtMsUa39TR+2+EesREvv40FQ0JRaOGpEsivMl4Jl8xCVqq0R5a
-         dyTf2m3gTu8BUHyT23JV2LGhKW8urHDIz6yxf/zQfGU6kSRbprnR2mmE7m5Xis0nH4sO
-         iWkdRrY+IOypjHZ6nQ3GPPpEQE0GosfhOvUDs34BoileSxi8CBbTaja/XryNZfJOh9Oh
-         SVXOogtB5KijtDwK7Yui8be+UxocsV/z9vA2/TJSPxEYXZpbG0M2VnHhRxDPInqh/mX0
-         GhxpVapp4uN/xTkYdiBEBP0oWGdsgXusl5ZmukbO2F4ztt0NqQb1CnZK2i2yNPcId/Ez
-         u8Mw==
-X-Gm-Message-State: AOJu0YyQw3PegFd78OF8lefxRADjov6C74zu9IZ8ADGOccrnNZBQHoe6
-	s7IAleYV2wy26hKjEDKeIA6z8xjPaPQEO178phS8bOO02y5aHYK0eTa9B87mHbgEyI4=
-X-Gm-Gg: AeBDievsyX7zQS01FyZOobTTBkvsTCU1E9gHqZZPkGsj8co/Oxe2wmaKVKaZHrZKtNm
-	tTgNLe6cofwM4VbXu3by+OIUTlPI2NBQkUxJf/qlY0uUBdjVuf0vCsbn4IrF6vTxkW8Xo65OLq7
-	1iw/lPlzcU9nURPC35zPinohGJy7e+LLUqjJB+ZikmX7cF7tqwnlwbI7KxcrQWAM0UJrwMl2ud/
-	0jWn/W5SILKF5R4XwP4C3Um+K29PV1ogjPf02TCyyUeY9NHW3Li/nasGGhkGaQdLUWKqqY/mdgP
-	6enQ2bg3oM2h9Ts0fspLRM98tio5xw7N9W3QJmCDUnrYgLwORAuXPttLLCV+hvMs0Yny6sfKRBV
-	wMgBGo+hAM5n5SFCXT2rDOeG+slEVEsAUEld1E4aKQf4Xa1HvTzM61IC1aXDS2QUoSKte1LA4Ur
-	bQR5aDIZ9wpphUv87Vljev+KDef3iZeRaLUQ8BF+JU8Os=
-X-Received: by 2002:a5d:64c5:0:b0:43e:a75e:352 with SMTP id ffacd0b85a97d-45162570080mr4694269f8f.4.1778069526968;
-        Wed, 06 May 2026 05:12:06 -0700 (PDT)
-Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45052a488d8sm12000365f8f.12.2026.05.06.05.12.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 05:12:06 -0700 (PDT)
-Message-ID: <b7657812-3afc-4b13-a579-6f07d061e2d9@linaro.org>
-Date: Wed, 6 May 2026 15:11:58 +0300
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KEZNfb6a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HDAiL6vd"
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1778069767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+1/uCUb/9Eo1Px+rgMFN1iRosL2spXsTi3KsPZ1F3xA=;
+	b=KEZNfb6au2XwQeEEi0swhycY4FJgNVfQtWY/FhK/yCoI3hSDLSwaRRZI7RlzCEMExUQY7f
+	T+QvDlQipN8FjeKi9rITCGTCItHT1Du7tdlSvZgdhQ74eu9zdcBtt8pwU8sOJ181n2cmw8
+	J9/k9sA5/zZtm5ooh/ksw3AgrucA71XVof7sdGHN+LWlrg0VV3tte3HlksbB5VLszGhz28
+	H4IgGvitX+Dn21W9SBCcjK0JOXsIi/JrEVu6xlth/4EHNuMcc01rZuEvaxqYBbT1EoX7Cs
+	d0OeQzL+2UoVRxfvwy9zy3ryLgFelOU8Zr/F5jtXA+rwQit7NsJnRKlvKmc2QA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1778069767;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+1/uCUb/9Eo1Px+rgMFN1iRosL2spXsTi3KsPZ1F3xA=;
+	b=HDAiL6vdcaFMCJJ0GmldyQzwhs3/86r20VaemvAKGIZwBdTF4E/PwfsT+zLFPFOhI9PuXQ
+	Bfk90npEht4yNjAQ==
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Osama Abdelkader <osama.abdelkader@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Xin Zhao <jackzxcui1989@163.com>,
+	Joseph Tilahun <jtilahun@astranis.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH tty v4 0/6] 8250: Add console flow control
+Date: Wed,  6 May 2026 14:21:55 +0206
+Message-ID: <20260506121606.5805-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos850: Add SRAM node
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-References: <20260413-exynos850_sram-v1-1-7fda5b7fb7d4@linaro.org>
- <2ff077e1-8983-4a41-bb21-5e4140545aa3@kernel.org>
- <DHSR70EGYY4N.2EA2HWIXJR7QR@linaro.org>
- <4c6a92e0-15a1-4f82-afc9-542f5ad9d2df@kernel.org>
- <DI6LNH2F0DP5.H1ZM8MTSDQJR@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DI6LNH2F0DP5.H1ZM8MTSDQJR@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+This is v4 of a series to implement console flow control for the
+8250 serial driver. v3 is here [0].
+
+The 8250 driver already has code in place to support console flow
+control. However, there is no way to activate it and it is
+incomplete. This series provides the necessary missing pieces while
+attempting to be as conservative as possible, so as not to introduce
+any side effects into the many 8250 variants or other non-8250 serial
+drivers.
+
+For patch 2 I used the following Coccinelle script to perform the
+modifications...
+
+===== BEGIN cons_flow.cocci =====
+// SPDX-License-Identifier: GPL-2.0-only
+// Options: --all-includes
+
+virtual patch
+
+@r1@
+type T1;
+identifier U;
+@@
+
+T1 {
+   ...
+   struct uart_port U;
+   ...
+};
+
+@r2@
+r1.T1 *E;
+@@
+
+- (E->port.flags & UPF_CONS_FLOW)
++ uart_cons_flow_enabled(&E->port)
+
+@r3@
+struct uart_port *U;
+@@
+
+- (U->flags & UPF_CONS_FLOW)
++ uart_cons_flow_enabled(U)
+
+@r4@
+struct uart_port *U;
+@@
+
+- U->flags |= UPF_CONS_FLOW
++ uart_set_cons_flow_enabled(U, true)
+===== END cons_flow.cocci =====
+
+Changes for v4:
+
+- Rename uart_get_cons_flow() to uart_cons_flow_enabled().
+
+- Rename uart_set_cons_flow() to uart_set_cons_flow_enabled().
+
+Changes for v3:
+
+- Deprecate UPF_CONS_FLOW. Provide separate boolean with wrappers as
+  alternative.
+
+- Update all UPF_CONS_FLOW users to new cons_flow wrappers.
+
+- Use irqsave variant of spin lock for status update.
+
+- When 8250 console flow control is not specified, clear the policy.
+
+Changes for v2:
+
+- Prepend a patch to perform an extra LSR wait after CTS assertion if
+  the initial LSR wait timed out.
+
+- Close a window in serial8250_register_8250_port() where console
+  flow control was briefly disabled.
+
+- Add port lock synchronization to the port->status RMW update in
+  uart_set_options().
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20260417102423.40984-1-john.ogness@linutronix.de
+
+John Ogness (6):
+  serial: core: Add dedicated uart_port field for console flow
+  serial: Replace driver usage of UPF_CONS_FLOW
+  serial: sh-sci: Avoid deprecated UPF_CONS_FLOW
+  serial: 8250: Set cons_flow on port registration
+  serial: 8250: Check LSR timeout on console flow control
+  serial: 8250: Add support for console flow control
+
+ drivers/tty/serial/8250/8250_core.c |  6 ++++++
+ drivers/tty/serial/8250/8250_port.c | 21 +++++++++++++++++----
+ drivers/tty/serial/bcm63xx_uart.c   |  2 +-
+ drivers/tty/serial/omap-serial.c    |  2 +-
+ drivers/tty/serial/pch_uart.c       |  2 +-
+ drivers/tty/serial/pxa.c            |  2 +-
+ drivers/tty/serial/samsung_tty.c    |  8 ++++----
+ drivers/tty/serial/serial_core.c    | 21 ++++++++++++++++++++-
+ drivers/tty/serial/serial_txx9.c    |  4 ++--
+ drivers/tty/serial/sh-sci.c         |  5 ++++-
+ drivers/tty/serial/sunsu.c          |  2 +-
+ include/linux/serial_core.h         | 20 ++++++++++++++++++++
+ 12 files changed, 78 insertions(+), 17 deletions(-)
 
 
+base-commit: a2083fd1fa7aa0ef5cd8fd92396da0de2d0654b0
+-- 
+2.47.3
 
-On 4/30/26 6:37 PM, Alexey Klimov wrote:
-> On Tue Apr 14, 2026 at 10:08 AM BST, Krzysztof Kozlowski wrote:
->> On 14/04/2026 11:00, Alexey Klimov wrote:
->>> On Mon Apr 13, 2026 at 4:23 PM BST, Krzysztof Kozlowski wrote:
->>>> On 13/04/2026 16:52, Alexey Klimov wrote:
->>>>> SRAM is used by the ACPM protocol to retrieve the ACPM channels
->>>>> information and configuration data. Add the SRAM node.
->>>>>
->>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>> ---
->>>>>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 8 ++++++++
->>>>>  1 file changed, 8 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>>> index cb55015c8dce..cf4a6168846c 100644
->>>>> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>>> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
->>>>> @@ -910,6 +910,14 @@ spi_2: spi@11d20000 {
->>>>>  			};
->>>>>  		};
->>>>>  	};
->>>>> +
->>>>> +	apm_sram: sram@2039000 {
->>>>> +		compatible = "mmio-sram";
->>>>> +		reg = <0x0 0x2039000 0x40000>;
->>>>> +		#address-cells = <1>;
->>>>> +		#size-cells = <1>;
->>>>> +		ranges = <0x0 0x0 0x2039000 0x40000>;
->>>>
->>>> You miss here children.
->>>
->>> Thank you! I guess I should convert it to smth like this:
->>>
->>> apm_sram: sram@2039000 {
->>> 		compatible = "mmio-sram";
->>> 		reg = <0x0 0x2039000 0x40000>;
->>> 		ranges = <0x0 0x0 0x2039000 0x40000>;
->>> 		#address-cells = <1>;
->>> 		#size-cells = <1>;
->>>
->>> 		acpm_sram_region: sram-section@0 {
->>> 			reg = <0x0 0x40000>;
->>
->> This covers entire block, so feels pointless. Maybe requirement of
->> children should be dropped. What's the point of having children? Why
->> does the driver need them?
-> 
-> Thinking further about this. I was looking at the schema file and
-> different commits and it the right approach could be:
-> 
-> - add separate compatible for mmio-sram region for this case. Similar
-> to scmi and scpi, i'd say it should be "exynos,acpm-sram" or
-> "samsung,acpm-sram";
-> 
-> - update schema sram.yaml to exclude requirement for having child nodes
-> and properties like ranges, address and size cells
-> Similar like in commit, for instance, git show d0fe6491ddd22
-> (or git show 2d4a22e79a5fd).
-
-this works fine, but only if the sram is consumed as a whole, and only by
-ACPM. Is this the case for exynos850?
-
-Cheers,
-ta
