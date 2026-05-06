@@ -1,248 +1,142 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F00E441033;
-	Wed,  6 May 2026 12:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62C331A7E4
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 12:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778069771; cv=none; b=mroLRdhq4riAaRRm5L2aaH0fsSjbbPGs4x6wRnscQtvPodPI4AR9Y6Sul96e9r70+FtEiZ7dfe8tiE0sQXNBQOL6OWYgHnqtQrjMAyZPRJazFfmRwkMyDLzPZh1XYEvUxlmLbHrKXk8kXhSAvAZD5xMf71CiZ87DJ2hQGaoBoqg=
+	t=1778070493; cv=none; b=g+kHBnfwRMMNB9JRG1n7SD4RUjjF7AaB5ktwm6nlMIiRPLuc52Qgsu+IgABm46ArOTmt/IQRM4QD/RrwCEPQiyZMSP/FDHkepPZuqA0rGVynLHqUEydxe0SNKW3hlJa8jbzAcZoB03uOuOsO6RYmAMKxM7n3KivdkWG8HmOwku4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778069771; c=relaxed/simple;
-	bh=oGdnYzwS2KxBBPOTkydJBt0oLCQIbgX6je1aQYE6Afo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AJVBrWuqGibX7oi70CJE+dcirs9A0Ufx+aTr1bATT0zMAWLILHjrb+grZLFzw/EQOOJJiAky0V7PZNacDtonUR/CWQ7nlUUpn2Zs8nDqQrZRvRVP3YuxeZ4LPARUMM7ZOPXsvvPVq84x2zkakclLqgNVkSt+mPsk8lk+tZYcahM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xFWnkskh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gbuMKKHK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1778070493; c=relaxed/simple;
+	bh=vclG0yxAvF+A/2roV7osqFbBYgf+u0vUuYzd2t5GLzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uScOO7EyuDphr5pRozrYyw7Gwpc/P1qEDFMcx4krRCObFrseih1xAtCjU1OQ2ZdZ3W/Sei3PMKRvQvWtn/BkPI/groaWfLPatcBNlm0admaYtzJi7omJACxVRp5b1Y2sYfduqn0n/K2XDkLYBJgRwQ6eO56NqInJdTYInCZMRiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xskv7F1R; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xFWnkskh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gbuMKKHK"
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1778069768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vE7RdfFrv3z5SE91ZG6pmeFTFDF5vNPcNpZ+sQ+T1TI=;
-	b=xFWnkskhPGgbQOkrcHPHBsstkhAM00sSjLFAeRB7VzAGCrQd59JlHjM9TCgWEEmGIKRJ7/
-	k2bYdKFleAMOKjMHNIcEOl/uTVR6/5zhe5UfT+ah4SV/9UC470291f5Cy/OCazslWDWX3V
-	xI6AOJHY9Vb5Z2Lp18gttQNdO12+m3FCXz6EmHkgsFQUYkycZ8y3QKUZ5oZcfRs2vDSzmj
-	YmuN2wQMvqAVxj4MMcrOqjRtJ2ArZt9u3FxssTpjJjUKGlc5XPAzpreqPcNTFrUBhU7jHQ
-	YG0pjdXUpioFaEKxBXJ8HfUjc7XqkwLCAtnbUgsUvojn6RE1WMGAdJ0N6g3NbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1778069768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vE7RdfFrv3z5SE91ZG6pmeFTFDF5vNPcNpZ+sQ+T1TI=;
-	b=gbuMKKHK9iOhMyI9k4nDA6P3GImdUXN5z+ClLWkNQ4asJJ6vbp9KZQCLfDC7BZWxClqLI0
-	b8SM7ivQMkIu1fDQ==
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Thomas Fourier <fourier.thomas@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	sparclinux@vger.kernel.org
-Subject: [PATCH tty v4 2/6] serial: Replace driver usage of UPF_CONS_FLOW
-Date: Wed,  6 May 2026 14:21:57 +0206
-Message-ID: <20260506121606.5805-3-john.ogness@linutronix.de>
-In-Reply-To: <20260506121606.5805-1-john.ogness@linutronix.de>
-References: <20260506121606.5805-1-john.ogness@linutronix.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xskv7F1R"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so80330595e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 05:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778070489; x=1778675289; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fgsWJ43+sPMyFM6YZi9dneb609gv57UFa/hUFdFYocw=;
+        b=xskv7F1RGtGi8zD/UnbdcgR1YZziglp0fHeiJ2Z4aWoTi73VyKgyRHiq1KaZehrBjK
+         Lg+KIP6pWBH2Ugy8gIsXOHD5XTWYoBF3aXgatwTV8dHrxyBs0VtXfr8xmVJXFT7UksP5
+         waZq9xtMoKoT1YaJ4SnsmReRHGNWLsT4giytb2h/OsPHObT629UyIGx+h3u1oQq2kbTu
+         txHKxzhvC9iM+p/jasZTkQqRW18yHtujShomKocfvTySM3etJAafb3NoZJ/TrFm+/gIQ
+         wsS6ygZ/izRtWQYGJikLnGQFti8MTr0R49lTPYLKJE1PNHNrHmMQCtyXzYOfTHEYissc
+         guxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778070489; x=1778675289;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fgsWJ43+sPMyFM6YZi9dneb609gv57UFa/hUFdFYocw=;
+        b=K0yk/t+WntL8eRRVbms60Wv93KLgwmDYa/p51nrScOPa9Uk5LVvqMi5ulKHwWmD276
+         qSvVoj3NICwGTCerq22hECScHC9vnOs39up5o/Rm/GtjDvsqmNNbVBpyNxYyRxQP4M31
+         TxdkfCuqky0L1tbxhgt/kSrhwon/hCIa0btcMnV7mmWBRepoKAb7RBLOtsQuUOz1gs9o
+         5amOWHgFgaiLCN9jYzDxyPXtd+Mxj845wrCWz78MFYVhVr/+Zr6pvJwQz4+2x4mU69sK
+         o2rpKW4MlM8eKgjqphKzazqrqdneXMf4AdrdVY//5tKAMczmHpY8GCfVjadqD1Vi6RfY
+         I08A==
+X-Forwarded-Encrypted: i=1; AFNElJ8Nah/muvNmoyuKsNr1VpPQCUlLs9V3tJQ0eBFpHx6kkCLglupc9DcIs3e2qeIa09u51yoV7Y/bZ59QuFol4A3jnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8gS25eB5ag+XMhJ51aLjX6pw4F70t7CduGcVaS4XWwq1leZG6
+	cglFvUzjFMX8Ot/goEHd2OOEJoC6X5xmQEKrDKBXFyIDay9nw8J4MCBBZ/OpTdOIg3E=
+X-Gm-Gg: AeBDietK2AOy27rQzCoZ7oAnhqz4xYvOdZnfiz0vo/exwGzLbj2MlcqebKz3wHvwlOP
+	Y6Q8IKu++hTSLfIEbTD7dmz8icAFHpo0PDTW/9UkSZRpeIz41fVGV+H5rs5ysFsWCzikZknzuM/
+	FyOrUnVxclhOz4+0JX05JJdYeYkYVwHyQcSfzhjGsIPGG4+67c/J7oesPZcKUeDl8wVYiOCLGnx
+	2ly1NLmr5oN0JF3c9S3yJc+rZ0ws3lyjnHH+j8UeAPX2SPR2lPBiv2OY0dgpzbqlR+jDn5p+WzB
+	exH1moP/wHMN9w1Rm2euYQ23ML13Ant3xVQHyhXNp2SoCaTm9HK9lO4VbwX1ccCYKUh2+Q/21Z4
+	OWfpiZn4w+9HzBNqpfjxBkG9yOF0EJvmN2+wy7AcEFeUmWL3c7VFCODHU7CXPcSbbLV9q6MvhsM
+	6Vz8nx74D+CoFhIhH3PfjZ9MBZ0OLN765chuBV0piL3GQ=
+X-Received: by 2002:a05:600c:811a:b0:489:1c32:210d with SMTP id 5b1f17b1804b1-48e51f369c3mr57793395e9.15.1778070489168;
+        Wed, 06 May 2026 05:28:09 -0700 (PDT)
+Received: from [10.11.12.108] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e539109b7sm41077585e9.15.2026.05.06.05.28.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 May 2026 05:28:08 -0700 (PDT)
+Message-ID: <06406c7b-c141-4997-9921-9358cdea7641@linaro.org>
+Date: Wed, 6 May 2026 15:28:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: s3c64xx: fix all kernel-doc warnings
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Juan Yescas <jyescas@google.com>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+References: <20260416224056.985233-1-rdunlap@infradead.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260416224056.985233-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Rather than using the UPF_CONS_FLOW bit of uart_port.flags to track
-the user configuration of console flow control, use the newly added
-uart_port.cons_flow (via its getter/setter functions).
+Hi!
 
-A coccinelle script was used to perform the search/replace.
+You missed adding the SPI maintainer. +Mark.
 
-Note1: The sh-sci driver is blindly copying platform data configuration
-       flags to uart_port.flags. Thus UPF_CONS_FLOW could get set for
-       uart_port.flags. A follow-up commit will address this.
+Also, there's another kdoc warning in that file. Do you care to fix it?
 
-Note2: The samsung_tty driver is using UPF_CONS_FLOW as a platform data
-       configuration flag. However, the driver explicitly checks for
-       this configuration flag and thus setting UPF_CONS_FLOW in
-       uart_port.flags is avoided.
+scripts/kernel-doc -none include/linux/platform_data/spi-s3c64xx.h
+Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member 'polling' not described in 's3c64xx_spi_info'
+Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype for s3c64xx_spi_set_platdata(). Prototype was for s3c64xx_spi0_set_platdata() instead
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
----
- drivers/tty/serial/8250/8250_port.c | 4 ++--
- drivers/tty/serial/bcm63xx_uart.c   | 2 +-
- drivers/tty/serial/omap-serial.c    | 2 +-
- drivers/tty/serial/pch_uart.c       | 2 +-
- drivers/tty/serial/pxa.c            | 2 +-
- drivers/tty/serial/samsung_tty.c    | 8 ++++----
- drivers/tty/serial/serial_txx9.c    | 4 ++--
- drivers/tty/serial/sunsu.c          | 2 +-
- 8 files changed, 13 insertions(+), 13 deletions(-)
+Cheers,
+ta
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index af78cc02f38e7..dbed5e5767541 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1988,7 +1988,7 @@ static void wait_for_xmitr(struct uart_8250_port *up, int bits)
- 	wait_for_lsr(up, bits);
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->port.flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(&up->port)) {
- 		for (tmout = 1000000; tmout; tmout--) {
- 			unsigned int msr = serial_in(up, UART_MSR);
- 			up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
-@@ -3351,7 +3351,7 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
- 		 * it regardless of the CTS state. Therefore, only use fifo
- 		 * if we don't use control flow.
- 		 */
--		!(up->port.flags & UPF_CONS_FLOW);
-+		!uart_cons_flow_enabled(&up->port);
- 
- 	if (likely(use_fifo))
- 		serial8250_console_fifo_write(up, s, count);
-diff --git a/drivers/tty/serial/bcm63xx_uart.c b/drivers/tty/serial/bcm63xx_uart.c
-index 51df9d2d8bfc5..544695cb184c3 100644
---- a/drivers/tty/serial/bcm63xx_uart.c
-+++ b/drivers/tty/serial/bcm63xx_uart.c
-@@ -675,7 +675,7 @@ static void wait_for_xmitr(struct uart_port *port)
- 	}
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (port->flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(port)) {
- 		tmout = 1000000;
- 		while (--tmout) {
- 			unsigned int val;
-diff --git a/drivers/tty/serial/omap-serial.c b/drivers/tty/serial/omap-serial.c
-index 0b85f47ff19e0..a689d190940cf 100644
---- a/drivers/tty/serial/omap-serial.c
-+++ b/drivers/tty/serial/omap-serial.c
-@@ -1092,7 +1092,7 @@ static void __maybe_unused wait_for_xmitr(struct uart_omap_port *up)
- 	} while (!uart_lsr_tx_empty(status));
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->port.flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(&up->port)) {
- 		for (tmout = 1000000; tmout; tmout--) {
- 			unsigned int msr = serial_in(up, UART_MSR);
- 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 6729d8e83c3c5..2f72cd62e2488 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -1444,7 +1444,7 @@ static void wait_for_xmitr(struct eg20t_port *up, int bits)
- 	}
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->port.flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(&up->port)) {
- 		unsigned int tmout;
- 		for (tmout = 1000000; tmout; tmout--) {
- 			unsigned int msr = ioread8(up->membase + UART_MSR);
-diff --git a/drivers/tty/serial/pxa.c b/drivers/tty/serial/pxa.c
-index fea0255067ccd..10fc8990579b5 100644
---- a/drivers/tty/serial/pxa.c
-+++ b/drivers/tty/serial/pxa.c
-@@ -573,7 +573,7 @@ static void wait_for_xmitr(struct uart_pxa_port *up)
- 	} while (!uart_lsr_tx_empty(status));
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->port.flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(&up->port)) {
- 		tmout = 1000000;
- 		while (--tmout &&
- 		       ((serial_in(up, UART_MSR) & UART_MSR_CTS) == 0))
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index e27806bf2cf3e..2f94fc798cffb 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -319,7 +319,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
- 	ourport->tx_enabled = 0;
- 	ourport->tx_in_progress = 0;
- 
--	if (port->flags & UPF_CONS_FLOW)
-+	if (uart_cons_flow_enabled(port))
- 		s3c24xx_serial_rx_enable(port);
- 
- 	ourport->tx_mode = 0;
-@@ -493,7 +493,7 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
- 	struct tty_port *tport = &port->state->port;
- 
- 	if (!ourport->tx_enabled) {
--		if (port->flags & UPF_CONS_FLOW)
-+		if (uart_cons_flow_enabled(port))
- 			s3c24xx_serial_rx_disable(port);
- 
- 		ourport->tx_enabled = 1;
-@@ -781,7 +781,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
- 		uerstat = rd_regl(port, S3C2410_UERSTAT);
- 		ch = rd_reg(port, S3C2410_URXH);
- 
--		if (port->flags & UPF_CONS_FLOW) {
-+		if (uart_cons_flow_enabled(port)) {
- 			bool txe = s3c24xx_serial_txempty_nofifo(port);
- 
- 			if (ourport->rx_enabled) {
-@@ -1830,7 +1830,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 
- 	if (cfg->uart_flags & UPF_CONS_FLOW) {
- 		dev_dbg(port->dev, "enabling flow control\n");
--		port->flags |= UPF_CONS_FLOW;
-+		uart_set_cons_flow_enabled(port, true);
- 	}
- 
- 	/* sort our the physical and virtual addresses for each UART */
-diff --git a/drivers/tty/serial/serial_txx9.c b/drivers/tty/serial/serial_txx9.c
-index 436a559234dfe..4ae9a45c8e3a3 100644
---- a/drivers/tty/serial/serial_txx9.c
-+++ b/drivers/tty/serial/serial_txx9.c
-@@ -422,7 +422,7 @@ static void wait_for_xmitr(struct uart_port *up)
- 		udelay(1);
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(up)) {
- 		tmout = 1000000;
- 		while (--tmout &&
- 		       (sio_in(up, TXX9_SICISR) & TXX9_SICISR_CTSS))
-@@ -857,7 +857,7 @@ serial_txx9_console_write(struct console *co, const char *s, unsigned int count)
- 	 *	Disable flow-control if enabled (and unnecessary)
- 	 */
- 	flcr = sio_in(up, TXX9_SIFLCR);
--	if (!(up->flags & UPF_CONS_FLOW) && (flcr & TXX9_SIFLCR_TES))
-+	if (!uart_cons_flow_enabled(up) && (flcr & TXX9_SIFLCR_TES))
- 		sio_out(up, TXX9_SIFLCR, flcr & ~TXX9_SIFLCR_TES);
- 
- 	uart_console_write(up, s, count, serial_txx9_console_putchar);
-diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-index 6505a1930da9a..4ff3e5c41dab9 100644
---- a/drivers/tty/serial/sunsu.c
-+++ b/drivers/tty/serial/sunsu.c
-@@ -1245,7 +1245,7 @@ static void wait_for_xmitr(struct uart_sunsu_port *up)
- 	} while (!uart_lsr_tx_empty(status));
- 
- 	/* Wait up to 1s for flow control if necessary */
--	if (up->port.flags & UPF_CONS_FLOW) {
-+	if (uart_cons_flow_enabled(&up->port)) {
- 		tmout = 1000000;
- 		while (--tmout &&
- 		       ((serial_in(up, UART_MSR) & UART_MSR_CTS) == 0))
--- 
-2.47.3
+On 4/17/26 1:40 AM, Randy Dunlap wrote:
+> Add kernel-doc for one struct member and use the correct function name
+> to eliminate kernel-doc warnings:
+> 
+> Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member
+>  'polling' not described in 's3c64xx_spi_info'
+> Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype
+>  for s3c64xx_spi_set_platdata(). Prototype was for
+>  s3c64xx_spi0_set_platdata() instead
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+> v2: add tag; rebase & resend
+> 
+> Cc: Andi Shyti <andi.shyti@kernel.org>
+> Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> 
+>  include/linux/platform_data/spi-s3c64xx.h |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> --- linux-next-20260415.orig/include/linux/platform_data/spi-s3c64xx.h
+> +++ linux-next-20260415/include/linux/platform_data/spi-s3c64xx.h
+> @@ -30,6 +30,7 @@ struct s3c64xx_spi_csinfo {
+>   * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+>   * @num_cs: Number of CS this controller emulates.
+>   * @no_cs: Used when CS line is not connected.
+> + * @polling: Using polling mode when %true (no 'dmas' property in devicetree)
+>   * @cfg_gpio: Configure pins for this SPI controller.
+>   */
+>  struct s3c64xx_spi_info {
+> @@ -41,7 +42,7 @@ struct s3c64xx_spi_info {
+>  };
+>  
+>  /**
+> - * s3c64xx_spi_set_platdata - SPI Controller configure callback by the board
+> + * s3c64xx_spi0_set_platdata - SPI Controller configure callback by the board
+>   *				initialization code.
+>   * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
+>   * @num_cs: Number of elements in the 'cs' array.
 
