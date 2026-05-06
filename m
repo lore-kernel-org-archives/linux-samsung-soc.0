@@ -1,132 +1,98 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A68E492514
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 15:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE644B8DCF;
+	Wed,  6 May 2026 17:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778080640; cv=none; b=LIutlvKbZ9bTALOn8ZyNWq35B72tei63SVKkgQaJM2lY9XHrWyg+rr95KWsw+Ht+E5lYuZDF8mU2F9z/GbQ3vCs3RnZOzSm9n6yXeQVeQYKmsHvpIyHLDBhYK6bBYOA4Iy07g4MUdqDjSpYNvroUU0Er46M/nnNDL+6JIym4TKU=
+	t=1778089919; cv=none; b=YFSH2J6WSCuMWk6Q81e4B5QJd2/13S5B2OG2C7ZYHe9arcfsUdLDHyMjtIvRT//OYj7FIkvxO0JPJq3OKg8xLCknVTqV5hNiUmj768r6+8hcU2lcXftYHABOH9J4qUQ2/6yl8B4sZJu8Y/d2AjfXdIZ0ib+C9mLcpvYRyHMYp+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778080640; c=relaxed/simple;
-	bh=CIHXvYkwT0jmkDtE417aEEPyKFHS+9YHa78p6P2MNXQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=a83W++IWxcClN9I/QBa6UnR29gnLDKFU0yGSZLltrsb1Uoc9Wvq35KI0w8CHVC1eKcml7aNnU+2VJCsIh5tH9qxd8KiJXJ/I2fLN1cjQ2Q4Mbc8aOzTdyBmdf8aHtZp876uR/uc60AuLMnUIl15x9oXzmwk/G7lLELMH1MvHiFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cr7AeDnq; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1778089919; c=relaxed/simple;
+	bh=j+vj0b2qvC7RkbEimqlw8Ccn8JEhZeot+8jORHjR8xE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DBFfec6gpwpZdlJ9M974ORd1RqRiaMmrxAmQ0FblwkY9DxC3elWbgtj81vxrLI4YhBxTsJuPDVVTcIeOIZ1p0wpH9efArCISbFgyT7uQWsyg/FbBjpHu+dkHsebnkVHMgCDXz/1TUSSLeMGsxcD+ue+PxmQCFtmY/isjCK/Cv7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OCXYVQiP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cr7AeDnq"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4891b0786beso43360775e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 08:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778080634; x=1778685434; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YWneBoACYfMuiuSESr0/5daG1MHT/M5YTM3M8vS2pFA=;
-        b=cr7AeDnqmkz/lL6GNhQX62OXzYXKqDOCq7Ej0QjJgFH0s7HGSRv6a5BnPjRw2aZf7X
-         Q5UxAnSfeUpqWBIvvZn5w+ViBmUbUt1Tl26xnaIEy089lpMWa0/ewrV27PzSMjpB3AIH
-         +sLUZhD/wFC+4IfexUCu+PDzcsAa+5rqBYM2FxSdW+DEGv/l4BqOM6kXxIVC8t3P2F9+
-         zBUuVeb4xz2QP0khM5sOkcYCyxdCtTnIOm+nmq0J9XcUwxaSX+mdk8mijaz7CPOIJK7d
-         c+G1O+pHq1qTmyvMbkG1hotAGe/BeRDLbsZlK501F1Qo+/zi0nz3nh7mTG4MGLRPImZR
-         v2LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778080634; x=1778685434;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YWneBoACYfMuiuSESr0/5daG1MHT/M5YTM3M8vS2pFA=;
-        b=dSPKD+knpNbDI3uKG/4Q1S/r7t/HHX+3SuvxCWPgXU84v9X0/PengMS/29utCoYgPj
-         KRXBV9QkDysqjRPYuqutnopxZDzd/SugsGRcEm6AyVKO87Ssz507iPw5ESJUERGsI6/E
-         CEv3vT2It13mNKl/oH0H8bl4nBkap3NXofyFPXwShI6WOqJuXIEl2ygtN2fA9iUMBqkT
-         FB/OufHt+YIj0fNN99x7L39soUI5ITiKLf5ZmjsWRiIQ7xij8q12b0Wi2ulqo/E5NMsQ
-         voXN3MMPfqqlQoqjA2qyisxwTNN1SZVOAnCwbvJz0UEAuqplOWWGxUiF0pusqoaxg6/3
-         OdFA==
-X-Forwarded-Encrypted: i=1; AFNElJ9I3bWxYGB4xAQQvm6Lp0hBX+ipIjvn7Fqwno9L09aaj6y1a3E1ESpUVrFsDBScIZ11UmcpGK4DKr3RMV+PK6yHQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCFNZDf3YQZnF/+Bia3ndbIaBmP0sJZw0hwB4x8tSn9bWWsIxr
-	KGrxEeqQiNgYyFYNvBbzm+a1IRmr9mazXKkotglrDOlQo2mT+AkzuTGX0YvDJ0dAQus=
-X-Gm-Gg: AeBDieux2lrQF/A1wioOeDnzqel5W/yw3PFe1LuouMGqYZv9rmp1DmG3uv5sfq/qsVb
-	utkZRKbPd3vtfgh4THCjrQ5ESiWYWjRDWze/9HktncgkEDvzVmmjsiryde+zoEuUb7i4VYObMPf
-	sC2s2+Wcs4vFnIBuWUY6/JrdH19gY8b9rT2Ws8D7jYVYp89EHwfX/VD3Q82P8PFa6my2H0dSqGL
-	7UElYgNGLYJqwMeUIb5psh0hB/P+h5cQ4kE6AMdBiqhJH6716WFbNnwtCt/pPpj6btin7KRyBv/
-	xFAoFH1SJBVKMXJi/T8+2vxwA/LF94dHBgkxXhklnAqDWEC21S6FKaSpONtzjJmBX56+5LycOoK
-	ItHUOpCAf+nCywnSkbZeefa3APwz+ftYG16s7NWoIcUFMtNJRGfRyP4E0JKPCY7DtW41bbCmmPB
-	GM4gSWCWrQB4HvZgS12EQxD8lCTAfIxpqwTFJBzSJl1Q7nKfrjk8Z6Y3bluq1fNtcJOQmW0gU+M
-	YN/XljfYMd7NjCyyM5FedjP/HuE
-X-Received: by 2002:a05:600c:c094:b0:487:5c0:671f with SMTP id 5b1f17b1804b1-48e51e1a7c4mr49435305e9.9.1778080633868;
-        Wed, 06 May 2026 08:17:13 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:da69:ce01:65af:7871])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e53895effsm51990165e9.3.2026.05.06.08.17.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 08:17:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OCXYVQiP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=ZhIhrzrQk3cuIdZiSPIRnT5icdPEWXf6gRX+saxJE/4=; b=OCXYVQiPZAWj9eduP5dmCHdb/O
+	aAR4/Oh0/fHdHOZwJpOLOcRy4G8pgdbuBbijr5LKHnQ/E4rXuRBYco7xoCjQuPrOrtjmQjcM3WyYQ
+	xuVIVGeVEQwbIXjsjU31nN7rjT3+sjYadgpc0fdZrdkNp21/Ld3x7bJSHOafVfsGRaabEQYI1B6TT
+	QNLf1TdnBr0ExXfWRsZJsl/lqy623zTOjrtQhsIVDwLsF7+PODhErHbsa1PDzLKO3zFxzWO1H5IRM
+	WClFb1ITmBMcCk7F3Yni4puwteYFuvgqo2wVHufCXOn4AJYuZvkpwcosxYkaVJVUUuX5NBg0xtPLD
+	kZ6Cenyg==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wKgPR-00000001hLU-19mO;
+	Wed, 06 May 2026 17:51:45 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3] spi: s3c64xx: fix all kernel-doc warnings
+Date: Wed,  6 May 2026 10:51:44 -0700
+Message-ID: <20260506175144.449364-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 06 May 2026 16:17:12 +0100
-Message-Id: <DIBOZA3G83XE.13MZJF4AJQAOU@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, <linux-kernel@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <peter.griffin@linaro.org>,
- <andre.draszik@linaro.org>, <jyescas@google.com>,
- <kernel-team@android.com>, <stable@vger.kernel.org>, "Titouan Ameline"
- <titouan.ameline@gmail.com>
-Subject: Re: [PATCH v5 1/7] firmware: samsung: acpm: Fix cross-thread RX
- length corruption
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
-X-Mailer: aerc 0.20.0
-References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org> <20260505-acpm-fixes-sashiko-reports-v5-1-43b5ee7f1674@linaro.org>
-In-Reply-To: <20260505-acpm-fixes-sashiko-reports-v5-1-43b5ee7f1674@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue May 5, 2026 at 2:12 PM BST, Tudor Ambarus wrote:
-> Sashiko identified a cross-thread RX length corruption bug when
-> reviewing the thermal addition to ACPM [1].
->
-> When multiple threads concurrently send IPC requests, the ACPM polling
-> mechanism can encounter responses belonging to other threads. To drain
-> the queue, the driver saves these concurrent responses into an internal
-> cache (`rx_data->cmd`) to be retrieved later by the owning thread.
->
-> Previously, the driver incorrectly used `xfer->rxcnt` (the expected
-> receive length of the *current* polling thread) when copying data for
-> *other* threads into this cache. If the threads expected responses of
-> different lengths, this resulted in buffer underflows (leading to reads
-> of uninitialized memory) or potential buffer overflows.
->
-> Fix this by replacing the boolean `response` flag in
-> `struct acpm_rx_data` with `rxcnt`, caching the exact expected receive
-> length for each specific transaction during transfer preparation. Use
-> this cached length when saving concurrent responses.
->
-> Consequently, ensure that `xfer->rxcnt` is explicitly zeroed in driver
-> helpers (e.g., `acpm_dvfs_set_xfer`) for fire-and-forget messages to
-> prevent uninitialized stack garbage from being interpreted as a massive
-> expected receive length.
->
-> Cc: stable@vger.kernel.org
-> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
-> Reported-by: Titouan Ameline <titouan.ameline@gmail.com>
+Add kernel-doc for one struct member and use the correct function name
+to eliminate kernel-doc warnings:
 
-As far as I can see, the name in this tag should be
-Titouan Ameline de Cadeville.
+Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member
+ 'polling' not described in 's3c64xx_spi_info'
+Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype
+ for s3c64xx_spi_set_platdata(). Prototype was for
+ s3c64xx_spi0_set_platdata() instead
 
-> Closes: https://sashiko.dev/#/patchset/20260420-acpm-tmu-v3-0-3dc8e93f0b2=
-6%40linaro.org [1]
-> Closes: https://lore.kernel.org/r/20260426210255.73674-1-titouan.ameline@=
-gmail.com/
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/firmware/samsung/exynos-acpm-dvfs.c |  3 +++
->  drivers/firmware/samsung/exynos-acpm.c      | 15 ++++++++-------
->  2 files changed, 11 insertions(+), 7 deletions(-)
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+v2: add tag; rebase & resend
+v3: add Tudor's Rev-by: tag; rebase; add Mark to recipients
 
-[..]
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-spi@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-Best regards,
-Alexey
+ include/linux/platform_data/spi-s3c64xx.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20260506.orig/include/linux/platform_data/spi-s3c64xx.h
++++ linux-next-20260506/include/linux/platform_data/spi-s3c64xx.h
+@@ -30,6 +30,7 @@ struct s3c64xx_spi_csinfo {
+  * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+  * @num_cs: Number of CS this controller emulates.
+  * @no_cs: Used when CS line is not connected.
++ * @polling: Using polling mode when %true (no 'dmas' property in devicetree)
+  * @cfg_gpio: Configure pins for this SPI controller.
+  */
+ struct s3c64xx_spi_info {
+@@ -41,7 +42,7 @@ struct s3c64xx_spi_info {
+ };
+ 
+ /**
+- * s3c64xx_spi_set_platdata - SPI Controller configure callback by the board
++ * s3c64xx_spi0_set_platdata - SPI Controller configure callback by the board
+  *				initialization code.
+  * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
+  * @num_cs: Number of elements in the 'cs' array.
