@@ -1,42 +1,42 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6D712B94
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 06:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460C630C618
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 06:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778049335; cv=none; b=IQi+OGJ5gzDQ5Dom5tedAEmJmaFvIIrQ7uErdzOrkBr0z+LsPODcfe3OIs8YnR5Qecx0aLtxomryNr258c7ybmcjOvnvOV6gSKFfgYe2t5r9PDtQCB6aMi0iEBiCmfT+FG6so/gdgH2uUIFA1FR2eSUWa+kR2Yp1RrPEpD9kPV8=
+	t=1778049359; cv=none; b=DS0puHWXBBHYF2zGF/Qk6XondIMlBLn1mPAjnD+96QTTDs879kirnVMtTD+ggR0HRtdgkaqq4T6e3F3Z65Xyzg0nQHNUL8dUvt+wlRVIq3fe44M2lT9IxL0zNNcNxZjhFjfdsJakR0izl243Xnvcldq9StiddgAR9UZlcBHN9Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778049335; c=relaxed/simple;
-	bh=PvWvtMNWchCwwWtP5r6JLFvbcxZpGuZvgCjoTHDmIac=;
+	s=arc-20240116; t=1778049359; c=relaxed/simple;
+	bh=XHauu4bdj/t0K4qEUoP+047paPxyPewo7Z02k93au1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=JQGOPQQd63TO0+KKGVCGlXvvAXPJ9mHj0XSptNB/mpQk1lJrppZJD+3GC68Um32Pg55wN3uY9kBNZuM58iua7VrWh9/EMdeNtTe9+znv1mx5BM4sGE/T6bG1B6deDoy+Uxl9lfLcPCXS5Lpwin/R9nCIXAGJrm0i+yVcP10/HUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jxDoomzg; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=Q42hYF2qHsF8hnFm8T26yj+osIOSP7LNzQtMkVhRU2qnDn+YPxLq+Qx3pv9aLkSuR+xLfZ/QjL202S5xPxRn7Ei8o2As1jrXwkYCQvLCCBc6ZXSMxrK4tvoBiibsLjicaUjzNjtSjDp9mKxYCmClHbdR77wCysLgo577cLBe0W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XXMG3Rae; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jxDoomzg"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260506063525euoutp02a171970959a92f19819f8d2f74204157~s5nDbmdpY1483514835euoutp02G
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 06:35:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260506063525euoutp02a171970959a92f19819f8d2f74204157~s5nDbmdpY1483514835euoutp02G
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XXMG3Rae"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260506063555euoutp02f226ac9101c7e9ac509ad0ee6d46a92c~s5nf5nqw31134911349euoutp02O
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 06:35:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260506063555euoutp02f226ac9101c7e9ac509ad0ee6d46a92c~s5nf5nqw31134911349euoutp02O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1778049325;
-	bh=Uj+QchjM1TjaqqN5H20BKQY/O8GeHx9yl6VKOOJcP5Y=;
+	s=mail20170921; t=1778049355;
+	bh=D4ONrkbTuXpFZZg3C3l160J+0NtSHqnB8pAXnoDZkIE=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=jxDoomzgWnwlDvZ9xVJImT5gCkCKA/ASI4o2s+9y+hPBQdbcN9fOfescQKJ8Dntmu
-	 i4+bxXm80oDwkjVFGT1m4nHv4s7T5xvAgsKYCTR/BrCWewYsdwyxxia/HQa3z6setC
-	 Vu+k9V1oKUYuvFGNKd1gr76Eyd2qa+F+3aVSVN90=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	b=XXMG3RaeRt2J0AsvocM+oNG3vC1MGgitSsYwbi3Kj4QNGOPfeQOljVDXVJH9MT8li
+	 YAAmNgKiGfeBeS9TShsD+gY50i1EKH8MxNSOnvdF7dlUuHLniCtUABtmZIQu6MNw/D
+	 icH0d9xXijL+3OzJk5Hr3Q7Kcfp0K5A3bQXqnvNU=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260506063524eucas1p2e642628db1f6ac58096790da6f502e48~s5nDJldkh1757617576eucas1p29;
-	Wed,  6 May 2026 06:35:24 +0000 (GMT)
+	20260506063555eucas1p2affe879f010f6be0edc41475690fd05a~s5nfpkOcu1874318743eucas1p2I;
+	Wed,  6 May 2026 06:35:55 +0000 (GMT)
 Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260506063523eusmtip246f21b2b475e3cbfa4443ee0d0673545~s5nCKdIkG2580125801eusmtip2I;
-	Wed,  6 May 2026 06:35:23 +0000 (GMT)
-Message-ID: <b9765ddd-bb8a-458f-85d4-159d3cc5fe5b@samsung.com>
-Date: Wed, 6 May 2026 08:35:23 +0200
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260506063554eusmtip1082de50ca431abd1e9064abd69212ba0~s5ne4CFKl2212022120eusmtip1M;
+	Wed,  6 May 2026 06:35:54 +0000 (GMT)
+Message-ID: <d568fde6-8033-45c1-a2e1-13f8112f1193@samsung.com>
+Date: Wed, 6 May 2026 08:35:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,66 +44,69 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 0/5] drm/exynos: fbdev: Use client buffers
-To: Thomas Zimmermann <tzimmermann@suse.de>, inki.dae@samsung.com,
-	sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com,
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos/fimd: fix register offset type in
+ fimd_trigger()
+To: Chen-Yu Tsai <wenst@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+	<kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Language: en-US
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20260423094452.32665-1-tzimmermann@suse.de>
+In-Reply-To: <20260408065055.1353444-1-wenst@chromium.org>
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260506063524eucas1p2e642628db1f6ac58096790da6f502e48
+X-CMS-MailID: 20260506063555eucas1p2affe879f010f6be0edc41475690fd05a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260423095139eucas1p149a0e97f62e8bf353a65466ca26cbff9
+X-RootMTR: 20260408065112eucas1p129f600747c27e999ec3d42504bc0fd2b
 X-EPHeader: CA
-X-CMS-RootMailID: 20260423095139eucas1p149a0e97f62e8bf353a65466ca26cbff9
-References: <CGME20260423095139eucas1p149a0e97f62e8bf353a65466ca26cbff9@eucas1p1.samsung.com>
-	<20260423094452.32665-1-tzimmermann@suse.de>
+X-CMS-RootMailID: 20260408065112eucas1p129f600747c27e999ec3d42504bc0fd2b
+References: <CGME20260408065112eucas1p129f600747c27e999ec3d42504bc0fd2b@eucas1p1.samsung.com>
+	<20260408065055.1353444-1-wenst@chromium.org>
 
-
-On 23.04.2026 11:37, Thomas Zimmermann wrote:
-> A client buffer holds the DRM framebuffer for an in-kernel DRM
-> client. Until now, exynos created an internal ad-hoc framebuffer for
-> its fbdev emulation, while by-passing the regular interfaces used by
-> user-space compositors.
+On 08.04.2026 08:50, Chen-Yu Tsai wrote:
+> Sparse reports:
 >
-> Convert exynos' fbdev emulation to use client buffers. Replacing the
-> existing code with a client buffer allows for stream-lining exynos code
-> and later also the fbdev helpers. The new framebuffer will be registered
-> against the client's file and will support handles for GEM objects. It
-> is then just another framebuffer within the DRM ecosystem.
+>     exynos_drm_fimd.c:992:39: warning: incorrect type in initializer (different address spaces)
+>     exynos_drm_fimd.c:992:39:    expected void *timing_base
+>     exynos_drm_fimd.c:992:39:    got void [noderef] __iomem *
+>     exynos_drm_fimd.c:1005:33: warning: incorrect type in argument 1 (different address spaces)
+>     exynos_drm_fimd.c:1005:33:    expected void const volatile [noderef] __iomem *addr
+>     exynos_drm_fimd.c:1005:33:    got void *
+>     exynos_drm_fimd.c:1007:33: warning: incorrect type in argument 2 (different address spaces)
+>     exynos_drm_fimd.c:1007:33:    expected void volatile [noderef] __iomem *addr
+>     exynos_drm_fimd.c:1007:33:    got void *
 >
-> If all driver's fbdev-emulation helpers can be converted to use client
-> buffers, the emulation's framebuffer handling as a whole can possibly be
-> moved into shared helpers.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Add "__iomem" to *timing_base to fix its type.
+>
+> Fixes: 3854fab24e89 ("drm/exynos: fimd: support LCD I80 interface")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 
-> Patch 1 first fixes a long-standing bug.
+> ---
+> random warning I found while checking for the size_t warning.
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Patches 2 to 4 convert exynos' fbdev emulation to client buffers. It
-> still allocates a GEM object buffer tailored towards fbdev emulation,
-> but size calculations now use common DRM helpers.
->
-> Patch 5 cleans up symbol visibility in exynos' fb code.
->
-> Thomas Zimmermann (5):
->   drm/exynos: fbdev: Remove offset into screen_buffer
->   drm/exynos: fbdev: Inline exynos_drm_fbdev_update()
->   drm/exynos: fbdev: Calculate buffer geometry with format helpers
->   drm/exynos: fbdev: Use a DRM client buffer
->   drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
->
->  drivers/gpu/drm/exynos/exynos_drm_fb.c    |   2 +-
->  drivers/gpu/drm/exynos/exynos_drm_fb.h    |   7 --
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 100 ++++++++++------------
->  3 files changed, 47 insertions(+), 62 deletions(-)
->
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index b6abdc4f2b0a..695d3515d421 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -989,7 +989,7 @@ static void fimd_trigger(struct device *dev)
+>  {
+>  	struct fimd_context *ctx = dev_get_drvdata(dev);
+>  	const struct fimd_driver_data *driver_data = ctx->driver_data;
+> -	void *timing_base = ctx->regs + driver_data->timing_base;
+> +	void __iomem *timing_base = ctx->regs + driver_data->timing_base;
+>  	u32 reg;
+>  
+>  	 /*
+
 Best regards
 -- 
 Marek Szyprowski, PhD
