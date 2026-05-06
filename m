@@ -1,66 +1,65 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62C331A7E4
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 12:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591B332A3C9
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 12:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778070493; cv=none; b=g+kHBnfwRMMNB9JRG1n7SD4RUjjF7AaB5ktwm6nlMIiRPLuc52Qgsu+IgABm46ArOTmt/IQRM4QD/RrwCEPQiyZMSP/FDHkepPZuqA0rGVynLHqUEydxe0SNKW3hlJa8jbzAcZoB03uOuOsO6RYmAMKxM7n3KivdkWG8HmOwku4=
+	t=1778070573; cv=none; b=gZmf++1uUSqL2FFit5G5EWdAFGdHgRiquXvRsJoBv0ehplPEuNJ+8S/An2Z1LnvnJABe9a0CfBjTye0H8KAFHtI/gk39pHotz0hP3AMBEhLf63siamkK2NECtX5XGz4DCdtSve6X2CY3C/QU3ROeYNQ0eMzQo2k+qj0UWD7uLco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778070493; c=relaxed/simple;
-	bh=vclG0yxAvF+A/2roV7osqFbBYgf+u0vUuYzd2t5GLzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uScOO7EyuDphr5pRozrYyw7Gwpc/P1qEDFMcx4krRCObFrseih1xAtCjU1OQ2ZdZ3W/Sei3PMKRvQvWtn/BkPI/groaWfLPatcBNlm0admaYtzJi7omJACxVRp5b1Y2sYfduqn0n/K2XDkLYBJgRwQ6eO56NqInJdTYInCZMRiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xskv7F1R; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1778070573; c=relaxed/simple;
+	bh=XOZ7v8ltQwZiMyzo5VWS6ZSorJyR6knJEj/bH49Z3ZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b4bN/hY/5lQtwTj/vPWhcUic402N17eo7H51RqWZ4D+eMq0GUKdcegH1rWtpGnsnkVhLshi8CGmH98ryDnhQiGSbqFuqm0gJs7oyuAQI4kkJxyfNYeX+fnxdh2ytfYPfIyVGIsHFh/WcQ7kfLFOrQnhEBiMWOxtsr+aphX6sKjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KeENEyvB; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xskv7F1R"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so80330595e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 05:28:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeENEyvB"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4891c0620bcso45575535e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 05:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778070489; x=1778675289; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fgsWJ43+sPMyFM6YZi9dneb609gv57UFa/hUFdFYocw=;
-        b=xskv7F1RGtGi8zD/UnbdcgR1YZziglp0fHeiJ2Z4aWoTi73VyKgyRHiq1KaZehrBjK
-         Lg+KIP6pWBH2Ugy8gIsXOHD5XTWYoBF3aXgatwTV8dHrxyBs0VtXfr8xmVJXFT7UksP5
-         waZq9xtMoKoT1YaJ4SnsmReRHGNWLsT4giytb2h/OsPHObT629UyIGx+h3u1oQq2kbTu
-         txHKxzhvC9iM+p/jasZTkQqRW18yHtujShomKocfvTySM3etJAafb3NoZJ/TrFm+/gIQ
-         wsS6ygZ/izRtWQYGJikLnGQFti8MTr0R49lTPYLKJE1PNHNrHmMQCtyXzYOfTHEYissc
-         guxA==
+        d=linaro.org; s=google; t=1778070569; x=1778675369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MErtgJ01ux0KftOTULYSL/LrPrLq4iBEMS2wRNoZ6W4=;
+        b=KeENEyvBAZnq0XJGFgdQeQn++VcX90Y5oU3H5htUHqXMXRrycmjMZRKpVKSSLUukGr
+         toSPjBKpVDOVhkraEUNb8//7l40kEgKpC8rZ9CIY+lDN2mTtMQSWpppmgny/fkDq5Y/V
+         3pBpVqKTSvxepQShZO3JA44Ft9SN+ABZpCQqxbh5ibnR8Cf5KbBXap+di50kY5/yY/yI
+         dJUm2vZMSOI1X7T7Ih2t+j5UlA2fzQFPg5EzE8SRIh9jKE38J4k+cg2H4z9dcQmBE77z
+         QGQhoNh1fPi5XUD6t/NYzFClys2TMAOgaHXBkV/R0NuePExm13r0UvSjG1j1y3B7qsUO
+         s8dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778070489; x=1778675289;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fgsWJ43+sPMyFM6YZi9dneb609gv57UFa/hUFdFYocw=;
-        b=K0yk/t+WntL8eRRVbms60Wv93KLgwmDYa/p51nrScOPa9Uk5LVvqMi5ulKHwWmD276
-         qSvVoj3NICwGTCerq22hECScHC9vnOs39up5o/Rm/GtjDvsqmNNbVBpyNxYyRxQP4M31
-         TxdkfCuqky0L1tbxhgt/kSrhwon/hCIa0btcMnV7mmWBRepoKAb7RBLOtsQuUOz1gs9o
-         5amOWHgFgaiLCN9jYzDxyPXtd+Mxj845wrCWz78MFYVhVr/+Zr6pvJwQz4+2x4mU69sK
-         o2rpKW4MlM8eKgjqphKzazqrqdneXMf4AdrdVY//5tKAMczmHpY8GCfVjadqD1Vi6RfY
-         I08A==
-X-Forwarded-Encrypted: i=1; AFNElJ8Nah/muvNmoyuKsNr1VpPQCUlLs9V3tJQ0eBFpHx6kkCLglupc9DcIs3e2qeIa09u51yoV7Y/bZ59QuFol4A3jnA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8gS25eB5ag+XMhJ51aLjX6pw4F70t7CduGcVaS4XWwq1leZG6
-	cglFvUzjFMX8Ot/goEHd2OOEJoC6X5xmQEKrDKBXFyIDay9nw8J4MCBBZ/OpTdOIg3E=
-X-Gm-Gg: AeBDietK2AOy27rQzCoZ7oAnhqz4xYvOdZnfiz0vo/exwGzLbj2MlcqebKz3wHvwlOP
-	Y6Q8IKu++hTSLfIEbTD7dmz8icAFHpo0PDTW/9UkSZRpeIz41fVGV+H5rs5ysFsWCzikZknzuM/
-	FyOrUnVxclhOz4+0JX05JJdYeYkYVwHyQcSfzhjGsIPGG4+67c/J7oesPZcKUeDl8wVYiOCLGnx
-	2ly1NLmr5oN0JF3c9S3yJc+rZ0ws3lyjnHH+j8UeAPX2SPR2lPBiv2OY0dgpzbqlR+jDn5p+WzB
-	exH1moP/wHMN9w1Rm2euYQ23ML13Ant3xVQHyhXNp2SoCaTm9HK9lO4VbwX1ccCYKUh2+Q/21Z4
-	OWfpiZn4w+9HzBNqpfjxBkG9yOF0EJvmN2+wy7AcEFeUmWL3c7VFCODHU7CXPcSbbLV9q6MvhsM
-	6Vz8nx74D+CoFhIhH3PfjZ9MBZ0OLN765chuBV0piL3GQ=
-X-Received: by 2002:a05:600c:811a:b0:489:1c32:210d with SMTP id 5b1f17b1804b1-48e51f369c3mr57793395e9.15.1778070489168;
-        Wed, 06 May 2026 05:28:09 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778070569; x=1778675369;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MErtgJ01ux0KftOTULYSL/LrPrLq4iBEMS2wRNoZ6W4=;
+        b=UeZnEWbSCmZPJtXjnLEzlqsxpQniz5cErkTPBoQSRZyz7cSrxjtn/66shTipRxWTTL
+         yqP3QByYIoVWnZFh/LzHyUlPZ9/Eoq/Ml0uov7XtYAg0c4r02fEAxoX+vEgCeqE+9/Gl
+         yLkQdY1JQo7IFpreKUZ/6OjT9eDNLC///TRf8zGd/6S2uB6cldWZe0YJnVoRR2nr12xb
+         s3gvh6Uj8vP6nzhQXDzRzyhDP7RWTZgAEeeyss4ORNKBrg3w2HkrIyQLMGxyopwiA3Fr
+         s2aMHsi0b3S3eCdevQ3DwkOVDOgDjwezvNB007hOXS4RL1agGHY9k3JeI4Ue39OMwtDp
+         H9SQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8NNp7fgDwXKLR3YpvyRMIH9oZeQ2H5xQFkANiZrtAc/xc93RVr4YH5ZYcXAZb4N90XbuxH3Z8igSRl3mNwwu+JRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZqC2CIw5s1yHQodUOMAU4fcG+qSUkJBnyByPliPl7cY15smUl
+	UbKAvinoWUOjmiLN1YhYvzOmROb3nqi0ZAnyd4HoWnonq/yU3cPrjru62biU80+h6e4=
+X-Gm-Gg: AeBDieux3V6zbbTxbkT+5PiTmRBc0PpYPLT6p69dCCtckASxSMqd4OiVILheZ0yYHrF
+	DCWTf6r7tclJ0hPMW4xS8/MhF6CHiPTvFkU/UtZfWINKMVAsTa19vKVOWXdOo6H6toF4TGRPlvj
+	HnrFeQ90vnzEYo4ldlgAjnNZyN9PjYSaJ+TIhT9PLXO0PGwfszzm5JmorFCrH+SY02gTLKO49KS
+	bBqBCeSqj5urYG5/WTg3vevivru2k+sWGNFnLt1qx6YGeUDS+qJO9aoJ3c5MpB33Hx7gSA9Ftry
+	g1S18cW1a2xhq5c0yWem0PdWkmI8pzcv9Kdwko//+ORiOVsGIfL02C7UoWbMoKAzPFON+c/Sy62
+	+oZZjANp31sjrxUJj8QaSws6yH9FNL4f5HJ9VPeTdNFwH1yt3a1KVi4sfUr/0DEqTJPYlgQgZX/
+	MDT7++kJ36Ok36sxRDqek8YeXKQCD7KyOeCJ9h09RYp4ashoG7gT6pYQ==
+X-Received: by 2002:a05:600c:c096:b0:488:936a:6220 with SMTP id 5b1f17b1804b1-48e51f444ffmr39137505e9.21.1778070568779;
+        Wed, 06 May 2026 05:29:28 -0700 (PDT)
 Received: from [10.11.12.108] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e539109b7sm41077585e9.15.2026.05.06.05.28.08
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45055f249bbsm10865842f8f.36.2026.05.06.05.29.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 05:28:08 -0700 (PDT)
-Message-ID: <06406c7b-c141-4997-9921-9358cdea7641@linaro.org>
-Date: Wed, 6 May 2026 15:28:05 +0300
+        Wed, 06 May 2026 05:29:28 -0700 (PDT)
+Message-ID: <d5e1e929-e24c-4876-8590-030db9e95b52@linaro.org>
+Date: Wed, 6 May 2026 15:29:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,6 +68,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] spi: s3c64xx: fix all kernel-doc warnings
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
  Mark Brown <broonie@kernel.org>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
@@ -77,66 +77,26 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
  Juan Yescas <jyescas@google.com>, Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 References: <20260416224056.985233-1-rdunlap@infradead.org>
+ <06406c7b-c141-4997-9921-9358cdea7641@linaro.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260416224056.985233-1-rdunlap@infradead.org>
+In-Reply-To: <06406c7b-c141-4997-9921-9358cdea7641@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi!
 
-You missed adding the SPI maintainer. +Mark.
 
-Also, there's another kdoc warning in that file. Do you care to fix it?
-
-scripts/kernel-doc -none include/linux/platform_data/spi-s3c64xx.h
-Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member 'polling' not described in 's3c64xx_spi_info'
-Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype for s3c64xx_spi_set_platdata(). Prototype was for s3c64xx_spi0_set_platdata() instead
-
-Cheers,
-ta
-
-On 4/17/26 1:40 AM, Randy Dunlap wrote:
-> Add kernel-doc for one struct member and use the correct function name
-> to eliminate kernel-doc warnings:
+On 5/6/26 3:28 PM, Tudor Ambarus wrote:
+> Hi!
 > 
-> Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member
->  'polling' not described in 's3c64xx_spi_info'
-> Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype
->  for s3c64xx_spi_set_platdata(). Prototype was for
->  s3c64xx_spi0_set_platdata() instead
+> You missed adding the SPI maintainer. +Mark.
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> ---
-> v2: add tag; rebase & resend
+> Also, there's another kdoc warning in that file. Do you care to fix it?
 > 
-> Cc: Andi Shyti <andi.shyti@kernel.org>
-> Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> 
->  include/linux/platform_data/spi-s3c64xx.h |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> --- linux-next-20260415.orig/include/linux/platform_data/spi-s3c64xx.h
-> +++ linux-next-20260415/include/linux/platform_data/spi-s3c64xx.h
-> @@ -30,6 +30,7 @@ struct s3c64xx_spi_csinfo {
->   * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
->   * @num_cs: Number of CS this controller emulates.
->   * @no_cs: Used when CS line is not connected.
-> + * @polling: Using polling mode when %true (no 'dmas' property in devicetree)
->   * @cfg_gpio: Configure pins for this SPI controller.
->   */
->  struct s3c64xx_spi_info {
-> @@ -41,7 +42,7 @@ struct s3c64xx_spi_info {
->  };
->  
->  /**
-> - * s3c64xx_spi_set_platdata - SPI Controller configure callback by the board
-> + * s3c64xx_spi0_set_platdata - SPI Controller configure callback by the board
->   *				initialization code.
->   * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
->   * @num_cs: Number of elements in the 'cs' array.
+> scripts/kernel-doc -none include/linux/platform_data/spi-s3c64xx.h
+> Warning: include/linux/platform_data/spi-s3c64xx.h:40 struct member 'polling' not described in 's3c64xx_spi_info'
+> Warning: include/linux/platform_data/spi-s3c64xx.h:51 expecting prototype for s3c64xx_spi_set_platdata(). Prototype was for s3c64xx_spi0_set_platdata() instead
 
+
+Ah, I misread, both are fixed.
+
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
