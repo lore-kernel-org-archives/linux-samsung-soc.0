@@ -1,66 +1,68 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B534D43D51A
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 11:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5A3B6340
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 May 2026 11:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778067566; cv=none; b=B4LO+HKpmpxAvKVIWS3V8/MJzyQ4plnuMFOnSJw8NWI14CkzzfvJLU6oY0WIRNAMtaojG93xKn1GsdDf9Q/dHl71lo8bw3jo7v2Lm+aaxl5BNPv4YpYJu8BnINV+h75uge6BJcCYmfF097rnfIpffLALyut0dgziXAjL8/A7xuk=
+	t=1778067566; cv=none; b=HHm+uaRQCZ/WpFJb8eMfYYanWkTFa3vmcl/fRjyrC0/NrLKe3BZgsdG+9F/YomiKngJJDljNwYjrxHLCLDephckags3bppRIy63bu9u1idkL112rKfs/3I/UcPQbEwPaBKxIjpKRdsgquKQzqbvvPJrrgsi40rG56ShyhcBEhmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1778067566; c=relaxed/simple;
-	bh=9wjIXq96Ye0zgM2I0ds4oYNVzLtE1yAQNKLV1EIU9V8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dtpLUutXJW6zSTnHM46aB1A1lUxOgFcP6vVwzWDrMW7h0GnpBOZzXXihPkTSEaQshso+rwgCSlxgDaYmQG3AFa1ewmMwXF5KRk67mQ00sfUHl7k7LnoEKv1oYuqdoEkzm/kW92j7hzgYTYmAn+IVPHxnluDz1tWQbkcJ3DQWVQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K73V6rrr; arc=none smtp.client-ip=209.85.221.43
+	bh=InPW5aIoFLfi7L5QYj+FWyGxWg+TtOroOI35/SgGMrQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=V/dH9L6dWaZWWaOD3oRek4vNJWv5+medghjB2EY9LOubOsQykagy5funZp/FbOw/J99ku+PjK+LdNhqgqgOm7WVP5nlNNDpVtSsCTfdPmEC02zoeolZaSYcvC/scF89XV1dU9rNNwc8RrLN20X4rZ89wSJzrL27zHi7EWxCxACY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c6zrL21F; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K73V6rrr"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43d76dd4ee8so5084728f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 04:39:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c6zrL21F"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-44a044cb827so4560573f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 May 2026 04:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778067562; x=1778672362; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IVj1fWCL5+lK+iedLmeQpkoKIZN4NJDvNvjAcGI6dJ4=;
-        b=K73V6rrrSE+AMJo3i0ACwCTS1P082p/G0P1XvztAczC06uZAl6DKipDVBjnfc6m9z5
-         yMQx7OriVyX7fkPiqpiagpaFjfpVnvBFVH1Vxozp5+yWQqTrcunPIQh8ZAVRT2uVVyEG
-         bF5hN+AwE7krMSkzvOdpjwTyYHvTLdMNpiF6ugQZp+U9o3v2GXr0Nb+EwkCAdJtrIAit
-         F6snMa4XlDRfRn20J/XIqhlxsR2WQaV0wZEr/7F5rLyLHAIIVBC0PS3qOoO+G6RFldDC
-         YAD8Kqb5g8PVF4ioWvWNowp7BV6ZjKd4TdY9RTYYzXHPuq4zJnikXHnhRnPpn6QHaz33
-         q07Q==
+        d=linaro.org; s=google; t=1778067563; x=1778672363; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RvGC3o+HXUBsO1osZIafgMiKf+lkJO3vUojNNgCQ4PQ=;
+        b=c6zrL21FYNzEy3XDPYIAPJ+OMWEEd/E8i3oP3CjsPFRvIfDN4YuvBeDip+LUt4jds5
+         UfYPpWGtd4g1nRgOB71YAvBOUAu0wgFpiNTwxyeRb92sr58EVDkb/hFAXC9hFu0Y/5l9
+         8p9MO9OwUnF1STu75Kj0BCyG9ciVnxrguHN7PK1A2Pue7sVLvGEY6UIqUrzOPChlriTI
+         jVeHxTYbdhL16AgxE8uAqI7WKfypImy4rlIHKTBuoFFbl8sNbT7hiTXv28jnKpq6Vfjf
+         1/LQFFB3HDIkgaIIQsZF+t8ERpjkmomQwko7nuoh/zaqcR41aDCmAIdk6WkhmvZowTID
+         TUnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778067562; x=1778672362;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IVj1fWCL5+lK+iedLmeQpkoKIZN4NJDvNvjAcGI6dJ4=;
-        b=DqDJZCWWcCgReKGyByc0AQ6HjYEpqnRvXBtnZ4xn6sDc7/7VW6AO8jcb0J4kFNE0LR
-         6mME1pdyXrznf8woOpcsH+V3YjlbvmwOQZnzV1DTqjWCM7Kwo1hUsHEsARZsIKN92OCK
-         3AvH+L6658uDfkQcXXsemTwnwa5KxDp1+6y5N92klwcQBK7CtEQkaLxHCusGxnxd9BXt
-         WRPQAx8iCG5KomTAs/g2XC6gdoCw5QXzHAw+P/iCUkbdhyAMSs7pJwBUAoM6GHoQtkwV
-         esEQkcHkBb45LBfso2knWd2NIciuJKp9MEpWsXw6EAGKlzWaqRMp7eEGTjXRtuOSTLG/
-         no9Q==
-X-Forwarded-Encrypted: i=1; AFNElJ/Wv2nNzpOWOh1nAxKz3FEmow/7JiMB7d4P5j4hKJwiyrIRjTCPjYKU5hG8diXGJWem6r2MHq97sH2BOgcgVIudcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YybFiK3ce2bDhXXGt3wtV+kPfVU8MPyexFFhhVgJdR1hZhEw2fa
-	0d1DDHvYOUyh2kYuFFHpjD4ws4S3t7s+E+TI8RlFgF4zLQ/wXMztT5qwybRvaZ8/xsc=
-X-Gm-Gg: AeBDiesuPHJh4hTXePpgr1iGK4NW4Kt0vA/mXuefja2r3DQPHbZcbkxTF1YzKEOrRvW
-	bXZ2JzSQmQzy5HtW4izgxcthEgxHdWaTmRRU/tczL4b1CDKeWTy5OhFovd33R8N4tbiBU8NkVTw
-	y/4g/UCIPricdSszlZ8LPGqrkvKxlsYOa15qcuDqleWb7bwtrje2cMX/zTIuVXpo+UoNDWLEQ+r
-	THwCn/I5Gqy+eIkXV8Wuu/quarwlDnFJgviwn7Y2owXHq0BGAuCiiZo5Z1v9MrLVwmWxIcAhXy6
-	vTeGe4QYeNNIWgwpJAkSVT0EbGUU4H5/HUjFi0onduXbCU5iR+gZrdDLr3flGHf9s4+kfQveLw7
-	PTqelkG4RSRxVMoXILUid8cODhfPi/UWMV8UcCdIHJlzVIVhaiRE/Tdl1JsPart/RNYCN8Kfv/4
-	fF9Ai/o8kvMSwUoZ7qq62hgr+/SEA2s1JZzpdJ7HUm1dY4Bix9WLReQLdB9d6jQQLOfy/KBNLms
-	8sq8rASg+xECZKybg==
-X-Received: by 2002:a05:6000:22c4:b0:43d:1c21:ead5 with SMTP id ffacd0b85a97d-4515ce1c6bcmr5425016f8f.22.1778067561946;
-        Wed, 06 May 2026 04:39:21 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778067563; x=1778672363;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RvGC3o+HXUBsO1osZIafgMiKf+lkJO3vUojNNgCQ4PQ=;
+        b=DIHuCQGctKl8iVUG1qy2bVfeF64hhGrFihyi1LvzllOuQnFKnv0LfECy8CzNO5k2I9
+         kZW+ebXlvjFQHn/FPmpE6vhmNzH7N0vcbaWkQ6SrER1VBgFXEo5kKZk2bfNS7tLzpIk+
+         DGe/OU0RxbeTnx5XFlzFHHqRi7z06Vy2/U08ZJT0sDIMmKftBVjGhzRAgjCHSO/EfA1b
+         VKJe5NgcpaUyVCUQB6bUgrr7cbf4K7/OCCkOVChE25BdgKpuhQxmBXZIkL3CpuF2zkdm
+         One7DtBkjIiaCJk0u0AJtpO9X4yvPxrfGG6nDw3zBlOxO1+IYem/QMei2zZ9ZKre98qV
+         wRpA==
+X-Forwarded-Encrypted: i=1; AFNElJ84XUdQgYrKRkRk8R9Pad69YbrDMovVk9WjDxO3iUv3ncw5k84r0lpNMlmGqbSv628GOpBNIVo/lyRr5A4FdMyeWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBL6dHvdfPbjQ3y+jTZfa2tLqi+qEAzyhddOq8FB4F5oV45JHf
+	wPRFPJLcZlU7Qll4Cp7Dq14l9bAf+wrBTulW/4R2T3caVQ2aU9/+4L+R6qjF6DBpib0=
+X-Gm-Gg: AeBDieu+IGr0hSACYm3wCCPG0+u4gjF8n4tsX3R1g9dom8VnkYqhvqhF2xv+BO7Se+l
+	DaBnibvthZ5HQLukmlh1VYUsyLstIoUewTAYVMWm3n0FR2UxXNPqf/CwVHsGpoFgGPFDB3tx3Nd
+	c2aZS9wH0601K7SIUencAsMxrST+/jHPvdACJw3VettAlAADikJjq8vcFS5uaBcaVGZSTY/jxO/
+	RQ8tG11MhzOqtJNqjuGxvWwnDmkVS6HOwgP6k12nU6Hq02tI+wrq8PTsgHLZW/+HVQugQWIfeS1
+	tLhjvybS6WNP5qM5hHl32WDDJBnHxMXlNhdzdvF+ZTh4Et2WUiCaVaSM8cM5r+YvaJRNdHinoaQ
+	2Prn4Lpuluv1b5KdlJXDJx1qMh0Bjz0P/zwxWNS3bt2HZaOgerogTN8fQtRFWoMNilt6rgiXWNS
+	ga0FnhlM9PtkNmnGJg3moxooGCYxlyWpOXxsLC1lQWJRKU/yCXs9VVT7PvB0W6lEXa+akppAZvi
+	NpVbh+UfDaYqioQKg==
+X-Received: by 2002:a5d:5d87:0:b0:43d:762e:76ba with SMTP id ffacd0b85a97d-4515b525abemr5169570f8f.17.1778067563093;
+        Wed, 06 May 2026 04:39:23 -0700 (PDT)
 Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4505238e6e0sm11852350f8f.6.2026.05.06.04.39.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4505238e6e0sm11852350f8f.6.2026.05.06.04.39.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 May 2026 04:39:21 -0700 (PDT)
+        Wed, 06 May 2026 04:39:22 -0700 (PDT)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 0/6] firmware: samsung: acpm: TMU support and cleanups
-Date: Wed, 06 May 2026 11:39:02 +0000
-Message-Id: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+Date: Wed, 06 May 2026 11:39:04 +0000
+Subject: [PATCH 2/6] firmware: samsung: acpm: Annotate rx_data->cmd with
+ __counted_by_ptr
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,11 +71,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFYo+2kC/0XNQQ6DIBCF4asQ1p0GqKjhKo0LxLGSFqGAponx7
- qW66PKf5H2z0YTRYqKKbDTiapP1cwl+IdRMen4g2KE0FUzUTDIJ2gQH2S0w4StgTFAZqUeGYmS
- NoWUWIo72c5D37uyI76XI+Tz+YUUOthK3kz12kHSa7NNDxOBjTqBRtH2Ng5QtV6v8/eh1QjDeO
- ZsVWZsrh2g47fb9C9kMBjfQAAAA
-X-Change-ID: 20260505-acpm-tmu-helpers-4c5af0e2f07c
+Message-Id: <20260506-acpm-tmu-helpers-v1-2-a9cd5daf8355@linaro.org>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+In-Reply-To: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Krzysztof Kozlowski <krzk@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -85,94 +85,85 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
  linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
  peter.griffin@linaro.org, andre.draszik@linaro.org, jyescas@google.com, 
- kernel-team@android.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ kernel-team@android.com
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778067561; l=3632;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778067561; l=2479;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=9wjIXq96Ye0zgM2I0ds4oYNVzLtE1yAQNKLV1EIU9V8=;
- b=r8xf8GxAIL1BdWW1vT0QMZLJ3de6b9Cpy9hf2Hon4GLaqnK6iD4XK7jpdzHllGv0zilynV9Wm
- nlU05KGBnMgAK9cl50FBjPbEhD8d5fkX9k59ZWvBPIxJDpcyysnx9mP
+ bh=InPW5aIoFLfi7L5QYj+FWyGxWg+TtOroOI35/SgGMrQ=;
+ b=pubO52w85UBt/AD2Icw0FjZhzPE1/uxNCqZC7wE3gbz3G3T+DYAk/KG32A46kRsJt6nvTwNLa
+ uopL717hhx2AY4JcFM/7kgruUPkFO+YPujpA0lG1qTAm3QoXYbGW4Zg
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Hi all,
+Rename the `n_cmd` member of `struct acpm_rx_data` to `cmdcnt` to
+maintain consistent nomenclature across the driver (aligning with
+`txcnt`, `rxcnt`, and transfer helpers).
 
-This series introduces protocol support for the Exynos
-Thermal Management Unit (TMU) to the ACPM driver, alongside several
-cleanups.
-
-These patches are split from the following set:
-Link: https://lore.kernel.org/linux-samsung-soc/20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org/#t
-
-Dependencies
-============
-
-Please note that this series is based on top of the ACPM polling and
-LKMM fixes series:
-Link: https://lore.kernel.org/linux-samsung-soc/20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org/
-
-The MFD and clk maintainers are included because of the cleanup patches
-(3 and 4). ACPM updated some structures that the mfd and clk client
-drivers are using, so these patches shall naturally go via the Samsung
-SoC tree.
-
-Note that when compiling with W=1 one will see the following kdoc
-false-positive warning:
-  CC [M]  drivers/firmware/samsung/exynos-acpm.o
-Warning: drivers/firmware/samsung/exynos-acpm.c:118 struct member '__counted_by_ptr(cmdcnt' not described in 'acpm_rx_data'
-Warning: linux/drivers/firmware/samsung/exynos-acpm.c:118 struct member '__counted_by_ptr(cmdcnt' not described in 'acpm_rx_data'
-
-This is not a dependency per se, but wanted to let you know that
-I proposed the following patch to fix it:
-Link: https://lore.kernel.org/all/20260506-kdoc-__counted_by_ptr-v1-1-70763486871f@linaro.org/
-
-Cheers,
-ta
-
----
-Changes since 20260113-acpm-tmu-27e21f0e2c3b:v4:
-- reword commit message of first patch emphasizing there's no
-  functional change (Krzysztof)
-- remove static keyword from `static void acpm_set_xfer`
-- replace for loop with memcpy in acpm_tmu_set_threshold()
-- update kernel doc on devm_acpm_get_by_phandle()
+With the member renamed, annotate the dynamically allocated `cmd`
+pointer with the `__counted_by_ptr(cmdcnt)` macro to improve runtime
+bounds checking.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
 ---
-Tudor Ambarus (6):
-      firmware: samsung: acpm: Consolidate transfer initialization helper
-      firmware: samsung: acpm: Annotate rx_data->cmd with __counted_by_ptr
-      firmware: samsung: acpm: Drop redundant _ops suffix in acpm_ops members
-      firmware: samsung: acpm: Make acpm_ops const and access via pointer
-      firmware: samsung: acpm: Add TMU protocol support
-      firmware: samsung: acpm: Add devm_acpm_get_by_phandle helper
+ drivers/firmware/samsung/exynos-acpm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
- drivers/clk/samsung/clk-acpm.c                     |   8 +-
- drivers/firmware/samsung/Makefile                  |   1 +
- drivers/firmware/samsung/exynos-acpm-dvfs.c        |  20 +-
- drivers/firmware/samsung/exynos-acpm-pmic.c        |  20 +-
- drivers/firmware/samsung/exynos-acpm-tmu.c         | 239 +++++++++++++++++++++
- drivers/firmware/samsung/exynos-acpm-tmu.h         |  28 +++
- drivers/firmware/samsung/exynos-acpm.c             | 113 +++++++---
- drivers/firmware/samsung/exynos-acpm.h             |   2 +
- drivers/mfd/sec-acpm.c                             |   6 +-
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |  32 ++-
- 10 files changed, 397 insertions(+), 72 deletions(-)
----
-base-commit: 5e9b7d093f3f77cb0af4409559e3d139babfb443
-change-id: 20260505-acpm-tmu-helpers-4c5af0e2f07c
-prerequisite-change-id: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581:v5
-prerequisite-patch-id: 18d89d0e2bc0efe2cb366746ac4db36f4682f061
-prerequisite-patch-id: e877f865862ee94f5750b877b5fad863d8acd7c8
-prerequisite-patch-id: b5da16b5c6d6731ea519ed68302fd52ce57c7ffa
-prerequisite-patch-id: df5b1d9df4c8894afaff645c9eb84aa4e3daeeee
-prerequisite-patch-id: be74a55583acb36dedca3e118f49633172979617
-prerequisite-patch-id: 31ebc7bd806d4d466c256049f32e3270e2caeeb6
-prerequisite-patch-id: 7ea0832fcf76e4f40e18b74083904e7e37e1addf
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index 88a06842753d..fac88c427d2a 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -105,14 +105,14 @@ struct acpm_queue {
+  * struct acpm_rx_data - RX queue data.
+  *
+  * @cmd:	pointer to where the data shall be saved.
+- * @n_cmd:	number of 32-bit commands.
++ * @cmdcnt:	allocated capacity of the @cmd buffer in 32-bit words.
+  * @rxcnt:	expected length of the response in 32-bit words.
+  * @completed:	flag indicating if the firmware response has been fully
+  *		processed.
+  */
+ struct acpm_rx_data {
+-	u32 *cmd;
+-	size_t n_cmd;
++	u32 *cmd __counted_by_ptr(cmdcnt);
++	size_t cmdcnt;
+ 	size_t rxcnt;
+ 	bool completed;
+ };
+@@ -432,7 +432,7 @@ static int acpm_prepare_xfer(struct acpm_chan *achan,
+ 	/* Clear data for upcoming responses */
+ 	rx_data = &achan->rx_data[bit];
+ 	rx_data->completed = false;
+-	memset(rx_data->cmd, 0, sizeof(*rx_data->cmd) * rx_data->n_cmd);
++	memset(rx_data->cmd, 0, sizeof(*rx_data->cmd) * rx_data->cmdcnt);
+ 	/* zero means no response expected */
+ 	rx_data->rxcnt = xfer->rxcnt;
+ 
+@@ -584,19 +584,19 @@ static int acpm_achan_alloc_cmds(struct acpm_chan *achan)
+ {
+ 	struct device *dev = achan->acpm->dev;
+ 	struct acpm_rx_data *rx_data;
+-	size_t cmd_size, n_cmd;
++	size_t cmd_size, cmdcnt;
+ 	int i;
+ 
+ 	if (achan->mlen == 0)
+ 		return 0;
+ 
+ 	cmd_size = sizeof(*(achan->rx_data[0].cmd));
+-	n_cmd = DIV_ROUND_UP_ULL(achan->mlen, cmd_size);
++	cmdcnt = DIV_ROUND_UP_ULL(achan->mlen, cmd_size);
+ 
+ 	for (i = 0; i < ACPM_SEQNUM_MAX; i++) {
+ 		rx_data = &achan->rx_data[i];
+-		rx_data->n_cmd = n_cmd;
+-		rx_data->cmd = devm_kcalloc(dev, n_cmd, cmd_size, GFP_KERNEL);
++		rx_data->cmdcnt = cmdcnt;
++		rx_data->cmd = devm_kcalloc(dev, cmdcnt, cmd_size, GFP_KERNEL);
+ 		if (!rx_data->cmd)
+ 			return -ENOMEM;
+ 	}
 
-Best regards,
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
+2.54.0.545.g6539524ca2-goog
 
