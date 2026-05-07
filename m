@@ -1,68 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33367373C10;
-	Thu,  7 May 2026 13:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2267A315D3B;
+	Thu,  7 May 2026 14:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778160441; cv=none; b=Qsny+igcROZEvc/iUOxxshOq05JKvemkEQwbDiJXGP5w8rmGuoY8OKRtTsaehxDoyh1fMRrsqjQYnaO438uxO/kxbApl7JH9Q/B5idA8+30diFN+F/3yus0p1GoyXDi0Vwf6DnFtyHXj8Ofsn3EYicSbQbNYD97PU6YOWkY7x14=
+	t=1778164133; cv=none; b=gEklWjI8+EW81jyk7yZGN2o1Xyq/eMn34Gp22fMCa6y+5MesLuz3IWzICJ2wEAJ4xCv0nmb3CdubrmpsNWdgYYnjTUsmVXLSJ1+o7r6K9i7y/vqAkubSoOYIc7IPu2qAsXTJBaZ9nw/aOx7ombi/O/JAUG6fdoI9sI5KN8dJWsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778160441; c=relaxed/simple;
-	bh=2zmpjvVUY+07HWWUcCxpxC+7KsaT2l7nu3KqtNlhEY4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i7rqvz2wnRXa6iRaCiewUZEI/hOLL2wg9TQjdr7sPNs+GNqpsj79ypQ48avMAqQWyfj3Ky0+otk4snZt+vVgfkAw2rdIbNDp+U/qKOrXYVVN4pnadM/Nrm15ANIMkk/tB7fqrX+LMKiLKdw5kJIfg8lnfWUmfABODrNRnLxBvt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDP4jj7N; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778164133; c=relaxed/simple;
+	bh=CEBLsdC5BhK44Ow0f/DvFi3ITfR7Y2d7VKh8V95wdMY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=hWyEmXp3B4EQbdJUdFPEhL3GZyo/Cr5ViXpV3C9CqPLOWflbD3tJEx1ARifPVhcqzmbCsWgBr9Q9noQ/ZHaP67L8l3zO2YhkwGG102k5kVYGxOj+nywO2yXv4y4vGzc62RFHOLzH46kbtRgqpZa2C9v7sb0WQUmf1bo58xT/gyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=H9g0LH3R; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDP4jj7N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E24AC2BCB2;
-	Thu,  7 May 2026 13:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778160440;
-	bh=2zmpjvVUY+07HWWUcCxpxC+7KsaT2l7nu3KqtNlhEY4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FDP4jj7NK2NiCJ32H/8JUes7jbtSzWLFGfK7AsuAg3xKx9a9XLBx6xcITj7fe9elr
-	 nn1AJZiyKbAz2nTQaS3y7vORVE5ZznA6nDNkYjmAQf5czONfch6VfqDBgplwhuTx91
-	 YVMbZ4KxBkCe8BD7ZuaxWPYFh4IpY9M4Vl+yZEsWPh2+ByrQNtF+tHaD09uMr0LC1p
-	 aQDU/7/tDx0sjGEC3eEOWyB0DFm0FeIGw/LzfIeIAEoIu/cn9+7YD9dnOVtLb9TNDZ
-	 9vReZBbI6lnjaklvwvPLW1NtPExfqcXPftjfDv6IkV66LPFn2fh7SCNYtCZNAIAYbv
-	 98NkFHMP1hlCA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-In-Reply-To: <20260428135216.100135-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260428135216.100135-2-krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3] mfd: MAINTAINERS: Remove Krzysztof from
- Samsung PMIC drivers
-Message-Id: <177816043936.1868182.12796239804738991716.b4-ty@b4>
-Date: Thu, 07 May 2026 14:27:19 +0100
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="H9g0LH3R"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 61B2D2763F;
+	Thu,  7 May 2026 16:28:49 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0bPPlxm6rDu1; Thu,  7 May 2026 16:28:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1778164128; bh=CEBLsdC5BhK44Ow0f/DvFi3ITfR7Y2d7VKh8V95wdMY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=H9g0LH3RjjyzOIC1+Hk+5regrB3BjwoyxdcW1xunzecRiKfuYk1yWQWLiQ2PQYKly
+	 oezPg000Kdfk1X7f3a/XorXtnsJ8OG/IDaP/mwds/DSfjNCwKK3p6kbbesEeariTVr
+	 IdOvjfyTyTuHziMn1ex6m2E4ksdyWDzNqALxQO2TBrh+GbbYKDHEDAtfep8u39NZ7+
+	 0eOJKDiiM3WVcyepFVFi45W1DNtuaY1vfY0D9S4L2ZRbtXeMs5StXkICxJbQW/fodK
+	 vRzUOhv0LGI2zzIG7Y/rjhmV1Chq6JKTa83qJiK/KbvUg/oiGO7Gj68ZKRnxNLdf9w
+	 QCtclKZc+PvnA==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 May 2026 19:58:32 +0530
+Message-Id: <DICIKJZ1JOZQ.36S4SZ5G8RM5Q@disroot.org>
+Cc: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] Configuring DMA threshold value for DW-MMC
+ controllers
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Kaustabh Chakraborty" <kauschluss@disroot.org>, "Ulf Hansson"
+ <ulfh@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jaehoon Chung"
+ <jh80.chung@samsung.com>, "Shawn Lin" <shawn.lin@rock-chips.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>
+References: <20260415-dwmmc-dma-thr-v3-0-31014d36b6ee@disroot.org>
+In-Reply-To: <20260415-dwmmc-dma-thr-v3-0-31014d36b6ee@disroot.org>
 
-On Tue, 28 Apr 2026 15:52:16 +0200, Krzysztof Kozlowski wrote:
-> Due to lack of time I did not perform reviews of patches for Samsung
-> PMIC drivers last year, at least not in timely manner.  I still can
-> perform limited testing of the code on hardware, but that does not
-> warrant having "M" here.
-> 
-> Maintainer should be responsive, so drop my name and shift these drivers
-> maintenance to André Draszik (from previous reviewer role).
-> 
-> [...]
+On 2026-04-15 20:32 +05:30, Kaustabh Chakraborty wrote:
+> In Samsung Exynos 7870 devices with Broadcom Wi-Fi, it has been observed
+> that small sized DMA transfers are unreliable and are not written
+> properly, which renders the cache incoherent.
+>
+> Experimental observations say that DMA transfer sizes of somewhere
+> around 64 to 512 are intolerable. We must thus implement a mechanism to
+> fall back to PIO transfer in this case. One such approach, which this
+> series implements is allowing the DMA transfer threshold, which is
+> already defined in the driver, to be configurable.
+>
+> Note that this patch is likely to be labelled as a workaround. These
+> smaller transfers seem to be successful from downstream kernels,
+> however efforts to figure out how so went in vain. It is also very
+> possible that the downstream Broadcom Wi-Fi SDIO driver uses PIO
+> transfers as well.
+>
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-Applied, thanks!
-
-[1/1] mfd: MAINTAINERS: Remove Krzysztof from Samsung PMIC drivers
-      commit: e089805df3476e13fd2e5e131373f6712f15222f
-
---
-Lee Jones [李琼斯]
-
+Hi, bump! What's the status of this patch series? Both patches have been
+reviewed.
