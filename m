@@ -1,92 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB3E3B8BD4;
-	Thu,  7 May 2026 12:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33367373C10;
+	Thu,  7 May 2026 13:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778155213; cv=none; b=G4nzyOvoWMPsR0/StIYlyOcTIM9d3aUqf9s+wOxFGSQl+SiZ5X1adYrrrf402bokKizgnjd61qvEER+4j9YhTQz7I3BoKNx/zA6UUuEHdhD+60zgn5JDEXrFj/Fz5luVoNHo5rghIoBc7L6q0PzWBMEMpjQFGyNKsF8+Sf6Xb4c=
+	t=1778160441; cv=none; b=Qsny+igcROZEvc/iUOxxshOq05JKvemkEQwbDiJXGP5w8rmGuoY8OKRtTsaehxDoyh1fMRrsqjQYnaO438uxO/kxbApl7JH9Q/B5idA8+30diFN+F/3yus0p1GoyXDi0Vwf6DnFtyHXj8Ofsn3EYicSbQbNYD97PU6YOWkY7x14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778155213; c=relaxed/simple;
-	bh=4P63+pMF5hPGAISna7ea2oO0XmA+Gl8rd2gi9zdqbEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WXv5Xa60GIb9zwQur1chqEheD35P/XHGxHU5TZR4qADj5PvmVgppc+jJ8ztxjv7JqcG0g7m/05kWTf0bnoboeehDBZmGjqxJS48A0+BQw5fAkJDrPN0d9Y911Lq+SmgGWPtRGk7lxoS11hKxfs2EXJKS6LC/lK+xmWXuR1Rbflo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj6NZvVv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778160441; c=relaxed/simple;
+	bh=2zmpjvVUY+07HWWUcCxpxC+7KsaT2l7nu3KqtNlhEY4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=i7rqvz2wnRXa6iRaCiewUZEI/hOLL2wg9TQjdr7sPNs+GNqpsj79ypQ48avMAqQWyfj3Ky0+otk4snZt+vVgfkAw2rdIbNDp+U/qKOrXYVVN4pnadM/Nrm15ANIMkk/tB7fqrX+LMKiLKdw5kJIfg8lnfWUmfABODrNRnLxBvt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDP4jj7N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj6NZvVv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F70AC2BCB8;
-	Thu,  7 May 2026 12:00:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDP4jj7N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E24AC2BCB2;
+	Thu,  7 May 2026 13:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778155211;
-	bh=4P63+pMF5hPGAISna7ea2oO0XmA+Gl8rd2gi9zdqbEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dj6NZvVvVdOgDw+LjcXmghm4lgzB0yLDuhWRWp6+T1Ab+ZYzJKC2uAEiWaO1m8cmY
-	 6fFESU1DwxI99LL4EouzKOWCzyS2GGh9n5dErai0qC1ZuojTipZeVZEbk1Q94thy4d
-	 P0VP9ZdJ2RiUYT2vfZ31Gr2SVPLgg5n9ba0LinPQ4w8HC8ywZ764RI8QLKbVhBFDno
-	 36OuvxzmLV7EDgAIy6A9MdahCwYHddaXy+bLHpaCkPBW4GLNaKzCV2gGN2zzCeJT1v
-	 jh8ToM18pipZRbdpWWSgbSr3cU2OHxam70kBlSkRnXAUGiRxib+9on4Q4WWMvjhu2n
-	 jdKoP6EWKNK3g==
-Date: Thu, 7 May 2026 13:00:03 +0100
+	s=k20201202; t=1778160440;
+	bh=2zmpjvVUY+07HWWUcCxpxC+7KsaT2l7nu3KqtNlhEY4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FDP4jj7NK2NiCJ32H/8JUes7jbtSzWLFGfK7AsuAg3xKx9a9XLBx6xcITj7fe9elr
+	 nn1AJZiyKbAz2nTQaS3y7vORVE5ZznA6nDNkYjmAQf5czONfch6VfqDBgplwhuTx91
+	 YVMbZ4KxBkCe8BD7ZuaxWPYFh4IpY9M4Vl+yZEsWPh2+ByrQNtF+tHaD09uMr0LC1p
+	 aQDU/7/tDx0sjGEC3eEOWyB0DFm0FeIGw/LzfIeIAEoIu/cn9+7YD9dnOVtLb9TNDZ
+	 9vReZBbI6lnjaklvwvPLW1NtPExfqcXPftjfDv6IkV66LPFn2fh7SCNYtCZNAIAYbv
+	 98NkFHMP1hlCA==
 From: Lee Jones <lee@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, willmcvicker@google.com,
-	jyescas@google.com, shin.son@samsung.com,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] firmware: samsung: acpm: Drop redundant _ops
- suffix in acpm_ops members
-Message-ID: <20260507120003.GG305027@google.com>
-References: <20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org>
- <20260420-acpm-tmu-v3-3-3dc8e93f0b26@linaro.org>
+To: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+In-Reply-To: <20260428135216.100135-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260428135216.100135-2-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v3] mfd: MAINTAINERS: Remove Krzysztof from
+ Samsung PMIC drivers
+Message-Id: <177816043936.1868182.12796239804738991716.b4-ty@b4>
+Date: Thu, 07 May 2026 14:27:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260420-acpm-tmu-v3-3-3dc8e93f0b26@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-On Mon, 20 Apr 2026, Tudor Ambarus wrote:
-
-> Rename the `dvfs_ops` and `pmic_ops` members of `struct acpm_ops` to
-> `dvfs` and `pmic` respectively.
+On Tue, 28 Apr 2026 15:52:16 +0200, Krzysztof Kozlowski wrote:
+> Due to lack of time I did not perform reviews of patches for Samsung
+> PMIC drivers last year, at least not in timely manner.  I still can
+> perform limited testing of the code on hardware, but that does not
+> warrant having "M" here.
 > 
-> Since these members are housed within the `acpm_ops` structure and
-> utilize the `acpm_*_ops` types, the `_ops` suffix on the variable names
-> creates unnecessary redundancy (e.g., `handle.ops.dvfs_ops`).
+> Maintainer should be responsive, so drop my name and shift these drivers
+> maintenance to André Draszik (from previous reviewer role).
 > 
-> This cleanup removes the stuttering, leading to cleaner consumer code.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/clk/samsung/clk-acpm.c                        | 8 ++++----
->  drivers/firmware/samsung/exynos-acpm.c                | 4 ++--
->  drivers/mfd/sec-acpm.c                                | 6 +++---
+> [...]
 
-Acked-by: Lee Jones <lee@kernel.org>
+Applied, thanks!
 
->  include/linux/firmware/samsung/exynos-acpm-protocol.h | 4 ++--
->  4 files changed, 11 insertions(+), 11 deletions(-)
+[1/1] mfd: MAINTAINERS: Remove Krzysztof from Samsung PMIC drivers
+      commit: e089805df3476e13fd2e5e131373f6712f15222f
 
--- 
-Lee Jones
+--
+Lee Jones [李琼斯]
+
