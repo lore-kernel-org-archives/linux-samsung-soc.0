@@ -1,158 +1,146 @@
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16858332EBA
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 17:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778260952; cv=pass; b=V8som/J60PXQAst07uRw9yKUUtSO+QOG8TcMmhJT0fj/hafhqWhQFOPDEOchdvViwM1i3vG+dZmEPaCFeZMJIi9KtuWbsPOyYaZ8kjwEbRgXCRaARORpmhXZACPC6laKleZnOJaaN8V2Tax4VPak8B1gO5H46lXjdKyahTItyZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778260952; c=relaxed/simple;
-	bh=bhjgliOCQpf3UnZBKOdagDkW2QpmCx/wb7qbG6lkCT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZoSQdHT1OXzgrH0izfjtb8UjJphKiPUszQEH2iaJD+LMARO/YHN5YQ9CGQXvNjPKh5/UXpfXVDFZTlr9HREWHZaALu0wmH65AXC0QngVDesYD2UNc5pl08ahfLd07inxN/WSkBHrmwnjQ16blAqT2rSRewG1i3NKsrzV/vKwqks=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2necLGa; arc=pass smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A63E33AD9A;
+	Fri,  8 May 2026 17:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778261257; cv=none; b=XOA5K1cwqvAUrZz8aCSs3uU6OrYE0TygqfxrZgDo7uePokPzfBKRD1gI3V0fa+0FinSu2OC5sNmONwAecC+9YmU40LcPqm49Fp28QIwyQrHvyoxYJUXrLFGSaOUI0TRNU6LZaYiZoSLEgK2jXwH+gRx3knMp8MMy66KHBKvjb5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778261257; c=relaxed/simple;
+	bh=GVadrPaIpXvloCZ2qd0TqpTcfl5gklkUuZCeS18TOZ8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=TuQlVjHFjLSV3OtU9nXZHwpcr1BKC7/afpf9k8hs6gbBBnXIf12+O0gL1BPXVptcKtHZJVZIERFywElaPCFaQJ/lqk53H1+QZcIk4/88nXKYcFSI224orhKbjNNkTBoclKnsJHUsO2cLTrcT58MF7si2Ls2cstynro1H18bdFU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FoabeDNM; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2necLGa"
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-651d692e833so2579316d50.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2026 10:22:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778260950; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OKBCBJhU71eDN4xW+TG1fZuNZMPXspGpL9gTUzGX0KfP0B77IctwFBblPXgWV5gJDV
-         nUgnWWf7d2w47NjesU0WnjYcss5Pvo93lC7ccKuCje+8O6kWPc4P94yjgbW2FDkX/hFQ
-         qZ7wdDI7pQppGVIyJNm98iqjQMunSCju2Qs1r7Vm+II7N6CMpSJxxG1w2BcybE5qgH/S
-         gJqbgLNL75CamelgoSMOQy6EDzXKojltQhyE7DGOfAjwJtRr6UcTi+Tjb7HQq69HuM58
-         TSxMyvXJoOEn14rHd60e08Zn/v8S7XBxMpIPudkxk0WYq+vQqFIFCRXLJQlOReNjbZsm
-         sTpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=4TwIRY2nZA1VjJMy/1brhO0GpNrd8SUOXjsMr4w1IXQ=;
-        fh=vuAMQFUxo4XS7y3jJ7Q+IAtB8P9iI2Y7qWjvHaMUj6Q=;
-        b=T2iXjwgzrDUXsLn6qr0pRmDm8Erw726mG4JY+npmWxC99rbAHQCwt4NI3ynFFeWHKP
-         GBoSZrczHEqFaRPiQg9MhQ2Gzf+weioUKVb5gNCRpnldl1SGjXVYvjPG/b0DY3iOVEs8
-         Q6EJP321AnLkXD40nCLdsmArOdKmcBHwpmdS+At5riLLifjG6xwmu2d46aHUSL2OfT51
-         0my+9yGfyR9m4vXGHUeHEPUuBtDN3Qs2wDGRZDzeuJtj2zeabim53nBRJwcSfuYrQ920
-         Gk1iBzAVT2K0Ig207wy+zINOlFbgxQlz9mUKE9DLK1oJDSTXJ9v4HGLcrfR6yHfMeHBm
-         cPjw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778260950; x=1778865750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TwIRY2nZA1VjJMy/1brhO0GpNrd8SUOXjsMr4w1IXQ=;
-        b=G2necLGa2+hUMZePBrI5kC3vDBQ5SUBwer/Rl/tag4v6yKEcqfdrlA4thyZm9PB1Lg
-         ME7lIN+WWxkVDiGErKSU8oapaFV/fJSvD5ErrBzJQfWtj5tz+yPU7b4GtGQfFAvp7i/Z
-         eJBVBscOqRA0eM3ua4/uGhbgMc5PGMdzKF/KMTSUOqPkTTVz8N7biYYJPYfTkVSvpkbh
-         C3pzG9nJ4z/H+BZaD1/sOEd0kBmAym0qC0R6CdV1jNTppJwhgCu5k1j9sAKqbWT6AUeQ
-         zWoZW3ilOcmpOgPIn86vj48csVwPlWhTo2yUod/1pry+MERbUcH7N3w/NsKnUCI5S70V
-         21xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778260950; x=1778865750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4TwIRY2nZA1VjJMy/1brhO0GpNrd8SUOXjsMr4w1IXQ=;
-        b=aenVVdolFZG99QDohT5MSDERhLAAJ/RJUdiKfnAVj/Ni0jC24tvZ+VGhHtNbQGntYN
-         ZunhPkCFsfaSnYICXddeQs1mFXfuyee5AkBQwQd/evWUfutilZL+RyVc6DpyVMwJNWf6
-         o1QZaldnPJNI8Xw19lD6I3Fh2yElN3jiC0zVR5AIELJ+Fr5O789fa6oYBJCHm+UGU1mi
-         FC+qjBMHs3DwBFbtAmjMOBpLABwVHZIBjns/Yi5Ybvjhb/un/97M+56rwt1DhsVeGxA2
-         TEqFqU+67oUXcXfOxjup8cMMRKkvRis8f5lP8XLHTBFr3uvspqaJjzIfZCa6iZ7cWpPn
-         4oGA==
-X-Forwarded-Encrypted: i=1; AFNElJ8UJh/59w/v46TOYJrUdhv+EarcQl4Aia1n5LxwYMvdyQqL22a/iIjf5WEXfRSXIWOdFru1wgYkErL47A5/6ObguQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJh1NIjA+pEH37K8sLiov004Olra7LGRbww/sG+rcR5gwTCAfR
-	bSfBJleYDkmJ0GXerCKNChuEQwnseSZNrMWvt0NWpNGt7NqhyKBH/puMPxxeT7B7M2yMGNGLVr1
-	XErDsxuFyOY+yZN6tVHhBcmFVHKYd8MVlt1GfpZCPgQ==
-X-Gm-Gg: Acq92OGDbfR8NWgJuhofwyYXURUlpQh7lQO4vzZPltgXyAo+fYnE7ULGvdhAmhbdwHa
-	eb5wqIzQoBN1F/hTiCuNfnxgRsdGMI4dnDsJTX3Xq1iuior0TZnRgts8zEgVjPS+bTNDDXpJmL3
-	h1G/bR28R5nsWamxT+ix5yzkPUsDG+sgGamtfXHkXCOzPYXCEnWaTUQJgyZXrTN2fwH3nHpXYMs
-	igA2TPuIOOuzvVOVxjB+I18iL1ouj9wPzMdQ0jvrQx8r3lfyf5qTsIyQjai4z8oBk7Sgr20YjNs
-	5RG5qRZX5Jyzo2mo5pDtEeyhyQr4Zk+pU7rFcPh6Lw==
-X-Received: by 2002:a05:690e:400f:b0:651:bcb6:888f with SMTP id
- 956f58d0204a3-65d94b499damr3535814d50.15.1778260949925; Fri, 08 May 2026
- 10:22:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FoabeDNM"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id E957027342;
+	Fri,  8 May 2026 19:27:31 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Mz1FdCaqy_UM; Fri,  8 May 2026 19:27:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1778261251; bh=GVadrPaIpXvloCZ2qd0TqpTcfl5gklkUuZCeS18TOZ8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=FoabeDNM7Jyz+x0UDJK6XcQU51z7Kdd5xB/++yvjt5c/PUyu4oQ9/i/J5rLglEHBS
+	 dUWSemd3ufA1LqftJjHvOJNQeLILdkgigpTYXJ2yrYSK8CzS8Zzi9ToGYHbDyHqm9B
+	 Gk9TQM/GcPz1LwiGOY6WlKmC6O1dIYOr1g5tuKQYVKrhB1o8MFyt+g2p+0+wKo/ycy
+	 biOp8HFVlb6UorCJfanOu/hhaTi4DerBImFFRf22ONmJaaaQMFuBHxnbpRYLC7RhS+
+	 gCMGPYdj1nFOCgVNbRCX53LCTLIT52dQTXuQY8vrGE03YQSXwdKkpFADQXMVlAnouL
+	 6p6aVHxrv7Mfg==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260430-exynos850-i3c-criticalclocks-v1-1-6e1fd8dfa21b@linaro.org>
-In-Reply-To: <20260430-exynos850-i3c-criticalclocks-v1-1-6e1fd8dfa21b@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 8 May 2026 12:22:21 -0500
-X-Gm-Features: AVHnY4I2OawrzI6xYvjWNwRGdaLspFjoHiDADtZnKv7uMu1NzvUcqwurZTLYMoM
-Message-ID: <CAPLW+4kLyzUv-tstDezbqJetOLuPkzQ_Kt8EGBPy9U861q=7uQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos850: mark APM I3C clocks as critical
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Brian Masney <bmasney@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 08 May 2026 22:57:12 +0530
+Message-Id: <DIDGZWFXUX7H.WYJNRZR4BQ2P@disroot.org>
+Cc: "Pavel Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "MyungJoo Ham" <myungjoo.ham@samsung.com>, "Chanwoo
+ Choi" <cw00.choi@samsung.com>, "Sebastian Reichel" <sre@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <skhan@linuxfoundation.org>, "Nam Tran" <trannamatk@gmail.com>,
+ =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>,
+ <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v5 08/11] leds: rgb: add support for Samsung S2M series
+ PMIC RGB LED device
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Lee Jones" <lee@kernel.org>, "Kaustabh Chakraborty"
+ <kauschluss@disroot.org>
+References: <20260424-s2mu005-pmic-v5-0-fcbc9da5a004@disroot.org>
+ <20260424-s2mu005-pmic-v5-8-fcbc9da5a004@disroot.org>
+ <20260507190005.GT305027@google.com>
+In-Reply-To: <20260507190005.GT305027@google.com>
 
-On Thu, Apr 30, 2026 at 6:53=E2=80=AFAM Alexey Klimov <alexey.klimov@linaro=
-.org> wrote:
->
-> The Exynos850 APM co-processor relies on the I3C bus to communicate with
-> the PMIC. Currently, there is no dedicated PMIC consumer driver managing
-> these clocks, so the clock subsystem automatically gates them during the
-> initialisation. Once gated, any subsequent ACPM communication with APM
-> results in timeouts.
->
-> As a temporary workaround (and let's hope it doesn't become permanent),
-> mark both `gout_i3c_pclk` and `gout_i3c_sclk` as CLK_IS_CRITICAL ones to
-> prevent the clock subsystem from disabling them. This makes the ACPM
-> communication functional. This workaround should be reverted once a
-> proper ACPM PMIC driver is implemented to manage these clocks.
->
-> Cc: Sam Protsenko <semen.protsenko@linaro.org>
-> Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
+On 2026-05-07 20:00 +01:00, Lee Jones wrote:
+> On Fri, 24 Apr 2026, Kaustabh Chakraborty wrote:
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+[...]
 
->  drivers/clk/samsung/clk-exynos850.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>> +
+>> +	switch (rgb->device_type) {
+>> +	case S2MU005:
+>> +		lut_ramp_up =3D s2mu005_rgb_lut_ramp;
+>> +		lut_ramp_up_len =3D ARRAY_SIZE(s2mu005_rgb_lut_ramp);
+>> +		lut_ramp_dn =3D s2mu005_rgb_lut_ramp;
+>> +		lut_ramp_dn_len =3D ARRAY_SIZE(s2mu005_rgb_lut_ramp);
+>> +		lut_stay_hi =3D s2mu005_rgb_lut_stay_hi;
+>> +		lut_stay_hi_len =3D ARRAY_SIZE(s2mu005_rgb_lut_stay_hi);
+>> +		lut_stay_lo =3D s2mu005_rgb_lut_stay_lo;
+>> +		lut_stay_lo_len =3D ARRAY_SIZE(s2mu005_rgb_lut_stay_lo);
+>> +		break;
+>> +	default:
+>> +		/* execution shouldn't reach here */
 >
-> diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/cl=
-k-exynos850.c
-> index eb9c80b60225efa33d85f5f3c284eb8a63a48015..b143a42293f5a154f53a86d4e=
-97e17a3e61164f3 100644
-> --- a/drivers/clk/samsung/clk-exynos850.c
-> +++ b/drivers/clk/samsung/clk-exynos850.c
-> @@ -686,10 +686,11 @@ static const struct samsung_gate_clock apm_gate_clk=
-s[] __initconst =3D {
->              CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK, 21, 0, 0),
->         GATE(CLK_GOUT_TOP_RTC_PCLK, "gout_top_rtc_pclk", "dout_apm_bus",
->              CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK, 21, 0, 0),
-> +       /* TODO: Should be dealt with or enabled in PMIC ACPM driver */
->         GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
-> -            CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
-> +            CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, CLK_IS_CRITICA=
-L, 0),
->         GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
-> -            CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
-> +            CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, CLK_IS_CRITICA=
-L, 0),
->         GATE(CLK_GOUT_SPEEDY_PCLK, "gout_speedy_pclk", "dout_apm_bus",
->              CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK, 21, 0, 0),
->         /* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICA=
-L) */
+> Instead of a comment, perhaps a WARN_ON_ONCE(1); or similar would be
+> more robust here to catch unexpected device types?
 >
-> ---
-> base-commit: 0787c45ea08a13b5482e701fabc741877cf681f6
-> change-id: 20260430-exynos850-i3c-criticalclocks-dcabb78bf154
+
+[...]
+
+>> +static int s2m_rgb_pattern_clear(struct led_classdev *cdev)
+>> +{
+>> +	struct s2m_rgb *rgb =3D to_s2m_rgb(to_s2m_mc(cdev));
+>> +	int ret =3D 0;
+>> +
+>> +	mutex_lock(&rgb->lock);
+>> +
+>> +	switch (rgb->device_type) {
+>> +	case S2MU005:
+>> +		ret =3D s2mu005_rgb_reset_params(rgb);
+>> +		break;
+>> +	default:
+>> +		/* execution shouldn't reach here */
+>> +		break;
 >
-> Best regards,
-> --
-> Alexey Klimov <alexey.klimov@linaro.org>
+> As above.
 >
+> And a single branch switch () makes little sense.
+
+Even with an `if`, since only one variant is supported we're sure that
+the control would never go to `else` anyway. I will flatten this block,
+and expect the switch to be added when another variant is added.
+
+>> +static struct mc_subled s2mu005_rgb_subled_info[] =3D {
+>
+> const?
+
+No, this is fed to (struct led_classdev_mc)::subled_info, which is not a
+const pointer. Relevant snip is marked below.
+
+"Assigning to 'struct mc_subled *' from const struct mc_subled[3]
+discards qualifiers."
+
+
+>> +	{ .channel =3D 0, .color_index =3D LED_COLOR_ID_BLUE },
+>> +	{ .channel =3D 1, .color_index =3D LED_COLOR_ID_GREEN },
+>> +	{ .channel =3D 2, .color_index =3D LED_COLOR_ID_RED },
+>> +};
+
+[...]
+
+>> +	switch (rgb->device_type) {
+>> +	case S2MU005:
+>> +		rgb->mc.subled_info =3D s2mu005_rgb_subled_info;
+
+Here.
+
+>> +		rgb->mc.num_colors =3D ARRAY_SIZE(s2mu005_rgb_subled_info);
+>> +		break;
+>> +	default:
+>> +		return dev_err_probe(dev, -ENODEV, "device type %d is not supported b=
+y driver\n",
+>> +				     pmic_drvdata->device_type);
