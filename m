@@ -1,78 +1,37 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BF3351C20
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 06:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F82134AB00
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 06:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778222936; cv=none; b=MWdwMvsDL/qxSjspYdf9HO6clC/8/bYHLV8bcrurSHlFDRPr5EyqEOkA0Eodjnfp3OcxLcUDadOkhyYudn96zWYVcODszc1I106gcaMjWRsavp89jkDyUhkNCp6WIedfV7sPnx19e1rASLtnjA/6/ak2hYUzirkZCyXeFVa3fW4=
+	t=1778222943; cv=none; b=cMjLLc/yJYvZDtvO9mNiTsr9iQa5tfWbMMMcJt7N6I+VwEbMjUvxeMwLES0p5MY2M/nXJljtetABtXF2yCzNn6f7pRZjL4mRQFrMFLuF3Z6ObCTQeL4q+vf+u4XZIiUH0ljigZNakU80uqxrb0IWalydtTEdjGnCyzjosk6HFQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778222936; c=relaxed/simple;
-	bh=La7CMK4gl703SbgbA0ooVfqjynNW+OR6H4x1jXh4GAo=;
+	s=arc-20240116; t=1778222943; c=relaxed/simple;
+	bh=uwia3rlf0Boz6lTCKVhiaHp/seSlsYrM6oyDDAO3RQw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hYZFU8TOYxifkBFU4QJJO/2Y7Ef+f/hFGa7I+i0oQ3f/SXmrEP/o6ZnFKLS9Jne3IqBgTBH8o/6yua+m/6i3Jo1V2Ff+X+/9EAFqQuVPRQ7cD5BFIWpkkFGaPSjTo4QDUEz76XhWeSvFmx47SWKRv7cT3+YkzDqbzvf40m8wq2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UZXE+2GA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V0g/okx8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TrEKDGgr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7qhWn4nl; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=C7CMQz7uLhTjK/BFg2BHHIJHvEVXPwdabQGx6HiTEVj0knwa+T8XH7FDpW8AGKJUc5QKWRHoVukYTGyIG+ZWfzdoELU1uQQAG1CJNA6cGoWxmc6/oR/J5WP2h/BoNS90DJDbuGmAQUOXA+2OsFb2VYfebUcAjUjkA5nxfpq8SiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UZXE+2GA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V0g/okx8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TrEKDGgr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7qhWn4nl"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EF8F866D60;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 499CF5D006;
 	Fri,  8 May 2026 06:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1778222931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cZsaukSwwYwyw2QWtnxk2DA/oVq+do+ykglUmDmglU0=;
-	b=UZXE+2GAqQpYAUBBDadgr+DrLzmwSgORYarW37GfRsQR2BeteJc38mxKkPlowhRd+QRa+1
-	jAqC4XuvwG9OkQQiKdoFQ1CHFC1K1zG4QHliI61H0gL8ZduMEW8nfhXamB0UOEmHB0rdVZ
-	Wwn7RygCo0PpCry1++SZgr2KGEwjSsE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1778222931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cZsaukSwwYwyw2QWtnxk2DA/oVq+do+ykglUmDmglU0=;
-	b=V0g/okx8D6hRitfR5N1Rf5OrXfMj2CleguslH3C8c9QxK1FlX9CkfJZnqwxdMPe4sa0L1U
-	5qSHUEQd+M9+RJBg==
-Authentication-Results: smtp-out2.suse.de;
+Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1778222930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cZsaukSwwYwyw2QWtnxk2DA/oVq+do+ykglUmDmglU0=;
-	b=TrEKDGgrzB3TdL5A4LrT1IK15RuW1U2VX7EK/Uw1rIXF9Ml4tN4cw2jM/DM8Lvb0FSQldx
-	nQGmMc+gJCYdBxI9rBeeSsbH6M6n0211G9xqdySUZJCD7bAN3iRDcmm7+MsBl4MIu3kAUc
-	gG3e/LGQAlrYl2ptnpVPfT2cLPsZHtk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1778222930;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cZsaukSwwYwyw2QWtnxk2DA/oVq+do+ykglUmDmglU0=;
-	b=7qhWn4nlvh1kuZYsumA8nyJwpN+IfnRo4iqcqQkrr1MY5/gYc8kZi06owhtsx9YhOVI1Dc
-	Hd8su6HtZKi43SBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6210593A8;
-	Fri,  8 May 2026 06:48:50 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E58A3593A8;
+	Fri,  8 May 2026 06:48:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kHAjJ1KH/Wm1cgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 08 May 2026 06:48:50 +0000
+	id ANehNlGH/Wm1cgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 08 May 2026 06:48:49 +0000
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: inki.dae@samsung.com,
 	sw0312.kim@samsung.com,
@@ -83,10 +42,12 @@ To: inki.dae@samsung.com,
 	simona@ffwll.ch
 Cc: dri-devel@lists.freedesktop.org,
 	linux-samsung-soc@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 3/5] drm/exynos: fbdev: Calculate buffer geometry with format helpers
-Date: Fri,  8 May 2026 08:46:49 +0200
-Message-ID: <20260508064842.22689-4-tzimmermann@suse.de>
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/5] drm/exynos: fbdev: Remove offset into screen_buffer
+Date: Fri,  8 May 2026 08:46:47 +0200
+Message-ID: <20260508064842.22689-2-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260508064842.22689-1-tzimmermann@suse.de>
 References: <20260508064842.22689-1-tzimmermann@suse.de>
@@ -97,120 +58,59 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[samsung.com,kernel.org,gmail.com,ffwll.ch];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqirfcw6gnbcr9a9yhi49fhi6)];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 499CF5D006
+X-Spam-Score: -4.00
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -6.80
+X-Spam-Level: 
 
-Replace the geometry and size calculation in exynos' fbdev emulation
-with DRM format helpers. This consists of a 4CC lookup from the fbdev
-parameters, format lookup, pitch calculation and size calculation.
-
-Then allocate the GEM buffer object for the framebuffer memory from
-the calculated size. Mmap provides the allocated buffer to user space,
-so align the buffer size to PAGE_SIZE.
-
-Initialize the fields screen_size and fix.smem_len in struct fb_info
-from the size of the allocated buffer object. This is the real size
-and can differ from the requested size.
+The screen_buffer field in struct fb_info contains the kernel address
+of the first byte of framebuffer memory. Do not add the display offset.
+This offset only describes scrolling during scanout.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Fixes: 19c8b8343d9c ("drm/exynos: fixed overlay data updating.")
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: <stable@vger.kernel.org> # v3.2+
 ---
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 35 ++++++++++++-----------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 1c564edd497e..9225cf1a83c8 100644
+index 637927818dfe..d283ded266d5 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -60,11 +60,14 @@ static const struct drm_fb_helper_funcs exynos_drm_fbdev_helper_funcs = {
- int exynos_drm_fbdev_driver_fbdev_probe(struct drm_fb_helper *helper,
- 					struct drm_fb_helper_surface_size *sizes)
- {
--	struct exynos_drm_gem *exynos_gem;
- 	struct drm_device *dev = helper->dev;
- 	struct fb_info *info = helper->info;
-+	u32 fourcc, pitch;
-+	u64 size;
-+	const struct drm_format_info *format;
-+	struct exynos_drm_gem *exynos_gem;
-+	struct drm_gem_object *obj;
- 	struct drm_mode_fb_cmd2 mode_cmd = { 0 };
--	unsigned long size;
- 	int ret;
+@@ -61,17 +61,13 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+ 	struct fb_info *fbi = helper->info;
+ 	struct drm_framebuffer *fb = helper->fb;
+ 	unsigned int size = fb->width * fb->height * fb->format->cpp[0];
+-	unsigned long offset;
  
- 	DRM_DEV_DEBUG_KMS(dev->dev,
-@@ -72,23 +75,23 @@ int exynos_drm_fbdev_driver_fbdev_probe(struct drm_fb_helper *helper,
- 			  sizes->surface_width, sizes->surface_height,
- 			  sizes->surface_bpp);
+ 	fbi->fbops = &exynos_drm_fb_ops;
  
--	mode_cmd.width = sizes->surface_width;
--	mode_cmd.height = sizes->surface_height;
--	mode_cmd.pitches[0] = sizes->surface_width * (sizes->surface_bpp >> 3);
--	mode_cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
--							  sizes->surface_depth);
+ 	drm_fb_helper_fill_info(fbi, helper, sizes);
+ 
+-	offset = fbi->var.xoffset * fb->format->cpp[0];
+-	offset += fbi->var.yoffset * fb->pitches[0];
 -
--	size = mode_cmd.pitches[0] * mode_cmd.height;
-+	fourcc = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-+	format = drm_get_format_info(dev, fourcc, DRM_FORMAT_MOD_LINEAR);
-+	pitch = drm_format_info_min_pitch(format, 0, sizes->surface_width);
-+	size = ALIGN(pitch * sizes->surface_height, PAGE_SIZE);
- 
- 	exynos_gem = exynos_drm_gem_create(dev, EXYNOS_BO_WC, size, true);
- 	if (IS_ERR(exynos_gem))
- 		return PTR_ERR(exynos_gem);
-+	obj = &exynos_gem->base;
-+
-+	mode_cmd.width = sizes->surface_width;
-+	mode_cmd.height = sizes->surface_height;
-+	mode_cmd.pixel_format = fourcc;
-+	mode_cmd.pitches[0] = pitch;
-+	mode_cmd.modifier[0] = DRM_FORMAT_MOD_LINEAR;
- 
--	helper->fb =
--		exynos_drm_framebuffer_init(dev,
--					    drm_get_format_info(dev, mode_cmd.pixel_format,
--								mode_cmd.modifier[0]),
--					    &mode_cmd, &exynos_gem, 1);
-+	helper->fb = exynos_drm_framebuffer_init(dev, format, &mode_cmd, &exynos_gem, 1);
- 	if (IS_ERR(helper->fb)) {
- 		DRM_DEV_ERROR(dev->dev, "failed to create drm framebuffer.\n");
- 		ret = PTR_ERR(helper->fb);
-@@ -102,8 +105,8 @@ int exynos_drm_fbdev_driver_fbdev_probe(struct drm_fb_helper *helper,
- 
- 	info->flags |= FBINFO_VIRTFB;
- 	info->screen_buffer = exynos_gem->kvaddr;
--	info->screen_size = size;
--	info->fix.smem_len = size;
-+	info->screen_size = obj->size;
-+	info->fix.smem_len = obj->size;
- 
- 	return 0;
+ 	fbi->flags |= FBINFO_VIRTFB;
+-	fbi->screen_buffer = exynos_gem->kvaddr + offset;
++	fbi->screen_buffer = exynos_gem->kvaddr;
+ 	fbi->screen_size = size;
+ 	fbi->fix.smem_len = size;
  
 -- 
 2.54.0
