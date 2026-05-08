@@ -1,147 +1,87 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7074D370D4D
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 06:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E82330330
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 09:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778222971; cv=none; b=UnvHbru3dxTZXsqsg9mRryku49p4bX3ynv2e4Chh4Av/adhB1ee3VymwK/pkGmLVgnCPnKQWzX3T1lgT1UhlIbAxbVQMN8R0E4W34TjB4sdBPbcFFcz4cR+JOfiR57kXK88NRi3fbHlu8W1bb+zuMDugG8KsiJmWKRMowcaMcmU=
+	t=1778233522; cv=none; b=Oq/km96VPnKMAOvDwNRXCSEvss/yuqH5OvGeWJZ09tL1ff0UdGz/vgBCWG9Qb+sJ6kM+l2yl8oFYDlAllp8m40FtmH+ybzMmIT8mrWfOxD2yQzIzJkEXPKpljxwUcLru1wN7kLaAOZ8Csxe0rpl9DIoLGaMceXKjLLuJ67lMzfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778222971; c=relaxed/simple;
-	bh=vRS08cqaXUu1GeWYMQXJivEE8uquc587jr/BI6noc7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O+pZx5ChyV+oEQL8IvNWNrs+hdWQj1WybMQueMMA5cYYklH3SpjvfiDQ8M4RWMyGa3m33R4HwghtZ+EgqgNu5wGIKoEozW611OzazWJgZ+awIcydv+2P3F1bYbDJLcmULusX+ZLPj4zXQc6rMb3f2nD8M/sB0W4cgf+kej5iqR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A19915CFB9;
-	Fri,  8 May 2026 06:48:51 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5614A593A7;
-	Fri,  8 May 2026 06:48:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sPqRE1OH/Wm1cgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 08 May 2026 06:48:51 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	m.szyprowski@samsung.com,
-	wens@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 5/5] drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
-Date: Fri,  8 May 2026 08:46:51 +0200
-Message-ID: <20260508064842.22689-6-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260508064842.22689-1-tzimmermann@suse.de>
-References: <20260508064842.22689-1-tzimmermann@suse.de>
+	s=arc-20240116; t=1778233522; c=relaxed/simple;
+	bh=7o0a2ooTOrXhr6IHzg8WgMkQFz+9SrmX8Gzqe2tcSac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=LrS9aSuXPaKmMXzomAfeHzkfWYWgVgupCETk4AdUIhtObTAg+MnQbqiuXQyvnlCAxXm+OyDSRpeVrUPUA/HtED/iBhjtddXZkRwnEz04Ioj0xO/XPUreOncPWrH3XuphWvKKh/zdFeWeNo6LIVYpl39eU7glSJxBMdrdVTM7H9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ppwsqxgt; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ppwsqxgt"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260508094517euoutp024f42d436f1bbecca6d8f195a73e7015d~tjfZi7NYR3153631536euoutp02f
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 09:45:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260508094517euoutp024f42d436f1bbecca6d8f195a73e7015d~tjfZi7NYR3153631536euoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1778233517;
+	bh=gxQW6IaAVHIWOFCSuA1dtUKpx2jMGyN8kHb9f+xDjA8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=PpwsqxgtPS4xIJ6UqzgNJm1b+SOz83XG3y61EIlXZ57T5+1O63GTCLsc5K9why5sr
+	 sdoqjTELGFZvD2y9Ki6kO2gg0K4m3haPKniTa+zMSuPx3GdOib3IJKM1giG2rpyAjY
+	 PfoB3dqPmljqeslV1Q4oNkw7qWXQXn8ARH7tt9AE=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260508094516eucas1p1b1e6d7218fc5c399092e59e32cbc7b63~tjfZMcr7v2446824468eucas1p1T;
+	Fri,  8 May 2026 09:45:16 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260508094516eusmtip258e3387552835438b345118010637fb6~tjfYvEdtp2070420704eusmtip2F;
+	Fri,  8 May 2026 09:45:16 +0000 (GMT)
+Message-ID: <03c06142-12eb-45b7-8d22-ce12fab6e132@samsung.com>
+Date: Fri, 8 May 2026 11:45:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [BUG] exynos5_i2c_xfer_atomic() can sleep.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev, Andi
+	Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20260506065110.sY3jKS7G@linutronix.de>
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: A19915CFB9
-X-Spam-Score: -4.00
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-CMS-MailID: 20260508094516eucas1p1b1e6d7218fc5c399092e59e32cbc7b63
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0
+X-EPHeader: CA
+X-CMS-RootMailID: 20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0
+References: <CGME20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0@eucas1p2.samsung.com>
+	<20260506065110.sY3jKS7G@linutronix.de>
 
-The only caller of exynos_drm_framebuffer_init() is the helper
-exynos_user_fb_create() from the same source file. Declare the
-former as static. Tidy up the header's include statements.
+On 06.05.2026 08:51, Sebastian Andrzej Siewior wrote:
+> While looking into the xfer_atomic i2c thingy, I've been looking at the
+> exynos5_i2c_xfer_atomic() function and noticed that it has a
+> disable_irq() invocation. Given that i2c_algorithm::xfer_atomic is
+> called from atomic context (with either preemption or interrupts
+> disabled) the might_sleep() in disable_irq() must lead to splat here.
 
-v2:
-- clean up the includes in the header file (Chen-Yu)
+Its me, who added that code, commit 445094c8a9fb1. I've tested that in the reboot/shutdown path and I'm quite sure that I've copied that irq_disable/enable from some other driver. I also cannot locate that might_sleep() in disable_irq(), where exactly it is?
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  3 ++-
- drivers/gpu/drm/exynos/exynos_drm_fb.h    | 10 +++-------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  1 +
- 3 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index ab0e0c74ec47..c6a33f550ace 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -22,6 +22,7 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_fbdev.h"
-+#include "exynos_drm_gem.h"
- 
- static int check_fb_gem_memory_type(struct drm_device *drm_dev,
- 				    struct exynos_drm_gem *exynos_gem)
-@@ -55,7 +56,7 @@ static const struct drm_framebuffer_funcs exynos_drm_fb_funcs = {
- 	.create_handle	= drm_gem_fb_create_handle,
- };
- 
--struct drm_framebuffer *
-+static struct drm_framebuffer *
- exynos_drm_framebuffer_init(struct drm_device *dev,
- 			    const struct drm_format_info *info,
- 			    const struct drm_mode_fb_cmd2 *mode_cmd,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.h b/drivers/gpu/drm/exynos/exynos_drm_fb.h
-index fdc6cb40cc9c..74300ad9bb51 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.h
-@@ -10,14 +10,10 @@
- #ifndef _EXYNOS_DRM_FB_H_
- #define _EXYNOS_DRM_FB_H_
- 
--#include "exynos_drm_gem.h"
-+#include <linux/types.h>
- 
--struct drm_framebuffer *
--exynos_drm_framebuffer_init(struct drm_device *dev,
--			    const struct drm_format_info *info,
--			    const struct drm_mode_fb_cmd2 *mode_cmd,
--			    struct exynos_drm_gem **exynos_gem,
--			    int count);
-+struct drm_device;
-+struct drm_framebuffer;
- 
- dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index f43ce974c952..247b0ec001af 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -22,6 +22,7 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_fbdev.h"
-+#include "exynos_drm_gem.h"
- 
- #define MAX_CONNECTOR		4
- 
+> This looks very light tested because exynos5_i2c_poll_irqs_timeout()
+> which should be invoked from atomic context has usleep_range(). This
+> will schedule from atomic context is not good. I *think* this gets back
+> with enabled interrupts.
+
+Indeed this should be replaced with udelay.
+
+Best regards
 -- 
-2.54.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
