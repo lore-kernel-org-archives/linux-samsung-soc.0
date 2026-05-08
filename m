@@ -1,178 +1,212 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1048031327F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 May 2026 23:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4513783AC
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 06:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778196891; cv=none; b=tb7IXpF6w5YMFPaCvP9a9UjOJQrXu6PXlRrEwjraLiMhqUoG8B5j0ZH8nDIaFE0B0E/k3SNPQRfaL8fBiv97J7vJfuvs7FhpTlmiUexwiC5IINohjDiKRA60DexA9R15gXHxH5xGaDxR+e2KdE3+f1GtckRm8b2MwVbLJXqXIHU=
+	t=1778222060; cv=none; b=IHasZyZXrr7sYzy8s6/W+AastXL3vzNgTpeyC+YCVoFd+BS9F95mnO0fQJa2EI9H3CPUquSHtwiooBmRwKAtk4grrdMF05ki6jGA0tCVnGSM56+x6Jp3F0UeczR/RGz+1PjVQJY42PIWvKppEv6WiPrqzlDdjfBxKKQ/DVnjP10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778196891; c=relaxed/simple;
-	bh=U0seoVi4n3qqjK+J09RdgSIJmaaFquCQiKFxG++i0kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6TxFOQT7Cg4lhPQN5M/hdg7YahEy6lekqbOv8xXeCn0Y2+OzfNhpz4cl1JvIxQJFZusrO/k5IIBh7hZhDhvBok1WvljrL6hI8z3wnBLWIdYgedDlnHleiZZ1cLuNfe6TTHHWFi8bXw0pXenClOXJnMQkXbtW4Ctk8Lw18m7xhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GSeW8c2k; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTWkKz2I; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1778222060; c=relaxed/simple;
+	bh=/XzQsh1/1qfsvgFTf56DnnioH4nk63w3q1l1LQ6FiOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLwPVP0maP9LAImaMBUn1PNkrpaameuIl3Xu3B8TCJlSpIE3qzmnpVEkbXYtsiuHDEb5p2n5oXJfIWqXyUDXL9uorge8+68JytIyZLAz5SNluvzMiDkJ9sV52BFsVFoZiv+fYRr2lkmbx3OpDyaJE8lWSGCw62XCtsDGXLukJK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yYuVes5k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F7jUEJpE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yYuVes5k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F7jUEJpE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GSeW8c2k";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTWkKz2I"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1778196888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qSM6UscZWrZrRnJYPP1LWeuyeD/23NQG6vtPlp735gM=;
-	b=GSeW8c2kkNbn12j/3E9+NV13pGDvhH6WA8QSpvK1UFqoMld4uyBsJOw2xAM8bsM4WVTSwj
-	ni6rxEBGSIOMDJElAq3uSA30A0nsfykmNVlNFq/mHlBAiArj0auytUSJ8PUSifEqr5kygj
-	aErXFr0JPG2DEzd4HeiYVGTtVN6LW64=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-3KgP7zRLMB6QgQ0C5PsA_g-1; Thu, 07 May 2026 19:34:47 -0400
-X-MC-Unique: 3KgP7zRLMB6QgQ0C5PsA_g-1
-X-Mimecast-MFC-AGG-ID: 3KgP7zRLMB6QgQ0C5PsA_g_1778196887
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50d8e8c47a3so33756781cf.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 May 2026 16:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1778196887; x=1778801687; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSM6UscZWrZrRnJYPP1LWeuyeD/23NQG6vtPlp735gM=;
-        b=GTWkKz2I+WHWPQrRB/BNFRvlUfK2ZLfquaTXRdbCRIhmMHDdHE5yyHOV89iT8EbJmD
-         cgqFIlfRJFaI17AUrf6Rd5T/VClEMPfR0JwFvemtDTNvVxuaeVGQvNo3emolZJgTpUJH
-         Y1l84faJ41DkGiypIQTNSC5C9VQ9BjNDtCYFzYrxlAqijH/lY7wPy9Q8Gu2v41Co7jjG
-         jpF1n+PcifxRhJ10mP7HdSvxMIMOrcVe3DxiTy6oNOWqAcB9IDiZPC2bEa9z1gOW+A1A
-         o/nEvCd9hH9KyIv1A0bAGVT8DKHzLpnQgWn4H/6IUUsDgmNbPcFzTnS4nq4ULX9v7w0+
-         k2cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778196887; x=1778801687;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qSM6UscZWrZrRnJYPP1LWeuyeD/23NQG6vtPlp735gM=;
-        b=NEMtCXz2vGGIw7kzbxQO5PpeMfI1HZ3spd56femsbZdc530vtSmV2OpEl6HSkQtids
-         V5CtKGRKKoFusuDPawObNPCzCVXVeyxlRH/9fxXHsGAuE0N8TK/HQ6lvwPnPS7F9QRJ1
-         JLY8eBIbvyKCCPe+J6j7yWga5uuzc7XVzp0Swg+0gTB8q6hmEOfVlFp7ygHNQSUeTzNT
-         4P8qUf4PUXuxsNP4jyGDAUZn5IWkLQeTdILYb3/LeiiQZMl4pGZNFNUqiczAlH/L00tr
-         iRrdhxi1j3+f4oerTBB/Q2xAkNH3TTLJwFu4z5V3JowBomlsYrK2Bp9/xuXcSdCIghAa
-         3/Gg==
-X-Forwarded-Encrypted: i=1; AFNElJ9Gx3qLKzyxU1b3MhiKCQ1VrAj/cDNTgdhIzSsXdG2dmz/ijnXNkzp7OArleU2OaUnaJ0LKT+IOaF+17+zFVYXlAw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFQUggEYyyjabDnVHNmRfAqx/D54zqmo5+qPx/VGnSGZ3eAQqc
-	CWatPMugKSjueraD4qrBeXBiJuTrdnrt4ZCwkaj9/0+a82yjnPAJd4G9n1y2qffEuyRsweC0dIL
-	aXRbUZ8X/uvmec/Vr1X433ALOu2FnuggO/fdX1LeAOivaBNNPJZw7HCdfB4y+pMpU74DjEJm0
-X-Gm-Gg: AeBDieuIypnAQviaAGNHHHBU5s1n8CcAXaT2LWZfDEDPmb0lSQ3fdk0DU5q5Uh+XCbu
-	eDdAeggkUPPBhpMmvzmnRJhlwef/DWQHNDfdQcmX257noSchv+ULEbLhNvTATxm641Td7wU2ZSa
-	gS6svaNNzELmqkyOVNKlC8l+wDYKLnK9aEA82e6Py9FoAdqSonQuAPkjLJ3Wh0d22PT9I0zg9I0
-	Tt5WSti53TYmwXm9kziHwS2Exp5w0XBBxthBh5Ew/P89xzs/aZBhe7wgTvJKok0apRFR/fe5plF
-	wuFw1X9VahUG1gJaoRYjcLm5wUq+hVqJNoTPYmt/SpyEfQ2s2WzB6pyAdpXjXCnxS1REjyTabB6
-	/xHSH/vfCaeLuvNZcjK4Sq23iYU00fEJkjRJ6GJQmdYy3glKDnDetAcY3
-X-Received: by 2002:a05:622a:a14:b0:50d:aae1:7070 with SMTP id d75a77b69052e-51461fb1ad5mr157914871cf.48.1778196887223;
-        Thu, 07 May 2026 16:34:47 -0700 (PDT)
-X-Received: by 2002:a05:622a:a14:b0:50d:aae1:7070 with SMTP id d75a77b69052e-51461fb1ad5mr157914391cf.48.1778196886751;
-        Thu, 07 May 2026 16:34:46 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5148e83dd35sm1697181cf.29.2026.05.07.16.34.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 16:34:45 -0700 (PDT)
-Date: Thu, 7 May 2026 19:34:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	"open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be)?b" <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCHv2 1/3] clk: samsung: use kzalloc_flex
-Message-ID: <af0hkVm0TQPTAiPd@redhat.com>
-References: <20260506233833.178357-1-rosenp@gmail.com>
- <20260506233833.178357-2-rosenp@gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yYuVes5k";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F7jUEJpE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yYuVes5k";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F7jUEJpE"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 128F65CC5E;
+	Fri,  8 May 2026 06:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1778222051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zOsbIhlef44DTkGsoPWXHPBsl57WqM4Qt7XMbvRnzco=;
+	b=yYuVes5kv4DMvt3PJUErhS4U2VMDuUxxPLdFXfP75wMvWW3kXNBfnXBY0R+K+zFiYHlDDj
+	ScvCwui197BX8Sk5v81tWiuAo51Nqd5naCidAspjL1fOU7ZljO0sYx+oyioQv2tVu/u6Oq
+	9E6Gc8lQP59DPttFSxkqQVVFj1NxRkM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1778222051;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zOsbIhlef44DTkGsoPWXHPBsl57WqM4Qt7XMbvRnzco=;
+	b=F7jUEJpEyQ6BHpqMBcGzBWQJCIrg8ZO8/W7GwcjyEV/IqkjSfesuR8zxePBHZltEjRF9FZ
+	87lErDJPT+SpPtBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yYuVes5k;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F7jUEJpE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1778222051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zOsbIhlef44DTkGsoPWXHPBsl57WqM4Qt7XMbvRnzco=;
+	b=yYuVes5kv4DMvt3PJUErhS4U2VMDuUxxPLdFXfP75wMvWW3kXNBfnXBY0R+K+zFiYHlDDj
+	ScvCwui197BX8Sk5v81tWiuAo51Nqd5naCidAspjL1fOU7ZljO0sYx+oyioQv2tVu/u6Oq
+	9E6Gc8lQP59DPttFSxkqQVVFj1NxRkM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1778222051;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zOsbIhlef44DTkGsoPWXHPBsl57WqM4Qt7XMbvRnzco=;
+	b=F7jUEJpEyQ6BHpqMBcGzBWQJCIrg8ZO8/W7GwcjyEV/IqkjSfesuR8zxePBHZltEjRF9FZ
+	87lErDJPT+SpPtBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9930593A7;
+	Fri,  8 May 2026 06:34:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id diPkL+KD/WkCZAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 08 May 2026 06:34:10 +0000
+Message-ID: <87ca272f-d202-4c08-b289-67fc953cde25@suse.de>
+Date: Fri, 8 May 2026 08:34:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260506233833.178357-2-rosenp@gmail.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] drm/exynos: fbdev: Use client buffers
+To: Marek Szyprowski <m.szyprowski@samsung.com>, inki.dae@samsung.com,
+ sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com,
+ simona@ffwll.ch, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
+References: <CGME20260423095139eucas1p149a0e97f62e8bf353a65466ca26cbff9@eucas1p1.samsung.com>
+ <20260423094452.32665-1-tzimmermann@suse.de>
+ <b9765ddd-bb8a-458f-85d4-159d3cc5fe5b@samsung.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <b9765ddd-bb8a-458f-85d4-159d3cc5fe5b@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -5.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[samsung.com,gmail.com,ffwll.ch,lists.freedesktop.org];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 128F65CC5E
+X-Spam-Level: 
 
-Hi Rosen,
+Hi
 
-On Wed, May 06, 2026 at 04:38:31PM -0700, Rosen Penev wrote:
-> Simplify allocation by using kzalloc_flex with a flexible array member
-> to combine allocations. samsung_clk_alloc_reg_dump is no longer needed
-> for this struct but is needed elsewhere.
-> 
-> Add __counted_by for extra runtime analysis. Move counting variable
-> assignment after kzalloc_flex which does the same with GCC 15 and above.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/clk/samsung/clk.c | 11 ++++++-----
->  drivers/clk/samsung/clk.h |  2 +-
->  2 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-> index 91e5cdbc79d7..2895c77534ae 100644
-> --- a/drivers/clk/samsung/clk.c
-> +++ b/drivers/clk/samsung/clk.c
-> @@ -430,21 +430,22 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
->  			unsigned long nr_rsuspend)
->  {
->  	struct samsung_clock_reg_cache *reg_cache;
-> +	int i;
->  
-> -	reg_cache = kzalloc_obj(struct samsung_clock_reg_cache);
-> +	reg_cache = kzalloc_flex(*reg_cache, rdump, nr_rdump);
->  	if (!reg_cache)
->  		panic("could not allocate register reg_cache.\n");
-> -	reg_cache->rdump = samsung_clk_alloc_reg_dump(rdump, nr_rdump);
+Am 06.05.26 um 08:35 schrieb Marek Szyprowski:
+> On 23.04.2026 11:37, Thomas Zimmermann wrote:
+>> A client buffer holds the DRM framebuffer for an in-kernel DRM
+>> client. Until now, exynos created an internal ad-hoc framebuffer for
+>> its fbdev emulation, while by-passing the regular interfaces used by
+>> user-space compositors.
+>>
+>> Convert exynos' fbdev emulation to use client buffers. Replacing the
+>> existing code with a client buffer allows for stream-lining exynos code
+>> and later also the fbdev helpers. The new framebuffer will be registered
+>> against the client's file and will support handles for GEM objects. It
+>> is then just another framebuffer within the DRM ecosystem.
+>>
+>> If all driver's fbdev-emulation helpers can be converted to use client
+>> buffers, the emulation's framebuffer handling as a whole can possibly be
+>> moved into shared helpers.
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-samsung_clk_alloc_reg_dump() is used in three other places. Is it
-possible to convert those 3 places in a similar fashion so that this
-function can be dropped?
+Thanks a lot!
 
->  
-> -	if (!reg_cache->rdump)
-> -		panic("could not allocate register dump storage.\n");
-> +	reg_cache->rd_num = nr_rdump;
-> +
-> +	for (i = 0; i < nr_rdump; ++i)
-> +		reg_cache->rdump[i].offset = rdump[i];
->  
->  	if (list_empty(&clock_reg_cache_list))
->  		register_syscore(&samsung_clk_syscore);
->  
->  	reg_cache->reg_base = reg_base;
->  	reg_cache->sysreg = sysreg;
-> -	reg_cache->rd_num = nr_rdump;
->  	reg_cache->rsuspend = rsuspend;
->  	reg_cache->rsuspend_num = nr_rsuspend;
->  	list_add_tail(&reg_cache->node, &clock_reg_cache_list);
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index b1192ca03db5..098f27a6290d 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -324,10 +324,10 @@ struct samsung_clock_reg_cache {
->  	struct list_head node;
->  	void __iomem *reg_base;
->  	struct regmap *sysreg;
-> -	struct samsung_clk_reg_dump *rdump;
->  	unsigned int rd_num;
->  	const struct samsung_clk_reg_dump *rsuspend;
->  	unsigned int rsuspend_num;
-> +	struct samsung_clk_reg_dump rdump[] __counted_by(rd_num);
+>
+>
+>> Patch 1 first fixes a long-standing bug.
+>>
+>> Patches 2 to 4 convert exynos' fbdev emulation to client buffers. It
+>> still allocates a GEM object buffer tailored towards fbdev emulation,
+>> but size calculations now use common DRM helpers.
+>>
+>> Patch 5 cleans up symbol visibility in exynos' fb code.
+>>
+>> Thomas Zimmermann (5):
+>>    drm/exynos: fbdev: Remove offset into screen_buffer
+>>    drm/exynos: fbdev: Inline exynos_drm_fbdev_update()
+>>    drm/exynos: fbdev: Calculate buffer geometry with format helpers
+>>    drm/exynos: fbdev: Use a DRM client buffer
+>>    drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
+>>
+>>   drivers/gpu/drm/exynos/exynos_drm_fb.c    |   2 +-
+>>   drivers/gpu/drm/exynos/exynos_drm_fb.h    |   7 --
+>>   drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 100 ++++++++++------------
+>>   3 files changed, 47 insertions(+), 62 deletions(-)
+>>
+> Best regards
 
-Personally I think the rd_num should be above rdump so that they are
-together.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
 
-Brian
 
