@@ -1,130 +1,77 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D4D3128DF
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2026 22:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778277911; cv=pass; b=OY6Wf7TqEd1y3Z2Aiq3Q1LFKtFZkhryjdGIfgR5OzH9TqEFA6+Vuwr9Qp+bqOaXlorjxCy06NgkFz3aiO96noByde35tAE/eXASrNT+Hiu2ql0S5+KW77RysYoiXB1nUiDOREHDBfIyUoDGg4y8Y/SyXPg813GpCOzxuDhrcY3E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778277911; c=relaxed/simple;
-	bh=sFhOkypFgUFtrwO3/lD2eVgWx0KBMQErr2EqNiq9JBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LrKriMjXKzDWvr8DiSjrLctKWeD5wTT1SuQGkamV5YqM7FlA4uZ/b9LFfhg/GJkDvs4MX/3mrrYFdYQ9aFH305feuJwjHCd/h/2Qb6+/jpp26lBsLSjpIZoH8o9OvyA0Wxq/tF0NYz6uPo9SR2ZBIbl5rIZOBhXO3Dw4TMY6QBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Te0YCfX3; arc=pass smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF9E372B50;
+	Sun, 10 May 2026 12:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778415834; cv=none; b=kezu1hHFANwCfJr/Cyd5RhwkXhpm96GpsAR88NcLuzMn5HiOFM5J+Ytu51K9QF/ct/L2Bk1CYcjfk42c+bemvAYDaCnJjWh8dN2WdbsoDLV6nr4M+sWGGDikBJCgJjHBl/2JrIW6Yn+NK0BxYFes6Jr/PCxKVXvcPB/FAQLtgcg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778415834; c=relaxed/simple;
+	bh=TC873zStqJ259MiwNikRrru9L89mhebxpZ8MWRYnZmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=d0BYj7uP839Eh3Dv3TruYkS+YNkoDVYB3rhaNgDR6dAlRkwJe6+MOiKTiWZVXAy+v0UPBcGZQwbXog4wx54iUGsBn9xDnEaQxe0wFtLhA0IyfQIMkhnsdA3JUUBPL9aTaZNsWwSnI239qSLWz9XNOCJgLCiG9fOLBDH7iSZ9X4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD0b9e+e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Te0YCfX3"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-67b6da5a618so3578337a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2026 15:05:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778277908; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ascpvjcBZtC1ygzkeSf8fZrTCs1NJa4EdvjB1E5OdB+OUPCIKb4UqGlrDQnE6qjBpO
-         Wl1RCcTUBcyvOsY0ICX4dwyp4+eZMQodrNpxV2udz7Owrx1Q8Q9TKBWr+IYcDE1ULSS5
-         MadKrcYYBJK7qQ6BsnFPo+nrkhvr5IR5d7MbtO+Bpo/YCfbD1Q+/XlJxwkl5POct12L9
-         2sIfy3qTNW8Uimv4VfVjYTDkeXay4thmQnp2BppS1UgGbv5EQ8+v98POfZHl9RRol4k3
-         EkzmXAqeBDKR3SkumNWuMi1CXmbGKwkkHyZB23QVdy4Q1866WGAcUnjMhWdRGy8cQ2V5
-         OeQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=9axHN34RSuU5CsT1lGt5XlZGT/hvy0PsddNDcz/MesI=;
-        fh=/6B+y2ptKLPejVwEtKgQYz+sj5tmbtXU0a6WOSMxZmM=;
-        b=DzmU2PYmjNJRGlViU6D+0In7xXNyIru5KS/wxYHrzylKf+7CLT5sAOG/ReznYvZ84e
-         Qg7pvAFn06tgBo9g3XwCxQojcPKrWt5sE4oeuAJynt119Sz0eyKe8xiSBcK5tlztzJJe
-         I9UqSGLI2Mxz94ywtmDJRo/8DrC3p27nUKEvZHqKo94BjsjVR5sJbeP3ai1LQFyGWILr
-         p585sCeCN981zuGvYjh+nLm5GJjxS4lPz2jdxz6Vtul0LYsGWEeqYJBxpXMUXhJVr7JD
-         oid7wYj64w5UdqBTdYLwWTShjRhjH2No55bPnbfY/ezcK+PETnK2OzlVq2FkBlQ9tTqe
-         lgEQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778277908; x=1778882708; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9axHN34RSuU5CsT1lGt5XlZGT/hvy0PsddNDcz/MesI=;
-        b=Te0YCfX3YWorWj7GscIhG16r7LxH79T+UiD+AsvoWWXWPL+85VG+pjrqtb4Zx/zmNe
-         0URm0AEsB/WVu2Vlqs8x39bIGdvfwqWk7ucNGgQ4V23RAHvW6Qa6ILyb8RPVJTiFuvD3
-         ik75Hs7UmbZ8TsN48VnjL3/lciUzIp7ZtXulibrc9RwlpwDB1mDyGVdAVvt/Rfc+Ynxs
-         rKPE5zO2Qewb3jZ7x9pT2Ced7pF6WffFTdpHp6xuTkPhShZLGzxK6Gl/P0/Np13/kjul
-         isFDjs7cGPKlNBa5AVhr0bN897SwuMU2WJGUcNOW2mcDIctbHF2NnC6PzOIIQxKV0XKH
-         ZcBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778277908; x=1778882708;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9axHN34RSuU5CsT1lGt5XlZGT/hvy0PsddNDcz/MesI=;
-        b=OvaQ8lGu+SiuR+/w/9c8FttQOU0ooNXtamztUPD6tjcvqeHAOJydzCW3eTS+gEFpEc
-         9RRsxiVEHq6vGHTVZ+0uqyprxj3W2sarII5Wyf7yX9ldNAzSITogqbUHo42zoVgadywF
-         q2YoKtoUtNjCLUROevmZhqs7kmF9zPLvxP1PfQbUJBrhyn5chXXBDcMhjaVgZOwY4TX8
-         ICt5BUDcieeN0Qoi+IK6nitIK7AKKfppnIyrKkn4ff3oZ3euSeObXN7/XEv/7YGrDL57
-         ALN/SSDbWyDsubU6qhzNdDgC5MzKaJVhUe4Wxow3vZXHdU1+O3JySOzqeg0UICgt4h+V
-         qqCg==
-X-Forwarded-Encrypted: i=1; AFNElJ/2Q5rjjPUoJb3SY5R1hNTI8RaHsAS7rsZHUIMbXm8Gd3wyvuS9fNPPyZvzm9tFJpd3OWDjMGiLjfZUwKqRhPFzbw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr+aKalkJygeDmOXFF8zlJa/Asst9deF8T1Ic/KuJjsAs+h18L
-	D6iZRbIZ6GbHNjV4GMxcDt9yx+T8yVY6ZItcDbvsycp4Nd2U9nuUXG3Idzr7qQWZnzQPcSs/Wl0
-	qGubh8vwxRa1E9Dpwc2Fb2RLebd+S9qGCu+VgHIT7/g==
-X-Gm-Gg: Acq92OEm8GTbshCwLe0S/buNnKXaXVW+FQQlzp48ruoI6PAyleoMEbt9F0Gl52Z3BE/
-	zyawccKvYlcdpNXtFQ89GWPgJK6yqjWqqooiM45wXMyTX1+n+z+oI/eDU4mwCyNQ/L0U5BX9TJe
-	2WqjECgsZGCyDzn7qmwLhZ9BnNRm8dZVggvEJ21RZXTFnZuoe0Xtu/MkmA/89ZWXG+ydIfNJLJo
-	Ir0EnKo8wi53DlHpTKcqJFOFPAj9NM5dNTnyyYWhcQ61InF7kpCV5s/KxOTwjxBInq4l8XDiHjm
-	UX8QR+jO/lcp0jmWWGCVX81KYWdYm7V4tygVqI+IxTS1AETFu+Wb
-X-Received: by 2002:a05:6402:440f:b0:679:4b89:d348 with SMTP id
- 4fb4d7f45d1cf-67d648b2341mr7555694a12.24.1778277907636; Fri, 08 May 2026
- 15:05:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD0b9e+e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD44C2BCF7;
+	Sun, 10 May 2026 12:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778415833;
+	bh=TC873zStqJ259MiwNikRrru9L89mhebxpZ8MWRYnZmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=AD0b9e+ezrryuNWZ8BZEaU0+rFHiKV5efAYKwxEINwCllXX7j2Fv9630NzBqPHRD0
+	 UaDnpvaG4g8DuuO0A5YWgdFWl7E0YwH91ujb1+3YGGEcz4aqGaqmnjxz5cSM14/mb3
+	 0UqhiYJxb8Q8DojeQueJupwWhq64tCHK/Txgh1lnA2k6PguhvDW+5nX9TlAmtVZmK4
+	 myJceoTdZAiZpIIFR906BUQhqQ8qseQlxUGZs6QUXSOZ9NtGvcPbXlNakbgAqX1BZO
+	 YEbx7zcLhAqC95s5fzmqKUOybvOnKcApvB2olYBFwcwKa3T+csPiOng5phrWmGUIos
+	 gxDw2DwSFWZ/g==
+From: Vinod Koul <vkoul@kernel.org>
+To: =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+Cc: neil.armstrong@linaro.org, krzk@kernel.org, alim.akhtar@samsung.com, 
+ andre.draszik@linaro.org, pritam.sutar@samsung.com, kauschluss@disroot.org, 
+ johan@kernel.org, ivo.ivanov.ivanov1@gmail.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260406135627.234835-1-kernel@lvkasz.us>
+References: <20260406135627.234835-1-kernel@lvkasz.us>
+Subject: Re: [PATCH v2] phy: exynos5-usbdrd: fix USB 2.0 HS PHY tuning
+ values for Exynos7870
+Message-Id: <177841582887.420676.2529810300062190966.b4-ty@kernel.org>
+Date: Sun, 10 May 2026 17:53:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260417115842epcas5p1fb06d6f1663b97b1eae3aafaa6a3de0b@epcas5p1.samsung.com>
- <20260417121452.827054-1-alim.akhtar@samsung.com> <20260417121452.827054-3-alim.akhtar@samsung.com>
-In-Reply-To: <20260417121452.827054-3-alim.akhtar@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 8 May 2026 23:04:56 +0100
-X-Gm-Features: AVHnY4JcC94zWVXrCoUpySC3LgZfp20jXlP-UHsUMtZ7sbT2HpSsWnqgH1G_b7s
-Message-ID: <CADrjBPrD1o40K8_seeaQHzqiZRYMVVteMOPozpTVz+q0zGr3sg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: ufs: exynos: add ExynosAutov920
- compatible string
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, 
-	martin.petersen@oracle.com, krzk+dt@kernel.org, sowon.na@samsung.com, 
-	linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Fri, 17 Apr 2026 at 12:58, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
-> From: Sowon Na <sowon.na@samsung.com>
->
-> Add samsung,exynosautov920-ufs compatible for ExynosAutov920 SoC.
->
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Sowon Na <sowon.na@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+On Mon, 06 Apr 2026 15:56:27 +0200, Łukasz Lebiedziński wrote:
+> The existing PHYPARAM0 tuning values for Exynos7870 are incorrect,
+> causing the USB 2.0 PHY to fail high-speed negotiation and fall back
+> to full-speed (12Mbps) operation.
+> 
+> Fix TXVREFTUNE (transmitter voltage reference) from 14 to 3,
+> TXRESTUNE (transmitter impedance) from 3 to 2, and SQRXTUNE
+> (squelch threshold) from 6 to 5. Also explicitly set
+> TXPREEMPPULSETUNE to 0, which was previously missing from the
+> tuning table despite being included in the register mask.
+> 
+> [...]
 
->  Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> index a7eb7ad85a94..710ce493f3b6 100644
-> --- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -19,6 +19,7 @@ properties:
->        - samsung,exynos7-ufs
->        - samsung,exynosautov9-ufs
->        - samsung,exynosautov9-ufs-vh
-> +      - samsung,exynosautov920-ufs
->        - tesla,fsd-ufs
->
->    reg:
-> --
-> 2.34.1
->
+Applied, thanks!
+
+[1/1] phy: exynos5-usbdrd: fix USB 2.0 HS PHY tuning values for Exynos7870
+      commit: 5a759b120e31aa3ed914d98b51eb1755235250f2
+
+Best regards,
+-- 
+~Vinod
+
+
