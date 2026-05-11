@@ -1,77 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF9E372B50;
-	Sun, 10 May 2026 12:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6A52F0C7E
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2026 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778415834; cv=none; b=kezu1hHFANwCfJr/Cyd5RhwkXhpm96GpsAR88NcLuzMn5HiOFM5J+Ytu51K9QF/ct/L2Bk1CYcjfk42c+bemvAYDaCnJjWh8dN2WdbsoDLV6nr4M+sWGGDikBJCgJjHBl/2JrIW6Yn+NK0BxYFes6Jr/PCxKVXvcPB/FAQLtgcg=
+	t=1778500546; cv=none; b=HcH4KRqg31V/IA7TYFoF87HgVj2uqpKERbJ0coHJPCWsHDdGAJhmQXsdD1pSKN1pNESlinq3j6+pW1bXolM1nYT1YOiKPHNMy2lonMPgEF1/TIrgwXPQe0LRB1KcmpvAIYPfcJ5cCTlNCleFlnkOQCN3yK1TJBIl42v+Mrq/0Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778415834; c=relaxed/simple;
-	bh=TC873zStqJ259MiwNikRrru9L89mhebxpZ8MWRYnZmM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d0BYj7uP839Eh3Dv3TruYkS+YNkoDVYB3rhaNgDR6dAlRkwJe6+MOiKTiWZVXAy+v0UPBcGZQwbXog4wx54iUGsBn9xDnEaQxe0wFtLhA0IyfQIMkhnsdA3JUUBPL9aTaZNsWwSnI239qSLWz9XNOCJgLCiG9fOLBDH7iSZ9X4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD0b9e+e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778500546; c=relaxed/simple;
+	bh=n67UuozKzT2WrjxCdWcXlONRW7fTPoBWq4U1CO466X0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sAD0SVHyTzBGJmNsowzTxohiypN1OxgttAaZPkt9llCqKY7QOKH45yENmK2kqb4imyisj2zso7YqM+/Sod1u5EGObcDdlE6ySPCnMvvKjyKrFDPzorqa6uK2FM23sXF7cGWs60GOWVNdAL4M7oCLkuE5kApeEt1rI4YvxcQ0Lb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gfI92xOp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cPijFBaQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gfI92xOp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cPijFBaQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD0b9e+e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD44C2BCF7;
-	Sun, 10 May 2026 12:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778415833;
-	bh=TC873zStqJ259MiwNikRrru9L89mhebxpZ8MWRYnZmM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AD0b9e+ezrryuNWZ8BZEaU0+rFHiKV5efAYKwxEINwCllXX7j2Fv9630NzBqPHRD0
-	 UaDnpvaG4g8DuuO0A5YWgdFWl7E0YwH91ujb1+3YGGEcz4aqGaqmnjxz5cSM14/mb3
-	 0UqhiYJxb8Q8DojeQueJupwWhq64tCHK/Txgh1lnA2k6PguhvDW+5nX9TlAmtVZmK4
-	 myJceoTdZAiZpIIFR906BUQhqQ8qseQlxUGZs6QUXSOZ9NtGvcPbXlNakbgAqX1BZO
-	 YEbx7zcLhAqC95s5fzmqKUOybvOnKcApvB2olYBFwcwKa3T+csPiOng5phrWmGUIos
-	 gxDw2DwSFWZ/g==
-From: Vinod Koul <vkoul@kernel.org>
-To: =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
-Cc: neil.armstrong@linaro.org, krzk@kernel.org, alim.akhtar@samsung.com, 
- andre.draszik@linaro.org, pritam.sutar@samsung.com, kauschluss@disroot.org, 
- johan@kernel.org, ivo.ivanov.ivanov1@gmail.com, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260406135627.234835-1-kernel@lvkasz.us>
-References: <20260406135627.234835-1-kernel@lvkasz.us>
-Subject: Re: [PATCH v2] phy: exynos5-usbdrd: fix USB 2.0 HS PHY tuning
- values for Exynos7870
-Message-Id: <177841582887.420676.2529810300062190966.b4-ty@kernel.org>
-Date: Sun, 10 May 2026 17:53:48 +0530
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gfI92xOp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cPijFBaQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gfI92xOp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cPijFBaQ"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0CBB961CB9;
+	Mon, 11 May 2026 11:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1778500543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mIJRUigLZj/PD78y2FOxyIs4tzN0VAc/QZ4+NqxfINQ=;
+	b=gfI92xOpOtrAYu1ELiDF7lc4TUTvel09bPLyyaR1vT+eOM+mZhppVDl0omQY3pwv6/Cbtw
+	nCAiUzla/4jTVdOPR8u/bS/7aeCH5066cgUZM96xkMc9F8d1/iNlIT2kqLyHtKoUT2IVQd
+	eSYYMVe/tEChntPZILPPzVRzUJNiRBY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1778500543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mIJRUigLZj/PD78y2FOxyIs4tzN0VAc/QZ4+NqxfINQ=;
+	b=cPijFBaQQc7Wv+3sRRRSGvJhjaV6PbBopyki9roFMJjklviLefpgKh0LEJb9zm0Bnmw7OE
+	xyYYwpjbM0qOzLCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1778500543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mIJRUigLZj/PD78y2FOxyIs4tzN0VAc/QZ4+NqxfINQ=;
+	b=gfI92xOpOtrAYu1ELiDF7lc4TUTvel09bPLyyaR1vT+eOM+mZhppVDl0omQY3pwv6/Cbtw
+	nCAiUzla/4jTVdOPR8u/bS/7aeCH5066cgUZM96xkMc9F8d1/iNlIT2kqLyHtKoUT2IVQd
+	eSYYMVe/tEChntPZILPPzVRzUJNiRBY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1778500543;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=mIJRUigLZj/PD78y2FOxyIs4tzN0VAc/QZ4+NqxfINQ=;
+	b=cPijFBaQQc7Wv+3sRRRSGvJhjaV6PbBopyki9roFMJjklviLefpgKh0LEJb9zm0Bnmw7OE
+	xyYYwpjbM0qOzLCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BAA88593A3;
+	Mon, 11 May 2026 11:55:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xtleLL7DAWoERgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 11 May 2026 11:55:42 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	m.szyprowski@samsung.com,
+	wens@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH v3 0/5] drm/exynos: fbdev: Use client buffers
+Date: Mon, 11 May 2026 13:54:30 +0200
+Message-ID: <20260511115538.57884-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_TWO(0.00)[2];
+	FREEMAIL_TO(0.00)[samsung.com,kernel.org,gmail.com,ffwll.ch];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+
+A client buffer holds the DRM framebuffer for an in-kernel DRM
+client. Until now, exynos created an internal ad-hoc framebuffer for
+its fbdev emulation, while by-passing the regular interfaces used by
+user-space compositors.
+
+Convert exynos' fbdev emulation to use client buffers. Replacing the
+existing code with a client buffer allows for stream-lining exynos code
+and later also the fbdev helpers. The new framebuffer will be registered
+against the client's file and will support handles for GEM objects. It
+is then just another framebuffer within the DRM ecosystem.
+
+If all driver's fbdev-emulation helpers can be converted to use client
+buffers, the emulation's framebuffer handling as a whole can possibly be
+moved into shared helpers.
+
+Patch 1 first fixes a long-standing bug.
+
+Patches 2 to 4 convert exynos' fbdev emulation to client buffers. It
+still allocates a GEM object buffer tailored towards fbdev emulation,
+but size calculations now use common DRM helpers.
+
+Patch 5 cleans up symbol visibility in exynos' fb code.
+
+v3:
+- add error checks to geometry calculation
+v2:
+- clean up exynos fb header (Chen-Yu)
+
+Thomas Zimmermann (5):
+  drm/exynos: fbdev: Remove offset into screen_buffer
+  drm/exynos: fbdev: Inline exynos_drm_fbdev_update()
+  drm/exynos: fbdev: Calculate buffer geometry with format helpers
+  drm/exynos: fbdev: Use a DRM client buffer
+  drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
+
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_fb.h    |  10 +-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 111 +++++++++++-----------
+ 3 files changed, 62 insertions(+), 62 deletions(-)
 
 
-On Mon, 06 Apr 2026 15:56:27 +0200, Łukasz Lebiedziński wrote:
-> The existing PHYPARAM0 tuning values for Exynos7870 are incorrect,
-> causing the USB 2.0 PHY to fail high-speed negotiation and fall back
-> to full-speed (12Mbps) operation.
-> 
-> Fix TXVREFTUNE (transmitter voltage reference) from 14 to 3,
-> TXRESTUNE (transmitter impedance) from 3 to 2, and SQRXTUNE
-> (squelch threshold) from 6 to 5. Also explicitly set
-> TXPREEMPPULSETUNE to 0, which was previously missing from the
-> tuning table despite being included in the register mask.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] phy: exynos5-usbdrd: fix USB 2.0 HS PHY tuning values for Exynos7870
-      commit: 5a759b120e31aa3ed914d98b51eb1755235250f2
-
-Best regards,
+base-commit: 680a4832a8182b13ac5d55ab0c03c54ebc2baadd
 -- 
-~Vinod
-
+2.54.0
 
