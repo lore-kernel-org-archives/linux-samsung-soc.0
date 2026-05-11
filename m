@@ -1,201 +1,158 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA748377031
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2026 11:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483973A453F
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2026 13:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778500558; cv=none; b=VzL3d1adL6ZPJRMzVrzrrbn3l2Dp3uGoXUw6jagfwNnE7SjhQj5FrJ+tktaWju7FyCANMim+SCzbKGnyMhqBD9C0nH15bYO93sLokzwoLuXKQZ+wtEszuZPFfCJXH1aNK24As4ZRypCHcYQS4XgR6t3Xp8FJT+EfLBdLEwTUgcU=
+	t=1778505475; cv=none; b=dqX8IagSFT32hyRKBpNElcj56BvVue1gMeQEmi/STuNjjOfftsptIqZv6q/BgVNdr1wWurkaIHvVxR5UkvkOrJdp+RpxwwI4xLP/Rn3KvB3VcVRFEIQDMdoVnGsbndm4Gu2JAsuAIyaqh2o4dxhnrlv/USRD9N6otpdak/V897M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778500558; c=relaxed/simple;
-	bh=Xou65TIchHrMk/SmJ4kC+IGJir663zopY/qCoOy4wms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S2ZPXAmjtkV+6TKP1Q4I3bqshzKOEj7Ec/Q0W3eusKEPgNoYQj74Dx9jrJ+NRjbxeiXetpRnzkYm7ccwlQ2/i9o9vV/GyoOlCXG0XPfJ/zbSe76KnJt4umDZOHVAEEIwPZPXtJYjAkFgE3YSTPobZsw2o82oyqW3A3NuiMxCufE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1nB17uTD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RW8CduWy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1nB17uTD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RW8CduWy; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1778505475; c=relaxed/simple;
+	bh=70pRwaawB6fSxyFjY9MWQ2Wj667Hq0JjSk0kpFgv0o0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=uHjt66xbD5aJFTwHIkPqJD323WD3jsn6ehdjh3B/GfH8A7r5d/QHlmmBTOuDsMKOhA45tyci68yoXRdEfLG5rSHDRwoI0hlYhMN4DcRL4R2u0UPqP8iHlo3NH+qluSJbtCGiu2iv68a3icuu6E5zx6TI39war72mcJNHSSjI8c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OKiZ5YAY; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1nB17uTD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RW8CduWy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1nB17uTD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RW8CduWy"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9549E61CBC;
-	Mon, 11 May 2026 11:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1778500544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I62Gp+N6xbWYqomjf961OL2PVVxznkP0yEcmbDG1cAU=;
-	b=1nB17uTDXrfxXbFKzdZO6h3TlFMDLL8GVASr7VHE0GpfeUsftAVcsQgr8pYtX8QG+a2J6A
-	EKTRkjuX/o948hdPWtPJ/7aCoEQfRMpg0rDtZFYTIbqDmDlwykLfhmVOJo/P4J+iJ1UV2/
-	YiNT3Lfkx4KTZ7IpOmUwpvTKO8zU4dc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1778500544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I62Gp+N6xbWYqomjf961OL2PVVxznkP0yEcmbDG1cAU=;
-	b=RW8CduWy3V6pPLykJsioEsc7Pm+66UOpvVYy4nttoxsU3uFiEOsuHzgWeQyMgrqVJPIHk/
-	Zd2YF8syWT3oN1BQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1778500544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I62Gp+N6xbWYqomjf961OL2PVVxznkP0yEcmbDG1cAU=;
-	b=1nB17uTDXrfxXbFKzdZO6h3TlFMDLL8GVASr7VHE0GpfeUsftAVcsQgr8pYtX8QG+a2J6A
-	EKTRkjuX/o948hdPWtPJ/7aCoEQfRMpg0rDtZFYTIbqDmDlwykLfhmVOJo/P4J+iJ1UV2/
-	YiNT3Lfkx4KTZ7IpOmUwpvTKO8zU4dc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1778500544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I62Gp+N6xbWYqomjf961OL2PVVxznkP0yEcmbDG1cAU=;
-	b=RW8CduWy3V6pPLykJsioEsc7Pm+66UOpvVYy4nttoxsU3uFiEOsuHzgWeQyMgrqVJPIHk/
-	Zd2YF8syWT3oN1BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51488593A9;
-	Mon, 11 May 2026 11:55:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UASZEsDDAWoERgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 11 May 2026 11:55:44 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	m.szyprowski@samsung.com,
-	wens@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 5/5] drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
-Date: Mon, 11 May 2026 13:54:35 +0200
-Message-ID: <20260511115538.57884-6-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260511115538.57884-1-tzimmermann@suse.de>
-References: <20260511115538.57884-1-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OKiZ5YAY"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-44ccbd3290aso3409327f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2026 06:17:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778505473; x=1779110273; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
+        b=OKiZ5YAYE5GosIW9lKyy4U4IQ6LOmSN909YdrCMzeucPYB/sKJ0yPm3hKVCQ9vW2nT
+         G3lDMvs8v/iwvkUo4xCLNSvxsaP54sJRcysgPeBBl695/hAMiqidXxRNaT/rwRit4Amd
+         RYgCS/ne+0R+xfxke34UlwcRq09huKA6yB2YXd+ftFPx1HBtvSOq/jEzogZTFXd1TWCd
+         lY1SHqHJPv+q2pSEFRpUWePdeSvdBPO5hpLbE9qF4pPjcGae3WGqhW0ypO6JrCxHXcdT
+         kiVNKNppC1oVavuE+0/xoLM1ZPqELlB33VkV+uWicfO6RlbfutFqaTgxJpNdDVO6W6Mf
+         EHYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778505473; x=1779110273;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VpBr89JbDstdIUMvCB+UAEmSrotPv1wv1lCMdlQElUc=;
+        b=HgKoP+26+AzpMfeQkez2c1KCEVzmZiYLrroh6e20yUPLkTzP9sWb7oqu2UCwGjw8xM
+         gzYC5eOXkTRSKuP9IIGJ7GZPkdUzlj8eqJZfaS19JceVBFQuvgVhgaH2922LWASdpLll
+         wDjAW2WDu9gU1fwd/6ddxIXNktdNZoFHQ7XJ8V+g02BGBApdhTL9GD23SvuHuakdZLsy
+         M3u8XvL5ZqWGMLa9p05tbSLAHX4u6zlSwZvd1189MdV9630VCp+QAvJSEKHF/nUNGzRo
+         8u1QX7CQIKvgHrHsg6FdOlyiAk5xGkyJc/opYHPXGXLW0oDcrJ6nYpyZm/uoN9xs8BUI
+         OLUA==
+X-Forwarded-Encrypted: i=1; AFNElJ+5kEBqHSScNLgAogT6LIJAJ1VC+3rCbVmjjR9vb2sRgGxPNtkXpqZQmPmA1cJmDAZTOQFT38ejBFuocaufZe3z0g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW0rQ0D4vpqz/Da+dlHnd9N/uF8Fm18rEjDfQso26XUSFfG/bQ
+	ETLaFFhA7+gXv9lGHU+4XmWllK57NYs2BGNiRdzeXWY+iBzM59njgbVvfeOuofXfldo=
+X-Gm-Gg: Acq92OG+/Bdz0Imtlm4ojyRKbZiXTVodr57fyp4gHfIFDDrYl9GKdLfJ/AJbQoTlr19
+	2Ai8ZI3lYCCN/xwFnDiKK76W4l/XKj8S/hxzJzc6KUdRfmIg+FwEcltyqU/kpoXtLYDgbeYx2d2
+	H9Krd7nlbgAPNfNooqsUqGKUbnwxAUw0eY0dEIOz/bpEF2kp/6i8WzxmdL2cz8JcWxZduFYkHpN
+	DQl7VFb2Frr7c1poeX2KdajFn5gL8yHDsO72R67Ko1FGKygTFNn5OyNeb8ekTSr9HetqMKLQ2Ht
+	QTnCKCSkjn/xnyvWh/6WlyAfLYbeKtDUqiH8PNIZzAiS8xSW3Zf8RFfK2Od8KJlgqfErVS6TVDm
+	uBwIAcTll81c+CRs+XYenSaWRuyi86IlMc3gKhLHqUGDsMqotqDDEvuW6zEVsp+cWpcgWT9Vk5A
+	dY3WnfBUXWvJnBYO1iZshTB1kEKpPJL7Fx9+nXk+VJoXOiyLcwCjuh/HYfpgctPGsuNzkpWe1lp
+	BSxrf/xqRzWVLARgw==
+X-Received: by 2002:a5d:5d0b:0:b0:43d:c2bc:21b4 with SMTP id ffacd0b85a97d-4515b525d65mr37422228f8f.16.1778505472478;
+        Mon, 11 May 2026 06:17:52 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:5acc:6281:995e:547f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4549120f1f9sm25688565f8f.24.2026.05.11.06.17.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 May 2026 06:17:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[samsung.com,kernel.org,gmail.com,ffwll.ch];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqirfcw6gnbcr9a9yhi49fhi6)];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Level: 
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 11 May 2026 14:17:51 +0100
+Message-Id: <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>
+Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Lee Jones"
+ <lee@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Sylwester
+ Nawrocki" <s.nawrocki@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <peter.griffin@linaro.org>, <jyescas@google.com>,
+ <kernel-team@android.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+X-Mailer: aerc 0.20.0
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+In-Reply-To: <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
 
-The only caller of exynos_drm_framebuffer_init() is the helper
-exynos_user_fb_create() from the same source file. Declare the
-former as static. Tidy up the header's include statements.
+On Thu May 7, 2026 at 9:31 AM BST, Tudor Ambarus wrote:
+> On 5/6/26 6:13 PM, Alexey Klimov wrote:
+>> On Wed May 6, 2026 at 12:39 PM BST, Tudor Ambarus wrote:
 
-v2:
-- clean up the includes in the header file (Chen-Yu)
+[..]
 
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |  3 ++-
- drivers/gpu/drm/exynos/exynos_drm_fb.h    | 10 +++-------
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |  1 +
- 3 files changed, 6 insertions(+), 8 deletions(-)
+>>> new file mode 100644
+>>> index 000000000000..c68d60b4c0b3
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/samsung/exynos-acpm-tmu.c
+>>=20
+>> [..]
+>>=20
+>>> +static int acpm_tmu_to_linux_err(s8 fw_err)
+>>> +{
+>>> +	/*
+>>> +	 * ACPM_TMU_INIT uses BIT(0) and BIT(1) of msg.rx.ret to flag APM
+>>> +	 * capabilities. Treat zero and all positive values as success.
+>>=20
+>> ACPM_TMU_INIT returns capabilities inside designated error field?
+>
+> yes
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-index ab0e0c74ec47..c6a33f550ace 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-@@ -22,6 +22,7 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_fbdev.h"
-+#include "exynos_drm_gem.h"
- 
- static int check_fb_gem_memory_type(struct drm_device *drm_dev,
- 				    struct exynos_drm_gem *exynos_gem)
-@@ -55,7 +56,7 @@ static const struct drm_framebuffer_funcs exynos_drm_fb_funcs = {
- 	.create_handle	= drm_gem_fb_create_handle,
- };
- 
--struct drm_framebuffer *
-+static struct drm_framebuffer *
- exynos_drm_framebuffer_init(struct drm_device *dev,
- 			    const struct drm_format_info *info,
- 			    const struct drm_mode_fb_cmd2 *mode_cmd,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.h b/drivers/gpu/drm/exynos/exynos_drm_fb.h
-index fdc6cb40cc9c..74300ad9bb51 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fb.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fb.h
-@@ -10,14 +10,10 @@
- #ifndef _EXYNOS_DRM_FB_H_
- #define _EXYNOS_DRM_FB_H_
- 
--#include "exynos_drm_gem.h"
-+#include <linux/types.h>
- 
--struct drm_framebuffer *
--exynos_drm_framebuffer_init(struct drm_device *dev,
--			    const struct drm_format_info *info,
--			    const struct drm_mode_fb_cmd2 *mode_cmd,
--			    struct exynos_drm_gem **exynos_gem,
--			    int count);
-+struct drm_device;
-+struct drm_framebuffer;
- 
- dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 121c342dd14a..8641c9e84d4c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -22,6 +22,7 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_fbdev.h"
-+#include "exynos_drm_gem.h"
- 
- #define MAX_CONNECTOR		4
- 
--- 
-2.54.0
+Heh. Okay.
+
+>> What about other messages/commands? They just return error code there?
+>
+> all the other commands either return -1 for errors, regardless of the err=
+or
+> type, or 0 for success.
+>>=20
+>>> +	 */
+>>> +	if (fw_err >=3D 0)
+>>> +		return 0;
+>>> +
+>>> +	if (fw_err =3D=3D -1)
+>>> +		return -EACCES;
+>>> +
+>>> +	return -EIO;
+>>> +}
+>>=20
+>> Could we map these return values with better granularity instead of
+>> returning -EIO for everything else that is not minus one?
+>
+> I think we're good as we are now. The firmware returns either -1 for erro=
+rs,
+> zero for success, or BIT(0) and BIT(1) for TMU_INIT to flag some capabili=
+ties.
+> I can't tell if there are other commands that return capabilities as well=
+,
+> or if there are other capabilities for TMU_INIT, I don't have access to t=
+he
+> firmware code.
+
+On Exynos850 I see more than just one returned error codes. I definitely
+see 0xfe and 0xfd at least. I don't have any data to confirm that ff
+maps to -1 and fd-s, fe-s to -2,-3 though and what they mean. From my
+experiments I suspect that 0xfe means that call/msg type is not
+implemented or not accessible and 0xfd means that passed parameter is
+wrong or incorrect or not found.
+
+I am also not sure that I saw 0xff-s but, well, maybe that needs more
+experimenting.
+
+Thanks,
+Alexey
 
