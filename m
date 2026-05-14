@@ -1,105 +1,135 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3252D238A;
-	Thu, 14 May 2026 15:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240F33F411C;
+	Thu, 14 May 2026 16:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778773764; cv=none; b=oY+x3M+SMvmmWq1hVHCAfoeZCXLTP14Hd/JlQr0cayDEA8JHwlMB9eDo1liHm8M7OCn6q2oEgL+WjWoTo1DK1gHNMJOZ8US0mWN0g2GYqAbJXsdlbnVbUMus2eSuhNGPMzx4iX4MCXidZ1Hs1nZsZSvUr3wLNCsf91VBMi5vIBc=
+	t=1778777716; cv=none; b=C5lTbXeKHDNiva/VGLVKU31u8Qbbr5SvFuTG9nBP1VTaC/8GhNcLJg9Tscc6WtC38iW1uZgKZjAalhpgbhd6NjOUTSXwMwudFTd/mTwyXEWfiN4pen6Tq/V8S1U25x7OHMIwxKEJiVp68myBCVEbH+fr8thKgnZaMatf+tul5Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778773764; c=relaxed/simple;
-	bh=HvYYmbt7vIXkmuUhJ1bsT180d7aFwrKQEHP4FFnba90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1iTEPbF62fmnuez5TxjX3DWRAnhgIjUH2WmBnZm8LdpUP/zy5OrctYDOOxMwvZzLqsUzC6rE8lN7wGnCU8kCQYr27K++aCCj7qn3FjVrIk2vFQPP8HdJoHqPL1OWBx0NuZezEWbnf6IsHbUiVyOBIONkbcBs8H6nvvtgKdg2i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7G/MlDx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778777716; c=relaxed/simple;
+	bh=A9Ps+lSXtxtbsCFcbN8DM7h1LamHgs4wzNRLMVa0fck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUI589kWQUak30pEHmCKoPN3ST8E0HfvdtTorfkBM+9rWcmFX4Hj6fSy+X3FAu6oA4/m3nMDnAMdGtEanjoAjc7rkDzdTrsh1jEhdR/Itp6hnN1QpQ+JpHyHBAk+Z1vtjOAnV4SCsdORC/R+KwgdjGjuMaq+M8Fa/npXcV6k6vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTIHN89V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7G/MlDx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C77FDC2BCB3;
-	Thu, 14 May 2026 15:49:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTIHN89V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267C7C2BCB3;
+	Thu, 14 May 2026 16:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778773764;
-	bh=HvYYmbt7vIXkmuUhJ1bsT180d7aFwrKQEHP4FFnba90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y7G/MlDxc7c+iftuGNVZEM9Kb7YR+s4gViNlXrJHQtlEzT36sylvsQ3qTpmLx4yxa
-	 iVr3zOI8qWxKqej6V1ZFUwpdVgzYLLu57pO+QN+YOPPMobuaj89I9fUt6tmRenh7bT
-	 uHZ5ryMuUrjba9tzsuaNTpvpzIhPL3U0vCbZTiw6E0iMQ5MhAOz3oXcGH2u/lGd/yj
-	 nhd9wOvKsDZ+wYfwPzjDFqZklfutUCwFAwoIiOODxsJ+33fJA9fndK6qDIj5ymZXJ5
-	 sB49VnvrdHeM+ZSsI/04qwecYL1isVJXSvS9eITmx2P6RW4FSWHLSE7H9iJ6gjP8BG
-	 J2Kl2fWSncpWA==
-Date: Thu, 14 May 2026 21:19:20 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Felix Gu <ustc.gu@gmail.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Naveen Kumar <mnkumar@google.com>,
-	Joy Chakraborty <joychakr@google.com>, Roy Luo <royluo@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: google-usb: Fix runtime PM cleanup on probe failure
-Message-ID: <agXvAB1AgXvywP2B@vaman>
-References: <20260316-google-v1-1-30a034e87a2a@gmail.com>
+	s=k20201202; t=1778777715;
+	bh=A9Ps+lSXtxtbsCFcbN8DM7h1LamHgs4wzNRLMVa0fck=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gTIHN89VlVMLWCnaKZiSmFioyyuX16awRTvxxcrZhc1j19hZAnTaccjHR/QJzgtGk
+	 mu2/rjgGUSt6Q3VPXkmDwLQ6lZeP+l2JQLZPJgnSflQ0SE1eL3tpKrCcTAMQefoZK1
+	 lZjO3M+cZIv+u2Ny3y9V5BDo3aVpOQzOwPn3ikKo/v0PUl+9cdW+JdCDYd6qt+5cBs
+	 7gjSXh4Haj/5EEWJwAq/0vDRClnDczuM3rfLM3Nom3ZxXu/0+tJxRgWrpbYxyYKJRR
+	 vDLlS1aB8xdj5eKOmXHwGeOgH7vVuRRZn0ncYOcBisecw/cu8Z7Rzsi0ppeeYpjSef
+	 AETWtT2IP46qw==
+Message-ID: <b572ee14-86e3-479f-8969-29da89a2469e@kernel.org>
+Date: Thu, 14 May 2026 18:55:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260316-google-v1-1-30a034e87a2a@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] firmware: samsung: acpm: Fix cross-thread RX
+ length corruption
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ peter.griffin@linaro.org, andre.draszik@linaro.org, jyescas@google.com,
+ kernel-team@android.com, stable@vger.kernel.org,
+ Titouan Ameline <titouan.ameline@gmail.com>
+References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
+ <20260505-acpm-fixes-sashiko-reports-v5-1-43b5ee7f1674@linaro.org>
+ <DIBOZA3G83XE.13MZJF4AJQAOU@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DIBOZA3G83XE.13MZJF4AJQAOU@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 16-03-26, 21:11, Felix Gu wrote:
-> In google_usb_phy_probe(), if typec_switch_register() fails,
-> pm_runtime_disable() is not called, leading to an unbalanced
-> runtime PM state on probe failure.
+On 06/05/2026 17:17, Alexey Klimov wrote:
+> On Tue May 5, 2026 at 2:12 PM BST, Tudor Ambarus wrote:
+>> Sashiko identified a cross-thread RX length corruption bug when
+>> reviewing the thermal addition to ACPM [1].
+>>
+>> When multiple threads concurrently send IPC requests, the ACPM polling
+>> mechanism can encounter responses belonging to other threads. To drain
+>> the queue, the driver saves these concurrent responses into an internal
+>> cache (`rx_data->cmd`) to be retrieved later by the owning thread.
+>>
+>> Previously, the driver incorrectly used `xfer->rxcnt` (the expected
+>> receive length of the *current* polling thread) when copying data for
+>> *other* threads into this cache. If the threads expected responses of
+>> different lengths, this resulted in buffer underflows (leading to reads
+>> of uninitialized memory) or potential buffer overflows.
+>>
+>> Fix this by replacing the boolean `response` flag in
+>> `struct acpm_rx_data` with `rxcnt`, caching the exact expected receive
+>> length for each specific transaction during transfer preparation. Use
+>> this cached length when saving concurrent responses.
+>>
+>> Consequently, ensure that `xfer->rxcnt` is explicitly zeroed in driver
+>> helpers (e.g., `acpm_dvfs_set_xfer`) for fire-and-forget messages to
+>> prevent uninitialized stack garbage from being interpreted as a massive
+>> expected receive length.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+>> Reported-by: Titouan Ameline <titouan.ameline@gmail.com>
 > 
-> Switch to devm_pm_runtime_enable() to ensure that runtime PM is
-> automatically disabled both on probe failure and during driver
-> removal.
+> As far as I can see, the name in this tag should be
+> Titouan Ameline de Cadeville.
 
-PLease see https://sashiko.dev/#/patchset/20260316-google-v1-1-30a034e87a2a%40gmail.com
+Ack, thanks!
 
-> 
-> Fixes: cbce66669c82 ("phy: Add Google Tensor SoC USB PHY driver")
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
-> ---
->  drivers/phy/phy-google-usb.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
-> index ab20bc20f19e..79480f8b110e 100644
-> --- a/drivers/phy/phy-google-usb.c
-> +++ b/drivers/phy/phy-google-usb.c
-> @@ -251,7 +251,9 @@ static int google_usb_phy_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(phy_provider),
->  				     "failed to register phy provider\n");
->  
-> -	pm_runtime_enable(dev);
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
->  
->  	sw_desc.fwnode = dev_fwnode(dev);
->  	sw_desc.drvdata = gphy;
-> @@ -271,7 +273,6 @@ static void google_usb_phy_remove(struct platform_device *pdev)
->  	struct google_usb_phy *gphy = dev_get_drvdata(&pdev->dev);
->  
->  	typec_switch_unregister(gphy->sw);
-> -	pm_runtime_disable(&pdev->dev);
->  }
->  
->  static const struct of_device_id google_usb_phy_of_match[] = {
-> 
-> ---
-> base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
-> change-id: 20260316-google-3acfa2f3de9d
-> 
-> Best regards,
-> -- 
-> Felix Gu <ustc.gu@gmail.com>
-
--- 
-~Vinod
+Best regards,
+Krzysztof
