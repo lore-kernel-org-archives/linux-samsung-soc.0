@@ -1,157 +1,170 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C063E92B7;
-	Fri, 15 May 2026 07:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82F73EFD27
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 07:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778831639; cv=none; b=eyjWHHnvdtwAPFtuJoR5faLHvcEYnuJltyIO2vecDC2Vs34o4jBfrKK8bezvDSg6OZqm3n45GGLhnfk+6FfJx55qLmsRE37D5DJ4WpWHo/qYHXqpwMrAgmQOnAsqSw/tBuHsQY2nlK7/hDOmakPGyKCu03YMNx8RTHjemFk0uz4=
+	t=1778831788; cv=none; b=bi4ceHCLFydjAvmszClrBqzVz9bD+CreBdy6PyilHzXNo16WQCVLRUuUs8tn8tYzZQLrDzFkBveyqZ4ErfxfIpfPa8HZgmnvYC5y54KLjV4iJ3KKyiUshCXx6U6fk3ofHLh+P/RSYqCyonV3Bva5BFAgsiX6NLma5hJpUghQ9zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778831639; c=relaxed/simple;
-	bh=/nFq4OHmE8dbUM03xwqrDzHTp3KweVGytErCxZHr5oY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=koNpz73XYphgDAcl+sZ7NgGtft5mBK7tc/iC2bNHFZfy5IeoHbEl6aLc4iyD1Yc1j2o3dcQnOmiVeOLYxGQfK/fiSKxwux6H1FEmh5n9DEtaiHcl/SWPXkF2dtfyr50Dm9be1xEwGx/fajAMQOl7mzj8QqDeCsoFKp7Cizo16iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qtpUpvoc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8QaW9UMC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1778831788; c=relaxed/simple;
+	bh=Jqx/gqWShhJ+18Tlq/ec/Xd+/qJ5jHenCuDTIMvA44s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KGzZk7DB0XN3XB9XH+43zeL3qe2CulImaFgOsspP2bsYlqR4PhB/1OSG7us70dlLqNknk0IqG14zR5r5gOqJszABnl/9Yym12HMyAYyyssqOLh/Dp6S3AlwgQNUbJmI+vUq1Gf9gRvd90q+jcwElv7LOTlAw/beg9VLgHLGWNXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UdM2fl5t; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qtpUpvoc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8QaW9UMC"
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1778831636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P5i3jr/Ze5LIkO9MuiHcaAM6dwhzewxwm2J6/ovcRNo=;
-	b=qtpUpvocYMS6ga/mG6+yHhgkECgfN4/AWHu4OEWfwDxipL5TsdQ5X3k+V+I7b14vol/Ctv
-	LpOvxyM8j8DcbYElrkoCF4USg0Lz7TKZMixJ4X1GEElr76JRimy/rGExHvpN/mrdb65GAW
-	Gc77mhFCmV1DUq3wnCiPLUmslcUvKlBQpEPW+dzhPRlGUMbflE3JJl5GUP5p/3x3KtYgMx
-	7ZEghSFNU3wSI5T898bHC4ltszzph/Mv7J+ibXEOR2XJ56jj7LNt0FNxcZunVNUB6npV9g
-	XpgT7vJpFDejIJEdJDPY6myZJhftYdOLHgFgzvdR/lv4jJVSrKgRs/ww97oMGw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1778831636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P5i3jr/Ze5LIkO9MuiHcaAM6dwhzewxwm2J6/ovcRNo=;
-	b=8QaW9UMC9D6WJDmRgFabqQSsEY7fzsi0K5cWTpOqVGgiQzDFkqENkkeARQkt0ciOL8/adq
-	qTcPuuNMZL70cODQ==
-To: Krzysztof Kozlowski <krzk@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
- linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Andy
- Shevchenko
- <andriy.shevchenko@linux.intel.com>, Thomas Fourier
- <fourier.thomas@gmail.com>, Kees Cook <kees@kernel.org>,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, sparclinux@vger.kernel.org, Peter
- Griffin <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, =?utf-8?Q?Andr=C3=A9?= Draszik
- <andre.draszik@linaro.org>,
- Alexey Klimov <alexey.klimov@linaro.org>
-Subject: Re: [PATCH tty v4 2/6] serial: Replace driver usage of UPF_CONS_FLOW
-In-Reply-To: <1a5abd2e-e9ab-4a48-94c2-5e082f57adde@kernel.org>
-References: <20260506121606.5805-1-john.ogness@linutronix.de>
- <20260506121606.5805-3-john.ogness@linutronix.de>
- <87lddvy2dl.fsf@jogness.linutronix.de>
- <1a5abd2e-e9ab-4a48-94c2-5e082f57adde@kernel.org>
-Date: Fri, 15 May 2026 09:59:55 +0206
-Message-ID: <87wlx56rcc.fsf@jogness.linutronix.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UdM2fl5t"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-488b0e1b870so146149435e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 00:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778831785; x=1779436585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nE9mrH0UhzecibkTC58SxCDMEGe2+PqMAu5GxokQyLA=;
+        b=UdM2fl5tMOQO5s8H+YEBNJ6CaY15odFcoiWqlbbE1QJI3gIfRVt9NZ9T7H2YCuiuNE
+         bWFV9tC8lGTNhw2N4LZ41GY4dvvy8K0+KDq/wQVb6yWdvLpvjPvx4AenUwRxRKXnLanQ
+         kYi+jiV9g2R+LxXZWv77QLeNc9tze8esjwdbMwvz8SrvgN89X8jxZX4TzFzviSPLOror
+         Pr6LFfSWUeagmN67NbwTnNpbi2GPORZh7W2rb2nhgwBAtW8ppDOHlJ7Cvd5ZLWDAERI8
+         sFbg2nkEb1eR8PuKd27RYjMf7pbhVcguMYPQKSo0bCzR+rdRqW7gDIUYfMe9I4qzXemz
+         LBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778831785; x=1779436585;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nE9mrH0UhzecibkTC58SxCDMEGe2+PqMAu5GxokQyLA=;
+        b=VG6JM1L2lwttttUlTQFLKHoxUevm2TfMNsZJrg77RRPxD+ED2jEZ470m6NtkK6DtTT
+         C8XcyyAbmWCQ43cMJM/Y50iI+luZVf5KLrzH/F04wG6H67LYvCnBUSWRDZXAKJac7GgH
+         9ZclKjwL7Ja8Nvz5F5M058yeQlqila8WjbDVmzJ/sNhbjtYCBKb9kyUJN6QUGFu+FXR1
+         SCHhLN6Px/UUsiiVOeEI7a6MJ+edKanVszcqhmqLzFAtzVvxZyRL0smztXGQKjBtw93p
+         5cns7oQ3Unlcow2l0zecdwM9amLDw7U+P/DZfZEezRPdtAxpj98ZrziL39X5zrMKOSPn
+         Ohbg==
+X-Forwarded-Encrypted: i=1; AFNElJ8p8TPNlWEkzYFK26e/ljoHrky5I9UgdXdvZzHlpog5OD+9hNXrdoNhZz1REssPo28GX/5Uw4pLg9+ab3UV4T9t3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxalU4EasP7UjQLYSbyDHhFiDAzs0Jlc7wcICeiM6mcHm+HPJLq
+	snwoPsoT6CaBapDyguNnG3Qdi/MAr3PJwydMCKngdhVETFNpBsub4E5GEpiMlZv5TyA=
+X-Gm-Gg: Acq92OF1UwYs0D7zZsja8b6gnkFHLbyUBNOVbzexboSjx0ZOgo6xeyt3N3vFZ3xxPI+
+	dfbpSduE0VWNre2ItKN3YO0V3hkYYotlmxfO3+z4vB9HUdC0GMLp+9SyKtVqw3l9okE/2C+LIog
+	onMbYUmIbFwTDpmdweLP4HMyYbeDC1qP1hVQUIzTtrSBtN3ARq2GApanmD+TMzIE7pA79I9zony
+	DXhQzkNikvJo1G/tzTB1qb6E/WazXNg9/w03f9DthVK51HLL9LbwImRB4WxOzXYQbXEOLD1Mwhn
+	Yg+0IjEukzbTYaXZ5y8JmUHApUvbkvYpSgiAGPDbaM+a4LlUGUcFnb0YYcM5sgRroyMqzKHJj0S
+	SYaVH/533B4NUTXZ5KU+XZohsGsO1DTgMNkxkRAISKYeiBaVLLsVUy0a7NYduR4VuqKni8EjKnz
+	BqLN3K4wNdDhC1blKQbU0gFqsPJDIn61Bs
+X-Received: by 2002:a05:600c:6992:b0:48f:e230:2a20 with SMTP id 5b1f17b1804b1-48fe662a1b2mr36300395e9.31.1778831785070;
+        Fri, 15 May 2026 00:56:25 -0700 (PDT)
+Received: from [10.11.12.109] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c88e5asm43645835e9.6.2026.05.15.00.56.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 May 2026 00:56:24 -0700 (PDT)
+Message-ID: <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
+Date: Fri, 15 May 2026 10:56:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+ <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2026-05-13, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> (This email is particularly directed at the Samsung folks.)
->> 
->> Responding to Sashiko:
->> 
->> https://sashiko.dev/#/patchset/20260506121606.5805-1-john.ogness%40linutronix.de
->> 
->> On 2026-05-06, Sashiko wrote:
->>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
->>>> index e27806bf2cf3e..2f94fc798cffb 100644
->>>> --- a/drivers/tty/serial/samsung_tty.c
->>>> +++ b/drivers/tty/serial/samsung_tty.c
->>>> @@ -319,7 +319,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
->>>>  	ourport->tx_enabled = 0;
->>>>  	ourport->tx_in_progress = 0;
->>>>  
->>>> -	if (port->flags & UPF_CONS_FLOW)
->>>> +	if (uart_cons_flow_enabled(port))
->>>>  		s3c24xx_serial_rx_enable(port);
->>>
->>> This isn't a new bug introduced by this patch, but does this code
->>> result in a recursive spinlock acquisition and deadlock when console
->>> flow control is enabled?
->>>
->>> The serial core framework calls port->ops->stop_tx() with the
->>> port->lock spinlock already held. When uart_cons_flow_enabled(port)
->>> evaluates to true, s3c24xx_serial_stop_tx() invokes
->>> s3c24xx_serial_rx_enable().
->>>
->>> Looking at s3c24xx_serial_rx_enable(), it unconditionally attempts to
->>> acquire the exact same lock again:
->>>
->>> static void s3c24xx_serial_rx_enable(struct uart_port *port)
->>> {
->>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
->>> 	unsigned long flags;
->>> 	...
->>> 	uart_port_lock_irqsave(port, &flags);
->>> 	...
->>> }
->>>
->>> Because spinlocks are not recursive in the kernel, it appears this
->>> sequence would cause an immediate deadlock on the same CPU.
->> 
->> Although out of scope for my series, the reported issue is real. Perhaps
->> something for Krzysztof or Alim to look into.
->> 
->>>> @@ -493,7 +493,7 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
->>>>  	struct tty_port *tport = &port->state->port;
->>>>  
->>>>  	if (!ourport->tx_enabled) {
->>>> -		if (port->flags & UPF_CONS_FLOW)
->>>> +		if (uart_cons_flow_enabled(port))
->>>>  			s3c24xx_serial_rx_disable(port);
->>>
->>> Similarly here, s3c24xx_serial_start_tx() is also called with
->>> port->lock held, and s3c24xx_serial_rx_disable() will attempt to
->>> acquire port->lock again:
->>>
->>> static void s3c24xx_serial_rx_disable(struct uart_port *port)
->>> {
->>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
->>> 	unsigned long flags;
->>> 	...
->>> 	uart_port_lock_irqsave(port, &flags);
->>> 	...
->>> }
->>>
->>> Could this pre-existing locking issue in the samsung_tty driver be
->>> addressed so that the rx enable/disable helpers do not try to take the
->>> port lock when it is already held by the caller?
->> 
->> Also legitimate. But out of scope for my series.
->
->
-> Thanks for letting us know. Deadlock did not happen so far, so something
-> is missing in Sashiko's report. :)
 
-Nothing is missing. I am guessing you never use console flow
-control. The deadlock is clearly visible:
 
-->stop_tx() (always called with the port locked)
-  s3c24xx_serial_stop_tx()
-    s3c24xx_serial_rx_enable()
-      uart_port_lock_irqsave() (DEADLOCK!)
+On 5/11/26 4:17 PM, Alexey Klimov wrote:
+> On Thu May 7, 2026 at 9:31 AM BST, Tudor Ambarus wrote:
+>> On 5/6/26 6:13 PM, Alexey Klimov wrote:
+>>> On Wed May 6, 2026 at 12:39 PM BST, Tudor Ambarus wrote:
+> 
+> [..]
+> 
+>>>> new file mode 100644
+>>>> index 000000000000..c68d60b4c0b3
+>>>> --- /dev/null
+>>>> +++ b/drivers/firmware/samsung/exynos-acpm-tmu.c
+>>>
+>>> [..]
+>>>
+>>>> +static int acpm_tmu_to_linux_err(s8 fw_err)
+>>>> +{
+>>>> +	/*
+>>>> +	 * ACPM_TMU_INIT uses BIT(0) and BIT(1) of msg.rx.ret to flag APM
+>>>> +	 * capabilities. Treat zero and all positive values as success.
+>>>
+>>> ACPM_TMU_INIT returns capabilities inside designated error field?
+>>
+>> yes
+> 
+> Heh. Okay.
+> 
+>>> What about other messages/commands? They just return error code there?
+>>
+>> all the other commands either return -1 for errors, regardless of the error
+>> type, or 0 for success.
+>>>
+>>>> +	 */
+>>>> +	if (fw_err >= 0)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (fw_err == -1)
+>>>> +		return -EACCES;
+>>>> +
+>>>> +	return -EIO;
+>>>> +}
+>>>
+>>> Could we map these return values with better granularity instead of
+>>> returning -EIO for everything else that is not minus one?
+>>
+>> I think we're good as we are now. The firmware returns either -1 for errors,
+>> zero for success, or BIT(0) and BIT(1) for TMU_INIT to flag some capabilities.
+>> I can't tell if there are other commands that return capabilities as well,
+>> or if there are other capabilities for TMU_INIT, I don't have access to the
+>> firmware code.
+> 
+> On Exynos850 I see more than just one returned error codes. I definitely
+> see 0xfe and 0xfd at least. I don't have any data to confirm that ff
+> maps to -1 and fd-s, fe-s to -2,-3 though and what they mean. From my
 
-John Ogness
+for these error codes we will return -EIO which is alright. We can have
+a more granular approach depending on the SoC if you want.
+
+For GS101 above is alright, it matches the info I got from the firmware guys.
+
+> experiments I suspect that 0xfe means that call/msg type is not
+> implemented or not accessible and 0xfd means that passed parameter is
+> wrong or incorrect or not found.
+> 
+> I am also not sure that I saw 0xff-s but, well, maybe that needs more
+> experimenting.
+> 
+
+fe and ff will be covered as well by -EIO.
+
+Let's keep this as it is for now, and if you need a more granular approach
+we can differentiate that for e850.
+
+Thanks,
+ta
