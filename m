@@ -1,145 +1,176 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F682477998
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 11:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9E044B66A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 12:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778845587; cv=none; b=Ds6QkgLVZHJhn2ZiXgtagdD+R73+t1AF0Zw3mwqIc54oY59TzBFgRUVgyVUHWYLbJ6+Iy4Z7/VWJAnk3SuLYqAkrM3ZbD8poSJ4BQf9fXOPjbPSZUzPOAp6NcDAz6tfvaAig60r4gA/b1Bs+VgvFuuqPTJtN8Fruy7jUnjziP0A=
+	t=1778848887; cv=none; b=NTITpVWgrmzA3yZtPgNzr1J0jRETZW3hIVsPKMTHlXk2WyIBWmEz1OT5SV6J+6RAg3Sjnn4aKPmwC0TYDM7GQEsRqHmAFHjfUaaGSIkV3cS8kl29zP+XT4YVoSD0zikwirIP2TaBkvI3cy3Dv/q8GClWVYSaT5mPHaXdvAYsmek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778845587; c=relaxed/simple;
-	bh=smt36ZMu0E/3hioXX+dDQB8jyC41lVD6s2fMbH5KKrs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=i+uR6mb+HvhbOf2XyOfijcFQhnKlmb1wU6ZgOKC+40rKUHg4ESMupUZrnbcXIaR9oReQGdINkfoRNfk6RyY3l5CggXYgGBUq8oz1XwdJQ9Jt+9TPrshpNDaH7rl8f9oV1ILqmzuXRsh/Al154giErFA6RrOX1N2AdESFchmXlvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0kHrw5b; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1778848887; c=relaxed/simple;
+	bh=7TZ5vcA+GLdk6E7fGnm5v0lehUpocwQ4ZVzCnZFOHkU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RMHUzQN3sm6g+8RqovluM3UTk7y/Wb8zKGUZMxBty1eg5Lhy4oHe4mOeMjjj1MyFihWxKq4vhgFmaFp0P0CSWkMxyEogQhXcCflGCWlvPk2Xwhyu5uyGhH79cUzCyb1tlTkXKwXsMc855rvhPEgcTX6gtmyDfHg1Zh3oEUVL5PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sGFycZSK; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0kHrw5b"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-441209fb77eso499467f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 04:46:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sGFycZSK"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-488ab2db91aso97489265e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 05:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778845585; x=1779450385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pvxma9zQmCdm279DUidXmwLHduEyeRuxuVZscrFTJwA=;
-        b=j0kHrw5bDqYP+T8XwHDP81N+FAir8ksH4BJ4lsPhhwffD6kO1MhaxC3UjVZDH+tvup
-         NyzqyzTckeYLZcCUjqoboqT1ccqEbZdvpNFQE2yhw0OT5jiFE5RPrEZ+/LFH+HTCtmrw
-         U/4oBZf22+aFFgGAJdP842GUN8ulTsKuwFzin1LLZszyG1HbFIN6qM+1HETsKMGql9WI
-         Q79ncug+y4T09q2AQpu/mAk/o7dItWT4jft8xviyUmnhAN8/NLzsX3mNLYnGvVv707c/
-         6set1woztS7GE8Lqf4uwoyKuPWq0V7ePJydH0V65zIbfjo58gqM88fW+U8bpfR0f1NdQ
-         gbKQ==
+        d=linaro.org; s=google; t=1778848884; x=1779453684; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fFHLfFog5+tJEOD6z3uXuJEqumNcdwRPWU/fZudPyJE=;
+        b=sGFycZSK/yj9Ii47pbKAxiJsXnlz0zISKj5li3Qr0KJnBPVc8qVGTcRmnms051ZMfL
+         xQe0eIux31D5e4lPG/ab9DWOCTUutJud16sFMFeAw2FGAil8X5c1azQLaN3GEtqVtGEz
+         mTYoZhnLbQ+fJHVb7SR1B4PgjJudK2JDVC5PVFOhP3vmXDrXOKhJpb1BwL9rZEXaBt3F
+         gg98IIim+FHn8ZFNbFzaNK0co9KNvvsVWYBTAAQ8wMsUu/gDdcIwZnzynRnQyPEC6sPF
+         Db7Wm7d3ZNuopSiPkcFHHYrRT/rPRrZZMakywjnnVbZTQWzSbfWO78zLb3WA5YVJXLpK
+         8VqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778845585; x=1779450385;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pvxma9zQmCdm279DUidXmwLHduEyeRuxuVZscrFTJwA=;
-        b=NAapSIkltMu2hT4s9l49UT7A+jpOevesyesVAx/wOu/qCPYgkRAwqIxZpex96wP5bu
-         SekbrzKhRBlNJ8WXym2PwvKVVVRxqjj/CBmBuL+CpercXVmoODJX1/qqDMTdWFggh4sF
-         P40Y1XGMSTdAmHWVOeBD+2TPWDQUJ6hC7DhFSVXkqrNu7L+AV4iTdbm9orx1cCOAg36r
-         +kn7fcGo746pIFZ8bqxPe8FKfLzADpD37Hp6Lrp6FOxbt459rRDC+Tc6vyR9aUtuzqyx
-         YIPFF6x912W7pBLpw/IYCuDPfgjY/RfZpm9ORQ1QEt3jpIbQzPbbq63uYKbxMIZ0ypQ2
-         hRkA==
-X-Forwarded-Encrypted: i=1; AFNElJ9m09mUTUof0jAgq/a6Jh9VhvNFPEuiiBHgPIS2rZ/Ks6umUkKw6Cy0KagUFca61qSUs4Cgty9zIh+Yh73ZUrdkww==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6wnASPUl4WQINJ4R5ZfhtPROAufzZ6dMfKAEGRk8DAssZmdu1
-	lPwtZa4GHtl+6phPkTBIxBVrKlL3AviWDGDDAgfZnnsHcbWFyYKIkgkiiC1Kl+yMmOLLHZQlbde
-	4ybGQ8Ar0Xw==
-X-Gm-Gg: Acq92OEmxfY9Unc0mbWnR1J7VWonu5wEv7dS80W1EAdGp0X5RdiveRbnFahz0hAv5R5
-	/LGCPyUBmXrKN4PxVQeGKzLnjnvoBNVILXHElNl2TdoO+am3POqYGX/SepWury6ZxfJjJnmrqp9
-	I3QEEyceZ6ttlZIlX2T7I+8NRrg8cxSfnRdI4IVVo7ahR9ZKcJJ4XO1BW+dzz4HEBmCLO+IFkEE
-	8bt40+Bm5qvaSktHY5tNL7Q3pAFdDWDGy/OTPidFunxbzEQ8dy1gon62ILYFKy3qLHaJEGOkv6A
-	CdXr4bNZI6dAmYRhG5qxBAbEWe7B5yfJt4RJFmS7cOocWOjyf2uUJY1pctAXR2VKqhY89VkIA5k
-	StUjjHUxTfObNsNKKe85im2q8BWleiYoD3sqO6KmoUKBTeyaLMwVtc30bJOVEoQXYLiwdRvgdyX
-	+6ofK0/akA2xA0PNTVczGTB1Op/olGDUxSDgMT/TynDGs=
-X-Received: by 2002:a05:6000:402c:b0:453:9897:76aa with SMTP id ffacd0b85a97d-45d93eccfbfmr12213466f8f.21.1778845584636;
-        Fri, 15 May 2026 04:46:24 -0700 (PDT)
-Received: from [10.11.12.109] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a5653sm14852612f8f.35.2026.05.15.04.46.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2026 04:46:24 -0700 (PDT)
-Message-ID: <06c264c2-07cb-4157-aa2a-2502ae1f4bd6@linaro.org>
-Date: Fri, 15 May 2026 14:46:21 +0300
+        d=1e100.net; s=20251104; t=1778848884; x=1779453684;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFHLfFog5+tJEOD6z3uXuJEqumNcdwRPWU/fZudPyJE=;
+        b=hyWIp6u2b01jWe2/1sEYI945AUHn1GIrZZ3NZJey5bSBC0OKsq5ZHfRYRfSGHtssMC
+         fiHFpEVdgqW7y26De43eWF9SKv5GGvTZ+fAdTlsDUE5kZH6B+kUQzpTD9JPFhthnrrDp
+         3I8T1RSeuif4totS8vl9VS9FVqBlms/VBotHHRh5u8Hsdz83AplTVz0k9nqaIDwC0KKX
+         C2jLSpZivLCScOlDAiZvhl1uhDDuVDJJ0wgZ+tY7mFIkJ6pKyvddX5UX9B3UkJtVsUs2
+         xAeG/UPIXpxafBAVf1RzK+g1J6sO0ZmTZWRT8d/pcczFW0Q8PkYiJWOw9LTOdrUvwcYX
+         HjCQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9DrDMBXDSi5COnyqwo4N8E422fB2vfmkd9Vr+j0wOmP9LJKOf45XFirwEfxTXljr74oZrSTK61KpPnvVauhzGTbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSfGhIlwXt+mSfjeNkbslxU1dJ60kAxLniYVQbVaOkGU30QEcN
+	pb+ctRxjr/qA4myax0u7zDuGv5LbQJ5CyTf75PVs8Xbz3J/+Dr8MfMnSI6knrvGWnjL3GHSXi1k
+	sH4H17M4=
+X-Gm-Gg: Acq92OGJaULKhglwVv4duRuSr1PIGsvsv0DlE6JYoQTMeepYLZbjwrD6xDT688MASkQ
+	x4zktDOGS35aoyKDL2R7j7P+8GM74VVo0d9qFff+etxmfBiSlYjv+5KM8XKdy8r808v343JY/q7
+	3d5b71hRTRj35nO5MrKOc77Chiib6XOFjypEdyZpITY5E5ecUHbNiS6pQzJ1O/nXz+dgxZ3O3SO
+	CV+ovTvmUazfloJAiAXRsDkXlTEqngvwrFPfU5mjRKW0aSJOIJSJ/PkeQ7+3W8lu2qvazGslBmn
+	0n7I7lcCQ1SB0rzU5428AWQLW0hrbWzXoRg1OD/3d1nwM9Kh9AsVCiT/Toyy6+bTOwgzeFN5Iq7
+	4FCnz8ihfJCqnXM6XLRHiNPJpvSkIdNirGs7lBEtz+fuApBcTOmfJf9uBAfZWiBvUApobHJMMBu
+	PiBpmG6xFEu5Gddp0aBA8eZI561VOUw+qj/pUSgQGhIsKOTKKkwZBlcAi8T81qJ5is3yDrGk6bB
+	RHfLZHQqDxdvpDx9g==
+X-Received: by 2002:a05:600c:a309:b0:486:fba7:b150 with SMTP id 5b1f17b1804b1-48fe61f20a7mr44622645e9.15.1778848883620;
+        Fri, 15 May 2026 05:41:23 -0700 (PDT)
+Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a5653sm15154969f8f.35.2026.05.15.05.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 May 2026 05:41:23 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Fri, 15 May 2026 12:41:21 +0000
+Subject: [PATCH] tty: serial: samsung: Remove redundant port lock
+ acquisition in rx helpers
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] firmware: samsung: acpm: TMU support and cleanups
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-References: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
- <a4c287df-0300-4fae-8a2b-23e2358fb740@linaro.org>
-Content-Language: en-US
-In-Reply-To: <a4c287df-0300-4fae-8a2b-23e2358fb740@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260515-samsung-tty-flow-control-deadlock-v1-1-93255edbc9bc@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAHAUB2oC/x3NQQrCMBBA0auUWTvQCW0FryIuYjKpwZiRTKqW0
+ rs3uHyb/zdQLpEVLt0GhT9Ro+QGOnXgHjbPjNE3g+nN1I80otqXLnnGWlcMSb7oJNciCT1bn8Q
+ 9kfxgJjrTPQwErfMuHOLv/7je9v0Am3DCl3MAAAA=
+X-Change-ID: 20260515-samsung-tty-flow-control-deadlock-1d426171bf41
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ john.ogness@linutronix.d, peter.griffin@linaro.org, 
+ andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com, 
+ stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778848883; l=2912;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=7TZ5vcA+GLdk6E7fGnm5v0lehUpocwQ4ZVzCnZFOHkU=;
+ b=HSB610k4svdM7RKtaunGgLw3+2VSD01p4S4EygS9OUnKmnC03b2/KyWCaywVndUgAybnnLZpV
+ Iy911zmNlEdB3AXvSJIjtzoXHQPpTK2gU4xSiY6C6ROJ3/zU5kryg5R
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
+Sashiko identified a deadlock when the console flow is engaged [1].
 
+When console flow control is enabled (UPF_CONS_FLOW),
+s3c24xx_serial_stop_tx() calls s3c24xx_serial_rx_enable() and
+s3c24xx_serial_start_tx() calls s3c24xx_serial_rx_disable().
 
-On 5/15/26 2:44 PM, Tudor Ambarus wrote:
-> Hi, Krzysztof,
-> 
-> On 5/15/26 12:32 PM, Tudor Ambarus wrote:
->> Changes in v2:
->> - collect tags
->> - resend as sashiko couldn't apply previous version. We want
->>   sashiko's review feedback
-> 
-> That didn't work, sashiko still can't apply:
-> https://sashiko.dev/#/patchset/20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355%40linaro.org
+The serial core framework invokes the .stop_tx() and .start_tx()
+callbacks with the port->lock spinlock already held. Furthermore, all
+internal driver paths that invoke stop_tx (such as the DMA TX
+completion handler s3c24xx_serial_tx_dma_complete() or the PIO TX IRQ
+handler s3c24xx_serial_tx_irq()) also acquire port->lock prior to
+calling it. (Note that s3c24xx_serial_start_tx() is only invoked by the
+serial core).
 
-the correct link is
-https://sashiko.dev/#/patchset/20260515-acpm-tmu-helpers-v2-0-8ca011d5a965%40linaro.org
+However, s3c24xx_serial_rx_enable() and s3c24xx_serial_rx_disable()
+unconditionally attempt to acquire port->lock again using
+uart_port_lock_irqsave(). Since spinlocks are not recursive, this
+causes a deadlock on the same CPU when console flow control is engaged.
 
-the description bellow still applies.
+Remove the redundant lock acquisition from both rx helper functions.
 
-> 
-> cut
-> 
->> ---
->> base-commit: 5e9b7d093f3f77cb0af4409559e3d139babfb443
-> above is v7.1-rc1 (signed tag)
-> 
->> change-id: 20260505-acpm-tmu-helpers-4c5af0e2f07c
->> prerequisite-change-id: 20260423-acpm-fixes-sashiko-reports-ae28b6ed5581:v5
->> prerequisite-patch-id: 18d89d0e2bc0efe2cb366746ac4db36f4682f061
->> prerequisite-patch-id: e877f865862ee94f5750b877b5fad863d8acd7c8
->> prerequisite-patch-id: b5da16b5c6d6731ea519ed68302fd52ce57c7ffa
->> prerequisite-patch-id: df5b1d9df4c8894afaff645c9eb84aa4e3daeeee
->> prerequisite-patch-id: be74a55583acb36dedca3e118f49633172979617
->> prerequisite-patch-id: 31ebc7bd806d4d466c256049f32e3270e2caeeb6
->> prerequisite-patch-id: 7ea0832fcf76e4f40e18b74083904e7e37e1addf
-> 
-> While I see I forgot to update the dependencies, I don't think they
-> matter to sashiko. If sashiko used v7.1-rc1 and the prerequisite
-> patches it would correctly apply the set.
-> 
-> If one goes in the Sashiko link above and expand the `Baseline`
-> (show details), will see:
-> 
-> 5e9b7d093f3f77cb0af4409559e3d139babfb443 (5e9b7d093f3f77cb0af4409559e3d139babfb443)	Failed	View Log
-> 	^ this is v7.1-rc1 (signed tag)
-> 
-> krzk/HEAD (254f49634ee16a731174d2ae34bc50bd5f45e731)	Failed	View Log
-> 	^ this is krzk/HEAD -> krzk/master -> v7.1-rc1
-> 
-> Shall your HEAD point to the krzk/for-next branch? Happy to resubmit
-> the set.
-> 
-> Thanks,
-> ta
+Cc: stable@vger.kernel.org
+Fixes: b497549a035c ("[ARM] S3C24XX: Split serial driver into core and per-cpu drivers")
+Reported-by: John Ogness <john.ogness@linutronix.de>
+Closes: https://sashiko.dev/#/patchset/20260506121606.5805-1-john.ogness%40linutronix.de [1]
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+ drivers/tty/serial/samsung_tty.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 2f94fc798cff..63d0232dffc2 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -245,12 +245,9 @@ static bool s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
+ static void s3c24xx_serial_rx_enable(struct uart_port *port)
+ {
+ 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+-	unsigned long flags;
+ 	int count = 10000;
+ 	u32 ucon, ufcon;
+ 
+-	uart_port_lock_irqsave(port, &flags);
+-
+ 	while (--count && !s3c24xx_serial_txempty_nofifo(port))
+ 		udelay(100);
+ 
+@@ -263,23 +260,18 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
+ 	wr_regl(port, S3C2410_UCON, ucon);
+ 
+ 	ourport->rx_enabled = 1;
+-	uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+ static void s3c24xx_serial_rx_disable(struct uart_port *port)
+ {
+ 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+-	unsigned long flags;
+ 	u32 ucon;
+ 
+-	uart_port_lock_irqsave(port, &flags);
+-
+ 	ucon = rd_regl(port, S3C2410_UCON);
+ 	ucon &= ~S3C2410_UCON_RXIRQMODE;
+ 	wr_regl(port, S3C2410_UCON, ucon);
+ 
+ 	ourport->rx_enabled = 0;
+-	uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+ static void s3c24xx_serial_stop_tx(struct uart_port *port)
+
+---
+base-commit: 16e95bfb79b5d9d01dc7651d98caf3c2ace331cd
+change-id: 20260515-samsung-tty-flow-control-deadlock-1d426171bf41
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
