@@ -1,179 +1,246 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0644103A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F473CC9E8
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 10:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778837559; cv=none; b=KkzAiF6UKAPs+G2hRzjCAWgr3KPu8zzUtWgYx0IQlaOlLZ/quaGQx55Mn8//GZ3kJcyRXarYwwzb6dcIaemYBuwm6stFNMCd9GpmTOg+wmzVyNMnmHb+pYtOkadIZ9+TDpb8JqdtHR9ufbgyFMCsoMvVZFW3UHWDlxk+tRFfAKA=
+	t=1778840482; cv=none; b=gTfcu2Zoci1cVAFVGF9w6iAXOKhlP8SwlhhPBhHLDhFSzC4ZADIVajwm7JcBMK4LJy6JKIS/c1kCYDDZyZGOFO4cGXA9z9vtvB8pCMJP/V3r54bjONchQMCgGx0PuRx4CaU98VBm6Mudax9I+VaoT1lc9Xprq6P31bN8bhKLAE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778837559; c=relaxed/simple;
-	bh=V/zAmCJSjPS4lESeLMnCYH+wKme4wcn13reVAfH2wSY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qAhn8/Ky2eOW1rOiUT9iyOiJ7sHwAU5FI3DQodHHsEAaiGNUqgNLa9d/Qh2uH9M4DBl3v9BRS+NrCUA0e4ulwIdu0eg9jV1EEzJGOX+StBz6Agn9Gm0lfRugznXIXrC9vWK5QVV5L69vmLHqW9veBHONemUAByMHgYYCgOt0MlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HWs9zKPd; arc=none smtp.client-ip=209.85.208.169
+	s=arc-20240116; t=1778840482; c=relaxed/simple;
+	bh=EsfVrBZrJsQs/Tx4mfI8R8eRm6q5uajg1tGl9pwd0JM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BsU8Buyk0Bx8jloYjeeMWkQOVAAt0DECIxPYFw8h9b+mEuvZl7lfgYJkIH1Hoyow7Y785e0Fh44JTv1eYE6wsYPtC95DJbawtRxpEj8rFqsBkrNVSvNmJf7YbydKc/GWzfe5j8MaiYqBDIbPXE7NscQopSv7hR9iSbx3kOpJ/Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W8SRfXK/; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWs9zKPd"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39380e79936so105985031fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 02:32:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W8SRfXK/"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48374014a77so78225945e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 03:21:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778837556; x=1779442356; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bAYzurZY50V3hmmtsDULHaTPPUEpyOSaAQclTNRWi04=;
-        b=HWs9zKPd8M0tg/D8xHPzwjUF++R4Ie2fvhiqKnjEoo8zRvOQGqYr5e7sL+gnQ7XjUf
-         VPn3Q9QKqVM2WK1oE1qPBwsJqkWTpnqFJSdAnIyNtogtlv8pY59Sws8k/JkVatF8LfwK
-         LoOf6GBTDSTt30Z0Q62fRnEz1NhJCDGMaJoFHrSkIo9fOOPzC/6RZsoGttxSUM+E81xY
-         cNPsAErEBPER9xzPdBgbiadlRo9vonWoLOXcCaydtcOrdZWB3wkJhOFigNUmZQYFzTvt
-         Py08jVeEBKlKPhRNVYq+TwIqlV+aU0WxsFOjK0klpVOZ3U3qcUg+UL93O50OlRpOeZ43
-         hN9w==
+        d=linaro.org; s=google; t=1778840479; x=1779445279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HkvhJ/9wP8zr+IJruUAJhSjjyH2HxiZyy6n7D1GMZRw=;
+        b=W8SRfXK/Kgq8GrQxYKwInjZCMRtWX3qIIyuOU/TIduZrBVlynZkhp5ZU+blJ/qI02T
+         z3PGRwTdWZKlwo79lWPPPJ3Ydm5O+MIexA/CBKOs5qm+GUDR+2YiyULKXdVDlIXvEqcI
+         Ku+zyVGq5V8hViIboN3xLKPhkYIProkyGwcnH0rvPeSsS1HHoIztaCdT3W9h5i2SMs6B
+         fqE3zI5CYj6QlipmoMqxuQQ5C6m8cDOg1W0wZleZsDikm/p6naXhM4+UJxbCCvcMul3O
+         GWKEi9EWeIAUgFrbZyuDnT++yIt0N1NNHf8xY7AiWLy1XmXmnSH/E7MKziF92edtNcDV
+         OQAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778837556; x=1779442356;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bAYzurZY50V3hmmtsDULHaTPPUEpyOSaAQclTNRWi04=;
-        b=JzyyjeRyFICC1dRP5iF3cFmoqEU9v6aVQIAbFp++UoUP7zPd1AmhVXbx3uMidxH5cv
-         yJBrJSOtKpwsfeQ4/AMWx0lioI+G8VHmLbNWGoVQ+V+GUNqvGkxdu6Ru2XRiGkych7pG
-         k+JDOJaD9UoQiS7zVQsPFkPkNaKAAJOqly8EZKHqHA0Mo1Onoj58zlsL5GIG/XfgYpKC
-         5z78o9epfzBfBSBiiPjiAhNRP2h1fWCdVb79bJRNdkj0RN9ZMJPkuV4f4mfY2EOsn+2S
-         gLZ+cshOY/GoHTQKd0XeYY7WAG6NlmbOWyARDG/+OEVdaxEd86p5u2GjeWEUqGPlSGaU
-         q0PQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9GOXY8Y7kR0VICLJsk6ra8FCZu2yfpfAGU+2U6vptbAabABbuIcDJWg+EZ9JxbPhQ6j/JLDgMTmWGyCd7fO5POKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo12ksgpVYbg72d7fFF3mHp1R4cK64WH7FoUTJfAzsUWqIjQMy
-	FbNtNPGm3S0oz5GFsl0/1doM6xfAzqYfm8sLYYLZxdl+yXv+tYuOwxwilPeCbcdIV2k=
-X-Gm-Gg: Acq92OH5Uw1449z1bxsMDHAvdjFq0t+mVU2S73MlwltOHGvMx8ZeIpx8Iemwekb/IQM
-	wSnwlNEVcDfr1Jr6OyrV8sjaYx9VDduxpnmPbW0kcBT4XVQ/NLMhOZ8QSS+49iRrRVJgcT2fGga
-	GIiVDljm8A3JErSCw/B98MhvWgXLjZp6W2+ufhnN3IqG2OTlxXpb2xl3BzA2/UMsD0q4cGG/GPM
-	7sytm8vX25ohKNR01hFKivIHta7E5aj3R9u7PxHLXt4GzVEonT3e6ORqa1o51n9nAj4vxJ9FjGO
-	QmN21R5Q8Nkdm2Aoyo0j7hvSCx44LZrjWbHpr5MCKv3ttWP5t8WYTfNvYqFLuU16CfAgLylmuEc
-	TeJ/bn5XAqUwdWkNL7ACw0SPozMa87Nhq+MgF8rEku6zZc96tEm7npJ5ukPuX460vm/SFVR40Yb
-	bO3s4ph4F5MHuLi7z+Otn+sW+kxAQD5mPP8fk5ALDs9QDdoHccshiCH4MG2bAgz2actgCy9LrD/
-	nS54F/R
-X-Received: by 2002:a05:6512:1241:b0:5aa:b6a:7a8c with SMTP id 2adb3069b0e04-5aa0e7755fbmr794712e87.43.1778837555450;
-        Fri, 15 May 2026 02:32:35 -0700 (PDT)
-Received: from ta2.c.googlers.com (17.83.155.104.bc.googleusercontent.com. [104.155.83.17])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a90f10c5e5sm1181661e87.3.2026.05.15.02.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2026 02:32:35 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 15 May 2026 09:32:30 +0000
-Subject: [PATCH v2 6/6] firmware: samsung: acpm: Add
- devm_acpm_get_by_phandle helper
+        d=1e100.net; s=20251104; t=1778840479; x=1779445279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HkvhJ/9wP8zr+IJruUAJhSjjyH2HxiZyy6n7D1GMZRw=;
+        b=OiotojnzWvkOL/8xD2VK2gxWoPvvN3XQ3srojskM+u1vXz6ItogbOtce46P+g8qF+J
+         QumduUp4pT9X4+e+JDd/E+LX2e0LsYz1qcpnbxAL5SyXh7cC+Yh6o82AH//rXCwm9Zdx
+         no0UpyRGgmuXzblkqL7EMNq6qLlZiX6AHGqty1PvI970J8KNvtgIVMknz85Rb0ysCyHM
+         rXnl6ZOiS6LOYuRh6J9iFBeyiziJb2clFUBZvJ3s/jVJadYWNpIcaX5JdrMWY9a5/AmS
+         exhCnbtS8I/VbpDBEjnxmVx3V9ag3iPKYxFd1W7wyKtI1cL4UPjrxYjWVWd8jkpOkavD
+         iLNw==
+X-Forwarded-Encrypted: i=1; AFNElJ9pul2bgI7owCCix3deKNjqvm+lE/0KO60uiSjOVr8u1Opzoc96BAeziSKMXU31tp7LkEpVo/IsR7i8yQoYicIPEw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuMOHNAM/XM8TbjmUH7bgbMrrUwW13oKkjNP4KGrywPzfyyq2p
+	PTwSw/jVyWHtaOOVZKNDySslNugHVwSe10zwcAIZIjgdLr0zxnWBkXOo6ItzZv2dmoQ=
+X-Gm-Gg: Acq92OEn7uGa9lOsni10eZYotJUgIf+rpgeUsoqfMsRthIywS/33tsEp4ySJHy48ZwE
+	xUK1X1801gmOrCrGHWIhQ/7gaXOjD0ovoXOCbMsixYix+SrIGVLbPM/jNcTALR7E5Bcn7ksG/lM
+	pJCPaWJCU5nFJ4VUDds2aboTaNbx+S20SIhm40s56wYu2igLLyyQAwd8JfSBBBlVsAjKrqRcH3L
+	3GHBoLAE20SBbSGtg6b5NVOsOZL+KzIRSgLN73lPy7uDNdkw1Vtp2N3aR3RzBTXNqAefQ5MEr07
+	7tlBGzc8qbaX3xy/m/pamQw3a9SXQAPWJqv61z0ipA8PqTe/7TyZcEHXxNgIc+FTwyv+F9hzBxe
+	XQU9W1bcLhyc/nvMB9RAQvLgoXe02kWF3msNuSZs2wJHEK8XGsh6d2VKkwkxhai47kHotcNDVD/
+	qaQdtrLKJHbMEhG1fORp5wj8kBLag6F5z5
+X-Received: by 2002:a05:600c:46cf:b0:48e:8974:c377 with SMTP id 5b1f17b1804b1-48fe6626ba1mr44036975e9.29.1778840479456;
+        Fri, 15 May 2026 03:21:19 -0700 (PDT)
+Received: from [10.11.12.109] ([79.115.63.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c834besm52284855e9.3.2026.05.15.03.21.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 May 2026 03:21:19 -0700 (PDT)
+Message-ID: <ae8fdfa0-d910-432c-b5fc-f11b997a4bce@linaro.org>
+Date: Fri, 15 May 2026 13:21:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH tty v4 2/6] serial: Replace driver usage of UPF_CONS_FLOW
+To: John Ogness <john.ogness@linutronix.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Thomas Fourier <fourier.thomas@gmail.com>, Kees Cook <kees@kernel.org>,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, sparclinux@vger.kernel.org,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alexey Klimov <alexey.klimov@linaro.org>, Juan Yescas <jyescas@google.com>
+References: <20260506121606.5805-1-john.ogness@linutronix.de>
+ <20260506121606.5805-3-john.ogness@linutronix.de>
+ <87lddvy2dl.fsf@jogness.linutronix.de>
+ <1a5abd2e-e9ab-4a48-94c2-5e082f57adde@kernel.org>
+ <87wlx56rcc.fsf@jogness.linutronix.de>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <87wlx56rcc.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260515-acpm-tmu-helpers-v2-6-8ca011d5a965@linaro.org>
-References: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
-In-Reply-To: <20260515-acpm-tmu-helpers-v2-0-8ca011d5a965@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- peter.griffin@linaro.org, andre.draszik@linaro.org, jyescas@google.com, 
- kernel-team@android.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778837548; l=3069;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=V/zAmCJSjPS4lESeLMnCYH+wKme4wcn13reVAfH2wSY=;
- b=InTs9KReVdF2eoMfw0/biWdc7G3Bd8Nh8MxuA9Gg5UmfB4Osm6mTlKpQfuXozSCoIiHD7QqQe
- acV6BXVoUDbCnqsPo4ZPDSLBCkon0f53ViIX/VdTjIn/a3bkutA2HBs
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Introduce devm_acpm_get_by_phandle() to standardize how consumer
-drivers acquire a handle to the ACPM IPC interface. Enforce the
-use of the "samsung,acpm-ipc" property name across the SoC and
-simplify the boilerplate code in client drivers.
 
-The first consumer of this helper is the Exynos ACPM Thermal Management
-Unit (TMU) driver. The TMU utilizes a hybrid management approach: direct
-register access from the Application Processor (AP) is restricted to the
-interrupt pending (INTPEND) registers for event identification.
-High-level functional tasks, such as sensor initialization, threshold
-programming, and temperature reads, are delegated to the ACPM firmware
-via this IPC interface.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/firmware/samsung/exynos-acpm.c             | 23 ++++++++++++++++++++++
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |  6 ++++++
- 2 files changed, 29 insertions(+)
+On 5/15/26 10:53 AM, John Ogness wrote:
+> On 2026-05-13, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>> (This email is particularly directed at the Samsung folks.)
+>>>
+>>> Responding to Sashiko:
+>>>
+>>> https://sashiko.dev/#/patchset/20260506121606.5805-1-john.ogness%40linutronix.de
+>>>
+>>> On 2026-05-06, Sashiko wrote:
+>>>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+>>>>> index e27806bf2cf3e..2f94fc798cffb 100644
+>>>>> --- a/drivers/tty/serial/samsung_tty.c
+>>>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>>>> @@ -319,7 +319,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
+>>>>>  	ourport->tx_enabled = 0;
+>>>>>  	ourport->tx_in_progress = 0;
+>>>>>  
+>>>>> -	if (port->flags & UPF_CONS_FLOW)
+>>>>> +	if (uart_cons_flow_enabled(port))
+>>>>>  		s3c24xx_serial_rx_enable(port);
+>>>>
+>>>> This isn't a new bug introduced by this patch, but does this code
+>>>> result in a recursive spinlock acquisition and deadlock when console
+>>>> flow control is enabled?
+>>>>
+>>>> The serial core framework calls port->ops->stop_tx() with the
+>>>> port->lock spinlock already held. When uart_cons_flow_enabled(port)
+>>>> evaluates to true, s3c24xx_serial_stop_tx() invokes
+>>>> s3c24xx_serial_rx_enable().
+>>>>
+>>>> Looking at s3c24xx_serial_rx_enable(), it unconditionally attempts to
+>>>> acquire the exact same lock again:
+>>>>
+>>>> static void s3c24xx_serial_rx_enable(struct uart_port *port)
+>>>> {
+>>>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>>>> 	unsigned long flags;
+>>>> 	...
+>>>> 	uart_port_lock_irqsave(port, &flags);
+>>>> 	...
+>>>> }
+>>>>
+>>>> Because spinlocks are not recursive in the kernel, it appears this
+>>>> sequence would cause an immediate deadlock on the same CPU.
+>>>
+>>> Although out of scope for my series, the reported issue is real. Perhaps
+>>> something for Krzysztof or Alim to look into.
+>>>
+>>>>> @@ -493,7 +493,7 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
+>>>>>  	struct tty_port *tport = &port->state->port;
+>>>>>  
+>>>>>  	if (!ourport->tx_enabled) {
+>>>>> -		if (port->flags & UPF_CONS_FLOW)
+>>>>> +		if (uart_cons_flow_enabled(port))
+>>>>>  			s3c24xx_serial_rx_disable(port);
+>>>>
+>>>> Similarly here, s3c24xx_serial_start_tx() is also called with
+>>>> port->lock held, and s3c24xx_serial_rx_disable() will attempt to
+>>>> acquire port->lock again:
+>>>>
+>>>> static void s3c24xx_serial_rx_disable(struct uart_port *port)
+>>>> {
+>>>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
+>>>> 	unsigned long flags;
+>>>> 	...
+>>>> 	uart_port_lock_irqsave(port, &flags);
+>>>> 	...
+>>>> }
+>>>>
+>>>> Could this pre-existing locking issue in the samsung_tty driver be
+>>>> addressed so that the rx enable/disable helpers do not try to take the
+>>>> port lock when it is already held by the caller?
+>>>
+>>> Also legitimate. But out of scope for my series.
+>>
+>>
+>> Thanks for letting us know. Deadlock did not happen so far, so something
+>> is missing in Sashiko's report. :)
+> 
+> Nothing is missing. I am guessing you never use console flow
+> control. The deadlock is clearly visible:
+> 
+> ->stop_tx() (always called with the port locked)
+>   s3c24xx_serial_stop_tx()
+>     s3c24xx_serial_rx_enable()
+>       uart_port_lock_irqsave() (DEADLOCK!)
+> 
 
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 2cebc5456968..a663e15fbad6 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -857,6 +857,29 @@ struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_acpm_get_by_node);
- 
-+/**
-+ * devm_acpm_get_by_phandle - Resource managed lookup of the standardized
-+ * "samsung,acpm-ipc" handle.
-+ * @dev: consumer device
-+ *
-+ * Return: pointer to handle on success, ERR_PTR(-errno) otherwise.
-+ */
-+struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev)
-+{
-+	struct acpm_handle *handle;
-+	struct device_node *np;
-+
-+	np = of_parse_phandle(dev->of_node, "samsung,acpm-ipc", 0);
-+	if (!np)
-+		return ERR_PTR(-ENODEV);
-+
-+	handle = devm_acpm_get_by_node(dev, np);
-+	of_node_put(np);
-+
-+	return handle;
-+}
-+EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
-+
- static const struct acpm_match_data acpm_gs101 = {
- 	.initdata_base = ACPM_GS101_INITDATA_BASE,
- 	.acpm_clk_dev_name = "gs101-acpm-clk",
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index 08d9f5c95701..83cbd425b652 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -71,6 +71,7 @@ struct device;
- #if IS_ENABLED(CONFIG_EXYNOS_ACPM_PROTOCOL)
- struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- 					  struct device_node *np);
-+struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev);
- #else
- 
- static inline struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
-@@ -78,6 +79,11 @@ static inline struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
+Right.
+
+The lock acquisitions in the rx helper functions are redundant and shall be
+removed.
+
+The serial core framework invokes the .stop_tx() and .start_tx() callbacks
+with the port->lock spinlock already held. Furthermore, all internal driver
+paths that invoke stop_tx/start_tx also acquire port->lock prior to calling
+them.
+    
+However, s3c24xx_serial_rx_enable() and s3c24xx_serial_rx_disable()
+unconditionally attempt to acquire port->lock again using
+uart_port_lock_irqsave(). Since kernel spinlocks are not recursive, this
+causes a deadlock on the same CPU when console flow control is engaged.
+
+Just removing the redundant lock acquisitions shall fix it. I'll prepare
+a patch.
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index e27806bf2cf3..17cd5bb100b1 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -245,12 +245,9 @@ static bool s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
+ static void s3c24xx_serial_rx_enable(struct uart_port *port)
  {
- 	return ERR_PTR(-ENODEV);
- }
-+
-+static inline struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
- #endif
+        struct s3c24xx_uart_port *ourport = to_ourport(port);
+-       unsigned long flags;
+        int count = 10000;
+        u32 ucon, ufcon;
  
- #endif /* __EXYNOS_ACPM_PROTOCOL_H */
-
--- 
-2.54.0.563.g4f69b47b94-goog
-
+-       uart_port_lock_irqsave(port, &flags);
+-
+        while (--count && !s3c24xx_serial_txempty_nofifo(port))
+                udelay(100);
+ 
+@@ -263,23 +260,18 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
+        wr_regl(port, S3C2410_UCON, ucon);
+ 
+        ourport->rx_enabled = 1;
+-       uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+ static void s3c24xx_serial_rx_disable(struct uart_port *port)
+ {
+        struct s3c24xx_uart_port *ourport = to_ourport(port);
+-       unsigned long flags;
+        u32 ucon;
+ 
+-       uart_port_lock_irqsave(port, &flags);
+-
+        ucon = rd_regl(port, S3C2410_UCON);
+        ucon &= ~S3C2410_UCON_RXIRQMODE;
+        wr_regl(port, S3C2410_UCON, ucon);
+ 
+        ourport->rx_enabled = 0;
+-       uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+ static void s3c24xx_serial_stop_tx(struct uart_port *port)
