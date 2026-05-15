@@ -1,246 +1,210 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F473CC9E8
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 10:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE0844BC93;
+	Fri, 15 May 2026 10:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778840482; cv=none; b=gTfcu2Zoci1cVAFVGF9w6iAXOKhlP8SwlhhPBhHLDhFSzC4ZADIVajwm7JcBMK4LJy6JKIS/c1kCYDDZyZGOFO4cGXA9z9vtvB8pCMJP/V3r54bjONchQMCgGx0PuRx4CaU98VBm6Mudax9I+VaoT1lc9Xprq6P31bN8bhKLAE4=
+	t=1778841564; cv=none; b=q6OFUFT2UCqnfepVWKejN8uVftPJfC3vFboLCwWGw1ENIGawLDpzhDUvDP5deQP3UDuZjnoNhIh58T7bcJKb66HcWjHFl0CuLOjajU2Kf8PE7HH6QGTlcrdi4U5d+2/xf6GhnL1Fx8oQWiaHW2RyDVI/BXnlYLDjCnfkqumUz5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778840482; c=relaxed/simple;
-	bh=EsfVrBZrJsQs/Tx4mfI8R8eRm6q5uajg1tGl9pwd0JM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsU8Buyk0Bx8jloYjeeMWkQOVAAt0DECIxPYFw8h9b+mEuvZl7lfgYJkIH1Hoyow7Y785e0Fh44JTv1eYE6wsYPtC95DJbawtRxpEj8rFqsBkrNVSvNmJf7YbydKc/GWzfe5j8MaiYqBDIbPXE7NscQopSv7hR9iSbx3kOpJ/Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W8SRfXK/; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1778841564; c=relaxed/simple;
+	bh=xqJosKum8u3HfaS4s7QBFPoBoRkyRsgBlwzVgVbWZZQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jgb58ymvvTQxPNAgPYvCxyI+W/kv8WZpR5bGRXLVlkLuL/cla5LP0OpmWlYiakrOOAzn2xqW9vTZXiEAD/szBca8f9ZwD4OQTE6s/CSxYg3852e258F7zUPSbw4LwBm//5IHFxAIsAm1crNq13BmSoTADHaPLwS9BYAhjO3+6ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=NSUsCuvn; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W8SRfXK/"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48374014a77so78225945e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2026 03:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778840479; x=1779445279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HkvhJ/9wP8zr+IJruUAJhSjjyH2HxiZyy6n7D1GMZRw=;
-        b=W8SRfXK/Kgq8GrQxYKwInjZCMRtWX3qIIyuOU/TIduZrBVlynZkhp5ZU+blJ/qI02T
-         z3PGRwTdWZKlwo79lWPPPJ3Ydm5O+MIexA/CBKOs5qm+GUDR+2YiyULKXdVDlIXvEqcI
-         Ku+zyVGq5V8hViIboN3xLKPhkYIProkyGwcnH0rvPeSsS1HHoIztaCdT3W9h5i2SMs6B
-         fqE3zI5CYj6QlipmoMqxuQQ5C6m8cDOg1W0wZleZsDikm/p6naXhM4+UJxbCCvcMul3O
-         GWKEi9EWeIAUgFrbZyuDnT++yIt0N1NNHf8xY7AiWLy1XmXmnSH/E7MKziF92edtNcDV
-         OQAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778840479; x=1779445279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HkvhJ/9wP8zr+IJruUAJhSjjyH2HxiZyy6n7D1GMZRw=;
-        b=OiotojnzWvkOL/8xD2VK2gxWoPvvN3XQ3srojskM+u1vXz6ItogbOtce46P+g8qF+J
-         QumduUp4pT9X4+e+JDd/E+LX2e0LsYz1qcpnbxAL5SyXh7cC+Yh6o82AH//rXCwm9Zdx
-         no0UpyRGgmuXzblkqL7EMNq6qLlZiX6AHGqty1PvI970J8KNvtgIVMknz85Rb0ysCyHM
-         rXnl6ZOiS6LOYuRh6J9iFBeyiziJb2clFUBZvJ3s/jVJadYWNpIcaX5JdrMWY9a5/AmS
-         exhCnbtS8I/VbpDBEjnxmVx3V9ag3iPKYxFd1W7wyKtI1cL4UPjrxYjWVWd8jkpOkavD
-         iLNw==
-X-Forwarded-Encrypted: i=1; AFNElJ9pul2bgI7owCCix3deKNjqvm+lE/0KO60uiSjOVr8u1Opzoc96BAeziSKMXU31tp7LkEpVo/IsR7i8yQoYicIPEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuMOHNAM/XM8TbjmUH7bgbMrrUwW13oKkjNP4KGrywPzfyyq2p
-	PTwSw/jVyWHtaOOVZKNDySslNugHVwSe10zwcAIZIjgdLr0zxnWBkXOo6ItzZv2dmoQ=
-X-Gm-Gg: Acq92OEn7uGa9lOsni10eZYotJUgIf+rpgeUsoqfMsRthIywS/33tsEp4ySJHy48ZwE
-	xUK1X1801gmOrCrGHWIhQ/7gaXOjD0ovoXOCbMsixYix+SrIGVLbPM/jNcTALR7E5Bcn7ksG/lM
-	pJCPaWJCU5nFJ4VUDds2aboTaNbx+S20SIhm40s56wYu2igLLyyQAwd8JfSBBBlVsAjKrqRcH3L
-	3GHBoLAE20SBbSGtg6b5NVOsOZL+KzIRSgLN73lPy7uDNdkw1Vtp2N3aR3RzBTXNqAefQ5MEr07
-	7tlBGzc8qbaX3xy/m/pamQw3a9SXQAPWJqv61z0ipA8PqTe/7TyZcEHXxNgIc+FTwyv+F9hzBxe
-	XQU9W1bcLhyc/nvMB9RAQvLgoXe02kWF3msNuSZs2wJHEK8XGsh6d2VKkwkxhai47kHotcNDVD/
-	qaQdtrLKJHbMEhG1fORp5wj8kBLag6F5z5
-X-Received: by 2002:a05:600c:46cf:b0:48e:8974:c377 with SMTP id 5b1f17b1804b1-48fe6626ba1mr44036975e9.29.1778840479456;
-        Fri, 15 May 2026 03:21:19 -0700 (PDT)
-Received: from [10.11.12.109] ([79.115.63.228])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c834besm52284855e9.3.2026.05.15.03.21.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2026 03:21:19 -0700 (PDT)
-Message-ID: <ae8fdfa0-d910-432c-b5fc-f11b997a4bce@linaro.org>
-Date: Fri, 15 May 2026 13:21:15 +0300
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="NSUsCuvn"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id EDAD8270D2;
+	Fri, 15 May 2026 12:39:20 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id nitB1vRL07iJ; Fri, 15 May 2026 12:39:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1778841560; bh=xqJosKum8u3HfaS4s7QBFPoBoRkyRsgBlwzVgVbWZZQ=;
+	h=From:Subject:Date:To:Cc;
+	b=NSUsCuvn9Hk64UQi5BXEvj2kJV376hVGDOyGiZQJXq+eLhE3Y06LdENJto7rmWPg1
+	 c9W2KuAr4jEQp4Pg6CEdYgLIhbmNi6f+bRy3hXsnhSngHkwVfL2rMXT7ywjFs5BW7q
+	 s9utDh4Ysc0mTfHNlrDvVJBs9kmENlDJ+kGHUEVh19sG3HAfVn3Fw02FXF96matvbh
+	 d8cHLhlj7AKFYVdqII42TO64CFZKgH9nkNrB0McM6JcMb5F8E33ojgtuBrZYnuHuA7
+	 xanlu0ALGlj4iUonamZ9j6/X4RIgCm9+MZ0t/mYcqzFaw7Qhx5+5g+SUqkg+lZUoyN
+	 t1kM/xGMSHvGg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v6 00/11] Support for Samsung S2MU005 PMIC and its
+ sub-devices
+Date: Fri, 15 May 2026 16:08:56 +0530
+Message-Id: <20260515-s2mu005-pmic-v6-0-1979106992d4@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH tty v4 2/6] serial: Replace driver usage of UPF_CONS_FLOW
-To: John Ogness <john.ogness@linutronix.de>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
- linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Thomas Fourier <fourier.thomas@gmail.com>, Kees Cook <kees@kernel.org>,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, sparclinux@vger.kernel.org,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alexey Klimov <alexey.klimov@linaro.org>, Juan Yescas <jyescas@google.com>
-References: <20260506121606.5805-1-john.ogness@linutronix.de>
- <20260506121606.5805-3-john.ogness@linutronix.de>
- <87lddvy2dl.fsf@jogness.linutronix.de>
- <1a5abd2e-e9ab-4a48-94c2-5e082f57adde@kernel.org>
- <87wlx56rcc.fsf@jogness.linutronix.de>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <87wlx56rcc.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMH3BmoC/2XOQW7DIBCF4atErEs1DAPYWfUeVRcYDwmLhAhSq
+ 1XkuxdHitLYy4f0/cNNVC6Jq9jvbqLwlGrK5zbs206Eoz8fWKaxbYGARimFsuLpG8DIyykFCcG
+ 66O3ggw6ikUvhmH7uuc+vto+pXnP5vdcntbw+QvQampQE2bNWHY3aQ+g/xlRLztf3XA5iSU344
+ BYU2hXHxl0XlXcmGnJ+y/WTI5oV140P5CNzT86C3nJ6ctp8npbrkR11YJxju+XmH8c1N43HMIR
+ +9MYD0Cuf5/kPAcWbmKYBAAA=
+X-Change-ID: 20251112-s2mu005-pmic-0c67fa6bac3c
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Nam Tran <trannamatk@gmail.com>, 
+ =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
 
+S2MU005 is an MFD chip manufactured by Samsung Electronics. This is
+found in various devices manufactured by Samsung and others, including
+all Exynos 7870 devices. It is known to have the following features:
 
+1. Two LED channels with adjustable brightness for use as a torch, or a
+   flash strobe.
+2. An RGB LED with 8-bit channels. Usually programmed as a notification
+   indicator.
+3. An MUIC, which works with USB micro-B (and USB-C?). For the micro-B
+   variant though, it measures the ID-GND resistance using an internal
+   ADC.
+4. A charger device, which reports if charger is online, voltage,
+   resistance, etc.
 
-On 5/15/26 10:53 AM, John Ogness wrote:
-> On 2026-05-13, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> (This email is particularly directed at the Samsung folks.)
->>>
->>> Responding to Sashiko:
->>>
->>> https://sashiko.dev/#/patchset/20260506121606.5805-1-john.ogness%40linutronix.de
->>>
->>> On 2026-05-06, Sashiko wrote:
->>>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
->>>>> index e27806bf2cf3e..2f94fc798cffb 100644
->>>>> --- a/drivers/tty/serial/samsung_tty.c
->>>>> +++ b/drivers/tty/serial/samsung_tty.c
->>>>> @@ -319,7 +319,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
->>>>>  	ourport->tx_enabled = 0;
->>>>>  	ourport->tx_in_progress = 0;
->>>>>  
->>>>> -	if (port->flags & UPF_CONS_FLOW)
->>>>> +	if (uart_cons_flow_enabled(port))
->>>>>  		s3c24xx_serial_rx_enable(port);
->>>>
->>>> This isn't a new bug introduced by this patch, but does this code
->>>> result in a recursive spinlock acquisition and deadlock when console
->>>> flow control is enabled?
->>>>
->>>> The serial core framework calls port->ops->stop_tx() with the
->>>> port->lock spinlock already held. When uart_cons_flow_enabled(port)
->>>> evaluates to true, s3c24xx_serial_stop_tx() invokes
->>>> s3c24xx_serial_rx_enable().
->>>>
->>>> Looking at s3c24xx_serial_rx_enable(), it unconditionally attempts to
->>>> acquire the exact same lock again:
->>>>
->>>> static void s3c24xx_serial_rx_enable(struct uart_port *port)
->>>> {
->>>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
->>>> 	unsigned long flags;
->>>> 	...
->>>> 	uart_port_lock_irqsave(port, &flags);
->>>> 	...
->>>> }
->>>>
->>>> Because spinlocks are not recursive in the kernel, it appears this
->>>> sequence would cause an immediate deadlock on the same CPU.
->>>
->>> Although out of scope for my series, the reported issue is real. Perhaps
->>> something for Krzysztof or Alim to look into.
->>>
->>>>> @@ -493,7 +493,7 @@ static void s3c24xx_serial_start_tx(struct uart_port *port)
->>>>>  	struct tty_port *tport = &port->state->port;
->>>>>  
->>>>>  	if (!ourport->tx_enabled) {
->>>>> -		if (port->flags & UPF_CONS_FLOW)
->>>>> +		if (uart_cons_flow_enabled(port))
->>>>>  			s3c24xx_serial_rx_disable(port);
->>>>
->>>> Similarly here, s3c24xx_serial_start_tx() is also called with
->>>> port->lock held, and s3c24xx_serial_rx_disable() will attempt to
->>>> acquire port->lock again:
->>>>
->>>> static void s3c24xx_serial_rx_disable(struct uart_port *port)
->>>> {
->>>> 	struct s3c24xx_uart_port *ourport = to_ourport(port);
->>>> 	unsigned long flags;
->>>> 	...
->>>> 	uart_port_lock_irqsave(port, &flags);
->>>> 	...
->>>> }
->>>>
->>>> Could this pre-existing locking issue in the samsung_tty driver be
->>>> addressed so that the rx enable/disable helpers do not try to take the
->>>> port lock when it is already held by the caller?
->>>
->>> Also legitimate. But out of scope for my series.
->>
->>
->> Thanks for letting us know. Deadlock did not happen so far, so something
->> is missing in Sashiko's report. :)
-> 
-> Nothing is missing. I am guessing you never use console flow
-> control. The deadlock is clearly visible:
-> 
-> ->stop_tx() (always called with the port locked)
->   s3c24xx_serial_stop_tx()
->     s3c24xx_serial_rx_enable()
->       uart_port_lock_irqsave() (DEADLOCK!)
-> 
+This patch series implements a lot of these features. Naturally, this
+series touches upon a lot of subsystems. The 'parent' is the MFD driver,
+so the subsystems have some form of dependency to the MFD driver, so
+they are not separable.
 
-Right.
+Here are the subsystems corresponding to the patch numbers:
+dt-bindings - 01, 02, 03
+mfd         - 03, 04, 05, 06
+led         - 01, 07, 08, 09
+extcon      - 02, 10
+power       - 11
 
-The lock acquisitions in the rx helper functions are redundant and shall be
-removed.
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v6:
+- Fix build, UAF, and functional errors with
+  CONFIG_V4L2_FLASH_LED_CLASS=m (Lee Jones)
+- Remove (ret < 0) wherever redundant (Lee Jones)
+- Remove extra conditionals for supporting multiple variants (Lee Jones)
+- Fix OOB condition in initailizing flash LED channels (Lee Jones)
+- declare i inside for, like: for (int i = 0; ...) (Lee Jones)
+- Rewrite and simplify closest timing function for clarity (Lee Jones)
+- Link to v5: https://lore.kernel.org/r/20260424-s2mu005-pmic-v5-0-fcbc9da5a004@disroot.org
 
-The serial core framework invokes the .stop_tx() and .start_tx() callbacks
-with the port->lock spinlock already held. Furthermore, all internal driver
-paths that invoke stop_tx/start_tx also acquire port->lock prior to calling
-them.
-    
-However, s3c24xx_serial_rx_enable() and s3c24xx_serial_rx_disable()
-unconditionally attempt to acquire port->lock again using
-uart_port_lock_irqsave(). Since kernel spinlocks are not recursive, this
-causes a deadlock on the same CPU when console flow control is engaged.
+Changes in v5:
+- Drop port property from charger dt binding (Krzysztof Kozlowski)
+- Create separate dt binding for S2MU005 MFD (Krzysztof Kozlowski)
+- Move RGB LED and charger schema to parent schema (Rob Herring)
+- Fix error of using invalid revision mask
+- Link to v4: https://lore.kernel.org/r/20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org
 
-Just removing the redundant lock acquisitions shall fix it. I'll prepare
-a patch.
+Changes in v4:
+- Use OF graph to connect charger with MUIC in device tree
+- Move DMA coherent mask to all MFD PMICs (André Draszik)
+- Modify pointer names for flash/RGB drivers (Lee Jones)
+- Use 100-char line wrap for flash/RGB drivers (Lee Jones)
+- Revamp LED device initialization in flash driver (Lee Jones)
+- Add proper USB 2.0 support in charger driver (Łukasz Lebiedziński)
+- Link to v3: https://lore.kernel.org/r/20260225-s2mu005-pmic-v3-0-b4afee947603@disroot.org
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index e27806bf2cf3..17cd5bb100b1 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -245,12 +245,9 @@ static bool s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
- static void s3c24xx_serial_rx_enable(struct uart_port *port)
- {
-        struct s3c24xx_uart_port *ourport = to_ourport(port);
--       unsigned long flags;
-        int count = 10000;
-        u32 ucon, ufcon;
- 
--       uart_port_lock_irqsave(port, &flags);
--
-        while (--count && !s3c24xx_serial_txempty_nofifo(port))
-                udelay(100);
- 
-@@ -263,23 +260,18 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
-        wr_regl(port, S3C2410_UCON, ucon);
- 
-        ourport->rx_enabled = 1;
--       uart_port_unlock_irqrestore(port, flags);
- }
- 
- static void s3c24xx_serial_rx_disable(struct uart_port *port)
- {
-        struct s3c24xx_uart_port *ourport = to_ourport(port);
--       unsigned long flags;
-        u32 ucon;
- 
--       uart_port_lock_irqsave(port, &flags);
--
-        ucon = rd_regl(port, S3C2410_UCON);
-        ucon &= ~S3C2410_UCON_RXIRQMODE;
-        wr_regl(port, S3C2410_UCON, ucon);
- 
-        ourport->rx_enabled = 0;
--       uart_port_unlock_irqrestore(port, flags);
- }
- 
- static void s3c24xx_serial_stop_tx(struct uart_port *port)
+Changes in v3:
+- Remove "extcon" text from dt-bindings documentation (Rob Herring)
+- Add connector for MUIC node
+- Fix dt binding errors reported by robh's bot
+- Fix kernel test robot const errors 
+- Remove FIELD_PREP() values in register header file (André Draszik)
+- Add max_register, volatile_reg, cache_type (André Draszik)
+- Redo [v2 07/12] to NOT store the PMIC revision (André Draszik)
+- Add a commit to fix DMA coherent mask in I2C PMICs
+- Implement various flow changes in flash LED driver (André Draszik)
+- Use device_for_each_child_node_scoped() (André Draszik)
+- Fix CFI panic in devm_add_action_or_reset()
+- Link to v2: https://lore.kernel.org/r/20260126-s2mu005-pmic-v2-0-78f1a75f547a@disroot.org
+
+Changes in v2:
+- Drop [v1 06/13], instead use regmap_irq_chip::get_irq_regs() 
+- Remove references to driver in devicetree commits (Conor Dooley)
+- Propagate errors of sec_pmic_store_rev() (André Draszik)
+- Fix documentation language errors (Randy Dunlap)
+- Link to v1: https://lore.kernel.org/r/20251114-s2mu005-pmic-v1-0-9e3184d3a0c9@disroot.org
+
+To: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: André Draszik <andre.draszik@linaro.org>
+To: Nam Tran <trannamatk@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+
+---
+Kaustabh Chakraborty (11):
+      dt-bindings: leds: document Samsung S2M series PMIC flash LED device
+      dt-bindings: extcon: document Samsung S2M series PMIC extcon device
+      dt-bindings: mfd: add documentation for S2MU005 PMIC
+      mfd: sec: add support for S2MU005 PMIC
+      mfd: sec: set DMA coherent mask
+      mfd: sec: resolve PMIC revision in S2MU005
+      leds: flash: add support for Samsung S2M series PMIC flash LED device
+      leds: rgb: add support for Samsung S2M series PMIC RGB LED device
+      Documentation: leds: document pattern behavior of Samsung S2M series PMIC RGB LEDs
+      extcon: add support for Samsung S2M series PMIC extcon devices
+      power: supply: add support for Samsung S2M series PMIC charger device
+
+ .../bindings/extcon/samsung,s2mu005-muic.yaml      |  40 ++
+ .../bindings/leds/samsung,s2mu005-flash.yaml       |  52 +++
+ .../bindings/mfd/samsung,s2mu005-pmic.yaml         | 120 ++++++
+ Documentation/leds/index.rst                       |   1 +
+ Documentation/leds/leds-s2m-rgb.rst                |  60 +++
+ drivers/extcon/Kconfig                             |  10 +
+ drivers/extcon/Makefile                            |   1 +
+ drivers/extcon/extcon-s2m.c                        | 345 +++++++++++++++++
+ drivers/leds/flash/Kconfig                         |  12 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-s2m-flash.c                | 352 +++++++++++++++++
+ drivers/leds/rgb/Kconfig                           |  11 +
+ drivers/leds/rgb/Makefile                          |   1 +
+ drivers/leds/rgb/leds-s2m-rgb.c                    | 416 +++++++++++++++++++++
+ drivers/mfd/sec-common.c                           |  37 +-
+ drivers/mfd/sec-i2c.c                              |  29 ++
+ drivers/mfd/sec-irq.c                              |  74 ++++
+ drivers/power/supply/Kconfig                       |  11 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/s2m-charger.c                 | 299 +++++++++++++++
+ include/linux/mfd/samsung/core.h                   |   1 +
+ include/linux/mfd/samsung/irq.h                    |  66 ++++
+ include/linux/mfd/samsung/s2mu005.h                | 332 ++++++++++++++++
+ 23 files changed, 2266 insertions(+), 6 deletions(-)
+---
+base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
+change-id: 20251112-s2mu005-pmic-0c67fa6bac3c
+
+Best regards,
+--  
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
