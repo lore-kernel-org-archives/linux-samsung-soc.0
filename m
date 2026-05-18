@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A753446C3;
-	Mon, 18 May 2026 10:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D673E717A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2026 10:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779099830; cv=none; b=mzutUTij6nmkuOx8tN+unSg50xtdWzNje13LlwajkEuPQpHPKDnfScaGFJrcrJw5JYkvS9xKgQzlNMJdvHe5Uk58SlrYivSDLeB+MihO85xHXFD7xRm3eQrkFaenCr2MRUJb6+r+vBjOz7/0RIJThyQvzq1m5jKv5QQ0rO4FTZY=
+	t=1779100048; cv=none; b=ma9hH20iJjlFRb775LdOnCGlXVd7bM5ttZQljbqtr82/jqwvi4rTJFAfIGel74KS9M+R9NN76F2vfrSwDRQZD6YebUVTUwAiMkmCnmCiP2ADcPw0nZ5R8lEk0ZkZ8Q+JcCxWS/tgMSlwLHn3xFVJsZF1/GM55Fby2fP9JzUHSK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779099830; c=relaxed/simple;
-	bh=i3wWInKnlNmS1++USwfTN3VrDNZNb25BYuiRZlvBVTU=;
+	s=arc-20240116; t=1779100048; c=relaxed/simple;
+	bh=iV0yJhfhI1iDqjYTPkc7D13ggZb4VKds5NvfVEmjYBg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A9mLnV8rAX3unni0aKeCAL0Mh5T4asjnjwJJw6u8+TWvh+Nd+rk2jUnZGrE1oHjDZge72pvNxf9YeCNMnmf56HGVQWU6FYpZbrIwjyPGAWei6x3s/IFzEFHAAEZ4QaqyvSgGgdhlThzg+z6mR2yHPC4MKcBnvA+ZL2ahJ6/nX9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxRbxLuC; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=g9YQNX6qqAMILqJq5xaY/KNHUeGXReNf6hLcLM7QxIoj7l22O7dkbOKlzhlPlW5uoO+q4TpeE0zjpGQGlmFvIHNDQtSPRCMIOxgM65mtTB98LFa5QjxDeZE9XS3fXPDBSuM/QM8yeMrLcnCxh4JhXx510v8lbrbv+KyUNGNKk+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c5cdq4sy; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxRbxLuC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D2FC2BCB7;
-	Mon, 18 May 2026 10:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779099829;
-	bh=i3wWInKnlNmS1++USwfTN3VrDNZNb25BYuiRZlvBVTU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FxRbxLuC8iHMdlc1vHRfGL9A7KBIs60PIa+KTnQHNO+Y4RrTjfJMNGC7T342cQwf2
-	 5/HOCdkgxctAf6gikwBTMscIie3XogVjobo469GooUJXjnfzQ1E3Exm5GRart6m33x
-	 yehATdXLhnfzR19KjgQeFT8zMcf6zL20ym9JbobjhfD7lwiIqGF8cI3AsIg99POMYn
-	 V02N9reGzPs0/I4IVUzlGi9xyTauLnkdrUa99pNpg/lda5Tgy8yCsWsVGgPHF0maGV
-	 A41aJpwbO4bcb8Yk2ZDSyJmD8zeiaPh+ywwnGydNLVjtt3wmGOKMh8sdW9Uko0oH2V
-	 ZivAF31LcheVQ==
-Message-ID: <0240eb13-6c56-4879-8db7-b990a220a78f@kernel.org>
-Date: Mon, 18 May 2026 12:23:43 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5cdq4sy"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so22821325e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2026 03:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1779100035; x=1779704835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oofnoEjFC3k8jMJB3VTduoNGQlCA1NG6eHrRA2nUPzQ=;
+        b=c5cdq4sy9zlUVFRdrSi5HsNiGaANx8yG68tDRfyOAOBiVKlX7hHzmI2bKQYJJKQ1vb
+         QkP223cR3cw2En/kYzpcZ12PDe5lixCL5MqUOoytp75hje/6IG/+miZgfXHzM//gfWNZ
+         nBEbPHkhPlY4lw0G/BXTBuVh8r8syPni7isFNrdyTppyfvreGEyzdLOWo4oj8QS+BoH1
+         CNfyn94nVyl7AHkupwwaUHJZbGEKNCUQxo/m1Q7vZ8uLT09Uf5X7XSmHNCD4UDDiktTb
+         3ml3lgsqfWfbCtb+PwaAzVgvSYMX6TAFMdHM/asDkOetMSoPhJhRc+LKX5GeTwPlMP3Q
+         d3QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779100035; x=1779704835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oofnoEjFC3k8jMJB3VTduoNGQlCA1NG6eHrRA2nUPzQ=;
+        b=RGgO367OKPdC7zXUGWSCi3T48o/fYsfGhIW1tta9wZvGgnsuCZDB2EGEltWwnMCZQv
+         You2FLokauC8VyXcundnr3q5PPY4YMAFsVnNsu+UAtJMQf131tkw+Fc5mS9iugZZsSrs
+         YjT2bOUBv/Bu/RCvAwWTus7eyENTleGE/QOz7Aw5GWINW7mrHrJl1lmfDnhKF5DpjBD/
+         CCIIp/s5oE2/tiyr/e9zsnOK175jIS7OZNF6ee5rwPX/FkiWW3E4pnnxS3RHji2AQ4gt
+         cNXYIPjOOX2vJ9etTyO7qruhKAUSiv4COsdI3mwS35cqIUqnVpgixKqHUVp46fmCakt6
+         N5Fg==
+X-Forwarded-Encrypted: i=1; AFNElJ9nb/4XcQkuN21Rz1KhrhStuy5n4G/FKWRv+f5DGzAq4YHHJ0pw0Tstd5FBlyinNxRsKTwuuq5nXc5SFrDldr0C4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JMAH0lrwBBO651RAy8gwybuomiNCIs99AMlS72ZJ3sE7Qp5S
+	GtEA/2WWFfO6c1GNkYUvkz47llTB2ad7A5chkEUCjgWBsjrw/nN1+jZBtM2LwgRUsi0=
+X-Gm-Gg: Acq92OExJGrLmyWWW5j8fpd2n9uraFAnhWdM98+6SCLhga4csWHWlIjT/g+VpI5Shm0
+	sE27/2Y5QAUb0mNCGrafhLWilVFjOms7OGTotRpjIOTQSef9Xc6N+4UGYHM0auz3oa6HjJhDz/j
+	IHX90k6DaSNC61fydz5uor6PCgEew0XCi6QKf1tQ9xxtQGf4GRv5Q4zJC2iJGexVgkGoLSQw5UF
+	sD/C2Hrxx2xwuMtEQSUC18+6+IOnv5XEkKtaRL9WYlzK5gEDCT68QNKgK5VMDG8owoGORiK5rZz
+	D1bXVZ+i1MxrZDF343EUMsHz1xrT6OqSINtUjAWXVa6QOwP9zDeV5uwnb8EhvPNSBFQJRGEWCNp
+	FmA0SetgZ22fZarhZ5Y/EIErgxtCkVCVVbPc+tGmDqS7te7eV9tVzjWMCslyJWZl08WvJosZIgw
+	Zdhpr2XwmsJObFwjVqwzrZRg2EhUqeievm3JsLfeRGrA==
+X-Received: by 2002:a05:600c:3b07:b0:489:1a3a:9e45 with SMTP id 5b1f17b1804b1-48fe651e127mr216677595e9.26.1779100035288;
+        Mon, 18 May 2026 03:27:15 -0700 (PDT)
+Received: from [10.11.12.109] ([82.76.215.73])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da0a1aeafsm37898451f8f.23.2026.05.18.03.27.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 May 2026 03:27:15 -0700 (PDT)
+Message-ID: <6802a856-76dc-4bd0-a026-59b0249646af@linaro.org>
+Date: Mon, 18 May 2026 13:27:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,139 +68,42 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/11] dt-bindings: mfd: add documentation for S2MU005
- PMIC
-To: Conor Dooley <conor@kernel.org>,
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Nam Tran <trannamatk@gmail.com>, =?UTF-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?=
- <kernel@lvkasz.us>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20260515-s2mu005-pmic-v6-0-1979106992d4@disroot.org>
- <20260515-s2mu005-pmic-v6-3-1979106992d4@disroot.org>
- <20260515-justly-recite-6028f4bfb24a@spud>
- <DIJK5FTQ5KWG.HOKZAOXHTGU7@disroot.org>
- <20260516-esquire-chitchat-0fffa597e2f3@spud>
- <DIKZ5L2HC2CV.YL3MZUJQ2EV6@disroot.org>
- <20260517-corrode-tuesday-a598ca734b38@spud>
- <d2f4cb7d-5c3e-4b9a-86ca-04262cbb9775@kernel.org>
- <20260518-succulent-plethora-2dba60fad426@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] firmware: samsung: acpm: add Exynos850 support
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260513-exynos850-acpm-firmware-support-v1-0-3858d097e433@linaro.org>
+ <20260513-exynos850-acpm-firmware-support-v1-2-3858d097e433@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260518-succulent-plethora-2dba60fad426@spud>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20260513-exynos850-acpm-firmware-support-v1-2-3858d097e433@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/05/2026 11:45, Conor Dooley wrote:
-> On Mon, May 18, 2026 at 09:15:11AM +0200, Krzysztof Kozlowski wrote:
->> On 17/05/2026 22:52, Conor Dooley wrote:
->>> On Sun, May 17, 2026 at 06:39:37PM +0530, Kaustabh Chakraborty wrote:
->>>>>>>>> +
->>>>>>>> +    properties:
->>>>>>>> +      compatible:
->>>>>>>> +        const: samsung,s2mu005-rgb
->>>>>>>> +
->>>>>>>> +    required:
->>>>>>>> +      - compatible
->>>>>>>> +
->>>>>>>> +    unevaluatedProperties: false
->>>>>>>> +
->>>>>>>> +  reg:
->>>>>>>> +    maxItems: 1
->>>>>>>
->>>>>>> Move this above the child nodes please.
->>>>>>
->>>>>> But properties are sorted in lex order?
->>>>>
->>>>> Typically the binding is sorted in the same order as properties go in
->>>>> nodes. Common stuff like reg/clocks/interrupts therefore send up above
->>>>> child nodes.
->>>>
->>>> So, do I change this? For one, I don't see the same being followed in
->>>> other schemas of samsung in the same dir (not that I'm trying to pose it
->>>> as an argument against your suggestion), and this was reviewed by
->>>> Krzysztof and is adderssed in v7.
->>>
->>> If Krzysztof doesn't care, then I won't ask you to change it.
->>
->> This builds on top of bindings for previous Samsung PMIC devices, so
->> that's why it keeps the compatibles for children, I guess. No one
->> complained about this at v1-v2 reviews, so when I joined reviewing in v3
->> I did not, either.
->>
->> I don't think the compatible should be here, but I also don't want to
->> stall that patchset. I understand that it is inconsistent review from my
->> side, because other similar patchsets receive comment to drop the
->> compatible. But I don't think we will be fair asking to drop the
->> compatible now, when we did not ask for that in the early versions at all.
+
+
+On 5/13/26 2:12 AM, Alexey Klimov wrote:
+> The Exynos850 SoC contains an APM co-processor. Communication
+> with this hardware block is established using the ACPM protocol,
+> which handles IPC messages for clocks, power, thermal management,
+> and PMIC control.
 > 
-> 
-> I think you misunderstood, we were talking about the ordering of the
-> properties in the binding file being alphanumerical, rather than the
-> more typical approach of approximately following the order of
-> dts-coding-style.
+> Add the "samsung,exynos850-acpm-ipc" compatible string along with
+> its associated match data. This includes the specific initialisation
+
+s/initialisation/initialization 
+
+> data base offset (which differs from the GS101 offset) and the
+> "exynos850-acpm-clk" device name required to properly instantiate
+> the clock provider.
+
+The patch looks alright. With what client did you test it, cpufreq?
+
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org> 
 
 
-Ah, then I misunderstood and, even though it is a nit, I do care because
-old code is then used for new patches. Bindings follow DTS rules, thus
-should be:
-1. compatible
-2. reg
-3. core properties
-4. vendor properties
-
-Kaustabh, can you change it please?
-
-Best regards,
-Krzysztof
