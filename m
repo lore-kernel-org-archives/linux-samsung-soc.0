@@ -1,243 +1,124 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013031.outbound.protection.outlook.com [40.107.162.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7BC2628D;
-	Tue, 19 May 2026 14:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.31
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779199863; cv=fail; b=YzEKdQuZfox+5LvALM3bYFMOsW1Tpf8Em5Hq7hK72smHusEG+uPJDy9QdvGGdxtuEstw0facdp0fH2trDO2btW3neNchdAuNL0V/Zz2RMPa51D4Xrj1Rja+FIzRmTa1act/eb6j6UJeEzG6V1P0Y3uTl9GzC2kQY9jvpS+7IR9Y=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779199863; c=relaxed/simple;
-	bh=EUC8c+5sCAd2Wvx8RY47PJiNJ6n0dOhUv6+fUqtHjCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=f2iErbNJNF8RL7tYoWGCyzU7/4lEZaLc799JGQyVWzVsBwzh927V2I8zEqeQEM5rGcK8HcTdVLYpTSUyAv12bKaSfqbMJcBut+N3kz+/ytwH9iyure8GyMj768RVJVfxQaG2jbyPxb19kOlcBEFUi4Tl+1HRNrBPu88YIlY97Kk=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=mpzR+jZd; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=mpzR+jZd; arc=fail smtp.client-ip=40.107.162.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D21F09AD
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2026 15:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779205581; cv=none; b=q03M2MVLpJC9vZktLAR7t299J45ndqDqlmeNOPrxpqz1XNIryCbnvsjYV4ywfcl5ifGSSOP+cR6wbfW2HORAytW7n2Lu/96+lBuYuRuIK4SVzhHTW6uhb4a7rDL1ktCiGcDy39gzyhgJilCHWtm3DV09egbBI+9xZt2c4q6Sj8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779205581; c=relaxed/simple;
+	bh=5T+dGixDG5fmBL/dmq6WzOVfoP6DUYuLr5vjU9kA3wA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fIEYe8O0+i8CkGlVqpBJKzNI+riFLa5r2kAFFTfGMlJne6cXqlgJxTnmyMen+Liad5jgtzvW0iotgDQax9mC6We56Q/+uRRBdvL9z4szzMypiv31NVFVkVTSf9av7qLOFSZRAxe95BpoDMyf6ic8MWZhFKaCwirJnjWz1+J5Bjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P5o5p2/u; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="mpzR+jZd";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="mpzR+jZd"
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=JdK79mxR/Zvxk8FrbV2rieqvvRtIce3gQ4LpbO4W6F//9UhzFIsLIq5SSgQQjfiqH8URNABOBzy8uDQFvKAXjvhy7ZlvXLyU8YKjm8Rd6CsOtw6zEh2c0tgBoOl6E6DSJpak2GeAAkaF7yEMpyGzToBjzYVUR8RGsDn3HcCPe2E2Zpy5fD8kB0F0IV8NbYhFoon+UctkqXBUIywc8l8CXPRLFYpZQ/aH6AeW3xh6SvXtc02coCWnBJc/d3tUiy77pTQSvdIFWJCqwmDEu59zl5trO6coyeCWhZ2k+XRy1TJp1zRSkKe2nGJ/ejTMMT2BTHQnOt/ViXRgvn40u5vHdg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MVeHNoDWn7iWUy6TuALWxxk4E8VGQG2H5OUTDtMjpHM=;
- b=xuTz80wEcLnxVW4QijeWH94VtYrUCNyziowzGQoN++dFBSHMThoLcPDq8V/Xcaj7A7mYWNcp6MG8msw1Zb/IgQ3cwxVuHNVT596BqbK4yLDWj3zkBrbgCyqjc+0Ik2TZKDjrRLJbxauPItad09vEFjBM3o6tjxf/dmwtDDMOG/SfwonZ61amV2/IHBLGZ2HWo7KbkDoTX8yIzg0CF5vC2FVveqhScry+HeRi64KxKOltD4Q0rKUgpsD9RhJtlOml/3qbrYuAXOB3p6U22Upd6YW0uOK1Q5UpMx2j/MeM5fg2UKISK/Y96R26RXHwY5Ff9PHenEWW+ttrQvUnimkhNw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MVeHNoDWn7iWUy6TuALWxxk4E8VGQG2H5OUTDtMjpHM=;
- b=mpzR+jZd2yS+YtOAQ7sPPpH/Aw8N5ifmrFJNa3hgbLEybsYtU34oyXXJbCIq2OuirawukqfxDPaXpM3vUPEnY8qpil27fZrn2q0CMBlNADHP0l2+NHwPOPIr9d/3NP7FnIIj0CmeMqSLV1qLj0sqlTwk9c/+hekpxN2biRyXVbw=
-Received: from AS8PR04CA0203.eurprd04.prod.outlook.com (2603:10a6:20b:2f3::28)
- by DU2PR08MB10016.eurprd08.prod.outlook.com (2603:10a6:10:49e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.24; Tue, 19 May
- 2026 14:10:55 +0000
-Received: from AM3PEPF00009BA0.eurprd04.prod.outlook.com
- (2603:10a6:20b:2f3:cafe::36) by AS8PR04CA0203.outlook.office365.com
- (2603:10a6:20b:2f3::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.24 via Frontend Transport; Tue, 19
- May 2026 14:10:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF00009BA0.mail.protection.outlook.com (10.167.16.25) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.11
- via Frontend Transport; Tue, 19 May 2026 14:10:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZHjj7aZXuuYiqaV6YR7zHoZnaZOjMM+obpbtkfvyHV71x1KTP/bod42b6Y6ZqrDUPceSWXm7NP6wcu9jFsSrRsPy5ZPiFJfdmqQuEKsfZdjfNyixkhBQwWFzDQsutY6o/iVpAmZJVIOwZOIUpZiJdiEbeR/ffQ0s1P3EatcSfc5l71gSxf01wK866I/t+R+kMb34CqLARW2fdyAT89IN3dXZFZCRdcD8PTXdxWYamOy6XqzE1EMgYwwa9fuCDmuS37e5Vlg3mYEUvYtEhWkCo6aZtrJnEuhgqq35lgqo9NrH6V6Qc2bL1UB6t4VRYOnGtzcjE3HCix2chG+0AsBOpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MVeHNoDWn7iWUy6TuALWxxk4E8VGQG2H5OUTDtMjpHM=;
- b=PpEibO+YSzXA+gHX0l/Z3cWDBHXIMt4aMHErsSj8I/4F7O57eZ0nuiVwczzVWjHZwbvCJP+4MhpIhfPcLNNl5yIxgOcFeauuVW//it9xeuVedCuPY/Ud7u9SRVfe2ZC91r0Hj3i5qc0HADD+WjpOKSkeg06nRy7GK1wwsz3YOrrt/uA0EgbcYj4XyV7VseGG7QMp/7tNwUiEldM0t17mT27lMtk0zwBLB3FTrIJWDRZeL52S+vD4Rq4smaaikisEfL+CNngMiXAB+mYKYPWKf7+85vrJQl/NIR5AMHw9adJp26CL066+PbUNsSfDXym6jvt5pqnj7Ryyq+2p52XN9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MVeHNoDWn7iWUy6TuALWxxk4E8VGQG2H5OUTDtMjpHM=;
- b=mpzR+jZd2yS+YtOAQ7sPPpH/Aw8N5ifmrFJNa3hgbLEybsYtU34oyXXJbCIq2OuirawukqfxDPaXpM3vUPEnY8qpil27fZrn2q0CMBlNADHP0l2+NHwPOPIr9d/3NP7FnIIj0CmeMqSLV1qLj0sqlTwk9c/+hekpxN2biRyXVbw=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10) by PAWPR08MB10209.eurprd08.prod.outlook.com
- (2603:10a6:102:365::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Tue, 19 May
- 2026 14:09:52 +0000
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04]) by GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04%6]) with mapi id 15.21.0048.013; Tue, 19 May 2026
- 14:09:51 +0000
-From: Bence Csokas <bence.csokas@arm.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Bence Csokas <bence.csokas@arm.com>,
-	Daniel Kiss <Daniel.Kiss@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH resend] drm: uapi: Add macro for chipset specific event ID region
-Date: Tue, 19 May 2026 16:05:48 +0200
-Message-ID: <20260519140548.28853-2-bence.csokas@arm.com>
-X-Mailer: git-send-email 2.54.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0429.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18b::20) To GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5o5p2/u"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4891c00e7aeso27909085e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2026 08:46:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1779205578; x=1779810378; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cNEYJ0/3OL6V5KtaRvLweTOXbANv4SgmKSvooy29LIM=;
+        b=P5o5p2/us21ERwcjXlCUCV3w2XDJiLvqzH3sMy3g5u0Czyl6cV8Td8hygZfyob/FoR
+         wOb6omBvdJiHNXdlyvXkKW8QJ8ud0MwmMbKxmTtHlQWruz7RlIVQ3mybtTIVCB/JzC3k
+         dmVpguypTG4gTmIKSshCHQYku/40bKcLmmt/yx0Ozro4uV3ptJhVh75rIzkjVLM7W1S4
+         uWR7+w45Z1kQ5hxT0WybTKy3oi3eiVdHGMPcwm0Rtsdq5Ia6RgEXXrjz893+oLUJRlS2
+         9gke22KZeRV3V/KAcvri8HyCCre+sTTR4Y3hujiuAPEM/uBlbIspea2JfFfWt2MI2Aj6
+         gVcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779205578; x=1779810378;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cNEYJ0/3OL6V5KtaRvLweTOXbANv4SgmKSvooy29LIM=;
+        b=N/vUmhfAou+26Z0X6Qj7TmN5pcElXo6TWMdFyAOEfA1DIcHGKL8P007AaFejGaJDTC
+         6M/hQJ9xAxhmOImbyVHB4FZgitCHKwdxCCfRs8v3lQsqpIsvRGFZwGFE224w1dcqqeLR
+         R06msKrTBSkVUeS8sQPc2CjjAn0Y6kVUDFdjWy/qzCFVzTSOW0b+ruwpCyHfiZmYOT8L
+         MWyM2obxN4ilFosbscGQH3//vbaJyavPQlIe3Q8IjFmqyqcCA+2b4yUszHheRm1hkqvQ
+         jDU/SIbRm5S6X8pXRwRnkRu2LexldPs4Xsecsy5SaqHpd+OjEdVN4jkXmBg4uNJ9CI0e
+         4DWg==
+X-Forwarded-Encrypted: i=1; AFNElJ/OYgcJasr6v7g7KWeSyMXTrjVe94055iQMQt+ATKmCCRDw3XcX5ovXf7zWbdjpMMo9aMdNgyp07T8izDzHWDt/hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI2ncaCZadaPkh2aUqwNhTTmpDZ28IhX9Dr6Df1esxlHoDXR5H
+	OjTK0k14aLE16PO5NMigyN2UDdQcs3AzxoYVa9/Hzp2Y8dGHlT/az8I32tL0OMKmPwnRwGB27X0
+	JVGnz
+X-Gm-Gg: Acq92OFkmynYXcKEG+dCJOyRnw95xmI5ZBEdo4vgZO/6QQWdj8RHpOgPyF/HE9L4UbS
+	vzQvjlMSpUH/zXqJW+1nFaSWFHC5h/cMDvzc+syNUa3A3zK68U1Q1zHqBSlxRj9pJpmTkHJ4TML
+	s85CHcINcAcR2n+gPi+LAJ7sHVTNmpC/o3a7b6AXWuGIYxSRieDp38Eo8TJxj8AkAZh+NIfTJz3
+	z1k1RMg1hpCyXzptf+Zr4kFxLtytx7tNi7pPNv71ENO4jKfysJsuy4uN1AqhSsfZB/HZ+t4mfk1
+	lAXOWil7K2VoqpQwjcRXQoUwWJcnT2mfazDQXR3Vw5xJ+c9i6JlWUCmVttOsjEePecN6AOCnQA8
+	S6N3bHPMqlXzZh/nmePJyYO7sDn6Ja0HUsDfHYs0PLxxpB7F59bYBWRbj0GR4IQNAGBuWenmEgG
+	1MsBismDDz8hU0dbNkY7FO2DX0u2h0pOI=
+X-Received: by 2002:a05:600c:34cc:b0:48e:60a3:220a with SMTP id 5b1f17b1804b1-48fe59af1cemr336906785e9.0.1779205578122;
+        Tue, 19 May 2026 08:46:18 -0700 (PDT)
+Received: from [10.11.12.109] ([82.76.215.73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4862209sm333119405e9.0.2026.05.19.08.46.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 May 2026 08:46:17 -0700 (PDT)
+Message-ID: <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
+Date: Tue, 19 May 2026 18:46:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10455:EE_|PAWPR08MB10209:EE_|AM3PEPF00009BA0:EE_|DU2PR08MB10016:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d052d74-22fc-4d67-b97e-08deb5b0714b
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|18002099003|56012099003|11063799006;
-X-Microsoft-Antispam-Message-Info-Original:
- qgAEJ3H48+RUPReafObFRdlLEefTb+XjCOAgo53lndZkuFEeztzustG/f6utv00eR5ToJO9et1ik5s+CrFUSylgRUojdNyDNNhYbYjDuPlxFn3MHLubL9p0hwpUwshayQNtNxs9kvFNEm9LflIGxq3RK8oj2ELJIxYLM9vAu3WpPFnyMe41zv29UTufCLe6yzj+R4xjH23EU6VkXKS+EXq3o65GzxQUjrfy2pcoG1Oe9/75+hZw7njUuhYffMDm0nFMH1YzkkqwBDAxtAVl+f74FYwVDBgo5JJuMIEPD4cWNVxAYTGeBOz4SsFGpdz+offbhfrIbAv9wDnRYFBuSgIue/Mkj8M1iDXVd4e8duV9QZHRJXdFaeMS9QFEXo/H+h2MCe2DYoQVHIj7aYkApUNXBPtzSuBgBtoQSB4ECs0BSmRL+iZ86qjrvojgWUCbrJmbcQokHeOMZVxImqZiX7JIvCWmZUHzh7Uto5N/LZSPBeoOcOZO7bDsE/H9BWfThM4Mzl9iUwuOFworiFkjfMQm5hdE+8F/rLYEAqgUIeUl7ZvO3nFkHbEVOVk4LR8XBrl+dd7/w3/dOzoTvEkAdCqZtVYY/TJ61ujUBj7d7pAM9d3iGT8W9ZEkb7Wr8jLYG/o+D0hdwgEHjGj1+oW+A7A==
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10455.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(18002099003)(56012099003)(11063799006);DIR:OUT;SFP:1101;
-X-Exchange-RoutingPolicyChecked:
- B3rm3+dYcTb7Sr1D9CcDuOuIuwlcFRbRLYb/5YQxdYVtPlwQ3K4N5TrWdoLW+088lwYfGDl9abFqHkkPDxbe1zz4/sIzT0CZv9LdbKRzgRX4em7VyvgIRVo6xfM9LlBP4OD/uBXEOcUtqRNjnXzlaOl0JGrRwC1JNFSgnbFv5RA0pHsEsS+TQuuHXm7XmOh63eDfTMo2vkaekDOoNfc5E2TfbZTpkVPtC4jRpCEvZUnKIplBvr4r+flUOFL3R+kv+KtjutLW66P7UXifQkmbkM5ndtkLljQP/pYFIWiMBgcAuOmUtjTPRpVsNyADLCmJT/pwdBwKqruy4t1FWwWnNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB10209
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF00009BA0.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	0deef6e9-25e3-4ec8-3707-08deb5b04b52
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|1800799024|36860700016|82310400026|35042699022|7416014|376014|18002099003|56012099003|11063799006|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	Wcw3uWByz4ogflU3tLofQ0ImXot6OQHHy19kFzqyGcY/pH7bpeQXH3VvqR1NDcGUWkA4DiY4CE8U8AhBCQcT3fTmO5IkmWs6rczenHamEzloC+Mi2jSQ2MkOzj5a2XeKsetD3WzhkFpdPLJy9E2YQQGw121IlnKZNib4wMMScbmbEAKJbCnTYOoiNMHqzgaGgIVl+8ji5tOfTDtPUz7HReAsWvKOt89kIUKfY9XSJ1BOyg6fcD/dMDOXW2x3TDeurhzKZ1QHwBCWRMsRahTq3h+UEyCnDJbQuaOBeU+5wNKvh4HCkM37V9GgCmvwJbEbHt8oazSGoSJbKhbVQ5WDZVLpqsKYk2zsP9u1deg3MVc+bOfp1a8/mVeWS+YK6iqgTUHZohuW2RHC2GTHoGiwrv1EyK+QVepQhb5KEO4HpWHU6wggqDNz3DHOfERsuGoD5vb2iViZbfJto04JN8IIoIUm0UULKzU5hWiVaGSjDMOPIRyTYA8ytl1q2bRMkL1PffYjtJEYoGQbRiwGuJRz2cAwMhUVRPN4oZ9A3iHqAosR1US+4Rh0CJ1jEAuFQksF3abrSz++tqn9yGrNXAkDBgUiVKIUJra8NgjL41fPdXEJC0UjwaH1cjLrkS3sPv0A6DXsDLO3Q7IVx/O9krNtk6X7QPtiild0TK3A86FdKCAAAwEF6nDeNNujr4U9z88D
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(1800799024)(36860700016)(82310400026)(35042699022)(7416014)(376014)(18002099003)(56012099003)(11063799006)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	bAeWsYVvkBUpKs4uY+pQ/CLuH+t0N0zXNwszdLkfqDxJHhnvKhwHj9/ANhwLAwLECWRsnR8Qu0C5KaKMDfoQxt9NS6oUb7bzIjN5Uje9UjMvXEaKvsBYrg4e2gMS6UntRBxQ/Zk3sb4JZO3Bg8kMO8xQ97/cNHqwuNm14H/Uq6zShFOrPOuuUnrvqKCKHQBohBI9Pf9ZN3lTbwkK+8dKwOlzghNJJkQ+2fGQK8mr6uNb0TRThuvkr6YcQXSVz2OqF0Dq+ANRYRFHnlm61lmiyw/kn8CzKwRzbk2nDgm1ZNgIRjceL04l7UFUQBc1rs5I5TxPRARmZspI3xRyyEktUAY4GgUIv+QExSopUvWgNqNWhjQmm9jah8hGp2XtPlFxG/qlX47/vd+7+N5UbolXQRJJ3iiY6KU1DMbnWDna98hwht/mU+tCiDGFWK+DKXfu
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2026 14:10:55.1925
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d052d74-22fc-4d67-b97e-08deb5b0714b
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF00009BA0.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR08MB10016
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ peter.griffin@linaro.org, jyescas@google.com, kernel-team@android.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+ <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+ <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
+ <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-uapi/drm/drm.h states:
+Hi, Alexey,
 
-    Event types 0 - 0x7fffffff are generic DRM events, 0x80000000 and
-    up are chipset specific.
+On 5/18/26 2:24 PM, Alexey Klimov wrote:
+> Thinking further about this I'd humbly suggest that even
+> 
+> 	if (fw_err >= 0)
+> 		return 0;
+> 
+> 	pr_debug_ratelimited("ACPM tmu call returned: %x\n", fw_err);
+> 	or pr_debug(...);
+> 
+> 	if (fw_err == -1)
+> 		return -EACCES;
+> 
+> some debug message would do.
+> Perhaps we need some convertation, for instance as it is done in scmi
+> code (scmi_to_linux_errno(), scmi_linux_errmap[]). But I don't have any
+> data for mapping acpm errors to some human meanings.
 
-However, this distinction was not put in the code. To elevate the contract
-between the generic DRM framework and the driver from the comment to code,
-put this in a macro for clarity and convenience.
+I did that for the pmic helpers. I don't need any debug prints for
+gs101 TMU as I have clear instructions from firmware: 0 for success,
+-1 for error.
 
-Cc: Daniel Kiss <Daniel.Kiss@arm.com>
-Signed-off-by: Bence Csokas <bence.csokas@arm.com>
----
-Link to v1:
-https://lore.kernel.org/lkml/20260408163608.361826-2-bence.csokas@arm.com
+You may update it for e850 later on if you need it.
 
- include/uapi/drm/drm.h         | 8 ++++++++
- include/uapi/drm/exynos_drm.h  | 4 ++--
- include/uapi/drm/virtgpu_drm.h | 2 +-
- include/uapi/drm/vmwgfx_drm.h  | 2 +-
- 4 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 27cc159c1d27..aa745e643ef4 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -1419,6 +1419,14 @@ struct drm_event {
-  * The event payload is a struct drm_event_crtc_sequence.
-  */
- #define DRM_EVENT_CRTC_SEQUENCE	0x03
-+/**
-+ * DRM_EVENT_VENDOR_SPECIFIC - vendor/chipset specific event
-+ *
-+ * These event IDs are reserved for chipset and driver specific events.
-+ *
-+ * Refer to the chipset driver's header for details and payload struct.
-+ */
-+#define DRM_EVENT_VENDOR_SPECIFIC(_v) ((_v) | 0x80000000)
- 
- struct drm_event_vblank {
- 	struct drm_event base;
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index a51aa1c618c1..8d3156fb129c 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -395,8 +395,8 @@ struct drm_exynos_ioctl_ipp_commit {
- 		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
- 
- /* Exynos specific events */
--#define DRM_EXYNOS_G2D_EVENT		0x80000000
--#define DRM_EXYNOS_IPP_EVENT		0x80000002
-+#define DRM_EXYNOS_G2D_EVENT		DRM_EVENT_VENDOR_SPECIFIC(0x0)
-+#define DRM_EXYNOS_IPP_EVENT		DRM_EVENT_VENDOR_SPECIFIC(0x2)
- 
- struct drm_exynos_g2d_event {
- 	struct drm_event	base;
-diff --git a/include/uapi/drm/virtgpu_drm.h b/include/uapi/drm/virtgpu_drm.h
-index 9debb320c34b..03e8a0c7f778 100644
---- a/include/uapi/drm/virtgpu_drm.h
-+++ b/include/uapi/drm/virtgpu_drm.h
-@@ -224,7 +224,7 @@ struct drm_virtgpu_context_init {
-  * effect.  The event size is sizeof(drm_event), since there is no additional
-  * payload.
-  */
--#define VIRTGPU_EVENT_FENCE_SIGNALED 0x90000000
-+#define VIRTGPU_EVENT_FENCE_SIGNALED DRM_EVENT_VENDOR_SPECIFIC(0x10000000)
- 
- #define DRM_IOCTL_VIRTGPU_MAP \
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_MAP, struct drm_virtgpu_map)
-diff --git a/include/uapi/drm/vmwgfx_drm.h b/include/uapi/drm/vmwgfx_drm.h
-index 7d786a0cc835..5e5878384e60 100644
---- a/include/uapi/drm/vmwgfx_drm.h
-+++ b/include/uapi/drm/vmwgfx_drm.h
-@@ -715,7 +715,7 @@ struct drm_vmw_fence_arg {
- /*
-  * The event type
-  */
--#define DRM_VMW_EVENT_FENCE_SIGNALED 0x80000000
-+#define DRM_VMW_EVENT_FENCE_SIGNALED DRM_EVENT_VENDOR_SPECIFIC(0x0)
- 
- struct drm_vmw_event_fence {
- 	struct drm_event base;
-
-base-commit: ab5fce87a778cb780a05984a2ca448f2b41aafbf
--- 
-2.54.0
-
+Cheers,
+ta
