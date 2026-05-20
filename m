@@ -1,185 +1,233 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013064.outbound.protection.outlook.com [40.107.162.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6763E9C1F;
-	Wed, 20 May 2026 15:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779290424; cv=fail; b=JSfT5aRb8i2kuQe7jhohE8LL5frip2aLLxgGudYRmFi/7A5RnsFhm/uivRfsJUOh/IyMW4I9Xzj2ngEBpxcEYeVqE3x2MRWrDMb57Rr+JwzWTo5tQQuw11APjVTAoIA31EiBHrvXls6CG2ofyU568LYHXdUSKFJEIurDH8IJ6uI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779290424; c=relaxed/simple;
-	bh=l4/qnkjd6bZg1XEV1PAL87hixaCbAhx6wxIELiuPUQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Xc2dTqiG/FWcXIvdz9g5ltHOmtxd/n8caf9XehfMymatDc+FC63rbUIwphY3wMf2RpO4qBCC1KwIfiVpX5NfNGWJdWfCJzY4+MPzrWUOcTOog9Zs2k385625fjUy356DN1DVHgDooQlrwRZtH+FAMD1d0kY1CrKQ1YRT6kFSnqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OQRypaQM; arc=fail smtp.client-ip=40.107.162.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D0A31B114
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2026 16:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779293190; cv=none; b=Dqt2AsheYvpAYtrz6vH9BmKhuIYyiHxO2Doqc68dRzeUhf6hMJ3kUBbh6hy1qCHv9txGavTrwsxAp2bgZZqJs8rQmc88SHYYNpXeREehP1wjs+5eWRXy5JxXDtWiM0mcufoLKNnxHkbiE9cK1FyUiLUqHv8DTB18titErRiGWq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779293190; c=relaxed/simple;
+	bh=m6JPhIJbQ0gEyv8AT7Djg+r0/yXuFuEOF6/cwQNjcNQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gaKXRAr/vyoC+E9niRM1atT6J9TCKt6Ei1E15cl86bh0hubIe6IitdLEr2Rk8Mrpt6OaRk5tNgWqcDlmht9HJ406A2iqf3ylQ79bhTQgssI6nKJfaXXQLS1dCVfkHtd838QoQ4C6wl0+l/2hQ3Knelr6PREhlTt5UM7Wfgt7mYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m23EGLF2; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OQRypaQM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aA+JXsQik2/65dKKvYoYr1R+s8ZSAkh6iypCTHshK+iogywfx6hkYDRX5VM+B4zXupEWK04lHy5FP/BHFapQs7N4aCL5sh38lFY4yJryc0OoTavixnFkV52tRwBok2kg8vgMpEwFq2Qq7lsc0s4aIt0APR5A8Te7rfpe8msFTX1qwMPMjBUPgEwimgjevWsAqWaHJBiB0OycN+GTRT1kbbqPyoiB852AQvix8FqjFL4kh37ACSnNib5uhTCV4QrCz3Ix/I8BvROl2h/5z+jtOQJa8bQf6F9N/2PU8cghT90DuoPFkGxryVPAjC3wRf9KclpkJARKF6hKDh971fQBKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mkW91SkV0pxRKcye1NH7wqUvPh4aFckQs7BkyPzGA48=;
- b=oJRIDflWs9ypVQjuOP1tV2WULzNWrBtenuMMJomTvzQRY+VgMQqLDSG3JJ8qeYp6TV1UCbboOYMsY+O3AxNSU3MwRC9xlz+VcrbeL0y0LzADB0V4WcNsZQOy74ouUuopRt7M4n1y61vqlkv6NKrqvlSEH9gGLkH+Hid1rvRfvQto+kDr5+1dRzNGHHNdOKWAZ/llJDEy7CU5pbKgtsA/x+1HWBZMASur0/bux+i/f75gr2yAxcbWtpe23HQhOZ7PNYhlSlFgHSJdeGPdhxfE92QGvTXrY78gtrw0puRW3OjL2SeMmu74bhvQwiXyMRCXHqU5fpH3Sebwsc32pgSuOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mkW91SkV0pxRKcye1NH7wqUvPh4aFckQs7BkyPzGA48=;
- b=OQRypaQMCjAzSX0eywA8LNtnOT2VZoWmNWA0Nkb3P1YysAG4BffxJM9k7Z3/R+m1slXLZu5rtpxbsTZf0zxLEeYlqKLDwmEvlhbaYZRdExIz/eyfyAUnwaBhPwWSCxVNg16DHKSAFvEwGb22h3o43KBPU27+L35MbR5PFDfQwqoW33EPvUXB84lKq1xf4/4+FbIM/tpiBN9/ySRa/QOfa/VMbfg1CIi7PIb5PMftnKS66iFR/lkBbGK5AySk7KREiuj5AN/aOx/7xZkBuTQnQyRrKMtd2DsOuBiSTY/mzi3vDPC9eNgbDf0Qj7UbJMz2rWpJMMj8/vCyl2TY/vnjYw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB6900.eurprd04.prod.outlook.com (2603:10a6:208:17d::10)
- by VI0PR04MB10808.eurprd04.prod.outlook.com (2603:10a6:800:261::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Wed, 20 May
- 2026 15:20:18 +0000
-Received: from AM0PR04MB6900.eurprd04.prod.outlook.com
- ([fe80::7fda:8431:ca1b:b023]) by AM0PR04MB6900.eurprd04.prod.outlook.com
- ([fe80::7fda:8431:ca1b:b023%5]) with mapi id 15.21.0048.013; Wed, 20 May 2026
- 15:20:17 +0000
-Date: Wed, 20 May 2026 18:20:12 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
-	Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v8 phy-next 15/31] drm/rockchip: dw_hdmi: avoid direct
- dereference of phy->dev.of_node
-Message-ID: <20260520152012.acf6xpe7hvrdzn2u@skbuf>
-References: <20260505100523.1922388-1-vladimir.oltean@nxp.com>
- <20260505100523.1922388-16-vladimir.oltean@nxp.com>
- <3758596.1xdlsreqCQ@phil>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3758596.1xdlsreqCQ@phil>
-X-ClientProxiedBy: WA1PEPF00005B93.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d8::631) To AM0PR04MB6900.eurprd04.prod.outlook.com
- (2603:10a6:208:17d::10)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m23EGLF2"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-bd6460b0d11so926557466b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2026 09:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1779293187; x=1779897987; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TgkFusfrsQUtnPD0k3UI2UziIOgmFiUaBBrm2kUxAis=;
+        b=m23EGLF2t51KKyqgatk6/NM1c4Iuvx8QyMohPw4bQciJ8nJzJX86tJqO/zPPL1Yr2y
+         dPiCOaUsCDg2h/VCcK2f1sfLKJBRDQZveyeM1bjo4trvLNXCVFrS85ZycRHg3c8ZnWup
+         6eM+vv8+IOVN43stYr3umMYu++tf22cUwHM0YaZ6LBBy0QXH+vvYekn5ONS5fc7JtEze
+         EOJEi0J1FrS7H3kaDSNO2I23Gxpz3F2EodJObI995NeiiXj3628KaUjs4UHBe0FnYidN
+         YbgPl7ZUF07aBRZI+W3AzgDqzSEAkCdS90gc5Dvh2ZnPLJftlbGCP+qaRzH75Cqs2A2+
+         03xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779293187; x=1779897987;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TgkFusfrsQUtnPD0k3UI2UziIOgmFiUaBBrm2kUxAis=;
+        b=kN+a+AxovkdcHPFUlGlqsyWH5uAa4/AYtu1PqJYAjTG/l1DjLuDZlN66H45pgh/qJ5
+         XgLKmUp0vfm0blaxL0HI7nVcC1TFvgEHWXtZSFKjY+AewSFztVUO0+LMgJiOzvhDPN8a
+         6hB1ByoC+gH++QX5Mr+gncVnsC5UiYeiBG2lcJXKxiZ92ThD1OWzwplifMl9hI54ksrL
+         aCORQbQN6J3bMmn2zXAy3Zh5gRthx7kUhH1zpFUwgSpgXrlxRjwx4b/RE5dSx+U67o/d
+         9LniuUfOH37NAKxhGZoYhaFfa68OzodApkRnHJcDS5ctAgQRzu4em4Ngpta71+LWkA6S
+         42vA==
+X-Gm-Message-State: AOJu0YzbmLwe+mjOYVEncYSRZkDi5Z58KLW0Fn5ogKq8nUcqk8kj13vs
+	wt88w3Wd4Z97Xak9c21Q54PG+9HKD1pGrcQfHO+iFa1a5qEZdzVb6b+n7/or5lPocpZXmEo8FAc
+	MCOZn
+X-Gm-Gg: Acq92OE3UZH/bW5p6quhN1PKiIN8fHGiNY45ow0GIfG8LKfP5BvXmHM2U0x0oZmgYXh
+	cMeAZ83v9U2ixjRUytbpypjzzgixNov58fKfD+qBzL+yJiOX2XzvIPBZe1599z60fhux12hww7z
+	PLhpiXwJ1ypDKF29vGA6R1nJ+jB7ecVuKcFzSVgqov14wPhGAFUUyDGhTek1NwjS7v0WGT/CC0/
+	U2LqqyzK88iRIbtj2N870YqNiyoBRiAA3PV4YTLHPeXw4eSJJIDq51/N9din9IZxsmzTV7xQioH
+	Kb0uPsObM28o8yokd7F8Cr1GYFtiZCD44sxoiFCdQpbVZKPFkvkAFPMbJmUxStwx5eStQa3Q21V
+	VzVTYeKrkch0U1dIyLN9M2/MIfHP5Uo43lv5lqIlxWKvthCgqorD3v+uaHGhuj61fK+PHXT2Mq7
+	cZpvmUY0aAVxF2MONOYC4bmkbvlX47ll/fXaoHdH6zyQIMN+owuXrOVfaxK+bWK5/vkovN3PoQ7
+	2AEy1MmEJQYbDd5nkPp/TuY
+X-Received: by 2002:a17:907:e104:b0:bd2:c919:22c9 with SMTP id a640c23a62f3a-bd5179311e1mr921917166b.35.1779293186834;
+        Wed, 20 May 2026 09:06:26 -0700 (PDT)
+Received: from localhost ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bd4f4e21235sm868671666b.43.2026.05.20.09.06.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 May 2026 09:06:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6900:EE_|VI0PR04MB10808:EE_
-X-MS-Office365-Filtering-Correlation-Id: c385c8c1-b3c8-4655-82ec-08deb6834c8f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|19092799006|10070799003|366016|11063799006|5023799004|6133799003|56012099003|22082099003|18002099003|4143699003;
-X-Microsoft-Antispam-Message-Info:
-	y6VMH6By2VJoIZ5ieBzCRsombvv6k3m1LLawVi98Fb0P4dpJygu7ekSLtmwIiRHbUJ5TqjcQHt+TfBIXZz4uHqR5IVMruCx7MMkt6zGjL2TZ83RrFa1T+YjUw6Fg4N9GlD3wrmkKOdtbti0rc6X16vdCTLSTd0dNX7ygXO0P9C9vkVimI6+AbXnbSRy0cZUOjbB/aGrUzN82UhgrtYlGFS1o6BbtYTqrFG2cJTO+SLjBstzCoJeR1QQKhujIEWYld3reDZOYZSuft9fl98numemuPhRABZIn/FJHkxu9Tl1q7/+UY6iQjz5oq/Mgf+rwnFDewsmvzrZmYhdUDjT0EUU/tjej8/h+ijOkSno0CtycIARjpbjIGmivdJ0NcORWrNK7nnvOawbqMJMOvhrpgt604+eXjXEg9tIKCReaTZ4g821ZVoVFInj4eLtljkUEj4lLIw5X4odI7zsIxyRJWpjIhA9GTBDxBI000Bmn+xALPDpOD2cQFPb8Rn5ITpufTh+buBJ1meivFtmZyHyDUL6fC17HxMmycZJD304Ke5tdFhLB2xaRckMQtOZpxYcU4A3flvBWamOBbrtHY6kAL0E/0Nu+ZqG0MEM7vCOeTBeu6o14sPf51v2hCwJLpgCXr7sUguoZfh4AsrdpThDo6JNZpMVmK2Sfx89VEFMVMIGN/3qiOdg0xo08pWy/Rw9WM6j0gPfW7iFWsYZNSgX7zA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6900.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(19092799006)(10070799003)(366016)(11063799006)(5023799004)(6133799003)(56012099003)(22082099003)(18002099003)(4143699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?w+bzZsFe3eKKjCLyiZMDhiUaw1usTpGN0A/VGIJbnAU/L1jz2NnkRTkuQ1?=
- =?iso-8859-1?Q?SjdVO4XPOp46xKNJy9SxbrSI9zktykp5eHFoLj48iqNmgMU1kvBTKaZ6vB?=
- =?iso-8859-1?Q?7Ji/LWZghZhprNPfJN11bum8PZazaRAey61lyzgFq81RyyTlgmJN6ndjZG?=
- =?iso-8859-1?Q?lnhCcU3ktE/a1YO5XjUxUN9SmJWTIctpKyJToJjKUP/J1wibcRMGDJcq0T?=
- =?iso-8859-1?Q?utmqq3sQKkA1KLJ59UsIeEkpVrlUSJ5+kUL9Mh4DHECvEOHpfmzXs91z6T?=
- =?iso-8859-1?Q?DT9SXcOnS00uSDxbEp2RvjHLlkKvdn6AYeAIRumT6MkQpI9PH3vyO5oIOR?=
- =?iso-8859-1?Q?G79iwJnowCwlPIkNhdawGMCmlVlnMe8ZdMbsnCD4gssgqwYEW/zMOirjf+?=
- =?iso-8859-1?Q?C2IY70OgNKDP7wiPCqw7P4rRiVHTS141vBDt2KD1EBcEUNHiiwgdH9hKRU?=
- =?iso-8859-1?Q?RzRvFPMTwjQUjWMLPoz/CA8W8iI+Q5Ao0VRX/3sgg4KKHc81hgFW8ItliE?=
- =?iso-8859-1?Q?flMuxNs0dW7/j/4hgQ6vTkc7JrDSuACRLyKjAN5WaHlkzj3fVdqRqMoZ19?=
- =?iso-8859-1?Q?KZ0ZLD8a3ktt7DIoys1iQu8ONhAEqiLNgUPDcjbXS7l/TweaFAQqortR8a?=
- =?iso-8859-1?Q?MToSXs3XO5DkzK58HXlm+JSsVj99hN0EhOZaoZA1bq14VbbmFobFcNw2lo?=
- =?iso-8859-1?Q?wDkQSunXeFwIyhk2m5Nc7cvRT+9+KRUBGd7Vg3AWmW6MpdmGu69wpx6Okm?=
- =?iso-8859-1?Q?zhJT78p2vGIM/i8cGDgXPjniF0OKHWuChaJ12Jo58DdEthOp747khVlFIG?=
- =?iso-8859-1?Q?buDlmVNxKyYB/b6+S2O6IOnJTy3wY7d88hSPCoF0GTaIbemd4kfvHyZ+zm?=
- =?iso-8859-1?Q?aucQwWXAWUJnhLTzbVkZGDbhftTRPW0Ns6ARX91zOEpriOS2s6urvpioW5?=
- =?iso-8859-1?Q?PswradQ3uKdChmxqIA1eU+Vkul8MlzS9/E0npsVNK0f7X6GrfsRfMuD3IP?=
- =?iso-8859-1?Q?SZSoH9EtVxW+ktkQnL5UxbEmf75RNuiJqfrX5jttAutoCcVqGYOuOsgQR1?=
- =?iso-8859-1?Q?vTiXCa8H8qAzH88MbiO7Mnl9eISERZTfscEIFgqJoO3F7gzy8Okp2r0FLz?=
- =?iso-8859-1?Q?YJkq70v1uRvDEYIA78yI7lQ1+l25rEUOZzZ2A6xN8TtHlgnuD2dMPF47Ex?=
- =?iso-8859-1?Q?voOt28Z7pocAYhQjs4xFf9Zisf/B/BJdZtH5soWUyCA85tRB+xkJPiktNq?=
- =?iso-8859-1?Q?kUT+fxM8BMhSK0aqju1NdZiF/dpMZ3ZCtkGRN4zbeAltjrI9Lm9/6W0Ra6?=
- =?iso-8859-1?Q?4zzTh/88P4X5g6G/1e/WcbQOyULO2Tn2QtjvFWAo5/45sjmlUWBGkcpC5v?=
- =?iso-8859-1?Q?qcq+0adp6u2F3qq5UMpZfuIAuig9XLWCPQEGa9m2C1VH5mdRMC+hXejJP5?=
- =?iso-8859-1?Q?lp+wWWZaRSidsHzl25ajbOYMSv6BbxVw+FQ2PKC0XmkgXeq4jlm+NTRY/D?=
- =?iso-8859-1?Q?9/OdIwsIXsHhZ8fC9310VsVXjW6s04Fcglex5f4k06b4SUIx5F2S5A5I2y?=
- =?iso-8859-1?Q?+YgtCeOcj0X/LxCRbTc9s4/pnlvVj67GsYP73bRmnkPf14mHn6WiTKFdHT?=
- =?iso-8859-1?Q?TRpiVjFxKiScw6UxbVloY2HIco9czRJsQzO+j73zrXZqjBxRG6AujOV5KC?=
- =?iso-8859-1?Q?uTeD9DTaA0L/7i62meoJhVgEDESNAOy53Ck3g89w4cwPvxiqTgNHmK6vOC?=
- =?iso-8859-1?Q?mRDE+zFDSlrVE33FApjom1COBgFnNlVMUG0TpKNwN9RM3bKY+jwn7iBFUe?=
- =?iso-8859-1?Q?YmBm3XuW6GqH/uV25VqE7ARzchddWnf3l6A53jPVEpbsyPZsqmuYFpiFTh?=
- =?iso-8859-1?Q?JF?=
-X-MS-Exchange-AntiSpam-MessageData-1: HLlipyHbu6yqYg==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c385c8c1-b3c8-4655-82ec-08deb6834c8f
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6900.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 15:20:17.6180
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eTVm/2d3fCQSmd5fytap+wEqwJac+az9a+yuKziHQ+ZvOOwWG065tCPWUtheZHYzEZHW/7dhoMsqYnslhvOdPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10808
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 20 May 2026 17:06:25 +0100
+Message-Id: <DINMSL1LPPCF.1U0AO6MYUFTN2@linaro.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <sashiko-reviews@lists.linux.dev>,
+ <conor+dt@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 3/6] soc: samsung: exynos-pmu: generalise
+ gs101-specific cpu{idle,hotplug} for Exynos SoCs
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: <krzk@kernel.org>, <alim.akhtar@samsung.com>, <peter.griffin@linaro.org>
+X-Mailer: aerc 0.21.0
+References: <20260513-exynos850-cpuhotplug-v4-3-54fec5f65362@linaro.org>
+ <20260514053037.BB9A1C2BCB7@smtp.kernel.org>
+In-Reply-To: <20260514053037.BB9A1C2BCB7@smtp.kernel.org>
 
-Hi Heiko,
+(adding samsung list and other folks back in c/c)
 
-On Wed, May 20, 2026 at 04:21:24PM +0200, Heiko Stuebner wrote:
-> Hi Vladimir,
-> 
-> Am Dienstag, 5. Mai 2026, 12:05:07 Mitteleuropäische Sommerzeit schrieb Vladimir Oltean:
-> > The dw_hdmi-rockchip driver validates pixel clock rates against the
-> > HDMI PHY's internal clock provider on certain SoCs like RK3328.
-> > This is currently achieved by dereferencing hdmi->phy->dev.of_node
-> > to obtain the provider node, which violates the Generic PHY API's
-> > encapsulation (the goal is for struct phy to be an opaque pointer
-> > with a hidden definition, to be interacted with only using API
-> > functions or NULL pointer checks, for the case where optional variants
-> > of phy_get() did not find a PHY).
-> > 
-> > Refactor dw_hdmi_rockchip_bind() to perform a manual phandle lookup
-> > on the "hdmi" PHY index within the controller's DT node. This provides
-> > a parallel path to the clock provider's OF node without relying on the
-> > internal structure of the struct phy handle.
-> > 
-> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> > Reviewed-by: Heiko Stueber <heiko@sntech.de>
-> 
-> there is now already more stuff depending on this change [0], and
-> the change itself also is sort of independent of the whole
-> phy-series. And somehow this series itself sadly hasn't gotten
-> much review yet.
-> 
-> So would you be ok with me just picking this one patch for the
-> drm-misc-tree?
-> 
-> 
-> Thanks
-> Heiko
-> 
-> [0] https://lore.kernel.org/dri-devel/20260518193748.2482823-1-jonas@kwiboo.se/
+On Thu May 14, 2026 at 6:30 AM BST, sashiko-bot wrote:
+> Thank you for your contribution! Sashiko AI review found 4 potential issu=
+e(s) to consider:
+> - [High] Hardware register misprogramming due to incorrect CPU index from=
+ smp_processor_id().
+> - [High] Use-After-Free of device node intr_gen_node.
+> - [High] Missing teardown of global notifiers on probe failure causes Use=
+-After-Free.
+> - [Medium] Missing of_node_put() on error path causes a device node refer=
+ence leak.
+> --
 
-I am currently out of office, so I can't look very closely, but yes,
-I did agree with Vinod to try to reduce the size of this series by
-submitting some of the changes this cycle to individual subsystems, and
-the cross-tree remainder the following cycle. So yes, feel free to pick
-from this series and I'll submit to dri-devel whatever remains when I
-return to this activity.
+Sashiko reported quite good findings. I'd say that most of them were
+present in the code one way or another before my series.
+They look fixable.
+I'd rather need then two series: first one with fixes and then
+generalisation of cpuhp for Exynos but first one will be listed as a
+dependency (but dependency will indicate order of how series should
+be applied). Is that okay with you to proceed this way?
+
+Best regards,
+Alexey
+
+
+> commit 00ecbc34b3961a015d2064ffdbd5f20fb602ef73
+> Author: Alexey Klimov <alexey.klimov@linaro.org>
+>
+> soc: samsung: exynos-pmu: generalise gs101-specific cpu{idle,hotplug} for=
+ Exynos SoCs
+>
+> This patch generalises cpuhotplug and cpuidle support for GS101-based SoC=
+s
+> to be reused for other Exynos-based SoCs. It introduces cpu_pmu_offline a=
+nd
+> cpu_pmu_online callbacks in exynos_pmu_data and updates gs101 platform da=
+ta
+> to use them.
+>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exyn=
+os-pmu.c
+>> index d58376c38179b..660416c0db432 100644
+>> --- a/drivers/soc/samsung/exynos-pmu.c
+>> +++ b/drivers/soc/samsung/exynos-pmu.c
+> [ ... ]
+>> @@ -425,6 +346,11 @@ static int setup_cpuhp_and_cpuidle(struct device *d=
+ev)
+>>  		return 0;
+>>  	}
+>> =20
+>> +	if (!pmu_context->pmu_data->cpu_pmu_offline || !pmu_context->pmu_data-=
+>cpu_pmu_online) {
+>> +		dev_err(dev, "PMU write/read sequence is not present for cpuhotplug a=
+nd cpuidle\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>
+> Does this return path leak the intr_gen_node device node reference?
+> of_parse_phandle() acquires a reference to it earlier in this function,
+> which needs to be released via of_node_put() before returning.
+>
+> [ ... ]
+>> @@ -458,17 +384,17 @@ static int setup_cpuhp_and_cpuidle(struct device *=
+dev)
+>> =20
+>>  	/* set PMU to power on */
+>>  	for_each_online_cpu(cpu)
+>> -		gs101_cpuhp_pmu_online(cpu);
+>> +		exynos_cpuhp_pmu_online(cpu);
+>> =20
+>>  	/* register CPU hotplug callbacks */
+>>  	cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,	"soc/exynos-pmu:prepare",
+>> -			  gs101_cpuhp_pmu_online, NULL);
+>> +			  exynos_cpuhp_pmu_online, NULL);
+>> =20
+>>  	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "soc/exynos-pmu:online",
+>> -			  NULL, gs101_cpuhp_pmu_offline);
+>> +			  NULL, exynos_cpuhp_pmu_offline);
+>> =20
+>>  	/* register CPU PM notifiers for cpuidle */
+>> -	cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
+>> +	cpu_pm_register_notifier(&exynos_cpu_pm_notifier);
+>>  	register_reboot_notifier(&exynos_cpupm_reboot_nb);
+>>  	return 0;
+>>  }
+>
+> This problem wasn't introduced by this patch, but is there a use-after-fr=
+ee
+> of intr_gen_node in setup_cpuhp_and_cpuidle()?
+>
+> of_node_put(intr_gen_node) is called immediately after of_address_to_reso=
+urce(),
+> but later the node pointer is passed to of_syscon_register_regmap():
+>
+> 	ret =3D of_address_to_resource(intr_gen_node, 0, &intrgen_res);
+> 	of_node_put(intr_gen_node);
+> 	...
+> 	ret =3D of_syscon_register_regmap(intr_gen_node,
+> 					pmu_context->pmuintrgen);
+>
+> Also, this problem wasn't introduced by this patch, but does this functio=
+n
+> need to provide a teardown mechanism for these global notifiers?
+>
+> If exynos_pmu_probe() fails after this point, the devres-managed pmu_cont=
+ext
+> will be freed.
+>
+> Since cpuhp_setup_state() and cpu_pm_register_notifier() don't use devm_
+> variants, subsequent CPU hotplug or idle events could invoke the dangling
+> callbacks and access the freed pmu_context, potentially causing a
+> use-after-free.
+>
+>> diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs101=
+-pmu.c
+>> index 17dadc1b9c6ec..5f2a599241447 100644
+>> --- a/drivers/soc/samsung/gs101-pmu.c
+>> +++ b/drivers/soc/samsung/gs101-pmu.c
+> [ ... ]
+>> @@ -322,11 +322,68 @@ static const struct regmap_access_table gs101_pmu_=
+wr_table =3D {
+>>  	.n_no_ranges =3D ARRAY_SIZE(gs101_pmu_ro_registers),
+>>  };
+>> =20
+>> +/*
+>> + * gs101_cpu_pmu_ prefix functions are common code shared by CPU PM not=
+ifiers
+>> + * (CPUIdle) and CPU hotplug callbacks. Functions should be called with=
+ IRQs
+>> + * disabled and cpupm_lock held.
+>> + */
+>> +static int gs101_cpu_pmu_online(struct exynos_pmu_context *pmu_context,=
+ unsigned int cpu)
+>> +	__must_hold(&pmu_context->cpupm_lock)
+>> +{
+>> +	unsigned int cpuhint =3D smp_processor_id();
+>
+> This problem wasn't introduced by this patch, but will smp_processor_id()
+> return the correct CPU index during hotplug startup?
+>
+> During CPU hotplug startup, exynos_cpuhp_pmu_online() is called via
+> CPUHP_BP_PREPARE_DYN, which executes on the Boot Processor.
+>
+> As a result, smp_processor_id() returns the Boot Processor's ID instead o=
+f the
+> target CPU's ID, which could misconfigure the Boot Processor's register w=
+hile
+> leaving the target CPU uninitialized.
+
