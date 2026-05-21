@@ -1,102 +1,91 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DE935B137
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 09:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CCB358389;
+	Thu, 21 May 2026 09:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779354297; cv=none; b=qr94BN97Y2kcbBZ19NM6e69naAe8STje2MwAb3OFNIBZDoXgGMa55FEitZ+z1fAmr7jT1jsPz1o6CgcR2I+DHbMN1F0+LPSdqdLcSDsrGGjPvqxD2IKxeqazPwJFqDeH4lim2aadYOOOVHZKxs9mjS/pp4z8KlpuPVmVnd0iGWU=
+	t=1779354413; cv=none; b=suAQR5vMJVU8uVh1XgPUJQXmfhoHW3yRXnSXsLt+QHKdK5hy7SMC1A82zxvWtUBhZujdtGVBpBsfDr1gOf1Bw1Hq6l9AIgIG4GtIIjp6ls0QhtmamE9+XDDWlh8q7agrrCpa/eRqPduZ4juPVyqhaiULmEXyGJNaNlnM+A2qb+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779354297; c=relaxed/simple;
-	bh=51jdkliopHm/gTkNpfyqZJdBe6+HfqqyblMbDA73iTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8rImMzawrl7SC51MmAIxLNucXV5LaMQRuvOfGF45fGq0Fe5L4Tbne1UhVpxOlWlHZZV3B46wQNR0aMedcpgYJDat8m6eSBdmAPuDVcdR8jk08DkLKMoeUU8iwWo0td3lpm5pPD0MEDMn/+KjZZuPUmhXl+oXgT64bFcPwWTzio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fd6DhrsO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w6ZCIvIL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1779354413; c=relaxed/simple;
+	bh=bG1ORrM+5zQuozEgvJPRr0FAsMaoGZ5vXZ0w82XrLeQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IfwhfkmxNAd51ChCE5tj2ABj2fcairL93l6eZU3cA3yul2bc3An5m/B5cLOsKO5hnRbI6xqIPStIaYlirAwC2ltLHTZjSHAMvG04E0E2VjFBA8j7JZ8YCr7OKxo2Y+ACESUb6xjzpXrI3v+Hzw6vkjbhmGO8d1UBUvOrCidDf/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3mrLih5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fd6DhrsO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w6ZCIvIL"
-Date: Thu, 21 May 2026 11:04:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1779354295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fSDPkRUUJC/bV8tedmxXW4GHFzaVR3KOKuUCBGSDWus=;
-	b=fd6DhrsOkDkVlvJmnojDSYTfvxgdDuEFW0nykKnpcXFVv6JGL2tKkOziAGd1u0pcwu5pD/
-	+67Hv5MavnqkZ1tfiFmGjH4Qv52WmwyI6Znj/nYQyvZA174tY3OlZM1t8YGDGOjzJay9Ka
-	ZuVkn9Nko7R5zjLG988KjO/f4b83dl06WsZYmxYPtQPZ8u+YlkI5jEQr1/Iw5zR0AcJteN
-	ou6yERi6jYswvjfI11ETBPPuU9pXGNyyynpGxzZkfwFkEQ41dPNGBEBQVijDOCApUfXW67
-	qloChEmysIhRZmVP5gKSJ2UDKTTgFERnTb67OL+LqgNsNKAV0WodHinquaHxkQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1779354295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fSDPkRUUJC/bV8tedmxXW4GHFzaVR3KOKuUCBGSDWus=;
-	b=w6ZCIvILEIf2lo04wU/0+32CTneX/5/eJI+XnLzI/3gDgC538g4FbafFduGE4apaApx0lv
-	TTY1RPCizLMCfcCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, Thomas Gleixner <tglx@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3mrLih5"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BA0631F000E9;
+	Thu, 21 May 2026 09:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779354412;
+	bh=0chucKSxIxMImRF4ab1C0iTNacki3NqqCTkFos9OEuE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=P3mrLih5x0pu8nQDHtlwWUhxQawDZVLViB9rQFD0Ef2rlSxi+N8t6wELWONvcNgWn
+	 Fp/cOL88m0R7Ejk328LMFt8oB71XJSjtLu6ksx27u9nIG8sTEvEinDuWt3tqsf+E7R
+	 ccp7BZwXGvJk03Yf2yjKVk9U2k3BVldh1+O4Nu1e7RCaMYAoyk42kS125TyuMMI2cS
+	 zdHlxe1Pk8FqoG0o2CKVuiCpvhRvL+S7pQJJ4oF5e9AeTL4KyinC21bZ/myf9ggfNd
+	 eknFms+7oeD+w8fXrO+dfawz+hox6aUSuXQmCdai703ae5NTMb/awDlmTqdnKkFgzA
+	 SE+hiwhsJZVcg==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams
+ <clrkwllms@kernel.org>, Steven
+	Rostedt <rostedt@goodmis.org>
 Subject: Re: [PATCH] irqchip/exynos-combiner: switch to raw_spinlock
-Message-ID: <20260521090453.bbUZ00tS@linutronix.de>
+In-Reply-To: <20260520220422.3522908-1-m.szyprowski@samsung.com>
 References: <CGME20260520220432eucas1p10502ca0f9368bd6de5ce027ad8170109@eucas1p1.samsung.com>
  <20260520220422.3522908-1-m.szyprowski@samsung.com>
+Date: Thu, 21 May 2026 11:06:48 +0200
+Message-ID: <87ecj5w2qf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260520220422.3522908-1-m.szyprowski@samsung.com>
+Content-Type: text/plain
 
-On 2026-05-21 00:04:22 [+0200], Marek Szyprowski wrote:
+On Thu, May 21 2026 at 00:04, Marek Szyprowski wrote:
+
 > The exynos-combiner driver uses a regular spinlock to protect access to
 > the combiner interrupt status register in combiner_handle_cascade_irq(),
 > which is invoked in hard IRQ context as a chained interrupt handler.
-> 
+>
 > When PREEMPT_RT is enabled on ARM, regular spinlock is converted to a
 > sleeping lock (mutex-based), which must not be used in atomic context
 > such as hard interrupt handlers. Switch the irq_controller_lock to
 > raw_spinlock, which remains a true non-sleeping spinlock even under
 > PREEMPT_RT.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: a900e5d99718 ("ARM: exynos: move exynos4210-combiner to drivers/irqchip")
 
-For the change based on the reasoning
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Mechanically this makes sense, but out of curiosity I have to ask:
 
-but why do you need a lock around a single read of a register? 
-As far as I can tell, it was introduced in commit
-   84bbc16c1f621 ("ARM: S5PV310: Add IRQ support")
+> -static DEFINE_SPINLOCK(irq_controller_lock);
+> +static DEFINE_RAW_SPINLOCK(irq_controller_lock);
+>  
+>  struct combiner_chip_data {
+>  	unsigned int hwirq_offset;
+> @@ -72,9 +72,9 @@ static void combiner_handle_cascade_irq(struct irq_desc *desc)
+>  
+>  	chained_irq_enter(chip, desc);
+>  
+> -	spin_lock(&irq_controller_lock);
+> +	raw_spin_lock(&irq_controller_lock);
+>  	status = readl_relaxed(chip_data->base + COMBINER_INT_STATUS);
+> -	spin_unlock(&irq_controller_lock);
+> +	raw_spin_unlock(&irq_controller_lock);
 
-and then dragged through the kernel, merged, renamed, unmerged until it
-got where it is today.
+What is this lock actually protecting?
 
-This
-	https://lore.kernel.org/all/1277476037-8806-5-git-send-email-kgene.kim@samsung.com/
+Each combiner has it's own @base address, so there is no concurrency
+problem between two cascade interrupts being handled at the same time.
 
-is v1, as you see the lock is used in multiple places. Then someone
-asked "why locking"
-	https://lore.kernel.org/all/20100628144743.GB3287@debian/
+That means the only possible problem would be that the same cascade
+interrupt is handled on two CPUs concurrently. Is that even possible?
 
-and in v2
-	https://lore.kernel.org/all/1279270714-15146-5-git-send-email-kgene.kim@samsung.com/
+Thanks,
 
-it went down to a single user. 
-
-It looks like a leftover from initial development. So it would make
-sense to einer remove it or add a comment why it is still there after
-all these years since it is not obvious.
-
-Sebastian
+        tglx
