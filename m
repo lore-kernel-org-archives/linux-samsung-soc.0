@@ -1,173 +1,111 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC35376A10;
-	Thu, 21 May 2026 09:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323B5372B41
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 11:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779356329; cv=none; b=MfZj7393sxePZLF46o74pxuI+etB9G+ZLIlImEnprP51KLfYraJPD6WO5Oo1b7sC7FhHoZUqPfx/gJY/kHJm1J4Epe8ci6dkmtr9Q/tDB7Dr2QBmVJc0fmzLfPJcyAvO+8oADzKJQ3VSkVsEhBxj6PEvgljPH2dmUWCX5kGTlaE=
+	t=1779362767; cv=none; b=NF3/tCMoqVVnmqhZPp7lO87DzbywKGbO6nMTQ2O3d8/zzXNIbWwuPoFIyv61Ik8Xsvfcmt3nHT15uIYNbCwPrjsJKWutE4DW3GhbQy4mXIqs7k/hGEIZ3DoBXnQQi4shENtr0QNFMEt8sfnADcalM3cg4kHOojIAe9OiFs7iEA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779356329; c=relaxed/simple;
-	bh=KfGfTyFVL31vdUdOn+76p0c9asI51Kz6rpZ61Tm62g8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cEw3imQRhQn+KYwmqNMyGexNEwoS8UClVayeQ8FU6aYTc7vLw9cT0dHrvKadL0dWY25OaH6PiqmNjUujhbbyKHKqXHs1P/3GlDl/SRcOlfRY07DLXei3h5gEVSetrHh29J6PMt5hF86TC/vlW30M+D2Y0rnR84Z8UH+hZf9cdL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0I4tMOaq; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1779362767; c=relaxed/simple;
+	bh=+XpvXMZNLwaWXLrwI8QU0wpO9WhgG91kHw4oJ13QJxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=jdN61rWUulHGW+aByr6zi+P/ftRVsHAa2zFD4otI/B5R4UNm4f6cyjpkFky0JAcY+YwLPEHE9eJno7tUZUef2nn+joP9gu1JDLdlvmgmm5U6nPHPiL8PnKnu5OB1pXqwswxZNeTcfl/C+B4w6IDyhg/RFSFdp4BA2LYJHZ0Zf4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rGkfJLYu; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0I4tMOaq"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=82qSLImWzSWwJwDL4P56RDhSxB/3/+bLg3x1B6/8Vyo=; b=0I4tMOaqwxFvPcLAyXC1tGPrfE
-	HXHaVV7+wYwVP4UGjSNoFDd1VfRVRwKpSUpdi+/cM0lBIFBOtW57RPkKHZJ6gSZa57lZaOJNQszdB
-	j5MhP9nNF2ZBC5XTLEZLefqvWnNibulepEtkV4okP/kU2AAENM/x1cT5yntunk8HjnN93yJVk0KhD
-	4BGKyKzwZYIhS+icC3RQoCP/xlaXk2zQuPvKHmUwXbld7xPg620UPcbli2n9Nu98+Jo3ggiseSwXX
-	f5u71NtNcCGIkISy1Bu3AzX1ANpj9jp2f9+W1J8qexkOfVBSIDSPhC21GfXXPezuckw1Oq9h13vk1
-	Ke/2S4sA==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-phy@lists.infradead.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-can@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	UNGLinuxDriver@microchip.com,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Can Guo <quic_cang@quicinc.com>,
-	Chanho Park <chanho61.park@samsung.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	David Airlie <airlied@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	JC Kuo <jckuo@nvidia.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Joe Perches <joe@perches.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Xie <kevin.xie@starfivetech.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Dege <michael.dege@renesas.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Peter Chen <peter.chen@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Samuel Holland <samuel@sholland.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sean Paul <sean@poorly.run>,
-	Sebastian Reichel <sre@kernel.org>,
-	Shawn Guo <shawn.guo@linaro.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Vincent Mailhol <mailhol@kernel.org>,
-	Xu Yang <xu.yang_2@nxp.com>,
-	Yixun Lan <dlan@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: (subset) [PATCH v8 phy-next 00/31] Split Generic PHY consumer and provider API
-Date: Thu, 21 May 2026 11:38:18 +0200
-Message-ID: <177935628872.1653123.15514691751947313571.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260505100523.1922388-1-vladimir.oltean@nxp.com>
-References: <20260505100523.1922388-1-vladimir.oltean@nxp.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rGkfJLYu"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260521112603euoutp02e43e4db682ee7bf50e5af82cd1f68e6d~xkQFzJkMm1027810278euoutp02Q
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 11:26:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260521112603euoutp02e43e4db682ee7bf50e5af82cd1f68e6d~xkQFzJkMm1027810278euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1779362763;
+	bh=ip9QVPCCouGenbqfjJ/NrcAKbR/S6x3OuiBOrCOdt+8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=rGkfJLYuajlTFpSd2JtaWBrNzsH1OdXbyQCSKIe2CqY8dbxhr+LmkLCIT2pRroGUu
+	 312GPXnso0MJLRwhp3hPosxSD4eL1G3X4FtjTIAYZGZzIAsM8TitZkNzwsHcL2WfMQ
+	 bD7yMOS2FBPScfpG8sZE0tTYx60pSRsbFA8wseF8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260521112602eucas1p22a4c1f32694ae09a4b568d20adb49ff1~xkQFcREV20311103111eucas1p2u;
+	Thu, 21 May 2026 11:26:02 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260521112602eusmtip206dc41f961a36bb19b47f729d48a5644~xkQEvQqli0263802638eusmtip2e;
+	Thu, 21 May 2026 11:26:02 +0000 (GMT)
+Message-ID: <97f33a9d-5fdd-4766-aaff-d10d5f5fdf28@samsung.com>
+Date: Thu, 21 May 2026 13:26:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] irqchip/exynos-combiner: switch to raw_spinlock
+To: Thomas Gleixner <tglx@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+	Rostedt <rostedt@goodmis.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <87ecj5w2qf.ffs@tglx>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260521112602eucas1p22a4c1f32694ae09a4b568d20adb49ff1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260520220432eucas1p10502ca0f9368bd6de5ce027ad8170109
+X-EPHeader: CA
+X-CMS-RootMailID: 20260520220432eucas1p10502ca0f9368bd6de5ce027ad8170109
+References: <CGME20260520220432eucas1p10502ca0f9368bd6de5ce027ad8170109@eucas1p1.samsung.com>
+	<20260520220422.3522908-1-m.szyprowski@samsung.com> <87ecj5w2qf.ffs@tglx>
 
+On 21.05.2026 11:06, Thomas Gleixner wrote:
+> On Thu, May 21 2026 at 00:04, Marek Szyprowski wrote:
+>> The exynos-combiner driver uses a regular spinlock to protect access to
+>> the combiner interrupt status register in combiner_handle_cascade_irq(),
+>> which is invoked in hard IRQ context as a chained interrupt handler.
+>>
+>> When PREEMPT_RT is enabled on ARM, regular spinlock is converted to a
+>> sleeping lock (mutex-based), which must not be used in atomic context
+>> such as hard interrupt handlers. Switch the irq_controller_lock to
+>> raw_spinlock, which remains a true non-sleeping spinlock even under
+>> PREEMPT_RT.
+> Mechanically this makes sense, but out of curiosity I have to ask:
+>
+>> -static DEFINE_SPINLOCK(irq_controller_lock);
+>> +static DEFINE_RAW_SPINLOCK(irq_controller_lock);
+>>  
+>>  struct combiner_chip_data {
+>>  	unsigned int hwirq_offset;
+>> @@ -72,9 +72,9 @@ static void combiner_handle_cascade_irq(struct irq_desc *desc)
+>>  
+>>  	chained_irq_enter(chip, desc);
+>>  
+>> -	spin_lock(&irq_controller_lock);
+>> +	raw_spin_lock(&irq_controller_lock);
+>>  	status = readl_relaxed(chip_data->base + COMBINER_INT_STATUS);
+>> -	spin_unlock(&irq_controller_lock);
+>> +	raw_spin_unlock(&irq_controller_lock);
+> What is this lock actually protecting?
+>
+> Each combiner has it's own @base address, so there is no concurrency
+> problem between two cascade interrupts being handled at the same time.
+>
+> That means the only possible problem would be that the same cascade
+> interrupt is handled on two CPUs concurrently. Is that even possible?
+Frankly speaking I did this conversion mechanically, late in the evening to fix
+the bug warning I've spotted. Indeed this spinlock looks like a copy&paste or
+development leftover. The only side-effect of it I see is a memory barrier,
+which might affect how the register access happens, but this should not affect
+cascade operation imho. Do You want me to send a patch removing it completely?
 
-On Tue, 05 May 2026 13:04:52 +0300, Vladimir Oltean wrote:
-> The biggest problem requiring this split is the fact that consumer
-> drivers poke around in struct phy, accessing fields which shouldn't be
-> visible to them. Follow the example of mux, gpio, iio, spi offload,
-> pwrsec, pinctrl and regulator, which each expose separate headers for
-> consumers and providers.
-> 
-> Some off-list discussions were had with Vinod Koul regarding the 3 PHY
-> providers outside the drivers/phy/ subsystem. It was agreed that it is
-> desirable to relocate them to drivers/phy/, rather than to publish
-> phy-provider.h to include/linux/phy/ for liberal use. Only phy.h and
-> (new) phy-props.h - consumer-facing headers - stay there.
-> 
-> [...]
-
-Applied, thanks!
-
-[15/31] drm/rockchip: dw_hdmi: avoid direct dereference of phy->dev.of_node
-        commit: 9392e7340bffb406a705de755adfb44eab547d40
-
-Best regards,
+Best regards
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
