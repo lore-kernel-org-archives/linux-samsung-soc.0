@@ -1,152 +1,112 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409873DB318
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 14:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE49027AC31
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 14:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779374189; cv=none; b=PFt3nCVKJzKYoIMlupqq9ZAwSHsctC06LEPgwqhXT83ieAuER2Uwc06HFQRRs/9gPWE1KaO33FWqLompi8oZp/nYr4biyGITKFPIPgX+uSAePYiXSZawx+seYh5cqlOBuelYyt9iYn87jkwbmgyXEdGfV/bkNbnf7UzdFR2mD64=
+	t=1779374991; cv=none; b=slM3AfmRkbTTsPsEPpFE3cR6QFZF5xxJHM3CTJfDj+Z51TY7hUWI/tlwWAsKN1sMovbUJdGCZMapDOfhovi+WwZULtd0wOZuq9OPTrBwCznryMVllOxEikDp1xi7eTY/6nTdOdGXNDzniCQvuAYFxJjByJX095aY6nO3bOT3GDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779374189; c=relaxed/simple;
-	bh=/ixmRpmg8xZAeEKEAmXcd5PzO0R0B/Z2N+0BuJ1k904=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dX7vwCEXjwt4zAMycCzE3c0WD8rZA5Kc7IgivOxuAGORhtExMkVZb8u+uGJrS8A81NQbAWfwmvcUJtaiy5Mnse9wGTedcpMPtAHxgzzvma/o8Q3SZnZTGG7bGDA5Hk2FeX/8jxfMo2m86YXRnGAQ0U2DJ/i0vkZvoYtpNfetU2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePiSbu0a; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779374991; c=relaxed/simple;
+	bh=kHfW1tkeDqd0FB9koVmxfMJiTZ+rQNUC9ZCer8vMg4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0n1I8Ju8sWLGOOqRh3ltAaQV3w9SAi+8J/Aw56E8vZ3HrjaW0D4kGvEkADN3aQT0DtP1WpWKL+sBx+nweIdwAGJN5iydNDUNX6GCPlqgXXDItEWebVVF71mmlH7rFZvaCRiAJGCVb/AtSl9Qdjpfy/JD1sG/VW6RqPfEgCRavE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zwYi+evs; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePiSbu0a"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2ba4efedbeaso45346325ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 07:36:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zwYi+evs"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-490388fd0dbso7288075e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2026 07:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779374187; x=1779978987; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTAM2OCnR/CpQqKrM7cC8oSYE2+MEWlXnrT+DWAEKJA=;
-        b=ePiSbu0a4AxKyHLLBEfAXCjsVhxksbJc4h9MZ7Q+wylGqkTlzkZIa4E4EurEP1oE1d
-         ucrDDUJf5/Ys4KQDFSDyuh1Uwf8ONla/oC50oBiAzObrzkYGrwnSTdo+JOgVOuOAHHQH
-         /s/WHRbAa7a34P2pzWBtLTJDfov0oXcw2ktQSbzTex9mtwh6Ntaw1ONa3xl6qvzWMut5
-         35zMU7/QsjxESkOUs8t+y+vZ6iJd7CMY0jJZ1WOhVO5SGVVeUqB2iyuJmtIV1P4/Nu2H
-         /pP9vMmGOVh2g0sivE2sWIS/a1Ssp6bAisJ/0cOy9FIY0kFJqkYf9ukLa0CX8fh93WvN
-         mKGw==
+        d=linaro.org; s=google; t=1779374988; x=1779979788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kHfW1tkeDqd0FB9koVmxfMJiTZ+rQNUC9ZCer8vMg4o=;
+        b=zwYi+evsFyK43tb9HzHTSVntN44q1OnTQayutfzV+wb4Y8ri7IPaZjYbyRchbwO26W
+         2dgAkL3l+uotciSKXUxP2wcaVxvJLC/AdkoUmqlZgAl8hyScxwQ6UNreVkdnyDh8oWu5
+         cDToEJyPDZbwnEIGJ5LLlMD6giVf6ZTzVUFSJ1Yrd729vbGixIwUrWvdHB68QubCxGMS
+         Pc+TC80jhuRXTJVkuKR6VmOG5K8mstXm5cLU4KNkqzsXYvRVLbyOK0NPkt5zDP5Ba+gL
+         UsaRtuEv79JnF8taC/IDJUjzCuNWYfvg6T28K4tm1xb+GyFG9HkAbELuQqgmKcfPZ8rP
+         pBJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779374187; x=1779978987;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTAM2OCnR/CpQqKrM7cC8oSYE2+MEWlXnrT+DWAEKJA=;
-        b=Gjo8fae7nsEVNwdw3SO6jHyW/o8gj7FMa+qL4Pyy4TFcmB0QSv3inO6kIToSz2DEOO
-         OowBwmsO2N1rujUDBBcoLc1dPFkun/a9O4XVLYJ8OUJuAA/Ll/IU2pFvtBO/L0l94CW9
-         0IN3xnmAQvg1zEh1c4wSRXvUyzVtWEJgTmOioPR9je0moa9VgSmsbE82CXZZfgIMu5vZ
-         01ezh7qP9/pgjnjEQ4USsHN/1XgoKBwYT7HQiN+yhmTgfbiZR2DRmj8P+SzLGWNoGWjT
-         tZSi6tCEOzTNEnqWuoGRwfyFmlO/Oo5Uz4+sgUxYmq71Gf+wBzUk5JMO1OmxmZbUuPQg
-         YuuA==
-X-Forwarded-Encrypted: i=1; AFNElJ8A208UySRPkNy9KP2tusf9h8UPw64iZ/ekjvxKIsn0kgdoOIp4LlcUpQVyRCpJVQjaN333yAmnzWe/DoaEAZh9Zg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWdnHGFixdZdPFXwTpTePyr/0sZdF6C2yYahjHj7Uxbb9+Ixhg
-	cbfNKPsO90EeL/8azGjx5Aj7f09PqQOw8lksHXv7+wHFN6uFAc2IRmGor/q+O9AqE4Q=
-X-Gm-Gg: Acq92OFCSMQ3EOU4Y9w3Som8Qf76jTADz4t3Z8ieraZKjQpcYLMoTcZUagPa62xJeX9
-	f1rCBlxPhyBzwPV4V3O48UPYg4SEO1U1w2UN6x0HebWG9CxfONf++DEbiTDSzekeRBx9265KWeW
-	4ztto7yU6I91Eg97+Z0n6q6Jz4EIWGmXPGI/PK2vu/DkzJLMENp5ixQacxT/BcrPwpquV1dnS9H
-	7Iz81yIGYLpNcJHjfVMAiRseQ7pk2WvlRf9Aj+rMrah3nqO5D9vpY6x3MwZO7tJWHs9EDKCHFEx
-	i7oNX8J3/mxM+6EYn6gDlkYG52VphilBG4al7PIg5kdNOyXzLQGGZWiLPpSJEb4fiprSH9JqicP
-	IYV9kt2+G7SNiS0ceh2UoP4URZoukBH0hB3cCgW65sbYFOpw32sRaT5CzjCMWZHYt77uP5Pk2Mf
-	SV0/A9azaiA2Y0UkOQC/b7AKcTn27wixmaZ5PUgsazTS6F+gzVB1QGeZIjzpDltjtkxV9jT5C7V
-	HlatzLmjLZ9NbCk/+hnLhmcWxk=
-X-Received: by 2002:a17:902:ce92:b0:2b0:bebb:1081 with SMTP id d9443c01a7336-2bea339d36fmr32322615ad.28.1779374187405;
-        Thu, 21 May 2026 07:36:27 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bea929d774sm13807245ad.32.2026.05.21.07.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 07:36:26 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Thu, 21 May 2026 23:36:24 +0900
-Message-Id: <20260521143624.56906-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20251104; t=1779374988; x=1779979788;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kHfW1tkeDqd0FB9koVmxfMJiTZ+rQNUC9ZCer8vMg4o=;
+        b=n1g1CM57uxq5vVLARSRPrm09qUqXCSpAyMbSfRGcoJ0kfXwwW+fZzzTwXerhTDw7vW
+         jPgmr/ZSdMfDtYhe+ob/rVqtkOjdXvQ5Wsl4rFJTiNWgtFXddPa58dIKUuZdHfv5ZW5X
+         MhXINsLia3++N3T2jdZ4XarKb5xeYlibnA/YM6xyyak0KEWCqNyOb+4KQTFusTJqxPdw
+         fYHzW4Lk2meR20Hg4ZqJxmjjLfyUOYsaXpuZQVdJibfSD+p+hpzz07peP9N9An8pjz1Z
+         SXnkhjUD0Nu0+xOhS9pUKLM2/ZoQhVyibufrTBCacx4fPuDMulYqvhUuH3t6HHqYhzJb
+         npkg==
+X-Forwarded-Encrypted: i=1; AFNElJ+78Ap3pChTZD4AftFCytlX/8neC3pjWuQllivI/vgJomdJh7PDpRMn4ATL4r9D/tVZmuaObUPSiG6ldrAyuULVHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+7ZOIztAkNEaz72b865KKPzlDfJQUrfuk+09ELk3gxH6MGNk5
+	fnUpiCLMe37TK11fFizy1kcXObUx0dc6Y9gdQZUHL7+NoM7N2BbSWTQn8Y7y/AVON2Y=
+X-Gm-Gg: Acq92OF3tKqegW4j0zzIOrSdVxiyGMjocaaDzCGWHnndNU2wxEnOPm8HEZQ3w1HfKf5
+	SGA+3CZjgWlmiQc0ObPel/Xr3U6YE/1AgQ4BpiCfgZ5g5uFi2vHRbBVhzFd5h8+5MOVtS9AdCHp
+	QlVC3xTz2mrzToYqOevOfDL4ZClFuOaeQrrwaCywdG8h0I7Z5NssO8ED7IQJeyJjnWFafEPrPp6
+	YI879lCL/DDpuCt+UXDt2QO1GPL8r8RKKYTWC+hfA/Ncg+haizkkNFDEM84y4PmZSkK9jEcp1SA
+	2pB89J9sTqgNxBVI0aSzZphrQq1TxUzjnCD87QargbHfRF7vHdFeo1zCAnu54oKBhLTWDNSqGJU
+	l1fW6lR33PFt4W/g/xsn0EKD5gZY1Jhz3ys0ewv9MP2qvRDltcaK/8zIQSrMtIZvl+RKPAutWzZ
+	eb1PMlM3GuGsbU/O+xgewAQfyVesYOi28=
+X-Received: by 2002:a05:600c:3b26:b0:48a:5821:5ffc with SMTP id 5b1f17b1804b1-49036033499mr48409275e9.2.1779374988282;
+        Thu, 21 May 2026 07:49:48 -0700 (PDT)
+Received: from [10.11.12.110] ([82.76.215.73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035c6766fsm35082475e9.2.2026.05.21.07.49.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 May 2026 07:49:47 -0700 (PDT)
+Message-ID: <b061d100-c0dd-467d-8289-be2c0935791b@linaro.org>
+Date: Thu, 21 May 2026 17:49:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] firmware: samsung: acpm: Add TMU protocol support
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ jyescas@google.com, kernel-team@android.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260506-acpm-tmu-helpers-v1-0-a9cd5daf8355@linaro.org>
+ <20260506-acpm-tmu-helpers-v1-5-a9cd5daf8355@linaro.org>
+ <DIBOWQYHOPOU.3PCLCL8030WRL@linaro.org>
+ <806da86b-45b7-43cc-b364-97bade8f4041@linaro.org>
+ <DIFVKM72KZDI.14EVGUMQ0NV9S@linaro.org>
+ <a55690fc-7727-401d-9b3c-06bf3c2852d0@linaro.org>
+ <DILRJBWU9SKV.2P7EJN7ECEJB7@linaro.org>
+ <73f18a2c-e729-45d7-9376-7c0e60ed35c7@linaro.org>
+ <DINT2DFDVWFX.BGTG7LOC91RH@linaro.org>
+ <CADrjBPqiooFC9o56bOAg-j7908ssPtrzff1reNe6eXmu7hcA=w@mail.gmail.com>
+ <DIOE94AX265Y.4QU8ZF520FUV@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DIOE94AX265Y.4QU8ZF520FUV@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dave and Daniel,
+Hi, Alexey,
 
-    This PR brings a cleanup and modernization series for Exynos DRM,
-    focused on fbdev emulation and DMA/GEM internals.
+On 5/21/26 4:37 PM, Alexey Klimov wrote:
+> Peter, I agree we shouldn't bother about hypothetical SoCs. However,
 
-Major changes are:
-    - migrate fbdev allocation to DRM client buffers,
-    - switch fbdev geometry calculations to DRM format helpers with tighter checks,
-    - fix screen_buffer handling to match fb_info semantics,
-    - adopt DRM core DMA tracking and remove redundant Exynos-side code.
-	
-Please kindly let me know if there is any problem.
+It's standard kernel philosophy to not add code that __might__ be useful
+later. Please consider adding that print when you submit support for
+e850.
 
-Thanks,
-Inki Dae
-
-The following changes since commit 512f9f150f367176fa9e5f4613b4863409a6f686:
-
-  Merge tag 'drm-msm-next-2026-04-02' of https://gitlab.freedesktop.org/drm/msm into drm-next (2026-04-03 18:57:00 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v7.2
-
-for you to fetch changes up to b9bb45aeaf028450c753782280922d31120b342a:
-
-  drm/exynos: Make exynos_drm_framebuffer_init() an internal interface (2026-05-21 23:11:46 +0900)
-
-----------------------------------------------------------------
-New feature and cleanup for Exynos fbdev
-- Move fbdev emulation to DRM client buffers
-  . Reuses standard ADDFB2/GEM paths and simplifies cleanup.
-- Use DRM format helpers for geometry and size
-  . Applies 4CC-based format/pitch/size calculation with stronger checks and PAGE_SIZE alignment.
-  . Sets screen_size and fix.smem_len from actual allocated size.
-
-Exynos DRM internal cleanup
-- Adopt DRM core DMA tracking and drop redundant code
-  . Removes private DMA tracking, exynos_drm_gem_prime_import(), and obsolete iommu_dma_init_domain() stub.
-- Reduce duplication and tighten local scope
-  . Replaces MAX_FB_BUFFER with DRM_FORMAT_MAX_PLANES.
-  . Drops redundant exynos_drm_gem.size and internalizes local-only helpers.
-
-Bug fix for Exynos fbdev behavior
-- Fix screen_buffer offset handling
-  . Keeps screen_buffer at framebuffer base and avoids applying scanout offset.
-  . Includes Fixes and stable Cc for backporting.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (5):
-      drm/exynos: Internalize exynos_drm_gem_free_object()
-      drm/exynos: Use DRM core dedicated DMA device tracking facility
-      drm/exynos: Drop exynos_drm_gem.size field
-      drm/exynos: Drop MAX_FB_BUFFER in favor of DRM_FORMAT_MAX_PLANES
-      drm/exynos/dma: Drop iommu_dma_init_domain() stub
-
-Thomas Zimmermann (5):
-      drm/exynos: fbdev: Remove offset into screen_buffer
-      drm/exynos: fbdev: Inline exynos_drm_fbdev_update()
-      drm/exynos: fbdev: Calculate buffer geometry with format helpers
-      drm/exynos: fbdev: Use a DRM client buffer
-      drm/exynos: Make exynos_drm_framebuffer_init() an internal interface
-
- drivers/gpu/drm/exynos/exynos_drm_dma.c   |  15 ++--
- drivers/gpu/drm/exynos/exynos_drm_drv.c   |   1 -
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |   9 ---
- drivers/gpu/drm/exynos/exynos_drm_fb.c    |   9 +--
- drivers/gpu/drm/exynos/exynos_drm_fb.h    |  10 +--
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 111 +++++++++++++++---------------
- drivers/gpu/drm/exynos/exynos_drm_g2d.c   |  13 ++--
- drivers/gpu/drm/exynos/exynos_drm_gem.c   |  50 ++++++--------
- drivers/gpu/drm/exynos/exynos_drm_gem.h   |   8 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c   |   2 +-
- drivers/gpu/drm/exynos/exynos_drm_ipp.h   |   4 +-
- 11 files changed, 103 insertions(+), 129 deletions(-)
+Cheers,
+ta
