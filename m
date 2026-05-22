@@ -1,111 +1,140 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0363B7B76
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2026 09:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779441627; cv=pass; b=f1RiGem5RUyvYupHgDaToQcJEHvxyWpuFfRRSBmDkODgXsGvYEdIGAWCIGftHL5+w7WRArEXElXjtFUrxhb4uxbvphTJBxh7ZfSvnsxYLzK/+7WxPsnSsRdrQSuqTOTRVQiaOBhH1UtLqFnRQ8ln456fzynH84rvdxH2N7YHKcE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779441627; c=relaxed/simple;
-	bh=OEirToh+MwCYb1DaYfmows1iO3IlCn32okdonWMlk1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DW95vyke4SCajit/NP5JD56MfciENERPxAmK22cJ9c4T3QG9DRkuNqp7isnykfJjuRigvvuK10b/8BAYOwKowQifBb1+ZE918+fakOeliC+MuADv54A8J30URtCB32F/oB3zL0usTYjReSEPzt2RMfgLVQZqM9A7uxayJraE2VE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DkO7X7AG; arc=pass smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA830EF90;
+	Fri, 22 May 2026 22:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779489395; cv=none; b=fOBU5w5LplZPEJpldpY3VryF2hPa/aBZvyoFM63eq3LOTRt7uSyprWLdKNvJG+KrkFeY+2nUhBzLjXPeqv7gKGsRCth5qjw4Af+/WafylIdFR5MQozULjJIQcMujlpwcMUD9iTMYouABl9eRoYD7elJSvxqM0BSmJmFLjoeZ90s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779489395; c=relaxed/simple;
+	bh=DsFrLy1QnmfWFDbon41lWyQaVdRD1IbMP6ozeZW94Ms=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bFwEg/M6bdIo797RwJaLKxBqrnra72M832fR8TkK7daf+RZj1S2La21uXYgDMY6WOXACxkJiS1I0yIKUZVq98AiIb1TAi9pFhaEU4CLjFi7oBppfwAQkm0yZv/LW3urN+Ir71JsTOxQF5kFPr2B/qFkNvEYsEmA1r7RKzw8GRUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJM13lUm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkO7X7AG"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-68852b58d87so2611369a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2026 02:20:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779441624; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ji+t57/26R5Wh46Sy8MfCF+GZNJTeHh+V9J60a8xAv3PtGPTBwCUsI5hjWP0Fi6jL5
-         4nUPHizS1nYnQzmjkmLG9/CQdKDk5ACc0RVRvv80OIl3xxwol6Ef6IAOq4g+gF2oES8f
-         AU4dO6aMuN1hqQ0y14DG0GFAhtv1RbQtbHEzi00/64Vt1y/V3SUo7HsPi6sfEXe25QGU
-         awnlMI2itFW8IIzeaL0bfEs5q0sDsvgroD0sw3mJyTcj0VmcjcU+Ksss6QbPPD2oiyRt
-         rW6t7TnDg6JLAYTT3v7Hf1oNhAFiVLTFiRaJCskjGuSqQsAnt2pThVWRPaVNljcv3Puc
-         41nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=OEirToh+MwCYb1DaYfmows1iO3IlCn32okdonWMlk1w=;
-        fh=4y1DgIY3dN9qVc4DumFq18iZWp7LgCJZOxd6bZjXax4=;
-        b=WOUW/rwYarVHyWCWyy9zzV5MzQZUNEEbRYXaDrI1QBQwMnKx8MIKV15MPl0x3akced
-         W/TTyojKDFEwpwCLNcObsOS3p8TvBkdDsIxkyCRe01xOjyIjaKN9SV62bn4K97aWcaqa
-         XIM+ngKeE+wJh1TclGZ8qs3q6JvAR8hwNx5OSClVNYPKo+fwIKN1YipxSEyqK8Xx1aXR
-         4qxN9IJIAFI1VBcPwRJKXu2aC037np7wktdaAoah2uVQKPfV/dEFmJOsrDHUhBn+sCJ9
-         t1yJkSDyn12g2KvveqQOQvxIXTrDDYQ0M4ALnbBQ6LMhkTI05d7qTirSEfTB0mvocCzz
-         UPkw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779441624; x=1780046424; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEirToh+MwCYb1DaYfmows1iO3IlCn32okdonWMlk1w=;
-        b=DkO7X7AGc5UKN5MbAii8YYgDZjEBmJIOPZ0wV/UOQ4suqXcU6NADg+xz38gcVSHuoX
-         v9kviPyTM3aD/o+finss4lqNBmDPiHAM1ftb8MbMS/xZ8ftkI8C2o9sq6DvehIbIw0Tu
-         QOdGJ+uIVRn5emcyoyqIJFfYjbQX63slkUnhGoiIuXNoX8z2pui+LcE3DQmjBAiMfiuK
-         VuPQxRYnp1xLG4kAZgjY5YFTNvDJIhg0CnwNYZaAKLnkHC8oeWDs2mN57yz8HKv1Chaq
-         6bbGhLR8duUgH/iXN8p8cFeLuXMDbE1mgsJpqdPrOdnhVSnKDaVCwiLABjGnnGakipBL
-         bIWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779441624; x=1780046424;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OEirToh+MwCYb1DaYfmows1iO3IlCn32okdonWMlk1w=;
-        b=mkKB1J5cVAGzp8H9b5KTvQGc4ZxKM6T9eGAC/Lwn9+4Jd44daOIn9vTRIXcaPxS485
-         fCTuHdseGvBU1MyMXtItx0Mp6V6WvnVbZg8CP04dLYsQrroeDMxZaUb/0WW9bUcP4BvA
-         nWt0t2Hs1t0f9q79vwPvMbeffVUMn4XjJUKm5Frz0gBGPMBJ3Qm31KWljjhjGlAPIPtn
-         d3Q99VSGFMYnoQLhStqWaYi5/DqlBk5xmEEcRjx/jf4szW6bJKTaAmcs2lrLNkTviD5N
-         zCWCvo9MKTbElTcLyTiZZd2cNgH7Znpzm7YdqchKjy8x3FsSh8vUoSaCySV4nt8VGfIM
-         DVlg==
-X-Forwarded-Encrypted: i=1; AFNElJ/qsMQ8t9oxDf/aF9Frmxb1R4gjckBiWroqbvn90k0ENxeSCjKclI05VPDEBRyjkzlygPEux/n4JDNrMB8nbdUB8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxsqEHxkloFkBK+GP1tSg3vLe9T8VNq0FnFcRYpFK0sE57OQ0t
-	eew6umiRGieKsjkEkVWRu2WL7muhj5W3LMeEoEMc/2/Ys76CEcfiKLrm6W2nnOYlA9IPkqqTKgw
-	sDJDynHPcpkuJIpZTLBqTj1YYgXoCwzBhC8MVE1T5uQ==
-X-Gm-Gg: Acq92OGGpDcS0iwWsa25X4T9zeKYSNNus5ur8+KYmVu9VlQMhSQOTE+VoqyY3oyySdV
-	zeE3Hj2sA47TDuks54ayts81QYbVhpuA9GZsn2tbynMFnIwMyD9M3YdUQ57Oj4MRbFpg4HDXkl0
-	eR1EeL8pKA+O/fh861RbdAhufhrZeJunGovLB/MpYM7alAruUE4qgpDSAO/vO541Lmsc8Wh8o1x
-	+a4feEnzVmpyLBUnlrofvmeV2qxIKrFMMBC/TPBWUb9UrfbtE36LNoOfPrpRgvgo8cYnBzSAxhg
-	gUJfrsfW8VKhVsVC3VZ0rWL3EfwSz4m15yxW0Ho=
-X-Received: by 2002:a05:6402:358e:b0:687:cfde:ddb3 with SMTP id
- 4fb4d7f45d1cf-6889c420cc6mr1356687a12.5.1779441624077; Fri, 22 May 2026
- 02:20:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJM13lUm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B643F1F000E9;
+	Fri, 22 May 2026 22:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779489394;
+	bh=6njRsw02iSRnqRZYZKADbmfJ16iyqvzEz/yxpdPwiws=;
+	h=From:Date:Subject:To:Cc;
+	b=gJM13lUmR9iFlNe65UcQTtky7kQ/5n05Waz3y72Kk3S1Jsb+tQ23erOPvN2HFZMft
+	 b2gssuvysm+IN9dzoIeX2lWjpTIri5QjW4rQnY5slehKEoEJLdP29rYnHcY8/RqqVk
+	 EKb1HG6yip5h4evB/A7Zax9WeElIFHCIB4sSm25J/EN9J8FisMjBBVauQx6o6UyvXM
+	 YuzOiLH+gdvteVaDG/VlxBTqUGLrFWTNt4mlqPETFscLkA/OhSbgg8b/bDzgM400U9
+	 XQwwF+9GL984VQfTLo6BARwfJGExfbGGyi00mLefYyFr8TgNn+bqbpWV/qsPrtyUtD
+	 9J/uLjP9FHNvw==
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 23 May 2026 00:36:30 +0200
+Subject: [PATCH] media: camif-core: Drop GPIO handling
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260522061030eucas1p15f61b7bc01f77a3d34d41472210ea662@eucas1p1.samsung.com>
- <20260522061012.2687122-1-m.szyprowski@samsung.com>
-In-Reply-To: <20260522061012.2687122-1-m.szyprowski@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 22 May 2026 10:20:12 +0100
-X-Gm-Features: AVHnY4KmsYofVZ6OtbI0hlOv_2b1wBOu2Rzf0xG7uc2W1dzbk8tXLU_FZLOZnh4
-Message-ID: <CADrjBPqaVVCYzeG6OVtB1VqnQCLAAvefuZHv3=v86bRcaAv4Cg@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/exynos-combiner: remove useless spinlock
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-rt-devel@lists.linux.dev, Thomas Gleixner <tglx@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260523-s3c-camif-descriptors-v1-1-797052aab553@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDQAxA0atI1g2MM2ppr1JcjJloU6hKolIQ7
+ 96xXb7F/zsYq7DBvdhBeROTacwoLwXQM44Do6Rs8M43rvYBLRBSfEuPiY1U5mVSw2vZ+KojF+I
+ tQW5n5V4+v++j/dvW7sW0nDM4ji+0Cit9eQAAAA==
+X-Change-ID: 20260523-s3c-camif-descriptors-71624bc03a9d
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>
+X-Mailer: b4 0.15.2
 
-On Fri, 22 May 2026 at 07:14, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> irq_controller_lock doesn't protect anything, it must be some leftover
-> from early development or copy/paste. Remove it completely.
->
-> Suggested-by: Thomas Gleixner <tglx@kernel.org>
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Link: https://lore.kernel.org/all/20260520220422.3522908-1-m.szyprowski@samsung.com/
-> Fixes: 96031b31a4b3 ("irqchip/exynos-combiner: Switch to raw_spinlock")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+The driver and platform data refers to the legacy GPIO API,
+doesn't really use it, and also calls some GPIO-related functions
+passed as platform data.
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+This platform data is not used anywhere in the kernel.
+
+I'm not outright deleting the driver, just deleting the bogus
+GPIO handling. If outoftree developers want to fix up the
+driver the GPIOs should be defined in some kind of firmware
+node and be obtained using the gpiod_get*() APIs directly
+in the driver, but I don't even know what these GPIOs are
+since they are hidden in platform data that is not in the
+mainline kernel, so what can I do.
+
+Signed-off-by: Linus Walleij <linusw@kernel.org>
+---
+ drivers/media/platform/samsung/s3c-camif/camif-core.c | 9 ++-------
+ include/media/drv-intf/s3c_camif.h                    | 2 --
+ 2 files changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+index 221e3c447f36..1304d4191dd6 100644
+--- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
++++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+@@ -12,7 +12,6 @@
+ #include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+-#include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -412,7 +411,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 
+ 	camif->dev = dev;
+ 
+-	if (!pdata || !pdata->gpio_get || !pdata->gpio_put) {
++	if (!pdata) {
+ 		dev_err(dev, "wrong platform data\n");
+ 		return -EINVAL;
+ 	}
+@@ -429,9 +428,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = pdata->gpio_get();
+-	if (ret < 0)
+-		return ret;
++	/* FIXME: get GPIOs here */
+ 
+ 	ret = s3c_camif_create_subdev(camif);
+ 	if (ret < 0)
+@@ -504,7 +501,6 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ err_clk:
+ 	s3c_camif_unregister_subdev(camif);
+ err_sd:
+-	pdata->gpio_put();
+ 	return ret;
+ }
+ 
+@@ -521,7 +517,6 @@ static void s3c_camif_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	camif_clk_put(camif);
+ 	s3c_camif_unregister_subdev(camif);
+-	pdata->gpio_put();
+ }
+ 
+ static int s3c_camif_runtime_resume(struct device *dev)
+diff --git a/include/media/drv-intf/s3c_camif.h b/include/media/drv-intf/s3c_camif.h
+index f746851a5ce6..00d83620ea5f 100644
+--- a/include/media/drv-intf/s3c_camif.h
++++ b/include/media/drv-intf/s3c_camif.h
+@@ -31,8 +31,6 @@ struct s3c_camif_sensor_info {
+ 
+ struct s3c_camif_plat_data {
+ 	struct s3c_camif_sensor_info sensor;
+-	int (*gpio_get)(void);
+-	int (*gpio_put)(void);
+ };
+ 
+ #endif /* MEDIA_S3C_CAMIF_ */
+
+---
+base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+change-id: 20260523-s3c-camif-descriptors-71624bc03a9d
+
+Best regards,
+--  
+Linus Walleij <linusw@kernel.org>
+
