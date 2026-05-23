@@ -1,33 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEA830EF90;
-	Fri, 22 May 2026 22:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7618D3064B5;
+	Sat, 23 May 2026 03:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779489395; cv=none; b=fOBU5w5LplZPEJpldpY3VryF2hPa/aBZvyoFM63eq3LOTRt7uSyprWLdKNvJG+KrkFeY+2nUhBzLjXPeqv7gKGsRCth5qjw4Af+/WafylIdFR5MQozULjJIQcMujlpwcMUD9iTMYouABl9eRoYD7elJSvxqM0BSmJmFLjoeZ90s=
+	t=1779506158; cv=none; b=IxrQcnEEbq2ERQbgZfB4twXAJ2eY+OlqTUpNwRy3dPGD5iV2wJv4SJ30mgwTopHH7r9jn9VKH99QiFdmBwakWUTp+62boekYXGxJEpIHWk0ft0LjuSj+wci0UaY38SCG9UA+4ouhMJ+tQeV4uNMx884DmpnlLzXk9g6wJTJZNco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779489395; c=relaxed/simple;
-	bh=DsFrLy1QnmfWFDbon41lWyQaVdRD1IbMP6ozeZW94Ms=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bFwEg/M6bdIo797RwJaLKxBqrnra72M832fR8TkK7daf+RZj1S2La21uXYgDMY6WOXACxkJiS1I0yIKUZVq98AiIb1TAi9pFhaEU4CLjFi7oBppfwAQkm0yZv/LW3urN+Ir71JsTOxQF5kFPr2B/qFkNvEYsEmA1r7RKzw8GRUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJM13lUm; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779506158; c=relaxed/simple;
+	bh=6QdnE50gKD+tD0QjrDjYqrv+GzTNJTCVGiBEnMarYUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VZDa0qqtCdViZGZpg4UBYx2LleMG5da8u36/lE1pi0Byf1CQoC7YLuNLG6b1TW672WNtSFeAGGVE2GIXPNzVzipDhxzTd7Qu4nV2XI9SDY1v+N8mJJqjDOQfbjgqZ08FF0k2QLN/yLUCnMHsYmpvQOZ9K0tUfaY88RnsGXyQCYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Bs4hWhIM; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJM13lUm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B643F1F000E9;
-	Fri, 22 May 2026 22:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779489394;
-	bh=6njRsw02iSRnqRZYZKADbmfJ16iyqvzEz/yxpdPwiws=;
-	h=From:Date:Subject:To:Cc;
-	b=gJM13lUmR9iFlNe65UcQTtky7kQ/5n05Waz3y72Kk3S1Jsb+tQ23erOPvN2HFZMft
-	 b2gssuvysm+IN9dzoIeX2lWjpTIri5QjW4rQnY5slehKEoEJLdP29rYnHcY8/RqqVk
-	 EKb1HG6yip5h4evB/A7Zax9WeElIFHCIB4sSm25J/EN9J8FisMjBBVauQx6o6UyvXM
-	 YuzOiLH+gdvteVaDG/VlxBTqUGLrFWTNt4mlqPETFscLkA/OhSbgg8b/bDzgM400U9
-	 XQwwF+9GL984VQfTLo6BARwfJGExfbGGyi00mLefYyFr8TgNn+bqbpWV/qsPrtyUtD
-	 9J/uLjP9FHNvw==
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 23 May 2026 00:36:30 +0200
-Subject: [PATCH] media: camif-core: Drop GPIO handling
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Bs4hWhIM"
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64N25WfF2306715;
+	Sat, 23 May 2026 03:15:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=ktEyyfLRRFdMxrVEwuRXgkrGd6j3WoLUViZhfjdpIzI=; b=
+	Bs4hWhIMzslsm+RWhy+hphFROIoTOhhATkMRnqvyaqITdVIvhR9bJfYiYa8UYX77
+	6GSACDcuiS3lu3uKJ8Io/MABzTlN3P76qgtOpvomfmpHvPUn2E7WtSl4Rxc7NgSc
+	dae6MCdu7wps4FaEu6vo3InaL21uX4AAyqKiWjT5pH/0n9lqGtqLfxacPqySusUv
+	UwDFXg7PWLxNAIF5UHY3ijDhHVQkiCmBzWsaSc7lIvdLAGfpryKtTfCIlouTtJj9
+	IqeJRUGHuucnmw7QdtUHdoEE7PQuj9dBy2HL275QfxpUzQdmeMuUegSCf8pmZssZ
+	mK4fg2/dtXqmVSFbAweEqA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4eb35904mf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 23 May 2026 03:15:11 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 64N3F7ai032598;
+	Sat, 23 May 2026 03:15:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4eb2p6hsbw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 23 May 2026 03:15:10 +0000 (GMT)
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 64N3F9ds032824;
+	Sat, 23 May 2026 03:15:09 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4eb2p6hs6k-1;
+	Sat, 23 May 2026 03:15:09 +0000 (GMT)
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+        krzk+dt@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, sowon.na@samsung.com,
+        peter.griffin@linaro.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/4] add ufs support for Exynosautov920 SoC
+Date: Fri, 22 May 2026 23:14:15 -0400
+Message-ID: <177913641756.1181900.3954359823694090087.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260417121452.827054-1-alim.akhtar@samsung.com>
+References: <CGME20260417115813epcas5p40234b872c221ce28981b17e42ca48139@epcas5p4.samsung.com> <20260417121452.827054-1-alim.akhtar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,106 +66,49 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260523-s3c-camif-descriptors-v1-1-797052aab553@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDQAxA0atI1g2MM2ppr1JcjJloU6hKolIQ7
- 96xXb7F/zsYq7DBvdhBeROTacwoLwXQM44Do6Rs8M43rvYBLRBSfEuPiY1U5mVSw2vZ+KojF+I
- tQW5n5V4+v++j/dvW7sW0nDM4ji+0Cit9eQAAAA==
-X-Change-ID: 20260523-s3c-camif-descriptors-71624bc03a9d
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-X-Mailer: b4 0.15.2
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-23_01,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2605130000 definitions=main-2605230029
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIzMDAyOSBTYWx0ZWRfXyFX+vTF4Zt7F
+ 18aqXksxvYMFfeQCkjwTt4Mlpg/XYFyGL0L5m/TCFSryNhK1EXwpVpmsdUtH7kO9dgvokGiZHAb
+ vIrX1sEtmS9IZxBAKSkWqch24Qd2cH9iNlacmlSQ69mEjRKAX1OQuTN/9kGnplx1jDcWPPs/gBY
+ PYLV3MsxTIboJN7tARSbW0g2IT6rnLreR+/JU9+S/qyGhAlbVSNU+WmOJe3e2cu3r+tfGoiymbc
+ T0OVsm9u5nsfCCC1Lje5gUcwEM06YXO8/WzcAap3uKE2d5dBampn2l15L+RSykJxBIqvKx3COaS
+ tJvHv3rOuay09xSVKZfZolpNsDTV40rAMclpJoqaLXQjTy4opq+O/drHlGXQz0n7rprZs8/azFf
+ j6kZp37LmcMNgHBBuCQyNR7jzAnAqlu+rsXxRz5H03zrgdyn0zdrKw3SzP2Vm/H/jkAydS/00xb
+ +3tKnqom5140bel3Cwg==
+X-Proofpoint-GUID: QrLFBChcJdRLJx10MBLFfMdrcPYcSPO9
+X-Proofpoint-ORIG-GUID: QrLFBChcJdRLJx10MBLFfMdrcPYcSPO9
+X-Authority-Analysis: v=2.4 cv=TJJ1jVla c=1 sm=1 tr=0 ts=6a111bbf cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=jiCTI4zE5U7BLdzWsZGv:22 a=x0eKOSpe3m1H3M0S9YoZ:22 a=VwQbUJbxAAAA:8
+ a=UCUsExACdNoqk4LCDqkA:9 a=QEXdDO2ut3YA:10
 
-The driver and platform data refers to the legacy GPIO API,
-doesn't really use it, and also calls some GPIO-related functions
-passed as platform data.
+On Fri, 17 Apr 2026 17:44:48 +0530, Alim Akhtar wrote:
 
-This platform data is not used anywhere in the kernel.
+> This series adds ufs driver support for ExynosAutov920,
+> ExynosAutov920 has the UFSHCI 3.1 compliant UFS controller.
+> 
+> ExynosAutov920 has a different mask of UFS sharability from ExynosAutov9,
+> so this series provide flexible parameter for the mask.
+> 
+> With this series applied, UFS is functional and basic I/O operations are
+> known to be working.
+> 
+> [...]
 
-I'm not outright deleting the driver, just deleting the bogus
-GPIO handling. If outoftree developers want to fix up the
-driver the GPIOs should be defined in some kind of firmware
-node and be obtained using the gpiod_get*() APIs directly
-in the driver, but I don't even know what these GPIOs are
-since they are hidden in platform data that is not in the
-mainline kernel, so what can I do.
+Applied to 7.2/scsi-queue, thanks!
 
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
- drivers/media/platform/samsung/s3c-camif/camif-core.c | 9 ++-------
- include/media/drv-intf/s3c_camif.h                    | 2 --
- 2 files changed, 2 insertions(+), 9 deletions(-)
+[2/4] dt-bindings: ufs: exynos: add ExynosAutov920 compatible string
+      https://git.kernel.org/mkp/scsi/c/45c9dee6d653
+[3/4] scsi: ufs: exynos: add support for ExynosAutov920 SoC
+      https://git.kernel.org/mkp/scsi/c/50349bd5d0ab
 
-diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-index 221e3c447f36..1304d4191dd6 100644
---- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-@@ -12,7 +12,6 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/errno.h>
--#include <linux/gpio.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -412,7 +411,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 
- 	camif->dev = dev;
- 
--	if (!pdata || !pdata->gpio_get || !pdata->gpio_put) {
-+	if (!pdata) {
- 		dev_err(dev, "wrong platform data\n");
- 		return -EINVAL;
- 	}
-@@ -429,9 +428,7 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = pdata->gpio_get();
--	if (ret < 0)
--		return ret;
-+	/* FIXME: get GPIOs here */
- 
- 	ret = s3c_camif_create_subdev(camif);
- 	if (ret < 0)
-@@ -504,7 +501,6 @@ static int s3c_camif_probe(struct platform_device *pdev)
- err_clk:
- 	s3c_camif_unregister_subdev(camif);
- err_sd:
--	pdata->gpio_put();
- 	return ret;
- }
- 
-@@ -521,7 +517,6 @@ static void s3c_camif_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	camif_clk_put(camif);
- 	s3c_camif_unregister_subdev(camif);
--	pdata->gpio_put();
- }
- 
- static int s3c_camif_runtime_resume(struct device *dev)
-diff --git a/include/media/drv-intf/s3c_camif.h b/include/media/drv-intf/s3c_camif.h
-index f746851a5ce6..00d83620ea5f 100644
---- a/include/media/drv-intf/s3c_camif.h
-+++ b/include/media/drv-intf/s3c_camif.h
-@@ -31,8 +31,6 @@ struct s3c_camif_sensor_info {
- 
- struct s3c_camif_plat_data {
- 	struct s3c_camif_sensor_info sensor;
--	int (*gpio_get)(void);
--	int (*gpio_put)(void);
- };
- 
- #endif /* MEDIA_S3C_CAMIF_ */
-
----
-base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
-change-id: 20260523-s3c-camif-descriptors-71624bc03a9d
-
-Best regards,
---  
-Linus Walleij <linusw@kernel.org>
-
+-- 
+Martin K. Petersen
