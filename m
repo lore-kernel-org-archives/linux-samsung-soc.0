@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33651F4180;
-	Sun, 24 May 2026 19:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79FD317177;
+	Sun, 24 May 2026 19:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779651734; cv=none; b=V2rash17izNGsmMu5LUz2Zl6oB9p0S3cvRjmU6DWik55ip+Kak0/gRLdGxKcJBfPQR8JKHvn3VaieJxUTTQdbMEKhAqzyCiLYoF2sUwBicDIkyPAQS6LA96julaz7ximkQBxKrRfGhmZyyZiECbvN+PcqACPIjuxq0XlUvXaLPw=
+	t=1779651913; cv=none; b=eJc+401Nw1QuXD9im1ov4oPsvE9AhxiO5EF7Gxfc3hKJkrvaN+C/bMvvi9sXFu1VT0qbID7APsMnJ2mwKkwo5B/AntkleYv1c53VyJVOZhjSecfeeUufkKNVNDVnQxCjCgC2ky8h1xnGmFEOrtQW+6dX+qcdwcCjgWVFY5y3tLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779651734; c=relaxed/simple;
-	bh=lthXzUytBGGEZEbaMRp/d7G3sIqZTOorIRP0QYBN0Cw=;
+	s=arc-20240116; t=1779651913; c=relaxed/simple;
+	bh=QZOJvQX4u/fUijyNgavTBXTcqLSrOnzXl87vQibVrOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hqfzkX46mm/Lg0y2miXinJImLgz0/CgE807EYJ/shy9vnobwZJqYyFooYEqJ6fJmDE0r9hvS6ZgGa4ajsE4iIw+k22Z1etFdMK+2ScQKy4H6DVJeSCMUr1WqGb0tKmEhtbruIe3X07DN8HScgOx1LL6N2hqzWbyIzktTnIhk3MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZb2Qfml; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=Hk7bqOPPZqjvmz58W+X1AGAh7tqPsmY2ZlI1kN/ZIqX+MoarpgR+L9r/rk0UlIYEM0HBCAko089jNJrXInS58r0UDm0lAfWzbciEjuwMK8OvfqfbE47l2ltYVV7E1xV0ngbwhW4IYyQGq5rXOATU057QkNl+JhrHlQZZtd0E6E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgeAlY20; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZb2Qfml"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B3E1F000E9;
-	Sun, 24 May 2026 19:42:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgeAlY20"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 027D51F000E9;
+	Sun, 24 May 2026 19:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779651733;
-	bh=5Qbk2Js+U5TVltxF7DmfkdpZCQrfZY8VcWdcdlf8tJQ=;
+	s=k20260515; t=1779651912;
+	bh=gdj0TK35GEIKhHP5Bk5VXTOILEdwebdNDL/HO2puRpY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=iZb2Qfmltboafv45n9a51F+qDWhaK733kQGT2ABAw9GJv0WPs4sYPWJMkYBrMpW76
-	 84bfCmBxjpODVz4HcUDEpWrhSkXvW/D1by+hOZyX1DJaOqHhCLJxyhaYy3ZS30sDZR
-	 doJES/dfPScYEE85hYtIjEOpT6tG5WvwgwKORpvTKKPeSA6jvxFO8TlPj4qyic62Ea
-	 bzD/f5f6tcd4OnajOVxK95QqB2DR+mg2ebPTSeCXtVUUuLmDMax85rzaK+hTzG/B8E
-	 ifhiwn6cOs7ODHGxJk9ltYtrAK0KsRojltv92B7OydVVEY191AcRu0/5BmLSuDGsh3
-	 9VbImlmVHvx5w==
-Message-ID: <e9c5e57c-25d8-45f1-bc3e-696393cab4dd@kernel.org>
-Date: Sun, 24 May 2026 21:42:08 +0200
+	b=DgeAlY20zPHOWDxcPkVhHKArltfO89gPsKw5HHeqrV7Teq4LhenSUPZFh8CI4pNmX
+	 kWCK8WAkpKSHPhd5sh3MXSLxA9DZuwKysqUPtHo8wIp2KlBveKZnHUweFg+nLr2our
+	 J/X/lVE1u6VqYIVtyVVX8/xea/R7JSAhbl1QDBhv4WQKKlVQ/fEQtor8nfNj0KEvre
+	 p+7iwAaN9hnod3RYQN9IhwNXytlbo+V47YaSnUxWlmGJ+a9GLxV2MOF+c+WZgtCigU
+	 MKvbS6h4tdSSvcyT6hiytditdeaBPhYolh/lzfqx5wL4Wa7dbktAVh1hlcU8Ij/d2O
+	 i/2bMm+6PXJ5w==
+Message-ID: <453e852b-1134-4404-999e-125d712188dd@kernel.org>
+Date: Sun, 24 May 2026 21:45:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: serial: samsung: Remove redundant port lock
- acquisition in rx helpers
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- john.ogness@linutronix.d, peter.griffin@linaro.org,
- andre.draszik@linaro.org, jyescas@google.com, kernel-team@android.com,
- stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>
-References: <20260515-samsung-tty-flow-control-deadlock-v1-1-93255edbc9bc@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: google,gs101-acpm-ipc:
+ document Exynos850 compatible
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260513-exynos850-acpm-firmware-support-v1-0-3858d097e433@linaro.org>
+ <20260513-exynos850-acpm-firmware-support-v1-1-3858d097e433@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,34 +92,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260515-samsung-tty-flow-control-deadlock-v1-1-93255edbc9bc@linaro.org>
+In-Reply-To: <20260513-exynos850-acpm-firmware-support-v1-1-3858d097e433@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/05/2026 14:41, Tudor Ambarus wrote:
-> Sashiko identified a deadlock when the console flow is engaged [1].
+On 13/05/2026 01:12, Alexey Klimov wrote:
+> The Exynos850 SoC incorporates an APM co-processor. Communication with
+> this hardware block is done using the ACPM protocol, which handles IPC
+> messages for clocks, power, thermal management and PMIC control.
 > 
-> When console flow control is enabled (UPF_CONS_FLOW),
-> s3c24xx_serial_stop_tx() calls s3c24xx_serial_rx_enable() and
-> s3c24xx_serial_start_tx() calls s3c24xx_serial_rx_disable().
-> 
-> The serial core framework invokes the .stop_tx() and .start_tx()
-> callbacks with the port->lock spinlock already held. Furthermore, all
-> internal driver paths that invoke stop_tx (such as the DMA TX
-> completion handler s3c24xx_serial_tx_dma_complete() or the PIO TX IRQ
-> handler s3c24xx_serial_tx_irq()) also acquire port->lock prior to
-> calling it. (Note that s3c24xx_serial_start_tx() is only invoked by the
-> serial core).
-> 
-> However, s3c24xx_serial_rx_enable() and s3c24xx_serial_rx_disable()
-> unconditionally attempt to acquire port->lock again using
-> uart_port_lock_irqsave(). Since spinlocks are not recursive, this
-> causes a deadlock on the same CPU when console flow control is engaged.
-> 
-> Remove the redundant lock acquisition from both rx helper functions.
-> 
+> Dedicated compatible string is required for the Exynos850 because
+> its firmware utilizes a different initialisation data base offset
+> (0x7000) compared to the existing GS101 implementation (0xa000).
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+This is good reason/explanation, but open the binding please - you will
+see several specific children, e.g. S2MPG10. You need to be very
+explicit in commit msg that your Exynos850 is always fitted with these
+PMIcs. If not, then you need some other compatibles, because binding
+should be complete.
+
 
 Best regards,
 Krzysztof
