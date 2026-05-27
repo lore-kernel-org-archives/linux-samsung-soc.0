@@ -1,82 +1,108 @@
-Received: from vinatta.cz (vinatta.cz [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958FA3C5837;
-	Wed, 27 May 2026 18:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0541939A076;
+	Wed, 27 May 2026 19:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779907090; cv=none; b=ByEA/OwU9bY8c69rmYXKIaJBrvVBcPPAFfyYTqnNB68Zu4p74DhkP+EzA3+WXN4TrkWOiK48FfCfEWBNhg7cvzQ3KS+J7Y9cAA481/Zi2oitNLUx29OU6OnSOvpqCuRjQQBmACOqy4l3vioJAjoMXQ0GgHD4oehFyj5mdn4t318=
+	t=1779911133; cv=none; b=AEUjeQ3WQEGg4v9k2grfpNSRzU2Vhv3upqHMHBAwOTjgIPWpyaukAO654tR2tO15wN2D2tojX99qZKgwGYpz2nddPdxyJwiIC5mmwOLcUZVLmLKpJEOi7Qt8495XX+9kxIzad9aoX8kBS8b+TjqlVLZM0zRL+iW+ta74LSU7Miw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779907090; c=relaxed/simple;
-	bh=ApEPioN6Lb4OKyOa7Ff37Nv+Yg/r+wxB4CavphylJVQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:To:From:Cc:
-	 References:In-Reply-To; b=SlaPwXfkiGihZWJbmhahPCdvnpzyPRUXBB++bfuazN5Z9cHXFWTssLvY2E2rl0zCbV1i91drlTN2H7aNvjCzZamTKrL0EJ/3FlaPD6DfUYQ8wO8JWjL5tNRNjGrRuqjk3yXz3Lncj1mRroMSiouz6UZDuJn8w/ZZPAIu20IKcz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=vinatta.cz; dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b=CZPrCZhI; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinatta.cz
+	s=arc-20240116; t=1779911133; c=relaxed/simple;
+	bh=eopCEnXS8WKRsOh51rQnWAJA50RLBc15JXO+1L+aarA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jdNAwxw3kyEBSESyGx8NtZIPCVP24ZdA67zCryUq3pm7GNKN+eEexu5ptK/5VpuKABLozyF74BFsTDdpi51MF5ZWvM1Pwttz9Dky4q8Oh0Fxryrw8Kdow6OsWBcLvsDylQbYeRBWSERfBpTkKksEjjFFEO1ZYmayRd+4SX5PjV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8IFwv5A; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b="CZPrCZhI"
-DKIM-Signature: a=rsa-sha256; bh=kpx6Uj9RIdUNjK8W3CnmyMzyh2ekBIwrGqDnhdzKB20=;
- c=relaxed/relaxed; d=vinatta.cz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@vinatta.cz; s=default; t=1779906099; v=1; x=1780338099;
- b=CZPrCZhIXkDoHB0cMhVJm/JiciH7dzJdwyLBNIe3/8l0Zq3QV7VFjYO1LEd+kDuYAthVAc6v
- 9Phsze4RHJ9Wiy9dWqZUi5r11Ec++f5qsA7nGRjusmk7hxln5DUEsOKnpA2/zvZ9LMdttYtwoyk
- obUMhAA8pyd2d3p8TJdxtRngXAsD4MSuHOA2w5iCmS3mJjwGMFQ4EIGNj12WNFNtf7i78IRXvpe
- JEqKD5JLfzCf1QT+W+0p1tE0PQQ7dibqrscIPMku5iDYLpWuWEeYveIaDWU/huyQb4ixLw5hd7h
- EVuNnF/o8bxGM9wtY1p5oWRroCkzvfJ9ffBm6K/KgWwcQ==
-Received: by vinatta.cz (envelope-sender <karel@vinatta.cz>) with ESMTPS id
- 4f3f7766; Wed, 27 May 2026 20:21:39 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8IFwv5A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC2CF1F000E9;
+	Wed, 27 May 2026 19:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779911131;
+	bh=VEXrEgQOj4YY+Lnsrc4y61tSJT6X+D5o07tAaEt61D0=;
+	h=From:To:Cc:Subject:Date;
+	b=b8IFwv5Ai+txihlJgwlqu12gYLmg8TX0mxUE4T4ysYKm8Tllc5zV3o2ICG/JFkm9P
+	 QY25aqK9ciSVxn0PIppWVm48fTGiaN6eAyQDRc1gJ45xYjkDj5COiQajUe1Ugpayu+
+	 K3zpCJB8x07rSiFTGsK7Mm+rig6r1gytivolAM5sRPCYPRCaZU6FIQ5XAhhPGmgxbZ
+	 XozANXFe3lwlEPxUdOTnFE23En8vgt+OMBMmkcDoL2OeTcDlR/LuSIF7l759GurykQ
+	 lGqU9Qut4WegZz8tw9e7pLUsOxWxDb9XEqfumeIx+m0JFZA7s7r90oG0Yi2nUV9fC+
+	 yATW1OTVm3Fiw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/exynos: fix size_t format string
+Date: Wed, 27 May 2026 21:45:07 +0200
+Message-Id: <20260527194525.45762-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 May 2026 20:21:38 +0200
-Message-Id: <DITO1XL17NWQ.31DQEIXADGBND@matfyz.cz>
-Subject: Re: [PATCH v1 2/3] regulator: Use named initializers for
- platform_device_id arrays
-To: =?utf-8?b?VXdlIEtsZWluZS1Lw7ZuaWcgKFRoZSBDYXBhYmxlIEh1Yik=?=
- <u.kleine-koenig@baylibre.com>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: "Matti Vaittinen" <mazziesaccount@gmail.com>, "Marek Vasut"
- <marek.vasut+renesas@gmail.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Matthias Brugger"
- <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Samuel Kayode"
- <samkay014@gmail.com>, =?utf-8?q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Andreas Kemnade" <andreas@kemnade.info>, "Kevin Hilman"
- <khilman@baylibre.com>, "Roger Quadros" <rogerq@kernel.org>, "Tony
- Lindgren" <tony@atomide.com>, <linux-kernel@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-mediatek@lists.infradead.org>, <imx@lists.linux.dev>,
- <linux-arm-msm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
- <linux-omap@vger.kernel.org>
-References: <cover.1779878004.git.u.kleine-koenig@baylibre.com>
- <d02f55dfd5bdd743ae5cd76f2a5af0d346226a68.1779878004.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <d02f55dfd5bdd743ae5cd76f2a5af0d346226a68.1779878004.git.u.kleine-koenig@baylibre.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Uwe Kleine-K=C3=B6nig (The Capable Hub), 2026-05-27T12:47:45+02:00:
-> diff --git a/drivers/regulator/88pm886-regulator.c b/drivers/regulator/88=
-pm886-regulator.c
-> index a38bd4f312b7..7328cd1cf265 100644
-> --- a/drivers/regulator/88pm886-regulator.c
-> +++ b/drivers/regulator/88pm886-regulator.c
-> @@ -373,7 +373,7 @@ static int pm886_regulator_probe(struct platform_devi=
-ce *pdev)
->  }
-> =20
->  static const struct platform_device_id pm886_regulator_id_table[] =3D {
-> -	{ "88pm886-regulator", },
-> +	{ .name =3D "88pm886-regulator" },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(platform, pm886_regulator_id_table);
+From: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Karel Balej <balejk@matfyz.cz> # for Marvell 88PM886
+The exynos_gem->base.size argument is a size_t rather than an
+unsigned long, so adapt the printk() format string accordingly:
+
+In file included from drivers/gpu/drm/exynos/exynos_drm_gem.c:16:
+drivers/gpu/drm/exynos/exynos_drm_gem.c: In function 'exynos_drm_alloc_buf':
+drivers/gpu/drm/exynos/exynos_drm_gem.c:69:49: error: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+   69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n",
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   70 |                         (unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+      |                                                              ~~~~~~~~~~~~~~~~~~~~~
+      |                                                                              |
+      |                                                                              size_t {aka unsigned int}
+
+The dma_addr in the same line is already printed using a cast
+to unsigned long, so change that similarly to use the correct
+%pad format.
+
+Fixes: 11e898373fba ("drm/exynos: Drop exynos_drm_gem.size field")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_gem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 297a93b087cd..8e357f2beb9e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -66,8 +66,8 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bool kvmap)
+ 	if (kvmap)
+ 		exynos_gem->kvaddr = exynos_gem->cookie;
+ 
+-	DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n",
+-			(unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
++	DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(%pad), size(0x%zx)\n",
++			  &exynos_gem->dma_addr, exynos_gem->base.size);
+ 	return 0;
+ }
+ 
+@@ -80,8 +80,8 @@ static void exynos_drm_free_buf(struct exynos_drm_gem *exynos_gem)
+ 		return;
+ 	}
+ 
+-	DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
+-			(unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
++	DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%pad), size(0x%zx)\n",
++			  &exynos_gem->dma_addr, exynos_gem->base.size);
+ 
+ 	dma_free_attrs(drm_dev_dma_dev(dev), exynos_gem->base.size, exynos_gem->cookie,
+ 			(dma_addr_t)exynos_gem->dma_addr,
+-- 
+2.39.5
+
