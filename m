@@ -1,138 +1,71 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from vinatta.cz (vinatta.cz [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A185335564
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 08:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779955359; cv=pass; b=WpE+9EM4zSM4TIkjvFiGF8vM9HHr01iKKroC1LkcuqGA3fGOn+AsSPtBh0bh8EkuXPOd+UicWbm6H+0bXjsMd+kLxPxB4SDBl1ey1UZ+FmWTKUOJF/CvgC0vZ7vjcseLNung+KwiKS3lDNJlv6z/DlD9ugt0p50XSdBTmXCz4Lk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779955359; c=relaxed/simple;
-	bh=bG7XwxaEW2IACHakSY7DuqwFmH+ZNFy25Crj6OOZINg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XEpMIZlyKofybt4aWkDl3E4CcrwPwsLGWW/Qndhkbjl+f5Fun1p7tsaWpYhLxRI85Bc0ybIa3JBRuM2gReQDSUV9gGZkxSp8M158M+dOyhhdj4GJVvMyYyrhmIXcrnENn52XeSH+5DCAg2fkYW4WA9QNemEo8cLIGGRZhELbzoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jnHvpziF; arc=pass smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08ED30C34A;
+	Thu, 28 May 2026 08:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779957640; cv=none; b=jXCDDfZkoNAQHtEhrNajlzlN1dy7di35EwuWgMtM0/7/Tr866g7mwxUbAn2P2uuotO04ryvbmytuFF5tcdXT/w9YNKpPNAjiXssdDC5PgL1MQ7gxIPt1ndECjaglIFkxYXaWk3PdRWmnSIeE1r1QvB9kSo1EtDfl0LkL52/kXFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779957640; c=relaxed/simple;
+	bh=hbTxqBhmRzh5qEhtmmqSxMZrR1fcZVJBDnekfUYevmQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Cc:Subject:
+	 References:In-Reply-To; b=LzmUopuv/GhWgvaWPWqcG+F4rvX9SKWuAqYQqLOfIp5rJeiFwJNSdnM1ImS8Dvsdw3DFDg0kUagY4gDCI2IYJSnIjWXUtUADr+yecQ+eoWIN7jW/us44KL3c3x5aoMVH7zfuC8K1mE4Rj7ccdSAk9AgnJZs8N6G2WuTL0lkraY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=vinatta.cz; dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b=Mk0NQ0aK; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinatta.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnHvpziF"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-68852a4fc68so9210573a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 01:02:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779955356; cv=none;
-        d=google.com; s=arc-20240605;
-        b=RmHH1PtRpRgVIUzOWxFavkeJGKMbJwmKMKHWBE+4o0E+0ACffNUkHPqN/pLnswbNzz
-         sWhcrpzQOQMREcPODARfXZhzrj4d2Gujmf1cJ1rCdcyRxgqsoFx55fuzMVtkAmNjxyl1
-         IebBmN+3bLo5tS1QFPtKWQxEzFgkYdmE35lbbBb15JLAN3UWaNN+Qc2zbUpE++r/Hd49
-         JwCMJoD4z7cPkRUwkrjRHjBrQGMkB0OVH03KaN3aOQifOomc5hHlg1qwn1Ze13dU9mmY
-         HnCwXmLNnoU468biZvbnjqLdvC2P/W44wQo1fsRIzmFAadF3jH9Ca+2GomEPKuPOetom
-         1LJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
-        fh=c/S9mW1rn930OkAJD2riirznO7E+SZsDPxzqESnsbjQ=;
-        b=hmMtOhT5uPwBiNnBKRIap5V8LmezXmSuKNeYp9OAVIf71ZrHIA9iXRhS8qmOK5ZKi3
-         977YlbrcVyrROA2fvOaZdJ+8MTSIAVHCOOPNm+MHas3//ta2Lq4HIRay1mwpBlN0jSdj
-         llSMrxjxOnBV8lVLi/DfkEm8IDNyUDRWsHsRQ0TcLxHJeNqDA914mgRzE5Y7WnwOSbw6
-         ZxC3NpbwpveaeisZxp+2vN4bPpUiQYmnwoUb47rmw+5gRSGzeEI76u9gIgZOf3txxLx6
-         IVgDoKSt1/kzs9ZKc2SBQO98pq6+iIF7JcOHnG/+sWrKm3TTjiCTTkjlQJ0FA/H4HbBO
-         BoSg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779955356; x=1780560156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
-        b=jnHvpziF8ekQovl/+kfv2HLkAgGo6i9HZx4vXObioFLgGq4EenVdy4/x0HJuJVJQ4A
-         +8v4Rx1UunKzW6VwZPw/45zmfLnLDlq6pXL2d7shKxFd0sEUichANLiEneZukaMIcGZ7
-         Hv0ecc9qExm0vo6knjymxantdEr3cmq3L982N7PzyaJcqUsFX3IfQnTpLRzLuL9nKQNR
-         tyhvup2WNUVqoHw3cUAvJDKusQkW8AHlTg0gPItoj13ESPRZFi4jfgI6mYTHMI52okdI
-         PLIXO7ePEy7O8QvsiJbwc6g0YIAlsbdkGRpFNZXiIpp3UDa4S06TNRPZtVaxmNYq7uJu
-         +2eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779955356; x=1780560156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
-        b=RMBEr2YFosArhh/2EsUitxzWhUti5H+as392S7PochCzchH/wKyhReGz/GA3/6uqYG
-         pE9wmY5CE9463BqRDwoF2tFtgk7yg21tLb3i2jJSwn5Uneq8GoyNJ/5mCXvtJD9xpL79
-         qVxxGJmroOxb5yZW7yKFNMfGfmEPSFricC93QEOfAwGrqZPK+MmVemoAKlKkv0OGOvoj
-         /Yt3FsKdrgl3dxGWN/9f+V/dv7WujH9snVxz2MVy+9N7U0cq6WucujCbxdo8sJZG7ZfL
-         Ejya8ns3py8yhjWGTPQVuSNDPZqU86Bi9gauGVzUxcuY5TA1jYrlmUbvxm6jvN6QCd9y
-         K15w==
-X-Forwarded-Encrypted: i=1; AFNElJ/dfrcDNp8anyuRE4ddDGFX/bzDSqnJVqL9Di8O2UkuVlwNzpas4p2eGjLT8wUqgkqK3z/p/I1lZM+ae8aYkNds7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YytskUN6fz6jOffqpW6oVe2j8y+qX7aNNaa4RXsgKFszuVD0ZwI
-	msYStNCh/IXvVuCbZbc+TbDfGk5S/I3h3vRroPYb4mYjwVmh8jP8MvJbMn5/yOinA7Fmz9M1S0L
-	0Wz7DIFlrtzd8gf+UVe+iswqkoUJL4RziAsiqE7J41g==
-X-Gm-Gg: Acq92OEE0RH/6StvnzhXYVoYF+6h+AUnEydOLTXPZMwfZ2tDoOWKhEcg3OvVEqEumk+
-	I7UMLpers7U9n9n67KTIPfhAhHOWwKc4wFnS1CuLiqmAlhnFIoP/b4B6HPvTlqIabvkG4+9kg1Z
-	pCWW42vSRhaIVmYOtzed4/v12OkgSa6Qm/0eOH+q2a3+RvkJyDn11xfYR2ISIV0KWS+jzsXHyti
-	mhnvfxM47/Qe9IHhMqZxxgBX3+lzqhKsnTCDkwaMZwN3Nc8sSiM9yGcHPzGi/MzLafdv4c0yvT5
-	LbF1GcPozFAg2bHjxcEVHOoFbZSsruwGD0CLhZ+UyZ+NP2nwlwvy
-X-Received: by 2002:a05:6402:458e:b0:683:f485:c63c with SMTP id
- 4fb4d7f45d1cf-6889c4321c4mr13969121a12.1.1779955355656; Thu, 28 May 2026
- 01:02:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b="Mk0NQ0aK"
+DKIM-Signature: a=rsa-sha256; bh=qgwa+0R+XFn6p6bqyj4g6FOJ3XZRc6X9G5oNCLDxasY=;
+ c=relaxed/relaxed; d=vinatta.cz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@vinatta.cz; s=default; t=1779957617; v=1; x=1780389617;
+ b=Mk0NQ0aKSh7SbxTr8wKXtLX+td5K82EuzmGtzBO3w384Xyt7Ds+1n6tk3ZwCMUbcOrSJuw8m
+ +DloLdPVC3Hu2d6ht/pPovN/zBJqnfelbXx5SEecyeGUcLf5+n7AoDFuiLe2lKga7t02B1ac+yL
+ 9am6IjgF1zUcWOS4h91PwB1wnEB0y0A88AwAaO44UcGhKJbW4DmNUBgFSxk8YKtzwPaJCaxLRug
+ moYFHrOZsE0+556cQh6GmrfR9eNZoXS47I1kfyk5alwQFgutqaTWY4oNKofFD++Seot+/a5oWxE
+ i+p58yLzS8lHT1gZfjLe3WcMcVeXaS8rRkpFYa00rkHEg==
+Received: by vinatta.cz (envelope-sender <karel@vinatta.cz>) with ESMTPS id
+ dab5865d; Thu, 28 May 2026 10:40:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260526061321.6123-1-grandmaster@al2klimov.de>
-In-Reply-To: <20260526061321.6123-1-grandmaster@al2klimov.de>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 28 May 2026 09:02:22 +0100
-X-Gm-Features: AVHnY4IF4snH_x_Zty3iJL9-gZoieI2TfzLBtrQPLtenatLAkZtKV7qhQYKta-8
-Message-ID: <CADrjBPrsynS5qfJrrVAFwY5kzoM4VcesMC0z0-aKcH-vaGL+PQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos5410: fix refcount leak
-To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, 
-	"open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 28 May 2026 10:40:17 +0200
+Message-Id: <DIU6BCZABXFD.1TVSGC0VM835C@matfyz.cz>
+To: =?utf-8?b?VXdlIEtsZWluZS1Lw7ZuaWcgKFRoZSBDYXBhYmxlIEh1Yik=?=
+ <u.kleine-koenig@baylibre.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>
+From: "Karel Balej" <balejk@matfyz.cz>
+Cc: "Matti Vaittinen" <mazziesaccount@gmail.com>, "Chanwoo Choi"
+ <cw00.choi@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] rtc: Use named initializers for
+ platform_device_id arrays
+References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
+ <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
 
-On Tue, 26 May 2026 at 07:13, Alexander A. Klimov
-<grandmaster@al2klimov.de> wrote:
->
-> Every value returned from of_clk_get() is supposed to be cleaned up
-> via clk_put() once not needed anymore.
->
-> Fixes: be95d2c7d918 ("clk: samsung: Add support for EPLL on exynos5410")
-> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
-> ---
+Uwe Kleine-K=C3=B6nig (The Capable Hub), 2026-05-28T08:48:12+02:00:
+> diff --git a/drivers/rtc/rtc-88pm886.c b/drivers/rtc/rtc-88pm886.c
+> index 57e9b0a66eed..13aa3ae82239 100644
+> --- a/drivers/rtc/rtc-88pm886.c
+> +++ b/drivers/rtc/rtc-88pm886.c
+> @@ -78,7 +78,7 @@ static int pm886_rtc_probe(struct platform_device *pdev=
+)
+>  }
+> =20
+>  static const struct platform_device_id pm886_rtc_id_table[] =3D {
+> -	{ "88pm886-rtc", },
+> +	{ .name =3D "88pm886-rtc" },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(platform, pm886_rtc_id_table);
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-
->  drivers/clk/samsung/clk-exynos5410.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-> index baa9988c7bb7..0cd9b0392cf5 100644
-> --- a/drivers/clk/samsung/clk-exynos5410.c
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> @@ -269,8 +269,12 @@ static void __init exynos5410_clk_init(struct device_node *np)
->  {
->         struct clk *xxti = of_clk_get(np, 0);
->
-> -       if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
-> -               exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
-> +       if (!IS_ERR(xxti)) {
-> +               if (clk_get_rate(xxti) == 24 * MHZ)
-> +                       exynos5410_plls[epll].rate_table =
-> +                               exynos5410_pll2550x_24mhz_tbl;
-> +               clk_put(xxti);
-> +       }
->
->         samsung_cmu_register_one(np, &cmu);
->
-> --
-> 2.54.0
->
->
+Acked-by: Karel Balej <balejk@matfyz.cz> # for Marvell 88PM886
