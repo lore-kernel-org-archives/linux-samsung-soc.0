@@ -1,71 +1,87 @@
-Received: from vinatta.cz (vinatta.cz [37.205.8.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08ED30C34A;
-	Thu, 28 May 2026 08:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B5334FF79
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779957640; cv=none; b=jXCDDfZkoNAQHtEhrNajlzlN1dy7di35EwuWgMtM0/7/Tr866g7mwxUbAn2P2uuotO04ryvbmytuFF5tcdXT/w9YNKpPNAjiXssdDC5PgL1MQ7gxIPt1ndECjaglIFkxYXaWk3PdRWmnSIeE1r1QvB9kSo1EtDfl0LkL52/kXFI=
+	t=1779957990; cv=none; b=VzpPDX56j2sp62u8n84FqpfU0SBsJP4UdL6FtwT4vU405D72JEQoh5HKoKHZuDQhtIV8/+WVuHegbvMOd8fV0HmH8xRj6QzWO6JGONUot74VEvHOHe7Pr5VXeZKWPq+8kO4tXkC6jNH5EnjLIj2HrG7fhbxVA6b/AHMmiEP+YGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779957640; c=relaxed/simple;
-	bh=hbTxqBhmRzh5qEhtmmqSxMZrR1fcZVJBDnekfUYevmQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Cc:Subject:
-	 References:In-Reply-To; b=LzmUopuv/GhWgvaWPWqcG+F4rvX9SKWuAqYQqLOfIp5rJeiFwJNSdnM1ImS8Dvsdw3DFDg0kUagY4gDCI2IYJSnIjWXUtUADr+yecQ+eoWIN7jW/us44KL3c3x5aoMVH7zfuC8K1mE4Rj7ccdSAk9AgnJZs8N6G2WuTL0lkraY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=vinatta.cz; dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b=Mk0NQ0aK; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinatta.cz
+	s=arc-20240116; t=1779957990; c=relaxed/simple;
+	bh=7mp4N0QTUq6d2IRoEd48LEAfXGIOJj7w/sFE/VmeZaQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=OKulUjCgWXuXICZFQXQOobqIqKi7QaCCEEY6AQw6lWfKUjCRCVEo4/J2M9TLa4NeHqSub0hD8OrnujAnJ6ysq/0DrK7n9/GQCj88Jww1DUyeKyhydVAhfKJZ0HX/ZgCldVj9do5fqtfa9R+6xdsHl1Gxae2v9XjH+waEBJyVl5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KeoZE8GV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinatta.cz header.i=@vinatta.cz header.b="Mk0NQ0aK"
-DKIM-Signature: a=rsa-sha256; bh=qgwa+0R+XFn6p6bqyj4g6FOJ3XZRc6X9G5oNCLDxasY=;
- c=relaxed/relaxed; d=vinatta.cz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@vinatta.cz; s=default; t=1779957617; v=1; x=1780389617;
- b=Mk0NQ0aKSh7SbxTr8wKXtLX+td5K82EuzmGtzBO3w384Xyt7Ds+1n6tk3ZwCMUbcOrSJuw8m
- +DloLdPVC3Hu2d6ht/pPovN/zBJqnfelbXx5SEecyeGUcLf5+n7AoDFuiLe2lKga7t02B1ac+yL
- 9am6IjgF1zUcWOS4h91PwB1wnEB0y0A88AwAaO44UcGhKJbW4DmNUBgFSxk8YKtzwPaJCaxLRug
- moYFHrOZsE0+556cQh6GmrfR9eNZoXS47I1kfyk5alwQFgutqaTWY4oNKofFD++Seot+/a5oWxE
- i+p58yLzS8lHT1gZfjLe3WcMcVeXaS8rRkpFYa00rkHEg==
-Received: by vinatta.cz (envelope-sender <karel@vinatta.cz>) with ESMTPS id
- dab5865d; Thu, 28 May 2026 10:40:17 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KeoZE8GV"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260528084621euoutp02d8c468e09a633dcd690f1254594afe86~zrlp21fjQ3074130741euoutp02h
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 08:46:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260528084621euoutp02d8c468e09a633dcd690f1254594afe86~zrlp21fjQ3074130741euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1779957981;
+	bh=5KpXoMlUBIo07hkMUGdEi14XEgmQe4bZb6aHSf3DYdw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=KeoZE8GVf5b1OEe6UFSGQLiROB02q4qaaDAArsfCMX58Gd8ErSxREKheEPOmUfWRH
+	 RzZ6Y2XEuMP4Sq73zIHdLdmIdbNEjS4pR8bktyU1TVRld9xxAu+gI0BGhwXaizQAQv
+	 6Cyx4MHBwN7y1xtNUj6SZg+6MZO6Xu2FKJoXoUck=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260528084620eucas1p178159f6b7f3eed6806a848db6587a9f7~zrlpjYHfw0286802868eucas1p1U;
+	Thu, 28 May 2026 08:46:20 +0000 (GMT)
+Received: from AMDN5751 (unknown [106.210.134.141]) by eusmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260528084620eusmtip158031719a5ee8ffa2ec70f2df3e3bb3c~zrlpDenNy3061430614eusmtip1_;
+	Thu, 28 May 2026 08:46:20 +0000 (GMT)
+From: "Sylwester Nawrocki" <s.nawrocki@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Chanwoo
+ Choi'" <cw00.choi@samsung.com>, =?UTF-8?Q?'Andr=C3=A9_Draszik'?=
+	<andre.draszik@linaro.org>, "'Tudor Ambarus'" <tudor.ambarus@linaro.org>,
+	"'Stephen Boyd'" <sboyd@kernel.org>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Brian Masney'" <bmasney@redhat.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20260527-samsung-clk-maintainer-v1-1-97b179224ca5@linaro.org>
+Subject: RE: [PATCH] MAINTAINERS: add myself as a co-maintainer for Samsung
+ SoC clock drivers
+Date: Thu, 28 May 2026 10:46:20 +0200
+Message-ID: <001a01dcee7e$75221490$5f663db0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 28 May 2026 10:40:17 +0200
-Message-Id: <DIU6BCZABXFD.1TVSGC0VM835C@matfyz.cz>
-To: =?utf-8?b?VXdlIEtsZWluZS1Lw7ZuaWcgKFRoZSBDYXBhYmxlIEh1Yik=?=
- <u.kleine-koenig@baylibre.com>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: "Matti Vaittinen" <mazziesaccount@gmail.com>, "Chanwoo Choi"
- <cw00.choi@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] rtc: Use named initializers for
- platform_device_id arrays
-References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
- <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMRLRiS7x6EsXGdyHJNlMCP943byQGZPUDss63YNJA=
+Content-Language: pl
+X-CMS-MailID: 20260528084620eucas1p178159f6b7f3eed6806a848db6587a9f7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260527205405eucas1p15ef3a9c4021f760ababa4bfdde18251f
+X-EPHeader: CA
+X-CMS-RootMailID: 20260527205405eucas1p15ef3a9c4021f760ababa4bfdde18251f
+References: <CGME20260527205405eucas1p15ef3a9c4021f760ababa4bfdde18251f@eucas1p1.samsung.com>
+	<20260527-samsung-clk-maintainer-v1-1-97b179224ca5@linaro.org>
 
-Uwe Kleine-K=C3=B6nig (The Capable Hub), 2026-05-28T08:48:12+02:00:
-> diff --git a/drivers/rtc/rtc-88pm886.c b/drivers/rtc/rtc-88pm886.c
-> index 57e9b0a66eed..13aa3ae82239 100644
-> --- a/drivers/rtc/rtc-88pm886.c
-> +++ b/drivers/rtc/rtc-88pm886.c
-> @@ -78,7 +78,7 @@ static int pm886_rtc_probe(struct platform_device *pdev=
-)
->  }
-> =20
->  static const struct platform_device_id pm886_rtc_id_table[] =3D {
-> -	{ "88pm886-rtc", },
-> +	{ .name =3D "88pm886-rtc" },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(platform, pm886_rtc_id_table);
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin@linaro.org>
 
-Acked-by: Karel Balej <balejk@matfyz.cz> # for Marvell 88PM886
+> Subject: [PATCH] MAINTAINERS: add myself as a co-maintainer for Samsung
+> SoC clock drivers
+> 
+> As Google Tensor gs101 is based off a Samsung Exynos design I've been
+> working on the Samsung SoC clock drivers and have an interest in helping
+> maintain this code in the kernel.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> This follows discussions with Krzysztof about expanding the Samsung SoC
+> maintenance team in the kernel.
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
