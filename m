@@ -1,180 +1,138 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502513438AF
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 07:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779953638; cv=none; b=TZCsNkxM7srTmlf3HLncDpePHkm901ojMW+nBxQCYknR0+LN6MeS3q9UcxvEdLCWpmTms78xPPSUyunlPS2Hc00DPdZifUV5c8YmMINiSZYY+3/2zzgAcwxD6MVGRza+xIOzTcFALNZTOn7cR9FdkOI6AzmCuCxBaFbWHj35rSY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779953638; c=relaxed/simple;
-	bh=RY9fSeHfq2QAue8rVsj9RxP7vq+pN9p8akdEUjeM8J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5AbMzSx2yhNiW4GhGrM2Y+wWlcITvS5StnjxK4thR0DmeY3UEtNnpOP8nitV9NMFoxJokmusiCRSLnTpWvm81ZTZcwGeHJeNMXl124Bb8XfwJKM3Klyg+V9HQY5YZW0dsNhlOFneH4YgycgluykocAj6SxR3NvUPo7t/DVvaQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lGCQ67YB; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A185335564
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 08:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779955359; cv=pass; b=WpE+9EM4zSM4TIkjvFiGF8vM9HHr01iKKroC1LkcuqGA3fGOn+AsSPtBh0bh8EkuXPOd+UicWbm6H+0bXjsMd+kLxPxB4SDBl1ey1UZ+FmWTKUOJF/CvgC0vZ7vjcseLNung+KwiKS3lDNJlv6z/DlD9ugt0p50XSdBTmXCz4Lk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779955359; c=relaxed/simple;
+	bh=bG7XwxaEW2IACHakSY7DuqwFmH+ZNFy25Crj6OOZINg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XEpMIZlyKofybt4aWkDl3E4CcrwPwsLGWW/Qndhkbjl+f5Fun1p7tsaWpYhLxRI85Bc0ybIa3JBRuM2gReQDSUV9gGZkxSp8M158M+dOyhhdj4GJVvMyYyrhmIXcrnENn52XeSH+5DCAg2fkYW4WA9QNemEo8cLIGGRZhELbzoA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jnHvpziF; arc=pass smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lGCQ67YB"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so130892275e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 00:33:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnHvpziF"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-68852a4fc68so9210573a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 01:02:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779955356; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RmHH1PtRpRgVIUzOWxFavkeJGKMbJwmKMKHWBE+4o0E+0ACffNUkHPqN/pLnswbNzz
+         sWhcrpzQOQMREcPODARfXZhzrj4d2Gujmf1cJ1rCdcyRxgqsoFx55fuzMVtkAmNjxyl1
+         IebBmN+3bLo5tS1QFPtKWQxEzFgkYdmE35lbbBb15JLAN3UWaNN+Qc2zbUpE++r/Hd49
+         JwCMJoD4z7cPkRUwkrjRHjBrQGMkB0OVH03KaN3aOQifOomc5hHlg1qwn1Ze13dU9mmY
+         HnCwXmLNnoU468biZvbnjqLdvC2P/W44wQo1fsRIzmFAadF3jH9Ca+2GomEPKuPOetom
+         1LJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
+        fh=c/S9mW1rn930OkAJD2riirznO7E+SZsDPxzqESnsbjQ=;
+        b=hmMtOhT5uPwBiNnBKRIap5V8LmezXmSuKNeYp9OAVIf71ZrHIA9iXRhS8qmOK5ZKi3
+         977YlbrcVyrROA2fvOaZdJ+8MTSIAVHCOOPNm+MHas3//ta2Lq4HIRay1mwpBlN0jSdj
+         llSMrxjxOnBV8lVLi/DfkEm8IDNyUDRWsHsRQ0TcLxHJeNqDA914mgRzE5Y7WnwOSbw6
+         ZxC3NpbwpveaeisZxp+2vN4bPpUiQYmnwoUb47rmw+5gRSGzeEI76u9gIgZOf3txxLx6
+         IVgDoKSt1/kzs9ZKc2SBQO98pq6+iIF7JcOHnG/+sWrKm3TTjiCTTkjlQJ0FA/H4HbBO
+         BoSg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1779953636; x=1780558436; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HaYzHO++GhEFXQR1JkiMJsWACEcNpxKT9x8Fc4Oq/Ck=;
-        b=lGCQ67YBWA5/uA7ilIGLyMhsiPVXhkmLZ8fpO3+HgSJKGrdCticMDPRauibe1QcDsL
-         hNHcW6ASLgfLVFLHNVz3rKIw8yf1FVuS+Pok01qzvdaBOg64VDrppFH/YtXZoAyjqzMJ
-         BVG8AHwPvNddArzT+xsQnWbZOa/xTg57lItTo=
+        d=linaro.org; s=google; t=1779955356; x=1780560156; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
+        b=jnHvpziF8ekQovl/+kfv2HLkAgGo6i9HZx4vXObioFLgGq4EenVdy4/x0HJuJVJQ4A
+         +8v4Rx1UunKzW6VwZPw/45zmfLnLDlq6pXL2d7shKxFd0sEUichANLiEneZukaMIcGZ7
+         Hv0ecc9qExm0vo6knjymxantdEr3cmq3L982N7PzyaJcqUsFX3IfQnTpLRzLuL9nKQNR
+         tyhvup2WNUVqoHw3cUAvJDKusQkW8AHlTg0gPItoj13ESPRZFi4jfgI6mYTHMI52okdI
+         PLIXO7ePEy7O8QvsiJbwc6g0YIAlsbdkGRpFNZXiIpp3UDa4S06TNRPZtVaxmNYq7uJu
+         +2eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779953636; x=1780558436;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaYzHO++GhEFXQR1JkiMJsWACEcNpxKT9x8Fc4Oq/Ck=;
-        b=BsH2cm/V7x5+QwOb3+RKWyiK/rk7L7JXD3QoJ6jpPeoe7jA5gkciuxeprX9vaxiqOx
-         MbXfNJe6fI55uar0JWZmptJH/ZVRU/AGbg5nr7Ejo7GbfNguP/x7WY0yq2rSlXh3dByw
-         IS/5wMnCnGpb0XTADgixfwf4KlfEtV6VVEhGFMyO2KN7HGX2qF1yD9nZqfufBTLQQPnN
-         9y3GuUKjUdUc+sm19v1TzJVxoolrm8qh0dPddycRWpPnpXF/ZPPy3yuccjTdyFSW1qth
-         pnT4KY06MTkVR3e7AbnJVQmQmtuRJhGIhR4SMOCikkZWMbyVDk9JeBHP4HOsrCI2znIq
-         bIPw==
-X-Forwarded-Encrypted: i=1; AFNElJ9FK/WrhTwyWW6ubbjWtWIZYn7LwDl/VVAz6G8tlpg9rcTV5aTx8WrBW4weEbmQ9CcQV0f7Aree/D7GAulF7shTEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyUCkTDX1kqwg7flAZYsZIsBu/tsRXAp2gW0kGhJdYmFVjxV/9
-	C//Nbm9seuCuMGMIF/sftd88xLu6JvEjJZd2AS99g+XIB6GbzKarN51hKk++hFsiglM=
-X-Gm-Gg: Acq92OFWKEtj/5ZXUu282FgDDw53HpQ11bL3DRRU3reBKgr9CgT6vlpQ1E0OUZ3CckB
-	4fI8nOuH9uuDuRIfa1pPGYDbf84YPo53RvUwLYKq/pTar7rWnTygX9k0ZA/vvDQh185KsGuXhj+
-	pL+HhPLwn+hiHvF02/Fo3EJz7q7QUcw14Rmr0v+NNnk/RX8ZAb0ahuxYiZxeUJvvK47cqbKb7GF
-	a5ubOYQXOkBC+se1phpBqF1Zg+X8ZTjDmpYLS7ThiSSsc7WFszQ9MOtt7AjaH6xVX6SET6BeU7/
-	ng7Hd5onZVTyTjaEXmrI0wffpwMT04NbPXsqVo3pNgvlKF/YH7OuqSwo7DA8j8aGy3PmZMSTtDe
-	vX/6eGFKqzXYtJ00QfPWG0tmjVUilX3uZtUuVm3/IIPGzv7vgDvzC5K9IyMMZaeOUm8x6Wo4yeI
-	xfY24tIbf7WGNp4sl447eMijBBaeG9fERxigvtIeEQBZl/rgrwsLwpR5Ul
-X-Received: by 2002:a05:600c:674a:b0:490:5057:f5f7 with SMTP id 5b1f17b1804b1-49050580a91mr371954875e9.11.1779953635635;
-        Thu, 28 May 2026 00:33:55 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4908b8aa05esm11520965e9.13.2026.05.28.00.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2026 00:33:54 -0700 (PDT)
-Date: Thu, 28 May 2026 09:33:52 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, airlied@linux.ie, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [GIT PULL] exynos-drm-next
-Message-ID: <ahfv4Ox5mFZ5TPCi@phenom.ffwll.local>
-References: <20260521143624.56906-1-inki.dae@samsung.com>
- <CAPM=9twLzSJh-rHpNf-JOPBmzFnFevc6v-gu6kWfLCTPeyWLFQ@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1779955356; x=1780560156;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYtDazt9U95VcVF6VWujIonGGFD/naB0M81vsxEng7Y=;
+        b=RMBEr2YFosArhh/2EsUitxzWhUti5H+as392S7PochCzchH/wKyhReGz/GA3/6uqYG
+         pE9wmY5CE9463BqRDwoF2tFtgk7yg21tLb3i2jJSwn5Uneq8GoyNJ/5mCXvtJD9xpL79
+         qVxxGJmroOxb5yZW7yKFNMfGfmEPSFricC93QEOfAwGrqZPK+MmVemoAKlKkv0OGOvoj
+         /Yt3FsKdrgl3dxGWN/9f+V/dv7WujH9snVxz2MVy+9N7U0cq6WucujCbxdo8sJZG7ZfL
+         Ejya8ns3py8yhjWGTPQVuSNDPZqU86Bi9gauGVzUxcuY5TA1jYrlmUbvxm6jvN6QCd9y
+         K15w==
+X-Forwarded-Encrypted: i=1; AFNElJ/dfrcDNp8anyuRE4ddDGFX/bzDSqnJVqL9Di8O2UkuVlwNzpas4p2eGjLT8wUqgkqK3z/p/I1lZM+ae8aYkNds7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytskUN6fz6jOffqpW6oVe2j8y+qX7aNNaa4RXsgKFszuVD0ZwI
+	msYStNCh/IXvVuCbZbc+TbDfGk5S/I3h3vRroPYb4mYjwVmh8jP8MvJbMn5/yOinA7Fmz9M1S0L
+	0Wz7DIFlrtzd8gf+UVe+iswqkoUJL4RziAsiqE7J41g==
+X-Gm-Gg: Acq92OEE0RH/6StvnzhXYVoYF+6h+AUnEydOLTXPZMwfZ2tDoOWKhEcg3OvVEqEumk+
+	I7UMLpers7U9n9n67KTIPfhAhHOWwKc4wFnS1CuLiqmAlhnFIoP/b4B6HPvTlqIabvkG4+9kg1Z
+	pCWW42vSRhaIVmYOtzed4/v12OkgSa6Qm/0eOH+q2a3+RvkJyDn11xfYR2ISIV0KWS+jzsXHyti
+	mhnvfxM47/Qe9IHhMqZxxgBX3+lzqhKsnTCDkwaMZwN3Nc8sSiM9yGcHPzGi/MzLafdv4c0yvT5
+	LbF1GcPozFAg2bHjxcEVHOoFbZSsruwGD0CLhZ+UyZ+NP2nwlwvy
+X-Received: by 2002:a05:6402:458e:b0:683:f485:c63c with SMTP id
+ 4fb4d7f45d1cf-6889c4321c4mr13969121a12.1.1779955355656; Thu, 28 May 2026
+ 01:02:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPM=9twLzSJh-rHpNf-JOPBmzFnFevc6v-gu6kWfLCTPeyWLFQ@mail.gmail.com>
-X-Operating-System: Linux phenom 6.19.10+deb14-amd64 
+References: <20260526061321.6123-1-grandmaster@al2klimov.de>
+In-Reply-To: <20260526061321.6123-1-grandmaster@al2klimov.de>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 28 May 2026 09:02:22 +0100
+X-Gm-Features: AVHnY4IF4snH_x_Zty3iJL9-gZoieI2TfzLBtrQPLtenatLAkZtKV7qhQYKta-8
+Message-ID: <CADrjBPrsynS5qfJrrVAFwY5kzoM4VcesMC0z0-aKcH-vaGL+PQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynos5410: fix refcount leak
+To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, 
+	"open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 26, 2026 at 11:01:07AM +1000, Dave Airlie wrote:
-> On Fri, 22 May 2026 at 00:36, Inki Dae <inki.dae@samsung.com> wrote:
-> >
-> > Hi Dave and Daniel,
-> >
-> >     This PR brings a cleanup and modernization series for Exynos DRM,
-> >     focused on fbdev emulation and DMA/GEM internals.
-> >
-> > Major changes are:
-> >     - migrate fbdev allocation to DRM client buffers,
-> >     - switch fbdev geometry calculations to DRM format helpers with tighter checks,
-> >     - fix screen_buffer handling to match fb_info semantics,
-> >     - adopt DRM core DMA tracking and remove redundant Exynos-side code.
-> >
-> > Please kindly let me know if there is any problem.
-> 
-> Hi Inki,
-> 
-> In file included from
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:16:
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:
-> In function ‘exynos_drm_alloc_buf’:
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:69:49:
-> warning: format ‘%lx’ expects argument of type ‘long unsigned int’,
-> but argument 6 has type ‘size_t’ {aka ‘unsigned int’} [-Wformat=]
->    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> "dma_addr(0x%lx), size(0x%lx)\n",
->       |
-> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    70 |                         (unsigned long)exynos_gem->dma_addr,
-> exynos_gem->base.size);
->       |
-> ~~~~~~~~~~~~~~~~~~~~~
->       |
->               |
->       |
->               size_t {aka unsigned int}
-> /home/airlied/devel/kernel/dim/src/include/drm/drm_print.h:563:39:
-> note: in definition of macro ‘drm_dev_dbg’
->   563 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
->       |                                       ^~~
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:69:9:
-> note: in expansion of macro ‘DRM_DEV_DEBUG_KMS’
->    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> "dma_addr(0x%lx), size(0x%lx)\n",
->       |         ^~~~~~~~~~~~~~~~~
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:69:76:
-> note: format string is defined here
->    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> "dma_addr(0x%lx), size(0x%lx)\n",
->       |
->           ~~^
->       |
->             |
->       |
->             long unsigned int
->       |
->           %x
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:
-> In function ‘exynos_drm_free_buf’:
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:83:37:
-> warning: format ‘%lx’ expects argument of type ‘long unsigned int’,
-> but argument 6 has type ‘size_t’ {aka ‘unsigned int’} [-Wformat=]
->    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
->       |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    84 |                         (unsigned long)exynos_gem->dma_addr,
-> exynos_gem->base.size);
->       |
-> ~~~~~~~~~~~~~~~~~~~~~
->       |
->               |
->       |
->               size_t {aka unsigned int}
-> /home/airlied/devel/kernel/dim/src/include/drm/drm_print.h:563:39:
-> note: in definition of macro ‘drm_dev_dbg’
->   563 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
->       |                                       ^~~
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:83:9:
-> note: in expansion of macro ‘DRM_DEV_DEBUG_KMS’
->    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
->       |         ^~~~~~~~~~~~~~~~~
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_gem.c:83:64:
-> note: format string is defined here
->    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
->       |                                                              ~~^
->       |                                                                |
->       |
-> long unsigned int
->       |                                                              %x
-> 
-> 
-> Can you fix this up in a follow on PR?
+On Tue, 26 May 2026 at 07:13, Alexander A. Klimov
+<grandmaster@al2klimov.de> wrote:
+>
+> Every value returned from of_clk_get() is supposed to be cleaned up
+> via clk_put() once not needed anymore.
+>
+> Fixes: be95d2c7d918 ("clk: samsung: Add support for EPLL on exynos5410")
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+> ---
 
-Uh, you've pushed this already and it kinda broke my workflow. I've
-applied the fixup from Arnd to sort this out. Apparently there was also a
-fixup by the original author, but that never landed in the right trees.
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-Cheers, Sima
--- 
-Simona Vetter
-Software Engineer
-http://blog.ffwll.ch
+>  drivers/clk/samsung/clk-exynos5410.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+> index baa9988c7bb7..0cd9b0392cf5 100644
+> --- a/drivers/clk/samsung/clk-exynos5410.c
+> +++ b/drivers/clk/samsung/clk-exynos5410.c
+> @@ -269,8 +269,12 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>  {
+>         struct clk *xxti = of_clk_get(np, 0);
+>
+> -       if (!IS_ERR(xxti) && clk_get_rate(xxti) == 24 * MHZ)
+> -               exynos5410_plls[epll].rate_table = exynos5410_pll2550x_24mhz_tbl;
+> +       if (!IS_ERR(xxti)) {
+> +               if (clk_get_rate(xxti) == 24 * MHZ)
+> +                       exynos5410_plls[epll].rate_table =
+> +                               exynos5410_pll2550x_24mhz_tbl;
+> +               clk_put(xxti);
+> +       }
+>
+>         samsung_cmu_register_one(np, &cmu);
+>
+> --
+> 2.54.0
+>
+>
