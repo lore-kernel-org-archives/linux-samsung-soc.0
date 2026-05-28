@@ -1,213 +1,184 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EE034165B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 06:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CDE32ED5C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 07:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779950921; cv=none; b=Y8G2glzh4xB5BJ6mmYtAwX9JILJFHlgS6qE6D/79htTnSl6mfpmTotbewU/3K/ZEw0kPuTasQ7wVwWMlXcUGt7TTv1OVE16S0aLp2dwi3cotyTjvNK3sOOUpufTLp1EFIokYfvxkeGI9y0hURHVl0xP53zk0RKGvxIcvbjGZnpU=
+	t=1779953180; cv=none; b=dIGRAZJmKoO3fyfvsbHGU5MXcLQ3YNvRvenfa0nHpwb6H7N86QJq8iaNo4dSeIHD0PU0o1rqt2X5UkpLG4k9ITHhSTtGRX9by/PcvZh1HVQ/pixiDTcj8bMbhOuC4Mkb+klYU6u68pwd7T5+F0xgbhX9wxG7W6yCq2nXslBI0nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779950921; c=relaxed/simple;
-	bh=m5uGc/qKlrf55L8CXwzUdqW7cfhZwFz5pQDyvwJ1754=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Imm3JFR5/TaSTtjvYeop+toQzS9hSeDTzhqD+xWQM9nqJOUt3hwq9wRwPWwK+zkNy/xo5iQx1A8qah4eH442rMcy6A3sM2ORWf++4j+pw903rt6v5tbFn9BuVr/F89sssJsX51PNiFkz4TOO2yEKEwWvdk49+AewsT3X5oIu47g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=johLM7EA; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1779953180; c=relaxed/simple;
+	bh=mN22yLYavxQD0qrKuY/241cKoIVJqcbyDsB4JLlHb8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JX9YhFO1BcJXQfkCg/FC1uQoiVfCnScnV/JgYOo5z+wHnMg60vSSszl2cSNg/fJsROLM1YBZTB8sCV+OYAchAhuKlD4DMrclyn2XIHfSllGvT7szrC9oF5VTX7dU5wCfrdF4IG3N+sy34Wl5PZYvmNGbldzGJMOLUWLsxTKkpdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Hf+lQ9Qg; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="johLM7EA"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43d73422431so8833177f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 May 2026 23:48:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Hf+lQ9Qg"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4905e190c71so48497355e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 00:26:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1779950915; x=1780555715; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GoBQjtq79NGF4+VCtC77fE1/QP+MOv2ih0K3njcQTfI=;
-        b=johLM7EAaC11Kaog9XD5D4hE+KFNor67HkzRlf2X+C+kpBFLbMvZNINMu0UhHu1JWY
-         PLu0nzi1aVrvfPA9bkQ9+7Gc6uslWOrgiOq76X/XDMaiCTsveYO1LKSKsVITGoSRKE7H
-         YyXzKVF9J8SNGrtVuSeuqV1qTdAenBVRnK2Dy2zIgQYDNyE3codKzR1GwEIeK/oYGq5k
-         EHsZOpxNTGFGVgosDd8gbjQBtwcW2kDLLBG1ECW5Kporz7YmojOeADgdwZtE5qEHv9zF
-         hyIVDz3H4iYf3cwIjprGrXqv/4Sc+XGCrZHr6e5NTX0xAeSZtMmhGinLHANEMwd/jY9I
-         aHeQ==
+        d=ffwll.ch; s=google; t=1779953177; x=1780557977; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Okm57YHWqP6DudQxxBoKKLC7I9Qfb5iqn9tysYDvME=;
+        b=Hf+lQ9QgAJffwyKaEcDMtlpnRUZRqcszeDeZjaZ+s0HkYHXDvxC17xaplNmaYs1Rtz
+         zgwbmAvzb+26qF+jju9dFJMzXewM4ssLw1ohssBFjQND1ELNfYZDecIm9tl9um1g5Y8m
+         iJdavpmDCp0GOAZubX1JOm0SN6uFbWlFIfbBQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779950915; x=1780555715;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GoBQjtq79NGF4+VCtC77fE1/QP+MOv2ih0K3njcQTfI=;
-        b=Y/BO789rYw75I9JaOfwiQkyrzyHRiT9o3ci3XqLE9Z6uUnJGtBs0iHqaNkV1zc7Cdq
-         sYVWkGFhEZIiRY1QDQd1fNxaYdfSk2eL1mIn01/km+S2AjjLd9zCaDkNzoHGnLvwQfMu
-         ibRL0wxxc/xMyEn70J68YLN46ot1Ld272R6+5VIylobtFaru8RyLCoL1+GCoOsjNbkh9
-         9PNwItF3fgfLgEF20b94UiSKz77fX7W5lIUyIVnjUi/YTKgMi9OLonF7Apb0aJ98OFWc
-         pgeVTN7/7XM8SMKOw/eAudGaA9XmWzgOdJdPhRHRymUY+lbNdX8WvNv90qptUhQEzXiN
-         33pQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8Cru5Id9Nt0IkAZ6eYol1EU1RtuHCbeLlOeQ8/Or6GuBeTlTvXpYTaiMp1oFBrmpmc2K4RtTks6Y68NrhTrNdw6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrU+kLJbh8HrT9YcL50JETrsQwFKBwtdD9RRT0znxjNzjm8qmf
-	zveZQIP5UL8o1BK3VsbEFniJS/hqk+N9NS31a286PTQcLxkixdjy6XphTBoyYHBb+ZE=
-X-Gm-Gg: Acq92OHeVKYe45NtH3wYBV1oeUz/oT2GP5n3i0BWyTgscNW/DGrVgJU8m+aHXqz3HFf
-	XBO1yeg1B14SiaTPgaK4sb6uw9HCmH/o4RwkaoOqkfVWOaONHI+cSC/kFQ1ncl8aOU7L7jDZ6JC
-	5iRjiFEAdoqdZ3M0BOH+mcyhSstE9ollpwnK/Lo37NixxQVAqiv1xKqSF4QLSlevHSmCh1oKYK3
-	yPetsCju34h86SvPCMJuzQvBM7haOhhoqy/qFq7HTXuGFZ510rcCwqixms2F/m0l3d5sURlwFi/
-	WaEdzzootrYuMlvb+3eSloGfTw5fM12itdHEVv7qa47uvxyhWTMoCSQKP95YLjNeQxtS96Kauuw
-	FCJNxcQgC9T9eKGqBd/Ak8yf2FX2SF9eYrqXnE+fMk9xtqG+pcLHow7hqf/cvk8dQfbUAzVoWuT
-	Q7vPqptVr3XjYyK+SDHwYLNoAndrt8Y1lxGByvhyEVghbxG0r5R84MtP2XprQdgYDDaL+zDrNyN
-	nd310+rwUcwXPnXc89yTEooCEl32dVbv4So
-X-Received: by 2002:a05:6000:4612:b0:45e:e509:d2fa with SMTP id ffacd0b85a97d-45ee509d6a0mr2313536f8f.3.1779950914861;
-        Wed, 27 May 2026 23:48:34 -0700 (PDT)
-Received: from localhost (p200300f65f47db04e95e43453a0d1648.dip0.t-ipconnect.de. [2003:f6:5f47:db04:e95e:4345:3a0d:1648])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-45edb557679sm19913360f8f.10.2026.05.27.23.48.34
+        d=1e100.net; s=20251104; t=1779953177; x=1780557977;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Okm57YHWqP6DudQxxBoKKLC7I9Qfb5iqn9tysYDvME=;
+        b=q6DnyONy8uUu3UnGqbNpHEY6eBlLpEgOjAfqtMHqZ4GhXMPmIjvo9ABNtbht4kSFG6
+         UB72oRwNaer48CZdcZGRFih7DDzj42hfQtonElMWzfJNXvYk0/zkEvPyXHbhgRkkuvsv
+         Aohual9ldbmJrLpQkqVtlvReGTL3C6d+1VDbhaLMvn3LabqJCL/xGTmOZzpHps3hp5aR
+         0B+XEjYZvw4ucr8ORcDcxjT9CEkKN7IEUQMB7RFMCOWb4LC99WyCKTCB4CaOqTZCfnMK
+         gaaxLxd69e8s1/D+y3fpDENogvew7BjtS2XfHOM706nDnz6wYly5tzwItJV+VOgCtEC/
+         V9Jw==
+X-Forwarded-Encrypted: i=1; AFNElJ8owfxE2+ieeWcYey+Ql+hzW+1yYw0pVUe7z/lBpEla2cHCR2WJVQoJr2NJVjYV0CILCXwFZ9Uy0RNdjFlhC2leyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4He75nHv0kSoW++u1VOOml34tz+T5uB1EBIJQyv/g04ytaSt2
+	z5MQlHmwzbNInq9rBNDdjWFxOmU9DPnW6bwjxqaOAYDRr33CuBMO/p1jkmQy2hTDewA=
+X-Gm-Gg: Acq92OGJZBmuJleISfxFUjHaWBNtcqTFM4VqcFNOl4LGg2sO3KHvNgMX6WP2yE3DSnq
+	2gzrx4HlnNP4zjbL3W9JOtcOmkNrJr26jQrFUH6Imb8gGpf5SnOi3HGrjMr4GHrnPrAvIo8OQ3J
+	/7dAa2vrPLFPSKuChrdrK5Xsl1rzz9eOVpYJUznZEbEmK5m94XRlugPdLcwX0Xz4/wLDd7dDC/s
+	EAIif6YMP+foTFTjNmijA8r2jxXHzf21ibvxxXQbDKqPzTMO0jzL6c6ECMQNaPHzy4n+mL9Mglf
+	ZO0ALBSkem8OvXUzfxE996/sIkVfn5vRJsmzlD84sIVGusEEihmDmBAGiyC7mOM4wgr7G/rtB1E
+	s6okbLimUr71rIXDOe6ck6Ae1cd0+kR3okm+GOwizFn/xLIRVrBi/jioX/xUF0x60HfqouER38T
+	Zg8gksv5cJvHfPvEFaJSm0NH4sYoLtq1k5iXcCRPdhtZ+Dj9PrJXNSHOXp
+X-Received: by 2002:a05:600c:4510:b0:48f:e230:72fc with SMTP id 5b1f17b1804b1-490428ee268mr403369655e9.33.1779953177104;
+        Thu, 28 May 2026 00:26:17 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909235f98bsm30377995e9.1.2026.05.28.00.26.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 23:48:34 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Karel Balej <balejk@matfyz.cz>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+        Thu, 28 May 2026 00:26:16 -0700 (PDT)
+Date: Thu, 28 May 2026 09:26:14 +0200
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v1 3/3] rtc: Use named initializers for platform_device_id arrays
-Date: Thu, 28 May 2026 08:48:12 +0200
-Message-ID:  <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
-References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: fix size_t format string
+Message-ID: <ahfuFv4_-bd47r4w@phenom.ffwll.local>
+Mail-Followup-To: Chen-Yu Tsai <wenst@chromium.org>,
+	Arnd Bergmann <arnd@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260527194525.45762-1-arnd@kernel.org>
+ <CAGXv+5HvJiTkLJMZ13w0OHwgp+nPBftGAC-15nhJ3R=vOPWpUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4899; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=m5uGc/qKlrf55L8CXwzUdqW7cfhZwFz5pQDyvwJ1754=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqF+Uy5Ols39Cbig7Hkh4SbnBhc4NVgRtOtNMxp p4NvkrvTg6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCahflMgAKCRCPgPtYfRL+ TszwCAC02fMR+WvzmWHjOpRMzvb312T2IK+IlESAE1RgLXFdBFszV0itM1PUUkQ+l6i5sc7qeJ/ B555Dxg1NDPROfSNV1ykGbFmw4I81fMtpndCrJTqao5VAmyg1WjpygSHvcGWSG3+20Fs5FARpXi As1m0yF6TjTLjiUaL6oHJJbxLFM5hpiBk/xvqr+2G7bhhXEtNbXwvkVASq4NAatvEQnZPPdiR+0 fKDI+/cLUsKd3fUqdNPR9HgIqXVcGVxu64wm3JeZjGLXNwcbtTzQf2NNZTo6KDYZrd9rjmEdx2F 3UqB/KI+0vlLeVFfJwenqJhuFHshSEJrprhxapZBlcdMIsn+
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5HvJiTkLJMZ13w0OHwgp+nPBftGAC-15nhJ3R=vOPWpUg@mail.gmail.com>
+X-Operating-System: Linux phenom 6.19.10+deb14-amd64 
 
-Named initializers are better readable and more robust to changes of the
-struct definition. This robustness is relevant for a planned change to
-struct platform_device_id replacing .driver_data by an anonymous union.
+On Wed, May 27, 2026 at 11:03:03PM +0200, Chen-Yu Tsai wrote:
+> On Wed, May 27, 2026 at 9:45 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> >
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > The exynos_gem->base.size argument is a size_t rather than an
+> > unsigned long, so adapt the printk() format string accordingly:
+> >
+> > In file included from drivers/gpu/drm/exynos/exynos_drm_gem.c:16:
+> > drivers/gpu/drm/exynos/exynos_drm_gem.c: In function 'exynos_drm_alloc_buf':
+> > drivers/gpu/drm/exynos/exynos_drm_gem.c:69:49: error: format '%lx' expects argument of type 'long unsigned int', but argument 6 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
+> >    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n",
+> >       |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    70 |                         (unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+> >       |                                                              ~~~~~~~~~~~~~~~~~~~~~
+> >       |                                                                              |
+> >       |                                                                              size_t {aka unsigned int}
+> >
+> > The dma_addr in the same line is already printed using a cast
+> > to unsigned long, so change that similarly to use the correct
+> > %pad format.
+> >
+> > Fixes: 11e898373fba ("drm/exynos: Drop exynos_drm_gem.size field")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> I posted the same patch [1] one and a half months ago when the culprit
+> patch was queued up and I got a report about this from the bots.
+> 
+> Inki hasn't picked up my fix yet.
+> 
+> And it seems the exynos-drm-next stuff was only merged into drm-next
+> yesterday, now causing the warnings to pop up all over.
 
-While touching these arrays unify spacing and usage of commas.
+Yeah that's some pretty bad fail for exynos and I guess also for Dave for
+not compile-testing on 32bit before pushing drm-next out. I've noticed it
+just this morning trying to do some stuff.
 
-Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
----
- drivers/rtc/rtc-88pm886.c  |  2 +-
- drivers/rtc/rtc-bd70528.c  |  8 ++++----
- drivers/rtc/rtc-max77686.c | 10 +++++-----
- drivers/rtc/rtc-max8998.c  |  4 ++--
- drivers/rtc/rtc-s5m.c      | 12 ++++++------
- drivers/rtc/rtc-tps6594.c  |  4 ++--
- 6 files changed, 20 insertions(+), 20 deletions(-)
+Picked up Arnd's patch as the first one that I've found (after I've typed
+it myself already, but hey let's at least give some credit).
 
-diff --git a/drivers/rtc/rtc-88pm886.c b/drivers/rtc/rtc-88pm886.c
-index 57e9b0a66eed..13aa3ae82239 100644
---- a/drivers/rtc/rtc-88pm886.c
-+++ b/drivers/rtc/rtc-88pm886.c
-@@ -78,7 +78,7 @@ static int pm886_rtc_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id pm886_rtc_id_table[] = {
--	{ "88pm886-rtc", },
-+	{ .name = "88pm886-rtc" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, pm886_rtc_id_table);
-diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-index 4c8599761b2e..482810b61495 100644
---- a/drivers/rtc/rtc-bd70528.c
-+++ b/drivers/rtc/rtc-bd70528.c
-@@ -341,10 +341,10 @@ static int bd70528_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id bd718x7_rtc_id[] = {
--	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
--	{ "bd71815-rtc", ROHM_CHIP_TYPE_BD71815 },
--	{ "bd72720-rtc", ROHM_CHIP_TYPE_BD72720 },
--	{ },
-+	{ .name = "bd71828-rtc", .driver_data = ROHM_CHIP_TYPE_BD71828 },
-+	{ .name = "bd71815-rtc", .driver_data = ROHM_CHIP_TYPE_BD71815 },
-+	{ .name = "bd72720-rtc", .driver_data = ROHM_CHIP_TYPE_BD72720 },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
- 
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index 3cdfd78a07cc..375565a3bddf 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -866,11 +866,11 @@ static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
- 			 max77686_rtc_suspend, max77686_rtc_resume);
- 
- static const struct platform_device_id rtc_id[] = {
--	{ "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data, },
--	{ "max77802-rtc", .driver_data = (kernel_ulong_t)&max77802_drv_data, },
--	{ "max77620-rtc", .driver_data = (kernel_ulong_t)&max77620_drv_data, },
--	{ "max77714-rtc", .driver_data = (kernel_ulong_t)&max77714_drv_data, },
--	{},
-+	{ .name = "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data },
-+	{ .name = "max77802-rtc", .driver_data = (kernel_ulong_t)&max77802_drv_data },
-+	{ .name = "max77620-rtc", .driver_data = (kernel_ulong_t)&max77620_drv_data },
-+	{ .name = "max77714-rtc", .driver_data = (kernel_ulong_t)&max77714_drv_data },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, rtc_id);
- 
-diff --git a/drivers/rtc/rtc-max8998.c b/drivers/rtc/rtc-max8998.c
-index c873b4509b3c..a2c946edcd1a 100644
---- a/drivers/rtc/rtc-max8998.c
-+++ b/drivers/rtc/rtc-max8998.c
-@@ -299,8 +299,8 @@ static int max8998_rtc_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id max8998_rtc_id[] = {
--	{ "max8998-rtc", TYPE_MAX8998 },
--	{ "lp3974-rtc", TYPE_LP3974 },
-+	{ .name = "max8998-rtc", .driver_data = TYPE_MAX8998 },
-+	{ .name = "lp3974-rtc", .driver_data = TYPE_LP3974 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, max8998_rtc_id);
-diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index c6ed5a4ca8a0..aa706074ec3e 100644
---- a/drivers/rtc/rtc-s5m.c
-+++ b/drivers/rtc/rtc-s5m.c
-@@ -807,12 +807,12 @@ static int s5m_rtc_suspend(struct device *dev)
- static SIMPLE_DEV_PM_OPS(s5m_rtc_pm_ops, s5m_rtc_suspend, s5m_rtc_resume);
- 
- static const struct platform_device_id s5m_rtc_id[] = {
--	{ "s5m-rtc",		S5M8767X },
--	{ "s2mpg10-rtc",	S2MPG10 },
--	{ "s2mps13-rtc",	S2MPS13X },
--	{ "s2mps14-rtc",	S2MPS14X },
--	{ "s2mps15-rtc",	S2MPS15X },
--	{ },
-+	{ .name = "s5m-rtc",     .driver_data = S5M8767X },
-+	{ .name = "s2mpg10-rtc", .driver_data = S2MPG10 },
-+	{ .name = "s2mps13-rtc", .driver_data = S2MPS13X },
-+	{ .name = "s2mps14-rtc", .driver_data = S2MPS14X },
-+	{ .name = "s2mps15-rtc", .driver_data = S2MPS15X },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
- 
-diff --git a/drivers/rtc/rtc-tps6594.c b/drivers/rtc/rtc-tps6594.c
-index 7c6246e3f029..2cebd54c2dbf 100644
---- a/drivers/rtc/rtc-tps6594.c
-+++ b/drivers/rtc/rtc-tps6594.c
-@@ -485,8 +485,8 @@ static int tps6594_rtc_suspend(struct device *dev)
- static DEFINE_SIMPLE_DEV_PM_OPS(tps6594_rtc_pm_ops, tps6594_rtc_suspend, tps6594_rtc_resume);
- 
- static const struct platform_device_id tps6594_rtc_id_table[] = {
--	{ "tps6594-rtc", },
--	{}
-+	{ .name = "tps6594-rtc" },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, tps6594_rtc_id_table);
- 
+Cheers, Sima
+> 
+> ChenYu
+> 
+> [1] https://lore.kernel.org/all/20260408064936.1342321-1-wenst@chromium.org/
+> 
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_gem.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> > index 297a93b087cd..8e357f2beb9e 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> > @@ -66,8 +66,8 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *exynos_gem, bool kvmap)
+> >         if (kvmap)
+> >                 exynos_gem->kvaddr = exynos_gem->cookie;
+> >
+> > -       DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n",
+> > -                       (unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+> > +       DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(%pad), size(0x%zx)\n",
+> > +                         &exynos_gem->dma_addr, exynos_gem->base.size);
+> >         return 0;
+> >  }
+> >
+> > @@ -80,8 +80,8 @@ static void exynos_drm_free_buf(struct exynos_drm_gem *exynos_gem)
+> >                 return;
+> >         }
+> >
+> > -       DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
+> > -                       (unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+> > +       DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%pad), size(0x%zx)\n",
+> > +                         &exynos_gem->dma_addr, exynos_gem->base.size);
+> >
+> >         dma_free_attrs(drm_dev_dma_dev(dev), exynos_gem->base.size, exynos_gem->cookie,
+> >                         (dma_addr_t)exynos_gem->dma_addr,
+> > --
+> > 2.39.5
+> >
+
 -- 
-2.47.3
-
+Simona Vetter
+Software Engineer
+http://blog.ffwll.ch
