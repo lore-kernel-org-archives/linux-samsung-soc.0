@@ -1,81 +1,80 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4116D340419
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 06:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EE034165B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 06:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779950914; cv=none; b=eWSahWjp9bt2Cht+kbImdEl1QfQlb85Prqb7tvYFyZWegqjgCyZpf9YVAjwqdpD85e4ahXPTZg41MDJEgs0bcTb1lTWZRf0n8EyzQ7uQTEsyfNX1v7+fJVFhh05DtR7k8CC7Q/7MryKi90Z9xNSBduzt2+Fr/34JvGf6qOj2m6k=
+	t=1779950921; cv=none; b=Y8G2glzh4xB5BJ6mmYtAwX9JILJFHlgS6qE6D/79htTnSl6mfpmTotbewU/3K/ZEw0kPuTasQ7wVwWMlXcUGt7TTv1OVE16S0aLp2dwi3cotyTjvNK3sOOUpufTLp1EFIokYfvxkeGI9y0hURHVl0xP53zk0RKGvxIcvbjGZnpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779950914; c=relaxed/simple;
-	bh=ctSZqEB1mlU+XvYe9FpEXZw3i6PMNlg9mOrPLqs/9M4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QRlbhYCDTTJ5ml7BYOz5pv3d9j8DNk0LyYU0nzCBOuIf5szFQKOmsSYeRyChih7JOSdExmb226TJU+Mf0oPQ4KDbt5NkCilSwwYR4J+Y0uxF05hp3SCR584iEG7npLw/sCzJl00fSdHmnQ779IbLLdU9YOUb5HHEcIoAeT+xRIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gzB7S+NK; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1779950921; c=relaxed/simple;
+	bh=m5uGc/qKlrf55L8CXwzUdqW7cfhZwFz5pQDyvwJ1754=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Imm3JFR5/TaSTtjvYeop+toQzS9hSeDTzhqD+xWQM9nqJOUt3hwq9wRwPWwK+zkNy/xo5iQx1A8qah4eH442rMcy6A3sM2ORWf++4j+pw903rt6v5tbFn9BuVr/F89sssJsX51PNiFkz4TOO2yEKEwWvdk49+AewsT3X5oIu47g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=johLM7EA; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gzB7S+NK"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4904fd4f6aeso46629595e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 May 2026 23:48:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="johLM7EA"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43d73422431so8833177f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 May 2026 23:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1779950910; x=1780555710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ImRGRn+Fhpb0WqEiONhradFoxfKocbbhNboCMBAjm1U=;
-        b=gzB7S+NKgoSpTirBxxoJcIQjyCJ1WSppgIXRr0lfQthFFhConTiP1usCUkpZuUUw95
-         07pyJ9+egz9z1u3CHnvAeUiiCbAxkr1YTIY31jYcV18OInqIZywiflY+z7d60FfwaB8D
-         SwZdJLoCM6IaX6z+Hf8d1UdRF0CWkxOpSShfTmflvmBeLhMEICDJjfRPbWy/mceNiSlH
-         nKGaCShdYa7jVjRwRnJyIIkNNogK9tRxXY8d1TqRzE41IUejiP0skBLb9jIyREI5Il7M
-         vRrJ2DGj7WZUqcS3eZ37yBI3cH/Bl1p88xX+rLVnPUVwjD7tRbCogl4/m1mkhVRjtGKM
-         dXYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779950910; x=1780555710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre.com; s=google; t=1779950915; x=1780555715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ImRGRn+Fhpb0WqEiONhradFoxfKocbbhNboCMBAjm1U=;
-        b=ngH54WUBL/zotZwpe2dhbuJG/qBcuAcn6ChM6vylP6XZJTMW+WjfxgcTnhJ1W6J//a
-         sjcFRCtjrs7Kid1Uw8GEE4Uhy8LEALuQM2YYmbkmklfySv7l2I8+co2Jn99WE/34Ol81
-         SL7z3S/0cdTRMJc+0dnHLPoTyFEglzaoH/pJKlFkAYoIJMMdiDVEoMA5GR5HW0T7AWdM
-         5z6ZAXEBXnIPIGnjlL2hNfrHgsejh99oGCncLoek0MuXw3Z1PzEKB6cXy951ofDGGR/k
-         nd9l/QiaFj362xQJ+Kd1cqQZZ7Zy63hmL3QY7fuCOfVr5lCNX+W3w8bnypvMzEVlLhyM
-         wKlA==
-X-Forwarded-Encrypted: i=1; AFNElJ8nDKevaFxP877htRJ33ZYJq8K+gJcTP/4I7Nvn1igZVLo8f/MJkzAly5IvOhxVIg5gl+7weC2pJWehahS19Jz00Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgFtfV79KVUf+y9o2VULS4ISoSLpnfMnp+FXnk0dWDRzTjlVT0
-	cGZTo+O6SzIEnLA+QxxwUb7mLTi8t1zzvt3U3yXwOkB9OUza1l/PenibiP9tT+qeeuY=
-X-Gm-Gg: Acq92OGxwZ0KW5WoalCUf4ntl8dWEGAbw8ta+4iX5mJJIZBhJblDe/l4alSU2momEEw
-	25oq67nDC3s7P8vgMppX1ap/jyE6yAo3UhSVxS4lo4EruCgIarVEeq4AKlifSUHaGLXvDP0mhDP
-	jpxcaIuDv0UXZtM7wO75MO72vs+JRYw655IldHXSFYr59cl5wRxUUs0JsKO/Nk7B5gnCWXWcQnO
-	sY21TtK4fBvCEWpqOP19nvdWAKMTCJH1qVZLfdLU/xaOXXjf//6BANHcSxnVk81m+qrzpcAF0/9
-	OCbvoq+ldNYA2Qi5czZBy/dhThSASgZJQ9AAP1VK3k7Ozb6TBTaAa9uzHtiLDREe+UUB0ZTjo7A
-	U5rggEgrzkn4FA+na6PmsmaX/8wdH+Ljko25VD2Hyakfb56bKuMQb9x4IGkt4JdlZ10Dum8ZZ0a
-	Lu7GVe2l2Ur0APtUguHfI86Ny8gEDme8gHMts/oII9dPdSSdWzv2m4GtUnsNCYSyanrU2Q9d+fr
-	hfSO0311HNZgl1f+TZgRcWDmA==
-X-Received: by 2002:a05:600c:6995:b0:490:482c:4384 with SMTP id 5b1f17b1804b1-490482c44ddmr429872215e9.24.1779950909709;
-        Wed, 27 May 2026 23:48:29 -0700 (PDT)
+        bh=GoBQjtq79NGF4+VCtC77fE1/QP+MOv2ih0K3njcQTfI=;
+        b=johLM7EAaC11Kaog9XD5D4hE+KFNor67HkzRlf2X+C+kpBFLbMvZNINMu0UhHu1JWY
+         PLu0nzi1aVrvfPA9bkQ9+7Gc6uslWOrgiOq76X/XDMaiCTsveYO1LKSKsVITGoSRKE7H
+         YyXzKVF9J8SNGrtVuSeuqV1qTdAenBVRnK2Dy2zIgQYDNyE3codKzR1GwEIeK/oYGq5k
+         EHsZOpxNTGFGVgosDd8gbjQBtwcW2kDLLBG1ECW5Kporz7YmojOeADgdwZtE5qEHv9zF
+         hyIVDz3H4iYf3cwIjprGrXqv/4Sc+XGCrZHr6e5NTX0xAeSZtMmhGinLHANEMwd/jY9I
+         aHeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779950915; x=1780555715;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GoBQjtq79NGF4+VCtC77fE1/QP+MOv2ih0K3njcQTfI=;
+        b=Y/BO789rYw75I9JaOfwiQkyrzyHRiT9o3ci3XqLE9Z6uUnJGtBs0iHqaNkV1zc7Cdq
+         sYVWkGFhEZIiRY1QDQd1fNxaYdfSk2eL1mIn01/km+S2AjjLd9zCaDkNzoHGnLvwQfMu
+         ibRL0wxxc/xMyEn70J68YLN46ot1Ld272R6+5VIylobtFaru8RyLCoL1+GCoOsjNbkh9
+         9PNwItF3fgfLgEF20b94UiSKz77fX7W5lIUyIVnjUi/YTKgMi9OLonF7Apb0aJ98OFWc
+         pgeVTN7/7XM8SMKOw/eAudGaA9XmWzgOdJdPhRHRymUY+lbNdX8WvNv90qptUhQEzXiN
+         33pQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8Cru5Id9Nt0IkAZ6eYol1EU1RtuHCbeLlOeQ8/Or6GuBeTlTvXpYTaiMp1oFBrmpmc2K4RtTks6Y68NrhTrNdw6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrU+kLJbh8HrT9YcL50JETrsQwFKBwtdD9RRT0znxjNzjm8qmf
+	zveZQIP5UL8o1BK3VsbEFniJS/hqk+N9NS31a286PTQcLxkixdjy6XphTBoyYHBb+ZE=
+X-Gm-Gg: Acq92OHeVKYe45NtH3wYBV1oeUz/oT2GP5n3i0BWyTgscNW/DGrVgJU8m+aHXqz3HFf
+	XBO1yeg1B14SiaTPgaK4sb6uw9HCmH/o4RwkaoOqkfVWOaONHI+cSC/kFQ1ncl8aOU7L7jDZ6JC
+	5iRjiFEAdoqdZ3M0BOH+mcyhSstE9ollpwnK/Lo37NixxQVAqiv1xKqSF4QLSlevHSmCh1oKYK3
+	yPetsCju34h86SvPCMJuzQvBM7haOhhoqy/qFq7HTXuGFZ510rcCwqixms2F/m0l3d5sURlwFi/
+	WaEdzzootrYuMlvb+3eSloGfTw5fM12itdHEVv7qa47uvxyhWTMoCSQKP95YLjNeQxtS96Kauuw
+	FCJNxcQgC9T9eKGqBd/Ak8yf2FX2SF9eYrqXnE+fMk9xtqG+pcLHow7hqf/cvk8dQfbUAzVoWuT
+	Q7vPqptVr3XjYyK+SDHwYLNoAndrt8Y1lxGByvhyEVghbxG0r5R84MtP2XprQdgYDDaL+zDrNyN
+	nd310+rwUcwXPnXc89yTEooCEl32dVbv4So
+X-Received: by 2002:a05:6000:4612:b0:45e:e509:d2fa with SMTP id ffacd0b85a97d-45ee509d6a0mr2313536f8f.3.1779950914861;
+        Wed, 27 May 2026 23:48:34 -0700 (PDT)
 Received: from localhost (p200300f65f47db04e95e43453a0d1648.dip0.t-ipconnect.de. [2003:f6:5f47:db04:e95e:4345:3a0d:1648])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4908d80952asm13777795e9.1.2026.05.27.23.48.28
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-45edb557679sm19913360f8f.10.2026.05.27.23.48.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 23:48:29 -0700 (PDT)
+        Wed, 27 May 2026 23:48:34 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	linux-rtc@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Karel Balej <balejk@matfyz.cz>,
+Cc: Karel Balej <balejk@matfyz.cz>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	=?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v1 0/3] rtc: Use named initializers for platform_device_id arrays
-Date: Thu, 28 May 2026 08:48:09 +0200
-Message-ID: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v1 3/3] rtc: Use named initializers for platform_device_id arrays
+Date: Thu, 28 May 2026 08:48:12 +0200
+Message-ID:  <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
+References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -83,87 +82,132 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2956; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=ctSZqEB1mlU+XvYe9FpEXZw3i6PMNlg9mOrPLqs/9M4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqF+Up8pYbtZoUCw3r8+fOJGekG5PZPwptdY0eL tFdqigjF+OJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCahflKQAKCRCPgPtYfRL+ TjgYCAChrHD2kpobkQDS/kOb03ZK4sw2ENh4cFJRBLYOasAIuMF3//D2JUL2ZbhP6+lWhluNIn0 ezNtZga4/I3VHz4htYqJ88jImRuMyg8IiWCGrVoEESkPCftK4VlmnStBfSm5b5mBjSdOz9YTcqm ucxuQ548hWFvNdEw9T2W/1NND6t3KJbrRntNSQMDvkOM6Z2kpas4+wLMBWN0xK6IX1mkWUV1zNP wucjVeqV3zSbA1ROQEw1dSTomgIW6qg6vXbkKx66Yl9O+Ew6aBOPnYbET8HgyuX7pRy6s57sbjC WUAPAlIvVPAhOrsmeSO8svYa2NisfNk0lzzlqth0+Tm4g7Iz
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4899; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=m5uGc/qKlrf55L8CXwzUdqW7cfhZwFz5pQDyvwJ1754=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqF+Uy5Ols39Cbig7Hkh4SbnBhc4NVgRtOtNMxp p4NvkrvTg6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCahflMgAKCRCPgPtYfRL+ TszwCAC02fMR+WvzmWHjOpRMzvb312T2IK+IlESAE1RgLXFdBFszV0itM1PUUkQ+l6i5sc7qeJ/ B555Dxg1NDPROfSNV1ykGbFmw4I81fMtpndCrJTqao5VAmyg1WjpygSHvcGWSG3+20Fs5FARpXi As1m0yF6TjTLjiUaL6oHJJbxLFM5hpiBk/xvqr+2G7bhhXEtNbXwvkVASq4NAatvEQnZPPdiR+0 fKDI+/cLUsKd3fUqdNPR9HgIqXVcGVxu64wm3JeZjGLXNwcbtTzQf2NNZTo6KDYZrd9rjmEdx2F 3UqB/KI+0vlLeVFfJwenqJhuFHshSEJrprhxapZBlcdMIsn+
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Named initializers are better readable and more robust to changes of the
+struct definition. This robustness is relevant for a planned change to
+struct platform_device_id replacing .driver_data by an anonymous union.
 
-this series targets to use named initializers for platform_device_id
-arrays. In general these are better readable for humans and more robust
-to changes in the respective struct definition.
+While touching these arrays unify spacing and usage of commas.
 
-This robustness is needed as I want to do
-
-	diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-	--- a/include/linux/mod_devicetable.h
-	+++ b/include/linux/mod_devicetable.h
-	@@ -610,4 +610,7 @@ struct dmi_system_id {
-	 struct platform_device_id {
-		char name[PLATFORM_NAME_SIZE];
-	-	kernel_ulong_t driver_data;
-	+	union {
-	+		kernel_ulong_t driver_data;
-	+		const void *driver_data_ptr;
-	+	};
-	 };
-
-which allows dropping several casts and eases porting CHERI to mainline
-linux. A possible follow-up change is the following example:
-
-	diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-	index 375565a3bddf..31b641bd8962 100644
-	--- a/drivers/rtc/rtc-max77686.c
-	+++ b/drivers/rtc/rtc-max77686.c
-	@@ -760,8 +760,7 @@ static int max77686_rtc_probe(struct platform_device *pdev)
-	 
-		mutex_init(&info->lock);
-		info->dev = &pdev->dev;
-	-	info->drv_data = (const struct max77686_rtc_driver_data *)
-	-		id->driver_data;
-	+	info->drv_data = id->driver_data_ptr;
-	 
-		ret = max77686_init_rtc_regmap(info);
-		if (ret < 0)
-	@@ -866,10 +865,10 @@ static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
-				 max77686_rtc_suspend, max77686_rtc_resume);
-	 
-	 static const struct platform_device_id rtc_id[] = {
-	-	{ .name = "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data },
-	-	{ .name = "max77802-rtc", .driver_data = (kernel_ulong_t)&max77802_drv_data },
-	-	{ .name = "max77620-rtc", .driver_data = (kernel_ulong_t)&max77620_drv_data },
-	-	{ .name = "max77714-rtc", .driver_data = (kernel_ulong_t)&max77714_drv_data },
-	+	{ .name = "max77686-rtc", .driver_data_ptr = &max77686_drv_data },
-	+	{ .name = "max77802-rtc", .driver_data_ptr = &max77802_drv_data },
-	+	{ .name = "max77620-rtc", .driver_data_ptr = &max77620_drv_data },
-	+	{ .name = "max77714-rtc", .driver_data_ptr = &max77714_drv_data },
-		{ }
-	 };
-	 MODULE_DEVICE_TABLE(platform, rtc_id);
-
-increasing readability due to less casting which also improves type safety.
-
-Best regards
-Uwe
-
-Uwe Kleine-König (The Capable Hub) (3):
-  rtc: Drop unused assignment of platform_device_id driver data
-  rtc: ab8500: Simplify driver_data handling
-  rtc: Use named initializers for platform_device_id arrays
-
+Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+---
  drivers/rtc/rtc-88pm886.c  |  2 +-
- drivers/rtc/rtc-ab8500.c   |  5 ++---
  drivers/rtc/rtc-bd70528.c  |  8 ++++----
- drivers/rtc/rtc-cros-ec.c  |  4 ++--
  drivers/rtc/rtc-max77686.c | 10 +++++-----
- drivers/rtc/rtc-max8997.c  |  4 ++--
  drivers/rtc/rtc-max8998.c  |  4 ++--
  drivers/rtc/rtc-s5m.c      | 12 ++++++------
  drivers/rtc/rtc-tps6594.c  |  4 ++--
- 9 files changed, 26 insertions(+), 27 deletions(-)
+ 6 files changed, 20 insertions(+), 20 deletions(-)
 
-
-base-commit: e7d700e14934e68f86338c5610cf2ae76798b663
+diff --git a/drivers/rtc/rtc-88pm886.c b/drivers/rtc/rtc-88pm886.c
+index 57e9b0a66eed..13aa3ae82239 100644
+--- a/drivers/rtc/rtc-88pm886.c
++++ b/drivers/rtc/rtc-88pm886.c
+@@ -78,7 +78,7 @@ static int pm886_rtc_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id pm886_rtc_id_table[] = {
+-	{ "88pm886-rtc", },
++	{ .name = "88pm886-rtc" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, pm886_rtc_id_table);
+diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
+index 4c8599761b2e..482810b61495 100644
+--- a/drivers/rtc/rtc-bd70528.c
++++ b/drivers/rtc/rtc-bd70528.c
+@@ -341,10 +341,10 @@ static int bd70528_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id bd718x7_rtc_id[] = {
+-	{ "bd71828-rtc", ROHM_CHIP_TYPE_BD71828 },
+-	{ "bd71815-rtc", ROHM_CHIP_TYPE_BD71815 },
+-	{ "bd72720-rtc", ROHM_CHIP_TYPE_BD72720 },
+-	{ },
++	{ .name = "bd71828-rtc", .driver_data = ROHM_CHIP_TYPE_BD71828 },
++	{ .name = "bd71815-rtc", .driver_data = ROHM_CHIP_TYPE_BD71815 },
++	{ .name = "bd72720-rtc", .driver_data = ROHM_CHIP_TYPE_BD72720 },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, bd718x7_rtc_id);
+ 
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index 3cdfd78a07cc..375565a3bddf 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -866,11 +866,11 @@ static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
+ 			 max77686_rtc_suspend, max77686_rtc_resume);
+ 
+ static const struct platform_device_id rtc_id[] = {
+-	{ "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data, },
+-	{ "max77802-rtc", .driver_data = (kernel_ulong_t)&max77802_drv_data, },
+-	{ "max77620-rtc", .driver_data = (kernel_ulong_t)&max77620_drv_data, },
+-	{ "max77714-rtc", .driver_data = (kernel_ulong_t)&max77714_drv_data, },
+-	{},
++	{ .name = "max77686-rtc", .driver_data = (kernel_ulong_t)&max77686_drv_data },
++	{ .name = "max77802-rtc", .driver_data = (kernel_ulong_t)&max77802_drv_data },
++	{ .name = "max77620-rtc", .driver_data = (kernel_ulong_t)&max77620_drv_data },
++	{ .name = "max77714-rtc", .driver_data = (kernel_ulong_t)&max77714_drv_data },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, rtc_id);
+ 
+diff --git a/drivers/rtc/rtc-max8998.c b/drivers/rtc/rtc-max8998.c
+index c873b4509b3c..a2c946edcd1a 100644
+--- a/drivers/rtc/rtc-max8998.c
++++ b/drivers/rtc/rtc-max8998.c
+@@ -299,8 +299,8 @@ static int max8998_rtc_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id max8998_rtc_id[] = {
+-	{ "max8998-rtc", TYPE_MAX8998 },
+-	{ "lp3974-rtc", TYPE_LP3974 },
++	{ .name = "max8998-rtc", .driver_data = TYPE_MAX8998 },
++	{ .name = "lp3974-rtc", .driver_data = TYPE_LP3974 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, max8998_rtc_id);
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index c6ed5a4ca8a0..aa706074ec3e 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -807,12 +807,12 @@ static int s5m_rtc_suspend(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(s5m_rtc_pm_ops, s5m_rtc_suspend, s5m_rtc_resume);
+ 
+ static const struct platform_device_id s5m_rtc_id[] = {
+-	{ "s5m-rtc",		S5M8767X },
+-	{ "s2mpg10-rtc",	S2MPG10 },
+-	{ "s2mps13-rtc",	S2MPS13X },
+-	{ "s2mps14-rtc",	S2MPS14X },
+-	{ "s2mps15-rtc",	S2MPS15X },
+-	{ },
++	{ .name = "s5m-rtc",     .driver_data = S5M8767X },
++	{ .name = "s2mpg10-rtc", .driver_data = S2MPG10 },
++	{ .name = "s2mps13-rtc", .driver_data = S2MPS13X },
++	{ .name = "s2mps14-rtc", .driver_data = S2MPS14X },
++	{ .name = "s2mps15-rtc", .driver_data = S2MPS15X },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
+ 
+diff --git a/drivers/rtc/rtc-tps6594.c b/drivers/rtc/rtc-tps6594.c
+index 7c6246e3f029..2cebd54c2dbf 100644
+--- a/drivers/rtc/rtc-tps6594.c
++++ b/drivers/rtc/rtc-tps6594.c
+@@ -485,8 +485,8 @@ static int tps6594_rtc_suspend(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(tps6594_rtc_pm_ops, tps6594_rtc_suspend, tps6594_rtc_resume);
+ 
+ static const struct platform_device_id tps6594_rtc_id_table[] = {
+-	{ "tps6594-rtc", },
+-	{}
++	{ .name = "tps6594-rtc" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, tps6594_rtc_id_table);
+ 
 -- 
 2.47.3
 
