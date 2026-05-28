@@ -1,120 +1,142 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADB024676D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 15:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EDF352034;
+	Thu, 28 May 2026 17:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779980492; cv=none; b=UcP8fTczKAjv/QN98QJItb8FD1u10AZme5h1uRxixbjACTBIBPBsaOrwdiYxZHgGVq+IZBwHXZz8fjPOcLZuxe9QN5FyWjw/loN8Zwt8l76pRXx4SWdhVxOuPM3ntdnZDhToSXtLO6eG54q2Yt+CNIWeXM58GosvZCc43DY5RDU=
+	t=1779990282; cv=none; b=apsArKsMXYViuWmcyAAytCUdleexARB0rdrb6fSZua9E3jtFJl35TrrpWOW1l7vhcKo3mQLhg3GHGoAyviKAD0Jkq5xiKOam/af8GN8bXquPJ+0jCCy1sOFQWvexTG3NFsUfLCK8XD/yO58AZ6OSWUOawfdiT+whjcycRQ3W9uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779980492; c=relaxed/simple;
-	bh=9xzyoUE6qOdj6O2bY4JAlCLASTXIu14f/2Bz1bQlr7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9DJN3D88Ik8PhcXGTrlSrRW2yvGffdgk7GAcnpoHNs21v9/O4xM3rREy4HWfptv/Gs22Iot2d8lo29Bvj0I5V9iv1ZtOc03b7o/2oxD2Vjn+0f3Udpu9QuULtLaBDKYBJv1E2riSb5WhiZBFhx/LoEat+OP9OTNxKc0pbmnFv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g/eRvKoh; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuWhcrHS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1779990282; c=relaxed/simple;
+	bh=veJ7mwLr0PMh7m/C13btr+rFqXEZ8+dyazWfcFoueC0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BzYz8xypNR/mKNRhkT7lodhEA0FeNoZuvYhlvac1DIR0cEidXmhC1x6rP1WgsrhDqHzsyABCsDqBJI6XVS906vPbzSHVQwZ8F22Dz3oRstK4tJoQMfXGTBbe98aRrr6WDdyPHGTsVx+hAuthe0ok9hqtWcDqhrAi7jj7sTF+Ps8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VMjSVWPL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OnYHJ+HE; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g/eRvKoh";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuWhcrHS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779980486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CBJS8Qa+mR61hdZo89Fp/7Obv2aTJuMCATxA11asNhY=;
-	b=g/eRvKohqZLH7NK3tzwyf7Cr3n6rFTjjPvFBg+EfzGVwD00eiPLH0i992GLK8xpy3MpIm9
-	NxYD9G4LWzdoz1o2RPJH/NUYoSejR0QouDx/fvHGMzepfDjBR5tELIBgwSezfYD5FnbKrw
-	/AEGwdUWQkPHV4TXJvIv4EMtxVtkkMg=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-gGBR8zYEMRG8O4oQMqWxUA-1; Thu, 28 May 2026 11:01:23 -0400
-X-MC-Unique: gGBR8zYEMRG8O4oQMqWxUA-1
-X-Mimecast-MFC-AGG-ID: gGBR8zYEMRG8O4oQMqWxUA_1779980483
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-7dc18e2498cso20510427b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2026 08:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779980483; x=1780585283; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CBJS8Qa+mR61hdZo89Fp/7Obv2aTJuMCATxA11asNhY=;
-        b=TuWhcrHSCbDVsh1FhAWXHOHesxZavnhMOC0RiPM35ssQcVyAnC36bspFEDeRjqrT6d
-         zWtJGwyi5WBwo8PCL8F6ejSEPlBweCd4UI0xw931zB13gPKDAVsl7KQ7UfxOlFb8KM+I
-         DaDKKHbmrQnDcQHftSTtLvjxUJ+7cXWUa2Ft7HZ+619fjsg/c90X0be7hUwDAwYzMXhN
-         LyI0BCTZWTvGgND7nKiBZnJHi2+idKVhSxEvuzfZDcTi5kYOwPqH5I9H0enwIjLDJ4Yj
-         jf/gPj3u1n8RJKoJP03asjppHxlltUvWILvCpkBaV3Ko9BaMyc+EFG+Y3JCUCpP4EEl8
-         XS4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779980483; x=1780585283;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CBJS8Qa+mR61hdZo89Fp/7Obv2aTJuMCATxA11asNhY=;
-        b=SZ93er11VjRpcleGocR5Ze/b35C86D4vz43N0jU9hVMAVkI6imeQLkGINSYmnWZ9Ty
-         y/aFxFKUlIUa+REuFd5+a+0+7/nCBauXte/H9Buwg62hWij4JyJYaZYiFwSThJCc1Vx8
-         Wcl67kWyMWiCPqqjA6kv85dpnnRXyREF7NSqYjZNG+Vsg5cR6HmdkYlSmwY8TAwpp9KS
-         xZgoqlRiSw3MixqTgMzjnfgEfdSbl0on1MYz/FLC4hwNtxUfvfu3kwBErKBQVeDb7DkF
-         qr/CU+B7BbBnzo0Mkq5WozHInIyytOfU33aCgzb/fRaqKhke/0hH+R50WJEZuQoKj0FX
-         Rhmw==
-X-Forwarded-Encrypted: i=1; AFNElJ8TbUBgNj2tkeLeRJCF9ZejNtwEXPBGNj6o8gi6RdwFLIyO8XICMnJWPheax6FClgZKE496LIBFmcfTCe0TRW6ibA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ9X6N4z4x87nlQrl+Wc5SC/FpFZU7qEwROcYqMOqS+CdhXDsP
-	gPAQw3hiT1AZg0iCxq/svXqwcVRA+GQtn+JXdYtmDtpxQGMinrYKfWL3ihNPdWAi/PaQVplql3/
-	CDMiG3gGuImqOMxpcXFqEoDtusNi2+SFJY0YuAEWCWCsQCsiCebfZRtxcmgYNivUHaM8hDNhi
-X-Gm-Gg: Acq92OESBy0Ka84A9bKyqdkc8RRaIMAeCWcHygfEqihREYUffy6/eevehGd2lETjVha
-	DlDvspMV/tvSQOmlErjHnibMCPhQejAbbd//joAwZYGT0vZzaT2obDdBjLQcC0hAn3yyEYuGS9l
-	CK938Bpxma8zLhTpvCpOhNPI5sXEdsYWE3C4oFp7mgGtxzAfBy5NyfrwC/RcQSYFv75nfBGNk+S
-	91Vphgj83sVEdCTo4FMjJ2DUyQfdzdOwKWffJAza+wWf94Mt3bogR7DUA8gjq9lzhRIs13cfoAv
-	qDh7OfMhiHFCU9FpeN8E8PHVkZhP0hbF3C2xAuOEmljIS2OZdGiPVZqV4T2fYS5T+bhPSTHUUhN
-	mLif5pF/yCe+Mrf//CA1iITPbSx9ZwEnHZN9cHM+3U1P29Rg1EWqqD/ErriUiTJLV5kw=
-X-Received: by 2002:a05:690c:6901:b0:7db:ba77:89a0 with SMTP id 00721157ae682-7dbba77995emr58160177b3.35.1779980481566;
-        Thu, 28 May 2026 08:01:21 -0700 (PDT)
-X-Received: by 2002:a05:690c:6901:b0:7db:ba77:89a0 with SMTP id 00721157ae682-7dbba77995emr58158977b3.35.1779980480727;
-        Thu, 28 May 2026 08:01:20 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ccdf274370sm5674976d6.32.2026.05.28.08.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2026 08:01:19 -0700 (PDT)
-Date: Thu, 28 May 2026 11:01:11 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v1] clk: Use named initializers for platform_device_id
- arrays
-Message-ID: <ahhYt69wr3vg8A24@redhat.com>
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VMjSVWPL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OnYHJ+HE"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 263D31D000CD;
+	Thu, 28 May 2026 13:44:39 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Thu, 28 May 2026 13:44:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1779990278;
+	 x=1780076678; bh=Tv0GvQR9LdZ5J0jYYwa7d5Uyc3AKXGH4YOdKXhneO1E=; b=
+	VMjSVWPL8CUZrqTgfYcdXq0OhW1qOrR7LGZ0yymaQR/b6wnZvPfCcaxMs+tTofKH
+	+6mktGBcwvopUmyKalcWWWnho7cK2c1CMnIHN62lteDcIwwYy+58KIPg4k+UZjQq
+	vXQOcB134YHNp3ARtK/9ruo2UJLtdAXbY8TiaffBqzlfrPBd4QgzaoJ/GnQrkX9t
+	2k5M5tYzX5jpkWgyxnfrwFQnfbO1gCvpEzK4RQ8fM+5pKDK6X79On7DIzrmAboHI
+	oTGG35a7FcN32YLGYrPGrIzZupJsRSTk4BC1DL7nSdV4NMQXwH+bwcafiUsI/sFU
+	H0Oi6y2qavKt2nmOyAWGGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779990278; x=
+	1780076678; bh=Tv0GvQR9LdZ5J0jYYwa7d5Uyc3AKXGH4YOdKXhneO1E=; b=O
+	nYHJ+HEBGfLSfgR9faVDKYA8WIGs9nU/m/0xvz7zotzmDQXMc1ARN9fAePngamQR
+	28vmC1ViYoV2/om90T5XGjig8gFIOOaGzcUwVcq0FuripuVOyuwzzqZoVvEmSZDH
+	1JD0cF3zVW8B9DTmE+L0b9N0xbpq8HxzBl2FPVSXFaxyZwIFvz9WMq5WhnXYbZuV
+	96/WqJiDKYHWSAdMrL6ulE9q97ZzlBtAqkTQCkkFiY0SHbwhVeEb+SUWdzycPvN8
+	8IjvLGQS8BNJE72+mhcj/AQzwTMe+OhZoz5YO94JEgISdLg+8BZuOIGkCM8hn0Ch
+	N/k8SG8RlvpIT9a9F5duA==
+X-ME-Sender: <xms:BX8YasIjzB6KaaZdxw9LUYG7v3wzUEDo7VuOxxeXOtN0PGtUGW8gJA>
+    <xme:BX8Yam9ZcpMLau2S9VvEv6L3k-6SMc3eODzZCRUqM54fuHb6sTFxEzuMtDGgsDgiX
+    7MlmNa5Lf4UA0oBWCcYRoiutSMkA028W3Z8nAxGZcT5DVM9cMsMDQ>
+X-ME-Proxy-Cause: dmFkZTF15I2exDPtkrKztTne1NwFdgpQPX5RZHaMMfMA6gF6Y5BggLL1zRpelnKTMY3yBh
+    R4wK9fwRoM7FrpSRvU2kUe/PJ8DEF0RJTiCet1Z3XZOzfJlAmAGguJwZ3Y4LdKWe5Ra1yt
+    9Ank0wim2jQFH2IFOytzTNjNHGkn/Ae5k6iQRP/tXLhPqbG8hKldvfnu/5P4vgFmVlmTMS
+    BLtSPVuZTPKbPlWJ9cLE8wplnT3mnotXJHkmv1+aPYsyy7a4tAyjiqHt+HVE0kLYH4AZ6C
+    DNvtXHbwrbMim+efkocyZJvr+xOlXiy/azm8os8X9/hZer9SH/YJGVQBkADn5xfDHxnJQp
+    wJbURRQfherRUAUXf6wVRJ3WwV9FbzJVFfZ5Oi+cIxTVkeKBQyd6BgZkFuuI28mvWfQryr
+    YGa9xvBG7hJYWjUxRyb1ubjL1A/k+dlMbcS/cbIvnM1lVXSInksjQtr+P2X+apzPUbZTr/
+    n2+clI183YNFxm9WcrZTH/p+5lDRsmgn36EWEuyvlKsUnO8oOcqECQwPNmWn91gnoW9fUH
+    gN+yhtIPSMfvYV7PZ4LqqwYpvMkEG6Z2j/1goh8mHe3vMuvSXNLnnH3PxZ0CxbFQNo0jtF
+    W7FUHfNKhUlQ2eAXdkMiECxHvTc0sHzdXmPWgFPVJMudAkKb99TH0ATU5nSg
+X-ME-Proxy: <xmx:BX8YaitXoGv-ZZWow7DNa4wJSssqKd9hxZ8Kt0EeZWYeTLNwZAKuEg>
+    <xmx:BX8YapD857mxD0bNTG9yFGDr_4EswW0hL6ukkwFYli7cxEZ6gbs6eg>
+    <xmx:BX8YatB_-o-aj2Jt4p9laqnWNyjpMJp6UrdisKEHTWBjeBEQA0BK9w>
+    <xmx:BX8YajodPLvCsEJrEAzYFDDZFCVvcDzzBYbLXdmE3dA6naFcSj7mIA>
+    <xmx:Bn8YasNTWmvzM6wFwlhtzIQhrUiK3Ip3ud0OXdwgZBvctZSd8x0XW6Jb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 98AE6182007A; Thu, 28 May 2026 13:44:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+X-ThreadId: AR8ZB97ino5k
+Date: Thu, 28 May 2026 19:44:17 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "Peter Griffin" <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
+Message-Id: <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
+In-Reply-To: 
+ <20260505-acpm-fixes-sashiko-reports-v5-4-43b5ee7f1674@linaro.org>
+References: 
+ <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
+ <20260505-acpm-fixes-sashiko-reports-v5-4-43b5ee7f1674@linaro.org>
+Subject: Re: [PATCH v5 4/7] firmware: samsung: acpm: Add memory barrier before
+ advancing RX pointer
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 28, 2026 at 12:29:38PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> Named initializers are better readable and more robust to changes of the
-> struct definition. This robustness is relevant for a planned change to
-> struct platform_device_id replacing .driver_data by an anonymous union.
-> 
-> While touching these arrays unify spacing and usage of commas.
-> 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
+> Sashiko identified a silent data corruption in [1].
+>
+> In acpm_get_rx(), the driver reads the response payload from SRAM using
+> __ioread32_copy() and subsequently updates the hardware RX rear pointer
+> via writel().
+>
+> On weakly ordered architectures like ARM64, writel() provides a write
+> memory barrier (wmb()), which strictly orders prior writes against
+> subsequent writes. However, it does not order prior reads against
+> subsequent writes. Consequently, the CPU is permitted to reorder the
+> writel() store to become globally visible before the payload reads
+> have completed.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+I am very confused by this after seeing it in the Exynos fixes pull
+request. How would anything get reordered here? What I see is that
 
+- The SRAM is device memory, so any access to it is architecturally
+  ordered against other accesses to the same device. Even on
+  architectures that don't guarantee this, Linux I/O accessors
+  do.
+
+- The __ioread32_copy() writes data from MMIO into main memory,
+  and the store into main memory is guaranteed to be both before
+  the final writel() (because of the implied __iowmb()) and
+  after the read (because of the data dependency).
+
+- The smp_store_release() in addition orders the write into
+  rx_data->completed after the previous memory asccesses and
+  before the writel().
+
+> If this reordering occurs, the firmware may observe the updated rear
+> pointer, assume the queue slot is available, and overwrite the SRAM
+> payload while the kernel is still actively reading from it, leading
+> to silent data corruption.
+
+It is possible that I'm still missing the point here, but it
+very much sounds like you trusted a chatbot over trying to
+understand what is actually going on. Can you explain a
+sceneario where the barrier actually makes a difference,
+and what the corresponding barrier operation on the other
+side is?
+
+     Arnd
