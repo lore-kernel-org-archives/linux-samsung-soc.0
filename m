@@ -1,138 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8BC3C1985;
-	Fri, 29 May 2026 12:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813703E121E;
+	Fri, 29 May 2026 12:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780056616; cv=none; b=QTPP3UlL+OG3HX3ptVS5GCNdYLLbesEPTRGW9XJxOlftFp5ous0TNLxg/Bke1drYSN2EFvhK2lBKTJRuFOY4gjw7QeYInh1XnA2X1Tm+NYm0Ar7ZRboDIfpCfPgDiC+jSkhgVL7xa8mHy12qYO3Oj+aZmnmt+nU/foqZFxysI08=
+	t=1780057089; cv=none; b=hE8VKjQyYJv/njJwQyhAod1YVbWdyzD3AxxdpzvfHgWthDp5ahQUt4hsH3vY7Q6+VxFI7TnwZbYVLacl+wDxvRkGz3bjF7D3jIo/jXRBN0Wb69K8Qb7P7s4xjA809M+RZjjswGMbWQrV2qKaTTyPb1FSalbmjMxdVtKCYlDiRF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780056616; c=relaxed/simple;
-	bh=ZLfFtQxQ+THgENy168wSADjvsd1lVfmS5lB3JrO4Lfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gldqHBNvi9DsAl6ck4G8exqGY75JGlHhQoLLBkgnrWXZVGXr2Eawz2RMoy9OFPkOQHen+1rSZmQw3L98Fv90v+bu46daGSBYxGzLg60NQUPW6zdPXW3CpK5UzNiVvcXbFnlXq0axqJ6JzMLKjjxlILbHAZOdN69tUXEB2LEeNVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyXtXwqq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780057089; c=relaxed/simple;
+	bh=ZMjAF+OwBUX1j8RpGOcH8icmR9zWYxGfGHxf/YItcBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KbLYOV3JlFvtutf4UOrY/IQcgSLiKzGIErXKrd6DKobQybRemZMmVImjk597xuZ25finis2J5fyB5Nk4nbnDqoYoSUwhG0iBhNho8zDFh0FecOSVb6twp2LRD8fbx3h5/F+a7AOjCVf3iDpvdwmE5t+hBL3ALPsSmV7CidrP5T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geAcMOp5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyXtXwqq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602E71F00893;
-	Fri, 29 May 2026 12:10:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geAcMOp5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F751F00899;
+	Fri, 29 May 2026 12:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780056614;
-	bh=8SKoGN1Us/22ltFHkqd1z9zCVAyjuesLzj8RdQcSeq0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=kyXtXwqqOddMoY8gTSbOeyLygeyJn59wS8YL53J1HhrzYUBxjz3ahzcWonJ4HRFBf
-	 nqUEUeOI3Kp1OIO4JzHOKzv22hfYGKMACaB+9PsC5b4L2Pz5yUQmH/ZalRt/FNcHFJ
-	 exH36+LZnJprGKyv+cCLoOjR43FM1PayTzG3OkHSMu/zFnG47636RyEz1FgXO9P1Ic
-	 GI/NTIyzox5qTxCXuF6iB7X2+kG2qNE6T+Jg8oVYC5caP8JP+FDTkpmDAOVymzb70r
-	 HdU8kNuxCqutakqfU8W5/ZKTnZqau4IG3/G0XiAiufXG1usB1lRnxWe9H4glnF26Tw
-	 QTQtcXx1vjKdw==
-Message-ID: <6eac8493-83d9-48fa-bba9-92408cc30b50@kernel.org>
-Date: Fri, 29 May 2026 14:10:11 +0200
+	s=k20260515; t=1780057086;
+	bh=CzGNF+VTlvtIapSjsIV5bW5TQhJnEB3/iQPUbpSa5uI=;
+	h=From:To:Cc:Subject:Date;
+	b=geAcMOp56bGWFIr02wcGx3THTHRAt1Sdn54lmekJqxnYyEUoh+mQBnwyuPFnBrzv+
+	 TTj1k0ACRBCKCcQYiZRm9kBn2kTagJaBDAkU+VzNKiGbyPwV9odjPQZZxrYvw5hBU1
+	 ajp3tHKo2h6yxzzZjc799g2GcG2PSawv19H1U6ckpPpzl9+HPpc5LvjC70YzaqutBd
+	 rqVTIwHP2YLZ6UIQ6v0kv72IHVg/zLhm/5xW3+eExKz6KGfjXszIv1of0ePF29WF7+
+	 J2XVtQI8EfxEhGDcxkuU/3UZc3NTWVVA85c6du3r4Vbvtz2CWL22U8eDNeesxBdBij
+	 VHnKbkHGl3FsQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Drew Fustini <fustini@kernel.org>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] samsung: drivers firmware for v7.1, replacement
+Date: Fri, 29 May 2026 14:17:57 +0200
+Message-ID: <20260529121757.13224-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] firmware: samsung: acpm: Add memory barrier before
- advancing RX pointer
-To: Arnd Bergmann <arnd@arndb.de>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
-References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
- <20260505-acpm-fixes-sashiko-reports-v5-4-43b5ee7f1674@linaro.org>
- <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
- <ad30ca8b-01ba-40b9-a631-503ff463bc50@kernel.org>
- <26e9c700-c519-4888-8739-c48c73b8a39f@app.fastmail.com>
- <ed771a16-6241-4246-976e-48349e544b5b@linaro.org>
- <9d6bda31-839b-4cf8-b715-0d24760c73c2@app.fastmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <9d6bda31-839b-4cf8-b715-0d24760c73c2@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2052; i=krzk@kernel.org; h=from:subject; bh=ZMjAF+OwBUX1j8RpGOcH8icmR9zWYxGfGHxf/YItcBg=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqGYP21QR0o7tuEi3Mg+qQ+UoRS4Gpd1oPhE3Go FDcj+ptjJaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahmD9gAKCRDBN2bmhouD 1w1MEACCgy6+0dYIFFXZlvyZWmbIS+Ge3Pbw03rpKsktJby8zcvGTsrWW9U+hmfTxRvqJ9FZXQG XGjrj+IOxst9AmogOnewraoEokSI0ZeCP+rAlfT9kTPdp70plfpOi3+JPI5sZBimChUWEZ8D0vF VBVbmOtjqF1HvhwYSo3agk9dIy0Dpu4wWP7OBkaZulXFkR8GSkvnZd+e2a+GgXw0qCajG5i9RF6 03OJmC3jcQgO72+BsLg0gHWKt+QFrrLX9vEB0RonLs8bYpXA8CYOx+owW5gTAXgiaXs4cDtsagB UZbWG78w4S+MPvWwPLvoF2sqmqkWH0Q4UMVoXSJCUOT+gx5qzghAL5FSETykQ8ms7ZE5gtDhSUO 853mdWa3ske8PUFHiX+sSXRGwHI/5z//PcyeWL3fhLvRanRHxQcXl9egQIuRM/kQs4IS/Xhn9NM jGat76mqkd2kIyBMl2tC65KNYliyZuy1c8K5zRWZclfyHZMa/DM+9EUW/WJ9KKA+SxekOsbyJUL 9qtahlHmXrPAdJxUI/Pc/0b7kuan+tfQu9PEcCnIE5/tcUnaT3VSpKrJv/2eO+Ga8dAAfklxGcS CA644PSF1FULCSzz+dMFIKgUPkHPvtwUmil2/JT0gOnaW2xea+JnYMcWEqurg6SgPBQ1Aoh8dhk zPcw6gAqMBcGBwQ==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 29/05/2026 13:44, Arnd Bergmann wrote:
-> On Fri, May 29, 2026, at 13:20, Tudor Ambarus wrote:
->> On 5/29/26 11:25 AM, Arnd Bergmann wrote:
->>
->> I missed the data dependency chain. I focused too much on the read
->> part in __ioread32_copy() that I missed the RAM store implications
->> in it. The RAM store is forced to wait for its SRAM load, and the
->> writel is forced to wait for all the RAM stores. So the entire
->> payload is guaranteed to be visible in memory RAM before the writel.
->>
->> Maybe I thought about the reordering of the final __raw_readl() loop
->> iteration with the writel(). But the dma_wmb() -> __dma_wmb() ->
->> dmb(oshst) from writel has a compiler barrier, so the compiler can't
->> reorder the code. And given the ARM64 device memory accesses ordering,
->> the ordering is protected.
-> 
-> Ok, thanks for checking and confirming my thoughts.
-> 
->> My bad, sorry. We shall either drop or revert the patch. Please let
->> me know if you prefer a revert.
-> 
-> I'll leave it up to Krzysztof, as he's already sent it to
-> soc@lists.linux.dev as part of the 7.1 fixes, and I'd
-> like to send the rest to Linus soon.
-> 
-> Krzysztof, if you can send an updated pull request without
-> this patch (and maybe also without b4a38606991c ("firmware:
-> samsung: acpm: Fix dummy stubs to return ERR_PTR"), see
-> separate email), I'll just merge the other fixes and
-> send that off instead.
-> 
+Hi Arnd and SoC folks,
 
-Yes, I will do that.
+This is a replacement/rework pull of previous tags/samsung-drivers-fixes-7.1.
+I also dropped that tag from my repo.
+
+Changes against previous pull:
+1. Drop commit: firmware: samsung: acpm: Fix dummy stubs to return ERR_PTR
+2. Drop commit: firmware: samsung: acpm: Add memory barrier before advancing RX pointer
+
+This caused rewritten history, but all of the commits were already in next
+since May 14.
+
 
 Best regards,
 Krzysztof
+
+
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-fixes-7.1-2
+
+for you to fetch changes up to 7fe40c32a33905302341797b5d12c541729dd08d:
+
+  firmware: samsung: acpm: Fix infinite loop on sequence number exhaustion (2026-05-29 14:11:23 +0200)
+
+----------------------------------------------------------------
+Samsung SoC driver fixes for v7.1
+
+Fix several concurrency issues present in Samsung ACPM firmware drivers,
+used currently only on Google GS101.  Tudor with help of Sashiko
+identified several missing barriers and incomplete synchronization,
+leading to possible transfer data corruption or use after free.  Few
+other issues related to probe, including missing mailbox cleanup, were
+also fixed.
+
+----------------------------------------------------------------
+Tudor Ambarus (5):
+      firmware: samsung: acpm: Fix cross-thread RX length corruption
+      firmware: samsung: acpm: Fix mailbox channel leak on probe error
+      firmware: samsung: acpm: Fix false timeouts and Use-After-Free in polling
+      firmware: samsung: acpm: Fix missing LKMM barriers in sequence allocator
+      firmware: samsung: acpm: Fix infinite loop on sequence number exhaustion
+
+ drivers/firmware/samsung/exynos-acpm-dvfs.c |   3 +
+ drivers/firmware/samsung/exynos-acpm.c      | 141 +++++++++++++++++++---------
+ 2 files changed, 100 insertions(+), 44 deletions(-)
