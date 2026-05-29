@@ -1,66 +1,66 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D63A872D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 07:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83F732E13B
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 07:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780039632; cv=none; b=OEk/y+n/FNfg3GFcLbadbJzP1AB8TlodKW9oeoIXnBaVWxTFWEENhRVjSM7mlbyfvQar2JW0OgYHyn/KTfANo/+tbbK45Vztbs0JKjjlK9CPOSyVWQKOfZnfl9Zlhr7+UYuRzh9shbXYm/jKKwGc6sZmtH2eTI6m2jOZcj/T2uU=
+	t=1780040004; cv=none; b=itIv4ozBl0rzN8ro+eeIfhTIQlSwkFAHuRYHu0PkttiSoE8LBtLBHBnOPQRasRlsHpM9n+AC7j51TVRH2OZcEOBxj+eHW2g9tLKOKD8JMfaknHAegFFyzS7n/3rmbHgsP4jkDvnqw91omehuDr7JeMM3O7fF5vh6dgQfiuOJdaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780039632; c=relaxed/simple;
-	bh=EfKOI1MhNdNCtFTETqtogGkGBGw70Ri4WZ28lvlLvrw=;
+	s=arc-20240116; t=1780040004; c=relaxed/simple;
+	bh=C2UmvHg4pq3Kveuh7eyfvS0WF+OsmyQbD1WPj/oCZfM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sAu7yz3C+YD6CGh2TQ4esy/SOwnOjCQlEu9g2DYZyXnpUQJCXJRCAr7OZ3inIkNC5Ldiy/WaLda4+HC2/owG7ZwW/7MNS5FgXkp3ygze9u0iyCT19wnaGZmPHK0vnHRDU9M1uKsXwLNajgKMJ77tBXJLqdRrCnw2jBMxKzL5VXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=n5BhlVk5; arc=none smtp.client-ip=209.85.167.45
+	 In-Reply-To:Content-Type; b=dF0ILDaR00gLxnw+/5GPs/cElMfWuX/OlmwXC2OW3hIXButnE/aT7V4GeIp99DXo8PN/mxKLVkQugjEsP6D8dYPnUcg+9ImHpA/wsgHsjWjz0rk3iyX2FbBeCZfmwSxpLwLNYrBGBUXsaNOmeykDzuOH/hq4Yo3tP0XbA2JJqdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnOc882U; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n5BhlVk5"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5aa50ea5661so1136724e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 00:27:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnOc882U"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a4113ab355so8844330e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 00:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780039628; x=1780644428; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780040001; x=1780644801; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oelNQunsqm6lRn+BaGSQ+cqWJ81wjwxd4/AhjqK6NKM=;
-        b=n5BhlVk5zhWeWuh3R2o/C02pta6AC0QnOmOKnaco/8gpMqpsRtLF4N2SjudetqFfYW
-         AQsaYYeskjQ2SaksKSeGMof9EgBSHoMPk22xYzDvvzqpHBL9Be0XWzL0WokSmWdqnA1v
-         Oe6WSBsmkfOQgMg9sgf4Z0sIqu7ErTZAX9NAEUndzGdYVuu1xXTvInOA+aoci1zWYttp
-         x40nRVGP94AtKYZ+V3ZKjzjKl5bIykpYHpr8h+1hSVXRy3SkxIwpnn9B3/J0SDX6vSKk
-         MGifpWy+cuov0t4+pQCHoLVH6BxiTHVrsGpezwbAk3oQtPa5Ei8JVzcMKSn64/6ECp+5
-         RnYg==
+        bh=cLXzJTBxhRzNVcfTdOrnp8DxAIsKoO1FxDcS4XlJuFs=;
+        b=VnOc882U2GUpjzR1ghxiJZKdLoi5M1jiMx+VpZnO+OVGUSU0ASGcCU7/hCpHNwKBhQ
+         pfNInZglmC+wiy2xToqcI3uhnQBtr1K6Oiid2a840KjKKNHN6jHbgQ7Yj7d8xPJgz7XJ
+         trE1H734BruHR2IJIAbPlY2E+SmIPKcOg0AtNRIbUIacU3rZgTn+oopx0IaO4/07wR4r
+         ouHwOhHQePhxnUcLDptTjmalVIR7M7P8uC3r+O9ulbRGDaQGSttIDgQlpBYwJR9FdsUE
+         Ql1bIi+7M5I3ahqrfqroWxYhIyZA5bLEDtpEpULTROOx66rZDDZtYuc6U/HgfjgBV0Gy
+         5L9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780039628; x=1780644428;
+        d=1e100.net; s=20251104; t=1780040001; x=1780644801;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oelNQunsqm6lRn+BaGSQ+cqWJ81wjwxd4/AhjqK6NKM=;
-        b=eraLWR0I9GApRyYNxY0RsZZrx1Z1okAFAFS46ApmFYoLNUy/r9AUqbNzHsK4mUqkgs
-         HNWCz4WSUlzwZ3Vr3U4JDADx5HOqi9sRJ85Pp9o+ce2K5oOAF5gwRuNqlbzLaK2eykMc
-         wIRF5v5ayByfLF9N5XzokXLRZLGD+9x7hD2Qhp/qzyCGME28jtgbfbiQ0qf7ucjTxx39
-         +5B8dUVpLwoBAxj2X/Ucm3eXAJvF4dRFXn4JVhFcOZKzCkva2YDRBnr569fh/jiAkU1D
-         a36tcNpihjLvdgLY3ahbRj8JTh6rYFKvElSkfkZUZ5Mmh1ZHu97f7WQJ29O6c+gE2U/X
-         J0hw==
-X-Forwarded-Encrypted: i=1; AFNElJ9yqDH7GdXcqJwCAVgveFf9q7vJ2biG13fkNWiPiPGt2oxGOMHZsTDWTD9JCI5ef93ZGqGDryCzmVdArciNCr7UPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxsqx1StfwUSfmlJeuNgBw0a+mrPd5bcuzxPq41ckwMG55rSGB
-	l3BToDb/R1dcR/Y4H1BNMAa5Ke7XlbZkC2EEA6IXb407Fc7UkynCKo5s
-X-Gm-Gg: Acq92OH6iERLxhWG9280Gy3cO8mO9Hx6JId5yf1Y8LFS61skp8zPRDw/Tz9PklERxT6
-	9bl6f6CIx5thffYkljHinSO4Ek3W74dQoj3QbERwddTSC4oWgvss3poEDkr93lZn+l9o8dmqfmL
-	uWrvQavcEVNMe728BnSEpo27K7TGT4mB5XrHc++PWT+ty2lANmmMx0S9SGbE8YTR99TdS8ScAZJ
-	lNvnQdpP7rrl9TOyYD5t8ZYBjvq5BJLsxTT5VCPm2A08z8fjKXuo+iMQmK+VUg1YP2+RqUsyB+p
-	Mq9aIrpVTnk3R+C1azQkpNpDatAJGhd6MOJm5t4qp3HQfL6R3VX3Nkowsy0dSs7JsSeTZFTN7R9
-	Wru0Ib03zxP/RIsJXiJzCmL+CFsIHtYSk2NhRuT5GuY6YixwklNq0pw6FWDHj4AXhQtSMVLOypb
-	so3OV+FeXuDElY4tfWt2LpOCXb0f0sy4wHnB7RE3ugp3gTfi9ECjlATg==
-X-Received: by 2002:a05:6512:3b1e:b0:5a8:950f:e92e with SMTP id 2adb3069b0e04-5aa594b1691mr463708e87.23.1780039627984;
-        Fri, 29 May 2026 00:27:07 -0700 (PDT)
+        bh=cLXzJTBxhRzNVcfTdOrnp8DxAIsKoO1FxDcS4XlJuFs=;
+        b=IRqoY1h2qpSqjKjpATSsGYJAdR6j6lPCwyjOc0KV3rWqI8VTGo9WYpFtPvtPuqnTFB
+         dy9HVqM7LVn1zHG/gkQYUyXT+NMkwYgPfBnAV1VJk90z8YdMJsHw6Mj+8Fg93YUlZgS3
+         fe3wkRy65X/1He9KVDjWic9Ri/x/nvXu/0st0MTWVpRXdBEmKwzaujmycB6thyw5v51g
+         f5qN1Tg91KolQP2tYKyNheICV/6t7eNzcKcTrd2wKa1eoimgb/txabq5dBOJuCEJP89j
+         GF5zD+CHk65G9yJY/9CknwjceJTbDWnyv468M6cswUh1gnuB213iTQoymeOR4D7ylIb0
+         /Mkg==
+X-Forwarded-Encrypted: i=1; AFNElJ/pRSMwOeV1cD+KpZR+AljStBEcXeTIBPIzOFHqA1nsYc5lEEzP5UKPOlH9SayiATe1JcgGni13HDf3WrXRh6wflQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/YLm6UCvpp4YwuuXWRCQPML5YYUSqimLK9YYDDlNfWNI3H/kp
+	8Lj+VKpzmcCefPp+n/A4ev467a6LJVFW1oy4eLdDkBHe+p+sIVPRHaQQ
+X-Gm-Gg: Acq92OHGa5EKu6RaAQJOscYdSskqLWmUHN/INNf9ej8RoM48zv7MnijR1AWS+jE/GcF
+	khbKB22wFB5Rh+KYiITLinIsESxvnEQdRLDOfQSwkHyjsHpTeLq9jGz7o1Pzapdawf599GifyGN
+	30SUhtbOYuGbCblPXyTNy/VcEvkNGudF2hHmWbQR/2BocUehdmUluSF2T/q6of8HSWm241tpwBr
+	FkX04if+zY8R7iPYm36YaaJRFgQwn257hdd/vcQPFLjBoDIfPuhmEw9Q9oD1HyRxsusUnRALrc3
+	zcmXREMh7wKXLSEkrs4WcmAQYZJyqV+vwFSOrVEb+IxQX8HmaAdzutm3ZyGXuX3P2MSKohq/NOm
+	fGXSE0gjh2G3XGtJuf8xuHBeK8vfWFxoRSL9Dsl8MAPnCVop5xX9pKZ7STy6tfhblx+W94KAYS+
+	7Wz85TtIDNat9qf0bgZEZxTd/UG3MAi43H4xtl8Tcn+eXtgSPsLmzyvQ==
+X-Received: by 2002:a05:6512:b07:b0:5a8:97d7:8c2e with SMTP id 2adb3069b0e04-5aa594b424cmr494476e87.28.1780040000761;
+        Fri, 29 May 2026 00:33:20 -0700 (PDT)
 Received: from [10.38.18.54] ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b7921bfsm90535e87.70.2026.05.29.00.27.06
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b79f297sm92290e87.82.2026.05.29.00.33.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2026 00:27:07 -0700 (PDT)
-Message-ID: <2045debf-e518-4a7a-9509-e305cad4bd11@gmail.com>
-Date: Fri, 29 May 2026 10:27:05 +0300
+        Fri, 29 May 2026 00:33:19 -0700 (PDT)
+Message-ID: <fca8dfd9-f377-44ef-bfdb-b7135f4d39c5@gmail.com>
+Date: Fri, 29 May 2026 10:33:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,33 +68,33 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] clk: Use named initializers for platform_device_id
+Subject: Re: [PATCH v1 3/3] rtc: Use named initializers for platform_device_id
  arrays
 To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
- <u.kleine-koenig@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ <u.kleine-koenig@baylibre.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Karel Balej <balejk@matfyz.cz>, Chanwoo Choi <cw00.choi@samsung.com>,
  Krzysztof Kozlowski <krzk@kernel.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+ linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
+ <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
 Content-Language: en-US, en-AU, en-GB, en-BW
 From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 28/05/2026 13:29, Uwe Kleine-König (The Capable Hub) wrote:
+On 28/05/2026 09:48, Uwe Kleine-König (The Capable Hub) wrote:
 > Named initializers are better readable and more robust to changes of the
 > struct definition. This robustness is relevant for a planned change to
 > struct platform_device_id replacing .driver_data by an anonymous union.
 > 
 > While touching these arrays unify spacing and usage of commas.
 > 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+> Signed-off-by: Uwe Kleine-König (The Capable Hub)<u.kleine-koenig@baylibre.com>
+
 Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 -- 
