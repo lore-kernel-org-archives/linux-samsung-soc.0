@@ -1,66 +1,33 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83F732E13B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 07:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FBD1C860A;
+	Fri, 29 May 2026 07:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780040004; cv=none; b=itIv4ozBl0rzN8ro+eeIfhTIQlSwkFAHuRYHu0PkttiSoE8LBtLBHBnOPQRasRlsHpM9n+AC7j51TVRH2OZcEOBxj+eHW2g9tLKOKD8JMfaknHAegFFyzS7n/3rmbHgsP4jkDvnqw91omehuDr7JeMM3O7fF5vh6dgQfiuOJdaE=
+	t=1780040862; cv=none; b=Wal5w2uN7Zf+k1mWxe7KLvsaCH/7lgKDSbLWhk2wVhw/5NlLaX5i5zeDysOrjKVH4Q5BGGXy4/GYb/ddmRFSyq7wDzrGG1GSNPn9I8orunjJsy6NNMVn7nftUP46vvuhE69qowW8Bbe9T2s1EqyIbnN2lZFJDge5vnhBmEXC2uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780040004; c=relaxed/simple;
-	bh=C2UmvHg4pq3Kveuh7eyfvS0WF+OsmyQbD1WPj/oCZfM=;
+	s=arc-20240116; t=1780040862; c=relaxed/simple;
+	bh=bT80htsJM5fMPojIJl9otZSe7IXP6SzmCHZSrqVUfx8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dF0ILDaR00gLxnw+/5GPs/cElMfWuX/OlmwXC2OW3hIXButnE/aT7V4GeIp99DXo8PN/mxKLVkQugjEsP6D8dYPnUcg+9ImHpA/wsgHsjWjz0rk3iyX2FbBeCZfmwSxpLwLNYrBGBUXsaNOmeykDzuOH/hq4Yo3tP0XbA2JJqdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnOc882U; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=gvTF08PkzwR4SIVW7AhjeJQOCiYYAHQrlzyc26zjr/Q3wxQSCOcSLLeL0rTHF1LXmsYyHBuz2/q9t+jDCC/vfsA4dYuVH+hZU4EpF136QMDET/K2xblElreuV1IQ5fSrbDX0SOPlDmzcUEbum3fR/oXQw4ys85RchsITINQ6dNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQ2xNQjF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnOc882U"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a4113ab355so8844330e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 00:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780040001; x=1780644801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cLXzJTBxhRzNVcfTdOrnp8DxAIsKoO1FxDcS4XlJuFs=;
-        b=VnOc882U2GUpjzR1ghxiJZKdLoi5M1jiMx+VpZnO+OVGUSU0ASGcCU7/hCpHNwKBhQ
-         pfNInZglmC+wiy2xToqcI3uhnQBtr1K6Oiid2a840KjKKNHN6jHbgQ7Yj7d8xPJgz7XJ
-         trE1H734BruHR2IJIAbPlY2E+SmIPKcOg0AtNRIbUIacU3rZgTn+oopx0IaO4/07wR4r
-         ouHwOhHQePhxnUcLDptTjmalVIR7M7P8uC3r+O9ulbRGDaQGSttIDgQlpBYwJR9FdsUE
-         Ql1bIi+7M5I3ahqrfqroWxYhIyZA5bLEDtpEpULTROOx66rZDDZtYuc6U/HgfjgBV0Gy
-         5L9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780040001; x=1780644801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLXzJTBxhRzNVcfTdOrnp8DxAIsKoO1FxDcS4XlJuFs=;
-        b=IRqoY1h2qpSqjKjpATSsGYJAdR6j6lPCwyjOc0KV3rWqI8VTGo9WYpFtPvtPuqnTFB
-         dy9HVqM7LVn1zHG/gkQYUyXT+NMkwYgPfBnAV1VJk90z8YdMJsHw6Mj+8Fg93YUlZgS3
-         fe3wkRy65X/1He9KVDjWic9Ri/x/nvXu/0st0MTWVpRXdBEmKwzaujmycB6thyw5v51g
-         f5qN1Tg91KolQP2tYKyNheICV/6t7eNzcKcTrd2wKa1eoimgb/txabq5dBOJuCEJP89j
-         GF5zD+CHk65G9yJY/9CknwjceJTbDWnyv468M6cswUh1gnuB213iTQoymeOR4D7ylIb0
-         /Mkg==
-X-Forwarded-Encrypted: i=1; AFNElJ/pRSMwOeV1cD+KpZR+AljStBEcXeTIBPIzOFHqA1nsYc5lEEzP5UKPOlH9SayiATe1JcgGni13HDf3WrXRh6wflQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/YLm6UCvpp4YwuuXWRCQPML5YYUSqimLK9YYDDlNfWNI3H/kp
-	8Lj+VKpzmcCefPp+n/A4ev467a6LJVFW1oy4eLdDkBHe+p+sIVPRHaQQ
-X-Gm-Gg: Acq92OHGa5EKu6RaAQJOscYdSskqLWmUHN/INNf9ej8RoM48zv7MnijR1AWS+jE/GcF
-	khbKB22wFB5Rh+KYiITLinIsESxvnEQdRLDOfQSwkHyjsHpTeLq9jGz7o1Pzapdawf599GifyGN
-	30SUhtbOYuGbCblPXyTNy/VcEvkNGudF2hHmWbQR/2BocUehdmUluSF2T/q6of8HSWm241tpwBr
-	FkX04if+zY8R7iPYm36YaaJRFgQwn257hdd/vcQPFLjBoDIfPuhmEw9Q9oD1HyRxsusUnRALrc3
-	zcmXREMh7wKXLSEkrs4WcmAQYZJyqV+vwFSOrVEb+IxQX8HmaAdzutm3ZyGXuX3P2MSKohq/NOm
-	fGXSE0gjh2G3XGtJuf8xuHBeK8vfWFxoRSL9Dsl8MAPnCVop5xX9pKZ7STy6tfhblx+W94KAYS+
-	7Wz85TtIDNat9qf0bgZEZxTd/UG3MAi43H4xtl8Tcn+eXtgSPsLmzyvQ==
-X-Received: by 2002:a05:6512:b07:b0:5a8:97d7:8c2e with SMTP id 2adb3069b0e04-5aa594b424cmr494476e87.28.1780040000761;
-        Fri, 29 May 2026 00:33:20 -0700 (PDT)
-Received: from [10.38.18.54] ([213.255.186.37])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b79f297sm92290e87.82.2026.05.29.00.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2026 00:33:19 -0700 (PDT)
-Message-ID: <fca8dfd9-f377-44ef-bfdb-b7135f4d39c5@gmail.com>
-Date: Fri, 29 May 2026 10:33:18 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQ2xNQjF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7763B1F00893;
+	Fri, 29 May 2026 07:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780040861;
+	bh=iomTY4Ad9VMho5vTBG2rGPVpkuu5FijZvMIWhno+SFY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BQ2xNQjFvx798LQaafRp0qHl4e/SQjVrVHNZPyfzx/PuBbDNICyKY0w5mzA//yE8+
+	 bnaL6668ZqrU3Y+QDFDECJba7z6HMVy6WccEJCjRy3m7EVNMDER3pydwX72seN44K+
+	 WHdMtkhF7Z5LTT6t/hWwhgDZJxnSigaA4ua3ohZ5qd6A8XgJKBjU4GXSkXkPNTkJ1x
+	 JpUiJw0ZmEMWoZnYfw5YIrPUpqSk5qxJH0NlyrLo04QtI/xJELrSJg8VEaIZOi7wZC
+	 KroKImR6OBgZwj1H4MuUQGIul1DnXn9/Gz0mITY9LfQL1jAhnpkbrIYkCh7AVeWMjZ
+	 1HOhvGCpE/X2w==
+Message-ID: <ad30ca8b-01ba-40b9-a631-503ff463bc50@kernel.org>
+Date: Fri, 29 May 2026 09:47:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,39 +35,142 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] rtc: Use named initializers for platform_device_id
- arrays
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
- <u.kleine-koenig@baylibre.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Karel Balej <balejk@matfyz.cz>, Chanwoo Choi <cw00.choi@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
+Subject: Re: [PATCH v5 4/7] firmware: samsung: acpm: Add memory barrier before
+ advancing RX pointer
+To: Arnd Bergmann <arnd@arndb.de>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
- <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <d14b9076b2c7703708bcc5cc35f339cd97fc10cd.1779950275.git.u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
+References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
+ <20260505-acpm-fixes-sashiko-reports-v5-4-43b5ee7f1674@linaro.org>
+ <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 28/05/2026 09:48, Uwe Kleine-König (The Capable Hub) wrote:
-> Named initializers are better readable and more robust to changes of the
-> struct definition. This robustness is relevant for a planned change to
-> struct platform_device_id replacing .driver_data by an anonymous union.
+On 28/05/2026 19:44, Arnd Bergmann wrote:
+> On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
+>> Sashiko identified a silent data corruption in [1].
+>>
+>> In acpm_get_rx(), the driver reads the response payload from SRAM using
+>> __ioread32_copy() and subsequently updates the hardware RX rear pointer
+>> via writel().
+>>
+>> On weakly ordered architectures like ARM64, writel() provides a write
+>> memory barrier (wmb()), which strictly orders prior writes against
+>> subsequent writes. However, it does not order prior reads against
+>> subsequent writes. Consequently, the CPU is permitted to reorder the
+>> writel() store to become globally visible before the payload reads
+>> have completed.
 > 
-> While touching these arrays unify spacing and usage of commas.
+> I am very confused by this after seeing it in the Exynos fixes pull
+> request. How would anything get reordered here? What I see is that
 > 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub)<u.kleine-koenig@baylibre.com>
+> - The SRAM is device memory, so any access to it is architecturally
+>   ordered against other accesses to the same device. Even on
+>   architectures that don't guarantee this, Linux I/O accessors
+>   do.
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Well, __ioread32_copy does not guarantee that, I think. That's the
+relaxed version.
 
--- 
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+However everything is guarded with mutex, so we do not consider here
+other threads and within single thread it indeed does not look like
+misordered.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+> 
+> - The __ioread32_copy() writes data from MMIO into main memory,
+>   and the store into main memory is guaranteed to be both before
+>   the final writel() (because of the implied __iowmb()) and
+
+Yes
+
+>   after the read (because of the data dependency).
+
+I don't see the data dependency regarding the write. We read 'rx_front'
+and 'i' in the loop. The 'i' is used for subsequent read (addr = base +
+mlen*i) and that's dependency, but that 'addr' is not used in any
+further writes.
+
+> 
+> - The smp_store_release() in addition orders the write into
+>   rx_data->completed after the previous memory asccesses and
+>   before the writel().
+
+smp_store_release() wasn't there before the next commit, so maybe that
+was missing when interpreting Sashiko suggestions.
+
+There is no code flow where smp_store_release() does not appear, except
+when RX queue is empty from the start, but that case would exit early or
+would not matter.
+
+Tudor, please validate this more. I postpone for now pull with firmware
+driver changes which were put on top of these fixes.
+
+
+> 
+>> If this reordering occurs, the firmware may observe the updated rear
+>> pointer, assume the queue slot is available, and overwrite the SRAM
+>> payload while the kernel is still actively reading from it, leading
+>> to silent data corruption.
+> 
+> It is possible that I'm still missing the point here, but it
+> very much sounds like you trusted a chatbot over trying to
+> understand what is actually going on. Can you explain a
+> sceneario where the barrier actually makes a difference,
+> and what the corresponding barrier operation on the other
+> side is?
+> 
+>      Arnd
+
+
+Best regards,
+Krzysztof
