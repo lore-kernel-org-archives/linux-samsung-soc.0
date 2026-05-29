@@ -1,162 +1,130 @@
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791723563D4;
-	Fri, 29 May 2026 11:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107F538C2DE;
+	Fri, 29 May 2026 12:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780055499; cv=none; b=PiHCosajZEUae8n7bxqR/Wee3bxj7w1pMw/nMv3+suAhhvonax+f5VV3+RC1jp3hb3M4zOK3pyjqbQiXz7w6i431/6JcuyEZxmWd6dvqj7NHm8mWIcSLl2fwNaTfZesKqrNJKEP9gJaqgg6fnTj9JFvpZslVvqVAYv0UGEQaFjY=
+	t=1780056552; cv=none; b=jhgDAs30z81wUL2BlBgPqype+f4Ce7+rBcG+Gdj9en9pk/wenXD7rI74HqxcYBiHm4eA68AP7yOYIoAX0qH5Dbp2QwV5jX4igtbEuMVzkNIW6u+5+qTv7h+Pg4NIA5kkiY/4s2JKFFQANtFutTiQVbQ6Q5CcHV8eR0xB0zbxyZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780055499; c=relaxed/simple;
-	bh=o4GFlSVWj/+jDlv7S6gEbu7/IKbl9bZZUJr5uBZjW6o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=tO27SSOIeBTTsolffppComznRhfGpVGKB6Z8SZkK3Cl1tLvvhhF0SqlDSwEKUIGPR7T4SShVbgKM5d3GVJiqDOXPglO/ETU/dINyfmLfRFvRSOQmYignBhf0w4w0iWYPpQnF1poxxNQUZ1AvtGFLXXUPJdXl0YLKetawOdRVROg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JzK94IfB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AAgeHqn/; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1780056552; c=relaxed/simple;
+	bh=rto4zqqjKLfYX6UD66fjrO6XfgUVE45eZnao8JfIbnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gqSQNKXff0Lu/1x5N1YLocN9qy2tPMdL8C9tT1H0+V26cKjtUDiCWLDJyET5ce0uADh1slexUhuWvfpe4AyhHAbuPSZ5iFe0jBmI+s4h2fj/mEBv8PbSCu8QolUj7i88tdEmuJ4NlWcu141Ex9JRmHQfzZXrrT7+WajjMSdeNDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boHAtK05; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JzK94IfB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AAgeHqn/"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7D53A7A0028;
-	Fri, 29 May 2026 07:51:37 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-04.internal (MEProxy); Fri, 29 May 2026 07:51:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1780055497;
-	 x=1780141897; bh=VJNx6OZ4qZBVWaiEmcIuYAI1+8fMOknxmxIfY6fAGFg=; b=
-	JzK94IfB/Wj10ilbbVhYyhyh9svTwvL/VPr3axqhWsorZkpSNRM2+QRX/L4RHXnY
-	WX4A7v74zlzegKv6QOTtrfG9VI7wVPe45ga33NZT3YLkSwtC303gvPEcFAlu1AOH
-	dA0omNNhAu0Bg0mdG2/X5RuVEPcsOMXvZ3Ujm0sS/HuqE07h+I16hBDy3QD2KRT+
-	Cpe7aSk9JriUzRppyDjy+AZJMGy5weXplGNN3KFGGrS50JFvGB61hnFPoSN6ijUi
-	QNpbD9UXz6cCXpUAqvnoO3TDvcGIbCDzj3xWCI7mzoP54Tl7iL6kHfTD3f/D8Omr
-	88w6QNFzfZuiUpTFJb0xcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1780055497; x=
-	1780141897; bh=VJNx6OZ4qZBVWaiEmcIuYAI1+8fMOknxmxIfY6fAGFg=; b=A
-	AgeHqn/mT2xRwfZvf2CvM0agLuin4YDkYfsrm8uVAP7ZURkUawQ9kvW77bnK+M2U
-	kL0S9/2aNyI6iz+Dfl/oS7OVW36f2FppG8153X8tmjd1z5GDEIS5zdpfa5iuYVsy
-	O3O7O1mLn68xX0LkWM2zHgF5jlLKOa40pZCQCQHxgMjWENOhO2MiLKaAmKcupIqc
-	SWnwUM6gZ4oL6G2JkZxtC5HQNanPLcUe+mTrWhp5OIeb0uwxnHSz9ZUCvG9qGPwm
-	BWcB4FB/pzRXp1tRpMlxwSQQUrgUaIUW0vg2SEDP2ECKABceE/qUthlHvCj7gEev
-	cGhvTV8phi4gHij9NmJPQ==
-X-ME-Sender: <xms:yH0Zaj8uzgIzXsHnbL_ATZ5ydyrMo5b5lh3Z9NY0dN-6V0rerAoplw>
-    <xme:yH0Zaqge-Y4QFanlxyEuqkgMsXcTY1q59SrWXcDZnZnZEae4_RfPidGw1-xkaqHYS
-    ZBgE1p6977fZ6NCM2kE0mYejl0-x07L8U4sGL4TTxTnrw73b783efW8>
-X-ME-Proxy-Cause: dmFkZTEOqfAht6jnJ7IgGiG0XvEGJZLrz8NegVe6R6sYgAFlTHHQVyPuWoyw17obntFV/+
-    JmXJgEYHjgkibZCJ3+Lxg/l7rjD8gUZpJosfJIv2nMg/x0ge5U097tsebjyuIJe3bGxiPt
-    ob1c8Tc0E0aIaXn1TH4lpk3//a0mUJ+z0lwRi6lNpFNk1JURc1+o91yU92cMKqagvpKJq1
-    RlO1gTD7nZ/gTae1UAMc+mGNZ6dWY6tkzi2hIgcl1fAn6qJ7ffNfaqGRONEtfKrtV7eUy7
-    VPw7PmE7O55ed1lxy/8OtG2qGdbfhGQycj5WR/YxPPYDQ4JFQbIqGpYmJ9jJyTguvR/gdu
-    mIE/Uch51YcAo1S5P4axzLZRCcjPgXR92Gr1fil61GXfMu/fXufYxYn+pGJFZj6MB90uKJ
-    xGfug2+8VuuV7xOsTqg/+58nRcvzWX0Zl4nS2XHksErSIiWj7eGmE4NbeHP1gaolwfDDO+
-    bmHuJZIyhbeXCPvk4rBk48v5mZYyml7Y16Uqlrg3rZCzxG+gGqtOQbm8/X1d5tDvGJTnEW
-    kUtLXJYyGErkcG5ZJi80Rjsn2ZjPjv/4RUSnh3CuOP70vs6Fju7IB7TfXp6+gYfomFtk3B
-    S+3kn46kdRUSDQWZTfNaKryDwEhgoZx2u+Q2vwoheIEguHS2TpknAZqNeFlg
-X-ME-Proxy: <xmx:yH0ZahgeYq8R-edrkhDq75gq7jWpnYFls4am1DCKfraYjD9OGctSgg>
-    <xmx:yH0ZanmdnpRwmATw7IAFYwYHkravIieLfbDHU1eLT9vfb0PgKl3eoQ>
-    <xmx:yH0ZagVZGimS9jIenqF9JaS_UQDt16a9zE2VWBFC8e1FC_LqJNJZnQ>
-    <xmx:yH0Zass2zb3P8Sm1Y7I4U6iINRCSKiEYJDWufocHPZoFkKku8LT1hQ>
-    <xmx:yX0ZaqgNVdvIz2tJ-dWpbNBH2490ByKefS_2Nf_7mTDo_hZljemtSjpq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B37D5182007E; Fri, 29 May 2026 07:51:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boHAtK05"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3019A1F00893;
+	Fri, 29 May 2026 12:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780056551;
+	bh=CShwEWo9cW6R29h3T+uOG/SZzXZmcNWwo5C80hFvKxk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=boHAtK054f8c7dl8eyj46Ajo5vx6iBzLzbx+1oNLKU+87AWrzFSc4YeOHPNfZ5Zec
+	 sGUm6+6drASEhJamy2i+ilwcEXx9HqckABeD3vjaBf2zyXczzbq+IQTToanRvh2TX4
+	 /kcGnGJEcXCrAuxz5JJJ5h4IeixUSBk35X1BPA8woiI4+4q+AjUo1G/M2mGGFtMwbL
+	 8xDUG+6x9kh5jF+x0yJwYWx8L4tHI+xKlU8BL14iTVvplyze5sGYoldVbJ67O9jsyw
+	 8ldSq1L+FHNHh8jwKS59yhQGO1Lc3uiNmtkWsvgfIgSpinDtc4xlUFbB1m9PjxDx6G
+	 YLSUEKwrno0Yg==
+Message-ID: <6c77d706-5944-4e7d-8a4a-b3a6cac6a83b@kernel.org>
+Date: Fri, 29 May 2026 14:09:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AIgwaTVwlN8Z
-Date: Fri, 29 May 2026 13:51:16 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] firmware: samsung: acpm: Fix dummy stubs to return
+ ERR_PTR
+To: Arnd Bergmann <arnd@arndb.de>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org,
- "Peter Griffin" <peter.griffin@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
  =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
-Message-Id: <03dc9ccc-d819-413e-b8fd-23ccd85675ba@app.fastmail.com>
-In-Reply-To: 
+References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
  <20260505-acpm-fixes-sashiko-reports-v5-3-43b5ee7f1674@linaro.org>
-References: 
- <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
- <20260505-acpm-fixes-sashiko-reports-v5-3-43b5ee7f1674@linaro.org>
-Subject: Re: [PATCH v5 3/7] firmware: samsung: acpm: Fix dummy stubs to return ERR_PTR
-Content-Type: text/plain
+ <03dc9ccc-d819-413e-b8fd-23ccd85675ba@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <03dc9ccc-d819-413e-b8fd-23ccd85675ba@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
-> Sashiko identified a potential NULL pointer dereference [1].
->
-> The dummy stub implementation for devm_acpm_get_by_node() returns NULL
-> when CONFIG_EXYNOS_ACPM_PROTOCOL is disabled.
+On 29/05/2026 13:51, Arnd Bergmann wrote:
+> On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
+>> Sashiko identified a potential NULL pointer dereference [1].
+>>
+>> The dummy stub implementation for devm_acpm_get_by_node() returns NULL
+>> when CONFIG_EXYNOS_ACPM_PROTOCOL is disabled.
+> 
+> I meant to comment on this yesterday as well.
+> 
+> Having stub functions like this return NULL is a common way to
+> define optional interfaces, where callers still work when the
+> feature is disabled, though this clearly does not work for
+> acpm because some callers have a NULL pointer dereference
+> when compile testing.
+> 
+> My preferred solution to this type of problem would be to
+> just remove the stub helpers and drop the ||COMPILE_TEST
+> from the one user that calls them, see below.
+> 
+> The point here is that CONFIG_EXYNOS_ACPM_PROTOCOL already
+> supports compile-testing itself, and all (both) drivers using
+> it clearly require the support, so this just simplifies
+> the option space without losing any build coverage.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
 
-I meant to comment on this yesterday as well.
+Sure, I am fine with it. I'll take your patch with a bit adjusted commit
+msg.
 
-Having stub functions like this return NULL is a common way to
-define optional interfaces, where callers still work when the
-feature is disabled, though this clearly does not work for
-acpm because some callers have a NULL pointer dereference
-when compile testing.
-
-My preferred solution to this type of problem would be to
-just remove the stub helpers and drop the ||COMPILE_TEST
-from the one user that calls them, see below.
-
-The point here is that CONFIG_EXYNOS_ACPM_PROTOCOL already
-supports compile-testing itself, and all (both) drivers using
-it clearly require the support, so this just simplifies
-the option space without losing any build coverage.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index 70a8b82a0136..198d8b621289 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -97,7 +97,7 @@ config EXYNOS_CLKOUT
- 
- config EXYNOS_ACPM_CLK
- 	tristate "Clock driver controlled via ACPM interface"
--	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-+	depends on EXYNOS_ACPM_PROTOCOL
- 	help
- 	  This driver provides support for clocks that are controlled by
- 	  firmware that implements the ACPM interface.
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index 83cbd425b652..c73aea30d960 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -68,22 +68,8 @@ struct acpm_handle {
- 
- struct device;
- 
--#if IS_ENABLED(CONFIG_EXYNOS_ACPM_PROTOCOL)
- struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
- 					  struct device_node *np);
- struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev);
--#else
--
--static inline struct acpm_handle *devm_acpm_get_by_node(struct device *dev,
--							struct device_node *np)
--{
--	return ERR_PTR(-ENODEV);
--}
--
--static inline struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev)
--{
--	return ERR_PTR(-ENODEV);
--}
--#endif
- 
- #endif /* __EXYNOS_ACPM_PROTOCOL_H */
+Best regards,
+Krzysztof
