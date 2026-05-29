@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAE442B74A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 20:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CF93B388A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 20:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780084876; cv=none; b=JpB4ePyd+h32JhT8DeU68cUNwMelDljS08AK9QXNdXdx9JmnVP2gXnLgt5qazppj1+1893PA+0lvlQJvVFu+gYczlFdIGSIqORkGK+inE0ExgqSy2kAKJyz8ET0FfNDl/LYX04rp2TgAZdUeecwbcFp3IhMlS+6CclSMQT7JtEk=
+	t=1780084963; cv=none; b=LMNYvN68JwJJuMxG+oYNmVr4ohXtk4fUrdkoZXAlHrVUoGUSadB6Fc5C/weFiS4l4n+Gq/R/FdOT03V3fw5ZffEIuRvUQ8CzShUU5LNyD6QseyhQv7cE97DdY0MKWa4wJL+uAce+D+6EMF8CvbmNtrdxKsHoRKvqxjwiKBYvdL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780084876; c=relaxed/simple;
-	bh=gpQUlKH5NGXNx4BW0dbm4YRXddq/maC4M14dxVlc6zI=;
+	s=arc-20240116; t=1780084963; c=relaxed/simple;
+	bh=3IoDhb3udmXxflS3dgrcLv1niGYnHXK5D0HgB/kdlyQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQvSRRnmXIaayPRQbMgKg0lzTFwOXCZJC2pTGUU0lGi64YwB9ffyRZI7VKueg54ejtPI7aTwgziV4wQY/RwSLiD4E2efz92ArgVNN39n5iLaR2eWU0IVSsS//sKpf6sh/nOE3Yy4AU4Lt+vVsF8eMHeuXbpj+DEoYrxUIZeSAJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8YuViiZ; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=mTy+fIY/hdycdxYfiiAWLlJjWFKbfieRP0RuRonRXa0xm2pIzVBa6draXvrSIz7zvm2EXXZ/uXNaSog8qTPnhG5UG3Uvy0lUzr4kdd5qLkLQt1R8UPlaMff7Mk8nalor+pwQfITtMBrBb14roCLu7VzajL4MPM6weASXqbdtTMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZlarIqBW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8YuViiZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C861F0089D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 20:01:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlarIqBW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C77B1F0089E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 20:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780084875;
-	bh=gpQUlKH5NGXNx4BW0dbm4YRXddq/maC4M14dxVlc6zI=;
+	s=k20260515; t=1780084962;
+	bh=3IoDhb3udmXxflS3dgrcLv1niGYnHXK5D0HgB/kdlyQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=f8YuViiZM1UMzDAJAq1lo0WoEGF7KHuV4swKSDdmjUkqLe6rdRSf6jcLcu0HT2JBf
-	 XCeA1y8RrLdjDQEmLWvITnnf8jy51NYHxyRQARI9jnVrkfNWoojnRufmxYeuuIJPix
-	 bqzpnLfAT8Pb/w0qjdFhNg5ezIGs/24C1/dJ/qNWC+ko6x40oF0p5wNA0fyvNWLtSp
-	 +xSRnOq+jNRZZa5vvnsHNr8ddDvF2lw6GrH4MwVFRYHicvoySQR/svBmwffiHS6Zhi
-	 WcxZo6wzF41oz/KvUdFCJm88oFGQ8Og9uSpI8fUgwnPzNt8/9t9Jh6+EobMQdudF3l
-	 5wXsJlWOjW3yQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5a8dc2606a0so14152487e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 13:01:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/UTXfdYugJuTqSKrd86Bsct82RQpbORrM/MQu8d/P2i9rhRvU7peTANSNPDf0wAkaW2lHk9+/Nt9MaWz99gNUCCg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdX+yUTDcY2FchSd0o+AZfhyBps+q99n5KVWNayQfAse8niKTu
-	2paZxpRqReiX1KJPTt++6FCLz058sl+WOp2DbAeyYo/5KmImfoNbOJynTKhf63QIj6htQ6ZQmME
-	++Bvlz9IHNBDoHHsNp5na7Il5VYYoK60=
-X-Received: by 2002:a05:6512:3b9a:b0:5a8:778b:7df8 with SMTP id
- 2adb3069b0e04-5aa6092fb8dmr422996e87.40.1780084873900; Fri, 29 May 2026
- 13:01:13 -0700 (PDT)
+	b=ZlarIqBWtLGcGIdM2D5odT8h71DAweyXa2Y8k8pHd+US5FR+kmMo4PR1UpJNcqvFg
+	 VsgUHFWdn6XOxhXICNF2Xx14atl22crYlJdj5NRdZJV697Waap41kNM2wxjUwuCVoD
+	 cF9nHEh3l6C7hOV3bcoKpd3Phk/uMm9STgYb1lPP9CqsUIAu4Tz6swP2sZyeRkXpvr
+	 Wyswhck/JhJ6KMfL5aylsDFOQZR/rDcHZ0xNk6Sk9bFthDpNMBQ1fSMj24UmIyuIec
+	 IMFoJjRJKa8KSF3mxA1yAZB9XS+aLT4J+Q9uwgQrZ7cEkmToNsbDEnF++twcZDkQlD
+	 x8jvjunZ2l9Cw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-38e8292423fso99731091fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 13:02:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8hDrUjHal9RDVFiYCnc1RpSXIIQ9Y9ktzHPdsHbI1njyqjZiTuawXq+EXQzAbba3tPkErg+b+CJ8/ouXQGWKDm7Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb5WuYy1TosAo0eZ65vmyS3j7G3SV4bPUDZF54310uuiW2G+TL
+	UozXnyYUqEpsKgH7+z6XJhecRI/zWE9PcKOJxROYdGzJDv7e5tpIkXpYHZHKQ07Hv4HJx7dQGRN
+	WSTZOno1+BEl7UuL2MuduNSX5guotkZo=
+X-Received: by 2002:a05:6512:110f:b0:5a4:19df:db1 with SMTP id
+ 2adb3069b0e04-5aa607bdf2dmr472223e87.15.1780084961397; Fri, 29 May 2026
+ 13:02:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,10 +44,10 @@ MIME-Version: 1.0
 References: <20260527-samsung-pinctrl-maintainer-v1-1-bcebada27279@linaro.org>
 In-Reply-To: <20260527-samsung-pinctrl-maintainer-v1-1-bcebada27279@linaro.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 29 May 2026 22:01:01 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnAyHeDD5w0Wg2PmdFjjcSa5s3gN=du6edQhGtfsc185g@mail.gmail.com>
-X-Gm-Features: AVHnY4JOm0-WzW1G9MqJXGq-A3i7d7XKJ22NGKYBCGIPn2yAsSH6lKQkt7oHVSE
-Message-ID: <CAD++jLnAyHeDD5w0Wg2PmdFjjcSa5s3gN=du6edQhGtfsc185g@mail.gmail.com>
+Date: Fri, 29 May 2026 22:02:29 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=ci76uJRi3miCeK=b_niFfpbjB596UvHhBVWLXPSvtXQ@mail.gmail.com>
+X-Gm-Features: AVHnY4II6mWwzs5HHtPCKUO6QCDuwfRP29kXe_FIpHNftdTxNbG5xf6Bwi9pi9A
+Message-ID: <CAD++jL=ci76uJRi3miCeK=b_niFfpbjB596UvHhBVWLXPSvtXQ@mail.gmail.com>
 Subject: Re: [PATCH] MAINTAINERS: add myself as co-maintainer for Samsung
  pinctrl drivers
 To: Peter Griffin <peter.griffin@linaro.org>
@@ -68,8 +68,9 @@ o.org> wrote:
 >
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-As Krzysztof is in on it, I'm in on it.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Patch applied!
+
+Will go into 7.2-rc1 in order to not annoy Linus (the big penguin).
 
 Yours,
 Linus Walleij
