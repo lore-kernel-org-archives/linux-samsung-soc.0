@@ -1,176 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FBD1C860A;
-	Fri, 29 May 2026 07:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5411233A9C4
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 07:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780040862; cv=none; b=Wal5w2uN7Zf+k1mWxe7KLvsaCH/7lgKDSbLWhk2wVhw/5NlLaX5i5zeDysOrjKVH4Q5BGGXy4/GYb/ddmRFSyq7wDzrGG1GSNPn9I8orunjJsy6NNMVn7nftUP46vvuhE69qowW8Bbe9T2s1EqyIbnN2lZFJDge5vnhBmEXC2uM=
+	t=1780041305; cv=none; b=iNAlaxMzomk16z4U1NKJtaLtOOsIBVHUuJtlrA6eKoOVcq/JQRdczrWakzNgf2AQJVBticLHav6x1rRMKREVHmb89a0/UssvdhzFhjGtwIqaFUdo5KpezblU9C4kOvlq2FSvMevhP7kX7s68MBtI1tvEi18JOedWp9BCrGFT/X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780040862; c=relaxed/simple;
-	bh=bT80htsJM5fMPojIJl9otZSe7IXP6SzmCHZSrqVUfx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gvTF08PkzwR4SIVW7AhjeJQOCiYYAHQrlzyc26zjr/Q3wxQSCOcSLLeL0rTHF1LXmsYyHBuz2/q9t+jDCC/vfsA4dYuVH+hZU4EpF136QMDET/K2xblElreuV1IQ5fSrbDX0SOPlDmzcUEbum3fR/oXQw4ys85RchsITINQ6dNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQ2xNQjF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780041305; c=relaxed/simple;
+	bh=RkS7WzdVXZTKNqv2HuQwFG3ciFYmigOpDjNSH5EoriI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GRwqPrmus5BbfYM+v0cMUlV0WJqE/uFpk7ZXUWWXKUsCoM8Z5JDmnDWtaNOsNZz3g1kUd6viKl2KuyBRC6CSpymEAOm9Gomh5ZM2vuYRWef8UCjEjIxI+EdRorlIP/DyPApw/qaeTxmTaMSPHZtM7k0G4JaJzFWPirMYl0YAhqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=A2X0b66f; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQ2xNQjF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7763B1F00893;
-	Fri, 29 May 2026 07:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780040861;
-	bh=iomTY4Ad9VMho5vTBG2rGPVpkuu5FijZvMIWhno+SFY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BQ2xNQjFvx798LQaafRp0qHl4e/SQjVrVHNZPyfzx/PuBbDNICyKY0w5mzA//yE8+
-	 bnaL6668ZqrU3Y+QDFDECJba7z6HMVy6WccEJCjRy3m7EVNMDER3pydwX72seN44K+
-	 WHdMtkhF7Z5LTT6t/hWwhgDZJxnSigaA4ua3ohZ5qd6A8XgJKBjU4GXSkXkPNTkJ1x
-	 JpUiJw0ZmEMWoZnYfw5YIrPUpqSk5qxJH0NlyrLo04QtI/xJELrSJg8VEaIZOi7wZC
-	 KroKImR6OBgZwj1H4MuUQGIul1DnXn9/Gz0mITY9LfQL1jAhnpkbrIYkCh7AVeWMjZ
-	 1HOhvGCpE/X2w==
-Message-ID: <ad30ca8b-01ba-40b9-a631-503ff463bc50@kernel.org>
-Date: Fri, 29 May 2026 09:47:37 +0200
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="A2X0b66f"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4904127c32cso46192465e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 00:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1780041301; x=1780646101; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rwrPCj2IqJEcRJugk6Ecz2xdcmK5e89mwdODai47RFE=;
+        b=A2X0b66f2auNExa6ecfSSnPqJ/K9Rdknaol/P4/XVGqh2a81HKWwYAy9pkmvIHYdQr
+         nbGSuvxvphfQwOLXIEd5qwVGT1MUwa3UY++v+Req/ml7mTausk6zpveVLKt2jm88KxWm
+         9SkD/By/2ESECbESTmLPTMoStSPzDhaoa0o2LD6loDPuc2KXf5FR2k5VqQd1Xg1YYbtS
+         gwawovJsFTMm4DGpQ1EYYUlEMApcu21CM/ARIu8soNhIv/ISbmiSxeSMHbFmaTXocT/B
+         fMTELZN1fMDJRpc65sQTFWvp2ijkVStAZzY4or6k8Bh+gnpEL0l8dF6GBcyD/570foXu
+         cphQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780041301; x=1780646101;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rwrPCj2IqJEcRJugk6Ecz2xdcmK5e89mwdODai47RFE=;
+        b=nL/0q4QaRgmlmUe6O5s9h5ej3Np9euCFTDdmwgddjTXPtHGZrf5f87uRpTvzXw0L1q
+         reMQCCiV6PpaKN4rwKroEX+F93O76jhChPmjLcz1dYeTZ8OwYjLPXcN5MoYOCYKlbhMJ
+         r4DwA4DbWbj493rpLIPtGVutBG5Py2eFUW+zgg+brHdaXuBpHgVHW/VuSqtvJNWgXvmT
+         DyyNEt5SYMAmp3Zk3hUrX9tWPNN4bFZYvXb31pleSsDueGSLO+AQZ0z01b8OsjfsEHiB
+         VVz/s5/Lt60XR0JSjhhwEv0TWaDmIFp61+41On6K4ZB1Y7jjcpiG+stWKo386YkNTGaC
+         iEAg==
+X-Forwarded-Encrypted: i=1; AFNElJ8GswjcZdKBMSQKR43YdfA8zelNGL4iI9rCtKCLYEJIlNyntjLiJMualuEY1fj1oZ/WvUaY5CKnBW/bzvyAdgVkcQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUhNq4cq+OW+DB5Em5p2K/3gbhlf6hNyH3NgB6kX0YbcqqDB+C
+	rW0/6F5Java8mi11d4+I23cPb+aSysr+6k5RyTDNr17vdK31f9qeynGZ1FA7XS70X7w=
+X-Gm-Gg: Acq92OGxyp9X+xefrWP3knotWWeBxxGhQ996w0qoYNoPPjVFd9G3CZpbEbjVMdwKlF9
+	71H8ekT+HrRmdHYDrcq3xVie574xSZp6NiAEFcRsIZlpWKx2UDLMSsZAt+9rpIMGEHr/Gz3fhqW
+	53VLUQgUi3ZNMSmYkmSNMfbBdkGoYaFws+4TcGXCczWvA0gOblI5MpFqqqPvskK1jfdwa95hzIV
+	tlVDO0V5+Q44KSj2AZvrad8nWy/gWylwzAPgF+pxLOnCWhDQ4PUBRhf5NTQhUyp8IeME7UMh+8A
+	IUgiy6hVWC2TqANT2imzspi4HxB/Ib32MfSXYKrs16fCKBl+0Qq9S88Mrf7B3BAtuROn9KVdHSq
+	czJmfoIG1UKqTlKty9JK/47S2wFq3hteaEcvH1MlDrAPOgHauUZ91AqkwSkI3josSP0oo9Qxesh
+	/rMpCOWQycEvkCP2H9hSalc1SVW7JhY3v1eBIVDt3CYnj5+9lbXTquJwi5AjPXDLpCPpYglNP2Z
+	WUDfjOtD3UNNhqcwD8mrdnv1H9ALtjIefS2
+X-Received: by 2002:a05:600c:4504:b0:48f:be94:d82c with SMTP id 5b1f17b1804b1-4909c0b33fcmr30600785e9.19.1780041300797;
+        Fri, 29 May 2026 00:55:00 -0700 (PDT)
+Received: from localhost (p200300f65f47db043f932d8b97293bf6.dip0.t-ipconnect.de. [2003:f6:5f47:db04:3f93:2d8b:9729:3bf6])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4909ca65f54sm27221465e9.5.2026.05.29.00.54.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2026 00:55:00 -0700 (PDT)
+Date: Fri, 29 May 2026 09:54:58 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: fix size_t format string
+Message-ID: <ahlFfp-kIqpdPGZd@monoceros>
+References: <20260527194525.45762-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] firmware: samsung: acpm: Add memory barrier before
- advancing RX pointer
-To: Arnd Bergmann <arnd@arndb.de>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
-References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
- <20260505-acpm-fixes-sashiko-reports-v5-4-43b5ee7f1674@linaro.org>
- <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <a1629d9d-0357-42a3-aef8-c8d1cfa5ad39@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 28/05/2026 19:44, Arnd Bergmann wrote:
-> On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
->> Sashiko identified a silent data corruption in [1].
->>
->> In acpm_get_rx(), the driver reads the response payload from SRAM using
->> __ioread32_copy() and subsequently updates the hardware RX rear pointer
->> via writel().
->>
->> On weakly ordered architectures like ARM64, writel() provides a write
->> memory barrier (wmb()), which strictly orders prior writes against
->> subsequent writes. However, it does not order prior reads against
->> subsequent writes. Consequently, the CPU is permitted to reorder the
->> writel() store to become globally visible before the payload reads
->> have completed.
-> 
-> I am very confused by this after seeing it in the Exynos fixes pull
-> request. How would anything get reordered here? What I see is that
-> 
-> - The SRAM is device memory, so any access to it is architecturally
->   ordered against other accesses to the same device. Even on
->   architectures that don't guarantee this, Linux I/O accessors
->   do.
-
-Well, __ioread32_copy does not guarantee that, I think. That's the
-relaxed version.
-
-However everything is guarded with mutex, so we do not consider here
-other threads and within single thread it indeed does not look like
-misordered.
-
-> 
-> - The __ioread32_copy() writes data from MMIO into main memory,
->   and the store into main memory is guaranteed to be both before
->   the final writel() (because of the implied __iowmb()) and
-
-Yes
-
->   after the read (because of the data dependency).
-
-I don't see the data dependency regarding the write. We read 'rx_front'
-and 'i' in the loop. The 'i' is used for subsequent read (addr = base +
-mlen*i) and that's dependency, but that 'addr' is not used in any
-further writes.
-
-> 
-> - The smp_store_release() in addition orders the write into
->   rx_data->completed after the previous memory asccesses and
->   before the writel().
-
-smp_store_release() wasn't there before the next commit, so maybe that
-was missing when interpreting Sashiko suggestions.
-
-There is no code flow where smp_store_release() does not appear, except
-when RX queue is empty from the start, but that case would exit early or
-would not matter.
-
-Tudor, please validate this more. I postpone for now pull with firmware
-driver changes which were put on top of these fixes.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jnujdylfqv2kbd66"
+Content-Disposition: inline
+In-Reply-To: <20260527194525.45762-1-arnd@kernel.org>
 
 
-> 
->> If this reordering occurs, the firmware may observe the updated rear
->> pointer, assume the queue slot is available, and overwrite the SRAM
->> payload while the kernel is still actively reading from it, leading
->> to silent data corruption.
-> 
-> It is possible that I'm still missing the point here, but it
-> very much sounds like you trusted a chatbot over trying to
-> understand what is actually going on. Can you explain a
-> sceneario where the barrier actually makes a difference,
-> and what the corresponding barrier operation on the other
-> side is?
-> 
->      Arnd
+--jnujdylfqv2kbd66
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/exynos: fix size_t format string
+MIME-Version: 1.0
 
+Hello,
 
-Best regards,
-Krzysztof
+On Wed, May 27, 2026 at 09:45:07PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The exynos_gem->base.size argument is a size_t rather than an
+> unsigned long, so adapt the printk() format string accordingly:
+>=20
+> In file included from drivers/gpu/drm/exynos/exynos_drm_gem.c:16:
+> drivers/gpu/drm/exynos/exynos_drm_gem.c: In function 'exynos_drm_alloc_bu=
+f':
+> drivers/gpu/drm/exynos/exynos_drm_gem.c:69:49: error: format '%lx' expect=
+s argument of type 'long unsigned int', but argument 6 has type 'size_t' {a=
+ka 'unsigned int'} [-Werror=3Dformat=3D]
+>    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx),=
+ size(0x%lx)\n",
+>       |                                                 ^~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~
+>    70 |                         (unsigned long)exynos_gem->dma_addr, exyn=
+os_gem->base.size);
+>       |                                                              ~~~~=
+~~~~~~~~~~~~~~~~~
+>       |                                                                  =
+            |
+>       |                                                                  =
+            size_t {aka unsigned int}
+>=20
+> The dma_addr in the same line is already printed using a cast
+> to unsigned long, so change that similarly to use the correct
+> %pad format.
+>=20
+> Fixes: 11e898373fba ("drm/exynos: Drop exynos_drm_gem.size field")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_gem.c
+> index 297a93b087cd..8e357f2beb9e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -66,8 +66,8 @@ static int exynos_drm_alloc_buf(struct exynos_drm_gem *=
+exynos_gem, bool kvmap)
+>  	if (kvmap)
+>  		exynos_gem->kvaddr =3D exynos_gem->cookie;
+> =20
+> -	DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(0x%lx), size(0x%lx)\n=
+",
+> -			(unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+> +	DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev), "dma_addr(%pad), size(0x%zx)\n",
+> +			  &exynos_gem->dma_addr, exynos_gem->base.size);
+>  	return 0;
+>  }
+> =20
+> @@ -80,8 +80,8 @@ static void exynos_drm_free_buf(struct exynos_drm_gem *=
+exynos_gem)
+>  		return;
+>  	}
+> =20
+> -	DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%lx)\n",
+> -			(unsigned long)exynos_gem->dma_addr, exynos_gem->base.size);
+> +	DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%pad), size(0x%zx)\n",
+> +			  &exynos_gem->dma_addr, exynos_gem->base.size);
+
+Inconsistent formatting. The first hunk used dma_addr(%pad), the second
+adds "0x". Chen-Yu Tsai's patch[1] was better in that regard.
+
+Best regards
+Uwe
+
+[1] https://lore.kernel.org/all/20260408064936.1342321-1-wenst@chromium.org/
+
+--jnujdylfqv2kbd66
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmoZRlAACgkQj4D7WH0S
+/k4uLAf8CDNBSWkI/8nW1u/hhrBYD4t2URn0LO0re8mpGRHjxAyA2ted0Ag3jvDa
+8F55jr1ySezFOkOTycAdA+yW6AiferDGR6YbeeJURQtgw6/OR0QQ/iHO+PC2ZyjC
+9q6ls8fHy2K99TM2nwUh2SjbucVfCUhCXYL8iK88guLXcWdOfAyFJMT5Q1iQEhAU
+qW8lFER+hwe6VMeTZQk5CyqPhsUcYz0Pt+qVkGs3hOBbIL505NlsnPzSDgsE6kC/
+GnmGyW63GGoVoyA6J1C6ybt/geR4ilr12gm+rZqKDU9Wydfwz/kfmA3sc5JzWVZT
+xF6rNWt7febUyDzSmbvzndFdKi1DcA==
+=vHrt
+-----END PGP SIGNATURE-----
+
+--jnujdylfqv2kbd66--
