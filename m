@@ -1,103 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813703E121E;
-	Fri, 29 May 2026 12:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7EB36D9FA
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 12:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780057089; cv=none; b=hE8VKjQyYJv/njJwQyhAod1YVbWdyzD3AxxdpzvfHgWthDp5ahQUt4hsH3vY7Q6+VxFI7TnwZbYVLacl+wDxvRkGz3bjF7D3jIo/jXRBN0Wb69K8Qb7P7s4xjA809M+RZjjswGMbWQrV2qKaTTyPb1FSalbmjMxdVtKCYlDiRF4=
+	t=1780058238; cv=none; b=Vy1G/3IErloVYCSEUr5qcZx0SQBkLyYXQzAgXfQEcr0XmJeEYdAGe7Ljciy1VILt3o3Dr9yrZX3huPFPhUgyp9IfUhkuVKzoUBqXGKmnCiee3p6kw1JN7COERFoRFxvjIa0sv2bOISS3e4Tu1+tOxDM9M1X7BmcIAef80nlJJ2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780057089; c=relaxed/simple;
-	bh=ZMjAF+OwBUX1j8RpGOcH8icmR9zWYxGfGHxf/YItcBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KbLYOV3JlFvtutf4UOrY/IQcgSLiKzGIErXKrd6DKobQybRemZMmVImjk597xuZ25finis2J5fyB5Nk4nbnDqoYoSUwhG0iBhNho8zDFh0FecOSVb6twp2LRD8fbx3h5/F+a7AOjCVf3iDpvdwmE5t+hBL3ALPsSmV7CidrP5T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geAcMOp5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780058238; c=relaxed/simple;
+	bh=DojchXGz/KKYSE94iO1v9P4Lxh1mNKs7SpCF/Nl2JGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mSnpvxtzYwZi/bo1w81z5+Aoy2mnsdedx6CeOax/WMMhKdKKmAN2/XTUaMiHnEyWw4uDmnaSYBucDPbMg92fByMXKmUoy2tb3TFLEWL4pu4jKorxjHITLbDHFVwykEPc+o9zDCCnFsPJ/ntVVvcwwRApYiirB9VJ1upZzkp+obI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xtXw/yL0; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geAcMOp5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F751F00899;
-	Fri, 29 May 2026 12:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780057086;
-	bh=CzGNF+VTlvtIapSjsIV5bW5TQhJnEB3/iQPUbpSa5uI=;
-	h=From:To:Cc:Subject:Date;
-	b=geAcMOp56bGWFIr02wcGx3THTHRAt1Sdn54lmekJqxnYyEUoh+mQBnwyuPFnBrzv+
-	 TTj1k0ACRBCKCcQYiZRm9kBn2kTagJaBDAkU+VzNKiGbyPwV9odjPQZZxrYvw5hBU1
-	 ajp3tHKo2h6yxzzZjc799g2GcG2PSawv19H1U6ckpPpzl9+HPpc5LvjC70YzaqutBd
-	 rqVTIwHP2YLZ6UIQ6v0kv72IHVg/zLhm/5xW3+eExKz6KGfjXszIv1of0ePF29WF7+
-	 J2XVtQI8EfxEhGDcxkuU/3UZc3NTWVVA85c6du3r4Vbvtz2CWL22U8eDNeesxBdBij
-	 VHnKbkHGl3FsQ==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Drew Fustini <fustini@kernel.org>,
-	soc@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] samsung: drivers firmware for v7.1, replacement
-Date: Fri, 29 May 2026 14:17:57 +0200
-Message-ID: <20260529121757.13224-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xtXw/yL0"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-45ef616daf6so124706f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 05:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1780058235; x=1780663035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RQzxiBtnUr7ain8V9TqP5xGod1EBAScgia3DVab5ruI=;
+        b=xtXw/yL0BJXLsXKDdDDkxRhQ7QSaPmFGBsCrTsSiCRbednhJqwwGJgy/1GbtEcR4EQ
+         OsH4xv5X1qWVmtO6zsGi9cUoXZU9NyLEwAt7WCyr+eHbgs+XGNVVpwmJn/Y3X+XcIKgU
+         ZGvxDYIhwQYzPokgGdgjsnHC8UB8tl/zG8tXBkErZxEg4+gjiMHlpYjaZfHbng/W+ES5
+         +scVzVyGqVAJmWtoQ4pVVw5svdbx6KptkIRyNBP7VLHaH1VMdzcH7MNd5KqjV6aajmR7
+         Xq9JNPLhwwnZE0kQMjY1+TT2jNKBBmscqEU0kwr6o7B9hEpBnnxmPFa7w1QshW93Ljbu
+         1Gag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780058235; x=1780663035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RQzxiBtnUr7ain8V9TqP5xGod1EBAScgia3DVab5ruI=;
+        b=HmBPmM7mWwx/MNHxt+MLQ5xkWvzr133a93PTwwKYT8L1e9HhGfqm/1s1OH9txZ2rqq
+         Lmblx9OnvX2DP1TWJlG+4iNwMF8Hpj39TONz6jXxh3w6YdLmIfgZCdNA1Thvtg1vfAxW
+         yDNoxzOwOUUHfQsZuDXlTEADOXzmSbw/iljUzUtWiFBST5dCKsd25GKfJXX6akRPxy/m
+         5T088OYrUJB1DsqDH8zr/zYZYpHVMDsah5heYXgfrePFMXUTKy0aqDnAVJMxoMqbXA7g
+         PxHxV6di7O2a4+5UlKYp7soS+vjGTKO2DfszR1A5CHFXQYoEEzeJq0y/HVZ38ASuGIrp
+         0quw==
+X-Forwarded-Encrypted: i=1; AFNElJ8c3pf827Cf/Ic05k1MXmlckuxSFLslwhK3rvfAgEEl9n0+cLGuJCwrqwPrdheVJzoGGqxn3/6ltsSqaGdH6dSAKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWIiDmUMkzoPnf9hETmC+AbtSbgqi/sWwKRsZL7bdXdzXBASTl
+	yBozKEIw5LPrKhFdRGHChI+eFjkA8h628YEMQ+MEfC+AS7fcqF4jqxiexXPOws6NL1g=
+X-Gm-Gg: Acq92OFEvx9O02iQJVezuOrX5ADPOMu2+hMLT4buj51p9c0VhETvJY6QQb3ehRgUkb5
+	RZU5DnWWVquZOQshBfdrQXYv/HSjDFWoSWVI7Wsi4aN/UyV7qF/sDPKLuOzRglLxN86kFkdVTLF
+	n25lKTSt8kqYfbjWjsLx+/PrS0FBGLV+B1nJ1cfxUIP9Z2J/Owv0PKrY/V7BCiSctmUzaiQ0KsA
+	aq/YeNWmmo18CilSdA0Ot1vWKo1OvAcixNM4Q8PJvMkBhBKyoSICMZgNtdF9oXj5y8/pHpQgi9K
+	TkYD8+BuQYji8nv8M4OZ/NITzifi21FqExsIbhA+QHTiU5Frm/LhHagsFHTv0CHLdLUR+ppvvCK
+	HKmpJImLkgYYP727lJEjt9bGupLJ6pE4//7006mqIFYAqm0hNK93JilErOgMa2cuci1DxTkRNeq
+	PqXvojcy8wvRpN/maGf9p20kc3DwwCMAcdO55sMnZZ0g==
+X-Received: by 2002:a05:6000:470c:b0:45e:f2bd:2b16 with SMTP id ffacd0b85a97d-45ef2bd2d41mr3802790f8f.18.1780058235304;
+        Fri, 29 May 2026 05:37:15 -0700 (PDT)
+Received: from [10.11.12.110] ([82.76.215.73])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef34a0374sm2981872f8f.2.2026.05.29.05.37.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 May 2026 05:37:14 -0700 (PDT)
+Message-ID: <a7994860-24a3-4f87-84bf-109ed653dda4@linaro.org>
+Date: Fri, 29 May 2026 15:37:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2052; i=krzk@kernel.org; h=from:subject; bh=ZMjAF+OwBUX1j8RpGOcH8icmR9zWYxGfGHxf/YItcBg=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqGYP21QR0o7tuEi3Mg+qQ+UoRS4Gpd1oPhE3Go FDcj+ptjJaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahmD9gAKCRDBN2bmhouD 1w1MEACCgy6+0dYIFFXZlvyZWmbIS+Ge3Pbw03rpKsktJby8zcvGTsrWW9U+hmfTxRvqJ9FZXQG XGjrj+IOxst9AmogOnewraoEokSI0ZeCP+rAlfT9kTPdp70plfpOi3+JPI5sZBimChUWEZ8D0vF VBVbmOtjqF1HvhwYSo3agk9dIy0Dpu4wWP7OBkaZulXFkR8GSkvnZd+e2a+GgXw0qCajG5i9RF6 03OJmC3jcQgO72+BsLg0gHWKt+QFrrLX9vEB0RonLs8bYpXA8CYOx+owW5gTAXgiaXs4cDtsagB UZbWG78w4S+MPvWwPLvoF2sqmqkWH0Q4UMVoXSJCUOT+gx5qzghAL5FSETykQ8ms7ZE5gtDhSUO 853mdWa3ske8PUFHiX+sSXRGwHI/5z//PcyeWL3fhLvRanRHxQcXl9egQIuRM/kQs4IS/Xhn9NM jGat76mqkd2kIyBMl2tC65KNYliyZuy1c8K5zRWZclfyHZMa/DM+9EUW/WJ9KKA+SxekOsbyJUL 9qtahlHmXrPAdJxUI/Pc/0b7kuan+tfQu9PEcCnIE5/tcUnaT3VSpKrJv/2eO+Ga8dAAfklxGcS CA644PSF1FULCSzz+dMFIKgUPkHPvtwUmil2/JT0gOnaW2xea+JnYMcWEqurg6SgPBQ1Aoh8dhk zPcw6gAqMBcGBwQ==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] firmware: samsung: acpm: Fix dummy stubs to return
+ ERR_PTR
+To: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ jyescas@google.com, kernel-team@android.com, stable@vger.kernel.org
+References: <20260505-acpm-fixes-sashiko-reports-v5-0-43b5ee7f1674@linaro.org>
+ <20260505-acpm-fixes-sashiko-reports-v5-3-43b5ee7f1674@linaro.org>
+ <03dc9ccc-d819-413e-b8fd-23ccd85675ba@app.fastmail.com>
+ <6c77d706-5944-4e7d-8a4a-b3a6cac6a83b@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <6c77d706-5944-4e7d-8a4a-b3a6cac6a83b@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Arnd and SoC folks,
-
-This is a replacement/rework pull of previous tags/samsung-drivers-fixes-7.1.
-I also dropped that tag from my repo.
-
-Changes against previous pull:
-1. Drop commit: firmware: samsung: acpm: Fix dummy stubs to return ERR_PTR
-2. Drop commit: firmware: samsung: acpm: Add memory barrier before advancing RX pointer
-
-This caused rewritten history, but all of the commits were already in next
-since May 14.
 
 
-Best regards,
-Krzysztof
+On 5/29/26 3:09 PM, Krzysztof Kozlowski wrote:
+> On 29/05/2026 13:51, Arnd Bergmann wrote:
+>> On Tue, May 5, 2026, at 15:13, Tudor Ambarus wrote:
+>>> Sashiko identified a potential NULL pointer dereference [1].
+>>>
+>>> The dummy stub implementation for devm_acpm_get_by_node() returns NULL
+>>> when CONFIG_EXYNOS_ACPM_PROTOCOL is disabled.
+>>
+>> I meant to comment on this yesterday as well.
+>>
+>> Having stub functions like this return NULL is a common way to
+>> define optional interfaces, where callers still work when the
+>> feature is disabled, though this clearly does not work for
+>> acpm because some callers have a NULL pointer dereference
+>> when compile testing.
+>>
+>> My preferred solution to this type of problem would be to
+>> just remove the stub helpers and drop the ||COMPILE_TEST
+>> from the one user that calls them, see below.
+>>
+>> The point here is that CONFIG_EXYNOS_ACPM_PROTOCOL already
+>> supports compile-testing itself, and all (both) drivers using
+>> it clearly require the support, so this just simplifies
 
+I confirm that the ACPM protocol is mandatory for the clients to
+work, thanks!
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+>> the option space without losing any build coverage.
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+nice, I didn't know this. I guess it's a "greedy" algorithm in
+allmodconfig, if the dependency is met the dependents are enabled too.
 
-are available in the Git repository at:
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-fixes-7.1-2
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>
+> 
+> Sure, I am fine with it. I'll take your patch with a bit adjusted commit
+> msg.
+> 
 
-for you to fetch changes up to 7fe40c32a33905302341797b5d12c541729dd08d:
+Thank you! I need to drop the devm_acpm_get_by_phandle dummy stub from:
+https://lore.kernel.org/linux-samsung-soc/a59c6e3a-6092-4114-8961-c2a71a812959@kernel.org/T/#m0ac077507129c37b84443513eecadd70b5eaf8b8
 
-  firmware: samsung: acpm: Fix infinite loop on sequence number exhaustion (2026-05-29 14:11:23 +0200)
+Shall I send again the entire set?
 
-----------------------------------------------------------------
-Samsung SoC driver fixes for v7.1
-
-Fix several concurrency issues present in Samsung ACPM firmware drivers,
-used currently only on Google GS101.  Tudor with help of Sashiko
-identified several missing barriers and incomplete synchronization,
-leading to possible transfer data corruption or use after free.  Few
-other issues related to probe, including missing mailbox cleanup, were
-also fixed.
-
-----------------------------------------------------------------
-Tudor Ambarus (5):
-      firmware: samsung: acpm: Fix cross-thread RX length corruption
-      firmware: samsung: acpm: Fix mailbox channel leak on probe error
-      firmware: samsung: acpm: Fix false timeouts and Use-After-Free in polling
-      firmware: samsung: acpm: Fix missing LKMM barriers in sequence allocator
-      firmware: samsung: acpm: Fix infinite loop on sequence number exhaustion
-
- drivers/firmware/samsung/exynos-acpm-dvfs.c |   3 +
- drivers/firmware/samsung/exynos-acpm.c      | 141 +++++++++++++++++++---------
- 2 files changed, 100 insertions(+), 44 deletions(-)
+Cheers,
+ta
