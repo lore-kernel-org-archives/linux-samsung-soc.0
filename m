@@ -1,242 +1,155 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2802B35B645
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 14:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780063743; cv=pass; b=J8XtHy5t/ZA94ZRv/W1XVvczZUj5rVm77T13D0m4tormBwSZTYX/lDYi9Sb/EPv0em0CA/6ubV1KuY/jxJ7seuzspNiyw6nUT417xe5snGM4X1Z/Yp0etKkJ4QmQC7uPTg/kPl7jojPM3638GPNbYGbw0dlKcgV8XdOS2FAo3sM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780063743; c=relaxed/simple;
-	bh=j4cujlAIKOz/in38oyKHb4PSqXGHVuyQz4LKsTI2JXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJhaeZBWzUr6+z2v1LDYmGTruSq675GsScB27x6ijhoBwUeTBGcKj/GfgYLO2bKlCgGl6xgji/1hOQ1KBI7oq8Chk1nJucDYoGcr8A7EtuainZx4oRfi7wMgSZMvxOm+Xw0gqu3ag3hXo9UjDgUj7LK3cqShVa3qRY5++5Sx/9M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJAfmiq6; arc=pass smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1C236C9C2;
+	Fri, 29 May 2026 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780067055; cv=none; b=KM850Ae0pTjQCMhSc0Pnny2wL3wSnl6LMg17WjWtyPAlLEFwJu6azhFARYQiG3+0hBifQE0wTBNQKkIcLRRsNWhxvPdIhKutV4k9QmPXabCQkDjQ3pPdfu5NHugNdkaw5kWHFYIgtKQJhWGTKsm9hOPX74ow+StyB5w8WBUQZFs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780067055; c=relaxed/simple;
+	bh=bQ18QPLL+im82nhYKB017b2zavRhi7h41FQEYN6/t3k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ORve4DrGUVSdqk3J3eJyA9ExL75yxPMJoKobIJWSHmDlw0jYq4JbH7PCcJ0wWITR4QtUhUfZFjyt7z10Nw2yNVo8ZqsoOMJM9HdHxH7F6VDouCNXe9cVZEwNaoruXO3IfSwVJQ5STST7OYYYdA91gZUDR/RU1JZdKC1i+xznNYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mgf3otVK; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJAfmiq6"
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5753a289955so4833089e0c.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2026 07:09:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780063741; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UQK81+cc9uAoMHxH/jz6UM7wVrtbJPSJkMgGwf1f+3Q/8tBQDI2ESB7vsINprLKZoE
-         BJ4Vm9I6ONoxB9YXpRic+xfHYhroZjEmlGCMw1BVL3+5A6wFcLgtZ0dzmVnof97vhqhx
-         KuwFnrlrNleEK4MmrC17d268clyUd8K49GanUaujHItVDoTLRe0pdIBmW5A74wcwViaF
-         2AJVfdiOVCLRX9puLTRlMo3ZbsQsdh+OT3bzORObVDPT/xQeW3VPCn1jE6phWwKLsmBW
-         Pz7wB6CzNRDCSvkFqqvcMxHDKe60UzNkrNUTfzKY2OF30GmofXBZEuR48bhQrLtIEhDU
-         ce/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=FKQQSeQjkRReUr6YFC2bWAXDEPfRaFYHezUzVYoDBqw=;
-        fh=ju942IcYX2L54jGZ2CySnvB9xF+lyZCw/6nQqxOJZuM=;
-        b=eyI55I2cqwVVTPOC1AJwgc00yK/EGV7ZSC5UcLsjob8X05uCzk1gdUk72pAotCv3tv
-         MY0TSsvghsErtvv6pEDDkyS/E4v3q8z5Of2V2bkh6V4HlDWdHlh/jh+KUwEw3vtFLEAn
-         XSVQazBOLBMrUYsr2mTgn8GKP4G2ucUFP4quU/fXidPPNwuYNYLAtbkuBnZa+Qq56P/c
-         eQ5RO4tO1J+jLzidYO79eX1zizuk2vGcTbBY5GsCsE9OVR453k6LrzVG1Hs/BZswdncx
-         MWQheS9pOI6UDjN89mpIvKq5UmoQ/aeB9iXLPlZRNewdl8QuwH6vXg/BrU8xzaH6L3Fh
-         JZFw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780063741; x=1780668541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKQQSeQjkRReUr6YFC2bWAXDEPfRaFYHezUzVYoDBqw=;
-        b=bJAfmiq6xx7PHCxX1bXAuZrYa9cGphDvbVoCrGF2LS2o22jQxYwIXnNZlGDSGm841E
-         xgj8684OKK9ISaEPtfW35eyurqVu6Fw4kN0Hd8OwG9QgPhIyQpKAJJ5zcuYEFCPXqyrI
-         Bgw4xB1B2CnWZUvIHUk2W6tSXaK00xlmWAdQPG7zQwmLVzhTIEQix4yRj4xJzHqvAXCJ
-         7ZZrIYzazphymagPKdrXVnQp16wMAsX0p6Ftph6q/tbrFKlMVkovsVAQ34XoQm+oSm2B
-         wvzo/kIy2TuzSI4MjPf9zFgTlbt+Os03bQY8ERVkdsdUMPymGdn8zMXxzoyXAJDdFsTv
-         45JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780063741; x=1780668541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FKQQSeQjkRReUr6YFC2bWAXDEPfRaFYHezUzVYoDBqw=;
-        b=mWNeHYUybEiZnbcM7uium5wayrjqYrTMErfdXffcfMl3qA7c1as03xenZQY+GNLSPM
-         MwgsCoZAN3G2rzS1BLcQ36MWGKp/aDtX9MUePhTxDGsHuMz2fFVLW8tDI/uD1Sk574ko
-         rhIrVW0civHrr+Kumdk/Nqy7Kg/Oy/EFVJfZLV/iM4/tq97XQH+AA74PuQRPBqWg/C2m
-         iZFuvpX8JoZlPoPD4HpBLFPc0Phqzlj4sK0aAQBoa/hzurAf6+8rijCGrYIBiicBpPTL
-         Qal8jGbHbQZmtpygP9hYnThOjZqVex00Ptn8nk24c1tAcAtvRfr2qosqHkSQ4b8aV+Ef
-         4AmA==
-X-Forwarded-Encrypted: i=1; AFNElJ8/RMYft/M2+4RJfmwejwLSXq/g+hqcIx54LV1BNX0xsPOF+Fra4xLRgFPJvORVabB/yJ7HHgtIkjMwR+q8r5JiTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQUd5NeBAV6ZBUOp7rKqvBGSisyo9Vbi3IDO3DWc4SATP+EN3p
-	3u1YOxZki/8BQwLc+ukw2L6Wm8cMyUYPUyabt/7IzkmxjrDumx7BkH/OquM0EvALOnu28bn1139
-	gOfNuo8vUFLmbBU9P+vXrLIGIeZzPMKE=
-X-Gm-Gg: Acq92OEgSLnt9HXkfGDamA4yuq8HLTlEx2TsQ3DOcB74ETJcEmE7ul/VIkD+GBaM/M7
-	z3QVslnLwZpeccNU/N5Lvbimj/APn/kBVFN+MYQg/z+hv2nNExjuxn17+4DLnxzOSf1VWqkv20d
-	f+vP29tFuraKwgt4/2OqK5I7rXy/srUSJURQKSoJ/6KGG8MMnP18qAtfwxjM2PdCLGhDI2rkarl
-	9Nv9NccFZpxiosagyJDTqiUSonlnuUbBdKrMijr+D3i+9bxV8y79hFnJg440KfODLOW1s4I7IQP
-	BNhLUU4sUqXg32FewkOA9kNTQP6RYsKmfKsdt3N5JgE5dnrsFiqFS/C7YII=
-X-Received: by 2002:a05:6122:3102:b0:56c:ce8a:b07a with SMTP id
- 71dfb90a1353d-599f2482c7emr1099623e0c.7.1780063740711; Fri, 29 May 2026
- 07:09:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mgf3otVK"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9A8231A373C;
+	Fri, 29 May 2026 15:04:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 68007601FA;
+	Fri, 29 May 2026 15:04:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8289D10888CC2;
+	Fri, 29 May 2026 17:04:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1780067045; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=fUWeaNsfFgJU6Qp2lS9wdzvNAu5L3srRKzUtR510ldk=;
+	b=mgf3otVKPRUXFhpVnJ78Lp60lbpvE9XKk2jjeYH47r8V1MgE6/2/7CGUwnSZ5BbjM+ec2Q
+	1a3MmW+WvM1X6MXUISKX9VbbPMOs3VTpwQ3yJkE0chnFTQ5lj3iga19mOl4E1U1/e5m9Gl
+	ZwCPvE730Kp70jTlHWR7C1sEtlK+dPMUU6vAtQo5/7c4qqAA740HQ7UvGplbHoi6r5jcIK
+	Wm3zdae3yU81FhvS2OMJN3OVOJ4lWi5OUe0AO5kzftu9S1HhwvzTJQHt0C6eer/PiJefBw
+	BcM0i1ONwLzaJVERSNfcgPZbkcwrdXXHXv03nAJdIW9iUAEI5/xljJhlfnbs4g==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Arnd Bergmann <arnd@kernel.org>, soc@lists.linux.dev, Andrew Lunn
+ <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik
+ <robert.jarzmik@free.fr>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: select legacy gpiolib interfaces where used
+In-Reply-To: <20260428162757.540823-1-arnd@kernel.org>
+References: <20260428162757.540823-1-arnd@kernel.org>
+Date: Fri, 29 May 2026 17:04:00 +0200
+Message-ID: <87h5nq1cm7.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260521143624.56906-1-inki.dae@samsung.com> <CAPM=9twLzSJh-rHpNf-JOPBmzFnFevc6v-gu6kWfLCTPeyWLFQ@mail.gmail.com>
- <ahfv4Ox5mFZ5TPCi@phenom.ffwll.local>
-In-Reply-To: <ahfv4Ox5mFZ5TPCi@phenom.ffwll.local>
-From: Inki Dae <daeinki@gmail.com>
-Date: Fri, 29 May 2026 23:08:24 +0900
-X-Gm-Features: AVHnY4J6q80BjsvOs3e02zPCftWZaBjf3RrxpMJFV7vnSDrj-oxU7SK2s6bFheM
-Message-ID: <CAAQKjZOpVCh==G8H7RUpGKDiU2hOdtoz+f-HfC3zwVbTBAbayQ@mail.gmail.com>
-Subject: Re: [GIT PULL] exynos-drm-next
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Dave Airlie <airlied@gmail.com>, airlied@linux.ie, daniel@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-2026=EB=85=84 5=EC=9B=94 28=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 4:34, S=
-imona Vetter <simona.vetter@ffwll.ch>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+Arnd Bergmann <arnd@kernel.org> writes:
+
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> On Tue, May 26, 2026 at 11:01:07AM +1000, Dave Airlie wrote:
-> > On Fri, 22 May 2026 at 00:36, Inki Dae <inki.dae@samsung.com> wrote:
-> > >
-> > > Hi Dave and Daniel,
-> > >
-> > >     This PR brings a cleanup and modernization series for Exynos DRM,
-> > >     focused on fbdev emulation and DMA/GEM internals.
-> > >
-> > > Major changes are:
-> > >     - migrate fbdev allocation to DRM client buffers,
-> > >     - switch fbdev geometry calculations to DRM format helpers with t=
-ighter checks,
-> > >     - fix screen_buffer handling to match fb_info semantics,
-> > >     - adopt DRM core DMA tracking and remove redundant Exynos-side co=
-de.
-> > >
-> > > Please kindly let me know if there is any problem.
-> >
-> > Hi Inki,
-> >
-> > In file included from
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:16:
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:
-> > In function =E2=80=98exynos_drm_alloc_buf=E2=80=99:
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:69:49:
-> > warning: format =E2=80=98%lx=E2=80=99 expects argument of type =E2=80=
-=98long unsigned int=E2=80=99,
-> > but argument 6 has type =E2=80=98size_t=E2=80=99 {aka =E2=80=98unsigned=
- int=E2=80=99} [-Wformat=3D]
-> >    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> > "dma_addr(0x%lx), size(0x%lx)\n",
-> >       |
-> > ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    70 |                         (unsigned long)exynos_gem->dma_addr,
-> > exynos_gem->base.size);
-> >       |
-> > ~~~~~~~~~~~~~~~~~~~~~
-> >       |
-> >               |
-> >       |
-> >               size_t {aka unsigned int}
-> > /home/airlied/devel/kernel/dim/src/include/drm/drm_print.h:563:39:
-> > note: in definition of macro =E2=80=98drm_dev_dbg=E2=80=99
-> >   563 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
-> >       |                                       ^~~
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:69:9:
-> > note: in expansion of macro =E2=80=98DRM_DEV_DEBUG_KMS=E2=80=99
-> >    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> > "dma_addr(0x%lx), size(0x%lx)\n",
-> >       |         ^~~~~~~~~~~~~~~~~
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:69:76:
-> > note: format string is defined here
-> >    69 |         DRM_DEV_DEBUG_KMS(drm_dev_dma_dev(dev),
-> > "dma_addr(0x%lx), size(0x%lx)\n",
-> >       |
-> >           ~~^
-> >       |
-> >             |
-> >       |
-> >             long unsigned int
-> >       |
-> >           %x
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:
-> > In function =E2=80=98exynos_drm_free_buf=E2=80=99:
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:83:37:
-> > warning: format =E2=80=98%lx=E2=80=99 expects argument of type =E2=80=
-=98long unsigned int=E2=80=99,
-> > but argument 6 has type =E2=80=98size_t=E2=80=99 {aka =E2=80=98unsigned=
- int=E2=80=99} [-Wformat=3D]
-> >    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%l=
-x)\n",
-> >       |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-> >    84 |                         (unsigned long)exynos_gem->dma_addr,
-> > exynos_gem->base.size);
-> >       |
-> > ~~~~~~~~~~~~~~~~~~~~~
-> >       |
-> >               |
-> >       |
-> >               size_t {aka unsigned int}
-> > /home/airlied/devel/kernel/dim/src/include/drm/drm_print.h:563:39:
-> > note: in definition of macro =E2=80=98drm_dev_dbg=E2=80=99
-> >   563 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
-> >       |                                       ^~~
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:83:9:
-> > note: in expansion of macro =E2=80=98DRM_DEV_DEBUG_KMS=E2=80=99
-> >    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%l=
-x)\n",
-> >       |         ^~~~~~~~~~~~~~~~~
-> > /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/exynos/exynos_drm_ge=
-m.c:83:64:
-> > note: format string is defined here
-> >    83 |         DRM_DEV_DEBUG_KMS(dev->dev, "dma_addr(0x%lx), size(0x%l=
-x)\n",
-> >       |                                                              ~~=
-^
-> >       |                                                                =
-|
-> >       |
-> > long unsigned int
-> >       |                                                              %x
-> >
-> >
-> > Can you fix this up in a follow on PR?
+> A few old machines have not been converted away from the old-style
+> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
+> symbol so the code still works where it is needed but can be left
+> out otherwise.
 >
-> Uh, you've pushed this already and it kinda broke my workflow. I've
-> applied the fixup from Arnd to sort this out. Apparently there was also a
-> fixup by the original author, but that never landed in the right trees.
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+for mv78xx0 and orion5x
 
-It looks like the same patch, commit
-3470274dca4887e2b56684bd6a482097318d95a5, has already been merged.
-Due to my oversight, Arnd Bergmann=E2=80=99s patch was merged instead of th=
-e
-original patch from Chen-Yu Tsai. I suspect that there may have been
-an issue, and Arnd addressed it quickly, which resulted in his patch
-being merged.
-
-I had actually prepared Chen-Yu Tsai=E2=80=99s patch, but I appear to have
-missed it while moving the patches to the next branch.
-
-I sincerely apologize again for wasting your time.
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
 Thanks,
-Inki Dae
 
+Gregory
+> ---
+>  arch/arm/mach-mv78xx0/Kconfig     | 1 +
+>  arch/arm/mach-orion5x/Kconfig     | 1 +
+>  arch/arm/mach-pxa/Kconfig         | 1 +
+>  arch/arm/mach-s3c/Kconfig.s3c64xx | 1 +
+>  arch/arm/mach-sa1100/Kconfig      | 1 +
+>  5 files changed, 5 insertions(+)
 >
-> Cheers, Sima
-> --
-> Simona Vetter
-> Software Engineer
-> http://blog.ffwll.ch
+> diff --git a/arch/arm/mach-mv78xx0/Kconfig b/arch/arm/mach-mv78xx0/Kconfig
+> index 9de3bbc09c3a..670e6587827e 100644
+> --- a/arch/arm/mach-mv78xx0/Kconfig
+> +++ b/arch/arm/mach-mv78xx0/Kconfig
+> @@ -6,6 +6,7 @@ menuconfig ARCH_MV78XX0
+>  	depends on ATAGS
+>  	select CPU_FEROCEON
+>  	select GPIOLIB
+> +	select GPIOLIB_LEGACY
+>  	select MVEBU_MBUS
+>  	select FORCE_PCI
+>  	select PLAT_ORION_LEGACY
+> diff --git a/arch/arm/mach-orion5x/Kconfig b/arch/arm/mach-orion5x/Kconfig
+> index ee449ca032d2..cef19bea6164 100644
+> --- a/arch/arm/mach-orion5x/Kconfig
+> +++ b/arch/arm/mach-orion5x/Kconfig
+> @@ -5,6 +5,7 @@ menuconfig ARCH_ORION5X
+>  	depends on CPU_LITTLE_ENDIAN
+>  	select CPU_FEROCEON
+>  	select GPIOLIB
+> +	select GPIOLIB_LEGACY
+>  	select MVEBU_MBUS
+>  	select FORCE_PCI
+>  	select PCI_QUIRKS
+> diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+> index 10e472f4fa43..66e26990e2c8 100644
+> --- a/arch/arm/mach-pxa/Kconfig
+> +++ b/arch/arm/mach-pxa/Kconfig
+> @@ -10,6 +10,7 @@ menuconfig ARCH_PXA
+>  	select CPU_XSCALE if !CPU_XSC3
+>  	select GPIO_PXA
+>  	select GPIOLIB
+> +	select GPIOLIB_LEGACY
+>  	select PLAT_PXA
+>  	help
+>  	  Support for Intel/Marvell's PXA2xx/PXA3xx processor line.
+> diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfi=
+g.s3c64xx
+> index 8f40af063ad6..3f97fba8e4f5 100644
+> --- a/arch/arm/mach-s3c/Kconfig.s3c64xx
+> +++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+> @@ -101,6 +101,7 @@ config MACH_WLF_CRAGG_6410
+>  	depends on ATAGS
+>  	depends on I2C=3Dy
+>  	select CPU_S3C6410
+> +	select GPIOLIB_LEGACY
+>  	select LEDS_GPIO_REGISTER
+>  	select S3C64XX_DEV_SPI0
+>  	select S3C64XX_SETUP_FB_24BPP
+> diff --git a/arch/arm/mach-sa1100/Kconfig b/arch/arm/mach-sa1100/Kconfig
+> index 0fb4c24cfad5..e23700e0d6c8 100644
+> --- a/arch/arm/mach-sa1100/Kconfig
+> +++ b/arch/arm/mach-sa1100/Kconfig
+> @@ -13,6 +13,7 @@ menuconfig ARCH_SA1100
+>  	select CPU_FREQ
+>  	select CPU_SA1100
+>  	select GPIOLIB
+> +	select GPIOLIB_LEGACY
+>  	select IRQ_DOMAIN
+>  	select ISA
+>  	select NEED_MACH_MEMORY_H
+> --=20
+> 2.39.5
 >
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
