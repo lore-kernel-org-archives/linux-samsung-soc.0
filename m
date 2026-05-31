@@ -1,129 +1,116 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE0835675A;
-	Sun, 31 May 2026 11:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636B835292A;
+	Sun, 31 May 2026 12:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780228723; cv=none; b=UgJOVVpAhywldK8RheyZHm5dGdA7YCwkIzXcRAzDXuFpZ0bXTN1FrlanOLCFEuuuDBLL+b+kddicavJzG27sF6Jk8N83Rq2ZMWhQVxt5qDxjSLavGycjRHyC1qo9D9/YaeN09RxmKnpdArJzn5+KDytqVjsQZ/XS0n7zjbqAaoU=
+	t=1780229239; cv=none; b=AlKlkr+4nkg2TRRgIYwt9hnHHByC9m3iZhtGuVmzFv8hmLw+jWdCIa7I0dU9AFK7X/zSz/lOIf/vMzacxe8J3XDifuq9kDwv1rQVUgZPszU2MIfMYbZ5/N054wPDRWa/4H6vHDYK70QMdYorNTkP11fBhQenbdx6egC4r+J0HRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780228723; c=relaxed/simple;
-	bh=yYhbiDnTJpVzQzg8icy5ewB1/IAZoNu3acgwQaRmnmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bnEDOFC4g4aU91U4pjgok4cQR72AyiKytMfSnw53Eb8o/Gq1t/cWOpwcQ11uXthky/iixuYMmOsMKmiWGQ9hJz7FBub770171IMnVdOlJ5CtCf+t7ovNNuYP0i+ew583OSdIyyUdwOH6nfDvRl6EdSNF/PQFPB4Y3I3iAJTJCAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIv4/H7h; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780229239; c=relaxed/simple;
+	bh=QTutGE9zG2f+Wgcbt0UYC4ZHolWzIcPt+afitFBIpXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jfb96r/ihylIf8L2opbDaLsBbwKQafgEuvabm1SQMf7Ce5zSy309xw0X5UhDHKfIowU0FUOmj84Tj7LyCc9Q/1LfeI7gMTzMRSY0xCg093dbwWlG6HtYZbkS7c0t/JJVG8hlnOny72h9a0AY1kWmFiM6ao8mwpCR30F6pNzPWGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SglFG5od; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIv4/H7h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D8C1F00893;
-	Sun, 31 May 2026 11:58:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SglFG5od"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A61471F00893;
+	Sun, 31 May 2026 12:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780228722;
-	bh=hMz/MQA75gOB9EAv0N+Va87HRCe5WtuAO46WIYAnbQU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=aIv4/H7hdpFd4pJmq/BBaPy2qv8JMzAfikW3hLKLRCz453AEdVG30ttENhn5ebMLf
-	 H4z39Ozvnhqs2Sc+KfmH+bjyhUN8y5PaIqSK2loPgyS5wYmjnmSefDY65TMwrJ3sJ7
-	 tNkZlN546xbZgu8EqnP4AITR2yOcQxSTOM/r9iZL/8oN2uVMly/X63UNSE4/acXf3g
-	 OFS/VMxPXdpp9pJBPN5NGhUBK6Q1S9X24i0Ca0IxDKpmiiwRY6m2xgrhtDWeUzyHey
-	 xIT9IaeDOCkJja/Dhvjm6HNerckqvfTPtXABSVqkarMgf+1h+CAmZTB5HWGEe2yQ76
-	 tJTE9AoR7Q93w==
-Message-ID: <446e7d5a-a42e-41f9-aa19-8ea4e2658cd5@kernel.org>
-Date: Sun, 31 May 2026 13:58:30 +0200
+	s=k20260515; t=1780229238;
+	bh=yxZg21Tdekg69TWZwk8L/j9NSFNsg6bUL3zOhnRkZd0=;
+	h=From:To:Cc:Subject:Date;
+	b=SglFG5odoJ/6xb5Aop5GyujemrKt6wALFTSMV8lh1qRcXrK4WaAuaSsRsCzfZTupH
+	 OyNRohGh6hRMEdbwmto4AKEtES4459oncgMVXFT//7NutF4ZjW/98sWSIpSA25JwV1
+	 jDEPXGpnSXMgQ19qrNi1ilYea01ff7juwRNM1xyMJJ3xKypc3bksmKWMutCIlknH70
+	 GKw8VaWTz3qnpBh05D2fvzqOPi+S8YI1geJE1FmuOodSnGee0LQqdDm4IV/ByEAex8
+	 zbkI0b5txmBayA/y/4j+atNapBLnmOCBfPxN7zrpCQczTZWfsUdlQoh7ZXEekABvhB
+	 sbTEdSb0j5MmQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Drew Fustini <fustini@kernel.org>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 1/2] arm64: dts: samsung: dts for v7.1
+Date: Sun, 31 May 2026 14:07:08 +0200
+Message-ID: <20260531120708.21017-3-krzk@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/5] thermal: samsung: Add support for Google GS101 TMU
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: jyescas@google.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260528-acpm-tmu-v6-0-b4d7ce57594b@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260528-acpm-tmu-v6-0-b4d7ce57594b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2658; i=krzk@kernel.org; h=from:subject; bh=QTutGE9zG2f+Wgcbt0UYC4ZHolWzIcPt+afitFBIpXA=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqHCRskp/GVPLlEa6LJ/D2c64a92TUEdPfVipZ5 N2Xjb6rD8GJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahwkbAAKCRDBN2bmhouD 1+mVEACEUx1fzPAa3nQag29ixTmdAErCVbmGBXIdz2L4VZ9rH14VAt2M60P3xNycu26KLxpINhe BU8IoxsCz/3v3koiZ90t1ok+bWqWluOifzsva3nYu+DIbPIlCVtKhv5vleLDfRB2ShtGpvaN4cB 1gepl1ha3V1Gt68eoWHuZ+pgjh0fJUbI+aQAXvNILPz4UYkB15bAIV9GJmvz+oTvEZR4LXyEHhO 50OYxRTDMg01ENDu+4fJGMJwmSoozyE+UjXVF2dLYzp1nFd5M9BEu14X5YQu/07Iz8DBpn26ZgV Z1USe//lFYP5tFUE0vBJ/Z+aXoq7wX6jx1Na//INJMRueRCkpxNbo/E9y4OdrtgRJKfKbxTLlKo caOTVqpypzWb/wFLD40P8sOhpY5aSvAotRPmbTHszs5Owt/7fuTi8dnJ8qpDYmvAfXp3AaI5EJd G7MUe6jixMEcs5OCKsPr9VciM7ZFyr4z2QQ+Ax+TbBlzr+9ANOUsRiVdcNnAlhb71fps9L8jUE4 4CnVmCWan6/uc+v8JhEJVz7jC7KFmUzGeUNKzJ9Ui0w7w2JXL5DEzYArACYhfnlQ2D8obDfh3UC b9M5twJ/Mrn6oEhJzqiGExTZZWRhvRyYUtKTWaUN+fN0NKndEIIZC5uZjePTRLcgbqOStKoco61 vFu04e4I7R2ji9g==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On 28/05/2026 13:36, Tudor Ambarus wrote:
-> Add support for the Thermal Management Unit (TMU) on the Google GS101
-> SoC.
-> 
-> The GS101 TMU implementation utilizes a hybrid architecture where
-> management is shared between the kernel and the Alive Clock and
-> Power Manager (ACPM) firmware. This hybrid ACPM TMU architecture is 
-> also present on other Samsung Exynos SoCs (e.g., AutoV920, Exynos850).
-> 
-> Dependencies
-> ============
-> The set depends on the ACPM TMU firmware helper driver that was queued
-> via the Samsung SoC tree:
-> git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git, branch
-> next/drivers.
-> 
-> Krzysztof agreed to prepare a stable tag for the above in a few days
-> (after the branch is processed by linux-next).
-> 
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
 
-Pull request for SoC with shared code also for you:
-https://lore.kernel.org/r/20260531115713.19388-2-krzk@kernel.org/T/#u
+are available in the Git repository at:
 
-Best regards,
-Krzysztof
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-7.2
+
+for you to fetch changes up to 20550601bf4c23effa013a5f37e5250618869e87:
+
+  MAINTAINERS: Add Peter Griffin as a co-maintainer of Samsung Exynos SoCs (2026-05-30 18:27:52 +0200)
+
+----------------------------------------------------------------
+Samsung DTS ARM64 changes for v7.2
+
+1. Exynos850: Implement proper power off to fully shutdown the board and
+   reduce drawn current.
+
+2. ExynosAutov920: Add UFS storage.
+
+3. Add Peter Griffin as a co-maintainer.
+   I have multiple subsystems to care of and limited time. Also, with
+   joining to SoC team I figured out it is good to plan my succession.
+   Or backup.
+
+   Peter shown both time and interest in keeping Samsung Exynos code
+   working.  He already works on and maintains Google Tensor SoC, which
+   shares a lot with Samsung Exynos processors.
+   Considering all this, I proposed Peter to become a co-maintainer here
+   (same for pinctrl, which went via different tree).
+
+   I will still be the one handling patches for this and (probably) next
+   cycle, but in a further timeframe the roles could reverse with me
+   only providing acks or reviews. If this works then depending on other
+   duties and amount of work, I might be slowly transitioning to leave
+   Samsung SoC maintainership.
+
+----------------------------------------------------------------
+Alexey Klimov (1):
+      arm64: dts: exynos850: Add syscon-poweroff node
+
+Alim Akhtar (1):
+      arm64: dts: exynosautov920: Add syscon hsi2 node
+
+Marc Zyngier (1):
+      arm64: dts: exynos: Add EL2 virtual timer interrupt
+
+Peter Griffin (1):
+      MAINTAINERS: Add Peter Griffin as a co-maintainer of Samsung Exynos SoCs
+
+Sowon Na (1):
+      arm64: dts: exynosautov920: enable support for ufs controller
+
+ MAINTAINERS                                        |  2 ++
+ arch/arm64/boot/dts/exynos/axis/artpec9.dtsi       |  3 ++-
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi         |  3 ++-
+ arch/arm64/boot/dts/exynos/exynos850.dtsi          |  7 ++++++
+ arch/arm64/boot/dts/exynos/exynos990.dtsi          |  3 ++-
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  3 ++-
+ arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |  8 +++++++
+ arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 27 ++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  3 ++-
+ 9 files changed, 54 insertions(+), 5 deletions(-)
