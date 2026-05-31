@@ -1,72 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mta.al2klimov.de (mta.al2klimov.de [162.55.223.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F088133FE15;
-	Sat, 30 May 2026 16:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483B348C7B;
+	Sun, 31 May 2026 09:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.55.223.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780159897; cv=none; b=lKOV+RAk1BTG3S5N20mJPebl1A3vAmIpi0i0RaIFHvxTG3bL8ZVwfOJJKu80AHypOwo1SPQsAneY2zMTTZtGkuVI9XT6nsKOIMqxTI/dMvJ77I7fwFUtryaHuhTgdDjM+QtrX4CgTPhYIDo6GidSgvXqgt3XWFmZ+4QVLnci4XU=
+	t=1780219799; cv=none; b=TmWkysjGp0EZtPINNXDiEIFoOr9gKrajde7NHH991+PCDrIFqgHVQheqcGaAWeDxUPcA+HohemO660iLbx/GrQI25Hq90PSk7TAu074rf0I/vdgwimNawKwTgA4EYUE0WzTP5MAE38wuuRuYR46Z/nCv7qspGSHtu2LnCV2tYug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780159897; c=relaxed/simple;
-	bh=sP0+xUeystX/lhZme5/NrNi0NW7w64KGCqkUVIDEHTU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c81UHiB+26MH9kyqXu+TaMpwQ5sKRAFsMSfFnQSNkjme7WA3wZurwK0OFHiyaQtJNkE0WKKG4k0WCegMSQHni4O+Qjf7w/3jUsVdXyz4p+QlqEKbfyMO481tk9otTS1voJaedDuVPckm7HEZ2AhEEDgl0tIdH4rOMg8jJTjIzmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAyAqQi3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780219799; c=relaxed/simple;
+	bh=Mw0rh43xOAuISiAf/pF5q/1/WffFeCfnXIJl+eu1Xu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GEIYpO9siyU4bYqq8Dsmw1gRzS4RIyKdPn6klLs/W2f+cnAbPnOrgX/ZY3xLu/7gfMVsu6QJesMF7zjdwmkE09wyam05KSg9bul6pmszPlPtu1c9zU+DDwmPp75BC8Vmkhc6pCEVaVF7RwtzwOhJMBDftYVGUQVJVg31pEsHUAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=al2klimov.de; spf=pass smtp.mailfrom=al2klimov.de; dkim=pass (2048-bit key) header.d=al2klimov.de header.i=@al2klimov.de header.b=dYE3x9Nk; arc=none smtp.client-ip=162.55.223.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=al2klimov.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=al2klimov.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAyAqQi3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A581F00893;
-	Sat, 30 May 2026 16:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780159896;
-	bh=Fs37mZtBEj4mh4HBBrOzVn2o9vM5ahogZ/D+zH8VWRE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=BAyAqQi3WXNfTP7owhvvOIsi35V9WV2a9Kf7BDnajl5xDaDfayuQiYxICAjvXvhcB
-	 G9Jp4kdq7Q19B/bLt8FZK18fVyO1Dv05jr4VrOuh/KBzhRc7ZjkVdlajtVbIf3k8+I
-	 iBP9oGd7wLwPJA5EfIHhVggz/CGu8VLgzDeqpFFqMPVHxBOwHLdTTn5F7/GQmMvWsF
-	 wK8D27QgMNFMMXzUh1bY1Kw6OdpGxZszex0aXG3dr87ipI8KdYXZLV6VPG0JbDdwxB
-	 mjL9IC8kQ8neyppeKCQdsWCtBVU50s+2ZL5wd1mbS9a40K7Fj+jhESh8geP0D5cDDB
-	 WCHSuzk1WYE3g==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Denzeel Oliva <wachiturroxd150@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260528-perics-usi-v1-1-13a6ee4d1a6f@gmail.com>
-References: <20260528-perics-usi-v1-1-13a6ee4d1a6f@gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos990: Fix PERIC0/1 USI clock types
-Message-Id: <178015989447.40681.11936234439376141101.b4-ty@b4>
-Date: Sat, 30 May 2026 18:51:34 +0200
+	dkim=pass (2048-bit key) header.d=al2klimov.de header.i=@al2klimov.de header.b="dYE3x9Nk"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=default; bh=Mw0rh43xOAuI
+	SiAf/pF5q/1/WffFeCfnXIJl+eu1Xu8=; h=in-reply-to:from:references:to:
+	subject:date; d=al2klimov.de; b=dYE3x9NkAUO2HLL2sZmqCX+/i0AtdXexhHV8Fm
+	qrO8TvrNCfhx6Ap0e/4+LXvrXOIsQ3ry9eWyO11Woq58bJpGJkBe1hU5MkUurni6diEZ3f
+	jfZMZz4JUAG5yvD+L4Q4f68qFYmrUNk6oTv9GFuW7QEnWsfIhZf0iffeHirfQlrAJfjTlr
+	07IP74Jnm0ucvHI2alJX9SVUoqXiiD+TcVwYQAVt50aO/DV92k3t6Y/vu9UntWbFDD2ZXM
+	ceuvH4c1xUCMNYJEwNi7XKc7rDqcqIpGfR3WzCxp+uIlJCgZOSUwrhiUICWHxNMuMA3HGc
+	uu6mqOvIkEtU8h/y/3p74IIA==
+Received: from [192.168.0.101] (88.215.123.80.dyn.pyur.net [88.215.123.80])
+	by mta.al2klimov.de (OpenSMTPD) with ESMTPSA id 2f391762 (TLSv1.3:TLS_CHACHA20_POLY1305_SHA256:256:NO);
+	Sun, 31 May 2026 09:29:48 +0000 (UTC)
+Message-ID: <ae9d7e2f-05df-497d-9547-ce4722f5e7db@al2klimov.de>
+Date: Sun, 31 May 2026 11:27:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: exynos5410: fix refcount leak
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ "open list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260526061321.6123-1-grandmaster@al2klimov.de>
+ <54284b18-e310-474e-9b64-63645804c1e0@kernel.org>
+Content-Language: en-US
+From: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+In-Reply-To: <54284b18-e310-474e-9b64-63645804c1e0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Thu, 28 May 2026 15:09:01 -0500, Denzeel Oliva wrote:
-> Use nMUX() for USI and UART user muxes to allow reparenting between
-> OSC and CMU IP output when changing rates, and use DIV_F() with
-> CLK_SET_RATE_PARENT on their dividers and gates so rate requests
-> propagate upward.
+
+On 5/30/26 18:26, Krzysztof Kozlowski wrote:
+> On 26/05/2026 08:13, Alexander A. Klimov wrote:
+>> Every value returned from of_clk_get() is supposed to be cleaned up
+>> via clk_put() once not needed anymore.
+>>
+>> Fixes: be95d2c7d918 ("clk: samsung: Add support for EPLL on exynos5410")
+>> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 > 
-> Consolidate identical USI parent arrays into shared
-> mout_peric0_nonbususer_p and mout_peric1_nonbususer_p.
 > 
-> [...]
+> Does not apply - you messed somehow sending these.
 
-Applied, thanks!
+Strange... copy&paste from
+https://lore.kernel.org/all/20260526061321.6123-1-grandmaster@al2klimov.de/
+(From: ... 2.54.0) applies to Linus' master.
 
-[1/1] clk: samsung: exynos990: Fix PERIC0/1 USI clock types
-      https://git.kernel.org/krzk/linux/c/e11560b050ce867bd7d3ccea138231db54e2250a
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
-
+Wait... ! Don't say because I fired all my compiled patches
+at once via git-send-email(1), they assembled to one thread?
+🙈
