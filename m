@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636B835292A;
-	Sun, 31 May 2026 12:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D5D38643B;
+	Sun, 31 May 2026 12:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780229239; cv=none; b=AlKlkr+4nkg2TRRgIYwt9hnHHByC9m3iZhtGuVmzFv8hmLw+jWdCIa7I0dU9AFK7X/zSz/lOIf/vMzacxe8J3XDifuq9kDwv1rQVUgZPszU2MIfMYbZ5/N054wPDRWa/4H6vHDYK70QMdYorNTkP11fBhQenbdx6egC4r+J0HRI=
+	t=1780229244; cv=none; b=pbyqG1P98DEM5dnXiQ/eab6Evhl6WrkpmPx092yXQXFHr42HTB8PgJDzlWVOuYyC6T9rfhs/aCuVgMUZa+Y3gsCV+Jn1IOYE0I0P2sElNEn3NA7zzR2vUB2eblG7AqHWf3Gr2TAPQpTgGXxsHhZJHzRR7mneSKMIAXciwhsv4gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780229239; c=relaxed/simple;
-	bh=QTutGE9zG2f+Wgcbt0UYC4ZHolWzIcPt+afitFBIpXA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jfb96r/ihylIf8L2opbDaLsBbwKQafgEuvabm1SQMf7Ce5zSy309xw0X5UhDHKfIowU0FUOmj84Tj7LyCc9Q/1LfeI7gMTzMRSY0xCg093dbwWlG6HtYZbkS7c0t/JJVG8hlnOny72h9a0AY1kWmFiM6ao8mwpCR30F6pNzPWGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SglFG5od; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780229244; c=relaxed/simple;
+	bh=pAo6hBdIG5A1dOfFT71zH2XqG2hBMV9l5Je5Gi8xvQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Jp2sAh9/JeMo4ljFgDC3UBWrLN/YQ8gwxO1Cu5K+WbeAT1aEtU5G4AdeN2b4tXAdugFG2D9QmvzeHeITxfowRpKs0uhCULteaBKZuAn9g9YLefQdGj2/hGE/YlYWPpGYJI02c61BqM+K3FS/DztjjV1cD2AWF1s4Rgh5HUFGf0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=js4n3+7+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SglFG5od"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A61471F00893;
-	Sun, 31 May 2026 12:07:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="js4n3+7+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1CD1F0089A;
+	Sun, 31 May 2026 12:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780229238;
-	bh=yxZg21Tdekg69TWZwk8L/j9NSFNsg6bUL3zOhnRkZd0=;
-	h=From:To:Cc:Subject:Date;
-	b=SglFG5odoJ/6xb5Aop5GyujemrKt6wALFTSMV8lh1qRcXrK4WaAuaSsRsCzfZTupH
-	 OyNRohGh6hRMEdbwmto4AKEtES4459oncgMVXFT//7NutF4ZjW/98sWSIpSA25JwV1
-	 jDEPXGpnSXMgQ19qrNi1ilYea01ff7juwRNM1xyMJJ3xKypc3bksmKWMutCIlknH70
-	 GKw8VaWTz3qnpBh05D2fvzqOPi+S8YI1geJE1FmuOodSnGee0LQqdDm4IV/ByEAex8
-	 zbkI0b5txmBayA/y/4j+atNapBLnmOCBfPxN7zrpCQczTZWfsUdlQoh7ZXEekABvhB
-	 sbTEdSb0j5MmQ==
+	s=k20260515; t=1780229243;
+	bh=zORGeWuTCNHFb6hRylyD7s9kKaOx02hxKZ8rvXfea0I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=js4n3+7+v3K5Tv77SQsDR7WI0DUARPFkX1P/3XV1SOpo79lKXoU8vfWJ0W9hBrjDs
+	 JNPGS8fpxpahWtWZ20g6C1M/g5yLqn9AhDSlHJ5aj+p7GOApEm5YcWApxicQ3KJ8b2
+	 YSd1qvhzh+guUELpcARykR/XJW//qvUmcbu6pwp1bnKRjhKCsvRgSIGVPjfar8IOMA
+	 OkMAmERCgdNzEpuxnbI35nRDCnQc2ZobKzXCbu+IJVoqza8rDHsraRder+3qqdoh7m
+	 +48oFGlFf+N7z3k1oT/pPRursveUHdD/OnM4DIMPAkJ0DUWaV5SjAeH+4gOHDs5U2N
+	 uFCuy3XXYqVFw==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -37,17 +38,19 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 1/2] arm64: dts: samsung: dts for v7.1
-Date: Sun, 31 May 2026 14:07:08 +0200
-Message-ID: <20260531120708.21017-3-krzk@kernel.org>
+Subject: [GIT PULL 2/2] ARM: samsung: mach for v7.2
+Date: Sun, 31 May 2026 14:07:09 +0200
+Message-ID: <20260531120708.21017-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260531120708.21017-3-krzk@kernel.org>
+References: <20260531120708.21017-3-krzk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2658; i=krzk@kernel.org; h=from:subject; bh=QTutGE9zG2f+Wgcbt0UYC4ZHolWzIcPt+afitFBIpXA=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqHCRskp/GVPLlEa6LJ/D2c64a92TUEdPfVipZ5 N2Xjb6rD8GJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahwkbAAKCRDBN2bmhouD 1+mVEACEUx1fzPAa3nQag29ixTmdAErCVbmGBXIdz2L4VZ9rH14VAt2M60P3xNycu26KLxpINhe BU8IoxsCz/3v3koiZ90t1ok+bWqWluOifzsva3nYu+DIbPIlCVtKhv5vleLDfRB2ShtGpvaN4cB 1gepl1ha3V1Gt68eoWHuZ+pgjh0fJUbI+aQAXvNILPz4UYkB15bAIV9GJmvz+oTvEZR4LXyEHhO 50OYxRTDMg01ENDu+4fJGMJwmSoozyE+UjXVF2dLYzp1nFd5M9BEu14X5YQu/07Iz8DBpn26ZgV Z1USe//lFYP5tFUE0vBJ/Z+aXoq7wX6jx1Na//INJMRueRCkpxNbo/E9y4OdrtgRJKfKbxTLlKo caOTVqpypzWb/wFLD40P8sOhpY5aSvAotRPmbTHszs5Owt/7fuTi8dnJ8qpDYmvAfXp3AaI5EJd G7MUe6jixMEcs5OCKsPr9VciM7ZFyr4z2QQ+Ax+TbBlzr+9ANOUsRiVdcNnAlhb71fps9L8jUE4 4CnVmCWan6/uc+v8JhEJVz7jC7KFmUzGeUNKzJ9Ui0w7w2JXL5DEzYArACYhfnlQ2D8obDfh3UC b9M5twJ/Mrn6oEhJzqiGExTZZWRhvRyYUtKTWaUN+fN0NKndEIIZC5uZjePTRLcgbqOStKoco61 vFu04e4I7R2ji9g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=832; i=krzk@kernel.org; h=from:subject; bh=pAo6hBdIG5A1dOfFT71zH2XqG2hBMV9l5Je5Gi8xvQI=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqHCRtiR3xlZ356nsuc1DBE4XfIARyYSGCdJvsm L2Hm1zX9CaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCahwkbQAKCRDBN2bmhouD 19IVEACAfFOV73GgiP7yXctThdSml1CzW9Zaj0e8lmr2ojgWWRP59PTCjnECC1tlzo0ccog+71K iKAoc3Nu1R7gLtjC1q5gwVS5gWS3Eyh7JODGJVnIy/iStFzPwLA0r7rBxXN81NGpnYLsT18exxb ANJty5QhCeXzYw/kh6/11BFKXLiKT9OsZ4Uey9XyQKbV+75Nq18OzOdbOl2pTBkMd7PTkMNvRoU 0ce2pr1U9lzkGtJl7HoBJfBmTfeUOtCC6F6NviXPXhh4615al59ygiUwGHw7sNCOmKJKqVOf7si l9S1FTuVOtLiGYtYFtoWgeplkfHaVCkk3amrJWu1JmKlCrCNl3+PJYOgY9LklE3OFD4o5soCy2P m/qjBFNnoW/jP0snJusas1EHGUMU9Hjn5EQ8w1e+Bh11noyr9k/6FjiNsJyU/xX1ngMPum5Qm2n 77eL2RYrpeB/tKmd5cEVtUz5ZOjS2Z+0w5Z3YJkDJUyYdTr1c5N/4DTemR1FcgLTS0bXucbALz/ Frs5viIBxG+s/GB8E+4PWdmMEINLkLdmEOFdxNHW1MuZksi+o6bWLesMHIgN3LbiXJ0dvV4Wyd0 NWSQFlrjfJR3/G2ICI9xX9j7kKptpKwpAyFdDDMuxW5dCHVvL8mYRx8i+s0lf9modO71K6Dh6xK 5qgnMMtGLUdK20Q==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
@@ -57,60 +60,20 @@ The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-7.2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-7.2
 
-for you to fetch changes up to 20550601bf4c23effa013a5f37e5250618869e87:
+for you to fetch changes up to b64cbd3f5d96b143fa9f21d84d381b1bb286339c:
 
-  MAINTAINERS: Add Peter Griffin as a co-maintainer of Samsung Exynos SoCs (2026-05-30 18:27:52 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v7.2
-
-1. Exynos850: Implement proper power off to fully shutdown the board and
-   reduce drawn current.
-
-2. ExynosAutov920: Add UFS storage.
-
-3. Add Peter Griffin as a co-maintainer.
-   I have multiple subsystems to care of and limited time. Also, with
-   joining to SoC team I figured out it is good to plan my succession.
-   Or backup.
-
-   Peter shown both time and interest in keeping Samsung Exynos code
-   working.  He already works on and maintains Google Tensor SoC, which
-   shares a lot with Samsung Exynos processors.
-   Considering all this, I proposed Peter to become a co-maintainer here
-   (same for pinctrl, which went via different tree).
-
-   I will still be the one handling patches for this and (probably) next
-   cycle, but in a further timeframe the roles could reverse with me
-   only providing acks or reviews. If this works then depending on other
-   duties and amount of work, I might be slowly transitioning to leave
-   Samsung SoC maintainership.
+  ARM: s3c: use gpio lookup table for LEDs (2026-05-04 19:09:09 +0200)
 
 ----------------------------------------------------------------
-Alexey Klimov (1):
-      arm64: dts: exynos850: Add syscon-poweroff node
+Samsung mach/soc changes for v7.2
 
-Alim Akhtar (1):
-      arm64: dts: exynosautov920: Add syscon hsi2 node
+Remove raw GPIO number usage from S3C6410-based crag6410 board.
 
-Marc Zyngier (1):
-      arm64: dts: exynos: Add EL2 virtual timer interrupt
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: s3c: use gpio lookup table for LEDs
 
-Peter Griffin (1):
-      MAINTAINERS: Add Peter Griffin as a co-maintainer of Samsung Exynos SoCs
-
-Sowon Na (1):
-      arm64: dts: exynosautov920: enable support for ufs controller
-
- MAINTAINERS                                        |  2 ++
- arch/arm64/boot/dts/exynos/axis/artpec9.dtsi       |  3 ++-
- arch/arm64/boot/dts/exynos/exynos2200.dtsi         |  3 ++-
- arch/arm64/boot/dts/exynos/exynos850.dtsi          |  7 ++++++
- arch/arm64/boot/dts/exynos/exynos990.dtsi          |  3 ++-
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  3 ++-
- arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |  8 +++++++
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 27 ++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  3 ++-
- 9 files changed, 54 insertions(+), 5 deletions(-)
+ arch/arm/mach-s3c/mach-crag6410.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
