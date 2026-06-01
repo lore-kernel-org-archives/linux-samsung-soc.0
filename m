@@ -1,158 +1,110 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3D0242D9D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2026 04:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780289032; cv=pass; b=k6RyOCCwzkALH6rtAIxBv9hkQaMgXFLC4aTBYLQpIGigAHsAhiTWIzEYtN8rGhAV3jBDx7DzYoYzIM0hiXiOKdI0jufS3He1QNQbCn7tevbe5hbaH+mhquP7gIGiKuy00zE2kjHhKCiJJgkPJqroj9ohnB+gLNlGc7E7oELwOuM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780289032; c=relaxed/simple;
-	bh=5nmY+5LsENDUu/siPXU4S3sNh3PS4DNCZAyKYLpDklU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WsxbGDHfAfBlhi/K8YlMfLtHSVGO026WSJn6cSXnxHANOkO5BZGNWaAn8Yb2Mt7pHJ9AuZmPPwYMBl+gJw3imUqHVtw6EcI08r+/XyQjDZszM1+qni6iNH9Twm8SP1dU0h0Q9RtWtzJrRKUSl63aDa3Zr7OOYhd9LIcY+D6J828=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GU4B3Th4; arc=pass smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E0C33C52F;
+	Mon,  1 Jun 2026 09:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780306794; cv=none; b=MBeot3IhTIGbagJoFRquLQApNOsU+xL5oUdhjO3JAu2ywPj8jkZYv+CnIEXF9lSREg9h3KiWe5jy+IWbXi42vQWkOgltwqLbOjuZ4znGQIl62PstieuHrpDv6npZWTuZh5i+3w5PizqLh7yG4/oXGU0ZYrLGRWVAkywQjy9HEt0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780306794; c=relaxed/simple;
+	bh=Oy8BU2sRS8bgnOzVUPqIh0XclRXRDBt9Z0ZFBzNdFJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qkWIjx0nDvdh8p4lL826JWYst3dSSN9lf99qvCeMwcZJjggM5i3nR4IKxKh4H5Vg8q8uDNX7bSXU64WkwQBfJ2At0cOg4CsR+5lVX+CENgdTW2Zp1TzmDUScxdffZFCcZ7EepC9KNAnA0C2F7MoeQdv0sYfLOkXsevyZ5dDWNz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK1hCWIo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GU4B3Th4"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5aa619653e4so1544477e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 31 May 2026 21:43:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780289028; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Sg4Kq9Z/pqIZgWvhjF5+njk6o5O2GwLLPe0VDQFcPQ4e18M5O8A3vPCBE8zj1L31Yy
-         pJUEa7Dy3vJmf/X81JvdWDdvxpcY/WGR4FNKanvaCt7Gep2sVKpkYniGOy/H5noM6e1/
-         SGOuDU13JD3fAQXIYJCLF9qBJrKor5K9DN6896We8TQEKyoh505kS/DQO/Ij8F1mKA18
-         mOEoF8VzIvvcxU19+kH39QRYT2SQItYtcH5xtyXkCEeW/NwLLyDGRbCxLyOrt4b8JW9h
-         dCtyP96i10tx63Kmp1GPadzNxADgHpUWPv4ENgdOPBBQZJxMU9euyESalE/qUOGkHMmm
-         9q8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zR1cIlAoMp5j8gAxy1mhFkkWhyjEsDYxuuZyh1K4KzI=;
-        fh=of/PwppgZtnONgrjr0zxSjSV95ae9wxE21Zrg+ODk18=;
-        b=MSLCayk2OnbnZuXiloDFPSRDwKhL6vZBQ4elflBVsQyS+TDv83p2zwzmB3HeLQM3rb
-         L8LJi+Qbja40cGCiJeyLSuustvOqoPdxuwi6pNIGKHwHlN3b4/tayrOc3Lo6xy646/9j
-         D5lHuswD6J0TRoktqyC9RbegB2WJEfNrLJgTCdLL/UqDVl8yZ7z5W5vNp6XAFAVBIHUD
-         3evDDaHh0VJKo52+nA3AOZP54hWUFA9Y0jGDybuICHTfM/Z189rNFkxyx0MKC9VLjiuO
-         +VwPnDXGSQJhLAkNuoTrrOPQTlAbV3yXk61mGk2SSmAgmacehpWkkfVd4pE4O/wLZTS3
-         RnCg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1780289028; x=1780893828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zR1cIlAoMp5j8gAxy1mhFkkWhyjEsDYxuuZyh1K4KzI=;
-        b=GU4B3Th413j4l4tsAV9YYmGKhnCX4Y9Pv27faVMb3jm+tihV0k8nYkqXupi4PPQfBq
-         3gyUmc6m6dBBAsM3zr/zihu/LDY88mXFr4a5S7B/gVS/nubDPmwJDIitSFZxas9hpoZ4
-         t33nHv2KB5F5JDSZG+xDC1WCTAKNknx3Yo6oo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780289028; x=1780893828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zR1cIlAoMp5j8gAxy1mhFkkWhyjEsDYxuuZyh1K4KzI=;
-        b=WBGFdoWMcGiPysr5XJ35aa9mHaxFUqScUswQNLV4B5B4ymCUABQ3ExaW9jkt/8xdXY
-         viaIJ8ISMrW1ju4rEpfxKncDf09TP8t6FHW4c4XXcTcpBkh/Uheg1QuK3o17KqQRU0HE
-         b8vyZBqpNY2QTOzMmQ28Dp2zqu4ulIVioJ+Y6NyQs6pmr80Wiu5G9WcivEeSsWpH6tY4
-         T8yTaQ0zOYGtQLLvTX7V1HRTn2Wngn2ahPtXPZ+Kk+gW76pJZZKth2/9ZXZRwtpO3wlI
-         4TI0E4HpB3rvICP5kfcyEINzdF/wxYhvZY5HSrNQUATv0zt+kZeRrs2NHnkB6tXy858y
-         DuTQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8ktE/zhxPzqLMw2B1NBThLLOwNYugGfKHYGW3NchoVGbEZLxZwVF+G9E0lqBkQTBLX3dAayREKstTeKcOETOPokQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvdpn7AH2td4aIZaEc2bvtqBG/d0eIB4SCkQfCYNrxwPXVA6fF
-	nn7sdU98fx9F/eXHjKhLWMcq08yjT88+8QF0ZYo6O7oruB65olQ6xt+ye1Qv2st+V/JwnTSOd6q
-	7ux51JO9ZjVUBULKRKYuSZ9hrVKQdXk8O0MAmr/sc
-X-Gm-Gg: Acq92OGyjKhbERa2vBIGQ5IPxUi/DnmDf8qEbib/tCoOwkuKlBPX4uejZvvJU1i+som
-	I8nbfxOJAkwZ4Kfpmxt4jCL+wxA4htykJgh0u5jND1C+HwZYMTQtMdczkQ1oEaHm4aqMlAaVDlf
-	JY/p/vdmtwQ3kyYoMLIDVvaxyRMo4mtqCUUthNiBoooao4Caq+71fih7J7+ljaqf1U9JTRFsgcE
-	O++8qUqY3WiJg1c9stEXK1Nh/hIDe8PCzi+CKS1PdDF1EbY9cpROg6e3S9cMo6fW02CsZp9vzrR
-	g27f7xqXhX62uPuwoi0iisQjNWx1NagN53jDjlaY1VZ6Jt4=
-X-Received: by 2002:a05:6512:128b:b0:5a4:a85:ba3b with SMTP id
- 2adb3069b0e04-5aa6145b9f6mr2247218e87.19.1780289028315; Sun, 31 May 2026
- 21:43:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK1hCWIo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446051F00898;
+	Mon,  1 Jun 2026 09:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780306791;
+	bh=f09vl+UCKxOyS+0Op2mQ1cUi0kSJ8p5Qw/ozEXgNE8M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BK1hCWIoQdvDtUjJPgw/vLCTfyMx3HWT0u573hyLRoItj4iND66Tz91vD22R9TtZ3
+	 9BRCmM94MTIt1fvb2hW9cuDOdG2tUROY2R27SFfi4IlSEBYSc/xaJCZtC/VXlGDLKv
+	 2jTTSB/c6LwzTaXgjjJM3vsVREgA/kLH+53CJ5vr0XWBAJGnTNDr5uErWcSklx0hHq
+	 viPc/srf/G1lku7G6ujLJSq1+u+pG6MwTIGejqN/SeejanZYvVPWYxdsYvAZh6f7S6
+	 xOvrT1LO/iwT7MeOhtbiuz48s3nYMde2oEsTH0pZRINFmN/k2G71JmE1/YEjrWxtr6
+	 ASNwjiwac9Ssw==
+Message-ID: <e1706d59-2731-4aab-979a-e2e2927caad1@kernel.org>
+Date: Mon, 1 Jun 2026 11:39:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260408065112eucas1p129f600747c27e999ec3d42504bc0fd2b@eucas1p1.samsung.com>
- <20260408065055.1353444-1-wenst@chromium.org> <d568fde6-8033-45c1-a2e1-13f8112f1193@samsung.com>
-In-Reply-To: <d568fde6-8033-45c1-a2e1-13f8112f1193@samsung.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 1 Jun 2026 12:43:35 +0800
-X-Gm-Features: AVHnY4JEx2SIxzD-JGLqt6co1RnSApTjEWdemWCmhyaNJcHSwWHrqMwqc83JIHs
-Message-ID: <CAGXv+5HvO3OjBC=u4EZeB6Aza6oSN0KWrvbQgWEnR=jskczvwg@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos/fimd: fix register offset type in fimd_trigger()
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: exynos-rng - Remove exynos-rng driver
+To: Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-kernel@vger.kernel.org
+References: <20260531175932.32171-1-ebiggers@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260531175932.32171-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 6, 2026 at 2:35=E2=80=AFPM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> On 08.04.2026 08:50, Chen-Yu Tsai wrote:
-> > Sparse reports:
-> >
-> >     exynos_drm_fimd.c:992:39: warning: incorrect type in initializer (d=
-ifferent address spaces)
-> >     exynos_drm_fimd.c:992:39:    expected void *timing_base
-> >     exynos_drm_fimd.c:992:39:    got void [noderef] __iomem *
-> >     exynos_drm_fimd.c:1005:33: warning: incorrect type in argument 1 (d=
-ifferent address spaces)
-> >     exynos_drm_fimd.c:1005:33:    expected void const volatile [noderef=
-] __iomem *addr
-> >     exynos_drm_fimd.c:1005:33:    got void *
-> >     exynos_drm_fimd.c:1007:33: warning: incorrect type in argument 2 (d=
-ifferent address spaces)
-> >     exynos_drm_fimd.c:1007:33:    expected void volatile [noderef] __io=
-mem *addr
-> >     exynos_drm_fimd.c:1007:33:    got void *
-> >
-> > Add "__iomem" to *timing_base to fix its type.
-> >
-> > Fixes: 3854fab24e89 ("drm/exynos: fimd: support LCD I80 interface")
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 31/05/2026 19:59, Eric Biggers wrote:
+> This driver has no purpose.  It doesn't feed into the Linux RNG, nor
+> does it implement the hwrng interface.  It is accessible only via the
+> "rng" algorithm type of AF_ALG, which isn't used in practice.  Everyone
+> uses either the Linux RNG, or rarely /dev/hwrng.
+> 
+> Moreover, this is a PRNG whose only source of entropy is the 160-bit
+> seed the user passes in.  So this can be used only by a user who already
+> has a source of cryptographically secure random numbers, such as
+> /dev/random.  Which they can, and do, just use in the first place.
 
-Inki, you missed this patch as well.
+I don't know nowadays about any real world usage of this driver, so fine
+by me:
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-ChenYu
-
-> > ---
-> > random warning I found while checking for the size_t warning.
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm=
-/exynos/exynos_drm_fimd.c
-> > index b6abdc4f2b0a..695d3515d421 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> > @@ -989,7 +989,7 @@ static void fimd_trigger(struct device *dev)
-> >  {
-> >       struct fimd_context *ctx =3D dev_get_drvdata(dev);
-> >       const struct fimd_driver_data *driver_data =3D ctx->driver_data;
-> > -     void *timing_base =3D ctx->regs + driver_data->timing_base;
-> > +     void __iomem *timing_base =3D ctx->regs + driver_data->timing_bas=
-e;
-> >       u32 reg;
-> >
-> >        /*
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+Best regards,
+Krzysztof
