@@ -1,110 +1,203 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013066.outbound.protection.outlook.com [40.107.162.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E0C33C52F;
-	Mon,  1 Jun 2026 09:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780306794; cv=none; b=MBeot3IhTIGbagJoFRquLQApNOsU+xL5oUdhjO3JAu2ywPj8jkZYv+CnIEXF9lSREg9h3KiWe5jy+IWbXi42vQWkOgltwqLbOjuZ4znGQIl62PstieuHrpDv6npZWTuZh5i+3w5PizqLh7yG4/oXGU0ZYrLGRWVAkywQjy9HEt0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780306794; c=relaxed/simple;
-	bh=Oy8BU2sRS8bgnOzVUPqIh0XclRXRDBt9Z0ZFBzNdFJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkWIjx0nDvdh8p4lL826JWYst3dSSN9lf99qvCeMwcZJjggM5i3nR4IKxKh4H5Vg8q8uDNX7bSXU64WkwQBfJ2At0cOg4CsR+5lVX+CENgdTW2Zp1TzmDUScxdffZFCcZ7EepC9KNAnA0C2F7MoeQdv0sYfLOkXsevyZ5dDWNz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK1hCWIo; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EECF3644C6;
+	Mon,  1 Jun 2026 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780315474; cv=fail; b=ZvcMjNmvidvNUT513g0OhZpZmn37CqIvAc/twuarNz2eF4otNqfVKxqpx51eX8vpEJmM7jde40vxNKo0zb48MfWTb6RlKF6SkMbnc5VwLQZkO2Stl/WEY1tvcTl7LJUIdJX40V+P3YFtm7xl9THhcbADVUS6tI2adpbuBiG8EFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780315474; c=relaxed/simple;
+	bh=dajP+FyTShQGGGSqSjHTeCBkeDHJKL4g9ZfU2tC16kY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=TqAd333rglJ3QxgUhHLMo9JKKQ3tJGv0MHno7ovQoqCFJVq3xJoWRUUfIfkx7hmAP68RrfGdTpcrm/ErX81N1scAVaxnGWn9UrujqmbMCnRPS4ddbDpF6Kb/xVeoG3LrbfF9pEoi4RRoyQlKwU1kibpOXy17XZbNbD2yiErJ/gI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=h5kK4Cmy; arc=fail smtp.client-ip=40.107.162.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK1hCWIo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446051F00898;
-	Mon,  1 Jun 2026 09:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780306791;
-	bh=f09vl+UCKxOyS+0Op2mQ1cUi0kSJ8p5Qw/ozEXgNE8M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BK1hCWIoQdvDtUjJPgw/vLCTfyMx3HWT0u573hyLRoItj4iND66Tz91vD22R9TtZ3
-	 9BRCmM94MTIt1fvb2hW9cuDOdG2tUROY2R27SFfi4IlSEBYSc/xaJCZtC/VXlGDLKv
-	 2jTTSB/c6LwzTaXgjjJM3vsVREgA/kLH+53CJ5vr0XWBAJGnTNDr5uErWcSklx0hHq
-	 viPc/srf/G1lku7G6ujLJSq1+u+pG6MwTIGejqN/SeejanZYvVPWYxdsYvAZh6f7S6
-	 xOvrT1LO/iwT7MeOhtbiuz48s3nYMde2oEsTH0pZRINFmN/k2G71JmE1/YEjrWxtr6
-	 ASNwjiwac9Ssw==
-Message-ID: <e1706d59-2731-4aab-979a-e2e2927caad1@kernel.org>
-Date: Mon, 1 Jun 2026 11:39:46 +0200
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="h5kK4Cmy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rMIvsVJF+up/pwDyptf9ehh1Wwnh3FRD20gDBVZwU0iMVZ4bzPLAcjldfWb1F/B60rdvdYJLHogrNkDQQJw6D/J+e5+fE5ECeY0tbCKZcsq9nC5ekEDFPN72QDDw1JZBXJMesgs5nKNjYNAeI8aJ6fnVfLAE7XEYtVqKBbiRdKP1yWa42sEK79WQGqdj6V3zgEdIcsoiWzi52RJF1Qae55prhmCvexQnqcfrHin9YbMZIPZKv/CsgcL5FpGdlcJNpBWHij7A+7A8ejVbvCWYAWx6I1nSAs3vrx6kEdE9C1TyIRC9Ft9f7OcFA/aDz6DvlIuvR1UGO5MishoHVTEMvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ykjOQs1RkIj+phL9goBKIzAWf5pkbllLyd69kthKiPM=;
+ b=SdaIen7FEpD+c5o5dZohqnLK28ItZCSN5lepR+uGEkpTvtOBRerUJf/m9y3DrvDw6kNOhisww6dsukGPf5rfWX5OYtaNsPvJZIvYQkuo+sHrs0Z9vVAsedHxy2mWm30RO/KvSypcmIQNYyEHeG0/A21c1PE2oR2Xx8GSz97wcnvQTDMIu2RQ4VcUDx8fWpIGjh/CKNEl9Wftqysje8hO0fA/NfvDCfS8GprLp029GCrw7WLfQ4pPQJ9wlcDODAOLsDs2CWEsG92v2VdS0bgjYQiQlzaoktd5Kr6dydDtOq/kcLmFkEEKP7J3GvOope0OXA1gWT7MvWGyYMaHt4FyBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=anholt.net smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ykjOQs1RkIj+phL9goBKIzAWf5pkbllLyd69kthKiPM=;
+ b=h5kK4CmylzYnj69WW3QKrSyCE0kgshs75ww5jn+wvE+1YG/5dvW/Hgw7cHj07S/sIrfZPn/AVNkUrv+PX5tp52+aYu9ksE+/WrSuHavMJDHnS0u80uiewxVWEsYRrX8SB7l7rp6AooFYrCEGST4Ue6RPuDp5EnrpAmJaWrEPrkg=
+Received: from DB9PR01CA0004.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:1d8::9) by GVXPR02MB10808.eurprd02.prod.outlook.com
+ (2603:10a6:150:153::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.15; Mon, 1 Jun 2026
+ 12:04:27 +0000
+Received: from DB1PEPF000509FB.eurprd03.prod.outlook.com
+ (2603:10a6:10:1d8:cafe::a0) by DB9PR01CA0004.outlook.office365.com
+ (2603:10a6:10:1d8::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.16 via Frontend Transport; Mon, 1
+ Jun 2026 12:04:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB1PEPF000509FB.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.71.7 via Frontend Transport; Mon, 1 Jun 2026 12:04:27 +0000
+Received: from SE-MAILARCH01W.axis.com (10.20.40.15) by se-mail10w.axis.com
+ (10.20.40.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.39; Mon, 1 Jun
+ 2026 14:04:26 +0200
+Received: from se-mail11w.axis.com (10.20.40.11) by SE-MAILARCH01W.axis.com
+ (10.20.40.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.61; Mon, 1 Jun
+ 2026 14:04:26 +0200
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail11w.axis.com
+ (10.20.40.11) with Microsoft SMTP Server id 15.2.1748.39 via Frontend
+ Transport; Mon, 1 Jun 2026 14:04:26 +0200
+Received: from lap5cd525d1j1.sto.se.axis.com (dh-10-133-4-142.sto.se.axis.com [10.133.4.142])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id D94B11247;
+	Mon,  1 Jun 2026 14:04:25 +0200 (CEST)
+Received: by lap5cd525d1j1.sto.se.axis.com (Postfix, from userid 22105)
+	id C5B1B803B117; Mon,  1 Jun 2026 14:04:25 +0200 (CEST)
+From: Henrik Grimler <henrik.grimler@axis.com>
+Date: Mon, 1 Jun 2026 14:03:59 +0200
+Subject: [PATCH] drm/lima: call drm_mm_init() with a valid allocation range
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: exynos-rng - Remove exynos-rng driver
-To: Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-kernel@vger.kernel.org
-References: <20260531175932.32171-1-ebiggers@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260531175932.32171-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20260601-lima-alloc-fix-v1-1-16d3f3b7b780@axis.com>
+X-B4-Tracking: v=1; b=H4sIAC51HWoC/x2MQQqAIBAAvxJ7bsEsJftKdBDbasEsFCIQ/550n
+ IGZDIkiU4KpyRDp4cRXqNC1DbjDhp2Q18oghdRCSYOeT4vW+8vhxi9Kt6pBjJseTA81uiNV/Q/
+ npZQPAuCFKWAAAAA=
+To: Qiang Yu <yuq825@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Eric Anholt <eric@anholt.net>, Erico Nunes
+	<nunes.erico@gmail.com>, Marek Vasut <marex@denx.de>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Andreas Baierl <ichgeh@imkreisrum.de>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>
+CC: Rob Herring <robh@kerrnel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-samsung-soc@vger.kernel.org>, <lima@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@axis.com>, Henrik Grimler
+	<henrik.grimler@axis.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2466;
+ i=henrik.grimler@axis.com; h=from:subject:message-id;
+ bh=dajP+FyTShQGGGSqSjHTeCBkeDHJKL4g9ZfU2tC16kY=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBqHXVDzi4owxugdwNeALyJMVQfOGpont7T/SsgC
+ appy3h41ZqJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCah11QwAKCRCwB25JC3Fh
+ a3dEB/9ez9HOuhICNM4o/MyCF9o+/NTAq/3KGMH33YugDXkVy/5kTULOUgvZKF1njwBa7l0+LT/
+ mEv201CYmfJw2SflypmP860ErBTCmYAO5lAfJhPWkooIPtgCcYmFdiVBPcX3+UlyI+RSYuqHpfU
+ Tp6sjHByH7fepSxLIUvFE045MFpt+eE/kLYxGS8BZ53VbYU9JGyfIUhemtF4uHGcqKKxAhkqLlB
+ 7fnky6qCm5ggM4yqcK94K8mDJSZqqljXOkQfFTISwj0w+aTfZT9JsoaaYY9JDaulyFarpqZxGTF
+ eO8uAdGdP/NJUsO3/wS57kfl7YFRu08ijYhtVPMiKfWSGLYu
+X-Developer-Key: i=henrik.grimler@axis.com; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509FB:EE_|GVXPR02MB10808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fc66b5e-e02d-4e7e-b8bf-08debfd5eddc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|7416014|376014|82310400026|1800799024|56012099006|18002099003|921020|3023799007|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	iUx1MglEwNy5UlMtunjSaUzP8LWT1M9+e1kjd3k2RWdqmVFh3FxYtDS65fqTruSA0Q4aZJ+/RNqJ2UQEvdsIxDcVjBnuVClc3Nvp5sainkyVq7Gr7kkyq+YQcr4UsfbKo6vY81o6lLLuLrx3K4ow3HbHnJiDyXOb9epy68i5/634bzyXk87tTY79unHTiBT6w+73Mb4moJH/UkCJyPsjlVle8PwFBEYBqYMEm9g1/GV1DFYnK+aQdjNQnUS5TrBfwAKtAR+ZYy1aVtprFM3/X37ce7kcrNEkowmlKTImx/hYfXiHuar2Em3J+h/gnWFjRCdtkMg2RfP5itA2WzuC4I7N5PQgZVqFW7roXnN8LIEAfq1WeekPDjEeQ5NtPIveUcqrwU15cUGzUsomJfjS0OkjUhzdS7qtnwA7cXM8FAoN854bT3ueULraQhp8kQrHLsqY3MAATmiK522Rv3nWQb8cG3jMt4zij1q5xGgFGc1vQ+QgeCqjl1So0e0xRH6eE8Fpzouu+qlssBVURWdNujxMuuvMlUefyzWhRxe4s/OMgD81bkwVd+jkTEoNfxh0ygwUEMPcsZG/xnF8Adn9eXnTyXUnKAEm4x+Z3ItEvIi966VeVAmzTPjBK55uf8qodjnr+pYpgeaAXK3nj0z3eeErY2AY9cQfXSJo5sDeE5MqNQdAuzA8IYQfMSaLMhalWQD6r18j84c+vAKy+dOVSnGiPt41uet5dXKNRbdttP1hyyrhStDznaSuVrhgN4iM51ZakL5ITXfWbSBXG2Wl2w==
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(7416014)(376014)(82310400026)(1800799024)(56012099006)(18002099003)(921020)(3023799007)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	0Ljs9hd1suIWkT4ZdMittnIbrh9MiKldnGWSE5nXytooItHUR5Zn2gzH8PxEE1PO0z6EtQOnoB7cHiGR1zPZILdhMhVcfWNaclangM/q7qQko7/D/ETJy8fCAG+JVNiFE2JAoaW32VWio91E2fmj/mLnU98cmKSHpaJbJxzVnW3DxEohrMOBFryTHrd7999Tcppvr4JzlLHRCputwJ3/YvaFX/PlzkoZOSDGff0X/v/XovWR7ZJBR6kSPN7WGLfREXKt4i+w72qy+aH6HqBypPT5qs8mQ5kvopsyw1HGF4hgnaBZiDve+DKdaSPvbWuHHUFqlqJpyxvuWBwHSx1H+3iV66B4rGAf8x+pxmH46pioG80YxWSf4D/xg8Q+6y1zgz7qH5gK2x+3PHsj52HgvKHl/IF1EsXernjAIYz3UBDK+lsJo8BKKKW0xCera6YK
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2026 12:04:27.2286
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fc66b5e-e02d-4e7e-b8bf-08debfd5eddc
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509FB.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR02MB10808
 
-On 31/05/2026 19:59, Eric Biggers wrote:
-> This driver has no purpose.  It doesn't feed into the Linux RNG, nor
-> does it implement the hwrng interface.  It is accessible only via the
-> "rng" algorithm type of AF_ALG, which isn't used in practice.  Everyone
-> uses either the Linux RNG, or rarely /dev/hwrng.
-> 
-> Moreover, this is a PRNG whose only source of entropy is the 160-bit
-> seed the user passes in.  So this can be used only by a user who already
-> has a source of cryptographically secure random numbers, such as
-> /dev/random.  Which they can, and do, just use in the first place.
+lima_vm_create() is currently run before va_start and va_end are set up,
+meaning they are both 0. lima_vm_create() runs drm_mm_init() with them
+as arguments for the allocator, and if DRM_DEBUG_MM is enabled the
+DRM_MM_BUG_ON check in drm_mm_init then fires, as seen here on
+exynos4412-odroid-u2:
 
-I don't know nowadays about any real world usage of this driver, so fine
-by me:
+[    1.736297] ------------[ cut here ]------------
+[    1.740370] kernel BUG at drivers/gpu/drm/drm_mm.c:931!
+[    1.745574] Internal error: Oops - BUG: 0 [#1] SMP ARM
+[    1.750697] Modules linked in:
+[    1.753734] CPU: 0 UID: 0 PID: 41 Comm: kworker/u16:1 Not tainted 7.0.10-postmarketos-exynos4 #11 PREEMPT
+[    1.763372] Hardware name: Samsung Exynos (Flattened Device Tree)
+[    1.769446] Workqueue: events_unbound deferred_probe_work_func
+[    1.775261] PC is at drm_mm_init+0x9c/0xa4
+[    1.779339] LR is at lima_vm_create+0x144/0x17c
+[ ... ]
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Fix the issue by moving the lima_vm_create() call after va_start and
+va_end are set up.
+
+Fixes: a1d2a6339961 ("drm/lima: driver for ARM Mali4xx GPUs")
+Signed-off-by: Henrik Grimler <henrik.grimler@axis.com>
+---
+This is a low priority fix and can wait for v7.2, it does not cause
+any real issues as far as I have seen: drm_mm_init() is re-run some
+seconds after first run with correct parameters.
+---
+ drivers/gpu/drm/lima/lima_device.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/lima/lima_device.c b/drivers/gpu/drm/lima/lima_device.c
+index 0bf7105c8748..7c873e62c16d 100644
+--- a/drivers/gpu/drm/lima/lima_device.c
++++ b/drivers/gpu/drm/lima/lima_device.c
+@@ -368,12 +368,6 @@ int lima_device_init(struct lima_device *ldev)
+ 	if (err)
+ 		goto err_out0;
+ 
+-	ldev->empty_vm = lima_vm_create(ldev);
+-	if (!ldev->empty_vm) {
+-		err = -ENOMEM;
+-		goto err_out1;
+-	}
+-
+ 	ldev->va_start = 0;
+ 	if (ldev->id == lima_gpu_mali450) {
+ 		ldev->va_end = LIMA_VA_RESERVE_START;
+@@ -387,6 +381,12 @@ int lima_device_init(struct lima_device *ldev)
+ 	} else
+ 		ldev->va_end = LIMA_VA_RESERVE_END;
+ 
++	ldev->empty_vm = lima_vm_create(ldev);
++	if (!ldev->empty_vm) {
++		err = -ENOMEM;
++		goto err_out1;
++	}
++
+ 	ldev->iomem = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ldev->iomem)) {
+ 		dev_err(ldev->dev, "fail to ioremap iomem\n");
+
+---
+base-commit: c453c60fdba437f69209e027b418c4a24143605a
+change-id: 20260529-lima-alloc-fix-2cd5408f6493
 
 Best regards,
-Krzysztof
+-- 
+Henrik Grimler <henrik.grimler@axis.com>
+
