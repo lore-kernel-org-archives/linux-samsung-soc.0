@@ -1,183 +1,262 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DDB3B2D00
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2026 07:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780384593; cv=pass; b=Ahh+elz21dKT/A4r6N3a6ZKuqTPs2d+bGFhd/ObrF5ki+5e5do7zC2n6PncpzlmWqrq5PfT1hE446zoamHo4MCfbpS48Di/oy6a3ugL3KJrtR1r8rz6i6/gNKJk9TGM1fI7ajeTklkiOWtNHhe6msUkLDuJmsJhmZ3ORskLEvuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780384593; c=relaxed/simple;
-	bh=3Auo9+tlIPxJEemufW/aV/S8UvWMioUVYV7RZf+xXog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvETdtIc3MrlU4iITPu22wNSgRyDsW4d2CsKzSZ39RfgfOkYWhROgCqfkMFniJ3Lv+MiH/rARLhB9ulCoqJQv5y9dUx8/k/hX4q3V8StcesAVM8ZtMYhWUFusq9W0p8CG1bzOARTQ5ejOok7i+NZFIAXf9fc49yJtvo99jsXXEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZihSNpf; arc=pass smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1279F3F23C4
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2026 17:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780419655; cv=none; b=vApJEMmUbpBVcTIURNV2lBW26QjJW33cBvSGv2iHPv6ZjkiuMoYb3+RZKZJCkGgZgWu9Z8YAfiMAqyMc6OYkqtBp9ol5+3f+fqh5bY+h7K0JW2bfkvSGqhmX87gGPtAtp4dGuH7Wdk+YpqLQwemMQTd9M8msHfWnIOBuiq8tgqU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780419655; c=relaxed/simple;
+	bh=dzlXq7jykuFHnwxkXRA0IhnPhgOSS7lnT318/jWXEm8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lsnCBddw+ElN8w97cgqAKem0q2J4kbqCt4BpiIJgBW/2F2LVUevhOftJEfPxieIYCL7eI/nyGjEOGke6Zd1LLyAgMFYc5o++Lh1RDF6dGJVGSwWdyPi8m+TMQ0gBlwF5zg6GSRXG07W98mQ2KBMLld4ucPidZ2oF8uKKI9/tD+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rvmVcsmC; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZihSNpf"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7e6c733856aso1143221a34.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2026 00:16:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780384591; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kcW/PRhs8W4NYmTutXbLSgbDYfWSYFuDgCD9e/29K8ctlFaUiKYqZV7GZ51ONANB3t
-         JzaHpUOL7yeJ/cHhWskVCVkrl45QooH1bkDaBIUHjmbzQn807+Wr2566ZZrV6gQMVRV5
-         682L6bpTN+yX+YL+F8060UZPiGUCRRyQcXvA5J9kHMwbVQW7z/HowQ4dV1MgWi3PtLWH
-         95A50i+fflgbVrlFwefoWRtpa0lUN7PrDZNxZnxLoUiQCcgYvUWdBUKPAavQWvIPtxAx
-         mzPds8Y+FFUQfNjlathNrRKK3ng/Nqz9S7XipKjtQ5KneITJwNqGB9DjcJxWxyNmfDGX
-         Bb/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=6QljEUOAK4GhDaCOum5n6uKCL9G0xte2SQqS3q0iDCI=;
-        fh=QiBjiiYPXMrxqWKFCSbNhQ5bThA5/vbji33TQzconhA=;
-        b=gAYkdRTX96d0lEgcHStoDoYjm6DPULAkVODrrnqgTsRVBVUvoI+qFX0msdVh/+LnP9
-         wlkvkMKE0pqCtdWMQ6X8seGW9mvUYheHh3B7+2Br3cLgOlhdgYRtT6YoK2gq/mDlZvzy
-         1fko9+7W9qfaZjYfCpoTTwRluNt3niRzzyXCVjb7MwK3LFRaNHiBuTWLg0eIIvd4AH1s
-         pjeDuRsH0GO4m1GrtMUx+sQ5J/oU+OH9Gi72P7XOmdaYnSKwzUkAnugTFrV0v+h5EVVA
-         FZTgykvPKy9LffeZM3O0IRLRRJRD7rglK1bjTJnjekjmbyYO85E6qvSpvFPKRTxcjZXc
-         RPMg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rvmVcsmC"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4903997fcb5so118982175e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2026 10:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780384591; x=1780989391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QljEUOAK4GhDaCOum5n6uKCL9G0xte2SQqS3q0iDCI=;
-        b=EZihSNpf+WRNKQcRULsOG2olQcYQtbCYaVsz4y/yvoZQT5nv7xZbPZivLgN6NdkWiA
-         l5RnbOeOs9H/3Pp/hBaZ+28IkrB2uS7sekoUftWOw8E2zhTiIegeHP7LMMLIqkpmtWDX
-         6g+DzOBYhBvMQ7oDm4F4ctYquzqDqIhMZKTSNOz38w1NN6YyXc3JCaPH2V1NwzWZ2FSn
-         2L2rvtBB+JvRnhGHbgFIxnNgAuQ5hYKEv1Fct3k21X2SJU3V10p7HUI+eg48L9jh/huq
-         m/hwn2QIySDK38ffqsSCbDIWvbY3vRgWrkjPP+l39rGwu5rknSpvpKNI56o/Z+CWO93U
-         P/mw==
+        d=linaro.org; s=google; t=1780419651; x=1781024451; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mi7kVezCcDvg8qXbli6L/hgVp0yagoLhCnZtW1BhRxA=;
+        b=rvmVcsmCB8X7IeWUwkmKqwpTUkwoYCMIbbf5yDWR5hmnx64zyKjHBEn6o6X31C9lsp
+         +KPMytHY9keRXImttcMNyi+Edl0ID8P+6VHnhVm5LkhjFg6BBrNVPQ0qgsJ2BHCvEflt
+         vAyw6ySUMg1otJuFBz2oIKvoz0cHVDJpfS9KgJgQTOrFyf45vpU3eNXAnqzD3m6r32wo
+         ce86azNJ6lXwuCuLgP00cRzEgGasZbagekIng1wXzZ5fwWcKROJ33NotKVghZSimRgPt
+         ZkosB+6CnXCPfD3Z6V8L7w7ex6y1/OaY9+1pSr9U5e5GbFfkieSPwDC+4kjKYCYZY+Gx
+         gHVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780384591; x=1780989391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6QljEUOAK4GhDaCOum5n6uKCL9G0xte2SQqS3q0iDCI=;
-        b=jZYHJm+7ii6r9GiVqqUMvrSnrlWc6qxz9nSyjzWp6yh+ypGRnHpvEQgHbQrVkBN/Ms
-         7LjUBfp1HecOrNzMMeElYRcK3jILQbVX2S5ReardgZJHkLjyc9PQhD5UWJJkKStvlkAm
-         k4xhKYmIhQKXOJ7+zqtfXqJfwGwYb53XOsFUqIVGldJb85yxTsRWmRZaUkU58Gzf56gE
-         O9ugupYkHm0dr80RSaqUkjl94fHwED44UyHnT0gLgJWQgJ882Nay9Gz3j6CxZcUwjpMV
-         5MNQzLYv9Qz7dYwHMqEd+jzLpST9ZLvbDEyIZ/b7Z3TlR/s93eyOyuJNArZYPNhFdHbN
-         NOlA==
-X-Forwarded-Encrypted: i=1; AFNElJ+Wwy7lLyCKfmFe3G3JnKhtyntZVayROT65oiEntgib5iYlxy3r37fOMZyoe+1GZqe81EWE1Dmmzl5HXqWJEp3XsA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsjVBf7bPvze4lDK21DYqbdy1UAHGLbQH8Iw0QMtJnneCQsLvS
-	Rr2lznIAgkUcRpbOzIgk6CWB9y7UVYCj9AFY+whEDtC2VBlOfit08eHyL5UatDoVtFY6FxbbHVJ
-	HCaPNS/CwV5ZdcWXNQJs7QCH9J+Sojow=
-X-Gm-Gg: Acq92OFb0igJhz4QrC6vcV1B1fL6bDrE8aIUzNhzwWI3p4eW1wCqsKtXQF7cHx1dyMM
-	AQ+ewmJq8XgJYJQsnIPFFdTELdD7AhJ8odDtOFpKoKXIV9tNw6d21eI78tUBYMoDg5Ryp06ow42
-	mWj2ogLaYzPrZPwvWmKzDAitS/nmkqYgZVQlhZCXb9USfBq4OGRjcxvivhIOwl7qM/iJpi6VM3h
-	2b8OQpHc5QttPCoQ0nqHtofZ9p57CmF1K9eTjGKACGuL51htcAovZ4byp984rCNL9Pv4y3VajpE
-	db49WJ0fEHhfyrnoGPYj
-X-Received: by 2002:a05:6830:4194:b0:7e5:68d0:462d with SMTP id
- 46e09a7af769-7e6a1e20025mr8818586a34.19.1780384591168; Tue, 02 Jun 2026
- 00:16:31 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1780419651; x=1781024451;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mi7kVezCcDvg8qXbli6L/hgVp0yagoLhCnZtW1BhRxA=;
+        b=GCJssR3a4w1pF6mDf31TJ6+nzIOalOi/CCALR77qfp8c/0KCkp3tyawtKGSqLaC0re
+         tkDDiVg1cTHLS/f2ggJ/W6AN9fTaf2p3jora6PHKyxF5SzyGgvkvh+Ip8RB0O1u5La73
+         MXlVUG+Dcxmn80lfcmJ/3HqmNgcoZiEFB0aJ7K2zHU7r9JNFzV91e4TDxL1/qUkhOD3T
+         D37lx7IShiLfcn2DDabMDtqEr0JDyAOSWGMn1Dwt0n49A6SpijJ+cIfOekky0keJNKEM
+         pRyWTEsrFulfNPIX2AJtdiTocViJgESsuej+PxgPdKY/o8RFL9zWQQTV0bARxSShhEtT
+         kjig==
+X-Forwarded-Encrypted: i=1; AFNElJ8SrqZQ8GMh3K8K7TFPayZqF/zC0aY3XOPiK8lQr/PC+IwJqEBwWReiqhtAKLAuIJopwH4Gi/4BTBeJSbadmh359A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoI/9kuDwiqkbhhZ5rEHpDs8i4olpxroMIXAuCdPhhf8hNlMIG
+	3/nWLhqhNWo5oHFSgN7uNjKsktdjQbYFhrhtWFAssF+754M9fHIU83d0WRuvOs4ZBNU=
+X-Gm-Gg: Acq92OFQJ3Wzbrdq5e/KIN236lyp3aw04+8ULF4lkzqhhGTsadb568fddUjtpOezW+N
+	UC+N9mCA8/MKu/geOCAKsI2oHo9k+G3i+0kRAT87R8NjA4cjG4MqPxwIBbUXPn7Cg1LEZ7ntF9Z
+	ycEwQCuSiKh2wY7TTJf295yJO/mS48TJcdRyrc7rCg/haFFCWC7MTVjaXepDI8qbcZK5WGMDSrC
+	lB8v2FyysJvZ8OWhvo3UN9+G/FcOZUMZ2W4ijJcJrEiZkE6ZJtIvsLV4RlrwYyXqYB7maPaVuWa
+	YbB//4kRir00/O5Uwehdw2EdguuPfq/LVSseBJA3cxmu3gRE+PEq5at2QXfg1RMCl1Da0xaRVrC
+	7NpTkDvmoWSizUVQ3gvZA0+Z1jZnplalZFjixvpNA+e8DLTgsd2y8JjA0UaqxYWxyobmiuz5N5u
+	GfZDfzNY2cyA1UTsbrmoTDBQsnleos9/oZPLM6EplahqaB17rbYY6hGmRiRLY6ESS8BVhqPnzR1
+	HHY/xXzowTjb/I=
+X-Received: by 2002:a05:600c:348c:b0:490:45bb:8dd9 with SMTP id 5b1f17b1804b1-490b506a773mr11009225e9.8.1780419651420;
+        Tue, 02 Jun 2026 10:00:51 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f360bd6sm541156f8f.36.2026.06.02.10.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jun 2026 10:00:51 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v7 0/5] thermal: samsung: Add support for Google GS101 TMU
+Date: Tue, 02 Jun 2026 17:00:46 +0000
+Message-Id: <20260602-acpm-tmu-v7-0-8047dd54b0e9@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260601-lima-alloc-fix-v1-1-16d3f3b7b780@axis.com>
-In-Reply-To: <20260601-lima-alloc-fix-v1-1-16d3f3b7b780@axis.com>
-From: Qiang Yu <yuq825@gmail.com>
-Date: Tue, 2 Jun 2026 15:16:19 +0800
-X-Gm-Features: AVHnY4JMWdde9M5jvz91Ix9Ornc_9nS90uFwDWQRw6lHLBiqcEwZUx95HD6BJaU
-Message-ID: <CAKGbVbt6NtBOrnE-ijV2cWLdFcHZTK7tqL6Wxoz9FTS5Sz5H2g@mail.gmail.com>
-Subject: Re: [PATCH] drm/lima: call drm_mm_init() with a valid allocation range
-To: Henrik Grimler <henrik.grimler@axis.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Eric Anholt <eric@anholt.net>, Erico Nunes <nunes.erico@gmail.com>, Marek Vasut <marex@denx.de>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Andreas Baierl <ichgeh@imkreisrum.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Rob Herring <robh@kerrnel.org>, 
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
-	lima@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel@axis.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD4MH2oC/2XRTW7DIBAF4KtErEuFB4afrHqPqgsbDwlSY6fYQ
+ a0i3704bWUqLx+a70kz3NlEKdLEjoc7S5TjFMehBPN0YP7cDifisS+ZgQAtmkby1l8vfL7cOBi
+ CJggCLztWxq+JQvx8VL2+lXyO0zymr0dzbtbXvxK1leSGC+4Doe6dJCfCy3sc2jQ+j+nE1pYMt
+ XSVhCJJQGulCkJ5vZNykwpEJWWRsveWnAyig71UtaxWzqpI26ELFpXVUu0kbhIBK4mrxNCTkc4
+ g0E7qWtpK6iI71RtPaNCp7p9cfg6f6ONWvm7+vf6yfAOuTbdp2AEAAA==
+X-Change-ID: 20260113-acpm-tmu-27e21f0e2c3b
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: jyescas@google.com, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780419650; l=7436;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=dzlXq7jykuFHnwxkXRA0IhnPhgOSS7lnT318/jWXEm8=;
+ b=jA88N4eUnchzna0+uTR/HgEIhnZJyvLI13NhkkttLP+TWN7PpfbM1Q+SVISL46WzVFp0Qc8m1
+ p+gpzAm1/qmAKGfuIcbvh/kXQsjvpWkTIeNgdZn1d2LQq3msY/pzW8S
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Mon, Jun 1, 2026 at 8:04=E2=80=AFPM Henrik Grimler <henrik.grimler@axis.=
-com> wrote:
->
-> lima_vm_create() is currently run before va_start and va_end are set up,
-> meaning they are both 0. lima_vm_create() runs drm_mm_init() with them
-> as arguments for the allocator, and if DRM_DEBUG_MM is enabled the
-> DRM_MM_BUG_ON check in drm_mm_init then fires, as seen here on
-> exynos4412-odroid-u2:
->
-> [    1.736297] ------------[ cut here ]------------
-> [    1.740370] kernel BUG at drivers/gpu/drm/drm_mm.c:931!
-> [    1.745574] Internal error: Oops - BUG: 0 [#1] SMP ARM
-> [    1.750697] Modules linked in:
-> [    1.753734] CPU: 0 UID: 0 PID: 41 Comm: kworker/u16:1 Not tainted 7.0.=
-10-postmarketos-exynos4 #11 PREEMPT
-> [    1.763372] Hardware name: Samsung Exynos (Flattened Device Tree)
-> [    1.769446] Workqueue: events_unbound deferred_probe_work_func
-> [    1.775261] PC is at drm_mm_init+0x9c/0xa4
-> [    1.779339] LR is at lima_vm_create+0x144/0x17c
-> [ ... ]
->
-> Fix the issue by moving the lima_vm_create() call after va_start and
-> va_end are set up.
->
-> Fixes: a1d2a6339961 ("drm/lima: driver for ARM Mali4xx GPUs")
-> Signed-off-by: Henrik Grimler <henrik.grimler@axis.com>
-> ---
-> This is a low priority fix and can wait for v7.2, it does not cause
-> any real issues as far as I have seen: drm_mm_init() is re-run some
-> seconds after first run with correct parameters.
+Add support for the Thermal Management Unit (TMU) on the Google GS101
+SoC.
 
-Reviewed-by: Qiang Yu <yuq825@gmail.com>
+The GS101 TMU implementation utilizes a hybrid architecture where
+management is shared between the kernel and the Alive Clock and
+Power Manager (ACPM) firmware. This hybrid ACPM TMU architecture is 
+also present on other Samsung Exynos SoCs (e.g., AutoV920, Exynos850).
 
-drm mm in the empty_vm is not used at all, so no issue caused by it.
-drm mm of a real per app vm matters but they are initialized properly
-after va_start/end set. In fact only the PDE page matters in empty_vm,
-I should only create it instead of the full lima_vm.
+Dependencies
+============
+The set depends on the ACPM TMU firmware helper driver that was queued
+via the Samsung SoC tree: 
+https://lore.kernel.org/r/20260531115713.19388-2-krzk@kernel.org/T/#u
 
-> ---
->  drivers/gpu/drm/lima/lima_device.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpu/drm/lima/lima_device.c b/drivers/gpu/drm/lima/li=
-ma_device.c
-> index 0bf7105c8748..7c873e62c16d 100644
-> --- a/drivers/gpu/drm/lima/lima_device.c
-> +++ b/drivers/gpu/drm/lima/lima_device.c
-> @@ -368,12 +368,6 @@ int lima_device_init(struct lima_device *ldev)
->         if (err)
->                 goto err_out0;
->
-> -       ldev->empty_vm =3D lima_vm_create(ldev);
-> -       if (!ldev->empty_vm) {
-> -               err =3D -ENOMEM;
-> -               goto err_out1;
-> -       }
-> -
->         ldev->va_start =3D 0;
->         if (ldev->id =3D=3D lima_gpu_mali450) {
->                 ldev->va_end =3D LIMA_VA_RESERVE_START;
-> @@ -387,6 +381,12 @@ int lima_device_init(struct lima_device *ldev)
->         } else
->                 ldev->va_end =3D LIMA_VA_RESERVE_END;
->
-> +       ldev->empty_vm =3D lima_vm_create(ldev);
-> +       if (!ldev->empty_vm) {
-> +               err =3D -ENOMEM;
-> +               goto err_out1;
-> +       }
-> +
->         ldev->iomem =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(ldev->iomem)) {
->                 dev_err(ldev->dev, "fail to ioremap iomem\n");
->
-> ---
-> base-commit: c453c60fdba437f69209e027b418c4a24143605a
-> change-id: 20260529-lima-alloc-fix-2cd5408f6493
->
-> Best regards,
-> --
-> Henrik Grimler <henrik.grimler@axis.com>
->
+The bindings, driver and MAINTAINERS are expected to go via the thermal
+tree. The dts and defconfig patches are expected to go via the Samsung
+SoC tree, after the bindings and driver are queued.
+
+Architecture Overview
+=====================
+
+The hardware supports two parallel control paths. For this
+implementation, responsibilities are split as follows:
+
+1. Kernel Responsibility:
+- maintain direct memory-mapped access to the interrupt pending
+  (INTPEND) registers to identify thermal events.
+- map physical hardware interrupts to logical thermal zones.
+- coordinate functional operations through the ACPM IPC protocol.
+
+2. Firmware Responsibility (ACPM):
+- handle sensor initialization.
+- manage thermal thresholds configuration.
+- perform temperature acquisition and expose data via IPC.
+
+Sensor Mapping (One-to-Many)
+============================
+
+The SoC contains multiple physical temperature sensors, but the ACPM
+firmware abstracts these into logical groups (Clusters) for reporting:
+
+- ACPM Sensor 0 (Big Cluster): Aggregates physical sensors 0, 6, 7, 8, 9.
+- ACPM Sensor 1 (Mid Cluster): Aggregates physical sensors 4, 5.
+- ACPM Sensor 2 (Little Cluster): Aggregates physical sensors 1, 2.
+
+The driver maps physical interrupt bits back to these logical parents.
+When an interrupt fires, the driver checks the bitmask in the INTPEND
+registers and updates the corresponding logical thermal zone.
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Changes in v7, addressed Sashiko's driver review:
+- add a rollback mechanism in `acpm_tmu_control` to prevent leaving hardware in
+  a dirty state when we fail to enable a sensor midway during probe or
+  resume.
+- prevent calling `ops->read_temp` on a disabled sensor if a concurrent disable
+  occurs (e.g. suspend).
+- don't mix mutex guards with goto as per cleanup guidelines
+- fix irq clear order in `acpm_tmu_thread_fn`. Avoid clearing a new interrupt
+  that occurs during `thermal_zone_device_update` (which can cause missed
+  over-temperature events).
+- initialize hardware thresholds at boot and prevent boot-time spurious
+  interrupts (which previously triggered because sensors were enabled before
+  thresholds were set).
+- ensure clocks are disabled when removing the driver, even if an autosuspend
+  is pending (which would otherwise get cancelled by `pm_runtime_disable()`,
+  leaking the clock).
+- add rollback in `acpm_tmu_suspend` on failure. If system suspend fails at
+  `ops->suspend`, re-enable the TMU sensors so they don't remain disabled.
+- Link to v6: https://lore.kernel.org/r/20260528-acpm-tmu-v6-0-b4d7ce57594b@linaro.org
+
+Changes in v6:
+- defconfig: reword commit message (Krzysztof).
+- bindings: make samsung,acpm-ipc a required property (Krzysztof,
+  sashiko)
+- address sashiko's review feedback on the driver:
+  - ensure that the loop continues to disable the rest of the sensors
+    on the teardown path in `acpm_tmu_control`.
+  - avoid leaving the hardware in an active state during remove by
+    s/pm_runtime_put_autosuspend(dev)/pm_runtime_put_sync(dev) in
+    `acpm_tmu_control`.
+  - initialize `acpm_temp` in `acpm_tmu_get_temp` to mitigate the risk
+    of exposing stack memory.
+  - fix race condition in `acpm_tmu_update_thresholds`. Guard 
+    `was_enabled = sensor->enabled;` with the mutex held.
+  - prevent keeping the sensor disabled on a threshold setting error
+    scenario.
+  - allow the IRQ subsystem to correctly detect an interrupt storm by
+    returning IRQ_NONE.
+  - devres ordering in probe, eliminate a UAF by moving the IRQ request
+    after registering the zones.
+- self review on Kconfig:
+  - add `depends on HAS_IOMEM`, due to `devm_platform_ioremap_resource`
+  - add `default ARCH_EXYNOS`, based on Krzysztof's patch from:
+    Link: https://lore.kernel.org/linux-samsung-soc/b20c560f-4bc3-4686-9c91-36d93f1535b2@oss.qualcomm.com/T/#t
+- Link to v5: https://lore.kernel.org/r/20260525-acpm-tmu-v5-0-85fde739752e@linaro.org
+
+Changes in v5:
+- no changes, rebase on top of krzk/for-next branch.
+- Link to v4: https://lore.kernel.org/r/20260423-acpm-tmu-v4-0-8b59f8548634@linaro.org
+
+Changes in v4: address sashiko review:
+- thermal driver: avoid mixing mutex cleanup helpers with goto statements
+- firmware, tmu:
+  - remove __packed from union acpm_tmu_msg.
+  - return ERR_PTR(-ENODEV) for devm_acpm_get_by_phandle when
+    CONFIG_EXYNOS_ACPM_PROTOCOL is disabled. 
+- Link to v3: https://lore.kernel.org/r/20260420-acpm-tmu-v3-0-3dc8e93f0b26@linaro.org
+
+Changes in v3:
+- thermal driver: use .set_trips() instead of .set_trip_point()
+- new cleaning/prerequisite patches for firmware/acpm:
+  - firmware: samsung: acpm: Make acpm_ops const and access via pointer
+  - firmware: samsung: acpm: Drop redundant _ops suffix in acpm_ops members
+  - firmware: samsung: acpm: Consolidate transfer initialization helper
+- firmware: acpm: TMU helpers - check return value from the firmware
+- overall change: emphasize that the ACPM TMU hibrid approach applies to
+  other Samsung SoCs as well (Exynos850, AutoV920).
+- dts: drop active trip points, update trip point values
+- collect R-b tags
+- Link to v2: https://lore.kernel.org/r/20260119-acpm-tmu-v2-0-e02a834f04c6@linaro.org
+
+Changes in v2:
+- architecture: switch from a syscon/MFD approach to a thermal-sensor
+  node with a phandle to the ACPM interface
+- bindings: address Krzysztof's feedback, drop redundencies,
+  interrupts description.
+- firmware: introduce devm_acpm_get_by_phandle() to standardize IPC
+  handle acquisition.
+- thermal driver: drop compatible's data and use the static data from
+  the driver directly.
+- defconfig, make EXYNOS_ACPM_THERMAL a module
+- Link to v1: https://lore.kernel.org/r/20260114-acpm-tmu-v1-0-cfe56d93e90f@linaro.org
+
+---
+Tudor Ambarus (5):
+      dt-bindings: thermal: Add Google GS101 TMU
+      thermal: samsung: Add Exynos ACPM TMU driver GS101
+      MAINTAINERS: Add entry for Samsung Exynos ACPM thermal driver
+      arm64: dts: exynos: gs101: Add thermal management unit
+      arm64: defconfig: enable Exynos ACPM thermal support
+
+ .../bindings/thermal/google,gs101-tmu-top.yaml     |  69 +++
+ MAINTAINERS                                        |   8 +
+ arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi   | 136 +++++
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  18 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/thermal/samsung/Kconfig                    |  19 +
+ drivers/thermal/samsung/Makefile                   |   2 +
+ drivers/thermal/samsung/acpm-tmu.c                 | 618 +++++++++++++++++++++
+ 8 files changed, 871 insertions(+)
+---
+base-commit: a1c3227fc1a1cd83cd7fceb93406da4e37fe06eb
+change-id: 20260113-acpm-tmu-27e21f0e2c3b
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
