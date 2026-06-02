@@ -1,68 +1,35 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36D53F39DE
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2026 17:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC447395ADF
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2026 18:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780419659; cv=none; b=kXHMZtGtDClGXA9ZakwJFVioJ2UVSzUxffPOlwAXnvoVgQNeQuJA1sHSNtZIo/ne22M5SW7B/yCZqoQ6ULXZC5XWl3eRa3laKC9n5VeZOJ3jhofi9MpmijCCTaAeHQr1MMrdXNDVsVVQJcMp8KzcQg6WKM5wGI4yX6t3AWFaSwE=
+	t=1780425468; cv=none; b=a3P9qoOesgnnPU3j3I4xFhD0Ex0Y8obZJ9RhTKprgaZ92GRUrl+sIaSQoV+5VY3X2+0b1JkU12C7vuI/kDG7wx5jIhGRdxNC8/8kUQBbR18PEuEtRSv3nQMmr65drp5e0qE91IQUtOKcWxHLnreVY1jvmhjTyQZyX+KJaKN7yx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780419659; c=relaxed/simple;
-	bh=cWhAhaDFLAoUDdG0hR8RPClQQZ34eSbbH9qVOO1JS/c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HzilN1ter2PAF+11DUuyWCHLHbAnLawYQzmW1iI8zanNPy8yR4tnsEJ/EYQ0v3vLDgmhX0NKEsgQlz9sTIvBTlawQNilsztLsoaI7JHj9MKrxTJ9hnEGuDhF/QUXlN/2R3cOoUovzDIiP8XjcYd6N4bxZY9jb0pDn3sDnFHt1b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JeZALUGu; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1780425468; c=relaxed/simple;
+	bh=+9icRJM878guDktkvKRdV7M11E818HdtxnWGnfxrGmU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B1Gf2wLB3Ia5POOQ0TVz9fEY4+jgPfwR1FPq4rp4L+Uki/Nieo0+Qz95JxBWCtYUiSw7mkLFM46QhL6tpemFpeCdwlcGH6Ro48dH874xi4stBzSvknW6mSuLzOW14aWbEymJ8Dx6OZBJz5cY2KQzMOia3ubWsX2GC4OqipuspgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=lyLKTlSB; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JeZALUGu"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4600cbb06deso1645855f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2026 10:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1780419654; x=1781024454; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SDntjNasVGG8hcuxF4CdQbpDwBoTb2ZE5Gcryz3TjxU=;
-        b=JeZALUGuTmh4/QY9U753eEc/VnUnN6YJj8jbgz4Ngvmv20VER+7y2GwRxU9bSFWIAZ
-         Lm8ND5K8o+lVjCJcKj15k13CqBd/liS9t2VkuXmfSi+UhVWFTvOXNCa1EAR/6yZOawLE
-         VmGXzzhZL1kEX4GgZgxx63tzyvpsxYVwNGrTJpjbIhDdkBW1BtWh4KyCMbIl+qC4pSB9
-         iZLM4qd2f0uxKH4ohjHbWMkzme2/3fQQ9cilaeHFdQh+J0EiX8ttXbwvtSPLHso/vLSh
-         4p1fBMSQEluV5UsoWHU7mLcQZlA/bubPb0L8VDgKoUcroGYpyG3Jw40Fmil9dGiX4CNF
-         4/CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780419654; x=1781024454;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SDntjNasVGG8hcuxF4CdQbpDwBoTb2ZE5Gcryz3TjxU=;
-        b=UXAKAy6/2oPWmZPvNxXfIvXwwkWVzSLou9EYtDyaGzRUvwMijGoVSiVOo5EgLmiXiq
-         9ExeSXZsV7cgvXt8COBV5xBwoqZt3lVDc+Fw0vmZz/EYO6d93V+H1pR91Vc/LKtKhCYN
-         NMKmSHK1b36yBjyPKfUqqjiWm3t/2roF/QLjJXpSDjQfyOIjJsGxC5W27tHnl0/4l63T
-         Vb2zQc9ytJ0jYDgCh63w804u9TaGiugLRQGhZjpp7Y2z1UJ7a9jGHEiz1AyVsZ039VLv
-         8kPiJQ3EZ8tmVjVDbDWaMosh530pZVIZGoZ/IEn/MSe1avKXJB0+LuhTyDkapG7YNN8L
-         Ca6Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+l2Bk28y/V5HAGNTZpTafoGQMYxV8DZK6fqmHhC2iQh8WXxGGOTZroxLa5bOVN0vt6c8pB7dAoTHnCvZNi2DIaOg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt/bGg4KTPKpwS3Gc+tvR6yYeSocdjCSjclh3VZUtAP4p3H/Jt
-	KRxa7QjowF49RrtlyVQQx9GehW2vCovlbFF7Qdbb4wzzFk7VQtWLn9dS+bHwi1eTePk=
-X-Gm-Gg: Acq92OFqoUXTklrHbFAu8PkVVI1bMLu4s9ejaWAt6X/jGZO9cmTM2QQl18bV2XceJyZ
-	Ph1icOK8Lr698CxUZyoSpkCPUBHu9YtYDFXbvDguvCgD5uGOhS2nebFaiOuTlQcKm5DWxnLGpOI
-	cOvFHA18Vi4eweG/t5Rgce5x0hflzW0yFTDH1hmfgdkgMBwgg/aCIm7yeU0Pz/pSMWtUOsaEd7z
-	aNQzynqxwtsO4bUanah1MDX306z71e77NZzPZ8tWSppF3vQ4E8YvRH+k6HjH+AsdDqQkXK1pAPs
-	FRZMiG5w/oZWfOgk4nzwruzhzZ8kyTLy7Bo39J1j/bQJhx2pt7temKcqpPw26JGN1ruDsZMSBXT
-	j2Rv8U9uB7eLSmweXSmIDaKJoUiXuTpIW1bKzaQ+9BuGSb5WwCJv/K1ke6ReN+Pwix+V5wyOsIo
-	WNq27spl3/0HvIx3ZP9zZZ7JiGuoo08E/SnAic1rHdH1Mfum+x8+kalefTEiOWqwvZtiUgzobgs
-	aX/r+VSD2bO+iM=
-X-Received: by 2002:a05:6000:46d3:b0:45e:73a1:8d04 with SMTP id ffacd0b85a97d-4601f6286e5mr118252f8f.1.1780419654223;
-        Tue, 02 Jun 2026 10:00:54 -0700 (PDT)
-Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f360bd6sm541156f8f.36.2026.06.02.10.00.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 10:00:53 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 02 Jun 2026 17:00:50 +0000
-Subject: [PATCH v7 4/5] arm64: dts: exynos: gs101: Add thermal management
- unit
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="lyLKTlSB"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1780425462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ifzs265vUAPV6IFIZqod6woQ6e3KxesGPyzpRuY/iQY=;
+	b=lyLKTlSBQSQJUwrUC6x4vG/WGdEJePCQnq6NVERHIGUwOlV7NeAqpEC2A5PYYTeRM4YwQT
+	3if7BAnbRhIm5dZwAO8amUxkTsAlByPdU7nS5e6/8Wp6P/vFoXwRzJDr5pCqluka3qY3Cm
+	PCkNjWRi11HbsnuNPylJomeG2W1CbLY=
+From: Henrik Grimler <henrik@grimler.se>
+Subject: [PATCH RESEND v4 0/3] drm/bridge: sii9234: use extcon to detect
+ cable attachment
+Date: Tue, 02 Jun 2026 20:36:47 +0200
+Message-Id: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,282 +38,81 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260602-acpm-tmu-v7-4-8047dd54b0e9@linaro.org>
-References: <20260602-acpm-tmu-v7-0-8047dd54b0e9@linaro.org>
-In-Reply-To: <20260602-acpm-tmu-v7-0-8047dd54b0e9@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: jyescas@google.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-hardening@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780419650; l=7066;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=cWhAhaDFLAoUDdG0hR8RPClQQZ34eSbbH9qVOO1JS/c=;
- b=apG+pBt4RaD3p55VL+tYKafqLWdfptJk341hfVXxmHuVVAPTR+ucK4vZXv0pPUcu7yU4JlNIQ
- lVJbAqiECM1BpF553YSpUdwqEDaojhCiK1t6+56AP0VrZcwe/LLfHvb
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
+ linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2044; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=+9icRJM878guDktkvKRdV7M11E818HdtxnWGnfxrGmU=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBqHyLk9cgk+1xEeOBEHFUSpeRNgrTIniPD26alJ
+ mpxLsjrnnWJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCah8i5AAKCRCwB25JC3Fh
+ a1hBB/9Sv18iNp9etcxbIHTuwjpTLL2QqfhikCmtehealHMm8Dd7N3r71Bx7InayxC/j2KNDfod
+ mPC61myClxgXnxatDXBDhhr6N+OlsBJrVuAYCRtIbehKvul4unwOD5JspIfECEK2YUxPWiC1TnH
+ x8oTDDy/a1aQ27N1H4q6EkFEP2+MMmm8ZhmZTqzkqf7oJG5eoJATscB2x6uyWatK2YGej0OxJqo
+ jx8aWRp+UNqv/Dj3Tq3tFQ5s0zmEqi9hwm0vDw45mu4EKBjbn1nrVRFbkNWMLRio5HVVFUapxjj
+ 822T2mk5dFJjygbST/RDFskh61NnUrey1ARv5cjOg+I42moL
+X-Developer-Key: i=henrik@grimler.se; a=openpgp;
+ fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
+X-Migadu-Flow: FLOW_OUT
 
-Add the Thermal Management Unit (TMU) support for the Google GS101 SoC.
+Hi,
 
-Describe the TMU using a consolidated SoC node that includes memory
-resources for interrupt identification and a phandle to the ACPM IPC
-interface for functional control.
+This series fixes so HDMI through the sii9234 MHL chip works when
+cable is hotplugged, by making the MHL chip use extcon cable detection
+functions. Patch 3, that actually implements the extcon parts, is heavily
+inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
+cable detection logic to detect MHL") by Maciej Purski.
 
-Define thermal zones for the little, mid, and big CPU clusters, including
-associated trip points and cooling-device maps to enable thermal
-mitigation.
+Before these changes, HDMI only worked if cable was plugged in before
+booting. If no cable was connected, then wlr-randr still showed HDMI
+as connected, with 0x0 px, which confused at least some UIs (phosh)
+and caused problems:
+https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Tested on exynos4412-i9305.
+
+Best regards,
+Henrik Grimler
+
+Signed-off-by: Henrik Grimler <henrik@grimler.se>
 ---
- arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi | 136 +++++++++++++++++++++++
- arch/arm64/boot/dts/exynos/google/gs101.dtsi     |  18 +++
- 2 files changed, 154 insertions(+)
+Changes in v4:
+- Collect tags
+- Link to v3: https://lore.kernel.org/r/20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi
-new file mode 100644
-index 000000000000..b27d1a539ec2
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-tmu.dtsi
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Google GS101 TMU configurations device tree source
-+ *
-+ * Copyright 2020 Samsung Electronics Co., Ltd.
-+ * Copyright 2020 Google LLC.
-+ * Copyright 2026 Linaro Ltd.
-+ */
-+
-+#include <dt-bindings/thermal/thermal.h>
-+
-+/ {
-+	thermal-zones {
-+		cpucl2-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 0>;
-+
-+			trips {
-+				big_switch_on: big-switch-on {
-+					temperature = <80000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				big_mitigate: big-mitigate {
-+					temperature = <90000>;
-+					hysteresis = <5000>;
-+					type = "passive";
-+				};
-+
-+				big_hot: big-hot {
-+					temperature = <100000>;
-+					hysteresis = <5000>;
-+					type = "hot";
-+				};
-+
-+				big_critical: big-critical {
-+					temperature = <105000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&big_mitigate>;
-+					cooling-device = <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		cpucl1-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 1>;
-+
-+			trips {
-+				mid_switch_on: mid-switch-on {
-+					temperature = <80000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				mid_mitigate: mid-mitigate {
-+					temperature = <90000>;
-+					hysteresis = <5000>;
-+					type = "passive";
-+				};
-+
-+				mid_hot: mid-hot {
-+					temperature = <100000>;
-+					hysteresis = <5000>;
-+					type = "hot";
-+				};
-+
-+				mid_critical: mid-critical {
-+					temperature = <105000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+				     trip = <&mid_mitigate>;
-+					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+			       };
-+			};
-+		};
-+
-+		cpucl0-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&tmu_top 2>;
-+
-+			trips {
-+				little_switch_on: little-switch-on {
-+					temperature = <80000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				little_mitigate: little-mitigate {
-+					temperature = <90000>;
-+					hysteresis = <5000>;
-+					type = "passive";
-+				};
-+
-+				little_hot: little-hot {
-+					temperature = <100000>;
-+					hysteresis = <5000>;
-+					type = "hot";
-+				};
-+
-+				little_critical: little-critical {
-+					temperature = <105000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&little_mitigate>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 86933f22647b..b6866ef99fb3 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -74,6 +74,7 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0000>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL0>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
-@@ -86,6 +87,7 @@ cpu1: cpu@100 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0100>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL0>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
-@@ -98,6 +100,7 @@ cpu2: cpu@200 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0200>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL0>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
-@@ -110,6 +113,7 @@ cpu3: cpu@300 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0300>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL0>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&ananke_cpu_sleep>;
- 			capacity-dmips-mhz = <250>;
-@@ -122,6 +126,7 @@ cpu4: cpu@400 {
- 			compatible = "arm,cortex-a76";
- 			reg = <0x0400>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL1>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
-@@ -134,6 +139,7 @@ cpu5: cpu@500 {
- 			compatible = "arm,cortex-a76";
- 			reg = <0x0500>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL1>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&enyo_cpu_sleep>;
- 			capacity-dmips-mhz = <620>;
-@@ -146,6 +152,7 @@ cpu6: cpu@600 {
- 			compatible = "arm,cortex-x1";
- 			reg = <0x0600>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL2>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
-@@ -158,6 +165,7 @@ cpu7: cpu@700 {
- 			compatible = "arm,cortex-x1";
- 			reg = <0x0700>;
- 			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_CPUCL2>;
-+			#cooling-cells = <2>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&hera_cpu_sleep>;
- 			capacity-dmips-mhz = <1024>;
-@@ -639,6 +647,15 @@ watchdog_cl1: watchdog@10070000 {
- 			status = "disabled";
- 		};
- 
-+		tmu_top: thermal-sensor@100a0000 {
-+			compatible = "google,gs101-tmu-top";
-+			reg = <0x100a0000 0x800>;
-+			clocks = <&cmu_misc CLK_GOUT_MISC_TMU_TOP_PCLK>;
-+			interrupts = <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH 0>;
-+			samsung,acpm-ipc = <&acpm_ipc>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
- 		trng: rng@10141400 {
- 			compatible = "google,gs101-trng",
- 				     "samsung,exynos850-trng";
-@@ -1862,3 +1879,4 @@ timer {
- };
- 
- #include "gs101-pinctrl.dtsi"
-+#include "gs101-tmu.dtsi"
+Changes in v3:
+- Fix return of dev_err_probe in patch 2 and patch 3, spotted by
+  Dmitry and Marek respectively.
+- Change to depends on EXTCON || !EXTCON instead of select
+- Collect tags for patch 1 (not 3 since there were (minor) changes)
+- Link to v2: https://lore.kernel.org/r/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se
 
+Changes in v2:
+- Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
+- Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
+
+---
+Henrik Grimler (3):
+      drm/bridge: sii9234: fix some typos in comments and messages
+      drm/bridge: sii9234: use dev_err_probe where applicable
+      drm/bridge: sii9234: use extcon cable detection logic to detect MHL
+
+ drivers/gpu/drm/bridge/Kconfig   |   1 +
+ drivers/gpu/drm/bridge/sii9234.c | 124 +++++++++++++++++++++++++++++++--------
+ 2 files changed, 102 insertions(+), 23 deletions(-)
+---
+base-commit: a87fef0880c4f52769b5a3c2fc1b2d73aaa04eb3
+change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
+
+Best regards,
 -- 
-2.54.0.1013.g208068f2d8-goog
+Henrik Grimler <henrik@grimler.se>
 
