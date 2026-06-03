@@ -1,167 +1,154 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C7407CF2
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Jun 2026 08:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F4838B147
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Jun 2026 09:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780475347; cv=none; b=HijCjRquXhuS32c/ZbczSnFE0H4RWqxxFv07jF0zSApTB+i9VMnPqkExJQIRZw21eRjdU2sXm+q6YmyrhVdi6aLT8u0eOWnFAg0u2gdvG32Claisdy4MyaZdzBemaEMUhMhSze9ry4QyEnkoVD/pBoJ6UoEnfU1wz1bwG6ZqwBM=
+	t=1780478776; cv=none; b=n8yK+mR0P8ZIvWrQK+bAnPG9bplNDTP9n5zqE0JqOTc7igNUCWLkf2eKLSVcovSJFO7WmypNNCw2DVRQNK2ALyI3T0sdBI+mPL56n540oL3/gvGdTqzfnQQgziEKhpCsJvgEaC6p6rzwHYrJgwqvrGa3pF9mlTS7A4XKNXixX/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780475347; c=relaxed/simple;
-	bh=bloimK55FpfGsQLgS/eRSYfIoH0XLCbUnwSE5SJK4mA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GessjhAzB3zpHyEx1OUAmBliH8HbrgaATC7wfAwYmKTyaPrtWb1S34UeSg4WqgoytcwQlWk1Tu6rTEUBBdTsm3RtIybS7pag7Lmc2XRuETBhTMQCVYEwRnVKclu7McdeqldAGUvvJVyNCsbZx7DRjUo5NwjT24s3NKGZ0UtKliQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EWNcTRTN; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1780478776; c=relaxed/simple;
+	bh=IRixWQMwizXFdhkvvgBqMpo7g1d2nL7BH7+e0C+a08c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T3YOl/Xb/9FDUkWsDKLENbhJHLN3fFNztShsljU5TU5bbVyIApyF7GyYKBbWWLnos2hHCIgjhMdOpRamMmmQ6zEruThWKTUbeHc8hREp+4F1XIQTJc70Pe2uSsZUjkGoGKoeZ0Js0S7TSjSxG0cQrmd126L+MMKS73YR2nJDZZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lTFed7pm; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EWNcTRTN"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-45ef616daf6so4940665f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2026 01:29:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTFed7pm"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4903f7a90d1so113685805e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2026 02:26:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1780475344; x=1781080144; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/UFR5yeANXS1ym7dwBfhF3G3wNluixUtSkJDeWkxZK0=;
-        b=EWNcTRTNT7pDA05mXrH769q8zlWlrxXDTZsceI7a+eI2mwvm/CFjPvFhngCqQpnf29
-         srTGnAkEzRHnZOFVbZ9wDjyA7NnuXxjwwwzJwh5gpuDRaIkoiCdV5KYCK6LDcL79g08Y
-         SVCOhIlhpcKFLOo+UZXyLH6MUeCm2tgyZiSYeiipUZ4lSA/pSGTwGXh01+fS3+O77lI6
-         tJ6tKef1JgE2i3o+3EH7AmaQjcwlZ75A0qToc7AlQHCAIaN8jQjoRM03pZ1nbGHiBvlD
-         h1YRCm5+oawq2kj0/711nznw/tEUAc+0K1I0msDkv8f/ELYR8JirQYzP6dFdVWiIqIMv
-         +E/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780475344; x=1781080144;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+        d=linaro.org; s=google; t=1780478773; x=1781083573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/UFR5yeANXS1ym7dwBfhF3G3wNluixUtSkJDeWkxZK0=;
-        b=Fz/frV1QU+Ubyts3nwlI1nH1CrIMJXGfJfujUlAF/8Ep2vpyL3mTGhUmcpiypXj7HY
-         pkDg8eYk1J8dDf4LltU4SByI0mri8wWBH5vFB6X+4dJ5A+zF7c8zqMrFNPuIi/MRIOxg
-         +Yehb+UiAvfooqkr3TyShqnZk3bQ67JPTr+2/QgJLt/VNO+1HnzhKINO/dRUu0vu2iEC
-         ig66vuuo3kmyVJPfjEGFiiWRKJn6a3jSt/XUnMMOa67PO2E1Vl8zhtZD5xsT+M1CM/Ys
-         I84aAfQ0pGlzXIDBOrKc95o8Ui4po+7o9P9o5IMxdNnsirbVhC+aTJjaQwaWaMDJ8yDq
-         HFoA==
-X-Forwarded-Encrypted: i=1; AFNElJ99jmX1bVPAwdo6MiLP7RWFfgkKD0N8wsDQbgx/AKxE99/5waMdZ+5YwbazPoYEyhlxfXye0ts2gdajJSeBbunYBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxtLXcbYIPKQxligSoJIP5oTmz4Zq8W3gbhdpCdsM1XewdSkfV
-	bHWrz3dBgTY4q8l61dFRuEcd3jg+zDT5Zl0+gjOSc/HtF3z8cYL9SZpxFkxrxLV6sHc=
-X-Gm-Gg: Acq92OGkEgT+S7Gy2AzWlSCeXhu9yyrQ3cxPXoRJl3NZdiZ5BleJTmbdEnhODqzad94
-	yFF0EERIsRUv1Rs0JtpCr0etQ1J57CsIs2YjkzLYIRfUK10gGNCZEX/MqkcAny0A84LVgSKgPTR
-	YVVXZtQTr8Iuy0pmo8Fc3F2rQvJZWSEoQs4YiqTP5qbnRPQkRe/1wWm85RIfDjXgQrncuY8iEtU
-	cTgLeAyA/kN2K+lS6xdZrnj89Cq6dcltnFrlsA2d9pciy2ckhTyTONdh4y9BuOCiTTZGknBb1Rw
-	zxvOCxX4WaOFJPo6d0UAPxkqxiBt3yfSCM+a87RbuaXP5ZiIXRFRcda5xf7h2TkPuEXo61hbIgy
-	L0Qkak9x9Vhgu1SfiDLw9QFO9IGJ32TJlJ4QFv29/ZGpB3DU8dMoj8dbPCeZxBp1U3i3EgOoqJ+
-	10JCGxcCEGgDm9UhghqkMd7J9bFWMv/QGDK2E/VDZc35nZSZVi207k1Y8n+/Bwoz7W6RhzhC0Va
-	bdMjpvHn254soqVlS00XwtfC6LBir/FIIi9/FM=
-X-Received: by 2002:a5d:5389:0:b0:45e:f2bd:2b16 with SMTP id ffacd0b85a97d-4602182dbb8mr2455986f8f.18.1780475344302;
-        Wed, 03 Jun 2026 01:29:04 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:9b1c:c9e0:4645:9af0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f360bd6sm6191614f8f.36.2026.06.03.01.29.03
+        bh=LVv22gZyTmtymIxhoGte2pKFNDZ9dT7qVuNtoXNbMUA=;
+        b=lTFed7pmMZ9uNCoZyARWr5g75M74ezYc785BMdLbnW3+GprgZFXL2z7BiQMkkClVQy
+         kE0iWjhW/CCeFhJORITaU0rp7nqJo0uF1x1xyeg8komFjBHumA6y+wjMuuktiw0u2dHt
+         hjotIolEewzWLC1X+8uvAK4/jrwTQNrqL6SHEIACpfNQwJCKKTcp8hW4gxN2HcbGWzuL
+         gCs35UAASBnHOSmjRoJ9uWtApnrrnUpTc4kpGKnghjOSml/WecpQWqkTSbV8BpyA780j
+         jOQuE2YvFApmYQJl7O1Gk5sfcvkcx/a/kBC9Qm1cdkAiPYIMzVqCWlRX2g+ee/kS+G8i
+         SQmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780478773; x=1781083573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LVv22gZyTmtymIxhoGte2pKFNDZ9dT7qVuNtoXNbMUA=;
+        b=mHuDr7xE9ORcfLfwGZpek/2pVF3g8NsqIguamdakw/h5tsNTMcuVv6UFQ+2qcWJTtW
+         58jONT+k1wkUyA2o/oYoUz9hDhe/pvkkeUHNgL0waNmCDQTiDsS2OgmSROyzBVGH+NLF
+         sesrcDHcwaBimimIVs4oPYhSD/VCJrOLXvYuekK3YEk5yldEC69mKOYEPn9UIYRmY2xk
+         3D205rGS34sjujxdK6VB2OKP7YABCY2b3DY8tQ94MWWEW6mF1tcGrHB0uan9c7N0I/aF
+         eCmvUtD3eCXqdr6z8jRvi2u+JQAN0zxQ6GpP6lJK5BLf2TrFc2PSb/aZgcx02NMuByX1
+         Mmow==
+X-Forwarded-Encrypted: i=1; AFNElJ8/SS2rXXlZjNv7lCNyOHT9yrP8FXn40crJEJhNEigSTZE0DillDlsi+yxnSuFHtlbOijXHMMTsGoFucfgTlbJdDA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0wHlrVvXrEHcO4Dpj73A1HIi0s1x7sBUebDFguy25ZHNV4gs
+	ZufFlCE9Fho3DFEKUo+b0Rk1C+YCOuS6+qiAFRs7C1VAWZB+2n3QafraUZJr29CYjq0=
+X-Gm-Gg: Acq92OFGg2SgOLyKe0pgbmzugQgd36K44C0/sc9Tz4Z+OCDKRAsghpd8aiPTwc8U6dw
+	CztvWW4+YjsOgEYB/drGFrlUo+Uu23pSx0fhOxYBsxVTSgjED6xQ2rrot9V2zp9GMvBQnuwMrgG
+	6oXoftvzxLF1oytjpikiWKbexjEpGwEBIhki76Vu+ghwKBB8bDUycLww7vzkHZQIernPkJAIUp1
+	ZnT3bQmjMgpTICHRj+C3WfHch9vYX5/h0WhsHyYe8CXP4Mm1w0arZCGnmSqse4CanY891YluHiq
+	g0pkyCI1LM90jQPAuz+V1hGDMmvoE+9KzlP8XlnMmLIQ/NrgQuo83sXVkam4URIPJG1FyraaSmR
+	e8LPXxkZEUi+0Zo0r61HADNXhM0DWkApOswy3m8ZTTbb0H2CjXvE9+st5PszaqxEQ1fc1Bb4ylO
+	P79smk2aLnv/gWVGZ3bwre8eQ4i2xaaZWf9DHSjhg1hA==
+X-Received: by 2002:a05:600c:45d4:b0:490:5074:651e with SMTP id 5b1f17b1804b1-490b60ef350mr41726765e9.25.1780478773360;
+        Wed, 03 Jun 2026 02:26:13 -0700 (PDT)
+Received: from [10.11.12.110] ([82.76.215.73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490b79d64e8sm35451535e9.0.2026.06.03.02.26.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jun 2026 01:29:03 -0700 (PDT)
+        Wed, 03 Jun 2026 02:26:12 -0700 (PDT)
+Message-ID: <c76c8f9b-bdd1-4006-aa28-735254f0409a@linaro.org>
+Date: Wed, 3 Jun 2026 12:26:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/5] thermal: samsung: Add Exynos ACPM TMU driver GS101
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: jyescas@google.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260602-acpm-tmu-v7-0-8047dd54b0e9@linaro.org>
+ <20260602-acpm-tmu-v7-2-8047dd54b0e9@linaro.org>
+ <DIYTOGU8I2DV.1GKZ59F7AJWTE@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DIYTOGU8I2DV.1GKZ59F7AJWTE@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jun 2026 09:29:02 +0100
-Message-Id: <DIZ9U0RE11CQ.3QJET21NQ2QJL@linaro.org>
-Cc: "Bartlomiej Zolnierkiewicz" <bzolnier@gmail.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Daniel
- Lezcano" <daniel.lezcano@kernel.org>, "Zhang Rui" <rui.zhang@intel.com>,
- "Lukasz Luba" <lukasz.luba@arm.com>, "Peter Griffin"
- <peter.griffin@linaro.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "open
- list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>, "open list"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] thermal/drivers/exynos: fix clock ordering race and
- shared IRQ handling
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Rosen Penev" <rosenp@gmail.com>, <linux-pm@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20260603013018.239703-1-rosenp@gmail.com>
-In-Reply-To: <20260603013018.239703-1-rosenp@gmail.com>
+Content-Transfer-Encoding: 7bit
 
-On Wed Jun 3, 2026 at 2:30 AM BST, Rosen Penev wrote:
-> Fix two pre-existing issues in exynos_tmu_probe/remove:
->
-> 1. Clock ordering race: The driver manually unprepares clocks in
->    exynos_tmu_remove() and the probe error path, but the IRQ handler and
->    thermal zone are devm-managed and remain active until after the manual
->    cleanup.  If the shared IRQ fires or the thermal zone is polled in tha=
-t
->    window, clk_enable() is called on an unprepared clock, which is illega=
-l.
->    Replace devm_clk_get() + manual clk_prepare() with devm_clk_get_prepar=
-ed(),
->    and devm_clk_get() + manual clk_prepare_enable() with
->    devm_clk_get_enabled(), so clock unprepare is tied to the devm lifetim=
-e
->    and happens after the IRQ and thermal zone are released.  Remove the
->    now-redundant manual cleanup from the error path and remove function.
->
-> 2. Shared IRQ handling: The driver requests a shared IRQ (IRQF_SHARED) wi=
-th
->    NULL as the hardirq handler, causing the kernel to wake the threaded
->    handler for every interrupt on the shared line.  The threaded handler
->    unconditionally returned IRQ_HANDLED without verifying that the TMU
->    actually generated the interrupt, which could cause other shared-IRQ
->    devices to be starved.  Change tmu_clear_irqs to return the interrupt
->    status register value, and return IRQ_NONE from the handler if no TMU
->    interrupt was pending.
->
-> Assisted-by: opencode:big-pickle
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 81 +++++++++-------------------
->  1 file changed, 24 insertions(+), 57 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index 47a99b3c5395..5dc22006d7f8 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -196,7 +196,7 @@ struct exynos_tmu_data {
->  	void (*tmu_control)(struct platform_device *pdev, bool on);
->  	int (*tmu_read)(struct exynos_tmu_data *data);
->  	void (*tmu_set_emulation)(struct exynos_tmu_data *data, int temp);
-> -	void (*tmu_clear_irqs)(struct exynos_tmu_data *data);
-> +	u32 (*tmu_clear_irqs)(struct exynos_tmu_data *data);
->  };
-> =20
->  /*
-> @@ -760,24 +760,28 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq,=
- void *id)
->  {
->  	struct exynos_tmu_data *data =3D id;
-> =20
-> -	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> -
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> =20
-> +	if (!data->tmu_clear_irqs(data)) {
-> +		clk_disable(data->clk);
-> +		mutex_unlock(&data->lock);
-> +		return IRQ_NONE;
-> +	}
-> +
->  	/* TODO: take action based on particular interrupt */
-> -	data->tmu_clear_irqs(data);
 
-After that change the TODO comment now feels misplaced.
-From a quick glance, it seems it should be moved as well to just
-before if (!data->tmu_clear_irqs(data))
 
-> =20
-> +	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> +
->  	return IRQ_HANDLED;
+On 6/2/26 10:49 PM, Alexey Klimov wrote:
+> On Tue Jun 2, 2026 at 6:00 PM BST, Tudor Ambarus wrote:
+>> Add driver for the Thermal Management Unit (TMU) managed via the Alive
+>> Clock and Power Manager (ACPM), found on Samsung Exynos SoCs such as
+>> Google GS101 (and Exynos850, autov920, etc.).
+>>
+>> The TMU on utilizes a hybrid management model shared between the
+>> Application Processor (AP) and the ACPM firmware. The driver maintains
+>> direct memory-mapped access to the TMU interrupt pending registers to
+>> identify thermal events, while delegating functional tasks - such as
+>> sensor initialization, threshold configuration, and temperature
+>> acquisition - to the ACPM firmware via the ACPM IPC protocol.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>> ---
+>>  drivers/thermal/samsung/Kconfig    |  19 ++
+>>  drivers/thermal/samsung/Makefile   |   2 +
+>>  drivers/thermal/samsung/acpm-tmu.c | 618 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 639 insertions(+)
+>>
+>> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+>> index f4eff5a41a84..383ae3f56cbb 100644
+>> --- a/drivers/thermal/samsung/Kconfig
+>> +++ b/drivers/thermal/samsung/Kconfig
+>> @@ -9,3 +9,22 @@ config EXYNOS_THERMAL
+>>  	  the TMU, reports temperature and handles cooling action if defined.
+>>  	  This driver uses the Exynos core thermal APIs and TMU configuration
+>>  	  data from the supported SoCs.
+>> +
+>> +config EXYNOS_ACPM_THERMAL
+>> +	tristate "Exynos ACPM thermal management unit driver"
+>> +	depends on THERMAL_OF
+>> +	depends on HAS_IOMEM
+>> +	depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
 
-Best regards,
-Alexey
+I forgot to drop "|| (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)", ACPM is NOT
+optional for this driver. I will comply this way with Arnd's solution from:
 
+https://lore.kernel.org/linux-samsung-soc/178006367096.55906.16678510397337205828.b4-ty@b4/T/#t
+
+>> +	default ARCH_EXYNOS
+>> +	help
+>> +	  Support for the Thermal Management Unit (TMU) on Samsung Exynos SoCs
+>> +	  (such as Google GS101 and Exynos850).
+> 
+> This driver doesn't support Exynos850. There is no initialisation sequence
+> and etc, moreover the next section is also not entirely correct for Exynos850.
+> Not sure why it is mentioned here in such way.
+> (Not even mentioning that ACPM TMU part is not aligned for Exynos850)
+> 
+
+Okay, I'll drop the reference to e850.
+
+Cheers,
+ta
