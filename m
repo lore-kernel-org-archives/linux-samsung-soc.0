@@ -1,96 +1,211 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD99481A82;
-	Thu,  4 Jun 2026 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48A3DD50F
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jun 2026 20:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780591659; cv=none; b=BOdOu14U0UVyujQdGVhXe+gd4FFi+7eJAb6IlCJ7scSbp2wg3Be6vyx6YiynK00PGJxJQJ4+P1opT0v7YvQVi/tHVnx0lQcgqOmRTvr0LaavSU/t2B42PdpdsH1aGUu00lCMje1N+uUIA5GdTuEYEGOKJfQo9LChPd6znzyuKN0=
+	t=1780606538; cv=none; b=qlFuwJqI6jHsx6fnnxoMz3RXiXz33sy275HuVRCXrjplYy7W+cAFXd0kCwb0gQokgEnH01PgpsJzy4PnZH1dTbrOKQKx1Hc5LqDNYxeD3mDNTUCmHiGI+7NFq+3UPD7KAsDU4KDp0pFeyeIq0LMNg07w5EUTYe59R73tgX5Z5ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780591659; c=relaxed/simple;
-	bh=YPPo8chYFB6K+I/VduhClAFbvZ2Q8inq9cNixSn75as=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cCdo8/Rfnp9BTCDJSZDvT0LMome8P31/i8u0Mg4W4vV99yiDaM21F+Jhnfd0zB12P4aDdfmfwM4Ihs0IBHyOpHp2XqhJqAgjxEGcBNPv6INDjjcysOevAJ14v11fonGtz4iFysxVxzp5xJn7SFQUJe/Lr0RTDMGrl+lgjQjO9Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCPsq6i+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780606538; c=relaxed/simple;
+	bh=ea7cuzjVH8l4WaNc0d4fbb0kmTQLbO6kPFR9OFprAfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tCTLKC/ix1PHF4Nj/YoNyEQBvet4l15ASUqO5S0Ltu/S4rIVF55bebPsy9zDR2ykCO1afeLj1aF/KV7m3+RqPu3etziPgygfXQ0ocsO+p1zemKcNOiRnTW7OHSpkC5iIrXsD4kzgm+fwpU9xwTf6X23eeXNy9OzpKqXRNBTlHvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=lVLAylAy; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCPsq6i+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3415C1F00893;
-	Thu,  4 Jun 2026 16:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780591658;
-	bh=bzUqB8Gc1l3ZB4Tk3EJ59Avlc95OFGNMp6MXOzHPn0U=;
-	h=From:To:Cc:Subject:Date;
-	b=HCPsq6i+V09pfMmfGxWoKNEYyGxwupz2Nu52t1RkNAdF0kK3rtYxslp0ZSIfYJwjG
-	 t0njQ6W8KVpDccxS4UAO0yQ5QWxPy/Li6Bt3Pw+rvZ+ip7+V9CCcxKwTOBaMSaMbS0
-	 VApU/XyCYuFzcbM3k/qM9OAlp1HHzwV1ZIe1snH1WbUjUJgSfdl+soXu1hcwt6NqBK
-	 MgayyiNn4hPA+oEXQTo+3WxhbKroODaEmIuLhfdQiPUR571FnRn/EU585VxiDrWvwO
-	 DziRfjP0JoOHrkNK5rsvvTg0aQrjFHcMyLWf950Jwjm255LGlPuRU0PKTUucw+CVC0
-	 aWCid2xG/b3VQ==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="lVLAylAy"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-45eedcdaeaaso787320f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jun 2026 13:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1780606535; x=1781211335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+NJl+VOtJmF26AH7Q6wbNKM2etWMSqxxrEhElEZ90kc=;
+        b=lVLAylAyaUuctwWwXM7IxqzBTSZ9VAsUppIvBLn5lK+m1KKmirK1ZXhHjk3esUF8zv
+         JQ7YxFbiMuJuY5c9n+0H4G0+H4FWONRJh4h66ePYi+kpxzDj0LgqrDIekF9dPieZDjDe
+         dKLLVs+1X6kRgoFanWNJpT9y2BHtIxF8DC+zjE+ezbnROGhg1g94pRdhI61YzozJMaVP
+         sVRNQpoJpd8BbdEdbkrAkFjESeGdyH5yfAbDPlVTe9H6RlAIRNZLIPl5947iVgdeD2Er
+         eK586pkpWIjJP5zKVH5+lO3VPFzTTswg0PD2blRoz7jDMP1Pxgpf1PeesrPQBrOD3heB
+         IGCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780606535; x=1781211335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+NJl+VOtJmF26AH7Q6wbNKM2etWMSqxxrEhElEZ90kc=;
+        b=aVUhAvNxg8vK5y1afEi2/7QhJg9ZB3kGZfQaLdI2ip/JFgrF/7jQSNPWJTGBnf+5JI
+         rRh0YVDGTeq2zJJFsuJ/J4eXJSJYu+GUHJBb3P0EyyAneNvqL7ctvvxxTJVC3CbO+6gF
+         hCAWH9F8US+9PmZywoMrPUzQ0Yqs4SwpPIvzqYSjk+vnj+0k7radt96P2QlgQv9lgi1k
+         KcbW9gChtrjO5Qq5MPBsRHo7lznQxl7lA7UddRdwwXWG5KleXdOzMNs9NVeDeLsE4r+1
+         FzF8M4eYhBJak+8Zq899tofsfWL1QGG219W9bdmHZdICuZs2F3Dl0G2h7FEvcdy9QAuy
+         PtJA==
+X-Forwarded-Encrypted: i=1; AFNElJ+BseMbXZ3UJiYsFklRmQG2hs1Z4bjoWAUvJgGm7SPBpgBZ9yutkqf1G+E56fNXyt6zJk9Rjyii9den6B0EC8uLPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu/lnaYMZbiOyD2aMc9xgUUmhm+KYw3ksKm1FHoSEZGCnx1l6f
+	JsGhRh5bkjtYDLJjEwU9DvI7sL/lSGpnfxweDW4tzl2XqRph554ggqdaCbz+iJGe1EM=
+X-Gm-Gg: Acq92OFEpWS1edz70ntvZS7bfWTiUCXSUh33F/YhUIUw494AiiB0ucRpFf/RHk4a6qe
+	EJVXxXY2GMKyYTxVCt4X0hZmAEyBj32hvlyc5rCidOXd4LOjuA9pFBo4EigS6puSiHG17z1/PVs
+	cuw9S3KZ70XHrDfTFecK/5o+NHOzK5kWe/S+b4O4ElolaAhGt/n9jzpMz0vs3pOzN7JQ33U7zaV
+	OeVzo4JrPOUxTZ2OF1cfA3jAI8P3/hfY8405PaZjtjXGFSUrDnbILEiZhbvtq2guxAVXQeUL98a
+	Po+LDfl03noje8wCDED4vmJtJ/wZi+mrz6Vci/SgcLB5v610KwPAPpFPSxyIqY3VEUnvR/sCrVv
+	RU91ddUQrUrz9EzkJbdrujy4weR+cMoUT6dkp38vWglIWK+2gKdbbumFpacDbugnqbOSDj0cAey
+	DedZx8itYoRouR7otjeHiL1FkNSrvEns84OQzAukuzzBFirRcqJf6FQ54ITEGLXM8UOdqVR2ORW
+	Cfk9PatCkM=
+X-Received: by 2002:a05:600c:8b83:b0:490:b106:4fe8 with SMTP id 5b1f17b1804b1-490c25e268dmr4427955e9.33.1780606534635;
+        Thu, 04 Jun 2026 13:55:34 -0700 (PDT)
+Received: from localhost (cust-east-par-46-193-69-147.cust.wifirst.net. [46.193.69.147])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4601f345209sm19050059f8f.17.2026.06.04.13.55.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 13:55:34 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jonas Gorski <jonas.gorski@gmail.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk: samsung: drivers for v7.2
-Date: Thu,  4 Jun 2026 18:47:25 +0200
-Message-ID: <20260604164729.83284-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1] spi: Use named initializers for platform_device_id arrays
+Date: Thu,  4 Jun 2026 22:55:26 +0200
+Message-ID:  <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1535; i=krzk@kernel.org; h=from:subject; bh=YPPo8chYFB6K+I/VduhClAFbvZ2Q8inq9cNixSn75as=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqIawh9/qRh5P2EStG1jdge75NoukzkQxSp+Gpe IfafIhNgjaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaiGsIQAKCRDBN2bmhouD 12e/D/9szn7IdgDb1ogfGC/rerXAt1JQ4TLsuhxza6M0m9A8mUSAkPEjmH8D3/SjgR9EJM92b4N /AZOU25nzgNc0veD0E4Yt0l/aY/Ps83KdeBpEn3Q3ey80UG68fveDunU1f/aFLh4cgNpV+jgQrG KZQ7AbJ5D+KpKFfktUI5TOIbukRejrH7NwFgO4AKKvrvzmFyifnbReU4Tv8jq/dlAPKAmqeqRNe 12XfhjCPlspltebls8uOcxn7PUslM1E2y4XyTWWfmV4ZcCFjNnV01zKpWSMp4P8SIPZYk4+xaVl g5eDDH3eFHQRc/LHQTKjh1UUintVsRY/wNmRBoQftQU6QxZAdE09Pergeu73vG64ffR2W5VRP+Z Pkc5zqX0w3Fl9tzgCLxgfLGIJ+YhPbhfksbAAp/15+hJYpoqEOQOeaFm++3KibgreHRG/cGdhKO qTijaAot/jnJESCkR8CivFAUOv0CBDO5eHR6QDMmemppuySXwUKFcEjRGlsxdnYNRSVY91bMSnG p7GhKnar2ddumN3iY7jo0Kqk6ICq2RxPfMLCD6YO7U2HQmcNF499evxPTz3p9F2PH+r+04MDM4G Tc/2wEEsZBpLpu88chn8lZMQeQGO09JILx37TP6wsSmNEoDDTdgIkS69RO8CRf/XDbRM0Z1q8gT fKAx3kUWHjepdFw==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4127; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=ea7cuzjVH8l4WaNc0d4fbb0kmTQLbO6kPFR9OFprAfk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqIeY+OnML+6BoYUWkNCcBW4CCesKWtAUwtH7M1 CmI8V/tdnuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaiHmPgAKCRCPgPtYfRL+ ToUeB/9Ds3iuojuAku3iJ0znnvPHYZeMZmNwhkINjPq7CaINJ7JSSTyEpswyNm8rlz0f3IVltgG X9FN32hGno1eod3IWEdXziUvimgNDfm+qys7MJ19RMbC6O9cM0qWH6C9itsGBh65JGITdDOy1BT rq/uQnuBCGD3Jtmj40WqMfGiAyWwFXPTlg6bKMl6D50jYoQRL6GtCnS7jwJiF3jazUVHOmWkbKR aOUfXFLmbLIUxNMXk7A1eK9qDN7j6YP1DwbM8tPr7aDcibwnH4SQtyO/44gnPf9NNktZivcxQMu RDWOo7FyPzJwfsbv35FnUs3qqloZfoa2bHv7I7dqpjHrMANr
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Hi Stephen and Michael,
+Named initializers are better readable and more robust to changes of the
+struct definition. This robustness is relevant for a planned change to
+struct platform_device_id replacing .driver_data by an anonymous union.
 
-Notable change outside of this pull: Peter Griffin was added as co-maintainer
-to Samsung SoC and Samsung SoC clocks.  See also commit 20550601bf4 in
-linux-next and
-https://lore.kernel.org/all/178015858043.36212.8088079079471293822.b4-ty@b4/
+While touching these arrays unify spacing and usage of commas.
 
-Best regards,
-Krzysztof
+Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
+see e.g.
+https://lore.kernel.org/all/cover.1779893336.git.u.kleine-koenig@baylibre.com/
+for details about my quest to modify platform_device_id.
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+Best regards
+Uwe
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+ drivers/spi/spi-altera-platform.c | 4 ++--
+ drivers/spi/spi-bcm63xx.c         | 3 +--
+ drivers/spi/spi-cs42l43.c         | 4 ++--
+ drivers/spi/spi-rspi.c            | 4 ++--
+ drivers/spi/spi-s3c64xx.c         | 6 +++---
+ drivers/spi/spi-sh-msiof.c        | 4 ++--
+ 6 files changed, 12 insertions(+), 13 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/spi/spi-altera-platform.c b/drivers/spi/spi-altera-platform.c
+index 3ee5d3480bb4..3de7df73f216 100644
+--- a/drivers/spi/spi-altera-platform.c
++++ b/drivers/spi/spi-altera-platform.c
+@@ -139,8 +139,8 @@ MODULE_DEVICE_TABLE(of, altera_spi_match);
+ #endif /* CONFIG_OF */
+ 
+ static const struct platform_device_id altera_spi_ids[] = {
+-	{ DRV_NAME,		ALTERA_SPI_TYPE_UNKNOWN },
+-	{ "subdev_spi_altera",	ALTERA_SPI_TYPE_SUBDEV },
++	{ .name = DRV_NAME,		.driver_data = ALTERA_SPI_TYPE_UNKNOWN },
++	{ .name = "subdev_spi_altera",	.driver_data = ALTERA_SPI_TYPE_SUBDEV },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, altera_spi_ids);
+diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
+index f8cfe535b2a3..43d7b54e3ae8 100644
+--- a/drivers/spi/spi-bcm63xx.c
++++ b/drivers/spi/spi-bcm63xx.c
+@@ -477,8 +477,7 @@ static const struct platform_device_id bcm63xx_spi_dev_match[] = {
+ 		.name = "bcm6358-spi",
+ 		.driver_data = (unsigned long)bcm6358_spi_reg_offsets,
+ 	},
+-	{
+-	},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, bcm63xx_spi_dev_match);
+ 
+diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
+index 68f208ef1e01..6961e36b89d1 100644
+--- a/drivers/spi/spi-cs42l43.c
++++ b/drivers/spi/spi-cs42l43.c
+@@ -438,8 +438,8 @@ static int cs42l43_spi_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id cs42l43_spi_id_table[] = {
+-	{ "cs42l43-spi", },
+-	{}
++	{ .name = "cs42l43-spi" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, cs42l43_spi_id_table);
+ 
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index a0c77e02bc90..38df676774ee 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -1377,8 +1377,8 @@ static int rspi_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id spi_driver_ids[] = {
+-	{ "rspi",	(kernel_ulong_t)&rspi_ops },
+-	{},
++	{ .name = "rspi", .driver_data = (kernel_ulong_t)&rspi_ops },
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 37176e557099..28c56b06fa99 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1613,10 +1613,10 @@ static const struct s3c64xx_spi_port_config gs101_spi_port_config = {
+ 
+ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	{
+-		.name		= "s3c6410-spi",
+-		.driver_data	= (kernel_ulong_t)&s3c6410_spi_port_config,
++		.name = "s3c6410-spi",
++		.driver_data = (kernel_ulong_t)&s3c6410_spi_port_config,
+ 	},
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s3c64xx_spi_driver_ids);
+ 
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 070e16bc764f..f23db85a1889 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1310,8 +1310,8 @@ static void sh_msiof_spi_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct platform_device_id spi_driver_ids[] = {
+-	{ "spi_sh_msiof",	(kernel_ulong_t)&sh_data },
+-	{},
++	{ .name = "spi_sh_msiof", .driver_data = (kernel_ulong_t)&sh_data },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
+ 
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-7.2
+base-commit: a225caacc36546a09586e3ece36c0313146e7da9
+-- 
+2.47.3
 
-for you to fetch changes up to e11560b050ce867bd7d3ccea138231db54e2250a:
-
-  clk: samsung: exynos990: Fix PERIC0/1 USI clock types (2026-05-30 18:50:36 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for v7.2
-
-1. Exynos850: Mark APM (Active Power Management) I3C clocks as critical,
-   because they are necessary for communication with firmware but we do
-   not have any consumer of them so far.
-
-2. Exynos990: Correct the parents of a few muxes and propagate rate
-   requests up.
-
-----------------------------------------------------------------
-Alexey Klimov (1):
-      clk: samsung: exynos850: mark APM I3C clocks as critical
-
-Denzeel Oliva (1):
-      clk: samsung: exynos990: Fix PERIC0/1 USI clock types
-
- drivers/clk/samsung/clk-exynos850.c |   5 +-
- drivers/clk/samsung/clk-exynos990.c | 307 +++++++++++++++++-------------------
- 2 files changed, 146 insertions(+), 166 deletions(-)
