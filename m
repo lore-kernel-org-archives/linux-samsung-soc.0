@@ -1,211 +1,113 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF48A3DD50F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jun 2026 20:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C34B320CCC
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Jun 2026 20:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780606538; cv=none; b=qlFuwJqI6jHsx6fnnxoMz3RXiXz33sy275HuVRCXrjplYy7W+cAFXd0kCwb0gQokgEnH01PgpsJzy4PnZH1dTbrOKQKx1Hc5LqDNYxeD3mDNTUCmHiGI+7NFq+3UPD7KAsDU4KDp0pFeyeIq0LMNg07w5EUTYe59R73tgX5Z5ik=
+	t=1780690750; cv=none; b=jE2DJzu7YKCzR6gJlKEibTS8DYBK4W5X12gGx80UCzVHU7tNRbOB444xbyoSmsE21o2t+uAjVi7YiZce+rb7eDq+8FX17jpFhdKnoTkyF27Nkzx1mLcKjz3veYDum04XEXCManEDKaFfSG4t+Hzw9tsyM5KM0O/e7NGaDEwbLnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780606538; c=relaxed/simple;
-	bh=ea7cuzjVH8l4WaNc0d4fbb0kmTQLbO6kPFR9OFprAfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tCTLKC/ix1PHF4Nj/YoNyEQBvet4l15ASUqO5S0Ltu/S4rIVF55bebPsy9zDR2ykCO1afeLj1aF/KV7m3+RqPu3etziPgygfXQ0ocsO+p1zemKcNOiRnTW7OHSpkC5iIrXsD4kzgm+fwpU9xwTf6X23eeXNy9OzpKqXRNBTlHvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=lVLAylAy; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1780690750; c=relaxed/simple;
+	bh=OoF9Xm4zEceiVun1U4P/sU/e+H8GRtR4qWLoIVDocR8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RnguzFs/ZnpGtY99Lmf2K0BPsuLKCf4jxaThB+JXyE6yztsRNE5bc69STAZo6/w9PnSKHl0D61RE+um/Mpfkzl5vQIaQm1GyX+WXzWf/0Iy2ems6KxDSTLz5axNjfQ5uwDP4XtHsdu7dIviUVGhQm4ugzm7ZiCQQbYITLmbg8c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X6OiBpFC; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="lVLAylAy"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-45eedcdaeaaso787320f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jun 2026 13:55:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6OiBpFC"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-490b915ded5so19218655e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jun 2026 13:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1780606535; x=1781211335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NJl+VOtJmF26AH7Q6wbNKM2etWMSqxxrEhElEZ90kc=;
-        b=lVLAylAyaUuctwWwXM7IxqzBTSZ9VAsUppIvBLn5lK+m1KKmirK1ZXhHjk3esUF8zv
-         JQ7YxFbiMuJuY5c9n+0H4G0+H4FWONRJh4h66ePYi+kpxzDj0LgqrDIekF9dPieZDjDe
-         dKLLVs+1X6kRgoFanWNJpT9y2BHtIxF8DC+zjE+ezbnROGhg1g94pRdhI61YzozJMaVP
-         sVRNQpoJpd8BbdEdbkrAkFjESeGdyH5yfAbDPlVTe9H6RlAIRNZLIPl5947iVgdeD2Er
-         eK586pkpWIjJP5zKVH5+lO3VPFzTTswg0PD2blRoz7jDMP1Pxgpf1PeesrPQBrOD3heB
-         IGCA==
+        d=linaro.org; s=google; t=1780690748; x=1781295548; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LV2TWmv6e3Y0iXxtyydvRw2ubePqc7/64NdStyqTFkI=;
+        b=X6OiBpFCrxJbjlJ03ze5J3NWppdVGJPXM2Q42Ph13oQBGQM9cn6lSHkocV/G8CMBSj
+         ru1qdNZBg2Q/OObI2gGSRgyhzSaLRGz4lF1z83zBJjaJvwZd4/Zn/skQS5l4pRxtLtEg
+         BD/tL6x9TtdpybmYIf2kKzml/xfGzyh2YP5qQvrb03zd06YydrnWewXYtjHcthGNcaDg
+         0+7LmcUEqQ/j1VGNGihIdkXUzGP8yZBPCipqrIKQMf0dAKUvXmYRYpTf3obbCUHYJbAz
+         cM2ukIjiYB8OPjJSHKdy3qnxy+YrnTrM3MVxm9rON2hqsfCHAkFci6gKBwz7kafJBgm1
+         IFvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780606535; x=1781211335;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1780690748; x=1781295548;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+NJl+VOtJmF26AH7Q6wbNKM2etWMSqxxrEhElEZ90kc=;
-        b=aVUhAvNxg8vK5y1afEi2/7QhJg9ZB3kGZfQaLdI2ip/JFgrF/7jQSNPWJTGBnf+5JI
-         rRh0YVDGTeq2zJJFsuJ/J4eXJSJYu+GUHJBb3P0EyyAneNvqL7ctvvxxTJVC3CbO+6gF
-         hCAWH9F8US+9PmZywoMrPUzQ0Yqs4SwpPIvzqYSjk+vnj+0k7radt96P2QlgQv9lgi1k
-         KcbW9gChtrjO5Qq5MPBsRHo7lznQxl7lA7UddRdwwXWG5KleXdOzMNs9NVeDeLsE4r+1
-         FzF8M4eYhBJak+8Zq899tofsfWL1QGG219W9bdmHZdICuZs2F3Dl0G2h7FEvcdy9QAuy
-         PtJA==
-X-Forwarded-Encrypted: i=1; AFNElJ+BseMbXZ3UJiYsFklRmQG2hs1Z4bjoWAUvJgGm7SPBpgBZ9yutkqf1G+E56fNXyt6zJk9Rjyii9den6B0EC8uLPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/lnaYMZbiOyD2aMc9xgUUmhm+KYw3ksKm1FHoSEZGCnx1l6f
-	JsGhRh5bkjtYDLJjEwU9DvI7sL/lSGpnfxweDW4tzl2XqRph554ggqdaCbz+iJGe1EM=
-X-Gm-Gg: Acq92OFEpWS1edz70ntvZS7bfWTiUCXSUh33F/YhUIUw494AiiB0ucRpFf/RHk4a6qe
-	EJVXxXY2GMKyYTxVCt4X0hZmAEyBj32hvlyc5rCidOXd4LOjuA9pFBo4EigS6puSiHG17z1/PVs
-	cuw9S3KZ70XHrDfTFecK/5o+NHOzK5kWe/S+b4O4ElolaAhGt/n9jzpMz0vs3pOzN7JQ33U7zaV
-	OeVzo4JrPOUxTZ2OF1cfA3jAI8P3/hfY8405PaZjtjXGFSUrDnbILEiZhbvtq2guxAVXQeUL98a
-	Po+LDfl03noje8wCDED4vmJtJ/wZi+mrz6Vci/SgcLB5v610KwPAPpFPSxyIqY3VEUnvR/sCrVv
-	RU91ddUQrUrz9EzkJbdrujy4weR+cMoUT6dkp38vWglIWK+2gKdbbumFpacDbugnqbOSDj0cAey
-	DedZx8itYoRouR7otjeHiL1FkNSrvEns84OQzAukuzzBFirRcqJf6FQ54ITEGLXM8UOdqVR2ORW
-	Cfk9PatCkM=
-X-Received: by 2002:a05:600c:8b83:b0:490:b106:4fe8 with SMTP id 5b1f17b1804b1-490c25e268dmr4427955e9.33.1780606534635;
-        Thu, 04 Jun 2026 13:55:34 -0700 (PDT)
-Received: from localhost (cust-east-par-46-193-69-147.cust.wifirst.net. [46.193.69.147])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4601f345209sm19050059f8f.17.2026.06.04.13.55.33
+        bh=LV2TWmv6e3Y0iXxtyydvRw2ubePqc7/64NdStyqTFkI=;
+        b=ZjChtbDcQRfGZVexsP6DQOrfWEcbj/tOrrAeVL5s14leDO/7VAGAV8YXS81bC2FiGI
+         tdRuBbdWtxFZoLoDmaIoklZEcLn9YrT1RKd9R96tps7bacupwIaa4UYBgRTGQ2n80+Kz
+         +GZL6CDm2ay9shkk7B3gu3niuQrmaVHNZ1HFFFX9zsi0Km5xIAOYmHiwEvp6Z3/8Q3rT
+         c1FkbJKXZ9vdbhHKz77bmjJBUAP/t03Iu8gV478QPbDajpiEG0mqaJpnC5/FNl75xyHe
+         zF75Rl8920dL5mDvzX8xxFdMUMzaIlX/Ay/Gr2S6SOjQntbZxuxiRAgdoTYIphCpU6uI
+         zJ2A==
+X-Forwarded-Encrypted: i=1; AFNElJ+gL730jMLXNYbgX2LrntL1Zb03UulPUNViuu0pfBLF9kJo1BRgfO+jEeDQAhfhW+2m359bDU3jE3OgrhDMBzVvDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6OqGAqx1Oie5Ek7s+latSxRZiTax8eUkbCq4GpjW7uotUUJ4U
+	Zbv7n1R1NVpsSEs6pjGWg3pBNi1OC2vUgPr+6tsYgP0zJkG+VEhbHQGo2AndEgZKsyk=
+X-Gm-Gg: Acq92OFDfw3dO+nNfAQ4OmzXUw7egCH8ch5J7Jsq2sjS3HjzDTr3bmiluUuqGHTmnln
+	FJm8nZrSBowAI+hr6IRhHsEInJir5Q7BySb1E221ONNnVw1bSjG0tCqecK2WIWu/5/DPk8xX0iV
+	0dyPr2XQFwqH8NR6uH/DH5y3wjrgkatqSJSEE8tqRlk7Qri3BrsaG1nLgqDzGQ/fsq7wUXYfgBq
+	CJb/fNIAqS4ygQzUxr8JiHbG2NUYMnFHaewi+qjVrx2i6Q6IknnqzTX3jRtEHYbA6HqaqSM7lc+
+	ku1sWXkMSuWsBy+c9XF/dtXxtdHq6sc6vV/OtPff7qcND4jLBw8bJhm3A3P6kUDVQlF2POYYquo
+	frV/vjja1rJixUxbXsICks2y+4FZIbBTua8Er6LElgWjv7hff0Gs5t5rTdgIRhw1xZMO0SOadYC
+	+kJGabmVREdGnOJhKY6JwlQooT5/jKI8hfaFcZGIYeGgvMOoaHpyxKXY90uEip11tIwOLWokdGf
+	cyBj04Y06ikkARWKp52k0HvOxA=
+X-Received: by 2002:a05:600d:6444:20b0:490:5466:8591 with SMTP id 5b1f17b1804b1-490c26e1acbmr64974595e9.12.1780690747723;
+        Fri, 05 Jun 2026 13:19:07 -0700 (PDT)
+Received: from [127.0.1.1] ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc413541sm190533895e9.14.2026.06.05.13.19.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 13:55:34 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Jonas Gorski <jonas.gorski@gmail.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v1] spi: Use named initializers for platform_device_id arrays
-Date: Thu,  4 Jun 2026 22:55:26 +0200
-Message-ID:  <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
+        Fri, 05 Jun 2026 13:19:06 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH 0/3] Exynos PMU fixes for cpu hotplug and cpuidle routines
+Date: Fri, 05 Jun 2026 21:18:49 +0100
+Message-Id: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4127; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=ea7cuzjVH8l4WaNc0d4fbb0kmTQLbO6kPFR9OFprAfk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqIeY+OnML+6BoYUWkNCcBW4CCesKWtAUwtH7M1 CmI8V/tdnuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaiHmPgAKCRCPgPtYfRL+ ToUeB/9Ds3iuojuAku3iJ0znnvPHYZeMZmNwhkINjPq7CaINJ7JSSTyEpswyNm8rlz0f3IVltgG X9FN32hGno1eod3IWEdXziUvimgNDfm+qys7MJ19RMbC6O9cM0qWH6C9itsGBh65JGITdDOy1BT rq/uQnuBCGD3Jtmj40WqMfGiAyWwFXPTlg6bKMl6D50jYoQRL6GtCnS7jwJiF3jazUVHOmWkbKR aOUfXFLmbLIUxNMXk7A1eK9qDN7j6YP1DwbM8tPr7aDcibwnH4SQtyO/44gnPf9NNktZivcxQMu RDWOo7FyPzJwfsbv35FnUs3qqloZfoa2bHv7I7dqpjHrMANr
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACkvI2oC/x3MQQrCMBBG4auUWTsQI43Uq4gLSf+0A5qGDC2R0
+ rs7dPn44O2kqAKlR7dTxSYqS7a4XjqK8ztPYBmtyTsfXHA9o/3yoly+K8eyzsX8A07SoHzzqcd
+ 4j0MYEtmhVJxgg+frOP7sYMawbQAAAA==
+X-Change-ID: 20260605-exynos-pmu-cpuhp-idle-fixes-32f5ed7c969f
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Sashiko <sashiko-bot@kernel.org>
+X-Mailer: b4 0.14.3
 
-Named initializers are better readable and more robust to changes of the
-struct definition. This robustness is relevant for a planned change to
-struct platform_device_id replacing .driver_data by an anonymous union.
+This was reported by Sashiko here:
+https://sashiko.dev/#/patchset/20260513-exynos850-cpuhotplug-v4-0-54fec5f65362@linaro.org?part=3
+and was mainly introduced by enabling cpu hotplug
+support and cpuidle for gs101-based SoCs.
 
-While touching these arrays unify spacing and usage of commas.
+One patch removes strange usage of smp_processor_id() and
+other patches deal with a few missing error paths issues
+here and there in setup_cpuhp_and_cpuidle() and around.
 
-Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+Tested on gs101-raven device, I don't see any regressions
+but testing from others will be appreciated.
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
-Hello,
+Alexey Klimov (3):
+      soc: samsung: exynos-pmu: use target cpu ID in hotplug callbacks
+      soc: samsung: exynos-pmu: fix use-after-free of interrupt generator node
+      soc: samsung: exynos-pmu: fix error paths in cpuhotplug/idle states setup
 
-see e.g.
-https://lore.kernel.org/all/cover.1779893336.git.u.kleine-koenig@baylibre.com/
-for details about my quest to modify platform_device_id.
+ drivers/soc/samsung/exynos-pmu.c | 75 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 15 deletions(-)
+---
+base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
+change-id: 20260605-exynos-pmu-cpuhp-idle-fixes-32f5ed7c969f
 
-Best regards
-Uwe
-
- drivers/spi/spi-altera-platform.c | 4 ++--
- drivers/spi/spi-bcm63xx.c         | 3 +--
- drivers/spi/spi-cs42l43.c         | 4 ++--
- drivers/spi/spi-rspi.c            | 4 ++--
- drivers/spi/spi-s3c64xx.c         | 6 +++---
- drivers/spi/spi-sh-msiof.c        | 4 ++--
- 6 files changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/spi/spi-altera-platform.c b/drivers/spi/spi-altera-platform.c
-index 3ee5d3480bb4..3de7df73f216 100644
---- a/drivers/spi/spi-altera-platform.c
-+++ b/drivers/spi/spi-altera-platform.c
-@@ -139,8 +139,8 @@ MODULE_DEVICE_TABLE(of, altera_spi_match);
- #endif /* CONFIG_OF */
- 
- static const struct platform_device_id altera_spi_ids[] = {
--	{ DRV_NAME,		ALTERA_SPI_TYPE_UNKNOWN },
--	{ "subdev_spi_altera",	ALTERA_SPI_TYPE_SUBDEV },
-+	{ .name = DRV_NAME,		.driver_data = ALTERA_SPI_TYPE_UNKNOWN },
-+	{ .name = "subdev_spi_altera",	.driver_data = ALTERA_SPI_TYPE_SUBDEV },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, altera_spi_ids);
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index f8cfe535b2a3..43d7b54e3ae8 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -477,8 +477,7 @@ static const struct platform_device_id bcm63xx_spi_dev_match[] = {
- 		.name = "bcm6358-spi",
- 		.driver_data = (unsigned long)bcm6358_spi_reg_offsets,
- 	},
--	{
--	},
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, bcm63xx_spi_dev_match);
- 
-diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
-index 68f208ef1e01..6961e36b89d1 100644
---- a/drivers/spi/spi-cs42l43.c
-+++ b/drivers/spi/spi-cs42l43.c
-@@ -438,8 +438,8 @@ static int cs42l43_spi_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id cs42l43_spi_id_table[] = {
--	{ "cs42l43-spi", },
--	{}
-+	{ .name = "cs42l43-spi" },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, cs42l43_spi_id_table);
- 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index a0c77e02bc90..38df676774ee 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1377,8 +1377,8 @@ static int rspi_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id spi_driver_ids[] = {
--	{ "rspi",	(kernel_ulong_t)&rspi_ops },
--	{},
-+	{ .name = "rspi", .driver_data = (kernel_ulong_t)&rspi_ops },
-+	{ }
- };
- 
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 37176e557099..28c56b06fa99 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1613,10 +1613,10 @@ static const struct s3c64xx_spi_port_config gs101_spi_port_config = {
- 
- static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 	{
--		.name		= "s3c6410-spi",
--		.driver_data	= (kernel_ulong_t)&s3c6410_spi_port_config,
-+		.name = "s3c6410-spi",
-+		.driver_data = (kernel_ulong_t)&s3c6410_spi_port_config,
- 	},
--	{ },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, s3c64xx_spi_driver_ids);
- 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 070e16bc764f..f23db85a1889 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1310,8 +1310,8 @@ static void sh_msiof_spi_remove(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id spi_driver_ids[] = {
--	{ "spi_sh_msiof",	(kernel_ulong_t)&sh_data },
--	{},
-+	{ .name = "spi_sh_msiof", .driver_data = (kernel_ulong_t)&sh_data },
-+	{ }
- };
- MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- 
-
-base-commit: a225caacc36546a09586e3ece36c0313146e7da9
+Best regards,
 -- 
-2.47.3
+Alexey Klimov <alexey.klimov@linaro.org>
 
