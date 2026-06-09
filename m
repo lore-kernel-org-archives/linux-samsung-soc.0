@@ -1,134 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D973C3EF0D3;
-	Tue,  9 Jun 2026 10:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFA33EBF02
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jun 2026 11:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780999654; cv=none; b=UMEYPf+m+lyszU0PnYcCrGkiRo1SkYIb5Vla3K9vwQDgNYqXnF7xKYQPg/qZki8YR1V929o/q80iO9L3ptpsbYY/KH5hzz4UaNOBsSvGk63nMAkKbehp5aIGYTs7zM6ELL2kaPNtjjOHi64P3pzTI2EjfVCgIWxXHz1RcfTGa34=
+	t=1781005493; cv=none; b=JpGd6IrgIzTzV0MkJHnNTSVe3vyvJMqn19r6VmDnl6H1fAgAeHT44Tu4vsziy253zWeKFoYhgYFMzeDV5L+p6cA4LZb718714ZNJlae84wyhlGWedrJurTezGbTBEfYDf6ToC+f3KbQPFkod92hdVZsVKbm+4NYmhqljE9dnDNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780999654; c=relaxed/simple;
-	bh=tA/MOzeyHSqIo3tt7AXKoXv8TR0mfzGmek0dsnqoLWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H+xtl2o5/gu4GU6aNZqUAa7kNGcqkHsBwGRo98LVZBH86W1fmxp5YZ+6wuFpdt7ctoreHCwqTDonZ2e26LHUreLjG+I3hMkibvRE0dKVWQ0sVyTL3fQ6X3CozurBnrNQ9WMArRoIstsDa57Jd/q5zdpmX7ZtqdNFVtqrvty/enY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWz4DKfg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781005493; c=relaxed/simple;
+	bh=YygPCiAmXiWrvewKwYWtyCzbkJfaFZJYqrm32SMOdfc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bDoZWWzMuLZXXd17bGDUiaTWFTlaMBpFx+CZXXtsSOm10m0ge5rTssr67pWBQ0HE87JAivfu3rFH9YuEzjxuy6vFfocOxvkHmoPgj/gIolW8SP5GR8o0yDB24mITfY/J22thctWFUohtUu1914WJFnu8HXmibE4wLhiVf3sJNfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MtG26ii1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWz4DKfg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F1411F00898;
-	Tue,  9 Jun 2026 10:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780999651;
-	bh=MOBpQ0JRmmblQJ4PcSwUlho8DTvTXyDdtyxsMVR58xk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LWz4DKfgGJnelu8EZ4aRzGBiJ06JbirjU+eL59uzgm/1EVwjdoQcZimNDTZDq7ryM
-	 9QKZyDr5nHUsJgmgoVBKP7kVm4/ZfybP3o02Vb8P281t10sMdOTeqpcYzmczwJZdjl
-	 2E2WaFlqDkllKtXpVQiIFwFLVbVjbETBd5M61DTkC/758CCnStnRh5bi78+qK/vPLT
-	 hwauR1nyoSCBoobp58hQrdiMkhUuH59FPJGKK9vvRFnsEWpNY3BoEC767rFOlQZCq4
-	 paDQsy8OJP6LQgsbJneveyFLpV+u++spq0xYBK7Wog1odbsGySNKuo55RNvzHZetn6
-	 eBGV44Ldc/6eg==
-Message-ID: <c866dbcd-c211-48df-84e3-f66785ba8538@kernel.org>
-Date: Tue, 9 Jun 2026 12:07:26 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MtG26ii1"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-68b90fc6a1dso172205a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jun 2026 04:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1781005491; x=1781610291; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jVtKsScmZpYoItkBLWZrzYfhywAVGgLQpel9i66ubjc=;
+        b=MtG26ii12BO+NUu9y/zgI2ET6cVwpxJJsjdg8MLjQwNSQzb8ec8s3U2O4zcikD/mbz
+         VYAvyW5NWnIf500OmAHtNokBj8DT4vSyAV2qlnAHPRDY/VZ4ZiI6Q0qqw/t9BCx+91zR
+         1ITZQHkekqPktZufU1PXlje0xF3aYwQ0AbmweRCvgLJBei7S6Q4WpIIpsYcXfn79ajqk
+         mWTo4Z8pTAoDAT24ViMaZnDnGwFQhMLc4XR1Uf+x9MQIdeMzyQAtPgpUplTDGBPYE91M
+         XrbkOHhhom7sLE8D2i7Fbw4n/PMy3o/08mtIxiNk41ZRkb6Iu9AqZ6UNoWnwsP7fRoau
+         yTUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781005491; x=1781610291;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jVtKsScmZpYoItkBLWZrzYfhywAVGgLQpel9i66ubjc=;
+        b=AXdtXqkEwZKYyTkp1nOKbzohmNymi5FipRCQnH9agPcS+07OTc5QBFxCHwO5wO20EO
+         ykksC6F+cZsiKbqb/QuLxuCQuBpD5irif/v7W8UDlAKNct8owk3Dp1MM6JL71BAQjm7a
+         P/ikDAOECywVMUR2uJ5CNJSFyYMlWQLJSZdWqLxt+K+6Ajeo9LBDEQLlQX9THpfMXOVY
+         ovEsYa3pttac4T3SuGGyOmc+w7UWyD2Zf4kktN6ptgwJoCDjRZ0b3owskDt/LIWmauG5
+         yUouroHOuc4X3DAqps3GSnIVqUP+GuzqRAlMvi7yPM7WrRCARrvGhN2jWJqcQ2bf41Wg
+         sWiQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+jZqa0KBxwVd4P3lZnYzP4/pvBYEj138mrYbQHE0Jxru2+ii57ujhBB1NOSkFgTkjR50qfLPjrSPt7vkLSTx5f0g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOFoiMKMkaAqRQSqRrAhzwmJ5VP133rHaCuhiZUhUGB5lkv1pA
+	l4YSTxOBUiuOOhsewIgciJ3AiuTbhtHtbIDwBDxGgkts8lXn4j56QhyBs3h3F5QD0ik=
+X-Gm-Gg: Acq92OFcUF4gJxRClndHUSORp0W/i/Iy1mRWFbaYyjh1e+ISXVzN11N3l/iGMczJfWS
+	h6SZRniz8spuj+q8bH7VebEtdHV++amgo0X3X2JUBaRHJlc6CJN6HS4tXFtWD/UJtDbWlBMN06l
+	96lUpYHQqdOPgrJ9qdK90U538lIsE+2IN9eWocu57aVM0lxGY1mrrl34PiTEUiY+IZHw9Ega+wk
+	xSk1EQaublyt2nLpb9sy8ecyqYHpbqf8dCUshQe9JHctcesXkyLXcW1KbepmwqvCvkexayxuyTw
+	/CuPxa5TB8qZRwKsMgw4pmBEmXPuIJt2hUWBij4GDUoD0PpWPp4sfTiIUDqGiK2C0+SmsbvcX7/
+	4/yF01Eu9wurzoBHX9fFfm6zJfeCOgbWrXPlZb913rH8iWkEOKJI2ofrfqEtiFezUR+f7IU+Xu1
+	f1VNQ3yCTyFY4mSHvXY7S1ch9TagHZTHTvdR2SWrs1bcG7CvA568fFNr8=
+X-Received: by 2002:a05:6402:4250:10b0:68c:3439:945f with SMTP id 4fb4d7f45d1cf-68ff217a53dmr5586490a12.12.1781005490656;
+        Tue, 09 Jun 2026 04:44:50 -0700 (PDT)
+Received: from [192.168.107.26] ([80.233.69.159])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6914f3b583bsm4516495a12.29.2026.06.09.04.44.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 04:44:49 -0700 (PDT)
+Message-ID: <08d7299968e14e5fc07fa4791479abd9a2b11c2d.camel@linaro.org>
+Subject: Re: [PATCH v8 4/5] arm64: dts: exynos: gs101: Add thermal
+ management unit
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, "Rafael J. Wysocki"	
+ <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui	
+ <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+ Krzysztof Kozlowski	 <krzk@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva"	 <gustavoars@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Alim Akhtar	 <alim.akhtar@samsung.com>
+Cc: jyescas@google.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 09 Jun 2026 12:44:47 +0100
+In-Reply-To: <20260603-acpm-tmu-v8-4-0f1810a356e6@linaro.org>
+References: <20260603-acpm-tmu-v8-0-0f1810a356e6@linaro.org>
+	 <20260603-acpm-tmu-v8-4-0f1810a356e6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-8+build1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] soc: samsung: exynos-pmu: fix of_node refcount leak
- in exynos_get_pmu_regmap()
-To: geoffrey <geoffreyhe2@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260609095224.1706036-1-geoffreyhe2@gmail.com>
- <20260609095224.1706036-2-geoffreyhe2@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260609095224.1706036-2-geoffreyhe2@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 09/06/2026 11:52, geoffrey wrote:
-> From: Weigang He <geoffreyhe2@gmail.com>
-> 
-> exynos_get_pmu_regmap() obtains a device_node via of_find_matching_node()
-> and passes it to exynos_get_pmu_regmap_by_phandle(np, NULL). With
-> propname == NULL the callee uses np directly and only drops a reference
-> when propname is set, so the reference taken by of_find_matching_node()
-> is leaked on every call -- including on each -EPROBE_DEFER retry of the
-> only in-tree caller, exynos_retention_init() in the Exynos pinctrl
-> driver.
-> 
-> Drop the reference in the function that acquired it.
-> 
-> Found by static analysis tool CodeQL.
-> 
-> Fixes: 76640b84bd7a ("soc: samsung: pmu: Provide global function to get PMU regmap")
-> Signed-off-by: Weigang He <geoffreyhe2@gmail.com>
-> ---
->  drivers/soc/samsung/exynos-pmu.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index d58376c38179b..a5da2741852b4 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -167,11 +167,17 @@ static const struct mfd_cell exynos_pmu_devs[] = {
->   */
->  struct regmap *exynos_get_pmu_regmap(void)
->  {
-> -	struct device_node *np = of_find_matching_node(NULL,
-> -						      exynos_pmu_of_device_ids);
+Hi Tudor,
 
-Use __free() to make it simpler.
+On Wed, 2026-06-03 at 13:00 +0000, Tudor Ambarus wrote:
 
->  
+>=20
+> [...]
+>=20
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
+ot/dts/exynos/google/gs101.dtsi
+> index 86933f22647b..b6866ef99fb3 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>=20
+> [...]
+>=20
+> @@ -639,6 +647,15 @@ watchdog_cl1: watchdog@10070000 {
+> =C2=A0			status =3D "disabled";
+> =C2=A0		};
+> =C2=A0
+> +		tmu_top: thermal-sensor@100a0000 {
+> +			compatible =3D "google,gs101-tmu-top";
+> +			reg =3D <0x100a0000 0x800>;
+> +			clocks =3D <&cmu_misc CLK_GOUT_MISC_TMU_TOP_PCLK>;
+> +			interrupts =3D <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH 0>;
+> +			samsung,acpm-ipc =3D <&acpm_ipc>;
+> +			#thermal-sensor-cells =3D <1>;
 
+Vendor-specific properties should always come after generic ones
+(samsung,... to move to end here).
 
-Best regards,
-Krzysztof
+Cheers,
+Andre'
