@@ -1,68 +1,49 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4027C4D90CC
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jun 2026 17:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C2368287;
+	Tue,  9 Jun 2026 23:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781026782; cv=none; b=SAWMn9FVIzFVePVVxRFlsT00tc1cS94QDy63pe8OZI2SF1Dq4f5qVYMIuw1ircQ/nk0OZj08Hz8wyLbv3GYNyqBFvZdxqxmgi5bm8EJUyxmx8gjUfAmV0GX5n+8PwHjqtvRZYGTsVTGW01vSC27o6Eby0ygVXDbeB9hunsRrKas=
+	t=1781046329; cv=none; b=tF85fgKH0Oq8wD7B/k8zBM5v0m+m7e+jeEJMirobLbdYdPfVDHvuy+BPy+xtS0M9Qa6pduY4uZvFmAmk3/nUCTob1y/tJbhBLhgJJxnhuIWCUGULDugC8yeWSBTdn9iqao5criLT0jR6Bcos06F+fQwpVbOLBADPeAP2gMNc7ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781026782; c=relaxed/simple;
-	bh=o4lBBDo9eAjT/ZPpvEx+fz0ZaY5RNu9o+ne5xMIM/Xw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PZ+12QEtATz6Qv38zD26Z/8AXMx2XoKNVNaiQODkkz6hYkXhIPEexDwRAb+wPYoVHMkRj9gcPyfQQ1LD1ClfhvxZqJTKwlTWfsI62rOvxWozZ6lOq9gtVebCGqaYIU//JNT2i0Djr/arZJ7bBa6Xk7bXzkZn0HACwKQ4fS9owco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sXrL68Ku; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781046329; c=relaxed/simple;
+	bh=dD1NfSsfFeqA+ue7kAvizM5ggS1y8qNVvwfe835lrO0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jkC6gEeJPRLd3YK7YxiBoBwpwjW9SlBIfmVv4mjj6N2fQN5S3T9DjNhWbn4eU370BYcvNNvzujztIf6eBaiagMfjCyQRMHS+K5FcgUoG+eWOrvleoR5WTuPxj60A8rSaxmA8NYaZhZpk8Qce/rILLj0y26Ty9giri8ryHbdtRfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L28OnAvk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sXrL68Ku"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4903d730b1fso66318035e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jun 2026 10:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781026779; x=1781631579; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LO818/ID+4f5iFNHp7OoRCd/tE5378VXxX0IuTr0NL0=;
-        b=sXrL68KugCimECfzeY1S7miTYgupx2dzMsIgGLeK3zZ2Ph+/zL3coz1k95dtE+7YU6
-         N9PBg/zYXhx0rwYIaKHgCvCkA5ghHMKHXJlI1Rk8hFvT0zlO79cploXlfNSG2qAwSYaW
-         3d6R6opUvC5OKYzOkp1F3njPbgwYFyczYaXm0kSmmWqGo4UTBV4iXk6is54RboKhabmO
-         DTm/iqWP4zA3A28w2MOoJ8wVzLgiZ07HTLvomZyPeV5anPadk5Mt1HQZYlGb2WeDliku
-         jzzjIMXtJg9NIhDjegOz1Z6G0QW+uycEefCFZyqtt9EfTalIVo9KTgl5mjM1Zfj907pg
-         zJTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781026779; x=1781631579;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LO818/ID+4f5iFNHp7OoRCd/tE5378VXxX0IuTr0NL0=;
-        b=lxFWh8gV/vabAWPq+tjSWP+HGttnGUwyj6DlX+QD99N0Jg1gq6dC1Ys7ST3vdXBsrn
-         LcFAaw1fImta4YWxZpwkvQmBf9OXcCbEp0rj617zV5F/Nc7MEaiuYTq2HAY2Fi9a9fTj
-         VxuMPVXqmXg5LbdvCmGPfM7+SL1iu6X/doxV9hJFNY2CC2RcprxqAW5TBlTCauM/709l
-         eKb/TfpYTz+e4kyJ1o37FYczTJwW0zuFOcTzCd8/adQB4kNFxu9PPa+6yjSK+iYs8ol5
-         RYe2DXR/4hkziOu4mR0SD47dOHqfZDADa4amR7IW5ejsgJWsTwiLVuRw01pwvb4MGvu9
-         JJbw==
-X-Gm-Message-State: AOJu0YykfYQMwU221t3ORNtatZO6aKbK9RjNachRJnT64va4yZuy/Hs8
-	bATSarpgR0dXgJigNngW3E/sJ8vx4HKkEZQ6IwHIz+6pqpC+uD0496IqhaF0Tv5sim1jmZhfKFv
-	uKKNMgA8=
-X-Gm-Gg: Acq92OGozh5t//dKuEjau7TkvjdoIRis+4nbf5GBTJXej1jBhJRyQ2R4uDDkQHyFzG/
-	JhFpfcRw9kNCXJ1C2mvcNsK0ULVCCZ+PIsMV6IzIcgtDcpZXCrLsFpn3IRWn9Z5rcVOXvk/Ii24
-	i2+ZB+4aN1u02Bpvo8GBP3lsipj7YCWrzkozz1xlvMjtjaeF7cV0v0BfYUIMszAvHNxFOEL12Ux
-	irNkSp+UmGObwOWv22p0CxKIqjoYcqSKWUoEPRzma47hnh2FqPsZ/Tv7RSUaWRwVm3r/MRIJggC
-	kQT1i7z0tRHxjwsy0aMmMfZVew5fQt6zDA98HsWePggAb7oQuDQ8bId0/8jFuJzD8Dqy609cTiI
-	YonsyeMpnlTKnEsMHsxZZOQFnyBWhBBGVA8WuVZ1UFqkPfNalklAiTIkukXLjjckZYKExkl5bZ/
-	wFQfAoGrmgOUSOyAG2oAyvwMWTcGAMKHPXIaZPHCf0KXL2YCQB5GEpxkC3zCMFRYIENl0AkA90r
-	l7mTglmPqLIWkm6zNZUia+CAxk=
-X-Received: by 2002:a05:600c:a011:b0:490:58ef:cea7 with SMTP id 5b1f17b1804b1-490c25ee058mr358565295e9.22.1781026778657;
-        Tue, 09 Jun 2026 10:39:38 -0700 (PDT)
-Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3fcf5bsm593605215e9.9.2026.06.09.10.39.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 10:39:38 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Tue, 09 Jun 2026 18:39:28 +0100
-Subject: [PATCH v5 6/6] arm64: dts: exynos850: add PMU interrupt generation
- node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L28OnAvk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA3D1F00899;
+	Tue,  9 Jun 2026 23:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781046328;
+	bh=aD95TvwXzD1HaNltihw0RgGiAp/VWUjSzOzfVn/vpJ4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=L28OnAvkY/r0m9bFU1xVoWTX2MnuT/q4O6fdW4fwfJ3lk79I2ImaueEtLj4iwJw6p
+	 nOcxnxB2Ag2oqttsiksQZJLmjwDlUbrtHLsndHLHrSzzgxN/VfO2Vtb0zedsbaADvt
+	 QFTH7m6Bjat73UujH1+4veGbeOYD0HMuugWodUJ/nQf/J20xxgCVRUi32hPvDLVZTO
+	 etkMTzj48eeqTkVcIO7PfMBnRaE8oS6l1bUEO6DtxCbhFOWKSpNdfTwHQKqDND0u4h
+	 n9ynxWs/qMEggAXqF7Gg/mTR8CZa7Nwp7Mat6RK5FPCiPjs1B2tcx8AYwEHRz8Ku+p
+	 gIeCPZgB62wrA==
+From: Mark Brown <broonie@kernel.org>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Jonas Gorski <jonas.gorski@gmail.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
+References: <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v1] spi: Use named initializers for platform_device_id
+ arrays
+Message-Id: <178104146688.34323.8035338642693154122.b4-ty@b4>
+Date: Tue, 09 Jun 2026 22:44:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,58 +51,48 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260609-exynos850-cpuhotplug-v5-6-8422cf80d43b@linaro.org>
-References: <20260609-exynos850-cpuhotplug-v5-0-8422cf80d43b@linaro.org>
-In-Reply-To: <20260609-exynos850-cpuhotplug-v5-0-8422cf80d43b@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, 
- linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Henrik Grimler <henrik@grimler.se>, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1151; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=dD1NfSsfFeqA+ue7kAvizM5ggS1y8qNVvwfe835lrO0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKJwyRgD+N++a2A9XgQFuhe7FstOHL8se6UVCS
+ wsatsTVih+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiicMgAKCRAk1otyXVSH
+ 0DkkB/9pWRLnlIpMt6gUTHT5/ks1l2rsbAQWYtvhksDTQCtJzEPseYryqzpaqg32KCS2NucXJvE
+ JI6uOk7uDNJ+xtsKKgD3AOoFx2unswqFaYUbadIOX0xhKwpjYN/RRJhw+5C2wSdEJZoDpcv7uFw
+ bz5++GgO+W4K2NwXC0kbVGeWW57cRePRLF8mvxYyBgOOPCJ5UsTpx0kaANgT55VB1S+ej3MS3dq
+ vP6l1mxvQjGHZUVa+ylqhSKaevGCMTCXk0x1Zp2p2q5vQLd3FWz5XFG8fvCkBudK9xQIKWBJPuQ
+ xZBRCCi68SuZvTK9L07OF5krtksdlcCq7Riig3fI8ky9MTKh
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Add pmu_intr_gen node for Exynos850. This hw block is required
-for different power management routines like CPU hotplug and
-different sleep and idle states.
-Also reference this node from main PMU node.
+On Thu, 04 Jun 2026 22:55:26 +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> spi: Use named initializers for platform_device_id arrays
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Applied to
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 3881f573ec08..04662b1c5458 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -214,6 +214,7 @@ gic: interrupt-controller@12a01000 {
- 		pmu_system_controller: system-controller@11860000 {
- 			compatible = "samsung,exynos850-pmu", "syscon";
- 			reg = <0x11860000 0x10000>;
-+			google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
- 
- 			poweroff: syscon-poweroff {
- 				compatible = "syscon-poweroff";
-@@ -231,6 +232,11 @@ reboot: syscon-reboot {
- 			};
- 		};
- 
-+		pmu_intr_gen: syscon@11870000 {
-+			compatible = "samsung,exynos850-pmu-intr-gen", "syscon";
-+			reg = <0x11870000 0x10000>;
-+		};
-+
- 		watchdog_cl0: watchdog@10050000 {
- 			compatible = "samsung,exynos850-wdt";
- 			reg = <0x10050000 0x100>;
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
 
--- 
-2.51.0
+Thanks!
+
+[1/1] spi: Use named initializers for platform_device_id arrays
+      https://git.kernel.org/broonie/spi/c/fc82dda1dcc6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
