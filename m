@@ -1,234 +1,688 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221B40BCD3
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 13:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B668332B105
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 14:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781098480; cv=pass; b=YcthO97DSC+foe47BELvsySIoj7ppOvsHmFRvsgmd/Ar+6ePHiW8WLZK5jseKpb17XJb0qsFMa/UtP4sqjw4OxETJG/sOYfIC6lukI+y4vtqPV0QvG5Xz38m3rMJu80ogN85IoM/wxku6WcXxwbPuxS5IQpSsItkzPJ22cJEUIo=
+	t=1781102830; cv=pass; b=OgvPw4wRpin+gHAmayGheoNjWrkkgYFGWapZHzJVRHvCXiOPw/jfYBgdzlO5j+YpClEd7QSDJ9kXI2uWWgVCENEVGd40deIgRymVTLiPoCWUiMDuMoOOKtJcvoP+B2mpdZddPcoQCSYlQH66po/oaofRZ6K1t6wM6MjsT9fEbDo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781098480; c=relaxed/simple;
-	bh=JAR4sei5juO8181/3mmsMW50Yqk1AXNa41CYDKywtHU=;
+	s=arc-20240116; t=1781102830; c=relaxed/simple;
+	bh=+3FXE/p9YBXMrAUbUzwT6v4+ObS7tZG8SkRsrbD6o3k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARcWQKAIm+JfSfSRWY1Qp67BEW58+4u8bGSBGcRNOzkE+qJ/hO9h4/YvyzyYYwc/scJDiUc3jtbndQWOXWbqNDyBakjtjykfbEVSmsazhyD1ZWeaXmzAjMF18jRcUN6Uq0USQuu2OM3QEOoaHVuqA0mqF8ypdU0QFfC2msNLeTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r65yP2o4; arc=pass smtp.client-ip=209.85.208.49
+	 To:Cc:Content-Type; b=Urqir4QV1188GqfXQ+KuaGlDYfc+hdnjWc72CXOjHK/A1rghtfs2qjlfVP+RHGwBl2QsXo6agVJpv08GvE9K+8fLeLT6YmWeVHwxzGCV/VK0AiKLSrSnwKQ0lB4iXgMlK91fFYV3/uEmjoElVnx8jpHmab0zQKdenPJD0i5kzIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IiqKsi7P; arc=pass smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r65yP2o4"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-68c76fb8009so8912987a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 06:34:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781098473; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IiqKsi7P"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-68e5f7c1131so12974938a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 07:47:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781102827; cv=none;
         d=google.com; s=arc-20240605;
-        b=PwYsg0X6Nu1d6iKtHQ64qkj0wfbRA+vZSIPDlf/A9CMCMQUwT996MFvnts2W6pjJCQ
-         s/sZjZJTnLhoPv8/ZEYqDM9od85pVWHCuHbCo8z84UySWpBiGjs1pFjUILzEKmrwAaOl
-         47A4vnE096kxxDZZ+ZgtfqPIFVuLB5Yn3/O1ZdrcnnUehIRM2ehQU+OBYix9FzzURnHk
-         0REnVEVpV9im8hkNCmMvCI9Iak37DZs8Scs1oveESSErhcD9z8BTP6vPfCC7BYCYjEcT
-         qNCrEaAzKW7CIvtzXXJbfZ3nHsAmGMa/dH97XOY58+v/+HuZ9M8P6WjlruaCRTk9bNnT
-         l1XQ==
+        b=I2OQ3GkZZy5hK7hQE0Ry2jaLCXpsL7SEqLqLafD+mYX5ONkmf9HNfevCs4m2bHuxmB
+         XXo24aa6naWfN+refWgXE5M90qbaZXT5unJSpqfSc2vJC3Jj0sP3D/kgi2bI1Cw7yeqQ
+         Xl3Ry05jLJBNXQtRRg0LZZOFL9rmbOPVYnXgYWIYHF5cb1zxnKgj8Tk+/mXWJDmu9NOe
+         iQwBXJlVR8hBV9/Po4JqB0Uawh0WZXF/neZCe6E3QzP6ESb4etKR245gr34bGS7J56ub
+         AFyqWLQaXMr0pBgZQSdHp1KC2jORESjLB5PNYl4YC0j+5aZD9GrwoXmaFYIaEIo3Ti20
+         q6pA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=wusSRoPz5XHuYf/hgRAbVTth3meUxSSzw6AAFjCcAZ8=;
-        fh=33MCjscKuuo7oT1/ECw37RFMMsuez7MWr9TN4allsG0=;
-        b=cBZAnJCjotTCOrhjQTuTcygMQWdZT/5jUbi3Ap2JPbgtLFOry0KxbCSppuOC0d/lPG
-         QrluAlAZdQZHRhOVqUMCYDsTT/Enu9RDqBhPPx+4lq2g6QoOvGg6aL7IIIBi9at86XFM
-         WHqKNnGVPD29sfEwHlGHlu+ctljWkXRIrRL5/SMdKiBSwa0rDj6TZSiVXRQm7hr+OV46
-         G+UIYqVmP2HS6Yty4t/10uVNA54UEFCNDB4LN0Cd9zA8Gi2dVC5QtJqLuB7piwNzivgF
-         kSVe8LfD81EZ/okunD0BT5Uycm7OdMpFdFFtfp/P1KAFlJlhS8YJnoTh1zRpy8gtYhHz
-         JQkA==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=CyD3QFtMqslcSf2mJfFV+i9938i59wMcpqc0b8cm3Js=;
+        fh=KF5EqKh5EL+pPLTIXxYjWqHVia4GsJleRNqGmjPrlH0=;
+        b=F1UbgMQ9iG9dV7ZrOzSvERDXZL4/TYp+kYk81fR2EbWnIds5XzZOwC3cWCQbdAVDZ5
+         h3I/zq5IGExfi1VmBfVlBVvmzvz2+xtfM+40vH/YUlf8IhMhT5gLFIFbbr+msJt5zwAt
+         j5sP5bNDo8/mNspfovXVYhBmjdBcEVkHdDqX0QUC+vUDpQcqatZ7ymYYoRyaonB972eV
+         DTIaF8OaqeUmTuVIxlOXLCbvRhFqRWLKzf9jKlhKY7efPMlFmLFjEJTuB198gJ72FCZU
+         SdPddgC9FjWhR1/jKDqfY1bOOAXqAanBcwUu3R9SczrvL9wqjXEvb23SwbS2nJZl9YEX
+         HyxA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781098473; x=1781703273; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wusSRoPz5XHuYf/hgRAbVTth3meUxSSzw6AAFjCcAZ8=;
-        b=r65yP2o4m6EbvApoz6B9olIJyccqqM+nsr9La+vvKTORiM9dhjL+w8m31GYAsnJr+m
-         DpZRmHfMImMwwa5BsihxuKsmVYxTcP25BVyyMB9Q9k/wertyodkhP5KFNb6umUoG+XgW
-         5Bnnx/FkW/oii78eVtgvjthXKAy6Qo1GjtU78Ypix94oqFc8srX5iI11fZsAWTJk5XTz
-         mV1d3D2GJPHp16g74gjP/ZxSS6p9wt2E0LqBHCGkwTmoBrIp3ez0mY5WGnzor+0QH0B9
-         dOFFuS7gty6/1yUkWPgxbOuvFThtifc0bA/154DG/Y0PIuDIK1kPK6eUIwUCsrIcHas6
-         lM1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781098473; x=1781703273;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1781102827; x=1781707627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wusSRoPz5XHuYf/hgRAbVTth3meUxSSzw6AAFjCcAZ8=;
-        b=Xvenx0SHngLUMD09U83IiSN/rVnaRtQU9k+ewLtB1dm2xfCkQEQ3A3Vj8VGTe+1+h1
-         ZiUyo6PbaAMA96kyGTo+sF8KKIAvS0DRudrO9b97MfU1r8QtqdV2g72qBze2EWtWXBPN
-         wprqWu+KWKfoH9DJPkudQ6W/S31KSe3Iz9eI45FutRIJhgAryHZOrGQgWTHDWqptV8Be
-         YOqkJ9AC+pqbrbojV989xlkyG8J+96m09niFH91/IGKpJCoWqXYFuQuwC2+E3AKaobGW
-         qS4ZiiT/3+Dg5rZ7nb6ahETiBfDVKzy9CrAmyCx0vDeRJ6M70JKPvApXFm7nPM1RM9PM
-         pGXg==
-X-Forwarded-Encrypted: i=1; AFNElJ++G1h8ni0+rOpLQmxm8sM7aVFTnbrLhqEoTGdMeci9VEKHiWZZcxF0GUbCKTWUWXmQ/s0ofOAM20p9w3LAtGSg3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYqyyyaql0qvq4xn23WwaLVTXQziGD0/bXhH09T/DF8PMlzEgK
-	ELzvjw8lstEaflXvjue9t1xiZ1B3RiAXjZZRO5rEFA0XKpsXZLxYCmfdRe0+5C4WiOnkBFfwyKT
-	sU+qMPJ4ATVQ90VUcZB6TIC3NV0s0frhw/oVE6XlMog==
-X-Gm-Gg: Acq92OHcisg7ObsS0ViKcoAIcJsDaphRZjN9gwHS/zw7qzW0wAdhrfNo8Hm2XCBPurF
-	+9jEGFn2pHN7QtB7l0pDkLFo/4mCYpFAjES32q959xBADpgojeuuC9vDCAjZ9UffOy5UzAdcUgY
-	iCfTD6lTNxyz1+MsIcjVO3ZmuLpQnXBk/cwdBshJzb0cOmFYI23SRCDI9kjtnScrl4JlGZZ9ESm
-	pejUk13ISv04ZO0tuiYhKT11iFTRzJmLWNFdlt646kO9D2tF5FYfCUuLCYNc9BLOEr3GZ/vEVjL
-	dFZm6x5E4keVZdrOh3vqIzhJbiFMTw0gwW4A+Nlk7PMMhlyFFLwT
-X-Received: by 2002:a05:6402:3905:b0:68b:f026:f381 with SMTP id
- 4fb4d7f45d1cf-68fa4e3140bmr11010010a12.8.1781098473183; Wed, 10 Jun 2026
- 06:34:33 -0700 (PDT)
+        bh=CyD3QFtMqslcSf2mJfFV+i9938i59wMcpqc0b8cm3Js=;
+        b=IiqKsi7P71Va0DI/iw69+LJuLVGNLFdAlxr9pqD+ybzhk9nVL8q9gTbPzw0TlF3fFv
+         vvaK6yMZ9RmohD+rTkGQgpKeVkliyXATGJAtsVO6QaBj7vwW1jUjx58fBblz94+9JlhG
+         38mTHmL5Ju7cMOztkh3+e140ymCbu+hOJ1NpXlRSbK6eeeLtLv4xdo+TD3N1y44u356Z
+         JPGiqEeypMTm5QHQ3J93/54+GLzKdWkByCcsGquuRiFJfRbgsMhmfTwa87CRKnVtAOil
+         NnWgNhbiAXldCIG4G65PK28F376CGIP8YaVXfrFyFOenX7PNTW/MBUdYGFJXtgRlZ17N
+         Cmjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781102827; x=1781707627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CyD3QFtMqslcSf2mJfFV+i9938i59wMcpqc0b8cm3Js=;
+        b=o0IdHpgcYVGm3b8H1o2HJJYq2NyqZR00Hw1y0DSrb6LCqofkqht9MQ+mBoIDv9zG48
+         dJv1X/7BGfHeVcRCrwSyLBmbaNfMNgXyfPqRTkihtYQ80XBqg61sfYyIE32eN2g/RS3/
+         MsGHcPq6flX/uEzoGB5r/wU4zveqjB2u2bOiWTscT6FPh2kQy1iQTIjUDeiZ/qSeu6os
+         +Foj7Gd+1HXm9OY8a2MP2xXXTKRkPTZi7EhQfceOaOPi9xxdVgcxbxv43VIfbPR1wSVJ
+         Rpn3jxln9tXvHXdNFsswKme4kPFstHBKckuTwo6bCilIoWqYMJbwDY2v/wIK5pTEqVSB
+         5ktw==
+X-Forwarded-Encrypted: i=1; AFNElJ8uwEPTuiH76I3SthgqawvGG96rvVEGMcexB+5XmOqW+okudQuRGQymzIQl+yHVWr5JhibwLYqTX4MVlUFo3ilLuA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxeks4sMNNWImGIS4UxbyNBliT8EgvNZNCFTKQNHeB7qbC8e7+0
+	I8oI4yBrcdBZJm1LtAAaDSYDdRFYA2uDrFiprKHaE7YUyy+L/aYXXQNyXjEDuQEDs0h/1OxD7rq
+	oesoaI1q0rp4q5NFt4tV1Deft7f1abJTDbmUtnUrQ1g==
+X-Gm-Gg: Acq92OHSj0NOyEKoxtRn7llqzGZWSGXofZEx5NrjKyKa8k2UrzypQYI2MNgh/oeDeud
+	6yfH73NOtISrszwDs1v8iE2uLafndvtn7Dv0Vdnn06H51cTVNhKkZf9jvzK/6rz/VJfZfa5EOSq
+	sXxfAgRMU2nvswPW69coduw036LyN6Fj7b/BNNHiX811sGMsw8e9dzIh1XguDTg+ZusW2dLUMeC
+	kuTYRkR60u78IrVaKDHMVDDw5zaliahS3RlcGekfV20MZROzrgI0kmuoM/wK4TItk7sA0abTiaK
+	Hk1zdZvL1RYMp2Zr4l6BxM1mRqvuGW1tdwcxcwAsEGB0CJVJmPVw4rCtgQXDplY=
+X-Received: by 2002:a05:6402:5304:b0:68b:d82b:fbf with SMTP id
+ 4fb4d7f45d1cf-68fa53605f1mr12086168a12.26.1781102826290; Wed, 10 Jun 2026
+ 07:47:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org>
- <20260605-exynos-pmu-cpuhp-idle-fixes-v1-3-0cd05c81a82d@linaro.org>
-In-Reply-To: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-3-0cd05c81a82d@linaro.org>
+References: <20260531175932.32171-1-ebiggers@kernel.org>
+In-Reply-To: <20260531175932.32171-1-ebiggers@kernel.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 10 Jun 2026 14:34:21 +0100
-X-Gm-Features: AVVi8CdudhNuk1JulHq85Six9g2TTnXsPBjPVrWOLueCdeIJGpUeMcdSZ2qVZRE
-Message-ID: <CADrjBPq4fou5KWh4T=oNkUVPz5Jk-821OVe3j5sWrKnCtHYM6w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: samsung: exynos-pmu: fix error paths in
- cpuhotplug/idle states setup
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+Date: Wed, 10 Jun 2026 15:46:54 +0100
+X-Gm-Features: AVVi8Cf7Tc5WF83bzw-4SdQYGkXWDq5rzm0KTqS8yJHg2nLW9FVMA1Vw4CrWrzk
+Message-ID: <CADrjBPo3BpSk49oasf_9g06xrBMkw+NiKo10xDKjWr8sJ+Zc-Q@mail.gmail.com>
+Subject: Re: [PATCH] crypto: exynos-rng - Remove exynos-rng driver
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alexey,
+Hi Eric,
 
-Thanks for your patch!
-
-On Fri, 5 Jun 2026 at 21:19, Alexey Klimov <alexey.klimov@linaro.org> wrote:
+On Sun, 31 May 2026 at 19:02, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> The setup_cpuhp_and_cpuidle() initialisation sequence currently ignores
-> the return values of cpuhp_setup_state(), cpu_pm_register_notifier(), and
-> register_reboot_notifier(). If any of these registrations fail during
-> probe() routine, the driver returns 0, leaving the driver partially
-> configured.
-
-I originally made the failure non-fatal because the system still boots
-without the notifiers registered (and all other Arm64 Exynos SoCs
-upstream don't register notifiers and AFAICT have broken cpu hotplug
-and cpu idle).
-
-In hindsight, that seems like a mistake. I think your patch to fully
-unwind everything in case of failure makes more sense.  See small
-comment below about destroy_cpuhp_and_cpuidle()
-
+> This driver has no purpose.  It doesn't feed into the Linux RNG, nor
+> does it implement the hwrng interface.  It is accessible only via the
+> "rng" algorithm type of AF_ALG, which isn't used in practice.  Everyone
+> uses either the Linux RNG, or rarely /dev/hwrng.
 >
-> Furthermore, if anything after setup_cpuhp_and_cpuidle() fails in probe()
-> routine, for instance devm_mfd_add_devices(), the probe() lacks an error
-> path and leaves notifiers and cpu hotplug states registered.
+> Moreover, this is a PRNG whose only source of entropy is the 160-bit
+> seed the user passes in.  So this can be used only by a user who already
+> has a source of cryptographically secure random numbers, such as
+> /dev/random.  Which they can, and do, just use in the first place.
 >
-> Introduce variables for the cpu hotplug state IDs in exynos_pmu_context
-> struct, that should be initialised to CPUHP_INVALID by default. Check all
-> return codes in setup_cpuhp_and_cpuidle(), and add an error path to remove
-> registered states on failure. Finally, add destroy_cpuhp_and_cpuidle()
-> helper to safely tear down notifiers and cpu hotplug states.
+> Just remove this driver.  There's no need to keep useless code around.
 >
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Closes: https://sashiko.dev/#/patchset/20260513-exynos850-cpuhotplug-v4-0-54fec5f65362@linaro.org?part=3
-> Fixes: 78b72897a5c8 ("soc: samsung: exynos-pmu: Enable CPU Idle for gs101")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> Note that the other crypto_rng drivers in drivers/crypto/ are similarly
+> unused and are being removed too.  This commit just handles exynos-rng.
+>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 > ---
->  drivers/soc/samsung/exynos-pmu.c | 57 ++++++++++++++++++++++++++++++++++------
->  1 file changed, 49 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index 9636287f6794..846313a28e9a 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -38,6 +38,8 @@ struct exynos_pmu_context {
->         unsigned long *in_cpuhp;
->         bool sys_insuspend;
->         bool sys_inreboot;
-> +       int cpuhp_prepare_state;
-> +       int cpuhp_online_state;
->  };
->
->  void __iomem *pmu_base_addr;
-> @@ -404,6 +406,17 @@ static struct notifier_block exynos_cpupm_reboot_nb = {
->         .notifier_call = exynos_cpupm_reboot_notifier,
->  };
->
-> +static void destroy_cpuhp_and_cpuidle(void)
-> +{
-> +       cpu_pm_unregister_notifier(&gs101_cpu_pm_notifier);
-> +       unregister_reboot_notifier(&exynos_cpupm_reboot_nb);
-> +
-> +       if (pmu_context->cpuhp_prepare_state != CPUHP_INVALID)
-> +               cpuhp_remove_state(pmu_context->cpuhp_prepare_state);
-> +       if (pmu_context->cpuhp_online_state != CPUHP_INVALID)
-> +               cpuhp_remove_state(pmu_context->cpuhp_online_state);
-> +}
-> +
->  static int setup_cpuhp_and_cpuidle(struct device *dev)
->  {
->         struct device_node *intr_gen_node;
-> @@ -465,16 +478,42 @@ static int setup_cpuhp_and_cpuidle(struct device *dev)
->                 gs101_cpuhp_pmu_online(cpu);
->
->         /* register CPU hotplug callbacks */
-> -       cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "soc/exynos-pmu:prepare",
-> -                         gs101_cpuhp_pmu_online, NULL);
-> +       pmu_context->cpuhp_prepare_state = CPUHP_INVALID;
-> +       pmu_context->cpuhp_online_state = CPUHP_INVALID;
->
-> -       cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "soc/exynos-pmu:online",
-> -                         NULL, gs101_cpuhp_pmu_offline);
-> +       ret = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "soc/exynos-pmu:prepare",
-> +                               gs101_cpuhp_pmu_online, NULL);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       pmu_context->cpuhp_prepare_state = ret;
-> +
-> +       ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "soc/exynos-pmu:online",
-> +                               NULL, gs101_cpuhp_pmu_offline);
-> +       if (ret < 0)
-> +               goto clean_cpuhp_states;
-> +
-> +       pmu_context->cpuhp_online_state = ret;
->
->         /* register CPU PM notifiers for cpuidle */
-> -       cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
-> -       register_reboot_notifier(&exynos_cpupm_reboot_nb);
-> -       return 0;
-> +       ret = cpu_pm_register_notifier(&gs101_cpu_pm_notifier);
-> +       if (ret)
-> +               goto clean_cpuhp_states;
-> +
-> +       ret = register_reboot_notifier(&exynos_cpupm_reboot_nb);
-> +       if (!ret)
-> +               /* Success */
-> +               return ret;
-> +
-> +       cpu_pm_unregister_notifier(&gs101_cpu_pm_notifier);
-> +
-> +clean_cpuhp_states:
-> +       if (pmu_context->cpuhp_prepare_state != CPUHP_INVALID)
-> +               cpuhp_remove_state(pmu_context->cpuhp_prepare_state);
-> +       if (pmu_context->cpuhp_online_state != CPUHP_INVALID)
-> +               cpuhp_remove_state(pmu_context->cpuhp_online_state);
-> +
-> +       return ret;
->  }
->
->  static int exynos_pmu_probe(struct platform_device *pdev)
-> @@ -548,8 +587,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
->
->         ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, exynos_pmu_devs,
->                                    ARRAY_SIZE(exynos_pmu_devs), NULL, 0, NULL);
-> -       if (ret)
-> +       if (ret) {
-> +               destroy_cpuhp_and_cpuidle();
 
-You only want to do this if pmu_cpuhp == true, as currently only gs101
-registers the notifiers.
-
-Thanks,
+If the driver is being removed, should the binding documentation for
+this driver not also be deleted (see
+Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml)?
 
 Peter
+
+>  MAINTAINERS                         |   8 -
+>  arch/arm/configs/exynos_defconfig   |   1 -
+>  arch/arm/configs/multi_v7_defconfig |   1 -
+>  drivers/crypto/Kconfig              |  18 --
+>  drivers/crypto/Makefile             |   1 -
+>  drivers/crypto/exynos-rng.c         | 399 ----------------------------
+>  6 files changed, 428 deletions(-)
+>  delete mode 100644 drivers/crypto/exynos-rng.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 882214b0e7db..a7f2762baac1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23701,18 +23701,10 @@ L:    linux-samsung-soc@vger.kernel.org
+>  S:     Supported
+>  F:     Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+>  F:     drivers/mailbox/exynos-mailbox.c
+>  F:     include/linux/mailbox/exynos-message.h
+>
+> -SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
+> -M:     Krzysztof Kozlowski <krzk@kernel.org>
+> -L:     linux-crypto@vger.kernel.org
+> -L:     linux-samsung-soc@vger.kernel.org
+> -S:     Maintained
+> -F:     Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+> -F:     drivers/crypto/exynos-rng.c
+> -
+>  SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+>  M:     =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>  L:     linux-samsung-soc@vger.kernel.org
+>  S:     Maintained
+>  F:     Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yam=
+l
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_=
+defconfig
+> index 84070e9698e8..8b072a5c0a5e 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -362,11 +362,10 @@ CONFIG_CRYPTO_LZ4=3Dm
+>  CONFIG_CRYPTO_USER_API_HASH=3Dm
+>  CONFIG_CRYPTO_USER_API_SKCIPHER=3Dm
+>  CONFIG_CRYPTO_USER_API_RNG=3Dm
+>  CONFIG_CRYPTO_USER_API_AEAD=3Dm
+>  CONFIG_CRYPTO_AES_ARM_BS=3Dm
+> -CONFIG_CRYPTO_DEV_EXYNOS_RNG=3Dy
+>  CONFIG_CRYPTO_DEV_S5P=3Dy
+>  CONFIG_DMA_CMA=3Dy
+>  CONFIG_CMA_SIZE_MBYTES=3D96
+>  CONFIG_FONTS=3Dy
+>  CONFIG_FONT_7x14=3Dy
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi=
+_v7_defconfig
+> index bcc9aabc1202..3672dd12df60 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -1327,11 +1327,10 @@ CONFIG_CRYPTO_GHASH_ARM_CE=3Dm
+>  CONFIG_CRYPTO_AES=3Dm
+>  CONFIG_CRYPTO_AES_ARM_BS=3Dm
+>  CONFIG_CRYPTO_AES_ARM_CE=3Dm
+>  CONFIG_CRYPTO_DEV_SUN4I_SS=3Dm
+>  CONFIG_CRYPTO_DEV_FSL_CAAM=3Dm
+> -CONFIG_CRYPTO_DEV_EXYNOS_RNG=3Dm
+>  CONFIG_CRYPTO_DEV_S5P=3Dm
+>  CONFIG_CRYPTO_DEV_ATMEL_AES=3Dm
+>  CONFIG_CRYPTO_DEV_ATMEL_TDES=3Dm
+>  CONFIG_CRYPTO_DEV_ATMEL_SHA=3Dm
+>  CONFIG_CRYPTO_DEV_MARVELL_CESA=3Dm
+> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> index 3449b3c9c6ad..39c7b195bb33 100644
+> --- a/drivers/crypto/Kconfig
+> +++ b/drivers/crypto/Kconfig
+> @@ -373,25 +373,10 @@ config CRYPTO_DEV_SAHARA
+>         select CRYPTO_ENGINE
+>         help
+>           This option enables support for the SAHARA HW crypto accelerato=
+r
+>           found in some Freescale i.MX chips.
+>
+> -config CRYPTO_DEV_EXYNOS_RNG
+> -       tristate "Exynos HW pseudo random number generator support"
+> -       depends on ARCH_EXYNOS || COMPILE_TEST
+> -       depends on HAS_IOMEM
+> -       select CRYPTO_RNG
+> -       help
+> -         This driver provides kernel-side support through the
+> -         cryptographic API for the pseudo random number generator hardwa=
+re
+> -         found on Exynos SoCs.
+> -
+> -         To compile this driver as a module, choose M here: the
+> -         module will be called exynos-rng.
+> -
+> -         If unsure, say Y.
+> -
+>  config CRYPTO_DEV_S5P
+>         tristate "Support for Samsung S5PV210/Exynos crypto accelerator"
+>         depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+>         depends on HAS_IOMEM
+>         select CRYPTO_AES
+> @@ -402,20 +387,17 @@ config CRYPTO_DEV_S5P
+>           algorithms execution.
+>
+>  config CRYPTO_DEV_EXYNOS_HASH
+>         bool "Support for Samsung Exynos HASH accelerator"
+>         depends on CRYPTO_DEV_S5P
+> -       depends on !CRYPTO_DEV_EXYNOS_RNG && CRYPTO_DEV_EXYNOS_RNG!=3Dm
+>         select CRYPTO_SHA1
+>         select CRYPTO_MD5
+>         select CRYPTO_SHA256
+>         help
+>           Select this to offload Exynos from HASH MD5/SHA1/SHA256.
+>           This will select software SHA1, MD5 and SHA256 as they are
+>           needed for small and zero-size messages.
+> -         HASH algorithms will be disabled if EXYNOS_RNG
+> -         is enabled due to hw conflict.
+>
+>  config CRYPTO_DEV_NX
+>         bool "Support for IBM PowerPC Nest (NX) cryptographic acceleratio=
+n"
+>         depends on PPC64
+>         help
+> diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
+> index 283bbc650b5b..e141ab0dd741 100644
+> --- a/drivers/crypto/Makefile
+> +++ b/drivers/crypto/Makefile
+> @@ -9,11 +9,10 @@ obj-$(CONFIG_CRYPTO_DEV_ATMEL_I2C) +=3D atmel-i2c.o
+>  obj-$(CONFIG_CRYPTO_DEV_ATMEL_ECC) +=3D atmel-ecc.o
+>  obj-$(CONFIG_CRYPTO_DEV_ATMEL_SHA204A) +=3D atmel-sha204a.o
+>  obj-$(CONFIG_CRYPTO_DEV_CCP) +=3D ccp/
+>  obj-$(CONFIG_CRYPTO_DEV_CCREE) +=3D ccree/
+>  obj-$(CONFIG_CRYPTO_DEV_CHELSIO) +=3D chelsio/
+> -obj-$(CONFIG_CRYPTO_DEV_EXYNOS_RNG) +=3D exynos-rng.o
+>  obj-$(CONFIG_CRYPTO_DEV_FSL_CAAM_COMMON) +=3D caam/
+>  obj-$(CONFIG_CRYPTO_DEV_GEODE) +=3D geode-aes.o
+>  obj-$(CONFIG_CRYPTO_DEV_HIFN_795X) +=3D hifn_795x.o
+>  obj-$(CONFIG_CRYPTO_DEV_IMGTEC_HASH) +=3D img-hash.o
+>  obj-$(CONFIG_CRYPTO_DEV_MARVELL) +=3D marvell/
+> diff --git a/drivers/crypto/exynos-rng.c b/drivers/crypto/exynos-rng.c
+> deleted file mode 100644
+> index 2aaa98f9b44e..000000000000
+> --- a/drivers/crypto/exynos-rng.c
+> +++ /dev/null
+> @@ -1,399 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/*
+> - * exynos-rng.c - Random Number Generator driver for the Exynos
+> - *
+> - * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
+> - *
+> - * Loosely based on old driver from drivers/char/hw_random/exynos-rng.c:
+> - * Copyright (C) 2012 Samsung Electronics
+> - * Jonghwa Lee <jonghwa3.lee@samsung.com>
+> - */
+> -
+> -#include <linux/clk.h>
+> -#include <linux/crypto.h>
+> -#include <linux/err.h>
+> -#include <linux/io.h>
+> -#include <linux/module.h>
+> -#include <linux/mutex.h>
+> -#include <linux/of.h>
+> -#include <linux/platform_device.h>
+> -
+> -#include <crypto/internal/rng.h>
+> -
+> -#define EXYNOS_RNG_CONTROL             0x0
+> -#define EXYNOS_RNG_STATUS              0x10
+> -
+> -#define EXYNOS_RNG_SEED_CONF           0x14
+> -#define EXYNOS_RNG_GEN_PRNG            BIT(1)
+> -
+> -#define EXYNOS_RNG_SEED_BASE           0x140
+> -#define EXYNOS_RNG_SEED(n)             (EXYNOS_RNG_SEED_BASE + (n * 0x4)=
+)
+> -#define EXYNOS_RNG_OUT_BASE            0x160
+> -#define EXYNOS_RNG_OUT(n)              (EXYNOS_RNG_OUT_BASE + (n * 0x4))
+> -
+> -/* EXYNOS_RNG_CONTROL bit fields */
+> -#define EXYNOS_RNG_CONTROL_START       0x18
+> -/* EXYNOS_RNG_STATUS bit fields */
+> -#define EXYNOS_RNG_STATUS_SEED_SETTING_DONE    BIT(1)
+> -#define EXYNOS_RNG_STATUS_RNG_DONE             BIT(5)
+> -
+> -/* Five seed and output registers, each 4 bytes */
+> -#define EXYNOS_RNG_SEED_REGS           5
+> -#define EXYNOS_RNG_SEED_SIZE           (EXYNOS_RNG_SEED_REGS * 4)
+> -
+> -enum exynos_prng_type {
+> -       EXYNOS_PRNG_UNKNOWN =3D 0,
+> -       EXYNOS_PRNG_EXYNOS4,
+> -       EXYNOS_PRNG_EXYNOS5,
+> -};
+> -
+> -/*
+> - * Driver re-seeds itself with generated random numbers to hinder
+> - * backtracking of the original seed.
+> - *
+> - * Time for next re-seed in ms.
+> - */
+> -#define EXYNOS_RNG_RESEED_TIME         1000
+> -#define EXYNOS_RNG_RESEED_BYTES                65536
+> -
+> -/*
+> - * In polling mode, do not wait infinitely for the engine to finish the =
+work.
+> - */
+> -#define EXYNOS_RNG_WAIT_RETRIES                100
+> -
+> -/* Context for crypto */
+> -struct exynos_rng_ctx {
+> -       struct exynos_rng_dev           *rng;
+> -};
+> -
+> -/* Device associated memory */
+> -struct exynos_rng_dev {
+> -       struct device                   *dev;
+> -       enum exynos_prng_type           type;
+> -       void __iomem                    *mem;
+> -       struct clk                      *clk;
+> -       struct mutex                    lock;
+> -       /* Generated numbers stored for seeding during resume */
+> -       u8                              seed_save[EXYNOS_RNG_SEED_SIZE];
+> -       unsigned int                    seed_save_len;
+> -       /* Time of last seeding in jiffies */
+> -       unsigned long                   last_seeding;
+> -       /* Bytes generated since last seeding */
+> -       unsigned long                   bytes_seeding;
+> -};
+> -
+> -static struct exynos_rng_dev *exynos_rng_dev;
+> -
+> -static u32 exynos_rng_readl(struct exynos_rng_dev *rng, u32 offset)
+> -{
+> -       return readl_relaxed(rng->mem + offset);
+> -}
+> -
+> -static void exynos_rng_writel(struct exynos_rng_dev *rng, u32 val, u32 o=
+ffset)
+> -{
+> -       writel_relaxed(val, rng->mem + offset);
+> -}
+> -
+> -static int exynos_rng_set_seed(struct exynos_rng_dev *rng,
+> -                              const u8 *seed, unsigned int slen)
+> -{
+> -       u32 val;
+> -       int i;
+> -
+> -       /* Round seed length because loop iterates over full register siz=
+e */
+> -       slen =3D ALIGN_DOWN(slen, 4);
+> -
+> -       if (slen < EXYNOS_RNG_SEED_SIZE)
+> -               return -EINVAL;
+> -
+> -       for (i =3D 0; i < slen ; i +=3D 4) {
+> -               unsigned int seed_reg =3D (i / 4) % EXYNOS_RNG_SEED_REGS;
+> -
+> -               val =3D seed[i] << 24;
+> -               val |=3D seed[i + 1] << 16;
+> -               val |=3D seed[i + 2] << 8;
+> -               val |=3D seed[i + 3] << 0;
+> -
+> -               exynos_rng_writel(rng, val, EXYNOS_RNG_SEED(seed_reg));
+> -       }
+> -
+> -       val =3D exynos_rng_readl(rng, EXYNOS_RNG_STATUS);
+> -       if (!(val & EXYNOS_RNG_STATUS_SEED_SETTING_DONE)) {
+> -               dev_warn(rng->dev, "Seed setting not finished\n");
+> -               return -EIO;
+> -       }
+> -
+> -       rng->last_seeding =3D jiffies;
+> -       rng->bytes_seeding =3D 0;
+> -
+> -       return 0;
+> -}
+> -
+> -/*
+> - * Start the engine and poll for finish.  Then read from output register=
+s
+> - * filling the 'dst' buffer up to 'dlen' bytes or up to size of generate=
+d
+> - * random data (EXYNOS_RNG_SEED_SIZE).
+> - *
+> - * On success: return 0 and store number of read bytes under 'read' addr=
+ess.
+> - * On error: return -ERRNO.
+> - */
+> -static int exynos_rng_get_random(struct exynos_rng_dev *rng,
+> -                                u8 *dst, unsigned int dlen,
+> -                                unsigned int *read)
+> -{
+> -       int retry =3D EXYNOS_RNG_WAIT_RETRIES;
+> -
+> -       if (rng->type =3D=3D EXYNOS_PRNG_EXYNOS4) {
+> -               exynos_rng_writel(rng, EXYNOS_RNG_CONTROL_START,
+> -                                 EXYNOS_RNG_CONTROL);
+> -       } else if (rng->type =3D=3D EXYNOS_PRNG_EXYNOS5) {
+> -               exynos_rng_writel(rng, EXYNOS_RNG_GEN_PRNG,
+> -                                 EXYNOS_RNG_SEED_CONF);
+> -       }
+> -
+> -       while (!(exynos_rng_readl(rng,
+> -                       EXYNOS_RNG_STATUS) & EXYNOS_RNG_STATUS_RNG_DONE) =
+&& --retry)
+> -               cpu_relax();
+> -
+> -       if (!retry)
+> -               return -ETIMEDOUT;
+> -
+> -       /* Clear status bit */
+> -       exynos_rng_writel(rng, EXYNOS_RNG_STATUS_RNG_DONE,
+> -                         EXYNOS_RNG_STATUS);
+> -       *read =3D min_t(size_t, dlen, EXYNOS_RNG_SEED_SIZE);
+> -       memcpy_fromio(dst, rng->mem + EXYNOS_RNG_OUT_BASE, *read);
+> -       rng->bytes_seeding +=3D *read;
+> -
+> -       return 0;
+> -}
+> -
+> -/* Re-seed itself from time to time */
+> -static void exynos_rng_reseed(struct exynos_rng_dev *rng)
+> -{
+> -       unsigned long next_seeding =3D rng->last_seeding + \
+> -                                    msecs_to_jiffies(EXYNOS_RNG_RESEED_T=
+IME);
+> -       unsigned long now =3D jiffies;
+> -       unsigned int read =3D 0;
+> -       u8 seed[EXYNOS_RNG_SEED_SIZE];
+> -
+> -       if (time_before(now, next_seeding) &&
+> -           rng->bytes_seeding < EXYNOS_RNG_RESEED_BYTES)
+> -               return;
+> -
+> -       if (exynos_rng_get_random(rng, seed, sizeof(seed), &read))
+> -               return;
+> -
+> -       exynos_rng_set_seed(rng, seed, read);
+> -
+> -       /* Let others do some of their job. */
+> -       mutex_unlock(&rng->lock);
+> -       mutex_lock(&rng->lock);
+> -}
+> -
+> -static int exynos_rng_generate(struct crypto_rng *tfm,
+> -                              const u8 *src, unsigned int slen,
+> -                              u8 *dst, unsigned int dlen)
+> -{
+> -       struct exynos_rng_ctx *ctx =3D crypto_rng_ctx(tfm);
+> -       struct exynos_rng_dev *rng =3D ctx->rng;
+> -       unsigned int read =3D 0;
+> -       int ret;
+> -
+> -       ret =3D clk_prepare_enable(rng->clk);
+> -       if (ret)
+> -               return ret;
+> -
+> -       mutex_lock(&rng->lock);
+> -       do {
+> -               ret =3D exynos_rng_get_random(rng, dst, dlen, &read);
+> -               if (ret)
+> -                       break;
+> -
+> -               dlen -=3D read;
+> -               dst +=3D read;
+> -
+> -               exynos_rng_reseed(rng);
+> -       } while (dlen > 0);
+> -       mutex_unlock(&rng->lock);
+> -
+> -       clk_disable_unprepare(rng->clk);
+> -
+> -       return ret;
+> -}
+> -
+> -static int exynos_rng_seed(struct crypto_rng *tfm, const u8 *seed,
+> -                          unsigned int slen)
+> -{
+> -       struct exynos_rng_ctx *ctx =3D crypto_rng_ctx(tfm);
+> -       struct exynos_rng_dev *rng =3D ctx->rng;
+> -       int ret;
+> -
+> -       ret =3D clk_prepare_enable(rng->clk);
+> -       if (ret)
+> -               return ret;
+> -
+> -       mutex_lock(&rng->lock);
+> -       ret =3D exynos_rng_set_seed(ctx->rng, seed, slen);
+> -       mutex_unlock(&rng->lock);
+> -
+> -       clk_disable_unprepare(rng->clk);
+> -
+> -       return ret;
+> -}
+> -
+> -static int exynos_rng_kcapi_init(struct crypto_tfm *tfm)
+> -{
+> -       struct exynos_rng_ctx *ctx =3D crypto_tfm_ctx(tfm);
+> -
+> -       ctx->rng =3D exynos_rng_dev;
+> -
+> -       return 0;
+> -}
+> -
+> -static struct rng_alg exynos_rng_alg =3D {
+> -       .generate               =3D exynos_rng_generate,
+> -       .seed                   =3D exynos_rng_seed,
+> -       .seedsize               =3D EXYNOS_RNG_SEED_SIZE,
+> -       .base                   =3D {
+> -               .cra_name               =3D "stdrng",
+> -               .cra_driver_name        =3D "exynos_rng",
+> -               .cra_priority           =3D 300,
+> -               .cra_ctxsize            =3D sizeof(struct exynos_rng_ctx)=
+,
+> -               .cra_module             =3D THIS_MODULE,
+> -               .cra_init               =3D exynos_rng_kcapi_init,
+> -       }
+> -};
+> -
+> -static int exynos_rng_probe(struct platform_device *pdev)
+> -{
+> -       struct exynos_rng_dev *rng;
+> -       int ret;
+> -
+> -       if (exynos_rng_dev)
+> -               return -EEXIST;
+> -
+> -       rng =3D devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
+> -       if (!rng)
+> -               return -ENOMEM;
+> -
+> -       rng->type =3D (uintptr_t)of_device_get_match_data(&pdev->dev);
+> -
+> -       mutex_init(&rng->lock);
+> -
+> -       rng->dev =3D &pdev->dev;
+> -       rng->clk =3D devm_clk_get(&pdev->dev, "secss");
+> -       if (IS_ERR(rng->clk)) {
+> -               dev_err(&pdev->dev, "Couldn't get clock.\n");
+> -               return PTR_ERR(rng->clk);
+> -       }
+> -
+> -       rng->mem =3D devm_platform_ioremap_resource(pdev, 0);
+> -       if (IS_ERR(rng->mem))
+> -               return PTR_ERR(rng->mem);
+> -
+> -       platform_set_drvdata(pdev, rng);
+> -
+> -       exynos_rng_dev =3D rng;
+> -
+> -       ret =3D crypto_register_rng(&exynos_rng_alg);
+> -       if (ret) {
+> -               dev_err(&pdev->dev,
+> -                       "Couldn't register rng crypto alg: %d\n", ret);
+> -               exynos_rng_dev =3D NULL;
+> -       }
+> -
+> -       return ret;
+> -}
+> -
+> -static void exynos_rng_remove(struct platform_device *pdev)
+> -{
+> -       crypto_unregister_rng(&exynos_rng_alg);
+> -
+> -       exynos_rng_dev =3D NULL;
+> -}
+> -
+> -static int __maybe_unused exynos_rng_suspend(struct device *dev)
+> -{
+> -       struct exynos_rng_dev *rng =3D dev_get_drvdata(dev);
+> -       int ret;
+> -
+> -       /* If we were never seeded then after resume it will be the same =
+*/
+> -       if (!rng->last_seeding)
+> -               return 0;
+> -
+> -       rng->seed_save_len =3D 0;
+> -       ret =3D clk_prepare_enable(rng->clk);
+> -       if (ret)
+> -               return ret;
+> -
+> -       mutex_lock(&rng->lock);
+> -
+> -       /* Get new random numbers and store them for seeding on resume. *=
+/
+> -       exynos_rng_get_random(rng, rng->seed_save, sizeof(rng->seed_save)=
+,
+> -                             &(rng->seed_save_len));
+> -
+> -       mutex_unlock(&rng->lock);
+> -
+> -       dev_dbg(rng->dev, "Stored %u bytes for seeding on system resume\n=
+",
+> -               rng->seed_save_len);
+> -
+> -       clk_disable_unprepare(rng->clk);
+> -
+> -       return 0;
+> -}
+> -
+> -static int __maybe_unused exynos_rng_resume(struct device *dev)
+> -{
+> -       struct exynos_rng_dev *rng =3D dev_get_drvdata(dev);
+> -       int ret;
+> -
+> -       /* Never seeded so nothing to do */
+> -       if (!rng->last_seeding)
+> -               return 0;
+> -
+> -       ret =3D clk_prepare_enable(rng->clk);
+> -       if (ret)
+> -               return ret;
+> -
+> -       mutex_lock(&rng->lock);
+> -
+> -       ret =3D exynos_rng_set_seed(rng, rng->seed_save, rng->seed_save_l=
+en);
+> -
+> -       mutex_unlock(&rng->lock);
+> -
+> -       clk_disable_unprepare(rng->clk);
+> -
+> -       return ret;
+> -}
+> -
+> -static SIMPLE_DEV_PM_OPS(exynos_rng_pm_ops, exynos_rng_suspend,
+> -                        exynos_rng_resume);
+> -
+> -static const struct of_device_id exynos_rng_dt_match[] =3D {
+> -       {
+> -               .compatible =3D "samsung,exynos4-rng",
+> -               .data =3D (const void *)EXYNOS_PRNG_EXYNOS4,
+> -       }, {
+> -               .compatible =3D "samsung,exynos5250-prng",
+> -               .data =3D (const void *)EXYNOS_PRNG_EXYNOS5,
+> -       },
+> -       { },
+> -};
+> -MODULE_DEVICE_TABLE(of, exynos_rng_dt_match);
+> -
+> -static struct platform_driver exynos_rng_driver =3D {
+> -       .driver         =3D {
+> -               .name   =3D "exynos-rng",
+> -               .pm     =3D &exynos_rng_pm_ops,
+> -               .of_match_table =3D exynos_rng_dt_match,
+> -       },
+> -       .probe          =3D exynos_rng_probe,
+> -       .remove         =3D exynos_rng_remove,
+> -};
+> -
+> -module_platform_driver(exynos_rng_driver);
+> -
+> -MODULE_DESCRIPTION("Exynos H/W Random Number Generator driver");
+> -MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+> -MODULE_LICENSE("GPL v2");
+>
+> base-commit: 5624ea54f3ba5c83d2e5503411a31a8be0278c1e
+> --
+> 2.54.0
+>
+>
