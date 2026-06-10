@@ -1,132 +1,181 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714DA257452
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 08:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDEF21CC58
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 09:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781079386; cv=pass; b=B1gs0k18p6OtyVcGS50iLFcTgsbNy3NANFRb/d6ZLJe3d6Wvk3tbSaOl+aL4E3iqjR6Uazvag1zW5xacB1h2JCWsBoeNWKaCuCPKv0hhZSaxhAbIQ+EhmhpA15t5TV5CVi0X9M/MeD8tLtX1bon6bDswS1ON7AycnpsN6fmY4y8=
+	t=1781085367; cv=pass; b=ZTE2a/uFUqvgcxjEU0b5ljRUdMiLnDzGBy/TVc9saB7QNKKJZyh+OIka5UGUtGGz9fVVqw3KlJ7o7RWejCw7Pzjq7mjU+MS89jkypsljTsbakiHk+wGJAKvx0NVNPg/hB9lGG7/HmWTRlBQ4HzLcN/rS0bkUEpxnwe7SzTH0rfA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781079386; c=relaxed/simple;
-	bh=/rsvtot1H8oonankc8I/0lOyn+rcfdNAR9xvGxSRQNk=;
+	s=arc-20240116; t=1781085367; c=relaxed/simple;
+	bh=hZNp1wzl7aMol0obQLeujStExhwYmp321tYBENr5gfk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c9gQGz4DeI3YAG8ht1tGSXT0RmU8LVHAhgE8wO1tkd9Tcb1jl911XJWdDuVozjBcyWjO9ySuXlb7qEKaGds2pXb58EmIeC/zHkVED4JaB0usLr5AZcYV92RtYicMIHxIN8bHQ4TSHOhBbxoxAfrj7h6ePFi6e3ecY/v7bbUJtK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HVFdvUIa; arc=pass smtp.client-ip=209.85.208.50
+	 To:Cc:Content-Type; b=ZB4fSYT1FinuGGU/47QFk67l+4nzyv0qTluDZchXJ0ZgbizlVCD7adAgvs+lQf/xArjk1PkFgtFgQ+RGXmcYQiabG/mY9UtQiXnQtUFJW6LxlYLvW7aAiuOtDJQtIiW1QnNTuoDT7BT0qKt9B6/IX1/dVl03GNDhiUFhbkPrqrA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJyl9nYe; arc=pass smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVFdvUIa"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-687ed9aabb3so12707262a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 01:16:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781079384; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJyl9nYe"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-68c5eecdd56so9845338a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 02:56:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781085365; cv=none;
         d=google.com; s=arc-20240605;
-        b=ckXZ93emjVqnaxKUyyYewNNm/paGzFqUfJAa4PAAgnT0kL2ZNwIH1A+hlUslyervZD
-         gWnuIw5QcHQaX0kWn1UrN3zu2dXiYp5S4+LpNRBpGcC5rTKW332pbVHSYQRvc/PDMEqx
-         7EvT2MWpqr0GHdobSmmhgSXsB0jSvvilweO0T+N8nl/WIQwE+ZKtazpQ3DA+9gloF1lE
-         pLEt0kF3pFo16780SmFza5a47lUtyQX0Qwxd+/ygLW+nfDldbDWsWdE25cG3bwpz8tke
-         CZ+Y+TSpV+pQOlIQE2K9m4MlKklX3ppVzqfHDHtunVhSMmcXtdruaJNJA/nUX8WFct2/
-         PcJQ==
+        b=bbmHZ1vZ+CFiJo3fazDELq2Or1ODxdK2AMdCPW51Yy3Ox2onQgpYZDLHDjc4IpJmkc
+         KCbzxP83dwHotxR/El8LwJ0MH9LKHrEofhiwXYyEsPkLUSr5UFqv9MZ1Y5ZTqCFCdmsm
+         3KdPPJZGTCn+HtBGSqKBbuRh7VTpKYacEFOf7GnyA9p67vpqcm7AgXOoaneMLGUZznHL
+         e2O6Iht0GYE4rKPokKqKUc/Ze95dAwc68W/klGuQ2nvPXWsoTNLrLT5t5OqQBQ0wv7vR
+         a8pd76BnChlMwlghqKCT8eGyNICi7I6T4ZsciQtrGk3+B7yQXg6G1e9X3wMbDpwAedkp
+         90Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=tHoPJkb7g+dCqec0zDKH8l5x9cBJqpDBFECmITAhpgs=;
-        fh=RXPyUHFGoetJa1aO82hPTQEiDsF1C70AQe6laci73nY=;
-        b=M0zzMGmTqiP1XeFMDv40frb2Q92Ibc0ibwxAiTEog6+2TC8ib/fiXT9B4Coela4kVv
-         +ncP3msc+wHXq5ceDqY77BWcu33Fq3pCY51xDvwAlR5VlPDUhQqSowaOkJ2CYLk8Ejeu
-         WOBKrEgpz0rsrK6Rnf0vNOmdTs6aDQw5SoWJYyGO8VfXQdQOVNm9gaPmhISAvixPqnzV
-         trim8/OLDLvcEpX8QNb3yACFHDyKqVKOCX+SnFfCjJXbHObDoDc0bs+8SHlIgxi5Tx0G
-         JgcFRduLkelXOpoW3JgPEAsC344SdPev6GFz4Lq49+FsUHgeMDx81nEO5ENQ+4Z9ITgp
-         7vDw==;
+        bh=CmlGB8tR+Cv/jqDrTQc1t9bnzwkfYB6t+ePs6hjw60w=;
+        fh=4Y7sMpXKoSdgwZnKBdUJj/6wsFntxhsEoWlAsiMVyW4=;
+        b=iDGc8q/jFaWFbMF8Rvgf+ePUdwujHDniIhs0G/J6tPMX4FcikoYeI7oZGaxRj/zxTQ
+         AEQOOdCvufxiuwtkQEweYyj0Oo0l+7QkczCmAfXvMH9Ufw86UhyP8a9bXOi8TCUPkczG
+         VA90k9GyxxFAcFACyQAdpWW7+iBBmf/Tc5Sz9yF2/ujbb6iTfjczuRR3PdxqWrycK+5G
+         ZwcnXG/WDYkX5kwAASScP/N/QgAHYXB62sZoJX7T0wqOFhJWwcyDqedDMlqXiLXD8XJy
+         A3xS2N/sbGQ8SGry6zM4jp2gwTqacT+hP+bpaSkSTsAJeZzgHg3aVeGfyXEwPWgDZ3vt
+         GiGQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781079384; x=1781684184; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1781085365; x=1781690165; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tHoPJkb7g+dCqec0zDKH8l5x9cBJqpDBFECmITAhpgs=;
-        b=HVFdvUIa6iq6mss3vnSp1pft3ZK4pOPJtG4J8UkvdD3/fJxiFB+D77sEu0kHm3V0WA
-         LR9dgEhgDEKL9/dMk4F6RmqUUgIIMkpRo7wB7RoOKByhfVjZfkLU3B48T3qqd75amsQl
-         avHZmtoHQEvqQKaO1ltitazhhiUpGufYzgKajiUVh37DLJKriGZOCBTkiaj9YP5km1Fu
-         WKU5B5z7SCACZZzEFsyvpioAcZo2wRYuMffrrce/BdT77fSkaZQmKYOPkr/Reh7SlKvc
-         q8F+5LTVe/JGCUKMjgKNyuDhdKAjL9DjBxBIP5cN9Ond7sfdPYF3UJK6r/Mwp9ffe5cB
-         J4Sg==
+        bh=CmlGB8tR+Cv/jqDrTQc1t9bnzwkfYB6t+ePs6hjw60w=;
+        b=LJyl9nYekUQk8o5/09+acieQM8M72nvIR6T8Iy4gh+Q2qH3MQuqgJIXTS80vqnNYh7
+         TBWLPZfdCxfHIwqGPf1dI5dDlIkNWLb7QTpkJSEtd3bFJmlSY3xb/TIZGB8sPQQm/Nhv
+         iP/gvzutuRHm7N2/kIjbyFXFnzIEftqpQk2ySUVqQ2kyc9SBXy69jeRAi9xmjkLCSsvO
+         7Ipdemze8b577dmaOXNj1GH1qoC2NMqAE0OnK2BXwppSR4I23dVCbbc+fPkkLceAXcW3
+         sX8/G0oIfCnK3aQEBpNxVjt70CwwV+Mimu2tp/SGJ9Oqdvw9Ke9S0JN4gzMd0tBfpZXf
+         nurg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781079384; x=1781684184;
+        d=1e100.net; s=20251104; t=1781085365; x=1781690165;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tHoPJkb7g+dCqec0zDKH8l5x9cBJqpDBFECmITAhpgs=;
-        b=SdTBEAUyGMe2vRpeiJPSzxJ6ksYDYqP5fpxMDlzmf+h2E17tQEpdI8NjidlhSvc2op
-         ehBIrlSOV5Lx/yafPX95I7yZURQJGgcGO7Yfp1vcloHN8LRHe8nWVJnXGXdbvHPjsrZ9
-         5xIMYaK1+Z0+ZeUJt6w4KMyzfl0NlRjgzF5NYFeqfJeR2SCqXpukol1nZc/NdpYVfFXI
-         kl8OUi0VkgQO8b5ydhVHKJC4CPmaCh6dC3XSWSernIGmNYqaFDZt3ysl+ubYDFIWxiF4
-         lo46yKc+vWI0A3CxrmGvmx88JE+Bxy3W4+gdcOuRepS9CuK1YzBRFc0PAcVQT0iO949C
-         aeCw==
-X-Forwarded-Encrypted: i=1; AFNElJ8qH/c1tJCKdQzDTFykKOXuxB9RuePqoWKjhWN3OXY3dcxGjsgW0+USq02CajqAdLqM0mDP/A6kAc5t24OMsv+cZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDOsnF7ZRT+Ym/JZDcU9x3HElyVrb9i4vwVn0PgxFod+7at+wi
-	iWv6b8RAl9+FecR6JuPIrNz+RZIBUHIs1f3iajnK802LnUhheDGC+H0uL7W1riYpaIgkTS1JH1Z
-	1DZN96GaGtWqRiC7RKY26PVm9cpFi/WYpY8xLP30fOw==
-X-Gm-Gg: Acq92OGvvadR6IaubXqBL+DKKUY7z+nBvhRgqWTjl+ix1NMuAHO3SjenJnk9xxtDcze
-	AzPGXR0UwxYPWXCd6VrgEYNyuX9pw4dNmlEtkrkcN7VJpgHkE+CUaXEAqMajQblLuw9uc0nSH1S
-	uv9k/uHo8mFUcSfsztuKpBXJRtb4rdcrKQ2ekSaNZEmy/zscVIIHB4PFCIHc2Qx8rAhSJr5dMPf
-	/G+o4rZchVu8nIIldY2fazDGvG76wu+pv4AFukx5MTkC/Y1OLoCZ1XQT1IHFLETiXpKOK58BCK0
-	yspKk6RedngHFPRJZJ7l5BuPSH5NN9bAATW1MwbAvNST7S25Gmkh9I5zq53ULtc=
-X-Received: by 2002:a05:6402:364a:b0:691:52e1:646 with SMTP id
- 4fb4d7f45d1cf-69152e108b3mr6650804a12.18.1781079383954; Wed, 10 Jun 2026
- 01:16:23 -0700 (PDT)
+        bh=CmlGB8tR+Cv/jqDrTQc1t9bnzwkfYB6t+ePs6hjw60w=;
+        b=eDc0JhiI2AX+9y/THbshPi36ckhlwYaravNag2dw6xAqEe2aAteIo1Fift46V812Xt
+         uqGzu/+kKWGNdqqLq0eFwiWfiQSYuvoIVkK49AHFbA1mtwVQcOwsWDhYTOgfND8qv6sH
+         lgeSf/nDNRoqs44j6LaPcfRA2EcLW++cUlWaWuCD8qMPfEf/Qn25BRLKyxv73EOzS25a
+         owraYccMr2BygXla1D3H+pqlDHyfdmHt6+89fXFW7Y3DL1IctQCQYGHvbG2OjcSCTTgh
+         0vtWs9xxsDe0t1JXn3tGRgw44BGVNU3zAM7UUxvadWUgO8MS2jDKYyeW615OkmqSwVsV
+         rdfw==
+X-Forwarded-Encrypted: i=1; AFNElJ8iFI9W6F0KLybNq/n3OOsLvsDH8l5wVfLo9zYWzQaJmE0bmvHc0Csg3md9YInQV71vTlm4PbGXuxyEY4TLTYXJ3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXxD96cvDld7l640QRuvpNFsQ0kzQOMEQB/EKDDZ1dBcwKR5EU
+	Ppj7CCj1cdDAzerpPdRvbHX20fI/eIzBT2x2/wOFCvH9xBIsaVCsNynqWiJY7ayiomdnw9ilepS
+	+MgirF3JVtEC/W6vipUBhPWpMYsWfSyhglGuUvri4Ig==
+X-Gm-Gg: Acq92OHCXNBKLqE/StFM7qFRWlg5pZs3MWuoCZi6Ox4k9lfZ3E4B7Cqw19hKPfnwLwW
+	SFEVKRPxZMJfAUfCuJCcqAmWcTiQJ4L5zD6y1YN/r6Frf4l+r/1pqO2li25L+mQ4zQzPHeTmpMW
+	/GEo+WZ+XrC28GzqNbhIGbNhF6ttcWRDwvQaxhbmZ9p+RToXwZ+05lfwEmfRgmIGs9iAbxGC0p8
+	rUwtaJBx9UjsRRwQEhNQPm/ZhpZSXNtkyROKw58tjiCwhUFSWPkHU5m5RQ7VDrR/nM/68pjylTg
+	rigEwJnG1oDLC9urhqpcr6soYRhvBTU0vbyFtfzG5yYAGTt4NXgP
+X-Received: by 2002:a05:6402:26ca:b0:68e:66da:c39c with SMTP id
+ 4fb4d7f45d1cf-68fa52595a9mr11429014a12.24.1781085364631; Wed, 10 Jun 2026
+ 02:56:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260610050337epcas2p1f6d27933f30ac063454fd25acbde327f@epcas2p1.samsung.com>
- <20260610050326.2903402-1-sh86.bae@samsung.com> <20260610050326.2903402-3-sh86.bae@samsung.com>
-In-Reply-To: <20260610050326.2903402-3-sh86.bae@samsung.com>
+References: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org>
+ <20260605-exynos-pmu-cpuhp-idle-fixes-v1-1-0cd05c81a82d@linaro.org>
+In-Reply-To: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-1-0cd05c81a82d@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 10 Jun 2026 09:16:12 +0100
-X-Gm-Features: AVVi8Cdmggek5VJwntYPdwBeIDAOFuLirE2SfZ_uo_NZy2DfGsDe0iwZglsDAY0
-Message-ID: <CADrjBPqwJhhb5qRvrxyw0Y1mmf9AhaaJFJe9Tzuo+H1aBJ1zNw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: exynosautov920: Add hsi0 syscon node
- for PCIe PHY
-To: Sanghoon Bae <sh86.bae@samsung.com>
-Cc: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, 
-	alim.akhtar@samsung.com, kishon@kernel.org, krzk+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, sowon.na@samsung.com
+Date: Wed, 10 Jun 2026 10:55:51 +0100
+X-Gm-Features: AVVi8Cefu1n2MWDEUi6aR9N7alNw0lKukQb9HTmuDkQk8K2PjK6RnQfXSI6M9T4
+Message-ID: <CADrjBPoDC68jyEY2HZtoh1SLfVwFPpzKea7T6QLyfY99MsNVcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] soc: samsung: exynos-pmu: use target cpu ID in
+ hotplug callbacks
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 10 Jun 2026 at 06:03, Sanghoon Bae <sh86.bae@samsung.com> wrote:
+Hi Alexey,
+
+Thanks for your patch.
+
+On Fri, 5 Jun 2026 at 21:19, Alexey Klimov <alexey.klimov@linaro.org> wrote:
 >
-> Add the syscon-hsi0 node to control PCIe PHY power, PLL settings,
-> and device direction (RC/EP mode) on ExynosAutov920.
+> The CPU hotplug state callbacks __gs101_cpu_pmu_online() and
+> __gs101_cpu_pmu_offline() currently partially use smp_processor_id() to
+> determine the target register offset for the CPU inform hints. This may
+> be fine for cpuidle flow but broken for cpu hotplug where the target
+> cpu is passed as an argument and could be different from cpu where
+> that is executing (e.g. CPU 0 offlining CPU 1), meaning that
+> smp_processor_id() returns the id of local CPU but hotplug flow
+> deals with another CPU core undergoing the transition.
+
+This was intentional. The powermode hint is always programmed based on
+the currently executing CPU core in the gs101 downstream code (for
+both CPU Idle and CPU hotplug paths). See
+https://android.googlesource.com/kernel/google-modules/raviole-device/+/refs/heads/android-gs-raviole-mainline/drivers/soc/google/cal-if/pmucal_powermode.c#15
+and the pmu_intr_gen is done based on the actual CPU being
+enabled/disabled.
+
+It's possible Exynos850 requires something different. I suggest
+checking the equivalent function in the e850 downstream kernel.
+
 >
-> Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+> This causes the pmu driver to write power down and power on configuration
+> hints to the wrong hardware registers, messing up the power state of active
+> cores and failing to configure the target core. Fix this by removing the
+> cpuhint variable entirely and utilizing the target 'cpu' argument passed
+> to the callbacks by the hotplug core infrastructure.
+
+Unfortunately I think you're introducing the bug you describe with this patch.
+
+regards,
+
+Peter
+
+>
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: https://sashiko.dev/#/patchset/20260513-exynos850-cpuhotplug-v4-0-54fec5f65362@linaro.org?part=3
+> Fixes: 598995027b91 ("soc: samsung: exynos-pmu: enable CPU hotplug support for gs101")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
-
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/soc/samsung/exynos-pmu.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 0bf7c4cb9846..cc3ed5c52ffe 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1382,6 +1382,12 @@ cmu_hsi0: clock-controller@16000000 {
->                                       "noc";
->                 };
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index d58376c38179..6e635872247a 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -235,11 +235,10 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+>  static int __gs101_cpu_pmu_online(unsigned int cpu)
+>         __must_hold(&pmu_context->cpupm_lock)
+>  {
+> -       unsigned int cpuhint = smp_processor_id();
+>         u32 reg, mask;
 >
-> +               syscon_hsi0: syscon@16030000 {
-> +                       compatible = "samsung,exynosautov920-hsi0-sysreg",
-> +                                    "syscon";
-> +                       reg = <0x16030000 0x1000>;
-> +               };
-> +
->                 pinctrl_hsi0: pinctrl@16040000 {
->                         compatible = "samsung,exynosautov920-pinctrl";
->                         reg = <0x16040000 0x10000>;
+>         /* clear cpu inform hint */
+> -       regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
+> +       regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu),
+>                      CPU_INFORM_CLEAR);
+>
+>         mask = BIT(cpu);
+> @@ -296,12 +295,10 @@ static int gs101_cpuhp_pmu_online(unsigned int cpu)
+>  static int __gs101_cpu_pmu_offline(unsigned int cpu)
+>         __must_hold(&pmu_context->cpupm_lock)
+>  {
+> -       unsigned int cpuhint = smp_processor_id();
+>         u32 reg, mask;
+>
+>         /* set cpu inform hint */
+> -       regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpuhint),
+> -                    CPU_INFORM_C2);
+> +       regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu), CPU_INFORM_C2);
+>
+>         mask = BIT(cpu);
+>         regmap_update_bits(pmu_context->pmuintrgen, GS101_GRP2_INTR_BID_ENABLE,
+>
 > --
-> 2.45.2
->
+> 2.51.0
 >
