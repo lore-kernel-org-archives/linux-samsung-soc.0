@@ -1,98 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C2368287;
-	Tue,  9 Jun 2026 23:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DADE33A9CF
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 05:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781046329; cv=none; b=tF85fgKH0Oq8wD7B/k8zBM5v0m+m7e+jeEJMirobLbdYdPfVDHvuy+BPy+xtS0M9Qa6pduY4uZvFmAmk3/nUCTob1y/tJbhBLhgJJxnhuIWCUGULDugC8yeWSBTdn9iqao5criLT0jR6Bcos06F+fQwpVbOLBADPeAP2gMNc7ps=
+	t=1781067821; cv=none; b=DGrFrLfI7Eng8o00cJdtK//UDmy0d5t9g65/FHiJJc4x+0igOlnnrEf+DwPVr+CHzp+tYeG5rPkcf3rfXT6KY9OvuHHvHBEZk1GkQdFSwwNzr1AgAI9J0JwpwWpik3f9ts4LhDi/WZCXGpxGn8Nfb1MUVfHFJC1r/ORN06WqVqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781046329; c=relaxed/simple;
-	bh=dD1NfSsfFeqA+ue7kAvizM5ggS1y8qNVvwfe835lrO0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jkC6gEeJPRLd3YK7YxiBoBwpwjW9SlBIfmVv4mjj6N2fQN5S3T9DjNhWbn4eU370BYcvNNvzujztIf6eBaiagMfjCyQRMHS+K5FcgUoG+eWOrvleoR5WTuPxj60A8rSaxmA8NYaZhZpk8Qce/rILLj0y26Ty9giri8ryHbdtRfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L28OnAvk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781067821; c=relaxed/simple;
+	bh=Pax4m6nK4pG6R31DiVcIF/qo3cpKDqLqclQ+WpfObnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=X3CknpNNkBb6NGV1GamXBTaeRCe080cCIHdeDlDApxMzV2pWnYKkap0RuWcR+CTno5itCZwrJl6v+YUHYoG+b3bJN1jJJtTpAx5WlaTR/ratJ244y9AhtRecDkRRqLbBEBQpOJwIOvxioG/rZOTL9c7+xDFh0edV9y7LYUgHvWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=D4we42SI; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L28OnAvk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA3D1F00899;
-	Tue,  9 Jun 2026 23:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781046328;
-	bh=aD95TvwXzD1HaNltihw0RgGiAp/VWUjSzOzfVn/vpJ4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=L28OnAvkY/r0m9bFU1xVoWTX2MnuT/q4O6fdW4fwfJ3lk79I2ImaueEtLj4iwJw6p
-	 nOcxnxB2Ag2oqttsiksQZJLmjwDlUbrtHLsndHLHrSzzgxN/VfO2Vtb0zedsbaADvt
-	 QFTH7m6Bjat73UujH1+4veGbeOYD0HMuugWodUJ/nQf/J20xxgCVRUi32hPvDLVZTO
-	 etkMTzj48eeqTkVcIO7PfMBnRaE8oS6l1bUEO6DtxCbhFOWKSpNdfTwHQKqDND0u4h
-	 n9ynxWs/qMEggAXqF7Gg/mTR8CZa7Nwp7Mat6RK5FPCiPjs1B2tcx8AYwEHRz8Ku+p
-	 gIeCPZgB62wrA==
-From: Mark Brown <broonie@kernel.org>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Jonas Gorski <jonas.gorski@gmail.com>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
-References: <3fcd432a505bb1bb7f8ef0fba9162243200b3347.1780606153.git.u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v1] spi: Use named initializers for platform_device_id
- arrays
-Message-Id: <178104146688.34323.8035338642693154122.b4-ty@b4>
-Date: Tue, 09 Jun 2026 22:44:26 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="D4we42SI"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260610050337epoutp0303f37ec00b375381c17b4728928fcfd1~3n75OEepp0269602696epoutp03e
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2026 05:03:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260610050337epoutp0303f37ec00b375381c17b4728928fcfd1~3n75OEepp0269602696epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1781067817;
+	bh=H9ovJzCXhhhqKYuIwIuvGMuIArl2WOSc/Jo/J9JUc1A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D4we42SIfe9I3c7LF15XVc4N+Ok5wd1W56VAXG0FMsFcBgtkEBJJJfiz711uqfBrk
+	 L5nbB9FtVEhCQzXt/q9yOPpdydtuGWZeD4IJxa3lmqkCWlmQzET9w+ylABd/LFXukY
+	 wVfXLp4H7JWGdlGG7C7R3ol49iCWaASNqGDpFdqY=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20260610050336epcas2p3d4da2a15424dc7cdae9fdc92b8657b4e~3n74t8mKN0743907439epcas2p3-;
+	Wed, 10 Jun 2026 05:03:36 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.38.204]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4gZtw829kgz6B9m6; Wed, 10 Jun
+	2026 05:03:36 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260610050335epcas2p3ec1c019e86b75e9a4edd965a8b27ebd3~3n73kIW3d1025210252epcas2p3D;
+	Wed, 10 Jun 2026 05:03:35 +0000 (GMT)
+Received: from asswp146.dsn.sec.samsung.com (unknown [12.81.221.119]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260610050335epsmtip27ce4fa849c2b99f059a31acdac8909c6~3n73c8N9t1155711557epsmtip2f;
+	Wed, 10 Jun 2026 05:03:35 +0000 (GMT)
+From: Sanghoon Bae <sh86.bae@samsung.com>
+To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+	alim.akhtar@samsung.com, kishon@kernel.org
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	sowon.na@samsung.com, Sanghoon Bae <sh86.bae@samsung.com>
+Subject: [PATCH v3 1/2] dt-bindings: soc: samsung: exynos-sysreg: Add hsi0
+ for ExynosAutov920
+Date: Wed, 10 Jun 2026 14:03:25 +0900
+Message-ID: <20260610050326.2903402-2-sh86.bae@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20260610050326.2903402-1-sh86.bae@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1151; i=broonie@kernel.org;
- h=from:subject:message-id; bh=dD1NfSsfFeqA+ue7kAvizM5ggS1y8qNVvwfe835lrO0=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqKJwyRgD+N++a2A9XgQFuhe7FstOHL8se6UVCS
- wsatsTVih+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiicMgAKCRAk1otyXVSH
- 0DkkB/9pWRLnlIpMt6gUTHT5/ks1l2rsbAQWYtvhksDTQCtJzEPseYryqzpaqg32KCS2NucXJvE
- JI6uOk7uDNJ+xtsKKgD3AOoFx2unswqFaYUbadIOX0xhKwpjYN/RRJhw+5C2wSdEJZoDpcv7uFw
- bz5++GgO+W4K2NwXC0kbVGeWW57cRePRLF8mvxYyBgOOPCJ5UsTpx0kaANgT55VB1S+ej3MS3dq
- vP6l1mxvQjGHZUVa+ylqhSKaevGCMTCXk0x1Zp2p2q5vQLd3FWz5XFG8fvCkBudK9xQIKWBJPuQ
- xZBRCCi68SuZvTK9L07OF5krtksdlcCq7Riig3fI8ky9MTKh
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-CMS-MailID: 20260610050335epcas2p3ec1c019e86b75e9a4edd965a8b27ebd3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260610050335epcas2p3ec1c019e86b75e9a4edd965a8b27ebd3
+References: <20260610050326.2903402-1-sh86.bae@samsung.com>
+	<CGME20260610050335epcas2p3ec1c019e86b75e9a4edd965a8b27ebd3@epcas2p3.samsung.com>
 
-On Thu, 04 Jun 2026 22:55:26 +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> spi: Use named initializers for platform_device_id arrays
+Add hsi0 compatible on samsung,exynos-sysreg
+To support ExynosAutov920 PCIe settings:
+- PCIe PHY power control
+- PLL settings for PCIe
+- PCIe device direction (RC/EP)
 
-Applied to
+Signed-off-by: Sanghoon Bae <sh86.bae@samsung.com>
+---
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
+ 1 file changed, 1 insertion(+)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
-
-Thanks!
-
-[1/1] spi: Use named initializers for platform_device_id arrays
-      https://git.kernel.org/broonie/spi/c/fc82dda1dcc6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index 9c63dbcd4d77..fcdb9ffd2644 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -37,6 +37,7 @@ properties:
+               - samsung,exynos8895-peric1-sysreg
+               - samsung,exynos990-peric0-sysreg
+               - samsung,exynos990-peric1-sysreg
++              - samsung,exynosautov920-hsi0-sysreg
+               - samsung,exynosautov920-hsi2-sysreg
+               - samsung,exynosautov920-peric0-sysreg
+               - samsung,exynosautov920-peric1-sysreg
+-- 
+2.45.2
 
