@@ -1,85 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E570841C2EF;
-	Wed, 10 Jun 2026 15:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB73134D901;
+	Wed, 10 Jun 2026 18:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781104206; cv=none; b=ZuNIa/As9SZDrmyxtfDEN98TlKPAOvv0OjlvoxRoO0Cii2Wcz6fAkMaJfpuXBEVaTkoV69ecnLLD/Q/gH1pC/94u2cFkFVpwi20uFP6G4+dmeeQqtK2rEy+h+FahZgOJLT8tLVQGWqW/DBa8L0Cmn5geb2Oi025wKguwnaUDL6k=
+	t=1781116745; cv=none; b=rnwaKcR8FhV+BrjtLDgCylkEtFQgG8LiEU8aips/VEbqFtlMFBjCFNyfOvOHdIqWdqx4CFCDrn1Dvfc7/ymvaYJIVE+QPEs9V4SHNr6MzVu04UbambkZigSG2EAA3DR1O7OzCnLGQy48p+hq2bYyHO/Hgd/JWSuk22Aj5BzmmFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781104206; c=relaxed/simple;
-	bh=UnORoybj1kwAjQwxs/GmgO7PN5XvskdkbObR4fnn0lc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tGj1itLclSJ1oYeG1KaEt4LRa8tDqBePKbgISV7FGtc2bKNo71Jgxb17cx521/EgnajCFZTaTkbJBxwamopoxk8+1tGyp6OnC6Q9e5foJ9pIfczwIBhKU59UcnsSFkV0qcqpYlU3NPsWDAjtvGUcC1OIjCz6MTZ6KXVbbN5KrOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0611C1F00893;
-	Wed, 10 Jun 2026 15:10:02 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1781116745; c=relaxed/simple;
+	bh=GxMar0oLEIQoe7sHtEEfoKoR0HEcjBy+/l3pVm1wND8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFCVGnNzWYgejpEOzB4ZPX5+64K0DQixJ6qnEI5vGhajbKvHT9JcHTy1aMf8h6LJl/tAQ6a61KZph0iZ5EGqWmGzMWd5YRDn07GCUC97tNKS32SmxH/nk9aLc/MQe2jv7VSaImiqYv8ixMsTGTu1+4ihpZ0IN7KSyaHqcyhU86Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1ObFPr2; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1ObFPr2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DC01F00893;
+	Wed, 10 Jun 2026 18:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781116744;
+	bh=4o1VtWCXoWoxZBd6EawCUnJfQ/1lp18t/RARZHM0h5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=L1ObFPr2OvgTYrOIIO4/YtP6lSqMh682GiOhOkJWrOkn11BH1KN8+D4dLayTtyAQk
+	 OCKltKKSoaFudM5UTbZ+sDqvJaKgF28LSWLxitUx48re7IN69YoiqhAv4HE7aKihIh
+	 +XbGlAD2J3OJ+EZixK+Wo8iw8K4CDmoLOe6pazU99tWs+FmU0aQMs8QPKLuPd74MHr
+	 w9hezWha/VMuYab5un8ehjztSILHjkRN9dG/0/4SoZ9dQxe4+t+NbkaUDyKD2FemYq
+	 IwsHPk29AfT229gyPnvy6kNFwH4JnlrUTfsyf8BymvScuBdBtvXClCOzC7Z+Q/4Ui3
+	 qm9lGdnlcUozw==
+Date: Wed, 10 Jun 2026 18:39:02 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
 	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] arm64: tegra: Drop CPU masks from GICv3 PPI interrupts
-Date: Wed, 10 Jun 2026 17:09:54 +0200
-Message-ID: <0be8708c53609bb64bfa31d84dffc5c2d56b5679.1781103355.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1781103355.git.geert+renesas@glider.be>
-References: <cover.1781103355.git.geert+renesas@glider.be>
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: exynos-rng - Remove exynos-rng driver
+Message-ID: <20260610183902.GA1158828@google.com>
+References: <20260531175932.32171-1-ebiggers@kernel.org>
+ <CADrjBPo3BpSk49oasf_9g06xrBMkw+NiKo10xDKjWr8sJ+Zc-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADrjBPo3BpSk49oasf_9g06xrBMkw+NiKo10xDKjWr8sJ+Zc-Q@mail.gmail.com>
 
-Unlike older GIC variants, the GICv3 DT bindings do not support
-specifying a CPU mask in PPI interrupt specifiers.  Drop the masks.
+On Wed, Jun 10, 2026 at 03:46:54PM +0100, Peter Griffin wrote:
+> Hi Eric,
+> 
+> On Sun, 31 May 2026 at 19:02, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > This driver has no purpose.  It doesn't feed into the Linux RNG, nor
+> > does it implement the hwrng interface.  It is accessible only via the
+> > "rng" algorithm type of AF_ALG, which isn't used in practice.  Everyone
+> > uses either the Linux RNG, or rarely /dev/hwrng.
+> >
+> > Moreover, this is a PRNG whose only source of entropy is the 160-bit
+> > seed the user passes in.  So this can be used only by a user who already
+> > has a source of cryptographically secure random numbers, such as
+> > /dev/random.  Which they can, and do, just use in the first place.
+> >
+> > Just remove this driver.  There's no need to keep useless code around.
+> >
+> > Note that the other crypto_rng drivers in drivers/crypto/ are similarly
+> > unused and are being removed too.  This commit just handles exynos-rng.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > ---
+> 
+> If the driver is being removed, should the binding documentation for
+> this driver not also be deleted (see
+> Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml)?
+> 
+> Peter
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+In other discussions I've been told that devicetree bindings are
+hardware descriptions that should still exist even if there is no
+driver.  It doesn't make a lot of sense, but it seems to be what the
+devicetree people want.  I expect there would be objections to removing
+this binding.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 04a95b6658caaa92..390609fee09c9da0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -4083,7 +4083,7 @@ gic: interrupt-controller@f400000 {
- 			reg = <0x0 0x0f400000 0x0 0x010000>, /* GICD */
- 			      <0x0 0x0f440000 0x0 0x200000>; /* GICR */
- 			interrupt-parent = <&gic>;
--			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			#redistributor-regions = <1>;
- 			#interrupt-cells = <3>;
-@@ -5869,10 +5869,10 @@ tj-thermal {
- 
- 	timer {
- 		compatible = "arm,armv8-timer";
--		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
--			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-parent = <&gic>;
- 		always-on;
- 	};
--- 
-2.43.0
-
+- Eric
