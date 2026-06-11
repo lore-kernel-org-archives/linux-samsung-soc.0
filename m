@@ -1,133 +1,138 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BF931E845
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 07:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B40E3B3C11
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 07:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781161642; cv=pass; b=IyUMd+5r/QPSj6/gyNRk6K9qe0TjQx/rKumtPKbOWyyOoP08BO5r4MMlJn0y48OmH1+erEknnq3urD1bw9P7QYn6sG7EXyGbeIcEZIZ3Vn3idlbJZ4cCJauXoBfbXmfoSTX3ZtFH0l3X2ZBdji+YthPZotGLAc+Kc0soKeks47c=
+	t=1781161882; cv=pass; b=NFLNSaEmTesj+Ht//nY0G25v907rN1YJpbnIF2KQGvSEG+4N8byipQVeAfbUgf4NGm1yRJAjf9IuLo8cgxI1u614FFukER6g8HHXEKwsSYEnD2ZtioeNPnOvC3woHGhZdCEdR1tJB4HTADki9bD4wlYivEs/O/lLsSCzZHnV3TU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781161642; c=relaxed/simple;
-	bh=xN2LpMjZu5K7DVB0JhBTnaF6qsi0f6S98BwkA4HP9IQ=;
+	s=arc-20240116; t=1781161882; c=relaxed/simple;
+	bh=A+vjY9UePGm++PcxVZs5XDA+KliAt9XGKyHV2kvhaX8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xa3wHaY7g1lkDL+CRHsh6fvRrx95wVkZl2tQRZMHcFrpVZA1wW/rY7mX8VPWBH3LrBNzBw/krinJHmqPcDNbdHrZXz6r4RjuKCFvniumHaThXrYEkwp+ww4KUwv9vll4MmkbVNF0XygPi9/O2CjbwHIogAv+WFj6BegtofPjEFA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uad1jsjg; arc=pass smtp.client-ip=209.85.208.46
+	 To:Cc:Content-Type; b=uYZOKIKFbSKtf/H86i+qm43IfiL3nsGeNgcxsEZStINZYYvsmeKfcAht8d8LG5JSXeY+B5Z3/dEzeeQKw1+9Cy+bGRwx5UWwYoqesIhRr638ccjNcKGMxmnfCtR2eXEy10Qk54ZN3ZWsqcSB9aRpBZLDdeV2AEeh44YhFILWh/A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wE3yK/b0; arc=pass smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uad1jsjg"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-691c5776f35so6190500a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 00:07:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781161639; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wE3yK/b0"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-69170548d0eso7518264a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 00:11:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781161879; cv=none;
         d=google.com; s=arc-20240605;
-        b=kYFjatgrB/F+viY1reEB/+Q+3XTK6uRFnc7f+vb7HmB22mWZOrw4XeY0sggS9LSMzC
-         65hNRN02GQ3+oeoYtH6+LphQ5LnRXLcbKCjw7/ny2V+YWhdreywFc9skbYg9AkrVS08+
-         X8azf767kQ2NVozqBkdZCrBVluXaAlxNbozt1dXmVAmenTFp2vM3OtVvdjANqO25JcSP
-         ILoUB7X/rTM7gvsCKFgT1jpQ2scEA/ia3acPOyCsqr5AnPo9dpmrx+Jn2N90F7jmIKMb
-         cBPrKSjhxqi8FAea90RPtxmaKFrh6zRopDyRFt3oBWMKXGwjoGj9lvuuoseDBkWZruVM
-         08qg==
+        b=IGC2cNq3cqRhYx++F5oVFG5kjZ6jGXXhSUSXZOlwGClZXHKfuEOcZCE2DqxVUwSsi0
+         E7S/wP0VrWduoZpIWzmQJJE5nJkHRGe3+kZjfjhukAw/dJ8C35kVmEgKFZUUipBFc59g
+         1mlhm/ZGmiRj0VI8bxhEbMCY8WLSfCAILswpCo8tjvhTc99jR7wlwHJ4rAdbzSEasbkX
+         FCPDYh4AjjcA8GarMZVQlGtmmTu7YYdcAt6Khj9XdVDi3buvhTUjoHMUN+cpnIJQPm+Z
+         XnXpf3dKRGwAL1md/WHV4MRluW1vrZlKIzA/NUMkVLlKEniE/N/G75Pe0wXZm1leN6aq
+         5C6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=AEpk5nvUQrP2hOPNfotCvTIhHCWOPoRQlVlTaAX6Z7w=;
-        fh=ywKNola9YlMQzHhuLVImhQQ9pW/t0GqTpKM5vevJz/g=;
-        b=DJcqQMjwjlbNt+j9qPYPd5xFWSv2sWYhTWGvQeBjSKX+X2QLADA1oQtti0mzSOlN1F
-         QwS25JxqmhBtul+8B1CQAwbrbjBvL7HaNqFq6KcfSsWPnwjRnUdVnrD2A8laCUdb6bVZ
-         ICBUYv4GpFxis4Cjh2VCuM7nC1wuCe9kuHS8s+a4+Jwn40WDrvHY9Kg+2Y/fVNt5P4K8
-         miezfa1sKDOwW26YNOrS0IPM3qvAVxuZq01kQSP9HssNGnjOQ/vY5pi3yf6UmK6742xl
-         RCy1feK4pf+4/cdmZrRGNZ0a1mtl1r2JJB+9LhF6Bm5lI0NgEPJTdg+6RW+PbRGqwxso
-         bALA==;
+        bh=f/de9C39QdWQLV5Q6hT47S1phWBZwegbTCNZx8KIleQ=;
+        fh=LZc5S1Dftyl+vQ78i9znJ6HNbXt5tXyXIYRBELKGJIk=;
+        b=NSy5CazU0PEXfWWau5X9NLAgTILezMzmnSW3BtUkU7PxVbAr2WBg2azkmcqbLKtO6g
+         eYHIalXw0qE9m34wkQd8alXk9SVMLCHj7wKhxMAGt/YSSiNVc7EjjP77RzQAZWNCkFfH
+         lryQv8z+tRMly+tUCslyjwu2AI8YyZ7thaIZnLuEgYwsjwJUdZe9AziXEVX5woRQgXFg
+         4JcOum4uj0nB0oy3YHjfbarZoM5f39j/fbfE+LQE+MRC88jskPwQSnsybWuvryF/zoMt
+         CWeUVCoPsq3jfqFTQXBBNIzdzpKXKjOmJer4Egl/HU6epcgByxtLgrj00+OW/K57fxXy
+         DmaA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781161639; x=1781766439; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1781161879; x=1781766679; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEpk5nvUQrP2hOPNfotCvTIhHCWOPoRQlVlTaAX6Z7w=;
-        b=Uad1jsjgMMxeVF+rFkzhlnKhcxuqXiVxg6zHIdCYr1XJ5ZoyLoYzBoLyv6arGMfaqW
-         AvpxpKVHWAhv5av/0ni6x7yhxPyrlm2gbZqJMLxcjtA9icDrqw9gry8Xxymr1zsaZRcB
-         wrSthcZuHwjZlzq8X/XdGTX29WF7p/wrti9wwBFEk749XmRESjo+DqkhsunbqnfWQ0RX
-         FrtBxVHtZse4ZN2UCsMvgf0faqIve8Jc2o5EEpnxzwlCaDz5F9SSKd/QDaBpRYrpDPte
-         Hk+rKOb8dYlzHs4slCOnqi5iPA4SHyOXvP+xd2qRJsBJwwHn5JqlGoHmOta5dHmtoBAD
-         ZHaQ==
+        bh=f/de9C39QdWQLV5Q6hT47S1phWBZwegbTCNZx8KIleQ=;
+        b=wE3yK/b0YoexmPEmKXgpFzlJcsfRs3aITD+EWWRh2bt2RPjzi5bqo2qjU/5dCTRRv+
+         L1mvmhmN9eF6xctowNtD6Qv+8qX3XP9Yi5XYLJ6ADW3aP6SATT5Xlqk2u+iXh6gsYK89
+         i67FI6iyM84EUceCD0SUpa9/pXYE82dMJSgNXEdEDXbDP79m8oYouDt2u6XCWoeU4KbJ
+         ZLljcWg3oHa+Lr3rPVn3OE8NVmWizJ8xNr/KZIOxAqhE5eZ8PKpIp5EL5zUFguFHo7/T
+         XnKrbAAh6lOi+fUEfEi01nFcIC4AgkRIMFryGzz7wM5xAwbNKYWnCWumGNWEo3AjlEg3
+         DTtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781161639; x=1781766439;
+        d=1e100.net; s=20251104; t=1781161879; x=1781766679;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AEpk5nvUQrP2hOPNfotCvTIhHCWOPoRQlVlTaAX6Z7w=;
-        b=fN8+CGcNRy0rjFWrvcCY9vGXPKSzI5RsdXz11SSPW44urOKXeqHhPd9S/6xrnyqehr
-         hTRRVcprd2FnqH0pId0e4QpJJvMvfaXSGbcrOUwssax14O/uAiazC0LYlgu2hJ+RN7wm
-         J30VkedkDGVYmdyhS+0MA6VL0lUhtDqpEPCLdbgX4V6EyQaMBYpfMx4nHfVVHiC2mLYP
-         yy89lOI8jbiWR2t5NYgxvA+6959qwT0ZqUM2ucDfK8Fu9RBVEnV0UEcYVvpdsHtMi6u9
-         XrXtNXCsHr0gZlokLkP2d832DO4YR+/WQkVF/gZ89/Yuo6aOuV+OsqYN+oDYWk89+lQ3
-         xhKg==
-X-Forwarded-Encrypted: i=1; AFNElJ94k8zHEqrqUZi5YzcJI2Z39X9Bkf8cYDOBH25H7KKZXZO/KnMh9amhyfwYA0QvI2kJ7oqx+hd0bHLEy01SpcpQ9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNVMBQkAvysHR0kOPE/VSFq+wcHwANwCWtrs6/ySWvQOZ3/2QG
-	i1c4iHDWYXALXGz4BxhVYARw1pID2PklQPwE0qbfib4oGvYBoTNq1W6xEY7vGrJK2vV0jckdd6z
-	GQKIwYt734PS5XBx0tQAqjG9vloxQ7vPxM6n2htzWfw==
-X-Gm-Gg: Acq92OEc5ch14k+Qy/YgocTjZsGG6yl6xp+2l0D9QGLZl4PGN3PYblGtf+HznnOeabq
-	Hup8DHJK0G/YtwePrcFAbmCKTvwmZktXNRj8TfVafAU6Cp5ew8qH2VwTJRfd0FUB1SofhFmdS55
-	TuZ2aCjwvST5hUZSaNGkzx8PsufeEy9/H2ibJs7XLsqaM5zO5ru7B1PThnfOzdzcwj0tC3GE54N
-	w0Jl/1VKN/o1kuoFF/QHqjH5QabLTW/XiAXWNWsiQ8YF+FKBDJwlCBAgcFX/jTaAwq+t+MALN5h
-	0WhOEj702G1aUqLah8efSzebKd0fUfoTStkoHuCgXNSCrsLp6xoz
-X-Received: by 2002:a05:6402:440a:b0:68d:623a:bc77 with SMTP id
- 4fb4d7f45d1cf-6930e282296mr669421a12.8.1781161639285; Thu, 11 Jun 2026
- 00:07:19 -0700 (PDT)
+        bh=f/de9C39QdWQLV5Q6hT47S1phWBZwegbTCNZx8KIleQ=;
+        b=nCRxNqNOFJ3n6xJ03H+X5mFVZ9zhnyIxLaUw407YZnNuNLnDBU9NMOQDD0G/Zwc4Fs
+         Og7gjBiRU/9TpvLCsnstg2l6Or5zjBKVuz5Vc9CqxMt50/606FiVQbEASeFF1KecS3Ha
+         MX5UPTrcM3iZ8x3uxbWPvyKWAenBIS0qVEPKN5isuTFel4wk/B01M4XeVx9Ex4FGPkFa
+         ZUt1IJPHvNCi01tbPb7ddQtBeCh4p6n10ljKIFMfLBTYHLOuGvnvTmtzddSpwmkx0N5Y
+         C74s85WKS9gQiMGeP3vubyW8/CvAlc6U5qIQqEAqtcfURzn3y2tdGkzul3NpNcIs3e85
+         T+ig==
+X-Forwarded-Encrypted: i=1; AFNElJ/8vqQpe3FkpQ2N9NDu1fomIsIh2RGUAwNVeIWg3CdS0KwmK6f2+BEd00M/rM7wRnE+nDEaJW9Xpoz3Ng8QfBaLow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEXeSjQJ3WvpUnVl9FAlYxUgqXwYOKSw6ZsOj6toQGIYSOnynp
+	/YZ58eG9h9I02Tz32vw99a2hgVHTrYv81swznmS8AzKptBKHHjHAlihrhUwgXTOrp8De0b2Snjp
+	cG1x/2frJqo8cq4581rxyfCqMJrwH/JBuqKOnzU7qWQ==
+X-Gm-Gg: Acq92OHANB09lTnpJXcrqshO6/CgS/RiVX0KpDj8KMWEBYZqI5WMbYtZ/fYNdms08Dz
+	8L9CQ/hCdfPHgUzBsdAoK/uIaoNu5ak6tL9jvoQdfGQR2EFZaL0LVPyAuc2JFO8sSg9ND88XxTF
+	T6AzAR+Pdp7kV/UwvtKKDhFNtx3q+3aFEWrMVj6QCnO5s/21sH+5cf6GTnkYSHoS/syDWk0Fd0X
+	IELqCRgSyUdZ+Dmd754iqtzb2rdu1Sctkumnjt1qqtAoaBTj6KQ21zO+2QQcjc8z2QMrrrIHb10
+	HOBRNK5zfJE1YKc+JXJWqoH7ydqLL+HRNBb2C9hAwM9RsFU2ro46
+X-Received: by 2002:a05:6402:520d:b0:689:c099:ef99 with SMTP id
+ 4fb4d7f45d1cf-6930e2e85ddmr662846a12.22.1781161879564; Thu, 11 Jun 2026
+ 00:11:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org>
- <20260605-exynos-pmu-cpuhp-idle-fixes-v1-3-0cd05c81a82d@linaro.org>
- <CADrjBPq4fou5KWh4T=oNkUVPz5Jk-821OVe3j5sWrKnCtHYM6w@mail.gmail.com> <DJ5GP6VQJDHL.2V30K56ME95DO@linaro.org>
-In-Reply-To: <DJ5GP6VQJDHL.2V30K56ME95DO@linaro.org>
+References: <20260531175932.32171-1-ebiggers@kernel.org> <CADrjBPo3BpSk49oasf_9g06xrBMkw+NiKo10xDKjWr8sJ+Zc-Q@mail.gmail.com>
+ <20260610183902.GA1158828@google.com>
+In-Reply-To: <20260610183902.GA1158828@google.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 11 Jun 2026 08:07:07 +0100
-X-Gm-Features: AVVi8Ce9AFTdn5GgI4FGeBsq66vruRZqhouaV1W8cJvhIjXpfYGWOCqf13Hq8Oo
-Message-ID: <CADrjBPqF6GPRLNUZtzkGUHTUQ6NOPoaRvVvF1mUUj_DJ9As1dg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: samsung: exynos-pmu: fix error paths in
- cpuhotplug/idle states setup
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+Date: Thu, 11 Jun 2026 08:11:06 +0100
+X-Gm-Features: AVVi8CdK6eYIPK8G4aFqD8lMifZVhDYEkmKnIKOnCa2_bel3Ygx-BiVfzt5sLyg
+Message-ID: <CADrjBPoVFCb4rTze4mQhdQ0=FJmhpFiET0GCRBx9FaGs9DsrDA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: exynos-rng - Remove exynos-rng driver
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Alexey,
+Hi Eric,
 
-On Wed, 10 Jun 2026 at 16:07, Alexey Klimov <alexey.klimov@linaro.org> wrote:
+On Wed, 10 Jun 2026 at 19:39, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> On Wed Jun 10, 2026 at 2:34 PM BST, Peter Griffin wrote:
-> > Hi Alexey,
->
-> Hi Peter,
->
-> > Thanks for your patch!
+> On Wed, Jun 10, 2026 at 03:46:54PM +0100, Peter Griffin wrote:
+> > Hi Eric,
 > >
-> > On Fri, 5 Jun 2026 at 21:19, Alexey Klimov <alexey.klimov@linaro.org> wrote:
-> >>
-> >> The setup_cpuhp_and_cpuidle() initialisation sequence currently ignores
-> >> the return values of cpuhp_setup_state(), cpu_pm_register_notifier(), and
-> >> register_reboot_notifier(). If any of these registrations fail during
-> >> probe() routine, the driver returns 0, leaving the driver partially
-> >> configured.
+> > On Sun, 31 May 2026 at 19:02, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > This driver has no purpose.  It doesn't feed into the Linux RNG, nor
+> > > does it implement the hwrng interface.  It is accessible only via the
+> > > "rng" algorithm type of AF_ALG, which isn't used in practice.  Everyone
+> > > uses either the Linux RNG, or rarely /dev/hwrng.
+> > >
+> > > Moreover, this is a PRNG whose only source of entropy is the 160-bit
+> > > seed the user passes in.  So this can be used only by a user who already
+> > > has a source of cryptographically secure random numbers, such as
+> > > /dev/random.  Which they can, and do, just use in the first place.
+> > >
+> > > Just remove this driver.  There's no need to keep useless code around.
+> > >
+> > > Note that the other crypto_rng drivers in drivers/crypto/ are similarly
+> > > unused and are being removed too.  This commit just handles exynos-rng.
+> > >
+> > > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > > ---
 > >
-> > I originally made the failure non-fatal because the system still boots
-> > without the notifiers registered (and all other Arm64 Exynos SoCs
-> > upstream don't register notifiers and AFAICT have broken cpu hotplug
-> > and cpu idle).
+> > If the driver is being removed, should the binding documentation for
+> > this driver not also be deleted (see
+> > Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml)?
 > >
-> > In hindsight, that seems like a mistake. I think your patch to fully
-> > unwind everything in case of failure makes more sense.  See small
-> > comment below about destroy_cpuhp_and_cpuidle()
+> > Peter
 >
-> Wait, setup_cpuhp_and_cpuidle() should be non-fatal and shouldn't
-> return any errors?
+> In other discussions I've been told that devicetree bindings are
+> hardware descriptions that should still exist even if there is no
+> driver.  It doesn't make a lot of sense, but it seems to be what the
+> devicetree people want.  I expect there would be objections to removing
+> this binding.
 
-I suggest you re-read my above comment above ^^
+Ok thanks for confirming.
 
 Peter.
