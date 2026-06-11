@@ -1,244 +1,129 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67348A2D0;
-	Thu, 11 Jun 2026 18:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A852D73A6;
+	Thu, 11 Jun 2026 19:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781203033; cv=none; b=PDMgK7l0UhoZK8Mqw6Bnc1jy40WfvxIdKkU3SRwuZdwRtSppzT3DYEX37DgIfVMi+EhxYaAMdnmS7SXprzneTKBNu+dTJAQdBfrW/mH2lyqrZ0WyWC9NLf5LVUHjlG7pX7fN4hPouE6D4JzEKEw3QSh8IO89ngoQG0OalyoTwn8=
+	t=1781206323; cv=none; b=VpzFIAXrMbqZtPdXTBzEbGFyQv89kgWVN9yzrAN3yIIcXN+muQdocioflyNIDHOIdErJRUPW7rNyJYQjzKCjLxGwRq5Nl6fh4Vsfiza78sQP8fXolxUEZcLHAVjn+G/pvTK6v13e8o0C7PPxPksgu8P3kBOfQcjwEREjf1BjGng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781203033; c=relaxed/simple;
-	bh=xdT3L8Dv1uqNF2Q7l8GE7prCeJm1fbeqrupCUwjLkYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GoNmxS/rXygotdK5iSpa8Qjew/EEluJ70yK8J/9s9EP7HYPlweJkW7U9LI4v92MDIDlysc0fq4T+GRa7NE7lVYscX9Jk6kvPFh/LkphvFNzRsrgSP7lWnvkFuO5WuIsF8tpXe9vxmF8gXEqgfTXaILmsrAU/dChq8arQX4elT34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=dDcc08x0; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yHxSM7TA; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1781206323; c=relaxed/simple;
+	bh=260eALo52JL67I5BXXirsBFEo7RheHsKr6WGe8VJtcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dF+Cp+vfNKRI/4xYd9FU4F/BrVuEuKaG5WHmbmGnm8NvY25gSRUbDWHtBcYG6w9sJ2nrSdEfiqoOEBAQzi91ZE/qAcEoSukUig5NaitJa4KZyjvev2miL7rsHwkzpycLwCDTpePRD8Pt/POA4eJ8f2+PaNp80PMQvXs7kM2K9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LNBc0IqM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="dDcc08x0";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yHxSM7TA"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gbrwN2g2kz9tWv;
-	Thu, 11 Jun 2026 20:37:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1781203028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Dkv0Y88H+SR6ILk9sT/YTT+0skYukMCzceYVycVftns=;
-	b=dDcc08x0dcrKswHlCVxuROso1L8H2qo5xxLwb2GdvV2xY4AFA5F9RTOimgpKn5pxzpRufh
-	tuzqlDg4A/rMg7HKbaHXE3Vn8IMzlSkyObAvpKbFCrjOXigEghkfPqHyz21cbPm/v+RB2l
-	lKbNlYW77r7imN2qll75tefdhZS8Z9cFOW+c5+P8mS+wPK4d4VwSyRmVXFe92peAB8WLng
-	A5/8uiQVtk2fibFWyO1c3OU9AeUBbNZgE1rYZdsN/u0W8kE0k69/i6qInDr/o2vEse8Kkc
-	7lH0fpN/C1Hu12dfoxky+PSj7B3F9OEOn08lRas9tdnimqiR3kdSw4VZBudakg==
-From: Manuel Ebner <manuelebner@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1781203022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Dkv0Y88H+SR6ILk9sT/YTT+0skYukMCzceYVycVftns=;
-	b=yHxSM7TAtkgtiG7evw5aBg+nfR1e5mMA5TA7y6XTlvnRHkWVkwOgn7nzTTVwgiJfxrlSPw
-	Fq6b2wdI56NyVbncWKl66lO/iR9AszePqYiGiIJS1Lnjbk/DbXPERUSPgNsiAwW8Xv8gBr
-	9sJTd5vM8OCzoTh48DBrJTg+X4eYfzigRIXzj5phRIFhp3mxRKM/hXHh9qnPi3MkMWml1z
-	9AbAxExj8Rl6A86dy7oZMZIJIUm83Z4Y6TQoBFXIF9dNdlS3J1vNIZLdCAFK8O2yqXcnEj
-	+bODCeBRbhc1fQWZrgL1UmtZcarxtrM5WqAJEGAWdVgLtWZN++53G17Pw0dPfw==
-To: Vineet Gupta <vgupta@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <chleroy@kernel.org>,
-	linux-snps-arc@lists.infradead.org (open list:SYNOPSYS ARC ARCHITECTURE),
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
-	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-Cc: Manuel Ebner <manuelebner@mailbox.org>
-Subject: [PATCH] Documentation: arch: fix brackets
-Date: Thu, 11 Jun 2026 20:35:20 +0200
-Message-ID: <20260611183525.153058-2-manuelebner@mailbox.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LNBc0IqM"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=dzHuIpFbYrCgFwipPgG7Z1jCCHIP4pv/lJwgbnEmeHI=; b=LNBc0IqM7rCyEMAI2eK+n7euOK
+	EL5tl1qU5tthxVnxNyHYfmyt7uh+YodDHxRY7kb/0zCqPJtfg1SmBxAo5buBIQ6IcPuj+tWmnMr++
+	UsU+Ylgt9hBplMU/D6nl3sv3jan3dF1UVtWpZQFSOPttuT/e89rMwcrlZioZ0DLMvDI7ULWRdrL2W
+	dkzaDKtT3Lf5UsARBNJGWGckkhuUhNpvsbtSYCeN06t46Qu+XfhIDcZ+9ntdETBR5Y2LZ3vAujiNz
+	ibshv6mzE8J6MFQzkNdxvtkrVddEqUPtCKz9s7Uv3JvIIOvkylLANPbrZQQ097sSpO5o+/bNCASnv
+	QszFYwZA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wXl86-00000009wz2-1JvM;
+	Thu, 11 Jun 2026 19:31:54 +0000
+Message-ID: <ac98ff55-99df-4c90-8e6b-ab1dde219b5a@infradead.org>
+Date: Thu, 11 Jun 2026 12:31:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: arch: fix brackets
+To: Manuel Ebner <manuelebner@mailbox.org>, Vineet Gupta <vgupta@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <chleroy@kernel.org>,
+ "open list:SYNOPSYS ARC ARCHITECTURE" <linux-snps-arc@lists.infradead.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
+ <linux-samsung-soc@vger.kernel.org>,
+ "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+ <linuxppc-dev@lists.ozlabs.org>
+References: <20260611183525.153058-2-manuelebner@mailbox.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260611183525.153058-2-manuelebner@mailbox.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: f6zk6t8i7udhsfuxo6bwkb9axkpyzqtj
-X-MBO-RS-ID: 29289ebd505fa1394bb
+Content-Transfer-Encoding: 7bit
 
-Add missing and remove needless parentheses, brackets and curly braces.
+Hi,
+A couple of comments but overall this is a nice cleanup.
 
-Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
----
- Documentation/arch/arc/arc.rst                 |  2 +-
- .../arm/samsung/clksrc-change-registers.awk    |  2 +-
- Documentation/arch/arm/vlocks.rst              |  4 ++--
- .../arch/arm64/memory-tagging-extension.rst    |  2 +-
- Documentation/arch/powerpc/vas-api.rst         |  2 +-
- Documentation/arch/sparc/oradax/dax-hv-api.txt | 18 +++++++++---------
- Documentation/arch/sparc/oradax/oracle-dax.rst |  3 ++-
- 7 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/arch/arc/arc.rst b/Documentation/arch/arc/arc.rst
-index 6c4d978f3f4e..553851f43be7 100644
---- a/Documentation/arch/arc/arc.rst
-+++ b/Documentation/arch/arc/arc.rst
-@@ -36,7 +36,7 @@ Important note on ARC processors configurability
- 
- ARC processors are highly configurable and several configurable options
- are supported in Linux. Some options are transparent to software
--(i.e cache geometries, some can be detected at runtime and configured
-+(i.e cache geometries), some can be detected at runtime and configured
- and used accordingly, while some need to be explicitly selected or configured
- in the kernel's configuration utility (AKA "make menuconfig").
- 
-diff --git a/Documentation/arch/arm/samsung/clksrc-change-registers.awk b/Documentation/arch/arm/samsung/clksrc-change-registers.awk
-index 7be1b8aa7cd9..48464397088c 100755
---- a/Documentation/arch/arm/samsung/clksrc-change-registers.awk
-+++ b/Documentation/arch/arm/samsung/clksrc-change-registers.awk
-@@ -163,4 +163,4 @@ BEGIN {
-     }
- }
- 
--// && ! /clksrc_clk.*=.*{/ { print $0 }
-+// && ! /clksrc_clk.*=.*{/ { print $0 }}
-diff --git a/Documentation/arch/arm/vlocks.rst b/Documentation/arch/arm/vlocks.rst
-index 737aa8661a21..b0ac33263086 100644
---- a/Documentation/arch/arm/vlocks.rst
-+++ b/Documentation/arch/arm/vlocks.rst
-@@ -102,10 +102,10 @@ Features and limitations
- 	if (I_won) {
- 		/* we won the town election, let's go for the state */
- 		my_state = states[(this_cpu >> 8) & 0xf];
--		I_won = vlock_lock(my_state, this_cpu & 0xf));
-+		I_won = vlock_lock(my_state, this_cpu & 0xf);
- 		if (I_won) {
- 			/* and so on */
--			I_won = vlock_lock(the_whole_country, this_cpu & 0xf];
-+			I_won = vlock_lock(the_whole_country, this_cpu & 0xf);
- 			if (I_won) {
- 				/* ... */
- 			}
-diff --git a/Documentation/arch/arm64/memory-tagging-extension.rst b/Documentation/arch/arm64/memory-tagging-extension.rst
-index 679725030731..e6fe428f0e2a 100644
---- a/Documentation/arch/arm64/memory-tagging-extension.rst
-+++ b/Documentation/arch/arm64/memory-tagging-extension.rst
-@@ -222,7 +222,7 @@ programs should not retry in case of a non-zero system call return.
- address ABI control and MTE configuration of a process as per the
- ``prctl()`` options described in
- Documentation/arch/arm64/tagged-address-abi.rst and above. The corresponding
--``regset`` is 1 element of 8 bytes (``sizeof(long))``).
-+``regset`` is 1 element of 8 bytes (``sizeof(long)``).
- 
- Core dump support
- -----------------
-diff --git a/Documentation/arch/powerpc/vas-api.rst b/Documentation/arch/powerpc/vas-api.rst
-index a9625a2fa0c6..1d0d055356e3 100644
---- a/Documentation/arch/powerpc/vas-api.rst
-+++ b/Documentation/arch/powerpc/vas-api.rst
-@@ -293,7 +293,7 @@ Simple example
- 				//Format CRB request with compression or
- 				//uncompression
- 				// Refer tests for vas_copy/vas_paste
--				vas_copy((&crb, 0, 1);
-+				vas_copy(&crb, 0, 1);
- 				vas_paste(addr, 0, 1);
- 				// Poll on csb.flags with timeout
- 				// csb address is listed in CRB
-diff --git a/Documentation/arch/sparc/oradax/dax-hv-api.txt b/Documentation/arch/sparc/oradax/dax-hv-api.txt
-index ef1a4c2bf08b..ef6088aeaa66 100644
---- a/Documentation/arch/sparc/oradax/dax-hv-api.txt
-+++ b/Documentation/arch/sparc/oradax/dax-hv-api.txt
-@@ -457,7 +457,7 @@ bits set, and terminate at a CCB that has the Conditional bit set, but not the P
- Offset   Size   Field Description
-                 Bits         Field Description
-                 [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
--                             “Secondary Input Element Size”
-+                             “Secondary Input Element Size”)
-                 [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
-                 [9]          Padding Direction selector: A value of 1 causes padding bytes
-                              to be added to the left side of output elements. A value of 0
-@@ -656,7 +656,7 @@ Offset         Size            Field Description
-                                [18:16]      Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
-                                             Element Offsets”)
-                                [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
--                                            “Secondary Input Element Size”
-+                                            “Secondary Input Element Size”)
-                                [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
-                                [9:5]        Operand size for first scan criteria value. In a scan value
-                                             operation, this is one of two potential exact match values.
-@@ -793,13 +793,13 @@ Offset   Size   Field Description
-                 [18:16]      Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
-                              Element Offsets”)
-                 [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
--                             “Secondary Input Element Size”
-+                             “Secondary Input Element Size”)
-                 [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
-                 [9]          Reserved
-                 [8:0]        Test value used for comparison against the most significant bits
-                              in the input values, when using 2 or 3 byte input elements.
--8        8      Completion (same fields as Section 36.2.1.2, “Extract command”
--16       8      Primary Input (same fields as Section 36.2.1.2, “Extract command”
-+8        8      Completion (same fields as Section 36.2.1.2, “Extract command)”
-+16       8      Primary Input (same fields as Section 36.2.1.2, “Extract command”)
- 24       8      Data Access Control (same fields as Section 36.2.1.2, “Extract command”,
-                 except Primary Input Length Format may not use the 0x0 value)
- 32       8      Secondary Input, if used by Primary Input Format. Same fields as Primary
-@@ -880,7 +880,7 @@ Offset   Size   Field Description
-                                        [18:16]     Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
-                                                    Element Offsets”)
-                                        [15:14]     Secondary Input Element Size (see Section 36.2.1.1.4,
--                                                   “Secondary Input Element Size”
-+                                                   “Secondary Input Element Size”)
- 
- 
-                                                       524
-@@ -895,8 +895,8 @@ Offset   Size   Field Description
-                                                     causes padding bytes to be added to the right side of output
-                                                     elements.
-                                        [8:0]        Reserved
--        8              8               Completion (same fields as Section 36.2.1.2, “Extract command”
--        16             8               Primary Input (same fields as Section 36.2.1.2, “Extract command”
-+        8              8               Completion (same fields as Section 36.2.1.2, “Extract command”)
-+        16             8               Primary Input (same fields as Section 36.2.1.2, “Extract command”)
-         24             8               Data Access Control (same fields as Section 36.2.1.2, “Extract command”)
-         32             8               Secondary Bit Vector Input. Same fields as Primary Input.
-         40             8               Reserved
-@@ -949,7 +949,7 @@ Offset   Size   Field Description
-                                    [31]        If set, this CCB functions as a Sync command. If clear, this
-                                                CCB functions as a No-op command.
-                                    [30:0]      Reserved
--       8             8             Completion (same fields as Section 36.2.1.2, “Extract command”
-+       8             8             Completion (same fields as Section 36.2.1.2, “Extract command”)
-        16            46            Reserved
- 
- 36.2.2. CCB Completion Area
-diff --git a/Documentation/arch/sparc/oradax/oracle-dax.rst b/Documentation/arch/sparc/oradax/oracle-dax.rst
-index d1e14d572918..67867ea7be40 100644
---- a/Documentation/arch/sparc/oradax/oracle-dax.rst
-+++ b/Documentation/arch/sparc/oradax/oracle-dax.rst
-@@ -438,7 +438,8 @@ that in user land::
- The output bitmap is ready for consumption immediately after the
- completion status indicates success.
- 
--Excer[t from UltraSPARC Virtual Machine Specification
-+Excer?t from UltraSPARC Virtual Machine Specification
-+i guess this is wrong, but i don't know what's correct
- =====================================================
- 
-  .. include:: dax-hv-api.txt
+On 6/11/26 11:35 AM, Manuel Ebner wrote:
+> Add missing and remove needless parentheses, brackets and curly braces.
+> 
+> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+> ---
+>  Documentation/arch/arc/arc.rst                 |  2 +-
+>  .../arm/samsung/clksrc-change-registers.awk    |  2 +-
+>  Documentation/arch/arm/vlocks.rst              |  4 ++--
+>  .../arch/arm64/memory-tagging-extension.rst    |  2 +-
+>  Documentation/arch/powerpc/vas-api.rst         |  2 +-
+>  Documentation/arch/sparc/oradax/dax-hv-api.txt | 18 +++++++++---------
+>  Documentation/arch/sparc/oradax/oracle-dax.rst |  3 ++-
+>  7 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/arch/arc/arc.rst b/Documentation/arch/arc/arc.rst
+> index 6c4d978f3f4e..553851f43be7 100644
+> --- a/Documentation/arch/arc/arc.rst
+> +++ b/Documentation/arch/arc/arc.rst
+> @@ -36,7 +36,7 @@ Important note on ARC processors configurability
+>  
+>  ARC processors are highly configurable and several configurable options
+>  are supported in Linux. Some options are transparent to software
+> -(i.e cache geometries, some can be detected at runtime and configured
+> +(i.e cache geometries), some can be detected at runtime and configured
+
+   (i.e., cache geometries),
+or even
+   (e.g., cache geometries),
+
+>  and used accordingly, while some need to be explicitly selected or configured
+>  in the kernel's configuration utility (AKA "make menuconfig").
+>  
+
+
+> diff --git a/Documentation/arch/sparc/oradax/oracle-dax.rst b/Documentation/arch/sparc/oradax/oracle-dax.rst
+> index d1e14d572918..67867ea7be40 100644
+> --- a/Documentation/arch/sparc/oradax/oracle-dax.rst
+> +++ b/Documentation/arch/sparc/oradax/oracle-dax.rst
+> @@ -438,7 +438,8 @@ that in user land::
+>  The output bitmap is ready for consumption immediately after the
+>  completion status indicates success.
+>  
+> -Excer[t from UltraSPARC Virtual Machine Specification
+> +Excer?t from UltraSPARC Virtual Machine Specification
+
+   Excerpt
+
+> +i guess this is wrong, but i don't know what's correct
+>  =====================================================
+>  
+>   .. include:: dax-hv-api.txt
+
+and then you can add
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
 -- 
-2.54.0
-
+~Randy
