@@ -1,68 +1,68 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9BD3491C9
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2026 04:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBE1397689
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2026 04:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781238853; cv=none; b=t+3LM4AQZbkOzaXlifg1CTMrdBzQ4TA2z2UmdC3BZaPU543YB4fhibDqsa8FBhh110sv06a4r3iKM+WYJLIvC4YXLyjl3nvH8Lyq/PPhHpIOzIRdkLugHeBD2KtMs+D2VjJMQBTbArrB8mYOtRA5jCz0DPoblrKECRoSet1mzJc=
+	t=1781238855; cv=none; b=pDDkl3+rXtro80ZwgvgDYWP1WWT2YYxCReI+R4GLDdcBho7C9DrMqiqp85LMRY4N8RybE2GzQ6Qr78PTdhx7LAgJshcEwUOj+vtrHhVYAIRjPsEHa/OyQoG7SGwKvvVqa/uXGnTF/mhiIsrHE+DqKGB/2/pjh3UmXxffd884B/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781238853; c=relaxed/simple;
-	bh=8NO0mxtAoT6j+xJiok+JHjq7wm86lTa8jBG09RN76uw=;
+	s=arc-20240116; t=1781238855; c=relaxed/simple;
+	bh=lvfJKU3OdNs7E4fSf7JASKUsJlVAskD5AP0iAuO+yuU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EG4sq6H+sSZRx7jxd1lirjp1E7tnLBfestLfdeKTbbhBtHvUA098gCbaFW7qvFsFUgNnlHKavXK/il9ka9ukDMQhRAcK+LQKpR3OA54zHvp0Elay7eOlAZ4/muuzx45hgGS1H+m3KhhnMTSv3rMMJ7sGTPPBrago013xHSQxB9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tfginiEc; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=qW0OA0PA1pAJciPH7XbbV7s8ERmZDBz+gyiVzKT3hOSNLTRvQ4G8UxLqHv+vojFHCf8jPcTGYktnA5hOTScQ1zWo3J4NrrZnh0ioaV98AIS0zP7EnlAO273FomcTtol5evheLRltsbzr9cvRJEULRoqhjNvyaXBmI3320isy5P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vet1HPcT; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tfginiEc"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-490b9318997so3590255e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 21:34:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vet1HPcT"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-490b4a8e28bso3158055e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 21:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781238850; x=1781843650; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1781238852; x=1781843652; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cAsp3VpEafJ9cxB3mLI79s5LcZsAYgH/J7dK9sn4380=;
-        b=tfginiEcNNgr3VhSw5ZlT4UUd/Lh222ZiMhnaEcuDVuzQjIxl2I7Cpx9oOM7xXZRqg
-         VJ+LwFrGruYgFHdiMbD7eJjB3CvvmPF833sJN3QirSMSsmKbQJwmfrXUEH1eRVpGUcPB
-         LjiT/Co2Lq5uLq9ObUu+Zha/W263URUBGiP6HlvFjlcGTDrpCPIHPEFlXYtnsBLZFLDq
-         6k+b6INTVF3k3B9kHLdnC+/80A1d5+OpkwdUMnpyY6lLLCQkS5A4kkusUfoiPJDfgYQG
-         lE47GhNbaqKm0r25/h2zRqXxigxH7d/nBxs1Gftjf4TeCs3CFZyzjH3kMXZQxeDPrdzy
-         nacQ==
+        bh=VEV7Awuq7KVMhz5bMmZCK2peLPBiWMiT9VBdMWpRmIY=;
+        b=vet1HPcT4HhGoNXFWiArW4OxYmR49V7fQyaMxaR5p5wKBzMCfE7ygO67M6zMRhHRpf
+         Erb0mY4Po0qmVB41mour+fCeaDkzb6TiNbMI17U6rISNjTuf3+syxqS9e7OafjcvwS5k
+         uOMFBhBmKXtKHFtg1AxZf/X0tce4ljOkft9sLp2hRzcNJLhu4oFwMLoTM/IpNCv6/COu
+         rTpRU/WQYPXULFhKoKvgQtICytIbncS1T+ZXcI+uLrUabrafgsR13wb2wB87CjQW4HgU
+         8IbfxX2mZCnuzKvHfV0RwHxTsfkDnlpVrO2Y2U5hBZfxezN8AnDqhsb45uRc8R+X2bt7
+         JrFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781238850; x=1781843650;
+        d=1e100.net; s=20251104; t=1781238852; x=1781843652;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=cAsp3VpEafJ9cxB3mLI79s5LcZsAYgH/J7dK9sn4380=;
-        b=WhIzPuXOntHjlz+Y1w8nmYIn7HjHGrJmDdjzHroCaRHMhOB8cdOFt751ysereF6Z+d
-         ZhNlSqEjyDZcFeVYEIcxVQL8tkehpFdZrWEOjGMqATRqSLCdfkc7HnFW0C2BDBxJyEhI
-         DggK7t2Ut04CknY9M3YMf/lJnd5eZ21d4PuiTgh+rGDH2XpavtuTkSiudQiIeEecgr+r
-         +7zSpA8qmTic6IAVCB2kiI4hKbwOq6ItwuvoF19Dz+QRSuVp3S1lLX7iwTGJW+qaV+cC
-         GBrUkFjdxSsRmi81GH5JknrFMO1UxjtkrNLLGikcBwrju3cD75XkA3+ERYJQa9dugovk
-         /F3A==
-X-Forwarded-Encrypted: i=1; AFNElJ+Y1DETMlKMsPg1nhneqgA28CiVufE9x/STOwMmjZUs0LvZc6jylfz9Qm2MGDCOB1eccEgE2o11UL7sGPpC+w15RQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/J5J9Wjl7loI2VYAqxtSs9R9RxC/sXOjJlypyjfgm850AbVi
-	JNDJhV/qJK6sEev3N5kPXOlc/5R56SjHYJhAMLVw64n05fO23oG4yJXGdMn/epMVuoc=
-X-Gm-Gg: Acq92OGTu1zHJ3izR+f/MjyVSyqU6QtYWhyq7E89O6SColIksZ6i6BwYd/1jdrKCynx
-	rON85OQQWVRYnad5llC9+1krQZqpDLX8Wcwlqex661rfX/p/tYNJeTgvfLRYY0sSoztvlsjr/Lr
-	YjV5PwIaep0dYBK0n+drnFoF1RDeek3yoEgvC4xZx8S464oKlekqxSEgd7MLmQ4slJ2YuGJRyiB
-	/GK966JxKw98I1HoMj1ruGTqr9uLzvDkSDI+3wIgsvuSonmFsKM5J2FOew2smdHPlZaY4MzsD1y
-	5sU/bzBhGScrvV0KMHYV0hZZUpdnc1GAlMvkrUmWZMccCxeu30+o2nIzaTlU1pijAcc6fS4VJH8
-	2ccn1BfSX3XsaJQirFpMj/BFFjTO7VWj2MPpFgLB/EytA0bGIdep7lYx9IBI3KQRNuQQO4IvqSP
-	C0AgFfwFd8/w3HyKN3qte+VX+5X26+8rie55zVa6ruwPP+z1+FZLVByYGE5ws3JN5VtiX5j1QKj
-	+PaAe2CYLYa2jV2wpeISNhd3es=
-X-Received: by 2002:a05:600c:c107:b0:490:e106:4fd1 with SMTP id 5b1f17b1804b1-490ec50a95fmr8737825e9.34.1781238849975;
-        Thu, 11 Jun 2026 21:34:09 -0700 (PDT)
+        bh=VEV7Awuq7KVMhz5bMmZCK2peLPBiWMiT9VBdMWpRmIY=;
+        b=PJVzD/kXmhAgENq4rezv4Goz0mXJQoVG4MBGurdI2nxLWiCMyUt2EIust8JqFPRwfE
+         GLKWIDWt0WaL5teWCIHuKSDbfTJEo/H1sjor5HZpQxitl3R0cBcsJ/Ou44e5sgMn5uKy
+         ImmZsJU5Qi1fJDw07w1OSPwgrrHjMokG5SC71F9JWFePg8sRc+Cfc2SVWicVG5ZeQmo9
+         /T46j7ADfzkHu3g3Gmm7eH34JMXU0TdnBYvYdDdHf2Ze6OwgkJqQB/DkP35H1/7ErAc/
+         2CQUD/uuzEGhb7KS2z3Rlli2KzW3CFthyBPdxabgbc+5f+BhnKE9K6JY4JwSh8ctPStb
+         u/KA==
+X-Forwarded-Encrypted: i=1; AFNElJ/aWedOHSB91RrFmL/tFO+nveHHyJYnghY5niGinYk5LYABrTDQ9e2mKqI1MDhkWO18p3Z/GiWAxJDjbLcvS0SbXQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgeVwnoHoljXltECcYetxjnFY84FhHpSU5SKEpZMn2ZPMvcHzo
+	yzE9PhctLDz6a2WDdITLalgZgJoF4aGo+xQ10opmZYoeMdAuDrJldjGv4vPNdkVtScc=
+X-Gm-Gg: Acq92OHZC7lWRPa5kIv3EOWswUYkDFFYVFU742oWjmGlGqYG45E79GA76uwaHBVmIGD
+	L15wlqbBNYwobjAV4wsj7+ejTgOjq+shixe+K3yXFJbx/S/jgqI099BXDBkUvcJBo2QWXn/jKHr
+	jfHVKQ4hx/QCjMM+3ZabY+ryHU/6cxwIlVMHtrJIXPusyOSj9QsGfuGq39BpBlQl64yYpVqJg3p
+	CVW1Qtmxh0XtkgnrbbLb3uXWbJstOvFGltUKNj6e7yqmuJB8Kj2dThBdWSQ/jmSiT+TThwN776E
+	KWqFnludE8vG0Il7L5MKoRPH7elmVcjpO7onT9f4ZojPnr3pRX7mzEmEeDI8TEzthkXwUZ6qPTJ
+	ThOE5xIBaAUYqCmbZmQkFX/4s48iC3TJTjeifc4QHQFRkI6ZXJYsbsjY5JlGh1XNl7ylO+UtpAn
+	55RVRXQEMNW9LWfK47GLsNVk9goD7ZZE7/XNAz/PS4iXFu6Ax2+LknT7hYyQIXYCLgOHHZgSKmF
+	auwuhcbiqUmLljT
+X-Received: by 2002:a05:600c:4595:b0:48f:d5b8:5b07 with SMTP id 5b1f17b1804b1-490ec4fb683mr9831835e9.20.1781238851699;
+        Thu, 11 Jun 2026 21:34:11 -0700 (PDT)
 Received: from [127.0.1.1] ([94.4.195.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490ea83da91sm36134865e9.10.2026.06.11.21.34.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490ea83da91sm36134865e9.10.2026.06.11.21.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2026 21:34:09 -0700 (PDT)
+        Thu, 11 Jun 2026 21:34:10 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Fri, 12 Jun 2026 05:34:01 +0100
-Subject: [PATCH 1/2] firmware: samsung: acpm: add fire-and-forget xfer
- support
+Date: Fri, 12 Jun 2026 05:34:02 +0100
+Subject: [PATCH 2/2] cpufreq: add ACPM-based CPU DVFS driver for Exynos
+ SoCs
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260612-acpm-fast-xfer-v1-1-1aa6cd2268ba@linaro.org>
+Message-Id: <20260612-acpm-fast-xfer-v1-2-1aa6cd2268ba@linaro.org>
 References: <20260612-acpm-fast-xfer-v1-0-1aa6cd2268ba@linaro.org>
 In-Reply-To: <20260612-acpm-fast-xfer-v1-0-1aa6cd2268ba@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -87,363 +87,275 @@ Cc: Sudeep Holla <sudeep.holla@kernel.org>,
  linux-kernel@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
 X-Mailer: b4 0.14.3
 
-The current ACPM IPC protocol relies on synchronous polling
-(acpm_dequeue_by_polling) to process mailbox responses.
-For CPU DVFS, cpufreqs schedutil governor requires ->fast_switch() to
-execute in an atomic context. Waiting for firmware acknowledgments
-in a loop in such case also using udelay(20) under spinlock doesn't
-make a lot of sense. Experiemnts on Exynos850 showed that even with
-removed udelay() or with it significantly decreased, the firmware
-processing takes 15us...250us.
+Exynos-based SoCs (e.g., Exynos850, gs101) manage CPU DVFS via an
+ACPM co-processor (sometimes co-processor specifically called APM).
+Historically, routing CPU frequencies through the clock framework
+breaks fast frequency switching as it is implemented in cpufreq-dt.
+The clk_set_rate() uses mutexes, which prevents the scheduler to
+utilize schedutil's fast path.
 
-Introduce acpm_do_xfer_fast(), which implements a fire-and-forget
-asynchronous path:
- - utilizes spin_trylock() to exit without sleeping if the channel
-   is busy;
- - adds/sends the message and kicks the mailbox doorbell;
- - exits immediately, allowing fast_switch to complete quickly.
+Introduce a dedicated ACPM-based cpufreq driver that bypasses the clock
+framework and communicates directly with the ACPM firmware protocol.
+It implements ->fast_switch() to rely on acpm_dvfs_set_rate_fast(),
+enabling faster frequency transitions.
 
-To prevent the unread asynchronous responses from permanently exhausting
-the 63-slot sequence ring buffer, implement an acpm_drain_stale_rx().
-This drains the RX queue during the fast path:
- - copies payloads and sets completion flags for sleeping
-   synchronous users;
- - explicitly acks 'is_async' messages.
-
-Hooks it up in the right places of ACPM dvfs machinery.
-
-The channels {tx,rx}_lock needs probably a bit of rework to
-differentiate between channels that support or need fast xfer and
-those that do not.
+Add Google gs101 and Samsung exynos850 to the cpufreq-dt-platdev
+blocklist to prevent driver cpufreq-dt initialisation.
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- drivers/firmware/samsung/exynos-acpm-dvfs.c        |  14 ++
- drivers/firmware/samsung/exynos-acpm-dvfs.h        |   3 +
- drivers/firmware/samsung/exynos-acpm.c             | 142 +++++++++++++++++++--
- drivers/firmware/samsung/exynos-acpm.h             |   3 +
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |   2 +
- 5 files changed, 154 insertions(+), 10 deletions(-)
+ drivers/cpufreq/Kconfig.arm          |   8 ++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/acpm-cpufreq.c       | 195 +++++++++++++++++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ 4 files changed, 207 insertions(+)
 
-diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.c b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-index 7266312ef5a6..5411aa121b73 100644
---- a/drivers/firmware/samsung/exynos-acpm-dvfs.c
-+++ b/drivers/firmware/samsung/exynos-acpm-dvfs.c
-@@ -43,6 +43,20 @@ int acpm_dvfs_set_rate(struct acpm_handle *handle,
- 	return acpm_do_xfer(handle, &xfer);
- }
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index a441668f9e0c..891ff4b6ec22 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -24,6 +24,14 @@ config ARM_AIROHA_SOC_CPUFREQ
+ 	help
+ 	  This adds the CPUFreq driver for Airoha EN7581 SoCs.
  
-+int acpm_dvfs_set_rate_fast(struct acpm_handle *handle,
-+			    unsigned int acpm_chan_id, unsigned int clk_id,
-+			    unsigned long rate)
++config ARM_ACPM_CPUFREQ
++	tristate "ACPM based CPUFreq support"
++	depends on ARCH_EXYNOS || (COMPILE_TEST && 64BIT)
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Exynos-based machines
++	  with ACPM firmware.
++
+ config ARM_APPLE_SOC_CPUFREQ
+ 	tristate "Apple Silicon SoC CPUFreq support"
+ 	depends on ARCH_APPLE || (COMPILE_TEST && 64BIT)
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 6c7a39b7f8d2..c54d2dd6629d 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -54,6 +54,7 @@ obj-$(CONFIG_X86_AMD_FREQ_SENSITIVITY)	+= amd_freq_sensitivity.o
+ ##################################################################################
+ # ARM SoC drivers
+ obj-$(CONFIG_ARM_AIROHA_SOC_CPUFREQ)	+= airoha-cpufreq.o
++obj-$(CONFIG_ARM_ACPM_CPUFREQ)		+= acpm-cpufreq.o
+ obj-$(CONFIG_ARM_APPLE_SOC_CPUFREQ)	+= apple-soc-cpufreq.o
+ obj-$(CONFIG_ARM_ARMADA_37XX_CPUFREQ)	+= armada-37xx-cpufreq.o
+ obj-$(CONFIG_ARM_ARMADA_8K_CPUFREQ)	+= armada-8k-cpufreq.o
+diff --git a/drivers/cpufreq/acpm-cpufreq.c b/drivers/cpufreq/acpm-cpufreq.c
+new file mode 100644
+index 000000000000..20fb79169993
+--- /dev/null
++++ b/drivers/cpufreq/acpm-cpufreq.c
+@@ -0,0 +1,195 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Exynos ACPM-based CPUFreq DVFS driver
++ */
++
++#include <linux/cpu.h>
++#include <linux/cpufreq.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++
++#include <linux/firmware/samsung/exynos-acpm-protocol.h>
++
++#define ACPM_DVFS_TRANSITION_TIMEOUT 400
++
++struct acpm_cpu_priv {
++	struct device *cpu_dev;
++	struct acpm_handle *handle;
++	unsigned int acpm_chan_id;
++	unsigned int clk_id;
++};
++
++static unsigned int acpm_soc_cpufreq_get_rate(unsigned int cpu)
 +{
-+	struct acpm_xfer xfer = {0};
-+	u32 cmd[4];
++	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
++	struct acpm_cpu_priv *priv;
 +
-+	acpm_dvfs_init_set_rate_cmd(cmd, clk_id, rate);
-+	acpm_set_xfer(&xfer, cmd, ARRAY_SIZE(cmd), acpm_chan_id, false);
++	if (unlikely(!policy))
++		return 0;
 +
-+	return acpm_do_xfer_fast(handle, &xfer);
++	priv = policy->driver_data;
++
++	/* return priv->handle->ops->dvfs.get_rate(priv->handle, priv->acpm_chan_id,
++	 *					priv->clk_id) / 1000;
++	 */
++
++	/* TODO: FIXME. Exynos850 doesn't return rate via ACPM */
++	return policy->cur;
 +}
 +
-+
- static void acpm_dvfs_init_get_rate_cmd(u32 cmd[4], unsigned int clk_id)
- {
- 	cmd[0] = FIELD_PREP(ACPM_DVFS_ID, clk_id);
-diff --git a/drivers/firmware/samsung/exynos-acpm-dvfs.h b/drivers/firmware/samsung/exynos-acpm-dvfs.h
-index b37b15426102..107d9aa27690 100644
---- a/drivers/firmware/samsung/exynos-acpm-dvfs.h
-+++ b/drivers/firmware/samsung/exynos-acpm-dvfs.h
-@@ -14,6 +14,9 @@ struct acpm_handle;
- int acpm_dvfs_set_rate(struct acpm_handle *handle,
- 		       unsigned int acpm_chan_id, unsigned int id,
- 		       unsigned long rate);
-+int acpm_dvfs_set_rate_fast(struct acpm_handle *handle,
-+			    unsigned int acpm_chan_id, unsigned int id,
-+			    unsigned long rate);
- unsigned long acpm_dvfs_get_rate(struct acpm_handle *handle,
- 				 unsigned int acpm_chan_id,
- 				 unsigned int clk_id);
-diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index 942a2e9f02f5..3caab47adf26 100644
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -20,13 +20,13 @@
- #include <linux/mailbox/exynos-message.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/math.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/types.h>
- 
- #include "exynos-acpm.h"
-@@ -109,12 +109,16 @@ struct acpm_queue {
-  * @rxcnt:	expected length of the response in 32-bit words.
-  * @completed:	flag indicating if the firmware response has been fully
-  *		processed.
-+ * @is_async:	For fire-and-forget xfer. Set to true to just ack
-+ *		responses without processing.
-+ *		By default, set to false for regular senders.
-  */
- struct acpm_rx_data {
- 	u32 *cmd __counted_by_ptr(cmdcnt);
- 	size_t cmdcnt;
- 	size_t rxcnt;
- 	bool completed;
-+	bool is_async;
- };
- 
- #define ACPM_SEQNUM_MAX    64
-@@ -148,8 +152,8 @@ struct acpm_chan {
- 	struct acpm_info *acpm;
- 	struct acpm_queue tx;
- 	struct acpm_queue rx;
--	struct mutex tx_lock;
--	struct mutex rx_lock;
-+	spinlock_t tx_lock;
-+	spinlock_t rx_lock;
- 
- 	unsigned int qlen;
- 	unsigned int mlen;
-@@ -232,7 +236,7 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer,
- 
- 	*native_match = false;
- 
--	guard(mutex)(&achan->rx_lock);
-+	guard(spinlock)(&achan->rx_lock);
- 
- 	rx_front = readl(achan->rx.front);
- 	i = readl(achan->rx.rear);
-@@ -297,6 +301,9 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer,
- 				*native_match = true;
- 		}
- 
-+		if (rx_data->is_async)
-+			clear_bit_unlock(seqnum, achan->bitmap_seqnum);
-+
- 		i = (i + 1) % achan->qlen;
- 	} while (i != rx_front);
- 
-@@ -306,6 +313,57 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer,
- 	return 0;
- }
- 
-+static void acpm_drain_stale_rx(struct acpm_chan *achan)
++static int acpm_soc_cpufreq_set_target(struct cpufreq_policy *policy,
++				       unsigned int index)
 +{
-+	u32 rx_front, seqnum, rx_seqnum;
-+	const void __iomem *base = achan->rx.base;
-+	struct acpm_rx_data *rx_data;
-+	u32 i, val, mlen = achan->mlen;
++	struct acpm_cpu_priv *priv = policy->driver_data;
++	unsigned long freq_khz = policy->freq_table[index].frequency;
 +
-+	if (!spin_trylock(&achan->rx_lock))
-+		return;
-+
-+	rx_front = readl(achan->rx.front);
-+	i = readl(achan->rx.rear);
-+
-+	/* Get out quick if we nothing to process */
-+	if (i == rx_front) {
-+		spin_unlock(&achan->rx_lock);
-+		return;
-+	}
-+
-+	do {
-+		val = readl(base + mlen * i);
-+		rx_seqnum = FIELD_GET(ACPM_PROTOCOL_SEQNUM, val);
-+
-+		if (rx_seqnum) {
-+			seqnum = rx_seqnum - 1;
-+			rx_data = &achan->rx_data[seqnum];
-+
-+			if (rx_data->rxcnt)
-+				__ioread32_copy(rx_data->cmd, base + mlen * i, rx_data->rxcnt);
-+
-+			/* Signal the waiting thread (if any). If it hasn't started
-+			 * spinning yet, it will see this instantly when it does. */
-+			smp_store_release(&rx_data->completed, true);
-+
-+			/* Only free the sequence number if it belongs to an
-+			 * async request. Senders who use regular acpm_do_xfer()
-+			 * will free their own sequence numbers in
-+			 * acpm_dequeue_by_polling().
-+			 */
-+			if (rx_data->is_async)
-+				clear_bit_unlock(seqnum, achan->bitmap_seqnum);
-+		}
-+
-+		i = (i + 1) % achan->qlen;
-+	} while (i != rx_front);
-+
-+	writel(rx_front, achan->rx.rear);
-+
-+	spin_unlock(&achan->rx_lock);
++	/* standard slow path */
++	return priv->handle->ops->dvfs.set_rate(priv->handle, priv->acpm_chan_id,
++						priv->clk_id, freq_khz * 1000);
 +}
 +
- /**
-  * acpm_dequeue_by_polling() - RX dequeue by polling.
-  * @achan:	ACPM channel info.
-@@ -388,15 +446,15 @@ static int acpm_wait_for_queue_slots(struct acpm_chan *achan, u32 next_tx_front)
- }
- 
- /**
-- * acpm_prepare_xfer() - prepare a transfer before writing the message to the
-+ * __acpm_prepare_xfer() - prepare a transfer before writing the message to the
-  * TX queue.
-  * @achan:	ACPM channel info.
-  * @xfer:	reference to the transfer being prepared.
-  *
-  * Return: 0 on success, -errno otherwise.
-  */
--static int acpm_prepare_xfer(struct acpm_chan *achan,
--			     const struct acpm_xfer *xfer)
-+static int __acpm_prepare_xfer(struct acpm_chan *achan,
-+			       const struct acpm_xfer *xfer, bool is_async)
- {
- 	struct acpm_rx_data *rx_data;
- 	u32 *txd = (u32 *)xfer->txd;
-@@ -429,6 +487,7 @@ static int acpm_prepare_xfer(struct acpm_chan *achan,
- 	/* Clear data for upcoming responses */
- 	rx_data = &achan->rx_data[bit];
- 	rx_data->completed = false;
-+	rx_data->is_async = is_async;
- 	memset(rx_data->cmd, 0, sizeof(*rx_data->cmd) * rx_data->cmdcnt);
- 	/* zero means no response expected */
- 	rx_data->rxcnt = xfer->rxcnt;
-@@ -436,6 +495,12 @@ static int acpm_prepare_xfer(struct acpm_chan *achan,
- 	return 0;
- }
- 
-+static int acpm_prepare_xfer(struct acpm_chan *achan,
-+			     const struct acpm_xfer *xfer)
++static unsigned int acpm_soc_cpufreq_fast_switch(struct cpufreq_policy *policy,
++						 unsigned int target_freq)
 +{
-+	return __acpm_prepare_xfer(achan, xfer, false);
-+}
-+
- /**
-  * acpm_wait_for_message_response - an helper to group all possible ways of
-  * waiting for a synchronous message response.
-@@ -452,6 +517,62 @@ static int acpm_wait_for_message_response(struct acpm_chan *achan,
- 	return acpm_dequeue_by_polling(achan, xfer);
- }
- 
-+int acpm_do_xfer_fast(struct acpm_handle *handle, const struct acpm_xfer *xfer)
-+{
-+	struct acpm_info *acpm = handle_to_acpm_info(handle);
-+	struct exynos_mbox_msg msg;
-+	struct acpm_chan *achan;
-+	u32 idx, tx_front;
++	struct acpm_cpu_priv *priv = policy->driver_data;
 +	int ret;
 +
-+	if (xfer->acpm_chan_id >= acpm->num_chans)
-+		return -EINVAL;
++	ret = priv->handle->ops->dvfs.set_rate_fast(priv->handle, priv->acpm_chan_id,
++						    priv->clk_id, target_freq * 1000);
++	if (ret < 0)
++		return 0;
 +
-+	achan = &acpm->chans[xfer->acpm_chan_id];
-+
-+	msg.chan_id = xfer->acpm_chan_id;
-+	msg.chan_type = EXYNOS_MBOX_CHAN_TYPE_DOORBELL;
-+
-+	/* Ideally should be a raw_spin_trylock.
-+	 * If we can't get it immediately, then give up.
-+	 */
-+	if (!spin_trylock(&achan->tx_lock))
-+		return -EBUSY;
-+
-+	/* clean up/ack previous responses */
-+	acpm_drain_stale_rx(achan);
-+
-+	tx_front = readl(achan->tx.front);
-+	idx = (tx_front + 1) % achan->qlen;
-+
-+	if (idx == readl(achan->tx.rear)) {
-+		/* stalled; queue is full? */
-+		spin_unlock(&achan->tx_lock);
-+		return -EBUSY;
-+	}
-+
-+	ret = __acpm_prepare_xfer(achan, xfer, true);
-+	if (ret) {
-+		spin_unlock(&achan->tx_lock);
-+		return ret;
-+	}
-+
-+	__iowrite32_copy(achan->tx.base + achan->mlen * tx_front,
-+			 xfer->txd, xfer->txcnt);
-+
-+	/* advance TX front */
-+	writel(idx, achan->tx.front);
-+
-+	/* ring the doorbell */
-+	ret = mbox_send_message(achan->chan, (void *)&msg);
-+	if (ret >= 0)
-+		mbox_client_txdone(achan->chan, 0);
-+
-+	spin_unlock(&achan->tx_lock);
-+
-+	return ret < 0 ? ret : 0;
++	return target_freq;
 +}
 +
- /**
-  * acpm_do_xfer() - do one transfer.
-  * @handle:	pointer to the acpm handle.
-@@ -485,7 +606,7 @@ int acpm_do_xfer(struct acpm_handle *handle, const struct acpm_xfer *xfer)
- 	msg.chan_id = xfer->acpm_chan_id;
- 	msg.chan_type = EXYNOS_MBOX_CHAN_TYPE_DOORBELL;
- 
--	scoped_guard(mutex, &achan->tx_lock) {
-+	scoped_guard(spinlock, &achan->tx_lock) {
- 		tx_front = readl(achan->tx.front);
- 		idx = (tx_front + 1) % achan->qlen;
- 
-@@ -654,8 +775,8 @@ static int acpm_channels_init(struct acpm_info *acpm)
- 		if (ret)
- 			return ret;
- 
--		mutex_init(&achan->rx_lock);
--		mutex_init(&achan->tx_lock);
-+		spin_lock_init(&achan->rx_lock);
-+		spin_lock_init(&achan->tx_lock);
- 
- 		cl->dev = dev;
- 
-@@ -675,6 +796,7 @@ static void acpm_clk_pdev_unregister(void *data)
- static const struct acpm_ops exynos_acpm_driver_ops = {
- 	.dvfs = {
- 		.set_rate = acpm_dvfs_set_rate,
-+		.set_rate_fast = acpm_dvfs_set_rate_fast,
- 		.get_rate = acpm_dvfs_get_rate,
- 	},
- 
-diff --git a/drivers/firmware/samsung/exynos-acpm.h b/drivers/firmware/samsung/exynos-acpm.h
-index 708f6b0102ac..210709326a1f 100644
---- a/drivers/firmware/samsung/exynos-acpm.h
-+++ b/drivers/firmware/samsung/exynos-acpm.h
-@@ -22,4 +22,7 @@ void acpm_set_xfer(struct acpm_xfer *xfer, u32 *cmd, size_t cmdcnt,
- int acpm_do_xfer(struct acpm_handle *handle,
- 		 const struct acpm_xfer *xfer);
- 
-+int acpm_do_xfer_fast(struct acpm_handle *handle,
-+		      const struct acpm_xfer *xfer);
++static int acpm_soc_cpufreq_init(struct cpufreq_policy *policy)
++{
++	struct device *cpu_dev = get_cpu_device(policy->cpu);
++	struct cpufreq_frequency_table *freq_table;
++	struct acpm_cpu_priv *priv;
++	struct of_phandle_args args;
++	unsigned int transition_latency;
++	int ret;
 +
- #endif /* __EXYNOS_ACPM_H__ */
-diff --git a/include/linux/firmware/samsung/exynos-acpm-protocol.h b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-index c6b35c0ff300..93c9b20517f8 100644
---- a/include/linux/firmware/samsung/exynos-acpm-protocol.h
-+++ b/include/linux/firmware/samsung/exynos-acpm-protocol.h
-@@ -16,6 +16,8 @@ struct device_node;
- struct acpm_dvfs_ops {
- 	int (*set_rate)(struct acpm_handle *handle, unsigned int acpm_chan_id,
- 			unsigned int clk_id, unsigned long rate);
-+	int (*set_rate_fast)(struct acpm_handle *handle, unsigned int acpm_chan_id,
-+			     unsigned int clk_id, unsigned long rate);
- 	unsigned long (*get_rate)(struct acpm_handle *handle,
- 				  unsigned int acpm_chan_id,
- 				  unsigned int clk_id);
++	if (!cpu_dev)
++		return -ENODEV;
++
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	ret = of_parse_phandle_with_args(cpu_dev->of_node, "clocks",
++					 "#clock-cells", 0, &args);
++	if (ret) {
++		dev_err(cpu_dev, "failed to parse clocks property\n");
++		goto out_free_priv;
++	}
++
++	priv->clk_id = args.args[0];
++
++	/*
++	 * DVFS communication is expected to happen only via channel 0
++	 * for now for known SoCs with ACPM firmware. Hardcoding.
++	 */
++	priv->acpm_chan_id = 0;
++
++	priv->handle = devm_acpm_get_by_node(cpu_dev, args.np);
++	of_node_put(args.np);
++
++	if (IS_ERR(priv->handle)) {
++		ret = PTR_ERR(priv->handle);
++		goto out_free_priv;
++	}
++
++	priv->cpu_dev = cpu_dev;
++
++	ret = dev_pm_opp_of_add_table(cpu_dev);
++	if (ret < 0) {
++		dev_err(cpu_dev, "failed to add OPP table: %d\n", ret);
++		goto out_free_priv;
++	}
++
++	dev_pm_opp_of_get_sharing_cpus(cpu_dev, policy->cpus);
++
++	ret = dev_pm_opp_get_opp_count(cpu_dev);
++	if (ret <= 0) {
++		ret = -EPROBE_DEFER;
++		goto out_remove_table;
++	}
++
++	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
++	if (ret) {
++		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
++		goto out_remove_table;
++	}
++
++	policy->driver_data = priv;
++	policy->freq_table = freq_table;
++
++	transition_latency = dev_pm_opp_get_max_transition_latency(cpu_dev);
++	if (!transition_latency)
++		transition_latency = ACPM_DVFS_TRANSITION_TIMEOUT * NSEC_PER_USEC;
++
++	policy->cpuinfo.transition_latency = transition_latency;
++	policy->dvfs_possible_from_any_cpu = true;
++	policy->fast_switch_possible = true;
++	policy->suspend_freq = freq_table[0].frequency;
++
++	/* TODO: FIXME. Exynos850 doesn't expose rate of clocks via ACPM  (get_rate doesn't work) */
++	policy->cur = freq_table[0].frequency;
++
++	return 0;
++
++out_remove_table:
++	dev_pm_opp_of_remove_table(cpu_dev);
++out_free_priv:
++	kfree(priv);
++	return ret;
++}
++
++static void acpm_soc_cpufreq_exit(struct cpufreq_policy *policy)
++{
++	struct acpm_cpu_priv *priv = policy->driver_data;
++
++	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
++	dev_pm_opp_of_remove_table(priv->cpu_dev);
++	kfree(priv);
++}
++
++static struct cpufreq_driver acpm_soc_cpufreq_driver = {
++	.name		= "acpm-cpufreq",
++	.flags		= CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
++			  CPUFREQ_NEED_INITIAL_FREQ_CHECK | CPUFREQ_IS_COOLING_DEV,
++	.verify		= cpufreq_generic_frequency_table_verify,
++	.get		= acpm_soc_cpufreq_get_rate,
++	.init		= acpm_soc_cpufreq_init,
++	.exit		= acpm_soc_cpufreq_exit,
++	.target_index	= acpm_soc_cpufreq_set_target,
++	.fast_switch	= acpm_soc_cpufreq_fast_switch,
++	.register_em	= cpufreq_register_em_with_opp,
++	.set_boost	= cpufreq_boost_set_sw,
++	.suspend	= cpufreq_generic_suspend,
++};
++
++static int __init acpm_soc_cpufreq_module_init(void)
++{
++	if (!of_machine_is_compatible("google,gs101") &&
++	    !of_machine_is_compatible("samsung,exynos850"))
++		return -ENODEV;
++
++	return cpufreq_register_driver(&acpm_soc_cpufreq_driver);
++}
++module_init(acpm_soc_cpufreq_module_init);
++
++static void __exit acpm_soc_cpufreq_module_exit(void)
++{
++	cpufreq_unregister_driver(&acpm_soc_cpufreq_driver);
++}
++module_exit(acpm_soc_cpufreq_module_exit);
++
++MODULE_AUTHOR("Alexey Klimov <alexey.klimov@linaro.org>");
++MODULE_DESCRIPTION("ACPM-based CPUfreq DVFS driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index ff1204c666b1..ae58aa92fc40 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -186,6 +186,9 @@ static const struct of_device_id blocklist[] __initconst = {
+ 	{ .compatible = "qcom,sm8550", },
+ 	{ .compatible = "qcom,sm8650", },
+ 
++	{ .compatible = "google,gs101", },
++	{ .compatible = "samsung,exynos850", },
++
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
+ 	{ .compatible = "st,stih418", },
 
 -- 
 2.51.0
