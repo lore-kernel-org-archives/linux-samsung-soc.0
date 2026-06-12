@@ -1,381 +1,268 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31AB3DE43A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2026 07:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81085379C23;
+	Fri, 12 Jun 2026 09:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781249954; cv=none; b=RfA0DBdqLzmtFoaut5xpEzxiu6/A8JgnS19Iop4X/4r7v8pmLY7AG6kOuDqLLHa7UoBGOvP66ofgv7+wJYaawgDUn7QKA8YNGgaeggDexZ9ZRS9tLJ9nrIMas5s7DwxoynMd+X2WRJUn7LOPWbCTo7rOkvxQYBm/qBRuutTU1B4=
+	t=1781258258; cv=none; b=IlNG5U3P3hiBIYbVw5BCaCbk4nQcyyYcmGfHd2rklnS//8fiPBRLb0a8PR7P25+ikmLq7v8y4OUmsXbh3wj6R74ah1b6fkyVQQ6yd3DqVc9pANPo8T+VqQSazYjV/FPelTa90wwNM5aVcke5QYIq5O07ZDMjgoMoaRClWUE+myA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781249954; c=relaxed/simple;
-	bh=z9QRWjpF4mbZ5QQNhCSkNyl2RjyVBn8VQoPBXaspdM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvL6mS6J70TJZ/0sTBqrIFq9eS1lgp7zwYd8r9OKrpguY1YoLPjG7+GIDWwsUvEfeJV/I9wKQXO93uxoVgFlQtIzz8D+nXxnnPjeOcY5+bBWviseLSnwQGM2ZZ+naxXxOpfrADGYlbwsdGTlsf1HtiBDoJzXvxZUyTV+D7EPo+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O/46NIXP; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781258258; c=relaxed/simple;
+	bh=NzzIuketYheAuYOcGULqCQhSphsx9v/bVAg3XmB6uw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ah1Kk4wF+kPUiHVN5uiK5iR/U7FlJ4t4aI7oohEQkIcIUf8O5CKCKuHckOTMr27ZCxgm8fWz8qoFgOG+/ztho+N28ZOUbh0risL6vw/cK9I1gnIAZgkoRin99xKdGK2GvP7dKd+oNv+pTw6FQP3D/EeDoXJn9oPZQT3Wj9kO68A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=s1F3qdd9; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=P+pZIcb6; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O/46NIXP"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-36bba9a1089so448557a91.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2026 00:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781249949; x=1781854749; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iwAzsKuG98i0XaLphIm9C7P5riFyScOebLVPU4KDGKQ=;
-        b=O/46NIXPIFSAZHb7jNQrMvppvNiOQZwIAB5jiTJ25Vv3MMvN7bKgZ0EqcWJhTwtyMc
-         7Rdq+EafzLlEi+CvFWnoLLvoK8uDJo2GBdOduHAmibHj6EA6mgm+l8xyte9xlWqO+7zn
-         O/WPQD55VC0xcdDxxYUsfyV6h55I6TG2fjzfdpN5IPopPglKPVo6eYXYWCOpTnhTzOpI
-         2rxhKPDXxbrXcZ72RutUzTA9dDJJgUKd1PQ7Bb5tP4lN9518tTV+/t+jMBNGxAU56bvl
-         SpLkzLJincEoLalt6aYjcq+OfBQW5S0fV3cYbD1CMCqKWoK6yosF0IpWNRFTP7JkqMoY
-         Erbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781249949; x=1781854749;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iwAzsKuG98i0XaLphIm9C7P5riFyScOebLVPU4KDGKQ=;
-        b=ovw79eyLb3sXngBR8tplhMeXt6/pTPH4ADtckfWkjVFfBTP5Ud8C31XBe6wOxgR78s
-         ZYrIsxzBE2/RKHZ45toInK1Y6WH0iFDtGpi7/nrliHrfAISX15/74lBdG5t1Nhk3B6vb
-         J7zbBvLVhzctHdgmTVZjzJWvi1kRUWKUXgiZKV/XMpIcQZYLcN5ixwieJw0xgxrjJH72
-         8OsJpne1/7NDfe01KlzffyZSVn1+jyLBCWfOA78xSuuZh+5E9KaOXXvoLgyCGfdlS86U
-         G2mS5vSuXIZHbRbEsU2dzjpP+cRlQ4SnDsOQAQUx1EzhnnV8y7MTZU5nq8T36YIbcPHJ
-         bYlQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8hXpfxN3jflzpYC2MqRzLjznIxdXXW2JYoPcaiEnn2wLebWaPsp17a9+YuWNseC74meFMbfLCSlGWwBioRnOIhEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZNv8CnFc+ocQeQqn+lIoEMbIzIJD8sGdY4qOKC89djpbnw1fM
-	r77YnCx2HT27DxgJr6AQeMNHYl3vPTpAJoCOxibtiwPSgMd1IEIf/qml6lKNNmJy8/8=
-X-Gm-Gg: Acq92OEA5lkoPHROb7IGn4H6fC/xe5SKfuTh4AvcDyovRbWdM8iKOBV5AzntzgBsHK9
-	5cZrbPGexaKvCABiyXZlS44rtG29ET6yX+vqJQrcPKyOmhgacbIA2k2I1ifflacXPR0mDjJyj9p
-	hs+qKXZrRLkKEEdltKPUDsUPf/6ilB8TiY/CnlmcSNMDx/s66il8WZGgK7pS8c52aCqCyBjLFhb
-	VlrWj+Gagi4Vahyf/yO35GBIlO92xmYa6rPkhWYU/nbyEzBaYy2zo/33YxcPSkTXqwTD+8aywUw
-	yqW5WmeBvLosxv7gMK95oK1xp1BHHOBKIenKgx3ysUre7Dl4lDBz9qvxoNHLLFqjt0PmNbNLcS5
-	ly8RQ8wyZc4mKp4YhOqF11xh4n22njHBFJrlZd1koTd7MORY/yjXst08sj+3dhfViuHSriX8V7u
-	tCdO419IhdIzXWF2/qm+NG7wo=
-X-Received: by 2002:a17:90b:2f4b:b0:36a:6ac2:8bc8 with SMTP id 98e67ed59e1d1-37a037e2876mr1910045a91.14.1781249948578;
-        Fri, 12 Jun 2026 00:39:08 -0700 (PDT)
-Received: from localhost ([122.172.82.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8434ac9c474sm1268869b3a.2.2026.06.12.00.39.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 00:39:07 -0700 (PDT)
-Date: Fri, 12 Jun 2026 13:09:05 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] cpufreq: add ACPM-based CPU DVFS driver for Exynos
- SoCs
-Message-ID: <xruckzvdmox4ewgc4shrhrfrq3a3rjl4zqa3rh46oaqezbmir2@yt7oxm2sy4q2>
-References: <20260612-acpm-fast-xfer-v1-0-1aa6cd2268ba@linaro.org>
- <20260612-acpm-fast-xfer-v1-2-1aa6cd2268ba@linaro.org>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="s1F3qdd9";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="P+pZIcb6"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gcFLQ2ZZLz9thq;
+	Fri, 12 Jun 2026 11:57:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1781258254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sOatx03+Y4coDzuWmp5c1p33Lzh+TpfabzIJ4Oj6V+0=;
+	b=s1F3qdd9U4XVjxCBW/i/uPH2pKeTgpyBPgHQYB2f26mQHBVVCg+hktbRcSBV/TfnnGbTnb
+	GDCR4sQJbzqCQNRwJmNv8o5TtVfpuECQgmnzlI1pL9whhUAdhMlqu4eJZFtdE3ThZtKJv4
+	Y4n3Y9EEX2NkUWey/RJ5gcK1NYu+zUuT/75ITxyH9F5/klMnzJHP9OFCoMg5dXLI6r7EoT
+	IC5fQ+Q1wTMrLTRT6FFKYYfimnDJYKDDA03fdSYCHV6GasS/wVK/4hGsk7YXmoIAREL9Ly
+	iAKlz+uuA+pvBn2AX6Bn5S27MBtMaOC96LJ+NAvHEG7uWOW4CTIOH2UagGc2Dg==
+From: Manuel Ebner <manuelebner@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1781258252;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sOatx03+Y4coDzuWmp5c1p33Lzh+TpfabzIJ4Oj6V+0=;
+	b=P+pZIcb6gjPwDszM++dcZebKJPjN/pOLCFp+5Dy9ZIKa9yWLL0cGC3Qfpenshai3kIv7+s
+	Ov29mbsGZnR92TRpwky6/pdCttsHgIJ8K1sjF+c5gy8BQQEChjLB0OxmQ3C8JoKtJf/nTs
+	uMWybarE5KyyY8OrfZevyU94beCu7gQWJ5xTQmJzK88VqcdQNQYo+6Nw+1ovUJ8n1dJk9N
+	RRrDVC3OAY8PxCl9lp1q9UHy6TDvNDuWvQBFCRtGRLr0/s9pzPyBRumyRtwtxAAgZlI4yy
+	YPeRjLIiSXfw6sKOr/hq0vPWLkD5lg2zpZJmk2oTWBFoOzE7HG3qvFcbonehOQ==
+To: Vineet Gupta <vgupta@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <chleroy@kernel.org>,
+	linux-snps-arc@lists.infradead.org (open list:SYNOPSYS ARC ARCHITECTURE),
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT))
+Cc: Manuel Ebner <manuelebner@mailbox.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] v2 Documentation: arch: fix brackets
+Date: Fri, 12 Jun 2026 11:54:22 +0200
+Message-ID: <20260612095432.177759-2-manuelebner@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260612-acpm-fast-xfer-v1-2-1aa6cd2268ba@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 060f6ef0ba5af3aaaf0
+X-MBO-RS-META: aotyjym6h6hrfmqj4cgbcszockbfspnn
 
-On 12-06-26, 05:34, Alexey Klimov wrote:
-> Exynos-based SoCs (e.g., Exynos850, gs101) manage CPU DVFS via an
-> ACPM co-processor (sometimes co-processor specifically called APM).
-> Historically, routing CPU frequencies through the clock framework
-> breaks fast frequency switching as it is implemented in cpufreq-dt.
-> The clk_set_rate() uses mutexes, which prevents the scheduler to
-> utilize schedutil's fast path.
+Add missing and remove needless parentheses, brackets and curly braces.
+Fix typos.
 
-The OPP core can be configured with a "config_clks" helper, which can let you
-call a custom callback instead of clk_set_rate(). With that you can still use
-cpufreq-dt ? This may need minor update in OPP core though, as we don't allow
-the custom callback for single clocks for now.
+Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+---
+[v1] -> [v2]
+"(i.e cache geometries)" -> "(e.g., cache geometries)"
+"Excer[t" -> "Excerpt"
+add Reviewed-by: Randy Dunlap
+fixed my own typos.
+---
+ Documentation/arch/arc/arc.rst                 |  2 +-
+ .../arm/samsung/clksrc-change-registers.awk    |  2 +-
+ Documentation/arch/arm/vlocks.rst              |  4 ++--
+ .../arch/arm64/memory-tagging-extension.rst    |  2 +-
+ Documentation/arch/powerpc/vas-api.rst         |  2 +-
+ Documentation/arch/sparc/oradax/dax-hv-api.txt | 18 +++++++++---------
+ Documentation/arch/sparc/oradax/oracle-dax.rst |  2 +-
+ Documentation/arch/x86/x86_64/fsgs.rst         |  4 ++--
+ 8 files changed, 18 insertions(+), 18 deletions(-)
 
-> Introduce a dedicated ACPM-based cpufreq driver that bypasses the clock
-> framework and communicates directly with the ACPM firmware protocol.
-> It implements ->fast_switch() to rely on acpm_dvfs_set_rate_fast(),
-> enabling faster frequency transitions.
-> 
-> Add Google gs101 and Samsung exynos850 to the cpufreq-dt-platdev
-> blocklist to prevent driver cpufreq-dt initialisation.
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |   8 ++
->  drivers/cpufreq/Makefile             |   1 +
->  drivers/cpufreq/acpm-cpufreq.c       | 195 +++++++++++++++++++++++++++++++++++
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
->  4 files changed, 207 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index a441668f9e0c..891ff4b6ec22 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -24,6 +24,14 @@ config ARM_AIROHA_SOC_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver for Airoha EN7581 SoCs.
->  
-> +config ARM_ACPM_CPUFREQ
-> +	tristate "ACPM based CPUFreq support"
-> +	depends on ARCH_EXYNOS || (COMPILE_TEST && 64BIT)
-> +	select PM_OPP
-> +	help
-> +	  This adds the CPUFreq driver for Exynos-based machines
-> +	  with ACPM firmware.
-> +
->  config ARM_APPLE_SOC_CPUFREQ
->  	tristate "Apple Silicon SoC CPUFreq support"
->  	depends on ARCH_APPLE || (COMPILE_TEST && 64BIT)
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 6c7a39b7f8d2..c54d2dd6629d 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -54,6 +54,7 @@ obj-$(CONFIG_X86_AMD_FREQ_SENSITIVITY)	+= amd_freq_sensitivity.o
->  ##################################################################################
->  # ARM SoC drivers
->  obj-$(CONFIG_ARM_AIROHA_SOC_CPUFREQ)	+= airoha-cpufreq.o
-> +obj-$(CONFIG_ARM_ACPM_CPUFREQ)		+= acpm-cpufreq.o
->  obj-$(CONFIG_ARM_APPLE_SOC_CPUFREQ)	+= apple-soc-cpufreq.o
->  obj-$(CONFIG_ARM_ARMADA_37XX_CPUFREQ)	+= armada-37xx-cpufreq.o
->  obj-$(CONFIG_ARM_ARMADA_8K_CPUFREQ)	+= armada-8k-cpufreq.o
-> diff --git a/drivers/cpufreq/acpm-cpufreq.c b/drivers/cpufreq/acpm-cpufreq.c
-> new file mode 100644
-> index 000000000000..20fb79169993
-> --- /dev/null
-> +++ b/drivers/cpufreq/acpm-cpufreq.c
-> @@ -0,0 +1,195 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Exynos ACPM-based CPUFreq DVFS driver
-> + */
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/slab.h>
-> +
-> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-
-Add this within the earlier list in alphabetic order.
-
-> +#define ACPM_DVFS_TRANSITION_TIMEOUT 400
-> +
-> +struct acpm_cpu_priv {
-> +	struct device *cpu_dev;
-> +	struct acpm_handle *handle;
-> +	unsigned int acpm_chan_id;
-> +	unsigned int clk_id;
-> +};
-> +
-> +static unsigned int acpm_soc_cpufreq_get_rate(unsigned int cpu)
-> +{
-> +	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
-> +	struct acpm_cpu_priv *priv;
-> +
-> +	if (unlikely(!policy))
-> +		return 0;
-> +
-> +	priv = policy->driver_data;
-> +
-> +	/* return priv->handle->ops->dvfs.get_rate(priv->handle, priv->acpm_chan_id,
-> +	 *					priv->clk_id) / 1000;
-> +	 */
-
-Wrong multiline comment format.
-
-> +
-> +	/* TODO: FIXME. Exynos850 doesn't return rate via ACPM */
-
-:(
-
-> +	return policy->cur;
-> +}
-> +
-> +static int acpm_soc_cpufreq_set_target(struct cpufreq_policy *policy,
-> +				       unsigned int index)
-> +{
-> +	struct acpm_cpu_priv *priv = policy->driver_data;
-> +	unsigned long freq_khz = policy->freq_table[index].frequency;
-> +
-> +	/* standard slow path */
-> +	return priv->handle->ops->dvfs.set_rate(priv->handle, priv->acpm_chan_id,
-> +						priv->clk_id, freq_khz * 1000);
-> +}
-> +
-> +static unsigned int acpm_soc_cpufreq_fast_switch(struct cpufreq_policy *policy,
-> +						 unsigned int target_freq)
-> +{
-> +	struct acpm_cpu_priv *priv = policy->driver_data;
-> +	int ret;
-> +
-> +	ret = priv->handle->ops->dvfs.set_rate_fast(priv->handle, priv->acpm_chan_id,
-> +						    priv->clk_id, target_freq * 1000);
-> +	if (ret < 0)
-> +		return 0;
-> +
-> +	return target_freq;
-> +}
-> +
-> +static int acpm_soc_cpufreq_init(struct cpufreq_policy *policy)
-> +{
-> +	struct device *cpu_dev = get_cpu_device(policy->cpu);
-> +	struct cpufreq_frequency_table *freq_table;
-> +	struct acpm_cpu_priv *priv;
-> +	struct of_phandle_args args;
-> +	unsigned int transition_latency;
-> +	int ret;
-> +
-> +	if (!cpu_dev)
-> +		return -ENODEV;
-> +
-> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	ret = of_parse_phandle_with_args(cpu_dev->of_node, "clocks",
-> +					 "#clock-cells", 0, &args);
-> +	if (ret) {
-> +		dev_err(cpu_dev, "failed to parse clocks property\n");
-> +		goto out_free_priv;
-> +	}
-> +
-> +	priv->clk_id = args.args[0];
-> +
-> +	/*
-> +	 * DVFS communication is expected to happen only via channel 0
-> +	 * for now for known SoCs with ACPM firmware. Hardcoding.
-> +	 */
-> +	priv->acpm_chan_id = 0;
-> +
-> +	priv->handle = devm_acpm_get_by_node(cpu_dev, args.np);
-
-devm on CPU node is incorrect. The resource won't be freed if you remove this
-driver's module.
-
-> +	of_node_put(args.np);
-> +
-> +	if (IS_ERR(priv->handle)) {
-> +		ret = PTR_ERR(priv->handle);
-> +		goto out_free_priv;
-> +	}
-> +
-> +	priv->cpu_dev = cpu_dev;
-> +
-> +	ret = dev_pm_opp_of_add_table(cpu_dev);
-> +	if (ret < 0) {
-> +		dev_err(cpu_dev, "failed to add OPP table: %d\n", ret);
-> +		goto out_free_priv;
-> +	}
-> +
-> +	dev_pm_opp_of_get_sharing_cpus(cpu_dev, policy->cpus);
-
-Check count before this ?
-
-> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
-> +	if (ret <= 0) {
-> +		ret = -EPROBE_DEFER;
-> +		goto out_remove_table;
-> +	}
-> +
-> +	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
-> +	if (ret) {
-> +		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
-> +		goto out_remove_table;
-> +	}
-> +
-> +	policy->driver_data = priv;
-> +	policy->freq_table = freq_table;
-> +
-> +	transition_latency = dev_pm_opp_get_max_transition_latency(cpu_dev);
-> +	if (!transition_latency)
-> +		transition_latency = ACPM_DVFS_TRANSITION_TIMEOUT * NSEC_PER_USEC;
-> +
-> +	policy->cpuinfo.transition_latency = transition_latency;
-> +	policy->dvfs_possible_from_any_cpu = true;
-> +	policy->fast_switch_possible = true;
-> +	policy->suspend_freq = freq_table[0].frequency;
-> +
-> +	/* TODO: FIXME. Exynos850 doesn't expose rate of clocks via ACPM  (get_rate doesn't work) */
-
-This makes the driver broken. I don't think we can merge with this.
-
-> +	policy->cur = freq_table[0].frequency;
-> +
-> +	return 0;
-> +
-> +out_remove_table:
-> +	dev_pm_opp_of_remove_table(cpu_dev);
-> +out_free_priv:
-> +	kfree(priv);
-> +	return ret;
-> +}
-> +
-> +static void acpm_soc_cpufreq_exit(struct cpufreq_policy *policy)
-> +{
-> +	struct acpm_cpu_priv *priv = policy->driver_data;
-> +
-> +	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
-> +	dev_pm_opp_of_remove_table(priv->cpu_dev);
-> +	kfree(priv);
-> +}
-> +
-> +static struct cpufreq_driver acpm_soc_cpufreq_driver = {
-> +	.name		= "acpm-cpufreq",
-> +	.flags		= CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-> +			  CPUFREQ_NEED_INITIAL_FREQ_CHECK | CPUFREQ_IS_COOLING_DEV,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.get		= acpm_soc_cpufreq_get_rate,
-> +	.init		= acpm_soc_cpufreq_init,
-> +	.exit		= acpm_soc_cpufreq_exit,
-> +	.target_index	= acpm_soc_cpufreq_set_target,
-> +	.fast_switch	= acpm_soc_cpufreq_fast_switch,
-> +	.register_em	= cpufreq_register_em_with_opp,
-> +	.set_boost	= cpufreq_boost_set_sw,
-> +	.suspend	= cpufreq_generic_suspend,
-> +};
-> +
-> +static int __init acpm_soc_cpufreq_module_init(void)
-> +{
-> +	if (!of_machine_is_compatible("google,gs101") &&
-> +	    !of_machine_is_compatible("samsung,exynos850"))
-> +		return -ENODEV;
-> +
-> +	return cpufreq_register_driver(&acpm_soc_cpufreq_driver);
-> +}
-> +module_init(acpm_soc_cpufreq_module_init);
-> +
-> +static void __exit acpm_soc_cpufreq_module_exit(void)
-> +{
-> +	cpufreq_unregister_driver(&acpm_soc_cpufreq_driver);
-> +}
-> +module_exit(acpm_soc_cpufreq_module_exit);
-> +
-> +MODULE_AUTHOR("Alexey Klimov <alexey.klimov@linaro.org>");
-> +MODULE_DESCRIPTION("ACPM-based CPUfreq DVFS driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index ff1204c666b1..ae58aa92fc40 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -186,6 +186,9 @@ static const struct of_device_id blocklist[] __initconst = {
->  	{ .compatible = "qcom,sm8550", },
->  	{ .compatible = "qcom,sm8650", },
->  
-> +	{ .compatible = "google,gs101", },
-> +	{ .compatible = "samsung,exynos850", },
-> +
->  	{ .compatible = "st,stih407", },
->  	{ .compatible = "st,stih410", },
->  	{ .compatible = "st,stih418", },
-> 
-> -- 
-> 2.51.0
-
+diff --git a/Documentation/arch/arc/arc.rst b/Documentation/arch/arc/arc.rst
+index 6c4d978f3f4e..5923dee37a98 100644
+--- a/Documentation/arch/arc/arc.rst
++++ b/Documentation/arch/arc/arc.rst
+@@ -36,7 +36,7 @@ Important note on ARC processors configurability
+ 
+ ARC processors are highly configurable and several configurable options
+ are supported in Linux. Some options are transparent to software
+-(i.e cache geometries, some can be detected at runtime and configured
++(e.g., cache geometries), some can be detected at runtime and configured
+ and used accordingly, while some need to be explicitly selected or configured
+ in the kernel's configuration utility (AKA "make menuconfig").
+ 
+diff --git a/Documentation/arch/arm/samsung/clksrc-change-registers.awk b/Documentation/arch/arm/samsung/clksrc-change-registers.awk
+index 7be1b8aa7cd9..48464397088c 100755
+--- a/Documentation/arch/arm/samsung/clksrc-change-registers.awk
++++ b/Documentation/arch/arm/samsung/clksrc-change-registers.awk
+@@ -163,4 +163,4 @@ BEGIN {
+     }
+ }
+ 
+-// && ! /clksrc_clk.*=.*{/ { print $0 }
++// && ! /clksrc_clk.*=.*{/ { print $0 }}
+diff --git a/Documentation/arch/arm/vlocks.rst b/Documentation/arch/arm/vlocks.rst
+index 737aa8661a21..b0ac33263086 100644
+--- a/Documentation/arch/arm/vlocks.rst
++++ b/Documentation/arch/arm/vlocks.rst
+@@ -102,10 +102,10 @@ Features and limitations
+ 	if (I_won) {
+ 		/* we won the town election, let's go for the state */
+ 		my_state = states[(this_cpu >> 8) & 0xf];
+-		I_won = vlock_lock(my_state, this_cpu & 0xf));
++		I_won = vlock_lock(my_state, this_cpu & 0xf);
+ 		if (I_won) {
+ 			/* and so on */
+-			I_won = vlock_lock(the_whole_country, this_cpu & 0xf];
++			I_won = vlock_lock(the_whole_country, this_cpu & 0xf);
+ 			if (I_won) {
+ 				/* ... */
+ 			}
+diff --git a/Documentation/arch/arm64/memory-tagging-extension.rst b/Documentation/arch/arm64/memory-tagging-extension.rst
+index 679725030731..e6fe428f0e2a 100644
+--- a/Documentation/arch/arm64/memory-tagging-extension.rst
++++ b/Documentation/arch/arm64/memory-tagging-extension.rst
+@@ -222,7 +222,7 @@ programs should not retry in case of a non-zero system call return.
+ address ABI control and MTE configuration of a process as per the
+ ``prctl()`` options described in
+ Documentation/arch/arm64/tagged-address-abi.rst and above. The corresponding
+-``regset`` is 1 element of 8 bytes (``sizeof(long))``).
++``regset`` is 1 element of 8 bytes (``sizeof(long)``).
+ 
+ Core dump support
+ -----------------
+diff --git a/Documentation/arch/powerpc/vas-api.rst b/Documentation/arch/powerpc/vas-api.rst
+index a9625a2fa0c6..1d0d055356e3 100644
+--- a/Documentation/arch/powerpc/vas-api.rst
++++ b/Documentation/arch/powerpc/vas-api.rst
+@@ -293,7 +293,7 @@ Simple example
+ 				//Format CRB request with compression or
+ 				//uncompression
+ 				// Refer tests for vas_copy/vas_paste
+-				vas_copy((&crb, 0, 1);
++				vas_copy(&crb, 0, 1);
+ 				vas_paste(addr, 0, 1);
+ 				// Poll on csb.flags with timeout
+ 				// csb address is listed in CRB
+diff --git a/Documentation/arch/sparc/oradax/dax-hv-api.txt b/Documentation/arch/sparc/oradax/dax-hv-api.txt
+index ef1a4c2bf08b..49be62a9ce86 100644
+--- a/Documentation/arch/sparc/oradax/dax-hv-api.txt
++++ b/Documentation/arch/sparc/oradax/dax-hv-api.txt
+@@ -457,7 +457,7 @@ bits set, and terminate at a CCB that has the Conditional bit set, but not the P
+ Offset   Size   Field Description
+                 Bits         Field Description
+                 [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
+-                             “Secondary Input Element Size”
++                             “Secondary Input Element Size”)
+                 [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
+                 [9]          Padding Direction selector: A value of 1 causes padding bytes
+                              to be added to the left side of output elements. A value of 0
+@@ -656,7 +656,7 @@ Offset         Size            Field Description
+                                [18:16]      Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
+                                             Element Offsets”)
+                                [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
+-                                            “Secondary Input Element Size”
++                                            “Secondary Input Element Size”)
+                                [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
+                                [9:5]        Operand size for first scan criteria value. In a scan value
+                                             operation, this is one of two potential exact match values.
+@@ -793,13 +793,13 @@ Offset   Size   Field Description
+                 [18:16]      Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
+                              Element Offsets”)
+                 [15:14]      Secondary Input Element Size (see Section 36.2.1.1.4,
+-                             “Secondary Input Element Size”
++                             “Secondary Input Element Size”)
+                 [13:10]      Output Format (see Section 36.2.1.1.6, “Output Format”)
+                 [9]          Reserved
+                 [8:0]        Test value used for comparison against the most significant bits
+                              in the input values, when using 2 or 3 byte input elements.
+-8        8      Completion (same fields as Section 36.2.1.2, “Extract command”
+-16       8      Primary Input (same fields as Section 36.2.1.2, “Extract command”
++8        8      Completion (same fields as Section 36.2.1.2, “Extract command”)
++16       8      Primary Input (same fields as Section 36.2.1.2, “Extract command”)
+ 24       8      Data Access Control (same fields as Section 36.2.1.2, “Extract command”,
+                 except Primary Input Length Format may not use the 0x0 value)
+ 32       8      Secondary Input, if used by Primary Input Format. Same fields as Primary
+@@ -880,7 +880,7 @@ Offset   Size   Field Description
+                                        [18:16]     Secondary Input Starting Offset (see Section 36.2.1.1.5, “Input
+                                                    Element Offsets”)
+                                        [15:14]     Secondary Input Element Size (see Section 36.2.1.1.4,
+-                                                   “Secondary Input Element Size”
++                                                   “Secondary Input Element Size”)
+ 
+ 
+                                                       524
+@@ -895,8 +895,8 @@ Offset   Size   Field Description
+                                                     causes padding bytes to be added to the right side of output
+                                                     elements.
+                                        [8:0]        Reserved
+-        8              8               Completion (same fields as Section 36.2.1.2, “Extract command”
+-        16             8               Primary Input (same fields as Section 36.2.1.2, “Extract command”
++        8              8               Completion (same fields as Section 36.2.1.2, “Extract command”)
++        16             8               Primary Input (same fields as Section 36.2.1.2, “Extract command”)
+         24             8               Data Access Control (same fields as Section 36.2.1.2, “Extract command”)
+         32             8               Secondary Bit Vector Input. Same fields as Primary Input.
+         40             8               Reserved
+@@ -949,7 +949,7 @@ Offset   Size   Field Description
+                                    [31]        If set, this CCB functions as a Sync command. If clear, this
+                                                CCB functions as a No-op command.
+                                    [30:0]      Reserved
+-       8             8             Completion (same fields as Section 36.2.1.2, “Extract command”
++       8             8             Completion (same fields as Section 36.2.1.2, “Extract command”)
+        16            46            Reserved
+ 
+ 36.2.2. CCB Completion Area
+diff --git a/Documentation/arch/sparc/oradax/oracle-dax.rst b/Documentation/arch/sparc/oradax/oracle-dax.rst
+index d1e14d572918..a5d53f240dc8 100644
+--- a/Documentation/arch/sparc/oradax/oracle-dax.rst
++++ b/Documentation/arch/sparc/oradax/oracle-dax.rst
+@@ -438,7 +438,7 @@ that in user land::
+ The output bitmap is ready for consumption immediately after the
+ completion status indicates success.
+ 
+-Excer[t from UltraSPARC Virtual Machine Specification
++Excerpt from UltraSPARC Virtual Machine Specification
+ =====================================================
+ 
+  .. include:: dax-hv-api.txt
+diff --git a/Documentation/arch/x86/x86_64/fsgs.rst b/Documentation/arch/x86/x86_64/fsgs.rst
+index 6bda4d16d3f7..f8d483a7fb06 100644
+--- a/Documentation/arch/x86/x86_64/fsgs.rst
++++ b/Documentation/arch/x86/x86_64/fsgs.rst
+@@ -182,8 +182,8 @@ address spaces via an attribute based mechanism in Clang 2.6 and newer
+ versions:
+ 
+  ==================================== =====================================
+-  __attribute__((address_space(256))  Variable is addressed relative to GS
+-  __attribute__((address_space(257))  Variable is addressed relative to FS
++  __attribute__(address_space(256))   Variable is addressed relative to GS
++  __attribute__(address_space(257))   Variable is addressed relative to FS
+  ==================================== =====================================
+ 
+ FS/GS based addressing with inline assembly
 -- 
-viresh
+2.54.0
+
