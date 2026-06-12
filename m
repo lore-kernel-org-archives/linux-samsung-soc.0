@@ -1,129 +1,281 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A852D73A6;
-	Thu, 11 Jun 2026 19:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7213626E6F2
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jun 2026 04:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781206323; cv=none; b=VpzFIAXrMbqZtPdXTBzEbGFyQv89kgWVN9yzrAN3yIIcXN+muQdocioflyNIDHOIdErJRUPW7rNyJYQjzKCjLxGwRq5Nl6fh4Vsfiza78sQP8fXolxUEZcLHAVjn+G/pvTK6v13e8o0C7PPxPksgu8P3kBOfQcjwEREjf1BjGng=
+	t=1781238852; cv=none; b=JfqitmevEuhPKjo5d32hYF8o+kYgu1VMXlCNOZWX99ev8UZJLuY9yplCs2GmslyCp2jYgLmp8aoKZl0Ou0K0PQdBvom3JgANbKH+XDl/BWYt+Cmzx+XGsX9Pom+aoHtkd8PPjo2tEYG+s9OC8skKTzKrAmHz0AVjB2iqt5leOVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781206323; c=relaxed/simple;
-	bh=260eALo52JL67I5BXXirsBFEo7RheHsKr6WGe8VJtcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dF+Cp+vfNKRI/4xYd9FU4F/BrVuEuKaG5WHmbmGnm8NvY25gSRUbDWHtBcYG6w9sJ2nrSdEfiqoOEBAQzi91ZE/qAcEoSukUig5NaitJa4KZyjvev2miL7rsHwkzpycLwCDTpePRD8Pt/POA4eJ8f2+PaNp80PMQvXs7kM2K9rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LNBc0IqM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1781238852; c=relaxed/simple;
+	bh=NF/qmdhWCjpqkBvOLZ31n1hI4ONAkar+Wm+ahERpCrM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pACvK5T0OPPx9XiYGPM91g6rr2VZa/pTUPaES7IjDGoi+QEkcw2LU9Cpkvvx9fRPjmJXyYY/l7X1/7xxwvk31DnBSxxU9sgCJnthdQWO/EcDdMT3D59ecfHH8VfVbqcW0JlwP4S/dOEyNzXGwVgfO4D48YRKLTXaBAn7qGxkW9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EeDGigb8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LNBc0IqM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=dzHuIpFbYrCgFwipPgG7Z1jCCHIP4pv/lJwgbnEmeHI=; b=LNBc0IqM7rCyEMAI2eK+n7euOK
-	EL5tl1qU5tthxVnxNyHYfmyt7uh+YodDHxRY7kb/0zCqPJtfg1SmBxAo5buBIQ6IcPuj+tWmnMr++
-	UsU+Ylgt9hBplMU/D6nl3sv3jan3dF1UVtWpZQFSOPttuT/e89rMwcrlZioZ0DLMvDI7ULWRdrL2W
-	dkzaDKtT3Lf5UsARBNJGWGckkhuUhNpvsbtSYCeN06t46Qu+XfhIDcZ+9ntdETBR5Y2LZ3vAujiNz
-	ibshv6mzE8J6MFQzkNdxvtkrVddEqUPtCKz9s7Uv3JvIIOvkylLANPbrZQQ097sSpO5o+/bNCASnv
-	QszFYwZA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wXl86-00000009wz2-1JvM;
-	Thu, 11 Jun 2026 19:31:54 +0000
-Message-ID: <ac98ff55-99df-4c90-8e6b-ab1dde219b5a@infradead.org>
-Date: Thu, 11 Jun 2026 12:31:52 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EeDGigb8"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-490cdae130cso2288895e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2026 21:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1781238849; x=1781843649; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vvM7pahAjxlhrr61LEyDzqcCT+Fc1a/WkHWS05sPsSE=;
+        b=EeDGigb8AYUgBjsoGX23h0fk/hCGhXTozbHvYihhowfM6muU6bf/I281KstmcHRIOc
+         8l/gAUOf7+Wi2GxMctZAkTDxluF0kNbufsZoTchme0Bnk3ObtNKhZNkGafRrmYC3PwqV
+         hpDCgy2mFL2Lfz5dfZjoX7P+F1j+g3ukfT4rjoWQKpS45pEDTr5rkHBg+K0keizo53BI
+         N4U/Qtwez2zFsUrDH5OYV7/YmGPC6f5FHoEqJ+9tWpt4oxwrgQzs/Ra2bfDDA1WZ9A/+
+         GXFoO63G65kuEB8UXAgjYY28YY8jpYEqGVqjsy/ZuY+FeFpZP7gVmuYPG1TRFrkDejtZ
+         NuhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781238849; x=1781843649;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vvM7pahAjxlhrr61LEyDzqcCT+Fc1a/WkHWS05sPsSE=;
+        b=ItRRqe9s0O5rC1xCdNDa+rXWgiroWaSAND9OOey8ZS8nsJRZaq9OiiIIk3fLTmp7z9
+         we8dBnmBA9iRcQ2wAyZUWLP/ODQvcJOw8dGUWTFTgObSO+BAYohHQjkjTeg57ZGm6Jqq
+         lPrxObvnJuopGHnlwcnIsn5/XhxY/Sywtk4blFgWWKaRykF94l/FWkIE4lgj7VW66Vl1
+         fRB3KrjP6UOvbhmIUE0MXj7ZJMM7zdgmF3yjfGtEoZG4u8dpIT/RLeOw/gPipeCaVchM
+         NWYICg/345KbnlEG+5QVTzWDhzXq/9smzDkJnyxIQ+VuUcmEZXY51LK88/zYNLfofoAw
+         FSqg==
+X-Forwarded-Encrypted: i=1; AFNElJ+WoOOGN6uViWRbp8SvkDXB2Ux/pk1x703uZnL7ubyjKxEjtpznqO36PXWL6ZBkx/BBtT3gFowz6EASiJUERPzm3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn77fqnRPCmrrI2Q3yghkPf7peixAvZwpd5RgnUz0yEY6EKEjp
+	NcYHF1RUj0gqwlpM/uCjPmvxRyHU4WQ4ukSz9KLNAaizQHDyQX6SfGX6cGxMTHQviWQ=
+X-Gm-Gg: Acq92OHfmwiElhrRJ+q6d65hWsGv4nrAqIPLaqJQHk2U74Gj4EMzaeyDPU4ELP2kIgy
+	Mn+012+Oy+z1JzVH/UXZJT4HhT94FZYuOd1eFQafBwybOzE2LNGEoY1DzhX+KlBbupEX/R8YjY0
+	AL8RXjkH2WaTIkB7TPCDuLPkHNhJmhBI/0kVc2a7oZvITde8x3ahgsoLkzioLyUqILbXvvGiijX
+	SZ2DkBEvf24c16D7j6DCV+dkgiotEcFn3FTbJoqIqCUlovn+AbRA6Y2rG7f4GjAhUt97Z1rI4za
+	S2KOFNUNymPPQoBivk6sRarh173/qiSBDbFQkxQZVOxPqTMluuzw9bIKiu2930gwA+Xz/lI2bc8
+	Wk8tfCO0Ur0ByuA24pvH4FWoWzDElijqV0gpaGjOpgiNTakSUjus1iDRv2O7fCczTHLmkVQtsP8
+	TnYugiIPIyvItdH4dtkJmPWAGZ9PcxW7UL7sB9CX4Xw4e8FwkQ8IxCBkeIZql9HUyiaV8XbnCev
+	a7qf5BlJCL9FgDb
+X-Received: by 2002:a05:600c:83ca:b0:490:aef9:aa3b with SMTP id 5b1f17b1804b1-490ec523ef7mr8700565e9.32.1781238848787;
+        Thu, 11 Jun 2026 21:34:08 -0700 (PDT)
+Received: from [127.0.1.1] ([94.4.195.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490ea83da91sm36134865e9.10.2026.06.11.21.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jun 2026 21:34:07 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH 0/2] ACPM cpufreq with fast_switch support, fast path xfer
+ in ACPM
+Date: Fri, 12 Jun 2026 05:34:00 +0100
+Message-Id: <20260612-acpm-fast-xfer-v1-0-1aa6cd2268ba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: arch: fix brackets
-To: Manuel Ebner <manuelebner@mailbox.org>, Vineet Gupta <vgupta@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <chleroy@kernel.org>,
- "open list:SYNOPSYS ARC ARCHITECTURE" <linux-snps-arc@lists.infradead.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>,
- "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
- <linuxppc-dev@lists.ozlabs.org>
-References: <20260611183525.153058-2-manuelebner@mailbox.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260611183525.153058-2-manuelebner@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADmMK2oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDM0Mj3cTkglzdtMTiEt2KtNQiXQuzZJOUVHOLZCODJCWgpoKi1LTMCrC
+ B0bG1tQB8iyBQYAAAAA==
+X-Change-ID: 20260612-acpm-fast-xfer-86c4de78c20b
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-pm@vger.kernel.org, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
+X-Mailer: b4 0.14.3
 
-Hi,
-A couple of comments but overall this is a nice cleanup.
+The series implements acpm_do_xfer_fast() that does as little
+as possible to make it usabe in atomic context to eventually
+use it in cpufreq path with ->fast_switch(). That's basically it.
+Cpufreq deals directly with ACPM dvfs instead of going through
+clk framework.
 
+This series is Work-In-Progress / RFC.
+This is currently a working prototype, but I am sending it as an RFC to
+get feedback on the approach — specifically the ACPM fast path of sending
+messages. If ACPM part is no-go then cpufreq is not needed.
 
-On 6/11/26 11:35 AM, Manuel Ebner wrote:
-> Add missing and remove needless parentheses, brackets and curly braces.
-> 
-> Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
-> ---
->  Documentation/arch/arc/arc.rst                 |  2 +-
->  .../arm/samsung/clksrc-change-registers.awk    |  2 +-
->  Documentation/arch/arm/vlocks.rst              |  4 ++--
->  .../arch/arm64/memory-tagging-extension.rst    |  2 +-
->  Documentation/arch/powerpc/vas-api.rst         |  2 +-
->  Documentation/arch/sparc/oradax/dax-hv-api.txt | 18 +++++++++---------
->  Documentation/arch/sparc/oradax/oracle-dax.rst |  3 ++-
->  7 files changed, 17 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/arch/arc/arc.rst b/Documentation/arch/arc/arc.rst
-> index 6c4d978f3f4e..553851f43be7 100644
-> --- a/Documentation/arch/arc/arc.rst
-> +++ b/Documentation/arch/arc/arc.rst
-> @@ -36,7 +36,7 @@ Important note on ARC processors configurability
->  
->  ARC processors are highly configurable and several configurable options
->  are supported in Linux. Some options are transparent to software
-> -(i.e cache geometries, some can be detected at runtime and configured
-> +(i.e cache geometries), some can be detected at runtime and configured
+Known TODO items:
+ -- rx/tx channels locks rework;
+ -- initial frequency fetching: Exynos850 firmware currently lacks a
+    clean get_rate, so the driver falls back to dump defaults until the
+    first freq transition.
+ -- potential mailbox channels re-implementation.
 
-   (i.e., cache geometries),
-or even
-   (e.g., cache geometries),
+Any thoughts, testing, or feedback on the architecture would be greatly
+appreciated.
 
->  and used accordingly, while some need to be explicitly selected or configured
->  in the kernel's configuration utility (AKA "make menuconfig").
->  
+This was tested on Exynos850 with example of DT nodes described
+in [1] and [2].
 
+Dependencies are different series that adds Exynos850 ACPM support:
+-- ACPM mailbox support for Exynos850:
+https://lore.kernel.org/linux-samsung-soc/20260429-exynos850-mbox-dts-v1-1-7f3ad27ed4f4@linaro.org/
+-- sram DT node:
+https://lore.kernel.org/linux-samsung-soc/20260413-exynos850_sram-v1-1-7fda5b7fb7d4@linaro.org/
+-- ACPM support on Exynos850: 
+https://lore.kernel.org/linux-samsung-soc/20260513-exynos850-acpm-firmware-support-v1-0-3858d097e433@linaro.org/
 
-> diff --git a/Documentation/arch/sparc/oradax/oracle-dax.rst b/Documentation/arch/sparc/oradax/oracle-dax.rst
-> index d1e14d572918..67867ea7be40 100644
-> --- a/Documentation/arch/sparc/oradax/oracle-dax.rst
-> +++ b/Documentation/arch/sparc/oradax/oracle-dax.rst
-> @@ -438,7 +438,8 @@ that in user land::
->  The output bitmap is ready for consumption immediately after the
->  completion status indicates success.
->  
-> -Excer[t from UltraSPARC Virtual Machine Specification
-> +Excer?t from UltraSPARC Virtual Machine Specification
+(the above dependencies pull some other series as well)
 
-   Excerpt
+[1]:
 
-> +i guess this is wrong, but i don't know what's correct
->  =====================================================
->  
->   .. include:: dax-hv-api.txt
+cpu0: cpu@0 {
+	device_type = "cpu";
+	compatible = "arm,cortex-a55";
+	reg = <0x0>;
+	clocks = <&acpm_ipc E850_CLK_ACPM_DVFS_CPUCL0>;
+	enable-method = "psci";
+	operating-points-v2 = <&cpucl0_opp_table>;
+	capacity-dmips-mhz = <250>;
+	dynamic-power-coefficient = <70>;
+};
 
-and then you can add
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+[2]:
 
-thanks.
+	cpucl0_opp_table: opp-table-0 {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp-130000000 {
+			opp-hz = /bits/ 64 <130000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-182000000 {
+			opp-hz = /bits/ 64 <182000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-247000000 {
+			opp-hz = /bits/ 64 <247000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-351000000 {
+			opp-hz = /bits/ 64 <351000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-442000000 {
+			opp-hz = /bits/ 64 <442000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-546000000 {
+			opp-hz = /bits/ 64 <546000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-650000000 {
+			opp-hz = /bits/ 64 <650000000>;
+			opp-microvolt = <625000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-806000000 {
+			opp-hz = /bits/ 64 <806000000>;
+			opp-microvolt = <656250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-949000000 {
+			opp-hz = /bits/ 64 <949000000>;
+			opp-microvolt = <681250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1053000000 {
+			opp-hz = /bits/ 64 <1053000000>;
+			opp-microvolt = <706250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1157000000 {
+			opp-hz = /bits/ 64 <1157000000>;
+			opp-microvolt = <737500>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1300000000 {
+			opp-hz = /bits/ 64 <1300000000>;
+			opp-microvolt = <781250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1456000000 {
+			opp-hz = /bits/ 64 <1456000000>;
+			opp-microvolt = <825000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1586000000 {
+			opp-hz = /bits/ 64 <1586000000>;
+			opp-microvolt = <875000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1742000000 {
+			opp-hz = /bits/ 64 <1742000000>;
+			opp-microvolt = <937500>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-1846000000 {
+			opp-hz = /bits/ 64 <1846000000>;
+			opp-microvolt = <981250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-2002000000 {
+			opp-hz = /bits/ 64 <2002000000>;
+			opp-microvolt = <1050000>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-2106000000 {
+			opp-hz = /bits/ 64 <2106000000>;
+			opp-microvolt = <1106250>;
+			clock-latency-ns = <500000>;
+		};
+
+		opp-2210000000 {
+			opp-hz = /bits/ 64 <2210000000>;
+			opp-microvolt = <1181250>;
+			clock-latency-ns = <500000>;
+		};
+	};
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+Alexey Klimov (2):
+      firmware: samsung: acpm: add fire-and-forget xfer support
+      cpufreq: add ACPM-based CPU DVFS driver for Exynos SoCs
+
+ drivers/cpufreq/Kconfig.arm                        |   8 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/acpm-cpufreq.c                     | 195 +++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/firmware/samsung/exynos-acpm-dvfs.c        |  14 ++
+ drivers/firmware/samsung/exynos-acpm-dvfs.h        |   3 +
+ drivers/firmware/samsung/exynos-acpm.c             | 142 +++++++++++++--
+ drivers/firmware/samsung/exynos-acpm.h             |   3 +
+ .../linux/firmware/samsung/exynos-acpm-protocol.h  |   2 +
+ 9 files changed, 361 insertions(+), 10 deletions(-)
+---
+base-commit: ec039126b7fac4e3af35ebccaa7c6f9b6875ba81
+change-id: 20260612-acpm-fast-xfer-86c4de78c20b
+
+Best regards,
 -- 
-~Randy
+Alexey Klimov <alexey.klimov@linaro.org>
+
