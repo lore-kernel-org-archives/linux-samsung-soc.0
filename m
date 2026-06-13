@@ -1,109 +1,78 @@
-Received: from mail-dy1-f194.google.com (mail-dy1-f194.google.com [74.125.82.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA4D223DCE
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 22:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D2C262A6;
+	Sat, 13 Jun 2026 23:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781390218; cv=none; b=ISxAcqznBT6IcjufJHCakKIacrN5jMRbDkneC84ytArtITyXP2XPJhrTZHJJQaVmBhzzqpjnlcAxAUKdXV20HRBWyz//reUMbpm8zrdPbthhdRQFS8vtqeusTKlsmfAYfHBNQp+hkzpEG5tnanAzi4i9253P/pLgKl3E1HiMJ2c=
+	t=1781392360; cv=none; b=rjkmlzKIaSJVMJQEIe8aTLlKYhzgovdgoGFqj5YAUKkr2Gp6Q68qRKqcnWuXtoAEV0bWFwV25GgnB3xb153d4C15BKCT9M2Waz6PhfmcKYFIq7hWMaEdpBLSP30iSpziLFIhNOJF0Lq+8FngS1wDWcqlt7I08lF8H4+noKclxTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781390218; c=relaxed/simple;
-	bh=h+tI3stwiGTxgkfAJhfASTTw8PeWJ3Lj02d/Ek3YFYE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rryUQK+Q17E9ty632+yG+eTaOTPtmdxR//a8yTn8Krh9hxm+rVUojyuaFi7uF4cw2r194qbmVMSjRA5Zdzj0gSMNLSQLJGPp2hVTP3nxqzNOpP7gCBB1w6kplkRj4GyPYvf6bDfzU12UAFxLNajBotYDMHuUCJbbRMYz9AwY/kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcjYPqMx; arc=none smtp.client-ip=74.125.82.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781392360; c=relaxed/simple;
+	bh=tSZFM29KLKrvYVoY/t9UgZxSvJhEo2Sk++9eqH//J8k=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=LQ5pCGZSuHWCFvkOyEGf8bhWTa4GCwywEJweb11qARqrb/ajOTmB0WtT2k+gQ/26Wz1wWs1SEP6jEGRtgH2A3/BmkMpi39SqN8nQQylQFSoXQBKbyRlhaTx8ly1b4RWxZIwfQrokS1Bip3yFMv21cAhQn3POjLxqcwL2UPiR1V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/wUsrNo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcjYPqMx"
-Received: by mail-dy1-f194.google.com with SMTP id 5a478bee46e88-307631dbfedso4714504eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 15:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781390215; x=1781995015; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XiDlOMwIBEzJgDCkrbGsmaIjHNUQPh0ynYvlELyCcHQ=;
-        b=bcjYPqMxhp+FV/Htkto+EIASNLl02zQ3r1rMX6J6zcs/Y5MEZqwaUI0SWzwLSgWPfv
-         jFtHPxCBP1e8ZxUgeEz2NySE6KigpuYQFqMzMxJyHcXhtTjqDxHrjIvOJLzTxV2afKF+
-         qr1naiJCz+M4lbRwKcTrgU2d02RM+qww0ie4J35kRN3WhDeHL/c11snwF+MH7ta6HCxC
-         nMJuHPADwjAQ0U4wlDvMif1reitbuMvcgUugXXkJBfqQ3NQ36uHtAuqEFFzK5Dp70Hgr
-         ZB87j72loFPDEtoVXv7zIOHHMaQsngJjvcTLJpVvBCA29/qachtJSaCHPqzCIzpaE06J
-         wqAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781390215; x=1781995015;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XiDlOMwIBEzJgDCkrbGsmaIjHNUQPh0ynYvlELyCcHQ=;
-        b=KqUTmvDVgm6BjU4d4XilB+8iZm7QZWcXIths+ha8rILopUzl+8QK/UG/DecDJd7qSr
-         hSRFKUP2b1jZI1WTaIQGdq9g5IF1W7kFKEoQoPt5IG6D3xUazT2M+sYWfkcPkxnTughv
-         Ar+t8MlJ9FGxOG7j1SkoiBJyPiKTuqKj44NobbS8htqOneqBWIG4be+wHED7YKeTepEz
-         qcgnX18RkRmJMnVl/EFNTXDtsFHEXnLVdFFeE+irXqqxttGZqkXP1bdCcYHiAKpAkD+K
-         svyvdSDAOed2Sk8ALjZ5x/GP7enkixHGDW4VASr+vrV0q1PmNXArFwoOxQxpiQXKfb/j
-         IP4w==
-X-Forwarded-Encrypted: i=1; AFNElJ8zJRXhF9t8NtrjFthDT/vSd+l/xMhWNQNLirCLtxKQKgDf9gBYXgRdRfBNeVIygKhSFemhkB4s4hOpXAGYLaoizA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEX9zWMIP5S59kqkGkV2bs9SvbCHSlBYWb0S7SNQoBTq/wzlPF
-	diROgsEAheK0+R6XQUSiEsGSbK13xrR+mPty3ZkxgjbdCHH4TVBiAAnk
-X-Gm-Gg: Acq92OFTSHYVuMSLHIOj2Yg72yqoVxSZygHhXnheMiZbch2tutaYUieGMJREnm5EkxH
-	+S+aBVyoMovB4/tJNm7BBkZWqaP8O/0CGiN6UV6KEVG2v1gLjQN+BXh5hFlYYgLFWg+4wHRbCLB
-	ETDaFsn3ebf7s/MBjAzQhXSEUlOUQ7aV8nG5soVDrmcC5XFCZTp1Tr+vB2kPEqireVVB2YOxUAh
-	2Z95gcPZzd97Oxi75+rPSGMEtlDh38e7lCuLGrqs6uQHHdtZ4dFpyJRLoNzmQiVC8qfAn3tGsZy
-	n9t8hQxtTbq5oM8IhVViUGnLcSjkoLPZjRKaYKnQLyA0w05HDsYWR0ddgQWMvx5GH++222FtVo+
-	plUyhHmEkXYxLFD3ikfzellaoUpEgG9E57B/P7M28yQpHSeoIrF69pvIJl+sfTbLnmPkKORV/w5
-	kASQxw9b5AopiuzxxD/bVILsFAeZNAHZEexlExyj51XIgFkKzCNjg0iKgRKzONhRNjnIRVG0uDW
-	l54EY0wodLse3rFKAqZWHROOuTUteWA2BemrOyKgIg4K/wX8lzwA4YtNuRLfE//DNlM2QHnPYNN
-	zDwBeJJBhDpDxDWdUue9+Wo5rpMY
-X-Received: by 2002:a05:7300:6d22:b0:304:e2a5:689e with SMTP id 5a478bee46e88-3081ff40814mr4819684eec.2.1781390214752;
-        Sat, 13 Jun 2026 15:36:54 -0700 (PDT)
-Received: from ethan-latitude5420.. (host-127-24.cafrjco.fresno.ca.us.clients.pavlovmedia.net. [68.180.127.24])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081eb95450sm11091739eec.28.2026.06.13.15.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jun 2026 15:36:54 -0700 (PDT)
-From: Ethan Nelson-Moore <enelsonmoore@gmail.com>
-To: linux-crypto@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH] crypto: s5p-sss - correct CONFIG_CRYPTO_DEV_EXYNOS_RNG macro name in comment
-Date: Sat, 13 Jun 2026 15:36:47 -0700
-Message-ID: <20260613223648.119694-1-enelsonmoore@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/wUsrNo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4C41F000E9;
+	Sat, 13 Jun 2026 23:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781392359;
+	bh=IY+WHHGsAnJN/4eY+iYURE+KdmDKPrPGJmVfcTioUBA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date;
+	b=S/wUsrNoxzrGp4EZRaGJAg2tNTOL2JXSB+ZUA42KKQJfBEXkPGbEqkd1+LVfStFTq
+	 9rQ0JUcBUGVTX87cPIuJntEGLMupTB307UtnBHVRlEAzxc0BeCjux6hdwW/n1Mwdlf
+	 XflDamQwfQsa+8CPaPq2Lv2vOKWMOXX4ghlBE4w8AIwa6ayWtUJZmRD7t+2wl1CA7C
+	 fIA3+L2Sspkj2Pb8lFdzsWqO6XL3jZaKJpXcaFp/udgyO6dJLIzfwWUi2cmiFnbmph
+	 mk/hZRwBaGUafiukCqlaL8hZFB6C+l4MVg5Vd3t5PamvZw+doFYJ9ry7Hc+Q+Le51L
+	 Lgw/4Z8+Rtv2g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260604164729.83284-2-krzk@kernel.org>
+References: <20260604164729.83284-2-krzk@kernel.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v7.2
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Sat, 13 Jun 2026 16:12:37 -0700
+Message-ID: <178139235762.819343.11900802215889516024@lazor>
+User-Agent: alot/0.12
 
-A comment in drivers/crypto/s5p-sss.c incorrectly refers to
-CONFIG_EXYNOS_RNG instead of CONFIG_CRYPTO_DEV_EXYNOS_RNG. Correct it.
+Quoting Krzysztof Kozlowski (2026-06-04 09:47:25)
+> Hi Stephen and Michael,
+>=20
+> Notable change outside of this pull: Peter Griffin was added as co-mainta=
+iner
+> to Samsung SoC and Samsung SoC clocks.  See also commit 20550601bf4 in
+> linux-next and
+> https://lore.kernel.org/all/178015858043.36212.8088079079471293822.b4-ty@=
+b4/
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e7=
+31:
+>=20
+>   Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-7.2
+>=20
+> for you to fetch changes up to e11560b050ce867bd7d3ccea138231db54e2250a:
+>=20
+>   clk: samsung: exynos990: Fix PERIC0/1 USI clock types (2026-05-30 18:50=
+:36 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Discovered while searching for CONFIG_* symbols referenced in code but
-not defined in any Kconfig file.
-
-Signed-off-by: Ethan Nelson-Moore <enelsonmoore@gmail.com>
----
- drivers/crypto/s5p-sss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index bdda7b39af85..9bb1b1661174 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -2151,8 +2151,8 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * Note: HASH and PRNG uses the same registers in secss, avoid
--	 * overwrite each other. This will drop HASH when CONFIG_EXYNOS_RNG
--	 * is enabled in config. We need larger size for HASH registers in
-+	 * overwrite each other. This will drop HASH when CONFIG_CRYPTO_DEV_EXYNOS_RNG
-+	 * is enabled. We need larger size for HASH registers in
- 	 * secss, current describe only AES/DES
- 	 */
- 	if (IS_ENABLED(CONFIG_CRYPTO_DEV_EXYNOS_HASH)) {
--- 
-2.43.0
-
+Thanks. Pulled into clk-next
