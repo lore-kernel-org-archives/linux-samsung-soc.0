@@ -1,172 +1,91 @@
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3472D3E5EE2
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 12:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5B53E717A
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 13:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781354212; cv=none; b=V9XmRkniMeSpY5J6R8M8Jx6QWUCK1yDWHuIxN8mKhP98b6dU0lkcRrVPbRdx/DolzT4y803tTxDtGSfXLrZtrnVM+fuSj1PD652KDTqUN5k7QDwFELWlROO5nVUkZJ9CLgNizxSQXfiUSPdzsmncmta5kqVJ6TNyW0Kin/a0XCs=
+	t=1781356008; cv=none; b=f2SZ2Nh1eKnJ8Ic7g0KACHa7G3zq3QbvorsspTv+3AHKY//vCF1KR3oDcyh6wqWxEvkktfBaoaCbdgcEFV6zDRHK0qmYy++uw9LeQwdeOpFLG6242K1v2qX0lqZKEaW3HUtFbUUFlQGCW/vR46yEXwoIqzOBOIh1/qlQMnNlrGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781354212; c=relaxed/simple;
-	bh=8QsT5qMevIWG1r4CekVOQr7GSa6vcMhLRdQO614ENU8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ozy6hroTg2L7CtYs223rW4WIUCD1nGIpCMzvzpVc6tSQjieaB9t8MJiHtQtTbb5ohajxQ4m8cnQTQN1T3epPpUdCzPOjSCmbs2jJ/HC3BzjYP8A+k6giNMMtjVkmiKBqk1Rti5uN7cgehg/35Bg9l2BKtL+YZscbbE57o3Aun2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1NxmSFz; arc=none smtp.client-ip=74.125.82.177
+	s=arc-20240116; t=1781356008; c=relaxed/simple;
+	bh=N/aP5eDxpyw2n4AsTqEONVjJMGlgTeC3rtTHjXXYzAI=;
+	h=Message-ID:Content-Type:MIME-Version:Subject:From:To:Cc:Date; b=LdS5+CJtfRsoBPbyrv0rTIumkC0yTQgDf35e5miLuqJ+1ilyUIO1qZdhHKJejhOOHwJlWAxlVXV+V7zClTn6GSrevlXqNTnXujbAMFwq3/qZ6CokSPE0lp+bBaFu/WIVCRm0vytqHbAH5PsSCq+WOXX+Jht1EwrwyKiB8XVqefM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPy08EH1; arc=none smtp.client-ip=74.125.82.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1NxmSFz"
-Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-304e83724bfso2814528eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 05:36:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPy08EH1"
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-1384eb94d20so2506786c88.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 06:06:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781354210; x=1781959010; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k4USlR/wTC53+DK1xOyOVELLpPn6dQVqos5QLqbfQPM=;
-        b=j1NxmSFzOiqZf8mWZ/7Cn7e3K6qMkGJeV445+HSmYdOymJZZouuwPoaI+qwwC4P+A5
-         hC9bMLQ6R0KaNe0Uh/rRiSwhVgYJfQArTBrjW8Ke+a0E/qJDbOMpDa6vayChXcgkwnUP
-         HM1alEEx3o+ZDEOOnVZ63IPgGKoMwmPwCSDh8NTqkxb7y9Z+AhdYEG7A+yt1q7iyHd+K
-         hp0mFvRYwXOfSQ6Tfiljmr3skCXH3p8C6di+v/MDOAWTV/r4d05OLqRv+zWjijZq8fVJ
-         fB9W3p3XJXg1h1yyfnIgpEB5TPaZxKPY+uCswsHqVLNtIRBkCGsSz0jou9YrjnIA9hct
-         R/ZA==
+        d=gmail.com; s=20251104; t=1781356003; x=1781960803; darn=vger.kernel.org;
+        h=date:cc:to:from:subject:content-transfer-encoding:mime-version
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/aP5eDxpyw2n4AsTqEONVjJMGlgTeC3rtTHjXXYzAI=;
+        b=BPy08EH11QJgztMKs97NWSC2nXQ/EkAD0bKuNp4u16ZrvkLgN1gT0AavIByGhX1bBB
+         hFEkGnZl71HldQe8irHuaIPevBpMoCrKrb/Mg6C69hrBX0lP5mBd8lF056YA5MeOM1YZ
+         xo2Q+WcBN1zAHreweTs1CjPnK3NBgDkIPoHxtHHL3xCEVAaihB0kwhbtmqK6+S+lQ0RZ
+         ZxM49q342oc4BH0TYCBVQcj5FvOUOeZPkCxs+1GVT9y7GCKxctSRa6+7F9v7Old6x0Gc
+         UIKEk7eXALThOhFhwgQpGRtw4XKlxfB7ZhOSbiUYx498HzHTYLF0pe04p0vpOkcakcn6
+         nE5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781354210; x=1781959010;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k4USlR/wTC53+DK1xOyOVELLpPn6dQVqos5QLqbfQPM=;
-        b=LYYQ+mFeXAJzb4FuNW7YcTA3pfMjLPEQ/Afd88C7gL3E3HjFhtjKlqyJkfQpub4CHZ
-         U8luZtbfHlz4gSZBXOyIK51wVInlvR8zMDiOojqyKt1Bxvlf9zmv9O3T8HWunZUIQcZ1
-         v5x0cVdWbqd3gN4BL4iAsQ1juC0nQjAgsZi49REP28RR4VCROg5W09Tez4UwDvjgVy5y
-         ek3RsW0NxJ7F8QHHHdYpUKeCch30xoTmadaOyspIKdvUpSfg819T2Vtx5kIHBoLhYgDF
-         lg7vNWK1Rrc+OMUzLbp8P8LcKDvv+cUdHEtlv/zp6wwzc2cld3eIiVj19WjM9xqCWl+x
-         eX8A==
-X-Gm-Message-State: AOJu0YzDQ3LhpI6r8Z5oSwf8/q6fZ9V8gmvmldQc8zKlNJXIf5Llg/UF
-	guF1viayumbz/vb/x2SCxAkI+UCFyf7gDPEP6vedvqo/ZpRptLlYA5FF
-X-Gm-Gg: Acq92OH1VCyJvSMUf2schSx8LsqmftTwlbhf9SPyJP0aAeFl7f/EXz8t6bYITLPhg0z
-	sDs6TF4knSbLPyJ71WFlv2FIwoo1JLxM0udAYcigrCwp9GeftaTAR6/jKfDC6LG82prPWgHSoAE
-	NJaDILIPAMyL75zYGpIbF1yB2rhZELZVENEumGtFae/BvrZwfdXkjX+Yani3E07zz158yYIxuHv
-	sIhBXYgm2piobECP9aNeWSDPOKUgwAlLNw5O6faOgoqm1WgmvmwTBOvjW0isHzDK3FvWpACW2Gs
-	dursu3A9FKSsSprsgJ8E7SVmpFHA3nJdBN2Jrdjkdvtquh838XIg86YzU48NIEqdajG29gu07GT
-	xmk+hr6clSRWG9zPeTkk9TuG32c0tZptu0coiUMivLXWFT3bmP9BJIVTVy59pYFINAvfdOkrIkH
-	MrvP9NY9LsXgYZqMrmwOk0d5Ln0fUc
-X-Received: by 2002:a05:7300:d513:b0:304:54d6:20f3 with SMTP id 5a478bee46e88-3081ff3da47mr3614433eec.4.1781354210099;
-        Sat, 13 Jun 2026 05:36:50 -0700 (PDT)
-Received: from [127.0.0.1] ([38.252.222.142])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081eb95450sm9176630eec.28.2026.06.13.05.36.46
+        d=1e100.net; s=20251104; t=1781356003; x=1781960803;
+        h=date:cc:to:from:subject:content-transfer-encoding:mime-version
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N/aP5eDxpyw2n4AsTqEONVjJMGlgTeC3rtTHjXXYzAI=;
+        b=X55QYjvrGTr15HlBX8kwUGtG66pw/2wCShHkaLJ1qtkFmKw4XzBNXKcRkGI5tVzSu1
+         Kp+OyGmq6mes1mPrmZ6+OMsiFgpyUSDSrMigxU2OGYyeFj+oDqYLJFzon1zBKoek9wVe
+         GCDT+ZPr/Vx9j3ppsnX2zRJTxkMrggTT5qA1aTZDdIGkm/14rSYJ5v/RZMbEJEEovuQC
+         I8U/MX71J2xGRbuCpjuM/yMCLEpD6PHtRO00me+rxVSFJuA/3IKhJ57xu4q4bWFAet0+
+         nezt8xTYk6RpWFCs3N+J1U0lv0AFz4sVWZhI+3kZG+yY+U027SasoGQfDraAlZnVl9Lg
+         q8yA==
+X-Gm-Message-State: AOJu0YzR0Bo67W8cU3r28kket/8/Kw55pCo3IOKYud2YcX7kme/U/+zv
+	NgvTMrA/3SMxubu/K8BXgIxxVLgeKJQwLytCMpPSykwUD6JnRUuW+XYeUllUFQ==
+X-Gm-Gg: Acq92OGWOZf4N44lhdt4LC8O8OOu2yRIGnrC42si9yMC3hCy6eTJw8zV2OetGojtQKF
+	Uc7Iy9X7XAM9zCiWvF4vVGfCTE4USdX57bWrz8EXxqTsDT2qz6vvu/JtqP+ScvF7MgwBCLNGr1V
+	XCQoN5bs7BvuCfoF0vFO15K2+wlBypLAfFH4kTHOTdhEHgol1QJ0g3k8R+2xyCm745cO1360v2v
+	k8CnMmjJ9PO6DXKGEQcR+7uHOKdqs4qoVKwM3intl0/TaJzNzYD4CpDOUjXj187LA47oPGM1YAI
+	bGYOEBLzmIHditW0JClYMSiolCir/ajaNXgJIuFzpbmTGG+9NmbOCjdyeRh5tR8nyQMdfJzoizJ
+	mHcGgK3RVJLNV2gltGrHpnmWjFeatuHeHBjzJ5Fr2nu0pxcoHu13BgjHrnSi60/8j5agFyi4Zif
+	1T2Ro1J7hPuf50aMKpItikWiC5khqwo2yGiebA7Q8=
+X-Received: by 2002:a05:7022:619:b0:138:36f:4288 with SMTP id a92af1059eb24-1386f24697amr1581778c88.15.1781356002926;
+        Sat, 13 Jun 2026 06:06:42 -0700 (PDT)
+Received: from [127.0.0.1] ([38.252.222.131])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1384b9815a6sm5298534c88.15.2026.06.13.06.06.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jun 2026 05:36:49 -0700 (PDT)
-From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sat, 13 Jun 2026 07:36:18 -0500
-Subject: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
- parents
+        Sat, 13 Jun 2026 06:06:42 -0700 (PDT)
+Message-ID: <6a2d55e2.bf38ae28.2d8f62.4755@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
-References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
-In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
-X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781354194; l=3772;
- i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
- bh=8QsT5qMevIWG1r4CekVOQr7GSa6vcMhLRdQO614ENU8=;
- b=ihYZln6EC8btrpTxULgjKOmfDRIQxFeQLj9PPzVgyazaKnnRWT2mIMsb9cFanykEkbWDFuL65
- zqMsltsBrMjDXF5b8zKilor295hReYlHkfEKHOAhh2CJsa00CRG/Fkx
-X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
- pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
+Content-Transfer-Encoding: base64
+Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
+ parents
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 13 Jun 2026 08:06:40 -0500
 
-Correct eight PERIS gate clock parents to match the hardware clock
-tree and reorder the GIC mux parents so mout_peris_bus_user is the
-default source.
-
-Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
----
- drivers/clk/samsung/clk-exynos990.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index ee3566b8e57c..df5928833b23 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -2551,7 +2551,7 @@ static const unsigned long peris_clk_regs[] __initconst = {
- 
- /* Parent clock list for CMU_PERIS muxes */
- PNAME(mout_peris_bus_user_p)		= { "oscclk", "mout_cmu_peris_bus" };
--PNAME(mout_peris_clk_peris_gic_p)	= { "oscclk", "mout_peris_bus_user" };
-+PNAME(mout_peris_clk_peris_gic_p)	= { "mout_peris_bus_user", "oscclk" };
- 
- static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_PERIS_BUS_USER, "mout_peris_bus_user",
-@@ -2584,15 +2584,15 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_BUSP_IPCLKPORT_CLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_CLK_PERIS_OSCCLK_CLK,
--	     "gout_peris_clk_peris_oscclk_clk", "mout_peris_bus_user",
-+	     "gout_peris_clk_peris_oscclk_clk", "oscclk",
- 	     CLK_CON_GAT_CLK_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_OSCCLK_IPCLKPORT_CLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_CLK_PERIS_GIC_CLK,
--	     "gout_peris_clk_peris_gic_clk", "mout_peris_bus_user",
-+	     "gout_peris_clk_peris_gic_clk", "mout_peris_clk_peris_gic",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_GIC_IPCLKPORT_CLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_AD_AXI_P_PERIS_ACLKM,
--	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_bus_user",
-+	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_clk_peris_gic",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_AD_AXI_P_PERIS_IPCLKPORT_ACLKM,
- 	     21, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_PCLK,
-@@ -2600,19 +2600,19 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_GIC_CLK,
--	     "gout_peris_gic_clk", "mout_peris_bus_user",
-+	     "gout_peris_gic_clk", "mout_peris_clk_peris_gic",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_GIC_IPCLKPORT_CLK,
- 	     21, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_GOUT_PERIS_LHM_AXI_P_PERIS_CLK,
--	     "gout_peris_lhm_axi_p_peris_clk", "oscclk",
-+	     "gout_peris_lhm_axi_p_peris_clk", "mout_peris_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_LHM_AXI_P_PERIS_IPCLKPORT_I_CLK,
- 	     21, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_GOUT_PERIS_MCT_PCLK,
--	     "gout_peris_mct_pclk", "mout_peris_clk_peris_gic",
-+	     "gout_peris_mct_pclk", "mout_peris_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_MCT_IPCLKPORT_PCLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_OTP_CON_TOP_PCLK,
--	     "gout_peris_otp_con_top_pclk", "mout_peris_clk_peris_gic",
-+	     "gout_peris_otp_con_top_pclk", "mout_peris_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_D_TZPC_PERIS_PCLK,
-@@ -2624,7 +2624,7 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
--	     "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
-+	     "gout_peris_tmu_top_pclk", "mout_peris_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
- 	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK,
-
--- 
-2.54.0
-
+T24gU2F0LCBKdW4gMTMsIDIwMjYsIFNhc2hpa28gQUkgd3JvdGU6Cj4gRG9lcyByZW9yZGVyaW5n
+IHRoZSBtb3V0X3BlcmlzX2Nsa19wZXJpc19naWNfcCBhcnJheSBicmVhayB0aGUgaGFyZHdhcmUK
+PiByZWdpc3RlciBtYXBwaW5nPwo+Cj4gSW4gdGhlIEV4eW5vcyBjbG9jayBmcmFtZXdvcmssIHRo
+ZSBpbmRpY2VzIG9mIHRoZSBQTkFNRSBhcnJheSBjb3JyZXNwb25kCj4gZGlyZWN0bHkgdG8gdGhl
+IGhhcmR3YXJlIG11bHRpcGxleGVyIHJlZ2lzdGVyIGJpdCB2YWx1ZXMuLi4KClRoZSByZW9yZGVy
+IGRvZXMgbm90IGJyZWFrIHRoZSBtYXBwaW5nIOKAlCBpdCBjb3JyZWN0cyBpdC4gVGhlIG9yaWdp
+bmFsCnVwc3RyZWFtIFBOQU1FIG9yZGVyIHdhcyBhIHBvcnRpbmcgYnVnIHRoYXQgaW52ZXJ0ZWQg
+dGhlIHBhcmVudHMuCgpUaGUgZG93bnN0cmVhbSBFeHlub3M5ODMwIHNvdXJjZSBjb25maXJtcyB0
+aGUgaGFyZHdhcmUgcmVnaXN0ZXIgZW5jb2RpbmcKKGRyaXZlcnMvc29jL3NhbXN1bmcvY2FsLWlm
+L2V4eW5vczk4MzAvY211Y2FsLW5vZGUuYzoxMDkzLTEwOTYpOgoKICBlbnVtIGNsa19pZCBjbXVj
+YWxfbXV4X2Nsa19wZXJpc19naWNfcGFyZW50c1tdID0gewogICAgICBNVVhfQ0xLQ01VX1BFUklT
+X0JVU19VU0VSLCAgIC8vIGluZGV4IDAg4oaSIG11eCB2YWx1ZSAwCiAgICAgIE9TQ0NMS19QRVJJ
+UywgICAgICAgICAgICAgICAgIC8vIGluZGV4IDEg4oaSIG11eCB2YWx1ZSAxCiAgfTsKClNvIGhh
+cmR3YXJlIG11eCB2YWx1ZSAwIHNlbGVjdHMgTVVYX0NMS0NNVV9QRVJJU19CVVNfVVNFUiAodXBz
+dHJlYW06Cm1vdXRfcGVyaXNfYnVzX3VzZXIpLCBub3Qgb3NjY2xrLiBUaGUgb3JpZ2luYWwgdXBz
+dHJlYW0gaGFkIHRoZXNlCnN3YXBwZWQsIHdoaWNoIHdvdWxkIGNhdXNlIGNsa19zZXRfcGFyZW50
+KCkgdG8gd3JpdGUgdGhlIHdyb25nIG11eApyZWdpc3RlciB2YWx1ZS4KClRoaXMgcGF0Y2ggZml4
+ZXMgdGhhdCBpbnZlcnNpb24uCg==
