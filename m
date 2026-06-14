@@ -1,116 +1,131 @@
-Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EB01C84D0
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Jun 2026 01:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781401016; cv=pass; b=j1cPUplGfOie+plfIWpnbZX4rVgOdh8VOPUXCJbBkP5jz+ZzVtyDgHjKMmR07SG+Bvphpc6QvKSlGnjGUa5tWcBPlgbY8C1GrcDlu+dJKtbDDoghD6W9H5WFnxCp05S/f7fzZ0VT2kYZZOLvQyeoeEN+cUWOTJGWZMKLjwBXKUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781401016; c=relaxed/simple;
-	bh=tFndD4xhU6TM1v7geR2uc3Y5I7UDLVFeRXl5ob/r77w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D2v9mGQlBE6bt0VcYkID2uLnpKgYd04qUz2wEWmyxqg4qcgHYlj8fW8NUcKWF7Uv77LZx7qZPJp1F+8SMt2aFjebcqt1V5/m5cteO+8au7nTdW26BNgmn024/brbV/Atdity6FeJzet+GaHSE2HRj0X8VFOAl+v4YjaN+kBo71o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lq7oVhaT; arc=pass smtp.client-ip=209.85.219.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C0F31B10B;
+	Sun, 14 Jun 2026 13:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781443519; cv=none; b=K1IFWp4ta19VWB+BtBBsNvN0QxtOzc64zAQoh7yF2Cm6fZcOKGvRLa1peU88KfCII+ZQAH8KL/KIcFkK3JehGLCMXgKRcT6xRhQch4hI5EReplk18Jp5dCXoZwR0hS6/VV410chqodmvK2+c9qykOLN1X3WMcVSysQTOfjsc9rM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781443519; c=relaxed/simple;
+	bh=1DpxaMczlFntQ/KwXjfeCcIdr0We47kNMie0BY8eW18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OWBbZR+jNwa/VLmexdiWz4trt/ctZbZl4k7SpkOAdXlLqT3qCMPcRx1pFt4NAm4Ic5Pbb6tr5aXG10sBJfIQbRxQCeC7/7r8wdviO9ga9ydsbuCGifNprqb2gsZwbrS4DUHQnP9KlQQgvnqc819FcOrS/TNmoh82rxdOjT8UA1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DnWOsVpZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lq7oVhaT"
-Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-8ccea53f35cso27465736d6.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2026 18:36:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781401014; cv=none;
-        d=google.com; s=arc-20240605;
-        b=eaQLq6wstkGjcYGPqG5vqHDr2uL0JC4c3cj0JYAnd4ZDPrLlZ0al5eX6pDjSve1cwN
-         uXDNMszDO9PhZVLb3Hp4gxFDOSyQigmBTGxmx8kjAp6wgS3M646pUCUPm3G6Pj968UE+
-         d66uqaHMPnJb+SVeJ1zussm7Op4dx1nKId87atb/U0gmEKNYDA829zKivvGaGQWr0Tsd
-         Q0D3wTkK20PZKo+bx7jPUBtcCWnGr3c79gG3hIbfa3qk4QvkMzrGL4pJAOF43va7wwOC
-         z6zd/2jMomsTvdT0w3mvd6Hz8BldV16oDuDG5jBGzjExLbEtf+KYee3m3g7esdN2Wwyx
-         h7TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=n5fB2rVLAd0NOe06dMOPUowfvJcEsGLFODQSz7k5AdA=;
-        fh=GjBCi8iRWYH2bs33IRxRqb1P0xhhdGTERgiaOPDAe2U=;
-        b=hYY6pRGgIW5oVaQQ5h0qJJX6TYoqgmqxXp728rvjfH3UFwdJ1YXH57CRfTbWTIf60K
-         ETyVkhTvY4p2gC4FOprJjmqf+U4aUoelEeMBloAtHk1NjfFMWlEOZe5hWUBZ+VsvUpLF
-         D58eDzS4fEmaeVmRMUYRNd2RAaDTzkCikaGd8C8wPGMzgQHdEnCfBteXjwEJBej9LOkY
-         d/fpJ1t4tq4olXkSqHuoQJrteviHJWcyH5eW7iQSNrL0TiySuya2U80TcDRE/8SwyVg6
-         0A1uGobYr+XooLn+8RjxywQMo0tanDKihxV2XOghFFE8ejcQX7yaanHD9LCoBgE8lOv4
-         pE1A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781401014; x=1782005814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n5fB2rVLAd0NOe06dMOPUowfvJcEsGLFODQSz7k5AdA=;
-        b=Lq7oVhaTp3shuBcI4FV6IeeDy07NOxFCQMIkoGPSGZeQzsGeivts5YzYdZEpdeKbHE
-         Rp5o0/Ea9UVbIOq2i5UpJUYQwfOR2eL3py3INDf3ehftrLru5P1SSJT+m0NEKgiE5lSb
-         qygXvVB9s9z5Dy+Jv6vKD0MzQifxhiD1QFFzKnnzWrtI2STMWtiOdRn69JThiroCAK9y
-         0F5zxy8AuLjGi3PadroDCALDPRoqUWr7PMTn7NrOzEhJ54ycQ6E9PvvR6lo4d+BGQ/xx
-         PyNYvHicEtxYgPtEuoRWq2i9didX+FNncszBaLzr6C+Vm1pm04Avkrnt898J7W2sYfte
-         onEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781401014; x=1782005814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=n5fB2rVLAd0NOe06dMOPUowfvJcEsGLFODQSz7k5AdA=;
-        b=q7oO3yl0EeE7y7XuvxuGeJbk3alG6wsI+qYpPESy1CXwfwh774wlWmw8JCkiJM+rC3
-         Xgp40eo3MbFIMzMh3FZKPPZTcXY7BOCIoe9E0z5F5Vdh4cCG2tihEC+jCrWisFCE/69t
-         wae/c7MQrmYSKhJ+5q28p81fW9mDyfkjBBZGY3ainQH/m2FOF84PDoR9SHuBbj3Pi18h
-         7oQuGVQTnhIshfCpPkUoMxCSDn8vskL3yY//kFZ2acTnSalWATQmPK1fr5OuVL2wytLb
-         liK/EosvZ/7mMCyFeH9hGb2pKFZp0Jzui+uEuNcqin7vIDUDRnacJfnNsYSbRyGE8px/
-         4m0A==
-X-Forwarded-Encrypted: i=1; AFNElJ8MgxS2aqafPG41wNDOaKTE5tEgnoBIJpw6y4IanrirEJZcnnFlqYpuIkGOvfHebkOjlfYJ6cTQ6YjCj/VsFQ8vEw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YySPXWCeLh4FPkuJJthFBOtM4w3EG/5dei/KmIxK32zl/Bj6f6o
-	lJVt1F3FwFlGdJm6BMShM0g+gblsooF11+nQXiDL4NccM6mItiYD6667KlzKWVHQ6AQebBRUDMV
-	vN+5zxKTcjF3JYdyrOIIGCiIiS5w/w4+m7pdw
-X-Gm-Gg: Acq92OELbOuJzejGIN3LvtDbadGALjc6EBw3ktZIOyJbUaVrZKoEIK+mKqX8cjDYVPA
-	jHezEgTpaQDwuo2dxnQf2FvH+hhlKU5tmICJBWJx2QN4hJ5rpCM63dsB5HxSAOgFupq7/HEwyWT
-	Il5tx2H5ON/m7yeMk3/xj6qbgC6kNm2Z2arLfq85ffCUCA4uE2ji3Gsbe2yVEe2pq0KOvLd0UTl
-	SBgotoK1LnUuyv9vKOBbmySzY9O5Fz5w/GZ2t88uuBDWmIe3m4vMa45rzIcQaPiSMKj6mKXu/Rx
-	CcRIKFxF4fg9vyi0aDnURpiMV0D9VD67rEIYQIjbiPHQUSmYDBL1uAllAuNo5gxJ4rWB0g==
-X-Received: by 2002:a05:622a:1456:b0:517:6550:2a0 with SMTP id
- d75a77b69052e-5195338b5edmr85745681cf.19.1781401014088; Sat, 13 Jun 2026
- 18:36:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnWOsVpZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C02A81F000E9;
+	Sun, 14 Jun 2026 13:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781443518;
+	bh=Aj37DJlM1zJKEqBmIRnTZyxYadMIW5oAzKFUVkzZL6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=DnWOsVpZ989Lm0MBbSZyRrpAGcxhXfMnpbLzOCSAo1cmwTI5vrmNpwn7k6WSLGifm
+	 2yR+HHX0UzKHEn2H6BNG9UnOeFKkRfcMgcLsJ0ACR7ZF1ZgAEVKeVXCXbEnJ1EWYOt
+	 pCQaPDRcMNIaTvoyEsmR8C2xVnV0zT9yLVTvEuTYCmiJ7UMU3VglD83staPM9G+mZT
+	 eCSXVIV/YDKUnY+M5M7k7BP/H9jvcXWAaMJs9ILNBROkLikxllJXrobafL0F8CA+VM
+	 8vd18kQeyPJkEqNeuhmUNqgCcZ5Msdd46yVWyBMiQOXwHjVevbcfLyrXVOGKmyR2nB
+	 Zu4DA7lFLP5Uw==
+Message-ID: <9a6ced09-4954-414e-ad33-5b9cb67938e8@kernel.org>
+Date: Sun, 14 Jun 2026 15:25:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260613223648.119694-1-enelsonmoore@gmail.com> <20260614005044.GA1808@sol>
-In-Reply-To: <20260614005044.GA1808@sol>
-From: Ethan Nelson-Moore <enelsonmoore@gmail.com>
-Date: Sat, 13 Jun 2026 18:36:43 -0700
-X-Gm-Features: AVVi8CepR6jF4mFfkqqK9wY4g4xLO3th8OtglCBTM-sf5Kca7lHFvKNbbL4gNGA
-Message-ID: <CADkSEUiZHbSGi=Fp4u5dNxZDrXnFpk3WK86JMd+oU5z2CEO19A@mail.gmail.com>
-Subject: Re: [PATCH] crypto: s5p-sss - correct CONFIG_CRYPTO_DEV_EXYNOS_RNG
- macro name in comment
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: exynos: Add bluetooth support to manta
+To: Lukas Timmermann <linux@timmermann.space>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Marquet <tb@a-marquet.fr>
+References: <20260408-manta-bluetooth-v1-1-b7658e78359a@timmermann.space>
+ <653b640e-8b61-4c60-a455-63a400b308e7@kernel.org>
+ <ai2OYGlCx0x4NUs8@archstation>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <ai2OYGlCx0x4NUs8@archstation>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Eric,
+On 13/06/2026 19:11, Lukas Timmermann wrote:
+> #include <atomic>
+> On Mon, Apr 27, 2026 at 03:49:34PM +0200, Krzysztof Kozlowski wrote:
+>> On 08/04/2026 13:56, Lukas Timmermann wrote:
+>>> Enable the bcm4330-bt device for manta boards on serial0.
+>>> Also adds the necessary pin definitions and interrupt handling for
+>>> wakeup.
+>>>
+>>> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+>>> Co-developed-by: Alexandre Marquet <tb@a-marquet.fr>
+>>> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
+>>
+>> Incomplete/incorrect DCO chain. Please do not reorder tags. Git does
+>> them correctly, so you HAD to change them manually.
+>>
+>> You send the patch or you apply the patch so you must commit with sign off.
+> I developed the actual patch based on his findings. We both don't really
+> care about who is mentioned first or anything.
+> 
+> Sorry. Yes I rearranged stuff. So it should be:
+> 
+> co-dev: alex
+> sign-off: alex
+> co-dev: me
+> sign-off: me
+> 
+> Correct?
+>>
 
-On Sat, Jun 13, 2026 at 5:52=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
-> CONFIG_CRYPTO_DEV_EXYNOS_RNG was already removed by
-> https://lore.kernel.org/linux-crypto/20260531175932.32171-1-ebiggers@kern=
-el.org/
+Yes
 
-Thanks for letting me know.
 
-> I didn't want to touch this comment which is nonsense anyway.  But if
-> you're going to try to update it, it should be updated to correctly
-> explain that the driver is working around broken devicetree bindings.
 
-Yes, that comment definitely needs rewriting - I had no idea that is
-what it is referring to.
-
-Ethan
+Best regards,
+Krzysztof
