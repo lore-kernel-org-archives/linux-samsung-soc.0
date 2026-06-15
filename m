@@ -1,368 +1,525 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D43F44DA
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 14:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781534259; cv=pass; b=Xn8eiRYjBUqpL/6Hv3joZxSG9q1wy8O3PryVIiNU4N85w8F8lgqqRDTsvHLmFnYPStCf7KBErxBUkNkBT/LxmsmWpX5K3AHVcuplgaJnGFaVQUs1AO7FLKJl6pP2JIp9gwEbuJe6vS/dE/dVvEKPW0VswBZ87S9djMwrU4u13cA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781534259; c=relaxed/simple;
-	bh=4k2Mw99a5llfRvdMVuY0Q94wOPzpx+M3oiuPKHWHcyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GrLDwHLjoRvaLBROmeekYdrP4wY6DCLBIMvgaa6T88FpQ+n0SXFm6Qf9m/+Dy9rou3Vfy4RHCsMzX+zK4OFAkFJfAUV4+aB/gwCMwqzeEJPvtIqLkEVxeDZvKEwfLfzF4MeKas2s/YVGmCnP6GDXsTFBlhMMDjSnXKVTAw37DJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=trZDIpWN; arc=pass smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B09219F11B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 18:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781546771; cv=none; b=W/bxtdXng4RjtZq23KwZ3oq9p0QWsHFXKNA73kWvZ1PZPD6dQSGflHHwiWjXoHZ0uHUwvOKUdZ/p6xnaPZjQVP+xhqYlJhzKG+7Qj0Ts/P+OHtmB1Na6vRi1hNsDO6pmVdPUP0CEo+XLWLXlSyKrgFDxhaOMJOxMScf6CBZdGKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781546771; c=relaxed/simple;
+	bh=fW9r01EPQhqsfy19zu/auqg544mFwRvXRV407ff98Dw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Rneqv7SiGMQrh4P4ArmSu4cq5PkSksQKllFFSX9FvHF3khyQKcT5RGCeW3pyD9aKbW9JKJQHdbQqC8ak1qerLPiMXUO/VYwAnieE8rkPiKgdXrBYLoNmNQ4DE3NeOpf81XK/zKilqJODatVHnQDWIS42OH14qOI7IscxAs4LVdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tXIjVlIC; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rdbabiera.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="trZDIpWN"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-69170548d0eso4968599a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 07:37:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781534254; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UAW71R6jboaHF6xRhtDwoyT4Wnx8f1juGmK56RdlT+RXz3VDNcENU+o4ouvdWbFx1o
-         g3S5404It6QOCztjATcnxPAzb4YHfM9vl4ZeDakx3mxKWGQ83SkqiC+OoKhEazbXqUTX
-         ygNcCqfRc5lS26bq9e1uPxFc7X5jMqh2oj4UECA8EcvteUt5DiNNyLcVrEBKGrNaDdSx
-         Ank/VP44Skn93OLymkMKSUGXVhoGhtlMRSZ9BGo2PBUEOuT50BZMBX3nd8BxtMJamhTq
-         zJIosrFx/UCRCThCQmoyLythYDd+08EPPWlKYSwF2jslBdqMCXsjV9iGN+lOojI67YYH
-         qeGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
-        fh=WpSHAro5zA3YOduEuiSjYjTCWO4gukSrgBrydn47Rvw=;
-        b=B6C3WGmTW5Jiw0wgMhH0Z8fEMvsrd7lWsIlfosYkhf6Jf+cm5/E0QNEpvXuMrnSCN8
-         XAKCNJcgR7FLjKLhRYwr4eyWEAQYWhRCQQq9rEgL7gabG+TJVbbryDBYMiXp4Kq9/HCQ
-         oQ9PEHdr9a3U8VDLIKans5aZ9SEazbNO5j9Az99nktdVO9NVAclejJWhxhf2pZc609VE
-         jxSa9MKhSUP7rabPJf7wLBKaGA5JS24Kkvn0/CX16pgFX2WdFdXXhiAe5SFt2Otvhiu9
-         jMzQCXkbqMb7rGXbDmAtGd/CSzlM5dotP+SU9BU6ykL+GXjJ2+4Ev/BnPXnHKx1WuYo8
-         rIOA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tXIjVlIC"
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-c8581f7723aso1734941a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 11:06:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781534254; x=1782139054; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
-        b=trZDIpWNF9siuoK2aPxp/ZmYsdhR+pnOZJuZAuin4sUCR8WHLi9AlMnRXpkXdbKopo
-         XVOzRhUJOVqfpD0cyN+bO/a6K254tJGgsDYc68v2fw/foLQcCsBPDVchcsBjAiOIthVO
-         Sub+dJ/nfGrx4Ih5uW+QTIwIdLXbfkvDDGGF71FF2QekZk6cis/VaMd/kz3agQbz9Kc8
-         JHmnA/+XcAci+M5eMZ4hCpZd0AgONSUUZU1Vd24enqUEmBTqLbz9vQ6UETyOvD7qG35o
-         0i0JKsmveQ0jIoyO7YttX3v/bg8O/XkIiU6qPyB7x7CS+fL1s48AxgUE+4bqNlc1pDNH
-         e0Gg==
+        d=google.com; s=20251104; t=1781546770; x=1782151570; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tYM90U1z3Qc3uuvS1BqysVMKBe7scMOj+TAX3rB6WiI=;
+        b=tXIjVlIChcPV1q1+Rp+7e6Fr4BcvwZyEaBy4miwsYRhYt6WxLtoLWLBM0ZxhwDcnKM
+         d7Kcv18+xMV2BTr+YRCHDG5JzKvhpLMcLK4VXhu9Q/IsT2btZr9P0861t9XIFqc0loUT
+         ZTXYJhJGiJfdvl05CJdFjkVHnb+dXDGqsdQN3qkqAx207NcAImxEIlzwcvAbmjQgRb3k
+         754Cn9OP+XPZg3ru/s/xU4una64bQl+VRsnrqXrZ7nLY/gtL/Zq9Xi6Fkr4qYshkL4UA
+         33k73N1586LPhUgAhIu2rxYAgpAkTybtw3eX9USex1KkrLghpi5jnc9hFeygT2J3rAP3
+         8rZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781534254; x=1782139054;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
-        b=MRXJlg8uJbdq1h9NjlEcjVxJHV1ilQOPlH/VuMgWOHyqwxW0YCm3Il1FwAvhjv3SXx
-         dcX8+YCokN1RDiJwJb9SKN776jTI9Q47ScVdKvp5FBQUsS0Na7E9/tIHFKphDzwlUhK7
-         LwcCg/m7zzf+fDZoA/0WAERoFSBd3Zjl/nvhyrRy9vCqYPbXQM+sT7y2mlsMe2ITz4mY
-         uXWHfjL0wKShsz2KGCw+HJguA6NSQCI/D2cSJfU0EsAnKgU52+oTw3bZbas7PueClMvO
-         89iSzLV1EV/AaEBZyTY6w0+DpDKFL48ms6pkupKx43Yz7TY+bcKb+fQBPyB8aXG7iV4q
-         NCWQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9X6RPi5imyrTcRH7JVW8NsXd8k5UpyJHOl1B61KuH8oHPcEoT1yfd8AZQtG+Btg4rCZ2gNi2w3YtxLbnvg6CGDgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxod48jfLOenYmdk/6iIdI3CVnJFVoWpzetANSj03VUOpx5Ji9v
-	Dx6aXFdf3ibF++O0zRYvebSd3Tc2qjlfk+RQFKnl5ryMWER0D0xsVrh3rmgelE9zcsvhzBV5A3U
-	wa02cCMmJMkcrHVWlsYl13gE9nlSlzSeSPyg7nR5+lw==
-X-Gm-Gg: Acq92OGsvfxdb+uMNzp4zjfamiwuMZT1V0p65Hm4omuJ4WDJINUPAHMYn1h4d3imsJ/
-	X46djYwcSV1p8tnAVAz9sFCya+/5yEeCoHGlNC4rOWN0crD7meqjG+mTW66LSBdg+zWE+9JjM/9
-	MePeFe1GvSzZzT50J/jCWcljbzDRmqm9YOsOoNCnWl/6CSRBrcwJmeAyLMmCoaJELQ3nbZQjffy
-	oG7TDrL6H0egwJQQJBhBHW5Ddbz5G7I/ds9SC88Hp1/GWxzhpsuFr4IiF589lwX72bhs3GLL8DI
-	p1PVwVBQamEHjcZehHnYIIBxOGkGlc59lTjY95RNXA==
-X-Received: by 2002:a05:6402:3509:b0:691:b129:6374 with SMTP id
- 4fb4d7f45d1cf-693c6bb1155mr4076869a12.20.1781534253600; Mon, 15 Jun 2026
- 07:37:33 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1781546770; x=1782151570;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tYM90U1z3Qc3uuvS1BqysVMKBe7scMOj+TAX3rB6WiI=;
+        b=Dppm6j7HC9166qoQaqvHhtYYMjkCC7yLp1Exu1H2Kk/dLb8F2aPT++NxjrBUFElIj+
+         Bgg9PQurOLzMvPDY6wFMyubIWaH2LH8rNvxzPY4JE+n5E0jXp+b/FuqOQaMuUyx3iDz7
+         ih0MCMX2VzhCH3SdnoHjZuEbMxcrOKTl5vbBKBMvXHuB2Vpu3UbF2zVriTD8D08N7kyX
+         fs/mYZDKHhjhpq8aKVt/h6vcZeKPxilBvbQ5w2W74dfvBk9DKkrwRKtE9MbdPIZhSynb
+         uGfrNizrKEyZY2bCzENpKKOrDy0HxC3VH31ncOvCSiRC4QqKOssupZBR5oFX7SJtWjOD
+         qaFQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9NUVzWgbvQEnydCSvo2Y0F2/P71WAy9sRPipmToiR1JKeJys9ez/oTL6mCl4Phn8r3zThjH70eZ/Hmbwlxr9stHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXfzRbp2FsN2znftD2n1wlwhUIjwR0XOR80syQuCpkS+/vKfOZ
+	pvszyeEKGWnMDnMmpu7xg445+jw6JVFAOxNVrbJyA6n5D112cdEIuYq3qPHxEQEjLsidWx+G+fV
+	hciw/8/0tjel8y5fRhA==
+X-Received: from pgli9.prod.google.com ([2002:a63:1309:0:b0:c85:735b:ca4a])
+ (user=rdbabiera job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:483:b0:3b3:2703:110 with SMTP id adf61e73a8af0-3b7e4951a07mr190399637.4.1781546769346;
+ Mon, 15 Jun 2026 11:06:09 -0700 (PDT)
+Date: Mon, 15 Jun 2026 18:05:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CGME20260615083428epcas5p15eb83d4d631296cf4863e330542cd7dc@epcas5p1.samsung.com>
- <20260615085252.1964423-1-alim.akhtar@samsung.com> <20260615085252.1964423-5-alim.akhtar@samsung.com>
-In-Reply-To: <20260615085252.1964423-5-alim.akhtar@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 15 Jun 2026 15:37:21 +0100
-X-Gm-Features: AVVi8CdyAmDV3V1XLVdrgHm2SJuvGn45ObQOKAvV3zPFgvm4HNYd9FmG2O2s0Nc
-Message-ID: <CADrjBPqS=d2Q02UhdpkSxHJ-RYe-hvurB-1meurTOLoUcUidFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: exynos: add initial support for
- Samsung Exynos8855 smdk
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	hajun.sung@samsung.com
+Mime-Version: 1.0
+X-Developer-Key: i=rdbabiera@google.com; a=openpgp; fpr=0B74D21BCA57BD40083A73A0DB00FC8CD80B20A1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14616; i=rdbabiera@google.com;
+ h=from:subject; bh=fW9r01EPQhqsfy19zu/auqg544mFwRvXRV407ff98Dw=;
+ b=owGbwMvMwCV2m+FPzw1uhYWMp9WSGLIM7FlKIvSqUrM46sLP7dJe/XJqyZPWkCsHjRiPGix+Y
+ JpdvO5yRwkLgxgXg6yYIgt3ySXpU+F7HTisihfAzGFlAhnCwMUpABPx4GP4X5IesOIQf0H03zff
+ vFNLuDZ+W59ce+CkoYp0UwVTrtUuXobvsRezDWvlrBnXif8/8/jO2eIwyRyfr6oipZ/8BNtP6fM CAA==
+X-Mailer: git-send-email 2.54.0.1189.g8c84645362-goog
+Message-ID: <20260615180556.4048184-2-rdbabiera@google.com>
+Subject: [PATCH v1] phy: Add USB3 PHY support to Google Tensor SoC USB PHY driver
+From: RD Babiera <rdbabiera@google.com>
+To: vkoul@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org, 
+	tudor.ambarus@linaro.org, p.zabel@pengutronix.de, neil.armstrong@linaro.org
+Cc: badhri@google.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, RD Babiera <rdbabiera@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Alim,
+Add USB3 PHY support for the Google Tensor G5 USB PHY driver.
+This patch adds functionality for the usb3_core and usb3_tca registers,
+usb3 clock, and usb3 reset as defined in
+google,lga-usb-phy.yaml.
 
-On Mon, 15 Jun 2026 at 09:34, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
-> Add initial devicetree support for Samsung smdk board using
-> Exynos8855 SoC.
+Refactor the probe sequence to initialize the USB2 and USB3 PHYs, and then
+initialize clocks and resets for both PHYs afterwards.
 
-I think it would be worthwhile adding a more verbose description of
-the Exynos8855 SoC in the commit message e.g. a brief list of the
-major IPs on the SoC.
+Refactor set_vbus_valid to reduce duplicated code.
 
->
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-[..]
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
-> new file mode 100644
-> index 000000000000..f5132bcaa47c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos8855 SMDK board device tree source
-> + *
-> + * Copyright (C) 2026 Samsung Electronics Co., Ltd.
-> + *
-> + * Device tree source file for WinLink's E850-96 board which is based on
-> + * Samsung Exynos8855 SoC.
+Implement USB3 phy_ops for phy_init, phy_exit, and phy_power_on.
 
-E850-96 isn't based on the Exynos8855 SoC. I guess it's leftover from
-a copy/paste.
+Signed-off-by: RD Babiera <rdbabiera@google.com>
+---
+ drivers/phy/phy-google-usb.c | 350 +++++++++++++++++++++++++++++++----
+ 1 file changed, 317 insertions(+), 33 deletions(-)
 
-regards,
+diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
+index ab20bc20f19e..a23a9008b521 100644
+--- a/drivers/phy/phy-google-usb.c
++++ b/drivers/phy/phy-google-usb.c
+@@ -20,6 +20,7 @@
+ #include <linux/reset.h>
+ #include <linux/usb/typec_mux.h>
+ 
++/* USB_CFG_CSR */
+ #define USBCS_USB2PHY_CFG19_OFFSET 0x0
+ #define USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV GENMASK(19, 8)
+ 
+@@ -28,11 +29,41 @@
+ #define USBCS_USB2PHY_CFG21_REF_FREQ_SEL GENMASK(15, 13)
+ #define USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL BIT(19)
+ 
++/* USBDP_TOP */
+ #define USBCS_PHY_CFG1_OFFSET 0x28
++#define USBCS_PHY_CFG1_PHY0_MPLLA_SSC_EN BIT(1)
++#define USBCS_PHY_CFG1_PHY0_SRAM_BYPASS_MODE GENMASK(11, 10)
++#define SRAM_BYPASS_MODE_BYPASS_FIRMWARE BIT(0)
++#define SRAM_BYPASS_MODE_BYPASS_CONTEXT BIT(1)
+ #define USBCS_PHY_CFG1_SYS_VBUSVALID BIT(17)
+ 
++#define USBDP_TOP_CFG_REG_OFFSET 0x44
++#define USBDP_TOP_CFG_REG_PMGT_REF_CLK_REQ_N BIT(0)
++
++#define PHY_POWER_CONFIG_REG1_OFFSET 0x48
++#define PHY_POWER_CONFIG_REG1_PG_MODE_EN BIT(1)
++#define PHY_POWER_CONFIG_REG1_UPCS_PIPE_CONFIG GENMASK(31, 14)
++#define UPCS_PIPE_CONFIG_ISO_CPM BIT(5)
++#define UPCS_PIPE_CONFIG_PG_MODE_STATIC BIT(6)
++#define UPCS_PIPE_CONFIG_LANE_RESET_NO_PG_EXIT BIT(9)
++
++/* USB3_TCA */
++#define TCA_INTR_STS_OFFSET 0x8
++#define TCA_INTR_STS_XA_ACT_EVT BIT(0)
++#define TCA_TCPC_OFFSET 0x14
++#define TCA_TCPC_MUX_CONTROL GENMASK(2, 0)
++#define TCA_TCPC_MUX_CONTROL_USB_ONLY 0x1
++#define TCA_TCPC_CONNECTOR_ORIENTATION BIT(3)
++#define TCA_TCPC_VALID BIT(4)
++#define TCA_PSTATE_0_OFFSET 0x50
++#define TCA_PSTATE_0_UPCS_LANE0_PHYSTATUS BIT(8)
++
++#define GPHY_TCA_DELAY_US 10
++#define GPHY_TCA_TIMEOUT_US 2500000
++
+ enum google_usb_phy_id {
+ 	GOOGLE_USB2_PHY,
++	GOOGLE_USB3_PHY,
+ 	GOOGLE_USB_PHY_NUM,
+ };
+ 
+@@ -46,11 +77,50 @@ struct google_usb_phy_instance {
+ 	struct reset_control_bulk_data *rsts;
+ };
+ 
++struct google_usb_phy_config {
++	const char * const *clk_names;
++	unsigned int num_clks;
++	const char * const *rst_names;
++	unsigned int num_rsts;
++};
++
++static const char * const u2phy_clk_names[] = {
++	"usb2",
++	"usb2_apb",
++};
++static const char * const u3phy_clk_names[] = {
++	"usb3"
++};
++static const char * const u2phy_rst_names[] = {
++	"usb2",
++	"usb2_apb",
++};
++static const char * const u3phy_rst_names[] = {
++	"usb3"
++};
++
++static const struct google_usb_phy_config phy_configs[GOOGLE_USB_PHY_NUM] = {
++	[GOOGLE_USB2_PHY] = {
++		.clk_names = u2phy_clk_names,
++		.num_clks = ARRAY_SIZE(u2phy_clk_names),
++		.rst_names = u2phy_rst_names,
++		.num_rsts = ARRAY_SIZE(u2phy_rst_names),
++	},
++	[GOOGLE_USB3_PHY] = {
++		.clk_names = u3phy_clk_names,
++		.num_clks = ARRAY_SIZE(u3phy_clk_names),
++		.rst_names = u3phy_rst_names,
++		.num_rsts = ARRAY_SIZE(u3phy_rst_names),
++	},
++};
++
+ struct google_usb_phy {
+ 	struct device *dev;
+ 	struct regmap *usb_cfg_regmap;
+ 	unsigned int usb2_cfg_offset;
+ 	void __iomem *usbdp_top_base;
++	void __iomem *usb3_core_base;
++	void __iomem *usb3_tca_base;
+ 	struct google_usb_phy_instance *insts;
+ 	/*
+ 	 * Protect phy registers from concurrent access, specifically via
+@@ -65,15 +135,79 @@ static void set_vbus_valid(struct google_usb_phy *gphy)
+ {
+ 	u32 reg;
+ 
+-	if (gphy->orientation == TYPEC_ORIENTATION_NONE) {
+-		reg = readl(gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++	reg = readl(gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++	if (gphy->orientation == TYPEC_ORIENTATION_NONE)
+ 		reg &= ~USBCS_PHY_CFG1_SYS_VBUSVALID;
+-		writel(reg, gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
+-	} else {
+-		reg = readl(gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++	else
+ 		reg |= USBCS_PHY_CFG1_SYS_VBUSVALID;
+-		writel(reg, gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
+-	}
++	writel(reg, gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++}
++
++static void set_sram_bypass(struct google_usb_phy *gphy, u32 bypass)
++{
++	u32 reg;
++
++	reg = readl(gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++	reg &= ~USBCS_PHY_CFG1_PHY0_SRAM_BYPASS_MODE;
++	reg |= FIELD_PREP(USBCS_PHY_CFG1_PHY0_SRAM_BYPASS_MODE, bypass);
++	writel(reg, gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++}
++
++static void set_pmgt_ref_clk_req_n(struct google_usb_phy *gphy, bool resume)
++{
++	u32 reg;
++
++	reg = readl(gphy->usbdp_top_base + USBDP_TOP_CFG_REG_OFFSET);
++	if (resume)
++		reg |= USBDP_TOP_CFG_REG_PMGT_REF_CLK_REQ_N;
++	else
++		reg &= ~USBDP_TOP_CFG_REG_PMGT_REF_CLK_REQ_N;
++	writel(reg, gphy->usbdp_top_base + USBDP_TOP_CFG_REG_OFFSET);
++}
++
++static int wait_tca_xa_ack(struct google_usb_phy *gphy)
++{
++	int ret;
++	u32 reg;
++
++	ret = readl_poll_timeout(gphy->usb3_tca_base + TCA_INTR_STS_OFFSET,
++				 reg, !!(reg & TCA_INTR_STS_XA_ACT_EVT),
++				 GPHY_TCA_DELAY_US, GPHY_TCA_TIMEOUT_US);
++	if (ret)
++		dev_err(gphy->dev, "tca xa_ack timeout, ret=%d", ret);
++
++	return ret;
++}
++
++static int program_tca_locked(struct google_usb_phy *gphy)
++	   __must_hold(&gphy->phy_mutex)
++{
++	int ret;
++	u32 reg;
++
++	reg = readl(gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
++	writel(reg, gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
++
++	reg = readl(gphy->usb3_tca_base + TCA_TCPC_OFFSET);
++	reg &= ~TCA_TCPC_MUX_CONTROL;
++	reg |= FIELD_PREP(TCA_TCPC_MUX_CONTROL, TCA_TCPC_MUX_CONTROL_USB_ONLY);
++	if (gphy->orientation == TYPEC_ORIENTATION_REVERSE)
++		reg |= TCA_TCPC_CONNECTOR_ORIENTATION;
++	else
++		reg &= ~TCA_TCPC_CONNECTOR_ORIENTATION;
++	reg |= TCA_TCPC_VALID;
++	writel(reg, gphy->usb3_tca_base + TCA_TCPC_OFFSET);
++
++	ret = wait_tca_xa_ack(gphy);
++	dev_dbg(gphy->dev, "TCA switch %s, mux %lu, orientation %s",
++		ret ? "failed" : "success",
++		FIELD_GET(TCA_TCPC_MUX_CONTROL, reg),
++		FIELD_GET(TCA_TCPC_CONNECTOR_ORIENTATION, reg) ? "reverse" : "normal");
++
++	reg = readl(gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
++	writel(reg, gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
++
++	return ret;
+ }
+ 
+ static int google_usb_set_orientation(struct typec_switch_dev *sw,
+@@ -161,6 +295,103 @@ static const struct phy_ops google_usb2_phy_ops = {
+ 	.exit		= google_usb2_phy_exit,
+ };
+ 
++static int google_usb3_phy_init(struct phy *_phy)
++{
++	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
++	struct google_usb_phy *gphy = inst->parent;
++	int ret = 0;
++	u32 reg;
++
++	dev_dbg(gphy->dev, "initializing usb3 phy\n");
++
++	guard(mutex)(&gphy->phy_mutex);
++
++	reg = readl(gphy->usbdp_top_base + PHY_POWER_CONFIG_REG1_OFFSET);
++	reg |= PHY_POWER_CONFIG_REG1_PG_MODE_EN;
++	reg &= ~PHY_POWER_CONFIG_REG1_UPCS_PIPE_CONFIG;
++	reg |= FIELD_PREP(PHY_POWER_CONFIG_REG1_UPCS_PIPE_CONFIG,
++			  (UPCS_PIPE_CONFIG_ISO_CPM |
++			   UPCS_PIPE_CONFIG_PG_MODE_STATIC |
++			   UPCS_PIPE_CONFIG_LANE_RESET_NO_PG_EXIT));
++	writel(reg, gphy->usbdp_top_base + PHY_POWER_CONFIG_REG1_OFFSET);
++
++	set_vbus_valid(gphy);
++
++	reg = readl(gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++	reg |= USBCS_PHY_CFG1_PHY0_MPLLA_SSC_EN;
++	writel(reg, gphy->usbdp_top_base + USBCS_PHY_CFG1_OFFSET);
++
++	set_sram_bypass(gphy, SRAM_BYPASS_MODE_BYPASS_FIRMWARE |
++			SRAM_BYPASS_MODE_BYPASS_CONTEXT);
++	set_pmgt_ref_clk_req_n(gphy, true);
++
++	ret = clk_bulk_prepare_enable(inst->num_clks, inst->clks);
++	if (ret)
++		return ret;
++
++	ret = reset_control_bulk_deassert(inst->num_rsts, inst->rsts);
++	if (ret)
++		goto disable_clocks;
++
++	ret = readl_poll_timeout(gphy->usb3_tca_base + TCA_PSTATE_0_OFFSET,
++				 reg, !(reg & TCA_PSTATE_0_UPCS_LANE0_PHYSTATUS),
++				 GPHY_TCA_DELAY_US, GPHY_TCA_TIMEOUT_US);
++	if (ret) {
++		dev_err(gphy->dev, "wait for lane0 phystatus timed out");
++		goto assert_resets;
++	}
++
++	return 0;
++
++assert_resets:
++	reset_control_bulk_assert(inst->num_rsts, inst->rsts);
++disable_clocks:
++	clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
++	return ret;
++}
++
++static int google_usb3_phy_exit(struct phy *_phy)
++{
++	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
++	struct google_usb_phy *gphy = inst->parent;
++
++	dev_dbg(gphy->dev, "exiting usb3 phy\n");
++
++	guard(mutex)(&gphy->phy_mutex);
++
++	set_pmgt_ref_clk_req_n(gphy, false);
++	reset_control_bulk_assert(inst->num_rsts, inst->rsts);
++	clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
++
++	return 0;
++}
++
++static int google_usb3_phy_power_on(struct phy *_phy)
++{
++	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
++	struct google_usb_phy *gphy = inst->parent;
++	int ret;
++
++	dev_dbg(gphy->dev, "power on usb3 phy\n");
++
++	guard(mutex)(&gphy->phy_mutex);
++	ret = wait_tca_xa_ack(gphy);
++	if (ret) {
++		dev_err(gphy->dev, "PoR->NC transition timeout");
++		return ret;
++	}
++
++	ret = program_tca_locked(gphy);
++
++	return ret;
++}
++
++static const struct phy_ops google_usb3_phy_ops = {
++	.init		= google_usb3_phy_init,
++	.exit		= google_usb3_phy_exit,
++	.power_on	= google_usb3_phy_power_on,
++};
++
+ static struct phy *google_usb_phy_xlate(struct device *dev,
+ 					const struct of_phandle_args *args)
+ {
+@@ -173,14 +404,61 @@ static struct phy *google_usb_phy_xlate(struct device *dev,
+ 	return gphy->insts[args->args[0]].phy;
+ }
+ 
++static int google_usb_phy_parse_clocks(struct google_usb_phy *gphy)
++{
++	struct device *dev = gphy->dev;
++	int id, i, ret;
++
++	for (id = 0; id < GOOGLE_USB_PHY_NUM; id++) {
++		const struct google_usb_phy_config *cfg = &phy_configs[id];
++		struct google_usb_phy_instance *inst = &gphy->insts[id];
++
++		inst->num_clks = cfg->num_clks;
++		inst->clks = devm_kcalloc(dev, inst->num_clks, sizeof(*inst->clks), GFP_KERNEL);
++		if (!inst->clks)
++			return -ENOMEM;
++
++		for (i = 0; i < inst->num_clks; i++)
++			inst->clks[i].id = cfg->clk_names[i];
++
++		ret = devm_clk_bulk_get(dev, inst->num_clks, inst->clks);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to get phy%d clks\n", id);
++	}
++
++	return 0;
++}
++
++static int google_usb_phy_parse_resets(struct google_usb_phy *gphy)
++{
++	struct device *dev = gphy->dev;
++	int id, i, ret;
++
++	for (id = 0; id < GOOGLE_USB_PHY_NUM; id++) {
++		const struct google_usb_phy_config *cfg = &phy_configs[id];
++		struct google_usb_phy_instance *inst = &gphy->insts[id];
++
++		inst->num_rsts = cfg->num_rsts;
++		inst->rsts = devm_kcalloc(dev, inst->num_rsts, sizeof(*inst->rsts), GFP_KERNEL);
++		if (!inst->rsts)
++			return -ENOMEM;
++
++		for (i = 0; i < inst->num_rsts; i++)
++			inst->rsts[i].id = cfg->rst_names[i];
++		ret = devm_reset_control_bulk_get_exclusive(dev, inst->num_rsts, inst->rsts);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to get phy%d resets\n", id);
++	}
++
++	return 0;
++}
++
+ static int google_usb_phy_probe(struct platform_device *pdev)
+ {
+ 	struct typec_switch_desc sw_desc = { };
+-	struct google_usb_phy_instance *inst;
+ 	struct phy_provider *phy_provider;
+ 	struct device *dev = &pdev->dev;
+ 	struct google_usb_phy *gphy;
+-	struct phy *phy;
+ 	u32 args[1];
+ 	int ret;
+ 
+@@ -212,39 +490,45 @@ static int google_usb_phy_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(gphy->usbdp_top_base),
+ 				    "invalid usbdp top\n");
+ 
++	gphy->usb3_core_base = devm_platform_ioremap_resource_byname(pdev,
++								     "usb3_core");
++	if (IS_ERR(gphy->usb3_core_base))
++		return dev_err_probe(dev, PTR_ERR(gphy->usb3_core_base),
++				    "invalid usb3 core\n");
++
++	gphy->usb3_tca_base = devm_platform_ioremap_resource_byname(pdev,
++								    "usb3_tca");
++	if (IS_ERR(gphy->usb3_tca_base))
++		return dev_err_probe(dev, PTR_ERR(gphy->usb3_tca_base),
++				    "invalid usb3 tca\n");
++
+ 	gphy->insts = devm_kcalloc(dev, GOOGLE_USB_PHY_NUM, sizeof(*gphy->insts), GFP_KERNEL);
+ 	if (!gphy->insts)
+ 		return -ENOMEM;
+ 
+-	inst = &gphy->insts[GOOGLE_USB2_PHY];
+-	inst->parent = gphy;
+-	inst->index = GOOGLE_USB2_PHY;
+-	phy = devm_phy_create(dev, NULL, &google_usb2_phy_ops);
+-	if (IS_ERR(phy))
+-		return dev_err_probe(dev, PTR_ERR(phy),
++	gphy->insts[GOOGLE_USB2_PHY].phy = devm_phy_create(dev, NULL, &google_usb2_phy_ops);
++	gphy->insts[GOOGLE_USB2_PHY].index = GOOGLE_USB2_PHY;
++	gphy->insts[GOOGLE_USB2_PHY].parent = gphy;
++	if (IS_ERR(gphy->insts[GOOGLE_USB2_PHY].phy))
++		return dev_err_probe(dev, PTR_ERR(gphy->insts[GOOGLE_USB2_PHY].phy),
+ 				     "failed to create usb2 phy instance\n");
+-	inst->phy = phy;
+-	phy_set_drvdata(phy, inst);
++	phy_set_drvdata(gphy->insts[GOOGLE_USB2_PHY].phy, &gphy->insts[GOOGLE_USB2_PHY]);
+ 
+-	inst->num_clks = 2;
+-	inst->clks = devm_kcalloc(dev, inst->num_clks, sizeof(*inst->clks), GFP_KERNEL);
+-	if (!inst->clks)
+-		return -ENOMEM;
+-	inst->clks[0].id = "usb2";
+-	inst->clks[1].id = "usb2_apb";
+-	ret = devm_clk_bulk_get(dev, inst->num_clks, inst->clks);
++	gphy->insts[GOOGLE_USB3_PHY].phy = devm_phy_create(dev, NULL, &google_usb3_phy_ops);
++	gphy->insts[GOOGLE_USB3_PHY].index = GOOGLE_USB3_PHY;
++	gphy->insts[GOOGLE_USB3_PHY].parent = gphy;
++	if (IS_ERR(gphy->insts[GOOGLE_USB3_PHY].phy))
++		return dev_err_probe(dev, PTR_ERR(gphy->insts[GOOGLE_USB3_PHY].phy),
++				     "failed to create usb3 phy instance\n");
++	phy_set_drvdata(gphy->insts[GOOGLE_USB3_PHY].phy, &gphy->insts[GOOGLE_USB3_PHY]);
++
++	ret = google_usb_phy_parse_clocks(gphy);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to get u2 phy clks\n");
++		return ret;
+ 
+-	inst->num_rsts = 2;
+-	inst->rsts = devm_kcalloc(dev, inst->num_rsts, sizeof(*inst->rsts), GFP_KERNEL);
+-	if (!inst->rsts)
+-		return -ENOMEM;
+-	inst->rsts[0].id = "usb2";
+-	inst->rsts[1].id = "usb2_apb";
+-	ret = devm_reset_control_bulk_get_exclusive(dev, inst->num_rsts, inst->rsts);
++	ret = google_usb_phy_parse_resets(gphy);
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "failed to get u2 phy resets\n");
++		return ret;
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev, google_usb_phy_xlate);
+ 	if (IS_ERR(phy_provider))
 
-Peter
+base-commit: 2ace2e949979b82f82f12dd76d7c5a6145246ca3
+-- 
+2.54.0.1189.g8c84645362-goog
 
-
-
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "exynos8855.dtsi"
-> +
-> +/ {
-> +       model = "Samsung Exynos8855 SMDK board";
-> +       compatible = "samsung,exynos8855-smdk","samsung,exynos8855";
-> +
-> +       chosen {
-> +       };
-> +
-> +       memory@80000000 {
-> +               device_type = "memory";
-> +               reg = <0x0 0x80000000 0x80000000>;
-> +       };
-> +
-> +};
-> +
-> +&oscclk {
-> +       clock-frequency = <76800000>;
-> +};
-> +
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> new file mode 100644
-> index 000000000000..d403f41bbecb
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> @@ -0,0 +1,199 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos8855 SoC device tree source
-> + *
-> + * Copyright (C) 2023 Samsung Electronics Co., Ltd.
-> + *
-> + * Samsung Exynos8855 SoC device nodes are listed in this file.
-> + * Exynos8855 based board files can include this file and provide
-> + * values for board specific bindings.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +       compatible = "samsung,exynos8855";
-> +       #address-cells = <2>;
-> +       #size-cells = <1>;
-> +
-> +       interrupt-parent = <&gic>;
-> +
-> +       aliases {
-> +               pinctrl0 = &pinctrl_alive;
-> +               pinctrl1 = &pinctrl_cmgp;
-> +               pinctrl2 = &pinctrl_hsi_ufs;
-> +               pinctrl3 = &pinctrl_peric;
-> +               pinctrl4 = &pinctrl_pericmmc;
-> +               pinctrl5 = &pinctrl_usi;
-> +       };
-> +
-> +       oscclk: clock-oscclk {
-> +               compatible = "fixed-clock";
-> +               clock-output-names = "oscclk";
-> +               #clock-cells = <0>;
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               cpu-map {
-> +                       cluster0 {
-> +                               core0 {
-> +                                       cpu = <&cpu0>;
-> +                               };
-> +                               core1 {
-> +                                       cpu = <&cpu1>;
-> +                               };
-> +                               core2 {
-> +                                       cpu = <&cpu2>;
-> +                               };
-> +                               core3 {
-> +                                       cpu = <&cpu3>;
-> +                               };
-> +                       };
-> +
-> +                       cluster1 {
-> +                               core0 {
-> +                                       cpu = <&cpu4>;
-> +                               };
-> +                               core1 {
-> +                                       cpu = <&cpu5>;
-> +                               };
-> +                               core2 {
-> +                                       cpu = <&cpu6>;
-> +                               };
-> +                       };
-> +
-> +                       cluster2 {
-> +                               core0 {
-> +                                       cpu = <&cpu7>;
-> +                               };
-> +                       };
-> +               };
-> +
-> +               cpu0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x0>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu1: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x100>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu2: cpu@200 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x200>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu3: cpu@300 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x300>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu4: cpu@400 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x400>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu5: cpu@500 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x500>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu6: cpu@600 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x600>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu7: cpu@700 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x700>;
-> +                       enable-method = "psci";
-> +               };
-> +       };
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +
-> +       soc: soc@0 {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges = <0x0 0x0 0x0 0x20000000>;
-> +
-> +               gic: interrupt-controller@10200000 {
-> +                       compatible = "arm,gic-v3";
-> +                       #interrupt-cells = <3>;
-> +                       interrupt-controller;
-> +                       reg = <0x10200000 0x10000>,
-> +                             <0x10240000 0x140000>;
-> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_alive: pinctrl@11850000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x11850000 0x1000>;
-> +
-> +                       wakeup-interrupt-controller {
-> +                               compatible = "samsung,exynos850-wakeup-eint",
-> +                                            "samsung,exynos7-wakeup-eint";
-> +                       };
-> +               };
-> +
-> +               pinctrl_cmgp: pinctrl@12030000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x12030000 0x1000>;
-> +               };
-> +
-> +               pinctrl_usi: pinctrl@15030000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x15030000 0x1000>;
-> +               };
-> +
-> +               pinctrl_peric: pinctrl@15440000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x15440000 0x1000>;
-> +               };
-> +
-> +               pinctrl_pericmmc: pinctrl@154f0000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x154f0000 0x1000>;
-> +               };
-> +
-> +               pinctrl_hsi_ufs: pinctrl@17040000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x17040000 0x1000>;
-> +               };
-> +       };
-> +
-> +       timer {
-> +               compatible = "arm,armv8-timer";
-> +               /* Hypervisor Virtual Timer interrupt is not wired to GIC */
-> +               interrupts =
-> +                    <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                    <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                    <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +                    <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +       };
-> +};
-> +
-> +#include "exynos8855-pinctrl.dtsi"
-> --
-> 2.34.1
->
