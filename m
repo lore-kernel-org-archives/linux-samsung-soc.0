@@ -1,93 +1,94 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B113F5BCF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 14:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D43F44DA
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 14:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781532913; cv=pass; b=luzaVJMWmlawsnFoWT+AUxSoX7zaPsZcIpNOENUzaqG8FdnrMSI5S09DABP1TJT8ufLykYvROyb/zkhSEuDKkWNSTp/3Ai0p2iiKVXCEnePCfJ7lsU1JWWyzWzAV0xIiCeV8h6coPPkSmSr8mspYQKqA8E51MEDJFi8LBgm2fKw=
+	t=1781534259; cv=pass; b=Xn8eiRYjBUqpL/6Hv3joZxSG9q1wy8O3PryVIiNU4N85w8F8lgqqRDTsvHLmFnYPStCf7KBErxBUkNkBT/LxmsmWpX5K3AHVcuplgaJnGFaVQUs1AO7FLKJl6pP2JIp9gwEbuJe6vS/dE/dVvEKPW0VswBZ87S9djMwrU4u13cA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781532913; c=relaxed/simple;
-	bh=xTYJTF9WX1tkILvQ4OfNPiOZwQsAyO+hC34NdNlz0q4=;
+	s=arc-20240116; t=1781534259; c=relaxed/simple;
+	bh=4k2Mw99a5llfRvdMVuY0Q94wOPzpx+M3oiuPKHWHcyc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tov865MUsyQCiSMlSbGOTxLGcnkAX4iz9LnJnNuC/ewxhmpCrWEsRGx1N/rVfIJQfS+OrrsMZT2tdpO/n7V90wYiptAccO1lYYH7hF0k6cz/IfrgzjZ9SOQy8c0nKEWXmDR+glw7FE6jF8EgmkB0G8lisx4S9VVYrfoTjfAnJEE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rENLb8Dx; arc=pass smtp.client-ip=209.85.218.51
+	 To:Cc:Content-Type; b=GrLDwHLjoRvaLBROmeekYdrP4wY6DCLBIMvgaa6T88FpQ+n0SXFm6Qf9m/+Dy9rou3Vfy4RHCsMzX+zK4OFAkFJfAUV4+aB/gwCMwqzeEJPvtIqLkEVxeDZvKEwfLfzF4MeKas2s/YVGmCnP6GDXsTFBlhMMDjSnXKVTAw37DJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=trZDIpWN; arc=pass smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rENLb8Dx"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-bebc80100efso349022966b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 07:15:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781532911; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="trZDIpWN"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-69170548d0eso4968599a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 07:37:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781534254; cv=none;
         d=google.com; s=arc-20240605;
-        b=ITM8Tkvb5gsjrBhvlSKXX+kdLBrp1rwkLSD7V4AomEp7Xma4dVzOCy7vm4M4OYHRjh
-         qOuqP2Yj//i2hH5T1ZBcQdBKj7BJMCduXYQNuLvDBFv5+0/8ngyt9fXEBmzBSMPn6Qao
-         CQ8rE0ySIHLGiXTDiqUs68G4fiJkKsQmvmowkCDlm9udbDyGp2GpFlCiwSAk5OajFPps
-         seSalkgRrXFhp/DOMbZWkG3oOrvUfR1fvU1XLhedxthM0G2NLr+4duoxZlS1USU86V6k
-         0ShWIky66h/993KCmKt03OQBNtJBYmYKo4rOBd7XMU4Beo3O0qGIWs8e2PFTeZT6EESc
-         GCFw==
+        b=UAW71R6jboaHF6xRhtDwoyT4Wnx8f1juGmK56RdlT+RXz3VDNcENU+o4ouvdWbFx1o
+         g3S5404It6QOCztjATcnxPAzb4YHfM9vl4ZeDakx3mxKWGQ83SkqiC+OoKhEazbXqUTX
+         ygNcCqfRc5lS26bq9e1uPxFc7X5jMqh2oj4UECA8EcvteUt5DiNNyLcVrEBKGrNaDdSx
+         Ank/VP44Skn93OLymkMKSUGXVhoGhtlMRSZ9BGo2PBUEOuT50BZMBX3nd8BxtMJamhTq
+         zJIosrFx/UCRCThCQmoyLythYDd+08EPPWlKYSwF2jslBdqMCXsjV9iGN+lOojI67YYH
+         qeGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
-        fh=qclPCs23oyTOI5er0cguGBTexZeGLSRNBCXfsao9t0Y=;
-        b=IDplco75gvGaYuPdXpdyJEgXPXiePnci0UdOCxQ/4PMS3Zb++0cN3nEq+vgtYuCfHS
-         xYg2si9GBJ1jEB2d55VVCqE9tLNNYesjnw7JwIFYgUegRxviSHCSCYSkK65B3PFYm0NL
-         V5S+n05uldF+NwDbVqAW3ET038HKY1WMT60kVlUOxwjwEjDtzwO+FOn114L/9JKvQ8dA
-         2RjuxIs4oPgCdZhO7/s+8ixAILVyM0izYh8l5d882rdDg07Tz9l22sEq8C3A6hf5+QN5
-         i47FwU5rw1HpSqYfkYvdh0u+tX4sGLDc7CBYedjtM8uwbhvaqov5EtBI6KwQCZh9ZBS0
-         DNnw==;
+        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
+        fh=WpSHAro5zA3YOduEuiSjYjTCWO4gukSrgBrydn47Rvw=;
+        b=B6C3WGmTW5Jiw0wgMhH0Z8fEMvsrd7lWsIlfosYkhf6Jf+cm5/E0QNEpvXuMrnSCN8
+         XAKCNJcgR7FLjKLhRYwr4eyWEAQYWhRCQQq9rEgL7gabG+TJVbbryDBYMiXp4Kq9/HCQ
+         oQ9PEHdr9a3U8VDLIKans5aZ9SEazbNO5j9Az99nktdVO9NVAclejJWhxhf2pZc609VE
+         jxSa9MKhSUP7rabPJf7wLBKaGA5JS24Kkvn0/CX16pgFX2WdFdXXhiAe5SFt2Otvhiu9
+         jMzQCXkbqMb7rGXbDmAtGd/CSzlM5dotP+SU9BU6ykL+GXjJ2+4Ev/BnPXnHKx1WuYo8
+         rIOA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781532911; x=1782137711; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1781534254; x=1782139054; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
-        b=rENLb8DxHg2dzAUvz70MPXSyXBkXXW6Sf13TbnWsNM8nXkt2iBxULOAU290i187Mxu
-         B7G+0xJy7bgu4JMWJXdcp2qzInwd158sAog+xjFPHBYISoPyJIAEpTLeau0vN+VHOOWn
-         x0enV73x89V2u4TPa5CgVA/T4o2fh0b28cWzB2T6p8kXdCZlGZnY1nfGdwVan40zF9Ww
-         dF1CosTJQmUIzOTBoC7U4J1p+HrtXjIppibeo3eoJ2ByQwUEOOTOVvhmqI0VMUIU85+r
-         myA4yCXosgJAIjLa4pVqqGYv36ymZhDpPr6nAr7S/i5zzx/ylLOrE2/9w5jH9Ph6io86
-         klzA==
+        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
+        b=trZDIpWNF9siuoK2aPxp/ZmYsdhR+pnOZJuZAuin4sUCR8WHLi9AlMnRXpkXdbKopo
+         XVOzRhUJOVqfpD0cyN+bO/a6K254tJGgsDYc68v2fw/foLQcCsBPDVchcsBjAiOIthVO
+         Sub+dJ/nfGrx4Ih5uW+QTIwIdLXbfkvDDGGF71FF2QekZk6cis/VaMd/kz3agQbz9Kc8
+         JHmnA/+XcAci+M5eMZ4hCpZd0AgONSUUZU1Vd24enqUEmBTqLbz9vQ6UETyOvD7qG35o
+         0i0JKsmveQ0jIoyO7YttX3v/bg8O/XkIiU6qPyB7x7CS+fL1s48AxgUE+4bqNlc1pDNH
+         e0Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781532911; x=1782137711;
+        d=1e100.net; s=20251104; t=1781534254; x=1782139054;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
-        b=n2lCAKzTOhuIrYTrwHCr8SA80ZF6TDW2l9lqiJtX+Suc/NxUbRYcPWVe3ghIWNC8by
-         qEyVz4VofdJ9Xyz1W4UGZhuw3Yhxf/NcUIPNaavdaZvGr6QsmYeF1H7hSv7i3k+HFgTE
-         q+EuQcmzIUtrs/1JHJgw7tEPrXqHXAaeF97PWI8442O0W3fv2m7ANxVM59+zI7/Xg5Xg
-         aVB/6g/YzFFgcphbB2lhvKf9FCo/HOdVahPMTQ+baY+ZKA+VRE7lgMH9B+1BCC0dpHk7
-         FmJ0N8N8xaGi+ApOXTG67o19UX/jL2kuEJvqzEBhL3FLedcPESKOQD4A44B7aezE3GqC
-         3J5A==
-X-Forwarded-Encrypted: i=1; AFNElJ/jmQQCaAQh6Pwlnp1nAr210AJzIASH6OYZUfDMEuor1n0mECILeF6IJRJiJ4kaUouLp4Ec59DuUL25A3s9r3D+gQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTqAKZINHwIoa/qU5pGDWhmwtLfQDLW4ShJLhiZ1r2bXSAeCcj
-	vaQEjf06qSKgkyAvXNcjGbVabVTbhziPyWrb/D1PRsTX5vVNOTxWlwz019q4raLZFkn5a4Aj0Qv
-	Xj6vZ35VSAhmc0i2DrWYnOyg6LH823fgDqXjidS008g==
-X-Gm-Gg: Acq92OEhC70AoHM+lkaG0IQxFfYE4W4o4lJj/Lhv3tj+0RYf/bj7rWlfM1TFFfeXrRy
-	LCMl17yB/fu/T1+QbTKuImrT0ioVU47MhPFSoifWrxuubHfgJ5g+UD0v6SFeOY2iAsrXTQAnhA5
-	tClrCrqn3gfzNGEnYtpSIGevZSIV1cQ2C40Xs4ytjuPE0NhbTN3RILuaWYKRWuRzPCoTDtDbsdk
-	+hLbUuk9xz0DALAVxuH4uYpFslJu71LYktiRl9KtCrw0byB9r7yFrrhtRbbqht1LizmVwuW292y
-	3wx9CtVDwLiQtNvdCON3M06xoL4gdEz0+18wCuNzKA==
-X-Received: by 2002:a17:906:6312:b0:beb:a412:4597 with SMTP id
- a640c23a62f3a-bfe289041e9mr675217466b.16.1781532910299; Mon, 15 Jun 2026
- 07:15:10 -0700 (PDT)
+        bh=pNTgpeSODbW8fA2CiQ0TTKa3WB869mQ9r3APlwXpORg=;
+        b=MRXJlg8uJbdq1h9NjlEcjVxJHV1ilQOPlH/VuMgWOHyqwxW0YCm3Il1FwAvhjv3SXx
+         dcX8+YCokN1RDiJwJb9SKN776jTI9Q47ScVdKvp5FBQUsS0Na7E9/tIHFKphDzwlUhK7
+         LwcCg/m7zzf+fDZoA/0WAERoFSBd3Zjl/nvhyrRy9vCqYPbXQM+sT7y2mlsMe2ITz4mY
+         uXWHfjL0wKShsz2KGCw+HJguA6NSQCI/D2cSJfU0EsAnKgU52+oTw3bZbas7PueClMvO
+         89iSzLV1EV/AaEBZyTY6w0+DpDKFL48ms6pkupKx43Yz7TY+bcKb+fQBPyB8aXG7iV4q
+         NCWQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9X6RPi5imyrTcRH7JVW8NsXd8k5UpyJHOl1B61KuH8oHPcEoT1yfd8AZQtG+Btg4rCZ2gNi2w3YtxLbnvg6CGDgQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxod48jfLOenYmdk/6iIdI3CVnJFVoWpzetANSj03VUOpx5Ji9v
+	Dx6aXFdf3ibF++O0zRYvebSd3Tc2qjlfk+RQFKnl5ryMWER0D0xsVrh3rmgelE9zcsvhzBV5A3U
+	wa02cCMmJMkcrHVWlsYl13gE9nlSlzSeSPyg7nR5+lw==
+X-Gm-Gg: Acq92OGsvfxdb+uMNzp4zjfamiwuMZT1V0p65Hm4omuJ4WDJINUPAHMYn1h4d3imsJ/
+	X46djYwcSV1p8tnAVAz9sFCya+/5yEeCoHGlNC4rOWN0crD7meqjG+mTW66LSBdg+zWE+9JjM/9
+	MePeFe1GvSzZzT50J/jCWcljbzDRmqm9YOsOoNCnWl/6CSRBrcwJmeAyLMmCoaJELQ3nbZQjffy
+	oG7TDrL6H0egwJQQJBhBHW5Ddbz5G7I/ds9SC88Hp1/GWxzhpsuFr4IiF589lwX72bhs3GLL8DI
+	p1PVwVBQamEHjcZehHnYIIBxOGkGlc59lTjY95RNXA==
+X-Received: by 2002:a05:6402:3509:b0:691:b129:6374 with SMTP id
+ 4fb4d7f45d1cf-693c6bb1155mr4076869a12.20.1781534253600; Mon, 15 Jun 2026
+ 07:37:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260615083423epcas5p3acec08339e81e2d276d7953b3c6ee51a@epcas5p3.samsung.com>
- <20260615085252.1964423-1-alim.akhtar@samsung.com> <20260615085252.1964423-4-alim.akhtar@samsung.com>
-In-Reply-To: <20260615085252.1964423-4-alim.akhtar@samsung.com>
+References: <CGME20260615083428epcas5p15eb83d4d631296cf4863e330542cd7dc@epcas5p1.samsung.com>
+ <20260615085252.1964423-1-alim.akhtar@samsung.com> <20260615085252.1964423-5-alim.akhtar@samsung.com>
+In-Reply-To: <20260615085252.1964423-5-alim.akhtar@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 15 Jun 2026 15:14:58 +0100
-X-Gm-Features: AVVi8CegUODrx3rDKzc3HaHPFo8dt4vcr6ypuvp0i1NB7YLXJyBmVm30dPPOny0
-Message-ID: <CADrjBPpyNymPXtYgdeOGtp1KDkdp9gTrBAEcJR89B+wwF8uUXw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] pinctrl: samsung: Add Exynos8855 pinctrl configuration
+Date: Mon, 15 Jun 2026 15:37:21 +0100
+X-Gm-Features: AVVi8CdyAmDV3V1XLVdrgHm2SJuvGn45ObQOKAvV3zPFgvm4HNYd9FmG2O2s0Nc
+Message-ID: <CADrjBPqS=d2Q02UhdpkSxHJ-RYe-hvurB-1meurTOLoUcUidFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] arm64: dts: exynos: add initial support for
+ Samsung Exynos8855 smdk
 To: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -97,198 +98,271 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Alim,
 
-Thanks for your patch. It's great to see more Exynos SoCs being supported!
-
 On Mon, 15 Jun 2026 at 09:34, Alim Akhtar <alim.akhtar@samsung.com> wrote:
 >
-> Add pinctrl configuration for Exynos8855. The bank type
-> macros are reused from Exynos850 SoC.
+> Add initial devicetree support for Samsung smdk board using
+> Exynos8855 SoC.
+
+I think it would be worthwhile adding a more verbose description of
+the Exynos8855 SoC in the commit message e.g. a brief list of the
+major IPs on the SoC.
+
 >
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 123 ++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
->  3 files changed, 126 insertions(+)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> index fe9f92cb037e..db120ae4d847 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> @@ -943,6 +943,129 @@ const struct samsung_pinctrl_of_match_data exynos850_of_data __initconst = {
->         .num_ctrl       = ARRAY_SIZE(exynos850_pin_ctrl),
->  };
->
+[..]
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+> new file mode 100644
+> index 000000000000..f5132bcaa47c
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+> @@ -0,0 +1,32 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Samsung Exynos8855 SMDK board device tree source
+> + *
+> + * Copyright (C) 2026 Samsung Electronics Co., Ltd.
+> + *
+> + * Device tree source file for WinLink's E850-96 board which is based on
+> + * Samsung Exynos8855 SoC.
 
-Are you sure you want to use E850 pinctrl macros and not the GS101
-ones? The GS101 macros allow the fltcon offset to be specified, which
-I think is required for all Exynos9 (including e850 SoC). Youngmin
-sent a series previously
-https://lore.kernel.org/lkml/20251202093613.852109-1-youngmin.nam@samsung.com/
-fixing up some of this but it hasn't been re-spun in a while. In
-particular this patch
-https://lore.kernel.org/lkml/20251202093613.852109-4-youngmin.nam@samsung.com/.
-
-> +/* pin banks of exynos8855 pin-controller 0 (ALIVE) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks0[] __initconst = {
-> +       /* Must start with EINTG banks, ordered by EINT group number. */
-> +       EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-> +       EXYNOS850_PIN_BANK_EINTW(4, 0x020, "gpa1", 0x04),
-> +       EXYNOS850_PIN_BANK_EINTN(3, 0x040, "gpq0"),
-> +       EXYNOS850_PIN_BANK_EINTN(2, 0x060, "gpq1"),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x080, "gpc0", 0x10),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0a0, "gpc1", 0x14),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0c0, "gpc2", 0x18),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0e0, "gpc3", 0x1c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpc4", 0x20),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpc5", 0x24),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpc6", 0x28),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpc7", 0x2c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpc8", 0x30),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1a0, "gpc9", 0x34),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1c0, "gpc10", 0x38),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1e0, "gpc11", 0x3c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpc12", 0x40),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpc13", 0x44),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpc14", 0x48),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpj0", 0x4c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpj1", 0x50),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x2a0, "gpj2", 0x54),
-> +};
-> +
-> +/* pin banks of exynos8855 pin-controller 1 (CMGP) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks1[] __initconst = {
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x00,  "gpm0",  0x00),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x20,  "gpm1",  0x04),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x40,  "gpm2",  0x08),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x60,  "gpm3",  0x0c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x80,  "gpm4",  0x10),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0xa0,  "gpm5",  0x14),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0xc0,  "gpm6",  0x18),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0xe0,  "gpm7",  0x1c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpm8",  0x20),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpm9",  0x24),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpm10", 0x28),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpm11", 0x2c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpm12", 0x30),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1a0, "gpm13", 0x34),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1c0, "gpm14", 0x38),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1e0, "gpm15", 0x3c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpm16", 0x40),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpm17", 0x44),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpm18", 0x48),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpm19", 0x4c),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpm20", 0x50),
-> +       EXYNOS850_PIN_BANK_EINTW(1, 0x2a0, "gpm21", 0x54),
-> +};
-> +
-> +
-> +/* pin banks of exynos8855 pin-controller 2 (HSI UFS) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks2[] __initconst = {
-> +       EXYNOS850_PIN_BANK_EINTG(2, 0x0, "gpf3", 0x00),
-> +};
-> +
-> +/* pin banks of exynos8855 pin-controller 3 (PERIC) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks3[] __initconst = {
-> +       EXYNOS850_PIN_BANK_EINTG(8, 0x0,   "gpp0", 0x00),
-> +       EXYNOS850_PIN_BANK_EINTG(8, 0x20,  "gpp1", 0x04),
-> +       EXYNOS850_PIN_BANK_EINTG(6, 0x40,  "gpp2", 0x08),
-> +       EXYNOS850_PIN_BANK_EINTG(4, 0x60,  "gpg0", 0x0c),
-> +       EXYNOS850_PIN_BANK_EINTG(3, 0x80,  "gpg1", 0x10),
-> +       EXYNOS850_PIN_BANK_EINTG(6, 0xa0,  "gpb0", 0x14),
-> +       EXYNOS850_PIN_BANK_EINTG(4, 0xc0,  "gpb1", 0x18),
-> +};
-> +
-> +/* pin banks of exynos8855 pin-controller 4 (PERICMMC) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks4[] __initconst = {
-> +       EXYNOS850_PIN_BANK_EINTG(7, 0x0, "gpf2", 0x00),
-> +};
-> +
-> +/* pin banks of exynos8855 pin-controller 5 (USI) */
-> +static const struct samsung_pin_bank_data exynos8855_pin_banks5[] __initconst = {
-> +       EXYNOS850_PIN_BANK_EINTG(8, 0x00, "gpp3", 0x00),
-> +       EXYNOS850_PIN_BANK_EINTG(2, 0x20, "gpp4", 0x04),
-> +       EXYNOS850_PIN_BANK_EINTG(2, 0x40, "gpg2", 0x08),
-> +       EXYNOS850_PIN_BANK_EINTG(1, 0x60, "gpg3", 0x0c),
-> +};
-> +
-> +static const struct samsung_pin_ctrl exynos8855_pin_ctrl[] __initconst = {
-> +       {
-> +               /* pin-controller instance 0 ALIVE data */
-> +               .pin_banks      = exynos8855_pin_banks0,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks0),
-> +               .eint_wkup_init = exynos_eint_wkup_init,
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-
-With fltcon_offset specified, you could then use
-gs101_pinctrl_suspend/gs101_pinctrl_resume callbacks here.
+E850-96 isn't based on the Exynos8855 SoC. I guess it's leftover from
+a copy/paste.
 
 regards,
 
-Peter.
+Peter
 
 
-> +               /* pin-controller instance 1 CMGP data */
-> +               .pin_banks      = exynos8855_pin_banks1,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks1),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-> +               /* pin-controller instance 2 HSI UFS data */
-> +               .pin_banks      = exynos8855_pin_banks2,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks2),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-> +               /* pin-controller instance 3 PERIC data */
-> +               .pin_banks      = exynos8855_pin_banks3,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks3),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-> +               /* pin-controller instance 4 PERICMMC data */
-> +               .pin_banks      = exynos8855_pin_banks4,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks4),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-> +               /* pin-controller instance 5 USI data */
-> +               .pin_banks      = exynos8855_pin_banks5,
-> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks5),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
-> +       },
+
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "exynos8855.dtsi"
+> +
+> +/ {
+> +       model = "Samsung Exynos8855 SMDK board";
+> +       compatible = "samsung,exynos8855-smdk","samsung,exynos8855";
+> +
+> +       chosen {
+> +       };
+> +
+> +       memory@80000000 {
+> +               device_type = "memory";
+> +               reg = <0x0 0x80000000 0x80000000>;
+> +       };
+> +
 > +};
 > +
-> +const struct samsung_pinctrl_of_match_data exynos8855_of_data __initconst = {
-> +       .ctrl           = exynos8855_pin_ctrl,
-> +       .num_ctrl       = ARRAY_SIZE(exynos8855_pin_ctrl),
+> +&oscclk {
+> +       clock-frequency = <76800000>;
 > +};
 > +
->  /* pin banks of exynos990 pin-controller 0 (ALIVE) */
->  static struct samsung_pin_bank_data exynos990_pin_banks0[] = {
->         /* Must start with EINTG banks, ordered by EINT group number. */
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 5ac6f6b02327..5ecc9ed4c44d 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1500,6 +1500,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
->                 .data = &exynos7885_of_data },
->         { .compatible = "samsung,exynos850-pinctrl",
->                 .data = &exynos850_of_data },
-> +       { .compatible = "samsung,exynos8855-pinctrl",
-> +               .data = &exynos8855_of_data },
->         { .compatible = "samsung,exynos8890-pinctrl",
->                 .data = &exynos8890_of_data },
->         { .compatible = "samsung,exynos8895-pinctrl",
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> index 937600430a6e..bb02fb49b2af 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -396,6 +396,7 @@ extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos7870_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos7885_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
-> +extern const struct samsung_pinctrl_of_match_data exynos8855_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos8890_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos8895_of_data;
->  extern const struct samsung_pinctrl_of_match_data exynos9610_of_data;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> new file mode 100644
+> index 000000000000..d403f41bbecb
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> @@ -0,0 +1,199 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Samsung Exynos8855 SoC device tree source
+> + *
+> + * Copyright (C) 2023 Samsung Electronics Co., Ltd.
+> + *
+> + * Samsung Exynos8855 SoC device nodes are listed in this file.
+> + * Exynos8855 based board files can include this file and provide
+> + * values for board specific bindings.
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +/ {
+> +       compatible = "samsung,exynos8855";
+> +       #address-cells = <2>;
+> +       #size-cells = <1>;
+> +
+> +       interrupt-parent = <&gic>;
+> +
+> +       aliases {
+> +               pinctrl0 = &pinctrl_alive;
+> +               pinctrl1 = &pinctrl_cmgp;
+> +               pinctrl2 = &pinctrl_hsi_ufs;
+> +               pinctrl3 = &pinctrl_peric;
+> +               pinctrl4 = &pinctrl_pericmmc;
+> +               pinctrl5 = &pinctrl_usi;
+> +       };
+> +
+> +       oscclk: clock-oscclk {
+> +               compatible = "fixed-clock";
+> +               clock-output-names = "oscclk";
+> +               #clock-cells = <0>;
+> +       };
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu-map {
+> +                       cluster0 {
+> +                               core0 {
+> +                                       cpu = <&cpu0>;
+> +                               };
+> +                               core1 {
+> +                                       cpu = <&cpu1>;
+> +                               };
+> +                               core2 {
+> +                                       cpu = <&cpu2>;
+> +                               };
+> +                               core3 {
+> +                                       cpu = <&cpu3>;
+> +                               };
+> +                       };
+> +
+> +                       cluster1 {
+> +                               core0 {
+> +                                       cpu = <&cpu4>;
+> +                               };
+> +                               core1 {
+> +                                       cpu = <&cpu5>;
+> +                               };
+> +                               core2 {
+> +                                       cpu = <&cpu6>;
+> +                               };
+> +                       };
+> +
+> +                       cluster2 {
+> +                               core0 {
+> +                                       cpu = <&cpu7>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +               cpu0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a520";
+> +                       reg = <0x0>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu1: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a520";
+> +                       reg = <0x100>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu2: cpu@200 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a520";
+> +                       reg = <0x200>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu3: cpu@300 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a520";
+> +                       reg = <0x300>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu4: cpu@400 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a720";
+> +                       reg = <0x400>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu5: cpu@500 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a720";
+> +                       reg = <0x500>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu6: cpu@600 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a720";
+> +                       reg = <0x600>;
+> +                       enable-method = "psci";
+> +               };
+> +
+> +               cpu7: cpu@700 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a720";
+> +                       reg = <0x700>;
+> +                       enable-method = "psci";
+> +               };
+> +       };
+> +
+> +       psci {
+> +               compatible = "arm,psci-1.0";
+> +               method = "smc";
+> +       };
+> +
+> +       soc: soc@0 {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x0 0x0 0x20000000>;
+> +
+> +               gic: interrupt-controller@10200000 {
+> +                       compatible = "arm,gic-v3";
+> +                       #interrupt-cells = <3>;
+> +                       interrupt-controller;
+> +                       reg = <0x10200000 0x10000>,
+> +                             <0x10240000 0x140000>;
+> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +               };
+> +
+> +               pinctrl_alive: pinctrl@11850000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x11850000 0x1000>;
+> +
+> +                       wakeup-interrupt-controller {
+> +                               compatible = "samsung,exynos850-wakeup-eint",
+> +                                            "samsung,exynos7-wakeup-eint";
+> +                       };
+> +               };
+> +
+> +               pinctrl_cmgp: pinctrl@12030000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x12030000 0x1000>;
+> +               };
+> +
+> +               pinctrl_usi: pinctrl@15030000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x15030000 0x1000>;
+> +               };
+> +
+> +               pinctrl_peric: pinctrl@15440000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x15440000 0x1000>;
+> +               };
+> +
+> +               pinctrl_pericmmc: pinctrl@154f0000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x154f0000 0x1000>;
+> +               };
+> +
+> +               pinctrl_hsi_ufs: pinctrl@17040000 {
+> +                       compatible = "samsung,exynos8855-pinctrl";
+> +                       reg = <0x17040000 0x1000>;
+> +               };
+> +       };
+> +
+> +       timer {
+> +               compatible = "arm,armv8-timer";
+> +               /* Hypervisor Virtual Timer interrupt is not wired to GIC */
+> +               interrupts =
+> +                    <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                    <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                    <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> +                    <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> +       };
+> +};
+> +
+> +#include "exynos8855-pinctrl.dtsi"
 > --
 > 2.34.1
 >
