@@ -1,165 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D733BE65F;
-	Mon, 15 Jun 2026 08:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BAD3939BF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 08:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781511425; cv=none; b=Z+K7XO+Z41mRU+wkoVjHQOUk44MZ/fW+Sx5Ata5boarh/fBG+kLbkfPk3Qnw5ZX4bzjvuHTOH9MuZalMxvimKwZuQixGefj2lYdMjaThqTTeTmoqRSF4jMmQTGxNS1WJXicW8niu/sRYaQaSYiMR5SUFDzmw04eUOU9VfdsScOY=
+	t=1781512463; cv=none; b=qYOaSgy8d4TwKe3Z7ee/+VmpK2mILrK4GpzBYgbg1aAmcPkswKjINSNcFYRj995QkSE8Q0ikbdSjJZe8GleC/O1Aiayegt/Ji6VaZp3iBBcOXyUZGzip/IR/E9AZt8ZAzngIehw1HHbMFTNWIBL8sVSeMMElutBBcObuekhVudQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781511425; c=relaxed/simple;
-	bh=8eyhlRIj8sWtROsfnlZnpmAb9R6mFe7bid6T9bEOvC8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Wkm9aVikMGQ+d6nWAOHHAQP00OESj8IkU08wvQ1/+qrfzGGhlq4//ySpDsnJUI3+kxqx6P2hn2LjUivHwLilzg9xsA/vWIXAjVvn/lr91pIc2OS57osXZG8N2owKeKQ+j6guJKnc5TUS6YYxbl8lQFxS/OlxCckGITJ2kRdmUfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Biu4IkOD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781512463; c=relaxed/simple;
+	bh=B85cMPOr49iZ1u4+mhMX5r28Vr9uQa+N5lyLQI6PLjU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=DQbfkZtgCMt9qCm4ICcJG7rN+WButCfkov5cQiULjdioA7TBVDd9KG73lW/3JiNpVdIz/gNYofydOod31rQAEC85Z70wK7THwLzpibEL4ovk0/9EQ4+vFxbzv+dvJVnidlMir/QvRq98I3s8JN3WrehOQgMeSCh87H+18Y2qQWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XqJoLJhD; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Biu4IkOD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 721151F000E9;
-	Mon, 15 Jun 2026 08:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781511423;
-	bh=aH0o7nWDQT6KV9saGoM0jvsLIafJzmaBf4bhSqCtANs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=Biu4IkODwpBcr+U/99U7lwrDVYfvGocIpBerQgK4X95YFyOYeuSbM4KdwZr7cJROz
-	 gjlLH2yHFHfG3uy67alqdVM8q+vJSHXnz8ayg6fs7SbMmwomyIOtbJf1ncaiO7lL1a
-	 i6E7yoqDShUBJO8DzW2JqMB4pg7CoCLUqDn3SksGMoc51hXpwKuuwpAHkG+e4uRNFM
-	 UePo4g6fts7bkpyCuFfikeZsjRX4u19b+VmUp24A6JH01cXUUa0k/xih+TKiL4SmVs
-	 braHK3PxxAf477vEg8VyeudilrdcpJhw/JOInESoNaVnMYFw+ByQN/9y4wAfPfNyEt
-	 1N4S659lRqCrw==
-Message-ID: <419fe57b-fed0-411d-8bd6-eb452e767784@kernel.org>
-Date: Mon, 15 Jun 2026 10:16:57 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XqJoLJhD"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260615083412epoutp023306949f9db0605e1bdbbe3c0fb499d5~5NCMEL4Rc1918719187epoutp029
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 08:34:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260615083412epoutp023306949f9db0605e1bdbbe3c0fb499d5~5NCMEL4Rc1918719187epoutp029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1781512452;
+	bh=KhuMmUqphIgaaYpgdXDk7UgsJLLox2AR9vG8/O3XcIo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=XqJoLJhDknqHNRQoxcO4cBtnqVX0xue4seMl7LGkXlPCuJp1bX6D00CZjvZRik4Ei
+	 KJOOWRof5OVoAYspgPycdwJ93TE0SdZZQqoJXQbfF6mRVK5RNhtCEAPJfXgcvEJxjl
+	 nwkwXeRE5nMto5ODNUeLTP1Lp9Xerxr0nY+9YD8g=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260615083411epcas5p134cd104d32ea19b3d8fdc1c46732225c~5NCLeco3l2849128491epcas5p1W;
+	Mon, 15 Jun 2026 08:34:11 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4gf3Lp731sz6B9m7; Mon, 15 Jun
+	2026 08:34:10 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260615083410epcas5p162d288f0bb2431bdd3653011d7a72688~5NCKJndSz1417414174epcas5p18;
+	Mon, 15 Jun 2026 08:34:10 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260615083408epsmtip17cc8b873406b8d5dd19aaedf37ea0d44~5NCIjrR770235602356epsmtip1c;
+	Mon, 15 Jun 2026 08:34:08 +0000 (GMT)
+From: Alim Akhtar <alim.akhtar@samsung.com>
+To: krzk@kernel.org, peter.griffin@linaro.org, robh@kernel.org,
+	conor+dt@kernel.org, linusw@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	hajun.sung@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v2 0/5] Add minimal Exynos8855 SoC support
+Date: Mon, 15 Jun 2026 14:22:47 +0530
+Message-Id: <20260615085252.1964423-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] MAINTAINERS: Add entry for Samsung Exynos8855 SoC
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 'Linus Walleij' <linusw@kernel.org>
-Cc: peter.griffin@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- hajun.sung@samsung.com
-References: <CGME20260612161148epcas5p33904df90bd840d20a6db05622aaa28b8@epcas5p3.samsung.com>
- <20260612163020.411761-1-alim.akhtar@samsung.com>
- <20260612163020.411761-6-alim.akhtar@samsung.com>
- <CAD++jL=mQUJCqVyqK746UdkZCsO+2oeO1MCQM4F-_pSOfpuQuA@mail.gmail.com>
- <007a01dcfc9d$aa94dd60$ffbe9820$@samsung.com>
- <0aa74645-d99d-4776-b3e6-e74fc0528f11@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <0aa74645-d99d-4776-b3e6-e74fc0528f11@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260615083410epcas5p162d288f0bb2431bdd3653011d7a72688
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260615083410epcas5p162d288f0bb2431bdd3653011d7a72688
+References: <CGME20260615083410epcas5p162d288f0bb2431bdd3653011d7a72688@epcas5p1.samsung.com>
 
-On 15/06/2026 10:12, Krzysztof Kozlowski wrote:
-> On 15/06/2026 10:04, Alim Akhtar wrote:
->> Thanks Linus for your review
->>
->>> -----Original Message-----
->>> From: Linus Walleij <linusw@kernel.org>
->>> Sent: Monday, June 15, 2026 12:51 PM
->>> To: Alim Akhtar <alim.akhtar@samsung.com>
->>> Cc: krzk@kernel.org; peter.griffin@linaro.org; robh@kernel.org;
->>> conor+dt@kernel.org; linux-samsung-soc@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
->>> gpio@vger.kernel.org; hajun.sung@samsung.com
->>> Subject: Re: [PATCH 5/5] MAINTAINERS: Add entry for Samsung Exynos8855
->>> SoC
->>>
->>> Hi Alim,
->>>
->>> On Fri, Jun 12, 2026 at 6:11 PM Alim Akhtar <alim.akhtar@samsung.com>
->>> wrote:
->>>
->>>> Add maintainers entry for the Samsung Exynos8855 SoC based platforms
->>>>
->>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> (...)
->>>> +SAMSUNG EXYNOS8855 SoC SUPPORT
->>>> +M:     Alim Akhtar <alim.akhtar@samsung.com>
->>>> +L:     linux-arm-kernel@lists.infradead.org (moderated for non-
->>> subscribers)
->>>> +L:     linux-samsung-soc@vger.kernel.org
->>>> +S:     Maintained
->>>> +F:     arch/arm64/boot/dts/exynos/exynos8855*
->>>
->>> If you really want to single out a single platform like this (and I don't even
->>> know if that is a good idea... how do you keep the big picture in mind?) you
->>> should probably want to also add a wildcard for all the
->>> 8855 device tree files.
->>>
->> I am also not sure, just followed what was done historically, other Exynos8855 file will get added once they
->> are posted for review, e.g. clock driver.
->> Let me discuss with Krzk during OSS (Mumbai) and see how do we handle this or any other better ways.
->>
-> 
-> You are Alim already reviewer for entire Samsung, so not sure if this is
-> beneficial but I also do not mind.
-> 
-> For Exynos850 and Google GS101, these were added because folks wanted to
-> be involved in these specific bits. In the past I was voting for per-DTS
-> file maintainer entry and rejecting per-board maintainer entries. There
+This series adds initial support for the Exynos8855 SoC and also
+initial SMDK board support. 
 
-Lemme clarify: "voting for in-DTS file maintainer entry", so like we
-have for DT bindings, which lists maintainers.
+Exynos8855 is octa-core CPUs, a combination of Cortex-A720 and Cortex-A520,
+arranged in 3 clusters. And other peripheral for mobile application.
 
-> was even get_maintainers.pl patch doing that. Unfortunately after many
-> tries that patch eventually did not land and I got bored bringing it up,
-> thus I agreed to earlier NXP approach for per-board or per-SoC maintainers.
-> 
-> I would like to encourage more people doing meaningful reviews, so if
-> having maintainers entry helps that, then I am in.
-> 
-> Therefore I am fine with this patch as is.
-> 
-> Best regards,
-> Krzysztof
+This initial support consists of CPUs, pinctrl and related nodes
+needed for initial kernel boot.
+
+With these patches, kernel can boot using initramfs till file system mounts.
+
+More platform support will be added in near future, clock driver to go next.
+
+Chanegs since v1:
+* Fixed some of the review comments by Sashiko [1]
+* Dropped serial node, will be added once clock support is available
+* Dropped wkup interrupt for CMGP block, will be added later
+
+Link of v1:
+https://lore.kernel.org/linux-samsung-soc/20260612163020.411761-1-alim.akhtar@samsung.com/
+
+[1] https://sashiko.dev/#/patchset/20260612163020.411761-1-alim.akhtar@samsung.com?part=4
+
+Alim Akhtar (5):
+  dt-binding: ARM: samsung: Add Samsung Exynos8855
+  dt-binding: pinctrl: samsung: Add exynos8855-pinctrl compatible
+  pinctrl: samsung: Add Exynos8855 pinctrl configuration
+  arm64: dts: exynos: add initial support for Samsung Exynos8855 smdk
+  MAINTAINERS: Add entry for Samsung Exynos8855 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |   1 +
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../boot/dts/exynos/exynos8855-pinctrl.dtsi   | 581 ++++++++++++++++++
+ .../arm64/boot/dts/exynos/exynos8855-smdk.dts |  32 +
+ arch/arm64/boot/dts/exynos/exynos8855.dtsi    | 199 ++++++
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 123 ++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+ 10 files changed, 953 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
 
 
-Best regards,
-Krzysztof
+base-commit: b99ae45861eccff1e1d8c7b05a13650be805d437
+-- 
+2.34.1
+
