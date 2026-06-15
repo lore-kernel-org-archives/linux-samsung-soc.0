@@ -1,240 +1,294 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8357F1990C7;
-	Mon, 15 Jun 2026 13:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.44
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781531657; cv=fail; b=uYDaLMkfgJe7tSWlw4f9+tO56Zn5EiqClHv32O2MwD8iJjO7TYb4+Cu1n0hF1kkMlIjfEDaqDAC+kfPgx8VnFcdJ5+KzAOSvVRE5qe2OggI5spnkUKnQJSuijjDrXx+BUIV0953g/5YjK++XKZ9V3UmKLKG8tDxlxKizU9sGrjg=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781531657; c=relaxed/simple;
-	bh=XtvDuv2M1NoihPZDyoYcECxjyFpKc5lJe/+MCDa+s/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OLtIn+u5gkwnKyQdzA/vb2qAkU1pUOM6XAjvCz6yiT13WUZb1sQgy25/dywjGGNMysrrgyjLKmMsmPR/ZPBkn+4kPEf9qf31YjRE9eSR61iOgwdJSnzg0igJob9tlIjqy5FPufUuzGvP1Murf3it3a0eaE7A7E2QSdtjqA9Rf+s=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=igzhS2uF; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=igzhS2uF; arc=fail smtp.client-ip=52.101.66.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B113F5BCF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 14:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781532913; cv=pass; b=luzaVJMWmlawsnFoWT+AUxSoX7zaPsZcIpNOENUzaqG8FdnrMSI5S09DABP1TJT8ufLykYvROyb/zkhSEuDKkWNSTp/3Ai0p2iiKVXCEnePCfJ7lsU1JWWyzWzAV0xIiCeV8h6coPPkSmSr8mspYQKqA8E51MEDJFi8LBgm2fKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781532913; c=relaxed/simple;
+	bh=xTYJTF9WX1tkILvQ4OfNPiOZwQsAyO+hC34NdNlz0q4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tov865MUsyQCiSMlSbGOTxLGcnkAX4iz9LnJnNuC/ewxhmpCrWEsRGx1N/rVfIJQfS+OrrsMZT2tdpO/n7V90wYiptAccO1lYYH7hF0k6cz/IfrgzjZ9SOQy8c0nKEWXmDR+glw7FE6jF8EgmkB0G8lisx4S9VVYrfoTjfAnJEE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rENLb8Dx; arc=pass smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="igzhS2uF";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="igzhS2uF"
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=dyhp5lhJi5oRvXgY2mS9++jvxsSaguibiBOWfuUjRJz2n85TIE0ird/JMEcMn3/+s3Pt62JumMHzeZEUQJB3lAwRAeTcIt7A8KEIJ9rL2p1kTH94nt96O0XV4SzcwbooYX8D8O9VjtlISavdKlN2tlPTcIo1QLKpYxJUdyHjuEjt/qe8NiNj9ACjgiRvsbf4kokio2DI1fPWc0R0WzOIlgRBRqsXDJDfvjkMIX15qeMe1YqSQahM3IXcBERuT3iRIaKabUGgKVZ6TACsLHZ0D/ZwPhJMK8hw+exsjOMsiDAQC2v4ABYoRR0NKBK4XS6dBC6KYUQx4/n3imq4rVY7Cg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oo6Q4HHlGvWeSV5TqH0kN84+1wSYdj1XJq3bOkF2cOQ=;
- b=hQAz7PAFryn/Jt3YrPyfeg+7un6yAr8YP1idOQolmd0jPP97rnRy8OSu+CUGOh43X4L9gsKvggmPMSw8mjpclwboBgLdNc1SDzExOGqi2kk+tWA7FhQAo5b960XsKliNZu4UuLlD2jQ1H5vid+MxGYX1TF+81NWVUDh9R4voZcRM3hC7kUewQzjepwHKx5KeAxs9MzcY0LKj7c6JUDsb6UiyqV/u8FCid6DZ0d0OFzTm2WrjtP0E9s3J1ALpZNCkjUNki58IJ6C3LL3VK/zgAomjJ/6VMt37iqnNByqGN192WjIuG74fG70BeKS/omUvps3J9vGMoRLg8jP2F/NOyA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oo6Q4HHlGvWeSV5TqH0kN84+1wSYdj1XJq3bOkF2cOQ=;
- b=igzhS2uF3gPTNhsfdAh1ZDRmbkqO1xdnFJJb8quzraNRvKLphYORRFK02vcRf6dCV4Bmsv80gFlQ1pQDV7QyhkboBsp1bH6u5+nYPuNYpk53yvm43Tx+kaSJUGONKKYCSwwWf4ROJgF9RxCXutqx9Uv83ByF4JuSdCiCoeq0Zy4=
-Received: from AM8P190CA0022.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:219::27)
- by DU5PR08MB10609.eurprd08.prod.outlook.com (2603:10a6:10:518::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
- 2026 13:54:07 +0000
-Received: from AMS0EPF000001A3.eurprd05.prod.outlook.com
- (2603:10a6:20b:219:cafe::98) by AM8P190CA0022.outlook.office365.com
- (2603:10a6:20b:219::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.18 via Frontend Transport; Mon,
- 15 Jun 2026 13:54:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AMS0EPF000001A3.mail.protection.outlook.com (10.167.16.228) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.8
- via Frontend Transport; Mon, 15 Jun 2026 13:54:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sCLOQcB+rNMYXSziQRgAQjudyxmLntg7Pj8uzh3VT3RMujgNx10khP6MAyu/DH8oUycTpqhTc/trGkHPHTGzEyCS156Esp04c109QMKrs56/pNO9GxgJwhw1DQAgXP7FVJEvx5+Yf/6tLaHtVWkreuPfAPq6vqFI2/BgulsJBeRAe24dYb5myKLu2/OwsvQCHSsdFoLs+0PM754XxAE7tOpBtz3ZINyh+5chaxTxGUz8QR3hqrVH8XocslvYdneO8eVJ2oU+PLCb7qxLdwaC+2mTNrk0W/R7xeLm5jphlKhkXWq/zGb9wQV5358zndVZxIqdMj8KGeZsDIWbR5imXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oo6Q4HHlGvWeSV5TqH0kN84+1wSYdj1XJq3bOkF2cOQ=;
- b=nFTUQzsiFXC8eIIX5zeqXkpQH7oMCAVNn9SI6Kfkko/khN+lb6DdF0CW6gU2JPFYOkboF9dVOpUZFW9AzvMRiz7Sg9juCymYph0qndGYHrCwlqR3lPP+m/Ql5crY/nLi3GE80lnBlkfvVv9zV///ikfMYdkd0HnbLJR7YzgLZr4APWf+xIE4YxpdgbP5hRNS9+OGQxCCYeLrwmO/sb3i2+QFEg0x5M3WCVSuG5G80uB7rTzG4OeaUc7RxvsHhxVjESzpyc2fOKrBQPNweMM9YjpLt+wNirxspnWxkVwTjqVYiuZAJzFNfEw28x+6KwUMNVC5ibTTKHgGc0aZJ2vZ5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oo6Q4HHlGvWeSV5TqH0kN84+1wSYdj1XJq3bOkF2cOQ=;
- b=igzhS2uF3gPTNhsfdAh1ZDRmbkqO1xdnFJJb8quzraNRvKLphYORRFK02vcRf6dCV4Bmsv80gFlQ1pQDV7QyhkboBsp1bH6u5+nYPuNYpk53yvm43Tx+kaSJUGONKKYCSwwWf4ROJgF9RxCXutqx9Uv83ByF4JuSdCiCoeq0Zy4=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10) by AS8PR08MB6007.eurprd08.prod.outlook.com
- (2603:10a6:20b:29e::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
- 2026 13:53:03 +0000
-Received: from GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04]) by GV1PR08MB10455.eurprd08.prod.outlook.com
- ([fe80::af66:6019:a08:d04%4]) with mapi id 15.21.0113.015; Mon, 15 Jun 2026
- 13:53:03 +0000
-From: Bence Csokas <bence.csokas@arm.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Bence Csokas <bence.csokas@arm.com>,
-	Daniel Kiss <Daniel.Kiss@arm.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Subject: [PATCH resend] drm: uapi: Add macro for chipset specific event ID region
-Date: Mon, 15 Jun 2026 15:52:36 +0200
-Message-ID: <20260615135238.564424-1-bence.csokas@arm.com>
-X-Mailer: git-send-email 2.54.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PA7P264CA0491.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:3dc::28) To GV1PR08MB10455.eurprd08.prod.outlook.com
- (2603:10a6:150:16f::10)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rENLb8Dx"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-bebc80100efso349022966b.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jun 2026 07:15:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781532911; cv=none;
+        d=google.com; s=arc-20240605;
+        b=ITM8Tkvb5gsjrBhvlSKXX+kdLBrp1rwkLSD7V4AomEp7Xma4dVzOCy7vm4M4OYHRjh
+         qOuqP2Yj//i2hH5T1ZBcQdBKj7BJMCduXYQNuLvDBFv5+0/8ngyt9fXEBmzBSMPn6Qao
+         CQ8rE0ySIHLGiXTDiqUs68G4fiJkKsQmvmowkCDlm9udbDyGp2GpFlCiwSAk5OajFPps
+         seSalkgRrXFhp/DOMbZWkG3oOrvUfR1fvU1XLhedxthM0G2NLr+4duoxZlS1USU86V6k
+         0ShWIky66h/993KCmKt03OQBNtJBYmYKo4rOBd7XMU4Beo3O0qGIWs8e2PFTeZT6EESc
+         GCFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
+        fh=qclPCs23oyTOI5er0cguGBTexZeGLSRNBCXfsao9t0Y=;
+        b=IDplco75gvGaYuPdXpdyJEgXPXiePnci0UdOCxQ/4PMS3Zb++0cN3nEq+vgtYuCfHS
+         xYg2si9GBJ1jEB2d55VVCqE9tLNNYesjnw7JwIFYgUegRxviSHCSCYSkK65B3PFYm0NL
+         V5S+n05uldF+NwDbVqAW3ET038HKY1WMT60kVlUOxwjwEjDtzwO+FOn114L/9JKvQ8dA
+         2RjuxIs4oPgCdZhO7/s+8ixAILVyM0izYh8l5d882rdDg07Tz9l22sEq8C3A6hf5+QN5
+         i47FwU5rw1HpSqYfkYvdh0u+tX4sGLDc7CBYedjtM8uwbhvaqov5EtBI6KwQCZh9ZBS0
+         DNnw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1781532911; x=1782137711; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
+        b=rENLb8DxHg2dzAUvz70MPXSyXBkXXW6Sf13TbnWsNM8nXkt2iBxULOAU290i187Mxu
+         B7G+0xJy7bgu4JMWJXdcp2qzInwd158sAog+xjFPHBYISoPyJIAEpTLeau0vN+VHOOWn
+         x0enV73x89V2u4TPa5CgVA/T4o2fh0b28cWzB2T6p8kXdCZlGZnY1nfGdwVan40zF9Ww
+         dF1CosTJQmUIzOTBoC7U4J1p+HrtXjIppibeo3eoJ2ByQwUEOOTOVvhmqI0VMUIU85+r
+         myA4yCXosgJAIjLa4pVqqGYv36ymZhDpPr6nAr7S/i5zzx/ylLOrE2/9w5jH9Ph6io86
+         klzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781532911; x=1782137711;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nVryjK2DM4sA5w3mh6UPqm7isJZnfv1jNZ8fuuEu1pk=;
+        b=n2lCAKzTOhuIrYTrwHCr8SA80ZF6TDW2l9lqiJtX+Suc/NxUbRYcPWVe3ghIWNC8by
+         qEyVz4VofdJ9Xyz1W4UGZhuw3Yhxf/NcUIPNaavdaZvGr6QsmYeF1H7hSv7i3k+HFgTE
+         q+EuQcmzIUtrs/1JHJgw7tEPrXqHXAaeF97PWI8442O0W3fv2m7ANxVM59+zI7/Xg5Xg
+         aVB/6g/YzFFgcphbB2lhvKf9FCo/HOdVahPMTQ+baY+ZKA+VRE7lgMH9B+1BCC0dpHk7
+         FmJ0N8N8xaGi+ApOXTG67o19UX/jL2kuEJvqzEBhL3FLedcPESKOQD4A44B7aezE3GqC
+         3J5A==
+X-Forwarded-Encrypted: i=1; AFNElJ/jmQQCaAQh6Pwlnp1nAr210AJzIASH6OYZUfDMEuor1n0mECILeF6IJRJiJ4kaUouLp4Ec59DuUL25A3s9r3D+gQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTqAKZINHwIoa/qU5pGDWhmwtLfQDLW4ShJLhiZ1r2bXSAeCcj
+	vaQEjf06qSKgkyAvXNcjGbVabVTbhziPyWrb/D1PRsTX5vVNOTxWlwz019q4raLZFkn5a4Aj0Qv
+	Xj6vZ35VSAhmc0i2DrWYnOyg6LH823fgDqXjidS008g==
+X-Gm-Gg: Acq92OEhC70AoHM+lkaG0IQxFfYE4W4o4lJj/Lhv3tj+0RYf/bj7rWlfM1TFFfeXrRy
+	LCMl17yB/fu/T1+QbTKuImrT0ioVU47MhPFSoifWrxuubHfgJ5g+UD0v6SFeOY2iAsrXTQAnhA5
+	tClrCrqn3gfzNGEnYtpSIGevZSIV1cQ2C40Xs4ytjuPE0NhbTN3RILuaWYKRWuRzPCoTDtDbsdk
+	+hLbUuk9xz0DALAVxuH4uYpFslJu71LYktiRl9KtCrw0byB9r7yFrrhtRbbqht1LizmVwuW292y
+	3wx9CtVDwLiQtNvdCON3M06xoL4gdEz0+18wCuNzKA==
+X-Received: by 2002:a17:906:6312:b0:beb:a412:4597 with SMTP id
+ a640c23a62f3a-bfe289041e9mr675217466b.16.1781532910299; Mon, 15 Jun 2026
+ 07:15:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10455:EE_|AS8PR08MB6007:EE_|AMS0EPF000001A3:EE_|DU5PR08MB10609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 294a82b3-d89b-4be8-ddaa-08decae5909a
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|23010399003|366016|1800799024|56012099006|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info-Original:
- fZu9yS8ex0K0uvOBJnKlvGNRRn2jo9XShczsZLuMkJvbWiwFjWcP/x5aGyhWKkMvWz67AyD8tl8XyhDHutk+GZ1LkE99VPVg24YwLQqqXqvftL19/ZrPjRFTb7CBnSBHVLAZPQi7ijHrg5X3pkAm3LPWikE3TMY1hQV9MEEDZkvpGtSEvei/wUh19YHfAgNq1a4N9EwQ2urZn4+XLufoeXMKINtHIA4xEJvxLkoff4/9Pn7qEYVey6BAyABaos4LYZ49Klt8VuK5NyqTLCNu8/mzfgbl2krCI6h1YKXKCADCca07FNb0lHEAEw1YO/mArMOCLQJ2NdYTH1yiLt+pnhd7uGR6/EcZfZZIXlYwagkW0sZPcaDScfZJB4bK4BzuNQl4BsmqHulYubYy+gekLmOyhMuQISzllkU7NlVBVMDv1/SbeugbtEs2zz3BVy+ySSqhg72Hv1Hlc4nkK+OJQpxonSGXZQg4/wewX2uWZKW7M7JCqWmq5MDUWPWuZd9vJnyotuONcS2ffmSDYl2F/yWpNEs+Uk+lG1n6nvdF3NGA0MpW+GfB8eAHiM4xE7x21xJ8q3kCH6jHtIRe7dTozSXXbiclqYAUTHYT4/PG2Zwpi/PoivQiUaczVN5X9FoMqoYAeUvS3bTEuSZ/xEkJo4uPuvLMMhrVCsqLP4Hc7k/qgXH5Phc0iWIP6KlglWF3
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10455.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(23010399003)(366016)(1800799024)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-X-Exchange-RoutingPolicyChecked:
- WTTqmaJDZhm/WfepIds7e8psG8yW78X6hMh8F4lBG2Rnf4qhRzy1IjEzZcyVKYxrfvkGKFjG6vpFzMISZ5OKU4vlFVbF+pxMU0ebjaQE+VWwmfSEqCq9I/tHxsEAyyUvb4fIMGX4bzVl6BvNAOOEphkGdIhe/LzcFNlVfAJO3Mo6VTTFR/e44t/Pt1qbgA9wrTM8sHx8+sLkxfoRnr0S7ZhXMS+BQMfhvWBAbZaAS8CbkRi1ko9kPDv8p9Nl4TuVy+Q6sfToY1c8c4xrzpv15dJfLWYn4GyULaeX8i/hb7V1qimErGgxAev/n0WhVUkz0KpkVZ12TSQEZ5zsTAcp1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6007
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF000001A3.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	c57dad40-d2db-45a9-be79-08decae56b25
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|36860700016|7416014|376014|82310400026|23010399003|35042699022|1800799024|56012099006|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	3/dItL8eR5/VogiRo489vrExhnq+DCNM9PQhwwUkKOVEiLqo1a20y6QmmMKMD7bwY4WBFM2M1YgtA/cc8qDR+7aNHn50htC1kkMUHQyJttnVkpa/0QqZckuZ1Tud7yJwU3A9dqlSQAjwX7/jSoOw1RbvOZGYu1mGHoVLImKnC9LIGa1mJPWS8XdTCRrzAjVNA7fJ+T5DX8VWMpfDzz8z4g2IqiBTZ/69O7I3YnYSczvrqU7s7TC3m0sNTMV1nATB4s2lbtpXNb8+EIUEe2eSGoJ7qybQdWK9fbLdGrNUiUa8D+2ryZ8ZjNTkUJytcp7LOOWaVC+kCXtxv8dPMEJvymK9Wc87wdi5G4CQZu60RaZvIGAL3VnYtypdsGp1yLnOA5un7Zq4A5IUC6wbhERVF48lhjV12qkoYep11e6d3t+WC20tOf1939sepa0akBcWkrzj8/FxM9uEXytlgIsrsMHMuBEHAC98tA/mJgIwDjZoVlS8ec11mA5vPYtNujH1Edl4BjtPPThlpbHovw1Yp51xGxJnOirT/az769asrOsuG6Hzh9MSBho2N5MbnS9UcpkUubaVtJIkQOJA1hFvbx6ypRV5j3akR3bW9Qn+t8aoxGbXLkczriBz524KVN7A4XZdxyvVBQa1TqbeLcc/AV7noARhWKZgCAON5xskG0ABKOJBQERzP+lJfl2NAE0uvfzruVDyIeAXproIdWBZY8lWVKU+g4Fzlr2buSNjoEk=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(36860700016)(7416014)(376014)(82310400026)(23010399003)(35042699022)(1800799024)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	bYbsnOHDfsHF3tpa51QDddDnrS5ewiIqxvnZKi1sS1jAGzEjnrGVS//QmW0PoJ3V5h2Xeplj0jyjBjw41wf3pfV+lmLh+rtoXPx5yR5hqSkvzcDgGYV29XfHVrZQpQpqAPCa9CWlhzv2hmts5tztoItLDiHpXEncbdiwNfdIimVKB5soD12ZhC6m+bUGF6JyiWG8ZBXBh8i9vkktLPFMXHF7lGn34d21S1vk0MoW2+bbZgUIJiIIKT995yCZltvfQbOeMHp6bD2L2MF+fXF/+9jVQlzFyUdb0Yq83q9h8Vgf62MYeucem7s1vF3vYo5eFm5UNy35JSfFN3uI7TtYu9lrNLcgJu+3V49DAFQlnY4HmUmwyJBBoomnjKTCZ8H/cofidAwA1r7eRnlGR4QuyFZYk033bs5pcMsPLrtm6XfKUQDAEfLWnr7DiCGlkEjH
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 13:54:05.4592
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 294a82b3-d89b-4be8-ddaa-08decae5909a
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001A3.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR08MB10609
+References: <CGME20260615083423epcas5p3acec08339e81e2d276d7953b3c6ee51a@epcas5p3.samsung.com>
+ <20260615085252.1964423-1-alim.akhtar@samsung.com> <20260615085252.1964423-4-alim.akhtar@samsung.com>
+In-Reply-To: <20260615085252.1964423-4-alim.akhtar@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 15 Jun 2026 15:14:58 +0100
+X-Gm-Features: AVVi8CegUODrx3rDKzc3HaHPFo8dt4vcr6ypuvp0i1NB7YLXJyBmVm30dPPOny0
+Message-ID: <CADrjBPpyNymPXtYgdeOGtp1KDkdp9gTrBAEcJR89B+wwF8uUXw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] pinctrl: samsung: Add Exynos8855 pinctrl configuration
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	hajun.sung@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-uapi/drm/drm.h states:
+Hi Alim,
 
-    Event types 0 - 0x7fffffff are generic DRM events, 0x80000000 and
-    up are chipset specific.
+Thanks for your patch. It's great to see more Exynos SoCs being supported!
 
-However, this distinction was not put in the code. To elevate the contract
-between the generic DRM framework and the driver from the comment to code,
-put this in a macro for clarity and convenience.
+On Mon, 15 Jun 2026 at 09:34, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+> Add pinctrl configuration for Exynos8855. The bank type
+> macros are reused from Exynos850 SoC.
+>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 123 ++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
+>  3 files changed, 126 insertions(+)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> index fe9f92cb037e..db120ae4d847 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+> @@ -943,6 +943,129 @@ const struct samsung_pinctrl_of_match_data exynos850_of_data __initconst = {
+>         .num_ctrl       = ARRAY_SIZE(exynos850_pin_ctrl),
+>  };
+>
 
-Cc: Daniel Kiss <Daniel.Kiss@arm.com>
-Signed-off-by: Bence Csokas <bence.csokas@arm.com>
----
- include/uapi/drm/drm.h         | 8 ++++++++
- include/uapi/drm/exynos_drm.h  | 4 ++--
- include/uapi/drm/virtgpu_drm.h | 2 +-
- include/uapi/drm/vmwgfx_drm.h  | 2 +-
- 4 files changed, 12 insertions(+), 4 deletions(-)
+Are you sure you want to use E850 pinctrl macros and not the GS101
+ones? The GS101 macros allow the fltcon offset to be specified, which
+I think is required for all Exynos9 (including e850 SoC). Youngmin
+sent a series previously
+https://lore.kernel.org/lkml/20251202093613.852109-1-youngmin.nam@samsung.com/
+fixing up some of this but it hasn't been re-spun in a while. In
+particular this patch
+https://lore.kernel.org/lkml/20251202093613.852109-4-youngmin.nam@samsung.com/.
 
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 27cc159c1d27..aa745e643ef4 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -1419,6 +1419,14 @@ struct drm_event {
-  * The event payload is a struct drm_event_crtc_sequence.
-  */
- #define DRM_EVENT_CRTC_SEQUENCE	0x03
-+/**
-+ * DRM_EVENT_VENDOR_SPECIFIC - vendor/chipset specific event
-+ *
-+ * These event IDs are reserved for chipset and driver specific events.
-+ *
-+ * Refer to the chipset driver's header for details and payload struct.
-+ */
-+#define DRM_EVENT_VENDOR_SPECIFIC(_v) ((_v) | 0x80000000)
- 
- struct drm_event_vblank {
- 	struct drm_event base;
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index a51aa1c618c1..8d3156fb129c 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -395,8 +395,8 @@ struct drm_exynos_ioctl_ipp_commit {
- 		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
- 
- /* Exynos specific events */
--#define DRM_EXYNOS_G2D_EVENT		0x80000000
--#define DRM_EXYNOS_IPP_EVENT		0x80000002
-+#define DRM_EXYNOS_G2D_EVENT		DRM_EVENT_VENDOR_SPECIFIC(0x0)
-+#define DRM_EXYNOS_IPP_EVENT		DRM_EVENT_VENDOR_SPECIFIC(0x2)
- 
- struct drm_exynos_g2d_event {
- 	struct drm_event	base;
-diff --git a/include/uapi/drm/virtgpu_drm.h b/include/uapi/drm/virtgpu_drm.h
-index 9debb320c34b..03e8a0c7f778 100644
---- a/include/uapi/drm/virtgpu_drm.h
-+++ b/include/uapi/drm/virtgpu_drm.h
-@@ -224,7 +224,7 @@ struct drm_virtgpu_context_init {
-  * effect.  The event size is sizeof(drm_event), since there is no additional
-  * payload.
-  */
--#define VIRTGPU_EVENT_FENCE_SIGNALED 0x90000000
-+#define VIRTGPU_EVENT_FENCE_SIGNALED DRM_EVENT_VENDOR_SPECIFIC(0x10000000)
- 
- #define DRM_IOCTL_VIRTGPU_MAP \
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_MAP, struct drm_virtgpu_map)
-diff --git a/include/uapi/drm/vmwgfx_drm.h b/include/uapi/drm/vmwgfx_drm.h
-index 7d786a0cc835..5e5878384e60 100644
---- a/include/uapi/drm/vmwgfx_drm.h
-+++ b/include/uapi/drm/vmwgfx_drm.h
-@@ -715,7 +715,7 @@ struct drm_vmw_fence_arg {
- /*
-  * The event type
-  */
--#define DRM_VMW_EVENT_FENCE_SIGNALED 0x80000000
-+#define DRM_VMW_EVENT_FENCE_SIGNALED DRM_EVENT_VENDOR_SPECIFIC(0x0)
- 
- struct drm_vmw_event_fence {
- 	struct drm_event base;
+> +/* pin banks of exynos8855 pin-controller 0 (ALIVE) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks0[] __initconst = {
+> +       /* Must start with EINTG banks, ordered by EINT group number. */
+> +       EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+> +       EXYNOS850_PIN_BANK_EINTW(4, 0x020, "gpa1", 0x04),
+> +       EXYNOS850_PIN_BANK_EINTN(3, 0x040, "gpq0"),
+> +       EXYNOS850_PIN_BANK_EINTN(2, 0x060, "gpq1"),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x080, "gpc0", 0x10),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0a0, "gpc1", 0x14),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0c0, "gpc2", 0x18),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x0e0, "gpc3", 0x1c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpc4", 0x20),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpc5", 0x24),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpc6", 0x28),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpc7", 0x2c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpc8", 0x30),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1a0, "gpc9", 0x34),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1c0, "gpc10", 0x38),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1e0, "gpc11", 0x3c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpc12", 0x40),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpc13", 0x44),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpc14", 0x48),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpj0", 0x4c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpj1", 0x50),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x2a0, "gpj2", 0x54),
+> +};
+> +
+> +/* pin banks of exynos8855 pin-controller 1 (CMGP) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks1[] __initconst = {
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x00,  "gpm0",  0x00),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x20,  "gpm1",  0x04),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x40,  "gpm2",  0x08),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x60,  "gpm3",  0x0c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x80,  "gpm4",  0x10),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0xa0,  "gpm5",  0x14),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0xc0,  "gpm6",  0x18),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0xe0,  "gpm7",  0x1c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpm8",  0x20),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpm9",  0x24),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpm10", 0x28),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpm11", 0x2c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpm12", 0x30),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1a0, "gpm13", 0x34),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1c0, "gpm14", 0x38),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x1e0, "gpm15", 0x3c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpm16", 0x40),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpm17", 0x44),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpm18", 0x48),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpm19", 0x4c),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpm20", 0x50),
+> +       EXYNOS850_PIN_BANK_EINTW(1, 0x2a0, "gpm21", 0x54),
+> +};
+> +
+> +
+> +/* pin banks of exynos8855 pin-controller 2 (HSI UFS) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks2[] __initconst = {
+> +       EXYNOS850_PIN_BANK_EINTG(2, 0x0, "gpf3", 0x00),
+> +};
+> +
+> +/* pin banks of exynos8855 pin-controller 3 (PERIC) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks3[] __initconst = {
+> +       EXYNOS850_PIN_BANK_EINTG(8, 0x0,   "gpp0", 0x00),
+> +       EXYNOS850_PIN_BANK_EINTG(8, 0x20,  "gpp1", 0x04),
+> +       EXYNOS850_PIN_BANK_EINTG(6, 0x40,  "gpp2", 0x08),
+> +       EXYNOS850_PIN_BANK_EINTG(4, 0x60,  "gpg0", 0x0c),
+> +       EXYNOS850_PIN_BANK_EINTG(3, 0x80,  "gpg1", 0x10),
+> +       EXYNOS850_PIN_BANK_EINTG(6, 0xa0,  "gpb0", 0x14),
+> +       EXYNOS850_PIN_BANK_EINTG(4, 0xc0,  "gpb1", 0x18),
+> +};
+> +
+> +/* pin banks of exynos8855 pin-controller 4 (PERICMMC) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks4[] __initconst = {
+> +       EXYNOS850_PIN_BANK_EINTG(7, 0x0, "gpf2", 0x00),
+> +};
+> +
+> +/* pin banks of exynos8855 pin-controller 5 (USI) */
+> +static const struct samsung_pin_bank_data exynos8855_pin_banks5[] __initconst = {
+> +       EXYNOS850_PIN_BANK_EINTG(8, 0x00, "gpp3", 0x00),
+> +       EXYNOS850_PIN_BANK_EINTG(2, 0x20, "gpp4", 0x04),
+> +       EXYNOS850_PIN_BANK_EINTG(2, 0x40, "gpg2", 0x08),
+> +       EXYNOS850_PIN_BANK_EINTG(1, 0x60, "gpg3", 0x0c),
+> +};
+> +
+> +static const struct samsung_pin_ctrl exynos8855_pin_ctrl[] __initconst = {
+> +       {
+> +               /* pin-controller instance 0 ALIVE data */
+> +               .pin_banks      = exynos8855_pin_banks0,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks0),
+> +               .eint_wkup_init = exynos_eint_wkup_init,
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
 
-base-commit: 0e0611827f3349d0a2ac121c023a6d3260dcecdb
--- 
-2.54.0
+With fltcon_offset specified, you could then use
+gs101_pinctrl_suspend/gs101_pinctrl_resume callbacks here.
 
+regards,
+
+Peter.
+
+
+> +               /* pin-controller instance 1 CMGP data */
+> +               .pin_banks      = exynos8855_pin_banks1,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks1),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
+> +               /* pin-controller instance 2 HSI UFS data */
+> +               .pin_banks      = exynos8855_pin_banks2,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks2),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
+> +               /* pin-controller instance 3 PERIC data */
+> +               .pin_banks      = exynos8855_pin_banks3,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks3),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
+> +               /* pin-controller instance 4 PERICMMC data */
+> +               .pin_banks      = exynos8855_pin_banks4,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks4),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
+> +               /* pin-controller instance 5 USI data */
+> +               .pin_banks      = exynos8855_pin_banks5,
+> +               .nr_banks       = ARRAY_SIZE(exynos8855_pin_banks5),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+> +       },
+> +};
+> +
+> +const struct samsung_pinctrl_of_match_data exynos8855_of_data __initconst = {
+> +       .ctrl           = exynos8855_pin_ctrl,
+> +       .num_ctrl       = ARRAY_SIZE(exynos8855_pin_ctrl),
+> +};
+> +
+>  /* pin banks of exynos990 pin-controller 0 (ALIVE) */
+>  static struct samsung_pin_bank_data exynos990_pin_banks0[] = {
+>         /* Must start with EINTG banks, ordered by EINT group number. */
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 5ac6f6b02327..5ecc9ed4c44d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1500,6 +1500,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+>                 .data = &exynos7885_of_data },
+>         { .compatible = "samsung,exynos850-pinctrl",
+>                 .data = &exynos850_of_data },
+> +       { .compatible = "samsung,exynos8855-pinctrl",
+> +               .data = &exynos8855_of_data },
+>         { .compatible = "samsung,exynos8890-pinctrl",
+>                 .data = &exynos8890_of_data },
+>         { .compatible = "samsung,exynos8895-pinctrl",
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> index 937600430a6e..bb02fb49b2af 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> @@ -396,6 +396,7 @@ extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos7870_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos7885_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
+> +extern const struct samsung_pinctrl_of_match_data exynos8855_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos8890_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos8895_of_data;
+>  extern const struct samsung_pinctrl_of_match_data exynos9610_of_data;
+> --
+> 2.34.1
+>
