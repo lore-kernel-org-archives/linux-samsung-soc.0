@@ -1,112 +1,117 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73FC3B47E5;
-	Mon, 15 Jun 2026 20:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5110A35F5E6;
+	Tue, 16 Jun 2026 04:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781555239; cv=none; b=mpmUVKjNwgi4LpStSgKkERHZioplmAw1ttlC4uQodhhorX1xeWiVG5fp0n0dcD1Rhrv9LWAXnf5zhbKE5blwdlHwpHX46YUtVssgCge+wAGJisJKxK1kdG5ML4vQiJus0JQjreXbUB9bvrJK/ouqnM4lB1dm3K6u1m3OkgT8PgQ=
+	t=1781583272; cv=none; b=dP3c6yO3bx/m3J/ssfV95mzjk7sGA/NZSKoET3LjySMJXNK9TvRpzP1A5ainMp149vBCajkh+nVxhAM3peb4yjww6uudmGxS36eDkN2gfI2aUgSMmuW1wJkRXRE12yGdT2CpC/+XUCNYZKSpiUVUHh8eeuMyb60OUXmm4P8QGgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781555239; c=relaxed/simple;
-	bh=StJprQUXPLF2w+0F2m9K2mAV2YNA3SRi2UqMMHT9HXU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MCkUrMP2+g8es+YaQ7BmAYgHL5ky56hc2Voby7L1JRpCyrXGRm8mUD0pICvZokaxMhqTkfsFKzkevFAaJzA2zllyClP0PrThptwsnIVv6Napo0Jmf18TS01bWDv+zqW/n+j7ZeznIUq+OL3LZQi/laHBSC7qeS8wkqj9hVyprqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Oo96zeec; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1781583272; c=relaxed/simple;
+	bh=xxdUORxWbvErtRd31xWtGb9ULllIwe+InORzOULRTYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L3TUyvGsO+TajgG31T4OV07e3QyTuxM230qDzMEHiM0bkAg/M6KQFKrxJNZ4DxZWStlqVgBYC1iNtl/OYxQLwbPWfHaVx77ixUn4ZrQNuUQzIqeALxVyXwE3Q1JEmT/DsXhphXjYlMZRc78PirLotnZ5MV95RA6MAk7637vB25Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+7fRE/2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Oo96zeec"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 54F862745D;
-	Mon, 15 Jun 2026 22:27:17 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id V-HTUCdQRqUh; Mon, 15 Jun 2026 22:27:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1781555236; bh=StJprQUXPLF2w+0F2m9K2mAV2YNA3SRi2UqMMHT9HXU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=Oo96zeecAUWrTOD71oH/asz0aBEE+/g1nUp6b9fggQWC1INQ2f+4wvyjzxnXaFahL
-	 pQg+Oej7jWxqft57j2OntsRFW3XAF6oeWqWQFgph1TkGuSqeSduD9YKduBFOi0kjhJ
-	 V7U3wLWkr8izOy7/+Fz+k+usrygVIzTVQyC0pEGTvKgSQOrpCnUxzc3QD5px0J0aRk
-	 k915ScXKU4CIKOVpbOvdLcAQ4EzD8EfoB9t2S3S4NtKx7bJjlVTvqwyB+wqS8F/5wb
-	 W8VlYlf29vi7cUYfCRs8wYj8HYxf3hh6e+UrRKDoQxcD9o6AcC5drUrcXZGMYtXgu5
-	 XdDOnucZjml9g==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Tue, 16 Jun 2026 01:56:45 +0530
-Subject: [PATCH 3/3] leds: rgb: s2m: use multi-led node of mfd as source
- node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+7fRE/2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44521F000E9;
+	Tue, 16 Jun 2026 04:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781583270;
+	bh=yF6T44Uu+Hks9wc+cjl/ajpTObo8218Q80E0x7BrTXE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=D+7fRE/2RMD/gGabASwdhNLsuiOIaumvr7s7InRsZCW8TuoqHmlgIphRV5QiPByex
+	 Kuphajh+PyfU+clB52m3Olrl+tYKjejM18ongtls+kWrmRJx+Vf3BwtkWwzxM8wa3P
+	 BAjH2JLEc3b1etlSNzTLqlgC95MAaVW9k9ww7khiffqq0GQNnu+5WH6lSYbnxq2Xap
+	 4vl6qD1PPALRuZs35b45C8VLfTbLQ408M2kfyDXjkBkFuGECSI9dX7qEBtUIEOK4dm
+	 X9RaCXu2Mcfvmfg95OLC8AsET2BcNjU5cK5cZTgP1GDxOXn5Ouuat0QRfWuZA+swzz
+	 B+nUI8/ro+BkQ==
+Message-ID: <7dd8dcf3-5aec-442a-941e-7564936befa9@kernel.org>
+Date: Tue, 16 Jun 2026 06:14:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260616-s2mu005-pmic-supplement-v1-3-41e84518b711@disroot.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: s2mu005-pmic: reorder reg and
+ interrupts properties
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-leds@vger.kernel.org
 References: <20260616-s2mu005-pmic-supplement-v1-0-41e84518b711@disroot.org>
-In-Reply-To: <20260616-s2mu005-pmic-supplement-v1-0-41e84518b711@disroot.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-leds@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
+ <20260616-s2mu005-pmic-supplement-v1-1-41e84518b711@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260616-s2mu005-pmic-supplement-v1-1-41e84518b711@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-With the provided compatible string, the driver is able to use the
-respective node to initialize following the properties in said node.
+On 15/06/2026 22:26, Kaustabh Chakraborty wrote:
+> As per convention, and as also reiterated by maintainers [1], the
+> properties in schema is to be ordered similar to how its done in
+> devicetree sources; starting from compatible and reg. Re-order the
+> properties in this schema accordingly.
+> 
+> Link: https://lore.kernel.org/all/0240eb13-6c56-4879-8db7-b990a220a78f@kernel.org [1]
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-However, the compatible node is removed from the devicetree schema.
-Follow the same in the driver. The soruce node must be, as per schema, a
-sub-node named "multi-led" in the parent MFD node. Initialize the LED
-driver into the sub-system by fetching it from the parent node.
+Honestly, nah... I commented on v6 so you change the patch. But you were
+posting this huge patchset faster than we can review (v6 and v7 posted
+on the same day!), so v7 got applied where you did not implement the
+comments. One small posting per 24h. One big posting per 2-3 days, not
+more often.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
- drivers/leds/rgb/leds-s2m-rgb.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+There is little benefit in fixing this single file.
 
-diff --git a/drivers/leds/rgb/leds-s2m-rgb.c b/drivers/leds/rgb/leds-s2m-rgb.c
-index d239f54eee901..aa7e739213568 100644
---- a/drivers/leds/rgb/leds-s2m-rgb.c
-+++ b/drivers/leds/rgb/leds-s2m-rgb.c
-@@ -366,6 +366,7 @@ static int s2m_rgb_probe(struct platform_device *pdev)
- 	struct sec_pmic_dev *pmic_drvdata = dev_get_drvdata(dev->parent);
- 	struct s2m_rgb *rgb;
- 	struct led_init_data init_data = {};
-+	struct device_node *multi_led_node __free(device_node) = NULL;
- 	int ret;
- 
- 	rgb = devm_kzalloc(dev, sizeof(*rgb), GFP_KERNEL);
-@@ -392,7 +393,11 @@ static int s2m_rgb_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to create mutex lock\n");
- 
--	init_data.fwnode = of_fwnode_handle(dev->of_node);
-+	multi_led_node = of_get_child_by_name(dev->parent->of_node, "multi-led");
-+	if (!multi_led_node)
-+		return dev_err_probe(dev, -ENODEV, "RGB LED node required but not found\n");
-+
-+	init_data.fwnode = of_fwnode_handle(multi_led_node);
- 	ret = devm_led_classdev_multicolor_register_ext(dev, &rgb->mc, &init_data);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to create LED device\n");
-@@ -406,12 +411,6 @@ static const struct platform_device_id s2m_rgb_id_table[] = {
- };
- MODULE_DEVICE_TABLE(platform, s2m_rgb_id_table);
- 
--static const struct of_device_id s2m_rgb_of_match_table[] = {
--	{ .compatible = "samsung,s2mu005-rgb", .data = (void *)S2MU005 },
--	{ /* sentinel */ },
--};
--MODULE_DEVICE_TABLE(of, s2m_rgb_of_match_table);
--
- static struct platform_driver s2m_rgb_driver = {
- 	.driver = {
- 		.name = "s2m-rgb",
-
--- 
-2.53.0
-
+Best regards,
+Krzysztof
