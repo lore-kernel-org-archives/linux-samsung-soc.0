@@ -1,277 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1E53546CC
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jun 2026 10:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7783EFFAF;
+	Wed, 17 Jun 2026 10:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781691360; cv=none; b=Pz6+LXmhqn5l/2S6HBjFQdBB9A3FrLb0JxwMefxAdQnpcG6AePofoYXslRQD6Ay7iEWwom7OzDyWb6pJ2GMCynVvL5Juev50PowRjzKwUslo+IfTnyCGq5dSX4+EjXdp63PVzxwL1vfbzJ+Mlojy5V+iOUQbAFCvE+2WLzX4DwA=
+	t=1781691626; cv=none; b=kWB91REpjZMz/JA4v6T3v4KaQOb+5Z0fIjn2/tzy/DTjCdHUHnFjws9BnR26jL4YJAulhnPcp1l98Saz3MyzQTaUvXsasRm554tZXC8b+U7chwh2i8psrol0odTi9M2UF5bTpe3kHPro277gth8Qxym77c4uHq1yzaJM04K9Kdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781691360; c=relaxed/simple;
-	bh=uj3m2cQQQ9kgOtUjDnRvXjSVDT0eqJK+Hl7kwi5PCN4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=See+Fkpj+AoShGRMKyyoItmMzm68qHuH/gExqeDzwsP5z5e70hq4BoWSd0MrWwToCsM1pm/+0MdAOe77zh5XMIQbSo3GNaG1X3VGdr5PFb1Me9EWyMGcfSLDVSB3WeXbw6A+7EiJp+sNkkDTpOVHU2cw3zQvY1kVGVUTO6Zsirg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVJT+oKW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781691626; c=relaxed/simple;
+	bh=LemMe3KggFiCwPPl9bGmfkEUoHEUWpJ7AOoGFXW6Xbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFw38jjPlHupeIcQAUJEH6fCitXNBNR0n1TCYQbjMRuxCGXMc9KWDOzWl4ttfkCyLxluh+JeLBv2P8fEQRW/MOc9UT4o8Kwp3eGl/RuJoyxPBzZVjK4xNPtdpgH+JOV7nMs0EBH0FR1zU+DH8HyZllEQ3+ZaVjVBQ4KcGIKbpEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nngpRcHq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVJT+oKW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD88A1F00A3E;
-	Wed, 17 Jun 2026 10:15:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nngpRcHq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073691F000E9;
+	Wed, 17 Jun 2026 10:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781691359;
-	bh=2i8AsvfkuN3+J1HtjnfzmL4zwdbdZh3Px/PkaHWtfhU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=AVJT+oKWN5k5wrSY9emuWPdQyOSBlwkwyeB0B74/SyeIBlGr3nqRd/FMxLpSt2q0H
-	 GGl7n5qwTKHrZH+UWIdrrSeznmvXlchbQ9Oa63LpRIjeRL6DJSyI6jsanACLFLBWlL
-	 noSuEJySx2khlIw2ZqZIyy1FrZiGp6oZu8G0xvXmJvoKpb+gGVVImSEJFOm0vJGd0C
-	 0UAitTH7M/rYcFp3bUgKoCSvvzZQI0zpIzPjS0CpXgwLL8VgqtQNQyK4xwgutrImyP
-	 5CvCBew+hjFtb4VQhRF2vEZTdq+6iFdvxJxNSaX6kQqPHloiSxCN4pLYioxhT0HTgs
-	 UJBvN1xq/v6Xw==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 17 Jun 2026 12:14:51 +0200
-Subject: [PATCH 26/37] drm/exynos: mic: Switch to atomic bridge callbacks
+	s=k20260515; t=1781691617;
+	bh=mGDpQKiaGmdMQBKgXybhSkmu2YNTiVFD1n1EPaO+ol0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nngpRcHqLTi0JBr234u9hEGzndNN1zkYDSWphGDzDeiBEyXscpEG3E02lAUNeKgLr
+	 bP1/yubOPljYWqR+GDt7wHMLqr0kuTYXCU85r2UncLrQigEttDWrbj91/PKDZkqcOp
+	 Zz2hTNleWc3ZJCNLsMwsfvkDXOvGuVeTQnNj+jzTigQ7+3uXR2bzVSHExxFwQkJ1YZ
+	 l2qWmqEOCWBP1CPk3MS22aYCRqTjOZfFmXsfMgGt0Kw9IrDDe66Wk2hRZdyNDjCgbB
+	 3gzrKgwCuKBANm8nFxQVd8FsZyYKOP9Mr+Ot0EfDPX2i+7Rvk7uHvEWVe/ZL/kllUw
+	 1RHDFK3QZxvnQ==
+Date: Wed, 17 Jun 2026 12:20:13 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: peter.griffin@linaro.org, robh@kernel.org, conor+dt@kernel.org, 
+	linusw@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, hajun.sung@samsung.com
+Subject: Re: [PATCH v2 2/5] dt-binding: pinctrl: samsung: Add
+ exynos8855-pinctrl compatible
+Message-ID: <20260617-favorite-bobcat-of-ecstasy-02f62f@quoll>
+References: <20260615085252.1964423-1-alim.akhtar@samsung.com>
+ <CGME20260615083419epcas5p48c6b192d1abcbd5411f0958aa9b83237@epcas5p4.samsung.com>
+ <20260615085252.1964423-3-alim.akhtar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260617-drm-all-atomic-bridges-v1-26-b63e6316166b@kernel.org>
-References: <20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org>
-In-Reply-To: <20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, dri-devel@lists.freedesktop.org, 
- Maxime Ripard <mripard@kernel.org>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5255; i=mripard@kernel.org;
- h=from:subject:message-id; bh=uj3m2cQQQ9kgOtUjDnRvXjSVDT0eqJK+Hl7kwi5PCN4=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlGxROzF/OdPvU5/8fNSTVtzreqHTavW7PcT4pr3o57k
- w9waXx81zGVhUGYk0FWTJHliUzY6eXti6sc7Ff+gJnDygQyhIGLUwAm8m86Y8Nhkb122ZN2sP/3
- XTOt67zmljuqn460bf5XP/uz2IL/uoy1zcc3Whs7lJ5ol/vu5Fwj95mxznpbuYdW50I5i29Lgs1
- tZ8spHitsv6WeFRu8NKFQbtrpQDsrp+upJy508JXb/rv1R3kmAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260615085252.1964423-3-alim.akhtar@samsung.com>
 
-The mic bridge still uses the deprecated non-atomic bridge
-callbacks.
+On Mon, Jun 15, 2026 at 02:22:49PM +0530, Alim Akhtar wrote:
+> Document pin controller support on Exynos8855 SoC.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
 
-Switch to their atomic counterparts, adding the bridge state
-handlers if not already present.
+No wakeup-eint?
 
-Generated by the following Coccinelle script:
+>  Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-@ is_bridge @
-identifier funcs;
-@@
-
- struct drm_bridge_funcs funcs = {
-	...,
- };
-
-@ has_create_state depends on is_bridge @
-identifier funcs, f;
-@@
-
-struct drm_bridge_funcs funcs = {
-  ...,
-  .atomic_create_state = f,
-  ...,
-};
-
-@ update_struct depends on (is_bridge && !has_create_state) @
-identifier is_bridge.funcs;
-identifier f;
-@@
-
- struct drm_bridge_funcs funcs = {
-+	.atomic_create_state = drm_atomic_helper_bridge_create_state,
-+	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-+	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	...,
- };
-
-@ update_pre_enable_struct depends on (is_bridge && !has_create_state) @
-identifier is_bridge.funcs;
-identifier f;
-@@
-
- struct drm_bridge_funcs funcs = {
- 	...,
--	.pre_enable = f,
-+	.atomic_pre_enable = f,
- 	...,
- };
-
-@ update_pre_enable_impl depends on update_pre_enable_struct @
-identifier update_pre_enable_struct.f;
-identifier b;
-@@
-
--void f(struct drm_bridge *b)
-+void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
- {
-	...
- }
-
-@ update_enable_struct depends on (is_bridge && !has_create_state) @
-identifier is_bridge.funcs;
-identifier f;
-@@
-
- struct drm_bridge_funcs funcs = {
- 	...,
--	.enable = f,
-+	.atomic_enable = f,
- 	...,
- };
-
-@ update_enable_impl depends on update_enable_struct @
-identifier update_enable_struct.f;
-identifier b;
-@@
-
--void f(struct drm_bridge *b)
-+void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
- {
-	...
- }
-
-@ update_disable_struct depends on (is_bridge && !has_create_state) @
-identifier is_bridge.funcs;
-identifier f;
-@@
-
- struct drm_bridge_funcs funcs = {
- 	...,
--	.disable = f,
-+	.atomic_disable = f,
- 	...,
- };
-
-@ update_disable_impl depends on update_disable_struct @
-identifier update_disable_struct.f;
-identifier b;
-@@
-
--void f(struct drm_bridge *b)
-+void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
- {
-	...
- }
-
-@ update_post_disable_struct depends on (is_bridge && !has_create_state) @
-identifier is_bridge.funcs;
-identifier f;
-@@
-
- struct drm_bridge_funcs funcs = {
- 	...,
--	.post_disable = f,
-+	.atomic_post_disable = f,
- 	...,
- };
-
-@ update_post_disable_impl depends on update_post_disable_struct @
-identifier update_post_disable_struct.f;
-identifier b;
-@@
-
--void f(struct drm_bridge *b)
-+void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
- {
-	...
- }
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
-
----
-To: Inki Dae <inki.dae@samsung.com>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- drivers/gpu/drm/exynos/exynos_drm_mic.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-index e68c954ec3e6..3069f958137f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
-@@ -19,10 +19,11 @@
- #include <linux/regmap.h>
- 
- #include <video/of_videomode.h>
- #include <video/videomode.h>
- 
-+#include <drm/drm_atomic_state_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_print.h>
- 
- #include "exynos_drm_drv.h"
-@@ -226,11 +227,12 @@ static void mic_set_reg_on(struct exynos_mic *mic, bool enable)
- 
- 	reg |= MIC_UPD_REG;
- 	writel(reg, mic->reg + MIC_OP);
- }
- 
--static void mic_post_disable(struct drm_bridge *bridge)
-+static void mic_post_disable(struct drm_bridge *bridge,
-+			     struct drm_atomic_commit *commit)
- {
- 	struct exynos_mic *mic = bridge->driver_private;
- 
- 	mutex_lock(&mic_mutex);
- 	if (!mic->enabled)
-@@ -255,11 +257,12 @@ static void mic_mode_set(struct drm_bridge *bridge,
- 	drm_display_mode_to_videomode(mode, &mic->vm);
- 	mic->i80_mode = to_exynos_crtc(bridge->encoder->crtc)->i80_mode;
- 	mutex_unlock(&mic_mutex);
- }
- 
--static void mic_pre_enable(struct drm_bridge *bridge)
-+static void mic_pre_enable(struct drm_bridge *bridge,
-+			   struct drm_atomic_commit *commit)
- {
- 	struct exynos_mic *mic = bridge->driver_private;
- 	int ret;
- 
- 	mutex_lock(&mic_mutex);
-@@ -293,13 +296,16 @@ static void mic_pre_enable(struct drm_bridge *bridge)
- unlock:
- 	mutex_unlock(&mic_mutex);
- }
- 
- static const struct drm_bridge_funcs mic_bridge_funcs = {
--	.post_disable = mic_post_disable,
-+	.atomic_create_state = drm_atomic_helper_bridge_create_state,
-+	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-+	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_post_disable = mic_post_disable,
- 	.mode_set = mic_mode_set,
--	.pre_enable = mic_pre_enable,
-+	.atomic_pre_enable = mic_pre_enable,
- };
- 
- static int exynos_mic_bind(struct device *dev, struct device *master,
- 			   void *data)
- {
-
--- 
-2.54.0
+Best regards,
+Krzysztof
 
