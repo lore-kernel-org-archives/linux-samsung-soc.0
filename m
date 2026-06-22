@@ -1,165 +1,152 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3389B33B6CC;
-	Mon, 22 Jun 2026 20:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581B34E744
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2026 20:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782160684; cv=pass; b=dEWCxhcSPuFGjV5I31Hld3/evmZrknGQzrqJpt7F08Y9C/DTJ4B4xnwzFVweZFUdejQQ3yvRdOdyEOsGZoagj0P6PsWTiCpFAXtv1/j3lPuahzrv50iJW6pKt59vcqjoRSjK5V2IVZMvMgfUXeogHjx4VmNYFjnhlUCNpJrC+PE=
+	t=1782161033; cv=pass; b=FpJVBZ4JhjNAHhAED8/OIs0cFLCR6iZkePds6Xp1TCxyBZI09YChwVjw2kmrHWmmK9f0vAdZzt5sNYHtJLIOCgwbdk9vp+C4/XmA1Z7HuIbHIhSCXDitpVFnR/Uk8hT/4IPooD2m+XMtNIPzKL6LnLfhW0kChntVr9/78cKcfsU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782160684; c=relaxed/simple;
-	bh=WsDcKuA1gvo2wPOxdvdHPc1d4sATgEmk4SH3WC2S+lA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AuHfawblQAsmmC2AS2ckOmnyll1we17CddoDP43mjee5zU4gwFUbOAS32xEbvuPlfRFBKn+iyPasQnVz5E/dOp1Jmubztoq7L9s/s7Wf7wvGxY9hL2JUhzlYVHEL0H4H1lO02i4GsRzZmKt1ZRbNbTlEEgtWYPM7RH5k/qNUpJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ftenAF2p; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1782161033; c=relaxed/simple;
+	bh=PmY9a393FkPMi7cXE1kIXzUX+srKCbPNwHhnlFRxeaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tV0GuM+gxgyMAtCVOVe4WOD6BnqKX29t0Sa/IhuwAKuc61WXoBDZgoS7knKMaScP00ZyMkNpygdna7m9HlvkO24quTkswVj/MOqgsExC6AaPg74JhFEpjU26p13jlUlgz0yZG651+rJOSOY1A2hiJtkaEVFfV49o/8PFHoG6H1o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=okXjPV0A; arc=pass smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ftenAF2p"
-ARC-Seal: i=1; a=rsa-sha256; t=1782160644; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NbZ03RwDUpsPUGMBrvUdLdu9YwvBtwbJnzp1KGgnOw8bmxFm308mN3AT9TQxGf0hTvg6NQG4C2vMqEG28Kk9TYtSAwUBIsPuLMENiboDJ821z6UtEvkeDwz5+Jcm+re9M7ZFaWtEkR9uOKdar4YVHKXBp3rQHmkoCuJ+yoWpc4o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1782160644; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mN91JuTXlP9yH/fF2WAYmfPvIPkIj7NLhNIGrphtGFQ=; 
-	b=cdn/QOUYXHEVxnnOG0Xz+v5hgIFdWmFnUWGGBrXE0BkN+/Y/SSTnkF8DIdXeHmsun1N1bTnfVSATEUntE3qlia7Tu2OXutygr1K/pScuMkRUqb8jzru748kl9eSG9NgAF6EAKY/Eq7kqq5AHGgy4zYxnRNwUhOnHfiaIKQmZ7Ec=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1782160644;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=mN91JuTXlP9yH/fF2WAYmfPvIPkIj7NLhNIGrphtGFQ=;
-	b=ftenAF2pLAzRlyNVRan8mKVLwnie2DhUAR+YqxoXAcc93rbXBpyH//u6VQz6uvu5
-	NVnB16FfAhcMzP72FH86ULWAFvMa3rYocIFntWDDFHxLa7uuG26U7HA2MLbmUYNgfOb
-	uJogOLlRuf0JNK3ahPODVSRWU84ISRiZWge9esxY=
-Received: by mx.zohomail.com with SMTPS id 1782160642430172.91971762131618;
-	Mon, 22 Jun 2026 13:37:22 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 6EF1E1824A2; Mon, 22 Jun 2026 22:37:11 +0200 (CEST)
-Date: Mon, 22 Jun 2026 22:37:11 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Georgi Djakov <djakov@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulfh@kernel.org>, Peter Rosin <peda@lysator.liu.se>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Linus Walleij <linusw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Taniya Das <quic_tdas@quicinc.com>, 
-	Robert Marko <robimarko@gmail.com>, Christian Marangi <ansuelsmth@gmail.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Adam Skladowski <a_skl39@protonmail.com>, 
-	Sireesh Kodali <sireeshkodali@protonmail.com>, Barnabas Czeman <barnabas.czeman@mainlining.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Anusha Rao <quic_anusha@quicinc.com>, Luo Jie <quic_luoj@quicinc.com>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanho Park <chanho61.park@samsung.com>, 
-	Sunyeal Hong <sunyeal.hong@samsung.com>, Shin Son <shin.son@samsung.com>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Alina Yu <alina_yu@richtek.com>, Andy Gross <agross@kernel.org>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
-Message-ID: <ajmcsfEXiTfFh-XH@venus>
-References: <20260622101606.485961-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="okXjPV0A"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-697763eeafcso4344160a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jun 2026 13:43:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782161031; cv=none;
+        d=google.com; s=arc-20240605;
+        b=j2OawfV32G5WP/Hu3HVVlhZiE5lFyAdqamZerAhmexSIRqBzjS9fTcc7xNxEOr3JTx
+         CwGYiX5Y6TBlA4ksH1wDXQ0mwuQNWxuhWHMzZZy2YxzWoS52zOeEC5RdoQhKrriWS3e5
+         Ty0+X6f1LNU6OkccGV5EHRke+WwzEpI9OfhHszGz097EmL/RWg4h3yuADRRxCCbbZwfy
+         eIltq5W+26zzAIIH0cd0tjzSdi2bAlMb33xL5wBG7tk0xhw9Fm1ojcs6PHdv/lT2Aj5e
+         82jRIVLzTE1GZZ4qIztUEJdhoGYzGaSmC4zrlOqixVbpKTknlvIfubGKwg+gnaLfpQGR
+         cmOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=LK9z00ubzec0E/FSX4Kl4K5PC+aZIx5IC8zFGof99gs=;
+        fh=nCn/wKT9FjkQb9Z5czMmiZLnSusssVLaR360z2ASSe8=;
+        b=CbjdtpEYFsZfYPAb41MDJHMI3ux02Yme1/cg7skWMAB9nOZcnW0UXzNHJbIu9hcXsr
+         FR6J6GM65Ogu6z6CHMwDZQmPCkcwxx5nZXAgI/gfFom+WB+wp3TkMMxoPLGG6wyQh0TV
+         pj3UhAZSvxXc9WFX6V9kT0T4gISgOWQ5ByaI2I+6Rb5bCCPvrzYN56gvyxNR+PivGZrV
+         m+/JvCxAn+bUgPNnV2HMKYlf2kD1ccIgOXVkJPAH9+nj2jQ7++uX1q41vsudgHgbX64r
+         +nZ5U/uk5JwxJ3I8L/ffYkxpmoYZ+X0XDuNIUUNwHBBJiLl8IReulrfNzeOXYrXFuapj
+         6qSA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1782161031; x=1782765831; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LK9z00ubzec0E/FSX4Kl4K5PC+aZIx5IC8zFGof99gs=;
+        b=okXjPV0AOSJKvZm7tQjyO7uxpIS5W9igsAWDUnJxqXu4LGRBVY/BmykQWaUu0nL0bX
+         +ph0Q9E2NzDsdY1Ec7GJ1MqWhEETd4a0PXQgeATcI/XYzznigwM04kKsH0nsAgG7wihn
+         wdfplEWxQQ/M37Z7klWPJD6yHJscOskP9TF1/dKr5yYeqYoi6aQuQGux00hMEP+QDDQl
+         4y7H4p5wKDE6VEIXhm6/qgOEPeJBHRN5i/WVzf/kKx1Cgp1zFqQjo+ANlqO+p01wWfAq
+         Ff3a7lz4Yw6dUt3yoN4Uc4Elo43Dj1J7bL6q6dOM3LZf5GrN5B71k9Q21xZULv97DHLy
+         a+Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782161031; x=1782765831;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LK9z00ubzec0E/FSX4Kl4K5PC+aZIx5IC8zFGof99gs=;
+        b=ifLpsjxGNPxkBp8P14WA/HX6Q2YGmb4ANHNUFfALlnPianwav8qGDISMijhfN3IvXu
+         wQIs57BxjMoS6wEyf5Zgs3o5ztZy2g+NixFJbJ+Eg25PGD23nv23cGOD7oqpSyeiEQkU
+         xmPlLJ+lNFM4VUV96aC7y4OzxXujoZYhczGLzgtp56KpXsYOofbnYIt4/7xoc/fK1fqW
+         qyEUyW1zBh1uGWghjQ0LiTZZ0ul4y5Bfw1JHEjHdD8rn2ZEnn5uCb87T3NK/fypuoGcs
+         A6h8JA2Gq/8Cp9NG0kUuO/9UIurP22+Us8Gg2TpsnHF8dHdd7at6cGcOYBwu6PFqRtxR
+         EdJw==
+X-Forwarded-Encrypted: i=1; AFNElJ9YgwT+lYlnkgDDB9A0SdRCQGmwAwhx8yozzFumNv5UBTMQZpWHdqJDid3f7kZdR73N7qiut4zN+GZ52yZS8KLu+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqiNqxJOni8gEB/OO6FBkDREkr0UZG0Vu3wlLjnLTsm7rESLGi
+	JmhEY3M9x9bo53jZ2KF5ewFzxPJBax0b87Bn7DvedLi05NpyDfbzBSeyAXFByGkfvSX6wiZyVPD
+	S5tpOrpMWqHhGVM3ii0z68aipNS/2lEIW7wRgKDviNQ==
+X-Gm-Gg: AfdE7cn14+KY/RRTcQry1PtmOkFrUsTRvauLhLydPMEyx/fF6XyvDP/LFKkFFVs5vjI
+	e4L1m8HtoSZ3htme5KPZPlggN5djpLTrrSksXZ91lFP4N6Gah9Htdna9pVjFaeXQV+i0je3UHsR
+	ddszQzr+EtxtpK+i6Ch735LMghl9wsBUE9WsR6dv6O2GEqBR/NocMllUruakWo4BaWWJ+Cbrr69
+	iz724pjCD8TJeqqzlX41Q0zeIAlgeFDpYXuuGWb4B7LTeXu2Lt+/c6oqYw6RNFyuV/iVB3pFlSe
+	C7ETBvLKUAkRF+1q86IvXmEJR9pbiaY=
+X-Received: by 2002:a05:6402:5203:b0:68d:d511:4a9f with SMTP id
+ 4fb4d7f45d1cf-6970f7bb394mr10422389a12.18.1782161030519; Mon, 22 Jun 2026
+ 13:43:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="he6mgtsui5z5w5dr"
-Content-Disposition: inline
-In-Reply-To: <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-0.2.10.1.5.2/282.152.77
-X-ZohoMailClient: External
+References: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org>
+ <20260605-exynos-pmu-cpuhp-idle-fixes-v1-3-0cd05c81a82d@linaro.org>
+ <CADrjBPq4fou5KWh4T=oNkUVPz5Jk-821OVe3j5sWrKnCtHYM6w@mail.gmail.com>
+ <DJ5GP6VQJDHL.2V30K56ME95DO@linaro.org> <CADrjBPqF6GPRLNUZtzkGUHTUQ6NOPoaRvVvF1mUUj_DJ9As1dg@mail.gmail.com>
+ <DJFT3TXC0OJA.1ZK17YA2RSQXK@linaro.org>
+In-Reply-To: <DJFT3TXC0OJA.1ZK17YA2RSQXK@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 22 Jun 2026 21:43:39 +0100
+X-Gm-Features: AVVi8CcSJhlsiEYo8DbJV4KtarpnAeTWxw-4zzSg6pxbzuPPjnCW8fducZqtX0Y
+Message-ID: <CADrjBPovA8Kpzjqwr5w0UvqYhpdGyBwpv=xkBLcGGuwZZoocPg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] soc: samsung: exynos-pmu: fix error paths in
+ cpuhotplug/idle states setup
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Alexey,
 
---he6mgtsui5z5w5dr
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
-MIME-Version: 1.0
+On Mon, 22 Jun 2026 at 19:57, Alexey Klimov <alexey.klimov@linaro.org> wrote:
+[..]
+> >> >
+> >> > I originally made the failure non-fatal because the system still boots
+> >> > without the notifiers registered (and all other Arm64 Exynos SoCs
+> >> > upstream don't register notifiers and AFAICT have broken cpu hotplug
+> >> > and cpu idle).
+> >> >
+> >> > In hindsight, that seems like a mistake. I think your patch to fully
+> >> > unwind everything in case of failure makes more sense.  See small
+> >> > comment below about destroy_cpuhp_and_cpuidle()
+> >>
+> >> Wait, setup_cpuhp_and_cpuidle() should be non-fatal and shouldn't
+> >> return any errors?
+> >
+> > I suggest you re-read my above comment above ^^
+>
+> Could you please clarify what specifically addresses my question about
+> notifiers?
 
-Hi,
+Sure, I was referring to this part of my previous reply:
 
-On Mon, Jun 22, 2026 at 12:16:08PM +0200, Krzysztof Kozlowski wrote:
-> There is no use of double colon '::' in YAML. OTOH, the literal style
-> block, e.g. using '|' treats all characters as content [1] therefore
-> single use of ':' in descriptions is perfectly fine, whenever '|' is
-> used.
->=20
-> Cleanup existing code, so the confusing style won't be re-used in new
-> contributions.
->=20
-> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->=20
-> ---
->=20
-> Intention for this patch is to go via Rob's tree.
-> ---
+> >> > In hindsight, that seems like a mistake. I think your patch to fully
+> >> > unwind everything in case of failure makes more sense.
 
-[...]
+[..]
+>
+> If c2 idles are used during reboot/shutdown then they fail or what?
 
->  .../bindings/power/reset/restart-handler.yaml |  8 ++++----
+This followed similar logic to the Samsung downstream kernel drivers.
+I have no extra information about it beyond the downstream kernel
+source. It seemed reasonable though that CPU's will be hotplugged
+during suspend and reboot so you may wish to ignore these.
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+The proper solution of course is a fully PSCI compliant firmware,
+which doesn't require these side channel hints.
 
-[...]
+>
+> I am not saying that patch is correct and some rework is needed but I don't
+> get why we should completely ignore errors from hotplug states registration
+> and should not check registration of notifiers. At least warning should be
+> shown to user that pm functionality might be unreliable.
 
-Greetings,
+As mentioned above, and in my previous reply, I think your proposed
+patch is a good idea.
 
--- Sebastian
+regards,
 
---he6mgtsui5z5w5dr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmo5nPIACgkQ2O7X88g7
-+pqv2Q/+LMhPKKkmgsVnMejKBphG4p2N/zVrnMgxmg8lVO8rwgA7Kxo2wlLqu2H5
-iapTV4a2dMXB0SUw8UGbt9Lt6JjHaORZnybu95mZEZMS+G7HRl5M8DE+LWMJXLX0
-S+G43Cv1O/d5dV/rM2nJqOItOK+KIbHQI4+oY/O8P7ENnU2h3X2HxOtWxtg6+9gz
-UNPZgoZdEE38SJVzhHrCO1+NfGikbo7vUZC0BmyxiNuVTK9eFjie/eIS3ST4W5T9
-3v2n+F2fD7+xsfSzUyjRc3p+zLyweImjiS6J5GAmTf4qxL9hQ3nXEW2gtRQQvB2l
-W62s4eZt9jFlQjhXVjUeIkEPkORE4RrDInyktgSc6BKm/D5SylQgwytebDtJC2s4
-QceoYrV7CHNsQ0vr9oITDlBN4Ik2TTsqhK2Sw0/2P0W7VU7y8uoHsm2xHPkf17l+
-svy9/UvPf4f5kyBIPwySRFS4IUXcdP8MhscNstvyw1GJqxtCNNRfDX6z0isLIU6Q
-yfIbxBsgCdHQMyM3HekxaofPcGx9LRJtbbNt2YA4SbqEKnzci/ToUY+z8a2svvDM
-Ko5OrYJ/yAjPYjcoQ7ajynJC+BxvFRMTtfCEQmDLiaxN9+ueXJJMXe26hLYClF9g
-ADHM+PuYvQrF2GfU9DgvPXkJHh3yEtyPk1rE6O1f4Q9xvKZMblg=
-=cVKh
------END PGP SIGNATURE-----
-
---he6mgtsui5z5w5dr--
+Peter
