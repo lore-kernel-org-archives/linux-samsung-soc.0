@@ -1,114 +1,101 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB19233939
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jun 2026 12:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F01D5CE0;
+	Wed, 24 Jun 2026 21:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782303558; cv=none; b=Azl/E30GScaHhyhsSyjNzjTx/GIvqkzGav0bt/HDSFUGNw9AZWZSDMSxcysioPnXXMufrLk32TgOhhB/+XBlOny5/JPNV3ShhiD8w8hT94/LnUHTgbXLQi3bFB1L9NlLcLx4BokCFIv4TBINi0cK4W8a9O/X+TG28f84zob2PTA=
+	t=1782335809; cv=none; b=YpK+ZBhL++fSOTlmjVt1a2W7c2hFl/TEa+KMxwPPir3yB7k6cGkbnYpMOZLKCIoJPNgcDnsbsvH8bBniL7UycRC7uvGzgs2FJIqkIJ/VwCJzd2ADPy2iqu6HPKH53cwNWVOgNWKR1UmaccW3bTyWdkWHcgQfm2DYgF0c3R+7X30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782303558; c=relaxed/simple;
-	bh=xQoETzVYL7/fMAukFP1/FEY+oMvDH3rg5mFsB8017XU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=hB0aQPKCsWYdM04FCga2ZOdnC4A+0WcRhPI7E3/Qr4rVsuk6VTLqqQ93XqmzM0NSIY/v1Al3mrs4uJ/nPqY4daH1cLJhSaSyoAU7XpEyiTOdmAlaau6ly/CKr6q3eQNBeR1t/NByijsi89pcQ93TzMViq/h2NxKGxsnX9s24z+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KEv1cfu/; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1782335809; c=relaxed/simple;
+	bh=3UyBs04HfmneOkBn5MHla72aREGAHdv8PrXO423iVL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UrlcPMN9OCxyW2ulHnrq5usfKcr96JGcrN8ggG7RWYIwLQ1YYWIwEl5ahaJCa4eDutYHAxYvJdISyXvjyCEyuzrGT97FgH7YMXZk852RJm3kRS2yC956QNJ1U74fnA4wkN1iWxngj+VyXAfoUz0PYux903pye/GU4byeXmGqpY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZFrS24Gq; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KEv1cfu/"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZFrS24Gq"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 0F38C1A090E;
-	Wed, 24 Jun 2026 12:19:08 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 374074E40832;
+	Wed, 24 Jun 2026 21:16:47 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CBC89601C5;
-	Wed, 24 Jun 2026 12:19:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BEFE4106C83D2;
-	Wed, 24 Jun 2026 14:18:49 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0645B601C5;
+	Wed, 24 Jun 2026 21:16:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9F1C1106C8468;
+	Wed, 24 Jun 2026 23:16:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782303545; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1782335806; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=xQoETzVYL7/fMAukFP1/FEY+oMvDH3rg5mFsB8017XU=;
-	b=KEv1cfu/jYGfDwre6OwZ+P4Da5g/P5DLOoi4ufNgHjjSXbNTPwIbnYk/UOh9ec76Xi6r/G
-	DFd6/DHGMh414txRBF40PoSxV+VlfEMI0dV693nAwprxYHVOsiF4l+Nu7k56WcpLJ+plKt
-	M19npB/jcwdfaojICtMPjr+ioXw/rsjoqIyL5YLlhgzfWwm7gkFRNvDV3r+5fmxgiNLiGR
-	Fpg//myj41KpNJxvcsa7CgwV2XAA3Pq1OFhNBG6SiZNr209BBBOm7pZ+5lA6O75NrZhmgM
-	/YrgBuSybieaZhN5mTMsjq+GstetuZsbblHI6ibs2ayVSjRRAtJDYNmvgfkWLg==
+	bh=ArYnu/1YanuqdlV21/ZctLMYIsPxKet83mcYTyOtQec=;
+	b=ZFrS24GqxJYKAJxoy9vCQOrpfZcgIPX4nupird0dtQGbPOfrq5K85w4+9dM3I4kgnQQU1b
+	xS7j5cKtUf3hTEUhPzEr7DM/aI4xGHfGpXNeDwXbebuxiMRrf0ogFptnLEVS4xpRHKPQZG
+	TL2AXUkzoktLkRQ6JDUljTvL/R0D/k9RcIDsVeMqaBiqEFepjCEgt+Z748zSGpdgwCc5fy
+	Y9xkKiy6TAw7SYBClX/8310oKVePASQodwOA60f3c13Z1BQOiWfLD2osHNmH3NTgO1kCTb
+	dhDeb73oZjjqnuPSKkXSOhoG7hR+W+urvycKhp30zAhb25LQyCH74LjYwcFsUA==
+Date: Wed, 24 Jun 2026 23:16:42 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Karel Balej <balejk@matfyz.cz>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] rtc: Use named initializers for
+ platform_device_id arrays
+Message-ID: <178233558807.1517260.17147492956958938039.b4-ty@b4>
+References: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 24 Jun 2026 14:18:48 +0200
-Message-Id: <DJH9VDITIVKV.1UZLU2S53MLO9@bootlin.com>
-Subject: Re: [PATCH 00/37] drm/bridge: Convert all bridges to atomic
-Cc: "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca
- Ceresoli" <luca.ceresoli@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- "Sasha Finkelstein" <k@chaosmail.tech>, "Janne Grunau" <j@jannau.net>,
- <asahi@lists.linux.dev>, "Benson Leung" <bleung@chromium.org>, "Guenter
- Roeck" <groeck@chromium.org>, <chrome-platform@lists.linux.dev>, "Francesco
- Dolcini" <francesco@dolcini.it>, "Peter Senna Tschudin"
- <peter.senna@gmail.com>, "Ian Ray" <ian.ray@ge.com>, "Martyn Welch"
- <martyn.welch@collabora.co.uk>, "Manikandan Muralidharan"
- <manikandan.m@microchip.com>, "Dharma Balasubiramani"
- <dharma.b@microchip.com>, "Russell King" <linux@armlinux.org.uk>, "Inki
- Dae" <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>,
- "Kyungmin Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, "Linus Walleij" <linusw@kernel.org>,
- "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <linux-mediatek@lists.infradead.org>, "Rob Clark"
- <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
- "Abhinav Kumar" <abhinav.kumar@linux.dev>, "Jessica Zhang"
- <jesszhan0024@gmail.com>, "Sean Paul" <sean@poorly.run>, "Marijn Suijten"
- <marijn.suijten@somainline.org>, <freedreno@lists.freedesktop.org>, "Tomi
- Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Alain Volmat"
- <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>
-To: "Maxime Ripard" <mripard@kernel.org>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.21.0
-References: <20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org>
-In-Reply-To: <20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1779950275.git.u.kleine-koenig@baylibre.com>
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed Jun 17, 2026 at 12:14 PM CEST, Maxime Ripard wrote:
-> Hi,
->
-> Over the years, most of the bridges have been converted to atomic
-> modesetting and hooks, but not all of them. This forces us to maintain
-> two different code path in quite a few places, which is pretty
-> bothersome. The switch to atomic modesetting for legacy bridges though
-> is pretty trivial, and we don't have a lot of drivers still using the
-> legacy path.
->
-> This series converts all bridges to atomic modesetting and drops the
-> legacy codepaths where relevant.
->
-> Let me know what you think,
-> Maxime
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+On Thu, 28 May 2026 08:48:09 +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> this series targets to use named initializers for platform_device_id
+> arrays. In general these are better readable for humans and more robust
+> to changes in the respective struct definition.
+> 
+> This robustness is needed as I want to do
+> 
+> 	diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+> 	--- a/include/linux/mod_devicetable.h
+> 	+++ b/include/linux/mod_devicetable.h
+> 	@@ -610,4 +610,7 @@ struct dmi_system_id {
+> 	 struct platform_device_id {
+> 		char name[PLATFORM_NAME_SIZE];
+> 	-	kernel_ulong_t driver_data;
+> 	+	union {
+> 	+		kernel_ulong_t driver_data;
+> 	+		const void *driver_data_ptr;
+> 	+	};
+> 	 };
+> 
+> [...]
 
-Lovely cleanup!
+Applied, thanks!
 
-Apart from what Laurent pointed out, it all LGTM. Instead of spamming with
-an R-by on all patches except 37, I'll just wait for v2 to send a
-full-series R-by in reply to the cover letter.
+[1/3] rtc: Drop unused assignment of platform_device_id driver data
+      https://git.kernel.org/abelloni/c/ba5dca876b54
+[2/3] rtc: ab8500: Simplify driver_data handling
+      https://git.kernel.org/abelloni/c/6e2f1f0184da
+[3/3] rtc: Use named initializers for platform_device_id arrays
+      https://git.kernel.org/abelloni/c/041ca8884410
 
-Luca
+Best regards,
 
---
-Luca Ceresoli, Bootlin
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
