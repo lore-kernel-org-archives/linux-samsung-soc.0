@@ -1,100 +1,102 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271A5329367
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jun 2026 16:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8EA227EA4;
+	Sat, 27 Jun 2026 17:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782579273; cv=none; b=NeCfRJCvGkM1q70AWmSGHielBvXDUSpoI7Jt9BKXhisi3mieXgRQIjRWjqVKwu59OPbBm00r7aBHS8bcfG3kRYuMgo9L5ZHutfqeT6hEk9FBnhsI3htxu44C1FuQFZgcrHqARXQ1SFI29j8UdAS8PHHAqaiQUo8i65wTwUqMsZA=
+	t=1782581285; cv=none; b=Kg2XPBvwbhP652iBH+MAzTaNXG9ZF7z9AywCCQYVQLVGl5169QXMSlsKiVZoi9VYBAY5NzgF91Ve86BUi9Xc++NS5nWKIJf1D9e7uAnANc1SnZI9UwAHkwWkf7HdbUcjS6LN+A90Jr9kHeOdAl/CwhH6RQwPZArwDDLaay64IYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782579273; c=relaxed/simple;
-	bh=DhWrWAH6pSp+Smwnq22EI/Ld7m8pY4Pykfe9SUrvhD8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=GRMsgzWd9udhiWUY8N1sBvGbh3Fdby8n2ElAGGKz/iTefOPxS035rtz7GbbfJOUe6wG1KvhGsrJwlRdAstSCpSBUgEsvQjor5d0QZ5IpdYj4wo81CZoZ7xaTunRVS5JZyR3mKbSdkQb0UAK+ALINyWvCaigw5nB5lDmjDetKlkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=h/P7HL6u; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1782581285; c=relaxed/simple;
+	bh=DmZDPPqhhkvHZLZb6YokbPqUR4ydJKbf0IXnVNJ1PUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsJe8CyRp5QcGlqm1vusuzajEcLacXCnCaObQ8cQT5l8v0eCED4Uxyy0zQzVorNZSf8zD0M52r97g9pnMPniFgLtIHIwOUKG8KzB0Unw2yihBcemloiylyzNIOpzJ5CjKPjfz0IfK1XEY7VHbp/iOTgYvuFIbjfuAZq/ViIumss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xn9DlXaG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h/P7HL6u"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260627165428epoutp03f29373b06f1bed55d514b71cea2dfdbf~8-mZp3rr12520025200epoutp03h
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jun 2026 16:54:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260627165428epoutp03f29373b06f1bed55d514b71cea2dfdbf~8-mZp3rr12520025200epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1782579268;
-	bh=yxQV2OmQ8FmlGKRUAsciidZmHjuFiJO8smjOiFHVv7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h/P7HL6uOnzJL6aSZln3lWZYnbcV7y84ZgFiHoIHOiL0RzvtOT4c0JLKruuJHon1t
-	 KtrQCLbQLU/AYawunPnpTQnlFA+YAdfSfSxycOPtqNauiBEfe+q+CgouLiveCSC2nv
-	 VDNFJRIZ76Ri+WUY2aHTuNA1sWEISjx0OXM3K5gI=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20260627165427epcas5p26b4df715d2277bc220bcff20b25a6bfd~8-mZPe9dR1145511455epcas5p2R;
-	Sat, 27 Jun 2026 16:54:27 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4gndtV6zHJz6B9m4; Sat, 27 Jun
-	2026 16:54:26 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260627165426epcas5p205bd4b60c6f1dba68f4f1125ad29745d~8-mXrDabu1145411454epcas5p2i;
-	Sat, 27 Jun 2026 16:54:26 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260627165424epsmtip1623a04ef7aeb2592566c2d2d559a6a1a~8-mWNJ6462007020070epsmtip1Q;
-	Sat, 27 Jun 2026 16:54:24 +0000 (GMT)
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: krzk@kernel.org, peter.griffin@linaro.org, robh@kernel.org,
-	conor+dt@kernel.org, linusw@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	hajun.sung@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v3 6/6] MAINTAINERS: Add entry for Samsung Exynos8855 SoC
-Date: Sat, 27 Jun 2026 22:42:28 +0530
-Message-Id: <20260627171228.2687857-7-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260627171228.2687857-1-alim.akhtar@samsung.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xn9DlXaG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC2B1F000E9;
+	Sat, 27 Jun 2026 17:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1782581283;
+	bh=nH9xtVPzbPWocfOAVQI1VzHO7nyVTdC36kSsc9UTgzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Xn9DlXaG3KC9wdc99i+Ulwez0X/m1yy5C/uOxFiGfNqxy41v8TKKh5zKWRcSxVvW0
+	 Ou7BlXKIvzKdvg3hc/Zqx/N4Fnoqfm87Pfaa0DJpzyoDJQvG22p5ZpZdeHx4rNiLgh
+	 /qLeQn9iOUdH8/k7AwWwMMuB5Iydro53kKGXn7DM=
+Date: Sat, 27 Jun 2026 18:26:45 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WenTao Liang <vulab@iscas.ac.cn>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	bmasney@redhat.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fix: clk/samsung: exynos_clkout_probe: success path
+ leaks parent clock   references from of_clk_get_by_name
+Message-ID: <2026062704-detail-machine-270f@gregkh>
+References: <20260626120135.34173-1-vulab@iscas.ac.cn>
+ <2026062612-twiddling-lagged-62ac@gregkh>
+ <10D15C29-89E4-4A0B-BB89-F03A86963DDA@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260627165426epcas5p205bd4b60c6f1dba68f4f1125ad29745d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260627165426epcas5p205bd4b60c6f1dba68f4f1125ad29745d
-References: <20260627171228.2687857-1-alim.akhtar@samsung.com>
-	<CGME20260627165426epcas5p205bd4b60c6f1dba68f4f1125ad29745d@epcas5p2.samsung.com>
+In-Reply-To: <10D15C29-89E4-4A0B-BB89-F03A86963DDA@iscas.ac.cn>
 
-Add maintainers entry for the Samsung Exynos8855 SoC based platforms
+On Sat, Jun 27, 2026 at 07:42:36PM +0800, WenTao Liang wrote:
+> 
+> 
+> > 2026年6月26日 22:24，Greg KH <gregkh@linuxfoundation.org> 写道：
+> > 
+> > On Fri, Jun 26, 2026 at 08:01:35PM +0800, WenTao Liang wrote:
+> >> of_clk_get_by_name() acquires clock references stored in the local
+> >>  parents[] array. All error paths correctly release these via the clks_put
+> >>  label, but the success path returns 0 without releasing the parent
+> >>  references. The references were only needed to obtain clock names for
+> >>  registration and are permanently leaked after probe completes.
+> >> 
+> >> Cc: stable@vger.kernel.org
+> >> Fixes: 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to module driver")
+> >> Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
+> >> ---
+> >> drivers/clk/samsung/clk-exynos-clkout.c | 4 ++++
+> >> 1 file changed, 4 insertions(+)
+> > 
+> > For all of these, you are not using the normal kernel style, which means
+> > a LLM is generating them, which implies that you did not properly
+> > document what tool found/fixed all of these.  So please go back and fix
+> > them all up and resend them properly, after telling the
+> > maintainers/developers that the originals should be ignored.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> 
+> 
+> Thank you for the review and guidance. I understand the issues now.
+> 
+> I will:
+> 1. Study the proper kernel coding style
+> 2. If using any automated tools, document them properly in the commit
+>    message
+> 3. Fix all the patches following the correct style
+> 4. Send a v2 series with proper version history
+> 5. Inform all maintainers that the original patches should be ignored
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Do this right now please!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1705eb823dd0..f6d9e03d3370 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23996,6 +23996,13 @@ F:	arch/arm64/boot/dts/exynos/exynos850*
- F:	drivers/clk/samsung/clk-exynos850.c
- F:	include/dt-bindings/clock/exynos850.h
- 
-+SAMSUNG EXYNOS8855 SoC SUPPORT
-+M:	Alim Akhtar <alim.akhtar@samsung.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	arch/arm64/boot/dts/exynos/exynos8855*
-+
- SAMSUNG EXYNOS ACPM MAILBOX PROTOCOL
- M:	Tudor Ambarus <tudor.ambarus@linaro.org>
- L:	linux-kernel@vger.kernel.org
--- 
-2.34.1
+> I apologize for the inconvenience and will ensure future submissions
+> follow all kernel submission guidelines properly.
 
+Also try learning this by doing just a few patches first, not hundreds,
+otherwise you run the risk of being outright banned from development.
+
+good luck!
+
+greg k-h
