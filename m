@@ -1,77 +1,201 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C62318EE6;
-	Mon, 29 Jun 2026 17:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8583F2F2910;
+	Mon, 29 Jun 2026 19:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782755213; cv=none; b=Q0ysDzH6jen9kxsF7+86nGzDnVvzZp04qzk/ToQnOKjn1c9QzizVakLya/30hnbSPjY8ekJMVyMOerZXA5gwhCOebx4uAhSz1nrsk8T/q7PTWhuEA6FJ0QKji9XUwPT3kAyDm5zlOz7bSUNoNhaZ+xNNDjpsfR5bjMDOT8TC0is=
+	t=1782761157; cv=none; b=MDfQWrDhGWDTKkXfZLaDTrEXrwGmbZa50/W4lspm1IO5mOnsvC+g8N30jE63ZVkmi+BLsGaUcEYq8knU4XrbsGHsmDUaClvpg0kwPwK9uIIrINdGMyaqHrITej1uc5IsAkI95WQBDfAcm7lugezJkExnuBhgSV2fX5w8H+dNrqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782755213; c=relaxed/simple;
-	bh=Gqsw1pW7i6nGU1jNertuHP6roce2PEW69oDsk7J1LiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFDWFLc8UeWeNBjWEpEyArWACYJmjUQnTZvVEZ7TWyJ+iejmGQVn/nyR2fJr1HKCjTuUNA/g/SR4efT3vmBsgsxCTqoIbQ93RhcyhfyBT9qof/d5xqWWem24RciqZrRvoFzUm9YK4aj9Rso8P0RuqkfjZj6LjLikueyIYUB8+so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aNHnYcSV; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1782761157; c=relaxed/simple;
+	bh=T4H8XWitNrpIiqDjEpMYqVocXGsbvgto5ocyPUBfiuk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fLGrOq+wOvpNPEhSw1baJyO1atyiwvPmX3bzpUrzvAhkN4HkD4WaySsSivrW0JrV73ZYbpZN7zN2pbHIZD2EQGjzlcrdRoPPAyZgwJUiFCSekiG0V8T44DEBCwNHkQQXg6msuhDUpEd4bFAzr4Pwhg1FNu588Gti+bAgQcz6/vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOjc9JyG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aNHnYcSV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782755212; x=1814291212;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gqsw1pW7i6nGU1jNertuHP6roce2PEW69oDsk7J1LiM=;
-  b=aNHnYcSVCzEJV7NHAVDTc1AtJmamPmTDsXFTxrUQ7xuKT+750YHzZyd8
-   xxt1h1SZPQrSxrc1J0+uf3OYleRH9GDc1ujiuHLpKoxbbUTBN5IEGPyNU
-   c3PUb2DVEBT7ReB4OH0wcTPGLOpX59Xy0LPFk5A5mXfGYosW8SHt8WajK
-   KMRgCV0Opi7iyUm4O/ZPByQo4Pvg7flIR0qX9sVt/8qeep4a81yqPMaZ8
-   Y8r7it3bDsWqY2WwkyuCc34ityPzIsB0PSiaJUgKV1hivH08VBsLLvPeH
-   8Z0vuXc4m8ra29GQZTyAZboiOAclE78c4LsCEwsQCIZfoBGdgHn81HTRE
-   w==;
-X-CSE-ConnectionGUID: +UVjVl90QISvNQWHddZfSg==
-X-CSE-MsgGUID: gUiUADLbS8i35XErHT7yAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="106253864"
-X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
-   d="scan'208";a="106253864"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 10:46:45 -0700
-X-CSE-ConnectionGUID: 22+hkID1RIGeSqnEZMg/Dg==
-X-CSE-MsgGUID: 86ddzfK/T5aItVVVW1CvSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
-   d="scan'208";a="245671320"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.207])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 10:46:43 -0700
-Date: Mon, 29 Jun 2026 20:46:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v1 1/1] media: camif-core: Drop unused include
-Message-ID: <akKvgdXIj4EmKfxs@ashevche-desk.local>
-References: <20260320215910.3236783-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOjc9JyG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F6D1F000E9;
+	Mon, 29 Jun 2026 19:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782761156;
+	bh=uYIw6aQ9I+77XwEcGZ5sLAkEEwuPzF6gubx9MILGtr0=;
+	h=From:To:Cc:Subject:Date;
+	b=WOjc9JyG02UBcXhhgV9ic0phr0uZCFD5k0ILdv6ONhCv8Z1XYDxBYiwvpukl7K1Fg
+	 a8aIrsAXippHTg2Wibb6tHWkzlE4E0fWXgBDrHzByOJL4F8jISF06sHckyYY+PF7tK
+	 OiAiSmS9jz9wRn1oMBm18e5Uavo00IhgOxFuVQdHvJLDYYtq4uXlvS/eQXpk6KaIDD
+	 GN3rVLuuxb69YleGJzixCH/hWeHWpFDPzoCr2KQROO1CK5H8VnjBM1FKT5hXUj42/o
+	 WOenPbgoWzQyVU21Y69V/YrWJ0M+K8b+G7Zlo5u3zMESofU5MsPpKfLAYEn9kt+uGS
+	 wlAF5pba2Dehg==
+From: Lorenzo Stoakes <ljs@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Thomas Hellstrom <thomas.hellstrom@linux.intel.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Helge Deller <deller@gmx.de>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@kernel.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <liam@infradead.org>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Kees Cook <kees@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org,
+	etnaviv@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	intel-xe@lists.freedesktop.org,
+	xen-devel@lists.xenproject.org,
+	linux-fbdev@vger.kernel.org,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 00/13] convert more vm_flags_t users to vma_flags_t
+Date: Mon, 29 Jun 2026 20:25:23 +0100
+Message-ID: <cover.1782760670.git.ljs@kernel.org>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260320215910.3236783-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 20, 2026 at 10:59:10PM +0100, Andy Shevchenko wrote:
-> This driver includes the legacy header <linux/gpio.h> but does
-> not use any symbols from it. Drop the inclusion.
+This series makes further progress in converting usage of the deprecated
+vm_flags_t type to its replacement, vma_flags_t.
 
-Can anybody take this, please?
+It focuses on mm, though updates some users of mm APIs also.
 
--- 
-With Best Regards,
-Andy Shevchenko
+It updates:
+
+* The core do_mmap() code path for VMA mapping.
+* Unmapped area logic.
+* The usage of mm->def_vma_flags.
+* VMA page protection bit logic.
+* General usage of VMA flags in core mm code, mlock, mprotect, mremap.
 
 
+REVIEWER/MERGER NOTE: This is dependent on [0], which must be merged before
+this.
+
+[0]:https://lore.kernel.org/linux-mm/cover.1782735110.git.ljs@kernel.org/
+
+Lorenzo Stoakes (13):
+  mm: introduce vma_flags_can_grow() and vma_can_grow()
+  mm/vma: update do_mmap() to use vma_flags_t
+  mm: convert __get_unmapped_area() to use vma_flags_t
+  mm: update generic_get_unmapped_area[_topdown]() to use vma_flags_t
+  mm: prefer mm->def_vma_flags in mm logic
+  mm/vma: convert vm_pgprot_modify() to use vma_flags_t and rename
+  mm/vma: rename vma_get_page_prot to vma_flags_to_page_prot
+  mm: introduce vma_get_page_prot() and use it
+  mm/vma: update create_init_stack_vma() to use vma_flags_t
+  mm/vma: convert miscellaneous uses of VMA flags in core mm
+  mm/mlock: convert mlock code to use vma_flags_t
+  mm/mprotect: convert mprotect code to use vma_flags_t
+  mm/mremap: convert mremap code to use vma_flags_t
+
+ arch/mips/kernel/vdso.c                     |   4 +-
+ arch/powerpc/mm/book3s64/slice.c            |   6 +-
+ drivers/gpu/drm/drm_gem.c                   |   2 +-
+ drivers/gpu/drm/drm_gem_dma_helper.c        |   2 +-
+ drivers/gpu/drm/drm_gem_shmem_helper.c      |   2 +-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c       |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gem.c     |   6 +-
+ drivers/gpu/drm/i915/gem/i915_gem_mman.c    |  12 +-
+ drivers/gpu/drm/msm/msm_gem.c               |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_gem.c       |   2 +-
+ drivers/gpu/drm/omapdrm/omap_fbdev.c        |   2 +-
+ drivers/gpu/drm/omapdrm/omap_gem.c          |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c |   2 +-
+ drivers/gpu/drm/tegra/gem.c                 |   2 +-
+ drivers/gpu/drm/virtio/virtgpu_vram.c       |   2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c  |   2 +-
+ drivers/gpu/drm/xe/xe_device.c              |   2 +-
+ drivers/gpu/drm/xe/xe_mmio_gem.c            |   2 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     |   2 +-
+ drivers/video/fbdev/core/fb_io_fops.c       |   2 +-
+ fs/aio.c                                    |   2 +-
+ fs/hugetlbfs/inode.c                        |   3 +-
+ include/linux/huge_mm.h                     |  10 +-
+ include/linux/memfd.h                       |   6 +-
+ include/linux/mm.h                          |  51 ++++--
+ include/linux/sched/mm.h                    |  16 +-
+ ipc/shm.c                                   |   3 +-
+ mm/debug.c                                  |   2 +-
+ mm/huge_memory.c                            |  21 +--
+ mm/memfd.c                                  |  15 +-
+ mm/mlock.c                                  |  97 ++++++------
+ mm/mmap.c                                   | 164 +++++++++++---------
+ mm/mprotect.c                               |  16 +-
+ mm/mremap.c                                 |  38 ++---
+ mm/nommu.c                                  |   3 +-
+ mm/util.c                                   |  10 +-
+ mm/vma.c                                    |  27 ++--
+ mm/vma.h                                    |   8 +-
+ mm/vma_exec.c                               |  20 ++-
+ sound/core/memalloc.c                       |   2 +-
+ tools/testing/vma/include/dup.h             |  22 ++-
+ 41 files changed, 339 insertions(+), 261 deletions(-)
+
+--
+2.54.0
