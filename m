@@ -1,116 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D833FC5A1;
-	Mon, 29 Jun 2026 10:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782728578; cv=none; b=ZloQ3s5VyHJ9JcGBnZ1IxGTq9GflxarWntqgnQTj4xkHTDGQXBKrePtgnUNRTiQ4y5Ol3XaczlnpfE9MepBEqXYzQbedQoCPMJAWxjBmExV0uE3WvBagxUzNYLyromsHU6Bmmk2Rpzs8onU5yKQt6w+zODvmzg/1bTv5vLhC/Eg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782728578; c=relaxed/simple;
-	bh=nm79rb2Uv4NTeBAwS0Fl6t22ENEYwHf4rkwzbzfr4nY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ETLZU7zVcyUWFY3n8b83ib4pSp8j7rJrC5ZPF4bT0gHyTuw7u9u94GR3fJI9ZO9zihgYpAcAsD1W/e8npjr3hAFFDc4y21vuSTDv0hKwjYOfcECTSPp69Spf5Em1Dvd/yts4Co4KbPuhn6YDn/bLbVz6PMJYBFT3uusRTYhIW4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZ3w1MGP; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB1835A393
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 10:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782729456; cv=pass; b=OL32dmGXluvvudtQb6jm54ih2BaPXchovHd7c2vqAAOWQtexaQ6+CTpn3rBe9rAZ5XahJ6FrGCNzyktCkjFj6aK3RGaFqhQdPtp003a4MDM03ib35ewX+nIIADcshXGaGpMDELSou/bYnHDXtpO7TZ1Q2wKcKtswXZiMttMbS5E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782729456; c=relaxed/simple;
+	bh=FDg0Cl/yIbEJs1iZUcaKBc5BZgkQJeT1BjRjBz2+49s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lxg+XU93qZosBrM9pBCTzKILMl+fRLe2zu5PStgG0AOhcBz269LfeZNvluOl8ybShLs6EZ42//XAKaN+Z3/ukjpivQhidlOy52fDSzTTSPeI7WqgFk0MsIfzTF7/BqtHRdyGhhzDRynaXd/FSDaTdroIiUByssTmw65E4Byvifs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yNLt9r9x; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZ3w1MGP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912011F00A3A;
-	Mon, 29 Jun 2026 10:22:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782728577;
-	bh=YKILQp0lAA6FRhfS32i1F7oL2VhGfy+S4ceEp0E6QgY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=ZZ3w1MGPu6xAsLW0pK0xX8UNoTwCanqweqUwzJG3an0Fyw9iExGA0nMsy2qfLialK
-	 X2dcmIzoEyfZO2N4uizWbtvjpFTaO3cgE722C2TNSfnjKaQsGGkhFBlWlI4qPHVWU1
-	 6i0tYS9+EvLBC2B2tp245uaSiFglLNZ4AESfOn7a95tRnGTmYHqxlMckqjJTUD8Ygu
-	 /eU5hP3LfeYq8Za104pJFJH/h/eCn7l+AplpN+UrlPNEO6thsi34itVLVGWxoWVnSc
-	 P4MGXqROPf1hhtc3FtxABVA0TbJjjte+CwR+4K8UXALFSZwM1zvrp/fzRDjdAlCqF1
-	 xUAoo1tHd+nRQ==
-Message-ID: <801b7303-0112-4f8d-8286-fac7e41692d9@kernel.org>
-Date: Mon, 29 Jun 2026 12:22:51 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yNLt9r9x"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-697edb1bf6eso4591552a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 03:37:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782729453; cv=none;
+        d=google.com; s=arc-20260327;
+        b=E967ngtnemUoGI1jSOYdkSatvyLnwuY+14AE8q9y1cYy0xIHiWzNFRtRvE8pQyfuTS
+         YjBONekN4yjarnJJiowCoVUzw/oTpKJqpuWbSyuZ3N1CNgm8Xchtzmm5I4Erls+RRRfi
+         OulpEXU09ixb5MT7eteLYqRwIH08FIF2EkDqFIxAIeN3gpFMcU3q9IIK+9ZxYCApSoie
+         sb0s07PdUXqYO0alQlvz0Oceu4854B+QIegscKdQFd02TWKCoMHqpJLZumMV5I1ziKdj
+         5ZtE2OFy0KILb0uQtp5uvGYZwkHqQy0fZojUsyFeXXts0Petq295yaQ5gToJtlniH0oy
+         hMNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=3WQCCc/cF9ZMS+U/vA37gGpk3ADooCOs8aFr7FRgnAg=;
+        fh=U57IkMfpxq6Pi4bdrC3nnDJ0e+SVZ2wkFdkINzIWVpM=;
+        b=ish8HjTYRg99fhx2NdffiXCNDgAu+jfzGGDrI9c1oveFCyPGfM6DqF4Z/LWm77ozeu
+         mcP+C9kDCP3HnCmiiU44BjpOBRWdEefNr20F4HWcijaRGID8WV40fL4nu1sDsbVmXbF2
+         +t5gtUGjHRuML0jz+0Y/TtY+G+iZOMY21e+MCed3AaAo1E1lvFCy4TYU+fWHnXtrnRUt
+         Yrs33ST0JHYTfqqMg+KmGFulEHSOPrWh2H+N5K3iYifqt8pzLePCXECXzGVpxzk5HxG3
+         wOsf3j6hKRlOPNx/ZdUhZvbDSsAz5aMlJzdUQTVSmmGfEnFGleqAaiAC3ahnAfGvXs+Z
+         7eQQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1782729453; x=1783334253; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WQCCc/cF9ZMS+U/vA37gGpk3ADooCOs8aFr7FRgnAg=;
+        b=yNLt9r9xtmlcY4hQOxUHk6RH3pxvfxn2ARq3N0PeKfYTGDUFyE8d3aLdwswytFWgGi
+         4IxnsS6oh8tyJzF++FIwCHYYTeb3esPrdfYhuzq0WxfI5vxjk4qo9TA4yoxkBMWJ/vol
+         UcwWSFQ5alScG44B0rHsJPpA19v9IMVF6xqIxDx1WsORJM21NU4WibuxemOnXFW8TxLs
+         VYkNnnF+Jwm2NbG6em9jjmwhjhyngoTEXTWB99oTD/z6MW9Rni5ToGKxBKNNaI01wwk8
+         pIXE0ZiSck51LUf4FPhkCsOKNK3trxngGlwd6MAkkwil7bys5yHRdH7MhFIIv8FnsyTg
+         OZvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782729453; x=1783334253;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3WQCCc/cF9ZMS+U/vA37gGpk3ADooCOs8aFr7FRgnAg=;
+        b=GxZhs/0q2IObyCs9E2RnAiwrlJ4bzJBmkrM7wFqUDBhi6no6JLykpKKufrLt2lJuWO
+         FsAAfVw/y9S3xqtYRGN+wX+RCPdWwWqqgQYVrid+rMl7QhAEO1iBYoModlR2Mhcr9YKv
+         AK8/ItCori3I2MefkT31oMsr+8tO55NKQoOK5AxR6LtV9m+jofGY3dFI5EZRWrQZ2Xzc
+         EYM+CxPGaJ5XIlJL89wK6BTg5FvAlz72u889+f+reT1C5dDClc+j2hQzJ9KQoHznA5jB
+         HuLwfI2EPvPYfy7KU7GLsXv8q52yCviE/RVBbViU6OXN7WmqMr70fZgq+L2bYIwj3aFS
+         dLVQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqUYiWHS1qIN8PBt9WQfHJFIwJMuiiA++kZLdX0PQAM9AsoX3QdwqJ7doCA/xYBAFZi3ot/A/F5ZmRs+tHirBQmiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyCXOEeeB54m4lSq/e5Onz75N/yJFvLCXsVhyDdmB2PxomVkJi
+	wufEB1orJBLkeJ7tsff+HGUJTrkZFW1HhoA5OChnm1o+VMEzNnZSGsrecRBuQjLOpOEckrnBcaH
+	2Hmx6sM+0l5WXx5FGlnOEcslp9G6oVWHezzylTkE4HQ==
+X-Gm-Gg: AfdE7ckQPjlKccfVwti0FtnhwjWRMrtezkEc41Tsaepi2Ni6W5rY5/5jZWb3crW8gGX
+	S74hYEY+Mp0GKYszklzxPp/MMFTY6w+fC4dG37/DrYb3J8olJsNyS2QJyuOFda3qQH9oMiobbLG
+	O8SUYfuZBzdljwkbYSeo5TX9niJ70pow43Gfe61/nUJTz4mTklzUR4n+ZhmiZruS8avx1ORZ/9T
+	r1YTfTn7eiKWmtGN/J1fh70tCCIhlmTZ1ZV27fp2S4vVv/CmeRyl2HL9UON2UCgy2LptOi4DGKP
+	kZExZJqrJ6MDXmsCkaT2trUo+WUo8A==
+X-Received: by 2002:a05:6402:430f:b0:698:3f58:9290 with SMTP id
+ 4fb4d7f45d1cf-6983f5898b7mr3425467a12.20.1782729452868; Mon, 29 Jun 2026
+ 03:37:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: exynos: Add bluetooth support to manta
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Lukas Timmermann <linux@timmermann.space>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexandre Marquet <tb@a-marquet.fr>
-References: <20260614-manta-bluetooth-v2-1-52de06cabf9d@timmermann.space>
- <178272778358.113362.3049339184584034398.b4-ty@b4>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <178272778358.113362.3049339184584034398.b4-ty@b4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com> <20260613-exynos990-peris-fix-v3-v3-1-2b230db78ae4@gmail.com>
+In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-1-2b230db78ae4@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 29 Jun 2026 11:37:21 +0100
+X-Gm-Features: AVVi8Cd_KzL4j8x2t75zH4aE58eWi5dZrC_hXca-XTNOV6txB2qHwNYu_bbkjxY
+Message-ID: <CADrjBPoa7pTyfANuWznzeoLm7oWdWGcJbGxW4hmuSWo-R30SJg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: exynos990: Add CLK_GOUT_PERIS_TMU_SUB_PCLK
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 29/06/2026 12:09, Krzysztof Kozlowski wrote:
-> 
-> On Sun, 14 Jun 2026 22:16:35 +0200, Lukas Timmermann wrote:
->> Enable the bcm4330-bt device for manta boards on serial0.
->> Also adds the necessary pin definitions and interrupt handling for
->> wakeup.
-> 
-> Applied, thanks!
-> 
-> [1/1] ARM: dts: exynos: Add bluetooth support to manta
->       https://git.kernel.org/krzk/linux/c/718b15471c2b13a4830e80efbb489c2a849060d1
-> 
+On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com> wrote:
+>
+> Add the missing TMU_SUB_PCLK clock ID for the Exynos990 PERIS CMU.
+>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
 
-And still incorrect DCO. Checkpatch tells you that, so please run it.
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-I fixed it up, although already after pushing so all builds will now
-complain. That's super annoying. I will reject future patches which
-ignore checkpatch.
-
-Best regards,
-Krzysztof
+>  include/dt-bindings/clock/samsung,exynos990.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
+> index 47540307cb52..c06f591d9d90 100644
+> --- a/include/dt-bindings/clock/samsung,exynos990.h
+> +++ b/include/dt-bindings/clock/samsung,exynos990.h
+> @@ -434,5 +434,6 @@
+>  #define CLK_GOUT_PERIS_TMU_TOP_PCLK            17
+>  #define CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK     18
+>  #define CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK      19
+> +#define CLK_GOUT_PERIS_TMU_SUB_PCLK            20
+>
+>  #endif
+>
+> --
+> 2.54.0
+>
