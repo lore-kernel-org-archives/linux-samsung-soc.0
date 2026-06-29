@@ -1,92 +1,92 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC093B9D84
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D3B40863E
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 12:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782729861; cv=pass; b=Y3tdNJq/PlGojb3o01Rcz0dzjcfxYNljLplK2BiSTciJGoo0QMzrb5RCZMNgXCXN01Y0IkcMht4VsVHrYa0iSuJMhbXFTdvym1OVWGLLu1z/7IrK1sLEGk4FvG2Ibhyg6wnZ3gpUZAiPYbdHfTy2DVSuBuDceW3O4cgomP05ytQ=
+	t=1782736364; cv=pass; b=WD2rZVoo2RzpLLmEivtU6rgbwl3K8nrhrqi7FH/5W3JQvIN2TuTNaaD0c+64eLkbwVqaU8EMhHHaqLhCtbsV1I2N83wIJHh32PGMkfULHieMMCcPBZr6VIJsTsLh+srVmtkkL9EGpRgUdTI3hmF7my9/gA7EOf/aJIv6wO/b5Cw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782729861; c=relaxed/simple;
-	bh=iDO4j2JAZZI6/SJz0ZNmXzlln8bKUKTt/Dj4jurK9p0=;
+	s=arc-20240116; t=1782736364; c=relaxed/simple;
+	bh=L8JaU1cFQMm9KChrGufXeN5dKBFqD7lhpptMglX4LMw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XmXxy+0+t06iWeSoCzJ14qikVbnf77hZ1pnmmaWTpmQGv47TZOnfN9uyk76SK1nCmDE9cAMLaBUplTgdkc0no5ejYL+5QQaaOhiKlRqWa0SDmQNcpTTqWvYgmr1xFiLRYkfhUe/cwyyN9jfmLWycEh7zfWwWl99ADLzdLWUrA80=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vYwkTSNy; arc=pass smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=FX+3UtCh2SCtD8KzdHBp3KZyiQj3+n+DMvGOx9NG5Mqg3TaoWCJbA6BkCWirf41NPAgbnZExIQ3raPpepVhNgwnAqfPKa0npuyvC5gkdP7vwN0RTIloONbAmhbu4tpqYfUC5V+XsIan7bHyOcgWxAZlItEoyHkjmojf6lWWIovc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JGuyXLnQ; arc=pass smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vYwkTSNy"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6983f20a8bfso4075193a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 03:44:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782729858; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JGuyXLnQ"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6986287534eso1761410a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jun 2026 05:32:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782736361; cv=none;
         d=google.com; s=arc-20260327;
-        b=FT3UKss/AQj+N72RMstoSagRlTDjsZd8QU4u2BK0GygQS4Gm4loHodMu63+EAsN/wM
-         mtiwB0gZfnC811qtd1MOZzXzn0pX8gEoa2qwieDubx9Jv53OggWM4RqdiLCmC3nlaMHC
-         iI3kqOg2I42so3n5zfJBj9ZN6rz8sykAHubTyS257AgY/erefBLmIC6DTW+spblsIgQs
-         pFOKFatU4pk+RFZHtCVnUUA0yCHEXrR/ndUeqVzeik6lGG7xc1dgnQ5P7VyqWdDJXEXJ
-         4MkXXNc7UgrnXfCGx7vIKrTx8szlD9g5bWNDzgpIvHJpCS8BZfkfB0nePm1+wEyAyIIB
-         v13w==
+        b=qdje9QV4EFbjgGjuSRZaOrLElPha+TOqmASivHEHxOqbofisJqdNOdvuGt5UhT2hER
+         F9KJW4EU4Q+Bq3fVx1HWfb3X2CJUdxVxHGG3Pk+tpwSPKJFk5OJHcHH5Qex6X2EO7MZ1
+         TuEFF3gW2uqXmypT2d45vYuQMPXEVI49S8oyARhSYRnzqaz3D0lTrXdZvV5/3Yk5aBqa
+         j5qWkNE5sBwvtSLEs3WvD2ByWtwFBPgDLFjtye65D6UedL6ELFwL7/vMFzBWTmkIjiSk
+         mqW8Vk0PUGWJH4qRlvyiAZGzKwkItrn/SyI1fBKmpHNINKFPaNEpFOaTfke92e/PooBo
+         pZWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
-        fh=2MULmamw9A1vbjnDL1o5sUNozon9quJycxJ4oXWF/X8=;
-        b=ZtfJ+BrDXOLP59M+V+nbQ+csEAicQKjmB1A6NSvg/Ce/QTE4vXjpy1p+XRilZ2ytkp
-         LipJo+0wOj/d11Ej8MUapf40/TnJPxxX/jMWA1yWZrQgYgDepMH58q1c9u/9RMvmDvmZ
-         J9wQwGfxGJeCATwA9D9TWzETm0fZNi5iSYvNJPh6c243G6+Hw8bLfBhc+QQUHxljB0ON
-         u9r+sSQa0LdIX3HfO4vsPh6MeuR7L4cAHHTv2xPjtYoL8YKM/YEX7KxcThbpKjNP7dWg
-         sM1w/c/dkiGqEkX1a2MYmJySE748wgYlRlO6+oYhieXk5PngLfnqEMRK3dX1g7ainAhV
-         eOPQ==;
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        fh=ZbaUkDsxDw7EvddgnPYzIjRUn37LqKh+wOfw8Rn+YUo=;
+        b=l4l6gLJ/gXtzGAay1SODplPZZwkt7ssVFCaFhdgaL5bYvjKPttcOyjgXjTAWKn44vb
+         w16wn5xaXYjBQT54gXsdrsvK9ZUJKy3upiD7RSIqvQBsHLtkoLrZZBtuFAn8k5DSQCkR
+         ePoYw5W/E2ZpnExCgTpTPmDsCXPtguTFiCHSXtkx+lpyD1KdK/vg+22N6nZhsB5j0ECp
+         Mpf7duG/HrUeF0YmYbY+2MghTaFSKu27PxY1s8K0sTzJFq26FweBu1BITwj+x8tlZSbe
+         VfaWmf0wrN6IPtgbf5EypTd4JUWZw2ILZWOsEr8cDSc3e+ZyZxdAG9C8cMZNZG5Dw+1A
+         iHmA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782729858; x=1783334658; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1782736361; x=1783341161; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
-        b=vYwkTSNydHDJMWhbVKWp3I0A/xVS9T1wUnB7DRi8/z1KJKysqwd0m+tNU6a7mIqter
-         81qyJTlFztmPfCOU08vBZ6TLf3KmdjYKvrh0PNSfr2FVMEpPBlvHSPjAII0F5FhongtE
-         lCLvfP+yYvcQ+KyYst5BxA5MVAeuPx9EIorhQD0rwKrduR/aEKB9/0Bjuwstj8EjVETg
-         I/vsZOnVgQxYvnhMPv0MG6WoNRUdo+TS/wTgAxNxH6TalLxH7uZsaLJ+aajCSxXgfwg+
-         htXJAluBwnzF5sQed2QkKuHsFWARL6sy1lD2FpKWCc3OYlGND1J/Swh3ME7e4cXGLQ85
-         8kKQ==
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        b=JGuyXLnQL5sz9BH6+VPjvQeoF3/judbJARvJ0xkTJSpwa3rlW9fTCnYBr3mSjiI2xB
+         3Ac60HX+i5+KJAoVOEBKs+x3EUrHbziQNfLPDONqowB+t9HrmkDfyf1YK0P8vDtScu3Y
+         791WtF7RyjGrvlOAOBWeitOkmZzwWJkx0f9z3W9jhD4iRV1xGBbKtKyvI231NsXMyMuP
+         LDLPPtMnXTbWN/mUVqzpW0vlEevdhFAu00He9KdLufz9D/UHuvLWxDOjj5tSixQ+mR/1
+         8jtGvG6Bgzl0NFhPretHBnDU9dB/73TI0SSZKc3sVk/29lR2qq6KpsiAZTLvkZPSIX31
+         diog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782729858; x=1783334658;
+        d=1e100.net; s=20251104; t=1782736361; x=1783341161;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
-        b=awbwWnhuqyw3ATeoybXOCchUzGjTkOKpYj7SQ9UlRae5KDjZsMhh4GItwgrEPzH9GP
-         Ch70ub23ewthD8HVERQzjq0ItZMheGsB1+3QoLsF2fLf7xijkbv1vOwVn5CXmMrSB2qW
-         TsPranUvb9+p/tRewvJzHfGuA4FbrGXYZ2LYCr4WLPqQAU5qAP/q26ZN234YUCxh5INN
-         MU4odXqZqF7wmzUvliCdoPg78HIcVEDOAKgZ7AGI6meaV5hDvorLK31Im3CxfnoOOwhT
-         oKZxCdQG2bLBgSXE2nAvDDBsvJrkflsoGmdcKA+ugEl6AAPNOj19MOgoOv5OvpVmIcCn
-         E/LQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rq5oXj2laivtEE3uz16B3T66hDDoLG+b2tm8ubhrLlaZjr+uY+GQ3TeXLT+8JL3qwmwUaJlZg+3sApo9p6iH/B8Ig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX9nepHhSSeNiK5swX7fR3MNLanc7dx1OmjsnZFDyKUrirriSF
-	EN/3WhDUzPavpb/mArcGoa6sH4GzQIgj/Uid4I45nlSIhl3QoVP5gsSioG44bAlHYWUekKaAxcB
-	rsHwK+dLvP5HjhMjhapqUyVhFTcowcDHJBe+tBl4TGg==
-X-Gm-Gg: AfdE7cnm/pxKHbtB6qr7sXqUNJMSq5yWGWcjUjZZLyXipw6VrXCksF9PJh0Mz18qDDa
-	IBF0kC3GWvJva97m2qn2LWfOAI9rQyOjZV2cI6T0v/ZeLSpKaiQTm3potYz5PukSSOmBrjWVNCT
-	doIRUg4wTMKHnK257iVyTnOzrpDSQ0bEpCNxB7ErysJYYqDiCVhifDmjz3tbXpA0gA+R3kiPB9h
-	GJvQhy+V3XC69cv/jzwDa3svlH2wQAdBNULZjrSssF93lOgmUPf9foxjXKdFhLJUP+WvLCmfrwg
-	POeJeyEzmeZA3umrhW8e47/vLkgEoA==
-X-Received: by 2002:a05:6402:400d:b0:697:8d48:7fa7 with SMTP id
- 4fb4d7f45d1cf-69810ae01c2mr5980595a12.22.1782729858308; Mon, 29 Jun 2026
- 03:44:18 -0700 (PDT)
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        b=D28wO6T+NAfxMBoYHXY6QPCDhJrf9h+Bouq7UUAfKfrLdUaKcNpcY9sDBzPLzjL2cS
+         RbsuH0g0x8TwWmXmwig5W99UpIGgHXCg0POJS5PFGwFeY9/Q0mSEDthM0NG2lA/oJ3R/
+         Bo0W4d4Xq2m9R5qEZepEEofJ8bVbFGrOSDcQENNz/uZ7RTPb4FdI1sLWqP0heFLP9ID0
+         ugA+eaC5Cxc4EFBe6ETpUj0BgLGrPDGBfUQKJ5j6vBqKBBrLBbr7lBpAB4FKkkmmeiX9
+         fN0fnDsUFDhnlVYIZuU4QX51I0oAD1tj4p21KtW0hgvDGkYYQu2iZ1kxPRJERv8uF0hh
+         X7eQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqJQYcNSfYfzMt+JgxmP18bYQANZqQCdB9QlsuuirAZ/zvBhs3zojF1BuXyPjpcGmM/PTwsiui4Ueachkluhtqhag==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/p9l56jwF+YlUcEWRPyCFLElyePAt9oEoclQh1SqAQH3plVQn
+	8N6N86zynGG+UdHED1Rr9xelVOXQBzyXvy8gjLWPdpmWDYZUSNCRLCbMs+g/LQcl7IIvhKjWdOV
+	TPbcPWYdf5pikMYFE3fGbSFDVjIB4eCtv/jQcAfX/0VKfRGIB9zPxJZY=
+X-Gm-Gg: AfdE7cl7wUZV9G/Xi6/qqqedLM9IFVpsCCkSD/LK6L0RX+nG9VSEDw7N9oyU7oddExD
+	FH/JTOvMJc+0X9XqrR1att0Jn/p6a+wIEfUcdFIrJctpiLHNa27mk0sCAJuWtlJvF164V6JwRpE
+	aoOJgOzEs6uoICWvTQzkEEtn0Ri5GNsfi50BVQcQtbZh1OLtop2t3SRhcWppw02d5UaF3CgfzB7
+	8SAmLss51yjPTb1LqI26U6zeCYXWdyCFPPLc72u99I2vnWFHjdhB9JF/CkJxorP2R2X1xA4z5dH
+	9AzUVcb5lXeGkblx7Tr9aogrkA3xlg==
+X-Received: by 2002:a05:6402:35cd:b0:697:d475:9692 with SMTP id
+ 4fb4d7f45d1cf-6983630b4camr4695431a12.11.1782736360872; Mon, 29 Jun 2026
+ 05:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com> <20260613-exynos990-peris-fix-v3-v3-2-2b230db78ae4@gmail.com>
-In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-2-2b230db78ae4@gmail.com>
+References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com> <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
+In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 29 Jun 2026 11:44:05 +0100
-X-Gm-Features: AVVi8CdUhgADG2xSK96hAWTQ9tVWRhtK6fekJr5xsrWPfeyuxnqLTd7JZu91VDg
-Message-ID: <CADrjBPrCKS-_FSFaL+124cdRioGOEvk+6HFfrJCGt7HB983rGw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: samsung: exynos990: Add PERIS TMU_SUB_PCLK gate
+Date: Mon, 29 Jun 2026 13:32:29 +0100
+X-Gm-Features: AVVi8CdLbhp4Di9rmkSMap57ieyZzpxVCIoG3c1G91VB-Ou_IfcxhglJYrQ6uH0
+Message-ID: <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
 To: Denzeel Oliva <wachiturroxd150@gmail.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
 	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -97,43 +97,98 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsun
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
+Hi Krysztof & Denzeel,
+
 On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com> wrote:
 >
-> Add the missing CLK_GOUT_PERIS_TMU_SUB_PCLK gate clock for the Thermal
-> Management Unit sub-block and update CLKS_NR_PERIS accordingly.
+> Correct eight PERIS gate clock parents to match the hardware clock
+> tree and reorder the GIC mux parents so mout_peris_bus_user is the
+> default source.
 >
 > Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  drivers/clk/samsung/clk-exynos990.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+@Krysztof: I was thinking, maybe we should establish a new rule/best
+practice for Samsung clock upstream submissions whereby patch
+contributors should link to the downstream cal-if code for the SoC
+after the --- line. That would make reviewing the patches' correctness
+a bit easier, as the downstream cal-if code would be readily available
+to the reviewer.
+
+regards,
+
+Peter
+
+>  drivers/clk/samsung/clk-exynos990.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 >
 > diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-> index 4385c3b76dd6..ee3566b8e57c 100644
+> index ee3566b8e57c..df5928833b23 100644
 > --- a/drivers/clk/samsung/clk-exynos990.c
 > +++ b/drivers/clk/samsung/clk-exynos990.c
-> @@ -21,7 +21,7 @@
->  #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK + 1)
->  #define CLKS_NR_PERIC0 (CLK_GOUT_PERIC0_SYSREG_PCLK + 1)
->  #define CLKS_NR_PERIC1 (CLK_GOUT_PERIC1_XIU_P_ACLK + 1)
-> -#define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
-> +#define CLKS_NR_PERIS (CLK_GOUT_PERIS_TMU_SUB_PCLK + 1)
+> @@ -2551,7 +2551,7 @@ static const unsigned long peris_clk_regs[] __initconst = {
 >
->  /* ---- CMU_TOP ------------------------------------------------------------- */
+>  /* Parent clock list for CMU_PERIS muxes */
+>  PNAME(mout_peris_bus_user_p)           = { "oscclk", "mout_cmu_peris_bus" };
+> -PNAME(mout_peris_clk_peris_gic_p)      = { "oscclk", "mout_peris_bus_user" };
+> +PNAME(mout_peris_clk_peris_gic_p)      = { "mout_peris_bus_user", "oscclk" };
 >
-> @@ -2619,6 +2619,10 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
->              "gout_peris_d_tzpc_peris_pclk", "mout_peris_bus_user",
->              CLK_CON_GAT_GOUT_BLK_PERIS_UID_D_TZPC_PERIS_IPCLKPORT_PCLK,
+>  static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
+>         MUX(CLK_MOUT_PERIS_BUS_USER, "mout_peris_bus_user",
+> @@ -2584,15 +2584,15 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_BUSP_IPCLKPORT_CLK,
 >              21, 0, 0),
-> +       GATE(CLK_GOUT_PERIS_TMU_SUB_PCLK,
-> +            "gout_peris_tmu_sub_pclk", "mout_peris_bus_user",
-> +            CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
-> +            21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_CLK_PERIS_OSCCLK_CLK,
+> -            "gout_peris_clk_peris_oscclk_clk", "mout_peris_bus_user",
+> +            "gout_peris_clk_peris_oscclk_clk", "oscclk",
+>              CLK_CON_GAT_CLK_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_OSCCLK_IPCLKPORT_CLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_CLK_PERIS_GIC_CLK,
+> -            "gout_peris_clk_peris_gic_clk", "mout_peris_bus_user",
+> +            "gout_peris_clk_peris_gic_clk", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_GIC_IPCLKPORT_CLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_AD_AXI_P_PERIS_ACLKM,
+> -            "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_bus_user",
+> +            "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_AD_AXI_P_PERIS_IPCLKPORT_ACLKM,
+>              21, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_PCLK,
+> @@ -2600,19 +2600,19 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_GIC_CLK,
+> -            "gout_peris_gic_clk", "mout_peris_bus_user",
+> +            "gout_peris_gic_clk", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_GIC_IPCLKPORT_CLK,
+>              21, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_GOUT_PERIS_LHM_AXI_P_PERIS_CLK,
+> -            "gout_peris_lhm_axi_p_peris_clk", "oscclk",
+> +            "gout_peris_lhm_axi_p_peris_clk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_LHM_AXI_P_PERIS_IPCLKPORT_I_CLK,
+>              21, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_GOUT_PERIS_MCT_PCLK,
+> -            "gout_peris_mct_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_mct_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_MCT_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_TOP_PCLK,
+> -            "gout_peris_otp_con_top_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_otp_con_top_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_D_TZPC_PERIS_PCLK,
+> @@ -2624,7 +2624,7 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
+>              21, 0, 0),
 >         GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
->              "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
+> -            "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_tmu_top_pclk", "mout_peris_bus_user",
 >              CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK,
 >
 > --
 > 2.54.0
