@@ -1,120 +1,160 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EF53A8FE6;
-	Tue, 30 Jun 2026 10:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782815047; cv=none; b=OL5HJPr9/p4QJKHBNG+w6ks5T9QV51e2BJ1s/um9CAxpJc72aRvOzBx/Cm0y2OKAnzJNMX+cB5vHD3kQlymaOFyRmBJBEmiNCqeAcTXumR7zvcyjnKuX4AsXDg0R19/blGLgdgo0wozn6GK6lpHDRUrJwv4CIuL52rk4+gbQDM8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782815047; c=relaxed/simple;
-	bh=ktunQaDDS5EVOVO47fVPmptPD5p+avnAGjEgEXLkbp0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Rbim+d2YDrsCp8zJtdpnKdjWr+gnTyq6k4rY0xoWhpqSlfbnAglWRWB2JH0JOBXojHbSwFWYxzdTsDoRfUxG23XUWIUlyqsTEReODRCBeKVj9qoRNpZCoBnOL0tJAxQDsyR+XQ9hHj8CbUEyiyfF35frfoJC1g75gqTws8HFxJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=icQ/wQmM; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C356A39903E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 11:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782817387; cv=pass; b=LNq6lVEYdYXWM5ejJdWTD1fF83lBgfiIWxmYD4qQi47KyPKbpF7zXf1iCdIa0X099v4dHP2IZ85kxcDLP0ArZC06E3Jfmxvqlx4F+hfeP76cn23yzXDMGjIP3khOE2/jJ1RM9n3ti3McJphfnFxVPOTBR6xw9sH72AMo6jF7KIk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782817387; c=relaxed/simple;
+	bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r2yPV5NbcTzIzrXM3QZkOtN8KJj2j8YmpKiImqMyD1RaYiQvw/ch/ggXFH7JE+qr4ry3k68fkcBKKP60arVDRcsJsq43uX1aZmOWOs2TesZQ8q5P6JS7ZFdVVRy2pJoiMXP29VNttPFBpPjUjgal1aenD4ghT1y7OiNKnsiWt/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FI8Mm/CC; arc=pass smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="icQ/wQmM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782815045; x=1814351045;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ktunQaDDS5EVOVO47fVPmptPD5p+avnAGjEgEXLkbp0=;
-  b=icQ/wQmMyVZEeQ41y0s/RD11IysL84RlqYL/arY/vH1/dWVzn1+QLLrf
-   ueBMWmMjezVhy+WaJXO+3iNQGGIcbJzXI6eieapAM1kBIjGjhhVCaXSQm
-   TOdxhxZcTJ6IN/W0mgmM+fsTXj3LXTIHco9RasSd9cPj/qGSeyCO0W2Wz
-   KbLi3LZ7d4xjSij4MOQWw89C0LFz2W4TDpD3vv6oGlWF6PGxSVzs/7RtK
-   R4U6BszKlVT+/8x5p+jGiXmDLemCjiVPuYg/rmmaXKWDznfJUbi98POac
-   d+XGxySUIzljPn21oJFt6BBAIK0pXw+4U1qaOJf6g5aG7EdN+AsAIzC0X
-   w==;
-X-CSE-ConnectionGUID: u+aCKVkgTeGawSelnWB4hg==
-X-CSE-MsgGUID: ElGvpXLJS5OtmCjngCQmbg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="83581389"
-X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; 
-   d="scan'208";a="83581389"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2026 03:24:04 -0700
-X-CSE-ConnectionGUID: jgq2xSQuTZCC6QLcUYS3Dw==
-X-CSE-MsgGUID: Tgh3e1tLRQ2N4h0xSzOsDw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,233,1774335600"; 
-   d="scan'208";a="245877673"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.148])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2026 03:23:47 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Lorenzo Stoakes <ljs@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Lucas Stach
- <l.stach@pengutronix.de>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim
- <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, Tomi
- Valkeinen <tomi.valkeinen@ideasonboard.com>, Sandy Huang
- <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan
- <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>, Dmitry Osipenko
- <dmitry.osipenko@collabora.com>, Zack Rusin <zack.rusin@broadcom.com>,
- Matthew Brost <matthew.brost@intel.com>, Thomas Hellstrom
- <thomas.hellstrom@linux.intel.com>, Oleksandr Andrushchenko
- <oleksandr_andrushchenko@epam.com>, Helge Deller <deller@gmx.de>, Benjamin
- LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, David
- Hildenbrand <david@kernel.org>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <liam@infradead.org>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev
- Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, Lance Yang
- <lance.yang@linux.dev>, Hugh Dickins <hughd@google.com>, Vlastimil Babka
- <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn
- <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, Kees Cook
- <kees@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- virtualization@lists.linux.dev, intel-xe@lists.freedesktop.org,
- xen-devel@lists.xenproject.org, linux-fbdev@vger.kernel.org,
- linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-sound@vger.kernel.org
-Subject: Re: [PATCH 08/13] mm: introduce vma_get_page_prot() and use it
-In-Reply-To: <3bb8bdc4788230c33102166d56cbc5abfad9d4cb.1782760670.git.ljs@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
-References: <cover.1782760670.git.ljs@kernel.org>
- <3bb8bdc4788230c33102166d56cbc5abfad9d4cb.1782760670.git.ljs@kernel.org>
-Date: Tue, 30 Jun 2026 13:23:44 +0300
-Message-ID: <d6d75626287ddd46d7da136cf013f7b21b1afc06@intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FI8Mm/CC"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6983f8b0aebso721369a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 04:03:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782817384; cv=none;
+        d=google.com; s=arc-20260327;
+        b=myQ0BqDpudsMkgAZ0aHJCmsGtFHnAisk/AfPpUKwBih/gKXs9y1vxJLB8IwBiPG2io
+         8JGGKm6pzIGNi/udfZCUfsWLNbAKFUHvup/FemrnYXyUuJAzt8DyW3DegLf0y/pFjcc1
+         RPsKWCU54bWeYbICtrlRONOdvF+3XVmKQi9WGgZTXlZTilZ2jV9HY2g87EmtuzvVF8aq
+         4s4CUncaHDV1ortER8BApwu867GNHlZORWQRkJvNKcccv1M+MaJqFX7qLrSX0l4z+5td
+         lWGXEjcH4oQYYwOGBwjOqdqA2YNgKYmApKz1B3GQGUgoJTYSmlxgok/23/I61QK0OW7N
+         0Y1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
+        fh=b/HT3n/xf8PpmQ7TznfE5BR3Wu0Di4hlV8QD0xBaE4k=;
+        b=AL+RMncqeX5fzNbcX62RzUVazy71zbdoELF51FyhiXNkTtULFZyeuqDDmip7XCye66
+         busHnUP7ckcisxR14OtdDLbCXutnzQi7Rcyy5Emdt0osql7FzAC65BbIz+XYsUJbkvII
+         Dodtuq5KDEzEjn6+D1zlfx3dof4ADa2yyQBnzyRrzm1t/RXK7uDy7tuDIdFoG+gIzQGo
+         u0kzni/ORU436M1QMhmj324ViGxcF1IsGKFxxPz//N4OCYLWkZ0HTvoGOmy1+/fVJ9ND
+         bHQgg7ZjRllb7DClwZc2G2YiFYRp93oB5qEKibhXSyhwiCy7+wiwouEpYe9ob61a9mXo
+         Tlew==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1782817384; x=1783422184; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
+        b=FI8Mm/CCqhCN5gcgXwiyaPrReLZg2XBTJl4ZBvTdsTX7PhNxJs00V6wYnKXAYxxWnX
+         FX4gLOzWpeTqYp7exZk0PkPyvxeGbAwHEGHunoHT3vDYpu2UscNwjV3mt1ws22WwkNmX
+         2pLmtNtVTJilFBX3JGGI6dtJgSCid7bPHoll31MGB1Z2ZilMfFxMtV5OQs4AthXUnjVp
+         evxDZVYjI1bxzDvCov5PVDzdOhWEFqmcC7z/knhMJZF5SNBiMLA+7LcrMiENw5+G5iTj
+         ly6aob1L79tjfy/fd8mgxTgbU4+4mpktN1sU+74tivnd1xbZeXy/wiHdRbHneJ39SUPs
+         2UbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782817384; x=1783422184;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
+        b=nr8GTNhcr13BriDJ06oWa5XJIEIRS3xD/Uy1FxANGs3npHlvCZgR/6V+l/6E+Pym+o
+         KorWASO7inbsyvNZXHwQINIGcfU5sR8siM/snvIa1FLS4kjTvUvd/w+6ncfOLQSoEDlM
+         bk5A6USrZojbOeHIYiAx8dEZW28IDamPEBvF6zbhYBTPf7YA0gXySk3+nQyt9Pwz5ze+
+         l2JecOjPeni2L1zn7AzPrkZpyZ0s26UypYkdZyq1quj0/yK70tT+F0bG/G7Y5IptYWtw
+         Q/npvzTGurUAFp2ntfcUxBdmDavQi0RUgn7AhcFNgijEeuqEtFRsnB9CKu0r6Ltn/tDp
+         +BUg==
+X-Forwarded-Encrypted: i=1; AHgh+RqxyzIEKUhJppnpIcalSrUidv6BABmx+J0f8vdM79ToCPDFgq5Wm/pFSU279l0iJPyOSUMowbrzjMIDvXwDMKTDtg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrQ3JANB+zfNMkRNrVYrv3l0uI/wxzzbWp5KmjRqPXuDNMhU5n
+	o0qFToDv/YX/13LxpKOwrGgUVuFYIB8BJw5FpTe5F0UspWV1MS4BwwkSiJ0a2tpJ9oDQ+ex7krF
+	8+FT3CvzCc5yEKa2zVdzN/9z7mJQ1HgA6HZIvPiCA1A==
+X-Gm-Gg: AfdE7cmTMwsCN98v77+Bx/gBZKfIRwZ7F5mAoKLkSu+5IsXPlP8s+ZzsNeo3Y2kjpJx
+	ynUp6bUypMeqfbMpdrHbXbiEFp6g+bwzaUuwQr916X3b9nKOiSV74lo/nD3NxSfZj7mqocg0BTz
+	okzs5oiW1Dj2j7LRoA+heC87+VEGWHngqmYoWtP/vprKz5/r+I+uWzF9jDdmdBDB92szr/D9hi2
+	sisX/cLHlynyQLYxEjrnz2YVB7Y1f6tWZDAxB9gLlS7HptUk0bmmdf9jpwiLN5u6W2J6FnX0kXp
+	827U2HvBl8OdVu53Iv3bHUUc3KoKpQ==
+X-Received: by 2002:a05:6402:2695:b0:697:fbe7:2028 with SMTP id
+ 4fb4d7f45d1cf-698819d524fmr695334a12.13.1782817384224; Tue, 30 Jun 2026
+ 04:03:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
+ <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
+ <CGME20260629123246epcas5p2aab9da9ef417274bb0b70f74c386f7b4@epcas5p2.samsung.com>
+ <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com> <0f1e01dd0844$01190c40$034b24c0$@samsung.com>
+In-Reply-To: <0f1e01dd0844$01190c40$034b24c0$@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 30 Jun 2026 12:02:52 +0100
+X-Gm-Features: AVVi8CcnyhJ8d9gnBSRZyCKu3M5tPQ4ftaBlF7F7oCbmkRZx4xm5fGDGZptwHa0
+Message-ID: <CADrjBPoZ4G09WGC_b59YWq3_EfTaPFyp0dD7VizKLYBW_eFk+A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 29 Jun 2026, Lorenzo Stoakes <ljs@kernel.org> wrote:
->  drivers/gpu/drm/i915/gem/i915_gem_mman.c    | 12 ++++++------
+Hi Alim,
 
-For i915,
+On Tue, 30 Jun 2026 at 04:53, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Peter Griffin <peter.griffin@linaro.org>
+> > Sent: Monday, June 29, 2026 6:02 PM
+> > To: Denzeel Oliva <wachiturroxd150@gmail.com>
+> > Cc: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
+> > <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
+> > Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
+> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Brian
+> > Masney <bmasney@redhat.com>; Rob Herring <robh@kernel.org>; Conor
+> > Dooley <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
+> > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
+> > parents
+> >
+> > Hi Krysztof & Denzeel,
+> >
+> > On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com>
+> > wrote:
+> > >
+> > > Correct eight PERIS gate clock parents to match the hardware clock
+> > > tree and reorder the GIC mux parents so mout_peris_bus_user is the
+> > > default source.
+> > >
+> > > Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> > > ---
+> >
+> > Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> >
+> > @Krysztof: I was thinking, maybe we should establish a new rule/best
+> > practice for Samsung clock upstream submissions whereby patch
+> > contributors should link to the downstream cal-if code for the SoC after the --
+> > - line. That would make reviewing the patches' correctness a bit easier, as the
+> > downstream cal-if code would be readily available to the reviewer.
+> >
+> We can leave this choice to the reviewer if they want to refer to downstream cal-if code.
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+Generally I would like to, but I also don't have time to hunt around
+the internet for a downstream kernel tree. My rationale was that the
+submitter is most likely to know where the downstream code is, and is
+likely using it for the upstream clock implementation. So, linking to
+it as part of the submission should hopefully be fairly easy.
 
+If it is a Samsung SoC for which no public code is available that's
+fine. I didn't intend this to be a hard requirement: "you can't
+upstream x,y,z unless you link to the cal-if code". I meant it more as
+"best practice/guidance"; if the cal-if code is publicly available,
+linking to it would be a useful reference for reviewers.
 
+Thanks,
 
--- 
-Jani Nikula, Intel
+Peter
