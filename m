@@ -1,178 +1,121 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAE53FA5CB
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 11:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782819165; cv=pass; b=F+ES5ZwOhhdd2BatBJ9Hhn1sNyATMqFeEIMh6UTxP3CPtvCkEremTHFEJQoKX0djSpJQFf/MS+NVnvwc6dUtliithX9ey4Sc4KZ39Gyk/dXlSmz5pDCCdn1r6i0rOmEbuRRRn/fkuZq8Ogluqs5vhOssYkIMofToY6bC0wHPQnM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782819165; c=relaxed/simple;
-	bh=Ml3S2a0ZylulO8bEdZQM280rooBXFC/9alJktHHXtFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B3BLaJ80KY1GC050P1SiDzj5aYzVbMCwutLEYPyljPVfKoh4SqiCdji7mo/FdDLVc22W/800i1MJIuR5hFnw3RBBYc8uwo4LbaSvFkX5wALqnOX9iabiEysDjUN5n97LXBTXcBVsx1b9VQ3uLN5T5gmCb5yIgw8eFi6ts4J2meo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OAdrWwk7; arc=pass smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E927540E8C8
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 12:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782823404; cv=none; b=iNy0iHjd8u18KzBm5+HBTl83tLAI1O/YZdFHrf5mbbD+iKX1UST0V+gCoV3C+JevYiNIbGnK7G+r6fb+i0aXEgwmKS9KWR9zvoriqmLKPQwOidQVBQk6s6MsGVD/sqF4PMhcWWAgvdbLLfp05day0jDxtlhNdtP2pAvFHfWg3/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782823404; c=relaxed/simple;
+	bh=4w4cGdT+RgHR/aDEKh+OBCsIxDXLoDWnQ6lNHnaoXiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GpDeJHUaMtgtPfRjIwob6/grCHNwIUOwjTvWUPPXKT3GvXsyFmyf+bVGItBdufeXcpqg+KDIt4fuAurEtq8hHjDvtZ27dy3LOOGFsSMgZpXcoKF3mcZATxQPoybICgelvMBm0GDJFAAHPZWW1kb+8ZOcSqqVMtAdPtkB0r+t0+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=F8Rw5xWG; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAdrWwk7"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6984169c126so6196980a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 04:32:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782819162; cv=none;
-        d=google.com; s=arc-20260327;
-        b=GJmgx75useyMiphCfcRf4grJk2fcZgcJDZVVFmAh3YjZGm3/rDnMOjhkDx9vLUMHIi
-         1ywzh6Ola+J4jV+cGQT8WMSfdmZf5XhnBGf+Ez+Zrso1TAYEmSD5PDvxwxs4HQ9JK357
-         YovrfyW3f2WMqnPbYo6EK6bXaWBxiIJjtjx0742fA4E8mcj6uqFD6pzEJtwojwo+IWa7
-         yv1YIqDcC+93yEmWmn4SXM2ezVoAyVwygaITVOpjoOzttX9ZGBabIhNju+UH2zm/lATK
-         BGJA1y79lEdGKjKXqiyyk9aqm5RreyGK3vJEXfQFTKehWq21ea9yIuaYZlMFXrkAg8qf
-         MCJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=Ml3S2a0ZylulO8bEdZQM280rooBXFC/9alJktHHXtFE=;
-        fh=fYG8gzL6+5gXww387M27HL+dtHLjydkjsiUdX2muCV4=;
-        b=kNw8zTLaFaUflLEXsy8+LuWlhR6Jd1dyNGvMjU3JRT3HIpbZe/s4FbQHYXgtsA0tFg
-         CbgQved202oxfthzaIq8tFd/hpmnJJbUr0rcN4RfWCK/e6U4/2+oFVduaUWzt9O9oizq
-         YEhPpSmztO0/uVQDEBajElSenpHAkMKbZeNJGboys9zAWop+Y/PdMJFy3Hn+wa5XxyZa
-         Fee0AAucH6T1D8r8Um4Xiytjc7OiqHUcqm47bP2ppQmV5HX87k9p/Op2Q1CYVz1QDAax
-         W48g+s5m1JKMfhX5hJsn8rNFOsVLcxDZ7wdOStBMw8cPuDfWm7ymZJdacnloY0TiAwLH
-         mkAQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782819162; x=1783423962; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ml3S2a0ZylulO8bEdZQM280rooBXFC/9alJktHHXtFE=;
-        b=OAdrWwk7io5oRt1D+wBZo4XxKyRYhbS6Ga+h5k2kXwFfqO2AeuIuDEj0LSUzB9GBmO
-         f0rD+mCzMfVr47ERrP4WOeHPDWE/5OvIxMOsExToiiXTfSzyUgBu/61t+i9xws+p/AKT
-         SYputwV7kGbe5rmLIH4scSfPzUWmuuqHCZERoVqhuDXB62mou9SO+wABdItAa2iWKIRI
-         L8lwHW6D/oGFXhSUkpJBpAQQIrqk5TyXnlQoiyExM5w1EPfb/qXpapYY+oZyfDL3MZ5z
-         86VTfAf9aNOPluWsB+ZmlpXGGFTNsavi7owG0emKIdizUY8N7QWz+V2GRUgXVCPTXKjv
-         Hs0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782819162; x=1783423962;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ml3S2a0ZylulO8bEdZQM280rooBXFC/9alJktHHXtFE=;
-        b=ceKoOMy55AMS5pBfpEE+TqyhhtGZf7FwnD82pKFxF2/DIqcRS1moP5ckPGExl3HXsL
-         v9FQEGMdJDoIGE9KLuvEXouvsDp6b8QOxs/ZoueD6vFaz2C1rJUqAXx03wftLmL1emPs
-         +P54Hz/5DHmMZ/usekZPN02og+8SVbASIRq8phNjZ4TSbEZuiH/0QCqke9YQnvpaQ/f6
-         qNHTTfPYfV9BXXyq4oEw/FUiQfTjX8lxZ9NoonKY40SXmFoPpeVFMonpznzrYJSn7Gge
-         7bosM6VIR9HK7gFRBZizG5jrQoXBVkWFGs/Wd5L4XhHOt0go76JN+xXijuaPk5BKqVdr
-         sm5A==
-X-Forwarded-Encrypted: i=1; AHgh+Rq+cpJlSRGhMOX/Qnv2Uy3wCXwNJsc5X9WkCb12DYaxiZAU7GMiJfOYtQqWCl0R4lCV+qbW+rGnODM9CTUvHDQzSg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0gZRlOd0yTr5zjQNrS1zCMlK/xEwy39Tns+uTnb+5aVZhsyVO
-	FmDUCOp/Iyqy7RC/pgEkyj3aihyXBQkOHois0TVVrsr4HOV8qUzc9E1FmmvkubjZOMFNsQnS5pl
-	R8tb+0SIMahdJgnIJsTI9sZrUOvbPLvxRbb0xVykVCA==
-X-Gm-Gg: AfdE7cnJq8gRHbb8WJphPW0i6oe2KniAgnuSu9aw4nGLUlptSIbOSZUFV1yNWUbxXfr
-	0zxZbO8s/uhIL4c4zfzT0bJUDYnAf4HZPV9uaUs0kyKmv0yg8OZWBINpwNaExPIqnkEeCU6CfNI
-	K8UQpnLto9JINcSSzRW8beMuHHrVrPy28XWFGDWJ8kpEeWYcga73m3ggcaSFhSF0qdLNoZVHWGo
-	TMMKarT/Cz+PgyKnaLoHVlZlhjFuEWjKG3hh6liHK2VeUl6wLPG97cumzgfcb+pDoIabY15Q1v7
-	931DFBZ9f8XN56YRLLxLSHusbi/yVg==
-X-Received: by 2002:a05:6402:51c8:b0:698:3b7c:7e36 with SMTP id
- 4fb4d7f45d1cf-698878ad389mr184057a12.32.1782819162077; Tue, 30 Jun 2026
- 04:32:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="F8Rw5xWG"
+Date: Tue, 30 Jun 2026 14:43:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1782823390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nex/RRO5Ai+er398OAIER7iHNhBcGonnMTqkZOJ75Og=;
+	b=F8Rw5xWGpw+DYic48f1q6n6F1n1XyMtM7m+pEBMShkzn1hWP5BCD5kXeD8TOyNkSZ1VCiC
+	Zyjb/gV2vWGvaRiTXSE42kC/GVe/Ctm1A9s9qxOA5ft2zBF8DEBKjhXmun8ZLJGiZgk3Ij
+	b+tvD/i6cV3rJTSZCEn3wTxMb1GR+yk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 0/3] drm/bridge: sii9234: use extcon to detect
+ cable attachment
+Message-ID: <20260630124301.GA4736@localhost>
+References: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
- <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
- <CGME20260629123246epcas5p2aab9da9ef417274bb0b70f74c386f7b4@epcas5p2.samsung.com>
- <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com>
- <0f1e01dd0844$01190c40$034b24c0$@samsung.com> <CADrjBPoZ4G09WGC_b59YWq3_EfTaPFyp0dD7VizKLYBW_eFk+A@mail.gmail.com>
- <b035916c-e985-4acf-930b-bb74814ae748@kernel.org>
-In-Reply-To: <b035916c-e985-4acf-930b-bb74814ae748@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 30 Jun 2026 12:32:30 +0100
-X-Gm-Features: AVVi8CcNxlc8aBvVUsFvxwtw-6b-XjIoK93AeruSemmptuSvFy4q0u1JGeOhNoM
-Message-ID: <CADrjBPrG7bo1i6YcxuwNKnYmKF=d-MXXMWSNdu+KfF7hhqQMXg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Denzeel Oliva <wachiturroxd150@gmail.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Krzysztof,
+Hello,
 
-On Tue, 30 Jun 2026 at 12:12, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 30/06/2026 13:02, Peter Griffin wrote:
-> > Hi Alim,
-> >
-> > On Tue, 30 Jun 2026 at 04:53, Alim Akhtar <alim.akhtar@samsung.com> wrote:
-> >>
-> >>
-> >>
-> >>> -----Original Message-----
-> >>> From: Peter Griffin <peter.griffin@linaro.org>
-> >>> Sent: Monday, June 29, 2026 6:02 PM
-> >>> To: Denzeel Oliva <wachiturroxd150@gmail.com>
-> >>> Cc: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
-> >>> <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
-> >>> Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
-> >>> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Brian
-> >>> Masney <bmasney@redhat.com>; Rob Herring <robh@kernel.org>; Conor
-> >>> Dooley <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
-> >>> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> >>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> >>> Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
-> >>> parents
-> >>>
-> >>> Hi Krysztof & Denzeel,
-> >>>
-> >>> On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com>
-> >>> wrote:
-> >>>>
-> >>>> Correct eight PERIS gate clock parents to match the hardware clock
-> >>>> tree and reorder the GIC mux parents so mout_peris_bus_user is the
-> >>>> default source.
-> >>>>
-> >>>> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> >>>> ---
-> >>>
-> >>> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> >>>
-> >>> @Krysztof: I was thinking, maybe we should establish a new rule/best
-> >>> practice for Samsung clock upstream submissions whereby patch
-> >>> contributors should link to the downstream cal-if code for the SoC after the --
-> >>> - line. That would make reviewing the patches' correctness a bit easier, as the
-> >>> downstream cal-if code would be readily available to the reviewer.
-> >>>
-> >> We can leave this choice to the reviewer if they want to refer to downstream cal-if code.
-> >
-> > Generally I would like to, but I also don't have time to hunt around
-> > the internet for a downstream kernel tree. My rationale was that the
-> > submitter is most likely to know where the downstream code is, and is
-> > likely using it for the upstream clock implementation. So, linking to
-> > it as part of the submission should hopefully be fairly easy.
-> >
-> > If it is a Samsung SoC for which no public code is available that's
-> > fine. I didn't intend this to be a hard requirement: "you can't
-> > upstream x,y,z unless you link to the cal-if code". I meant it more as
-> > "best practice/guidance"; if the cal-if code is publicly available,
-> > linking to it would be a useful reference for reviewers.
->
-> cal-if as vendor tree? Some contributors just base their work on
-> downstream GPL-compliance dumps from opensource.samsung.com, so not sure
-> how that link would work.
+Friendly ping! This series has been reviewed/tested and still applies
+cleanly on drm-misc-next, could it be merged?
 
-Urgh, I see. My suggestion kind of assumed the downstream vendor tree
-had been pushed to a public Git repository, similar to how Google used
-to push their gs101 sources, for example:
-https://android.googlesource.com/kernel/google-modules/raviole-device/+/refs/heads/android-gs-raviole-mainline/drivers/soc/google/cal-if/
+Best regards,
+Henrik Grimler
 
-A link to a tarball for sure isn't as easy to just click through and
-take a look which is what I was hoping to achieve. Thanks for the link
-though, maybe that will come in useful at some point.
-
-Peter
+On Tue, Jun 02, 2026 at 08:36:47PM +0200, Henrik Grimler wrote:
+> Hi,
+> 
+> This series fixes so HDMI through the sii9234 MHL chip works when
+> cable is hotplugged, by making the MHL chip use extcon cable detection
+> functions. Patch 3, that actually implements the extcon parts, is heavily
+> inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
+> cable detection logic to detect MHL") by Maciej Purski.
+> 
+> Before these changes, HDMI only worked if cable was plugged in before
+> booting. If no cable was connected, then wlr-randr still showed HDMI
+> as connected, with 0x0 px, which confused at least some UIs (phosh)
+> and caused problems:
+> https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
+> 
+> Tested on exynos4412-i9305.
+> 
+> Best regards,
+> Henrik Grimler
+> 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+> Changes in v4:
+> - Collect tags
+> - Link to v3: https://lore.kernel.org/r/20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se
+> 
+> Changes in v3:
+> - Fix return of dev_err_probe in patch 2 and patch 3, spotted by
+>   Dmitry and Marek respectively.
+> - Change to depends on EXTCON || !EXTCON instead of select
+> - Collect tags for patch 1 (not 3 since there were (minor) changes)
+> - Link to v2: https://lore.kernel.org/r/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se
+> 
+> Changes in v2:
+> - Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
+> - Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
+> 
+> ---
+> Henrik Grimler (3):
+>       drm/bridge: sii9234: fix some typos in comments and messages
+>       drm/bridge: sii9234: use dev_err_probe where applicable
+>       drm/bridge: sii9234: use extcon cable detection logic to detect MHL
+> 
+>  drivers/gpu/drm/bridge/Kconfig   |   1 +
+>  drivers/gpu/drm/bridge/sii9234.c | 124 +++++++++++++++++++++++++++++++--------
+>  2 files changed, 102 insertions(+), 23 deletions(-)
+> ---
+> base-commit: a87fef0880c4f52769b5a3c2fc1b2d73aaa04eb3
+> change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
+> 
+> Best regards,
+> -- 
+> Henrik Grimler <henrik@grimler.se>
+> 
