@@ -1,51 +1,116 @@
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E927540E8C8
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jun 2026 12:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4818C413D66;
+	Tue, 30 Jun 2026 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782823404; cv=none; b=iNy0iHjd8u18KzBm5+HBTl83tLAI1O/YZdFHrf5mbbD+iKX1UST0V+gCoV3C+JevYiNIbGnK7G+r6fb+i0aXEgwmKS9KWR9zvoriqmLKPQwOidQVBQk6s6MsGVD/sqF4PMhcWWAgvdbLLfp05day0jDxtlhNdtP2pAvFHfWg3/8=
+	t=1782825244; cv=none; b=O6qqJfTeeibpjmLzlFE1EHNiePkKIjU+o9SJsKFOICPSRNo/dfqwz3Al/PdblP9FHJrErcJPvx72B53pMzEI2HRsCAs1YMhu+KB1jyMx3rQGmdRrnFs8XbDnRjwKvtaoTTq+Q/gBo7OA1fWBbot3e14MKDNGFexRxLlmDkRi7qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782823404; c=relaxed/simple;
-	bh=4w4cGdT+RgHR/aDEKh+OBCsIxDXLoDWnQ6lNHnaoXiE=;
+	s=arc-20240116; t=1782825244; c=relaxed/simple;
+	bh=xFwetoL8Vuck3E69GGR5DG/ScQBvfKjkLbbRxYolLus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GpDeJHUaMtgtPfRjIwob6/grCHNwIUOwjTvWUPPXKT3GvXsyFmyf+bVGItBdufeXcpqg+KDIt4fuAurEtq8hHjDvtZ27dy3LOOGFsSMgZpXcoKF3mcZATxQPoybICgelvMBm0GDJFAAHPZWW1kb+8ZOcSqqVMtAdPtkB0r+t0+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=F8Rw5xWG; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSxeWf3zVq8I+kl5ASFY4VKvuXj1IVcgzw6aUWbjbFeki06zUJGzu5+UQUTZNRa9tFmYjyqeetdzQEjFIhz1zEvL1uQd1Ake+Eyv7fvuDP1DoGr5NSpGwfjRJISlxtd4ppkb7Cthy92YJTfskiiaZXyF3Xt0qit5uxRrkhKJwQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+NR4PWB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="F8Rw5xWG"
-Date: Tue, 30 Jun 2026 14:43:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1782823390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nex/RRO5Ai+er398OAIER7iHNhBcGonnMTqkZOJ75Og=;
-	b=F8Rw5xWGpw+DYic48f1q6n6F1n1XyMtM7m+pEBMShkzn1hWP5BCD5kXeD8TOyNkSZ1VCiC
-	Zyjb/gV2vWGvaRiTXSE42kC/GVe/Ctm1A9s9qxOA5ft2zBF8DEBKjhXmun8ZLJGiZgk3Ij
-	b+tvD/i6cV3rJTSZCEn3wTxMb1GR+yk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+NR4PWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A928F1F000E9;
+	Tue, 30 Jun 2026 13:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782825242;
+	bh=3VuQxWyNENL8ziwIh4+vVmGpesCoHqcx8KGFgDaDinE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=D+NR4PWBy6W6iM/Ff9MJncwYZfKq30z/VF5MnSG8JFLGmwT0FzFrXQ6aqWQn6tpWz
+	 chHpLPggi5lTbCoTpu69t94kXbZr+54B8Qro/1rU8YF3QIJBK4COjPZil73sSsG/rd
+	 CiVe+KSnk9WsTojsa9gNlK1n26D3/mnvCqbZMD5cX6k9unq4jh7CGsXJojiyasmvDq
+	 7w0D/ZsVBTMrSr6IcdOr8M0V26GjKqIDvDX2FrobXBhsyL6Jjt3N6f1qpqH6gdqybZ
+	 eLCJc7XBSLae7AfshSoISbnWfGD+cmyyDGkCoKB0jaQPJzFZxNYKlq0Y2hgnslfXEp
+	 2ae+MO2588wVg==
+Date: Tue, 30 Jun 2026 08:14:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Lee Jones <lee@kernel.org>, Sean Paul <sean@poorly.run>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Lukasz Luba <lukasz.luba@arm.com>, Vinod Koul <vkoul@kernel.org>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Chanho Park <chanho61.park@samsung.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Anusha Rao <quic_anusha@quicinc.com>, linux-mmc@vger.kernel.org,
+	Jonathan Marek <jonathan@marek.ca>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Taniya Das <quic_tdas@quicinc.com>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Zhang Rui <rui.zhang@intel.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sunyeal Hong <sunyeal.hong@samsung.com>,
+	freedreno@lists.freedesktop.org,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Simona Vetter <simona@ffwll.ch>, Andi Shyti <andi.shyti@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-i2c@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 0/3] drm/bridge: sii9234: use extcon to detect
- cable attachment
-Message-ID: <20260630124301.GA4736@localhost>
-References: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Robert Marko <robimarko@gmail.com>, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, Jiri Slaby <jirislaby@kernel.org>,
+	linux-phy@lists.infradead.org, Shin Son <shin.son@samsung.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, Luo Jie <quic_luoj@quicinc.com>,
+	linux-serial@vger.kernel.org,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Andy Gross <agross@kernel.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-leds@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-media@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-pm@vger.kernel.org, Alina Yu <alina_yu@richtek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Drop incorrect usage of
+ double '::'
+Message-ID: <178282524123.2726988.10975134253725315687.robh@kernel.org>
+References: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -54,68 +119,65 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 
-Hello,
 
-Friendly ping! This series has been reviewed/tested and still applies
-cleanly on drm-misc-next, could it be merged?
-
-Best regards,
-Henrik Grimler
-
-On Tue, Jun 02, 2026 at 08:36:47PM +0200, Henrik Grimler wrote:
-> Hi,
+On Tue, 23 Jun 2026 07:48:43 +0200, Krzysztof Kozlowski wrote:
+> There is no use of double colon '::' in YAML. OTOH, the literal style
+> block, e.g. using '|' treats all characters as content [1] therefore
+> single use of ':' in descriptions is perfectly fine, whenever '|' is
+> used.
 > 
-> This series fixes so HDMI through the sii9234 MHL chip works when
-> cable is hotplugged, by making the MHL chip use extcon cable detection
-> functions. Patch 3, that actually implements the extcon parts, is heavily
-> inspired by commit 688838442147 ("drm/bridge/sii8620: use micro-USB
-> cable detection logic to detect MHL") by Maciej Purski.
+> Cleanup existing code, so the confusing style won't be re-used in new
+> contributions.
 > 
-> Before these changes, HDMI only worked if cable was plugged in before
-> booting. If no cable was connected, then wlr-randr still showed HDMI
-> as connected, with 0x0 px, which confused at least some UIs (phosh)
-> and caused problems:
-> https://gitlab.gnome.org/World/Phosh/phosh/-/issues/828
-> 
-> Tested on exynos4412-i9305.
-> 
-> Best regards,
-> Henrik Grimler
-> 
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
+> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
-> Changes in v4:
-> - Collect tags
-> - Link to v3: https://lore.kernel.org/r/20250824-exynos4-sii9234-driver-v3-0-80849e716a37@grimler.se
+> I split the patches to avoid bounces from mailing list due to email size.
 > 
-> Changes in v3:
-> - Fix return of dev_err_probe in patch 2 and patch 3, spotted by
->   Dmitry and Marek respectively.
-> - Change to depends on EXTCON || !EXTCON instead of select
-> - Collect tags for patch 1 (not 3 since there were (minor) changes)
-> - Link to v2: https://lore.kernel.org/r/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se
+> This can go via clock tree (no dependencies)... or both could go via
+> Rob's tree.
 > 
 > Changes in v2:
-> - Add dependency on extcon in patch 3. Issue reported by kernel test robot <lkp@intel.com>
-> - Link to v1: https://lore.kernel.org/r/20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se
-> 
+> 1. Add tags (partial Reviews as Acks, as that's the meaning of Ack)
 > ---
-> Henrik Grimler (3):
->       drm/bridge: sii9234: fix some typos in comments and messages
->       drm/bridge: sii9234: use dev_err_probe where applicable
->       drm/bridge: sii9234: use extcon cable detection logic to detect MHL
+>  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8084.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq6018.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9607.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9615.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8660.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8909.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8916.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8974.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-sdm660.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq5018-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq9574-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qca8k-nsscc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qcm2290-gpucc.yaml       | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml  | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml    | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml      | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm8350-videocc.yaml      | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,videocc.yaml   | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5260-clock.yaml | 6 +++---
+>  .../devicetree/bindings/clock/samsung,exynos5410-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5433-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos7-clock.yaml    | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml  | 2 +-
+>  .../bindings/clock/samsung,exynosautov9-clock.yaml          | 2 +-
+>  .../bindings/clock/samsung,exynosautov920-clock.yaml        | 2 +-
+>  .../devicetree/bindings/clock/samsung,s5pv210-clock.yaml    | 2 +-
+>  32 files changed, 34 insertions(+), 34 deletions(-)
 > 
->  drivers/gpu/drm/bridge/Kconfig   |   1 +
->  drivers/gpu/drm/bridge/sii9234.c | 124 +++++++++++++++++++++++++++++++--------
->  2 files changed, 102 insertions(+), 23 deletions(-)
-> ---
-> base-commit: a87fef0880c4f52769b5a3c2fc1b2d73aaa04eb3
-> change-id: 20231218-exynos4-sii9234-driver-d817d4b511d5
-> 
-> Best regards,
-> -- 
-> Henrik Grimler <henrik@grimler.se>
-> 
+
+Applied, thanks!
+
