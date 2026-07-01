@@ -1,249 +1,113 @@
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7351494A14;
-	Wed,  1 Jul 2026 16:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82127395D86
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Jul 2026 18:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782922185; cv=none; b=TEqg1FFxf/vf3y2VAsU7f6XXWfdSDe8xewTubxKz9s9zep3u+292ajkVS8SVg0pTEmoqPkg+iJQx6XyMHCd+H1H/rbDLxHKWqhfbqJlVmoVDqlMGQUKPCy/ZnNNhu3X6cXYZmJ6H5101wzZRCZgRNTph9f5BEkZjK3/c5kErFS4=
+	t=1782931663; cv=none; b=CejOx7qSjfFaDdOoGGBWu80DnmCGFXLPH7LIjQSkJbRY75xkBQqJipio3Uwi6RbJYXoAfydEPTEobb017oUkpNVjXAHZ934CCIq19Qp+3WOdlQ15hhW62jBh+zPS2j2aTd96U4R8lmZMgX8v0+RCwikijoV9xV+QO7tXLKSWr38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782922185; c=relaxed/simple;
-	bh=8e1pR5ODf4qR1XSRT43hMYiO0BUA8niL6+sOiP2Ey+A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t4LbpB/uA3ZXtX7qlVAOghFz4/M3Th2mOddJ+2kehphwI8FAjFkh9Ee7kQFdJXOrt1Wqgr97m6nMHY2QdCMl3KypwTn4EWQEoBjTIKOVyND9bcxAbu18cBlZM4gY+mLtja95g98HpJc4nSNPaTkxRlnhQw10nBT1lGIrAyTK/Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GKsigi9j; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1782931663; c=relaxed/simple;
+	bh=/qWtFqHBkrtLXXAD1XpvUaW1zHKMs9ArEGyHDtyLBkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LOmDK/gUCN3/Ek00FyDNzdE+xoucVRBlYixoOJSYcbIfLO59dAGfyyB8w8Jxhifk8T3g0QDEuzroXNTtWBwFbKXFAbrIm27XvgDyf0jLrFL30P5OaEIiCuVSPzBdU67mlz6VyCzQrN+dNUt3SePObeZck9xQYsEcLMe7ujrBmto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QLyO9jKG; arc=none smtp.client-ip=209.85.214.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GKsigi9j"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782922180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=32k3xy2qoDs5v558QiIXDOBJrw4XcLaI228zHYcvJQI=;
-	b=GKsigi9jw5iEZkRAOu0U35OCwwNX+WFYQBJnw1VnjqCFwAV1xkeG5HVPPXjVerUIFCpvkl
-	1sYFG/+4cZNO5RnH+3ZGNEajZyzEn2vDXqeNcTTch6ZM0ZT3P4Eo/8D1DaouN8eSB+B2FA
-	bvbtO9Gx6J4K8rZ0y4m06I1Z9Hu4ibM=
-From: Lance Yang <lance.yang@linux.dev>
-To: ljs@kernel.org
-Cc: akpm@linux-foundation.org,
-	tsbogend@alpha.franken.de,
-	maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	l.stach@pengutronix.de,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	peter.griffin@linaro.org,
-	jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	robin.clark@oss.qualcomm.com,
-	lumag@kernel.org,
-	lyude@redhat.com,
-	dakr@kernel.org,
-	tomi.valkeinen@ideasonboard.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	thierry.reding@kernel.org,
-	mperttunen@nvidia.com,
-	jonathanh@nvidia.com,
-	kraxel@redhat.com,
-	dmitry.osipenko@collabora.com,
-	zack.rusin@broadcom.com,
-	matthew.brost@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	oleksandr_andrushchenko@epam.com,
-	deller@gmx.de,
-	bcrl@kvack.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	muchun.song@linux.dev,
-	osalvador@suse.de,
-	david@kernel.org,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	liam@infradead.org,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	baohua@kernel.org,
-	lance.yang@linux.dev,
-	hughd@google.com,
-	vbabka@kernel.org,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	jannh@google.com,
-	pfalcato@suse.de,
-	kees@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	dri-devel@lists.freedesktop.org,
-	etnaviv@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	intel-xe@lists.freedesktop.org,
-	xen-devel@lists.xenproject.org,
-	linux-fbdev@vger.kernel.org,
-	linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 12/13] mm/mprotect: convert mprotect code to use vma_flags_t
-Date: Thu,  2 Jul 2026 00:09:17 +0800
-Message-Id: <20260701160917.91435-1-lance.yang@linux.dev>
-In-Reply-To: <7ef626d8a12dc742cfc09d080be5dc09850e873a.1782760670.git.ljs@kernel.org>
-References: <7ef626d8a12dc742cfc09d080be5dc09850e873a.1782760670.git.ljs@kernel.org>
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QLyO9jKG"
+Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-2c82538b6c0so9568565ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Jul 2026 11:47:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782931662; x=1783536462;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qy1+fiy5vVG6Fgi2325/mnWQkrttmVDQVIUSqg+HoGM=;
+        b=iNs9j0lAbh/vBKPzZ+KzeAbfl/IbX4sayKSE3g7zxWzvDQpISoiwG2AaWsWu/2pn9v
+         /B4Ii3K7NDGkL7dgok5adWvOLE0lQs0iJPjrDBFPoPF5zEhMxtBV5Drzuw79LRVbjzm1
+         qr/slxBZY2FKoQcG+HthgEZeRiSAYPVwptP24YnhEaQE2eqzQU6mZKFpmUzYgtYOpe8b
+         9YbX6OTBjJBEZquM0RgvwP0EqFDa26LjRH2ZsWs7AdGIf8Ss6zE1SPjfVAyGqClIndJS
+         J7+j4zfOzlK7/RcORbIVzhnOT5wPBE14D0SoSLdyJGbwsTnEfNUN9izHUvi0bvCwfUZ+
+         5kTA==
+X-Forwarded-Encrypted: i=1; AHgh+Rpxj0wPEvA6O8Rt7P73GdvxfKNYVgpnwGTJ8GGj7k7UBW9LZBLMAUVU4GOOFf/30kBgPyB4n6a8o4hkXuN+L1uWYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysD9qTB2dDSpLjEflDq3ZWNIXqjsh859VSgd75cR70yjnMLlgv
+	uuY4KUZbCjK/6/IL059oIYC+hrtlJv0pyuqRwkxxtK+f1x0pJAmpKFdhCPD1qu06NwItJvXhwdu
+	gUumdts2PtfCwtkudOKMST9EGAhG2/Ltbh8/3QJJyn15HXX3ZGduVlyn3hlBUuAaHfBQO4P65qY
+	qU2p23bxc/wOCIWhLw87Z1ZfDfBgob6cZyyhleZT6vRRA/iS+2DyNwZJd6Xtt7lOtYm4nVpxhmV
+	8gWIGzUyVB1Hzpf2awu8tNnY53891k=
+X-Gm-Gg: AfdE7cmpNDAvmDUtQMDVRL+FJs0dW5GwiCEdoN3K0ZaUR63P12to7uG1XvlxNBaKZ01
+	1IIj1dU+y8ISePq8Npda6bCZUJRNEn9b7MX54JSWp8XYS+KlCmYtTQBfJSgVKQdnB0o11o76SPJ
+	8QouAljYqVt1e3yk5lpnsa1fReJqJL5ct+dYyruwzBDlHdIE+S1eYN7fEnnpXXYJ9l1sydLiKng
+	4ct4lR6MF6S0ct3SmUTPCcz8RJXAyNbgn3bs52B5rJZAoFAZ5KLeWbxpq3Q5TQuwRyuvEXvXSFH
+	8DOjImXRS76OCKBASLORAj1WqTrd7sh0WTtGegot5CN1V/7yCI05DyXv0jZDnh2WcJLA2cHVSgk
+	6zFREG2ruk/a5MOv+3sY/FmCD7g3T5pQpMrSeu3NesBU9G27HY5aO2sIidzFWi321kPfNa3UNtm
+	nOz3slEr3/D9iZDAUHazjj9rTRaVraVvWORYFvxB473TqX3xGYcKncbw==
+X-Received: by 2002:a17:902:ceca:b0:2c9:97a8:aff5 with SMTP id d9443c01a7336-2ca91243db7mr17533525ad.46.1782931661728;
+        Wed, 01 Jul 2026 11:47:41 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-2ca9a8c144csm327245ad.5.2026.07.01.11.47.41
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Jul 2026 11:47:41 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c083f1818so8651981cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Jul 2026 11:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1782931661; x=1783536461; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qy1+fiy5vVG6Fgi2325/mnWQkrttmVDQVIUSqg+HoGM=;
+        b=QLyO9jKG++R7FF9qSPift3aqkD7X4VtrFmS9WWR8whSLC+BlN2vreZvVws0R+8QYNc
+         t4AB1cMh4w1awn/e3TVm/Np21oNySvFUp3c8+FTAmubXlVWVtT5Hlp96/U/pyd3aY+y+
+         CvOjHqK1+h1DLVv8tzuK6F+mcQfnXUKtFgVU8=
+X-Forwarded-Encrypted: i=1; AFNElJ+cpwiW6ZtSmZ58zCxOBeYo1SQS75vMuov5rS7bzCMMPKIJJXq1eM77NHKGoV2AzT9jU6ZL93l3u1d6YUepFqosQA==@vger.kernel.org
+X-Received: by 2002:ac8:7f4d:0:b0:51c:1bcd:5cc3 with SMTP id d75a77b69052e-51c2ad5c37bmr24012641cf.25.1782931660581;
+        Wed, 01 Jul 2026 11:47:40 -0700 (PDT)
+X-Received: by 2002:ac8:7f4d:0:b0:51c:1bcd:5cc3 with SMTP id d75a77b69052e-51c2ad5c37bmr24012221cf.25.1782931660134;
+        Wed, 01 Jul 2026 11:47:40 -0700 (PDT)
+Received: from [10.211.247.235] ([192.19.50.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51c1080d149sm57936471cf.1.2026.07.01.11.47.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Jul 2026 11:47:39 -0700 (PDT)
+Message-ID: <d37a738d-f316-42cf-8dbc-99a732a33240@broadcom.com>
+Date: Wed, 1 Jul 2026 11:51:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm: uapi: Add macro for chipset specific event ID
+ region
+To: Bence Csokas <bence.csokas@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org
+Cc: Daniel Kiss <Daniel.Kiss@arm.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, Zack Rusin <zack.rusin@broadcom.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+References: <20260616134802.636166-2-bence.csokas@arm.com>
+From: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
+Content-Language: en-US
+In-Reply-To: <20260616134802.636166-2-bence.csokas@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
+LGTM!
 
-On Mon, Jun 29, 2026 at 08:25:35PM +0100, Lorenzo Stoakes wrote:
->Replace use of the legacy vm_flags_t flags with vma_flags_t values
->throughout the mprotect logic.
->
->Note that we retain the legacy vm_flags_t bit shifting code in
->do_mprotect_key(), deferring a vma_flags_t approach to this for the time
->being.
->
->Additionally update comments to reflect the changes to be consistent.
->
->No functional change intended.
->
->Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
->---
-> mm/mprotect.c | 16 ++++++++--------
-> 1 file changed, 8 insertions(+), 8 deletions(-)
->
->diff --git a/mm/mprotect.c b/mm/mprotect.c
->index 9cbf932b028c..c9504b2a2525 100644
->--- a/mm/mprotect.c
->+++ b/mm/mprotect.c
->@@ -40,7 +40,7 @@
-> 
-> static bool maybe_change_pte_writable(struct vm_area_struct *vma, pte_t pte)
-> {
->-	if (WARN_ON_ONCE(!(vma->vm_flags & VM_WRITE)))
->+	if (WARN_ON_ONCE(!vma_test(vma, VMA_WRITE_BIT)))
-> 		return false;
-> 
-> 	/* Don't touch entries that are not even readable. */
->@@ -97,7 +97,7 @@ static bool can_change_shared_pte_writable(struct vm_area_struct *vma,
-> bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
-> 			     pte_t pte)
-> {
->-	if (!(vma->vm_flags & VM_SHARED))
->+	if (!vma_test(vma, VMA_SHARED_BIT))
-> 		return can_change_private_pte_writable(vma, addr, pte);
-> 
-> 	return can_change_shared_pte_writable(vma, pte);
->@@ -194,7 +194,7 @@ static __always_inline void set_write_prot_commit_flush_ptes(struct vm_area_stru
-> {
-> 	bool set_write;
-> 
->-	if (vma->vm_flags & VM_SHARED) {
->+	if (vma_test(vma, VMA_SHARED_BIT)) {
-> 		set_write = can_change_shared_pte_writable(vma, ptent);
-> 		prot_commit_flush_ptes(vma, addr, ptep, oldpte, ptent, nr_ptes,
-> 				       /* idx = */ 0, set_write, tlb);
->@@ -811,8 +811,8 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
-> 		vm_unacct_memory(nrpages);
-> 
-> 	/*
->-	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
->-	 * fault on access.
->+	 * Private VMA_LOCKED_BIT VMA becoming writable: trigger COW to avoid
->+	 * major fault on access.
-> 	 */
-> 	if (vma_flags_test(&new_vma_flags, VMA_WRITE_BIT) &&
-> 	    vma_flags_test(&old_vma_flags, VMA_LOCKED_BIT) &&
->@@ -886,7 +886,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
-> 			goto out;
-> 		start = vma->vm_start;
-> 		error = -EINVAL;
->-		if (!(vma->vm_flags & VM_GROWSDOWN))
->+		if (!vma_test(vma, VMA_GROWSDOWN_BIT))
-> 			goto out;
-> 	} else {
-> 		if (vma->vm_start > start)
->@@ -894,7 +894,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
-> 		if (unlikely(grows & PROT_GROWSUP)) {
-> 			end = vma->vm_end;
-> 			error = -EINVAL;
->-			if (!(vma->vm_flags & VM_GROWSUP))
->+			if (!vma_test(vma, VMA_GROWSUP_BIT))
+Reviewed-by: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
 
-IIUC, should this be
-
-if (!vma_test_single_mask(vma, VMA_GROWSUP))
-
-instead?
-
-#elif defined(CONFIG_PARISC)
-#define VM_GROWSUP	INIT_VM_FLAG(GROWSUP)
-...
-#ifndef VM_GROWSUP
-#define VM_GROWSUP	VM_NONE
-...
-
-VM_GROWSUP is only defined as GROWSUP on parisc and becomes VM_NONE
-elsewhere. But VMA_GROWSUP_BIT is the raw ARCH_1 bit, which is also used
-for other arch-specific VMA flags:
-
-	DECLARE_VMA_BIT_ALIAS(SAO, ARCH_1),		/* Strong Access Ordering (powerpc) */
-	DECLARE_VMA_BIT_ALIAS(GROWSUP, ARCH_1),		/* parisc */
-	DECLARE_VMA_BIT_ALIAS(SPARC_ADI, ARCH_1),	/* sparc64 */
-	DECLARE_VMA_BIT_ALIAS(ARM64_BTI, ARCH_1),	/* arm64 */
-	DECLARE_VMA_BIT_ALIAS(ARCH_CLEAR, ARCH_1),	/* sparc64, arm64 */
-	DECLARE_VMA_BIT_ALIAS(MAPPED_COPY, ARCH_1),	/* !CONFIG_MMU */
-
-Other vma_test() changes look fine to me: just fixed INIT_VM_FLAG()
-masks matching their VMA_*_BIT :)
-
-Cheers, Lance
-
-> 				goto out;
-> 		}
-> 	}
->@@ -918,7 +918,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
-> 		}
-> 
-> 		/* Does the application expect PROT_READ to imply PROT_EXEC */
->-		if (rier && (vma->vm_flags & VM_MAYEXEC))
->+		if (rier && vma_test(vma, VMA_MAYEXEC_BIT))
-> 			prot |= PROT_EXEC;
-> 
-> 		/*
->-- 
->2.54.0
->
->
+-- 
+Maaz Mombasawala <maaz.mombasawala@broadcom.com>
