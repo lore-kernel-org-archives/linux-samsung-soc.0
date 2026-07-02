@@ -1,32 +1,32 @@
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C213EDE63
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jul 2026 11:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9BD4418F0
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 Jul 2026 11:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782990967; cv=none; b=Ox+Yf8fA5wEsgEjLx94tgosJeCwu1lDq88raWyq6Pd+qdzxTuZiXinn7LHmL8i1KD8IZBftt5+jBoiilihzA87d7HFUvUNR+jyiiHkT4D/FfQ1D977tGinquUey1k3YwnUII/4iia8N4cRk/uM2IaopZGGRm3Z2MBkU6RCcyZE0=
+	t=1782992294; cv=none; b=cLkjm+vnDO6q4gzgoOovUW8nck1WGSb9phQn0nNzC2lVfOpncvIBBstFnB2JeTzjae6nAdd/jEvUGN3GYo0OLHcMTpoWaV7xWEmlg4iPcAJYkz9AF4T9jvV5XDKhG9vMr7Tr2kmlzpV+7ra+CGwgAXlK0ORKV6AgojNAmWHyzhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782990967; c=relaxed/simple;
-	bh=GnYBDGATmtulOrbHYieuBQYJQv+WuoHKcBOPpP2DOUE=;
+	s=arc-20240116; t=1782992294; c=relaxed/simple;
+	bh=s4zTiOPxPEEvh+Z2LMv+6gqe9ZZvh+3yTK3Yc5UnT/U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EZ1uyQ5yVRjaJR6kpDvhoTtuM5iPGvMwBHK0SAP/n6MEEKMaNBKPYfA2ucj5Q+x+4U7hIvplCnDz+1xUomIqOwAGD5yvYw7Z1U3nH3fJffeG5FyOX7BtpGShw6/L8kHyWKCA7zKQyWZOLYSK4xB9muLvMNBFj7guTiDWxng+3hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SNO+TI3y; arc=none smtp.client-ip=91.218.175.183
+	 MIME-Version:Content-Type; b=e+AsRD4985aKjMaE09tkpZKVIB1a9E5A9jh1DLw75f/JUPBm0j1KDcy9Utm1tU3NzecRvdxYpGpHCvvnEOALOgY+CoVdW2H6b7z09zP57MxAZvq9YJu+iaeXRWQMcCcANt+f0H94G2cu1MX/mxQ74pWgGFWu6CBdLQHZcgVVA74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AkD1PO3E; arc=none smtp.client-ip=95.215.58.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SNO+TI3y"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AkD1PO3E"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782990951;
+	t=1782992273;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MXoiAeiZxppUV0bbr36tbNoILtIVkAZHXOhXlmlq9aE=;
-	b=SNO+TI3ysBG4+DhR3hPTF1SvhO32c4IR52yjAPmkR78MakGGmD/cQOYIcE8MmMX2BXfJ/B
-	PngJwUk8MPDHueMWfaVQgxbOjSa6VTjHZniUa88SClGCvA5JNzJYRen32CdMAokXiIgXtC
-	8TVZTPLK3UhpO1X2vjoT/Jd84+uq0gc=
+	bh=s4zTiOPxPEEvh+Z2LMv+6gqe9ZZvh+3yTK3Yc5UnT/U=;
+	b=AkD1PO3EYh/hmuzqNyG5+F4iFU+xRbougp+bY+xotWctIjwUQvMKpAwXsjPb5kG+NxyY12
+	mV0mEGNoe2Czu7JdCtguHySTk1KxuHzjRfZnXIBhIe71SSOqRiI6wOFZz62JhxqVX83KFA
+	KhWu2A9hV9btjfbdFeq0dyXUttdl5PQ=
 From: Lance Yang <lance.yang@linux.dev>
 To: ljs@kernel.org
 Cc: akpm@linux-foundation.org,
@@ -111,11 +111,11 @@ Cc: akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 02/13] mm/vma: update do_mmap() to use vma_flags_t
-Date: Thu,  2 Jul 2026 19:15:31 +0800
-Message-Id: <20260702111531.64883-1-lance.yang@linux.dev>
-In-Reply-To: <e0ac58ad2b88ff7e2f0024e3286b2e786f79ca32.1782760670.git.ljs@kernel.org>
-References: <e0ac58ad2b88ff7e2f0024e3286b2e786f79ca32.1782760670.git.ljs@kernel.org>
+Subject: Re: [PATCH 03/13] mm: convert __get_unmapped_area() to use vma_flags_t
+Date: Thu,  2 Jul 2026 19:37:22 +0800
+Message-Id: <20260702113722.97837-1-lance.yang@linux.dev>
+In-Reply-To: <b1ad7c4443f5cba622e4c48c5a9ef15427001a93.1782760670.git.ljs@kernel.org>
+References: <b1ad7c4443f5cba622e4c48c5a9ef15427001a93.1782760670.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -127,116 +127,20 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
 
-On Mon, Jun 29, 2026 at 08:25:25PM +0100, Lorenzo Stoakes wrote:
->The core do_mmap() function accepts a vm_flags_t parameter which it then
->manipulates before passing to mmap_region() to do the heavy lifting of the
->memory mapping.
+On Mon, Jun 29, 2026 at 08:25:26PM +0100, Lorenzo Stoakes wrote:
+>Update __get_unmapped_area() to be parameterised by vma_flags_t rather than
+>vm_flags_t as part of the effort to move VMA flags from a system word to a
+>bitmap.
 >
->Update do_mmap() to instead accept a vma_flags_t parameter, and adjust all
->the logic within do_mmap() to manipulate this instead.
->
->This is as part of the ongoing effort to convert VMA flags from a system
->word size to a bitmap type which allows us to unrestrict the number of VMA
->flags, as well as gain control over how VMA flag manipulation occurs.
->
->We do not cascade these changes to all functions which accept vm_flags_t,
->but rather use vma_flags_to_legacy() where necessary, specifically
->deferring converting calc_vm_prot_bits(), calc_vm_flag_bits() and
->__get_unmapped_area() to vma_flags_t.
->
->Also utilise the new vma_flags_can_grow() predicate which correctly handles
->the case of architectures without upward growing stacks.
->
->As part of this change, introduce VMA_SHADOW_STACK so we can correctly
->handle the case of the shadow stack not being defined.
+>We cascade the changes up to arch_get_unmapped_area_topdown() and
+>arch_get_unmapped_area(), where, for now, we use vma_flags_to_legacy() in
+>order to propagate the VMA flags.
 >
 >No functional change intended.
 >
 >Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 >---
 
-Not exactly a small one :) I stared at this patch for a while, hopefully
-don't miss anythig ...
-
-Just one tiny nit below. Overall, LGTM, feel free to add:
+Nothing suspicious that I could spot :) Feel free to add:
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
-[...]
->diff --git a/mm/mmap.c b/mm/mmap.c
->index 46174e706bbe..547352183214 100644
->--- a/mm/mmap.c
->+++ b/mm/mmap.c
-[...]
->@@ -488,23 +496,27 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-> 		 * Check to see if we are violating any seals and update VMA
-> 		 * flags if necessary to avoid future seal violations.
-> 		 */
->-		err = memfd_check_seals_mmap(file, &vm_flags);
->+		err = memfd_check_seals_mmap(file, &vma_flags);
-> 		if (err)
-> 			return (unsigned long)err;
-> 	} else {
-> 		switch (flags & MAP_TYPE) {
-> 		case MAP_SHARED:
->-			if (vm_flags & (VM_GROWSDOWN|VM_GROWSUP))
->+			if (vma_flags_can_grow(&vma_flags))
-> 				return -EINVAL;
-> 			/*
-> 			 * Ignore pgoff.
-> 			 */
-> 			pgoff = 0;
->-			vm_flags |= VM_SHARED | VM_MAYSHARE;
->+			vma_flags_set(&vma_flags, VMA_SHARED_BIT, VMA_MAYSHARE_BIT);
-> 			break;
->-		case MAP_DROPPABLE:
->-			if (VM_DROPPABLE == VM_NONE)
->+		case MAP_DROPPABLE: {
->+			vma_flags_t droppable = VMA_DROPPABLE;
->+
->+			if (vma_flags_empty(&droppable))
-> 				return -EOPNOTSUPP;
->+			vma_flags_set_mask(&vma_flags, droppable);
->+
-> 			/*
-> 			 * A locked or stack area makes no sense to be droppable.
-> 			 *
->@@ -515,23 +527,24 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-> 			 */
-> 			if (flags & (MAP_LOCKED | MAP_HUGETLB))
-> 			        return -EINVAL;
->-			if (vm_flags & (VM_GROWSDOWN | VM_GROWSUP))
->+			if (vma_flags_can_grow(&vma_flags))
-> 			        return -EINVAL;
-> 
->-			vm_flags |= VM_DROPPABLE;
-
-Old code checked VM_GROWSDOWN|VM_GROWSUP before seting VM_DROPPABLE. New
-code flips that around. Hmm, shouldn't master, just made me look twice ;)
-
-Maybe keep old order?
-
-Cheers, Lance
-
->-
-> 			/*
-> 			 * If the pages can be dropped, then it doesn't make
-> 			 * sense to reserve them.
-> 			 */
->-			vm_flags |= VM_NORESERVE;
->+			vma_flags_set(&vma_flags, VMA_NORESERVE_BIT);
-> 
-> 			/*
-> 			 * Likewise, they're volatile enough that they
-> 			 * shouldn't survive forks or coredumps.
-> 			 */
->-			vm_flags |= VM_WIPEONFORK | VM_DONTDUMP;
->+			vma_flags_set(&vma_flags, VMA_WIPEONFORK_BIT,
->+				      VMA_DONTDUMP_BIT);
->+
-> 			fallthrough;
->+		}
-> 		case MAP_PRIVATE:
-> 			/*
-> 			 * Set pgoff according to addr for anon_vma.
-[...]
