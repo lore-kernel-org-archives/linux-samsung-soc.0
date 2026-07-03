@@ -1,112 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85243403EF;
-	Thu,  2 Jul 2026 16:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06FA3CA4B9
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jul 2026 12:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783009908; cv=none; b=Tw9UHvblnmKDlVkQSgvA1G9Npto2hqIq55J7z5RXqd9lGRYRw7ZfKxkqWteN/l2kYuphsVfz/2J1ke31XtkXmKg8c4fj9iQU8hg91r9iVlqYviuTsPCqsvV2aN7irhhQ2gMVwSnTDIzrlX7C5L96J2HzEbk5ZQX/GbWhVCii7Bc=
+	t=1783080954; cv=none; b=Y7ZQQZ/pPsv6zNnu/JqXfMX+Anxy97hGZXS+Prxh+vG7uozlyMJ+0w+z9jeyOwyYQGqXa+TvW7mRXog3YR5pbuXAVCMgmVwerJzD4Z8tYZ0zluSB+gbSpDG2GK6dfNeXvrz0F5tv6hWJi6Vut58YHd7+OZqZxryEvhWj/7UqH9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783009908; c=relaxed/simple;
-	bh=E1qWf++P4fQTxTfdt1w7bxV4tlwl6MwcbrDidejiQ/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=srWY49Ny5fAH76APObP7+PdbvAMYyjdhJ0zitLwHa3jVuM+OwMSwk8wwCjftXnnVA/8lL7/aMS5mlfLIwojmXrgBMKqJADZPm9awc3su/KEqVPQhGf6zyeMBfAq9G1Aqo20zhhyozag9zcnk2RMXFzMu/725HIs7/Vksr8nZQ8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTJm75v6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783080954; c=relaxed/simple;
+	bh=AuHHrWb27znCGcC0QzmYEgTh0U7JHklL+01GaPyAJTg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=cen7zTLxUsKc/cNbCsPXRmEVLUXjelDy8v4viCpwHDJIdzp0fVoAJdGVN07EIXewiEtDhkoevz1tDQ7OU5v13w2jGjEwU4siy9XuhMKdmLqTXlYkBlODSP8VUtXhxM6kZAodpGBh3fPg/YMhK/8g7Yhwap0YD6FB69jHJ/B3aHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TkPcDkgC; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTJm75v6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5261F00A3A;
-	Thu,  2 Jul 2026 16:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783009907;
-	bh=E1qWf++P4fQTxTfdt1w7bxV4tlwl6MwcbrDidejiQ/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FTJm75v6g78dw7nc2yIjeNrtd/XXU46WO/2u8nnziEKlJYchAWQ9hGEChgT4F31ah
-	 HiH5xTUbuFOhBbd6C1duQ+RhK7b4oHictxqHPOAi/lrzXWZ0FTN2EDGOuyFEWt0mD1
-	 vjw0IUs1vrHYSMCjr+3zzHxShdi1SoTmUIrBx0H0nw1oUHkfV6THw+nOZBnbM1ksv+
-	 +IgzClZgoCati852KoF+eqgYzFxCjgh+OL3JRZibavJHQwCUYoiGfhSnInQcjeQExX
-	 M1Tr3eyxRp2MXQhzrXdgxW+NoNc9BMVcJx67MLhqeaR6Vs6Z2WBP6mhtT0mJnysYek
-	 vPOd4U2WlHy2g==
-Date: Thu, 2 Jul 2026 17:31:24 +0100
-From: Lorenzo Stoakes <ljs@kernel.org>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, tsbogend@alpha.franken.de, 
-	maddy@linux.ibm.com, mpe@ellerman.id.au, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	l.stach@pengutronix.de, inki.dae@samsung.com, sw0312.kim@samsung.com, 
-	kyungmin.park@samsung.com, krzk@kernel.org, peter.griffin@linaro.org, 
-	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, 
-	tursulin@ursulin.net, robin.clark@oss.qualcomm.com, lumag@kernel.org, lyude@redhat.com, 
-	dakr@kernel.org, tomi.valkeinen@ideasonboard.com, hjc@rock-chips.com, 
-	heiko@sntech.de, andy.yan@rock-chips.com, thierry.reding@kernel.org, 
-	mperttunen@nvidia.com, jonathanh@nvidia.com, kraxel@redhat.com, 
-	dmitry.osipenko@collabora.com, zack.rusin@broadcom.com, matthew.brost@intel.com, 
-	thomas.hellstrom@linux.intel.com, oleksandr_andrushchenko@epam.com, deller@gmx.de, bcrl@kvack.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, muchun.song@linux.dev, osalvador@suse.de, 
-	david@kernel.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	liam@infradead.org, npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	baohua@kernel.org, hughd@google.com, vbabka@kernel.org, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, jannh@google.com, pfalcato@suse.de, 
-	kees@kernel.org, perex@perex.cz, tiwai@suse.com, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
-	etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-fbdev@vger.kernel.org, 
-	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 13/13] mm/mremap: convert mremap code to use vma_flags_t
-Message-ID: <akaSQypCQLeW9qfK@lucifer>
-References: <380f761d35a3faa4370f8b3f92e3d4af3d4c7110.1782760670.git.ljs@kernel.org>
- <20260702134947.25189-1-lance.yang@linux.dev>
- <akaJx8Zt8kazlrjq@lucifer>
- <2f36a2da-0686-485f-b4b9-ae699bef4fd4@linux.dev>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TkPcDkgC"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260703121542epoutp0384798b624df3472e97ef4ab07e4b806a~_xquWiBeO1971319713epoutp03I
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jul 2026 12:15:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260703121542epoutp0384798b624df3472e97ef4ab07e4b806a~_xquWiBeO1971319713epoutp03I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1783080942;
+	bh=qm11f/zR4qtblmEb9WqIxklnSmRd5ntPO4IgWl784nc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=TkPcDkgCOY2B6XOPzI5ryVssnTiJHrpBeVjczbrd3NyYY1J790URp72ZOsSyF03Nf
+	 NwV9KWIof+h6Q9yfZmknZXy7T77bwK3lt0ZJaZiHyFdDJ1ipWctulCeyy48Y4clget
+	 rNauQ09ZqrmhrS6lH9ByYIBQdw/dK3t76rOrWesA=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260703121541epcas2p2b791d0a882a31a404f0259e2df2e1138~_xqtpTVl21760017600epcas2p2F;
+	Fri,  3 Jul 2026 12:15:41 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.38.209]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4gsCQ54kxqz6B9m6; Fri,  3 Jul
+	2026 12:15:41 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20260703121541epcas2p4408a3bbc4a2f9ff6d018cf9a2f5298d2~_xqs3tG1Y1460114601epcas2p4o;
+	Fri,  3 Jul 2026 12:15:41 +0000 (GMT)
+Received: from KORCO090186 (unknown [12.80.211.165]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260703121541epsmtip14e82d433e2e957a41fbddb55aa76c1ba~_xqsxJ7j_2740427404epsmtip1U;
+	Fri,  3 Jul 2026 12:15:41 +0000 (GMT)
+From: =?utf-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Peter Griffin'"
+	<peter.griffin@linaro.org>
+Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
+	<semen.protsenko@linaro.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<ryu.real@samsung.com>, <d7271.choe@samsung.com>, <shin.son@samsung.com>,
+	<jaewon02.kim@samsung.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <youngmin.nam@samsung.com>
+In-Reply-To: <0e6201dd07a8$eb5884d0$c2098e70$@samsung.com>
+Subject: RE: [PATCH v3 2/5] pinctrl: samsung: fix incorrect pin-bank entries
+ on Exynos2200/7885/8890/8895
+Date: Fri, 3 Jul 2026 21:15:40 +0900
+Message-ID: <000001dd0ae5$aa491e10$fedb5a30$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f36a2da-0686-485f-b4b9-ae699bef4fd4@linux.dev>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIr5xjB9BZkcy1LV54fp2FD5N/QnAF3wuMlAatK81MBmh+d8gGktICKtYrtzGA=
+Content-Language: ko
+X-CMS-MailID: 20260703121541epcas2p4408a3bbc4a2f9ff6d018cf9a2f5298d2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251202093027epcas2p24adbd3226dd50b2780baceee6588f3ba
+References: <CGME20251202093027epcas2p24adbd3226dd50b2780baceee6588f3ba@epcas2p2.samsung.com>
+	<20251202093613.852109-1-youngmin.nam@samsung.com>
+	<20251202093613.852109-3-youngmin.nam@samsung.com>
+	<CADrjBPqYT9h_UJKSxBJ_KMQ4yQv4yyTuHaPYjC+K1-6TZj+PXg@mail.gmail.com>
+	<0e6201dd07a8$eb5884d0$c2098e70$@samsung.com>
 
-On Fri, Jul 03, 2026 at 12:17:29AM +0800, Lance Yang wrote:
->
->
-> On 2026/7/3 00:07, Lorenzo Stoakes wrote:
-> > On Thu, Jul 02, 2026 at 09:49:47PM +0800, Lance Yang wrote:
+Hi Alim
+
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> Sent: Monday, June 29, 2026 6:23 PM
+> To: 'Peter Griffin' <peter.griffin@linaro.org>; 'Youngmin Nam'
+> <youngmin.nam@samsung.com>
+> Cc: krzk@kernel.org; s.nawrocki@samsung.com; linus.walleij@linaro.org;
+> semen.protsenko@linaro.org; ivo.ivanov.ivanov1@gmail.com;
+> ryu.real@samsung.com; d7271.choe@samsung.com; shin.son@samsung.com;
+> jaewon02.kim@samsung.com; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: RE: [PATCH v3 2/5] pinctrl: samsung: fix incorrect pin-bank
+> entries on Exynos2200/7885/8890/8895
+> 
+> Hi Krzysztof, Peter
+> 
+> > -----Original Message-----
+> > From: Peter Griffin <peter.griffin@linaro.org>
+> > Sent: Saturday, March 7, 2026 2:47 AM
+> > To: Youngmin Nam <youngmin.nam@samsung.com>
+> > Cc: krzk@kernel.org; s.nawrocki@samsung.com; alim.akhtar@samsung.com;
+> > linus.walleij@linaro.org; semen.protsenko@linaro.org;
+> > ivo.ivanov.ivanov1@gmail.com; ryu.real@samsung.com;
+> > d7271.choe@samsung.com; shin.son@samsung.com;
+> > jaewon02.kim@samsung.com; linux-arm-kernel@lists.infradead.org; linux-
+> > samsung-soc@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH v3 2/5] pinctrl: samsung: fix incorrect pin-bank
+> > entries on
+> > Exynos2200/7885/8890/8895
+> >
+> > Hi Youngmin,
+> >
+> > On Tue, 2 Dec 2025 at 09:30, Youngmin Nam <youngmin.nam@samsung.com>
+> > wrote:
 > > >
-> > > On Mon, Jun 29, 2026 at 08:25:36PM +0100, Lorenzo Stoakes wrote:
-> > > > Replace use of the legacy vm_flags_t flags with vma_flags_t values
-> > > > throughout the mremap logic.
-> > > >
-> > > > Additionally update comments to reflect the changes to be consistent.
-> > > >
-> > > > No functional change intended.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
-> > > > ---
+> > > This patch corrects wrong pin bank table definitions for 4 SoCs
+> > > based on their TRMs.
 > > >
-> > > The vm_flags_set() cases below spell out vma_start_write(), but the
-> > > vm_flags_clear() cases don't?
+> > > Exynos2200
+> > > - gpq0/1/2 were using EXYNOS_PIN_BANK_EINTN(), which implies a
+> > >   'bank_type_off' layout (.fld_width = {4,1,2,2,2,2}).
+> > > - Per the SoC TRM these banks must use the 'alive' layout
+> > >   (.fld_width = {4,1,4,4}).
+> > > - Switch them to
+> > EXYNOS9_PIN_BANK_EINTN(exynos9_bank_type_alive, ...).
+> > >
+> > > Exynos7885
+> > > - etc0, etc1: update bank type to match the SoC TRM.
+> > > - gpq0 is a non-wakeup interrupt bank; change EINTW -> EINTN
+> accordingly.
+> > >
+> > > Exynos8890
+> > > - Per the SoC TRM, rename bank ect0 to gpb3 and mark it as
+> > >   a non-external interrupt bank.
+> > > - gpi1, gpi2: update bank type to match the SoC TRM.
+> > >   exynos8895_bank_type_off (.fld_width = {4,1,2,3,2,2}) ->
+> > >   exynos5433_bank_type_off (.fld_width = {4,1,2,4,2,2})
+> > > - Per the SoC TRM, mark etc1 as a non-external interrupt bank.
+> > > - apply lower case style for hex numbers.
+> > >
+> > > Exynos8895
+> > > - gpa4 is a non-wakeup interrupt bank per the SoC TRM.
+> > >   change EINTW -> EINTN. (The bank_type itself was correct and is kept
+> > >   unchanged.)
+> > > - apply lower case style for hex numbers.
+> > >
+> > > This aligns the pin-bank tables with the documented bitfield layouts
+> > > and wakeup domains. No DT/ABI change.
+> > >
+> > > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> > > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > > Reviewed-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> > > Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > > ---
 > >
-> > Yep as I said elsewhere, implicitly taking the lock is terrible and me doing
-> > this is completely on purpose to get rid of that :)
+> > This patch contains some worthwhile fixes for multiple Exynos SoCs. Do
+> > you plan to re-send it? I think it would be good to get this merged
+> > (even if there isn't broad agreement around renaming the pinctrl
+> > macros to EXYNOS9_)
 > >
-> > But I haven't been clear enough clearly, so I should put the argument as to why
-> > that's ok in the commit message.
+> Can we relook into this series?
+> AFA EXYNOS9_ macro is concern, Exynos990, Exynos9810 etc already support
+> available upstream.
+> Of course it does not justify why Exynos9, but we can consider all SoCs
+> which has come after 2020 have this newer architecture.
+> Or Just have SAMSUNG_ prefix for all such newer SoC.
+> 
+> A unified Macro help in adding new SoC support without much confusion(like
+> I am trying with Exynos8855)
+> 
+> @Youngmin, will you have some time to re-spin these series?
+> 
+
+Sure. Let me re visit my patches and will try.
+
+
+> > Thanks,
 > >
-> > Will do so on respin.
->
-> Makes sense, thanks for spelling it out! A short changelog note
-> should clear it up for me :D
+> > Peter
+> 
 
-Yeah absolutely, that's necessary and was an oversight on my part, will correct!
 
-Thanks for your great review here, much appreciated! :)
-
->
-> [...]
-
-Cheers, Lorenzo
