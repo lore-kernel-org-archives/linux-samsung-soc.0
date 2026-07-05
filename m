@@ -1,67 +1,67 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E9938552C
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2026 15:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BE238A729
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2026 15:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783264478; cv=none; b=J6QFpAsa8VwL91jTt+ki7Xkm/rLa/15AaFFTerDn6YbZgdySqZ3N172l0a0f0WSKluoW0dltg4zOZNtw8yNn1R2TBvyuj6Ipx/JeSayV87n6/a2BTRb+AiovA296hqSYtQX5haZYuXZ7N4YumvYRaIv1TDvoDNEz0jD/0MRCPyc=
+	t=1783264490; cv=none; b=hv1KkWbf5oS5BGf2RZ0yQzp0KaPOlyStx96+yEJZecii63QwbEk+JPncln6aLUX8EsP6VRQ4OX84p3fcX/PLhd6W3SOzSXQIC5SL7f1BL6TIFiUsL75dPA+6yAs1W2mhTM7SGY2Jj++Fo8xBw8dynZLfBtHFaKny9kPRZbn42eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783264478; c=relaxed/simple;
-	bh=/ARYZ3nMFNE4qw1dHISvtgGeE92jI229vSRxfVl732s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GlzmIz8zLc4V8ZQE6wi66lEMBli54jwajkbb/zrAFNTg48BHSM0M5k33ePOl9IKmyxqGJJRsyquEBW21GIAKxzZdUBssiQVFFZ4rpDxMB3Rq+RRSpSQpKWBWsK9Yy2dr3IbMkRJFJHi4oUoemFTCc5Kf1ngmAtE0m8BnYy1mHeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=PD1I2V8A; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1783264490; c=relaxed/simple;
+	bh=Xf/xzFGJi2vaDFB15xp0iGcI3t4qdDyhgsnIwc5oNsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iWRrG7v4OFirmhRl41LpjomsCl70ML7Eg2JCBZPJ1A6JOFLHy/+I0ek7FwZ7tAaC3u2g+WJ66sv8dM3+XqKxts+X7hXDkkMY+jFnrH3nyAYhJyipD7fkN7SN8eNWO1c7fROfCO3R5QvkU+ybbhgYF3FcND0rXsNn606lbTSmpfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=GNuOI9Yp; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="PD1I2V8A"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-493b77b150aso20044615e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jul 2026 08:14:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="GNuOI9Yp"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493b61b52b6so13867275e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jul 2026 08:14:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1783264474; x=1783869274; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=W1sbIzpLoPVOsWAp5a91/2b+hubQz3OERKvp78vmABs=;
-        b=PD1I2V8A5KdEME/1KcKwaX7YqOfPMzSF9mRgcdyyOh1GXWDyi3zuF3fIMgSb0q1DIa
-         oHXj6JhPq2mpatWUKIM5n4QcOZpC1WDsbLeEKe+7tIYiolbZf6IDGjIdEv64lOg2/UIc
-         PGX/0akQx+IdpOtb/WS9wReP0M/TwtyhcHsvcNaFkITYJnQ1mplUJhXtDSnfDseNufm9
-         VXvosP/HQKlTfWyzAaxxBEngTrcrdv4WgOnEHNe1u5PnExNBGsBj4M2gJI8TPX33IgOj
-         sDfZP2/Y8gPWC8m/Da9acriEbPg/5Sr2RZZOyhcKTEdlzpaQ/1npURWN9TamRtymV2oK
-         nr+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783264474; x=1783869274;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=baylibre.com; s=google; t=1783264483; x=1783869283; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=W1sbIzpLoPVOsWAp5a91/2b+hubQz3OERKvp78vmABs=;
-        b=MgcMV1+VLNnQ70h4l0snk48eMDVr5zDqUzmaiwVsz4JBMjJfy+2GJ/HOX5RKEOi6+1
-         oJ3eY5JA41XxqrNpC7TD2uWqYp4D+WA2MvRw7aLJbO4mbIjrs+Yum5H8mJFCtJKRtZps
-         cOK2UmJHB/MzivWoSXrR+2WsEAjx8I+c6ZubZ/Nu1xRC4nNX/3XCQiwpHyKyU1meTI06
-         75f9P8qdgGw7ti7y4CGij1dqB0xP1/V+j0DsvT+kFBMY+vVwe5riSNwuQPcIFImwaNRe
-         5fUxyl1Hp9RGKXbTQAqgRQqKYjMigBffw1/oWhoPsKG1pWoITX6KyZEQoywLsPY4hiED
-         aQ/A==
-X-Forwarded-Encrypted: i=1; AFNElJ97rWsBtnuktJgpzf+T2/trhrssFiioe2GS2ZDO/p0e+NNilfTzIfhUqomSfL3pGqnc/nJjkbCiSeanUVijAuifLw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypg+hHpB4VnurZhuXFrwR/RQcGnhpVXeAnDmrD1KBTWKw4ctSn
-	txGfqvHCdXLLIoaCNKZ1AUscZwJ8DVVGEsZhgdRVz2ECJTQWf9SxLqFrIqmyGz9qFNk=
-X-Gm-Gg: AfdE7ckemq+Z6JBG7Bq2FD4Fn5tYGDCeD2bxkVBHB0DAt4nEccNrj8adiFv+TdEa1rq
-	S0bSAdhMt3nXnTa0BZxUS94Mw7IzO69OZnAXhlXRfwccMW3ITrtf9jUZfhw8vOSEw/3WnRM+ekJ
-	+/9ZK3hik/f/TcXE8g6JPFOkQPUHpYcg4fuWyh3LN8P5bcgI7vHBZ8Zu130WFWU3VBdFUTuv5bL
-	Q1psuavS92xaWlSRb2ISjlIRUEiOwU6FfBRlt5XOyFpx6fWNz2b6d6coR3SjHmwwO09PLizHPak
-	tF77Ys0MFGnVZ9Wj8rLwpNUHYgPDHmc6870zBKz4RnqL+XpiDx7PXL+FqV25DMBs1SyHWanFKvn
-	GrfG5XVTq15EKoEFzgHZy06gxSinWkqzM5qdrjx396i5JDoiC3o33+7zXAyMchpj9ConyhAiv8M
-	zQv4tdsGvhc8x37mW+Gg==
-X-Received: by 2002:a05:600c:8b61:b0:492:7084:32af with SMTP id 5b1f17b1804b1-493d11f4b80mr87345205e9.23.1783264473096;
-        Sun, 05 Jul 2026 08:14:33 -0700 (PDT)
+        bh=6CB0Qn/eLcxkW55Gksdgt2UmNi3HYRow65CVxg+mV6U=;
+        b=GNuOI9Yp9YXNYhpGeIWlP2mjW/C4yOSqaODWsR5rvEBSfMX/gXSlwi74zPGFSn8JAh
+         r6DUs6sGRn9yv80KeY0sg3VXRy6TEZmGTAnmC2fxYz2S9CmxU69qSbwVYNuA7zobPDfi
+         RjGLXXYB/9twu+F5RJwrc+SX2E2GnHDlERZI52cVv6zrJYM+P7miEUTNng2R6qaKe8rA
+         pHOJarZoOhSlzEjTDKvt9Glgi1wiSEPc5K64eIQR5ZzkjQJqCcXcIiz49YlHh2p6aJZy
+         RipHfeNax5q+wAHFUyNx7CtiMhW2VRbITLi+hBGxqZ4SSegueiXapNv4tk5v3MY5efmY
+         NuuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783264483; x=1783869283;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6CB0Qn/eLcxkW55Gksdgt2UmNi3HYRow65CVxg+mV6U=;
+        b=MJpl+vABBfoZZyOsFbvj7gWbtYOhX6SkIkIDeC5hRMgsCDA4w4vEI0hrjmGpzoNPeI
+         hdsGVDKkiDI7RoKo8OzEDl79mDgW+zBe4g1lJqi2rwYFwxBL11Ys28BeH7c+FQ6HvORN
+         HeFYYSRyG5zUCVoWe0891DXQb/bXfjpisCU+PfRzFVslCWfzs7Y9bfbqTmKp+QathYeY
+         j0XQMhpXPYEcZFx6BTEKnHM5Bo5GmReh4lCZR7dWJOltaGEcUqvw2XQbXxa1qedBgHzw
+         +TgSM12rQSdayV62085dF6i3LrK9G6X5w7kW9FuGOqK8Qd+kR3FMNpAZlsaoKUgWORCy
+         bUKA==
+X-Forwarded-Encrypted: i=1; AFNElJ++FXdcKMpGf8IUr2Uj8uOrO3+Th04n/45/Ps/RCnRWwR2xI2FUn83O0z7ofEYSzVhma36R7O5XNHr412QIN6L1hQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBcinyzVzT3pNmx+TkrAxhXYW9sXiYKgt3QTcs/Ivah/hgXiEo
+	AR7OWtomSFxHlaotXp/UcvL0ZTCbgm+Kdwq0iwp4MzvujKKm0vCZsLkLnsf0JKJJR2A=
+X-Gm-Gg: AfdE7cmQj9hL7o2a8bgJVE5Qq4OtCVghvX9iLPfgLFXjZ6lYGJqwAKm7LumzeOLfQi+
+	Wfg7d08f8HTzorna+LLocwtzgN5cpkyC9dh1GhoDgPgVDuKDEWgu/e/Z0WKiN2jzQuJ8tu5pET/
+	kCTKZG8k7im3PWP6uejJnj6HPX/anl5m0Lc8HOIQi0fcOAjYvCDBmuTRM2dCJcaSrXpywmRh9a8
+	5/pDGlD+LOkTP4PLle9g2ZMian3l8aihzwP0+a3awJz4jY4JOyfF9AytzLCvtFfQV8i07FJIuSh
+	45e2KcpAbVwlksN/ArUzRLSNrvEl0NBPV1U0ImPU5QoRBSKB2P6NUaeRYZOXnNMVAkEMgHZyD3p
+	l3TAgDh30r2Z4gDcO4x+NPgfKkLejpguWRwclO5qersVB4BWdEy5GunEJC3tsO4JbryZJnn17ti
+	hMkXTVENix+De4Bn5HXw==
+X-Received: by 2002:a05:600c:4686:b0:493:c42c:7e88 with SMTP id 5b1f17b1804b1-493d11fecddmr76405695e9.34.1783264482603;
+        Sun, 05 Jul 2026 08:14:42 -0700 (PDT)
 Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-493c63b6f8csm262180195e9.11.2026.07.05.08.14.30
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47a9de1d8f1sm16472176f8f.3.2026.07.05.08.14.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jul 2026 08:14:32 -0700 (PDT)
+        Sun, 05 Jul 2026 08:14:42 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: linux-pwm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Sven Peter <sven@kernel.org>,
+Cc: Sven Peter <sven@kernel.org>,
 	Janne Grunau <j@jannau.net>,
 	Neal Gompa <neal@gompa.dev>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -112,6 +112,7 @@ Cc: linux-kernel@vger.kernel.org,
 	Michal Simek <michal.simek@amd.com>,
 	asahi@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-rpi-kernel@lists.infradead.org,
 	chrome-platform@lists.linux.dev,
 	imx@lists.linux.dev,
@@ -125,10 +126,12 @@ Cc: linux-kernel@vger.kernel.org,
 	sophgo@lists.linux.dev,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH v1 0/5] pwm: Unify arrays of various *_device_id
-Date: Sun,  5 Jul 2026 17:14:12 +0200
-Message-ID: <cover.1783263835.git.ukleinek@kernel.org>
+Subject: [PATCH v1 4/5] pwm: Unify coding style of of_device_id arrays
+Date: Sun,  5 Jul 2026 17:14:16 +0200
+Message-ID:  <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
 X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
+In-Reply-To: <cover.1783263835.git.ukleinek@kernel.org>
+References: <cover.1783263835.git.ukleinek@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -136,34 +139,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3597; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=/ARYZ3nMFNE4qw1dHISvtgGeE92jI229vSRxfVl732s=; b=owEBbAGT/pANAwAKAY+A+1h9Ev5OAcsmYgBqSnTF02HXaqUpIDE1Mt23JzG4uWfnR2u11awWU 3umjMoAUj+JATIEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCakp0xQAKCRCPgPtYfRL+ TnxCB/i0tqSm4WRb5bStOYawCPIjfRWQcr4xSi/+9osjT9WCMkOFcdJIALH3OTjRDssO1bo27Lf HlxVL0NC+cyu2/kdQnTKxCwlN4Mr+K0ubzHhjQG0p5hKoo0E+ymyawDtJ372H29L5zSSYeZCvIo x4WE6N9MvkYqMFbIYzoBUakF9cYdVbu6ohyBqtXYSqr1ZwGjdHd4MWHija/sPCTtV/LrwSg4fhc gQCbrGPW2Y9VKehuNTAzHv2wje5Cu3eNO+c3uV15dBMdPgO9DfEp3EXIwH2ZR09Uaz5HwWXbYK9 FN+Z8CfZYziZ0D7HLlPGgse2ncweWpObjQ6pQzued8YQFKE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=29840; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=Xf/xzFGJi2vaDFB15xp0iGcI3t4qdDyhgsnIwc5oNsQ=; b=owGbwMvMwMXY3/A7olbonx/jabUkhiyvknOB2kYL6roFdBK/eHqKL7p1I3PaVY2eXTsi/5g0z WGZdlmxk9GYhYGRi0FWTJHFvnFNplWVXGTn2n+XYQaxMoFMYeDiFICJhNqw/+He8vXPeuY2lotR h5cfl7Sc9aCEu9Pm+vHH2h8X8daFHV1kmrAp7dsej06d/57B+qXVLB53pm6UEfl+/UT/mR9/vF7 VOGX9iP409RLTJufFQRWvxG8m9Ld8nNliFvE/uf1ee/L8Bz/f1EgsdGsr0t8oY27z5vyi4JuiGg clg7W6reJZJONvWZo80H/Z47OHtfKm7rIgjRP7+esrX01OLvde/Khg29m9tX/qU3f+bz+oLz3f3 mJF/f4DGn3dlb1vm+O6js5o9gheqpx92LhzQWnC0YNR3lUG+W9LTna2OC1J12WMLHfrWqHbalIz X097pgqP/mSeUvUnMw3b5d0Vbxc/v6QhWCXXkirMIn8PAA==
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Hello,
+ - Use a single space in a of_device_id array terminator; A single space
+   after the opening { and before the closing } in non-empty
+   initializers;
+ - No comma after an array terminator;
+ - Also no trailing comma after a named initializer iff the
+   closing } is on the same line;
 
-this series is part of a preparation for changing .driver_data (and
-similarily named members) of *_device_id to an anonymous union.
-See e.g.
-https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
-for the idea behind it. I also grabbed the opportunity to unify the
-coding style for all these arrays while going through these.
-
-The patch series is based on pwm/for-next + "pwm: pxa: Depend on OF and
-simplify accordingly" [1].
-
-Best regards
-Uwe
-
-[1] https://lore.kernel.org/linux-pwm/20260705083910.3502207-2-u.kleine-koenig@baylibre.com
-
-Uwe Kleine-König (The Capable Hub) (5):
-  pwm: pca9685: Drop unused assignment of acpi_device_id driver data
-  pwm: Use named initializers for arrays of acpi_device_id
-  pwm: Unify coding style of acpi_device_id arrays
-  pwm: Unify coding style of of_device_id arrays
-  pwm: lpss-pci: Unify coding style of pci_device_id array
-
+Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+---
  drivers/pwm/pwm-apple.c           |  2 +-
  drivers/pwm/pwm-argon-fan-hat.c   |  2 +-
  drivers/pwm/pwm-atmel-hlcdc.c     | 15 ++++++---------
@@ -183,18 +171,15 @@ Uwe Kleine-König (The Capable Hub) (5):
  drivers/pwm/pwm-imx27.c           |  2 +-
  drivers/pwm/pwm-ipq.c             |  4 ++--
  drivers/pwm/pwm-jz4740.c          |  2 +-
- drivers/pwm/pwm-loongson.c        |  2 +-
  drivers/pwm/pwm-lp3943.c          |  2 +-
  drivers/pwm/pwm-lpc18xx-sct.c     |  2 +-
  drivers/pwm/pwm-lpc32xx.c         |  2 +-
- drivers/pwm/pwm-lpss-pci.c        |  2 +-
- drivers/pwm/pwm-lpss-platform.c   | 10 +++++-----
  drivers/pwm/pwm-mediatek.c        |  2 +-
  drivers/pwm/pwm-meson.c           |  9 ++++-----
  drivers/pwm/pwm-mtk-disp.c        |  8 ++++----
  drivers/pwm/pwm-mxs.c             |  2 +-
  drivers/pwm/pwm-omap-dmtimer.c    |  4 ++--
- drivers/pwm/pwm-pca9685.c         |  6 +++---
+ drivers/pwm/pwm-pca9685.c         |  2 +-
  drivers/pwm/pwm-pxa.c             |  8 ++++----
  drivers/pwm/pwm-raspberrypi-poe.c |  2 +-
  drivers/pwm/pwm-rcar.c            |  4 ++--
@@ -218,11 +203,771 @@ Uwe Kleine-König (The Capable Hub) (5):
  drivers/pwm/pwm-visconti.c        |  2 +-
  drivers/pwm/pwm-vt8500.c          |  2 +-
  drivers/pwm/pwm-xilinx.c          |  4 ++--
- 54 files changed, 96 insertions(+), 102 deletions(-)
+ 51 files changed, 87 insertions(+), 93 deletions(-)
 
-
-base-commit: 1a4920940ebfd8d907858abd8f8dd09b13752946
-prerequisite-patch-id: b423a9d049b4520ef37b40635c95004363ecf692
+diff --git a/drivers/pwm/pwm-apple.c b/drivers/pwm/pwm-apple.c
+index 6e58aca2f13c..3c8ae739ffdb 100644
+--- a/drivers/pwm/pwm-apple.c
++++ b/drivers/pwm/pwm-apple.c
+@@ -142,7 +142,7 @@ static int apple_pwm_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id apple_pwm_of_match[] = {
+ 	{ .compatible = "apple,s5l-fpwm" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, apple_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-argon-fan-hat.c b/drivers/pwm/pwm-argon-fan-hat.c
+index 2c59bd142d40..b480663e87d5 100644
+--- a/drivers/pwm/pwm-argon-fan-hat.c
++++ b/drivers/pwm/pwm-argon-fan-hat.c
+@@ -89,7 +89,7 @@ static int argon_fan_hat_i2c_probe(struct i2c_client *i2c)
+ 
+ static const struct of_device_id argon_fan_hat_dt_ids[] = {
+ 	{ .compatible = "argon40,fan-hat" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, argon_fan_hat_dt_ids);
+ 
+diff --git a/drivers/pwm/pwm-atmel-hlcdc.c b/drivers/pwm/pwm-atmel-hlcdc.c
+index 387a0d1fa4f2..1ba2c9a049b9 100644
+--- a/drivers/pwm/pwm-atmel-hlcdc.c
++++ b/drivers/pwm/pwm-atmel-hlcdc.c
+@@ -217,23 +217,20 @@ static const struct of_device_id atmel_hlcdc_dt_ids[] = {
+ 		.compatible = "atmel,at91sam9n12-hlcdc",
+ 		/* 9n12 has same errata as 9x5 HLCDC PWM */
+ 		.data = &atmel_hlcdc_pwm_at91sam9x5_errata,
+-	},
+-	{
++	}, {
+ 		.compatible = "atmel,at91sam9x5-hlcdc",
+ 		.data = &atmel_hlcdc_pwm_at91sam9x5_errata,
+-	},
+-	{
++	}, {
+ 		.compatible = "atmel,sama5d2-hlcdc",
+-	},
+-	{
++	}, {
+ 		.compatible = "atmel,sama5d3-hlcdc",
+ 		.data = &atmel_hlcdc_pwm_sama5d3_errata,
+-	},
+-	{
++	}, {
+ 		.compatible = "atmel,sama5d4-hlcdc",
+ 		.data = &atmel_hlcdc_pwm_sama5d3_errata,
++	}, {
++		.compatible = "microchip,sam9x60-hlcdc",
+ 	},
+-	{	.compatible = "microchip,sam9x60-hlcdc", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, atmel_hlcdc_dt_ids);
+diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+index a765ef279b51..f74a42d75b81 100644
+--- a/drivers/pwm/pwm-atmel-tcb.c
++++ b/drivers/pwm/pwm-atmel-tcb.c
+@@ -374,9 +374,9 @@ static struct atmel_tcb_config tcb_sama5d2_config = {
+ };
+ 
+ static const struct of_device_id atmel_tcb_of_match[] = {
+-	{ .compatible = "atmel,at91rm9200-tcb", .data = &tcb_rm9200_config, },
+-	{ .compatible = "atmel,at91sam9x5-tcb", .data = &tcb_sam9x5_config, },
+-	{ .compatible = "atmel,sama5d2-tcb", .data = &tcb_sama5d2_config, },
++	{ .compatible = "atmel,at91rm9200-tcb", .data = &tcb_rm9200_config },
++	{ .compatible = "atmel,at91sam9x5-tcb", .data = &tcb_sam9x5_config },
++	{ .compatible = "atmel,sama5d2-tcb", .data = &tcb_sama5d2_config },
+ 	{ /* sentinel */ }
+ };
+ 
+diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+index 06d22d0f7b26..86918523d821 100644
+--- a/drivers/pwm/pwm-atmel.c
++++ b/drivers/pwm/pwm-atmel.c
+@@ -441,9 +441,8 @@ static const struct of_device_id atmel_pwm_dt_ids[] = {
+ 	}, {
+ 		.compatible = "microchip,sam9x60-pwm",
+ 		.data = &mchp_sam9x60_pwm_data,
+-	}, {
+-		/* sentinel */
+ 	},
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, atmel_pwm_dt_ids);
+ 
+diff --git a/drivers/pwm/pwm-bcm-iproc.c b/drivers/pwm/pwm-bcm-iproc.c
+index f4c9f10e490e..dc1e792b1e08 100644
+--- a/drivers/pwm/pwm-bcm-iproc.c
++++ b/drivers/pwm/pwm-bcm-iproc.c
+@@ -230,7 +230,7 @@ static int iproc_pwmc_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id bcm_iproc_pwmc_dt[] = {
+ 	{ .compatible = "brcm,iproc-pwm" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bcm_iproc_pwmc_dt);
+ 
+diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
+index 022c078aae84..ecfa3e3707f4 100644
+--- a/drivers/pwm/pwm-bcm-kona.c
++++ b/drivers/pwm/pwm-bcm-kona.c
+@@ -319,7 +319,7 @@ static int kona_pwmc_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id bcm_kona_pwmc_dt[] = {
+ 	{ .compatible = "brcm,kona-pwm" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bcm_kona_pwmc_dt);
+ 
+diff --git a/drivers/pwm/pwm-bcm2835.c b/drivers/pwm/pwm-bcm2835.c
+index 532903da521f..a4fbf9cfc6f7 100644
+--- a/drivers/pwm/pwm-bcm2835.c
++++ b/drivers/pwm/pwm-bcm2835.c
+@@ -165,7 +165,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(bcm2835_pwm_pm_ops, bcm2835_pwm_suspend,
+ 				bcm2835_pwm_resume);
+ 
+ static const struct of_device_id bcm2835_pwm_of_match[] = {
+-	{ .compatible = "brcm,bcm2835-pwm", },
++	{ .compatible = "brcm,bcm2835-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, bcm2835_pwm_of_match);
+diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+index 858d36991374..5db4d41a7442 100644
+--- a/drivers/pwm/pwm-berlin.c
++++ b/drivers/pwm/pwm-berlin.c
+@@ -191,7 +191,7 @@ static const struct pwm_ops berlin_pwm_ops = {
+ 
+ static const struct of_device_id berlin_pwm_match[] = {
+ 	{ .compatible = "marvell,berlin-pwm" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, berlin_pwm_match);
+ 
+diff --git a/drivers/pwm/pwm-brcmstb.c b/drivers/pwm/pwm-brcmstb.c
+index 82d27d07ba91..790ef7ffbbe5 100644
+--- a/drivers/pwm/pwm-brcmstb.c
++++ b/drivers/pwm/pwm-brcmstb.c
+@@ -222,7 +222,7 @@ static const struct pwm_ops brcmstb_pwm_ops = {
+ };
+ 
+ static const struct of_device_id brcmstb_pwm_of_match[] = {
+-	{ .compatible = "brcm,bcm7038-pwm", },
++	{ .compatible = "brcm,bcm7038-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, brcmstb_pwm_of_match);
+diff --git a/drivers/pwm/pwm-clk.c b/drivers/pwm/pwm-clk.c
+index f8f5af57acba..1907f2f10e5c 100644
+--- a/drivers/pwm/pwm-clk.c
++++ b/drivers/pwm/pwm-clk.c
+@@ -119,7 +119,7 @@ static void pwm_clk_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id pwm_clk_dt_ids[] = {
+-	{ .compatible = "clk-pwm", },
++	{ .compatible = "clk-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_clk_dt_ids);
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index 2c92ce754872..1ce12ee0329b 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -91,7 +91,7 @@ static int clps711x_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id clps711x_pwm_dt_ids[] = {
+-	{ .compatible = "cirrus,ep7209-pwm", },
++	{ .compatible = "cirrus,ep7209-pwm" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, clps711x_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
+index 67cfa17f58e0..08a24a45c76d 100644
+--- a/drivers/pwm/pwm-cros-ec.c
++++ b/drivers/pwm/pwm-cros-ec.c
+@@ -267,7 +267,7 @@ static int cros_ec_pwm_probe(struct platform_device *pdev)
+ static const struct of_device_id cros_ec_pwm_of_match[] = {
+ 	{ .compatible = "google,cros-ec-pwm" },
+ 	{ .compatible = "google,cros-ec-pwm-type" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, cros_ec_pwm_of_match);
+ #endif
+diff --git a/drivers/pwm/pwm-hibvt.c b/drivers/pwm/pwm-hibvt.c
+index e02ee6383dbc..29ad8d0b5536 100644
+--- a/drivers/pwm/pwm-hibvt.c
++++ b/drivers/pwm/pwm-hibvt.c
+@@ -266,7 +266,7 @@ static const struct of_device_id hibvt_pwm_of_match[] = {
+ 	  .data = &hi3559v100_shub_soc_info },
+ 	{ .compatible = "hisilicon,hi3559v100-pwm",
+ 	  .data = &hi3559v100_soc_info },
+-	{  }
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, hibvt_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
+index 80fdb3303400..c20753a36d6d 100644
+--- a/drivers/pwm/pwm-imx-tpm.c
++++ b/drivers/pwm/pwm-imx-tpm.c
+@@ -442,7 +442,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(imx_tpm_pwm_pm,
+ 				pwm_imx_tpm_suspend, pwm_imx_tpm_resume);
+ 
+ static const struct of_device_id imx_tpm_pwm_dt_ids[] = {
+-	{ .compatible = "fsl,imx7ulp-pwm", },
++	{ .compatible = "fsl,imx7ulp-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, imx_tpm_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-imx1.c b/drivers/pwm/pwm-imx1.c
+index d5535d208005..075d46180dff 100644
+--- a/drivers/pwm/pwm-imx1.c
++++ b/drivers/pwm/pwm-imx1.c
+@@ -151,7 +151,7 @@ static const struct pwm_ops pwm_imx1_ops = {
+ };
+ 
+ static const struct of_device_id pwm_imx1_dt_ids[] = {
+-	{ .compatible = "fsl,imx1-pwm", },
++	{ .compatible = "fsl,imx1-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_imx1_dt_ids);
+diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+index c8b801fcb525..7c1ad15008d2 100644
+--- a/drivers/pwm/pwm-imx27.c
++++ b/drivers/pwm/pwm-imx27.c
+@@ -378,7 +378,7 @@ static const struct pwm_ops pwm_imx27_ops = {
+ };
+ 
+ static const struct of_device_id pwm_imx27_dt_ids[] = {
+-	{ .compatible = "fsl,imx27-pwm", },
++	{ .compatible = "fsl,imx27-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_imx27_dt_ids);
+diff --git a/drivers/pwm/pwm-ipq.c b/drivers/pwm/pwm-ipq.c
+index c53373948136..6b7aec566f7e 100644
+--- a/drivers/pwm/pwm-ipq.c
++++ b/drivers/pwm/pwm-ipq.c
+@@ -245,8 +245,8 @@ static int ipq_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id pwm_ipq_dt_match[] = {
+-	{ .compatible = "qcom,ipq6018-pwm", },
+-	{}
++	{ .compatible = "qcom,ipq6018-pwm" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_ipq_dt_match);
+ 
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index e0b5966fc7fe..0db1474c7c8c 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -261,7 +261,7 @@ static const struct of_device_id jz4740_pwm_dt_ids[] = {
+ 	{ .compatible = "ingenic,jz4740-pwm", .data = &jz4740_soc_info },
+ 	{ .compatible = "ingenic,jz4725b-pwm", .data = &jz4725b_soc_info },
+ 	{ .compatible = "ingenic,x1000-pwm", .data = &x1000_soc_info },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
+ 
+diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
+index 90b0733c00c1..10537e74be28 100644
+--- a/drivers/pwm/pwm-lp3943.c
++++ b/drivers/pwm/pwm-lp3943.c
+@@ -296,7 +296,7 @@ static int lp3943_pwm_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id lp3943_pwm_of_match[] = {
+-	{ .compatible = "ti,lp3943-pwm", },
++	{ .compatible = "ti,lp3943-pwm" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, lp3943_pwm_of_match);
+diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
+index 1e614b2a0227..4a1950635850 100644
+--- a/drivers/pwm/pwm-lpc18xx-sct.c
++++ b/drivers/pwm/pwm-lpc18xx-sct.c
+@@ -330,7 +330,7 @@ static const struct pwm_ops lpc18xx_pwm_ops = {
+ 
+ static const struct of_device_id lpc18xx_pwm_of_match[] = {
+ 	{ .compatible = "nxp,lpc1850-sct-pwm" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, lpc18xx_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-lpc32xx.c b/drivers/pwm/pwm-lpc32xx.c
+index c748537e57d1..19ec53648f40 100644
+--- a/drivers/pwm/pwm-lpc32xx.c
++++ b/drivers/pwm/pwm-lpc32xx.c
+@@ -155,7 +155,7 @@ static int lpc32xx_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id lpc32xx_pwm_dt_ids[] = {
+-	{ .compatible = "nxp,lpc3220-pwm", },
++	{ .compatible = "nxp,lpc3220-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, lpc32xx_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index 992137a27750..0bb49be657b7 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -627,7 +627,7 @@ static const struct of_device_id pwm_mediatek_of_match[] = {
+ 	{ .compatible = "mediatek,mt8183-pwm", .data = &mt8183_pwm_data },
+ 	{ .compatible = "mediatek,mt8365-pwm", .data = &mt8365_pwm_data },
+ 	{ .compatible = "mediatek,mt8516-pwm", .data = &mt8516_pwm_data },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_mediatek_of_match);
+ 
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 8c6bf3d49753..20e6cd07127c 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -596,15 +596,14 @@ static const struct of_device_id meson_pwm_matches[] = {
+ 	{
+ 		.compatible = "amlogic,meson8-pwm-v2",
+ 		.data = &pwm_meson8_v2_data
+-	},
+-	{
++	}, {
+ 		.compatible = "amlogic,meson-axg-pwm-v2",
+ 		.data = &pwm_meson_axg_v2_data
+-	},
+-	{
++	}, {
+ 		.compatible = "amlogic,meson-g12-pwm-v2",
+ 		.data = &pwm_meson_axg_v2_data
+ 	},
++
+ 	/* The following compatibles are obsolete */
+ 	{
+ 		.compatible = "amlogic,meson8b-pwm",
+@@ -642,7 +641,7 @@ static const struct of_device_id meson_pwm_matches[] = {
+ 		.compatible = "amlogic,meson-s4-pwm",
+ 		.data = &pwm_s4_data
+ 	},
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, meson_pwm_matches);
+ 
+diff --git a/drivers/pwm/pwm-mtk-disp.c b/drivers/pwm/pwm-mtk-disp.c
+index bafd6b6195f6..b5409e15dac8 100644
+--- a/drivers/pwm/pwm-mtk-disp.c
++++ b/drivers/pwm/pwm-mtk-disp.c
+@@ -295,10 +295,10 @@ static const struct mtk_pwm_data mt8183_pwm_data = {
+ };
+ 
+ static const struct of_device_id mtk_disp_pwm_of_match[] = {
+-	{ .compatible = "mediatek,mt2701-disp-pwm", .data = &mt2701_pwm_data},
+-	{ .compatible = "mediatek,mt6595-disp-pwm", .data = &mt8173_pwm_data},
+-	{ .compatible = "mediatek,mt8173-disp-pwm", .data = &mt8173_pwm_data},
+-	{ .compatible = "mediatek,mt8183-disp-pwm", .data = &mt8183_pwm_data},
++	{ .compatible = "mediatek,mt2701-disp-pwm", .data = &mt2701_pwm_data },
++	{ .compatible = "mediatek,mt6595-disp-pwm", .data = &mt8173_pwm_data },
++	{ .compatible = "mediatek,mt8173-disp-pwm", .data = &mt8173_pwm_data },
++	{ .compatible = "mediatek,mt8183-disp-pwm", .data = &mt8183_pwm_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, mtk_disp_pwm_of_match);
+diff --git a/drivers/pwm/pwm-mxs.c b/drivers/pwm/pwm-mxs.c
+index 8cad214b1c29..e1a3df6549fc 100644
+--- a/drivers/pwm/pwm-mxs.c
++++ b/drivers/pwm/pwm-mxs.c
+@@ -163,7 +163,7 @@ static int mxs_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id mxs_pwm_dt_ids[] = {
+-	{ .compatible = "fsl,imx23-pwm", },
++	{ .compatible = "fsl,imx23-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, mxs_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+index 1858a77401f8..51830a87275c 100644
+--- a/drivers/pwm/pwm-omap-dmtimer.c
++++ b/drivers/pwm/pwm-omap-dmtimer.c
+@@ -444,8 +444,8 @@ static void pwm_omap_dmtimer_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id pwm_omap_dmtimer_of_match[] = {
+-	{.compatible = "ti,omap-dmtimer-pwm"},
+-	{}
++	{ .compatible = "ti,omap-dmtimer-pwm" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_omap_dmtimer_of_match);
+ 
+diff --git a/drivers/pwm/pwm-pca9685.c b/drivers/pwm/pwm-pca9685.c
+index 8babd29f161c..a2792b803643 100644
+--- a/drivers/pwm/pwm-pca9685.c
++++ b/drivers/pwm/pwm-pca9685.c
+@@ -550,7 +550,7 @@ static const struct acpi_device_id pca9685_acpi_ids[] = {
+ MODULE_DEVICE_TABLE(acpi, pca9685_acpi_ids);
+ 
+ static const struct of_device_id pca9685_dt_ids[] = {
+-	{ .compatible = "nxp,pca9685-pwm", },
++	{ .compatible = "nxp,pca9685-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, pca9685_dt_ids);
+diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
+index 157735d0d054..07f5e09f1b1a 100644
+--- a/drivers/pwm/pwm-pxa.c
++++ b/drivers/pwm/pwm-pxa.c
+@@ -144,10 +144,10 @@ static const struct pwm_ops pxa_pwm_ops = {
+  * supported identically.
+  */
+ static const struct of_device_id pwm_of_match[] = {
+-	{ .compatible = "marvell,pxa250-pwm", .data = &pwm_id_table[0]},
+-	{ .compatible = "marvell,pxa270-pwm", .data = &pwm_id_table[0]},
+-	{ .compatible = "marvell,pxa168-pwm", .data = &pwm_id_table[0]},
+-	{ .compatible = "marvell,pxa910-pwm", .data = &pwm_id_table[0]},
++	{ .compatible = "marvell,pxa250-pwm", .data = &pwm_id_table[0] },
++	{ .compatible = "marvell,pxa270-pwm", .data = &pwm_id_table[0] },
++	{ .compatible = "marvell,pxa168-pwm", .data = &pwm_id_table[0] },
++	{ .compatible = "marvell,pxa910-pwm", .data = &pwm_id_table[0] },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_of_match);
+diff --git a/drivers/pwm/pwm-raspberrypi-poe.c b/drivers/pwm/pwm-raspberrypi-poe.c
+index 8921e7ea2cea..7cea6561c730 100644
+--- a/drivers/pwm/pwm-raspberrypi-poe.c
++++ b/drivers/pwm/pwm-raspberrypi-poe.c
+@@ -177,7 +177,7 @@ static int raspberrypi_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id raspberrypi_pwm_of_match[] = {
+-	{ .compatible = "raspberrypi,firmware-poe-pwm", },
++	{ .compatible = "raspberrypi,firmware-poe-pwm" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, raspberrypi_pwm_of_match);
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 578dbdd2d5a7..1733cd700693 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -248,8 +248,8 @@ static void rcar_pwm_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rcar_pwm_of_table[] = {
+-	{ .compatible = "renesas,pwm-rcar", },
+-	{ },
++	{ .compatible = "renesas,pwm-rcar" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+ 
+diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
+index 2196080b4177..140fd0bcb93f 100644
+--- a/drivers/pwm/pwm-renesas-tpu.c
++++ b/drivers/pwm/pwm-renesas-tpu.c
+@@ -479,11 +479,11 @@ static int tpu_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id tpu_of_table[] = {
+-	{ .compatible = "renesas,tpu-r8a73a4", },
+-	{ .compatible = "renesas,tpu-r8a7740", },
+-	{ .compatible = "renesas,tpu-r8a7790", },
+-	{ .compatible = "renesas,tpu", },
+-	{ },
++	{ .compatible = "renesas,tpu-r8a73a4" },
++	{ .compatible = "renesas,tpu-r8a7740" },
++	{ .compatible = "renesas,tpu-r8a7790" },
++	{ .compatible = "renesas,tpu" },
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(of, tpu_of_table);
+diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
+index 67b85bdb491b..050ca8aad0ca 100644
+--- a/drivers/pwm/pwm-rockchip.c
++++ b/drivers/pwm/pwm-rockchip.c
+@@ -292,10 +292,10 @@ static const struct rockchip_pwm_data pwm_data_v3 = {
+ };
+ 
+ static const struct of_device_id rockchip_pwm_dt_ids[] = {
+-	{ .compatible = "rockchip,rk2928-pwm", .data = &pwm_data_v1},
+-	{ .compatible = "rockchip,rk3288-pwm", .data = &pwm_data_v2},
+-	{ .compatible = "rockchip,vop-pwm", .data = &pwm_data_vop},
+-	{ .compatible = "rockchip,rk3328-pwm", .data = &pwm_data_v3},
++	{ .compatible = "rockchip,rk2928-pwm", .data = &pwm_data_v1 },
++	{ .compatible = "rockchip,rk3288-pwm", .data = &pwm_data_v2 },
++	{ .compatible = "rockchip,vop-pwm", .data = &pwm_data_vop },
++	{ .compatible = "rockchip,rk3328-pwm", .data = &pwm_data_v3 },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rockchip_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+index dfa1d11a48a8..ac8399b96ad1 100644
+--- a/drivers/pwm/pwm-rzg2l-gpt.c
++++ b/drivers/pwm/pwm-rzg2l-gpt.c
+@@ -437,7 +437,7 @@ static int rzg2l_gpt_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rzg2l_gpt_of_table[] = {
+-	{ .compatible = "renesas,rzg2l-gpt", },
++	{ .compatible = "renesas,rzg2l-gpt" },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzg2l_gpt_of_table);
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 951b38ff5f8e..331e81f1594a 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -501,7 +501,7 @@ static const struct of_device_id samsung_pwm_matches[] = {
+ 	{ .compatible = "samsung,s5p6440-pwm", .data = &s5p64x0_variant },
+ 	{ .compatible = "samsung,s5pc100-pwm", .data = &s5pc100_variant },
+ 	{ .compatible = "samsung,exynos4210-pwm", .data = &s5p64x0_variant },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, samsung_pwm_matches);
+ 
+diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
+index 4a07315b0744..d5000ea9084a 100644
+--- a/drivers/pwm/pwm-sifive.c
++++ b/drivers/pwm/pwm-sifive.c
+@@ -356,7 +356,7 @@ static void pwm_sifive_remove(struct platform_device *dev)
+ 
+ static const struct of_device_id pwm_sifive_of_match[] = {
+ 	{ .compatible = "sifive,pwm0" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pwm_sifive_of_match);
+ 
+diff --git a/drivers/pwm/pwm-sl28cpld.c b/drivers/pwm/pwm-sl28cpld.c
+index 934378d6a002..ba6bec0b9289 100644
+--- a/drivers/pwm/pwm-sl28cpld.c
++++ b/drivers/pwm/pwm-sl28cpld.c
+@@ -245,7 +245,7 @@ static int sl28cpld_pwm_probe(struct platform_device *pdev)
+ 
+ static const struct of_device_id sl28cpld_pwm_of_match[] = {
+ 	{ .compatible = "kontron,sl28cpld-pwm" },
+-	{}
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sl28cpld_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+index 7d07b0ca7d29..0b6461172e6a 100644
+--- a/drivers/pwm/pwm-sophgo-sg2042.c
++++ b/drivers/pwm/pwm-sophgo-sg2042.c
+@@ -225,11 +225,10 @@ static const struct sg2042_chip_data sg2044_chip_data = {
+ static const struct of_device_id sg2042_pwm_ids[] = {
+ 	{
+ 		.compatible = "sophgo,sg2042-pwm",
+-		.data = &sg2042_chip_data
+-	},
+-	{
++		.data = &sg2042_chip_data,
++	}, {
+ 		.compatible = "sophgo,sg2044-pwm",
+-		.data = &sg2044_chip_data
++		.data = &sg2044_chip_data,
+ 	},
+ 	{ }
+ };
+diff --git a/drivers/pwm/pwm-sprd.c b/drivers/pwm/pwm-sprd.c
+index 4c76ca5e4cdd..88928f9e7557 100644
+--- a/drivers/pwm/pwm-sprd.c
++++ b/drivers/pwm/pwm-sprd.c
+@@ -277,8 +277,8 @@ static int sprd_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sprd_pwm_of_match[] = {
+-	{ .compatible = "sprd,ums512-pwm", },
+-	{ },
++	{ .compatible = "sprd,ums512-pwm" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sprd_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-sti.c b/drivers/pwm/pwm-sti.c
+index 3b702b8f0c7f..e5c3cf594571 100644
+--- a/drivers/pwm/pwm-sti.c
++++ b/drivers/pwm/pwm-sti.c
+@@ -625,7 +625,7 @@ static int sti_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sti_pwm_of_match[] = {
+-	{ .compatible = "st,sti-pwm", },
++	{ .compatible = "st,sti-pwm" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sti_pwm_of_match);
+diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+index 4789eafb8bac..2aa88f4985f5 100644
+--- a/drivers/pwm/pwm-stm32-lp.c
++++ b/drivers/pwm/pwm-stm32-lp.c
+@@ -412,8 +412,8 @@ static DEFINE_SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
+ 				stm32_pwm_lp_resume);
+ 
+ static const struct of_device_id stm32_pwm_lp_of_match[] = {
+-	{ .compatible = "st,stm32-pwm-lp", },
+-	{},
++	{ .compatible = "st,stm32-pwm-lp" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, stm32_pwm_lp_of_match);
+ 
+diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+index c708e4a7ad70..ea5a51a2800f 100644
+--- a/drivers/pwm/pwm-stm32.c
++++ b/drivers/pwm/pwm-stm32.c
+@@ -918,9 +918,9 @@ static int stm32_pwm_resume(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(stm32_pwm_pm_ops, stm32_pwm_suspend, stm32_pwm_resume);
+ 
+ static const struct of_device_id stm32_pwm_of_match[] = {
+-	{ .compatible = "st,stm32-pwm",	},
+-	{ .compatible = "st,stm32mp25-pwm", },
+-	{ /* end node */ },
++	{ .compatible = "st,stm32-pwm" },
++	{ .compatible = "st,stm32mp25-pwm" },
++	{ /* end node */ }
+ };
+ MODULE_DEVICE_TABLE(of, stm32_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-sun4i.c b/drivers/pwm/pwm-sun4i.c
+index 6c5591ca868b..0752152b1470 100644
+--- a/drivers/pwm/pwm-sun4i.c
++++ b/drivers/pwm/pwm-sun4i.c
+@@ -369,7 +369,7 @@ static const struct of_device_id sun4i_pwm_dt_ids[] = {
+ 		.data = &sun50i_h6_pwm_data,
+ 	}, {
+ 		/* sentinel */
+-	},
++	}
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_pwm_dt_ids);
+ 
+diff --git a/drivers/pwm/pwm-sunplus.c b/drivers/pwm/pwm-sunplus.c
+index b342b843247b..b578f3f1a3a3 100644
+--- a/drivers/pwm/pwm-sunplus.c
++++ b/drivers/pwm/pwm-sunplus.c
+@@ -214,8 +214,8 @@ static int sunplus_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id sunplus_pwm_of_match[] = {
+-	{ .compatible = "sunplus,sp7021-pwm", },
+-	{}
++	{ .compatible = "sunplus,sp7021-pwm" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sunplus_pwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
+index 67cc5e8bdb0e..3751737ead43 100644
+--- a/drivers/pwm/pwm-tiecap.c
++++ b/drivers/pwm/pwm-tiecap.c
+@@ -211,9 +211,9 @@ static const struct pwm_ops ecap_pwm_ops = {
+ };
+ 
+ static const struct of_device_id ecap_of_match[] = {
+-	{ .compatible	= "ti,am3352-ecap" },
+-	{ .compatible	= "ti,am33xx-ecap" },
+-	{},
++	{ .compatible = "ti,am3352-ecap" },
++	{ .compatible = "ti,am33xx-ecap" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ecap_of_match);
+ 
+diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
+index 2533c95b0ba9..3a53489f0b98 100644
+--- a/drivers/pwm/pwm-tiehrpwm.c
++++ b/drivers/pwm/pwm-tiehrpwm.c
+@@ -407,7 +407,7 @@ static const struct pwm_ops ehrpwm_pwm_ops = {
+ static const struct of_device_id ehrpwm_of_match[] = {
+ 	{ .compatible = "ti,am3352-ehrpwm" },
+ 	{ .compatible = "ti,am33xx-ehrpwm" },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ehrpwm_of_match);
+ 
+diff --git a/drivers/pwm/pwm-twl-led.c b/drivers/pwm/pwm-twl-led.c
+index a555cc3be4b3..e1b6871af81e 100644
+--- a/drivers/pwm/pwm-twl-led.c
++++ b/drivers/pwm/pwm-twl-led.c
+@@ -338,7 +338,7 @@ static int twl_pwmled_probe(struct platform_device *pdev)
+ static const struct of_device_id twl_pwmled_of_match[] = {
+ 	{ .compatible = "ti,twl4030-pwmled" },
+ 	{ .compatible = "ti,twl6030-pwmled" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, twl_pwmled_of_match);
+ #endif
+diff --git a/drivers/pwm/pwm-twl.c b/drivers/pwm/pwm-twl.c
+index 8f981ffff4b4..99c1caf4f19c 100644
+--- a/drivers/pwm/pwm-twl.c
++++ b/drivers/pwm/pwm-twl.c
+@@ -362,7 +362,7 @@ static int twl_pwm_probe(struct platform_device *pdev)
+ static const struct of_device_id twl_pwm_of_match[] = {
+ 	{ .compatible = "ti,twl4030-pwm" },
+ 	{ .compatible = "ti,twl6030-pwm" },
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, twl_pwm_of_match);
+ #endif
+diff --git a/drivers/pwm/pwm-visconti.c b/drivers/pwm/pwm-visconti.c
+index 28fae4979e3f..830aef483bd0 100644
+--- a/drivers/pwm/pwm-visconti.c
++++ b/drivers/pwm/pwm-visconti.c
+@@ -156,7 +156,7 @@ static int visconti_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id visconti_pwm_of_match[] = {
+-	{ .compatible = "toshiba,visconti-pwm", },
++	{ .compatible = "toshiba,visconti-pwm" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, visconti_pwm_of_match);
+diff --git a/drivers/pwm/pwm-vt8500.c b/drivers/pwm/pwm-vt8500.c
+index 016c82d65527..3f2c8031a626 100644
+--- a/drivers/pwm/pwm-vt8500.c
++++ b/drivers/pwm/pwm-vt8500.c
+@@ -227,7 +227,7 @@ static const struct pwm_ops vt8500_pwm_ops = {
+ };
+ 
+ static const struct of_device_id vt8500_pwm_dt_ids[] = {
+-	{ .compatible = "via,vt8500-pwm", },
++	{ .compatible = "via,vt8500-pwm" },
+ 	{ /* Sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, vt8500_pwm_dt_ids);
+diff --git a/drivers/pwm/pwm-xilinx.c b/drivers/pwm/pwm-xilinx.c
+index 52c241982807..fa2d10e658dd 100644
+--- a/drivers/pwm/pwm-xilinx.c
++++ b/drivers/pwm/pwm-xilinx.c
+@@ -281,8 +281,8 @@ static int xilinx_pwm_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id xilinx_pwm_of_match[] = {
+-	{ .compatible = "xlnx,xps-timer-1.00.a", },
+-	{},
++	{ .compatible = "xlnx,xps-timer-1.00.a" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, xilinx_pwm_of_match);
+ 
 -- 
 2.55.0.11.g153666a7d9bb
 
