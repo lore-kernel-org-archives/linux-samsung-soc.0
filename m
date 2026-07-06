@@ -1,169 +1,137 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CE03859DC
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jul 2026 07:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBA83939BD
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jul 2026 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783324657; cv=none; b=qY1/VBFm/m/z86LkQ4W+6DXlFAYRTbcIkGQbticv3Lomjg2AAORX+8PgXrUFB+LKqGSLxnRi5zY52ecMM7dibQb3NawYdU2WlxPOGGD0H2T00emeiT2S/AOD5LHU85pSmH3aKQCAjM5l+ojkdvNetyRdCp9Ud0h4jmTJ0zF7zqI=
+	t=1783325205; cv=none; b=LSKmEqSq8ctU6aac9+iiqyl3ztIvmJAs83AwffcYHFIjsXFJ02nWm894MJq4XCuf5e9B6JMjXLgcX79KUDcHA7W4UGwKga8RhcFOxj9oaowoJXHserxHxVlyUsb4vrB0bprZYW/oMJ97USu/QQ/KYxLEJA62doNFxKbY8jD0Iwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783324657; c=relaxed/simple;
-	bh=9rUAdY1bqdroaIZBNoRnWUT1ZjWTBEwO0TyKfjFIbdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GDr4K+MwLqtoWjPziSNgjYl8h9bNZjfIEGUG3TyVACJG94hK/9r2ussO1GvX+LEXxEzKSDaE5VUNHIjQiOvd+OYFnpOkDajjBsxCE4s/ipM+1ZgV3aHNDlNpDDB2B7AfgXScv8cZrGU8eU2WAmmJHVlunaWkcM9bB8Qe0OaFOmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=tIER4XnP; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1783325205; c=relaxed/simple;
+	bh=6FRXXocn1lfRgJnxiPkpYYSBB5w4wnBEBhNnIuipX2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pulODYiDMCYk6d383ZESsZ+NiqFMU1FHMKBOplRiLWFWv995IT3E/n3CcaI9onnsJNJuO5lQMVkWalsqJIlKd2SbhfkZ9tCF8J/hPdydSAlZ4LQcml/U3EYQ8M/CiEhoGPEwb+NT/aj1ScE+u8uINEJk7fZ+BcdE1xKMsZXbHd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tIER4XnP"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-493c733f15aso27587455e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2026 00:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783324647; x=1783929447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wPDzWcnE/ifTtdQxRYWVMNosWjNjJ8DQqD5V74MEqYk=;
-        b=tIER4XnP4CRpLZw+G8woC/s/tsQ4yLnPO0NYINiXSmFo4IC3mVFzfFo3SOpHFUpKKU
-         4OcQOkFJDJ09cBSdNmVw8jtNJ8g3CDOVrglVrYXXeEDi/C2bZjgpqQavHOoaWErbgy5j
-         9BLeG8QAPb4i+DtUcgaMZAdMKpkaUsWsVthLZlr0dF5aAbvgwcE/Q2Y7EXlK1NbCNLs9
-         kWAv95Lfqm9K0aUWi2VQQSOq165qDeq/sE5MUua7QVU26kYaGv6wlv5emtB5dgs/nz24
-         AcTztPUTmyfbC9eeH6twz7uV0LMzpXVtcSvnBdaOAtCH4CxJ3Do+czh7KUKvx7/nXzrH
-         ZYow==
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-59ebb89109aso2135847e0c.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:06:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783324647; x=1783929447;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wPDzWcnE/ifTtdQxRYWVMNosWjNjJ8DQqD5V74MEqYk=;
-        b=ER9LUGqKjMR6wc4k0yWaBtq4128LQlKIuXx6La+Sc3bEb7ZHD8hWHYGvifBP8QRXLY
-         CByLljysV9eNiqqrjnyKta1p71wnKhK6ufoE/Shh6vd8ywd5naK2M4jBXiJpCT/BRAqk
-         87P1zf3md+DFcYcuBDuli5GH9O+I/VuRyq3yuNxSgV7kKb7N2s4hKG8KO+QD7GdPNiaQ
-         +EI7VjVEw8NEr3yMQEgEiYG5yI2ECavGxdl26NGMH4dPKgj4HJDJapXMKDd8OoyTVLzW
-         C7qIXfknUMFvBBX1z7h6+/DbZdjsiZWkzcumrd+Bk2VydPc7BnJtgnMRzazWyvh7T8hy
-         ioZA==
-X-Gm-Message-State: AOJu0YzzxMxtQN8GY+hKRyF1CQQeMblvVHtmmMAulsdlaoknyFQqoeI1
-	aC7h4RlPpK1+Y4sm7mVQOLeQ5OSdLCnIakdTLEDNo7850TRXWHVMFJDB
-X-Gm-Gg: AfdE7cmVbbI7HN2Rm1AwFbpkp38ud4x9CecCuQn/Gq9GgpXWSp1cYDZ/9rp9UGiXCb3
-	oIJigPPfVXUWqObgz/3v9tC8g5MUYQWdkCWJlsSRZWtc3J8X6dANNWVXgzarxjfaMl+jdtp/8nU
-	FpwxWIY2gsS6jlWp5dPycMCUUR2KufaNRuQMztWjGo7TCHm4IAT1EkpDn/eRlJW8EzRVO5gJN+2
-	SKSyhVfcREQkqdr0621G0aEy4q9h5szDWHtJe/thByosPNiBTGxV8woQPZOyM14/3ugNf3Q3Fy5
-	7Hnjvuik6GaLcI0a21JR55sBMCzqp4O0dkmYRh9TWYkgER2Uju5G7yqUwZfGAXTNCYMezXMUWzF
-	/8c6MCStRT10OmA0BBckPChQWqNj4ORmjh9oZY58/uwCxV9uj6NMwMpEOBvgYjQBWv753ZOX3ea
-	MPLwMqaUzb809PZ3DpvredvJLtdijBpf/aFqhPWr9fM6EH16SGSaMWawUhKgU=
-X-Received: by 2002:a05:600c:6087:b0:493:dcad:84ee with SMTP id 5b1f17b1804b1-493dcad864amr16118265e9.0.1783324647312;
-        Mon, 06 Jul 2026 00:57:27 -0700 (PDT)
-Received: from [192.168.1.107] (87-126-128-216.ip.btc-net.bg. [87.126.128.216])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493cce03fa1sm256320455e9.11.2026.07.06.00.57.25
+        d=1e100.net; s=20251104; t=1783325196; x=1783929996;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xlcdnSGCAGaaD3Qtz41jPpd7wkV1TEYjW94sOKYd3zY=;
+        b=bHBiQCTShin1iCZ8YAucVTLRUPM7BR4WGTsNnRrtI7qZQrZzvATAdMQyi8ICCJ9Xxq
+         HHMwaMAea8B9HaM+F6xFjb2geFDZw4cdLOFrR8JUt85nxkNzF3bBmzQAlGnFYYbaPABu
+         YONFB7YUw3rw37POKmLk1RYPg66rABYKPlv2ss8YfFJe7YYJCYetEv7EgIuHjKLbKcNG
+         z/UfdhCi2gotnClOPMsXoQT9n394cXGpeHysDGEIuItH4UHAkRFgwFEK8NvMFJoIQxyO
+         gSXlqLlC0S/PpUH/CwubDQFvv1lc++hrTYa1or4e6Fht2rW9T7wSLe19WNDIM+pM80HB
+         chGA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr72453SBPB5LaOYppNCT0sNWzCJRe5MXQwkzc0ZA2VZmHZZYj6KemeD4ilX1uv9s1AFcAHr6y3AR4zgvoOsoG0ww==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoK5rusmDcd+3yrqLkyTRC+h6X1+C9vA3HFnegF5hSwNHh5n1g
+	J9xgx7VfkY1m1LqeYEOY3RpMC1vND09V/iVKcLkE2pIYXNQ7b8DcqSWpP+j7OXth
+X-Gm-Gg: AfdE7ckpfMSTL03N+qz2udjyk0bXz44rr4DmEplUxA2TxiBDk8HKMwYxrFOC4fD/lFI
+	aBed3uff1mqFLfpA16l/7frNZgaRZB9UoNPey9p+flVsmJOKlMB32R4rdsGK5/Sdv/gPB8et8sV
+	F0ZpZx5KdZxe+W6p+hIOTM7GWm7KuLBOGB/yBZt2HJBYrbCR4DWJE7LTMDVQZTCVh+g4LESyLpg
+	J431IgtbVsjdLryaMmZ2dcbcLlW+E1G0PgX7LPcIis0iLYutB+Q+fA/m3hu4KGUhHxWdZuYbUTM
+	v/YvoFv1bb23gY0TVY+OEMHofZQ/UL9SiSxXorePJIolx4Cs2fTD6DWXpQ4x4wYDaSuRoag3+Iz
+	3OXUa2ofIZy2bmvm0SgDgZ0IOL2cxXvZd/DfmoZhTu53WOFauamHkz2hWGW/D/bjqjhwy89HnDB
+	wZvXXG/FIETrXa654pX1ZDsrHKFkwBNIbmmbN26qC0Qfb2xCDRZ80LPcKcaloa
+X-Received: by 2002:a05:6122:547:b0:5bd:ecad:8f9c with SMTP id 71dfb90a1353d-5be101d9e4bmr3210275e0c.6.1783325196005;
+        Mon, 06 Jul 2026 01:06:36 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5be02c4414csm4405131e0c.13.2026.07.06.01.06.35
+        for <linux-samsung-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jul 2026 00:57:26 -0700 (PDT)
-Message-ID: <c0e3a874-0d9b-4fc7-bfe9-23ad9d339918@gmail.com>
-Date: Mon, 6 Jul 2026 10:57:24 +0300
+        Mon, 06 Jul 2026 01:06:35 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-735f73287e2so1584607137.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jul 2026 01:06:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RodjpuGctSaVC/JP38FJhtezEEfexWx8MCM1Vugfb8dnayqI9eGeF9kZNTFAAA0/tAg/kKUghhLAFCYMMnIOXrVAw==@vger.kernel.org
+X-Received: by 2002:a05:6102:800d:b0:722:826e:1423 with SMTP id
+ ada2fe7eead31-7427f0478a0mr3286706137.20.1783324855096; Mon, 06 Jul 2026
+ 01:00:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-binding: ARM: samsung: Add Samsung Exynos8855
-To: Alim Akhtar <alim.akhtar@samsung.com>, krzk@kernel.org,
- peter.griffin@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- linusw@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- hajun.sung@samsung.com
-References: <20260627171228.2687857-1-alim.akhtar@samsung.com>
- <CGME20260627165406epcas5p1be75af2010edfc57cad0f668a8e3568d@epcas5p1.samsung.com>
- <20260627171228.2687857-2-alim.akhtar@samsung.com>
- <4df9f388-2dc7-47b6-afc0-7a0cc6d15ca3@gmail.com>
- <08ba01dd0cf9$cbe0a4b0$63a1ee10$@samsung.com>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <08ba01dd0cf9$cbe0a4b0$63a1ee10$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1783263835.git.ukleinek@kernel.org> <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+In-Reply-To: <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Jul 2026 10:00:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXKyFJ20N6qKafvMZ_0sVj5+XTxcod_6wGkwTsokn7dvw@mail.gmail.com>
+X-Gm-Features: AVVi8CfQACxAMot5VlqKHI6FXvkOZpEWhTZp1dlkgWSruFHOk1f-I-dS5kVo31s
+Message-ID: <CAMuHMdXKyFJ20N6qKafvMZ_0sVj5+XTxcod_6wGkwTsokn7dvw@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] pwm: Unify coding style of of_device_id arrays
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Neal Gompa <neal@gompa.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Michael Walle <mwalle@kernel.org>, Chen Wang <chen.wang@linux.dev>, 
+	Inochi Amaoto <inochiama@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Hammer Hsieh <hammerh0314@gmail.com>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Alexey Charkov <alchark@gmail.com>, 
+	Sean Anderson <sean.anderson@linux.dev>, Michal Simek <michal.simek@amd.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, chrome-platform@lists.linux.dev, 
+	imx@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/6/26 6:44 AM, Alim Akhtar wrote:
-> Hi Ivaylo,
-> Thanks for your review. 
+On Sun, 5 Jul 2026 at 17:14, Uwe Kleine-K=C3=B6nig (The Capable Hub)
+<u.kleine-koenig@baylibre.com> wrote:
+>  - Use a single space in a of_device_id array terminator; A single space
+>    after the opening { and before the closing } in non-empty
+>    initializers;
+>  - No comma after an array terminator;
+>  - Also no trailing comma after a named initializer iff the
+>    closing } is on the same line;
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@b=
+aylibre.com>
 
-No problem :D
+>  drivers/pwm/pwm-rcar.c            |  4 ++--
+>  drivers/pwm/pwm-renesas-tpu.c     | 10 +++++-----
+>  drivers/pwm/pwm-rzg2l-gpt.c       |  2 +-
 
-> 
->> -----Original Message-----
->> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> Sent: Monday, July 6, 2026 4:11 AM
->> To: Alim Akhtar <alim.akhtar@samsung.com>; krzk@kernel.org;
->> peter.griffin@linaro.org; robh@kernel.org; conor+dt@kernel.org;
->> linusw@kernel.org
->> Cc: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> devicetree@vger.kernel.org; linux-gpio@vger.kernel.org;
->> hajun.sung@samsung.com
->> Subject: Re: [PATCH v3 1/6] dt-binding: ARM: samsung: Add Samsung
->> Exynos8855
->>
->> On 6/27/26 20:12, Alim Akhtar wrote:
->>> Add Samsung Exynos8855 smdk board to documentation
->>>
->>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->>> ---
->>>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
->>> b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
->>> index 753b3ba1b607..273464400477 100644
->>> ---
->>> a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-
->> boards.yam
->>> +++ l
->>> @@ -235,6 +235,12 @@ properties:
->>>                - winlink,e850-96                 # WinLink E850-96
->>>            - const: samsung,exynos850
->>>
->>> +      - description: Exynos8855 based boards
->>> +        items:
->>> +          - enum:
->>> +              - samsung,exynos8855-smdk         # Samsung SMDK
->>> +          - const: samsung,exynos8855
->>
->> Is there any particular reason for using "exynos8855" rather than the
->> commercial name - exynos1580? We've already established using the latter
->> naming scheme as a convention (e.g. exynos3830 -> exynos850, exynos9830 ->
->> exynos990) rather than the development model numbers, so I don't think
->> breaking that will help anyone with the already painful model number confusion.
->>
-> The reason for using Exynos8855 is that it comes from the chip-id register, which is RO register.
-> And in my opinion it has to be chip-id, maintaining two names is confusing (as you also mentioned).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
 
-I see your point but I'm not sure whether exynos-based platforms like tensors
-will follow this. Afaik GS101's development name is e9845. So there likely will
-still be some deviation.
+Gr{oetje,eeting}s,
 
-It's not really a fatal thing, just a nit imo because all bindings will have
-to follow that for the upstreamed SoC, so non-revertable. But if maintainers
-are okay with this, I'm happy to start using chip-id names for future contributions
-too.
+                        Geert
 
-Best regards,
-Ivaylo
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> Yes, there were couple of deviation but let's come back to the "original" convention (which is to use chip-id).
-> 
-> @ Krzysztof, Peter 
-> Any input on this? 
-> 
->> Best regards,
->> Ivaylo
->>
->>> +
->>>        - description: Exynos8895 based boards
->>>          items:
->>>            - enum:
-> 
-> 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
