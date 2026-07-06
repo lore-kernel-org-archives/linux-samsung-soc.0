@@ -1,121 +1,137 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EE92E719B
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jul 2026 22:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0281C1B7910
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jul 2026 00:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783291245; cv=none; b=kGwwWD0hlXpslFh79R8wyv8qjWMAT0Lf7rQ756p7juEr+fkhocPwx8dWI5pPS5NBtNN13RMxcx2oiCl58vk11BWA5d9DlRJmj/0WpcKX0hrVWUd6gXaJLwQOjlCZ2kUND++nKyJBg88qBvjkYYLTuInJ+y+cvwYsm+jfqOZFgEA=
+	t=1783298075; cv=none; b=d5SggbzpCrBe2kw7fhYm6otE2+Gh3t0c1d3LW0+bbSKQr226bsdbIbxm5IpTs7iAcFuzpL+npmhCk9oMXRVxi/phqsDXEWoovmdmBjzaAyPG6TR9zUeVfBgiiRz4NPO9GIuFOLFR8SVSxIgPFjwuJUvoOcV6QvJtNgKnjGIrGNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783291245; c=relaxed/simple;
-	bh=o6tKcjSGL3hmAoOfrQ72FhjNH6OcQ99PKzW3pQ6hb58=;
+	s=arc-20240116; t=1783298075; c=relaxed/simple;
+	bh=2PxUxZPMKUCuY9XPy73Y/KPmQ0r97rw0cg10OraDCjk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rzHlte4CccfTPczWh/pyJnY44JlR9Mc8gnDfvmVXKqsSuL/AbfaDpqTtWDfPFx1nZykLJMyeC6cUcWON3VEogMMrpW4hcOxsMdrTGA5T7HTZ/qrz2e5/kJV4kl0NdvOpi1IMj9vcozFjZkGBbt3aMGsl4EElqUs3/V0pdqRb7cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZzyVtOT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=kfLauQ51ir0rR0M+xR7KGfPxbjoWdONuskxIGg9WGBf60LAWRXfbx4VzgQ4yd21+RY42/Q2fRgzX7nsB+0fU2M+0fqLnluOy2v90hW+xSS9yEH/7Jyn82YMyJgre3RuLBvR6atwa/XhLx27dZdzDKFRPTg8LO9ztQDrr6iTJzhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mLsuUED9; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZzyVtOT"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493c2c0b9a8so21524055e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jul 2026 15:40:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783291243; x=1783896043; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=veU2IZXpTiLRV+FUCeAbLnHfRb1mcReExg9kWOUDBqA=;
-        b=IZzyVtOTFcv7PRBDHD9/w92l8TEWp9nBHTccefnzhmj9va1ldhieCIOA4T5vb27jRC
-         0VeUky/pI8uCWNc817jEiSCSARdtbltKuTVdAPevc9pJMqZE82DnCmGDG2zIWOkED+3M
-         33CT7zxRAOsUYKwLUJ4XSVBOHIPK9QqUctQRp0UmLSudRhuwPDl9+Kknt1CBUUl2J446
-         4LiIhHZt7mMZJs5ivy7SMxRpoiiBmNXNU6W2cnCx05ADuomxMSstPwPoSaj5qpPIflBq
-         sZSbcILeHpQu8bzaNzM+SWcLClgqrj6AIN9yTh/cY84Mf5UXEqirx5JU2HFRlys7g1xz
-         xBHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783291243; x=1783896043;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=veU2IZXpTiLRV+FUCeAbLnHfRb1mcReExg9kWOUDBqA=;
-        b=Jvnxof1Q88IBwunD2uQKnIYq0LtMVqpj/uLVeP1m3M1lWi0Hc86EVAC8YASdu5laoX
-         8esfFQ/n+JcVDnMrFKfS/UJM4B1bp8kpWTakl3gW4pMwZE+8xKuu+conn2S5PApXxzP/
-         UmIqcfD/cIWJnPJm9oEWpsmLs52YXpSFY6dc4DEqFXkuzuqCIjjQv20uf7GXgiTIbQf5
-         /qTALE8vaf54c7LQFNwub9Y8cx+iPV8xGtS6/VZZVjqihSWFUNG8tQfWHjcFL1upZN3C
-         V7Z2NiKFRCtlOhkFl6u4dsczf5j6g5QE7jvopgCYI2X/7mjgiOdAk1hP1pMhrhdY620r
-         0LpA==
-X-Gm-Message-State: AOJu0Yx3jtJ3z5hxfYHTjnChJLaic5ljt2rwbZQxMauu20Eq39da1qSx
-	sxS2ajmcq032TUsB/Wm1aVm6UICmrtfhViudCETh61CX5bNua1XmOtNn
-X-Gm-Gg: AfdE7cnMlpBK7/ZsgJbvubGePGnwJZB/nB+0ke/1JXT5bK/ub88XAyeBrybIp3WfEZg
-	QHoZ1OpoMSGT4AsFQQXaxoAJUBpY3r2XmYvy3zoe52tXxDGQD+DDhjMt2HXlE4hzBDNFilch011
-	5cZDL6+HFXcCrSKahKqPnm8BGAslZt8hyxBLCDgJobLSigfD6DyMSrkZ1g5e7yE1EvA4tVAME5H
-	74LyEbXqzTxkebfxX8xpC6G4KFIerD+aHG/oTpz9JNgB0IYick2ditkQRX3DOY4GhC2GOSM4361
-	xv8JTpOS5Q2d/1k4h6lOTmQie3MPd2ckJLG5zZ5QTbZFVnIjp8DoxgPJR8g2tnVCMRzergoFfQs
-	036QireGCGrvgTtvnkWQJ+wdxYryAJ962h7B+XDIqVvE0dEg2dSPXUrDIZhj7WDN9Q3+ULT+qqj
-	//BSrhM34ZWWBtMWxcUGzkNN8Zpvc/zaS0ByvMmcrk6Bufb7iKSwjLNN815sE=
-X-Received: by 2002:a05:600c:314f:b0:493:cfd2:cd06 with SMTP id 5b1f17b1804b1-493d11cef20mr85595145e9.6.1783291242828;
-        Sun, 05 Jul 2026 15:40:42 -0700 (PDT)
-Received: from [192.168.1.109] (87-126-128-216.ip.btc-net.bg. [87.126.128.216])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493bef1807asm289906045e9.1.2026.07.05.15.40.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jul 2026 15:40:41 -0700 (PDT)
-Message-ID: <4df9f388-2dc7-47b6-afc0-7a0cc6d15ca3@gmail.com>
-Date: Mon, 6 Jul 2026 01:40:40 +0300
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mLsuUED9"
+Message-ID: <973f3d6f-6ff4-4685-9c9f-b07987f74d98@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1783298059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYrjdzAhnc0P88BFwUH/b6uj52WFQfIRb2R1u4QFCds=;
+	b=mLsuUED9ENIp3ed3h8bdKFYcEwFgoRzOELLNc1jLIXF6taZ+WEztXLwd9/BAKQWvUz2Hs3
+	3EKLIatmB5Z+Df3dgdlCr8bmpTJQbWFj3Jp6WCvzaQnW40BXVB4LUsJRj7jQdhncagFIYu
+	oCbFYryMjDBm1fu5il4d+x3rl9gBRyM=
+Date: Mon, 6 Jul 2026 08:33:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-binding: ARM: samsung: Add Samsung Exynos8855
-To: Alim Akhtar <alim.akhtar@samsung.com>, krzk@kernel.org,
- peter.griffin@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- linusw@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- hajun.sung@samsung.com
-References: <20260627171228.2687857-1-alim.akhtar@samsung.com>
- <CGME20260627165406epcas5p1be75af2010edfc57cad0f668a8e3568d@epcas5p1.samsung.com>
- <20260627171228.2687857-2-alim.akhtar@samsung.com>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20260627171228.2687857-2-alim.akhtar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v1 4/5] pwm: Unify coding style of of_device_id arrays
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
+ <u.kleine-koenig@baylibre.com>, linux-pwm@vger.kernel.org
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+ Neal Gompa <neal@gompa.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
+ Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Paul Walmsley <pjw@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Michael Walle
+ <mwalle@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Hammer Hsieh <hammerh0314@gmail.com>,
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+ Alexey Charkov <alchark@gmail.com>, Sean Anderson <sean.anderson@linux.dev>,
+ Michal Simek <michal.simek@amd.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, chrome-platform@lists.linux.dev,
+ imx@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev
+References: <cover.1783263835.git.ukleinek@kernel.org>
+ <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chen Wang <chen.wang@linux.dev>
+In-Reply-To: <20de6cd60c2938aad2d21397b92742849418ab1b.1783263835.git.ukleinek@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 6/27/26 20:12, Alim Akhtar wrote:
-> Add Samsung Exynos8855 smdk board to documentation
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index 753b3ba1b607..273464400477 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -235,6 +235,12 @@ properties:
->                - winlink,e850-96                 # WinLink E850-96
->            - const: samsung,exynos850
->  
-> +      - description: Exynos8855 based boards
-> +        items:
-> +          - enum:
-> +              - samsung,exynos8855-smdk         # Samsung SMDK
-> +          - const: samsung,exynos8855
 
-Is there any particular reason for using "exynos8855" rather than the commercial
-name - exynos1580? We've already established using the latter naming scheme as a
-convention (e.g. exynos3830 -> exynos850, exynos9830 -> exynos990) rather than
-the development model numbers, so I don't think breaking that will help anyone
-with the already painful model number confusion.
+On 7/5/2026 11:14 PM, Uwe Kleine-König (The Capable Hub) wrote:
+>   - Use a single space in a of_device_id array terminator; A single space
+>     after the opening { and before the closing } in non-empty
+>     initializers;
+>   - No comma after an array terminator;
+>   - Also no trailing comma after a named initializer iff the
+iff -> if
+>     closing } is on the same line;
+>
+> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 
-Best regards,
-Ivaylo
+[......]
 
-> +
->        - description: Exynos8895 based boards
->          items:
->            - enum:
+> diff --git a/drivers/pwm/pwm-sophgo-sg2042.c b/drivers/pwm/pwm-sophgo-sg2042.c
+> index 7d07b0ca7d29..0b6461172e6a 100644
+> --- a/drivers/pwm/pwm-sophgo-sg2042.c
+> +++ b/drivers/pwm/pwm-sophgo-sg2042.c
+> @@ -225,11 +225,10 @@ static const struct sg2042_chip_data sg2044_chip_data = {
+>   static const struct of_device_id sg2042_pwm_ids[] = {
+>   	{
+>   		.compatible = "sophgo,sg2042-pwm",
+> -		.data = &sg2042_chip_data
+> -	},
+> -	{
+> +		.data = &sg2042_chip_data,
+> +	}, {
+>   		.compatible = "sophgo,sg2044-pwm",
+> -		.data = &sg2044_chip_data
+> +		.data = &sg2044_chip_data,
+>   	},
+>   	{ }
+>   };
+
+Changes to sophgo related files：
+
+Reviewed-by: Chen Wang <chen.wang@linux.dev>
+
+Thanks,
+
+Chen
+
+[......]
+
 
