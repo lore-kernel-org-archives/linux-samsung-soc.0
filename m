@@ -1,34 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A326379C2F;
-	Tue,  7 Jul 2026 15:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF63F36A36B
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jul 2026 15:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783437092; cv=none; b=QUCPr4plpPJsMgFX15WG8RAoxzg0JlwstpnxDXfNurnFULZ498I5UelmN2abXPeD/PgrvCtoEHENMMZ0akyMzy7wi7chKBe02Niklj7q3wl6CbayIsEXtPj/fkmv4NmPw+JkLMrOOPjcdNfzH0gy6vKQ/vP7r4J5HZEzgGaUbJg=
+	t=1783437153; cv=none; b=SzeFCi9o72MpeKSE7YEr3js2wg+LFdMo8ZVfxJ6ar+INTvEf1zbMZzkfN4SvVDxKyG/2YPNbwLiK7ZcLfbE0KBttZIx/iE6linV6sfDT4DSRIodwME9tjwAwfW6Qd7ak71aA6RcHud2UdXEsiceC4/ko0a/GOT7URMhUIziRbjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783437092; c=relaxed/simple;
-	bh=HI3ffE+ujzSlcnMKd2l9E+SAUa2JXxPL6wEPc8J2u9o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HnBg767Na6t4ls5c2JG+cuIbFSpA5xr+Ee3jtB8I/YNERTS42StJ0J1nYIVeU7skzAFEPerGtzBrDnRA6I8AvWASBFDOfeao1kjBMQhPvyxa4PKgrOECAj9glQnjeRSqvubWnQiEVRw34bATJ3PdwiJnkg2QSGgf+CSP8YF0thw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2OMVpVV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783437153; c=relaxed/simple;
+	bh=j1tFob+8fC1FYhlul234L/DAWHXn94crSEpAWb++AiM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TjqN2xi7F6pMPRzjEuPqVSOmACq6Zo6cI7pFILRf7EmuJprxdiQP+wDW3NZ/O49flCVUw8+U51XmUEIWS81Yttjp+b2Cb5aBkKqbD3tkSPuJmy+D9NpbrWI5L19MjuNSWNrOgiReMo2eZse890zJa/FHAs2/XKXF7dNJKNviA14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuPPEHjE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2OMVpVV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AFFE1F000E9;
-	Tue,  7 Jul 2026 15:11:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuPPEHjE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA16F1F00A3A;
+	Tue,  7 Jul 2026 15:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783437090;
-	bh=JjlforA+ziaBJVLx4Cnr7pb3fjV8I7GXKYxgRHaZVMM=;
-	h=From:Subject:Date:To:Cc;
-	b=X2OMVpVVZIPZgxnKjrKjswDJh0duEmdapPSfE68qiGhWWIKiIDY0RU163wpGKIaDe
-	 eGem2XLqIyxXzMI7rOMp33ad74vgjmwJNl5or2vF8DICNrz+8otdvm3vmFtBN2R30e
-	 C2VA3XzVrOXeVfRfw4v8rOgzBJf7Dr2AUBLvtWrahyFfzWeFNty09CqqQPa20BbzlD
-	 g8Ce8t9oGlLDKtxa1W9CFIqQtY07w04lRVRfqXm2hbvlWi8f9ZNikY5JwSut+Ba1AL
-	 6pryS3NyKnoiaqPK+HavXoR4vYMCcYwvj/6b/sNgh8zGu/JJho2AbgO392+U7EAx8s
-	 9aSuchoVMFnDA==
+	s=k20260515; t=1783437152;
+	bh=4sRc6wcNBB4MLUuGQspnLkC0R+FL/I/qWmV9NNwvbTY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=FuPPEHjEGkcvr6P8vaV/5OhlSyoO8+Ep46N7f1HF5hlqygnmkZo5uFx+MyqLyzhZi
+	 6DM5vezYe2iXo0qSLXxUErQlgITPMX3sTA3jzRA4KTxj/tktzFHPxkWEwzYVnjlnVG
+	 NAekUXga8iJ+ly/3XWHWJENNfFJZHl6SEHljpvqUQgMcs14y9mIHR6VSBDA9R3hcg/
+	 zq+tdrq/p8VxY1w7d6xOvgtKkvaWHmVUNXnCI41IoK3EL1d4gpZSZVsp9R6GYPRysi
+	 rybrL/N4YhFXf0DMU6ONnfb/W0j3HH3xnWO4u/hG02vAUVLDynsAHwwHrmO/vvwV5A
+	 FNLBWgEKWzhQA==
 From: Maxime Ripard <mripard@kernel.org>
-Subject: [PATCH v2 00/37] drm/bridge: Convert all bridges to atomic
-Date: Tue, 07 Jul 2026 17:11:07 +0200
-Message-Id: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
+Date: Tue, 07 Jul 2026 17:11:33 +0200
+Subject: [PATCH v2 26/37] drm/exynos: mic: Switch to atomic bridge
+ callbacks
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,11 +38,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WOQQ6CMBBFr0Jm7ZgWsRhX3sO4KHTAiZTqtBKM4
- e4CunX5J3lv3hsiCVOEY/YGoYEjh34e+SaD+mr7lpDdvCFXuVFG79GJR9t1aFPwXGMl7FqKWDh
- bNFS6Zn9oYIbvQg2Pq/h8+W6hx3P2p+8RKhsJ6+A9p2O2WD3HGnsaEy7PUJWocljYK8cU5LU2D
- nqFfznlv5xBo8LK7MjstNHGVKcbSU/dNkgLl2maPp8VRM/5AAAA
-X-Change-ID: 20260615-drm-all-atomic-bridges-4da4fe7df58f
+Message-Id: <20260707-drm-all-atomic-bridges-v2-26-21d03cbca446@kernel.org>
+References: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
+In-Reply-To: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -50,157 +49,231 @@ To: Andrzej Hajda <andrzej.hajda@intel.com>,
 Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
  Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
  Luca Ceresoli <luca.ceresoli@bootlin.com>, dri-devel@lists.freedesktop.org, 
- Maxime Ripard <mripard@kernel.org>, Joshua Peisach <jpeisach@ubuntu.com>, 
- Sasha Finkelstein <k@chaosmail.tech>, Janne Grunau <j@jannau.net>, 
- asahi@lists.linux.dev, Benson Leung <bleung@chromium.org>, 
- Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
- Francesco Dolcini <francesco.dolcini@toradex.com>, 
- Francesco Dolcini <francesco@dolcini.it>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Ian Ray <ian.ray@gehealthcare.com>, 
- Peter Senna Tschudin <peter.senna@gmail.com>, 
- Martyn Welch <martyn.welch@collabora.co.uk>, 
- Manikandan Muralidharan <manikandan.m@microchip.com>, 
- Dharma Balasubiramani <dharma.b@microchip.com>, 
- Russell King <linux@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>, 
+ Maxime Ripard <mripard@kernel.org>, Inki Dae <inki.dae@samsung.com>, 
  Seung-Woo Kim <sw0312.kim@samsung.com>, 
  Kyungmin Park <kyungmin.park@samsung.com>, 
  Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-mediatek@lists.infradead.org, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- freedreno@lists.freedesktop.org, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Ian Ray <ian.ray@gehealthcare.com>
+ linux-samsung-soc@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5894; i=mripard@kernel.org;
- h=from:subject:message-id; bh=HI3ffE+ujzSlcnMKd2l9E+SAUa2JXxPL6wEPc8J2u9o=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm+4gJcoUWvVI19WyLDClrCZKtabhWXCV5aIbT3AMdVa
- 73aZpaOqSwMwpwMsmKKLE9kwk4vb19c5WC/8gfMHFYmkCEMXJwCMBF/acaGD8+KT92Pu/z8cfKm
- sw3hWnHKQk6bdh5i/mO39m41F/OpVzaFVr5zZ2yZuTYu1aRIn1GNsT7tUmCS/BrLj5m1V9q/FP9
- YY9Qm9ndNyRHJ65k/NTZ6FU+UnfbF7vQ077xOc5/WY7mdvwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5338; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=j1tFob+8fC1FYhlul234L/DAWHXn94crSEpAWb++AiM=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm+4tK+lp3nfPYLrPSd2rRNZoLJO2amWK5lX575iUx7P
+ N/p3++yjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRVRGM9blVZ169rjSccFyN
+ R3TvnQ8eM6X1DP843DO3/vt89Qn2OAfGdyvyZmme9jffk8Wza8blKsZ6P37BwAKRbja9R+rlny0
+ uXX65+aWh2u+9687V8f/csK0g6UCR3SnxO/2yE1+IPX0jwngHAA==
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-Hi,
+The mic bridge uses the legacy non-atomic pre_enable and post_disable
+bridge callbacks.
 
-Over the years, most of the bridges have been converted to atomic
-modesetting and hooks, but not all of them. This forces us to maintain
-two different code path in quite a few places, which is pretty
-bothersome. The switch to atomic modesetting for legacy bridges though
-is pretty trivial, and we don't have a lot of drivers still using the
-legacy path.
+In order to remove the legacy bridge callback support from the DRM
+bridge core, switch to their atomic counterparts and add the bridge
+atomic state handlers.
 
-This series converts all bridges to atomic modesetting and drops the
-legacy codepaths where relevant.
+Generated by the following Coccinelle script:
 
-Let me know what you think,
-Maxime
+@ is_bridge @
+identifier funcs;
+@@
+
+ struct drm_bridge_funcs funcs = {
+	...,
+ };
+
+@ has_create_state depends on is_bridge @
+identifier funcs, f;
+@@
+
+struct drm_bridge_funcs funcs = {
+  ...,
+  .atomic_create_state = f,
+  ...,
+};
+
+@ update_struct depends on (is_bridge && !has_create_state) @
+identifier is_bridge.funcs;
+identifier f;
+@@
+
+ struct drm_bridge_funcs funcs = {
++	.atomic_create_state = drm_atomic_helper_bridge_create_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	...,
+ };
+
+@ update_pre_enable_struct depends on (is_bridge && !has_create_state) @
+identifier is_bridge.funcs;
+identifier f;
+@@
+
+ struct drm_bridge_funcs funcs = {
+ 	...,
+-	.pre_enable = f,
++	.atomic_pre_enable = f,
+ 	...,
+ };
+
+@ update_pre_enable_impl depends on update_pre_enable_struct @
+identifier update_pre_enable_struct.f;
+identifier b;
+@@
+
+-void f(struct drm_bridge *b)
++void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
+ {
+	...
+ }
+
+@ update_enable_struct depends on (is_bridge && !has_create_state) @
+identifier is_bridge.funcs;
+identifier f;
+@@
+
+ struct drm_bridge_funcs funcs = {
+ 	...,
+-	.enable = f,
++	.atomic_enable = f,
+ 	...,
+ };
+
+@ update_enable_impl depends on update_enable_struct @
+identifier update_enable_struct.f;
+identifier b;
+@@
+
+-void f(struct drm_bridge *b)
++void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
+ {
+	...
+ }
+
+@ update_disable_struct depends on (is_bridge && !has_create_state) @
+identifier is_bridge.funcs;
+identifier f;
+@@
+
+ struct drm_bridge_funcs funcs = {
+ 	...,
+-	.disable = f,
++	.atomic_disable = f,
+ 	...,
+ };
+
+@ update_disable_impl depends on update_disable_struct @
+identifier update_disable_struct.f;
+identifier b;
+@@
+
+-void f(struct drm_bridge *b)
++void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
+ {
+	...
+ }
+
+@ update_post_disable_struct depends on (is_bridge && !has_create_state) @
+identifier is_bridge.funcs;
+identifier f;
+@@
+
+ struct drm_bridge_funcs funcs = {
+ 	...,
+-	.post_disable = f,
++	.atomic_post_disable = f,
+ 	...,
+ };
+
+@ update_post_disable_impl depends on update_post_disable_struct @
+identifier update_post_disable_struct.f;
+identifier b;
+@@
+
+-void f(struct drm_bridge *b)
++void f(struct drm_bridge *b, struct drm_atomic_commit *commit)
+ {
+	...
+ }
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Changes in v2:
-- Rebase on top of current drm-misc-next
-- Improve commit messages
-- Fix the references in the doc
-- Link to v1: https://lore.kernel.org/r/20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org
 
 ---
-Maxime Ripard (37):
-      drm/adp: mipi: Add atomic bridge state handlers
-      drm/bridge: analogix-anx6345: Switch to atomic bridge callbacks
-      drm/bridge: analogix-anx78xx: Switch to atomic bridge callbacks
-      drm/bridge: aux-bridge: Add atomic bridge state handlers
-      drm/bridge: aux-hpd-bridge: Add atomic bridge state handlers
-      drm/bridge: chrontel-ch7033: Switch to atomic bridge callbacks
-      drm/bridge: cros-ec-anx7688: Add atomic bridge state handlers
-      drm/bridge: lontium-lt8713sx: Add atomic bridge state handlers
-      drm/bridge: lontium-lt8912b: Switch to atomic bridge callbacks
-      drm/bridge: lontium-lt9611uxc: Add atomic bridge state handlers
-      drm/bridge: lvds-codec: Switch to atomic bridge callbacks
-      drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Add atomic bridge state handlers
-      drm/bridge: microchip-lvds: Add atomic bridge state handlers
-      drm/bridge: nxp-ptn3460: Switch to atomic bridge callbacks
-      drm/bridge: of-display-mode-bridge: Add atomic bridge state handlers
-      drm/bridge: parade-ps8622: Switch to atomic bridge callbacks
-      drm/bridge: sii9234: Add atomic bridge state handlers
-      drm/bridge: sil-sii8620: Add atomic bridge state handlers
-      drm/bridge: simple-bridge: Switch to atomic bridge callbacks
-      drm/bridge: tc358764: Switch to atomic bridge callbacks
-      drm/bridge: tda998x: Switch to atomic bridge callbacks
-      drm/bridge: ti-tfp410: Switch to atomic bridge callbacks
-      drm/bridge: ti-tpd12s015: Add atomic bridge state handlers
-      drm/bridge: thc63lvd1024: Switch to atomic bridge callbacks
-      drm/bridge: waveshare-dsi: Switch to atomic bridge callbacks
-      drm/exynos: mic: Switch to atomic bridge callbacks
-      drm/mcde: dsi: Add atomic bridge state handlers
-      drm/mediatek: dpi: Switch to atomic bridge callbacks
-      drm/msm: dsi: Switch to atomic bridge callbacks
-      drm/omap: dpi: Switch to atomic bridge callbacks
-      drm/omap: dsi: Switch to atomic bridge callbacks
-      drm/omap: sdi: Switch to atomic bridge callbacks
-      drm/omap: venc: Switch to atomic bridge callbacks
-      drm/sti: dvo: Switch to atomic bridge callbacks
-      drm/sti: hda: Switch to atomic bridge callbacks
-      drm/sti: hdmi: Switch to atomic bridge callbacks
-      drm/bridge: Remove legacy bridge callback support
-
- drivers/gpu/drm/adp/adp-mipi.c                     |   4 +
- drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  13 ++-
- drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  13 ++-
- drivers/gpu/drm/bridge/aux-bridge.c                |   4 +
- drivers/gpu/drm/bridge/aux-hpd-bridge.c            |   4 +
- drivers/gpu/drm/bridge/chrontel-ch7033.c           |  13 ++-
- drivers/gpu/drm/bridge/cros-ec-anx7688.c           |   4 +
- drivers/gpu/drm/bridge/lontium-lt8713sx.c          |   4 +
- drivers/gpu/drm/bridge/lontium-lt8912b.c           |   8 +-
- drivers/gpu/drm/bridge/lontium-lt9611uxc.c         |   3 +
- drivers/gpu/drm/bridge/lvds-codec.c                |  10 +-
- .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   |   3 +
- drivers/gpu/drm/bridge/microchip-lvds.c            |   3 +
- drivers/gpu/drm/bridge/nxp-ptn3460.c               |  17 ++--
- drivers/gpu/drm/bridge/of-display-mode-bridge.c    |   4 +
- drivers/gpu/drm/bridge/parade-ps8622.c             |  18 ++--
- drivers/gpu/drm/bridge/sii9234.c                   |   4 +
- drivers/gpu/drm/bridge/sil-sii8620.c               |   4 +
- drivers/gpu/drm/bridge/simple-bridge.c             |  13 ++-
- drivers/gpu/drm/bridge/tc358764.c                  |  13 ++-
- drivers/gpu/drm/bridge/tda998x_drv.c               |  13 ++-
- drivers/gpu/drm/bridge/thc63lvd1024.c              |  14 ++-
- drivers/gpu/drm/bridge/ti-tfp410.c                 |  10 +-
- drivers/gpu/drm/bridge/ti-tpd12s015.c              |   4 +
- drivers/gpu/drm/bridge/waveshare-dsi.c             |  14 ++-
- drivers/gpu/drm/drm_bridge.c                       |  61 ++++--------
- drivers/gpu/drm/exynos/exynos_drm_mic.c            |  14 ++-
- drivers/gpu/drm/mcde/mcde_dsi.c                    |   3 +
- drivers/gpu/drm/mediatek/mtk_dpi.c                 |  10 +-
- drivers/gpu/drm/msm/dsi/dsi_manager.c              |  13 ++-
- drivers/gpu/drm/omapdrm/dss/dpi.c                  |  14 ++-
- drivers/gpu/drm/omapdrm/dss/dsi.c                  |  14 ++-
- drivers/gpu/drm/omapdrm/dss/sdi.c                  |  14 ++-
- drivers/gpu/drm/omapdrm/dss/venc.c                 |  14 ++-
- drivers/gpu/drm/sti/sti_dvo.c                      |  20 ++--
- drivers/gpu/drm/sti/sti_hda.c                      |  20 ++--
- drivers/gpu/drm/sti/sti_hdmi.c                     |  20 ++--
- drivers/gpu/drm/tests/drm_bridge_test.c            | 104 ---------------------
- include/drm/drm_bridge.h                           | 103 --------------------
- 39 files changed, 287 insertions(+), 351 deletions(-)
+To: Inki Dae <inki.dae@samsung.com>
+To: Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 ---
-base-commit: 928e01b05e0a147db8df1152f95acbb801630308
-change-id: 20260615-drm-all-atomic-bridges-4da4fe7df58f
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index e68c954ec3e6..3069f958137f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -19,10 +19,11 @@
+ #include <linux/regmap.h>
+ 
+ #include <video/of_videomode.h>
+ #include <video/videomode.h>
+ 
++#include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_print.h>
+ 
+ #include "exynos_drm_drv.h"
+@@ -226,11 +227,12 @@ static void mic_set_reg_on(struct exynos_mic *mic, bool enable)
+ 
+ 	reg |= MIC_UPD_REG;
+ 	writel(reg, mic->reg + MIC_OP);
+ }
+ 
+-static void mic_post_disable(struct drm_bridge *bridge)
++static void mic_post_disable(struct drm_bridge *bridge,
++			     struct drm_atomic_commit *commit)
+ {
+ 	struct exynos_mic *mic = bridge->driver_private;
+ 
+ 	mutex_lock(&mic_mutex);
+ 	if (!mic->enabled)
+@@ -255,11 +257,12 @@ static void mic_mode_set(struct drm_bridge *bridge,
+ 	drm_display_mode_to_videomode(mode, &mic->vm);
+ 	mic->i80_mode = to_exynos_crtc(bridge->encoder->crtc)->i80_mode;
+ 	mutex_unlock(&mic_mutex);
+ }
+ 
+-static void mic_pre_enable(struct drm_bridge *bridge)
++static void mic_pre_enable(struct drm_bridge *bridge,
++			   struct drm_atomic_commit *commit)
+ {
+ 	struct exynos_mic *mic = bridge->driver_private;
+ 	int ret;
+ 
+ 	mutex_lock(&mic_mutex);
+@@ -293,13 +296,16 @@ static void mic_pre_enable(struct drm_bridge *bridge)
+ unlock:
+ 	mutex_unlock(&mic_mutex);
+ }
+ 
+ static const struct drm_bridge_funcs mic_bridge_funcs = {
+-	.post_disable = mic_post_disable,
++	.atomic_create_state = drm_atomic_helper_bridge_create_state,
++	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
++	.atomic_post_disable = mic_post_disable,
+ 	.mode_set = mic_mode_set,
+-	.pre_enable = mic_pre_enable,
++	.atomic_pre_enable = mic_pre_enable,
+ };
+ 
+ static int exynos_mic_bind(struct device *dev, struct device *master,
+ 			   void *data)
+ {
+
 -- 
-Maxime Ripard <mripard@kernel.org>
+2.54.0
 
