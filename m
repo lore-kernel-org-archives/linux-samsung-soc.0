@@ -1,165 +1,206 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3A830D403;
-	Tue,  7 Jul 2026 10:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A326379C2F;
+	Tue,  7 Jul 2026 15:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783419443; cv=none; b=iFd30XJHRb4+HAQ2gBYV0vfBmIhkaGoNPkKsq4hENdld5xPen3Q3ROiujeem/lRJb9NGQf/nND9JtXgz1FbLdRmThq59pTmOMEiXtZ4090UcHozBg4zAnl17N4agyJ3i1iQuLokiiF5O44j9w0A2pliSmlwDYR9+9wJLc74NvFg=
+	t=1783437092; cv=none; b=QUCPr4plpPJsMgFX15WG8RAoxzg0JlwstpnxDXfNurnFULZ498I5UelmN2abXPeD/PgrvCtoEHENMMZ0akyMzy7wi7chKBe02Niklj7q3wl6CbayIsEXtPj/fkmv4NmPw+JkLMrOOPjcdNfzH0gy6vKQ/vP7r4J5HZEzgGaUbJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783419443; c=relaxed/simple;
-	bh=otIkrJ34PwtSzdRkCKl+4UR6U9X1i0nmtukZH91G9+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ddDxQwLTl5LjZ533n9UswvuEJu4ExJa7TIWsZuzn3lg5rq8ELphr7y5l3ScoulaLoF8BDfeYIt1I794JwiKgy0THpg/6YLvEwD791I9dXmADynqBtzgEer83+/aZaAlbw6TdQMysiMnBpqa/xLw3ddnsg9c6jy1kAoslQKsUo9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGH+4V3q; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783437092; c=relaxed/simple;
+	bh=HI3ffE+ujzSlcnMKd2l9E+SAUa2JXxPL6wEPc8J2u9o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HnBg767Na6t4ls5c2JG+cuIbFSpA5xr+Ee3jtB8I/YNERTS42StJ0J1nYIVeU7skzAFEPerGtzBrDnRA6I8AvWASBFDOfeao1kjBMQhPvyxa4PKgrOECAj9glQnjeRSqvubWnQiEVRw34bATJ3PdwiJnkg2QSGgf+CSP8YF0thw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2OMVpVV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGH+4V3q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 122461F000E9;
-	Tue,  7 Jul 2026 10:17:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2OMVpVV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AFFE1F000E9;
+	Tue,  7 Jul 2026 15:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783419441;
-	bh=mnyEnVNjUbkl63yjftBd6ZAUslZHuhLMLE5i1q1dbiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cGH+4V3qnWn/h2ntR4JOMP1MeFASTJyb/ukIFIKga6vmMPs4hWnZeyozgnP8o9zcj
-	 4aOepXlE5yG0XgvATIbejO38So9984JOSQXxfemV7MrbXTQdbQqJryZ7by0rmLtk6g
-	 KbyecrBlOO6RxZhZHoEJHQvN3lfQ+IRVIfllVkFrcFe5jzAzy0lAaGw02N38CG8Xem
-	 bIuNc24pIIBeQZLitf75XKOixE/v2BoAd9XaTV+y7NflJFaBKiVOSfh8s3qL1kjbV3
-	 QtnOkHzUZcffKxdXoostqrwbOmOdDgDEYFoMQefdIk5SYi6OuZQQ8BSF6bkbad2igD
-	 ZZ2I4X8hc6i0g==
-Date: Tue, 7 Jul 2026 11:16:56 +0100
-From: Lorenzo Stoakes <ljs@kernel.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Lucas Stach <l.stach@pengutronix.de>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Thomas Hellstrom <thomas.hellstrom@linux.intel.com>, 
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Helge Deller <deller@gmx.de>, Benjamin LaHaise <bcrl@kvack.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R . Howlett" <liam@infradead.org>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Kees Cook <kees@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	virtualization@lists.linux.dev, intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
-	linux-fbdev@vger.kernel.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 03/13] mm: convert __get_unmapped_area() to use
- vma_flags_t
-Message-ID: <akzR7JQuaKEQpH5Y@lucifer>
-References: <cover.1782760670.git.ljs@kernel.org>
- <b1ad7c4443f5cba622e4c48c5a9ef15427001a93.1782760670.git.ljs@kernel.org>
- <DJRZGEZU5ESV.3IP5LEAUQJCBK@nvidia.com>
+	s=k20260515; t=1783437090;
+	bh=JjlforA+ziaBJVLx4Cnr7pb3fjV8I7GXKYxgRHaZVMM=;
+	h=From:Subject:Date:To:Cc;
+	b=X2OMVpVVZIPZgxnKjrKjswDJh0duEmdapPSfE68qiGhWWIKiIDY0RU163wpGKIaDe
+	 eGem2XLqIyxXzMI7rOMp33ad74vgjmwJNl5or2vF8DICNrz+8otdvm3vmFtBN2R30e
+	 C2VA3XzVrOXeVfRfw4v8rOgzBJf7Dr2AUBLvtWrahyFfzWeFNty09CqqQPa20BbzlD
+	 g8Ce8t9oGlLDKtxa1W9CFIqQtY07w04lRVRfqXm2hbvlWi8f9ZNikY5JwSut+Ba1AL
+	 6pryS3NyKnoiaqPK+HavXoR4vYMCcYwvj/6b/sNgh8zGu/JJho2AbgO392+U7EAx8s
+	 9aSuchoVMFnDA==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 00/37] drm/bridge: Convert all bridges to atomic
+Date: Tue, 07 Jul 2026 17:11:07 +0200
+Message-Id: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DJRZGEZU5ESV.3IP5LEAUQJCBK@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WOQQ6CMBBFr0Jm7ZgWsRhX3sO4KHTAiZTqtBKM4
+ e4CunX5J3lv3hsiCVOEY/YGoYEjh34e+SaD+mr7lpDdvCFXuVFG79GJR9t1aFPwXGMl7FqKWDh
+ bNFS6Zn9oYIbvQg2Pq/h8+W6hx3P2p+8RKhsJ6+A9p2O2WD3HGnsaEy7PUJWocljYK8cU5LU2D
+ nqFfznlv5xBo8LK7MjstNHGVKcbSU/dNkgLl2maPp8VRM/5AAAA
+X-Change-ID: 20260615-drm-all-atomic-bridges-4da4fe7df58f
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, dri-devel@lists.freedesktop.org, 
+ Maxime Ripard <mripard@kernel.org>, Joshua Peisach <jpeisach@ubuntu.com>, 
+ Sasha Finkelstein <k@chaosmail.tech>, Janne Grunau <j@jannau.net>, 
+ asahi@lists.linux.dev, Benson Leung <bleung@chromium.org>, 
+ Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Francesco Dolcini <francesco@dolcini.it>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Ian Ray <ian.ray@gehealthcare.com>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Russell King <linux@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ freedreno@lists.freedesktop.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Ian Ray <ian.ray@gehealthcare.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5894; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=HI3ffE+ujzSlcnMKd2l9E+SAUa2JXxPL6wEPc8J2u9o=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFm+4gJcoUWvVI19WyLDClrCZKtabhWXCV5aIbT3AMdVa
+ 73aZpaOqSwMwpwMsmKKLE9kwk4vb19c5WC/8gfMHFYmkCEMXJwCMBF/acaGD8+KT92Pu/z8cfKm
+ sw3hWnHKQk6bdh5i/mO39m41F/OpVzaFVr5zZ2yZuTYu1aRIn1GNsT7tUmCS/BrLj5m1V9q/FP9
+ YY9Qm9ndNyRHJ65k/NTZ6FU+UnfbF7vQ077xOc5/WY7mdvwA=
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Mon, Jul 06, 2026 at 10:28:24PM -0400, Zi Yan wrote:
-> On Mon Jun 29, 2026 at 3:25 PM EDT, Lorenzo Stoakes wrote:
-> > Update __get_unmapped_area() to be parameterised by vma_flags_t rather than
-> > vm_flags_t as part of the effort to move VMA flags from a system word to a
-> > bitmap.
-> >
-> > We cascade the changes up to arch_get_unmapped_area_topdown() and
-> > arch_get_unmapped_area(), where, for now, we use vma_flags_to_legacy() in
-> > order to propagate the VMA flags.
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
-> > ---
-> >  fs/hugetlbfs/inode.c     |  3 ++-
-> >  include/linux/huge_mm.h  | 10 +++++-----
-> >  include/linux/mm.h       |  6 ++++--
-> >  include/linux/sched/mm.h | 12 ++++++------
-> >  mm/huge_memory.c         | 21 ++++++++++++---------
-> >  mm/mmap.c                | 27 ++++++++++++++-------------
-> >  6 files changed, 43 insertions(+), 36 deletions(-)
-> >
-> <snip>
->
-> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> > index 95d0040df584..b301ec90740a 100644
-> > --- a/include/linux/sched/mm.h
-> > +++ b/include/linux/sched/mm.h
-> > @@ -193,12 +193,12 @@ unsigned long mm_get_unmapped_area(struct file *filp, unsigned long addr,
-> >  				   unsigned long len, unsigned long pgoff,
-> >  				   unsigned long flags);
-> >
-> > -unsigned long mm_get_unmapped_area_vmflags(struct file *filp,
-> > -					   unsigned long addr,
-> > -					   unsigned long len,
-> > -					   unsigned long pgoff,
-> > -					   unsigned long flags,
-> > -					   vm_flags_t vm_flags);
-> > +unsigned long mm_get_unmapped_area_vmaflags(struct file *filp,
-> > +					    unsigned long addr,
-> > +					    unsigned long len,
-> > +					    unsigned long pgoff,
-> > +					    unsigned long flags,
-> > +					    vma_flags_t vma_flags);
->
-> Want to use two-tab indentation while at it?
+Hi,
 
-Yeah sure will fix on respin!
+Over the years, most of the bridges have been converted to atomic
+modesetting and hooks, but not all of them. This forces us to maintain
+two different code path in quite a few places, which is pretty
+bothersome. The switch to atomic modesetting for legacy bridges though
+is pretty trivial, and we don't have a lot of drivers still using the
+legacy path.
 
->
-> <snip>
->
-> > @@ -812,19 +811,20 @@ arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
-> >  }
-> >  #endif
-> >
-> > -unsigned long mm_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
-> > -					   unsigned long len, unsigned long pgoff,
-> > -					   unsigned long flags, vm_flags_t vm_flags)
-> > +unsigned long mm_get_unmapped_area_vmaflags(struct file *filp, unsigned long addr,
-> > +					    unsigned long len, unsigned long pgoff,
-> > +					    unsigned long flags, vma_flags_t vma_flags)
->
-> Ditto.
+This series converts all bridges to atomic modesetting and drops the
+legacy codepaths where relevant.
 
-Ack will fix!
+Let me know what you think,
+Maxime
 
->
-> LGTM.
->
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v2:
+- Rebase on top of current drm-misc-next
+- Improve commit messages
+- Fix the references in the doc
+- Link to v1: https://lore.kernel.org/r/20260617-drm-all-atomic-bridges-v1-0-b63e6316166b@kernel.org
 
-Thanks!
+---
+Maxime Ripard (37):
+      drm/adp: mipi: Add atomic bridge state handlers
+      drm/bridge: analogix-anx6345: Switch to atomic bridge callbacks
+      drm/bridge: analogix-anx78xx: Switch to atomic bridge callbacks
+      drm/bridge: aux-bridge: Add atomic bridge state handlers
+      drm/bridge: aux-hpd-bridge: Add atomic bridge state handlers
+      drm/bridge: chrontel-ch7033: Switch to atomic bridge callbacks
+      drm/bridge: cros-ec-anx7688: Add atomic bridge state handlers
+      drm/bridge: lontium-lt8713sx: Add atomic bridge state handlers
+      drm/bridge: lontium-lt8912b: Switch to atomic bridge callbacks
+      drm/bridge: lontium-lt9611uxc: Add atomic bridge state handlers
+      drm/bridge: lvds-codec: Switch to atomic bridge callbacks
+      drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Add atomic bridge state handlers
+      drm/bridge: microchip-lvds: Add atomic bridge state handlers
+      drm/bridge: nxp-ptn3460: Switch to atomic bridge callbacks
+      drm/bridge: of-display-mode-bridge: Add atomic bridge state handlers
+      drm/bridge: parade-ps8622: Switch to atomic bridge callbacks
+      drm/bridge: sii9234: Add atomic bridge state handlers
+      drm/bridge: sil-sii8620: Add atomic bridge state handlers
+      drm/bridge: simple-bridge: Switch to atomic bridge callbacks
+      drm/bridge: tc358764: Switch to atomic bridge callbacks
+      drm/bridge: tda998x: Switch to atomic bridge callbacks
+      drm/bridge: ti-tfp410: Switch to atomic bridge callbacks
+      drm/bridge: ti-tpd12s015: Add atomic bridge state handlers
+      drm/bridge: thc63lvd1024: Switch to atomic bridge callbacks
+      drm/bridge: waveshare-dsi: Switch to atomic bridge callbacks
+      drm/exynos: mic: Switch to atomic bridge callbacks
+      drm/mcde: dsi: Add atomic bridge state handlers
+      drm/mediatek: dpi: Switch to atomic bridge callbacks
+      drm/msm: dsi: Switch to atomic bridge callbacks
+      drm/omap: dpi: Switch to atomic bridge callbacks
+      drm/omap: dsi: Switch to atomic bridge callbacks
+      drm/omap: sdi: Switch to atomic bridge callbacks
+      drm/omap: venc: Switch to atomic bridge callbacks
+      drm/sti: dvo: Switch to atomic bridge callbacks
+      drm/sti: hda: Switch to atomic bridge callbacks
+      drm/sti: hdmi: Switch to atomic bridge callbacks
+      drm/bridge: Remove legacy bridge callback support
 
->
->
-> --
-> Best Regards,
-> Yan, Zi
->
+ drivers/gpu/drm/adp/adp-mipi.c                     |   4 +
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |  13 ++-
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |  13 ++-
+ drivers/gpu/drm/bridge/aux-bridge.c                |   4 +
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c            |   4 +
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |  13 ++-
+ drivers/gpu/drm/bridge/cros-ec-anx7688.c           |   4 +
+ drivers/gpu/drm/bridge/lontium-lt8713sx.c          |   4 +
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |   8 +-
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c         |   3 +
+ drivers/gpu/drm/bridge/lvds-codec.c                |  10 +-
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   |   3 +
+ drivers/gpu/drm/bridge/microchip-lvds.c            |   3 +
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |  17 ++--
+ drivers/gpu/drm/bridge/of-display-mode-bridge.c    |   4 +
+ drivers/gpu/drm/bridge/parade-ps8622.c             |  18 ++--
+ drivers/gpu/drm/bridge/sii9234.c                   |   4 +
+ drivers/gpu/drm/bridge/sil-sii8620.c               |   4 +
+ drivers/gpu/drm/bridge/simple-bridge.c             |  13 ++-
+ drivers/gpu/drm/bridge/tc358764.c                  |  13 ++-
+ drivers/gpu/drm/bridge/tda998x_drv.c               |  13 ++-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  14 ++-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |  10 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |   4 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c             |  14 ++-
+ drivers/gpu/drm/drm_bridge.c                       |  61 ++++--------
+ drivers/gpu/drm/exynos/exynos_drm_mic.c            |  14 ++-
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |   3 +
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  10 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |  13 ++-
+ drivers/gpu/drm/omapdrm/dss/dpi.c                  |  14 ++-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |  14 ++-
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  |  14 ++-
+ drivers/gpu/drm/omapdrm/dss/venc.c                 |  14 ++-
+ drivers/gpu/drm/sti/sti_dvo.c                      |  20 ++--
+ drivers/gpu/drm/sti/sti_hda.c                      |  20 ++--
+ drivers/gpu/drm/sti/sti_hdmi.c                     |  20 ++--
+ drivers/gpu/drm/tests/drm_bridge_test.c            | 104 ---------------------
+ include/drm/drm_bridge.h                           | 103 --------------------
+ 39 files changed, 287 insertions(+), 351 deletions(-)
+---
+base-commit: 928e01b05e0a147db8df1152f95acbb801630308
+change-id: 20260615-drm-all-atomic-bridges-4da4fe7df58f
 
-Cheers, Lorenzo
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
