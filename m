@@ -1,69 +1,69 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2C23B0AC6
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 04:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7822A3A8722
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 04:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783572807; cv=none; b=IOjR2rDZlL8GSkIQg/zkN0vaKB7lrX1fKqxSR47+uq46n/bE7mfWv+RtjofBRkMVRDEGPTptPLtk3CUxkujre54A+iKvAKWyKaGwT4xbev1JIsz8d0JVqJoBlyLcZxcuJ+FSb4g5Sv/X7TK1k6f9kihkl2Pxyhiv3qrVHdpC9HM=
+	t=1783572809; cv=none; b=elHc1wd7l2/ZM9KDWoc0M30Pl6jShGlMPpoocMuTOOCZNTiA/JvczpqeWh2utcHxwFoMQO8zd0clPeodRUIUu97d4mtHUP/Oognd3D9++wSeKuSQGqLuO21P7gaxSxlJKEPHp59tqxBdXTgwpG2aDA3ZBIvygO3CyJ4SxVzKQbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783572807; c=relaxed/simple;
-	bh=C/JBPBrKCpT+pFsApyRp+cfFsIiKs1yHxFS0jng7vns=;
+	s=arc-20240116; t=1783572809; c=relaxed/simple;
+	bh=9ETvrgpcOsds9lmxQAmOQHpch3UKS4v/aQsM3zZkK1I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iE3K3rFFyo2atMal68C2bY0NGA1bt0Yx8iTVXy75pe0ywXWTIyb5mCUJ4ekXDCgrdbvdA3X+QnOysk9Z2OJkGULUc2hY8odeGu5TTrttqqy33R6fnKHEIxLUm0Kr1Sjq2T+JwfzHJhmpxyATZAPgadSAENP60CWWjBhegTkLokc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CY11oDb6; arc=none smtp.client-ip=209.85.216.54
+	 In-Reply-To:To:Cc; b=A50Ngi6xzGXOls5pixbnpKX0NU3M2HXZuR5dJGLsrZIuQXl51MCKLkNTwf83DSVAqoY/fNWW+Me7XyZPu4PuY3n7gYTowTQk+LlnMiIS0ODWNEfrYCIM/cCJ1kJAusGzq8hmd+4X/fJWEhreL6PSFcGVmfIXm5952nE/gJrot8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=olnq9z1X; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CY11oDb6"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36b9d265355so1369117a91.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jul 2026 21:53:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="olnq9z1X"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c96c92c0980so885342a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jul 2026 21:53:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783572805; x=1784177605; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783572807; x=1784177607; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bLrpxV2JAO/VYsyFMZCC7Uy4u+zpRCDGvbfRkpyaA/o=;
-        b=CY11oDb6sDFFmGpmnpS9NMRW9JckahZZdY6YOqOeP5Ctji1ojVrLYNQOlQoC8AH722
-         1hZ8WYzimBT42ohf1PlXjWt/HoSmra1wSKuUFsG9QOQaTfMonW//KzSP+knBuDB6yTDp
-         hVvvGX3Fli+ZvtMDbNShAkDeO1kuNgx38G0g0angetQmCkOMpehv4hGQutiH+Xlw/h2V
-         7hNDxY+aHi8GDdoYv+dIQJCyi9njDyMu11WONtoxkM2ojKp+/awxr7Dl6AoJkMXm6Sr7
-         16zrTpVutZwSPTbMXo1nncMSikMdMDlEdBf7ebsZYI9RKTmH0/Oqgi0L8rC3il0DhTil
-         /D5g==
+        bh=qxBAC1X03as+tFyIiqR1eSV5/XvfuyfF0ASJNC6z1U8=;
+        b=olnq9z1Xyrx4ynUjlpGRICcF35L7oXLRf1zyGWJvsPnYU8FafcJIGID1vXZuSUEZqt
+         6J+zM14e8BdjJCNVpmc7eSw/dNIvEx6xC9zuIpTPqcXZb9dSN0oAvDee/On7CLq6wTE4
+         jRdzlQhdTvL7E+AgRFXDQGqxVjLIo2IwpwClWqEhvJofPX0DGYDWAL8DHykAvqlbNBBu
+         a0rXspRpV/881tWK7GzcDmLOTx5mxGu5WjIU4EGpGnbqJbOiv4ul2TkMDhurR3INadnS
+         EHpngEbFPccLZtbyH7JkG4Xk4+OIr+ijv7OwPG88ZGgltmzACXHCVJ2uWLJiBnQwaiUR
+         amAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783572805; x=1784177605;
+        d=1e100.net; s=20251104; t=1783572807; x=1784177607;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=bLrpxV2JAO/VYsyFMZCC7Uy4u+zpRCDGvbfRkpyaA/o=;
-        b=psoQAaBQdtrEDT2IlU70Jal6AgUfyXM0hiRfJTmXFw3m6Iy2FKACHAyg1MucDpr9UH
-         9TdwxH2ePNZW5Uy70Zode+q+tLKi/pBmRPRpYUMOYQRWVwCkVxlpKDCKXDE2NpYiOUSX
-         jdULXWIJmq4CDdY3f9VtyWi7h/GagjKvdtCyOwhpwOqJ4hwoqWjkmdY6Pn0/RgtQaY3Y
-         sv0rj9EnazM9I/zZEZzegYRZID6ri8j5Hd7REEZUzxItOiiQuP7HwBwDsN1F5QlmZhzY
-         ycwc+hGxxoAj/3aqQk1KXiMhgUzejZbYTcwW52vdlZmZuU8AlPfkWHFkJ0RSFkl2uD61
-         N9pA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr7i8b3GJ9TOOvG1fQGspbhdWXvY+5aArK5zNybi7RSqMab+17WMYr5W3kAywGuOdZnv8YnMFkCxPYH2LSv07ROiQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ulj2bmL+qcuQnktd5868MUGWB7xXfGkKEAisOu6jdhFbJqbm
-	icBYdet/BVn3ed1oig1/ld8Dqd6o1Vog1+gVznhgy6SOXQn/1x3tLA2q
-X-Gm-Gg: AfdE7ckh6E0fR+/i8PgKWHNp4k4bC5DJCEKKC3muwKnWu1YqSDTlr6eqfkRWFRTcoOx
-	a8Oe+Mkw/aaGC7RI2RAlFMIT11rwpCkt0tQpgK/Pl2mLU6KrVIEnsoUsTkadQ/Sq7MJm5HQdsrn
-	bg9OmruAVjC2/ZUDpv1jtiyGA8MZ4DDwlDSOaoF3oEmo4ovyUsRYS7O69gCLtZVcnjghSu1RPt8
-	i3P3gizxzwWg3aNhWt2bGypdDeH8C1m6qAoF+MGSdfiP0D7GJrouiEtGXkCdBt9oSWwV5Exj86T
-	xfLxUNC/5ZPhzksvaylwXZtp7X5toOuiCMCmrfkwXqEmSt99QVZEhL4TY3T+V0jx1rVoGctpxzj
-	GCZ5qCAeCGOyyUz5cgahI3fDB83+DbG+Aq+Gejog1Z9e/qYtGO4KZGSvXf5HI6gh+q9OErKJBhE
-	PfIowWl/XzdExOiXy5Tr8axg8+OsnkN4Jhq9T46KbZ7RU8YeVHDObstapkqTXk5WwwlRUdpHhz9
-	5OS
-X-Received: by 2002:a05:6300:2213:b0:3c0:b766:750c with SMTP id adf61e73a8af0-3c0bcc1a69bmr6989440637.58.1783572804878;
-        Wed, 08 Jul 2026 21:53:24 -0700 (PDT)
+        bh=qxBAC1X03as+tFyIiqR1eSV5/XvfuyfF0ASJNC6z1U8=;
+        b=JQRqD8QQHZfI2jepnbtA6NzCLRuS3eOunfi2V0KezP+RMmJ6VxO7aPxwFKkJBdUvNj
+         S3JVMWdFF3W436Q8O0c+kaCRxxGQAZyxD2tRVEmzJkWXT4ww4ILCh0zJBX/4+wqrw9Ki
+         k6n48rE7Q8WUoGwxYzGimQaZD/9LPJgU/+v2uqEALMefQHI5yE1lLydcx+sGWD/s/XX3
+         zXlttqjUEtqoyDNuJpbH+D0YKiUnU3KaoO+yeOlsNUU5G0jdfjDN4yC6e0o1zhWA0vHa
+         Nwd8n+fErcwxRWQS771EOyVnbZA797uQUFaEE8bBtBsgQDWjUcV+AvWlE/R+6FivPsSz
+         td8w==
+X-Forwarded-Encrypted: i=1; AHgh+RoO6qEWx2uslH14NsDeKqB+LMOu2nMtDOVAxGY2oDgPAaPYBmbmxyutyHeSdyIssEoEKH6YfJrFYAeXDv24q2UdhQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3Flh77/cVlY5/5y33CSlMYuJBp28r6XkefqgpescC5UiTyJ81
+	Z61wU7VS5Q+07ZouSKjiv/RbtdO0Ee8bcHi9IJpPgVgE71zJeUxepA2f
+X-Gm-Gg: AfdE7ckFVoPUEmD4Snww3NkKCx6hdunaFtgFoC6jFTRCb/Ul+guZDenqKb8OdZRf7p2
+	0DT2Dq3To+Vqqtdpk3nWr1MJfaioqWYSFRbE1QDy8iRcLAdj+XOcny594wkOadCanaExlvtOcIN
+	2POaL7HZWrPwv5m5vPJdn211Bs45XUBgMf1MxXr/rRn3nompoumpsB2uabL12/ZQZYOH4VzQrw/
+	CMdeguQkflYCyFpRKGhrSJIdx6bj7D9lRA71cBjFs6yvzRBbQkoV9Um6SIOb4GfET4J9l1Bg15M
+	ZJ58L3WGje1bB9YWowvfXQfMJ95jgAaAEYLs3gENh93O0dt0JpgYNG97tmkY1gT2bPigkIqGsJ2
+	dydQY39sPIHlucjjQIGUhRWEFCSJfHVw+gm8DuZBlVVNUuAl1V5YgfzJr+HuiUk9LvMms4k9YdD
+	FJ627n4icevBITmLiYthRsHhcHcZlwsAzzoWsuF7jEukFk3Pd63uI/dMC8hBJZG3CCHBCDeKHKD
+	FMBO9kTUblsD2U=
+X-Received: by 2002:a05:6a20:a107:b0:3b5:489c:7bb5 with SMTP id adf61e73a8af0-3c0bc95a3cbmr6838051637.28.1783572806789;
+        Wed, 08 Jul 2026 21:53:26 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:e229:88c8:fd09:9a39])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b658a99afsm26559252c88.0.2026.07.08.21.53.23
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b658a99afsm26559252c88.0.2026.07.08.21.53.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 21:53:24 -0700 (PDT)
+        Wed, 08 Jul 2026 21:53:25 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 08 Jul 2026 21:53:08 -0700
-Subject: [PATCH v2 10/11] ARM: s3c: crag6410: convert remaining GPIO lookup
- tables to property entries
+Date: Wed, 08 Jul 2026 21:53:09 -0700
+Subject: [PATCH v2 11/11] ARM: s3c: crag6410: convert basic-mmio-gpio and
+ LEDs to software properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260708-samsung-kp-v2-10-3c6ed4c9b3b6@gmail.com>
+Message-Id: <20260708-samsung-kp-v2-11-3c6ed4c9b3b6@gmail.com>
 References: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
 In-Reply-To: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,213 +89,173 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org,
  patches@opensource.cirrus.com
 X-Mailer: b4 0.16-dev-b242f
 
-Static property entries support defining GPIOs and are more similar to
-device tree properties and are not prone to losing link between device
-and a lookup table because of changes in device name. Convert the board
-to use them for WM1250 and SPI0 devices.
+Convert the basic-mmio-gpio device and the GPIO-controlled LEDs on the
+Cragganmore 6410 board to use software nodes/properties. This allows
+removing the crag_leds_table GPIO lookup table.
 
-This also fixes issue with recent conversion to GPIO descriptors
-where GPIO lookup tables were specifying incorrect GPIO chip name
-("GPIO<N>" vs "GP<N>").
-
-Fixes: 10a366f36e2a ("ASoC: wm1250-ev1: Convert to GPIO descriptors")
-Fixes: a45cf3cc72dd ("spi: s3c64xx: Convert to use GPIO descriptors")
 Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/arm/mach-s3c/devs.c          | 35 -----------------
- arch/arm/mach-s3c/devs.h          |  1 -
- arch/arm/mach-s3c/mach-crag6410.c | 83 ++++++++++++++++++++++++++++-----------
- 3 files changed, 59 insertions(+), 60 deletions(-)
+ arch/arm/mach-s3c/mach-crag6410.c | 117 +++++++++++++++++++++-----------------
+ 1 file changed, 64 insertions(+), 53 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 0237307b9238..d1125316043b 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -335,38 +335,3 @@ void __init dwc2_hsotg_set_platdata(struct dwc2_hsotg_plat *pd)
- 		npd->phy_exit = s3c_usb_phy_exit;
- }
- #endif /* CONFIG_S3C_DEV_USB_HSOTG */
--
--#ifdef CONFIG_S3C64XX_DEV_SPI0
--static struct resource s3c64xx_spi0_resource[] = {
--	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
--	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
--};
--
--struct platform_device s3c64xx_device_spi0 = {
--	.name		= "s3c6410-spi",
--	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s3c64xx_spi0_resource),
--	.resource	= s3c64xx_spi0_resource,
--	.dev = {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	},
--};
--
--void __init s3c64xx_spi0_set_platdata(int src_clk_nr, int num_cs)
--{
--	struct s3c64xx_spi_info pd;
--
--	/* Reject invalid configuration */
--	if (!num_cs || src_clk_nr < 0) {
--		pr_err("%s: Invalid SPI configuration\n", __func__);
--		return;
--	}
--
--	pd.num_cs = num_cs;
--	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = s3c64xx_spi0_cfg_gpio;
--
--	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
--}
--#endif /* CONFIG_S3C64XX_DEV_SPI0 */
-diff --git a/arch/arm/mach-s3c/devs.h b/arch/arm/mach-s3c/devs.h
-index 2737990063b1..90a86ade3570 100644
---- a/arch/arm/mach-s3c/devs.h
-+++ b/arch/arm/mach-s3c/devs.h
-@@ -27,7 +27,6 @@ extern struct platform_device *s3c24xx_uart_src[];
- 
- extern struct platform_device s3c64xx_device_iis0;
- extern struct platform_device s3c64xx_device_iis1;
--extern struct platform_device s3c64xx_device_spi0;
- 
- extern struct platform_device s3c_device_fb;
- extern struct platform_device s3c_device_hsmmc0;
 diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 4c9b8c1fb08e..03a97a20e38c 100644
+index 03a97a20e38c..b48980920aee 100644
 --- a/arch/arm/mach-s3c/mach-crag6410.c
 +++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -438,7 +438,6 @@ static struct platform_device *crag6410_devs0[] __initdata = {
- 
- static struct platform_device *crag6410_devs1[] __initdata = {
- 	&crag6410_dm9k_device,
--	&s3c64xx_device_spi0,
- 	&crag6410_lcd_powerdev,
- 	&crag6410_backlight_device,
- 	&speyside_device,
-@@ -771,17 +770,22 @@ static struct wm831x_pdata glenfarclas_pmic_pdata = {
- 	.disable_touch = true,
+@@ -319,12 +319,17 @@ static const struct property_entry crag6410_mmgpio_props[] = {
+ 	{ }
  };
  
--static struct gpiod_lookup_table crag_wm1250_ev1_gpiod_table = {
--	/* The WM1250-EV1 is device 0027 on I2C bus 1 */
--	.dev_id = "1-0027",
++static const struct software_node crag6410_mmgpio_node = {
++	.name		= "basic-mmio-gpio",
++	.properties	= crag6410_mmgpio_props,
++};
++
+ static struct platform_device_info crag6410_mmgpio_devinfo = {
+ 	.name		= "basic-mmio-gpio",
+ 	.id		= -1,
+ 	.res		= crag6410_mmgpio_resource,
+ 	.num_res	= ARRAY_SIZE(crag6410_mmgpio_resource),
+-	.properties	= crag6410_mmgpio_props,
++	.swnode		= &crag6410_mmgpio_node,
+ };
+ 
+ static struct platform_device speyside_device = {
+@@ -839,61 +844,68 @@ static struct s3c_sdhci_platdata crag6410_hsmmc0_pdata = {
+ 	.host_caps		= MMC_CAP_POWER_OFF_CARD,
+ };
+ 
+-static const struct gpio_led gpio_leds[] = {
+-	{
+-		.name = "d13:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d14:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d15:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d16:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d17:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d18:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d19:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
+-	{
+-		.name = "d20:green:",
+-		.default_state = LEDS_GPIO_DEFSTATE_ON,
+-	},
++static const struct software_node crag6410_leds_node = {
++	.name = "leds-gpio",
+ };
+ 
+-static struct gpiod_lookup_table crag_leds_table = {
+-	.dev_id = "leds-gpio",
 -	.table = {
--		GPIO_LOOKUP("GPION", 12, "clk-ena", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 12, "clk-sel0", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 13, "clk-sel1", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 14, "osr", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 8, "master", GPIO_ACTIVE_HIGH),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 0, "cs", 0, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 1, "cs", 1, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 2, "cs", 2, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 3, "cs", 3, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 4, "cs", 4, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 5, "cs", 5, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 6, "cs", 6, GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP_IDX("basic-mmio-gpio", 7, "cs", 7, GPIO_ACTIVE_LOW),
 -		{ },
 -	},
-+static const struct property_entry crag_wm1250_ev1_properties[] = {
-+	PROPERTY_ENTRY_GPIO("clk-ena-gpios",
-+			    SAMSUNG_GPIO_NODE('N'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel0-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel1-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 13, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("osr-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 14, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("master-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 8, GPIO_ACTIVE_HIGH),
-+	{ }
-+};
+-};
++#define CRAG6410_LED_NODE(_idx, _name)					\
++static const struct property_entry crag6410_led##_idx##_props[] = {	\
++	PROPERTY_ENTRY_STRING("label", _name),				\
++	PROPERTY_ENTRY_GPIO("gpios", &crag6410_mmgpio_node,		\
++			    _idx, GPIO_ACTIVE_LOW),			\
++	PROPERTY_ENTRY_STRING("default-state", "on"),			\
++	{ }								\
++};									\
++static const struct software_node crag6410_led##_idx##_node = {	\
++	.parent = &crag6410_leds_node,					\
++	.properties = crag6410_led##_idx##_props,			\
++}
+ 
+-static const struct gpio_led_platform_data gpio_leds_pdata = {
+-	.leds = gpio_leds,
+-	.num_leds = ARRAY_SIZE(gpio_leds),
++CRAG6410_LED_NODE(0, "d13:green:");
++CRAG6410_LED_NODE(1, "d14:green:");
++CRAG6410_LED_NODE(2, "d15:green:");
++CRAG6410_LED_NODE(3, "d16:green:");
++CRAG6410_LED_NODE(4, "d17:green:");
++CRAG6410_LED_NODE(5, "d18:green:");
++CRAG6410_LED_NODE(6, "d19:green:");
++CRAG6410_LED_NODE(7, "d20:green:");
 +
-+static const struct software_node crag_wm1250_ev1_swnode = {
-+	.properties = crag_wm1250_ev1_properties,
++static const struct software_node *crag6410_leds_swnodes[] = {
++	&crag6410_leds_node,
++	&crag6410_led0_node,
++	&crag6410_led1_node,
++	&crag6410_led2_node,
++	&crag6410_led3_node,
++	&crag6410_led4_node,
++	&crag6410_led5_node,
++	&crag6410_led6_node,
++	&crag6410_led7_node,
++	NULL
  };
  
- static struct i2c_board_info i2c_devs1[] = {
-@@ -794,7 +798,8 @@ static struct i2c_board_info i2c_devs1[] = {
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x24) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x25) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x26) },
--	{ I2C_BOARD_INFO("wm1250-ev1", 0x27), },
-+	{ I2C_BOARD_INFO("wm1250-ev1", 0x27),
-+	  .swnode = &crag_wm1250_ev1_swnode, },
- };
- 
- static struct s3c2410_platform_i2c i2c1_pdata = {
-@@ -891,15 +896,48 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 
- static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
- 
--static struct gpiod_lookup_table crag_spi0_gpiod_table = {
--	.dev_id = "s3c6410-spi.0",
--	.table = {
--		GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
--		GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
--		{ },
--	},
-+static const struct software_node_ref_args crag6410_spi0_gpio_refs[] = {
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('C'), 3, GPIO_ACTIVE_LOW),
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('N'), 5, GPIO_ACTIVE_LOW),
-+};
-+
-+static const struct property_entry crag6410_spi0_properties[] __initconst = {
-+	PROPERTY_ENTRY_REF_ARRAY("cs-gpios", crag6410_spi0_gpio_refs),
-+	{ }
-+};
-+
-+static const struct resource crag6410_spi0_resource[] __initconst = {
-+	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
- };
- 
-+static const struct s3c64xx_spi_info crag6410_spi0_platform_data __initconst = {
-+	.num_cs = 2,
-+	.cfg_gpio = s3c64xx_spi0_cfg_gpio,
-+};
-+
-+static const struct platform_device_info crag6410_spi0_info __initconst = {
-+	.name		= "s3c6410-spi",
-+	.id		= 0,
-+	.res		= crag6410_spi0_resource,
-+	.num_res	= ARRAY_SIZE(crag6410_spi0_resource),
-+	.data		= &crag6410_spi0_platform_data,
-+	.size_data	= sizeof(crag6410_spi0_platform_data),
-+	.dma_mask	= DMA_BIT_MASK(32),
-+	.properties	= crag6410_spi0_properties,
-+};
-+
-+static void __init crag6410_setup_spi0(void)
++static void __init crag6410_setup_leds(void)
 +{
++	struct platform_device_info leds_info = {
++		.name	= "leds-gpio",
++		.id	= PLATFORM_DEVID_NONE,
++	};
 +	struct platform_device *pd;
 +	int err;
 +
-+	pd = platform_device_register_full(&crag6410_spi0_info);
++	err = software_node_register_node_group(crag6410_leds_swnodes);
++	if (err) {
++		pr_err("failed to register leds software nodes: %d\n", err);
++		return;
++	}
++
++	leds_info.fwnode = software_node_fwnode(&crag6410_leds_node);
++
++	pd = platform_device_register_full(&leds_info);
 +	err = PTR_ERR_OR_ZERO(pd);
 +	if (err)
-+		pr_err("failed to create spi0 device: %d\n", err);
++		pr_err("failed to create leds-gpio device: %d\n", err);
 +}
 +
- static void __init crag6410_machine_init(void)
- {
- 	/* Open drain IRQs need pullups */
-@@ -928,12 +966,8 @@ static void __init crag6410_machine_init(void)
+ static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
  
- 	software_node_register(&crag_dcdc1_swnode);
- 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
--	gpiod_add_lookup_table(&crag_wm1250_ev1_gpiod_table);
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
--	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
--	s3c64xx_spi0_set_platdata(0, 2);
--
- 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
+ static const struct software_node_ref_args crag6410_spi0_gpio_refs[] = {
+@@ -972,13 +984,12 @@ static void __init crag6410_machine_init(void)
  	platform_add_devices(crag6410_devs0, ARRAY_SIZE(crag6410_devs0));
  	platform_device_register_full(&crag6410_mmgpio_devinfo);
-@@ -941,6 +975,7 @@ static void __init crag6410_machine_init(void)
- 	gpiod_add_lookup_table(&crag_leds_table);
+ 
+-	gpiod_add_lookup_table(&crag_leds_table);
  	crag6410_setup_keypad();
  	crag6410_setup_gpio_keys();
-+	crag6410_setup_spi0();
+ 	crag6410_setup_spi0();
  
  	platform_add_devices(crag6410_devs1, ARRAY_SIZE(crag6410_devs1));
- 	gpio_led_register_device(-1, &gpio_leds_pdata);
+-	gpio_led_register_device(-1, &gpio_leds_pdata);
++	crag6410_setup_leds();
+ 
+ 	regulator_has_full_constraints();
+ 
 
 -- 
 2.55.0.795.g602f6c329a-goog
