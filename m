@@ -1,247 +1,203 @@
 Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E9229994B
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 14:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7BA42E007
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 16:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783608344; cv=none; b=jeCX1byECZvWVPhgKENJnfSAiLkZhy16alQfnQjUBbjyfmFjwWHoMafkJMKV8bC/qGFKU+srgNNYS4u/h5dIGDzWiCB7lfup+QxDuDn5mNJFqfudoM/drWmSh+fqnaepEsVOZHIA32g2FkQSLjxkaCIrG2d9WhzD5FfXzvyZgFM=
+	t=1783613329; cv=none; b=eBgh/X6Sy7XGpKUT69tmHMeoaYmol8eZ9XK6Ur9kET3TNWfhKOO37X71T9bpI2J5BgqQA7lTehTY22EXDMvBpWUc39es7j3330nurQRLc1Qy1qtVvEWdD7bD17pnQ+SkNl4xQGNoGIwJYscoiMc1VbIEeRXvD2mrBop7R5th9Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783608344; c=relaxed/simple;
-	bh=HIml+MyqhrM0fvI5KdhsRuEYP/j52YdwE4GExRT8dog=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SF66nHkFEQbf/8C8lkdQhL0MKoVqgACVYl+yHO7DolH4YfchbadCaFAYe6HAWMQe1UTajnVtUgR5dV1wn2ED3LzWcefwL74orZbrdSvjdGxjZiGb12rUURIlRKZKtjnmmRNnAlNW9bBE3o7oU3Fb19LyHsmkngNxxXhvrZFhhVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a7DyX/Y8; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1783613329; c=relaxed/simple;
+	bh=LdoEID+mftfieJuREjeHFGnl1pSH4i3KPMTl65rvBKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQo0k3Lp6uhvwJ9zQ9ZzSDsxFI31epXfYq4Cm6k7clDka3BCm97hsL1fpRWOhl5xvQf1i7hAMeFoC4vz2bZ2lQqwYTagJ2cMQxR88oJTnHd1y1zkhQg7wxZb7a1dSgIv1acOFn63Odty74pwkIpa90lpVm3Ns6HdRtXUfLDALqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=MIXNNbtc; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7DyX/Y8"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-475cb71a4ebso1834877f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jul 2026 07:45:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="MIXNNbtc"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4758bd3731bso23504f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jul 2026 09:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783608341; x=1784213141; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Sbhm2y91wOEPq0FWBEAzboduk4MNUncXQAPdVuYnt3s=;
-        b=a7DyX/Y8MYnMukvYBDXe7+ZAL394ppcPxlVcJV+TQXAa2Pq5NtFeVWeLqF+Qa/j2LP
-         MXjawVr69dRYpFLUems9t5hH3aZt2/3p2KeHPrFYXDM6kWqINSa46v854DeLPES6FGmh
-         xEdkctrOcJt/48YL9vKan3L51q6fNIz5Ze8CoioWRB0CgtN/660V3mEe9EP4jlLbU7zW
-         cUZgrW9aBO0+lT8DkV10MwDdaD60CBcVLDGNkAVfECJ9+3INlV7NgpAOAa8f9PNdTcLC
-         ppHL36IUK6tWxn8pFXO66Ko+Wev9GF1wHpmNhPJi6+1XNyh2SKbGqV8ESa8JKzSYRhD6
-         SjsA==
+        d=baylibre.com; s=google; t=1783613326; x=1784218126; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Gov176wXURlzSR3dUDxqqJ+JUc69jBkAANSG0MToDuM=;
+        b=MIXNNbtco0ot4EbgBCazIAcAgkmMGSlgBUkph/ZIj83xY7G7d+g0+5PdEK3X27kvuQ
+         BCgcoilnMXnSkeyGhqzYX5wvmvQrWEqZLQO1azhpcTnqjQeke5xfEFEVISjPACdwyrnr
+         RAKm0m8cPG95tV5BiD4eonZi5sCnbQR/1T2Rg0sVCfIJefpTAajuym6efVhpXRz2B5pe
+         6L5Y37FwLzwZo/Jo2pQLiLPEgRDJYwHhcQbUxzsRLf0gwH0tfrrWgmjB0133vUYurZtW
+         Sm4/ByBq6+56bVB0VucJb8u5SS/3UZ2YcOT9E6Jy3Y1H4XcPrkqCMRWvG0q/k/8Nm90J
+         dbYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783608341; x=1784213141;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1783613326; x=1784218126;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Sbhm2y91wOEPq0FWBEAzboduk4MNUncXQAPdVuYnt3s=;
-        b=JQDh0vnG1X3hFgG+pUcLzRSkR/ZCYzuiL2AduoWojFzArQeDcVkuiNinciWW36F0SI
-         H0eJDi7LjeZv0J04LQV9CFb7C3+8BdRKtsBOYKJsy3L4qhvv4kzR7+offPOUO86Lmcc/
-         4VzXGHfT7lZL/0FSn7/YoAM6zhjpbYLvOgJvu1ARp3Jzb4CgDs15zu1fVrTULDrJ0A4H
-         fD66iH849lejm3/+Z6xFSsZ+zPSb89a3TYl+yLl7FP10GWFdvBoLILjXoU9gUSB2Q4BY
-         utJIIGTDEnRV1iu0QcYVIdk4cYgcEZ8y1l1/DYvjDQsVZIgAGOKIv46UV90mkNwMMyVh
-         UVIw==
-X-Forwarded-Encrypted: i=1; AHgh+RomyAZXUBzcTzWw5mcuy7v6Zqkzyr5Mmi3+pzwRaihvyzk6Q6owaTIf4DtNw40M7ak5/GcHUNUKNTpQyivyr63hBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9LOnQTq/6H1880NkTzcfGa6RlLHec1d5BNTGvWfwxJlhka6b6
-	NJm11z/z3RQXUYSGJhlnp+GCOkxtMt+VmJsBZ+a1BTf+hedJ/ZiOHhUT9MLIGqgHm9g=
-X-Gm-Gg: AfdE7ck3vRwfBKro6dgUEmX1tkSxOk6ZrNeZF4N9hXkfuiwmdeE111CH2AFig4c9KMp
-	n7NkXRNpVexoIkqb4kn3szKAMRRhq7FgpkgROeGb5ILtxxlygex/DkbBmkGLh31sP+jCXal5VII
-	+Eee/j+83BC1H9vw0M/vi9r5V/aOezuXiO6RCGYB6O64812Pdx2FLs6ehDRf2JNlyXNVoeuBzAb
-	lxnaUQO0ySYeb+hYkOFQuWRbv/auR/YV695MjWWEHaC8RST9yAkXgHQMgNWRnS0rK48+Y+mPZu2
-	AI7Gh82pQ9ulVusIch/Ji2Bun/0q+ZEXA+EdqKlfUjtw1BhY8jNT/j1hJpqjmifj9hHvrlorPbC
-	X1N4neDrOI3lcjoql9JuUhy9Zv1A/4hB1vLdFkXcnJrlrGXxWxP19Si5Uz0Y9C5NrCLpaxHT34A
-	hb9aL0SlCyMszKlQyfI1qLiGaG3u6lKJEpdLLbY/oBoEa1tut9cVgAIc/So14H4RFU3HrBIdvGI
-	J7I
-X-Received: by 2002:a05:6000:41f7:b0:472:79bc:3919 with SMTP id ffacd0b85a97d-47df079051fmr8084209f8f.39.1783608341484;
-        Thu, 09 Jul 2026 07:45:41 -0700 (PDT)
-Received: from [127.0.1.1] ([2.122.8.179])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47aa0960b06sm50995732f8f.28.2026.07.09.07.45.40
+        bh=Gov176wXURlzSR3dUDxqqJ+JUc69jBkAANSG0MToDuM=;
+        b=Mu2oJZsjPrH9eIRHzde+L1r9bmDx4i52we22EAFZb/bQZ3Rsktj6DeyAl6A7GEM5pp
+         9i7MMg3g1c1btCT4peLrPv2LMU2Dn6X4uoSrzaMdesCIxIveRIwBngax+anlfcFDUrJD
+         dMr35wVjS71prOOoc7RXG+CvdKkcnQEVYFwc+K01Kcvh7d13N+PjgwRvpW/l1Kjy07Pv
+         dfNEe/rYTcT27PfSFyzPmGIIEFQYp7cXfiESCi8gAoZM68J0jgPzzA69YE7xClxhF1Is
+         kh34vNQZ9/3ikDJ+KhcNJBXg2tQgbxBW4IKKIB+vRscAhsPeAefZHo+L615hHanj5KcJ
+         u0DQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoaqB//UAfvXGZW2jkZK5908JKg37L7Rpw67zzlgRMddddWObYCGgXFfsiUTTfg3V+zgEEtWp+kQTf3xLigpHHjcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrw8ApZ18Zt4qs0CMrqQq8C12l7ThrJ4Yvg+oSRW7EYRETEnYL
+	ZaNl2cf9smdbvGTMJDxbPbAfbTa5kvnSKU5OoS2SXEpERMCK2yjsRosphiReTphyB5Q=
+X-Gm-Gg: AfdE7ckP9+ZfdZb7WqF6I9HFqaoUmqr/8w7JqaCraVm9MBMMRY3dQdPRv71Qjwa0mXK
+	bi08sRQhbrq0WoSzwxQVZQ+bjIqOID1JD/cIzhTEsKnyoIEeHONGv0HFnMZ5Q/UngqC8LnIUbYL
+	ziQ6NHyPDe0SzuIGSyCQmoAtO59pAMLvr22dP9bQRhc5tD/O9zjU+SEHD6TWK+sWuhUUP7qqI/G
+	uLxIjYqotVnxX6YfKx9K0WBsswiDQFl1fANrhypXjRLCFeGevRNQa2YyJW1+ydT94ib+lgL4VlN
+	DKorxyyavSMMlLeGEkvGWzuYtOy/KMo7claM6hkVrS36aJH3D/1fEcEiN21gI/2HPVW+bZSuJA1
+	hQmAS1yF7puuXOgaDlhjd7PT7HBscUV9wpnsAr3I7iMpZ1z0A7XGzyutQFxeB7spGHwcLi+HQ8F
+	Q20vOhMMwwPQqS2ccBpVrQOHglGeBGiGRk1NgWWBMXEjAyKTkxAAb6cpPcbdfQLGXyFdyC0CRvh
+	1gH
+X-Received: by 2002:a05:6000:230b:b0:46d:f979:1827 with SMTP id ffacd0b85a97d-47df757026bmr3824909f8f.23.1783613325532;
+        Thu, 09 Jul 2026 09:08:45 -0700 (PDT)
+Received: from localhost (p200300f65f47db043de98c19b374aa68.dip0.t-ipconnect.de. [2003:f6:5f47:db04:3de9:8c19:b374:aa68])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47aa0960816sm50486350f8f.29.2026.07.09.09.08.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2026 07:45:40 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 09 Jul 2026 15:45:37 +0100
-Subject: [PATCH v4 2/2] mailbox: exynos: Add support for Exynos850 mailbox
+        Thu, 09 Jul 2026 09:08:43 -0700 (PDT)
+Date: Thu, 9 Jul 2026 18:08:42 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, mfd@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-mediatek@lists.infradead.org, 
+	Qunqin Zhao <zhaoqunqin@loongson.cn>, linux-crypto@vger.kernel.org, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
+	Colin Foster <colin.foster@in-advantage.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Zha Qipeng <qipeng.zha@intel.com>, Thomas Richard <thomas.richard@bootlin.com>, 
+	linux-sound@vger.kernel.org, patches@opensource.cirrus.com, Xu Yilun <yilun.xu@intel.com>, 
+	Tom Rix <trix@redhat.com>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
+	James Ogletree <jogletre@opensource.cirrus.com>, Fred Treven <fred.treven@cirrus.com>, 
+	Ben Bright <ben.bright@cirrus.com>, Support Opensource <support.opensource@diasemi.com>, 
+	Andy Shevchenko <andy@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Samuel Kayode <samkay014@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
+	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	Linus Walleij <linusw@kernel.org>, linux@ew.tq-group.com, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tim Harvey <tharvey@gateworks.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Neal Gompa <neal@gompa.dev>, Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravanan Sekar <sravanhome@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, Peter Tyser <ptyser@xes-inc.com>
+Subject: Re: [PATCH v2 00/23] mfd: Use named initializers for arrays of
+ *_device_data
+Message-ID: <ak_DIUQI9MX5aB8e@monoceros>
+References: <cover.1783507945.git.u.kleine-koenig@baylibre.com>
+ <ak41yQp3x78s4Fmx@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260709-exynos850-ap2apm-mailbox-v4-2-caf2fe9a237d@linaro.org>
-References: <20260709-exynos850-ap2apm-mailbox-v4-0-caf2fe9a237d@linaro.org>
-In-Reply-To: <20260709-exynos850-ap2apm-mailbox-v4-0-caf2fe9a237d@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Jassi Brar <jassisinghbrar@gmail.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ka4fpqo6ejmxfupn"
+Content-Disposition: inline
+In-Reply-To: <ak41yQp3x78s4Fmx@ashevche-desk.local>
 
-Exynos850-based platforms support ACPM and has similar workflow
-of communicating with ACPM via mailbox, however mailbox controller
-registers are located at different offsets and writes/reads could be
-different. To distinguish between such different behaviours,
-the registers offsets for Exynos850 and the platform-specific data
-structs are introduced and configuration is described in such structs
-for gs101 and exynos850 based SoCs. Probe routine now selects the
-corresponding platform-specific data via device_get_match_data().
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- drivers/mailbox/exynos-mailbox.c | 72 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 66 insertions(+), 6 deletions(-)
+--ka4fpqo6ejmxfupn
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 00/23] mfd: Use named initializers for arrays of
+ *_device_data
+MIME-Version: 1.0
 
-diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
-index fa02f18948cf..ff75c1c7633c 100644
---- a/drivers/mailbox/exynos-mailbox.c
-+++ b/drivers/mailbox/exynos-mailbox.c
-@@ -24,14 +24,60 @@
- 
- #define EXYNOS_MBOX_CHAN_COUNT		HWEIGHT32(EXYNOS_MBOX_INTGR1_MASK)
- 
-+#define EXYNOS850_MBOX_INTGR0		0x8	/* Interrupt Generation Register 0	*/
-+#define EXYNOS850_MBOX_INTMR1		0x24	/* Interrupt Mask Register 1		*/
-+
-+#define EXYNOS850_MBOX_INTMR1_MASK	GENMASK(15, 0)
-+#define EXYNOS850_MBOX_INTGR0_MASK	GENMASK(31, 16)
-+
-+#define EXYNOS850_MBOX_CHAN_COUNT	HWEIGHT32(EXYNOS850_MBOX_INTGR0_MASK)
-+
-+/**
-+ * struct exynos_mbox_driver_data - platform-specific mailbox configuration.
-+ * @intgr:		offset to the IRQ generation register, doorbell
-+ *			to APM co-processor.
-+ * @intgr_shift:	shift to apply to the value written to IRQ generation
-+ *			register.
-+ * @intmr:		offset to the IRQ mask register.
-+ * @intmr_mask:		value to write to the mask register to mask out all
-+ *			interrupts.
-+ * @num_chans:		number of channels the mailbox can support (hardware
-+ *			capability).
-+ */
-+struct exynos_mbox_driver_data {
-+	u32 intgr;
-+	u32 intgr_shift;
-+	u32 intmr;
-+	u32 intmr_mask;
-+	int num_chans;
-+};
-+
- /**
-  * struct exynos_mbox - driver's private data.
-  * @regs:	mailbox registers base address.
-  * @mbox:	pointer to the mailbox controller.
-+ * @data:	pointer to driver platform-specific data.
-  */
- struct exynos_mbox {
- 	void __iomem *regs;
- 	struct mbox_controller *mbox;
-+	const struct exynos_mbox_driver_data *data;
-+};
-+
-+static const struct exynos_mbox_driver_data exynos850_mbox_data = {
-+	.intgr = EXYNOS850_MBOX_INTGR0,
-+	.intgr_shift = 16,
-+	.intmr = EXYNOS850_MBOX_INTMR1,
-+	.intmr_mask = EXYNOS850_MBOX_INTMR1_MASK,
-+	.num_chans = EXYNOS850_MBOX_CHAN_COUNT,
-+};
-+
-+static const struct exynos_mbox_driver_data exynos_gs101_mbox_data = {
-+	.intgr = EXYNOS_MBOX_INTGR1,
-+	.intgr_shift = 0,
-+	.intmr = EXYNOS_MBOX_INTMR0,
-+	.intmr_mask = EXYNOS_MBOX_INTMR0_MASK,
-+	.num_chans = EXYNOS_MBOX_CHAN_COUNT,
- };
- 
- static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
-@@ -50,7 +96,9 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
- 		return -EINVAL;
- 	}
- 
--	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
-+	/* Ring the doorbell */
-+	writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
-+	       exynos_mbox->regs + exynos_mbox->data->intgr);
- 
- 	return 0;
- }
-@@ -80,19 +128,31 @@ static struct mbox_chan *exynos_mbox_of_xlate(struct mbox_controller *mbox,
- }
- 
- static const struct of_device_id exynos_mbox_match[] = {
--	{ .compatible = "google,gs101-mbox" },
-+	{
-+		.compatible = "google,gs101-mbox",
-+		.data = &exynos_gs101_mbox_data
-+	},
-+	{
-+		.compatible = "samsung,exynos850-mbox",
-+		.data = &exynos850_mbox_data
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, exynos_mbox_match);
- 
- static int exynos_mbox_probe(struct platform_device *pdev)
- {
-+	const struct exynos_mbox_driver_data *data;
- 	struct device *dev = &pdev->dev;
- 	struct exynos_mbox *exynos_mbox;
- 	struct mbox_controller *mbox;
- 	struct mbox_chan *chans;
- 	struct clk *pclk;
- 
-+	data = device_get_match_data(&pdev->dev);
-+	if (!data)
-+		return -ENODEV;
-+
- 	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
- 	if (!exynos_mbox)
- 		return -ENOMEM;
-@@ -101,8 +161,7 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	if (!mbox)
- 		return -ENOMEM;
- 
--	chans = devm_kcalloc(dev, EXYNOS_MBOX_CHAN_COUNT, sizeof(*chans),
--			     GFP_KERNEL);
-+	chans = devm_kcalloc(dev, data->num_chans, sizeof(*chans), GFP_KERNEL);
- 	if (!chans)
- 		return -ENOMEM;
- 
-@@ -115,7 +174,8 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(pclk),
- 				     "Failed to enable clock.\n");
- 
--	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
-+	exynos_mbox->data = data;
-+	mbox->num_chans = data->num_chans;
- 	mbox->chans = chans;
- 	mbox->dev = dev;
- 	mbox->ops = &exynos_mbox_chan_ops;
-@@ -126,7 +186,7 @@ static int exynos_mbox_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, exynos_mbox);
- 
- 	/* Mask out all interrupts. We support just polling channels for now. */
--	writel(EXYNOS_MBOX_INTMR0_MASK, exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
-+	writel(data->intmr_mask, exynos_mbox->regs + data->intmr);
- 
- 	return devm_mbox_controller_register(dev, mbox);
- }
+Hello,
 
--- 
-2.51.0
+On Wed, Jul 08, 2026 at 02:34:33PM +0300, Andy Shevchenko wrote:
+> On Wed, Jul 08, 2026 at 01:15:07PM +0200, Uwe Kleine-K=F6nig (The Capable=
+ Hub) wrote:
+> > Hello,
+> >=20
+> > this series superseeds my previous patch "[PATCH v1] mfd: Use named
+> > initializers for arrays of i2c_device_data"
+> > (https://lore.kernel.org/lkml/20260515095839.4005460-2-u.kleine-koenig@=
+baylibre.com)
+> > that Lee asked me to rebase and also the series "[PATCH v1 0/3] mfd:
+> > Initialize spi_device_id arrays using member names"
+> > (https://lore.kernel.org/lkml/cover.1783003256.git.u.kleine-koenig@bayl=
+ibre.com).
+> >=20
+> > The objective for this series is to prepare mfd for changing
+> > of_device_id etc to make driver_data a union, see
+> > https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylib=
+re.com/
+> > for the idea behind it.
+> >=20
+> > This series is based on yesterday's next/master and it does the
+> > restructuring not only for i2c and spi (as the two series mentioned
+> > above), but for all *_device_id structures that I intend to modify with
+> > a union that affect mfd. So (I hope) this is the only patch series
+> > affecting mfd for this quest.
+> >=20
+> > I don't care much about the last few patches unifying the coding style.
+> > I think it's a good opportunity to do that, but if you don't like them,
+> > just don't apply these.
+>=20
+> The patches bring inconsistency (or still leave it) with the terminator s=
+tyle
+> in both I=B2C and ACPI ID tables. Can you revisit that?
 
+I found a few inconstencies for of_device_id, but not for acpi and i2c.
+I have a script for the acpi and i2c (and now also for the of) changes
+and don't spot inconsistencys in the terminator style for acpi and i2c
+devices apart from comments.
+
+(I looked at the output of:
+
+	git grep -lE '(i2c|acpi)_device_id [a-z0-9_]*\[\]' drivers/mfd | xargs -r =
+sed -rn '/(i2c|acpi)_device_id [a-zA-Z0-9_]*\[/,/^};/p' | grep -B1 ^\} | so=
+rt | uniq -c
+
+)
+
+Do you mean to unify the comments, too?
+
+Best regards
+Uwe
+
+--ka4fpqo6ejmxfupn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpPx4cACgkQj4D7WH0S
+/k624gf/dzy2q/+UDcko+3qRC/vjduntKV5JaImo1jv66pbGa0vVyVdYDHS/QwvV
+X+Jr6jTMyEZcw6O1onRP1ZIcKU6MTkl/wvtqeLkFJ4PXv/hKftTSkP/IHkLuekNm
+Cn37LNIalY7gpr1gfPvcL5Q/BN1qqXCUggmW0xXf+Gi9W5bwWuTaRsJ9ehVptA3+
+rMp5HAYJ1isaiiqfMZJ/TqtNWHN6aVh8ZS6YU5b2iDitwtnRCQD1pOcYCYaXgfrt
+fbXqb+xpQvMfRgK+MLErhmJUfHf2tKi1s5OKoG1T9fiLCmp0VzTkB4+o4AgpQgeE
+pUTRSN5jhrCLDAt7v6B6b4XHPcYmTQ==
+=tSBk
+-----END PGP SIGNATURE-----
+
+--ka4fpqo6ejmxfupn--
