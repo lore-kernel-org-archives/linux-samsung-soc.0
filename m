@@ -1,69 +1,69 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDD13ACA57
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 04:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCEE3AE187
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 04:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783572801; cv=none; b=KDua+hSFF2BwoxW24dhXHrzMUUb6V2kcbBStI4IVQxun9hbU9lXOepb74tRN9zK7zkrF9CLZfosCgHlxdEbAPZVWOvhCmLuaccClGnCxbNVqPd2pmHrpDXK3iZ+jIyvIYaH307biGDQH5EHTPb3vmZiwGQfIDJr5foH3v9uzRXk=
+	t=1783572803; cv=none; b=UBJ7aS7clSjNgXbeftInyws4n05SgOgHF1RMYZknfNtnQwh6YrXL2gPiDcEjY57mSvss2WzMeKEx9ZpQ9m1KWTaDzkgM3mjJ9vKhoRuAWp3PsLNhOMkvbh8te/Puy5gXo8poaq0hsKsrdcCi88AwL/o5Nh4TK3ntn9Wo9jtj1Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783572801; c=relaxed/simple;
-	bh=mzHOAKnpIclZ+dUrEFlyAHDhi9NRf/snVduAybPIKTI=;
+	s=arc-20240116; t=1783572803; c=relaxed/simple;
+	bh=weNKM+jKgF7ONLxec9vNuyvVd+aTiWgQiKrjcviOfOQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BkwgTmvmMoC08it4JRXCnd5mk07qNaKZumz/ZBLnp2OC3dlabfm+1HEMIQxmfDaVrd6OWCnwP/MdnyLs7oYBmLgxS3kLpOU8CpF/FK3e22u6T967pC7/XyQKdnrChwU7Y3IweJmjuI+el21+Id4jd81WLQKTCPV/70whKwH1Shc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVW4xiDe; arc=none smtp.client-ip=209.85.215.171
+	 In-Reply-To:To:Cc; b=SkvfUzXCmwFst2SxmhdnIdDafccBghNui6bUrIj9bZlHc4DrxUH/MVCJ8bBSDugxosUWPuJbkWZIJFL4F4o6kncoSOeS3D+l++MGml+ZEJSQxBK9S7ytm+ylYkZ5s40gFKOJ52v5gE70c83noGH0aBjxtIkZmDcHH28Qy39AhWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQ1vq4UT; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVW4xiDe"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-c96bfabc8d4so838981a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jul 2026 21:53:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQ1vq4UT"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-848593533cbso303741b3a.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jul 2026 21:53:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783572799; x=1784177599; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783572801; x=1784177601; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=O1LTw3WK/9p+ZPz0q4JfjCRwvq1FGfxGeOWFBZeZJ2E=;
-        b=RVW4xiDeN1YnumIhixUFEQYvR56ILRWmDs2pn1bIVpRGgeJ0bUKV1MldxLLDVNsmaj
-         0J2uzdVCfusVLYwqzHiyZYk9B9vXAsA/g0K7SU/Mcel0PrbAJgQH0QtepZvY22vwsjeT
-         RqnGU6aUfvIqPAqMtfIT1R+dTgfTNUnw3iTWddKw1pIu9iZhkkLV5RxNY4ystAUGKlT5
-         qG2XYLOp+ydDqP1dmLxoEQaPL5xe0rczD+pBZ9Hu1IcNbP+HOsnwAs8poA7wvlIryJvZ
-         0tM3u8xPZFTr1zKXJO04m4nady7STS84xIriJsLrQqxTVlMTsqLGjp9fPD1OQ/6Ol5zh
-         zumQ==
+        bh=GrfkfcUdvCW3rBx7LBcGMDMGZ2FYcqBrKqnDysmumDI=;
+        b=aQ1vq4UTrLe+tteQE7YhdW3TpR61nyw+lUnHdFoXgZslH03D9LZA6XwonPH3LixNEv
+         FLxBiDruj1p40nfBZQy/s0+BTEKvq/XXO10b7BdOHDuRCUeNkacA35eWyg4LXZWwZgGF
+         qGiam5VAhjQSUkp1NVLcnR5x0HSZ36SVRDetXslm2lrhGaWOKg7Tt2LPwI+zt2lSrw/C
+         DG2bfgYt17yQ9pPX+mgobEVp1mfAwCkfjNU95yrR8gcrKWDOtYUGX7bxKgk+/P7Q2vS7
+         3Ac3rtYFKha46/iFbF8Ux8ySN1kMavbdHXL7W6nZZUfkqeQphohOE2AcDdurknKKjOSX
+         cpeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783572799; x=1784177599;
+        d=1e100.net; s=20251104; t=1783572801; x=1784177601;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=O1LTw3WK/9p+ZPz0q4JfjCRwvq1FGfxGeOWFBZeZJ2E=;
-        b=cetCQVvNR1BnpkZyLtVlpmWEgGKHndEszN1BklH5Tl26OUOqERGUddy5De+suHXnmD
-         6Ya8j3u5dUk+dQ4aevSvZcVxT5q7vvKHDafg6ipF3qXQD3jutiy9H6c2ManFxO0tkDbX
-         z0GkmZLjFFUiMgv5jt4e2DVQqU6vpGr0yBlMyU/v0h7SGj+oT7HZQeLKXWNDfOWdYmt5
-         dRxQol2BRop7QRASEsFj3hf0eoTgff+vHD1nurcTjvJbUiICkzdiwlWrF+kTfuIVhvYs
-         NvC90d8cW2TrFpwhztHbv1JGDOZr76URz+/DCerRPO4x+2FhDAaPfHra0vMWOyOsNrb6
-         NT6Q==
-X-Forwarded-Encrypted: i=1; AHgh+RqQ+dr/xYh/jykmLMyWWCyEpiajPZ1f1t5NS4LvHMxhKAOUcQ/OoIzOcjXnf9KsElxB6Ffi3c6aVHcStUwTN5MnAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/plakFGu0dOt3ZDuv/vrri+b6U+qZ7iS5MLWlaU0o5RRJc8NK
-	P7xvU0lmfjVe2XI/BcX0RIh5Ad3/CmjKCKjVj60apas1Twt8lX0HKN20
-X-Gm-Gg: AfdE7ck1VZLbGkUM0GzE0QaziGYs9O5cGAXZazhfXaax7nEVQ9TlOnCF6WhedUmCcy3
-	fsBUUkDvyE07Zy6FxNrXBhafyUCQ6SpOtC7vSsDDcFxnw2MspgJ/1ttkk8LY+aOE94ZAF9o4QiR
-	sy34+9QJK2J89fNIVK9lS0WnEp4fFc7mpGJgLEO4jCRB3GRVroJIcZ/jRc1SAz26WMtj//YxQ5B
-	+SfgoivhJaEQktTRg2VnkCkHOZ5FLqVr/uc0sxmiZ7U/wIR8wJxW1+Ic1gZycGkThfCALudbd3M
-	+dsoooH6EECUEZ6uI7p9QS0kGKqpyoiDbewSNNW5zL8y/jT26O3wINKyGWfuGEmf6IVp3D0x8v4
-	WjcLUf3luf8gwKelSt+AZVELaALxfsqxZExs+tdTankzOYPh6hUCaabcWfll2ex6pQLYhY0tOm2
-	QZ4wadVBtfyUAMt4axQ5Ql1oUnn+0z/PCE9/7eV9LiYR9JefYv//VW0LnbWtjrzHJLjy4M6AlPb
-	ssZ
-X-Received: by 2002:a05:6a20:7486:b0:3c0:9c1a:894c with SMTP id adf61e73a8af0-3c0bd2ea843mr7270196637.68.1783572799026;
-        Wed, 08 Jul 2026 21:53:19 -0700 (PDT)
+        bh=GrfkfcUdvCW3rBx7LBcGMDMGZ2FYcqBrKqnDysmumDI=;
+        b=ODxAho7W0WdZEmhWIB4wJpnl+bmHzb7cWcZh4plNwVgbDv+bl50IORSjfUay0sqd6p
+         d5khv4D0j36NFmKRkCbmkjTUy3+gDokeNK6MC0bnSnG7Viq8u/PARdlrKRLXwv32qmsW
+         B2vxEJqBNZvcSpTjcmADmXMr9Tvxg3bwXRQ18Dym2V6vFh5o4QEa5Vg/hI8PjP8EjyiJ
+         r+WResJw3zJmUUOZynHW0yjMTGKmMpGxpV7KF7sXfEx3t2U60YkCBcRauS888Um5mT34
+         Bw/onw03fNhoweS8DlnU+T4vT9sfvsfFAcD4WHcZoS2pAff/b6Dk5W/As7L3VWZjU+sL
+         Ogqg==
+X-Forwarded-Encrypted: i=1; AHgh+RpolqMyWBMHnACN7PD0azovQZDCMq5lYogEeBj6gkrHopAtGGSeXdUVyfxHq6xcTPGm2F6sJ/+VlZVitF+4Iv++qw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuXQRg9uOsWgQ1dZJmFJr4gWvTwYnatmlse/vgPvUXqkaxGNK+
+	1X5JXqnbNpM21ERF8vgC8p9oSKqw66qjfoLKgP5Kd+4i48Nxn5f22I/6
+X-Gm-Gg: AfdE7cmsMYE6cASXVB/H++5py/wMbqpDIg8DKxbvJEd1cnzX3PpatGxdY/ejqPmr+yd
+	OHx00xOJRhHqiJgRAwFrPYCc4m++rHoFF6eVCwQoFQETy9bCKey9mwn972wus/hc+/3tOFama3J
+	Ws68zodiopJnI4ralKbdmIdnq6EX1ZIpZg/p/2BcPF4FBEaGuLXXOC12balErZ1IJXcE3/7FmEg
+	9hC168bZvbIgLILc04TWejLlrNnxF4jXGkN2bqSXWwc2+3YQ8hBOZ4Bo5x/g5gRuY/SUy8Jfl7f
+	Kp16As+pGSDVTQcumIExr0sWp46IZaIepurRYa06adOY1zbMPcPZCd/8cGMEi8aK1diOV00DssW
+	wpGZfulEjl7m4mQt3VNj70JzeXDihj7rW4TAU23CBUxCkCikfCh/37K5FTaZExtVWwsNBQiJWCy
+	UBp9sYNAVTaT/cK0m4LkF2bT1O0eUtOsdyprAwihRdLL+LrH986wilxTC9tvyVhe3mWwem6EvoK
+	/W2p2Xx99q3VgU=
+X-Received: by 2002:a05:6a21:697:b0:3c0:9c19:659c with SMTP id adf61e73a8af0-3c0bd206a8fmr6865916637.68.1783572801015;
+        Wed, 08 Jul 2026 21:53:21 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:e229:88c8:fd09:9a39])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b658a99afsm26559252c88.0.2026.07.08.21.53.17
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b658a99afsm26559252c88.0.2026.07.08.21.53.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 21:53:18 -0700 (PDT)
+        Wed, 08 Jul 2026 21:53:20 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 08 Jul 2026 21:53:05 -0700
-Subject: [PATCH v2 07/11] regulator: wm831x: support software node in
- platform data
+Date: Wed, 08 Jul 2026 21:53:06 -0700
+Subject: [PATCH v2 08/11] ARM: s3c: crag6410: convert PMIC to software
+ properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260708-samsung-kp-v2-7-3c6ed4c9b3b6@gmail.com>
+Message-Id: <20260708-samsung-kp-v2-8-3c6ed4c9b3b6@gmail.com>
 References: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
 In-Reply-To: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,105 +89,77 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org,
  patches@opensource.cirrus.com
 X-Mailer: b4 0.16-dev-b242f
 
-Allow passing a software node via platform data to the wm831x buckv
-regulators. This is useful for non-DT/non-ACPI platforms that want to
-associate device properties (like DVS GPIOs) with the regulator devices
-using software nodes.
-
-If the software node is present, the driver will also attempt to read
-DVS configuration ("wlf,dvs-init-state" and "wlf,dvs-control-src") from
-it, falling back to legacy platform data fields if properties are missing.
+Convert the PMIC DVS GPIO configuration from a legacy lookup table to
+software properties. We use the new 'swnode' field in 'struct
+wm831x_buckv_pdata' to pass the software node to the regulator driver.
+The DVS control source is also passed via software node properties.
 
 Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/regulator/wm831x-dcdc.c  | 24 +++++++++++++++++++++---
- include/linux/mfd/wm831x/pdata.h |  2 ++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ arch/arm/mach-s3c/mach-crag6410.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
-index 834d7c181971..ce43c51c0170 100644
---- a/drivers/regulator/wm831x-dcdc.c
-+++ b/drivers/regulator/wm831x-dcdc.c
-@@ -16,6 +16,7 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/property.h>
- #include <linux/slab.h>
- 
- #include <linux/mfd/wm831x/core.h>
-@@ -332,14 +333,26 @@ static void wm831x_buckv_dvs_init(struct platform_device *pdev,
- 	struct wm831x *wm831x = dcdc->wm831x;
- 	int ret;
- 	u16 ctrl;
-+	int dvs_control_src;
-+	u32 val;
- 
- 	if (!pdata)
- 		return;
- 
-+	if (pdata->swnode) {
-+		struct fwnode_handle *fwnode = software_node_fwnode(pdata->swnode);
-+
-+		if (fwnode)
-+			device_set_node(&pdev->dev, fwnode);
-+	}
-+
- 	/* gpiolib won't let us read the GPIO status so pick the higher
- 	 * of the two existing voltages so we take it as platform data.
- 	 */
--	dcdc->dvs_gpio_state = pdata->dvs_init_state;
-+	if (device_property_read_u32(&pdev->dev, "wlf,dvs-init-state", &val) == 0)
-+		dcdc->dvs_gpio_state = val;
-+	else
-+		dcdc->dvs_gpio_state = pdata->dvs_init_state;
- 
- 	dcdc->dvs_gpiod = devm_gpiod_get(&pdev->dev, "dvs",
- 			dcdc->dvs_gpio_state ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW);
-@@ -349,7 +362,12 @@ static void wm831x_buckv_dvs_init(struct platform_device *pdev,
- 		return;
- 	}
- 
--	switch (pdata->dvs_control_src) {
-+	if (device_property_read_u32(&pdev->dev, "wlf,dvs-control-src", &val) == 0)
-+		dvs_control_src = val;
-+	else
-+		dvs_control_src = pdata->dvs_control_src;
-+
-+	switch (dvs_control_src) {
- 	case 1:
- 		ctrl = 2 << WM831X_DC1_DVS_SRC_SHIFT;
- 		break;
-@@ -358,7 +376,7 @@ static void wm831x_buckv_dvs_init(struct platform_device *pdev,
- 		break;
- 	default:
- 		dev_err(wm831x->dev, "Invalid DVS control source %d for %s\n",
--			pdata->dvs_control_src, dcdc->name);
-+			dvs_control_src, dcdc->name);
- 		return;
- 	}
- 
-diff --git a/include/linux/mfd/wm831x/pdata.h b/include/linux/mfd/wm831x/pdata.h
-index 75aa94dadf1c..d73a04c82ca1 100644
---- a/include/linux/mfd/wm831x/pdata.h
-+++ b/include/linux/mfd/wm831x/pdata.h
-@@ -12,6 +12,7 @@
- 
- struct wm831x;
- struct regulator_init_data;
-+struct software_node;
- 
- struct wm831x_backlight_pdata {
- 	int isink;     /** ISINK to use, 1 or 2 */
-@@ -50,6 +51,7 @@ struct wm831x_buckv_pdata {
- 	int dvs_control_src; /** Hardware DVS source to use (1 or 2) */
- 	int dvs_init_state;  /** DVS state to expect on startup */
- 	int dvs_state_gpio;  /** CPU GPIO to use for monitoring status */
-+	const struct software_node *swnode; /** Software node for properties */
+diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+index 9682ef67b866..4c9b8c1fb08e 100644
+--- a/arch/arm/mach-s3c/mach-crag6410.c
++++ b/arch/arm/mach-s3c/mach-crag6410.c
+@@ -456,9 +456,21 @@ static struct pca953x_platform_data crag6410_pca_data = {
+ 	.irq_base	= -1,
  };
  
- /* Sources for status LED configuration.  Values are register values
++static const struct property_entry crag_dcdc1_properties[] = {
++	PROPERTY_ENTRY_GPIO("dvs-gpios",
++			    SAMSUNG_GPIO_NODE('K'), 0, GPIO_ACTIVE_HIGH),
++	PROPERTY_ENTRY_U32("wlf,dvs-control-src", 1),
++	{ }
++};
++
++static const struct software_node crag_dcdc1_swnode = {
++	.name = "wm831x-buckv-dcdc1",
++	.properties = crag_dcdc1_properties,
++};
++
+ /* VDDARM is controlled by DVS1 connected to GPK(0) */
+ static struct wm831x_buckv_pdata vddarm_pdata = {
+-	.dvs_control_src = 1,
++	.swnode = &crag_dcdc1_swnode,
+ };
+ 
+ static struct regulator_consumer_supply vddarm_consumers[] = {
+@@ -656,23 +668,6 @@ static struct wm831x_pdata crag_pmic_pdata = {
+ 	.touch = &touch_pdata,
+ };
+ 
+-/*
+- * VDDARM is eventually ending up as a regulator hanging on the MFD cell device
+- * "wm831x-buckv.1" spawn from drivers/mfd/wm831x-core.c.
+- *
+- * From the note on the platform data we can see that this is clearly DVS1
+- * and assigned as dcdc1 resource to the MFD core which sets .id of the cell
+- * spawning the DVS1 platform device to 1, then the cell platform device
+- * name is calculated from 10*instance + id resulting in the device name
+- * "wm831x-buckv.11"
+- */
+-static struct gpiod_lookup_table crag_pmic_gpiod_table = {
+-	.dev_id = "wm831x-buckv.11",
+-	.table = {
+-		GPIO_LOOKUP("GPIOK", 0, "dvs", GPIO_ACTIVE_HIGH),
+-		{ },
+-	},
+-};
+ 
+ static struct i2c_board_info i2c_devs0[] = {
+ 	{ I2C_BOARD_INFO("24c08", 0x50), },
+@@ -931,7 +926,7 @@ static void __init crag6410_machine_init(void)
+ 	s3c_fb_set_platdata(&crag6410_lcd_pdata);
+ 	dwc2_hsotg_set_platdata(&crag6410_hsotg_pdata);
+ 
+-	gpiod_add_lookup_table(&crag_pmic_gpiod_table);
++	software_node_register(&crag_dcdc1_swnode);
+ 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+ 	gpiod_add_lookup_table(&crag_wm1250_ev1_gpiod_table);
+ 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
 
 -- 
 2.55.0.795.g602f6c329a-goog
