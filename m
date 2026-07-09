@@ -1,161 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DCB3E3148;
-	Thu,  9 Jul 2026 07:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAD23E95A4
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 08:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783582283; cv=none; b=SevxZGuHBOYh/ccKvj2zokNAEqfS7z37QL6lIWo/uylzyzldFkB+lKjOv9Bdvg5u8/a42vwPkx55nk7T1KADjplEQiJ6aY2ANSuN9qcOJArwC0PKU6kQU6ehQDaTKwTkm4KgjD4ugDXEq+s7v7jUmJM/mgOeZL3HRfSaNRVzZKc=
+	t=1783584634; cv=none; b=jydIVkWRuPcIZ/HxdZah7zrEy3AYpho5LzqJKis8v0avCwQKz1PoZtlwBlBHstMjPPRuIHVJDt6iJpawUu42Q7fRxuA8srg7Fi/I5AsOphbUMzDcasj/9u4FT0KcFHDEzFL3SqJootvhwCFs4fWnkngrGCeTh5rCaSE2D8EpFwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783582283; c=relaxed/simple;
-	bh=cjMXLnfC6g6dIxN+DHVrz3kfjIpPNwD3v2Vrk7OqkFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/yGN6Syq9hqIwT7Iwfl9Z8RaC67OancZQzmCXD16KEddaEKXrz6k2bReMxTq4bjCYTlGOfYSRtbODn/seXomFKkfh5WIPVXLA6uO2/Hn6/kJAYB/0Em9IVkJ+8Dm7lKDmwDYt/A5SDoQU+EhB05ND4zc1Q3uS9zCx6aLmk3c9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nizz2/0P; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1783584634; c=relaxed/simple;
+	bh=OEahzOA/KTRGTvkyoCk8o8fpVF85458RzotimJ/M6YA=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FgI9aymOPSjmyVZqfVrXi/5ekvy9Q6BpNTWpT78NH9S3UjLBZYXNdyjqsFnac/NvlcX/rmfc1hOWiSDW3bP3exWOcgxJcXQHKoKEWkm4ESeDTVZbP0DXZhSoCFYfJrRagG8QGgUAl1j1r7rc5vmUSu7W3lfMI1pUfYSeFW1Lr+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTBH081n; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nizz2/0P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1783582281; x=1815118281;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=cjMXLnfC6g6dIxN+DHVrz3kfjIpPNwD3v2Vrk7OqkFQ=;
-  b=Nizz2/0PBf3aedaBgxqwxsdMNU/2Y9Q05O+R52Br3rQBYKvmbtSocW70
-   9cZu0wpDGGChdypm5AulaLyy8ku5Y+ohPZIMqMmjw6tMXZMnNy3aPMuln
-   xgee1C6ugz5wnHaGb0gP9I5249hRYZeicOaMXmv+Ndny0PXs6u3mVZv80
-   MPXZzarvIm9xMChRKtXbfUT3P5Z4e83jB8nCWMIZw7u73U14QVo9Y1yn5
-   dPuIrLeJ65NqFjsILJEIHtbYWMmVPcduYrtZq4oLYYlUnN0iR46UHDZzO
-   knJeNlKJUeTfd/nYr1Oi658QsuoGRudV/pd14/UlT+l30axtf7+8QVqc2
-   w==;
-X-CSE-ConnectionGUID: 7rpYzFpFReiPt5X/igFexQ==
-X-CSE-MsgGUID: bEiFxh60QzOOWr5yzr7Zfg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="84356458"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="84356458"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2026 00:31:18 -0700
-X-CSE-ConnectionGUID: l77jRguWS0KUZDhOEz0AwA==
-X-CSE-MsgGUID: c8A8Itj8SOiqwX6JveJBLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="277729305"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2026 00:31:10 -0700
-Date: Thu, 9 Jul 2026 10:31:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Praveen Talari <praveen.talari@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Peter Korsgaard <jacmet@sunsite.dk>,
-	Michal Simek <michal.simek@amd.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	bjorn.andersson@oss.qualcomm.com,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-omap@vger.kernel.org, linux-mips@vger.kernel.org,
-	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-	aniket.randive@oss.qualcomm.com,
-	chandana.chiluveru@oss.qualcomm.com
-Subject: Re: [PATCH 0/6] tty: serial: propagate errors from uart_ops.pm
- callback
-Message-ID: <ak9OPNcVAhkfxHvZ@ashevche-desk.local>
-References: <20260709-add_return_check_for_uart_change_pm-v1-0-e85c6ffa8ec4@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTBH081n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 832E81F0155C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 08:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783584633;
+	bh=OEahzOA/KTRGTvkyoCk8o8fpVF85458RzotimJ/M6YA=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=WTBH081nAVdwug7LFzIXFDgrbegoCxoadFT6WO6Frj2908/6QzMGpqt+CfrEXJqRU
+	 rcgGiDX4HCNTU8FqoW1govO01jdvhuzUXNNJ0tTwJ/a75ha6cknVn+4Ri9j8V9UT6j
+	 FEDw2qbGgQMoPPJBJI33u2xbH/NNR/2Po70XNcNawxYMXR37COZ6bP05UqWxnXPglt
+	 +/3qvpADr+xjrw+F8R/KNXi2aw9RGkyyEgsPKWJU1EspALz+kc34kr4mUtD5XemHJd
+	 k7mj/FGZm/6JeoPOKEQouTiImik/jECjqVZ4/3PN4IM+ItDJKnXZfeOx0R9CmyjUkp
+	 t8QVaWsR+PBRg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5aebc8cb5bcso1133391e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jul 2026 01:10:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rq4xyQhjcgC4CF2mq1cB7vVua5wJPVJ4TKZAtOthWHoGVY5I2U8uTUPVZ7ZZWBO9pc+Ii7x5tI5MJhN3quHlYugiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1gmI2/Ac/cNjPsBHgTCUYfG3czkA9gereyDsCJYZ+Fyly+Hn2
+	vCOu7Etp3SXXYAN8RRzf2RWjtmNMQlTiwlSjdvmWg/+uisBJBU2iYn9WZdlqSiUdkBKnVQAkBE5
+	mVFXLzaSqYnoBawI8HuCFSPRZbdcxuwUsp86v/36tyw==
+X-Received: by 2002:ac2:57cb:0:b0:5ae:b75a:7176 with SMTP id
+ 2adb3069b0e04-5b0115b31cbmr957946e87.65.1783584632201; Thu, 09 Jul 2026
+ 01:10:32 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 9 Jul 2026 01:10:30 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 9 Jul 2026 01:10:30 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260709-add_return_check_for_uart_change_pm-v1-0-e85c6ffa8ec4@oss.qualcomm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
+Date: Thu, 9 Jul 2026 01:10:30 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfJQm8RqhiLbRA1x7skt=jW8vvTD-1VCDcw-dO_VjisZQ@mail.gmail.com>
+X-Gm-Features: AVVi8CddxA9iUF7IgAB_SRFc1uKWkA3NnqyOXCt0i1LuR82tf86E-F3pS5f_rfg
+Message-ID: <CAMRc=MfJQm8RqhiLbRA1x7skt=jW8vvTD-1VCDcw-dO_VjisZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Remove support for platform data from samsung keypad
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	patches@opensource.cirrus.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 09, 2026 at 11:55:12AM +0530, Praveen Talari wrote:
-> The uart_ops.pm callback has been declared void since its introduction,
-> which means any error from a driver's power management implementation is
-> silently discarded by uart_change_pm(). Beyond losing the error
-> information, uart_change_pm() unconditionally updates state->pm_state
-> even when the underlying hardware transition failed. This causes the
-> serial core to track a power state that does not reflect reality:
-> subsequent calls to uart_change_pm() see the stale cached state as
-> matching the requested state and skip the callback entirely, leaving the
-> hardware permanently stuck with no further recovery attempt.
-> 
-> On modern platforms where the .pm callback performs real work —
-> enabling clock trees, interacting with runtime PM, asserting voltage
-> regulators — this is a correctness gap. Failures are invisible to the
-> PM framework, the port proceeds to call ops->startup() on potentially
-> unpowered hardware, and suspend/resume errors are hidden from the core
-> that needs to handle them.
-> 
-> This series fixes the problem in four steps:
-> 
->   Patch 1 changes the uart_ops.pm callback signature from void to int,
->   updates uart_change_pm() to propagate errors and only commit
->   state->pm_state on success, and handles the return value at every
->   call site in serial_core.c with appropriate policy per context
->   (propagate, log, or skip-on-failure).
-> 
->   Patch 2 updates the 8250 driver family: serial8250_do_pm() and
->   serial8250_pm() are updated to return int (with the exported symbol
->   declaration updated in serial_8250.h), and the 8250 sub-driver
->   pm callbacks are updated to return 0.
-> 
->   Patch 3 updates the remaining non-8250 serial drivers. All .pm
->   implementations are updated to return 0. The sh-sci forward
->   declaration shared with rsci is also updated.
-> 
->   Patch 4 updates arch-level implementations: SA1100 (assabet, h3xxx),
->   OMAP1/ams-delta (modem_pm, now propagates regulator errors), and
->   MIPS/Alchemy (alchemy_8250_pm).
-> 
-> All existing .pm implementations return 0, so there is no functional
-> change for any current driver. The series purely adds the infrastructure
-> for drivers to report errors going forward, with the serial core ready
-> to handle them correctly.
+On Thu, 9 Jul 2026 06:52:58 +0200, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> said:
+> Hi,
+>
+> This is a reworked and extended version of the series previously posted
+> to convert the Samsung keypad driver and Cragganmore 6410 board to
+> generic device properties. The first 8 patches of the original series
+> (general cleanups) have been merged into mainline, and this version
+> focuses on the remaining keypad rework and extends the board conversion.
+>
+> Specifically, we rework the Samsung keypad driver to stop using platform
+> data and instead rely on generic device properties, and convert the
+> Cragganmore board to use software nodes for all its peripherals, removing
+> legacy GPIO lookup tables.
+>
+> We start by introducing a compact matrix keypad binding and implementing
+> it in the driver. To support referencing Samsung GPIO chips in board
+> properties, we add infrastructure to register and attach software nodes
+> to Samsung gpio_chips. We then switch the Cragganmore keypad to use
+> software properties and drop platform data support from the driver.
+>
+> To convert the PMIC DVS regulator on Cragganmore, we add software node
+> support to the wm831x regulator driver, allowing DVS configuration via
+> device properties. Once the board is converted, we clean up the driver
+> by removing legacy DVS platform data fields.
+>
+> Finally, we convert the remaining peripherals on Cragganmore (GPIO keys,
+> PMIC, WM1250, SPI0, basic-mmio-gpio, and LEDs) to software properties.
+> This allows us to eliminate all legacy GPIO lookup tables, which also
+> fixes incorrect GPIO chip names ("GPIO<N>" vs "GP<N>") from previous
+> descriptor conversions.
+>
+> Mark, it would be great if you could give this a spin on Cragganmore.
+>
+> Thanks!
+>
 
-Just no, please just properly implement runtime PM. The .pm() must die completely.
-I used to have the PoC for that long time ago [1], but due to lack of time and
-other priorities it went abandoned. Also Atlassian made a brain damages move to
-limit repository to 1Gb, so I haven't able to update it for a few years.
+I admit I haven't looked at the series in great detail but it looks sane and
+you've been doing these conversions before so I trust your judgment.
 
-Note, that Tony (you have him in the Cc list) did a lot for some corner cases
-with that and we still have them IIRC. Tony, do you know what is the state of
-affairs with runtime PM for UART?
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-[1]: https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm-plus
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Bartosz
