@@ -1,116 +1,157 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5644A4C9003
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2026 17:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5BC366079
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jul 2026 01:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783530797; cv=none; b=cH0ZuwJyh8aUlfv2/2pDCEPrJr9unO84s8zRBe/cvi0rHYaR3646m3luDlCIbRFwDoduEU/1WCkpnBzjNQIZhlXM6ykQ+wwkHIR0lPHa8cUnDXr0i/oxOLYLjfxmWwypD9MQxUQetQb50k+ncxPuakI8+LYAeuvjrt4cuCtIoMc=
+	t=1783559437; cv=none; b=CJmOhMagNQM6zXr3GQxFyf9VSM3F2gdRC1v/Z9VQpiHgLYggJ0ZrA5/ai7wuP86q+drwvV4OYpa2T8qBczUsdCIETBPr4410QN2hLBWpMJbs702NZ2p40heUA+96plQANucaX8p2USi5CmWraSyHGCmvqrbTyDrdg6RGgVI0RnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783530797; c=relaxed/simple;
-	bh=zfmAyoMMb2wOrJd1JOChx63QvBzEFg9LxEcj6r2lKq0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KOowKKwdoNzUzOlNet42YZWEW+i8JW4u35zPAwNczC+hfYrw10POoCQdX59qd9RKjasJOI5R365jyIP7O0vXWyvbCesLgDa4Oahtw7f3sTwFurPmCny+SdvCb/sj4i1200YSq27eqgy8/2B2ZjTNMV6zRTdqPgM6OImnG6Vyo0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NULni/6N; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1783559437; c=relaxed/simple;
+	bh=k3K2O09SarAjPeX241uL2J937+yy32T1n43Z11zxY0I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gNFoPWgZNZ/cKPHF8DCsOKrHvCup59UarQFyajm2dTvIhESs1/OIXRa8OCkB29b+t73dlTxXmgdgtpr+0q4gIPpK2cZkKRnLIC/9l8Kfp477D2nmNOF8NXEHxutkEleCj7GwcBnRHP2Y3FzuNaVhyYSW4XntL4+YMW+kprpWw+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xE1AEC1k; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NULni/6N"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id C9C791A0ED1
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2026 17:13:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9B8C66033F
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jul 2026 17:13:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 537A811BC19AE;
-	Wed,  8 Jul 2026 19:12:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783530790; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=zfmAyoMMb2wOrJd1JOChx63QvBzEFg9LxEcj6r2lKq0=;
-	b=NULni/6NFJ20KXh/pLbAeGrodYIPFdy8eBKw/RzQ8jTjYVIOvQUspy5qI1oy+zxGvEH+zJ
-	WvoEK/O51fn4m48VZqqjYI81CQOxKWiScZbhJgJK2YVbNsZS1VGyuYZaMx3SLmnfr6jQoI
-	YR2AKo/UgzIYjSUwzS3rpj+IKjb2Q+LhZ7cuFyaUM6XIR+e8wEmd4HbVythE68S0mmv3Cs
-	j3oVLe6v+J9QSUhcNCD7mRipL0D8vtu88BOWe2ZQTs+kPxWTy/tKTtUto+VyBJhtPXpxqr
-	+JFdA0Avyf2sOR23P7FkAyhriBrPYmbpdEOaTOxocTMTFz9QJqO1ky88LwxwQA==
-Date: Wed, 08 Jul 2026 19:12:56 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-CC: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- dri-devel@lists.freedesktop.org, Joshua Peisach <jpeisach@ubuntu.com>,
- Sasha Finkelstein <k@chaosmail.tech>, Janne Grunau <j@jannau.net>,
- asahi@lists.linux.dev, Benson Leung <bleung@chromium.org>,
- Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Ian Ray <ian.ray@gehealthcare.com>,
- Peter Senna Tschudin <peter.senna@gmail.com>,
- Martyn Welch <martyn.welch@collabora.co.uk>,
- Manikandan Muralidharan <manikandan.m@microchip.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>,
- Russell King <linux@armlinux.org.uk>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- Linus Walleij <linusw@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org, Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- freedreno@lists.freedesktop.org,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>
-Subject: Re: [PATCH v2 00/37] drm/bridge: Convert all bridges to atomic
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
-References: <20260707-drm-all-atomic-bridges-v2-0-21d03cbca446@kernel.org>
-Message-ID: <CB4505B9-E9E5-402D-B5A6-A72395D2E5E9@bootlin.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xE1AEC1k"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-493d1e8aa46so9741575e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jul 2026 18:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1783559433; x=1784164233; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=0Y9hy7trM4rhn2V5CWQ6cEWC05ni+rRFhrd6P/Y+NVc=;
+        b=xE1AEC1kDGZvXCmf4IdfGnhKHV3jHpmtku/GvbEMQjCuwaOiB1sIquTHrzBdtDVCra
+         s5jAkqNWNj4Jq/5PbVKZmExFkbhO2BdaozWDlMZo8izMPyP40tUgDI0ElTl1CsS5lWOj
+         eoN9/379iUtYuHSkVjxbl8vIAfgTPO2QimjqOm9uTUTH6q1HfN4FNqgrEocMrPyroC4W
+         UiXefQbFvWljNAo1KhMx3GbTBRaXExcRF2H6XAJ+fB0DwtgHdsvJdZtunvrGDiqBlWrV
+         MYuVyLAMnbQfvp4bGv24gSSWkoZrseaIEjBhtHyppJvZqTWGsMxVXFX2sblGwDxaHbd8
+         L3XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783559433; x=1784164233;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=0Y9hy7trM4rhn2V5CWQ6cEWC05ni+rRFhrd6P/Y+NVc=;
+        b=rsQs0+F048jdqZj+wgR51asZfZ1Qwops888siL/XMyAkAFsNF+XZ1yV4WTOPZ2+cBJ
+         DL4YDDfgtb238TbTBV0eSXaeSQhxF8g/YCtuqhhPrBjPHGT9C3iiYh4Cv8uWHGCSIfsl
+         /WBDdIazlav17frz0bxvpYQtkFoBB03nebSB6rFSzokgR+Smz54umdVv2gda3NFZo90f
+         4JmW1vJASWq+EUxgh4AphdXmMfFMsEUcK8Lp6uB6i0w4T9YMmyU7jrD1usBBiYV6YJZF
+         XoKFg5Hlc9aauPFfDldRLLQ2f9Pa00QGIDg0xY3UEF0rmG+eK8SHNV7oKVKclIHSB9IO
+         XDfQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rq7G93C0YG+f1uCZNLIDlw7/vI4p3ZD2t/fYBfjc+mhuV+vleV0yNYwV2Eyy7ln22YA+oojtlP60vpJrwLRbTYaaA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgPCb4LjdeF681QeuaF5eSaAadJHKyXpqEAdrCUkdU6NvAtcX1
+	ywUcT8ZhfJAmWZNJRrA4azQiQL3E2Xm3cJP816LKAS0Yv8V0OLwpFkujgyPmh7AafyY=
+X-Gm-Gg: AfdE7ck4Y2SR6YZymUeZKxojB759EFklCdgD/oNJdhQbg/V5faCb5ZMIbMIq9WxguLJ
+	VzdN2hI29qkILZlVK9rkqS6y0urJWzNXu+hWRRlMh5JVu7oU7+Fy9VZKaJRefOyqCZGP5xHAhNa
+	GaC5e9uvgMUl0NdlgkNb9e+sJbLjEwjgH1QsiuHcE5eNB8ou665hDNtl1tb3DaUO80UtDC5DiN9
+	n2c+o6eqC7imzlKBM+V5sPTWbfzcUBsFNH/uqdOS1srTncP9G+WrDphQvZUISMUJU0ko5XAOr3m
+	6T221pqWOk3phVdLuyhxaeu4V+44t64x0VjdrZsu3s6QHS9IeBRw0M4qo4SSfdDAI4JV4T/YTC1
+	okl3SoE4VeClhEcP1VRRXrYaxEysCdEmCTFPHN+3F5RACJ+LsF1sHMAoLn/22NzqVCO/xujTOu9
+	igAOTcwNzAv46OZ+v24OMdR4XuS4LYqP9XjZWg0hACDzWMnHnwHwfNgM8pI201yTfTe+Ya2xxly
+	UKu
+X-Received: by 2002:a05:600c:83c6:b0:493:c42e:5be0 with SMTP id 5b1f17b1804b1-493e6853dbfmr51091305e9.0.1783559433204;
+        Wed, 08 Jul 2026 18:10:33 -0700 (PDT)
+Received: from [127.0.1.1] ([2.122.8.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493eb742d0esm18994725e9.13.2026.07.08.18.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 18:10:32 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH 0/3] thermal: samsung: acpm-tmu: Add Exynos850 support
+Date: Thu, 09 Jul 2026 02:10:26 +0100
+Message-Id: <20260709-acpm-tmu-e850-support-v1-0-9fdd58b634af@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAL1TmoC/0XMQW7DIBCF4atYrDvRADEmXuUeURYYP6dIxThgR
+ 5Wi3L3EWXT3/pHme4qCHFBE3zxFxiOUkOYa8qsR/tvNN1AYawvFynDHlpxfIq1xI9iWqWzLkvJ
+ KYNWZFoM/QYv6u2RM4Xd3L9dPZ9y3yq+fo4goxe183+y4Yf2PPywx8SStZKdbA3P+CbPL6ZDy7
+ e0ProB8ijGsfeOk10p1k5d1jVb7sW4MJ31kM7ojdDeBDQZxfb3+ANTWkuvxAAAA
+X-Change-ID: 20260708-acpm-tmu-e850-support-e02765ebc9e3
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Mateusz Majewski <m.majewski2@samsung.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+X-Mailer: b4 0.14.3
 
+This series adds support for the Thermal Management Unit found on
+the Samsung Exynos850 SoC to the existing acpm-tmu driver.
 
+The acpm-tmu driver was recently introduced to support a hybrid thermal
+architecture where hardware management is shared between the kernel and
+the ACPM firmware. 
 
-Il 7 luglio 2026 17:11:07 CEST, Maxime Ripard <mripard@kernel=2Eorg> ha sc=
-ritto:
->Hi,
->
->Over the years, most of the bridges have been converted to atomic
->modesetting and hooks, but not all of them=2E This forces us to maintain
->two different code path in quite a few places, which is pretty
->bothersome=2E The switch to atomic modesetting for legacy bridges though
->is pretty trivial, and we don't have a lot of drivers still using the
->legacy path=2E
->
->This series converts all bridges to atomic modesetting and drops the
->legacy codepaths where relevant=2E
->
->Let me know what you think,
->Maxime
->
->Signed-off-by: Maxime Ripard <mripard@kernel=2Eorg>
+However, the distribution of responsibilities between the Application
+Processor and the firmware varies depending on the SoC:
 
-I'm out of office so I'm afraid I can only reply from mobile, but I review=
-ed the series on a real laptop:
+1. GS101 (Existing):
+   The ACPM firmware handles sensor initialization, threshold configuration,
+   and temperature reading via ACPM IPC. The kernel only uses MMIO to read
+   the interrupt pending registers.
 
-Reviewed-by: Luca Ceresoli <luca=2Eceresoli@bootlin=2Ecom>
+2. Exynos850 (This series):
+   The firmware implements a much smaller subset of TMU IPC commands
+   (temperature readings, TMU suspend/resume, basic TMU init).
+   The driver should use direct MMIO register access to support the
+   remaining functionality.
 
-Luca
+In this series the patch 2/3 prepares the acpm-tmu driver by moving the
+hardcoded GS101 IPC calls into SoC-specific callbacks: tz_control,
+tmu_init, tmu_update_thresholds, and tmu_check_and_clear_irqs.
+
+The patch 3/3 implements actual Exynos850 support.
+
+There are some updates to be made (rework defines a little bit
+and get rid of hardcoded values in exynos850_tmu_init() but it will
+be useful to get feedback about patch 2/3 which is refactoring
+acpm-tmu to support more than one SoC.
+
+Dependencies
+============
+
+This series is done on top of the following series from Tudor:
+v8 gs101 acpm-tmu support
+https://lore.kernel.org/linux-samsung-soc/20260603-acpm-tmu-v8-0-0f1810a356e6@linaro.org/
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+Alexey Klimov (3):
+      dt-bindings: thermal: gs101-tmu: add Exynos850 compatible
+      thermal: samsung: acpm-tmu: refactor SoC-specific operations into driver data
+      thermal: samsung: acpm-tmu: add Exynos850 support
+
+ .../bindings/thermal/google,gs101-tmu-top.yaml     |  26 +-
+ drivers/thermal/samsung/acpm-tmu.c                 | 460 +++++++++++++++++++--
+ 2 files changed, 445 insertions(+), 41 deletions(-)
+---
+base-commit: a1c3227fc1a1cd83cd7fceb93406da4e37fe06eb
+change-id: 20260708-acpm-tmu-e850-support-e02765ebc9e3
+prerequisite-message-id: 20260603-acpm-tmu-v8-0-0f1810a356e6@linaro.org
+prerequisite-patch-id: 335add736ef8f6753c3bdd94f19747aa4b9e782b
+prerequisite-patch-id: e254a5f13d367da94d4bd299304859baa9409f0b
+prerequisite-patch-id: 45efb8d607e3380686135441c62eb6c2747e70e3
+prerequisite-patch-id: 718107c8283ea4a449d9838b57966e1c319f32b5
+prerequisite-patch-id: 45b02a84dacb09cd95969b638caa64960f73d242
+
+Best regards,
+-- 
+Alexey Klimov <alexey.klimov@linaro.org>
+
