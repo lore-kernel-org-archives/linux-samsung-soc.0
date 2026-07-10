@@ -1,129 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE943DA5AF;
-	Fri, 10 Jul 2026 10:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783677619; cv=none; b=S6JRbwAz9DTe6z3mRE4BXaRHojauCi7S7CMzxZU/erKmN6pNo8Raf/6aa/bnq3sQwLomhmR0+q+Jc+8Xoz1pFPXAENmUu9f1VXaFlI2CUgPw/kn8DD0qspSuCs6MBqFhYQQmHXILNH2tVfy2AGYoHTubdrkbdPfP+ytJGGMrGTw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783677619; c=relaxed/simple;
-	bh=uRFWxNJi36M7wdK+uh8lCcztSRrJqZU9g3FNU7DqTvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkeO7pS53hZBJH/hWrCzXDc5D67oIZzejUUkjOMWSJ3bkPqRe8xQCwMzaIdTu3Yi337MoiAbQDpZmbqmIEw4w+BpWZBTe5kxNqpNre2LJgKqn+rNSqsZ8kOoUF9IQiWeMshZZnNM0tackm7u+8Tj3UZkK0uQk9xf7poMICmBW3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nu1ocvjo; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D003C3C0B
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 10:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783678112; cv=pass; b=g+S0HcA/V0dUc2xe9/84EhVDfur8mJGNGN3DEIRVM+P4mtGCp6l2OdD8Y2HOv+pJpDQioad7cInA+Qei/4fZrZVILfjQCMtufntQrTexslDI5ERbI1nGgFkPmZPixpM+AR2isHYk8Tk03MEv/FAdZtK4QTmapa6zdR9wDK5XlQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783678112; c=relaxed/simple;
+	bh=pRM2rNgd9MBRVIU9n/6jP1Ntus4fUi+4/1OzQi5Hjs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dfQJOW5lYfz4s0w8fzxcrDbq4tp6f1bpczX0khcGQC3q2BV2fPhAForM311DHbsnvKwGa+rQW4NsWjzQIPKVYJ4cP8FCvbUIvBpm1bYLSOMOzEcBGOpbM4qh3bN1WtEI7ejLQWwu1I7hjrXlyzqhgAKZOGdLKpK/yFmF2hQhdKc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ItQXTRZb; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nu1ocvjo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D36E1F000E9;
-	Fri, 10 Jul 2026 10:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783677617;
-	bh=C+BUdcDvSoRVrNMjITxAFXhgI5ZKgX5bbKAlvn2T6D8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Nu1ocvjocm6JhLYycd6ODQjEqYpYzAygoJiQS6HHxn/GaWwyhfDCVyx/aGI3h7Mpg
-	 YJMhGnAjjVzkWe+bZXA/0m9J47NSBQz6A7jvusJfLJAh6HDQkzBGnZ2oVSwm4xT2zP
-	 XShCU0qX1coxYM7mXYCpPOgmGa610q3125szfqfZdcqi08Yj+Nk4CzTi5Y4wPJYEd9
-	 nLiCQ++LWdqK3roW0ZCJ31vC8HBGRubDxWFVhbk31nJjtgqsa+gusHNShiSW2iT+1Z
-	 g4AcEPo8kHLGCMKH+F7/pZ5cTKAcqHYoexQgqbOow3MbDTHKu3c0JT+ak7hj6ua+m7
-	 jLubPCIHlQSCA==
-Message-ID: <9eb6b0ef-cbc1-4b2f-b607-986f28ec46ee@kernel.org>
-Date: Fri, 10 Jul 2026 12:00:10 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ItQXTRZb"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-698ae09e356so1013214a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 03:08:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783678109; cv=none;
+        d=google.com; s=arc-20260327;
+        b=rcRYTTLf2vKJbMwNsG6SjuyyOfVC7hW7HPr6j3rEJHHUkGZ+dw1zLg6XoKsAal+Ntl
+         q4R9Z8FcLlv10wWYQ8oFASgIuFlO5VaQPTLxzaW4cb75SKSFnsQ+FkYQ1zfJ1ct8R2Xj
+         NidRu5/hgk+CUQ586XFyFdQcbWwEguyU9mFumcLqYtrBnOUjYRWkmv8khZd+QMr2vVHN
+         /Sv1EjCBbs41z9Od7M65QOb9gBydVx/klpcWeFmDTEkt+RPdcR/Jp79T0ulsC37vnAui
+         PxFw24Hl9CheWwEBihrowxPANVeIh6Oh+y5TQHZClcW6btFkTwPNV4v9jfrc+bkAKE5e
+         Qnzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=XQ09WvOdFm9bzQk3hIkyZtzTyrw6fuB4GwRwRjKXZBU=;
+        fh=Bls3Ig53JT7dL/0Jwc8IobypV6q2NwmDohshO9Fv3FU=;
+        b=S3aASo9mgOfE881vGoH8RRXpaydQ7N1eWu79qPtbZirwXSYQSGA6GUXdDzi74a8fXd
+         jgOxMxC6BEO3jtiF8BPts6saBB5bjiW7ob70/hIyO03vmYgcHVOewSYCp2AbRNM6pbBz
+         YBHq6GmMqwEdQXVQk7SGHl+qS7tiuFnc9KjQnizPfn44ykxRJlLalRsaa0FtX2U08Dc2
+         mnscAF+s8M95s8TqZYBLAW5Atlq0I2VmVbIVaeBdcJZ4OYxO9aplmAbUYwYTjLzd5gkO
+         1e2QuDpywV138PnFGP2HixdwJH/n6uoQM9XMCQF7IlleIAiiaIgdoaxjEtRTzaz3CzUj
+         X5UA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1783678109; x=1784282909; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XQ09WvOdFm9bzQk3hIkyZtzTyrw6fuB4GwRwRjKXZBU=;
+        b=ItQXTRZbsEq+Y4Iv2yFAOj62T9Cq1YaKqMlbce2lP6q7WO3e0YiRDdP+KePeMwhqMO
+         +fEvbYmMeh09kOTWtVdRc9se4h62qM0u+PzZRRqT/Ei/I+swGGpPVa+0Ji/UQFQ8AYMA
+         Gd3sG8rukUgnIWYfb1TmukZ2Mbt2wMzU6LC8xn4U3IcqOFe8wY9dlvuV2vJKjnikz3rS
+         wh+f4jaZRo4IbgQtWJsLJG/HccqwDY4SAB+GUuL0SOD8z07LxFocdKDs41qwePIf58eb
+         ZUEcfPN4uaM/nSn0eebe1ZJyo5sG0K+m4gd9Amam7qXr+wm1yJlZNrGug7gZsyjPLKH7
+         Iuvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783678109; x=1784282909;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=XQ09WvOdFm9bzQk3hIkyZtzTyrw6fuB4GwRwRjKXZBU=;
+        b=hhMrtR5lTNi4iQGPGpZCgoHzMuCwi9bbDLEXUSzhvHuoowQ6/MRUxr1uBJ07EpaK8X
+         32rJHy1chd46eVH+iLRnNXwYsaANwyim3LWrsH13n74TUtfn7xqqPQF2okpGYgxDj/OT
+         qgslI6L7/r/Tc2dvRrhpflF06jIwYmqADu0Wi5ue2xPjSxMJfdFYFbkrn/ZSKgxpYD7x
+         qY9//gWfFK5+DD0Ej6+T79gpsBxALi/Yi4pxbNJy/EB0sZs5u+EBk3wwCUPnP0VxRb+x
+         EBZmat8jf0c/ejnECd3t3G48pKi7+DiLTc6Sb16mQlODVaLK6b+VIwMTACcSjBGrS6VT
+         Fw9A==
+X-Forwarded-Encrypted: i=1; AHgh+RqoNKz1/d77NAv+CDc6sGT3s+rImCJXhaKaprmH66lmzfWFmulaubrXJFK3ouDmuPwm058KOiH76pEzITsB+qUjhw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR0KzJB+BMfYoPqQrL11XgLiBOgL1Y44fa9wDbtaIHyrP26fWj
+	0jLpNlbbkj0DFr2LlUiITHZ4z2vI+UZcDukGY1IFMIzjK1RTqemQbVX4dOcdnxHwc3eiB9xEPLH
+	o0UBIpdvonMpokusbD2hTmt9pxTTfRhrKmB+3fM9zYQ==
+X-Gm-Gg: AfdE7cn7syGt9pibY+qKaCojuN96HxSSDXWx7Hr9FQlBQ11UkAhx8slmn9wm/ha2yu+
+	/UPcb8v7VnRBfyXDWbGwVRTkma2nxjTjt9Go22qEhY+7etXioqcAhMxkPcfbL6oR26CzWkrG/iq
+	K10IlixddkM9uimmDx+iU43jMEY9ICMzgRCmNfBT0G6ke+nwKTUsWZDWD76wH6lmpBc9RK+aiC5
+	SDXxJZ1GEJoNWUP8sWzsCPwLKxkFFexD6GQCnkLz5lYNKxn8QCmhDTZKyhfiqq6rDdrU2T2haPL
+	6WmPKpu3JJwl9b+RT24Xfk4/TNt64W8=
+X-Received: by 2002:a05:6402:1f0d:b0:698:52b4:c2c9 with SMTP id
+ 4fb4d7f45d1cf-69ab449f56bmr3763583a12.31.1783678109402; Fri, 10 Jul 2026
+ 03:08:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <CGME20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e@epcas5p4.samsung.com>
+ <20260627171228.2687857-1-alim.akhtar@samsung.com> <20260627171228.2687857-6-alim.akhtar@samsung.com>
+ <CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
+ <14cf01dd1052$4de88670$e9b99350$@samsung.com> <9eb6b0ef-cbc1-4b2f-b607-986f28ec46ee@kernel.org>
+In-Reply-To: <9eb6b0ef-cbc1-4b2f-b607-986f28ec46ee@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 10 Jul 2026 11:08:17 +0100
+X-Gm-Features: AUfX_mw_MQovWgLm-SNbZiYq6L-o37seq6gSN5GX96bbQr3I8gkT7hwklMnJXyA
+Message-ID: <CADrjBPp54oxAfJ9i7VTqCVuCJLq3X5mZPh9wMOMgoa-N1e1Ghw@mail.gmail.com>
 Subject: Re: [PATCH v3 5/6] arm64: dts: exynos: add initial support for
  Samsung Exynos8855 smdk
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Peter Griffin' <peter.griffin@linaro.org>
-Cc: robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- hajun.sung@samsung.com
-References: <CGME20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e@epcas5p4.samsung.com>
- <20260627171228.2687857-1-alim.akhtar@samsung.com>
- <20260627171228.2687857-6-alim.akhtar@samsung.com>
- <CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
- <14cf01dd1052$4de88670$e9b99350$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <14cf01dd1052$4de88670$e9b99350$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, robh@kernel.org, conor+dt@kernel.org, 
+	linusw@kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, hajun.sung@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/07/2026 11:55, Alim Akhtar wrote:
->>> ---
->>>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
->>>  .../boot/dts/exynos/exynos8855-pinctrl.dtsi   | 574 ++++++++++++++++++
->>>  .../arm64/boot/dts/exynos/exynos8855-smdk.dts |  32 +
->>>  arch/arm64/boot/dts/exynos/exynos8855.dtsi    | 204 +++++++
->>>  4 files changed, 811 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
->>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
->>> +       };
-> [snip]
->>> +
->>> +       oscclk: clock-oscclk {
->>> +               compatible = "fixed-clock";
->>> +               clock-output-names = "oscclk";
->>> +               #clock-cells = <0>;
->>> +       };
->>
->> Small nit, but I believe oscclk node should be ordered alpha-numerically by the
->> node name. See https://docs.kernel.org/devicetree/bindings/dts-coding-
->> style.html
->>
-> Thanks, will update in v4 
+Hi Krysztof,
 
+On Fri, 10 Jul 2026 at 11:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 10/07/2026 11:55, Alim Akhtar wrote:
+> >>> ---
+> >>>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
+> >>>  .../boot/dts/exynos/exynos8855-pinctrl.dtsi   | 574 ++++++++++++++++++
+> >>>  .../arm64/boot/dts/exynos/exynos8855-smdk.dts |  32 +
+> >>>  arch/arm64/boot/dts/exynos/exynos8855.dtsi    | 204 +++++++
+> >>>  4 files changed, 811 insertions(+)
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+> >>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> >>> +       };
+> > [snip]
+> >>> +
+> >>> +       oscclk: clock-oscclk {
+> >>> +               compatible = "fixed-clock";
+> >>> +               clock-output-names = "oscclk";
+> >>> +               #clock-cells = <0>;
+> >>> +       };
+> >>
+> >> Small nit, but I believe oscclk node should be ordered alpha-numerically by the
+> >> node name. See https://docs.kernel.org/devicetree/bindings/dts-coding-
+> >> style.html
+> >>
+> > Thanks, will update in v4
+>
+>
+> The node feels ordered, no? clock before cpu?
 
-The node feels ordered, no? clock before cpu?
+Yes, good point. I was looking at the label not the node name.
 
-Best regards,
-Krzysztof
+Peter
