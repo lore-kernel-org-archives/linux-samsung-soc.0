@@ -1,78 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837C61F4C8E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61722AD3F
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783712476; cv=none; b=VQ/KL89FaFLNCYlAsR+2pdwz5tpIMYg3dDGGu+la03bLqaAipRg1rSwp5yLlgoXJVvnXk5rsW0tfLNHsrhXSxfeAEPDbEq98x4LbmsrmGpwr6w4yFeaw0aUrzZqSQUJYL04TFSdsVqCAyFDKAVVsMLRT4wDmHhVRP6N9rkHhHXM=
+	t=1783712767; cv=none; b=c8dpaD2IQQXBkT3NbeQEWPYufIE1V9K2/l8VJs7BxJYeNUTadVF2zRmK4tQSqd8onyNsvsKG7fkCljgz9d1ud+GN9Pcs0jVmnfrmAuJ6TtCPxnUOL2isXw3UMD/SWb3IJNyL5Cjq4Uxp91tbr2TS1yhN7BXgyazSr0/ASkUtLVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783712476; c=relaxed/simple;
-	bh=0BS9a11S/ASQzzUnTlPyCH9spaY57RR0shSO+pm/PGw=;
+	s=arc-20240116; t=1783712767; c=relaxed/simple;
+	bh=sZDwGaUkGBLrMyNSIpb3kLYEJV1iPNS+5Pn9t9xv6aE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RllKaY85OPb+xQH1A4JXV6Fc4Fy44b4FtUwBOe/0US77BAIn/OT5+drQm6LRY+uTSOyLBj2HgTKK+ZkYLIC3VXKHUQG7X/kZsCPH5xhsC+Uy93sSCE28mkYafEveEmo5HlcZzySixPl+ohj0KN2fCHrEafy5DqsDMhAM4njsMK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/3eTXpw; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=qscQJM+slRfnzxt0omLX89e/ZrULSdwTQjKl9sI973vEXXRBc7B9yKlr+GOdf1xWpmDCmHkT3KStPyatG2p9f+dkEjIS1Ux0H53A1bVfF2511KPUeZYieQS/1lsT99V6lHPTVuRznlkeIouwJQIXg523M71gY4jluLnYT58qFOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQ5prH05; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/3eTXpw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6931E1F00ACA
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:41:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQ5prH05"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E55B1F0155D
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 19:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783712475;
-	bh=0BS9a11S/ASQzzUnTlPyCH9spaY57RR0shSO+pm/PGw=;
+	s=k20260515; t=1783712765;
+	bh=sZDwGaUkGBLrMyNSIpb3kLYEJV1iPNS+5Pn9t9xv6aE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=G/3eTXpwb9YtyJg2IHMVyMTz8QCkrCnC84GGVHNcGfz8gz2bzW/RdHZ9KtBEYKE01
-	 5Fq7fTf5n/FyAGOL58ZNPi2j86NWC+iwLZu8ihoa3mQ+3rnbZRoAlf+gC2FX5XOHGe
-	 QWNbJ/g4K5nwOZZAN/Tq51nvX5XbxMfKIzF7l0ATnU2VyBMoEzdwVmsTeCcgarjgcz
-	 susJwHa+pdoZ+NnFfkaWgE1alMxapZ8/OFkKJ2oHJaP9LrL57jXI9Y+VWfae3mmSLl
-	 6X6p3ImmFT9Jze9S5q7qLFzmHp5zok9EKwgCKSuliH4TdjpG4PMxtsnq5wG0521gsa
-	 YLqHE7dCsofcg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aeb5829fd5so1183965e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 12:41:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq8LS0GEGgkAa+PG3UrrxYIuHzQoAicG6ZXcTTT2aCcTuUug2sDgApUuwPJ4CwKMJHvrntfcXu57pk6tc9j0Dm78w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynnq6SomY337GNFexLGGcbokAJJiAXhZLbMFOh869coG/CfJ2J
-	FcYfoQlPylZs6/Ps6l11kMV7W23E66EJLO9L5nKfBe46ZesgAQF81b5eoP/FCi+cp9y872bqU5l
-	xlKA59w58Vvd+RyyAX4kVawmauY6Vh+w=
-X-Received: by 2002:ac2:5a5d:0:b0:5b0:136c:5cb5 with SMTP id
- 2adb3069b0e04-5b0236670d9mr74091e87.20.1783712474237; Fri, 10 Jul 2026
- 12:41:14 -0700 (PDT)
+	b=eQ5prH05UmMQ5nGzy2ipeXY4lkQKyESaExDjUsgSfLeW4Exvc2X3hmxZBp+HDDnwh
+	 gy5xn0rCrTfjNjQPuHqcu0FzPQaJ1YAZQhahxV6T71deZYeziM3pxHW7W2QMq7y6oo
+	 FhrHfQwcIy8kJ5vfpHKHkPBPGkAXF61R0T/lZ2ElQ2NH5ERxyQsy7VX/rtQZXyubbl
+	 A2sLjBzEZvP7c6oEza0bh+NHkyjHOxBrmO5f6L+sHKF4PsUJlyZudG5MyYb+SAYa+Q
+	 NxdYQYovNbSqCC+VoYxV741dZW8VrYV1dSt2xDZrMn+OppxGaWxi3KV0Oc/ks13nm6
+	 ThnjUYcTxcrQg==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5aeb11c7347so1082947e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 12:46:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RplgjpkFXM4TOYvCZ/cF01oeui6Izj8EA4dgnX/Uut9dlZWr2fLwS7E+93XKBhWOI+f8BL+WAeQzxjTWB5gfmpg5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRqzQjo13BiZNP2j4GaxAtCf2TN5E6+rtF0lxz1YWeIBL2jdwX
+	26RrYnJBoSt1d2c1wJW2urSnsE+cU/5TDkjAY8f2XCUQmeoRVDRcuQ9GycOyDBNXTDRRD1I86+6
+	vwGJnfo9wMTnHNSfNrrqOLcDB7Bkf6MM=
+X-Received: by 2002:a05:6512:32cf:b0:5ae:b792:7f1e with SMTP id
+ 2adb3069b0e04-5b0236a3891mr89821e87.30.1783712764308; Fri, 10 Jul 2026
+ 12:46:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
-In-Reply-To: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
+References: <cover.1783615311.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <cover.1783615311.git.u.kleine-koenig@baylibre.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 10 Jul 2026 21:41:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn7cLCgKLf4RkBFP8yhrLs9qcteygwiAAc9sS3Amih2jQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxh6L3gr1zlgEqCXxbqPp1yls-g8dyPSgWL7AUruP9FnQEvhxSQ-OlsUYE
-Message-ID: <CAD++jLn7cLCgKLf4RkBFP8yhrLs9qcteygwiAAc9sS3Amih2jQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] Remove support for platform data from samsung keypad
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	patches@opensource.cirrus.com
+Date: Fri, 10 Jul 2026 21:45:51 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkJthrzmVCDE=BopUDMECBpMtPOpCJ9S0CKWRg--Zfz3A@mail.gmail.com>
+X-Gm-Features: AUfX_mx_vh7ziiGHTkkaiMBQb1TjjZ8vahBxzqeJira0tID9YqDdR27A_6wUme0
+Message-ID: <CAD++jLkJthrzmVCDE=BopUDMECBpMtPOpCJ9S0CKWRg--Zfz3A@mail.gmail.com>
+Subject: Re: [PATCH v3 00/23] mfd: Use named initializers for arrays of *_device_data
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Lee Jones <lee@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, mfd@lists.linux.dev, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-mediatek@lists.infradead.org, Qunqin Zhao <zhaoqunqin@loongson.cn>, 
+	linux-crypto@vger.kernel.org, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
+	Colin Foster <colin.foster@in-advantage.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Zha Qipeng <qipeng.zha@intel.com>, 
+	Thomas Richard <thomas.richard@bootlin.com>, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, Xu Yilun <yilun.xu@intel.com>, 
+	Tom Rix <trix@redhat.com>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
+	James Ogletree <jogletre@opensource.cirrus.com>, Fred Treven <fred.treven@cirrus.com>, 
+	Ben Bright <ben.bright@cirrus.com>, Support Opensource <support.opensource@diasemi.com>, 
+	Andy Shevchenko <andy@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Samuel Kayode <samkay014@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
+	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	linux@ew.tq-group.com, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Tim Harvey <tharvey@gateworks.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravanan Sekar <sravanhome@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, asahi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-rockchip@lists.infradead.org, Peter Tyser <ptyser@xes-inc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 9, 2026 at 6:53=E2=80=AFAM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Thu, Jul 9, 2026 at 6:59=E2=80=AFPM Uwe Kleine-K=C3=B6nig (The Capable H=
+ub)
+<u.kleine-koenig@baylibre.com> wrote:
 
-> This is a reworked and extended version of the series previously posted
-> to convert the Samsung keypad driver and Cragganmore 6410 board to
-> generic device properties. The first 8 patches of the original series
-> (general cleanups) have been merged into mainline, and this version
-> focuses on the remaining keypad rework and extends the board conversion.
+> The objective for this series is to prepare mfd for changing
+> of_device_id and the others to make driver_data a union, see
+> https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre=
+.com/
+> for the idea behind it.
 
-Looks good to me!
-
+The series:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
