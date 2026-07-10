@@ -1,175 +1,136 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F13FBEAA
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 09:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A8A3FAE0C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783677258; cv=none; b=Tn0B3jlblyPJWazNVFUhEkOYQ9iUUocBlgjx7YMGYWAokHKhgpHsjIJmFe/3HTzTz4ahk/hvs+XvCV6Nf7zThx43/u1gvbxD8D7pvmDPu8TJYSUGJ9e/RdNsriFGds5jJKmzUqCUh3/Jn9iyRKKC2X2px9ygGW2frEV8l6qVSw8=
+	t=1783677365; cv=none; b=BvQGOv2d5/maXfvglN3RR+4/0P44PJEHRU3wIb473HRJOoX6a5mDeNEQ/G7vxtdtuGPFkuaziDOT4c86HhU5TykzLp8R4qz2VJQcYPsQibElSir0RSOrMOSRZ+MHjrAiUAhNGtn6m9bjIn19vy4JEP4Vqj1fa6hIhOLpikRWvq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783677258; c=relaxed/simple;
-	bh=v8P2Uf45mI/biqxnOxHWfgXQmu+JaXEwT05r7bGVu80=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sX73GxiJsnaNZxT0HXFCr33WWCXcPTnAXO3hR0/ftWQm6/j9imdPdVW7pnM6hOJAykero4l2LCgIx1HKyExsUZ7QJz3NQOqwUm6m/o5qvakspRnKu8Ms2So7hTFkeZt1PDdC9KpHk07ywMzZLe8ou7nUasNUBhq0FPX5VWiXVeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ip/hqoeG; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1783677365; c=relaxed/simple;
+	bh=B3VU4yJiypPcN5IOxk0Ji0Cz6QjkMxN92TfqPAqYXcc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=sI14DY4knncROlhfKHJqOhio3GK1HVGZSpStLYQUH45/LjvtjJheQbrdHb6p0PsGZhJl+l/10Wsa/mZ6IqG+Bq6w+cQ9qnuUmlW4+J8ZiFXXLQe+6dQrEKW8kNCSFKfCG3oXrfS/zUW9qpN6eFkYVKUCGV5GhCjbkLzU/yX9SzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XxL419zM; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ip/hqoeG"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47d70879764so474294f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 02:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783677252; x=1784282052; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=v8P2Uf45mI/biqxnOxHWfgXQmu+JaXEwT05r7bGVu80=;
-        b=Ip/hqoeGAr/myjEmeIAVuqq/vHDGOW82Jij0v9V7U9rEvPVd9xIOWYyooT6BVXBmQX
-         oQtmGVl0uMY1ruyFgsmEHUkL4uUGHUyVEIfFDGOZQIlD95I00sEkYCvvLbsUVaCRcdE/
-         21l9ux9MUb0iFF5oP9hKQH6roO+9UKLSfUNsGIWQFMT0Tc948Tjponv4UABojt2vCMnC
-         gLTlIF36tLwLlPnNOmJ3i9z8rMMq3NEiQtkOpsuomare+m7yXnB+/mZ0F6cQEI72XISf
-         Mm8Wpf/L6vFfce6tR71mQY2uUfqusyRMIGEgWKU19OdDbVQgTfvp33yjhc0PQ3Zo1D9L
-         hSmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783677252; x=1784282052;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=v8P2Uf45mI/biqxnOxHWfgXQmu+JaXEwT05r7bGVu80=;
-        b=CRY77nq+YEHmAzlpCkfPq+ZUUBYAOPMSH5xHUMdDps93oHbJlZfHqNWp7L0bnqaFD/
-         s13zyXkqmOaBPyqxj3UzkPMPkYanXxSlSqRf+ZTjtPwh1MaxpWk9+m00yIeHjDDh7oyG
-         PS3IjpS2yKhi6iPkyt8PogB0jNT2POGC6OydV9sy+/OsdcxHgo0Xu/3HTMRN59jh3o2A
-         OJkUe7LmVvMg2HzoeNXIiuJehAlPjaNvhcoJOEA2aIV205I8vfcXAKTMK3CxCkoSeDb3
-         Vu3OCnsV6TPuelBfl+NTWXMX1t8zlJUgBsstLVqJQMaF8GiRoi/c7asI47GInl3wX6Ol
-         oC4g==
-X-Forwarded-Encrypted: i=1; AHgh+Rq9H8BZXAO8U5xkAc92yiPkEXMb+1B6rpw7fE3yb9zhxJd414CsObs8yv8h6eba0pLI8VElM86LyFS57EAkGaPymQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlQA8Wc0uHOotEg+Irn1f+oDgCxXlaSSfeJtlEJjMDxlATAFoC
-	WSHGOD76RLNOqqr31lZ2ETzZXUk9+Z00Y8HPkCO20VwnGjFmiX0iTkWUNVn3VWGTHXs=
-X-Gm-Gg: AfdE7cnenCyXEQDVl+bAAabH/9rqNjwVwdFkE/UQnT96pnLxBvxk4hFUW6jwH00oKdE
-	9pky67SViWhon8S54mrhm/8WISjg35D3JFUpWJ2piIv1OE6Em9CAirW/UsyR1xrEDevWCxjMLGi
-	YSV+YwIAu2P8W7EIdgcRWT7nXVRubYvZ9ZuuNtN+9J2YvMWT12yLftoSw7QwduyCbmrDB3GsmxK
-	saUR5nHs3fR2Q/yL/SBNsRtX1HVgxx4CQz6SbS2zaXH4Baa1zG0FypB9gPgjggy9/iNrbYr/B0q
-	Ubvbw5L07VNcTI3ZhtBZvRn5qgDcP6+OuAoB+Ed8QjNPW+tW8TsFUqHOJ4oCHIz58VSQdhB+fXO
-	XItRmxrQHQ0J7eBh2fwQ1K9yKS8XW+LIy44k8pZ/8UZ++tAyK1HcCS1/wqlfPFPDI3hYOVstvvQ
-	xuqFoocuI+DDWIh55kPux4TWmn
-X-Received: by 2002:a05:6000:27d4:b0:47d:f441:5f93 with SMTP id ffacd0b85a97d-47df4416019mr6854730f8f.25.1783677252374;
-        Fri, 10 Jul 2026 02:54:12 -0700 (PDT)
-Received: from [192.168.219.26] ([212.129.74.16])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47aa039ae44sm55993210f8f.23.2026.07.10.02.54.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 02:54:12 -0700 (PDT)
-Message-ID: <a4003ac352f382fa4ff329acdfa561eb06e77289.camel@linaro.org>
-Subject: Re: [RFC] Significant Random I/O Performance Regression in Linux
- Kernel 6.18 (Up to 27.7%) Likely Caused by Commit 3c7ac40d7322
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: =?UTF-8?Q?=E5=AD=99=E9=AD=81?= "(Kui Sun)" <kui.sun@unisoc.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Bart Van Assche
- <bvanassche@acm.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Avri Altman
- <avri.altman@wdc.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "\"Martin K. Petersen\""	
- <martin.petersen@oracle.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam	 <mani@kernel.org>, "kernel-team@android.com"
- <kernel-team@android.com>,  "linux-samsung-soc@vger.kernel.org"	
- <linux-samsung-soc@vger.kernel.org>, "linux-scsi@vger.kernel.org"	
- <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"	
- <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"	
- <stable@vger.kernel.org>, "linux-arm-msm@vger.kernel.org"	
- <linux-arm-msm@vger.kernel.org>, =?UTF-8?Q?=E5=BC=A0=E5=A6=82=E6=B3=89?=
- "(Rain Zhang)" <Rain.Zhang@unisoc.com>, "cixi.geng@linux.dev"
- <cixi.geng@linux.dev>,  =?UTF-8?Q?=E5=94=90=E6=9C=88=E6=9E=97?= "(Yuelin
- Tang)"	 <yuelin.tang@unisoc.com>, =?UTF-8?Q?=E9=99=88=E6=96=87=E8=B6=85?=
- "(Wenchao Chen)" <Wenchao.Chen@unisoc.com>
-Date: Fri, 10 Jul 2026 10:54:19 +0100
-In-Reply-To: <12a8417dc8644a71b9cb25c53c93805a@zeshmbx08.spreadtrum.com>
-References: <12a8417dc8644a71b9cb25c53c93805a@zeshmbx08.spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-8+build1 
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XxL419zM"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260710095559epoutp014dad9dde4dbeba92e892ee796e0f5001~A5Ruy7UWg1295612956epoutp01w
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 09:55:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260710095559epoutp014dad9dde4dbeba92e892ee796e0f5001~A5Ruy7UWg1295612956epoutp01w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1783677359;
+	bh=8vAKTnmdmvmDA1Ji9vn6HcRCE7MwnlpFhJBq71EW0FY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=XxL419zMc9u7ltGjbVEM2cBn1NvUNjNB3ocsZk2M73L7wixtQhd2OaEmGRhb1Mwq6
+	 eukaAtTV0oohx7p5a5Ory9sX3M59g3e8i8bDF0H3CVBS84oV9xst0a3543vHqdRILE
+	 9dE9MXXKlqtdVZPbqsk3L8Jlzyoaead1OkQ2V0E0=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260710095558epcas5p21f700629a4fd59103c125552625cb9d1~A5RuO9rFU2279422794epcas5p24;
+	Fri, 10 Jul 2026 09:55:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4gxRzd6cFjz6B9m8; Fri, 10 Jul
+	2026 09:55:57 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260710095557epcas5p3d8f4859aa37f6b868f937233f72ad4a9~A5Rs2Pu851894318943epcas5p3C;
+	Fri, 10 Jul 2026 09:55:57 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260710095556epsmtip1449243a9c0c08a8f924b7b1eded2af93~A5Rrgdz121520515205epsmtip1P;
+	Fri, 10 Jul 2026 09:55:55 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>
+Cc: <krzk@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+	<linusw@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <hajun.sung@samsung.com>
+In-Reply-To: <CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
+Subject: RE: [PATCH v3 5/6] arm64: dts: exynos: add initial support for
+ Samsung Exynos8855 smdk
+Date: Fri, 10 Jul 2026 15:25:54 +0530
+Message-ID: <14cf01dd1052$4de88670$e9b99350$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQCQM7wiCxtRwyhZTDec7lkhalOHFwIex+rgAd5cQHMByjDVPrjSAgjg
+Content-Language: en-us
+X-CMS-MailID: 20260710095557epcas5p3d8f4859aa37f6b868f937233f72ad4a9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e
+References: <CGME20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e@epcas5p4.samsung.com>
+	<20260627171228.2687857-1-alim.akhtar@samsung.com>
+	<20260627171228.2687857-6-alim.akhtar@samsung.com>
+	<CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
 
-Hi,
 
-On Fri, 2026-07-10 at 07:17 +0000, =E5=AD=99=E9=AD=81 (Kui Sun) wrote:
-> Dear Kernel Maintainers,
+
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Thursday, July 9, 2026 7:20 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: krzk=40kernel.org; robh=40kernel.org; conor+dt=40kernel.org;
+> linusw=40kernel.org; linux-samsung-soc=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> gpio=40vger.kernel.org; hajun.sung=40samsung.com
+> Subject: Re: =5BPATCH v3 5/6=5D arm64: dts: exynos: add initial support f=
+or Samsung
+> Exynos8855 smdk
 >=20
-> During our upgrade from Linux kernel 5.15 to Linux kernel 6.18, we observ=
-ed a significant performance regression in random I/O
-> workloads=E2=80=94with a maximum degradation of 27.7%.
-
-[...]
-
-> This issue is particularly pronounced in single-threaded, small-block I/O=
- scenarios=E3=80=82
+> On Sat, 27 Jun 2026 at 17:54, Alim Akhtar <alim.akhtar=40samsung.com> wro=
+te:
+> >
+> > Add initial devicetree support for Samsung smdk board using
+> > Exynos8855 SoC.
+> > This SoC has Octa-core CPU with tri cluster architecture, a custom GPU
+> > and a NPU supporting up to 14.7 TOPS apart from other supporting
+> > peripheral and IPs.
+> >
+> > Commercially this SoC is also known as Exynos1580 =5B1=5D
+> >
+> > =5B1=5D
+> > https://semiconductor.samsung.com/processor/mobile-processor/exynos-15
+> > 80/
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           =7C   1 +
+> >  .../boot/dts/exynos/exynos8855-pinctrl.dtsi   =7C 574 ++++++++++++++++=
+++
+> >  .../arm64/boot/dts/exynos/exynos8855-smdk.dts =7C  32 +
+> >  arch/arm64/boot/dts/exynos/exynos8855.dtsi    =7C 204 +++++++
+> >  4 files changed, 811 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> > +       =7D;
+=5Bsnip=5D
+> > +
+> > +       oscclk: clock-oscclk =7B
+> > +               compatible =3D =22fixed-clock=22;
+> > +               clock-output-names =3D =22oscclk=22;
+> > +               =23clock-cells =3D <0>;
+> > +       =7D;
 >=20
-> To illustrate the impact, we conducted benchmark tests using AnTuTu on Un=
-isoc T615 devices.
-> The results are summarized below:
-
-[...]
-
-
-> Root Cause Identification
+> Small nit, but I believe oscclk node should be ordered alpha-numerically =
+by the
+> node name. See https://docs.kernel.org/devicetree/bindings/dts-coding-
+> style.html
 >=20
-> Through investigation, we identified that upstream commit 3c7ac40d732232f=
-ec0ba31d0a5e3cc9c112fc2e7, merged in April 2025, is likely
-> responsible for this performance drop.
-> After locally reverting this commit on kernel 6.18, performance fully rec=
-overed:
->=20
-> Table 4=EF=BC=9AMixed Random Read/Write Speed Scores=EF=BC=88After Revert=
-=EF=BC=89
-> Device=C2=A0 Kernel Version=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Test1=C2=A0=C2=A0=
- Test2=C2=A0=C2=A0 Test3=C2=A0=C2=A0 Average
-> T615=C2=A0=C2=A0=C2=A0 5.15=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 18604=C2=A0=C2=A0 18314=C2=A0=C2=A0 17732=C2=A0=C2=A0 18216=
-.67
-> T615=C2=A0=C2=A0=C2=A0 6.18=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 13372=C2=A0=C2=A0 13081=C2=A0=C2=
-=A0 13081=C2=A0=C2=A0 13178.00=EF=BC=88=E2=86=9327.66%=EF=BC=89
-> T615=C2=A0=C2=A0=C2=A0 6.18=EF=BC=88reverted 3c7ac40)=C2=A0 18314=C2=A0=
-=C2=A0 18604=C2=A0=C2=A0 18604=C2=A0=C2=A0 18507.33
+Thanks, will update in v4=20
+
+> Peter
 >=20
 
-Thank you for your above analysis. Your numbers match up well with my own
-observations at the time in
-https://lore.kernel.org/all/88d31a258feb36425ad73d0323077972f85f8341.camel@=
-linaro.org/
-
-[...]
-
-> Request and Recommendations
->=20
-> Given the tangible impact on mobile user experience, we kindly request th=
-e community to:
-> 1.=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Consider reverting commit 3c7ac40d732232=
-fec0ba31d0a5e3cc9c112fc2e7, or
-> 2.=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Re-evaluate the proposed change in light=
- of its effect on low-concurrency I/O paths, as discussed here:
-> https://lore.kernel.org/lkml/88d31a258feb36425ad73d0323077972f85f8341.cam=
-el@linaro.org/
-
-While originally I was trying to find a solution that doesn't regress exist=
-ing
-platforms and still works for the newly added platform, I can only second t=
-he request
-for revert, given how important UFS is for mobile.
-
-Mani was also in favour of reverting:
-https://lore.kernel.org/all/4enen7mopxtx4ijl5qyrd2gnxvv3kygtlnhxpr64egckpvk=
-ja4@hjli25ndhxwc/
-
-
-Cheers,
-Andre'
