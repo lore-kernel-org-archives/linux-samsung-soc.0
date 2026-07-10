@@ -1,79 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6594195D2;
-	Thu,  9 Jul 2026 17:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827523603D7;
+	Fri, 10 Jul 2026 04:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783619802; cv=none; b=cP8r1IaeO3A1kip64+CtLlaxysMW9M2dQ1ouuqU9lDx0S/RwfHsKZP/L4mabrFxRvX0tJdkK4Aq2BPsSiCvDP7OlnXP+BpkanHCoNzDmLjlr9yc6fouPfKx734KHyz5cI4lC2rNNq0V6I8NszgFe0OKBPTvhimTGey0DWDbwT0I=
+	t=1783658711; cv=none; b=qLaHSescImnv3jxRf958iP5majo3qpNpyCANOdcQPZfqgL3qGuUxswf93S3+XVvUWpfvNvZ66h/NFzFHPsMyR/RUxH2IXtt1la9jjZH130fnpjQkoEvifs2Re5pLQafvWt6jBJoi67cUQs3pqxBK+ZYe7Ya+BcK6fiRkiZoZBWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783619802; c=relaxed/simple;
-	bh=kRNaGdAzO65KDiiRZApRLTAEg00VP2mKB0qAOtVoKqA=;
+	s=arc-20240116; t=1783658711; c=relaxed/simple;
+	bh=FwC4nxcw77Dy9Pw4BgEh1WKzMzw00KasgsFTwsY3DRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sK5ha/nulPwkXIqmILbFjR3sNKHX9zAmU1XweWMb65x24ZFuikBofE5Ty2tgRwJsNH8wjvDkomZ0DeQFqvI2wvjTG3oH0+wRfu9HRqhoJCAdLuhhfA/Em3diZlRz+N0WrfAHGgDBeOvCLGUS8bP/aPFe2fNyMvsLGuw/6phWy/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axNtc6LO; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUUnEWYa8HS1WKHfBC6b8VCmwOed5EoN1HeTJo4L3eb8wwO9xh1Q9dpjZfgyYEwcSO/krKyAs/HbvWLqJ1mlzIo3qfUH3bC9zWX1In/nb9Uw3/WCwlRfL6C4/SS78R/ENNQ68smxpg1rS21Df5Q9WFv9YHgDXnY01MbdOcqBnoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atomide.com; spf=pass smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=CTaihVTY; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axNtc6LO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D671F000E9;
-	Thu,  9 Jul 2026 17:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783619801;
-	bh=kRNaGdAzO65KDiiRZApRLTAEg00VP2mKB0qAOtVoKqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=axNtc6LOOBmyBlnBWUE9U9vekFWNnBt9PdSaYchoHJcik99QPBwU8bS3ByRopgCSs
-	 53Etzm5KZeWG3QAMuBruIEdNHSVtoN8hYLuggDGdNcUa2Q0Bqw261XG67Hu9d0VSwO
-	 LvanHDh/ZyUDeHHLW9Mv7WIQCplnf2daiknOyWstgJewxlUgPJHT6aEVl9bwF57J3H
-	 cXpDGivmGMbS4jT3PXDA5KDCHBhfXBXiZu77UVkkw3yWWua15kj2nCVoIfJOwM/9JP
-	 XAamfoj1NaqAdqVq8w/lDNzHnWg7Vv5sOkMnau93YFBZ7VLlJwCdN0dj0cLNxaHCqC
-	 vTvOpuek9KZaw==
-Date: Thu, 9 Jul 2026 18:56:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="CTaihVTY"
+Received: from localhost (84-231-250-126.elisa-mobile.fi [84.231.250.126])
+	by mail5.25mail.st (Postfix) with ESMTPSA id C8E32617B5;
+	Fri, 10 Jul 2026 04:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atomide.com;
+	s=25mailst; t=1783658352;
+	bh=jp+8+5QI95ophkzdeX5PhLSIZp16xbFMwu4QDRkzOEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CTaihVTY3xKeYwYurPIj1PGrGR+oQrwQf6TQ4FUpfmbKGRQQH/0vBl8OOK/WUw/zr
+	 +CHCGjc9WZ0h+gMjDXgKIuG0sfG5b8v/fURlsq3junjLdDh4yjLeo/E3mnyZF5ILb5
+	 0L9YsyLyaxt3ROVT6g7hv2fvRb3jKJLKIJ+xGvLZkROMhpsQ6xMpDQn/A0jBZLmU4Z
+	 ZO8Iro9rshL2Y66OWXG4Ngkys+C/yPaKUbK202WNo4t9V08TAI3OILwZ+ejHZzDyNG
+	 eSqlieskQg4bhu+Sw3PZD6vdc9fq9daM5LBBKO5PSTb9Angg33oCQkJipqydJDwaNj
+	 eyyRZriX8WpVQ==
+Date: Fri, 10 Jul 2026 07:37:46 +0300
+From: Tony Lindgren <tony@atomide.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Praveen Talari <praveen.talari@oss.qualcomm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Peter Korsgaard <jacmet@sunsite.dk>,
+	Michal Simek <michal.simek@amd.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
 	Russell King <linux@armlinux.org.uk>,
-	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	bjorn.andersson@oss.qualcomm.com,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 01/11] dt-bindings: input: samsung,s3c6410-keypad:
- introduce compact binding
-Message-ID: <20260709-unmoving-tarmac-7b2a4c919fc9@spud>
-References: <20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com>
- <20260708-samsung-kp-v2-1-3c6ed4c9b3b6@gmail.com>
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-omap@vger.kernel.org, linux-mips@vger.kernel.org,
+	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+	aniket.randive@oss.qualcomm.com,
+	chandana.chiluveru@oss.qualcomm.com
+Subject: Re: [PATCH 0/6] tty: serial: propagate errors from uart_ops.pm
+ callback
+Message-ID: <20260710043746.GM30058@atomide.com>
+References: <20260709-add_return_check_for_uart_change_pm-v1-0-e85c6ffa8ec4@oss.qualcomm.com>
+ <ak9OPNcVAhkfxHvZ@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+hEnRWUEffYSYq9t"
-Content-Disposition: inline
-In-Reply-To: <20260708-samsung-kp-v2-1-3c6ed4c9b3b6@gmail.com>
-
---+hEnRWUEffYSYq9t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ak9OPNcVAhkfxHvZ@ashevche-desk.local>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+* Andy Shevchenko <andriy.shevchenko@linux.intel.com> [260709 10:38]:
+> Just no, please just properly implement runtime PM. The .pm() must die completely.
+> I used to have the PoC for that long time ago [1], but due to lack of time and
+> other priorities it went abandoned. Also Atlassian made a brain damages move to
+> limit repository to 1Gb, so I haven't able to update it for a few years.
+> 
+> Note, that Tony (you have him in the Cc list) did a lot for some corner cases
+> with that and we still have them IIRC. Tony, do you know what is the state of
+> affairs with runtime PM for UART?
 
---+hEnRWUEffYSYq9t
-Content-Type: application/pgp-signature; name=signature.asc
+The RX side of things should work for hardware that can wake up to an incoming
+event. Linux for sure needs more work to properly handle the various corner case
+TX wake-up of a PM runtime idled UART. I'm mostly offline until Monday though,
+will check my notes for more details next week.
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCak/g0wAKCRB4tDGHoIJi
-0jsHAQCJcgPlMZuvdGNMPI7lSKXrzapHabhemAMKR+FtfbcAZQD/RZzL++UNHLy0
-dU/d8/UC/L4AAP2H3So4Ft+2ivIaFgA=
-=eiJ3
------END PGP SIGNATURE-----
+Tony
 
---+hEnRWUEffYSYq9t--
+> [1]: https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm-plus
