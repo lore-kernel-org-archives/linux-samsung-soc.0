@@ -1,108 +1,114 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDC225B0B8
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 04:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1568C357CE6
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 07:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783745379; cv=none; b=FpnA1uhBSh72U0EvbAiuuEXEGbwjfiMgIPTcYv2meHG/W0BvLdr3/2471JFSS3RDb0oGyFPfBVPW9ilce30L6BSaJGZdCJroCNXDD34k3BsppnIyf8Bq5HA5HoKxSplS8a7fLPnD6pTNHgHmjX/h/tOE1B6fhN2LJnd5g/3/CIE=
+	t=1783755268; cv=none; b=blJ1q4JtwuhVYpGWu48KH15WW4zF5HYJNMlOBo8xFNkIQwYH4pPJtM4dTGdnVEWJl1c8Fm4Ta0G9owntyoUaI8SUag/A+L3Fd1bTDAHsyq4ih2dvTqDgLiVDir22Wo0xurwVPs2rKzORc17OAO501QyTfy2MyDfxgViq0tlxb64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783745379; c=relaxed/simple;
-	bh=S7g5HdrobVHgSI3y7yFITx6ZdgODEA0xXX0TnH33v6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SKo/vA+6WTstE+vnzUghLcHTXcTXYPCwwhPESQfaHLcPen3oPqXkgxENGG2qu+1Vmncv1lT3rOYUltgW7PEJBuH627upHnWElzaiC1hkE6xPhMPEeemXh3hytACfwoIFsIoLiCH2BPuBLV2KZb53nvnOG3DtHtv7KcIsompaZ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrUunfIs; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1783755268; c=relaxed/simple;
+	bh=gUnPJvqa+6hCH/9HCtTO8STc6X6BWHZ70c5H6AKWsOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tYrLNKk/T4z785UMJLC/Idu5DHXo/5GlML9FO3vW7bbL0wjY3/k0M/ucM2Q/JhVkF15nIwcHvHQSbDzBOJbLgJChitjXILJ5X+JBJWNkB+rVTZz+AdRho7jLtwa12EUuUGMGqI4vDaYA22sXEyFWuQffgV9trJ0KzvsLenrSCtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVUYdWB3; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrUunfIs"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2cc61541f8cso33046945ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jul 2026 21:49:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVUYdWB3"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39c9452243cso15134561fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 00:34:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783745377; x=1784350177; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=qesMdHKmyxw3NJ4a67qnIHpz73OEBeBHn6uWkzO1uyM=;
-        b=WrUunfIsErXFnQOhWCnUXZ7TKyOqI8TaNmxv25pZRtai9YvHHJ6dlC29g3qtOv+vRE
-         xYGb5fhsMMmG+7vkZUZWHTJrvL8kinbikFiRoVPLvRke4dZUuCv6kQy49n5hwBvqeAqk
-         xhvFXMk5+PlucjVTUu/1Pu+FLP1RNmVxnd7flmwuS/1jWdtuSE6HgVyff+UYnMkYZU+i
-         WKs/DPjTZ9fvAifwp0iUhJX/P1HqglKBU2GvRdGjc3RYGJV1ljbf3KUJ6sjsWI8eM1aC
-         hyGezqIdlIEcKo4FcZkkfuig2XwLgIQsIOl/Jt/fuqNsfwuLe67ocz3RFcljSVK89Ybx
-         DyZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783745377; x=1784350177;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1783755265; x=1784360065; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=qesMdHKmyxw3NJ4a67qnIHpz73OEBeBHn6uWkzO1uyM=;
-        b=L7Oo8RAVjViYRXD/K/6GRP07LRHbkRCkd8PF3Khg2hzWyY5F8c1ImTD8KhOHOKJ3iU
-         SJ8uvIgMjh1w5hbi2EypKnLiZF9LsgSZn0IrUrTSsrps0Ap6yw41M0KUJAGmMtXnphBe
-         HMc3xCHzTujTIUtTiF39byaQXMR1Gew/weIzDHTYU8H3YdHegzJg+f/KH1erNmUuct69
-         XmR/mLgwywnw0ZNh43sGaImBSSRGCEsmpZYmuR4D0BMnRk3dv2qSlBrOiZwydNTF0uiG
-         U3bDmaStrrGnhiS5dQEnPh0S5GciFbGewfelk1pk3WaTg0XMNBcmaCfZVASHfr1zhFWH
-         qG0g==
-X-Forwarded-Encrypted: i=1; AHgh+RpR2+3guDOSM/h+oZ8Y2i5dM6bEutaVgDvg/Pc5Y/ssTTt95bCBULQK2e3DtfWbaS97s/h8/UN9yTVDe1XiVhnTww==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh8XnaBt2U/mCpPHKkE+8Qw48er67yVHcy7NTXozn/nZzGPdD/
-	yEWasu+DD1EeErnYfNqnPXG2wR31ZVCH6bqIWaQRxcZEJo2MLhfTuUU1
-X-Gm-Gg: AfdE7ck5K1d6+NeAfo0Ve5EpptKrJ80JODru/HJV0LjOoFF+fhQUwnSz92f0LFn/qWd
-	6LxmUE2apnpRtMg5B1jPNFulGUtq8Y7TM321YfqlC3XKa/FOuEMaE9OVkQA2Zk7NYkmw9JAguSp
-	mpsGC9O+mqY6UQhgkW8PBYx9wNF+m568AbNGiFuvy2L4Z1fS/46lmPPHliPglgaQ56kwl0BY+N/
-	Jxrcxe/SAOK87NVO0zAN4cv9702ZoI7vTjIoqQMQD1FHiWU0ld1kKT8TntPfbE5wxjEtZ30L3b1
-	vYLWRyTnNq8zzs+ic0xGXpJbaj9G3YapESdPIk5a9w7PMw26QfroB/re5bb5ZyUu8MKgxIHFb+3
-	BoU0xwilhFqMgklmGPIXtc3YASHt36twEsfelVhm9+Uj4CGzO8Fyz+PmAIe1T1Fll5kdPD4D1P8
-	Ss0idEgQ6dvrVYPiz8gyBjykjgT/CELKY6oJM474ytzDAM1usxbXv9ew==
-X-Received: by 2002:a05:6a20:734f:b0:3bf:6763:f0d0 with SMTP id adf61e73a8af0-3c0f085657fmr7458822637.4.1783745377459;
-        Fri, 10 Jul 2026 21:49:37 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:d42f:71b6:335c:aceb])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311a6115e61sm25970082eec.22.2026.07.10.21.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 21:49:36 -0700 (PDT)
-Date: Fri, 10 Jul 2026 21:49:31 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Frank Li <Frank.Li@nxp.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Greg Ungerer <gerg@linux-m68k.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Hauke Mehrtens <hauke@hauke-m.de>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Dominik Brodowski <linux@dominikbrodowski.net>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-phy@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v2 09/10] Input: matrix_keyboard - replace linux/gpio.h
- inclusion
-Message-ID: <alHLK4O77khiKwtW@google.com>
-References: <20260710211954.1373336-1-arnd@kernel.org>
- <20260710211954.1373336-10-arnd@kernel.org>
+        bh=aBafLctpeA1AoyzErbEa9EGgxzwRbfKFWoPKc6c7bv4=;
+        b=AVUYdWB3WfvWD9/jCidP0U7zRkAI7QnX4kmNcHjB6Nosq4CWaZlW0hNhy2LM6kgpWe
+         TWeOEWd21tnxJAl6DPVycHqgm9166I3BafNhzXVO9hS6LEulcv+AlPncKAl7GvVrR03Q
+         iCvt2f7qMPGyswDv6RE6LdZAC8T7nBCACNeECjWvasy2/IQ6mcUH99GfG+odlxT5vxDc
+         faI4NAbgRuPvGxueHmF2X4sAqU7TBPz2sj2hy41Y3HsZaAYU2w0jJYHYvY8gACqUio0A
+         PKN2hjadzNTtEb4X+/A4fXYRXB4crD0SpHGqL5UMuZ2Is9WMaTouNVWbOrjTDz6nyty1
+         dqQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783755265; x=1784360065;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=aBafLctpeA1AoyzErbEa9EGgxzwRbfKFWoPKc6c7bv4=;
+        b=aPULrWv5WBrrss5xZJbW7bsu1plNkyRo0+SqWfqtqhEXnvW96B+stQ2o2hpW5BOvGj
+         Ierv4RECfchBi/pyZA2TG50HyGNbZ+6PgczoCaMw0x6p8r8Un0jflMXrvrP3DvA1bqJE
+         1oHSkFPrw9/UtgNYTgiwTeT3GmG8u/a+PFhL04eiLTPhQO8wXdAxF3Jek8SQN6jhLeRs
+         Aa92hL488fw20w+qC3s2sZZU61X7ypcfDAXtPdK2GaOzKjuIv1SU5ab6vpETrhQINcxz
+         FGCX1l9ZJ8pQIcmqm0OX4UmNFTvKOIEukHXM66vQqy1O8oFQRjmYhO0MBf6SjIv0Jpmw
+         ifRw==
+X-Forwarded-Encrypted: i=1; AHgh+RrCNPD3UX/Z4AIpgQJxH2locK9+eh/s7iSadK9JfBzDRiPYRdG1zsGslIYKHsVSSlQLhHjMhQHPChwcY9/iNHSxbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHeF2i4MxksR1wY8LefN8F5VIcEC60qnpPRmb54MBv8khv/tdz
+	3SiaN7BmVKzpKAj6ZVzw69c+RZNA/4VmkHUYCNvPx5aUeJn9j18PF0YE
+X-Gm-Gg: AfdE7ck2glNKGL8lH5eCPpA03ksuhrHEu3+3/AQn4UabfRKJPD/VqFEz1Fxn2fMA8C0
+	CwNHJMqOxHFKEhPevUzgkOtXRC6GZVBhmIiOzQXDIxwDbIpn50SDo6hljNvL884PRY+yft45/Jb
+	4AJATsVPCto/gcet4SNaqPofA7qnveoQWNQh4TZeV7acFHx7PAR2S6HgmXNXh1L+4NAjCkunpNT
+	5cNWFr1N7AeMD4RBPr90ALPwiwmE7frI7OFl60gdBJcYMgfSOKbk6+22v+RTyACl75ZBArsRbif
+	aCczAdCSnyx2XA3QaNAoPevW7hMFjfvCDgp+5o2CJeUuj+xDi+UtNuwH/RnTPSkjCbEh98w1OIh
+	+rGZfA9cUMWYeoCGaBQNlpsRuAofvvuGKAWAM7ywhLQy6l/VoeXbfo38huc7IO921TyWEsWqG15
+	5dsk9rHnJxw8lDUiZr6yiWl2cELbEcRavbN4hIQpOy6hX0ryB4zs9hZvpEAcWdJlA9ELn7xA==
+X-Received: by 2002:a05:6512:3f8:b0:5ae:bf45:e3be with SMTP id 2adb3069b0e04-5b0236689cdmr321070e87.21.1783755264967;
+        Sat, 11 Jul 2026 00:34:24 -0700 (PDT)
+Received: from ?IPV6:2a00:1fa0:4322:18e2:4e2b:60a6:4ce2:33fb? ([2a00:1fa0:4322:18e2:4e2b:60a6:4ce2:33fb])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b01ca9dd41sm1117527e87.48.2026.07.11.00.34.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Jul 2026 00:34:23 -0700 (PDT)
+Message-ID: <de1d491e-159e-41c2-b145-4d09db091031@gmail.com>
+Date: Sat, 11 Jul 2026 10:34:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260710211954.1373336-10-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/10] ASoC: replace linux/gpio.h inclusions
+To: Arnd Bergmann <arnd@kernel.org>, linux-gpio@vger.kernel.org,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>, Frank Li <Frank.Li@nxp.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Greg Ungerer <gerg@linux-m68k.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, Yoshinori Sato <ysato@users.sourceforge.jp>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Dominik Brodowski <linux@dominikbrodowski.net>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-phy@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+References: <20260710211954.1373336-1-arnd@kernel.org>
+ <20260710211954.1373336-7-arnd@kernel.org>
+Content-Language: en-US
+From: Sergey Shtylyov <sergei.shtylyov@gmail.com>
+In-Reply-To: <20260710211954.1373336-7-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 10, 2026 at 11:19:54PM +0200, Arnd Bergmann wrote:
+On 7/11/26 12:19 AM, Arnd Bergmann wrote:
+
 > From: Arnd Bergmann <arnd@arndb.de>
 > 
-> linux/gpio.h is going away, so remove that since the driver already
-> includes linux/gpio/consumer.h.
+> linux/gpio.h is going away,s o use linux/gpio/consumer.h instead.
+
+   s/s o/ so/?
+
 > 
 > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>[...]
 
-Adjusted the subject (s/replace/remove) and applied, thank you.
+MBR, Sergey
 
-Thanks.
-
--- 
-Dmitry
