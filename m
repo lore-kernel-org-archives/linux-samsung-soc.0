@@ -1,69 +1,69 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24C7367B7E
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jul 2026 02:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EA3367B6D
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jul 2026 02:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783822393; cv=none; b=Dwk2zwt2mqSd0K/VdaL7xGit6e/Sbyb+IjG11lmdy4WAeajeMGL0N1avdtLChJm3krSSdc2l8cO4IIwn+SbjC5Nxaz0iOLwoJLHnOM3j7+bsCRFmDByupVEJRiNIy+LKT5n04ubmEmchOZBePTmWyjS4MU0Q+BVcHrF3BHreba8=
+	t=1783822395; cv=none; b=OuP3Ju+Yb4rZV80nqHgWvh4QbHQ3maixx5q4cihyAiH7ddIK6agkadBCYqDGQLd7x3eCAU51mzXfI4mJePSjsm3sLJsgWSnPn2Q3wCq8IB6pSYxxLaBFZq7aXyGlYaVoWzzZgQyIsI2L1QQmp3JubjrNmkhTOgj0rPwrU5ulC1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783822393; c=relaxed/simple;
-	bh=o14WWo5qJFt+cooxn41hVY96/Zqncd1xZ05HOGgFc/U=;
+	s=arc-20240116; t=1783822395; c=relaxed/simple;
+	bh=eq12R7NB8g3dejJk3OC3R9HbUZCictTcSDAGjAXeTbg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fjO4mASOhaVyN9TMWzuLLmDXpEn6B7zg9gaczUAGpqK0TNqApxArMUZqlTTE0iz/0LoLhSdAs3vkRH1eV8X+z8KdxOVEcdRK90geRoeqyuvbh4hh+VYqtD42OUKNRd/6F/fslomoK5KnXI76IaRtLvVTGdyPB/eiNhQK+1XBvKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOoMgTjw; arc=none smtp.client-ip=209.85.215.174
+	 In-Reply-To:To:Cc; b=nfv+VTWHwnjVS3vVUXQFLi56lPrHgYvujTMmXWgOh1CBT4r5PMg2e0Y6bD0XffLrF8up2Gtd5+j+3oVj78USL6tsTpzwYGMzYaMmmFvTE0751KqGrnUbkkYpR/TkoVtlUAImfijsTZI2JjrZ5JYI83nV/vSFPGFAT6cmnRkp9J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnymHQC1; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOoMgTjw"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c981c2c37cbso1252668a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 19:13:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnymHQC1"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3810c5d691bso1742443a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 19:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783822391; x=1784427191; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783822393; x=1784427193; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=5FHjUZQYADUT6bCIy3JjzfiUR27NaQqxGvamZew7Xmw=;
-        b=dOoMgTjw10WINSyMQDQpScfZNUm791DTIb1xvcHd1+Rx0zvGrG70Y6Zknmbo5TTcTl
-         APkHatjg8/aoOYScAueBIBLoW7h4EYz9C+drZnspf3D42G4suXqoWziOrO5iNYhs6GvG
-         +qF8BTnlvt3Au+K4bCLhmF+2PFszbX2IQHs1m9X78FRudn5B91QhIacq5i+sMZktUcs8
-         UpqxZeiXf3bd30rfR8iBXtBg+WVIYOkU2r/ZjTMDnOzfrnYo9lYVMsS3b9mu+nSDiAkt
-         nhGUqWEEAghrhNnKCtAEarcOpf5jbYRymKYcBN/JYcNPnwdBwZJZ2mK/O1zNGQkcRot7
-         vj6A==
+        bh=qnUG3JskAqM/JfRrK06JJsIVlYwHJ11zw3wV0jbg0eU=;
+        b=VnymHQC1/GvrV99w5LqAdZD7lX1dTHrXdJ7A2gPFkzJUo0ZKkH0qlDJyZsejLt0fmN
+         QqekvZLdlAJywHierQWTZ16XxJhA7WC/yzaiCt/FrS2J3O1PIScSatfzDgDhTg8R/wEt
+         87XFGFmSlL35BrfT5GiAr62pnK+ImiPno8JEU1KsFu0xcoxE2DsKsLVEo+L15wh424nD
+         ZwRXoBVM343Jb8UVngyhfCHvQ4Eap8CQj1u7wHYd/gHU+eZxEZh4aVvSlY35E9KLtEbD
+         jYRm7dybVQQXq6qmLQQbDmeoWqe/2YrmdFgx/aqclHqElSLurn+LXC20UualzWL5ecih
+         z9eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783822391; x=1784427191;
+        d=1e100.net; s=20251104; t=1783822393; x=1784427193;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5FHjUZQYADUT6bCIy3JjzfiUR27NaQqxGvamZew7Xmw=;
-        b=tWeVAx2RQdEd9UpFTyJbo+OXifsxxXIgOoU3PK8aAXGOXJjF6mDnF1DcqPUuCF9PoN
-         pQlvReG2zYfEr+fQ47c1yp4SfzNzvLhjOwDhhSFmd1+RsSi0K0n0BWWFcUEW4dmF5imt
-         2+fDIwkkZmIfJSDEFJ2lbXb2KCARWyiPqrY9zXO6sNqMDbR5OWDo2Kwo07Y9hnQt/q1L
-         vf+koTZvHCE6VaZ4EUouuzV9tW/Z5yAdt6SW/TeArXhLiySsSOiGKh4lW48zrVdV0kYo
-         xEZoWSNJ2cZ5bSwBZ0xQqSlEescmy6t7S84mPziYXhE3I3fGkeSjK3ppAssThYv0bcgb
-         POJw==
-X-Forwarded-Encrypted: i=1; AHgh+Rrf2hCqVVZI+ainh2DYxNlu5HVckhwX4hyDtIIbhHmrYq0zxZpqMrbw59VXL2upkELynzNZSTGSzEqVBoZp484fRQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBSajSPkeGdGiP7tHml0ZyExCetT5nLhkFLmVDPKRLmv+dJ5b4
-	D9DDPIxHaodzLggbO+11i7IgvPwf54v4ZqPafqDPy9vZXQULSiRX2mOp
-X-Gm-Gg: AfdE7ckqGYGfWSv1x2VwHeFm2iiH7nwSvrKyZwEjZpnt6IFuuZBm5iEuImVRex7JwSk
-	Zli4WRHh4kWBa260bzRH8wd601Yxb6A+Fd1TnXYNkSPc4YTYSr7Ix+LHpn87jC1cou1xEAgapsD
-	95ZT2Rje2CWQcBzMZdnhkwpookYMAfxgAWTQMgd5HnhCKZIdpF6xjBj4hCjssciPaFOoih2YdrZ
-	KRdETkih8MNSy8069DJW3rNhlFc/2eak2F+ugvLSJs4tokNMGDJ4XLuB0COSqJdyu5x/WlBVUFq
-	haYHSmvlSH8OX4dV78vgqZnsEHcveoGQ9SESdp80I/BWgC9bjqepfKOupTmEPgAQ/IWnHcIcGm+
-	XT5ZL6AjirUrH2CVTA8QbyyQUmdABpkWMgjWgqBJPZCFlGOG6ohkHxrT9RJ2VOO3ylHIlqwlkh7
-	qCOWULRIQQ0UqwlNNk8Nkcwq4oXeCwQLawth/dqbWURx9wf35Whz+HHgph5TUmip5wZbvhWQAaL
-	TI=
-X-Received: by 2002:a05:6300:2290:b0:3b5:4fff:fa0f with SMTP id adf61e73a8af0-3c1109ecda0mr4245973637.14.1783822391326;
-        Sat, 11 Jul 2026 19:13:11 -0700 (PDT)
+        bh=qnUG3JskAqM/JfRrK06JJsIVlYwHJ11zw3wV0jbg0eU=;
+        b=hB471B+kgWmHgp5ijDNzR1LFacA+Gp2zf3wqrMqV3vaF9H1O2gnE/GogzMxLlitZy0
+         UOMFrIRkElByZRo5/9k2prsSesoCI5VeOfeVDroW0I0qqqf8RqvWMhMGVcC2RCpgP30T
+         tb+BIgeUj1P0AKnPtGbKRiPf88ZzrKJzwqZUbAsRaIdzi2a5f9GzT/USB8SETIJXH0ob
+         IWY3HquGoY4bxdcLOV32GuFpuLtumRhxRLkmTU1LpF5UaVeYQDNC9CjUh30Mj4AoCyrX
+         5U10FcFJEzxrqXQ686yS1jo/d1DEW/YtodJyWw05P831SvkuLqp5J1k3Nxs1wKp55ZA+
+         C5CA==
+X-Forwarded-Encrypted: i=1; AHgh+RobUrDYeDDdRozZjPMJzYswNIMThGS6st2WJXynYxgAw+FnkK8Y3+yXF0CI66V0lIQO55iNv5ow6uMBr/n3DwllFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeafTXgQ79tNSro2pKMMrhk6RJIItMiKSPOg9oz0YgAp2qD8wE
+	NH4L54q+rcounU3QD+oTiKvZST8sFBR2Urgr0H0vuXIrq8jkXot5FEzR
+X-Gm-Gg: AfdE7cm7S4J99YdPeRZ8wFg8iJpgWEWsPKxty6G+ejBDMtE3rVt4OFPBrAsH8WvfL5T
+	W0zIWIqdgCyS7SQS5VvWYt26S1iWb/stnMJ+aGlU3xbENRol4l16Mpqqyc6y9b2UQPSYbp779Jd
+	TwR/jc5nQtL/QG9tIVmDWfW1rLJG51SJDKW7taDA+vswV3NDj4tsUndGP4sH9YqnynnzPFD5ejb
+	7K3pCzF+g/FZj0PfOfkFJsv05vIAyvtEH6r7xP4AVNpoleQvgDeSTUGLiDwISmGymd2Xg0i/trN
+	jcQe9odSoueZbDdYNxCvL15fgstoRxVKkwMii7jk2ehP+e2gkJSPBxo4oFFWKe+NTlTA0GhCoTH
+	0WSKcTkxguJl99Keg4XCsLubAf8ExuwjPyAoJuvDj3c+0n5ywUJtTAE3myUacu1mY9vp+jUsNWG
+	DDaMuM7GmiWKQyi6f6B2MHlIUje2elNV8kWcyxcFEkyRPEEcXhMTMWHEyY/+seeaQK6dF3Csgvq
+	rE=
+X-Received: by 2002:a17:90b:5545:b0:36d:9e0b:3801 with SMTP id 98e67ed59e1d1-38dc74c4a32mr4437207a91.8.1783822393449;
+        Sat, 11 Jul 2026 19:13:13 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:c63e:9756:a95c:c75])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm54796692eec.18.2026.07.11.19.13.09
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm54796692eec.18.2026.07.11.19.13.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 19:13:10 -0700 (PDT)
+        Sat, 11 Jul 2026 19:13:12 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 11 Jul 2026 19:12:47 -0700
-Subject: [PATCH v3 06/10] ARM: s3c: crag6410: use software nodes/properties
- to set up GPIO keys
+Date: Sat, 11 Jul 2026 19:12:48 -0700
+Subject: [PATCH v3 07/10] mfd: wm831x: support software nodes for DCDC
+ regulators
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260711-samsung-kp-v3-6-b2fcaba77aff@gmail.com>
+Message-Id: <20260711-samsung-kp-v3-7-b2fcaba77aff@gmail.com>
 References: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
 In-Reply-To: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -86,136 +86,133 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- patches@opensource.cirrus.com, Krzysztof Kozlowski <krzk@kernel.org>
+ patches@opensource.cirrus.com
 X-Mailer: b4 0.16-dev-b242f
 
-Switch the gpio-keys device to use software nodes/properties to
-describe the buttons and switches. This will allow dropping support
-for platform data from the gpio-keys driver in the future.
+Allow passing software nodes to wm831x DCDC regulators via PMIC platform
+data. This is useful for non-DT/non-ACPI platforms that want to
+associate device properties (like DVS GPIOs) with the regulator devices
+using software nodes.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+We add 'dcdc_swnodes' to the PMIC platform data 'struct wm831x_pdata' and
+have the MFD core assign these software nodes to the buckv cells.
+
+Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/arm/mach-s3c/mach-crag6410.c | 79 ++++++++++++++++++++++++++++-----------
- 1 file changed, 58 insertions(+), 21 deletions(-)
+ drivers/mfd/wm831x-core.c        | 47 ++++++++++++++++++++++++++++++----------
+ include/linux/mfd/wm831x/pdata.h |  2 ++
+ 2 files changed, 37 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index c2df5dcb3368..757c0f383ff1 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -18,6 +18,7 @@
- #include <linux/input/matrix_keypad.h>
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
-+#include <linux/gpio/property.h>
- #include <linux/leds.h>
+diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+index df8e76e000cc..c4793be419ba 100644
+--- a/drivers/mfd/wm831x-core.c
++++ b/drivers/mfd/wm831x-core.c
+@@ -14,6 +14,7 @@
  #include <linux/delay.h>
- #include <linux/mmc/host.h>
-@@ -228,32 +229,68 @@ static void __init crag6410_setup_keypad(void)
- 		pr_err("failed to instantiate keypad device\n");
- }
+ #include <linux/mfd/core.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/err.h>
  
--static struct gpio_keys_button crag6410_gpio_keys[] = {
--	[0] = {
--		.code	= KEY_SUSPEND,
--		.gpio	= S3C64XX_GPL(10),	/* EINT 18 */
--		.type	= EV_KEY,
--		.wakeup	= 1,
--		.active_low = 1,
--	},
--	[1] = {
--		.code	= SW_FRONT_PROXIMITY,
--		.gpio	= S3C64XX_GPN(11),	/* EINT 11 */
--		.type	= EV_SW,
--	},
-+static const struct software_node crag6410_gpio_keys_node = {
-+	.name = "crag6410-gpio-keys",
+ #include <linux/mfd/wm831x/core.h>
+@@ -1449,6 +1450,32 @@ const struct of_device_id wm831x_of_match[] = {
  };
+ EXPORT_SYMBOL_GPL(wm831x_of_match);
  
--static struct gpio_keys_platform_data crag6410_gpio_keydata = {
--	.buttons	= crag6410_gpio_keys,
--	.nbuttons	= ARRAY_SIZE(crag6410_gpio_keys),
-+static const struct property_entry crag6410_suspend_key_props[] = {
-+	PROPERTY_ENTRY_U32("linux,code", KEY_SUSPEND),
-+	PROPERTY_ENTRY_GPIO("gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 10,	/* EINT 18 */
-+			    GPIO_ACTIVE_LOW),
-+	PROPERTY_ENTRY_BOOL("wakeup-source"),
-+	{ }
- };
- 
--static struct platform_device crag6410_gpio_keydev = {
--	.name		= "gpio-keys",
--	.id		= 0,
--	.dev.platform_data = &crag6410_gpio_keydata,
-+static const struct software_node crag6410_suspend_key_node = {
-+	.parent = &crag6410_gpio_keys_node,
-+	.properties = crag6410_suspend_key_props,
-+};
-+
-+static const struct property_entry crag6410_prox_sw_props[] = {
-+	PROPERTY_ENTRY_U32("linux,input-type", EV_SW),
-+	PROPERTY_ENTRY_U32("linux,code", SW_FRONT_PROXIMITY),
-+	PROPERTY_ENTRY_GPIO("gpios",
-+			    SAMSUNG_GPIO_NODE('N'), 11,	/* EINT 11 */
-+			    GPIO_ACTIVE_HIGH),
-+	{ }
-+};
-+
-+static const struct software_node crag6410_prox_sw_node = {
-+	.parent = &crag6410_gpio_keys_node,
-+	.properties = crag6410_prox_sw_props,
- };
- 
-+static const struct software_node *crag6410_gpio_keys_swnodes[] = {
-+	&crag6410_gpio_keys_node,
-+	&crag6410_suspend_key_node,
-+	&crag6410_prox_sw_node,
-+	NULL
-+};
-+
-+static void __init crag6410_setup_gpio_keys(void)
++static int wm831x_add_devices(struct wm831x *wm831x, int wm831x_num,
++			      const struct mfd_cell *cells, int num_cells)
 +{
-+	struct platform_device_info keys_info = {
-+		.name	= "gpio-keys",
-+		.id	= 0,
-+	};
-+	struct platform_device *pd;
-+	int err;
++	struct wm831x_pdata *pdata = &wm831x->pdata;
++	int i;
 +
-+	err = software_node_register_node_group(crag6410_gpio_keys_swnodes);
-+	if (err) {
-+		pr_err("failed to register gpio-keys software nodes: %d\n", err);
-+		return;
++	struct mfd_cell *local_cells __free(kfree) =
++		kmemdup_array(cells, num_cells, sizeof(*cells), GFP_KERNEL);
++	if (!local_cells)
++		return -ENOMEM;
++
++	for (i = 0; i < num_cells; i++) {
++		struct mfd_cell *cell = &local_cells[i];
++
++		if (strcmp(cell->name, "wm831x-buckv") == 0) {
++			int id = cell->id - 1;
++
++			if (id >= 0 && id < WM831X_MAX_DCDC)
++				cell->swnode = pdata->dcdc_swnodes[id];
++		}
 +	}
 +
-+	keys_info.fwnode = software_node_fwnode(&crag6410_gpio_keys_node);
-+
-+	pd = platform_device_register_full(&keys_info);
-+	err = PTR_ERR_OR_ZERO(pd);
-+	if (err)
-+		pr_err("failed to create gpio-keys device: %d\n", err);
++	return mfd_add_devices(wm831x->dev, wm831x_num, local_cells, num_cells,
++			       NULL, 0, NULL);
 +}
 +
- static struct resource crag6410_dm9k_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C64XX_PA_XM0CSN5, 2),
- 	[1] = DEFINE_RES_MEM(S3C64XX_PA_XM0CSN5 + (1 << 8), 2),
-@@ -397,7 +434,6 @@ static struct platform_device *crag6410_devs0[] __initdata = {
- 	&samsung_device_pwm,
- 	&s3c64xx_device_iis0,
- 	&s3c64xx_device_iis1,
--	&crag6410_gpio_keydev,
- };
+ /*
+  * Instantiate the generic non-control parts of the device.
+  */
+@@ -1620,15 +1647,13 @@ int wm831x_device_init(struct wm831x *wm831x, int irq)
+ 	/* The core device is up, instantiate the subdevices. */
+ 	switch (parent) {
+ 	case WM8310:
+-		ret = mfd_add_devices(wm831x->dev, wm831x_num,
+-				      wm8310_devs, ARRAY_SIZE(wm8310_devs),
+-				      NULL, 0, NULL);
++		ret = wm831x_add_devices(wm831x, wm831x_num,
++					 wm8310_devs, ARRAY_SIZE(wm8310_devs));
+ 		break;
  
- static struct platform_device *crag6410_devs1[] __initdata = {
-@@ -909,6 +945,7 @@ static void __init crag6410_machine_init(void)
+ 	case WM8311:
+-		ret = mfd_add_devices(wm831x->dev, wm831x_num,
+-				      wm8311_devs, ARRAY_SIZE(wm8311_devs),
+-				      NULL, 0, NULL);
++		ret = wm831x_add_devices(wm831x, wm831x_num,
++					 wm8311_devs, ARRAY_SIZE(wm8311_devs));
+ 		if (!pdata->disable_touch)
+ 			mfd_add_devices(wm831x->dev, wm831x_num,
+ 					touch_devs, ARRAY_SIZE(touch_devs),
+@@ -1636,9 +1661,8 @@ int wm831x_device_init(struct wm831x *wm831x, int irq)
+ 		break;
  
- 	gpiod_add_lookup_table(&crag_leds_table);
- 	crag6410_setup_keypad();
-+	crag6410_setup_gpio_keys();
+ 	case WM8312:
+-		ret = mfd_add_devices(wm831x->dev, wm831x_num,
+-				      wm8312_devs, ARRAY_SIZE(wm8312_devs),
+-				      NULL, 0, NULL);
++		ret = wm831x_add_devices(wm831x, wm831x_num,
++					 wm8312_devs, ARRAY_SIZE(wm8312_devs));
+ 		if (!pdata->disable_touch)
+ 			mfd_add_devices(wm831x->dev, wm831x_num,
+ 					touch_devs, ARRAY_SIZE(touch_devs),
+@@ -1649,9 +1673,8 @@ int wm831x_device_init(struct wm831x *wm831x, int irq)
+ 	case WM8321:
+ 	case WM8325:
+ 	case WM8326:
+-		ret = mfd_add_devices(wm831x->dev, wm831x_num,
+-				      wm8320_devs, ARRAY_SIZE(wm8320_devs),
+-				      NULL, 0, NULL);
++		ret = wm831x_add_devices(wm831x, wm831x_num,
++					 wm8320_devs, ARRAY_SIZE(wm8320_devs));
+ 		break;
  
- 	platform_add_devices(crag6410_devs1, ARRAY_SIZE(crag6410_devs1));
- 	gpio_led_register_device(-1, &gpio_leds_pdata);
+ 	default:
+diff --git a/include/linux/mfd/wm831x/pdata.h b/include/linux/mfd/wm831x/pdata.h
+index 75aa94dadf1c..d5d9d9600756 100644
+--- a/include/linux/mfd/wm831x/pdata.h
++++ b/include/linux/mfd/wm831x/pdata.h
+@@ -12,6 +12,7 @@
+ 
+ struct wm831x;
+ struct regulator_init_data;
++struct software_node;
+ 
+ struct wm831x_backlight_pdata {
+ 	int isink;     /** ISINK to use, 1 or 2 */
+@@ -132,6 +133,7 @@ struct wm831x_pdata {
+ 	struct wm831x_status_pdata *status[WM831X_MAX_STATUS];
+ 	/** DCDC1 = 0 and so on */
+ 	struct regulator_init_data *dcdc[WM831X_MAX_DCDC];
++	const struct software_node *dcdc_swnodes[WM831X_MAX_DCDC];
+ 	/** EPE1 = 0 and so on */
+ 	struct regulator_init_data *epe[WM831X_MAX_EPE];
+ 	/** LDO1 = 0 and so on */
 
 -- 
 2.55.0.795.g602f6c329a-goog
