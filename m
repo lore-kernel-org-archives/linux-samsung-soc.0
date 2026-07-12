@@ -1,34 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AC630CDAE;
-	Sat, 11 Jul 2026 18:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72913A1DB
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jul 2026 02:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783795816; cv=none; b=UzyeQHh9IpO+0u+5nvjOYwq+r3aAXh8V239lXM/dxVVTUbgXE15NNigZ8xlQmdvXFSB7zfbjbCx69ay8+Np88EBbVulTuYMf4aZZhodK5DH52rIEYqW0DdWc709IqisbGkYRQnE4y8/29mIiusGG+gZWSDg1lefGylU0zrqdoKY=
+	t=1783822380; cv=none; b=hfosoMnuurJiZs+6/gaAtXOinCf07ItzufqSjmtthurCxfgToTBBMDuymdPOaOWUb67fYyUYkdnvlLfHJjLOpF95Vma2g8RbNYCg2u3buS4C7GZAaIFO8JfePe3RHzWmFK9IPwTk6TvN/1qQwM9ADdvmSrmlVqEjM6p3tBZprd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783795816; c=relaxed/simple;
-	bh=PIqQBUvFAhhZLltfbuAmGUSiDj9zb0uqnBAJox/uNeE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=faMGCPEwVO9QMpfJFpumIbpgWZuKuEtTnsaj2TIqK4NClBjE6Ar8fBB7vjZyvIoQi+5elRStoUlSuoVuWmlTrLzoosIvuvi84ztkncqzHZskMYBfTD28gpDkbap3dfQGUNDB4FPOt9hgP6KbEmexqndSZlxFzgeEvBpEBOCr9Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGl604zO; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783822380; c=relaxed/simple;
+	bh=hvTXNaq5urOGZLsi2ZFCjd3V+3EespLnbI3oOLSonsM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WF7O3B120C3lK6RrUldsXLYuvb1N446QmQYfGd71sttaeDm8iVEyjj3POXvj6zVYajPRY0ewZ1rwgZOsryS5wbOsZdAU9hC1/YtjcFV2VLjbWbhSpK+TTHBqSYU++dzeWo2j7gPr5VUI2rp+Ql6+QUhPCiL/0jfKtmehm+kUOEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+Jg5D3A; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGl604zO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2690E1F00A3A;
-	Sat, 11 Jul 2026 18:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783795814;
-	bh=VYkDI6h+waLNcPjkBya9DGnDggZvgWVLygEReXlfsZM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=kGl604zOY5i/9BHc7cLc4ryqHD+01SAUicrFqMKwslfHQhi80jDyaMm2MyxhO5qOt
-	 5Pq/TrS3o9h1Q+W/qwP8lSEVI5jCfMdWQHJGOSTzqQxcgi/ZcaaOXqvQkVb1FUVgE6
-	 9YbVEPYs9ZC7WBFyRZhHqrj+/ntYKTZVK3XRtCayQvKHxiWeP6HYUE54e0sI1syKFA
-	 s2zK3U9ax8wTAugutxfyxWaRWS5LrbXoh4d2i5NgoY8R2qopkb5XoFfc+IxgcXnP6J
-	 LumgNfEnvhlL0OZHtdfacxoMtfjedGIBKxF4rKadinDpk8PtJvmtheBqh+pFiShHQX
-	 BbDB2Fj9clkaw==
-From: Lorenzo Stoakes <ljs@kernel.org>
-Date: Sat, 11 Jul 2026 19:45:10 +0100
-Subject: [PATCH v2 13/13] mm/mremap: convert mremap code to use vma_flags_t
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+Jg5D3A"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cacb8416a1so17880525ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 19:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783822378; x=1784427178; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=akuiiPDroRfJeMxQ3ozyBHs44kZ19VHRGG2J2TIkiPU=;
+        b=L+Jg5D3AYD7EaLi7Rom6AdJHoDoXb3foXSB554j3divtSX6oiCLDNMG0umvwMoLvbG
+         v2Uy2EWRiq9/KJsZxs9KlGBiwR9c9Dy1lSme+Pkk3YesO4GwjynUvqP9L7oa1VixJGAl
+         cq4PLiBmQslaoPFfg5HjWKUxvuNGMFTBVFqM14DbIlCWC6t7ivhz7V2wToVmIAapZoP+
+         YyEaGmsKxvXnhMYg7gqSKBsTOJQxv4HpTkf6VMDzWqktNBUaqHeg2a4Cqg+tJ4ed+xb+
+         W6T6ifMhF9KV25LJYGait46YfXRwaZnEtdap5S7DvMU48I1beCWbuLrtA7sXN6v29OAA
+         I30g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783822378; x=1784427178;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=akuiiPDroRfJeMxQ3ozyBHs44kZ19VHRGG2J2TIkiPU=;
+        b=hH0fMOu3LYyhY8nQt0Mm3hJguG2W+sb/J313r2U5nOqWQupWDymJITzpeSPs6l4lDn
+         +T0Hd8zqQjvmAUy0ZRKa8yuNF4mhpukzxfsL8w+5XfMXknSMd1Ukunu6kSWvDciTwKzz
+         RxU96Ct/gdeONEBXudZQrDlw8rkWZpswVm3BmeTOapxB0pFenEUiWL2tnVbtX6/gYRwj
+         Iu2SE36FAawMgmewUEMOdiWb0Xc/JoX5ZewOVjJCPal4wmNfUDlssLvd4/EPki2EhiiM
+         9JcsTP01GG1oJcqN4boQNP/muVSzEPSoFfsBVY3C73osUNNakos3jddu1o+AQ6M7b4Y6
+         aF6w==
+X-Forwarded-Encrypted: i=1; AHgh+RqTyhJZKokID8DEMostCnFEN1faJJffosN10Fs3uf2Xu0xw2bhAwMmpzFhPmC2kTvKxTE6Z84hCsfJIgy1K/iFWYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSy1CWz9IN6R6pwUuCsL3aqk7yJCpqGzcvoi1Cs2kWst2U8zvg
+	7KKJj7213bZ9fhUfo6Wjsx37ksKpzouMlqdv16SmBUMXLlwyf7fAJjdO
+X-Gm-Gg: AfdE7cnAqybFPT3PzNGHQlTohoe53N5pc2HWQoSk0lOBOj09cZnkB+BtabrKD9u8BM7
+	KdMcuq5Cg9ZrJhFOj4loHHTKE+vaUIKMdoAop8gjQEG5Fa8MnimWI8cu2arc9cg38a1DQCRXELZ
+	toImnWnhPJPW/eRf6zdQzjBg2PgZR25sIoLtODgDeQ9So3zmlejs421SMQVLOufN9jD0cYtpWUS
+	XeHGheKIC5vR+fiecgDWFabIE1eH6SBItry/Nd+752UqCABAGkOqCc/et0Gx5tAEpsCXXqkb3V/
+	5pZJK4MeB+iF7kPQbcHwEw3Kd0nJk7noGt9QvkGDJfkgvuddr/GClK+DbQbz3RgUzGMQsholoiF
+	VdIEi4sowjaDqZSGMb6YNDjCSwK3Na+6Z9tmnJlVd6A2NTL4zb/6MUjpbeulqUJXt2QLMcjgqVy
+	9eUk3B3tzt8UTUONtzinDs2t6sMc14vuBAgpRy7djkUy/IpXucSy8nLOhPQ0n/Rv5zskDc1Qwz1
+	9Y=
+X-Received: by 2002:a05:6a21:7701:b0:3c0:9c1a:8951 with SMTP id adf61e73a8af0-3c110b34ff1mr4611577637.73.1783822378295;
+        Sat, 11 Jul 2026 19:12:58 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:c63e:9756:a95c:c75])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm54796692eec.18.2026.07.11.19.12.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jul 2026 19:12:57 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v3 00/10] Remove support for platform data from samsung
+ keypad
+Date: Sat, 11 Jul 2026 19:12:41 -0700
+Message-Id: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,259 +71,119 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260711-b4-vma-flags-mm-v2-13-0fa2357d5431@kernel.org>
-References: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
-In-Reply-To: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Hugh Dickins <hughd@google.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, Jann Horn <jannh@google.com>, 
- Pedro Falcato <pfalcato@suse.de>, Muchun Song <muchun.song@linux.dev>, 
- Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>, 
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
- Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Russell King <linux+etnaviv@armlinux.org.uk>, 
- Christian Gmeiner <christian.gmeiner@gmail.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIABn4UmoC/1XOQQ6DIBCF4as0rDsGEVG76j0aFwijEosYsKbGe
+ PeiK7v8M5kvbyMBvcFAHreNeFxMMG6Mkd1vRPVy7BCMjk0YZZyWaQVB2vAZOxgmUIha85a1BaM
+ kPkweW/M9sVcdu/XOwtx7lH8E5XmZZglLcy44gxS0NbNfk9l5N/RueXZWmneinD3Q3oR4WM+BC
+ zvoAxK0oOV1y8KAQqYEaq6qJmvERan3ff8BOv6NlukAAAA=
+X-Change-ID: 20240819-samsung-kp-ceedd4f2f720
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
  Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>, 
- Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
- Gurchetan Singh <gurchetansingh@chromium.org>, 
- Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Matthew Brost <matthew.brost@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, 
- Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: Lorenzo Stoakes <ljs@kernel.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
- etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
- linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6381; i=ljs@kernel.org;
- h=from:subject:message-id; bh=PIqQBUvFAhhZLltfbuAmGUSiDj9zb0uqnBAJox/uNeE=;
- b=owGbwMvMwCV2fu7ZrsZH9SKMp9WSGLKC+q2WCm/T1ymxZjMq/yxer2XvM7/x212H55Myy179n
- RqvN8Gno5SFQYyLQVZMkeX5F/H9QSJh8zov+LvBzGFlAhnCwMUpABPpOszIsGhLcPGPAz1FjgKb
- Jc53v4/W6X/HznOmXdW58Edb+l2lCQz/DLaa7emYsZ9lb/CKY38l3gjvWSW8537dgQvfdvIpbK9
- 8xgIA
-X-Developer-Key: i=ljs@kernel.org; a=openpgp;
- fpr=E7F417BF5214569E89D04F46CF9DCD8A81E27F14
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ patches@opensource.cirrus.com, Conor Dooley <conor.dooley@microchip.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.16-dev-b242f
 
-Replace use of the legacy vm_flags_t flags with vma_flags_t values
-throughout the mremap logic.
+Hi,
 
-Note that, in replacing vm_flags_clear() (which takes the VMA write lock)
-with vma_clear_flags() and vma_clear_flags_mask() (which do not)
-respectively in unmap_source_vma() and dontunmap_complete(), we do not add
-a VMA write lock to account for htis.
+This series converts the Samsung keypad driver and the Cragganmore 6410
+board to generic device properties, allowing the removal of legacy platform
+data and GPIO lookup tables.
 
-This is because, in both cases, move_vma() is their calling function and
-this has already acquired the VMA write lock on vrm->vma whose VMA flags
-are being cleared.
+We rework the Samsung keypad driver to stop using platform data, utilizing
+a new compact matrix keypad binding. To support this on the Cragganmore
+board, we add infrastructure to associate software nodes with Samsung
+gpio_chips, and add software node propagation support to the wm831x MFD
+core to route DVS GPIO to the PMIC regulator.
 
-In the case of vma_set_flags() in unmap_source_vma() we do need to do this
-- as prev and next were not necessarily write locked at this point.
+Finally, we convert all peripherals on the Cragganmore board (including
+keypad, GPIO keys, PMIC, WM1250, SPI0, basic-mmio-gpio, and LEDs) to
+software properties. This allows us to eliminate all legacy GPIO lookup
+tables and fixes incorrect GPIO chip names from previous conversions.
 
-Additionally update comments to reflect the changes to be consistent.
+Mark, it would be great if you could give this a spin on Cragganmore.
 
-No functional change intended.
+The majority of changes are in arch/board code, with a couple of input
+matches and one for MFD. If everyone agrees maybe we can merge it all
+through the soc tree?
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+Thanks!
+
+Changes in v3:
+- Fixed legacy property handling regression in the keypad driver by
+  separating compact and verbose binding paths
+- Removed redundant registration of crag6410_mmgpio_node from
+  mach-crag6410.c
+- Removed dead S3C64XX_SETUP_KEYPAD Kconfig symbol definition and
+  selection
+- Fixed missing newline in pr_err() message in mach-crag6410.c
+- Redesigned PMIC DVS support to keep regulator driver changes minimal
+  (untouched) and only use software nodes for GPIO routing via MFD core
+- Link to v2: https://patch.msgid.link/20260708-samsung-kp-v2-0-3c6ed4c9b3b6@gmail.com
+
+Changes in v2:
+- Patches 1-8 of v1 were merged into mainline, dropping them from this
+  series
+- Rebased remaining patches (9-14 of v1) onto latest next
+- Resolved conflicts in mach-crag6410.c
+- Removed redundant "out of memory" error messages from the keypad
+  driver
+- Added an infrastructure patch to register and attach software nodes
+  for Samsung gpio_chips
+- Converted basic-mmio-gpio and LEDs on Cragganmore 6410 to software
+  properties in a new separate patch
+- Addressed DT bindings feedback on the compact binding patch
+- Fixed proximity switch event type for GPIO keys
+- Added support for software nodes in wm831x regulator driver
+- Converted PMIC DVS on Cragganmore 6410 to software properties using
+  the new driver support
+- Removed legacy DVS platform data fields and cleaned up driver
+  fallback.
+
 ---
- mm/mremap.c | 38 ++++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+Dmitry Torokhov (10):
+      dt-bindings: input: samsung,s3c6410-keypad: introduce compact binding
+      Input: samsung-keypad - handle compact binding
+      ARM: s3c: register and attach software nodes for Samsung gpio_chips
+      ARM: s3c: crag6410: switch keypad device to software properties
+      Input: samsung-keypad - remove support for platform data
+      ARM: s3c: crag6410: use software nodes/properties to set up GPIO keys
+      mfd: wm831x: support software nodes for DCDC regulators
+      ARM: s3c: crag6410: convert PMIC DVS GPIO to software properties
+      ARM: s3c: crag6410: convert basic-mmio-gpio and LEDs to software properties
+      ARM: s3c: crag6410: convert remaining GPIO lookup tables to property entries
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 384ef4cc2195..b64aa1f6e07e 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -68,7 +68,7 @@ struct vma_remap_struct {
- 	bool populate_expand;		/* mlock()'d expanded, must populate. */
- 	enum mremap_type remap_type;	/* expand, shrink, etc. */
- 	bool mmap_locked;		/* Is mm currently write-locked? */
--	unsigned long charged;		/* If VM_ACCOUNT, # pages to account. */
-+	unsigned long charged;		/* If VMA_ACCOUNT_BIT, # pgs to account */
- 	bool vmi_needs_invalidate;	/* Is the VMA iterator invalidated? */
- };
- 
-@@ -963,7 +963,7 @@ static unsigned long vrm_set_new_addr(struct vma_remap_struct *vrm)
- 
- 	if (vrm->flags & MREMAP_FIXED)
- 		map_flags |= MAP_FIXED;
--	if (vma->vm_flags & VM_MAYSHARE)
-+	if (vma_test(vma, VMA_MAYSHARE_BIT))
- 		map_flags |= MAP_SHARED;
- 
- 	res = get_unmapped_area(vma->vm_file, new_addr, vrm->new_len, pgoff,
-@@ -985,7 +985,7 @@ static bool vrm_calc_charge(struct vma_remap_struct *vrm)
- {
- 	unsigned long charged;
- 
--	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
-+	if (!vma_test(vrm->vma, VMA_ACCOUNT_BIT))
- 		return true;
- 
- 	/*
-@@ -1012,7 +1012,7 @@ static bool vrm_calc_charge(struct vma_remap_struct *vrm)
-  */
- static void vrm_uncharge(struct vma_remap_struct *vrm)
- {
--	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
-+	if (!vma_test(vrm->vma, VMA_ACCOUNT_BIT))
- 		return;
- 
- 	vm_unacct_memory(vrm->charged);
-@@ -1032,7 +1032,7 @@ static void vrm_stat_account(struct vma_remap_struct *vrm,
- 	struct vm_area_struct *vma = vrm->vma;
- 
- 	vm_stat_account(mm, vma->vm_flags, pages);
--	if (vma->vm_flags & VM_LOCKED)
-+	if (vma_test(vma, VMA_LOCKED_BIT))
- 		mm->locked_vm += pages;
- }
- 
-@@ -1176,7 +1176,7 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
- 	 * arose, in which case we _do_ wish to unmap the _new_ VMA, which means
- 	 * we actually _do_ want it be unaccounted.
- 	 */
--	bool accountable_move = (vma->vm_flags & VM_ACCOUNT) &&
-+	bool accountable_move = vma_test(vma, VMA_ACCOUNT_BIT) &&
- 		!(vrm->flags & MREMAP_DONTUNMAP);
- 
- 	/*
-@@ -1195,7 +1195,7 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
- 	 * portions of the original VMA that remain.
- 	 */
- 	if (accountable_move) {
--		vm_flags_clear(vma, VM_ACCOUNT);
-+		vma_clear_flags(vma, VMA_ACCOUNT_BIT);
- 		/* We are about to split vma, so store the start/end. */
- 		vm_start = vma->vm_start;
- 		vm_end = vma->vm_end;
-@@ -1220,8 +1220,8 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
- 	 * |             |
- 	 * |-------------|
- 	 *
--	 * Having cleared VM_ACCOUNT from the whole VMA, after we unmap above
--	 * we'll end up with:
-+	 * Having cleared VMA_ACCOUNT_BIT from the whole VMA, after we unmap
-+	 * above we'll end up with:
- 	 *
- 	 *    addr  end
- 	 *     |     |
-@@ -1241,13 +1241,15 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
- 		if (vm_start < addr) {
- 			struct vm_area_struct *prev = vma_prev(&vmi);
- 
--			vm_flags_set(prev, VM_ACCOUNT); /* Acquires VMA lock. */
-+			vma_start_write(prev);
-+			vma_set_flags(prev, VMA_ACCOUNT_BIT);
- 		}
- 
- 		if (vm_end > end) {
- 			struct vm_area_struct *next = vma_next(&vmi);
- 
--			vm_flags_set(next, VM_ACCOUNT); /* Acquires VMA lock. */
-+			vma_start_write(next);
-+			vma_set_flags(next, VMA_ACCOUNT_BIT);
- 		}
- 	}
- }
-@@ -1330,8 +1332,8 @@ static void dontunmap_complete(struct vma_remap_struct *vrm,
- 	unsigned long old_start = vrm->vma->vm_start;
- 	unsigned long old_end = vrm->vma->vm_end;
- 
--	/* We always clear VM_LOCKED[ONFAULT] on the old VMA. */
--	vm_flags_clear(vrm->vma, VM_LOCKED_MASK);
-+	/* We always clear VMA_LOCKED[ONFAULT]_BIT on the old VMA. */
-+	vma_clear_flags_mask(vrm->vma, VMA_LOCKED_MASK);
- 
- 	/*
- 	 * anon_vma links of the old vma is no longer needed after its page
-@@ -1767,14 +1769,14 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
- 	 * based on the original.  There are no known use cases for this
- 	 * behavior.  As a result, fail such attempts.
- 	 */
--	if (!old_len && !(vma->vm_flags & (VM_SHARED | VM_MAYSHARE))) {
-+	if (!old_len && !vma_test_any(vma, VMA_SHARED_BIT, VMA_MAYSHARE_BIT)) {
- 		pr_warn_once("%s (%d): attempted to duplicate a private mapping with mremap.  This is not supported.\n",
- 			     current->comm, current->pid);
- 		return -EINVAL;
- 	}
- 
- 	if ((vrm->flags & MREMAP_DONTUNMAP) &&
--			(vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP)))
-+	    vma_test_any(vma, VMA_DONTEXPAND_BIT, VMA_PFNMAP_BIT))
- 		return -EINVAL;
- 
- 	/*
-@@ -1804,7 +1806,7 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
- 		return 0;
- 
- 	/* We are expanding and the VMA is mlock()'d so we need to populate. */
--	if (vma->vm_flags & VM_LOCKED)
-+	if (vma_test(vma, VMA_LOCKED_BIT))
- 		vrm->populate_expand = true;
- 
- 	/* Need to be careful about a growing mapping */
-@@ -1812,10 +1814,10 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
- 	if (pgoff + (new_len >> PAGE_SHIFT) < pgoff)
- 		return -EINVAL;
- 
--	if (vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP))
-+	if (vma_test_any(vma, VMA_DONTEXPAND_BIT, VMA_PFNMAP_BIT))
- 		return -EFAULT;
- 
--	if (!mlock_future_ok(mm, vma->vm_flags & VM_LOCKED, vrm->delta))
-+	if (!mlock_future_ok(mm, vma_test(vma, VMA_LOCKED_BIT), vrm->delta))
- 		return -EAGAIN;
- 
- 	if (!may_expand_vm(mm, &vma->flags, vrm->delta >> PAGE_SHIFT))
+ .../bindings/input/samsung,s3c6410-keypad.yaml     |  53 ++-
+ arch/arm/mach-s3c/Kconfig                          |   5 -
+ arch/arm/mach-s3c/Kconfig.s3c64xx                  |   7 -
+ arch/arm/mach-s3c/Makefile.s3c64xx                 |   1 -
+ arch/arm/mach-s3c/devs.c                           |  62 ----
+ arch/arm/mach-s3c/devs.h                           |   2 -
+ arch/arm/mach-s3c/gpio-core.h                      |   3 +
+ arch/arm/mach-s3c/gpio-samsung-s3c64xx.h           |   5 +
+ arch/arm/mach-s3c/gpio-samsung.c                   |  72 +++-
+ arch/arm/mach-s3c/keypad.h                         |  27 --
+ arch/arm/mach-s3c/mach-crag6410.c                  | 369 +++++++++++++--------
+ arch/arm/mach-s3c/setup-keypad-s3c64xx.c           |  20 --
+ drivers/input/keyboard/samsung-keypad.c            | 200 +++++------
+ drivers/mfd/wm831x-core.c                          |  47 ++-
+ include/linux/input/samsung-keypad.h               |  39 ---
+ include/linux/mfd/wm831x/pdata.h                   |   2 +
+ 16 files changed, 472 insertions(+), 442 deletions(-)
+---
+base-commit: 8e9685d3c41c35dd1b37df70d854137abcb2fbac
+change-id: 20240819-samsung-kp-ceedd4f2f720
+
+Thanks.
 
 -- 
-2.55.0
+Dmitry
 
