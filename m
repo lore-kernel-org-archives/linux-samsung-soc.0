@@ -1,69 +1,69 @@
 Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6943367B89
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jul 2026 02:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1A3672A5
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Jul 2026 02:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783822388; cv=none; b=QsPM98IZK0eKhgfVY7cVnxmJEC1hYXoxnH9CyZNPcMwAt9NsBnSnxInehdYjY1Qqf4kFZyU4Cxr/3h7MNiz0AfDLzIyq9DT2zk5bUqsoxih76npz841FUWWk+cxmNpvdnPFYZ2NYNNtEod53XksnC7vrOk4wElG07bunl2rQhiw=
+	t=1783822391; cv=none; b=CAEn3+VKkSGuxH1o4j3pY23GrHz655GkY9NOBHWrVJBLu+B2bgwv6/AO9t3xjxG2XxAyOKF96muWBKBoDxMyRrhaOpsrLJak/s5lBfQ3JmnE902ai+SUiEoZeKHFDUO8cI8Lnb8JCAwDVa4J/TJO1ZVHmNN0VJVGYaMZtNDb0K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783822388; c=relaxed/simple;
-	bh=GE6WrGfyy9P4IMx6v0tVdKrd6b48cdMay86cwwuTjQ4=;
+	s=arc-20240116; t=1783822391; c=relaxed/simple;
+	bh=MbHlbYKPDPXngEv5b2cf7bYHnBjY1dG/nTATjVUAvcY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p7KlUjf0FnjWbWHr0btRUIeAhrEzRzLOgFPZ7vfJaObibNnjokUUoVisAOhq9BkoXtgwm53vowRcttN6yk9Jwmm62xd63WRKTBGrTYvlQPmNXzaabP0/paGB1iC67l5FuQFCXsG2H14uH7kWQt74ucu8a0myGjylNWxwumjv+FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3d5yAXE; arc=none smtp.client-ip=209.85.216.45
+	 In-Reply-To:To:Cc; b=jNiVNP5cV9izsfZXCqZMlKfc5KMSMixEmvIOeAdBRpYr3SQvQm/MqzE3N6rsPkKUB7fvN5TkyfUhy90e/cQbjeRvQGbWN9JXgpZAruK6vnzNIX3AYkq9ghUhCWJCj5M+xAOEY3RtcD4lVeF1gv64yV7pHJ7DvjlDXp99PzUU57M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IckXT8aQ; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3d5yAXE"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-38a0c7e841fso2470829a91.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 19:13:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IckXT8aQ"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-381891a9525so2463552a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jul 2026 19:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783822385; x=1784427185; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783822387; x=1784427187; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=n/De877qrc3LI5SOFOCYuqXrG3akE0R4KYm/cFtv2XA=;
-        b=l3d5yAXEOdoK4Rf5RQZsGeNxFD2OcNxclnTiw6Wf/xQhikng1+0LB7qlbcGd7F0l8Y
-         +cQXK+TjV3+vFYQhRgw5cxXaVS0wcPl2XkhptBS6rgeLaVJrdQ+NmFbFvDEuFEPfRalv
-         ZrCZUAiHjIbWZA8hs12Gw0nNHSH7F2UA5mPlUEiw79RP9ejP1znyAIA4pVaWjUvIc0W0
-         fdqaTL0ZNYqTJURVWagtS2Zm5w61NIg74vZ9P3jNdN1gqcfvwkufHTJA7nWHHLyDKn/U
-         eyKMz+Xjg6CxJjCmFcmr8CGsYZsJs7uDY3dSkcFvGYthqAxrFaXFTSGPcdfyLRfRbwR4
-         Pcmw==
+        bh=gQ4PU66CTnBXQAzr6PHBDQyKEYKs9ioZmr93h8ngf+E=;
+        b=IckXT8aQImmqrso9oMx61C2RjvuLXJwQ7XqMOcAakT97vVobu5muRvNsYjAq1LiLOT
+         MM2jQpk/8Y2gGt1MjD3VjbwDADaJFBNmBxiDObBwyGyNR/01RbDKxOPexSAJVrmjuLWJ
+         JCbkSlIYNJW7McIxypquyS2NmAQVBEyX5zJgcwqx4q7w3zHsbGz/jK7ha22mXXuEdwE2
+         agHx3bQt9+W4XQsBxm9LIn37LfnZBbwl3IDa6mIh/hcNgnHQyjxp2J36I94QaZAxJna0
+         tIBMDUkHlp22U88fCKtkKjQDqbSoLHyVBQO7gV21hldHN/U9ocGp+mLTBgD/9wc7JoOk
+         rf2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783822385; x=1784427185;
+        d=1e100.net; s=20251104; t=1783822387; x=1784427187;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=n/De877qrc3LI5SOFOCYuqXrG3akE0R4KYm/cFtv2XA=;
-        b=YYkS9v6bP/18ZXwVUaga02UBLV+mMk6xvsE0F+rgC/9/j65z4kgZcJrzTISz2g9sEF
-         q6vSTTlxr4LzdFyN65nTb5lhdFLtg/m1xAIwWIsumZ/3G477KZeLMywuyH9rhlcF1yAW
-         nXl2FglpHvdUfrXD3zMvy50kSl1/myKY9sklf+7H4J7nD6owFR63G6lZUnvrBCNRvDoG
-         7FgC04w6kgwN0ZT78HpyEbrDnmNGkSuwM3X2OXKgU5RLbE+gMDmOqSRl7OrZ3Vaig3yF
-         6F6GTzioZV+fXTocq7HlXZxwt9DAU9WnLN/x4Vy2mh5Z9Vs+RlVrAQbyKpO7RBgQcos/
-         fvfw==
-X-Forwarded-Encrypted: i=1; AHgh+RrosOtUUak4Vl4mhokqyLMcpw7qtmMUjsU+YOqDTXURUr8CNUCUTIk1GtoDyAU7Ym1bryi2D0sOFEHkljG71HTtJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/2M0k9L7QdCSJKtinu7G1KLFrSiFd4mqWsVU2rkWsoLwZ1tdw
-	jiWoOscaQAwRxHDqcAQNKYCr27PAoUSjkKOkJvt+UqdYZGw18cyK26Do
-X-Gm-Gg: AfdE7cmEPxQqJdBy5YIP5h7jQGoXe9+yWjDgsDw+EIfO7fladGJ5b23Xk9KL1fnnpJ0
-	JFvZ68i5/nqg++trHRCvsqNUSAabTOTISiWm3LggprUH0ZihZMHyDXGv7c2m3eXniEB2Y3JEkWn
-	lB791ij7tz9ZdoElZAoIAov5qx+/O8/STo9DJWMSb2qqskG5Qqnz3FAHT5ebFz92BiHeK6GpNNZ
-	OOLSs+EegALfhMUOop8+AGEHE2FLYeFeCuGJ/u34+witM2f1XP+d5qdX3Aff/NA5BJBr6w3YQRR
-	62hdyBPrEGNBSIQWKSAxwiYjvbcoyqPEfA9b7aaubSpulVRHigHKCjbViaW6QR1dFLd4XZhqsmq
-	Kx4bEICP6rluEgG1pKUjZBnDf6DxrGtlXy9HR+Y00UMOmxR8Jdfn2Bxcj2CKaM53f9j/6hMCKJp
-	kXjDrVEGroETMPF2OQ/24ItexfcCcJ2w85V0tRavmOcHi3wRO5pzOaxx2Est5qy5csxS2Al32K0
-	Vc=
-X-Received: by 2002:a17:90b:3908:b0:384:a641:3fe with SMTP id 98e67ed59e1d1-38dc7737215mr4573280a91.21.1783822385166;
-        Sat, 11 Jul 2026 19:13:05 -0700 (PDT)
+        bh=gQ4PU66CTnBXQAzr6PHBDQyKEYKs9ioZmr93h8ngf+E=;
+        b=Kp/wx5SkgE6tQEU3i1f6IBzJuSPeYt5Ea/Wu66aJyYSPT+FlOrH5IOh16YczUjD8NQ
+         nYXA5lNN2ubQ+IUBiwtRt/d9tYKJQXvjpC2E5vc5RiNtjsz8fe1F3SoCPos4AshnyDsp
+         gpIRHKz+JGUbUPdfWxt71BbF22Eu32M4HBpFS34D3JjCXIZkBuormt1iWlpSofZjw5wW
+         zx5SbZIF5ruHSxc7zNagLyzHHV2CEWdtoqkAdpNQSoortTu72jgHe7jvJodAZfQgetW9
+         tJl86bq9ZygD59vtQ1JHo8ZJdkzG3YiVZdWxirASc9uLWkES3WLbRbEPDyyajzRGpj1z
+         JfVg==
+X-Forwarded-Encrypted: i=1; AHgh+RocdjNFqtGkCLpPriNLSc3cDw4O5xPuGinDKECcXydEpShj/+ZPwq9l6mp+O0wOe1+fZFYBSFJq75cqLZFPI3HUnA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQvHhtDtdgVnrcKZxYUmmBn66v8isxCG+ZtfDSjC6iQrbTh7Xi
+	rkztot2TK7gJA8sIU2b7kWCdrDBoc1wWCgg1ZIL8SW8+T3KPaO4wfUQa
+X-Gm-Gg: AfdE7cmxbCreu8M/AIhpUrJrM4bSaPq9Hcu3es/YZplWd5pqtZQzcHuUFO5/WPG7XQr
+	aYtWlrHZudjD3CWHbojQuEabFTnKzXMvBI1u82Ko5mmMkNMt3kOWaitYLid/bamO7yav6IPh9E5
+	aTaUIj3ph4VovtlZL2WHnlh9Txt4pQ3jSYKrukX5mrqFaxBkW0SA8HNvYtaiz7h2U5g4nRpR85E
+	nfIQS3xrtSnLHGa6Dawe/yJhMjIpu0i59MjDcekPxFsc5gW77WlWysw8zEA0bhxU8ltx2mbaXuP
+	mJBCUJHzu41KzGRNoOConpHg5xgcwfjaTjN/iIfvVfBjR60Zj59hS04fo+4Oo0wYwCBimfHu53p
+	wXzZ9LUFntaSnuGHT5OV1KxOWHCzG2b/w2ilg3r3jnfWgiMSMnxAD7YN2cdnsW2HPktbnyXUc9z
+	nLzrWuChWzIdKH7FoJ65iuiLcczujCOsP3GVe2+bnITvF8zixRRokemc33HybTA+8wDQHkJBg9n
+	1w=
+X-Received: by 2002:a17:90b:5343:b0:37f:9ce1:7369 with SMTP id 98e67ed59e1d1-38dc777486cmr4384818a91.31.1783822387067;
+        Sat, 11 Jul 2026 19:13:07 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:c63e:9756:a95c:c75])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm54796692eec.18.2026.07.11.19.13.03
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3117d847e17sm54796692eec.18.2026.07.11.19.13.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 19:13:04 -0700 (PDT)
+        Sat, 11 Jul 2026 19:13:06 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sat, 11 Jul 2026 19:12:44 -0700
-Subject: [PATCH v3 03/10] ARM: s3c: register and attach software nodes for
- Samsung gpio_chips
+Date: Sat, 11 Jul 2026 19:12:45 -0700
+Subject: [PATCH v3 04/10] ARM: s3c: crag6410: switch keypad device to
+ software properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260711-samsung-kp-v3-3-b2fcaba77aff@gmail.com>
+Message-Id: <20260711-samsung-kp-v3-4-b2fcaba77aff@gmail.com>
 References: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
 In-Reply-To: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -86,297 +86,330 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- patches@opensource.cirrus.com, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+ patches@opensource.cirrus.com, Krzysztof Kozlowski <krzk@kernel.org>
 X-Mailer: b4 0.16-dev-b242f
 
-Define and register software nodes for the Samsung GPIO chips on legacy
-(non-DT) platforms.
+Switch the keypad device to use software properties to describe the
+keypad. This will allow dropping support for platform data from the
+samsung-keypad driver.
 
-Attach the matching software node to each gpio_chip's fwnode during
-registration, using the bank label to calculate the index.
-
-This provides the infrastructure for converting board files and drivers
-to use software nodes/properties instead of legacy platform data or GPIO
-lookup tables.
-
-Assisted-by: Antigravity:gemini-3.5-flash
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/arm/mach-s3c/gpio-core.h            |  3 ++
- arch/arm/mach-s3c/gpio-samsung-s3c64xx.h |  5 +++
- arch/arm/mach-s3c/gpio-samsung.c         | 72 ++++++++++++++++++++++++--------
- 3 files changed, 63 insertions(+), 17 deletions(-)
+ arch/arm/mach-s3c/Kconfig                |  5 ---
+ arch/arm/mach-s3c/Kconfig.s3c64xx        |  7 ----
+ arch/arm/mach-s3c/Makefile.s3c64xx       |  1 -
+ arch/arm/mach-s3c/devs.c                 | 27 ---------------
+ arch/arm/mach-s3c/devs.h                 |  1 -
+ arch/arm/mach-s3c/keypad.h               | 27 ---------------
+ arch/arm/mach-s3c/mach-crag6410.c        | 56 ++++++++++++++++++++++++--------
+ arch/arm/mach-s3c/setup-keypad-s3c64xx.c | 20 ------------
+ 8 files changed, 42 insertions(+), 102 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/gpio-core.h b/arch/arm/mach-s3c/gpio-core.h
-index 6801c85fb9da..464b0d02f102 100644
---- a/arch/arm/mach-s3c/gpio-core.h
-+++ b/arch/arm/mach-s3c/gpio-core.h
-@@ -14,6 +14,8 @@
- #include "gpio-samsung.h"
- #include <linux/gpio/driver.h>
+diff --git a/arch/arm/mach-s3c/Kconfig b/arch/arm/mach-s3c/Kconfig
+index b3656109f1f7..2e77bb4f3a8c 100644
+--- a/arch/arm/mach-s3c/Kconfig
++++ b/arch/arm/mach-s3c/Kconfig
+@@ -111,11 +111,6 @@ config S3C64XX_DEV_SPI0
+ 	  Compile in platform device definitions for S3C64XX's type
+ 	  SPI controller 0
  
-+struct software_node;
-+
- #define GPIOCON_OFF	(0x00)
- #define GPIODAT_OFF	(0x04)
+-config SAMSUNG_DEV_KEYPAD
+-	bool
+-	help
+-	  Compile in platform device definitions for keypad
+-
+ config SAMSUNG_DEV_PWM
+ 	bool
+ 	help
+diff --git a/arch/arm/mach-s3c/Kconfig.s3c64xx b/arch/arm/mach-s3c/Kconfig.s3c64xx
+index 3f97fba8e4f5..aef97cc5d195 100644
+--- a/arch/arm/mach-s3c/Kconfig.s3c64xx
++++ b/arch/arm/mach-s3c/Kconfig.s3c64xx
+@@ -74,11 +74,6 @@ config S3C64XX_SETUP_FB_24BPP
+ 	help
+ 	  Common setup code for S3C64XX with an 24bpp RGB display helper.
  
-@@ -66,6 +68,7 @@ struct samsung_gpio_cfg;
-  */
- struct samsung_gpio_chip {
- 	struct gpio_chip	chip;
-+	const struct software_node *swnode;
- 	struct samsung_gpio_cfg	*config;
- 	struct samsung_gpio_pm	*pm;
- 	void __iomem		*base;
-diff --git a/arch/arm/mach-s3c/gpio-samsung-s3c64xx.h b/arch/arm/mach-s3c/gpio-samsung-s3c64xx.h
-index 8ed144a0d474..fc21d3f50ce9 100644
---- a/arch/arm/mach-s3c/gpio-samsung-s3c64xx.h
-+++ b/arch/arm/mach-s3c/gpio-samsung-s3c64xx.h
-@@ -13,6 +13,8 @@
+-config S3C64XX_SETUP_KEYPAD
+-	bool
+-	help
+-	  Common setup code for S3C64XX KEYPAD GPIO configurations
+-
+ config S3C64XX_SETUP_SDHCI_GPIO
+ 	bool
+ 	help
+@@ -106,7 +101,6 @@ config MACH_WLF_CRAGG_6410
+ 	select S3C64XX_DEV_SPI0
+ 	select S3C64XX_SETUP_FB_24BPP
+ 	select S3C64XX_SETUP_I2C1
+-	select S3C64XX_SETUP_KEYPAD
+ 	select S3C64XX_SETUP_SDHCI
+ 	select S3C64XX_SETUP_SPI
+ 	select S3C64XX_SETUP_USB_PHY
+@@ -117,7 +111,6 @@ config MACH_WLF_CRAGG_6410
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_USB_HOST
+ 	select S3C_DEV_USB_HSOTG
+-	select SAMSUNG_DEV_KEYPAD
+ 	select SAMSUNG_DEV_PWM
+ 	help
+ 	  Machine support for the Wolfson Cragganmore S3C6410 variant.
+diff --git a/arch/arm/mach-s3c/Makefile.s3c64xx b/arch/arm/mach-s3c/Makefile.s3c64xx
+index 61287ad2ea42..1686b1f344f8 100644
+--- a/arch/arm/mach-s3c/Makefile.s3c64xx
++++ b/arch/arm/mach-s3c/Makefile.s3c64xx
+@@ -32,7 +32,6 @@ obj-y				+= dev-audio-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP)	+= setup-fb-24bpp-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_I2C0)	+= setup-i2c0-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_I2C1)	+= setup-i2c1-s3c64xx.o
+-obj-$(CONFIG_S3C64XX_SETUP_KEYPAD)	+= setup-keypad-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_SPI)		+= setup-spi-s3c64xx.o
+ obj-$(CONFIG_S3C64XX_SETUP_USB_PHY) += setup-usb-phy-s3c64xx.o
+diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
+index bab2abd8a34a..0237307b9238 100644
+--- a/arch/arm/mach-s3c/devs.c
++++ b/arch/arm/mach-s3c/devs.c
+@@ -39,7 +39,6 @@
+ #include "devs.h"
+ #include "fb.h"
+ #include <linux/platform_data/i2c-s3c2410.h>
+-#include "keypad.h"
+ #include "pwm-core.h"
+ #include "sdhci.h"
+ #include "usb-phy.h"
+@@ -265,32 +264,6 @@ void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
+ }
+ #endif /* CONFIG_S3C_DEV_I2C1 */
  
- #ifdef CONFIG_GPIO_SAMSUNG
+-/* KEYPAD */
+-
+-#ifdef CONFIG_SAMSUNG_DEV_KEYPAD
+-static struct resource samsung_keypad_resources[] = {
+-	[0] = DEFINE_RES_MEM(SAMSUNG_PA_KEYPAD, SZ_32),
+-	[1] = DEFINE_RES_IRQ(IRQ_KEYPAD),
+-};
+-
+-struct platform_device samsung_device_keypad = {
+-	.name		= "samsung-keypad",
+-	.id		= -1,
+-	.num_resources	= ARRAY_SIZE(samsung_keypad_resources),
+-	.resource	= samsung_keypad_resources,
+-};
+-
+-void __init samsung_keypad_set_platdata(struct samsung_keypad_platdata *pd)
+-{
+-	struct samsung_keypad_platdata *npd;
+-
+-	npd = s3c_set_platdata(pd, sizeof(*npd), &samsung_device_keypad);
+-
+-	if (!npd->cfg_gpio)
+-		npd->cfg_gpio = samsung_keypad_cfg_gpio;
+-}
+-#endif /* CONFIG_SAMSUNG_DEV_KEYPAD */
+-
+ /* PWM Timer */
  
+ #ifdef CONFIG_SAMSUNG_DEV_PWM
+diff --git a/arch/arm/mach-s3c/devs.h b/arch/arm/mach-s3c/devs.h
+index 21c00786c264..2737990063b1 100644
+--- a/arch/arm/mach-s3c/devs.h
++++ b/arch/arm/mach-s3c/devs.h
+@@ -39,7 +39,6 @@ extern struct platform_device s3c_device_i2c1;
+ extern struct platform_device s3c_device_ohci;
+ extern struct platform_device s3c_device_usb_hsotg;
+ 
+-extern struct platform_device samsung_device_keypad;
+ extern struct platform_device samsung_device_pwm;
+ 
+ /**
+diff --git a/arch/arm/mach-s3c/keypad.h b/arch/arm/mach-s3c/keypad.h
+deleted file mode 100644
+index 9754b9a29945..000000000000
+--- a/arch/arm/mach-s3c/keypad.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
+-/*
+- * Samsung Platform - Keypad platform data definitions
+- *
+- * Copyright (C) 2010 Samsung Electronics Co.Ltd
+- * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+- */
+-
+-#ifndef __PLAT_SAMSUNG_KEYPAD_H
+-#define __PLAT_SAMSUNG_KEYPAD_H
+-
+-#include <linux/input/samsung-keypad.h>
+-
+-/**
+- * samsung_keypad_set_platdata - Set platform data for Samsung Keypad device.
+- * @pd: Platform data to register to device.
+- *
+- * Register the given platform data for use with Samsung Keypad device.
+- * The call will copy the platform data, so the board definitions can
+- * make the structure itself __initdata.
+- */
+-extern void samsung_keypad_set_platdata(struct samsung_keypad_platdata *pd);
+-
+-/* defined by architecture to configure gpio. */
+-extern void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols);
+-
+-#endif /* __PLAT_SAMSUNG_KEYPAD_H */
+diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
+index c4040aad1ed3..c2df5dcb3368 100644
+--- a/arch/arm/mach-s3c/mach-crag6410.c
++++ b/arch/arm/mach-s3c/mach-crag6410.c
+@@ -15,6 +15,7 @@
+ #include <linux/io.h>
+ #include <linux/init.h>
+ #include <linux/input-event-codes.h>
++#include <linux/input/matrix_keypad.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/machine.h>
+ #include <linux/leds.h>
+@@ -22,6 +23,7 @@
+ #include <linux/mmc/host.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/fixed.h>
 +#include <linux/property.h>
-+
- /* GPIO bank sizes */
- #define S3C64XX_GPIO_A_NR	(8)
- #define S3C64XX_GPIO_B_NR	(7)
-@@ -89,6 +91,9 @@ enum s3c_gpio_number {
- /* define the number of gpios we need to the one after the GPQ() range */
- #define GPIO_BOARD_START (S3C64XX_GPQ(S3C64XX_GPIO_Q_NR) + 1)
+ #include <linux/pwm.h>
+ #include <linux/pwm_backlight.h>
+ #include <linux/dm9000.h>
+@@ -53,7 +55,6 @@
+ #include "gpio-cfg.h"
+ #include <linux/platform_data/spi-s3c64xx.h>
  
-+extern const struct software_node samsung_gpiochip_nodes[];
-+#define SAMSUNG_GPIO_NODE(node)	(&samsung_gpiochip_nodes[(node) - 'A'])
-+
- #endif /* GPIO_SAMSUNG */
- #endif /* GPIO_SAMSUNG_S3C64XX_H */
+-#include "keypad.h"
+ #include "devs.h"
+ #include "cpu.h"
+ #include <linux/platform_data/i2c-s3c2410.h>
+@@ -176,7 +177,7 @@ static struct s3c_fb_platdata crag6410_lcd_pdata = {
  
-diff --git a/arch/arm/mach-s3c/gpio-samsung.c b/arch/arm/mach-s3c/gpio-samsung.c
-index 81e198e5a6d3..b35cf62a9157 100644
---- a/arch/arm/mach-s3c/gpio-samsung.c
-+++ b/arch/arm/mach-s3c/gpio-samsung.c
-@@ -37,6 +37,28 @@
- #include "gpio-cfg-helpers.h"
- #include "pm.h"
+ /* 2x6 keypad */
  
-+const struct software_node samsung_gpiochip_nodes[] = {
-+	SOFTWARE_NODE("GPA", NULL, NULL),
-+	SOFTWARE_NODE("GPB", NULL, NULL),
-+	SOFTWARE_NODE("GPC", NULL, NULL),
-+	SOFTWARE_NODE("GPD", NULL, NULL),
-+	SOFTWARE_NODE("GPE", NULL, NULL),
-+	SOFTWARE_NODE("GPF", NULL, NULL),
-+	SOFTWARE_NODE("GPG", NULL, NULL),
-+	SOFTWARE_NODE("GPH", NULL, NULL),
-+	SOFTWARE_NODE("GPI", NULL, NULL),
-+	SOFTWARE_NODE("GPJ", NULL, NULL),
-+	SOFTWARE_NODE("GPK", NULL, NULL),
-+	SOFTWARE_NODE("GPL", NULL, NULL),
-+	SOFTWARE_NODE("GPM", NULL, NULL),
-+	SOFTWARE_NODE("GPN", NULL, NULL),
-+	SOFTWARE_NODE("GPO", NULL, NULL),
-+	SOFTWARE_NODE("GPP", NULL, NULL),
-+	SOFTWARE_NODE("GPQ", NULL, NULL),
+-static uint32_t crag6410_keymap[] = {
++static const u32 crag6410_keymap[] __initconst = {
+ 	/* KEY(row, col, keycode) */
+ 	KEY(0, 0, KEY_VOLUMEUP),
+ 	KEY(0, 1, KEY_HOME),
+@@ -192,17 +193,41 @@ static uint32_t crag6410_keymap[] = {
+ 	KEY(1, 5, KEY_CAMERA),
+ };
+ 
+-static struct matrix_keymap_data crag6410_keymap_data = {
+-	.keymap		= crag6410_keymap,
+-	.keymap_size	= ARRAY_SIZE(crag6410_keymap),
++static const struct property_entry crag6410_keypad_props[] __initconst = {
++	PROPERTY_ENTRY_U32("keypad,num-columns", 6),
++	PROPERTY_ENTRY_U32("keypad,num-rows", 2),
++	PROPERTY_ENTRY_U32_ARRAY("linux,keymap", crag6410_keymap),
++	{ }
 +};
 +
-+#define NUM_SAMSUNG_GPIOCHIPS ARRAY_SIZE(samsung_gpiochip_nodes)
-+
- static int samsung_gpio_setpull_updown(struct samsung_gpio_chip *chip,
- 				unsigned int off, samsung_gpio_pull_t pull)
- {
-@@ -491,6 +513,16 @@ static __init void s3c_gpiolib_track(struct samsung_gpio_chip *chip)
- }
- #endif /* CONFIG_S3C_GPIO_TRACK */
++static const struct resource crag6410_keypad_resources[] __initconst = {
++	[0] = DEFINE_RES_MEM(SAMSUNG_PA_KEYPAD, SZ_32),
++	[1] = DEFINE_RES_IRQ(IRQ_KEYPAD),
+ };
  
-+static void __init samsung_setup_gpiochip_nodes(void)
+-static struct samsung_keypad_platdata crag6410_keypad_data = {
+-	.keymap_data	= &crag6410_keymap_data,
+-	.rows		= 2,
+-	.cols		= 6,
++static const struct platform_device_info crag6410_keypad_info __initconst = {
++	.name		= "samsung-keypad",
++	.id		= PLATFORM_DEVID_NONE,
++	.res		= crag6410_keypad_resources,
++	.num_res	= ARRAY_SIZE(crag6410_keypad_resources),
++	.properties	= crag6410_keypad_props,
+ };
+ 
++static void __init crag6410_setup_keypad(void)
 +{
-+	const struct software_node *group[NUM_SAMSUNG_GPIOCHIPS + 1] = { 0 };
++	struct platform_device *pd;
 +
-+	for (unsigned int i = 0; i < NUM_SAMSUNG_GPIOCHIPS; i++)
-+		group[i] = &samsung_gpiochip_nodes[i];
++	/* Set all the necessary GPK pins to special-function 3: KP_ROW[x] */
++	s3c_gpio_cfgrange_nopull(S3C64XX_GPK(8), 2, S3C_GPIO_SFN(3));
 +
-+	software_node_register_node_group(group);
++	/* Set all the necessary GPL pins to special-function 3: KP_COL[x] */
++	s3c_gpio_cfgrange_nopull(S3C64XX_GPL(0), 6, S3C_GPIO_SFN(3));
++
++	pd = platform_device_register_full(&crag6410_keypad_info);
++	if (IS_ERR(pd))
++		pr_err("failed to instantiate keypad device\n");
 +}
 +
- /*
-  * samsung_gpiolib_add() - add the Samsung gpio_chip.
-  * @chip: The chip to register
-@@ -506,12 +538,16 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
- 	struct gpio_chip *gc = &chip->chip;
- 	int ret;
- 
-+	gc->label = chip->swnode->name;
-+
- 	BUG_ON(!chip->base);
- 	BUG_ON(!gc->label);
- 	BUG_ON(!gc->ngpio);
- 
- 	spin_lock_init(&chip->lock);
- 
-+	gc->fwnode = software_node_fwnode(chip->swnode);
-+
- 	if (!gc->direction_input)
- 		gc->direction_input = samsung_gpiolib_2bit_input;
- 	if (!gc->direction_output)
-@@ -659,49 +695,49 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit[] = {
- 		.chip	= {
- 			.base	= S3C64XX_GPA(0),
- 			.ngpio	= S3C64XX_GPIO_A_NR,
--			.label	= "GPA",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('A'),
- 	}, {
- 		.chip	= {
- 			.base	= S3C64XX_GPB(0),
- 			.ngpio	= S3C64XX_GPIO_B_NR,
--			.label	= "GPB",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('B'),
- 	}, {
- 		.chip	= {
- 			.base	= S3C64XX_GPC(0),
- 			.ngpio	= S3C64XX_GPIO_C_NR,
--			.label	= "GPC",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('C'),
- 	}, {
- 		.chip	= {
- 			.base	= S3C64XX_GPD(0),
- 			.ngpio	= S3C64XX_GPIO_D_NR,
--			.label	= "GPD",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('D'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= S3C64XX_GPE(0),
- 			.ngpio	= S3C64XX_GPIO_E_NR,
--			.label	= "GPE",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('E'),
- 	}, {
- 		.base	= S3C64XX_GPG_BASE,
- 		.chip	= {
- 			.base	= S3C64XX_GPG(0),
- 			.ngpio	= S3C64XX_GPIO_G_NR,
--			.label	= "GPG",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('G'),
- 	}, {
- 		.base	= S3C64XX_GPM_BASE,
- 		.config	= &samsung_gpio_cfgs[1],
- 		.chip	= {
- 			.base	= S3C64XX_GPM(0),
- 			.ngpio	= S3C64XX_GPIO_M_NR,
--			.label	= "GPM",
- 			.to_irq = s3c64xx_gpiolib_mbank_to_irq,
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('M'),
+ static struct gpio_keys_button crag6410_gpio_keys[] = {
+ 	[0] = {
+ 		.code	= KEY_SUSPEND,
+@@ -361,7 +386,7 @@ static struct platform_device wallvdd_device = {
  	},
  };
  
-@@ -711,25 +747,25 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit2[] = {
- 		.chip	= {
- 			.base	= S3C64XX_GPH(0),
- 			.ngpio	= S3C64XX_GPIO_H_NR,
--			.label	= "GPH",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('H'),
- 	}, {
- 		.base	= S3C64XX_GPK_BASE + 0x4,
- 		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= S3C64XX_GPK(0),
- 			.ngpio	= S3C64XX_GPIO_K_NR,
--			.label	= "GPK",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('K'),
- 	}, {
- 		.base	= S3C64XX_GPL_BASE + 0x4,
- 		.config	= &samsung_gpio_cfgs[1],
- 		.chip	= {
- 			.base	= S3C64XX_GPL(0),
- 			.ngpio	= S3C64XX_GPIO_L_NR,
--			.label	= "GPL",
- 			.to_irq = s3c64xx_gpiolib_lbank_to_irq,
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('L'),
- 	},
- };
- 
-@@ -740,43 +776,43 @@ static struct samsung_gpio_chip s3c64xx_gpios_2bit[] = {
- 		.chip	= {
- 			.base	= S3C64XX_GPF(0),
- 			.ngpio	= S3C64XX_GPIO_F_NR,
--			.label	= "GPF",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('F'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[7],
- 		.chip	= {
- 			.base	= S3C64XX_GPI(0),
- 			.ngpio	= S3C64XX_GPIO_I_NR,
--			.label	= "GPI",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('I'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[7],
- 		.chip	= {
- 			.base	= S3C64XX_GPJ(0),
- 			.ngpio	= S3C64XX_GPIO_J_NR,
--			.label	= "GPJ",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('J'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[6],
- 		.chip	= {
- 			.base	= S3C64XX_GPO(0),
- 			.ngpio	= S3C64XX_GPIO_O_NR,
--			.label	= "GPO",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('O'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[6],
- 		.chip	= {
- 			.base	= S3C64XX_GPP(0),
- 			.ngpio	= S3C64XX_GPIO_P_NR,
--			.label	= "GPP",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('P'),
- 	}, {
- 		.config	= &samsung_gpio_cfgs[6],
- 		.chip	= {
- 			.base	= S3C64XX_GPQ(0),
- 			.ngpio	= S3C64XX_GPIO_Q_NR,
--			.label	= "GPQ",
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('Q'),
- 	}, {
- 		.base	= S3C64XX_GPN_BASE,
- 		.irq_base = IRQ_EINT(0),
-@@ -784,9 +820,9 @@ static struct samsung_gpio_chip s3c64xx_gpios_2bit[] = {
- 		.chip	= {
- 			.base	= S3C64XX_GPN(0),
- 			.ngpio	= S3C64XX_GPIO_N_NR,
--			.label	= "GPN",
- 			.to_irq = samsung_gpiolib_to_irq,
- 		},
-+		.swnode	= SAMSUNG_GPIO_NODE('N'),
- 	},
- };
- 
-@@ -803,6 +839,8 @@ static __init int samsung_gpiolib_init(void)
- 		return 0;
- 
- 	if (soc_is_s3c64xx()) {
-+		samsung_setup_gpiochip_nodes();
+-static struct platform_device *crag6410_devices[] __initdata = {
++static struct platform_device *crag6410_devs0[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_i2c0,
+@@ -372,8 +397,10 @@ static struct platform_device *crag6410_devices[] __initdata = {
+ 	&samsung_device_pwm,
+ 	&s3c64xx_device_iis0,
+ 	&s3c64xx_device_iis1,
+-	&samsung_device_keypad,
+ 	&crag6410_gpio_keydev,
++};
 +
- 		samsung_gpiolib_set_cfg(samsung_gpio_cfgs,
- 				ARRAY_SIZE(samsung_gpio_cfgs));
- 		samsung_gpiolib_add_2bit_chips(s3c64xx_gpios_2bit,
++static struct platform_device *crag6410_devs1[] __initdata = {
+ 	&crag6410_dm9k_device,
+ 	&s3c64xx_device_spi0,
+ 	&crag6410_lcd_powerdev,
+@@ -873,16 +900,17 @@ static void __init crag6410_machine_init(void)
+ 	gpiod_add_lookup_table(&crag_wm1250_ev1_gpiod_table);
+ 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+ 
+-	samsung_keypad_set_platdata(&crag6410_keypad_data);
+-
+ 	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
+ 	s3c64xx_spi0_set_platdata(0, 2);
+ 
+ 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
+-	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
++	platform_add_devices(crag6410_devs0, ARRAY_SIZE(crag6410_devs0));
+ 	platform_device_register_full(&crag6410_mmgpio_devinfo);
+ 
+ 	gpiod_add_lookup_table(&crag_leds_table);
++	crag6410_setup_keypad();
++
++	platform_add_devices(crag6410_devs1, ARRAY_SIZE(crag6410_devs1));
+ 	gpio_led_register_device(-1, &gpio_leds_pdata);
+ 
+ 	regulator_has_full_constraints();
+diff --git a/arch/arm/mach-s3c/setup-keypad-s3c64xx.c b/arch/arm/mach-s3c/setup-keypad-s3c64xx.c
+deleted file mode 100644
+index 8463ad37c6ab..000000000000
+--- a/arch/arm/mach-s3c/setup-keypad-s3c64xx.c
++++ /dev/null
+@@ -1,20 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-//
+-// Copyright (c) 2010 Samsung Electronics Co., Ltd.
+-//		http://www.samsung.com/
+-//
+-// GPIO configuration for S3C64XX KeyPad device
+-
+-#include <linux/gpio.h>
+-#include "gpio-cfg.h"
+-#include "keypad.h"
+-#include "gpio-samsung.h"
+-
+-void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols)
+-{
+-	/* Set all the necessary GPK pins to special-function 3: KP_ROW[x] */
+-	s3c_gpio_cfgrange_nopull(S3C64XX_GPK(8), rows, S3C_GPIO_SFN(3));
+-
+-	/* Set all the necessary GPL pins to special-function 3: KP_COL[x] */
+-	s3c_gpio_cfgrange_nopull(S3C64XX_GPL(0), cols, S3C_GPIO_SFN(3));
+-}
 
 -- 
 2.55.0.795.g602f6c329a-goog
