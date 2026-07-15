@@ -1,120 +1,247 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D05D4248AA
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2026 18:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3998D3C1092
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2026 21:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784141169; cv=none; b=UIFvPE+vf4pby4UAX7qFPiLZyu6XGBLa4MMSLMKIPDYb4tN8MHpo/7jqD7lRZvtcXJwC4nqsL/AmU74To3KsDbYxvxySpzCyI5Fi+TUmofb1jLIEl0yWgHXEgPkyT1o18t4T4d8LlvpwgPvo3QW6rKsDNtuKLptXXT+UUh2BDvk=
+	t=1784149275; cv=none; b=FKhtNhXnSml05MVQ5O3clXZYe5u7puj5G+Ue1A0CsHAwWgoP5Z6pXLDWDcyiVP9re0nGCtaTkWgzOhFwbU/6Fl9XmkmHtZDOocp0DefyszIzkM/LbPtJNiK+dfEHbhfQWSiakE4VNPan96sgFJIO7vBosQ2LAPgfS58Dxj853xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784141169; c=relaxed/simple;
-	bh=p8DS9Lkfl+bVR+9wrEG/5fYveO8iAKu9dFhFTTtcoac=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=WmUun9gow661eE3KVN7QAVRSjOXldIKeFaEjzsTKJeeFO3nZLUkLyi3NqkuroQCCWHAJ/zmTjkXXboLD33ofNx9Ym/JpBx0IIctCYEy/MVMdeuq/YhVucXUTUcZVeDH/JWmObCvZiAxDjwwdMub3t744pJ5aLWyso1yN8gqU5L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nT4A4ZZo; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1784149275; c=relaxed/simple;
+	bh=9mzkR6mK72CbOoNM5u63KwQEb0cgWSJMe3fULxtBV/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJF5mUaenSRlfDpcm+mETGmoFTbGF2x3eqTSaSOBX1W92tZg6rWw6oTeAl+E70jZYeK7mulF2LumlfmrrD/p5SISeISGnyzY0rU2Bv4cKkDemvkapnSSJlpx26NCwN4A4azjAnz5ldLdXvD1T0uloMrqtxjrGfQdPxd8yffUeJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=C2qcyZGA; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nT4A4ZZo"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-471eeac43bfso5675251f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jul 2026 11:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784141163; x=1784745963; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=NZ1koe0FoGKZWlSKLYl/usYRXo5FiitnJD7Hzawo0JA=;
-        b=nT4A4ZZoFBVhnqD+4YsVsUh/vZzwf1iJBHfaqjSWyTneWel/ly9JicJ7vyqH1IX8eO
-         r7aZNR03fCQ7D0kWoeQ1n+bZwglXI/IjbwRa3xcq0qd9/6Ld71Q/BzSH5fd21Vjt7weH
-         D486QQN4TGemEZWOZ0yAF9dxuI1f0Acg5u36RFgL8pudNurEmr56WO3n1VLlwy9hqG/K
-         apsgDSxYuM+tohF9bpqeAVHut5V5iAPEyVyAc5SeUzPM0RzXsV/j70hNg8WZa+MS6jJf
-         G3z95b1dw1Vt3cBTNVhcbRMmFJX3Hr0D4TbUx4zUYRXtPP4sEHmjDlRPkq5Os0MMe0yO
-         KDnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784141163; x=1784745963;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NZ1koe0FoGKZWlSKLYl/usYRXo5FiitnJD7Hzawo0JA=;
-        b=jIK787c9V+j9NFDukVcQcE4hmNHBas25h5ZibTkh1MgOPghf697IYd6HODh+rQUulg
-         2dcHfKaumJcie7x6PpiC8Ayfmgw8C78B10q1sB7uC1iRxhTY6drbfO2SCYuozzayobuj
-         8m5E8kLu7xVzrfRaTLMC/EnJAM9yFgWAucOfJZKbanQks7iw0U/d1+dqZOgkJKHDSVIt
-         KDzNbBK6WjRxYPXPKKGXvWAs6g3TTLKLg8x7nJAz7QgJHvT0TAYakzXU5b5sCvL0AeDx
-         EvbxNdIEPzSn/YayduhBgl0dv6X+zQUlDEYQ+wJ7djbJz61CLqariQMoZ9y2igDzSE++
-         nR/A==
-X-Forwarded-Encrypted: i=1; AHgh+RpjYF4CCZv+9hoRCPOFfV15SJNmRgpNbL1Fxu5yGUeez2hCfTatgGbkTYOjj92p/TpSJBmOMlbgxXV9UFmtwuARiA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdWuV2Mbb/nPd/aOOEYAMmNipLDt97B5debJNd9WGEUde74ndn
-	mFlYTlMJAL7xzOGyx2HKqTAFX8lrCrQTPqJHiiWY7h4MqViQAVx66v73z02h3LmxGxA=
-X-Gm-Gg: AfdE7clFt4R27iQQbZZEQdhdxq5AvdrXscx1WwjyPztq6eMBOpMTh16SLKYSvmbgxY9
-	n6EdpIKZ2QR6FZk/wCW9pKicIwVeaMvaj5mop5xYg/hHOW11WZHIrhE2mlrCDLExIFKOA0p5yP+
-	2re2D2fIFKVkz/neDhXa17Zl7kmvi7dAax6CTe8S/GHarhhlzXXf/h3haNTyjqX3iXsQSisQddp
-	H2Pqqx9tbpYcRpM28nViajZE7msRaXqVPON1K6h5E/dFbIOlNHEfrKATeIn13F/XxNvCSlUckEN
-	ATiuo/zI/fYmWTa1hkiOK6GZvL+P6g3eZUUEMo2tinrtQ+NwtfUDRkpYeCPghkv0HtIbp+2mwN3
-	L36USsw/OnsxFtjUup+c025lbRsvXoa6jo42eaMPsuLII5qS28owgtoiKtmAb10w+/39Aj43ABZ
-	St9hKs1p1LE4ReibkpOsFZC7Y0zHpupRppd5j4omeej8Tk3Q5aEwDrcI3M1DaiVuEfuCs3EgzG6
-	Q==
-X-Received: by 2002:a5d:5f09:0:b0:47f:4e46:e9e8 with SMTP id ffacd0b85a97d-47f4fcc846emr4872875f8f.6.1784141162784;
-        Wed, 15 Jul 2026 11:46:02 -0700 (PDT)
-Received: from localhost ([2.122.8.179])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f464c25b2sm18639255f8f.30.2026.07.15.11.46.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2026 11:46:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="C2qcyZGA"
+Date: Wed, 15 Jul 2026 23:00:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1784149259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DI98beaWzJsxWR4025nuO00Osx1NSq0imL9gfHXYr5w=;
+	b=C2qcyZGAQCYWYHaphCqFN45Un9ibt4AF6XgSMc3hIenYmOoCXGVmfYH3SSpOIGA5zadykM
+	maEAZvYOy9eknDsKb78vUdvIwrSut6n1Zn21J7voa91c43d1RjvX94lZ1wj43Z1nUv6mY2
+	i/TiQ+HYEXTWs+wbSmpEG6M62zkWwLo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v4 3/3] drm/bridge: sii9234: use extcon cable
+ detection logic to detect MHL
+Message-ID: <20260715210052.GA32576@l14.localdomain>
+References: <20260602-exynos4-sii9234-driver-v4-0-9b2fc38e104a@grimler.se>
+ <20260602-exynos4-sii9234-driver-v4-3-9b2fc38e104a@grimler.se>
+ <178404686056.173179.5143201359152396886.b4-review@b4>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Jul 2026 19:46:01 +0100
-Message-Id: <DJZD9AJO482G.30HLO88FPQ7UZ@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, "Sam Protsenko" <semen.protsenko@linaro.org>,
- <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <stable@vger.kernel.org>, "Sashiko" <sashiko-bot@kernel.org>
-Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: fix use-after-free of
- interrupt generator node
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Peter Griffin" <peter.griffin@linaro.org>
-X-Mailer: aerc 0.21.0
-References: <20260605-exynos-pmu-cpuhp-idle-fixes-v1-0-0cd05c81a82d@linaro.org> <20260605-exynos-pmu-cpuhp-idle-fixes-v1-2-0cd05c81a82d@linaro.org> <CADrjBPoHhiNTfBsEam+=AWVc03mbQt+E6gm5Dw0fo=pH-w4Uuw@mail.gmail.com>
-In-Reply-To: <CADrjBPoHhiNTfBsEam+=AWVc03mbQt+E6gm5Dw0fo=pH-w4Uuw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <178404686056.173179.5143201359152396886.b4-review@b4>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed Jun 10, 2026 at 11:58 AM BST, Peter Griffin wrote:
-> Hi Alexey,
+Hi Luca,
 
-Hi Peter,
+Thanks for reviewing!
 
-> Thanks for your patch.
->
-> On Fri, 5 Jun 2026 at 21:19, Alexey Klimov <alexey.klimov@linaro.org> wro=
-te:
->>
->> The setup_cpuhp_and_cpuidle() parses the device tree node for the
->> interrupt generation block via of_parse_phandle() and decrements its
->> reference count using of_node_put() immediately after fetching the resou=
-rce
->> address. However, later the intr_gen_node pointer is passed into
->> of_syscon_register_regmap().
->>
->> Fix this by moving the of_node_put() invocation to after the
->> of_syscon_register_regmap() call, and adding it to correct error paths.
->
-> I think  using
-> __free(device_node) =3D of_parse_phandle
->
-> would be a cleaner/simpler fix.
+On Tue, Jul 14, 2026 at 06:34:20PM +0200, Luca Ceresoli wrote:
+> On Tue, 02 Jun 2026 20:36:50 +0200, Henrik Grimler <henrik@grimler.se> wrote:
+> 
+> Hello Henrik,
+> 
+> > To use MHL we currently need the MHL chip to be permanently on, which
+> > consumes unnecessary power. Let's use extcon attached to MUIC to enable
+> > the MHL chip only if it detects an MHL cable.
+> > 
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> 
+> I have several minor comments, but overall looks OK to me.
+> 
+> >
+> >
+> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > index 4a57d49b4c6d..11171b4054b5 100644
+> > --- a/drivers/gpu/drm/bridge/Kconfig
+> > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > @@ -333,6 +333,7 @@ config DRM_SII902X
+> >  config DRM_SII9234
+> >  	tristate "Silicon Image SII9234 HDMI/MHL bridge"
+> >  	depends on OF
+> > +	depends on EXTCON || !EXTCON
+> 
+> IMO the other syntax is more readable:
+> 
+>           depends on EXTCON if EXTCON
+> 
+> See https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html
 
-Yep, thanks. Around time of sending this Krzysztof also adviced to use
-_free() in another commit on maillist.
+Thanks for the link. I was not even aware of the other recommended
+variant, seems it is rarely used:
 
-https://lore.kernel.org/linux-samsung-soc/c866dbcd-c211-48df-84e3-f66785ba8=
-538@kernel.org/
+$ find -name Kconfig -exec grep -P '\b(\w+)\b if \1\b' {} +|wc -l
+7
 
-I'll update it.
+Will change in next version that I aim at sending within a week.
+
+> >
+> > diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
+> > index e43248e515b3..72c6aeed6e12 100644
+> > --- a/drivers/gpu/drm/bridge/sii9234.c
+> > +++ b/drivers/gpu/drm/bridge/sii9234.c
+> > @@ -170,8 +172,12 @@ struct sii9234 {
+> >  	struct drm_bridge bridge;
+> >  	struct device *dev;
+> >  	struct gpio_desc *gpio_reset;
+> > -	int i2c_error;
+> >  	struct regulator_bulk_data supplies[4];
+> > +	struct extcon_dev *extcon;
+> > +	struct notifier_block extcon_nb;
+> > +	struct work_struct extcon_wq;
+> > +	int cable_state;
+> > +	int i2c_error;
+> 
+> Moving i2c_error is unrelated, and apparently unneeded unless I'm missing
+> something.
+
+Yes, it is unneeded, will drop the change in next version.
+
+> > @@ -863,6 +869,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
+> >  	return 0;
+> >  }
+> >  
+> > +static void sii9234_extcon_work(struct work_struct *work)
+> > +{
+> > +	struct sii9234 *ctx =
+> > +		container_of(work, struct sii9234, extcon_wq);
+> 
+> Can fit on a single line.
+
+Will fix.
+
+> > +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
+> > +
+> > +	if (state == ctx->cable_state)
+> > +		return;
+> > +
+> > +	ctx->cable_state = state;
+> > +
+> > +	if (state > 0)
+> > +		sii9234_cable_in(ctx);
+> > +	else
+> > +		sii9234_cable_out(ctx);
+> > +}
+> > +
+> > +static int sii9234_extcon_notifier(struct notifier_block *self,
+> 
+> "self" is not a very descriptive name. What about "nb", being a notifier
+> block?
+
+Sure, will fix.
+
+> > +			unsigned long event, void *ptr)
+> > +{
+> > +	struct sii9234 *ctx =
+> > +		container_of(self, struct sii9234, extcon_nb);
+> 
+> Single line here too.
+
+Will fix.
+
+> > [ ... skip 14 lines ... ]
+> > +	/* Then get micro-USB Interface Controller node */
+> > +	muic = of_get_next_parent(musb);
+> > +
+> > +	if (!muic) {
+> > +		dev_info(ctx->dev,
+> > +			 "no extcon found, switching to 'always on' mode\n");
+> 
+> Can fit in a line.
+
+The rest of the file uses 80 char line limit, but seems sensible to
+exceed it here. Will fix.
+
+> > +		return 0;
+> > +	}
+> > +
+> > +	edev = extcon_find_edev_by_node(muic);
+> > +	of_node_put(muic);
+> > +	if (IS_ERR(edev)) {
+> > +		return dev_err_probe(ctx->dev, PTR_ERR(edev),
+> > +			      "invalid or missing extcon\n");
+> > +	}
+> 
+> You can drop the curly braces, and perhaps the dev_err_probe() can fit in a
+> 100-chars line.
+
+Will fix.
+
+> > +
+> > +	ctx->extcon = edev;
+> > +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
+> > +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
+> > +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
+> > +	if (ret) {
+> > +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
+> > +		return ret;
+> > +	}
+> 
+> Use dev_err_probe(), and so remove the {}.
+
+Will fix.
+
+> > @@ -929,7 +1004,15 @@ static void sii9234_remove(struct i2c_client *client)
+> >  {
+> >  	struct sii9234 *ctx = i2c_get_clientdata(client);
+> >  
+> > -	sii9234_cable_out(ctx);
+> > +	if (ctx->extcon) {
+> > +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
+> > +					   &ctx->extcon_nb);
+> 
+> I guess you can use devm_extcon_register_notifier() to simplify a bit the
+> code.
+
+Will look into it, thanks!
 
 Best regards,
-Alexey
+Henrik Grimler
+
+> > +		flush_work(&ctx->extcon_wq);
+> > +		if (ctx->cable_state > 0)
+> > +			sii9234_cable_out(ctx);
+> > +	} else {
+> > +		sii9234_cable_out(ctx);
+> > +	}
+> >  	drm_bridge_remove(&ctx->bridge);
+> >  }
+> >  
+> 
+> Luca
+> 
+> -- 
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
