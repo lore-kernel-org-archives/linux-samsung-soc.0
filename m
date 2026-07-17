@@ -1,117 +1,84 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707DC3DD520
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2026 07:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519872BE053;
+	Fri, 17 Jul 2026 08:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784273868; cv=none; b=k6HJYlZJNV0Iw7cg9V1b3zusXPV29jDzGDDFhqJqFsIjf2NZfhNiyEpwXJ+xV8zinrGJtL8Q5Qk8FqTBclFUDodL9VAJ5OFv0yOvs+T/1b5CBm6M4YHe+pxiHIorojQK9bJKFJuKGv3r3m8wn/YPwNHBPpFBhabuppZ3LXVrUsA=
+	t=1784278191; cv=none; b=qCH4B4w6EdQb+KxfD7/CjV+UYKMs0usAnFTSxaxS3WIHu6thrarjVzGW/HgEzZazk8PO6xJhwV/+bxSNrbOm2Xd8XZkGHumt2NxT2hBHEtgSv29BEknlVpV55GttszYXWs1l+NlLHkolN8PqI+nZlNsebIxrx2BJgrrF+6rmfNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784273868; c=relaxed/simple;
-	bh=qZkQOIOG8Kl3936adbYcP2Yh8w6XNbgYkOrvcA3q2GM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kSBA2uPTtJLLMbyQY++W4TXn1sZEnQ9bnxt52jRnl+4Dmm7d0qD7d88T+k6hLXbkO/oh5uEx5rpoamtKixGerkjGtDyn3T9AS3C4RWMW9pkJ40UR9sN+fjBex4JPaOgdIC20hMOkuYTVfhbp0B75wkwJry6GtJZkcAt49rlm1aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kon2YfH/; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784278191; c=relaxed/simple;
+	bh=M1qHWhMJ2vTUy5BaEKWWqgRYUs/aNH/eQfrqWMcPPLY=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=eH/L8fBv2DLKWO80w/y2Y006PiOyCg/qeObixFOGqUYS8OPH2xmX1RX4DSZMlCKSpVnea53tf7iRL72w77ZVKxXie/G8UfGzswgehnDr87VKJRw71LQKtAr13Ljo0nxI+Ul49YxSTWjukzp4ynZY+wsyjZ+b2QyRlrSomVXoNaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgFeC5GL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kon2YfH/"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D5F761A103B;
-	Fri, 17 Jul 2026 07:37:34 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 943D660361;
-	Fri, 17 Jul 2026 07:37:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC0A611BD3D44;
-	Fri, 17 Jul 2026 09:37:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784273852; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Cdb0RCCdG1Y5r/It8CwrJzVJ0JbWRfQ0sD99bdj9c+M=;
-	b=kon2YfH/dOK4tDt53OBaDo5FFMl+LDNwDVUop5ds1NRI/Wg1uSfOdRPoX//xppPkYw4F4k
-	i7WIsxXBl1un2FVxbtH0z+MNg/Pxf/kDZFkkmQMF7GWX2KDvfCGfcNPlsGE/XeWd6UWU5+
-	GU0KvK2Qz5NhcKTqLYeMaoODnDSsLW8zaf8j7HAZsl2HX2a+q1UNwnNfj8/t2YSHY0CoOJ
-	iuHvYWwy+oF8TF5SvX8WUIAoCWzZZkD3fHymApMwuHuo/Ci0SwMn3oduihoRjpk8TrJJuw
-	dKfxpFRA4xRbQoh0VoLeExcl0443IzDaZd45c4NSu8UobUALaKN9EhlqiiNUTA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,  Daniel Lezcano
- <daniel.lezcano@kernel.org>,  Zhang Rui <rui.zhang@intel.com>,  Lukasz
- Luba <lukasz.luba@arm.com>,  Markus Mayer <mmayer@broadcom.com>,  Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-  Florian Fainelli <florian.fainelli@broadcom.com>,  Frank Li
- <Frank.Li@nxp.com>,  Sascha Hauer <s.hauer@pengutronix.de>,  Pengutronix
- Kernel Team <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
-  zhanghongchen <zhanghongchen@loongson.cn>,  Yinbo Zhu
- <zhuyinbo@loongson.cn>,  Amit Kucheria <amitk@kernel.org>,  Thara Gopinath
- <thara.gopinath@gmail.com>,  Niklas =?utf-8?Q?S=C3=B6derlund?=
- <niklas.soderlund@ragnatech.se>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>,  John
- Madieu <john.madieu.xa@bp.renesas.com>,  Heiko Stuebner <heiko@sntech.de>,
-  Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>,  Alim Akhtar
- <alim.akhtar@samsung.com>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-  Alexandre Torgue <alexandre.torgue@foss.st.com>,  Thierry Reding
- <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
-  Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Laura Nao <laura.nao@collabora.com>,
-  Fei Shao <fshao@chromium.org>,  Chen-Yu Tsai <wenst@chromium.org>,
-  Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,  Frank Wunderlich
- <frank-w@public-files.de>,  Mikko Perttunen <mperttunen@nvidia.com>,
-  Svyatoslav Ryhel <clamor95@gmail.com>,  linux-pm@vger.kernel.org (open
- list:THERMAL),  linux-kernel@vger.kernel.org (open list),
-  linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM
- ARCHITECTURE),  imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE),  linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM
- MAILING LIST),  linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR
- THERMAL DRIVERS),  linux-rockchip@lists.infradead.org (open
- list:ARM/Rockchip SoC support),  linux-samsung-soc@vger.kernel.org (open
- list:SAMSUNG THERMAL DRIVER),  linux-stm32@st-md-mailman.stormreply.com
- (moderated list:ARM/STM32 ARCHITECTURE),  linux-tegra@vger.kernel.org
- (open list:TEGRA ARCHITECTURE SUPPORT),
-  linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
- support:Keyword:mediatek),  Niklas S?derlund
- <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v2] thermal/drivers: Remove redundant error messages on
- IRQ request failure
-In-Reply-To: <20260717024733.374913-1-panchuang@vivo.com> (Pan Chuang's
-	message of "Fri, 17 Jul 2026 10:47:10 +0800")
-References: <20260717024733.374913-1-panchuang@vivo.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 17 Jul 2026 09:37:18 +0200
-Message-ID: <87v7aekqxd.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgFeC5GL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114FB1F000E9;
+	Fri, 17 Jul 2026 08:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784278189;
+	bh=cYuZ+CRFk03hiWJ0HC3KigHuxua0YjUKs+2Dja/OrBg=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc;
+	b=DgFeC5GLqSzOP+GCjhyeXf5hR/vY/98UPz4EyHLu+56RxHNeDjfoHFTij4I7lYsu+
+	 a6JlhCp2Q5K0vqIDiJ87VcMZqSobvY1akK3ZofSCKuk8Pi680uGfRIO9r2GtHepbn4
+	 KlTySY//ivAWf8NMV0pVuEWNG4M1GOTk3L+WEo9JaJ3k26eDKyUY3vl2uTk0L0PnIR
+	 CZvJjJXDCJjqHRtvo5pJPug5oG+hgcNp2R7Oww0gcS5n0etHt2gvNuAxHvrbBw1GOv
+	 p7FjL7idnh/4PoMwLgvJ+TOJ/+5fblnzGrSw2UXOgaM1hS2L5Rs5x2aaU8ODu5yMbU
+	 cKwvVjEbSxgpA==
+Message-ID: <505844fbd2c5c8ab07153348d20b708c@kernel.org>
+Date: Fri, 17 Jul 2026 08:49:45 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Albert Esteve" <aesteve@redhat.com>
+Subject: Re: [PATCH v2 3/5] drm/panel: of_drm_find_panel() return a counted
+ reference
+In-Reply-To: <20260713-drm_refcount_wiring-v2-3-d3bb61f4bd4d@redhat.com>
+References: <20260713-drm_refcount_wiring-v2-3-d3bb61f4bd4d@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, "Alain
+ Volmat" <alain.volmat@foss.st.com>, "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Andy Yan" <andy.yan@rock-chips.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Chen-Yu Tsai" <wens@kernel.org>, "David
+ Airlie" <airlied@gmail.com>, "Fabio Estevam" <festevam@gmail.com>, "Frank
+ Li" <Frank.Li@nxp.com>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ =?utf-8?b?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, "Inki Dae" <inki.dae@samsung.com>, "Jagan
+ Teki" <jagan@amarulasolutions.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jessica
+ Zhang" <jesszhan0024@gmail.com>, "Jingoo Han" <jingoohan1@gmail.com>, "Jonas
+ Karlman" <jonas@kwiboo.se>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Jyri
+ Sarha" <jyri.sarha@iki.fi>, "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Kyungmin Park" <kyungmin.park@samsung.com>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Laurentiu
+ Palcu" <laurentiu.palcu@oss.nxp.com>, "Linus Walleij" <linusw@kernel.org>, "Luca
+ Ceresoli" <luca.ceresoli@bootlin.com>, "Lucas Stach" <l.stach@pengutronix.de>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Magnus Damm" <magnus.damm@gmail.com>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Marek Vasut" <marex@denx.de>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, "Maxime Ripard" <mripard@kernel.org>, "Mikko
+ Perttunen" <mperttunen@nvidia.com>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Peter Griffin" <peter.griffin@linaro.org>, "Philippe
+ Cornu" <philippe.cornu@foss.st.com>, "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Raphael
+ Gallais-Pou" <rgallaispou@gmail.com>, "Robert Foss" <rfoss@kernel.org>, "Samuel
+ Holland" <samuel@sholland.org>, "Sandy Huang" <hjc@rock-chips.com>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Thierry
+ Reding" <thierry.reding@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tomi
+ Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-On 17/07/2026 at 10:47:10 +08, Pan Chuang <panchuang@vivo.com> wrote:
+On Mon, 13 Jul 2026 13:53:06 +0200, Albert Esteve wrote:
+> Callers of of_drm_find_panel() receive a pointer with no reference
+> held, creating a window where the panel device can be unregistered
+> and freed between the lookup and first use (e.g., drm_panel_prepare()).
+> 
+> Fix the lookup function by acquiring a reference with drm_panel_get()
+> 
+> [ ... ]
 
-> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-> devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq()
-> automatically log detailed error messages on failure. Remove the
-> now-redundant driver-specific dev_err() and dev_err_probe() calls.
->
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Niklas S?derlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-                       ^
-There is an encoding issue here
-
->  drivers/thermal/armada_thermal.c                          | 5 +----
-
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
-
+Thanks!
+Maxime
