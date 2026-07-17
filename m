@@ -1,136 +1,176 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEE03E5A2D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2026 09:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784281884; cv=none; b=eKdDDqtxE+BTxlu4QyR9T+IliTp2P1Rn5GwMeOsR7+EDfE0C+tZ6nldQQVUqsyH00ICRAFgw6pnOH7j0w9NCw6ZXJWMhTGFRVInsMjdRcXhS8GgBMgKzIQo9lQ2bi4VRvh2HBelyH74gNfERW6/JWN71FbrPuPj00JHEaQqlVjM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784281884; c=relaxed/simple;
-	bh=ZB3H3f3ElaLpxDpPNUF4NsqqhjJPg/4ycXg5Jb65iVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8t835NDfInZlIR0W6TSL0rXJFghc70FUPyjCU/3hWCf5NPZHo7gxzIQCHVZPbixXRtNaH+rBXZT1kKnNNffk4hS/3VBNQikUMo98n+GKc1crM4XW3m/KcpQMANU+cJ1xd+Wc8V5Nw49I9CfAYHQtTJTp/ffhA2lo1MTEmMmAGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=cB+tdg1X; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F9E3F39E0
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2026 11:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784287596; cv=pass; b=CyMvlZYZ96eEOyHS/RQKkJQI0A6NayN/L/1gBainSRy9J1tnEWcQgLAnQthSJ3yjtcEMrz5tzKo7x1KeCY3rfblUDPSSbtTmBPN7GhCO0/fgmFoKS77toCtAblrK/ikaISpeYC22RPBUaIcRnA97DxZaRIXL3ZJ4+fCjMPICOAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784287596; c=relaxed/simple;
+	bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z19mZAfC0bn5TJgJe6o+J9Yg/E0MBPeS6qWLav4N3NhWjPXQm5uY/XBOOrv4naeC+UeNIlaBD2lLz+A+OoUJn98+U89uSW4oVlp/k56ifRuIG6uRy5ZO+HSknpEVhb3T3xFZ4uO64jwY8yYlLMVH211b5TTHuaVqaw2lLKxV8Pw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hbuaHMNf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkPuMfAv; arc=pass smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="cB+tdg1X"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-47ddf7b09e5so3786463f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2026 02:51:21 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hbuaHMNf";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkPuMfAv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784287579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+	b=hbuaHMNfVh/BTlEUtqw2qc88EQ5YrQJttUseyY/ZW5fbk68bM7/2J47/ytW8GSVyPUZu+F
+	utec4FzXZOTpv9YvNnvpNMNs41+i7FmLqC4iNgxM2JMow75DMd0/6Zsji/ErK4zVNYS+sw
+	LlikvaofhxxezrDsxgYQkKZPYSY57v0=
+Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
+ [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-opcwyzOnNFu0HhHp091Z-Q-1; Fri, 17 Jul 2026 07:26:18 -0400
+X-MC-Unique: opcwyzOnNFu0HhHp091Z-Q-1
+X-Mimecast-MFC-AGG-ID: opcwyzOnNFu0HhHp091Z-Q_1784287578
+Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-66807ba1ce8so4228153d50.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jul 2026 04:26:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784287578; cv=none;
+        d=google.com; s=arc-20260327;
+        b=nK0GhmVHgGT+bF9ayyEopbUtlVm7Nh61/FKBRgNTps/flZwwANWPxJBDOUJpUQKMmI
+         we0SIcWC4cxrO1/w8YiI8TXkR2umm7LzM9x1zLrryWmFLBDD+i6xw2jUmn00jOluScjI
+         UICreR+SjwnTcgCYetqLokvetzKwJyD2sh3oSkx4GorXmKefS6tOMMLgAp+1NgvhfHot
+         SwCXzsHAs/vA8R4Wv5GHyh75xUYncPPDGO7GHYhYrpfsaHAvp7e4K8bZ14/z8QOV15Kf
+         pQ4atyoXlDVSwnBrFMvU5GbXnHPY4muGrjeh49xUOcdrIQmVY+KVxo2wn976hmQ83SY1
+         dang==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        fh=eECA7BPRwebJVmRtrWZbwFrlvk3ATGZYmqJwTp5Mk6M=;
+        b=pb60CE8yvDsgnujTsi1hk5PYrUNtEjj9kO/9fJqluJEcAnfWbORMKaw4PMa9UXLr6z
+         mC3t9qNzkbnrqlbu+vBq41goPyCKEcB94lfUzvBY3KCp346JEpgSprOhH25gg08EeA7x
+         7Y1b+EdP21BlSA+sdORUu8WvW4N2YjBNjRPxMA/FelYtPbjEokCvAmFANjOzgl89FKPQ
+         XKjGjrG2EOkjQ4RGVsL0QOqYzvkV/6TXNNB8+bHSCXBg2hn6bydiXcoH5czfCmE7N8XA
+         yO2ravc4v72l/gUTe7MOSV+NP0K1c2XOe3s5MI3lpKWgVj9TyYEUjZu6mqeXpDb/QmQd
+         k6pg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784281879; x=1784886679; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=redhat.com; s=google; t=1784287578; x=1784892378; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ZB3H3f3ElaLpxDpPNUF4NsqqhjJPg/4ycXg5Jb65iVQ=;
-        b=cB+tdg1XWIVi/nE4Jy5/Pgsw+Y00eJVeUkaXLNESntJ3OXzp5cGChc08JvvMrD4X8p
-         tt9I48cU7Or0u/P44pZaFM1YemrURJgP8mxwSUw86Hsw5u14cLnQdc2K8Hwn+fZaq/WI
-         hUxsMX2l5MCE+C9JVNV2vuctRQ2uXnFn5x6NCeQQj0tkYSIJes/jC5k6IzGnzaCdGepX
-         mQRoQ2HJZBJz1Rnc1PDcq9rGtMrLjOExGA936TipDwZpi+E64xHPhWSYx0n6VVdIb1rX
-         58jRdJriWpckJXQplf/wIdKVbdCP378zaX1OCKbw9si8tq766IsHXa3FuTF4Jzd6xUC+
-         7Jjg==
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        b=dkPuMfAv+k2E9nBvXL+bKAaBa+jYrnhdMsC2bR2eUwKZ4mnbrq3tiJekZW2hxFd4xa
+         6eicuVh0uCaFzJ3BDWToJPYoCo2rsWg/YOK30OwvtB/KNUuGQIpqRUIpratcRfUUb8z4
+         Dzsp9jw2Y1wfsThjrVG6Vy9kRlMayacB6owIbhaAY7yV9ph2adsHO5Ostz8FNn8l6qNJ
+         h91KbJB4Fx2ocuedxZ5IsMwuKs/dPvJqaX3JrTLTOwo2mEKMxytUmS/QoGngM61YghBA
+         piTMMKauhYhsHa56zWIi8jBr3KuuaFcQzlP4h+UHhMWbrfGgPrgdSY8VU91HtCvduo10
+         VPQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784281879; x=1784886679;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1784287578; x=1784892378;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ZB3H3f3ElaLpxDpPNUF4NsqqhjJPg/4ycXg5Jb65iVQ=;
-        b=XAgBJrhnkLGT8kxiP9q62PZyTziC7D2b3iMq4xIV5SMukw2qffdWVrnGEhGA9GM7ro
-         Cj1XyZSthIQSmDYGQijw5EfKO0B9hHZ/2zKgHFh13FimZewdtxuAQeLeFN5B/dvn5DoY
-         LejL9hpQmPjEtHuMnuT7EIwmopuFXBYFoACbJP6y1pLTN6joGhE7oLLNp0C/YLwsdk3n
-         clYv0th+R2+HSO9cB94vbzYS3c86mkBVbJ6NubPgEEWFlkSbwsDFfH0bn1ce98qSSehh
-         Gv9lPRMonfcilQgBpK+RlHJs9u42tQ9+LUzr1TBxYiYjP5QkuLYFPpGC32lnIHBs8JRZ
-         sg9w==
-X-Forwarded-Encrypted: i=1; AHgh+RpWlujIDC2vHH6GT6DNbUyNYodwOh5cuoH8Xp7YMkfPMTOUiEOYV0nEyHmMIH7SR6OadArL/YrFgwgYzdRms02UtA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoqJ+286ZfVnxjklFGrvBDerijwCFBHFll9JkRwayw5c+3HjBR
-	Ryv4Bwl8XLTp65CWzlqV6PebENY/By428uILz8rKtJO2cgmxfQnBO7OAU11a+cnaaM0=
-X-Gm-Gg: AfdE7cnbTGa92noyDrHkY4UcbTHUz2YY+c6FRcKKwtntLRTTFqJapOaPHItlvIfTlVq
-	adaewmwG+qq3uxVuQrp3m30c3ocpz7KQhkiS2EnQkLhN9gWwXAJf3Bl6551Dq11sFRqM8e0FF7D
-	vTiXu3B9QyqCc51mtNweMRDjE7Bv4F9A9GCm95dgGY3bWeK/iyHe68DLG9/GVSGBj4C+yGllFZs
-	VI92N06ub6CKK7sH0mOfd+9LYnfnFMOpGhsKmNSSYo31JE8QDggEYoAbZx8xzvrE9L84kfqkRay
-	s1Bpo/QxcsgJWAv1T+rFCzcw+6Adk0gC8Ta/golnboHbB35iDGErftaRZ0kqQAKeUcvYy5ofs8U
-	o7IDaTTLiHb81j06kvbQ6WYmzv4dmuWneD7mAEkgFAXzjuUCsfYOT4K4/PQyZ7OwgIlN6k1oSy8
-	ohVh5tZIQZQvOgp2786LeIMJTk17PncLt0QKiQXboQGeSxkahibvJz7irVhhIqpJSuKx+tNnW+J
-	HMi
-X-Received: by 2002:a05:6000:26cf:b0:46e:483c:2262 with SMTP id ffacd0b85a97d-47f622f81e5mr2795318f8f.14.1784281879131;
-        Fri, 17 Jul 2026 02:51:19 -0700 (PDT)
-Received: from localhost (p200300f65f47db047d2d8b161e35ab77.dip0.t-ipconnect.de. [2003:f6:5f47:db04:7d2d:8b16:1e35:ab77])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f63e496afsm2730880f8f.1.2026.07.17.02.51.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 02:51:18 -0700 (PDT)
-Date: Fri, 17 Jul 2026 11:51:17 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Brian Masney <bmasney@redhat.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v1] clk: Use named initializers for platform_device_id
- arrays
-Message-ID: <aln6H4A2QTO9w3Rq@monoceros>
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        b=qfAoyIg47xSAvy6y/kkRAhv+OTni/3D7LhHh8tL+LwWyVQ7JYry52bBCYRy1ERIM06
+         qNgFPOhFUANU/XqkMyWtbi5ak9Nxy2Nq0H3NRP1+m4F0avqQ+Ji8jYBUFC/0+hDy5wLu
+         lkHED0uvoHtorhIR/UV6/EIHSv+hPLikydM6izHaN9a2ITTNe8FXmxZwKRVffKIXD/xo
+         p0a2ez+gpiGukB5uWShcHYqBBJa7VlaWrAoX13QDRsvwp9fIpQdHg2YHFX0nPh1GKRw6
+         yRt4llUYSz1P53fG8+robyrspMryhNAasRrJlChlwF+A//xPSG6cNPIS1hq1nXe3/nOW
+         25Ag==
+X-Forwarded-Encrypted: i=1; AHgh+Rqk6yubNp2n741NlEhGAlxlR3rmibCPLLN/MTz75WapvAVEsVjMluktMet/jgPMq89qa0MdA6t0JT32BiAR8+2h/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF0qN6HKEYSZikmEmQtItTsr8NVZYHJo1OyM7ozKPJM0i/B5tg
+	34cIUhX+7m/ttoIVvl1Z0U1cvFqr3JhP0QbIfBzGZprUXg9Fn25PbXbejotzVFei6vH8m9vZUaQ
+	9aMpXFwW0t9wGxZNDU54tvbvMxiNnM8d7m04vVoccodYf1ifL7VCcyqgKZoLOPAYtSlyEsesZsa
+	TrKTQLd/2Qb4J2A7bFZOSaSVYRc7D+OoUtsvxYSQEDvl+KrJo=
+X-Gm-Gg: AfdE7cnK+yK3Xe9V0WUpnLVPpZoHlcJvrnFqMrMiKVSMeeh+pAyfjUBsg1bwLCcpUJ3
+	M4e9iJvAFTNKmXQfXnSpVWob1XOx5xJOlAskj7Bi+o8URhF3/3D9+k+viKkPp4FiCljPcNG2d2s
+	NY0O2jHNmk+R+8QFXxuwtquyJbkjTz5N8sjSrkmOiI/mzSR/QDXzu0DmOr
+X-Received: by 2002:a05:690e:43cb:b0:668:43ce:50e4 with SMTP id 956f58d0204a3-66843ce511emr36189d50.53.1784287577990;
+        Fri, 17 Jul 2026 04:26:17 -0700 (PDT)
+X-Received: by 2002:a05:690e:43cb:b0:668:43ce:50e4 with SMTP id
+ 956f58d0204a3-66843ce511emr36162d50.53.1784287577611; Fri, 17 Jul 2026
+ 04:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fkycjd7kwh675awn"
-Content-Disposition: inline
-In-Reply-To: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
-
-
---fkycjd7kwh675awn
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+References: <20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com>
+ <20260713-drm_refcount_wiring-v2-5-d3bb61f4bd4d@redhat.com> <20260717-heavenly-peach-guan-82f0f1@houat>
+In-Reply-To: <20260717-heavenly-peach-guan-82f0f1@houat>
+From: Albert Esteve <aesteve@redhat.com>
+Date: Fri, 17 Jul 2026 13:26:06 +0200
+X-Gm-Features: AUfX_my0X2LQ6M_jKeRcxy0r6pG-sYFIFgqEmiZmXcdV57T8jjudIQuMMnSFyJg
+Message-ID: <CADSE00+7=2ph4kRQLc7_MFbp_SSt3eYz-bBxWcfCj6_oFPjwFA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] drm: release panel reference after panel bridge creation
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: Use named initializers for platform_device_id
- arrays
-MIME-Version: 1.0
 
-Hello,
+On Fri, Jul 17, 2026 at 10:56=E2=80=AFAM Maxime Ripard <mripard@kernel.org>=
+ wrote:
+>
+> On Mon, Jul 13, 2026 at 01:53:08PM +0200, Albert Esteve wrote:
+> > Update a second batch of drivers calling of_drm_find_panel() or
+> > drm_of_find_panel_or_bridge() to release the lookup reference after
+> > wrapping the panel in a bridge.
+>
+> I would have expected this to be squashed of patch 3, any reason it's in
+> a separate patch?
 
-On Thu, May 28, 2026 at 12:29:38PM +0200, Uwe Kleine-K=F6nig (The Capable H=
-ub) wrote:
-> Named initializers are better readable and more robust to changes of the
-> struct definition. This robustness is relevant for a planned change to
-> struct platform_device_id replacing .driver_data by an anonymous union.
->=20
-> While touching these arrays unify spacing and usage of commas.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@bayl=
-ibre.com>
+My intention was to make the series easier to review. Patch 3
+contained the initial set of callers mostly found via the Coccinelle
+script (simpler to address generally), and patch 5 includes the rest.
+Including all the changes plus the core API update in a single commit
+felt like too much.
 
-This patch still applies to next-20260716 and still is complete (i.e. no
-new clk drivers appeared that require this type of adaption).
+That said, I am happy to squash this for the next version (fewer
+patches to track).
 
-The patch sits in my queue for quite a while now, got positive feedback
-only and already missed one merge window.
 
-Do you still have it on your radar?
 
-Best regards
-Uwe
 
---fkycjd7kwh675awn
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> > Also handle the cases where a panel is found but cannot be used,
+> > dropping the reference immediately in those paths.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpZ+xIACgkQj4D7WH0S
-/k4RPAf/R/neZTJeROp5HDfAB1kjiKdTD1eb+lCt/Alu7OUMfPtNCohc+wbWz0aD
-9VLN0xNFPWisKl7W+P4wIm/oBhVUpj9YI8Xe63UGQUTRD+pMXyWR0tum0HiUJ7fe
-BFPKV8aY+GJ7FwbxX764+avTkKzUBJQSUzerE4Ea8QtB+YU5zUPe/X/NePEgMYJ2
-KMGSQJqpPjooKUbhKdUHbEOHxfomCWX4U1mUW6fuiUEg1zoGXbzsfXy1DibGlBtw
-BDhBd/LMd+okrZyBw0mXnzKLVn0bDosN4Qdc+UUh21otT2ahbWBYTjwlUlZkHvZi
-sWFrnPSXKS02gFdBmGivvUcQMzygWg==
-=PWp0
------END PGP SIGNATURE-----
-
---fkycjd7kwh675awn--
