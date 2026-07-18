@@ -1,47 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368BE3DE42A;
-	Sat, 18 Jul 2026 16:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BCE30BB91
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jul 2026 23:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784391798; cv=none; b=rGwSRjFt9i6p3/ZrtGjM7ZP3M0H9EfM8EeSyGQeHyHG7Ue1SEi/ghmkIV6ySiIfTTGeKS7jbj+2IsJusnd8HotoJ+6rEt80Fv7z3cjaTQSvMir8uDocOCJ9Jgc60mW57m2xiIjqzq6qd8Zg+vQSqdB8KcaUnItSJ0w+HSetCCAA=
+	t=1784417761; cv=none; b=cCNz4B36VHWoMLNn6ArrD5jSjbt1faECC8N/NMcVQkywk30Colc08B4tkqIDD522ndvamPSM4FQXt/ya+fW7Py7qdd8tdt1KatgyARy/4NERYMXx0XdmhMArj+kzoRdt3qH9vivL51I/CljuuASzAFCOzSwoKJ17JI4V88iiULk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784391798; c=relaxed/simple;
-	bh=8CXE8dnHUd6cA6BVVcsx2XQ5mloEU+tRYFpnNL3pEtQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gChNBIArjcUi0Mpb3qEQWEP6hnI7I9e/0QVX3x0ZG+qr8bwIKFwO4XFs7ceqeFi6/usLX+bmSespRivq0D4/TC1eAZbNJ3+0K+apZfczRy6NEC06h44ijTb1PtqUWaWMR6kyrThyPs6MkocM1EThvyQudOu9RDLct5R8m1DgQzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZKO031O; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784417761; c=relaxed/simple;
+	bh=4VckNmYkZcMe07k6xO/fIqj/JsCM+9ZJGLo0Ai8FnTM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kbl/C0UTVI7blxTCQ2fczT0IRzBYqJj470bhOITab68sK3+r4cKhEg3GPZUGs7U2EDksVZYCHpuCU2mFojUDE1Vb1hE6/ZFO2PMrhQOBQK/cg7/Ux6pm2yFezr7imnV9OML4s0n75ywNhShiqOAmzcygojuZa9fstBh4bEqeDVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pCJxmMwW; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZKO031O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8241F000E9;
-	Sat, 18 Jul 2026 16:23:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784391795;
-	bh=4ik/QrSKPwfSN+RYBZpadgi0brYUJlQiUYzJEWmwqDA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=lZKO031OJYWiuDO11/NKzknq6ad5HVR3E4rkFWBsKVK501KGaZT+W5/MVOQ/fEq7q
-	 nAw1A7o5Sv9dGgoH1tzCKTdBfucSaGaOrp9mFjKgMNWzIri0Ms48GZqHxcEiqMav+7
-	 kMU2ZLMnzgIfiK61PkXsYFgLpcsEAZsm9y4z0whcpRJfHqx67bH8zHKR095TyV/9g6
-	 +1R9LsvalgiCYuHwqacIKbtaqpLtePIV0C1UvquRyW/0WH5F7tYXsPbPgl6jD8kdi9
-	 TrT0XvP0pF8oiYcTJFIIT53O4ftSd43tkc0+QiRq8R8YBnBGaZo8BNCSAAXFXj6/yq
-	 I8fP+4Fuz+7vw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: linux-clk@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org
-In-Reply-To: <20260629032540.2331559-1-rosenp@gmail.com>
-References: <20260629032540.2331559-1-rosenp@gmail.com>
-Subject: Re: [PATCHv3 0/3] clk: samsung: use kzalloc_flex
-Message-Id: <178439179015.22478.3429488347380802765.b4-ty@b4>
-Date: Sat, 18 Jul 2026 18:23:10 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCJxmMwW"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4954df200ddso7180895e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jul 2026 16:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784417758; x=1785022558; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=fbveywkXEOoKA5l+wqrU0DqqoG4NoX/G8iLvkPe8hb4=;
+        b=pCJxmMwWGfj7gh4cUN//Il3BcF2e7Ea+NvvRUgjk8G+IzWYYPC8u21T3mrUim5PY6P
+         jH3ha3kPWIPTaM6MZCZLnG5YBeQZKUAKLiBY38jvYzX6MBq7m3iCsZmSFXh2ubazy0kP
+         35+4IEbg+PZ0YVoqctysP2dgbwOZ0MpfOjneQhrQj7bBxQrFK/dt0nNcmOTZ5V4AmrYD
+         J1q1BAK9meA61De8sBSkUH0oH6g8gxb2OWWs5/uwfIlv9DpO6COfEToFSaRGF9A89cJb
+         Cse9UG4L2GH8ZafGhZqCgUg7Az6W9KyFEJ/RMVyp9rT9PZYJ6QkBNVzHTBWNidu+ryue
+         s7Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784417758; x=1785022558;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=fbveywkXEOoKA5l+wqrU0DqqoG4NoX/G8iLvkPe8hb4=;
+        b=akU+tNItPvBUUEFrDX7u0rocP3LBoqQ+D8UTJeah5NlLy+9Sr0SnMDnXvzllCuXMC6
+         dsGYAaQgbvN+HcXU2XdZep088ETexMnPBXBm8sspyXo4FBZ595bA2ox1kSaDaPlPWsC8
+         SR/6NA8bx5y83B+fo8DE1jxIBCW+LDXuHS1aX/xFB9cD3DGFnKIXL4/FT+jVTnauDXXi
+         x/iarREzb8y7cPW8JE8xnkkw57gCYXr3yV0TOQHOs8GgnBF3CEuyOv3gqnLs3bSz/4KD
+         QG/5o/2ghomXl8eoEigv2Bbu39FhPzP/xDSxJbHC5fuDPTzsydC2IBrYLBnSxutlYHoA
+         A36Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rqbc06D75lZBvR6wrARV0mhB4uUsn7iDbv+AUr2b02uuoQQbg7bXsIFE5R3GxrJ7wqFeQHbE5JsxVbv2hylMxMEbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6pLEdSuGuMS5PXKU1lrWxKsWctG2EWrUt2mUiC0hjy0D85KFu
+	PBZz0qk/vG8Z2ahB+7hM4hcn4pmxDKWbU/laD7foRwRk5ySMI7CqtI8D
+X-Gm-Gg: AfdE7ck9bCbKNKiO6J9WpoUONEa+oFWgAcIgSWgn3Dccm7QIC+F0hAXHxAYMEpyRkg6
+	DcWeFj9gl8Wzk+UMek1QpdM6Az883SG74btFfG+Gu9oWT/TfffNUA9BPnzsQ9dexjYLbl9HMkly
+	hPPLwjmyXnN+fnSnCffCaBK+ZkC7kEjBi8M6Hh5klHSRKj8hTIGrunQGm92qRh5NKR1Nbc9Ynm3
+	/EfBvXMyUMIF9oYqdLV3q2AwPHmGN2XXN5uvq11LreEm1oYElSNouCU5ECzpu5uMF1XggdClHAw
+	VjRSWWgutitRQARmamgbZFyo36Ciygzhyt4mtxkcCg+MSiv6EgNfwXzWyAd2WMj7hJF4hJ4KRCU
+	h2R9chRDkZtMuY5KMWbIsnTagRDKKNcinkS3D74f6mu+TYzs26EaL3A4SOd2M9gCuzhZf/PdtI/
+	j9Yp4ezmIc9A==
+X-Received: by 2002:a05:600c:1989:b0:495:699:84ca with SMTP id 5b1f17b1804b1-4954a798f17mr83663665e9.28.1784417757432;
+        Sat, 18 Jul 2026 16:35:57 -0700 (PDT)
+Received: from [127.0.0.2] ([2a01:14:111:ccf0:645b:9e5c:7fe3:c09f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4954a2a24b6sm160964675e9.3.2026.07.18.16.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Jul 2026 16:35:56 -0700 (PDT)
+From: Diogo Silva <diogompaissilva@gmail.com>
+Subject: [PATCH 00/15] drm/drm_simple: remove drm_simple_encoder_init
+Date: Sun, 19 Jul 2026 01:35:31 +0200
+Message-Id: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,32 +69,110 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMQNXGoC/yXM0QqCQBBG4VeRuW5hlVDrVSIWnf2tiVxlRiMQ3
+ 72tLr+LczYyqMDoXGykeInJlDLKQ0F879INTmI2Vb6qfVO2LuoYTMb5iYDEU4QGSbK46OtTd2R
+ uhranXM+KQd6/8+X6t639A7x8d7TvHyUPD1h7AAAA
+X-Change-ID: 20260718-drm_simple_encoder_init-d069a4cc7f8b
+To: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, 
+ Alison Wang <alison.wang@nxp.com>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Chia-I Wu <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Xinliang Liu <xinliang.liu@linaro.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
+ Liviu Dudau <liviu.dudau@arm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
+ imx@lists.linux.dev, linux-mediatek@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-doc@vger.kernel.org, Diogo Silva <diogompaissilva@gmail.com>
 X-Mailer: b4 0.15.2
 
+The simple KMS helpers are deprecated because they only add an
+intermediate layer between drivers and atomic modesetting.
 
-On Sun, 28 Jun 2026 20:25:37 -0700, Rosen Penev wrote:
-> Switch three structs to flexible array members to combine allocations.
-> 
-> v3: move rd_num
-> v2: fix compilation and reword descriptions
-> 
-> Rosen Penev (3):
->   clk: samsung: use kzalloc_flex
->   clk: samsung: cpu: use kzalloc_flex
->   clk: samsung: pll: use kzalloc_flex
-> 
-> [...]
+This series open-codes all remaining drm_simple_encoder_init() users by
+calling drm_encoder_init() directly and providing driver-local
+drm_encoder_funcs where needed. After the driver conversions, the helper
+is removed and the completed DRM todo item is dropped.
 
-Applied, thanks!
+Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+---
+Diogo Silva (15):
+      drm/exynos: remove dependency on DRM simple helpers
+      drm/xlnx/zynqmp_dpsub: remove dependency on DRM simple helpers
+      drm/tegra: remove dependency on DRM simple helpers
+      drm/fsl-dcu: remove dependency on DRM simple helpers
+      drm/kmb: remove dependency on DRM simple helpers
+      drm/virtio: remove dependency on DRM simple helpers
+      drm/tidss: remove dependency on DRM simple helpers
+      drm/imx: remove dependency on DRM simple helpers
+      drm/mediatek: remove dependency on DRM simple helpers
+      drm/renesas/shmobile: remove dependency on DRM simple helpers
+      drm/hisilicon/kirin: remove dependency on DRM simple helpers
+      drm/arm/komeda: remove dependency on DRM simple helpers
+      drm/meson: remove dependency on DRM simple helpers
+      drm/drm_simple: remove deprecated drm_simple_encoder_init function
+      Documentation/gpu: remove completed drm_simple_encoder_init() todo
 
-[1/3] clk: samsung: use kzalloc_flex
-      https://git.kernel.org/krzk/linux/c/7b2a8eb5c7b5545793e18036c8b66106f2d9fbb8
-[2/3] clk: samsung: cpu: use kzalloc_flex
-      https://git.kernel.org/krzk/linux/c/421ccea8f872c0e7cf6fd754a4a3bef4f45cf2dc
-[3/3] clk: samsung: pll: use kzalloc_flex
-      https://git.kernel.org/krzk/linux/c/6d32ae6403694035896cbf0436088fca4c6a35f1
+ Documentation/gpu/todo.rst                        | 15 ---------------
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c  |  9 +++++++--
+ drivers/gpu/drm/drm_simple_kms_helper.c           | 13 ++-----------
+ drivers/gpu/drm/exynos/exynos_dp.c                | 13 +++++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c           | 14 ++++++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c           | 11 +++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c          | 14 ++++++++++++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c              | 15 +++++++++++++--
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c         | 10 +++++++---
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c      |  9 +++++++--
+ drivers/gpu/drm/imx/dc/dc-kms.c                   |  8 ++++++--
+ drivers/gpu/drm/kmb/kmb_dsi.c                     |  9 +++++++--
+ drivers/gpu/drm/mediatek/mtk_dsi.c                | 10 +++++++---
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c        | 11 ++++++++---
+ drivers/gpu/drm/meson/meson_encoder_dsi.c         | 11 ++++++++---
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c        | 11 ++++++++---
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 10 +++++++---
+ drivers/gpu/drm/tegra/dsi.c                       | 17 ++++++++++++++---
+ drivers/gpu/drm/tegra/rgb.c                       | 14 ++++++++++++--
+ drivers/gpu/drm/tidss/tidss_encoder.c             | 10 +++++++---
+ drivers/gpu/drm/virtio/virtgpu_display.c          | 12 ++++++++++--
+ drivers/gpu/drm/xlnx/zynqmp_kms.c                 | 13 +++++++++++--
+ include/drm/drm_simple_kms_helper.h               |  4 ----
+ 23 files changed, 185 insertions(+), 78 deletions(-)
+---
+base-commit: e55c6b9a3522aaf1441a0662d534c1c7bfa9b860
+change-id: 20260718-drm_simple_encoder_init-d069a4cc7f8b
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
+--  
+Diogo Silva <diogompaissilva@gmail.com>
 
