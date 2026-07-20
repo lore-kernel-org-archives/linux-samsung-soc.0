@@ -1,447 +1,173 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B793F12E8
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 11:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AEF422E1D
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784545514; cv=none; b=j6Qi0d9TEQFmjECCovtpwQrBS5Bqpi6JsE5iMW/TbNa1z1C63mwJkX/SrTDwLUVYRVKWbP5hPIWyB1GdBibALS0jCiB2yJcAt/Yq5nxCqvszCFqvgF+qifzJG+axM4l+gHFA8bVmmUZ2IfcCSX2oX3TkdyEh09PtlgRxnRpLvPg=
+	t=1784552990; cv=none; b=bFUfT0qEb9TV6iEJ205Y/+7ypr0jvnq2w0Hw67e99g1M47Vdw2on9S3gxyAaixBBjBqJwMb70D8yGOJTk8x7CkTAWVQkQr/a1VKSQw7+nD9uq7infkwvB3XudMqhZ/nKwfFJ0nQ+Yw9fPjGVOcJj0cKDpvWiAE9Bc13s/vZupiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784545514; c=relaxed/simple;
-	bh=Cr0D8IrXdc7M3cfjxvsuMeRGNkhVfxYYqCumwIz6RgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSom+eed6Gg0aNLukWCmoUZZkGYeQMUfUocj/zAiVtO26W5bwK4jJBARub8a4o4j08sb2lqD1CR5p9QBTxHpoU6RWW2jXgxxZrkRiHrARTcRQW4Zw4E61xKwwtFT60BazvsVh7Eb/uCb/SucSpoViDwyKTMMKb/0NUWxzRbaQx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y2FwkocI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SF9cBLWT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y2FwkocI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SF9cBLWT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1784552990; c=relaxed/simple;
+	bh=NibdtCwpxrzNYlWG3qc/r04EtocLChhxPuanrYhvQf0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fW2kcJJ0831RP+Cga29jdzBEzHamslhtsSq0wIajK6NOMRnt7RRCalcGeNxxVvTSYCGhAy3F98v2nr8H6a4vUqlj49cpu7rwHo6lElrt4lPux1FVBqqKkX6mDeOWhrOmzwCb9Rdr3MKHEHGYjM+rMG7ppAB9uc158j8bPcbTDZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHv6x7WZ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y2FwkocI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SF9cBLWT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y2FwkocI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SF9cBLWT"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 314C579EF8;
-	Mon, 20 Jul 2026 11:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1784545507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
-	b=y2FwkocI3YQIQJFXqrW9ZKICtrgU7bGVS3vz/2uDjZt14w7zVOXlNMnQ4XTNJUK34rzpem
-	JLpUktCdpsjMGideeJkQRJwuSLFJDvapFsfvDgZzS0FCBSnObDwNE5QRv++UUjkN1mcj24
-	5ZICafeK/+n3gCHZyy4tZSyWy5JZ2yo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1784545507;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
-	b=SF9cBLWTd+GoNKIEYOgPttCZT+F5hmFW/zHjyXOkatbqIxXJH/pnUErjpIGt+RTdjV8E6n
-	kYPGn/y9Fv7Ta9Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=y2FwkocI;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SF9cBLWT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1784545507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
-	b=y2FwkocI3YQIQJFXqrW9ZKICtrgU7bGVS3vz/2uDjZt14w7zVOXlNMnQ4XTNJUK34rzpem
-	JLpUktCdpsjMGideeJkQRJwuSLFJDvapFsfvDgZzS0FCBSnObDwNE5QRv++UUjkN1mcj24
-	5ZICafeK/+n3gCHZyy4tZSyWy5JZ2yo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1784545507;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
-	b=SF9cBLWTd+GoNKIEYOgPttCZT+F5hmFW/zHjyXOkatbqIxXJH/pnUErjpIGt+RTdjV8E6n
-	kYPGn/y9Fv7Ta9Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEE11779AA;
-	Mon, 20 Jul 2026 11:05:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cqwbLeEAXmpUBAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 20 Jul 2026 11:05:05 +0000
-Message-ID: <4af254a4-beb7-4f77-830f-42d5bacb10a4@suse.de>
-Date: Mon, 20 Jul 2026 13:05:03 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHv6x7WZ"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4728c12ba97so5028938f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 06:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1784552987; x=1785157787; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=E8mYPhXUmZpNbn2oVo3k+YKafzsgCsS1GE9LMv7AFBw=;
+        b=wHv6x7WZ/IV6ZYym8nQcXPLFMwS9lgllAo7xOYbOuwSQqsR0aQMfCZIOU7ib/S90Vo
+         +5bMjMfpbKfVjE+1V39fstmHz9V+OuCkorKzJqFqqQbCyQwnq7UkjmN/AQzYUmnV2+L9
+         vV4NvhyQZpA+DzH48IfXwHg7cP2d0UzVKiMctwOETCPrykdlruLxK6sakRFkaK+vlhoY
+         w3fFquvx/0OgmNsQWlvAZBnljgWum8YJkZKIGmaLhPDL9Hi6NQCxq+QwEn36BbCUv6mE
+         uCrUHi6b6iOTOY76BZ/sfWGYnf4G1DYmKIPvm1vkvBLNG3PzDYq+6KAra4CBDgLEB5dr
+         0HuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784552987; x=1785157787;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=E8mYPhXUmZpNbn2oVo3k+YKafzsgCsS1GE9LMv7AFBw=;
+        b=T4Sg1FDK9sEMrAgaAOejc4ZUQSE6eu8jQ84z9JKJ3DCxrV39n7SyLzsthH09DWFXya
+         ZJtkfX2WxZzHplD+Q4UfJwzqTN/Bgqk7qcHI2siCPcVdm9B0wLc49j8Hhm+6BgRHLQGL
+         m/G76ADXkXOEwuYUrBvDC/R+n78SCDTGtilO8Yi/6U8/J/cC/gTXBq1hEZAbLl0Yo0VU
+         kn2lOD4kma0eLfctz/uugqKcKD6IvuugG2W7oeaf5FRQf+t3fquuvARLzF1Rv6J8to3J
+         CUjCdoS4+EF3QTd2uCqiPz9/PjtHuwXV0n+bVpjoahNwaCAqGYeqCOxIIjWobwG6XQZS
+         1Sfg==
+X-Forwarded-Encrypted: i=1; AHgh+Rrp0ki7nZxPXPx02NaGUIUB44vGTOHPcgPqF6mZEsrJXjg8Rkzy63doJWpOE5MaUckB57tY1hH79Qx3O2DnRwuoBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1lxjDeqnII26TvXBrLwJiP7zeSED7149lV7ilULHffw7ZeNw
+	aWKY8mhSoVFFPLysrP/cU65Pzz2fQ4we6gPZImDwy/BFYelSrVyZonP0cPqtlDh+bDY=
+X-Gm-Gg: AR+sD13MUBKEtxB+/+d+bQpfdqurhIVZtCKYLGXZFrOe8C3JZPLsGBx7iHeuWxlEUBe
+	faB7IhSwamDfcIY2btcJlLtnsZ87mNjJ4AXd2Ip1ZIz5NHEgZHMeFj6m+6JY955rrjEDYBqDwIz
+	X0K5vSSMe1KqaVqhM0EhZbJhjjGpjPy4uJsMDsF5UEQDN+mUrAcq3JayZUYFEqMjRlk8Sv7SYOs
+	wRfpnWvVwRJ6ZUGjCUA8dVDvKH4mpaqsf6mayz2OYvXYNXXXXW8BfvBmCigVry6SepvAvSSTIQF
+	JssAkfCyVyNIe8O+MaXrdFld07p57VE/q7UOtPBSe/fb3eTagLvxuOyCrIHmpfRkdk3EDIkxoJZ
+	0SmrO0XBtiekohC2ebOTetO63BCUyXdSY9/62E08WNk4BooR6vxmvhWjBnf9xeNcZdtPECvNg1M
+	clVAa04/++J+XKLIDgRPwN4lo=
+X-Received: by 2002:a05:6000:25fe:b0:46e:c978:7ddc with SMTP id ffacd0b85a97d-47f62316b85mr16082343f8f.24.1784552986541;
+        Mon, 20 Jul 2026 06:09:46 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63ec7ea1sm30767434f8f.24.2026.07.20.06.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 06:09:46 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Alison Wang <alison.wang@nxp.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Albert Esteve <aesteve@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
+Date: Mon, 20 Jul 2026 15:09:38 +0200
+Message-Id: <178455228150.789946.15332957012612566281.b4-ty@b4>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/15] drm/exynos: remove dependency on DRM simple helpers
-To: Diogo Silva <diogompaissilva@gmail.com>, Jingoo Han
- <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Xinliang Liu <xinliang.liu@linaro.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
- <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-doc@vger.kernel.org
-References: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
- <20260719-drm_simple_encoder_init-v1-1-a78c509e3062@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20260719-drm_simple_encoder_init-v1-1-a78c509e3062@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,samsung.com,ffwll.ch,kernel.org,linaro.org,ideasonboard.com,linux.intel.com,amd.com,nvidia.com,agner.ch,nxp.com,intel.com,redhat.com,collabora.com,chromium.org,iki.fi,pengutronix.de,glider.be,google.com,arm.com,baylibre.com,googlemail.com,lwn.net,linuxfoundation.org];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[59];
-	TAGGED_RCPT(0.00)[renesas];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.com:url]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 314C579EF8
-X-Spam-Score: -3.01
 
-Hi
+Hi,
 
-Am 19.07.26 um 01:35 schrieb Diogo Silva:
-> The simple KMS helpers are deprecated because they only add an
-> intermediate layer between drivers and atomic modesetting.
->
-> Open-code drm_simple_encoder_init() by calling drm_encoder_init()
-> directly and providing driver-local drm_encoder_funcs.
-> Also check the return value from drm_encoder_init() to avoid silent
-> failures.
->
-> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
-> ---
->   drivers/gpu/drm/exynos/exynos_dp.c       | 13 +++++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 14 ++++++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 11 +++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_vidi.c | 14 ++++++++++++--
->   drivers/gpu/drm/exynos/exynos_hdmi.c     | 15 +++++++++++++--
->   5 files changed, 57 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-> index b80540328150..1598892c602b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-> @@ -24,11 +24,11 @@
->   #include <drm/drm_bridge.h>
->   #include <drm/drm_bridge_connector.h>
->   #include <drm/drm_crtc.h>
-> +#include <drm/drm_encoder.h>
->   #include <drm/drm_of.h>
->   #include <drm/drm_panel.h>
->   #include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
-> -#include <drm/drm_simple_kms_helper.h>
->   #include <drm/exynos_drm.h>
->   
->   #include "exynos_drm_crtc.h"
-> @@ -79,6 +79,10 @@ static void exynos_dp_nop(struct drm_encoder *encoder)
->   	/* do nothing */
->   }
->   
-> +static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
->   	.mode_set = exynos_dp_mode_set,
->   	.enable = exynos_dp_nop,
-> @@ -95,7 +99,12 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->   
->   	dp->drm_dev = drm_dev;
->   
-> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
-> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_dp_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	if (ret) {
-> +		dev_err(dp->dev, "Failed to initialize encoder\n");
+On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
+> The drm_panel subsystem provides kref-based reference counting [1]
+> (drm_panel_get/put) but almost nothing in the tree actually uses it.
+> This results in a systemic use-after-free pattern throughout the codebase.
+> 
+> This series aims to close all those issues.
+> 
+> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+> a counted reference for the list entry. drm_panel_bridge_add_typed()
+> now holds a counted reference for the lifetime of the panel_bridge.
+> 
+> [...]
 
-Preferably use drm_err and drm_dev.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-> +		return ret;
-> +	}
->   
->   	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
->   
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> index 0dc36df6ada3..4e42a1da81d1 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> @@ -12,10 +12,10 @@
->   #include <linux/regulator/consumer.h>
->   
->   #include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_encoder.h>
->   #include <drm/drm_panel.h>
->   #include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
-> -#include <drm/drm_simple_kms_helper.h>
->   
->   #include <video/of_videomode.h>
->   #include <video/videomode.h>
-> @@ -140,6 +140,10 @@ static void exynos_dpi_disable(struct drm_encoder *encoder)
->   	}
->   }
->   
-> +static const struct drm_encoder_funcs exynos_dpi_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static const struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
->   	.mode_set = exynos_dpi_mode_set,
->   	.enable = exynos_dpi_enable,
-> @@ -194,7 +198,13 @@ int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder)
->   {
->   	int ret;
->   
-> -	drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
-> +	ret = drm_encoder_init(dev, encoder, &exynos_dpi_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	if (ret) {
-> +		DRM_DEV_ERROR(encoder_to_dpi(encoder)->dev,
-
-It just failed to init the encoder, so better not use it here. The 
-device should be the same as passed to the function via 'dev'.
-
-> +			      "failed to create encoder ret = %d\n", ret);
-> +		return ret;
-> +	}
->   
->   	drm_encoder_helper_add(encoder, &exynos_dpi_encoder_helper_funcs);
->   
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index c4d098ab7863..6b7561ac9bb0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -13,7 +13,7 @@
->   
->   #include <drm/bridge/samsung-dsim.h>
->   #include <drm/drm_probe_helper.h>
-> -#include <drm/drm_simple_kms_helper.h>
-> +#include <drm/drm_encoder.h>
->   
->   #include "exynos_drm_crtc.h"
->   #include "exynos_drm_drv.h"
-> @@ -22,6 +22,10 @@ struct exynos_dsi {
->   	struct drm_encoder encoder;
->   };
->   
-> +static const struct drm_encoder_funcs exynos_drm_dsi_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static irqreturn_t exynos_dsi_te_irq_handler(struct samsung_dsim *dsim)
->   {
->   	struct exynos_dsi *dsi = dsim->priv;
-> @@ -79,7 +83,10 @@ static int exynos_dsi_bind(struct device *dev, struct device *master, void *data
->   	struct drm_device *drm_dev = data;
->   	int ret;
->   
-> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
-> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_drm_dsi_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	if (ret)
-> +		return ret;
->   
->   	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_LCD);
->   	if (ret < 0)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> index 67bbf9b8bc0e..59dea853d364 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -13,10 +13,10 @@
->   
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_edid.h>
-> +#include <drm/drm_encoder.h>
->   #include <drm/drm_framebuffer.h>
->   #include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
-> -#include <drm/drm_simple_kms_helper.h>
->   #include <drm/drm_vblank.h>
->   #include <drm/exynos_drm.h>
->   
-> @@ -403,6 +403,10 @@ static void exynos_vidi_disable(struct drm_encoder *encoder)
->   {
->   }
->   
-> +static const struct drm_encoder_funcs exynos_vidi_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
->   static const struct drm_encoder_helper_funcs exynos_vidi_encoder_helper_funcs = {
->   	.mode_set = exynos_vidi_mode_set,
->   	.enable = exynos_vidi_enable,
-> @@ -445,7 +449,13 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
->   		return PTR_ERR(ctx->crtc);
->   	}
->   
-> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
-> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_vidi_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	if (ret) {
-> +		DRM_DEV_ERROR(dev, "failed to initialize encoder ret = %d\n",
-> +			      ret);
-
-Again, you rather want drm_err() with drm_dev here.
-
-I've briefly looked over the series and many patches seem affected. 
-Please prefer drm_ logging functions and DRM devices over the plain 
-device equivalents.
-
-Best regards
-Thomas
-
-
-> +		return ret;
-> +	}
->   
->   	drm_encoder_helper_add(encoder, &exynos_vidi_encoder_helper_funcs);
->   
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 09b2cabb236f..f44586ce0fdf 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -36,9 +36,9 @@
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_bridge.h>
->   #include <drm/drm_edid.h>
-> +#include <drm/drm_encoder.h>
->   #include <drm/drm_print.h>
->   #include <drm/drm_probe_helper.h>
-> -#include <drm/drm_simple_kms_helper.h>
->   
->   #include "exynos_drm_crtc.h"
->   #include "regs-hdmi.h"
-> @@ -1575,6 +1575,11 @@ static void hdmi_disable(struct drm_encoder *encoder)
->   	mutex_unlock(&hdata->mutex);
->   }
->   
-> +static const struct drm_encoder_funcs exynos_hdmi_encoder_funcs = {
-> +	.destroy = drm_encoder_cleanup,
-> +};
-> +
-> +
->   static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
->   	.mode_fixup	= hdmi_mode_fixup,
->   	.enable		= hdmi_enable,
-> @@ -1862,7 +1867,13 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
->   
->   	hdata->phy_clk.enable = hdmiphy_clk_enable;
->   
-> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
-> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
-> +			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	if (ret) {
-> +		DRM_DEV_ERROR(dev, "failed to initialize encoder ret = %d\n",
-> +			      ret);
-> +		return ret;
-> +	}
->   
->   	drm_encoder_helper_add(encoder, &exynos_hdmi_encoder_helper_funcs);
->   
->
+[1/4] drm/panel: have drm_panel_add/remove manage a list reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b619d9d2af33db01ea237e3546e9d55595e94ea0
+[2/4] drm/bridge/panel: hold a reference to the wrapped panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/34069e04d338a333561b64a2da055bd16bfba39b
+[3/4] drm/panel: of_drm_find_panel() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/738ff709f7cf82a41cbd9f6b8f9b1f236ce26610
+[4/4] drm/panel: find_panel_by_fwnode() return a counted reference
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d857b8ce04a7ed4b36a11db16968ab1652ed702a
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
-
-
+Neil
