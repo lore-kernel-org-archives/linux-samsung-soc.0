@@ -1,66 +1,68 @@
 Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B958240928F
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 15:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5924941168A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 15:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784562056; cv=none; b=BN0LbCXSObOtXraY/TwKwjz7Vo5uXWwxIU4kRr8HIeB+0Au2/ZkfJXVla8tWud7WpW6B0hIyTF5LPljaq0xQKhX9nYpWitnAuNCA2O1MI3Cd5NlaWZ3gSSPCZOEpuBt6veRZQowEE1e+QGTmgpv2NcntZq1uAy4MHa6TMssy4q4=
+	t=1784562057; cv=none; b=Uq2invDFLu7jIBE3fAhKngJWfIYYiqOYG1iGW5+y1bXKWG+tASDtx81vIu5JWSGkvasXmUsUojauEug3+3DWkTXYMC04PBui/7wq3CaH5EzoiMxIJXQQkS+52wz7qNj+5nlA/Mfqm9JfzDgcuguCPG7AHiY+knnKbKYX1vY2WAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784562056; c=relaxed/simple;
-	bh=mfEjaMH0TBdC/ZK8n1+F49JSV1pp/UfoGo41Uw6GS6s=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cNaXkjtotypwoXVZJkkafePX1wnFgpHMdWg8CHbpa2uwBk4GF3Lp1+MyIHEorAl/JQg9mp1j1188ZKMYbPs3i6LWkwi+9nHlCw3zHfGcYq1wpguuSF/HubQdkzD6qy6lG0wsp8emwZome4NmthKHu4b6g5DIN00i/0YBPvs6ED4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgQu0z+i; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1784562057; c=relaxed/simple;
+	bh=nIPzxyC7g+URQtzWP7eUGE6nO5tW3SAcscwh0lKy5F8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mtH/3sL+EydLM/Y3/XYaiMJqcj+2o96H0QCVNZpLz1A0/kFQ//BVDhZEcYJMcl96LS5MNQ/om8wiTaYXC426CaRdBdnQn+GCEgfl3iVBPpcyRdopH3xCQlp+sP0hQkZuXY6K+BdgRi+hZe9XwBT/5L73cNDIlP2BG7Wd0QTXo98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+P3xI3T; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgQu0z+i"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-472326ca506so7942419f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 08:40:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+P3xI3T"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-47f703a9e5dso509203f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jul 2026 08:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784562046; x=1785166846; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=+RhVkb1Ieh+bhF0gQzF1Ju+q7qk3GiWptVGwICJBljM=;
-        b=PgQu0z+iJJqHsPW8yt5EjZpQouA11UsLnx2D4wcezrOwTJ5kmvbFl3gCejTBu3nE0v
-         GBOk4FxZdWfqnqEUfGiwGSa1AvK5D8hRc1oj17IGAkh/N6/r4F8y1Uu0PLLqDjOHIsVy
-         BZvB0aOHqvyvecGbIl52ybXhEmQtJqGA66KNrCuaL2H0V4/KeqypVaO0W+On3BbtHODN
-         m/eR5XthSTAKjjM7/+OaUDhyl/l8i7VdO51JwweiXN/LUX3BCIDliz+CFLRJzSDafvFL
-         wXWZPM0pyz8D+vV4jzi9s9+YhGzothNQ8AUwmnvnXfpCrxF8mHdv/sRNrHeP3l3tSvDj
-         WWsA==
+        d=gmail.com; s=20251104; t=1784562053; x=1785166853; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Pvez7dBBgFzTEWul+X0zgtK0IubmPdgVdOv0lVVEMOs=;
+        b=Q+P3xI3T+i5cj9Doai+6QDl5EuWScSaDw9cizNOjpWLNNgNvvYyVTRj1UuUFQaCWqV
+         2A+f4QUmUY0YIwmSiCHL8UL8qsXeG2LypiebMKuQ3uNLvwZLFrN6llZ3OsEKt2GlNMRq
+         HAEhF9NNTZ5Lr4Mgi2xl7e75NVJPsOv3N65eQLuGzoiNU9gJI+Jkl6o6V/dOzun0F/Nx
+         2u18jAPIWTFJmKHJ+Jj8EcCNn1a2rh47vRZs3EezK+RRdNkXfnbeO40/1lgKbCqOirxd
+         JUgQ2zH/bBu5qHNDBau41ajRVvlsGwJa1JRli3dn2NkOTpDdXGkbg9KvS9SOp4tyne1s
+         IKAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784562046; x=1785166846;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=+RhVkb1Ieh+bhF0gQzF1Ju+q7qk3GiWptVGwICJBljM=;
-        b=Iy2iq2A9d4bB4mTnJ5pdv5fWQRvJRqxGUqbfS9dYeMhn04rZGx5XLVCv7yfDXoElfx
-         Bwvaut645mV9j31ltXBO/aEkgkSeKkMymipSl2p0gVtr1n5hFllbYGZybONLzUOG7gCx
-         LxNhXz/CgiiDJFDTYpIjia9I8z/g8akf3J0luV11AuP3pM/LzRS9PAiFQbjLqfluJzQk
-         6y5L5qYmzzZiD3/G/s70/dJ4I0Udc/6g1z72FsP80PIuft+JTTZs4OFEgmARjH/FPgwS
-         yZrWo0PJreBtaPGnthfsq/E4A7d5Y1gbtE8fG12CjJsT1jpCRuvhsaOCCQXGoLuKVW7i
-         QbwQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp44sJRZxhapKalmUXaiN8SFRACcNP4Y5jMwUNXUSNNtZD93RvbpEg6v7MfM8WEOsIhgb5FaXZ0NenVKLVTgylWuw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUs4jq9Y486BRINfplw0PPI3NS7vDHAR6k8n3/6iaairyj9JdG
-	Ow5LhE9uj05/rzUWrFV1lySzcwnPevIjXrZCbr83FDZN+NMwUG6VY+bI
-X-Gm-Gg: AR+sD12egGZoBVCXoJErQg65NS1IcaCFMrEBYBwbqAJAxpPgvHDCxmBUGNB6Wla7XAb
-	NgyTaKXm2OHDrCH+BGOQgIwC1yqcw4kDbWw2PHnj9kC+3wRCNY/NtlbmipxWc78UKBbOG3cFUOc
-	l7QTH0XhXFxAls2IYJezloVunNxw72iW03lshY7jC/CpgsUAuOaLGxOxCVnUwou+mBeJG/GD6X2
-	qM1m5AokdEw5ww2cZVgx2eFKTftQ+uE/Ls970nUHBp4KWj01kJv8z4sEGZJZnUtn3+2WhFniPIK
-	dPsWgffmjXbZXtvCWSPxPggRl0nV1eNjr81utf3OP7/3ID5lOZGSPYh9R1fFdH2XT3HPinjMOEA
-	PMnKxoEyEJc1zXgA8KVZXqCo5m9VdkkOKw4MdBFqHipbXh1XPAhmLaDScvsdZt6FzmuPo3tR7lE
-	6MF/PQ4EpvpQ==
-X-Received: by 2002:a05:6000:4310:b0:47e:b336:6385 with SMTP id ffacd0b85a97d-47f622d054fmr17529323f8f.0.1784562045728;
-        Mon, 20 Jul 2026 08:40:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784562053; x=1785166853;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Pvez7dBBgFzTEWul+X0zgtK0IubmPdgVdOv0lVVEMOs=;
+        b=FEtTX32RuSnBGyrkzED0GAix9RMEfnFn/qkqPjN9783nmi0Z+kbbzAsp1XCy3dQQKi
+         pXBDcNK/uEyNIqg2Sz6RddsaG8rdKvLTpznsmjGmAklEcwpXAvwkjvY2IkcmnLIjjJr4
+         bNK6EuONxnJNz21Ivku3HvS7va0S2RBn/MT5s2WLfWTvgEM/JFm34GlsodqyLZnqREVF
+         dJf4i5m3v/zh47/+Jn1kghJAPWwYhKH+4Cz2nZ39zVdyn+3Y9dDHuyO1H745fUZOjDJc
+         VIwye7Nt24b42R9nLRZwGRSET573bzy79AZRfIyC3HdSACxDvECPp5zj9qYGZrP58zyV
+         NvCQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rpa/Tsm0EWxBiJ54xLOh2j1wzqKImMet4ZRk0ANc3oGeBh0sznSqxjUJC/c+htxggib1yl8ks27F4UpWQVq6ib51w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69KJ0MPXLxaSjX9m0HQ1+sc8iKneu/DCfyJOKn7r1bQcovRim
+	Vc1qsbAgtRuzIoy1SXuoIjD5H/UAh+9R39EMoJvvtM9bYr5pWBsEhjPr
+X-Gm-Gg: AR+sD12JKxju9cZzceJeD/tEM8J1tKxNxv/bStIOlJD8em6Abcv5NLXTCNjcDyiKYk6
+	CtxgMv0Z9ycpyhrIXaQSASZ+6qnHzLhCNR4/wd16KyiQ6JR8/QsaOyikzceXEWOw7Bc/UIvw+IE
+	SCZDwzlcUtR1S4Q+TItkuQrpZXR2Fjw1H8HoG70aW8iiKn5MeHYTdMHEfGOlZlGLCBjB/cIVNUT
+	y/Gzh3DAN1qHTU9yqX5ZPHxkjwTUbEIsifLHbXrTZ5suQXP5QeTnNswxRRV6WQK24tNg12JTWVv
+	HIwii2VYptFVBdPYJMB15PxhFOzhNLVcL5/SYUeN8EvWPqWmdrN5Zqb4gBnoxMxE4MN7SopSfvz
+	ECnqbjO23JwpBrEJR5az4394cjLZUq9vwoFirP3NcaLNllg1GffLlG9e4Zau8VpQZoZjy1VVKBC
+	eh8gpDB0yXLg==
+X-Received: by 2002:adf:f604:0:b0:475:f0f0:9ef6 with SMTP id ffacd0b85a97d-47f6233f338mr13274205f8f.59.1784562053525;
+        Mon, 20 Jul 2026 08:40:53 -0700 (PDT)
 Received: from [127.0.0.2] ([2a01:14:111:ccf0:e9c1:2f80:10a9:c708])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f67466e09sm32667936f8f.21.2026.07.20.08.40.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f67466e09sm32667936f8f.21.2026.07.20.08.40.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 08:40:45 -0700 (PDT)
+        Mon, 20 Jul 2026 08:40:52 -0700 (PDT)
 From: Diogo Silva <diogompaissilva@gmail.com>
-Subject: [PATCH v2 00/15] drm/drm_simple: remove drm_simple_encoder_init
-Date: Mon, 20 Jul 2026 17:40:32 +0200
-Message-Id: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
+Date: Mon, 20 Jul 2026 17:40:34 +0200
+Subject: [PATCH v2 02/15] drm/xlnx/zynqmp_dpsub: remove dependency on DRM
+ simple helpers
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,11 +71,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHFBXmoC/3WNyw6CMBBFf4V0bU2pysOV/2EIKdMBxtCWtNhoC
- P8uYFy6PMm958wsoCcM7JrMzGOkQM6uIA8Jg17ZDjnplZkUMhN5WnDtTR3IjAPWaMFp9DVZmrg
- WWanOAHlbNGx9jx5beu3me/Xl8GweCNOm2xY9hcn5956O6bb7Vcq/lZhywVVewEWUeBKZvHVG0
- XAEZ1i1LMsHAbIKNtAAAAA=
-X-Change-ID: 20260718-drm_simple_encoder_init-d069a4cc7f8b
+Message-Id: <20260720-drm_simple_encoder_init-v2-2-5020b630668a@gmail.com>
+References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
+In-Reply-To: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
 To: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
  Seung-Woo Kim <sw0312.kim@samsung.com>, 
  Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
@@ -121,124 +121,57 @@ X-Mailer: b4 0.15.2
 The simple KMS helpers are deprecated because they only add an
 intermediate layer between drivers and atomic modesetting.
 
-This series open-codes all remaining drm_simple_encoder_init() users by
-calling drm_encoder_init() directly and providing driver-local
-drm_encoder_funcs where needed. After the driver conversions, the helper
-is removed and the completed DRM todo item is dropped.
+Open-code drm_simple_encoder_init() by calling drm_encoder_init()
+directly and providing driver-local drm_encoder_funcs.
+Also check the return value from drm_encoder_init() to avoid silent
+failures.
 
 Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
 ---
-Changes in v2:
-- Change logging to consistently use drm_err()
-- Link to v1: https://patch.msgid.link/20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com
+ drivers/gpu/drm/xlnx/zynqmp_kms.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-To: Jingoo Han <jingoohan1@gmail.com>
-To: Inki Dae <inki.dae@samsung.com>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-To: David Airlie <airlied@gmail.com>
-To: Simona Vetter <simona@ffwll.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-To: Maxime Ripard <mripard@kernel.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-To: Michal Simek <michal.simek@amd.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>
-To: Stefan Agner <stefan@agner.ch>
-To: Alison Wang <alison.wang@nxp.com>
-To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-To: David Airlie <airlied@redhat.com>
-To: Gerd Hoffmann <kraxel@redhat.com>
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Gurchetan Singh <gurchetansingh@chromium.org>
-To: Chia-I Wu <olvaffe@gmail.com>
-To: Jyri Sarha <jyri.sarha@iki.fi>
-To: Liu Ying <victor.liu@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pengutronix Kernel Team <kernel@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Xinliang Liu <xinliang.liu@linaro.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>
-To: Yongqin Liu <yongqin.liu@linaro.org>
-To: John Stultz <jstultz@google.com>
-To: Liviu Dudau <liviu.dudau@arm.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: virtualization@lists.linux.dev
-Cc: imx@lists.linux.dev
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+index d5f922450565..ac9197e026af 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+@@ -29,8 +29,8 @@
+ #include <drm/drm_managed.h>
+ #include <drm/drm_mode_config.h>
+ #include <drm/drm_plane.h>
++#include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+-#include <drm/drm_simple_kms_helper.h>
+ #include <drm/drm_vblank.h>
+ 
+ #include <linux/clk.h>
+@@ -417,6 +417,10 @@ static const struct drm_driver zynqmp_dpsub_drm_driver = {
+ 	.minor				= 0,
+ };
+ 
++static const struct drm_encoder_funcs zynqmp_dpsub_encoder_funcs = {
++	.destroy = drm_encoder_cleanup,
++};
++
+ static int zynqmp_dpsub_kms_init(struct zynqmp_dpsub *dpsub)
+ {
+ 	struct drm_encoder *encoder = &dpsub->drm->encoder;
+@@ -436,7 +440,13 @@ static int zynqmp_dpsub_kms_init(struct zynqmp_dpsub *dpsub)
+ 
+ 	/* Create the encoder and attach the bridge. */
+ 	encoder->possible_crtcs |= drm_crtc_mask(&dpsub->drm->crtc);
+-	drm_simple_encoder_init(&dpsub->drm->dev, encoder, DRM_MODE_ENCODER_NONE);
++	ret = drm_encoder_init(&dpsub->drm->dev, encoder,
++			       &zynqmp_dpsub_encoder_funcs,
++			       DRM_MODE_ENCODER_NONE, NULL);
++	if (ret) {
++		drm_err(&dpsub->drm->dev, "failed to initialize encoder\n");
++		return ret;
++	}
+ 
+ 	ret = drm_bridge_attach(encoder, dpsub->bridge, NULL,
+ 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
 
----
-Diogo Silva (15):
-      drm/exynos: remove dependency on DRM simple helpers
-      drm/xlnx/zynqmp_dpsub: remove dependency on DRM simple helpers
-      drm/tegra: remove dependency on DRM simple helpers
-      drm/fsl-dcu: remove dependency on DRM simple helpers
-      drm/kmb: remove dependency on DRM simple helpers
-      drm/virtio: remove dependency on DRM simple helpers
-      drm/tidss: remove dependency on DRM simple helpers
-      drm/imx: remove dependency on DRM simple helpers
-      drm/mediatek: remove dependency on DRM simple helpers
-      drm/renesas/shmobile: remove dependency on DRM simple helpers
-      drm/hisilicon/kirin: remove dependency on DRM simple helpers
-      drm/arm/komeda: remove dependency on DRM simple helpers
-      drm/meson: remove dependency on DRM simple helpers
-      drm/drm_simple: remove deprecated drm_simple_encoder_init function
-      Documentation/gpu: remove completed drm_simple_encoder_init() todo
-
- Documentation/gpu/todo.rst                        | 15 ---------------
- drivers/gpu/drm/arm/display/komeda/komeda_crtc.c  |  9 +++++++--
- drivers/gpu/drm/drm_simple_kms_helper.c           | 13 ++-----------
- drivers/gpu/drm/exynos/exynos_dp.c                | 13 +++++++++++--
- drivers/gpu/drm/exynos/exynos_drm_dpi.c           | 13 +++++++++++--
- drivers/gpu/drm/exynos/exynos_drm_dsi.c           | 11 +++++++++--
- drivers/gpu/drm/exynos/exynos_drm_vidi.c          | 13 +++++++++++--
- drivers/gpu/drm/exynos/exynos_hdmi.c              | 14 ++++++++++++--
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c         | 10 +++++++---
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c      |  9 +++++++--
- drivers/gpu/drm/imx/dc/dc-kms.c                   |  8 ++++++--
- drivers/gpu/drm/kmb/kmb_dsi.c                     |  9 +++++++--
- drivers/gpu/drm/mediatek/mtk_dsi.c                | 10 +++++++---
- drivers/gpu/drm/meson/meson_encoder_cvbs.c        | 11 ++++++++---
- drivers/gpu/drm/meson/meson_encoder_dsi.c         | 11 ++++++++---
- drivers/gpu/drm/meson/meson_encoder_hdmi.c        | 11 ++++++++---
- drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 10 +++++++---
- drivers/gpu/drm/tegra/dsi.c                       | 16 +++++++++++++---
- drivers/gpu/drm/tegra/rgb.c                       | 15 +++++++++++++--
- drivers/gpu/drm/tidss/tidss_encoder.c             | 10 +++++++---
- drivers/gpu/drm/virtio/virtgpu_display.c          | 12 ++++++++++--
- drivers/gpu/drm/xlnx/zynqmp_kms.c                 | 14 ++++++++++++--
- include/drm/drm_simple_kms_helper.h               |  4 ----
- 23 files changed, 183 insertions(+), 78 deletions(-)
----
-base-commit: e1113c37ba4f166e37dec74a729e6dfd8cba1687
-change-id: 20260718-drm_simple_encoder_init-d069a4cc7f8b
-
-Best regards,
---  
-Diogo Silva <diogompaissilva@gmail.com>
+-- 
+2.54.0
 
