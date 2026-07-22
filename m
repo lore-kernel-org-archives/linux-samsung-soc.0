@@ -1,166 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1AA3655CC;
-	Wed, 22 Jul 2026 14:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9384C37DE89;
+	Wed, 22 Jul 2026 15:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784730980; cv=none; b=RiZ8MVPkr9HEa/pLhRlbUkL5+U0lKgpLtCPtTeXBR4dbT556R1kGqvX0vMNcBEW0y2VMrUDakfQctMWdYaHZEbiEnxczdPEXZtkJq0XDRABM+d1oTU+ibQjTTdsVHy+2eAiBzmwJLU3OT8gkew0vhBmVYzD8kHlh6O1LNGq98jY=
+	t=1784733624; cv=none; b=BMjTU9hy9ZUomTEmcsLoxunHb9BMOvgD0EYb3Dj2JA8cBGi8itWg7UKxaUmFheFZElKyrdF/eCZn4wAGYdqneRrdHJb5wwXHs71lb/4fOfCRiDGRETq9OEtRGjT15bziC2ySG6QGEOmDOHMP2AGySt9ebAL8XSJ1ZFTGGfR8ub4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784730980; c=relaxed/simple;
-	bh=OzKhpL/xCcLDtrs/vE76e2SHBeM0GhDirW4fjbn1y10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sR3TEdhtjEZt878lnhmnTR+JGi5gjPJJtuHZRaeROGUqfhDJVTdizEBE8rel85DLdY21kovf4sj7wbuubb7zbZzZ2eFeYPCzbvPyFX8zILQRi9Mu2VBvUh0ZQlMXMtZKMAbzfWi2IDOZby/dqPSM56dDh2Zs+7t6OsnadaSJLGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFGra5uf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784733624; c=relaxed/simple;
+	bh=4Y6payjzw4H+9nIeEhagxhPs2sVXNApGYce2Vry765k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwWNK1XHmMJaLCYKIf8bDnfNg+TgtXPwG/vdMT6yY7ufcmvpvZs9MNxxRwHS1CKufB6kWeiu8hPy/AcwlPnXKurN+xVkBl+8ns8CHeM2UmPVFVUEDDKh3bl5jBeVoSmSVQj3YhPMAK376191NAb+2f22oGbJSptNqJ5BmvhJsuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHxNWoLi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFGra5uf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A298F1F000E9;
-	Wed, 22 Jul 2026 14:36:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHxNWoLi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 152451F000E9;
+	Wed, 22 Jul 2026 15:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784730979;
-	bh=rncOYEHNQZnCerUEAUIKUY0kxzd/Rst4GSYy3YkGBiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=cFGra5ufilocIuJfM8gSzW60rH5UffaGWTjVoku9icCvdKfbGshoBgtpoU9J4TBAR
-	 Ns3ac9kv1Th/g54QOx5z56SLMZe2ySiEIv65XpPoMjA3UFpsdZzi0oJqofN4x98D2p
-	 m4lZ9oMMil7zMd9k9+rzQMvGQdzHReyfYjjBBm955F4gkk4KFjIQOOT/mPUzrrmxtD
-	 43IiL1O3Fmq0qqGqb9k2MDnCWisp77KJ0x6mk3tstlzQOGQrq1aJdtHXn8pW6ulVrO
-	 jeZk5ldH2UFluVUmoTqWL6jsrRH19TDzr1NKw9PWN4J5MDMUhRoM2zp1AiEyGdBH8q
-	 UANALHWmfhrFQ==
-Message-ID: <7b43e8e2-eb03-4c44-b7a9-1f0640141612@kernel.org>
-Date: Wed, 22 Jul 2026 16:36:00 +0200
+	s=k20260515; t=1784733622;
+	bh=Ni9QvwpOBI9XGbAW5jEnvLz17SQhbLZTmB0sDYQ3bfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=MHxNWoLipdYtdcxH5ZuffW1EziIb/qde+X319AUL1yhw/yF3qyEJ6UZQLp7XZYO8P
+	 AoCZAtXVRwp4p/QDqVSNz7zn9Mhr+Co6eIVTXEz1lx3Se6Neahl4s+1cGRzo5CaimB
+	 ih4VrieaBPffALnRLeVIYcbMnJK8A3jnxgmcqJr+bDvy6MOf868pkYzrm0nF+O9xEb
+	 LRyJdp9PE/focqh37rS4ukFWq5uBchAusVqVE90aPvafTmyjivXSdVPmMJtT8dcjnm
+	 6kZnbvnTWa9ygwRThUSPMYUDzC1vas3CrADVQWWnqJkQaMbw0xFQjnlu5QPnsz5J4Q
+	 0gScho7E0CJhQ==
+Date: Wed, 22 Jul 2026 10:20:19 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: devicetree@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Mateusz Majewski <m.majewski2@samsung.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Zhang Rui <rui.zhang@intel.com>, Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: thermal: gs101-tmu: add Exynos850
+ compatible
+Message-ID: <178473361756.946166.4949700030015164786.robh@kernel.org>
+References: <20260709-acpm-tmu-e850-support-v1-0-9fdd58b634af@linaro.org>
+ <20260709-acpm-tmu-e850-support-v1-1-9fdd58b634af@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/13] mm/vma: rename vma_get_page_prot to
- vma_flags_to_page_prot
-Content-Language: en-US
-To: Lorenzo Stoakes <ljs@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@kernel.org>, "Liam R. Howlett"
- <liam@infradead.org>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
- Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
- <20260711-b4-vma-flags-mm-v2-7-0fa2357d5431@kernel.org>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Autocrypt: addr=vbabka@kernel.org; keydata=
- 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
-In-Reply-To: <20260711-b4-vma-flags-mm-v2-7-0fa2357d5431@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260709-acpm-tmu-e850-support-v1-1-9fdd58b634af@linaro.org>
 
-On 7/11/26 20:45, Lorenzo Stoakes wrote:
-> Having vma_get_page_prot() refer to VMA flags and vma_set_page_prot() refer
-> to a VMA is confusing.
-> 
-> Rename vma_get_page_prot() to vma_flags_to_page_prot() to resolve this
-> confusion.
-> 
-> No functional change intended.
-> 
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+On Thu, 09 Jul 2026 02:10:27 +0100, Alexey Klimov wrote:
+> Document the `samsung,exynos850-tmu-top` compatible string for the
+> Exynos850 SoC.
+> 
+> Unlike the GS101, where the ACPM firmware handles most of the TMU
+> initialization and threshold configuration, the Exynos850 firmware
+> implements a significantly smaller subset of TMU IPC commands.
+> Consequently, the Application Processor requires broader direct
+> MMIO access to initialize the thermal unit, configure thresholds,
+> clear interrupts and collect calibration data.
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  .../bindings/thermal/google,gs101-tmu-top.yaml     | 26 +++++++++++++++-------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
