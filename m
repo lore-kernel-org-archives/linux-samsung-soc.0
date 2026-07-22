@@ -1,41 +1,40 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5B643BDB2;
-	Wed, 22 Jul 2026 18:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E71E45D5D9;
+	Wed, 22 Jul 2026 18:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784746768; cv=none; b=gEC/a8aTNDdG15yuC9BuyRWdkXv831+KRdhABBbgJBGYJ21+ojpfNnwzX67h3bC9YzMFinZj1oFEUoRoVFBuPl+GSh4D9yY7L8TjXhKElqZp6/Lgy/dXlR1irFh7Btm7sNzg2OfjQ0HcPa7SMtR8Z+74ArTvVegjdWaWpoTMoAY=
+	t=1784746775; cv=none; b=pRY2jRlfMeLCaBMI+2p0SzR88zJgV7BFcSGXW46Dg/GA2O1xgOkXiNeGLTQpL7jMUrUlDCtVmtWFed/JC8xGhmJlYpMVywxWplT+w06e4imeeHu16FYY31MZmsJeGpfsMagpONZ/1LhUIq1iNSXP5vYYZ0vucl4Abu5bMApFBkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784746768; c=relaxed/simple;
-	bh=j5zx2Zv7OQbPH6wFcqtPgLJYRBg7b6u5ufPgbW3BiNM=;
+	s=arc-20240116; t=1784746775; c=relaxed/simple;
+	bh=1YohDgTSOkkTpl+65u26bbQhosd/+AGS22C8onQsxPU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hL7tYEAD54b1V4g0C/Apt2/zPFIEFK9qtYnRVZIDnWngMBB4i/5g7tBUS5IZcegDk4vAunS3Vbo19gK3MUAi2S1dR+HAjUYzjSZTkNLSzknG2wjCamNM2/OlXrdX7GzgvBmJaGjX6M2BTumldeu0h/r5AT+opT8xUjbRwMzHdL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ByRGd02Q; arc=none smtp.client-ip=178.21.23.139
+	 In-Reply-To:To:Cc; b=TmL57DiesB/ybyk34DzOd3P2n1wrJ9d8IRNca1JobVA6g86NEQVXGZMg1aQrgMFu0id9pdQHyEWhF1OsJH+B0OPpP7rGlbL9noH1w2/AT++WGBYTBP5HO6o3OS/BJMGG+/wxb9k7Q9hFpyYs4CR8RBrWaS/+lDOBjge62pFjKMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=akPUmchE; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ByRGd02Q"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="akPUmchE"
 Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 0364B847B9;
-	Wed, 22 Jul 2026 20:59:18 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 509AE83F7A;
+	Wed, 22 Jul 2026 20:59:31 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id CXGRsNS74ewV; Wed, 22 Jul 2026 20:59:17 +0200 (CEST)
+ id MN0pYQ004ibo; Wed, 22 Jul 2026 20:59:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1784746757; bh=j5zx2Zv7OQbPH6wFcqtPgLJYRBg7b6u5ufPgbW3BiNM=;
+	t=1784746770; bh=1YohDgTSOkkTpl+65u26bbQhosd/+AGS22C8onQsxPU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ByRGd02QMj5JJG0g2WL11iS27CdMBQBwkowhIETNf2mxN2zcBQHSumnAXy5gp/z1W
-	 r4rl6CFP4m/qtNXU3FXV4+LzzEQH+TX4khAcNkAHLBNAtTmsIOb8GXXCd8OPivH8sQ
-	 uqoc7YpkHT/v4SKuo1KGKRRUkp4SKYAbfVIq//gMQ7i3WoxfblKgkpU1xRkbU/ARCT
-	 tpT/TH7HRgUTc6zxkDuSxC7RKyWKyfeWlw+drMghHRO9AToeBm67/QHuqMhes2mwhC
-	 hOkhUohMN1qjGhpIBtiZMw8LJxnCqEIe+xJkfaDSUf1vUR29g3tyjLDoBwjPI68cob
-	 R33zj2JnS0cyw==
+	b=akPUmchE2iIdGt7B3MdYhifPqGY3yW16Vqxr/8pilsgaFQC4fTNhWFS2WNtzYnwQO
+	 CrKrhyDmPgHR2Wnq7BJoF0oB47EFPr/3kRjveb0eFz4hx3EEUC/fGY8naLSXGiXrXt
+	 V247SGp06E8Qa4wBijyAF5OCi8qlhlfpWe9OIYgDNvweWwtc7GnbaNbNWMP3HVhRED
+	 bQtCugGy+SV5KUplFHQpd4UZPGweK3mYr3hO6HX+V4WYKVicApyC5IO6F1ZMwZrl3I
+	 RPEXA4lZgUiFb3/1KZffFLY9ML8IrR1APABc7sJBUpqg7oGHdyEI8Ufir7eZGED6ev
+	 mpdKxJWpJO5Sw==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Thu, 23 Jul 2026 00:28:33 +0530
-Subject: [PATCH v3 2/3] drm/bridge: samsung-dsim: use DSIM interrupt to
- wait for PLL stability
+Date: Thu, 23 Jul 2026 00:28:34 +0530
+Subject: [PATCH v3 3/3] drm/exynos: remove simplefb nodes before init
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,7 +43,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260723-exynos-dsim-fixes-v3-2-0c31ae1dbecc@disroot.org>
+Message-Id: <20260723-exynos-dsim-fixes-v3-3-0c31ae1dbecc@disroot.org>
 References: <20260723-exynos-dsim-fixes-v3-0-0c31ae1dbecc@disroot.org>
 In-Reply-To: <20260723-exynos-dsim-fixes-v3-0-0c31ae1dbecc@disroot.org>
 To: Inki Dae <inki.dae@samsung.com>, 
@@ -67,121 +66,46 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  Kaustabh Chakraborty <kauschluss@disroot.org>
 
-Stabilizing PLL needs to be waited for. This is done using a loop,
-checking the PLL_STABLE bit in the status register.
+The simple-framebuffer uses the framebuffer region initialized by the
+boot loader for display. However, with Linux the DSI and FIMD/DECON
+stack is initialized from scratch.
 
-DSIM fires an interrupt when the PLL is stabilized. Rely on this
-functionality for stabilization wait, getting rid of the implicit loop.
+However, both are destined use the same memory region, so both cannot
+co-exist. For a seamless display transition during boot, the framebuffer
+must be destroyed, which releases the memory region, followed by proper
+IP re-initialization. Achieve it using
+aperture_remove_all_conflicting_devices(). This is also implemented in
+other similar systems such as in Qualcomm's msm_kms driver.
 
-This has been tested on a Galaxy J6 (Exynos 7870). Unfortunately, since
-testing on all supported devices is less feasible, introduce a stop-gap
-measure where the timeout has a gracious lower bound of 100
-microseconds. This will (hopefully) prevent regressions due to timeout
-on other devices.
-
-Suggested-by: Inki Dae <inki.dae@samsung.com>
-Link: https://lore.kernel.org/r/CAAQKjZMLMbwDVZRb5+Xb_5yz3AEP4uuzFJMuuZy9NFDu13VU5w@mail.gmail.com
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 41 +++++++++++++++++++++++------------
- include/drm/bridge/samsung-dsim.h     |  1 +
- 2 files changed, 28 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index da753ff6eed4..866cff205e71 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -17,6 +17,7 @@
- #include <linux/export.h>
- #include <linux/irq.h>
- #include <linux/media-bus-format.h>
-+#include <linux/minmax.h>
- #include <linux/of.h>
- #include <linux/phy/phy.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 9ee30086879f..7657f86a9d19 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -7,6 +7,7 @@
+  *	Seung-Woo Kim <sw0312.kim@samsung.com>
+  */
+ 
++#include <linux/aperture.h>
+ #include <linux/component.h>
+ #include <linux/dma-mapping.h>
  #include <linux/platform_device.h>
-@@ -788,7 +789,7 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
- {
- 	const struct samsung_dsim_driver_data *driver_data = dsi->driver_data;
- 	unsigned long fin, fout;
--	int timeout;
-+	unsigned int timeout;
- 	u8 p, s;
- 	u16 m;
- 	u32 reg;
-@@ -849,19 +850,26 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
- 	if (dsi->swap_dn_dp_data)
- 		reg |= DSIM_PLL_DPDNSWAP_DAT;
+@@ -273,6 +274,11 @@ static int exynos_drm_bind(struct device *dev)
+ 	if (ret)
+ 		goto err_mode_config_cleanup;
  
-+	/*
-+	 * The PLL_TIMER value is the product of the timeout delay and the APB
-+	 * bus clock rate. Calcutate the timeout delay on-the-fly here.
-+	 * It is assumed that the bus clock is the first clock in the provided
-+	 * bulk clock data.
-+	 */
-+	timeout = 100;
-+	fin = clk_get_rate(dsi->driver_data->clk_data[0].clk) / HZ_PER_MHZ;
-+	if (fin)
-+		timeout = max(dsi->driver_data->reg_values[PLL_TIMER] / fin,
-+			      timeout);
++	/* Remove existing devices which own the framebuffer memory. */
++	ret = aperture_remove_all_conflicting_devices(exynos_drm_driver.name);
++	if (ret)
++		goto err_unbind_all;
 +
-+	reinit_completion(&dsi->pll_stabilized);
- 	samsung_dsim_write(dsi, DSIM_PLLCTRL_REG, reg);
- 
--	timeout = 3000;
--	do {
--		if (timeout-- == 0) {
--			dev_err(dsi->dev, "PLL failed to stabilize\n");
--			return 0;
--		}
--		if (driver_data->has_legacy_status_reg)
--			reg = samsung_dsim_read(dsi, DSIM_STATUS_REG);
--		else
--			reg = samsung_dsim_read(dsi, DSIM_LINK_STATUS_REG);
--	} while ((reg & BIT(driver_data->pll_stable_bit)) == 0);
-+	if (wait_for_completion_timeout(&dsi->pll_stabilized,
-+					usecs_to_jiffies(timeout))) {
-+		dev_err(dsi->dev, "PLL failed to stabilize\n");
-+		return 0;
-+	}
- 
- 	dsi->hs_clock = fout;
- 
-@@ -1596,8 +1604,12 @@ static irqreturn_t samsung_dsim_irq(int irq, void *dev_id)
- 		return IRQ_HANDLED;
- 	}
- 
--	if (!(status & (DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY |
--			DSIM_INT_PLL_STABLE)))
-+	if (status & DSIM_INT_PLL_STABLE) {
-+		complete(&dsi->pll_stabilized);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (!(status & (DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY)))
- 		return IRQ_HANDLED;
- 
- 	if (samsung_dsim_transfer_finish(dsi))
-@@ -2148,6 +2160,7 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi);
- 
- 	init_completion(&dsi->completed);
-+	init_completion(&dsi->pll_stabilized);
- 	spin_lock_init(&dsi->transfer_lock);
- 	INIT_LIST_HEAD(&dsi->transfer_list);
- 
-diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsung-dsim.h
-index 03005e474704..e3433da21ad0 100644
---- a/include/drm/bridge/samsung-dsim.h
-+++ b/include/drm/bridge/samsung-dsim.h
-@@ -123,6 +123,7 @@ struct samsung_dsim {
- 	int state;
- 	struct drm_property *brightness;
- 	struct completion completed;
-+	struct completion pll_stabilized;
- 
- 	spinlock_t transfer_lock; /* protects transfer_list */
- 	struct list_head transfer_list;
+ 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
+ 	if (ret)
+ 		goto err_unbind_all;
 
 -- 
 2.54.0
