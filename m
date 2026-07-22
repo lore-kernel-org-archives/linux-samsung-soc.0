@@ -1,173 +1,191 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011028.outbound.protection.outlook.com [40.93.194.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5035C242D84
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jul 2026 12:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784722538; cv=none; b=D3m2ewKdBWWlsEkps6jSL43aUvaa8WlKSIS0GEYxLAq/jGE8gpr8rUX/m8BUUU8O2EKp1rhX33Ux+Qbc3Qr3Do1PR/tW2o4Lv9trEjXfieHtQS6FgWpcQ5/wwK/FnZ3tlX9YTS2uQIsQbO8JxZeBGcf3OoA+bvWNYW9OMPVVBc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784722538; c=relaxed/simple;
-	bh=95InElf/4mMVvsvkCeBo9ZBGIRSOpJ7fiMvMn4rFSdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bk4gzEdFSTcgSJM36UJC+feCWWnQAVUFnZwimgGDQ/aOPH7TyEA1FNRdHDZYomtSO4gCCiNM6gLG7mMqxzPfKNsFnx/rJZkiogsbBUTjv2zfPv+LbzvfDZ7t/tVicqABJxKridLMvUoDUg1CV0+1SSinhrUkujeI1bBr4L/Z9kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XZuU/xqo; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898EE344D8D;
+	Wed, 22 Jul 2026 13:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784726403; cv=fail; b=H4e2bJR1yWkKdfrd3kJQ7AVkjpC+QBYUVvTuC/FblRAdTgjqnLg4nAq2fNWPLDNbDVTAOGTnLzXEfA9LtYK25IN6k8Wa5iv84iXkz6Fg7BNR5RByBt78ceTJxbhE9+1bHI2XVh1BP2G9j2NIGC/8lfKDJBe05Mfqxe55uIwRGR0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784726403; c=relaxed/simple;
+	bh=Lo8ORDVS+0msTRo/3kylJLkq6ftzZIlpgJDA7nhND4g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LWPFW3h5rJMjO9dVwfuXJSJ/ntedy/H8syhgEmfds+QsfkJNu1YMjurP7VU1zTCujMPwEulZ1lzOXW0uvZ7Q5m6bRdbFI0Y4udA6ZkA1M2SK2tADqNZS6PYTHkmMUs4aKFSJ+cP2V3zaYFAfMxraOqi0aESHw+6Z8YCA9LPLWwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k3CoXHCO; arc=fail smtp.client-ip=40.93.194.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XZuU/xqo"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4798bea72f9so6620380f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jul 2026 05:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784722534; x=1785327334; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
-        b=XZuU/xqokm2tkI47ojr/7+A5d+NGo1RsSCBPA56Q1TxWC3YDYuqZQ5gbbjinxGzAJK
-         3cneB2gbFaTqBbdgHVQmgmg9wI7lqQrNJHl9uofiQ/psAaeDXHPzsxrdWbXemfImI6XC
-         7BTulj52mNuWGrIuetfzQUWe5hjGMQZAslCOx9hZoOy+qnzKh/0NDoyQbwJBkJ5DkjZ6
-         wKNZrZpwkC70AFFA4JWf/HMVaZMpJ1xpKHHjsz4fDVZ+xsOJuFFfkiENnvkmkwMA0Dyc
-         W64gd0jeV4AjxgFleo7EjwF1lGSeuQzhmyvDLtn4lPCN3hcPJuFGrH9wbQMgbOG7s5EE
-         YsGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784722534; x=1785327334;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VI2Isc4fgmRJDTCJfmw/OSW5rvOEVOT9p4D8XxgQ81I=;
-        b=SebQ7wsVH9QZGhYdXN2XM4CwqxFSRbTRuKiCFbnpLPWvuSooaQY53GFwQrfDh2zqa1
-         gA9zW+UmXN3PjN9oTIibsXhwEqXRXs+5Z2anefMtCkyQB0ya6YJ4BQmfWZdRsfemrFXW
-         1Kyk7GmyJhQg/aAJtY+4F1xhlEWu04SeO03FRhY+vB4lcHR9uEiDJ4CmSPF0H6/eygD1
-         f0eVLvhjIJc+fbhi2WMDt8G2H2mkdq9ScWcexo4cZcPSzGaVj5aiY5FL2KD2PLDlmBc5
-         1DNHFuJG2wXR8ZvMIDgxyHy5Ga0XWKvFD6mNZmFhTMxfdsbzVcbBI5gorBgdpS4ISgyh
-         CyCg==
-X-Forwarded-Encrypted: i=1; AHgh+Rq4nYdOxVcDE65ZbjTEaj+8ZGVxbUKyhBUj7ECsgmXF9x6PS2TqPdSRd4UjuAlFIxyoVJ8BREQQ6xGaH2r6E02jXg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YypCYsbNuD7zfOsHMJybxaYHMwkSaZoHYVswERITpkPHPZEZOfi
-	eOZP8Ul9J9NgwzRz+5flNDLwyeaKGVWte7uFhSy4k2Be2fKcamiIOeELsOu6Mcq9OeQ=
-X-Gm-Gg: AR+sD110bqW78eqzE0w1oc1+8Gp7Q0e5SnWkUd3rfPRp1FvwFR76oRflI0auCvRN/Dm
-	X8qJArVdBZzu+oyHgF75OXBdopSOG1cFeQ7dcrVs8kfEIgKab4YSzlumIL/tP8DRSDLYZv/swIj
-	3MENc0KdKo1FHkUW2SDTibyGIpUNnP00caTlibHbnzjSe9aDUBrTXsh5dgNrsmODqB4GEx696RW
-	h8aNCeRe4QwlkFD3tRroGnfMdofemEE8tQRG6PYcYOJ6/nExTGOBvoUTEOW+S7OyfWenfxAMkfj
-	MXC2cLW2Do4/E7zJaq+EdpOHbX9EkccxMZq39Uaqmh++p8dheACw9sx7jT28oFtE/xws9vdqoDa
-	yYjoktltznLCA84GFP/Sq8inw5to/lanGlXpWd5lxjv4/jxwahlrK6k9CcQNBdAOOVh+n8u39zY
-	HFamlBnYvf98sXDwLZL8+T7hM=
-X-Received: by 2002:a05:6000:46cd:b0:47f:70f4:7c5 with SMTP id ffacd0b85a97d-47f70f40972mr13998165f8f.53.1784722534372;
-        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f8635c8d7sm4379093f8f.21.2026.07.22.05.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 05:15:34 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Linus Walleij <linusw@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Alison Wang <alison.wang@nxp.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Albert Esteve <aesteve@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
-Date: Wed, 22 Jul 2026 14:15:11 +0200
-Message-Id: <178472247762.1745070.2847290153778032256.b4-ty@b4>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k3CoXHCO"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TJ7i/eyvJjHeafsP5rTIpncZqBZ8nc/w2Z9/MhoTYl8aVVXQ0pW/7Za255PpjIfUqtqZb4nHCYSW6w5QbHqQf4GSWyA/qHzHxWeoyo1A4VFZiVUGFi5Yz3ZNHk9v+Ghca7Xdji5GpplUGrbkmMCuhe5wbZdZhXfNhoHvJ+myvgLZV+N4qeWlGCejtt1YnxJqnX/LOimm89hZdP+XY5eiNpEJ5FXAsrNG27AFba3Q6G1DQmMS0W3jjrGGZnM3PlsOpgQH3FgKbKRGfUNEnYcT5vTI1LRb+IbJWImlkmylhJ5pGyzYE8U9bbhl4vKQfjLgpMDR04gm+WPwYSjk3r+xtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D0tE+FUuEMBR+jo617axIAMr7kzhlvh02eokOi/8wGY=;
+ b=UrirpCT4c5J2hTnVyb0V+vjp0zQG0FUn1cgDJ9N+G+gT96XR8LmkYrQyBjlTe27mAIDCeQkEksHZB+SR3hlkV0E6+c5CdFlpXZyem89XlPm6y1AdPr0z2dpxFqMylmj9uit8mq9vGgYSqnMmt1RLxMJfo3BYOjO4BjJ0Rvhy9lQ+2vODqtSLhLfQOrKOqeS2uQY6zrFPtH/JXF5JWfSwVv8SJYRxjUtl5RqsQhk7F040Zo7t92yRcH3fQ2rbIwFlTkzl9KMu0i/oDQrn8D1hPcS4JpRxNLplDG/FPE3zmc7BxdzDxcey57SOEaZqLQSRK6Djw5GaO1Z5j2jf6c78bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0tE+FUuEMBR+jo617axIAMr7kzhlvh02eokOi/8wGY=;
+ b=k3CoXHCOgdGiZUntvvg2ZgBL4mQ1g82slPEm6MBfvL5jBw3Ylwr0Umgomr9rAkT4/+97V5RHyF29bFmnftZeoPEDcLk1wpGoDwgGwdKj4kA6NDQVk4ElpgPnULl02EICgcd7tbeveeXFopjgaPpEWeKODc2sRiN0g7a4TBk2hZP9b8c9ayvOJmHgj5G3bsuKAqvr/kl2B7erXCt2F/Ol4i7Mjex7rzhDBOq1/JLk/cBzy9/lsV3KS5HLcU9hZTuaB3cl7RvWn5kTgG3zzzInYT/sEOyLHiWEpiN70xMUE2pU6ivcYJTdihAYBupPSLpJzEwQ0XCZzg9C0V6vnyDveQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by CY5PR12MB6454.namprd12.prod.outlook.com (2603:10b6:930:36::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Wed, 22 Jul
+ 2026 13:19:57 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0245.009; Wed, 22 Jul 2026
+ 13:19:57 +0000
+Message-ID: <df8cde1e-cf6e-44f5-b650-ec186c62a92c@nvidia.com>
+Date: Wed, 22 Jul 2026 14:19:52 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: tegra: Drop CPU masks from GICv3 PPI
+ interrupts
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Thierry Reding <thierry.reding@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1781103355.git.geert+renesas@glider.be>
+ <0be8708c53609bb64bfa31d84dffc5c2d56b5679.1781103355.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <0be8708c53609bb64bfa31d84dffc5c2d56b5679.1781103355.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P195CA0018.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::15) To SJ1PR12MB6051.namprd12.prod.outlook.com
+ (2603:10b6:a03:48a::18)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|CY5PR12MB6454:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9a7b530-207b-4334-2d02-08dee7f3ed13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|23010399003|1800799024|10070799003|7416014|366016|11063799006|56012099006|4143699003|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	dhNVbn3i9ts/PTgTbtcw3V1vJH9RGLcjpj+p86DHYdUAbi4qz5jCKAO9Ry4L0DPnyhrhmIQnHfzVlhwSpoRpWWUhstXF/x7oV1sFN45O4wAfcnN9hnex/U8iOlwY2SMztLVNwKYnEJUV6zWbsCOpkRKQo5gDKby2OKYlRC+bX2cbrpUJdIbMGha8n1ib4kKz+QGQPUdkdOvYqcxziD4+OOc+NIQdlSXXgXIEo7gvzQKXc6BdjDxuNn+SLPCV5vSq2JkiEulC85KgL32bDlqsvPCSSL5T5xyb352Ia2PmSfS/3KBjsvAiIjcOHt35vFjBuAdk6sVJL7hjq3V5O4365+YMkYzaCh552lBbffzs7DmKtx/w30fV2zWjwMRdu0ShNJjd0Zv+wF7rHNwlWEOONrhCSFvptDDDPdm6QpF733eclJ5ePYYGhEWtTTx1hvcUYxzOCWG4sXrfy0uExhmso55sz5sZTbnXiME4kn11l/ssh8/vun4j7j6PaHB35Y4KAKEjIUK4vnRly6nfAHHmOu8XVImTXzfxbF8bVqfqTruyqCDp2khAZGn9Ym9Z8yD59WmFjPXowBPLuHUbxbu4rPAD0hogFo6mIJdaaKyDbiXGbJtaRh6OvAvp83KUhNGRAi7OfJiZ/gzYjhEC8FYLBjSPaAcLeXxBlbyttxx7ei0=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(1800799024)(10070799003)(7416014)(366016)(11063799006)(56012099006)(4143699003)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cnhvaGVsdzNySFdFbktyQmQweXg3SzNXR2xFeVZEUmdkdUlMazR3S2RFdnla?=
+ =?utf-8?B?RjY3N1FjZSt1dHUxZllObFhzR3l0YzdORmJiLzBFME80NndodkFuVUF3Mktq?=
+ =?utf-8?B?a2UvL2VoZUEwRTA5bDNnc1FLUW9zQjIyUyt4SkozZWNTb29JYXBGOG91TlVR?=
+ =?utf-8?B?UyszSWw4NFRXUGFrSzE0d0d4YUJ0SVQ0akZpeWJESG1BSjBueVVkSDR0N2d2?=
+ =?utf-8?B?NFhTTDdjbEhLT3Y2czBmcFJhYnd4bnhpd3cvQXhZTDBTekxEaUVyeFh4Y1Bt?=
+ =?utf-8?B?VmFjeWFZZU0wT0lGd2NhUHdZSFlKMm5IMmE3aCsvK29aYVhERmdlc2ZSRXd5?=
+ =?utf-8?B?c1o3aW50STNnRW5BTlhPOUZEN0h5U1lLNUZWQkwvVFBUR0U5V1pEcE1YdWNv?=
+ =?utf-8?B?QjZlT3JwOGVXQW5qTWVHYWR2WEFueENhQWdubUFxNXNhQU1JT2pqalZmT0Q0?=
+ =?utf-8?B?VmtFTkE1V2tlWDRORHMyWjRneXlOcktFYzFoTlM5RHVpaWZOWkxJUnVqeE96?=
+ =?utf-8?B?N1h2aDkxcHBLbkNUV0lYSTBqVERBRDUxNVI5OVNEQ2MxVVpnVE9HVU9BR0FS?=
+ =?utf-8?B?WHE3VjB0VHBBamFQVE5JY1VpM2FmY2tQR3NOeGJ3enJPK0RFbkxvZG9IMXVw?=
+ =?utf-8?B?MVpCWDZMOUhlTEZWQ1ZVMmpBQlVCZjhIamw0aHpDS0ZDTmQ2TzQ0elN2cXJM?=
+ =?utf-8?B?Z0pUWUgxdWZ4bVFWQ3I4RU5MUkxiUHJBQ1lGTlJGZ0s1dFZkS3dRdVFUb1A2?=
+ =?utf-8?B?OXM3RjVMaDBLKzYzY0pxaDNVZ1JxZTRpZmhLWmNJemc2bmxHNC9OYzJjMFNp?=
+ =?utf-8?B?dW1wUXBBVE9obDkwMVNqSzhObnk5MHAyQ3hJSVkzVUZjK05SVi8ydzdxMEZ3?=
+ =?utf-8?B?SUs4bTJZdUp2SVR2UklBRzJqNk1JQ0E1MGFvb2V1QXpBMlNxYzBheW0rSmh5?=
+ =?utf-8?B?N0UrTVVQcGNNYllmUGY2NVVVYS9oN2xpbm54TXZQVFNraGU1V1EwOVc2dWtG?=
+ =?utf-8?B?a2o2bzdSSURTMGFXRk13NWpJWEpiNVdyVUpEbXM3MjJRc1BPVW8wc2pFMDNy?=
+ =?utf-8?B?OGJ1NTBZRFl4R2pqYVEvYzZYQW9HZ0VKNDV4UmRITm1GblplMlRFcmszbWRS?=
+ =?utf-8?B?MmF6cG1Vb0o5Zkc3Rk5iYSt0ZllnRW81YzJwMEJEN2RwcXVUVWJXc1FGWnV0?=
+ =?utf-8?B?dXdWZXBwY1hSazBKaXcrQUlGbTVrdm9uNS9UdmtVd0hjOC9PQXNhdkxYNkl6?=
+ =?utf-8?B?VXJ4YXNmQ3BJcEthT3dudUpFNTEzNlZGREM3K0dVOVdFOUVucGp3UmhBa3F1?=
+ =?utf-8?B?U1dIVjhQVCtXc1pUVmpPeVpjTXV4dGNBSHpncEtDOHQxTDBWYTVjeDRsMkl5?=
+ =?utf-8?B?TmEwQUx0TFRkRy96NDVmbVVnNWdsY2lHZ29qRXlYUHZ6ZFJ6WWsrSTdxZ1U3?=
+ =?utf-8?B?T3Vsc1FrV2xUOUdwa3BEeWlHV1pERE9qTnVBOVRqU1NCNGEzVFVWeDVsb3Fm?=
+ =?utf-8?B?anROZlBUaHFOMjc3UXRDTCtkbVl1YXFPOUxaVVo5cUJqOHhaWUxtMXdtUXk0?=
+ =?utf-8?B?UkkzaFlLeWo0NzNjcFR0UGI2bVUyQlRWZ1lVOEkwalZUZFJ5M3BMaHJMbFhF?=
+ =?utf-8?B?ZG9TM3kzd05OWFBxYW1IZ2lrckpUcXVHUUNzVUdFSlFJbTRSejVhaDFtM2Vv?=
+ =?utf-8?B?Y2NRVnEvK2l5YWlMU1lCS01nRFZkckNWbkRIWjM3V0pIazFMT1ZLSUo2N1J5?=
+ =?utf-8?B?SEp4dUdmckN0clBjYkF6UjRqMDJyc1FJQzk0WkVOUVRZeWwveUNjUDd5ckVM?=
+ =?utf-8?B?M0tuTXBZcUJyVlpIMVdJTXZ0MlFIdTM1NnM1RGIzeStDUWhDZTJzalRja1hM?=
+ =?utf-8?B?bkI2S3VmMldqaE5GY2c3b2x0eVBQUHhhb2plV3pxVjNmK1hmTGlnUGxqY1Ra?=
+ =?utf-8?B?dVFtNWJlTURuMW5Mc1doYzJ3a2xUV3dMNCtWdUQxNHVUVlI0SGRUK2hMZCt4?=
+ =?utf-8?B?cG9NUk8yRUdIbjZNTUFqVGU0U2JOSElSMnNCczl2YUlsM0V3Q0FEajZNV2s2?=
+ =?utf-8?B?VzJFK1E5NVB0ZUUwaS9vNU8xL1VCa2x3eXNUQUZrWTFLWmVVOWRTTWs0UzYx?=
+ =?utf-8?B?b1ZQVTFSTmU1R2d6YXZDSGtRcnVEaEM0V0wrblpHNVpEemkyL3JPSFZLc1d5?=
+ =?utf-8?B?WXVGTllCQlhEV25zMnpGUTAxaitMMWZZd3YrM2UrOTdqbDhGcStwbHcrVG1j?=
+ =?utf-8?B?bkFrR09uRHFOcGVFS0R3UlQ2Q1NYbTRXODB6RS9MUXNYMWdJMjU1ZTdWUXJS?=
+ =?utf-8?B?WFAva09zcFhDekxJallRRnJVanlJaGJjK1I5LzdxQXIyeGlTeHBQa2pUQWIv?=
+ =?utf-8?Q?BoOKel+GryGjIYG8NxRdpVUiCYUH7/BqTpfLZyo1h6uFY?=
+X-MS-Exchange-AntiSpam-MessageData-1: 27/DJ2O8TrFS8g==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9a7b530-207b-4334-2d02-08dee7f3ed13
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2026 13:19:57.6362
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 99cBhjeUwgsK9CumHmaXwAVPRl3KxAeLmKTcRc3iXzfTCeU9AJhtLZ/399h8TSvyhZf5iSGTrIg2wbCiBdcZdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6454
 
-Hi,
 
-On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
-> The drm_panel subsystem provides kref-based reference counting [1]
-> (drm_panel_get/put) but almost nothing in the tree actually uses it.
-> This results in a systemic use-after-free pattern throughout the codebase.
+On 10/06/2026 16:09, Geert Uytterhoeven wrote:
+> Unlike older GIC variants, the GICv3 DT bindings do not support
+> specifying a CPU mask in PPI interrupt specifiers.  Drop the masks.
 > 
-> This series aims to close all those issues.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>    - No changes.
+> ---
+>   arch/arm64/boot/dts/nvidia/tegra234.dtsi | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
-> a counted reference for the list entry. drm_panel_bridge_add_typed()
-> now holds a counted reference for the lifetime of the panel_bridge.
-> 
-> [...]
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index 04a95b6658caaa92..390609fee09c9da0 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -4083,7 +4083,7 @@ gic: interrupt-controller@f400000 {
+>   			reg = <0x0 0x0f400000 0x0 0x010000>, /* GICD */
+>   			      <0x0 0x0f440000 0x0 0x200000>; /* GICR */
+>   			interrupt-parent = <&gic>;
+> -			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>   
+>   			#redistributor-regions = <1>;
+>   			#interrupt-cells = <3>;
+> @@ -5869,10 +5869,10 @@ tj-thermal {
+>   
+>   	timer {
+>   		compatible = "arm,armv8-timer";
+> -		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> -			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+>   		interrupt-parent = <&gic>;
+>   		always-on;
+>   	};
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-[1/4] drm/panel: have drm_panel_add/remove manage a list reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff40cded27168e53406e0120ad66e114
-[2/4] drm/bridge/panel: hold a reference to the wrapped panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea8950fd825e0d6ecd713705a42f06417
-[3/4] drm/panel: of_drm_find_panel() return a counted reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d319cae2acd9df1b297cc948c58bc7
-[4/4] drm/panel: find_panel_by_fwnode() return a counted reference
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883dab989178dd4186090d6bcf52b8d55
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
 
 -- 
-Neil
+nvpublic
+
