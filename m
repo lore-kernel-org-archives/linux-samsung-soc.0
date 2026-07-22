@@ -1,144 +1,168 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E232320CBE;
-	Wed, 22 Jul 2026 14:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12804306764;
+	Wed, 22 Jul 2026 14:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784729407; cv=none; b=qzkCpYg+CBhFPZZ3XTpgHu2fV1Hn/JrNyl69MRq5AuqNCb4mwkiZxRTbSt8yeKaCDHsfH5fq6cIHcauP1gnl7rGo9nths54TpdCeem6D0xvPIEzwpAfPjV0zrHDDX0e7yemVNnHh4JGHe3Uxnkm2L9MbNodT2LRQTSyjc1i0pCk=
+	t=1784729885; cv=none; b=NFyq8sDsdxVDm0FtWe05iQLXYHxd5P9LMdPLw+j9zow0JKPUdg516kN7tOzIO+T6+nxIIvKYPDCmICrS1w4HZ6n9VzqhrRwio21ETMtVYnU/CYRNUJdVeobgHA2KrjVjNMlFwMytZBLvQfVjp3mVXznUJRaZ7KFF1CyqdAve6wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784729407; c=relaxed/simple;
-	bh=+UNxDf7R0fKYJyPR4rBG363ftHoOIEin6Wr6xd8h+VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niDqHNyq9a6EsGqIkIZIZH8Mz0373PJyUTOPxX4+VsPGVd9opQ71CgZTnwDmVSX//uksAiq2oVmSxIENK4rixZQYzBHRyQJuSFRFDS4ghl95VQ0TVlGtCFzkULjh7t5voJwcvDmowwHoOnyxQWCfXW4VH5P4LaVDazv2rxfLywA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBKZJysH; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784729885; c=relaxed/simple;
+	bh=np4yayh2BMzDrIbeGsDIccHY4xwm2Ph+deSS9Lu+mrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=el71np27iqmyVtSo01el7is+WblCD4XWe8cGnUIbZGeEKpIeI2gsZODQj2/JEkVGPJLStjtrVgZOxHl10OUuatO68BdYKBlmlUzvzhRJcPpPzsJt6nd4GzuJ/rjqfuOXAzfRX7/1m0/qfMu40102hsHooqZZBqOgMZBqkz7eSmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4vdnNdZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBKZJysH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE471F000E9;
-	Wed, 22 Jul 2026 14:10:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4vdnNdZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998571F000E9;
+	Wed, 22 Jul 2026 14:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784729405;
-	bh=GKC9UuiVWxD/MFzLYjOHg83pmVBtg7m7d81lYjsbO4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FBKZJysHWtyygCrX8kFOgyhfU6JsT4+b8mD57jr1fEBBFHnR1CwvpG9Dej2mjrENQ
-	 TD2HffbkHINJ4F9QFThkAws/a93D69vf8qsp+1OFudLsj9/kL1mJsRgPeyQjm4FNty
-	 h1TIfz/RZoQNSICrYttVQTabtwHH8B9UGM2X/Melqh+gCZzVBOsZ0Wn67GIX53qKB2
-	 dh6yUEVATyElmTWiwdAmoVWfbQ7HOhQzROthiI+RxeDfpcP++ZFV7dKiEyGHlhyvfC
-	 UdZx13hKoS56mTpYZ3zXrgVeE/Bo7Tijz7toMzQkCII+LvDK7l7bx8vC7xqnVZkc7K
-	 pLl2PMKBLjOaw==
-Date: Wed, 22 Jul 2026 09:10:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Joonwon Kang <joonwonkang@google.com>,
-	Subhash Jadavani <sjadavani@google.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Lucas Wei <lucaswei@google.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 6/7] dt-bindings: mailbox: goog-mba: Add goog-mba mailbox
- bindings
-Message-ID: <20260722141004.GB548057-robh@kernel.org>
-References: <20260714222338.2965707-1-dianders@chromium.org>
- <20260714152138.6.Ia186a29119b4b5c409815b755e0c2c3965b0495f@changeid>
- <8e3025c5-16a0-40d7-affa-098ca37699c7@kernel.org>
- <CAD=FV=Vrd9AxO-NY_CP2h+f21qt4uGY2pOoFgacV+G5bnfd32Q@mail.gmail.com>
+	s=k20260515; t=1784729883;
+	bh=nr20QdluTC6Xb2QJCx/L2OqHD3wYjRZzxUHD+ltN0io=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=a4vdnNdZSy07RDuS+C9gat8xlWANgEMGre2Gt8w50+S/RARkD/NxqriSXn9wrozPj
+	 E5W9CBr1d7eepeguATkGjOrPXaqKaMp0+xcdJH6JVLGWRdkxSRqsBQirTItAu9VNRf
+	 xKAJOUg/URAYNGPYd8y4vGKj+ONw/nWOpgBtlfPsR8ltFxfx8IoinmWT2jtQMA7WpP
+	 nozoGRCEMkB8851Fg9u/prJ/JOJKbaLEpz8L+8Zr68k62Ilb0p88pE+y3ZC8cSKbhK
+	 kBpgQZfX/d3Rxy5rU6yBQqCx1AN3uW+o51yyGmm2In6YviRmTxHVmf6qDl7Zlbt9Ib
+	 DwnPnhWrhgAMw==
+Message-ID: <ac18f5bc-62a9-41b0-8980-a4c465a4229a@kernel.org>
+Date: Wed, 22 Jul 2026 16:17:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Vrd9AxO-NY_CP2h+f21qt4uGY2pOoFgacV+G5bnfd32Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/13] mm: convert __get_unmapped_area() to use
+ vma_flags_t
+Content-Language: en-US
+To: Lorenzo Stoakes <ljs@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@kernel.org>, "Liam R. Howlett"
+ <liam@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+ Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-aio@kvack.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
+ <20260711-b4-vma-flags-mm-v2-3-0fa2357d5431@kernel.org>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Autocrypt: addr=vbabka@kernel.org; keydata=
+ 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
+In-Reply-To: <20260711-b4-vma-flags-mm-v2-3-0fa2357d5431@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 15, 2026 at 09:49:14AM -0700, Doug Anderson wrote:
-> Hi,
+On 7/11/26 20:45, Lorenzo Stoakes wrote:
+> Update __get_unmapped_area() to be parameterised by vma_flags_t rather than
+> vm_flags_t as part of the effort to move VMA flags from a system word to a
+> bitmap.
 > 
-> On Tue, Jul 14, 2026 at 9:51 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On 15/07/2026 00:21, Douglas Anderson wrote:
-> > > Introduce bindings for the MailBox Array IP block present in Laguna
-> > > SoCs (AKA "lga", AKA "Google Tensor G5").
-> > >
-> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > ---
-> > >
-> > >  .../bindings/mailbox/google,mba.yaml          | 216 ++++++++++++++++++
-> >
-> > Filename must match compatible.
+> We cascade the changes up to arch_get_unmapped_area_topdown() and
+> arch_get_unmapped_area(), where, for now, we use vma_flags_to_legacy() in
+> order to propagate the VMA flags.
 > 
-> Whoops! Will fix in v2.
+> No functional change intended.
 > 
-> 
-> > > +properties:
-> > > +  compatible:
-> > > +    items:
-> > > +      - enum:
-> > > +          - google,lga-mailbox-array
-> > > +      - const: google,mailbox-array
-> >
-> > Don't use generic fallback. Just the SoCs.
-> 
-> Sure, if you insist.
-> 
-> In general the "mba" hardware is designed with enough identification
-> registers that we should be able to autodetect which variant we're on.
-> Thus, my hope is to not ever need to reference the SoC-specific
-> variant in the driver itself. It's not the end of the world to use the
-> "google,lga-mailbox-array" as the generic, I guess...
-> 
-> I don't suppose I can change your mind here? If we take
-> "google,lga-mailbox-array" as the generic, then going foward a few
-> generations we end up with:
-> 
-> properties:
->   compatible:
->     oneOf:
->       - const: google,lga-mailbox-array
->       - items:
->           - enum:
->               - google,next-mailbox-array
->               - google,nextnext-mailbox-array
->               - google,another-mailbox-array
->           - const: google,lga-mailbox-array
-> 
-> If we keep "google,mailbox-array" as the generic, then going forward a
-> few generations we end up with this, which seems nicer / less
-> confusing:
-> 
-> properties:
->   compatible:
->     items:
->       - enum:
->           - google,lga-mailbox-array
->           - google,next-mailbox-array
->           - google,nextnext-mailbox-array
->           - google,another-mailbox-array
->       - const: google,mailbox-array
+> Reviewed-by: Lance Yang <lance.yang@linux.dev>
+> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-I find 4 strings nicer than 5 strings.
+Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
 
-> Sure, it means that if someone unexpectedly makes a new Google
-> mailbox-array that's totally incompatible then the
-> "google,mailbox-array" sounds too generic, but that doesn't feel like
-> the end of the world. You could call the new mailbox array designed in
-> the year 2037 the "google,2037-mailbox-array" and things would overall
-> be less confusing than using the "google,lga-mailbox-array" as the
-> generic.
-
-What exactly do we need to do to stop having this conversation? We've 
-done this scheme and version numbers and it never ends well.
-
-The reality is the h/w folks can't help themselves from changing things, 
-so nothing remains unchanged for very many generations.
-
-Rob
