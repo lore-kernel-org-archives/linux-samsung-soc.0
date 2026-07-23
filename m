@@ -1,68 +1,68 @@
 Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F93B4423
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 21:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324123D1AA4
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 21:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784843086; cv=none; b=lR+pULgK1P4y+1kUj9fllY/Ydk78mXpd8ciKnJrwIFRwobp/nvrLk9KMl4gAOwNCxDN8dGUZ+ZHGbT7lJTPKw6++XHZbwFUnKR/1q3E+LlBbo/YQCXUtAnwnTkAdaOgppUp0ByEq+NrQsNF1JU33eFifDO691P9xa/4QNlOS+Hk=
+	t=1784843276; cv=none; b=ckNtVLMF+ht1MF8e1YDpaWb72tjKtwYHY+Bz4FBf5jlQLVlhdUSD0LZ6r+5hVjaWxPjwjzdHVrIkaibmtN/BnCca302d/+mNGvXE8U12d6txtjMISntytbFxbTSFcsw4BCOwXk4NJwHU0M1Bxrq5lLeZ5sGxoOuAbFGNUx0h5a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784843086; c=relaxed/simple;
-	bh=+OdY4u+xuxYYvTPwu8ClxFwkAzmS5N6snQwjr7+39zQ=;
+	s=arc-20240116; t=1784843276; c=relaxed/simple;
+	bh=iV0DB1IMnoBJFnSPG+BJBYj6LaiitsOcMqjwyNRMcSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YOnxHgG+ErAyE933HmDL3S08GHJFNLmhRc4+7lsBH5Q63+rW0Qai/mSsTjY13XI1nuHtPDkpu/TYOXDDDFF0l6q/vmpsXJFobjP5cwDVtQBnQhSztZpZrUT4bjs/HoFewDBOz39qHEpM+ItXgRp8yftoHvBkdp1Ar7xiTwN6PMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm6GoOq2; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version:Content-Type; b=rypmBDKqGg2e8njMFnE73BPt6wRU4wwO7v6JXO8T16hWXr9oV76Fun3+ScBxFtvyvUGjSovjTVYOA5hbenlxt8836icyTprtg88atsok43u+J1tmBOa5fpO5kfmWr26eG3e0sKC+Ik3tnhYvlylKZ+T7W9HDwvqXwvNHXKITmNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0C8C6bU; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm6GoOq2"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso7724085e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 14:44:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0C8C6bU"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so11904925e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 14:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784843081; x=1785447881; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784843273; x=1785448073; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Bon1Nju5bHH5h+TKI6hTtwU3OXh0HgCxIWxUvi5q8O4=;
-        b=Nm6GoOq29GTOLLjSSAJgq1ryut8RGL0+d6agh08NasrhiQqy8BgK5oASaCYufMcx/e
-         6cMAVdjpQyolUvK8xmadMGCLkAFKOQqV8DLI113cL0T328FEJOusn5zlqJgDGK5nFoDq
-         G+foxa4z2bakD6e5+6GQeS1vlGq0WAoRZDbFURHPb0xulFcWoRWpdbNpMLSLL83uaWW7
-         +5w2gLAX4Tgcx1elmQSgPqEv3ruvmJNgU/WRHUjO0TkOZrKgVXaPSbsUq0JE/OVj7uiT
-         hFmmkBVqUK+3s3Iuq280AI5xgRSeknnBdsZwzNi3hNgu+qs+OLtgScyT8Kql9XxiWI+g
-         EXbg==
+        bh=MVBWHG8ESuMad3qr42QTUda7Z4q11ujZE8cB+I2e/yU=;
+        b=d0C8C6bUTNh/9oG6a1caj1XPTXLttCiqI7KhBzk8XQKS3iwV1Tb8IF2Vk+TZC8xV2S
+         acSnI8QWNHa7sOT8GMkXpNGLcRevcH5KRm3g/GXDBYGn8ZHQXs3f8tWWnYoHJiSadOSJ
+         UAODMeIL2zKCqAg8oNFrkgikW7Lc4O7vezmkGRmiFwg5j3QjbU9AdGJMQeVaxLnZr0qn
+         EHnWHbfbMMfOONovUYZT8q9qtkUOqLZ4IYbzbxRait5sSg2zET0QjkYm6Rpu+312cRxK
+         E5yFwLgYx/D44RGGyHerUONIdzxZMuM22JKE6EnpF4ZYUd/Q3e64n/xpM5Lt1+APVgS0
+         SAzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784843081; x=1785447881;
+        d=1e100.net; s=20251104; t=1784843273; x=1785448073;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Bon1Nju5bHH5h+TKI6hTtwU3OXh0HgCxIWxUvi5q8O4=;
-        b=lkJlNYEC9Ee8JwQsqYGRQA8COdMIZx96blBCdMb4ZaZcKPTi0wM2IsluiDz1IYcV/8
-         oWxoA0ZqLI+absNJ2NrdD/o54hqfULFTXJGymdpQCi3QkvRphtwPYji9gTmDo+a2vTws
-         tVFaVpM12Aj7ZAERv4Je9pbxe5yKKJnVwh3wKyxLnyo1xPYhtv6OIN1wGoRenH5mbFaa
-         pSCmcE/OtaAkZFIfZ3VypGQGqGDAn+ioThOupyuXkS/Mj6dlHN6482lDooI73hmeLBW9
-         qslcodbvRMGdmTPaVUFN7rMrJt1w/wyFKooAB3m7RGAQdTct+3Yw23tPqk+CDUcmPF7J
-         nlRA==
-X-Forwarded-Encrypted: i=1; AHgh+RqwwFwnzanYJ0NTPER/siRB9PMDs42tGDu8m511YXQdKHeMPuqWF6wPucAWusxNBpQHzDXrCo9Cd4dSF+VOhXFQXg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0iXBEua56nxeDkkP3yD4lGFUQcdjDtvd5oWQrmyBYRe3i72jZ
-	D34hY4+YU73q/uB5x1RKw9OA2praMwM5pSOik6Acj7UAEL1JzkFz0QWd
-X-Gm-Gg: AR+sD13jA44t/8jbLQF7rU0jd414M4gFmabM8nZm55i2hdVI+D+NtFL/INLLbmS8nBO
-	3M5ek3PsXtKe1OAJ7aYSLLwhWJzeYo6FmAFp9h2OFgfXHOI5NRjUopQfWiJxx6QY9RURFqqKU7O
-	BtnkabEKNCHMzW8fFUt9odyccs64TDPicv36wxiA2Ojboj+3Ju1zuDGOSVZZVsQYMpvGBmE1maD
-	6EUPytFWSp5Ofroyo0zvbOHQgqVWwL/BNyjByHh/uQ9aZ27bKAyFaJmQBg4RRO63sTEjULXaFno
-	qOPjsKeYh6FwvkwflmoXuD10mAmoENYIGlvI6Sf0Z9S9n2ok5YpppqWXZ+NXpCHd7wxo3Ska54u
-	TRz7Dot9EHGOnorBQNo3z+QN+iDHAjIwgnwNvWzTSlW6dVh+/H4dTGta1BgYoD8zDgCEZVgdv0z
-	9QoR1PzKLqTIFPvaYCi7V5Vi7ArZtCETUdoD04+mvvQc7utMyYKQrqzMKos4iP0ahVPuQuf3Yos
-	ktSTFx3vlg14Iy8fYmmYQ++IYLtwDgIcg+nkUw+d5U9o9WkeVvpDZvvtr1Ms2Ftfplzmgz3gLZb
-	OcItNIM5TKPzIX/ruMT3YmhlWePBEcUcHI3zJkEKkyIGCtpq9Q2G+ShNyGG/7eW3G7cWMbZAvRs
-	QwTGwcDR5NplrgnGPkx1ojQ==
-X-Received: by 2002:a05:600c:5942:b0:495:6397:14b1 with SMTP id 5b1f17b1804b1-49573cf0ec2mr37512475e9.34.1784843081421;
-        Thu, 23 Jul 2026 14:44:41 -0700 (PDT)
+        bh=MVBWHG8ESuMad3qr42QTUda7Z4q11ujZE8cB+I2e/yU=;
+        b=KrzDEd45TwjLrpYq8JmUmPPpZBQgmVZ429z5GZVGhnb4xnRV0W7Hx+H7joPnpJE96A
+         KIIxHOiONYLh03TtMZ3HNsKrD2ignTH1sSF8Tq+lphbGey1G43NO/8tsUas8cwZSO2Cd
+         0R+dtD4lCsDSxQg0zJILLIbca37atd6WM6xJJevilDNnKg1C6KpswuNYGhxkEJEDCc95
+         B4afM/g5W/ba+DTOs/qGeHzkAlIlJ9bwpacAZbGLX7gRWMGOlpGJY/UfFP9oSQQDIbKG
+         x1B7CWXRkbjeVLsRsnFZPBeScn0ZPq8dsET0sQwLRxRZGyc9Bk7JFp3e7zNfhSeuXm6S
+         gzQA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq3GbU1aKWXsS5imnheFQFz+T/K++NcV38HE3lUmT+kur9zqO4toB37W9rqiy7Q8nX7qnzZT5xx2zYBqp4+Bt15nQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYyfQ5Z+U9VHMrevO/KFN1fALepmmuXeWRjA6z2NJcZlkMzs0J
+	Q+GHaCmYu6kiRZM9gCLruotTf1EENkcrtGfnFbJF01DtHforkAfrBUvt
+X-Gm-Gg: AR+sD10gwQ9ahcNoEwxWFxroE/Z/kPKiqsl+Rm4fYlghoGAcEQSF4qaa0ohRczG/bY+
+	RANHaYfFFYvTFSMCScqUp3PpIVMl1z1HtNUxgCvdHhuc2r/ny/Mo83IcxbB5mXBeTTsmG3yEfwb
+	eXS/2S4baQvWgBValHZi64mHC1VUk8dNRUMqUks9kVI7DTl3AELL+9y1Bn47OajpkyvqQPh80c0
+	7OoD6akkZoyodmCK19NiS4GybFlm5VMBNw+GKq/gsfIp4u1pcHhsqxTCU9xd65ISbWaPrq5V1+W
+	hLTmp0PeKntcac0Ir89zMTYFCibQXwkJyz/dup7rBO6SVJqUomo9O6IHvOdK2a81JQaPl07WcnT
+	oH8DPNroJSOH3g0ccrqGwcbm0ccCYF9k1S/D9Hvgb79maeYzq9JegPgURUzVp0JeEXWcC6dpsGx
+	I+Acp5rlFHZ4Zs5fZeaxhZgP9LM+P/NMBJos2QmvmDitbl8rITwzCOiOPpaBy7jbobWjH4QwPds
+	CckQL6GpqU/N7GEVIcW281Pniv4gz+XlE7t35+aQ8XGzY3ti4Q3xjSWxtYedqmap21OazcC9uzC
+	KjDMa0R43ozClBQ3CTh8CDQuWYaprynP/LgL2JhvnYLppKORIkci6OfynHwMymULAWO+AVOBMEQ
+	D8UfQzGr9eq8=
+X-Received: by 2002:a7b:cd14:0:b0:493:bb0:3b43 with SMTP id 5b1f17b1804b1-49573cbfb7fmr37428135e9.2.1784843273372;
+        Thu, 23 Jul 2026 14:47:53 -0700 (PDT)
 Received: from systembl0wer (ip-86-49-244-181.bb.vodafone.cz. [86.49.244.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af6ad58sm24633755e9.4.2026.07.23.14.44.40
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957bd9bbc4sm13559335e9.3.2026.07.23.14.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 14:44:41 -0700 (PDT)
-Date: Thu, 23 Jul 2026 23:44:39 +0200
+        Thu, 23 Jul 2026 14:47:53 -0700 (PDT)
+Date: Thu, 23 Jul 2026 23:47:51 +0200
 From: Joshua Crofts <joshua.crofts1@gmail.com>
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
@@ -73,12 +73,12 @@ Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
  linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: proximity: add driver for Sharp GP2AP070S
+Subject: Re: [PATCH 1/3] dt-bindings: iio: proximity: add Sharp GP2AP070S
  proximity sensor
-Message-ID: <20260723234439.06411731@systembl0wer>
-In-Reply-To: <20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
+Message-ID: <20260723234751.5ff138bd@systembl0wer>
+In-Reply-To: <20260723-gp2ap070s-v1-1-b8ca3a4c10dd@disroot.org>
 References: <20260723-gp2ap070s-v1-0-b8ca3a4c10dd@disroot.org>
-	<20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
+	<20260723-gp2ap070s-v1-1-b8ca3a4c10dd@disroot.org>
 X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -89,284 +89,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 23 Jul 2026 22:58:34 +0530
+On Thu, 23 Jul 2026 22:58:33 +0530
 Kaustabh Chakraborty <kauschluss@disroot.org> wrote:
 
 > The GP2AP070S is a proximity sensor designed and manufactured by Sharp
-> Corporation. This sensor is used in mobile devices, including, but not
-> limited to - the Samsung Galaxy J6.
+> Corporation. Unlike the other GP2AP* schemas, this is strictly a
+> proximity sensor and NOT an ambient light sensor.
 > 
-> The driver has been adopted from Samsung's downstream kernel
-> implementation [1]. Due to the lack of public documentation about the
-> schematics of this device. The downstream driver acts as the secondary
-> source of information. Driver clarity has also been improved with the
-> help of the GP2AP* drivers in iio/light.
+> For power supplies, it expects two voltage supplies, one for core and
+> other for driving the infrared LED which is used to measure proximity
+> distance.
 > 
-> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
+> This chip has been used in production mobile devices such as the Samsung
+> Galaxy J6.
+> 
 > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
 
-Some comments inline. Additionally, please check out Sashiko's
-findings: https://sashiko.dev/#/patchset/20260723-gp2ap070s-v1-0-b8ca3a4c10dd%40disroot.org.
-
->  drivers/iio/proximity/Kconfig     |  11 +
->  drivers/iio/proximity/Makefile    |   1 +
->  drivers/iio/proximity/gp2ap070s.c | 502 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 514 insertions(+)
-> 
-> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-> index bb77fad2a1b3..3f30ebfc21bc 100644
-> --- a/drivers/iio/proximity/Kconfig
-> +++ b/drivers/iio/proximity/Kconfig
-> @@ -41,6 +41,17 @@ config D3323AA
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called d3323aa.
->  
-> +config GP2AP070S
-> +	tristate "Sharp GP2AP070S proximity sensor"
-> +	select REGMAP_I2C
-> +	depends on I2C
-
-A very small nit (and probably a personal opinion), but "depends on" should
-go before "select"
-
-> +	help
-> +	  Say Y here to build a driver for the Sharp GP2AP070S proximity
-> +	  sensor.
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called gp2ap070s.
-> +
->  config HX9023S
->  	tristate "TYHX HX9023S SAR sensor"
->  	select IIO_BUFFER
-> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-> index 4352833dd8a4..627ffb04acb2 100644
-> --- a/drivers/iio/proximity/Makefile
-> +++ b/drivers/iio/proximity/Makefile
-> @@ -7,6 +7,7 @@
->  obj-$(CONFIG_AS3935)		+= as3935.o
->  obj-$(CONFIG_CROS_EC_MKBP_PROXIMITY) += cros_ec_mkbp_proximity.o
->  obj-$(CONFIG_D3323AA)		+= d3323aa.o
-> +obj-$(CONFIG_GP2AP070S)		+= gp2ap070s.o
->  obj-$(CONFIG_HX9023S)		+= hx9023s.o
->  obj-$(CONFIG_IRSD200)		+= irsd200.o
->  obj-$(CONFIG_ISL29501)		+= isl29501.o
-> diff --git a/drivers/iio/proximity/gp2ap070s.c b/drivers/iio/proximity/gp2ap070s.c
-> new file mode 100644
-> index 000000000000..9625f53d956e
-> --- /dev/null
-> +++ b/drivers/iio/proximity/gp2ap070s.c
-> @@ -0,0 +1,502 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * IIO driver for Sharp GP2AP070S proximity sensor.
-> + *
-> + * Copyright (C) 2026 Kaustabh Chakraborty <kauschluss@disroot.org>
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/iio/events.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/types.h>
-
-Please add iio/* includes after the generic linux/* headers. Ensure
-that there is a blank line between the two groups.
-
-Additionally, you're also missing <asm/byteorder.h>, array_size.h, err.h,
-types.h and delay.h.
-
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-
-Don't include this, this is included in i2c.h (see Uwe Kleine-Konig's
-work).
-
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#define GP2AP070S_REG_COM1		0x80
-> +#define GP2AP070S_REG_COM2		0x81
-> +#define GP2AP070S_REG_COM3		0x82
-> +#define GP2AP070S_REG_COM4		0x83
-> +#define GP2AP070S_REG_PS1		0x85
-> +#define GP2AP070S_REG_PS2		0x86
-> +#define GP2AP070S_REG_PS3		0x87
-> +#define GP2AP070S_REG_PS_THD_LO_LE16	0x88
-> +#define GP2AP070S_REG_PS_THD_HI_LE16	0x8a
-> +#define GP2AP070S_REG_OS_D0_LE16	0x8c
-> +#define GP2AP070S_REG_D0_LE16		0x90
-> +
-> +/* GP2AP070S_REG_COM1 */
-> +#define GP2AP070S_VAL_COM1_WKUP		BIT(7)
-> +#define GP2AP070S_VAL_COM1_EN		BIT(5)
-> +
-> +/* GP2AP070S_REG_COM3 */
-> +#define GP2AP070S_VAL_COM3_INT_PULSE	BIT(1)
-> +
-> +/* GP2AP070S_REG_COM4 */
-> +#define GP2AP070S_VAL_COM1_BLINK	GENMASK(2, 0)	/* LED Blink Interval */
-
-You don't need a comment like this if you name your macro reasonably
-(which you did IMO).
-> +
-> +#define GP2AP070S_VAL_COM1_BLINK_0ms	0
-> +#define GP2AP070S_VAL_COM1_BLINK_2ms	1
-> +#define GP2AP070S_VAL_COM1_BLINK_8ms	2
-> +#define GP2AP070S_VAL_COM1_BLINK_33ms	3
-> +#define GP2AP070S_VAL_COM1_BLINK_66ms	4
-> +#define GP2AP070S_VAL_COM1_BLINK_131ms	5
-> +#define GP2AP070S_VAL_COM1_BLINK_262ms	6
-> +#define GP2AP070S_VAL_COM1_BLINK_524ms	7
-> +
-> +/* GP2AP070S_REG_PS1 */
-> +#define GP2AP070S_VAL_PS1_RESOL		GENMASK(5, 4)	/* Resolution */
-> +
-> +#define GP2AP070S_VAL_PS1_RESOL_14ms	0
-> +#define GP2AP070S_VAL_PS1_RESOL_12ms	1
-> +#define GP2AP070S_VAL_PS1_RESOL_10ms	2
-> +#define GP2AP070S_VAL_PS1_RESOL_8ms	3
-> +
-> +/* GP2AP070S_REG_PS2 */
-> +#define GP2AP070S_VAL_PS2_IOUT		GENMASK(6, 4)	/* Current Output */
-> +#define GP2AP070S_VAL_PS2_SUM32		BIT(2)
-> +
-> +#define GP2AP070S_VAL_PS2_IOUT_0mA	0
-> +#define GP2AP070S_VAL_PS2_IOUT_24mA	1
-> +#define GP2AP070S_VAL_PS2_IOUT_89mA	2
-> +#define GP2AP070S_VAL_PS2_IOUT_130mA	3
-> +#define GP2AP070S_VAL_PS2_IOUT_190mA	4
-> +
-> +/* GP2AP070S_REG_PS3 */
-> +#define GP2AP070S_VAL_PS3_PRST		GENMASK(6, 4)	/* Repeating Measurements */
-> +
-> +struct gp2ap070s_drvdata {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	struct regulator_bulk_data *regulators;
-> +	u32 near_level;
-
-In the _write_event_value function, 
-> +};
-> +
-> +static const struct regmap_config gp2ap070s_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
-> +static const char *const gp2ap070s_regulator_names[] = {
-> +	"vdd",
-> +	"vled",
-> +};
-> +
-> +static ssize_t gp2ap070s_iio_read_near_level(struct iio_dev *indio_dev,
-> +					     uintptr_t priv,
-> +					     const struct iio_chan_spec *chan,
-> +					     char *buf)
-> +{
-> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
-> +
-> +	return sprintf(buf, "%u\n", drvdata->near_level);
-
-Use sysfs_emit() instead.
-> +}
-> +
-> +static const struct iio_chan_spec_ext_info gp2ap070s_iio_chan_spec_ext_info[] = {
-> +	{
-> +		.name = "nearlevel",
-> +		.shared = IIO_SEPARATE,
-> +		.read = gp2ap070s_iio_read_near_level,
-> +	},
-> +	{ /* sentinel */ }
-
-Remove the comment.
-
-> +};
-> +
-
 ...
 
-> +static int gp2ap070s_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct gp2ap070s_drvdata *drvdata;
-> +	int ret;
+> +  vdd-supply:
+> +    description: Voltage supply for the internal circuitry
 > +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*drvdata));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
+> +  vled-supply:
+> +    description: Voltage supply for the IR LED
 > +
-> +	drvdata = iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, drvdata);
+> +  proximity-near-level: true
 > +
-> +	drvdata->dev = dev;
-> +	drvdata->regmap = devm_regmap_init_i2c(client, &gp2ap070s_regmap_config);
-> +	if (IS_ERR(drvdata->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(drvdata->regmap), "Failed to create regmap\n");
-> +
-> +	ret = devm_regulator_bulk_get_enable(dev,
-> +					     ARRAY_SIZE(gp2ap070s_regulator_names),
-> +					     gp2ap070s_regulator_names);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get and enable regulators");
-> +
-> +	usleep_range(10000, 11000);
-> +
-> +	indio_dev->name = "gp2ap070s";
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = gp2ap070s_iio_chan_spec;
-> +	indio_dev->num_channels = ARRAY_SIZE(gp2ap070s_iio_chan_spec);
-> +	indio_dev->info = &gp2ap070s_iio_info;
-> +
-> +	device_property_read_u32(&client->dev, "proximity-near-level",
-> +				 &drvdata->near_level);
-> +
-> +	ret = gp2ap070s_probe_hw_register(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_request_threaded_irq(dev, client->irq, NULL,
-> +					gp2ap070s_irq_handler, IRQF_ONESHOT,
-> +					"gp2ap070s-irq", indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to request IRQ");
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
 
-Just return ret instead, dev_err_probe() is called automatically on failure.
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +static const struct of_device_id gp2ap070s_of_device_id[] = {
-> +	{ .compatible = "sharp,gp2ap070s" },
-> +	{ /* sentinel */ }
-
-Remove the comment.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, gp2ap070s_of_device_id);
-> +
-> +static const struct i2c_device_id gp2ap070s_i2c_device_id[] = {
-> +	{ .name = "gp2ap070s" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, gp2ap070s_i2c_device_id);
-> +
-> +static struct i2c_driver gp2ap070s_i2c_driver = {
-> +	.driver = {
-> +		.name = "gp2ap070s",
-> +		.of_match_table = gp2ap070s_of_device_id,
-> +	},
-> +	.probe = gp2ap070s_probe,
-> +	.id_table = gp2ap070s_i2c_device_id,
-> +};
-> +module_i2c_driver(gp2ap070s_i2c_driver);
-> +
-> +MODULE_AUTHOR("Kaustabh Chakraborty <kauschluss@disroot.org>");
-> +MODULE_DESCRIPTION("Sharp GP2AP070S Proximity Sensor");
-> +MODULE_LICENSE("GPL");
-> 
+vdd-supply and vled-supply are definitely required.
 
 -- 
 Kind regards,
