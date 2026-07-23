@@ -1,312 +1,373 @@
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B4372B27;
-	Thu, 23 Jul 2026 20:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F93B4423
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 21:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784838383; cv=none; b=mwfgMk5fudXgdjmec0ktKO1H7VxlzgfS+UnhYHBe/iLT8xe3YUdCzpfUer7Hez5pgAgZWL/BbvIPXXr7Z+4myJnchnVaPWWrJT4rgIAFEF3Oido5yOMHGql88K3HoxNfYaRhPKRMuePv75qV69pRF0vdK8d51LUbZihCqXvBBmc=
+	t=1784843086; cv=none; b=lR+pULgK1P4y+1kUj9fllY/Ydk78mXpd8ciKnJrwIFRwobp/nvrLk9KMl4gAOwNCxDN8dGUZ+ZHGbT7lJTPKw6++XHZbwFUnKR/1q3E+LlBbo/YQCXUtAnwnTkAdaOgppUp0ByEq+NrQsNF1JU33eFifDO691P9xa/4QNlOS+Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784838383; c=relaxed/simple;
-	bh=5iG8Fb/wE2D83EOlwWwa80p3yf8ydNzzDHEtgWXwQ+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qT/Zk6vfYI950RT6rVMn37N60Cvueinuq1dywE2zKP/p0BEdMZJrltfZnx3BT04eBCqC5nTs2x+is9lZoLOK2fs7dEGiFEYJefsYj7pjtbn1LUnD06LlejfKwj7BnVM3r3yyuPVU9V/nxbjbeFWk1gMyCOuHzBJJzUOJeK3IoN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=TXfg5ubM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eoV4KXT3; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1784843086; c=relaxed/simple;
+	bh=+OdY4u+xuxYYvTPwu8ClxFwkAzmS5N6snQwjr7+39zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YOnxHgG+ErAyE933HmDL3S08GHJFNLmhRc4+7lsBH5Q63+rW0Qai/mSsTjY13XI1nuHtPDkpu/TYOXDDDFF0l6q/vmpsXJFobjP5cwDVtQBnQhSztZpZrUT4bjs/HoFewDBOz39qHEpM+ItXgRp8yftoHvBkdp1Ar7xiTwN6PMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm6GoOq2; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="TXfg5ubM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eoV4KXT3"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id 67ABA13005AB;
-	Thu, 23 Jul 2026 16:26:19 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 23 Jul 2026 16:26:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784838379;
-	 x=1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=
-	TXfg5ubMGpI7NH2+Kilra5KFHoKlpaz8cZfxh6VS0Y8aco6ACn5bHVXXNhuqfdNz
-	AHnuDiorIp9DgwlNO+v7fnyXJSh0ch6JmJRwJLqkU/D8t1IP5h99QfouIP4tukaP
-	BlRyW5EIlO5Fc1xoDsDwGE1DuTLfLfRGXr9hsDkbq6c0qdfbgZu0iewm5r/wbtIg
-	pccyjlUmfHVcp/JCc1IfzmJfclrUNq4zJxVHycV+85mfTCkb1c2xe78MuNoJZBE2
-	YFMiJZ+wKgNOq/FhrVkn4C5ayCoN+4A6akEA03CiW88iEIipAQ6LFbwbMwU3cPe3
-	enFj9VY8Px/AydESmr18PA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784838379; x=
-	1784845579; bh=W3JglPnWk9TBq4x0G1FeLIkVSrGWMGHIqS6ALjWfpa0=; b=e
-	oV4KXT3Ym/YV5GkF2QRCa4+pOlI/zY8q4hcvjJ3LxL9gvXQU6dggg4Kx4JHeElJC
-	9IM6iw8nO/pEEwu2ZxZc40FBfz/CNw7/4q11pncrryEXvDEfI50yEbSOTjXWvB6c
-	P6riHQKso/WbIn20eXxFtKjaVHL19mCYnPU/hv9Zw6sa4UbpVCoZ7Z5ZzySoCYxC
-	rsD6zwlNXs2pymTpfxtlUvJOPfoEPTdVzhqLwqxI88o9iHMtbamqeT28J5rgypVy
-	xx/io/NKkJpvLEVPWaoqxyiz/DA16RAdOQNHHUPdj90X3sysR6zA1a4OM2vafVby
-	9vlzKc58AmpQ/K+BZW37Q==
-X-ME-Sender: <xms:6nhiaq0GCCJ3UjZ1Tl2tjNSSOnLYa4n_DvEcQxwQC9GuOs_D83Mzog>
-    <xme:6nhiaqScHvfaZ8a3YA8X-XOWjv0Qdvpj2dus8nerwH4i6u3xSe-ZOxZ6idILJxXim
-    y1KXEIpiY7SW9YeE_uONa8KUBeR7Q5D2gjX1lMoCNkek2ZgELFkeA>
-X-ME-Received: <xmr:6nhianaCq0-8aK30F5jYwZGN-zCrvAD2Sd6SGgBH9Eu3eu1y9EjCtytpO_M1R6a-kZg2BJEbUUYPYJms-lGCWOBvUA9tEM8>
-X-ME-Proxy-Cause: dmFkZTGtHfvCGLFNFtcVRq1cHrKjv7HYmoxFw1SEsPfggLpPF3+EigNttIIi46yncFHb8w
-    RNhYQ07T1sllTu+sciGyBlKNcqXi+ymeT8cw3/9uVWtj/55kw2wskM5if1ZNL/3AIR5RA7
-    JKSkKWovXVlh7x77H2TM7Fwa4ev5Ev2uAIZzQMb9G24Gxj0uSSfHKfofOICsmDLLuGJSqQ
-    arq+kkHAqnBsywojtxH84aBy8syhUvWsWbGXXq4laZV35SkdUVXHQX8BaFHGaJFjYDX/ty
-    4nfo9ODP4B4TvmLO5jB3ku72GvF+yhV8RnLjRs4UWFh7UVF90OGDAER6ybUj5upM1dXNGZ
-    F03sjgtZ4n7EW2/LRPbX33fsmxdTQZM4Vw5QGKeQRTtYxEOchEyqIxRBu4LbkRDn73kWsj
-    LxYHgAovK+XVj0yrC2GlG4PIwCuhaVZl4PNrkMgjuuHaVnpbrMOazhWf+XHy5e4/kzdEPK
-    ESIrNm8TOPUo7esJ9Bowy13hBURoivHoZBN+d4ZkKnSoXGR5vuSaTyzTxQ+Hzaay0E7Lfr
-    xq6M32C+odLuFXo74tayix0UXXCfsRftO/iWF6RnjQkHlRCv1V8SQ1MYK7N3gRXqdouc8l
-    jyXZqRQAN02lAaHt2bHhaQRmnjivyIfZ3NUs7hofb60faFpc5bKWXMeqNoIw
-X-ME-Proxy: <xmx:6nhiaoCXzbGIALywOyKdXlCmgNNav7K7UV8hqKi_9N-GTFvh7oRdGw>
-    <xmx:6nhiauBmaHuLQ1nKqA7wC38CXfEeYaFqFWIRA7sNALBbywVskdn7Lw>
-    <xmx:6nhiakG0cjRTw4Z4znK2C-2aTt_TaksxSzeagr3CTWcsXG4N-rNvpA>
-    <xmx:6nhiahnCr7pm_ynLAL8AGOG2tvn6-_tx8d1jY7ys3gGWLrP5zNJxoA>
-    <xmx:63hianEYvSz2qubeSY6ig3NYWooFgtsXupJs-9XDOyc4f82FAicO-1U8>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Jul 2026 16:26:17 -0400 (EDT)
-Date: Thu, 23 Jul 2026 22:26:16 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Michael Krufky <mkrufky@linuxtv.org>,
-	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-Message-ID: <20260723202616.GE2273555@ragnatech.se>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm6GoOq2"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso7724085e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 14:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784843081; x=1785447881; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Bon1Nju5bHH5h+TKI6hTtwU3OXh0HgCxIWxUvi5q8O4=;
+        b=Nm6GoOq29GTOLLjSSAJgq1ryut8RGL0+d6agh08NasrhiQqy8BgK5oASaCYufMcx/e
+         6cMAVdjpQyolUvK8xmadMGCLkAFKOQqV8DLI113cL0T328FEJOusn5zlqJgDGK5nFoDq
+         G+foxa4z2bakD6e5+6GQeS1vlGq0WAoRZDbFURHPb0xulFcWoRWpdbNpMLSLL83uaWW7
+         +5w2gLAX4Tgcx1elmQSgPqEv3ruvmJNgU/WRHUjO0TkOZrKgVXaPSbsUq0JE/OVj7uiT
+         hFmmkBVqUK+3s3Iuq280AI5xgRSeknnBdsZwzNi3hNgu+qs+OLtgScyT8Kql9XxiWI+g
+         EXbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784843081; x=1785447881;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Bon1Nju5bHH5h+TKI6hTtwU3OXh0HgCxIWxUvi5q8O4=;
+        b=lkJlNYEC9Ee8JwQsqYGRQA8COdMIZx96blBCdMb4ZaZcKPTi0wM2IsluiDz1IYcV/8
+         oWxoA0ZqLI+absNJ2NrdD/o54hqfULFTXJGymdpQCi3QkvRphtwPYji9gTmDo+a2vTws
+         tVFaVpM12Aj7ZAERv4Je9pbxe5yKKJnVwh3wKyxLnyo1xPYhtv6OIN1wGoRenH5mbFaa
+         pSCmcE/OtaAkZFIfZ3VypGQGqGDAn+ioThOupyuXkS/Mj6dlHN6482lDooI73hmeLBW9
+         qslcodbvRMGdmTPaVUFN7rMrJt1w/wyFKooAB3m7RGAQdTct+3Yw23tPqk+CDUcmPF7J
+         nlRA==
+X-Forwarded-Encrypted: i=1; AHgh+RqwwFwnzanYJ0NTPER/siRB9PMDs42tGDu8m511YXQdKHeMPuqWF6wPucAWusxNBpQHzDXrCo9Cd4dSF+VOhXFQXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0iXBEua56nxeDkkP3yD4lGFUQcdjDtvd5oWQrmyBYRe3i72jZ
+	D34hY4+YU73q/uB5x1RKw9OA2praMwM5pSOik6Acj7UAEL1JzkFz0QWd
+X-Gm-Gg: AR+sD13jA44t/8jbLQF7rU0jd414M4gFmabM8nZm55i2hdVI+D+NtFL/INLLbmS8nBO
+	3M5ek3PsXtKe1OAJ7aYSLLwhWJzeYo6FmAFp9h2OFgfXHOI5NRjUopQfWiJxx6QY9RURFqqKU7O
+	BtnkabEKNCHMzW8fFUt9odyccs64TDPicv36wxiA2Ojboj+3Ju1zuDGOSVZZVsQYMpvGBmE1maD
+	6EUPytFWSp5Ofroyo0zvbOHQgqVWwL/BNyjByHh/uQ9aZ27bKAyFaJmQBg4RRO63sTEjULXaFno
+	qOPjsKeYh6FwvkwflmoXuD10mAmoENYIGlvI6Sf0Z9S9n2ok5YpppqWXZ+NXpCHd7wxo3Ska54u
+	TRz7Dot9EHGOnorBQNo3z+QN+iDHAjIwgnwNvWzTSlW6dVh+/H4dTGta1BgYoD8zDgCEZVgdv0z
+	9QoR1PzKLqTIFPvaYCi7V5Vi7ArZtCETUdoD04+mvvQc7utMyYKQrqzMKos4iP0ahVPuQuf3Yos
+	ktSTFx3vlg14Iy8fYmmYQ++IYLtwDgIcg+nkUw+d5U9o9WkeVvpDZvvtr1Ms2Ftfplzmgz3gLZb
+	OcItNIM5TKPzIX/ruMT3YmhlWePBEcUcHI3zJkEKkyIGCtpq9Q2G+ShNyGG/7eW3G7cWMbZAvRs
+	QwTGwcDR5NplrgnGPkx1ojQ==
+X-Received: by 2002:a05:600c:5942:b0:495:6397:14b1 with SMTP id 5b1f17b1804b1-49573cf0ec2mr37512475e9.34.1784843081421;
+        Thu, 23 Jul 2026 14:44:41 -0700 (PDT)
+Received: from systembl0wer (ip-86-49-244-181.bb.vodafone.cz. [86.49.244.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af6ad58sm24633755e9.4.2026.07.23.14.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 14:44:41 -0700 (PDT)
+Date: Thu, 23 Jul 2026 23:44:39 +0200
+From: Joshua Crofts <joshua.crofts1@gmail.com>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] iio: proximity: add driver for Sharp GP2AP070S
+ proximity sensor
+Message-ID: <20260723234439.06411731@systembl0wer>
+In-Reply-To: <20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
+References: <20260723-gp2ap070s-v1-0-b8ca3a4c10dd@disroot.org>
+	<20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260723184538.3888637-13-ekffu200098@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sang-Heon,
+On Thu, 23 Jul 2026 22:58:34 +0530
+Kaustabh Chakraborty <kauschluss@disroot.org> wrote:
 
-Thanks for your work.
-
-On 2026-07-24 03:45:14 +0900, Sang-Heon Jeon wrote:
-> Both branches of the check return the same value, so the check has
-> no effect. Remove it and return the value directly.
+> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
+> Corporation. This sensor is used in mobile devices, including, but not
+> limited to - the Samsung Galaxy J6.
 > 
-> This is the result of running the Coccinelle script from
-> scripts/coccinelle/misc/cond_return_no_effect.cocci.
+> The driver has been adopted from Samsung's downstream kernel
+> implementation [1]. Due to the lack of public documentation about the
+> schematics of this device. The downstream driver acts as the secondary
+> source of information. Driver clarity has also been improved with the
+> help of the GP2AP* drivers in iio/light.
 > 
-> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > ---
->  drivers/media/i2c/mt9p031.c                          |  6 +-----
->  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
->  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
->  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
->  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
 
-For rcar-csi2.c,
+Some comments inline. Additionally, please check out Sashiko's
+findings: https://sashiko.dev/#/patchset/20260723-gp2ap070s-v1-0-b8ca3a4c10dd%40disroot.org.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
->  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
->  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
->  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
->  8 files changed, 9 insertions(+), 49 deletions(-)
+>  drivers/iio/proximity/Kconfig     |  11 +
+>  drivers/iio/proximity/Makefile    |   1 +
+>  drivers/iio/proximity/gp2ap070s.c | 502 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 514 insertions(+)
 > 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index d21510caf45a..2b09e8315c8e 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
->  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
->  	if (ret < 0)
->  		return ret;
-> -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
->  }
+> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> index bb77fad2a1b3..3f30ebfc21bc 100644
+> --- a/drivers/iio/proximity/Kconfig
+> +++ b/drivers/iio/proximity/Kconfig
+> @@ -41,6 +41,17 @@ config D3323AA
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called d3323aa.
 >  
->  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> index b0302dfc3278..7383341ec51d 100644
-> --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
->  static int __maybe_unused xisc_runtime_resume(struct device *dev)
->  {
->  	struct isc_device *isc = dev_get_drvdata(dev);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(isc->hclock);
-> -	if (ret)
-> -		return ret;
->  
-> -	return ret;
-> +	return clk_prepare_enable(isc->hclock);
->  }
->  
->  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> index 773f6548370a..872bd09656b1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
->  	if (ret)
->  		return ret;
->  
-> -	ret = pm_runtime_get_sync(pd_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return pm_runtime_get_sync(pd_dev);
->  }
->  
->  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
-> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> index be1cbd5cfe84..e88e66be4f6d 100644
-> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
->  	unsigned long max_freq = ULONG_MAX;
->  	struct device *dev = core->dev;
->  	struct dev_pm_opp *opp;
-> -	int ret = 0;
->  
->  	if (legacy_binding) {
->  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
-> @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
->  	}
->  
->  done:
-> -	ret = hfi_session_set_property(inst, ptype, &cu);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return hfi_session_set_property(inst, ptype, &cu);
->  }
->  
->  static int acquire_core(struct venus_inst *inst)
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 7305cc4a04cb..6635f5782175 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
->  			return ret;
->  	}
->  
-> -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
->  }
->  
->  /* -----------------------------------------------------------------------------
-> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> index 14eedd1ceb27..bb06847f3a63 100644
-> --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  	struct media_device *md = &camif->media_dev;
->  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
->  	unsigned int ip_rev = camif->variant->ip_revision;
-> -	int ret;
->  
->  	memset(md, 0, sizeof(*md));
->  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
-> @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  
->  	media_device_init(md);
->  
-> -	ret = v4l2_device_register(camif->dev, v4l2_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return v4l2_device_register(camif->dev, v4l2_dev);
->  }
->  
->  static void camif_clk_put(struct camif_dev *camif)
-> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> index 870ac3c8b085..6404eb74db32 100644
-> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2160_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
-> diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-> index a408fcc3a060..4988fbf5005e 100644
-> --- a/drivers/media/usb/gspca/jl2005bcd.c
-> +++ b/drivers/media/usb/gspca/jl2005bcd.c
-> @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
->  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
->  						    unsigned char value)
->  {
-> -	int retval;
->  	u8 instruction[2];
->  
->  	instruction[0] = reg;
->  	instruction[1] = value;
->  
-> -	retval = jl2005c_write2(gspca_dev, instruction);
-> -	if (retval < 0)
-> -			return retval;
-> -
-> -	return retval;
-> +	return jl2005c_write2(gspca_dev, instruction);
->  }
->  
->  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
-> -- 
-> 2.43.0
+> +config GP2AP070S
+> +	tristate "Sharp GP2AP070S proximity sensor"
+> +	select REGMAP_I2C
+> +	depends on I2C
+
+A very small nit (and probably a personal opinion), but "depends on" should
+go before "select"
+
+> +	help
+> +	  Say Y here to build a driver for the Sharp GP2AP070S proximity
+> +	  sensor.
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called gp2ap070s.
+> +
+>  config HX9023S
+>  	tristate "TYHX HX9023S SAR sensor"
+>  	select IIO_BUFFER
+> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> index 4352833dd8a4..627ffb04acb2 100644
+> --- a/drivers/iio/proximity/Makefile
+> +++ b/drivers/iio/proximity/Makefile
+> @@ -7,6 +7,7 @@
+>  obj-$(CONFIG_AS3935)		+= as3935.o
+>  obj-$(CONFIG_CROS_EC_MKBP_PROXIMITY) += cros_ec_mkbp_proximity.o
+>  obj-$(CONFIG_D3323AA)		+= d3323aa.o
+> +obj-$(CONFIG_GP2AP070S)		+= gp2ap070s.o
+>  obj-$(CONFIG_HX9023S)		+= hx9023s.o
+>  obj-$(CONFIG_IRSD200)		+= irsd200.o
+>  obj-$(CONFIG_ISL29501)		+= isl29501.o
+> diff --git a/drivers/iio/proximity/gp2ap070s.c b/drivers/iio/proximity/gp2ap070s.c
+> new file mode 100644
+> index 000000000000..9625f53d956e
+> --- /dev/null
+> +++ b/drivers/iio/proximity/gp2ap070s.c
+> @@ -0,0 +1,502 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * IIO driver for Sharp GP2AP070S proximity sensor.
+> + *
+> + * Copyright (C) 2026 Kaustabh Chakraborty <kauschluss@disroot.org>
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/types.h>
+
+Please add iio/* includes after the generic linux/* headers. Ensure
+that there is a blank line between the two groups.
+
+Additionally, you're also missing <asm/byteorder.h>, array_size.h, err.h,
+types.h and delay.h.
+
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+
+Don't include this, this is included in i2c.h (see Uwe Kleine-Konig's
+work).
+
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#define GP2AP070S_REG_COM1		0x80
+> +#define GP2AP070S_REG_COM2		0x81
+> +#define GP2AP070S_REG_COM3		0x82
+> +#define GP2AP070S_REG_COM4		0x83
+> +#define GP2AP070S_REG_PS1		0x85
+> +#define GP2AP070S_REG_PS2		0x86
+> +#define GP2AP070S_REG_PS3		0x87
+> +#define GP2AP070S_REG_PS_THD_LO_LE16	0x88
+> +#define GP2AP070S_REG_PS_THD_HI_LE16	0x8a
+> +#define GP2AP070S_REG_OS_D0_LE16	0x8c
+> +#define GP2AP070S_REG_D0_LE16		0x90
+> +
+> +/* GP2AP070S_REG_COM1 */
+> +#define GP2AP070S_VAL_COM1_WKUP		BIT(7)
+> +#define GP2AP070S_VAL_COM1_EN		BIT(5)
+> +
+> +/* GP2AP070S_REG_COM3 */
+> +#define GP2AP070S_VAL_COM3_INT_PULSE	BIT(1)
+> +
+> +/* GP2AP070S_REG_COM4 */
+> +#define GP2AP070S_VAL_COM1_BLINK	GENMASK(2, 0)	/* LED Blink Interval */
+
+You don't need a comment like this if you name your macro reasonably
+(which you did IMO).
+> +
+> +#define GP2AP070S_VAL_COM1_BLINK_0ms	0
+> +#define GP2AP070S_VAL_COM1_BLINK_2ms	1
+> +#define GP2AP070S_VAL_COM1_BLINK_8ms	2
+> +#define GP2AP070S_VAL_COM1_BLINK_33ms	3
+> +#define GP2AP070S_VAL_COM1_BLINK_66ms	4
+> +#define GP2AP070S_VAL_COM1_BLINK_131ms	5
+> +#define GP2AP070S_VAL_COM1_BLINK_262ms	6
+> +#define GP2AP070S_VAL_COM1_BLINK_524ms	7
+> +
+> +/* GP2AP070S_REG_PS1 */
+> +#define GP2AP070S_VAL_PS1_RESOL		GENMASK(5, 4)	/* Resolution */
+> +
+> +#define GP2AP070S_VAL_PS1_RESOL_14ms	0
+> +#define GP2AP070S_VAL_PS1_RESOL_12ms	1
+> +#define GP2AP070S_VAL_PS1_RESOL_10ms	2
+> +#define GP2AP070S_VAL_PS1_RESOL_8ms	3
+> +
+> +/* GP2AP070S_REG_PS2 */
+> +#define GP2AP070S_VAL_PS2_IOUT		GENMASK(6, 4)	/* Current Output */
+> +#define GP2AP070S_VAL_PS2_SUM32		BIT(2)
+> +
+> +#define GP2AP070S_VAL_PS2_IOUT_0mA	0
+> +#define GP2AP070S_VAL_PS2_IOUT_24mA	1
+> +#define GP2AP070S_VAL_PS2_IOUT_89mA	2
+> +#define GP2AP070S_VAL_PS2_IOUT_130mA	3
+> +#define GP2AP070S_VAL_PS2_IOUT_190mA	4
+> +
+> +/* GP2AP070S_REG_PS3 */
+> +#define GP2AP070S_VAL_PS3_PRST		GENMASK(6, 4)	/* Repeating Measurements */
+> +
+> +struct gp2ap070s_drvdata {
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +	struct regulator_bulk_data *regulators;
+> +	u32 near_level;
+
+In the _write_event_value function, 
+> +};
+> +
+> +static const struct regmap_config gp2ap070s_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +};
+> +
+> +static const char *const gp2ap070s_regulator_names[] = {
+> +	"vdd",
+> +	"vled",
+> +};
+> +
+> +static ssize_t gp2ap070s_iio_read_near_level(struct iio_dev *indio_dev,
+> +					     uintptr_t priv,
+> +					     const struct iio_chan_spec *chan,
+> +					     char *buf)
+> +{
+> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
+> +
+> +	return sprintf(buf, "%u\n", drvdata->near_level);
+
+Use sysfs_emit() instead.
+> +}
+> +
+> +static const struct iio_chan_spec_ext_info gp2ap070s_iio_chan_spec_ext_info[] = {
+> +	{
+> +		.name = "nearlevel",
+> +		.shared = IIO_SEPARATE,
+> +		.read = gp2ap070s_iio_read_near_level,
+> +	},
+> +	{ /* sentinel */ }
+
+Remove the comment.
+
+> +};
+> +
+
+...
+
+> +static int gp2ap070s_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct gp2ap070s_drvdata *drvdata;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*drvdata));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	drvdata = iio_priv(indio_dev);
+> +	i2c_set_clientdata(client, drvdata);
+> +
+> +	drvdata->dev = dev;
+> +	drvdata->regmap = devm_regmap_init_i2c(client, &gp2ap070s_regmap_config);
+> +	if (IS_ERR(drvdata->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(drvdata->regmap), "Failed to create regmap\n");
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev,
+> +					     ARRAY_SIZE(gp2ap070s_regulator_names),
+> +					     gp2ap070s_regulator_names);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to get and enable regulators");
+> +
+> +	usleep_range(10000, 11000);
+> +
+> +	indio_dev->name = "gp2ap070s";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = gp2ap070s_iio_chan_spec;
+> +	indio_dev->num_channels = ARRAY_SIZE(gp2ap070s_iio_chan_spec);
+> +	indio_dev->info = &gp2ap070s_iio_info;
+> +
+> +	device_property_read_u32(&client->dev, "proximity-near-level",
+> +				 &drvdata->near_level);
+> +
+> +	ret = gp2ap070s_probe_hw_register(drvdata);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_request_threaded_irq(dev, client->irq, NULL,
+> +					gp2ap070s_irq_handler, IRQF_ONESHOT,
+> +					"gp2ap070s-irq", indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request IRQ");
+
+Just return ret instead, dev_err_probe() is called automatically on failure.
+> +
+> +	return devm_iio_device_register(&client->dev, indio_dev);
+> +}
+> +
+> +static const struct of_device_id gp2ap070s_of_device_id[] = {
+> +	{ .compatible = "sharp,gp2ap070s" },
+> +	{ /* sentinel */ }
+
+Remove the comment.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, gp2ap070s_of_device_id);
+> +
+> +static const struct i2c_device_id gp2ap070s_i2c_device_id[] = {
+> +	{ .name = "gp2ap070s" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, gp2ap070s_i2c_device_id);
+> +
+> +static struct i2c_driver gp2ap070s_i2c_driver = {
+> +	.driver = {
+> +		.name = "gp2ap070s",
+> +		.of_match_table = gp2ap070s_of_device_id,
+> +	},
+> +	.probe = gp2ap070s_probe,
+> +	.id_table = gp2ap070s_i2c_device_id,
+> +};
+> +module_i2c_driver(gp2ap070s_i2c_driver);
+> +
+> +MODULE_AUTHOR("Kaustabh Chakraborty <kauschluss@disroot.org>");
+> +MODULE_DESCRIPTION("Sharp GP2AP070S Proximity Sensor");
+> +MODULE_LICENSE("GPL");
 > 
 
 -- 
-Kind Regards,
-Niklas Söderlund
+Kind regards,
+Joshua Crofts
