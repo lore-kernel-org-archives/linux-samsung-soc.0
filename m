@@ -1,67 +1,41 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6EA363090
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 15:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E15370D41;
+	Thu, 23 Jul 2026 17:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784820598; cv=none; b=SKU2N/in5mN9wZyBMr04tgIGKmpyDeaxEYnX6dw/g0lw4yGCs9D0yXCwUgNVRsOnzHa8be2hTKTcSsOcQgKfVPNtMpve6QyHAx76D9J74mZtojYM6RYZ+SCHvfuiwrlTJQoJLiqxcx2Dat1Z2NZsvR18Qthlkag6N38ZhJGENvU=
+	t=1784827735; cv=none; b=psLdntnOPqPV6bV69285BAOF5c3SHPs7++h8onA/PIlhFcUH44m/hkseWD6rqOVPRiV/xzM4TvBa4RZhWJPAEGUyvdBfFu4NvirHgcghKwvgSgbg+9idDN/LGFZBzyNTpO3wGuZvGq6BQ0tUAti8UgcvUiBeqQyi8Mq+XNt+/fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784820598; c=relaxed/simple;
-	bh=jwiBqgpS72CTHm9lXAG2OLJMZUi4KFI68Q4tUffnH/A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uzZG06V3+LEe7hAl4MO5jUEg4sQ90lNKt2RWWg57dv37tqTqBHyOd2CEn8NFugTWEFn/bi7RXVI/hBFx0ASPPP0nBw+WuG0MDG0VXQnA3LaRvlcOHfcKQXCnCRFXkdTPwIFKqzni4JqOcWoHvyPSK72yx6/rjMe+woPQxHV8EAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tkQjpw0P; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1784827735; c=relaxed/simple;
+	bh=ZOm1CUFG2zTNpg9nFY6xska/JOIUFcW8kvB1OU0zRw0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Py4hS86ZATCOMRWgIDy462nwL5GTKs06Y16n+boihLxJbFhHJ4XiRhmBki1923SYZG8Su9W2H8zuTp2z748ZMqtthksPfvfSWjVQN/Yc0OVtrH0qk0j2M1SVTXaZ2cEK54yy465tkedKMXGFVVEpc3hplXNgHg35chR/b/rIdic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=JLkA2Bz9; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tkQjpw0P"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4954c0833b4so5826665e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jul 2026 08:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784820594; x=1785425394; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qvvA47yK9RFkS+3kJ0N4nXWgy3089ah7H4jN9EcLvHQ=;
-        b=tkQjpw0P7lyU9bNmNHmDI20/+bNOME+KN7wW1i2eVaFDXe+ps7DAvH+7x1w6A31Hbo
-         Ug/qS6eQCY73P3UIp25YjLOMdsmkRqMfpuHRh0kLs4AiFZ/1XgJbTISL5C4IC6jEP8Vv
-         yNPp5cfT/f769aPZ8QAXDFF/Xe7WdIGp2YhN+dUncNGyk/PKJgoBTQ5A9Hj/JrZxaTY/
-         YvGS+tpNB/r6fv89Jox8k+dYjqEsXhODRxXO0HOF9Do28gErpKnhHhCXMA2VfLqkMeqD
-         4hwNGyAmoziO0K2Fx8iGBMN579vmGtA+kWyzk9A+6aWQ6tQEJ80M0kpSTSI8wEEW9YU3
-         t3ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784820594; x=1785425394;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qvvA47yK9RFkS+3kJ0N4nXWgy3089ah7H4jN9EcLvHQ=;
-        b=L8DA9+gyFlLL8oy/oAZKJXZyIPRvGvGdfrMjAjwuUf4yxS13ZBcOnF9VQhIQ7sfAFL
-         akq16WJYd+IbZP3D6Iy607QnA6GfIF4KRxUoqg9EQWki2DPd3235UeqTdtULFiNokvHB
-         W1ku8phxM6VfdJfafCT+pkKeHxd9v4FXXzWExdk8T9ojsgl/z1sk74ShZLIOvmGw188K
-         OYBqklYwYo/sUs/FMeXYAQhs9kKCeGeb4YBTyyPVEI5WPV4PxAzMh8lnZp0aHeGJzHMd
-         7Lz9iDZq6ohBQF4pQQIKOXmwoQpM2Ehktxfi2lzoG+AU7L3v6NOeeqZcoptgtk0jOKqs
-         RIhQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoxG7to5HF94UvZyU69H988f7P0h4dhmfY/dJnpS4lMDEb+d2tbqK0S2Ap4nUzRp3c6WKj5bjIr1AvQblSRUsdXxg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YznewE4YUnnvBIPjUVi9JMSu5w2EBo5xx3gLVQyUDzC3o5JKP4B
-	efXtLD3Dv2TrTIToBsx8dMmQnlphIldAOkbpa/SpDM2JmtMzVR0Efh7oJw7ZRFX+oO8=
-X-Gm-Gg: AR+sD12ZkMhf6rE4asfudyE1oRzM6BuX2PKfTrDxFnXXuR+voJ4ZWT7RjhO0FYGmgmx
-	426ZjsTvg+3yIEPRqKKHZmowQiZM6xoKrGW92G6QZHxiD4m4xnzk6nWgpomKnjR3I/1jKGxr0J+
-	4uy0zjYzbqlWM4j3YnjLIvfqhpnEOmSU1cGAuuxfEANduIDnxH6+46oKBj2fMpjCYEPi4UG7vnW
-	9CX66wIDihj3eDaozMhk9/tcLkSMhyntdCnSbcSPZQLVmA6YnI4vP0kgzkJTeivTKbGgjQ9X8vy
-	pLnQJuPRLuLl5JM3kPqXmouqloG0r3WkeUBQjAZ7IddHthecQmw81cynC+xiGHuRZB8IqeNSxK2
-	oZYNYRtX/kXOJylEmDgE5IQXhWfnBnfl29YJgScn/9/jFC7gk7+v+sykI15F7e7kaHVbX0c8DQx
-	Rl3ap7QXYFJD+5wHTLDQaS2upIYQoXrZqNtpuo0dq9ZKEI/7eObuen56IgV2lKfHh+3g==
-X-Received: by 2002:a05:600c:654b:b0:495:5375:2510 with SMTP id 5b1f17b1804b1-49573cff63dmr26167785e9.24.1784820594260;
-        Thu, 23 Jul 2026 08:29:54 -0700 (PDT)
-Received: from [127.0.1.1] ([2.122.8.179])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49574653f83sm36952525e9.0.2026.07.23.08.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:29:53 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Thu, 23 Jul 2026 16:29:47 +0100
-Subject: [PATCH v2 2/2] arm64: dts: exynos850: Add acpm SRAM node
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="JLkA2Bz9"
+Received: from mail01.layka.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 634DB88254;
+	Thu, 23 Jul 2026 19:28:49 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id xBHW57MMBbBa; Thu, 23 Jul 2026 19:28:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1784827728; bh=ZOm1CUFG2zTNpg9nFY6xska/JOIUFcW8kvB1OU0zRw0=;
+	h=From:Subject:Date:To:Cc;
+	b=JLkA2Bz9sj5geTmL1XiLYYQ6p/JjRIChIcfSEjROsbZqj8Rv3eMLHGL6rZzliCSa/
+	 /BV9Kk7sMnRCkwOtiQqQwp/IsLKifB/lJKO4YyirGNs/TlCWgnADLDw5E0wPsW+nm0
+	 sCfkuzECIGBEOzo2KBe2emDyYWQFwuK1ZrdMH0IbbdOvzyS7tMlDe32R7WAfuEGFK1
+	 GJa9pcKTh1uBU/UDb1uNDC1wi4IA/H7BueXXQckc6ax0pcuwF/UTaWdhw6VZvQYPR8
+	 aLb2jtL/VeoUMbNEYSh3hojMtF6vCOFfIVbcI4mundIoSi/JvLCYZfqJJLJNDN/3wA
+	 y1fh0dNK7F0Yw==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/3] Add Sharp GP2AP070S Proximity Driver and enable it in
+ Galaxy J6 (j6lte)
+Date: Thu, 23 Jul 2026 22:58:32 +0530
+Message-Id: <20260723-gp2ap070s-v1-0-b8ca3a4c10dd@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -70,43 +44,56 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260723-exynos850_sram-v2-2-c94968e52f42@linaro.org>
-References: <20260723-exynos850_sram-v2-0-c94968e52f42@linaro.org>
-In-Reply-To: <20260723-exynos850_sram-v2-0-c94968e52f42@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDcyNj3fQCo8QCA3ODYt0081QDQyMDS3ODRFMloPqCotS0zAqwWdGxEH5
+ xaVJWanIJyACl2loASkmqTW0AAAA=
+X-Change-ID: 20260723-gp2ap070s-f7e0120970a5
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
 
-SRAM is used by the ACPM protocol to retrieve the ACPM channels
-information and configuration data. Add the SRAM node.
+Sharp GP2AP070S is a promixity sensor (NOT an ambient light sensor) in
+mobile devices. This sensor chip is found in mobile devices, including
+(but perhaps not limited to) Samsung Galaxy J6 (codename: j6lte).
 
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+To the best of my knowledge, there's no public documentation available
+for this device. [1] is a downstream kernel implementation, which has
+been the single source for developing this driver. Some bits have also
+been stolen from existing GP2AP* drivers available in iio/light.
+
+The last patch in this series touches the device tree sources to add the
+light sensor node in j6lte. This needs to be accepted into next only
+when the former patches are in next.
+
+[1] https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c
+
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Kaustabh Chakraborty (3):
+      dt-bindings: iio: proximity: add Sharp GP2AP070S proximity sensor
+      iio: proximity: add driver for Sharp GP2AP070S proximity sensor
+      arm64: dts: exynos7870-j6lte: add Sharp GP2AP070S proximity sensor
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 3881f573ec08..9a8d92aae9a8 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -917,6 +917,11 @@ spi_2: spi@11d20000 {
- 			};
- 		};
- 	};
-+
-+	apm_sram: sram@2039000 {
-+		compatible = "samsung,exynos850-acpm-sram";
-+		reg = <0x0 0x2039000 0x40000>;
-+	};
- };
- 
- #include "exynos850-pinctrl.dtsi"
+ .../bindings/iio/proximity/sharp,gp2ap070s.yaml    |  59 +++
+ arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |  55 ++-
+ drivers/iio/proximity/Kconfig                      |  11 +
+ drivers/iio/proximity/Makefile                     |   1 +
+ drivers/iio/proximity/gp2ap070s.c                  | 502 +++++++++++++++++++++
+ 5 files changed, 626 insertions(+), 2 deletions(-)
+---
+base-commit: 290aaf24a551d5a0dce037e3fab30820f9113a10
+change-id: 20260723-gp2ap070s-f7e0120970a5
 
--- 
-2.51.0
+Best regards,
+--  
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
