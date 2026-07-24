@@ -1,97 +1,138 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21EA417BFC
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jul 2026 12:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2CF37EFF1
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jul 2026 19:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784895813; cv=none; b=f6AEnkucdhxQ8sZNCLF61QR8yBbi+hRy/oAcT+1oQrBqausFoLQesIDun9YhkPZ2ktlROTXtIphmfPK3iIO/bJbJXn8dKSeAN7J3+DUK2/DxvHSrcwVKuZRuV3aNqY39CjuQPky37HCurY8VCjF2+cVRkhLI/TzJbFuaxoegsFA=
+	t=1784921048; cv=none; b=kGPhLCJrmrWQxrRLeBTkfwCypyifPAcXjPeXs20Xu+Tj5+t6aj/iUYURkyGbF2kcrAxOQhlDv5uzgtqqLJ2s5tmeRpBOZcX5IcPuQSR/p6f2ZPuTWKdrUwlJsnFunuYn9f+T+V7Ckry7DI4tXOIjdIpLY3jHPLQ/Tj9xeNVhB2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784895813; c=relaxed/simple;
-	bh=QqQ0c1cxoYl2N2Q2vFVFFoPIeqLYjgaTaw2HcL81u74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ONxbePo52/XRdP3Qcxois9UY03k5EULyvglbJyUDso7Uc8qqd7Db8TW30z4xHriM4e0yXbawtkaeulyReFzxFHP8kI/EGaoxi9c2nyOA7DbdqZru2F8J0zCE2e5DKB2BcVedthy9vFRU2riL270STuIvRBmI4G+42U8KEG5SfTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFpMZ12V; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1784921048; c=relaxed/simple;
+	bh=hieC/kyuGvbUOouu6D2lYg+NmV0Y0CqegVgla8HlJRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uccefLKaK94R7CRVEB1kiDz775IjcRu+e5KmbONwAchsRvMuf3c4TizUcEOjQB9ZATD8zLaQ5jIJbBx803jGbJm+0bsGzWDTdRmryaZpecfAUNkHo6VJEG2+lUwLBkXr8nEID0j5jEDAaKpNTik8t0rK4YQaAWyXeaiUV5M7rjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qS6GaHjm; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFpMZ12V"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2caced6038eso4479035ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jul 2026 05:23:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qS6GaHjm"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2cad8076b01so9223425ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Jul 2026 12:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784895811; x=1785500611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=QqQ0c1cxoYl2N2Q2vFVFFoPIeqLYjgaTaw2HcL81u74=;
-        b=iFpMZ12VoKWH7Gq7MKzV9+9vMWElPJva3tUMYsVJSTbTa25zCRwOp0tWHtTXpP+9yP
-         sUxj7BJp+whBck1QyhqKtCdjQSf/WSFqAeMAve39BIifqQo/wmN2h4r6O0busYAPDa4l
-         P6dJHldhTRcWeoSHUeavmkOMpQoTy9GVds1H5KlYmN/JgWS7xdpzMRfcxjt0rLvjtQN1
-         HfzSIaOiG96KwOTSD8NpGtje1L6ZuQymxxWKvy4mCaqiJpamvA5EHSgvJ4ppTNYzVT2U
-         0kQwKLpHCa92fU1bNUdC/dKYStnSfMTIVjsMNU8skyeR6LGoddVN0opKEv2GVi/8v6OZ
-         dpZQ==
+        d=gmail.com; s=20251104; t=1784921047; x=1785525847; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wzWZ3WF1iTTyJII+h6wIVAKbIfkK/TqWCpKjALnDATk=;
+        b=qS6GaHjm+EtoF58nzoqgbIQJjCta0wGM+sc856WkYhg3KbaTl/fmLddXsedzDEHNxA
+         SF/jnMk2ESZr3MMcE/qDPRC6LQjUXYN6aYP6iNa07l+tuOFUba+ydNcs+UbvxNlhv9xE
+         9JVeIVAhTMLX5J7lZNI0EqBcIIGqjHHHmDxo6UF30/QSm+jfecKMJhVhwbi2K28tKXrr
+         tifFXagMx5aPTKwehGI+uHgd7bSbVAHu/AsmW2LSzUhvNA2bNl7XcsYOFk7l46jPGw6K
+         45sVvVdu5YlXZZUchGJcUT9IVcRZ6ogqJFizEuvH5Kq5u36lMQFok9EyERUt+1j4WAiQ
+         HBfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784895811; x=1785500611;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QqQ0c1cxoYl2N2Q2vFVFFoPIeqLYjgaTaw2HcL81u74=;
-        b=o1uf5Pf+Ms0CRwaXaQJ1uywM8rzAu0qn87KDXn7eSgnz9BzLemW9qb2uGTXG1uZlxa
-         3E69t9H8Z/XOgC11B5ZzmHs7S7IMgL4hc6aFu22fme9ZVkyRKhC0boDa01lntir2gTXn
-         cS2FM+EJ0lDIBsgNFGzFW7lcPcdHAKsyFMDnCZPk1RziM4XKANxEaB2iN2qSP7ogffNC
-         5ddnZQeZIqH/zG4wQhrAGI9YLmzFONHFf7bxYsCVoMOEhMjv43ZzOS0Gacg5Dq8BQsw2
-         v2RZt6kymw9+4WaDNNvGdDqPbuJxUfNbNfkKNNDWWyM4WhcIAAWOUfS0u8A07YGsVqJW
-         AvjA==
-X-Forwarded-Encrypted: i=1; AHgh+RqhFifH1056QT/Opag/AcfE82MNLIsTWjfIxLO3/TOg3X529OBsYXEpw+KE5mcZsQPbmDn/WiW4QfxUZrtIbb1S7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx5WP/ylTD8zKrnzwb82LVQClVl53KB16oJy8yzqjnBajEXJF5
-	jiOhlFFQ+tcgv2aDvBltu/rfFNYlB1zxByPglcjWow54HOIrM/y8PjTZ
-X-Gm-Gg: AR+sD11HGuSO+9y/5OdNRhBsKtjwZWjmkeXuCMJ/+UUlyKRUEIxjEhpS+tXzbCRnMx3
-	ljdnQv2jkuiWCKRo8lVIlP5zYHRmUjQagev/iK5CqmHhzoCKYV09mDYMTxyIJQsDTcevZDCtBHj
-	tEd8/3jz2saQqCX5w4TE3C6C1eaoWiYkdINmIaeSExIEv0poO9VQ+G/6LCA9GW0RlyyHmZjhUwh
-	RGXkXGU2QeMe7TtFr5kEHbx7RuQe7qwh+t1V07z1A5oWiAeM6Mi0nVdxetV32cRxVuUsr6MlKk0
-	2rugfjIbTWGcYKTjfWgY9LBEH54jhNF9mZbt3hjNZnNDVpDUu+r+fXWNf1xs2X2I+qRX4cdCTq/
-	12C7SsdO8xwq0gNO4+44ul/3bMbU/Oknc0kgfZsVvHEJSEjQgpoAczaV11XC1Fj3b3GHIaYhDg7
-	Zkc/jlkFgsRdQ=
-X-Received: by 2002:a17:903:228e:b0:2c9:994c:9a5 with SMTP id d9443c01a7336-2cfd72c810emr2927585ad.30.1784895811180;
-        Fri, 24 Jul 2026 05:23:31 -0700 (PDT)
-Received: from ubuntu.. ([2405:201:8026:213e:9261:769c:50a5:6d0e])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147e081985sm31448346eec.23.2026.07.24.05.23.24
+        d=1e100.net; s=20251104; t=1784921047; x=1785525847;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wzWZ3WF1iTTyJII+h6wIVAKbIfkK/TqWCpKjALnDATk=;
+        b=NcsnduujYPCkKrNNTSIvdoaPDklhNNKzfBKbRUiLgR7xBBFXtMnXcecxCPoAYdIuR0
+         dAnj7YnPO9/3tJyL/ML8ahbfYJvQ/xP8ARCmCHFblIWEW7vfnXYwQ/QYyCMlg9LP+8JU
+         R/ZQc79p8jnXvxbqsChKM0p5NLG002hMt2G8tSY8EbjMRccjk1FQK1lhLPZMJGQGXnVL
+         GNFrNqXG0QLMOrrWtE2tOUHE4YcMQyF94YigD2ByYoArjFZFP89k+0HGLaha2mapOB3G
+         lT5jJ6Er5HP/myMWKisyyZ7Wsgpv51fDmNQo5ZVsPgEHy89spa58Q0ibHv/KEjEqjq9N
+         Fqtw==
+X-Forwarded-Encrypted: i=1; AHgh+RoPJgBc5COahxl5uIxKO7dKCw2y6/e2dppJhGwjrpAgxO5IN0M4y+Fcbh+KA2U4Pfdl4UbJDtSCMdieFnC+SzU39g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOB9PGwhLx9a40HH9KCY7O1gYTHWcIy5jQhmimQIutMUl+j/vQ
+	dk4cJFWTDA7LE+4JulbgldEaZheukpAFQTdqL6WnAPW14rIPdkZDxlln
+X-Gm-Gg: AR+sD125WY8I69ps9CX8j+pTaRJct2k1JmZQncDCXMouTa+qIdNqvLtjGDPjxVqDwa/
+	UvyZfoF+ct5wpd4kqQnRGwhOzQJfwBiXD9t/GLmLF66RvUcKoTqDyXqcePR1rIFEPL2NoKxjEXj
+	ckNjvqU909Y7oR4dY40MHy4HAFdIqEx19d88t0YaavvZ0IZSD7NSyWPDPBKEc1hc/MO9sb3x/OP
+	TtcC3KM9KAweMG0qg31HpBaWmJ9SR5GZT+pCbbq6d2BXdHzjxcqqsRAN8xjIbLihaqk3OmEPPLx
+	eO37CMJ9nHvsOkSJ4YQFHgGfED9TKzoX26kAuSzCjGXKNKUBv1KXC+XBlNiXQJRqpZimD6WIQWp
+	E144B6YD2WUmf9OW5HGOCnqNW11epETREw6zZj9/wGgqKyCTQWfb6AqKlL9AQGUxRD4pUOcKose
+	fJvTbmK+p9A7boeZB/ojrqbIFMKxcFdmFwD++hqIk32IhYZ9gWsJkIAA==
+X-Received: by 2002:a05:6300:408a:b0:3c3:a3fd:db0a with SMTP id adf61e73a8af0-3c44afda117mr9145039637.16.1784921046575;
+        Fri, 24 Jul 2026 12:24:06 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:40e1:40e4:dabe:543e])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc3e127asm3436937eec.2.2026.07.24.12.24.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 05:23:30 -0700 (PDT)
-From: mdshahid03@gmail.com
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/exynos: vidi: use memdup_user() instead of kmalloc() and copy_from_user()
-Date: Fri, 24 Jul 2026 17:52:54 +0530
-Message-ID: <20260724122254.121935-1-mdshahid03@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260705110221.153481-1-mdshahid03@gmail.com>
-References: <20260705110221.153481-1-mdshahid03@gmail.com>
+        Fri, 24 Jul 2026 12:24:05 -0700 (PDT)
+Date: Fri, 24 Jul 2026 12:24:01 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Srba <Michael.Srba@seznam.cz>, Linus Walleij <linusw@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/5] Input: zinitix - do not ignore non-moving fingers
+Message-ID: <amO1AWyjGltjO0lZ@google.com>
+References: <20260724-zinitix-modes-v1-0-f6df7d86a878@disroot.org>
+ <20260724-zinitix-modes-v1-2-f6df7d86a878@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260724-zinitix-modes-v1-2-f6df7d86a878@disroot.org>
 
-Hi,
+Hi Kaustabh,
 
-Gentle ping on this patch.
+On Fri, Jul 24, 2026 at 12:54:04AM +0530, Kaustabh Chakraborty wrote:
+> With the ZT7548 touchscreen present in the Galaxy J6, multitouch does not
+> work reliably. This is due to the fact that the driver reports fingers
+> only when their state is changed, so it's either placed against the
+> scren, moved, or drawn away from the screen.
+> 
+> The function which is responsible for this is zinitix_report_finger().
+> This function is called from the IRQ handler, under the following
+> condition:
+> 
+> 		if (p->sub_status & SUB_BIT_EXIST)
+> 			zinitix_report_finger(bt541, i, p);
+> 
+> This implies and ensures that every valid finger must have the
+> SUB_BIT_EXIST flag.
+> 
+> However, at the beginning of the function, it refuses to recognize any
+> finger if it has none of SUB_BIT_UP | SUB_BIT_DOWN | SUB_BIT_MOVE. This
+> excludes fingers in reports which do not move from the position since
+> the previous interrupt. Add SUB_BIT_EXIST to the list of valid bits.
 
-Could please take a look when time permits?
+This makes the check basically a no-op as SUB_BIT_EXIST would always be
+set when we reach this function. It may very well be that we want to
+delete this check altogether, or maybe we need to add SUB_BIT_UPDATE and
+SUB_BIT_WAIT. I am curious what status bits you see when this condition
+(original) triggers for you...
 
-Thanks!
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+>  drivers/input/touchscreen/zinitix.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/touchscreen/zinitix.c b/drivers/input/touchscreen/zinitix.c
+> index 3421b8ffb19b..fdcb80f52c91 100644
+> --- a/drivers/input/touchscreen/zinitix.c
+> +++ b/drivers/input/touchscreen/zinitix.c
+> @@ -406,7 +406,7 @@ static void zinitix_report_finger(struct bt541_ts_data *bt541, int slot,
+>  	u16 x, y;
+>  
+>  	if (unlikely(!(p->sub_status &
+> -		       (SUB_BIT_UP | SUB_BIT_DOWN | SUB_BIT_MOVE)))) {
+> +		       (SUB_BIT_EXIST | SUB_BIT_UP | SUB_BIT_DOWN | SUB_BIT_MOVE)))) {
+>  		dev_dbg(&bt541->client->dev, "unknown finger event %#02x\n",
+>  			p->sub_status);
+>  		return;
+> 
 
-Mohammad Shahid
+Thanks.
 
+-- 
+Dmitry
