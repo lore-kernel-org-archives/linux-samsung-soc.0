@@ -1,89 +1,89 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1A23D649C
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E085F3D649C
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785087850; cv=none; b=V4QW/+c8sXsLEcduE80i+h03k23737C3i4QF+7vtsc9/QK9rhIa4zc/UG3cLK+IX/rtorjiWiYcpPOyOEQNB8jUkqXgUiX5grG02mvJruq3iSIrTsv4dZSzAZvDnv39SATiG3mQrIxS+EGon6f33LQlHgheTftz9UgXF+ngpHQI=
+	t=1785087852; cv=none; b=Q5x/31OQv/k9g/hyaH4TjK1r4uZTTmM037WV1oQ4O8TeykuqrvqaBOXuDvugjsIsWh4CE+dNTVNmVutGOgWvTDvRIJmTamiP6Rftc14BPLHUnyUNUk2LPs3ih3X6uvrxCbNcEWXsWMERC7g762SgcaZ0/j7bw1UatjJp5QGqYWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785087850; c=relaxed/simple;
-	bh=9Kdc+t7zEowlwHOut1CYSzTz7wD6Zy1nYRHG/ARWJm0=;
+	s=arc-20240116; t=1785087852; c=relaxed/simple;
+	bh=+BnnarzXgrjvsWGAIfKXHLhwNzJRyL+7qFo71+EihXM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u94oROqgG5qFvAGrejGvq8S4voX0EpOO6OY6Y2XA/APpkqA+vddlReBSRJg5zsWwjTFqL3LTci3Kcy167tIaf7ejdnU8XJ1uE4mclkC4nUgDnicFpBotL2whR2ZZqyVqC8SYDiSD1nIyZOCnP3zhwgJJ5CfE4e6X93Ar01ntUkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P0al+mQh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=C9BaW9Yz; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=j1W8mHYgCwGKByYktWNHUz1EIkItGnZnx58wkZa/mXLXB25xn0xZeAbPJ/9H7VQXwVjUIfR/2yt6NbifxxsZ8z7IGV34diVxdFy0H2ztsLg0EA0ANO1cdiFUKfcfg8Gp5azhk89I6VsVbtaVv+Wk9R8DG8iyjzfL4dmP+XtewLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CqXhuqEQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XMObIfqT; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P0al+mQh";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="C9BaW9Yz"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66QH7JhI1419243
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:07 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CqXhuqEQ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XMObIfqT"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66QH7UZe1127155
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JYEWRW0PHq2V9fq3m8eDc5+VKauFhMXll8srcAue+VQ=; b=P0al+mQhnZ+RVhew
-	tlSyAC60CwfR83K21+21eFCMjeqbRPG/k+Kapgipn+8nZkBf5LWA738CbEEyTJcn
-	l6qQU1UrQJ9m3e6e9pYcpFNAnglDqhIWQBvnac80jRpcC2DG+GLd5bsPnCXrGZ63
-	hEKHjUOZyeZO+TNV3G00jr5PHoN8eXbI9wPIrNg/zlyyS8fYb/LUUdIyOWJ5b55a
-	4hGJyB4G0u57cOpKI4bic3JvEHfdfaCzj8ZsHA/Dx77JH0ie+nBPPfzupeZXXeJb
-	5DNWfcPld4EdK52+gqhaJTbAwDTal///cOT4msMDdBM2QUOlFEhQf0dR+hLPB9LL
-	5K2Vmg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fmm573mwf-1
+	wRPRpR/UEXvdQsqUEO5zDwx48+Dmt+GyHSlx+q/gcro=; b=CqXhuqEQlWxLy5Ia
+	/+vkEyIpWGvhqVFgHgsnbrbNvyc+Qw2SX8ro+ldlDeJUnEOzvwbmO+HLgX4W7FeG
+	JKt3rS35KvNXxMq00Gg+xWU3UgbqvcFZNY0um+6is+lGNuPDi0eLhyQFd0RiDQlV
+	d7VXvg7NuC8AKjkkjnpTiPPtDuI4qwxEVI8AuClSkP+ELDq91NCjLrRE9kaS5GGL
+	YvqicXTVJr3ecUZn0XsFQph4lS2RDTSUlrq/Hn4F2fhswxKzRMZf+aHUgC042a2R
+	eKjpIjjlFUGRD0t8D4ZR3BIz+rSRvTHcfLiuIgqrOejuGPyvF43Cf/agLKHdUd1g
+	6hMShQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fmnweua9k-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:07 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c083f1818so25689781cf.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 10:44:07 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 17:44:10 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51bff5c7035so45539561cf.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Jul 2026 10:44:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785087847; x=1785692647; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1785087849; x=1785692649; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=JYEWRW0PHq2V9fq3m8eDc5+VKauFhMXll8srcAue+VQ=;
-        b=C9BaW9YzeBzeqMhFLiQ5QW0I66ZiZIhE/PMFfI3O6VSsnpRgzlj410i6C58KK9TEtJ
-         FldyTbOalamNULTePvf6dwhBjRWDf9APIqF4/PwFs/3ZLEqRZnkGSgHXzPIGyL8qksGp
-         zj5iA+3qoyaHy6+Nca8HuJ+lZeLe/wBpuTMcoPk7tpdG1jnfuEecE9vGpNDKBdWJLzwV
-         z/WaDj28smCO01p3r9FOJ7k4HfalLtfu6QDjj+/42lHlydR1bDJU53jzhzo5h8dfGxy9
-         JIda4r+f6h6Cq7Anp48do0OLDHGIm6VQOoR3WZhuezKcU1EhyGgF3lMsipbi5//rMwD5
-         +BIQ==
+        bh=wRPRpR/UEXvdQsqUEO5zDwx48+Dmt+GyHSlx+q/gcro=;
+        b=XMObIfqTw5TE29KCVBv7Ra4njX9jZgEJUC44J/7N0pvTF1AXqrWgmPJ6fK5NXVdZuF
+         5+po8RdZyGh+VYvYu2uzZ3Emw48CUEf15owm20AIMQ2fTSRaH2vt7hoO0mKiJC5J0jP5
+         tuwWKzv0wxrpgKzz5jMPTcEUFHebc5SazUzuE5alb/Qa80cZOxjJUVtTIqx4AF2qFRK2
+         X1s7hkmazskshwiZooFeZH5Qqr3/u0h3+Y48+7vAW60qIWa58WOgYtKs7OlKBzsS/IBw
+         to/gaDvmC9k9fi0EQ2bc4WJ8hAM38AaLRat5JMSZGvalKXVi8lcU6hZlrOgMAq32vKyn
+         nC6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785087847; x=1785692647;
+        d=1e100.net; s=20251104; t=1785087849; x=1785692649;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=JYEWRW0PHq2V9fq3m8eDc5+VKauFhMXll8srcAue+VQ=;
-        b=G3dyapH5W+L44LYhvXBJuUXpH48f0BmWOhd1D1BASO9XpDVREngJ9/4r461u2v1w/y
-         hnjcdFtPAg+HpuTDw9WiKUaXQWHY07itQwQ0vb63VG+z9oC8FsaWK4EtK0IOlewEAkHQ
-         Tzaor2nJe10uOrDL3tkWJbfG1nKyGLSWneOfKS9Z05QZ4rpE5cM3Ta1Say3lNu7svSOj
-         8KzYOeZCpkmCB6Xwh77bYW22l3AvXbxn86HVI20ZsBNEcB1W0SMt0awHAT0IPrEZKP/Z
-         JBWCwA1sHecZWV82yBOZjRf0EfBQ5Kzvsb6dLMtLu6GB5T644PWRC2YufKKZeBag0BJ6
-         Iiwg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp3wb7N34eu/IB5juL2wzGNgJfxGm+LxGcFR3XFgCubNiaC0AUd105U9ocJQxyc+62CCl+bX1kThZcX50umVb7t7Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFm9WUEHFt+/YDVhaCW3Wb1dO3DNCsz2p/DnhrF7keHlA0AHr/
-	DUPGJsGyHXX3lm91f7vKsnBcB13rU/PeA3xk881h++PmnbYYeQ32OgaFOV3ySZhA/oxq+cVVxrk
-	3hdf6XeAmrg7Z2hAxxPOYHXC5gFlA267HKnhRfK11QzKft4BnkwfCt6pz6L01/u7D5Yb6GIGNPg
+        bh=wRPRpR/UEXvdQsqUEO5zDwx48+Dmt+GyHSlx+q/gcro=;
+        b=AYl1LQ2G1MhzooJrokXrBUWMgM9hCATmDtDT86gSA974FSOXLnlvcU9zkSW0jdNepQ
+         xfH2LhwjZ3bM0izFKSgv9FDZx3TAC9R3HJIgsvLtTp2CIjvXyUE54HsWVeD4RMNxDk/5
+         t5CnUDTe9lVI685iGxuAinpmjFCDaWdEGgRHzdoNTGPBDTODru2+CbLmbrMlfeI5NBgs
+         gvmYB38f7YQK71AIM4/RPlqAFm9YAsMTO8PapsWNiwYZjjmfVkeYAWX7HOZG9XD94QW3
+         hKuYzu1dyeK2a+z0ENdzFL8/lPdy/xOHd8xMIIIR+vSIuHMWJOit2dMu8Z2q4BHBWv/B
+         zoAA==
+X-Forwarded-Encrypted: i=1; AHgh+RpuTlx4hJO9t4I1CZTWN+SVjp9b8V7lZzWkDjfwEwlhwhyUe0Pn2Pl5dl0I2rk0RpGwMUPqQRt2HaQPziVnKHrspQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxw4PpFge1uKEHaBBDlsrILU3Cw8ncfOQgBoZ1nL/O7DCO6+qq
+	dA7KwmxctKEmi9oWylxjsd+flAJwK1laFiYJNOy5dnocKUDnrItfrD1kSW72H13b9+cAJg07W4G
+	ApAo5vje+XgNG3VBjzEZlT29AKYgKmdtR6On7QieCxe9cVsrGcPsnglYB2lA1gc8bnzXNvHTZbw
 	==
-X-Gm-Gg: AR+sD11RG3rpb8ggJr4KLZoJN6kkZiaNcojym+V4lKAMCLOeO3v5FG5cD4sFbNK/u+e
-	36kIEu9vdS0ERaHBl73HyhaBFERoWIkqzlDgsz0lvtuaRc310068odlgiUDtLl/mQuN+Zw9/qXZ
-	t+gKQ33bMoCj/DayicdFPQHd+lzWxvrmeIxSvjcJzpxVOHz1TPJGGPEXgujsaf/fCNfnPo+DBi9
-	+Vdn0p831uG62CGYWdsuEJyjuqh9KpPfzfBXTREQIi2QdtxTif7H0okUzDKyP78ViRg//dxoL7Y
-	EPhbESf+EAuv1/gZNHy7aBX7OM8L0hy5pZhq+s+9mhz7Glgj4XO5cw6PAC+bTmXB7/yyWi8rnXI
-	CKBvnBKlJ0CDdOHyE+z7fUPkq
-X-Received: by 2002:a05:622a:2448:b0:51a:8aec:9bbd with SMTP id d75a77b69052e-529a8353f25mr61789131cf.19.1785087846686;
-        Sun, 26 Jul 2026 10:44:06 -0700 (PDT)
-X-Received: by 2002:a05:622a:2448:b0:51a:8aec:9bbd with SMTP id d75a77b69052e-529a8353f25mr61788861cf.19.1785087846280;
-        Sun, 26 Jul 2026 10:44:06 -0700 (PDT)
+X-Gm-Gg: AR+sD12MKZlx9sur6/Y4kKR2lQAnodvjBeJhgfGN9PnLSK7pT9b+tJxeLx/f8/ICWPD
+	+6R/1dqzZMPN+M5RBkN+4enoQjoMhllQIiyue0V7avCFEhBKCt/XZN9BxL/HBNJZ4xa4nvgOCX3
+	lqXHCRS+Zqj7tilBWmf39kJUpSN7EtJ191GJcnR0qhzK7FqnpIH7Hnk0QRbXcJwv9RFL8fLHO/3
+	NEhX2TuXlhvEe+bZ3cuFEw/T76UpbTalL1hCtgXnblO58h+nbpg7Ro9hiJUBdF/k+UVWW0titol
+	wD5p9+tpkHffBYDRNl08imV6ZeDdCuNwDvaJPYUT8AdKX8o66Rze5eERcg4HFsIAEPCTxm3ezyL
+	1Ub61emRfgmh5zsLAwizZm9wt
+X-Received: by 2002:ac8:7d05:0:b0:517:9f43:4732 with SMTP id d75a77b69052e-529a8382195mr63709211cf.11.1785087849092;
+        Sun, 26 Jul 2026 10:44:09 -0700 (PDT)
+X-Received: by 2002:ac8:7d05:0:b0:517:9f43:4732 with SMTP id d75a77b69052e-529a8382195mr63708911cf.11.1785087848671;
+        Sun, 26 Jul 2026 10:44:08 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.223.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c63bd3sm41576093f8f.27.2026.07.26.10.44.04
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c63bd3sm41576093f8f.27.2026.07.26.10.44.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jul 2026 10:44:05 -0700 (PDT)
+        Sun, 26 Jul 2026 10:44:07 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Sun, 26 Jul 2026 19:43:40 +0200
-Subject: [PATCH 7/8] arm64: dts: fsd: Move 'status' to the end to match
- coding style
+Date: Sun, 26 Jul 2026 19:43:41 +0200
+Subject: [PATCH 8/8] arm64: dts: fsd: Align continued properties and add
+ missing blank lines
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260726-b4-dts-coding-style-strict-v1-7-e9e3e9879d05@oss.qualcomm.com>
+Message-Id: <20260726-b4-dts-coding-style-strict-v1-8-e9e3e9879d05@oss.qualcomm.com>
 References: <20260726-b4-dts-coding-style-strict-v1-0-e9e3e9879d05@oss.qualcomm.com>
 In-Reply-To: <20260726-b4-dts-coding-style-strict-v1-0-e9e3e9879d05@oss.qualcomm.com>
 To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
@@ -109,288 +109,279 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6074;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7689;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=9Kdc+t7zEowlwHOut1CYSzTz7wD6Zy1nYRHG/ARWJm0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqZkdOTo4JZdSInPTNsae/rPkvBcq2DkLeb/n0h
- E1eSIPJiP6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCamZHTgAKCRDBN2bmhouD
- 11fbD/kB7w+BCZ2Wl6vmGP5t1Gdr1C47gKiZ7WNxO3SskdUUknoEbhSAzctvfmJjFfI1VLyxzBo
- w/XCU6uezm9TLAqhaN3PSxHvQWdrlgUdUPyRNUBopvt58838pgy1bnMqvYLI2Naij6/zRg+w4Pe
- vMthXochuhM7SKokWPgVq36ZwuW6sKotzdojFashb/vtswaAeV7xaXwlJFV36pHivEEJY6fncyy
- dlLzVeb/whkff6QpLpgZLA92G7JdEJYEV/2bTO8XQBbt0KAIy9u6U6PuKr0YoOxAH2I0E5dx93/
- R6e3DpksRbhWsDA9z/b4uVwfUhm/BCesTwQK2EqKJWY5ll/fkfV6EzCoB1AQe9SaUcSdy2t+H6+
- zdWWRzTwAbYXJmLXA3DDP653xStAgds/uaXXQlAPGrN1Z6z8wyPZv8+7JHC0ZCe0mjXjCna4p08
- LTPOsoZBH92gFwKVX4nmJdX2HFRIY2+yFTAepNcB1GOQgoxyHaMNDj5Si11N48jX2NhFYMY2xfv
- eB+wHlTPSrADPF1TDaLu9Z1hhXkGZjhm2P38iVLb9Oo35QrCGtS/R4xWiQqBmmlQbWjitujBfM7
- 0wNiCvgJGBqj3RP0L3dxweiCC/Te/UsXaiw4jwEsLPRsykBgrKzN529706N/Ox0gu0tZ7rgkif7
- NkBRpXZarNZBGtQ==
+ bh=+BnnarzXgrjvsWGAIfKXHLhwNzJRyL+7qFo71+EihXM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqZkdPGk3UP3dnXxfQH0P5ccJD9cIkkCbqGt2zO
+ y/Vn1do+42JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCamZHTwAKCRDBN2bmhouD
+ 1yH9D/0YgFHyXtxGmIX11k3wKs/H6eZFBi/snTzlh8GGh56dC7zO49DUHWd/P7zZwBKUxHe/qhR
+ 00xo7fLp9VH4NyPmaUqE5Sgjond/tXhbOYWuwsCDix7wH3UAhwgVQRTzsaLJUx3J9IilG6G92Lw
+ 84G0eZnlOJYRwZJTfrA5amp5IW0uC6QoPnxVjhO9+DKpj8Cz6TrkmGdgLkk7nx2O45lsxfoQoi0
+ FK6bB0FoPgfwkJ+qRfdShuEv2SeEbEd6LHPCFKEc86JhBtV+W4TK8NgCavgig+uq8f2ZIUVnwvB
+ Pl3JoLvLN6LFyMPwP4E3B0+SrMYc2Jj1znHcOjiRjEMGnllnvirT6FueBtn1F49q6uE9OH4T9ju
+ JSbmc6AB2EDRzc3h5a88BZgOQNu5pn4atnKbPqnKkwF62erEMYZCeqVcfO3GjvFb3AdnlQQG/oR
+ nqvva6GEiUKWS80Z6LmiQXK/yVPtqwbbinTz8z4yWGwOiSZO/YenVR2ez51qqV8KjAfmfEZGIkX
+ ZZiMYXw1KxBKv31n8PBmhLZm0rDERasDe1X+QvsqvOFyz6SAo2HqHNrR0P7+u/HFGwYzIZiu0Gg
+ vwb9DnVYP30BwEnVPzRhXxbThopKN6quFpjerAFiAaThrwi7eVxl6d+V4HcVWrPrxCgOsdMq99Q
+ syJrQH/O0HCcZwQ==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI2MDE3OSBTYWx0ZWRfX4Vt0CuTgcvyX
- 7OdUZzoHQDDXJR47MSlRv+XXttbTc+f25oHVNNycWR8QNPs545xhgE0+QSZyQnUF+w8lP5AUqng
- HM7BwWNhQLmUrM6AxjVgy8oqum6jy5A=
-X-Proofpoint-GUID: JL2pybYSXkj9-rq6_um8xL2l9T7zhlPk
-X-Authority-Analysis: v=2.4 cv=FOErAeos c=1 sm=1 tr=0 ts=6a664767 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI2MDE3OSBTYWx0ZWRfX83Am3Cptic3K
+ 5EZCf0L/5S6o8U6ofKmIjlALM9zMQ36xs4eYS3MbDGZhxPTRVlDrssmlbCZCu9dqVUiaY7DCxXf
+ idUyW3euWBUVgfEy9DPv4ufy4UYmlJ468H08/gMqKoDiV8WJyZsjn6HUpzZCVG/sx1ocrtYvbWO
+ Vm0nZwO8YmOfWpSI9L+rOsfJEVFZWAZ0PhiTFeBeqccgjDq+XKQpg1nYwvJ+4HV1Y3K8cHcwC0S
+ 2VixF7VaUczSEAgViBz+aoaDehRQAZ3RWeEYBOlyorOLeuB883+fImF0e2L93QdvwYQ1ETLxHFZ
+ WHy7oH5sJtvApB8zW31w1a6h/sQqwMXHhxEPNEDCVwmnIGn2wlw76icRCFTwX4xS/qCHzzvje31
+ UrRqF7TLTbcszCdnd1skC9JkuoBvl7aAy/DMdYn/B8LLV90jOoefHcc4FgJUol93lbsgQGQA+mq
+ JQ5hTVRKzO7gPlbpY5A==
+X-Proofpoint-GUID: fQtJhSTKQKeOmiojIZmwWWVwx9tNo7T-
+X-Authority-Analysis: v=2.4 cv=S77pBosP c=1 sm=1 tr=0 ts=6a66476a cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=EUspDBNiAAAA:8 a=vEzWEtAh74nsurIt10gA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: JL2pybYSXkj9-rq6_um8xL2l9T7zhlPk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI2MDE3OSBTYWx0ZWRfX6KrP5SUUwsf3
- 6ITsZ66k6Am25SzbyCVVL/Luq/vOQvhzbS+PC+RiKPzJ7JZtvIyqJo79lPs4b3j+Cdm3weeVARD
- 6lQeJE9yUhoPbxYyangbfX/nf2pgnb+DRv9YEoQr5Enph/2xm/FKbjr8m7JKX5KDl1KrL1Mfc5T
- qbbSKC2uOd3/b5xsEBNPynX734YgYOB/TMnZZrnyW/GYcPA5b2FArOh3yl4n8R2+RvLMnOnVS3B
- NRwA8rJwhoX1ZUnz0HdhKwPVIqQPcFUE1CeUc0pw7N6Bj+uLwqwxJwd0+jBnYhgzQvJ4J+9YSmY
- khQ0/Vq0W74Kk8zXGDQfgs5CrGB1aVoH30QAia81WUunYtmJbv9FJLuHJTTN/0KlPK/la0EXBSj
- is7ZrPYsEJqDu6MjDGaJXhhE5V7Kc2jMWlwMD9/Lwd961HN2nZ97JXvTq1MDh2GZUqjDSiGfcn+
- aIHUKwL/IxDKlWt1/bw==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=EUspDBNiAAAA:8 a=dn6OTeshHBKSxJNNhkUA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: fQtJhSTKQKeOmiojIZmwWWVwx9tNo7T-
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI2MDE3OSBTYWx0ZWRfX+F5lSQ5WBIbI
+ eQnqk/ksQfg+F8a7MS6Q5ed5m9GepxP7cBOfDcpor2dwFchlUeFSM9RIHcAtsviBMcoAb/ofNL6
+ BlnXgGBwXa8gyvVVwaQHyQdxmzAg/+A=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-26_05,2026-07-24_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
- adultscore=0 priorityscore=1501 spamscore=0 impostorscore=0 suspectscore=0
+ bulkscore=0 suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607260179
 
-'status' property is special, thus DTS coding style expects it to be
-always the last property preceded with a blank line, as reported by
-dt-check-style:
+Trivial white-space only changes to adjust to DTS coding style and fix
+dt-check-style strict warnings like:
 
-  [required-blank-lines] "status" must be preceded by a blank line
-  [property-order] property 'phy-mode' out of canonical order (should sort before 'status')
+  [required-blank-lines] child node must be preceded by a blank line
+  [continuation-alignment] continuation should align to column 39 (under < or ")
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/tesla/fsd-evb.dts |  6 ++++--
- arch/arm64/boot/dts/tesla/fsd.dtsi    | 24 ++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/tesla/fsd-evb.dts |  2 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi    | 97 +++++++++++++++++++----------------
+ 2 files changed, 55 insertions(+), 44 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-index 9ff22e1c8723..73b6a25e0e4d 100644
+index 73b6a25e0e4d..503abe52a81c 100644
 --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
 +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-@@ -65,9 +65,10 @@ codec {
- };
- 
- &ethernet0 {
-+	phy-mode = "rgmii-id";
+@@ -53,9 +53,11 @@ simple-audio-card,dai-link@0 {
+ 			cpu-0 {
+ 				sound-dai = <&i2s_0 0>;
+ 			};
 +
- 	status = "okay";
- 
--	phy-mode = "rgmii-id";
- 	fixed-link {
- 		speed = <1000>;
- 		full-duplex;
-@@ -75,9 +76,10 @@ fixed-link {
- };
- 
- &ethernet1 {
-+	phy-mode = "rgmii-id";
+ 			cpu-1 {
+ 				sound-dai = <&i2s_0 1>;
+ 			};
 +
- 	status = "okay";
- 
--	phy-mode = "rgmii-id";
- 	fixed-link {
- 		speed = <1000>;
- 		full-duplex;
+ 			codec {
+ 				sound-dai = <&tlv320aic3x>;
+ 				system-clock-frequency = <33000000>;
 diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index 5b06e2667b89..214d33ca7177 100644
+index 214d33ca7177..6766c78243a3 100644
 --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
 +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -603,6 +603,7 @@ serial_0: serial@14180000 {
- 				 <&clock_peric PERIC_SCLK_UART0>;
- 			clock-names = "uart", "clk_uart_baud0";
- 			samsung,uart-fifosize = <64>;
+@@ -43,12 +43,15 @@ cluster0 {
+ 				core0 {
+ 					cpu = <&cpucl0_0>;
+ 				};
 +
- 			status = "disabled";
+ 				core1 {
+ 					cpu = <&cpucl0_1>;
+ 				};
++
+ 				core2 {
+ 					cpu = <&cpucl0_2>;
+ 				};
++
+ 				core3 {
+ 					cpu = <&cpucl0_3>;
+ 				};
+@@ -58,12 +61,15 @@ cluster1 {
+ 				core0 {
+ 					cpu = <&cpucl1_0>;
+ 				};
++
+ 				core1 {
+ 					cpu = <&cpucl1_1>;
+ 				};
++
+ 				core2 {
+ 					cpu = <&cpucl1_2>;
+ 				};
++
+ 				core3 {
+ 					cpu = <&cpucl1_3>;
+ 				};
+@@ -73,12 +79,15 @@ cluster2 {
+ 				core0 {
+ 					cpu = <&cpucl2_0>;
+ 				};
++
+ 				core1 {
+ 					cpu = <&cpucl2_1>;
+ 				};
++
+ 				core2 {
+ 					cpu = <&cpucl2_2>;
+ 				};
++
+ 				core3 {
+ 					cpu = <&cpucl2_3>;
+ 				};
+@@ -456,13 +465,13 @@ clock_imem: clock-controller@10010000 {
+ 			reg = <0x0 0x10010000 0x0 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+-				<&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
+-				<&clock_cmu DOUT_CMU_IMEM_ACLK>,
+-				<&clock_cmu DOUT_CMU_IMEM_DMACLK>;
++				 <&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
++				 <&clock_cmu DOUT_CMU_IMEM_ACLK>,
++				 <&clock_cmu DOUT_CMU_IMEM_DMACLK>;
+ 			clock-names = "fin_pll",
+-				"dout_cmu_imem_tcuclk",
+-				"dout_cmu_imem_aclk",
+-				"dout_cmu_imem_dmaclk";
++				      "dout_cmu_imem_tcuclk",
++				      "dout_cmu_imem_aclk",
++				      "dout_cmu_imem_dmaclk";
  		};
  
-@@ -616,6 +617,7 @@ serial_1: serial@14190000 {
- 				 <&clock_peric PERIC_SCLK_UART1>;
- 			clock-names = "uart", "clk_uart_baud0";
- 			samsung,uart-fifosize = <64>;
-+
- 			status = "disabled";
+ 		clock_cmu: clock-controller@11c10000 {
+@@ -499,17 +508,17 @@ clock_peric: clock-controller@14010000 {
+ 			reg = <0x0 0x14010000 0x0 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+-				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
+-				<&clock_cmu DOUT_CMU_PERIC_SHARED1DIV36>,
+-				<&clock_cmu DOUT_CMU_PERIC_SHARED0DIV3_TBUCLK>,
+-				<&clock_cmu DOUT_CMU_PERIC_SHARED0DIV20>,
+-				<&clock_cmu DOUT_CMU_PERIC_SHARED1DIV4_DMACLK>;
++				 <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
++				 <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV36>,
++				 <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV3_TBUCLK>,
++				 <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV20>,
++				 <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV4_DMACLK>;
+ 			clock-names = "fin_pll",
+-				"dout_cmu_pll_shared0_div4",
+-				"dout_cmu_peric_shared1div36",
+-				"dout_cmu_peric_shared0div3_tbuclk",
+-				"dout_cmu_peric_shared0div20",
+-				"dout_cmu_peric_shared1div4_dmaclk";
++				      "dout_cmu_pll_shared0_div4",
++				      "dout_cmu_peric_shared1div36",
++				      "dout_cmu_peric_shared0div3_tbuclk",
++				      "dout_cmu_peric_shared0div20",
++				      "dout_cmu_peric_shared1div4_dmaclk";
  		};
  
-@@ -658,6 +660,7 @@ pwm_0: pwm@14100000 {
- 			#pwm-cells = <3>;
- 			clocks = <&clock_peric PERIC_PWM0_IPCLKPORT_I_PCLK_S0>;
- 			clock-names = "timers";
-+
- 			status = "disabled";
+ 		sysreg_peric: system-controller@14030000 {
+@@ -522,13 +531,13 @@ clock_fsys0: clock-controller@15010000 {
+ 			reg = <0x0 0x15010000 0x0 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+-				<&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
+-				<&clock_cmu DOUT_CMU_FSYS0_SHARED1DIV4>,
+-				<&clock_cmu DOUT_CMU_FSYS0_SHARED0DIV4>;
++				 <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
++				 <&clock_cmu DOUT_CMU_FSYS0_SHARED1DIV4>,
++				 <&clock_cmu DOUT_CMU_FSYS0_SHARED0DIV4>;
+ 			clock-names = "fin_pll",
+-				"dout_cmu_pll_shared0_div6",
+-				"dout_cmu_fsys0_shared1div4",
+-				"dout_cmu_fsys0_shared0div4";
++				      "dout_cmu_pll_shared0_div6",
++				      "dout_cmu_fsys0_shared1div4",
++				      "dout_cmu_fsys0_shared0div4";
  		};
  
-@@ -668,6 +671,7 @@ pwm_1: pwm@14110000 {
- 			#pwm-cells = <3>;
- 			clocks = <&clock_peric PERIC_PWM1_IPCLKPORT_I_PCLK_S0>;
- 			clock-names = "timers";
-+
- 			status = "disabled";
+ 		sysreg_fsys0: system-controller@15030000 {
+@@ -541,11 +550,11 @@ clock_fsys1: clock-controller@16810000 {
+ 			reg = <0x0 0x16810000 0x0 0x3000>;
+ 			#clock-cells = <1>;
+ 			clocks = <&fin_pll>,
+-				<&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
+-				<&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV4>;
++				 <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
++				 <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV4>;
+ 			clock-names = "fin_pll",
+-				"dout_cmu_fsys1_shared0div8",
+-				"dout_cmu_fsys1_shared0div4";
++				      "dout_cmu_fsys1_shared0div8",
++				      "dout_cmu_fsys1_shared0div4";
  		};
  
-@@ -681,6 +685,7 @@ hsi2c_0: i2c@14200000 {
- 			pinctrl-0 = <&hs_i2c0_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C0>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -694,6 +699,7 @@ hsi2c_1: i2c@14210000 {
- 			pinctrl-0 = <&hs_i2c1_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C1>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -707,6 +713,7 @@ hsi2c_2: i2c@14220000 {
- 			pinctrl-0 = <&hs_i2c2_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C2>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -720,6 +727,7 @@ hsi2c_3: i2c@14230000 {
- 			pinctrl-0 = <&hs_i2c3_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C3>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -733,6 +741,7 @@ hsi2c_4: i2c@14240000 {
- 			pinctrl-0 = <&hs_i2c4_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C4>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -746,6 +755,7 @@ hsi2c_5: i2c@14250000 {
- 			pinctrl-0 = <&hs_i2c5_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C5>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -759,6 +769,7 @@ hsi2c_6: i2c@14260000 {
- 			pinctrl-0 = <&hs_i2c6_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C6>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -772,6 +783,7 @@ hsi2c_7: i2c@14270000 {
- 			pinctrl-0 = <&hs_i2c7_bus>;
- 			clocks = <&clock_peric PERIC_PCLK_HSI2C7>;
- 			clock-names = "hsi2c";
-+
- 			status = "disabled";
- 		};
- 
-@@ -789,6 +801,7 @@ i2s_0: i2s@140e0000 {
+ 		sysreg_fsys1: system-controller@16830000 {
+@@ -921,7 +930,7 @@ spi_0: spi@14140000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_peric PERIC_PCLK_SPI0>,
+-				<&clock_peric PERIC_SCLK_SPI0>;
++				 <&clock_peric PERIC_SCLK_SPI0>;
+ 			clock-names = "spi", "spi_busclk0";
+ 			samsung,spi-src-clk = <0>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s0_bus>;
- 			#sound-dai-cells = <1>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -806,6 +819,7 @@ i2s_1: i2s@140f0000 {
+@@ -940,7 +949,7 @@ spi_1: spi@14150000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_peric PERIC_PCLK_SPI1>,
+-				<&clock_peric PERIC_SCLK_SPI1>;
++				 <&clock_peric PERIC_SCLK_SPI1>;
+ 			clock-names = "spi", "spi_busclk0";
+ 			samsung,spi-src-clk = <0>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&i2s1_bus>;
- 			#sound-dai-cells = <1>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -840,6 +854,7 @@ m_can0: can@14088000 {
- 				 <&clock_peric PERIC_MCAN0_IPCLKPORT_CCLK>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -857,6 +872,7 @@ m_can1: can@14098000 {
- 				 <&clock_peric PERIC_MCAN1_IPCLKPORT_CCLK>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -874,6 +890,7 @@ m_can2: can@140a8000 {
- 				 <&clock_peric PERIC_MCAN2_IPCLKPORT_CCLK>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -891,6 +908,7 @@ m_can3: can@140b8000 {
- 				 <&clock_peric PERIC_MCAN3_IPCLKPORT_CCLK>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x0 128 64 64 64 64 32 32>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -909,6 +927,7 @@ spi_0: spi@14140000 {
+@@ -959,7 +968,7 @@ spi_2: spi@14160000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			clocks = <&clock_peric PERIC_PCLK_SPI2>,
+-				<&clock_peric PERIC_SCLK_SPI2>;
++				 <&clock_peric PERIC_SCLK_SPI2>;
+ 			clock-names = "spi", "spi_busclk0";
+ 			samsung,spi-src-clk = <0>;
  			pinctrl-names = "default";
- 			pinctrl-0 = <&spi0_bus>;
- 			num-cs = <1>;
-+
- 			status = "disabled";
+@@ -973,21 +982,21 @@ timer@10040000 {
+ 			compatible = "tesla,fsd-mct", "samsung,exynos4210-mct";
+ 			reg = <0x0 0x10040000 0x0 0x800>;
+ 			interrupts = <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
+-				<GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
++				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&fin_pll>, <&clock_imem IMEM_MCT_PCLK>;
+ 			clock-names = "fin_pll", "mct";
  		};
- 
-@@ -927,6 +946,7 @@ spi_1: spi@14150000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&spi1_bus>;
- 			num-cs = <1>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -945,6 +965,7 @@ spi_2: spi@14160000 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&spi2_bus>;
- 			num-cs = <1>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -1007,6 +1028,7 @@ ethernet1: ethernet@14300000 {
- 				    <&eth1_rx_ctrl>, <&eth1_mdio>;
- 			local-mac-address = [00 00 00 00 00 00];
- 			iommus = <&smmu_peric 0x0 0x1>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -1026,6 +1048,7 @@ ufs: ufs@15120000 {
- 			pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
- 			phys = <&ufs_phy>;
- 			phy-names = "ufs-phy";
-+
- 			status = "disabled";
- 		};
- 
-@@ -1056,6 +1079,7 @@ ethernet0: ethernet@15300000 {
- 				    <&eth0_rx_ctrl>, <&eth0_mdio>;
- 			local-mac-address = [00 00 00 00 00 00];
- 			iommus = <&smmu_fsys0 0x0 0x1>;
-+
- 			status = "disabled";
- 		};
- 	};
 
 -- 
 2.53.0
