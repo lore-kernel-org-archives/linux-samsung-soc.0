@@ -1,97 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73F33CAA3A;
-	Mon, 27 Jul 2026 19:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D163D79FD
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 19:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785178856; cv=none; b=UcCtC8PyWgKaaAg1alZ4L7bjUImLm+k69ZA3YNtMA2xnw6XIC2fbA/0bXuM6px1A5Dbh0mFuqkppiMHmtnlQbQkOjEsgmnQLSKIhuX/W+w5N/MPRj0PTatjFOr6DttQvwHNtS66xP9f6xN6n1+dLP9x0fEGPAwnBh9F1fbXY9WQ=
+	t=1785181723; cv=none; b=WWd/u0L5VPvVMcLV0sYevgGKOcWabnbYMmguo9PmZouJt60C9mFYChkqoEJgcOTsg/216nZ4auebksFswBk79+PHGtrN9zFgpOtiJ3bSliPm61QbK4luGs13kLbugR3jyw7W40nH5Wiqw1mcojFPwnm2W4mozyP5N9p25c7gY44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785178856; c=relaxed/simple;
-	bh=8q/iUaeAAO3trLj7UgUpcehLnoLmuEJ+JikTuSLad8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lEpD+SlV2vbiEspfg4aTZTnxVZQX7kFUSQ0lMRyWQUti+yDsClR/PXxUZkas9Hd/xiFOyNdsCXAikCF4yxt9OG6MW+ghcAQgVJ9jS7vXqIAPK9Pu9tnhrrYiUQHAfSv2M0thiZiC2U+Dc2ougDlIBNZwSXSCG1dpWUh8IkP+mik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWUh/KLA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785181723; c=relaxed/simple;
+	bh=g92HLocdRA/w3YM68miWwLxYb3rDVNqg12i6lFPfJgs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BnBDylSzqHnXCtEdEV1xQcmpq8vXsrhqNqf+5DageGX7v1XfvcC29dWVsOtjrRk8M0Z0fvhsbJH0N1T9ERD8S+O9Uo+ccQu2/jfs35REUPlKjaPjDazdeliZ3v51AsrK/pX2t6P/Mnhb/c5D6sMUD7Ht2UejsaqdfywYYaVmvoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGe/SxxX; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWUh/KLA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7146E1F00A3D;
-	Mon, 27 Jul 2026 19:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785178826;
-	bh=4iStQMNT3oznFv2kg8CejE5g27jqz5g151MZWuQusgM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MWUh/KLAada8qqjoQQEa2lVBBSfTe6TleecU8ttk/TZqzeSwCEqkEl8ptjAa49ePI
-	 mcOgVAW3VMkbMsErsFz5z7NkTeKhN0jumnYf03tOy9zIueoV9tOQaNqXsf0uqkC7kU
-	 TATzGEItP/w/oiT6gpnikbK3uTxAPYYNZpZwJ0ZTdJw29t6h9GsLUaCdV8w8PFzrI+
-	 k9owfenPmFTqLWW8qKS2Lt0slbULm5xXjl4RkXJUMRTFAjnR0fBu4jIlY3Ge7teqPR
-	 p9XTkz9FFDegxGoxGnuBohVwGE59Zwkfgkz44t7qCmyM8CcXedi9234R+8BqBDMhkj
-	 /fJQ1r4jXeY+w==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Drew Fustini <fustini@kernel.org>,
-	soc@lists.linux.dev
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGe/SxxX"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-38dcbade417so3298730a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 12:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785181721; x=1785786521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ph9MOB90x8/rsIoED4kDLbacmQxfQ83Asvuv4fsdn60=;
+        b=bGe/SxxXJ6vAWNQ0UV5Dp/OvdyOSqYbucNlPMaClKCQpqzRvsEkxch2DHp0nLc+ZYu
+         MScl1RAnV2PRnwBxMEXYPmF8HOwNau3Hl7u+zEGuFQ3ykCP7MvgOm8U9WWfalDZpXEWQ
+         dcAv1IvWBeJoKMfqgaFSDrFkMtb3YY0xGZW1tIMapdf1+L7NTMkZ4GmtfRoX+3TU/d2c
+         qOt82tCk5x6PUGDBmoMttY5a4N7Xx1jOo+E+6mdDvTpbjIyEUlYvkil2lnxz+UKVt+ta
+         nnFn/CPfOhvmkSURe1NpqXYhDKWIvMWOLEXKkmwy6ouS6ytvSvwXNy8K+PoHst4CfOlN
+         mwPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785181721; x=1785786521;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ph9MOB90x8/rsIoED4kDLbacmQxfQ83Asvuv4fsdn60=;
+        b=RAg8tFRmdE1kvfG8W6nlHHaEJ5aIeYOZR6/xAO060/epKdoXxreTax6Ft2v7VF45KH
+         eQ6cQBliH6NBAC6eeChPVtWgd/J1KLqA4QXjjxVrHfhGWDUMeuF8wxyspnH14bCqpjYt
+         3rda/ruXtwsO+LgqkFMF6nUNbsYfp2cEcVx3gr3OSilSbFsPO5txIJHA+oq9I317sIl8
+         Dk1YOeMkHceXW29ZvDySYrlwO9ccrjsIsCzeZqfwWk6G9LMFc940eKN4uYO6vszFvj1N
+         Rzr3rr134TqPlwYOqpeQVsoFL9uW4omsHlhCCooJPBkO4wQrV3ruyfCjp+7cSSfJ95+a
+         cTaQ==
+X-Gm-Message-State: AOJu0Yw3TjZv6+c+bOkEq0kTAwpUsO8IXUVBFiwuicE6ePrrSqh3si2K
+	nFkU0n047e42cgctozEUHWtDpXpQdFXFSfdctDKt9bTyMVndT02Efc/6ACOtcjeh
+X-Gm-Gg: AR+sD10CHQJnqTgIICL4Ol8SOnJaoXgk+0qpcxNqcTgiAntddDQdMZvOSzpwgeiSbWf
+	OXNccOnRYgTS4eOtkM4EOAWsQDt7Td+cuN/LvNlG4BPwLcWFO053lg6/7MOOW26h6VdgtlSFn7N
+	gZTMmNxoyD+eBSTg9H+Piw7UeEwhqwbDcXZHoTXYBQKvCVhiDo65/gvIxDEkZF8Ayh/Ndfb46yN
+	w6zJhwXbA3rWBGAmarwfs1BvENn4/PMRXAOsbLSFjhCqQ4u75UVhC3vy6o/t7BjU3VFkbEaMCGv
+	pD7BzM+SyTdj8UYqvqkAXgqo001/bOd+HTMxcYnQzPxxf8sCEr2qB1pLgm2MwdA7gSBP65jxPWl
+	r8I3Vfvh9j7c7ocBEzbazUl+PUP8Yq7yDcxaHP9VT6MPDipQiIDW0jJpFuoVTPAfKhcWo0Vog8U
+	elZSFdh9D+AI4z+lbqkfk/ZWwOpAb/a/sceTko/n1R8+3S1IySoL+48BMw+9oPHdcrYnIe97cEE
+	N1qSgW//Jx4OVW5T1YWDnglk/AVF6S5yiDqVlDp8Ij/KxqFnDAS0m020BZevUwPrd5C+96rsQcC
+	kprlvvYkLmVAleV6rzEAlnx6rgBHOG+7bw31cA==
+X-Received: by 2002:a17:90b:1c8e:b0:37e:a09:2640 with SMTP id 98e67ed59e1d1-38f6480d1demr780368a91.7.1785181721391;
+        Mon, 27 Jul 2026 12:48:41 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f642bfc71sm270847a91.11.2026.07.27.12.48.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 12:48:39 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 2/2] arm64: dts: samsung: for v7.3
-Date: Mon, 27 Jul 2026 21:00:10 +0200
-Message-ID: <20260727190010.404981-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260727190010.404981-3-krzk@kernel.org>
-References: <20260727190010.404981-3-krzk@kernel.org>
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:PIN CONTROLLER - SAMSUNG),
+	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map with modern APIs
+Date: Mon, 27 Jul 2026 12:48:35 -0700
+Message-ID: <20260727194836.11689-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1779; i=krzk@kernel.org; h=from:subject; bh=8q/iUaeAAO3trLj7UgUpcehLnoLmuEJ+JikTuSLad8c=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqZ6q7bO19C4LuRrGTY2igQZCqfXKRyqIhOH1Kb w3HXyb1heyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCamequwAKCRDBN2bmhouD 1/bcEACUgUJR7TT824i01H5LBaXzgsHJCP4z8nZTAiMdRp5UypbAjKizXmBnG8oYrTLNUE0V7Dw 5NEgkU6yxy6iEtHvukzb7CHorp/MFdlYQQeKFT22FqKna9FFpue/bKFSclqMpWF+lbGulsbow2L tUiWDkvGqj3daAh38z24Kj9zLgpxeuIb/ANUXN1t2ARfbd3rIcgThBD2NrupW3ahSUJOklwu0+1 BiZKa20dHR7a/JJdcUcrdbW9I+Dj80WRq0m+xQrpSZmb0NTd0qkr8cQi6hBRdtGJPuUfmfNDm5O V0tu3i7bUgj1AEIyqUnAdHAptaVghGD+HaKisBdtxBfQVodEl6qB2kwzmOzpiSyq8LtTuPx1lBx 180jytbc9SkCB5XsTGchfdhM+0zXO0rjBmTyvi1PsweyT3ol3C8XcObVEeeGcHsXQQ7xIuJBTES HpdEiCzwsTpVwhxr0FUF+AJUkSRh3TF2YgURBxQxvFri7bckO9Vo+0Tp7K6acCV/ph9hClHV+sw HCISoPaWbj2WXgf5ee8QROEnjI8YsZzft74Gd9kdaxhCcpq0rZqREHTQ7xL4lXnMQLOMaFZxfwA H2OLPRKITDZT2YANmzAUS1ZJwJC5HJ643Ot6AX/sECZJoCu6ucoLjLXJ4nuQvoibfnURbJHDMTa ZjX5JHKKXUGl3sQ==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
+lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
+works with both OF and ACPI fwnodes and follows modern conventions.
 
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+For the muxed EINT path, change the error handling to propagate the
+error code rather than silently returning 0.
 
-are available in the Git repository at:
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-7.3
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 81fe0b08a9af..5bef230f5bed 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -824,8 +824,8 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 			return -ENOMEM;
+ 
+ 		for (idx = 0; idx < bank->nr_pins; ++idx) {
+-			irq = irq_of_parse_and_map(to_of_node(bank->fwnode), idx);
+-			if (!irq) {
++			irq = fwnode_irq_get(bank->fwnode, idx);
++			if (irq < 0) {
+ 				dev_err(dev, "irq number for eint-%s-%d not found\n",
+ 							bank->name, idx);
+ 				continue;
+@@ -841,11 +841,9 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 	if (!muxed_banks)
+ 		return 0;
+ 
+-	irq = irq_of_parse_and_map(wkup_np, 0);
+-	if (!irq) {
+-		dev_err(dev, "irq number for muxed EINTs not found\n");
+-		return 0;
+-	}
++	irq = of_irq_get(wkup_np, 0);
++	if (irq < 0)
++		return irq;
+ 
+ 	muxed_data = devm_kzalloc(dev, sizeof(*muxed_data)
+ 		+ muxed_banks*sizeof(struct samsung_pin_bank *), GFP_KERNEL);
+-- 
+2.55.0
 
-for you to fetch changes up to a87d503a0ab077b0d9892290ab7dbec29f922eb1:
-
-  MAINTAINERS: Add entry for Samsung Exynos8855 SoC (2026-07-13 09:20:24 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v7.3
-
-1. New SoC Exynos8855 (market naming: Exynos 1580) basic support with
-   its SMDK development board.  That's a 8-core SoC, released in Q4
-   2024.
-
-2. ExynosAutov920: Add HSI0 syscon node.
-
-----------------------------------------------------------------
-Alim Akhtar (3):
-      dt-binding: ARM: samsung: Add Samsung Exynos8855
-      arm64: dts: exynos: add initial support for Samsung Exynos8855 smdk
-      MAINTAINERS: Add entry for Samsung Exynos8855 SoC
-
-Sanghoon Bae (1):
-      arm64: dts: exynosautov920: Add hsi0 syscon node for PCIe PHY
-
- .../bindings/arm/samsung/samsung-boards.yaml       |   6 +
- MAINTAINERS                                        |   7 +
- arch/arm64/boot/dts/exynos/Makefile                |   1 +
- arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi | 574 +++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos8855-smdk.dts     |  31 ++
- arch/arm64/boot/dts/exynos/exynos8855.dtsi         | 204 ++++++++
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi     |   6 +
- 7 files changed, 829 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
