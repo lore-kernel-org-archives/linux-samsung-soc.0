@@ -1,505 +1,342 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4633381AF;
-	Sun, 26 Jul 2026 19:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B4B3EB102
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 09:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785092427; cv=none; b=hBGtEqxl3rnbdZdGCxNp3ii+GUd9GS4oZx4Z/t7N3qiWP3mCmgB0dRxUedEtrB7/ZUCLlRAaAvVnZDuk1jeIe365LZ1z6gKl/Gq7mldTW7RtFKr6Mt//cuL7+n5gZb0uALKz9jl0s43vvcsVKtNbqfUzAWlEMXK6ousDqgnzJSA=
+	t=1785144307; cv=none; b=uMXv/79vWQ81qDoZD6uxfVgJqHvbiMObknaUl6c5oldGKwbo7gH7WZmEq8yDe9Lff+FV4W7Ri13ilGaUhn7o5mlR8OB11kH3L7lLTYU2sBMXP6Sy/d79Z5PowQLBBKC+SUYELu2A+xfeyPlD2VvNoxDagIp8/dbOfXA7JqAz+Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785092427; c=relaxed/simple;
-	bh=Bwia5BBJV+FFvs2clzZ9RJEc5KtMpNgAHmcmq9EpHXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LYcVYLxrHZXX3D8Pb+huqN4hxhUPFhQW6Hnht6CAEphrcze/YFgsCRFoOxd7MMJ0A+/KPrW0e786Krf8MTxed6b2OztVk6vnD2hbzQkeetlQ1vhFLLC7fk1WQCC1SIkzYswgYRIg3FiuibGC3X8T4WNy9LZyzp/q8+tq/564LtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSDrblsN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785144307; c=relaxed/simple;
+	bh=KGGXByqAct727YELO9+LMLusE8CCPOyq0E5LFYrQetM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O78oaZCwLzkw8anfBE0A9SeCC9DdaZmtgtorXqgyyFEs1T4PowybS8uweILf4vsBROewcM83c5t33O1MbxzolDTtqBKUiLLpm4jF5w+pbtkBPiD9Eghi9yry8PUytKAdo36zdjGwF+P5PZH9fGI/GTX/rs5lBsAQHRaiVO2P+iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TgS0JFL9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Iu3Tre3W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSDrblsN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7281F000E9;
-	Sun, 26 Jul 2026 19:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785092425;
-	bh=X3f9rW6ecKd7Ic3gfdbZlKXMvf2ZuM/6RpCc9u5zk40=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=CSDrblsN/1QQQe61BhPiGQ1CPKQUnex8Z1+On7HMnCHcBOJVbfvhTsnEErxoFtr9O
-	 2pu3vxDZkpItELmLvqPEbncPAHHWqFhkmUjMIyznJB6n6XsQACQQIY7QoQy/IHI65/
-	 1edd6BVNbwcH2h2AYem70gt4DTezyrAinzuL+/pkF6EKts3wldQ4M+9lWllqsRwM/3
-	 qBmmZgf8+ntr8xI832Zxe6/Ez3uw6iDm8dl7q95g94cB1u8lagdxjcgQ+gqOoktpTE
-	 nq7O+hMyy+yvJZc9/PM37HwqTzD8oCRA8No4acppvg24+kUwNievrzcdKW9GS+oLsM
-	 oqGjFEmZWcPEw==
-Date: Sun, 26 Jul 2026 20:00:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: proximity: add driver for Sharp GP2AP070S
- proximity sensor
-Message-ID: <20260726200019.2011049e@jic23-huawei>
-In-Reply-To: <20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
-References: <20260723-gp2ap070s-v1-0-b8ca3a4c10dd@disroot.org>
-	<20260723-gp2ap070s-v1-2-b8ca3a4c10dd@disroot.org>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TgS0JFL9";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Iu3Tre3W"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66R8g7Lx161631
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 09:25:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=BXNIjjE8d2VbhCtEzyZftO
+	Rf3rk1HhEtHYt3oWL5j/8=; b=TgS0JFL9/ZiSVLj1b2/j3GnUbaHIya4eBavJML
+	4mL+XoVCYWEy5cKH3Jw1ESK0BQ1gE+IxUV2bFgd3TXk87n4DlkBgLGtOxZtKXNJD
+	NWpSnbwrs0cFkbVGXQdBb+GPSaatK8rFSFE7soNU80GX6UBfsR4vtJRIb8BbX0Xi
+	ztuyeFQfQvcPneG35kyvEaRtM2n6Ha5obHXE4C/EiS1AE5OSzVR9u73Oie9B/hFX
+	9mALBZAgP8Mr2QSxqYnzBD1rndOpLrh9E7t6SwoVP6i/XtGjCUoNasxcDvafdcLu
+	bcT4M1r+MUvIfSl0/1LxiVRBew4t8ToOhEMckcbIAJ2ZVdgg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fny9wh8pq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 09:25:05 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c20762d21so27058421cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 02:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785144305; x=1785749105; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=BXNIjjE8d2VbhCtEzyZftORf3rk1HhEtHYt3oWL5j/8=;
+        b=Iu3Tre3WLIQDeu9TUJs9mc8h8U7hM7J+70NUiaB94Qyq3rVez59zdUuOwlRbTQk4CR
+         7XsMo6ehRCaNAATE+8aTd+f13yITXNy6sQm00IyS5RO7Q/DIeLxooOhub21qim6Y7L3B
+         6kzKwzfyVkH0U2Zd9NHS2J8Q9xs8aGKaOceIEFDJ12XbYR5VUE3xxdrIEepU6P7oprNs
+         p+z+4iH3fxnvl45qROetkk6e8+UtCqWu7hGnvMhMmCoS1DPXmVgbwtlqiFJFX5T4VbE1
+         8X0DtsOI1d860Bv3trh3lOlxfuF4mK364PnCFmBgZCCPjARc4lsBTqe7BJR0JljZ/PuW
+         /tlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785144305; x=1785749105;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=BXNIjjE8d2VbhCtEzyZftORf3rk1HhEtHYt3oWL5j/8=;
+        b=L8hWCDwpJiRGy6sRWTYwt/27mcBEj5o7fW0OyUfOHTiLuOPXcJO/V3zKu1rFy2MNHt
+         EqTfZGxlvUrHfl2otZyLwrcJqxMXkMuGoJFPmhZTiRpvPHY+Z6diZv2DtiXEcLAbeobD
+         OC9S5DehotZbcsrnc8rApvdgGh0JCMGj3rw0jmxMdaeR0P+kz/otRHgQIM1Lc2BHcTMV
+         Qkw4icTNunA6GW7vTLB5Mh9+ybm/M0J6EOQI0vH3U2yTrfcGAt2stsQ3rKphQG9/cDuQ
+         612sOYEwaUhvC2pCSY/jHmdSFbGQrZrztfTX6u4YChqMc9dgiIKorfWknTPmLaBEhpA/
+         ofhA==
+X-Forwarded-Encrypted: i=1; AHgh+Ro43NkGFsmmaYrTzanAzd0h2E/azRxxYTc/Cd6pvcCuL7HOsG24zHs9hISWh7y6hp7Yhny59sAglV+q45J7u1IZrQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV+/a7i3OsK65vuDnjalG7tdQNQXiC4Q8Knu37ANybQL0JcmgS
+	+21ZlbESu+kg78d1ExmB1S1U+khJgoR80MqXARbe8u6h0OobQZJ2Nvhj/E6YEShe9iTToiWEWhh
+	0zt59PegvA1QUvGc2O24r4MHIyJdpJIqjfHdgwi3/uNYytREyKBj5JNCS1qVVz1GAouJUVx6auf
+	o2jxoFcg==
+X-Gm-Gg: AR+sD1128dmKdcTJSP6RbLRIetT1idmu+Y260Bz0eHMC548gJQuzBwosspXeM3dPq7Z
+	uaO+rqGsGCBSweGXKD+HN907ILsUaX8UgoHRez2eila256TN2zwuZPb34TbOKFNL0auohF1lnpy
+	O/7D4wuJ/FyhIg7+chenM4JWEzyXINahMn3ZmCBgyLL/8K1KNDSGFDLwPuWJnyWndpTlRz9fyhA
+	8N/CcoSuUdib9NWNstcU+d+dZow4qhJb1X50Iac0qOepMuO3s7g8LlHxoNEqtKVEJN1ax49vDxG
+	4clj8wUyq4GnDkE5iKCHZFnZmQf6kPM4gbMhMVEYrmrpmePc9KFu+Lb2qtWpgm1tDZEVeGJcmvM
+	a2Quqgrvw5zyqp/L0
+X-Received: by 2002:a05:622a:15c2:b0:51b:f340:d2be with SMTP id d75a77b69052e-529a86c8ff8mr79521441cf.53.1785144304587;
+        Mon, 27 Jul 2026 02:25:04 -0700 (PDT)
+X-Received: by 2002:a05:622a:15c2:b0:51b:f340:d2be with SMTP id d75a77b69052e-529a86c8ff8mr79521241cf.53.1785144304129;
+        Mon, 27 Jul 2026 02:25:04 -0700 (PDT)
+Received: from quoll ([178.197.223.174])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69fb51c9691sm2357592a12.7.2026.07.27.02.25.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 02:25:03 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Drop redundant lists from various Samsung entries
+Date: Mon, 27 Jul 2026 11:24:49 +0200
+Message-ID: <20260727092451.43570-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7712; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=KGGXByqAct727YELO9+LMLusE8CCPOyq0E5LFYrQetM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqZyPjA9yT9eGEDRhvFAGE7uhiZW2bvNIcf6f8e
+ O1XxR3eutaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCamcj4wAKCRDBN2bmhouD
+ 10oAD/4yLRNM7s3tOckBrgt5Pg7P2Tib75a89Po47kqTT/2LhKNvjgqQmnVTaBt3YSWJWPFjXyg
+ cfFS7znMfWRlnFGFinKAcKFQWneELRjFiyhQwUb/JaT6uupHrk2k6kM55TdZm3z/vnPGziCXE+G
+ oDkzEt5+xINPzRWapw8XdYoxlMR/A1wpaj7aEq/ePnCcJwKDnVoW73cCSNWHbfdOH1CqHlxWXHv
+ gKHbEzhflwbdX4JawPpHRGODGVR5+18fRiUKedwvv8MI9P13aqZ7c3iVCk52pJL8e/74FAuw2ES
+ mPl+KZ2c0hetj3+mHKJ+68adE1wUhqPNp3EanfaKWZZVdqpmNQqU9wwePmIdnfh0KokxAwi4i1D
+ +R71AavhU02UD0AY/B5DlB7pvvaYOcyCkTHFnLCIwqGmXp5dqX8UiR3eaLyrr7znGrPaRQFXrhU
+ m+j6I/38QkfqpYIfG2/er40v3hCjopvZZ2yaZJ2QPTZZ98fQng8v0nSR+jJhle5YzGfZlw359Mp
+ xnEjw1EO5M/sCCo0v+24EXbpbfR+9icuMS1Obn5SJBB1hRjqpEG2NWf+G1KN9UXSQKYevQ91Tom
+ A9Ayaihfad617aK39Krc2dX8ICCQ6FrqTZEIb5OSxxPhSM89zy1jzdDha2gIx+FgTXeQBmGl+w2 06LYqfTlCR7wNgw==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDA5MiBTYWx0ZWRfX1wXTsirQkznv
+ aJ7rVjXDqyUYnl/uykmwbi/hEb6UFNrZ0KDBGGG+cdiezLZ/sXDnu02AllMrM0gQ+6mO/3B8SWe
+ T0PvaSAYk4xNgj9OhOZinm8uJQPUcIj4I6+44bLJ5giE5525cgmNblUaQ4TvufvhYFDM19SzDvp
+ eAHlpBMD/HsMGkYj1o9Zv2P38naBtKcktUeyp3PrBOkLX2OvDhiOXMA1DI5798On3DX68LOAn5f
+ qPy3G/ejNKxVUv9c2mH51MWzrpMEqsUpsfS0IPUK7hJOCthDVL7YaqnIPLYtWOgu4XKWZTVUqeR
+ dapTi5nq+KH+r54mE+k67GNUptT4HNqR0hf+QDTgrkanCmA18DKH3QLIS+plyrxLk6aQOAqZH+O
+ 3eU95Yt+XYQD/xMJkLAlpkwkvMs4ZhkxaMGIVu/xW595Xv5fAfhepBrhq10I9VOoqIl2wRQCPpm
+ Cg3PBLVyflyL1ww/2sA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDA5MiBTYWx0ZWRfX2SEAb5uyvjMF
+ BcmTJUn1DN005KnHdy5A2FwRC/hJk7oWbJqo66zU5IuXoD2mF9AJB9UhuYo4UO7ipo0ge8enYPD
+ 9FUfVgK6lYnFuAc3Vr7dVoISyojfCFg=
+X-Proofpoint-ORIG-GUID: 1bDq6gbYG6SBEVs6WuinUjt71fNVBR9g
+X-Authority-Analysis: v=2.4 cv=E4b9Y6dl c=1 sm=1 tr=0 ts=6a6723f1 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=VwQbUJbxAAAA:8 a=xq3W2uTSAAAA:8 a=KKAkSRfTAAAA:8 a=hD80L64hAAAA:8
+ a=EUspDBNiAAAA:8 a=JfrnYn6hAAAA:8 a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8
+ a=6J6j7_AOAAAA:8 a=sLuR29lIkFDoGf37nhcA:9 a=lqcHg5cX4UMA:10 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=P5L7wpMTXyg1GfFA3Gwx:22
+ a=cvBusfyB2V15izCimMoJ:22 a=1CNFftbPRP8L7MoqJWF3:22 a=DoBsnWhqfNmTxX1QClym:22
+X-Proofpoint-GUID: 1bDq6gbYG6SBEVs6WuinUjt71fNVBR9g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-27_02,2026-07-24_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607270092
 
-On Thu, 23 Jul 2026 22:58:34 +0530
-Kaustabh Chakraborty <kauschluss@disroot.org> wrote:
+Individual driver maintainer entries (not subsystem) do not need to
+repeat the generic subsystem mailing lists in "L:", because
+get_maintainers.pl will get them from the subsystem entry.  They only
+need to mention additional lists specific to Samsung stuff, like
+linux-samsung-soc@vger.kernel.org.
 
-> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
-> Corporation. This sensor is used in mobile devices, including, but not
-> limited to - the Samsung Galaxy J6.
-> 
-> The driver has been adopted from Samsung's downstream kernel
-> implementation [1]. Due to the lack of public documentation about the
-> schematics of this device. The downstream driver acts as the secondary
-> source of information. Driver clarity has also been improved with the
-> help of the GP2AP* drivers in iio/light.
-> 
-> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-Hi Kaustabh
+Drop generic lists from almost all of the Samsung entries where all the
+files are already covered by the subsystem entry.
 
-I've tried to avoid too much duplication of the things Joshua
-already called out (and I didn't even look at sashiko yet for
-this one!)
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Various comments inline.  The use of regmap is unusual so
-I'd expect to see a bit more information on why that makes sense
-(or use of regmap_bulk_read() + regcache)
+---
 
-Thanks,
+Cc: linux-iio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-media@vger.kernel.org
 
-Jonathan
+I will take the patch through Samsung SoC tree.
+---
+ MAINTAINERS | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-
-> diff --git a/drivers/iio/proximity/gp2ap070s.c b/drivers/iio/proximity/gp2ap070s.c
-> new file mode 100644
-> index 000000000000..9625f53d956e
-> --- /dev/null
-> +++ b/drivers/iio/proximity/gp2ap070s.c
-> @@ -0,0 +1,502 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * IIO driver for Sharp GP2AP070S proximity sensor.
-> + *
-> + * Copyright (C) 2026 Kaustabh Chakraborty <kauschluss@disroot.org>
-
-You mention basing this on the vendor driver to some extent at least.
-Perhaps a reference to that here would be good to keep clear attribution?
-If it's not enough for an extra copyright notice, it probably is enough
-as a useful source of info like the link you have above.
-
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/iio/events.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#define GP2AP070S_REG_COM1		0x80
-> +#define GP2AP070S_REG_COM2		0x81
-> +#define GP2AP070S_REG_COM3		0x82
-> +#define GP2AP070S_REG_COM4		0x83
-> +#define GP2AP070S_REG_PS1		0x85
-> +#define GP2AP070S_REG_PS2		0x86
-> +#define GP2AP070S_REG_PS3		0x87
-> +#define GP2AP070S_REG_PS_THD_LO_LE16	0x88
-> +#define GP2AP070S_REG_PS_THD_HI_LE16	0x8a
-> +#define GP2AP070S_REG_OS_D0_LE16	0x8c
-> +#define GP2AP070S_REG_D0_LE16		0x90
-> +
-> +/* GP2AP070S_REG_COM1 */
-> +#define GP2AP070S_VAL_COM1_WKUP		BIT(7)
-> +#define GP2AP070S_VAL_COM1_EN		BIT(5)
-Why the VAL bit of these defines? They are field masks rather
-than values of anything.  Normally we just use the absense of
-REG to indicate what are fields.
-
-Up to you but a clean way to associate registers and the fields in them
-without needing lots of comments is to use a bit of extra white space.
-
-e.g.
-#define GP2AP070S_REG_COM1		0x80
-#define   GP2AP070S_COM1_WKUP		BIT(7)
-#define   GP2AP070S_COM1_EN		BIT(5)
-#define GP2AP070S_REG_COM2		0x81
-#define GP2AP070S_REG_COM3		0x82
-#define   GP2AP070S_COM3_INT_PULSE	BIT(1)
-#define GP2AP070S_REG_COM4		0x83
-#define   GP2AP070S_COM4_BLINK		GENMASK(2, 0)	/* LED Blink Interval */
-#define     GP2AP070S_COM4_BLINK_0ms	0
-#define     GP2AP070S_COM4_BLINK_2ms	1
-#define     GP2AP070S_COM4_BLINK_8ms	2
-
-> +
-> +/* GP2AP070S_REG_COM3 */
-> +#define GP2AP070S_VAL_COM3_INT_PULSE	BIT(1)
-> +
-> +/* GP2AP070S_REG_COM4 */
-> +#define GP2AP070S_VAL_COM1_BLINK	GENMASK(2, 0)	/* LED Blink Interval */
-Why is something in COM4 called COM1?
-
-> +
-> +#define GP2AP070S_VAL_COM1_BLINK_0ms	0
-> +#define GP2AP070S_VAL_COM1_BLINK_2ms	1
-> +#define GP2AP070S_VAL_COM1_BLINK_8ms	2
-> +#define GP2AP070S_VAL_COM1_BLINK_33ms	3
-> +#define GP2AP070S_VAL_COM1_BLINK_66ms	4
-> +#define GP2AP070S_VAL_COM1_BLINK_131ms	5
-> +#define GP2AP070S_VAL_COM1_BLINK_262ms	6
-> +#define GP2AP070S_VAL_COM1_BLINK_524ms	7
-> +
-> +/* GP2AP070S_REG_PS1 */
-> +#define GP2AP070S_VAL_PS1_RESOL		GENMASK(5, 4)	/* Resolution */
-> +
-> +#define GP2AP070S_VAL_PS1_RESOL_14ms	0
-> +#define GP2AP070S_VAL_PS1_RESOL_12ms	1
-> +#define GP2AP070S_VAL_PS1_RESOL_10ms	2
-> +#define GP2AP070S_VAL_PS1_RESOL_8ms	3
-> +
-> +/* GP2AP070S_REG_PS2 */
-> +#define GP2AP070S_VAL_PS2_IOUT		GENMASK(6, 4)	/* Current Output */
-> +#define GP2AP070S_VAL_PS2_SUM32		BIT(2)
-> +
-> +#define GP2AP070S_VAL_PS2_IOUT_0mA	0
-> +#define GP2AP070S_VAL_PS2_IOUT_24mA	1
-> +#define GP2AP070S_VAL_PS2_IOUT_89mA	2
-> +#define GP2AP070S_VAL_PS2_IOUT_130mA	3
-> +#define GP2AP070S_VAL_PS2_IOUT_190mA	4
-> +
-> +/* GP2AP070S_REG_PS3 */
-> +#define GP2AP070S_VAL_PS3_PRST		GENMASK(6, 4)	/* Repeating Measurements */
-> +
-> +struct gp2ap070s_drvdata {
-> +	struct device *dev;
-
-As below, can use regmap_get_device() and not carry a duplicate copy of dev around.
-
-> +	struct regmap *regmap;
-> +	struct regulator_bulk_data *regulators;
-
-Is this used?
-
-> +	u32 near_level;
-> +};
-> +
-> +static const struct regmap_config gp2ap070s_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-
-Given there seems to be quite a bit of checking what I assume are non
-volatile registers, enable regcache and provide all the callbacks
-so it knows what is volatile and what isn't.  You should reduce the bus
-traffic a fair bit.
-
-> +};
-
-
-> +
-> +static int gp2ap070s_read_event_config(struct iio_dev *indio_dev,
-> +				       const struct iio_chan_spec *chan,
-> +				       enum iio_event_type type,
-> +				       enum iio_event_direction dir)
-> +{
-> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
-> +	unsigned int value;
-> +	int ret;
-> +
-> +	if (type != IIO_EV_TYPE_THRESH)
-> +		return -EINVAL;
-> +
-> +	switch (dir) {
-> +	case IIO_EV_DIR_EITHER:
-> +		ret = regmap_read(drvdata->regmap, GP2AP070S_REG_COM3, &value);
-> +		if (ret)
-> +			return ret;
-> +
-> +		return !!(value & GP2AP070S_VAL_COM3_INT_PULSE);
-
-For these single bit gets I'd prefer a FIELD_GET() as that !! is a bit ugly to read.
-If not use a ternary to set to 1 or 0.
-
-That !! thing used to be common but Linus amongst others have expressed
-it is not great to read.
-
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int gp2ap070s_write_event_config(struct iio_dev *indio_dev,
-> +					const struct iio_chan_spec *chan,
-> +					enum iio_event_type type,
-> +					enum iio_event_direction dir,
-> +					bool state)
-> +{
-> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (type != IIO_EV_TYPE_THRESH)
-> +		return -EINVAL;
-> +
-> +	switch (dir) {
-> +	case IIO_EV_DIR_EITHER:
-> +		if (state)
-> +			ret = regmap_set_bits(drvdata->regmap,
-> +					      GP2AP070S_REG_COM3,
-> +					      GP2AP070S_VAL_COM3_INT_PULSE);
-			reutrn regmap_set_bits()
-> +		else
-> +			ret = regmap_clear_bits(drvdata->regmap,
-> +						GP2AP070S_REG_COM3,
-> +						GP2AP070S_VAL_COM3_INT_PULSE);
-			returnn regmap_clear_bits()
-
-and you can drop the check below, the break and the final return 0;
-
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct iio_info gp2ap070s_iio_info = {
-> +	.read_raw = gp2ap070s_iio_read_raw,
-> +	.read_event_value = gp2ap070s_iio_read_event_value,
-> +	.write_event_value = gp2ap070s_iio_write_event_value,
-> +	.read_event_config = gp2ap070s_read_event_config,
-> +	.write_event_config = gp2ap070s_write_event_config,
-> +};
-> +
-> +static irqreturn_t gp2ap070s_irq_handler(int irq, void *private)
-> +{
-> +	struct iio_dev *indio_dev = private;
-> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
-> +	struct device *dev = drvdata->dev;
-> +	u16 threshold_lo, threshold_hi, distance;
-> +	__le16 value;
-> +	int ret;
-> +
-> +	ret = regmap_raw_read(drvdata->regmap, GP2AP070S_REG_PS_THD_LO_LE16,
-
-Why is raw_read needed rather than a normal bulk read?
-For these I'd assume they aren't volatile and we want caching to cut down
-on bus transfers?  If there is a reason to do it this way add a comment.
-
-> +			      &value, sizeof(value));
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read low threshold value (%d)\n", ret);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	threshold_lo = __le16_to_cpu(value);
-
-le16_to_cpu()
-
-> +
-> +	ret = regmap_raw_read(drvdata->regmap, GP2AP070S_REG_PS_THD_HI_LE16,
-> +			      &value, sizeof(value));
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read high threshold value (%d)\n", ret);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	threshold_hi = __le16_to_cpu(value);
-> +
-> +	ret = regmap_raw_read(drvdata->regmap, GP2AP070S_REG_D0_LE16, &value,
-> +			      sizeof(value));
-> +	if (ret) {
-> +		dev_err(dev, "Failed to read proximity distance (%d)\n", ret);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	distance = __le16_to_cpu(value);
-> +
-> +	if (distance >= threshold_hi) {
-
-This very racy given I'd assume distance can change between interrupt and the
-event.  A common solution to this is to make it a userspace problem and
-poke out an IIO_EV_DIR_EITHER event.
-
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_RISING),
-> +			       iio_get_time_ns(indio_dev));
-
-Grab timestamp as early as you can, as nearer to the interrupt.  Typically
-top of the interrupt handler.
-
-> +	} else if (distance <= threshold_lo) {
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, 0,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_FALLING),
-> +			       iio_get_time_ns(indio_dev));
-> +	} else {
-> +		/*
-> +		 * If none match, then it's stuck in the threshold band gap.
-> +		 * The hardware generally does not issue interrupts here.
-
-This needs an explanation of why there isn't a race. Is the value latched on
-interrupt until we read it?
-
-> +		 */
-> +		WARN_ONCE(true, "spurious interrupt issued in proximity threshold gap\n");
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int gp2ap070s_probe_hw_register(struct gp2ap070s_drvdata *drvdata)
-> +{
-> +	struct device *dev = drvdata->dev;
-> +	int ret;
-> +
-> +	ret = regmap_clear_bits(drvdata->regmap, GP2AP070S_REG_COM1, ~0);
-
-write a 0 rather than clear bits when you are clearing them all.
-
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to reset sensor\n");
-> +
-> +	ret = regmap_clear_bits(drvdata->regmap, GP2AP070S_REG_COM2, ~0);
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to unmask interrupts\n");
-> +
-> +	ret = regmap_set_bits(drvdata->regmap, GP2AP070S_REG_COM3,
-> +			      GP2AP070S_VAL_COM3_INT_PULSE);
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to enable interrupt\n");
-> +
-> +	ret = regmap_write_bits(drvdata->regmap, GP2AP070S_REG_COM4,
-> +				GP2AP070S_VAL_COM1_BLINK,
-> +				FIELD_PREP_CONST(GP2AP070S_VAL_COM1_BLINK,
-> +						 GP2AP070S_VAL_COM1_BLINK_33ms));
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to set LED blink timing\n");
-> +
-> +	ret = regmap_write_bits(drvdata->regmap, GP2AP070S_REG_PS1,
-> +				GP2AP070S_VAL_PS1_RESOL,
-> +				FIELD_PREP_CONST(GP2AP070S_VAL_PS1_RESOL,
-> +						 GP2AP070S_VAL_PS1_RESOL_10ms));
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to set resolution\n");
-> +
-> +	ret = regmap_write_bits(drvdata->regmap, GP2AP070S_REG_PS2,
-> +				GP2AP070S_VAL_PS2_IOUT | GP2AP070S_VAL_PS2_SUM32,
-> +				FIELD_PREP_CONST(GP2AP070S_VAL_PS2_IOUT,
-> +						 GP2AP070S_VAL_PS2_IOUT_89mA) |
-> +				GP2AP070S_VAL_PS2_SUM32);
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to set current output\n");
-> +
-> +	ret = regmap_write_bits(drvdata->regmap, GP2AP070S_REG_PS3,
-> +				GP2AP070S_VAL_PS3_PRST,
-> +				FIELD_PREP_CONST(GP2AP070S_VAL_PS3_PRST, 3));
-> +	if (ret)
-> +		return dev_err_probe(drvdata->dev, ret, "Failed to set measurement repetitions\n");
-> +
-> +	ret = regmap_set_bits(drvdata->regmap, GP2AP070S_REG_COM1,
-> +			      GP2AP070S_VAL_COM1_WKUP | GP2AP070S_VAL_COM1_EN);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable sensor\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int gp2ap070s_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct gp2ap070s_drvdata *drvdata;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*drvdata));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	drvdata = iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, drvdata);
-
-Is this used?  It rarely is when a driver doesn't yet have power management
-(which is fine until someone needs it!)
-
-> +
-> +	drvdata->dev = dev;
-
-It is easy to get dev from the regmap so you can just do that and not carry an
-extra copy around.  regmap_get_device().
-
-
-
-> +	drvdata->regmap = devm_regmap_init_i2c(client, &gp2ap070s_regmap_config);
-> +	if (IS_ERR(drvdata->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(drvdata->regmap), "Failed to create regmap\n");
-> +
-> +	ret = devm_regulator_bulk_get_enable(dev,
-> +					     ARRAY_SIZE(gp2ap070s_regulator_names),
-> +					     gp2ap070s_regulator_names);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get and enable regulators");
-> +
-> +	usleep_range(10000, 11000);
-
-fsleep() applies standard level of slack rather than us having to think
-about what is appropriate.
-
-> +
-> +	indio_dev->name = "gp2ap070s";
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = gp2ap070s_iio_chan_spec;
-> +	indio_dev->num_channels = ARRAY_SIZE(gp2ap070s_iio_chan_spec);
-> +	indio_dev->info = &gp2ap070s_iio_info;
-> +
-> +	device_property_read_u32(&client->dev, "proximity-near-level",
-
-Use dev for all client->dev given you defined it.
-
-> +				 &drvdata->near_level);
-For optional properties like this we are generally hardening against
-unexpected errors in a way that we didn't use to.
-
-You can use a local for the string if you prefer or just do
-	if (device_property_present(dev, "proximity-near-level")) {
-		ret = device_property_read_u32(dev, "proximity-near-level",
-					       &drvdata->near_level);
-		if (ret)
-			return dev_err_probe();
-	}
-
-> +
-> +	ret = gp2ap070s_probe_hw_register(drvdata);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_request_threaded_irq(dev, client->irq, NULL,
-> +					gp2ap070s_irq_handler, IRQF_ONESHOT,
-> +					"gp2ap070s-irq", indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to request IRQ");
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2c8aadac544d..761cdf667471 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3591,14 +3591,12 @@ N:	s5pv210
+ ARM/SAMSUNG S5P SERIES 2D GRAPHICS ACCELERATION (G2D) SUPPORT
+ M:	Łukasz Stelmach <l.stelmach@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/platform/samsung/s5p-g2d/
+ 
+ ARM/SAMSUNG S5P SERIES HDMI CEC SUBSYSTEM SUPPORT
+ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+ L:	linux-samsung-soc@vger.kernel.org
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/cec/samsung,s5p-cec.yaml
+ F:	drivers/media/cec/platform/s5p/
+@@ -3608,7 +3606,6 @@ M:	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+ M:	Jacek Anaszewski <jacek.anaszewski@gmail.com>
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/samsung,s5pv210-jpeg.yaml
+ F:	drivers/media/platform/samsung/s5p-jpeg/
+@@ -3617,7 +3614,6 @@ ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
+ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+ M:	Andrzej Hajda <andrzej.hajda@intel.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+ F:	drivers/media/platform/samsung/s5p-mfc/
+@@ -5696,7 +5692,6 @@ F:	drivers/media/pci/bt8xx/bttv*
+ 
+ BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+-L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
+@@ -16125,7 +16120,6 @@ F:	drivers/power/supply/max77976_charger.c
+ 
+ MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+-L:	linux-pm@vger.kernel.org
+ S:	Maintained
+ B:	mailto:linux-samsung-soc@vger.kernel.org
+ F:	Documentation/devicetree/bindings/power/supply/maxim,max14577.yaml
+@@ -20859,7 +20853,6 @@ F:	drivers/pci/controller/dwc/*rcar*
+ 
+ PCI DRIVER FOR SAMSUNG EXYNOS
+ M:	Jingoo Han <jingoohan1@gmail.com>
+-L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+@@ -24152,7 +24145,6 @@ F:	arch/arm64/boot/dts/exynos/exynos8855*
+ 
+ SAMSUNG EXYNOS ACPM MAILBOX PROTOCOL
+ M:	Tudor Ambarus <tudor.ambarus@linaro.org>
+-L:	linux-kernel@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+@@ -24162,7 +24154,6 @@ F:	include/linux/firmware/samsung/exynos-acpm-protocol.h
+ 
+ SAMSUNG EXYNOS MAILBOX DRIVER
+ M:	Tudor Ambarus <tudor.ambarus@linaro.org>
+-L:	linux-kernel@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+@@ -24192,7 +24183,6 @@ F:	drivers/platform/x86/samsung-galaxybook.c
+ SAMSUNG INTERCONNECT DRIVERS
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Artur Świgoń <a.swigon@samsung.com>
+-L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ F:	drivers/interconnect/samsung/
+@@ -24205,7 +24195,6 @@ F:	drivers/platform/x86/samsung-laptop.c
+ 
+ SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
+ M:	André Draszik <andre.draszik@linaro.org>
+-L:	linux-kernel@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ B:	mailto:linux-samsung-soc@vger.kernel.org
+@@ -24224,7 +24213,6 @@ F:	include/linux/mfd/samsung/
+ 
+ SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
+ M:	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+-L:	linux-media@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/platform/samsung/s3c-camif/
+@@ -24239,14 +24227,12 @@ F:	drivers/nfc/s3fwrn5
+ SAMSUNG S5C73M3 CAMERA DRIVER
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Andrzej Hajda <andrzej.hajda@intel.com>
+-L:	linux-media@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/media/samsung,s5c73m3.yaml
+ F:	drivers/media/i2c/s5c73m3/*
+ 
+ SAMSUNG S5K3M5 CAMERA DRIVER
+ M:	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/i2c/samsung,s5k3m5.yaml
+@@ -24255,13 +24241,11 @@ F:	drivers/media/i2c/s5k3m5.c
+ SAMSUNG S5K5BAF CAMERA DRIVER
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+ M:	Andrzej Hajda <andrzej.hajda@intel.com>
+-L:	linux-media@vger.kernel.org
+ S:	Supported
+ F:	drivers/media/i2c/s5k5baf.c
+ 
+ SAMSUNG S5KJN1 CAMERA DRIVER
+ M:	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+-L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/i2c/samsung,s5kjn1.yaml
+@@ -24270,7 +24254,6 @@ F:	drivers/media/i2c/s5kjn1.c
+ SAMSUNG S5P Security SubSystem (SSS) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Vladimir Zapolskiy <vz@mleia.com>
+-L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+@@ -24279,7 +24262,6 @@ F:	drivers/crypto/s5p-sss.c
+ 
+ SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+ M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+-L:	linux-media@vger.kernel.org
+ S:	Supported
+ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ F:	Documentation/devicetree/bindings/media/samsung,exynos4210-csis.yaml
+@@ -24309,7 +24291,6 @@ F:	include/linux/clk/samsung.h
+ SAMSUNG SPI DRIVERS
+ M:	Andi Shyti <andi.shyti@kernel.org>
+ R:	Tudor Ambarus <tudor.ambarus@linaro.org>
+-L:	linux-spi@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/spi/samsung,spi*.yaml
+@@ -24325,7 +24306,6 @@ F:	drivers/net/ethernet/samsung/sxgbe/
+ SAMSUNG THERMAL DRIVER
+ M:	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+-L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+@@ -27924,7 +27904,6 @@ F:	drivers/ufs/host/*dwc*
+ UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER EXYNOS HOOKS
+ M:	Alim Akhtar <alim.akhtar@samsung.com>
+ R:	Peter Griffin <peter.griffin@linaro.org>
+-L:	linux-scsi@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/ufs/host/ufs-exynos*
+-- 
+2.53.0
 
