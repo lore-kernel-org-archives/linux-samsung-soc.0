@@ -1,128 +1,86 @@
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B36363094;
-	Mon, 27 Jul 2026 18:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF2C3563F6;
+	Mon, 27 Jul 2026 19:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785177990; cv=none; b=kAqhgomocEr9rveH2NHCm1n42UE/598OeBj/Sq3e7mFNFXj3Yt93Byc74Isl/xTWbbaIgXumMgDt5AFgRKff5CuQ83r+GPVnM3Y97csHEbwADc7xY1ckRsv+V2YvKEl2p01JMKDTicSkZTgyUjCB3nL1xyRclPH0IgZ9tXLfHuA=
+	t=1785178821; cv=none; b=horVIYOaEHf5biO8FbAfxqjyxjdWPgdtBNgLKerawH97YxPZO088AvzZG8XZkQc00qvqZvvhldNzMQciqY8xAb8J2m9jBt4BUucYFetk2ovzUqO5OWyIZor3oXVdYNVL/ez/IT3W8jxQs8FRxp0EeCzxCd49m+rjSfblCSMP6Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785177990; c=relaxed/simple;
-	bh=Z/5pwo4klH/G5J4/WGhzTofwYGUJUpFmG7OVLRoY6CY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=daCTePm0EWTlluLDfRMbDapDJ/rUrdzKcecUKD/ykzKVXXYh9+x2k5l+90g8p9J/9tNaFjusyNVmFKiUUbYhRO98uRi6Pj4E2PEMR/siAuw/6T5k3pAuBnNi/FsoUHX40P4K5SWyTyK1JyuhWlVJ5JG7ofM63nOrmXpeRVccP6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Pstfw6IK; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1785178821; c=relaxed/simple;
+	bh=rYIh72XF25YLtMkQ1atMR+hym/ldzSeNr/6aOYMQpt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qsM7EUqB4lUt5qh4K+oLo3ZcpZO85D7QS5SlhWJt/QttC0uAg9cnOA4GEyuHw5Kpy0P41/6rbjyJkhHxkXEqnYouN/jSgnuCIT0YuXQGnQTco3FzWmnnIc+sn8VNhS6IfveDT2Zu6W8stoR/Jkn4OdzCK49V0v3ZpgmhOm3OWfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Juff+TE3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Pstfw6IK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Juff+TE3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FE41F000E9;
+	Mon, 27 Jul 2026 19:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785178820;
+	bh=to/gd4X6LaSNNZAdxvsgERKxojbIenZcMcO/zkvD++4=;
+	h=From:To:Cc:Subject:Date;
+	b=Juff+TE3lRb7sru6aoIwZMTtRRgNHaiF8m8ztEaqSeusE/7EG5oXp6jibDS1ju1+E
+	 lfoK7sYotuFnij0PmhOL8P8+IBDpAJ9ntmdQwbuH2lbzrqR6TNnR3UM4V7G79DusX/
+	 kCQ+31y1LjmNSr2yhBmZCitVzjcATuQ2IQ6v3haIu6xmlJSDf17KvLeLMLiQ79cu7f
+	 A+XkruZxBBDUBdc2581dA9zlrA92vjAz9bwn1Jq/UxgilfMvghLK+ACdNv1bsHRitE
+	 TAh/QkihD+ZZi+M82YPLGBziGVnw7exiyZ+4DvzwdBRGNgQxkTgCXcyQsgQxxdsA3w
+	 gvXIQKT3Rbtjg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Drew Fustini <fustini@kernel.org>,
+	soc@lists.linux.dev
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 1/2] samsung: drivers for v7.3
+Date: Mon, 27 Jul 2026 21:00:09 +0200
+Message-ID: <20260727190010.404981-3-krzk@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1785177974;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s0wH+ySFfCBVmnBojBZaXIoCALe+k/ClNs6fjt/QIh0=;
-	b=Pstfw6IK644jlNnRGZZRzPiUJEWtkwg3bh22GraX3/i7mt3gP1kE9IC1GsrEiZtN9HwtV0
-	MbmNO1kYDW2KbxEiOr9P49jzr3JFdam9Nv4GjjD4EnyoxMaeGntAA6aDHk6vcsi6R0udzB
-	+qL9WEAdvH37Xa/JrZBO5IRJVCi2wuT6cT0F3vO1i/01J0QVy6duT66k2KWM33tHsZvYjQ
-	IdWTyvdQr7nYV4CBGvN1dS+L/UTx/sY/MqpIXlJweYMZ4jPVhCOdsVHOTVktRuhWKjSlzx
-	xk9gIo5Z9YB9UXA4kdjs/bbuTUWyR74sGlTMCREYyq4Bzestgaw3iD+MdtjkZw==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Jul 2026 20:45:58 +0200
-Message-Id: <DK9KRSOWRHY0.H7SC0R3BIIUZ@cknow-tech.com>
-To: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
- <jesszhan0024@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Robert Foss" <rfoss@kernel.org>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
- <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca
- Ceresoli" <luca.ceresoli@bootlin.com>, "Inki Dae" <inki.dae@samsung.com>,
- "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Laurentiu Palcu"
- <laurentiu.palcu@oss.nxp.com>, "Lucas Stach" <l.stach@pengutronix.de>,
- "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Paul Cercueil" <paul@crapouillou.net>, "Linus
- Walleij" <linusw@kernel.org>, "Marek Vasut" <marex@denx.de>, "Stefan Agner"
- <stefan@agner.ch>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
- "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Kieran
- Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
- <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
- Das" <biju.das.jz@bp.renesas.com>, "Sandy Huang" <hjc@rock-chips.com>,
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
- <andy.yan@rock-chips.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>,
- "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Philippe Cornu"
- <philippe.cornu@foss.st.com>, "Maxime Coquelin"
- <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>, "Chen-Yu Tsai" <wens@kernel.org>, "Samuel
- Holland" <samuel@sholland.org>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Jingoo
- Han" <jingoohan1@gmail.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>,
- "Kyungmin Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>,
- "Paul Kocialkowski" <paulk@sys-base.io>, "Alain Volmat"
- <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>,
- "Thierry Reding" <thierry.reding@kernel.org>, "Mikko Perttunen"
- <mperttunen@nvidia.com>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Albert
- Esteve" <aesteve@redhat.com>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-mips@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
- <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] drm/panel: refcounting panel lookups and
- references
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-References: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
- <178472247762.1745070.2847290153778032256.b4-ty@b4>
-In-Reply-To: <178472247762.1745070.2847290153778032256.b4-ty@b4>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1356; i=krzk@kernel.org; h=from:subject; bh=rYIh72XF25YLtMkQ1atMR+hym/ldzSeNr/6aOYMQpt0=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqZ6q6NcocqgMAzuIwXGHz+MdwjCWeW1Qcu79Pq ClQqBIj+/aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCamequgAKCRDBN2bmhouD 1wHSD/9n1mwjVI21ZgDi5+oUoh/x6ZWS6GDHeGSvqt7gsT1Ox9ObKyTde8MOudJTb8C8lhusNL6 QR1+fNjr+E44KUxlFD9Q/kjYkK1lGgMn8qy7dgG+OtWP7pJ3GIxlBnWxKspeyYFn+2OK1lCv+l7 PFYw+Vz6FoCVAxSIwX6qa4BG53EoWyCHaDY6xTWPsoanR1C3hwwELgwZiUcNksYiTHMHjwXVM9f TYhwo/eHypuoma8kScS5yn9afqe+1monWYwIFCrDpRIN1gnFBKvHhc7PEeuOZB24r05hxZBiJJO +41crEggSJGTHxoa/IDr46i1NlG8A1kjRDXBrS1T0pO4XiiM2e1xlhVTl+WAQB6r4CWHzcWH0iS wxhHW5zXqfC2+ukVHPVYqpCxqZbyqyjepYiHsc6yboXHD85boCFNHsBSTQFJt/emgFxDizelm4A 7+QdYDt/4EOA9noKyYp1k9NYCi2WBWdJ6auEq1/Gvn1EspmPpyh4LSEbB2cYZ4AHS6ekqPmPnFj Trzu5NfuBju52v0i74n7LLExymedxP9Ew4iRLCAiAWkm+yeENYXFqpLwVwB6RaLo3swVwkfL2Un +II4/A6+uhQE1L8fWo7r1FGcEpN6w7bio3nGgpzYg+/AzUD+lNC6w2t/UdxscVuUZMNxOn2mZVH lDxSh4MkeBo7QEg==
+X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Wed Jul 22, 2026 at 2:15 PM CEST, Neil Armstrong wrote:
-> On Fri, 17 Jul 2026 16:02:03 +0200, Albert Esteve wrote:
->> The drm_panel subsystem provides kref-based reference counting [1]
->> (drm_panel_get/put) but almost nothing in the tree actually uses it.
->> This results in a systemic use-after-free pattern throughout the codebas=
-e.
->>=20
->> This series aims to close all those issues.
->>=20
->> Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
->> a counted reference for the list entry. drm_panel_bridge_add_typed()
->> now holds a counted reference for the lifetime of the panel_bridge.
->>=20
->> [...]
->
-> Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (dr=
-m-misc-next)
->
-> [1/4] drm/panel: have drm_panel_add/remove manage a list reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/61aebeadff4=
-0cded27168e53406e0120ad66e114
-> [2/4] drm/bridge/panel: hold a reference to the wrapped panel
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/8f79d34ea89=
-50fd825e0d6ecd713705a42f06417
-> [3/4] drm/panel: of_drm_find_panel() return a counted reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b71a623598d=
-319cae2acd9df1b297cc948c58bc7
-> [4/4] drm/panel: find_panel_by_fwnode() return a counted reference
->       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ac3baea883d=
-ab989178dd4186090d6bcf52b8d55
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
-That last commit resulted in an extra ``drm_panel.c.orig`` file which=20
-wasn't part of the patch and seems incorrect?
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
-Cheers,
-  Diederik
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-7.3
+
+for you to fetch changes up to e131ca83dabc8bfb8c1d455d02bf2d7a7bc1198a:
+
+  dt-bindings: samsung: exynos-pmu: Narrow allowed reboot modes (2026-07-09 15:17:42 +0200)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v7.3
+
+1. Fix very old leak of OF node in PMU driver.
+2. Few cleanups and new bindings for ExynosAutov920 HSI0 syscon.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (2):
+      dt-bindings: samsung: exynos-pmu: Restrict children with unevaluatedProperties
+      dt-bindings: samsung: exynos-pmu: Narrow allowed reboot modes
+
+Sanghoon Bae (1):
+      dt-bindings: soc: samsung: exynos-sysreg: Add hsi0 for ExynosAutov920
+
+Weigang He (1):
+      soc: samsung: exynos-pmu: fix of_node refcount leak in exynos_get_pmu_regmap()
+
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 27 +++++++++++++++++++---
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |  1 +
+ drivers/soc/samsung/exynos-pmu.c                   |  4 ++--
+ 3 files changed, 27 insertions(+), 5 deletions(-)
