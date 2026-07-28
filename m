@@ -1,126 +1,115 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D163D79FD
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 19:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C5246BD5;
+	Tue, 28 Jul 2026 06:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785181723; cv=none; b=WWd/u0L5VPvVMcLV0sYevgGKOcWabnbYMmguo9PmZouJt60C9mFYChkqoEJgcOTsg/216nZ4auebksFswBk79+PHGtrN9zFgpOtiJ3bSliPm61QbK4luGs13kLbugR3jyw7W40nH5Wiqw1mcojFPwnm2W4mozyP5N9p25c7gY44=
+	t=1785218743; cv=none; b=WKBodnIyEZsb3b2ea/X7gn+dQe6QlY5Bzc1+HkAkhEWs2tMhG1BcaWRpAqIeVVlTHGxQykho6ugtKarRGOJXQxcGyHMcDLue+TgpkCz6KsO5clbpW5a3mBLIvD4k7Ik2zagH5y6JITZUVVQWWpHEaZJzogBDIbWAIn996h616/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785181723; c=relaxed/simple;
-	bh=g92HLocdRA/w3YM68miWwLxYb3rDVNqg12i6lFPfJgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BnBDylSzqHnXCtEdEV1xQcmpq8vXsrhqNqf+5DageGX7v1XfvcC29dWVsOtjrRk8M0Z0fvhsbJH0N1T9ERD8S+O9Uo+ccQu2/jfs35REUPlKjaPjDazdeliZ3v51AsrK/pX2t6P/Mnhb/c5D6sMUD7Ht2UejsaqdfywYYaVmvoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGe/SxxX; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785218743; c=relaxed/simple;
+	bh=la2w/maOKNG532+j79DbVIrZtlFK4M353e6Ism3ie5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6KBBVXgYAlEX+I25Vrh6lb2uWxOaDUpuVSifnfVuVBMTavKrcRLeL93Vjg+8ZOCx2STU3aSecWV/I+0bV79OfZd4gqneJjjpkKFZNKrF2aYZp/CIXIGC6srTJVGLVB0ix5weodkKdmbHgYhJXqoMdtV+GEODg1sIjLFW9P+Hmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxeYDorZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGe/SxxX"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-38dcbade417so3298730a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Jul 2026 12:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785181721; x=1785786521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ph9MOB90x8/rsIoED4kDLbacmQxfQ83Asvuv4fsdn60=;
-        b=bGe/SxxXJ6vAWNQ0UV5Dp/OvdyOSqYbucNlPMaClKCQpqzRvsEkxch2DHp0nLc+ZYu
-         MScl1RAnV2PRnwBxMEXYPmF8HOwNau3Hl7u+zEGuFQ3ykCP7MvgOm8U9WWfalDZpXEWQ
-         dcAv1IvWBeJoKMfqgaFSDrFkMtb3YY0xGZW1tIMapdf1+L7NTMkZ4GmtfRoX+3TU/d2c
-         qOt82tCk5x6PUGDBmoMttY5a4N7Xx1jOo+E+6mdDvTpbjIyEUlYvkil2lnxz+UKVt+ta
-         nnFn/CPfOhvmkSURe1NpqXYhDKWIvMWOLEXKkmwy6ouS6ytvSvwXNy8K+PoHst4CfOlN
-         mwPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785181721; x=1785786521;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ph9MOB90x8/rsIoED4kDLbacmQxfQ83Asvuv4fsdn60=;
-        b=RAg8tFRmdE1kvfG8W6nlHHaEJ5aIeYOZR6/xAO060/epKdoXxreTax6Ft2v7VF45KH
-         eQ6cQBliH6NBAC6eeChPVtWgd/J1KLqA4QXjjxVrHfhGWDUMeuF8wxyspnH14bCqpjYt
-         3rda/ruXtwsO+LgqkFMF6nUNbsYfp2cEcVx3gr3OSilSbFsPO5txIJHA+oq9I317sIl8
-         Dk1YOeMkHceXW29ZvDySYrlwO9ccrjsIsCzeZqfwWk6G9LMFc940eKN4uYO6vszFvj1N
-         Rzr3rr134TqPlwYOqpeQVsoFL9uW4omsHlhCCooJPBkO4wQrV3ruyfCjp+7cSSfJ95+a
-         cTaQ==
-X-Gm-Message-State: AOJu0Yw3TjZv6+c+bOkEq0kTAwpUsO8IXUVBFiwuicE6ePrrSqh3si2K
-	nFkU0n047e42cgctozEUHWtDpXpQdFXFSfdctDKt9bTyMVndT02Efc/6ACOtcjeh
-X-Gm-Gg: AR+sD10CHQJnqTgIICL4Ol8SOnJaoXgk+0qpcxNqcTgiAntddDQdMZvOSzpwgeiSbWf
-	OXNccOnRYgTS4eOtkM4EOAWsQDt7Td+cuN/LvNlG4BPwLcWFO053lg6/7MOOW26h6VdgtlSFn7N
-	gZTMmNxoyD+eBSTg9H+Piw7UeEwhqwbDcXZHoTXYBQKvCVhiDo65/gvIxDEkZF8Ayh/Ndfb46yN
-	w6zJhwXbA3rWBGAmarwfs1BvENn4/PMRXAOsbLSFjhCqQ4u75UVhC3vy6o/t7BjU3VFkbEaMCGv
-	pD7BzM+SyTdj8UYqvqkAXgqo001/bOd+HTMxcYnQzPxxf8sCEr2qB1pLgm2MwdA7gSBP65jxPWl
-	r8I3Vfvh9j7c7ocBEzbazUl+PUP8Yq7yDcxaHP9VT6MPDipQiIDW0jJpFuoVTPAfKhcWo0Vog8U
-	elZSFdh9D+AI4z+lbqkfk/ZWwOpAb/a/sceTko/n1R8+3S1IySoL+48BMw+9oPHdcrYnIe97cEE
-	N1qSgW//Jx4OVW5T1YWDnglk/AVF6S5yiDqVlDp8Ij/KxqFnDAS0m020BZevUwPrd5C+96rsQcC
-	kprlvvYkLmVAleV6rzEAlnx6rgBHOG+7bw31cA==
-X-Received: by 2002:a17:90b:1c8e:b0:37e:a09:2640 with SMTP id 98e67ed59e1d1-38f6480d1demr780368a91.7.1785181721391;
-        Mon, 27 Jul 2026 12:48:41 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f642bfc71sm270847a91.11.2026.07.27.12.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 12:48:39 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:PIN CONTROLLER - SAMSUNG),
-	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map with modern APIs
-Date: Mon, 27 Jul 2026 12:48:35 -0700
-Message-ID: <20260727194836.11689-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxeYDorZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79001F000E9;
+	Tue, 28 Jul 2026 06:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785218742;
+	bh=CbvCXbFtQpKu1PcGsiDIN+pvfvebjKSVVQajKdsn1hw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BxeYDorZA7jaEsrw7vvJEj1hGYSdtx4dlxDE6j4uAbywoxB/isKS3Rk0/pbZs664B
+	 MbsJO6GCIQRnnFbilKjDwSj16SrOPm0Cyps/R60AS7TvfxTFuFAQn276FbhC5fcOfH
+	 eWqpCLNTqmT9Vkd6aItsRh0/K2ebnbeRRQrzfH4AC/giFBtXKhtt/jho2XDc981zEU
+	 +4mibibmncjOKy785ZQL8M+buQHlL8tqTChVhwP1KokJI921Mx0Gwm5bRqH+wo41Zx
+	 H8lLpiD/oYptzawpyr0eOAYdxqsTD/mBdMGpjweF8U55kBSoesE5I2DtBvjztVx7++
+	 MoCKI9a4W+Erg==
+Message-ID: <a9a2caab-f93b-448a-b846-7e739c143687@kernel.org>
+Date: Tue, 28 Jul 2026 08:05:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map
+ with modern APIs
+To: Rosen Penev <rosenp@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>,
+ "moderated list:PIN CONTROLLER - SAMSUNG"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260727194836.11689-1-rosenp@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260727194836.11689-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
-lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
-works with both OF and ACPI fwnodes and follows modern conventions.
+On 27/07/2026 21:48, Rosen Penev wrote:
+> Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
+> lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
+> works with both OF and ACPI fwnodes and follows modern conventions.
 
-For the muxed EINT path, change the error handling to propagate the
-error code rather than silently returning 0.
+And what is the point of ACPI here? I see no point in such conversions
+of one call while leading everything untouched. Add proper ACPI support
+with valid ACPI tables with ENTIRE driver converted, not one call.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> For the muxed EINT path, change the error handling to propagate the
+> error code rather than silently returning 0.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 81fe0b08a9af..5bef230f5bed 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -824,8 +824,8 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 			return -ENOMEM;
- 
- 		for (idx = 0; idx < bank->nr_pins; ++idx) {
--			irq = irq_of_parse_and_map(to_of_node(bank->fwnode), idx);
--			if (!irq) {
-+			irq = fwnode_irq_get(bank->fwnode, idx);
-+			if (irq < 0) {
- 				dev_err(dev, "irq number for eint-%s-%d not found\n",
- 							bank->name, idx);
- 				continue;
-@@ -841,11 +841,9 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 	if (!muxed_banks)
- 		return 0;
- 
--	irq = irq_of_parse_and_map(wkup_np, 0);
--	if (!irq) {
--		dev_err(dev, "irq number for muxed EINTs not found\n");
--		return 0;
--	}
-+	irq = of_irq_get(wkup_np, 0);
-+	if (irq < 0)
-+		return irq;
- 
- 	muxed_data = devm_kzalloc(dev, sizeof(*muxed_data)
- 		+ muxed_banks*sizeof(struct samsung_pin_bank *), GFP_KERNEL);
--- 
-2.55.0
+But why?
 
+
+Best regards,
+Krzysztof
