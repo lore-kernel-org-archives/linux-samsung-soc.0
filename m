@@ -1,115 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C5246BD5;
-	Tue, 28 Jul 2026 06:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D4842CB12
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2026 11:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785218743; cv=none; b=WKBodnIyEZsb3b2ea/X7gn+dQe6QlY5Bzc1+HkAkhEWs2tMhG1BcaWRpAqIeVVlTHGxQykho6ugtKarRGOJXQxcGyHMcDLue+TgpkCz6KsO5clbpW5a3mBLIvD4k7Ik2zagH5y6JITZUVVQWWpHEaZJzogBDIbWAIn996h616/s=
+	t=1785239571; cv=none; b=ADkdN18jmsEh0ivG9tE1QTykH2mejuNmmqtWxnXAvLEcM5CWC9/3zsMiyXkCpPk1OGFEUXjDEKl10gYgSIKY+zf4e/DxiiZ8sGkp8exmtVkcnj6Y3NBrAKiNLTsxOSZvcG5SvSwR2T0GCog48Ip5Y5CPJ960F2W24BSZ92tZHTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785218743; c=relaxed/simple;
-	bh=la2w/maOKNG532+j79DbVIrZtlFK4M353e6Ism3ie5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K6KBBVXgYAlEX+I25Vrh6lb2uWxOaDUpuVSifnfVuVBMTavKrcRLeL93Vjg+8ZOCx2STU3aSecWV/I+0bV79OfZd4gqneJjjpkKFZNKrF2aYZp/CIXIGC6srTJVGLVB0ix5weodkKdmbHgYhJXqoMdtV+GEODg1sIjLFW9P+Hmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxeYDorZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785239571; c=relaxed/simple;
+	bh=4v6uHfHg6/3e1DBLlJLCeyIQj5GYdGKmPUl331n9fZs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=GsMRLg/Oq12A0HT9Z4mINuuQJj8yfseem6Bqa9FzZp/iVxsMH6eS93l0psPKa/IDaMXXCbIGvH5IuKt/EOKzaT3KOZTWGyRevgqVmRqLU02aBKumracGu34EkwOxxB9ncXe/Yn9DaPK3qG61TOJaVPS55PpDjG6+1te1O2FHAcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XNDvM/Rf; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxeYDorZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79001F000E9;
-	Tue, 28 Jul 2026 06:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785218742;
-	bh=CbvCXbFtQpKu1PcGsiDIN+pvfvebjKSVVQajKdsn1hw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BxeYDorZA7jaEsrw7vvJEj1hGYSdtx4dlxDE6j4uAbywoxB/isKS3Rk0/pbZs664B
-	 MbsJO6GCIQRnnFbilKjDwSj16SrOPm0Cyps/R60AS7TvfxTFuFAQn276FbhC5fcOfH
-	 eWqpCLNTqmT9Vkd6aItsRh0/K2ebnbeRRQrzfH4AC/giFBtXKhtt/jho2XDc981zEU
-	 +4mibibmncjOKy785ZQL8M+buQHlL8tqTChVhwP1KokJI921Mx0Gwm5bRqH+wo41Zx
-	 H8lLpiD/oYptzawpyr0eOAYdxqsTD/mBdMGpjweF8U55kBSoesE5I2DtBvjztVx7++
-	 MoCKI9a4W+Erg==
-Message-ID: <a9a2caab-f93b-448a-b846-7e739c143687@kernel.org>
-Date: Tue, 28 Jul 2026 08:05:34 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XNDvM/Rf"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260728115242epoutp01f341bf652a09c46389f55b6502b7dbc7~GcexZr_lE1114011140epoutp012
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Jul 2026 11:52:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260728115242epoutp01f341bf652a09c46389f55b6502b7dbc7~GcexZr_lE1114011140epoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1785239562;
+	bh=AiB02Wdm7NldivtJgubd8uEDhXBzGC4t5y0JFft5kUU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=XNDvM/RfP7Jj4vhmLtoZb18UG53e4w9FlShD4p+tK0XJlvLh/i8Xa+vqDqSxDQc+g
+	 ZldKBTNh4/IPp/xhrxRN0A8j8A5TX6ywkJeY3Sn90kIB7INpQv5AWGS8OijYRhipyC
+	 hELNawz6iovzFV8DX4hGNrUJ4igN3ktyfoDJYEnA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260728115240epcas5p282c38caaf67285a4e6a2cdf52242f1f3~GcewPjYsV3209432094epcas5p23;
+	Tue, 28 Jul 2026 11:52:40 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4h8Yk01w5Tz2SSKY; Tue, 28 Jul
+	2026 11:52:40 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260728115239epcas5p218bc69194dc55a5087c363816396cd5e~Gceu_Inmk3209432094epcas5p20;
+	Tue, 28 Jul 2026 11:52:39 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260728115236epsmtip195fdddd41628afae8490b5e6330f51bb~GcesbVrYI2235622356epsmtip1a;
+	Tue, 28 Jul 2026 11:52:36 +0000 (GMT)
+From: "raghav.s" <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, mturquette@baylibre.com,
+	sboyd@kernel.org, bmasney@redhat.com, robh@kernel.org, conor+dt@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hajun.sung@samsung.com, raghav.s@samsung.com,
+	is.gandhi@samsung.com, ts.amit@samsung.com, pokala.reddy@samsung.com
+Subject: [PATCH 00/13] Add clock support for Exynos8855 SoC
+Date: Tue, 28 Jul 2026 17:40:58 +0530
+Message-Id: <20260728121111.2077860-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map
- with modern APIs
-To: Rosen Penev <rosenp@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>,
- "moderated list:PIN CONTROLLER - SAMSUNG"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20260727194836.11689-1-rosenp@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260727194836.11689-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260728115239epcas5p218bc69194dc55a5087c363816396cd5e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260728115239epcas5p218bc69194dc55a5087c363816396cd5e
+References: <CGME20260728115239epcas5p218bc69194dc55a5087c363816396cd5e@epcas5p2.samsung.com>
 
-On 27/07/2026 21:48, Rosen Penev wrote:
-> Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
-> lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
-> works with both OF and ACPI fwnodes and follows modern conventions.
+This patch series adds clock support for below blocks
+found in Exynos8855 SoC
 
-And what is the point of ACPI here? I see no point in such conversions
-of one call while leading everything untouched. Add proper ACPI support
-with valid ACPI tables with ENTIRE driver converted, not one call.
+TOP & PERIC
+PERIS
+HSI
+USB
 
-> 
-> For the muxed EINT path, change the error handling to propagate the
-> error code rather than silently returning 0.
+This is the minimal clock support provided for other IPs to
+be added. More clocks (MUXs, DIVs, GATEs) will be added
+as we add more consumers of the clocks
 
-But why?
+There are many other blocks, for which the support will be
+added in forthcoming patch series.
+
+Alim Akhtar (1):
+  clk: samsung: clk-pll: Add supoprt for pll_4313
+
+raghav.s (12):
+  dt-bindings: clock: exynos8855: add top & peric clock definitions
+  clk: samsung: exynos8855: add block top and peric clock support
+  arm64: dts: exynos8855: add cmu_top & cmu_peric clock DT nodes
+  dt-bindings: clock: exynos8855: add peris clock definitions
+  clk: samsung: exynos8855: add block peris clock support
+  arm64: dts: exynos8855: add cmu_peris clock DT nodes
+  dt-bindings: clock: exynos8855: add hsi clock definitions
+  clk: samsung: exynos8855: add block hsi clock support
+  arm64: dts: exynos8855: add cmu_hsi clock DT nodes
+  dt-bindings: clock: exynos8855: add usb clock definitions
+  clk: samsung: exynos8855: add block usb clock support
+  arm64: dts: exynos8855: add cmu_usb clock DT nodes
+
+ .../clock/samsung,exynos8855-clock.yaml       | 178 +++++
+ arch/arm64/boot/dts/exynos/exynos8855.dtsi    |  63 ++
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-exynos8855.c          | 710 ++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |  11 +-
+ drivers/clk/samsung/clk-pll.h                 |   1 +
+ .../dt-bindings/clock/samsung,exynos8855.h    | 120 +++
+ 7 files changed, 1083 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8855.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8855.h
 
 
-Best regards,
-Krzysztof
+base-commit: b4515cf4156356e8f4fe6e0fdc17f59adab9772f
+-- 
+2.34.1
+
