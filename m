@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5B7377A9F;
-	Tue, 28 Jul 2026 11:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5E43031B;
+	Tue, 28 Jul 2026 11:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785239934; cv=none; b=WicLY16FjmdWdc4O2yKcfea3JMlPjiKcmidAtLi0fOaHFeqF4IQwTZCGvikmpSOa8/NLUKgORa9swiU5RocSJzFmoiKnFbBqks35PZcehuggoa9p5KoQ4ByCLbQKJApr7AtOKYCpKrn8BsYxGSp8E3ao4Yl5uY2I/fCx2cNrTSA=
+	t=1785239995; cv=none; b=hK+V/8QqkWeY3WWBnM6ZHecbBPZoOv+KWIXhx/w/iHa5RRyNhhRr11ZUMp+myrUzPiEZx7ybhqTFzZ1REsYLPcQJTgRkxAJ/Soap7p/nPE7pgasvR8AwdfaABanwmjTvux9wDp7GB48zTTXwiySdGVrBAxkxH+vLXZ/8fz2zhuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785239934; c=relaxed/simple;
-	bh=LPUUz5uvfesJ+awJJlIQKRv7RRodtwkWMuVfRvOVm8c=;
+	s=arc-20240116; t=1785239995; c=relaxed/simple;
+	bh=OKW80cvujK1qZWYJwJa4ssNw7QpaoaK34NOMIxja00M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eWRE/w6UberOaB/W2l7v0z9PCWg3IEyC3upn5a9tjY9bUvYc7JJHuGx6fsSKoABwPT0R0NJobm/lpnsBfw4/QFxEJN7p/zKOQBi7RhBFh83wcpQSbAWfFloGO/FuciNdwRfCisrLLM10ygGf/7pDCVaDrSP+YNJxflEbFIS9VoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWsh+qus; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=FxBrG7cphCqd8NrYd8AVh0h2Uh728tc8ewJfmmpyTu48wmpQMPVyf2CZMDLp5geYcKlMWpnAjq1eNO60IJrwAYJmnYy7V8Adi347N3KjuF4VO3i/BH7bKudrE1if6D0SWS9QfB6anMXNBaSRBgsLNgbhXu3pRLJkEi6RKLnkm3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heJes8n9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWsh+qus"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 417541F000E9;
-	Tue, 28 Jul 2026 11:58:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heJes8n9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A101F00A3F;
+	Tue, 28 Jul 2026 11:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785239932;
-	bh=HkulgSOCZGvWgmFz9IJgFFBKyu+uGed2Tn7GqlTAY60=;
+	s=k20260515; t=1785239994;
+	bh=nalu+jHAn8oG2MOkOgH3K8VuqE2FZCyexEoTbT5+0qE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=oWsh+qusUKpDaopoUAxOKyZfURSKVUy24GdTuzPwxQ8pRWJlZgRKpZ0gu1Mn/Ef+k
-	 iD6tZJEaoGLU7zrkGltPx/vaMSHHLvhczj5ex3MJqpz+SaZ5DsA93D9C/aSbGyv7Vi
-	 uIQS5QBryja4estlgw/qIlxJUE2STR1ork7994sXjFQY08KhVLMHo0ChEhOYG1QHHF
-	 djzaDkIVuiaWmD6MTwfekN3M9U9FGzA+Doew7QgvqLitoPdGLaLazwDQqjdGq+DCoO
-	 4EUN5oaLOnhX9CF+493hJeA83UIFwWgPDLZc8CAv7kP1l9KtzKgQ7uJaA7JeJQF8Ym
-	 ZTQOk154RMfAA==
-Message-ID: <b2c668f3-addb-4c82-91c6-56651a601318@kernel.org>
-Date: Tue, 28 Jul 2026 13:58:41 +0200
+	b=heJes8n9WXaBrCl8l0ZCEgdYrwJB3O+6mzHN3jTb/GohegxXmHWdghduCMkCeyffG
+	 CmAAVTxeDCErzb6TrF52q5RKWCU2rauQljkFOCLAMol9Ze1tloLkSOT64AEOTRW8qE
+	 LVc3DIRJahiXfzwF4k5vpeUJi3CtK2gp5ncWvBWFW8cLpPT09G+BgF4cKPAnT7zqVd
+	 SQXbwVLy0S6F/SplKYdi4z0ekkjq0D8blAJua71Gq94WsbvDq8OClGovXMibQufQ52
+	 ZRnv3hWackEaR5V/AihykolL0BH40m4Vyk6YWyYHjS29fP6xN3HIE6+FsJHFbGyUeE
+	 C/G/fTi1goE/w==
+Message-ID: <8582d4f9-1a78-4f47-bab9-c52393dffbd1@kernel.org>
+Date: Tue, 28 Jul 2026 13:59:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] clk: samsung: clk-pll: Add supoprt for pll_4313
+Subject: Re: [PATCH 04/13] arm64: dts: exynos8855: add cmu_top & cmu_peric
+ clock DT nodes
 To: "raghav.s" <raghav.s@samsung.com>, s.nawrocki@samsung.com,
  cw00.choi@samsung.com, peter.griffin@linaro.org, alim.akhtar@samsung.com,
  mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com,
@@ -45,8 +46,8 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, hajun.sung@samsung.com, is.gandhi@samsung.com,
  ts.amit@samsung.com, pokala.reddy@samsung.com
 References: <20260728121111.2077860-1-raghav.s@samsung.com>
- <CGME20260728115245epcas5p2ffe1f7c31c6dd85161445d61a94e82e6@epcas5p2.samsung.com>
- <20260728121111.2077860-2-raghav.s@samsung.com>
+ <CGME20260728115256epcas5p38cbcfe68218d08301d237705388e6e62@epcas5p3.samsung.com>
+ <20260728121111.2077860-5-raghav.s@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,21 +93,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260728121111.2077860-2-raghav.s@samsung.com>
+In-Reply-To: <20260728121111.2077860-5-raghav.s@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/07/2026 14:10, raghav.s wrote:
-> From: Alim Akhtar <alim.akhtar@samsung.com>
+On 28/07/2026 14:11, raghav.s wrote:
+> Add required dt node for cmu_top & cmu_peric block
 > 
-> PLLs 4313 are found in the Exynos8855 SoC and it is similar
-> to pll_531x except for CON8 offset, so re-using code for
-> pll_4313
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > Signed-off-by: raghav.s <raghav.s@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos8855.dtsi | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
-Looks like name duplicates login.
+Please organize your patches in reasonable order. DTS is never in the
+middle, see submitting patches (both documents) and maintainer-soc profile.
 
 Best regards,
 Krzysztof
