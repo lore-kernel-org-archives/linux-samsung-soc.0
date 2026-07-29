@@ -1,55 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D525D3BB114
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 07:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9013CEB92
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 07:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785311123; cv=none; b=Ttf8K2aJjkac/Iumgxz+WyNgrUHJNVYmRAg+XD23W3ixpumIAnQZWu/v/9vHK+Icn8fRMetRS7EXokjqaojC8rmFsmG6wqH0yWerXoKQ5S0ED8q7GZ7sUZuGwYzwVProSWGrjKxlhT3acaP0BGCS0P8KGg5t0224eqVKEoMki7Q=
+	t=1785311229; cv=none; b=AUsFvp4mdKxJJDgPT+6UefHmmfgyVbFlRumWoM1s6sluHxZT59t0CJZlyYTERouN3TmHXRZQWSZthoG6yAGRN2/kRgcy7IT0Z0nUjXmlIsPMmRz7WgCKodoWWmQmQV0V5Mz9N4kC2KoWy2PhMk+2WYBW5t2ZAlxMJwKlOghRTeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785311123; c=relaxed/simple;
-	bh=njDMlwwUjrHXZJhnlxUW9cltbD62DWGi6t9OJ+YlVIk=;
+	s=arc-20240116; t=1785311229; c=relaxed/simple;
+	bh=CnDfjy0gxmr2Cbj6LcfLZcNzLV1wsZsbYNBRZJUebR0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifhHP0+1aZHfbxL31elUHbFyJROGj9z6HiMmUP5xCU5E/tGuDd0ApFm14E11K+c/IIlVH+aVea410d/lL5ekgmIFAmIV3JHVEf3V43oL7sBepXS7K/6M4GqD5s4W4bVFHn8Id8iY0m7g4Y9fpE58F+JRdxDMggf/vknYow9kriI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvJbwWEk; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=kgKCpi/sPIM/Zi4WwlsnC0diFfrIPloi/oosYU/vke3PSyGGj0MbB4Zhs11Q7ps1UBD64+oK9CwDBxZuy4WVoAI6sSA2XCpDUhXXHB6YS3bXJgNZArXcZiYuAgjhM0pAXrEwYvs1BuxPG80pGEiKV7VCc2k45yt9mBnilTJL53s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvM5t3MM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvJbwWEk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C691F00ADB
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 07:45:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvM5t3MM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1FA1F01558
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 07:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785311114;
-	bh=njDMlwwUjrHXZJhnlxUW9cltbD62DWGi6t9OJ+YlVIk=;
+	s=k20260515; t=1785311217;
+	bh=CnDfjy0gxmr2Cbj6LcfLZcNzLV1wsZsbYNBRZJUebR0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=hvJbwWEk1wDJE7TCgcNdKpdwDRIu1W6PoTdSnh/RV+9zK/l5333jglBvwZqAhBLth
-	 5ft4NXICyK5+5IOxAD15zNN2jp0ZSZE5qqrv5BJ0TzcOALo1M5wJWVrnfLTIbG97EW
-	 x1pigRMhyySvq8qCu1mLfOziedjFqgp/aky5bia1NM6tZ/YXx8Krjtav79gRWMHHsF
-	 D3YsgHuItwfQKADUz+DyvPUAQt78+sAn8YsCZosaN6wEqZcQt56SAJZUgzdHh0kMBM
-	 Nuop3BaKf5rGk2PRnBdFd8xyzWJ7Tryq8nahuHIvcQZVF9rLsIO5lrZ7Vo7RJZsXaO
-	 e2G670YdDUyMw==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39c94fccf3eso4625321fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 00:45:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq53I/is9ksgXmMD8jLPvxm5SCxyCMDVKofwUwdwba6hkVf9sMvnzDS+bvKHvtgsLEyFJdLdCEbGuhG7G0UT6SoqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhzgUunzz9JAQRQa6QTEM1+4eSDMvJ7JBKFgy98SmBYZT0gGGh
-	uMZYhMlsQ/f9nrsjQwQBUzYlD5rS4BVpM9XosQxJ7YA3udkIElFyWLC4R4ZdFQ5Qtvadf8o1kp9
-	XrIJeysx419Yz8hWFpzMzD3MWUsFoNc0=
-X-Received: by 2002:a2e:bc82:0:b0:39a:ec7b:6ccc with SMTP id
- 38308e7fff4ca-39f51e7e76emr9843921fa.27.1785311113316; Wed, 29 Jul 2026
- 00:45:13 -0700 (PDT)
+	b=lvM5t3MM6nDk5hVkfEOwRkMdNOBrGPKLRBo6ux+gQ467XT57j/sG+HYxVUCBOA3AW
+	 AaycBKXlGzIRFgvne2Pj0MI59TjkQ9+kSOCdU4Ck5CL//eWIJtk57qEg4gK4WS+PMP
+	 +i8JWnxi3JnLA2IZjC9EfxIFSFbTG7O7yqztY3BiX80eLoqZKtmroV5O9SIME80hk8
+	 xfrzITmVVmOLpfPCLVGnpxDFU6EhDdtrOguvKQdNBBwDQT58CSzAtIQtP1ovJPs1ec
+	 941kovFt46XtrOjw2CmXnSS85I5BP384Rfz8YdULHeFVlbD1/iVWggOy67J6m0gqU+
+	 c6x64oI6CyJnQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39c8dbf4ef0so4923841fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jul 2026 00:46:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqDl/h4vE7y8r73EqvsxzLHPTaX9MnWmlZG5TDAKg3pTKRYvqjL4lZpj1peAGazqp78TwFnOsf4yNGYUpBREJBRUg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+TLRtympXzt/Uhmzs11MF4C1KKoRLkUIT4RJPlpnFUJlP35q0
+	YlZQhDnsJHoHJ4g3/3yl4nKEzMratZ0cTtHI6gU51YPSKBxVFqn7njqLAwyKiW/AedxiqM0Rmnx
+	I7qmx7JZfV0kSA3CY3KJZfkrhxbMhX9A=
+X-Received: by 2002:a05:6512:3d28:b0:5b2:b7f2:f7fc with SMTP id
+ 2adb3069b0e04-5b2d0274201mr1124477e87.59.1785311215686; Wed, 29 Jul 2026
+ 00:46:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260724-zinitix-modes-v1-0-f6df7d86a878@disroot.org> <20260724-zinitix-modes-v1-1-f6df7d86a878@disroot.org>
-In-Reply-To: <20260724-zinitix-modes-v1-1-f6df7d86a878@disroot.org>
+References: <20260724-zinitix-modes-v1-0-f6df7d86a878@disroot.org>
+In-Reply-To: <20260724-zinitix-modes-v1-0-f6df7d86a878@disroot.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 29 Jul 2026 09:44:59 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=QfXJ78pfKy1hV6wGfSYzERUi=-nmqjPfMiXr9xk5+aw@mail.gmail.com>
-X-Gm-Features: AUfX_mybtqZ1t6TZw4bPWVPdjZ4BP7r6xZ4c1gUK05ScOPIPKt8w7HC1bwxjbdw
-Message-ID: <CAD++jL=QfXJ78pfKy1hV6wGfSYzERUi=-nmqjPfMiXr9xk5+aw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] Input: zinitix - check all available fingers for
- every touch event
+Date: Wed, 29 Jul 2026 09:46:43 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkRsHTL-vy0BcKL80onEocp3Js7UKgx=kKqFn8DEH8H8g@mail.gmail.com>
+X-Gm-Features: AUfX_mz6x0cLcw53qb2d4v30_RvCZ1PIlNE2O6iglWvSmm_YIQGxQudd43yM1KA
+Message-ID: <CAD++jLkRsHTL-vy0BcKL80onEocp3Js7UKgx=kKqFn8DEH8H8g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Support zinitix touch modes 0 and 1, dt changes to
+ Galaxy J6 (j6lte)
 To: Kaustabh Chakraborty <kauschluss@disroot.org>
 Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -63,38 +63,14 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Jul 23, 2026 at 9:24=E2=80=AFPM Kaustabh Chakraborty
 <kauschluss@disroot.org> wrote:
 
-> When this initial driver was first added to tree, that is, in commit
-> 26822652c85e ("Input: add zinitix touchscreen driver"), the touch_event
-> struct had a field called finger_cnt. It was supposed to report how many
-> fingers are touching the screen.
->
-> But then, in commit e941dc13fd37 ("Input: zinitix - do not report shadow
-> fingers"), some touchscreens reportedly exposed a bit mask for the
-> fingers, instead of the count. So the code was changed to bitwise
-> iteration.
->
-> With my testing on the ZT7548 touchscreen of the Galaxy J6, I find the
-> former to be true. This shows that there's two valid methods depending
-> on what hardware the driver is made to work on.
->
-> One solution is to implement both methods, and use some flag to select
-> between the two. However, this introduces more implementation overhead,
-> and a possibility of regression on devices the driver is expected to work=
-.
->
-> Instead, unconditionally check all fingers. The finger_mask field is now
-> left unused, thus serving as padding bytes in the struct. For each
-> finger, zinitix_report_finger() is called if the status reports the
-> SUB_BIT_EXIST bit, so phantom fingers are not going to be a thing.
->
-> Moreover, the android driver [1] does exactly that, so it's a tried
-> method of implementation.
->
-> Link: https://android.googlesource.com/kernel/bcm/+/23d376ef33aa4c500a5ea=
-24a290f029d5f8e2de3/drivers/input/touchscreen/zinitix_touch.c#1942 [1]
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> The zinitix family of touchscreens support at least three modes, called
+> 0, 1, and 2. At least some digitizers (including, but not limited to
+> ZT7548) are able to support multiple modes. Currently, the driver in
+> linux supports mode 2 only. This series aims to add support for modes 0
+> and 1, accompanied with necessary architectural changes.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+I wanted to test the patches on my hardware but didn't find the time,
+anyway it all looks fine so it's OK to merge.
 
 Yours,
 Linus Walleij
