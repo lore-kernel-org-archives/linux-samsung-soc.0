@@ -1,70 +1,70 @@
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D7B3D0934
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 23:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCCE47ACC9
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 23:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785454418; cv=none; b=KGg6B2H8vY3nZPUxfKCva4gW3K2wYHBc/2CKUjRui05tZw4vJ1nH0hrQVWZ6hAC4Hq4QdPn1APXfgIKcQKJtvY9983AD/5Vl9MJrG5B2YcMM9CtBbnzYSYJPEHhxQ1JsGatt2HONocLEDcQrlSOanVB5TaViTK2G9ryUQc++EAw=
+	t=1785454501; cv=none; b=YoB3p2lSpwztwqm9zR9T8UTFkrBuY3V5k+QYux1l68j5KP1U3jfmKifBo9g+p3g1O7RhbfXF06U52qJg/Plej8sqzzhw7ZHiarV3DmnqevCWPIgA81DStG5LEAPjBs/AeFxARewkDkB0GuyoLWWNIs/yChRN4r+6AyiD8ptDY2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785454418; c=relaxed/simple;
-	bh=GPZxIJ12NCdT32FLt89aeHS/XUCWgFohujxo0l4BvtQ=;
+	s=arc-20240116; t=1785454501; c=relaxed/simple;
+	bh=utT5GH8JwJmVzB+0txH3Mifzm/70gcqs7ugOLa5BO/c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fcue/d8Slud/IBHfU7+3+O913mCEq9da5KLihoGxYWSxosQ/g5xNV/KFtPLKr9DU5EIZYcqF9MB19yk/iwv3UgcmdOze0zK+d5gYhPAElUg9tKizQJRskEKqOIq3w/PYHAcbeiZvDkSgwFXiIrWMmsMS2pskaOBFDD143Wbq2Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ktCjQltn; arc=none smtp.client-ip=209.85.222.49
+	 To:Cc:Content-Type; b=uZmdDE6f8uTqmzwXncQXuKjM5dvJpMCAk9GFNIxy+zLhc4E+RHQ1dMD2rmn+xHfKJAw5nlSVNEO0/CVhiONKEbIcpPeItFQ9++zEeNmbBdEiWXUp60gz2ov/u4Ti+XO56opuVj820avj2FhwyrlXerBVl2Rwxmv65u0RiCRc/FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VQfHBkdN; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ktCjQltn"
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-9673385b1efso91983241.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 16:33:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VQfHBkdN"
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c2c0e261aeso143034e0c.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 16:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1785454416; x=1786059216; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1785454498; x=1786059298; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=1swx6ZS7vRHB6s/IgYx4mgkiMyCPAEEjNZGLF7mxwyE=;
-        b=ktCjQltnEtWDxdD3PtmZwcOA6myvZk7w9Oq5rnyA4+xrjxaugP2UH4EZM9BnqKmI8E
-         JHOxQgXyMTX1Ui4ZHj3si8tMSKNKJ4HWY5JwvN8JNzek9CTCPfa+5xcKzI+/LEJPCSU1
-         71JplxZ3fEvproXIJw+hTaiy++bZGjKwOYxHs=
+        bh=N7GFN5YpwDEZAtAP3vleYwkuNsvwAGPeTkmkPSkEkzs=;
+        b=VQfHBkdNKjKUDf0MG1/8Q4V+0baxVxOi+IrQn2BH8Hn8Iphk01UT7Iq9S6ucvYKTYL
+         p2n9UvdMErXxl4/lXJkgL2aY++JjMjyx/24isjXt+Lp/MRI6+ALPx3XWDv0tlyA9x2mt
+         FNRQk/sMv/ibKhlX5UGC0vJ2jWv0LHWsGlFoE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785454416; x=1786059216;
+        d=1e100.net; s=20251104; t=1785454498; x=1786059298;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=1swx6ZS7vRHB6s/IgYx4mgkiMyCPAEEjNZGLF7mxwyE=;
-        b=Lj/I46+CMVXLFZ900F1ec+y63BbQEfdp4mrphiHes26GzuKJUOxtzVFIC4LbhrvxnN
-         ROAe3JIIF2ccpC/Rxc/pO1DWTmzN6aXH6G8MGUcoNwvFTUvRJlEl/VNfFaexRa0Th/dM
-         IqL2Rub/40+uWSk97wDcmlWtavNWvN5vhqGGV6Mq1SXXiGqfcPbbfGg+cDrfrIKNnYo/
-         rMDGKYSfnaYo9DqVkQnuFqXYRTIHChd6T/cpolPO/24eGtVJBtYUHelsCiqBaYEqhvQ2
-         vdSi0mzjH2QApFt+kMwYZq99mCBr1Qde4Qezos3MImWTDY/TnhuiypMTEf8LbNPB9CxX
-         l3VQ==
-X-Forwarded-Encrypted: i=1; AHgh+Ro7vXwrWWC6Mhonl/KmLoyW/SHU3C2+a9bEELP8kBX1opl0LGfzcgEwhk3QQUGKL7REz4PDFdMd1XfLb2d6rCgfCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYsFuHLzYP5hQ60ZsAjyj/wQgA37zfJhH03M9UP/d4EA9HAAKm
-	/JKlm+ygIE094Ept5wD2fuFSEPvgnjv2PCdyArt5wYTKCwZECmPNIOnS+WCL9vCnTZ2puM9oK0l
-	iXTs=
-X-Gm-Gg: AR+sD10K8qdZfO1HnFncxBg88xW0AmkTloNCipJSeIfvdsUeWj16u+2CHXmDZt6IB2g
-	wzweSuUAgnTfF6Jyd/LytdSHP/SxWtKO2Ain+jvnc/8zhwj7xQ0CquUQmlgEX4yhbXHrc+Rr32a
-	rPnM1qzHExB0r83uKvwDYxsqXIE23IZ38DGjMBs8bUeFA0bzEIJmMqxLCt7M5VmbRj3KSxYJkPV
-	FW8ssiIDXJXO5QFVcAEAW6vE+/9nNBoDRzcK2hKej6DTlwDhTQwykV4VnnZni3L+zzxEGrcNGOn
-	V9Hv7/+GBtLuHkYsv/MkWDmCueZBYc4cQB+RNoeCQdRJbmVXDkjoklpQvBvnYFI+k1YipyljySQ
-	F7JD0FuGjjGe12SoiAUv08L1cEmc0NWmnuJVm250qeLFdy7OC9VX5vd0xro7jYdZJ9huCejL5X5
-	IyxMP9KZpEQjA8JEgIywFRIrmBTs5GWFt0zEjxPd1oOKDwtej4YvVedora3p+Si8UDPm//wFNTD
-	Px44qaLEDrprGqPkkmDdbafTpY=
-X-Received: by 2002:a05:6102:3708:b0:6c2:e290:cc69 with SMTP id ada2fe7eead31-75750786c56mr1614011137.23.1785454415795;
-        Thu, 30 Jul 2026 16:33:35 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7575bba4f9csm2219382137.10.2026.07.30.16.33.35
+        bh=N7GFN5YpwDEZAtAP3vleYwkuNsvwAGPeTkmkPSkEkzs=;
+        b=ZUo7Zr1x7sxhM/9vhAvfg4ViQ/LhsIoaK+z5/v/81VxEHd21O4yxiqakPQEnJ+xsuW
+         TMYYS5jzivmc2/n1g0mtX216Wx3Fl0+h5mSMEX2DiTyvDCsRK8H+hckGGRh5xV/xa5IT
+         SzIE23qRtGFpwdt1pj2pBHNzepESrRNdG70sQ32L058urLb+vpMry5mNRQYX878aDRzy
+         LvZH9cD6j6HQY5FBWVuuUXHO8eAzOKeU+SIHpMFmniG+OJ2jLWqlA04PXD4Dkv3rGXwD
+         K2oHr6OlXxtAMFdU7UjxkupnWNpHiLDBEV/ijJYDuI4Ol01aHMQ3u0lMmp7U2EKSXAKI
+         dnmg==
+X-Forwarded-Encrypted: i=1; AHgh+RqoYPZOMvrt9XDiHYWofY/7E6O9X4ACSZPJ5yp4vj2Es6AJV25MdRAEn5Z/Rrui/vQRM+h2T36RiFp/sP62iJUvOQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBLhbcYjbZXV/mpPbLBamZreowRMUFoAy9Fv7uFZyqqi1afoWq
+	lGqwiPApO/yHHRy+wkOQ0yCduIGkIpCvgYNQs20sj/uHmFS+MOIyYJo00MmQ5+IYwmT90ZGZbuO
+	xKHA=
+X-Gm-Gg: AR+sD10XPZcqdTlCAdnTOkwrmwdkx24y32riy2KHFnbEAk/N8IrfOjZX6/7h46/ykHm
+	+ozpuLPv/rC6IxJaQ05qKL5IksEoUDDDP1bIptoQnljya08eNzCwvTnsi2aY4fgZqjtv9taQHZZ
+	htQm6x0FHhJKNe7UkolHJhdH5xdSVOm4MNSwyjBYuf+liGe+mnv2bd3qFmG8q1tDZGIED/Ubm5u
+	fzh9gy2+AYoq4t0HERAbGUhLNHgan0kNSLhWTf9vpTtUXkM8g4PsazeMMACEzE7xx6z8/kcVcVG
+	pRCZb5AxALgm+pZdrZmke1gbUtrphEzfG0/aUz7P2BBZhuto1/2Y48SD9B8VNpaecJXnempq3vg
+	xNbdmnYJ+c1pgfsF7+eTecxZd5sUdX5KvA6NgOAOd9Umzx0R8rlRInmTYXjAHkYioOOdtK4h6GB
+	ZigisJW/GRXChVH+N3xwf6uF8QW5EwcYylB8MdQrpWSbXX9HnHTnLDKAkPxWl8XzapmXZQvneHo
+	aIuOzY7ZkbMH5BMA1Ehf8kdOks=
+X-Received: by 2002:a05:6122:3d06:b0:5bd:86ac:a847 with SMTP id 71dfb90a1353d-5c36603c111mr1510472e0c.6.1785454498064;
+        Thu, 30 Jul 2026 16:34:58 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-977cdb56d1fsm2250130241.7.2026.07.30.16.34.53
         for <linux-samsung-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2026 16:33:35 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-977bbf2eb3aso75262241.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 16:33:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrhyNB3aV0JHQP9kZNlxvSNBUEzY+ecKCOO5EFbXkWv5nhlobqVQv+OrFAC0Wrq0KLUvokTEPo2Viw4az1X/PgJsg==@vger.kernel.org
-X-Received: by 2002:a05:6102:3592:b0:608:9a34:c8ea with SMTP id
- ada2fe7eead31-7574e6d1a1amr1650546137.10.1785454414391; Thu, 30 Jul 2026
- 16:33:34 -0700 (PDT)
+        Thu, 30 Jul 2026 16:34:55 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-738bcf9a573so132544137.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jul 2026 16:34:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrYjXLfJES6yDfa7VGeEHGd+cFVxZ0+2O5EQ70qRnJVBWgYbEH0bNf9Kn06bN+FKVs4KO8luKMZPNq5H7tTMC5M9w==@vger.kernel.org
+X-Received: by 2002:a05:6102:511f:b0:745:78d4:4856 with SMTP id
+ ada2fe7eead31-7574e1d5298mr1438306137.7.1785454492526; Thu, 30 Jul 2026
+ 16:34:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,14 +72,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
- <20260722-contrib-pg-pixel10-initial-dts-v2-1-3abae9717feb@linaro.org>
-In-Reply-To: <20260722-contrib-pg-pixel10-initial-dts-v2-1-3abae9717feb@linaro.org>
+ <20260722-contrib-pg-pixel10-initial-dts-v2-5-3abae9717feb@linaro.org>
+In-Reply-To: <20260722-contrib-pg-pixel10-initial-dts-v2-5-3abae9717feb@linaro.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 30 Jul 2026 16:33:22 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X32DiN2X26AutA97cpmywW9C3-76p-crT8sSQ+XqZNZw@mail.gmail.com>
-X-Gm-Features: AUfX_mwLrAK1Nx-rPTyOqhPQSXAd6QqwkRvKOTa5fFmS8RMZbaeNFVMG8HEBq6M
-Message-ID: <CAD=FV=X32DiN2X26AutA97cpmywW9C3-76p-crT8sSQ+XqZNZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: arm: google: Add dt bindings for frankel/blazer/mustang
+Date: Thu, 30 Jul 2026 16:34:40 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WWpswZ0LbZzpj6RcyRxYps1Ht8+w2TYTviTw4bo80KZg@mail.gmail.com>
+X-Gm-Features: AUfX_mxnuq3KCnn0XeSL1ZB4QNLigMdFRjElx75voPzjUsE6soU8Kl1B5ccPok8
+Message-ID: <CAD=FV=WWpswZ0LbZzpj6RcyRxYps1Ht8+w2TYTviTw4bo80KZg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: defconfig: enable Tensor G5 SoC family
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
@@ -102,33 +102,14 @@ Hi,
 On Wed, Jul 22, 2026 at 2:56=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
 .org> wrote:
 >
-> -  # Bootloader requires empty ect node to be present
-> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
-> +      - description:
-> +          Google Pixel 10, 10 Pro, 10 Pro XL (Frankel, Blazer,
-> +          Mustang).
-> +        items:
-> +          - enum:
-> +              - google,lga-blazer
-> +              - google,lga-frankel
-> +              - google,lga-mustang
-> +          - const: google,lga
+> Enable the Google Tensor G5 (Laguna) SoC family in the arm64
+> defconfig. This SoC family is found in Pixel 10 and later phones.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-I'm not sure I really want to make a big stink here since I'm
-certainly interested in getting something landed. That being said, I
-at least want to ask about the "google,lga" entry in the above
-snippet. "google,lga" represents the SoC and I don't think that's
-technically required in the top-level compatible string.
+In case having a tag helps:
 
-I had a previous email about this that essentially went nowhere [1],
-but I'm hoping to continue the discussion (along with other similar
-topics) and Plumbers. The essence of the question is: how much data do
-we really want to jam into the top-level compatible string, and is the
-top-level compatible string truly the best place to indicate which SoC
-is present in the system? While many boards put the SoC here, I don't
-think anything in the DT spec requires it, and I'm hoping that we can
-stop doing it for new boards. When/if we need the SoC info in the
-device tree, it seems like we could put it somewhere better...
-
-[1] https://lore.kernel.org/r/CAD=3DFV=3DW+jE_L_LLgAhD8K_4+CtivSD9-9t7Xe63X=
-uKrKjfyfeQ@mail.gmail.com/
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
