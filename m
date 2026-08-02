@@ -1,208 +1,164 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765393ACF02
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  1 Aug 2026 21:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785618241; cv=none; b=VQ2ii8QQKFl9HDlIqTfvFPIBZfQOICScpt/hpcVW9HYuCIX8OOhNFUq8av5NwJXPCfcSySU+gH5goFHtIGuKRm6v0txsjFPdlWQc619iVTtCfVKuQBLkJoBnVMbgKzfDr35etrySKRaajm2vWevtcRyDFDKtdaJ7UzkJorTQvbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785618241; c=relaxed/simple;
-	bh=Bp4EO+bL5yc1jZYaDdyI0c+3Uqw4Url/keGMxlMQDoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQcjpw6BDXvdfw4pDR/0BNAO1krPEht0mWxZ+qPyxU/KV+lBrfdoXPYLfW9qiKC79+yTYBLgBSjUE3uc0+GoZ9TxrNm9Iimzh9muUbmuQo39NhFKpU040GmacXKwKNbSP0pX2fHkHlMgnUsR7Xsz7hEh9sc/BLutNkGcXq1ZOXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IxbSIwng; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VK87RfXh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD9A2EC09B
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Aug 2026 05:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785649665; cv=pass; b=cl+dr62mjpOWeAIffGwuAocIWJKuBczT7Jp57E5fOsO5T1t8D++UW+peZoYFu327o6TvyLBmBDqAn9A9pPxuD5GP/U72Mzlrzr3FB864DNM5EfC06czQWWCCwBDz7+DvOnP7vU4qaRRSghKgeiN8SOUtE+rdpfbY06jOw6l/XYM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785649665; c=relaxed/simple;
+	bh=A3EKmqxDfDj9NzHYNFgi5ziJ7Vts/80fa0UITXIfN2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SWB7pBfiT8jvgv5qYmlisFK0T/RHmQlG5Qqoq+s0/riI7R+DoG+HpgIF475uc+y/T7QFDMnvYCmmYiegyphxyC7IcW2Cz4Y9pBduES3uFPa13/S+f77Xyn5h80m/9SQUGuUBMWbHRFJWoiHRCKb9tH6dCTAwkdojommsW2UBnCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuMsNX+w; arc=pass smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IxbSIwng";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VK87RfXh"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671J04M83716865
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 1 Aug 2026 21:03:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=ibK6LqHgzG36kXmtKtvWY1wFxjnZQMKpesV
-	apeRPi3A=; b=IxbSIwngJQb/kXU30FA31RPgbfVa2rRJqz44aUQNYRF0640TSeV
-	JCjRyhn2JHTZpEmgzkjA+af9xAUZKXBfAxlRbbp/gmjGBkpq4Ib3Ref2wswwFANm
-	pOLi6k6Flew6rAEJBylO4/6aZFhbYSt59KnKHsacBKLz7+ApByuJLFVF5VkEonLW
-	6NqXQFROJT8/N5a466ny87qbHHaXFfSsnPrhdSt8k1VtdRkukrRn/u5uqogAlit2
-	QK6z8BrLZpeS7K618X96/91nYKHcRmMtMibaAsj2hjPtxtWT2cfPtS/Pku2/RVQY
-	OOxSpr8uWW8Tx/NUSJixg6aydO/Ltv6Gh+A==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs8r6hqus-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2026 21:03:59 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51ebdfceddcso23164401cf.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2026 14:03:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuMsNX+w"
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-59b074ec7ceso884931e0c.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2026 22:47:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785649663; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lJaV+MylAEDISUK/g+bkODCJSmU6FHIu40SRCthhsYaC5ecwP8K6efUFH7RC2PbwWh
+         3jcZcQIiX73uqwKdqx26BFX3IChwprZ/fE1e30NWX8wqnRdPvA7I2Gn2hrrLfrXki3q5
+         A5hs//yQnbUE1pJ++A+wybeVxwiVLzuVvaIqylPD36iVc349qHppcwytD7nCXRz63Qwx
+         Q1tz+c+jR+pFrAEd0oQPY4IsXm9PKhvFjoRA1PWQF8cMRxadwRYg+6mhQ2s5/HEAhE5U
+         1cU/56GPECRx9lumUin5ub9g78epT0Y3POwJcnMTnoTz9L3MkvtFdZxyEEU8i5XBx7ij
+         XlJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pzUc3cu7eYXLZesTw+qzStppD+6/bSKMRwSOeVVbqx4=;
+        fh=E9Ge8NmM1j88JilT2XgaA7szs2EwCQgfmka2p6HswH0=;
+        b=sJJZjer79o1zm7ZJdX858Xt0CU0MZIqZJh/6Y+NQurPJolIwE0KrvmZW1wsV3NbTeo
+         VGzQIcmT0K0xbm5gY9yu8weYa5fuT43rwuI3r4P3pirKU1GHKWJMQL3ojFnUWJk0HRT3
+         eKsJL/9NqIHgX2EB8TBEdov3rSQHzZDIHI+NaaRq/s+M8bd77EFSK7+W+q4cn8NfuovH
+         UGXIGQobF9wTKiN2xGF4BXxNFhDOGtGEpxUgWA3GOzeWLcjal9o4AKSjXHNNGHmfwg02
+         8QYqEaEA/LC+QYyfiU+jpxplst7uU/zhFkoi9ipqoXvckq5MZm4ekAsZTfvQrnnzWvTg
+         OCAw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785618239; x=1786223039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ibK6LqHgzG36kXmtKtvWY1wFxjnZQMKpesVapeRPi3A=;
-        b=VK87RfXhO8CBAzwQXKGnyOCmZnZ3SM1eqf/NTB860+JwRbdCeNQGgJmaDHd4LYkUxc
-         1tsScTqJ4xGowlsr08OsxRk6hds3vnRjuuVd9pqbInQ+eD2NeUffRjmROYxgG+4VTexf
-         A5cGsb2bnxfXGzAVFwe6xK8Z3cpRWx0cLsYBt6Pg8G7/fPEj3Ff6ovGfdUP5zZuwNWQs
-         BGwfYf0CvZ5nbhSHuu+sW0fNdsjn2N9XXV94UK2jOZMjXzTGIyiOzRfNlTHqQN2TF/AL
-         WQYcN2JbzzITl3yZkJlFKf8t2iURqAr33jR7z2srig7PufCYJe66LZ1jL6sWodDN7/U5
-         5GFQ==
+        d=gmail.com; s=20251104; t=1785649663; x=1786254463; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pzUc3cu7eYXLZesTw+qzStppD+6/bSKMRwSOeVVbqx4=;
+        b=OuMsNX+w0tZoiodpb7uQYn7mnZeYfa2Kqetutnj6ALM7h6XJ35PpkJBYNAtnWLVDFR
+         ns7fr3TslQ9U2OHVEaJ3Jjj8tQPOMIqwC3Zo3UWscd70VDAznLfee3XjAscXNPzUZX53
+         GrO9T+QExrO4WYJCtxGm22m/sS8pxsbm/hs2mRZbHUuMj8jbzYQGJbqAplvXFeb2oi1r
+         ipaaPlWLSeac2n5NGSli0TxWkne75PqZg/ddHhZOMkz8acBzwbkjG0wTmUQ91rVl50Cu
+         YSMJgrpirLFKChiZUlysLu3SLkPfHV6KbBpzuLw4RAGZiokDvm8K7AFsO/ibEfVMr2X0
+         vh0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785618239; x=1786223039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ibK6LqHgzG36kXmtKtvWY1wFxjnZQMKpesVapeRPi3A=;
-        b=AqbcLtl0gJrUwDV4CnVvFjEBSZxjEUsX3nLAWu9g2ogBiIEEH4AWPDyY51HU2Rdt7t
-         aXneC5bjEExs0FNa/yM+fde44l2C7rWYbOCue21QSftmJRoDluW5AxbjM+KiuPk+4DBd
-         8/q6rdI5/R+7tXCmoDqpAydyrPD1nImCC5XyrmNH1fxY/7Otd0CUl4n6ENYMGysARME7
-         XuIyPV25Pe5QyPNQuywfwJVln44doCqSLDJaZNtDWJGu8nCUOHMv0wPNbHDSo67GIIWj
-         uOuSNp3WpkLgtSOPfKAJzOcDqEAgSdDuMd1ooL2AGEm24Wbh/E9nIAlKs7/Vs2J5xb+J
-         oqwQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrcmcqH+bvgR61tnwXlcManW1dBI9OFXPZ4S01Sz7EBJfhPxbWxeAyjme4fTCZkNzc+ov+CWZuU2LdvmCemYCtddA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHt+hmDrjKGRqTJMn72kqUhCAJBLWv3jTbHyCjOPh6Tnjo6APh
-	RJMXXMMnh2aHx9UjgvjNKgdtAIQlpj0lvWjUU1Zlv7KX8T2hvpQuZSAogEBLqEIwNC0QtQySLVe
-	YOXmsy4fCaEcIY6iwNphwqHLHFgmWUV9ngZwbUge/vtxNInMyosYEH3BORiYY+LSS5dFJO3d6Iw
-	==
-X-Gm-Gg: AR+sD122nIoVYAWLxMr0lQWhN35TTD2IMyg5OgUjmi0/zheGMzW8RRpDGc4FmauREqR
-	8WPfYvn6ncVzVEU22zFGh1q1lETk3Fk1SHnc6a7idx+FsxqoNHA8C2t5Sv/Wge3J9RbIXOQkxlR
-	kyRmENqlP+oCAFrkjGHpsL70Cr3k7QmhuF3d8sNa+TP4OXTCWFdvjaXHxpUjgjXEtps9+0/Uyoe
-	MOBILJR2lCSWWyaQ7bjtQXq00nv18RzttBKEMswMj3F5NXsG+K/uXhCl68XD8LhNor36IeN0m8N
-	zM0/BXooAcjv7LJkKzQxQCKzFXONjQ3X8pDYcaVWVqxUkcbMokdZqk1JKeYncMwTRg8S6R3heHf
-	rdnhJKMpqJ9AQsMUL
-X-Received: by 2002:ac8:690e:0:b0:51b:fc67:c73c with SMTP id d75a77b69052e-52b566dbe08mr113236221cf.16.1785618238850;
-        Sat, 01 Aug 2026 14:03:58 -0700 (PDT)
-X-Received: by 2002:ac8:690e:0:b0:51b:fc67:c73c with SMTP id d75a77b69052e-52b566dbe08mr113235651cf.16.1785618238347;
-        Sat, 01 Aug 2026 14:03:58 -0700 (PDT)
-Received: from quoll ([178.197.223.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd41d1756sm17747602f8f.4.2026.08.01.14.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 14:03:57 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-        Tudor Ambarus <tudor.ambarus@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH] arm64: dts: exynos: Correct white-space style
-Date: Sat,  1 Aug 2026 23:03:54 +0200
-Message-ID: <20260801210353.383880-2-krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: git-send-email 2.53.0
+        d=1e100.net; s=20251104; t=1785649663; x=1786254463;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pzUc3cu7eYXLZesTw+qzStppD+6/bSKMRwSOeVVbqx4=;
+        b=O3RuCIUTfZ6figeJpUyDFbHN0ZN/h8w1ZOwhbysOy9DtrI2CZARvbbHa97A5AsCkgO
+         Pzz49wRarwz1kmRHRgVMALqSY++8/AD2xBSqyDZd5ctipZu9s7BdBaerGsaurCWGu7KL
+         b25FzjHyoqe8UeJ/V5N5ddDrDHP2A8Rcg5We5CYv22ua8f9HFVyXxHN7t5YOgVxbxWE7
+         alTH5Im/8nldcdFDWtZ2/nemZegJOY2+o3+lkFYJU+HmGDYt38Q4/q4SKSDt1ZvvhpBF
+         bvYVFLtE3kbPdWrmc+/fzPEGqtAOLwhBLhXYhZTLZtU+jUBnS+nO5ESSYQEfX2GLvKp/
+         ZHpQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoxFhw33AZnEHj4vEM85zO7wLYamKRh/OdY70lj+BpKZ5cBfqM/RUwxBsA0jTPh494h9v+zXZhlDk0ZOYJ/rzCDHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk7RmjaLawxRGTFZeoEr3wBFVWxtwGOdW8YlDWZsLunWQf75er
+	+PlLl0D1SioSrUi5lPonnSUzLdGNxhhgZeu1GLRqxJ/Rsd1Vey9tBIrfaBFbYBkm+8slgSFd5yF
+	vhMjfuWGV/eA1/lBqWTMRxhqGF/Z5rmU=
+X-Gm-Gg: AR+sD13CwKXzMAmtSzsRkDwM6mFh5+Jikgg3jJAX/LXr9IPtHDtH7QjBOS2VYfGKH8K
+	40TyU1bYjB80Qo8a+ctG+Encn0C6z+PLqFvToXgOrXUmfeo8KIvdpgQgkbtGvButjXpmd4MzQ1H
+	YYgXaLYKVcwmhdMJb23MkiE8aecJqeSxrCNN38mZCqzApk36JYGiPORfFiwR+1Ew/KgH75PzEha
+	oHrL2IpjlV+hNilq9J0AYOVHYJTFNf+yiOvtBmL5gPCWUGTPNjG2JOr9apooHF6dDuEtRoeG4ZS
+	5DNEBfvmd6DfxPdAR8MBX7tSkCzZbylc5a+Lbx6Ij2gcmsXyp9IMMnRGWDxat24+dZRi+VWZCyk
+	LmmCnO5DwZQ==
+X-Received: by 2002:a05:6102:6899:b0:726:cd42:d023 with SMTP id
+ ada2fe7eead31-75b2375d6eemr3857526137.11.1785649662796; Sat, 01 Aug 2026
+ 22:47:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2168; i=krzysztof.kozlowski@oss.qualcomm.com;
- h=from:subject; bh=Bp4EO+bL5yc1jZYaDdyI0c+3Uqw4Url/keGMxlMQDoE=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqbl85QcY3F61GKXMXrQBwgS29n3nDyolMOVqQi
- 9VfkOIBeg6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCam5fOQAKCRDBN2bmhouD
- 15O0EACONzDjqhT6o/NU5cl4R3+2VynfG1DDQAJkntazCotds81eIuZEUtYAbBHq9DwawiBJaAd
- yOwGnyyQ9iKam29ds0WkZcMYjCQJ7vefjfUdYb7BE5qaF45PHhavR+DQ3JZzZIFXqZM6aZRQYio
- a2DLv7C9RRI83+cFN809GC9a6sUpqfqqQhWxuCZrxQL71/dhAmCuR3YRm8fjBZGlG83pw+vIblg
- dNfAbf3uBgGhduhVjgMnti6dSKh6/DJI6Fp2uM0ctB77f/qzJFZE4ASxHpl+S+a0JBvnxc5LGUZ
- vzfK1sKG/l2C4WNzvkd0BMJCpuWmpShV+t76FFXdWqAJuPPz6vb3kvO1T2ZrTnF8B0m/T9RegyV
- WzRHIEBu9jeWQqTCVRp4xM3leq6jkLYBHi77YQ0/uM3TrhUM8T3IGrWT3ILdXNlCxOsVlw+gYqj
- KlrkjK5YAfx+Z72AxRXIvYyR0BZZHCOks49P7j4lqooCkdG4TV/vJ9ozFwjgRtrv//IP2tYIbHQ
- +8+gnDQBPBV5jFizxIjE6XrOCTVrxrTr1hGYs7VBvPISADyJie/70qqLsym05/Frr01IYt97+9w
- TPqVz2xNk1Jq2XLTcbhhtDV3AOfTzrz+xpq2uj08oBqpiX+7E4ofPrZnH8ZmHYQhikNNjioBsH5 0E2m2TAT0i9etyQ==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfX0+YrtWCZXiis
- 1OzvOE11NHz6Y6Zme8OdNZXFc0ov5XDODZwmQiQeZuuONKI3YRzE/sWzfeQ/i9nZRWMNbJS4/bK
- 1cJXMlvG2PygX74OHusLt6mSq2ARM0E=
-X-Proofpoint-GUID: Qja59vGjDNKFmxH3NhEBymzrCqJdHOsB
-X-Proofpoint-ORIG-GUID: Qja59vGjDNKFmxH3NhEBymzrCqJdHOsB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfX2jmJHShgRb23
- ZrhI/vSPSRvHhshrLsjm7NKVgOs/e+Id4jIxhP4DoV3dEQgHDqgcyRmCJMfKpnHpTxdRT0mJGeL
- pCZEBxHhth5yXrp1GCK8x3g6qukHlr9b/VeCyhFnMDKSVNgXD7bnt+Ns0gONFomAaYYo6K9YloB
- P4UEnB/Ye+T9Xbf/Uy2xJvfNWTEhvBkL00fQh6QAc9IX+VfYPhneFqZU6f7SPcBgMOrgltXGW2S
- cLoH/bk2vgEZ916Of8nHjR+cmOz79vpjLj0H3wxwRJsOGJAJ2zW+EhQd1qg6KAxGx1kxrchqzQ3
- 5u7a16gpRZCltZRK+le2MGLuRrEocLZDZAtRA1WpFrX6Ha6Zv8gx3SkAlarpq0dybsemu9ZiecC
- NM11USeGqRp2GRzV5ABQ+z4umz/h9AyzjYhccK/l4mnTjndy5vAJs6S+cVKo+8XkbiUSoAHu+LD
- bFOg+/tg/OYx2Q6xiqQ==
-X-Authority-Analysis: v=2.4 cv=Q5ziJY2a c=1 sm=1 tr=0 ts=6a6e5f3f cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
- a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=EUspDBNiAAAA:8
- a=WAwJ1FRNEprDOCzB6JEA:9 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-01_03,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608010169
+References: <20260623-exynos-drm-simple-v2-0-a8d59678b7d2@gmail.com>
+ <CAAQKjZN12OSBg+ch+xf+-uO6_Sbrtq-o8AkLdLA3mFQ_ubiLxA@mail.gmail.com> <CAJpoHp48cXPLrwvANAt_-D-jE=DcSyodAL=p36kQw3cGtQW_fw@mail.gmail.com>
+In-Reply-To: <CAJpoHp48cXPLrwvANAt_-D-jE=DcSyodAL=p36kQw3cGtQW_fw@mail.gmail.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Sun, 2 Aug 2026 14:47:05 +0900
+X-Gm-Features: AUfX_mymp3gbWIvEFlOpn_puCcmLWjZUNex9N8Qxwa40WVIlIo2zevDdW66QGDA
+Message-ID: <CAAQKjZM5cY8V_YaZzgF734Brabz=zwRkp2k-+b9CbqS2_Xvi2A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] drm/exynos: DRM encoder improvements for Exynos devices
+To: Diogo Silva <diogompaissilva@gmail.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Correct a few white-space issues, like missing space before bracket '{'
-character or spurious space, which will be flagged by dt-check-style
-("redundant-whitespace" warning).  No functional changes.
+Hi Diogo,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi   | 2 +-
- arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Thanks for the patch. The conversion itself looks correct.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
-index b65f1698cd74..439d7d7e319b 100644
---- a/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
-@@ -462,7 +462,7 @@ gpm21: gpm21-gpio-bank {
- };
- 
- &pinctrl_hsi_ufs {
--	gpf3: gpf3-gpio-bank{
-+	gpf3: gpf3-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
-index a675f822acec..646722da4e8c 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
-@@ -77,7 +77,7 @@ gpa4: gpa4-gpio-bank {
- 			     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH 0>;
- 	};
- 
--	gpa5: gpa5-gpio-bank  {
-+	gpa5: gpa5-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
-@@ -91,7 +91,7 @@ gpa5: gpa5-gpio-bank  {
- 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH 0>;
- 	};
- 
--	gpa9: gpa9-gpio-bank  {
-+	gpa9: gpa9-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
-@@ -106,7 +106,7 @@ gpa9: gpa9-gpio-bank  {
- 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH 0>;
- 	};
- 
--	gpa10: gpa10-gpio-bank  {
-+	gpa10: gpa10-gpio-bank {
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-controller;
-@@ -1030,7 +1030,7 @@ gpp27: gpp27-gpio-bank {
- 		#interrupt-cells = <2>;
- 	};
- 
--	hsi2c13_bus: hsi2c13-bus-pins  {
-+	hsi2c13_bus: hsi2c13-bus-pins {
- 		samsung,pins = "gpp25-0", "gpp25-1";
- 		samsung,pin-function = <GS101_PIN_FUNC_2>;
- 		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
--- 
-2.53.0
+Two small things to fix:
 
+1. exynos_hdmi.c: double blank line
+
+> +static const struct drm_encoder_funcs exynos_hdmi_encoder_funcs =3D {
+> +   .destroy =3D drm_encoder_cleanup,
+> +};
+> +
+> +
+>  static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_=
+funcs =3D {
+
+Please drop one of the blank lines. The other four files are fine,
+only exynos_hdmi.c has this.
+
+2. exynos_drm_dsi.c: header include order
+
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -13,7 +13,7 @@
+>  #include <drm/bridge/samsung-dsim.h>
+>  #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> +#include <drm/drm_encoder.h>
+
+Here the new include was put in place of the removed one, which breaks
+the alphabetical ordering. In the other four files you added
+<drm/drm_encoder.h> at the correct sorted position, so please do the
+same here:
+
+ #include <drm/bridge/samsung-dsim.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_probe_helper.h>
+
+Both are trivial, so no need to resend - I will fix them up myself
+while applying the patch.
+
+Thanks,
+Inki Dae
+
+2026=EB=85=84 7=EC=9B=94 5=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 4:54, Di=
+ogo Silva <diogompaissilva@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Hi Inki,
+>
+> > It looks like you may have forgotten to post the v2 patch. Could you
+> > please check?
+>
+> I think they are here:
+> https://lore.kernel.org/all/20260623-exynos-drm-simple-v2-1-a8d59678b7d2@=
+gmail.com/
+> https://lore.kernel.org/all/20260623-exynos-drm-simple-v2-2-a8d59678b7d2@=
+gmail.com/
+>
+> If I did something wrong tell me and I will re-send them.
+>
+> Thanks,
+> Diogo
