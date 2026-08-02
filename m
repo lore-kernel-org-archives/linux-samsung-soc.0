@@ -1,157 +1,142 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C362C2349
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Aug 2026 05:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785650120; cv=pass; b=ddFAG381jJYU+wni7V33Uf4N4JZ7JuppdP5dEK7DYGkaMUEQUQQ045VyAAEoARbRlHrGkoLywisXaB/S+3bB3uHygl/9wm88Ek/ynv5lBC8jZGILX8sGOcf34ROq+LywqCCf21TVPU3Y6VyxrB77SLh93uDQuLldxnQ5zFrMb+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785650120; c=relaxed/simple;
-	bh=9oKaYlOJNDKHpvXnlsz518DDIJdBNfw9fZDItnKMTSc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lSIOWQJILPaarz/foN/9OR3Zo5tE18/QLrXCPVocnKqWLpxBP9W4bpIZdBSs2Imfcsp3absdUvAY9fPac4UCQYKkn6MXVmHhj2/8SHYIpj4EI8CGE+OfPMhNPeU6BuxEvY2+giJ4tx+q2ES7aoXEb+IUodSyjNkkAZ/IBb5PyHE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnRprd76; arc=pass smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426132737F8
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  2 Aug 2026 06:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785651046; cv=none; b=OYqvLEEuYogUebWALCYluO/w9sm3aOOtd5rwxhFMqUPW5Jc6frGCE4eKYCPPhUIH8VerwL9V2gX1bICnDLEbQpsBfYWDC+hFv1oaIQuDfocFc4gpSKZwp9/2EGH/XmWYHwSI06uC6DTCI4H84QOCruV8UC4AGQRbBc0PwjM97Nk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785651046; c=relaxed/simple;
+	bh=fVWyj9dhtfJ9D+k8piyQKHBIS/R3WAWV0LnScYgJRl0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XmP+QCp+Ei/Y/eTcpQKm3HepvjxfcNS6A0gXzF38AUfW4jZOFTDvFk1pcHfudC0hKSYh+h/WgesT682ClgzNTo9G5opzmUT0W0IPmGCRuNwk/r2aQaGFIVoKXTMhGnbo4WtmNj773MMP7ONd23erb76yE2C/is/RYUGM3OgIqYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SnzFodwl; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnRprd76"
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-75609e844faso1401131137.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2026 22:55:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785650117; cv=none;
-        d=google.com; s=arc-20260327;
-        b=gjLN0JMj2F4ECPmQac2+vJoXMmW8d42TfCulWn+YYqoZeaN9XQOsQoEVzV9el8p3Wt
-         V4/pBfO2nCyii54/KuGaMysmjhvrayjrmlEBZKyzlsTGcm9Txw1KqcT9CSqkeZEneG5v
-         DIsNL5h+EU3JF0ic71JqfeNgs1B+PCk6h+h+7pOn3E4k3lOeR22fYzb53vFrjoS5OOZY
-         5JyILD4XsY2kVIHArWepKGolsVH6grc14XCMAwX9PY4BtyR8ClfQEihqSjNz0bWFV+CR
-         ZMDc9LNTQvfR8UJGPhJfLhisVXAknLKv+vv9cR3SLmauHVaEtf8jitD1u7VbEIlITyZp
-         3s+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3Vs1SQCwA2eulFFZ+BXHMpPyX24h7ndFKDeTGaZkolU=;
-        fh=Y8PJPYhl4PF2qWcFB94XwA7F2fLeNlfLaOIZS1/DOSs=;
-        b=Nwlz5b9l628p4A07t88SgOyAlnliA549Q5DFA5X35M514t83cSOVeKO9ixycw3D45l
-         tmMug4QSRwu0qkb/ekyme806WmGn/UQrfOgaCCVyExoiyFYQmss2C1HUVZ4Yz8+eMd0j
-         YjxweR3bVtaNpOSLWz+7yWxgVhIJ6ej35JKeRFwD2rG4stj1Vq44WC+YSMZsfYQnY2kK
-         KUUImxQK8RUmmp0G+XXjQAsI1CiOfO/rgbrSv+hbw3BIGMSrYk9CfbystQS6WHa9tWPZ
-         a5P0VUzYrXl0wtIhvbI6kcVgMmzAL5JYNB5mB9rCHrT35Y8lKb4fTxll+DPghtUprCHg
-         3Dow==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnzFodwl"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3856d6fbcb3so1628082a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 01 Aug 2026 23:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785650117; x=1786254917; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3Vs1SQCwA2eulFFZ+BXHMpPyX24h7ndFKDeTGaZkolU=;
-        b=GnRprd76G21NUYkhfwK8Ljr31JEyue4wW1iiXawSCP0yy8PaTA9/fd2beN2SMsXAbA
-         RXNpBRXjAA2+4Q0y73gVirs/X3k8Jk25f963Uoi7bKnnstJXj0VE6mIa0F/643sUgBO5
-         KI/4PeOr3eKSNYVvq9ETxz/zRRZPvosAwqQyMFFl1Ndg1lOEqLj6MRr1T1Wi1TVSSTz0
-         CZQ41Lbyn/+j6r1icXNbvo63kzohbwO+PqwhjETlqRuggpzFT7cqI433TZlEvBJWjK5p
-         cUd8t0fHL90DhZv+1xhVjtkSMxsHZ+xT7MwaD0BY51aT/Y3ib5BSoNSwdeCTt+Rfgm/6
-         pPUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785650117; x=1786254917;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1785651044; x=1786255844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=3Vs1SQCwA2eulFFZ+BXHMpPyX24h7ndFKDeTGaZkolU=;
-        b=cUDReACSc15PTsJVtHWRZPDXvuwmIgzjPZ3G//wl1TPRnR6xOzpEJ0i5laQq7X+8dZ
-         n/ESS7AwnYbnO98HZ3593UBfo951IoxyECZv1mCEXwxgFtzWhXDTP5BCGy1fw7E77dGG
-         hP1plAyh/JuH49iltod85BRlzMvW2+yEOFIVWYnkRhvfD0iQOtzs7Em4RuSyPxAmjYfM
-         qQboBDw/dkv1BwSJ32ixbuyKQG85RNFamRU7s+n75DzJZiF1wbE3390SXHT5Lp7QG2U8
-         bmRfhxlj7Fz7aR9S10Pv1l1YYDdZIbIfAqhipYs7PAPp7bLmhMCWqppYesPNMTv1YrZ+
-         69eg==
-X-Forwarded-Encrypted: i=1; AHgh+RpU6OkdIKTQk/flXFSDUNDAbPJZwkQYQFRIyKWGOx2Ro6eou1u+6NjRTSogGqA8IHuYywqMAC8kJrl6Yn2fR5iDlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFCnCfZKGUbA0com14erXq+xBuTVdJerLc6rlCZoZiH43iPkGy
-	svbyux778yQmDxc3DKHy9Hpv3W3W33Zdm77fKDDLQLpBGchch+15tpve1LakNn/c03oaaNV/AgB
-	Cy4Ii6SaoMifQahCuEK+oTHofcVrAvx4=
-X-Gm-Gg: AR+sD10Q0kYnxSww8rD1bGcJTmNxZceMAsx3tu21o/7hVO/FJOF9yGvX306VOiCJjsn
-	CKUJtLBOMxzprYqdo00PI0h32/ljLHr3Lpb/MSU5s8SXBUGytAVZtWwKqaJLk+f2SW9PkAtD6qM
-	ZzQb4rxZ4G78QSe4FkC6drwQq59d/+Gaa/pSD+16oHBhQmQHLlXmX1JQYrTGPuWuwmMfQONNO36
-	AFYSLUzGHv99KGuPphbS31D629ncX4sP7G5uw3EIwY2d9O6FZJWGd256R9+OdbXAMADdcc/tSVU
-	sbFT1Avuc9JNf5YIZ9Gw5ruFFeqbiYF4WVHTKkexLMp2T9vLBChjQD8Q+PQhwoVMDYy1LhzHiXI
-	=
-X-Received: by 2002:a05:6102:7ad:b0:738:f27:43fc with SMTP id
- ada2fe7eead31-758f8869b41mr1922174137.2.1785650117459; Sat, 01 Aug 2026
- 22:55:17 -0700 (PDT)
+        bh=vji7wKx6xE1l/WWcvsYGR+bhlFDcfVWGe0tEz1c5YfY=;
+        b=SnzFodwlUGhPpytwd6L1IX7cTn3yZbCYoCqt6XrKex0NntKhVVXjcoZZDzMAvthcMO
+         C2zyVyDYbufxKmMJk0wSbDL3htlYl5rDj56ua1OE/ttQcvvp0mvwiavS/PMoXg+2sWiw
+         vO2cSLuVqr6OLdnS1MOGeUDJYYT4kpp8IvdTQAaLkr1g75EMQX8pFofIzp8Ji7LwmwXG
+         /+CPdPwgGTVqq8KebHyGc8d8EF4g8GFTX1pVyoppHPAE9NiTrgLihzHwyz60pW8DHpTz
+         +g/BE9DlODaiO4EQGMZqxW3DoUktURDn9Ydr8agdOeLoB/fDlkuWD4O5ll4GqsE4kCVD
+         c83w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785651044; x=1786255844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vji7wKx6xE1l/WWcvsYGR+bhlFDcfVWGe0tEz1c5YfY=;
+        b=tJQwlpC998IAr5fZwpDTpTSDnGVt/BSdJ4kEk1Yqb04Qz0pPnTe4M4V9dJeQbUWvu2
+         quqDXOksd3aDdDeE371Ft/3YEJ8sQmFRqfrOaT6EeHMnYd13r6mISjWzuCVNeH5W2+QU
+         cQEMa0agDpI6cuGasdNnuuVRgCUF8E24J7ChxBqLu1j/bA6krbzGyi2OTkGuDRlXC8Gy
+         c628yFO2AJh+NtSsZDIpIUzAyp8d/qTBjHRrQadfruFtmH3K7m0HZ6F0V7uOMZ1yil8Q
+         y9/hd4NSo9gjRbli7XwdpW9v8htEnig9ckY/nmSXseovq6x71bVeP3ztK6+uGh37nUne
+         K4xw==
+X-Forwarded-Encrypted: i=1; AHgh+RopZQGSXST4Bsqf/3N0+lfai3GgzzBqzIlBhSr0EIjtC22jBOe2VvNNznjWBHGB/Nf1waBxlWvDUlUTZJjkncfV/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1YWOM3+kbPNVf/ibl9lH8MUHHm7DHECT6wBIXAc+Upq1P49JO
+	khWLsfi3342UrHq97xQHLlm88YM4q4UNRpi8qJUxwP3svqvXWwa2rrvw81ZFB03d
+X-Gm-Gg: AR+sD12hG9s35qX6tn04qIZZszLxjvI1WRwaW1dJgVhKBqw25wgPQEYFHq0S3RpyJAa
+	d9h3+dzzKLZGjyG6MVNuxbz6/Rve5NMdW/y6BiYWic889wlShcVSBZ+OZTkcAZB+qH7CjXH1Nb7
+	u4NXw4fuHMnFQ5HMfFSY75SI3ZU0RvvrwylWIjy5Db9Sd2VgvSi/qDoae6TgwZRyGKknskVpPNh
+	HzvmVXZUFjfx4YkoG2M+ps3mRv9XOWdc7ch/9Oa8OIzbcUAvPTRxuVte/wYNhU2RVkcPK3G3dQc
+	X5lBlUzdDNxMtsK80QbLtZCrpaCn7qszB5yM1TU2hvV2i99U+EDX3EC6Buh4MdH3ytHayzFNRvk
+	V5Kd4TKTCwSreGYiWmRcxkjF/dcKzJBvbUbkja4lp2srhEol4usKsXbVbgCaLBVu9/OXPRNdyQv
+	1qUBnZ4GAnqFE4B+d7rdokjI/8UnII7SGAOj/nvUnYIoU69nBJFcuJf/qsBxGI8g5tsXZID8Qp3
+	TaQdfvCZ1rLHS/289LwAmcdHY6ixzVQ/FFmQLm9pBX+kQFHIkboYLJKkeAB1hXw
+X-Received: by 2002:a17:90a:e7c4:b0:38e:9279:468c with SMTP id 98e67ed59e1d1-38fbc4d976dmr5437191a91.25.1785651043549;
+        Sat, 01 Aug 2026 23:10:43 -0700 (PDT)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38fb2f65459sm2564706a91.6.2026.08.01.23.10.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Aug 2026 23:10:43 -0700 (PDT)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date: Sun,  2 Aug 2026 15:10:39 +0900
+Message-Id: <20260802061039.73544-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260716131802.1564776-1-johan@kernel.org>
-In-Reply-To: <20260716131802.1564776-1-johan@kernel.org>
-From: Inki Dae <daeinki@gmail.com>
-Date: Sun, 2 Aug 2026 14:54:41 +0900
-X-Gm-Features: AUfX_mxYVom-AX8ugZp9yvdrgZXKEh5DEfjSaw3ZzVclgiqSMtSKQ8CYJUJRy5U
-Message-ID: <CAAQKjZPW+mHcXQJKQc7wJL=MGssBf10H_FO0S8D7uCjX48qrKg@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: hdmi: take i2c adapter module reference
-To: Johan Hovold <johan@kernel.org>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Dave and Daniel,
 
-Merged. Thanks,
+  This PR brings an encoder cleanup series for Exynos DRM along with a
+  refcounting fix for the HDMI DDC adapter.
+
+  Major changes are:
+      - drop the deprecated DRM simple KMS helper dependency and initialize
+        the encoders directly,
+      - handle the drm_encoder_init() return code so that a failure no longer
+        goes unnoticed or leads to cleanup of an uninitialized encoder,
+      - take a module reference to the DDC i2c adapter so that unloading the
+        adapter driver while in use fails gracefully instead of blocking
+        uninterruptibly.
+
+Please kindly let me know if there is any problem.
+
+Thanks,
 Inki Dae
 
-2026=EB=85=84 7=EC=9B=94 16=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 10:18, =
-Johan Hovold <johan@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> The i2c subsystem currently blocks during adapter deregistration
-> whenever there are consumers holding a reference.
->
-> Switch to using of_get_i2c_adapter_by_node() which also takes a
-> reference to the adapter module so that an attempt to unload the module
-> while in use fails gracefully instead of blocking uninterruptibly.
->
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exyno=
-s/exynos_hdmi.c
-> index 09b2cabb236f..b971b7098a4d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -1913,7 +1913,7 @@ static int hdmi_get_ddc_adapter(struct hdmi_context=
- *hdata)
->                 return -ENODEV;
->         }
->
-> -       adpt =3D of_find_i2c_adapter_by_node(np);
-> +       adpt =3D of_get_i2c_adapter_by_node(np);
->         of_node_put(np);
->
->         if (!adpt) {
-> @@ -2069,7 +2069,7 @@ static int hdmi_probe(struct platform_device *pdev)
->         if (hdata->regs_hdmiphy)
->                 iounmap(hdata->regs_hdmiphy);
->  err_ddc:
-> -       put_device(&hdata->ddc_adpt->dev);
-> +       i2c_put_adapter(hdata->ddc_adpt);
->
->         return ret;
->  }
-> @@ -2094,7 +2094,7 @@ static void hdmi_remove(struct platform_device *pde=
-v)
->         if (hdata->regs_hdmiphy)
->                 iounmap(hdata->regs_hdmiphy);
->
-> -       put_device(&hdata->ddc_adpt->dev);
-> +       i2c_put_adapter(hdata->ddc_adpt);
->
->         drm_bridge_put(hdata->bridge);
->
-> --
-> 2.54.0
->
->
+The following changes since commit 82cb10c8bc506a4d2093e0e59672fd307f549d38:
+
+  Merge tag 'drm-xe-next-2026-07-30' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2026-08-01 07:06:36 +1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v7.3
+
+for you to fetch changes up to 99b1947ba2f82b30c0a4ef3e457eacc31d1b0220:
+
+  drm/exynos: hdmi: take i2c adapter module reference (2026-08-02 14:54:06 +0900)
+
+----------------------------------------------------------------
+  Cleanup and modernization for Exynos encoders
+  - Remove dependency on deprecated DRM simple KMS helpers
+    . Replaces drm_simple_encoder_init() with drm_encoder_init() across dp,
+      dpi, dsi, vidi and hdmi.
+    . Adds per-driver drm_encoder_funcs with .destroy = drm_encoder_cleanup,
+      removing the intermediate layer between the drivers and atomic modesetting.
+  - Add error handling to drm_encoder_init()
+    . Checks the return code at every call site instead of ignoring it.
+    . Prevents silent encoder creation failures and drm_encoder_cleanup() on an
+      uninitialized encoder.
+
+  Bug fix for Exynos HDMI DDC adapter refcounting
+  - Take an i2c adapter module reference
+    . Switches to of_get_i2c_adapter_by_node() / i2c_put_adapter() so the
+      adapter module reference is held while the DDC bus is in use.
+    . Makes an unload attempt fail gracefully with -EBUSY instead of blocking
+      uninterruptibly in i2c_del_adapter().
+
+----------------------------------------------------------------
+Diogo Silva (2):
+      drm/exynos: Remove dependency on DRM simple helpers
+      drm/exynos: Add error handling to drm_encoder_init()
+
+Johan Hovold (1):
+      drm/exynos: hdmi: take i2c adapter module reference
+
+ drivers/gpu/drm/exynos/exynos_dp.c       | 13 +++++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 14 ++++++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 11 +++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 14 ++++++++++++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 20 +++++++++++++++-----
+ 5 files changed, 59 insertions(+), 13 deletions(-)
