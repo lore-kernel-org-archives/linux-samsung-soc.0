@@ -1,88 +1,123 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3286638A71E;
-	Mon,  3 Aug 2026 17:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15F4322E9
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Aug 2026 19:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785778126; cv=none; b=DAJGD3DifZTO7iLyNdiSMvpkKjqV0SyRFrhJwyMei2W8E3vbQ4MriVvBwHW3toXUZ5tSyWWam9t2tpFhsUBcIkD0+ROsvtWf6NYIzY6qI0sw7bOndDH2g3EXblggKHdBvINxtXvO2Dc0R1WK2LSXnCJmXt7wIZo9GXqHUkVIfm4=
+	t=1785784745; cv=none; b=MTCH/iBbJJ2XHgswoFtIs1cCM/ITubBpEfmAgEc7tjC7oYnBzb2aiFJVZFbSd86osZRmPeioe3Ezq8oTZZwkmDEcm1KzFR55Aj8tLCg/hpRPLEROUwlcThxGfN/fBw/d9LdFe5S/8iN76KIJ66AVMGu4FnxFlcQ6+3T22gZFUZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785778126; c=relaxed/simple;
-	bh=GT+yfWLFAPExdbDJ5COk1PTpR3MMG3NsRmwyhEWOYjM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Fh7XpEGhNapgd895h9/F9jJ9kfHM4vOZs8DWKMF6dMUoHxw/eeMDImGP/pDZxApEFQxjMRvcN9PbmSNYMgFvQ9ved/AA6Lg0wPa9jxByh+13rZgw8/U16yNk9839Wp4PoDpakpKbUe7lBIl760SxPvWfJjwn4O611q/2hsBwP4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=gdDyn7aU; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1785784745; c=relaxed/simple;
+	bh=XKGpIuuo6O7kytNhl1VQHpUrM4ZOOWo1SPMYBBVs6II=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lg6VmMgRtENDY2+u4CoIxnSkqsgOr+JmllvWvo+gBhLEZbczQc3amRUdddZWz6eruDePkH015TcaiXONG3p2uQII3OTn0rc6eOMP66McgazP2rJkLGKimErj4gbJdWBTsoplNZLS7sHzxA2vbNvRiSRpUSeJmrAax3xyLVBsoik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=k617tlsJ; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="gdDyn7aU"
-Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9C99B887E9;
-	Mon, 03 Aug 2026 19:28:36 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id zej7F0WdACzl; Mon,  3 Aug 2026 19:28:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1785778115; bh=GT+yfWLFAPExdbDJ5COk1PTpR3MMG3NsRmwyhEWOYjM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To;
-	b=gdDyn7aUsb6UsGC1GJ4OsW/ceiz5FmLDYl2c/KmfW8Xbe4PCxxHdkgMvjUbH3YyFA
-	 hUgm0T9hqnYCAv72T6bvA50SjREcrWPqpx0KNi5YA820ywxUnsN3w3Ud3G+wDeIBxt
-	 9jY/kxH4M9rvh9e7F/s8yys83uiKzBfMpacBr4KVe2QSujvzBmkBXcVY3xlbzW1nwX
-	 6jz9F0Ypy8S90x7publ6Ybu/7e9KsKw9VjpS3DnPSgg12UkjsdSOdCPLF1XMjBJksd
-	 BGtBWAQ1B5Esv13XCjIN0jMS9066jAHGFNP72QakW45VanwWLmqDTHw82Y4dvQjDUF
-	 knZnmHY2I4Sug==
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="k617tlsJ"
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7e6128bd9b3so1717392a34.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Aug 2026 12:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1785784741; x=1786389541; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=yWhNVuNUeWmdXxG9AxDJ/JJjMmObR+VfZMlaxit4KDY=;
+        b=k617tlsJSnXA+ObJtUmS4S3TPzDdSCOKnh5P+acMy2VpV93oxwg3ywmUWCevWQbrIz
+         DuIfYAUTaLXXP2zXjo+SECM7Cry2ctsMgvSt93TtMxcwlgN8NmjPpoMv3AXnPtgITr7u
+         jsM1n9hybsNdSs5XAEasSO8jZw4X57OdS0DhsZhk+CXhWzLv6kMEk+j8w6twhQpTDbmD
+         94bSOpROqxFNmxVeHKaptDq4pfeMs8ZnON9P28piUvvO5rgV4eyw4Z2eXaH7yY66MALK
+         MMeSgYxL2NhQed2WFAZJebvxzU08uy1prJ9rzFRczrIgxjXthFfoo4dStcQUUSgv7MT9
+         0yfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785784741; x=1786389541;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yWhNVuNUeWmdXxG9AxDJ/JJjMmObR+VfZMlaxit4KDY=;
+        b=NGXA8O/86cetCuMTTscTjK2Gm83MQ00SukvGGvXoLJ07X1BJt2JPg0CG2IrNhhaExp
+         GF7SNMEng2aYlYwSgrdDPHJfmQRTrznDK8iyAxgzx8L4ygDnvHEsIRlA8b359HgL4eXS
+         0qFvKeGKAMG7E159yP6l9WBr17TpPqCEBlObZLtqB4OhJlY1t0XEkt2G8IRnh8g/tmEd
+         wQHhw9VqvnVBIg28R1Uub0LBxHrxqlscYjTR1gtkwdJhbtFL/qpHpwI+CaFS0Q/6m8oJ
+         FNn6hIaYkaeGQFxBGmwbpvYzyL3cqGarjkTR2yfxYrNty9HbJhPAG1tjg/XltoSEy/E/
+         pYWw==
+X-Forwarded-Encrypted: i=1; AHgh+RpyB48fqSsa/F8BgMpI610HX4ksthTWB9NeiHKVkeQ7l6m++qJpojthnUOMQxftyt4HuUcJO7UgkWnMRq6YsPicqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysp5lAsOc1kUOnfTHqe73rgkwuFSmEiLHM+kLUcYxItmsD8vyb
+	gutvXZDqWAg1xm/Wgi/nEJCZU6AH9R5EE1iBvBIewnDuwk/aczgEAq71pwBb0X3gDhc=
+X-Gm-Gg: AR+sD12N2ztDCY/ENm/0z2pMC8JMuY6HohnAUicWEshM8CtpBkgzMLxQXHgkPSquMbR
+	a9Umc7FLQc0YfskJkwEYD217s6xYV0xfw6HPa4trwGejXLr5HGiD1A6J4FYcZF+l+iAySw21ouK
+	H44f9pvZAUQWRN6jYfAKAc42wtI1eC0OFlbF0ihfKM7Hkz9Tzl1kTAe0rncJbunJ5xFqmJRqOdm
+	EWTEG4Q3RaRAC9i8ky4szjCsgeHzGgvRLC9oMtW5DmjmGfyOy+XvZxODSZAgj32f9RA1mUxKSjH
+	rjhD0npsCDSx0meZ1Kfphjg47QKcScwg2HKY73BQGNGDVuwWsI+/dZqUb3ahpXOcBKD83KuoINl
+	ZymT+cdWzIe62d42OdX7GdsV5x9aujGEuTTlr4DZl9BXGKU7zT6NFzQdjBsfPk4uHiJ45RUj5eA
+	vWAZJW3VcUO/2kXoTjlOzcUT+tN9OHQJNQeCqzN9Pq1iQKWOvBJt5abbVHS08xG+JiJKFSLiUge
+	V1fNb/DhUq9CzEgfXGjq+gC718o7OMDeQ==
+X-Received: by 2002:a05:6830:6413:b0:7e9:d082:3b87 with SMTP id 46e09a7af769-7f196b61346mr16269729a34.1.1785784741332;
+        Mon, 03 Aug 2026 12:19:01 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:b8f7:1f5e:7c:a7d1? ([2600:8803:e7e4:500:b8f7:1f5e:7c:a7d1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f18f11e522sm8029109a34.25.2026.08.03.12.19.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Aug 2026 12:19:00 -0700 (PDT)
+Message-ID: <43059ed9-2ff8-4bf3-846a-53a4c7cd72bd@baylibre.com>
+Date: Mon, 3 Aug 2026 14:18:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Aug 2026 22:58:24 +0530
-Message-Id: <DKFHI80E1741.3L5TMU6D3P9OC@disroot.org>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 2/3] iio: proximity: add driver for Sharp GP2AP070S
  proximity sensor
-From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
-To: "David Lechner" <dlechner@baylibre.com>, "Kaustabh Chakraborty"
- <kauschluss@disroot.org>, "Jonathan Cameron" <jic23@kernel.org>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Peter Griffin"
- <peter.griffin@linaro.org>, "Alim Akhtar" <alim.akhtar@samsung.com>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
 References: <20260731-gp2ap070s-v3-0-d1f5cecf9fe7@disroot.org>
  <20260731-gp2ap070s-v3-2-d1f5cecf9fe7@disroot.org>
  <380b864f-6266-40fb-87a4-027afb422885@baylibre.com>
-In-Reply-To: <380b864f-6266-40fb-87a4-027afb422885@baylibre.com>
+ <DKFHI80E1741.3L5TMU6D3P9OC@disroot.org>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <DKFHI80E1741.3L5TMU6D3P9OC@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2026-08-01 11:41 -05:00, David Lechner wrote:
-> On 7/30/26 3:07 PM, Kaustabh Chakraborty wrote:
->> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
->> Corporation. This sensor is used in mobile devices, including, but not
->> limited to - the Samsung Galaxy J6.
->>=20
->> The driver has been adopted from Samsung's downstream kernel
->> implementation [1]. Due to the lack of public documentation about the
->> schematics of this device. The downstream driver acts as the secondary
->> source of information. Driver clarity has also been improved with the
->> help of the GP2AP* drivers in iio/light.
->>=20
->> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870=
-/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
+On 8/3/26 12:28 PM, Kaustabh Chakraborty wrote:
+> On 2026-08-01 11:41 -05:00, David Lechner wrote:
+>> On 7/30/26 3:07 PM, Kaustabh Chakraborty wrote:
+>>> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
+>>> Corporation. This sensor is used in mobile devices, including, but not
+>>> limited to - the Samsung Galaxy J6.
+>>>
+>>> The driver has been adopted from Samsung's downstream kernel
+>>> implementation [1]. Due to the lack of public documentation about the
+>>> schematics of this device. The downstream driver acts as the secondary
+>>> source of information. Driver clarity has also been improved with the
+>>> help of the GP2AP* drivers in iio/light.
+>>>
+>>> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
+>>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>>> ---
+> 
+> [...]
+> 
+>>> +static void gp2ap070s_reset_action(void *private)
+>>> +{
+>>> +	struct gp2ap070s_drvdata *drvdata = private;
+>>
+>> Usually, we don't bother with a cast/local variable in these.
+>> The void* can be passed directly as an arg.
+> 
+> Yeah, but CFI will not be happy about that.
 
-[...]
-
->> +static void gp2ap070s_reset_action(void *private)
->> +{
->> +	struct gp2ap070s_drvdata *drvdata =3D private;
->
-> Usually, we don't bother with a cast/local variable in these.
-> The void* can be passed directly as an arg.
-
-Yeah, but CFI will not be happy about that.
+How so? We do this all the time and no one has reported any
+issues with it.
