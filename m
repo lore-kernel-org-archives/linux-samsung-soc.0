@@ -1,81 +1,82 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C5D38D41A
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2026 12:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859823B9DA5
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2026 12:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785844957; cv=pass; b=b55jWlnUiZnTRDiaDVnyFHWNmNmx8IXipUN/vnw3FeIwNQeKsnXoXQ8NdqERiSGNpZGHvnXkNUBFJCVcU7xG/gNRhyBWym7pboi20wlHovVW4xTwLE3pNioiM5eEH+ABtRvyc+rPoGhQLKnl8gR4zS8mDaKGLXy1qLYh0gzN+uA=
+	t=1785845178; cv=pass; b=Yfi70+thcjAx6J/9e11C4P3pMa3z775H1pQDQwVe201Wubu+6XYPLB6AKIz5hREnsK2MKE5PEebX6Rz1bSRHJ/PosSxs7/ekSfd7y11Rd6GxozoG+PMaxo/IpD8PMpVWm53UMf79abFK97kgA/7diB/MCRvoWozSgXPeVUCnSPA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785844957; c=relaxed/simple;
-	bh=P7TML+J+bsE93YoV10CMbue+65Qvsp8FgofZrsGqLJQ=;
+	s=arc-20240116; t=1785845178; c=relaxed/simple;
+	bh=OKfmS8TsaGtc91iX9mLi6r83sQXms/fmJaIviRH0BCk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iwvkZZXu/fVJ5fleWvWDYwDxlstNXxs+Z5L2AR2ZYgOmME7ZpuPqBwq/nwitym9VCdsmlbYBiD2C9QPI8xMnScSj1chdkCIhdcqAkW07JOcN9fj6ban4C7x/cSQldw/HpsuXfvcF0DB+TFm2TjDtxLlqhe4zLW7FyArN/GQcn64=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jtf66vgC; arc=pass smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=fjmzN4kjc3tEuqFqrR3nGZhkyf57/aNKZrTKti7dbaYZ9ENYDhwmsSJSE5ZaXYNENRjGNVExKEno+hpqmK2ZaT/oruy259GDRmqdWnlgOrOmPxVOk2NMbnU4Ept+vxggGLu5uATYOP9cjIkCOgDWu/V3XoTGiJGv1nf+Cn16qv8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u/Xi3Suu; arc=pass smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jtf66vgC"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a10d02ff43so2545870a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Aug 2026 05:02:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785844949; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/Xi3Suu"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6a097f5ab95so6009709a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Aug 2026 05:06:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785845165; cv=none;
         d=google.com; s=arc-20260327;
-        b=DBnRxtc6BI0m8g0luraPXf/Hz7EgvJgFW532iFb3YgRvmPjMrYqr+kNaoSVIjR7IMS
-         cT+2fwVLN6pl0TQakbzGfJ4wFI0ZV8xIQPEnxKMYXmqP9RZHnypbH/U/Ze6kgqb7oajB
-         qkRgJAKDwhozZCuncF13TYbI/hSXQsWLDJL+5v2VMaCimceHgMlRjRAX2fHZ0/eB09dN
-         wohSPvI7FolJuKkENvT8NvU23NJYQLPBarwBoyOWMufjMEslBN37yE30fjZtyKZ03UtC
-         urflxROjdp0I17saiuNiI68yp6Wywqno1EYD6wBOvHdi+7mnIbDX5iO6+XivvN0WYpSs
-         J6XQ==
+        b=qRgOxnb1y6zO6mb55WEWOBTyDM2fDP2H8+LkUns8qoywHGTNED8HfahOgE5Dttb2th
+         +STB8culWC5RhquNkYtbPSdDqELYUpz5EYaqw77bIPsbrkVKEEWWrgV+xci+UTpqtRTK
+         NMV9mIZ9G4aVQR1jOhJKddrjltJoyiJUduwscfW1wrIOTbJmHkswq4q+MyVi+NUGYcV7
+         ungOSZOzxpl462/bAJY3fSELCeubE+TFAc6ytisLfwKy/RTPzf7/Dj11HdJJYtkS+S+e
+         LcSCeqpImdjHxVRDstBAfMK1Jr+PrLZnG4tKHYR5dH3Yn4e1NmugCNemcfKW0J67MRnB
+         IAzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=JfEB3jdnmC/L+cHcj5f3pqbHO5C/Aowk2AQpRt/aSAk=;
-        fh=GrFgd8mM5ZuLjaWXYB0uGtoOCDoCmBxyXWrimst89hE=;
-        b=eN8Ihh0CzMU9VMQD5VJrq15h45Qhurnh8auerXOpOQ7C4ze0Y4hyTfwrHFKF2upmSh
-         EZK9pIkXzyJBA1GRJaFPi3entmI+8Oo+OgXvJFc/HMx4+muzHoitAnatgGDhUAr8iXhK
-         PBOhrg3hjjujwZQkZ06ANmKapST6/Cg3SrO8wNFOZA2qG60GZOw/AG5qNhh1/txyAvNX
-         CXWNDhbjWwdsVCvaloCGdBGb80RRQsGdeX44eFcFhA6SdHS4duqK3ZDOj7GISBhGraEC
-         musRYldUc+pmVfK8brqJPaY+PT5fHEFiYhe7EVlkrsWSr8CG2y1+d7JnC4KY/lf+aZB/
-         2pZQ==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fCyU7QtPUTyFXWV8lHJd0pj2CzXXfS/x9VTPpIUporM=;
+        fh=ND9tOqSh7+XBJUh4oDKp7pNw6ztHWli2kyYhx4XPvhE=;
+        b=BDqzzwcs3gnle7GrlanzsEOWwAA2sHQFbvjbrEmwunTy786oW1oGn355L1Kdzo9xTo
+         1TzEH4SWHIJrpFXHiLZ58p4AQXnEOnc1VSc7Fo69sDCo4LtKK1L50gl8FkRSBHhLM9Ce
+         981giH6Q8MVTTnyVjD7cCMzTzgNdWg6y08hRLzk1LYg6K9n68phjt+3D5wkQySLnWtZn
+         7UC82KYnhFcZaAZYkxK3ose+uR4hA2iOzilrddxdMl3lY0dy1pbZOwVhi84Da/uT7eOW
+         901w7PIixpf/nlu8/hGzMg+gkQwqsHKtKI71OT50ao7aJ9iL9UukaRkMx1h7k6Qkq9Ib
+         mJ3g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1785844949; x=1786449749; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=JfEB3jdnmC/L+cHcj5f3pqbHO5C/Aowk2AQpRt/aSAk=;
-        b=jtf66vgCT/R4WtO6ltbeg4WxYWHEo/BcZmm0qEkmgnI0n4/P8V7ilMEygv8dpfYLOo
-         4PtY0mcv73Tv587ehalpnyzMHaruGlrOOZd9/gUNXqT43cIN5TnEhxG8lBwxXbM4Q4QV
-         9klfUUySiDZsPkLVioZ6UkiQwOrh505TChum1n9KS8yHQ4PSb+fsg8lcY56vz1rhrvmm
-         YMItzxhHfJg7tkHR2FjcRB+XmDZBrnOgAOaBa/4hOVCFrnOYf9fQ+zEeCWxEI/UqV+L4
-         YFbmz8dbts8GKrgBspfsdi31ofynwDkqUwzaztd21BkiSNNUO4uhm4qtkIJJ/XU+s2lY
-         7D9Q==
+        d=linaro.org; s=google; t=1785845165; x=1786449965; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fCyU7QtPUTyFXWV8lHJd0pj2CzXXfS/x9VTPpIUporM=;
+        b=u/Xi3SuuTOzPld5RapE2mn7THlhmIhJKnJ84MUDHK4ZdkuV+GnoJnL2o9yd+jBk1r0
+         fD32BlypPj5feeyrvrjUQNfpwfnxXMhdNLg00RZ4k6rvO//bMvkPSR8ydnr5jhJiIjlh
+         FJnOdzAuEC5udrCbCLq/ivfaEc+w6XnxWz//sFAcobnG1mjUTWCx/nWCesVE22OWQq8/
+         CtvUPcahdBxzDbRcpi7F5VHeSf4cCDsvXepGaIAm2BT/iBCyiyNh+LDgiiJcz/RuWSai
+         9aSHfyHjKb5Wn721I1urz18t+DAY60Xj03Drzfi/KDFguUKJXQ/K8RK6rXpHF67cdfUa
+         XT+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785844949; x=1786449749;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=JfEB3jdnmC/L+cHcj5f3pqbHO5C/Aowk2AQpRt/aSAk=;
-        b=qCD5E8ruzblCpNZZpUf5CL61kcj2rgk/kZtGh29ZjKeqEEiryo9CEjV0Xz//Q+IZCu
-         SU3sK2+oN6yarRIQDSGrTaiv6iop4oh2lijtBdppgsj0Z5ZgeGGR90n3g9y6xNb9NseC
-         YjYnlDxV4Kx6VzfN9iSBgNfUTIBcOZjFVK1qnPiQnSXzdbjP9THJAfN+h3Ih07+ufcfM
-         bnBNNVPeyq5viywrldzWZdAOa2cAC9iHtPGuyjHfzWvCSPsIKtcu/w2oGkZpue7G1d1z
-         hEU4AD8lIfDG4mIEIXOCjov6srbMp0/G+7g93JJsdeaCy8c2xX3pihRO7YvPlBB+kigQ
-         9qOg==
-X-Forwarded-Encrypted: i=1; AHgh+Rr+SN1DSpqmUqhrG+GNCQx4zqDMend9DLkcH+HyArlokh0QXnTMjy7V/HKWUgL2EG5w4e2zAtWuBh0ea3BhlDi8Aw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUv4nusXTsOu+f2KEScLzRfPp6B1itTJ9P82nZXFzm4uIW3Hcd
-	Ptkd9zwO4Gx1ypU6wy4cIp9127q7ncPtdnOluFR16wuqjNZYM5Gwx8NS8HXqGzgqGeyb9aImWXc
-	GPKQijj5BMs3NX1N0UJBHnlr1Np7bLxzR++Jyr8H2Fw==
-X-Gm-Gg: AR+sD11FgTxCRcQknHhPt1T9Ck59MhS21K8L7Ve+bapxLtFCWFX4DV5wBqSzWYf5swk
-	4PcbZYg5IMfG8gOscyWuWvuGXOWrTYios6EqPbA52Ne7lh/VAkoqtnYFcuJufxgYxx10CvTOKSt
-	7K3ufkZY7l5Y+Cv4bBChXUNZMg/r5JKwDsNQlWHLZjykCxwT8g7J6MN2+pQwCV5nOd9i+Gv8uca
-	xXLVjwnK79OW2bvuY952kMC6DMYP+KrUSDu0AwbN58nRsuo5bfaqS+b0qSz/Qx/KFIf+c8NO/wH
-	NDlo6W3oC1QIIhdieFTxhFDTdA1nnf3NVPo8aBK3R8viSHPhggNMIFdRn98pu2ND4KznLNfJrPs
-	MhlA=
-X-Received: by 2002:a05:6402:4541:b0:6a0:a506:3dd2 with SMTP id
- 4fb4d7f45d1cf-6a0a7ca2696mr10029472a12.18.1785844946990; Tue, 04 Aug 2026
- 05:02:26 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1785845165; x=1786449965;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fCyU7QtPUTyFXWV8lHJd0pj2CzXXfS/x9VTPpIUporM=;
+        b=WyoNcDPe1SrYub/THfWvts3EZNRqFy49QIWF5lQ6CD2U4QlpMF+HV+RpxpfaDmRDuN
+         7BXlfMPu78nf8BVuAeRIO8zAhY7k8HAM1X12IyUdAIMlpbvhLiCjevcPmdFjyslFshgg
+         URrXKfDVl3iMaCGMOO58yRB3bGZlcnOwDzNs7xFIeNkXrFxhDVNdM0ptdHYCRk+RN96o
+         tP0pHHKR3elJjuEI8PiuaJlbVWTXCy5kvrI7au+Vu/nRYMjJaF2jS6AKNjgNaS6kE8vY
+         5unBEKGtWSUX3H6B9oH7XqfGpyN7AO0uARClJ/vBtKkZRjctlSCDH3Jp6R2Ka3V2bCDy
+         AbRA==
+X-Forwarded-Encrypted: i=1; AHgh+RqHAmBHKi8KHQYjVa5yg8z4bSKX0uB3RkAypTQmGo9PGquF1sdPXyebdGM24zXwbaHAulDqick9Mu4fd2MEAuLQdw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK4PYrjPcwrdzpPdICzPyJizj3qRg/vR6xf3x3awHMeRubm0Ty
+	/GRSMXwrXj6RUKAND0hwyE8Ehap7G8Ijp9k9menrWOxl9GUnVgaXZ8Gu8RTemlJUOK4IPCSczRi
+	YUC3cx0q+xje0SO5Bb90npvJt/kc9UQHThZP0i9fsZQ==
+X-Gm-Gg: AR+sD12KQahgWM8ABZRXADdFSM8pNljv7yiiOpcTX0ZUjLwrv6IXY8yY2T+/j/saP/A
+	T081eVgwyYHhI6BsL3qNtTUSYaWJguTpz5LiTbvZWXdSUtjg8I9I9Po3J83mugea+wUr/nXMJom
+	bUIzWZ1weR4jyXC1TO51OUy5glmQhi+kcL1paPaVjLILygOVZDMWxmyqnwdUclhxiQ9UjYRI/GW
+	MLOKJfyh2VdoJgsGPKF5LdJEvi4FJUElyz2VoMmy3watquQoDi2enJhBd6PTB3gWvbILHFBnrxE
+	ypVdPWl9nQjF9sPiAdpR6uNV9siz4WmsDc3n+ggF20jn14iP8ZXnp/ZOLvtb95Edndl+eCxBp1Z
+	T5xQ=
+X-Received: by 2002:a05:6402:5110:b0:6a1:db5:cfee with SMTP id
+ 4fb4d7f45d1cf-6a10db5d1a0mr5648857a12.15.1785845164798; Tue, 04 Aug 2026
+ 05:06:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -83,14 +84,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260801-b4-dts-coding-style-strict-v2-0-f09a659ab80d@oss.qualcomm.com>
- <20260801-b4-dts-coding-style-strict-v2-1-f09a659ab80d@oss.qualcomm.com>
-In-Reply-To: <20260801-b4-dts-coding-style-strict-v2-1-f09a659ab80d@oss.qualcomm.com>
+ <20260801-b4-dts-coding-style-strict-v2-2-f09a659ab80d@oss.qualcomm.com>
+In-Reply-To: <20260801-b4-dts-coding-style-strict-v2-2-f09a659ab80d@oss.qualcomm.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 4 Aug 2026 13:02:14 +0100
-X-Gm-Features: AUfX_myyemfiqfsfXdJ2h84_aPqvk43OyKJhyLZTMMkflezs0lkCTasmyedEVbs
-Message-ID: <CADrjBPqF6N53RkQLzc_tiW=ZE=GYPVNBkQnPCbxjTb4i2SaDgA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] arm64: dts: exynos: Move 'status' to the end to
- match coding style
+Date: Tue, 4 Aug 2026 13:05:52 +0100
+X-Gm-Features: AUfX_mwrlgYvFkTTRG_NBrxloAPVHFqvdFO9-HQmrc4Owx0tXTyLAEmfyE0LJV0
+Message-ID: <CADrjBPqUzTtucMbu4=-4PiiThHambQWFjEGjeNMGmO0N9Ok9kw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] arm64: dts: exynos: Align continued properties and
+ add missing blank lines
 To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -100,3891 +101,2262 @@ Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 On Sat, 1 Aug 2026 at 16:07, Krzysztof Kozlowski
 <krzysztof.kozlowski@oss.qualcomm.com> wrote:
 >
-> 'status' property is special, thus DTS coding style expects it to be
-> always the last property preceded with a blank line, as reported by
-> dt-check-style:
+> Trivial white-space only changes to adjust to DTS coding style and fix
+> dt-check-style strict warnings like:
 >
->   [property-order] property 'iommus' out of canonical order (should sort before 'status')
->   [required-blank-lines] "status" must be preceded by a blank line
+>   [required-blank-lines] child node must be preceded by a blank line
+>   [continuation-alignment] continuation should align to column 39 (under =
+< or ")
 >
+> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  arch/arm64/boot/dts/exynos/exynos2200-g0s.dts      |  2 +
->  arch/arm64/boot/dts/exynos/exynos2200.dtsi         | 98 ++++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     | 10 +++
->  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 47 +++++++++--
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 55 +++++++++++-
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    | 10 ++-
->  arch/arm64/boot/dts/exynos/exynos7.dtsi            | 24 ++++++
->  .../boot/dts/exynos/exynos7885-jackpotlte.dts      |  3 +-
->  arch/arm64/boot/dts/exynos/exynos7885.dtsi         | 12 +++
->  arch/arm64/boot/dts/exynos/exynos850-e850-96.dts   | 13 ++-
->  arch/arm64/boot/dts/exynos/exynos850.dtsi          | 31 +++++++
->  arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts |  1 +
->  arch/arm64/boot/dts/exynos/exynos8895.dtsi         | 47 +++++++++++
->  arch/arm64/boot/dts/exynos/exynos990-c1s.dts       |  3 +-
->  arch/arm64/boot/dts/exynos/exynos990-r8s.dts       |  3 +-
->  .../boot/dts/exynos/exynos990-x1s-common.dtsi      |  3 +-
->  arch/arm64/boot/dts/exynos/exynos990.dtsi          |  2 +
->  arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |  9 +-
->  arch/arm64/boot/dts/exynos/exynosautov9.dtsi       | 77 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |  2 +
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi     | 57 +++++++++++++
->  21 files changed, 485 insertions(+), 24 deletions(-)
+>  arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     |  19 ++
+>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |   8 +-
+>  .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 120 ++++++-----
+>  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     |  45 ++++
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 230 ++++++++++++---=
+------
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   3 +-
+>  .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   7 +
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  34 ++-
+>  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |   4 +-
+>  arch/arm64/boot/dts/exynos/exynos7870.dtsi         |   9 +-
+>  arch/arm64/boot/dts/exynos/exynos7885.dtsi         |   9 +-
+>  arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi  |   1 +
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi          |  16 +-
+>  arch/arm64/boot/dts/exynos/exynos8855.dtsi         |   5 +
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi         |   9 +-
+>  arch/arm64/boot/dts/exynos/exynos9810.dtsi         |   9 +-
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi          |   3 +-
+>  arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |   9 +-
+>  arch/arm64/boot/dts/exynos/exynosautov920.dtsi     |   7 +
+>  19 files changed, 359 insertions(+), 188 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/exynos/exynos2200-g0s.dts b/arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
-> index 0e348c5cf7df..458f1bc6f5d0 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
-> @@ -143,6 +143,7 @@ &usb {
->         /* TODO: Replace these once PMIC is implemented  */
->         vdd10-supply = <&reg_dummy>;
->         vdd33-supply = <&reg_dummy>;
-> +
->         status = "okay";
->  };
->
-> @@ -161,6 +162,7 @@ &usb_hsphy {
->         /* TODO: Replace these once PMIC is implemented  */
->         vdda12-supply = <&reg_dummy>;
->         vdd-supply = <&reg_dummy>;
-> +
->         status = "okay";
->  };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> index 59662f9bdb98..b1c134f22324 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
-> @@ -266,6 +266,7 @@ mct_peris: timer@10040000 {
->                                      <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH 0>,
->                                      <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH 0>,
->                                      <GIC_SPI 954 IRQ_TYPE_LEVEL_HIGH 0>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -326,6 +327,7 @@ usi4: usi@105000c0 {
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI04>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric0 0x1024>;
-> +
->                         status = "disabled";
->
->                         hsi2c_8: i2c@10500000 {
-> @@ -340,6 +342,7 @@ hsi2c_8: i2c@10500000 {
->                                 interrupts = <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c8_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -353,6 +356,7 @@ serial_6: serial@10500000 {
->                                 pinctrl-0 = <&uart6_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -368,6 +372,7 @@ usi4_i2c: usi@105100c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric0 0x1024>;
-> +
->                         status = "disabled";
->
->                         hsi2c_9: i2c@10510000 {
-> @@ -382,6 +387,7 @@ hsi2c_9: i2c@10510000 {
->                                 interrupts = <GIC_SPI 672 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c9_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -418,6 +424,7 @@ usi7: usi@109000c0 {
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI07>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric1 0x2030>;
-> +
->                         status = "disabled";
->
->                         hsi2c_14: i2c@10900000 {
-> @@ -432,6 +439,7 @@ hsi2c_14: i2c@10900000 {
->                                 interrupts = <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c14_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -445,6 +453,7 @@ serial_9: serial@10900000 {
->                                 pinctrl-0 = <&uart9_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -460,6 +469,7 @@ usi7_i2c: usi@109100c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric1 0x2034>;
-> +
->                         status = "disabled";
->
->                         hsi2c_15: i2c@10910000 {
-> @@ -474,6 +484,7 @@ hsi2c_15: i2c@10910000 {
->                                 interrupts = <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c15_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -488,6 +499,7 @@ usi8: usi@109200c0 {
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI08>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric1 0x2038>;
-> +
->                         status = "disabled";
->
->                         hsi2c_16: i2c@10920000 {
-> @@ -502,6 +514,7 @@ hsi2c_16: i2c@10920000 {
->                                 interrupts = <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c16_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -515,6 +528,7 @@ serial_10: serial@10920000 {
->                                 pinctrl-0 = <&uart10_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -530,6 +544,7 @@ usi8_i2c: usi@109300c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric1 0x203c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_17: i2c@10930000 {
-> @@ -544,6 +559,7 @@ hsi2c_17: i2c@10930000 {
->                                 interrupts = <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c17_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -558,6 +574,7 @@ usi9: usi@109400c0 {
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI09>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric1 0x2040>;
-> +
->                         status = "disabled";
->
->                         hsi2c_18: i2c@10940000 {
-> @@ -572,6 +589,7 @@ hsi2c_18: i2c@10940000 {
->                                 interrupts = <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c18_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -585,6 +603,7 @@ serial_11: serial@10940000 {
->                                 pinctrl-0 = <&uart11_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -600,6 +619,7 @@ usi9_i2c: usi@109500c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric1 0x2044>;
-> +
->                         status = "disabled";
->
->                         hsi2c_19: i2c@10950000 {
-> @@ -614,6 +634,7 @@ hsi2c_19: i2c@10950000 {
->                                 interrupts = <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c19_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -628,6 +649,7 @@ usi10: usi@109600c0 {
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI10>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric1 0x2048>;
-> +
->                         status = "disabled";
->
->                         hsi2c_20: i2c@10960000 {
-> @@ -642,6 +664,7 @@ hsi2c_20: i2c@10960000 {
->                                 interrupts = <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c20_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -655,6 +678,7 @@ serial_12: serial@10960000 {
->                                 pinctrl-0 = <&uart12_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -670,6 +694,7 @@ usi10_i2c: usi@109700c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric1 0x204c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_21: i2c@10970000 {
-> @@ -684,6 +709,7 @@ hsi2c_21: i2c@10970000 {
->                                 interrupts = <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c21_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -821,6 +847,7 @@ usi0: usi@11d000c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI00>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x2000>;
-> +
->                         status = "disabled";
->
->                         hsi2c_0: i2c@11d00000 {
-> @@ -835,6 +862,7 @@ hsi2c_0: i2c@11d00000 {
->                                 interrupts = <GIC_SPI 704 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c0_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -848,6 +876,7 @@ serial_2: serial@11d00000 {
->                                 pinctrl-0 = <&uart2_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -863,6 +892,7 @@ usi0_i2c: usi@11d100c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x2004>;
-> +
->                         status = "disabled";
->
->                         hsi2c_1: i2c@11d10000 {
-> @@ -877,6 +907,7 @@ hsi2c_1: i2c@11d10000 {
->                                 interrupts = <GIC_SPI 703 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c1_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -891,6 +922,7 @@ usi1: usi@11d200c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI01>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x2008>;
-> +
->                         status = "disabled";
->
->                         hsi2c_2: i2c@11d20000 {
-> @@ -905,6 +937,7 @@ hsi2c_2: i2c@11d20000 {
->                                 interrupts = <GIC_SPI 706 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c2_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -918,6 +951,7 @@ serial_3: serial@11d20000 {
->                                 pinctrl-0 = <&uart3_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -933,6 +967,7 @@ usi1_i2c: usi@11d300c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x200c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_3: i2c@11d30000 {
-> @@ -947,6 +982,7 @@ hsi2c_3: i2c@11d30000 {
->                                 interrupts = <GIC_SPI 705 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c3_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -961,6 +997,7 @@ usi2: usi@11d400c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI02>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x2010>;
-> +
->                         status = "disabled";
->
->                         hsi2c_4: i2c@11d40000 {
-> @@ -975,6 +1012,7 @@ hsi2c_4: i2c@11d40000 {
->                                 interrupts = <GIC_SPI 708 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c4_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -988,6 +1026,7 @@ serial_4: serial@11d40000 {
->                                 pinctrl-0 = <&uart4_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1003,6 +1042,7 @@ usi2_i2c: usi@11d500c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x2014>;
-> +
->                         status = "disabled";
->
->                         hsi2c_5: i2c@11d50000 {
-> @@ -1017,6 +1057,7 @@ hsi2c_5: i2c@11d50000 {
->                                 interrupts = <GIC_SPI 707 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c5_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1031,6 +1072,7 @@ usi3: usi@11d600c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI03>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x2018>;
-> +
->                         status = "disabled";
->
->                         hsi2c_6: i2c@11d60000 {
-> @@ -1045,6 +1087,7 @@ hsi2c_6: i2c@11d60000 {
->                                 interrupts = <GIC_SPI 710 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c6_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1058,6 +1101,7 @@ serial_5: serial@11d60000 {
->                                 pinctrl-0 = <&uart5_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1073,6 +1117,7 @@ usi3_i2c: usi@11d700c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x201c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_7: i2c@11d70000 {
-> @@ -1087,6 +1132,7 @@ hsi2c_7: i2c@11d70000 {
->                                 interrupts = <GIC_SPI 709 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c7_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1102,6 +1148,7 @@ usi5_i2c: usi@11d800c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x102c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_11: i2c@11d80000 {
-> @@ -1116,6 +1163,7 @@ hsi2c_11: i2c@11d80000 {
->                                 interrupts = <GIC_SPI 711 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c11_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1131,6 +1179,7 @@ usi6_i2c: usi@11d900c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x1004>;
-> +
->                         status = "disabled";
->
->                         hsi2c_13: i2c@11d90000 {
-> @@ -1145,6 +1194,7 @@ hsi2c_13: i2c@11d90000 {
->                                 interrupts = <GIC_SPI 713 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c13_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1159,6 +1209,7 @@ usi11: usi@11da00c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI11>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x1058>;
-> +
->                         status = "disabled";
->
->                         hsi2c_22: i2c@11da0000 {
-> @@ -1173,6 +1224,7 @@ hsi2c_22: i2c@11da0000 {
->                                 interrupts = <GIC_SPI 716 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c22_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1186,6 +1238,7 @@ serial_13: serial@11da0000 {
->                                 pinctrl-0 = <&uart13_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1201,6 +1254,7 @@ usi11_i2c: usi@11db00c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_peric2 0x105c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_23: i2c@11db0000 {
-> @@ -1215,6 +1269,7 @@ hsi2c_23: i2c@11db0000 {
->                                 interrupts = <GIC_SPI 715 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c23_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1229,6 +1284,7 @@ usi5: usi@11dd00c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI05>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x117c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_10: i2c@11dd0000 {
-> @@ -1243,6 +1299,7 @@ hsi2c_10: i2c@11dd0000 {
->                                 interrupts = <GIC_SPI 538 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c10_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1256,6 +1313,7 @@ serial_7: serial@11dd0000 {
->                                 pinctrl-0 = <&uart7_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1270,6 +1328,7 @@ usi6: usi@11de00c0 {
->                                  <&cmu_peric2 CLK_DOUT_PERIC2_USI06>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_peric2 0x1180>;
-> +
->                         status = "disabled";
->
->                         hsi2c_12: i2c@11de0000 {
-> @@ -1284,6 +1343,7 @@ hsi2c_12: i2c@11de0000 {
->                                 interrupts = <GIC_SPI 539 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c12_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1297,6 +1357,7 @@ serial_8: serial@11de0000 {
->                                 pinctrl-0 = <&uart8_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1338,6 +1399,7 @@ usi_cmgp0: usi@14f000c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI0>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2000>;
-> +
->                         status = "disabled";
->
->                         hsi2c_24: i2c@14f00000 {
-> @@ -1352,6 +1414,7 @@ hsi2c_24: i2c@14f00000 {
->                                 interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c24_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1365,6 +1428,7 @@ serial_14: serial@14f00000 {
->                                 pinctrl-0 = <&uart14_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1380,6 +1444,7 @@ usi_i2c_cmgp0: usi@14f100c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2070>;
-> +
->                         status = "disabled";
->
->                         hsi2c_25: i2c@14f10000 {
-> @@ -1394,6 +1459,7 @@ hsi2c_25: i2c@14f10000 {
->                                 interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c25_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1408,6 +1474,7 @@ usi_cmgp1: usi@14f200c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI1>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2010>;
-> +
->                         status = "disabled";
->
->                         hsi2c_26: i2c@14f20000 {
-> @@ -1422,6 +1489,7 @@ hsi2c_26: i2c@14f20000 {
->                                 interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c26_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1435,6 +1503,7 @@ serial_15: serial@14f20000 {
->                                 pinctrl-0 = <&uart15_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1450,6 +1519,7 @@ usi_i2c_cmgp1: usi@14f300c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2074>;
-> +
->                         status = "disabled";
->
->                         hsi2c_27: i2c@14f30000 {
-> @@ -1464,6 +1534,7 @@ hsi2c_27: i2c@14f30000 {
->                                 interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c27_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1478,6 +1549,7 @@ usi_cmgp2: usi@14f400c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI2>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2020>;
-> +
->                         status = "disabled";
->
->                         hsi2c_28: i2c@14f40000 {
-> @@ -1492,6 +1564,7 @@ hsi2c_28: i2c@14f40000 {
->                                 interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c28_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1505,6 +1578,7 @@ serial_16: serial@14f40000 {
->                                 pinctrl-0 = <&uart16_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1520,6 +1594,7 @@ usi_i2c_cmgp2: usi@14f500c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2024>;
-> +
->                         status = "disabled";
->
->                         hsi2c_29: i2c@14f50000 {
-> @@ -1534,6 +1609,7 @@ hsi2c_29: i2c@14f50000 {
->                                 interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c29_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1548,6 +1624,7 @@ usi_cmgp3: usi@14f600c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI3>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2030>;
-> +
->                         status = "disabled";
->
->                         hsi2c_30: i2c@14f60000 {
-> @@ -1562,6 +1639,7 @@ hsi2c_30: i2c@14f60000 {
->                                 interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c30_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1575,6 +1653,7 @@ serial_17: serial@14f60000 {
->                                 pinctrl-0 = <&uart17_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1590,6 +1669,7 @@ usi_i2c_cmgp3: usi@14f700c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2034>;
-> +
->                         status = "disabled";
->
->                         hsi2c_31: i2c@14f70000 {
-> @@ -1604,6 +1684,7 @@ hsi2c_31: i2c@14f70000 {
->                                 interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c31_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1618,6 +1699,7 @@ usi_cmgp4: usi@14f800c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI4>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2040>;
-> +
->                         status = "disabled";
->
->                         hsi2c_32: i2c@14f80000 {
-> @@ -1632,6 +1714,7 @@ hsi2c_32: i2c@14f80000 {
->                                 interrupts = <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c32_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1645,6 +1728,7 @@ serial_18: serial@14f80000 {
->                                 pinctrl-0 = <&uart18_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1660,6 +1744,7 @@ usi_i2c_cmgp4: usi@14f900c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2044>;
-> +
->                         status = "disabled";
->
->                         hsi2c_33: i2c@14f90000 {
-> @@ -1674,6 +1759,7 @@ hsi2c_33: i2c@14f90000 {
->                                 interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c33_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1688,6 +1774,7 @@ usi_cmgp5: usi@14fa00c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI5>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2050>;
-> +
->                         status = "disabled";
->
->                         hsi2c_34: i2c@14fa0000 {
-> @@ -1702,6 +1789,7 @@ hsi2c_34: i2c@14fa0000 {
->                                 interrupts = <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c34_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1715,6 +1803,7 @@ serial_19: serial@14fa0000 {
->                                 pinctrl-0 = <&uart19_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1730,6 +1819,7 @@ usi_i2c_cmgp5: usi@14fb00c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2054>;
-> +
->                         status = "disabled";
->
->                         hsi2c_35: i2c@14fb0000 {
-> @@ -1744,6 +1834,7 @@ hsi2c_35: i2c@14fb0000 {
->                                 interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c35_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1758,6 +1849,7 @@ usi_cmgp6: usi@14fc00c0 {
->                                  <&cmu_cmgp CLK_DOUT_CMGP_USI6>;
->                         clock-names = "pclk", "ipclk";
->                         samsung,sysreg = <&syscon_cmgp 0x2060>;
-> +
->                         status = "disabled";
->
->                         hsi2c_36: i2c@14fc0000 {
-> @@ -1772,6 +1864,7 @@ hsi2c_36: i2c@14fc0000 {
->                                 interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c36_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1785,6 +1878,7 @@ serial_20: serial@14fc0000 {
->                                 pinctrl-0 = <&uart20_bus_single>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1800,6 +1894,7 @@ usi_i2c_cmgp6: usi@14fd00c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2064>;
-> +
->                         status = "disabled";
->
->                         hsi2c_37: i2c@14fd0000 {
-> @@ -1814,6 +1909,7 @@ hsi2c_37: i2c@14fd0000 {
->                                 interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c37_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1829,6 +1925,7 @@ usi_i2c_cmgp7: usi@14fe00c0 {
->                         clock-names = "pclk", "ipclk";
->                         samsung,mode = <USI_MODE_I2C>;
->                         samsung,sysreg = <&syscon_cmgp 0x2080>;
-> +
->                         status = "disabled";
->
->                         hsi2c_38: i2c@14fe0000 {
-> @@ -1843,6 +1940,7 @@ hsi2c_38: i2c@14fe0000 {
->                                 interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH 0>;
->                                 pinctrl-0 = <&hsi2c38_bus>;
->                                 pinctrl-names = "default";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-> index 540b4d6c9067..0c200df9996f 100644
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi b/arch/arm64/=
+boot/dts/exynos/exynos5433-bus.dtsi
+> index 0c200df9996f..9bfa0474675c 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi
-> @@ -12,6 +12,7 @@ bus_g2d_400: bus0 {
->                 clocks = <&cmu_top CLK_ACLK_G2D_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_g2d_400_opp_table>;
+> @@ -105,22 +105,27 @@ opp-400000000 {
+>                         opp-hz =3D /bits/ 64 <400000000>;
+>                         opp-microvolt =3D <1075000>;
+>                 };
 > +
->                 status = "disabled";
+>                 opp-267000000 {
+>                         opp-hz =3D /bits/ 64 <267000000>;
+>                         opp-microvolt =3D <1000000>;
+>                 };
+> +
+>                 opp-200000000 {
+>                         opp-hz =3D /bits/ 64 <200000000>;
+>                         opp-microvolt =3D <975000>;
+>                 };
+> +
+>                 opp-160000000 {
+>                         opp-hz =3D /bits/ 64 <160000000>;
+>                         opp-microvolt =3D <962500>;
+>                 };
+> +
+>                 opp-134000000 {
+>                         opp-hz =3D /bits/ 64 <134000000>;
+>                         opp-microvolt =3D <950000>;
+>                 };
+> +
+>                 opp-100000000 {
+>                         opp-hz =3D /bits/ 64 <100000000>;
+>                         opp-microvolt =3D <937500>;
+> @@ -133,15 +138,19 @@ bus_g2d_266_opp_table: opp-table-3 {
+>                 opp-267000000 {
+>                         opp-hz =3D /bits/ 64 <267000000>;
+>                 };
+> +
+>                 opp-200000000 {
+>                         opp-hz =3D /bits/ 64 <200000000>;
+>                 };
+> +
+>                 opp-160000000 {
+>                         opp-hz =3D /bits/ 64 <160000000>;
+>                 };
+> +
+>                 opp-134000000 {
+>                         opp-hz =3D /bits/ 64 <134000000>;
+>                 };
+> +
+>                 opp-100000000 {
+>                         opp-hz =3D /bits/ 64 <100000000>;
+>                 };
+> @@ -153,9 +162,11 @@ bus_gscl_opp_table: opp-table-4 {
+>                 opp-333000000 {
+>                         opp-hz =3D /bits/ 64 <333000000>;
+>                 };
+> +
+>                 opp-222000000 {
+>                         opp-hz =3D /bits/ 64 <222000000>;
+>                 };
+> +
+>                 opp-166500000 {
+>                         opp-hz =3D /bits/ 64 <166500000>;
+>                 };
+> @@ -168,18 +179,23 @@ bus_hevc_opp_table: opp-table-5 {
+>                 opp-400000000 {
+>                         opp-hz =3D /bits/ 64 <400000000>;
+>                 };
+> +
+>                 opp-267000000 {
+>                         opp-hz =3D /bits/ 64 <267000000>;
+>                 };
+> +
+>                 opp-200000000 {
+>                         opp-hz =3D /bits/ 64 <200000000>;
+>                 };
+> +
+>                 opp-160000000 {
+>                         opp-hz =3D /bits/ 64 <160000000>;
+>                 };
+> +
+>                 opp-134000000 {
+>                         opp-hz =3D /bits/ 64 <134000000>;
+>                 };
+> +
+>                 opp-100000000 {
+>                         opp-hz =3D /bits/ 64 <100000000>;
+>                 };
+> @@ -191,12 +207,15 @@ bus_noc2_opp_table: opp-table-6 {
+>                 opp-400000000 {
+>                         opp-hz =3D /bits/ 64 <400000000>;
+>                 };
+> +
+>                 opp-200000000 {
+>                         opp-hz =3D /bits/ 64 <200000000>;
+>                 };
+> +
+>                 opp-134000000 {
+>                         opp-hz =3D /bits/ 64 <134000000>;
+>                 };
+> +
+>                 opp-100000000 {
+>                         opp-hz =3D /bits/ 64 <100000000>;
+>                 };
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi b/arch/ar=
+m64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+> index 681553577ebc..d6850c51db26 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+> @@ -139,7 +139,7 @@ gpz1: gpz1-gpio-bank {
+>
+>         i2s0_bus: i2s0-bus-pins {
+>                 samsung,pins =3D "gpz0-0", "gpz0-1", "gpz0-2", "gpz0-3",
+> -                               "gpz0-4", "gpz0-5", "gpz0-6";
+> +                              "gpz0-4", "gpz0-5", "gpz0-6";
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+>                 samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+>                 samsung,pin-drv =3D <EXYNOS5433_PIN_DRV_FAST_SR1>;
+> @@ -572,16 +572,14 @@ hs_i2c9_bus: hs-i2c9-bus-pins {
 >         };
 >
-> @@ -20,6 +21,7 @@ bus_g2d_266: bus1 {
->                 clocks = <&cmu_top CLK_ACLK_G2D_266>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_g2d_266_opp_table>;
-> +
->                 status = "disabled";
+>         i2s1_bus: i2s1-bus-pins {
+> -               samsung,pins =3D "gpd4-0", "gpd4-1", "gpd4-2",
+> -                               "gpd4-3", "gpd4-4";
+> +               samsung,pins =3D "gpd4-0", "gpd4-1", "gpd4-2", "gpd4-3", =
+"gpd4-4";
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+>                 samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+>                 samsung,pin-drv =3D <EXYNOS5433_PIN_DRV_FAST_SR1>;
 >         };
 >
-> @@ -28,6 +30,7 @@ bus_gscl: bus2 {
->                 clocks = <&cmu_top CLK_ACLK_GSCL_333>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_gscl_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -36,6 +39,7 @@ bus_hevc: bus3 {
->                 clocks = <&cmu_top CLK_ACLK_HEVC_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_hevc_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -44,6 +48,7 @@ bus_jpeg: bus4 {
->                 clocks = <&cmu_top CLK_SCLK_JPEG_MSCL>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -52,6 +57,7 @@ bus_mfc: bus5 {
->                 clocks = <&cmu_top CLK_ACLK_MFC_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -60,6 +66,7 @@ bus_mscl: bus6 {
->                 clocks = <&cmu_top CLK_ACLK_MSCL_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_g2d_400_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -68,6 +75,7 @@ bus_noc0: bus7 {
->                 clocks = <&cmu_top CLK_ACLK_BUS0_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_hevc_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -76,6 +84,7 @@ bus_noc1: bus8 {
->                 clocks = <&cmu_top CLK_ACLK_BUS1_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_hevc_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> @@ -84,6 +93,7 @@ bus_noc2: bus9 {
->                 clocks = <&cmu_mif CLK_ACLK_BUS2_400>;
->                 clock-names = "bus";
->                 operating-points-v2 = <&bus_noc2_opp_table>;
-> +
->                 status = "disabled";
->         };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index a1fb354dea9f..bc5ff66d8455 100644
+>         pcm1_bus: pcm1-bus-pins {
+> -               samsung,pins =3D "gpd4-0", "gpd4-1", "gpd4-2",
+> -                               "gpd4-3", "gpd4-4";
+> +               samsung,pins =3D "gpd4-0", "gpd4-1", "gpd4-2", "gpd4-3", =
+"gpd4-4";
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_3>;
+>                 samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+>                 samsung,pin-drv =3D <EXYNOS5433_PIN_DRV_FAST_SR1>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch=
+/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
+> index bc5ff66d8455..0ad02a098765 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -141,6 +141,7 @@ sound {
+> @@ -234,60 +234,60 @@ &bus_noc2 {
 >
->  &adc {
->         vdd-supply = <&ldo3_reg>;
-> +
->         status = "okay";
+>  &cmu_aud {
+>         assigned-clocks =3D <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> -               <&cmu_aud CLK_MOUT_SCLK_AUD_I2S>,
+> -               <&cmu_aud CLK_MOUT_SCLK_AUD_PCM>,
+> -               <&cmu_top CLK_MOUT_AUD_PLL>,
+> -               <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> -               <&cmu_top CLK_MOUT_SCLK_AUDIO0>,
+> -               <&cmu_top CLK_MOUT_SCLK_AUDIO1>,
+> -               <&cmu_top CLK_MOUT_SCLK_SPDIF>,
+> +                         <&cmu_aud CLK_MOUT_SCLK_AUD_I2S>,
+> +                         <&cmu_aud CLK_MOUT_SCLK_AUD_PCM>,
+> +                         <&cmu_top CLK_MOUT_AUD_PLL>,
+> +                         <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                         <&cmu_top CLK_MOUT_SCLK_AUDIO0>,
+> +                         <&cmu_top CLK_MOUT_SCLK_AUDIO1>,
+> +                         <&cmu_top CLK_MOUT_SCLK_SPDIF>,
 >
->         thermistor-ap {
-> @@ -173,51 +174,61 @@ &bus_g2d_400 {
->         devfreq-events = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
->         vdd-supply = <&buck4_reg>;
->         exynos,saturation-ratio = <10>;
-> +
->         status = "okay";
+> -               <&cmu_aud CLK_DIV_AUD_CA5>,
+> -               <&cmu_aud CLK_DIV_ACLK_AUD>,
+> -               <&cmu_aud CLK_DIV_PCLK_DBG_AUD>,
+> -               <&cmu_aud CLK_DIV_SCLK_AUD_I2S>,
+> -               <&cmu_aud CLK_DIV_SCLK_AUD_PCM>,
+> -               <&cmu_aud CLK_DIV_SCLK_AUD_SLIMBUS>,
+> -               <&cmu_aud CLK_DIV_SCLK_AUD_UART>,
+> -               <&cmu_top CLK_DIV_SCLK_AUDIO0>,
+> -               <&cmu_top CLK_DIV_SCLK_AUDIO1>,
+> -               <&cmu_top CLK_DIV_SCLK_PCM1>,
+> -               <&cmu_top CLK_DIV_SCLK_I2S1>;
+> +                         <&cmu_aud CLK_DIV_AUD_CA5>,
+> +                         <&cmu_aud CLK_DIV_ACLK_AUD>,
+> +                         <&cmu_aud CLK_DIV_PCLK_DBG_AUD>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_I2S>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_PCM>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_SLIMBUS>,
+> +                         <&cmu_aud CLK_DIV_SCLK_AUD_UART>,
+> +                         <&cmu_top CLK_DIV_SCLK_AUDIO0>,
+> +                         <&cmu_top CLK_DIV_SCLK_AUDIO1>,
+> +                         <&cmu_top CLK_DIV_SCLK_PCM1>,
+> +                         <&cmu_top CLK_DIV_SCLK_I2S1>;
+>
+>         assigned-clock-parents =3D <&cmu_top CLK_FOUT_AUD_PLL>,
+> -               <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> -               <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> -               <&cmu_top CLK_FOUT_AUD_PLL>,
+> -               <&cmu_top CLK_MOUT_AUD_PLL>,
+> -               <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> -               <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> -               <&cmu_top CLK_SCLK_AUDIO0>;
+> +                                <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> +                                <&cmu_aud CLK_MOUT_AUD_PLL_USER>,
+> +                                <&cmu_top CLK_FOUT_AUD_PLL>,
+> +                                <&cmu_top CLK_MOUT_AUD_PLL>,
+> +                                <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                                <&cmu_top CLK_MOUT_AUD_PLL_USER_T>,
+> +                                <&cmu_top CLK_SCLK_AUDIO0>;
+>
+>         assigned-clock-rates =3D <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
+> -               <196608001>, <65536001>, <32768001>, <49152001>,
+> -               <2048001>, <24576001>, <196608001>,
+> -               <24576001>, <98304001>, <2048001>, <49152001>;
+> +                              <196608001>, <65536001>, <32768001>, <4915=
+2001>,
+> +                              <2048001>, <24576001>, <196608001>,
+> +                              <24576001>, <98304001>, <2048001>, <491520=
+01>;
 >  };
 >
->  &bus_g2d_266 {
->         devfreq = <&bus_g2d_400>;
-> +
->         status = "okay";
+>  &cmu_fsys {
+>         assigned-clocks =3D <&cmu_top CLK_MOUT_SCLK_USBDRD30>,
+> -               <&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+> -               <&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
+> -               <&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
+> -               <&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_USER=
+>,
+> -               <&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_US=
+ER>,
+> -               <&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_USER>=
+,
+> -               <&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_USE=
+R>,
+> -               <&cmu_top CLK_DIV_SCLK_USBDRD30>,
+> -               <&cmu_top CLK_DIV_SCLK_USBHOST30>;
+> +                         <&cmu_top CLK_MOUT_SCLK_USBHOST30>,
+> +                         <&cmu_fsys CLK_MOUT_SCLK_USBDRD30_USER>,
+> +                         <&cmu_fsys CLK_MOUT_SCLK_USBHOST30_USER>,
+> +                         <&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PIPE=
+_PCLK_USER>,
+> +                         <&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PI=
+PE_PCLK_USER>,
+> +                         <&cmu_fsys CLK_MOUT_PHYCLK_USBDRD30_UDRD30_PHYC=
+LOCK_USER>,
+> +                         <&cmu_fsys CLK_MOUT_PHYCLK_USBHOST30_UHOST30_PH=
+YCLOCK_USER>,
+> +                         <&cmu_top CLK_DIV_SCLK_USBDRD30>,
+> +                         <&cmu_top CLK_DIV_SCLK_USBHOST30>;
+>         assigned-clock-parents =3D <&cmu_top CLK_MOUT_BUS_PLL_USER>,
+> -               <&cmu_top CLK_MOUT_BUS_PLL_USER>,
+> -               <&cmu_top CLK_SCLK_USBDRD30_FSYS>,
+> -               <&cmu_top CLK_SCLK_USBHOST30_FSYS>,
+> -               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PIPE_PCLK_PHY>,
+> -               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PIPE_PCLK_PHY>,
+> -               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PHYCLOCK_PHY>,
+> -               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_PHYCLOCK_PHY>;
+> +                                <&cmu_top CLK_MOUT_BUS_PLL_USER>,
+> +                                <&cmu_top CLK_SCLK_USBDRD30_FSYS>,
+> +                                <&cmu_top CLK_SCLK_USBHOST30_FSYS>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PI=
+PE_PCLK_PHY>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PIPE_PCLK_PHY>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PH=
+YCLOCK_PHY>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PHYCLOCK_PHY>;
+>         assigned-clock-rates =3D <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
+>                                <66700000>, <66700000>;
 >  };
+> @@ -347,6 +347,7 @@ ports {
 >
->  &bus_gscl {
->         devfreq = <&bus_g2d_400>;
+>                 port@0 {
+>                         reg =3D <0>;
 > +
->         status = "okay";
->  };
+>                         tv_to_hdmi: endpoint {
+>                                 remote-endpoint =3D <&hdmi_to_tv>;
+>                         };
+> @@ -386,6 +387,7 @@ ports {
 >
->  &bus_hevc {
->         devfreq = <&bus_g2d_400>;
+>                 port@0 {
+>                         reg =3D <0>;
 > +
->         status = "okay";
->  };
+>                         hdmi_to_tv: endpoint {
+>                                 remote-endpoint =3D <&tv_to_hdmi>;
+>                         };
+> @@ -393,6 +395,7 @@ hdmi_to_tv: endpoint {
 >
->  &bus_jpeg {
->         devfreq = <&bus_g2d_400>;
+>                 port@1 {
+>                         reg =3D <1>;
 > +
->         status = "okay";
->  };
+>                         hdmi_to_mhl: endpoint {
+>                                 remote-endpoint =3D <&mhl_to_hdmi>;
+>                         };
+> @@ -416,8 +419,7 @@ pmic@66 {
+>                 s2mps13_osc: clocks {
+>                         compatible =3D "samsung,s2mps13-clk";
+>                         #clock-cells =3D <1>;
+> -                       clock-output-names =3D "s2mps13_ap", "s2mps13_cp"=
+,
+> -                               "s2mps13_bt";
+> +                       clock-output-names =3D "s2mps13_ap", "s2mps13_cp"=
+, "s2mps13_bt";
+>                 };
 >
->  &bus_mfc {
->         devfreq = <&bus_g2d_400>;
+>                 regulators {
+> @@ -433,6 +435,7 @@ ldo2_reg: LDO2 {
+>                                 regulator-min-microvolt =3D <2800000>;
+>                                 regulator-max-microvolt =3D <2800000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
->  &bus_mscl {
->         devfreq = <&bus_g2d_400>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -450,6 +453,7 @@ ldo4_reg: LDO4 {
+>                                 regulator-min-microvolt =3D <1300000>;
+>                                 regulator-max-microvolt =3D <1300000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
->  &bus_noc0 {
->         devfreq = <&bus_g2d_400>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -460,6 +464,7 @@ ldo5_reg: LDO5 {
+>                                 regulator-min-microvolt =3D <1000000>;
+>                                 regulator-max-microvolt =3D <1000000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
->  &bus_noc1 {
->         devfreq = <&bus_g2d_400>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -469,6 +474,7 @@ ldo6_reg: LDO6 {
+>                                 regulator-name =3D "VDD10_MIPI2L_1.0V_AP"=
+;
+>                                 regulator-min-microvolt =3D <1000000>;
+>                                 regulator-max-microvolt =3D <1000000>;
 > +
->         status = "okay";
->  };
->
->  &bus_noc2 {
->         devfreq = <&bus_g2d_400>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -479,6 +485,7 @@ ldo7_reg: LDO7 {
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <1800000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
-> @@ -344,7 +355,6 @@ tv_to_hdmi: endpoint {
->  };
->
->  &dsi {
-> -       status = "okay";
->         vddcore-supply = <&ldo6_reg>;
->         vddio-supply = <&ldo7_reg>;
->         samsung,burst-clock-frequency = <512000000>;
-> @@ -352,20 +362,24 @@ &dsi {
->         samsung,pll-clock-frequency = <24000000>;
->         pinctrl-names = "default";
->         pinctrl-0 = <&te_irq>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -489,6 +496,7 @@ ldo8_reg: LDO8 {
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <1800000>;
+>                                 regulator-always-on;
 > +
-> +       status = "okay";
->  };
->
->  &gpu {
->         mali-supply = <&buck6_reg>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -499,6 +507,7 @@ ldo9_reg: LDO9 {
+>                                 regulator-min-microvolt =3D <1800000>;
+>                                 regulator-max-microvolt =3D <1800000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
->  &hdmi {
->         hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
-> -       status = "okay";
->         vdd-supply = <&ldo6_reg>;
->         vdd_osc-supply = <&ldo7_reg>;
->         vdd_pll-supply = <&ldo6_reg>;
->
-> +       status = "okay";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -508,6 +517,7 @@ ldo10_reg: LDO10 {
+>                                 regulator-name =3D "VDD33_USB30_3.0V_AP";
+>                                 regulator-min-microvolt =3D <3000000>;
+>                                 regulator-max-microvolt =3D <3000000>;
 > +
->         ports {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
-> @@ -387,9 +401,10 @@ hdmi_to_mhl: endpoint {
->  };
->
->  &hsi2c_0 {
-> -       status = "okay";
->         clock-frequency = <2500000>;
->
-> +       status = "okay";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -518,6 +528,7 @@ ldo11_reg: LDO11 {
+>                                 regulator-min-microvolt =3D <1000000>;
+>                                 regulator-max-microvolt =3D <1000000>;
+>                                 regulator-always-on;
 > +
->         pmic@66 {
->                 compatible = "samsung,s2mps13-pmic";
->                 interrupt-parent = <&gpa0>;
-> @@ -819,9 +834,10 @@ stmfts: touchscreen@49 {
->  };
->
->  &hsi2c_7 {
-> -       status = "okay";
->         clock-frequency = <1000000>;
->
-> +       status = "okay";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -535,6 +546,7 @@ ldo13_reg: LDO13 {
+>                                 regulator-min-microvolt =3D <950000>;
+>                                 regulator-max-microvolt =3D <950000>;
+>                                 regulator-always-on;
 > +
->         bridge@39 {
->                 reg = <0x39>;
->                 compatible = "sil,sii8620";
-> @@ -884,6 +900,7 @@ port@0 {
->                                                  * Add a disabled port just to satisfy dtschema.
->                                                  */
->                                                 reg = <0>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -545,6 +557,7 @@ ldo14_reg: LDO14 {
+>                                 regulator-min-microvolt =3D <1200000>;
+>                                 regulator-max-microvolt =3D <1200000>;
+>                                 regulator-always-on;
 > +
->                                                 status = "disabled";
->                                         };
->
-> @@ -945,11 +962,11 @@ &i2s0 {
->  &i2s1 {
->         assigned-clocks = <&i2s1 CLK_I2S_RCLK_SRC>;
->         assigned-clock-parents = <&cmu_peric CLK_SCLK_I2S1>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -555,6 +568,7 @@ ldo15_reg: LDO15 {
+>                                 regulator-min-microvolt =3D <1200000>;
+>                                 regulator-max-microvolt =3D <1200000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
->
->  &mshc_0 {
-> -       status = "okay";
->         mmc-ddr-1_8v;
->         mmc-hs200-1_8v;
->         mmc-hs400-1_8v;
-> @@ -968,10 +985,11 @@ &mshc_0 {
->         bus-width = <8>;
->         assigned-clocks = <&cmu_top CLK_SCLK_MMC0_FSYS>;
->         assigned-clock-rates = <800000000>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -721,6 +735,7 @@ buck1_reg: BUCK1 {
+>                                 regulator-min-microvolt =3D <600000>;
+>                                 regulator-max-microvolt =3D <1500000>;
+>                                 regulator-always-on;
 > +
-> +       status = "okay";
->  };
->
->  &mshc_2 {
-> -       status = "okay";
->         cap-sd-highspeed;
->         disable-wp;
->         cd-gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-> @@ -983,10 +1001,11 @@ &mshc_2 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4>;
->         bus-width = <4>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -731,6 +746,7 @@ buck2_reg: BUCK2 {
+>                                 regulator-min-microvolt =3D <900000>;
+>                                 regulator-max-microvolt =3D <1300000>;
+>                                 regulator-always-on;
 > +
-> +       status = "okay";
->  };
->
->  &pcie {
-> -       status = "okay";
->         pinctrl-names = "default";
->         pinctrl-0 = <&pcie_bus &pcie_wlanen>;
->         vdd10-supply = <&ldo6_reg>;
-> @@ -998,6 +1017,8 @@ &pcie {
->         assigned-clock-rates = <0>, <100000000>;
->         interrupt-map-mask = <0 0 0 0>;
->         interrupt-map = <0 0 0 0 &gic GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -741,6 +757,7 @@ buck3_reg: BUCK3 {
+>                                 regulator-min-microvolt =3D <800000>;
+>                                 regulator-max-microvolt =3D <1200000>;
+>                                 regulator-always-on;
 > +
-> +       status = "okay";
->  };
->
->  &pcie_phy {
-> @@ -1006,6 +1027,7 @@ &pcie_phy {
->
->  &ppmu_d0_general {
->         status = "okay";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -751,6 +768,7 @@ buck4_reg: BUCK4 {
+>                                 regulator-min-microvolt =3D <600000>;
+>                                 regulator-max-microvolt =3D <1500000>;
+>                                 regulator-always-on;
 > +
->         events {
->                 ppmu_event0_d0_general: ppmu-event0-d0-general {
->                         event-name = "ppmu-event0-d0-general";
-> @@ -1015,6 +1037,7 @@ ppmu_event0_d0_general: ppmu-event0-d0-general {
->
->  &ppmu_d1_general {
->         status = "okay";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -761,6 +779,7 @@ buck5_reg: BUCK5 {
+>                                 regulator-min-microvolt =3D <600000>;
+>                                 regulator-max-microvolt =3D <1500000>;
+>                                 regulator-always-on;
 > +
->         events {
->                 ppmu_event0_d1_general: ppmu-event0-d1-general {
->                        event-name = "ppmu-event0-d1-general";
-> @@ -1238,6 +1261,7 @@ initial_touch: initial-state {
->  &pwm {
->         pinctrl-0 = <&pwm0_out>;
->         pinctrl-names = "default";
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -771,6 +790,7 @@ buck6_reg: BUCK6 {
+>                                 regulator-min-microvolt =3D <600000>;
+>                                 regulator-max-microvolt =3D <1500000>;
+>                                 regulator-always-on;
 > +
->         status = "okay";
->  };
+>                                 regulator-state-mem {
+>                                         regulator-off-in-suspend;
+>                                 };
+> @@ -855,6 +875,7 @@ ports {
 >
-> @@ -1270,6 +1294,7 @@ bluetooth {
->
->  &spi_1 {
->         cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
+>                         port@0 {
+>                                 reg =3D <0>;
 > +
->         status = "okay";
+>                                 mhl_to_hdmi: endpoint {
+>                                         remote-endpoint =3D <&hdmi_to_mhl=
+>;
+>                                 };
+> @@ -862,6 +883,7 @@ mhl_to_hdmi: endpoint {
 >
->         wm5110: audio-codec@0 {
-> @@ -1316,9 +1341,10 @@ controller-data {
->  };
->
->  &spi_3 {
-> -       status = "okay";
->         no-cs-readback;
->
-> +       status = "okay";
+>                         port@1 {
+>                                 reg =3D <1>;
 > +
->         irled@0 {
->                 compatible = "ir-spi-led";
->                 reg = <0x0>;
-> @@ -1339,22 +1365,26 @@ &timer {
+>                                 mhl_to_musb_con: endpoint {
+>                                         remote-endpoint =3D <&musb_con_to=
+_mhl>;
+>                                 };
+> @@ -906,6 +928,7 @@ port@0 {
 >
->  &tmu_atlas0 {
->         vtmu-supply = <&ldo3_reg>;
+>                                         port@3 {
+>                                                 reg =3D <3>;
 > +
->         status = "okay";
->  };
+>                                                 musb_con_to_mhl: endpoint=
+ {
+>                                                         remote-endpoint =
+=3D <&mhl_to_musb_con>;
+>                                                 };
+> @@ -924,6 +947,7 @@ muic_to_usb: endpoint {
 >
->  &tmu_apollo {
->         vtmu-supply = <&ldo3_reg>;
+>                 regulators {
+>                         compatible =3D "maxim,max77843-regulator";
 > +
->         status = "okay";
->  };
+>                         safeout1_reg: SAFEOUT1 {
+>                                 regulator-name =3D "SAFEOUT1";
+>                                 regulator-min-microvolt =3D <3300000>;
+> @@ -981,7 +1005,7 @@ &mshc_0 {
+>         fifo-depth =3D <0x80>;
+>         pinctrl-names =3D "default";
+>         pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_qrdy &sd0_bus1 &sd0_bus4
+> -                       &sd0_bus8 &sd0_rdqs>;
+> +                    &sd0_bus8 &sd0_rdqs>;
+>         bus-width =3D <8>;
+>         assigned-clocks =3D <&cmu_top CLK_SCLK_MMC0_FSYS>;
+>         assigned-clock-rates =3D <800000000>;
+> @@ -1304,7 +1328,7 @@ wm5110: audio-codec@0 {
+>                 interrupt-parent =3D <&gpa0>;
+>                 interrupts =3D <4 IRQ_TYPE_NONE>;
+>                 clocks =3D <&pmu_system_controller 0>,
+> -                       <&s2mps13_osc S2MPS11_CLK_BT>;
+> +                        <&s2mps13_osc S2MPS11_CLK_BT>;
+>                 clock-names =3D "mclk1", "mclk2";
 >
->  &tmu_g3d {
->         vtmu-supply = <&ldo3_reg>;
+>                 gpio-controller;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/=
+boot/dts/exynos/exynos5433-tmu.dtsi
+> index 81b72393dd0d..57b335f579d8 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> @@ -13,37 +13,44 @@ atlas0_thermal: atlas0-thermal {
+>                 thermal-sensors =3D <&tmu_atlas0>;
+>                 polling-delay-passive =3D <0>;
+>                 polling-delay =3D <0>;
 > +
->         status = "okay";
->  };
->
->  &usbdrd30 {
->         vdd33-supply = <&ldo10_reg>;
->         vdd10-supply = <&ldo6_reg>;
+>                 trips {
+>                         atlas0_alert_0: atlas0-alert-0 {
+>                                 temperature =3D <65000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
 > +
->         status = "okay";
->  };
->
-> @@ -1364,6 +1394,7 @@ &usbdrd_dwc3 {
->
->  &usbdrd30_phy {
->         vbus-supply = <&safeout1_reg>;
+>                         atlas0_alert_1: atlas0-alert-1 {
+>                                 temperature =3D <70000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
 > +
->         status = "okay";
->
->         port {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index fa2029e280a5..bc061b57caff 100644
+>                         atlas0_alert_2: atlas0-alert-2 {
+>                                 temperature =3D <75000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas0_alert_3: atlas0-alert-3 {
+>                                 temperature =3D <80000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas0_alert_4: atlas0-alert-4 {
+>                                 temperature =3D <85000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas0_alert_5: atlas0-alert-5 {
+>                                 temperature =3D <90000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas0_alert_6: atlas0-alert-6 {
+>                                 temperature =3D <95000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+> @@ -58,36 +65,42 @@ map0 {
+>                                 cooling-device =3D <&cpu4 1 2>, <&cpu5 1 =
+2>,
+>                                                  <&cpu6 1 2>, <&cpu7 1 2>=
+;
+>                         };
+> +
+>                         map1 {
+>                                 /* Set maximum frequency as 1700MHz  */
+>                                 trip =3D <&atlas0_alert_1>;
+>                                 cooling-device =3D <&cpu4 2 3>, <&cpu5 2 =
+3>,
+>                                                  <&cpu6 2 3>, <&cpu7 2 3>=
+;
+>                         };
+> +
+>                         map2 {
+>                                 /* Set maximum frequency as 1600MHz  */
+>                                 trip =3D <&atlas0_alert_2>;
+>                                 cooling-device =3D <&cpu4 3 4>, <&cpu5 3 =
+4>,
+>                                                  <&cpu6 3 4>, <&cpu7 3 4>=
+;
+>                         };
+> +
+>                         map3 {
+>                                 /* Set maximum frequency as 1500MHz  */
+>                                 trip =3D <&atlas0_alert_3>;
+>                                 cooling-device =3D <&cpu4 4 5>, <&cpu5 4 =
+5>,
+>                                                  <&cpu6 4 5>, <&cpu7 4 5>=
+;
+>                         };
+> +
+>                         map4 {
+>                                 /* Set maximum frequency as 1400MHz  */
+>                                 trip =3D <&atlas0_alert_4>;
+>                                 cooling-device =3D <&cpu4 5 7>, <&cpu5 5 =
+7>,
+>                                                  <&cpu6 5 7>, <&cpu7 5 7>=
+;
+>                         };
+> +
+>                         map5 {
+>                                 /* Set maximum frequencyas 1200MHz  */
+>                                 trip =3D <&atlas0_alert_5>;
+>                                 cooling-device =3D <&cpu4 7 9>, <&cpu5 7 =
+9>,
+>                                                  <&cpu6 7 9>, <&cpu7 7 9>=
+;
+>                         };
+> +
+>                         map6 {
+>                                 /* Set maximum frequency as 1000MHz  */
+>                                 trip =3D <&atlas0_alert_6>;
+> @@ -101,37 +114,44 @@ atlas1_thermal: atlas1-thermal {
+>                 thermal-sensors =3D <&tmu_atlas1>;
+>                 polling-delay-passive =3D <0>;
+>                 polling-delay =3D <0>;
+> +
+>                 trips {
+>                         atlas1_alert_0: atlas1-alert-0 {
+>                                 temperature =3D <65000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_1: atlas1-alert-1 {
+>                                 temperature =3D <70000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_2: atlas1-alert-2 {
+>                                 temperature =3D <75000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_3: atlas1-alert-3 {
+>                                 temperature =3D <80000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_4: atlas1-alert-4 {
+>                                 temperature =3D <85000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_5: atlas1-alert-5 {
+>                                 temperature =3D <90000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         atlas1_alert_6: atlas1-alert-6 {
+>                                 temperature =3D <95000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+> @@ -144,37 +164,44 @@ g3d_thermal: g3d-thermal {
+>                 thermal-sensors =3D <&tmu_g3d>;
+>                 polling-delay-passive =3D <0>;
+>                 polling-delay =3D <0>;
+> +
+>                 trips {
+>                         g3d_alert_0: g3d-alert-0 {
+>                                 temperature =3D <70000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_1: g3d-alert-1 {
+>                                 temperature =3D <75000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_2: g3d-alert-2 {
+>                                 temperature =3D <80000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_3: g3d-alert-3 {
+>                                 temperature =3D <85000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_4: g3d-alert-4 {
+>                                 temperature =3D <90000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_5: g3d-alert-5 {
+>                                 temperature =3D <95000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         g3d_alert_6: g3d-alert-6 {
+>                                 temperature =3D <100000>; /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+> @@ -187,37 +214,44 @@ apollo_thermal: apollo-thermal {
+>                 thermal-sensors =3D <&tmu_apollo>;
+>                 polling-delay-passive =3D <0>;
+>                 polling-delay =3D <0>;
+> +
+>                 trips {
+>                         apollo_alert_0: apollo-alert-0 {
+>                                 temperature =3D <65000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_1: apollo-alert-1 {
+>                                 temperature =3D <70000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_2: apollo-alert-2 {
+>                                 temperature =3D <75000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_3: apollo-alert-3 {
+>                                 temperature =3D <80000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_4: apollo-alert-4 {
+>                                 temperature =3D <85000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_5: apollo-alert-5 {
+>                                 temperature =3D <90000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         apollo_alert_6: apollo-alert-6 {
+>                                 temperature =3D <95000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+> @@ -232,24 +266,28 @@ map0 {
+>                                 cooling-device =3D <&cpu0 1 2>, <&cpu1 1 =
+2>,
+>                                                  <&cpu2 1 2>, <&cpu3 1 2>=
+;
+>                         };
+> +
+>                         map1 {
+>                                 /* Set maximum frequency as 1100MHz  */
+>                                 trip =3D <&apollo_alert_3>;
+>                                 cooling-device =3D <&cpu0 2 3>, <&cpu1 2 =
+3>,
+>                                                  <&cpu2 2 3>, <&cpu3 2 3>=
+;
+>                         };
+> +
+>                         map2 {
+>                                 /* Set maximum frequency as 1000MHz  */
+>                                 trip =3D <&apollo_alert_4>;
+>                                 cooling-device =3D <&cpu0 3 4>, <&cpu1 3 =
+4>,
+>                                                  <&cpu2 3 4>, <&cpu3 3 4>=
+;
+>                         };
+> +
+>                         map3 {
+>                                 /* Set maximum frequency as 900MHz  */
+>                                 trip =3D <&apollo_alert_5>;
+>                                 cooling-device =3D <&cpu0 4 5>, <&cpu1 4 =
+5>,
+>                                                  <&cpu2 4 5>, <&cpu3 4 5>=
+;
+>                         };
+> +
+>                         map4 {
+>                                 /* Set maximum frequency as 800MHz  */
+>                                 trip =3D <&apollo_alert_6>;
+> @@ -263,37 +301,44 @@ isp_thermal: isp-thermal {
+>                 thermal-sensors =3D <&tmu_isp>;
+>                 polling-delay-passive =3D <0>;
+>                 polling-delay =3D <0>;
+> +
+>                 trips {
+>                         isp_alert_0: isp-alert-0 {
+>                                 temperature =3D <80000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_1: isp-alert-1 {
+>                                 temperature =3D <85000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_2: isp-alert-2 {
+>                                 temperature =3D <90000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_3: isp-alert-3 {
+>                                 temperature =3D <95000>;  /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_4: isp-alert-4 {
+>                                 temperature =3D <100000>; /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_5: isp-alert-5 {
+>                                 temperature =3D <105000>; /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+>                                 type =3D "active";
+>                         };
+> +
+>                         isp_alert_6: isp-alert-6 {
+>                                 temperature =3D <110000>; /* millicelsius=
+ */
+>                                 hysteresis =3D <1000>;    /* millicelsius=
+ */
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos5433.dtsi
+> index bc061b57caff..5fc3ca233ac6 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -755,6 +755,7 @@ tmu_atlas0: tmu@10060000 {
->                                 <&cmu_peris CLK_SCLK_TMU0>;
->                         clock-names = "tmu_apbif", "tmu_sclk";
->                         #thermal-sensor-cells = <0>;
+> @@ -57,12 +57,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -72,12 +75,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -243,38 +249,47 @@ opp-400000000 {
+>                         opp-hz =3D /bits/ 64 <400000000>;
+>                         opp-microvolt =3D <900000>;
 >                 };
->
-> @@ -766,6 +767,7 @@ tmu_atlas1: tmu@10068000 {
->                                 <&cmu_peris CLK_SCLK_TMU0>;
->                         clock-names = "tmu_apbif", "tmu_sclk";
->                         #thermal-sensor-cells = <0>;
 > +
->                         status = "disabled";
+>                 opp-500000000 {
+>                         opp-hz =3D /bits/ 64 <500000000>;
+>                         opp-microvolt =3D <925000>;
 >                 };
->
-> @@ -777,6 +779,7 @@ tmu_g3d: tmu@10070000 {
->                                 <&cmu_peris CLK_SCLK_TMU1>;
->                         clock-names = "tmu_apbif", "tmu_sclk";
->                         #thermal-sensor-cells = <0>;
 > +
->                         status = "disabled";
+>                 opp-600000000 {
+>                         opp-hz =3D /bits/ 64 <600000000>;
+>                         opp-microvolt =3D <950000>;
 >                 };
->
-> @@ -788,6 +791,7 @@ tmu_apollo: tmu@10078000 {
->                                 <&cmu_peris CLK_SCLK_TMU1>;
->                         clock-names = "tmu_apbif", "tmu_sclk";
->                         #thermal-sensor-cells = <0>;
 > +
->                         status = "disabled";
+>                 opp-700000000 {
+>                         opp-hz =3D /bits/ 64 <700000000>;
+>                         opp-microvolt =3D <975000>;
 >                 };
->
-> @@ -799,6 +803,7 @@ tmu_isp: tmu@1007c000 {
->                                 <&cmu_peris CLK_SCLK_TMU1>;
->                         clock-names = "tmu_apbif", "tmu_sclk";
->                         #thermal-sensor-cells = <0>;
 > +
->                         status = "disabled";
+>                 opp-800000000 {
+>                         opp-hz =3D /bits/ 64 <800000000>;
+>                         opp-microvolt =3D <1000000>;
 >                 };
->
-> @@ -825,24 +830,28 @@ timer@101c0000 {
->                 ppmu_d0_cpu: ppmu@10480000 {
->                         compatible = "samsung,exynos-ppmu-v2";
->                         reg = <0x10480000 0x2000>;
 > +
->                         status = "disabled";
+>                 opp-900000000 {
+>                         opp-hz =3D /bits/ 64 <900000000>;
+>                         opp-microvolt =3D <1050000>;
 >                 };
->
->                 ppmu_d0_general: ppmu@10490000 {
->                         compatible = "samsung,exynos-ppmu-v2";
->                         reg = <0x10490000 0x2000>;
 > +
->                         status = "disabled";
+>                 opp-1000000000 {
+>                         opp-hz =3D /bits/ 64 <1000000000>;
+>                         opp-microvolt =3D <1075000>;
 >                 };
->
->                 ppmu_d1_cpu: ppmu@104b0000 {
->                         compatible = "samsung,exynos-ppmu-v2";
->                         reg = <0x104b0000 0x2000>;
 > +
->                         status = "disabled";
+>                 opp-1100000000 {
+>                         opp-hz =3D /bits/ 64 <1100000000>;
+>                         opp-microvolt =3D <1112500>;
 >                 };
->
->                 ppmu_d1_general: ppmu@104c0000 {
->                         compatible = "samsung,exynos-ppmu-v2";
->                         reg = <0x104c0000 0x2000>;
 > +
->                         status = "disabled";
+>                 opp-1200000000 {
+>                         opp-hz =3D /bits/ 64 <1200000000>;
+>                         opp-microvolt =3D <1112500>;
 >                 };
->
-> @@ -972,10 +981,11 @@ decon: decon@13800000 {
->                                      <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
->                                      <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
->                         samsung,disp-sysreg = <&syscon_disp>;
-> -                       status = "disabled";
->                         iommus = <&sysmmu_decon0x>, <&sysmmu_decon1x>;
->                         iommu-names = "m0", "m1";
->
-> +                       status = "disabled";
 > +
->                         ports {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> @@ -1015,9 +1025,10 @@ decon_tv: decon@13880000 {
->                         interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
->                                      <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
->                                      <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>;
-> -                       status = "disabled";
->                         iommus = <&sysmmu_tv0x>, <&sysmmu_tv1x>;
->                         iommu-names = "m0", "m1";
-> +
-> +                       status = "disabled";
+>                 opp-1300000000 {
+>                         opp-hz =3D /bits/ 64 <1300000000>;
+>                         opp-microvolt =3D <1150000>;
+> @@ -289,58 +304,72 @@ opp-500000000 {
+>                         opp-hz =3D /bits/ 64 <500000000>;
+>                         opp-microvolt =3D <900000>;
 >                 };
->
->                 dsi: dsi@13900000 {
-> @@ -1037,10 +1048,11 @@ dsi: dsi@13900000 {
->                                         "sclk_rgb_vclk_to_dsim0",
->                                         "sclk_mipi";
->                         power-domains = <&pd_disp>;
-> -                       status = "disabled";
->                         #address-cells = <1>;
->                         #size-cells = <0>;
->
-> +                       status = "disabled";
 > +
->                         ports {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> @@ -1062,6 +1074,7 @@ mic: mic@13930000 {
->                         clock-names = "pclk_mic0", "sclk_rgb_vclk_to_mic0";
->                         power-domains = <&pd_disp>;
->                         samsung,disp-syscon = <&syscon_disp>;
-> +
->                         status = "disabled";
->
->                         ports {
-> @@ -1108,6 +1121,7 @@ hdmi: hdmi@13970000 {
->                         samsung,syscon-phandle = <&pmu_system_controller>;
->                         samsung,sysreg-phandle = <&syscon_disp>;
->                         #sound-dai-cells = <0>;
-> +
->                         status = "disabled";
+>                 opp-600000000 {
+>                         opp-hz =3D /bits/ 64 <600000000>;
+>                         opp-microvolt =3D <900000>;
 >                 };
->
-> @@ -1195,6 +1209,7 @@ gpu: gpu@14ac0000 {
->                         clock-names = "core";
->                         power-domains = <&pd_g3d>;
->                         operating-points-v2 = <&gpu_opp_table>;
 > +
->                         status = "disabled";
->
->                         gpu_opp_table: opp-table {
-> @@ -1426,6 +1441,7 @@ serial_0: serial@14c10000 {
->                         clock-names = "uart", "clk_uart_baud0";
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&uart0_bus>;
-> +
->                         status = "disabled";
+>                 opp-700000000 {
+>                         opp-hz =3D /bits/ 64 <700000000>;
+>                         opp-microvolt =3D <912500>;
 >                 };
->
-> @@ -1438,6 +1454,7 @@ serial_1: serial@14c20000 {
->                         clock-names = "uart", "clk_uart_baud0";
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&uart1_bus>;
 > +
->                         status = "disabled";
+>                 opp-800000000 {
+>                         opp-hz =3D /bits/ 64 <800000000>;
+>                         opp-microvolt =3D <912500>;
 >                 };
->
-> @@ -1450,6 +1467,7 @@ serial_2: serial@14c30000 {
->                         clock-names = "uart", "clk_uart_baud0";
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&uart2_bus>;
 > +
->                         status = "disabled";
+>                 opp-900000000 {
+>                         opp-hz =3D /bits/ 64 <900000000>;
+>                         opp-microvolt =3D <937500>;
 >                 };
->
-> @@ -1470,6 +1488,7 @@ spi_0: spi@14d20000 {
->                         pinctrl-0 = <&spi0_bus>;
->                         num-cs = <1>;
->                         fifo-depth = <256>;
 > +
->                         status = "disabled";
+>                 opp-1000000000 {
+>                         opp-hz =3D /bits/ 64 <1000000000>;
+>                         opp-microvolt =3D <975000>;
 >                 };
->
-> @@ -1490,6 +1509,7 @@ spi_1: spi@14d30000 {
->                         pinctrl-0 = <&spi1_bus>;
->                         num-cs = <1>;
->                         fifo-depth = <64>;
 > +
->                         status = "disabled";
+>                 opp-1100000000 {
+>                         opp-hz =3D /bits/ 64 <1100000000>;
+>                         opp-microvolt =3D <1012500>;
 >                 };
->
-> @@ -1510,6 +1530,7 @@ spi_2: spi@14d40000 {
->                         pinctrl-0 = <&spi2_bus>;
->                         num-cs = <1>;
->                         fifo-depth = <64>;
 > +
->                         status = "disabled";
+>                 opp-1200000000 {
+>                         opp-hz =3D /bits/ 64 <1200000000>;
+>                         opp-microvolt =3D <1037500>;
 >                 };
->
-> @@ -1530,6 +1551,7 @@ spi_3: spi@14d50000 {
->                         pinctrl-0 = <&spi3_bus>;
->                         num-cs = <1>;
->                         fifo-depth = <64>;
 > +
->                         status = "disabled";
+>                 opp-1300000000 {
+>                         opp-hz =3D /bits/ 64 <1300000000>;
+>                         opp-microvolt =3D <1062500>;
 >                 };
->
-> @@ -1550,6 +1572,7 @@ spi_4: spi@14d00000 {
->                         pinctrl-0 = <&spi4_bus>;
->                         num-cs = <1>;
->                         fifo-depth = <64>;
 > +
->                         status = "disabled";
+>                 opp-1400000000 {
+>                         opp-hz =3D /bits/ 64 <1400000000>;
+>                         opp-microvolt =3D <1087500>;
 >                 };
->
-> @@ -1560,6 +1583,7 @@ adc: adc@14d10000 {
->                         clock-names = "adc";
->                         clocks = <&cmu_peric CLK_PCLK_ADCIF>;
->                         #io-channel-cells = <1>;
 > +
->                         status = "disabled";
+>                 opp-1500000000 {
+>                         opp-hz =3D /bits/ 64 <1500000000>;
+>                         opp-microvolt =3D <1125000>;
 >                 };
->
-> @@ -1575,6 +1599,7 @@ i2s1: i2s@14d60000 {
->                         clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
->                         #clock-cells = <1>;
->                         #sound-dai-cells = <1>;
 > +
->                         status = "disabled";
+>                 opp-1600000000 {
+>                         opp-hz =3D /bits/ 64 <1600000000>;
+>                         opp-microvolt =3D <1137500>;
 >                 };
->
-> @@ -1590,6 +1615,7 @@ pwm: pwm@14dd0000 {
->                         clocks = <&cmu_peric CLK_PCLK_PWM>;
->                         clock-names = "timers";
->                         #pwm-cells = <3>;
 > +
->                         status = "disabled";
+>                 opp-1700000000 {
+>                         opp-hz =3D /bits/ 64 <1700000000>;
+>                         opp-microvolt =3D <1175000>;
 >                 };
->
-> @@ -1604,6 +1630,7 @@ hsi2c_0: i2c@14e40000 {
->                         pinctrl-0 = <&hs_i2c0_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C0>;
->                         clock-names = "hsi2c";
 > +
->                         status = "disabled";
+>                 opp-1800000000 {
+>                         opp-hz =3D /bits/ 64 <1800000000>;
+>                         opp-microvolt =3D <1212500>;
 >                 };
->
-> @@ -1618,6 +1645,7 @@ hsi2c_1: i2c@14e50000 {
->                         pinctrl-0 = <&hs_i2c1_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C1>;
->                         clock-names = "hsi2c";
 > +
->                         status = "disabled";
+>                 opp-1900000000 {
+>                         opp-hz =3D /bits/ 64 <1900000000>;
+>                         opp-microvolt =3D <1262500>;
+> @@ -752,7 +781,7 @@ tmu_atlas0: tmu@10060000 {
+>                         reg =3D <0x10060000 0x200>;
+>                         interrupts =3D <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peris CLK_PCLK_TMU0_APBIF>,
+> -                               <&cmu_peris CLK_SCLK_TMU0>;
+> +                                <&cmu_peris CLK_SCLK_TMU0>;
+>                         clock-names =3D "tmu_apbif", "tmu_sclk";
+>                         #thermal-sensor-cells =3D <0>;
+>
+> @@ -764,7 +793,7 @@ tmu_atlas1: tmu@10068000 {
+>                         reg =3D <0x10068000 0x200>;
+>                         interrupts =3D <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peris CLK_PCLK_TMU0_APBIF>,
+> -                               <&cmu_peris CLK_SCLK_TMU0>;
+> +                                <&cmu_peris CLK_SCLK_TMU0>;
+>                         clock-names =3D "tmu_apbif", "tmu_sclk";
+>                         #thermal-sensor-cells =3D <0>;
+>
+> @@ -776,7 +805,7 @@ tmu_g3d: tmu@10070000 {
+>                         reg =3D <0x10070000 0x200>;
+>                         interrupts =3D <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peris CLK_PCLK_TMU1_APBIF>,
+> -                               <&cmu_peris CLK_SCLK_TMU1>;
+> +                                <&cmu_peris CLK_SCLK_TMU1>;
+>                         clock-names =3D "tmu_apbif", "tmu_sclk";
+>                         #thermal-sensor-cells =3D <0>;
+>
+> @@ -788,7 +817,7 @@ tmu_apollo: tmu@10078000 {
+>                         reg =3D <0x10078000 0x200>;
+>                         interrupts =3D <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peris CLK_PCLK_TMU1_APBIF>,
+> -                               <&cmu_peris CLK_SCLK_TMU1>;
+> +                                <&cmu_peris CLK_SCLK_TMU1>;
+>                         clock-names =3D "tmu_apbif", "tmu_sclk";
+>                         #thermal-sensor-cells =3D <0>;
+>
+> @@ -800,7 +829,7 @@ tmu_isp: tmu@1007c000 {
+>                         reg =3D <0x1007c000 0x200>;
+>                         interrupts =3D <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peris CLK_PCLK_TMU1_APBIF>,
+> -                               <&cmu_peris CLK_SCLK_TMU1>;
+> +                                <&cmu_peris CLK_SCLK_TMU1>;
+>                         clock-names =3D "tmu_apbif", "tmu_sclk";
+>                         #thermal-sensor-cells =3D <0>;
+>
+> @@ -812,17 +841,17 @@ timer@101c0000 {
+>                                      "samsung,exynos4210-mct";
+>                         reg =3D <0x101c0000 0x800>;
+>                         interrupts =3D <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+> +                                    <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&xxti>, <&cmu_peris CLK_PCLK_MCT>;
+>                         clock-names =3D "fin_pll", "mct";
 >                 };
+> @@ -960,21 +989,21 @@ decon: decon@13800000 {
+>                         compatible =3D "samsung,exynos5433-decon";
+>                         reg =3D <0x13800000 0x2104>;
+>                         clocks =3D <&cmu_disp CLK_PCLK_DECON>,
+> -                               <&cmu_disp CLK_ACLK_DECON>,
+> -                               <&cmu_disp CLK_ACLK_SMMU_DECON0X>,
+> -                               <&cmu_disp CLK_ACLK_XIU_DECON0X>,
+> -                               <&cmu_disp CLK_PCLK_SMMU_DECON0X>,
+> -                               <&cmu_disp CLK_ACLK_SMMU_DECON1X>,
+> -                               <&cmu_disp CLK_ACLK_XIU_DECON1X>,
+> -                               <&cmu_disp CLK_PCLK_SMMU_DECON1X>,
+> -                               <&cmu_disp CLK_SCLK_DECON_VCLK>,
+> -                               <&cmu_disp CLK_SCLK_DECON_ECLK>,
+> -                               <&cmu_disp CLK_SCLK_DSD>;
+> +                                <&cmu_disp CLK_ACLK_DECON>,
+> +                                <&cmu_disp CLK_ACLK_SMMU_DECON0X>,
+> +                                <&cmu_disp CLK_ACLK_XIU_DECON0X>,
+> +                                <&cmu_disp CLK_PCLK_SMMU_DECON0X>,
+> +                                <&cmu_disp CLK_ACLK_SMMU_DECON1X>,
+> +                                <&cmu_disp CLK_ACLK_XIU_DECON1X>,
+> +                                <&cmu_disp CLK_PCLK_SMMU_DECON1X>,
+> +                                <&cmu_disp CLK_SCLK_DECON_VCLK>,
+> +                                <&cmu_disp CLK_SCLK_DECON_ECLK>,
+> +                                <&cmu_disp CLK_SCLK_DSD>;
+>                         clock-names =3D "pclk", "aclk_decon", "aclk_smmu_=
+decon0x",
+> -                               "aclk_xiu_decon0x", "pclk_smmu_decon0x",
+> -                               "aclk_smmu_decon1x", "aclk_xiu_decon1x",
+> -                               "pclk_smmu_decon1x", "sclk_decon_vclk",
+> -                               "sclk_decon_eclk", "dsd";
+> +                                     "aclk_xiu_decon0x", "pclk_smmu_deco=
+n0x",
+> +                                     "aclk_smmu_decon1x", "aclk_xiu_deco=
+n1x",
+> +                                     "pclk_smmu_decon1x", "sclk_decon_vc=
+lk",
+> +                                     "sclk_decon_eclk", "dsd";
+>                         power-domains =3D <&pd_disp>;
+>                         interrupt-names =3D "fifo", "vsync", "lcd_sys";
+>                         interrupts =3D <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -992,6 +1021,7 @@ ports {
 >
-> @@ -1632,6 +1660,7 @@ hsi2c_2: i2c@14e60000 {
->                         pinctrl-0 = <&hs_i2c2_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C2>;
->                         clock-names = "hsi2c";
+>                                 port@0 {
+>                                         reg =3D <0>;
 > +
->                         status = "disabled";
->                 };
+>                                         decon_to_mic: endpoint {
+>                                                 remote-endpoint =3D
+>                                                         <&mic_to_decon>;
+> @@ -1038,15 +1068,15 @@ dsi: dsi@13900000 {
+>                         phys =3D <&mipi_phy 1>;
+>                         phy-names =3D "dsim";
+>                         clocks =3D <&cmu_disp CLK_PCLK_DSIM0>,
+> -                               <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDIV=
+8>,
+> -                               <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC0=
+>,
+> -                               <&cmu_disp CLK_SCLK_RGB_VCLK_TO_DSIM0>,
+> -                               <&cmu_disp CLK_SCLK_DSIM0>;
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_BITCLKDI=
+V8>,
+> +                                <&cmu_disp CLK_PHYCLK_MIPIDPHY0_RXCLKESC=
+0>,
+> +                                <&cmu_disp CLK_SCLK_RGB_VCLK_TO_DSIM0>,
+> +                                <&cmu_disp CLK_SCLK_DSIM0>;
+>                         clock-names =3D "bus_clk",
+> -                                       "phyclk_mipidphy0_bitclkdiv8",
+> -                                       "phyclk_mipidphy0_rxclkesc0",
+> -                                       "sclk_rgb_vclk_to_dsim0",
+> -                                       "sclk_mipi";
+> +                                     "phyclk_mipidphy0_bitclkdiv8",
+> +                                     "phyclk_mipidphy0_rxclkesc0",
+> +                                     "sclk_rgb_vclk_to_dsim0",
+> +                                     "sclk_mipi";
+>                         power-domains =3D <&pd_disp>;
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+> @@ -1059,6 +1089,7 @@ ports {
 >
-> @@ -1646,6 +1675,7 @@ hsi2c_3: i2c@14e70000 {
->                         pinctrl-0 = <&hs_i2c3_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C3>;
->                         clock-names = "hsi2c";
+>                                 port@0 {
+>                                         reg =3D <0>;
 > +
->                         status = "disabled";
->                 };
+>                                         dsi_to_mic: endpoint {
+>                                                 remote-endpoint =3D <&mic=
+_to_dsi>;
+>                                         };
+> @@ -1070,7 +1101,7 @@ mic: mic@13930000 {
+>                         compatible =3D "samsung,exynos5433-mic";
+>                         reg =3D <0x13930000 0x48>;
+>                         clocks =3D <&cmu_disp CLK_PCLK_MIC0>,
+> -                               <&cmu_disp CLK_SCLK_RGB_VCLK_TO_MIC0>;
+> +                                <&cmu_disp CLK_SCLK_RGB_VCLK_TO_MIC0>;
+>                         clock-names =3D "pclk_mic0", "sclk_rgb_vclk_to_mi=
+c0";
+>                         power-domains =3D <&pd_disp>;
+>                         samsung,disp-syscon =3D <&syscon_disp>;
+> @@ -1083,6 +1114,7 @@ ports {
 >
-> @@ -1660,6 +1690,7 @@ hsi2c_4: i2c@14ec0000 {
->                         pinctrl-0 = <&hs_i2c4_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C4>;
->                         clock-names = "hsi2c";
+>                                 port@0 {
+>                                         reg =3D <0>;
 > +
->                         status = "disabled";
->                 };
+>                                         mic_to_decon: endpoint {
+>                                                 remote-endpoint =3D
+>                                                         <&decon_to_mic>;
+> @@ -1091,6 +1123,7 @@ mic_to_decon: endpoint {
 >
-> @@ -1674,6 +1705,7 @@ hsi2c_5: i2c@14ed0000 {
->                         pinctrl-0 = <&hs_i2c5_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C5>;
->                         clock-names = "hsi2c";
+>                                 port@1 {
+>                                         reg =3D <1>;
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1688,6 +1720,7 @@ hsi2c_6: i2c@14ee0000 {
->                         pinctrl-0 = <&hs_i2c6_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C6>;
->                         clock-names = "hsi2c";
+>                                         mic_to_dsi: endpoint {
+>                                                 remote-endpoint =3D <&dsi=
+_to_mic>;
+>                                         };
+> @@ -1103,19 +1136,19 @@ hdmi: hdmi@13970000 {
+>                         reg =3D <0x13970000 0x70000>;
+>                         interrupts =3D <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_disp CLK_PCLK_HDMI>,
+> -                               <&cmu_disp CLK_PCLK_HDMIPHY>,
+> -                               <&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO>,
+> -                               <&cmu_disp CLK_PHYCLK_HDMI_PIXEL>,
+> -                               <&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO_P=
+HY>,
+> -                               <&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_TMDS_C=
+LKO_USER>,
+> -                               <&cmu_disp CLK_PHYCLK_HDMIPHY_PIXEL_CLKO_=
+PHY>,
+> -                               <&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_PIXEL_=
+CLKO_USER>,
+> -                               <&xxti>, <&cmu_disp CLK_SCLK_HDMI_SPDIF>;
+> +                                <&cmu_disp CLK_PCLK_HDMIPHY>,
+> +                                <&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO>=
+,
+> +                                <&cmu_disp CLK_PHYCLK_HDMI_PIXEL>,
+> +                                <&cmu_disp CLK_PHYCLK_HDMIPHY_TMDS_CLKO_=
+PHY>,
+> +                                <&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_TMDS_=
+CLKO_USER>,
+> +                                <&cmu_disp CLK_PHYCLK_HDMIPHY_PIXEL_CLKO=
+_PHY>,
+> +                                <&cmu_disp CLK_MOUT_PHYCLK_HDMIPHY_PIXEL=
+_CLKO_USER>,
+> +                                <&xxti>, <&cmu_disp CLK_SCLK_HDMI_SPDIF>=
+;
+>                         clock-names =3D "hdmi_pclk", "hdmi_i_pclk",
+> -                               "i_tmds_clk", "i_pixel_clk",
+> -                               "tmds_clko", "tmds_clko_user",
+> -                               "pixel_clko", "pixel_clko_user",
+> -                               "oscclk", "i_spdif_clk";
+> +                                     "i_tmds_clk", "i_pixel_clk",
+> +                                     "tmds_clko", "tmds_clko_user",
+> +                                     "pixel_clko", "pixel_clko_user",
+> +                                     "oscclk", "i_spdif_clk";
+>                         phy =3D <&hdmiphy>;
+>                         ddc =3D <&hsi2c_11>;
+>                         samsung,syscon-phandle =3D <&pmu_system_controlle=
+r>;
+> @@ -1219,30 +1252,37 @@ opp-160000000 {
+>                                         opp-hz =3D /bits/ 64 <160000000>;
+>                                         opp-microvolt =3D <1000000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1702,6 +1735,7 @@ hsi2c_7: i2c@14ef0000 {
->                         pinctrl-0 = <&hs_i2c7_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C7>;
->                         clock-names = "hsi2c";
+>                                 opp-267000000 {
+>                                         opp-hz =3D /bits/ 64 <267000000>;
+>                                         opp-microvolt =3D <1000000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1716,6 +1750,7 @@ hsi2c_8: i2c@14d90000 {
->                         pinctrl-0 = <&hs_i2c8_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C8>;
->                         clock-names = "hsi2c";
+>                                 opp-350000000 {
+>                                         opp-hz =3D /bits/ 64 <350000000>;
+>                                         opp-microvolt =3D <1025000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1730,6 +1765,7 @@ hsi2c_9: i2c@14da0000 {
->                         pinctrl-0 = <&hs_i2c9_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C9>;
->                         clock-names = "hsi2c";
+>                                 opp-420000000 {
+>                                         opp-hz =3D /bits/ 64 <420000000>;
+>                                         opp-microvolt =3D <1025000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1744,6 +1780,7 @@ hsi2c_10: i2c@14de0000 {
->                         pinctrl-0 = <&hs_i2c10_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C10>;
->                         clock-names = "hsi2c";
+>                                 opp-500000000 {
+>                                         opp-hz =3D /bits/ 64 <500000000>;
+>                                         opp-microvolt =3D <1075000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1758,6 +1795,7 @@ hsi2c_11: i2c@14df0000 {
->                         pinctrl-0 = <&hs_i2c11_bus>;
->                         clocks = <&cmu_peric CLK_PCLK_HSI2C11>;
->                         clock-names = "hsi2c";
+>                                 opp-550000000 {
+>                                         opp-hz =3D /bits/ 64 <550000000>;
+>                                         opp-microvolt =3D <1125000>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -1771,6 +1809,7 @@ usbdrd30: usb@15400000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         ranges = <0x0 0x15400000 0x10000>;
+>                                 opp-600000000 {
+>                                         opp-hz =3D /bits/ 64 <600000000>;
+>                                         opp-microvolt =3D <1150000>;
+>                                 };
 > +
->                         status = "disabled";
->
+>                                 opp-700000000 {
+>                                         opp-hz =3D /bits/ 64 <700000000>;
+>                                         opp-microvolt =3D <1150000>;
+> @@ -1437,7 +1477,7 @@ serial_0: serial@14c10000 {
+>                         reg =3D <0x14c10000 0x100>;
+>                         interrupts =3D <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_UART0>,
+> -                               <&cmu_peric CLK_SCLK_UART0>;
+> +                                <&cmu_peric CLK_SCLK_UART0>;
+>                         clock-names =3D "uart", "clk_uart_baud0";
+>                         pinctrl-names =3D "default";
+>                         pinctrl-0 =3D <&uart0_bus>;
+> @@ -1450,7 +1490,7 @@ serial_1: serial@14c20000 {
+>                         reg =3D <0x14c20000 0x100>;
+>                         interrupts =3D <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_UART1>,
+> -                               <&cmu_peric CLK_SCLK_UART1>;
+> +                                <&cmu_peric CLK_SCLK_UART1>;
+>                         clock-names =3D "uart", "clk_uart_baud0";
+>                         pinctrl-names =3D "default";
+>                         pinctrl-0 =3D <&uart1_bus>;
+> @@ -1463,7 +1503,7 @@ serial_2: serial@14c30000 {
+>                         reg =3D <0x14c30000 0x100>;
+>                         interrupts =3D <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_UART2>,
+> -                               <&cmu_peric CLK_SCLK_UART2>;
+> +                                <&cmu_peric CLK_SCLK_UART2>;
+>                         clock-names =3D "uart", "clk_uart_baud0";
+>                         pinctrl-names =3D "default";
+>                         pinctrl-0 =3D <&uart2_bus>;
+> @@ -1480,8 +1520,8 @@ spi_0: spi@14d20000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_SPI0>,
+> -                               <&cmu_peric CLK_SCLK_SPI0>,
+> -                               <&cmu_peric CLK_SCLK_IOCLK_SPI0>;
+> +                                <&cmu_peric CLK_SCLK_SPI0>,
+> +                                <&cmu_peric CLK_SCLK_IOCLK_SPI0>;
+>                         clock-names =3D "spi", "spi_busclk0", "spi_ioclk"=
+;
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -1501,8 +1541,8 @@ spi_1: spi@14d30000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_SPI1>,
+> -                               <&cmu_peric CLK_SCLK_SPI1>,
+> -                               <&cmu_peric CLK_SCLK_IOCLK_SPI1>;
+> +                                <&cmu_peric CLK_SCLK_SPI1>,
+> +                                <&cmu_peric CLK_SCLK_IOCLK_SPI1>;
+>                         clock-names =3D "spi", "spi_busclk0", "spi_ioclk"=
+;
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -1522,8 +1562,8 @@ spi_2: spi@14d40000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_SPI2>,
+> -                               <&cmu_peric CLK_SCLK_SPI2>,
+> -                               <&cmu_peric CLK_SCLK_IOCLK_SPI2>;
+> +                                <&cmu_peric CLK_SCLK_SPI2>,
+> +                                <&cmu_peric CLK_SCLK_IOCLK_SPI2>;
+>                         clock-names =3D "spi", "spi_busclk0", "spi_ioclk"=
+;
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -1543,8 +1583,8 @@ spi_3: spi@14d50000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_SPI3>,
+> -                               <&cmu_peric CLK_SCLK_SPI3>,
+> -                               <&cmu_peric CLK_SCLK_IOCLK_SPI3>;
+> +                                <&cmu_peric CLK_SCLK_SPI3>,
+> +                                <&cmu_peric CLK_SCLK_IOCLK_SPI3>;
+>                         clock-names =3D "spi", "spi_busclk0", "spi_ioclk"=
+;
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -1564,8 +1604,8 @@ spi_4: spi@14d00000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&cmu_peric CLK_PCLK_SPI4>,
+> -                               <&cmu_peric CLK_SCLK_SPI4>,
+> -                               <&cmu_peric CLK_SCLK_IOCLK_SPI4>;
+> +                                <&cmu_peric CLK_SCLK_SPI4>,
+> +                                <&cmu_peric CLK_SCLK_IOCLK_SPI4>;
+>                         clock-names =3D "spi", "spi_busclk0", "spi_ioclk"=
+;
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -1802,9 +1842,9 @@ hsi2c_11: i2c@14df0000 {
+>                 usbdrd30: usb@15400000 {
+>                         compatible =3D "samsung,exynos5433-dwusb3";
+>                         clocks =3D <&cmu_fsys CLK_ACLK_USBDRD30>,
+> -                               <&cmu_fsys CLK_SCLK_USBDRD30>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PHY=
+CLOCK>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PIP=
+E_PCLK>;
+> +                                <&cmu_fsys CLK_SCLK_USBDRD30>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PH=
+YCLOCK>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PI=
+PE_PCLK>;
+>                         clock-names =3D "aclk", "susp_clk", "phyclk", "pi=
+pe_pclk";
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+> @@ -1815,8 +1855,8 @@ usbdrd30: usb@15400000 {
 >                         usbdrd_dwc3: usb@0 {
-> @@ -1797,6 +1836,7 @@ usbdrd30_phy: phy@15500000 {
->                                         "itp";
->                         #phy-cells = <1>;
->                         samsung,pmu-syscon = <&pmu_system_controller>;
-> +
->                         status = "disabled";
->                 };
+>                                 compatible =3D "snps,dwc3";
+>                                 clocks =3D <&cmu_fsys CLK_SCLK_USBDRD30>,
+> -                                       <&cmu_fsys CLK_ACLK_USBDRD30>,
+> -                                       <&cmu_fsys CLK_SCLK_USBDRD30>;
+> +                                        <&cmu_fsys CLK_ACLK_USBDRD30>,
+> +                                        <&cmu_fsys CLK_SCLK_USBDRD30>;
+>                                 clock-names =3D "ref", "bus_early", "susp=
+end";
+>                                 reg =3D <0x0 0x10000>;
+>                                 interrupts =3D <GIC_SPI 231 IRQ_TYPE_LEVE=
+L_HIGH>;
+> @@ -1829,11 +1869,10 @@ usbdrd30_phy: phy@15500000 {
+>                         compatible =3D "samsung,exynos5433-usbdrd-phy";
+>                         reg =3D <0x15500000 0x100>;
+>                         clocks =3D <&cmu_fsys CLK_ACLK_USBDRD30>, <&xxti>=
+,
+> -                               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PHY=
+CLOCK>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PIP=
+E_PCLK>,
+> -                               <&cmu_fsys CLK_SCLK_USBDRD30>;
+> -                       clock-names =3D "phy", "ref", "phy_utmi", "phy_pi=
+pe",
+> -                                       "itp";
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PH=
+YCLOCK>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBDRD30_UDRD30_PI=
+PE_PCLK>,
+> +                                <&cmu_fsys CLK_SCLK_USBDRD30>;
+> +                       clock-names =3D "phy", "ref", "phy_utmi", "phy_pi=
+pe", "itp";
+>                         #phy-cells =3D <1>;
+>                         samsung,pmu-syscon =3D <&pmu_system_controller>;
 >
-> @@ -1811,6 +1851,7 @@ usbhost30_phy: phy@15580000 {
->                                         "itp";
->                         #phy-cells = <1>;
->                         samsung,pmu-syscon = <&pmu_system_controller>;
-> +
->                         status = "disabled";
->                 };
+> @@ -1844,11 +1883,10 @@ usbhost30_phy: phy@15580000 {
+>                         compatible =3D "samsung,exynos5433-usbdrd-phy";
+>                         reg =3D <0x15580000 0x100>;
+>                         clocks =3D <&cmu_fsys CLK_ACLK_USBHOST30>, <&xxti=
+>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_P=
+HYCLOCK>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_P=
+IPE_PCLK>,
+> -                               <&cmu_fsys CLK_SCLK_USBHOST30>;
+> -                       clock-names =3D "phy", "ref", "phy_utmi", "phy_pi=
+pe",
+> -                                       "itp";
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PHYCLOCK>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PIPE_PCLK>,
+> +                                <&cmu_fsys CLK_SCLK_USBHOST30>;
+> +                       clock-names =3D "phy", "ref", "phy_utmi", "phy_pi=
+pe", "itp";
+>                         #phy-cells =3D <1>;
+>                         samsung,pmu-syscon =3D <&pmu_system_controller>;
 >
-> @@ -1824,6 +1865,7 @@ usbhost30: usb@15a00000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         ranges = <0x0 0x15a00000 0x10000>;
-> +
->                         status = "disabled";
->
+> @@ -1858,9 +1896,9 @@ usbhost30_phy: phy@15580000 {
+>                 usbhost30: usb@15a00000 {
+>                         compatible =3D "samsung,exynos5433-dwusb3";
+>                         clocks =3D <&cmu_fsys CLK_ACLK_USBHOST30>,
+> -                               <&cmu_fsys CLK_SCLK_USBHOST30>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_P=
+HYCLOCK>,
+> -                               <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_P=
+IPE_PCLK>;
+> +                                <&cmu_fsys CLK_SCLK_USBHOST30>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PHYCLOCK>,
+> +                                <&cmu_fsys CLK_PHYCLK_USBHOST30_UHOST30_=
+PIPE_PCLK>;
+>                         clock-names =3D "aclk", "susp_clk", "phyclk", "pi=
+pe_pclk";
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+> @@ -1871,8 +1909,8 @@ usbhost30: usb@15a00000 {
 >                         usbhost_dwc3: usb@0 {
-> @@ -1850,6 +1892,7 @@ mshc_0: mmc@15540000 {
->                                 <&cmu_fsys CLK_SCLK_MMC0>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
+>                                 compatible =3D "snps,dwc3";
+>                                 clocks =3D <&cmu_fsys CLK_SCLK_USBHOST30>=
+,
+> -                                       <&cmu_fsys CLK_ACLK_USBHOST30>,
+> -                                       <&cmu_fsys CLK_SCLK_USBHOST30>;
+> +                                        <&cmu_fsys CLK_ACLK_USBHOST30>,
+> +                                        <&cmu_fsys CLK_SCLK_USBHOST30>;
+>                                 clock-names =3D "ref", "bus_early", "susp=
+end";
+>                                 reg =3D <0x0 0x10000>;
+>                                 interrupts =3D <GIC_SPI 244 IRQ_TYPE_LEVE=
+L_HIGH>;
+> @@ -1889,7 +1927,7 @@ mshc_0: mmc@15540000 {
+>                         #size-cells =3D <0>;
+>                         reg =3D <0x15540000 0x2000>;
+>                         clocks =3D <&cmu_fsys CLK_ACLK_MMC0>,
+> -                               <&cmu_fsys CLK_SCLK_MMC0>;
+> +                                <&cmu_fsys CLK_SCLK_MMC0>;
+>                         clock-names =3D "biu", "ciu";
+>                         fifo-depth =3D <0x40>;
 >
-> @@ -1864,6 +1907,7 @@ mshc_1: mmc@15550000 {
->                                 <&cmu_fsys CLK_SCLK_MMC1>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
+> @@ -1904,7 +1942,7 @@ mshc_1: mmc@15550000 {
+>                         #size-cells =3D <0>;
+>                         reg =3D <0x15550000 0x2000>;
+>                         clocks =3D <&cmu_fsys CLK_ACLK_MMC1>,
+> -                               <&cmu_fsys CLK_SCLK_MMC1>;
+> +                                <&cmu_fsys CLK_SCLK_MMC1>;
+>                         clock-names =3D "biu", "ciu";
+>                         fifo-depth =3D <0x40>;
 >
-> @@ -1878,6 +1922,7 @@ mshc_2: mmc@15560000 {
->                                 <&cmu_fsys CLK_SCLK_MMC2>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
+> @@ -1919,7 +1957,7 @@ mshc_2: mmc@15560000 {
+>                         #size-cells =3D <0>;
+>                         reg =3D <0x15560000 0x2000>;
+>                         clocks =3D <&cmu_fsys CLK_ACLK_MMC2>,
+> -                               <&cmu_fsys CLK_SCLK_MMC2>;
+> +                                <&cmu_fsys CLK_SCLK_MMC2>;
+>                         clock-names =3D "biu", "ciu";
+>                         fifo-depth =3D <0x40>;
 >
-> @@ -1937,6 +1982,7 @@ i2s0: i2s@11440000 {
->                                 pinctrl-0 = <&i2s0_bus>;
->                                 power-domains = <&pd_aud>;
->                                 #sound-dai-cells = <1>;
-> +
->                                 status = "disabled";
->                         };
+> @@ -1974,8 +2012,8 @@ i2s0: i2s@11440000 {
+>                                 #address-cells =3D <1>;
+>                                 #size-cells =3D <0>;
+>                                 clocks =3D <&cmu_aud CLK_PCLK_AUD_I2S>,
+> -                                       <&cmu_aud CLK_SCLK_AUD_I2S>,
+> -                                       <&cmu_aud CLK_SCLK_I2S_BCLK>;
+> +                                        <&cmu_aud CLK_SCLK_AUD_I2S>,
+> +                                        <&cmu_aud CLK_SCLK_I2S_BCLK>;
+>                                 clock-names =3D "iis", "i2s_opclk0", "i2s=
+_opclk1";
+>                                 #clock-cells =3D <1>;
+>                                 pinctrl-names =3D "default";
+> @@ -1991,7 +2029,7 @@ serial_3: serial@11460000 {
+>                                 reg =3D <0x11460000 0x100>;
+>                                 interrupts =3D <GIC_SPI 67 IRQ_TYPE_LEVEL=
+_HIGH>;
+>                                 clocks =3D <&cmu_aud CLK_PCLK_AUD_UART>,
+> -                                       <&cmu_aud CLK_SCLK_AUD_UART>;
+> +                                        <&cmu_aud CLK_SCLK_AUD_UART>;
+>                                 clock-names =3D "uart", "clk_uart_baud0";
+>                                 pinctrl-names =3D "default";
+>                                 pinctrl-0 =3D <&uart_aud_bus>;
+> @@ -2037,14 +2075,10 @@ pcie: pcie@15700000 {
 >
-> @@ -1950,6 +1996,7 @@ serial_3: serial@11460000 {
->                                 pinctrl-names = "default";
->                                 pinctrl-0 = <&uart_aud_bus>;
->                                 power-domains = <&pd_aud>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1960,6 +2007,7 @@ pcie_phy: pcie-phy@15680000 {
->                         samsung,pmu-syscon = <&pmu_system_controller>;
->                         samsung,fsys-sysreg = <&syscon_fsys>;
->                         #phy-cells = <0>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1982,6 +2030,7 @@ pcie: pcie@15700000 {
->                         phys = <&pcie_phy>;
->                         ranges = <0x81000000 0 0          0x0c001000 0 0x00010000>,
->                                  <0x82000000 0 0x0c011000 0x0c011000 0 0x03feefff>;
-> +
->                         status = "disabled";
->                 };
+>         timer: timer {
+>                 compatible =3D "arm,armv8-timer";
+> -               interrupts =3D <GIC_PPI 13
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+HIGH)>,
+> -                       <GIC_PPI 14
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+HIGH)>,
+> -                       <GIC_PPI 11
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+HIGH)>,
+> -                       <GIC_PPI 10
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+HIGH)>;
+> +               interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_=
+TYPE_LEVEL_HIGH)>,
+> +                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_HIGH)>,
+> +                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_HIGH)>,
+> +                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_HIGH)>;
 >         };
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> index 1f2eddcebdd9..c8925f4076b5 100644
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64=
+/boot/dts/exynos/exynos7-espresso.dts
+> index c8925f4076b5..b3d5b447aeb6 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
 > +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> @@ -68,9 +68,10 @@ &serial_2 {
->  };
+> @@ -99,8 +99,7 @@ pmic@66 {
+>                 s2mps15_osc: clocks {
+>                         compatible =3D "samsung,s2mps13-clk";
+>                         #clock-cells =3D <1>;
+> -                       clock-output-names =3D "s2mps13_ap", "s2mps13_cp"=
+,
+> -                               "s2mps13_bt";
+> +                       clock-output-names =3D "s2mps13_ap", "s2mps13_cp"=
+, "s2mps13_bt";
+>                 };
 >
->  &rtc {
-> -       status = "okay";
->         clocks = <&clock_ccore PCLK_RTC>, <&s2mps15_osc S2MPS11_CLK_AP>;
->         clock-names = "rtc", "rtc_src";
+>                 regulators {
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi b/arch/a=
+rm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> index d3301b8bd364..ecae9550801c 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-trip-points.dtsi
+> @@ -12,36 +12,43 @@ cpu-alert-0 {
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
 > +
-> +       status = "okay";
->  };
->
->  &watchdog {
-> @@ -79,6 +80,7 @@ &watchdog {
->
->  &adc {
->         vdd-supply = <&ldo3_reg>;
+>         cpu-alert-1 {
+>                 temperature =3D <80000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
 > +
->         status = "okay";
->  };
->
-> @@ -360,7 +362,6 @@ pmic_irq: pmic-irq-pins {
->  };
->
->  &mmc_0 {
-> -       status = "okay";
->         cap-mmc-highspeed;
->         mmc-ddr-1_8v;
->         mmc-hs200-1_8v;
-> @@ -373,10 +374,11 @@ &mmc_0 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_qrdy &sd0_bus1 &sd0_bus4 &sd0_bus8>;
->         bus-width = <8>;
+>         cpu-alert-2 {
+>                 temperature =3D <85000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
 > +
-> +       status = "okay";
->  };
->
->  &mmc_2 {
-> -       status = "okay";
->         cap-sd-highspeed;
->         card-detect-delay = <200>;
->         clock-frequency = <400000000>;
-> @@ -389,6 +391,8 @@ &mmc_2 {
->         vmmc-supply = <&ldo17_reg>;
->         vqmmc-supply = <&ldo2_reg>;
->         disable-wp;
+>         cpu-alert-3 {
+>                 temperature =3D <90000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
 > +
-> +       status = "okay";
->  };
->
->  &pinctrl_bus1 {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index 9cb6bd61262e..fa4e7d678423 100644
+>         cpu-alert-4 {
+>                 temperature =3D <95000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
+> +
+>         cpu-alert-5 {
+>                 temperature =3D <100000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
+> +
+>         cpu-alert-6 {
+>                 temperature =3D <110000>; /* millicelsius */
+>                 hysteresis =3D <10000>; /* millicelsius */
+>                 type =3D "passive";
+>         };
+> +
+>         cpu-crit-0 {
+>                 temperature =3D <115000>; /* millicelsius */
+>                 hysteresis =3D <0>; /* millicelsius */
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dt=
+s/exynos/exynos7.dtsi
+> index fa4e7d678423..a722d721a7c8 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -286,6 +286,7 @@ serial_0: serial@13630000 {
->                         clocks = <&clock_peric0 PCLK_UART0>,
->                                  <&clock_peric0 SCLK_UART0>;
->                         clock-names = "uart", "clk_uart_baud0";
-> +
->                         status = "disabled";
->                 };
+> @@ -670,13 +670,13 @@ tmuctrl_0: tmu@10060000 {
+>                 ufs: ufs@15570000 {
+>                         compatible =3D "samsung,exynos7-ufs";
+>                         reg =3D <0x15570000 0x100>,  /* 0: HCI standard *=
+/
+> -                               <0x15570100 0x100>,  /* 1: Vendor specifi=
+ced */
+> -                               <0x15571000 0x200>,  /* 2: UNIPRO */
+> -                               <0x15572000 0x300>;  /* 3: UFS protector =
+*/
+> +                             <0x15570100 0x100>,  /* 1: Vendor specifice=
+d */
+> +                             <0x15571000 0x200>,  /* 2: UNIPRO */
+> +                             <0x15572000 0x300>;  /* 3: UFS protector */
+>                         reg-names =3D "hci", "vs_hci", "unipro", "ufsp";
+>                         interrupts =3D <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&clock_fsys1 ACLK_UFS20_LINK>,
+> -                               <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
+> +                                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
+>                         clock-names =3D "core_clk", "sclk_unipro_main";
+>                         freq-table-hz =3D <0 0>, <0 0>;
+>                         pinctrl-names =3D "default";
+> @@ -706,10 +706,10 @@ usbdrd_phy: phy@15500000 {
+>                         compatible =3D "samsung,exynos7-usbdrd-phy";
+>                         reg =3D <0x15500000 0x100>;
+>                         clocks =3D <&clock_fsys0 ACLK_USBDRD300>,
+> -                              <&clock_fsys0 OSCCLK_PHY_CLKOUT_USB30_PHY>=
+,
+> -                              <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PHYC=
+LK_USER>,
+> -                              <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PIPE=
+_PCLK_USER>,
+> -                              <&clock_fsys0 SCLK_USBDRD300_REFCLK>;
+> +                                <&clock_fsys0 OSCCLK_PHY_CLKOUT_USB30_PH=
+Y>,
+> +                                <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PH=
+YCLK_USER>,
+> +                                <&clock_fsys0 PHYCLK_USBDRD300_UDRD30_PI=
+PE_PCLK_USER>,
+> +                                <&clock_fsys0 SCLK_USBDRD300_REFCLK>;
+>                         clock-names =3D "phy", "ref", "phy_utmi", "phy_pi=
+pe", "itp";
+>                         samsung,pmu-syscon =3D <&pmu_system_controller>;
+>                         #phy-cells =3D <1>;
+> @@ -718,10 +718,10 @@ usbdrd_phy: phy@15500000 {
+>                 usbdrd: usb@15400000 {
+>                         compatible =3D "samsung,exynos7-dwusb3";
+>                         clocks =3D <&clock_fsys0 ACLK_USBDRD300>,
+> -                              <&clock_fsys0 SCLK_USBDRD300_SUSPENDCLK>,
+> -                              <&clock_fsys0 ACLK_AXIUS_USBDRD30X_FSYS0X>=
+;
+> +                                <&clock_fsys0 SCLK_USBDRD300_SUSPENDCLK>=
+,
+> +                                <&clock_fsys0 ACLK_AXIUS_USBDRD30X_FSYS0=
+X>;
+>                         clock-names =3D "usbdrd30", "usbdrd30_susp_clk",
+> -                               "usbdrd30_axius_clk";
+> +                                     "usbdrd30_axius_clk";
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+>                         ranges =3D <0x0 0x15400000 0x10000>;
+> @@ -747,14 +747,10 @@ atlas_thermal: cluster0-thermal {
 >
-> @@ -296,6 +297,7 @@ serial_1: serial@14c20000 {
->                         clocks = <&clock_peric1 PCLK_UART1>,
->                                  <&clock_peric1 SCLK_UART1>;
->                         clock-names = "uart", "clk_uart_baud0";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -306,6 +308,7 @@ serial_2: serial@14c30000 {
->                         clocks = <&clock_peric1 PCLK_UART2>,
->                                  <&clock_peric1 SCLK_UART2>;
->                         clock-names = "uart", "clk_uart_baud0";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -316,6 +319,7 @@ serial_3: serial@14c40000 {
->                         clocks = <&clock_peric1 PCLK_UART3>,
->                                  <&clock_peric1 SCLK_UART3>;
->                         clock-names = "uart", "clk_uart_baud0";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -388,6 +392,7 @@ hsi2c_0: i2c@13640000 {
->                         pinctrl-0 = <&hs_i2c0_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C0>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -401,6 +406,7 @@ hsi2c_1: i2c@13650000 {
->                         pinctrl-0 = <&hs_i2c1_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C1>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -414,6 +420,7 @@ hsi2c_2: i2c@14e60000 {
->                         pinctrl-0 = <&hs_i2c2_bus>;
->                         clocks = <&clock_peric1 PCLK_HSI2C2>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -427,6 +434,7 @@ hsi2c_3: i2c@14e70000 {
->                         pinctrl-0 = <&hs_i2c3_bus>;
->                         clocks = <&clock_peric1 PCLK_HSI2C3>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -440,6 +448,7 @@ hsi2c_4: i2c@13660000 {
->                         pinctrl-0 = <&hs_i2c4_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C4>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -453,6 +462,7 @@ hsi2c_5: i2c@13670000 {
->                         pinctrl-0 = <&hs_i2c5_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C5>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -466,6 +476,7 @@ hsi2c_6: i2c@14e00000 {
->                         pinctrl-0 = <&hs_i2c6_bus>;
->                         clocks = <&clock_peric1 PCLK_HSI2C6>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -479,6 +490,7 @@ hsi2c_7: i2c@13e10000 {
->                         pinctrl-0 = <&hs_i2c7_bus>;
->                         clocks = <&clock_peric1 PCLK_HSI2C7>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -492,6 +504,7 @@ hsi2c_8: i2c@14e20000 {
->                         pinctrl-0 = <&hs_i2c8_bus>;
->                         clocks = <&clock_peric1 PCLK_HSI2C8>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -505,6 +518,7 @@ hsi2c_9: i2c@13680000 {
->                         pinctrl-0 = <&hs_i2c9_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C9>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -518,6 +532,7 @@ hsi2c_10: i2c@13690000 {
->                         pinctrl-0 = <&hs_i2c10_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C10>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -531,6 +546,7 @@ hsi2c_11: i2c@136a0000 {
->                         pinctrl-0 = <&hs_i2c11_bus>;
->                         clocks = <&clock_peric0 PCLK_HSI2C11>;
->                         clock-names = "hsi2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -546,6 +562,7 @@ rtc: rtc@10590000 {
->                                      <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&clock_ccore PCLK_RTC>;
->                         clock-names = "rtc";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -556,6 +573,7 @@ watchdog: watchdog@101d0000 {
->                         clocks = <&clock_peris PCLK_WDT>;
->                         clock-names = "watchdog";
->                         samsung,syscon-phandle = <&pmu_system_controller>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -567,6 +585,7 @@ gpu: gpu@14ac0000 {
->                                      <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
->                                      <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
->                         interrupt-names = "job", "mmu", "gpu";
-> +
->                         status = "disabled";
->                         /* TODO: operating points for DVFS, cooling device */
->                 };
-> @@ -581,6 +600,7 @@ mmc_0: mmc@15740000 {
->                                  <&clock_top1 CLK_SCLK_MMC0>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -594,6 +614,7 @@ mmc_1: mmc@15750000 {
->                                  <&clock_top1 CLK_SCLK_MMC1>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -607,6 +628,7 @@ mmc_2: mmc@15560000 {
->                                  <&clock_top1 CLK_SCLK_MMC2>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -617,6 +639,7 @@ adc: adc@13620000 {
->                         clocks = <&clock_peric0 PCLK_ADCIF>;
->                         clock-names = "adc";
->                         #io-channel-cells = <1>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -660,6 +683,7 @@ ufs: ufs@15570000 {
->                         pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
->                         phys = <&ufs_phy>;
->                         phy-names = "ufs-phy";
-> +
->                         status = "disabled";
->                 };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> index 9d74fa6bfed9..4b1961ca365b 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> @@ -62,7 +62,6 @@ power-key {
+>         timer {
+>                 compatible =3D "arm,armv8-timer";
+> -               interrupts =3D <GIC_PPI 13
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+LOW)>,
+> -                            <GIC_PPI 14
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+LOW)>,
+> -                            <GIC_PPI 11
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+LOW)>,
+> -                            <GIC_PPI 10
+> -                               (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_=
+LOW)>;
+> +               interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_=
+TYPE_LEVEL_LOW)>,
+> +                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_LOW)>,
+> +                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_LOW)>,
+> +                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TY=
+PE_LEVEL_LOW)>;
+>         };
 >  };
 >
->  &mmc_0 {
-> -       status = "okay";
->         mmc-hs200-1_8v;
->         mmc-hs400-1_8v;
->         cap-mmc-highspeed;
-> @@ -79,6 +78,8 @@ &mmc_0 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&sd0_clk_fast_slew_rate_3x &sd0_cmd &sd0_rdqs
->                      &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-> +
-> +       status = "okay";
->  };
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts b/arch/arm64=
+/boot/dts/exynos/exynos7870-j6lte.dts
+> index de30d0970336..02bab3ab2711 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
+> +++ b/arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts
+> @@ -398,8 +398,8 @@ accelerometer@1d {
+>                 pinctrl-0 =3D <&accel_irq>;
 >
->  &oscclk {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-> index 008228fb319a..7d7d56206b86 100644
+>                 mount-matrix =3D "-1", "0",  "0",
+> -                               "0", "1",  "0",
+> -                               "0", "0", "-1";
+> +                              "0", "1",  "0",
+> +                              "0", "0", "-1";
+>
+>                 st,drdy-int-pin =3D <1>;
+>         };
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7870.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos7870.dtsi
+> index 19f9ae783587..9e3ec6c952f0 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7870.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7870.dtsi
+> @@ -36,12 +36,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -51,12 +54,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -201,8 +207,7 @@ gic: interrupt-controller@104e1000 {
+>                               <0x104e2000 0x1000>,
+>                               <0x104e4000 0x2000>,
+>                               <0x104e6000 0x2000>;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
+>                         interrupt-controller;
+>                         #address-cells =3D <0>;
+>                         #interrupt-cells =3D <3>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos7885.dtsi
+> index 7d7d56206b86..6b994b487107 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos7885.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-> @@ -307,6 +307,7 @@ mmc_0: mmc@13500000 {
->                                  <&cmu_fsys CLK_GOUT_MMC_EMBD_SDCLKIN>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
+> @@ -56,18 +56,23 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> +
+>                                 core4 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core5 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> @@ -77,6 +82,7 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -186,8 +192,7 @@ gic: interrupt-controller@12301000 {
+>                               <0x12302000 0x2000>,
+>                               <0x12304000 0x2000>,
+>                               <0x12306000 0x2000>;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
 >                 };
 >
-> @@ -321,6 +322,7 @@ serial_0: serial@13800000 {
->                                  <&cmu_peri CLK_GOUT_UART0_EXT_UCLK>;
->                         clock-names = "uart", "clk_uart_baud0";
->                         samsung,uart-fifosize = <64>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -335,6 +337,7 @@ serial_1: serial@13810000 {
->                                  <&cmu_peri CLK_GOUT_UART1_EXT_UCLK>;
->                         clock-names = "uart", "clk_uart_baud0";
->                         samsung,uart-fifosize = <256>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -349,6 +352,7 @@ serial_2: serial@13820000 {
->                                  <&cmu_peri CLK_GOUT_UART2_EXT_UCLK>;
->                         clock-names = "uart", "clk_uart_baud0";
->                         samsung,uart-fifosize = <256>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -363,6 +367,7 @@ i2c_0: i2c@13830000 {
->                         pinctrl-0 = <&i2c0_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C0_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -377,6 +382,7 @@ i2c_1: i2c@13840000 {
->                         pinctrl-0 = <&i2c1_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C1_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -391,6 +397,7 @@ i2c_2: i2c@13850000 {
->                         pinctrl-0 = <&i2c2_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C2_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -405,6 +412,7 @@ i2c_3: i2c@13860000 {
->                         pinctrl-0 = <&i2c3_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C3_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -419,6 +427,7 @@ i2c_4: i2c@13870000 {
->                         pinctrl-0 = <&i2c4_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C4_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -433,6 +442,7 @@ i2c_5: i2c@13880000 {
->                         pinctrl-0 = <&i2c5_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C5_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -447,6 +457,7 @@ i2c_6: i2c@13890000 {
->                         pinctrl-0 = <&i2c6_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C6_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -461,6 +472,7 @@ i2c_7: i2c@11cd0000 {
->                         pinctrl-0 = <&i2c7_bus>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C7_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
+>                 cmu_peri: clock-controller@10010000 {
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi b/arch/arm=
+64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> index 424bc80bde68..e3f1ae8dedbf 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+> @@ -509,6 +509,7 @@ gpp0: gpp0-gpio-bank {
+>                 interrupt-controller;
+>                 #interrupt-cells =3D <2>;
 >         };
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> index ab076d326a49..afef32ad4ee2 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> @@ -178,7 +178,6 @@ &cmu_hsi {
->  };
->
->  &mmc_0 {
-> -       status = "okay";
->         mmc-hs200-1_8v;
->         mmc-hs400-1_8v;
->         cap-mmc-highspeed;
-> @@ -195,6 +194,8 @@ &mmc_0 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
->                      &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
 > +
-> +       status = "okay";
->  };
->
->  &oscclk {
-> @@ -224,21 +225,24 @@ micro_usb_det_pins: micro-usb-det-pins {
->  };
->
->  &rtc {
-> -       status = "okay";
->         clocks = <&cmu_apm CLK_GOUT_RTC_PCLK>, <&rtcclk>;
->         clock-names = "rtc", "rtc_src";
-> +
-> +       status = "okay";
->  };
->
->  &serial_0 {
-> -       status = "okay";
->         pinctrl-names = "default";
->         pinctrl-0 = <&uart1_pins>;
-> +
-> +       status = "okay";
->  };
->
->  &usbdrd {
-> -       status = "okay";
->         vdd10-supply = <&reg_dummy>;
->         vdd33-supply = <&reg_dummy>;
-> +
-> +       status = "okay";
->  };
->
->  &usbdrd_dwc3 {
-> @@ -273,6 +277,7 @@ &usbdrd_phy {
->
->  &usi_uart {
->         samsung,clkreq-on; /* needed for UART mode */
-> +
->         status = "okay";
->  };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> index 3881f573ec08..8abf7c9eac9e 100644
+>         gpp1: gpp1-gpio-bank {
+>                 gpio-controller;
+>                 #gpio-cells =3D <2>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/=
+dts/exynos/exynos850.dtsi
+> index 8abf7c9eac9e..911643008b9f 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> @@ -239,6 +239,7 @@ watchdog_cl0: watchdog@10050000 {
->                         clock-names = "watchdog", "watchdog_src";
->                         samsung,syscon-phandle = <&pmu_system_controller>;
->                         samsung,cluster-index = <0>;
+> @@ -61,12 +61,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -76,12 +79,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -96,24 +102,28 @@ cpu0: cpu@0 {
+>                         clocks =3D <&cmu_cpucl0 CLK_CLUSTER0_SCLK>;
+>                         clock-names =3D "cluster0_clk";
+>                 };
+> +
+>                 cpu1: cpu@1 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+>                         reg =3D <0x1>;
+>                         enable-method =3D "psci";
+>                 };
+> +
+>                 cpu2: cpu@2 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+>                         reg =3D <0x2>;
+>                         enable-method =3D "psci";
+>                 };
+> +
+>                 cpu3: cpu@3 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+>                         reg =3D <0x3>;
+>                         enable-method =3D "psci";
+>                 };
+> +
+>                 cpu4: cpu@100 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+> @@ -122,18 +132,21 @@ cpu4: cpu@100 {
+>                         clocks =3D <&cmu_cpucl1 CLK_CLUSTER1_SCLK>;
+>                         clock-names =3D "cluster1_clk";
+>                 };
+> +
+>                 cpu5: cpu@101 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+>                         reg =3D <0x101>;
+>                         enable-method =3D "psci";
+>                 };
+> +
+>                 cpu6: cpu@102 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+>                         reg =3D <0x102>;
+>                         enable-method =3D "psci";
+>                 };
+> +
+>                 cpu7: cpu@103 {
+>                         device_type =3D "cpu";
+>                         compatible =3D "arm,cortex-a55";
+> @@ -207,8 +220,7 @@ gic: interrupt-controller@12a01000 {
+>                               <0x12a04000 0x2000>,
+>                               <0x12a06000 0x2000>;
+>                         interrupt-controller;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
 >                 };
 >
-> @@ -250,6 +251,7 @@ watchdog_cl1: watchdog@10060000 {
->                         clock-names = "watchdog", "watchdog_src";
->                         samsung,syscon-phandle = <&pmu_system_controller>;
->                         samsung,cluster-index = <1>;
+>                 pmu_system_controller: system-controller@11860000 {
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos8855.dtsi
+> index 9d82fceb5130..0333b80eba84 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> @@ -42,12 +42,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -455,6 +457,7 @@ rtc: rtc@11a30000 {
->                                      <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cmu_apm CLK_GOUT_RTC_PCLK>;
->                         clock-names = "rtc";
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -469,6 +472,7 @@ mmc_0: mmc@12100000 {
->                                  <&cmu_core CLK_GOUT_MMC_EMBD_SDCLKIN>;
->                         clock-names = "biu", "ciu";
->                         fifo-depth = <0x40>;
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -482,6 +486,7 @@ i2c_0: i2c@13830000 {
->                         pinctrl-0 = <&i2c0_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C0_PCLK>;
->                         clock-names = "i2c";
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -57,9 +60,11 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -495,6 +500,7 @@ i2c_1: i2c@13840000 {
->                         pinctrl-0 = <&i2c1_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C1_PCLK>;
->                         clock-names = "i2c";
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
 > +
->                         status = "disabled";
->                 };
->
-> @@ -508,6 +514,7 @@ i2c_2: i2c@13850000 {
->                         pinctrl-0 = <&i2c2_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C2_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -521,6 +528,7 @@ i2c_3: i2c@13860000 {
->                         pinctrl-0 = <&i2c3_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C3_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -534,6 +542,7 @@ i2c_4: i2c@13870000 {
->                         pinctrl-0 = <&i2c4_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C4_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -548,6 +557,7 @@ i2c_5: i2c@13880000 {
->                         pinctrl-0 = <&i2c5_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C5_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -562,6 +572,7 @@ i2c_6: i2c@13890000 {
->                         pinctrl-0 = <&i2c6_pins>;
->                         clocks = <&cmu_peri CLK_GOUT_I2C6_PCLK>;
->                         clock-names = "i2c";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -632,6 +643,7 @@ usbdrd: usb@13600000 {
->                         clock-names = "bus_early", "ref";
->                         #address-cells = <1>;
->                         #size-cells = <1>;
-> +
->                         status = "disabled";
->
->                         usbdrd_dwc3: usb@0 {
-> @@ -651,6 +663,7 @@ usbdrd_phy: phy@135d0000 {
->                         clock-names = "phy", "ref";
->                         samsung,pmu-syscon = <&pmu_system_controller>;
->                         #phy-cells = <1>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -665,6 +678,7 @@ usi_uart: usi@138200c0 {
->                         clocks = <&cmu_peri CLK_GOUT_UART_PCLK>,
->                                  <&cmu_peri CLK_GOUT_UART_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_0: serial@13820000 {
-> @@ -676,6 +690,7 @@ serial_0: serial@13820000 {
->                                 clocks = <&cmu_peri CLK_GOUT_UART_PCLK>,
->                                          <&cmu_peri CLK_GOUT_UART_IPCLK>;
->                                 clock-names = "uart", "clk_uart_baud0";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -691,6 +706,7 @@ usi_hsi2c_0: usi@138a00c0 {
->                         clocks = <&cmu_peri CLK_GOUT_HSI2C0_PCLK>,
->                                  <&cmu_peri CLK_GOUT_HSI2C0_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_0: i2c@138a0000 {
-> @@ -705,6 +721,7 @@ hsi2c_0: i2c@138a0000 {
->                                 clocks = <&cmu_peri CLK_GOUT_HSI2C0_IPCLK>,
->                                          <&cmu_peri CLK_GOUT_HSI2C0_PCLK>;
->                                 clock-names = "hsi2c", "hsi2c_pclk";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -720,6 +737,7 @@ usi_hsi2c_1: usi@138b00c0 {
->                         clocks = <&cmu_peri CLK_GOUT_HSI2C1_PCLK>,
->                                  <&cmu_peri CLK_GOUT_HSI2C1_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_1: i2c@138b0000 {
-> @@ -734,6 +752,7 @@ hsi2c_1: i2c@138b0000 {
->                                 clocks = <&cmu_peri CLK_GOUT_HSI2C1_IPCLK>,
->                                          <&cmu_peri CLK_GOUT_HSI2C1_PCLK>;
->                                 clock-names = "hsi2c", "hsi2c_pclk";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -749,6 +768,7 @@ usi_hsi2c_2: usi@138c00c0 {
->                         clocks = <&cmu_peri CLK_GOUT_HSI2C2_PCLK>,
->                                  <&cmu_peri CLK_GOUT_HSI2C2_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_2: i2c@138c0000 {
-> @@ -763,6 +783,7 @@ hsi2c_2: i2c@138c0000 {
->                                 clocks = <&cmu_peri CLK_GOUT_HSI2C2_IPCLK>,
->                                          <&cmu_peri CLK_GOUT_HSI2C2_PCLK>;
->                                 clock-names = "hsi2c", "hsi2c_pclk";
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -778,6 +799,7 @@ usi_spi_0: usi@139400c0 {
->                         clocks = <&cmu_peri CLK_GOUT_SPI0_PCLK>,
->                                  <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         spi_0: spi@13940000 {
-> @@ -795,6 +817,7 @@ spi_0: spi@13940000 {
->                                 samsung,spi-src-clk = <0>;
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -810,6 +833,7 @@ usi_cmgp0: usi@11d000c0 {
->                         clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI0_PCLK>,
->                                  <&cmu_cmgp CLK_GOUT_CMGP_USI0_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_3: i2c@11d00000 {
-> @@ -824,6 +848,7 @@ hsi2c_3: i2c@11d00000 {
->                                 clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI0_IPCLK>,
->                                          <&cmu_cmgp CLK_GOUT_CMGP_USI0_PCLK>;
->                                 clock-names = "hsi2c", "hsi2c_pclk";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -836,6 +861,7 @@ serial_1: serial@11d00000 {
->                                 clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI0_PCLK>,
->                                          <&cmu_cmgp CLK_GOUT_CMGP_USI0_IPCLK>;
->                                 clock-names = "uart", "clk_uart_baud0";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -854,6 +880,7 @@ spi_1: spi@11d00000 {
->                                 samsung,spi-src-clk = <0>;
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -869,6 +896,7 @@ usi_cmgp1: usi@11d200c0 {
->                         clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI1_PCLK>,
->                                  <&cmu_cmgp CLK_GOUT_CMGP_USI1_IPCLK>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_4: i2c@11d20000 {
-> @@ -883,6 +911,7 @@ hsi2c_4: i2c@11d20000 {
->                                 clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI1_IPCLK>,
->                                          <&cmu_cmgp CLK_GOUT_CMGP_USI1_PCLK>;
->                                 clock-names = "hsi2c", "hsi2c_pclk";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -895,6 +924,7 @@ serial_2: serial@11d20000 {
->                                 clocks = <&cmu_cmgp CLK_GOUT_CMGP_USI1_PCLK>,
->                                          <&cmu_cmgp CLK_GOUT_CMGP_USI1_IPCLK>;
->                                 clock-names = "uart", "clk_uart_baud0";
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -913,6 +943,7 @@ spi_2: spi@11d20000 {
->                                 samsung,spi-src-clk = <0>;
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-> index 305dc72f93d8..da02b557a8f2 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-> @@ -192,5 +192,6 @@ ts_int: ts-int-pins {
->
->  &usi9 {
->         samsung,mode = <USI_MODE_I2C0_1>;
-> +
->         status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> index ff114cd6c9ea..e3b6d37aac09 100644
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos8895.dtsi
+> index e3b6d37aac09..a9a6f6970d71 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> @@ -244,6 +244,7 @@ serial_0: serial@10430000 {
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&uart0_bus>;
->                         samsung,uart-fifosize = <256>;
+> @@ -35,12 +35,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -50,12 +53,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -207,8 +213,7 @@ gic: interrupt-controller@10201000 {
+>                               <0x10206000 0x2000>;
+>                         #interrupt-cells =3D <3>;
+>                         interrupt-controller;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
+>                         #address-cells =3D <0>;
+>                         #size-cells =3D <1>;
 >                 };
->
-> @@ -256,6 +257,7 @@ usi0: usi@10440000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric0 0x1000>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos9810.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos9810.dtsi
+> index 01eba31f7ca3..4f1f1e9a41b2 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos9810.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos9810.dtsi
+> @@ -36,12 +36,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
->
->                         hsi2c_5: i2c@0 {
-> @@ -283,6 +285,7 @@ serial_2: serial@0 {
->                                 pinctrl-0 = <&uart2_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -298,6 +301,7 @@ spi_2: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -326,6 +330,7 @@ usi1: usi@10460000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric0 0x1004>;
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -51,12 +54,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
 > +
->                         status = "disabled";
->
->                         hsi2c_7: i2c@0 {
-> @@ -353,6 +358,7 @@ serial_3: serial@0 {
->                                 pinctrl-0 = <&uart3_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -368,6 +374,7 @@ spi_3: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -396,6 +403,7 @@ usi2: usi@10480000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric0 0x1008>;
-> +
->                         status = "disabled";
->
->                         hsi2c_9: i2c@0 {
-> @@ -423,6 +431,7 @@ serial_4: serial@0 {
->                                 pinctrl-0 = <&uart4_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -438,6 +447,7 @@ spi_4: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -466,6 +476,7 @@ usi3: usi@104a0000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric0 0x100c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_11: i2c@0 {
-> @@ -493,6 +504,7 @@ serial_5: serial@0 {
->                                 pinctrl-0 = <&uart5_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -508,6 +520,7 @@ spi_5: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -575,6 +588,7 @@ serial_1: serial@10830000 {
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&uart1_bus>;
->                         samsung,uart-fifosize = <256>;
-> +
->                         status = "disabled";
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -179,8 +185,7 @@ gic: interrupt-controller@10101000 {
+>                               <0x10106000 0x2000>;
+>                         #interrupt-cells =3D <3>;
+>                         interrupt-controller;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
+>                         #address-cells =3D <0>;
+>                         #size-cells =3D <1>;
 >                 };
->
-> @@ -587,6 +601,7 @@ usi4: usi@10840000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1008>;
-> +
->                         status = "disabled";
->
->                         hsi2c_13: i2c@0 {
-> @@ -614,6 +629,7 @@ serial_6: serial@0 {
->                                 pinctrl-0 = <&uart6_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -629,6 +645,7 @@ spi_6: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -657,6 +674,7 @@ usi5: usi@10860000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x100c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_15: i2c@0 {
-> @@ -684,6 +702,7 @@ serial_7: serial@0 {
->                                 pinctrl-0 = <&uart7_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -699,6 +718,7 @@ spi_7: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -727,6 +747,7 @@ usi6: usi@10880000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1010>;
-> +
->                         status = "disabled";
->
->                         hsi2c_17: i2c@0 {
-> @@ -754,6 +775,7 @@ serial_8: serial@0 {
->                                 pinctrl-0 = <&uart8_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -769,6 +791,7 @@ spi_8: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -797,6 +820,7 @@ usi7: usi@108a0000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1014>;
-> +
->                         status = "disabled";
->
->                         hsi2c_19: i2c@0 {
-> @@ -824,6 +848,7 @@ serial_9: serial@0 {
->                                 pinctrl-0 = <&uart9_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -839,6 +864,7 @@ spi_9: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -867,6 +893,7 @@ usi8: usi@108c0000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1018>;
-> +
->                         status = "disabled";
->
->                         hsi2c_21: i2c@0 {
-> @@ -894,6 +921,7 @@ serial_10: serial@0 {
->                                 pinctrl-0 = <&uart10_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -909,6 +937,7 @@ spi_10: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -937,6 +966,7 @@ usi9: usi@108e0000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x101c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_23: i2c@0 {
-> @@ -964,6 +994,7 @@ serial_11: serial@0 {
->                                 pinctrl-0 = <&uart11_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -979,6 +1010,7 @@ spi_11: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1007,6 +1039,7 @@ usi10: usi@10900000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1020>;
-> +
->                         status = "disabled";
->
->                         hsi2c_25: i2c@0 {
-> @@ -1034,6 +1067,7 @@ serial_12: serial@0 {
->                                 pinctrl-0 = <&uart12_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1049,6 +1083,7 @@ spi_12: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1077,6 +1112,7 @@ usi11: usi@10920000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1024>;
-> +
->                         status = "disabled";
->
->                         hsi2c_27: i2c@0 {
-> @@ -1104,6 +1140,7 @@ serial_13: serial@0 {
->                                 pinctrl-0 = <&uart13_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1119,6 +1156,7 @@ spi_13: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1147,6 +1185,7 @@ usi12: usi@10940000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x1028>;
-> +
->                         status = "disabled";
->
->                         hsi2c_29: i2c@0 {
-> @@ -1174,6 +1213,7 @@ serial_14: serial@0 {
->                                 pinctrl-0 = <&uart14_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1189,6 +1229,7 @@ spi_14: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1217,6 +1258,7 @@ usi13: usi@10960000 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         samsung,sysreg = <&syscon_peric1 0x102c>;
-> +
->                         status = "disabled";
->
->                         hsi2c_31: i2c@0 {
-> @@ -1244,6 +1286,7 @@ serial_15: serial@0 {
->                                 pinctrl-0 = <&uart15_bus>;
->                                 pinctrl-names = "default";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1259,6 +1302,7 @@ spi_15: spi@0 {
->                                 pinctrl-names = "default";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1356,6 +1400,7 @@ spi_0: spi@109d0000 {
->                         interrupts = <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>;
->                         pinctrl-0 = <&spi0_bus>;
->                         pinctrl-names = "default";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1371,6 +1416,7 @@ spi_1: spi@109e0000 {
->                         interrupts = <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>;
->                         pinctrl-0 = <&spi1_bus>;
->                         pinctrl-names = "default";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1437,6 +1483,7 @@ mmc: mmc@11500000 {
->                         interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>;
->                         #address-cells = <1>;
->                         #size-cells = <0>;
-> +
->                         status = "disabled";
->                 };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-c1s.dts b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> index 9f0ad4f9673a..a58923229128 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-c1s.dts
-> @@ -121,9 +121,10 @@ key_volup: key-volup-pins {
->  };
->
->  &usbdrd {
-> -       status = "okay";
->         vdd10-supply = <&reg_dummy>;
->         vdd33-supply = <&reg_dummy>;
-> +
-> +       status = "okay";
->  };
->
->  &usbdrd_phy {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-> index 55342db61979..563dbde6abc7 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-> @@ -121,9 +121,10 @@ key_volup: key-volup-pins {
->  };
->
->  &usbdrd {
-> -       status = "okay";
->         vdd10-supply = <&reg_dummy>;
->         vdd33-supply = <&reg_dummy>;
-> +
-> +       status = "okay";
->  };
->
->  &usbdrd_phy {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-> index 7b97220cccb7..01ecdf484dab 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-> @@ -104,9 +104,10 @@ key_volup: key-volup-pins {
->  };
->
->  &usbdrd {
-> -       status = "okay";
->         vdd10-supply = <&reg_dummy>;
->         vdd33-supply = <&reg_dummy>;
-> +
-> +       status = "okay";
->  };
->
->  &usbdrd_phy {
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> index 2e6fb24a3c92..c15ccaff2666 100644
+> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/=
+dts/exynos/exynos990.dtsi
+> index c15ccaff2666..8115d581b173 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> @@ -320,6 +320,7 @@ usbdrd_phy: phy@10c00000 {
->                         clock-names = "phy", "ref";
->                         samsung,pmu-syscon = <&pmu_system_controller>;
->                         #phy-cells = <1>;
-> +
->                         status = "disabled";
+> @@ -243,8 +243,7 @@ gic: interrupt-controller@10101000 {
+>                               <0x10106000 0x2000>;
+>                         #interrupt-cells =3D <3>;
+>                         interrupt-controller;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
+>                         #address-cells =3D <0>;
+>                         #size-cells =3D <1>;
 >                 };
->
-> @@ -332,6 +333,7 @@ usbdrd: usb@10e00000 {
->                         clock-names = "bus_early", "ref";
->                         #address-cells = <1>;
->                         #size-cells = <1>;
-> +
->                         status = "disabled";
->
->                         usbdrd_dwc3: usb@0 {
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> index de2c1de51a76..9912432c5961 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts
-> @@ -103,11 +103,13 @@ key_volup: key-volup-pins {
->  &pwm {
->         pinctrl-names = "default";
->         pinctrl-0 = <&pwm_tout3>;
-> +
->         status = "okay";
->  };
->
->  &serial_0 {
->         pinctrl-0 = <&uart0_bus_dual>;
-> +
->         status = "okay";
->  };
->
-> @@ -120,17 +122,20 @@ &ufs_1_phy {
->  };
->
->  &ufs_0 {
-> -       status = "okay";
->         vcc-supply = <&ufs_0_fixed_vcc_reg>;
-> +
-> +       status = "okay";
->  };
->
->  &ufs_1 {
-> -       status = "okay";
->         vcc-supply = <&ufs_1_fixed_vcc_reg>;
-> +
-> +       status = "okay";
->  };
->
->  &usi_0 {
->         samsung,clkreq-on; /* needed for UART mode */
-> +
->         status = "okay";
->  };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> index 2c34a2b30ad0..94f8d1c47676 100644
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/bo=
+ot/dts/exynos/exynosautov9.dtsi
+> index 94f8d1c47676..9c140ca261a2 100644
 > --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-> @@ -450,6 +450,7 @@ usi_0: usi@103000c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_0>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_0: serial@10300000 {
-> @@ -463,6 +464,7 @@ serial_0: serial@10300000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_0>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -483,6 +485,7 @@ spi_0: spi@10300000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -497,6 +500,7 @@ hsi2c_0: i2c@10300000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -513,6 +517,7 @@ usi_i2c_0: usi@103100c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_1>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_1>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_1: i2c@10310000 {
-> @@ -526,6 +531,7 @@ hsi2c_1: i2c@10310000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -542,6 +548,7 @@ usi_1: usi@103200c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_2>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_2>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_1: serial@10320000 {
-> @@ -555,6 +562,7 @@ serial_1: serial@10320000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_2>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -575,6 +583,7 @@ spi_1: spi@10320000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -589,6 +598,7 @@ hsi2c_2: i2c@10320000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -605,6 +615,7 @@ usi_i2c_1: usi@103300c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_3>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_3>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_3: i2c@10330000 {
-> @@ -618,6 +629,7 @@ hsi2c_3: i2c@10330000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -634,6 +646,7 @@ usi_2: usi@103400c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_4>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_4>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_2: serial@10340000 {
-> @@ -647,6 +660,7 @@ serial_2: serial@10340000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_4>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -667,6 +681,7 @@ spi_2: spi@10340000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -681,6 +696,7 @@ hsi2c_4: i2c@10340000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -697,6 +713,7 @@ usi_i2c_2: usi@103500c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_5>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_5>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_5: i2c@10350000 {
-> @@ -710,6 +727,7 @@ hsi2c_5: i2c@10350000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -726,6 +744,7 @@ usi_3: usi@103600c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_6>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_6>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_3: serial@10360000 {
-> @@ -739,6 +758,7 @@ serial_3: serial@10360000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_6>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -759,6 +779,7 @@ spi_3: spi@10360000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -773,6 +794,7 @@ hsi2c_6: i2c@10360000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -789,6 +811,7 @@ usi_i2c_3: usi@103700c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_7>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_7>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_7: i2c@10370000 {
-> @@ -802,6 +825,7 @@ hsi2c_7: i2c@10370000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -818,6 +842,7 @@ usi_4: usi@103800c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_8>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_8>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_4: serial@10380000 {
-> @@ -831,6 +856,7 @@ serial_4: serial@10380000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_8>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -851,6 +877,7 @@ spi_4: spi@10380000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -865,6 +892,7 @@ hsi2c_8: i2c@10380000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -881,6 +909,7 @@ usi_i2c_4: usi@103900c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_9>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_9>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_9: i2c@10390000 {
-> @@ -894,6 +923,7 @@ hsi2c_9: i2c@10390000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -910,6 +940,7 @@ usi_5: usi@103a00c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_10>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_10>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_5: serial@103a0000 {
-> @@ -923,6 +954,7 @@ serial_5: serial@103a0000 {
->                                          <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_10>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -943,6 +975,7 @@ spi_5: spi@103a0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -957,6 +990,7 @@ hsi2c_10: i2c@103a0000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -973,6 +1007,7 @@ usi_i2c_5: usi@103b00c0 {
->                         clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PCLK_11>,
->                                  <&cmu_peric0 CLK_GOUT_PERIC0_IPCLK_11>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_11: i2c@103b0000 {
-> @@ -986,6 +1021,7 @@ hsi2c_11: i2c@103b0000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1002,6 +1038,7 @@ usi_6: usi@109000c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_0>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_0>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_6: serial@10900000 {
-> @@ -1015,6 +1052,7 @@ serial_6: serial@10900000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_0>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1035,6 +1073,7 @@ spi_6: spi@10900000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1049,6 +1088,7 @@ hsi2c_12: i2c@10900000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1065,6 +1105,7 @@ usi_i2c_6: usi@109100c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_1>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_1>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_13: i2c@10910000 {
-> @@ -1078,6 +1119,7 @@ hsi2c_13: i2c@10910000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1094,6 +1136,7 @@ usi_7: usi@109200c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_2>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_2>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_7: serial@10920000 {
-> @@ -1107,6 +1150,7 @@ serial_7: serial@10920000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_2>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1127,6 +1171,7 @@ spi_7: spi@10920000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1141,6 +1186,7 @@ hsi2c_14: i2c@10920000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1157,6 +1203,7 @@ usi_i2c_7: usi@109300c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_3>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_3>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_15: i2c@10930000 {
-> @@ -1170,6 +1217,7 @@ hsi2c_15: i2c@10930000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1186,6 +1234,7 @@ usi_8: usi@109400c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_4>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_4>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_8: serial@10940000 {
-> @@ -1199,6 +1248,7 @@ serial_8: serial@10940000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_4>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1219,6 +1269,7 @@ spi_8: spi@10940000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1233,6 +1284,7 @@ hsi2c_16: i2c@10940000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1249,6 +1301,7 @@ usi_i2c_8: usi@109500c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_5>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_5>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_17: i2c@10950000 {
-> @@ -1262,6 +1315,7 @@ hsi2c_17: i2c@10950000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1278,6 +1332,7 @@ usi_9: usi@109600c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_6>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_6>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_9: serial@10960000 {
-> @@ -1291,6 +1346,7 @@ serial_9: serial@10960000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_6>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1311,6 +1367,7 @@ spi_9: spi@10960000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1325,6 +1382,7 @@ hsi2c_18: i2c@10960000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1341,6 +1399,7 @@ usi_i2c_9: usi@109700c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_7>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_7>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_19: i2c@10970000 {
-> @@ -1354,6 +1413,7 @@ hsi2c_19: i2c@10970000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1370,6 +1430,7 @@ usi_10: usi@109800c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_8>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_8>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_10: serial@10980000 {
-> @@ -1383,6 +1444,7 @@ serial_10: serial@10980000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_8>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1403,6 +1465,7 @@ spi_10: spi@10980000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1417,6 +1480,7 @@ hsi2c_20: i2c@10980000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1433,6 +1497,7 @@ usi_i2c_10: usi@109900c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_9>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_9>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_21: i2c@10990000 {
-> @@ -1446,6 +1511,7 @@ hsi2c_21: i2c@10990000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1462,6 +1528,7 @@ usi_11: usi@109a00c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_10>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_10>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_11: serial@109a0000 {
-> @@ -1475,6 +1542,7 @@ serial_11: serial@109a0000 {
->                                          <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_10>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1493,6 +1561,7 @@ spi_11: spi@109a0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1507,6 +1576,7 @@ hsi2c_22: i2c@109a0000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1523,6 +1593,7 @@ usi_i2c_11: usi@109b00c0 {
->                         clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PCLK_11>,
->                                  <&cmu_peric1 CLK_GOUT_PERIC1_IPCLK_11>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         hsi2c_23: i2c@109b0000 {
-> @@ -1536,6 +1607,7 @@ hsi2c_23: i2c@109b0000 {
->                                 clock-names = "hsi2c", "hsi2c_pclk";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1548,6 +1620,7 @@ ufs_0_phy: phy@17e04000 {
->                         #phy-cells = <0>;
->                         clocks = <&xtcxo>;
->                         clock-names = "ref_clk";
-> +
->                         status = "disabled";
+> @@ -51,12 +51,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -66,12 +69,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -338,8 +344,7 @@ gic: interrupt-controller@10101000 {
+>                               <0x10102000 0x2000>,
+>                               <0x10104000 0x2000>,
+>                               <0x10106000 0x2000>;
+> -                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ |
+> -                                                IRQ_TYPE_LEVEL_HIGH)>;
+> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8)=
+ | IRQ_TYPE_LEVEL_HIGH)>;
 >                 };
 >
-> @@ -1569,6 +1642,7 @@ ufs_0: ufs@17e00000 {
->                         phys = <&ufs_0_phy>;
->                         phy-names = "ufs-phy";
->                         samsung,sysreg = <&syscon_fsys2 0x710>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1580,6 +1654,7 @@ ufs_1_phy: phy@17f04000 {
->                         #phy-cells = <0>;
->                         clocks = <&xtcxo>;
->                         clock-names = "ref_clk";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1601,6 +1676,7 @@ ufs_1: ufs@17f00000 {
->                         phys = <&ufs_1_phy>;
->                         phy-names = "ufs-phy";
->                         samsung,sysreg = <&syscon_fsys2 0x714>;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1632,6 +1708,7 @@ pwm: pwm@103f0000 {
->                         #pwm-cells = <3>;
->                         clocks = <&xtcxo>;
->                         clock-names = "timers";
-> +
->                         status = "disabled";
->                 };
->         };
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> index 5873720c213e..a92e5751bf9b 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
-> @@ -71,6 +71,7 @@ key_back: key-back-pins {
->  &pwm {
->         pinctrl-names = "default";
->         pinctrl-0 = <&pwm_tout0>;
-> +
->         status = "okay";
->  };
->
-> @@ -80,6 +81,7 @@ &serial_0 {
->
->  &usi_0 {
->         samsung,clkreq-on; /* needed for UART mode */
-> +
->         status = "okay";
->  };
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index e2f962dc1b3d..f42207bdc701 100644
+>                 pdma0: dma-controller@1b2e0000 {
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/=
+boot/dts/exynos/exynosautov920.dtsi
+> index f42207bdc701..399b56b4dbdd 100644
 > --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -440,6 +440,7 @@ usi_0: usi@108800c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
->                         clock-names = "pclk", "ipclk";
+> @@ -48,12 +48,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpu0>;
+>                                 };
 > +
->                         status = "disabled";
->
->                         serial_0: serial@10880000 {
-> @@ -453,6 +454,7 @@ serial_0: serial@10880000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
+>                                 core1 {
+>                                         cpu =3D <&cpu1>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -473,6 +475,7 @@ spi_0: spi@10880000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
+>                                 core2 {
+>                                         cpu =3D <&cpu2>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -489,6 +492,7 @@ usi_1: usi@108a00c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI01_USI>;
->                         clock-names = "pclk", "ipclk";
+>                                 core3 {
+>                                         cpu =3D <&cpu3>;
+>                                 };
+> @@ -63,12 +66,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpu4>;
+>                                 };
 > +
->                         status = "disabled";
->
->                         serial_1: serial@108a0000 {
-> @@ -502,6 +506,7 @@ serial_1: serial@108a0000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI01_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
+>                                 core1 {
+>                                         cpu =3D <&cpu5>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->
-> @@ -522,6 +527,7 @@ spi_1: spi@108a0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
+>                                 core2 {
+>                                         cpu =3D <&cpu6>;
+>                                 };
 > +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -538,6 +544,7 @@ usi_2: usi@108c00c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI02_USI>;
->                         clock-names = "pclk", "ipclk";
+>                                 core3 {
+>                                         cpu =3D <&cpu7>;
+>                                 };
+> @@ -78,6 +84,7 @@ cluster2 {
+>                                 core0 {
+>                                         cpu =3D <&cpu8>;
+>                                 };
 > +
->                         status = "disabled";
->
->                         serial_2: serial@108c0000 {
-> @@ -551,6 +558,7 @@ serial_2: serial@108c0000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI02_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -571,6 +579,7 @@ spi_2: spi@108c0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -587,6 +596,7 @@ usi_3: usi@108e00c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI03_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_3: serial@108e0000 {
-> @@ -600,6 +610,7 @@ serial_3: serial@108e0000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI03_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -620,6 +631,7 @@ spi_3: spi@108e0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -636,6 +648,7 @@ usi_4: usi@109000c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI04_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_4: serial@10900000 {
-> @@ -649,6 +662,7 @@ serial_4: serial@10900000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI04_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -669,6 +683,7 @@ spi_4: spi@10900000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -685,6 +700,7 @@ usi_5: usi@109200c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI05_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_5: serial@10920000 {
-> @@ -698,6 +714,7 @@ serial_5: serial@10920000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI05_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -718,6 +735,7 @@ spi_5: spi@10920000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -734,6 +752,7 @@ usi_6: usi@109400c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI06_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_6: serial@10940000 {
-> @@ -747,6 +766,7 @@ serial_6: serial@10940000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI06_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -767,6 +787,7 @@ spi_6: spi@10940000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -783,6 +804,7 @@ usi_7: usi@109600c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI07_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_7: serial@10960000 {
-> @@ -796,6 +818,7 @@ serial_7: serial@10960000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI07_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -816,6 +839,7 @@ spi_7: spi@10960000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -832,6 +856,7 @@ usi_8: usi@109800c0 {
->                         clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
->                                  <&cmu_peric0 CLK_DOUT_PERIC0_USI08_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_8: serial@10980000 {
-> @@ -845,6 +870,7 @@ serial_8: serial@10980000 {
->                                          <&cmu_peric0 CLK_DOUT_PERIC0_USI08_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -865,6 +891,7 @@ spi_8: spi@10980000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -878,6 +905,7 @@ pwm: pwm@109b0000 {
->                         #pwm-cells = <3>;
->                         clocks = <&xtcxo>;
->                         clock-names = "timers";
-> +
->                         status = "disabled";
->                 };
->
-> @@ -918,6 +946,7 @@ usi_9: usi@10c800c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI09_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_9: serial@10c8000 {
-> @@ -931,6 +960,7 @@ serial_9: serial@10c8000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI09_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <256>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -951,6 +981,7 @@ spi_9: spi@10c80000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <256>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -967,6 +998,7 @@ usi_10: usi@10ca00c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI10_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_10: serial@10ca0000 {
-> @@ -980,6 +1012,7 @@ serial_10: serial@10ca0000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI10_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1000,6 +1033,7 @@ spi_10: spi@10ca0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1016,6 +1050,7 @@ usi_11: usi@10cc00c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI11_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_11: serial@10cc0000 {
-> @@ -1029,6 +1064,7 @@ serial_11: serial@10cc0000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI11_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1049,6 +1085,7 @@ spi_11: spi@10cc0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1065,6 +1102,7 @@ usi_12: usi@10ce00c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI12_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_12: serial@10ce0000 {
-> @@ -1078,6 +1116,7 @@ serial_12: serial@10ce0000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI12_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1098,6 +1137,7 @@ spi_12: spi@10ce0000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1114,6 +1154,7 @@ usi_13: usi@10d000c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI13_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_13: serial@10d00000 {
-> @@ -1127,6 +1168,7 @@ serial_13: serial@10d00000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI13_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1147,6 +1189,7 @@ spi_13: spi@10d00000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1163,6 +1206,7 @@ usi_14: usi@10d200c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI14_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_14: serial@10d20000 {
-> @@ -1176,6 +1220,7 @@ serial_14: serial@10d20000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI14_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1196,6 +1241,7 @@ spi_14: spi@10d20000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1212,6 +1258,7 @@ usi_15: usi@10d400c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI15_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_15: serial@10d40000 {
-> @@ -1225,6 +1272,7 @@ serial_15: serial@10d40000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI15_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1245,6 +1293,7 @@ spi_15: spi@10d40000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1261,6 +1310,7 @@ usi_16: usi@10d600c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI16_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_16: serial@10d60000 {
-> @@ -1274,6 +1324,7 @@ serial_16: serial@10d60000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI16_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1294,6 +1345,7 @@ spi_16: spi@10d60000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1310,6 +1362,7 @@ usi_17: usi@10d800c0 {
->                         clocks = <&cmu_peric1 CLK_MOUT_PERIC1_NOC_USER>,
->                                  <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
->                         clock-names = "pclk", "ipclk";
-> +
->                         status = "disabled";
->
->                         serial_17: serial@10d80000 {
-> @@ -1323,6 +1376,7 @@ serial_17: serial@10d80000 {
->                                          <&cmu_peric1 CLK_DOUT_PERIC1_USI17_USI>;
->                                 clock-names = "uart", "clk_uart_baud0";
->                                 samsung,uart-fifosize = <64>;
-> +
->                                 status = "disabled";
->                         };
->
-> @@ -1343,6 +1397,7 @@ spi_17: spi@10d80000 {
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
->                                 fifo-depth = <64>;
-> +
->                                 status = "disabled";
->                         };
->                 };
-> @@ -1468,6 +1523,7 @@ ufs_0: ufs@16e00000 {
->                         phy-names = "ufs-phy";
->                         samsung,sysreg = <&syscon_hsi2 0x710>;
->                         dma-coherent;
-> +
->                         status = "disabled";
->                 };
->
-> @@ -1479,6 +1535,7 @@ ufs_0_phy: phy@16e04000 {
->                         clock-names = "ref_clk";
->                         samsung,pmu-syscon = <&pmu_system_controller>;
->                         #phy-cells = <0>;
-> +
->                         status = "disabled";
->                 };
->
+>                                 core1 {
+>                                         cpu =3D <&cpu9>;
+>                                 };
 >
 > --
 > 2.53.0
