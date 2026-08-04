@@ -1,123 +1,68 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15F4322E9
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Aug 2026 19:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1D331AABF;
+	Tue,  4 Aug 2026 06:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785784745; cv=none; b=MTCH/iBbJJ2XHgswoFtIs1cCM/ITubBpEfmAgEc7tjC7oYnBzb2aiFJVZFbSd86osZRmPeioe3Ezq8oTZZwkmDEcm1KzFR55Aj8tLCg/hpRPLEROUwlcThxGfN/fBw/d9LdFe5S/8iN76KIJ66AVMGu4FnxFlcQ6+3T22gZFUZQ=
+	t=1785823917; cv=none; b=lmhkLQQ87sAUUZhdGrLBqpdGu0Kf7rRZjLNR9IEZTuOI3OYJQzzq7CSkkYmBQGduvkd+vizSy3hIYL/NM5l0Hce2dAFZFoo0eQsnur7Iygn+r8V7fTc/Q+XYjpFDY9fSFYRJEgcgUqAa4U0UFNlxaIqx3/9v481APAnSGmwBZv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785784745; c=relaxed/simple;
-	bh=XKGpIuuo6O7kytNhl1VQHpUrM4ZOOWo1SPMYBBVs6II=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lg6VmMgRtENDY2+u4CoIxnSkqsgOr+JmllvWvo+gBhLEZbczQc3amRUdddZWz6eruDePkH015TcaiXONG3p2uQII3OTn0rc6eOMP66McgazP2rJkLGKimErj4gbJdWBTsoplNZLS7sHzxA2vbNvRiSRpUSeJmrAax3xyLVBsoik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=k617tlsJ; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1785823917; c=relaxed/simple;
+	bh=HalyDjd/NT9SONmHp3RFFPNITjRfqQ5w0bx9uVifBGI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SKswpf4vxttLWb+vRpJdcNVmBq8UYOC7nfQxBeNaJvZO0kQLOxnNzRvfDqwC6yjrsk10KL2ncIEZp9TVLHdB85g0k8LiAXehmh9+GSvGu9TfpKwk5/PlrPADrDkDpuQWbrTzMPMWK+2os1Hfstrw272G0UdIZnEO6yC5/+BMpuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZpCSM3R; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="k617tlsJ"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7e6128bd9b3so1717392a34.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Aug 2026 12:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1785784741; x=1786389541; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=yWhNVuNUeWmdXxG9AxDJ/JJjMmObR+VfZMlaxit4KDY=;
-        b=k617tlsJSnXA+ObJtUmS4S3TPzDdSCOKnh5P+acMy2VpV93oxwg3ywmUWCevWQbrIz
-         DuIfYAUTaLXXP2zXjo+SECM7Cry2ctsMgvSt93TtMxcwlgN8NmjPpoMv3AXnPtgITr7u
-         jsM1n9hybsNdSs5XAEasSO8jZw4X57OdS0DhsZhk+CXhWzLv6kMEk+j8w6twhQpTDbmD
-         94bSOpROqxFNmxVeHKaptDq4pfeMs8ZnON9P28piUvvO5rgV4eyw4Z2eXaH7yY66MALK
-         MMeSgYxL2NhQed2WFAZJebvxzU08uy1prJ9rzFRczrIgxjXthFfoo4dStcQUUSgv7MT9
-         0yfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785784741; x=1786389541;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=yWhNVuNUeWmdXxG9AxDJ/JJjMmObR+VfZMlaxit4KDY=;
-        b=NGXA8O/86cetCuMTTscTjK2Gm83MQ00SukvGGvXoLJ07X1BJt2JPg0CG2IrNhhaExp
-         GF7SNMEng2aYlYwSgrdDPHJfmQRTrznDK8iyAxgzx8L4ygDnvHEsIRlA8b359HgL4eXS
-         0qFvKeGKAMG7E159yP6l9WBr17TpPqCEBlObZLtqB4OhJlY1t0XEkt2G8IRnh8g/tmEd
-         wQHhw9VqvnVBIg28R1Uub0LBxHrxqlscYjTR1gtkwdJhbtFL/qpHpwI+CaFS0Q/6m8oJ
-         FNn6hIaYkaeGQFxBGmwbpvYzyL3cqGarjkTR2yfxYrNty9HbJhPAG1tjg/XltoSEy/E/
-         pYWw==
-X-Forwarded-Encrypted: i=1; AHgh+RpyB48fqSsa/F8BgMpI610HX4ksthTWB9NeiHKVkeQ7l6m++qJpojthnUOMQxftyt4HuUcJO7UgkWnMRq6YsPicqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysp5lAsOc1kUOnfTHqe73rgkwuFSmEiLHM+kLUcYxItmsD8vyb
-	gutvXZDqWAg1xm/Wgi/nEJCZU6AH9R5EE1iBvBIewnDuwk/aczgEAq71pwBb0X3gDhc=
-X-Gm-Gg: AR+sD12N2ztDCY/ENm/0z2pMC8JMuY6HohnAUicWEshM8CtpBkgzMLxQXHgkPSquMbR
-	a9Umc7FLQc0YfskJkwEYD217s6xYV0xfw6HPa4trwGejXLr5HGiD1A6J4FYcZF+l+iAySw21ouK
-	H44f9pvZAUQWRN6jYfAKAc42wtI1eC0OFlbF0ihfKM7Hkz9Tzl1kTAe0rncJbunJ5xFqmJRqOdm
-	EWTEG4Q3RaRAC9i8ky4szjCsgeHzGgvRLC9oMtW5DmjmGfyOy+XvZxODSZAgj32f9RA1mUxKSjH
-	rjhD0npsCDSx0meZ1Kfphjg47QKcScwg2HKY73BQGNGDVuwWsI+/dZqUb3ahpXOcBKD83KuoINl
-	ZymT+cdWzIe62d42OdX7GdsV5x9aujGEuTTlr4DZl9BXGKU7zT6NFzQdjBsfPk4uHiJ45RUj5eA
-	vWAZJW3VcUO/2kXoTjlOzcUT+tN9OHQJNQeCqzN9Pq1iQKWOvBJt5abbVHS08xG+JiJKFSLiUge
-	V1fNb/DhUq9CzEgfXGjq+gC718o7OMDeQ==
-X-Received: by 2002:a05:6830:6413:b0:7e9:d082:3b87 with SMTP id 46e09a7af769-7f196b61346mr16269729a34.1.1785784741332;
-        Mon, 03 Aug 2026 12:19:01 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:b8f7:1f5e:7c:a7d1? ([2600:8803:e7e4:500:b8f7:1f5e:7c:a7d1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f18f11e522sm8029109a34.25.2026.08.03.12.19.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Aug 2026 12:19:00 -0700 (PDT)
-Message-ID: <43059ed9-2ff8-4bf3-846a-53a4c7cd72bd@baylibre.com>
-Date: Mon, 3 Aug 2026 14:18:59 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZpCSM3R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E004B1F000E9;
+	Tue,  4 Aug 2026 06:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785823915;
+	bh=PXSmEYs9TbtvGp/eM4EavpIH6gjJRcZp18E17KYaQ20=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=LZpCSM3RqZLgkfCU3TWvegvh/R7x1h7urJze+XOzns0XKzuNRnZNE+9ODkc50qZxD
+	 FluRk1VqBz3CCawC4gviCbpkEyKSV52QaaqJcpJuO9APuHvw95Zog9faPEClMI0Jfz
+	 3DdtQ9SCrbUWFEGvi2Vxo4cb5RQ8a5yHY2rWB1aj0iCaq7/cmssnCY5lICzmWRC2Ii
+	 TKGw2efti4DhYvxeZ3MGi17W85MT2krtjUwb8JdAcakhByqzrqxmnFL/P/AAZc0sSk
+	 9Cl3WtsvTThJzOhH5XC/AId3luPlIWj/aKA9i8aqlLsHSIciRjwsZ2zwE2gSpOb+r6
+	 OZrGrJfx90u2Q==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260801210353.383880-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260801210353.383880-2-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH] arm64: dts: exynos: Correct white-space style
+Message-Id: <178582391140.12883.16293784037220851134.b4-ty@b4>
+Date: Tue, 04 Aug 2026 08:11:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] iio: proximity: add driver for Sharp GP2AP070S
- proximity sensor
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20260731-gp2ap070s-v3-0-d1f5cecf9fe7@disroot.org>
- <20260731-gp2ap070s-v3-2-d1f5cecf9fe7@disroot.org>
- <380b864f-6266-40fb-87a4-027afb422885@baylibre.com>
- <DKFHI80E1741.3L5TMU6D3P9OC@disroot.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <DKFHI80E1741.3L5TMU6D3P9OC@disroot.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 
-On 8/3/26 12:28 PM, Kaustabh Chakraborty wrote:
-> On 2026-08-01 11:41 -05:00, David Lechner wrote:
->> On 7/30/26 3:07 PM, Kaustabh Chakraborty wrote:
->>> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
->>> Corporation. This sensor is used in mobile devices, including, but not
->>> limited to - the Samsung Galaxy J6.
->>>
->>> The driver has been adopted from Samsung's downstream kernel
->>> implementation [1]. Due to the lack of public documentation about the
->>> schematics of this device. The downstream driver acts as the secondary
->>> source of information. Driver clarity has also been improved with the
->>> help of the GP2AP* drivers in iio/light.
->>>
->>> Link: https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c [1]
->>> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->>> ---
-> 
-> [...]
-> 
->>> +static void gp2ap070s_reset_action(void *private)
->>> +{
->>> +	struct gp2ap070s_drvdata *drvdata = private;
->>
->> Usually, we don't bother with a cast/local variable in these.
->> The void* can be passed directly as an arg.
-> 
-> Yeah, but CFI will not be happy about that.
 
-How so? We do this all the time and no one has reported any
-issues with it.
+On Sat, 01 Aug 2026 23:03:54 +0200, Krzysztof Kozlowski wrote:
+> Correct a few white-space issues, like missing space before bracket '{'
+> character or spurious space, which will be flagged by dt-check-style
+> ("redundant-whitespace" warning).  No functional changes.
+
+Applied, thanks!
+
+[1/1] arm64: dts: exynos: Correct white-space style
+      https://git.kernel.org/krzk/linux/c/db23b4aab4252f793d9fa97dc5d6f8d99c5e8e4b
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
+
