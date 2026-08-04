@@ -1,82 +1,82 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC07C3AD501
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2026 12:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18A53B47FB
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Aug 2026 12:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785845551; cv=pass; b=UM+sjsjdaCquioIZLcBWs3clqWafqkiDXEOjNQJDvVHN0iXH1cZXracd4WLbPV631JG8TnmaRogx+pTkXh4KzZ///uCECBnFDgnWkCC6mAvIktHMqLzPdTl3J4HCRE9Vn/eoE0U/GOqkA9oNVEM0bGqy9NcxzCYupQ3jB65OFzk=
+	t=1785845600; cv=pass; b=M4Zf35QDZ/agEgnW4crwplgSmSHpkTbu/c/m8fe0tMTh+dzgyalX25hXScNqkFpeSXwW5Z7xk5u4+Pb/Np89z5NXpUoYhJXXWZu3pB+xozX2vwpl29AyEZ0K9280JZGsalGlLRPuDL/Hx2NyvPcSBsS3a6Br1ihbTMfrGxtoDM4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785845551; c=relaxed/simple;
-	bh=mAKg5cSi9W/mdd39Dtr4w6gDmKqq2ZSUQO17r311Jh8=;
+	s=arc-20240116; t=1785845600; c=relaxed/simple;
+	bh=1jmt5WCmRdYFJEkC9Rif/cfA1XLv5OjEVL2XiuFUUMs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8ITcO71r/c1OA/wc5LUsIXNgunqRpwqMe4fitIol1RaASfOniPuarSsVZTFszj5G3CgBCeBi7JYUQtM69qG7dWfH7w2tmqvj/QkGZKhk+/wS15qW6GgQMaMpsDPvaDOdIUeGdSGreOwCRPvjMeN0vaYui+koUK4pWjHfcGl79Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S2CcgF/C; arc=pass smtp.client-ip=209.85.208.52
+	 To:Cc:Content-Type; b=Arv+ZB3Zk43XC31cLPnxs+80jp3ewnC/GMtCq4KVaZ2bGapKk+m2cYDB/bE8hnYc0lXI3xomgpMOR1HphEdDD0QGHzhOapAl69j+Vt6E3p2GEkDu9sTOt6AqDxDjQyOPd5HSc4jdAvHGyf6YLPPO8ntiEN7+IxJbnP/jLb9uYV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A541xQpc; arc=pass smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S2CcgF/C"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6a051b737d8so4722712a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Aug 2026 05:12:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785845547; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A541xQpc"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6a10d02ff43so2563763a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Aug 2026 05:13:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785845596; cv=none;
         d=google.com; s=arc-20260327;
-        b=AXTDtAkIt4gibKupQAdJPm95vzR2gKKZDmrIi7SIss1qtBTew1oGWcXEg/IANfJOnx
-         JLl56KJff3ut1gRLWNOOkCk/ye5TmRHDm7Bh0Wewqc2JkiJH725NgJTCcZpSua8W9rCw
-         NU1Wyo1zP0Ziw8Ajori0vHWzU5OU6HHrk7Lm0q+/xVtS8HYS0/9HIq+kJtkDkPmC7PK9
-         2M9MaKV9rV3/MyJ/q6jMxV0AZv6F3iTOhxpZRckro++xiCVaV1SeCJS2nbbLO6Pl7vOu
-         B+rnsn0PvsqsPrTQXAibAGpy+qxnh/V2E8E0HxE22TbChkE8VQzDNUjjpu0Ud0swXLNX
-         FUsw==
+        b=UuyOS99tv+MWGUVCHafc/oYEF6thy5PkDgrLa3FXiOX2/rhV8/Sz9T3GZIAiJLUrEs
+         JuTLWFIDWh7pxJHzIxDgL8YfsqjnMmnSjeHFS1VvOaUVs16PiPHGSNqx8Ovskc2oBWmH
+         iI+7P/G6LsIOtyIAtcyiX6Q8R3HNySZyH58ia8XXCMrCCB3kKsvGN2mqj/5xqnxiz8Ou
+         iYrbJ/Kn3jFS1KCsKv9HUSiwqeETn1LpN3FJUgRqlgCVwfyDNj0aQk268ihYfpl2gFxw
+         bRqwTp8Ey7nQU7d50h39WvqeCLVbZ8zL15sjAh60AO7DMiiXj6oisiMbkn3Z7p909lwr
+         RPVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=/Ps1gHHJrXc9fjQgxn88Rwh5btQNAsYSwAkouqgeIro=;
-        fh=6Ef+hHqKwRck6KopfrYSFuNo437UIkaGCzVF13n0yLU=;
-        b=tD4/4+It0oGVdEJ192i6CXpev5bgDcgBpbVSUQhmwPEqFgKT96vuFEFB4mGic+nkUg
-         tkof5QfipoF3YEiYKwRjpb2l/NLiuWjU0eCXHzKvavL+jf1/YfZnzPzDL9ZOAXStpxZ7
-         HiI0klVkVK466thqH86DaHi96qhJ9jxnd9nYPc3W7VXTGmNN+eA4hPKbUktIsg0V++pQ
-         0/RuhPHNEceiaBJSu1frPZsjy9uUFmCUP3k1+t3F+1w84mMUq3OGJbuHPLnH1JyCL6/O
-         IPoDJ1J6FfxtBLn34TPnb5yh3PnKRrcwTax4wMR9g/Dbj1k3Leef/VLfgsyFIDE0qeMG
-         f1Vg==;
+        bh=IXbZR8tAcrziDMeRXEJQbq2r3n3VLeqHoVnsKPcZdkM=;
+        fh=ywUhfE26KYZBnFsNdNAaip+/Pmmpi4R6heXVaTrFirY=;
+        b=VEHXD137jpcxbFTp9rw1O5qf48U34a0JpQseAYaU6axu5JLTzTSQ62bTlp5v40bTSZ
+         wITLMivveE8DxVcGagwP3DF8wG1SXoSizq/BTo6a5QxfOIzQPoZYb8f06msN/0fhNX8w
+         j/RFTHrWk6wcNnt1l6KmFOqFbqm7zmyjQa2IgbX4ypQpZRUDs+2uT1xj08W80bbj8LJF
+         nQ7d/JuzLfd80pZ5EABoGOpdd7Hd1Jc5oSsAPBMVtSlxhaRAOcwjTpWq/L4UN/4kT88f
+         3fY7Ai/jBW6rp0Nf2iQr6I/S7vxAun1ASY9PyiqMRU4urtP7ReETVlW+0rGhEJo4C3CB
+         FrxQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1785845547; x=1786450347; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1785845596; x=1786450396; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=/Ps1gHHJrXc9fjQgxn88Rwh5btQNAsYSwAkouqgeIro=;
-        b=S2CcgF/CcbzqTqtpPkShWt0Y3V0s1qlWqb9G4kWJdQ9yxuk9EwOtRyA50P3EzrhwOc
-         3lQ04tqoxhU5AqR5qG57Y7rnGHW18VIR3t59CAaLM19nAPRBLNISJ+JuqRbxxAaTlxnE
-         xypoc4u8w9we+ZqBAzYLKK3dfUlYkQBrPS9gq57WgJ+F+zs3u8jbU35BQdBcyzwk2OGw
-         r6lhl738uAk24piJ3vJtz8kYv2BMbWAjq9duI9FcnlUzuolwgehJP7FuM9Pr9mMZqJOK
-         Z9RsRjN4bqxrbF3ZOEXbpSCvIIPpIw2uF1r41Wjso9qRBhU6XMte1XO+hf21ReDyk5uz
-         V3aQ==
+        bh=IXbZR8tAcrziDMeRXEJQbq2r3n3VLeqHoVnsKPcZdkM=;
+        b=A541xQpcY59QDdUBNiR5AzU+FDat0f0C3w6EWdHVaQOcEWsUSiPAMzJiBIxpXKtLsl
+         Rqmyuyh+g15mgW0YwefgKOwVe7rH/r8c6nuhrqtPCtYRONtrInDX1tjuJ2ugZ+6UZgVp
+         9Lp/QFBYDpNVcqhRygEqhTxNCCznx9TMwZqELpskQ8ykQTJqhre72LcGWLtYRxdN/CuB
+         Giw8SfqSz97mt/3Qa+HBKDND85fJ2F5bcqPkn5dSHfNiblbBdrQ5ODWylsizDsnpB7hn
+         +Mwsqb8XTrBt/wK3NYvLMR9wrjhyebkJ7bgvqlB0frKStECfqGX3U6xB3boT669IhW3a
+         RYQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785845547; x=1786450347;
+        d=1e100.net; s=20251104; t=1785845596; x=1786450396;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/Ps1gHHJrXc9fjQgxn88Rwh5btQNAsYSwAkouqgeIro=;
-        b=QBCJxNtW1JtWj7/AH4Bt+MXSqWtuRWaEAvLBHsXzaLtX052pCoK7jnY7zXZxD05def
-         n4KifMQkr7xQeg4zg8+aHCTq/RqoXTcOoW81/uNNqeETToDZl2ZCjAdXs6zCH6271o4h
-         VngIyqRZCUWdq9cfBLLmZy90pCIl0KQA9DTOl9UrnmjMB9gQKoBTkBA3g1iJwq8Q2LbB
-         rt6Sl9//hUJpAaShcAyuEXE/6jGIh2GddGuXw4D+1IM5XSPc7vCA9fUj9Cchh95nO1Je
-         YVhLookSxzF0lTbES8cIogU+g1WWYV7zAyqZHazmNrICT9Heuy/yQT3GmRD5PGRZl4fh
-         vXBw==
-X-Forwarded-Encrypted: i=1; AHgh+RpcX7tuGUf5G6vTX8P7p1tdjRPqAdQkUAcqQTFw74/3BQepui3rbecuUaMMpKkYruqn0Ax5FcYcga3u/IuJHQQ6kg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzOGDYCqoiQr6tBiMMFcPdH3o0IOok4V8iMSrOEnPZoU7LI3gZ
-	f2Lx3cdmVBCKnDpcJca60VfJPhl/Dr1VzLZQsgkRleaim19WqZ960SmVPuBxhqA6FfnEz/kivWz
-	xH6la42m62my2oS/SK2DSm6zPFHHCPwxSoRXFbrgBzw==
-X-Gm-Gg: AR+sD10VfIH3ZiN/nqoDfqrkQOajENhnHPlnB7KVaVaheOzBATw3jPwfuULc5MODBoe
-	T5JlKhuurED5eeocX+8Oxr3HTmv3GaXTghAg8J36y8ubliApT0O2i1KbwJnS1OoLf4DXpMTs4O+
-	xRhfOkIXNc7xpUsYOl1X3KKYjy6cf8M3UyHMsODZ238+CLZyqG/yGMP3sVYAiqB6JhynJL3JZvg
-	5ET5/C0IIGKc7UjfUUomwR1zr2ReL9pGfUhrVIAil2yssMWHVZf1j1O37sYQFns/v2TE3Xe22Q/
-	D419KZwVow8FpXCQ5edjkKp/imnnrEUIQdLLGNPrnmYYKJdJyimgfgPtn8Zbvl4syLhSnSRBegb
-	MN9w=
-X-Received: by 2002:a05:6402:5bc7:b0:6a0:f9b2:4d5e with SMTP id
- 4fb4d7f45d1cf-6a0f9b24eb6mr4339426a12.18.1785845547188; Tue, 04 Aug 2026
- 05:12:27 -0700 (PDT)
+        bh=IXbZR8tAcrziDMeRXEJQbq2r3n3VLeqHoVnsKPcZdkM=;
+        b=pT7PS7Rskt2RA2GruxN0l6vRr1W+v22pomvPSVsPD1tVWQJRSc7ef+pz0VGLY+XGlb
+         douxje5CoAAvw7eZfxIx0kTycKSvXy0mqt3ScJ2847t+M6UAlAujK64BSe6b6VBuIGv5
+         +KTlHpjrpJNouH1jAXbxxP+AeBtNWNIEWdW+vI/UaH6hRWSOnMt9zl5/5jl5e6oS0SBo
+         DvtkUPq93B7pAGGYi4w/kxLFI8PC05OtwlaO8ArCweWGE20OTMPE7Bz5JuUjFrSWEwhJ
+         hlB8pLbPa+Y3yrd9YeecSrFnyXCj/YspZyo0Vt/EnuoUZZuwI8iEXbaVpbso/3BASSup
+         I2iQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpFCaPZsaO0NTWyn7jH3iWt1rLUk+5s//ChwvNbxsPZkN7rOCpBYpHSnyw2XhUSvXFSiwBHbUrEi4kblWfsnmubQg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6avH4jHuJIWQcaOCTntxRZJR9Aem9Gzir0y2rfkTqUG8BqePc
+	jzmA9zyBfeOQze0AbuVMRXqj+eNZAKh03zt/CEw6iLVg6kG5+23h8/X/4k2EiXk6RZ1B0pAOgIt
+	QlC3LkTaXD5JKfWV2LK7VyquX9sKKrtN2zhRSDnHtgw==
+X-Gm-Gg: AR+sD11BcKJyOrLU4j4/P+MwCZc4FrbacOfqSUOHCXUsmFn5gvHFYtV4h6tkyEuuA4e
+	Yt3X0p1GCSIiozgm2swJGzvEcG1dOOMCgeVIhhkWgJst2c0TR88ddO39jea88TJK1GM35MreXny
+	Wo+2B6NI0yA6KfDkj+SBmtFgfO/pwDKku5ssABncoAW0HXtOZPdud9xIys9qCGF4EtQKJhEeWDF
+	BlU69YilEblVxMrEAALhkfQbB402RC9m8i/4WCFyjGkt5eiYAbn1IntPB660G/i2s/e/NTlq6db
+	HU/0U5v2PHtchwx0j3XD8U2rkTqB6YFH2gYu6kNrvenUbxaNJEhVos6BGqM2VuPCsbMmQdyRvsX
+	9B5A=
+X-Received: by 2002:a05:6402:210e:b0:6a1:dbd:bfe with SMTP id
+ 4fb4d7f45d1cf-6a10dbd14d3mr6487020a12.7.1785845595738; Tue, 04 Aug 2026
+ 05:13:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -84,14 +84,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260801-b4-dts-coding-style-strict-v2-0-f09a659ab80d@oss.qualcomm.com>
- <20260801-b4-dts-coding-style-strict-v2-7-f09a659ab80d@oss.qualcomm.com>
-In-Reply-To: <20260801-b4-dts-coding-style-strict-v2-7-f09a659ab80d@oss.qualcomm.com>
+ <20260801-b4-dts-coding-style-strict-v2-8-f09a659ab80d@oss.qualcomm.com>
+In-Reply-To: <20260801-b4-dts-coding-style-strict-v2-8-f09a659ab80d@oss.qualcomm.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 4 Aug 2026 13:12:14 +0100
-X-Gm-Features: AUfX_myz2rIr2To8pMiIrq3ny4dPMR2EiexQ93XXgjZCqitEJdVPlOyQLL_LX4E
-Message-ID: <CADrjBPoaf7-tXMnvQFZ7fV25Lb8R=95PgDqbkjDBDT+XadBfHg@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] arm64: dts: fsd: Move 'status' to the end to match
- coding style
+Date: Tue, 4 Aug 2026 13:13:04 +0100
+X-Gm-Features: AUfX_mwc02vgie46TBnIUko-uRbRaYK1so1vlpZtpYgOnY3URFkF56TQorxPBfo
+Message-ID: <CADrjBPo0OzJP7UmnW2igYyqhWxbrdF_fmj0xrvX_0N6P3tNoXg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] arm64: dts: fsd: Align continued properties and
+ add missing blank lines
 To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -106,13 +106,12 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, 1 Aug 2026 at 16:07, Krzysztof Kozlowski
 <krzysztof.kozlowski@oss.qualcomm.com> wrote:
 >
-> 'status' property is special, thus DTS coding style expects it to be
-> always the last property preceded with a blank line, as reported by
-> dt-check-style:
+> Trivial white-space only changes to adjust to DTS coding style and fix
+> dt-check-style strict warnings like:
 >
->   [required-blank-lines] "status" must be preceded by a blank line
->   [property-order] property 'phy-mode' out of canonical order (should sor=
-t before 'status')
+>   [required-blank-lines] child node must be preceded by a blank line
+>   [continuation-alignment] continuation should align to column 39 (under =
+< or ")
 >
 > Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
@@ -120,242 +119,239 @@ t before 'status')
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  arch/arm64/boot/dts/tesla/fsd-evb.dts |  6 ++++--
->  arch/arm64/boot/dts/tesla/fsd.dtsi    | 24 ++++++++++++++++++++++++
->  2 files changed, 28 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/tesla/fsd-evb.dts |  2 +
+>  arch/arm64/boot/dts/tesla/fsd.dtsi    | 97 +++++++++++++++++++----------=
+------
+>  2 files changed, 55 insertions(+), 44 deletions(-)
 >
 > diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/=
 tesla/fsd-evb.dts
-> index 9ff22e1c8723..73b6a25e0e4d 100644
+> index 73b6a25e0e4d..503abe52a81c 100644
 > --- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
 > +++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-> @@ -65,9 +65,10 @@ codec {
->  };
->
->  &ethernet0 {
-> +       phy-mode =3D "rgmii-id";
+> @@ -53,9 +53,11 @@ simple-audio-card,dai-link@0 {
+>                         cpu-0 {
+>                                 sound-dai =3D <&i2s_0 0>;
+>                         };
 > +
->         status =3D "okay";
->
-> -       phy-mode =3D "rgmii-id";
->         fixed-link {
->                 speed =3D <1000>;
->                 full-duplex;
-> @@ -75,9 +76,10 @@ fixed-link {
->  };
->
->  &ethernet1 {
-> +       phy-mode =3D "rgmii-id";
+>                         cpu-1 {
+>                                 sound-dai =3D <&i2s_0 1>;
+>                         };
 > +
->         status =3D "okay";
->
-> -       phy-mode =3D "rgmii-id";
->         fixed-link {
->                 speed =3D <1000>;
->                 full-duplex;
+>                         codec {
+>                                 sound-dai =3D <&tlv320aic3x>;
+>                                 system-clock-frequency =3D <33000000>;
 > diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tes=
 la/fsd.dtsi
-> index 5b06e2667b89..214d33ca7177 100644
+> index 214d33ca7177..6766c78243a3 100644
 > --- a/arch/arm64/boot/dts/tesla/fsd.dtsi
 > +++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-> @@ -603,6 +603,7 @@ serial_0: serial@14180000 {
->                                  <&clock_peric PERIC_SCLK_UART0>;
->                         clock-names =3D "uart", "clk_uart_baud0";
->                         samsung,uart-fifosize =3D <64>;
+> @@ -43,12 +43,15 @@ cluster0 {
+>                                 core0 {
+>                                         cpu =3D <&cpucl0_0>;
+>                                 };
 > +
->                         status =3D "disabled";
+>                                 core1 {
+>                                         cpu =3D <&cpucl0_1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpucl0_2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpucl0_3>;
+>                                 };
+> @@ -58,12 +61,15 @@ cluster1 {
+>                                 core0 {
+>                                         cpu =3D <&cpucl1_0>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpucl1_1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpucl1_2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpucl1_3>;
+>                                 };
+> @@ -73,12 +79,15 @@ cluster2 {
+>                                 core0 {
+>                                         cpu =3D <&cpucl2_0>;
+>                                 };
+> +
+>                                 core1 {
+>                                         cpu =3D <&cpucl2_1>;
+>                                 };
+> +
+>                                 core2 {
+>                                         cpu =3D <&cpucl2_2>;
+>                                 };
+> +
+>                                 core3 {
+>                                         cpu =3D <&cpucl2_3>;
+>                                 };
+> @@ -456,13 +465,13 @@ clock_imem: clock-controller@10010000 {
+>                         reg =3D <0x0 0x10010000 0x0 0x3000>;
+>                         #clock-cells =3D <1>;
+>                         clocks =3D <&fin_pll>,
+> -                               <&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
+> -                               <&clock_cmu DOUT_CMU_IMEM_ACLK>,
+> -                               <&clock_cmu DOUT_CMU_IMEM_DMACLK>;
+> +                                <&clock_cmu DOUT_CMU_IMEM_TCUCLK>,
+> +                                <&clock_cmu DOUT_CMU_IMEM_ACLK>,
+> +                                <&clock_cmu DOUT_CMU_IMEM_DMACLK>;
+>                         clock-names =3D "fin_pll",
+> -                               "dout_cmu_imem_tcuclk",
+> -                               "dout_cmu_imem_aclk",
+> -                               "dout_cmu_imem_dmaclk";
+> +                                     "dout_cmu_imem_tcuclk",
+> +                                     "dout_cmu_imem_aclk",
+> +                                     "dout_cmu_imem_dmaclk";
 >                 };
 >
-> @@ -616,6 +617,7 @@ serial_1: serial@14190000 {
->                                  <&clock_peric PERIC_SCLK_UART1>;
->                         clock-names =3D "uart", "clk_uart_baud0";
->                         samsung,uart-fifosize =3D <64>;
-> +
->                         status =3D "disabled";
+>                 clock_cmu: clock-controller@11c10000 {
+> @@ -499,17 +508,17 @@ clock_peric: clock-controller@14010000 {
+>                         reg =3D <0x0 0x14010000 0x0 0x3000>;
+>                         #clock-cells =3D <1>;
+>                         clocks =3D <&fin_pll>,
+> -                               <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
+> -                               <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV36>,
+> -                               <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV3_TB=
+UCLK>,
+> -                               <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV20>,
+> -                               <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV4_DM=
+ACLK>;
+> +                                <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV4>,
+> +                                <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV36>=
+,
+> +                                <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV3_T=
+BUCLK>,
+> +                                <&clock_cmu DOUT_CMU_PERIC_SHARED0DIV20>=
+,
+> +                                <&clock_cmu DOUT_CMU_PERIC_SHARED1DIV4_D=
+MACLK>;
+>                         clock-names =3D "fin_pll",
+> -                               "dout_cmu_pll_shared0_div4",
+> -                               "dout_cmu_peric_shared1div36",
+> -                               "dout_cmu_peric_shared0div3_tbuclk",
+> -                               "dout_cmu_peric_shared0div20",
+> -                               "dout_cmu_peric_shared1div4_dmaclk";
+> +                                     "dout_cmu_pll_shared0_div4",
+> +                                     "dout_cmu_peric_shared1div36",
+> +                                     "dout_cmu_peric_shared0div3_tbuclk"=
+,
+> +                                     "dout_cmu_peric_shared0div20",
+> +                                     "dout_cmu_peric_shared1div4_dmaclk"=
+;
 >                 };
 >
-> @@ -658,6 +660,7 @@ pwm_0: pwm@14100000 {
->                         #pwm-cells =3D <3>;
->                         clocks =3D <&clock_peric PERIC_PWM0_IPCLKPORT_I_P=
-CLK_S0>;
->                         clock-names =3D "timers";
-> +
->                         status =3D "disabled";
+>                 sysreg_peric: system-controller@14030000 {
+> @@ -522,13 +531,13 @@ clock_fsys0: clock-controller@15010000 {
+>                         reg =3D <0x0 0x15010000 0x0 0x3000>;
+>                         #clock-cells =3D <1>;
+>                         clocks =3D <&fin_pll>,
+> -                               <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
+> -                               <&clock_cmu DOUT_CMU_FSYS0_SHARED1DIV4>,
+> -                               <&clock_cmu DOUT_CMU_FSYS0_SHARED0DIV4>;
+> +                                <&clock_cmu DOUT_CMU_PLL_SHARED0_DIV6>,
+> +                                <&clock_cmu DOUT_CMU_FSYS0_SHARED1DIV4>,
+> +                                <&clock_cmu DOUT_CMU_FSYS0_SHARED0DIV4>;
+>                         clock-names =3D "fin_pll",
+> -                               "dout_cmu_pll_shared0_div6",
+> -                               "dout_cmu_fsys0_shared1div4",
+> -                               "dout_cmu_fsys0_shared0div4";
+> +                                     "dout_cmu_pll_shared0_div6",
+> +                                     "dout_cmu_fsys0_shared1div4",
+> +                                     "dout_cmu_fsys0_shared0div4";
 >                 };
 >
-> @@ -668,6 +671,7 @@ pwm_1: pwm@14110000 {
->                         #pwm-cells =3D <3>;
->                         clocks =3D <&clock_peric PERIC_PWM1_IPCLKPORT_I_P=
-CLK_S0>;
->                         clock-names =3D "timers";
-> +
->                         status =3D "disabled";
+>                 sysreg_fsys0: system-controller@15030000 {
+> @@ -541,11 +550,11 @@ clock_fsys1: clock-controller@16810000 {
+>                         reg =3D <0x0 0x16810000 0x0 0x3000>;
+>                         #clock-cells =3D <1>;
+>                         clocks =3D <&fin_pll>,
+> -                               <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
+> -                               <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV4>;
+> +                                <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV8>,
+> +                                <&clock_cmu DOUT_CMU_FSYS1_SHARED0DIV4>;
+>                         clock-names =3D "fin_pll",
+> -                               "dout_cmu_fsys1_shared0div8",
+> -                               "dout_cmu_fsys1_shared0div4";
+> +                                     "dout_cmu_fsys1_shared0div8",
+> +                                     "dout_cmu_fsys1_shared0div4";
 >                 };
 >
-> @@ -681,6 +685,7 @@ hsi2c_0: i2c@14200000 {
->                         pinctrl-0 =3D <&hs_i2c0_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C0>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -694,6 +699,7 @@ hsi2c_1: i2c@14210000 {
->                         pinctrl-0 =3D <&hs_i2c1_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C1>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -707,6 +713,7 @@ hsi2c_2: i2c@14220000 {
->                         pinctrl-0 =3D <&hs_i2c2_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C2>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -720,6 +727,7 @@ hsi2c_3: i2c@14230000 {
->                         pinctrl-0 =3D <&hs_i2c3_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C3>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -733,6 +741,7 @@ hsi2c_4: i2c@14240000 {
->                         pinctrl-0 =3D <&hs_i2c4_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C4>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -746,6 +755,7 @@ hsi2c_5: i2c@14250000 {
->                         pinctrl-0 =3D <&hs_i2c5_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C5>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -759,6 +769,7 @@ hsi2c_6: i2c@14260000 {
->                         pinctrl-0 =3D <&hs_i2c6_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C6>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -772,6 +783,7 @@ hsi2c_7: i2c@14270000 {
->                         pinctrl-0 =3D <&hs_i2c7_bus>;
->                         clocks =3D <&clock_peric PERIC_PCLK_HSI2C7>;
->                         clock-names =3D "hsi2c";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -789,6 +801,7 @@ i2s_0: i2s@140e0000 {
+>                 sysreg_fsys1: system-controller@16830000 {
+> @@ -921,7 +930,7 @@ spi_0: spi@14140000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&clock_peric PERIC_PCLK_SPI0>,
+> -                               <&clock_peric PERIC_SCLK_SPI0>;
+> +                                <&clock_peric PERIC_SCLK_SPI0>;
+>                         clock-names =3D "spi", "spi_busclk0";
+>                         samsung,spi-src-clk =3D <0>;
 >                         pinctrl-names =3D "default";
->                         pinctrl-0 =3D <&i2s0_bus>;
->                         #sound-dai-cells =3D <1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -806,6 +819,7 @@ i2s_1: i2s@140f0000 {
+> @@ -940,7 +949,7 @@ spi_1: spi@14150000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&clock_peric PERIC_PCLK_SPI1>,
+> -                               <&clock_peric PERIC_SCLK_SPI1>;
+> +                                <&clock_peric PERIC_SCLK_SPI1>;
+>                         clock-names =3D "spi", "spi_busclk0";
+>                         samsung,spi-src-clk =3D <0>;
 >                         pinctrl-names =3D "default";
->                         pinctrl-0 =3D <&i2s1_bus>;
->                         #sound-dai-cells =3D <1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -840,6 +854,7 @@ m_can0: can@14088000 {
->                                  <&clock_peric PERIC_MCAN0_IPCLKPORT_CCLK=
+> @@ -959,7 +968,7 @@ spi_2: spi@14160000 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <0>;
+>                         clocks =3D <&clock_peric PERIC_PCLK_SPI2>,
+> -                               <&clock_peric PERIC_SCLK_SPI2>;
+> +                                <&clock_peric PERIC_SCLK_SPI2>;
+>                         clock-names =3D "spi", "spi_busclk0";
+>                         samsung,spi-src-clk =3D <0>;
+>                         pinctrl-names =3D "default";
+> @@ -973,21 +982,21 @@ timer@10040000 {
+>                         compatible =3D "tesla,fsd-mct", "samsung,exynos42=
+10-mct";
+>                         reg =3D <0x0 0x10040000 0x0 0x800>;
+>                         interrupts =3D <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
+> -                               <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
+> +                                    <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks =3D <&fin_pll>, <&clock_imem IMEM_MCT_PCLK=
 >;
->                         clock-names =3D "hclk", "cclk";
->                         bosch,mram-cfg =3D <0x0 128 64 64 64 64 32 32>;
-> +
->                         status =3D "disabled";
+>                         clock-names =3D "fin_pll", "mct";
 >                 };
->
-> @@ -857,6 +872,7 @@ m_can1: can@14098000 {
->                                  <&clock_peric PERIC_MCAN1_IPCLKPORT_CCLK=
->;
->                         clock-names =3D "hclk", "cclk";
->                         bosch,mram-cfg =3D <0x0 128 64 64 64 64 32 32>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -874,6 +890,7 @@ m_can2: can@140a8000 {
->                                  <&clock_peric PERIC_MCAN2_IPCLKPORT_CCLK=
->;
->                         clock-names =3D "hclk", "cclk";
->                         bosch,mram-cfg =3D <0x0 128 64 64 64 64 32 32>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -891,6 +908,7 @@ m_can3: can@140b8000 {
->                                  <&clock_peric PERIC_MCAN3_IPCLKPORT_CCLK=
->;
->                         clock-names =3D "hclk", "cclk";
->                         bosch,mram-cfg =3D <0x0 128 64 64 64 64 32 32>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -909,6 +927,7 @@ spi_0: spi@14140000 {
->                         pinctrl-names =3D "default";
->                         pinctrl-0 =3D <&spi0_bus>;
->                         num-cs =3D <1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -927,6 +946,7 @@ spi_1: spi@14150000 {
->                         pinctrl-names =3D "default";
->                         pinctrl-0 =3D <&spi1_bus>;
->                         num-cs =3D <1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -945,6 +965,7 @@ spi_2: spi@14160000 {
->                         pinctrl-names =3D "default";
->                         pinctrl-0 =3D <&spi2_bus>;
->                         num-cs =3D <1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -1007,6 +1028,7 @@ ethernet1: ethernet@14300000 {
->                                     <&eth1_rx_ctrl>, <&eth1_mdio>;
->                         local-mac-address =3D [00 00 00 00 00 00];
->                         iommus =3D <&smmu_peric 0x0 0x1>;
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -1026,6 +1048,7 @@ ufs: ufs@15120000 {
->                         pinctrl-0 =3D <&ufs_rst_n &ufs_refclk_out>;
->                         phys =3D <&ufs_phy>;
->                         phy-names =3D "ufs-phy";
-> +
->                         status =3D "disabled";
->                 };
->
-> @@ -1056,6 +1079,7 @@ ethernet0: ethernet@15300000 {
->                                     <&eth0_rx_ctrl>, <&eth0_mdio>;
->                         local-mac-address =3D [00 00 00 00 00 00];
->                         iommus =3D <&smmu_fsys0 0x0 0x1>;
-> +
->                         status =3D "disabled";
->                 };
->         };
 >
 > --
 > 2.53.0
