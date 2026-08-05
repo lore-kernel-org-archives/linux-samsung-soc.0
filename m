@@ -1,121 +1,103 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24873DA7CA
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Aug 2026 09:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85623BED4F;
+	Wed,  5 Aug 2026 21:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785923460; cv=none; b=kkKHdOWBRgH3nFpGHrubDvcuiOKUh2YkPADgtbyxO7f4TnRBRC7nK5hNLKdnM+Y6gjSbpKQgEkPhEnel0C2A+Me58psEv2JIqmKFcQPfdhQ9BmzfPru1eufHXNN7rSw1QG90hp54FR4mK/2xjUkAUFL9gHIEH/tm/r+Fjy5BOEs=
+	t=1785964264; cv=none; b=tKf1hYWQIfxV5JKOmiI7qc6xCP5p1tLAb4ey2y6pbrYUHkUEnXWgUQh+iDyqdQwA/bXxBkhVGVt2kqzM67OjrqiAtXXrTzcM8K36EQlCKZ0wBdvjplXGOcZ1D7L9myYVoEiShDkNWYcWL/PG6/wXS/kTMZLjry/Xw7s0TcanVq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785923460; c=relaxed/simple;
-	bh=GhJWIZsmMbbggVc5cejmd9Kk8vnoL563iVPmpLwdrHs=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=ZX8XFFIzoK1GyoeJl8n+ZsKFRqcNDxbt914krjP7Z9uzq6uSbzpc/bQgUVHWgjzqqg7x5TWy3M373xYBZv7McABxzu+d77tuR/Q7M4309m9tJqrOYalrcNj6GzRuQ7rFVIxcrR8PBhemQ2p9sVYITLlRQ5I6ubj1GFNutSs5VuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jH5Luowd; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1785964264; c=relaxed/simple;
+	bh=u2MzKtUhXWoW5pNBBqbaSR33sJx/OJ3sbg2J3tK5LC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozZVQx0SMsAN7JwQyhBVfwtkkA7gLD/qTWZ0tj0SmNw7c0NYzAYu1Hw6MCCkLRn+VCmrahy54Anh6mxHPGcH9HSxMsXUaI12S0/fovXmJzcpWLbo4zm6PQPIm00gclbQK8iYJT/k8+nG1GTlw6Ko4tmZ82nyRUkdFLLT1+SDTtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPmWNwcW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jH5Luowd"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CAD354E410F0;
-	Wed,  5 Aug 2026 09:50:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 83C1A602AB;
-	Wed,  5 Aug 2026 09:50:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E944D11C3462D;
-	Wed,  5 Aug 2026 11:50:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1785923453; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=WQHukA8q/nWnCf8E4TYdCO3M6nSrkBqAfEwr+PxHQSY=;
-	b=jH5LuowduI/XKIkcaqUUxiW7Ol+EaGTPiorT3kiO854uKqBifIKgDbzQ9rMi2/ofKu1249
-	sbLzkXz0RnLqDiph3DHZvv556+U4DTxXi3J+9NzY/OHYhm6Cxk48hI5u2JGKNjm040vP6I
-	4a5bKHHeiDKY0r7MM2z2RPay+cLs2DntvgqyS0/48sT9QJo5B2ijdj5mJIgyxhPfU5iBYg
-	Pe7M2bdOPXn6YJd3c0TIFESE+Z9ykM3txG/jNRQQk/QGjTxBgC98f1f2IGPec7bGOBHphH
-	X7GRAaDEtut49k2NwCLvtf+rzYGgy6YRtXMElSONPmIJo85sRKBW+Z1/A0+gZw==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPmWNwcW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33ECD1F000E9;
+	Wed,  5 Aug 2026 21:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785964255;
+	bh=HOnt+mlWKgahltXJogjp3RXlb2gzBmZSb7vGUrLlr+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kPmWNwcW/a2+GTDqsCuxybRSLYK6rygLIowK+o0tF6OmRIvWaNJFyQlgRrlA5qrGA
+	 JOnog+xabydNVu+zWzJ8mYUplnfwQgNCiY+LYcVCAVh1qhGKoR21iIZ2TZbVvtHyqT
+	 63kK8kw7vKw/RGInQxfznoDxEE4Tu7GyeeohwD1T5DmLgIkkR5SAYzT3SBUbYgivy2
+	 iejUl19x0hiCewezJHsaPH2HmGfd1A00NmrmOhizhB2oOzr7m2bxV5/hhIYPRxqVcR
+	 PRoPOd6RK7IoPLBX8B7/pZDWwT3WnifvHhx5xJQ5TY4Umf8PH2Az2E1LcTaq09IJQp
+	 G760Lb+L5rFpA==
+Date: Wed, 5 Aug 2026 16:10:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Joseph Chen <chenjh@rock-chips.com>,
+	Chris Zhong <zyw@rock-chips.com>,
+	Zhang Qing <zhangqing@rock-chips.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	Julien Panis <jpanis@baylibre.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Alexander Kurz <akurz@blala.de>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 00/10] dt-bindings: mfd: Use generic power-controller
+ schema
+Message-ID: <20260805211054.GA1783131-robh@kernel.org>
+References: <20260804-mfd-syspower-v1-0-a440783c2e78@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3 1/3] drm/bridge: samsung-dsim: enable MFLUSH_VS for
- Exynos 7870 DSIM
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20260723-exynos-dsim-fixes-v3-1-0c31ae1dbecc@disroot.org>
-References: <20260723-exynos-dsim-fixes-v3-0-0c31ae1dbecc@disroot.org>
- <20260723-exynos-dsim-fixes-v3-1-0c31ae1dbecc@disroot.org>
-Date: Wed, 05 Aug 2026 11:50:38 +0200
-Message-Id: <178592343861.489541.8951125546023501465.b4-review@b4>
-X-Mailer: b4 0.15.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260804-mfd-syspower-v1-0-a440783c2e78@nxp.com>
 
-On Thu, 23 Jul 2026 00:28:32 +0530, Kaustabh Chakraborty <kauschluss@disroot.org> wrote:
-
-Hello Kaustabh,
-
-> Commit a36c533ad3e1 ("drm/bridge: samsung-dsim: Always flush display
-> FIFO on vsync pulse") intends to enable FIFO flushing at v-sync pulse by
-> not setting the active-low MFLUSH_VS bit.
+On Tue, Aug 04, 2026 at 10:16:35PM +0800, Peng Fan (OSS) wrote:
+> The generic power-controller.yaml schema has been added to dt-schema[1],
+> providing a common definition for the `system-power-controller` boolean
+> property. Convert MFD bindings that locally define this property to
+> instead reference the shared schema.
 > 
-> However, in Exynos 7870 DSIM, the MFLUSH_VS bit is active-high. There is
-> no publicly available documentation to the best of my knowledge, but
-> downstream kernel code [1] supports this claim. Enable the bit for
-> Exynos 7870.
+> The common change across all patches is:
+>  - Add a $ref to /schemas/power/power-controller.yaml#
+>  - Remove the local `system-power-controller` property definition
+>  - Switch from additionalProperties to unevaluatedProperties
 > 
-> Cc: stable@vger.kernel.org # v6.17 and later
+> This is a pick of patches 2-11 from [2], rebased to linux-next/master,
+> no changes. Patch 1 (the generic power-controller.yaml schema itself)
+> is dropped since it has already been picked up by dt-schema.
+> 
+> [1] https://github.com/devicetree-org/dt-schema/pull/187
+> [2] https://lore.kernel.org/all/177523251875.1559844.9690289848283345069.b4-ty@b4/
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Peng Fan (10):
+>       dt-bindings: mfd: ene-kb[3]930: Use generic power-controller schema
+>       dt-bindings: mfd: ti,tps65910: Use generic power-controller schema
+>       dt-bindings: mfd: rockchip,rk8x: Use generic power-controller schema
+>       dt-bindings: mfd: ricoh,rn5t618: Use generic power-controller schema
+>       dt-bindings: mfd: netronix,ntxec: Use generic power-controller schema
+>       dt-bindings: mfd: ti,twl: Use generic power-controller schema
+>       dt-bindings: mfd: ti,tps6594: Use generic power-controller schema
+>       dt-bindings: mfd: rohm,bd71828-pmic: Use generic power-controller schema
+>       dt-bindings: mfd: fsl,mc13xxx: Use generic power-controller schema
+>       dt-bindings: mfd: samsung,s2mpg10-pmic: Use generic power-controller schema
 
-Being a fix, there must be a Fixes: tag.
+Can we hold off on this until at least the next cycle. This change 
+effectively bumps the minimum version of dtschema. While 
+power-controller.yaml is added to dtschema, it is not yet in a released 
+version. I'm not all that sure these changes are much improvement given 
+it is a single boolean.
 
->
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-> index e2fc69fc51b6..b72542a0afb6 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -1089,6 +1089,13 @@ static int samsung_dsim_init_link(struct samsung_dsim *dsi)
->  			reg |= DSIM_HBP_DISABLE_MODE;
->  		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_NO_HSA)
->  			reg |= DSIM_HSA_DISABLE_MODE;
-> +
-> +		/*
-> +		 * For some hardware types, DSIM_MFLUSH_VS bit needs to be
-> +		 * enabled explicitly.
-> +		 */
-> +		if (dsi->plat_data->hw_type == DSIM_TYPE_EXYNOS7870)
-> +			reg |= DSIM_MFLUSH_VS;
->  	}
-
-Based on your commit message, the differentiating point of the Exynos 7870
-not "needs to be enabled" but rather "it is active high". So a more
-understandable comment would be "The Mflush_VS bit is active low on most
-devices but active high on the Exynos 7870", or something similar.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Rob
