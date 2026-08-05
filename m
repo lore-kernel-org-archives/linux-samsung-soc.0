@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85623BED4F;
-	Wed,  5 Aug 2026 21:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2531D481658;
+	Wed,  5 Aug 2026 21:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785964264; cv=none; b=tKf1hYWQIfxV5JKOmiI7qc6xCP5p1tLAb4ey2y6pbrYUHkUEnXWgUQh+iDyqdQwA/bXxBkhVGVt2kqzM67OjrqiAtXXrTzcM8K36EQlCKZ0wBdvjplXGOcZ1D7L9myYVoEiShDkNWYcWL/PG6/wXS/kTMZLjry/Xw7s0TcanVq4=
+	t=1785964395; cv=none; b=cHgBmCcHP9EXKNq2eu8Kh/VgfGNYpo+KMDVWAYqsvcf3Wfresp5XsqikY09L59RakcGUCAS9lS3MGknYwECzeyIWYhffRlXRE95CsYxQ+xVE5FXOXH7PZj/V3LzFZLhOX01HE27AOFbVfz/bC9glRezy4y0uP7Rauv/1kXqFBe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785964264; c=relaxed/simple;
-	bh=u2MzKtUhXWoW5pNBBqbaSR33sJx/OJ3sbg2J3tK5LC4=;
+	s=arc-20240116; t=1785964395; c=relaxed/simple;
+	bh=IccJcjZKXaLUO5taPWCPJ8eduAPPU4QfCEFCOx/VtDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozZVQx0SMsAN7JwQyhBVfwtkkA7gLD/qTWZ0tj0SmNw7c0NYzAYu1Hw6MCCkLRn+VCmrahy54Anh6mxHPGcH9HSxMsXUaI12S0/fovXmJzcpWLbo4zm6PQPIm00gclbQK8iYJT/k8+nG1GTlw6Ko4tmZ82nyRUkdFLLT1+SDTtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPmWNwcW; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOuOQl2YolgFxeusrNYkN8j11eTltKBsuTSMUzvA4Ad2XYBQaUUOTYi+whPd5F5NtRQhzxkkA7S27Mzou6e7rxyW0g6x/ZkKVbw87iXQP+zTJYMGe7PCVBKmUVk20wI9O6L1YSAfOuuXc9orgD7kYjcB7npFgDSElgoGvHIkc+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HydHWDqm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPmWNwcW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33ECD1F000E9;
-	Wed,  5 Aug 2026 21:10:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HydHWDqm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79BE51F000E9;
+	Wed,  5 Aug 2026 21:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785964255;
-	bh=HOnt+mlWKgahltXJogjp3RXlb2gzBmZSb7vGUrLlr+o=;
+	s=k20260515; t=1785964380;
+	bh=UC3IO8cIp/jhpoXZx6fPB2Bw4heXNVKT+nG8vL5ge50=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kPmWNwcW/a2+GTDqsCuxybRSLYK6rygLIowK+o0tF6OmRIvWaNJFyQlgRrlA5qrGA
-	 JOnog+xabydNVu+zWzJ8mYUplnfwQgNCiY+LYcVCAVh1qhGKoR21iIZ2TZbVvtHyqT
-	 63kK8kw7vKw/RGInQxfznoDxEE4Tu7GyeeohwD1T5DmLgIkkR5SAYzT3SBUbYgivy2
-	 iejUl19x0hiCewezJHsaPH2HmGfd1A00NmrmOhizhB2oOzr7m2bxV5/hhIYPRxqVcR
-	 PRoPOd6RK7IoPLBX8B7/pZDWwT3WnifvHhx5xJQ5TY4Umf8PH2Az2E1LcTaq09IJQp
-	 G760Lb+L5rFpA==
-Date: Wed, 5 Aug 2026 16:10:54 -0500
+	b=HydHWDqmDA4oYO1lXbKSt6JxI4wlEWZr0Fnnri09qzeBwKTC+Hc14TpFgCu82ZWmM
+	 USmb/p2zBO4ELQc+GUYsrzESrO98fYQf2+kknu9nPjVBnfYNMvBsofrF85WKAB33EL
+	 pAfRrd/f3AcKqqGqTOesUVNxCyDWJwjlTftVzt1162VBFa5Ogdhi7SkrLHVTVepkmo
+	 98mYOwhVTQaPffJuK6CG+d2cTxWS6PtN42bcr+7hYStleZjDqalk66SGsLtnZ4E1L3
+	 y2K8u4MlQE/ZcmWNlgc2U45OucgC/kumrOq/Cpipf62Lrs2UJh06yZJVXrMTe9njLZ
+	 HVtFVevgEBOdQ==
+Date: Wed, 5 Aug 2026 16:12:59 -0500
 From: Rob Herring <robh@kernel.org>
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -48,10 +48,11 @@ Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 00/10] dt-bindings: mfd: Use generic power-controller
- schema
-Message-ID: <20260805211054.GA1783131-robh@kernel.org>
+Subject: Re: [PATCH 02/10] dt-bindings: mfd: ti,tps65910: Use generic
+ power-controller schema
+Message-ID: <20260805211259.GB1783131-robh@kernel.org>
 References: <20260804-mfd-syspower-v1-0-a440783c2e78@nxp.com>
+ <20260804-mfd-syspower-v1-2-a440783c2e78@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -60,44 +61,16 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260804-mfd-syspower-v1-0-a440783c2e78@nxp.com>
+In-Reply-To: <20260804-mfd-syspower-v1-2-a440783c2e78@nxp.com>
 
-On Tue, Aug 04, 2026 at 10:16:35PM +0800, Peng Fan (OSS) wrote:
-> The generic power-controller.yaml schema has been added to dt-schema[1],
-> providing a common definition for the `system-power-controller` boolean
-> property. Convert MFD bindings that locally define this property to
-> instead reference the shared schema.
+On Tue, Aug 04, 2026 at 10:16:37PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> The common change across all patches is:
->  - Add a $ref to /schemas/power/power-controller.yaml#
->  - Remove the local `system-power-controller` property definition
->  - Switch from additionalProperties to unevaluatedProperties
-> 
-> This is a pick of patches 2-11 from [2], rebased to linux-next/master,
-> no changes. Patch 1 (the generic power-controller.yaml schema itself)
-> is dropped since it has already been picked up by dt-schema.
-> 
-> [1] https://github.com/devicetree-org/dt-schema/pull/187
-> [2] https://lore.kernel.org/all/177523251875.1559844.9690289848283345069.b4-ty@b4/
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Peng Fan (10):
->       dt-bindings: mfd: ene-kb[3]930: Use generic power-controller schema
->       dt-bindings: mfd: ti,tps65910: Use generic power-controller schema
->       dt-bindings: mfd: rockchip,rk8x: Use generic power-controller schema
->       dt-bindings: mfd: ricoh,rn5t618: Use generic power-controller schema
->       dt-bindings: mfd: netronix,ntxec: Use generic power-controller schema
->       dt-bindings: mfd: ti,twl: Use generic power-controller schema
->       dt-bindings: mfd: ti,tps6594: Use generic power-controller schema
->       dt-bindings: mfd: rohm,bd71828-pmic: Use generic power-controller schema
->       dt-bindings: mfd: fsl,mc13xxx: Use generic power-controller schema
->       dt-bindings: mfd: samsung,s2mpg10-pmic: Use generic power-controller schema
+> Mark the "ti,system-power-controller" as deprecated and include a reference
+> to power-controller.yaml to uses the common definition.
 
-Can we hold off on this until at least the next cycle. This change 
-effectively bumps the minimum version of dtschema. While 
-power-controller.yaml is added to dtschema, it is not yet in a released 
-version. I'm not all that sure these changes are much improvement given 
-it is a single boolean.
+There's little point in doing this. You can't change existing DTs and 
+you'll have to support both properties in the driver forever. Maybe if 
+there are new devices added and new platforms.
 
 Rob
