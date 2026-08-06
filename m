@@ -1,90 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1C3FE644;
-	Thu,  6 Aug 2026 08:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6871330568D
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  6 Aug 2026 13:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786005486; cv=none; b=oLVDK+7mC6EBYzc72pLeDTft0+gnjMODFutP2FDh5Z6NsILjGJNiXFuHq3tjXYLMTAo4+hY6BFygwCvNLtv/dY2V8Y7DRXOa/u9cATXEPUQj0zSrebU+UbyIfrwlWH+hc1R56r0SZg9Qrv2QMk+om0yE2xbzxFf9IkdKdbRJ6p0=
+	t=1786021273; cv=none; b=bc1mKgfke89LQT0n5qv3d934nA2R/FSPCeChVQqfZCtkpZEENwMHE/aGPDMNwsV7833lOhXja9KUE/eZ7a+6m3StRksVMvOsMkSgbDLdNHPE8vH6hjL01OtuK3hNqp86SkuYtaKKmQwyq6fj1Pomu1lHoyLv2WQGwPe1gHZE1Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786005486; c=relaxed/simple;
-	bh=GSj2xjCNpU7RFp2n8qMzzLXG0wroYNW/RtrARjI/Fbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLHsylx10oAT7yyv+7Ic44+voOBD9HUhDh+NPQnbn+sJ2/q+h1ujz9Gg93TgzSHuRkWOz6tpa9ZZjiUEURWpG0DXRQoUVGb8NrRKkQzRPaMvb1frNLghVWJ9whmnx10gFNsaDhPkqvfD+KhDtg1A4dbdCOc5frekfh2yaBfD3Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP/OxrQA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786021273; c=relaxed/simple;
+	bh=s04HVknsUgxEi6jihGejSgB/TwVykML3ayZM3Cu0Ci8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MEblkWr1TLSxtSTK2xEIRdTUUZQxaeebJm7+OsmeIc+zGgGG0qRDfB2U+7oj+JM23PvfojvPE6ZzCu6sbncfRqwLTD3CtIzLDQ0bt0jRHziMi3Lww/W1Fu6Dkild4OS50LEc0+AqItwi4zzLQI4SHsGQjQFxe5ECMkDzi19cMfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KHpvjunu; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP/OxrQA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE1F1F000E9;
-	Thu,  6 Aug 2026 08:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786005466;
-	bh=xETcnXPG1rHGxnguRdsMvGynwcAnDPqDrOB2wbseaJg=;
-	h=From:To:Cc:Subject:Date;
-	b=HP/OxrQAalykCntp4r+1KruZvR3p6C6WhqGSUgH3taZeREm3f93a2hq5camHOcegb
-	 db/opMZqVDWsOYduQUBHSg92ziRpc5QmJr1YwMgYe5d9VmPLRz5jlTLjyIyOkdYA0G
-	 5KFfAdgcVBFByq6waiW88e3ClBT7TA23YOuMiGmz4AbreXMd/uClP5vDrnhYPJnJF/
-	 bVK5nIq99cor8ZjvB2dcCP0K7IBp3Ld8vbw8UfGqwJYoRqq1Cx3Nf5/xT6sTQeyaJ2
-	 M/3oZjIs+l1/qbYIQ1wwTxdo6jFLvVWBErSuyFmWeti0luJyWSQqMc1aZlv2PUfa68
-	 lmXMFTfcYR6gw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KHpvjunu"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-495757ccbc1so23215775e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Aug 2026 06:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786021264; x=1786626064; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Zz60dwOt43+w/6UxrOfYd9SvtI6AkTQj3e04Pm3ApbA=;
+        b=KHpvjunuO30xZWFfXZPS5EyWGKAsSUbROB3EOXsZ0cYJkVGMmE5dYIArfAy2ohxDlf
+         Kk1prMsSr19HyRqOuFezX7bbnYRA3Mk1YOFHWdFF78/lmMsrzG0aywXczJulWLtzUHXd
+         2/l0i4Moc3SJ2h60sBxNxqVJXO0lrBgJY4BrAt5/sCkmIoEn59/2moxOVmKE+B7tYqX0
+         +MTxqGwTqa9GYN4p/+5eS2PaZcExTLdit+T/SHq7VN6glPQrcyAxNwO8qpbqk66yNKEw
+         5I0/tYqEqPYtZmbDdn8uULu5GmEhtAjb0cH9NjM73b5HVwAbBGsgu5N93FU4pBvf1Rs5
+         PqUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786021264; x=1786626064;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Zz60dwOt43+w/6UxrOfYd9SvtI6AkTQj3e04Pm3ApbA=;
+        b=bWfmwfn6+w8WafwWtLTw/dsmypRE8GI3vbS85QFlNkuFFvwntL1sY3RDOhsHhGfdD1
+         4h1YhGLpfw2JDrYiLGvda6Tcn17aKwNSS0GsNlakfge1dB5MIjsvxbL5FIA/GhkqlbfS
+         3Ul2DqsaQWtldrHYGccaN+k/nANIbIlWQWKndoX1W0cRBTvs6AxtCHYN1xriOL173mCb
+         caSrrwbErN0rUa1Qh4Dnfr9SgbQRO4Ryoriatf2mF7RiUa4B1OxxYS6XmZI720HqnFxa
+         t8Umsw4OUL6ieof3rrFLepuswnCdWe30xPnTn1ntNxGAukxMlij91gIFMcxOeS0uz9JY
+         hj2A==
+X-Forwarded-Encrypted: i=1; AHgh+RrsTnp5D5Ay0e5jq5Y460YIIWixPqa+iGVZC4I3Qw4u9MEeI9udGoXIp/gIwr5EQkRXMm6YbIMloweL8bStE06ZeQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwASG+pMKpsKh6DW6ocGTiB5zprXCaDcb9tu/PMdsQx3hqvjoS/
+	14QO+5c6Qvr5csoG8yfdOXwcvugDuqHAhzqCgvHNq19RL3NxoUEIL6AG4KSk1hbL25Q=
+X-Gm-Gg: AR+sD10uW51LjJvTole2gmHvGHWMvKspDK01mXoyBQl/zJKp0tUL/GMj9BAyp9wduVn
+	XrroVvGR1uQPyWentqyPr8GXHJFZu2B58EYDMvq/n0G6lsqhVDS0ZoxJgdUrySakYJtapgpcH6p
+	wzdiIkKvamFNifNY5lB0kAFQaawNAfm3zDbqSWFc3/sdo3+VDzxvthlCDaIoqZtffWPs0Ef6TXP
+	RhsNAMtmaD7ER6Pa6bXv+1ZqJYxdvKlaoKfAMG3NgMdS4KrZbz6R+PebTXjasvzbKJ6dhJobCRX
+	XcLlU5xtI+mEqU4d/2HFDLe+JqyJ11pPNGFnfyfz8m4u1D0iud3RufgrrxF0pDHCA77/XBUsXIY
+	I5Saj37CDtLo6XCY42CBtBdoN40FH1HB2+Xero8ogzf4ePiK1T0QK1C29AbKvOofv4H0D+OYAQM
+	NA85sx+BpWltXHnO6d8ZaTjZNxPMQjY8hfuDB4JbS7OHHBD+AJbg8po2JK3kuBPP+c+MiyHFLq2
+	7Q9iaprdObn8RiwSEHJ0ve+3YPgs6XrkebMUuG6lY/ih/EDRSVT
+X-Received: by 2002:a05:600c:4514:b0:496:bbce:f3 with SMTP id 5b1f17b1804b1-4994e71ed7bmr185444205e9.6.1786021264085;
+        Thu, 06 Aug 2026 06:01:04 -0700 (PDT)
+Received: from localhost (p200300f65f0171047a0a39ae84ac36f8.dip0.t-ipconnect.de. [2003:f6:5f01:7104:7a0a:39ae:84ac:36f8])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4994e99319bsm102317795e9.3.2026.08.06.06.01.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Aug 2026 06:01:02 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [GIT PULL] pinctrl: samsung: for v7.3 (second try)
-Date: Thu,  6 Aug 2026 10:37:28 +0200
-Message-ID: <20260806083728.351824-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk: samsung: Don't include <linux/mod_devicetable.h>
+Date: Thu,  6 Aug 2026 15:00:50 +0200
+Message-ID: <20260806130050.646488-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1448; i=krzk@kernel.org; h=from:subject; bh=GSj2xjCNpU7RFp2n8qMzzLXG0wroYNW/RtrARjI/Fbc=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqdEfIxNEq366S5fS6pXcmoVMDK2gJknTAZtHKQ VJM4YZ00RWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCanRHyAAKCRDBN2bmhouD 18JsD/9c07VASvHRN2HNf4ywD3BnbucQmSS2Y4UvlUstOicR2scLW7oWTC8544MiC6nPd8bLp4v fL5w6+GwIfIwYROV3Xsy/rXPD6HbZfoiVB+yjgJIqWzPIvq6OAttmUjE17R2eq0YYLH/0+8ytRC 3OmJXzHXAmedTuuHhPufObIskewRhVjw4yTHwsaLCE/E1BCMoeqeD/Rh2USE7szne2+NqrzqQt6 99YZAj/bvVQX+nuDh2W7X1qHtoKjv8N6dOGG12mWgBkEd99OG9QxDGfcuVK82fbJ7O5aPgfi38k wL6mAOuCtGpLgFrwMsWMNSECmTsg7EddqvzE5Alnqr2LJKaQVWmLu0zv0Gb0YMIl7nfDZV7Z0ib Y+bWrE2hq3yNWw4NjspY5TF0C3A3KL+y//mpCZxjTzWnez6UnGNBJLR/YZeD8HoeFSU1rwCuZxf A3WczXYzL/nhAZMVNMZFAa0q1sUMvHvdSedz6r9fa9HlEmyNPISxXqTT/BCNnAOPJ33ZmMMlmV9 k7npJJencS2G2InJC5dx+NCpJu/H+0xoW6wZAfts7BXsJYk0xw2YNYnYf8u6aXeJgxysIgVUOBq O8HpfZmiQWYVSvIOOUKuSPhO0xEGyTbMMh0OUdAXLjqfy5LDGxbRPtpAVk3tZmwbk3ldFBBbDl6 4wecwnxt4g/e81w==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2343; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=lIHh+rvtmrZa4l9g5kSUL7C6KlSIiEKm7NmxxSo2pLE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqdIWCm3HPr0hCHAGrzPj0/DIS42a7yNxhWa3uZ VFUr97OGGaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCanSFggAKCRCPgPtYfRL+ TtcXB/wOB4MQkk0pa+l2wPt71bxqbbWzB6fo+l+C8SGGq7V68zVdVeFe+oshBLr8v/Ybi84XaGM asLUGXjlJxEOtGu6bkspgEh8vRvRVQghymOKjpS0RPINBrt8c1Y3MYKKYQ3zkL8vgGYm6+453SI gMe6glco7jsfp9eP7O44+PPR15Ph2kU5lkz67rMyfT+iNAQ3CSrfqEMIWUyooJO2ydGx5RTT/bX ADlcMPZhZeOBzb+Mypz/hUwSVGCRasgzjUVHwstfqOE5l22TbE/ElXt4MHME8LciGN06eFKlYRO ee/de81tsT9vPuqcMVm0YNysYjtAL1SUTeBf2y6o6IIf7k6P
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+All users of drivers/clk/samsung/clk.h live in drivers/clk/samsung (see
 
-Second try - in the previous I had still the old email:
-https://lore.kernel.org/all/20260806082831.350285-2-krzk@kernel.org/
-Same contents.
+	git grep samsung/clk.h
 
-Best regards,
-Krzysztof
+). All these are only using of_device_id from
+the set of structures defined by this include (see
 
+	{ git grep -l clk\\.h drivers/clk/samsung/; echo drivers/clk/samsung/clk.h=
+; } | xargs grep -oh -E "\<(acpi_device_id|amba_id|ap_device_id|apr_device_=
+id|auxiliary_device_id|bcma_device_id|ccw_device_id|cdx_device_id|coreboot_=
+device_id|css_device_id|dfl_device_id|dmi_(device|system)_id|eisa_device_id=
+|fsl_mc_device_id|hda_device_id|hid_device_id|hv_vmbus_device_id|i2c_device=
+_id|i3c_device_id|ieee1394_device_id|input_device_id|ipack_device_id|isapnp=
+_device_id|ishtp_device_id|mcb_device_id|mdio_device_id|mei_cl_device_id|mh=
+i_device_id|mips_cdmm_device_id|of_device_id|parisc_device_id|pci_device_id=
+|pci_epf_device_id|pcmcia_device_id|platform_device_id|pnp_(card_)?device_i=
+d|rio_device_id|rpmsg_device_id|sdio_device_id|sdw_device_id|serio_device_i=
+d|slim_device_id|spi_device_id|spmi_device_id|ssam_device_id|ssb_device_id|=
+tb_service_id|tee_client_device_id|typec_device_id|ulpi_device_id|usb_devic=
+e_id|vchiq_device_id|vio_device_id|virtio_device_id|wmi_device_id|x86_(cpu|=
+device)_id|zorro_device_id|cpu_feature)\>" | sort | uniq -c
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+).
 
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+So <linux/mod_devicetable.h> can be replaced by <linux/device-id/of.h>
+to get rid of another user of the former header.
 
-are available in the Git repository at:
+Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@bay=
+libre.com>
+---
+Hello,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-7.3
+note that this patch depends on
+ad428f5811bd7fb3d91fa002174de533f9da94d7. So if you want to apply it
+without having that commit yet in your tree, I recommend pulling
 
-for you to fetch changes up to d441836c9d704d0f3db5dbf44df87af2ba7a9d26:
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux device-id-r=
+ework
 
-  pinctrl: samsung: Add Exynos8855 pinctrl configuration (2026-07-13 09:17:05 +0200)
+(or v7.2-rc2) first.
 
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v7.3
+Best regards
+Uwe
 
-Add drivers for newly introduced Samsung Exynos8855 SoC.
+ drivers/clk/samsung/clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-----------------------------------------------------------------
-Alim Akhtar (3):
-      dt-bindings: pinctrl: samsung: Add exynos8855-pinctrl compatible
-      dt-bindings: pinctrl: samsung: Add exynos8855-wakeup-eint compatible
-      pinctrl: samsung: Add Exynos8855 pinctrl configuration
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index b1192ca03db5..cc41cd4ad317 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -11,7 +11,7 @@
+ #define __SAMSUNG_CLK_H
+=20
+ #include <linux/clk-provider.h>
+-#include <linux/mod_devicetable.h>
++#include <linux/device-id/of.h>
+ #include <linux/regmap.h>
+ #include "clk-pll.h"
+ #include "clk-cpu.h"
 
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
- .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 132 +++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
- 5 files changed, 137 insertions(+)
+base-commit: ad428f5811bd7fb3d91fa002174de533f9da94d7
+--=20
+2.55.0.11.g153666a7d9bb
+
