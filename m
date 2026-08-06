@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8153BB674;
-	Thu,  6 Aug 2026 08:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1173EF0BD;
+	Thu,  6 Aug 2026 08:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786004355; cv=none; b=hqXfo4PKoURgLNPa7nWU8iY/y0pUIZzlT8KGwPSrh77RDynXazH4157BwBh4oUJU/cMF8tjhUjGoX5BFg52tXCSqQ93jUpWZVg3QWeNwrGVNu+Z9pS2/f3CBNxBoHS5dwyczAz8FaCx1qV0GWgyMch896ZT1FGgPz3MTbrUQ8No=
+	t=1786004360; cv=none; b=fgfzv9CMGelb7tbnWuHpKjFCgYQBtzwmouzrLbafOhy3zkcM4ScY4lt7NyehDBW6WpVA7do8Sicsl8xHq2uH3NMtr/V7b1TZjZYlJ6DzHQaXEinx5YtEAuTzhjaTXdcz8fIcZOhPE713lUEm+WYH/xS8ncQ+J5E6XsDl2Ddac+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786004355; c=relaxed/simple;
-	bh=XPsFn2eE3sKXbnQScOVUfxElOUzFv7hsnuWT25srH+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F00lTi0dxjAXFl5/qoUvU1lIrZj9knLqUDEcXZahujMla7NZusiy/uxWq/yyn+5/0es5GhFhWpkqXlbgLZfIwUiC2bNNIv1JWEn1iB5hHDKFY0MtspYg3JSHVA1GIgpcaL/P1uU1gYqBAG4t97hFktEgG+qnPqvcK8UFuUjwdhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CdR1aTtP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786004360; c=relaxed/simple;
+	bh=ltZzOOnh/qfs9F1SKre0GKeQ59g2TlOHTQyPYAcP8xI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JlizUV6fs+G1fMa+JDbC5M3HGeQB8CeVwswtN3AANuVhgSKxQov3jYLUG6U5S4OSLlnme9SdBo8oaYc96FmtiDXB4Wj0RzqrtuDkySH8Uclz5vmNfRg7voatONQMPZJDxWUQdeytfE6ZlLfch7iek4NO7xlpgKPFgIEIrURdiSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WbpAugg8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CdR1aTtP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F141F000E9;
-	Thu,  6 Aug 2026 08:19:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbpAugg8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0841F00A3A;
+	Thu,  6 Aug 2026 08:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786004354;
-	bh=JVezxqT7pqPq8EjOwQoBK9NfsDXNVMbK3A6RkO/5H1c=;
-	h=From:To:Cc:Subject:Date;
-	b=CdR1aTtP/1803WqHAZuKdxq+7Ha+xJ20uBS36BW0TuN+4qCXfa3yaXr6nB5e0UH3r
-	 g2MO5N3KuOFfnOU0Ti2SbK6CEjMyzwdG7NRaUVwKI3CI0n1c6Z4vtFctcEiHG+CUnz
-	 3SAWtfEZ9FS0hgf7XxAwIsREc5BZ1xAY31wsP3Wdiixx/aEbIHZYDKZ2cN+NFUCuut
-	 fqMIp1MV/I568ijlZZDheZEJ3zrDH3QnjjZtvs5k54lOE9TArGGyPXPvlKQFkfz/qG
-	 TflFuTRlQ6TvsO6j4dRKxHluhsuuRpLydsztHAbkOmGEHkB8GioUuTH27Uhj1xuVnp
-	 O397pIPmwQV1A==
+	s=k20260515; t=1786004358;
+	bh=z5P80yRKNrlYquBxRicfrAaD3b5AK0W4qjEeMTHYgOA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WbpAugg8S00Qpei6gXsuzpNSTVMpNIJrK0CPO1RIqMyUkIC6p7Qpl1k5uF6w+XuGH
+	 StaUR/WgpSVVH5TVEzmnnDbszk5F0EVxo32uxTUNB9/viuLY7mea8J40pweCXETTcW
+	 o9OHmxCWdFUN4IcLDaqyQO9UxRV7ha7xJxm1teFOyJ3MmiLNvKhbWhvisunzA84n8+
+	 PXLK8oh5dmfgbAQIi+T4zOaN/5HQu4fWvrQn3bx3J+0RL7SkKoHLGv5M31IrVzyHAF
+	 +Q8WoFVXuumQhU7CmCY602vSb98/grH1m0V+vwO/Jdscji71l36NJunFA3BL50CZHU
+	 V2mMcMGHzLWjQ==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: soc@lists.linux.dev
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
@@ -33,94 +34,42 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL 1/3] arm64: dts: samsung: for v7.3, part two
-Date: Thu,  6 Aug 2026 10:19:01 +0200
-Message-ID: <20260806081903.165005-4-krzk@kernel.org>
+Subject: [GIT PULL 2/3] ARM: dts: samsung: dts for v7.3
+Date: Thu,  6 Aug 2026 10:19:02 +0200
+Message-ID: <20260806081903.165005-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260806081903.165005-4-krzk@kernel.org>
+References: <20260806081903.165005-4-krzk@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3994; i=krzk@kernel.org; h=from:subject; bh=XPsFn2eE3sKXbnQScOVUfxElOUzFv7hsnuWT25srH+s=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqdEN3XIQVrSUEmRpJzGZp2Bwa3LUbB7XLJBk33 oQk+Jk+XpOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCanRDdwAKCRDBN2bmhouD 19rmD/9hEsO+IYIkeXBnej0YSFORBPlW8+XAGmiKZTZv27+16iSi3UOTAgYhYm/wHpE02nJVzei 1fziN65htHuW64eIkp3jAjJ4dxRjhialHrAZwMxEhcNXiTT+IQQ2EcpwQ0sMdTUSTXgucMZ3Yfd A7A9KNhm4D10g5AeWA+5awVidVmyBMI3sD63KAxh/SIfQW4p3gt4rm6v4VHi5OK0NRXlLTv7x26 SR8rvutFbpiP/n6nBXLqZcw0UaEv1mDQ+yZD2Pwqiyyfzjhi3fjRyMrMpqqRZuMkDSc86mavGib YSbMVZEnU+bS3Oy8H9bNpMIaarOKaX06gNbJVWnsIdCUyIYDpI9oOufFJOjoLVKtNlReHfHqe74 YvjsgiPrfvYo8UQupSPGZeBVhm5q2oye1dCU1YDF8dpehQVbS4oVoyoTFzC7wc9ltOmK0gY8/g+ DDaDXwE9OE0XCLH+DwXgiDFZhti2fhiGhcnKt3KbaGAiIqucFVodAaoFxI55m9WH2POnn7UAU3P 6+0cURfC8SrZuIEAds40hB5J3V1tuXxe1+s6k3Pr6aDKNSKvCqyuAzSOFp9IV8LQWCRnBOb3eO2 RFv8bxNqODulRi8fFbACRZgVibms0x2ox6ajfk4XKMCn1YgjWqHduCOG+VTa6D5rmDjX3AXSFjr 0q8L8eTLU0oxxEA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=864; i=krzk@kernel.org; h=from:subject; bh=ltZzOOnh/qfs9F1SKre0GKeQ59g2TlOHTQyPYAcP8xI=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqdEN4pHKKZGPshaCMz/8QNwR3DTlgJ9J8b2Hbg 5t/Al8p/oCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCanRDeAAKCRDBN2bmhouD 138oD/kBGvzT6G3+YD/2TIbaeYugcPufbrKz0aFWysCX5jAGUnbsR4xvqIW8gryDczd92IYqygC 2bWRmd3IyOb+cts5WhffhEaOR8Zc5kQ9vNbaSM1IG3Xn4394e1HskTt39nX+daWa0cGBxh8/5t1 MfZbTrwjXCZotDYYx0+FdTpkzZEm2iXYgTJDckT1iGJzZmhu/uRpkD6kYockLp1R+8d1D5Xy6W7 ry9YBprDJNwJMC28sltmUfcwMKTC5DnOl7zF90JAO1iYvlgxW4/LcB6R4EtpLOCktiQHjYq6PvR BB6ErjMZ4LEMSVXPLpAWgRY1ysjVhRrKpjZZ66G49xv/comEzl803nIQuLPEgBHNKTDGHDokBEw C9URWPGI2cz5DjUzdNPN3BeYrwas8eXDQiPVQ5PxXoOl3DiKK4HKqvyxYsfWhVcHFWKmJsnI8hx 2lqKodrP+EcyeTV7/elKtRyuBDPlBa+zLukmY17+nTZcY966+k+F/8dnswDgjc92ikHuj5llHnC 1ceZhWOxnEYbs8zNfL+xHkWUi+Rp+b2RtJ3WyaxaOLNRJHjxDHWHavTSfyweRNQ1koNlcHSDWOy V4g+yp1Dh8N6u8ogOEsuu+qjqTV9MMCXXU0kwJUOZWp0mUrrCyTPP7wCNfzZwgGEcWF1V+s+PUE 080yTc1YgILVbCg==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
-Hi Arnd and SoC folks,
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
-On top of the previous pull request.
-
-Best regards,
-Krzysztof
-
-
-The following changes since commit a87d503a0ab077b0d9892290ab7dbec29f922eb1:
-
-  MAINTAINERS: Add entry for Samsung Exynos8855 SoC (2026-07-13 09:20:24 +0200)
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-7.3-2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-7.3
 
-for you to fetch changes up to db23b4aab4252f793d9fa97dc5d6f8d99c5e8e4b:
+for you to fetch changes up to b78d749d4ba7c217d2be644619a79a72e1fd5dfd:
 
-  arm64: dts: exynos: Correct white-space style (2026-08-04 08:07:12 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v7.3, part two
-
-Several non-functional (white-space and style) changes to match with DTS
-coding style as reported by recent dt-check-style tool.  Goal is to get
-to no `dt-check-style --mode strict` warnings over time.
+  ARM: dts: exynos: Add bluetooth support to manta (2026-06-29 12:23:04 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (9):
-      arm64: dts: exynos: Move 'status' to the end to match coding style
-      arm64: dts: exynos: Align continued properties and add missing blank lines
-      arm64: dts: exynos5433: Override thermal zones by phandle
-      arm64: dts: exynos: Re-order clocks and align continued properties
-      arm64: dts: google: Move 'status' to the end to match coding style
-      arm64: dts: google: Align continued properties and add missing blank lines
-      arm64: dts: fsd: Move 'status' to the end to match coding style
-      arm64: dts: fsd: Align continued properties and add missing blank lines
-      arm64: dts: exynos: Correct white-space style
+Samsung DTS ARM changes for v7.3
 
- arch/arm64/boot/dts/exynos/exynos2200-g0s.dts      |   2 +
- arch/arm64/boot/dts/exynos/exynos2200.dtsi         |  98 ++++
- arch/arm64/boot/dts/exynos/exynos5433-bus.dtsi     |  29 ++
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |   8 +-
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 167 ++++--
- arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi     |  49 +-
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 570 ++++++++++++---------
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  13 +-
- .../arm64/boot/dts/exynos/exynos7-trip-points.dtsi |   7 +
- arch/arm64/boot/dts/exynos/exynos7.dtsi            |  58 ++-
- arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |   4 +-
- arch/arm64/boot/dts/exynos/exynos7870.dtsi         |   9 +-
- .../boot/dts/exynos/exynos7885-jackpotlte.dts      |   3 +-
- arch/arm64/boot/dts/exynos/exynos7885.dtsi         |  21 +-
- arch/arm64/boot/dts/exynos/exynos850-e850-96.dts   |  13 +-
- arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi  |   1 +
- arch/arm64/boot/dts/exynos/exynos850.dtsi          |  47 +-
- arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi |   2 +-
- arch/arm64/boot/dts/exynos/exynos8855.dtsi         |   5 +
- arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts |   1 +
- arch/arm64/boot/dts/exynos/exynos8895.dtsi         |  56 +-
- arch/arm64/boot/dts/exynos/exynos9810.dtsi         |   9 +-
- arch/arm64/boot/dts/exynos/exynos990-c1s.dts       |   3 +-
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts       |   3 +-
- .../boot/dts/exynos/exynos990-x1s-common.dtsi      |   3 +-
- arch/arm64/boot/dts/exynos/exynos990.dtsi          |   5 +-
- arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |   9 +-
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |  86 +++-
- arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |   2 +
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi     |  64 +++
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |   2 +
- .../boot/dts/exynos/google/gs101-pinctrl.dtsi      |   8 +-
- .../boot/dts/exynos/google/gs101-pixel-common.dtsi |  12 +-
- arch/arm64/boot/dts/exynos/google/gs101-raven.dts  |   2 +
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  81 ++-
- arch/arm64/boot/dts/tesla/fsd-evb.dts              |   8 +-
- arch/arm64/boot/dts/tesla/fsd.dtsi                 | 121 +++--
- 37 files changed, 1170 insertions(+), 411 deletions(-)
+Add Bluetooth to Exynos5250-based Google Manta (Nexus 10) board.
+
+----------------------------------------------------------------
+Lukas Timmermann (1):
+      ARM: dts: exynos: Add bluetooth support to manta
+
+ arch/arm/boot/dts/samsung/exynos5250-manta.dts | 41 +++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
