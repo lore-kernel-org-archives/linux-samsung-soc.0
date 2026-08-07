@@ -1,274 +1,151 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D027446D092;
-	Fri,  7 Aug 2026 12:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810564734C2
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Aug 2026 12:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786105726; cv=none; b=CCI7PzWuxv8l88mPWN9Y50RkA6KXr/XhVxMGuxKZrvTl4cQ9mOgwQ7jdDSTbITHv8Efu4wZWVJRic0m8AjsVelv0VfxLHMDEp+R9yaFxikGJ7ySJw3wvPkAhVQucXKNLSmrbl9behXGB7AedrdbJY1BLDFQv+0y9/wzckta46do=
+	t=1786106509; cv=none; b=hkxaYoCMVsWnva1u5gFB6sjtwImUkI399Z8lIIxmZYVYi3UnFLO1oo+oj9nsb52+VbhDj31/SPSQr+pToybkKg/BLtqW/BJrmj8WKKy5jeipVoYYMZE/fvS0GsAwAy/b65b4u+5V0DdNFDjaxOUf29DPkMbwihMLg5UAOO6R6cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786105726; c=relaxed/simple;
-	bh=3cSBl7HReDfm7Zk0sgjHm1MDmnlqQLZ8cInaYFaSiZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZQbNVJ/kYKOH5wIshfaap8Ypknb8HBG6XO5R/1dWCyikxJ6taKkuoHo7KOIfX7CJQds/12gliwCeZgKoj8YJCPZKCCvkcnzZwFiFr4eVyg4Gt8LeciVy1VKl7RoDisyihno7Z7V63Tw9KVWzMmXZlV11B5sue5Tgu3qfA/XcX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=THr1K3jb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1786106509; c=relaxed/simple;
+	bh=wFNzE40Ymv2+LaUU5/1TiOaLPVcmym9cOJl91bmVRPc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=Hqt4gAcZMRnR+bNwJ4pzQgCZJE4vitYPsUaR2riHfI/YsAmPqXpKRXbAVw9Bg5H3WogTF592UE8xStUehZI/cVBl+Lkep3hIFsvN0iYx/JoN4Gp5Bqo3VAxYWGUO9lRcCXeLGqvcPzh9RuGJf5bOw3qwAj+ACJ1pomT4fzagkxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tb9qL6WY; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="THr1K3jb"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C20B456D;
-	Fri,  7 Aug 2026 14:27:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1786105634;
-	bh=3cSBl7HReDfm7Zk0sgjHm1MDmnlqQLZ8cInaYFaSiZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=THr1K3jbVhkvA/tOKaBQeQphUp0VSzC9tRmsjFGUHUMVQs9OvW2v5SOLdozWTic7S
-	 fS/hAzdkK/iJYmfr97p1xciaNn5l2FE1xBUOpjGlqs4wOqlznw1VjJsIG51pJ/cN3D
-	 CvfI+vReZXQAizg+DjxTPrvWoCdIgYh/R7ol+XZQ=
-Date: Fri, 7 Aug 2026 15:28:25 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Michael Krufky <mkrufky@linuxtv.org>,
-	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-Message-ID: <20260807122825.GJ2201016@killaraus.ideasonboard.com>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tb9qL6WY"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260807124134euoutp02d8fec5361f3affba794b170d3b543b80~JhmS0XQCM1104011040euoutp02-
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Aug 2026 12:41:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260807124134euoutp02d8fec5361f3affba794b170d3b543b80~JhmS0XQCM1104011040euoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1786106494;
+	bh=vcU2V2rNi/Q4/Tzd/KVUpgzPRPp15jyUgegKZOy2Oeo=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=tb9qL6WYpQKGKeHBYwoMBDGgf4Cq4GgeWUzIk7XR8JYMvFOs7CvSeU5JDzEegqN5U
+	 uNFqE1fdIgt8XLQtQyGzDwhAmo0S8xdpcmSGOEelhvtprzgoOZP/+qjNmgZVKxWYpA
+	 BKFsHltzE633E8A6cPN8KOaZzVAD7ElQyptsIIfk=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260807124134eucas1p22aa7ed81b96bfc482fa520eb4e5333b1~JhmSiUKij0406604066eucas1p2g;
+	Fri,  7 Aug 2026 12:41:34 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260807124133eusmtip27e7ec09ec3063cc991dd9d28e924ae96~JhmR79SEz2432824328eusmtip2M;
+	Fri,  7 Aug 2026 12:41:33 +0000 (GMT)
+Message-ID: <8296b9aa-987a-4544-8ec8-9a0227fc16a2@samsung.com>
+Date: Fri, 7 Aug 2026 14:41:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260723184538.3888637-13-ekffu200098@gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [BUG] exynos5_i2c_xfer_atomic() can sleep.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Waiman
+	Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev, Andi Shyti
+	<andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>
+Content-Language: en-US
+In-Reply-To: <55bdf688-85f5-4b2b-9e90-b4a2c671250f@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260807124134eucas1p22aa7ed81b96bfc482fa520eb4e5333b1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0
+X-EPHeader: CA
+X-CMS-RootMailID: 20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0
+References: <CGME20260506065541eucas1p2f986355d0a06ac1f72aa00e8d3148ad0@eucas1p2.samsung.com>
+	<20260506065110.sY3jKS7G@linutronix.de>
+	<03c06142-12eb-45b7-8d22-ce12fab6e132@samsung.com>
+	<20260508100910.nxRkt3mA@linutronix.de>
+	<dbacd56b-2914-40ce-9139-78b819a81c13@samsung.com>
+	<20260508104235.n9gGOYqU@linutronix.de>
+	<55bdf688-85f5-4b2b-9e90-b4a2c671250f@samsung.com>
 
-On Fri, Jul 24, 2026 at 03:45:14AM +0900, Sang-Heon Jeon wrote:
-> Both branches of the check return the same value, so the check has
-> no effect. Remove it and return the value directly.
-> 
-> This is the result of running the Coccinelle script from
-> scripts/coccinelle/misc/cond_return_no_effect.cocci.
-> 
-> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-> ---
->  drivers/media/i2c/mt9p031.c                          |  6 +-----
->  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
->  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
->  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
->  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
->  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
->  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
->  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
->  8 files changed, 9 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index d21510caf45a..2b09e8315c8e 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
->  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
->  	if (ret < 0)
->  		return ret;
-> -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
+On 08.05.2026 17:28, Marek Szyprowski wrote:
+> On 08.05.2026 12:42, Sebastian Andrzej Siewior wrote:
+>> On 2026-05-08 12:35:51 [+0200], Marek Szyprowski wrote:
+>>> Ah, it looks that I've checked irq_disable() code, so that's why I
+>>> didn't find might_sleep() call. In the case of exynos5_i2c driver,
+>>> probably switching to disable_irq_nosync() will be enough. I assume
+>>> that all previous transfers have to be finished to start this atomic
+>>> one, so waiting for interrupts to finish is not needed.
+>> This looks kind of odd. Are the "other" transfers really done at this
+>> point? Do you have a backtrace for me from the atomic path?
+> I thought that i2c core somehow serializes the transfers for the given master.
+>
+>> Is this needed because you need to send the "power off" command via i2c?
+> Yes, most embedded boards do power off by sending i2c command to PMIC chip.
 
-I would have just replaced the last line with a
+I finally had some time to dig into this history. I've added support for atomic
 
-	return 0;
+transfers to the s3c23xx, exynos5 and brcmstd i2c controller drivers to get rid
 
-as I find it easier to read code that has multiple error paths when all
-the error paths look the same. It's a small personal preference though
-(and ths best option would be to convert this driver to the CCI
-helpers), so I'm OK with this change as-is.
+of the warnings observed during the system reboot (example log from v6.7-rc1):
 
-> +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
->  }
->  
->  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> index b0302dfc3278..7383341ec51d 100644
-> --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
->  static int __maybe_unused xisc_runtime_resume(struct device *dev)
->  {
->  	struct isc_device *isc = dev_get_drvdata(dev);
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(isc->hclock);
-> -	if (ret)
-> -		return ret;
->  
-> -	return ret;
-> +	return clk_prepare_enable(isc->hclock);
+[info] Will now restart.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1788 at drivers/i2c/i2c-core.h:40 i2c_transfer+0xe8/0xf4
+No atomic I2C transfer handler for 'i2c-0'
+Modules linked in: snd_soc_hdmi_codec s5p_csis s5p_fimc exynos4_is_common v4l2_fwnode v4l2_async snd_soc_i2s snd_soc_idma snd_soc_odroid snd_soc_s3c_dma spi_s3c64xx lima snd_soc_max98090 drm_shmem_helper gpu_sched snd_soc_core ac97_bus snd_pcm_dmaengine snd_pcm snd_timer snd soundcore pwm_samsung s5p_mfc exynosdrm analogix_dp samsung_dsim ehci_exynos s5p_jpeg phy_exynos_usb2 v4l2_mem2mem videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videodev videobuf2_common mc exynos_rng s5p_sss s5p_cec rtc_s3c s3c2410_wdt phy_exynos_mipi_video governor_passive exynos_bus pwm_fan exynos_ppmu
+CPU: 0 PID: 1788 Comm: reboot Not tainted 6.7.0-rc1-00001-g4ce67e6b4b7a #13398
+Hardware name: Samsung Exynos (Flattened Device Tree)
+ unwind_backtrace from show_stack+0x10/0x14
+ show_stack from dump_stack_lvl+0x40/0x4c
+ dump_stack_lvl from __warn+0x78/0x124
+ __warn from warn_slowpath_fmt+0x124/0x18c
+ warn_slowpath_fmt from i2c_transfer+0xe8/0xf4
+ i2c_transfer from regmap_i2c_read+0x64/0x9c
+ regmap_i2c_read from _regmap_raw_read+0x10c/0x258
+ _regmap_raw_read from _regmap_bus_read+0x40/0x6c
+ _regmap_bus_read from _regmap_read+0x60/0x148
+ _regmap_read from regmap_read+0x3c/0x60
+ regmap_read from regulator_get_voltage_sel_regmap+0x38/0x88
+ regulator_get_voltage_sel_regmap from regulator_get_voltage_rdev+0x70/0x170
+ regulator_get_voltage_rdev from _regulator_do_set_voltage+0x38/0x600
+ _regulator_do_set_voltage from regulator_set_voltage_rdev+0x5c/0x248
+ regulator_set_voltage_rdev from regulator_do_balance_voltage+0x338/0x4c8
+ regulator_do_balance_voltage from regulator_set_voltage_unlocked+0xd0/0x128
+ regulator_set_voltage_unlocked from regulator_set_voltage+0x58/0x94
+ regulator_set_voltage from _opp_config_regulator_single+0x44/0x118
+ _opp_config_regulator_single from _set_opp+0x110/0x4e0
+ _set_opp from dev_pm_opp_set_rate+0x114/0x220
+ dev_pm_opp_set_rate from __cpufreq_driver_target+0x178/0x72c
+ __cpufreq_driver_target from cpufreq_generic_suspend+0x28/0x50
+ cpufreq_generic_suspend from cpufreq_suspend+0x98/0x11c
+ cpufreq_suspend from device_shutdown+0x18/0x22c
+ device_shutdown from kernel_restart+0x38/0x90
+ kernel_restart from __do_sys_reboot+0x164/0x210
+ __do_sys_reboot from ret_fast_syscall+0x0/0x54
+Exception stack(0xf18edfa8 to 0xf18edff0)
+dfa0:                   beb56e14 00000004 fee1dead 28121969 01234567 00000000
+dfc0: beb56e14 00000004 004b269c 00000058 004c3000 00000000 00000000 00000000
+dfe0: b6f196d0 beb56c78 004b0fec b6f196e8
+---[ end trace 0000000000000000 ]---
 
-Here the change looks good, there's a single error paths so a direct
-return is fine.
+In meantime the commit a3368e1186e3 ("i2c: core: Fix atomic xfer check for non-preempt
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+config") has been merged to final v6.7, which removed the need to use atomic i2c
 
->  }
->  
->  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
-> diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> index 773f6548370a..872bd09656b1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
->  	if (ret)
->  		return ret;
->  
-> -	ret = pm_runtime_get_sync(pd_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return pm_runtime_get_sync(pd_dev);
->  }
->  
->  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
-> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> index be1cbd5cfe84..e88e66be4f6d 100644
-> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
->  	unsigned long max_freq = ULONG_MAX;
->  	struct device *dev = core->dev;
->  	struct dev_pm_opp *opp;
-> -	int ret = 0;
->  
->  	if (legacy_binding) {
->  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
-> @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
->  	}
->  
->  done:
-> -	ret = hfi_session_set_property(inst, ptype, &cu);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return hfi_session_set_property(inst, ptype, &cu);
->  }
->  
->  static int acquire_core(struct venus_inst *inst)
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 7305cc4a04cb..6635f5782175 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
->  			return ret;
->  	}
->  
-> -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> -	if (ret)
-> -		return ret;
-> -
-> -	return ret;
-> +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
->  }
->  
->  /* -----------------------------------------------------------------------------
-> diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> index 14eedd1ceb27..bb06847f3a63 100644
-> --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  	struct media_device *md = &camif->media_dev;
->  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
->  	unsigned int ip_rev = camif->variant->ip_revision;
-> -	int ret;
->  
->  	memset(md, 0, sizeof(*md));
->  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
-> @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
->  
->  	media_device_init(md);
->  
-> -	ret = v4l2_device_register(camif->dev, v4l2_dev);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return v4l2_device_register(camif->dev, v4l2_dev);
->  }
->  
->  static void camif_clk_put(struct camif_dev *camif)
-> diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> index 870ac3c8b085..6404eb74db32 100644
-> --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2160_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return ret;
-> +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
->  }
->  
->  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
-> diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-> index a408fcc3a060..4988fbf5005e 100644
-> --- a/drivers/media/usb/gspca/jl2005bcd.c
-> +++ b/drivers/media/usb/gspca/jl2005bcd.c
-> @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
->  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
->  						    unsigned char value)
->  {
-> -	int retval;
->  	u8 instruction[2];
->  
->  	instruction[0] = reg;
->  	instruction[1] = value;
->  
-> -	retval = jl2005c_write2(gspca_dev, instruction);
-> -	if (retval < 0)
-> -			return retval;
-> -
-> -	return retval;
-> +	return jl2005c_write2(gspca_dev, instruction);
->  }
->  
->  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
+transfers during system reboot/shutdown phases, so it turned out that the atomic
 
+transfers are not really used on my setup.
+
+>> Could you try to test with PREEMPT_RT? I'm sure how this works there.
+> I will check this, but so far I run all my tests without PREEMPT_RT
+
+I've added PREEMPT_RT to my test configs but so far I see no issue related to i2c
+
+transfers.
+
+Best regards
 -- 
-Regards,
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Laurent Pinchart
