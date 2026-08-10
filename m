@@ -1,76 +1,67 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E716D374E5A;
-	Mon, 10 Aug 2026 09:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAAE431A3E;
+	Mon, 10 Aug 2026 16:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786354897; cv=none; b=APCjf7IwPpDgnmGEH3f2MwZrmTy2LLNsnq0mWQE3g7ekdjOBo+2kllP3RPVskmy/QbFnF49nIQ2u/ggxYCgU82dEYA3INsBszZ69OTS/5HVJib2HKenrn22DFmdKQKUs2D2Ct4cUOaStP04sE08ZAvFXlbaEgxAEL4lwLH4eOHc=
+	t=1786381111; cv=none; b=lLOnXNgDneKImmqKHVqhYKfGPYADKDA6mVgdwmV75LY321YSloailV2iB8O8WLlqHJIMVa+RCIJqTOjDRfhd0DRAH5jpONcNGC60Fo0lWAJDahGimsW1WbCt6AENr+ftpreE7Q3NOhAtaf9fMO/H7Et+4PG5+EPqv7ZGUfVKOgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786354897; c=relaxed/simple;
-	bh=cOREWmnPykCUZDl8mbww0QbQDYHQ97pWPJwBTHheYnY=;
+	s=arc-20240116; t=1786381111; c=relaxed/simple;
+	bh=EdmODO+K8FY1/Ukkl4ewZeDwc8sjwFVCQZUjor0bOQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhSfa7wLyKxY/M4IdoAm9d6OeQ5pxSpDJiRwqPGpjXy9xeGVgudq9Jc8kkMAK2ChfFbfIicn/PlYfS9y7UA64MPDwbOYzF2+jsuADLMb+bmb28Npt5dUoLF02Vb8899S4yBzkN5zMaLpLBsAD6/AVXfR4I3ylbY3sPUWCXREYFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RrwXAIBB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4gOfjCVhDH8uCDydAc2JBHSAhKFuvdAx+UIANhvXUJRfAbIG+Z+qAIJ+sZYKDbqQHibBJuLw178JdTWasGg9+pXvCD1QnfxGwdZZ7wDimTn3ojLyXKlUsqwynxSCwd78+wBrV0U1PQFVcDjpBmYqZazj8bXXOf/WK+HSzOTPxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FXZR3S4i; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RrwXAIBB"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FXZR3S4i"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786354895; x=1817890895;
+  t=1786381110; x=1817917110;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=cOREWmnPykCUZDl8mbww0QbQDYHQ97pWPJwBTHheYnY=;
-  b=RrwXAIBBkT+UVQBEJ3CDe1VCsjZPqybGPW20aDQryNUpeRvL+2yzTvDm
-   C5dV9IU6jewo3h6h0NNiFP1dKGbNwHE9N7y1tRLb/DwuV/FGp+g0QUJAQ
-   IJzyWJdFdlI5DKtFpTskd3FOp6pA6htaR/SGvgDofpJBsyNxF3RxYp3gt
-   2mTYFI3dq6nwYqcWuuaBnwDfBwB86uEyxDOShHyFC8plqm2gNfPaUobEp
-   DavFP5fvdVsquZjcUVOdUYy2tLuZjyj2SYzVAd14wJg/HceCbdxS04vDr
-   luJYfwuWmMSFDdG2TqTxDPJnzH9pOg1tBeugRR2ZUehfLzGoL9UnA+JsZ
-   A==;
-X-CSE-ConnectionGUID: pGZpT2EMQQOk0K1jBDwn6g==
-X-CSE-MsgGUID: Zf3CcnZbQ4yvpxJs+GgKdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11870"; a="89387736"
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="89387736"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:41:34 -0700
-X-CSE-ConnectionGUID: KR5OuCjVQT+N3NNT/q2FfQ==
-X-CSE-MsgGUID: 8GqWIe1WQnyFLae702V6Uw==
+  bh=EdmODO+K8FY1/Ukkl4ewZeDwc8sjwFVCQZUjor0bOQU=;
+  b=FXZR3S4i13xbqqiTyqrYOQ1+JZLkufTVVSch1lOl7NywOZUJ8xff8PXK
+   w7l1cQYVo/dFX3rdCIpXJ0nONJ2RS8RfZlH9pThNXj9k34RbUy0Z0hYrm
+   HAlTdNKVX0O1vs5aVKwfhu+El73Y6fB68AlM+fMiDncggFXyONway/HdC
+   WeRBhbW97S1HsHr5aIGV/0DIHp0Viv7vj/NQ2XMM5VWnLeBMxiVtSjzNl
+   +TapVqv8suucC7k297uLRvPqnSyPWvr51BUmAphHG89HbrTE/eTNvNLul
+   KMw9E9a7R67Qpm3JVt5JtqpBs+3H+3jhdkb19JZcKt2n82L/CxXIcwSuF
+   w==;
+X-CSE-ConnectionGUID: 5Sq9GzGBRu2PUEeqjBpNIA==
+X-CSE-MsgGUID: N7EEE/S3T1SYn34JAWtmJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="104294094"
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="104294094"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 09:58:26 -0700
+X-CSE-ConnectionGUID: V8VOidKtSz+yDdfOwNZuGw==
+X-CSE-MsgGUID: 9+1VXaZXSC21N3EzgfuuGg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="263607423"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.127])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:41:28 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 21C8C11FA5C;
-	Mon, 10 Aug 2026 12:41:27 +0300 (EEST)
-Date: Mon, 10 Aug 2026 12:41:27 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sang-Heon Jeon <ekffu200098@gmail.com>, Julia.Lawall@inria.fr,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Michael Krufky <mkrufky@linuxtv.org>,
-	Hans Verkuil <hverkuil@kernel.org>, cocci@inria.fr,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="301324218"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.99])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 09:58:22 -0700
+Date: Mon, 10 Aug 2026 19:58:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 12/36] media: remove conditional return with no effect
-Message-ID: <anmcxzxwQSzPfXEr@kekkonen.localdomain>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260723184538.3888637-13-ekffu200098@gmail.com>
- <20260807122825.GJ2201016@killaraus.ideasonboard.com>
+Subject: Re: [PATCH v4 2/3] iio: proximity: add driver for Sharp GP2AP070S
+ proximity sensor
+Message-ID: <anoDKzl84lO58GbQ@ashevche-desk.local>
+References: <20260807-gp2ap070s-v4-0-74f6a67b6272@disroot.org>
+ <20260807-gp2ap070s-v4-2-74f6a67b6272@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -79,229 +70,222 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260807122825.GJ2201016@killaraus.ideasonboard.com>
+In-Reply-To: <20260807-gp2ap070s-v4-2-74f6a67b6272@disroot.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Laurent, Sang-Heon,
+On Fri, Aug 07, 2026 at 01:18:42AM +0530, Kaustabh Chakraborty wrote:
+> The GP2AP070S is a proximity sensor designed and manufactured by Sharp
+> Corporation. This sensor is used in mobile devices, including, but not
+> limited to - the Samsung Galaxy J6.
+> 
+> The driver has been adopted from Samsung's downstream kernel
+> implementation [1]. Due to the lack of public documentation about the
+> schematics of this device. The downstream driver acts as the secondary
+> source of information. Driver clarity has also been improved with the
+> help of the GP2AP* drivers in iio/light.
 
-On Fri, Aug 07, 2026 at 03:28:25PM +0300, Laurent Pinchart wrote:
-> On Fri, Jul 24, 2026 at 03:45:14AM +0900, Sang-Heon Jeon wrote:
-> > Both branches of the check return the same value, so the check has
-> > no effect. Remove it and return the value directly.
-> > 
-> > This is the result of running the Coccinelle script from
-> > scripts/coccinelle/misc/cond_return_no_effect.cocci.
-> > 
-> > Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
-> > ---
-> >  drivers/media/i2c/mt9p031.c                          |  6 +-----
-> >  .../media/platform/microchip/microchip-sama7g5-isc.c |  7 +------
-> >  drivers/media/platform/qcom/iris/iris_resources.c    |  6 +-----
-> >  drivers/media/platform/qcom/venus/pm_helpers.c       |  7 +------
-> >  drivers/media/platform/renesas/rcar-csi2.c           |  6 +-----
-> >  .../media/platform/samsung/s3c-camif/camif-core.c    |  7 +------
-> >  drivers/media/usb/dvb-usb-v2/mxl111sf.c              | 12 ++----------
-> >  drivers/media/usb/gspca/jl2005bcd.c                  |  7 +------
-> >  8 files changed, 9 insertions(+), 49 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> > index d21510caf45a..2b09e8315c8e 100644
-> > --- a/drivers/media/i2c/mt9p031.c
-> > +++ b/drivers/media/i2c/mt9p031.c
-> > @@ -452,11 +452,7 @@ static int mt9p031_set_params(struct mt9p031 *mt9p031)
-> >  	ret = mt9p031_write(client, MT9P031_HORIZONTAL_BLANK, hblank - 1);
-> >  	if (ret < 0)
-> >  		return ret;
-> > -	ret = mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> 
-> I would have just replaced the last line with a
-> 
-> 	return 0;
-> 
-> as I find it easier to read code that has multiple error paths when all
-> the error paths look the same. It's a small personal preference though
-> (and ths best option would be to convert this driver to the CCI
-> helpers), so I'm OK with this change as-is.
+...
 
-I wouldn't make an exception here, but obviously CCI is the way to go.
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
 
-> 
-> > +	return mt9p031_write(client, MT9P031_VERTICAL_BLANK, vblank - 1);
-> >  }
-> >  
-> >  static int mt9p031_s_stream(struct v4l2_subdev *subdev, int enable)
-> > diff --git a/drivers/media/platform/microchip/microchip-sama7g5-isc.c b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > index b0302dfc3278..7383341ec51d 100644
-> > --- a/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > +++ b/drivers/media/platform/microchip/microchip-sama7g5-isc.c
-> > @@ -598,13 +598,8 @@ static int __maybe_unused xisc_runtime_suspend(struct device *dev)
-> >  static int __maybe_unused xisc_runtime_resume(struct device *dev)
-> >  {
-> >  	struct isc_device *isc = dev_get_drvdata(dev);
-> > -	int ret;
-> > -
-> > -	ret = clk_prepare_enable(isc->hclock);
-> > -	if (ret)
-> > -		return ret;
-> >  
-> > -	return ret;
-> > +	return clk_prepare_enable(isc->hclock);
-> 
-> Here the change looks good, there's a single error paths so a direct
-> return is fine.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> >  }
-> >  
-> >  static const struct dev_pm_ops microchip_xisc_dev_pm_ops = {
-> > diff --git a/drivers/media/platform/qcom/iris/iris_resources.c b/drivers/media/platform/qcom/iris/iris_resources.c
-> > index 773f6548370a..872bd09656b1 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_resources.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_resources.c
-> > @@ -78,11 +78,7 @@ int iris_enable_power_domains(struct iris_core *core, struct device *pd_dev)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	ret = pm_runtime_get_sync(pd_dev);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return pm_runtime_get_sync(pd_dev);
++ bits.h // BIT() et alia
 
-The patch no longer applies after commit
-f87d7eda07fca21efe4b96169ae59007db46e60e .
+> +#include <linux/delay.h>
 
-> >  }
-> >  
-> >  int iris_disable_power_domains(struct iris_core *core, struct device *pd_dev)
-> > diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > index be1cbd5cfe84..e88e66be4f6d 100644
-> > --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> > +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > @@ -781,7 +781,6 @@ static int decide_core(struct venus_inst *inst)
-> >  	unsigned long max_freq = ULONG_MAX;
-> >  	struct device *dev = core->dev;
-> >  	struct dev_pm_opp *opp;
-> > -	int ret = 0;
-> >  
-> >  	if (legacy_binding) {
-> >  		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
-> > @@ -829,11 +828,7 @@ static int decide_core(struct venus_inst *inst)
-> >  	}
-> >  
-> >  done:
-> > -	ret = hfi_session_set_property(inst, ptype, &cu);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return hfi_session_set_property(inst, ptype, &cu);
-> >  }
-> >  
-> >  static int acquire_core(struct venus_inst *inst)
-> > diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> > index 7305cc4a04cb..6635f5782175 100644
-> > --- a/drivers/media/platform/renesas/rcar-csi2.c
-> > +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> > @@ -2273,11 +2273,7 @@ static int rcsi2_init_phtw_v3u(struct rcar_csi2 *priv,
-> >  			return ret;
-> >  	}
-> >  
-> > -	ret = rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return rcsi2_phtw_write_array(priv, step4, ARRAY_SIZE(step4));
-> >  }
-> >  
-> >  /* -----------------------------------------------------------------------------
-> > diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > index 14eedd1ceb27..bb06847f3a63 100644
-> > --- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > +++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
-> > @@ -301,7 +301,6 @@ static int camif_media_dev_init(struct camif_dev *camif)
-> >  	struct media_device *md = &camif->media_dev;
-> >  	struct v4l2_device *v4l2_dev = &camif->v4l2_dev;
-> >  	unsigned int ip_rev = camif->variant->ip_revision;
-> > -	int ret;
-> >  
-> >  	memset(md, 0, sizeof(*md));
-> >  	snprintf(md->model, sizeof(md->model), "Samsung S3C%s CAMIF",
-> > @@ -316,11 +315,7 @@ static int camif_media_dev_init(struct camif_dev *camif)
-> >  
-> >  	media_device_init(md);
-> >  
-> > -	ret = v4l2_device_register(camif->dev, v4l2_dev);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return v4l2_device_register(camif->dev, v4l2_dev);
-> >  }
-> >  
-> >  static void camif_clk_put(struct camif_dev *camif)
-> > diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > index 870ac3c8b085..6404eb74db32 100644
-> > --- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > +++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-> > @@ -987,11 +987,7 @@ static int mxl111sf_frontend_attach_atsc_mh(struct dvb_usb_adapter *adap)
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > -	ret = mxl111sf_lg2160_frontend_attach(adap, 2);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return mxl111sf_lg2160_frontend_attach(adap, 2);
-> >  }
-> >  
-> >  static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> > @@ -1007,11 +1003,7 @@ static int mxl111sf_frontend_attach_mercury(struct dvb_usb_adapter *adap)
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > -	ret = mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	return ret;
-> > +	return mxl111sf_lg2161_ep6_frontend_attach(adap, 2);
-> >  }
-> >  
-> >  static int mxl111sf_frontend_attach_mercury_mh(struct dvb_usb_adapter *adap)
-> > diff --git a/drivers/media/usb/gspca/jl2005bcd.c b/drivers/media/usb/gspca/jl2005bcd.c
-> > index a408fcc3a060..4988fbf5005e 100644
-> > --- a/drivers/media/usb/gspca/jl2005bcd.c
-> > +++ b/drivers/media/usb/gspca/jl2005bcd.c
-> > @@ -148,17 +148,12 @@ static int jl2005c_start_new_frame(struct gspca_dev *gspca_dev)
-> >  static int jl2005c_write_reg(struct gspca_dev *gspca_dev, unsigned char reg,
-> >  						    unsigned char value)
-> >  {
-> > -	int retval;
-> >  	u8 instruction[2];
-> >  
-> >  	instruction[0] = reg;
-> >  	instruction[1] = value;
-> >  
-> > -	retval = jl2005c_write2(gspca_dev, instruction);
-> > -	if (retval < 0)
-> > -			return retval;
-> > -
-> > -	return retval;
-> > +	return jl2005c_write2(gspca_dev, instruction);
-> >  }
-> >  
-> >  static int jl2005c_get_firmware_id(struct gspca_dev *gspca_dev)
-> 
++ dev_printk.h
++ device/devres.h
+
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+
++ sysfs.h // sysfs_emit()
+
+> +#include <linux/types.h>
+> +#include <linux/units.h>
+
++ asm/byteorder.h // le16_to_cpu()
+
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/iio.h>
+
+> +#include <linux/iio/types.h>
+
+I believe there is an agreement that iio.h implies types.h in iio/.
+
+...
+
+> +#define GP2AP070S_REG_PS_THD_LO_LE16	0x88
+> +#define GP2AP070S_REG_PS_THD_HI_LE16	0x8a
+> +#define GP2AP070S_REG_D0_LE16		0x90
+
+All those _LE16 do not add any value, we see that from the use of them.
+
+> +#define GP2AP070S_REG_MAX		(GP2AP070S_REG_D0_LE16 + 1)
+
+...
+
+> +struct gp2ap070s_drvdata {
+> +	struct regmap *regmap;
+> +	struct mutex mutex;
+
+Lock should have a comment explaining the data it protects.
+
+> +	u32 near_level;
+> +};
+
+...
+
+> +static const struct regmap_config gp2ap070s_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.volatile_reg = gp2ap070s_regmap_volatile,
+> +	.max_register = GP2AP070S_REG_MAX,
+> +	.cache_type = REGCACHE_FLAT,
+
+Oh, registers are from 0x80 to 0x91, why FLAT and not MAPLE?
+
+> +};
+
+...
+
+> +static int gp2ap070s_iio_read_raw(struct iio_dev *indio_dev,
+> +				  struct iio_chan_spec const *chan, int *val,
+> +				  int *val2, long mask)
+
+Split logically here and everywhere else.
+
+static int gp2ap070s_iio_read_raw(struct iio_dev *indio_dev,
+				  struct iio_chan_spec const *chan,
+				  int *val, int *val2, long mask)
+
+...
+
+> +static int gp2ap070s_iio_read_event_value(struct iio_dev *indio_dev,
+> +					  const struct iio_chan_spec *chan,
+> +					  enum iio_event_type type,
+> +					  enum iio_event_direction dir,
+> +					  enum iio_event_info info, int *val,
+> +					  int *val2)
+
+Ditto.
+
+> +{
+> +	struct gp2ap070s_drvdata *drvdata = iio_priv(indio_dev);
+> +	__le16 value;
+> +	int ret;
+> +
+> +	if (type != IIO_EV_TYPE_THRESH || info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&drvdata->mutex);
+> +
+> +	switch (dir) {
+> +	case IIO_EV_DIR_RISING:
+> +		ret = regmap_bulk_read(drvdata->regmap,
+> +				       GP2AP070S_REG_PS_THD_HI_LE16, &value,
+> +				       sizeof(value));
+
+Ditto.
+
+(With above comment about LE16 this will become
+
+		ret = regmap_bulk_read(drvdata->regmap, GP2AP070S_REG_PS_THD_HI,
+				       &value, sizeof(value));
+
+which is one line shorter.)
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = le16_to_cpu(value);
+> +		return IIO_VAL_INT;
+> +	case IIO_EV_DIR_FALLING:
+> +		ret = regmap_bulk_read(drvdata->regmap,
+> +				       GP2AP070S_REG_PS_THD_LO_LE16, &value,
+> +				       sizeof(value));
+
+Ditto.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = le16_to_cpu(value);
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+> +static int gp2ap070s_iio_write_event_value(struct iio_dev *indio_dev,
+> +					   const struct iio_chan_spec *chan,
+> +					   enum iio_event_type type,
+> +					   enum iio_event_direction dir,
+> +					   enum iio_event_info info, int val,
+> +					   int val2)
+
+Same as per above function.
+
+...
+
+> +		/* Ensure hi_threshold > lo_threshold */
+> +		threshold_other = le16_to_cpu(value);
+> +		if (threshold_other <= val)
+> +			return -EINVAL;
+> +
+> +		value = cpu_to_le16(val);
+> +		ret = regmap_bulk_write(drvdata->regmap,
+> +					GP2AP070S_REG_PS_THD_LO_LE16, &value,
+> +					sizeof(value));
+> +		if (ret)
+> +			return ret;
+> +
+> +		return 0;
+
+		return regmap_bulk_write(...);
+
+...
+
+> +	ret = regmap_write_bits(drvdata->regmap, GP2AP070S_REG_PS2,
+> +				GP2AP070S_PS2_IOUT | GP2AP070S_PS2_SUM32,
+> +				FIELD_PREP_CONST(GP2AP070S_PS2_IOUT,
+> +						 GP2AP070S_PS2_IOUT_89mA) |
+
+> +				GP2AP070S_PS2_SUM32);
+
+What's the point to have dup constant to be ORed?
+
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set current output\n");
+
+...
+
+> +	fsleep(10 * (MICRO / MILLI));
+
+What's is this multiplier for? I think you wanted USEC_PER_MSEC from time.h.
+Also add a comment with the reference to the datasheet (or other means) of why
+this value has been chosen.
+
+...
+
+> +	if (device_property_present(dev, "proximity-near-level")) {
+> +		ret = device_property_read_u32(dev, "proximity-near-level",
+> +					       &drvdata->near_level);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "Failed to get value for proximity-near-level\n");
+> +	}
+
+Any default to be applied?
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Sakari Ailus
+
