@@ -1,393 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71AE3612E7
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Aug 2026 14:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126E73D7D74
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Aug 2026 20:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786719570; cv=none; b=YOJ7eNiVqcsGjfVhfJmVrPQVf7D5xD+d64qhv9rv2NZAJfuTRsW071lXGdUO8lE/c0lmfNIoPyh+DNbVzo0q5ApuBU4iPzzzk/kjhmHkj5N3Ji4JCKduPdAWADO5Q9Y21n/uytHMpNry0F+pHpWdqN/mnQWrb3dh0AdDSVeHjuI=
+	t=1786739765; cv=none; b=fozI9L+gro3pMnKrCXpxtxijJGWRMrlqZ4n2OXGuqVWgLQ1Xo45XCzsn2LQ01Lk/yxBfEOp3C8KayX596YPdIRbC+3aAGHXG+J+dzbqUR17jEl320J43Vncr+kH+F32UuiopGu6zN8czqAmG1sZXc+vmkq62tnHDinkSRXoVh9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786719570; c=relaxed/simple;
-	bh=lawd9I8Vl3BnH0N/nvmouxRrGEsKUsKUHnpMfVrUYC0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ngEzTCOA56h7bvf1rBu3GwIFP+TN/M5xbHJJ/f7N8oPXQ8vFy+n1YMz2paIlIi8qSTQxKq6gnPiyr79wIllHE1ZQqmXmujJw3xh7gaqEYe7r0UlxTvRhv84YQelNPRh4dlNG9e2At7/dNYd/rDFHVTht7Ouls+N5NjbCcyaZqpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAhFUMQI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786739765; c=relaxed/simple;
+	bh=L6cGAtA9z1lEA32tpQrcrf/dbswezRI4TiPZATe6Y6k=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XGJBXIHKaQyla5PmtH44OGTLlyD7CMJhKTwt1MsRonn5wZfZQ9G6ZIekfRVXZNSU4nTCcjc1CVk6Azye0pVm8UiMA8oiJFCKvRZ5+RpQQrYsKoBRJM0tioAZgWdwRiX8hi/jOYeUcL//n4tZ+HIrTmXl9TOS00bE40a92QX89t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DGiNZhwc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAhFUMQI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 202431F000E9;
-	Fri, 14 Aug 2026 14:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786719568;
-	bh=mfBNsgF3zidzgFiNnSm7qaGCxvi2ZdL05Ik1cbGf/so=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=VAhFUMQIuGQQAbGIVcxftGuuvqqqtI5h5Bfb6rsJy302jKK69UXZt7kZtj8i/afaW
-	 +N06ooFAr3LUcnXtZEyDjTwFThQyA9Z5EUaL7fYImDulA3Yj8aG2dMhw4M+KhE4K3K
-	 JKU7sqI5atEFAPXSlzQnBWERaQmYfcvs/KYNsK3FYV4ZiogPXKQOnnoOdhxH8TQE5n
-	 QLlrtxelVXjmsLodhfqfD66dp4ewxgSUBzJd6WQB3HVWPKIu4qypi1YJCkJ7EIbMx6
-	 VKz09rVGdeXTWoHbWallN0I8aVgGdPaJHqURVWxMCCGOUV5Q7+j2bFL9MpCcdy343p
-	 O4eXLGyySuxBA==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Fri, 14 Aug 2026 16:57:35 +0200
-Subject: [PATCH v2 46/61] drm/exynos: Convert to atomic_create_state
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DGiNZhwc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1786739762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y8HxtGS/+pDsEWZq9YYRCPV84sZrTTgU1WrgrxJbu3s=;
+	b=DGiNZhwcCb1KbmOHbBKnCS6fB7eP05EMflaXau55R9uQeN5JSsKhwlKSlDOUJP1yqISIbT
+	RSsHwniTosn7PaShK3kcLoMLdfVUSzfuc97OCslW5o7ji66evCfYRSGSZhvYHRYoHWQwUK
+	nJYVaHuNVXugUMlG1+8xJ9CpVY8W5l4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-553-OoJM1A43PeiGF1bcosKBrg-1; Fri,
+ 14 Aug 2026 16:35:57 -0400
+X-MC-Unique: OoJM1A43PeiGF1bcosKBrg-1
+X-Mimecast-MFC-AGG-ID: OoJM1A43PeiGF1bcosKBrg_1786739754
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC0B919560B5;
+	Fri, 14 Aug 2026 20:35:53 +0000 (UTC)
+Received: from GoldenWind.lan (unknown [10.22.64.233])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 12FBC197751A;
+	Fri, 14 Aug 2026 20:35:49 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	nouveau@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	asahi@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	spice-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	imx@lists.linux.dev
+Subject: [PATCH 1/5] drm/vblank: Add drm_device.has_hw_vblank
+Date: Fri, 14 Aug 2026 16:35:29 -0400
+Message-ID: <20260814203542.1405135-2-lyude@redhat.com>
+In-Reply-To: <20260814203542.1405135-1-lyude@redhat.com>
+References: <20260814203542.1405135-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260814-drm-no-more-plane-reset-v2-46-82d2963dd134@kernel.org>
-References: <20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org>
-In-Reply-To: <20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- alim.akhtar@samsung.com, inki.dae@samsung.com, krzk@kernel.org, 
- kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, 
- sw0312.kim@samsung.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7338; i=mripard@kernel.org;
- h=from:subject:message-id; bh=lawd9I8Vl3BnH0N/nvmouxRrGEsKUsKUHnpMfVrUYC0=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFn1OjcmJeZ5qTcEdbNPW3MozevP9UNXNbpO/XjLsYaz2
- So8/tzUjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRJ8yMDZM+9UZd9MleZiHP
- t02OoU/3+q+HnZqd96NXvN8XEMNxb8ZD9efvXnnUFyu9lTW/4ykWxdgw7UW4Slj5LVu9eKEVTF7
- beMv9J/W21+6u3OjE9TD36VfN54vbp19KF2WMP8HVOFvbrhQA
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The plane reset implementation creates a custom state
-subclass, but only initializes a pristine state without resetting any
-hardware. This is equivalent to what atomic_create_state expects.
-Convert to it.
+Currently the way we check if a driver supports hardware vblanks or not is
+actually funny and cursed! Likely because it predates KMS.
 
-The conversion was done using the following Coccinelle semantic patch:
+As it turns out, we only check dev->num_crtcs to see if we have vblank
+support. Why? Because it doesn't actually represent the number of CRTCs on
+the device, unless drm_vblank_init() has been called - which sets
+dev->num_crtcs. And as it turns out, this is the second place we keep track
+of the number of CRTCs we have.
 
-@@
-identifier funcs;
-symbol drm_atomic_helper_plane_reset;
-symbol drm_atomic_helper_plane_create_state;
-@@
+Let's clean this up by starting with adding a variable specifically for
+tracking whether drm_vblank_init() has been called or not.
 
-struct drm_plane_funcs funcs = {
-  ...,
-- .reset = drm_atomic_helper_plane_reset,
-+ .atomic_create_state = drm_atomic_helper_plane_create_state,
-  ...,
-};
-
-@match_struct_reset@
-identifier funcs, reset_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .reset = reset_func,
-    ...,
-};
-
-@reset_uses_helpers depends on match_struct_reset@
-identifier match_struct_reset.reset_func;
-@@
-
- void reset_func(...)
- {
- 	<+...
-(
- 	__drm_atomic_helper_plane_reset(...);
-|
-	__drm_gem_reset_shadow_plane(...);
-)
- 	...+>
- }
-
-@match_struct_destroy@
-identifier funcs, destroy_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .atomic_destroy_state = destroy_func,
-    ...,
-};
-
-@script:python renamed_func@
-old_name << match_struct_reset.reset_func;
-new_name;
-@@
-if old_name.endswith("_reset"):
-    coccinelle.new_name = old_name.replace("_reset", "_create_state")
-else:
-    coccinelle.new_name = old_name
-
-@update_struct depends on match_struct_reset && reset_uses_helpers@
-identifier match_struct_reset.funcs, match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
--   .reset = reset_func,
-+   .atomic_create_state = new_name,
-    ...,
-};
-
-@drop_destroy depends on update_struct && match_struct_destroy@
-identifier match_struct_reset.reset_func;
-identifier match_struct_destroy.destroy_func;
-identifier container_func;
-identifier P;
-symbol drm_atomic_helper_plane_destroy_state;
-symbol __drm_atomic_helper_plane_destroy_state;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	...
-(
--	if (P->state) {
-- 		<+...
-(
--		drm_atomic_helper_plane_destroy_state(P, P->state);
-|
--		__drm_atomic_helper_plane_destroy_state(P->state);
-|
--		P->funcs->atomic_destroy_state(P, P->state);
-|
--		destroy_func(P, P->state);
-)
-- 		...+>
-- 	}
-|
--	drm_WARN_ON_ONCE(P->dev, P->state);
-|
--	WARN_ON(P->state);
-)
- 	...
-(
--	kfree(P->state);
-|
--	kfree(container_func(P->state));
-|
- 	// kfree is optional
-)
-(
--	P->state = NULL;
-|
- 	// plane->state clearing is optional
-)
- 	...
- }
-
-@drop_destroy_mtk depends on update_struct@
-identifier P;
-symbol __drm_atomic_helper_plane_destroy_state;
-symbol to_mtk_plane_state;
-@@
-
- void mtk_plane_reset(struct drm_plane *P)
- {
- 	...
--	if (P->state) {
--		__drm_atomic_helper_plane_destroy_state(P->state);
--		...
--	} else {
- 		...
--	}
- 	...
- }
-
-@transform_nv50_wndw depends on update_struct@
-identifier S;
-@@
-
- void nv50_wndw_reset(...)
- {
- 	...
--	if (WARN_ON(!(S = kzalloc_obj(*S))))
-+	S = kzalloc_obj(*S);
-+	if (WARN_ON(!S))
- 		return;
- 	...
- }
-
-@transform_kzalloc depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier P, S;
-statement ST;
-statement list STL;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	<...
- 	S = kzalloc_obj(*S);
-(
--	if (S)
--	{
--		STL
--	}
-+	if (!S) return;
-+
-+	STL
-|
--	if (S) ST
-+	if (!S) return;
-+
-+	ST
-)
-	...>
- }
-
-@transform_body depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier S, P;
-expression PS;
-@@
-- void reset_func(struct drm_plane *P)
-+ struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	S = kzalloc_obj(*S);
-	...
-(
- 	if (!S) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (WARN_ON(!S)) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (S == NULL) {
- 		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-)
-	...
-(
--	__drm_atomic_helper_plane_reset(P, PS);
-+	__drm_atomic_helper_plane_state_init(PS, P);
-|
--	__drm_gem_reset_shadow_plane(P, PS);
-+	__drm_gem_shadow_plane_state_init(P, PS);
-)
-	...
-}
-
-@update_early_return depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	<+...
--	return;
-+	return ERR_PTR(-EINVAL);
-	...+>
-}
-
-@update_return_plane depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_atomic_helper_plane_state_init(PS, P);
-	...
-+
-+	return PS;
-}
-
-@update_return_shadow depends on update_struct@
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_gem_shadow_plane_state_init(P, PS);
-	...
-+
-+	return &PS->base;
-}
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
-Cc: alim.akhtar@samsung.com
-Cc: inki.dae@samsung.com
-Cc: krzk@kernel.org
-Cc: kyungmin.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: sw0312.kim@samsung.com
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/drm_vblank.c | 3 ++-
+ include/drm/drm_device.h     | 7 +++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 5c04ef87e400..020e8c9cf7de 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -120,27 +120,23 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- 			  "plane : offset_x/y(%d,%d), width/height(%d,%d)",
- 			  exynos_state->crtc.x, exynos_state->crtc.y,
- 			  exynos_state->crtc.w, exynos_state->crtc.h);
- }
+diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+index f90fb2d13e423..d317148af8cb3 100644
+--- a/drivers/gpu/drm/drm_vblank.c
++++ b/drivers/gpu/drm/drm_vblank.c
+@@ -557,6 +557,7 @@ int drm_vblank_init(struct drm_device *dev, unsigned int num_crtcs)
+ 	if (!dev->vblank)
+ 		return -ENOMEM;
  
--static void exynos_drm_plane_reset(struct drm_plane *plane)
-+static struct drm_plane_state *exynos_drm_plane_create_state(struct drm_plane *plane)
++	dev->has_hw_vblank = true;
+ 	dev->num_crtcs = num_crtcs;
+ 
+ 	for (i = 0; i < num_crtcs; i++) {
+@@ -600,7 +601,7 @@ EXPORT_SYMBOL(drm_vblank_init);
+  */
+ bool drm_dev_has_vblank(const struct drm_device *dev)
  {
- 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	struct exynos_drm_plane_state *exynos_state;
- 
--	if (plane->state) {
--		exynos_state = to_exynos_plane_state(plane->state);
--		__drm_atomic_helper_plane_destroy_state(plane->state);
--		kfree(exynos_state);
--		plane->state = NULL;
--	}
--
- 	exynos_state = kzalloc_obj(*exynos_state);
--	if (exynos_state) {
--		__drm_atomic_helper_plane_reset(plane, &exynos_state->base);
--		plane->state->zpos = exynos_plane->config->zpos;
--	}
-+	if (!exynos_state)
-+		return ERR_PTR(-ENOMEM);
-+
-+	__drm_atomic_helper_plane_state_init(&exynos_state->base, plane);
-+	exynos_state->base.zpos = exynos_plane->config->zpos;
-+
-+	return &exynos_state->base;
+-	return dev->num_crtcs != 0;
++	return dev->has_hw_vblank;
  }
+ EXPORT_SYMBOL(drm_dev_has_vblank);
  
- static struct drm_plane_state *
- exynos_drm_plane_duplicate_state(struct drm_plane *plane)
- {
-@@ -167,11 +163,11 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
+diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+index 768a8dae83c52..2df08c756afd3 100644
+--- a/include/drm/drm_device.h
++++ b/include/drm/drm_device.h
+@@ -287,6 +287,13 @@ struct drm_device {
+ 	 */
+ 	struct drm_vblank_crtc *vblank;
  
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
- 	.destroy	= drm_plane_cleanup,
--	.reset		= exynos_drm_plane_reset,
-+	.atomic_create_state = exynos_drm_plane_create_state,
- 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
- 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
- };
- 
- static int
-
++	/**
++	 * @has_hw_vblank:
++	 *
++	 * Has the driver called drm_vblank_init() to setup hardware vblank support?
++	 */
++	bool has_hw_vblank;
++
+ 	/**
+ 	 * @vblank_time_lock:
+ 	 *
 -- 
 2.55.0
 
