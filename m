@@ -1,122 +1,152 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D43D9DA1
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Aug 2026 20:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70837371D1F;
+	Sun, 16 Aug 2026 20:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786739784; cv=none; b=aBhEZIEJt9ub40y6Ck/GNIYqBkzi95y+nC83l25Aa9BXS/ElDNf7criU8Xq2F+jTpx5UzmKZuhaXVtz1PIJJK98dpjJqvEnIe3JR+orlBk8zesA5Af4dR+jyjkibwuNW56z6rw6zSeZfk701L0VXThaFiV0KlKTGgV6Xgu9+Dxw=
+	t=1786910662; cv=none; b=gcGiW3rhgbgkXWQElQgMtLO891lcwch41MVFVWl9CEKrdekf9CEySAw+p9QcsT/WdBnYGC9QJx/ITSa6+/IUleGkxxQ6hZzmFjPlRNKapAQQBZTqud7o64o5dWebKQJP57gM+OibvTO77bHXG/25+1UEHEdKeXJOfERI4FywXg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786739784; c=relaxed/simple;
-	bh=eedkQEXrorNp37ksZK/2amUEphp9uBOtzRKZqiLu8RY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cbx/s6eK8tLd91AKOPs52p4JkjGQAvs+hsyKvtZCg/HPbNs6ODLqyGkETjrz8PjJKqqVPdlhQTUEMlTwQ9Svn4PqBAbqY2vG3h28UA+XznJCDw0QU0aaqM3wweq006GDlvx9aukdueDMLGS/hWTIiCt/isdnMG/l+WIBXx5gPQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwdIYDtp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1786910662; c=relaxed/simple;
+	bh=PG7cebm9cQkxk40ZX9sHX3YuAagFzKNjegdXGevJGHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FlyifdHzQlg9kowKkqg1pH3+Teov4QWrfnUGGKFYtaQnbhGcSIY7L9kIs2bEcOiMl2tuIhAWOqrWzBtJhiDxo8hCEwhgWfP8CD4cka+uJWSK5M4su5L0WHPApH4WysD21PkrVGH4qYrLyPePnCYETRTBY4SStsSeppVgpS8nA6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipvXQ6IQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwdIYDtp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1786739782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UEzS7cgh0s3kpDJoSKFSaeUbfz26XKFwvX4uV6Y0kQg=;
-	b=fwdIYDtpSWHoxjufb+eNfSzISFOciE40K2DO+Ldg+N43vjYWIzVcRrQZo++SeNmMcKE+/Z
-	cuktg1ioy5pyy0ujxsO3ug27vCdYkAt18D1FBNK4VzaBiTiA3RtwanFjNowHnx32n2MSfB
-	eKDXo0NoWIxdujcJUoEWeZEuX2cx438=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-oqOvZT7bMEW5oR1aBhdpHw-1; Fri,
- 14 Aug 2026 16:36:07 -0400
-X-MC-Unique: oqOvZT7bMEW5oR1aBhdpHw-1
-X-Mimecast-MFC-AGG-ID: oqOvZT7bMEW5oR1aBhdpHw_1786739765
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FF7D195608A;
-	Fri, 14 Aug 2026 20:36:04 +0000 (UTC)
-Received: from GoldenWind.lan (unknown [10.22.64.233])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 94B5E197751A;
-	Fri, 14 Aug 2026 20:36:00 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	nouveau@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	asahi@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-samsung-soc@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	spice-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	imx@lists.linux.dev
-Subject: [PATCH 4/5] drm/vblank: Use drm_for_each_crtc() in drm_vblank_init()
-Date: Fri, 14 Aug 2026 16:35:32 -0400
-Message-ID: <20260814203542.1405135-5-lyude@redhat.com>
-In-Reply-To: <20260814203542.1405135-1-lyude@redhat.com>
-References: <20260814203542.1405135-1-lyude@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipvXQ6IQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 534CD1F000E9;
+	Sun, 16 Aug 2026 20:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786910660;
+	bh=0Q+In85KJcx2q9yxNMIL3sT8YnPE2GKRoiwmStkQcPQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=ipvXQ6IQh+JW23GdsFHHX3LneRHRtIEFO8Xs3ByKgJjFgAk+zUKdMrzR5AcBgDnUw
+	 sRKblBLwtcz06ZWwId5nsuWd9vNMF8oykvugaC/EWarfj7qxxecPfA/hu6oxvFWQtU
+	 IaMcNXTAfOCRCQieSJUpgMXhx3RWnnCVGOk0hhX+V5OJz91lIWbpM30xo/MeeOYjFq
+	 XOTBHFdSnUhD+IECzNjiME2rDJVnGuySKQj9G3aA/xFqB35ewvoL13ycwSnwHhijtH
+	 HZbv3UDs7LD8CQ0gDxw5rShtC0bY2qbnHmACrJ0SgC2rV4HhtS4QvuicMwtRFXvHtc
+	 GTNdcJfz3utfA==
+Date: Sun, 16 Aug 2026 21:04:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Add Sharp GP2AP070S Proximity Driver and enable
+ it in Galaxy J6 (j6lte)
+Message-ID: <20260816210414.6ce52946@jic23-huawei>
+In-Reply-To: <20260807-gp2ap070s-v4-0-74f6a67b6272@disroot.org>
+References: <20260807-gp2ap070s-v4-0-74f6a67b6272@disroot.org>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-No functional changes yet, we just should be using this iterator here
-instead of manually counting the number of CRTCs anyhow.
+On Fri, 07 Aug 2026 01:18:40 +0530
+Kaustabh Chakraborty <kauschluss@disroot.org> wrote:
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/drm_vblank.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> Sharp GP2AP070S is a promixity sensor (NOT an ambient light sensor) in
+> mobile devices. This sensor chip is found in mobile devices, including
+> (but perhaps not limited to) Samsung Galaxy J6 (codename: j6lte).
+> 
+> To the best of my knowledge, there's no public documentation available
+> for this device. [1] is a downstream kernel implementation, which has
+> been the single source for developing this driver. Some bits have also
+> been stolen from existing GP2AP* drivers available in iio/light.
+> 
+> The last patch in this series touches the device tree sources to add the
+> light sensor node in j6lte. This needs to be accepted into next only
+> when the former patches are in next.
+> 
+> [1] https://github.com/Exynos7870/android_kernel_samsung_universal7870/blob/lineage-16.0/drivers/sensors/gp2ap070s.c
+> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+Make sure to take a look at sashiko feedback.
+https://sashiko.dev/#/patchset/20260807-gp2ap070s-v4-0-74f6a67b6272%40disroot.org
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 17283e8920378..d57405050554f 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -547,19 +547,20 @@ static void drm_vblank_init_release(struct drm_device *dev, void *ptr)
- int drm_vblank_init(struct drm_device *dev)
- {
- 	int ret;
--	unsigned int num_crtcs = dev->mode_config.num_crtc;
--	unsigned int i;
-+	struct drm_crtc *crtc;
- 
- 	spin_lock_init(&dev->vbl_lock);
- 	spin_lock_init(&dev->vblank_time_lock);
- 
--	dev->vblank = drmm_kcalloc(dev, num_crtcs, sizeof(*dev->vblank), GFP_KERNEL);
-+	dev->vblank = drmm_kcalloc(dev, dev->mode_config.num_crtc,
-+				   sizeof(*dev->vblank), GFP_KERNEL);
- 	if (!dev->vblank)
- 		return -ENOMEM;
- 
- 	dev->has_hw_vblank = true;
- 
--	for (i = 0; i < num_crtcs; i++) {
-+	drm_for_each_crtc(crtc, dev) {
-+		unsigned int i = crtc->index;
- 		struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, i);
- 
- 		vblank->dev = dev;
--- 
-2.55.0
+regcache flat is very rarely the write option.  maple is fine for even small
+sets of registers and avoids some pitfalls (I'm not sure the exact issue
+sashiko is calling out is real - I haven't checked)
+
+The timestamp skid thing isn't important (though it is correct) so
+I'd ignore that one. However it's point that you might as well
+do the work in a non threaded interrupt is valid given the simplicity.
+
+
+Calling regmap_reinit_cache() seems illogical even if not wrong
+on a teardown that is about to wipe out the regmap.
+
+I didn't look at the dtsi comments.
+
+
+
+> ---
+> Changes in v4:
+> - Clarify non-mandatory vled-supply commit message (Krzysztof Kozlowski)
+> - Simplify driver probe return paths (David Lechner)
+> - Rephrase fsleep() usage to use unit macros (David Lechner)
+> - Use regmap_reinit_cache() instead of regcache_mark_dirty() (David Lechner)
+> - Use regmap_assign_bits() instead on branch on regmap_{set,clear}_bits()
+>   (David Lechner)
+> - Drop redundant explicit cast to u16 (David Lechner)
+> - Replace (1 << 16) with macrofied BIT(16) (David Lechner)
+> - Add max_register to regmap config (David Lechner)
+> - Add upper byte register for proximity distance volatile registers (Sashiko)
+> - Return 0 instead of IIO_VAL_INT in iio config write calls (Sashiko)
+> - Add REGCACHE_FLAT to regmap (Sashiko)
+> - Link to v3: https://patch.msgid.link/20260731-gp2ap070s-v3-0-d1f5cecf9fe7@disroot.org
+> 
+> Changes in v3:
+> - Revoke stale patches sent erroneously, v2 changelog applies
+> - Link to v2: https://patch.msgid.link/20260731-gp2ap070s-v2-0-1bdfee07d5ea@disroot.org
+> 
+> Changes in v2:
+> - Reshuffle and add missing header inclusions (Joshua Crofts)
+> - Add missing regulators in driver and dt-schema
+>   (Joshua Crofts, Jonathan Cameron)
+> - Rename and rearrange register addresses, masks and values (Jonathan Cameron)
+> - Use regmap_get_device() for carrying dev pointer (Jonathan Cameron)
+> - Use FIELD_GET() instead of !! (Jonathan Cameron)
+> - Drop unused i2c_set_clientdata() (Jonathan Cameron)
+> - Use fsleep() instead of usleep_range() (Jonathan Cameron)
+> - Check if proximity-near-level is available before reading its value
+>   (Jonathan Cameron)
+> - Drop redundant dev_err_probe() from devm_request_threaded_irq()
+>   (Joshua Crofts)
+> - Use mutex guards for guarding concurrent read/write calls (Sashiko)
+> - Add reset chip action on removal (Sashiko)
+> - Ensure input value in iio_write_event_value() is 16-bit (Sashiko)
+> - Use regmap_bulk_*() instead of regmap_raw_*() (Jonathan Cameron)
+> - Hint volatile registers for regmap (Jonathan Cameron)
+> - Link to v1: https://patch.msgid.link/20260723-gp2ap070s-v1-0-b8ca3a4c10dd@disroot.org
+> 
+> ---
+> Kaustabh Chakraborty (3):
+>       dt-bindings: iio: proximity: add Sharp GP2AP070S proximity sensor
+>       iio: proximity: add driver for Sharp GP2AP070S proximity sensor
+>       arm64: dts: exynos7870-j6lte: add Sharp GP2AP070S proximity sensor
+> 
+>  .../bindings/iio/proximity/sharp,gp2ap070s.yaml    |  60 +++
+>  arch/arm64/boot/dts/exynos/exynos7870-j6lte.dts    |  55 ++-
+>  drivers/iio/proximity/Kconfig                      |  11 +
+>  drivers/iio/proximity/Makefile                     |   1 +
+>  drivers/iio/proximity/gp2ap070s.c                  | 491 +++++++++++++++++++++
+>  5 files changed, 616 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 290aaf24a551d5a0dce037e3fab30820f9113a10
+> change-id: 20260723-gp2ap070s-f7e0120970a5
+> 
+> Best regards,
+> --  
+> Kaustabh Chakraborty <kauschluss@disroot.org>
+> 
 
