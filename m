@@ -1,96 +1,67 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5333B42F2
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2026 16:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6B046DFF3;
+	Mon, 17 Aug 2026 18:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786983203; cv=none; b=NEaFO7x2ywhaUhHp4c/aFhGWqOxJ5/4pKIh9ZFthHoJsPEELuVL9S7yR9xLSoeLZGZRYMThPAQdC23cbyOiOgsopf/vD7BbRX8WanHGKxMYIwr4jWjOZUSmyadMRK7zjaQDa37CQnLKesmbQQpc/vYAdgxzEzkgHM4SoJ8mnHKc=
+	t=1786991425; cv=none; b=V2dJR03Y/1R4yqb1Q1q5AiSQJ0YpP2vvFbsaI6mazeVvmAq4TnSBDhqTIEXCptlIsqyojb5IjBu2kiH2QU7K1fNr9lDlVRj5DCyjcuvguB+91sC1i12Gvuzflvew+lu0jgeDwb4RSmfpIRCNdhADqSv6nYlmAb/ZS7v568MHK0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786983203; c=relaxed/simple;
-	bh=xJefdQ0fcifSAbmN42YkvhRzBSsRE/Tok4/E/KLKe4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I/qzQXiXWAVEhRuflV4dMvNoZbA1IAJSY/XdZmZSQty5OiRskuHyenvJXSY1jqpDYwGUwFnMdNXm1Gwzo8R/OdamISJnfJiuIa8wI6gKlTS+dyB1enDBfqUxyY6wh5VrsD7oa7UX48ZF+shaWv6t9yeVQRZoq+szWOvuGrUhGdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s5d0LIZn; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786991425; c=relaxed/simple;
+	bh=NilObdHYEVgJ8SGvNk1Sj2GRgOyjUIKfhuB1JExerxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RS/Q+ifKuGulGqaJlA4VbHXJRqxa93vFRhDYYewV7oMeTq6/0DyQp8TXv7ygQZYf8mqZM6fzfEzOwBLrm9cZKrGZ1Me8WwdV7pnoqurJIy0ZJ5eI2mAe6j84cnR7/aogHtE3YgcuzotpnvXHRi6EIpkGoGLQ51/6w3oBHC4NWj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uli4xpFx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s5d0LIZn"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-ca80d708489so38149a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Aug 2026 09:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786983201; x=1787588001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xJefdQ0fcifSAbmN42YkvhRzBSsRE/Tok4/E/KLKe4w=;
-        b=s5d0LIZnad2HhYJ2O2ojRrvLcvNaTKguGjr+XJQtvqMm/6iT3n0ZCo4xZurLBlwh5z
-         BQUkz2S8ox/fpzR4XcFxu/17a0cJ0asKSN5JFmkkYYiBzEcl29RY7Z1EEwNLUaJfRbMk
-         r5WnKJtPjlVVsLvQnA2SQJEWGpWp8a9sQCEI0iuSJpt+HUdm7yuxLmA/dXxYqwW9FDBn
-         DmEeavLqEijZg8/u799xtGNtRU8w4PCRLbix+e/USDGXqi6JBAiWAW10D95gKATGEdJe
-         hLiLANWmBo6CbRZCHeLu/Lym6h6KLMGPqzhJ9thnoTgRFphsXu1PaAehkDGY4V7ltyvS
-         smmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786983201; x=1787588001;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=xJefdQ0fcifSAbmN42YkvhRzBSsRE/Tok4/E/KLKe4w=;
-        b=LUY+t7V9VGNGH3gbGldaMu7L6ELsFLcc/gB/2HOU0fmrCN+IGLo+ulANdz5fW7aRRO
-         TwuUrc8aoVSCjQY9OvMLcuXw4qDAKOYeL0ypJHVXGwSCRg9dcW0SmfcZMbKzrHlbMpJJ
-         exqqksUucScoXxnGgPiaAkbB1UKNmyryiB9z6qd5isKtVHQ8h2Tb9m1mHrmIopN/ArCd
-         hvkuUfHcqB2Xwh6Q23QAhgF7hcKJS6YJIizyC+KLuJrYTqcxcCR2pRZIszgsW14awU5T
-         KkhrOG19B/wMspdtc0v1hhVo5Zio0CkOImH8nqMx1pxvw0aIJYoqfYSwUx+TVx+guHJ/
-         r4iA==
-X-Forwarded-Encrypted: i=1; AHgh+Rom0MKH0CvmoFpdWnawWA8Y95t6HB4vFL6KiBgvxUs3lEka7nVPX0nkNy6kV3+pSWWEKkJ2etJWVAEHH9UXxJliQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiXy/YbhjnwHpw+P/hrjGYQUUl2tnU5E7q1I9nX4eJQFG8WbU1
-	BwHCfOaNF9E66b0Mp452jH1b5aUe8WKPu4MA5Cm90p2lA3yokr8gl278
-X-Gm-Gg: AR+sD10Ms9TvGusuFykIHOeR6WhIMcPMD/NzScVT3OgweOdhntQu6tqVW/uz5ClrjqF
-	7RsayP8gJJTQhLw5rUr6MJq6WBY2YzBMwMIe9O1LXjBXPJvbh8w1BAd+U9kEPc8NtUrUwDAWSIS
-	SprzST6plu23MUWEWQ83acIYlrj0ePEf5Xp0yBEEFiVMM+dwXCiEBcU/ucljc7APvl8Cmd7mI6f
-	YvK8SM9afkDpZiml+x9smHqTHrL/e1Oxt83B7Qku+Rbg1lxk8NAHx4aDestL/FMjMSOktE78yU+
-	m0sBZ/y5QN/ASCTXrFfVB1ptA/RmXL6gX9+8xGG6gOjdgL5ZPtFjNHoEb6d46eqs7hIUEkfPvJD
-	qL8xcyUHH+JQQJoSnfmz6/Nn2hH1j3DD3wJ64OHc/0FyVG+9AgNjb4iyoM2e7PUjv1t0YeaLCHk
-	AUbTuLfYU7CjCjGrlYvL7wX/Pl//gK2xfs58x4kfAwJtcfhzESSBvtewvpo6I=
-X-Received: by 2002:a17:90a:d005:b0:38e:4f42:d0d6 with SMTP id 98e67ed59e1d1-3955f1d0d60mr113069a91.12.1786983201436;
-        Mon, 17 Aug 2026 09:13:21 -0700 (PDT)
-Received: from ubuntu.. ([2405:201:8026:213e:faaa:24d8:b961:4887])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-32678dd22f7sm11391087eec.1.2026.08.17.09.13.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 09:13:20 -0700 (PDT)
-From: mdshahid03@gmail.com
-To: daeinki@gmail.com
-Cc: airlied@gmail.com,
-	alim.akhtar@samsung.com,
-	dri-devel@lists.freedesktop.org,
-	krzk@kernel.org,
-	kyungmin.park@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	peter.griffin@linaro.org,
-	simona@ffwll.ch,
-	sw0312.kim@samsung.com
-Subject: Re: [PATCH] drm/exynos: vidi: use memdup_user() instead of kmalloc() and copy_from_user()
-Date: Mon, 17 Aug 2026 21:42:47 +0530
-Message-ID: <20260817161247.156884-1-mdshahid03@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAAQKjZPwb00MePpUTmKZbn67jXp=UWX7m81evttd29L+9UcVxw@mail.gmail.com>
-References: <CAAQKjZPwb00MePpUTmKZbn67jXp=UWX7m81evttd29L+9UcVxw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uli4xpFx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628431F000E9;
+	Mon, 17 Aug 2026 18:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786991424;
+	bh=pWicw3wdyX2Cf/d1fATA10bx2J8IVOMaFPlUNYeHVQ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Uli4xpFxmyrHSMu6NIWChiMnMG4R+IERaI7UQ5vUao/T9tZ3Ns+glcKpEynzgx9zH
+	 FbyqwkDzxvvVA0tTcdTZ/1zA4zAUsAVgHLcGO2UfkDBr1vC21OeVyEbk53FgIy8WuE
+	 aFMnmz9uSzdbfnPDGbDzjdbpUT8ZZGtOInFKZoLGpJMXK8EsAlLA8GPsctYJjO30fz
+	 VIZJWyo95ha+CjMwudMaa6Qtl04cNEtlN5QNzfFfsPQFcRfMgOqnOkGWKP1nN64Jib
+	 7kQ1+q1QZ8LNJ5Y1b/ugIRtYw5CDi7beUMkBMTjCALcbhMq1xvHA9ghp9AeV0FWmO1
+	 lhqH6ZrA/gEhQ==
+Date: Mon, 17 Aug 2026 13:30:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: devfreq: samsung,exynos-ppmu: Use standard
+ regex syntax
+Message-ID: <20260817183022.GA1718712-robh@kernel.org>
+References: <20260813174037.2263884-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260813174037.2263884-1-robh@kernel.org>
 
-Hi Inki,
+On Thu, Aug 13, 2026 at 12:39:58PM -0500, Rob Herring (Arm) wrote:
+> The "{,N}" regex syntax is non-standard, but happens to be supported by
+> python re module. It is equivalent to "{0,N}" which is more commonly
+> supported. This fixes using a rust implementation of the DT schema
+> tools.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/devfreq/event/samsung,exynos-ppmu.yaml  | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the response. I appreciate you taking the time to review the patch.
+Applied, thanks.
 
-For context, a similar cleanup patch of mine was recently accepted by Greg KH and is now in linux-next.
-
-Thanks,
-Shahid
-
+Rob
