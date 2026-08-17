@@ -1,300 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D1F3F8247;
-	Mon, 17 Aug 2026 10:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842983FB074;
+	Mon, 17 Aug 2026 11:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786962457; cv=none; b=fOU0q8bOsz2iIn0+AqsqTThXTX88c8C7/Zg90OxGFh5e5oQzz749J55gQtYErewgZjz8UAx/CPEF9FUVTThZVWpbwL7OpTneTnobFdOdOvem3plmI3Y9H/0LqkSkGf1MgZKsGEF1gOh5ERjmFyIxFF2RMvWpQj0gchSYfR0x9oM=
+	t=1786964856; cv=none; b=RWeNtkiF33Lra8urdT7InrIsBnYerBld+Z65QDvbxkJBS1cQsWE3dcNbYjmnqi1i0pFV5OzZadDvDObzitR/bMrt8AkUkJtPZH9373spmxh169S8mta7zAct7yWm6BqERsTZCApGB0j3ZwOra9IvyxwdMPX7PXQD0kGALA/kRgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786962457; c=relaxed/simple;
-	bh=cYNzeZh2Axi8jkvO3zOnqC5HKlk/dOB3tvbLJY35Oc8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T4xSmoPCKgelJPNMoy8SnXTWtyWIL+n8pL1btMGItsPV47NCsfMjXDGf7lWJu71OF9EKxiF7m66I3tDPlxwgev85GENcaTrar6eAR0/4i2jGzvowJQ5tghjZK1aNwChYBFFWibkzYTqANHcFXaKo4XV0XhFH4PUUEro+MIioNcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjNu/juK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1786964856; c=relaxed/simple;
+	bh=biOqkm+9BioQJU4c0xKJHFjIa1LDWfVFN2S4cqtbLHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fnG8JFbyPZpfJlCVKPuZVVkO0g9LD2JYT+2j69KrCJwTzQ7iHx/+mY2J6D5+GmlvkURVi7XQQ7LXtfKi8YvwNVUBkayUuE1nNqhTgV1E2r371ToC0WeQSc6AesJ/jktui3xCr9uoN94c9C6JC86yKp47KxaMj60vbwFhI8SMiBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJIgrn51; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjNu/juK"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6940DC2BCF4;
-	Mon, 17 Aug 2026 10:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786962457;
-	bh=cYNzeZh2Axi8jkvO3zOnqC5HKlk/dOB3tvbLJY35Oc8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PjNu/juKwAmGiZ2kTNmc9U1nyarI2q6xR6egEoOco7unyoNEQNu3QvItg4Fy5m0+J
-	 Uc6E89Rfbl6zlSa9KoKaD5mzu1nFkidFg37NZ0UQxtZxgabjt9m7GJHE0vSV9LNIPq
-	 cgpdXJQ1ORk+Ys+41xuWqj4wH9diOK4Y6ZjwMeFJAshe7mP4OdPZfvk4ATKk7WvDmv
-	 zsACbi5UYsjiPxnHAniOaHVy76XHqhsjTRjK09BClqmw9pB8/WkPfdcNtm24IqUs/m
-	 tyEcD7xc3VXY/BvtL9Z20P+6oNS9rksgrcRFbApmm9tNgirtMbmYmKwNValGSdNTUO
-	 tZKXXhUsHYU+w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EAEC5DF66;
-	Mon, 17 Aug 2026 10:27:37 +0000 (UTC)
-From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Date: Mon, 17 Aug 2026 11:27:30 +0100
-Subject: [PATCH 1/2] arm64: dts: exynos: Add initial support for Exynos5515
- SoC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJIgrn51"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8915D1F000E9;
+	Mon, 17 Aug 2026 11:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786964855;
+	bh=biOqkm+9BioQJU4c0xKJHFjIa1LDWfVFN2S4cqtbLHw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=EJIgrn516V7SW/w33JwxqLg1PgqwK4GlovqC0LNZgMFCT5oqsnoheHeeQAXF3YpKw
+	 1+amHPU1J9EhG37YzI3tS59PB1H3xehx99L9dXPb4w6oeO2ppOvfD0WPGRG7M7wCWH
+	 A5TmG8NqwBxgMPBGuPD6CKn3YVsJM5c8HUUZ8ccYA5iYYQqtU/75zdzGGJSg1pZpgS
+	 lbxuo8DEPc9mic7GhIN4nu6XwV7DVXDMcDi62rmppzu9HM5mYrL9PnjH8Tc1pJaahN
+	 GD7npcDpsmpkhn4YILvRPcjJNFh3UpWgNtOYGJgYqGw9CYG3UEnPhSAp1tMgbdiIpu
+	 muj52bDcqG0lA==
+Message-ID: <9e0c8579-fc12-403b-8df5-9cfe0a779fd2@kernel.org>
+Date: Mon, 17 Aug 2026 13:07:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260817-for-next-lucky7-v1-1-42ffb2b71ba2@member.fsf.org>
-References: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
-In-Reply-To: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Hi there,
+To: aidenisik@member.fsf.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aiden Isik <aidenisik+git@member.fsf.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6106;
- i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=7HSvN4K/1Ytjbafu8H69/bmsHu5n2zlSouseQ4xC7D0=;
- b=owEBbQKS/ZANAwAIAUknAbLEetfrAcsmYgBqguIWVUl0RPPX9hR/1pk4/gb9C3Jeckmuz73IY
- jTkyt3GoIiJAjMEAAEIAB0WIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCaoLiFgAKCRBJJwGyxHrX
- 68m2D/wOxLIqCkhMgZh35IMFdvET4yT8YsFYTaLNI7M55avdOWUrrJdG/hGs1EjjP7cpTA7CQkc
- D5BYcOABQzESbcUy2I79XUzLHm8MxX+A65FlNPx/0DI+7L7RfVcy/MlrHRViQOXlPNSsd1fxVHp
- 3FzO1rhiWHTpmBpbqtdX6Pb85nHPfl8IubCd4qr4QTG1QzcL5L+1AcA6KLZnrERVXL6gDLpCYLd
- 9fQTQ7Om5MuZSFL8TdBfPiaqi5jjt0eEqKnZhsoWFuya3SxvG0uop4NUVac4ViHMIlBf8RUbugn
- JtL6dja5VhrYkjbMGWRqBDxxDzokjDPfNGy7Aq0LCJAlX3KKT7w2U0NPTUGDX8H9l7wsebmLA2O
- +0s1cACe/Oi1eKf9J0QWGcDfc6JEHIp3D65sEraHWMZ3qZm5bVzqESvejjfRSznoylvP6bJ4sUn
- 1mD1TU7X3CObt9bJyuldq4itvZ3QMCVZwWHGUJZIHeTgTck6S+BhaEN62GZiViCSAQjIEteYVYQ
- WP0hCNtAWGowiHYLB8MerphnMhVc01PCz21SWA3bnTy5syOAGB1qMBssmyQA+VLgCHNKo4WG9IH
- JUn0uMuPp7Y5DZgK+2A0FgFWcDg9mCu1uPZgaiw6NkBLj8OPXjxHvYDLL2sLsJBas43G4NJgNB6
- h3p0tMdIx+fQRBg==
-X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
- fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
-X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
- auth_id=956
-X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
-Reply-To: aidenisik@member.fsf.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Aiden Isik <aidenisik+git@member.fsf.org>
+References: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Aiden Isik <aidenisik@member.fsf.org>
+On 17/08/2026 12:27, Aiden Isik via B4 Relay wrote:
+> This patchset adds initial support for the Exynos 5515 SoC, along with
 
-The Exynos5515 is an ARMv8 wearable SoC, used in the following devices:
-- Samsung Galaxy Watch 4 (SM-R860/SM-R865/SM-R870/SM-R875)
-- Samsung Galaxy Watch 4 Classic (SM-R880/SM-R885/SM-R890/SM-R895)
-- Samsung Galaxy Watch FE (SM-R861/SM-R866)
-- Samsung Galaxy Watch 5 (SM-R900/SM-R905/SM-R910/SM-R915)
-- Samsung Galaxy Watch 5 Pro (SM-R920/SM-R925)
-- Samsung Galaxy Watch 6 (SM-R930/SM-R935/SM-R940/SM-R945)
-- Samsung Galaxy Watch 6 Classic (SM-R950/SM-R955/SM-R960/SM-R965)
+You already sent a thread called "Hi there,". One is enough. Please name
+cover letters correctly, so it won't get messed in our mailboxes.
 
-Add the following support for this SoC:
-- Both Cortex-A55 cores
-- ChipID
-- Generic timer
-- Watchdog timer
-- CMU_TOP, CMU_PERI, and CMU_FSYS clock management units
-
-The devices using this SoC suffer from the same issue as many other
-Samsung devices, where the stock bootloader does not configure CNTFRQ_EL0.
-To mitigate this, the correct frequency is hardcoded in the timer node.
-
-Signed-off-by: Aiden Isik <aidenisik+git@member.fsf.org>
----
- arch/arm64/boot/dts/exynos/exynos5515.dtsi | 186 +++++++++++++++++++++++++++++
- 1 file changed, 186 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos5515.dtsi b/arch/arm64/boot/dts/exynos/exynos5515.dtsi
-new file mode 100644
-index 000000000000..5584c1a3aaf4
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5515.dtsi
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Samsung Exynos 5515 SoC device tree source
-+ *
-+ * Copyright (c) 2026 Aiden Isik <aidenisik+git@member.fsf.org>
-+ */
-+
-+#include <dt-bindings/clock/samsung,exynos5515-cmu.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "samsung,exynos5515";
-+	#address-cells = <2>;
-+	interrupt-parent = <&gic>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x0>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	oscclk: osc-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-output-names = "oscclk";
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupt-affinity = <&cpu0>,
-+				     <&cpu1>;
-+		interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		cpu_off = <0x84000002>;
-+		cpu_on = <0xc4000003>;
-+		cpu_suspend = <0xc4000001>;
-+		method = "smc";
-+	};
-+
-+	soc: soc@0 {
-+		compatible = "simple-bus";
-+		ranges = <0x0 0x0 0x0 0x20000000>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		chipid@10000000 {
-+			compatible = "samsung,exynos5515-chipid",
-+				     "samsung,exynos850-chipid";
-+			reg = <0x10000000 0x100>;
-+		};
-+
-+		sysreg_peri: syscon@10020000 {
-+			compatible = "samsung,exynos5515-peri-sysreg", "syscon";
-+			reg = <0x10020000 0x10000>;
-+		};
-+
-+		cmu_peri: clock-controller@10030000 {
-+			compatible = "samsung,exynos5515-cmu-peri";
-+			reg = <0x10030000 0x10000>;
-+			#clock-cells = <1>;
-+			clocks = <&oscclk>,
-+				 <&cmu_top CLK_DOUT_CMU_PERI_BUS>,
-+				 <&cmu_top CLK_DOUT_CMU_PERI_IP>,
-+				 <&cmu_top CLK_DOUT_CMU_PERI_UART>;
-+			clock-names = "oscclk",
-+				      "bus",
-+				      "ip",
-+				      "uart";
-+			samsung,sysreg = <&sysreg_peri>;
-+		};
-+
-+		watchdog: watchdog@10050000 {
-+			compatible = "samsung,exynos5515-wdt";
-+			reg = <0x10050000 0x100>;
-+			clocks = <&cmu_peri CLK_GOUT_PERI_WDT0_PCLK>,
-+				 <&oscclk>;
-+			clock-names = "watchdog",
-+				      "watchdog_src";
-+			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+
-+			status = "disabled";
-+		};
-+
-+		cmu_fsys: clock-controller@10400000 {
-+			compatible = "samsung,exynos5515-cmu-fsys";
-+			reg = <0x10400000 0x10000>;
-+			#clock-cells = <1>;
-+			clocks = <&oscclk>,
-+				 <&cmu_top CLK_DOUT_CMU_FSYS_BUS>,
-+				 <&cmu_top CLK_DOUT_CMU_FSYS_MMC_CARD>,
-+				 <&cmu_top CLK_DOUT_CMU_FSYS_MMC_EMBD>,
-+				 <&cmu_top CLK_DOUT_CMU_FSYS_USB20DRD>;
-+			clock-names = "oscclk",
-+				      "bus",
-+				      "mmc_card",
-+				      "mmc_embd",
-+				      "usb20drd";
-+			samsung,sysreg = <&sysreg_fsys>;
-+		};
-+
-+		sysreg_fsys: syscon@10420000 {
-+			compatible = "samsung,exynos5515-fsys-sysreg", "syscon";
-+			reg = <0x10420000 0x10000>;
-+		};
-+
-+		pmu_system_controller: system-controller@12860000 {
-+			compatible = "samsung,exynos5515-pmu",
-+				     "samsung,exynos7-pmu",
-+				     "syscon";
-+			reg = <0x12860000 0x10000>;
-+		};
-+
-+		cmu_top: clock-controller@15410000 {
-+			compatible = "samsung,exynos5515-cmu-top";
-+			reg = <0x15410000 0x10000>;
-+			#clock-cells = <1>;
-+			clocks = <&oscclk>;
-+			clock-names = "oscclk";
-+			samsung,sysreg = <&sysreg_top>;
-+		};
-+
-+		sysreg_top: syscon@15430000 {
-+			compatible = "samsung,exynos5515-top-sysreg", "syscon";
-+			reg = <0x15430000 0x10000>;
-+		};
-+
-+		gic: interrupt-controller@15600000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x15601000 0x1000>,
-+			      <0x15602000 0x1000>,
-+			      <0x15604000 0x2000>,
-+			      <0x15606000 0x2000>;
-+			#address-cells = <0>;
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		/*
-+		 * Non-updatable, broken stock Samsung bootloader does not
-+		 * configure CNTFRQ_EL0
-+		 */
-+		clock-frequency = <26000000>;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-+
-+#include "arm/samsung/exynos-syscon-restart.dtsi"
-
--- 
-2.54.0
-
-
+Best regards,
+Krzysztof
