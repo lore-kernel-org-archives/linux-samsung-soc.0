@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842983FB074;
-	Mon, 17 Aug 2026 11:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A63F4DC3;
+	Mon, 17 Aug 2026 11:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786964856; cv=none; b=RWeNtkiF33Lra8urdT7InrIsBnYerBld+Z65QDvbxkJBS1cQsWE3dcNbYjmnqi1i0pFV5OzZadDvDObzitR/bMrt8AkUkJtPZH9373spmxh169S8mta7zAct7yWm6BqERsTZCApGB0j3ZwOra9IvyxwdMPX7PXQD0kGALA/kRgA=
+	t=1786965021; cv=none; b=h2Ca66sX6b1o+ZGTLmxRqHQXILKgQYW6iH07ybHKedUqlmBdnuBMHJhPiqZ+VHe8MI52nQPa8UH2vhk4SSG8UTu3wL4IKeKSC0K914iUSRdPbQJd0KpiALW1kCxwE6e5pQ9a7hTNkEOaCJ+h9eDB6g03m8DlnD4zSCcNIxBHFGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786964856; c=relaxed/simple;
-	bh=biOqkm+9BioQJU4c0xKJHFjIa1LDWfVFN2S4cqtbLHw=;
+	s=arc-20240116; t=1786965021; c=relaxed/simple;
+	bh=cYZtabfWi7/ZDayXMrdc/ae//cy9n87ERVKyNzBe2Ps=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnG8JFbyPZpfJlCVKPuZVVkO0g9LD2JYT+2j69KrCJwTzQ7iHx/+mY2J6D5+GmlvkURVi7XQQ7LXtfKi8YvwNVUBkayUuE1nNqhTgV1E2r371ToC0WeQSc6AesJ/jktui3xCr9uoN94c9C6JC86yKp47KxaMj60vbwFhI8SMiBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJIgrn51; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=XvEpVHCpuB4lYV9yLt8MJ4UQBe9QTyMi30i4bGjV3Hm33uJHvtnmYL8SvOcR9J90R1fNEUWyEcmL8R8+UVdphziy6hf/c5OxEoBYIBWsAIEWaQ2/y733F3ceRt9SGWS1qlBJwTD0RfHzygw9yCF8cPOP1PrqkLJCuE3VC//4xh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=La2eQUl4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJIgrn51"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8915D1F000E9;
-	Mon, 17 Aug 2026 11:07:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="La2eQUl4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622851F000E9;
+	Mon, 17 Aug 2026 11:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786964855;
-	bh=biOqkm+9BioQJU4c0xKJHFjIa1LDWfVFN2S4cqtbLHw=;
+	s=k20260515; t=1786965020;
+	bh=dSeP13pLOt0UEaC0vv4QKQHllgx6b6/h0P1GwZl/yt8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=EJIgrn516V7SW/w33JwxqLg1PgqwK4GlovqC0LNZgMFCT5oqsnoheHeeQAXF3YpKw
-	 1+amHPU1J9EhG37YzI3tS59PB1H3xehx99L9dXPb4w6oeO2ppOvfD0WPGRG7M7wCWH
-	 A5TmG8NqwBxgMPBGuPD6CKn3YVsJM5c8HUUZ8ccYA5iYYQqtU/75zdzGGJSg1pZpgS
-	 lbxuo8DEPc9mic7GhIN4nu6XwV7DVXDMcDi62rmppzu9HM5mYrL9PnjH8Tc1pJaahN
-	 GD7npcDpsmpkhn4YILvRPcjJNFh3UpWgNtOYGJgYqGw9CYG3UEnPhSAp1tMgbdiIpu
-	 muj52bDcqG0lA==
-Message-ID: <9e0c8579-fc12-403b-8df5-9cfe0a779fd2@kernel.org>
-Date: Mon, 17 Aug 2026 13:07:29 +0200
+	b=La2eQUl4N7Q0Yhhht8ZGuQViek1nzUkVTDEQSlfFatl9XBkecyp0Wi46AV9yCw5AI
+	 Ja2C9I3f/J2fwlKfs9oSk+Ly+NkORgsUs4gfWoeCticGhhAgLvZIg5y0GJYnkklzT4
+	 V4qdEY9i2ONulOmVRKbET0QhzFEvlkdeW86Rk8cVilgYX6P1qQTlErKvSlnL3ugxok
+	 fjp/Iaf4vMtvsMCTCZxLWM2Yb+83MpSQJdpCYywFyVva5p1NakmNzMMXBUBXPLiEF8
+	 d/tVXvyBJEB1tyzskmj2G+xfKOG34/L6An+genrgQobdxR0SN7kMMRwoVi596oX70M
+	 z4adU6xDzjtyw==
+Message-ID: <d592c554-5e43-48f8-a1bf-5dc6c6525c27@kernel.org>
+Date: Mon, 17 Aug 2026 13:10:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Hi there,
+Subject: Re: [PATCH 1/2] dt-bindings: hwinfo: samsung,exynos-chipid: Add
+ exynos5515 compatible
 To: aidenisik@member.fsf.org, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
@@ -43,7 +44,8 @@ To: aidenisik@member.fsf.org, Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
  Aiden Isik <aidenisik+git@member.fsf.org>
-References: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
+References: <20260817-for-next-lucky7-chipid-v1-0-eb2908705c0d@member.fsf.org>
+ <20260817-for-next-lucky7-chipid-v1-1-eb2908705c0d@member.fsf.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,15 +91,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org>
+In-Reply-To: <20260817-for-next-lucky7-chipid-v1-1-eb2908705c0d@member.fsf.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/08/2026 12:27, Aiden Isik via B4 Relay wrote:
-> This patchset adds initial support for the Exynos 5515 SoC, along with
+On 17/08/2026 12:11, Aiden Isik via B4 Relay wrote:
+> From: Aiden Isik <aidenisik@member.fsf.org>
+> 
+> Add "samsung,exynos5515-chipid" compatible string to binding document.
+> Use the "samsung,exynos850-chipid" compatible, as it is the same on that
+> SoC as exynos5515.
 
-You already sent a thread called "Hi there,". One is enough. Please name
-cover letters correctly, so it won't get messed in our mailboxes.
+I do not see how you use "samsung,exynos850-chipid", probably you meant
+that devices are compatible? Just say that you add Exynos5515 ChipID
+fully compatible with foo bar (no differences in registers) instead of
+repeating the diff.
+
+s/exynos5515/Exynos5515/, in every commit msg
 
 Best regards,
 Krzysztof
