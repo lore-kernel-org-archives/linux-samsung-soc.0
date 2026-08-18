@@ -1,88 +1,88 @@
 Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E6029E10B;
-	Tue, 18 Aug 2026 13:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B48476CFE;
+	Tue, 18 Aug 2026 13:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787058726; cv=none; b=XcUPXtAcTD0Pk5FMp8XOzf2Dsy3JPn0k6aVykfsTLYgpNhkncwMWkxEOtNUsqXkYSoIPbw3F4BU/XkGqHgtixHqFZmU0DRasv9gE/eCbLq0mACHwo4HsOzGZRcUDrprdwUujYEbT/xceXP5AcHv9raIdHwloKDPnduvCZd6ZWX8=
+	t=1787059184; cv=none; b=REMX3xcZkpX1UVEGoQJN4V6ONLRy2RQLxY2iQqVGp6ue6xfSMaq3Zp9vzhyg6r3faHq/L1xmFE7+PNAMk2kWu+/jf58sXVQ8crmtsZliRAlH3qHer5NfKgts6EuaiXnAjbalrYnuPNuAl6WlWzfKSUDeh79HdxIS1saX08I7lqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787058726; c=relaxed/simple;
-	bh=uRONrne686OX/cJsaUhShmVzBciuAAPBA5LjELtZo+M=;
-	h=Message-ID:From:Subject:To:Cc:Date; b=RqNYLpQ1QvV4CaE3pbU0Nue59JwYCWahg2H2hBvePXE0VCmbjPaTp455Y4ndJDNa/P42YekGJeHckHLwD0m7BthvUjSnlV4DaVp0dEIfT0HPBAY1VXk/AZj3thMeZdxVfN2+F5ZbHmyDhLPyJGFMKXtQAFW3BsVrIcjJtMGshcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ti8G52xA; arc=none smtp.client-ip=203.205.221.242
+	s=arc-20240116; t=1787059184; c=relaxed/simple;
+	bh=raa2KNOPY2mQTdR+iGOkon9LB6rg4uy4ku9Frf+CxxM=;
+	h=Message-ID:From:Subject:To:Cc:Date; b=IiwQZCx+IweAzVbKYWYaIvzvXLBmizd8x6r4KSQryCglzS6vi6e/hHYJgtD/PB4UBIgCJpUnoTjnwr2LXUB67SR9xMtS5ebT6MCbUfqYQBkiohFeLqmZPXzpmuJqvssNJtUByPPWrn7J/LSP1kMmusP0Dq4hEpTnHeXbi6CH7GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jjPVkooN; arc=none smtp.client-ip=203.205.221.242
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ti8G52xA"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jjPVkooN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1787058720; bh=c2fIO+Uh5lMfJ0TQG1bXbVsEM8un3Gt2zARsM5wCiBw=;
+	t=1787059179; bh=EnE8Ac80Xeo0YvrWYWO15hMp/yHf4W3nmKkYtcbFD/c=;
 	h=From:Subject:To:Cc:Date;
-	b=ti8G52xAXRbFVyXyz7uNPB666UClNNWdX+IJr8Bnd8/MTpTwjRyW/4PNJpC5veWjz
-	 Vn/ZsiiEkiPhj2AU/Sif+zUHeOO0lN6LBtOj01hWkJ923+rqBw587n0sTb2g56crRN
-	 uJQgeFa0VxEE6RJMKZ5sckkwUr35fr5Hao4ryWQE=
+	b=jjPVkooNK06YQy0y7BPHfvu8U0ne6XfYE+jqIRj6tizpgfTTU/ZT/a6bNXCOlP/26
+	 WCwnOQMvydCaL2hbo7+By1eZ5t1EMEo0ffDH6rUvUIhdwtGY4ENVw6WUTtdxSwaiZp
+	 ocawPQtu/8j6jlMfbRifFgA/T0q/swL3V5vn3lBs=
 Received: from [127.0.1.1] ([5.195.0.150])
 	by newxmesmtplogicsvrsza63-0.qq.com (NewEsmtp) with SMTP
 	id 1721C6D8; Tue, 18 Aug 2026 21:05:50 +0800
-X-QQ-mid: xmsmtpt1787058627t25s38j6k
-Message-ID: <tencent_692077742B9CE600137EC92B0FEA258A8C09@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25G3eqbtrbTrgpSgA9Ra87BwxRtPtbh3cRgEgFB8YusHM55t4oyMC
-	 83ljhbN1E/dVTyneR0eJWsOVMC1HugibIBYUvhn8gSZ48kQIpRpathDCLt+x71cxbDhACG65heRU
-	 X+nbWBDc6Fg3oaFr7hIElV8ZYe0SHg5zpsKlu9YK0N2TvZMbEiF312g6HLcb3ujABwetTsae2NcC
-	 BEecL0hUgmmjdIQZel5Nyn1Jp+A6YSNJHDLhRtMioa2WEm2iV5PXCGmGZ9dXbpUAuEUkgDD3xHf6
-	 HU+CJ8StlkmE0312wqER7kRjDp9pQMPPB4sYIU/rC9DEh4Agnzd2vtXKHb4ZK2XluMTxwqRwO4UD
-	 t4c0nnqG9tScB+k1L/lV5j6GpyI7M5gRzhUjpfg936bb0yb8OE7te63RYNu7TSk/7GHTyHPQg9TL
-	 tTw8yFPt8BPu0s48UvfCje0yhUBqbmjC+5OLCDvQX2Gs6iGigvqbeTaSro6jTMKMEKr2D+VtzVvx
-	 x1NR5xl4rve+UwhVPW+jHTDKNdzk8CMbmROlU1StxouM9gzki0MJ1qhAzmxraNIYvrXhCb8+wiJ8
-	 N0Uiou7iEGHDiSdSj5DfzWNNVDrNd2RkY2CcB7IZiu7vwitqGXUk6H89KKcHorrJLkIbyETV1kAQ
-	 kB/7NobQlK92MFK0mg/2VIKfnBOdEs0WJ+lKfqjFxtLBx3gVPExNBmqqqb5i3Lom0ub45eVHaELX
-	 JunnYFyzmE9uKu1ZMo4g5eciiskBwmO1Ax7ucyS7R6t+XHDXcsvddEDw/sylP5mxelGpq9To0w05
-	 MqYOGKDoHgCY2qbR/0QkXHonG39QA5zED05sEFaat+BhTRuC+27U7yb8agKAHb6QTyZyXJ7s44V1
-	 2UEygr2Eivdb+ZCp9+AQk83uTkNpiQxPwGsJqbryQ4VWTqMItOzIG5jjtCyAFqG2001EPSfijJR6
-	 Rsq3jR5newlaa2vHXlUoKxv4/KsTsYorgMNr8E7NxUGWZPlSLPCLYnKbXgbceHd6VANdtuI0sP87
-	 SNHE/y5f4DjsSDesAZXJwSYAxRDjvwyokHeRvnNoA+/0qa8IIDZfSLULl/hZnabNX0YoJD5w==
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-mid: xmsmtpt1787059086trq17d73e
+Message-ID: <tencent_405FF24AB67AAAA26BC85ADD092710C0BB07@qq.com>
+X-QQ-XMAILINFO: MRMtjO3A6C9X2uROP3QJmhslvlrFV3Golkzi8hDQC5JSUnIFRZvFEtlTKN0uff
+	 fwGAX66sk+/bbEuY9nihtoVDIwg/tDaJhEtiWgo+tSBG+OQPpDINDA8xgdwMSPyi6IA1K62XAVU7
+	 5xNZgeowHG7ThZFJlOyPoaBa3qgzq2Qm48/Kz0o1U3Eis6RK3QBuPBHOrP68dg2l6PK7Vyuh021u
+	 wcBTspGMIhDmzVDzhqbfx469+hmQiBMqRiiDCYVTlExQYcVTDyV9R8ebv8d8mCIY01Jj7k+JXRTp
+	 +ttl9bZmugcRhiPtN3D6p1Pk0xTbry9uMSOdIt31lqhr1m8WJnqyNpuyxhXA7/cTmXYfszuRZaVe
+	 feArIgP43WyxO404ADfM3pZE26jnyw4pDngRDGw3unu/xz0tgj8q/gXPESoUwbCnlKb664Ah/j9a
+	 kravXFZUaEoxMha9kg6P7b1C2o0BU+9gfQkESKUWpXiJvlcwWgvl3oKkcdHZZuB4ac+9JGdTyxrw
+	 zrlrpQwg34Gw7UF77PML0WDHCmsi3quKUw2Dvv0RHCgtIi2yLsWJdxlSAI5oAC1quwZdRAXUNF2g
+	 nUSIYPgbCzjMHtt0U5vWYmPoWHK6Q0wBmgxhP0wGF37Rd06T9MVdCkSPmaBQjpZiNAM7CiCFOWJx
+	 QXYO7At16K/P8nPdM3bUItAtpdSvS7ofWVg32Z7v9zJuBz3YuZDskctld19VyUtsW+KJTaQNfYqi
+	 +NWy74azsfeNditfQQBfyN2bP699/AylwVYTdfNehPUCB0dB+zJLsC7j0BtdFa4fEeqQd3n5mXIf
+	 fp8GsZypT2YuDk0o/KrIJaOMelzIlFQ3gqgVfflualv5SnfiSbjdVYRHJLW6/VtllKz1TDl3STBy
+	 vvFPgyHZwvjmq7aK7j71+P3etgjbmeVU9EYq0e0/55WLZpY29507Qh31yDXvbLbSol9JqwG3/JPZ
+	 EGSFManxfBoxt8zG/grL++6czZRFHB9ygnYqXSdFfzzYw8sSIylyf57PEdsvsfmp3vWJp5LbmmK3
+	 bn+ddeMARkl17idbqgEtw8cUlHOpY=
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 From: Jiawen Liu <1298662399@qq.com>
-Subject: [PATCH] i2c: i2c-s3c2410: fix runtime PM cleanup
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, Andi Shyti <andi.shyti@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] memory: exynos5422-dmc: handle clock enable failures
+To: Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Date: Tue, 18 Aug 2026 17:11:57 +0400
-X-OQ-MSGID: <178705871733.291840.2722309413893899384@qq.com>
+Date: Tue, 18 Aug 2026 17:19:36 +0400
+X-OQ-MSGID: <178705917686.291840.2383875087169763088@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-Keep clock enabled until adapter teardown.
+Check clock-enable failures during probe.
 
-The remove path disables the controller clock before unregistering the
-I2C adapter, so adapter teardown can run after the hardware clock has
-already been turned off.
-
-Move I2C teardown before clock release (pm_runtime_disable,
-clk_unprepare) in s3c24xx_i2c_remove.
+If a later clock cannot be enabled, unwind clocks already enabled on
+that path before returning the error.
 
 Signed-off-by: jiawen <1298662399@qq.com>
 ---
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1136,11 +1136,9 @@
- {
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1297,8 +1297,15 @@
+ 	if (ret)
+ 		return ret;
  
-+	i2c_del_adapter(&i2c->adap);
-+	pm_runtime_disable(&pdev->dev);
- 	clk_unprepare(i2c->clk);
--
--	pm_runtime_disable(&pdev->dev);
--
--	i2c_del_adapter(&i2c->adap);
- }
+-	clk_prepare_enable(dmc->fout_bpll);
+-	clk_prepare_enable(dmc->mout_bpll);
++	ret = clk_prepare_enable(dmc->fout_bpll);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(dmc->mout_bpll);
++	if (ret) {
++		clk_disable_unprepare(dmc->fout_bpll);
++		return ret;
++	}
  
- static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+ 	/*
+ 	 * Some bootloaders do not set clock routes correctly.
 
