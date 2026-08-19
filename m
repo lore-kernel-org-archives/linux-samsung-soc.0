@@ -1,139 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4642B33D;
-	Wed, 19 Aug 2026 09:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787131616; cv=none; b=sEvn+AHveXATWepLa5XyZxZLR/beZeu+BgG1OIZV3TYdx+y3NyIQuR6M0aIBqG7ihRSIofrYF2wkeydq1hYPigSJr71a9vrckcxw5WSf+gPO5N7kwptWDCKt/gmxPYlHeAm0tjVQkM0JjO/NDdPCgi8s9SRDFT/Cq3q/4A/xvUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787131616; c=relaxed/simple;
-	bh=unTHroLxpYWadj5peuEMUTXs37fBzd/AbVM0REA87Fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NhofATio4G9BaU5yi2klcDyefKUnp8MVDA+DZB3eLvDCrOr9ttKq53mpjN6wZtSd51GQBkbLouNMuqpcdk49maX6nqlGZH37tZD78zg2WTgK8og2iOm9ZJnsYqZCO7WpX27OefDHJteM0NH2RYeTYGGu9AHsUxE8eereM0AIKW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ap/Hgs9K; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B190B2FFF90
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 12:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787143899; cv=pass; b=nmh5Q9ZTBjlK5kI8thT33CqlgNsUiwDSOR/gq5vGPjePxSX4pHGUTr1EC9WBNNK8QyDeV+oruHITVbkH1/UTsC5FeeONDDnU9bUwxVXvKXAaHZcgOD68GWK5XD7aI2yqI9uKoy2Jeh+QvxTn2FGtmzwCyQ6rWewNtgw7rSOpd8Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787143899; c=relaxed/simple;
+	bh=EjJrwHCol5OOGyWPDEykJ8H8IZKU6aQibgJTG3NN9OM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hrKGShT/hYg6VNRSv0y2B1RnTvdEk4DEH0b6AhdpzWDys/yq3qbF7zUDfXW9f9HKQLGuwsphDyudnLkk+Cz1uYgKKtJit4eV8FuSVjMu2IUQf+gwy6YBvJV0Dq9pF/OWU4rnzWF9i0A1eB1PmTQ2qt5/g+0fcv1AnV90YSP5cjs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpTWB6Za; arc=pass smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ap/Hgs9K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10101F000E9;
-	Wed, 19 Aug 2026 09:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787131612;
-	bh=3YOlYCjsLuF/lSuTPGHsZ4ENyvoxSjg6VoukER5Uovw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Ap/Hgs9K67iwn79UhZA9HfKJcflprkXoZej9NOT4iVfYZgi11SAGPHmic5e7sYU9K
-	 gOtACzzZodSL61at/rGUNRZhcdftLSr2D8MLHouHkbUx8GxCMfvt8u8kWQLjns2yfi
-	 AaZa+uDR1a9HQnYjaDjj4WvnJVijQI1ObdU9WjsQ3zh2Fh+zGHeksWmCfp91iVQq2b
-	 cAtQESzo00IZVKbJ0xc5qDX9lmwusARBLK37IgCqSvX1EiZimU7DqgchiAmNzRGam3
-	 RVVL6+x6OGIsmn+vnfEzqDspVA7DVebEB3F7VLrzo2UsrWr9+3SS0HaytI9yFza3fZ
-	 L0nTIwZxXdnRA==
-Message-ID: <72ec1b1f-112d-4f65-897e-e99652c5a7bf@kernel.org>
-Date: Wed, 19 Aug 2026 11:26:39 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpTWB6Za"
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-966eabad303so251951241.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 05:51:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787143896; cv=none;
+        d=google.com; s=arc-20260327;
+        b=d5nRCQL5AbYjDWgakeMEPSVvxT1QXpPS8P7EQzLU7Utv1IQ2Je0ftqrQ0OlL16dwVt
+         LgG4N7+fD8Jrrzyc+1nT33kA1KrZOc4nX2Dr8mp71WV6kFahyKYhjDb7x00sNmUGxOLM
+         uI6T06SrhaTnxtPmWVQOaHVsA5x/bErAR4NlZJMftBqLpljgQT7X8t4DxBKEZI+fAceC
+         PAgDcs0CCVEzKPuEJsaFv/Ph+YK00iSZNDZQBGRTjf57gaF941yos2+8msNAPj2C/Ia7
+         GXnYBcFnyVXqBcxyG7Rlqp/o/X82HRKPS/XkCziihGuUvMxlmXzUUMEWfUuMn4LXTvoU
+         kBsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=b89xWKguxhb5kJiAHzj3EgRzZ5QR0sQtBsj6gohCrzw=;
+        fh=sK+KC/KLBZBN5Ms5B77UmE01HQXbvRtTaGcFUO3s+yk=;
+        b=myZI4TEouHhmPdQ6aFEyGaJSsw4hQLF2XaJcsMy658sI/OHFE0Gt6VQZp6Pj8yxgYN
+         AEpiIpza4xCQdx0RIR7G7RwSn/ctbA7iPXSnCef4RnHNHGp9cKZJjUn+zYItzaFQbJd+
+         4u7keuG19+vrJe4GL8mnNZRlSGSgowJI1ekefCrnA79VkKxGO5QZlBLO4h0iT9j/lYbp
+         Zy9xksa2mtYIB4gaw8XpWWRwmmK4c+sXwwLWgx0WwuWJTfIKnw2VAZgI9kfIlJSCeJUI
+         DjFvrskCR82R/cJLKyGBce2TkNyI1xqsQFs2Dt0uP4y9wLLE577OmKxDcrWQWG/6joi4
+         CVug==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787143896; x=1787748696; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=b89xWKguxhb5kJiAHzj3EgRzZ5QR0sQtBsj6gohCrzw=;
+        b=XpTWB6ZafGMX2za6DeULcKkHo4glBdZxlqUpjg+AkZ+QYoEl09JIdONxS9/ogRCLwS
+         QOrbDvqiwipNiJsI9S8LzFCMb0wm8m2YSzyPxKSZlH8U4mqbbephxyYdW2Y6xcpAzVCQ
+         UY9Eb33j1UZyBxCkpneXOsQv8xmgh9RoZ2TrH83ryUOFtydqw24yqP3ZW5IQawv7BUYN
+         Ke7GP8ADEGj9Emp9tmCTywoahu6xK9RmbnBoqQLz2VcAgX0IsFjuWf9ETIIP8lrR18jo
+         PbAIpCsX6jV5JrL6ouL3ROpN0/uhsj4+2AyJtMjZqlSI0MsD1dfJ0tWUnpW1Uo/Sitdu
+         71Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787143896; x=1787748696;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=b89xWKguxhb5kJiAHzj3EgRzZ5QR0sQtBsj6gohCrzw=;
+        b=NBce2bS3wJD3DGIvGOZbEmc9Wkc2WJ6cI+1e35zpDd/RWv3H4R+j1N5n9Rri+G+1+J
+         IH04QlPeyqDsLVWgOO0Kd2rIRrjSTu7QjY2F5Td3elgcBbyQ5Tf8vOBw1UmXkFebj+bd
+         JFU9PXzxzOdoVFBL1sX1ttrmip3n3ts4njTl9pjiLmBdAD9d17R4xiD5ApDHk8+mns0M
+         /G+LrVZwg7a98UK8D/0qYQ5vXxHE01hAWk2xvUsY4d5jrxLJCqKgyHyj9KSS9mqsZgTl
+         NKOCHpdY3D1liahCTN2spKZn5JOIEQH9pSwCBB4vr6nEvpnN0R2BOVqlNW9S0Q1q+1xU
+         WRvQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpGfOLzFVqUBrVl/Xb3EQM3fPP5xJRkpSHaXeRXd+6eUVKwpBWFRjHWoAm/DnYIHq2ightfFS9COV6K+y0fOQu5TA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+U8jdva7Hj83YuEjs2aqn0aX9txJ7hH3YSj9xPZ190H9Nrzyc
+	AnUQGMUjDdtml0f43j+Kh3LHI/p681iRjbtAQ0qyuEKSrJJL/g3FKtkGUjDLfwhE4I22UHGOS+v
+	OW+xcNZaXCtFZfmJfaAVswSniNtSH3pE=
+X-Gm-Gg: AR+sD12QMNaO/AZTaA8+wMeulFhGw6Uhb0Lqn4KNEn5YPMCmLOg55gtlzGGwmtxX+Af
+	yUtH2uxCmtGCdX4IIgYvnBimMZFqRSWFPmkSOBLJLBuJHt5zd2vxDLdlPr38G7znkLpWliZmiRb
+	dPipmXvhbf2/toOg/nglgcGQ5Wd1Ewr0H744D8xXPZT/AVxcIom2HcVtcVpmobbw+kpNiverkeF
+	oky62N8vU2u0X2Uu2UNMjTiK+YwF2FSywLfx+gCpMdMcfLXGL1eoyIXg8kmaplzOT7G/dXrn0f8
+	cuosom5FX/Q/39aTTZ4cgoVllAg+NY/41HxY0g6qJvPWIt+0oVUK57bQ/Dg6E17Wx/TNOe8/hYI
+	=
+X-Received: by 2002:a05:6102:e0c:b0:778:5369:763d with SMTP id
+ ada2fe7eead31-778536977cfmr777017137.1.1787143896490; Wed, 19 Aug 2026
+ 05:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for
- frankel/blazer/mustang
-To: Doug Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
- soc@lists.linux.dev, Juan Yescas <jyescas@google.com>,
- RD Babiera <rdbabiera@google.com>, Brian Norris <briannorris@google.com>,
- William McVicker <willmcvicker@google.com>, kernel-team@android.com
-References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
- <20260722-contrib-pg-pixel10-initial-dts-v2-4-3abae9717feb@linaro.org>
- <20260724-dancing-skunk-of-novelty-72c1b8@quoll>
- <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
- <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260705110221.153481-1-mdshahid03@gmail.com>
+In-Reply-To: <20260705110221.153481-1-mdshahid03@gmail.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Wed, 19 Aug 2026 21:50:57 +0900
+X-Gm-Features: AcwNN1WZpgbj7Xmht22CXRTxKba8QfE40w5PRb6wQWHMVVHwKvxFfX4oKRnrA9U
+Message-ID: <CAAQKjZMKWDqbq+onK9JHejecie0Nh33WQ+rUBa=_0pc50FZU1w@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: vidi: use memdup_user() instead of kmalloc()
+ and copy_from_user()
+To: mdshahid03@gmail.com
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/08/2026 00:13, Doug Anderson wrote:
-> I did some digging. As far as I can tell:
-> 
-> * Nothing in the DeviceTree specification 0.4 [1] mentions that
-> aliases are deprecated.
-> 
-> * Nothing in the dt-schema repository [2] causes validation to fail
-> when you use new aliases and there is no "allowlist" of old aliases
-> that are allowed for historical reasons.
-> 
-> * There is a single reference in the kernel "Documentation/devicetree"
-> about not using aliases to assign an "instance ID" [3].
+Sorry for being late.
 
+2026=EB=85=84 7=EC=9B=94 5=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 8:02, <m=
+dshahid03@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> From: Mohammad Shahid <mdshahid03@gmail.com>
+>
+> Use memdup_user() to replace the open-coded kmalloc() and
+> copy_from_user() sequence.
+>
+> This simplifies the code while preserving the existing behavior.
+>
+> This issue was reported by memdup_user.cocci.
+>
+> Signed-off-by: Mohammad Shahid <mdshahid03@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/e=
+xynos/exynos_drm_vidi.c
+> index 67bbf9b8bc0e..183671de711e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -273,14 +273,9 @@ int vidi_connection_ioctl(struct drm_device *drm_dev=
+, void *data,
+>
+>                 size =3D (hdr.extensions + 1) * EDID_LENGTH;
+>
+> -               edid_buf =3D kmalloc(size, GFP_KERNEL);
+> -               if (!edid_buf)
+> -                       return -ENOMEM;
+> -
+> -               if (copy_from_user(edid_buf, edid_userptr, size)) {
+> -                       kfree(edid_buf);
+> -                       return -EFAULT;
+> -               }
+> +               edid_buf =3D memdup_user(edid_userptr, size);
+> +               if (IS_ERR(edid_buf))
+> +                       return PTR_ERR(edid_buf);
 
-No. The rule is saying: Do not add instance index properties OR custom
-OF aliases.
+exynos_drm_vidi.c does not include <linux/string.h>, where
+memdup_user() is declared. It only builds today because the header is
+pulled in transitively. You would add the include explicitly.
 
-Logical "OR" means here that for you this sentence is equal to:
-"Do not add custom OF aliases."
+This is a trivial thing so I can handle it.
 
-It's true though that you did not add custom OF alias, but a generic
-alias, yet you did not explain anywhere what this generic alias means as
-an ABI.
+ Merged. Thanks,
+Inki Dae
 
-
-Best regards,
-Krzysztof
+>
+>                 drm_edid =3D drm_edid_alloc(edid_buf, size);
+>                 kfree(edid_buf);
+> --
+> 2.43.0
+>
+>
