@@ -1,371 +1,173 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8C93B7B68
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 13:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.177
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787147217; cv=pass; b=sje/8vsZMHREiwYEWxh8V22Ji7oNxnScCL+DhwHnLrEtPMDsEwM3cITDLw4msC7wm6Qg522fyABjRRQxnQ390m4sRlM3+XBizucYV+lrzRFu8l5DQgEPdWPwnEon9b4OiPHRNBapNEM3mKyGNOVXQaBWM+LiNmqdAyGNJ/rlgKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787147217; c=relaxed/simple;
-	bh=7kaU1K4JN2nHoqShfQjPhwIYZu0ne7gMRI9iI645Wo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NVKVTb6ZfxwBMieTPr18366ggmUcaEjMMjwsBGQJqWvJFX3VYc3alnK7h8B6xL/uYaA4L0VWxrCgQStuIZWVaCA0MciaBn6TaS2WUEOaPN6PocTs59cPPn36TXU/4Sf5OhdXVlNeiB9O7tLUpfg2gfujVvq0sCRH87rYrOQ7/vc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHD6qpmY; arc=pass smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EDA3B8950;
+	Wed, 19 Aug 2026 14:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787150219; cv=none; b=PNU1yC3AM0jooOcUzL01S5Hb3GHfXjNRI9Ivqbdl1k0lVNgn/wHzOOyyfwufsGMmIqcl18hfFZDN3qojjwpDAvB3mb5MK6gxsnK0udVSN07R5bryucJF1QowgPp5eWDQX38BzTpG/r+ArTljjEyYodvsrCCeZ+LCz/y1rSziayE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787150219; c=relaxed/simple;
+	bh=Z45Dh8YUc3BGrrWwm7xYa5Sg8QQjx0AzwyoEFJ/r5rs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZNtW09yA7QVOBaT0rQ3SrCb97zjm8H/v0sfKyT7QInm0O+6HvfnTi7n3xCV2uL3hE6ik+52W/YQJf4WRNo3E6C9ovvcsTffNdPaAlSmbpfBclV6kCf2vhoMWDMfZOzTmJfLPvwNX8NiP67eGX9cTlyBYlDM0r2GU6OXMYse/LZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Uf5fwkSn; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHD6qpmY"
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-51c2cce930cso9883301cf.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 06:46:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787147212; cv=none;
-        d=google.com; s=arc-20260327;
-        b=GRJGNqLNgr2p3GUuIv61N0PzRjGVMsP1XK9d6hyNl68PJY7IUEzAGTEeKZXQmAvUN8
-         EHRpN7bO9nSiF2wSK1q8FHoghWpBT4pIeMciP47P2Aa9I36cF/1VeQ9AsJPA9SEIE19/
-         lLADwXn1DSiMvUQ4m/8me5s96To0YtZqSOvPIiQAnPnj4rtKTmnpaRlLeV8QfcQ2mKCT
-         hjDX++uN5nI5vZ3wag4fPXqNP7YHwF6P2K0oE3u7gI6wUHKFUN3pPDwgV8BaaLyfPREb
-         ANaECOeDIsyJ2WhBws0glI1wlW3TL+KtUneUKnOA8AmPkB6SztQ+2Joo/fvXHKfnzQha
-         ay2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hU/Rrco2eHgoRkaqU/aKPgtdcd60SOy8SNUe3WgzR/E=;
-        fh=k32QBm2OwOR3mEq7OoEalCM06foxRfbUmOn2pxNr2Kw=;
-        b=b0pexoyt1Du7w9+xWt5RAg6EYEG15upWmRcGO7/t1xx1Q8bffCBOcG8bKS3AH5UXRf
-         iwy8+PpudPuWe3qxNVQZhBvMCF2DKB5kqb6t8Yc1dZjFZpAkrq/nt0O6VDoq1DWeoQEc
-         yCwsr6vrCn17ggsz8gzDgx4VeG9v0aY6I1/lj3nkLnDk7071NrLnr0WxifI9hW6KFGTu
-         XvbXdfPebMEn02d45di9I3ZVjz6ETX0Jrpev6sQU/POon4b22hZKntEToRYDo11QxdFQ
-         yyLCZhED7xxIs4efLl6jDOoVfrwr18TGdXAihwRVhlcDEHUqD8LesP1YFf/B1s2OeUHH
-         7QLw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787147212; x=1787752012; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=hU/Rrco2eHgoRkaqU/aKPgtdcd60SOy8SNUe3WgzR/E=;
-        b=dHD6qpmYksM0DbONALVMvtCkCzrvkyMMIe3ERBcxQrd84UR/sqqwooHz4idKq9K28n
-         vbckEfqpUyKKgk2y1dKYVhf/Ona8UMgjyndrlI7g/7lTqUGUuUgCqNyUH7AF7nhwC+P4
-         qS0YFQjv+PNqrLdLmSWes3oKqp9fdM6p6zmgH348U5r+OPYI4UJoHVqO6sHaMDutsXxU
-         I/F5uLymLDzgaA2jtgYnIC4a1tUhCmVNpaFXUHTb3WBE2PVbwE0k3dCU1jJD2K6J3cvs
-         Qec0lZG+ZFv4ib+QSWPClm7UTDZ1lLM2/+9B4sOOWRnH5YkGlOQplTA+QRTImhN4rLVt
-         ZZ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787147212; x=1787752012;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hU/Rrco2eHgoRkaqU/aKPgtdcd60SOy8SNUe3WgzR/E=;
-        b=jUCjr+pf/gO4PGjmshhV0M39ywrZNJGdFQd3RvK1Fvl/ynqHFdysT5MEZw5PhhggT1
-         WV4xbI72MJcohDknuVEhdg8qwAWIN/6xJaNI2LNDcYNYbSYpcJGujw2Fur07spjZccgZ
-         IIR6+GevJsVYrZKtwbtAnmt6tbXDPnGBMigIfeYYQxb4svMpv6Eg+JY3xTAl89a2rNuH
-         vktEbkQUe2edBs50GWQFuzqEwTIvcMj1hSmDys0VbyHqJ2oE3xv2CZ/rdShB6lnA8iy2
-         bGw1RH+7cxzmTKnZANVONSlUoobDHm0wcFTn4p9av52Ov522JI+Lx3r228lSq5D2No0Q
-         skVg==
-X-Forwarded-Encrypted: i=1; AHgh+RpZ6Ammah4ixNMgMpWDtthFfkLkGbcMAs2QeS1KllbEYmkAyo2YnWJ986r5LIYec34PEsGUfKhIWkggFrczN4hqmQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF1s0wnI6UN5G3c2uVArbj9sVTFDhLniAHltwp154q9iWId9vV
-	qak3zdMdiUBLZqT8ZqWFeB5cU24QBKb4xdznvpwRDwYS/KYCOl3johjccjBWcaxVThViSl0rw9k
-	sRFVdV/R/BcxliXqw9zfk5yDnE1rTWW0=
-X-Gm-Gg: AR+sD10KoFSbJp8p1IU6Qn45rCUI7oX1KbtWnUVO39BwJB5N0LLVfgYCAbIHKlT4P81
-	PAUEru+6VemQhaI3LcHGRRYbmK43Ivz/zPX1uNY2Yv/NTFdT4TgbSVnh2Zczhpr+e+0t08DxM/L
-	5t7ewv2auUMA1t34+HmEkihdQoSOAR7bpnt5LkLaZYqay/u2GwVOjqvJRL4H65kDRxhbI6zNJcK
-	kbC3trzUGS9kPADYs9XwTD1J2whcVZsors7sCYxSA33lOSY0FP+O/5g7Lo4hz5zvNgPfehrdjhr
-	+Sdjige9ehda5kZ47TMP9jz2i4RUSouduC3sNTrySsESNlO8wveqE2Udm9l4Eg6geEMlA/aoPQU
-	=
-X-Received: by 2002:a05:620a:6087:b0:92e:7ef3:213f with SMTP id
- af79cd13be357-9371e6f639amr422130785a.23.1787147211854; Wed, 19 Aug 2026
- 06:46:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Uf5fwkSn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1787150194; x=1787754994; i=markus.elfring@web.de;
+	bh=Z45Dh8YUc3BGrrWwm7xYa5Sg8QQjx0AzwyoEFJ/r5rs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Uf5fwkSny3+Q0MQNbhLeOCl3cJUF+5caStpbD1L+aXhi+Te6Z6j26MycWVoXEpBr
+	 BZy5QMSL+Lo1l3CYKH8lyN3taAgVe+NVrEQ68aEMbTfEouots7LM2Th073ScJ3Jmu
+	 YOODGhlU1Ak0+3b5nDkX9hZS4OWgSjiA0BWkmsoPuDdbeaxgVtbuXjecvTq1Mq04S
+	 hm0KU6tZNE2rMVyb0/W0z95uiHh8xbI5/o76PloMkTHKDzuiUiDOONowf8Uz/nCfA
+	 du3vvK5Tj/E6gw1iT9JPEStMPzA7kQQnWiJZDf14kltG0cm0EsHmIGFHbphxlPdfu
+	 8PZxzgKGrNYT8Jd8Rw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mty5u-1wg7Qc2zC0-00xPNp; Wed, 19
+ Aug 2026 16:36:34 +0200
+Message-ID: <977d0549-c56c-4634-8f4f-ac9119fdf71f@web.de>
+Date: Wed, 19 Aug 2026 16:36:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260809-exynos-dsim-fixes-v5-0-6e63dc6c238f@disroot.org> <20260809-exynos-dsim-fixes-v5-2-6e63dc6c238f@disroot.org>
-In-Reply-To: <20260809-exynos-dsim-fixes-v5-2-6e63dc6c238f@disroot.org>
-From: Inki Dae <daeinki@gmail.com>
-Date: Wed, 19 Aug 2026 22:46:14 +0900
-X-Gm-Features: AcwNN1V9uq5rpfpNmzqQRI66nhVgUZiP-vg3h3coBunhivKyzh_w9urOtKY6OKo
-Message-ID: <CAAQKjZO1_FORfo5zx_Ywy=pX6qpbS0f9z1PboX4DbtHeFS1+MQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] drm/bridge: samsung-dsim: use DSIM interrupt to
- wait for PLL stability
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: 1298662399@qq.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ David Airlie <airlied@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>, Simona Vetter <simona@ffwll.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <tencent_989057BAD94EB58027BF7E9528F59A458608@qq.com>
+Subject: Re: [PATCH] drm/exynos: fimd: fix clock leak on resume error path
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_989057BAD94EB58027BF7E9528F59A458608@qq.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L15/ciHenYXp7vipUsF7bdN2ybdoDaGahcNoG/IabYKbYGd67MW
+ Fq2YjiZOtwA4Q7QuCYjEVqpPbV1Uu45tWZvFMDr/Du3i1sAOn8Rv3ZcQkR7F6MmhoLcvDdY
+ nt21oNjwa2GTzG5XGiNoRiqjQ4jB4RQr7gydeooAdXWMJiDMxav9V7Qox3sNpjjF5v2lgZ0
+ z3sosZu844ZIpIohh6Q4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:h3e9YzwAIcw=;bza8oQ3fT2czLSGb3tPHlvJczeI
+ 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
+ 13IKhIykaIQ=
 
-Thanks for update,
+=E2=80=A6
+> Disable bus_clk before returning the error to keep the clock state
+> balanced.
 
-2026=EB=85=84 8=EC=9B=94 9=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 5:59, Ka=
-ustabh Chakraborty <kauschluss@disroot.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
-=84=B1:
->
-> Stabilizing PLL needs to be waited for. This is done using a loop,
-> checking the PLL_STABLE bit in the status register.
->
-> DSIM fires an interrupt when the PLL is stabilized. Rely on this
-> functionality for stabilization wait, getting rid of the implicit loop.
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv7.2#n145
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/stable-kernel-rules.rst?h=3Dv7.2#n34
 
-I like the direction - replacing the busy loop with the interrupt the
-hardware already provides is clearly the right thing to do. Below are
-my comments.
-
->
-> To utilize this, explicitly unmask PLL_STABLE and SW_RST_RELEASE right
-> after reset, and wait for reset before setting up clock.
->
-> This has been tested on a Galaxy J6 (Exynos 7870). Unfortunately, since
-> testing on all supported devices is less feasible, introduce a stop-gap
-> measure where the timeout has a gracious lower bound of 100
-> microseconds. This will (hopefully) prevent regressions due to timeout
-> on other devices.
->
-> Suggested-by: Inki Dae <inki.dae@samsung.com>
-> Link: https://lore.kernel.org/r/CAAQKjZMLMbwDVZRb5+Xb_5yz3AEP4uuzFJMuuZy9=
-NFDu13VU5w@mail.gmail.com
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  drivers/gpu/drm/bridge/samsung-dsim.c | 49 +++++++++++++++++++++++++----=
-------
->  include/drm/bridge/samsung-dsim.h     |  1 +
->  2 files changed, 37 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/brid=
-ge/samsung-dsim.c
-> index fc42acc6b9ef..9f58c7b1be53 100644
-> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
-> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-> @@ -17,6 +17,7 @@
->  #include <linux/export.h>
->  #include <linux/irq.h>
->  #include <linux/media-bus-format.h>
-> +#include <linux/minmax.h>
->  #include <linux/of.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
-> @@ -722,9 +723,14 @@ static void samsung_dsim_wait_for_reset(struct samsu=
-ng_dsim *dsi)
->  static void samsung_dsim_reset(struct samsung_dsim *dsi)
->  {
->         u32 reset_val =3D dsi->driver_data->reg_values[RESET_TYPE];
-> +       u32 status;
->
->         reinit_completion(&dsi->completed);
->         samsung_dsim_write(dsi, DSIM_SWRST_REG, reset_val);
-> +
-> +       status =3D samsung_dsim_read(dsi, DSIM_INTMSK_REG);
-> +       status &=3D ~(DSIM_INT_PLL_STABLE | DSIM_INT_SW_RST_RELEASE);
-> +       samsung_dsim_write(dsi, DSIM_INTMSK_REG, status);
-
-What does this hunk actually buy us? Two concerns:
-
-First, it is racy. You trigger the software reset and then immediately
-read-modify-write DSIM_INTMSK. If the reset is still in flight, the
-hardware may restore the register defaults and drop this write.
-
-Second, it looks like a no-op. The fact that SW_RST_RELEASE is
-delivered today - without any driver code unmasking it - implies that
-DSIM_INTMSK reads back as all-unmasked after reset. If that is true,
-clearing those two bits changes nothing.
-
-The change that actually matters is adding DSIM_INT_PLL_STABLE to the
-mask written from the SW_RST_RELEASE handler, which you do further
-down. Unless there is a case I am missing, please drop this hunk. If
-it is needed, please add a comment explaining why.
-
->  }
->
->  static unsigned long samsung_dsim_pll_find_pms(struct samsung_dsim *dsi,
-> @@ -787,8 +793,7 @@ static unsigned long samsung_dsim_set_pll(struct sams=
-ung_dsim *dsi,
->                                           unsigned long freq)
->  {
->         const struct samsung_dsim_driver_data *driver_data =3D dsi->drive=
-r_data;
-> -       unsigned long fin, fout;
-> -       int timeout;
-> +       unsigned long fin, fout, timeout_us, bus_clk_mhz;
->         u8 p, s;
->         u16 m;
->         u32 reg;
-> @@ -849,19 +854,33 @@ static unsigned long samsung_dsim_set_pll(struct sa=
-msung_dsim *dsi,
->         if (dsi->swap_dn_dp_data)
->                 reg |=3D DSIM_PLL_DPDNSWAP_DAT;
->
-> +       /*
-> +        * The PLL_TIMER value is the product of the timeout delay and th=
-e APB
-> +        * bus clock rate. Calculate the timeout delay on-the-fly here.
-> +        * It is assumed that the bus clock is the first clock in the pro=
-vided
-> +        * bulk clock data.
-> +        */
-> +       timeout_us =3D 100;
-> +       bus_clk_mhz =3D clk_get_rate(dsi->driver_data->clk_data[0].clk) /=
- HZ_PER_MHZ;
-> +       if (bus_clk_mhz)
-> +               timeout_us =3D max(driver_data->reg_values[PLL_TIMER] / b=
-us_clk_mhz,
-> +                                timeout_us);
-
-PLL_TIMER is a hardware PLL lock timer. Deriving a *software* timeout
-from it is a heuristic with no documentation behind it, and the values
-we carry vary wildly (500, 22200, 80000).
-Since the completion wakes us up as soon as the PLL is stable, a
-generous fixed timeout costs nothing on working hardware and is much
-easier to reason about. Please just use a fixed value in the
-millisecond range.
-
-That also removes the need for the linux/minmax.h include and, more
-importantly, for reaching into clk_data[] by index.
-
-On that last point: clk_data points at a static array
-(exynos3_clk_bulk_data[] and friends) shared by every instance using
-the same driver_data. Indexing it with a hardcoded 0 and documenting
-the "first clock is the bus clock" assumption only in a comment is
-fragile.
-If you do need the bus clock rate, please add an explicit index or
-pointer to struct samsung_dsim_driver_data rather than relying on
-array ordering.
-
-> +
-> +       reinit_completion(&dsi->pll_stabilized);
->         samsung_dsim_write(dsi, DSIM_PLLCTRL_REG, reg);
->
-> -       timeout =3D 3000;
-> -       do {
-> -               if (timeout-- =3D=3D 0) {
-> -                       dev_err(dsi->dev, "PLL failed to stabilize\n");
-> -                       return 0;
-> -               }
-> +       if (!wait_for_completion_timeout(&dsi->pll_stabilized,
-> +                                        usecs_to_jiffies(timeout_us))) {
->                 if (driver_data->has_legacy_status_reg)
->                         reg =3D samsung_dsim_read(dsi, DSIM_STATUS_REG);
->                 else
->                         reg =3D samsung_dsim_read(dsi, DSIM_LINK_STATUS_R=
-EG);
-> -       } while ((reg & BIT(driver_data->pll_stable_bit)) =3D=3D 0);
-> +
-> +               if (!(reg & BIT(driver_data->pll_stable_bit))) {
-> +                       dev_err(dsi->dev, "PLL failed to stabilize\n");
-> +                       return 0;
-> +               }
-> +       }
-
-usecs_to_jiffies(100) rounds up to a single jiffy on any HZ we
-support, and wait_for_completion_timeout() arms a timer that expires
-on the next tick boundary. The actual wait can therefore be
-arbitrarily close to zero. The "gracious lower bound of 100
-microseconds" from the changelog simply does not exist in practice.
-
-Combined with the fallback being a *single* register read, this is a
-regression waiting to happen: on any platform where PLL_STABLE is not
-delivered - and per my note above, that is every platform except your
-Exynos7870 as far as we know - we go from 3000 polls (milliseconds) to
-one read taken possibly microseconds after the PLL was programmed.
-
-Please raise the lower bound to something meaningful, e.g. 20 ms.
-
->
->         dsi->hs_clock =3D fout;
->
-> @@ -1586,7 +1605,8 @@ static irqreturn_t samsung_dsim_irq(int irq, void *=
-dev_id)
->         samsung_dsim_write(dsi, DSIM_INTSRC_REG, status);
->
->         if (status & DSIM_INT_SW_RST_RELEASE) {
-> -               unsigned long mask =3D ~(DSIM_INT_RX_DONE |
-> +               unsigned long mask =3D ~(DSIM_INT_PLL_STABLE |
-> +                                      DSIM_INT_RX_DONE |
->                                        DSIM_INT_SFR_FIFO_EMPTY |
->                                        DSIM_INT_SFR_HDR_FIFO_EMPTY |
->                                        DSIM_INT_RX_ECC_ERR |
-> @@ -1596,8 +1616,10 @@ static irqreturn_t samsung_dsim_irq(int irq, void =
-*dev_id)
->                 return IRQ_HANDLED;
->         }
->
-> -       if (!(status & (DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY |
-> -                       DSIM_INT_PLL_STABLE)))
-> +       if (status & DSIM_INT_PLL_STABLE)
-> +               complete(&dsi->pll_stabilized);
-> +
-> +       if (!(status & (DSIM_INT_RX_DONE | DSIM_INT_SFR_FIFO_EMPTY)))
->                 return IRQ_HANDLED;
-
-The unmask change is correct, but the placement of the complete() call
-is not. The SW_RST_RELEASE branch returns before we ever look at
-DSIM_INT_PLL_STABLE, and DSIM_INTSRC has already been write-cleared
-for the full status word at the top of the handler.
-
-So if both bits are set in a single read, the PLL_STABLE source is
-acknowledged in hardware but complete() is never called, and the event
-is lost for good. set_pll() then always hits the timeout and falls
-back to the single read discussed above.
-
-This is not theoretical for the wait_for_reset =3D=3D 0
-platforms(exynos5433, imx8mm, imx8mp): there we proceed to set_pll()
-without waiting for the reset to complete, so the two events can
-genuinely overlap.
-
-Please move the PLL_STABLE handling above the SW_RST_RELEASE block.
-
-Thanks,
-Inki Dae
-
->
->         if (samsung_dsim_transfer_finish(dsi))
-> @@ -1635,9 +1657,9 @@ static int samsung_dsim_init(struct samsung_dsim *d=
-si)
->         if (driver_data->reg_values[RESET_TYPE] =3D=3D DSIM_FUNCRST)
->                 samsung_dsim_enable_lane(dsi, BIT(dsi->lanes) - 1);
->
-> -       samsung_dsim_enable_clock(dsi);
->         if (driver_data->wait_for_reset)
->                 samsung_dsim_wait_for_reset(dsi);
-> +       samsung_dsim_enable_clock(dsi);
->         samsung_dsim_set_phy_ctrl(dsi);
->         samsung_dsim_init_link(dsi);
->
-> @@ -2148,6 +2170,7 @@ int samsung_dsim_probe(struct platform_device *pdev=
-)
->                 return PTR_ERR(dsi);
->
->         init_completion(&dsi->completed);
-> +       init_completion(&dsi->pll_stabilized);
->         spin_lock_init(&dsi->transfer_lock);
->         INIT_LIST_HEAD(&dsi->transfer_list);
->
-> diff --git a/include/drm/bridge/samsung-dsim.h b/include/drm/bridge/samsu=
-ng-dsim.h
-> index 03005e474704..e3433da21ad0 100644
-> --- a/include/drm/bridge/samsung-dsim.h
-> +++ b/include/drm/bridge/samsung-dsim.h
-> @@ -123,6 +123,7 @@ struct samsung_dsim {
->         int state;
->         struct drm_property *brightness;
->         struct completion completed;
-> +       struct completion pll_stabilized;
->
->         spinlock_t transfer_lock; /* protects transfer_list */
->         struct list_head transfer_list;
->
-> --
-> 2.54.0
->
->
+Regards,
+Markus
