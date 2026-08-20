@@ -1,196 +1,258 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E653AE6FC;
-	Thu, 20 Aug 2026 06:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24FD3B1EEE
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 06:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787205801; cv=none; b=KjV2RWgSaCqOa+0SL0WCNI/QTTzbtiW9v5lhXt8GyqQmXB6NVaBVXELbtdfFAXNnNJWAC6tz1hmW58Y1jJdphtQTTcqQg/NoGDMsmHvUqih77ABoscn+h24iD5RBfVGcMk/0M8ET8aygNO5XtKtBqj9XfjkX3Tv/WSy2i16yyM8=
+	t=1787209154; cv=none; b=tdaosPk/iT2AlasVnRegcHTYuBdNGVLjeSW2Fl2grJPT82+J4MHmi0cmkrfc/hRqJFWdpXbmvcvzUajcmg1b7eiGQ5mHH8uhomqMc4BjaFSLFEaO2tPZ0Rl181sFHKyZ4T1rquy3GQWfSkwX0YxulxycI4K2eFFnEHsGINts+fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787205801; c=relaxed/simple;
-	bh=jnFPaMuN6Jw6pqqQT/InQ6wYjEGcdsE/XK1iLLP36bA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uF9Xa3KuX3JB850O9zCxkT7X+LI/ONqICoez4t2bW41UNrXlv5tCsP33f0wsZwuNeswc93b3+oBpo3NNyI9/TjQXEtJz5+n6vQ/q4EfThR9YDXqRd6HV5E5Jz5by28rOibDnLYy0A6ndmt0xxIJZUe6MKzlJLd3OvIP/D/rR3iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bk2yfDZB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787209154; c=relaxed/simple;
+	bh=QFQbK+h1+T3zXv+Lo48t5Ke65VULKiJ5q5hWe7PoMYE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnpt/P6/lAAm2y2PxlRIJJ3FHmCoMv+of/MaVqESjhBSjvMHl8t3g69Upb/WrK+e6qN8//2CrVOgG6mvZPj+moi/rb8FxUtbNe07cHVoP+o8+Ti3H56L6VEhRLhmByxc6cCGYmVS6Vt2E4mE2dYyv5la4QwSeL+lCxKD3yu32bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAzLSiH5; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bk2yfDZB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAE91F000E9;
-	Thu, 20 Aug 2026 06:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787205799;
-	bh=uXj7CZeqo1loDtSz0pXTzQ1JoeNkYByZu2BnknAMqN4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Bk2yfDZB6ALt7tiJO60H8je+GokIcayDpuTkE3D5rvn1AlEbdc77/FF7OZkHPCre7
-	 zq4000MqgbBOhr3+hNKWJRyOoyVarikKf44o/jkI2msY2RDpReLXk1JyALSDg3sCae
-	 6ZnloNUZO8g/SebhY2GzcEDdEtrNoaEgF8s2C/vrfzdl5K3Q/Jsw777YqhJTkk1Xlo
-	 8FteA5mrBIYyQzCmyEVqzDr/TcRQ47XDGiiUEtMwwXwjPCwLO0ROYaK5gP9IKH+hGL
-	 r0L0MzbK8xnRxSZbmULLCUK68afRvzghIr52WbmEK1UXowkc9ys0UZ/BDp9PfXoqXZ
-	 E7WpsEJ5+JGXA==
-Message-ID: <56db332f-a18e-4a9e-be9d-67d2e25c3666@kernel.org>
-Date: Thu, 20 Aug 2026 08:03:03 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAzLSiH5"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-38dcbade417so2069541a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 23:59:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787209152; x=1787813952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=l+flFXip44k0sCr7rKJMxdk0YHFqAbrFUAstCTx4HU4=;
+        b=GAzLSiH5UJUYm86Dp4pHOhPMz2zLDDmIEYmtL3eADu7jYkkHGH1XME22SVYjduWosv
+         qQl+FQAC/88INrm8NaHek7VsptLc6LE97Tb3JTGf24e/wYhuUjwq26A+2rnxicwQafMW
+         PEgQ51qXh9Gk4CcdRHyTAg60J7TEcwhbwFhK3iLyl4OmhnfFJnDPOQJ0aK4aKtF9gUK6
+         WvsQY1sXZihI7UE6qRfFzoOudRMDbeibzd8dlKZImkn+YoaG7Zja6CCzoXhEQFMnL9pi
+         LlI6QimBeNRRd6BfWlMrHEuKS9hGPy2XbW/go6Ai0DmLK0BTE/t+98Bd2EzdTl1FN2GX
+         VaBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787209152; x=1787813952;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=l+flFXip44k0sCr7rKJMxdk0YHFqAbrFUAstCTx4HU4=;
+        b=BvWCSiExxAVXy/c/xciYkkl0imXQfXtDoZQIp2h2auE7BEzpLPFXkZxYb63f7Pg/fl
+         DBIhWX1SEqxOH4vWwLGNyrJJDw04jij6sPMklBICPhnH/JXm13uACEeUKlPDxiVzT3xx
+         O5Bwa9tMZHe5S8FyioVnhJ/ObSAKPu/NiwY5+4IPR4ox1SG8TPz3BQ65PFbCudI9xQzX
+         168fsSzvKU56mzBfqGxjWwqUwvSlet8bFoueDSfxTLdKxs3Q3r9ntkUgSgsh8KEGCIqU
+         CDaqtKRVB7DEC9FsCSWkVNpQEus0qT5rn1QDFGvfeZ9GNSTfFFSSn0t77Ps1KNKSVKUA
+         MVTA==
+X-Forwarded-Encrypted: i=1; AHgh+RowscBfTwdwtkgmt5JgRelJG3PQL7ys7BYyWIslrVSnpT9VLIlM6KfOlYlBrCpQ31Ka/0VadKZSX6teBK+pC2eTaw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nZL4YQKcjWKDeoFsa+jXpezzF4YO5N+BdRieoCQCcbkU3nwhjv
+	CgKyCYpDYKOz9hjTIBrNn2aquvKnIr8HoEhtmo/Mep0M3wLF96JILxI=
+X-Gm-Gg: AR+sD12bfRLyXUxn1XCaFi8jogF3redLR2Vb/mCOeQ88DSIlRIWCHJahIb+2LnpuOy4
+	bBTYKiYoZqcbPyvUnointS3lB7tjngWFZkXgLCZ1r2uknJ9XfxdwuEcLbROgIOQ1cIT2RXCC0W7
+	0RXrh4AC7fa4KN92LvojhvW1jZZKg0HqjPyR4fntU0scecvdfFvCnoir6xmoCncubvwH8XAJQiU
+	GJlv1ZG4qBMtbp2azTkpcmROT0UZdJRBPU42eFReDd4AXp+kDUC/cjyVN7mSksX8vgwsSbclgPv
+	C8iaKW5I93jxE/I1gwF22IVXgTrIM4syMxNs1aWWo1rPVv4OTOIAZW6K/Uxx61p1z3CIIlCu7JW
+	JBqzqjfkTT6wMbyRhHGvX9R0N4GY0ejXdlC3Weu0ZsASBZmmTw4bZr9cOf4RF9G+heBHPoCvQ8M
+	dZWwaejmZdfPxSYYredJySurinpVhRSy7bXBvFN8AbmKX5EH6KukRzUr/vgfDNB/u1pfFomUI1S
+	w==
+X-Received: by 2002:a17:90b:4c8c:b0:38d:fda6:4873 with SMTP id 98e67ed59e1d1-3958108a4bbmr17249377a91.10.1787209152046;
+        Wed, 19 Aug 2026 23:59:12 -0700 (PDT)
+Received: from DL2XHKPB4.dl.net ([103.63.104.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3957fb87174sm5483221a91.12.2026.08.19.23.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 23:59:11 -0700 (PDT)
+From: Triet Hoang <triet.hoang.dev@gmail.com>
+To: mturquette@baylibre.com
+Cc: sboyd@kernel.org,
+	bmasney@redhat.com,
+	luca.ceresoli@bootlin.com,
+	krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	peter.griffin@linaro.org,
+	alim.akhtar@samsung.com,
+	michal.simek@amd.com,
+	shubhrajyoti.datta@amd.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Triet Hoang <triet.hoang.dev@gmail.com>
+Subject: [PATCH] drivers/clk: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+Date: Thu, 20 Aug 2026 13:59:04 +0700
+Message-ID: <20260820065904.2032536-1-triet.hoang.dev@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for
- frankel/blazer/mustang
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
- soc@lists.linux.dev, Juan Yescas <jyescas@google.com>,
- RD Babiera <rdbabiera@google.com>, Brian Norris <briannorris@google.com>,
- William McVicker <willmcvicker@google.com>, kernel-team@android.com
-References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
- <20260722-contrib-pg-pixel10-initial-dts-v2-4-3abae9717feb@linaro.org>
- <20260724-dancing-skunk-of-novelty-72c1b8@quoll>
- <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
- <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
- <c0657108-1958-4c4c-b5f5-0eb24e81b2b4@kernel.org>
- <CAD=FV=VY4AeAf=TMZfJYRo6C0iSqmL-P0GzxRvZHfnNsf+GnYQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD=FV=VY4AeAf=TMZfJYRo6C0iSqmL-P0GzxRvZHfnNsf+GnYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 19/08/2026 19:04, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Aug 19, 2026 at 2:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->>> Is there some other documentation saying "aliases == evil" that I
->>> missed? Maybe some email thread we're all supposed to have read?
->>
->> A lot of rules are implied by other rules and this one, how Linus stated
->> in other thread, might be implied by no-Linuxisms as you want ordering
->> or stable naming of Linux /dev entries.
->>
->> I understand your reason is actually different than above, but your code
->> does not suggest that.
->>
->> Anyway, if you wanted to have aliases as ABI, it would have to be
->> documented. You cannot send post-factum DTS and say "we already use it".
->> Every ABI must be documented before usage.
-> 
-> I'm happy to document. Can you please point to how / where I would
+Convert the deprecated SIMPLE_DEV_PM_OPS
+to DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr().
 
-Description of:
-Documentation/devicetree/bindings/ufs/ufs-common.yaml
-And obviously, as with every binding/ABI, you also need open-source,
-upstream user of this.
+This lets us drop the __maybe_unused annotations from its suspend and
+resume callbacks, and reduces kernel size in case CONFIG_PM or
+CONFIG_PM_SLEEP is disabled.
 
-> document this? As far as I can tell, no aliases are documented today,
+Signed-off-by: Triet Hoang <triet.hoang.dev@gmail.com>
+---
+ drivers/clk/clk-si521xx.c                  | 8 ++++----
+ drivers/clk/clk-versaclock5.c              | 8 ++++----
+ drivers/clk/samsung/clk-exynos-clkout.c    | 8 ++++----
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 8 ++++----
+ 4 files changed, 16 insertions(+), 16 deletions(-)
 
-git grep disagrees with you, e.g. second paragraph of serial.yaml.
+diff --git a/drivers/clk/clk-si521xx.c b/drivers/clk/clk-si521xx.c
+index ceadc07bcb6d..9336d08e8083 100644
+--- a/drivers/clk/clk-si521xx.c
++++ b/drivers/clk/clk-si521xx.c
+@@ -341,7 +341,7 @@ static int si521xx_probe(struct i2c_client *client)
+ 	return ret;
+ }
+ 
+-static int __maybe_unused si521xx_suspend(struct device *dev)
++static int si521xx_suspend(struct device *dev)
+ {
+ 	struct si521xx *si = dev_get_drvdata(dev);
+ 
+@@ -351,7 +351,7 @@ static int __maybe_unused si521xx_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused si521xx_resume(struct device *dev)
++static int si521xx_resume(struct device *dev)
+ {
+ 	struct si521xx *si = dev_get_drvdata(dev);
+ 	int ret;
+@@ -379,12 +379,12 @@ static const struct of_device_id clk_si521xx_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, clk_si521xx_of_match);
+ 
+-static SIMPLE_DEV_PM_OPS(si521xx_pm_ops, si521xx_suspend, si521xx_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(si521xx_pm_ops, si521xx_suspend, si521xx_resume);
+ 
+ static struct i2c_driver si521xx_driver = {
+ 	.driver = {
+ 		.name = "clk-si521xx",
+-		.pm	= &si521xx_pm_ops,
++		.pm	= pm_sleep_ptr(&si521xx_pm_ops),
+ 		.of_match_table = clk_si521xx_of_match,
+ 	},
+ 	.probe		= si521xx_probe,
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 913fcc5675f1..bf2276981e01 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -1223,7 +1223,7 @@ static void vc5_remove(struct i2c_client *client)
+ 		clk_unregister_fixed_rate(vc5->pin_xin);
+ }
+ 
+-static int __maybe_unused vc5_suspend(struct device *dev)
++static int vc5_suspend(struct device *dev)
+ {
+ 	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
+ 
+@@ -1233,7 +1233,7 @@ static int __maybe_unused vc5_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused vc5_resume(struct device *dev)
++static int vc5_resume(struct device *dev)
+ {
+ 	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
+ 	int ret;
+@@ -1335,12 +1335,12 @@ static const struct of_device_id clk_vc5_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
+ 
+-static SIMPLE_DEV_PM_OPS(vc5_pm_ops, vc5_suspend, vc5_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(vc5_pm_ops, vc5_suspend, vc5_resume);
+ 
+ static struct i2c_driver vc5_driver = {
+ 	.driver = {
+ 		.name = "vc5",
+-		.pm	= &vc5_pm_ops,
++		.pm	= pm_sleep_ptr(&vc5_pm_ops),
+ 		.of_match_table = clk_vc5_of_match,
+ 	},
+ 	.probe		= vc5_probe,
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index 5f64d93b2fac..9c8b17cb5e7c 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -214,7 +214,7 @@ static void exynos_clkout_remove(struct platform_device *pdev)
+ 	iounmap(clkout->reg);
+ }
+ 
+-static int __maybe_unused exynos_clkout_suspend(struct device *dev)
++static int exynos_clkout_suspend(struct device *dev)
+ {
+ 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+ 
+@@ -223,7 +223,7 @@ static int __maybe_unused exynos_clkout_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused exynos_clkout_resume(struct device *dev)
++static int exynos_clkout_resume(struct device *dev)
+ {
+ 	struct exynos_clkout *clkout = dev_get_drvdata(dev);
+ 
+@@ -232,13 +232,13 @@ static int __maybe_unused exynos_clkout_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
++static DEFINE_SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
+ 			 exynos_clkout_resume);
+ 
+ static struct platform_driver exynos_clkout_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+-		.pm = &exynos_clkout_pm_ops,
++		.pm = pm_sleep_ptr(&exynos_clkout_pm_ops),
+ 	},
+ 	.probe = exynos_clkout_probe,
+ 	.remove = exynos_clkout_remove,
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index 4a0136349f71..da62c7b7f24d 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -955,7 +955,7 @@ static int clk_wzrd_clk_notifier(struct notifier_block *nb, unsigned long event,
+ 	}
+ }
+ 
+-static int __maybe_unused clk_wzrd_suspend(struct device *dev)
++static int clk_wzrd_suspend(struct device *dev)
+ {
+ 	struct clk_wzrd *clk_wzrd = dev_get_drvdata(dev);
+ 
+@@ -965,7 +965,7 @@ static int __maybe_unused clk_wzrd_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused clk_wzrd_resume(struct device *dev)
++static int clk_wzrd_resume(struct device *dev)
+ {
+ 	int ret;
+ 	struct clk_wzrd *clk_wzrd = dev_get_drvdata(dev);
+@@ -981,7 +981,7 @@ static int __maybe_unused clk_wzrd_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(clk_wzrd_dev_pm_ops, clk_wzrd_suspend,
++static DEFINE_SIMPLE_DEV_PM_OPS(clk_wzrd_dev_pm_ops, clk_wzrd_suspend,
+ 			 clk_wzrd_resume);
+ 
+ static const struct versal_clk_data versal_data = {
+@@ -1242,7 +1242,7 @@ static struct platform_driver clk_wzrd_driver = {
+ 	.driver = {
+ 		.name = "clk-wizard",
+ 		.of_match_table = clk_wzrd_ids,
+-		.pm = &clk_wzrd_dev_pm_ops,
++		.pm = pm_sleep_ptr(&clk_wzrd_dev_pm_ops),
+ 	},
+ 	.probe = clk_wzrd_probe,
+ };
+-- 
+2.53.0
 
-> so this would be the first. If you could give me a hint of where you'd
-> expect it, that would probably be better than me guessing.
-> 
-> 
->> And this is what my comment was about: "they MUST talk
->> with upstream open source maintainers before they ship such ABI."
->>
->> And no, sending such DTS in your v1 is not documenting ABI. Does not count.
-> 
-> Sure, sending a DTS isn't documenting, but it _is_ talking. Discussion
-> in responses to patches is where we figure things out. For that to
-> work, reviewers need to point out problems and then we need to have a
-> continued discussion until we can figure out a solution. When that
-> discussion just stops, it's incredibly hard to make progress.
-> 
-> 
->>> thus implicitly provides an "instance ID"?  Would it be OK if I
->>> changed my alias name to "ufs-primary" or "ufs-internal" or "ufs-boot"
->>> or just "ufs"? We're not using the alias to get an instance ID, but
->>> when I added the alias I followed the pattern of all the other aliases
->>> and put an number at the end.
->>>
->>> I'm happy to attempt to fix our bootloader using whatever scheme
->>> upstream suggests. I'm trying to "talk to upstream" as requested, but
->>> for it to work I need upstream to talk back. :-)
->>
->> Make your case - what is the purpose of it? Boot device? Then you have
->> "chosen" node for stuff between firmware and OS. There is even a
->> property called "bootsource". If this is not boot device, but some
->> calibration data for ONE given instance of IP, regardless whether you
->> boot from it or not, then I find such case as border-base and not worth
->> implementing, because basically one can come one month later with "I
->> need 1000 aliases because my bootloader is patching up every device
->> node".
-> 
-> I think I've presened my problem fairly concretely [1]. If you hate
-
-There is no description of the problem at [1], except "bootloader adds
-the same type of calibration data".
-
-So I repeat my questions: to every UFS node? To every node? To one UFS
-node (but how do you guarantee that?)?
-
-I gave you two solutions, depending on actual upstream need of this. If
-you have the second case - so not the boot device - then you basically
-want to re-implement overlays which you cannot. Use overlays, which
-gives you nice stable and build-time verifiable label/phandle.
-
-
-
-Best regards,
-Krzysztof
