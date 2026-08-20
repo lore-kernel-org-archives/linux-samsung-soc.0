@@ -1,88 +1,33 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06FB46D2DA
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 14:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0FC3537E0;
+	Thu, 20 Aug 2026 14:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787236140; cv=none; b=lMZwv5k1GYlYfAwPVeW6Lce7sUaQ48y0F3dGh8YdGr5HmR7sc66foqhUxrOA2P4SVmPP7T+MJBm4zqCD+ppfUaBuzuZSVjo8k5FvMNs8gK5Z2yAoH4EM4/17YThW5zsJ9nzAp2+tBPOro3N+3fFo8n9ObhPnBJs/rMNHjnz8y9Y=
+	t=1787237341; cv=none; b=AGn3UcjDW0p+ss6JrmmUSS4ijvfrc4+JajM6XMXhHn2DpKh97I80pOLbI/BWyuPtYXqBHUKg4Mt9rv0LIkAsHphoG1CLoYAaK5/pHYAhhgD6GskOtA0vOdAlw5F2OuzERpimABB5i5ib6W1dTUspojiOhE8Fu71HWd0cKNU529A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787236140; c=relaxed/simple;
-	bh=Rlg36dlg49DGpbzZguuseW1TDCIQRWjjAPDcspTd+3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eS7g0IyJT19A6lBJC8JY0DbWqDs/+9VJH+LrkSh5pOBGpQRIhjRAMCW6p5x7uA0qKQwLT2Em8WTGlrmG+PQyRSGo0/9lVJZr0tZoP/N2DOcYYcZ9norOHkFEWiIfdmZ4SvLkCBAc3Ec55feoVEfKVr/vSb8HnCOAUOp8alzEtsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kjmLKskE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=J9GFQGiX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787237341; c=relaxed/simple;
+	bh=yuKXd+y5yvuknpoU/GuAmk9tKgJ/Rhx1PoAd2DIQ9mI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DBkucCyV6Q4s4lAAPli3LRYSoSb+TMVM3UzbqQykfsIy2OCY4Stlqa1xwbosbmqz9P+4dqq3HdiMR/pGSh343gdd3rPCgDi7UWM4eWNYWXl4stUey+ukzhs6FXvo4BpqdLZutwEYZ2QsezynQG7FD9KxjmA+MyFfwjoPvvMSAQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=in64KbWc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kjmLKskE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="J9GFQGiX"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67KE7ka63234908
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 14:28:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SqoIbGSwu0oft6wj/dC2iCPrOJL6cx75PNkhcbpHMcU=; b=kjmLKskEBUQmMzCo
-	ULVPSTmifuDAtsOPXPNau2mAkMMq/CFfk59EK13eRSTWl5mP9e3MykSpOwMpCB12
-	/+shK29vSs33VH9zlxI6Ji67KsMByUCvdw0mTLiPsigQkPYhW3nQacDatVDptqPk
-	sg7/2Zk4Z2Vu8u49EDaHBDtJxBTcuhoe39ihIEaBVCFcNtyJk66KcjoghTuUDimU
-	bHaa3rgoRwkHC5K9ppKI3Y1JRR42qieFHuuV9d5XmYTM7b8ZtspjF+le3iyUoMXI
-	kkN/7ji12+xnnt2zR9gJsw4BxQ3naFRGgMO0XQGdm1pDmD7UP+p2zSnsR+Vzw+Ja
-	TJ4L+g==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g5xbv9bfx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 14:28:57 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8eec6acbe21so43157276d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 07:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787236137; x=1787840937; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=SqoIbGSwu0oft6wj/dC2iCPrOJL6cx75PNkhcbpHMcU=;
-        b=J9GFQGiXUIkXmeFt93XtXrWCJ3zpVF1UV2NaByW9+X/NPg7/4B0B6Az9UdRRTx0/Qe
-         4w8rlUs5XJWFMecwa4+fjYbVa58L10kWFNJTLM0wFzwAtv5sITupT56PIUGvsCM6o9PT
-         umFaLxnMgD3tmWfnk2GbndPDStHQotD+VD1wacwKSEnOARYIy+bztmSQoAsa4bff59Ot
-         ztawRYgRBcAzSiHwWraJHcrSbdxPYFAe85hTqrs7x489mF10Exx7LtH7W7o/SxQPUOmP
-         Bl7NsvltRv6THTacrYzls5ZcCjw9TK3hsTG2BsqCwCnCmIrLCKE7eJXIEVOir4DVgnfq
-         pb7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787236137; x=1787840937;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=SqoIbGSwu0oft6wj/dC2iCPrOJL6cx75PNkhcbpHMcU=;
-        b=LK7LA4syEwRP58VX5XlLuNU7AZUW7pMBoRlSWJjfx6MDLRvzP1Tp7r00zZ7uq+0zAo
-         iRxbFJOT2kwDumve/zUvKoMsbWqwOUL+zlHqlCDvE4PcRu8CAw7Vyj5g+ZBKmbKqvZEo
-         yA3ri6kh6jpUqjFT1PN+poW4PwDM/k4dpK1aBl3RZYlmgV4hQ6Mn04e6nEED6IVqvlWL
-         g5VeZsc5gu7Qsqnn8ULNydWn7IBf1vbuMNDd9JBG4g9kn+snWuS1GOyWpJHdOTorTafv
-         piWD6MrjhyXOrvDxeYTmAvq9fPv27NiUwKe7JmGJfY/sDy3LfPiO9tvnKbOmL+N5yvLb
-         +n/w==
-X-Forwarded-Encrypted: i=1; AHgh+Rpbx4lGZING858jOUZgfe7fZiBbVZmrYXlIRooTxkOeci/nrbl5eKdAG7Q3NM7YVC/65Aw7pBVMaRGrB9AtMg0lkQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8GDlMO6CcbBBiRnQTC0noFYR8t1v2KJ2gpHwE5I/JtofJWZ92
-	XmWyZjoUjEI6vWXkCNuIRqk3PMU6MSg0durHcInw84CajvrUKva9CGz+cP/6GICnCLplpKEjcn2
-	6jW6fwoHJ+TxN2uhw3BWX7KPsEPeP66pdGfze49iAyjZwONpCJKm9r2B5lf9NgMIVgFuaZfHdfA
-	==
-X-Gm-Gg: AR+sD13KKGYq4jRC0oNMuK5TZ3rYskp88LvSc5OvMsLt6mabzQWCmuNNFIVUfR2aOpG
-	4+AR2iRe8p3EkqT4mJoy30xIk3/xTMWqQPTOoNVgik06rCjjLZXZMYZNitMDsA+rgtZMO11tQji
-	aBLCOtXaSJL4N6kHE8Aqii16+oBe9Hkrd5P18mFgU5aLXrJ0CYq+TOsWVU3RbwAdhZyYZEt4MJP
-	cGS1GNg5wpTbtQRuKfFOZcCby/vIBHyBlzgdzAawDTAjpdo1QWyI5gc7z6tC54U3P7Qk+CyhoA9
-	nWD0v6gkLSOU0KIuEpW8M8u3vChPe1oZvwtL+KBjdyq9DS/oqkczGh2HFYf8CEsTnzVyD/aL2EM
-	GHeVceCgMDum1dC6X5xls5Z3o5QFI
-X-Received: by 2002:a05:620a:2b85:b0:92b:8a7c:f71e with SMTP id af79cd13be357-9371e219cedmr1417190185a.15.1787236137195;
-        Thu, 20 Aug 2026 07:28:57 -0700 (PDT)
-X-Received: by 2002:a05:620a:2b85:b0:92b:8a7c:f71e with SMTP id af79cd13be357-9371e219cedmr1417182485a.15.1787236136788;
-        Thu, 20 Aug 2026 07:28:56 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.219.214])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499b2148727sm48532405e9.3.2026.08.20.07.28.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 07:28:55 -0700 (PDT)
-Message-ID: <88e40f93-ae65-4eb0-827d-9c33c52bad24@oss.qualcomm.com>
-Date: Thu, 20 Aug 2026 16:28:52 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="in64KbWc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 879691F00A3A;
+	Thu, 20 Aug 2026 14:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787237340;
+	bh=ueGrCpeqFNWx36/mwdB9fvoGAMWyigNbDFOf4Wns/PE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=in64KbWc6DsUlb8Miv3OPsvbc40KyBcIcy1j6x56eQguOLKaFgYksHIz0uoUoPLC8
+	 Ftpce+s9kl80DElKz/scjsqPDJ8NplKuDexyexvpueP9e/XVFqZ7MI1ADXUn4Otzcz
+	 Nga+EIYiizEZmaWyp8JA0flb4D2Ces5Tmc83hW2bHvf8Inl57qqs1zkxme9d3llLqn
+	 l1q+ATgKo1G6Euw7JUBF9yCLPzCkbn/bhZFyWqi37wDEAldYPJ4WiyHNayodfM9tNE
+	 G4dmTo+THB8F4xj/p95VrMiLdpFeYohqOWMkHOYpgkUk6/DpDtXmXoEc+/CNAD8FfR
+	 nbOdzHjVg7gjg==
+Message-ID: <626c4fa0-8e7f-4ef5-a027-b6ae2aa36099@kernel.org>
+Date: Thu, 20 Aug 2026 16:48:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -90,17 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Exynos850 GPU support
-To: Thomas Turner <tturner@lineageos.org>,
-        krzysztof.kozlowski@oss.qualcomm.com
-Cc: semen.protsenko@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <GVYP280MB12139AB976CA7ACF49FEB768A1A52@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
- <20260820142330.84514-1-tturner@lineageos.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drm/exynos: g2d: fix autosuspend cleanup on probe failure
+To: Guangshuo Li <lgs201920130244@gmail.com>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Joonyoung Shim <jy0922.shim@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20260808121752.2819486-1-lgs201920130244@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -145,48 +91,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260820142330.84514-1-tturner@lineageos.org>
+In-Reply-To: <20260808121752.2819486-1-lgs201920130244@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=AMKAkK6n c=1 sm=1 tr=0 ts=6a870f29 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EHrKs5ltxLiqmug07hMA:9 a=QEXdDO2ut3YA:10 a=Qzt0FRFQUfIA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIwMDEwOCBTYWx0ZWRfX/NI1VswqwM2Q
- IgvfP8AtREDD9T5//h7Hgov2/mGuRu3XDUkW7HLQXX0d+nKgGfsAz6D3IUXITnZns4/PxUjz890
- Qu24uDW4BN4JXK6p5jVg8ZoaijLUVAcD0Nej75PyhOPCj5UVOj/ihIyQa2BxoC8oZGQJiMIvLUJ
- rq3kVv9nLOTMrC90FA+0ThIqAAofbGRhPNrUhwZXONz1tCAsF6Pd8MghLjdkr89McM4k3xdbeg+
- Zp6ng9DrvWJlDfCYlBr70qEvW1ABzkRQjcd7xNrKp3j5WkpddkpmmWalAcpJzp/BAKSOPY89QQZ
- f7Cy1Z0LfY50JCxZyqnJoxRNU8ZLVU3AJTotAsc6LBBHRRpVHCkfPNnCiILieWumb/YoZcmqLoD
- d9u22HMmor23fSCEgwvObXm4pMbn9QVsWpa2Xtl710+nTJc6VWRfEwICcQ2pbBXHoWawezWdyeb
- 5sWn0dI9sdW899yXrYw==
-X-Proofpoint-GUID: prL7ITHqbKoWyUl79Xb_3_voUePlcL4c
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODIwMDEwOCBTYWx0ZWRfX3CozCul/V77y
- rCB+KMK/CFKIduqZxBwo8M5AF6ffYTwRhyOExnVlp/W70wCygTxGvbvHjp4VYtGAGjEYSb5ESHe
- 0i31dvQo6qf/UdoNqi4DF7J04rO8a0A=
-X-Proofpoint-ORIG-GUID: prL7ITHqbKoWyUl79Xb_3_voUePlcL4c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-19_06,2026-08-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 suspectscore=0 malwarescore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608200108
 
-On 20/08/2026 16:23, Thomas Turner wrote:
-> Hi all,
-> This is my first time sending patches to linux so apologies for
-> mistakes. This series provides basic GPU support to the Exynos850
-> platform, making use of the Mali G52 GPU through the panfrost driver.
+On 08/08/2026 14:17, Guangshuo Li wrote:
+> g2d_probe() calls pm_runtime_use_autosuspend(), but its failure path
+> does not call the matching pm_runtime_dont_use_autosuspend() before
+> disabling runtime PM.
 > 
+> If the autosuspend delay is set to a negative value while autosuspend
+> is enabled, the runtime PM core increments usage_count to prevent
+> runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
+> during cleanup, this reference is not dropped and usage_count remains
+> unbalanced.
+> 
+> The documentation for pm_runtime_use_autosuspend() also notes that it
+> is important to undo it with pm_runtime_dont_use_autosuspend() at
+> driver exit time, unless runtime PM was initially enabled with
+> devm_pm_runtime_enable().
+> 
+> Add the missing pm_runtime_dont_use_autosuspend() call to the probe
+> failure path before disabling runtime PM.
+> 
+> This issue was found by manual code inspection.
+> 
+> Fixes: d7f1642c90ab ("drm/exynos: add G2D driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+> ---
 
-Again: slow down.
+You sent vast amount of patches, all separate, making it very difficult
+to track and respond in efficient way. Do not do that.
 
-Why does this appear under empty subject thread?
+Group your work per subsystem.
+
+You were asked to clarify and respond to incorrect fixes statement. I do
+not see how you clarified and responded at all.
 
 Best regards,
 Krzysztof
-
