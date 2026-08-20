@@ -1,170 +1,196 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA53A783B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 23:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E653AE6FC;
+	Thu, 20 Aug 2026 06:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787182859; cv=none; b=m979KMLP8THxjx6JjEfEuRV5usZXFVWT+rDGiX8yidihmv0b3jMM3DlG5E1cIbkGJ7gx6Q9bPhrEExA7l7kFZJo35oj6DvIvU5XmvE2IIejv8DsRD+FUvmNFiO36XjfUvn4EtQRokVwlyyNJ/56M1JRW+PzzAcsXZxpjo3nLrZQ=
+	t=1787205801; cv=none; b=KjV2RWgSaCqOa+0SL0WCNI/QTTzbtiW9v5lhXt8GyqQmXB6NVaBVXELbtdfFAXNnNJWAC6tz1hmW58Y1jJdphtQTTcqQg/NoGDMsmHvUqih77ABoscn+h24iD5RBfVGcMk/0M8ET8aygNO5XtKtBqj9XfjkX3Tv/WSy2i16yyM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787182859; c=relaxed/simple;
-	bh=bk8X/C1AqkDTikcqiW7Hg2XdCI/waiwQ0VemNKokSJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SUzA+lcoArOCWlWP5ebGKUSkER1kd1xae+KnGrCGMyDZhctQFRfk+aNoyx2EarNeFeaqO7V444LenH/4KIjtYkqDYy+8LGnUBJ/zvEZLSyNJErrffFG3/ZdX2PjJUmWQiIm7REVwTy8+OOBmMYWY2zyhosr5f3P9TSHNO2vauzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=klPlzYSp; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1787205801; c=relaxed/simple;
+	bh=jnFPaMuN6Jw6pqqQT/InQ6wYjEGcdsE/XK1iLLP36bA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uF9Xa3KuX3JB850O9zCxkT7X+LI/ONqICoez4t2bW41UNrXlv5tCsP33f0wsZwuNeswc93b3+oBpo3NNyI9/TjQXEtJz5+n6vQ/q4EfThR9YDXqRd6HV5E5Jz5by28rOibDnLYy0A6ndmt0xxIJZUe6MKzlJLd3OvIP/D/rR3iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bk2yfDZB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="klPlzYSp"
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5c375a9e76cso1097396e0c.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 16:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1787182857; x=1787787657; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bk8X/C1AqkDTikcqiW7Hg2XdCI/waiwQ0VemNKokSJg=;
-        b=klPlzYSp+wttNPFbZ8Ogrw4aBT6ikyzcCP0ZJxJMWZdRlhYymPBaNnN3bj0wsP1a88
-         WE2Cet76LcW9DsjbbCjBDtZ1xv6oVTMj1jQv91nPg5DAIm0rxz+G/TQ+fpPXMSMmk5Bn
-         tCN1fjBM3uw1U3ZhmK1FbaF4jwJMa2qQ5aJFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787182857; x=1787787657;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bk8X/C1AqkDTikcqiW7Hg2XdCI/waiwQ0VemNKokSJg=;
-        b=QJFzipCiG/ibRZ+OiSOZbAmXTPAQ4rw1XYgUut4HSehPdBbgEhKPwubpKP3m6l6QtW
-         xBKxGig0cyhwp9ivLBNbWj8HRehtsGPOn4coFAD/Jb94fUW4ivR07AGFX85G9n3+kBFH
-         k185goDtbBLoK/YtttWpC4BiVrCMeS0h1YxA4hz5ANzsisQJhWxQjKpjuHadmPv/xEUY
-         T3L8lDNegcN0kVJggBpu9oPeBQdjVXr9nXvA/2qJmk1yQmCdYcXbeZG0A86In5T/J/Yf
-         VtcioKpPV93UxZxrDcqj4q37MlM3KC3yL1a9WKYBI8GTpc6g6zVBUo/+iRj8m7YthExD
-         pTLg==
-X-Forwarded-Encrypted: i=1; AHgh+RrlEv5eCR1hMhOksLZT6bUYOVcdSg+mpk2kr3ooSi+hfDkTRXaCfT2XimEzi0Idajmv2qKQ9Pf9K2WZ6CmSIkRBdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcFNM1YdYorSbFytMIbddyljpU1eDpSoLLIPYP0gaPk0RTBrov
-	JRhjKlB5/Cw/84T5LhklELgDnIHWp89dlCXnzlT0ugawMaai1K0vkIIY0JPqP6ZrF8Si/YhgnR6
-	FTl0=
-X-Gm-Gg: AR+sD10T12TOURCvKCIXgVO3ZKYyhb0UoKe3zBiiArJAS17LdRFiHJk87zw8qXxhTMV
-	qsu8ViWuRZlN7+eAXyIHM9IOiMW4oTy4vD8sa692n4MTWkhSJ8wWP+iYdpsiDz+xehyKAg6bG+H
-	rpYmtxyoQtzHHl9fZIqZNxgV7nixh0EvZIrX0sV2zsFLxJG8H/Cl98Dmjj8jNosUhCY+HZ9Qv2T
-	tvrcTKQvgxWqNpECzM83oN+9xqG1H3EYLX2XrQMG7wNW/HvwGlLykPlEqiATHGI6ZcvTuIwziqH
-	mIxi3upfEwWGmps7pLNCO/rbsY21wrviac9jbsad7A+1ua9+vXbCAbPP9gi7Pu1MBNB61gDLhpP
-	mX5WkLNq6zLm806PvqKVGhhD/QYcZQ11nZaMofXfc2t9wVnwrpTU+dJNHKptbq1nr5EeYmwNqA8
-	08JRr2dCL1AZaPiVQ5QdZUq/ismTK1kw+wjPeWT8VBpHQgcH6iwMIfJZeHvx1IqRzXb2hAELAEx
-	uvRlcGxIcMbLvlp3x/eKYaRaHI=
-X-Received: by 2002:a05:6102:6ce:b0:62f:3e1d:a55a with SMTP id ada2fe7eead31-777f8976d3amr3372367137.2.1787182857130;
-        Wed, 19 Aug 2026 16:40:57 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-777dafa9b1dsm3938654137.1.2026.08.19.16.40.54
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Aug 2026 16:40:55 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-97bf8f10ebfso774205241.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Aug 2026 16:40:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpgvOVzssU+GCC1utaKBlgmUbtqfOmsUXu5Ug8Ow+BQXu0DnrlxHq+RLl6YJI2436d0pjBR6Y9q7rhJH6971Cpn0w==@vger.kernel.org
-X-Received: by 2002:a05:6102:15ab:b0:777:4e3a:8dde with SMTP id
- ada2fe7eead31-777fab9d4a7mr3615810137.11.1787182853246; Wed, 19 Aug 2026
- 16:40:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bk2yfDZB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FAE91F000E9;
+	Thu, 20 Aug 2026 06:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787205799;
+	bh=uXj7CZeqo1loDtSz0pXTzQ1JoeNkYByZu2BnknAMqN4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Bk2yfDZB6ALt7tiJO60H8je+GokIcayDpuTkE3D5rvn1AlEbdc77/FF7OZkHPCre7
+	 zq4000MqgbBOhr3+hNKWJRyOoyVarikKf44o/jkI2msY2RDpReLXk1JyALSDg3sCae
+	 6ZnloNUZO8g/SebhY2GzcEDdEtrNoaEgF8s2C/vrfzdl5K3Q/Jsw777YqhJTkk1Xlo
+	 8FteA5mrBIYyQzCmyEVqzDr/TcRQ47XDGiiUEtMwwXwjPCwLO0ROYaK5gP9IKH+hGL
+	 r0L0MzbK8xnRxSZbmULLCUK68afRvzghIr52WbmEK1UXowkc9ys0UZ/BDp9PfXoqXZ
+	 E7WpsEJ5+JGXA==
+Message-ID: <56db332f-a18e-4a9e-be9d-67d2e25c3666@kernel.org>
+Date: Thu, 20 Aug 2026 08:03:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for
+ frankel/blazer/mustang
+To: Doug Anderson <dianders@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>,
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+ soc@lists.linux.dev, Juan Yescas <jyescas@google.com>,
+ RD Babiera <rdbabiera@google.com>, Brian Norris <briannorris@google.com>,
+ William McVicker <willmcvicker@google.com>, kernel-team@android.com
 References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
  <20260722-contrib-pg-pixel10-initial-dts-v2-4-3abae9717feb@linaro.org>
- <20260724-dancing-skunk-of-novelty-72c1b8@quoll> <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
+ <20260724-dancing-skunk-of-novelty-72c1b8@quoll>
+ <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
  <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
- <CAD++jLnQGy_LvRxMjq1s2Hs9Hn4LNTFZ0W17zC1YLs5StwfqMg@mail.gmail.com>
- <CAD=FV=VuVdq_=TQmONJZak84S2c2-2yQ8DS0k_odYsUfg0C+rQ@mail.gmail.com> <CAD++jL=VLzW-4eB=izJwaTJ+6xObk9+AQGTDK6ABdrGX4K3vAg@mail.gmail.com>
-In-Reply-To: <CAD++jL=VLzW-4eB=izJwaTJ+6xObk9+AQGTDK6ABdrGX4K3vAg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 19 Aug 2026 16:40:40 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VsiQfoGYHw3D2xmV=Jedu+cmqEfrCk0mkKFzsrRCQcTg@mail.gmail.com>
-X-Gm-Features: AcwNN1UHCTu0dpSrOeIjoA8l2gjjfO6Nzx_OO7IAuQCNztYoKMKLEde815SfxYY
-Message-ID: <CAD=FV=VsiQfoGYHw3D2xmV=Jedu+cmqEfrCk0mkKFzsrRCQcTg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for frankel/blazer/mustang
-To: Linus Walleij <linusw@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Drew Fustini <fustini@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, 
-	soc@lists.linux.dev, Juan Yescas <jyescas@google.com>, RD Babiera <rdbabiera@google.com>, 
-	Brian Norris <briannorris@google.com>, William McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <c0657108-1958-4c4c-b5f5-0eb24e81b2b4@kernel.org>
+ <CAD=FV=VY4AeAf=TMZfJYRo6C0iSqmL-P0GzxRvZHfnNsf+GnYQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CAD=FV=VY4AeAf=TMZfJYRo6C0iSqmL-P0GzxRvZHfnNsf+GnYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 19/08/2026 19:04, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Aug 19, 2026 at 2:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>> Is there some other documentation saying "aliases == evil" that I
+>>> missed? Maybe some email thread we're all supposed to have read?
+>>
+>> A lot of rules are implied by other rules and this one, how Linus stated
+>> in other thread, might be implied by no-Linuxisms as you want ordering
+>> or stable naming of Linux /dev entries.
+>>
+>> I understand your reason is actually different than above, but your code
+>> does not suggest that.
+>>
+>> Anyway, if you wanted to have aliases as ABI, it would have to be
+>> documented. You cannot send post-factum DTS and say "we already use it".
+>> Every ABI must be documented before usage.
+> 
+> I'm happy to document. Can you please point to how / where I would
 
-On Wed, Aug 19, 2026 at 4:29=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
-rote:
->
-> On Wed, Aug 19, 2026 at 7:03=E2=80=AFPM Doug Anderson <dianders@chromium.=
-org> wrote:
->
-> > I appreciate your suggestion of having a separate node for calibration
-> > storage. This feels more awkward to me than just giving up and having
-> > the bootloader hardcode all known device-tree paths that the UFS node
-> > might be found at. That being said, if everyone says that this would
-> > be a great solution, I could try prototyping it. The trick would now
-> > be that the Linux UFS driver would need to be able to find this
-> > calibration data, so the Linux UFS driver would either need to be able
-> > to find it at a specific hardcoded device tree path or the Linux UFS
-> > driver would need to search the device tree for a specific
-> > ufs-calibration compatible string.
->
-> Can't you just put the calibration data as a custom property inside
-> the UFS DT node? Just a long byte array or whatever it is.
-> The driver would certainly know where to find it that way.
-> I don't know who or how it has to be put there during manufacturing
-> or inserted by the boot loader into the node from wherever
-> manufacturing stores it though. (Assuming it's some calibration
-> added at manufacturing, I don't exactly know what it is...)
-> If the actual storage place is in something the OS can read
-> then we could probably use the nvmem to fetch it live?
->
-> The calibration business and what it is and where it is stored
-> evades me a bit...
+Description of:
+Documentation/devicetree/bindings/ufs/ufs-common.yaml
+And obviously, as with every binding/ABI, you also need open-source,
+upstream user of this.
 
-The problem we're facing is _finding_ the UFS node in the bootloader.
+> document this? As far as I can tell, no aliases are documented today,
 
-The device tree for the board is stored / maintained outside of the
-bootloader codebase. It is compiled and stored on the device. The
-bootloader runs, locates the device tree and then wants to make
-changes to it.
+git grep disagrees with you, e.g. second paragraph of serial.yaml.
 
-The bootloader needs to _find_ the UFS node in the device tree in
-order to make changes to it.
+> so this would be the first. If you could give me a hint of where you'd
+> expect it, that would probably be better than me guessing.
+> 
+> 
+>> And this is what my comment was about: "they MUST talk
+>> with upstream open source maintainers before they ship such ABI."
+>>
+>> And no, sending such DTS in your v1 is not documenting ABI. Does not count.
+> 
+> Sure, sending a DTS isn't documenting, but it _is_ talking. Discussion
+> in responses to patches is where we figure things out. For that to
+> work, reviewers need to point out problems and then we need to have a
+> continued discussion until we can figure out a solution. When that
+> discussion just stops, it's incredibly hard to make progress.
+> 
+> 
+>>> thus implicitly provides an "instance ID"?  Would it be OK if I
+>>> changed my alias name to "ufs-primary" or "ufs-internal" or "ufs-boot"
+>>> or just "ufs"? We're not using the alias to get an instance ID, but
+>>> when I added the alias I followed the pattern of all the other aliases
+>>> and put an number at the end.
+>>>
+>>> I'm happy to attempt to fix our bootloader using whatever scheme
+>>> upstream suggests. I'm trying to "talk to upstream" as requested, but
+>>> for it to work I need upstream to talk back. :-)
+>>
+>> Make your case - what is the purpose of it? Boot device? Then you have
+>> "chosen" node for stuff between firmware and OS. There is even a
+>> property called "bootsource". If this is not boot device, but some
+>> calibration data for ONE given instance of IP, regardless whether you
+>> boot from it or not, then I find such case as border-base and not worth
+>> implementing, because basically one can come one month later with "I
+>> need 1000 aliases because my bootloader is patching up every device
+>> node".
+> 
+> I think I've presened my problem fairly concretely [1]. If you hate
 
-The question is: how does the bootloader find the UFS node?
+There is no description of the problem at [1], except "bootloader adds
+the same type of calibration data".
 
-* Does it hardcode the DT path to the UFS node?
+So I repeat my questions: to every UFS node? To every node? To one UFS
+node (but how do you guarantee that?)?
 
-* Does it use an "alias" to find the path to the UFS node?
+I gave you two solutions, depending on actual upstream need of this. If
+you have the second case - so not the boot device - then you basically
+want to re-implement overlays which you cannot. Use overlays, which
+gives you nice stable and build-time verifiable label/phandle.
 
-* Does it search the whole device tree for a certain "compatible"
-string and use that to locate the node?
 
-Hardcoding the path is the easiest thing to do here, but then the
-bootloader will break if the UFS node ever changes. We also know that
-this path will differ for every SoC and is currently different between
-the downstream device trees and the upstream ones (because downstream
-device trees don't have a "soc@0" node). I've also been told that
-device tree paths are not ABI, so hardcoding paths in the bootloader
-seems less ideal.
 
-We could just hardcode the path in the bootloader. If this
-conversation goes nowhere I'll just change it to do that. If paths
-ever break, then I guess we'll just have to get yelled at when folks
-say "Why in the world would you hardcode DT paths in the bootloader?
-That's not ABI!"
-
--Doug
+Best regards,
+Krzysztof
