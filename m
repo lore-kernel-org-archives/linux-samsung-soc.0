@@ -1,165 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5695E3B7B7F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 07:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53633F6C3B;
+	Thu, 20 Aug 2026 10:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787209474; cv=none; b=aAbPQSDSj/LELhyJhMLlbnxDKeMVh2DOfUKaAqDUnr8dxsoXoRixEZ8y4lcuoSXoTTZQGV37PvzOFVw2KxNGUCLHxkJY8uBQARiqebFSSAqYHo+3H0GzH3VndSIE9hWzUppnnjOK/+hvYgYFLI2mun12HOvKPptdxsce9bJhC2Q=
+	t=1787223322; cv=none; b=Eb4an8ux/jnF+xZj/JGdKkYc51VmDr0W8k5lF7AUFYDmRV48pVlVwyT3SZTkCbWQ6ecmO29OPWsEHRVuCISFbQ5ECXgpkIVJEHfdm2B+UeXVx7W2UmhV3Z5l6YG5f5UOW86rqM1bijeTJwzplMoEcOMmickk8OEmhJg3SgSdurk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787209474; c=relaxed/simple;
-	bh=Cusf2T7B4al32h10rLH42UCGifbkj8cK5s3GiNopXUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iBBY9SHNQg+EnJRBw65qnYjcXeQGPRRmI6uRyVaD8VwfOVmcai4DU9TxOLINztuddEkbcDSg7KzjECWgu2J5bsRhMmRmrDWIpDeQgPAjnY236SVlpovgfzvpLRWGwYlpNfpWCVSrQztIc7g0HrWLlz83tpy8EbihYvd6J96tdXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ltu5V+rh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787223322; c=relaxed/simple;
+	bh=/djQJ1RRVbyrMfFajMU/PdnPIbQ2x/Yq2aRokGFcZHE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ijfCoGNgnJFifcN36GjkryOiA/vo7LPDW9DWwP2lABXP2IFsldT/Vt4CIxe6AVBAkuHLgK001aGDvDaEHkBu2m90bz6al0+EkiwrwtqXlvoNxFnaJWoH4T6vypwOx0sg+GliD9iJIJeNjAxSaCYkSKm6yqgjM4y1Z6zLmiy0JI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=X/SEpk2Y; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ltu5V+rh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D3161F0155B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 07:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787209473;
-	bh=Cusf2T7B4al32h10rLH42UCGifbkj8cK5s3GiNopXUs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ltu5V+rhF+34mxFIWuu5tU/suXKGLd5AhOIPnzPZp9urnSKf9VJ8EIsQW96gIkByQ
-	 jKIHe2Mnzdxyr98U6vZQ09qGUeNds3CD384Hn/JB9Z3F4QmW6lVsNIwq6k+b7vC9FT
-	 267T7HcoTXxb0qGVxv5IsV62Ctx+v2hK46ga9WWie8l1WQrNz9KP3G4SCZyFsuKnYA
-	 cQn8raKsRDRhIaMiDMG6G4KczC1esJDfvkwZn/l0iZe/HIjRXnKwirzM+eZy3NA/xO
-	 YVa86yd4qIGEJbrYtkTlW94CQsKDRIDVtI5kTXDMARcpwuc4k4ND1C2c8SIeVm+uaY
-	 kDZj7EjcX5R7g==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2193507e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 00:04:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpPg319SeBflmwolOdUdT3Yz265t7d7mD3seqBM9fLscsbQ87cXqszn5Bb5iuwhL6Q3ivi1DVvOALccuXyOw9a4+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIAQeFOC85TyVHUZ2Q1rpkSU2FfSkgi46jC3xXecnZ6lcJoaVG
-	DIC4ERUwa/5FQC1IGhXNwmbsGQmKaU5psMxoWoXfvMXRbu0XqtV59S9AB5yAaXVWA3R3pmxmPdX
-	oADUvKcc79JnprTaxZQXFb8FFhMlGisw=
-X-Received: by 2002:a05:6512:3f25:b0:5ae:bf45:e3be with SMTP id
- 2adb3069b0e04-5b478cf5425mr3737000e87.21.1787209471579; Thu, 20 Aug 2026
- 00:04:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="X/SEpk2Y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1787223306; x=1787828106; i=markus.elfring@web.de;
+	bh=/djQJ1RRVbyrMfFajMU/PdnPIbQ2x/Yq2aRokGFcZHE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=X/SEpk2Y31nHhtfwl968RcIA06hnPDEUKNs6CYdwboK4+YwCcjwg3gztQL5YjZ7I
+	 DCMZ9OxKmQlUVs4TSIyCPpznZV1H7k0wmAA4C3ggPnUr7becS8qwyJX0kntAd8Kjr
+	 e2BDice3j3zv5OnXzbAJ+IdcXY3jCM47j7JM+VV6XoS3tuF+HIuNHnmY15wuBfTeO
+	 NdD7Z1nGV+xyP5OsfqgQtAEnYDIUxdWTolxNrfEMQ8g6cRK+9k5vsQZVrbliuVSNV
+	 R1sw69tut1xRsouxLL92oxfoe23japSqHNIv5707vlbTq/r70DDj6fMEiE4o7DBed
+	 KCEFw/duP2zWeokdnw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from client.hidden.invalid by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjxeO-1wYhEY2JMO-00hAo7; Thu, 20
+ Aug 2026 12:55:06 +0200
+Message-ID: <53fb9fa9-9663-425a-93fb-7771cb1e8905@web.de>
+Date: Thu, 20 Aug 2026 12:55:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
- <20260722-contrib-pg-pixel10-initial-dts-v2-4-3abae9717feb@linaro.org>
- <20260724-dancing-skunk-of-novelty-72c1b8@quoll> <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
- <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
- <CAD++jLnQGy_LvRxMjq1s2Hs9Hn4LNTFZ0W17zC1YLs5StwfqMg@mail.gmail.com>
- <CAD=FV=VuVdq_=TQmONJZak84S2c2-2yQ8DS0k_odYsUfg0C+rQ@mail.gmail.com>
- <CAD++jL=VLzW-4eB=izJwaTJ+6xObk9+AQGTDK6ABdrGX4K3vAg@mail.gmail.com> <CAD=FV=VsiQfoGYHw3D2xmV=Jedu+cmqEfrCk0mkKFzsrRCQcTg@mail.gmail.com>
-In-Reply-To: <CAD=FV=VsiQfoGYHw3D2xmV=Jedu+cmqEfrCk0mkKFzsrRCQcTg@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 20 Aug 2026 09:04:19 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkJq0t8sC6_S4LHERbTTiUanKh32QJtdDtUZrXdDEHgMg@mail.gmail.com>
-X-Gm-Features: AcwNN1WqJo48aeez-Evap8v6fI7Rfgzep_6FDf8AekLbZhIutRdP2zHCmPTfiRA
-Message-ID: <CAD++jLkJq0t8sC6_S4LHERbTTiUanKh32QJtdDtUZrXdDEHgMg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for frankel/blazer/mustang
-To: Doug Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Drew Fustini <fustini@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, 
-	soc@lists.linux.dev, Juan Yescas <jyescas@google.com>, RD Babiera <rdbabiera@google.com>, 
-	Brian Norris <briannorris@google.com>, William McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: 1298662399@qq.com, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Alim Akhtar <alim.akhtar@samsung.com>
+References: <tencent_405FF24AB67AAAA26BC85ADD092710C0BB07@qq.com>
+Subject: Re: [PATCH] memory: exynos5422-dmc: handle clock enable failures
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_405FF24AB67AAAA26BC85ADD092710C0BB07@qq.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Wzi/Ywv0RunCgHfky2+t9AirgzefZDuQZ8vu9krudYnB78sFzvE
+ p2sw9UN7K9NBbgSbGV8QGheOq7FNTZkcKjCx6kzJuF5dbGBy+F6Rk+eVZkgGAeZXXFZayjg
+ 5huV5n381CPdU/IZ+ANC384nKOJp6+vfNBOwmwMMSMX6TQBQKyQTdfvwdB39noblfCZFlzz
+ f+r2yV1F8hX32O2EZ+HFQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cN31PgPvfqg=;ae8ZNHaR0XpTIHXmLmZIMkbK/CU
+ 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
+ =
 
-Hi Doug,
+> Check clock-enable failures during probe.
+>=20
+> If a later clock cannot be enabled, unwind clocks already enabled on
+> that path before returning the error.
 
-On Thu, Aug 20, 2026 at 1:41=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
 
-> > The calibration business and what it is and where it is stored
-> > evades me a bit...
->
-> The problem we're facing is _finding_ the UFS node in the bootloader.
->
-> The device tree for the board is stored / maintained outside of the
-> bootloader codebase. It is compiled and stored on the device. The
-> bootloader runs, locates the device tree and then wants to make
-> changes to it.
->
-> The bootloader needs to _find_ the UFS node in the device tree in
-> order to make changes to it.
+See also once more:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/stable-kernel-rules.rst?h=3Dv7.2#n34
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv7.2#n145
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv7.2#n792
 
-So, thebootloader needs to make changes to the calibration of
-the UFS storage, and it needs to find the right UFS storage
-to calibrate, right. I get that part.
-
-But this is what boggles my mind. It is actually a pretty
-deep philosophical subject.
-
-A piece of software (the bootloader) want to make changes
-to the calibration of a piece of hardware, which it somehow
-has the calibration for.
-
-This pretty much means that at some point *some* unit
-of software producing that said calibration already had a
-handle on the hardware.
-
-So there is a missing piece of the puzzle here.
-
-This is where the imperialistic ambition of device tree
-kicks in: the piece of software - be that a manufacturing
-run-it-once piece of code - that produced said calibration
-should have *also* used device tree to find the thing it
-was to calibrate. Supposedly looping over all UFS devices
-in the device tree and calibrating them one at a time,
-something like this.
-
-Ideally that piece of software should have updated the
-device tree too, but OK that is intervening with software
-engineering, maybe it does not have the capability to
-do that.
-
-But that piece of software *should* have at least encoded
-some kind of identifier for the thing it calibrated, like a
-unique serial number from the hardware, or in worst case
-at least the device tree node name.
-
-So the information to locate the right node in the device
-tree *should* have been present inside the calibration
-binary blob thingy.
-
-What is controversial with this patch is that an authority
-on the side comes in and says with a device tree property:
-
-"I have a random piece of calibration data and only I know
-which UFS it is for, so I am going to encode that knowledge
-into the device tree as an alias."
-
-The device tree "thinks" that this should already be evident.
-
-The device tree has the underlying assumption that
-everything is using it. The kernel, the boot loader, the
-secure operating environment, the GPU, accelerators...
-also the manufacturing tools.
-
-From the view of the device tree world, a manufacturing
-tool not using device tree is a hack, and if it is a hack
-then the system can put the information in there using
-a hack, and this whole ambition of finding the UFS node
-from the top down is moot. It's like polishing dirt.
-
-Now, I know this way of thinking is oddly bureaucratic
-and imperialistic, but it is in the core essence of how
-device tree was thought out. It wants to be the authoritative
-source of all hardware information, any other source
-is a hack in the view of the device tree.
-
-I don't know if this solves your problem other than saying
-"go with any hack because this takes place in an imperfect
-world", but at least it points out how this kind of problems
-collide with some of the core philosophy of device tree.
-
-Yours,
-Linus Walleij
+Regards,
+Markus
