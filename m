@@ -1,114 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D102882C5;
-	Thu, 20 Aug 2026 14:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7534037F323
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 15:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787237345; cv=none; b=rtBnWhb9edXDokiOeOlsQGLOJ3NYVNWqRgf+ddmtu0MrWCU9NIksagBccIhpnKd0adoDsu0cOyV2eY3p47HhEtsF5+12UZnm8d7HMnNMN/edC9JlXKzl3o7RnTMgtnc429ZF5/Gjyti3LsVfg14JUzHvCiCOcUII+Olra7afz/Y=
+	t=1787238545; cv=none; b=LWRZbcBdHVsAK2mYP2cdSwrj7xeahhVc4oDDPVwvDoGskK4Nc+qH2JJ+V+hL4oHujr3OGHetagHb0s4dez7I9jSPHc99YfA1hsRh9YkZaFVLBY0RYIWQGCPXb9WwAG7yYbD+vdCUX51r4J35zJ+jI9SQL+4PoFv2rAk3fWT2rSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787237345; c=relaxed/simple;
-	bh=6nJESaZQ35pgr2BcoZcft18s3EWqe/wnHp25kJkyABA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hi5XfPQTmIDHIie6LMj+rNcToQiy7PBGgvCwPWN+AmC2mokqTtlCUgq5voPJuqAUmwtJMmfAMTi9UGJK4aPAD58VipDCc4Z7Lwj/hPu8KPIL+K8/SnSqoPIybqtY7iVmxIgQ4HBJxnjwZL1sU5vzCHa3k632NQErIJY7blbPjDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMy2jEeF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787238545; c=relaxed/simple;
+	bh=I1DtpNiKv1KnqpYZERtbv20FbK7xO5TjOqNoiX5FaIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EL8YM2kmdUgGTFMYboQ3dFUTacgoLchAA7c3EgV5BnJgfHCvqRCFaCeWc+Dnx9ajeDH6ygHruqZ1o068i9k919T3VfUDF0ytflTkneZetZxDPxsUHmjL/cA7XZ2T+0rVu+yV6Fm76LgGDtIC2dZZXeprSRj3XLi1sE67A9nLLeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eSUKvD17; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=X1w8HNWb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMy2jEeF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1811F000E9;
-	Thu, 20 Aug 2026 14:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787237344;
-	bh=WsxMpo9lC1E1yD8g/8IlIIebsu63RhS6wZGPNNJDHk0=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=BMy2jEeFq4ePQUV0Ymr4lahLm495EqWbe5orYiHe+cnqChJyJ9IY/KF8PUK3kYtSR
-	 FObK2nZ7MddG3Ed1b0B64F42MrhCyFFqN2fuD3eTvCgLi6R/1uChRDZ0nlu4USbmZV
-	 86apbov+MXf4CIs6cjJHm0tFELIbnNdsEA6GlHO963PdjVUMMeGQ12Ov6qSUKLShV2
-	 p9izQw2EXr6p+hwlkKT9Zt6f85ycDCcEI22ZCsN8JH84pQSw+RBVopQOKBTIWdoyvD
-	 J5iPLCMm4KBADINWKhIttbBM1qBU9ICPF0qN/A5EwORXG+NE5HUYWgGX048t4lpvMr
-	 dzolIOBO+KIfA==
-Message-ID: <afedcd3b-04ea-45c6-a895-a172e3640f84@kernel.org>
-Date: Thu, 20 Aug 2026 16:48:59 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eSUKvD17";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="X1w8HNWb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787238541;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJnamaX6JlRGHuZ8sO/4OG43OjrZQHiP9rUJ3vO4bbE=;
+	b=eSUKvD17VuzFt1ezUoDVi4h+Do/v8u9+zB6iK0qbYxGUumLhub2eEHBGWcfKtH2lIXxCSk
+	uIplCUrsgbw6lQcY+BMRvxRq8LJtjZUdOczMO7fUgQ9D8LL9jrUhVZu8i46SGTRfUDk+NG
+	8uzA6jk8EYlyQSE37EUUP9fpOzF1Ank=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-295-dtM45yvXMGOF8-83QjhIZQ-1; Thu, 20 Aug 2026 11:08:59 -0400
+X-MC-Unique: dtM45yvXMGOF8-83QjhIZQ-1
+X-Mimecast-MFC-AGG-ID: dtM45yvXMGOF8-83QjhIZQ_1787238539
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-822ce245c5aso67375807b3.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Aug 2026 08:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1787238539; x=1787843339; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=gJnamaX6JlRGHuZ8sO/4OG43OjrZQHiP9rUJ3vO4bbE=;
+        b=X1w8HNWb/tapYuZDzYmwn4lddtV8e/WhF3vyNs6d6R5K6IbHdfJ+A+avl8BCxKweO7
+         AI7bjJww1EwWh9fajvO3QQs/Eyp0cyJeXgpUIu4O8kO4Yj2bSqK14S+EvkGQk8+QAfA+
+         KEFBzq+tvIcqVTPlqG7iVq4i4pj3lLPyXWzLDPaN5IxjvNAAaSp1JHWprMzSun1sqwXe
+         FRez0axInHrneKlGqOfuZ6IcnEniPOiSdADATuo23SyA5DbOj+uX9qpGl+9XFIIZGFJU
+         5BORRToxDJoYJQAoQ+hHv3DynpqUZbtRkBd06VMr9Xr/PkFqHQUOLxKrnSr/G+TkfC5W
+         3mMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787238539; x=1787843339;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=gJnamaX6JlRGHuZ8sO/4OG43OjrZQHiP9rUJ3vO4bbE=;
+        b=ckdJ9ybKwDjMWiIq0jbNzfRNOWfoaxc+YWfjZeplMmza/pBggcNsfBUZP5qAPyuryZ
+         Kghk2m2APwZDyVodeDv6ZQvoX9/Dx465ZJIpS7/XdKXYSZDg8gR9hGdU3NXoTs2uV7Tx
+         5Hg0vMrXFZRhskhYL0MI/ZfDyZPquN+uYtZilOwzCZceG61728+i3m8wB3XrIzoeDq5B
+         GBuqZE4Qw4S9rkV5fOcSi0YJV1dXUPdcxdSLdgvKG1trchFaBxjjZT2oTBp3GtX/GBAz
+         z1OTFPjvc/R20x9OA1X1LfzF0JRt2t/5jCaYAM+eqgfSO2sJ84fz4sjJpcUoV8tv0WJw
+         Oemg==
+X-Forwarded-Encrypted: i=1; AHgh+Rom5xkTlbxKrFRAkiDxNs37OsUEsS16BSu8qjqXYgYGJZsffIV0vhYK5xNFPyHGyFmgImCVDpzF5kqEasgasbmwvA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mW2XEYsVigTVGJs5PRq7Tf3ky3LetRhNF8Tbip21c+lFZKNmr5
+	UBqvJT/TpJ9pPPr5fSoV1y9Q7008NBiMY1tju957N6q1mLJcZKafLyuzx10S17Tr9oD0AukIBcw
+	qHNcQ5/fJBdROEIgNiB1csuE3PrCeQgDd0TXJAPyWPT6amMzGIMOzS+IO5uCGCkKHn+7aXIAt
+X-Gm-Gg: AR+sD12rNOL5jxMFg2HxOgwgvq52u9O/FV72nH2O6Hu7eweO5mtiR0GyGDeBIyr6kJH
+	OVm09DTmqO3J6kjUSDvWkRlE1uOOg58ygyUnq7SA2ibOywZEeTzvqWLWU3drHvRcBZGQx0fmuiH
+	7h/fDYJbiOMyNFg90bNCAjwjbSC7X7vFzf00wViWAJiIZ8+p72j26By7jg4S7MPrlySoNJv07J9
+	mBaS/KQ3Z2P/RzPRzNoxfX40al6AfSr27CwZ/Tpvy9IB05rbT4tz2V2C99TD01MBraHfSiweZVH
+	53VH9M6Prc8Ms0xzAfQPq+XnqlvAsaJTM4PAYeGE1XipQVPYBg/wnRx3Ijah8qgsCgAV6FODTaw
+	fIbDon4mIEosVz480pds9lggYCbGZ4/V28FM=
+X-Received: by 2002:a05:690c:c59d:b0:81f:3b6d:a0a4 with SMTP id 00721157ae682-844e3d5d5cemr41714197b3.25.1787238538969;
+        Thu, 20 Aug 2026 08:08:58 -0700 (PDT)
+X-Received: by 2002:a05:690c:c59d:b0:81f:3b6d:a0a4 with SMTP id 00721157ae682-844e3d5d5cemr41713897b3.25.1787238538408;
+        Thu, 20 Aug 2026 08:08:58 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-845186c0dacsm26600967b3.36.2026.08.20.08.08.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 08:08:57 -0700 (PDT)
+Date: Thu, 20 Aug 2026 11:08:55 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Triet Hoang <triet.hoang.dev@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, luca.ceresoli@bootlin.com,
+	krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com,
+	michal.simek@amd.com, shubhrajyoti.datta@amd.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drivers/clk: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+Message-ID: <aocYhz_ASVhW8zfm@redhat.com>
+References: <20260820065904.2032536-1-triet.hoang.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos850: Add GPU/Mali Bifrost node
-To: Thomas Turner <tturner@lineageos.org>, semen.protsenko@linaro.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- peter.griffin@linaro.org, alim.akhtar@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260820110620.1881-1-tturner@lineageos.org>
- <20260820140439.83220-1-tturner@lineageos.org>
- <20260820140439.83220-3-tturner@lineageos.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260820140439.83220-3-tturner@lineageos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260820065904.2032536-1-triet.hoang.dev@gmail.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On 20/08/2026 16:04, Thomas Turner wrote:
-> This can provide basic GPU functionality for the Exynos850 platform.
-> Tested on the SM-A217F device. Does not provide support for temperature
-> throttling, DVFS, power domains, governor support, boosting and voltage
-> control. Once PMIC is properly implemented, support will hopefully
-> increase. However the panfrost driver probes, the Mali-G52 GPU
-> initializes and the core clock is set-up.
+On Thu, Aug 20, 2026 at 01:59:04PM +0700, Triet Hoang wrote:
+> Convert the deprecated SIMPLE_DEV_PM_OPS
+> to DEFINE_SIMPLE_DEV_PM_OPS and pm_sleep_ptr().
 > 
-> Signed-off-by: Thomas Turner <tturner@lineageos.org>
+> This lets us drop the __maybe_unused annotations from its suspend and
+> resume callbacks, and reduces kernel size in case CONFIG_PM or
+> CONFIG_PM_SLEEP is disabled.
+> 
+> Signed-off-by: Triet Hoang <triet.hoang.dev@gmail.com>
 
-Slow down!
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-It's another version? Duplicate? I already responded to v2 (which was
-labeled v1), so is this vX?
-
-What is happening with this patchset?
-
-Best regards,
-Krzysztof
