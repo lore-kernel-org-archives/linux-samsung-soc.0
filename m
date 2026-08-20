@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF97F3A48E3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63693A4F32;
 	Thu, 20 Aug 2026 19:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787253128; cv=none; b=SaMwIedzyNZH1g9NQ2T++Ys9Puf0DzFHfGjAUCujjCcm+66hnElsmz9I/gOJIQDHscQtKrjzBFIkVOUzWHYARHcA8GBcVBkqWyUZW4wdW44z2Et5BcAA+WIxH5Yyble8DoCK3B1VKxV9oOMlc0bzR5FlgOp7HdNI3+Ids3bI3Ag=
+	t=1787253128; cv=none; b=dpil4v6MkPAlQCn56An83QrU23RlmP6R9PALJenm7G+ypfygNU23hBdv7zymWnzoWN0UguPI4XDBqk5HYuHbfEDMoTirbg6y17KBRqrBJryUkQRyTGjybx4AkZf5imO3FZ8ZkjRqu4d6TD4PCE9ED2l0Z4oSeDKYdMUy6SNxfQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787253128; c=relaxed/simple;
-	bh=FClt2rXZfpheNKgojWzXtNzlVz6kIXUmUxfCqnurlQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oVY2uudR6iXlGuf17v6iPycqb//Eo9sXehHITVAgvi5g4HqBILQCmsg8TDJCPxZYdqtTtZnS3u5EQgmI7k8UcNmRBYaww5PmU7WS+BDljH7qbTR1uBvBIWO8K6VvGeukPMBiCXsVfLF6deHkthEEAVK1URWKB2IMsMIMWqjwvwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8ZO7Hpn; arc=none smtp.client-ip=10.30.226.201
+	bh=eOP+RA4mnWGtFVmDZnso+934UzTGqKnTNVZ92PuZ8Bc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AeTWdaW5q5j/zk6bb3qp8bOaGCCL3i5ajVf/MxjjoWjCcmz9wb7TU3GXqlyg6GD4+JTW3VnSksICV+nGJmnTCQXdsMpKkede/vGr/xc2wA9ZLAW4V89JRA58K9q+CY2gqKKELZpuqM+j2vmHc4Om2taz0vJ75FDS3e2O1ywQhu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eO5QPypk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8ZO7Hpn"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CDC8C2BCFB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eO5QPypk"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 442C0C2BCB3;
 	Thu, 20 Aug 2026 19:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1787253128;
-	bh=FClt2rXZfpheNKgojWzXtNzlVz6kIXUmUxfCqnurlQ4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=K8ZO7HpnJU8dJkDP7rMbPNU6BEe9coezE1NuY6A+PMdpR9SHdHO5QpiSZ2OcnNKxn
-	 rpD69lypdibG8FMcZZ+BrEvBGBLs/zffIZ1skw1LYYvLz8yEKnYiraMae0tyl5Z9c3
-	 mR2mqg45/xv1fCv2n7ghjyn9n00DeOXvsrJn1+LKJ0yW+Gz8ZVciVZmjqDy+XTMIjd
-	 3frmvOUJP3FEv9uE25Te/hHqII6tw9p9BcCdwgg2dnOGm7Py4tCXR3NnGJmVpnPpue
-	 V8CIvuJpnHHLSiTYdR9ea8CkA3haAVhsvtMqE3E4bSLhonqTSMNQ1ny7G4LHBlxpSa
-	 LeiFOA16UomMA==
+	bh=eOP+RA4mnWGtFVmDZnso+934UzTGqKnTNVZ92PuZ8Bc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=eO5QPypkD5JbvqoQcnM+FyUJ/ZRfE15b+GHfCW/iHiw/vSHEIemIzizL+tqqXUgnW
+	 eS1bmB2/j9Yecj/m+9OcNdPeD4BaAzzIrghbCf0Ltprnblvjnh4WHB2J0PEcI1Bt3y
+	 u4oXUdRs8gqrH0MQuU/LfVnyYVEvKdjfd3ZpOSTw2MknsbxSwsimMNkvHJj6KOPmgo
+	 dktzW+AD9hnBi0HywbrGn2HOzk1JI2ikoNuCy91XYeDKIQQH4TZtsnlxIsG/fwuMTB
+	 V5ipaEviUNX8CWuXrWZk0u/IO2F4D9YWRVyQS8JWG7mK6iSYybQJu2VW2dP0TtPNvf
+	 YNdlYeSxknsuA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F8C5DF8C;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF34C5DF89;
 	Thu, 20 Aug 2026 19:12:08 +0000 (UTC)
 From: Markuss Broks via B4 Relay <devnull+markuss.broks.gmail.com@kernel.org>
-Date: Thu, 20 Aug 2026 22:12:06 +0300
-Subject: [PATCH 2/4] iommu/exynos: fix the enable sequence for no-block
- SysMMUs
+Subject: [PATCH 0/4] IOMMU driver improvements for modern Exynos SysMMUs
+Date: Thu, 20 Aug 2026 22:12:04 +0300
+Message-Id: <20260820-exynos-iommu-fixes-v1-0-6bbcd673bb15@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -41,9 +40,10 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260820-exynos-iommu-fixes-v1-2-6bbcd673bb15@gmail.com>
-References: <20260820-exynos-iommu-fixes-v1-0-6bbcd673bb15@gmail.com>
-In-Reply-To: <20260820-exynos-iommu-fixes-v1-0-6bbcd673bb15@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMUQqDMBCE4avIPndhG0TEq5Q+tHHSrmBSslUU8
+ e7G9vFj+GcjQ1YYddVGGbOaplhwvVTk34/4AmtfTE5cI60TxrLGZKxpHCcOusAYgrpvgwQvDZX
+ wk/EbSne7/23Tc4D/nk+07wdZ0Jc7dgAAAA==
+X-Change-ID: 20260820-exynos-iommu-fixes-e0e4d8f0fc06
 To: Marek Szyprowski <m.szyprowski@samsung.com>, 
  "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
  Robin Murphy <robin.murphy@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -53,11 +53,11 @@ Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Markuss Broks <markuss.broks@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787253126; l=1548;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787253126; l=2066;
  i=markuss.broks@gmail.com; s=20260803; h=from:subject:message-id;
- bh=K4btCYT7ezjlx6H4fapioD7ShFs/jWpvk5zQdk+w7+8=;
- b=eWfEM667DBzpg9cwP+89xFePRCc5Xqc6CdWKOSqJyauS4P76wUs+9H76z2L5zWlaTjSRxLcuD
- 8bTDvt94nd4AEmQKh38tilyh8prRWFXzKOGzlp4YWDUx7VO7+47Egjo
+ bh=eOP+RA4mnWGtFVmDZnso+934UzTGqKnTNVZ92PuZ8Bc=;
+ b=ISPOHNvudmR8znZALCiIIFA6iPpiCNxVuLytNm3IHeDKPyijmVlhi5VGISK+wzWdDUObCBnFt
+ bF++bdKHIZQAXUKtRHk49vIbKTWhQjlf4dJI0ha3F3Vt0gwgRVZNcuV
 X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
  pk=oKzGUTm30BCDqinRMpiHQqByOx1mp2mwmhg80Mv7Zg4=
 X-Endpoint-Received: by B4 Relay for markuss.broks@gmail.com/20260803 with
@@ -65,46 +65,51 @@ X-Endpoint-Received: by B4 Relay for markuss.broks@gmail.com/20260803 with
 X-Original-From: Markuss Broks <markuss.broks@gmail.com>
 Reply-To: markuss.broks@gmail.com
 
-From: Markuss Broks <markuss.broks@gmail.com>
+Newer SysMMU v7+ instances can lack BLOCK mode: CAPA1 bit 15 reports
+that the CTRL_BLOCK function is not implemented, and MMU_STATUS never
+reports a blocked state. The SysMMUs on Exynos 8835 are such
+instances.
 
-__sysmmu_enable() writes CTRL_BLOCK before programming CFG, the page
-table base and the VM registers. CTRL_BLOCK has the enable bit set,
-so on hardware without BLOCK mode this write immediately starts
-translation with whatever FLPT base the registers hold: reset values
-on the first enable, a stale page table on re-enable. A master that
-is already emitting traffic at that point gets its transactions
-translated through that garbage.
+The driver currently assumes blocking always works, with two
+consequences on such hardware:
 
-Keep the MMU disabled while it is being programmed on such hardware;
-the final CTRL_ENABLE write then brings it up with a consistent
-configuration in one step, which is also the same as the vendor driver
-sequence.
+The enable path writes CTRL_BLOCK first, which there acts as a plain 
+enable and starts translation before the page table base is programmed.
+
+Worse, both TLB invalidation paths gate the invalidation writes on
+sysmmu_block() succeeding, which it never does - so every unmap silently
+skips the invalidation. A stale TLB entry is a valid entry pointing
+at a freed page, so nothing ever faults: the device reads back garbage
+and its writebacks corrupt whatever the kernel has since reused those pages for.
+ 
+This was tracked down on Exynos 8835 with the MFC, where the
+first decoder session of a boot worked and later sessions produced
+garbage along with random kernel memory corruption.
+Patches 1-3 add detection of the capability bit and adapt the enable
+sequence and the invalidation paths, matching the vendor driver's
+handling of these parts. Patch 4 is an independent debugging
+improvement: decode the v7 fault transaction info word (AxID/AxLEN),
+which identifies the issuing port when a master containing several
+DMA engines faults.
+
+Tested on the Samsung Galaxy Tab S9 FE (Exynos 8835/Exynos 1380).
 
 Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 ---
- drivers/iommu/exynos-iommu.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Markuss Broks (4):
+      iommu/exynos: detect SysMMUs without BLOCK mode
+      iommu/exynos: fix the enable sequence for no-block SysMMUs
+      iommu/exynos: fix TLB invalidation for no-block SysMMUs
+      iommu/exynos: decode the v7 fault transaction info
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 0319da9fd831..a3a59d8a4cf1 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -655,7 +655,12 @@ static void __sysmmu_enable(struct sysmmu_drvdata *data)
- 	__sysmmu_enable_clocks(data);
- 
- 	spin_lock_irqsave(&data->lock, flags);
--	writel(CTRL_BLOCK, data->sfrbase + REG_MMU_CTRL);
-+	/*
-+	 * On no-block hardware CTRL_BLOCK acts as a plain enable; keep the
-+	 * MMU disabled until it is fully programmed.
-+	 */
-+	if (!data->no_block)
-+		writel(CTRL_BLOCK, data->sfrbase + REG_MMU_CTRL);
- 	__sysmmu_init_config(data);
- 	__sysmmu_set_ptbase(data, data->pgtable);
- 	__sysmmu_enable_vid(data);
+ drivers/iommu/exynos-iommu.c | 37 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 33 insertions(+), 4 deletions(-)
+---
+base-commit: 415606a7be939835db9b0d6b711887586646346d
+change-id: 20260820-exynos-iommu-fixes-e0e4d8f0fc06
 
--- 
-2.55.0
+Best regards,
+--  
+Markuss Broks <markuss.broks@gmail.com>
 
 
