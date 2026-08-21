@@ -1,115 +1,188 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EC038AC64
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B594248BD51
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787311765; cv=none; b=W/uLNX+3DNr+m+m7ogwR+YdPvmai1QPj4sGwKFTw/m1xhvc3kB1QH7RBZ/oekTunLiYuxndq8oWxAJ4AmPWN4/hzn594wM3gPk9tstLn+U68Sk+j/KwBGeY0X9qdyYVbFmYsHhNyv07FmqC7u3Hw6xDU6byp1gdVYg+1i8Iu4qc=
+	t=1787312710; cv=none; b=SuN4yaKMWTB19FT37hw2LQlE9ka1tbL22b7KT8Ena6pUBJQT8TToW99dXTXy7otGNFSXMwT7TrAht2XHnfxt5YBCmy1gqSjW+pZh9m2163YM3VyODqsAajSHPmo3Eud7vwUrU6smAuJ6Gf5cXEileOdRPBgbGhZTOa/XS0hwVy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787311765; c=relaxed/simple;
-	bh=rReboDtVWR+LchIn66VCIiRA4RrsNZEU4pEK04rnFMY=;
+	s=arc-20240116; t=1787312710; c=relaxed/simple;
+	bh=t6UzDLEI5sFGDTGO7Y5vJvN9sIzuySwnVE5VSaZ8VfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBAROqR9NBf7Du0MUhiaPOVKkKq5I42qTJcdn9Vw/fUNjagCdW9BJeUdKucM7yO/ynVRdus4/fYG6EwzeIQ5le3ffUhyIGsZVsX0fLAyWLVZ8Aa9LWED/uieA7oBH4w7BfhZMJawLsRZBCyyepNiLJd6/96r+3LaDsQxnvYV9g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=M4i1KIX9; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=prk1P82Ky4Ue2UYvMZIEtdVCk2bMhxIQgdgS6mmZDHJtFu7y6fdGns4YHb1+VLsVwfgM95BD1aRS52wyH/T/g4ZHm1xY45wH8ni2gAnV8iPrlDQXJ6ums0rvgUI96JJGuG60ueuG72oJS8qf5kvHUevmPOh44b0u6KMJe4SBueI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VdgImv2G; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RA+H+oQU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="M4i1KIX9"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 958E8165C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:29:19 -0700 (PDT)
-Received: from [192.168.0.1] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4095C3F763
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1787311763; bh=rReboDtVWR+LchIn66VCIiRA4RrsNZEU4pEK04rnFMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M4i1KIX93cAJLQz27qRfQpi0NYskBmszlAuv7yxBmySvbhfM9hSQXAPy1ql0gnRKP
-	 vOOKRmTPOy8USbiKUUj1JRJk9pne90bqbeNU6qgIzJG3KwgrgUsYXnqqMc4PfiXCyV
-	 wFg98JvHeikEXEDUx9KQJPCBxJBd5DIrShTqUaps=
-Date: Fri, 21 Aug 2026 12:28:01 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VdgImv2G";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RA+H+oQU"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67L9Lx1c789841
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:45:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2dAxTCvnWQHdzet60v9peB5B
+	pAu+xzdvRTiBy/vj54k=; b=VdgImv2GIIYlPoA7bawOCdd/z5eOizLUkWtHiKHG
+	fMJ8kehGNhTBZ0h8fQUpLmO4aHVb4Mho+58HJbtXJmK7pzA7iwmysMFI9YwLuJLd
+	0vJSyyQpP6DmL8TfPIZx52bXvBmaOa490uwxGO8tVnTT5LQPCWLV/uSDteUOUqma
+	tE65aj8LOjjW4Z/rx/aq+6zvt9jwn5DM+o8amnjPhmorMlOraz66r8EKsa6q4pa0
+	p5Q6NGTAo6FeLQBpnvIZHqRMWgICdneh/tjNO4EQy9HTiegVbpRhgIpeHu85e56G
+	ImFfg188wowSrriSTZS6q40qjqQT91C/Gs57w7aUUKPu3Q==
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g6ebusr9s-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 11:45:06 +0000 (GMT)
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-97762b21ba3so744754241.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 04:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787312705; x=1787917505; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=2dAxTCvnWQHdzet60v9peB5BpAu+xzdvRTiBy/vj54k=;
+        b=RA+H+oQUhTPtfVPIqMCkLqZ/KoO821hQwKZL3Ia2QfjU7bLx5l1HOFKt9KRuHJTVz4
+         uRMLtqSd+s8bN2SLZqvKbg7QRX1MfhQkFU9O6NzVP9m93WClz198YD4vSpjWY1YP8oX8
+         i6xH/JlR/SNZHf+1MZuzC30voWSLJvkGQC7SQWgCM9wxSzuaY49HAe+bb80j2a2Za2Zk
+         SQWYloXjKPVQ5XFu1q3pRsgP4E0CcHkgNMFF+Tzvv3wa++dYEVPELjY1r5GceO3FkV0m
+         Co4UuBaSb3WdQSXGSeGqaIgB7+CbiwgspLxWerxb0dR+81WshPgaTdyk8PNpqBcDqKXq
+         qtHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787312705; x=1787917505;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=2dAxTCvnWQHdzet60v9peB5BpAu+xzdvRTiBy/vj54k=;
+        b=QbNX4QgfjUt1VYEN7OYMJ+7gCcA5CuHIMWR95+zcPUjf77Udrvhyw6HL2rmn0NqLIG
+         MfJAY8sFiMfo/Wijlu1sQr9feT6pz2tTWyYYfo55OnfqYBNVdRCSprnYJXpg7y57CUSU
+         jICLlcdz1fw79dRsERzLdcknhVVrt8KSGcA//ONsMmhRg4eTKy6vA2Yybd1iZfB40EMV
+         TA997TYo9gStxHSdxRvC1JbSOCq2giyzoEh9hUPI9O8tTYDVFFtiLYLIefKd5OPPVL/G
+         HeI/SdfkoWLJwPuvsJVRHDwa37BcfQ1ow2NKp+nvUfq+dUF24tkbOIeITJlARNDfjUgd
+         +WRQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp1lhfwv/1Z8C+vCAcHyzzwe4sMYGjCsl3gwmlwh+ApUFXReDqZFyNl7lkTku8JiYvYTQHWcSC+B3lnDVtFj9k9TQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mVn73Xs1RpOc0thxtwBfWZKiRKHm677LAhn7QHwzkkQYHe1ha/
+	M/494ERVnHSaX8E9ExGElgXsyVxgc044ZJliJXkVc3mPy+n/t0cfqaOErTzE+kvNphomDyVgeAN
+	QbYWMRTyaswZKAimE/PEsVHZi7VT3Ja9FURn+g4Pp5IMCGhcVhlTDAgNsZ7OCpVjdvgeXEngXEQ
+	==
+X-Gm-Gg: AR+sD12ieHQjJLA2odh9A34v01mjcAWqkcTZFmVUKRX+P/kT8rxASG/a8YGEmJCoSZY
+	WD0mzRgPyDIgWUljKGPd5x8vtcpGTu8HKiTwApVCIR0QsLiSKn4cVjn4jc5ExTF22eAPK3UUYvc
+	Lw8xnmB+RrtS3r2USyv4z2HJb+e7yZ7fnGcZLqRvWDpiP+quRILglPoCFeDKB5vQfZVmFPzob4X
+	yQBmvJtL72Mht53GY/F70drUn48TpUBqMxSQsys8oyQIeMWEJ5xiM6fzmXgXZCsfcxUsfTKRUwI
+	aQi7EJqirNt5mh8Hyq6L7snCR085qTBGqKxjrjuGMhCjwl4/8FNR4t9Rb3ouPRcRwLskh9Nf5MC
+	LwsAmefihFBZwyqo=
+X-Received: by 2002:a05:6102:8083:b0:77b:63e3:6555 with SMTP id ada2fe7eead31-77b63e3c773mr239190137.12.1787312705051;
+        Fri, 21 Aug 2026 04:45:05 -0700 (PDT)
+X-Received: by 2002:a05:6102:8083:b0:77b:63e3:6555 with SMTP id ada2fe7eead31-77b63e3c773mr239156137.12.1787312704554;
+        Fri, 21 Aug 2026 04:45:04 -0700 (PDT)
+Received: from oss.qualcomm.com ([188.27.161.240])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3feec9d52sm6458300a12.2.2026.08.21.04.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 04:45:03 -0700 (PDT)
+Date: Fri, 21 Aug 2026 14:44:57 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	David Lechner <david@lechnology.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 40/45] clk: versatile: Make sure clk_init_data is fully
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Sudeep Holla <sudeep.holla@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        arm-scmi@vger.kernel.org, imx@lists.linux.dev,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+        soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 13/45] clk: imx: Make sure clk_init_data is fully
  initialized
-Message-ID: <aog2QXT_86BrtvTs@e142607>
+Message-ID: <gj4re27ahv3pusk5coh55xqrtj5dkigywa3sqysnifxpwsf5ch@fl6guu2elgnb>
 References: <cover.1787239813.git.geert+renesas@glider.be>
- <7c480e73222bb51982fb82dc0cc6cd503f2e8b92.1787239813.git.geert+renesas@glider.be>
+ <7300fde72b6449d2cd7c043e4caec9a6c4171424.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c480e73222bb51982fb82dc0cc6cd503f2e8b92.1787239813.git.geert+renesas@glider.be>
+In-Reply-To: <7300fde72b6449d2cd7c043e4caec9a6c4171424.1787239813.git.geert+renesas@glider.be>
+X-Proofpoint-GUID: u9kZM8eLANSAPHkyOeLu917Fc1Ep8-iI
+X-Proofpoint-ORIG-GUID: u9kZM8eLANSAPHkyOeLu917Fc1Ep8-iI
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODIxMDA4OSBTYWx0ZWRfX5RzJcdk7nEDH
+ mckbngK8jbztyraqScPe1KjCEo9QEGlhMMY3MzT8mV1S3b4wvGs6QSWFEgpEEhW9Mb8diW9QJtA
+ 4xJ8RWoRiBCbZ6rYGsxx02Fz4WXqwWo=
+X-Authority-Analysis: v=2.4 cv=QJlYgALL c=1 sm=1 tr=0 ts=6a883a42 cx=c_pps
+ a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=wUpz7uCjLrEXi01cjX+DLw==:17
+ a=kj9zAlcOel0A:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=yQKkdfHF0SNApnWj8YgA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+ a=TOPH6uDL9cOC6tEoww4z:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIxMDA4OSBTYWx0ZWRfXyznptPYkZvTY
+ jtzfuJGx5Ts/5vQ1R+l91njpCXmM9LpmYDZcpoDTaKt7S5dhMxh0Rzcdryu3z/2S5/uHFc4TBzU
+ pSuJwaE1kjLxZEVU2hEe98KV811WTQqyJI5ArPjgCf6IAbM3LfKrg1O6OVeV6Zdu01v7dg6bfGZ
+ zfYyQhbKIVjVxZ4nu2UA/KzCAvWzCVr4Tf2ZjXotq90uwMLD0ymu/FqDKA1O1Qeh4e1AuC50agD
+ C/MCGMm1gdPcSLnFQB7dOJ7Wi3T+Utcblo1ArGiLhSSC2ik+gSDL91eO2emvEBtURLXOsVJLSBT
+ VEiByt9TplOXQgWPsWKaBjpfwrHiWT7pjDlCO1ye2A2us6sP3Em7X3Bv0cLQClVwjFZt+/v+7+g
+ 5xNNegA07xEOeHP5uqBn2mR7+rMqTec3Tx/nkWJOPjNvezGBU4mR+RAsULt05pjZZuBntDKz3Mz
+ q/s6wkMe51RFN2q6U3w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-21_03,2026-08-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608210089
 
-On Fri, Aug 21, 2026 at 10:53:50AM +0200, Geert Uytterhoeven wrote:
+On 26-08-21 10:53:23, Geert Uytterhoeven wrote:
 > The clk_init_data structure contains several mutually-exclusive members
 > for different methods to specify the possible parents of a clock,
 > prompting drivers to initialize only the members they need.  However,
@@ -123,69 +196,4 @@ On Fri, Aug 21, 2026 at 10:53:50AM +0200, Geert Uytterhoeven wrote:
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> ---
-> Compile-tested only.
-> ---
->  drivers/clk/versatile/clk-icst.c         | 2 +-
->  drivers/clk/versatile/clk-sp810.c        | 2 +-
->  drivers/clk/versatile/clk-vexpress-osc.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-> index 6bd3db54dd229d28..97a1bfd6cf0ed995 100644
-> --- a/drivers/clk/versatile/clk-icst.c
-> +++ b/drivers/clk/versatile/clk-icst.c
-> @@ -360,8 +360,8 @@ struct clk *icst_clk_setup(struct device *dev,
->  {
->  	struct clk *clk;
->  	struct clk_icst *icst;
-> -	struct clk_init_data init;
->  	struct icst_params *pclone;
-> +	struct clk_init_data init = {};
->  
->  	icst = kzalloc_obj(*icst);
->  	if (!icst)
-> diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
-> index b0e69686f7a9a93e..28e5c0cf1fda38e4 100644
-> --- a/drivers/clk/versatile/clk-sp810.c
-> +++ b/drivers/clk/versatile/clk-sp810.c
-> @@ -86,7 +86,7 @@ static void __init clk_sp810_of_setup(struct device_node *node)
->  	const char *parent_names[2];
->  	int num = ARRAY_SIZE(parent_names);
->  	char name[12];
-> -	struct clk_init_data init;
-> +	struct clk_init_data init = {};
->  	static int instance;
->  	int i;
->  	bool deprecated;
-> diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-> index 9adbf5c33bd1cada..72e872ec6b7c9b47 100644
-> --- a/drivers/clk/versatile/clk-vexpress-osc.c
-> +++ b/drivers/clk/versatile/clk-vexpress-osc.c
-> @@ -64,7 +64,7 @@ static const struct clk_ops vexpress_osc_ops = {
->  
->  static int vexpress_osc_probe(struct platform_device *pdev)
->  {
-> -	struct clk_init_data init;
-> +	struct clk_init_data init = {};
->  	struct vexpress_osc *osc;
->  	u32 range[2];
->  	int ret;
-> -- 
-> 2.43.0
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Acked-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
