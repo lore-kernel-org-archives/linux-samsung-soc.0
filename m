@@ -1,287 +1,339 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98663494A08;
-	Fri, 21 Aug 2026 14:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787321128; cv=pass; b=JM3bifkhqJjLtfxIimBfDgmQlQU0VEvJamiY7Hp4DvmBf8Fe35PoJvR28tZLg+mC8Ja7S8shKRrT7aox8C+BL41rW6ZLwjSmpsaq57eqhWNqkt3BhtpkZQEYc+0oxi/hJTaAaTLIs3piI3IEAtVBMRa/nLCNpkdgNm/pZssM6mg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787321128; c=relaxed/simple;
-	bh=xY6CnZViDMwNpVsvDIJLXlXMPUGateyd8GAa9iRNToI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnv4HXQEgvEpciZAIJ++a+hBgLDYpuHRlpvL+z/xseESkMJ0f/PZ7vuTYqda90Fp00+HhL2Du29d5nrevin8M/CD6qJNxaGjAqQqCbFqVbinlUFSASinJ/ewUsHe8CP0gLu0lCJwnp/8vZaAvQfE8MYMouZO9J/o+u+TM6plt2w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=iAFqshWK; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F152490BFA;
+	Fri, 21 Aug 2026 14:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787323164; cv=none; b=bn7ivDAhJDUto/3NieNgwovXpcK/XeUOPVoQcWtYOCLDoOb+UoaW3BzjCLkQkHtE8fXwFNa+OD4Ysz1BsLk00bNmtICezJMKFOmld6JiHwGpMFj419ECziFhvpH9HmzOL5zlMlJoG9mASAwoBPM/MJo8JFz4fcOA97/2DX98HpU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787323164; c=relaxed/simple;
+	bh=XrpjqpxeU7ALF5OLpK2WpdbG15zlPyFx5PlM9LAlHdY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IY5Zn+nNslg2BV3OmdtRu9dgfx1uVjP+uAEuRJVXXmH1nJC9E/RN+5Tibte8xkEZKKnCQFIgWFOGe/r9huEAbRPwlRuOqzYgIpeoppvqrFpsw4uKR3LucWm/gjVcapSlueSEJzb17qWbjYkil3xKvbr0cblouju235EEkHz0ncA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FN1u/yS7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="iAFqshWK"
-ARC-Seal: i=1; a=rsa-sha256; t=1787321083; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=H4ryG+/eAwtbrA3rfZcwgF+bdwBvGTWVvrtPs1Yul5cUSMUWe+0tbRELoBHuFK9POaE9FUnfq5qyKr2us385/StaakQqr4HQqJUwJj2l/uCAbnaPkwp/T3zryjz0x0+2xn3fO2gYYKnkhqW7O6ss8+IPqJnpPyfJXE7JcJF6Yf0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787321083; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IXNJ/14cVvvKroHplPIGuCBeBYfygG4Y7sUaJ45XWQE=; 
-	b=LZyjX9ukzhWlioq344mJsaGiOxxN9QmN5v/M4N0J3TB0FD90+jf3oXIb/B8ajTaBOe3EaP7HrRmNO9AyPE57KI1aghYsoSy8EGNqq/g0L+TBOQsqLROgRWw64/fdYZOhbLF3fKXgh2hM+Lm60+lijakckEgFz9+xSnd8PEsruuU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787321083;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=IXNJ/14cVvvKroHplPIGuCBeBYfygG4Y7sUaJ45XWQE=;
-	b=iAFqshWKEh8790DF+6N3YIUd4kqggy2PHnH67q3Arq3ViMIsiJ9ypeV/nTX7Piad
-	GxLFUhRumzgudVRzU2jjXJ/Um2kDs3PVRPsz9ZeVHs7wifQEThNSMP2QUEwNjWF46vA
-	G1ObsbYShbr8chlR5M3c0b3gTqSyVV9L+S8j2cjQ=
-Received: by mx.zohomail.com with SMTPS id 1787321080610499.6979062011268;
-	Fri, 21 Aug 2026 07:04:40 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 52022181F47; Fri, 21 Aug 2026 16:04:34 +0200 (CEST)
-Date: Fri, 21 Aug 2026 16:04:34 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Billy Tsai <billy_tsai@aspeedtech.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Taichi Sugaya <sugaya.taichi@socionext.com>, 
-	Takao Orito <orito.takao@socionext.com>, Linus Walleij <linusw@kernel.org>, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	arm-scmi@vger.kernel.org, imx@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 28/45] clk: rockchip: Make sure clk_init_data is fully
- initialized
-Message-ID: <aohax7qilvrgV1iE@venus>
-References: <cover.1787239813.git.geert+renesas@glider.be>
- <49127c1f7529acccb17e1408db9f21f6d15aee2b.1787239813.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FN1u/yS7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911B61F000E9;
+	Fri, 21 Aug 2026 14:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787323162;
+	bh=1is4vlPBYIemAGJNcyTfyeB4LcQTBxiGBN1U0sCNEMs=;
+	h=From:Subject:Date:To:Cc;
+	b=FN1u/yS7xdcJbsStZ+nKUxoMvs+kEhII7QUNCGLCDiEhPuJw8j37Gjf3ioEGHsays
+	 B4R6H/mGhya901xaI8+TExbsArw8P2XBnjAaCN0Z/T6tQ3ZOnXhBqOG9Y/MCuxFQ6C
+	 HN/AQR2D5n3xrnHkUZefY218B3odTqpVVkxm7+dJ5uNAgi1zBZ7kt0gno/MpL1h+Xb
+	 MKG/JonL4EzBXyXM3CGkhUnJDh8c16VtEqLvL0r3/Mmy54DYjR08fTieu12GmNe5E0
+	 pdEgW/sYqNxYCl6bEerjcj1H24XdynDHugbHesM92juDFZ/tIH8ZmNuSGm3l1YgeXa
+	 Bk7E97B55Zwjw==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH 00/70] drm/crtc: Convert all drivers to atomic_create_state
+ and remove reset
+Date: Fri, 21 Aug 2026 16:38:36 +0200
+Message-Id: <20260821-drm-no-more-crtc-reset-v1-0-fb793475c05a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zybuuvaovsaw7bmk"
-Content-Disposition: inline
-In-Reply-To: <49127c1f7529acccb17e1408db9f21f6d15aee2b.1787239813.git.geert+renesas@glider.be>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-0.2.10.1.5.2/287.318.86
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNwQ7CIAzG8VchPdsEFnRur2J2YFC1B0ALmiXL3
+ l3mjv8v6a8rFBKmAqNaQejLhXNqYU4K/NOlByGH1tDp7qJ7PWCQiCljzELopXoUKlTRWGfDefb
+ XYA2045fQnZc/fJuOFnp/ml+PEWZXmpBj5DqqXY1cPCZaKu7PUPeoB5i27QeOVHDlpAAAAA==
+X-Change-ID: 20260709-drm-no-more-crtc-reset-14a4d5bc8d41
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Janne Grunau <j@jannau.net>, Sasha Finkelstein <k@chaosmail.tech>, 
+ asahi@lists.linux.dev, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+ Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Inki Dae <inki.dae@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
+ Ruben Wauters <rubenru09@aol.com>, Tian Tao <tiantao6@hisilicon.com>, 
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
+ Yongbang Shi <shiyongbang@huawei.com>, John Stultz <jstultz@google.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Xinliang Liu <xinliang.liu@linaro.org>, 
+ Yongqin Liu <yongqin.liu@linaro.org>, Dexuan Cui <decui@microsoft.com>, 
+ Long Li <longli@microsoft.com>, 
+ Saurabh Sengar <ssengar@linux.microsoft.com>, linux-hyperv@vger.kernel.org, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Liu Ying <victor.liu@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Paul Cercueil <paul@crapouillou.net>, 
+ linux-mips@vger.kernel.org, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ Marek Vasut <marex@denx.de>, Dave Airlie <airlied@redhat.com>, 
+ Gerd Hoffmann <kraxel@redhat.com>, spice-devel@lists.freedesktop.org, 
+ virtualization@lists.linux.dev, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ linux-renesas-soc@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Aditya Garg <gargaditya08@proton.me>, Aun-Ali Zaidi <admin@kodeit.net>, 
+ LiangCheng Wang <zaq14760@gmail.com>, Alex Lanzano <lanzano.alex@gmail.com>, 
+ Hans de Goede <hansg@kernel.org>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
+ Chia-I Wu <olvaffe@gmail.com>, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Jocelyn Falempe <jfalempe@redhat.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Huacai Chen <chenhuacai@kernel.org>, 
+ Jianmin Lv <lvjianmin@loongson.cn>, Mingcong Bai <jeffbai@aosc.io>, 
+ Qianhai Wu <wuqianhai@loongson.cn>, Xi Ruoyao <xry111@xry111.site>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+ nouveau@lists.freedesktop.org, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, 
+ linux-rockchip@lists.infradead.org, Iker Pedrosa <ikerpedrosam@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Zack Rusin <zack.rusin@broadcom.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10779; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=XrpjqpxeU7ALF5OLpK2WpdbG15zlPyFx5PlM9LAlHdY=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFkdSd+XbtrDvPLAypKrqwIuJBVtKGP58e3vNoGDLkZFC
+ yNyzqqYdkxlYRDmZJAVU2R5IhN2enn74ioH+5U/YOawMoEMYeDiFICJRGgxVrO/2eF1MjFl/cHs
+ Jxsn5npdOsF9VzR9SUlnHHvK7MgDb5U7ja6LGKsfk5sjoxNiGpPyibE+bdafRRv8i237pSPUjJy
+ TN8z19j5uyFy45IQqZ1NX/r7E2TskJUSfuzM9XtUaqtnAHgQA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
+This is a follow-up to the plane reset removal series, and part of a
+larger effort to remove the reset hook from all KMS objects.
 
---zybuuvaovsaw7bmk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 28/45] clk: rockchip: Make sure clk_init_data is fully
- initialized
-MIME-Version: 1.0
+The CRTC reset hook is overloaded: it is called both at probe time to
+create the initial software state and during suspend/resume to reset
+hardware and software state. These two roles have different
+requirements, and the reset hook is not fallible, making error
+handling difficult for the initial state allocation path.
 
-Hi,
+While reset has the semantics to reset both the software and hardware
+state, the vast majority of implementations and all the helpers only
+reset the software state, making them equivalent to
+atomic_create_state in practice. The atomic_create_state hook makes
+this explicit: it only allocates and initializes a pristine state
+without any side effect, and returns the state pointer or an ERR_PTR
+on failure.
 
-On Fri, Aug 21, 2026 at 10:53:38AM +0200, Geert Uytterhoeven wrote:
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
->=20
-> Make sure all members are fully initialized, to avoid such bugs, and to
-> prevent future breakage when converting drivers to a different method
-> for specifying the parents.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Compile-tested only.
-> ---
+This series converts all CRTC drivers tree-wide from the reset hook to
+atomic_create_state, then removes the reset hook from struct
+drm_crtc_funcs entirely. Two drivers (tilcdc and loongson) had actual
+hardware reset logic mixed into their reset hook; those are moved to
+CRTC creation instead. The conversions were done using a combination of
+Coccinelle semantic patches and manual adjustments.
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Maxime Ripard (70):
+      drm/adp: Switch to drm_atomic_helper_crtc_create_state
+      drm/amdgpu: vkms: Switch to drm_atomic_helper_crtc_create_state
+      drm/arm: hdlcd: Switch to drm_atomic_helper_crtc_create_state
+      drm/armada: Switch to drm_atomic_helper_crtc_create_state
+      drm/exynos: Switch to drm_atomic_helper_crtc_create_state
+      drm/fsl-dcu: Switch to drm_atomic_helper_crtc_create_state
+      drm/gud: Switch to drm_atomic_helper_crtc_create_state
+      drm/hisilicon: hibmc: Switch to drm_atomic_helper_crtc_create_state
+      drm/hisilicon: kirin: Switch to drm_atomic_helper_crtc_create_state
+      drm/hyperv: Switch to drm_atomic_helper_crtc_create_state
+      drm/imx: dc: Switch to drm_atomic_helper_crtc_create_state
+      drm/imx: dcss: Switch to drm_atomic_helper_crtc_create_state
+      drm/ingenic: Switch to drm_atomic_helper_crtc_create_state
+      drm/kmb: Switch to drm_atomic_helper_crtc_create_state
+      drm/logicvc: Switch to drm_atomic_helper_crtc_create_state
+      drm/meson: Switch to drm_atomic_helper_crtc_create_state
+      drm/msm: mdp4: Switch to drm_atomic_helper_crtc_create_state
+      drm/mxs: mxsfb: Switch to drm_atomic_helper_crtc_create_state
+      drm/qxl: Switch to drm_atomic_helper_crtc_create_state
+      drm/renesas: shmobile: Switch to drm_atomic_helper_crtc_create_state
+      drm/simple-kms: Remove unused reset_crtc hook
+      drm/simple-kms: Switch to drm_atomic_helper_crtc_create_state
+      drm/sitronix: st7571: Switch to drm_atomic_helper_crtc_create_state
+      drm/sprd: Switch to drm_atomic_helper_crtc_create_state
+      drm/sti: Switch to drm_atomic_helper_crtc_create_state
+      drm/stm: Switch to drm_atomic_helper_crtc_create_state
+      drm/sun4i: Switch to drm_atomic_helper_crtc_create_state
+      drm/tests: Switch to drm_atomic_helper_crtc_create_state
+      drm/tilcdc: Move hardware reset to CRTC creation
+      drm/tilcdc: Switch to drm_atomic_helper_crtc_create_state
+      drm/tiny: appletbdrm: Switch to drm_atomic_helper_crtc_create_state
+      drm/tiny: bochs: Switch to drm_atomic_helper_crtc_create_state
+      drm/tiny: cirrus: Switch to drm_atomic_helper_crtc_create_state
+      drm/tiny: pixpaper: Switch to drm_atomic_helper_crtc_create_state
+      drm/tiny: sharp: Switch to drm_atomic_helper_crtc_create_state
+      drm/udl: Switch to drm_atomic_helper_crtc_create_state
+      drm/vbox: Switch to drm_atomic_helper_crtc_create_state
+      drm/verisilicon: Switch to drm_atomic_helper_crtc_create_state
+      drm/virtio: Switch to drm_atomic_helper_crtc_create_state
+      drm/xlnx: Switch to drm_atomic_helper_crtc_create_state
+      drm/mipi-dbi: Switch to drm_atomic_helper_crtc_create_state
+      drm/atomic-helper: Remove drm_atomic_helper_crtc_reset
+      sysfb: Convert to create_state
+      drm/amdgpu: dm: Convert to atomic_create_state
+      drm/komeda: Convert to atomic_create_state
+      drm/malidp: Convert to atomic_create_state
+      drm/ast: Convert to atomic_create_state
+      drm/atmel-hlcdc: Convert to atomic_create_state
+      drm/imx: ipuv3: Convert to atomic_create_state
+      drm/loongsoon: Move hardware reset to CRTC creation
+      drm/loongson: Convert to atomic_create_state
+      drm/mediatek: Convert to atomic_create_state
+      drm/mgag200: Convert to atomic_create_state
+      drm/msm: dpu1: Convert to atomic_create_state
+      drm/msm: mdp5: Convert to atomic_create_state
+      drm/mxsfb: lcdif: Convert to atomic_create_state
+      drm/nouveau: Convert to atomic_create_state
+      drm/omapdrm: Convert to atomic_create_state
+      drm/rcar-du: Convert to atomic_create_state
+      drm/rzg2l-du: Convert to atomic_create_state
+      drm/rockchip: vop: Convert to atomic_create_state
+      drm/rockchip: vop2: Convert to atomic_create_state
+      drm/sitronix: st7920: Convert to atomic_create_state
+      drm/solomon: ssd130x: Convert to atomic_create_state
+      drm/tegra: Convert to atomic_create_state
+      drm/vc4: Convert to atomic_create_state
+      drm/vkms: Convert to atomic_create_state
+      drm/vmwgfx: Convert to atomic_create_state
+      drm/atomic-helper: Remove __drm_atomic_helper_crtc_reset
+      drm/crtc: Remove reset
 
-Greetings,
+ drivers/gpu/drm/adp/adp_drv.c                      |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  2 +-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c | 17 ++++----
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c   | 18 ++++----
+ drivers/gpu/drm/arm/hdlcd_crtc.c                   |  2 +-
+ drivers/gpu/drm/arm/malidp_crtc.c                  | 18 ++++----
+ drivers/gpu/drm/armada/armada_crtc.c               |  2 +-
+ drivers/gpu/drm/ast/ast_mode.c                     | 18 ++++----
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     | 19 ++++-----
+ drivers/gpu/drm/drm_atomic_state_helper.c          | 45 --------------------
+ drivers/gpu/drm/drm_mode_config.c                  |  4 +-
+ drivers/gpu/drm/drm_simple_kms_helper.c            | 13 +-----
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  2 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c         |  2 +-
+ drivers/gpu/drm/gud/gud_drv.c                      |  2 +-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c     |  2 +-
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c    |  2 +-
+ drivers/gpu/drm/hyperv/hyperv_drm_modeset.c        |  2 +-
+ drivers/gpu/drm/imx/dc/dc-crtc.c                   |  2 +-
+ drivers/gpu/drm/imx/dcss/dcss-crtc.c               |  2 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c             | 18 ++++----
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  2 +-
+ drivers/gpu/drm/kmb/kmb_crtc.c                     |  2 +-
+ drivers/gpu/drm/logicvc/logicvc_crtc.c             |  2 +-
+ drivers/gpu/drm/loongson/lsdc_crtc.c               | 26 ++++++------
+ drivers/gpu/drm/mediatek/mtk_crtc.c                | 18 ++++----
+ drivers/gpu/drm/meson/meson_crtc.c                 |  2 +-
+ drivers/gpu/drm/mgag200/mgag200_drv.h              |  4 +-
+ drivers/gpu/drm/mgag200/mgag200_mode.c             | 15 ++++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           | 18 ++++----
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c          |  2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c          | 20 ++++-----
+ drivers/gpu/drm/mxsfb/lcdif_kms.c                  | 17 ++++----
+ drivers/gpu/drm/mxsfb/mxsfb_kms.c                  |  4 +-
+ drivers/gpu/drm/nouveau/dispnv50/head.c            | 14 +++----
+ drivers/gpu/drm/omapdrm/omap_crtc.c                | 17 ++++----
+ drivers/gpu/drm/qxl/qxl_display.c                  |  2 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c     | 17 ++++----
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c      | 15 +++----
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c  |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        | 18 ++++----
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c       | 18 ++++----
+ drivers/gpu/drm/sitronix/st7571.c                  |  2 +-
+ drivers/gpu/drm/sitronix/st7920.c                  | 10 +++--
+ drivers/gpu/drm/solomon/ssd130x.c                  | 10 +++--
+ drivers/gpu/drm/sprd/sprd_dpu.c                    |  2 +-
+ drivers/gpu/drm/sti/sti_crtc.c                     |  2 +-
+ drivers/gpu/drm/stm/ltdc.c                         |  4 +-
+ drivers/gpu/drm/sun4i/sun4i_crtc.c                 |  2 +-
+ drivers/gpu/drm/sysfb/drm_sysfb_helper.h           |  4 +-
+ drivers/gpu/drm/sysfb/drm_sysfb_modeset.c          | 20 ++++-----
+ drivers/gpu/drm/tegra/dc.c                         | 18 ++++----
+ drivers/gpu/drm/tests/drm_kunit_helpers.c          |  2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c               | 49 +++++++++-------------
+ drivers/gpu/drm/tiny/appletbdrm.c                  |  2 +-
+ drivers/gpu/drm/tiny/bochs.c                       |  2 +-
+ drivers/gpu/drm/tiny/cirrus-qemu.c                 |  2 +-
+ drivers/gpu/drm/tiny/pixpaper.c                    |  2 +-
+ drivers/gpu/drm/tiny/sharp-memory.c                |  2 +-
+ drivers/gpu/drm/udl/udl_modeset.c                  |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  2 +-
+ drivers/gpu/drm/vc4/tests/vc4_mock_crtc.c          |  2 +-
+ drivers/gpu/drm/vc4/vc4_crtc.c                     | 14 +++----
+ drivers/gpu/drm/vc4/vc4_drv.h                      |  2 +-
+ drivers/gpu/drm/vc4/vc4_txp.c                      |  2 +-
+ drivers/gpu/drm/verisilicon/vs_crtc.c              |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_display.c           |  2 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                   | 18 ++++----
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 22 ++++------
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  2 +-
+ drivers/gpu/drm/xlnx/zynqmp_kms.c                  |  2 +-
+ include/drm/drm_atomic_state_helper.h              |  3 --
+ include/drm/drm_crtc.h                             | 12 ------
+ include/drm/drm_mipi_dbi.h                         |  2 +-
+ include/drm/drm_simple_kms_helper.h                |  1 -
+ 78 files changed, 275 insertions(+), 385 deletions(-)
+---
+base-commit: 7ea58b9ddb52264a4ed36bccb975062ada32c62d
+change-id: 20260709-drm-no-more-crtc-reset-14a4d5bc8d41
 
--- Sebstian
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
 
->  drivers/clk/rockchip/clk-cpu.c       | 2 +-
->  drivers/clk/rockchip/clk-ddr.c       | 2 +-
->  drivers/clk/rockchip/clk-gate-grf.c  | 2 +-
->  drivers/clk/rockchip/clk-inverter.c  | 2 +-
->  drivers/clk/rockchip/clk-mmc-phase.c | 2 +-
->  drivers/clk/rockchip/clk-muxgrf.c    | 2 +-
->  drivers/clk/rockchip/clk-pll.c       | 2 +-
->  drivers/clk/rockchip/clk.c           | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cp=
-u.c
-> index 6205af9ba88a8def..eb6b8b878e4dbeea 100644
-> --- a/drivers/clk/rockchip/clk-cpu.c
-> +++ b/drivers/clk/rockchip/clk-cpu.c
-> @@ -304,7 +304,7 @@ struct clk *rockchip_clk_register_cpuclk(const char *=
-name,
->  			int nrates, void __iomem *reg_base, spinlock_t *lock)
->  {
->  	struct rockchip_cpuclk *cpuclk;
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk, *cclk;
->  	int ret;
-> =20
-> diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-dd=
-r.c
-> index 81ae8a4ee30ed95c..fbb702d0b9d996d5 100644
-> --- a/drivers/clk/rockchip/clk-ddr.c
-> +++ b/drivers/clk/rockchip/clk-ddr.c
-> @@ -97,7 +97,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *na=
-me, int flags,
->  					 spinlock_t *lock)
->  {
->  	struct rockchip_ddrclk *ddrclk;
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
-> =20
->  	ddrclk =3D kzalloc_obj(*ddrclk);
-> diff --git a/drivers/clk/rockchip/clk-gate-grf.c b/drivers/clk/rockchip/c=
-lk-gate-grf.c
-> index 88e409e91a636aa1..458314a2569181d1 100644
-> --- a/drivers/clk/rockchip/clk-gate-grf.c
-> +++ b/drivers/clk/rockchip/clk-gate-grf.c
-> @@ -73,7 +73,7 @@ struct clk *rockchip_clk_register_gate_grf(const char *=
-name,
->  		u8 gate_flags)
->  {
->  	struct rockchip_gate_grf *gate;
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
-> =20
->  	if (IS_ERR(regmap)) {
-> diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/c=
-lk-inverter.c
-> index bf9072ed9fd4daed..e6c7dad60e966288 100644
-> --- a/drivers/clk/rockchip/clk-inverter.c
-> +++ b/drivers/clk/rockchip/clk-inverter.c
-> @@ -75,8 +75,8 @@ struct clk *rockchip_clk_register_inverter(const char *=
-name,
->  				void __iomem *reg, int shift, int flags,
->  				spinlock_t *lock)
->  {
-> -	struct clk_init_data init;
->  	struct rockchip_inv_clock *inv_clock;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
-> =20
->  	inv_clock =3D kmalloc_obj(*inv_clock);
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/=
-clk-mmc-phase.c
-> index 4efd22953f3e0533..d92bea75faf73767 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -205,8 +205,8 @@ struct clk *rockchip_clk_register_mmc(const char *nam=
-e,
->  				struct regmap *grf, int grf_reg,
->  				int shift)
->  {
-> -	struct clk_init_data init;
->  	struct rockchip_mmc_clock *mmc_clock;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
->  	int ret;
-> =20
-> diff --git a/drivers/clk/rockchip/clk-muxgrf.c b/drivers/clk/rockchip/clk=
--muxgrf.c
-> index ccbb1379501ab474..ecdc77654813a3c3 100644
-> --- a/drivers/clk/rockchip/clk-muxgrf.c
-> +++ b/drivers/clk/rockchip/clk-muxgrf.c
-> @@ -59,7 +59,7 @@ struct clk *rockchip_clk_register_muxgrf(const char *na=
-me,
->  				int shift, int width, int mux_flags)
->  {
->  	struct rockchip_muxgrf_clock *muxgrf_clock;
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
-> =20
->  	if (IS_ERR(regmap)) {
-> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pl=
-l.c
-> index 706ca4b344d399a3..7204b09243d483ae 100644
-> --- a/drivers/clk/rockchip/clk-pll.c
-> +++ b/drivers/clk/rockchip/clk-pll.c
-> @@ -1069,7 +1069,7 @@ struct clk *rockchip_clk_register_pll(struct rockch=
-ip_clk_provider *ctx,
->  		unsigned long flags, u8 clk_pll_flags)
->  {
->  	const char *pll_parents[3];
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct rockchip_clk_pll *pll;
->  	struct clk_mux *pll_mux;
->  	struct clk *pll_clk, *mux_clk;
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index ee8c79b938d3c15b..10df21178ba483e2 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -257,7 +257,7 @@ static struct clk *rockchip_clk_register_frac_branch(
-> =20
->  	if (child) {
->  		struct clk_mux *frac_mux =3D &frac->mux;
-> -		struct clk_init_data init;
-> +		struct clk_init_data init =3D {};
->  		struct clk *mux_clk;
->  		int ret;
-> =20
-> --=20
-> 2.43.0
->=20
->=20
-
---zybuuvaovsaw7bmk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmqIWusACgkQ2O7X88g7
-+poirhAApVi+Y+WU3mrw03dbGLE92vZNTJMxmeK5fzM3D7/o1HO6GGgy5ZBAlAcY
-AHjbpJgLpOY+bLGDnfv97vri7zP1duirRf2Yw3fhqiFp+tdt8AX6f9hU8bfwu+uy
-IaquBhUMuFejInZcStNJFlC4BF1UJkkacYSNtxFWAsKFMLlzOJQKu7lnBZwfbFWu
-C+FZ7xkWGWrSGNvroDobqiM/LDEYmI6OxnSwbCfoeczBF6D1VEaSeZhbDDVfx0hR
-ja1QtzHWcfm4Y3PLzEaNpmYerMSNE1fZIMFmraZZ3oFaak+uOYWZEWk0UzeZF4cv
-L5jzi4Cwa2V4TIot/53rF+xlSAjZAxTrBEH99onUWqBf4XyMa4k2DnlE+wPNqG5p
-Mz4QW3dtELwXRsHfeWqAT+rF2Iv2rsb8mkWeJ9ir0Ll2v8PHl2Ro9gWyag1zeRF5
-cahZmOPxJFpLKOVsNZX6AAhgvlsJN8kSZ8T48gpuTj+TjdEzrvm8A8l2yU5Or/C1
-kT56IUoCapPk1sZVEqNNPZQZduKm53nfXe9viHXg4BVjz8xXOU2LAZJ/gvrqjqzX
-XzRHvPAAdb+4q0BOqXmFgI6e4nSDBivR2zl2aidohQnxA++NPmGSG0xjBNZAqSY1
-HSFBW4PATNUCcY+1z4MjEfCGtmWtnYk0d23W6+Va0wfJjBcmMi8=
-=BMUY
------END PGP SIGNATURE-----
-
---zybuuvaovsaw7bmk--
