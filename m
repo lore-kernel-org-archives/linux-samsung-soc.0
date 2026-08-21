@@ -1,72 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5AF3B14AB;
-	Fri, 21 Aug 2026 07:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3306E3A4F51
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Aug 2026 08:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787298924; cv=none; b=HMzWNIRVdavEwhF0i/4VYmBcoRkCUwfSL5xickyOcVrAXopioSm3GjOw3+lOnC67bw6hEjM31jsJoZvuP5kMh0l0iPilPkRmF7sSvqD3cqkUZuMZ8dAuccxkl7VljMo3M8hTQDB8tbyHYMYul6C9QkQDlDd7V/7FiWJ+k/vGXL4=
+	t=1787301191; cv=none; b=b4eAhCF9TWM5YrmdnLTN/I/7Nd51X2thfumR/B1RrGL8JKEzhOOAj/guk7BWJrQSBf/ESA8G3tXdcgDrWlh6YTKG/PNd6aBqOsrdFPYC/z4BTujPpPRKDgzryR2iyVPGhxw+e/snPNEu/lKk6OpoXOdpWWKDxEgA+n9TNTvaTpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787298924; c=relaxed/simple;
-	bh=Bq1GqyPqzcqeQIVdo1BpDKNc6rB6vLDWe+3lyfG5hfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evOy27eobK5tHnPFIrnH5gBUW6CVzBu6Tb8HRNYocWF1q7KocDKIUL+ESrEBo/U0O1caH5ittHDxUvKegDrdrsPZTuHeHDb8nBGqmhGZdPyZgTqTrAa99fxlHUsdygnOmuide5vdkwkoBohu7orGheQVRWQO33k+f9abZ+QNG5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9lrqwmT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787301191; c=relaxed/simple;
+	bh=W/UJr+wBul7le596hgFokhp27LDaIo+FXFiWPzXo+7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WIBvzRS7ho4H4gRaCBi4tk9umfbc7r6Tm5mhJWHxtghPo29AJCnFYKbqBwhnbsjXoqrD9wXyPTIBK4QH2pN7kzs/aCzGe3cbTY+Obja3am+ipkLctzGp/F7By65gbinrKbzlcP9hXoPxAACau4pUsmEeWXnYokV+JFmpuN1dh2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B0IWHAFu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9lrqwmT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D471F000E9;
-	Fri, 21 Aug 2026 07:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787298922;
-	bh=ggncsFl+P4gYhgD6NGF6aVdrd2Isxhm9KFLNVg0s6ZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=j9lrqwmTCZ92FSDw0hL1RsBDQMIsVTp4wfsGe1iG7NqhFs8Yh8/jZUGXADUZmhCsK
-	 PtqGLLSTRysk5QpnLjrPM84cqCL9dWRERHtS7bLAuc+RtSpGMBpr4UFlUrl54moj4k
-	 dmx6MaNzoRmzmkr+3SV8T6+bcPkki49DajnFIuhUwIjPCNUSxd6srb1jHnz7O4fWxH
-	 ll/xDflUUW181xC/QK29yf4hP0GC90ZMPLkKR2+KbUE3Fq0EMWghy3QO5UqyDBw4mL
-	 8HPDRbCJ2hvtOPl5++OqjEYUNuvHlgZV5EmUd15OZyXobRa7mKwzSDz18bbfAOWsJZ
-	 ySAZdCSmqCmww==
-Date: Fri, 21 Aug 2026 09:55:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aiden Isik <aidenisik@member.fsf.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Aiden Isik <aidenisik+git@member.fsf.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add Exynos5515 SoC
-Message-ID: <20260821-orthodox-lilac-alligator-80806c@quoll>
-References: <20260818-for-next-lucky7-clock-v2-0-cda0cc80f158@member.fsf.org>
- <20260818-for-next-lucky7-clock-v2-1-cda0cc80f158@member.fsf.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B0IWHAFu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787301189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dO/fbXCwwsDTpCj7W4vUaIfdwS/oE05+bHk2g2QXOMc=;
+	b=B0IWHAFurUSShN9l0e33PUJ4kSEN12Zk8i/kux/Z2hstMqkyN5J8vZ3VsjJ/uxwyyKkah6
+	z6nW/1weVA41ODik6v6Lj+70UKfhQ2UiUR4D3wv66HpVZCYYtbUaJK2o0XEHJf+DMkECx3
+	Ojv0qJ/5lbCgGcBgvTO/qPNugCxiyx4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-kAJrx1l8PjGlKUUMQMLN_Q-1; Fri,
+ 21 Aug 2026 04:33:00 -0400
+X-MC-Unique: kAJrx1l8PjGlKUUMQMLN_Q-1
+X-Mimecast-MFC-AGG-ID: kAJrx1l8PjGlKUUMQMLN_Q_1787301179
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6C82818005B2;
+	Fri, 21 Aug 2026 08:32:59 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.32.129])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E6B43002D26;
+	Fri, 21 Aug 2026 08:32:54 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: EXYNOS: Replace __ASSEMBLY__ with __ASSEMBLER__
+Date: Fri, 21 Aug 2026 10:32:51 +0200
+Message-ID: <20260821083251.194341-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260818-for-next-lucky7-clock-v2-1-cda0cc80f158@member.fsf.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, Aug 18, 2026 at 10:58:35PM +0100, Aiden Isik wrote:
-> Add devicetree documentation for the Exynos5515 SoC's CMUs.
-> 
-> Add device tree bindings for the following CMUs:
-> - CMU_TOP
-> - CMU_PERI
-> - CMU_FSYS
-> 
-> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
-> ---
->  .../bindings/clock/samsung,exynos5515-cmu.yaml     | 145 ++++++++++++++++
->  include/dt-bindings/clock/samsung,exynos5515-cmu.h | 191 +++++++++++++++++++++
->  2 files changed, 336 insertions(+)
+While the GCC and Clang compilers already define __ASSEMBLER__ auto-
+matically when compiling assembly code, __ASSEMBLY__ is a macro that
+only gets defined by the Makefiles in the kernel. This can be very
+confusing when switching between userspace and kernelspace coding, or
+when dealing with uapi headers that rather should use __ASSEMBLER__
+instead. Let's standardize now on the __ASSEMBLER__ macro to avoid
+this confusion.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ Note: This has been split from an earlier bigger patch of mine into
+       a separate patch to ease reviewing
 
-Best regards,
-Krzysztof
+ arch/arm/mach-exynos/smc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/smc.h b/arch/arm/mach-exynos/smc.h
+index 5c30feb8f07d9..5c7730f6259fc 100644
+--- a/arch/arm/mach-exynos/smc.h
++++ b/arch/arm/mach-exynos/smc.h
+@@ -32,11 +32,11 @@
+ #define SMC_REG_CLASS_SFR_W	(0x1 << 30)
+ #define SMC_REG_ID_SFR_W(addr)	(SMC_REG_CLASS_SFR_W | ((addr) >> 2))
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ extern void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3);
+ 
+-#endif /* __ASSEMBLY__ */
++#endif /* __ASSEMBLER__ */
+ 
+ /* op type for SMC_CMD_SAVE and SMC_CMD_SHUTDOWN */
+ #define OP_TYPE_CORE		0x0
+-- 
+2.55.0
 
