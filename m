@@ -1,33 +1,39 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444503DFC8A;
-	Mon, 24 Aug 2026 06:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AD331F986
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Aug 2026 10:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787552734; cv=none; b=aMvTjq1gIqsasmYSvoFNmRY8tagZ+0d3+xeiDIeeYc1wj5hxH0CxLhAI+n+gNnTQ4lkpyB1tNbWsIILFMV5xjVbgwlUHWQJXc+v9osbmFxvwXbK9SaCFYprMqH8ufl7PBapxlHxYo3hpwFPDNCFD9sNXvdfLGkHozwPcMHVjEDY=
+	t=1787567849; cv=none; b=QbhvsbIPZ5kIxNegC9ZnssfVfAPCGiQKNaZEytU+k5tRYMYc7pFhp7Wcxc02kBYdRuIub/N1dGoI5JQ2f70qyxHDWaUJWz1HFQevmNNrZY81fZt2u58s61MPZNmZ9XLoWoq2ecqQ/yfdyIU6WrK7VgRKEhYSd+EKBASo+bkq/QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787552734; c=relaxed/simple;
-	bh=7igC2cDbucoh/04cVTYIH5CUVb63maf9OOFgl5APb4Q=;
+	s=arc-20240116; t=1787567849; c=relaxed/simple;
+	bh=jG1N410v2n0xfaKowcNAWjFTeBnT43Z5RkpSt7FGd2M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RGIot+GPQourNhDgwvB+lhKSusQQBJ0rqjzYDGHK8gnaLmmh4xfpZeWAr9IkMFe/67lIiXtcqPtQNPNdeJQiqdSC7UxpF+KlCZEH9NzMrBOLXJqWDHg31AglSIb2+aUuJCAV2n8omhgUZMrQTDqitVMLjO6AzyDWzmQMnC3NEyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGuzhHFc; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=kDNHNpOZTLiydeemtkQ3EZqQY326MOHjcHx6kmHHE05MlGd1lVTPaXy9ERUquORIwZUGf+v/cjxktPMEknUiMF4AfkdxB67+1rAe0K0VGLdp1ntVux99IceeaCVeCA8UBaLjABMXof91HYyjDw5n2qLnJy8NWsvigi4PfJQL9ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=ei4378Nj; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGuzhHFc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47E51F000E9;
-	Mon, 24 Aug 2026 06:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787552728;
-	bh=nQiKOvNAzzAP5bzzy3oCf6etpJ4me7o2INgLuv6lebM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=HGuzhHFc2XUwClmXGVpwVpzeTrii9LRKiYMo/vRzQS4bT8ZXm4np6g3mkUWq5XSsQ
-	 4oH/T2l0Hgy8bTcIJ/25NlkO+ew2FK5h4SBdr36aZeBEOwLTVThQSgFXK0JK5iWptu
-	 GUFsH13aA8MZ1vgZV1UxXsOuHShaWKc+ZRgCINeJ0jsxP9yDXerbIKMkfl+wStxrKE
-	 L2KwIiE9UzHG9vMFS8wUdc2qQmxJEZMkoelKwEtVMs841bhFfQVVKt69TGsMh5cF7z
-	 SAVYJV8X744QkvkziWKxuYkwapUMyMT31Wip4LnFcGAtI8JUgvVCYIsCVzPF1r3biv
-	 ehslSh/EpxPhA==
-Message-ID: <17aa3974-95fe-419a-a382-3c053e66d640@kernel.org>
-Date: Mon, 24 Aug 2026 08:25:15 +0200
+	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="ei4378Nj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-2eefaa527c; t=1787567841;
+ bh=YdYkIXIlftjAnppC8SHjw1JTObFUeSukQACJZ/mcO7Y=;
+ b=ei4378Nj9Cj5O00M8lJ4Hdm8nhUMog1iMOuNHREAeCaF8LAp21Y/dV3a9rynSSFmim+0m3aIH
+ 01nyNOzVh9MY1Jtc2wDTYVRer2bZheaLw02rap33B8DzXGqTjmvGzZq4DNa9NTxGrVt9WKphuvV
+ b/Fr2awwV2lWN66T8BXEKrw=
+X-Forward-Email-ID: 6a8c1edf8bf58215f74c5bbc
+X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
+ smtp.forwardemail.net, 121.127.44.73
+X-Forward-Email-Version: 2.13.16
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <91a95ba1-504d-41ef-b44f-59408b0939b8@lineageos.org>
+Date: Mon, 24 Aug 2026 11:37:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,153 +41,81 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: google: Add initial dts for
- frankel/blazer/mustang
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
- soc@lists.linux.dev, Juan Yescas <jyescas@google.com>,
- RD Babiera <rdbabiera@google.com>, Brian Norris <briannorris@google.com>,
- William McVicker <willmcvicker@google.com>, kernel-team@android.com
-References: <20260722-contrib-pg-pixel10-initial-dts-v2-0-3abae9717feb@linaro.org>
- <20260722-contrib-pg-pixel10-initial-dts-v2-4-3abae9717feb@linaro.org>
- <20260724-dancing-skunk-of-novelty-72c1b8@quoll>
- <CAD=FV=U0HUdjPcg+5Vx8_ag0zLd3CZx5w5SFr38p+YwRnC_G6w@mail.gmail.com>
- <CAD=FV=V2+D1m5L-0d81W3E_ih2us-SrddeBUAJtMybpQons7Ww@mail.gmail.com>
- <c0657108-1958-4c4c-b5f5-0eb24e81b2b4@kernel.org>
- <CAD=FV=VY4AeAf=TMZfJYRo6C0iSqmL-P0GzxRvZHfnNsf+GnYQ@mail.gmail.com>
- <56db332f-a18e-4a9e-be9d-67d2e25c3666@kernel.org>
- <CAD=FV=WUMKGRUbAyd7XFFc-NGoJEKRwu4MaUnEQUDB9Mq6YYXA@mail.gmail.com>
- <d6685094-b241-415e-9e56-d2fba75f3269@kernel.org>
- <CAD=FV=WPu5tuWA7MhC=48r=1uP3LK6hSqY7Egy=56V1Dqq1wRg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD=FV=WPu5tuWA7MhC=48r=1uP3LK6hSqY7Egy=56V1Dqq1wRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] Exynos850 GPU support
+To: Sam Protsenko <semen.protsenko@linaro.org>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <GVYP280MB12139AB976CA7ACF49FEB768A1A52@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
+ <20260820142330.84514-1-tturner@lineageos.org>
+ <88e40f93-ae65-4eb0-827d-9c33c52bad24@oss.qualcomm.com>
+ <GVYP280MB1213F9511E062056470AE74AA1A42@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
+ <GVYP280MB12134B4DF9D6CA15C7867CF8A1A42@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
+ <9c83836b-b4a6-40af-97b1-bbf696258547@kernel.org>
+Content-Language: en-GB
+From: Thomas Turner <tturner@lineageos.org>
+In-Reply-To: <9c83836b-b4a6-40af-97b1-bbf696258547@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 21/08/2026 18:40, Doug Anderson wrote:
-> Hi,
-> 
-> On Thu, Aug 20, 2026 at 11:51 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->>>>> I think I've presened my problem fairly concretely [1]. If you hate
->>>>
->>>> There is no description of the problem at [1], except "bootloader adds
->>>> the same type of calibration data".
->>>>
->>>> So I repeat my questions: to every UFS node? To every node? To one UFS
->>>> node (but how do you guarantee that?)?
->>>
->>> I'm sure it's not what you want to hear, but I guess my answer would
->>> be "for these boards".
->>
->> No, the question is how many aliases you need. Devices might have more
->> than one UFS storage, e.g. ExynosAuto.
-> 
-> How many UFS aliases do I need for this board? The answer is in the
-> patch that started this whole discussion: one UFS alias.
-> 
-> 
->> And then someone might need to calibrate UFS and SPI NOR storage? And MMC?
-> 
-> Not for this board.
+Hi,
 
-We do not talk about your board. You are adding GENERIC alias, so you
-are solving GENERIC problem for everyone and needs to be addressed as such.
+ > Can you please tell us a bit about how you tested this patch, and on
+ > which board? As DPU is not currently enabled on Exynos850 SoC, I'm not
+ > sure how exactly GPU can be useful. If you have a use case or a
+ > testing procedure we can run on the E850-96 board, please share.
 
-If you are solving here only your board problem and do not care how does
-it scale or whether it makes sense for anyone else, then topic is done -
-we do not need this feature.
+I tested this patch by running phosh (PostMarketOS) on the Samsung 
+Galaxy A21s device, in my tests logs indicated that the GPU hardware was 
+probed successfully and things were working. As for DPU, I simply 
+enabled CONFIG_DRM_SIMPLEDRM and that was enough since the bootloader 
+configured the related DPU bits. Since I don't own the e850-96 dev board 
+myself a testing procedure you could do is.
 
-> 
-> If you're asking about all future boards, of course they may have
-> other things to calibrate / tune. My point is that the contract here
-> is between the bootloader that will be run on these boards and the
-> device tree that will be run on these boards.
-> 
-> FWIW: the idea of a bootloader using an alias to find a node is not
-> something I invented. Coreboot (the upstream, open-source project)
-> uses "wifi" and "bluetooth" aliases to find nodes on Chromebooks. It
-> uses these aliases to place MAC addresses (which are stored by
-> manufacturing outside of DT) into the DT nodes (where bindings expect
-> them). Perhaps coreboot is doing it wrong, but this concept isn't new,
-> and I didn't invent it.
-> 
-> 
->>> I'm not quite clear on the "overlay" suggestion here. You're saying
->>> that we should require the base device tree to be compiled with "-@"?
->>> ...and not because we necessarily have any overlays upstream, but
->>> because the bootloader will generate an overlay dynamically? Compiling
->>> with "-@" would mean we could give a "ufs:" label to the UFS node and
->>> with "-@" that would be preserved. The bootloader could then use the
->>> "ufs:" label to find the node. When compiling with "-@", the exposed
->>> labels are essentially ABI. Did I get that right?
->>
->> I am saying that if you cannot answer my questions earlier (and you did
->> not)
-> 
-> I'm still not quite sure which question I didn't answer, but I guess
-> at this point it doesn't matter.
+1) Set status="okay"
+2) Enable CONFIG_DRM_SIMPLEDRM and CONFIG_DRM_PANFROST
+3) Try and boot some form of GUI and compare logs from dmesg with mine.
+4) NOTE: we set up fixed regulators during our testing with some support 
+from a secondary bootloader, however it should work with dummy regulators.
 
-I gave you the code which solves your problem, IMO. I do not see so far
-any reason to reimplement it with aliases.
+ > Would be nice to have a more detailed commit message overall. In
+ > addition to the above, it probably makes sense to also discuss current
+ > limitations. E.g. thermal, PD, and DVFS, which are enabled in the
+ > downstream kernel's GPU node [1].
 
-Best regards,
-Krzysztof
+Yes, I have updated the commit message in v2 of the patch series to be 
+more descriptive about what does and does not work, I hope that level of 
+detail is sufficient but feel free to point out any sections I may have 
+missed.
+
+ > How? The node is disabled.
+
+Not sure if the e850-96 device supports this functionality so for the 
+mean time I left it as "disabled", but would be interesting to see if 
+Sam or Alexey could test it too.
+
+ > Also, you need to version your patches correctly. This is v2. You also
+ > need changelog under ---.
+
+Again, sorry for not including this I am still getting my head around 
+the process, but in the v3 of the patch series I will make sure to 
+include it.
+
+ > You almost never use this parameter.
+ > git format patch; scripts/getmaintainers; git send email
+
+Got it thanks, Sam has been helping me with some of the kernel etiquette 
+and procedures in a private thread so hopefully the next patch set 
+should be lots clearer :).
+
+
+One other thing I wanted to ask, do you think it would be best to 
+include the logs about the GPU probing in the commit message of v3?
+
+In the next patch version I am going to reword the commit msg to be more 
+precise, i.e Add nodes for GPU. Can add more information about how I 
+tested it and possibly logs from dmesg.
+
+Cheers,
+Tom.
