@@ -1,188 +1,134 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D31481640
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 18:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787682273; cv=none; b=el8yJgX5OGzniCi8Ml4M4nt9pgbzU6Er+ou0BmlYsdlZfAhZRGjiyweGvQ6zAQnx3XSKoyYiqnEXbFTP9SHOhy6wqZSE7livn7I+pekOiV88PjgA3hDvl4XeiQmsw5guOuqYOSsXNq3uxPHzCwdpADziJzke4FmTOearjwmLLK0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787682273; c=relaxed/simple;
-	bh=S3YGTXaGmPCgbv4iCXelKQAvXeOzmCEMabBXbhoH2Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNS3Gv4M7gR/DxIXvoYSlB5VR6A9/bJjiRydMOUPO1woqgW8H/j2LqQ4bfQcUAMUfCVmPmVxq7YQzdoBOBMmoBqCp7E8dVcev5H1sam7ltj2h0FdIfTf8ISxCKkHwOoG4d7K+fgqiv5gyXZ8JLGSr04nBme/Ab18R9haklYRe1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qdvderp0; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628B132C94A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 18:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787683203; cv=pass; b=JIK8i8V3KYwnAsLS3oTmiY4FLaYEnm1V42UYkT1v5PcBXtopVqYLpxo6RnDBpY1k/mxxPo+Xc476HkYhUVWsr0CdPl1y4yxszcD4MQsKSc5DhPJkawOI1/Wemh6GpUwvUet/uRj/rEFWAuIDUWI4MBKBfWETwuGIiJTw5jfoc0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787683203; c=relaxed/simple;
+	bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sJRNvw1ta0SMid9Ow5nkcpcbodb7ySyCwVJDmvVMTMgUi3mR77r+3gPpKlSX+QYGEBENvCkoJL1GnuvTsgiuUL/Uej9p1vA++XodNBRnb774ZYPQeX6Spm5RkeQaKNgFR2u9LV+Ybf08cDPYqLpL35RUxwCxJ26fKZmLnuBskeo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/WMQGl2; arc=pass smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qdvderp0"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7eb5bdb50fcso95215a34.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 11:24:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/WMQGl2"
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-45eb2e6402aso166185fac.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 11:40:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787683200; cv=none;
+        d=google.com; s=arc-20260327;
+        b=UF+jv0/1QyfzNGsgtr/6oN8meq9dHdLUTAbpfcM9WYNtwPxA2sQYBfVttnaG8iLTtn
+         +M50oq2B46ugbHRJaC7ozE/98T+Sg2noTrDdipI947bJFhXAALedu++MrBqnlY3mZWv9
+         CCsUbjPWA1ViTFSjehwwIVyCKR5zZB+hLtfZFHvLategsLcxya9ITvJF+g+f/jbyubJK
+         HsLbnvpy8kzwKPc80eox1DMqX4FidVe65Sv/b/7kEXloSA/bOxfuih+SVNkTdI7ioM7Z
+         Wl8/KSx0hQJ6qts7Rz8P+UfZPE87NapG3GzggkC3gLl95noK21nqf/1omx4Dm3TzLhPH
+         2Grw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
+        fh=1HnnUKm3WAmxdJXp8FJNy/2ATvkICSMBsGIKTt95TkU=;
+        b=BDwfG/uorN8Ug65G0Zy9nYyjexwbKTEq2J9pgg6YrFzTJHaf61kalk3rhyK4odPn+y
+         FiFdLtM1yuk/ZHV6zRvZVC6C6G9YJEMNI9y5HAGVqYeY+yFoVgkXD5CipLAcya/IN2pV
+         trVONvibrLd0jY8Y/hu/MNQadOsjDuG0Xg1MnKkwzICHkyVjynH3Qo+GPEGKEkIF/quK
+         b6kzeSkEooGiaJgYMTJ3z8IuGO/TFQdNIjS9tvXnk8hijqqKIRRRUJmLI52oF7dYoK9x
+         fckm3ciSGO+WkzySA8QBx/bIsnJsFojbqs3sfTRcjfdsMbxpEdslg7uCzaREBgSnr901
+         6w4A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787682268; x=1788287068; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=mrSQugjWwNbSyFKJC0aQ+HhLTDBrn6ENKLGPbrFSXE0=;
-        b=Qdvderp0a4VDMVBw1R86lx/2BOmy4XgA3c0bdwF51z6M3za5MfLoL+DwBPxkVB+oq8
-         CtbhGwQLrqG9uHhbnoUneFTY1zp105K9ew86+c1YGcuXbR8gfyw8D90axWmPsPjC2Eov
-         AfxMm3N2/3lWUv0zgpzZ22W7CtD+tnJqO8PICqhB+9J9Li1MXMJtvA4dpV9GxeH62bMs
-         j7pmZE+ffqRllGd/OO7rT8TFc0qV2R8mEVJ7dTug1D8DG2sBuJbXjGvzat7TAqmcmw2t
-         NKCHwUZPO7sgsXUgh78P7cNRtg+MR5Tz5XrPJayE2GzFwNzNZPI69U3ZnomdMm60uwaI
-         L0Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787682268; x=1788287068;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1787683200; x=1788288000; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mrSQugjWwNbSyFKJC0aQ+HhLTDBrn6ENKLGPbrFSXE0=;
-        b=FxW+KTrLL78fG+SAiqHBS+ETJlXj/pFu595knmXTv37FfYfnjkq+CwUS0zBK+zhh+C
-         3CuV3oW+dfEdgwS5+/wRAhHCCS29Yd6LDB/pBuNHSI9NPN0WMx6Dl+ckXNPnK/zTab8g
-         bGQAq4LvQtANqXXctoDuhV47OL1LTzeYfHEwNuFEoQuVcMUymANqKIC3nbc0tV0SDqo6
-         j5Wx35At1VQrY1sopjFdOfd6kUCPVg4cZb+ZUbEWGL85IvK6nrFHF75oYs+B8uPlqWPh
-         jqbb/v4k5vwKcC4pAxEMinwV9kTKNm+VTZdTih0ee6LvP9UpZ5JLfvQkHnB835SWB8v+
-         lRbw==
-X-Forwarded-Encrypted: i=1; AHgh+Rq7RrYlyHsuh/78/YFwtTGEV0JdOmeXxd23A+ZMi36+ZAG6ye7aIzAhKjpr1AMHBSTupEjMdBih2ebUtfdrRzF1yw==@vger.kernel.org
-X-Gm-Message-State: AFuF++krURqhUIbu0P4PPgrYwFLv1ISJaJJrRqQV43eSBPlA9eNd3NJj
-	1D5CjQK8QrGSlFXJIQPW9kgjSmS01SkHHO6kLMS1y2+HZHCvIwGdtEfmLnm/ynyjOA==
-X-Gm-Gg: AR+sD10B11nCduYbS9pXdviKmOAGJAk6mfW2cqLj9KgMUCj5Mx7mVLI8kF/mxBRmgrK
-	9qCYQ6XL3rHnJy+qMjzmB7ofGV58g7UEWHoPwkmVu6C58EKaAT3NjUSTwAnoAw4joEm937tAUVv
-	4hV7LTxn9VIZWVNwMyRKphzEi0ZRsgaQuED2slsRd1mQFIiHyBSfKO+fBiI1pzECFkjdzRYfCsO
-	qheoKkpKkRYrb8vLMRbxgRsuumh45oGYqE58nz2g2ZvycZP5HvtqdgNryQiYEVeR5+5Vd766wWQ
-	llDFB+mYNUJmOhwvCQmo6W9Th/paaKYtYTTiNpJRukO9099farA8vwa+/8eTyqvV+UgimC4lx/c
-	PjSaf/gsN0Bg+rD06UkNk8UZuMOTHDP/LcyhvB4T728lYtLsjkNORmif33c3Y6Gawmdbu+TBaU/
-	U+3JnpPKqj9IUjGgxwzNn2DCNzaLTRdZvdfBr6B8xcD/1ETWEinDlfXVtSdWMin79IrhX5tcya4
-	Mxq/ziUswFG8wqUDSzmPOb9+DhM
-X-Received: by 2002:a05:6820:55ca:10b0:6ac:a539:bc41 with SMTP id 006d021491bc7-6b1a03e5c38mr696085eaf.12.1787682267892;
-        Tue, 25 Aug 2026 11:24:27 -0700 (PDT)
-Received: from google.com (203.215.188.35.bc.googleusercontent.com. [35.188.215.203])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b1a02566desm215005eaf.11.2026.08.25.11.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 11:24:27 -0700 (PDT)
-Date: Tue, 25 Aug 2026 18:24:25 +0000
-From: Neill Kapron <nkapron@google.com>
-To: RD Babiera <rdbabiera@google.com>
-Cc: vkoul@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org,
-	tudor.ambarus@linaro.org, p.zabel@pengutronix.de,
-	neil.armstrong@linaro.org, badhri@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] phy: Add USB3 PHY support to Google Tensor SoC USB
- PHY driver
-Message-ID: <ao3d2TlIRqxbz4WP@google.com>
-References: <20260710172946.15633-2-rdbabiera@google.com>
+        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
+        b=K/WMQGl2ZdGLQuaSQqD9iQu02BHFLpl/p3H3OZdZxR/bBDGQp5KNu2iVpg36hNlfhg
+         WoQEFDr8krOgQIpMU0V3j280JREazubY2O2YsEF6z+07m5w9CIaqAAjBnkdEYRlQu+y+
+         pD/XRWpuHfeGLjDfmy9Ig9pH50RXIICyAOcdw9XFFVtDZZriIcDMJqBqzBEo78Yg+k9E
+         MhhuGygE6O/X7SL+/HsL9VQ6F6OsRGK/97YA9rz8erSo/DNvgtudBgbpEEnZlI/8GUMX
+         21CmXKNzOwECkSY1y9d0pN1/DCKPfXzELHF+QyZeBKWFEePIAzj6Y9UzjhBWJQkC+VKU
+         eAGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787683200; x=1788288000;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
+        b=eoUsK5WvRXd2s2UO/uNcobLPEPexNyHd03VQ6b/pEzXLI+LLokwwzMvGeb1eyD6C0j
+         1EUDxwu9Lmc9Wp0TIHXhW9V5uGA/jGsHZzIZ2XkmABy2wKTEoR7VU5JoEuv3FS+Z17Q/
+         H7nKmQ0sJViYvifN7jmaxdl4BjspDK2WSf/EQtPigth8peKl91qqKpydLdZNor3/iMbT
+         OJGifLWEonIEjtPPhtRg9diOmlL/ys/j0umqYSH0xzs+P/Zq42eGSU01x2IRQtPq87Hp
+         BTGXrgq0enwFl36undqvRbGl9O6af6CCvsHT6DljausQOIr3VsKFtFGJy0RU6BinmoHC
+         ubXg==
+X-Forwarded-Encrypted: i=1; AHgh+RrHO/kQETTTrUjR1xKTXnWBO9q2EqbPT5uNSpTO31OKnmyB6AeCsKGy+wKTDutrMixuooe/+4Famvgfo/lnZRk74A==@vger.kernel.org
+X-Gm-Message-State: AFuF++niN3XmcRArXJqj15aUDkvammcmQDmqjBpuYdUpmZFoSQ77if9O
+	kSfsD9HNiNFD7dwNfGtijLgdlIgkGstVgjok841p14QvhUzYbTBrTs+Q6ufmg87X72VNa7buMyt
+	9JL/BOXWF8/eZPvDFWoMfHZk3zoYCfbs=
+X-Gm-Gg: AR+sD10Ih2FIwCu9U8csxIWde3G+oROqzBOmarcZgSLmByRIQiaWTHQz9fbYloaXVBX
+	RhzFxHOYl0gqFAvZbcIeoxiJWrjlcllPyVCXgQKPODweZNfh+hHMf+iJ6sn56fGIqC+b2Ane2XI
+	+IG1tRoRQ+baOxqunXyEkLd1V/MLn2tay0Ym8i1z3B/EW4Z0wg6f4fY7XdSHxKR9zHDGmZv8em1
+	JpRrkclCRS2XJnQl1HmIdJyHJ1sof9Tivctu4M/AY+hQYngj/kk4kbL3NGQJeVOPQc9u+O2tvTv
+	m46w/9EoZLUWKrf5tpI9qCNab1JcfGD+x0UzMtoI0LJ1hg==
+X-Received: by 2002:a05:6870:f623:b0:435:16e9:f288 with SMTP id
+ 586e51a60fabf-4659bb24b93mr1602806fac.20.1787683200126; Tue, 25 Aug 2026
+ 11:40:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260710172946.15633-2-rdbabiera@google.com>
+References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com> <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
+In-Reply-To: <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
+From: Diogo Silva <diogompaissilva@gmail.com>
+Date: Tue, 25 Aug 2026 20:39:49 +0200
+X-Gm-Features: AcwNN1Va3aTr02pKhzBqoinFUkwxjfSbh2WQ-EpZwUvKwCIdS5rdnwq9NOj-ZWw
+Message-ID: <CAJpoHp56yo+eQAYjvR3ez=HTSzapCd3dYppo=MdPx-Lm4J4DQg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] drm/drm_simple: remove drm_simple_encoder_init
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, David Airlie <airlied@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Xinliang Liu <xinliang.liu@linaro.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
+	John Stultz <jstultz@google.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	virtualization@lists.linux.dev, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi RD, some minor comments below.
+Hey,
 
-On Fri, Jul 10, 2026 at 05:29:47PM +0000, RD Babiera wrote:
-> +#define GPHY_TCA_DELAY_US 10
-> +#define GPHY_TCA_TIMEOUT_US 2500000
+> Diogo, do you want to send out another revision? Otherwise it's time to
+> get these patches merged.
 
-Do we really need a 2.5s timeout?
+I would keep them as is, unless you see anything that should really be
+improved before merging.
 
-...
-> +
-> +static int wait_tca_xa_ack(struct google_usb_phy *gphy)
-> +{
-> +	int ret;
-> +	u32 reg;
-> +
-> +	ret = readl_poll_timeout(gphy->usb3_tca_base + TCA_INTR_STS_OFFSET,
-> +				 reg, !!(reg & TCA_INTR_STS_XA_ACT_EVT),
-> +				 GPHY_TCA_DELAY_US, GPHY_TCA_TIMEOUT_US);
-> +	if (ret)
-> +		dev_err(gphy->dev, "tca xa_ack timeout, ret=%d", ret);
-
-The dev_* calls throughout this patch should have trailing newline
-characters.
-
-> +
-> +	return ret;
-> +}
-
-...
->  static int google_usb_set_orientation(struct typec_switch_dev *sw,
->  				      enum typec_orientation orientation)
->  {
->  	struct google_usb_phy *gphy = typec_switch_get_drvdata(sw);
-> +	int ret = 0;
->  
->  	dev_dbg(gphy->dev, "set orientation %d\n", orientation);
->  
-> -	gphy->orientation = orientation;
-> +	guard(mutex)(&gphy->phy_mutex);
->  
-> -	if (pm_runtime_suspended(gphy->dev))
-> -		return 0;
-> +	gphy->orientation = orientation;
->  
-> -	guard(mutex)(&gphy->phy_mutex);
-> +	if (IS_ENABLED(CONFIG_PM)) {
-> +		if (pm_runtime_get_if_active(gphy->dev) <= 0)
-> +			return 0;
-> +	}
->  
->  	set_vbus_valid(gphy);
->  
-> -	return 0;
-> +	if (gphy->phy_state == COMBO_PHY_TCA_READY && orientation != TYPEC_ORIENTATION_NONE)
-> +		ret = program_tca_locked(gphy);
-> +
-> +	pm_runtime_put_autosuspend(gphy->dev);
-
-Here you are using the _autosuspend variant, but autosuspend is never
-configured in probe(). Should this be changed to the plain
-pm_runtime_put(), or actually enable autosuspend in the probe function?
-
-> +
-> +	return ret;
->  }
-
-...
-> +
-> +static int google_usb3_phy_power_on(struct phy *_phy)
-> +{
-> +	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
-> +	struct google_usb_phy *gphy = inst->parent;
-> +	int ret;
-> +
-> +	dev_dbg(gphy->dev, "power on usb3 phy\n");
-> +
-> +	guard(mutex)(&gphy->phy_mutex);
-> +
-> +	if (gphy->phy_state != COMBO_PHY_TCA_READY) {
-
-I think prior to this we should add a check if phy_state is
-COMBO_PHY_IDLE, return an error and change this check to phy_state ==
-COMBO_PHY_INIT_DONE to make sure we are explicit in our state handling
-to prevent issues with any potential refactoring.
-
-> +		/* Wait for PoR -> NC transitions*/
-> +		ret = wait_tca_xa_ack(gphy);
-> +		if (ret) {
-> +			dev_err(gphy->dev, "PoR->NC transition timeout");
-> +			return ret;
-> +		}
-> +		gphy->phy_state = COMBO_PHY_TCA_READY;
-> +	}
-> +
-> +	if (gphy->orientation != TYPEC_ORIENTATION_NONE)
-> +		return program_tca_locked(gphy);
-> +
-> +	return 0;
-> +}
-...
-
-Thanks,
-Neill 
+Best regards,
+Diogo
