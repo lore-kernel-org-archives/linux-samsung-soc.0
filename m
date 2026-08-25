@@ -1,134 +1,87 @@
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628B132C94A
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 18:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787683203; cv=pass; b=JIK8i8V3KYwnAsLS3oTmiY4FLaYEnm1V42UYkT1v5PcBXtopVqYLpxo6RnDBpY1k/mxxPo+Xc476HkYhUVWsr0CdPl1y4yxszcD4MQsKSc5DhPJkawOI1/Wemh6GpUwvUet/uRj/rEFWAuIDUWI4MBKBfWETwuGIiJTw5jfoc0I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787683203; c=relaxed/simple;
-	bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sJRNvw1ta0SMid9Ow5nkcpcbodb7ySyCwVJDmvVMTMgUi3mR77r+3gPpKlSX+QYGEBENvCkoJL1GnuvTsgiuUL/Uej9p1vA++XodNBRnb774ZYPQeX6Spm5RkeQaKNgFR2u9LV+Ybf08cDPYqLpL35RUxwCxJ26fKZmLnuBskeo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/WMQGl2; arc=pass smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9DA2882DE
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 20:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787689891; cv=none; b=SEDLxDhfEqosxDNUkm9z2dTLy+VVXhJt0ZTux9NgGVWKQYkkdiJXMAcW1mr602ilymQ0GtlpmBezrHWHFrGck+/gkMmd9W8vxWgl4bu3DY9Oy7vBs1rgKUaqwSB/nGOQ5bjmdy/SzibFXxFUUH2fGVdyAzfLZRvF7ooLGrIcDEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787689891; c=relaxed/simple;
+	bh=7bCjJjgICnqgqAHn+tY0EcbNTuNXPayt8vzjbeE5BK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FRTV7IusUvVlplTziixTV2jGWOXLzuju0wosysXPCNItWkQQwGfF0D01QkuTTYoqhm7LSqqA7TsqWgMPX8MPwwaplfUBaOp3+QRLG3JlBgerw1+GF3HXrDYfJfcSLmcMLKM6ZXTEaeRh3+sCSzXhSYbWYYMLlmmQ89+QZcPHt2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=hnPYS903; arc=none smtp.client-ip=121.127.44.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/WMQGl2"
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-45eb2e6402aso166185fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Aug 2026 11:40:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787683200; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UF+jv0/1QyfzNGsgtr/6oN8meq9dHdLUTAbpfcM9WYNtwPxA2sQYBfVttnaG8iLTtn
-         +M50oq2B46ugbHRJaC7ozE/98T+Sg2noTrDdipI947bJFhXAALedu++MrBqnlY3mZWv9
-         CCsUbjPWA1ViTFSjehwwIVyCKR5zZB+hLtfZFHvLategsLcxya9ITvJF+g+f/jbyubJK
-         HsLbnvpy8kzwKPc80eox1DMqX4FidVe65Sv/b/7kEXloSA/bOxfuih+SVNkTdI7ioM7Z
-         Wl8/KSx0hQJ6qts7Rz8P+UfZPE87NapG3GzggkC3gLl95noK21nqf/1omx4Dm3TzLhPH
-         2Grw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
-        fh=1HnnUKm3WAmxdJXp8FJNy/2ATvkICSMBsGIKTt95TkU=;
-        b=BDwfG/uorN8Ug65G0Zy9nYyjexwbKTEq2J9pgg6YrFzTJHaf61kalk3rhyK4odPn+y
-         FiFdLtM1yuk/ZHV6zRvZVC6C6G9YJEMNI9y5HAGVqYeY+yFoVgkXD5CipLAcya/IN2pV
-         trVONvibrLd0jY8Y/hu/MNQadOsjDuG0Xg1MnKkwzICHkyVjynH3Qo+GPEGKEkIF/quK
-         b6kzeSkEooGiaJgYMTJ3z8IuGO/TFQdNIjS9tvXnk8hijqqKIRRRUJmLI52oF7dYoK9x
-         fckm3ciSGO+WkzySA8QBx/bIsnJsFojbqs3sfTRcjfdsMbxpEdslg7uCzaREBgSnr901
-         6w4A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787683200; x=1788288000; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
-        b=K/WMQGl2ZdGLQuaSQqD9iQu02BHFLpl/p3H3OZdZxR/bBDGQp5KNu2iVpg36hNlfhg
-         WoQEFDr8krOgQIpMU0V3j280JREazubY2O2YsEF6z+07m5w9CIaqAAjBnkdEYRlQu+y+
-         pD/XRWpuHfeGLjDfmy9Ig9pH50RXIICyAOcdw9XFFVtDZZriIcDMJqBqzBEo78Yg+k9E
-         MhhuGygE6O/X7SL+/HsL9VQ6F6OsRGK/97YA9rz8erSo/DNvgtudBgbpEEnZlI/8GUMX
-         21CmXKNzOwECkSY1y9d0pN1/DCKPfXzELHF+QyZeBKWFEePIAzj6Y9UzjhBWJQkC+VKU
-         eAGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787683200; x=1788288000;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=SSi+4NmtMxNkZmxsfuesKYnZ20ScCmyOkzMthR0BMj0=;
-        b=eoUsK5WvRXd2s2UO/uNcobLPEPexNyHd03VQ6b/pEzXLI+LLokwwzMvGeb1eyD6C0j
-         1EUDxwu9Lmc9Wp0TIHXhW9V5uGA/jGsHZzIZ2XkmABy2wKTEoR7VU5JoEuv3FS+Z17Q/
-         H7nKmQ0sJViYvifN7jmaxdl4BjspDK2WSf/EQtPigth8peKl91qqKpydLdZNor3/iMbT
-         OJGifLWEonIEjtPPhtRg9diOmlL/ys/j0umqYSH0xzs+P/Zq42eGSU01x2IRQtPq87Hp
-         BTGXrgq0enwFl36undqvRbGl9O6af6CCvsHT6DljausQOIr3VsKFtFGJy0RU6BinmoHC
-         ubXg==
-X-Forwarded-Encrypted: i=1; AHgh+RrHO/kQETTTrUjR1xKTXnWBO9q2EqbPT5uNSpTO31OKnmyB6AeCsKGy+wKTDutrMixuooe/+4Famvgfo/lnZRk74A==@vger.kernel.org
-X-Gm-Message-State: AFuF++niN3XmcRArXJqj15aUDkvammcmQDmqjBpuYdUpmZFoSQ77if9O
-	kSfsD9HNiNFD7dwNfGtijLgdlIgkGstVgjok841p14QvhUzYbTBrTs+Q6ufmg87X72VNa7buMyt
-	9JL/BOXWF8/eZPvDFWoMfHZk3zoYCfbs=
-X-Gm-Gg: AR+sD10Ih2FIwCu9U8csxIWde3G+oROqzBOmarcZgSLmByRIQiaWTHQz9fbYloaXVBX
-	RhzFxHOYl0gqFAvZbcIeoxiJWrjlcllPyVCXgQKPODweZNfh+hHMf+iJ6sn56fGIqC+b2Ane2XI
-	+IG1tRoRQ+baOxqunXyEkLd1V/MLn2tay0Ym8i1z3B/EW4Z0wg6f4fY7XdSHxKR9zHDGmZv8em1
-	JpRrkclCRS2XJnQl1HmIdJyHJ1sof9Tivctu4M/AY+hQYngj/kk4kbL3NGQJeVOPQc9u+O2tvTv
-	m46w/9EoZLUWKrf5tpI9qCNab1JcfGD+x0UzMtoI0LJ1hg==
-X-Received: by 2002:a05:6870:f623:b0:435:16e9:f288 with SMTP id
- 586e51a60fabf-4659bb24b93mr1602806fac.20.1787683200126; Tue, 25 Aug 2026
- 11:40:00 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="hnPYS903"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-2eefaa527c; t=1787689884;
+ bh=TJsN+ycmZ6jkrcNxbgl4Kd5KYLWAfFZNuUGOdqM3yDU=;
+ b=hnPYS903fB2GKDeanMZywrbHQN7AwZPLjl0/qT+UbynYjohB9+J5qJ/icJYUSmvS8rAEwi5yS
+ smqMsglk7vlRYpRaDy+fwU3rHDiuFsqnsr8e5UjtMubEoSDI9aVCDOP4CLrtuRpc3Aa+MK/fFIq
+ 5MozAWA4HsmWhl208rjMjoc=
+X-Forward-Email-ID: 6a8dfb9650593cdd5fd1dd31
+X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
+ smtp.forwardemail.net, 121.127.44.66
+X-Forward-Email-Version: 2.13.16
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <82427334-8196-434a-a7bc-601e88ca8e03@lineageos.org>
+Date: Tue, 25 Aug 2026 21:31:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com> <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
-In-Reply-To: <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
-From: Diogo Silva <diogompaissilva@gmail.com>
-Date: Tue, 25 Aug 2026 20:39:49 +0200
-X-Gm-Features: AcwNN1Va3aTr02pKhzBqoinFUkwxjfSbh2WQ-EpZwUvKwCIdS5rdnwq9NOj-ZWw
-Message-ID: <CAJpoHp56yo+eQAYjvR3ez=HTSzapCd3dYppo=MdPx-Lm4J4DQg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/15] drm/drm_simple: remove drm_simple_encoder_init
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Michal Simek <michal.simek@amd.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, David Airlie <airlied@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, Dmitry Osipenko <dmitry.osipenko@collabora.com>, 
-	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Xinliang Liu <xinliang.liu@linaro.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
-	John Stultz <jstultz@google.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	virtualization@lists.linux.dev, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] Exynos850 GPU support
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: krzysztof.kozlowski@oss.qualcomm.com, semen.protsenko@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ peter.griffin@linaro.org, alim.akhtar@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <GVYP280MB12139AB976CA7ACF49FEB768A1A52@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
+ <20260820142330.84514-1-tturner@lineageos.org>
+ <DKY572QGTWSQ.3GW5FQV7JF485@linaro.org>
+Content-Language: en-GB
+From: Thomas Turner <tturner@lineageos.org>
+In-Reply-To: <DKY572QGTWSQ.3GW5FQV7JF485@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hey,
+Hi Alexey,
 
-> Diogo, do you want to send out another revision? Otherwise it's time to
-> get these patches merged.
+On 25/08/2026 16:50, Alexey Klimov wrote:
+> 
+> Hi Thomas,
+> 
+> On the next submission, could you please also add my email
+> alexey.klimov@linaro.org to c/c list?
+> It is interesting topic.
 
-I would keep them as is, unless you see anything that should really be
-improved before merging.
+Sure thing.
+> Offtopic: I have working patches that enable cpu idle states on Exynos850
+> but they are not upstreameable due to PSCI (needs some argument
+> shift in one of the PSCI calls due to messed up MPIDRs).
+> If you will be interested to test/use that, please let me know.
+> 
 
-Best regards,
-Diogo
+Absolutely would be interested to try and test that on my ERD850 device,
+feel free to send patches/instructions my way.
+
+On another side note, I noticed that on the e850-96 you setup basic PMIC
+functionality in u-boot, on ERD850 we also do a similar thing via a
+secondary bootloader (uniLoader), was curious to know whether you or Sam
+have tried implementing PMIC capabilities into the Linux kernel at all and
+if so how successful or unsuccessful has it been?
+
+Best Regards,
+Tom
