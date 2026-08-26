@@ -1,230 +1,170 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AC840EBB4;
-	Wed, 26 Aug 2026 12:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609624766B8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2026 19:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787746930; cv=none; b=EPLNeqcrCI4nsMAuf4tjAxZufeOoh1qqScJnjc4CyU9tnFf9rqkPL2lc2pcr5xEbCXCVD3cLS9RO180+Jrut5IoenpwdIqwZ1d/Xgv2qg9+5JvrvS2qiUe/ndm3GSJpRh4l5sSU2p1z2jJowMU0pNsWEBI3p2U1pWKeYxY4NSU4=
+	t=1787770992; cv=none; b=GhBL1WwCJ8D4+7xA5yp/+afwjRF2yy9nlHmikokCqkMPTzIFivc+ZRalONjD3VjRae0Rv8IjSGF6S9itKIbrgkCSiTPUIo3iLjhxr2g78KlnouvUwf3Cx6xFxfbi8dXmivuTvNvTITAd3T79uZQQRWBt9K/8KmkYp1NYRLAt2/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787746930; c=relaxed/simple;
-	bh=17PvMIvb+dn7B7m1Zxj74lDvEz1I2kLqVXhcrz0Tbf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8JliacQ8SN5UbcZ4ST+sBThBL78N30H86lhq/NSK80TMfmWSGiWwAucvVJBBhn2logELERDEQjw9vPNwXrbZxUQV0NQohjBzcSlvUpj03PmqetOui6uiDnjW+iWKNBhP8azyYauh3+MIa5pjeqr6lsMgVJAFc0hGSKujuZgX1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uVab0SxY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DGIuEy/C; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wPR8sBIT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XkND9Kmf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1787770992; c=relaxed/simple;
+	bh=wvM8aRvWPmKDto0w4PK3ahRPwdGDE0+KecxUUFw61Bw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=AexW4kJSjakw1E4ye/2ohEuN3mjr8bIQe1geI0U4AtBDo25sZ7rMdf6EQr+FGmdYYXHQRiiyfdZaD997KX4RmgsZfcTjsL403u740duRxPRnpk6tAD6Pthu1qzVd+ev7oWa/uoq0Z7igLtjlG72HnQuYhmdqDh9V3a4w4RQ6348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GEkvImgz; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uVab0SxY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DGIuEy/C";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wPR8sBIT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XkND9Kmf"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 047E61F834;
-	Wed, 26 Aug 2026 12:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787746901; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DfJeqZ0bau7jEJJJvGO32xH5KjuTNFcBSKCpKpFG+LI=;
-	b=uVab0SxYMR/+N9UPruFWGWyG9I36bEDa8zsLoB4NzsI2qBEElaZ/5DZCHzkHWDprnCyDEw
-	R0uwjr0YDvXj1TmU5ztFzOTS3aimGNIxZeQhPLQHu8m44TyZdpaeyuhXhjH1UCW3glS4jq
-	QoTh3PYzFp8Yu2fElM0XkLc2DrUxoyU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787746901;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DfJeqZ0bau7jEJJJvGO32xH5KjuTNFcBSKCpKpFG+LI=;
-	b=DGIuEy/CudMk3cnncrFeKYGLxXCZqbeo2sEhLdK0lo6AqhJZpdU9FDJ8oCitjYM/kFqerb
-	BgKG0C2ysVE+hEAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wPR8sBIT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XkND9Kmf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787746897; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DfJeqZ0bau7jEJJJvGO32xH5KjuTNFcBSKCpKpFG+LI=;
-	b=wPR8sBIT2frtnc6D78zAycwSBgyVdWoFRVhBygmyb2Ca3AaFUwIqp7L0gxtjypqQldZDpt
-	TU8r7AUVtuTPJWd6Ehd1CdtlHZB5ajCAnQiQ4cZ7I0+sNm6H1UgxdShzH/5l+d7CK6k95+
-	VKOtkU/ofwaRSEMNTlXBdQujjVs4L0w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787746897;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DfJeqZ0bau7jEJJJvGO32xH5KjuTNFcBSKCpKpFG+LI=;
-	b=XkND9KmfuGPt0J2MaAOPK7SXHD3tA2Y4FuRteyuP+QxvSku29ElYGIlQxEuPr3E6lQ4ScU
-	BHbmLsDpbky789DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 96DAA13354;
-	Wed, 26 Aug 2026 12:21:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6vt+I0/ajmrGIwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Aug 2026 12:21:35 +0000
-Message-ID: <e7522f72-69f7-4f4c-80c0-86680c0e6f54@suse.de>
-Date: Wed, 26 Aug 2026 14:21:35 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GEkvImgz"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4996f1ee4a4so9852055e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2026 12:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1787770983; x=1788375783; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=T2Ai0YOriuHS1IQ7CT4b8R/035xHTVcwVEKbUv9HN3g=;
+        b=GEkvImgz1qvD7hqOUYhghwCsVtHsDlpxC2xmH7NBZyqzb0H5n8H2i8Uz66He7NNAe9
+         wZS0rRb2oBZuL4ANoEtBmcIxIVA90gFzq7aJrTp9DmFauDIhKhy5E/WaQ/Xl7pmfDGil
+         YOPHjGo+5Zz3aTPdwk0C54E0Zkm6uzUeXNCix5tEoyft7jH3CBAsPb3+HCLZEoJj+2An
+         LcyVzKIy4DE0D0D7gBsE4/qBt6fy6rmUpJ/Kr0fLjNaTUyut4BIv+je4Rs9snk4VKL+E
+         OgxAXHuTbG6UTuWAIq91IwoEEjJA3RW6uUVorPgYq91chYx9Crahd0fUvsaMmYDDTdBO
+         Kxsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787770983; x=1788375783;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=T2Ai0YOriuHS1IQ7CT4b8R/035xHTVcwVEKbUv9HN3g=;
+        b=pnksinPu5sa/D9W39oXvtdXCkWuS7BNaATozr2tjF2v8mtQleXp609dvcb1/OWmSPq
+         e43feopo0lnEbZ25jjG4gYc3LThhiKXscXgWEDdFBxO9tIAZGguDcdnRWOHzwaNzWIRS
+         CPYgo1oIDBoBRsCBMeJoh9TwRQh2R601Vp596VO/EsUlMwFtDNQBU5pJEB1+VdlC20dk
+         aipVYVCAK75OyipQhb/P3H9glbF6Li4wuTekHhJmYlXyi1BwfLEyCJ2wVaR12WYP1opx
+         67IKpAnRPhMBRketftgongrweNigvnaqd3Ol541jYDQX3mCs+mJ1TUHclekzMBlLCg2P
+         DwzQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqowV81XvGcI7eGaJAxoViE0/HlPgRhIq78siKcwb9kWPyUMfpBf4Kb4sU9Akp/xy/eLqilbuh908BmYgLRPa4J0A==@vger.kernel.org
+X-Gm-Message-State: AFuF++n5XRSS/Xp6f0Cby5ybK4xbwq1K9N/qkrktSn5YvKFvDSNALfRd
+	olA9iWMtBNqz6Uc5otSpvJ1PvtoeSaaIyqbi3+/xOjFHQqAYct1ieX6UogdgFj6fayA=
+X-Gm-Gg: AR+sD10e2HKfNsKv/DbwiG7fWv/HwVpcx6Wddv37QQU2tqnqiNPBYlHGYCfWffI+gbD
+	EuYJUIab+X2gFTwn0LxoUpwTvZtCVvJq7ZeBcuC9lF842OKMfKliLpishSoopVGdQ0w16BLNVLG
+	+yThKcqUKWVcwCHhZeHZ70DgQ/1uwfJePJdJf1MOKej2Day+jZAZ74BhzhjZRZ3g94D1gx88w4E
+	Ku6K0XxbbSRh+UdtbzhGG7Ogy5FRNYvRabgzMF7kqbWenz8K/4TL4t5KWReJRmsSwYWgr5lX8eT
+	c66C8xjsaz7LSAbChyTGTFw41BkP3LF68Z87n0VagL6DEAJ9fWWzumdw+ClIidaPJ3sEsrwIRLf
+	dlvc931sdmPVnT/3drp5kjxoTjTWhWK1OuTxxpCiLsVrALjoGteXJzySGNyyB7b4PE8bMmXyloo
+	8ZKKHl4Uv4TQgMimHzfrhRb6cr0sNprWktcTGK6G+Z6ET53iH8XeWv0aeB+JuKD9uNwX3abOoZl
+	ikoS3a8deOPYUBlW8mOHDNCLSpo1r6NkvVoKwivW/pRuFCFXp7JbnF3wru2
+X-Received: by 2002:a05:600c:190e:b0:499:a277:e8c8 with SMTP id 5b1f17b1804b1-499dc725b50mr82901585e9.13.1787770983326;
+        Wed, 26 Aug 2026 12:03:03 -0700 (PDT)
+Received: from localhost ([94.4.85.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482e27ab4dasm3669437f8f.15.2026.08.26.12.02.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Aug 2026 12:03:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/15] drm/drm_simple: remove drm_simple_encoder_init
-To: Diogo Silva <diogompaissilva@gmail.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Xinliang Liu <xinliang.liu@linaro.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
- <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-doc@vger.kernel.org
-References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
- <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
- <CAJpoHp56yo+eQAYjvR3ez=HTSzapCd3dYppo=MdPx-Lm4J4DQg@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CAJpoHp56yo+eQAYjvR3ez=HTSzapCd3dYppo=MdPx-Lm4J4DQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 047E61F834
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,samsung.com,ffwll.ch,kernel.org,linaro.org,ideasonboard.com,linux.intel.com,amd.com,nvidia.com,agner.ch,nxp.com,intel.com,redhat.com,collabora.com,chromium.org,iki.fi,pengutronix.de,glider.be,google.com,arm.com,baylibre.com,googlemail.com,lwn.net,linuxfoundation.org,lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[59];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Aug 2026 20:02:59 +0100
+Message-Id: <DKZ3X5VUHJSK.1KSJR6K8FATGV@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Thomas Turner" <tturner@lineageos.org>, "Sam Protsenko"
+ <semen.protsenko@linaro.org>
+Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ <krzysztof.kozlowski@oss.qualcomm.com>, <peter.griffin@linaro.org>,
+ <alim.akhtar@samsung.com>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>
+Subject: Re: 
+X-Mailer: aerc 0.21.0
+References: <GVYP280MB12139AB976CA7ACF49FEB768A1A52@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM> <CAPLW+4kQTUX8QhKnAP7bg=iCw5hhNQZoW7cuOpTdvvAUpGaicg@mail.gmail.com> <135d48e7-58ac-48b8-8fa5-c2548e2f3ae9@lineageos.org>
+In-Reply-To: <135d48e7-58ac-48b8-8fa5-c2548e2f3ae9@lineageos.org>
 
-Hi
-
-Am 25.08.26 um 20:39 schrieb Diogo Silva:
-> Hey,
+On Tue Aug 25, 2026 at 10:05 PM BST, Thomas Turner wrote:
+> Hi Sam and Alexey,
 >
->> Diogo, do you want to send out another revision? Otherwise it's time to
->> get these patches merged.
-> I would keep them as is, unless you see anything that should really be
-> improved before merging.
-
-I've now merged patch 1 to 13 and 15 into drm-misc-next. There was a 
-conflict with the exynos tree, which I resolved.
-
-Patch 14 first requires syncing with the amdgpu tree, which will happen 
-in a few days. You don't have to do anything here. After that, 
-simple_encoder_init will be gone.  Thanks for helping with this.
-
-Best regards
-Thomas
-
-
-
+> On 19/08/2026 20:51, Sam Protsenko wrote:
+>> Can you please tell us a bit about how you tested this patch, and on
+>> which board? As DPU is not currently enabled on Exynos850 SoC, I'm not
+>> sure how exactly GPU can be useful. If you have a use case or a
+>> testing procedure we can run on the E850-96 board, please share.
+>>=20
 >
-> Best regards,
-> Diogo
+> Sam, Alexey could you please test GPU on the E850-96 board by following
+> these instructions:
+>
+> 1) Apply this patch series locally
+> 2) Change status=3D"disabled"; to status=3D"okay";
+> 3) Make sure these configs are enabled:
+> CONFIG_DRM_SIMPLEDRM=3Dy
+> CONFIG_DRM_PANFROST=3Dy
+> 4) In terms of regulators we set up a basic mali regulator via our
+> secondary bootloader [1] and configured with this dts setup [2], NOTE
+> you may be able to get away with a dummy regulator so try that first.
+> If not I am sure you can replicate something simple with u-boot PMIC.
+> 5) Boot a GUI, I saw Debian was used for the bring-up, that should work
+> 6) Run the following command:
+> $ dmesg | grep "panfrost"
+> 7) Compare that to the output at [3]
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
+Your email subject still seems to be null.
 
+[   15.206193] panfrost 11500000.gpu: clock rate =3D 377000000
+[   15.206322] panfrost 11500000.gpu: error -ENODEV: _opp_set_regulators: n=
+o regulator (mali) found
+[   15.206513] panfrost 11500000.gpu: supply mali not found, using dummy re=
+gulator
+[   15.206840] panfrost 11500000.gpu: mali-g52 id 0x7212 major 0x0 minor 0x=
+0 status 0x0
+[   15.213137] panfrost 11500000.gpu: features: 00000000,00000df7, issues: =
+00000000,00000400
+[   15.221271] panfrost 11500000.gpu: Features: L2:0x07100206 Shader:0x0000=
+0000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+[   15.233080] panfrost 11500000.gpu: shader_present=3D0x1 l2_present=3D0x1
+[   15.240488] panfrost 11500000.gpu: [drm] Using Transparent Hugepage
+[   15.250497] [drm] Initialized panfrost 1.6.0 for 11500000.gpu on minor 0
 
+[root@e850usb ~]# uname -a
+Linux e850usb 7.2.0-next-20260825-00009-g647b48e80572-dirty #8 SMP PREEMPT =
+Wed Aug 26 17:05:45 BST 2026 aarch64 GNU/Linux
+
+I have different DRM_SIMPLEDRM options and related  enabled but nothing
+pops up via HDMI (at least I tried simple xorg-server things).
+Is it possible that your bootloader initilises some framebuffer and inserts
+it into DTB that passed to kernel? Or you have some other pieces in
+kernel/dt that implement missing functionality?
+
+Here it seems there are no outputs:
+[root@e850usb ~]# ls -al /dev/fb*
+ls: cannot access '/dev/fb*': No such file or directory
+
+and there no simle framebuffer or related logs. "DPU is not currently
+enabled on Exynos850 SoC" looks like the reason.
+
+Panfrost itself seems to be alive though:
+
+[root@e850usb ~]# eglinfo -B
+GBM platform:
+EGL API version: 1.5
+EGL vendor string: Mesa Project
+EGL version string: 1.5
+EGL client APIs: OpenGL OpenGL_ES
+OpenGL core profile vendor: Mesa
+OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
+OpenGL core profile version: 3.1 Mesa 26.2.1-arch1.1
+OpenGL core profile shading language version: 1.40
+OpenGL compatibility profile vendor: Mesa
+OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
+OpenGL compatibility profile version: 3.1 Mesa 26.2.1-arch1.1
+OpenGL compatibility profile shading language version: 1.40
+OpenGL ES profile vendor: Mesa
+OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
+OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.2.1-arch1.1
+OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
+
+Best regards,
+Alexey
