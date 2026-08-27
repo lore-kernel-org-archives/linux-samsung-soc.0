@@ -1,173 +1,69 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6733B05B6
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Aug 2026 19:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27FE361657;
+	Thu, 27 Aug 2026 12:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787773887; cv=none; b=uhaIK8BfUxgyEfQczwKltmIBgy9LPrDpHQfcnXGO5sxJcNYPUm7N5YIKZPebgI5L7fRI8dHm3nQCjGJtLQ/qrghlxLyzkcILuIPkmslUhYRDmbn+mF5eCRzt4CBzyupNNMzgS70Ax4Bj5LkEOoExYUL5pFOwAnbCNqFi7eViFBc=
+	t=1787832731; cv=none; b=Aj60eIBp7VeiB2v6JAUVLKK2ztwqMr1LGstoq8S7RHyDtfDPWArTXH2vieGb2sEnKSzHxw0aFx1pSsuIISyzatmZW40n73gJaZ8/IN2UKJt00CMKHjjW2uM9Vm/igPGL1pIRN7dwRQ6oUi+VUlvdhMHMfiE4LqqW9BCxZZB/Fh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787773887; c=relaxed/simple;
-	bh=ciMaZJFcjYFc+Da0mP+Le2loRZABOtV5XJdSvpXhzgg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LyyjQdTyvoFTmzP1SKCNWy+Owp2tUxISelE3+cC0KKeou4nPR4D9G9dj6/UV0LycnMT7AK7D2pzeVfILwWUDo/f1Td3pCkxn93ragYiavwjI8fgGo8/WEI3z/0g+UJhKhjlG0ZMxJerO67oC0TcSAJoqcCpgvarxXIISMXp60VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=YHrpEeFw; arc=none smtp.client-ip=121.127.44.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
+	s=arc-20240116; t=1787832731; c=relaxed/simple;
+	bh=78iFWf3uJYsoNXePtoPujdh3aRXqlKF1tSTtK7jnYoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PD2e7s1VTD6u4k2xHK9Rtj25p71zAlQFstoaVhHYzBTWx/t/uH0aIidtaSgt62Xlp9zs2QoyrXJznv2ogcrDy7W6z1SW3keJaSvbbMNBYliAK1Uk5CvdSJ8exHiiiiKkdxZo9CUnu1fhst89Qbjcb/nocL4j1EWbnxwzvZMtRoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU+h2O0i; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="YHrpEeFw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: References: Cc:
- To: From: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-2eefaa527c; t=1787773882;
- bh=ciMaZJFcjYFc+Da0mP+Le2loRZABOtV5XJdSvpXhzgg=;
- b=YHrpEeFwo7vUc9Mqu1HT3QdqSEf9gXgiRstNlQ7wZULDnh7Xs4rP9GBWurAWDgkd0Yh2kcD8G
- /6bGwICOK3lBKzd4Vu4DjXqB6tGcAum/Y3sboNpbBRFPLyZXan2lT/Oad8A7pmcm7BVyXhTWals
- FSeZt3RJ+ciFVLqED04SLfY=
-X-Forward-Email-ID: 6a8f43b9a86b7caee499143c
-X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
- smtp.forwardemail.net, 121.127.44.66
-X-Forward-Email-Version: 2.13.16
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <2731b56e-0559-4395-ae92-6940054a053b@lineageos.org>
-Date: Wed, 26 Aug 2026 20:51:15 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU+h2O0i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0301F000E9;
+	Thu, 27 Aug 2026 12:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787832729;
+	bh=dc3jY7P9zE1tJZ9onpOYOdmKX6vk4OXUfdwbcLqkpwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LU+h2O0iP62CpY9efKy5hlR/te82Ux3do6ydw1u2D2GZjjYZ9kV1DVb5+qOTvmMvo
+	 zuC+y3dfE7zppjCEpAWbl00nc3QiTxnW3U16cu6GlOyl05Y9hksSYvfYtqti7soS6N
+	 QLJC8ZEjTYZyN06JvCsXBmBAKc1fEpw/acpkvaou4kJncKS+j/K4ZcpRmuhdoZYtRm
+	 0EBrMcN0/6EF84vLKNVcAPt5WuybQRo15vGqIjSCkgKECPcaIieE/u5JCDCXBPDuqr
+	 sMl2eQVIB95lxUuUsFE0LR5qDzcB+7zDEruEg7wSbIykZyENcj3q/xatC6Z1k7U8GP
+	 wniRMeEeU9rzw==
+Date: Thu, 27 Aug 2026 14:12:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aiden Isik <aidenisik@member.fsf.org>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: samsung-wdt: Add
+ exynos5515-wdt compatible
+Message-ID: <20260827-precise-fresh-coot-b0d17b@quoll>
+References: <20260821-for-next-lucky7-watchdog-v4-0-d070cee5009f@member.fsf.org>
+ <20260821-for-next-lucky7-watchdog-v4-1-d070cee5009f@member.fsf.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Exynos850 GPU support
-From: Thomas Turner <tturner@lineageos.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- krzysztof.kozlowski@oss.qualcomm.com, peter.griffin@linaro.org,
- alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <GVYP280MB12139AB976CA7ACF49FEB768A1A52@GVYP280MB1213.SWEP280.PROD.OUTLOOK.COM>
- <CAPLW+4kQTUX8QhKnAP7bg=iCw5hhNQZoW7cuOpTdvvAUpGaicg@mail.gmail.com>
- <135d48e7-58ac-48b8-8fa5-c2548e2f3ae9@lineageos.org>
- <DKZ3X5VUHJSK.1KSJR6K8FATGV@linaro.org>
- <5e8698db-974c-4f8b-8939-bcdf8a47743d@lineageos.org>
-Content-Language: en-GB
-In-Reply-To: <5e8698db-974c-4f8b-8939-bcdf8a47743d@lineageos.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260821-for-next-lucky7-watchdog-v4-1-d070cee5009f@member.fsf.org>
 
-Hi,
+On Fri, Aug 21, 2026 at 04:14:49PM +0100, Aiden Isik wrote:
+> Add a dt-binding compatible for the Exynos5515 watchdog timer.
+> 
+> This watchdog requires a syscon phandle, and the cluster index should
+> *not* be specified, as that does not make sense on the Exynos5515 SoC
+> (due to it only having a single core cluster).
+> 
+> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+> ---
+>  .../devicetree/bindings/watchdog/samsung-wdt.yaml  | 23 +++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
 
-Forgot to attach the eglinfo -B logs I get in the previous email so here it is:
-This is using wayland on phosh UI from [1]
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+Best regards,
+Krzysztof
 
-samsung-a21s:~$ eglinfo -B
-GBM platform:
-EGL API version: 1.5
-EGL vendor string: Mesa Project
-EGL version string: 1.5
-EGL client APIs: OpenGL OpenGL_ES
-OpenGL core profile vendor: Mesa
-OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL core profile shading language version: 1.40
-OpenGL compatibility profile vendor: Mesa
-OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL compatibility profile shading language version: 1.40
-OpenGL ES profile vendor: Mesa
-OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
-OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
-
-Wayland platform:
-EGL API version: 1.5
-EGL vendor string: Mesa Project
-EGL version string: 1.5
-EGL client APIs: OpenGL OpenGL_ES
-OpenGL core profile vendor: Mesa
-OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL core profile shading language version: 1.40
-OpenGL compatibility profile vendor: Mesa
-OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL compatibility profile shading language version: 1.40
-OpenGL ES profile vendor: Mesa
-OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
-OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
-
-X11 platform:
-eglinfo: eglInitialize failed
-
-Surfaceless platform:
-EGL API version: 1.5
-EGL vendor string: Mesa Project
-EGL version string: 1.5
-EGL client APIs: OpenGL OpenGL_ES
-OpenGL core profile vendor: Mesa
-OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL core profile shading language version: 1.40
-OpenGL compatibility profile vendor: Mesa
-OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL compatibility profile shading language version: 1.40
-OpenGL ES profile vendor: Mesa
-OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
-OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
-
-Device platform:
-Device #0:
-
-Platform Device platform:
-EGL API version: 1.5
-EGL vendor string: Mesa Project
-EGL version string: 1.5
-EGL client APIs: OpenGL OpenGL_ES
-OpenGL core profile vendor: Mesa
-OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL core profile shading language version: 1.40
-OpenGL compatibility profile vendor: Mesa
-OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
-OpenGL compatibility profile shading language version: 1.40
-OpenGL ES profile vendor: Mesa
-OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
-OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
-OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
-
-Device #1:
-
-Platform Device platform:
-EGL API version: 1.5
-EGL vendor string: Mesa Project
-EGL version string: 1.5
-EGL client APIs: OpenGL OpenGL_ES
-OpenGL core profile vendor: Mesa
-OpenGL core profile renderer: llvmpipe (LLVM 22.1.8, 128 bits)
-OpenGL core profile version: 4.6 (Core Profile) Mesa 26.1.6
-OpenGL core profile shading language version: 4.60
-OpenGL compatibility profile vendor: Mesa
-OpenGL compatibility profile renderer: llvmpipe (LLVM 22.1.8, 128 bits)
-OpenGL compatibility profile version: 4.6 (Compatibility Profile) Mesa 26.1.6
-OpenGL compatibility profile shading language version: 4.60
-OpenGL ES profile vendor: Mesa
-OpenGL ES profile renderer: llvmpipe (LLVM 22.1.8, 128 bits)
-OpenGL ES profile version: OpenGL ES 3.2 Mesa 26.1.6
-OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.20
-
-Regards,
-Tom
-
-[1] https://wiki.postmarketos.org/wiki/Phosh
