@@ -1,223 +1,166 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3103C3425
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 07:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B1442E8FA;
+	Mon, 31 Aug 2026 13:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788159844; cv=none; b=Dv1tX6AG8PnKARI1qGEOtR8mJxi8+wClTrZEYdULu9pdnxKXUpWBvVhmw3bwTUdK7x5fShSTjwKlJR9+Ru8pUynvV+YUYr28NHf8lym9G572zBYO/Udc9ojkS67rAI8TDIUbmAH/iuFxu6OJx61O9nxqKjI7sond92n4KJssO5Y=
+	t=1788183395; cv=none; b=R44sq6RE59GlOGY0yEbw2RP94GYrsh4/gjQ1weNvSQUgdCB5sZv58xGKvM2c8CV5mu+qNY/iNDdRW4r1gE5wEU3ZDTzHOpL0CLEo/ZM6cEEBhqEKPSVjYOnGWCMWLNJeZpodyVDdEu11MbW0DiBph1XLtTFQ7jv7obp8SU5V9PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788159844; c=relaxed/simple;
-	bh=pcMWMmjLnn8DUrHK9s+VZ8ZoC360Bv0DvW4lp2EBBg8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=fch7DdQNuxVF6CqIcZZ8br+PaB6hbLoSrosvq/2mixWJETVMOgOWM8snkmHnRup6+kP6qxIO/TbC4BAvoMCX0AV1xFUAmEGkKR9Qbh0fyRCEaATJ0OcM6ZkMBOFAFWLmDumvGRpJLtf5GyYQMEhjGfuIlM5/YWhZ0ltz6RDZnYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HpEkP/DH; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1788183395; c=relaxed/simple;
+	bh=3d2wE4iPk/eSRIKBUJMr1Vert2gthTCrW2UXhnx95p4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dD0DD9xQiC3uzOWpMNluZckbv9WDXbuDq2jfiYTG0ppx1FHM/top8kJx2V0JsskKvmdBPqC1Iw3fx4if4/cSGyKWzrwfgOgViuaHmQhvkgIenzsLTJHyqxS2vSHJlmWsyE6MgN+/TzsZJ9jFRNaBhtNUMR9I0UuSRhTzsDITxEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fa7a1Q3Y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HpEkP/DH"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260831070352epoutp029a1b37003742d10771b141bbbab4fb1c~Q0eTSQNqo2913929139epoutp02D
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 07:03:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260831070352epoutp029a1b37003742d10771b141bbbab4fb1c~Q0eTSQNqo2913929139epoutp02D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1788159832;
-	bh=Dgb1ngpCR4vwZb6TG7VDqdD3XYLGgbrQsP5sDw19djY=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=HpEkP/DH2n3xOOnopyTG0qva57RbDbJxtyXz9+oOxmY8Iyh9gDXTw3bAC7n8LAUDg
-	 DAqiynEYOZ3p/3o9xt4zC6d/NleFHw0K9c4qxtESdhu5WwJaCu6qIyOZZj6BxRGyPE
-	 rh2L8c8kc0EvfNz9jnqg5UZp/OCp4ph4RV4lnZAo=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260831070351epcas5p46018d94a0c2ca993ee8680a5e0628591~Q0eSQ4KUS1551015510epcas5p4m;
-	Mon, 31 Aug 2026 07:03:51 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4hYKj24Kvvz3hhT4; Mon, 31 Aug
-	2026 07:03:50 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0~Q0eQsfTZ_1106911069epcas5p4l;
-	Mon, 31 Aug 2026 07:03:49 +0000 (GMT)
-Received: from vega.samsungds.net (unknown [107.108.73.84]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260831070346epsmtip1c4aeecb2495ffbcfc6ef1ee7dbfb8368~Q0eNxrS9g0914309143epsmtip1D;
-	Mon, 31 Aug 2026 07:03:46 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: vkoul@kernel.org, neil.armstrong@linaro.org, krzk@kernel.org,
-	peter.griffin@linaro.org, alim.akhtar@samsung.com, pritam.sutar@samsung.com,
-	andre.draszik@linaro.org, kernel@lvkasz.us, linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com,
-	muhammed.ali@samsung.com, thiagu.r@samsung.com, Selvarasu Ganesan
-	<selvarasu.g@samsung.com>
-Subject: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to prevent
- OOB access
-Date: Mon, 31 Aug 2026 12:33:09 +0530
-Message-Id: <20260831070309.158069-1-selvarasu.g@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-CMS-MailID: 20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0
-References: <CGME20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0@epcas5p4.samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fa7a1Q3Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016D61F000E9;
+	Mon, 31 Aug 2026 13:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788183394;
+	bh=3d2wE4iPk/eSRIKBUJMr1Vert2gthTCrW2UXhnx95p4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Fa7a1Q3YoUsfdoMvZbQAiBxdeh/TNaAy2cWmN+gHJtD0G5fAKj07cg5+8PsqlLHGz
+	 A1PAQuTvFk3cBiBuBnU9BX06M7lLnfqiM9pOLnHs/A2YOWF6hTp4V8VTsE2c/GmSFo
+	 URF1s+nDBwrxxWO45AdqLpYaq6wzMJThp7iMOVVQEGXgXFPN8CtiP/WnqMUZqdnyKW
+	 EQDpd7/10qJ2kUHSiXAJKr/GRWQLdNSiDsyIUkC44uOO8x+JESPpssnyKwOnT03CZH
+	 1TMqMRafZA0VRWtpwFEEpq9yiXTseAFhl04jX5wKhiXF3DXtIzYeLnD80tcC/prJs1
+	 YmW1jKy9yiPhA==
+Date: Mon, 31 Aug 2026 15:36:29 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Janne Grunau <j@jannau.net>, 
+	Sasha Finkelstein <k@chaosmail.tech>, asahi@lists.linux.dev, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	amd-gfx@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, 
+	Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
+	Ruben Wauters <rubenru09@aol.com>, Tian Tao <tiantao6@hisilicon.com>, 
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Yongbang Shi <shiyongbang@huawei.com>, 
+	John Stultz <jstultz@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Xinliang Liu <xinliang.liu@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
+	Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>, 
+	Saurabh Sengar <ssengar@linux.microsoft.com>, linux-hyperv@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Liu Ying <victor.liu@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, Marek Vasut <marex@denx.de>, Dave Airlie <airlied@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, spice-devel@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-renesas-soc@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	linux-sunxi@lists.linux.dev, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Aditya Garg <gargaditya08@proton.me>, 
+	Aun-Ali Zaidi <admin@kodeit.net>, LiangCheng Wang <zaq14760@gmail.com>, 
+	Alex Lanzano <lanzano.alex@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>, Chia-I Wu <olvaffe@gmail.com>, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
+	Michal Simek <michal.simek@amd.com>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <siqueira@igalia.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Dharma Balasubiramani <dharma.b@microchip.com>, Manikandan Muralidharan <manikandan.m@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Jianmin Lv <lvjianmin@loongson.cn>, 
+	Mingcong Bai <jeffbai@aosc.io>, Qianhai Wu <wuqianhai@loongson.cn>, 
+	Xi Ruoyao <xry111@xry111.site>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, 
+	linux-rockchip@lists.infradead.org, Iker Pedrosa <ikerpedrosam@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, 
+	Louis Chauvet <louis.chauvet@bootlin.com>, Melissa Wen <melissa.srw@gmail.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Zack Rusin <zack.rusin@broadcom.com>
+Subject: Re: [PATCH 00/70] drm/crtc: Convert all drivers to
+ atomic_create_state and remove reset
+Message-ID: <apWDRq8YOTwvGuSf@houat>
+References: <20260821-drm-no-more-crtc-reset-v1-0-fb793475c05a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="eainbiqt42xdkeio"
+Content-Disposition: inline
+In-Reply-To: <20260821-drm-no-more-crtc-reset-v1-0-fb793475c05a@kernel.org>
 
-The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
-creating both UTMI and PIPE3 PHY instances regardless of the SoC
-capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
-and ExynosAutoV920) provide phy_cfg arrays containing only a single
-element.
 
-On these SoCs, when the loop reaches index 1, the driver reads past the
-end of the rodata array, populating the second PHY instance with garbage
-data. Since the configuration structure contains critical function
-pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
-PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
+--eainbiqt42xdkeio
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/70] drm/crtc: Convert all drivers to
+ atomic_create_state and remove reset
+MIME-Version: 1.0
 
-Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
-store the actual size of the phy_cfg array for each SoC. Update the
-probe loop and the xlate function to bound their access against this
-value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
+On Fri, Aug 21, 2026 at 04:38:36PM +0200, Maxime Ripard wrote:
+> This is a follow-up to the plane reset removal series, and part of a
+> larger effort to remove the reset hook from all KMS objects.
+>=20
+> The CRTC reset hook is overloaded: it is called both at probe time to
+> create the initial software state and during suspend/resume to reset
+> hardware and software state. These two roles have different
+> requirements, and the reset hook is not fallible, making error
+> handling difficult for the initial state allocation path.
+>=20
+> While reset has the semantics to reset both the software and hardware
+> state, the vast majority of implementations and all the helpers only
+> reset the software state, making them equivalent to
+> atomic_create_state in practice. The atomic_create_state hook makes
+> this explicit: it only allocates and initializes a pristine state
+> without any side effect, and returns the state pointer or an ERR_PTR
+> on failure.
+>=20
+> This series converts all CRTC drivers tree-wide from the reset hook to
+> atomic_create_state, then removes the reset hook from struct
+> drm_crtc_funcs entirely. Two drivers (tilcdc and loongson) had actual
+> hardware reset logic mixed into their reset hook; those are moved to
+> CRTC creation instead. The conversions were done using a combination of
+> Coccinelle semantic patches and manual adjustments.
+>=20
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Assisted-by: Claude:claude-sonnet-5
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 8711a3b62c8e..311d1c25eb3e 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -477,6 +477,7 @@ struct exynos5_usbdrd_phy_config {
- 
- struct exynos5_usbdrd_phy_drvdata {
- 	const struct exynos5_usbdrd_phy_config *phy_cfg;
-+	int n_phy_cfg;
- 	const struct exynos5_usbdrd_phy_tuning **phy_tunes;
- 	const struct phy_ops *phy_ops;
- 	const char * const *clk_names;
-@@ -1164,7 +1165,7 @@ static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
- {
- 	struct exynos5_usbdrd_phy *phy_drd = dev_get_drvdata(dev);
- 
--	if (WARN_ON(args->args[0] >= EXYNOS5_DRDPHYS_NUM))
-+	if (WARN_ON(args->args[0] >= phy_drd->drv_data->n_phy_cfg))
- 		return ERR_PTR(-ENODEV);
- 
- 	return phy_drd->phys[args->args[0]].phy;
-@@ -1993,6 +1994,7 @@ static const char * const exynos5_regulator_names[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
- 	.phy_cfg		= phy_cfg_exynos2200,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos2200),
- 	.phy_ops		= &exynos2200_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS2200_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2006,6 +2008,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5420_USBDRD1_PHY_CONTROL,
-@@ -2019,6 +2022,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2031,6 +2035,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5433_USBHOST30_PHY_CONTROL,
-@@ -2044,6 +2049,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2056,6 +2062,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos7870,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos7870),
- 	.phy_tunes		= exynos7870_tunes,
- 	.phy_ops		= &exynos7870_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
-@@ -2069,6 +2076,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos850,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
- 	.phy_ops		= &exynos850_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2097,6 +2105,7 @@ static const struct exynos5_usbdrd_phy_tuning *exynos990_tunes[PTS_MAX] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos850,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
- 	.phy_ops		= &exynos850_usbdrd_phy_ops,
- 	.phy_tunes		= exynos990_tunes,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS990_PHY_CTRL_USB20,
-@@ -2629,6 +2638,7 @@ static const struct phy_ops exynosautov920_usb31drd_combo_ssphy_ops = {
- static const
- struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_combo_ssphy = {
- 	.phy_cfg		= usb31drd_phy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(usb31drd_phy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usb31drd_combo_ssphy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB31,
- 	.clk_names		= exynos5_clk_names,
-@@ -2659,6 +2669,7 @@ exynos5_usbdrd_phy_config usbdrd_hsphy_cfg_exynosautov920[] = {
- static const
- struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_combo_hsphy = {
- 	.phy_cfg		= usbdrd_hsphy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(usbdrd_hsphy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usbdrd_combo_hsphy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2687,6 +2698,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2863,6 +2875,7 @@ static const char * const gs101_regulator_names[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata gs101_usbd31rd_phy = {
- 	.phy_cfg			= phy_cfg_gs101,
-+	.n_phy_cfg			= ARRAY_SIZE(phy_cfg_gs101),
- 	.phy_tunes			= gs101_tunes,
- 	.phy_ops			= &gs101_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy		= GS101_PHY_CTRL_USB20,
-@@ -3020,7 +3033,7 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 
- 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
- 
--	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
-+	for (i = 0; i < drv_data->n_phy_cfg; i++) {
- 		struct phy *phy = devm_phy_create(dev, NULL, drv_data->phy_ops);
- 
- 		if (IS_ERR(phy))
--- 
-2.17.1
+Applied patches 1,3-14,16-28,31-41,43,45-49,52-62,64-68 to drm-misc-next
 
+Maxime
+
+--eainbiqt42xdkeio
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCapWDXQAKCRAnX84Zoj2+
+dtnDAYDvbcHtYOX7CuJCyNGSb99Ed+Livj62dMg0nsp864oeIMVzqxGBJIKgPp8Z
+RCHnUyUBfAxvXYJDr3LaH94QifMoTvJPOgPapZRwWXp6VAygmOgZF8WFxC9cEp2h
+0/QjaJymHA==
+=mCUP
+-----END PGP SIGNATURE-----
+
+--eainbiqt42xdkeio--
