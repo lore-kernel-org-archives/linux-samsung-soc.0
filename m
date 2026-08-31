@@ -1,166 +1,430 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B1442E8FA;
-	Mon, 31 Aug 2026 13:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FC4E80CE;
+	Mon, 31 Aug 2026 13:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183395; cv=none; b=R44sq6RE59GlOGY0yEbw2RP94GYrsh4/gjQ1weNvSQUgdCB5sZv58xGKvM2c8CV5mu+qNY/iNDdRW4r1gE5wEU3ZDTzHOpL0CLEo/ZM6cEEBhqEKPSVjYOnGWCMWLNJeZpodyVDdEu11MbW0DiBph1XLtTFQ7jv7obp8SU5V9PI=
+	t=1788183617; cv=none; b=oaF4wUGxQO+hKv5VttyzdsEmbdKnOZIpLkuOtXztJy1qs8uEcoV0lPOvXABdtMYNpTJykVdTXUkFda9eH38kirkLdxo696lVXug57hxTP+QNhozltIYf26/vfOFsSPI0D8aXxSuEyx23KgDLxiCtWrVCXOmLXw1DN5sb3f7f620=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183395; c=relaxed/simple;
-	bh=3d2wE4iPk/eSRIKBUJMr1Vert2gthTCrW2UXhnx95p4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dD0DD9xQiC3uzOWpMNluZckbv9WDXbuDq2jfiYTG0ppx1FHM/top8kJx2V0JsskKvmdBPqC1Iw3fx4if4/cSGyKWzrwfgOgViuaHmQhvkgIenzsLTJHyqxS2vSHJlmWsyE6MgN+/TzsZJ9jFRNaBhtNUMR9I0UuSRhTzsDITxEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fa7a1Q3Y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788183617; c=relaxed/simple;
+	bh=FF0rj7jkhCJv5WeBMBcyBA3vfUyV1mDNwa9GNRVpfts=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LmNaJhwnHQyZECnqw6inJoSyINj5iid8iWPtL8XZErNhz2yPTQ4AxGHx4giZovAIKhtd0T2DfkJ4OL4lvKtn0DLDA4HLqb2HhTnyC6Op7ULRhU/Cm/xjsEORtulYWcfupVbtlWEjf6bxtBoQ2Q66cFbXhefa8c/HbYPsG6DGRmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAxSGlzk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fa7a1Q3Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016D61F000E9;
-	Mon, 31 Aug 2026 13:36:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAxSGlzk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E67D1F00A3E;
+	Mon, 31 Aug 2026 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183394;
-	bh=3d2wE4iPk/eSRIKBUJMr1Vert2gthTCrW2UXhnx95p4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Fa7a1Q3YoUsfdoMvZbQAiBxdeh/TNaAy2cWmN+gHJtD0G5fAKj07cg5+8PsqlLHGz
-	 A1PAQuTvFk3cBiBuBnU9BX06M7lLnfqiM9pOLnHs/A2YOWF6hTp4V8VTsE2c/GmSFo
-	 URF1s+nDBwrxxWO45AdqLpYaq6wzMJThp7iMOVVQEGXgXFPN8CtiP/WnqMUZqdnyKW
-	 EQDpd7/10qJ2kUHSiXAJKr/GRWQLdNSiDsyIUkC44uOO8x+JESPpssnyKwOnT03CZH
-	 1TMqMRafZA0VRWtpwFEEpq9yiXTseAFhl04jX5wKhiXF3DXtIzYeLnD80tcC/prJs1
-	 YmW1jKy9yiPhA==
-Date: Mon, 31 Aug 2026 15:36:29 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Janne Grunau <j@jannau.net>, 
-	Sasha Finkelstein <k@chaosmail.tech>, asahi@lists.linux.dev, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	amd-gfx@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, 
-	Russell King <linux@armlinux.org.uk>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	Alison Wang <alison.wang@nxp.com>, Stefan Agner <stefan@agner.ch>, 
-	Ruben Wauters <rubenru09@aol.com>, Tian Tao <tiantao6@hisilicon.com>, 
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Yongbang Shi <shiyongbang@huawei.com>, 
-	John Stultz <jstultz@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Xinliang Liu <xinliang.liu@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
-	Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>, 
-	Saurabh Sengar <ssengar@linux.microsoft.com>, linux-hyperv@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
-	Frank Li <Frank.Li@nxp.com>, Liu Ying <victor.liu@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, Marek Vasut <marex@denx.de>, Dave Airlie <airlied@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, spice-devel@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-renesas-soc@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
-	linux-sunxi@lists.linux.dev, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Aditya Garg <gargaditya08@proton.me>, 
-	Aun-Ali Zaidi <admin@kodeit.net>, LiangCheng Wang <zaq14760@gmail.com>, 
-	Alex Lanzano <lanzano.alex@gmail.com>, Hans de Goede <hansg@kernel.org>, 
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>, Chia-I Wu <olvaffe@gmail.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Michal Simek <michal.simek@amd.com>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <siqueira@igalia.com>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dharma Balasubiramani <dharma.b@microchip.com>, Manikandan Muralidharan <manikandan.m@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Jianmin Lv <lvjianmin@loongson.cn>, 
-	Mingcong Bai <jeffbai@aosc.io>, Qianhai Wu <wuqianhai@loongson.cn>, 
-	Xi Ruoyao <xry111@xry111.site>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Magnus Damm <magnus.damm@gmail.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, 
-	linux-rockchip@lists.infradead.org, Iker Pedrosa <ikerpedrosam@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, 
-	Louis Chauvet <louis.chauvet@bootlin.com>, Melissa Wen <melissa.srw@gmail.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Zack Rusin <zack.rusin@broadcom.com>
-Subject: Re: [PATCH 00/70] drm/crtc: Convert all drivers to
- atomic_create_state and remove reset
-Message-ID: <apWDRq8YOTwvGuSf@houat>
-References: <20260821-drm-no-more-crtc-reset-v1-0-fb793475c05a@kernel.org>
+	s=k20260515; t=1788183614;
+	bh=9tQOm1ZLIVOY99xhF85nCz+7Wr8eSSAaqPMF364hkyg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WAxSGlzkTR6qQ5UUYM5Y2LRdABUEkwvBUKY4qb6q8CRSi1pY6P2XiJjZcuswz8DOu
+	 fcsn8VfuZOyThRCI8RAF13B2khoIwwRB9n1izymbPqOeqbI3raazEzWjqDmAsmQAid
+	 wfWJRVkTesHSHDF+2C53Wv0tai4bB4aK+tR2k9Nl4vEyFEeyafYwqw50p9jiDiW0Yl
+	 g/LWNF+KJsymOXfArWPx1dJSUGvD9CWCJQbIh9ypRaQvPC4h3sF1dRb0/uinDcTKj/
+	 1wPh6JhtbEx3T35WVvOZQ4a6fEz2l7cBrqdar2873i/wu67mwJh+p9eBWD9MqF3HEn
+	 kgftRU4U3Tb2Q==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Alexey Klimov <alexey.klimov@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	peter.griffin@linaro.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18-6.1] clk: samsung: exynos850: mark APM I3C clocks as critical
+Date: Mon, 31 Aug 2026 09:23:47 -0400
+Message-ID: <20260831133314.4125787-199-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="eainbiqt42xdkeio"
-Content-Disposition: inline
-In-Reply-To: <20260821-drm-no-more-crtc-reset-v1-0-fb793475c05a@kernel.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.48
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Alexey Klimov <alexey.klimov@linaro.org>
 
---eainbiqt42xdkeio
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/70] drm/crtc: Convert all drivers to
- atomic_create_state and remove reset
-MIME-Version: 1.0
+[ Upstream commit 44984aaf1aa727ff944dd4b72fcf069d08b0056d ]
 
-On Fri, Aug 21, 2026 at 04:38:36PM +0200, Maxime Ripard wrote:
-> This is a follow-up to the plane reset removal series, and part of a
-> larger effort to remove the reset hook from all KMS objects.
->=20
-> The CRTC reset hook is overloaded: it is called both at probe time to
-> create the initial software state and during suspend/resume to reset
-> hardware and software state. These two roles have different
-> requirements, and the reset hook is not fallible, making error
-> handling difficult for the initial state allocation path.
->=20
-> While reset has the semantics to reset both the software and hardware
-> state, the vast majority of implementations and all the helpers only
-> reset the software state, making them equivalent to
-> atomic_create_state in practice. The atomic_create_state hook makes
-> this explicit: it only allocates and initializes a pristine state
-> without any side effect, and returns the state pointer or an ERR_PTR
-> on failure.
->=20
-> This series converts all CRTC drivers tree-wide from the reset hook to
-> atomic_create_state, then removes the reset hook from struct
-> drm_crtc_funcs entirely. Two drivers (tilcdc and loongson) had actual
-> hardware reset logic mixed into their reset hook; those are moved to
-> CRTC creation instead. The conversions were done using a combination of
-> Coccinelle semantic patches and manual adjustments.
->=20
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+The Exynos850 APM co-processor relies on the I3C bus to communicate with
+the PMIC. Currently, there is no dedicated PMIC consumer driver managing
+these clocks, so the clock subsystem automatically gates them during the
+initialisation. Once gated, any subsequent ACPM communication with APM
+results in timeouts.
 
+As a temporary workaround (and let's hope it doesn't become permanent),
+mark both `gout_i3c_pclk` and `gout_i3c_sclk` as CLK_IS_CRITICAL ones to
+prevent the clock subsystem from disabling them. This makes the ACPM
+communication functional. This workaround should be reverted once a
+proper ACPM PMIC driver is implemented to manage these clocks.
 
-Applied patches 1,3-14,16-28,31-41,43,45-49,52-62,64-68 to drm-misc-next
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Link: https://patch.msgid.link/20260430-exynos850-i3c-criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-Maxime
+LLM Generated explanations, may be completely bogus:
 
---eainbiqt42xdkeio
-Content-Type: application/pgp-signature; name="signature.asc"
+## Phase 1: Commit Message Forensics
 
------BEGIN PGP SIGNATURE-----
+### Step 1.1: Subject Line
+**Record:** `[clk: samsung: exynos850]` `[mark]` — Mark APM I3C clocks
+(`gout_i3c_pclk`, `gout_i3c_sclk`) as `CLK_IS_CRITICAL` to prevent the
+clock core from gating them.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCapWDXQAKCRAnX84Zoj2+
-dtnDAYDvbcHtYOX7CuJCyNGSb99Ed+Livj62dMg0nsp864oeIMVzqxGBJIKgPp8Z
-RCHnUyUBfAxvXYJDr3LaH94QifMoTvJPOgPapZRwWXp6VAygmOgZF8WFxC9cEp2h
-0/QjaJymHA==
-=mCUP
------END PGP SIGNATURE-----
+### Step 1.2: Commit Message Tags
+**Record:**
+- **Fixes:** — not present (expected for manual review)
+- **Reported-by:** — none
+- **Tested-by:** — none
+- **Reviewed-by:** Sam Protsenko \<semen.protsenko@linaro.org\>, Tudor
+  Ambarus \<tudor.ambarus@linaro.org\>
+- **Acked-by:** — none
+- **Cc:** Sam Protsenko, Tudor Ambarus (not stable@vger.kernel.org)
+- **Link:** https://patch.msgid.link/20260430-exynos850-i3c-
+  criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
+- **Signed-off-by:** Alexey Klimov, Krzysztof Kozlowski (ignore
+  pipeline-added SOBs)
 
---eainbiqt42xdkeio--
+Notable: two Reviewed-by tags from Linaro Exynos850 platform developers;
+no syzbot or user bug reports.
+
+### Step 1.3: Commit Body Analysis
+**Record:**
+- **Bug:** With no PMIC consumer driver holding references, the clock
+  framework gates `gout_i3c_pclk` and `gout_i3c_sclk` during init.
+- **Symptom:** After gating, all ACPM communication with the Exynos850
+  APM co-processor times out.
+- **Root cause:** APM uses I3C to talk to the PMIC; those bus clocks
+  must stay enabled but nothing claims them.
+- **Fix approach:** Temporary `CLK_IS_CRITICAL` workaround until a
+  proper ACPM PMIC driver manages the clocks.
+- **Version info:** none in the message.
+
+### Step 1.4: Hidden Bug Fix Detection
+**Record:** Yes — described as a workaround, but it fixes real broken
+platform behavior (ACPM timeouts). Same pattern as other
+`CLK_IS_CRITICAL` entries in this file for clocks that must stay on
+without a consumer driver.
+
+---
+
+## Phase 2: Diff Analysis
+
+### Step 2.1: Change Inventory
+**Record:**
+- **File:** `drivers/clk/samsung/clk-exynos850.c` (+3 / −2, net +1 line)
+- **Functions:** `apm_gate_clks[]` static init table (inside
+  `exynos850_cmu_apm` init path)
+- **Scope:** Single-file, surgical hardware workaround
+
+### Step 2.2: Code Flow Change
+**Record:**
+- **Hunk 1 (I3C PCLK gate):** `GATE(..., 0, 0)` → `GATE(...,
+  CLK_IS_CRITICAL, 0)` for `gout_i3c_pclk`
+- **Hunk 2 (I3C SCLK gate):** `GATE(..., 0, 0)` → `GATE(...,
+  CLK_IS_CRITICAL, 0)` for `gout_i3c_sclk`
+- **Path affected:** Boot-time APM CMU clock registration; prevents
+  automatic disable of I3C clocks after init.
+
+### Step 2.3: Bug Mechanism
+**Record:**
+- **Category:** Hardware workaround / clock-gating correctness
+- **Mechanism:** Ungated clocks with no consumer get disabled by
+  `clk_disable_unused()`; APM I3C to PMIC then stops working and ACPM
+  mailbox traffic times out.
+
+### Step 2.4: Fix Quality
+**Record:**
+- Obviously correct: mirrors `gout_pmu_alive_pclk` on line 698 in the
+  same table.
+- Minimal, no API changes.
+- **Regression risk:** Low — keeps two clocks enabled that must remain
+  on; minor power cost on Exynos850 only.
+
+---
+
+## Phase 3: Git History Investigation
+
+### Step 3.1: Blame
+**Record:** In this checkout, I3C gate lines are at 687–690 with flags
+`0, 0`. Blame points to `a112b91dd6349` (history is flattened in this
+stable checkout). Verified directly: buggy code is present at HEAD.
+
+### Step 3.2: Fixes: Tag
+**Record:** N/A — no `Fixes:` tag.
+
+### Step 3.3: Related File History
+**Record:**
+- Commit `44984aaf1aa72` on `master` is this fix.
+- Related on master: `e57c36bc1a3e4` (APM-to-AP mailbox clock).
+- Fix is **not** an ancestor of HEAD (`fix NOT in HEAD`).
+- Standalone 1/1 patch (b4 dig `-a` shows only v1).
+
+### Step 3.4: Author Context
+**Record:** Alexey Klimov (Linaro). Reviewed by Sam Protsenko (original
+Exynos850 clk author per file copyright). Krzysztof Kozlowski (Samsung
+clk maintainer) committed it.
+
+### Step 3.5: Dependencies
+**Record:** No prerequisites. Uses existing `CLK_IS_CRITICAL` and
+`GATE()` macro. Applies standalone.
+
+---
+
+## Phase 4: Mailing List and External Research
+
+### Step 4.1: Original Discussion
+**Record:**
+- **URL:** https://patch.msgid.link/20260430-exynos850-i3c-
+  criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
+- **Revisions:** v1 only
+- **Feedback:** Sam Protsenko Reviewed-by (May 8); Tudor Ambarus
+  Reviewed-by (May 6); Krzysztof Kozlowski "Applied, thanks!" (May 14)
+- **Stable nomination:** none in thread
+- **NAKs:** none
+
+### Step 4.2: Reviewers
+**Record:** CC'd: Krzysztof Kozlowski, Sylwester Nawrocki, Chanwoo Choi,
+Alim Akhtar, Michael Turquette, Stephen Boyd, linux-clk@vger.kernel.org,
+linux-samsung-soc@vger.kernel.org. Appropriate maintainers were
+included.
+
+### Step 4.3: Bug Report
+**Record:** No external bug report or syzbot link. Issue comes from
+platform bring-up experience (Linaro/Samsung Exynos850 work).
+
+### Step 4.4: Related Patches
+**Record:** Standalone; not part of a multi-patch series.
+
+### Step 4.5: Stable List History
+**Record:** Lore fetch blocked by bot protection for web search; mbox
+thread has no stable discussion. UNVERIFIED for lore.kernel.org/stable
+search.
+
+---
+
+## Phase 5: Code Semantic Analysis
+
+### Step 5.1: Key Functions
+**Record:** `apm_gate_clks[]` in `drivers/clk/samsung/clk-exynos850.c`;
+registered via `exynos850_cmu_apm` `CLK_OF_DECLARE` path.
+
+### Step 5.2: Callers
+**Record:** Samsung CMU init during early DT clock probe for
+`samsung,exynos850-cmu-apm` (present in
+`arch/arm64/boot/dts/exynos/exynos850.dtsi`). Runs at boot on Exynos850
+boards.
+
+### Step 5.3: Callees
+**Record:** `GATE()` macro populates `samsung_gate_clock` with `.flags =
+CLK_IS_CRITICAL`, preventing disable when unused.
+
+### Step 5.4: Reachability
+**Record:** Boot path on Exynos850 (`exynos850-e850-96.dts`,
+`exynosautov920*.dts`, etc.). ACPM (`drivers/firmware/samsung/exynos-
+acpm.c`) uses mailbox to APM; PMIC access depends on APM I3C staying up.
+
+### Step 5.5: Similar Patterns
+**Record:** Same file already uses `CLK_IS_CRITICAL` for
+`gout_pmu_alive_pclk` (line 698) and many other gates. GPIO gates use
+`CLK_IGNORE_UNUSED` with TODO comments for the same class of problem.
+
+---
+
+## Phase 6: Cross-Reference Against Local Tree
+
+### Step 6.1: Buggy Code Present?
+**Record:** **Yes.** Local tree is **v6.18.43** (`git describe HEAD` →
+`v6.18.43-1-gc7f0dac02d232`, Makefile 6.18.43). At HEAD lines 687–690:
+
+```687:690:drivers/clk/samsung/clk-exynos850.c
+        GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
+             CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
+        GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
+             CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
+```
+
+Also confirmed at `v6.18` and `v6.18.43` tags. Exynos850 DT and drivers
+are present in this tree.
+
+### Step 6.2: Backport Complications
+**Record:** Clean apply expected — 5-line change, no conflicts. File is
+2338 lines with no recent churn in this stable branch.
+
+### Step 6.3: Related Fixes Already Present?
+**Record:** No — `git merge-base --is-ancestor 44984aaf1aa72 HEAD` → fix
+**NOT** in HEAD.
+
+---
+
+## Phase 7: Subsystem and Maintainer Context
+
+### Step 7.1: Subsystem Criticality
+**Record:** `drivers/clk/samsung/` — **IMPORTANT** (platform-specific
+clock driver). Exynos850 is ARM64 SoC support (consumer boards +
+automotive `exynosautov920`).
+
+### Step 7.2: Subsystem Activity
+**Record:** Exynos850 clk driver is actively maintained; recent master
+commits add mailbox clocks and this I3C fix.
+
+---
+
+## Phase 8: Impact and Risk Assessment
+
+### Step 8.1: Who Is Affected
+**Record:** Exynos850 platform users only — WinLink E850-96, Exynos Auto
+V920, and other `samsung,exynos850` boards using ACPM/APM PMIC
+communication.
+
+### Step 8.2: Trigger Conditions
+**Record:** Every boot on affected hardware after clock init completes
+and `clk_disable_unused()` runs. Deterministic, not a race. Unprivileged
+users cannot trigger directly, but all Exynos850 boots hit this path.
+
+### Step 8.3: Failure Mode Severity
+**Record:** ACPM communication timeouts → broken PMIC co-processor path.
+**Severity: HIGH** for affected platforms (essential firmware
+communication broken; power/PMIC management non-functional). Not a
+kernel oops, but platform is effectively broken for ACPM consumers.
+
+### Step 8.4: Risk-Benefit
+**Record:**
+- **Benefit:** HIGH for Exynos850 users on 6.18.y
+- **Risk:** VERY LOW — 2 flag changes + comment; established pattern
+- **Ratio:** Strong benefit for affected hardware, negligible risk
+  elsewhere
+
+---
+
+## Phase 9: Final Synthesis
+
+### Step 9.1: Evidence Summary
+
+**FOR backport:**
+- Real, reproducible platform bug in this tree (6.18.43)
+- Breaks ACPM/APM PMIC communication on every affected boot
+- Tiny, obviously correct hardware workaround
+- Reviewed by Exynos850 platform experts and committed by clk maintainer
+- Fits hardware-quirk exception (clock must stay on)
+- Clean backport, no dependencies
+- Fix not yet in stable/linux-6.18.y
+
+**AGAINST backport:**
+- Platform-specific (Exynos850 only)
+- Labeled "temporary workaround"
+- No kernel crash/oops/security issue — functional timeout
+- No explicit stable nomination in review thread
+
+**Unresolved:** Stable mailing list search blocked by lore bot
+protection.
+
+### Step 9.2: Stable Rules Checklist
+1. Obviously correct and tested? **PASS** — matches existing
+   `CLK_IS_CRITICAL` pattern; reviewed by platform developers
+2. Fixes a real bug affecting users? **PASS** — ACPM timeouts on
+   Exynos850
+3. Important issue? **PASS** — breaks essential APM/PMIC communication
+   on affected SoCs
+4. Small and contained? **PASS** — 5 lines, one file
+5. No new features or APIs? **PASS** — flag change only
+6. Can apply to local tree? **PASS** — buggy code present, clean apply
+
+### Step 9.3: Exception Category
+**Record:** Hardware quirk/workaround — clocks that must remain enabled
+for PMIC I3C on APM, analogous to existing `CLK_IS_CRITICAL` entries in
+the same table.
+
+### Step 9.4: Decision Rationale
+Exynos850 support is fully present in this 6.18.43 stable tree, and the
+I3C clock gating bug is present without the fix. Without this patch,
+ACPM communication with the APM co-processor fails after boot-time clock
+initialization — a serious functional defect for every Exynos850
+deployment on 6.18.y. The fix is minimal, follows an established pattern
+in the same file, and carries negligible regression risk.
+
+---
+
+## Verification
+
+- [Phase 1] Parsed subject, tags, body; no Fixes:/Reported-by/syzbot;
+  two Reviewed-by from Linaro
+- [Phase 2] Diff: 5 lines in `clk-exynos850.c`, `CLK_IS_CRITICAL` on two
+  I3C gates
+- [Phase 3] `git describe HEAD` → v6.18.43; `44984aaf1aa72` on master;
+  `fix NOT in HEAD`
+- [Phase 3] `git show 44984aaf1aa72` — full commit message and patch
+  confirmed
+- [Phase 3] `git cat-file -e v6.18:drivers/clk/samsung/clk-exynos850.c`
+  — file exists (2338 lines)
+- [Phase 3] `git show v6.18.43:...` — I3C gates have `0, 0` flags
+  (buggy)
+- [Phase 4] `b4 dig -c 44984aaf1aa72` — lore URL found
+- [Phase 4] `b4 dig -c 44984aaf1aa72 -w` — maintainers CC'd
+- [Phase 4] `b4 dig -c 44984aaf1aa72 -a` — v1 only, standalone
+- [Phase 4] `/tmp/exynos850-i3c.mbox` — Reviewed-by from Sam Protsenko
+  and Tudor Ambarus; Krzysztof applied; no stable nomination
+- [Phase 5] Grep: `gout_i3c_pclk` at lines 687–690 with flags `0, 0`;
+  `gout_pmu_alive_pclk` uses `CLK_IS_CRITICAL` at line 698
+- [Phase 5] DT: `exynos850.dtsi`, `exynos850-e850-96.dts`,
+  `exynosautov920.dtsi` present
+- [Phase 5] ACPM driver present at `drivers/firmware/samsung/exynos-
+  acpm.c`
+- [Phase 6] HEAD detached from `stable/linux-6.18.y` at Linux 6.18.43
+- [Phase 6] Buggy code verified at HEAD; fix absent from tree
+- [Phase 8] Failure mode: ACPM timeouts, HIGH severity for Exynos850
+  platforms
+- UNVERIFIED: lore.kernel.org/stable search (bot protection)
+
+**YES**
+
+ drivers/clk/samsung/clk-exynos850.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
+index 56f27697c76b1..413faf14eded9 100644
+--- a/drivers/clk/samsung/clk-exynos850.c
++++ b/drivers/clk/samsung/clk-exynos850.c
+@@ -684,10 +684,11 @@ static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_TOP_RTC_PCLK, "gout_top_rtc_pclk", "dout_apm_bus",
+ 	     CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK, 21, 0, 0),
++	/* TODO: Should be dealt with or enabled in PMIC ACPM driver */
+ 	GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
+-	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
+-	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
++	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_SPEEDY_PCLK, "gout_speedy_pclk", "dout_apm_bus",
+ 	     CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK, 21, 0, 0),
+ 	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
+-- 
+2.53.0
+
