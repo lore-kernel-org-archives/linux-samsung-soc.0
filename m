@@ -1,249 +1,244 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5E04AEBC5
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9029B484251;
+	Mon, 31 Aug 2026 16:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788190570; cv=none; b=BpH7oY51BKyviGOjyV6+28Ju/hTo/ybURgGBnaVxVqJJVT02B+uZKPsA0JwXyd7nq2JoLbjRdSpMcX7jsAWL8o8bMBFssmnIsoP3Q5kEXcaS/bzM8z6vNeF4Eh7VA+YxRmvkWi2nxTdG9RziLGEYY9K+DLFus7wm8W/aOqhaZgI=
+	t=1788193064; cv=none; b=TV/4zQN7+IaxX3wA96ey1s28iLy87FmzDhQWnUUheJnI03lXV2fgBQ1zOiLjxSDVNMIjXSx6gYZ6FdW5wwgh/OxNAr/3HBz/cZ3HwYnuYlhrxgU9wWWnsg2bUrWRTrB9AB+TCB7eMAjuDDFemilVcNsTpvVyr9ltcosmqbUiILc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788190570; c=relaxed/simple;
-	bh=DodOb5bu1oSMuLPsOxNFB8oK01GET+pyiMt7NsDyP0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwXQHhx2G1vRAOCYikG74wxy6hEsQ3xfciDLYIAMHuvnc4JOrCAm4WeQIdoL9CejgbidR1SBP9V3RIfIn1RaKulzm+yXOWWcymFn3CAHslGJWScOFA8vUrkMWQsoCmoNLqwHa/D06lO3cPXk1X6pTRxdOjyUOKgNv/Um9FoaEtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MllDFC1F; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AvVWjzlH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1788193064; c=relaxed/simple;
+	bh=UQdPVjsSllmbAksMbFCnvGYfKEyx+A8rEA2R4ECxdOM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZYr4uKtcHskElFoi43IfII+W9nwrc4qoZjaiTPRG/7VdNmWoSsjxLoQ8gmP3ZWel0y3zfYz3A1PQG/vmq/EFLgkpAoJQJRvIXx7emKOTOj6wZZvN47RAIj0mUJcV55RAtopXIPCiSi+75R8dw2jBU40d9GcszmHYpM6ybD3RDi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOufgh6j; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MllDFC1F";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AvVWjzlH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788190567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
-	b=MllDFC1FBEdnQNrGZhkaDrBpl2tNnlUR3bV0uqNK9YMcEXl+vOOyvlPNsxPaII6K6UZAJc
-	gQFslQcZjRNKSmxLmBwoMkDrJ9RnjvzFNDzdMM/v37r2kYDWSMMsSvkVmjCxsy5YP/E5J1
-	4nA6GLfiOEJVEWgW4RwZ7OZ8H3j6moA=
-Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
- [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-HAdle7pCPQOmPG85R8lXGQ-1; Mon, 31 Aug 2026 11:36:06 -0400
-X-MC-Unique: HAdle7pCPQOmPG85R8lXGQ-1
-X-Mimecast-MFC-AGG-ID: HAdle7pCPQOmPG85R8lXGQ_1788190565
-Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-66c767e23f6so4913294d50.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 08:36:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788190565; x=1788795365; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
-        b=AvVWjzlHj7QXls7GoYFVn44ZDsR69lSpKoIkBuoXoTNtgyugbIh79MEuKTLDPwmZ9n
-         qPUqN2uRU90DwZYmmiw3RBVZ7GhVpA8DE7AbkfGQmt9ErbpbmE0Ddb5B30YCyOiG93Ed
-         amkRp5ySisqByYFwIX832rN1E5SbVR9wa0yg552Cn/M99WQSxDepaE01yhq8VkxbZ1kx
-         2kAHJ21YaekABN0x++MKyHPvIibSSQMO9OD0CTw8ISnXIoacmURBYQkTpjA61Msnf1Tc
-         E79cMWOrQGLKCVQjRpm33ea365rAODULpJHtY7PY6GdCcoqj2S/9Hpe3/o+CluKemBMJ
-         X50Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788190565; x=1788795365;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=uVxBilOuJ3eJRjLFViKxIC+i5050iOvt2YALC/2UHq4=;
-        b=pc5Ob34YzXRxzxXY+dlY4pA804pJOmdZLxRrOr0U2qMs+B96OHGbUBLaHH8qFmosDv
-         /0WzOd7e9i+P3NL/c98n5Ut5yaTtXmKArWt3/YjulgrF/ZZduJiwoBeu8/pRtyxnGMHd
-         Q6znMZQ2u7C2qWnjn9hscTFzxboZEyZ4vstlLznXLtnKoZgs46kweSmJujUACqAazSLB
-         se9erWKUlMKgRta6Ukp9kqpxLKGB3fdCdEtDXAE7a2PG+paJv4sfCLMU8C0SnsGrTkUF
-         Uan2blKtLSXWQS93qc+k2TJU8aY5+YY0rOXanDMkmQJuEft+x16UkwXkEd08Gyn4yFhy
-         Py0A==
-X-Forwarded-Encrypted: i=1; AKwUvBxOCWJpaccYU86O0BSmM+IXSlHlMX6y+SxerCn+7I7nfcKTC3oun5ZRLEqTBsIGhXmsmvjl58Hb6VKObKBMu58iqg==@vger.kernel.org
-X-Gm-Message-State: AFuF++moHP9XIL5Rij6zTeGK6NVwPUsefuCf4PyeFvnl7pI43TOSCL9F
-	MgJ9tbX7hZy5NNPR6h+JM7JBPYtrzKbeVgjsKeE0SCSiOiRPhvyhz7P6m7B8hYn35r/kOWtkzop
-	MAybkb3BDSmEEG4gS6BoTWnn2bQVk5LXsroC8occyZMJWZWXHIR3+Zi6b5W/mNeBR1UqYaY7w
-X-Gm-Gg: AYBFou1q+gzV2crPignvEhgQU0Pu6FFP4II9bLebyHZmr0oJ9OOK0u7GrYag9Ef7iSe
-	FU/lu6dY42sRXdncecp4KxdTf64EKZ0NZyTzxNBE9UYcuPD1VZMVrWrkaOLwMYYggFWxGEQuWwY
-	+woxwPZNUOFFXeAzETB2lkfe8dWAFw43OnGNugWyogCVuRJ7Far2lHh41oq/cjU6gQRaa17W6cL
-	hKvEWyCyCR/0wmglDjf+/WZBxx8d0wJO28XCfbTinnLMUtyx+KrUyShU8//el3O4GpxYJm/tNnx
-	bQrkl3VMsdLOsNKWqzOoMqeTlEhCUQfeq5/aZNhPUAxdiRathAh0oNSRxfDOIXnZ8vLqCfUrAYc
-	=
-X-Received: by 2002:a05:690e:13c7:b0:66f:8255:9f3d with SMTP id 956f58d0204a3-66f873db9b1mr559435d50.7.1788190565249;
-        Mon, 31 Aug 2026 08:36:05 -0700 (PDT)
-X-Received: by 2002:a05:690e:13c7:b0:66f:8255:9f3d with SMTP id 956f58d0204a3-66f873db9b1mr559344d50.7.1788190564555;
-        Mon, 31 Aug 2026 08:36:04 -0700 (PDT)
-Received: from redhat.com ([2600:382:8519:3f74:ab6c:bb55:e9cb:f8d6])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66f7efc9dbfsm2062227d50.9.2026.08.31.08.35.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:36:03 -0700 (PDT)
-Date: Mon, 31 Aug 2026 11:35:55 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	David Lechner <david@lechnology.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized
- (part two)
-Message-ID: <apWfW5ahiYagw0OR@redhat.com>
-References: <cover.1787239813.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOufgh6j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE8771F000E9;
+	Mon, 31 Aug 2026 16:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788193062;
+	bh=P49xYdhz/xjQ7BMYEEzVnSoncIoxJ9kG0EiBOFLfPl4=;
+	h=From:Subject:Date:To:Cc;
+	b=cOufgh6jV1ylZ0/c48mF4elVJ9nF9FeI4rC/0rzzTyoqGjE0HVPGEDABGzgDEV3vI
+	 iUozhugXufPr3T01SxkQZ1bmwNK/N/PtzgAd4gWzJai+9/LuDPlU2LBJ/xW2tKRCRp
+	 YV2oJJhx3RwbY/9cIKN31dfI9eJeAT6V3WURQ4mBIPEFMmNMnmHUdGosmocGgz54rt
+	 /1HtPdFXL254gV2Nd1WChSFm4qhgLXrnZXaXQHxDo0JO1VG2RUr5QTm6UlxinAaQSn
+	 VIgK7aCD4ny4wDZofm2VdVYpYghrohClIrrElf29YQtKtfWXRtqfmdZkK7w0CDN0ZT
+	 8bmlzlDnpwnsg==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v3 00/40] drm/plane: Convert all drivers to
+ atomic_create_state and remove reset
+Date: Mon, 31 Aug 2026 18:17:16 +0200
+Message-Id: <20260831-drm-no-more-plane-reset-v3-0-1877c7aa57b3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XNPQ7CMAyG4augzBi57j8T90AMFXEgoiSVU0Wgq
+ ncnLQNi6Ph+kh9PKrBYDuq4m5RwtMF6lyLf79T13rkbg9WpFSFVWFELWp7gPDy9MAx95xiEA4+
+ ARVuiKYixNipdD8LGvlb5fEl9t2H08l4fxWxZv2aN22bMACFH0m1TGS4Nnh4sjvuDl5ta0Eg/q
+ MmKbYgS1JCmtsq1zvLiD5rn+QNzj1DiCAEAAA==
+X-Change-ID: 20260629-drm-no-more-plane-reset-04950f42e07f
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ hamohammed.sa@gmail.com, louis.chauvet@bootlin.com, melissa.srw@gmail.com, 
+ alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org, 
+ christian.koenig@amd.com, alison.wang@nxp.com, stefan@agner.ch, 
+ jstultz@google.com, sumit.semwal@linaro.org, xinliang.liu@linaro.org, 
+ yongqin.liu@linaro.org, Frank.Li@nxp.com, 
+ Sascha Hauer <s.hauer@pengutronix.de>, festevam@gmail.com, 
+ imx@lists.linux.dev, kernel@pengutronix.de, victor.liu@nxp.com, 
+ anitha.chrisanthus@intel.com, paulk@sys-base.io, chenhuacai@kernel.org, 
+ jeffbai@aosc.io, lvjianmin@loongson.cn, wuqianhai@loongson.cn, 
+ xry111@xry111.site, zhengxingda@iscas.ac.cn, marex@denx.de, 
+ airlied@redhat.com, kraxel@redhat.com, spice-devel@lists.freedesktop.org, 
+ virtualization@lists.linux.dev, andy.yan@rock-chips.com, heiko@sntech.de, 
+ hjc@rock-chips.com, linux-rockchip@lists.infradead.org, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, orsonzhai@gmail.com, 
+ zhang.lyra@gmail.com, alain.volmat@foss.st.com, rgallaispou@gmail.com, 
+ alexandre.torgue@foss.st.com, mcoquelin.stm32@gmail.com, 
+ philippe.cornu@foss.st.com, raphael.gallais-pou@foss.st.com, 
+ yannick.fertre@foss.st.com, jyri.sarha@iki.fi, 
+ tomi.valkeinen@ideasonboard.com, hansg@kernel.org, 
+ dmitry.osipenko@collabora.com, gurchetansingh@chromium.org, 
+ olvaffe@gmail.com, michal.simek@amd.com, harry.wentland@amd.com, 
+ siqueira@igalia.com, sunpeng.li@amd.com, linux@armlinux.org.uk, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+ nicolas.ferre@microchip.com, alim.akhtar@samsung.com, inki.dae@samsung.com, 
+ krzk@kernel.org, kyungmin.park@samsung.com, 
+ linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 
+ p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com, 
+ chunkuang.hu@kernel.org, matthias.bgg@gmail.com, 
+ Lyude Paul <lyude@redhat.com>, dakr@kernel.org, 
+ nouveau@lists.freedesktop.org, geert+renesas@glider.be, 
+ kieran.bingham+renesas@ideasonboard.com, 
+ laurent.pinchart+renesas@ideasonboard.com, 
+ linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com, 
+ tomi.valkeinen+renesas@ideasonboard.com, 
+ Biju Das <biju.das.jz@bp.renesas.com>, linux-sunxi@lists.linux.dev, 
+ samuel@sholland.org, wens@kernel.org, bcm-kernel-feedback-list@broadcom.com, 
+ zack.rusin@broadcom.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7711; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=UQdPVjsSllmbAksMbFCnvGYfKEyx+A8rEA2R4ECxdOM=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlTVwqc1s2/O5npboPLBs8f9/2OrUnzbD+Zc2d9+p7w2
+ Ps83PWvO6ayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBExPQZ68waZE79Kbj6M+VI
+ eegPpkc7du/3kt3862j2dl4/6RXs09Kv7xAU+7RF4d/B/dw5Mq/9zBgb5j5pltE76RyQyPlA086
+ 951/o/P85k6TUqm2YVp+cIDqz8rjT2TZ2j+xFjPX+fNNa+LUB
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-Hi Geert / all,
+This is a follow-up to the bridge reset removal series, and part of a
+larger effort to remove the reset hook from all KMS objects.
 
-On Fri, Aug 21, 2026 at 10:53:10AM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
-> 
-> Hence this series aims to make sure all members are fully initialized,
-> to avoid such bugs, and to prevent future breakage when converting
-> drivers to a different method for specifying the parents.
-> 
-> Part One[1] fixed all cases that I identified to be real bugs, in
-> response to a crash I saw on BeagleBone Black.
-> 
-> This series is the clock subpart of Part Two, which fixes remaining
-> cases that are currently harmless.  These are still fragile, and may
-> cause future breakage when converting drivers to a different method for
-> specifying the parents.
-> 
-> Thanks for your comments!
-> 
-> [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
->      initialized (part 1)"
->     https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
-> 
-> Geert Uytterhoeven (45):
->   clk: aspeed: Make sure clk_init_data is fully initialized
->   clk: at91: Make sure clk_init_data is fully initialized
->   clk: bcm: iproc: Make sure clk_init_data is fully initialized
->   clk: berlin: Make sure clk_init_data is fully initialized
->   clk: cdce925: Make sure clk_init_data is fully initialized
->   clk: clk-axi-clkgen: Make sure clk_init_data is fully initialized
->   clk: cs2000-cp: Make sure clk_init_data is fully initialized
->   clk: davinci: Make sure clk_init_data is fully initialized
->   clk: fractional-divider: Make sure clk_init_data is fully initialized
->   clk: gemini: Make sure clk_init_data is fully initialized
->   clk: highbank: Make sure clk_init_data is fully initialized
->   clk: hisilicon: Make sure clk_init_data is fully initialized
->   clk: imx: Make sure clk_init_data is fully initialized
->   clk: ingenic: Make sure clk_init_data is fully initialized
->   clk: keystone: Make sure clk_init_data is fully initialized
->   clk: lmk04832: Make sure clk_init_data is fully initialized
->   clk: mediatek: Make sure clk_init_data is fully initialized
->   clk: milbeaut: Make sure clk_init_data is fully initialized
->   clk: mmp: Make sure clk_init_data is fully initialized
->   clk: mvebu: Make sure clk_init_data is fully initialized
->   clk: mxs: Make sure clk_init_data is fully initialized
->   clk: nomadik: Make sure clk_init_data is fully initialized
->   clk: npcm7xx: Make sure clk_init_data is fully initialized
->   clk: nxp: Make sure clk_init_data is fully initialized
->   clk: pistachio: Make sure clk_init_data is fully initialized
->   clk: pwm: Make sure clk_init_data is fully initialized
->   clk: renesas: Make sure clk_init_data is fully initialized
->   clk: rockchip: Make sure clk_init_data is fully initialized
->   clk: samsung: Make sure clk_init_data is fully initialized
->   clk: scpi: Make sure clk_init_data is fully initialized
->   clk: silabs: Make sure clk_init_data is fully initialized
->   clk: socfpga: Make sure clk_init_data is fully initialized
->   clk: spear: Make sure clk_init_data is fully initialized
->   clk: stm32: Make sure clk_init_data is fully initialized
->   clk: st: Make sure clk_init_data is fully initialized
->   clk: sunxi: Make sure clk_init_data is fully initialized
->   clk: tegra: Make sure clk_init_data is fully initialized
->   clk: uniphier: Make sure clk_init_data is fully initialized
->   clk: ux500: Make sure clk_init_data is fully initialized
->   clk: versatile: Make sure clk_init_data is fully initialized
->   clk: vt8500: Make sure clk_init_data is fully initialized
->   clk: x86: Make sure clk_init_data is fully initialized
->   clk: xgene: Make sure clk_init_data is fully initialized
->   clk: xilinx: Make sure clk_init_data is fully initialized
->   clk: zynqmp: Make sure clk_init_data is fully initialized
+The plane reset hook is overloaded: it is called both at probe time
+to create the initial software state and during suspend/resume to
+reset hardware and software state. These two roles have different
+requirements, and the reset hook is not fallible, making error
+handling difficult for the initial state allocation path.
 
-44 / 45 patches have been added to clk-next. I took it all for simplicity
-rather than everyone trying to cherry pick just their parts.
+While reset has the semantics to reset both the software and hardware
+state, the vast majority of implementations and all the helpers only
+reset the software state, making them equivalent to
+atomic_create_state in practice. The atomic_create_state hook makes
+this explicit: it only allocates and initializes a pristine state
+without any side effect, and returns the state pointer or an ERR_PTR
+on failure.
 
-Geert: The only patch that didn't apply was:
+This series first adds the necessary infrastructure in the simple-kms
+and GEM atomic helpers, then converts all 51 plane drivers tree-wide
+from the reset hook to atomic_create_state. The conversions were done
+using a combination of Coccinelle semantic patches and manual
+adjustments. Once all drivers are converted, the old helpers and the
+reset hook itself are removed from struct drm_plane_funcs.
 
-  [PATCH 27/45] clk: renesas: Make sure clk_init_data is fully initialized
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v3:
+- Drop leftover state destruction in sun4i
+- Rebase on current drm-misc-next
+- Link to v2: https://lore.kernel.org/r/20260814-drm-no-more-plane-reset-v2-0-82d2963dd134@kernel.org
 
-I didn't look into it too much.
+Changes in v2:
+- Rebase on latest drm-misc-next tag
+- Fix sashiko reviews
+- Fix atmel-hlcdc breakage
+- Link to v1: https://lore.kernel.org/r/20260709-drm-no-more-plane-reset-v1-0-302d986fe5f0@kernel.org
 
-Brian
+---
+Maxime Ripard (40):
+      drm/simple-kms: Remove unused reset_plane hook
+      drm/vkms: Convert to atomic_create_state
+      drm/gem-atomic-helper: Remove __drm_gem_reset_shadow_plane()
+      drm/amdgpu: Convert to atomic_create_state
+      drm/fsl-dcu: Convert to atomic_create_state
+      drm/hisilicon/kirin: Convert to atomic_create_state
+      drm/imx/dc: Convert to atomic_create_state
+      drm/kmb: Convert to atomic_create_state
+      drm/logicvc: Convert to atomic_create_state
+      drm/loongson: Convert to atomic_create_state
+      drm/lcdif: Convert to atomic_create_state
+      drm/mxsfb: Convert to atomic_create_state
+      drm/qxl: Convert to atomic_create_state
+      drm/rockchip: Convert to atomic_create_state
+      drm/sprd: Convert to atomic_create_state
+      drm/sti: Convert to atomic_create_state
+      drm/stm: Convert to atomic_create_state
+      drm/tests: kunit: Convert to atomic_create_state
+      drm/tilcdc: Convert to atomic_create_state
+      drm/vboxvideo: Convert to atomic_create_state
+      drm/verisilicon: Convert to atomic_create_state
+      drm/virtio: Convert to atomic_create_state
+      drm/xlnx: Convert to atomic_create_state
+      drm/atomic-state-helper: Remove drm_atomic_helper_plane_reset()
+      drm/amdgpu_dm: Convert to atomic_create_state
+      drm/armada: Convert to atomic_create_state
+      drm/atmel-hlcdc: Drop spurious csc_init call from reset
+      drm/atmel-hlcdc: Convert to atomic_create_state
+      drm/exynos: Convert to atomic_create_state
+      drm/imx/ipuv3: Convert to atomic_create_state
+      drm/mediatek: Convert to atomic_create_state
+      drm/nouveau: Convert to atomic_create_state
+      drm/omap: Convert to atomic_create_state
+      drm/rcar-du: Convert to atomic_create_state
+      drm/rz-du: Convert to atomic_create_state
+      drm/shmobile: Convert to atomic_create_state
+      drm/sun4i: layer: Convert to atomic_create_state
+      drm/vmwgfx: Convert to atomic_create_state
+      drm/atomic-state-helper: Remove __drm_atomic_helper_plane_reset()
+      drm/plane: Remove reset
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c           |  2 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    | 28 +++++++++------
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.h    |  2 +-
+ .../display/amdgpu_dm/tests/amdgpu_dm_plane_test.c | 30 ++++++----------
+ drivers/gpu/drm/armada/armada_overlay.c            | 39 ++++++++++----------
+ drivers/gpu/drm/armada/armada_plane.c              | 15 ++++----
+ drivers/gpu/drm/armada/armada_plane.h              |  2 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c    | 33 ++++++++---------
+ drivers/gpu/drm/drm_atomic_state_helper.c          | 41 ----------------------
+ drivers/gpu/drm/drm_gem_atomic_helper.c            | 20 -----------
+ drivers/gpu/drm/drm_mode_config.c                  |  4 +--
+ drivers/gpu/drm/exynos/exynos_drm_plane.c          | 22 +++++-------
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c        |  2 +-
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c    |  2 +-
+ drivers/gpu/drm/imx/dc/dc-plane.c                  |  2 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c            | 19 +++++-----
+ drivers/gpu/drm/kmb/kmb_plane.c                    |  2 +-
+ drivers/gpu/drm/logicvc/logicvc_layer.c            |  2 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c              |  2 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c               | 22 +++++-------
+ drivers/gpu/drm/mxsfb/lcdif_kms.c                  |  2 +-
+ drivers/gpu/drm/mxsfb/mxsfb_kms.c                  |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c            | 15 ++++----
+ drivers/gpu/drm/omapdrm/omap_plane.c               | 13 ++++---
+ drivers/gpu/drm/qxl/qxl_display.c                  |  4 +--
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c    | 15 ++++----
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c      | 15 ++++----
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c       | 15 ++++----
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c | 15 ++++----
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c       |  2 +-
+ drivers/gpu/drm/sprd/sprd_dpu.c                    |  2 +-
+ drivers/gpu/drm/sti/sti_cursor.c                   |  2 +-
+ drivers/gpu/drm/sti/sti_gdp.c                      |  2 +-
+ drivers/gpu/drm/sti/sti_hqvdp.c                    |  2 +-
+ drivers/gpu/drm/stm/ltdc.c                         |  2 +-
+ drivers/gpu/drm/sun4i/sun4i_layer.c                | 21 +++++------
+ drivers/gpu/drm/tests/drm_kunit_helpers.c          |  2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c              |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  2 +-
+ drivers/gpu/drm/verisilicon/vs_cursor_plane.c      |  2 +-
+ drivers/gpu/drm/verisilicon/vs_plane.c             | 14 +++-----
+ drivers/gpu/drm/verisilicon/vs_plane.h             |  2 +-
+ drivers/gpu/drm/verisilicon/vs_primary_plane.c     |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_plane.c             |  2 +-
+ drivers/gpu/drm/vkms/vkms_plane.c                  | 15 ++++----
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 17 ++++-----
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  4 +--
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  4 +--
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  4 +--
+ drivers/gpu/drm/xlnx/zynqmp_kms.c                  |  2 +-
+ include/drm/drm_atomic_state_helper.h              |  3 --
+ include/drm/drm_gem_atomic_helper.h                |  2 --
+ include/drm/drm_plane.h                            | 12 -------
+ include/drm/drm_simple_kms_helper.h                |  1 -
+ 56 files changed, 192 insertions(+), 324 deletions(-)
+---
+base-commit: 07c66ce1e6446f5cc6a4ace99a8d46880f45c527
+change-id: 20260629-drm-no-more-plane-reset-04950f42e07f
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
 
