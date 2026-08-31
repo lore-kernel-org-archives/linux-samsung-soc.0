@@ -1,34 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B53C493652
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 16:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAD54078CE
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 18:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788193176; cv=none; b=CGCDyzkuLIN9ydWiQHiWjSYDWREupYJ4A06xf/sIc1PdYLQbpnFaxtvmxlR9JAgUH2irymArVrI3g7Y5uT/wBEpVyo1bZ3MjnBLYZosJMot3Y/8aI85IkXwXEQwZjlCx/q4eSX/X7QjERVkUHFTzOortd72NZdmgFjah0NnX2eE=
+	t=1788199880; cv=none; b=NdLJNSKU40KEN3cdpd7NhsCaBEOnXHEHdJ01KdOM1GtVAiYvA11mh95SQw5bcN1+zmGW9nS21BM1pZOkuowJNpnFNasIcVreKDy2Oem13Ql+PeZuZB+7nJb4j6V09T13/jgwUMV2RA6VKqKVKIFaOhFufTZ1LWp5VT2ih0U4+WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788193176; c=relaxed/simple;
-	bh=lawd9I8Vl3BnH0N/nvmouxRrGEsKUsKUHnpMfVrUYC0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c5c6j9BxkeypgTSVB9OVeUE2vzQ3SSPQOMFsegIyEX/vWYfbrj0JHI1kuT9Q6A2gKM1nlhFmNv5f3ulkxWiEDt5IRKvRb90+Yhezbu2Xw7ow+nwMwUMjVUYPR6c3swsUh8ZUENeEjlxrBgpG1ON/DexyMuTETbhjs4vEg3bS9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dU+9J0rT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788199880; c=relaxed/simple;
+	bh=zBdK1iiFDwTHqOyTQyYg4l3HxFz9CENCyVT51LTKz4k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DTV7B7PjGJFxnD2TrYVnRvP7chHrHqLZnPbNEeWLWfRqYafqfHB8TNJPH0AMg3T+lqqeM9vTaAfVTiwN4tU8cebMo16vOvnPbkgF7YrmZBjaGieZv8k8ebutRvC7wTvV+Dvbkm6G8NZ2pfiwfoqUmOD7CXiZnojwUPN5YpLDDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gdHa3F4O; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dU+9J0rT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239461F000E9;
-	Mon, 31 Aug 2026 16:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788193174;
-	bh=mfBNsgF3zidzgFiNnSm7qaGCxvi2ZdL05Ik1cbGf/so=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=dU+9J0rT1matZ2h9jFghwVb3YD7p/ZO9kSd/Dd4r398fbG/eEv0eC83ek6f9kJ7+7
-	 JkUeLrx9xunJyKQ6dAhR+Lp/PSqP/3CLXDi2zpULfwx6LjXZZBTH0q0TdZh/Sm9heL
-	 O45COJ0AriZEHRbdxQXWbt7YTZPgrdj0RlqmM0NOahnNeLvVZEpJ73O+Drag3Tmy9x
-	 wPtTF6fTFyNorHPf18Dg6v5ARVCahUGw7ZLnqtif6ydKyj2V9JVFC+WT/P788OGUyF
-	 0yYvfm/aPwdy+vuibBiCbctX6cq/3nNMxHWcLFtDm+yLWxclF22giuUp3uY/gu+HmH
-	 JSWqbpYbUxgQw==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 31 Aug 2026 18:17:45 +0200
-Subject: [PATCH v3 29/40] drm/exynos: Convert to atomic_create_state
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gdHa3F4O"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-398a5aad413so53448a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 Aug 2026 11:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1788199878; x=1788804678; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=KYKJ5VPlv39onDgpizRA6tuCgoTPGQMQ0bB2xHAAOlw=;
+        b=gdHa3F4OGPta8Ku4hc7pkSHi+zcYreUvgF2rhRQVSZ47n+ptJttnJS+mb+aFmLwAxo
+         18lopdAfAonfJtlyWxoxkDu946+C8uJXa5KLYJ9+nr7+xha1L8pRdYX3R67lcfIrsuvv
+         YwvrYs7VeqInldCQQPUFVgFjsAwbCCQLwg8h9qlLBP9fGKXheUvMOKP62KzTQt3vR/o0
+         LSO9tQAJFoJwCpSeh2d+JdohwgxHnADaUC+2TwxxJoUfkOv1ZEulGfDAQa/e6+V1ogHh
+         KDPvWBaf6Xlx/QMQ7fUcxrYn5oIjynFhw7tv4Z+j3elCHnxLHxAFlJ2c+z3GcIpLXJPR
+         oGSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788199878; x=1788804678;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=KYKJ5VPlv39onDgpizRA6tuCgoTPGQMQ0bB2xHAAOlw=;
+        b=Y0SmqxPk8bznvS7gk2TLETL5RTH/DliLDeWPStqWv3WDaqhGQOraDjN1EdvEHEGuRN
+         8b4KLqTXOFobtC2yv2Z/wk93zmhwnoRnG/cHGXtAWBmO8oPVI0fL2DUPaqoROjkhEaaf
+         WuoOynW7usu+JlA6MeKEAcMkHfEK2wKyOqkVCYbX+eWdeXJr3alc+sk4zmtlZMuc4th1
+         U9GJ2FE/EsQPw/RK9AQdn385vWdPF2WYALeZ0dU4pj3QTSiT3s7vvx6C1yuXoaz4fbMO
+         z+hFBqYrzIb2UEqehdyArA464V8LL/H0NCMn6cmLVscB7jbKXbM4cvoI25V7ZovzYkKE
+         k6dA==
+X-Forwarded-Encrypted: i=1; AKwUvByncQUF2MFeMRVMBqr4wMOWu4wokdPFa83oEnWzFNY8ri93VA1Sch0jDa6bh4IQ5d/YgRbnPcmhxnhvl3FaFOOBNw==@vger.kernel.org
+X-Gm-Message-State: AFuF++klUVbF+g5TARDQUIQXmqPEC6t8SgEMefQ7tY2Xd49qv7HcmNVp
+	PGtdMHRnHJ9Bqj4l7Ev9VZ9NdRcjHDsK4QqNU8cQCBYoOzLywJ/hmSosTet7usiilRc=
+X-Gm-Gg: AYBFou0XiWVpe3sdFe1QxNN7DspTKjtn7015hTWq9FZiHmA6De9/61WANLRFwUuX4zC
+	cDHblncpVLtutPWZp89E7sgh5fLUWqU6bygX0UJLnJJ/vMCjRpO3sz8x14L464Db9Sd6Uz3/j/d
+	wT20QWRSEuO+pHfHmMqxddiqTGOPAqEGg6xPtK0PFUywngZqxXkoBbcOaq99elElgwlB0l6htdn
+	VsauG1e594ctRaZxPsg5nosabs6k8paspFHf0OQ6YND+xVrBRLrS9p6UEb54ICqKRv0pwMwmJS0
+	MVzNEKSYRywKP1hV1N+Mz8FvUsYTsisfi1U/SGxYpTzkqQeq6AUm/YdL3RKuNyBYa3YQS4olOQt
+	zPVg6x5OWu77XGcrZBhO1PxGp9cb+bO3Z3RCj85OufgCUxkdAKvz+TaGz2IafwU9rqADeX1XSq3
+	AUEUrG/mh2hdhudnjzCsEtVP9COKTllkpabusi7FSaFBBnT35pBsru5u3OiQ==
+X-Received: by 2002:a17:90b:4a8c:b0:392:6638:2e6a with SMTP id 98e67ed59e1d1-396d0f69d10mr34762737a91.13.1788199877917;
+        Mon, 31 Aug 2026 11:11:17 -0700 (PDT)
+Received: from localhost ([71.212.197.238])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3990baaeec3sm863336a91.0.2026.08.31.11.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2026 11:11:17 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Fabio Estevam <festevam@gmail.com>, 
+ Frank Li <Frank.Li@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Peter Griffin <peter.griffin@linaro.org>, Roger Quadros <rogerq@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+In-Reply-To: <20260810180604.3034255-1-laurent.pinchart@ideasonboard.com>
+References: <20260810180604.3034255-1-laurent.pinchart@ideasonboard.com>
+Subject: Re: (subset) [PATCH v3 0/7] ARM: dts: Replace clock-frequency in
+ camera sensor nodes
+Message-Id: <178819987707.2869653.6455595386601883422.b4-ty@b4>
+Date: Mon, 31 Aug 2026 11:11:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,357 +89,36 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260831-drm-no-more-plane-reset-v3-29-1877c7aa57b3@kernel.org>
-References: <20260831-drm-no-more-plane-reset-v3-0-1877c7aa57b3@kernel.org>
-In-Reply-To: <20260831-drm-no-more-plane-reset-v3-0-1877c7aa57b3@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- alim.akhtar@samsung.com, inki.dae@samsung.com, krzk@kernel.org, 
- kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, 
- sw0312.kim@samsung.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7338; i=mripard@kernel.org;
- h=from:subject:message-id; bh=lawd9I8Vl3BnH0N/nvmouxRrGEsKUsKUHnpMfVrUYC0=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDFlTV8paNnS6r5fWagtx/jbnz5sJUfceeZz+lLDvhdmCz
- iun34ls6ZjKwiDMySArpsjyRCbs9PL2xVUO9it/wMxhZQIZwsDFKQATSdrJ2DDt8TSbJuv4/kcC
- h/Qk7vR8XqQdf8d25v9rp8zW7HsUeGE1l/SxzG+cyy7tOnSFjV9/3l3GOtP4p0saPCqv9SU7N3x
- v/mT+VuqQ/zLjqBUVPhsKf7wVL2HLCrYIuWloeLZUVCLj1cvDAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+X-Mailer: b4 0.16-dev
 
-The plane reset implementation creates a custom state
-subclass, but only initializes a pristine state without resetting any
-hardware. This is equivalent to what atomic_create_state expects.
-Convert to it.
 
-The conversion was done using the following Coccinelle semantic patch:
+On Mon, 10 Aug 2026 21:05:57 +0300, Laurent Pinchart wrote:
+> This patch series contains the leftovers from "[PATCH v2 00/72] media:
+> i2c: Reduce cargo-cult" ([1]). All driver patches have been merged, but
+> DT changes for ARM platforms were postponed to the next kernel release
+> and ended up being forgotten.
+> 
+> To refresh everybody's memory, a large number of camera sensor drivers
+> directly use the "clock-frequency" property to retrieve the effective or
+> desired external clock rate. This is standard behaviour on ACPI
+> platforms that don't implement MIPI DisCo for Imaging, but usage of the
+> property has leaked to OF-based platforms, due to a combination of
+> historical reasons (using "clock-frequency" was initially considered
+> right until before the introduction of "assigned-clock-rates") and plain
+> cargo-cult.
+> 
+> [...]
 
-@@
-identifier funcs;
-symbol drm_atomic_helper_plane_reset;
-symbol drm_atomic_helper_plane_create_state;
-@@
+Applied, thanks!
 
-struct drm_plane_funcs funcs = {
-  ...,
-- .reset = drm_atomic_helper_plane_reset,
-+ .atomic_create_state = drm_atomic_helper_plane_create_state,
-  ...,
-};
+[3/7] ARM: dts: ti: omap3-n950: Replace clock-frequency in camera sensor node
+      commit: e74a8fe7c2d85e314ead77064ea671b71de44b14
+[4/7] ARM: dts: ti: omap3-n9: Replace clock-frequency in camera sensor node
+      commit: 3da3c1f84d4f1d14d321ffbec742d4027b503827
+[5/7] ARM: dts: ti: omap3-n900: Replace clock-frequency in camera sensor node
+      commit: e59ab4d7eaed22ba714c57801262a09ac1c32100
 
-@match_struct_reset@
-identifier funcs, reset_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .reset = reset_func,
-    ...,
-};
-
-@reset_uses_helpers depends on match_struct_reset@
-identifier match_struct_reset.reset_func;
-@@
-
- void reset_func(...)
- {
- 	<+...
-(
- 	__drm_atomic_helper_plane_reset(...);
-|
-	__drm_gem_reset_shadow_plane(...);
-)
- 	...+>
- }
-
-@match_struct_destroy@
-identifier funcs, destroy_func;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
-    .atomic_destroy_state = destroy_func,
-    ...,
-};
-
-@script:python renamed_func@
-old_name << match_struct_reset.reset_func;
-new_name;
-@@
-if old_name.endswith("_reset"):
-    coccinelle.new_name = old_name.replace("_reset", "_create_state")
-else:
-    coccinelle.new_name = old_name
-
-@update_struct depends on match_struct_reset && reset_uses_helpers@
-identifier match_struct_reset.funcs, match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-@@
-struct drm_plane_funcs funcs = {
-    ...,
--   .reset = reset_func,
-+   .atomic_create_state = new_name,
-    ...,
-};
-
-@drop_destroy depends on update_struct && match_struct_destroy@
-identifier match_struct_reset.reset_func;
-identifier match_struct_destroy.destroy_func;
-identifier container_func;
-identifier P;
-symbol drm_atomic_helper_plane_destroy_state;
-symbol __drm_atomic_helper_plane_destroy_state;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	...
-(
--	if (P->state) {
-- 		<+...
-(
--		drm_atomic_helper_plane_destroy_state(P, P->state);
-|
--		__drm_atomic_helper_plane_destroy_state(P->state);
-|
--		P->funcs->atomic_destroy_state(P, P->state);
-|
--		destroy_func(P, P->state);
-)
-- 		...+>
-- 	}
-|
--	drm_WARN_ON_ONCE(P->dev, P->state);
-|
--	WARN_ON(P->state);
-)
- 	...
-(
--	kfree(P->state);
-|
--	kfree(container_func(P->state));
-|
- 	// kfree is optional
-)
-(
--	P->state = NULL;
-|
- 	// plane->state clearing is optional
-)
- 	...
- }
-
-@drop_destroy_mtk depends on update_struct@
-identifier P;
-symbol __drm_atomic_helper_plane_destroy_state;
-symbol to_mtk_plane_state;
-@@
-
- void mtk_plane_reset(struct drm_plane *P)
- {
- 	...
--	if (P->state) {
--		__drm_atomic_helper_plane_destroy_state(P->state);
--		...
--	} else {
- 		...
--	}
- 	...
- }
-
-@transform_nv50_wndw depends on update_struct@
-identifier S;
-@@
-
- void nv50_wndw_reset(...)
- {
- 	...
--	if (WARN_ON(!(S = kzalloc_obj(*S))))
-+	S = kzalloc_obj(*S);
-+	if (WARN_ON(!S))
- 		return;
- 	...
- }
-
-@transform_kzalloc depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier P, S;
-statement ST;
-statement list STL;
-@@
-
- void reset_func(struct drm_plane *P)
- {
- 	<...
- 	S = kzalloc_obj(*S);
-(
--	if (S)
--	{
--		STL
--	}
-+	if (!S) return;
-+
-+	STL
-|
--	if (S) ST
-+	if (!S) return;
-+
-+	ST
-)
-	...>
- }
-
-@transform_body depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier S, P;
-expression PS;
-@@
-- void reset_func(struct drm_plane *P)
-+ struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	S = kzalloc_obj(*S);
-	...
-(
- 	if (!S) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (WARN_ON(!S)) {
-		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-|
- 	if (S == NULL) {
- 		...
--		return;
-+		return ERR_PTR(-ENOMEM);
- 	}
-)
-	...
-(
--	__drm_atomic_helper_plane_reset(P, PS);
-+	__drm_atomic_helper_plane_state_init(PS, P);
-|
--	__drm_gem_reset_shadow_plane(P, PS);
-+	__drm_gem_shadow_plane_state_init(P, PS);
-)
-	...
-}
-
-@update_early_return depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	<+...
--	return;
-+	return ERR_PTR(-EINVAL);
-	...+>
-}
-
-@update_return_plane depends on update_struct@
-identifier match_struct_reset.reset_func;
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_atomic_helper_plane_state_init(PS, P);
-	...
-+
-+	return PS;
-}
-
-@update_return_shadow depends on update_struct@
-identifier renamed_func.new_name;
-identifier P;
-expression PS;
-@@
- struct drm_plane_state *new_name(struct drm_plane *P)
-{
-	...
- 	__drm_gem_shadow_plane_state_init(P, PS);
-	...
-+
-+	return &PS->base;
-}
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
-Cc: alim.akhtar@samsung.com
-Cc: inki.dae@samsung.com
-Cc: krzk@kernel.org
-Cc: kyungmin.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: sw0312.kim@samsung.com
----
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 5c04ef87e400..020e8c9cf7de 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -120,27 +120,23 @@ static void exynos_plane_mode_set(struct exynos_drm_plane_state *exynos_state)
- 			  "plane : offset_x/y(%d,%d), width/height(%d,%d)",
- 			  exynos_state->crtc.x, exynos_state->crtc.y,
- 			  exynos_state->crtc.w, exynos_state->crtc.h);
- }
- 
--static void exynos_drm_plane_reset(struct drm_plane *plane)
-+static struct drm_plane_state *exynos_drm_plane_create_state(struct drm_plane *plane)
- {
- 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
- 	struct exynos_drm_plane_state *exynos_state;
- 
--	if (plane->state) {
--		exynos_state = to_exynos_plane_state(plane->state);
--		__drm_atomic_helper_plane_destroy_state(plane->state);
--		kfree(exynos_state);
--		plane->state = NULL;
--	}
--
- 	exynos_state = kzalloc_obj(*exynos_state);
--	if (exynos_state) {
--		__drm_atomic_helper_plane_reset(plane, &exynos_state->base);
--		plane->state->zpos = exynos_plane->config->zpos;
--	}
-+	if (!exynos_state)
-+		return ERR_PTR(-ENOMEM);
-+
-+	__drm_atomic_helper_plane_state_init(&exynos_state->base, plane);
-+	exynos_state->base.zpos = exynos_plane->config->zpos;
-+
-+	return &exynos_state->base;
- }
- 
- static struct drm_plane_state *
- exynos_drm_plane_duplicate_state(struct drm_plane *plane)
- {
-@@ -167,11 +163,11 @@ static void exynos_drm_plane_destroy_state(struct drm_plane *plane,
- 
- static struct drm_plane_funcs exynos_plane_funcs = {
- 	.update_plane	= drm_atomic_helper_update_plane,
- 	.disable_plane	= drm_atomic_helper_disable_plane,
- 	.destroy	= drm_plane_cleanup,
--	.reset		= exynos_drm_plane_reset,
-+	.atomic_create_state = exynos_drm_plane_create_state,
- 	.atomic_duplicate_state = exynos_drm_plane_duplicate_state,
- 	.atomic_destroy_state = exynos_drm_plane_destroy_state,
- };
- 
- static int
-
+Best regards,
 -- 
-2.55.0
+Kevin Hilman (TI) <khilman@baylibre.com>
 
