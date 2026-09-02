@@ -1,106 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.lvkasz.us (mail.lvkasz.us [116.203.126.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008D443DA3C;
-	Tue,  1 Sep 2026 15:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A593932C8B;
+	Wed,  2 Sep 2026 00:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.126.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788278231; cv=none; b=RX5A38kLZ8TX//RFVRBgre5zgCv0W9i4AcB4Kx/FVGCz+4BafV6MuvHTL0PZZoKMCgsrZhxdvUKVlaZW2mRTuv7c5CBu/rkMGaNE2VuzfMcJEbCVKzGvXU37QuJo/i9EPWzuTUadgDqP7KG5ls3Czz0lPuzTS2GG7Pg1Xo+CHiM=
+	t=1788308026; cv=none; b=McA801J+GUHhcu9jR+GZ3Rnf+XnhZaQX03Q03UqV1TLK3SETCdng2wt7FReJZKqipAcKb3d9wNlM4BdICEBxziruAkz5poGorXUg2gnT3hrgnyNfDyoqMl5mmMgk45C7DWwLVe3Kk2L5F24/wgRCoWw0QoH9A98DA2vGuhDzrfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788278231; c=relaxed/simple;
-	bh=jMDhAjc34RQZ+0giQQ7rh4FX7lPZ1B1sXNtvajZA96U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KP1dkGgcaHKGfITlSREAWcdWsikJISMfXT05xZp14wNzKKdrrHIH93xTk/g0EnFivOcaQ82DrWL1LnAzej1w78ooAh/YuXEaa2QnDWXclU/zHhZLT8mo32MVcMSUyGhQ93TyZZzCB3VMAyd+wiExTv3Ed6BsdY6Q8vqshYUmPME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzawZaVX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788308026; c=relaxed/simple;
+	bh=/CCCKx7u/SD1z2NkO1bJZurwMqzPzrZhPYKcLlgoSk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sQS9dubFwv7PJDLXzNgGeM6xeq//AfX69SGWFy+5Sw186kI3b6yQ1VLaVoyPIEBpqLnh3d3hmoOlhDzqutOiSbli40Z7bQuz0kjxN8ecBl8OBEnPmcAFnYUtUL2x5mI7GoSEBwFdnr/yWQpSnII50SxCpvVgvcgrTaOQywbE/ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us; spf=pass smtp.mailfrom=lvkasz.us; dkim=pass (2048-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b=AeS22BDt; arc=none smtp.client-ip=116.203.126.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lvkasz.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lvkasz.us
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzawZaVX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2A71F000E9;
-	Tue,  1 Sep 2026 15:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788278229;
-	bh=fvfeoa72SKSMoxNvcTri8W07K6g4tIT/FLYAhRl3M3o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=mzawZaVXoIrWKEnogmBujoJ+JYN8cEkrQ9vqPpeEEIavM2VM38GbCyXAM2nYe1t0a
-	 HXZOxCLpeGtC4RT7a9phpFR7lFA+rgZ1COfwX59qAF/EnLEhwKdZXIt1nn8cThig40
-	 CRfCJzNNVjCrRWerEoC5ghkQ6nxNVO88M8oHbDiZle4puVHF3QHkjx2cDmIzTCfeto
-	 py/j8kijdhAXJXeqoQ9BEwe/GG4G4jPxEkbZ15Ec7qK5WZq5L9JM3P2PgeAndrlUbi
-	 dGMqaiU/blWzRON41N5clJd/AxSZQDUacI9Bw9xPACah8o/mk7YBlHxBr2ct6WEru0
-	 2fghu6K6MpTLQ==
-Message-ID: <da4181c5-a05d-4445-ab43-00ea222346b0@kernel.org>
-Date: Tue, 1 Sep 2026 17:57:04 +0200
+	dkim=pass (2048-bit key) header.d=lvkasz.us header.i=@lvkasz.us header.b="AeS22BDt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lvkasz.us; s=pf1;
+	t=1788307525; bh=/CCCKx7u/SD1z2NkO1bJZurwMqzPzrZhPYKcLlgoSk0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AeS22BDtMX3vpsCc4zhlmE9WLWILrdsFNNCwOTuDGtYsojDWUPF/Y6cLP7XD7g2vA
+	 pBBjHu0DYDsohnmOJgBZ7JGI4BNxLN5dQuirRObEqRQHqBtiZGfLnw46atHUcT0eQV
+	 C5u4efUH+1rYSXtu8K0QjrchETNX/lbApFTAofBxnn8NwSZRexm5tvvmP3+vFl6hIf
+	 fT3T6VWvP0lhxdTvtu6cY/nUlizjDDef43qSxt+1RR5Qd8OiAogMV+y6mPn1gLToRv
+	 7HTrAL3a0v6eddKxde7Y0CV7Z0jUWXeCf4u32VLNct0Ti4jYtKZTk8ehFlXPBQU9aU
+	 StH6MT1W4A65w==
+Received: from aorus.localdomain (5.185.72.109.ipv4.public.orange.pl [5.185.72.109])
+	by mail.lvkasz.us (Postfix) with ESMTPSA id 45B9BDF235;
+	Wed,  2 Sep 2026 02:05:24 +0200 (CEST)
+From: =?UTF-8?q?=C5=81ukasz=20Lebiedzi=C5=84ski?= <kernel@lvkasz.us>
+To: selvarasu.g@samsung.com
+Cc: akash.m5@samsung.com,
+	alim.akhtar@samsung.com,
+	andre.draszik@linaro.org,
+	dh10.jung@samsung.com,
+	jh0801.jung@samsung.com,
+	kernel@lvkasz.us,
+	krzk@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	muhammed.ali@samsung.com,
+	neil.armstrong@linaro.org,
+	peter.griffin@linaro.org,
+	pritam.sutar@samsung.com,
+	thiagu.r@samsung.com,
+	vkoul@kernel.org
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to prevent OOB access
+Date: Wed,  2 Sep 2026 02:04:37 +0200
+Message-ID: <20260902000439.25379-1-kernel@lvkasz.us>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260831070309.158069-1-selvarasu.g@samsung.com>
+References: <20260831070309.158069-1-selvarasu.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: exynos5422-dmc: handle clock enable failures
-To: Jiawen Liu <1298662399@qq.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Griffin <peter.griffin@linaro.org>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-References: <tencent_405FF24AB67AAAA26BC85ADD092710C0BB07@qq.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <tencent_405FF24AB67AAAA26BC85ADD092710C0BB07@qq.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/08/2026 15:19, Jiawen Liu wrote:
-> Check clock-enable failures during probe.
-> 
-> If a later clock cannot be enabled, unwind clocks already enabled on
-> that path before returning the error.
-> 
-> Signed-off-by: jiawen <1298662399@qq.com>
+I tested this on my Samsung Galaxy A6 (Exynos7870) with this patch applied
+on top of mainline. I wanted to verify the OOB read first before trusting
+this fix, so I forced the device tree to request PHY index 1
+(phys = <&usbdrd_phy 1>;) - this index does not exist for this SoC,
+because the phy_cfg_exynos7870[] array contains only one entry. I added
+a temporary pr_info() call after assigning phy_cfg in the probe loop to
+display the phy_isol/phy_init values using %pS:
 
-SoB does not match your "From" name. Please configure git correctly to
-use consistent identity.
+  i=0 phy_isol=exynos7870_usbdrd_phy_isol+0x0/0x60
+      phy_init=exynos7870_usbdrd_utmi_init+0x0/0x260
+  i=1 phy_isol=exynos5_usbdrd_phy_isol+0x0/0x50
+      phy_init=exynos5_usbdrd_utmi_init+0x0/0xc8
 
-Best regards,
-Krzysztof
+For i=1, both function pointers resolve to the exynos5_* variants
+instead of the exynos7870 ones - the OOB read lands right on
+the adjacent phy_cfg_exynos5[] array in .rodata. No crash occurs, since
+these garbage pointers happen to point to valid (though unrelated)
+kernel functions rather than something invalid.
+
+With the patch applied, the same debug print shows the loop correctly
+stopping at n_phy_cfg=1; i=1 is never reached. Boot and USB both work
+fine on the actual PHY index (0).
+
+Tested-by: Łukasz Lebiedziński <kernel@lvkasz.us>
