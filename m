@@ -1,124 +1,208 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918314AFE39
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Sep 2026 22:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2E428150F
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  3 Sep 2026 00:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788388844; cv=none; b=Vrbg6ASUuFDk7pckF9rRXkaNOkPBVRhmlDBWX12PYKy687hYzcSycqrgBw3f+GcgejjH9yVCuYk7vPKT2JE6xml9ex4nRpuCyaV7Uo8vxLOtrk+kUqvERoY8O/A7UYAoA52PTUh8baqyXcC1VnpiGHjrfvvhCf4XR6oWWgOEFB0=
+	t=1788396095; cv=none; b=PSvWQekZwPgJOO0+JOBvYsERlS/eYbSuGbZg/XXUW168QOEItFAOFRhQ41hKfhyh5Brg4xqVHLQaPHbOzb6Hf0T9XH62KhYgwGvSi+hXZtkNkwmyyy9A7S/t7xHqzTM4NujEI4qLgDNk7Kpyx7NXG2avNuB9E8NRXGknxhkTEPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788388844; c=relaxed/simple;
-	bh=nB9MtG/jZH/uKfPVqmTLfUSN14X89SFk7Mqq+TvM9Gs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RRcz/IouetHss1CO8iMeAad/AhvgwU47c0+8kT5DqcUenbTDyeWBC1F4AiYhpYwShq/3ewke/ZVzweZ01yT0eLxgXlo9hjZiDc8BNQDo8GwCvfpmmDinwzHtf6ETpv4BVH3Qc5w8HLSDRW7aRNG/nWBCwXxt7h6pcOy/qtdovOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DNH28the; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=P07nUBfs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1788396095; c=relaxed/simple;
+	bh=jMwOBwGiRU8fETlBy0Qnu3oQ54CAs0gRdMT8qbU+v98=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sUVdUPdkY6WlBRnsy433Vq6F9M0inFAS2y5buymjQsUVbeG6AcGI/tioQ5vPy0KWyXgTD7fkRwiGOkHfykHQpqqoM5VmD+6WYTRBRpIrQSARi7bP6XExh1MoLvj88wmX2AxENvUOOtYDj9C45Ie4MujXGoP9sUC6Wmr64yslRvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=q/l4gws5; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DNH28the";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="P07nUBfs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788388831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wNcn++DDYySJZokz8/3409CMhSq8WdyhJVAopZOy+GM=;
-	b=DNH28theP9j3szOJzPS22D58KI2bN0uGnCgFg4IF7ZSI31MdXGAdx4dfaEnJSx3TQdB3iJ
-	lsQ0Tn8tS3WBXtfYffuyfdCcW0PQuwh8CvjE5b3PWrBrJg6ysoSGWGcm8ifV32vPwQLRuC
-	fw6B2zmetL3s+VmATzpYE0yegXH8KQk=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654-vyGDuX38PmatbWV7QQF2HA-1; Wed, 02 Sep 2026 18:40:30 -0400
-X-MC-Unique: vyGDuX38PmatbWV7QQF2HA-1
-X-Mimecast-MFC-AGG-ID: vyGDuX38PmatbWV7QQF2HA_1788388830
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-938153538caso334012985a.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Sep 2026 15:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788388830; x=1788993630; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wNcn++DDYySJZokz8/3409CMhSq8WdyhJVAopZOy+GM=;
-        b=P07nUBfsrtIYhhD0j1WxCxTzWF8oxA9ofXn2Icf/vXqosQA7TDy7hxp5SF8Jx3nbke
-         XM5WSnzAh33X7/9dEISJhWMmwGNzH3LiHv78xWCNzLnnPNYpq+18LYKTZjO7HEuZroAC
-         NDqdSFm0uGqTCkd4F2RUhOtbEstAC+zGsx22SbMzivgSDw8NEYInjNJx+FKQE/jY3kHV
-         yw7+tY6HbzpQC9DUQMrjr10BOkuHkF9P8ATPSuNrcwsKF+lusqqCzOmLpF+7AvMCyIbB
-         xiiCyP+4VMB7fhBQYi/UJEs46Zo/mWFC7cUHd45eF64BKiUXmXBp72Fcesu+eTIjxLpP
-         Lb1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788388830; x=1788993630;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wNcn++DDYySJZokz8/3409CMhSq8WdyhJVAopZOy+GM=;
-        b=qo/NYVIruvAIJPGTTZlgnXzmeDYOh/E6US4KmSAu+yedx52jAJRDR+5A5M2d2eI35R
-         WymOKEX5Q34CvueoY7yFCwuFtO1+umEclvFBltKpsXbSbeSKYaWNtcPRn1uosHW7ARFN
-         r4hsyCdTPz9mz4FdrYsdhcp5LToRHDInJmutcrOs9iD4Rz8Mxp64LINqRUcT4ZwsayWm
-         cM1fnWH558iVXHN8p3FvBfLPm6//HRK/a2pFu27thvTkl1gw6hT0Ne1Ljoo9gfn8HMFw
-         8k9xWDZSXzBCPq4NHL+wGXKuUzoHcxDUN881qOYUWwEnEtMCUqwRgszRsiYRZHias7Bu
-         696Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzooODAyfO5S3MLidC15JO/bTK63VHmicQVkgE4LFfZt+1oQR9n+TtUgbyhY6b9OvoKp3qvx4xwVHiKQ1LydvlkgA==@vger.kernel.org
-X-Gm-Message-State: AFuF++nr26BlEz2auhMXQdOJMjfqL+FP/v/qYCTzQfEw71zRBFDayu0L
-	K/GBxkZFxJwDQa0UQx8dOE/WRnpHlEOXzr5iB25NXmZnij0Sk4N9SkHYwcYjANtTTKHjM+n11rH
-	QzCSWBDNSX3LPGzi0lVSDUpEjbrJkL5D0e/Zy+NhBd0F3zI9PYIGVi/Z/OBiRyh2dYX4T54+p
-X-Gm-Gg: AYBFou3u+WQ03pnapfjB73CEAGgqd28BHLLE6iXXQBK4qs9xtUSfvDDrN2mQHu8wYZB
-	JrmGumrSD+Xd+SxzLy9JyIX7NbxYrI90mQPYbNNnHGxow7/LE1t/Ov95C+cII/Mi/CamA4V0nMp
-	2ic+qJaQ7Oqyqf5MOsHIwprzJx3v0CB58cVZ2K4JXTbhWeh5huvdrnlDkOhu1OnxJK3WPzSZQqf
-	nKJhAK576WGLDRSSBrg5kJ26JindrkIdgSsKy9uEWjzn+RCvn3MwuFXZzPFS3qVRTk/uPXwsGJq
-	CRcvf53/wYUK7ijsNcsgS3Tej/GH8HS29ui9qGS8Twg1oQW/rTqHXyW2+GS4VRbKq9a6OHlbuxI
-	sOg==
-X-Received: by 2002:a05:620a:5ee1:b0:939:6de9:4cff with SMTP id af79cd13be357-9396de96ebbmr234855685a.45.1788388830012;
-        Wed, 02 Sep 2026 15:40:30 -0700 (PDT)
-X-Received: by 2002:a05:620a:5ee1:b0:939:6de9:4cff with SMTP id af79cd13be357-9396de96ebbmr234852385a.45.1788388829633;
-        Wed, 02 Sep 2026 15:40:29 -0700 (PDT)
-Received: from [10.239.101.46] ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9395f157ec6sm325731685a.7.2026.09.02.15.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 15:40:29 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: mturquette@baylibre.com, Triet Hoang <triet.hoang.dev@gmail.com>
-Cc: sboyd@kernel.org, luca.ceresoli@bootlin.com, krzk@kernel.org, 
- s.nawrocki@samsung.com, cw00.choi@samsung.com, peter.griffin@linaro.org, 
- alim.akhtar@samsung.com, michal.simek@amd.com, shubhrajyoti.datta@amd.com, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20260820065904.2032536-1-triet.hoang.dev@gmail.com>
-References: <20260820065904.2032536-1-triet.hoang.dev@gmail.com>
-Subject: Re: [PATCH] drivers/clk: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-Message-Id: <178838882032.2062832.5940694093369397743.b4-ty@b4>
-Date: Wed, 02 Sep 2026 18:40:20 -0400
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="q/l4gws5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1788396074; x=1788655274;
+	bh=u+EzJoDEG9W5tYl5Q0IYEK/9+yw3B8m1JuHAL+Fe8n4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=q/l4gws5khHQ9usVFhNy0enBWgX0xFWS+I2k5m6cemWpTllDUVh3FPqKFH8kVKUFv
+	 iJCxo5xmaJF+T33gO56nzM7+LirON14zZOmfgnX9JdJBdMq8YRUi7Dl9PINoAXXBDA
+	 CHyjVhOvu9EFUqZf3EzDPcGbjjys17oJptaYdcENSeL1uWc5x4/mMpDFTVfAUC1tOf
+	 AXs7UG7ZU3NxoN1+Jvc6c94MFtb1zh2t3Qz2FiHVehtm4DKGHsJu7CfVsE8VPshLVE
+	 BTwxh8DLOlnd2/zxsGGvi7jYMIV7Wj0nl6XWHZsxLKJ9agb+4coRDXNwH8Gtyc66aj
+	 nbozTG5nVArDA==
+Date: Thu, 03 Sep 2026 00:41:10 +0000
+To: aidenisik@member.fsf.org
+From: Aiden Isik <aidenisik@protonmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Aiden Isik <aidenisik+git@member.fsf.org>
+Subject: Re: [PATCH 2/2] arm64: dts: exynos: Add initial support for Samsung Galaxy Watch FE
+Message-ID: <4nry_0LYAWEUI1glONRapkF3AXjNNot6Rl4lQ91urHXgWoZKDAnfgn-VhZFPFqp9NPpuKAzYiaH9r2sVCcDgrp4hP6lsUWtcQuEB4vU5Vnc=@protonmail.com>
+In-Reply-To: <20260817-for-next-lucky7-v1-2-42ffb2b71ba2@member.fsf.org>
+References: <20260817-for-next-lucky7-v1-0-42ffb2b71ba2@member.fsf.org> <20260817-for-next-lucky7-v1-2-42ffb2b71ba2@member.fsf.org>
+Feedback-ID: 46524699:user:proton
+X-Pm-Message-ID: 84627e5c69c68b7676b45132793d9da796719d27
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=303; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=zL0boMPnZXSvjvuLkbS1bHkmEeflCn7eOnBIJo/+CW4=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJmLL0VV+h7R0zPm9dX9HPSGX61EsfIdw9vtRTN/i5/t
- j/WaLZpRykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABMJW8fIsH36qdUPmP4Wzj0q
- rGyUEmQd/uuT83qbiGs/py98ZH52/wlGhteCFQ9jr3uHZX69fKc99RrbBgm9fRUeH5YsUXdtrLG
- 6xA4A
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Monday, August 17th, 2026 at 11:37 AM, Aiden Isik via B4 Relay <devnull+=
+aidenisik.member.fsf.org@kernel.org> wrote:
 
-On Thu, 20 Aug 2026 13:59:04 +0700, Triet Hoang wrote:
-> drivers/clk: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+> From: Aiden Isik <aidenisik@member.fsf.org>
+>=20
+> The Samsung Galaxy Watch FE (SM-R861/SM-R866), codenamed lucky7, is a
+> smartwatch developed by Samsung and released in 2024. It has 1.5GiB RAM,
+> 16GiB of eMMC storage, an Exynos5515 (W920) SoC, and a 396x396 display.
+>=20
+> Support for the following is added by this device tree:
+> - Bootloader framebuffer
+> - Memory
+>=20
+> Only the lowest 490MiB and highest 512MiB of memory are used for now.
+> The 488MiB between the addresses of 0x9ea00000 and 0xbe680000 is excluded
+> from the memory node due to a bug where if the kernel even knows about
+> the existence of this memory, one or both cores will lock up and cause
+> an RCU stall.
 
-Applied, thanks!
+This used to work fine on my 7.0 and 7.1-based branches, so I did a bit
+of bisecting and found that the issue was introduced in commit
+7b9f263909a57e2463c6a543d72651e00a3fd0d6
+(of: reserved_mem: only support one <base size> entry in reg property).
 
-[1/1] drivers/clk: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-      commit: 48bec6fd8ec32ffdf65a5ccf268428a9f79ea210
+This explains why hiding the memory from the kernel worked, I *was*
+reserving this memory but in a way which this commit discontinued.
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+I initially thought this was some randomly-occurring "heisenbug", which
+is why I submitted the memory-hiding fix instead as it definitely worked,
+but now I know the real problem I will fix the reserved-memory node.
 
+I will fix this in the next version of this patchset, next merge window.
+
+>=20
+> Signed-off-by: Aiden Isik <aidenisik+git@member.fsf.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts | 106 +++++++++++++++++=
+++++++
+>  1 file changed, 106 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts b/arch/arm6=
+4/boot/dts/exynos/exynos5515-lucky7.dts
+> new file mode 100644
+> index 000000000000..f91ea7e44cf8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts
+> @@ -0,0 +1,106 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Samsung Galaxy Watch FE (lucky7/SM-R861/SM-R866) device tree source
+> + *
+> + * Copyright (c) 2026 Aiden Isik <aidenisik+git@member.fsf.org>
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos5515.dtsi"
+> +
+> +/ {
+> +=09compatible =3D "samsung,lucky7", "samsung,exynos5515";
+> +=09chassis-type =3D "watch";
+> +=09model =3D "Samsung Galaxy Watch FE (SM-R861/SM-R866)";
+> +
+> +=09chosen {
+> +=09=09ranges;
+> +=09=09#address-cells =3D <2>;
+> +=09=09#size-cells =3D <1>;
+> +
+> +=09=09framebuffer@9e0cf000 {
+> +=09=09=09compatible =3D "simple-framebuffer";
+> +=09=09=09reg =3D <0x0 0x9e0cf000 (396 * 396 * 4)>;
+> +=09=09=09format =3D "a8r8g8b8";
+> +=09=09=09height =3D <396>;
+> +=09=09=09stride =3D <(396 * 4)>;
+> +=09=09=09width =3D <396>;
+> +=09=09};
+> +=09};
+> +
+> +=09memory@80000000 {
+> +=09=09/*
+> +=09=09 * Use the lowest 490MiB and highest 512MiB of memory.
+> +=09=09 * The 488MiB between the addresses of 0x9ea00000 and
+> +=09=09 * 0xbe680000 is currently unused due to any memory accesses
+> +=09=09 * in several ranges between those addresses causing the core
+> +=09=09 * performing the accesses to stall.
+> +=09=09 */
+> +=09=09reg =3D <0x0 0x80000000 0x1ea00000>,
+> +=09=09      /* Crashing memory at 0x9ea00000-0xbe680000 */
+> +=09=09      /* Memory hole at 0xbe680000-0xc0000000 */
+> +=09=09      <0x0 0xc0000000 0x20000000>;
+> +=09=09device_type =3D "memory";
+> +=09};
+> +
+> +=09reserved-memory {
+> +=09=09ranges;
+> +=09=09#address-cells =3D <2>;
+> +=09=09#size-cells =3D <1>;
+> +
+> +=09=09framebuffer@9e0cf000 {
+> +=09=09=09reg =3D <0x0 0x9e0cf000 (396 * 396 * 4)>;
+> +=09=09=09no-map;
+> +=09=09};
+> +
+> +=09=09misc-rmem {
+> +=09=09=09/*
+> +=09=09=09 * Some of these regions belong to memory-mapped
+> +=09=09=09 * devices, and will be assigned to drivers as support
+> +=09=09=09 * is added.
+> +=09=09=09 *
+> +=09=09=09 * Other regions belong to the TrustZone firmware
+> +=09=09=09 * and should never be touched.
+> +=09=09=09 */
+> +=09=09=09reg =3D <0x0 0x87000000 0x200000>,
+> +=09=09=09      <0x0 0x87fff000 0x1000>,
+> +=09=09=09      <0x0 0x8a000000 0x31000>,
+> +=09=09=09      <0x0 0x8d800000 0x180000>,
+> +=09=09=09      <0x0 0x8ffff000 0x33000>,
+> +=09=09=09      <0x0 0x90100000 0x200000>,
+> +=09=09=09      <0x0 0x98a00000 0x600000>,
+> +=09=09=09      <0x0 0x9a000000 0xc00000>,
+> +=09=09=09      <0x0 0x9b000000 0x400000>,
+> +=09=09=09      <0x0 0x9bd00000 0x208000>,
+> +=09=09=09      <0x0 0x9c000000 0x20000>,
+> +=09=09=09      <0x0 0xa0000000 0x10000>,
+> +=09=09=09      <0x0 0xa0010000 0x400000>,
+> +=09=09=09      <0x0 0xa0510000 0x1000>,
+> +=09=09=09      <0x0 0xa0900000 0x2000>,
+> +=09=09=09      <0x0 0xa0902000 0x1000>,
+> +=09=09=09      <0x0 0xa0910000 0x3c000>,
+> +=09=09=09      <0x0 0xb0000000 0x200000>,
+> +=09=09=09      <0x0 0xb1000000 0x200000>,
+> +=09=09=09      <0x0 0xbbfff000 0x1000000>,
+> +=09=09=09      <0x0 0xbcfff000 0x1000>,
+> +=09=09=09      <0x0 0xbd430000 0x1250000>,
+> +=09=09=09      <0x0 0xd0000000 0x5d00000>,
+> +=09=09=09      <0x0 0xdc444000 0x2bbc000>,
+> +=09=09=09      <0x0 0xdf005000 0x1000>,
+> +=09=09=09      <0x0 0xdf008000 0x1000>,
+> +=09=09=09      <0x0 0xdf009000 0x12000>,
+> +=09=09=09      <0x0 0xdf01b000 0x21000>,
+> +=09=09=09      <0x0 0xdf03c000 0x1000>,
+> +=09=09=09      <0x0 0xdf03d000 0xfc3000>;
+> +=09=09=09no-map;
+> +=09=09};
+> +=09};
+> +};
+> +
+> +&oscclk {
+> +=09clock-frequency =3D <26000000>;
+> +};
+> +
+> +&watchdog {
+> +=09status =3D "okay";
+> +};
+>=20
+> --
+> 2.54.0
+>=20
+>=20
+> 
