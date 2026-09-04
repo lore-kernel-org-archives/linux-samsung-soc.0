@@ -1,87 +1,78 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F047127F
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2026 11:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136F048B368
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Sep 2026 12:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788522237; cv=none; b=sE5s/8G2Qa8DEde7g7iMoInXfVREjGet12x7wwRnVH+s/HI9m4HFPrdBszoHoCQNaLugsnDxH8UUzjImhFESD5+jv3Vs/bLNd9e/6rw+41WhGre4vrpk16FInlKs8tHNU0i5B9VwFkYCCSy43Nuy4/80cV9poJkfZPIt3loUjwY=
+	t=1788524636; cv=none; b=lbQyTzBJ26cbNMSpTUTZb5SDyjr0ONH5WVTQXRl9Qg9bJSpKA0CqZgkskY5NBSoTtOJk7U7+X4iHWt+rrBhzpXeC9f10KJuDqtXDcLYgwPEsHl0Ny3Ak6pLGH8KQh8ckTESOvHArsKV0w0SthGpSB6lU/oltLU9CyYCYOQH+Vi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788522237; c=relaxed/simple;
-	bh=fIMuzBUE4Zj1EFjD63EIb19sNc/ePv1J5PzlECDI6rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XP35bVI+jMFjaoh8y+Y743yO/4eYZ2r5HaeA1L4x+P3W6yuXzLw9CL2MSMRG68WMbbSgt121enfpCGxVlYZnFIMK3kXaAn9kNaLIkFauqKbg9PIXSugZejP/lgvMNErG7hrS/jKuECdr0K9VlQaRkjzJ3NgYTacBPfzX9nkImCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRIYvUAC; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1788524636; c=relaxed/simple;
+	bh=UYk+eG9tawnyS2l3xIJppBTd3bJFUYBsc/HBPa38tPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=b/xZZ/heQXVUhChFHbCd1fRDsWXp9q37tS4bm2r8mSezOspKqOC4pNuuC99Q20z8DuHqVuwdReRnG8YR5Zc1g05wTfuCdFq4dIjsTd57PtzpgRXTi46mxmbBBz/m2nwOQAGR1Cob0j8BRGRUwi1fZnIm42+MHu8wv1U7HoESnpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEQfIARB; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRIYvUAC"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-398c1101c1bso854566a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2026 04:43:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEQfIARB"
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-451a49abd8aso782305fac.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Sep 2026 05:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788522235; x=1789127035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=eHXljnuOo7jmxlWanqN7JoMXcPtjZ3FAb8iBM6xDPOo=;
-        b=MRIYvUAC9yd6Lp9vkFJRIkL5l5RNf7uXYZgFBR7nVgmgsX2GqjwC9A5JoO+ytWu0fP
-         bh9F/hPkCvNV5col+YdkwCEgHD5SgevBsp0546ocDAiY0HjMpueFpS1+5goaK3IXHa7Q
-         PU13Rm9muUmkPcH2LXjsn2x4Ny7NgGCHj0+1+A37ulfIhyB0W+pRgZXWOnmbbstjaiiz
-         3yAFpUdSsPNOiqWvHe7XTmnhi4V7TgcSgNiYgdzvVrAqLfS95e//MTr837jAmWTq100i
-         VUYGmc66VPmMBn8LIYm+KvZq5qhiG0bsLUjL7wH6QdBfSY6GWGBK5WCTATlJkRaw9l6M
-         PQGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788522235; x=1789127035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1788524633; x=1789129433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=eHXljnuOo7jmxlWanqN7JoMXcPtjZ3FAb8iBM6xDPOo=;
-        b=D5w6DM2vgzUY8qkZbnyrIcJIUDDtW8GdHTGDcF2fw8YHoibdkqWvqZ8n7MnG4a2lGr
-         igQi3aENMyyV1PX4R7TH94slJrYrpES9/xU4OtBYVNc4yeZyJWeaoOnQWbYwLPwm+SdG
-         HeVR0deQZqXuZYyTVdyYrrpVwKrs5upUhUzjA1hg9e5Z+OLCdSnj/UDXs0zZQnDJV26G
-         mz4lvskUAkoreTWpEdJdiD7UNN3mZ7cWy5xbdJrACqCAlUx1Sw+ifTwPwNGfIyZ8HGQW
-         v97LQKk+i3SlCKIiLA9f17ExiF3jqamYyihQNKaYFUhc3gNXkBxy+H83f735TzF973qe
-         83Tw==
-X-Forwarded-Encrypted: i=1; AKwUvBxfBbiI/9jdhvMtw6v+ZLeW7bGkPLNZf9UMCKGagJLhIHYgS3HWyO0emkECLNqvVIfGXr2UQOEgpJqShQDz55xSwQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++n2POuNOQ1rdQw1WI9idOCHwJ7I03hDPba0KY6aGByWMuVAv4KR
-	91W+yKL4yHOnXKuih0EpWRSBlH7KM/y+ZPkABf2BBKnzfc0uGbKRsKzV
-X-Gm-Gg: AYBFou0V5KreGFesg4NJ18rdFWE0LNcVVfb2d0shfCLoKMcotnfzjoss5uNxmrbHU/O
-	el8X9PVLkvRd0ZXxovF+KSbjCXIPRTLq9A9wRZVSFTjjEnr/pa3yQxPluyElhjbkShZ+ZkUK2qV
-	GsW3zRtr52VWco9r+DakXW7sN6n14npIx2r0JIymMiT6kfdoL+QkQJa2ECvoZwh5GKRT7tI4ovX
-	Uaza/eCd7SH+u0DbiLmT3lgMkiUlOvPmUfpoanBbzbszrkpiqid4Zd7YCYCvP+gmEiAr9/3VH/q
-	yWaz9zMYYBaQ2NKKkCQilFYPcbn2NXiO7IpWKn7kLbyGBBgfVE87u/iUtD+lx6GDQpb6BxifWPi
-	ESm6mXx1M8ajO+FHUVEdHAVM/20YGf7QG/ouK+boUF6P2E0+OBoB54f4iYeFsqidkPndKDICJcb
-	WRq4Jq83fYQFSVlsXwYW5Dxt/UjIaVruM4wMaZmqk1X3YQQGwa6m7/89Jp9b1Mri6gXkKJ0VeZ7
-	nxA1vjgc2A8Yr8=
-X-Received: by 2002:a17:90b:4d87:b0:380:540:d499 with SMTP id 98e67ed59e1d1-39b26100bfdmr7413763a91.6.1788522234956;
-        Fri, 04 Sep 2026 04:43:54 -0700 (PDT)
+        bh=bC9+Z8O8/eDUGiGPsOZTghyv70tTHYewS6bn0ofwswE=;
+        b=DEQfIARB3pQFGq13VhVWdpnY+KAMwFg1wxrAL7hEoit/0jCWHg1+TtIyg78+3qp+As
+         X+0ZFiNJiqxCjjbESjRydnUAtvL/DWcCC4HkTtXmwSFxSeOySeSwd6KY+L7QqC+6G98Y
+         fm7J0qqJxcZfKvBn2jVbLigUQ8Pe/QkByYFqLCn2ei+Gr4MXCCN9y7HAilULkyMfkkaQ
+         YdwDAMSh7nPttF6E72zQH0+UJk9BWcb6oNaQwkmdopRzje5JO/PHkDwxoj65gnPVxKlw
+         ds2O0EhpsvaHdgo1nk4XjHu+ZtZnDidgl+VskElmX0lkoztKCYplmj2/x6izufOTTKD2
+         6/nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788524633; x=1789129433;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=bC9+Z8O8/eDUGiGPsOZTghyv70tTHYewS6bn0ofwswE=;
+        b=Fum0RHs05UDT6GB0VmtJvSYAUfraQcSnbMzMbM3DNNY8J1vuRZmhFwl59U+rVwVDHK
+         Gh7ikOeA5gBupglG1xW315bU/PC61AeTOgAfaVpycw5TpFBEzDBRuP59Kt00ZThrWUuy
+         D/BChj5yBkEcgppdJN1w+GXW0SJVKR1nQtwyF4+xUEfbuGO3t3F4sKxjLJojj3yN9IU4
+         uHEWo+36vLli+H8isWwzpZULBnL/YtcGpuGkW1IiRBCHayJB7aottXyLiDhvDDL34JHi
+         +iCIdsNFkIYxUZaMehCfZp/wXvyj7sYvD5TtfJFZAWvrFdndvq1rx3sKjgiutTq521Nb
+         Towg==
+X-Forwarded-Encrypted: i=1; AKwUvByrMAZkosLaH9wYPXCZheh8KRWi10fc+WdCh4ZiB8cukBS1TBofbyMBmxzHJldQBc2HGPAU1aBuLvpi4yWq0YOoyA==@vger.kernel.org
+X-Gm-Message-State: AFuF++l+YPz2Wv/DFEuh7XN20XD8tfoHRWlkoa2AyKlKVYO7X1rT43OQ
+	7F1TAdQ4jX8d+6d1n7PRwyWkvK+P+W/+u+BHc8OiSHA0knHXTfjzIvjO
+X-Gm-Gg: AYBFou108oWvMGZjbJG3dkXvsBPq7UG3Umt1J6yeZtpILg+lb8cvhr8GidDsAOH+BJY
+	ACeUyilv4Erq+FAiAGorTfkl/aStYHFwTTzkHU5omf/NxndeeJ9jguAniQ0mvAko73ureEOst5F
+	t7nWz7LAcvom3ORKx/pVIhKMxBSFlejCuVyIEMPYb0MC99Lq/yHjknJdL8SDD9fBLAcKdG2+ShY
+	5/W17JlUmzC/FR6I8zAayBWz25w4YNYZ/B74798YHXEtTK9feJIKgdpFa8QvciIoI8YMaOGTxG8
+	qGrcEtAFtljh4N3xsamxiz62rwrmKJhcW3tIHPx0VT+5Pjw1zZwVahZlCsw+XCMxa4lwH2kD2EX
+	LXAHZVASQjGBYnWAZPu+bZW/wWMHu8a58QdOuaGJIuHKDEarDH8mm/UPPJV8oABTpRovtDaaaQ1
+	Spo9rgjNlE9kpATgC7C/VZgttCnFH398OPd+T3qojXYxEQxmAGjDUDsxsWsCr0yp/k/FeDIvDJm
+	sR6G7QrC23SbBQ=
+X-Received: by 2002:a05:6820:f023:b0:6b3:8240:b2e9 with SMTP id 006d021491bc7-6b6fbcd088amr4336612eaf.21.1788524633505;
+        Fri, 04 Sep 2026 05:23:53 -0700 (PDT)
 Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339a62be87sm5576999eec.6.2026.09.04.04.43.48
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-143240d86c3sm6209359c88.0.2026.09.04.05.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 04:43:54 -0700 (PDT)
+        Fri, 04 Sep 2026 05:23:53 -0700 (PDT)
 From: Hemanth Selam <hemanth.selam@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	George Cherian <gcherian@marvell.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Gilad Ben-Yossef <gilad@benyossef.com>,
-	Ayush Sawal <ayush.sawal@chelsio.com>,
-	Srujana Challa <schalla@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Russell King <linux@armlinux.org.uk>
 Cc: linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] crypto: fix typos in comments
-Date: Fri,  4 Sep 2026 17:13:39 +0530
-Message-ID: <20260904114345.27509-1-hemanth.selam@gmail.com>
+Subject: [PATCH 1/2] ARM: mach-s3c: fix typo "capabilites" in comment
+Date: Fri,  4 Sep 2026 17:53:40 +0530
+Message-ID: <20260904122342.30456-2-hemanth.selam@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20260904122342.30456-1-hemanth.selam@gmail.com>
+References: <20260904122342.30456-1-hemanth.selam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -90,287 +81,29 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix typos in comments, reported by scripts/checkpatch.pl using the
-misspelling list in scripts/spelling.txt.  Only touches comments, no code
-changes.
+Correct "capabilites" to "capabilities", reported by scripts/checkpatch.pl
+using the misspelling list in scripts/spelling.txt.  Only touches comments,
+no code changes.
 
 Assisted-by: Cursor:claude-opus-5
 Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
 ---
- drivers/crypto/atmel-sha.c                       |  4 ++--
- drivers/crypto/cavium/cpt/cptpf_main.c           | 12 ++++++------
- drivers/crypto/cavium/cpt/cptvf_main.c           |  4 ++--
- drivers/crypto/cavium/cpt/cptvf_mbox.c           |  4 ++--
- drivers/crypto/cavium/nitrox/nitrox_main.c       |  2 +-
- drivers/crypto/ccp/ccp-dev.c                     |  2 +-
- drivers/crypto/ccree/cc_buffer_mgr.c             |  4 ++--
- drivers/crypto/chelsio/chcr_algo.c               |  2 +-
- drivers/crypto/hisilicon/sec/sec_algs.c          |  2 +-
- drivers/crypto/marvell/octeontx/otx_cptvf_mbox.c |  4 ++--
- drivers/crypto/omap-sham.c                       |  4 ++--
- drivers/crypto/qce/aead.c                        |  2 +-
- drivers/crypto/s5p-sss.c                         |  2 +-
- 13 files changed, 24 insertions(+), 24 deletions(-)
+ arch/arm/mach-s3c/gpio-cfg.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-index 48f54b615504..89c0a3bdf4e0 100644
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -1203,7 +1203,7 @@ static int atmel_sha_finup(struct ahash_request *req)
- 
- 	/*
- 	 * final() has to be always called to cleanup resources
--	 * even if udpate() failed, except EINPROGRESS
-+	 * even if update() failed, except EINPROGRESS
- 	 */
- 	err2 = atmel_sha_final(req);
- 
-@@ -1338,7 +1338,7 @@ static int atmel_sha_done(struct atmel_sha_dev *dd)
- 	return err;
- 
- finish:
--	/* finish curent request */
-+	/* finish current request */
- 	atmel_sha_finish_req(dd->req, err);
- 
- 	return err;
-diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
-index 9358c1c041d4..4234f9f156a3 100644
---- a/drivers/crypto/cavium/cpt/cptpf_main.c
-+++ b/drivers/crypto/cavium/cpt/cptpf_main.c
-@@ -90,19 +90,19 @@ static void cpt_configure_group(struct cpt_device *cpt, u8 grp,
- 
- static void cpt_disable_mbox_interrupts(struct cpt_device *cpt)
- {
--	/* Clear mbox(0) interupts for all vfs */
-+	/* Clear mbox(0) interrupts for all vfs */
- 	cpt_write_csr64(cpt->reg_base, CPTX_PF_MBOX_ENA_W1CX(0, 0), ~0ull);
- }
- 
- static void cpt_disable_ecc_interrupts(struct cpt_device *cpt)
- {
--	/* Clear ecc(0) interupts for all vfs */
-+	/* Clear ecc(0) interrupts for all vfs */
- 	cpt_write_csr64(cpt->reg_base, CPTX_PF_ECC0_ENA_W1C(0), ~0ull);
- }
- 
- static void cpt_disable_exec_interrupts(struct cpt_device *cpt)
- {
--	/* Clear exec interupts for all vfs */
-+	/* Clear exec interrupts for all vfs */
- 	cpt_write_csr64(cpt->reg_base, CPTX_PF_EXEC_ENA_W1C(0), ~0ull);
- }
- 
-@@ -115,7 +115,7 @@ static void cpt_disable_all_interrupts(struct cpt_device *cpt)
- 
- static void cpt_enable_mbox_interrupts(struct cpt_device *cpt)
- {
--	/* Set mbox(0) interupts for all vfs */
-+	/* Set mbox(0) interrupts for all vfs */
- 	cpt_write_csr64(cpt->reg_base, CPTX_PF_MBOX_ENA_W1SX(0, 0), ~0ull);
- }
- 
-@@ -140,10 +140,10 @@ static int cpt_load_microcode(struct cpt_device *cpt, struct microcode *mcode)
- 	 */
- 	if (mcode->is_ae) {
- 		core = CPT_MAX_SE_CORES; /* start couting from 10 */
--		total_cores = CPT_MAX_TOTAL_CORES; /* upto 15 */
-+		total_cores = CPT_MAX_TOTAL_CORES; /* up to 15 */
- 	} else {
- 		core = 0; /* start couting from 0 */
--		total_cores = CPT_MAX_SE_CORES; /* upto 9 */
-+		total_cores = CPT_MAX_SE_CORES; /* up to 9 */
- 	}
- 
- 	/* Point to microcode for each core of the group */
-diff --git a/drivers/crypto/cavium/cpt/cptvf_main.c b/drivers/crypto/cavium/cpt/cptvf_main.c
-index db76df14c4a0..e07448098ac0 100644
---- a/drivers/crypto/cavium/cpt/cptvf_main.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_main.c
-@@ -417,7 +417,7 @@ static void cptvf_enable_swerr_interrupts(struct cpt_vf *cptvf)
- 
- 	vqx_misc_ena.u = cpt_read_csr64(cptvf->reg_base,
- 					CPTX_VQX_MISC_ENA_W1S(0, 0));
--	/* Set mbox(0) interupts for the requested vf */
-+	/* Set mbox(0) interrupts for the requested vf */
- 	vqx_misc_ena.s.swerr = 1;
- 	cpt_write_csr64(cptvf->reg_base, CPTX_VQX_MISC_ENA_W1S(0, 0),
- 			vqx_misc_ena.u);
-@@ -429,7 +429,7 @@ static void cptvf_enable_mbox_interrupts(struct cpt_vf *cptvf)
- 
- 	vqx_misc_ena.u = cpt_read_csr64(cptvf->reg_base,
- 					CPTX_VQX_MISC_ENA_W1S(0, 0));
--	/* Set mbox(0) interupts for the requested vf */
-+	/* Set mbox(0) interrupts for the requested vf */
- 	vqx_misc_ena.s.mbox = 1;
- 	cpt_write_csr64(cptvf->reg_base, CPTX_VQX_MISC_ENA_W1S(0, 0),
- 			vqx_misc_ena.u);
-diff --git a/drivers/crypto/cavium/cpt/cptvf_mbox.c b/drivers/crypto/cavium/cpt/cptvf_mbox.c
-index 1267e1eba7e9..9f2ae10bbd60 100644
---- a/drivers/crypto/cavium/cpt/cptvf_mbox.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_mbox.c
-@@ -120,7 +120,7 @@ int cptvf_send_vq_size_msg(struct cpt_vf *cptvf)
- }
- 
- /*
-- * Communicate VF group required to PF and get the VQ binded to that group
-+ * Communicate VF group required to PF and get the VQ bound to that group
-  */
- int cptvf_send_vf_to_grp_msg(struct cpt_vf *cptvf)
- {
-@@ -139,7 +139,7 @@ int cptvf_send_vf_to_grp_msg(struct cpt_vf *cptvf)
- }
- 
- /*
-- * Communicate VF group required to PF and get the VQ binded to that group
-+ * Communicate VF group required to PF and get the VQ bound to that group
-  */
- int cptvf_send_vf_priority_msg(struct cpt_vf *cptvf)
- {
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
-index e474c84d8d38..54b2db6bb5d0 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-@@ -468,7 +468,7 @@ static int nitrox_probe(struct pci_dev *pdev,
- 		err = -EIO;
- 		goto ioremap_err;
- 	}
--	/* allocate command queus based on cpus, max queues are 64 */
-+	/* allocate command queues based on cpus, max queues are 64 */
- 	ndev->nr_queues = min_t(u32, MAX_PF_QUEUES, num_online_cpus());
- 	ndev->qlen = qlen;
- 
-diff --git a/drivers/crypto/ccp/ccp-dev.c b/drivers/crypto/ccp/ccp-dev.c
-index 246801912e1a..aff3348b8351 100644
---- a/drivers/crypto/ccp/ccp-dev.c
-+++ b/drivers/crypto/ccp/ccp-dev.c
-@@ -30,7 +30,7 @@
- 
- #define MAX_CCPS 32
- 
--/* Limit CCP use to a specifed number of queues per device */
-+/* Limit CCP use to a specified number of queues per device */
- static unsigned int nqueues;
- module_param(nqueues, uint, 0444);
- MODULE_PARM_DESC(nqueues, "Number of queues per CCP (minimum 1; default: all available)");
-diff --git a/drivers/crypto/ccree/cc_buffer_mgr.c b/drivers/crypto/ccree/cc_buffer_mgr.c
-index dc7e0cd51c25..a592f5ec1b6a 100644
---- a/drivers/crypto/ccree/cc_buffer_mgr.c
-+++ b/drivers/crypto/ccree/cc_buffer_mgr.c
-@@ -717,7 +717,7 @@ static void cc_prepare_aead_data_mlli(struct cc_drvdata *drvdata,
- 			}
- 		} else { /* Contig. ICV */
- 			sg = &areq_ctx->src_sgl[areq_ctx->src.nents - 1];
--			/*Should hanlde if the sg is not contig.*/
-+			/*Should handle if the sg is not contig.*/
- 			areq_ctx->icv_dma_addr = sg_dma_address(sg) +
- 				(*src_last_bytes - authsize);
- 			areq_ctx->icv_virt_addr = sg_virt(sg) +
-@@ -749,7 +749,7 @@ static void cc_prepare_aead_data_mlli(struct cc_drvdata *drvdata,
- 
- 		} else { /* Contig. ICV */
- 			sg = &areq_ctx->src_sgl[areq_ctx->src.nents - 1];
--			/*Should hanlde if the sg is not contig.*/
-+			/*Should handle if the sg is not contig.*/
- 			areq_ctx->icv_dma_addr = sg_dma_address(sg) +
- 				(*src_last_bytes - authsize);
- 			areq_ctx->icv_virt_addr = sg_virt(sg) +
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index 6dec42282768..e2f2b2a6200e 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -1605,7 +1605,7 @@ static struct sk_buff *create_hash_wr(struct ahash_request *req,
- 		req_ctx->hctx_wr.dma_addr = 0;
- 	}
- 	chcr_add_hash_src_ent(req, ulptx, param);
--	/* Request upto max wr size */
-+	/* Request up to max wr size */
- 	temp = param->kctx_len + DUMMY_BYTES + (req_ctx->hctx_wr.imm ?
- 				(param->sg_len + param->bfr_len) : 0);
- 	atomic_inc(&adap->chcr_stats.digest_rqst);
-diff --git a/drivers/crypto/hisilicon/sec/sec_algs.c b/drivers/crypto/hisilicon/sec/sec_algs.c
-index 85eecbb40e7e..995aa598a1ed 100644
---- a/drivers/crypto/hisilicon/sec/sec_algs.c
-+++ b/drivers/crypto/hisilicon/sec/sec_algs.c
-@@ -790,7 +790,7 @@ static int sec_alg_skcipher_crypto(struct skcipher_request *skreq,
- 
- 	/*
- 	 * Only attempt to queue if the whole lot can fit in the queue -
--	 * we can't successfully cleanup after a partial queing so this
-+	 * we can't successfully cleanup after a partial queuing so this
- 	 * must succeed or fail atomically.
- 	 *
- 	 * Big hammer test of both software and hardware queues - could be
-diff --git a/drivers/crypto/marvell/octeontx/otx_cptvf_mbox.c b/drivers/crypto/marvell/octeontx/otx_cptvf_mbox.c
-index 90fdafb7c468..38d1de24652b 100644
---- a/drivers/crypto/marvell/octeontx/otx_cptvf_mbox.c
-+++ b/drivers/crypto/marvell/octeontx/otx_cptvf_mbox.c
-@@ -180,7 +180,7 @@ int otx_cptvf_send_vq_size_msg(struct otx_cptvf *cptvf)
- }
- 
- /*
-- * Communicate VF group required to PF and get the VQ binded to that group
-+ * Communicate VF group required to PF and get the VQ bound to that group
-  */
- int otx_cptvf_send_vf_to_grp_msg(struct otx_cptvf *cptvf, int group)
- {
-@@ -199,7 +199,7 @@ int otx_cptvf_send_vf_to_grp_msg(struct otx_cptvf *cptvf, int group)
- }
- 
- /*
-- * Communicate VF group required to PF and get the VQ binded to that group
-+ * Communicate VF group required to PF and get the VQ bound to that group
-  */
- int otx_cptvf_send_vf_priority_msg(struct otx_cptvf *cptvf)
- {
-diff --git a/drivers/crypto/omap-sham.c b/drivers/crypto/omap-sham.c
-index 6d2dd0b88f15..12d6dc68438a 100644
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1265,7 +1265,7 @@ static int omap_sham_finup(struct ahash_request *req)
- 		return err1;
- 	/*
- 	 * final() has to be always called to cleanup resources
--	 * even if udpate() failed, except EINPROGRESS
-+	 * even if update() failed, except EINPROGRESS
- 	 */
- 	err2 = omap_sham_final(req);
- 
-@@ -1732,7 +1732,7 @@ static void omap_sham_done_task(struct work_struct *t)
- 
- finish:
- 	dev_dbg(dd->dev, "update done: err: %d\n", err);
--	/* finish curent request */
-+	/* finish current request */
- 	omap_sham_finish_req(dd->req, err);
- }
- 
-diff --git a/drivers/crypto/qce/aead.c b/drivers/crypto/qce/aead.c
-index a9642c67f476..a6b446bbb499 100644
---- a/drivers/crypto/qce/aead.c
-+++ b/drivers/crypto/qce/aead.c
-@@ -379,7 +379,7 @@ static int qce_aead_create_ccm_nonce(struct qce_aead_reqctx *rctx, struct qce_ae
- 
- 	/*
- 	 * The crypto framework encodes cryptlen as unsigned int. Thus, even though
--	 * spec allows for upto 8 bytes to encode msg_len only 4 bytes are needed.
-+	 * spec allows for up to 8 bytes to encode msg_len only 4 bytes are needed.
- 	 */
- 	if (msglen_size > 4)
- 		msglen_size = 4;
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index bdda7b39af85..60547fa89ac4 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -1446,7 +1446,7 @@ static void s5p_hash_tasklet_cb(unsigned long data)
- 	return;
- 
- finish:
--	/* finish curent request */
-+	/* finish current request */
- 	s5p_hash_finish_req(dd->hash_req, 0);
- 
- 	/* If we are not busy, process next req */
+diff --git a/arch/arm/mach-s3c/gpio-cfg.h b/arch/arm/mach-s3c/gpio-cfg.h
+index 2dfb0561001e..778103412cd1 100644
+--- a/arch/arm/mach-s3c/gpio-cfg.h
++++ b/arch/arm/mach-s3c/gpio-cfg.h
+@@ -36,7 +36,7 @@ struct samsung_gpio_chip;
+  * @get_config: Read the current configuration for the GPIO
+  *
+  * Each chip can have more than one type of GPIO bank available and some
+- * have different capabilites even when they have the same control register
++ * have different capabilities even when they have the same control register
+  * layouts. Provide an point to vector control routine and provide any
+  * per-bank configuration information that other systems such as the
+  * external interrupt code will need.
 -- 
 2.48.1
 
