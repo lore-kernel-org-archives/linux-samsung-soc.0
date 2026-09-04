@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF444A2A55;
-	Fri,  4 Sep 2026 13:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0C14A2A79;
+	Fri,  4 Sep 2026 13:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788530312; cv=none; b=rNXwxV1X3FEmVeVoefrhpOQQ6JlaSsIrXnnWUh0cqroHYrq6nDOyFRpC/tFCHJ5ztF2Y7I6Oy1/X60Y+23C03KEQ0csFQi64p7VQux9lhzWFjXvUYceIxclIWNV7A326f6RWTzi0w+baql3VioHHHuwbgRqCvWM32CvPAfoYo8A=
+	t=1788530351; cv=none; b=R4tv87sBzVpOWqUDiN4A48TvhfwZNHg7YSyc3UY5gPl1JbHSSpDX9v4xqxd8DbpKs+wa5HLzGHtDpyQmzGbfGdGzXZ9EErb5nyLy8hAPgUEUWN6SmqBuufYRfCl8FiKU0rqPC5KVTf8V8/7dmGfZyFM4MO3BkKxXP5kZ+S8E8OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788530312; c=relaxed/simple;
-	bh=eOnkZMDH6WB1+VollyOzPBD787fFgTURa9j/jhC32EA=;
+	s=arc-20240116; t=1788530351; c=relaxed/simple;
+	bh=Cjpw3a81f/rcZiWDCEodWm86ZLBGBe+MT08VVug6MWQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dRkoX9hxMc9tZV+d7aBMMbCIxd4LjsMar6l7SZjtT61og6rh2970cjBCUeQ+SuFQkNPfrQw1EPvE8lG9leHDi93pClzCmWB20DoIWAft20MkBEu896JdYvReC5tOixK6XfAB1L2o1vYYcQOzpLfI3C+/PbaKwRagteO2srvw4ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtXIzRPB; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=BmTbvn8flne2L1F0WUp9EKPmy3ur5grfpsMg+UG4y15wggIlCC+RrqFbJjcL2dIN9b01eL/KO2rMkc9442KAbVQ6xzpDrYLhlqpQA76OXXFX+qOAT1q3MBMV/bYnUPRZCrnS1x8OdIbiaeFsGEFsQ9uD/coSvdQP7ajaCB0vlts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzO6+BFo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtXIzRPB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D081F00A3D;
-	Fri,  4 Sep 2026 13:58:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzO6+BFo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B291F00A3D;
+	Fri,  4 Sep 2026 13:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788530311;
-	bh=I0kX9+PdQJJyGam7brukkKosFXiiD3H3QIPIZ6Gsaew=;
+	s=k20260515; t=1788530349;
+	bh=ub/H5EV5rHEQmVWi3kq9DYUDWf3fOZm8HoE9J/8V61w=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=KtXIzRPBwSheizIaccbFJVmLmGQcP1SMs7wYEV5xoNaJ8XqX+icUvBar/dMq2FUMG
-	 4HH3mO+noIYrw3RrzmU/zv2A3B8c/f+QWefiQfXkgjFiw+IrH82H5dbaHGcJJl8K2y
-	 S9H0iLFi/2sa8D/V17s+TFU0YkHpGG7/56FzXepdTNhBTyy288bmM8c0Z8hVz5wG4f
-	 zo2XBL0mj8ULi2vplEGHM52WUFHYJKYmO3kQCNkO64wUWVSkn0MG1zkwGe21NuYBg9
-	 BQiFkgesLnhfjLFmv9hQxWLvyhdlh+Cj6MuwFKqi7lcRvsSPsF1E1XuAIvlihu3Nx+
-	 RwngWMtQqzU9g==
-Message-ID: <fbd0484d-cb9b-41c7-9ec9-ef9795a61232@kernel.org>
-Date: Fri, 4 Sep 2026 15:58:25 +0200
+	b=nzO6+BFoNZZIGQINVukiMVoYPwdIGleStNPeQoR3GadsebE6Fdzf7Cy2a7RL1IoNd
+	 qM/eTDYDtSw9WmUTdfIPEI/5FWv0ehkLgfw6ZOW7ryZxezKjtqCbsE3nSsFJYC9z+f
+	 jG660LJrQovR+vCBCK6U7cGmFXX3NvOn5bjD8pP9y04igbLen0zyjiZQV88Wcyi5bB
+	 U89zpHWCE18oSmPgNB6XPFi/B0V5e4TRcPVmm/gb9XBMRAMxEZMeChptQqNCn5ICQO
+	 Ng1bf/hzoGto6yHBkvM/rq8UX7PQGNrcKObnV9ztIxnaq7aVOCQ2jx7tqDIgEtDCjq
+	 vJ/xN+60F1vHw==
+Message-ID: <48506863-848c-43c0-9088-40ebe776cedc@kernel.org>
+Date: Fri, 4 Sep 2026 15:58:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: watchdog: samsung-wdt: Add
- exynos5515-wdt compatible
-To: aidenisik@member.fsf.org, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20260818-for-next-lucky7-watchdog-v3-0-2912bd122c57@member.fsf.org>
- <20260818-for-next-lucky7-watchdog-v3-1-2912bd122c57@member.fsf.org>
+Subject: Re: [PATCH v3 07/10] mfd: wm831x: support software nodes for DCDC
+ regulators
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>, Arnd Bergmann
+ <arnd@arndb.de>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linus Walleij <linusw@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <20260711-samsung-kp-v3-0-b2fcaba77aff@gmail.com>
+ <20260711-samsung-kp-v3-7-b2fcaba77aff@gmail.com>
+ <0306eaba-b59c-4f8b-9151-9f39685398ba@kernel.org>
+ <aprLYn4VzSTnZWuw@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,22 +97,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260818-for-next-lucky7-watchdog-v3-1-2912bd122c57@member.fsf.org>
+In-Reply-To: <aprLYn4VzSTnZWuw@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/08/2026 20:03, Aiden Isik via B4 Relay wrote:
-> From: Aiden Isik <aidenisik@member.fsf.org>
+On 04/09/2026 15:46, Dmitry Torokhov wrote:
+> On Fri, Sep 04, 2026 at 03:41:21PM +0200, Krzysztof Kozlowski wrote:
+>> On 12/07/2026 04:12, Dmitry Torokhov wrote:
+>>> Allow passing software nodes to wm831x DCDC regulators via PMIC platform
+>>> data. This is useful for non-DT/non-ACPI platforms that want to
+>>> associate device properties (like DVS GPIOs) with the regulator devices
+>>> using software nodes.
+>>>
+>>> We add 'dcdc_swnodes' to the PMIC platform data 'struct wm831x_pdata' and
+>>> have the MFD core assign these software nodes to the buckv cells.
+>>>
+>>> Assisted-by: Antigravity:gemini-3.5-flash
+>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>> ---
+>>>  drivers/mfd/wm831x-core.c        | 47 ++++++++++++++++++++++++++++++----------
+>>>  include/linux/mfd/wm831x/pdata.h |  2 ++
+>>>  2 files changed, 37 insertions(+), 12 deletions(-)
+>>
+>> I still need Ack for this from Lee... and the problem is that you did
+>> not Cc him.
 > 
-> Add a dt-binding compatible for the Exynos5515 watchdog timer.
+> Hmm, indeed. not sure wheat happened...
 > 
-> This watchdog requires a syscon phandle, and the cluster index should
-> *not* be specified, as that does not make sense on the Exynos5515 SoC
-> (due to it only having a single core cluster).
+>>
+>> Please resend everything or spin v4 with MFD maintainers included for
+>> acking.
 > 
-> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+> Maybe you could take patches 1-6 now and then I'll continue with the
+> rest of cleanups?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Sure, that works for me.
 
 Best regards,
 Krzysztof
