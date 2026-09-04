@@ -1,95 +1,70 @@
-Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905423D2FE1;
-	Fri,  4 Sep 2026 09:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C514457A9;
+	Fri,  4 Sep 2026 09:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788513228; cv=none; b=hR/3ajPfFwGY9czq8mGtgZmfcgquymF1k5bpg2vvpXgc6lraJ7CxOJ4VGpyR9ZgnCVEtYil/p8RtCkTVS+J7yPC/bwk+SpL/gAB+KE+sTalOmG5gzUHqUZjYxiaXv1l3NQ5AiXd58XqlfJh8GEFVfNWF451/FN6k9hL4OFJMNJM=
+	t=1788515696; cv=none; b=AwQ4kwA8yYCo/0DYvLdJCA7hpVGLAzuJpj/dqXxKFAMr0E6Qpaito0HoZ7f2McmUMaERJBTmYh2R3hJfFza+cZ2HxfrtfdnT7qXEWqWNLefLyW8XkQ+wNNz9DSdEE6kSdElhhq6DFVO87ht7UmOTvHLDUO+PTP8/4sWoGZvmJ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788513228; c=relaxed/simple;
-	bh=0P9F76FVBx2qhXy71sSOIagKjgFRrK/Pomv0R/cAf+o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JlsoZ+gJ8zqIMu3Wh518IxGjxckVCl7Eoo8Zm94R8wokxTpDPbn6M64djWVLe+z+IbajDjWkm4BP5jrjrmYuJmNGke8e9oRvbpjWvZiF8kPzG3b4w/XbtepfC88izrQIXyMOzs0ukPVcObcvShe8FwJcdEKAox1++RbiJ/JxmzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyberchaos.dev; spf=pass smtp.mailfrom=cyberchaos.dev; dkim=pass (1024-bit key) header.d=cyberchaos.dev header.i=@cyberchaos.dev header.b=WHrPmDgK; arc=none smtp.client-ip=195.39.247.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyberchaos.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberchaos.dev
+	s=arc-20240116; t=1788515696; c=relaxed/simple;
+	bh=R0oCLhhCS7BUY/r6tc8/OezJmRuFq14k+ZsxCYhrXo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBwUFopcXILFi2zQvA+le/MnqbT7rMhewUurUqVmFG6Q01uZWYKY8+V2SUiXfmMz5AeT8OPxwFTCVUwhhKMFFmMSSXD/+kcGSh4yjZyB6DwoEkk6BL/lsZGfrKylWlO0T7+fGYSM9m7LKs1oiag4Fvd1L6eBj6dVei8WJj35f9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=L9loEyYG; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cyberchaos.dev header.i=@cyberchaos.dev header.b="WHrPmDgK"
-From: Yureka Lilian <yureka@cyberchaos.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyberchaos.dev;
-	s=mail; t=1788512814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xN3oFt0Y2IcujH1DIfbY1diyGBQXYknSa0KCk1kgoTY=;
-	b=WHrPmDgKRLot/ajyWVqGI2TnujNsYmC+yXxif15HSpN61jqKi2Z0yiYpLsvGGwE01Y0jDO
-	Q1XgKDWWv//DucrFXEe4+/a3041XWylvD94ceRA3pD/BTiDzsDqKGziS0Fgh1WFgS+vc3W
-	EdjbjyOqKshI+jjBXlijkA2g+cgLsMI=
-Date: Fri, 04 Sep 2026 11:06:52 +0200
-Subject: [PATCH] tty: serial: samsung: Fix S5L on Apple A18 Pro
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="L9loEyYG"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=2CD+vq0t/y3lKLpZWTCB2Kl7s13Ty6fzKDJE63ASeNw=; 
+	b=L9loEyYGj3W3n9hec+MWr0NG7kcjqRUS4CrL9iKKexjr27AL1P29pP85yPYSx55rPeLTyyAgj2Z
+	7ni67iwk6HTcjtUbGDO6lNNtTgeE1LDG/4TP5GuJ0IHchTGRocW7CcsvY40QeyXNzzbc7aVdce1oD
+	8bWbpzKmMJBa3NfE+hVHRljWMxdKIPbF4Z8wuC41fVmnbNMwvGGQYm7y1/Fpk+PpVOmYNbKsUEEiR
+	gujNblKa9Ea4dZUTo9LaeeIyY197Jh2JK5QgKpEgEOwndmZgw32eHZx/MXyBDSSJEIaGkI4iaWaiq
+	gJUu1RtBwdKP2eH+SJusdHFz94dxpOKMFMmA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.98.2 #2 (Debian))
+	id 1x2QdF-0000000An7L-3OKe;
+	Fri, 04 Sep 2026 17:54:50 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 04 Sep 2026 19:54:49 +1000
+Date: Fri, 4 Sep 2026 19:54:49 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-crypto@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	"open list:SAMSUNG S5P Security SubSystem (SSS) DRIVER" <linux-samsung-soc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: s5p-sss: pass s5p_aes_dev to irq handler
+Message-ID: <apqVabaRCvLtfhoX@gondor.apana.org.au>
+References: <20260811043358.136042-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260904-apple-s5l-a18-pro-v1-1-4995312062ad@cyberchaos.dev>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ6CMBBG4auQWTtJWwtBr2JcDPgDYwg0HTUmh
- Ltbdfkt3tvIkBVG52qjjJearkuBP1TUT7KMYL0VU3ChcScXWVKawVbPLL7llFeuh9Ad4SUiCpU
- uZQz6/j0v17/t2d3RP74j2vcPuWaEuXUAAAA=
-X-Change-ID: 20260904-apple-s5l-a18-pro-5f2b3e1a4e4a
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- Yureka Lilian <yureka@cyberchaos.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260811043358.136042-1-rosenp@gmail.com>
 
-The UCON BIT(10) is set on boot on the S5L serials on Apple Silicon Macs
-of all generations and old iPhones [1]. It's unknown what it does
-exactly, but on the MacBook Neo (A18 Pro / T8140 SoC) clearing this bit
-breaks the uart and leads to garbled data in both directions.
-Add it to the APPLE_S5L_UCON_MASK to prevent it being cleared.
+On Mon, Aug 10, 2026 at 09:33:58PM -0700, Rosen Penev wrote:
+> The threaded irq handler takes the platform device and calls
+> platform_get_drvdata() to recover the driver data.  Pass the driver
+> data directly as the devm_request_threaded_irq() argument instead,
+> dropping the platform_get_drvdata() call.
+> 
+> Assisted-by: opencode:deepseek-v4-flash-free
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/crypto/s5p-sss.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Link[1]: https://oftc.catirclogs.org/asahi-dev/2026-07-24#35537011
-Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
----
- include/linux/serial_s3c.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index f54cb6e23f85..1732bc9240ff 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -247,10 +247,12 @@
- 				 S5PV210_UFCON_RXTRIG4)
- 
- #define APPLE_S5L_UCON_RXTO_ENA			9
-+#define APPLE_S5L_UCON_UNK			10
- #define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
- #define APPLE_S5L_UCON_RXTHRESH_ENA		12
- #define APPLE_S5L_UCON_TXTHRESH_ENA		13
- #define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
-+#define APPLE_S5L_UCON_UNK_MSK			BIT(APPLE_S5L_UCON_UNK)
- #define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_LEGACY_ENA)
- #define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
- #define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
-@@ -259,6 +261,7 @@
- 					 S3C2410_UCON_RXIRQMODE | \
- 					 S3C2410_UCON_RXFIFO_TOI)
- #define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK | \
-+					 APPLE_S5L_UCON_UNK_MSK | \
- 					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK | \
- 					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
- 					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
-
----
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260904-apple-s5l-a18-pro-5f2b3e1a4e4a
-
-Best regards,
---  
-Yureka Lilian <yureka@cyberchaos.dev>
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
