@@ -1,78 +1,89 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BED472534
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  5 Sep 2026 12:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9188446859
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  5 Sep 2026 12:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788610168; cv=none; b=Ve4GL2fJyFl100vkFEQYiP1j+l5Sk23zkTrhzBACibaVMoI8Npw52KgoAudh34vkeSTmvlY4S12Ddg9L6lUurFnfdv1VlnsU0e/kyvt9QgRsMSUtRbeMQAbN3DGGaXuMaFgL7+KuP/7ltzOXHdDa8WstBrSSTkqFuK3n/BufhDo=
+	t=1788611110; cv=none; b=uHlVHD4yvzg69igSqLDGjKbAEZ99EBevEm8559rwppWFMVrSqYCnX4gMyMbGGTsFgf0FiXDYPHkipk0XCCScbbU54p+Mn6tHxMbaH8/3BfNtyyeroDfKbICrYM6DCOQYxTEEEVIWsTqVF32aW5ZpD61UL2oaZ+3sv3krJTZU0PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788610168; c=relaxed/simple;
-	bh=DiJxiFNXhFG1plQ9zJLQLn71kZEFf3NEqOCZTCKyvw8=;
+	s=arc-20240116; t=1788611110; c=relaxed/simple;
+	bh=7FDVdWewnpg54EuU9ucLHlKJB14SIxO1UfQn4Ib5/nI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHlhsqv/9akb5lpvhnE+HmUn9m+XShIzpHPXAZX+PFTaOp5oOInnS3Kg+MORD7S9lL1MIYVvg+o9pDwHd2vQsX/8J3MbS2W7XqU+NYk/G4VXIXzh0KdQp8uGjjMC9UXcPWjA46ZeoPf6ljjt/d19jecxIkOqoM2oVhj4UzWdACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kI9HkivE; arc=none smtp.client-ip=209.85.215.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=BfTsNZRCv4g87Z6TefJydA3YAWOX0kqXxVvHgwwvQzlJy5mqzJM3eo/wYHIkTIf2+KelbU9AVab2jNCfpLMcU88/LiwtiRDA/7o1JUCVWpul4VF2+sPaR9yw20ypnndseMTqcDUwMW1laGr/6r3ughsgTKDiHlFKY/C8DEyWMyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIppZdlg; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kI9HkivE"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cbedf433a99so1881866a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Sep 2026 05:09:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIppZdlg"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-485888b3c3dso2007089f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Sep 2026 05:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788610166; x=1789214966; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788611107; x=1789215907; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=7nNJORH3YGlZxLWwixVhbCct5+yk2ZAkw7RdZaj4KWU=;
-        b=kI9HkivEsi9XLFsLmhRr2AI2QImiZMUZNAvULH7efTvoTGbVQwnJKye5c4Gq8oUxCl
-         4qYcADdPBatqbILQuDb8UwFniAQKys8hcsAohcw60LJ4Rz9D/FcQ2GozeeUMWQfgd+YI
-         /Norvxq54rrhrZMZe1Vc3cm60A5dFPoYiPfBVL90/dsRWOuqu6bja5MhIeqPFi4zm25o
-         1pqPx+mrpOEZUM0HZsrQStij+d/lb24k8ZgcOB3nw0PxtvkOGo/x3PkMhYkZJib7eb9R
-         4Ag7diQ2lRinKjpvs7TMPKhMBjrogpINDNtGjGJMxV4Sm2wcF+sb+Wc2ggSclMwzM98Q
-         qmSg==
+        bh=6jyEkPF9QjFxAuLX7joeVpRJHHAcWObix5FAN064Z/Y=;
+        b=NIppZdlgCAPQoL9WttB6AfgdCQRal5wFr5AQEERkH6DIce3Ho5ioUFe8AsyN6mXF9X
+         WTTLdt+yXULuDEsYVloplBF5n/DkRxynvvEDu8QzFlq983/ccKEtRGDoYtIGDzuhDQGy
+         szamzdSZUWmm0H2dVvJyYZ2SAxK2uruAjLFEeTSx//uFzCfaqKK9B8LjdX2yIvIgFQw/
+         opc6X+p+Qz/vZykF3mkz59Wkj+ik/zH4gU6pkTwM6mRUq9BCOmXeuPQPy5IIZlEY3Gbp
+         OnF1+6TLj7aJtaC9kVDZRK7DgVMt72mQKzvVKHsXAPYlL707BaFhHimeyEAaI0zC6f0s
+         8FRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788610166; x=1789214966;
+        d=1e100.net; s=20251104; t=1788611107; x=1789215907;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7nNJORH3YGlZxLWwixVhbCct5+yk2ZAkw7RdZaj4KWU=;
-        b=MpAB3KmWJpvhsyDCFqwgFc83HsC7HeGP/LSkoJFxZl/YdBRJ8f7OwdN23d47ToRRTS
-         OUJhl1ninocR1iXMth2dYUCWIJHFOckzQHfkTVUPY4CO36F6pTSsrGiD4nkSZBTXkh73
-         nzClFA2/qGs8U9cGRmPLk6pDIAKWE9eB++hQZ/VptwxBwAKgqI90BYlyyclRFMmsdp/r
-         QOPRdrVQgEvbDxn0AtUlziQaTYtLGmr+kOm3C/hJ6aa9D/K1u+wtMQyPLU/ERfOYysHB
-         hW2vEeKhFu4BVccBiAK+/NXy4WLuwebifIfrTeEt1ppEr9sFqxAgJinsoCe3kmjtiFiw
-         eP1g==
-X-Forwarded-Encrypted: i=1; AKwUvBw9Bf57xIQwJxpjFLZteVdkk9KDWXYW2dnc3C9W3ddf6emN6MR6AowIYhACw5Do4X6gxO1q5RUL70mLwAE5Uq2jfQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lQrfl41PQrxewLBDOigHeADEPkRQIo1O7O3oGcl8kCydi1jzmd
-	taQTijp5+gY1wMzFJxgvDP7Sf2iY3y3yfKPB48m/TrJHA2X9GN9WKPzC
-X-Gm-Gg: AYBFou0bD8Vo7/IOji+msSZ/4DzNl85Nq7wH7Vs4tQ46bA+cKpyEwKaDaVyRVDPbM04
-	6nDw+e7Ae6WJ0vzsi3qaq6+t5Qxl2ahbeorXJRGasuXaVhZUFi1ASGmW2JFI3Ocs8HXNu/ihnPO
-	H06s7LtOguhLm/0zKnOsp6fTOqhg0ffGZ78QX7INsswKQv4M10JFvoR7eNw7D3eoPsUwg7mojBP
-	jWnXY308sy78o3Zme07fHnjaBcrsDZRDpt5busR9oqYla/A8Apn3zR574ITW7M91Djs8D0f4OLx
-	aYo6NMNIwatge8icFzjD0x9OU63j51fIwwuZDPfoN86sN5Winfi0njimUz7fafpPgb/ATHQWUYW
-	k5D6rI3rRhOqn7i5yc2SoKDkl6BdiuNVU6PExmC6ZbwazvekPuLusMYmePx1IN+it+blGjtPGZV
-	1D/ZHdRkInER1DkPQI12bnBLYuKuPaSlklq2JKiVnDCmRPdRG5aA+tjtideXsRGGSLK/PaBHPyL
-	q4oC9QidSJ803I1hzUGXWuXn1PLT5K7P7nSBAmJ33xmBHkgT9ra//M816rowk4afBETu80A0Gs/
-	KKV4H7vU0eE=
-X-Received: by 2002:a17:90b:3d48:b0:396:5f7f:52f5 with SMTP id 98e67ed59e1d1-39b260e13e0mr17911289a91.3.1788610165515;
-        Sat, 05 Sep 2026 05:09:25 -0700 (PDT)
-Received: from nickhuang (2001-b400-e2da-caae-e718-2aad-4c92-5b14.emome-ip6.hinet.net. [2001:b400:e2da:caae:e718:2aad:4c92:5b14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08d086adsm16487288a91.15.2026.09.05.05.09.22
+        bh=6jyEkPF9QjFxAuLX7joeVpRJHHAcWObix5FAN064Z/Y=;
+        b=X1XFRx4vMKK3b77HWMyRwhBJcNYZSCRvCIrZcRyDIr9dkHdqJ9yTqpZKDZ6vQXfAFW
+         KpBIerzWiNONd6F1AqZHguQfJKeKpb0OA1vTj+9yc7Ug7ubVpzAqg7CfSsaG/Ys4mcz9
+         DRDfbvdLy5KzHILtZ2a/EYiqEjKGL4FqlaL8LWZqx5dx7fw9lH4ojI9Q66h/Yf6POcWR
+         6Yo82JOgtfH94DpEy3iuZctzKrKZ/mPPdKbDy1ygNW0tM0i4AbAWXvW4hoCGeg5PEF+Y
+         7kLzU522jq/yBerMZUJW3Lg0SM/wEOQeJ3L9RieccqeoorIUw+uDw3dWrsqq8eR7gbVs
+         Itpw==
+X-Forwarded-Encrypted: i=1; AKwUvBzaXEiQrHKx0tgTBQChv1m6f6til3uZowqTEvXTvrNrvGWIHZadhkIpu0wUWemf74Lz06MQNc8mrC+VnPldvqahwg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nlo+8psVipB3QwC/X8Djom3IZ/Oe5F+Pe26M2CfmYNa76rgGQi
+	n+lk/yPi9zBwfoYd7BGUco7ju3TarjN7xHAMccpJzD04xc4AMMGpEH9A
+X-Gm-Gg: AYBFou0KTrak+HwWGoHUxuR0vrMQBjoWiV9r+OEFv6L8bxGMDU18P/+ogfqPmeRwncM
+	Sv1pFPpVmMallWeisb/GgxxFEqSi7vsoViFzyDD5v8xHl9GtW15bAky/AFgwn7lir4ajlB3ieZQ
+	ABPMnVB+4C2FLMaJTYibhw77IgWbIk8ggZ4vs44x0mV3Pw3jySJmH//o3Dcb+D1pTOl3F3YDyGY
+	g4fiTRnz+V2gf88/U7+921OxaCPR8dlPZ8TKdScIRqeZo72kYX4edvgPbffb7LeA2YmwaefVuDn
+	+X9xtm79SJQzPvgp9LyMxjAfLPaZn4p8oBkNgS3c8G3aaaAlgnWyyEq23uA7L5nqzEbhibt1DQx
+	ZrW7vAGlpBCVf17pYX4cNXk6qckJHpvVqL0yg0Brf3INOyePYzHMFEspate8uJl4qh/7XHVot8r
+	EwBhIIddzll8OZcmLtN0qwJBL5hK/jOyIan3xZGQmetVndMQChkuqXYylN9pWdf2YrRXIhN6mc+
+	9Zh/0l1FWl7F9H/qZ00Ht2NiQaoWk3HpwMzpHrPNUgXQXJM3v8e0cxVn+gNHZ9Lmf/lfQX1/vdj
+	cXhFn3Qh7Mh8vOihWvK1CoHh+gHPSKZPP9x8gdAIF2Tl/MkFmnerN/zNPHelEIKr
+X-Received: by 2002:a05:6000:41db:b0:485:82f9:44b4 with SMTP id ffacd0b85a97d-4858709c044mr15925496f8f.7.1788611106580;
+        Sat, 05 Sep 2026 05:25:06 -0700 (PDT)
+Received: from unknown748F3CBA5068 (dynamic-2a02-3100-a4eb-3001-c06d-af27-9fa2-ea53.310.pool.telefonica.de. [2a02:3100:a4eb:3001:c06d:af27:9fa2:ea53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48588392b3esm15549562f8f.12.2026.09.05.05.25.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2026 05:09:25 -0700 (PDT)
-Date: Sat, 5 Sep 2026 12:09:21 +0000
-From: Nick Huang <sef1548@gmail.com>
-To: Hemanth Selam <hemanth.selam@gmail.com>
-Cc: Lee Jones <lee@kernel.org>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-kernel@vger.kernel.org, mfd@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] mfd: fix typos in comments
-Message-ID: <apwGcRLAYLPKFuZK@nickhuang>
-References: <20260904122834.33723-1-hemanth.selam@gmail.com>
+        Sat, 05 Sep 2026 05:25:05 -0700 (PDT)
+Date: Sat, 5 Sep 2026 14:25:02 +0200
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Steve Wahl <steve.wahl@hpe.com>, 
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>, Mike Travis <mike.travis@hpe.com>, 
+	Tony Luck <tony.luck@intel.com>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Tony Lindgren <tony@atomide.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Linux-OMAP <linux-omap@vger.kernel.org>, 
+	Dominik Brodowski <linux@dominikbrodowski.net>, Damien Le Moal <dlemoal@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, linux-ide@vger.kernel.org, 
+	Ethan Nelson-Moore <enelsonmoore@gmail.com>, Michael Schmitz <schmitzmic@gmail.com>, 
+	Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH v2 0/9] docs: kernel-parameters: Remove ten entries for
+ parameters that no longer exist
+Message-ID: <apwIbDr0kyquxVoL@gmail.com>
+References: <20260905094649.41996-1-kmehltretter@gmail.com>
+ <693303da-350b-4295-b008-6fee8bb4c591@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -81,288 +92,148 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260904122834.33723-1-hemanth.selam@gmail.com>
+In-Reply-To: <693303da-350b-4295-b008-6fee8bb4c591@app.fastmail.com>
 
-On Fri, Sep 04, 2026 at 05:58:28PM +0530, Hemanth Selam wrote:
-> Fix typos in comments, reported by scripts/checkpatch.pl using the
-> misspelling list in scripts/spelling.txt.  Only touches comments, no code
-> changes.
+On Sat, Sep 05, 2026 at 12:12:51PM +0100, Arnd Bergmann wrote:
+> On Sat, Sep 5, 2026, at 11:46, Karl Mehltretter wrote:
+> > kernel-parameters.txt still documents ten boot parameters whose parsing
+> > code was removed with the drivers or platforms that used them, one of
+> > them (atarimouse=) since before the git history. One patch per
+> > parameter, each with a Fixes: tag for the commit that removed the
+> > parser, so the maintainers of that area are on their own patch only;
+> > the two pata_legacy module parameters share the last one. Each entry
+> > was checked with git grep for its __setup(), early_param() and
+> > module_param() handler and with git log -S for the removing commit.
 > 
-> Assisted-by: Cursor:claude-opus-5
-> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
-> ---
->  drivers/mfd/88pm800.c                |  2 +-
->  drivers/mfd/kempld-core.c            |  2 +-
->  drivers/mfd/max8998.c                |  2 +-
->  drivers/mfd/rave-sp.c                |  6 +++---
->  drivers/mfd/si476x-i2c.c             |  2 +-
->  include/linux/mfd/da9063/registers.h |  2 +-
->  include/linux/mfd/db8500-prcmu.h     | 32 ++++++++++++++--------------
->  include/linux/mfd/lp8788.h           |  2 +-
->  include/linux/mfd/max8998.h          |  2 +-
->  include/linux/mfd/palmas.h           |  2 +-
->  include/linux/mfd/rohm-bd71828.h     |  2 +-
->  include/linux/mfd/samsung/core.h     |  2 +-
->  include/linux/mfd/si476x-core.h      |  2 +-
->  include/linux/mfd/twl.h              |  2 +-
->  14 files changed, 31 insertions(+), 31 deletions(-)
+> These all look good to me,
 > 
-> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
-> index e9941da58b18..aac630322b3c 100644
-> --- a/drivers/mfd/88pm800.c
-> +++ b/drivers/mfd/88pm800.c
-> @@ -275,7 +275,7 @@ static int device_gpadc_init(struct pm80x_chip *chip,
->  		goto out;
->  
->  	/*
-> -	 * the defult of PM800 is GPADC operates at 100Ks/s rate
-> +	 * the default of PM800 is GPADC operates at 100Ks/s rate
->  	 * and Number of GPADC slots with active current bias prior
->  	 * to GPADC sampling = 1 slot for all GPADCs set for
->  	 * Temprature mesurmants
-> diff --git a/drivers/mfd/kempld-core.c b/drivers/mfd/kempld-core.c
-> index b64729918dfd..47062f876e5d 100644
-> --- a/drivers/mfd/kempld-core.c
-> +++ b/drivers/mfd/kempld-core.c
-> @@ -37,7 +37,7 @@ static void kempld_get_hardware_mutex(struct kempld_device_data *pld)
->  
->  static void kempld_release_hardware_mutex(struct kempld_device_data *pld)
->  {
-> -	/* The harware mutex is released when 1 is written to the mutex bit. */
-> +	/* The hardware mutex is released when 1 is written to the mutex bit. */
->  	iowrite8(KEMPLD_MUTEX_KEY, pld->io_index);
->  }
->  
-> diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
-> index eb13bbaeda55..5032eab05bb4 100644
-> --- a/drivers/mfd/max8998.c
-> +++ b/drivers/mfd/max8998.c
-> @@ -146,7 +146,7 @@ static struct max8998_platform_data *max8998_i2c_parse_dt_pdata(
->  
->  	/*
->  	 * ToDo: the 'wakeup' member in the platform data is more of a linux
-> -	 * specfic information. Hence, there is no binding for that yet and
-> +	 * specific information. Hence, there is no binding for that yet and
->  	 * not parsed here.
->  	 */
->  	return pd;
-> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-> index 05d26d92df03..53c57bafea8f 100644
-> --- a/drivers/mfd/rave-sp.c
-> +++ b/drivers/mfd/rave-sp.c
-> @@ -331,7 +331,7 @@ static u8 rave_sp_reply_code(u8 command)
->  		return command + 0x20;
->  	case 0xE0 ... 0xEF:
->  		/*
-> -		 * Events emitted by all versions of the firmare use
-> +		 * Events emitted by all versions of the firmware use
->  		 * least significant bit to get an ACK code
->  		 */
->  		return command | 0x01;
-> @@ -544,7 +544,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
->  				 * NOTE: The above means that only the
->  				 * frame started by third SOF, sent
->  				 * after this one will have a chance
-> -				 * to get throught.
-> +				 * to get through.
->  				 */
->  				goto reset_framer;
->  			case RAVE_SP_DLE:
-> @@ -595,7 +595,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
->  
->  	/*
->  	 * The only way to get out of the above loop and end up here
-> -	 * is throught consuming all of the supplied data, so here we
-> +	 * is through consuming all of the supplied data, so here we
->  	 * report that we processed it all.
->  	 */
->  	return size;
-> diff --git a/drivers/mfd/si476x-i2c.c b/drivers/mfd/si476x-i2c.c
-> index 9bce720a0a08..6351aef2d3bb 100644
-> --- a/drivers/mfd/si476x-i2c.c
-> +++ b/drivers/mfd/si476x-i2c.c
-> @@ -222,7 +222,7 @@ int si476x_core_stop(struct si476x_core *core, bool soft)
->  	atomic_set(&core->is_alive, 0);
->  
->  	if (soft) {
-> -		/* TODO: This probably shoud be a configurable option,
-> +		/* TODO: This probably should be a configurable option,
->  		 * so it is possible to have the chips keep their
->  		 * oscillators running
->  		 */
-> diff --git a/include/linux/mfd/da9063/registers.h b/include/linux/mfd/da9063/registers.h
-> index 7b8364bd08a0..376c5d330599 100644
-> --- a/include/linux/mfd/da9063/registers.h
-> +++ b/include/linux/mfd/da9063/registers.h
-> @@ -14,7 +14,7 @@
->  #define DA9063_I2C_PAGE_SEL_SHIFT	1
->  #define	DA9063_EVENT_REG_NUM		4
->  
-> -/* Page selection I2C or SPI always in the begining of any page. */
-> +/* Page selection I2C or SPI always in the beginning of any page. */
->  /* Page 0 : I2C access 0x000 - 0x0FF	SPI access 0x000 - 0x07F */
->  /* Page 1 :				SPI access 0x080 - 0x0FF */
->  /* Page 2 : I2C access 0x100 - 0x1FF	SPI access 0x100 - 0x17F */
-> diff --git a/include/linux/mfd/db8500-prcmu.h b/include/linux/mfd/db8500-prcmu.h
-> index c939c9a1170a..87a28c4f1d81 100644
-> --- a/include/linux/mfd/db8500-prcmu.h
-> +++ b/include/linux/mfd/db8500-prcmu.h
-> @@ -337,31 +337,31 @@ enum sia_mmdsp_stat {
->   * @SYSCLKOK_ERR: The SYSCLK is not available in the given time
->   * @BOOT_ERR: Romcode has not validated the XP70 self reset in the given time
->   * @ROMCODESAVECONTEXT: The Romcode didn.t correctly save it secure context
-> - * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transfered
-> + * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transferred
->   *          through I2C has not been correctly executed in the given time
-> - * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transfered
-> + * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transferred
->   *             through I2C has not been correctly executed in the given time
-> - * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transfered through
-> + * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transferred through
->   *                     I2C has not been correctly executed in the given time
-> - * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transfered
-> + * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transferred
->   *             through I2C has not been correctly executed in the given time
-> - * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transfered through
-> + * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transferred through
->   *                     I2C has not been correctly executed in the given time
-> - * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transfered
-> + * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transferred
->   *             through I2C has not been correctly executed in the given time
-> - * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transfered through
-> + * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transferred through
->   *                     I2C has not been correctly executed in the given time
-> - * @VSAFEHPVALTO_ERR: The SAFE high power supply value transfered through I2C
-> + * @VSAFEHPVALTO_ERR: The SAFE high power supply value transferred through I2C
->   *                         has not been correctly executed in the given time
-> - * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transfered through I2C has
-> + * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transferred through I2C has
->   *                             not been correctly executed in the given time
-> - * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transfered through I2C has
-> + * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transferred through I2C has
->   *                             not been correctly executed in the given time
-> - * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transfered through
-> + * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transferred through
->   *                     I2C has not been correctly executed in the given time
-> - * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transfered through
-> + * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transferred through
->   *                     I2C has not been correctly executed in the given time
-> - * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transfered
-> + * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transferred
->   *             through I2C has not been correctly executed in the given time
->   * @CURAPPWRSTISNOTBOOT:Generated when Arm want to do power state transition
->   *             ApBoot to ApExecute but the power current state is not Apboot
-> @@ -376,11 +376,11 @@ enum sia_mmdsp_stat {
->   *                    been correctly executed in the given time
->   * @ARMREGU2VALTO_ERR: The ArmRegu2 value transferred through I2C has not
->   *                    been correctly executed in the given time
-> - * @VAPEREGUVALTO_ERR: The VApeRegu value transfered through I2C has not
-> + * @VAPEREGUVALTO_ERR: The VApeRegu value transferred through I2C has not
->   *                    been correctly executed in the given time
-> - * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transfered through I2C has not
-> + * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transferred through I2C has not
->   *                      been correctly executed in the given time
-> - * @VMODREGUVALTO_ERR: The VModemRegu value transfered through I2C has not
-> + * @VMODREGUVALTO_ERR: The VModemRegu value transferred through I2C has not
->   *                    been correctly executed in the given time
->   */
->  enum mbox_to_arm_err {
-> diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
-> index fd17bec2a33e..e8c50bd38a8a 100644
-> --- a/include/linux/mfd/lp8788.h
-> +++ b/include/linux/mfd/lp8788.h
-> @@ -34,7 +34,7 @@
->  #define LP8788_ALM_IRQ		"ALARM_IRQ"
->  
->  enum lp8788_int_id {
-> -	/* interrup register 1 : Addr 00h */
-> +	/* interrupt register 1 : Addr 00h */
->  	LP8788_INT_TSDL,
->  	LP8788_INT_TSDH,
->  	LP8788_INT_UVLO,
-> diff --git a/include/linux/mfd/max8998.h b/include/linux/mfd/max8998.h
-> index 5473f1983e31..ad2ad24412fb 100644
-> --- a/include/linux/mfd/max8998.h
-> +++ b/include/linux/mfd/max8998.h
-> @@ -45,7 +45,7 @@ enum {
->  /**
->   * max8998_regulator_data - regulator data
->   * @id: regulator id
-> - * @initdata: regulator init data (contraints, supplies, ...)
-> + * @initdata: regulator init data (constraints, supplies, ...)
->   * @reg_node: DT node of regulator (unused on non-DT platforms)
->   */
->  struct max8998_regulator_data {
-> diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
-> index dabcc0dea802..1d872363820a 100644
-> --- a/include/linux/mfd/palmas.h
-> +++ b/include/linux/mfd/palmas.h
-> @@ -251,7 +251,7 @@ enum tps65917_regulators {
->  	TPS65917_NUM_REGS,
->  };
->  
-> -/* External controll signal name */
-> +/* External control signal name */
->  enum {
->  	PALMAS_EXT_CONTROL_ENABLE1      = 0x1,
->  	PALMAS_EXT_CONTROL_ENABLE2      = 0x2,
-> diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-> index 39fe275a8117..ea9b1a8f495f 100644
-> --- a/include/linux/mfd/rohm-bd71828.h
-> +++ b/include/linux/mfd/rohm-bd71828.h
-> @@ -186,7 +186,7 @@ enum {
->  #define BD71828_REG_RTC_ALM2		0x63
->  #define BD71828_REG_RTC_START		BD71828_REG_RTC_SEC
->  
-> -/* Charger/Battey */
-> +/* Charger/Battery */
->  #define BD71828_REG_CHG_STATE		0x65
->  #define BD71828_REG_CHG_FULL		0xd2
->  #define BD71828_REG_CHG_EN		0x6F
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index 6191f409de94..e489ca0d55ed 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -106,7 +106,7 @@ struct sec_platform_data {
->  /**
->   * sec_regulator_data - regulator data
->   * @id: regulator id
-> - * @initdata: regulator init data (contraints, supplies, ...)
-> + * @initdata: regulator init data (constraints, supplies, ...)
->   */
->  struct sec_regulator_data {
->  	int				id;
-> diff --git a/include/linux/mfd/si476x-core.h b/include/linux/mfd/si476x-core.h
-> index d9e3a322134c..40866d7162c9 100644
-> --- a/include/linux/mfd/si476x-core.h
-> +++ b/include/linux/mfd/si476x-core.h
-> @@ -97,7 +97,7 @@ enum si476x_power_state {
->   * @command: Wait queue for wainting on the command comapletion.
->   * @cts: Clear To Send flag set upon receiving first status with CTS
->   * set.
-> - * @tuning: Wait queue used for wainting for tune/seek comand
-> + * @tuning: Wait queue used for wainting for tune/seek command
->   * completion.
->   * @stc: Similar to @cts, but for the STC bit of the status value.
->   * @power_up_parameters: Parameters used as argument for POWER_UP
-> diff --git a/include/linux/mfd/twl.h b/include/linux/mfd/twl.h
-> index b31e07fa4d51..238d9dcefc35 100644
-> --- a/include/linux/mfd/twl.h
-> +++ b/include/linux/mfd/twl.h
-> @@ -739,7 +739,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base);
->  #define TWL4030_REG_VUSB3V1	19
->  
->  /* TWL6030 SMPS/LDO's */
-> -/* EXTERNAL dc-to-dc buck convertor controllable via SR */
-> +/* EXTERNAL dc-to-dc buck converter controllable via SR */
->  #define TWL6030_REG_VDD1	30
->  #define TWL6030_REG_VDD2	31
->  #define TWL6030_REG_VDD3	32
-> -- 
-> 2.48.1
->
-Hi Hemanth 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> If you have a script that you can easily run on another tree,
+> could you send me the script or the output for this one?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=board-remove
+> 
 
-LGTM 
+Thanks for the review! Yes, here is the script, improved a bit since the
+series was made.
 
-Acked-by: Nick Huang <sef1548@gmail.com>
+It does not show anything on your branch though. board-remove at
+c12d647b0229 removes 40 registrations, none of them a documented
+parameter that loses its parser. The three documented names among them
+(debug, irq, noalign) are still registered by other code.
+
+Run it with
+    check-kernel-parameters.py -C ~/soc --diff 8d3ae59288f1 board-remove
+
+Its report mode turned up a second batch of stale entries on mainline
+(r128=, mga=, i810=, tdfx=, smart2=, shapers=, hd=, goldfish, js= and a
+few more), which I might send later.
+
+Thanks
+Karl
+
+The script:
+
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0
+"""Find documented boot parameters that nothing parses any more.
+
+Reads Documentation/admin-guide/kernel-parameters.txt at a git revision and
+looks for the registration of every documented name in the code at the same
+revision: __setup(), early_param(), core_param(), module_param() and friends.
+Names without a registration are printed together with whether the name at
+least still appears as a string somewhere (cmdline_find_option() style
+parsing), so a human can decide. A parameter that was only ever parsed by
+hand, without any of the macros, is invisible in both modes.
+
+Usage:
+    check-kernel-parameters.py [-C tree] [REV]           report for one revision
+    check-kernel-parameters.py [-C tree] --diff A B      names parsed at A but not at B
+
+Runs entirely on git objects (git grep / git show), no checkout needed.
+"""
+import argparse, re, subprocess, sys
+
+REG = r'(__setup|__setup_param|early_param|early_param_on_off|core_param|core_param_unsafe|late_param|module_param|module_param_unsafe|module_param_named|module_param_named_unsafe|module_param_cb|module_param_cb_unsafe|module_param_call|device_param_cb|module_param_string|module_param_array|module_param_array_named|module_param_hw|module_param_hw_named|module_param_hw_array|__core_param_cb|torture_param|param_check_\w+)\s*\('
+LEGEND_STOP = 'Kernel parameters'   # the tag legend ends at this heading, the parameter list follows
+
+def git(tree, *a):
+    r = subprocess.run(['git', '-C', tree, *a], capture_output=True, text=True, errors='replace')
+    if r.returncode and 'grep' not in a[0]:
+        sys.exit(f'git {a[0]} failed: {r.stderr.strip()}')
+    return r.stdout
+
+def documented(tree, rev):
+    """Return {name: line} for every parameter entry in kernel-parameters.txt at rev."""
+    txt = git(tree, 'show', f'{rev}:Documentation/admin-guide/kernel-parameters.txt')
+    names = {}
+    in_list = False
+    for n, line in enumerate(txt.split('\n'), 1):
+        if not in_list:
+            if line.strip() == LEGEND_STOP: in_list = True
+            continue
+        m = re.match(r'^\t([A-Za-z][A-Za-z0-9_.-]*)(?:=|\s|$)', line)
+        if not m: continue
+        name = m.group(1)
+        if name.isupper() and '.' not in name: continue     # a stray tag, not a parameter
+        names.setdefault(name, n)
+    return names
+
+def registered(tree, rev):
+    """Return the set of names registered by the parameter macros at rev."""
+    out = git(tree, 'grep', '-h', '-E', REG, rev, '--', ':!Documentation', ':!tools', ':!scripts')
+    names = set()
+    for line in out.split('\n'):
+        for m in re.finditer(REG + r'\s*"?([A-Za-z0-9_.-]+)', line):
+            name = m.group(2)
+            if m.group(1) == 'torture_param':     # torture_param(type, name, init, msg): the type comes first
+                mm = re.search(r'torture_param\s*\(\s*\w+\s*,\s*([A-Za-z0-9_]+)', line)
+                if mm: name = mm.group(1)
+            names.add(name.rstrip('='))
+    return names
+
+def string_hits(tree, rev, name):
+    """Files at rev that contain the name as a quoted string (manual command line parsing);
+    a dotted name is looked up whole first (arm64.nobti style tables), then by its last part."""
+    for probe in ([name, name.rsplit('.', 1)[-1]] if '.' in name else [name]):
+        out = git(tree, 'grep', '-l', '-F', f'"{probe}', rev, '--', ':!Documentation', ':!tools', ':!scripts')
+        hits = [l.split(':', 1)[1] for l in out.split('\n') if l]
+        if hits: return hits
+    return []
+
+def parsed_at(tree, rev):
+    docs = documented(tree, rev)
+    regs = registered(tree, rev)
+    def ok(name):
+        if name in regs: return True
+        base = name.rsplit('.', 1)[-1]          # module.param= is registered as module_param(param)
+        return base in regs
+    return docs, {n for n in docs if ok(n)}
+
+def report(tree, rev):
+    docs, ok = parsed_at(tree, rev)
+    missing = sorted(n for n in docs if n not in ok)
+    print(f'{len(docs)} documented parameters at {rev}, {len(missing)} without a registration macro:')
+    for n in missing:
+        hits = string_hits(tree, rev, n)
+        tag = f'string appears in {hits[0]}' + (f' (+{len(hits)-1})' if len(hits) > 1 else '') if hits else 'NOT FOUND anywhere'
+        print(f'  {n:40} kernel-parameters.txt:{docs[n]:<6} {tag}')
+
+def diff(tree, a, b):
+    docs_a, ok_a = parsed_at(tree, a)
+    docs_b, ok_b = parsed_at(tree, b)
+    lost = sorted(n for n in ok_a if n in docs_b and n not in ok_b)
+    print(f'documented parameters parsed at {a} but no longer at {b}: {len(lost)}')
+    for n in lost:
+        hits = string_hits(tree, b, n)
+        print(f'  {n:40} kernel-parameters.txt:{docs_b[n]:<6} ' + (f'string still in {hits[0]}' if hits else 'no string left either'))
+
+if __name__ == '__main__':
+    ap = argparse.ArgumentParser()
+    ap.add_argument('-C', dest='tree', default='.')
+    ap.add_argument('--diff', nargs=2, metavar=('A', 'B'))
+    ap.add_argument('rev', nargs='?', default='HEAD')
+    a = ap.parse_args()
+    if a.diff: diff(a.tree, *a.diff)
+    else: report(a.tree, a.rev)
