@@ -1,148 +1,132 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42663E44F0
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  5 Sep 2026 07:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361BF3DC4B1;
+	Sat,  5 Sep 2026 07:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788591863; cv=none; b=OPtWsoCjMExDDR9N9w2M+nJNdY1E6U/SoM2O8SfssDnw69J2zCpslfk25ngwOvCVS/OstRMXMrxYUhzmRAqdkcL0MJVYtE5RyAly7hf4KEbw7yIc5OlJiCqdxJD1A7L7kqLpcW4ecqeLQvlLk6E5tuKm+QirlA0aPPQrqCNwzp4=
+	t=1788592769; cv=none; b=gCcbct0WkPQRs1d8x/7fbREveTXWwJhyLzGNr8YOfd+WfbCnLDt2Tgb//HL7yC3jJi9PlBsRQVWcaaAsIAesOKoUvm06PzgnHc4tR9GKUHjTrlUtfyfHdXKQ597xZEg/9Qto6s4fDwkI7XieQkba17H2jgHfsQwj/LKkjQ9O35M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788591863; c=relaxed/simple;
-	bh=pPxPTNpM/nAKvWxY9H5AEsCMADngEkeEEOle128cyr0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pz4fcniDFCys21hcxKlBSPHItcrBwpGPduJSAT/Z0u5x5Jao7yEkww60APIOf8Vq0TESn3CBqG5FFrXdFYU/x2s8rOg2EJJaETFS7jTD6aceHLxHaKnWwwIMyH+kRfIm5ebvPRr387vTDqIyiI+G4RyyZL4amhziIEiRLmuexzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ufys3Hf4; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788592769; c=relaxed/simple;
+	bh=3PIqgsYluHYoEDKXs0rmNlSMTkVUqD4Xp612W0nZD/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7ZlUZDN9ZX5WjvHxi85aRi/QIzHa7fdWsPV4GAtl+rtNt+Ss8VaDYwpUigTZFPo8G/i6vSmyzuZYXRZ6vbTMc/2SR8VjLOdc4AiLqMTn+w6b4f/P7cFc4d5Ca7BAZJV4VYjBi5fhVlZkgAo3dOJWE76SGUNob29O/f0Gy9rtqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BB5tpRoj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ufys3Hf4"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-48589798dbbso1378210f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Sep 2026 00:04:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788591851; x=1789196651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=r0TEPPXgHP97qr/cFTbi2WII06m9YnzLfHQVRRK4PYs=;
-        b=Ufys3Hf40M0EzhImnoudR3WSMUwBOrbN7Taboome5GjqVtxwI5tiMndrMjUZtrzb0u
-         tK6f+gTpLgllMJq0uTRIdVUM2ba7tKqF+hT6HsioTq1CslyQk1sgjTW7fogCc0Aavtrn
-         B28WJP153FbCtnjpSgK4GIYtwAAKNOI8b3qfrR8lBeoGtsPx2WrNMM+iS21NEvcrdJ+Y
-         koxzHGYZxc+KDRfoCxwoW3zmi7MOUoLxcLyZNLQR5L8Q4I+VMXuUOVbI5gKB2VgJyFXw
-         0+LanghEEKkSJWdgoQB2B4+HX5qgLUjnIKBD8aqa7MWY8nQgLLnNj5vzsTFRCVEtpd2r
-         C7vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788591851; x=1789196651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=r0TEPPXgHP97qr/cFTbi2WII06m9YnzLfHQVRRK4PYs=;
-        b=pezN6Tbhhi3IObcXRQr3XIjW+O002g6QUA6q3ca/T9Smifd7VdcL1iMqJH5PUAXs9u
-         CIb+CLs17qxak1IVwp5dJr8zQ6BCyEEiWXExg1lIMaA2uUHdLvGlKSAUofrnJT1hM/7s
-         oQlro+Zfsl16yRnavC3Enuwf/8+SOvU1jJYXuuUt0W/F+4tpACtyT3XAkklR+ScNzvAB
-         mkTYNgqN8o1Jw/hvJaIJYsvI5aNQW9d1ykUPXAC2iXRtfzcXCvrmdyPxHOqBzQ8fFR/v
-         TDGT/hxsHXaEA3ZSAq9sYs1a9cfRXy32uQ0h4x1LFu/W/0l3ykZ1IuczbChLm+Q/xoOJ
-         UXYA==
-X-Forwarded-Encrypted: i=1; AKwUvBxH//L/xGVuSZy+l/nP3zpdWbcF5+loVk8SIj1GqRsyO++ld2hSXZcfd2GwFfuasqXrDhtj3wuGjaA5oQSRXaLmOw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nlTnGdig0RYpULzZ+kew388G+Z9CxrdJoQoumWIIqCsuUVeSs1
-	x/u1EHHkknfKQGl8QylIAxl+P0dCDw+ghygI8Ko3kt1CUw7Hd58peESV
-X-Gm-Gg: AYBFou3CGLzuY9/8KuuxNnBM8sM4ySLPe6vvvflNtNelD26bNcy3JC4lk/9MhV7ctRV
-	5a8b2pz56jPlj90tbtdxVp5vgr6TjAsBV4aLeBRKRVcqZJVtZx/X7KJRTpUWovT9zjKgu3bHlf3
-	Q+Fndyjw4S1JzuWAKhix5man5BghQ2S0HklWhgIvTf2+B1cWpiEBcPsU7mBz9fZ2LoFL8cur3eB
-	k/RvPWrNSyXcjowJR6WzOXLMJtCr6/BgX3ypv5Q97X05MqJb3ob/B8VGQcllO0/paVlPwAqjTHr
-	C1E3TpzmTh4uPYLWC8H8b6fk5kVT9oqU95RgIbMtQjWSVRpGErQCwRictg+/LZH8DiY+kezDJ5j
-	gsRiQfTvQU5ffwjQasvLodZA3oYIDPRAXgdD4owLj+kUIzpZZrnln6vAQah/l2gQHpjWWyS1eaW
-	Jw/EiPXbMaq3FZScFqud1Jn4pTfB8/pFy5XSY19JRZiTycfZnnD4IVa+A1ygJanvvTHQUJ96n41
-	z8i1D19X3A1RSNBdrt0gULoz6BWtNYn9wou35M9FoQsd6w4ScYOB2f2B8D0SP2LFWSb42KeWMrw
-	A+4rc+JNRewtRhm+ajxvEe+pofi1v+ASUhLawy2hQWEkSlBLilt9eFOdAKp3w2wil0aGBnGw
-X-Received: by 2002:a05:6000:24c4:b0:485:8a46:7053 with SMTP id ffacd0b85a97d-4858a467176mr9452131f8f.37.1788591850939;
-        Sat, 05 Sep 2026 00:04:10 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3100-a4eb-3001-c06d-af27-9fa2-ea53.310.pool.telefonica.de. [2a02:3100:a4eb:3001:c06d:af27:9fa2:ea53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485885bfdf6sm12011719f8f.34.2026.09.05.00.04.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 05 Sep 2026 00:04:10 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Steve Wahl <steve.wahl@hpe.com>,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tony Lindgren <tony@atomide.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-omap@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org
-Subject: [PATCH 9/9] docs: kernel-parameters: Drop the pata_legacy.qdi and pata_legacy.winbond entries
-Date: Sat,  5 Sep 2026 09:03:47 +0200
-Message-Id: <20260905070347.25902-10-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260905070347.25902-1-kmehltretter@gmail.com>
-References: <20260905070347.25902-1-kmehltretter@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BB5tpRoj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DC6C1F00A3D;
+	Sat,  5 Sep 2026 07:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788592767;
+	bh=M3vzONeF2cELGBH8NfmZxA7aI1d2aZ6r1LZ3FVlUKZc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BB5tpRojq//FWiUmBdhsu0DqUMqRWMU1MSuOYDiQ8eVM20T9O9MJ4paq0sGjG0C/D
+	 MfBxMCMedfy2MglaA2WZN1xEiNzZqIT3FGUlYshXeHyi1f9oKMS4t0Y8bfXaMgDL26
+	 jbeNxVPMrtSF1fMwwpRFpjyjnhczLkYZihxrHnrEK6NSZ7qnr+zu4R3vEEn9jDHUay
+	 j6ca4J7bRvxCP72wHvsn2WG35WKkdYxUNoiAGWctmgx2XFQQN23QKtCpqSZShIPjff
+	 2ZU+0N/tsHkNmKyKIC5pNnil9uQkwQy3v/e3JOsh+voAVgVKn2Tmmr7g4nhaLsZiiE
+	 YmAmJaYF8UzZQ==
+Message-ID: <9969f6d6-71ee-4c22-9b37-a0f6bac97169@kernel.org>
+Date: Sat, 5 Sep 2026 09:19:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] usb: dwc3: Add Exynos8855 to the generic platform
+ driver
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>, peter.griffin@linaro.org,
+ alim.akhtar@samsung.com, gregkh@linuxfoundation.org, robh@kernel.org,
+ conor+dt@kernel.org, Thinh.Nguyen@synopsys.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com,
+ hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+ muhammed.ali@samsung.com, thiagu.r@samsung.com
+References: <20260903071250.3421499-1-selvarasu.g@samsung.com>
+ <CGME20260903071322epcas5p2a40e3299b0954dd880c9b3651555760c@epcas5p2.samsung.com>
+ <20260903071250.3421499-4-selvarasu.g@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260903071250.3421499-4-selvarasu.g@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-pata_legacy no longer has qdi or winbond module parameters. The QDI
-support went away with commit 0dcd0a76370a ("libata: remove no longer
-needed pata_qdi driver") and the Winbond VLB support with commit
-3c4d783f6922 ("ata: pata_legacy: remove VLB support"). The entries also
-refer to CONFIG_PATA_QDI_MODULE and CONFIG_PATA_WINBOND_VLB_MODULE,
-which do not exist either.
+On 03/09/2026 09:12, Selvarasu Ganesan wrote:
+> Add the "samsung,snps-dwc3" compatible string to dwc3-generic-plat so
+> the Exynos8855 USB3 DWC3 controller can probe through the generic DWC3
+> platform glue.
+> 
+> The "samsung,snps-dwc3" string is used as a generic fallback to support
+> any Exynos SoC that utilizes a flattened model instantiation. This
+> fallback allows multiple Exynos SoCs to be supported by the generic
+> platform driver simply by adding the fallback compatible to their
+> respective device tree nodes.
+> 
+> Co-developed-by: Muhammed Ali <muhammed.ali@samsung.com>
+> Signed-off-by: Muhammed Ali <muhammed.ali@samsung.com>
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> ---
+>  drivers/usb/dwc3/dwc3-generic-plat.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
+> index ca69ac0eb07c..33a76c37d15d 100644
+> --- a/drivers/usb/dwc3/dwc3-generic-plat.c
+> +++ b/drivers/usb/dwc3/dwc3-generic-plat.c
+> @@ -237,6 +237,7 @@ static const struct of_device_id dwc3_generic_of_match[] = {
+>  	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
+>  	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
+>  	{ .compatible = "starfive,jhb100-dwc3", },
+> +	{ .compatible = "samsung,snps-dwc3", },
 
-Drop both entries.
+Why not in alphabetical order?
 
-Fixes: 0dcd0a76370a ("libata: remove no longer needed pata_qdi driver")
-Fixes: 3c4d783f6922 ("ata: pata_legacy: remove VLB support")
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 13 -------------
- 1 file changed, 13 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 4864e37005be..33298da28b55 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4994,19 +4994,6 @@ Kernel parameters
- 			the first port in the list above (0x1f0), and so on.
- 			By default all supported ports are probed.
- 
--	pata_legacy.qdi=	[HW,LIBATA]
--			Format: <int>
--			Set to non-zero to probe QDI controllers.  By default
--			set to 1 if CONFIG_PATA_QDI_MODULE, 0 otherwise.
--
--	pata_legacy.winbond=	[HW,LIBATA]
--			Format: <int>
--			Set to non-zero to probe Winbond controllers.  Use
--			the standard I/O port (0x130) if 1, otherwise the
--			value given is the I/O port to use (typically 0x1b0).
--			By default set to 1 if CONFIG_PATA_WINBOND_VLB_MODULE,
--			0 otherwise.
--
- 	pata_platform.pio_mask=	[HW,LIBATA]
- 			Format: <int>
- 			Supported PIO mode mask.  Set individual bits to allow
--- 
-2.53.0
-
+Best regards,
+Krzysztof
