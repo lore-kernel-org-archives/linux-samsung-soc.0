@@ -1,89 +1,111 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC173AF677;
-	Sun,  6 Sep 2026 03:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B1033E360;
+	Sun,  6 Sep 2026 03:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788666075; cv=none; b=S1E/DfYSIh9vKqP8rpQTk3dhnNFMmkMExHh2jvl+wrqfwS+27zDR50YxELZGUER+gNkYp6B+zH5dAJPJ+kMvYCEgUPSkZ6sbKyisevuhDeW6k4iAnsZbr5jImR4q1ekb2VNhnojL8gV3fsFlx09oOCi9fV4mo0dP1sVUwAx/mPA=
+	t=1788667135; cv=none; b=o4TZJ82YIE20oDELjk+Pd7uNLbGV4MbLyLT5gHr2k74ESLz1MKcNkjwl3w+dv/Hv2fxHJ3gre0NvAdJ613ntnAtlXytLshdmGrFCqf1HNMX02uPxRqLQQXr0TXCwRmpQOoS9Oy5NoRxQnRIOd2kH4Syx0gbVIQZGJiURwoXGAcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788666075; c=relaxed/simple;
-	bh=h0j5stD46d957APBucFRqb6CrKZZBxEvPkSafupSmCY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqUhZx7i2wRkOjs2mZ5yIwGS207EOik5AJ2kRGD7cFzwFJ+84x93Zc3SORUDUA1ZXg8Jva+SBy/rDqqRRpd5i7noVNFOoKjWDRWbVesNQeiFFqIBTHuj8iVUbgMl23VaUBxX/W1hnD7dfqqWkzn7x243Owg8NPMe7BVC79ZPFrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cSAuZc6H; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1788667135; c=relaxed/simple;
+	bh=vvyAxBwYRuSuFr1Lfde/jLWfJLW5ponsOXKY2bOsW2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFuArtvUBnkTKVsVBD6e1xk4gmVknkGgFsufL3z/rpUBAUQuJ2RGNfqDuUf72bVJ2PJqB/r7qijA9Fro5QLw+DLS4jnca5yvWxRbLoZHOUxJxRXklpo8iftv0B5dHNctLcZVHJUznXqSVZH+bGA24dfSXGl/T7RRsii5pdr3x6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0N2GaVta; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cSAuZc6H"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=YN
-	opptATUu6tkEGXcgMAKMvS7a6eNXNKQGXv4gfsEdA=; b=cSAuZc6HfNkuS5G+1R
-	pPSq9pX7ayFbhxLzg9kZoJY2TOlCNqXm6X2O6RkM6bvTVlVRhz4zRd006SA4LZzs
-	ItgaTlv6actVkxXIEBe34y01tjLEVPV0yQ7nCvTI7WQUziHc7BxqVFisIn+fTGOH
-	MBZ7afz7gTc9zCbq6CaPAdUF8=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgCXOSWx4Jxqg+X7QA--.59154S2;
-	Sun, 06 Sep 2026 11:40:34 +0800 (CST)
-From: Pengpeng Hou <hppiscas@163.com>
-To: Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pengpeng Hou <hppiscas@163.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jingoo Han <jg1.han@samsung.com>,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: host: ohci-exynos: Propagate clock errors from resume
-Date: Sun,  6 Sep 2026 11:40:31 +0800
-Message-ID: <20260906034031.85248-1-hppiscas@163.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0N2GaVta"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=0HkFo0ybA+orVFH/u7Fk4Ze5CEEmhF31UK62O8mlgwM=; b=0N2GaVtaoti9ntZUVjraUk/TwS
+	zA8FVp8lzNBR2HsnmRGGC+MadsLt1fIXrbhnQePRLjD374qnAommHTW7fhlrvbV5vyvdaoWEjnO0n
+	KNWc9m8l0qcTsQF0tnL1DxxznmoXytuzdQSq4KolMxbAc2v/BY78G7Q8LnAL/Hl9BdANR9meNTaIt
+	/rKx9NH8XePfZUmzfEX4Abjvj89pFQyLSPP2gZAijeNsL6l2HB/N5OTYv/q8jmmNrDxlirrPI/G6Q
+	i2zM97uJb1DXPy1u1aBpQJij0dY0uOfY9cg5txILtiHQo16jVXZUGayAKMhiDogZSG4iiT+wqqsB7
+	LONEM9PA==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1x341k-00000004es3-2eE6;
+	Sun, 06 Sep 2026 03:58:45 +0000
+Message-ID: <f241beab-4c83-4f18-bb02-9d6e3fd5ecc3@infradead.org>
+Date: Sat, 5 Sep 2026 20:58:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgCXOSWx4Jxqg+X7QA--.59154S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruFW3Zr1DJry8JF1rCF1rJFb_yoWkGFX_Ca
-	48GrW7Xrs0grZ09r1DGa4UAFZ7KF1xXF1YgFWIqw13GFnrtF1vqrsrury0ywn8Jw47tr9x
-	Cw4jvrn3XryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb1rW7UUUUU==
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxhIm7mqc4LLKIAAA3S
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] docs: kernel-parameters: Remove ten entries for
+ parameters that no longer exist
+To: Karl Mehltretter <kmehltretter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-m68k@lists.linux-m68k.org, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ linux-doc@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Steve Wahl <steve.wahl@hpe.com>,
+ Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+ Mike Travis <mike.travis@hpe.com>, Tony Luck <tony.luck@intel.com>,
+ linux-edac@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Tony Lindgren <tony@atomide.com>,
+ Kevin Hilman <khilman@baylibre.com>, linux-omap@vger.kernel.org,
+ Dominik Brodowski <linux@dominikbrodowski.net>,
+ Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ linux-ide@vger.kernel.org, Ethan Nelson-Moore <enelsonmoore@gmail.com>,
+ Michael Schmitz <schmitzmic@gmail.com>,
+ Andreas Kemnade <andreas@kemnade.info>
+References: <20260905094649.41996-1-kmehltretter@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260905094649.41996-1-kmehltretter@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-exynos_ohci_resume() ignores clk_prepare_enable() and proceeds to PHY
-and OHCI restoration.
+Hi,
 
-Return a clock failure before enabling the PHY. The existing PHY failure
-path continues to undo a successfully enabled clock.
+On 9/5/26 2:46 AM, Karl Mehltretter wrote:
+> kernel-parameters.txt still documents ten boot parameters whose parsing
+> code was removed with the drivers or platforms that used them, one of
+> them (atarimouse=) since before the git history. One patch per
+> parameter, each with a Fixes: tag for the commit that removed the
+> parser, so the maintainers of that area are on their own patch only;
+> the two pata_legacy module parameters share the last one. Each entry
+> was checked with git grep for its __setup(), early_param() and
+> module_param() handler and with git log -S for the removing commit.
+> 
+> Changes in v2:
+> - patch 9: drop the Fixes: tag for 0dcd0a76370a, which removed the
+>   separate pata_qdi driver and not the pata_legacy parameter; both
+>   parameters went away in 3c4d783f6922 alone
+> - collect the Reviewed-by and Acked-by tags from v1
+> 
+> v1: https://lore.kernel.org/all/20260905070347.25902-1-kmehltretter@gmail.com/
+> 
+> Karl Mehltretter (9):
+>   docs: kernel-parameters: Drop the atarimouse= entry
+>   docs: kernel-parameters: Drop the bau= entry
+>   docs: kernel-parameters: Drop the edac_report= entry
+>   docs: kernel-parameters: Drop the enable_timer_pin_1 entry
+>   docs: kernel-parameters: Drop the mini2440= entry
+>   docs: kernel-parameters: Drop the nomfgpt entry
+>   docs: kernel-parameters: Drop the omap_mux= entry
+>   docs: kernel-parameters: Drop the pcmv= entry
+>   docs: kernel-parameters: Drop the pata_legacy.qdi and
+>     pata_legacy.winbond entries
+> 
+>  .../admin-guide/kernel-parameters.txt         | 67 -------------------
+>  1 file changed, 67 deletions(-)
 
-The issue was found by our static-analysis tool and manually reviewed.
+For patches 1/9, 2/9, 4/9, 5/9, 6/9, 7/9, and 8/9:
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-Fixes: e864abed546f ("USB: ohci-exynos: add clock gating to suspend/resume")
-Assisted-by: gpt 5
-Signed-off-by: Pengpeng Hou <hppiscas@163.com>
----
- drivers/usb/host/ohci-exynos.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index cc5cb0900988..aa4eb9f9d69b 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -231,7 +231,9 @@ static int exynos_ohci_resume(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
- 	int ret;
- 
--	clk_prepare_enable(exynos_ohci->clk);
-+	ret = clk_prepare_enable(exynos_ohci->clk);
-+	if (ret)
-+		return ret;
- 
- 	ret = exynos_ohci_phy_enable(dev);
- 	if (ret) {
+thanks.
 -- 
-2.50.1 (Apple Git-155)
-
+~Randy
