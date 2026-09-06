@@ -1,43 +1,44 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8067523D297;
-	Sun,  6 Sep 2026 03:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC173AF677;
+	Sun,  6 Sep 2026 03:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788665862; cv=none; b=pUeTxYx+XpWHhdqh/fbuIQsBUeTIKX+cJ3J7iK1390UyfBWOvJ62qZxzUoFFhVGzzukAbOHpiSLPiw6BUP1hUTNtipjNwxMRVGT59rb/EJxi09hO5gNMWbqBKutYjx2HqTfXFLzdSP1Bho+BCmComf46A6HeedAmZFmmqw8PcXc=
+	t=1788666075; cv=none; b=S1E/DfYSIh9vKqP8rpQTk3dhnNFMmkMExHh2jvl+wrqfwS+27zDR50YxELZGUER+gNkYp6B+zH5dAJPJ+kMvYCEgUPSkZ6sbKyisevuhDeW6k4iAnsZbr5jImR4q1ekb2VNhnojL8gV3fsFlx09oOCi9fV4mo0dP1sVUwAx/mPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788665862; c=relaxed/simple;
-	bh=zHGqmoMnNLLwctQrmU4s9NMU+5YCR9CxS7sqvavlik8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q4ZKWGjwLrLrAyZ9NxrG9VS9U4WDa+A5v22RxGpU8RId5xgxU3+hEqHuDI+Bu0y1lZ09hr+MbdalqN8wjgKrCgnEeibH+2T5H+2Q45d9SusrJ5JN+yuKvr6pFw2bTq+I0vVR0iA90ar/vSgvR7Ixnq/daCksGXeZTJFv0oAEVSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IgvIgoaS; arc=none smtp.client-ip=117.135.210.4
+	s=arc-20240116; t=1788666075; c=relaxed/simple;
+	bh=h0j5stD46d957APBucFRqb6CrKZZBxEvPkSafupSmCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqUhZx7i2wRkOjs2mZ5yIwGS207EOik5AJ2kRGD7cFzwFJ+84x93Zc3SORUDUA1ZXg8Jva+SBy/rDqqRRpd5i7noVNFOoKjWDRWbVesNQeiFFqIBTHuj8iVUbgMl23VaUBxX/W1hnD7dfqqWkzn7x243Owg8NPMe7BVC79ZPFrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cSAuZc6H; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IgvIgoaS"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cSAuZc6H"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=UC
-	HeaKLx08osv1pSzR6MrGj8R6eTrVPOj6BnZUIFe6E=; b=IgvIgoaS5TkL9gKndL
-	vHDVctwuDI+VIykm87bm9B58jLlGVMGUPdJ42fAooKfFdfW0+6QGTwwgEIZ8IpHZ
-	fPgc3fAm1x2Cjk8XOG+90DKP4xXaAnfUahkcH5hfqk+Y5iWdqOTj3Ry3M8Pcc34S
-	FUYfFPPbsPuqivDhfskcRklBU=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=YN
+	opptATUu6tkEGXcgMAKMvS7a6eNXNKQGXv4gfsEdA=; b=cSAuZc6HfNkuS5G+1R
+	pPSq9pX7ayFbhxLzg9kZoJY2TOlCNqXm6X2O6RkM6bvTVlVRhz4zRd006SA4LZzs
+	ItgaTlv6actVkxXIEBe34y01tjLEVPV0yQ7nCvTI7WQUziHc7BxqVFisIn+fTGOH
+	MBZ7afz7gTc9zCbq6CaPAdUF8=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDXX9zV35xq8xjGAw--.37724S2;
-	Sun, 06 Sep 2026 11:36:54 +0800 (CST)
+	by gzsmtp4 (Coremail) with SMTP id PygvCgCXOSWx4Jxqg+X7QA--.59154S2;
+	Sun, 06 Sep 2026 11:40:34 +0800 (CST)
 From: Pengpeng Hou <hppiscas@163.com>
-To: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Pengpeng Hou <hppiscas@163.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andi Shyti <andi@etezian.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jingoo Han <jg1.han@samsung.com>,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: s2mps11: Propagate OF provider registration failures
-Date: Sun,  6 Sep 2026 11:36:04 +0800
-Message-ID: <20260906033651.84082-1-hppiscas@163.com>
+Subject: [PATCH] usb: host: ohci-exynos: Propagate clock errors from resume
+Date: Sun,  6 Sep 2026 11:40:31 +0800
+Message-ID: <20260906034031.85248-1-hppiscas@163.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -46,59 +47,43 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXX9zV35xq8xjGAw--.37724S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tF13Jry8WryUKrWruw1rJFb_yoW8Wr43pF
-	ZrAFy5tryUXr48Gas3Ar1xWFyfK3WSyFy5GrZrCryfuwn09F1rCw18AFWDtFn8Jr1vgr12
-	vryvyFWjkF43ZrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRAWrtUUUUU=
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxRbut2qc39Y6qQAA3m
+X-CM-TRANSID:PygvCgCXOSWx4Jxqg+X7QA--.59154S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFW3Zr1DJry8JF1rCF1rJFb_yoWkGFX_Ca
+	48GrW7Xrs0grZ09r1DGa4UAFZ7KF1xXF1YgFWIqw13GFnrtF1vqrsrury0ywn8Jw47tr9x
+	Cw4jvrn3XryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb1rW7UUUUU==
+X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxhIm7mqc4LLKIAAA3S
 
-s2mps11_clk_probe() ignores of_clk_add_hw_provider() failures, stores
-driver data and returns success even though DT consumers cannot acquire the
-registered clocks.
+exynos_ohci_resume() ignores clk_prepare_enable() and proceeds to PHY
+and OHCI restoration.
 
-Return the provider error through the existing lookup cleanup path. Skip
-empty lookup slots while unwinding because S2MPS14 omits its CP clock.
+Return a clock failure before enabling the PHY. The existing PHY failure
+path continues to undo a successfully enabled clock.
 
 The issue was found by our static-analysis tool and manually reviewed.
 
-Fixes: b228fad50c00 ("clk: s2mps11: Migrate to clk_hw based OF and registration APIs")
+Fixes: e864abed546f ("USB: ohci-exynos: add clock gating to suspend/resume")
 Assisted-by: gpt 5
 Signed-off-by: Pengpeng Hou <hppiscas@163.com>
 ---
- drivers/clk/clk-s2mps11.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/usb/host/ohci-exynos.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index fa5ac8f673f6..94969d97d6e9 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -192,8 +192,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		clk_data->hws[i] = &s2mps11_clks[i].hw;
- 	}
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index cc5cb0900988..aa4eb9f9d69b 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -231,7 +231,9 @@ static int exynos_ohci_resume(struct device *dev)
+ 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
+ 	int ret;
  
--	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
--			       clk_data);
-+	ret = of_clk_add_hw_provider(s2mps11_clks->clk_np,
-+				     of_clk_hw_onecell_get, clk_data);
+-	clk_prepare_enable(exynos_ohci->clk);
++	ret = clk_prepare_enable(exynos_ohci->clk);
 +	if (ret)
-+		goto err_reg;
++		return ret;
  
- 	platform_set_drvdata(pdev, s2mps11_clks);
- 
-@@ -201,8 +203,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 
- err_reg:
- 	of_node_put(s2mps11_clks[0].clk_np);
--	while (--i >= 0)
--		clkdev_drop(s2mps11_clks[i].lookup);
-+	while (--i >= 0) {
-+		if (s2mps11_clks[i].lookup)
-+			clkdev_drop(s2mps11_clks[i].lookup);
-+	}
- 
- 	return ret;
- }
+ 	ret = exynos_ohci_phy_enable(dev);
+ 	if (ret) {
 -- 
 2.50.1 (Apple Git-155)
 
