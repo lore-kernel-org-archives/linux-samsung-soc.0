@@ -1,108 +1,161 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F2430CD9E;
-	Sun,  6 Sep 2026 08:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B885517A309
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Sep 2026 00:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788682766; cv=none; b=rwTWmvVCyASDdpxG/mSWJM63UIEue7a3Z2JUWgXYp+RHrVZ/FNrdtP9vMVP9voxaDNF2PkWLZUqEJW7yCrfLxIyYKH9jbR0g0BvJe94QdGDgE5Sf3bvD8yjN0/SPGvRs5DKwwJfhZ3W8IGqKYO5FhVi3toPuDQus0tir00zf0Lw=
+	t=1788740922; cv=none; b=ZLv3335QJTYOCRHsB8y2mSEJm6Gm+plnTkaQn03/mz074kQadMM/UPR79mAD8JJ+EN905hSTXoRnjHb0UPIaVlEtWX8jso3fJwNvoYhxDbOH0zAKkn41lxWoOY0Nx9tZlsfZUCbVUs8UsBHr0YEcTIftxW/pCJxPYbL6J2IHaTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788682766; c=relaxed/simple;
-	bh=L5srEMJP1B5M0FdrqGNhOEFicz2UgHY3O0TahFjuZNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nNSqKwks7cPTF/mYWT7y/bzx2yIt+gRtAMjbNQDJI5GrQGLenn0XEvI7Yt6SEly1N03Os3/tf8eXUC48e1NLcpkJ0AHqoFSAWxS4odFHg2agFII+sOUoelj+Yt72y49zdZ5Q0D4Ay0Lbki8jkTTkRy521WrVpogrmzMH9TAtZBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=wo6/G8dN; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1788740922; c=relaxed/simple;
+	bh=BXf3BxKM1Ry24+Btv4DKMA3IKOzmPZEdfw4Dh5Jj9Ss=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=RIBD5xpus3hY1RBUbCZiz7jLNlRz+aNBj2T9sFWrozm2cN1irTGkW+KgzUy1PdXbtptNhysP1EbuPngDbi9ZqyMOUu+/i6hutps1NNbbku1YIoA8mBu3DganLKuHi2YGxgdJnS8OQ4G5wJGWKG8o1YsGQWNkGhQWXKMIpWxxDBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dzpENCZH; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="wo6/G8dN"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=qVqBaro4u6j4vDM7zRBqf26XGAFIlsvWCm284+Ot/Vs=; t=1788682764; x=1789892364; 
-	b=wo6/G8dNlvO19ndW8r5EKUPJU55fREq9XbZnwqmi2UI5H9VtIpSoTd4YB45Eh65kTjGHfh5OPOs
-	1xGZoCDHEmEyLss3xDq0fzrpmgw4e9SAxyM+gVPRBY1VXwPk8Pp8e1sN5FP57ZjX65nW25ihHJRip
-	1j7Je0Q2O0Lkp276MmHhDQisv7mZMuPykCFrBd1mO/32x6L54pb5lqbiE0+fWJ8IHLsJCOmJdDdfV
-	S5iurhY0IRFxWpLqbOh1/mg57KJ9aRulrTP0+s1/+dapHaVjZTSlWHOci7Nmph/YJeKaDrahZQk0m
-	lFnav5vk7UAQnd16UeLzpUyMF+QHRM7BIS6g==;
-Date: Sun, 6 Sep 2026 10:19:10 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-m68k@lists.linux-m68k.org, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- linux-doc@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, Randy
- Dunlap <rdunlap@infradead.org>, Thomas Gleixner <tglx@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Steve Wahl <steve.wahl@hpe.com>, Dimitri Sivanich
- <dimitri.sivanich@hpe.com>, Mike Travis <mike.travis@hpe.com>, Tony Luck
- <tony.luck@intel.com>, linux-edac@vger.kernel.org, Krzysztof Kozlowski
- <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@baylibre.com>,
- linux-omap@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>,
- Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- linux-ide@vger.kernel.org, Ethan Nelson-Moore <enelsonmoore@gmail.com>,
- Michael Schmitz <schmitzmic@gmail.com>
-Subject: Re: [PATCH v2 3/9] docs: kernel-parameters: Drop the edac_report=
- entry
-Message-ID: <20260906101910.588d055e@kemnade.info>
-In-Reply-To: <20260905185037.GDapxkfbPNUxJgaMH8@fat_crate.local>
-References: <20260905094649.41996-1-kmehltretter@gmail.com>
-	<20260905094649.41996-4-kmehltretter@gmail.com>
-	<20260905151345.GAapwxqT93wPWHF7u4@fat_crate.local>
-	<apwzmSr6b0WEkW86@gmail.com>
-	<20260905153336.GBapw2UFa7Sdc0ve_A@fat_crate.local>
-	<871pb7zn36.fsf@trenco.lwn.net>
-	<20260905162742.GCapxC_ra7hJd27LDR@fat_crate.local>
-	<apxDtqM8UMN5KNjs@gmail.com>
-	<20260905194720.7033b956@kemnade.info>
-	<20260905185037.GDapxkfbPNUxJgaMH8@fat_crate.local>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dzpENCZH"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4843efcbdb2so1460100f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Sep 2026 17:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1788740919; x=1789345719; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=MgZHADWpXS9kOhNwmKYW4eHLUxKCVK4/x85xToQp0Vk=;
+        b=dzpENCZHJ5jw/OAKRJsO92TqW0KakA+mpqvWTQnbwjfqiBxgGxs9xU9g4XGYfvawxT
+         ejnTFbFmvtswqmo+nNXCbb9vYNHY5FAqVaRAVqherd1mEIWGIDdwaKoMPfXR+/8DNR7L
+         G+E+uxVYJ/fXAnUCfbye+kdnPG6kbjQl5txsa4sRv9bEll8x3aWzOwv0G45dkHg0YpCS
+         JiuCi8vxa2sJ6MgeQeK5LonMXmm6K8pVSGoXlddWwKXhTwVFuPxq6gcGEgeqEhgtIuja
+         0DgmwUTahtM7NOqOiRDoAsQZeKDvje+A5SuuqgA+N6VtoZKjrcRkZU4DM4DV2H930CD5
+         wAOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788740919; x=1789345719;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MgZHADWpXS9kOhNwmKYW4eHLUxKCVK4/x85xToQp0Vk=;
+        b=PX/8n2vN6gWhoob0n6LdG+rWtODw3gXuyDEeV/I9n/3sB69ntFzXLiera+yfUssK8R
+         KTI3ynq1C1T9rVH7islhX7h4oTGq8Tr1i0wUeiRmuaeRuXXPs/chq2CCD/G2DwKGVNjO
+         iBNyv/2jNsCzzhK85EuEgw/hwqXKuZSS/udp4phv8u9c7jSMAeRLKa+SqrPn8BBA9qRT
+         00+j5TFxdMWwow/+rfJrNP+v2vQuh3yM9yuT4njagIoDcMSZe1Z1Tnr6MGQVIr2aMbHd
+         zq357mc79DOneuGusv8GpPDGqMRaHWRejZ8tf3WLOU4MtRFT5wcXgwOxOD7Bb1iCfM3A
+         996Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxRiJ6LGdjLbTgPtsh3iRrjZO+ltdWUZj3oPVKmyiqx6EbJXaMfaOSeA/Hy7FszHT5CZFzt+GwQJydJjv4hvcUCNg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kJTcL8d5PbPwXGqX7ALaM0GES/u3fAd2559lWERe6uhoN9NHdf
+	J9mF79KzvKdnMWfU6P320pm+5DhSyam02Soa9HHUKGWp5jGV2ExaaxJriDDzV4O3KSw=
+X-Gm-Gg: AYBFou2WAjx2hCoDgwnCr17Ya8uoIkKoc5l8JN4WUnRNMEHs4Sc8S094kPhvhCi4jzq
+	00+2sQLxkAPPYRHCcpaowOepwaEixVe0LRcdaFHUhyaPAXFY+vRgBQBSbGZizvzgsGfUxXlYzVH
+	VScbsPm45GfvyagyN5lIB6e72dhTvnrfxrwhyPx5umacK6qMTOtHt2sN0pc4rrJZuJ/SbXTEc98
+	+jqMN0VHKyBeIXoQycbgQDcgiZS4tfA3lXkWe6AcRupeW7DM1uZeVzc6sNtquHK/NsNY73z5srp
+	Tj6lczOmqzkrcoEBmvLvzck0y8pAmbPFKzLUiEXFeG7UhTCU4QR/E71i64H2OQ24Ajlz9viDQ7V
+	Q3OxoDcZER8ImnHmfAg1ilNaaYvhp1kUVGu6V9RZO+i9ckYZ1XHVcm8Qnfpk5eOiPytR7HVazsP
+	6Hz/9H9nMXd3NpCvM76ZDCH61C57+vglvJpZZUq7Tos5L3pjewF2Y194flhgQfNwlQK8cd5Sbit
+	s2GQOoVhSCbbDoCsnufzI5d741yieBKktBUobABXzY8Jgn34arl4PX8y3rp
+X-Received: by 2002:a05:6000:4710:b0:485:8a47:5b83 with SMTP id ffacd0b85a97d-4858a475c60mr16910358f8f.32.1788740918931;
+        Sun, 06 Sep 2026 17:28:38 -0700 (PDT)
+Received: from localhost ([94.4.85.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4858bc74298sm21639306f8f.6.2026.09.06.17.28.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Sep 2026 17:28:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 07 Sep 2026 01:28:36 +0100
+Message-Id: <DL8NQGNAVSYK.18TYE03LPQSW5@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Thomas Turner" <tturner@lineageos.org>, <semen.protsenko@linaro.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <peter.griffin@linaro.org>
+Cc: <alim.akhtar@samsung.com>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <thomas_turner@talktalk.net>
+Subject: Re: [PATCH v3 2/2] arm64: dts: exynos: Add GPU/Mali Bifrost node to
+ Exynos850
+X-Mailer: aerc 0.21.0
+References: <20260905170914.1640-1-tturner@lineageos.org>
+ <20260905170914.1640-3-tturner@lineageos.org>
+In-Reply-To: <20260905170914.1640-3-tturner@lineageos.org>
 
-On Sat, 5 Sep 2026 11:50:37 -0700
-Borislav Petkov <bp@alien8.de> wrote:
+On Sat Sep 5, 2026 at 6:09 PM BST, Thomas Turner wrote:
+> Add nodes for GPU (Mali Bifrost) to Exynos850. Does not provide support
+> for temperature throttling, DVFS, power domains, governor support,
 
-> On Sat, Sep 05, 2026 at 07:47:20PM +0200, Andreas Kemnade wrote:
-> > > That's for "not getting any answers" which is not the case here.  
-> 
-> No, that's the case ALWAYS. If you spam maintainers with too often
-> submissions, you end up achieving the opposite to what you're trying to do.
+One of the sensors exposed via ACPM is "linked" to the GPU/G3D as far as
+I know. The driver part was sent already and three sensors work there
+(two cpu clusters and GPU).
+
+I've never tested yet the DVFS of G3D via ACPM. Maybe it is worth a try
+on A21s. But it should work the same way as clusters clocks.
+
+> boosting and voltage control. Once PMIC is properly implemented, support
+> will hopefully increase. However, the panfrost driver probes, the
+> Mali-G52 GPU initializes and the core clock is set-up.
 >
-This particular set was sent too fast, I agree, but reading that document again, it
-sounds like the summary is being patient with busy people.
+> Testing for this patch was done on a device not currently supported by
+> linux, the Galaxy A21s. After enabling this node for that device
+> locally, I was able to test and confirm basic GPU functionality. As of
+> now, this patch has no users which have tested GPU capabilities and so
+> the node has been set to "disabled".
+>
+> Here are some logs I pulled:
+>
+> panfrost 11500000.gpu: clock rate =3D 377000000
+> panfrost 11500000.gpu: mali-g52 id 0x7212 major 0x0 minor 0x0 status 0x0
+> panfrost 11500000.gpu: features: 00000000,00000df7, issues: 00000000,0000=
+0400
+> panfrost 11500000.gpu: Features: L2:0x07100206 Shader:0x00000000 Tiler:0x=
+00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+> panfrost 11500000.gpu: shader_present=3D0x1 l2_present=3D0x1
+> panfrost 11500000.gpu: [drm] Using Transparent Hugepage
+> [drm] Initialized panfrost 1.6.0 for 11500000.gpu on minor 0
+>
+> OpenGL core profile vendor: Mesa
+> OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
+> OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
+> OpenGL core profile shading language version: 1.40
+> OpenGL compatibility profile vendor: Mesa
+> OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
+> OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
+> OpenGL compatibility profile shading language version: 1.40
+> OpenGL ES profile vendor: Mesa
+> OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
+> OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
+> OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
+>
+> Signed-off-by: Thomas Turner <tturner@lineageos.org>
 
-Some subsystems even discourage waiting in such cases:
-e.g.
-https://docs.kernel.org/process/maintainer-netdev.html
-"Do not wait too long (weeks) between postings either as it will make it
-harder for reviewers to recall all the context."
+So, I've got A21s and installed pmOS to test all that.
+My logs are slightly different but graphics is definitely alive:
+[    0.200787] [drm] Initialized simpledrm 1.0.0 for fa000000.framebuffer o=
+n minor 0
+[    0.215130] Console: switching to colour frame buffer device 90x100
+[    0.225540] simple-framebuffer fa000000.framebuffer: [drm] fb0: simpledr=
+mdrmfb frame buffer device
+[    0.226134] panfrost 11500000.gpu: clock rate =3D 377000000
+[    0.230960] panfrost 11500000.gpu: mali-g52 id 0x7212 major 0x0 minor 0x=
+0 status 0x0
+[    0.230981] panfrost 11500000.gpu: features: 00000000,00000df7, issues: =
+00000000,00000400
+[    0.230991] panfrost 11500000.gpu: Features: L2:0x07100206 Shader:0x0000=
+0000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
+[    0.231002] panfrost 11500000.gpu: shader_present=3D0x1 l2_present=3D0x1
+[    0.232329] panfrost 11500000.gpu: [drm] Using Transparent Hugepage
+[    0.232726] [drm] Initialized panfrost 1.6.0 for 11500000.gpu on minor 1
 
-[...] 
-> > But if the main maintainers (which is a bit harder to say in this series) found
-> > time to review, than IMHO (also seen from my maintainer perspective), improve
-> > as soon as you find time and submit the improved version.  
-> 
-> If you want an earlier submission, feel free to ask the person.
-> 
-> In the general case, though, one should do a good testing before submitting
-> and all the issues caught after that, one can work in in her/his next version
-> locally and perhaps even state so.
-> 
-Hmm, maybe I was misunderstood. Just to avoid that I accidentially provoke
-patch-flooding with my comments:
-The next revision should come only after you have finished your homework
-(improve according to review comments, tests,...) and any further review
-comments are unlikely.
+Also, when this is applied with status=3D"okay" on Winlink board then
+panfrost itself seems to be alive and drm initialises despite missing
+regulator as indicated in my other email in v2 of this series, hence:
 
-Regards,
-Andreas
+Reviewed-and-tested-by: Alexey Klimov <alexey.klimov@linaro.org>
+
+Thanks for working on this.
+Best regareds,
+Alexey
