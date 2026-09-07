@@ -1,161 +1,112 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B885517A309
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Sep 2026 00:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CBD2DC765
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Sep 2026 04:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788740922; cv=none; b=ZLv3335QJTYOCRHsB8y2mSEJm6Gm+plnTkaQn03/mz074kQadMM/UPR79mAD8JJ+EN905hSTXoRnjHb0UPIaVlEtWX8jso3fJwNvoYhxDbOH0zAKkn41lxWoOY0Nx9tZlsfZUCbVUs8UsBHr0YEcTIftxW/pCJxPYbL6J2IHaTs=
+	t=1788755970; cv=none; b=gBlr4gkX3269cJijxPWUNmoY5MLyanFhPN/rPUewuCO6xYiXfTgteRoBCmQGnaemDa4rdL94dAnxAi5PLH98Yn4PF0tRrvjUlfBVtjEK4zLqBBjtAfX/8Il0Y93L4UQIgViqFj+loXgpfWKbxckl4HayQx7zQIdOHFhEF4Qt4lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788740922; c=relaxed/simple;
-	bh=BXf3BxKM1Ry24+Btv4DKMA3IKOzmPZEdfw4Dh5Jj9Ss=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=RIBD5xpus3hY1RBUbCZiz7jLNlRz+aNBj2T9sFWrozm2cN1irTGkW+KgzUy1PdXbtptNhysP1EbuPngDbi9ZqyMOUu+/i6hutps1NNbbku1YIoA8mBu3DganLKuHi2YGxgdJnS8OQ4G5wJGWKG8o1YsGQWNkGhQWXKMIpWxxDBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dzpENCZH; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1788755970; c=relaxed/simple;
+	bh=SHkFjsUEK8BRAqvmfnv5vItChhZEKbXF3e++QGo0kBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGF5w+lzlaeILIFfZG5oLG2hk2cI0l83Qwia0pwCJYldPnmootBEr5R+EqwR94qzgUxT33/ZG8yHTB/9QDVZJmk2+exLS89mUCAMmPqdqnG6JwBQ2XqPWxurhonAQH4VjY0MNOO0t1EEIqPWvQrzZv0Meey+lz+uYU9lDCycPVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIANc05N; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dzpENCZH"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4843efcbdb2so1460100f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Sep 2026 17:28:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIANc05N"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2d6e954afbdso19052925ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Sep 2026 21:39:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1788740919; x=1789345719; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=MgZHADWpXS9kOhNwmKYW4eHLUxKCVK4/x85xToQp0Vk=;
-        b=dzpENCZHJ5jw/OAKRJsO92TqW0KakA+mpqvWTQnbwjfqiBxgGxs9xU9g4XGYfvawxT
-         ejnTFbFmvtswqmo+nNXCbb9vYNHY5FAqVaRAVqherd1mEIWGIDdwaKoMPfXR+/8DNR7L
-         G+E+uxVYJ/fXAnUCfbye+kdnPG6kbjQl5txsa4sRv9bEll8x3aWzOwv0G45dkHg0YpCS
-         JiuCi8vxa2sJ6MgeQeK5LonMXmm6K8pVSGoXlddWwKXhTwVFuPxq6gcGEgeqEhgtIuja
-         0DgmwUTahtM7NOqOiRDoAsQZeKDvje+A5SuuqgA+N6VtoZKjrcRkZU4DM4DV2H930CD5
-         wAOg==
+        d=linaro.org; s=google; t=1788755967; x=1789360767; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=OZVd8AEPtHxGrM09Xmw7u8IpkGldFD91EALn5nG1tdA=;
+        b=PIANc05N512QUTF5TjEtlbM4w7en9fL8O6BhtCA83roQ0jfUKukb//ho+6RXKySd9G
+         FUTw3G0FVSbMNUtMYku3cZHHlvlWyfjjJU1OVIXHzVBQnjMwT2JBWDeHUDO1DzVMkcrq
+         AxN6vpFP78ujLulq5uM1dTmRzi+LtC7nNUXT18TUw3Ahk1SOaot5RiQPSLJ/2M8AjXDY
+         c4jOM5KGpPU8aUg5vTo0VaGJqfiJ5RwIZVKupuv/lHnbq48TMS7H+gvkXalZhIqrdyU4
+         pndd0TNeuW9n0qkAm6pPJvKjOv5aq07RoZ4kaYjA9B1Lf1FeGycUCndnf8+V8OGsGPYn
+         uAiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788740919; x=1789345719;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1788755967; x=1789360767;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=MgZHADWpXS9kOhNwmKYW4eHLUxKCVK4/x85xToQp0Vk=;
-        b=PX/8n2vN6gWhoob0n6LdG+rWtODw3gXuyDEeV/I9n/3sB69ntFzXLiera+yfUssK8R
-         KTI3ynq1C1T9rVH7islhX7h4oTGq8Tr1i0wUeiRmuaeRuXXPs/chq2CCD/G2DwKGVNjO
-         iBNyv/2jNsCzzhK85EuEgw/hwqXKuZSS/udp4phv8u9c7jSMAeRLKa+SqrPn8BBA9qRT
-         00+j5TFxdMWwow/+rfJrNP+v2vQuh3yM9yuT4njagIoDcMSZe1Z1Tnr6MGQVIr2aMbHd
-         zq357mc79DOneuGusv8GpPDGqMRaHWRejZ8tf3WLOU4MtRFT5wcXgwOxOD7Bb1iCfM3A
-         996Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxRiJ6LGdjLbTgPtsh3iRrjZO+ltdWUZj3oPVKmyiqx6EbJXaMfaOSeA/Hy7FszHT5CZFzt+GwQJydJjv4hvcUCNg==@vger.kernel.org
-X-Gm-Message-State: AFuF++kJTcL8d5PbPwXGqX7ALaM0GES/u3fAd2559lWERe6uhoN9NHdf
-	J9mF79KzvKdnMWfU6P320pm+5DhSyam02Soa9HHUKGWp5jGV2ExaaxJriDDzV4O3KSw=
-X-Gm-Gg: AYBFou2WAjx2hCoDgwnCr17Ya8uoIkKoc5l8JN4WUnRNMEHs4Sc8S094kPhvhCi4jzq
-	00+2sQLxkAPPYRHCcpaowOepwaEixVe0LRcdaFHUhyaPAXFY+vRgBQBSbGZizvzgsGfUxXlYzVH
-	VScbsPm45GfvyagyN5lIB6e72dhTvnrfxrwhyPx5umacK6qMTOtHt2sN0pc4rrJZuJ/SbXTEc98
-	+jqMN0VHKyBeIXoQycbgQDcgiZS4tfA3lXkWe6AcRupeW7DM1uZeVzc6sNtquHK/NsNY73z5srp
-	Tj6lczOmqzkrcoEBmvLvzck0y8pAmbPFKzLUiEXFeG7UhTCU4QR/E71i64H2OQ24Ajlz9viDQ7V
-	Q3OxoDcZER8ImnHmfAg1ilNaaYvhp1kUVGu6V9RZO+i9ckYZ1XHVcm8Qnfpk5eOiPytR7HVazsP
-	6Hz/9H9nMXd3NpCvM76ZDCH61C57+vglvJpZZUq7Tos5L3pjewF2Y194flhgQfNwlQK8cd5Sbit
-	s2GQOoVhSCbbDoCsnufzI5d741yieBKktBUobABXzY8Jgn34arl4PX8y3rp
-X-Received: by 2002:a05:6000:4710:b0:485:8a47:5b83 with SMTP id ffacd0b85a97d-4858a475c60mr16910358f8f.32.1788740918931;
-        Sun, 06 Sep 2026 17:28:38 -0700 (PDT)
-Received: from localhost ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4858bc74298sm21639306f8f.6.2026.09.06.17.28.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Sep 2026 17:28:37 -0700 (PDT)
+        bh=OZVd8AEPtHxGrM09Xmw7u8IpkGldFD91EALn5nG1tdA=;
+        b=stMw028d6JAN8T+LpLiLYnl4lQPs6sh065Tf1fK3H/vvyV7S9K6LMwtAiydl7sWjdZ
+         COhKo5LVnG7MN51gFa+wADkcaUOIQHuhoxChKdwHh+AbRBOOhgzgNeqBm7YKH0I9AcwY
+         XqAbWfiZGQ33ru2QP2DCA3bLNQN20M68NxBT0gEMjJ1ttWUXcrahq2Mq50elLjn48b2B
+         KDUDEAQDNw9pUrTzW2rYM+WnwgV0+wjAxut/OIBtqQRSdK+AmgRWUVRKdb23pqkY+5x2
+         vZxBM45gLCvfnGuASsaugBjAWHkv5pSxpy0F4a9KBAyAcsC52YDM+QAOznvKS8sOAIob
+         xb+g==
+X-Forwarded-Encrypted: i=1; AKwUvBwz2L5aGpvylMg5XVMuICkM5uifEI3M5aRkzPgBBh5FhbT4YEHAgTG06H3xbguOBIaBb/vyHEsfAT+1+Taw8Pc5LQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++nazcr3Ug0KUmGIumd+A0xyvVxEaGQFNKmIh0pfzFB9hGC+DLcc
+	LxwYn5sMd0ymHsOZN5rCkygfihnYBZMipkNPTyaiPTldaQRR9pG1as++mjw6ffr3rhs=
+X-Gm-Gg: AYBFou2zhdhTTpzEoC39L1IXcoKfuc4mYvwIS5Q8x4cfUxh1bkXWUlm6JoHl8UntKyM
+	XykCNWMzCrOCtcB5fXUj49VjLyOxRJp2Tc+8tUAG5ls6OKuzZ6D4BFNrnPClmCLyRQpSxFtQNHF
+	rh9/od2CDvukdAe2iDQykjIqJcsjW7fUFxQ/yi/peg2OdB+3TKihKq2zmmzlirg2WlZbOFbijBp
+	Th9NKPvfdqBULNguumdLhCJI3lXXDFfTx7Pv9XfLzsDx07wsjnAVk5B6QlM4e/EqDwRAXWHvOcN
+	yMzct97mvY3xu4gqTh6pcJjbixZQEymg7qKG71wt3oUhxwNci1f5kQqMOZ7w7LjBMl2ONobzJUJ
+	eaUO1F6z9J/efXeAHuyLM4ky7/toAevR1mN1TIxIwH+/0y6EBTt/36Neu53ujPC8+lTJ4p83WCX
+	Xwrq1yTWf42uAyRaRi7sm0Fr9Wx/Lrjz5q8Mw9X9Z/LGkdrDDEFHRbCQCsHs5UKkQ=
+X-Received: by 2002:a17:903:37c8:b0:2d9:50:a91b with SMTP id d9443c01a7336-2db12667eeemr299920485ad.16.1788755966732;
+        Sun, 06 Sep 2026 21:39:26 -0700 (PDT)
+Received: from localhost ([122.172.87.224])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339885d29esm26643998eec.2.2026.09.06.21.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Sep 2026 21:39:25 -0700 (PDT)
+Date: Mon, 7 Sep 2026 10:09:23 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sumeet Pawnikar <sumeet4linux@gmail.com>
+Cc: rafael@kernel.org, amit.kachhap@gmail.com, daniel.lezcano@kernel.org,
+	thara.gopinath@gmail.com, talel@amazon.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+	mmayer@broadcom.com, sumitg@nvidia.com, krzk@kernel.org,
+	peter.griffin@linaro.org, myungjoo.ham@samsung.com,
+	kyungmin.park@samsung.com, cw00.choi@samsung.com, Frank.Li@nxp.com,
+	s.hauer@pengutronix.de, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, sven@kernel.org,
+	j@jannau.net, marcan@marcan.st, casey.connolly@linaro.org,
+	sre@kernel.org, wens@kernel.org, t.schramm@manjaro.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] cpufreq: Use %pe to print error pointers symbolically
+Message-ID: <ap4_-12ta7ThxEjc@vireshk-B250M-D3H>
+References: <20260906061755.5103-1-sumeet4linux@gmail.com>
+ <20260906061755.5103-4-sumeet4linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Sep 2026 01:28:36 +0100
-Message-Id: <DL8NQGNAVSYK.18TYE03LPQSW5@linaro.org>
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Thomas Turner" <tturner@lineageos.org>, <semen.protsenko@linaro.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <peter.griffin@linaro.org>
-Cc: <alim.akhtar@samsung.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <thomas_turner@talktalk.net>
-Subject: Re: [PATCH v3 2/2] arm64: dts: exynos: Add GPU/Mali Bifrost node to
- Exynos850
-X-Mailer: aerc 0.21.0
-References: <20260905170914.1640-1-tturner@lineageos.org>
- <20260905170914.1640-3-tturner@lineageos.org>
-In-Reply-To: <20260905170914.1640-3-tturner@lineageos.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260906061755.5103-4-sumeet4linux@gmail.com>
 
-On Sat Sep 5, 2026 at 6:09 PM BST, Thomas Turner wrote:
-> Add nodes for GPU (Mali Bifrost) to Exynos850. Does not provide support
-> for temperature throttling, DVFS, power domains, governor support,
+On 06-09-26, 11:47, Sumeet Pawnikar wrote:
+> Replace PTR_ERR() and %ld with %pe and pass the original pointer directly
+> to pr_err() and pr_warn(). The %pe format specifier prints a symbolic error
+> name (e.g. -ENOMEM) when CONFIG_SYMBOLIC_ERRNAME is enabled, otherwise it
+> falls back gracefully and prints the raw integer value. This makes messages
+> more readable without any functional change.
+> 
+> Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
+> ---
+>  drivers/cpufreq/bmips-cpufreq.c   | 4 ++--
+>  drivers/cpufreq/cppc_cpufreq.c    | 4 ++--
+>  drivers/cpufreq/qoriq-cpufreq.c   | 4 ++--
+>  drivers/cpufreq/s3c64xx-cpufreq.c | 5 ++---
+>  4 files changed, 8 insertions(+), 9 deletions(-)
 
-One of the sensors exposed via ACPM is "linked" to the GPU/G3D as far as
-I know. The driver part was sent already and three sensors work there
-(two cpu clusters and GPU).
+Applied. Thanks.
 
-I've never tested yet the DVFS of G3D via ACPM. Maybe it is worth a try
-on A21s. But it should work the same way as clusters clocks.
-
-> boosting and voltage control. Once PMIC is properly implemented, support
-> will hopefully increase. However, the panfrost driver probes, the
-> Mali-G52 GPU initializes and the core clock is set-up.
->
-> Testing for this patch was done on a device not currently supported by
-> linux, the Galaxy A21s. After enabling this node for that device
-> locally, I was able to test and confirm basic GPU functionality. As of
-> now, this patch has no users which have tested GPU capabilities and so
-> the node has been set to "disabled".
->
-> Here are some logs I pulled:
->
-> panfrost 11500000.gpu: clock rate =3D 377000000
-> panfrost 11500000.gpu: mali-g52 id 0x7212 major 0x0 minor 0x0 status 0x0
-> panfrost 11500000.gpu: features: 00000000,00000df7, issues: 00000000,0000=
-0400
-> panfrost 11500000.gpu: Features: L2:0x07100206 Shader:0x00000000 Tiler:0x=
-00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
-> panfrost 11500000.gpu: shader_present=3D0x1 l2_present=3D0x1
-> panfrost 11500000.gpu: [drm] Using Transparent Hugepage
-> [drm] Initialized panfrost 1.6.0 for 11500000.gpu on minor 0
->
-> OpenGL core profile vendor: Mesa
-> OpenGL core profile renderer: Mali-G52 MC1 (Panfrost)
-> OpenGL core profile version: 3.1 (Core Profile) Mesa 26.1.6
-> OpenGL core profile shading language version: 1.40
-> OpenGL compatibility profile vendor: Mesa
-> OpenGL compatibility profile renderer: Mali-G52 MC1 (Panfrost)
-> OpenGL compatibility profile version: 3.1 (Core Profile) Mesa 26.1.6
-> OpenGL compatibility profile shading language version: 1.40
-> OpenGL ES profile vendor: Mesa
-> OpenGL ES profile renderer: Mali-G52 MC1 (Panfrost)
-> OpenGL ES profile version: OpenGL ES 3.1 Mesa 26.1.6
-> OpenGL ES profile shading language version: OpenGL ES GLSL ES 3.10
->
-> Signed-off-by: Thomas Turner <tturner@lineageos.org>
-
-So, I've got A21s and installed pmOS to test all that.
-My logs are slightly different but graphics is definitely alive:
-[    0.200787] [drm] Initialized simpledrm 1.0.0 for fa000000.framebuffer o=
-n minor 0
-[    0.215130] Console: switching to colour frame buffer device 90x100
-[    0.225540] simple-framebuffer fa000000.framebuffer: [drm] fb0: simpledr=
-mdrmfb frame buffer device
-[    0.226134] panfrost 11500000.gpu: clock rate =3D 377000000
-[    0.230960] panfrost 11500000.gpu: mali-g52 id 0x7212 major 0x0 minor 0x=
-0 status 0x0
-[    0.230981] panfrost 11500000.gpu: features: 00000000,00000df7, issues: =
-00000000,00000400
-[    0.230991] panfrost 11500000.gpu: Features: L2:0x07100206 Shader:0x0000=
-0000 Tiler:0x00000809 Mem:0x1 MMU:0x00002830 AS:0xff JS:0x7
-[    0.231002] panfrost 11500000.gpu: shader_present=3D0x1 l2_present=3D0x1
-[    0.232329] panfrost 11500000.gpu: [drm] Using Transparent Hugepage
-[    0.232726] [drm] Initialized panfrost 1.6.0 for 11500000.gpu on minor 1
-
-Also, when this is applied with status=3D"okay" on Winlink board then
-panfrost itself seems to be alive and drm initialises despite missing
-regulator as indicated in my other email in v2 of this series, hence:
-
-Reviewed-and-tested-by: Alexey Klimov <alexey.klimov@linaro.org>
-
-Thanks for working on this.
-Best regareds,
-Alexey
+-- 
+viresh
