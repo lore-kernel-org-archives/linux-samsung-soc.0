@@ -1,128 +1,74 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D173639CD0E
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Sep 2026 18:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7963C2BA4
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Sep 2026 19:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788978470; cv=none; b=ptXCX+EEJta3ccMXbuOL4SmJ3rf/ABCI4DZCAVQ6KgukvsjIN+iyiMKoVxP9CPYno5ifqpcD2jKYL0ajq67ZnGRuRtB0SmYfu9x3Cy+9zLPNGdEMuEVpSTJeqJE9Ph/FzfPV5DgigQQre9ilRixpzOlTV+GbdL1CjaEwtyYu0Sk=
+	t=1788983109; cv=none; b=LowitU7O/MGm4HwrZsJRqiFkML14rCDJfI3rU99bC3ktwUJ24nP1P4VQvTRZdagO8zJE/i7dQeAM+s2Y/YYWEYzFThYlg5eCwtqo3X2eqbE4eE3sJGDAleKGRfhTRKAva79JpWCTU/mUSF2e11M7/e1Za/OraP24mFuqXMiT7tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788978470; c=relaxed/simple;
-	bh=jpVDW6nqXT3bwXZCXv2EI+3UUbOFqSMc60wFkeXbAgk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=lc6H17zyAHxB/RAfdVJWx9YSkIwAR5bDDMsWn1976KpHWyw37ak/I0asbP+F/LhKTUp30WRmBNH/pfQVjT+5GZR2Fz31myB+8kpsnk1ZaYyBs5MbH9Odes053/E0WhxkBEcEH/8ekywnzd+rqc9rw1V8RnT7ec60FDOFUhl4zsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qeX0in1d; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1788983109; c=relaxed/simple;
+	bh=4XB/I+FIqmb244yO8hTo1zUisuonT4XFLkLy0pw0SRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DCi+QPGViEIUGDmfjem5sQ7WXThR4R6Wg0alR9D5IYTyRD6sirJALB6oFSZ7GhIm4GBgwPEmNNMfAFK5QKngR9/wou1T2hUcoLKhfAh50K5cshL2abBzaFd5X1W+EBH/Gk/z4cI7W3tlIGayCBqbwa6E156c+hiiks6Gy8MRfoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=kPCYlq4Q; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qeX0in1d"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-49b8ce9b733so49489135e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 11:27:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1788978465; x=1789583265; darn=vger.kernel.org;
-        h=to:from:subject:cc:message-id:date:content-type
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JzzpRVmc6Qf1040g7Lq6SnAgBrX6WGAOi89cdyMonLo=;
-        b=qeX0in1dIzu48J9x5R8KqoTgevc4Ha9nGP+vm5qnQuFRJAQAKFfvLkerixsPp9wrN7
-         NQceb6BXTODR7Uphy1FCizGjrECYncTVVgc1vN2ooJ+LPAdnQz5D9+KSM5WHRWJz4xx2
-         1Whs9gaD89BhX3DwW6WYIlZbM1W04FhS3wmCLrNH0F+NU9p4Pq2N6FC7TQUCDXcQi3sl
-         JcahU8yX7q51iL1NCo1/NHpl4qaLgqd2YrcNgpkFlSD+lj4cnz8brt1/YPyI/4X67Vnn
-         ItI8xIPR7iVaPcyP29zq//wxxgPmLmPevJP8BQed3TRGKlFXEzO5NsmlFmeBjMbtyrNw
-         PI7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788978465; x=1789583265;
-        h=to:from:subject:cc:message-id:date:content-type
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=JzzpRVmc6Qf1040g7Lq6SnAgBrX6WGAOi89cdyMonLo=;
-        b=Ozq4wwlVHQpLgIzAceOvirt8cpX28XiFNqZi+q9qGH4sHJGgyfpI+MMH2Uo6Wt42ZO
-         xRlbRDzALP9Pv1dkZhp/qEFUF7HsFw5q3BAivKEPvGl8h/W17+gJzp8rwsK7p/nkSauj
-         WsMJRcvuMLcz1qQHgBPp5PskLcYfuSC2DkZBpx3vFoURbK8k8w6kKbX0OnwjW0poiL7x
-         FCY1ZauapRoNGvu1HZ8KykXLq/iYecFBJfSmsZQDEBxMGTtHpLpM8DXweLP8ucPl+kOX
-         Hxq+1Cj8jwKWsO5LOsB+KlsgfA+4ONoyzMmKYvHAQSi5zjVBeznhHGsp2CvTlxHT9I/n
-         uSJA==
-X-Forwarded-Encrypted: i=1; AKwUvByUNvPKyn8mosEnJao653+m75GI7UP1jqzjml3s6cSds/yNXG/ZrFmi2w9jE6yJ+ERO8byu7el8yzQsvY7V2rwmgw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lrdNaGv4Xp84RC4S3n24hCeIRlhmYXzlM0e0ebpdZRQYUpgzS6
-	gYoQ+Q1v4MdRZWBFHgJp5t7gdyI2DE9e2epT1JA5TYtWCV8xUPoEKP6VnM9zKL94xBJuQkTTPNt
-	u3TIY
-X-Gm-Gg: AYBFou3SV57+3GvWT0ciFtJ/kE9+mzJNmnwzNY9IWxLHdC3wuJL44/Cj3UgBXIZgVmg
-	9GItOgy6NOxezGirYzUBvfIhwerjBu3NW2qGyEc/k25bOTJ8hZO2I2zxiwIhS8D901ZbUkFrB0f
-	940w7BktexLW24Jmx7BYA90kyehaHl/H3r6hLutLBYyo5ZkvjLs67IEaSTaOM8dmGYvlkW3u1M8
-	Ic5FnfScqkz3QEYbkcJ200CytrYoI6sVuowMTkj3fRE3O+mhUxJQWCq3sb89K0E2ERKWg85G4aZ
-	XAHPlf16f0oIJAzkYFFIujJrKefjjacitBVdQBAKz7Gq5Z2eZtKOa1WiKm26BG2UbvAfiFDW+9m
-	xUPo4wfKyU946YWvcSnuEYpTHCh24c8542+5gd4HLG+vbLtR5Cw0D4iv76HFGcBaiYtkF6oUBh1
-	rdq1ihUTZzSWIt7kMKiCDl3/zsORURI8EeIVXuwZl0FpvGFnEQYk5RGYCM2ksO2IwigOiIgUana
-	lF7kv1p5ZU2FrlpUHvSUe3gae8RDj4PoErqh1AmtJ76T3NSOY9LpIx4/rgH
-X-Received: by 2002:a05:600c:64c6:b0:49c:fa20:cc02 with SMTP id 5b1f17b1804b1-49cfa20ccaemr335752275e9.25.1788978465474;
-        Wed, 09 Sep 2026 11:27:45 -0700 (PDT)
-Received: from localhost ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26c07c17sm11855715e9.14.2026.09.09.11.27.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 11:27:45 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="kPCYlq4Q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-2eefaa527c; t=1788983101;
+ bh=5ENYo56kYOoaOL7ZeChMo/ToS0E03eRMjgDAeWj53nw=;
+ b=kPCYlq4QFFsWgl2/vPxglOHfZ6sF/TCthjTr/ncpVcXs9fSL4+hcnMgBPviNk+r6yAsSxCrzI
+ Vj4dEwhs2pF9E3CYXzdm140Df6WCSl4vkTzd0Nxv6zTCthm0QC9CipAQUjS/WYCjoXzEWBl8KBF
+ 3d2YbuR3vRdzIaRiu10SOCs=
+X-Forward-Email-ID: 6aa1b7365382f19eb5d6c7ab
+X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
+ smtp.forwardemail.net, 149.28.215.223
+X-Forward-Email-Version: 2.14.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Thomas Turner <tturner@lineageos.org>
+To: semen.protsenko@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas_turner@talktalk.net
+Subject: [PATCH v4 0/2] Exynos850 GPU support
+Date: Wed,  9 Sep 2026 20:44:48 +0100
+Message-ID: <20260909194450.183693-1-tturner@lineageos.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Sep 2026 19:27:44 +0100
-Message-Id: <DLAZXSNZK6QC.1VFAX37XCXBOV@linaro.org>
-Cc: <linux-clk@vger.kernel.org>, "Sam Protsenko"
- <semen.protsenko@linaro.org>, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Peter Griffin"
- <peter.griffin@linaro.org>, "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: [question] [Exynos850] ACPM firmware doesn't implement
- ->recalc_rate for acpm clocks
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>
-X-Mailer: aerc 0.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+This patch series documents and provides basic GPU support for the
+Exynos850 SoC, making use of the Mali G52 GPU through the panfrost
+driver. Only basic support is provided here and as such lots of features
+are missing. This series only adds the GPU node for the Exynos850 SoC
+dtsi, but keeps it disabled, so it stays disabled currently on E850-96
+board (The only user of the Exynos850 SoC dtsi upstream).
 
-I'm working on Exynos850 platform support and currently trying to deal with
-ACPM firmware clocks. ACPM is firmware running on separate co-processor
-(like SCPI/SCMI thingy for instance).
+Thomas Turner (2):
+  dt-bindings: gpu: arm,mali-bifrost: add exynos850-mali compatible
+  arm64: dts: exynos: Add GPU/Mali Bifrost node to Exynos850
 
-Unlike gs101, the ACPM firmware clocks protocol on Exynos850 does not
-implement get_rate() ACPM IPC call. Set_rate works fine, but get_rate
-returns 0. Downstream reads MMIO registers directly to obtain the rate for
-these clocks.
+ .../devicetree/bindings/gpu/arm,mali-bifrost.yaml   |  1 +
+ arch/arm64/boot/dts/exynos/exynos850.dtsi           | 13 +++++++++++++
+ 2 files changed, 14 insertions(+)
 
-The file is drivers/clk/samsung/clk-acpm.c
-static const struct clk_ops acpm_clk_ops =3D {
-	.recalc_rate =3D acpm_clk_recalc_rate, <-- not impl by firmware
-	.determine_rate =3D acpm_clk_determine_rate,
-	.set_rate =3D acpm_clk_set_rate,
-};
+-- 
+2.47.3
 
-Currently I made ACPM clocks childs of corresponding parent clocks, for
-instance, for CPU clocks:
-	clocks =3D <&cmu_cpucl0 CLK_FOUT_CPUCL0_PLL>,
-		 <&cmu_cpucl1 CLK_FOUT_CPUCL1_PLL>;
-	clock-names =3D "cpucl0", "cpucl1";
-and just return parent_rate from ->recalc_rate().
-
-The problem is that stale (cached) value is returned all the time despite
-CLK_GET_RATE_NOCACHE. I tried different approaches but don't see smth
-upstreameable because clock rates are changed behind Linux and I need
-to trigger something like clk_get_rate(parent_clock) to let the new rate
-propagate down the tree.
-
-Which pattern is preferred for upstream acceptance here?
-
-1. Return parent_rate as is and live with stale parent rate.
-2. Cache the set value in ->set_rate() and return it in ->recalc_rate().
-3. Utilise clock rate change notifiers somehow and upon POST_RATE_CHANGE
-   do smth like clk_set_rate(parent, new_rate) but that probably breaks
-   locking and mixes clk-provider with clk-consumer.
-4. Maybe use/play with CLK_SET_RATE_PARENT?
-
-Or something else?
-Best regards,
-Alexey
