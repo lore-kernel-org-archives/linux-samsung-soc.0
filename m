@@ -1,88 +1,86 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78A256B85D
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Sep 2026 14:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE2D56C632
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  9 Sep 2026 14:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788963488; cv=none; b=VMFl4fKFx2tTNnwVDpRItCYOSykYIs6ajlbjDF94wtoiZq0RmFj5mbGP9wytD5r/LAEKRUiF+shK/olM+22lTVYCvMvb3MM2Gm+98nZOz2z0NClvBpkuHFE0bLmA3rWo4X1ETB5kEzWaTarIuNCeXnWB0yYHDmDl2x0y9RQzi1A=
+	t=1788963490; cv=none; b=dASSAJNs5cEMtMA5rQrpB+gQ4hUQBSqNinsqkaNG/jzUdg0md6YQjjRI1fLvh5OSFwJC2yoEfDIDqYEXaKIIvrmmewg20SVh4Z5xM1iI7hBiLWZeV65OtkSeaeT00M6IS6mkFlPvqZ6M//zhMlXBLuqNePgFn51yH1qSG6pq8IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788963488; c=relaxed/simple;
-	bh=mGJJghFSItEhhFNqrC/z616uuKMInTO+a8FIm23jRQk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Auso1k9FYrIJuoK2zYXzXxXfUuABM2y7by3dqY2fAEydYpy91JR3QIyXcUB7U86SKgYC8W6qBhA+O1Dy2KiWC1D8GbyqanVlVDZAJNBso7JqI8jqSoegeqhFiDRwBDR+BJr3x10tuJ+vKmoKQnLXU7R72/EoMb3F41HzMFSSF6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UzpJHeJf; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TMgFXtMn; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1788963490; c=relaxed/simple;
+	bh=c0cxm8DOEPLClpli1HmvHjC8bu9sqa+m4ayGpk0H/b0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pnkh0ZEf3oZ1i7qwFk+u/NKJIIPQRrXB03hpV7MfeCU5tv8xqGjAdWKGc9rGx0yQ+fJexz/vmRE7olFbegugacotwBap1tV4S+r6rkl0BaC61gh1xe/bT2KBa/u+InIQdAb+1vLYWXOX+i7Gnwq8q2vCm50gD77U/A5MFverp1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f3Sd0IcW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FBGzpPYq; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UzpJHeJf";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TMgFXtMn"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689CCprF1401036
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 9 Sep 2026 14:18:06 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f3Sd0IcW";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FBGzpPYq"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689BU2g51723075
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 9 Sep 2026 14:18:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KaUce9/yrvvWl365SbTXejci7TYcSE7Y91Xq09tmBZY=; b=UzpJHeJf8hlv3pxg
-	yKv31LFTgKIFGnY7P7QAKlfHUPvZJp+vWADabvrqDzLJ0jOogQuhxWippFaoI/5b
-	RQkSgzQqRn0Ewkwz2GlIkbZLJJPfslV8YLy+7aasW2+4manAh9XRt/ukayGZf0Kq
-	SydQh+Ljkif4K2wIXT1Qb7wwGIntc/9SqLyN9IYwgk7vhJKLkxOXZ3G/bgYX40Eu
-	DlJfLa3h5w4fGmYPYMn5tzvEhU59XNVqvugYTUC/bywpB0JBm62HaEElBQzjGHFV
-	sUj6m3fL0ZThH4pW5n7EaxXIvR28+H5pd5ft6KNNFgA9pO6fZqdHerV8thBA4/nm
-	ebqs1g==
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gk78x0j4t-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=apcsZg0PcToMRQMErCaGrj
+	GBMFk6lJ70wquYVwMAbm0=; b=f3Sd0IcWNDGqqEPl6fZ9kvm82NXdz9l5KzeK68
+	X0itKvUapiJNGTCiC+zbEETX2wV4WFElBFSr3ldTTaqH9PPWws7xwah1P/vvUg8Q
+	G6DMtgZNlYyjVs72p5FC/40HczSWpwJWjE2NmXvbGk7v6mywa217u+ZGwA0O97oE
+	JTbkF7FKMGmckwDJE/0cgzwTkz5U8FfMjHKI/UK8Go65jD9hJfDKFdNzyDhu00/G
+	XgZVeEYMPogNolKG+npNCp0zwnfrU8ye+70X10CXEdi71kcb14xTQiETSMVISaPy
+	n8ueZsgMGPL0vH+67RL+tmDq/+/3MuHuiIzUDM/UsPudkPRA==
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gk5cns14j-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 14:18:05 +0000 (GMT)
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-73858d44c8aso1316594137.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 07:18:05 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 14:18:07 +0000 (GMT)
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-97cc09260a3so5047858241.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 07:18:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788963485; x=1789568285; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=KaUce9/yrvvWl365SbTXejci7TYcSE7Y91Xq09tmBZY=;
-        b=TMgFXtMn49hRkeDB4V+bEou8t168dFdOfbmP3Fo0tnBA9gR8+gjWpT/7jDEDqsHz1W
-         afZu/Gs+p3+ryyMYligWQEHnkadM6jnt7C7QM/Gk7GuvPBrC9kvlprMPLwwqI/8tvNF2
-         Uwvw0UPnJUxYFjjt+KSAGNV9QoN1batU+obQ6Y1QaRPqklF2jMJa0hABNzIlCd3YItjR
-         6oJmEYBvL1jvF0o0eQSDVTF34E1nSrHWEU2chF7HXETKJL6ayN3BPp9zTGH76/OaOLDg
-         Hc9oFVI97pwZEUXrKq1DWxloQwUrthTsGENSaAE21mx64yu/qytMJoFFY8UXr+pEumi+
-         Yolg==
+        d=oss.qualcomm.com; s=google; t=1788963486; x=1789568286; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=apcsZg0PcToMRQMErCaGrjGBMFk6lJ70wquYVwMAbm0=;
+        b=FBGzpPYqcSO+TA52AE1F18fBYhrgsk9Di26p67hfPbeNZhOXdKa+n4WD1w8+bz4gQK
+         l6EawXIaxQug3muLxIFHC9W3deYuQQ7VUKbwQpZW1t6Ci050nEUS0BwvH6Y8EnjU3hao
+         tUCiRCY8pxY7zOf9o4shDvZJxJl8d+D8O/TP82vTU0M2++EJMew3ocWIK4m6+MsZJnFZ
+         pmiBBpzL3o32hpnqAwgppuYSQ1kp+T4nMfUy52qMYz0Yyc4WaSfHzPSVb1Bbt5zczRqZ
+         m1exaS+e06JQ+H7XZw1yHih+vcbLVx0khh705PBoBhL8lbXyXSwdiUorWEDYbEgle8ge
+         V1uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788963485; x=1789568285;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KaUce9/yrvvWl365SbTXejci7TYcSE7Y91Xq09tmBZY=;
-        b=jif02LE6JgnAJOc+Tpsz5H/uTyFmllftclRZLod7iqgnnpzBnAsq8X9wQzQYEjKXsd
-         JlYKK6RTHzBMHz++a7c/qN4OwAF+fSg1G/3UtyETX17cU76YI5o+MdQjhchyzZJn0uyU
-         ziDXqLM2FaYkjz1w3lTZF5WIpy7zRJgnR+lp65bTyxukguU25HT1FbusqFa5adaT61zX
-         HDsCYun4l1TbJONa9BadOuR7KAqMzBlyOTHjkoVZtLS7U85b5aF1/Ut8oG0AEb+gjr8U
-         dVR0yBDLIIhPxlnh8DvtsUVdnyKSTmX1DMdmiN0NtRtTfEyV06vuf1BbYcVNVImhIjxM
-         SvNA==
-X-Forwarded-Encrypted: i=1; AKwUvBxNq/jg4lRF5JjgXUdiRn9yVilMB18KeoGdVpgKUUZQ/t+az58mXyNwb3owfKHXgSiLXIGDhCWfQnQ7qQeeyPSMdw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lEEgH0OXim3gqiu698P0fU1sWmAcn1o2LSb/UyhXevs2+GrvNZ
-	c/dKCFVQ/K3ooOd1EOIpSLd7ee9iDoi7mCryF8UFILz4bkt+ELjHQ27os/Ek3zu9Bsnwgd2sjpB
-	q/i0nTC2EjpaE8lAcsIDM214QTtSgUK1SJ9m+gMSgth/o4xxOM29FZsTcqR8ksqtehQ+Whaqj4A
+        d=1e100.net; s=20251104; t=1788963486; x=1789568286;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=apcsZg0PcToMRQMErCaGrjGBMFk6lJ70wquYVwMAbm0=;
+        b=c7j/kB4KQJizqf2mMIW+Phopty1csOc7fLv2SB1K1XWh+aWYDSB+BdSeKA0vYY+DF5
+         qVkhksx7k/rVCEK6FaZJ2WgTkRTKdiLptquOpSegWRBzRBkSbLo9sZxb+WKZi2DJ8fkD
+         QcE0d26ha/bI5HS9OAqiRPg5C7o2BEtDFxGTsqD5ByBYUz9IWFOk13ayrxK0Vca4YUTy
+         FQFyiNPPF4YfrIBZwllabkxDWUsiqhlM9qNcX4swg4sVc/hFHe+J+g+ujTom7zJhSWrj
+         vz6GY+IIw+5BjCLZjsIz1JcGwSCAUtQZBYisvfXEkWxlZwItxraPGSqFU/5f7V4oypD5
+         ZyWQ==
+X-Forwarded-Encrypted: i=1; AKwUvByprDVCFx6VYUQZukKKi5qBR/88/6QKxyy+bkmogxbnajz7URa1D0X0ShlR1S4WJgE/JeQSsmTwXckonkx3R6iNXA==@vger.kernel.org
+X-Gm-Message-State: AFuF++n54DYUiGVya+/9In3CMTlfUdm59AhK6AY18AQMjOz4BL0+uQGX
+	hVgGLKasBjq8k8E26d90WbvPAD8uvAcjdq2BzWNFCB8ZvkhjO39RqZVe9OaWL10pC1VCVEzBZDo
+	wkDjw5LF60PWbR7OcPa7TN/sRHWsUU2jMFHYtaMfBgYl17KFOYaHfWsxFIkuybe9W9aP8UHojBw
 	==
-X-Gm-Gg: AYBFou0z6Sn6X5LQxgbs+MGd3pqf27BfXh0i/wd326QrY6eUu12QHJJbSI6ax04W+nv
-	iUen9qkAps2UN5wrp4mK7SUWsJdpZAL3OmJtt+r21ANn/omOjXF5W5O/6X+X98a+LMhTB/B66CZ
-	RjPFO5v3hlPLg4G48cawF51fFthExsB8/VbQ2jwL8irlTirk5pwJnWDQMMbtnENAj7JpIhzJx2T
-	jAw6y1xLpZFP8tU1B1cTumKO0njL83O3fpPhT5wDKRYeHcemkI4RI9znzuRNjxzQ4eCMKy1LPpn
-	dE/bcAht7mDauiaYQtBdqA34M4ST0s9mDxYVhmVoLs2j5GysyY7zZ6W2nqdo5rsntcwuHAE+/jE
-	tfHSEES+8dew9CPcsvD+1ur8=
-X-Received: by 2002:a05:6102:2907:b0:778:9033:e337 with SMTP id ada2fe7eead31-78a4a7186d7mr14276765137.7.1788963484682;
-        Wed, 09 Sep 2026 07:18:04 -0700 (PDT)
-X-Received: by 2002:a05:6102:2907:b0:778:9033:e337 with SMTP id ada2fe7eead31-78a4a7186d7mr14276686137.7.1788963483961;
-        Wed, 09 Sep 2026 07:18:03 -0700 (PDT)
+X-Gm-Gg: AYBFou2OgUPFLW2VHSmCVV+aE0C7lSKC4YSsJ7WP7zGWzVK41tJIIG/5z8srsg5IPfE
+	f8JRFst9gdzgiTfN2bBgiZRl99AdGAG2RZMLNETAfwTvgQrzT7lJIK9foBBTwHAAiqQz3KDKd0x
+	jLK888fuMHJQdQH6y3fjD4yeibIPUdH82DlypGfL4DEdN6XlPa5rDJ3qOo/KRpvXcZ7wia+GMEO
+	ZA3XvByDAiJQXtJdk0By2pYrE7Kmk+1sp/RFuGhEO1+f0HhMewS4VwyabsTUg0rgJyu1VoNw+9C
+	cCbJTDsXBGl6dR2XvYr4trjdoaDFVKBseLb8WMDRuiwieuDWeglsgJXP7w5CdMDV5lwclgCeHyL
+	hv7iWELSTWuP+f7yT1G7TP3c=
+X-Received: by 2002:a67:ecd7:0:b0:78a:568a:616e with SMTP id ada2fe7eead31-78a568a7517mr6302031137.5.1788963481442;
+        Wed, 09 Sep 2026 07:18:01 -0700 (PDT)
+X-Received: by 2002:a67:ecd7:0:b0:78a:568a:616e with SMTP id ada2fe7eead31-78a568a7517mr6302023137.5.1788963481058;
+        Wed, 09 Sep 2026 07:18:01 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.214])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c293b6246c4sm77581766b.20.2026.09.09.07.18.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c293b6246c4sm77581766b.20.2026.09.09.07.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 07:18:02 -0700 (PDT)
+        Wed, 09 Sep 2026 07:17:59 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Wed, 09 Sep 2026 16:17:52 +0200
-Subject: [PATCH 1/5] arm64: dts: fsd: Fix indentation of CPU nodes
+Subject: [PATCH 0/5] arm64: dts: fsd: Cleanups with new dt-style-check
+Date: Wed, 09 Sep 2026 16:17:51 +0200
+Message-Id: <20260909-dts-samsung-cleanup-strict-v1-0-1b755a446b22@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -91,9 +89,10 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260909-dts-samsung-cleanup-strict-v1-1-1b755a446b22@oss.qualcomm.com>
-References: <20260909-dts-samsung-cleanup-strict-v1-0-1b755a446b22@oss.qualcomm.com>
-In-Reply-To: <20260909-dts-samsung-cleanup-strict-v1-0-1b755a446b22@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQrCMAwA0F8ZORuoHczNXxEPXRJnhtbRtEMY+
+ 3erHt/lbWCSVAzOzQZJVjV9xYrjoQG6hzgJKleDd75zgxuQs6GFp5U4IT0kxLKg5aSUsfUnYmL
+ ueglQgyXJTd+//HL928o4C+XvCPv+AbRhanh+AAAA
+X-Change-ID: 20260909-dts-samsung-cleanup-strict-327cdcdd68ea
 To: Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Peter Griffin <peter.griffin@linaro.org>,
@@ -102,418 +101,73 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10829;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=829;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=mGJJghFSItEhhFNqrC/z616uuKMInTO+a8FIm23jRQk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqoWqSnUhp42JJuvjT3lk3UeBlFe+BA511LjOHB
- X1afbmVYLyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaqFqkgAKCRDBN2bmhouD
- 161AD/9mHusuedUPugo8y7rihvDXRj5hNQMmPMf3I2kYcmb6DlNz5HFEBKiA93IpMmRcmVzNVP1
- jOt+GuRW3tth3JwhtIvFwkvfQ5xVU52RHaImHEi73G0VF27aNsNbEuhz5r7J+uMTE5cfdFkWZ6/
- mTkwuWw0vzIH4z9VB4n2mRogC5rcUY4jTicX698ADjh8XJz7i8v1JPhfDIvcMyCzFCHhfdXdjZ6
- DY70NfUwa0yjE6m8PPt62Jr1b4GQkQHd+yus1z0ZctWG06gf7xHEHOIThUP7Tb0h8L+wr+h9Sof
- TmK7/NVPUNdyKklcwBN/fWGC9OCLq1yf0uUWODKVYOZIgA86CLEIKozYiQgRQCrlQhxl9V+GCNw
- kKDWkKH8sJtYJ0TER6jKd7P8pw+zvl988ecA6puaWil7Urhffx/Z6hsUntSgB4LL9CSj0eJENhk
- 7N5i1+kKJYie1VM6GkcYgVtPKmAyUtVJwHPsZ+eTOFDWi1ayRkJkxn6EVEioQsmcWVrpkA9waiz
- yBi2I2PtS5h01MDdsb2x52sefkdhniAZKPK+Si1dxmRd20nuW+jQ/sgOuJllKrn/nfuK1fXi0hP
- 0W2il9WcZOM7jm9YGxaTGW1HgMRxu6EgCH9NuU9p4NzV8dNF6unLOUy+bj7TxMl8YCXJSTjSVDe
- d1/lHF8PegC4w4w==
+ bh=c0cxm8DOEPLClpli1HmvHjC8bu9sqa+m4ayGpk0H/b0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqoWqRFO4McZz6cukP6b+AMueoMq8DlRFKGo9mR
+ 6iA1gvgMfyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaqFqkQAKCRDBN2bmhouD
+ 10WPD/0f7lIhTibcfCES5gvYPnDu3o3Lu2IW7Qj0PrIYjFjbilCdgC2nnk6SawIlqdW8B3uZTQd
+ or1k4v6ReZma6X4auTwcYAu2UnN8Pz+qQ9UhOmCsvKFhXz4JsZmrm52PhlKhjmd1T/RbkHfmr4N
+ byaoSJ00WrrwMFfIFBVngsoIsjdtPeK+jAXOcU2rY95Pl7tN3ieYeY1ZhuF38CJ3ed/CtGz3V1O
+ U5oW3kbA6PPpLWMdx8BXo4B/ygsoa4HT7OdECpM1NSWRRO7BYcNFxuUhka6NqVz/BSCdJsEk0Hd
+ Qy69mjaWuWy0xmqm0fGSutPV7f6vGoR6GBZHVHmLPCVoTrP76AWxVFIn9DzixNyxKiFh4knJZz5
+ jMNI46DgssgiO+GH30qi37RClWfjvkPYPs8aNs86T8Tsx0Waz2O0B4m+lVJZdgmR3XvC6b7JO60
+ ooza896KnZy9l3UmPw7Xnq3jozGmd+DXiqr3BwBdTAdcjrPXdxMlTtDiPplevdW/qmAtRtU5F90
+ egTcYZiEIttSbJjBtciF+3zV9oZxR38kwyB/eyGwMrIlXPMT7044r3HQHjAUF7kLz2D0ghXTEL1
+ 8+029XgQnNIgLmvf6tMZ2diccS8pqoFOOAZ9znsfa4OVpL9DN5iWZIx41N1n0KSQRj29rFE4lw2
+ 2WG0kEafeOl+ncg==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-ORIG-GUID: gqrK1-owQ4QQSF0oFihTVX2Eaexr2-7r
-X-Proofpoint-GUID: gqrK1-owQ4QQSF0oFihTVX2Eaexr2-7r
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDE2MCBTYWx0ZWRfX8TvcNe/kjSnS
- j0GarxF8z5BE4vejB/GDY1nHS8VmpwYSWCGk3JksZxfoBetWnYCsFTsZ2ob/idWwL7JoxMdAmig
- DPlFMRmmw/pNZvQ5bUz7h8l+1wZFphw=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDE2MCBTYWx0ZWRfX5GNQP3o2a30s
- vbCnTpCT67iJu9FdKLMyeTxVAD3P1GkDD0pSdc32eoGie9yPXegu6BqqkyewsRVJN3AWyagkeaC
- gHUiKml/tkLKWITCrE09Oh7ggSpBdYNJ0FRhZqwmFFsWkOdurOEKTbXoYZxmySdrzBrte9Tgv1D
- 1NlDjfunM8coTc+EMgUWwwhNE0fgeLV6QwGj8baW5SvDyZ+CH4hl3ui6lVYPB+5yUwyAN+dlzZD
- eP3u4axFd7rC6CRPP4CjyzogKVgg8sflenhKM8/a/vzB9Sq1FT+NSPt8SZJCaqA0hguUouQwMCV
- 48NHP/mgTm0hfTYpBJZA1gS4/HKRrUv0iU2oEScKSL46yWb1evn8d5F9GSO9hIRom+mTXRnKzcP
- ImQcDlsRjvfBXa0qDgr6pd8tzHOhnmVH1BY56+4G4s7ETaa7YF1r/rHV3tdkvWDxtpI7BUyxD/m
- Ovzf1ER+xxR0j66LqDg==
-X-Authority-Analysis: v=2.4 cv=SvWgLvO0 c=1 sm=1 tr=0 ts=6aa16a9e cx=c_pps
- a=P2rfLEam3zuxRRdjJWA2cw==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
+X-Proofpoint-GUID: EolHhbAmB-U8hRh9OH3FEUuHDdIwwzve
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDE2MCBTYWx0ZWRfX8id7AStYk0fW
+ kDrTG0qwYdobNlfDt3Ogx9/gaBPZ+G/RQ/HPP8dK6nrF3iF9ZHl0gGw6oLqvm9KUMb+D6ErPBca
+ vmNOPuol7TumVVO0nlmg4CkvBA/vBSQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDE2MCBTYWx0ZWRfX/vPJyYgtpnrF
+ zE8VXyyiGe2+ya9Ei5QZS2jFv9dOtpEl8rH9MXOLkoYLM5dEWfohKLlQqLF/idSDs8dBFU8xHEb
+ FwKb/eW3wvBvu2Z+RiTsSQ/8QmX0Qsp1snKJWAjumNCn08exe64QBMwBqjsHdHXeZ2Gr5I8+1Vj
+ 1OhO7IFqYDpb8KaZuZxQBFDe0B6YzhRPtWoBb9pjIX9m+/RUIogjBCzU6vydox+DYz7cEqHX3aX
+ NEnfF+0uuS8W/UWjNrXLefutNxndvLP2XArs8TBOPWc7hMSfZOkUX8tdyKkOrV+w1Ys0hPlbLVA
+ dqs4jv+jIQHJ+HRMfZjwSIiN9kOQ9Z2hSCSn/GrhktM/mFU+JHp+91k93hAbWi6ef84ss4P786+
+ RWhT/lDYbEMWJx3gQYOp8moFvh46vJtt51ImjsavwgGxAer75aGy0k22HDYHCViRpf8TBBdbGf0
+ lOkmBNxu9xydc+9WvuA==
+X-Authority-Analysis: v=2.4 cv=S+jpBosP c=1 sm=1 tr=0 ts=6aa16a9f cx=c_pps
+ a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=X3D6fG5ZlVyqGMLsjZoA:9 a=QEXdDO2ut3YA:10
- a=ODZdjJIeia2B_SHc_B0f:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=13zs_1EsgYwksEZ6_G0A:9 a=QEXdDO2ut3YA:10
+ a=TOPH6uDL9cOC6tEoww4z:22
+X-Proofpoint-ORIG-GUID: EolHhbAmB-U8hRh9OH3FEUuHDdIwwzve
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-08_03,2026-09-09_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609090160
+ adultscore=0 spamscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609090160
 
-Drop one tab too much to fix dt-check-style warning:
+Only a few warnings are left
 
-  fsd.dtsi:198: [indent-consistent] indent mismatch (expected depth 3 * '\t')
+Best regards,
+Krzysztof
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/tesla/fsd.dtsi | 310 ++++++++++++++++++-------------------
- 1 file changed, 155 insertions(+), 155 deletions(-)
+Krzysztof Kozlowski (5):
+      arm64: dts: fsd: Fix indentation of CPU nodes
+      arm64: dts: fsd: evb: Correct node order
+      arm64: dts: fsd: Move idle states out of CPUs node
+      arm64: dts: fsd: Re-order nodes to match coding style
+      arm64: dts: fsd: Re-order properties to match coding style
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index 6766c78243a3..d076ea634f4e 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -96,196 +96,196 @@ core3 {
- 
- 		/* Cluster 0 */
- 		cpucl0_0: cpu@0 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x000>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x000>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl0_1: cpu@1 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x001>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x001>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl0_2: cpu@2 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x002>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x002>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl0_3: cpu@3 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x003>;
--				enable-method = "psci";
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x003>;
-+			enable-method = "psci";
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		/* Cluster 1 */
- 		cpucl1_0: cpu@100 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x100>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x100>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl1_1: cpu@101 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x101>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x101>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl1_2: cpu@102 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x102>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x102>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl1_3: cpu@103 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x103>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x103>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		/* Cluster 2 */
- 		cpucl2_0: cpu@200 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x200>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x200>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl2_1: cpu@201 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x201>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x201>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl2_2: cpu@202 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x202>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x202>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl2_3: cpu@203 {
--				device_type = "cpu";
--				compatible = "arm,cortex-a72";
--				reg = <0x0 0x203>;
--				enable-method = "psci";
--				clock-frequency = <2400000000>;
--				cpu-idle-states = <&cpu_sleep>;
--				i-cache-size = <0xc000>;
--				i-cache-line-size = <64>;
--				i-cache-sets = <256>;
--				d-cache-size = <0x8000>;
--				d-cache-line-size = <64>;
--				d-cache-sets = <256>;
--				next-level-cache = <&cpucl_l2>;
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0 0x203>;
-+			enable-method = "psci";
-+			clock-frequency = <2400000000>;
-+			cpu-idle-states = <&cpu_sleep>;
-+			i-cache-size = <0xc000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&cpucl_l2>;
- 		};
- 
- 		cpucl_l2: l2-cache0 {
+ arch/arm64/boot/dts/tesla/fsd-evb.dts      |   10 +-
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi |   16 +-
+ arch/arm64/boot/dts/tesla/fsd.dtsi         | 1162 ++++++++++++++--------------
+ 3 files changed, 594 insertions(+), 594 deletions(-)
+---
+base-commit: 664f1ec11b4dc75f6de70a52e8219f812b6e57b3
+change-id: 20260909-dts-samsung-cleanup-strict-327cdcdd68ea
 
--- 
-2.53.0
+Best regards,
+--  
+Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
