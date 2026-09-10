@@ -1,108 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AC6563FAA;
-	Thu, 10 Sep 2026 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8874718CE
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Sep 2026 21:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789061616; cv=none; b=nJhP1bAloi6+cd00eznT7B4pmgX4y3r5fx8c9q7odox65J/DpVobRyHW+j2qz88NPSes4Li7L5RN57YC3wCda1GjV0iAcKm43npn823WPdD5mm70K9gXisdLPj7V4JrqP6Eu9ash1YiSpYwNCf8JdIhl7W0xKktLqAk7pNjAKXY=
+	t=1789076339; cv=none; b=bZk2mCSFnMuwLNuDBSpS32FFY/z6yff8PT/UcCHLErT47PedYQ5Z4W3myZkNot+5zB39ebeZTXVkoVXlFykpbWsJhzcAjzTxyfRmtLhmzkxDsMZYVqMoDbCYx7Sk4s2wlnpdAV6b4CFlxzeXpeV9gIuZUQ14CDWjG/rRARW98hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789061616; c=relaxed/simple;
-	bh=MCNOi9xIw5iRiR3EyFN0mMplUBmpBIeLYzXFr8Rll8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wp19RC0UGBn3WyZzOJtQyUfY155vCa/jx+HxcC33Bhxu4uOCknYEhnQCG7oX4OgQGTi1CrwyJ1HCU9b2VE6fgmsp5t2HWUBkLpxT1wUzFx2FezzHU7jlZLUjW9/ajeGPNFb8OVuzTrw5vBSKjCmK8mI/twH+Oj3uX79egV+Uq6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zr9Rrxkg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789076339; c=relaxed/simple;
+	bh=IhoXtIPy27R9nmeBtoMiaiTsuzKkKC2i/cZ0nUhc11o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=olUxRRUl18/avadFHroGVwGiHyu5dZVr2OXdtrTkvlLdgT6rI/UDT4W33jvtYGTtWinr5mP++wH1Ygk4tHc54HqDCfDdIkP3OoUY7nZgNx4T+easq/DhOrTxiEW8m8vLMOA3jZruJDAZzzQw4/sxac44qei/6Dr67WgsP9bGEQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pqm5a8R0; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zr9Rrxkg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A5A1F000FF;
-	Thu, 10 Sep 2026 17:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789061611;
-	bh=mc61jQ2p6vMPm9Sn/vjm/9Psk2xpnTlGysS95tscm7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Zr9RrxkgLuPZ7amTj6iAzMB56dHM0XLgFYwJmbnZPBjEbC0mWN3C+hPkJMCekYy0w
-	 Fhe66bjAyi9wUJ1ryaP8OrJykX1XrnmuZFzPZB6YS7pWZRDw5jvSvnO72YjmRGYROH
-	 z4Tm19zswYDqKxRW7mPSyzYnvVDtHi31P0rtyk7bOg4j79nYpu/6i5lJr+v7qPzOvj
-	 A3NE9iZpFHlo2ONmbI1iz6sgHB5b94cRQ2nbAOjOMeecQzhwvn77Raj2xaf8vTh8H1
-	 8rHrjkWj1dDEVB8CybNDdtDUta6Z0wvbXgS7xrbJ02/j1svRIcFXRpNL7Rm+ypvtuO
-	 XHn2kXvUOeFNg==
-Date: Thu, 10 Sep 2026 19:33:22 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Karl Mehltretter <kmehltretter@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Steve Wahl <steve.wahl@hpe.com>,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Mike Travis <mike.travis@hpe.com>, Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tony Lindgren <tony@atomide.com>,
-	Kevin Hilman <khilman@baylibre.com>, linux-omap@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
-	Michael Schmitz <schmitzmic@gmail.com>,
-	Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: [PATCH v2 9/9] docs: kernel-parameters: Drop the pata_legacy.qdi
- and pata_legacy.winbond entries
-Message-ID: <aqLp4p-CCi9sVDlb@ryzen>
-References: <20260905094649.41996-1-kmehltretter@gmail.com>
- <20260905094649.41996-10-kmehltretter@gmail.com>
- <apwKitEmOv3ZwLkd@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pqm5a8R0"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-49954b88fffso2713095e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Sep 2026 14:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789076336; x=1789681136; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=0occsfLmodcsn9s1z8E/JBq4kBSFx1YK4S42OPyg7Rc=;
+        b=Pqm5a8R0mXbgsDDL/O2/yW2btDZvs0/DjC75To+H/bi1ZD9Y2sdE212B0dvDbj2H+L
+         L9eJV2i7ByR1aMWxud2SJnCkbUChCZzAdR72vxUFoHx5Wt+vvbd3d2aqAthw7nysFL9r
+         4V24TvlahaaGRM8NrCPUuQTHipOOlJz8UflPAY4kdmcszc6rKeRy+UDZ9JUlAfU5TpSn
+         8YD0sFf0uepyqOL4dDU4kEW/t5DRGJ3JzWu7sVYi+ar6w+APWvOqmPvtqUGhHJ1cMYD4
+         +4/vi7qgC+GiPZuqygcxp9ePvpjpUJYuUgYSs0E+hXV4VGa/m/4dsAPbzXFax3t9V+N3
+         gK2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789076336; x=1789681136;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0occsfLmodcsn9s1z8E/JBq4kBSFx1YK4S42OPyg7Rc=;
+        b=o3TA6GXhpzoTISFtsRYPeYshwSrf0uN5wiyxVY3LC3uX3MWRrtT3TRjdWNyvspmF0Z
+         6smO8ljRpe2w8BFw56VNZP34cDVf2gnHKYS9TReHMHalMqNBnSvWQZ4L70BUaBj5mera
+         1WenxfB25K9PDthd2NtQdvz3o5im3kAKDcafU/+H4JiNQnEeIGGuecAjgspukzi37RtY
+         twTIqdsBGW9jjnB9uc0f8BmlvRd4qNoOjqVEjH/K4rsXaH7DLaSBEZO8ow+LF6IJz6GQ
+         +uvr7OBWeHTq+sQg5IMmm5qC9HzK0a11ffDIKXEew0nzSiLFsNBqawEmbn5qf9D0Jwyb
+         qfXA==
+X-Forwarded-Encrypted: i=1; AKwUvBzDwBemtHYvfk/U2izpVSKIMfCQ3oUbZdz39OoU4Rk49oeBv/kGeNo9UbwIPfIJEzLeAcEnEjDkQjcSaE2XPYw4ew==@vger.kernel.org
+X-Gm-Message-State: AFuF++mTdJ+BbNo16+MB2r/VzUmZ1bJMi5J+3nNC9+meIdFo77ahEL4r
+	HXMohI5uQ3Je7K376VncQzKdkb7tmsCmqzcj22zbSI4w1JuhFigU8MzGYtX7M2YBWzo=
+X-Gm-Gg: AYBFou1nxE1g16p3p840fGTXaYCLeKgAVFPc4oELajSf2FKN3SNY+nTkdRj0rQsXkfl
+	P8v18MN2ZAtQuPknYat3xkdZwU6h9SVBgEzNDBaFwW2KUdVHJJf09+nKIDMGtgXrKhk7mxKhhgj
+	Ewq9fr0o34xBlfQakDTNxFsL/U4YcoJL4Ypx8O/9cPIUQRMWbLbF7BJnnEC4ddh5T9vi3IRJl8Y
+	bc+ggpiaOYfCjLMd9jAVNQUJKIRAzREhw7gt4blOAr2l/MCkwzuUqE6BXCGFqj96CtIOG9VZsD3
+	upQrssr0kGiyV+bh0Z7INBIOifVVcKEiBDUJ0Kfu8eS8YAWpkXhc/wfcxN8ABKfkktUxz2lR7gG
+	WL30BTiY33m76akdrsaodri9cpB3AX8tB4kpa21bIssiqpoe1AGMprQpcaz5dDOJ7fD6TvLJ0Dc
+	+QrABeXiIhzLoe9/h22KWEL1aCJARJJuvcua+ZigUl4jksRf8l/On61bvpgFqN3K5G/yLsFqmVd
+	N3raRtkmfJkxPv8OG7i3Q+rneWIEFV8rhpjZmBweI14tErWlAW6XDBMHoSy
+X-Received: by 2002:a05:600c:1385:b0:49e:2a61:a17b with SMTP id 5b1f17b1804b1-49e619a0905mr8799185e9.5.1789076335948;
+        Thu, 10 Sep 2026 14:38:55 -0700 (PDT)
+Received: from localhost ([94.4.85.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e62227071sm4434585e9.3.2026.09.10.14.38.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2026 14:38:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <apwKitEmOv3ZwLkd@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 10 Sep 2026 22:38:53 +0100
+Message-Id: <DLBYMPDTOM7N.3I07C9Q0IJJ19@linaro.org>
+Subject: Re: [PATCH v3 0/2] Exynos850 ACPM SRAM devicetree node
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Sam Protsenko" <semen.protsenko@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>
+Cc: "Peter Griffin" <peter.griffin@linaro.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: aerc 0.21.0
+References: <20260727-exynos850_sram-v3-0-8627a49188ec@linaro.org>
+In-Reply-To: <20260727-exynos850_sram-v3-0-8627a49188ec@linaro.org>
 
-On Sat, Sep 05, 2026 at 02:29:46PM +0200, Karl Mehltretter wrote:
-> On Sat, Sep 05, 2026 at 11:46:49AM +0100, Karl Mehltretter wrote:
-> > pata_legacy no longer has the qdi and winbond module parameters:
-> > commit 3c4d783f6922 ("ata: pata_legacy: remove VLB support") removed
-> > both together with the VLB controller support. The entries also refer
-> > to CONFIG_PATA_QDI_MODULE and CONFIG_PATA_WINBOND_VLB_MODULE, which do
-> > not exist either.
-> > 
-> > Drop both entries.
-> > 
-> > Fixes: 3c4d783f6922 ("ata: pata_legacy: remove VLB support")
-> > Assisted-by: LLM
-> > Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
-> > Acked-by: Damien Le Moal <dlemoal@kernel.org>
-> 
-> This one is actually a duplicate, I just found out. Ethan posted a more
-> complete patch in June that removes all six pata_legacy entries which
-> commit 3c4d783f6922 ("ata: pata_legacy: remove VLB support") left
-> behind, this patch covers only two of them:
-> 
->   https://lore.kernel.org/r/20260607064053.195166-1-enelsonmoore@gmail.com/
-> 
-> It has a Reviewed-by tag from Randy, but does not seem to
-> have been picked up yet. 
-> 
-> So I suggest: drop 9/9 and take Ethan's patch instead.
-> The other patches of this series are not affected.
+Hi all,
 
-I have picked up the patch that you linked to above:
+On Mon Jul 27, 2026 at 2:23 PM BST, Alexey Klimov wrote:
+> Hi all,
+>
+> this is a small series that adds sram node required for ACPM communicatio=
+n.
+> Bindings update adds new compatible "samsung,exynos850-acpm-sram" there a=
+nd
+> excludes it from having child nodes and not required properties.
 
-ata: pata_legacy: remove documentation for removed module parameters
-https://git.kernel.org/libata/linux/c/a19d4f9b
+Gentle ping.
 
-Thank you for the ping!
+What is missing here? Should it be split into two separate coomits?
+There are no comments for at least a month.
 
+[..]
 
-Kind regards,
-Niklas
+> Alexey Klimov (2):
+>       dt-bindings: sram: Document samsung,exynos850-acpm-sram
+>       arm64: dts: exynos850: Add acpm SRAM node
+>
+>  Documentation/devicetree/bindings/sram/sram.yaml | 2 ++
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi        | 5 +++++
+>  2 files changed, 7 insertions(+)
+> ---
+
+Thanks,
+Alexey
