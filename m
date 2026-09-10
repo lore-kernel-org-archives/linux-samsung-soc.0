@@ -1,136 +1,139 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25CF367F21
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Sep 2026 01:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81814384CF5;
+	Thu, 10 Sep 2026 06:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789003998; cv=none; b=L+QOg+YPtam31DHgWThbuIyDH6vtUWBsJVuT/uUnfYDQgl534bvmS6DVrDFTplFwP5zfMiVnZfNb+jOkyEYgBtQiVAb1ZecZQtr0fT2xoewv0JyyjDncyt18MfrhWO9V/wB4tPQL4SQR2oF1G1SGjo3peJOJfyTe+ztq4FmMD90=
+	t=1789020980; cv=none; b=hvYld4Est4E5lUQ+qEyCx18o0lCcLKuOrrfo4/UZ7c7fEsiSQXi+U4FpdD0Z77sFVtB8OjfEdV9Khj2ODKJbYnGOYY84f3aT1puFhASlt/ZNvIWJMb4A3cE5EMl2Tp7PiYuW6cLzkMBfGnDB86wwvXcC98LGzl2Q/Pdd6fxXDZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789003998; c=relaxed/simple;
-	bh=ZYFLiiSEbPgU0+ZjsS1KNzdvmrfyUGct38CSb+7KC10=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n1Kq192W7K4JjAF03JarlKLO1p3JYoXIjQ+s1VfljdEm/ajCpucphn+JoK424mAYybngx7cD6LqZWinzbK0eF3yfK5GF9KC7eYNZ4dvSQUoGOEDz4VEVcxOtwHQpbT4utjBnY9y5Z1hx9IF7SGUtJ0solfUJpBm7P6qZXC78hrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKOsMtbD; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789020980; c=relaxed/simple;
+	bh=dy8JF2HPHqpbKppZPV0XvOy0C89bNiEmcRH7MGBdAB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1SFaZuXKeQ/oPZItLXOuA51YmZgvVQRxvWLuIp0ClT1VPLZSt2r8xronyIwqr4CF9hBTXNSEgBbYx7HJ9uSjXH2Km2lnVN2oxy3CN2dAIdMA7IzAo8drRmiSynYwpwB+I1j9tEySATiIYxJ2vnVkGMstIvJ69izOFljeMMKOWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRb6JNW/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKOsMtbD"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49b8e527d63so81384915e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Sep 2026 18:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789003988; x=1789608788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7gFP28iKq1M/HJk3t4X9byGhtWcmOOGCTOZxmuDlWN0=;
-        b=CKOsMtbDLmlvqC8UoICufqDEvkMqZRt2CNhavbyp+Wp4tgCcZvOZel11M4HI5DDmnO
-         ZAzzXbIWC1dy0RP9A1G0s94vYDEvR/IfMcm4AokLVmIzvRZGmoJXnyFEHsVQ4ZhfxFxN
-         vS/7t5ODxV7m+iWr7weuwS67oq8/8AgHKnG6MsC5+hdHRbHkqRbr462hkCSppYgvs5tg
-         /gfLDyDd7IjuI/rLVfo/8ltTx9CDAaHReuOyntpOAHsz2jFwB9GUDKnNR/G/rBJeqiSi
-         BSURrWL3KxAM2vuO0xHeT4gJRhUNeK1sSMjJIFbAvI+BweQVtCZaYJhYMQLknpfNySl4
-         phNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789003988; x=1789608788;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7gFP28iKq1M/HJk3t4X9byGhtWcmOOGCTOZxmuDlWN0=;
-        b=aXxtDvSklMVpNlyZ6N50jeaoNhjPTfXHYeAm2zREzSJETqcaBxEPF57Gm1deW3dZOJ
-         oHMWMxil6lmlAR01J7eMXwdJ291f/pxm636y2Hlyvd/89+D0U56OJoSeUhhEyBmrHQRH
-         MRiNXcQepiJsfeZ8l+LDGAtkEuENBXrQWjYTi+ZWMMnMyWpNuBeV7MDnlbShIJ9OEVg6
-         dBti2rrStTTW2TT7Ho4lvnsoHLxctPJnx74goBvhIfbBqfhnjznkd2ZqOfKWAnm2+d9Y
-         hB3VaI+/xsy/w5fXMyoRWNU7xhw5L1W/t+U1Uy0w5qcnPmkPxYiDoxGJfqm88wtRx9F1
-         QbMg==
-X-Forwarded-Encrypted: i=1; AKwUvBwnKWPDbyYAHsbuQHzcljP6Zhxk3TC6xev7G6HbD9VLW7Bu9d5SGmco75uTmwJ3V3uFk1XN5s3dV1chadi2QYEWPw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nvjT87i9yTYaeQ3nepZQFriolERfNxahVhTPkAx2hbiX98nDho
-	w6Yb7Jz1xne6dUCpIYSoLFlUqMPd+8C1SPBfhWIgq90iPUN59SWf+use
-X-Gm-Gg: AYBFou21bD5IUUkMJ9mBL+t7t9ZKDwf3bxC119Oh6d8ZuwzOnGDoU+66QrJCWTkU0Yh
-	l8hf5vEFJILXYgCzi3qgSjZ+14FNt1B3eF3SI1gK0fdZ7qDxUTB6we0vqwV6zqyz2l4F8jQfIQc
-	A1RdpkxnxrMosZMjSwYUeIHSmwJ0LYE8Hgh9ZS2ZBu8nTElCq3s5gIW7K6f8dagWNBQnxLnKb1h
-	DLLg+Du1m+T1AhtuNZJUPVY+ukYysRqUP8AyUheN5aczOsOFYJudWNYxGhbDNsOo60vDozhBD9s
-	qctuSCll4ojvAMVMMVq6wcze1BRn+foA3l0qptWvF9YBxelGzvkeuWJRKd2QAyrU06V9qMRF4xG
-	h2r0sLs+OqCqKfX0Q90qBJ3k42HceKTIp0GdNtkP7F5174aAEBxdZnlSiTSvUOgSCqTyC8dklik
-	QgI9m3WwmbPRwxkiT5w68pjFWqxusluYZbCsfYiaSL7g4TmLTSzz1z0YGWNQQytS5ZlDjfKAbSb
-	CTRjjzaZp0j9KwdsFxngAQ1d+ChGbxvG+MygXOMQqVCVTi2LxXDrmx3cGFkF27C9fSIDTvVwYn8
-	CP2xm4/baE0CvOkGVXy1yl+YFo7oLBqXdUJHHG3xdj/tnIdZ/00h0tKY/e53lMp5MYnT4ribj6W
-	WfcX6Y5A9FVjY
-X-Received: by 2002:a05:600c:6305:b0:49d:2803:22fe with SMTP id 5b1f17b1804b1-49d28032d49mr11185475e9.32.1789003988252;
-        Wed, 09 Sep 2026 18:33:08 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3100-b090-6201-5565-e933-e630-1831.310.pool.telefonica.de. [2a02:3100:b090:6201:5565:e933:e630:1831])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26d4e3f3sm35852735e9.15.2026.09.09.18.33.06
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 09 Sep 2026 18:33:07 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Steve Wahl <steve.wahl@hpe.com>,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Mike Travis <mike.travis@hpe.com>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Tony Lindgren <tony@atomide.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-omap@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Michael Schmitz <schmitzmic@gmail.com>,
-	Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 8/8] docs: kernel-parameters: Drop the pcmv= entry
-Date: Thu, 10 Sep 2026 03:32:45 +0200
-Message-Id: <20260910013245.8619-9-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260910013245.8619-1-kmehltretter@gmail.com>
-References: <20260910013245.8619-1-kmehltretter@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRb6JNW/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D258E1F00893;
+	Thu, 10 Sep 2026 06:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789020968;
+	bh=h6Exf0e8vILsYNXuRufIR8cElvccbDJONMs+KKdJ0hs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=iRb6JNW/uIyBGIC+b02KqPdx2+r9VaLnKuR5wE17VK6k56okkHiUb3tZWT2mP6RDu
+	 3KIqIiuykcum2z8JXcgpRDEPk3OjwwkXTLr53LzeIwYNsfPU/TF3cXn8RR2+ZvFOPq
+	 3xytP6LFyl3pexeKCqNUCI6ZY40w9QnNLCQIOWGThgbsW6qYyRYeXtVoeCd1wZGkPN
+	 fV2DGDzhEne76CL5cYsKPtSdeCNOa9SZsUWyPaN51ckRr+rbrg1kV6VhTXLw2mFSFm
+	 a0xbUkWBrV1wvJd4jdc0LeeU7kxILnh2f8xH1mxubodQJwwJQocaC+IPZPiVtF+NpW
+	 jeuXxAlItUFXw==
+Message-ID: <a05c4086-1681-44f4-88c6-de1073b0f5a6@kernel.org>
+Date: Thu, 10 Sep 2026 08:16:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: fix typos in comments
+To: Lee Jones <lee@kernel.org>
+Cc: Botsz HUANG <huang.botsz@gmail.com>,
+ Hemanth Selam <hemanth.selam@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ linux-kernel@vger.kernel.org, mfd@lists.linux.dev,
+ linux-samsung-soc@vger.kernel.org
+References: <20260904122834.33723-1-hemanth.selam@gmail.com>
+ <apwFlV97bLVlvsOJ@botszhome>
+ <59747ea8-bd89-4dff-ba13-ff9c66318e8c@kernel.org>
+ <20260909161454.GF2133376@google.com> <20260909161710.GG2133376@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260909161710.GG2133376@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-pcmv= went away with commit 7aeffbf2ddec ("pcmcia: remove unused
-pxa/sa1100 drivers"); nothing parses it any more.
+On 09/09/2026 18:17, Lee Jones wrote:
+> On Wed, 09 Sep 2026, Lee Jones wrote:
+> 
+>> On Tue, 08 Sep 2026, Krzysztof Kozlowski wrote:
+>>
+>>> On 05/09/2026 14:05, Botsz HUANG wrote:
+>>>> On Fri, Sep 04, 2026 at 05:58:28PM +0530, Hemanth Selam wrote:
+>>>>> 2.48.1
+>>>>>
+>>>>
+>>>> good job~
+>>>> Acked-by: Botsz HUANG <huang.botsz@gmail.com>
+>>>
+>>> I don't think this is real identity. It always comes with other
+>>> LLM-generated content - as in this case as well - from Nick Huang
+>>> <sef1548@gmail.com>.
+>>
+>> sef1548@gmail.com is Googleable and appears to be legit.
+>>
+>> They also have commits dating back to May last year.
+> 
+> Botsz Huang is also a real name [0].
+> 
+> Now, whether they should be Acked-by:ing patches is another issue entirely!
 
-Drop the entry.
+But:
+1. The questionable account only acks when sef1548 acks
+2. Even the style is exactly the same repeating the same mistake of not
+removing quoted text:
+ - big wall of text
+> LGTM
+> Acked-by: Nick Huang <sef1548@gmail.com>
 
-Fixes: 7aeffbf2ddec ("pcmcia: remove unused pxa/sa1100 drivers")
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
----
- Documentation/admin-guide/kernel-parameters.txt | 2 --
- 1 file changed, 2 deletions(-)
+ - big wall of text
+> good job~
+> Acked-by: Botsz HUANG <huang.botsz@gmail.com>
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 48dd273eaf6c..4864e37005be 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5311,8 +5311,6 @@ Kernel parameters
- 		nomsi	Do not use MSI for native PCIe PME signaling (this makes
- 			all PCIe root ports use INTx for all services).
- 
--	pcmv=		[HW,PCMCIA] BadgePAD 4
--
- 	pd_ignore_unused
- 			[PM]
- 			Keep all power-domains already enabled by bootloader on,
--- 
-2.53.0
+
+Best regards,
+Krzysztof
