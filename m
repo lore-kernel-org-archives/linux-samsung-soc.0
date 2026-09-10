@@ -1,151 +1,130 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCD72E738F
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 00:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789087375; cv=pass; b=BUSzex5NnsJTwcJf4eEzLBwjLNCXP3/yb7D20enfjgQxRQ3z+smQRpvwVkJ4QqVYqMuEGMqT/woMf6ITeBz3oO0VtnW2QKpWSqaCCNfhM3cFImfyeyvaHtm67b/13vNrTNxfIfcOD86xQjYyF3s94xsI7COGfpFzaGTIqjIvzzk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789087375; c=relaxed/simple;
-	bh=s9iYiLxHL7U/2B3sedn7a7chFI9A193m2Bj539bDZyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e/ynushkt3LExyRxOsKm1zCD/GU/1CxIgI5WURZL7OkL7xu/Ywm5EpGcvjQQVJv1sK2ml5tow6YOXOOyyfPWBJiLNUO2RnWjXg+nuo4PgyR9vlmOUmgM2U1/RC4USxAwqML3gpeoN5/8j4tsDcMGaPwlGGqOnq1HVV4fTLYt0WM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s9Hhm9x+; arc=pass smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C33DCD99
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 02:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789093091; cv=none; b=Jsxlo8BBHoCjQHJnOzo1smk9g4Gh1wHc8O+9EYm/Sq26W7xQ1GRrpyxo7Rr3vv5kASV3kcQSMYs/SAeZTnLgHwzv/eTeyq57RkuImZQTqCTCGbK98OoYFUUGkEgRMdIicldkvzb25+4iu0IHoeKiqHUFEFyY38ZIm3mGosKTUbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789093091; c=relaxed/simple;
+	bh=sb9XA5jIUBxmoa+Co1REyrkLnNvoLNEwcKFBsdJV6xo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ihSlq1t4NGWtCfblGUyWfklmHRRNE4Yj1pYSN+MlBr6I3MMOI9wkl1/hjbWHbzVy7xMhEWHSMhnDnOQotsi6/g8Xp3wi9L/IW+gAQgQvGTdBWFLPw34RnXNI9Ifia3R2Nad8aUbtsDTy7kUqbcNUBKwZp5GlvfyVma46exAlcMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZWEAKJZJ; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s9Hhm9x+"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-87f4e914a45so2900727b3.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Sep 2026 17:42:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789087371; cv=none;
-        d=google.com; s=arc-20260327;
-        b=lx4OmxlXzsZ9PwUkVujLYHWE9/2ADD9oAI2CZyjTwi6LZqAXXtEdPWza+L0DIIzmP1
-         /ZT+RzulcGQjLoIkhndebsjXjecWJeXG07uJEzPS1ooTb7Owy2wX6bJsyofVZInGc1hu
-         SqihO3An2qTTj+8od2vI5e4dpWtjfW/WmIw0RFGXjQcve1o3MSvj87J8Zc5YHk4B7aiI
-         DXhMj3fxEFJLfC0+Tfklm9B3OLBD2sQ20qF7uzGoE/l+H42zS7SlIKEZzRGdWScwvsMB
-         tbezk3Cyn7BzbyufIXnnSPe2RGBSTKfL4sMlAWm16frPMVoS2m/u6+EnqYarVXtec76T
-         IYsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=s3WVT2KPS4E/U4EB6j60mzQ6ExLGgX3JVRLYkcMa7dk=;
-        fh=KvijY07XDJ7OosR2ds3QdF4vQoarrz31XTnnW9ben3I=;
-        b=GI7Ip/EFgXBsxfQiURWzrwnl5b0LGbqdjX6pjhycG+t6wtRdLTeOZXyTXp1Ld6QHhR
-         jiMD1s89YA6IgjHOksOa74pi5D+rRskwZ7MthBBl5zvXOx8vvqKNK3g66IP4oAuMy2ZV
-         o1aSbl9gTHP2FzRdLoj9XJ0OvJs3RpycySOVOfleOCP21tP5o6O66TdIcL0dhf9JOcp3
-         SdldQzOemUaL5/OVQnJ+myGpNuELasev6BpOofNNoeX3C0/wR5bepqv2QUlTJCJfT2kg
-         Sbx02+nY4q5WbjCqPBBLn+xMolqQZckOyByFV71P1GK8bHVUP5Yuj2jqcHvxdZCvzJWL
-         Y7Nw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789087371; x=1789692171; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=s3WVT2KPS4E/U4EB6j60mzQ6ExLGgX3JVRLYkcMa7dk=;
-        b=s9Hhm9x+YDQG69tX0j8jBrKCIJKTZdwzTvn0Y461nXRP57BUQt1qB3MWpTro68tKY9
-         mf6K0M6ThgvID8jGDZe5K8gPjy1urNMD/t7WQyREItsQi8rVeCWb55uY58yeQ4Bb9HqC
-         BEVeEvOc8CerQqH6KtvRzTTpJC/nEenzz4qD2Jf1+BFeOtVTVokuzYfPBf5izs64nl+e
-         J5ngxdJnsEqLv74TN2LFgWJG0h0eJsSQ5r2dml4UHMPvIjSnUlFeppxX8Sh/d0i7/aNx
-         OtomYnEQDg7GQlnSXaLbdJnl5ItAraMNCX1ZNUNnIGfWbz2J51PLDselUWrwVquUrv0s
-         m5Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789087371; x=1789692171;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=s3WVT2KPS4E/U4EB6j60mzQ6ExLGgX3JVRLYkcMa7dk=;
-        b=H3ANz+3u4awxe6tRF4aUW95I080TlxxzaDlfU/AnugDaUSeLQdBDGsA8U8IWteV1A+
-         z2aoMtRkYqvODpQ3dz9i54RXXbofEkEH6nFfWo3CZDZ1BjtOnje6kOZuxjEWqyCC6TM4
-         knFtP5IALVBKa2jOUabH2oTcwb3WziLEyAmFLoLf4YnwsKalXg6d7pxu86s6s8VR9tqE
-         vcL5zeJmpR5echCovc99TIu0vWtzIZeAnZkBwuGuuClzeBKQQhASlqdsn3Cu/A38lmVl
-         Fsvhi+QKU11gQkbKk/qQoiTCKI7GQyHovTrhKTKTJDLnAbMf+391MNrj+WOqK8Y0xp2g
-         gnoA==
-X-Forwarded-Encrypted: i=1; AKwUvBxgY9Dp8QKRDgqDQgAeOQrrD+0RlKwsIPw4B/00/tp4FanZgwP8ZIa0QQgUb4L5sQ8olTZwibJqmMXQstS2UwU2HA==@vger.kernel.org
-X-Gm-Message-State: AFuF++nfnKk73KDzFfdwvwcHqbljt6nvDCc/Ds4daoRAlSML8kaZ6rdF
-	XTyLHq+JXG+AQRnGn9JYdOECO9cruYwq+UhVGu4ozIvUjFxXTxWWuidGk5K3jhkVFzLYnSDSYo4
-	Rzb9JYirSEJfVoUIc0pxS82ug7RBHuxwC2WFIbHhRcA==
-X-Gm-Gg: AYBFou0nTTQHP0XNKL4AuqtMOnE/rOV1annXX0iISwHDFI+ECZOMTkMDBUbnGcwTeVL
-	vGj0IC9GqJBeQPe7s8bXfNb21IVGsRiKjTq/9wKJs3evB2ggAPXCUIT1u3h4e20s/MEWU8owb6l
-	BN9KIF4H2YDo07QWmfvyyPvHdTvIM3VLlPcTZKFuNYH9b7qktbIk6x+4qd658KLBCMbRnl1efHd
-	p7kqfj8H0Q5aS01ip1cbwaL7UxwLxXSiei6XZtkEXH6tHzDB88IvIkuNdk9xVTAjvchBeKbAfpp
-	MDw03gyUznhXJk8ziwYsgVkdMFmZRrnZl4Cl+ZUStKpFIFcKkvSw2nIWsl1xO6czy9tywsc/Pp8
-	Cv11g9kya522kSA==
-X-Received: by 2002:a05:690c:660a:b0:873:5ddf:d862 with SMTP id
- 00721157ae682-884b3873114mr9013287b3.45.1789087371068; Thu, 10 Sep 2026
- 17:42:51 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZWEAKJZJ"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260911021803epoutp039657892c79d14f9aa1fe2bb7a947e7f1~UIq47eUhU1292112921epoutp03Z
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 02:18:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260911021803epoutp039657892c79d14f9aa1fe2bb7a947e7f1~UIq47eUhU1292112921epoutp03Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1789093083;
+	bh=NFtbyzYoNl/zCEgTU0VH6n/v1JONtCfMPfAx62T90jY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZWEAKJZJVgEC7eZ2jFl1u3xZ2Hhys6o8newPTd3nLC9fZ6xPEaB05tziAoTWtxTjr
+	 B4hpZh2sClxvvqyGaHKyBLlKOeTEFD1QXCpBKdO/pa+fsdU4/zxRPhX5y7+skWBvCb
+	 YoVT56EZh2H+0zs9SkMUcI3tx4OJ8LfU51XvgkUc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20260911021803epcas5p125a2fd347d43b9bfdd2cf660e77fbc2b~UIq4dqRYd1230512305epcas5p1s;
+	Fri, 11 Sep 2026 02:18:03 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4hgyrC15sTz2SSKZ; Fri, 11 Sep
+	2026 02:18:03 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260910155949epcas5p25209000963122d8c73dc18152feeabee~UAPGFN7l72530325303epcas5p2N;
+	Thu, 10 Sep 2026 15:59:49 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260910155947epsmtip28ec55c8ae2033e856b86e2b9ec9c545e~UAPEp86IB1332813328epsmtip2p;
+	Thu, 10 Sep 2026 15:59:47 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@oss.qualcomm.com>,
+	<linux-fsd@tesla.com>, "'Krzysztof	Kozlowski'" <krzk@kernel.org>, "'Peter
+ Griffin'" <peter.griffin@linaro.org>, "'Rob	Herring'" <robh@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20260909-dts-samsung-cleanup-strict-v1-4-1b755a446b22@oss.qualcomm.com>
+Subject: RE: [PATCH 4/5] arm64: dts: fsd: Re-order nodes to match coding
+ style
+Date: Thu, 10 Sep 2026 21:29:46 +0530
+Message-ID: <2084663827.61789093083145.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727-exynos850_sram-v3-0-8627a49188ec@linaro.org> <20260727-exynos850_sram-v3-1-8627a49188ec@linaro.org>
-In-Reply-To: <20260727-exynos850_sram-v3-1-8627a49188ec@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 10 Sep 2026 19:42:38 -0500
-X-Gm-Features: AcwNN1WDjFTgB-aBDySNIcrpUgOjcJa8lLtJJ127JD23ekWYTtDiP3LdRVUZsB0
-Message-ID: <CAPLW+4ntx8qLy9jAYYdT+XwxwKHjvisutqEi04oPEQny8auD-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: sram: Document samsung,exynos850-acpm-sram
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQI+vGmeAYQ1M8KGwzLNRALcGC0DngIGdcDsAfk7HAC15QOycA==
+Content-Language: en-us
+X-CMS-MailID: 20260910155949epcas5p25209000963122d8c73dc18152feeabee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20260909141824epcas5p28e392ad97ca2e5dae47a857272b5ea14
+References: <20260909-dts-samsung-cleanup-strict-v1-0-1b755a446b22@oss.qualcomm.com>
+	<CGME20260909141824epcas5p28e392ad97ca2e5dae47a857272b5ea14@epcas5p2.samsung.com>
+	<20260909-dts-samsung-cleanup-strict-v1-4-1b755a446b22@oss.qualcomm.com>
 
-On Mon, Jul 27, 2026 at 8:23=E2=80=AFAM Alexey Klimov <alexey.klimov@linaro=
-.org> wrote:
->
-> Document "samsung,exynos850-acpm-sram" which represents an SRAM region us=
-ed
-> for ACPM communication on Samsung-based SoCs.
->
-> The SRAM is consumed as a whole, is not split up using child nodes and
-> properties related to this are not required.
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Sent: Wednesday, September 9, 2026 7:48 PM
+> To: Alim Akhtar <alim.akhtar@samsung.com>; linux-fsd@tesla.com;
+> Krzysztof Kozlowski <krzk@kernel.org>; Peter Griffin
+> <peter.griffin@linaro.org>; Rob Herring <robh@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Krzysztof Kozlowski
+> <krzysztof.kozlowski@oss.qualcomm.com>
+> Subject: [PATCH 4/5] arm64: dts: fsd: Re-order nodes to match coding styl=
+e
+>=20
+> Re-order several top-level and MMIO nodes to match coding style - orderin=
+g
+> by name or by unit address, as pointed out by dt-check-style,
+> e.g.:
+>=20
+>   fsd.dtsi:981: [child-address-order] child node @10040000 out of address
+> order
+>   fsd.dtsi:315: [child-name-order] child node 'arm-pmu' out of name order
+>   fsd.dtsi:348: [child-name-order] child node 'clock' out of name order
+>=20
+> While moving chunks of code, also re-order a few properties (I2S, SPI and
+> CAN nodes) to fix:
+>=20
+>   fsd.dtsi:661: [property-order] property 'clocks' out of canonical order
+> (should sort before 'samsung,syscon-phandle')
+>   fsd.dtsi:936: [property-order] property 'pinctrl-names' must be placed =
+after
+> 'pinctrl-0'
+>   fsd.dtsi:936: [property-order] property 'pinctrl-names' out of canonica=
+l
+> order (should sort before 'samsung,spi-src-clk')
+>=20
+> Moving several nodes already creates unreviewable commit, thus reshufflin=
+g
+> the properties allows to skip changing the same line twice without loss o=
+f
+> readability.
+>=20
+> Signed-off-by: Krzysztof Kozlowski
+> <krzysztof.kozlowski@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/sram/sram.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documenta=
-tion/devicetree/bindings/sram/sram.yaml
-> index b83fc6831947..b9c4d4f3199b 100644
-> --- a/Documentation/devicetree/bindings/sram/sram.yaml
-> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> @@ -43,6 +43,7 @@ properties:
->          - qcom,rpm-msg-ram
->          - qcom,shikra-imem
->          - rockchip,rk3288-pmu-sram
-> +        - samsung,exynos850-acpm-sram
 
-Is there a reason we can't just use "mmio-sram" for Exynos850 ACPM
-needs? I can see it's used in the gs101 device tree like this. If
-there is a reason for this, I think it might be a good idea to
-document it in the commit message (probably in both patches). Also,
-should "mmio-sram" be added as a backup option (after comma) in your
-[PATCH 2/2]?
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
->
->    reg:
->      maxItems: 1
-> @@ -159,6 +160,7 @@ if:
->            enum:
->              - qcom,rpm-msg-ram
->              - rockchip,rk3288-pmu-sram
-> +            - samsung,exynos850-acpm-sram
->  then:
->    required:
->      - "#address-cells"
->
-> --
-> 2.51.0
->
+
+
