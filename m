@@ -1,122 +1,70 @@
-Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D87D1643B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 03:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0C440587A;
+	Fri, 11 Sep 2026 06:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789096674; cv=none; b=nrCIjC+gacdLfz9GnBWys1s9iJz/JweK6NhBrKSczA7szgRU46FyqhlQ8G78IlMMi4pB+dZo94wE44kyfxEb3G1eqdS/Pbq9K9cEhDew1WLyCsOHmjGN9Oo9oaLom2LBIOdyrOvNm/NijgA79M3AQNNSB0qwXd6pX7cykoW+z+w=
+	t=1789109752; cv=none; b=P1bQDnk/dP3GfhHKY5Jgko/Q63kO4HlbI8KJs4hGVk8zDVEMug3AQTXlHzbB/PloXTn7RR6Wv93zJtomniwNoJFwTqfBT4lToi6ozNdrHv87Vg2i0Ab2pUjkPlWRJ87PXU0EgCmahoEg7WtE3ngpiR0CKqsvdY5rK5r10ao/4Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789096674; c=relaxed/simple;
-	bh=RGyinIeQbH1SXwu8QSJD/G3OsD3YwwPsVELCds+SjXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wn5nQdmbXi9rEDOLwKGlJu3grO9OeRMikbPi2K9JJwzWPzp1B/Q6LCHV7zI3FOZWhYxXIcwpnT143XLD05BBVTfTLLjXtkPpQpEb7SinTeI+RL82i7dyZUu1bZMXDrZ7FzB/fYWBRs0sOgnoILEATKac1vua2Zj3rrBe21hDWqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oKocfXsr; arc=none smtp.client-ip=74.125.230.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789109752; c=relaxed/simple;
+	bh=ISVPbbt0Fc5BFamR3eYfpcVyINYbzazSJuHDTzPCUqA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=V5IH8dglDQ3VR5xyVL8wqhLIvANl14P9yv/8MqL6K45Xeidf2qYNjbM2TO6TK9P7iXJcpif42n4cSjBJv5lgwBZTGTGJpi+Di5o43YxawTnrif0rXTNwKaVWJkQO2/zPcRHpXv/2SxHmtY/NmLiw1ABqu6I5J8QInHQ1BOw4gdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/XbA+tV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oKocfXsr"
-Received: by mail-qk2-f12.google.com with SMTP id af79cd13be357-939109fafddso36065985a.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Sep 2026 20:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789096672; x=1789701472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=guOvZvhnofpuciLtaF8WyaHhY6OyItiA42hCWdF3Kac=;
-        b=oKocfXsroPKBbfln27+llpG1E/SzPpLhR9Sy5RkLGgsPXzKYmg9z+D/3OSIuWQtElv
-         OKbg1TAP8Zmed2nPkBw0onQ7kVf6I6XVlFpOZU3uwud9iRGpbxWxt+MLm2ASjULgyudM
-         SW8kw8U9CLAVUqS5zS/E1RYWLEvQVM1qRm+HsrcGAlfOi5Ft//wCJrEzo1Jhy5JQQt+N
-         cQARGQIhkNC6Np2/PLXJNWYHWv2/r9OVwXCG2W23gFTOnZpyDCWHxPaev3NEbX7qehba
-         yL+Ca5JmiFCDqPFKRA6XCxNJL5LCMr9CtVObD3IM9XtHMPwbKJpYvouPWvJ2hjuriJov
-         hbYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789096672; x=1789701472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=guOvZvhnofpuciLtaF8WyaHhY6OyItiA42hCWdF3Kac=;
-        b=MVcPXyjo5BAo5gt3pbE5xt2rYZckNe1F7u/EGHK9WaXKHPCVO6hYcSuh7ZRMkYyZor
-         Z97+Q/uN2Y11ATU1PC7B7JuBYXfMi4bmXZDYff3UUPab1Lts16DmGaopoDJhumodApob
-         TExQ5GjqAxNihhyyjAOBBTvYEQcZ2LtfsdXGK2E20ydPrZXMQ0bMkVBVOWeBPP7PqVBQ
-         JX7XclO6yoLG7HRu0nfu/jBXd1Q4OdJpEHavxDYqvgm0x8wNCL+fdaAe5oFVNYBnLLVm
-         YBUqmYJyyMUXTllP0oVLQIoz2AIdwMJBrViJ+32SPWMkmWvAgpofSCEh+UmR/9h1jkJ1
-         /HBQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxtqqdMBb3aq8XyWjWQcMpslLoojyORewWc1ieBHwOimbAu1Hl2VhxS4oS8rJphOqH5r36PBBYTDNEIcoIvLcyRrQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++n9evP0Jxll6e4g5Y87BWtc7DXNvX0PBPKHikHA3PY5PQ51QUmv
-	paVezPnHjRWoowVEp4C57JKzJQllVqMwLf7+BYf0958Fty4ZJulLvJ0=
-X-Gm-Gg: AYBFou3oDf2ptRb4GX5GtSq7ghH2oNj0sY5KBwE7ldAn+oLKGQyWQK7AAbtqawQMaoq
-	7oFu7eJ2ve/4YcUbgZU4auyiTOHQQ5zrIDRehzP6BEPd90e54Xi2yM7iSMuxFYD/OqY1EXXZzgw
-	LQW9/zlv5kaGDUX6BVsI3Pl51FiViLgV6DGN+//MifCSKRTsWWAOrtG4WX7YBKN2EM7lF56ggwd
-	RTOKAdg2NxXYOKNJL2GBP3OAl41/d/o59JioCCcgXdoxFsAVmkSg92AjrEbJb4/b4LmMpkucUXo
-	oBzBthZ6Ja9Fn1eDGJI2TLjBQN4zhtAQ8YHgUdNsCbrgf+mw4iCc0+1KuX9Ky2XWsUpxhdfmb+d
-	dtWptdNusl0ejnH4BobKb7VGfIph79rbsw1ID1v268JtUHCDNNDhRERh4GLb4cf+9S25KIzryPZ
-	YKGSd8+K1CChuNO8ycmpMRBv7TnCr2+RegvxsG1C0G24Cb+R+tokC37SAfDpYihd1AAeh1mDcI2
-	0oGa8XDqnaXIKhAzWNx02/Av9jjKzEF0mNRvTTiBRQ9mnY7+M95Y/Rllcysb255byofrwn5i3X+
-	QFzRo7aq4a8UaDK/933bgvAvyychNNYxsxQ=
-X-Received: by 2002:a05:620a:890d:b0:936:2fa5:387a with SMTP id af79cd13be357-939ea1dcc91mr265058185a.43.1789096672159;
-        Thu, 10 Sep 2026 20:17:52 -0700 (PDT)
-Received: from localhost.localdomain ([104.39.73.78])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f47e800sm11211576d6.27.2026.09.10.20.17.50
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 10 Sep 2026 20:17:51 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: s.nawrocki@samsung.com,
-	a.swigon@samsung.com,
-	djakov@kernel.org
-Cc: krzk@kernel.org,
-	peter.griffin@linaro.org,
-	alim.akhtar@samsung.com,
-	linux-samsung-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] interconnect: exynos: Remove the PM QoS request on unbind
-Date: Thu, 10 Sep 2026 23:17:50 -0400
-Message-ID: <20260911031750.8182-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/XbA+tV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B071F000FF;
+	Fri, 11 Sep 2026 06:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789109741;
+	bh=f1i7na06iDth2FdJIH8BE1JqijLD9bS75AOuEnYVjg8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=F/XbA+tV/fjHLp6KWUkt1UF/rxFDoluhj3dEGL2nQVc/LNX/RMVRIvVsEWGLmqb5O
+	 EmlovJpiVWVtk5TRgXB3Jv3ntHC6ZCBpkJFIBmWUCjvwWWOYFeih08MDGjTtxrMel5
+	 ipyWBbV3O7s2IqzXOp9HlSE82W9KtD0APDTnH3v1rHUnJ7yGqVbgnoRNrOaYq5/TI7
+	 Xp5CSIZH3LlnevFxTisSWh9m1gnGtLSsjKmjCInlm5pYZdqrm9TykzIDpLpvvRilzS
+	 C2xtkv8J17Fv6cJ0zPQpDSKNy3uzIlRXQDx10xGyP/P48PdUfQtqzW3CSHbk/lPjJd
+	 21DymFi2/97GQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lukasz Luba <lukasz.luba@arm.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, linux-pm@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Jiawen Liu <1298662399@qq.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, stable@vger.kernel.org
+In-Reply-To: <tencent_B0189529F550458590E3BA614EAB800FBF08@qq.com>
+References: <tencent_B0189529F550458590E3BA614EAB800FBF08@qq.com>
+Subject: Re: [PATCH v2] memory: exynos5422-dmc: handle clock enable
+ failures
+Message-Id: <178910973800.29600.13263415611790690641.b4-ty@b4>
+Date: Fri, 11 Sep 2026 08:55:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-The Exynos interconnect provider adds a minimum-frequency PM QoS request
-to its parent devfreq device. The request is embedded in the provider's
-device-managed private data.
 
-The probe error path removes the request, but the remove callback does
-not. Unbinding the provider while the parent device remains registered
-therefore frees the private data with the request still on the parent's
-QoS list. The child's device cleanup does not remove requests registered
-against its parent.
+On Fri, 04 Sep 2026 14:01:35 +0400, Jiawen Liu wrote:
+> Check the return values of clk_prepare_enable() for fout_bpll and
+> mout_bpll.
+> 
+> If enabling fout_bpll fails, propagate the error. If enabling mout_bpll
+> fails, disable fout_bpll before returning. This keeps the clock enable
+> count balanced on probe error paths.
+> 
+> [...]
 
-Remove the request after deregistering the provider, before the private
-data is released.
+Applied, thanks!
 
-This issue was identified during our ongoing static-analysis research while
-reviewing kernel code.
+[1/1] memory: exynos5422-dmc: handle clock enable failures
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/cce46902ea9fcd585cd200fffa3166f63bc571f1
 
-Fixes: 2f95b9d5cf0b ("interconnect: Add generic interconnect driver for Exynos SoCs")
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
- drivers/interconnect/samsung/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
-diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
-index 8e8f56186a3669ee834c21bb73e13eabf2cf68fa..9a4789fadac2ea5ecd017db12e2cc226eeba4f17 100644
---- a/drivers/interconnect/samsung/exynos.c
-+++ b/drivers/interconnect/samsung/exynos.c
-@@ -98,6 +98,7 @@ static void exynos_generic_icc_remove(struct platform_device *pdev)
- 	struct exynos_icc_priv *priv = platform_get_drvdata(pdev);
- 
- 	icc_provider_deregister(&priv->provider);
-+	dev_pm_qos_remove_request(&priv->qos_req);
- 	icc_nodes_remove(&priv->provider);
- }
- 
+Best regards,
 -- 
-2.53.0
+Krzysztof Kozlowski <krzk@kernel.org>
 
