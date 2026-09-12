@@ -1,123 +1,123 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687494A207C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 16:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7D519E96D
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Sep 2026 00:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789143726; cv=none; b=Avi8Cm6NqHghyVjHwlLe62aI1vPgyw2lw2sW6qzycScwGgQotN56J9tQovl/oHVS2kyxtOrEZhwsHAq5i5GAeAx/I8LyOaJ8fe5ZkydT1gzVimtNa6MQZGt+MVzKxhBc/38j+MMl9nhGJNKGdjpATT2D5mi6O1oyRLsQuFMelE8=
+	t=1789172723; cv=none; b=EFQ/AE+Kaw50xcPfd+h66qSr8xsoCQwSSRQF5rMsuPsFj/17vgMwvsmnczgpKhFdkCQ+r88Fj86wzZje87OxKBSt1B9JatUuQqIGWRkE/HMyeaGxmQidig17EK5sNwWfMiORkEWodBHp7Fp8XDTVr7GDjUVKMtF8729rY6PpS08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789143726; c=relaxed/simple;
-	bh=GxfLvy1lNLqnB7cOHn1e+wG0w1lu+LJsHvlm3Jjb4j0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Awplz5IGkUK0KnX0V/1Trc1rnRiEj+6/rP+jZ4XWz2EDnhS5utUkiBHQk3byoP1uiv3bav9OUYFTxvmGJEo/qa4Mzmif9JxmMNQrC/tbidS88LxxzdbjGX89l7KUs1uzUl0tiS5b/M2MZosRpdfDQ+6uP71MnQFb7KpCRIw6EV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwQ0qhGa; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789172723; c=relaxed/simple;
+	bh=1a3ZwnBwa1HzobSQmbsDSE0ulkRMx2KM84AVAdNHEiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pWuWpbHZp3KCrbuBb6QKjrd9CCTWnaZzItKJP8C724BZnQQ8aMXAme/ycxg+NRcYmIe2bAdcyBR6vS6LdNPj6hGXiFu4M2G1UuTmSaHKx186BZ6oUO2WPsfmU+HX7op8Vpnpp3YTpJ4zq1cncaGXDnOkObrYhjxm/LnLwwdfb/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cqFq1vtz; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=JxXZvxF6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwQ0qhGa"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-486955ae01eso1128977f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 09:22:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cqFq1vtz";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="JxXZvxF6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789172721;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DKGFm6G/TNMn0NvYxTUs0YYbh7R2/WV2gMX4ZNmGb2I=;
+	b=cqFq1vtzE1654P04M+7Sluje9VlF1Mbw7CVxNpXDq7u1eLUHioVW+ejBi2nsc/q80qTLK2
+	FivlBvPT4VMdWmFHPsxxs5PxP7kPkl4q0IQ4fJzFkLIdtulloBYLG6ZwnjsWLp53QWyPLf
+	R/kuTm0JIxZrZaITDur91TmPNeHvTeI=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-7SJvLQCSOQOwmF-qxE3nhQ-1; Fri, 11 Sep 2026 20:25:19 -0400
+X-MC-Unique: 7SJvLQCSOQOwmF-qxE3nhQ-1
+X-Mimecast-MFC-AGG-ID: 7SJvLQCSOQOwmF-qxE3nhQ_1789172719
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-939062ecda9so226345585a.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Sep 2026 17:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789143722; x=1789748522; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=2u8iyN3q0EUKLYr5pleadR3LYPKgReYhURZxG75dAWM=;
-        b=ZwQ0qhGaV6/PT65RDyP2g6qHmcWxAiCLfwzjGYgsaASBEHR8L8x5HdunFDG5OZbNpB
-         78yGcMELWwm7PB6xD8CsIzzDKlaUZUYTXeT3VLBsaab0am0mlb+PR65D7IuaVSgETA2u
-         jOKpYVLsfO+ZD0hHUpj8AD+FpElOyIVAoZJKmeLqN8qTuIYDvMeAdbcuD9yC1ILYMbyB
-         G5dMJwLhJ26rumxuZwI+wh9Y8kiyFk4Pmc8R5mTbI1c4bMHGfCDYXC1Ni8uxObLxE48S
-         vGX+cyHIrZEwSs0QXKqy6s+IxOst3rkYnR4DQlcFWrLZnM5+xa6sHjkMTcPW/QSncVN6
-         Ociw==
+        d=redhat.com; s=google; t=1789172719; x=1789777519; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=DKGFm6G/TNMn0NvYxTUs0YYbh7R2/WV2gMX4ZNmGb2I=;
+        b=JxXZvxF6tAz7RbNwXnokRBO56YkjuVydSP6Cm4g3N7wmsyGJtbubKT4nYQg32aue/M
+         gnzn5eJjvaHAm0wI16ZJDzr+xtW7NiLG9LUsXYTY9v5Jppv3HsZ4/cLtXIrrZGQ01Ibk
+         7XhgbxjWZYgLzeMfphlqBJIurCN+H/oftR0zUVKLPHgXHGcDH3iadaotQfWBtCTw/uGW
+         yEqgpl/8UKEpuPaGtAVI7wJ67oFLbWfdhrXLzCanOldPfu3DaYreSvb+CG7RxhLxUQe5
+         tjuOLb218Re2MTbAm8bTQQlQJBd1h9j6JRgJzAwvymuL3OfLOvCyt1O1+/8KSp4OhMbV
+         mc6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789143722; x=1789748522;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1789172719; x=1789777519;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2u8iyN3q0EUKLYr5pleadR3LYPKgReYhURZxG75dAWM=;
-        b=GsAEM1eheGzu6OJ3MB7+BXjyrVFpcbr4+uZxy57s3ggwIcXnR/0AnfDcYsmQE1QYGY
-         /Lhfpc0uHikKIkUXygIqrd3rfaT66gajghzpVfTnT5NzHQLHUHGoXBWBNdEOOwxuOILa
-         rUNQuP2o3JwFgzMrRCG6HAv3jNM5JktaPuuw9cpSZoim6dxpNdwBh8fqhAfoxqIc4a+t
-         1a6WjQXa8BmTsHXopy1NKOGoke7/UbzhMqscVZb6YIq+lM2WAJ6xXUOOOy/IIZWzXzi0
-         6rXIugU3NUKJuFByhe3j6H5HncSXHEm2S21U08mNb9BoxA6WjawcOcgXdb3wvGQ2gkJu
-         /xzw==
-X-Forwarded-Encrypted: i=1; AKwUvBywMQl7UPP+8FhWLFXdnEWy1TqZwjNGriBQ1nWRiqqJ1tU1/yKDMphLrC6Ii61RisP3NH4qhTZ9tbLnM0+2Q/9MAQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lNyJb2L9//rxGjXQR1X1oEGAHknWxyE8pedaIzJHGNBTgBrFU7
-	kuPfDMKezLGW/Fr9CBzYLRV+cVd1LY16oiBsvCTiDfxm4F3j2vpRlr+ArA3oNb4gH/A4p8J7vqv
-	6V+FX
-X-Gm-Gg: AYBFou3tu5MYCprnlSbASzzK/0c06F1mmaDmbe+BQfmE6bPwDfv+Q3l1h/cwLN7n/x1
-	pHeTkkKyfDwBBOSQapJdGbk4dmuIDHP0xy3N8D7qIq3AmWwNjShslv7JLCkaHWpFZRhvkv03ptn
-	O7JxZjs4+kSl581AfZZ0yGtQfGcTnAaPQj+fOJb31ovffgFVKZH1SUuusUscq0mRINGWZxrAtow
-	c7aPwD7CWLA21bF6/4DAz1FPG0XO4vU9xC9cEicOur+DEuZP/bNlcGUeTBD/gdoQ3W+/6SPBb/b
-	XJWwAc+40ewH1Wv+06foEJNuAsrJGIpN0uspNasqNxrJVcKrPpGjYeC5zwBAZvT+Lw/Q6rmQpsY
-	n9za6+1H8JaJaM0bY3Oz8qu8vhdVAVek+Hbyx9Q+m/nU0tSnlh4jLP97DvKwjkPhd+ia8rdv7jg
-	O9o6EpSCGKoZ1dvhflJZJyTYSz5NaXoOrZu9UDxBWRGw4NKcrvfGW+G+oRCfzjmXnCdVISZp7JI
-	HSf4flfuglYK/j3Wj2d/UodywtIshtsfRUbl5U9/sf1/SmFvb/59IBsSY3oZNRnHSi6j1Ax
-X-Received: by 2002:a05:600d:6414:10b0:49c:fc6c:be16 with SMTP id 5b1f17b1804b1-49e619c64cfmr43100325e9.28.1789143722456;
-        Fri, 11 Sep 2026 09:22:02 -0700 (PDT)
-Received: from localhost ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e6576122bsm75330195e9.2.2026.09.11.09.22.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Sep 2026 09:22:01 -0700 (PDT)
+        bh=DKGFm6G/TNMn0NvYxTUs0YYbh7R2/WV2gMX4ZNmGb2I=;
+        b=rP1LgANvw1+ffu9n8f+wPGfbBYTJBz8JlI7Tzse5vADf69F3T2W5FxA55nnXWhImYa
+         oo4gGn6ts7p31zfL+BiRtk/S/sqgAFq54a43McQOkNvLY14wpRM85MhEcYUOPShdbZAh
+         8NEqdIaz351cB7beMdwGjt8isJlAecgAKKtV3qC2HPFeodGcoonvQCVibhXITDD8nDmW
+         ePrICiOUqkwijViFG0qnFhFpzM4fRNuSfJYpsMdn/QM8Q2uMiSZAx36DKYd90xX7YeBs
+         pnjK+q74HXl5btUCcQyeLiKqLvn7bgCyr/03do9/9vlX4jDYq7O3+pN1A+EmK9voL9Hi
+         AF6g==
+X-Forwarded-Encrypted: i=1; AKwUvByuSuaPS8gItWbCQLTmoI33cXa7zvIddYgbCcuBVX1j1nONnPVIy59vd3Lw1nlQ4Y6NJheHg8I03PVQjJL+cWTbsg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lpxab5u+9qqzlmpHZ2okAZiWp1MobF5cvyt79dScVNsc09T1+D
+	dL2lTmmsodSCuXIgd5YImNx1e4LSb3Zm7OepujnHsJN3TMVXQIhWifrWhIwOlOU6+iZJhoN3yk+
+	TDiG05W5bE8bPKqS1d/8WSe4wVI/WLOaFASppRzoe6l14bHanOrzhiHY9h25OCpZD+WGFtXjn
+X-Gm-Gg: AYBFou0mE4rwLN+yEJJZcBFBk1rtK7HyZfoEDHlkzghnhZuKNYU/Y8cYY0lxWGkUcRf
+	wMjFlVQEGqv9MdY129qA3LNMWGHW5gwkqlexBkfTT3m2deMsFB+JXhzSAHq4eitjyYMViEUUEev
+	P6qZlulUtHP5vUiYyGYmGi+xqRm+6z9Pk2ciPRh2DpWCL/wwMXkVnFM/8A5oR4jdiOEw8OBFZP7
+	KaGDNMHseKtZI/DLcG6a+KwoYvR7NOtD5LfBB2fVy9qtsO0axSbdNpp/YnBtpYR2ytowF7W4LYs
+	BLYn4grnR5mTpaX8vS7JWi10McG1BeR1zO6HZLuyvxyHhFgpAJ8BhR1gmncGeP9YfweAfWWpgQx
+	wCBrxZeZFBUpGfHBaZMRGpzPrNJ7nCDRogek=
+X-Received: by 2002:a05:620a:2812:b0:939:1ad2:ce7c with SMTP id af79cd13be357-939ea16b999mr1115566485a.29.1789172719174;
+        Fri, 11 Sep 2026 17:25:19 -0700 (PDT)
+X-Received: by 2002:a05:620a:2812:b0:939:1ad2:ce7c with SMTP id af79cd13be357-939ea16b999mr1115562385a.29.1789172718699;
+        Fri, 11 Sep 2026 17:25:18 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-939e807eba7sm368493185a.29.2026.09.11.17.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Sep 2026 17:25:17 -0700 (PDT)
+Date: Fri, 11 Sep 2026 20:25:16 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Pengpeng Hou <hppiscas@163.com>
+Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andi Shyti <andi@etezian.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: s2mps11: Propagate OF provider registration failures
+Message-ID: <aqSb7O2gfU0hTuUV@redhat.com>
+References: <20260906033651.84082-1-hppiscas@163.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Sep 2026 17:22:01 +0100
-Message-Id: <DLCMIMOI4D23.1YB1F2148RZE4@linaro.org>
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Alim Akhtar"
- <alim.akhtar@samsung.com>, "Peter Griffin" <peter.griffin@linaro.org>,
- "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- <linux-samsung-soc@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] arm64: dts: exynos850: Add acpm SRAM node
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Sam Protsenko" <semen.protsenko@linaro.org>
-X-Mailer: aerc 0.21.0
-References: <20260727-exynos850_sram-v3-0-8627a49188ec@linaro.org>
- <20260727-exynos850_sram-v3-2-8627a49188ec@linaro.org>
- <CAPLW+4kBHV=pcK1WyEerQ=yg-_XcR+FMXe1W7OmrMX3hxcXo_Q@mail.gmail.com>
-In-Reply-To: <CAPLW+4kBHV=pcK1WyEerQ=yg-_XcR+FMXe1W7OmrMX3hxcXo_Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260906033651.84082-1-hppiscas@163.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Fri Sep 11, 2026 at 1:28 AM BST, Sam Protsenko wrote:
-> On Mon, Jul 27, 2026 at 8:23=E2=80=AFAM Alexey Klimov <alexey.klimov@lina=
-ro.org> wrote:
->>
->> SRAM is used by the ACPM protocol to retrieve the ACPM channels
->> information and configuration data. Add the SRAM node.
->>
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot=
-/dts/exynos/exynos850.dtsi
->> index 3881f573ec08..0b614caa411c 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
->> @@ -163,6 +163,11 @@ soc: soc@0 {
->>                 #size-cells =3D <1>;
->>                 ranges =3D <0x0 0x0 0x0 0x20000000>;
->>
->> +               apm_sram: sram@2039000 {
->> +                       compatible =3D "samsung,exynos850-acpm-sram";
->> +                       reg =3D <0x2039000 0x40000>;
->
-> Why it's 0x40000? I checked the TRM, and it says iRAM APM area is from
-> 0x02039000 to 0x02069000, which is 0x30000 (192 KiB). The downstream
-> kernel (v4.14) also say the APM SRAM size is 0x30000.
+On Sun, Sep 06, 2026 at 11:36:04AM +0800, Pengpeng Hou wrote:
+> s2mps11_clk_probe() ignores of_clk_add_hw_provider() failures, stores
+> driver data and returns success even though DT consumers cannot acquire the
+> registered clocks.
+> 
+> Return the provider error through the existing lookup cleanup path. Skip
+> empty lookup slots while unwinding because S2MPS14 omits its CP clock.
+> 
+> The issue was found by our static-analysis tool and manually reviewed.
+> 
+> Fixes: b228fad50c00 ("clk: s2mps11: Migrate to clk_hw based OF and registration APIs")
+> Assisted-by: gpt 5
 
-Good catch. That's my bad.
+Assisted-by: LLM
 
-Thanks,
-Alexey
+I'll fix this up on merge.
+
+Brian
 
