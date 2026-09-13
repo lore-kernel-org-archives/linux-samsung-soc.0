@@ -1,64 +1,63 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921DB33ADB9
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 14:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2B81EB5FD
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 14:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789311570; cv=none; b=LDOVw19LNZ7MxVcycUhi2GG1Mwu+tFvKIbG6lNsbeqMuLE3bWs6wUagcanB7hqmjWVRhHzqJxQ5vb8azkUEgyMnBUL+iz5LHak6s4g1ZL6NMDzt3wzh/lvGTlLdtycVzQCiusEi5BwfHeipejOR/kk5v0M9nvW0CIn9W3mNQ2Yg=
+	t=1789311575; cv=none; b=Lv0tv8JjMN6isS0nnaW3/MlAD9YainM2p9DqPwg0K5CsU/UmgaSQF7kRc352CP3bm5i0iBA/WrLUgx/+EbHzaCJvVotj8RZQrFK7yhT/E7Q87s8x3SUYH2uGBoRhaoYNz+ZLqaW0tqvQzLOQAEMAsXD5M4/NFED0BpT4nK1f/c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789311570; c=relaxed/simple;
-	bh=YSeTXGq1Y5urvm2AfNfvAhzNyUp8BTVNviU+imO++Nw=;
+	s=arc-20240116; t=1789311575; c=relaxed/simple;
+	bh=mLKbgQtKfNZH/MukbGyy0RqhzRY81GCD/PEfQFLWI3E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eeoDwss278YLMveXtt/711mFKlpACJelb6H9qFeRUexoRCJdBM4PvPqINxLBeBOGtWD44x3NrmBAImCVjcMBHB/XA0YCY+173v4iwfs8mgKhT8/qdliS2vnDmN/ZQfojOYp/40/DEkoa5Of2aK/DanpVWWjsGRuG9C8UARv6kMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9nWPm5k; arc=none smtp.client-ip=74.125.227.140
+	 MIME-Version; b=WMR39u3cjR7aj++EdmUGVzE0pTkDVC0nA8dWCVwlJSrNIpBjf388W5M17L3kTRFsWpXxUJXtKmptDGNC7yqtu5/HvPkEz6C2qWwqKnvxgLrhg19ja1g2JfCMkPPTKxNA9lL/ttdrReJg4jNdm3Y3a2owELv9LJUvOeqifEUYZuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jb2L7w0M; arc=none smtp.client-ip=74.125.227.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9nWPm5k"
-Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-396ccc09d65so1205388a91.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 07:59:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jb2L7w0M"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccafb751so1243048a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 07:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789311563; x=1789916363; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789311571; x=1789916371; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=DxAiZIWTohCHE3URqspBODvbQB2hR6En63VyQJNJmas=;
-        b=P9nWPm5ktdxTi8vygHLvmupNqrNpRSKZbgm0UBX2H3lqWDcC3O/f2Wy+wkeA8bGCV+
-         c9uINg12A3cCISGcFUDOHWLqtKLY0n1IXZmX+0bR7n2WFUkrk91dD1GxiC+pFioWengd
-         TARnC2EkKekkk6Kmjv0yjvgUkkmhQQWSi7JJC0SAwMhTPLmV0i8lSjANvv53mGQTZjLE
-         iZOl7BoN32JGGCtqxRwzPGN2hrlm7gOoL7VISHUjvevarPlYlin/4heW61OSXE0UpExp
-         vmalsg4B5zqEpKaMQrjnDzQMD+eEPWcBy7wFelKJHA2gNSTAFCpaoAX/+Gi+z8UWFEur
-         Q+Zw==
+        bh=IlgimeCT04wK/VVZmKrnlafua+eQjTo1OlyMX75Ktyg=;
+        b=jb2L7w0MsQKMULUFtG2bA5zGtQbb96dngYd7gZ7psaP5sEg4Y5BU10g4wTit2RCLU7
+         jp2LrG6aP2BsxoDgpegEXHUOz6sAGOn7BO7iZurAyiB8bTJGIqwWN16ZmG/74Uu947Y4
+         r32S3AskI8PkejxoMsO5IwCvPw3LW3nDOnyQG2RLeL6PjNnbg2x3uP+1A3NazCiteLEZ
+         sUp0SsG16YW1nWKZkFyTeOg3LOupF3Gs5jzGCDHbFYLzA9kC6Fq9HtwOD8nJNDRQ2b+/
+         RIWh7vJpK3D7xRGILCf0MjsqUTVCfOsravRKduG1IjzR8qAnF5aBpQxWVPVrvcVMdIO1
+         IdjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789311563; x=1789916363;
+        d=1e100.net; s=20251104; t=1789311571; x=1789916371;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=DxAiZIWTohCHE3URqspBODvbQB2hR6En63VyQJNJmas=;
-        b=MpuHxO8X/JBxmAayZr6phQKcdfaoG2UiW9aVoL129x4lU2oKsU5uwNSS6+TdHZZCm4
-         N6jt01TFV43TQTXy0CcRqJXIoNisr6hdtbeesh5yukTFOt+jpx5+1BZ45qolvp94nhI8
-         2AnQXwy1YPCBK2jqkd+fFQIfaiGjnOxDdSbFvcZI5VL/yRZqskfXN7Ak9zDDXaJKmgf2
-         9s2xkjpNhq9zhV/ashI6TofBtA0PHGtXgI4uwxoIn4n4LgGUhJ6kTsnp11B/ztcDIuNi
-         60p4FB6lDZqodIfigXViFiAD0fcuPnv/K++CNzbL+8UgRaS0yTyElfvjBQ8p2HgBPUTc
-         0o2Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwVLOQ8cCswAgjeslRSr+kv8QDX3w0MgMSlwoE5HAdxQgjaNSwmSKJ/f/xinIFbgUJIWN+DdBAxtuHIJ+Akyt/j2Q==@vger.kernel.org
-X-Gm-Message-State: AFuF++mf3f6OQqBkMCQGjKRGb10/FQ/VlmkmXnyJc0OnWZ8hyU1fjtQf
-	tBkrbcdEz/GCP2hlGFNSC707Z5LrpitbvLufidbkVyseqTZr7UC8lG3O
-X-Gm-Gg: AYBFou3VuXig7Z/1NpJzMrEfKpvQ9EXeTJEGlHCm4CG5Af23QzMrVhSepZodwS4kBus
-	GJ6JbOjHrRjF3kXYjs5y2552f0KJo4In3SjJ7fCPVa7sioHNY2flfVmkQE0BoQhFx3vvLEzGl4q
-	/V1vPQ1vVFAZZLzZAihAR7xMgdGHKdDUgBRM2EJ5hXGveqZEfITSzXa628YC0k38AwQVbSNVxOQ
-	GlN54MjqfSq47F83qU2GN+idRp7YrNJ6Wvtwfd4nS7q7pOQn5cybZDIFFSlIEjSTOs1epphHqNs
-	t9TLREWW/t3quhRKx+NuhDqnhl3SYgHPbBP5sFFsyng8UjfCVS7vQ9khGmlcvgicLZkyCQMDkwh
-	tyVlLoeQ5mjT64sHUP4tVd7M3iORUd3WfqdQvuH9ee7nY8KXHdFpAe8YCynIZhn3Q/e2y/FoS0I
-	prOvqjyPXXOrZg4YEQEOBlpncYlGQXUyPrmauCO+L+nO11Zu+Q+fYcS0nI4f/7J23Vrm5wVYRk7
-	KbTxxpnYPw=
-X-Received: by 2002:a17:90b:28d0:b0:398:9bd4:d18 with SMTP id 98e67ed59e1d1-39d9c3f2ba7mr26213072a91.23.1789311563420;
-        Sun, 13 Sep 2026 07:59:23 -0700 (PDT)
+        bh=IlgimeCT04wK/VVZmKrnlafua+eQjTo1OlyMX75Ktyg=;
+        b=ldTG05Is0GTlJ8j9ao8Vjw1ZOURHpDysOadt9/MXcTL0uhBmhOzL4Q9HWxGuzKXze4
+         ibEgtJB43uj5NgKcRI8i2CFiFsmB5FAFplvcLf4h+Tz8IIH5b+J6yKPFf0XQ6HxXeKhF
+         RAa/PYbOEoto2p438KqfMpsWQP2N4LL5b/YtlK7EKjltWGt9Mdu8/tH1scIaoFupDDKQ
+         XL/qTcdKEKHNr9cdD5VB3+PermkDruDfMIDkxciSvDKmnQ8yoq+VofWTAvCKEOW7RaXN
+         w4ccoZsOazmtF7+7zRH6rgNttcAFKlfBwwR/OXhD6f9dx6j06CG3e0h/gKJ6+kuGfklf
+         X6QQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwr93GmnstIFgHMyCrG0kC30NPKlobFJXe7wxX9WiKo/hb8B5Kd8lMAp5YcYEr1OdZdY3MOIWqy1IsFybIAt9ejNQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mJMQUKMD22r+OMPelIl/OpW0Urv17RahtnoShx5nL5ht5HGpFr
+	rqnEE6u0ujgwFF84D8zd5H0AfXPk0vUcS1nKcD6UpT9iWWQpusdkQNZE
+X-Gm-Gg: AYBFou3l+b0Hi/gsG3Xf6N+8o2m6ykCGkjLswMq30zc+n1EueVpTMGmv/swP5jV3mGI
+	TBaSn5wham6TP0heoAXdlHkcYummhHEnlqZH4EK7yGPyM8fWEKSjox8ysyalg/X4ZyNQBeoEKvI
+	qT9ra1JeXczoBiifb+tZ+OX/+ID8G9DItiUDbwjyPFSGfypCEgjHk2ayUIUA2YrkuJmUqZXcQP0
+	IWkn6fkeuTkmKNOxNsMI5HGnhw06WpX/KX3K84pQ366oNQ7ylanjpMKRBRSMcEq5Shn+bPiYqh/
+	oOAyGdpUyRJaGKCAlWLesbBNzgwZPMh19r1t8oeMKdY3GMFmJ0e6j1/XZw8ZZObhVc4M26BX2A5
+	dGtJQz2EELc/xFSDcSXvMSxMJr6erNiebx8xJIx+QLQGu8PgR/Y7ijite/+reSk7NYTX+39VLbX
+	Yap2aLQRsU6ZQavXh+sRSZx4eN5Xj0ZN2qiV8l8T8Yss5B95N3/P3qeGCBL9r/Fw9e0/gs03yt
+X-Received: by 2002:a17:90b:3c03:b0:398:de23:9af6 with SMTP id 98e67ed59e1d1-39d9c1db154mr25881100a91.15.1789311570670;
+        Sun, 13 Sep 2026 07:59:30 -0700 (PDT)
 Received: from archl-rock5b ([45.112.0.180])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b8f1f7sm17536306c88.11.2026.09.13.07.59.18
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b8f1f7sm17536306c88.11.2026.09.13.07.59.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2026 07:59:22 -0700 (PDT)
+        Sun, 13 Sep 2026 07:59:30 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -73,9 +72,9 @@ To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	linux-kernel@vger.kernel.org (open list),
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v9 1/9] thermal/drivers/exynos: Optimize clock lifecycle with devm helpers
-Date: Sun, 13 Sep 2026 20:28:29 +0530
-Message-ID: <20260913145905.9404-2-linux.amoon@gmail.com>
+Subject: [PATCH v9 2/9] thermal/drivers/exynos: Drop invalid IRQF_SHARED flag from TMU interrupts
+Date: Sun, 13 Sep 2026 20:28:30 +0530
+Message-ID: <20260913145905.9404-3-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260913145905.9404-1-linux.amoon@gmail.com>
 References: <20260913145905.9404-1-linux.amoon@gmail.com>
@@ -87,152 +86,39 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use the managed clock APIs to prepare and enable the TMU clocks in
-exynos_tmu_probe().
+Remove the IRQF_SHARED flag from devm_request_threaded_irq().
 
-Replace devm_clk_get() followed by manual clock preparation or enabling
-with devm_clk_get_prepared(), devm_clk_get_optional_prepared(), and
-devm_clk_get_enabled(). This also allows the manual clock cleanup and
-error handling paths to be removed.
+The driver requests a threaded interrupt with a NULL primary handler,
+which requires IRQF_ONESHOT to keep the interrupt line masked until
+the threaded handler completes.
 
-Preserve the existing requirement for the triminfo clock on
-SOC_ARCH_EXYNOS5420_TRIMINFO when using the optional clock API.
+The TMU interrupts are dedicated GIC SPIs in the Exynos device tree
+configurations, so there is no need to request them as shared
+interrupts.
 
-This simplifies the probe and remove paths and ensures clock resources
-are automatically released when the device is removed or probe fails.
+Requesting the interrupt without IRQF_SHARED avoids unnecessary
+interrupt sharing and matches the dedicated nature of the TMU
+interrupt lines.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 86 ++++++++--------------------
- 1 file changed, 25 insertions(+), 61 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 56717bb50d60..e75040222ccf 100644
+index e75040222ccf..825dbdef0b9a 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1036,65 +1036,44 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	data->clk = devm_clk_get(dev, "tmu_apbif");
-+	data->clk = devm_clk_get_prepared(dev, "tmu_apbif");
- 	if (IS_ERR(data->clk))
--		return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to get clock\n");
--
--	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
--	if (IS_ERR(data->clk_sec)) {
--		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
--			return dev_err_probe(dev, PTR_ERR(data->clk_sec),
--					     "Failed to get triminfo clock\n");
--	} else {
--		ret = clk_prepare(data->clk_sec);
--		if (ret) {
--			dev_err(dev, "Failed to get clock\n");
--			return ret;
--		}
--	}
--
--	ret = clk_prepare(data->clk);
--	if (ret) {
--		dev_err(dev, "Failed to get clock\n");
--		goto err_clk_sec;
--	}
--
--	switch (data->soc) {
--	case SOC_ARCH_EXYNOS5433:
--	case SOC_ARCH_EXYNOS7:
--		data->sclk = devm_clk_get(dev, "tmu_sclk");
--		if (IS_ERR(data->sclk)) {
--			ret = dev_err_probe(dev, PTR_ERR(data->sclk), "Failed to get sclk\n");
--			goto err_clk;
--		} else {
--			ret = clk_prepare_enable(data->sclk);
--			if (ret) {
--				dev_err(dev, "Failed to enable sclk\n");
--				goto err_clk;
--			}
--		}
--		break;
--	default:
--		break;
-+		return dev_err_probe(dev, PTR_ERR(data->clk),
-+				     "Failed to get tmu_apbif clock\n");
-+
-+	data->clk_sec = devm_clk_get_optional_prepared(dev,
-+						       "tmu_triminfo_apbif");
-+	if (IS_ERR(data->clk_sec))
-+		return dev_err_probe(dev, PTR_ERR(data->clk_sec),
-+				     "Failed to get tmu_triminfo_apbif clock\n");
-+
-+	if (!data->clk_sec && data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO)
-+		return dev_err_probe(dev, -ENOENT,
-+				     "Failed to get tmu_triminfo_apbif clock\n");
-+
-+	if (data->soc == SOC_ARCH_EXYNOS5433 ||
-+	    data->soc == SOC_ARCH_EXYNOS7) {
-+		data->sclk = devm_clk_get_enabled(dev, "tmu_sclk");
-+		if (IS_ERR(data->sclk))
-+			return dev_err_probe(dev, PTR_ERR(data->sclk),
-+					     "Failed to get tmu_sclk clock\n");
- 	}
- 
- 	ret = exynos_tmu_initialize(pdev);
- 	if (ret) {
- 		dev_err(dev, "Failed to initialize TMU\n");
--		goto err_sclk;
-+		return ret;
- 	}
- 
- 	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
- 						  &exynos_sensor_ops);
--	if (IS_ERR(data->tzd)) {
-+	if (IS_ERR(data->tzd))
- 		ret = dev_err_probe(dev, PTR_ERR(data->tzd), "Failed to register sensor\n");
--		goto err_sclk;
--	}
- 
- 	ret = exynos_thermal_zone_configure(pdev);
- 	if (ret) {
- 		dev_err(dev, "Failed to configure the thermal zone\n");
--		goto err_sclk;
-+		return ret;
- 	}
+@@ -1078,8 +1078,7 @@ static int exynos_tmu_probe(struct platform_device *pdev)
  
  	ret = devm_request_threaded_irq(dev, data->irq, NULL,
-@@ -1103,31 +1082,16 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 						| IRQF_SHARED | IRQF_ONESHOT,
+ 					exynos_tmu_threaded_irq,
+-					IRQF_TRIGGER_RISING
+-						| IRQF_SHARED | IRQF_ONESHOT,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
  					dev_name(dev), data);
  	if (ret)
--		goto err_sclk;
-+		return dev_err_probe(dev, ret, "Failed to request irq\n");
- 
- 	exynos_tmu_control(pdev, true);
--	return 0;
- 
--err_sclk:
--	clk_disable_unprepare(data->sclk);
--err_clk:
--	clk_unprepare(data->clk);
--err_clk_sec:
--	if (!IS_ERR(data->clk_sec))
--		clk_unprepare(data->clk_sec);
--	return ret;
-+	return 0;
- }
- 
- static void exynos_tmu_remove(struct platform_device *pdev)
- {
--	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
--
- 	exynos_tmu_control(pdev, false);
--
--	clk_disable_unprepare(data->sclk);
--	clk_unprepare(data->clk);
--	if (!IS_ERR(data->clk_sec))
--		clk_unprepare(data->clk_sec);
- }
- 
- #ifdef CONFIG_PM_SLEEP
+ 		return dev_err_probe(dev, ret, "Failed to request irq\n");
 -- 
 2.55.0
 
