@@ -1,55 +1,80 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886DF3E4115
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 12:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D083E337BAB
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 14:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789303081; cv=none; b=UoiQh5Et2BiWddJ3lmC66u9S6QgHoIvGnmaWsS+OiQ8Rj5o9EFC2PsErBmlSx/nMXPhsT8HBKVS3UNDN5KQ/N9yF7ucXtS0LcNEEKrFiSq0jhpmN56TCAbw1a/uYMLHkC1oEG89FPkw8nNBEaEPPn3g56ZouvEHs1e7Qd1slEqo=
+	t=1789311559; cv=none; b=ut4mvsTcGeAjqVDodlTAQci8Z0nrerpfG1NrgV5K3OLmYopj7m5ad6EqKSZ2YDyyKcjbfpG0R8rqSWwC1JCovT6mL94sbLD8w/H0QURY6s0cqYOAzFDHErqrb4SK6ITk/x/q68M9oPYq03hFj3E2u3SylfY4Y1Hvxzc51m6Oe0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789303081; c=relaxed/simple;
-	bh=WopdJzA3/twob5Fm9r2GzrgRY9PMRSEOdNbuBbpJ4cA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qP1bONtNuDE9Z0Bu9W9+fzywvMdeoI5t4XSx3ppiRqoqAq1mSRGEZFV6SkqDVhMVol1OLw1/3W1yDLwcxUzjubGRYulbCdWfeQY1jkIfh8cFKvFT+fRfW0N24smCP0JwyOp7kO3BksHulioEIq/lKuG040gaPPW7xb3RMB3Ukd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=EYi7k+8T; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
+	s=arc-20240116; t=1789311559; c=relaxed/simple;
+	bh=6vK0z9//9rngenyPHQtdNFlBhAKHWpEMyefsIOzovEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UQNiQREx8WK37b5wGGEOD9dncTsFDaF1O39eXEsKxctLQbdpT4PUAhetwU5x85o4S/D1yvCaxOcuGwvkSuClvDWItg0E9G0pWeVeiEmy50KG6xYJeaYpT5+8ZP3ayF3BftwyRfwS9wl8VO0ovqSRetx+p2MYN575i4LX499s/iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNYB7j2q; arc=none smtp.client-ip=74.125.227.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="EYi7k+8T"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-2eefaa527c;
- t=1789303074; bh=C9vbUExTnSfxpeKoDbrmG4gAzUATjo+nnHLBYfJpQBc=;
- b=EYi7k+8TpYWo55SxH65ah+IeFXpj0/TTYbfZvkj2/M19Nr6W/O7pkVChIwZGGoa1+PeG4ww4o
- vYpKYiVb20hIsmsCwDFtNooNM1J1u+ZWo3bBihEuUWD5nD870G4oKgkOCz7vaZC+aQZIhpStW07
- 13HYTLeZ0wUWfiZ5i6vOWMc=
-X-Forward-Email-ID: 6aa6991b53bb319e9d04cad9
-X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
- smtp.forwardemail.net, 149.28.215.223
-X-Forward-Email-Version: 2.14.2
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Thomas Turner <tturner@lineageos.org>
-To: semen.protsenko@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	peter.griffin@linaro.org
-Cc: alim.akhtar@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas_turner@talktalk.net,
-	alexey.klimov@linaro.org
-Subject: [PATCH v2 1/2] dt-bindings: arm: samsung: Add compatible for Samsung Galaxy A21s (SM-A217F)
-Date: Sun, 13 Sep 2026 13:37:39 +0100
-Message-ID: <20260913123740.203698-2-tturner@lineageos.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260913123740.203698-1-tturner@lineageos.org>
-References: <20260913123740.203698-1-tturner@lineageos.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNYB7j2q"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-39b350c6920so868354a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 07:59:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789311556; x=1789916356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ifs86+3yzusOqbHusfFJjo1uLj4OkYHhXzsQhWXXtVA=;
+        b=PNYB7j2qnuS03CGgiBFIUxDtDo2TyOg/Ri3MVg4z5o7SScjSA5KOIBYjBHFX/zWsHV
+         w4xS5j0zLG/7w4uKfKG8htIG5S5zE5oUENaZOaHVC8ovsb95Y0QNQbXE76OC6yCPDCzl
+         XWtvunGg68gRXI/DFLesJ/GmOgiXxWep2UU+baoiCoH551bLsuA5a76PJvBmYbxBFCL5
+         rFnh8rASFZEDypCs4zZHmh9/zUu0KwxY7YwEHT2AK9ij1gAyKt344zG02gjP1Kb9znTN
+         N/dhbIn866kJdUVq6cR6xRF0kC+AD955kc56kyiaaCQNxWqek0wXDQ96vsrfknIPIn/t
+         zuKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789311556; x=1789916356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ifs86+3yzusOqbHusfFJjo1uLj4OkYHhXzsQhWXXtVA=;
+        b=tGcl8MK7fsiX7cwFTnIxXLWjt82MENvZisFaJSpyPiO3R+eskJ7R5KDMAYMSat1b+6
+         gYC9U0kwDNfd1KKpVy4itZ9zeSoDDTopITpWlkAgoiGyWdXWKxpGgMGYy3ddE/vMWRrc
+         z5pGuBZaNdVWHAL1ODbDXcXKRzjZ/zaK5PF4qizVAsuEQAFkHpK8Y5cZa3IsRNLX48LS
+         kcjCpp0zMkaMSm12+nD6oFuCVMAMrcC7gFh5kfEApqpx6pwLAQAJi6XB1SAWfoUCUh8q
+         jahSDAZ+Yh8oiIZ/RPjmu0mhreb28RdF9Pi7cZoHoL5JbclY0EU36B4LzCfUrZFbZU1Z
+         gK3g==
+X-Forwarded-Encrypted: i=1; AKwUvByrXgWZd+PGkMoGfwCzS7o0wiLtkyx1M0BKTTnIfgr34iXKDwK78KOvcetJe47OnG28HRbgHoKRwVrjyC8h4zoMcQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mEg1Y65UXIDJTRy/zil/dtpxl1hANVJOWtD7xygEsiC4zDxHBQ
+	aE79by0sm74Q8YR8ofgXuTC9M5YSJXhNJxAFnxELeUcT/vPlFI3JmLmd
+X-Gm-Gg: AYBFou2DlOmQPWj7Nujo4RQ1czUcdoEvxBgsIh3E1peC++RlUHrF3njMU1tlRvZ6BPL
+	CU5KHkNraiLL16yo4gfHMrNk0PT4GYo6Mk8Y84NN6uT8SxxfPZqVSkKeqH54Hm7sZqTbhEUiyQN
+	SF9rvfH8SLGPbWJDxtSJFKcjFQJroVdphxi0zfbeuKNFpxEVFqipYUOJRd78pMXXeVKXuNIu2Ok
+	6nDAZsSu7SwHEXf13nqwcYkiLaHGhBDjSPEogqwS/KI5Eakqde0JQd1HXhEVKYG2br9znqpkxC2
+	ARd1ruin0r/I+LuEbESZG20CbP6d8t02VlmiJr7llwg2DMj75ImjCD2Sq1j3nD2Dmvz7xpAOzs4
+	YPnqtM0kayudoXF27iEEBSCCZXuSrbzRYwoZSwc7kG33R9PSh9G4P20+ZFAd7comVkE20m3icXS
+	DuR+tBAEYPTXpmtJtCxM/If62Jl3ukzB6Eeiq0TepdZXyPGfXZQW/9JkZDSvMybNXxlGYNEYzVc
+	wvz3cbdTxE=
+X-Received: by 2002:a17:90b:258c:b0:396:4c63:7193 with SMTP id 98e67ed59e1d1-39dbc1d79aamr13876016a91.11.1789311556047;
+        Sun, 13 Sep 2026 07:59:16 -0700 (PDT)
+Received: from archl-rock5b ([45.112.0.180])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b8f1f7sm17536306c88.11.2026.09.13.07.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Sep 2026 07:59:15 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+	linux-pm@vger.kernel.org (open list:THERMAL),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v9 0/9] Exynos Thermal code improvement
+Date: Sun, 13 Sep 2026 20:28:28 +0530
+Message-ID: <20260913145905.9404-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -58,29 +83,71 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add binding for the Samsung Galaxy A21s (SM-A217F) board, which is
-based on the Samsung Exynos850 SoC.
+Hi All,
 
-Signed-off-by: Thomas Turner <tturner@lineageos.org>
----
-Changes in v2:
- - Sort via alphabetical order
+This series performs a number of cleanups and refactoring changes to the
+Samsung Exynos TMU driver.
 
- .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
- 1 file changed, 1 insertion(+)
+The series starts with clock lifecycle and interrupt handling cleanups,
+followed by improvements to triminfo clock handling and correction of
+the Exynos5420 efuse trimming range.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-index 753b3ba1b607..021250497da9 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-@@ -232,6 +232,7 @@ properties:
-       - description: Exynos850 based boards
-         items:
-           - enum:
-+              - samsung,a217f                   # Samsung Galaxy A21s (SM-A217F)
-               - winlink,e850-96                 # WinLink E850-96
-           - const: samsung,exynos850
- 
+The later patches simplify the TMU register mapping and refactor the
+SoC-specific configuration into static variant data selected through
+the device tree match table. Thermal zone operations are also moved
+into the variant data, allowing the thermal zone registration to use
+the SoC-specific configuration directly.
+
+v8: Refactor SoC-specific configuration to new exynos_tmu_soc_config
+    structure which help clean up the callbacks.
+    dropped the IRQ clean up patches, with new approach 
+    it will be much eaasy for new SoC to be integrated
+    and the code will be much better way managed in the future.
+v7: Integrated my RFC patch which improves the IRQ framework
+    for all the SoC link below.
+v6: Add new patch to use devm_clk_get_enabled
+    and Fix few typo in subject as suggested by Daniel.
+v5: Drop the guard mutex patch
+v4: Tried to address Lukasz review comments.
+
+I dont have any Arm64 device the test and verify
+Tested on 32 bit Arch Odroid U3 amd XU4 SoC boards.
+
+Please share the feedback on this.
+
+[8] https://lore.kernel.org/all/20260214181930.238981-1-linux.amoon@gmail.com/
+[7] https://lore.kernel.org/all/20250813131007.343402-1-linux.amoon@gmail.com/
+[6] https://lore.kernel.org/all/20250616163831.8138-1-linux.amoon@gmail.com/
+[5] https://lore.kernel.org/all/20250430123306.15072-1-linux.amoon@gmail.com/
+[4] https://lore.kernel.org/all/20250410063754.5483-2-linux.amoon@gmail.com/
+[3] https://lore.kernel.org/all/20250310143450.8276-2-linux.amoon@gmail.com/
+[2] https://lore.kernel.org/all/20250216195850.5352-2-linux.amoon@gmail.com/
+[1] https://lore.kernel.org/all/20220515064126.1424-1-linux.amoon@gmail.com/
+[0] https://lore.kernel.org/lkml/CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com/T/#m77e57120d230d57f34c29e1422d7fc5f5587ac30
+
+Thanks
+-Anand
+
+Anand Moon (9):
+  thermal/drivers/exynos: Optimize clock lifecycle with devm helpers
+  thermal/drivers/exynos: Drop invalid IRQF_SHARED flag from TMU
+    interrupts
+  thermal/drivers/exynos: Handle optional triminfo clock correctly
+  thermal/drivers/exynos: Fixed the efuse min max value for exynos5420
+  thermal/drivers/exynos: Remove redundant base_second register resource
+  thermal/drivers/exynos: Use SoC-specific variant data to TMU
+    configuration
+  thermal/drivers/exynos: Move thermal zone ops to variant data
+  thermal/drivers/exynos: Add missing drvdata assignment in Exynos TMU
+    probe
+  thermal/drivers/exynos: Select thermal emulation support
+
+ drivers/thermal/samsung/Kconfig      |   1 +
+ drivers/thermal/samsung/exynos_tmu.c | 640 +++++++++++++++------------
+ 2 files changed, 348 insertions(+), 293 deletions(-)
+
+
+base-commit: 2f0c1cf72f4682178506f513bbf015e591b1aa4a
 -- 
-2.47.3
+2.55.0
 
