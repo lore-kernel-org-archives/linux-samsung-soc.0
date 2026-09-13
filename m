@@ -1,106 +1,82 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010EC49252E
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Sep 2026 19:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A2B22D785
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 01:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789240402; cv=none; b=KTVYKl4cv/WZ0GceM6lLPxx0F/DY8OS5U0gbgQksg33n4I8PP6X+6LixlmRfsgIVnGLPF1IjXnYyQ/BNH6K0YV+PpNDU01kGjtVFOqCHc0zvdw3zknEY5eVRXhe4r7PEcGzmnM4SvTpczzb120ltCiGGsrA51+RvJ+k7kJ4sdjw=
+	t=1789263300; cv=none; b=kSRdxARTWHTqJ4YV63cpx2oFX4RlDLT6CVC4AdWxStQY8zG7tGmpRY9xg6tce9zI1GIM3mF8oDAdloRP4D3BpJ9fCeqkduzWEhdQ/x6W+WiVYaYG6gTkFfrYX+yquip6GfBVoFyTycS7+XkVQPaCxb74iLo1wBw0mLxNowq14Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789240402; c=relaxed/simple;
-	bh=rzU25QtfHWStXyf5JOAOYagDMlPR8E/O7UUr9Hj10z4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iOX3vDTrWaahHkz/qGEFgpff8Tb2W02MF/enyX6LMY7fF6rYQBIT8EuOEQOmIE6dc4KEcpDhKT4jH7lg3jGv0BxwqSobpatEPpQfCp11NbAnygAi+o9oFHBTqINg7TCrWcKHWcBL2Jx7uqOXMngEoGG71xUVv/V/k178TfvjVJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3gOWOis; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1789263300; c=relaxed/simple;
+	bh=CtfAQLPmc/aaMApEpdADxsh5TlenudW5VoarEPfh7ME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+F1C098P0nqMSVsJBnla+sqFri6mRP2ZBD1wEJb4r5RTP4V0nj6amlS+VUNdjR+gCajWhQw0xWnFuyI7X3IeiEEIN3s0509zygPQm3rQWFe7Ttl7UrHi32Kl6vq4NOGe3btRu2gCEGs71QaiYf9zb5gp61sEL+BO/SY6ojAJIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtWKKhZI; arc=none smtp.client-ip=74.125.230.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3gOWOis"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cc4be0e5351so1473465a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Sep 2026 12:13:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtWKKhZI"
+Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-90cdfc9b6e4so13909436d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Sep 2026 18:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789240400; x=1789845200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=epJRaVobxvGM+/1VLnT5WJdru54OJK34KQRZKM0LI5E=;
-        b=a3gOWOisn5B5hRqXKFFZKdetKy+GtbuubsLGdKfo8dqVPZnDjUVVyhiVI9XUkx9E4X
-         TMjXM4UvHdST9h6udvx5ez24iQKYZ2V7W3zX1Z0yh5dQCXfeX3zqcpE2VLPlOgcvDKPB
-         paiBP6rpMsArRYh1Y3t/GG1OsXYDzEAPgP1HyakdZ1/FjORGhtUuAlf/QPT7c7QhZIpx
-         lzRNGFdtG6uhd9cpzXIXhVGYxs5Kn7OxElWIVaR25MN0adsA2AhHHg7oF0GD8OthXboy
-         aTUKZPWGTWoXVFr1+pU2wPMwfIAj8HJQ0Xan/coljkOmX3aPp+PI5OyofQSVcbAEQ8hK
-         M3rw==
+        d=gmail.com; s=20251104; t=1789263298; x=1789868098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=olNBNDsUgs4Oen6UYhKmbkEp8czeJg52l/oC6o3L080=;
+        b=BtWKKhZIfCYjYoSEQVQNX1/aiLr1QQauE6TREGOw0o+8G8wE5KBrAZ+4ZwP6gx1e+L
+         ANOPOHoSlqeYUprgZ/mbjKf8KOyCJSr+CQW4OcSFx5++dpxS7SpoyS+/FMdF/K3S/GKB
+         F/D1fDjmKRiwYrdZYhJVwd5ZhTlm5HxPULA9GcyvMKeBR1vzYYnAjzuadYU+SU2BmBHc
+         a8T8rGTCHYk4IkJfPV5IsGeyzdfsjjPT02DZK4Q6pwNtL43Xvwu+vcYvfir9ryQJ76Ru
+         wC4IqgZcVEEcGFlTh93Qs7DbaDkBm1q0Vzn1WclNN8jbWrl3xnBqE7NJmr0WsttG1WYt
+         J80g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789240400; x=1789845200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=epJRaVobxvGM+/1VLnT5WJdru54OJK34KQRZKM0LI5E=;
-        b=H4yCM2+Cfdsku/m0UGzz4qjGrBOmuG0EjFwPBHun8v6ZjSLJkwLEZCfxB7uadvgi+8
-         QLmigneGUKqno16FJ9+vyOaQhzWgXOhp2N9b8gF1oNfc92wk9gLElYb1C4G28g78+EO8
-         8JdSyl1hvOnU89MyVrLrsqM4WpN6LN3/iMhlq/wWu0ohzFnniAv0usSd38SrfDx0CCHm
-         XDPvy3QREVE5Q02N0GIOL/sr3U4VOAWSR9FEBE4UiqC4Hytcjo6rInw+Mii0bEw0Iz1B
-         7g+5ojDRg84wv8GDArrgu/IkqEpBJSLUHLGLZU1hRQrRqeiw0R9EGQ4UaqLkbdAr9l4A
-         DyWA==
-X-Forwarded-Encrypted: i=1; AKwUvBxFHeIW12OyKQRbhLEH4Vm2xUmI/+qvUZzhxaIUdDnWagK/ACDApnbkfyxGW/vDE6Sos3Zes9TllRU03YeMUqJMdg==@vger.kernel.org
-X-Gm-Message-State: AFuF++notog2DIMv6a5V/PZC1Z/Uu0QFb+f9Vrq2CSPKe3Q8vXG72Sue
-	POFFmkonFvpXasGCnX+7xyuWzCnUVxepUs3ni6GNggWbfUZm76dCpS5r
-X-Gm-Gg: AYBFou3tnD8b1KUzVgU8QcHOGwNTmpE80Rn4ADF0MyYn6fJuM2xTGEpO+cNpH3BkKdn
-	EZE7zKZ6kphFuOy3gSCSbw+8synnxN66H3vHIZV6OM7UDXKsePdjacrBPWhV2QJutqIWBZSsj2b
-	CCrKcEVJA5NjdYgh683cWr8XMA+/5AhvJbDezna3+vL4nTvMoz/btCO+HiSRby6p0ii7eLkVexD
-	0i/1dUJQ9SeGMdZHSxIBanLIUYL1WbFJn7Qt/WAkF4MKYBS3R5sIJ+a9P0XdieVg9JacuTMgAcm
-	ALOxvck0hWdb0zeSMQ0+6liQist4QWYKOI8VLcIEeSWViqPRWCoaTIboJyzvDH1uGwa6MItZgDY
-	Nu4XyIKYlY888ELYoKh8vvwfpw1XcFjicRwtKxRXle/gqVbroUcnOl8A8JcOjbXsUJzYRKoT2sT
-	IxZDFZb8M1PjMBUvhYA4VHiRxF1bnOiBgruALtOCzyJgprPxBlEs49RSv3Ax1giVn8Nt/f
-X-Received: by 2002:a17:90b:4cce:b0:38e:7168:281 with SMTP id 98e67ed59e1d1-39d9bec4d91mr17930859a91.10.1789240400257;
-        Sat, 12 Sep 2026 12:13:20 -0700 (PDT)
-Received: from gmail.com ([58.84.61.98])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b348cbsm14722239c88.3.2026.09.12.12.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Sep 2026 12:13:19 -0700 (PDT)
-From: Sumeet Pawnikar <sumeet4linux@gmail.com>
-To: rafael@kernel.org,
-	krzk@kernel.org,
-	amit.kachhap@gmail.com,
-	daniel.lezcano@kernel.org,
-	thara.gopinath@gmail.com,
-	talel@amazon.com,
-	hayashi.kunihiko@socionext.com,
-	mhiramat@kernel.org,
-	mmayer@broadcom.com,
-	viresh.kumar@linaro.org,
-	sumitg@nvidia.com,
-	peter.griffin@linaro.org,
-	myungjoo.ham@samsung.com,
-	kyungmin.park@samsung.com,
-	cw00.choi@samsung.com,
-	Frank.Li@nxp.com,
-	s.hauer@pengutronix.de,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	sven@kernel.org,
-	j@jannau.net,
-	marcan@marcan.st,
-	casey.connolly@linaro.org,
-	sre@kernel.org,
-	wens@kernel.org,
-	t.schramm@manjaro.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-samsung-soc@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev,
-	linux-mediatek@lists.infradead.org,
+        d=1e100.net; s=20251104; t=1789263298; x=1789868098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=olNBNDsUgs4Oen6UYhKmbkEp8czeJg52l/oC6o3L080=;
+        b=NJLUH95EENz1bxP+4PM4SwU0uKHgNWRE7FTW5E183jU/yCo7URALG/OZz5qjnhWgwK
+         XjZ0bL4C99vDx+At8kr2a8osepAr3n/WNDqMBFhbpqrTC9/v6IpqTGQJpd/2pjTyNRJs
+         AwIne44qZXaLoqYOfz7UVsEwICiO3qiqq8p2jwIFS0qpTmwoM1vXgezo0UbK5BjokRSa
+         t3rrTew7Vv9roQB3JZTX7G4WBL0NN2yJ7H7njhfaSNbrAIeK+zdfNh8PeZUmoxP6GGEG
+         rchhq6r/xg4EG5nFGtYIrsp9oFT2uSOq/PMd+c6r/Mh0OMZUImW1KLX/eQUq5C1t5Bn4
+         pOoQ==
+X-Forwarded-Encrypted: i=1; AKwUvByurWBgVGt/98ksLeIJP1UfVKgoaZq1qUfqNTcSGtUBptop5Fzn1PxYU0nB51R/5csrUWxjZc9OMnRUPAKsoShrsg==@vger.kernel.org
+X-Gm-Message-State: AFuF++mKaDpXCeq2MyUDFahWrY6Nok2ScYP+ZAt7W50w8OFo/rQiydDo
+	XAIg+jBTRmkqfJR/7lrtLJedpr9pY6Zy9YEErrBGdURYe0yfBko/R0A=
+X-Gm-Gg: AYBFou3dHab+c2I5yjuttMOlDMfqKrltZK+anNCGWUYNxB1PZUtsXVcocR76YCLQg24
+	H6DvU2x0ZIi28XhwO52zwloxLgLUrZr8EBjdHsUW/FCiPY9FdIzVrwfOchgkyUmIyCsXzbsY9pO
+	9P/ERGINx2GiF+5TXrYT5PoPaYD0XgGWOEgh7IwcC2dPzKE+in0zp/UynJAqcziu++Aoy8pRAbt
+	M4lHHGt8OvTfwX6awfj8BcsJC2l1SEX5ckcBMHUhlWw9ka8gr8Z66vDTufFwS6L+j14pmRljecx
+	y4qI6/4ai62p02sV+9gKG96MmWhqUpr+TAmSxlefmx+/KAxrpML7FPjRtqmHZSuNkAjoGUbWx2X
+	1EfkqbiiQZ/+Fc9h34BQzRElTDHRM6S+jp3hNcdV+jILRS0QcT0cAc9giyvPqvM8lwQ8f5g+bzE
+	KsDgZes0jeO1QuE6BVQevirsfrE3MnUjdy8jLQPl19Bpwl9gtzRb/Gx0lrpbHS+fBt7WPMMXRYh
+	8PiT4tYCSSp09rYJNUF8BUrcTrzyaTFhs1CZp1DPs2OC+4BnRGXMoxZriC/kb1ZQXyEKgsi/JKH
+	jiO1ky9dzkBvbr27jW2OgQyt23Oclzxx2g==
+X-Received: by 2002:a05:6214:1315:b0:90e:9a7c:e5a0 with SMTP id 6a1803df08f44-912120f0444mr161688246d6.17.1789263297899;
+        Sat, 12 Sep 2026 18:34:57 -0700 (PDT)
+Received: from localhost.localdomain ([104.39.73.78])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f4920c5sm58866936d6.32.2026.09.12.18.34.55
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 12 Sep 2026 18:34:57 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	sumeet4linux@gmail.com
-Subject: [PATCH v2 5/5] powercap: intel_rapl: Use %pe to print error pointers symbolically
-Date: Sun, 13 Sep 2026 00:41:55 +0530
-Message-ID: <20260912191156.185448-6-sumeet4linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260912191156.185448-1-sumeet4linux@gmail.com>
-References: <20260912191156.185448-1-sumeet4linux@gmail.com>
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH] drm/exynos: fimc: disable LCLK during cleanup
+Date: Sat, 12 Sep 2026 21:34:50 -0400
+Message-ID: <20260913013450.20786-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -109,32 +85,48 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace PTR_ERR() and %ld with %pe and pass the original pointer directly
-to pr_debug(). The %pe format specifier prints a symbolic error name
-(e.g. -ENOMEM) when CONFIG_SYMBOLIC_ERRNAME is enabled, otherwise it falls
-back gracefully and prints the raw integer value. This makes messages more
-readable without any functional change.
+fimc_setup_clocks() prepares and enables FIMC_CLK_LCLK after acquiring
+the clocks.  The later component_add() failure path and normal remove path
+only put the clock references, leaving LCLK prepared and enabled.
 
-Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
+The runtime PM callbacks manage only FIMC_CLK_GATE, and component bind and
+unbind do not change LCLK ownership.  Disable LCLK at the cleanup sites
+that are reached only after fimc_setup_clocks() succeeds.  Keep the setup
+failure path unchanged because it can put the clocks before LCLK has been
+enabled.
+
+This issue was identified during our ongoing static-analysis research while
+reviewing kernel code.
+
+Fixes: e5f8683923af ("drm/exynos: rework fimc clocks handling")
+Assisted-by: OpenAI:GPT-5.6
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 ---
- drivers/powercap/intel_rapl_msr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/powercap/intel_rapl_msr.c b/drivers/powercap/intel_rapl_msr.c
-index a34543e66446..46972ee1ff84 100644
---- a/drivers/powercap/intel_rapl_msr.c
-+++ b/drivers/powercap/intel_rapl_msr.c
-@@ -582,8 +582,8 @@ static int intel_rapl_msr_init(void)
- 	rapl_msr_platdev = platform_device_register_data(NULL, "intel_rapl_msr", 0, def,
- 							 sizeof(*def));
- 	if (IS_ERR(rapl_msr_platdev))
--		pr_debug("intel_rapl_msr device register failed, ret:%ld\n",
--			 PTR_ERR(rapl_msr_platdev));
-+		pr_debug("intel_rapl_msr device register failed, ret:%pe\n",
-+			 rapl_msr_platdev);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 09e33a26c..58214abb5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1362,6 +1362,7 @@ static int fimc_probe(struct platform_device *pdev)
+ err_pm_dis:
+ 	pm_runtime_dont_use_autosuspend(dev);
+ 	pm_runtime_disable(dev);
++	clk_disable_unprepare(ctx->clocks[FIMC_CLK_LCLK]);
+ 	fimc_put_clocks(ctx);
  
- 	return 0;
+ 	return ret;
+@@ -1376,6 +1377,7 @@ static void fimc_remove(struct platform_device *pdev)
+ 	pm_runtime_dont_use_autosuspend(dev);
+ 	pm_runtime_disable(dev);
+ 
++	clk_disable_unprepare(ctx->clocks[FIMC_CLK_LCLK]);
+ 	fimc_put_clocks(ctx);
  }
+ 
 -- 
-2.43.0
+2.47.1
 
