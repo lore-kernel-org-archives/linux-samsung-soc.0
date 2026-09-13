@@ -1,31 +1,31 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.66])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAF93E0C75
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 10:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CF33E1228
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 10:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789294428; cv=none; b=qY/gW8JAUG4CtZ9gVgLHi5KoX1Ps/7J2Utoi7rv/6uw9tQ6Lvl+fz004b8vPT84aJTdjBbMoHokmZMEELq79OqKsZf10/bnnCgVdWQZrZOEo6pB9nHTu3krWdg2JCGgueURBDOUrT36mLcAUFgiMBwemR8TXExvAyQIInX9F0Ls=
+	t=1789294429; cv=none; b=mhu+2YfTm3p7eY6bccXhyEoRTVu2sM5hG1MUrtjpphiVOWVgG5LzV6CGLjKra6t/RkZtXS/5+IEbQUTrf3Z3XmDHqZKLAzeaPQfvxXHr6th7Ye2/0QsuugOVe71CRTENkEyJRIykIYvx1gbUDovQqjjLGYsQ2fIqS+u8wYjx854=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789294428; c=relaxed/simple;
-	bh=dfGrhNe/8a5U7zoIJmFRiK9qopEVvmvIQIwi6yX+Onc=;
+	s=arc-20240116; t=1789294429; c=relaxed/simple;
+	bh=E/QiXPXlUVYSHwVS0L9lYnegQ29uywV3HbRa+8/6OWA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NTXW1WUvPSbv8U9wP3TDRw+oJu6HnJqX51ogAm/n+DVsL2a4mo5yTm3ztFZAVWBu7YCw0WsQXN4Fw1sU0zReBRYVXB3YFkglXasdJ/FENQ2/cxuqGJw8iG1fYTULhKjx21oTl4cxGNOXUIDrnU4MuhgDZ4O4rYm5EIOhEjQ4jmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=F39YZTsd; arc=none smtp.client-ip=121.127.44.66
+	 MIME-Version; b=C9whNB8wINCy38/ZRgOrfrljaeKCVUsO/MAHl6kGrp3wRM8f4IO/GBAW9wLpGUXBkzIKfX0CpR1/GFQ5iVA1u6CuVqH0bdlIFBCnxcH4gT8jCjxGo1Cqyc16XbVVbHlZw3v2cpi2EihIBw/knVAjsW9iEiA0/n80W7vwuNF611g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=uFiPfTm1; arc=none smtp.client-ip=121.127.44.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="F39YZTsd"
+	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="uFiPfTm1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-2eefaa527c;
- t=1789294420; bh=yZLeOpcK8d38XmjkQqkUC1h4vgXICE4C9Nm+SuuEi6g=;
- b=F39YZTsdEL6e8IpKPmO6puy5UAKRLoZ+PPFnVyeEvCeVmMUUJsE5cusuDBPZIitAxDd+KPIHS
- M+EUxQmz2aM6vQ5Ind6bK1jzu3MrqSFldTPbEu3fNLz8Ep9/FqF3mnmLjcNmgnjnWINRT0UgpAu
- TddoCvQhAfLNa9P/zD5/inA=
-X-Forward-Email-ID: 6aa677525d6bf3657bd82a58
+ t=1789294421; bh=/PPiEA1FGyaFHtzx0qxn1LM8VQhVacT/5QWpKmp70MI=;
+ b=uFiPfTm1b45p5sUFBQ51SMKISE7djZ6ZTquk5YnoQZTu+oYkWfydeUPeXHGACoBIDRJNdAlCl
+ KdT1TmY5qXHEOhG10BT8+SaRAwkR5PjISbFVmdptq+WeGMUfD1IlMvN9Tl1i0FQ+57/LtOuVM8t
+ pe38PicvMYajWiEOf5qw648=
+X-Forward-Email-ID: 6aa677545d6bf3657bd82aa0
 X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
- smtp.forwardemail.net, 121.127.44.66
+ smtp.forwardemail.net, 121.127.44.73
 X-Forward-Email-Version: 2.14.2
 X-Forward-Email-Website: https://forwardemail.net
 X-Complaints-To: abuse@forwardemail.net
@@ -44,9 +44,9 @@ Cc: alim.akhtar@samsung.com,
 	linux-kernel@vger.kernel.org,
 	thomas_turner@talktalk.net,
 	alexey.klimov@linaro.org
-Subject: [PATCH 1/2] dt-bindings: arm: samsung: Add compatible for Samsung Galaxy A21s (SM-A217F)
-Date: Sun, 13 Sep 2026 11:13:30 +0100
-Message-ID: <20260913101331.198835-2-tturner@lineageos.org>
+Subject: [PATCH 2/2] arm64: dts: exynos: Add initial support for Samsung Galaxy A21s (SM-A217F)
+Date: Sun, 13 Sep 2026 11:13:31 +0100
+Message-ID: <20260913101331.198835-3-tturner@lineageos.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260913101331.198835-1-tturner@lineageos.org>
 References: <20260913101331.198835-1-tturner@lineageos.org>
@@ -58,26 +58,262 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add binding for the Samsung Galaxy A21s (SM-A217F) board, which is
-based on the Samsung Exynos850 SoC.
+Add initial support for the Samsung Galaxy A21s (a21s) phone. It was
+launched in 2020, and it's based on the Exynos 850 SoC. It has multiple
+RAM configurations: 3GB, 4GB and 6GB.
+
+Since our bootloader does not set up memory nodes beforehand, default to
+the 3GB variant. Custom bootloaders can be used to initialise other
+nodes per RAM configuration.
+
+The Exynos DPU clocks required by simple-framebuffer are not kept
+enabled during boot. Add the DECON, DMA, DPP, PPMU and SSMU DPU clocks
+to the simple-framebuffer node so simpledrm maintains references to
+them. Without these clocks, the framebuffer fails to remain operational
+further into boot.
+
+This device tree adds support for the following:
+
+- SimpleFB
+- 3GB RAM
+- Buttons
+- Ramoops
+- MMC
+- USB
+- Watchdog
 
 Signed-off-by: Thomas Turner <tturner@lineageos.org>
 ---
- .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../arm64/boot/dts/exynos/exynos850-a217f.dts | 193 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |   2 +-
+ 3 files changed, 195 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-a217f.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-index 753b3ba1b607..b4593319ee3b 100644
---- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-+++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-@@ -233,6 +233,7 @@ properties:
-         items:
-           - enum:
-               - winlink,e850-96                 # WinLink E850-96
-+              - samsung,a217f                   # Samsung Galaxy A21s (SM-A217F)
-           - const: samsung,exynos850
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 76cc23acb9b2..f197f8eb633b 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos7870-j7xelte.dtb		\
+ 	exynos7870-on7xelte.dtb		\
+ 	exynos7885-jackpotlte.dtb	\
++	exynos850-a217f.dtb		\
+ 	exynos850-e850-96.dtb		\
+ 	exynos8895-dreamlte.dtb		\
+ 	exynos9810-starlte.dtb		\
+diff --git a/arch/arm64/boot/dts/exynos/exynos850-a217f.dts b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
+new file mode 100644
+index 000000000000..f1d11f91a353
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
+@@ -0,0 +1,193 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung Galaxy A21s (a21s/SM-A217F) device tree source
++ *
++ * Copyright (c) 2026, Thomas Turner <tturner@lineageos.org>
++ */
++
++/dts-v1/;
++#include "exynos850.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "Samsung Galaxy A21s";
++	compatible = "samsung,a217f", "samsung,exynos850";
++
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer0: framebuffer@fa000000 {
++			compatible = "simple-framebuffer";
++			reg = <0x0 0xfa000000 (720 * 1600 * 4)>;
++			width = <720>;
++			height = <1600>;
++			stride = <(720 * 4)>;
++			format = "a8r8g8b8";
++			clocks = <&cmu_dpu CLK_GOUT_DPU_DECON0_ACLK>,
++				 <&cmu_dpu CLK_GOUT_DPU_DMA_ACLK>,
++				 <&cmu_dpu CLK_GOUT_DPU_DPP_ACLK>,
++				 <&cmu_dpu CLK_GOUT_DPU_PPMU_ACLK>,
++				 <&cmu_dpu CLK_GOUT_DPU_PPMU_PCLK>,
++				 <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x3c900000>,
++		      <0x0 0xc0000000 0x20000000>,
++		      <0x0 0xe0d00000 0x1f300000>,
++		      <0x8 0x80000000 0x20000000>,
++		      <0x8 0xa0000000 0x20000000>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&key_voldown &key_volup>;
++
++		voldown-key {
++			label = "Volume Down";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
++		};
++
++		volup-key {
++			label = "Volume Up";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	/* TODO: Remove this once PMIC is implemented  */
++	reg_dummy: regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "dummy_reg";
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		ramoops@f0000000 {
++			compatible = "ramoops";
++			reg = <0x0 0xf0000000 0x200000>;
++			record-size = <0x20000>;
++			console-size = <0x20000>;
++			ftrace-size = <0x100000>;
++			pmsg-size = <0x20000>;
++		};
++
++		cont_splash_mem: framebuffer@fa000000 {
++			reg = <0x0 0xfa000000 (720 * 1600 * 4)>;
++			no-map;
++		};
++	};
++
++	/*
++	 * RTC clock (XrtcXTI); external, must be 32.768 kHz.
++	 *
++	 * TODO: Remove this once RTC clock is implemented properly as part of
++	 *       PMIC driver.
++	 */
++	rtcclk: clock-rtcclk {
++		compatible = "fixed-clock";
++		clock-output-names = "rtcclk";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
++};
++
++&cmu_hsi {
++	clocks = <&oscclk>, <&rtcclk>,
++		 <&cmu_top CLK_DOUT_HSI_BUS>,
++		 <&cmu_top CLK_DOUT_HSI_MMC_CARD>,
++		 <&cmu_top CLK_DOUT_HSI_USB20DRD>;
++	clock-names = "oscclk", "rtcclk", "dout_hsi_bus",
++		      "dout_hsi_mmc_card", "dout_hsi_usb20drd";
++};
++
++&mmc_0 {
++	compatible = "samsung,exynos7-dw-mshc";
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	cap-mmc-highspeed;
++	non-removable;
++	mmc-hs400-enhanced-strobe;
++	card-detect-delay = <200>;
++	clock-frequency = <800000000>;
++	bus-width = <8>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <2 4>;
++	samsung,dw-mshc-hs400-timing = <0 2>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
++		     &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
++
++	status = "okay";
++};
++
++&oscclk {
++	clock-frequency = <26000000>;
++};
++
++&pinctrl_alive {
++	key_voldown: key-voldown-pins {
++		samsung,pins = "gpa1-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
++	key_volup: key-volup-pins {
++		samsung,pins = "gpa0-7";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++};
++
++&rtc {
++	clocks = <&cmu_apm CLK_GOUT_RTC_PCLK>, <&rtcclk>;
++	clock-names = "rtc", "rtc_src";
++
++	status = "disabled";
++};
++
++&timer {
++	/*
++	 * Non-updatable, broken stock Samsung bootloader does not
++	 * configure CNTFRQ_EL0
++	 */
++	clock-frequency = <26000000>;
++};
++
++&usbdrd {
++	vdd10-supply = <&reg_dummy>;
++	vdd33-supply = <&reg_dummy>;
++
++	status = "okay";
++};
++
++&usbdrd_dwc3 {
++	dr_mode = "otg";
++	maximum-speed = "high-speed";
++};
++
++&usbdrd_phy {
++	status = "okay";
++};
++
++&watchdog_cl0 {
++	status = "okay";
++};
++
++&watchdog_cl1 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+index 3881f573ec08..8de135807aa7 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+@@ -147,7 +147,7 @@ psci {
+ 		method = "smc";
+ 	};
  
-       - description: Exynos8895 based boards
+-	timer {
++	timer: timer {
+ 		compatible = "arm,armv8-timer";
+ 		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
+ 		interrupts =
 -- 
 2.47.3
 
