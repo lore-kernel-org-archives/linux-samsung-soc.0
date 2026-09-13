@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFF23CAA3F;
-	Sun, 13 Sep 2026 10:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B305938E106;
+	Sun, 13 Sep 2026 10:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789294714; cv=none; b=e1WzcUpWT/uZRB9D/gs7zkktOMxi4H3ld8Rb/rXJf2SL0w0V6ppWaLIVbyAmkmYkGXyX/cgIs2UF/xs4mGEq4sxQu94hvulKDJdBmb8mjL7hNPNiunAmSMiN26dvpahvFYM184CYEKky+ZoLrMgnYX4CTfj+hy2L8/FyOzDpev0=
+	t=1789294894; cv=none; b=HEekAaaMHOxc0TLbyKZb91OJCkXYz2m+8z9pTAfB8Dh6GivjJG8Inv0Sen/UgJAlVuWhmqFj21WvIJWyd3RlGsN0CM2Sze7BcDNcMIqQCnOsKNdj1+HJxWk9aWQuwPn5mmtB/OllABQap+aV1KlFdS4RIZpog0RThxLiWJx89QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789294714; c=relaxed/simple;
-	bh=IL4UCf78k83LQhayqhvqOXC9kFdfpL2eFAdVm8LgQnM=;
+	s=arc-20240116; t=1789294894; c=relaxed/simple;
+	bh=0SZpvtdiXRybF1B+EXRwXtcWXnp2YQyuyDLN3XnjL5Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcTvpHdv2Sf2JWUVXZ0xGM+Ry9ORDl5eLXGpRusPsYsNf8u8RbxS9aEa/kGMIO08mdzXBFCLYFDlFWMhdnSZhH9k8Ty6ngg490P2HfgeWl934E0PX9UPKupGa0NsYFiP4y5d2Q+RfXFByGujL5zYZsHOrPrOBzmEauNGzM1+BKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHp0Vuq+; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=UCvMI4syzYTy96wSuoVytd7Fi3KrpQFjioVs76aV5T9Ao7YoQ9GHEOHZtcQVI/TdeNGQv4m5YcMvYkLIAL0hBVX0HlrGBgmt7GeShvMhnH5/O006iLfOP3I0QsJxFn6MvpT1a4Y9Ivq2SB6GtpE+6M9NXoRwcoz2Qxs1x+X0oxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eB5Nfplt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHp0Vuq+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE221F000FF;
-	Sun, 13 Sep 2026 10:18:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eB5Nfplt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597FA1F000FF;
+	Sun, 13 Sep 2026 10:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789294710;
-	bh=f3GOZLVQBmmZVeSOJvAxnBpXgKraYpmV0HE7uOdD6qo=;
+	s=k20260515; t=1789294893;
+	bh=Nj1Sc2FSNN6ZhJZTa8LiP2iCAf/RUsi5xVB8DoPPUN8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=jHp0Vuq+DsIP1G6ftTIl93PFX8DDdRQhTM76KGay6/Ns0uNl9UqVBJ3OMk+AZwqHG
-	 I5EB3N7+yP44+wRcOrFVZO8l6f8jKyb0kVQ1AIOhOoNgSxuk28s5/tcEBkp96ISPDJ
-	 SYv6thLOgoIcfvBclF9pARojSRS8QuwLq4GMSSRsfEid40PJblErkd11hSnuA2MSvu
-	 i28Rjt53Mios45YX4mVtsuQJpsnQNs9ns1fLI8HRrdbCCK/947cRpGSmdE3ksCGMCp
-	 NOTAuVH/owZhuqRrfG6+OPNWK1Ow+0iM0u4UKwOubY2JUILL2XoLv3HJtvXjAh0er4
-	 2Z4ilsXQfv1BQ==
-Message-ID: <47552144-27a0-4032-93e6-7519479343f5@kernel.org>
-Date: Sun, 13 Sep 2026 12:18:22 +0200
+	b=eB5Nfplt65+eHzqIV29cFpdR+4YyBzlZxMdHjkFTXjrjx26YIlBVbGwURHtCZ1nGI
+	 YEtDcebU5jThAgIuqx9s8Q9YHN8QLAhr7Oby7pIhDm1sC8pXQUC8wBiowxIm8QTvvv
+	 yv2YIXRlkeE1zy41hIheOv3HvJX2GpLQoX8kyO3T/FeX6FlGdKOBS+Jf+1YGtSgEyN
+	 g08EJ9G6UCBuuwrUj22q6Q1wNA6Mre0uwA5Vt2nFvEcJW00ygSnHq8I7bc4iPZ6G8H
+	 7PUGEAWJdl7dh7+L0DCixL7/W/aXCCYAjBbdKfFxEDBByA3ZCtR0EFIQuvcDe4UhW/
+	 28kORmTQQJrag==
+Message-ID: <882f2529-1d57-4911-b924-d05fd88a58bd@kernel.org>
+Date: Sun, 13 Sep 2026 12:21:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: samsung: Add compatible for Samsung
+Subject: Re: [PATCH 2/2] arm64: dts: exynos: Add initial support for Samsung
  Galaxy A21s (SM-A217F)
 To: Thomas Turner <tturner@lineageos.org>, semen.protsenko@linaro.org,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -45,7 +45,7 @@ Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, thomas_turner@talktalk.net,
  alexey.klimov@linaro.org
 References: <20260913101331.198835-1-tturner@lineageos.org>
- <20260913101331.198835-2-tturner@lineageos.org>
+ <20260913101331.198835-3-tturner@lineageos.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,30 +91,130 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260913101331.198835-2-tturner@lineageos.org>
+In-Reply-To: <20260913101331.198835-3-tturner@lineageos.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/09/2026 12:13, Thomas Turner wrote:
-> Add binding for the Samsung Galaxy A21s (SM-A217F) board, which is
-> based on the Samsung Exynos850 SoC.
+> Add initial support for the Samsung Galaxy A21s (a21s) phone. It was
+> launched in 2020, and it's based on the Exynos 850 SoC. It has multiple
+> RAM configurations: 3GB, 4GB and 6GB.
+> 
+> Since our bootloader does not set up memory nodes beforehand, default to
+> the 3GB variant. Custom bootloaders can be used to initialise other
+> nodes per RAM configuration.
+> 
+> The Exynos DPU clocks required by simple-framebuffer are not kept
+> enabled during boot. Add the DECON, DMA, DPP, PPMU and SSMU DPU clocks
+> to the simple-framebuffer node so simpledrm maintains references to
+> them. Without these clocks, the framebuffer fails to remain operational
+> further into boot.
+> 
+> This device tree adds support for the following:
+> 
+> - SimpleFB
+> - 3GB RAM
+> - Buttons
+> - Ramoops
+> - MMC
+> - USB
+> - Watchdog
 > 
 > Signed-off-by: Thomas Turner <tturner@lineageos.org>
 > ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/exynos/Makefile           |   1 +
+>  .../arm64/boot/dts/exynos/exynos850-a217f.dts | 193 ++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi     |   2 +-
+>  3 files changed, 195 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-a217f.dts
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index 753b3ba1b607..b4593319ee3b 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -233,6 +233,7 @@ properties:
->          items:
->            - enum:
->                - winlink,e850-96                 # WinLink E850-96
-> +              - samsung,a217f                   # Samsung Galaxy A21s (SM-A217F)
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 76cc23acb9b2..f197f8eb633b 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+>  	exynos7870-j7xelte.dtb		\
+>  	exynos7870-on7xelte.dtb		\
+>  	exynos7885-jackpotlte.dtb	\
+> +	exynos850-a217f.dtb		\
+>  	exynos850-e850-96.dtb		\
+>  	exynos8895-dreamlte.dtb		\
+>  	exynos9810-starlte.dtb		\
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850-a217f.dts b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
+> new file mode 100644
+> index 000000000000..f1d11f91a353
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
+> @@ -0,0 +1,193 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Samsung Galaxy A21s (a21s/SM-A217F) device tree source
+> + *
+> + * Copyright (c) 2026, Thomas Turner <tturner@lineageos.org>
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos850.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	model = "Samsung Galaxy A21s";
+> +	compatible = "samsung,a217f", "samsung,exynos850";
+> +
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		framebuffer0: framebuffer@fa000000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0x0 0xfa000000 (720 * 1600 * 4)>;
+> +			width = <720>;
+> +			height = <1600>;
+> +			stride = <(720 * 4)>;
+> +			format = "a8r8g8b8";
+> +			clocks = <&cmu_dpu CLK_GOUT_DPU_DECON0_ACLK>,
+> +				 <&cmu_dpu CLK_GOUT_DPU_DMA_ACLK>,
+> +				 <&cmu_dpu CLK_GOUT_DPU_DPP_ACLK>,
+> +				 <&cmu_dpu CLK_GOUT_DPU_PPMU_ACLK>,
+> +				 <&cmu_dpu CLK_GOUT_DPU_PPMU_PCLK>,
+> +				 <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
+> +		};
+> +	};
+> +
+> +	memory@80000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x80000000 0x3c900000>,
+> +		      <0x0 0xc0000000 0x20000000>,
+> +		      <0x0 0xe0d00000 0x1f300000>,
+> +		      <0x8 0x80000000 0x20000000>,
+> +		      <0x8 0xa0000000 0x20000000>;
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&key_voldown &key_volup>;
+> +
+> +		voldown-key {
+> +			label = "Volume Down";
+> +			linux,code = <KEY_VOLUMEDOWN>;
+> +			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		volup-key {
+> +			label = "Volume Up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
 
-Alphabetical order.
+
+linux,code goes to the end.
+
+You can run dt-check-style from
+https://github.com/krzk/linux/tree/b4/dts-style-checker-blank-lines in
+"--mode strict".
+
 
 Best regards,
 Krzysztof
