@@ -1,81 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD29D3E3D89;
-	Sun, 13 Sep 2026 10:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FDE389DE8
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 12:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789297018; cv=none; b=I4zSnUEqdz0vYKwnwPLtPAP4HkjjhfFgyYK4SlQij5SsHK0bf2WHl13BZov5ILc6SjoouG8aXUHT9dZbLkn20Ql1nX+kZvnG/qfnxLu88oX9Ra9dc2IvkyY7wtAkiAQEg2zhcWSDQ5axWtWFaufLkg05opJ2+0obDZJESnGudKI=
+	t=1789303072; cv=none; b=SRl5v/ZoEgJMsfzGRcOrnYtXPpWMGOSA0vzTjdhWbgkYc+ZTzAsAYE56AHNQPxsl0ubLhpCIiSbBNRYkB7UzZX3gwePCvGIIUDoo5TzqfiZJMcPwLIXk58a1nKaNiVZKruL4uG95hb6L29MLNaCDlFXoX4GZfNifXBnu5TQXNA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789297018; c=relaxed/simple;
-	bh=Wqmq53ZO0pbX08ozg8NdQ7c0GAj8uATnX8aluXWTjaQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=srpJMoY2jQUwleQ5+asSRcjzAys1fUDZVDnx2TAgVHXsz0q20OasWTnLi/GzwAUX62D9BTiLiHriw3I22tQJ2K9EXe12fxKUkgxeG4K3iul5AiPIJ+QwrM9EV0PZu7hrumXDpq2F5wYHwBLuyiwaoaAwCl55sL6X1egqpBJiyjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJ/TGJlH; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789303072; c=relaxed/simple;
+	bh=DHiSrDaF7ntikY4DDRu6z4jLdZj6Ur1+ibp5ltAw+fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O9xeoZRXV2kkhGh2WX94x6T0ktifhqw2ruekuHRmUrTdzxqqnXoVark7WpZkJ8i6uhX2gF1l1ohqpGoV970Zo3fN0o5v+WMcC1JXJ863Jaqo1kQXABe/CZCtSJvddfIK+shXoOYakcdDtjO6/ttkX2/fZjyzd3ZUdta5XIwFiyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=AgiWbpM6; arc=none smtp.client-ip=121.127.44.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ/TGJlH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890E61F000FF;
-	Sun, 13 Sep 2026 10:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789297017;
-	bh=frlkioWsr+rn+xQFULLyXcy9YieavxivQ8CM2t3LaSk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=mJ/TGJlHtZlAQ4e+c5QMiM4QtzYPwLbu+ChInurBPBwpKXh5r63unwCOCWl5TcT1E
-	 nAncKuQ4Ek0gFxbsY9rU4Cz5VcoWx2d2NYuKx7kpcD7kYJUtC1Z/W8kptRjhfqdZco
-	 Yw2msQu2FWXHeykNHeczmika9tMKg15yPgYMmunLSKGY0Z3m97L3d9+cahS497tXS2
-	 d7Pv4UwKlZap2KTwN0Bv3aERIsTYUfCT4qT7anq+I8w38TJV/Wn8tphxtOfVx8SV7q
-	 FtVsgid48NefDGPd6cvr+187tv35tqyRZM/p/M0o6TvdTcEIm8mwlGDucQf5aRgRC4
-	 fTOs1AajkNIvg==
-From: Vinod Koul <vkoul@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Pritam Manohar Sutar <pritam.sutar@samsung.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>, Johan Hovold <johan@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Pengpeng Hou <pengpeng@iscas.ac.cn>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260623135349.42739-1-pengpeng@iscas.ac.cn>
-References: <20260623135349.42739-1-pengpeng@iscas.ac.cn>
-Subject: Re: [PATCH] phy: samsung: usbdrd: propagate GS101 PIPE3 lock
- failures
-Message-Id: <178929701318.215437.17506405540101327111.b4-ty@kernel.org>
-Date: Sun, 13 Sep 2026 16:26:53 +0530
+	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="AgiWbpM6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-2eefaa527c; t=1789303070;
+ bh=8C1mtlOBb7/mwHTUtdF5nW2Lo4LQe1sAVZjBxRdWHUQ=;
+ b=AgiWbpM6hBgNRvLTgxMYA5XB0tsgMyZInwrB6K/993wETIwMLwVvEX5RmvlOgeeQorAdtpvGf
+ J3lN1kQhlVPSdwuaP82aUoKZ3rKCHPCAUOrbY9Jpk0dRJsH9+Z1ul3tByqKYh4hLq68px1Nn6Qx
+ FdSNzA6YBqLmD9gM4vWqylA=
+X-Forward-Email-ID: 6aa6991953bb319e9d04cab4
+X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
+ smtp.forwardemail.net, 121.127.44.66
+X-Forward-Email-Version: 2.14.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Thomas Turner <tturner@lineageos.org>
+To: semen.protsenko@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas_turner@talktalk.net,
+	alexey.klimov@linaro.org
+Subject: [PATCH v2 0/2] Add Samsung Galaxy A21s support
+Date: Sun, 13 Sep 2026 13:37:38 +0100
+Message-ID: <20260913123740.203698-1-tturner@lineageos.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+Hi all,
 
-On Tue, 23 Jun 2026 21:53:49 +0800, Pengpeng Hou wrote:
-> The GS101 PIPE3 initialization checks the PMA PLL lock and then checks
-> the CDR lock. The PLL helper returns an error, but the GS101 PIPE3 init
-> path dropped that result. The CDR helper only logged a timeout. PHY
-> initialization could therefore still return success after either the PLL
-> or the selected receive lane had not locked.
-> 
-> Make the in-file SoC-specific phy_init hook return an int so helpers
-> with real failure results can propagate them through the existing PHY
-> init paths. Keep the register-only helpers returning success and use the
-> new return path to report the GS101 CDR wait failure. Other SoC helper
-> paths keep their previous success behavior.
-> 
-> [...]
+This is a small patch series which adds support to the Samsung Galaxy
+A21s. This device is part of the Exynos850 SoC and its device tree is
+very loosely based on the e850-95 one.
 
-Applied, thanks!
+Thomas Turner (2):
+  dt-bindings: arm: samsung: Add compatible for Samsung Galaxy A21s
+    (SM-A217F)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy A21s
+    (SM-A217F)
 
-[1/1] phy: samsung: usbdrd: propagate GS101 PIPE3 lock failures
-      commit: 224fcee6fa830574029428d7232ea84e6a2422f5
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../arm64/boot/dts/exynos/exynos850-a217f.dts | 194 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |   2 +-
+ 4 files changed, 197 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-a217f.dts
 
-Best regards,
 -- 
-~Vinod
-
+2.47.3
 
