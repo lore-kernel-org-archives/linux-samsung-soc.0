@@ -1,64 +1,64 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FE7346FB3
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708B931E840
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 15:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789311620; cv=none; b=RdxbugccrEd3XosyttUon0n9T4QtT3EwdbB7olCz/sqdhSRtY64y384aHXv4MJQ8IpZmNa/1A8WTVrJxuCeCm9PICRq6fwjjiwQOHTd8ql56G4fqHzuZuwNRAFv5u0pwuz+CsB+VNvj/iybgDHi2XvZ1SvEhxqXZosjHme8TiIw=
+	t=1789311624; cv=none; b=uOnTareCHPjj0JIT1lytu2/l3O2fE8BxTP3zdrLo0+GB1b+W+8HdjtFLCC7pe2fqmxLg9XEWobU0H/w0kp5yjsFpESl6Jq0qnOncPA0eCi3ynSZF0e78LLFqIfvArYa3PTsUT8ImrtU7ebxWjUnrsKE8e831fVf6kjA21c5bAhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789311620; c=relaxed/simple;
-	bh=DwPp2HkWQO6qcGBPqXNMiD7gLL4HfMQuCnHnKBFbtEQ=;
+	s=arc-20240116; t=1789311624; c=relaxed/simple;
+	bh=Ac9hJRO3+NqcDPgpt7ObfLuM8SaCLFN2CkiLPShmu74=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sHNLEuahNfQByrIK0lm4o9fCIfRcQXp7qPMZFpKADhKFOlxJvrBi8+Usju0b0+S2x5zVgE/xof2GWl17+EzTffMpVjaS43iiS0SBRVKVhCL5lftX/oFxfJ4ZmqR+holYMPk2r1sCHPrhi+RBoDIzBABSnV4r5hRKkLKZ3VZQvq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rIW+SEYp; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=HmetSbFaTo8C+vFeKrPYIbfIMS5L83o3JteJbU8ezhJjSXX5hCNWEUjJpKoEOyXlbalWmyMU/5aF/3dY39iAEipvG4/hQgDGl8lP2+lkeS4m/ICoGKaTOwb+MHEXXUHfeESjEtyWORxMBrFoaml5/Yu7ujEAkewsA3CPrwfuhcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJBOmB/K; arc=none smtp.client-ip=74.125.227.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rIW+SEYp"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-86309e1a213so1005532b3a.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:00:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJBOmB/K"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-39dbdfaef3cso1156715a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Sep 2026 08:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789311618; x=1789916418; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789311623; x=1789916423; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=hbLN5q31GQxj4DJ6F6WcgB1JNfvwxcLXSAMVbVPmGVE=;
-        b=rIW+SEYprNJBHDGyJP2BhYP/2y3noGwTDDEQwPVEnHGUJ4nAmhbFxyOhuQIGEquM45
-         mmtmAAkeSe3vf+FmJvDUglwZdRPXxaAnazv9e8mNe0/uip3p+tgc3kC5rKPdS+YxZBBl
-         TZagPueOmQU7JXqsmSItiNA8d2wx1Mn77I2pwWQh5XMsoRSG8fLF93wKkjcatIQstpfm
-         OHxO1uTgL8B+X9sn/BZjQPLfXArxvvN1FFOD7/tyc036VW7J6q//h+yfk3LMVnAm4ezQ
-         s/OAKQ9OlCPn+lk5GXdRCx+ELIBO6Ejzhund2G9SmSN4pIZEWrCl7owDsFnSh2ZV52f9
-         vGLg==
+        bh=UlzyvIo8nOadqp8jqeYyZiaPQY3f0wl+9I9FZEmerIU=;
+        b=IJBOmB/Kn7/c019Mg0ADIEO9taMZF0g7ND3p7qANTwKtsYuY8WusCiQUmZaefASkI8
+         BOxCf3NXFGjnTD32F7tiDlqHohWaGa8zTk/wKJ0xTYaKGs9BpOn/SlNUKfNJEiLfMn+3
+         XNsGw+rYQcT9fj4oT+5nodhggni2xyuQywSzxLN0i9jptPNu5xuBf2qR6yPJ+HztZKCl
+         04myXS3E3HakHot0gzbGCS0klOcXBFYOCfUNCITZClO/1MrfuARJ8h8yeyfrBtgMwCUr
+         swO865Ki5mcgJVPAJR/c3lg2I9dc2AkKo0mu1BKZs3pJ0eKiplpbEVySf7EwWOYY1HFM
+         tc8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789311618; x=1789916418;
+        d=1e100.net; s=20251104; t=1789311623; x=1789916423;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hbLN5q31GQxj4DJ6F6WcgB1JNfvwxcLXSAMVbVPmGVE=;
-        b=qsiVgMoeRBKyIKWM3f48bLikC/+ADOXIGIPeTuEZmNVC1UDuMFkCODFtNk5+N1zU+S
-         hs8/43IRgD/j1l4X1e+N8yi8bOvT6LzA3ZhsFEzZ9+KUHnPOJ/1811EUDC5xorPV9Xv6
-         Ir47RH1P8yvkQPQ30ij5cXLJte/RnuDMA0UfC7mWu3Yl1GLyGETAXMr/q2fxPDmZsk+Q
-         9Zp3S4KgKg8m0lepZsxo39q5vy5C+kRFMWDLcZt0lt9P5u7zsBBUa77fK+81rMKl84X3
-         +LVGLm2nHCNGYS2mf9pabIQYX2rFO4o4BZoRuY//Aoi5aFhc9Hk3zsPk8bAG0R6ObkT+
-         o/HA==
-X-Forwarded-Encrypted: i=1; AKwUvBx/9P9tXKC3LIcuz+d+g4dgC5OHDZ/MHEXoWzhyO10CQZJRxUBTi+DqjjySOM3xGma3QtvLep4UedegibgVw5n1Dg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lun6vsIf1O0sCP4t8EPdenduXPLZOvHvnwc2OulwBNJs5fIgo0
-	QerYQh4nTdc5SQN1XA79WAqK+/A0svukQMPIfk8HOEACDZc3+skbpFiU
-X-Gm-Gg: AYBFou03beFrB0gk29f8Xd62rS71IWFuvy9ZCMSuMy6uNxxU14cPPOeYHEYgISIdhCZ
-	/YAIN7OhHfMTQ+ARyAGZLfyOP8F150I2smQq5e6aHXR5mg4acy6YnxHs4gEgkLVsF1W5W8WpLjP
-	qCQCC/+NHvBRxXCtgAXsilyrxmPJVk+5KzdKiSbgVpK7HmJFQJ8a1G7HrYU1qGBvnCS5M0GbnVv
-	hPOTkg+BlXsT4InAwa79sSnj3OoPrCIRYEeNLRWE7dMHB1KRKGS5hI967HH5xexLq7dKN2RFnsG
-	L24pqVtMRkoXSfpyBgP2PbNkO4yvzRc1+8QGPrBk+09byj4YwzvU5FibiSbpFK4yxT+fgpbQ3H4
-	5p+RVYtJGAwrzRObPEJeBpYKzWeGv1/k3o0Q3BTHNF4tihpmflvBkjWNTssf3emWk8uhHzGSypm
-	0YrbKFBrBJrvtD5oIjd0jgAh1FlpYRIszqEcIXn6tyriGQ0N7+Pd0OPoOe1itVRLGKAgqAqKird
-	/F3Z7gUOMY=
-X-Received: by 2002:a05:6a21:140a:b0:3d1:66cb:d49 with SMTP id adf61e73a8af0-3daed46b0e3mr24749980637.4.1789311615337;
-        Sun, 13 Sep 2026 08:00:15 -0700 (PDT)
+        bh=UlzyvIo8nOadqp8jqeYyZiaPQY3f0wl+9I9FZEmerIU=;
+        b=iyIy2kZUtuCDRVFBAswnzXnG4AJePViSjU3lprALXuUNq/Aw1JJgIz9tU94Rv7dLDN
+         X+GuyswRKdNJJclBsLe6LpHV/OLE6X8jcdZreZxTDrtjiJMrhRzNsVYGNvoPaiyLMWWD
+         9ViMwdc7ULEM/gD+3p3RZqBSL1JtF4Kc6xLdDghjKDII2kejvMAyI+uH1luPe9zN5F2V
+         InQvNh1dvCRWkqN/dR/zTUJPTUsSeH/+sAiXOLzGuh52Q7NSBR9VA1C2gpogZ59f7v4s
+         V0bXQ1fuTNugfWtYPlyNb1SrXmcqJ0yNkjazlmAvdSJUYJmHLi52qXzYT/Njy6lemGRh
+         STfQ==
+X-Forwarded-Encrypted: i=1; AKwUvBywA1r8MjqhP6VSlPH0mNws4ZEvpmWT3h+kIzlzWp4gDOQ2olTKZnMreq3exWz57QzkSPhKYfiNXLhAr8O6btl8Ag==@vger.kernel.org
+X-Gm-Message-State: AFuF++kDeBNsLhnVcVP2vS8zg+n8kvn58l6bYmUudFIqW5BfzgfzW3c+
+	BUcjwu3Pg4tmKFqsgdsrInhigqf9rpdiN7OUK7V4WPfR1TN/W2nuLMOK
+X-Gm-Gg: AYBFou0aQJZ9gOJrURXj1r+92wVwfxJvsLOYlQvDBmtYsTkkr3kAS/5dtEG+uky0MxA
+	CxyZb3JIggmS/JGmcsupLKOyg5WiUvxUg3zxd4VEOjq8S0yZFFc9gwl2NbZchK3CatBV8gu8Pc9
+	GU9VNFPYPDu72QBPTQSdSNF5NiFZUJsvm1I9aGxYHrHuTZe2uhUp4T0gx4VS8e6V8w3aJyDCvdn
+	+kI6S1dzc6mt8A8z7LIdXP0075+aiTGogwLGNWlPi6ZJPGAOodR0nuzNGz2eqYjS39gJMbgvDo0
+	ri0tK1kJDPFBjkkfqEERc8Blua8F8hnWhvNRGRiHpdWTv51dGU+dzITmtP/bVp1qec8V1Ef5SsG
+	UqDADjpaAEl+kA8nPjkcKGWFWRLSJky1ggsSKM8uhK1s07Q5ASVt+xZ6wZ83WZyPm1Dt1cDjtri
+	2bu0w4iJYSv+/ZhmejiMe05Vkf8xY5XF5GAecsS7x9HSvP5U93v7BunD68denyFyAK4+G0XpLqt
+	qxzRKrqACI=
+X-Received: by 2002:a17:90b:580e:b0:396:40e6:f631 with SMTP id 98e67ed59e1d1-39d9bbe47a7mr25597954a91.3.1789311622706;
+        Sun, 13 Sep 2026 08:00:22 -0700 (PDT)
 Received: from archl-rock5b ([45.112.0.180])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b8f1f7sm17536306c88.11.2026.09.13.08.00.10
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b8f1f7sm17536306c88.11.2026.09.13.08.00.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Sep 2026 08:00:14 -0700 (PDT)
+        Sun, 13 Sep 2026 08:00:21 -0700 (PDT)
 From: Anand Moon <linux.amoon@gmail.com>
 To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -73,9 +73,9 @@ To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	linux-kernel@vger.kernel.org (open list),
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
 Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v9 8/9] thermal/drivers/exynos: Add missing drvdata assignment in Exynos TMU probe
-Date: Sun, 13 Sep 2026 20:28:36 +0530
-Message-ID: <20260913145905.9404-9-linux.amoon@gmail.com>
+Subject: [PATCH v9 9/9] thermal/drivers/exynos: Select thermal emulation support
+Date: Sun, 13 Sep 2026 20:28:37 +0530
+Message-ID: <20260913145905.9404-10-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260913145905.9404-1-linux.amoon@gmail.com>
 References: <20260913145905.9404-1-linux.amoon@gmail.com>
@@ -87,28 +87,29 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dev_set_drvdata(&pdev->dev, data) early in the probe function,
-ensuring that the driver data is properly registered and accessible
-throughout the lifecycle of the device.
+Select THERMAL_EMULATION when EXYNOS_THERMAL is enabled, as the Exynos
+TMU driver provides thermal emulation support.
+
+This ensures the thermal emulation framework is enabled whenever the
+Exynos TMU driver is built.
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/thermal/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 0e7b92035850..fe56a48be5fe 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -1125,6 +1125,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	dev_set_drvdata(&pdev->dev, data);
-+
- 	data->clk = devm_clk_get_prepared(dev, "tmu_apbif");
- 	if (IS_ERR(data->clk))
- 		return dev_err_probe(dev, PTR_ERR(data->clk),
+diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+index e1e8035d24fb..7d5590f78185 100644
+--- a/drivers/thermal/samsung/Kconfig
++++ b/drivers/thermal/samsung/Kconfig
+@@ -4,6 +4,7 @@ config EXYNOS_THERMAL
+ 	depends on THERMAL_OF
+ 	depends on HAS_IOMEM
+ 	default ARCH_EXYNOS
++	select THERMAL_EMULATION
+ 	help
+ 	  If you say yes here you get support for the TMU (Thermal Management
+ 	  Unit) driver for Samsung Exynos series of SoCs. This driver initialises
 -- 
 2.55.0
 
