@@ -1,114 +1,136 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC3B490BEF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 16:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789405131; cv=none; b=KNuffqIbc+RU0lbXWlitP52ZI53/HF83EFLanatmRH6kMqAQzNEWMhHAy8ygJGw/nDw1Sw2+vc4xRRExhOvQYP84dP3n0G0SPcEsjZXdMRUjDnXGVNwsw2J3M73zDsE26i5QcbJG0dEyrdBiy+7Tlld+UrgRssT0IKFNVIN0rcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789405131; c=relaxed/simple;
-	bh=vQZJxL2K323Aqi0Kksky+b29VDXNl7ZpFQVdjp4dKvk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y4DjAu7Ru8RrQMnqpqgZDKurqYZmd61e3r6E3CuRM+Ewaaq48u0OnDNFGw6L1oGy3JTmtnhSod/T3SVPi996zbtAfPh4j8gwhYs8w4uvhiRAhUZb0mJb3GexD0ZcX4RKlQjRou0Usr4PDWfAidzRAR20/TbizgX0RNQOHsUMEYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N0Erb8jU; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174A038A728
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 18:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789411418; cv=pass; b=YtpclGOqRWcmmAgwfVAcHDRi2kNb4M73zgy+hDe5rPrCIx8yBh9u8Xb0dS38oX6JlPwLkcE1U6eBE0NRqFY8LSH3IuUt3INOELdNf9w6t9LVGjM0kwM5m6W3+n2PcQvyxD4dL/Mfj/Vdl/rtnBC2lp5cH2BbVizr+9Redi4Pzo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789411418; c=relaxed/simple;
+	bh=D60AujOfPZ0xT2zKJkyrcq2Rg0wSz8afS1KCAGi/hDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sk3kWUi7QNJThTZdxrEnQ9j7O3JXKt4F6yv7m0uVSGur9I+mgp+s+v5yFNyVhzVJ9qNyzzK5l08saWCTQlSbS/gh9we5kSuY7WIRU/078rGFp817SGSe+q40Xz7F9L6NDx30osaCkf2A+cWKJltPk8WLnnXcO5tUFFDcaqe1pFQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oehiCSal; arc=pass smtp.client-ip=74.125.224.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N0Erb8jU"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-486fa798933so1586417f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 09:58:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oehiCSal"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-67149cfbcb7so1481855d50.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 11:43:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789411413; cv=none;
+        d=google.com; s=arc-20260327;
+        b=oPIZQOncIwjtTV1VnFWp55GEIBC3zIsBoy28RCGCsZfoDXzlOvHeN20J0REBHTcT8r
+         +tmRFGCzSLQ+WZyypXLV2KezoyzSVXoJZGVcNGxS+UiFFcArGB560T/YFqW448s1+uIW
+         VB+whwDzW69AC8YeELAWjwdyi7IvgKGd2pKezZHDeh/6QvFhDMFdWE3nYYEwDPC9C52+
+         8tQzQ1xvo7x3hp8TbLKvjbNPP0pmrw0pWoxqgkuDAfX0C5S2f5V+sS0v9yXuL1fqRj4y
+         HkWowHs/J5uzGRCy1m95UdAeLDeIeoeE2rEp/yHrN6q75HC8zMz27dO7nYfr/5J9xO/F
+         cpeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=rTTwCzG+E2m003pB6kHU8/AZNGM2MnXKny9rOvXi4p4=;
+        fh=zQawJ4snOIgXMMCoSgvgaJgNPPObygo/4QRF7z4f0wk=;
+        b=aSX2CnD3SOoG1Sy3LfVr46EETqvP0zitTQiQUUVo+vpJKC7NsvT2A1AnYqAZY8sxIt
+         DfBONKDHluKPS1jH0TtUqbFbIGmIOTXC+DFpaprwScopelxQwKRglbAk62epj+lbDvY6
+         SAwakbLhZQhIgi0/N4RxBzNz8rUrOYZiRd9WvI88HUi0+zU4cWEKVFK3crF78QjX2Hw7
+         kMS2pofvTBjxCgsnEdjgGURl+HGA2FmuVvhIqgoHU9AliiLrNj6xgLVZbLl7FViWEo7Z
+         yiEJM9AThu1FnnDIEJD/Q4wrMggnSrua1Dc4sqjmICRp1wSSH6DWeVxUtSMM2Z1e68GT
+         F8YQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789405127; x=1790009927; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=/eFndhQmJL2HLUXXHwE0V3+xvGtq4NGEK5ul7Tv7r5I=;
-        b=N0Erb8jUYdWjUEi3FT62R+vexD8p65HxHbCIxlEfeWxOOubvsUiKr3O7juwlGMPLav
-         dWwLasoiPhJkiQ+peDezDyWdP9bb/SvhXw+PyY9z5BYgLKHFth//AhIJKyhTIX9j+bkD
-         JCYxWWNVuIOXKwqW4DOxvHfKmDqyawmD8FSMW7umwzr/NMmMmM6yP2eZ8J/Pu2JaVnpu
-         qcR6ebpQm2+Dp0EA4nWo+vCcNCUXDCH03DH5X8EZmXHAHkFPThxjmBMTzF1uwvc7RRyV
-         CAr+28nU+Es8bxFR3vt2a2yJgi40wFHZ5OXb1rYzlLdeBe6nz6S1EQY0ED7ZeK544ZVN
-         xIJg==
+        d=linaro.org; s=google; t=1789411413; x=1790016213; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=rTTwCzG+E2m003pB6kHU8/AZNGM2MnXKny9rOvXi4p4=;
+        b=oehiCSal6mkocd3l0eyyBhL6M49PFLZaKereHNIo5IKdRfOHE+M3YJIhgLtEKXbxE4
+         m4YguuBA5Fjy6vxGvM9k2PVI2arPGhcAcUgIEslDJtyXnTt3VEqkcp2GyKBnxj5XjSoA
+         OgprWDC8XQ7QSThSf+bV7qKJD5kV4KnCwHqm2OxnB8ryopEewVbE47kPodAssBGF9eD8
+         X9xq44zO/4g+gewqab4YmfR9vjJB1JLxSvAPacrNyhpEFfGgfLWKyzsLy5epmVXyed7N
+         UbMmwPWFdRr3c0XsPIST9/hhnsCiTqZYMvmqfLiuk81/7MEcsJupEhE4MbOmTFN+SV2k
+         PNMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789405127; x=1790009927;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1789411413; x=1790016213;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/eFndhQmJL2HLUXXHwE0V3+xvGtq4NGEK5ul7Tv7r5I=;
-        b=eAOM5We5h63B347C4tZHYzJbiWaBYV+HCRa5FJw/C8ev6Nlv+M1YfpLcO9vuMVz51/
-         IADoyfbV6mrN+ZE9wivbI1SwRhtBep3bvFOH9Ssfq+0l92X5/sNGv++dQSpRst1Edg8h
-         jhuwwXAxTK67i1NCnD2XpQLUGZHQwE/Cdql40E7FhS5HmKpMo4uo1Vkj70ViwaND8FuQ
-         ikQYMG6xqso91qdeKBZeoZ8JTdrr/EyepZXDaFhYZYxP9H3i3vQy7H5gKF58JNfkhbaG
-         d3o+CSRs+Ydzmz5ctPrn/11bcwFtW89wuWSLO5A3UZLi0I7dWTyUEQb8+/MUsJr62J6V
-         Ua1g==
-X-Forwarded-Encrypted: i=1; AKwUvBwMiXRBkkuS/5ZHE2P6abEOfk0hcxyJB0EYMTL5WpdUBIKoqWIEfkG9G3eZ4qSqoSgRXnsBNi+tDci5c1SM/9R9vg==@vger.kernel.org
-X-Gm-Message-State: AFuF++m/XEJqm+wDq91QgdAIl5QMzvCk/Liw1ryGA6A+gxQdMyltnV8J
-	xRbXSSvadFinZX4j4Fijs+Mve8w1ntjsTfW99mhx5wcslezWgxUR8j9MbGpNZrL7Wq8=
-X-Gm-Gg: AYBFou0t3BEvLMfWDM0gXHHH/sueUMe5HPvhN9YwQptgR0POO7AkoRZfILRJ0vUot/g
-	IJvKVZib+BW617AHVH4Z6Std7QuKM4Se56AKCXtXEb97SxJOczWlDhU7kTbf3yqfpgzto6XMKtW
-	XBvzeCgFyxN7CH6xcpnC+d3ItP/rchFoG7FtukmsGJhMHgNq9CogSkQ2pL+nDZ3h9MtKZR4Hd7X
-	TQxzbHlw7U2GwAOkNCqXE1klifdblD42Ezwf0TG9RrHSQg6d1tN7IXIfQNnfCOdlcG1/iDk3Gz4
-	dqwLgZZhK8fORi4ILFsYFzPHJMXx8HNaBZqrQrcNGAy2rNOiVOMuyx6PUVnNoS6I13CO3CxXprk
-	Rk14UNsl3Jq5WSgd9oGr8LvRaNetPTIkjc+A3nbclZRyUOAT2sl28uNhfUorfpPl8C/mw72q5AJ
-	Wz7G/7yp6yFumPeUh760cYvJv6/0SfAOT//bAYkbD86fuCQZAx4/SQo9qoOGOMRa1XZR5gv1es1
-	flmbav365mzjGHe+Z0rGy+hEAHyNhAaU0tw6CmQFT4xdUhZkw4uNXM2IoDKels=
-X-Received: by 2002:a05:6000:471a:b0:486:f506:2fa8 with SMTP id ffacd0b85a97d-48702ac2429mr4455498f8f.18.1789405127590;
-        Mon, 14 Sep 2026 09:58:47 -0700 (PDT)
-Received: from [127.0.1.1] ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb32e81asm29636198f8f.7.2026.09.14.09.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 09:58:47 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Mon, 14 Sep 2026 17:58:45 +0100
-Subject: [PATCH v4 2/2] arm64: dts: exynos850: Add acpm SRAM node
+        bh=rTTwCzG+E2m003pB6kHU8/AZNGM2MnXKny9rOvXi4p4=;
+        b=GIaKUZ1iC/M0vze7af62QuUx7abvLP6zn9qaTTWop3yEkVWLqpEihHUbngG3HLleI7
+         k0pxdSfwS5prP2sXkCaRlw7eVhkP5UBMrJvO/xZKM8crKN8bOxfEYeemp6SCPx6wWRDU
+         GKNGYJIv3ty2bmrwuL2HH2TDG/1/aGDlL3kb7hnZ+HaWTPuavwmMwXvrtxMA6a4BMNS/
+         N0wHN6inURIqs6ND41uaFjm+GFsxQnBX7b2apE1Na4IHoOgXYcAM43if1tF/yX7NpPBh
+         ui3IM2pNIsN4CA6onAPJe0zT2GseVT6cVALlYJngsSS5A8x1/su8OYFCzMsQtLD71xX0
+         39fQ==
+X-Forwarded-Encrypted: i=1; AKwUvByW0cDg9ZgIKhkaINqrkXE56KlzjYuh68HlwEPLeVVnJU5I7LEJAfnMylt85m6hB+x7oAqCJr7Bmsb1WP06exQfgw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nXE2Hko7tvO+evA8e533QI1XndZYq5Kkjzcd1R3Jfx4x85dGVX
+	DVJtXyXvUmTfN6LwnAc+ldV3MAxdWwA9ppIsvdBVWy74LDxKOfe1LsInZfnEku5S2h+wmxFB3aZ
+	xTr2EYwHEyPQ00DG8E2fUMj9IeXVB9LNVAUMtOZ16Tw==
+X-Gm-Gg: AYBFou0kowSp8KqvJq1gB5VlAV40cO6fr1T432eMSc4kjBoNpSG7FFkqL8U7uHUg7iR
+	hPWHs2T0F478zw/39QCRzXK/0A4mO7wX0kbsGniWviKg4bOdm9OhIuN8YvlEL6zsL25HGCsI7gA
+	bJ/yHZQpF5WepOKee+yYxSzoOjq7kMAaO6YEa0x9sj80XzJQd96e+98A2SbQyWU6GoupCDqSMFx
+	TqBrqWYceLDGGuuTSZMwgpnRDnpSDFKLca3d3hQWixvYsBc+3Fx0mCrTbT+93z2wRMV6hSKj9lZ
+	RA4jOtD5Tq36Az4qNGoKQH6p4jSIJTaFGe9kT4+Mu/79htzCcr2ZknTW1m+qSvW+sVHut2ROHFI
+	goEmEUwpudfjO6nOOHxLGWLhX
+X-Received: by 2002:a05:690e:43cd:b0:671:2d01:48e3 with SMTP id
+ 956f58d0204a3-6714dff5dd3mr885822d50.29.1789411412494; Mon, 14 Sep 2026
+ 11:43:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260914-exynos850_sram-v4-2-253871de0f61@linaro.org>
-References: <20260914-exynos850_sram-v4-0-253871de0f61@linaro.org>
-In-Reply-To: <20260914-exynos850_sram-v4-0-253871de0f61@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+References: <20260914-exynos850_sram-v4-0-253871de0f61@linaro.org> <20260914-exynos850_sram-v4-2-253871de0f61@linaro.org>
+In-Reply-To: <20260914-exynos850_sram-v4-2-253871de0f61@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 14 Sep 2026 13:43:18 -0500
+X-Gm-Features: AcwNN1X6rEhWyvGZGxC5VaFgYQL-l7UNaKIM-imvsW05a09IZ7DLJYvbUNRH2HQ
+Message-ID: <CAPLW+4=5KqfFxUQ5Td6PXfoKG-vdTkzYDF-sDAyODdXKSripzw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64: dts: exynos850: Add acpm SRAM node
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SRAM is used by the ACPM protocol to retrieve the ACPM channels
-information and configuration data. Add the SRAM node.
+On Mon, Sep 14, 2026 at 11:58=E2=80=AFAM Alexey Klimov <alexey.klimov@linar=
+o.org> wrote:
+>
+> SRAM is used by the ACPM protocol to retrieve the ACPM channels
+> information and configuration data. Add the SRAM node.
+>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
 
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 911643008b9f..2128749d7647 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -176,6 +176,11 @@ soc: soc@0 {
- 		#size-cells = <1>;
- 		ranges = <0x0 0x0 0x0 0x20000000>;
- 
-+		apm_sram: sram@2039000 {
-+			compatible = "samsung,exynos850-acpm-sram";
-+			reg = <0x2039000 0x30000>;
-+		};
-+
- 		chipid@10000000 {
- 			compatible = "samsung,exynos850-chipid";
- 			reg = <0x10000000 0x100>;
-
--- 
-2.51.0
-
+>  arch/arm64/boot/dts/exynos/exynos850.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/=
+dts/exynos/exynos850.dtsi
+> index 911643008b9f..2128749d7647 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> @@ -176,6 +176,11 @@ soc: soc@0 {
+>                 #size-cells =3D <1>;
+>                 ranges =3D <0x0 0x0 0x0 0x20000000>;
+>
+> +               apm_sram: sram@2039000 {
+> +                       compatible =3D "samsung,exynos850-acpm-sram";
+> +                       reg =3D <0x2039000 0x30000>;
+> +               };
+> +
+>                 chipid@10000000 {
+>                         compatible =3D "samsung,exynos850-chipid";
+>                         reg =3D <0x10000000 0x100>;
+>
+> --
+> 2.51.0
+>
