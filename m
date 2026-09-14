@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5268D3DDAE1;
-	Mon, 14 Sep 2026 07:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CF0361976;
+	Mon, 14 Sep 2026 07:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789369309; cv=none; b=l5F4sdmVsFT3wI49vvvjoY3G88K0iMjrV29w737EKZMRe3VmTZ9bCrw0Q3m5kh7a4RdfL3ph4MCciACQSXV61+WXtcNayNzwT1cV3ZF6f3sa9hoYSnfrrRiLVxRhawiE4EDuq0TC8qBp04Zw/Eks+w5lOh9REPF3LpxRPl2Fe7U=
+	t=1789369563; cv=none; b=dXh1m1WLeKsRnyuHs5HmRqmdeSSBD4mMGJaetbG/hbB/5Mmjp6jhpxTBj606NIMDTzpD3sd0+ls3F65NpzySpAEQRo5//ydXTXqAM9iJv5/sxEfA45IQ6iknvDQADPpp9y/tGIDoLx7q5VXhL25GMNIg4hIEHGRBkXgxQTaK1cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789369309; c=relaxed/simple;
-	bh=ODJiUHV1T1dz7dtKwr+xv5Gou5maMd+aqNZ4jkonLj8=;
+	s=arc-20240116; t=1789369563; c=relaxed/simple;
+	bh=j2sbgabFzSCRNwpAQXS91d5cLhlNykbsimA9YyMeT8w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XTNdlBgAG6mu4B0gMIAwIPp6KLSkgjW13qm/4lAqRTUFKGljFvnDTY/6UWmawasJSz5KkRkByJ/mcKeg5uOiw1OrQl4V4TcVZMbayg5cJlGWd0BZq+oGsOmUWXxcULY+DJjX21+22IUw7LDIqbtpiAx/UvmDGCeHqyUCJKgiKLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krYkFliL; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=M6Dn7jSef8Opq13KuxYgVai6q42Ym8p77T0J5SgFWl5OeDZ2F9pUMJSL4QE7HxCeEfI608m0e8yoftjkDBfe+lsQzS3E+DlHkdNYfU2hT3v/a+CJ1KUihtbfqO/VXVvPzRVFIhpdiIZrmoP/5C2R3WSIQYkLTvecRvB5XEE82/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pc0zjsVp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krYkFliL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9401F00893;
-	Mon, 14 Sep 2026 07:01:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pc0zjsVp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B7D1F000FF;
+	Mon, 14 Sep 2026 07:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789369308;
-	bh=GaE85tA+adRoAMcgb1cERLo8/ir7H9D/C8OWWR1KpXg=;
+	s=k20260515; t=1789369561;
+	bh=j2sbgabFzSCRNwpAQXS91d5cLhlNykbsimA9YyMeT8w=;
 	h=Date:Subject:To:References:From:In-Reply-To;
-	b=krYkFliLk89rcHNsKM/Cb7fqnrFSi56j3IED+3jxwMjHFJTF7wBvAO/iJxdNvHyGJ
-	 Y0u5FS2QnSeLE0wZGt14q7cCv4QjmQY+zRrfVZWBAHr30KKIDT8TWT+3j+lsUScilS
-	 LlNSnGRpFsB1MoooYt4RzYSo0IyQyfmeAjNdrtcnAKYgyC3c55F+zBBvfbl8INvZBs
-	 26LWk1wKCrc5lmBa5DlKkIxjMyiLYAi5RfrVcSyIelzgbK/ABsxoHtn28ciP2UOzJ6
-	 i1WZqcDFMMdunvx27eD6bAXeIbIN7u90i7nQ4P61k210S5Hk6PO8uesyeb1re/zrIz
-	 Ukts/WGrdDt1g==
-Message-ID: <8d547f65-a260-4b8b-80e4-4695d4422497@kernel.org>
-Date: Mon, 14 Sep 2026 09:01:42 +0200
+	b=Pc0zjsVpRx04sxzBjo/e36jVzsWrEDNtP0E33rDGiVGnBZ5YldGwTIPB/ze2M1J3h
+	 Lgpt7Nt8XWDYmFt3Fqt2zyOAb0CZAj1Dlf0dt/SOUeRJNi7ieMAybd7uIKDOGBCrlQ
+	 rmF6DY1jjRVwKzT6BUmZ6JCgMOfFOFYL4P2+P120TZPq7ptUVOZiMwasSpp9Ko4lzw
+	 RP4t41rF8fa57ClIwkgXPa1mLiL623lwpndvA/mprAHuAo2S0xlq01L7GAXV0VozRM
+	 a/C9Su8/3l0BAiA8ruU8+FN4HFxEOUXKMYD10fzqMKE4scakqHjEorTqm77bvH2yP6
+	 1W56QiQFu7oHA==
+Message-ID: <5c24248e-bee2-4256-af8f-a80be6744431@kernel.org>
+Date: Mon, 14 Sep 2026 09:05:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 8/9] thermal/drivers/exynos: Add missing drvdata
- assignment in Exynos TMU probe
+Subject: Re: [PATCH v9 5/9] thermal/drivers/exynos: Remove redundant
+ base_second register resource
 To: Anand Moon <linux.amoon@gmail.com>,
  Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
  "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -49,7 +49,7 @@ To: Anand Moon <linux.amoon@gmail.com>,
  "moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
  <linux-arm-kernel@lists.infradead.org>
 References: <20260913145905.9404-1-linux.amoon@gmail.com>
- <20260913145905.9404-9-linux.amoon@gmail.com>
+ <20260913145905.9404-6-linux.amoon@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,24 +95,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260913145905.9404-9-linux.amoon@gmail.com>
+In-Reply-To: <20260913145905.9404-6-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/09/2026 16:58, Anand Moon wrote:
-> Add dev_set_drvdata(&pdev->dev, data) early in the probe function,
-> ensuring that the driver data is properly registered and accessible
-> throughout the lifecycle of the device.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> The Exynos5420 TRIMINFO register can be accessed through the main TMU
+> register space, so a separate register mapping is not required.
 
-This is somehow confusing or completely incorrect code.
+No, the address is misplaced. You completely ignored entire point for
+second base, without any arguments, any data, anything, and just drop it
+completely.
 
-Either this was needed by the driver or not. If it was, then why no bug
-is being described? If this was not needed, then you are doing no-op
-changes.
-
-
+NAK
 
 Best regards,
 Krzysztof
