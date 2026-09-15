@@ -1,122 +1,106 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64DF43DEBD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 05:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D477043F4BC;
+	Tue, 15 Sep 2026 05:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789451650; cv=none; b=SnF2HdjM+1nMVT/GuW1pgBrhhCt1D1Tzgr1oujJkKFOtL2HdJGdTv/bTni3nSv92Vazo89akYe9i2FoQnlx9mQqzdFJu7RWGKWS0trPy79h+D9qffheLvIMMqWJ07c/hjZYJa7bc0qQdRD9KvTrJwF/uwOcNyh+/H7kY0RKJnKk=
+	t=1789451664; cv=none; b=m0eBd6V0vpMO71LLoikNAaY6tku/bwCyoaQtvdMHvM89kF3CFnBxd1Xb5u3AHjSV9GgxufjzCgbHtoqh34GyM9UMKDOeM6haq5lmD+TmD1FoKSvSD5GD0TUC6Psqj7x7Wef4d+Pu5GvUNuIJdFmNVJAjZYyMuaz5ndCOgjZPFEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789451650; c=relaxed/simple;
-	bh=6pnARJWU8Hn/XLwXN42+gQ7sps7ZUuWfUhevWLlNNPg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=obfIOfkNXSG5hLVGNCnq7FFdltdnOnM+/WZW9cTxqyNZ0Bbm2nl2oyiPelkhsO+enNNye+j9cjaZHgfaq+Pq3agUOS3NoahZFCMVR7tLonZwyx/cO2sORk0CxN+AOntEEAqkLg8JztuYITWyGvcYAM9HmF1jdoYYdVMf7TZTgY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F3aR4IMx; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F3aR4IMx"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260915055405epoutp035f617b3ffc53c608e9c0611a38ca63ea~VaMpXhb2e2221922219epoutp03b
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 05:54:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260915055405epoutp035f617b3ffc53c608e9c0611a38ca63ea~VaMpXhb2e2221922219epoutp03b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1789451645;
-	bh=6pnARJWU8Hn/XLwXN42+gQ7sps7ZUuWfUhevWLlNNPg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=F3aR4IMx/qlMGya5Xr0xNdL4TM9u53nAUc3/581RY3B5kcT8G1qHipkiClM6AnGv9
-	 qOfCc8mW1NW5RZ0VvZj41ThXyPaB5mMRVLZuFF5dSbe7E++tYWmK34Xt3labPalbKw
-	 ZoD3NSLlD4SFVRbR7y+BOBtJmLe6xC3iA+o/TNzw=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20260915055404epcas5p27df422b565f6cdd3834007c781f48090~VaMoi1tW-1755617556epcas5p2R;
-	Tue, 15 Sep 2026 05:54:04 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4hkWRb1vf6z2SSKn; Tue, 15 Sep
-	2026 05:54:03 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260915055402epcas5p1d4131ca25d791c6e4ba38ced99f1e29d~VaMnCxL-F1505315053epcas5p1m;
-	Tue, 15 Sep 2026 05:54:02 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260915055400epsmtip137fa43b73213458bcb593794a8e06add~VaMk7hdm70286302863epsmtip1j;
-	Tue, 15 Sep 2026 05:54:00 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Selvarasu Ganesan'" <selvarasu.g@samsung.com>, <vkoul@kernel.org>,
-	<neil.armstrong@linaro.org>, <krzk@kernel.org>, <peter.griffin@linaro.org>,
-	<pritam.sutar@samsung.com>, <andre.draszik@linaro.org>, <kernel@lvkasz.us>,
-	<linux-phy@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <jh0801.jung@samsung.com>, <dh10.jung@samsung.com>,
-	<akash.m5@samsung.com>, <muhammed.ali@samsung.com>, <thiagu.r@samsung.com>
-In-Reply-To: <20260831070309.158069-1-selvarasu.g@samsung.com>
-Subject: RE: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
- prevent OOB access
-Date: Tue, 15 Sep 2026 11:23:58 +0530
-Message-ID: <01e001dd44d6$9c203730$d460a590$@samsung.com>
+	s=arc-20240116; t=1789451664; c=relaxed/simple;
+	bh=3sYecSxeNgB02wiERP5ba/DfG+sYZLpEY0/l22a56V0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cF/YUXeMbuZXWSmya3BXWvOnqVQDDnRQP37aaqjiG760CIIkVkUTfunk55gB7eGCQvCz+gbdyqQ8fKcGBgN/irQ+/zcCoXuUYCSq/puY3CIdcHFNAKYd1U1W7E3gkkJxlxp5Akp/dpPmtlwEjWGjSNa7u8mky/Dfsd31HnoMC/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-01 (Coremail) with SMTP id qwCowAB3TPCE3ahqLUUKCA--.2511S2;
+	Tue, 15 Sep 2026 13:54:12 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: alim.akhtar@samsung.com
+Cc: bmasney@redhat.com,
+	cw00.choi@samsung.com,
+	krzk@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	mturquette@baylibre.com,
+	s.nawrocki@samsung.com,
+	sboyd@kernel.org,
+	semen.protsenko@linaro.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: samsung: Fix parent clock reference leak on enable failure
+Date: Tue, 15 Sep 2026 05:53:43 +0000
+Message-Id: <20260915055343.1730045-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGKDVFXPtvwg5u1EEO2Agv0acLiRgJK+Mort2M6G0A=
-Content-Language: en-us
-X-CMS-MailID: 20260915055402epcas5p1d4131ca25d791c6e4ba38ced99f1e29d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0
-References: <CGME20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0@epcas5p4.samsung.com>
-	<20260831070309.158069-1-selvarasu.g@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAB3TPCE3ahqLUUKCA--.2511S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF15AFy7JFyUGryxuw1DGFg_yoW8XFy5pF
+	Z7CrWYyFW5GrWUKF43Kr1qgr1aqw45CFy3WryfCa4kWwn0yryDAF1rGa4qv3Z8JrWrJFWr
+	trsrtFZ5CF18ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JULo7NUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwULA2qowpBb1AABsU
 
-Hi Selvarasu
+In exynos_arm64_enable_bus_clk(), when dev is NULL the parent clock is
+obtained with of_clk_get_by_name() and then handed to
+clk_prepare_enable(). On the enable failure path the function returns
+directly without clk_put(), leaking the consumer reference.
 
-> -----Original Message-----
-> From: Selvarasu Ganesan <selvarasu.g=40samsung.com>
-> Sent: Monday, August 31, 2026 12:33 PM
-> To: vkoul=40kernel.org; neil.armstrong=40linaro.org; krzk=40kernel.org;
-> peter.griffin=40linaro.org; alim.akhtar=40samsung.com;
-> pritam.sutar=40samsung.com; andre.draszik=40linaro.org; kernel=40lvkasz.u=
-s;
-> linux-phy=40lists.infradead.org; linux-arm-kernel=40lists.infradead.org; =
-linux-
-> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org
-> Cc: jh0801.jung=40samsung.com; dh10.jung=40samsung.com;
-> akash.m5=40samsung.com; muhammed.ali=40samsung.com;
-> thiagu.r=40samsung.com; Selvarasu Ganesan <selvarasu.g=40samsung.com>
-> Subject: =5BPATCH=5D phy: exynos5-usbdrd: Use dynamic phy_cfg size to pre=
-vent
-> OOB access
->=20
-> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
-> creating both UTMI and PIPE3 PHY instances regardless of the SoC capabili=
-ty.
-> Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990, and
-> ExynosAutoV920) provide phy_cfg arrays containing only a single element.
->=20
-> On these SoCs, when the loop reaches index 1, the driver reads past the e=
-nd
-> of the rodata array, populating the second PHY instance with garbage data=
-.
-> Since the configuration structure contains critical function pointers (ph=
-y_isol,
-> phy_init, set_refclk), any subsequent access to this PHY instance via
-> exynos5_usbdrd_phy_xlate could result in a kernel oops.
->=20
-> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
-> store the actual size of the phy_cfg array for each SoC. Update the probe
-> loop and the xlate function to bound their access against this value inst=
-ead of
-> the hardcoded EXYNOS5_DRDPHYS_NUM.
->=20
-> Assisted-by: Claude:claude-sonnet-5
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g=40samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+Store the clk_prepare_enable() return value and release the reference
+with clk_put() before returning on failure.
+
+Fixes: 454e8d296ce4 ("clk: samsung: Extract parent clock enabling to common function")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/clk/samsung/clk-exynos-arm64.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+index 35d4de233cc1..05c4a15dfe99 100644
+--- a/drivers/clk/samsung/clk-exynos-arm64.c
++++ b/drivers/clk/samsung/clk-exynos-arm64.c
+@@ -149,6 +149,7 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+ 		struct device_node *np, const struct samsung_cmu_info *cmu)
+ {
+ 	struct clk *parent_clk;
++	int ret;
+ 
+ 	if (!cmu->clk_name)
+ 		return 0;
+@@ -167,7 +168,11 @@ static int __init exynos_arm64_enable_bus_clk(struct device *dev,
+ 	if (IS_ERR(parent_clk))
+ 		return PTR_ERR(parent_clk);
+ 
+-	return clk_prepare_enable(parent_clk);
++	ret = clk_prepare_enable(parent_clk);
++	if (ret)
++		clk_put(parent_clk);
++
++	return ret;
+ }
+ 
+ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+-- 
+2.34.1
 
