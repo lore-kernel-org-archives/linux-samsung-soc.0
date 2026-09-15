@@ -1,36 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761803DA7F8;
-	Tue, 15 Sep 2026 15:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884214A6CDF;
+	Tue, 15 Sep 2026 18:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789484715; cv=none; b=n9cgZtmnJDObiTU3Dzaz31+a0VE8p5ZkvWNSAbO1BqKOoJRmIWji1QNFhKzdEI2MX0bJ9F/YXI3uyOZdhlfOELsxpQ5knNY/dhvubvT5UW5SBu9uY6EXcsd12KPYAIcKqFSX5y1I4It5zBqPrpVF2mzx2metov7nPf0Tsp3C8wk=
+	t=1789495532; cv=none; b=scEk3jaJqbfeet0JDqfFF0hblNplzvmS+1lPz5NwnsVrm4u1kVOCfExiYi/g6Hcz/08l4v56diz5hEAm6GLeiPHgwD5vF0ECUh6ZHM6V+9zH5qgIzxHNOxKGwTLx8eYsV+cO0V34F90js4GWpfA4rKUMxDgVeEre50pX0LwffPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789484715; c=relaxed/simple;
-	bh=DAmlGFJZYAmgnOIvR39oev84RuA6yc2k24v0yU66UX8=;
+	s=arc-20240116; t=1789495532; c=relaxed/simple;
+	bh=V6K4OlMCnUsCbDMREVaUa2vUImH9KQWys0wgaxngXJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iv6os0/vSp83JQmPUZT3K8t+sCZv2X60CfX89bJcHxd7tH+hEYtWoG0HV/va1SvJDRZ2I+AyXHKMpAP7G/BJeqN4JAOpZN+SfcdLpV3ADIj9hW6BriMLtKaaFKvMPLPutnyRNXNBS0v0kDuSOoCng4cAiHqi+5c4xOXLqYRZLs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gf5L5wnm; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfuPf03J7lxn0tqT5OuVYHZ4DS/aVd4KrSy2EDRM8b982EshWCpuzHWUr+D9KdPANs83cOFX09kIsaIw7aDm2lEcsp6xot0jmqiCR0NzNGmwbnunVarZnX3eiEP4fnf2GnWnQ/YsopuMzFiqjYgckczMy+23ng8N45508TCOPxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTo4X3Om; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gf5L5wnm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609DE1F00893;
-	Tue, 15 Sep 2026 15:05:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTo4X3Om"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A331F000FF;
+	Tue, 15 Sep 2026 18:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789484714;
-	bh=92Jyv3r5iRKPp9A+0MWzJBMIdxeAT/qbE/UD5yjhWE0=;
+	s=k20260515; t=1789495529;
+	bh=mPeI+6lTU/Y8EitQI5ZfnrfapFmX8wWN22xo6A7UJaE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gf5L5wnmtccLwoqcVRv226Jxh21B1B//39SXNk9kc4N8OS1FTlhq9PWO0oO0C2lV5
-	 /puLCofTcTcdOq9gexMECkzKA3ObUOxFvtdLZex77Bqia2hDmeu6n908Nd0hiX8iF9
-	 qTYQDbAMbNgjSO8+cNHSBskD1SEuiooBkMWuneDZS5c3lKtRyIRRattmm2nfwDtRhi
-	 /vDHelzWwxEEbNDJ6m9bDtWIf3Gi0xBkpoRi48jhIlvmxyg1p97zwYUvcCDIpP4GL2
-	 89RyOdTBK97/VTtSVGn5HnnYF5QSg1YyyyGBUWH6C6xYN7eMiLrpeTG7VTkcG879bb
-	 BqI5RrgGxycEw==
-Date: Tue, 15 Sep 2026 10:05:11 -0500
-From: Rob Herring <robh@kernel.org>
+	b=jTo4X3Om6pjYJxMpPsXGw742bcwi+fNKt1WirPMCjMB3CN4+QeGCMAad0HowUYo27
+	 zkPX73/bpXrtYTMe0XsfHOKvy0auvvNyZSnejxr33FwP5Y4EAzd8YeVUzA5p/dgDEw
+	 5cFlE/iE3GLNGT0ByRP+/biS9WQfT2P4HJ97Jm9P9K/qgKyfL5uH3H46GOijU3awQE
+	 U05QkDGXb1dMAlMiuCtrF46H69n28W2iJaBayGHH26y3LSBp2/268of5pUNUCjMz6C
+	 lP5HOIiL9QmsIGugbJJQ+XSzW3eNNY7uy3+IQE3mKC77JsHqvgv78X1PoCadcnYcJG
+	 U7RPeBeWp4lDg==
+Date: Tue, 15 Sep 2026 11:05:29 -0700
+From: Kees Cook <kees@kernel.org>
 To: Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, codemender-patching+linux@google.com,
-	Russell King <linux@armlinux.org.uk>,
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
 	Huacai Chen <chenhuacai@kernel.org>,
 	WANG Xuerui <kernel@xen0n.name>,
 	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
@@ -58,6 +57,7 @@ Cc: linux-kernel@vger.kernel.org, codemender-patching+linux@google.com,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
 	Saravana Kannan <saravanak@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -71,9 +71,9 @@ Cc: linux-kernel@vger.kernel.org, codemender-patching+linux@google.com,
 	Anna Schumaker <anna@kernel.org>,
 	Mike Marshall <hubcap@omnibond.com>,
 	Martin Brandenburg <martin@omnibond.com>,
-	Kees Cook <kees@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-	Simon Horman <horms@kernel.org>, Chuck Lever <cel@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
+	Jiri Pirko <jiri@resnulli.us>, Simon Horman <horms@kernel.org>,
+	Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
 	Olga Kornievskaia <okorniev@redhat.com>,
 	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
 	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
@@ -102,22 +102,22 @@ Cc: linux-kernel@vger.kernel.org, codemender-patching+linux@google.com,
 	Cen Zhang <zzzccc427@gmail.com>,
 	=?iso-8859-1?Q?C=E1ssio?= Gabriel <cassiogabrielcontato@gmail.com>,
 	Rong Zhang <i@rong.moe>, Arun Raghavan <arunr@valvesoftware.com>,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linux-edac@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-	linux-hardening@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 10/28] of/fdt: Replace strlcat() with snprintf() in
- early_init_dt_scan_chosen()
-Message-ID: <20260915150511.GB1926857-robh@kernel.org>
+	nikitash.mariiaw@gmail.com, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-edac@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-nfs@vger.kernel.org,
+	devel@lists.orangefs.org, linux-hardening@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 00/28] Replace remaining strlcat() call sites with
+ snprintf()/seq_buf()
+Message-ID: <202609151055.AFC6267@keescook>
 References: <20260915081910.4142719-1-morbo@google.com>
- <20260915081910.4142719-11-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -126,59 +126,48 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260915081910.4142719-11-morbo@google.com>
+In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 
-On Tue, Sep 15, 2026 at 08:18:27AM +0000, Bill Wendling wrote:
-> When CONFIG_CMDLINE_EXTEND is enabled, early_init_dt_scan_chosen() uses
-> two strlcat() calls to append a space and CONFIG_CMDLINE to the command
-> line buffer.
+On Tue, Sep 15, 2026 at 08:18:17AM +0000, Bill Wendling wrote:
+> strlcat() is deprecated: like strcat(), it requires re-scanning the
+> destination string from the beginning on every call, which is O(n^2)
+> when used to build up a string incrementally, and its truncation
+> behavior is easy to get wrong. See:
 > 
-> In preparation for removing the deprecated strlcat() API[1], replace the
-> strlcat() calls with a single snprintf() call using the existing string
-> length.
+>   https://github.com/KSPP/linux/issues/370
 > 
-> Additionally, check for a NULL initial_boot_params pointer and jump to
-> "handle_cmdline" so that CONFIG_CMDLINE handling still occurs without
-> dereferencing a NULL FDT pointer in fdt_path_offset().
-> 
-> Link: https://github.com/KSPP/linux/issues/370 [1]
-> Cc: codemender-patching+linux@google.com
-> Assisted-by: Assistant:Claude-3.5-Sonnet [editor_update_file, shell_command_run]
-> Signed-off-by: Bill Wendling <morbo@google.com>
-> ---
+> This series removes the remaining strlcat() call sites in the tree
+> (plus the one inside fortify-string.h's strcat() implementation
+> itself), replacing each with snprintf(), scnprintf(), or the seq_buf()
+> API, whichever best fits the surrounding code.
 
-> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> index a64afc3ded3d..311021a83f03 100644
-> --- a/drivers/of/fdt.c
-> +++ b/drivers/of/fdt.c
-> @@ -1095,6 +1095,9 @@ int __init early_init_dt_scan_chosen(char *cmdline)
->  	const void *rng_seed;
->  	const void *fdt = initial_boot_params;
->  
-> +	if (!fdt)
-> +		goto handle_cmdline;
-> +
->  	node = fdt_path_offset(fdt, "/chosen");
->  	if (node < 0)
->  		node = fdt_path_offset(fdt, "/chosen@0");
-> @@ -1133,8 +1136,12 @@ int __init early_init_dt_scan_chosen(char *cmdline)
->  	 */
->  #ifdef CONFIG_CMDLINE
->  #if defined(CONFIG_CMDLINE_EXTEND)
-> -	strlcat(cmdline, " ", COMMAND_LINE_SIZE);
-> -	strlcat(cmdline, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-> +	{
+Thanks for tackling this!
 
-No need for brackets.
+A few global notes:
 
-> +		size_t len = strlen(cmdline);
-> +
-> +		if (len < COMMAND_LINE_SIZE)
-> +			snprintf(cmdline + len, COMMAND_LINE_SIZE - len, " %s", CONFIG_CMDLINE);
-> +	}
->  #elif defined(CONFIG_CMDLINE_FORCE)
->  	strscpy(cmdline, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
->  #else
-> -- 
-> 2.55.0.1032.g73a4cd73de-goog
-> 
+- This series almost certainly needs to be sent as separate single
+  patches to each subsystem maintainer (rather than a giant CC list).
+
+- As others noted already, we don't want to do anything as just an
+  open-coded strlen/sprintf; this doesn't gain us anything. If we can't
+  use seq_buf or some other solution, we need to figure out what we _can_
+  do for a given use.
+
+- There are some collisions with other in-flight patches, e.g.  Mariia's[1]
+
+- The "Assisted-by:" trailer doesn't need the level of detail you've
+  got, which changed recently[2]. Now the desired trailer would just be:
+    Assisted-by: LLM
+
+- Please avoid including the Cc list in the email body (above or below
+  the "---" line), as it ends up being redundant.
+
+I'll go look through the individual patches...
+
+-Kees
+
+[1] https://lore.kernel.org/all/27956255dde39f58d73a7b51cb53cbe3d7804f54.1786411026.git.mariianikitash@google.com/
+[2] https://git.kernel.org/linus/816d9992d9ed ("coding-assistants: simplify attribution")
+
+-- 
+Kees Cook
