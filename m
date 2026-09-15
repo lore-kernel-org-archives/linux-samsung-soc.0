@@ -1,131 +1,259 @@
 Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E6539BFF1
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 14:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632F13546D8
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 14:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789483032; cv=pass; b=sF2cFnxWHapdqNIM3eLoqDJMkvdv2YWORr0Uv0nloSoFnCCZFXiPQELwr7L9YK6XNTc9s0iJQsuPQfLCxDl5qAKhBWDJZsoh+31cSMAseE5Gt2pw6agkZm6vzKZOJOfThvy96B5ERTETxQdD/QkN+jjWT9NbIa7E9ibZq1nQ2UQ=
+	t=1789483123; cv=pass; b=fdVq9J30iqnAfM3sYLgPTAJFCrVE+wd9JHmJ4G9A6MoO4q7hQ01gai+z1y/A/A+Fu4p7zvKXb3pooIcy7IJ8cXWKUYv6Eunwxqn5wiRWXUYbZh+NXTlT6k5Gh67wO/ZgSuRoSC2fg6N7jCJ5G8TH115SJ/3QU52PQWrhOxKeM/c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789483032; c=relaxed/simple;
-	bh=s9zHSd0QhzvZUu3ozdcfCjxb9AQPmCffjwKW+F9l7K8=;
+	s=arc-20240116; t=1789483123; c=relaxed/simple;
+	bh=iel1Zg3Gn2JgaK8/39sWaPWO9gbsJitWrIWTrMJvzaE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oln70YnBNf5XtV6YdbD9h5W6UPlAGttqFOFAsj/4hkr6jhWvbGghY7RNfx20C1W2R7T6ArlyKZkDfmP8TaHTQj6iMzb1TiPG353DxITrP+84ucRFs51/WVWioANolp3joEjuTiaH7fvZ6rRuTQ2Fa+z+i9h385/NX0pmsgUZGw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zfz715TX; arc=pass smtp.client-ip=74.125.228.76
+	 To:Cc:Content-Type; b=k1U0p7MDikPZMxjGnXM+nh/QxQvaDai0/51DlykWq4wSp9/rcLeweNxxMb1AF7ihWRD84VRm0XzUw8r8ELxBnq5ELCsQ7a66bxJrrcKF2UNJRDbKxWuU8YgC9Y72vNRL1FaB37ScDPborVIc2IuWdvRZeT9k72jTkRmBBwflNJs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PXv4jCmq; arc=pass smtp.client-ip=74.125.228.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zfz715TX"
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a98505364aso5282903a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 07:37:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789483028; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXv4jCmq"
+Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a67fa7a64eso5820899a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 07:38:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789483119; cv=none;
         d=google.com; s=arc-20260327;
-        b=gZp5NxZ/iKr+fAYQp2eOUVlOUHeWJcEYTFObMwBmNHJweeFmenfrYQQMZ9JY0FqbYD
-         LDkKfg49wA82I1jSsbreOWVSVHCybsXJVmkNGXwO+KqEYaL/fqAIMLJKWTzHY9VzQ7oe
-         27tFP28rU5roExPe/RCV1iqYRkkzscj9iUo4csC/nlEVNu5HIUC+US1T7nm5c/XffGkv
-         2lNwyElu9NuvkFQmR68GoJIAV+KP89cK9OwZFEfLMJObfmU84+aVeA4wX+t4I+MkRRuW
-         Gmp4GsZeHJUwy+aH1JKzu4jSUkA/aVBqcJrKg8bWzVx7yP6ok7Rf0i4visdt9FLHgB/S
-         v7AA==
+        b=eHFNr9FNV3OCiWpgy5qwzUbU1ywInJETBZjY2lQkPJJSSsnxVIGG0c0aBmilv6nFc4
+         1bTl3W4ScL3UAFJNt+MDxrBWl3H8fxiJxG+BKfPxDD+45HoGb+E1JxmaZrfKmNJY/Gq5
+         7MivVrFKU1nA/F7cQys7PYkHTcmUwMYB2E8qTVc+uvpICPJsb9L4NUtK5bLEXr0dEfs/
+         d2s0aNq+M84P0uWrn6RiRav3fzIyBgwFgGfyN8WdCk481YJcBElKdrliISOIn5+wJo0Y
+         e9TAWp5+W1uKeWRzjYNc6SFa5MtmTvskq+z7UYXaFjiSRg74wYiH7y2RGCsiJL1RryDI
+         iYGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=D77DzhDZ72+rZ/B0lquPWAieMQAEtWanQKfhdNjgaGs=;
-        fh=wtI4uC+fk3Uyo9RMPT68Qr8HYGjES480L63kc+6vTl4=;
-        b=kL85+vuhuyMfPFDalVTa3ZvVbkb7jtesTrQ5+PUYR0wKWZ6ff8MO41nuX4+4vhPCH2
-         WV+qAaWoJAp4urgi3rDHQcKEE1sWgNB0qHX6juVs55+3pjCzab/U1S1THVhMDo4WDTIf
-         UFLOZ/GykpDaA5MfC3TSs8QGswFv9K7nxCb1Yg5eqpLjciI734wLtFPXj6nifNWbFrna
-         E4tx2JoJFBULpY7uLcERyHyY2v5uMS19s1DJ9/hsv0x/5MSsKII1QyBpXBdw15d9DwmP
-         2P7JVS7B3fr0x/Z8zWnZ6Qskik8cXb7HoW2tTB/jCG42dQUVgQLyTwl0PsdNQtBvwnT+
-         cRlQ==;
+        bh=hJD9UyfEwkXA50QAdx7qCZZmHoP06c3J8prX9fzshMY=;
+        fh=HJ1JDVbNFfQpUR77XvQqWtnqv8rxSUYVBqFTgnP4zak=;
+        b=L9mrjlP3vy1cecqOlmwvA9roa761SSX2Wg99vlTgZ5RnwsgEmcrLVj0bRG6cR86JON
+         yqRgJ7nbtENdMcX87cxNSv6UVdeCfBhhnGcfZyAY8ZP6d7lQKIinD39H2qCXy293HOkW
+         JYwrkKo3cCrAYc6O254ChP2X7mK6LJN5gXAammPMVrLaTb2iVBVT1T2uYhLpPg2cZsvh
+         Yob60rA77vHrVe8+ICS/1/7dpyNJBTveZHByuymbBeXyUO6i3ZodnkA2Hyx1hMzA/x8T
+         4NckD9fXg+WwdTjxMm/OWHxYA0XesK2YxFQoPvr46HoETnOl7i+b+zoT5NiqsvRDFzFB
+         /Yag==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789483028; x=1790087828; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1789483119; x=1790087919; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=D77DzhDZ72+rZ/B0lquPWAieMQAEtWanQKfhdNjgaGs=;
-        b=zfz715TXNoXEV9KaE3Aaj/3yTGBhUmh2AosnAcRP3TcD3JDi7lUcg3gQpW4mFVOjNB
-         iYJyjdB7oPf08lCBQmz9tLR40AIGJP3cGrX93fbToI5O0rFxf1L0UZNVgy3mmMpHIwAT
-         WvUYcil2fwHN+758ozC9LK4mg3W5vRTSVTNMdff5BSdwoQrpOvCtgPdCpqizJ9efC3Aq
-         tRj4QczYOIMq/COov+mQ8au+EYGGxz5QC5oLz4vvxSGWUzmxrQPVsyzqLFGSg4/dSK/v
-         PsrPZzmNvZ0UYYu3RKtT2YWTe8SzZ5FgsfxWm+HokKMCiO7mPXu+yoKa30Hhxqe0wqt9
-         6P/A==
+        bh=hJD9UyfEwkXA50QAdx7qCZZmHoP06c3J8prX9fzshMY=;
+        b=PXv4jCmqfVuTx9gB/+PJTsyh1geSXnaXL6f3DnyLQDNSfxk2nG5l73W/6MeGQI/sdf
+         gIbjvsi41kCLzqZ1m3q9Ss7VISmknhJERm1jD/+ixKDa8OwVBeHYiBDwkYlvbyy4iVZ9
+         ZqEx/tHwdjzjPxjg9/P+4Xo91TDJvpLTL9xZ43o9OnyIXXv2lokFyh9I9J/zreRdU8zG
+         0hoNAauG/VIUmNHJS0Yoox1n1POnNZy7p9hkS/9p2f4Hy5EGAsZQ0zInjaXLOiYJR0xv
+         a00XF110rKdqBsYaSALuZ0H0BcUCriro1HN2jAlexbiu74sQEMG50VKqMNi6yXjb8lgW
+         Lwqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789483028; x=1790087828;
+        d=1e100.net; s=20260707; t=1789483119; x=1790087919;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=D77DzhDZ72+rZ/B0lquPWAieMQAEtWanQKfhdNjgaGs=;
-        b=YBKPa2G2yPfRQTgw3YoAH2VQP3mOQRQKWPExxxuDof8baRI9L3sFVXlE7mXfnlv4cp
-         tNu2VXe72eqGZMZKM0Da7usLmPfkOKUHCCAeRoL9MNsT1JUUjBfKvYAYcedEGv9gzhtK
-         E5kLrxWfo5x9lujsaFpsVJzf2Yw4plNXL50g1V7/MAnIvLnMjc+9xIHnvKCjQlH2Dgz/
-         Q9W6yBPBRjL9p0B6yvPw29jKXUkmHwtzcKprfdTfQGZo50Em9XUZs28Lq9guIe7bgEdV
-         CCQEaaxUgDE0hv64OoETt7ENKjMLDNQHYq6VemmMagghalOL4vevM3ZPel9luit8SVSr
-         utFA==
-X-Forwarded-Encrypted: i=1; AKwUvBxxBBoUrAM61XDDfvrSyM68tb9r7YhlyPSmqdo9mS/z1wxs6/uA6dOIEiLJeqytb0CIHiatYBljFxl8/osxFWekKw==@vger.kernel.org
-X-Gm-Message-State: AFuF++m4ZGeGm5vKX3WymqTR0RFApUlU9YbMqDAB8Hs2LTPOmrxX2uBM
-	lb16GLxA7zKRGjRZyyn8yGQRR6VwqEA4fGPVWyltudlhffwoZdkyyUXZ5U4AnlI7n2DfO2WZEjM
-	DKi55eaOTuL6HF1EJXrWN0k2MNna6E3E8PCcrPG2y1g==
-X-Gm-Gg: AYBFou3ROs6ebMg/44Hvq7lsG1SlwWDk8YrPoiX7s7Ltwce/QrZGIScj6cp4x+UuqfG
-	9JOGXRmbxUJW3tDV0bsLN1xPMU1Q+X00+0Dpk480B5SG3nGJ5baXhg/I/ITEOeevpqXdA7Uv0du
-	7gN3xAo8sy5GxaI7zQW+XqQ/6glv9jQYe0syv9bKxqXPV633/IeHYcxlLipghLUsLpu4ZcE8Jkg
-	fMXFIb/bLvZLj1S5nkovSRDipWuyv3JRsBrVbKLMepWKdQtdAdpNQydZqSrazvWnP3wC4iuosb/
-	gN6gXXbP0loZfKIPGLKgDPFBxgJparJTKu6KMfOCmOjjIN/RNyVfA9yCoCGolQ4pEQOf2tbTgUH
-	kStsIttNc6gs4Bw==
-X-Received: by 2002:a05:6402:321f:b0:6a6:32fa:54f4 with SMTP id
- 4fb4d7f45d1cf-6a9f62147e2mr5365012a12.19.1789483028305; Tue, 15 Sep 2026
- 07:37:08 -0700 (PDT)
+        bh=hJD9UyfEwkXA50QAdx7qCZZmHoP06c3J8prX9fzshMY=;
+        b=OHuNO9Kp2ryy3tk3hfzCwO6hf82tmj4suId34lMzZdOFUbHPQteUaeeLvSRwMupc7Q
+         v6T8ZrbYsAFx+Pcq2tNzMx5d9tcDbp5KPSm7AwSVaWkZC5uhZLGxNAIABUnz+wqG6Mod
+         QVRDDl5GmguPF77Htwlf74YzXiyEA0LnbrJdfiBNyz/I7/mYklXiN2XfLX2mKDAmPdra
+         jfAO//nG9bOuRIfimzDrejwSZz1oSBVfUMV2/vG2DtORZRvMAuNt8s1eFNTiuzWHe9K9
+         4jbVjNLX73Klhs4q+LDJMFTwcDPYh3FSemMawqOpti2l0LBJRs+N+21EU5KN8sA7dkbQ
+         rKYA==
+X-Forwarded-Encrypted: i=1; AKwUvBwkxIXo0te88tSUoAONfb34X0p6XgaSKp7ld9+14NH3rnvYx47xcyb2WOZNpUJrcYD19ktLE4o3qrzROLzDVVfrjg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lr3KnmdurhesN5icKXyf0gHzG3Giakv1iz7AExwMIrE8mwvrM3
+	8HN5E97IXzTP6Qe8geh5KHgQPknlBDNlpM8RW+XNvvpCkqFT9x5kVdS8xpFXRzM27+8ekWGaDv+
+	Sm3S6iEPKkonVvckR7OQ2P7oLmCmpADZGkM5s/IvJJQ==
+X-Gm-Gg: AYBFou3RgtJv4ECkCjTgpj+ePGQPc+x3fglg2pRasWtmiUb9c65jN+ElfH9PPpJ/Ds0
+	TtDo+IPuZR/65lmkpqmWvbwPV9soeq7jwSid906HCsaHUuY9Qs2vnqB/SPYMTJ5ZElzNusDcPj8
+	Q6rcTJcVdKLw3idUKtR6yP9SUra7EHsJ6QVh+ehZtPjrONjdIMi9WmeMrs0z5ZVZ7Jyx36dFwQ3
+	csJGjc2ysWw+y1hSbDlfpqlP9+z6WX/WAFSSiewx1fvyXjQkVeljv4sdx9eBMLCYvrMKMrPcIV+
+	egKPRTBuT8LFhhtaOsXi+Y8umqM8jpTJhUbpOFkO9Aq60gWn1+mF24JJ1hQgnAVUE5o/zJDSz9T
+	LfZUBuTV8qbOd7A==
+X-Received: by 2002:a05:6402:518b:b0:6a7:f7f3:66d4 with SMTP id
+ 4fb4d7f45d1cf-6a9f63d1831mr4622791a12.24.1789483119518; Tue, 15 Sep 2026
+ 07:38:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913123740.203698-1-tturner@lineageos.org> <20260913123740.203698-2-tturner@lineageos.org>
-In-Reply-To: <20260913123740.203698-2-tturner@lineageos.org>
+References: <CGME20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0@epcas5p4.samsung.com>
+ <20260831070309.158069-1-selvarasu.g@samsung.com>
+In-Reply-To: <20260831070309.158069-1-selvarasu.g@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 15 Sep 2026 15:36:56 +0100
-X-Gm-Features: AcwNN1UA7ww0ycDC66g2CaA2kAQpsW144jRswzivDAFwsftYfjODQouGwyp4baQ
-Message-ID: <CADrjBPoud7_Bn-BgMX4+MTOyk9Un8M1B-nR1RX3SO3avBqv4GQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: samsung: Add compatible for
- Samsung Galaxy A21s (SM-A217F)
-To: Thomas Turner <tturner@lineageos.org>
-Cc: semen.protsenko@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, alim.akhtar@samsung.com, 
+Date: Tue, 15 Sep 2026 15:38:27 +0100
+X-Gm-Features: AcwNN1Xw208DqxP9opmiR8ULGxXcGVSbiimmOgDikZLNDndPPFL37ybJKwgPW5Y
+Message-ID: <CADrjBPq9v8brtXt0y-FJhSPMQQirkRLSK4QkcafWO+UdbBH92g@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to prevent
+ OOB access
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: vkoul@kernel.org, neil.armstrong@linaro.org, krzk@kernel.org, 
+	alim.akhtar@samsung.com, pritam.sutar@samsung.com, andre.draszik@linaro.org, 
+	kernel@lvkasz.us, linux-phy@lists.infradead.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	thomas_turner@talktalk.net, alexey.klimov@linaro.org
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, dh10.jung@samsung.com, 
+	akash.m5@samsung.com, muhammed.ali@samsung.com, thiagu.r@samsung.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 13 Sept 2026 at 13:37, Thomas Turner <tturner@lineageos.org> wrote:
+On Mon, 31 Aug 2026 at 08:03, Selvarasu Ganesan <selvarasu.g@samsung.com> wrote:
 >
-> Add binding for the Samsung Galaxy A21s (SM-A217F) board, which is
-> based on the Samsung Exynos850 SoC.
+> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
+> creating both UTMI and PIPE3 PHY instances regardless of the SoC
+> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
+> and ExynosAutoV920) provide phy_cfg arrays containing only a single
+> element.
 >
-> Signed-off-by: Thomas Turner <tturner@lineageos.org>
+> On these SoCs, when the loop reaches index 1, the driver reads past the
+> end of the rodata array, populating the second PHY instance with garbage
+> data. Since the configuration structure contains critical function
+> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
+> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
+>
+> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
+> store the actual size of the phy_cfg array for each SoC. Update the
+> probe loop and the xlate function to bound their access against this
+> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
+>
+> Assisted-by: Claude:claude-sonnet-5
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-> Changes in v2:
->  - Sort via alphabetical order
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
 >
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
->  1 file changed, 1 insertion(+)
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index 8711a3b62c8e..311d1c25eb3e 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -477,6 +477,7 @@ struct exynos5_usbdrd_phy_config {
 >
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index 753b3ba1b607..021250497da9 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -232,6 +232,7 @@ properties:
->        - description: Exynos850 based boards
->          items:
->            - enum:
-> +              - samsung,a217f                   # Samsung Galaxy A21s (SM-A217F)
->                - winlink,e850-96                 # WinLink E850-96
->            - const: samsung,exynos850
+>  struct exynos5_usbdrd_phy_drvdata {
+>         const struct exynos5_usbdrd_phy_config *phy_cfg;
+> +       int n_phy_cfg;
+>         const struct exynos5_usbdrd_phy_tuning **phy_tunes;
+>         const struct phy_ops *phy_ops;
+>         const char * const *clk_names;
+> @@ -1164,7 +1165,7 @@ static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
+>  {
+>         struct exynos5_usbdrd_phy *phy_drd = dev_get_drvdata(dev);
 >
+> -       if (WARN_ON(args->args[0] >= EXYNOS5_DRDPHYS_NUM))
+> +       if (WARN_ON(args->args[0] >= phy_drd->drv_data->n_phy_cfg))
+>                 return ERR_PTR(-ENODEV);
+>
+>         return phy_drd->phys[args->args[0]].phy;
+> @@ -1993,6 +1994,7 @@ static const char * const exynos5_regulator_names[] = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
+>         .phy_cfg                = phy_cfg_exynos2200,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos2200),
+>         .phy_ops                = &exynos2200_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS2200_PHY_CTRL_USB20,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2006,6 +2008,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos5,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos5),
+>         .phy_ops                = &exynos5_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+>         .pmu_offset_usbdrd1_phy = EXYNOS5420_USBDRD1_PHY_CONTROL,
+> @@ -2019,6 +2022,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos5,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos5),
+>         .phy_ops                = &exynos5_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2031,6 +2035,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos5,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos5),
+>         .phy_ops                = &exynos5_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+>         .pmu_offset_usbdrd1_phy = EXYNOS5433_USBHOST30_PHY_CONTROL,
+> @@ -2044,6 +2049,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos5,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos5),
+>         .phy_ops                = &exynos5_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2056,6 +2062,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos7870,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos7870),
+>         .phy_tunes              = exynos7870_tunes,
+>         .phy_ops                = &exynos7870_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+> @@ -2069,6 +2076,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos850,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos850),
+>         .phy_ops                = &exynos850_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2097,6 +2105,7 @@ static const struct exynos5_usbdrd_phy_tuning *exynos990_tunes[PTS_MAX] = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynos850,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynos850),
+>         .phy_ops                = &exynos850_usbdrd_phy_ops,
+>         .phy_tunes              = exynos990_tunes,
+>         .pmu_offset_usbdrd0_phy = EXYNOS990_PHY_CTRL_USB20,
+> @@ -2629,6 +2638,7 @@ static const struct phy_ops exynosautov920_usb31drd_combo_ssphy_ops = {
+>  static const
+>  struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_combo_ssphy = {
+>         .phy_cfg                = usb31drd_phy_cfg_exynosautov920,
+> +       .n_phy_cfg              = ARRAY_SIZE(usb31drd_phy_cfg_exynosautov920),
+>         .phy_ops                = &exynosautov920_usb31drd_combo_ssphy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOSAUTOV920_PHY_CTRL_USB31,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2659,6 +2669,7 @@ exynos5_usbdrd_phy_config usbdrd_hsphy_cfg_exynosautov920[] = {
+>  static const
+>  struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_combo_hsphy = {
+>         .phy_cfg                = usbdrd_hsphy_cfg_exynosautov920,
+> +       .n_phy_cfg              = ARRAY_SIZE(usbdrd_hsphy_cfg_exynosautov920),
+>         .phy_ops                = &exynosautov920_usbdrd_combo_hsphy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOSAUTOV920_PHY_CTRL_USB20,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2687,6 +2698,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_phy = {
+>         .phy_cfg                = phy_cfg_exynosautov920,
+> +       .n_phy_cfg              = ARRAY_SIZE(phy_cfg_exynosautov920),
+>         .phy_ops                = &exynosautov920_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy = EXYNOSAUTOV920_PHY_CTRL_USB20,
+>         .clk_names              = exynos5_clk_names,
+> @@ -2863,6 +2875,7 @@ static const char * const gs101_regulator_names[] = {
+>
+>  static const struct exynos5_usbdrd_phy_drvdata gs101_usbd31rd_phy = {
+>         .phy_cfg                        = phy_cfg_gs101,
+> +       .n_phy_cfg                      = ARRAY_SIZE(phy_cfg_gs101),
+>         .phy_tunes                      = gs101_tunes,
+>         .phy_ops                        = &gs101_usbdrd_phy_ops,
+>         .pmu_offset_usbdrd0_phy         = GS101_PHY_CTRL_USB20,
+> @@ -3020,7 +3033,7 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>
+>         dev_vdbg(dev, "Creating usbdrd_phy phy\n");
+>
+> -       for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
+> +       for (i = 0; i < drv_data->n_phy_cfg; i++) {
+>                 struct phy *phy = devm_phy_create(dev, NULL, drv_data->phy_ops);
+>
+>                 if (IS_ERR(phy))
 > --
-> 2.47.3
+> 2.17.1
 >
