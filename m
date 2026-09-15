@@ -1,57 +1,57 @@
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD1C46F497
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B866249C4D8
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460763; cv=none; b=p7zBxCcRsPGmNNB2v2oNACoMl0+hyj4XrfsMGHfgK/Fc1p0nBD+NTBQNfDiIIk+a+zZm/Y7Hflqi62y7dsnvPlMiTZQEC+Jky7bveAAp29HdB+4qLEGjoMw9keh5zxI1qdLiLhKpnEdkCr5g3rq4AnZNUQlyciy4/0W9Q1EpqPE=
+	t=1789460836; cv=none; b=ZeG+AOGlFIkCW1RM8OXjZig+p3fuMc7S99/g/KfG3otzmOlHs82Is34FaCMy1LbUaBqPFoqhhS4e0Sutyp+7f7bY5xEIyyspXbkDBFOOI3eSTWsBE0qwS9/06VLsdNolC60s3rzCCCzc88iJ8oj1kohvcJ0uwD1baRgM+Tjy+k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789460763; c=relaxed/simple;
-	bh=Uf7uxHQ/vmaAoZCZZPN2XUoRZ9miHwSqTeOUYXKdUpY=;
+	s=arc-20240116; t=1789460836; c=relaxed/simple;
+	bh=Hbrp06lq3B7opj8tzjJVqcfrxhhZTvzJ1WqUPePmYuc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jopOAChf5jKG6xTJwcovyee1QUGtUToeM3wuYMa4I3PjWNSnCyoEkbCKzqubN+ghETyv2AxJlBW5K47ySiYC81WidQ6fsLS6mzlUSb03NNIAZOVpGis1r3RRv4nqNIybXmFD2f8jjGekpd4wS2R4YopYlYAEDENy8JJoMxeKdRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W7hgYBZk; arc=none smtp.client-ip=209.85.219.72
+	 To:Cc:Content-Type; b=gkixYcHuENfSFPNoThBYA4fvtLkgawWt6hWM7amU2Nnnkt1koL2oW3GzWpSBi2D2zLdPRZ7axcnZYU5dt5n6htpU7vhNJ7yO6DMgvFgsexnD+7gfI4T1vwkzIRIV0WLhTPdpAZ05OyhTPIJ1MwXudlzWtJVXXJThbJiM2SkpNPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WzfCrfnk; arc=none smtp.client-ip=209.85.216.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W7hgYBZk"
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-91064f6e75bso131693266d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:26:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WzfCrfnk"
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-39deda201bcso2515645a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:27:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460760; x=1790065560; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460834; x=1790065634; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=LcsuffwFDxj4u6SThnIq1nFzZdsoWr9GB9tsbe2KVjo=;
-        b=W7hgYBZkrzGtNENmFT+zXtpEfUglQNPS01INmBtESSNide8oJblahPlnVfzp9CTQb3
-         Xe/gBdw2w1o+YxW+F60IE2PD1/5SvGrEosl6R1c7pmzEM/azvwTlk+3WOcbEq8MC3TDU
-         OKM9Ffjcf3P8RlKYl197WOU8sE5snk4KZrcYOBSVqbNnECqovEyWEuPHtoNWIGAON1mZ
-         uWjx4hfgfLP3OJw5bp21glRAeB5u8eZnHgX0k8vJE5IO6h0i9eJ3DNXezY1FeYfqt+5u
-         e/gIQ7D8Z2tI1qT9oJ6IOE441zeAU+vin7mv/SBl70AowRShRE5Pgkp7PSm5kYdod545
-         h8ug==
+        bh=tzVl62qjzRm92BALDDypl3TnCOJSNAaLaOJ/zmWRh10=;
+        b=WzfCrfnk9xDKK2TFBTgQ5/In1b2Fkwyn4s4c1FchkW872s5ILaawLkPvXWM+ZzYjWV
+         LCPbTpD+sGFE2X+ls09ASIMR/NjXgN4JCg7IpOVaIgGS8IM4I0nwOvrpMXCHgdZu9IAf
+         OgeUziaSe1Z0ce8Ryg0uYLC0f4FP9MO4eqrsB0PrVm1VO8Qhs6aUcxjTqoBXUfnoBzBw
+         dFG8/jIBXskaMCOvvlVge+Wqwe/uecQXYDKqhClroifEpiGxLSzddQhR4YQF5I3gxXmw
+         lLVXEnDqDkI/q6j4c2VJeo46ZTJEDX5keivRxHrw8z2kSsmbjQu0wS07HQdW3nzCKVQE
+         Zp5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460760; x=1790065560;
+        d=1e100.net; s=20260707; t=1789460834; x=1790065634;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=LcsuffwFDxj4u6SThnIq1nFzZdsoWr9GB9tsbe2KVjo=;
-        b=NrSrTIunJRkRejGxpk/VaQ6RLdJnXDAEklqnFd5uQ+iYNG4nbdbG0MQ/6/5WslN0yT
-         /L5vX6kUA8qo4ttd4UeYznEGZOMQ67x3QtzSuOFmYH8ROuMnuN3Riey5Bpg1gjbWXNHs
-         5RySZI/Hol7Ism4KWzsZyR+wNmOd8tci5Bj941nG9wZ4HXtB6k1udzaulKRjGCwyhgpJ
-         S0nQ347fAN33ocVsoV9YKuiRY9A0B605X6QWQNo95vCfSIk4V8ZuocOh8ze9v/0NbPRi
-         MbvkDEUw96XsGI8CMVhgvXziuVh3B1BSLDCD4FlIAo54wCBGmAOxc8uD3vPzyj6ueZXU
-         +Oig==
-X-Forwarded-Encrypted: i=1; AKwUvBwIfSc4Brwc7308y06cocwr7TQ0EA5ty4pIiWUVZVto1IpGzGAQVhlQrWWylxlJnfOaaa7wXn4S5sjLp3pBIZhCvQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++nViPb2Hzqu6MjNs6qPSCuSiiIv3JSGbT6b0GB6mcM+Mh6Xtc6z
-	qcr3L/JPEOZZjp1Ld0vMd0C13BwI8csdWZgDbWKVZe5n87nT5kCmMpEe7kVi8Vj1jejWBkgBPdZ
-	P
-X-Received: from plxm10.prod.google.com ([2002:a17:902:db0a:b0:2d9:7bf:6891])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b50:b0:2db:8ae7:a5d2
- with SMTP id d9443c01a7336-2dd6c5f39camr129000865ad.9.1789460415373; Tue, 15
- Sep 2026 01:20:15 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:41 +0000
+        bh=tzVl62qjzRm92BALDDypl3TnCOJSNAaLaOJ/zmWRh10=;
+        b=NnFjhKw2MOIH3FL94IQU5TGZO5b+srlN0TvkA+yIjB600AGRXlQEAuej3vJayxsuNo
+         4y2TwQ4httXwtGhTvD7Xg5h0rM8emXeiv1XCEcMbkIK3BF7x6kg7sXxmmVSSUA2tgXxd
+         Kn+/6ATZxXeYz1MvDhNLckEgVPmAy+4i8T6e5IS794NUsXbXcP2lxJJ9zM//ZQeW5XJD
+         OJKVI2Wp1+f4akU5Kx/MtKW61hcUeY72qVrhRb40gxoRYL9SBdfQO0C16eSMycqh0byv
+         1Hn8Jm9FmpaiuzwDIzdF8yOm7hYhZHYHbBkRs3AWy9aEXO0ENnPoLJV2zE042PFHPtJR
+         0wwg==
+X-Forwarded-Encrypted: i=1; AKwUvBzfRw6Z7iDV34YVpYupMnzkK94FCNoGkyYGxCkFQfiTCXDYGyZZiraEzkfcDaFpo0WsaYlQknExJPrbv497BlBYFg==@vger.kernel.org
+X-Gm-Message-State: AFuF++l0OfBeXRuBfIYF2D6s+AEfzmN5m/E7YHsEklxbbyzXO84gWB0l
+	dZpI0g/kOlLt00qfm3Z2mvXp8ESpiwMRNvkxhkJEBxAON/mviY6kyksO7guwHcdGvFCsOU5awZ1
+	F
+X-Received: from plbjx4.prod.google.com ([2002:a17:903:1384:b0:2dd:1457:fac8])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:190d:b0:2dd:4168:7bd3
+ with SMTP id d9443c01a7336-2dd6c6c0cb1mr140747065ad.12.1789460411041; Tue, 15
+ Sep 2026 01:20:11 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:36 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -61,13 +61,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-25-morbo@google.com>
-Subject: [PATCH 24/28] EDAC/thunderx: Fix stale error context in thunderx_l2c_threaded_isr()
+Message-ID: <20260915081910.4142719-20-morbo@google.com>
+Subject: [PATCH 19/28] x86/setup: Use snprintf() to concatenate builtin and
+ boot command lines
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
-Cc: Bill Wendling <morbo@google.com>, Russell King <linux@armlinux.org.uk>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
+	Russell King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
 	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
 	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -123,17 +124,20 @@ Cc: Bill Wendling <morbo@google.com>, Russell King <linux@armlinux.org.uk>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-thunderx_l2c_threaded_isr() computes "tail" and "ctx" once before entering
-the loop that drains the L2C error ring, and never updates them on
-subsequent iterations. When multiple errors are queued, every iteration
-reports the first ring entry rather than advancing through the ring,
-causing subsequent hardware errors in a batch to go unreported.
+When CONFIG_CMDLINE_BOOL is enabled without CONFIG_CMDLINE_OVERRIDE,
+setup_arch() appends boot_command_line to builtin_cmdline using two
+strlcat() calls before copying the result back to boot_command_line.
 
-Recompute "tail" and "ctx" at the start of each loop iteration, matching
-the sibling thunderx_ocx_com_threaded_isr() and
-thunderx_ocx_lnk_threaded_isr() handlers.
+In preparation for removing the deprecated strlcat() API[1], format the
+combined command line into a temporary buffer using a single snprintf()
+call and copy the result to both builtin_cmdline and boot_command_line.
+Using a temporary buffer avoids undefined behavior from passing overlapping
+source and destination buffers to snprintf().
 
-Fixes: 41003396f932 ("EDAC, thunderx: Add Cavium ThunderX EDAC driver")
+Link: https://github.com/KSPP/linux/issues/370 [1]
+Cc: codemender-patching+linux@google.com
+Assisted-by: Developer:Gemini_2.5_Pro [editor_update_file, make_kernel_buil=
+d_single_file, checkpatch_run]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -247,24 +251,29 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- drivers/edac/thunderx_edac.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/setup.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
-index 9c0a1e48f96f..e7c335ca0c36 100644
---- a/drivers/edac/thunderx_edac.c
-+++ b/drivers/edac/thunderx_edac.c
-@@ -1880,6 +1880,9 @@ static irqreturn_t thunderx_l2c_threaded_isr(int irq,=
- void *irq_id)
-=20
- 	while (CIRC_CNT(l2c->ring_head, l2c->ring_tail,
- 			ARRAY_SIZE(l2c->err_ctx))) {
-+		tail =3D ring_pos(l2c->ring_tail, ARRAY_SIZE(l2c->err_ctx));
-+		ctx =3D &l2c->err_ctx[tail];
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index cda6adb9f69c..c40e0edd7c13 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -916,9 +916,11 @@ void __init setup_arch(char **cmdline_p)
+ #else
+ 	if (builtin_cmdline[0]) {
+ 		/* append boot loader cmdline to builtin */
+-		strlcat(builtin_cmdline, " ", COMMAND_LINE_SIZE);
+-		strlcat(builtin_cmdline, boot_command_line, COMMAND_LINE_SIZE);
+-		strscpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
++		char tmp[COMMAND_LINE_SIZE];
 +
- 		snprintf(msg, L2C_MESSAGE_SIZE,
- 			 "%s: %s: %016llx, %s: %016llx",
- 			 l2c->edac_dev->ctl_name, reg_int_name, ctx->reg_int,
++		snprintf(tmp, COMMAND_LINE_SIZE, "%s %s", builtin_cmdline, boot_command_=
+line);
++		strscpy(builtin_cmdline, tmp, COMMAND_LINE_SIZE);
++		strscpy(boot_command_line, tmp, COMMAND_LINE_SIZE);
+ 	}
+ #endif
+ 	builtin_cmdline_added =3D true;
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
