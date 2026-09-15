@@ -1,233 +1,119 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8BD429013
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 23:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA65339872
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789427158; cv=none; b=aWLRklBXl+eKpNFiEbMX0bA3LbG0QhSacn7eYAzcA0fXcMyOG7aK7g+KZd/0kL4gkabjb/Lw3Uh1jRdOF7xqehzExpuVEHADM0cv6rmz5NP2tlgZAThg9ekkZqk0vT9PvWD89+KafTh3MhKv3RRlduPAMRELAcxVoLQv+WI1OmY=
+	t=1789435229; cv=none; b=R4c+lXYlD+aBKPNkFBxbHN32Hsg7oBrmLbP+wrp+SfTfTo5Tr6lk2POcMxXCEVGEPRKtHUSbUT1QZ8yaxbGmLfjfMApBu0x051RB1cjVmVPKmVixLJZzCf9QrbYuIxKaievxsy0Ir9u6q1MbP7AiJ5dVxCVRZmovfRMyCpB5vOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789427158; c=relaxed/simple;
-	bh=LL9/CFfn7brpN4GoNpkA5AZ4Gnfvk9onVtuLOpwNb0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ebbsaOEvtRHy0LXmLt/wSLzn4LMaUMx+xRGW/hGLjMmawtAWBzpJGkNOgCnWD7GMoU+/P0nimqwtZgp9LUDWVfXExjiAZ8dSSyWtSzbhVBjk6Diyu5nzXW6BU5ojr387/trE0bjB3ZlWvtR4sAyMCg+/0HX410NvQSxmoX+AqkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pdFvL0qE; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789435229; c=relaxed/simple;
+	bh=WGU7/JMb3Apf6nVCL6jDk8mWhlmHbK7srTQ8Ag0GJPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qz4/j/2y2SloyHb+tebkDrwHePOa7wEibpPSJnE3u6MdkfnAjSuL+2pV0xyzNg7s00gTIIhUk3iDhgvQPNZErUlk3b1PcsrzCu4bm2gu68iTg4yEA0E+MVpKl2pVptYxe27RNGsij2ru6rnrVZcmvwNlKz6WFIlWg6RVn7q+Npk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=q70+f9D3; arc=none smtp.client-ip=74.125.230.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pdFvL0qE"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6351831so1366389f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 16:05:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q70+f9D3"
+Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-90cdfc6db0aso34581206d6.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 18:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789427155; x=1790031955; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1789435224; x=1790040024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CzV23OsQcR796zildVLZdcKUHcQM8u6Rrj7Y41au9L0=;
-        b=pdFvL0qEKuFqOG1EQ6XsIo1HIO1tTf4PvjyRqpEcAgzDTPmDnzwUxSGccnQ0rb10ZJ
-         qaKfRd00uMJG6hioUkde2OAm3xKUCZ9LLMLpQXbI+8Kw064OHi5wf2Ey/PQBLtjURLfc
-         RUrRpvOkdgZO3J6bgWMrWYPkt21RSdgAElcXTydpFfglf7lR1nVhfJF9WW663PwXHBIj
-         8qG3qjs5S936lghS6uCF+It6hR7VsMKa+TAUEoL4uvCODNvkwLSmVIXJXTs/aUfTb8fu
-         eZLQo9gVMoYNjLlROanHpIHyFbi6O+YdvVgyW4ec9nRRqu3T3YmYkBO6omhTk6FM0/s0
-         fMAw==
+        bh=8bAgcAeT8h1GjhtSyhK4NU9n9kJiBEpb3mWf8LmEtbk=;
+        b=q70+f9D378mv0oplvqwtYnLQOz8q+f+4PZRI8RtM9qSddiKKJ4NtBp57We2lrDKeT6
+         uylKOERaUVqc6HXJ1gdW5p4M40gwNIdyVOxpHh1g/8ypWETO5NL07Vis6ln4c7knVlnp
+         4JuOlRmTul13brTbmegxC6TgOb/lpnchrjvSE06CZ+zvtO2Q+r1uH9kCOHiIm1+bBx6r
+         wBCJVXmg0l9DmPzCCeX724F0A8qk0Dam7HHYAKk+CXTl9Sq5rDco6UT/dXfbhVBAUFBP
+         3AEjpgtYp/FBx/4HUty+DRaI8Lvuv4RWvfcYUdliOzzQkZWxua6Yy9Gas0i+GO9eCiav
+         AOkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789427155; x=1790031955;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CzV23OsQcR796zildVLZdcKUHcQM8u6Rrj7Y41au9L0=;
-        b=u3ZuOt8VYxUI0hcnGMl8PtpF3TABA9J23iIht2ZU+A+OPJhugC075NIFBj5TsL/6dl
-         TdAmlPwSfHSr4q1sf94Znwuu4QSPfmLRqmTXVsjHRiCfxdcZ05U1fXmSGLR4cv3JZ6a3
-         wWYkI1mMm1TTOWQrl7KmcRNgUFNF9bU4HHn9I2rECra9iLw6hnefbm38FZ8Y29+bRN4w
-         lZp8KhGwHmXnfW74DpyIz40mC5wu70afkKQxXieIDVS48foS4KWf90f95/TsEX0vx3zV
-         UdPU5nE3kdqdcAARMibaWDcDjy3hRCbk9Mb+Na88b9bcpwFJ+UrXuRGUU2IDrrrPMDL4
-         4rIA==
-X-Gm-Message-State: AFuF++mUFbp/bksPHX3s1j0uKkaU/COSFHS5FhUPT0V1jiGiwqBU6RIQ
-	USB5M0e8HqruSDSpHVFl6lIdlTlOd8M78gKuv/PtP3NIrHDdA18kEgX95Ouym+wJjho=
-X-Gm-Gg: AYBFou0JIK+VxOCa1ZN+Jg2A85jQoZOqGOliQyuQSVXXPbL2A9OSiWaRnEhVVlunGPv
-	EpiCFU9WN6zZ7WQ/9VtRN5U/8R6SRG2nAH18G1Foq+0P9nAfUgZ7lBJkadQpF3GF+F5icY5wdgn
-	nTpuhaMBSaxMEHwL/wKUcR7qLhEEYxK53Je4yEZWFgLohEop2ARy2NLbRn7pap3eXCPPOjXf8Yz
-	AL9tYV2xE0zWYAM5gl82N6U/+s63IVgR/zmy+1hJ/M81gtHeSMi0MWLmZt9C4w45fg4IQgkXsgm
-	WfdMlkqMMA+NWhFCYVKjc0GPfC2zIk1kS/WZTzkFwOqsFQIh4NXTX5Vj8BYcnO3GXU3XNGfOTBZ
-	8El6bSyx4Su85S6Tj6Ny1CPO/igAwIjuH6zDqsElEILJ+1mDAC88R93IFS98NK6EnUZ9leupaFM
-	oHNTpYsjFzdT/YEB5bjdeladv/Dcujfw8sq6sBvM7rICXYO+cShVKIMv8nDc6MkufACGWBf6sYf
-	EE7xfxv8BEjo0w5TH1mQuw1MZd2gMiXGHH57hTk/k9rvohSysg/hNkJSvanKq8=
-X-Received: by 2002:a05:6000:5ca:b0:487:24e:27fb with SMTP id ffacd0b85a97d-48702b139dcmr5406922f8f.38.1789427155095;
-        Mon, 14 Sep 2026 16:05:55 -0700 (PDT)
-Received: from [127.0.1.1] ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb32d5f1sm32098817f8f.12.2026.09.14.16.05.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 16:05:54 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Tue, 15 Sep 2026 00:05:44 +0100
-Subject: [PATCH v2 2/2] clk: samsung: acpm: add Exynos850 support
+        d=1e100.net; s=20260707; t=1789435224; x=1790040024;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=8bAgcAeT8h1GjhtSyhK4NU9n9kJiBEpb3mWf8LmEtbk=;
+        b=SmXn4WivmFNloDGyvKZr+/iIB3oIk5+f5UDT5Xofz4crWt7dXg5ma2TEl/9zIV9uTk
+         /UMV3TBDrolVCfaKJEmOb85c8EHabSJ+D5vvUpu0UamDaWzuaXbyPibCqJIzL+FQq8Ok
+         c7VOFkKI0f00Hu3aYHOv1135S/bMY/vc0pC/MXfHSnlbpSxjJcNxcpY79XOm/lJDk9xy
+         Wz/RR+kyuQ0dvqL1Wy4MdiSXlD9JLzBuPFsVOWIAHdCCq6tHB/twUIC8cr+UynN5mEas
+         mk5RxjN7jQwCXj2snS1A/WqOkrMGsjZ5DtlDX3NomAOHTbhi1avG3OZPGuVhLAa0q8eO
+         N/ig==
+X-Forwarded-Encrypted: i=1; AKwUvBzkGu7cc+ATHf4Ytnp3n1ZX38NaNXt/btPNj8yKPPFMeg2P74DhGLTvFclXJjgZdEz//+e1Bbzq8iUzxi07+lWF8Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++l1saQHh1sMoXvqjd7vzkeIGwNrMpj7sbC0l0SmaNQfCdYMnZAa
+	YjjVD4XetEs5laDOZtir38vcVwIIVYvRKnyHLoQkIwfdQb7LLKFYVeE=
+X-Gm-Gg: AYBFou2oZe0ZK5w6W4mhzt9EuIlkWqDTHSC54Q5tD+dGj03eIa0MXz36+o6qPVvHxs8
+	6guctzZmCKp9/yZ9vbbFSMd2OilimmommFwvg9uVs/4irtnILkjCERmbdI1yAsWup2c7f0LMlD/
+	21QjQj10bDEIemalB+nqjgOvIwmKYBsdNwKdQC2Fsj4meVOubIHWP6LaQlpJl5+PR4PGOb8ViK3
+	TPpKBbztt4HmeVBm1DuxTyblH1Zo2S0/zDktaZdKEYuXbK3nASS4cQa297aSzx5ZzF6YI+ege8y
+	5qAs0MB2DW+cx/V+XemOFR1h6V8DxqvEEdtdfeB4hsWEOIiJMPlO9PdeSU0cSFT7OpRSdyTeXWS
+	lcK/LhhLigFdeJxYLZ/QR7heOLHAaz9T4XZWTS3DPiJ/4zFtM9bnIM3FIRY6FOhStKmH1h2Y97Z
+	+DyGyd2mmwe4PlgA4nvzO7Nj4J1O2ysK3f3yjOXlvh+wrxYDBkF/bPevDnuxXGJazwN6uumuNk4
+	u3fHrjvtGREgU7JzFESDgQKScRqU3Nb+NpeAQ8VTFKLHDKXiDvpAG6vjA2e2/qobFh5SY6W67cO
+	61S5lAtx0+Hoz/69Qcguc8MtFvQK1a4kOr+2NX9wYsAacbOZxdmkDEoJKdweEvGPjrM2ggOAmUN
+	hZI9DJQ==
+X-Received: by 2002:a05:6214:2f0a:b0:910:3453:9011 with SMTP id 6a1803df08f44-9122e66e23bmr95006006d6.35.1789435224176;
+        Mon, 14 Sep 2026 18:20:24 -0700 (PDT)
+Received: from 6e-wmo5420-02.ad.psu.edu.net (6e-wmo5420-02.ad.psu.edu. [104.39.213.233])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9121a62b783sm91141946d6.23.2026.09.14.18.20.22
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 14 Sep 2026 18:20:23 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH 2/4] usb: ohci-s3c2410: disable controller wakeup on removal
+Date: Mon, 14 Sep 2026 21:20:09 -0400
+Message-ID: <20260915012011.61874-3-mhun512@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20260915012011.61874-1-mhun512@gmail.com>
+References: <20260915012011.61874-1-mhun512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-exynos850-acpm-clk-v2-2-ffad4a6b3fb1@linaro.org>
-References: <20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org>
-In-Reply-To: <20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
-The Exynos850 SoC utilizes the APM co-processor for clock management
-via ACPM, similar to the GS101 SoC.
+Probe enables controller wakeup after the OHCI core marks controllers with
+RemoteWakeupConnected as wakeup-capable. Removal does not undo this, so the
+wakeup source can remain attached after driver unbind.
 
-Add the Exynos850-specific clock variant array (including mif, int,
-cpucl0, cpucl1, g3d, aud, cam, disp, and cp) and wire it up to the
-driver data infrastructure. Add the "exynos850-acpm-clk" device ID
-to enable dynamic instantiation of these clocks during probe().
+Disable controller wakeup after removing the HCD.
 
-Unlike GS101, the ACPM firmware on Exynos850 does not implement a
-dynamic rate read call over ACPM IPC. To return sane clock rate in
-->recalc_rate introduce a SoC-specific ->get_rate() driver data
-callback. For Exynos850, this falls back to reading the upstream parent
-CMU clock rate.
-When ->get_rate() is set, populate pdata.fw_name during clock registration
-to let clock framework to link the parent clock.
+This issue was identified during our ongoing static-analysis research
+while reviewing kernel code.
 
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Fixes: a6eeeb9f45b5 ("USB: Update USB default wakeup settings")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 ---
- drivers/clk/samsung/clk-acpm.c | 46 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ drivers/usb/host/ohci-s3c2410.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
-index 4b68b44fe615..9f46fbdd999d 100644
---- a/drivers/clk/samsung/clk-acpm.c
-+++ b/drivers/clk/samsung/clk-acpm.c
-@@ -22,6 +22,7 @@ struct acpm_clk {
- 	struct clk_hw hw;
- 	unsigned int mbox_chan_id;
- 	struct acpm_handle *handle;
-+	const struct acpm_clk_driver_data *drv_data;
- };
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -335,6 +335,7 @@
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
  
- struct acpm_clk_variant {
-@@ -32,6 +33,8 @@ struct acpm_clk_driver_data {
- 	const struct acpm_clk_variant *clks;
- 	unsigned int nr_clks;
- 	unsigned int mbox_chan_id;
-+	/* For SoCs where ACPM firmware doesn't implement get_rate call */
-+	unsigned long (*get_rate)(struct clk_hw *clk, unsigned long parent_rate);
- };
- 
- #define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
-@@ -41,6 +44,18 @@ struct acpm_clk_driver_data {
- 		.name		= cname,		\
- 	}
- 
-+static const struct acpm_clk_variant exynos850_acpm_clks[] = {
-+	ACPM_CLK("mif"),
-+	ACPM_CLK("int"),
-+	ACPM_CLK("cpucl0"),
-+	ACPM_CLK("cpucl1"),
-+	ACPM_CLK("g3d"),
-+	ACPM_CLK("aud"),
-+	ACPM_CLK("cam"),
-+	ACPM_CLK("disp"),
-+	ACPM_CLK("cp"),
-+};
-+
- static const struct acpm_clk_variant gs101_acpm_clks[] = {
- 	ACPM_CLK("mif"),
- 	ACPM_CLK("int"),
-@@ -58,6 +73,19 @@ static const struct acpm_clk_variant gs101_acpm_clks[] = {
- 	ACPM_CLK("bo"),
- };
- 
-+static unsigned long bypass_acpm_exynos850_get_rate(struct clk_hw *hw,
-+						    unsigned long parent_rate)
-+{
-+	return parent_rate;
-+}
-+
-+static const struct acpm_clk_driver_data acpm_clk_exynos850 = {
-+	.clks = exynos850_acpm_clks,
-+	.nr_clks = ARRAY_SIZE(exynos850_acpm_clks),
-+	.mbox_chan_id = 0,
-+	.get_rate = bypass_acpm_exynos850_get_rate,
-+};
-+
- static const struct acpm_clk_driver_data acpm_clk_gs101 = {
- 	.clks = gs101_acpm_clks,
- 	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
-@@ -69,6 +97,9 @@ static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
- {
- 	struct acpm_clk *clk = to_acpm_clk(hw);
- 
-+	if (clk->drv_data->get_rate)
-+		return clk->drv_data->get_rate(hw, parent_rate);
-+
- 	return clk->handle->ops->dvfs.get_rate(clk->handle, clk->mbox_chan_id,
- 					       clk->id);
+ 	usb_remove_hcd(hcd);
++	device_wakeup_disable(hcd->self.controller);
+ 	s3c2410_stop_hc(dev);
+ 	usb_put_hcd(hcd);
  }
-@@ -89,14 +120,23 @@ static const struct clk_ops acpm_clk_ops = {
- };
- 
- static int acpm_clk_register(struct device *dev, struct acpm_clk *aclk,
--			     const char *name)
-+			     const char *name, const struct acpm_clk_driver_data *drv_data)
- {
- 	struct clk_init_data init = {};
-+	struct clk_parent_data pdata = {};
- 
- 	init.name = name;
- 	init.ops = &acpm_clk_ops;
- 	aclk->hw.init = &init;
- 
-+	/* If get_rate is set, the SoC relies on parent topology */
-+	if (drv_data->get_rate) {
-+		pdata.fw_name = name;
-+		init.parent_data = &pdata;
-+		init.num_parents = 1;
-+		init.flags = CLK_GET_RATE_NOCACHE;
-+	}
-+
- 	return devm_clk_hw_register(dev, &aclk->hw);
- }
- 
-@@ -145,13 +185,14 @@ static int acpm_clk_probe(struct platform_device *pdev)
- 		 * The code assumes the clock IDs start from zero,
- 		 * are sequential and do not have gaps.
- 		 */
-+		aclk->drv_data = drv_data;
- 		aclk->id = i;
- 		aclk->handle = acpm_handle;
- 		aclk->mbox_chan_id = mbox_chan_id;
- 
- 		hws[i] = &aclk->hw;
- 
--		err = acpm_clk_register(dev, aclk, drv_data->clks[i].name);
-+		err = acpm_clk_register(dev, aclk, drv_data->clks[i].name, drv_data);
- 		if (err)
- 			return dev_err_probe(dev, err,
- 					     "Failed to register clock\n");
-@@ -162,6 +203,7 @@ static int acpm_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id acpm_clk_id[] = {
-+	{ .name = "exynos850-acpm-clk", (kernel_ulong_t)&acpm_clk_exynos850 },
- 	{ .name = "gs101-acpm-clk", (kernel_ulong_t)&acpm_clk_gs101 },
- 	{ }
- };
-
--- 
-2.51.0
-
