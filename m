@@ -1,57 +1,57 @@
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E784A263D
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1894A4980
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460886; cv=none; b=qdq/xtMGbSUvG136hsUEbxs5EpW1C1Z7nGC8/7TY9eu06pnwvWHNzrQZ8XYuxP2VQ0WxSGlpzKPdKTwv0ziolA4ataF4JAylO3Amfa5afrHTSPYLoVWbWvwWxWwqjkLlcc8botXjRkWG1ChPG8TCWLQkr95UjyICzNjGXKX8Bx0=
+	t=1789460888; cv=none; b=nYGQ2c3Mn0LV6+D80fatTlMnCJ+2JE2dpoV2p0UPLKtGK6nCviPnYfZcPKmkRO4hFBsJ7sbAHdWvFds4RK6SOqPyuuZGAopCNpM96u6EhA+EKdYcCnpdY56Byty3z530Z7EZZTxmDAz6ttdz5DqYhfXX5MrJ5ayTNTu7uKCXmh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789460886; c=relaxed/simple;
-	bh=JbSID6fXeQe1AsKDTvJAsGmW8NhLrp6cj1GLFUVFC9I=;
+	s=arc-20240116; t=1789460888; c=relaxed/simple;
+	bh=LqJMFQGliTTZ9KNIvLTBQqllQDtaRAf0jEikiPuUKto=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lMKr/ZY+YewctTw17TkTSPsBZ9Sd37NtxTamxn4H/6XcTx5C+bg94KKmxv9E5N41fyTc/oG/Z2TyJAC3LXe+a7H055y+ycTz8tp3BdxdS4u5lvD/FiDjuiScgCQuYN2ginmfd+wQhBABnpmGcCJvcN949sszCvPKDTMiLBfvoNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rIwe/oKa; arc=none smtp.client-ip=209.85.222.200
+	 To:Cc:Content-Type; b=sgSUfZaN18p+MhTF6vNE0QTsNnNIVOSSXOKXejLlGpQip1H+UU+fGQbRbxLtV0aFn1F6eKMYg1Z1pXOzhFlQKU+gYIZC+vQDAv7Yg4hPlUizL1hdCEFtDfaBLG3vUilztFkxeF2XH0IURWXurho1EB0mrhTCz/GlH/PKOGPhdKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUPnyV/2; arc=none smtp.client-ip=209.85.219.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rIwe/oKa"
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-939a6937513so656349185a.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:28:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUPnyV/2"
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-9104215fbdbso121525586d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460883; x=1790065683; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460885; x=1790065685; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=6A34g5ncwO0UUCNmS7GYn32h6CG74u/Wx3k3q5PSbh8=;
-        b=rIwe/oKaRRtkMVwDk88NRdDbmhg4osWylEVCN6iWZ91x4KV1V3zUvBXq9Fyu0LfLRO
-         jWwyqcuIyHUo8+99EvNT5BRwOG6O5ARiHTOEoy+4XwtSM2GCPZt9JzOwT7NtpwXDN4Q3
-         Sjby/KLx+jf5WKhMJtyfJhTPmCz/O561RcTjIj7u28rOZ/bWYo7QlcQBydxUZ4+M+NPJ
-         iLXunM7Lonvdcvq9VUHdgg8clAm1hUrXaA/ux7dJCJNRSzXR5Ka/GC89wCfQ7oyJi7cS
-         8/xYzDOpeAxbC8AGP2+65bLvv0Prg61uQal4+R86aBz6G5fYcmGEJ2OgKiBK7dKYOJDr
-         rv2Q==
+        bh=eELVo8fI0ZjlHs2eEJ49S4+N/SPMib/OwBxEH2gJjRU=;
+        b=VUPnyV/2eIA1SCDTF9bDqhZ1hlm9SZBQ+8LOoZf+8quoYCDd/vr0P+55btdQGjuE/P
+         pgzpdzowW2bE1myC/7oOrSwEehbVgPZsYlpZ0Us5sjDckZFcB/GBkDXvl7Yll1x2ubWi
+         13+NZZvmgyzsF4X+Tz6ZeIi1hgXNSArdaNnoZoelVPxhfqXP2Kxtif4av6I7Iaci1hnf
+         9GNvSasS/kCnlSnc5c+P5d7rUXqEs57gPp9ITK1QLV13+VeTpU//tvyum8ZaUnV3PH+C
+         QCMTiBXu9oNKSq9IhmwyHS5cTEJ8LYqypqDbp6MumUsuucmr9giNYxeaQIdiQBTWIfdA
+         MN5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460883; x=1790065683;
+        d=1e100.net; s=20260707; t=1789460885; x=1790065685;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=6A34g5ncwO0UUCNmS7GYn32h6CG74u/Wx3k3q5PSbh8=;
-        b=qEKIgJb/vcE1dgPk7nC69D2ZpZOEG4ACUpHR1vl489Cp2G24f1Y6IWXu3dqPipcP4c
-         sBDO37JqbjP2mz1xReKGXaTrwpfPH17S5Av5bOyiA49hq6p4RP7w+QC4ok+oT/FmhhsH
-         oIugbyRXqgQy2X3m0vLNL+Vc9ye0HMdmcPv5dlJ1QPNYIb+MrvBKpxMnjIhRmtZtp37A
-         +HXUmTQHdGgi16Q4UK7bbT2Ob5EwYMzm8SRbBIa9dNZY3TsfmdZH73gBKoKPZRSl0PKm
-         DUQxxiWEahT5lxxQesfGSZu0xWCUDdWuWdfYbfsZjwrv5graywI4pBBOwimpyjwazmwC
-         vPxA==
-X-Forwarded-Encrypted: i=1; AKwUvBxXFPniTvcmD82+y3QD3mY65YBDNS6o3PJfeAnMdsrIhqgWtp+lG3I3KDFGMqREvlHQFui5I5J6cEG5x7pu4Q3sZA==@vger.kernel.org
-X-Gm-Message-State: AFuF++kX9KgKs9C5cYOi/WxthqP8YmbSnA2iNcpcDE8knpQyCWX57G49
-	B8vfhRlpZ4CnbjqrlXMmVHMmJT8bwF8HzhVPrMR0DUhi98g67GRc1e0rJtyb0lbxOzVVID9iz8U
-	M
-X-Received: from plyw21.prod.google.com ([2002:a17:902:d715:b0:2db:8c06:4fa6])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f712:b0:2db:20fa:9443
- with SMTP id d9443c01a7336-2dd6c6db8c2mr126055895ad.13.1789460413607; Tue, 15
- Sep 2026 01:20:13 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:39 +0000
+        bh=eELVo8fI0ZjlHs2eEJ49S4+N/SPMib/OwBxEH2gJjRU=;
+        b=M8T0sEJKvID8a6Oaa+ReUTjs9+mQD6lsjiaFSoAUHyeFDanCm2QwGHtJEN84ymQLtp
+         mVQL08jsnAgVuhFXQm4+XtnL90QWPVO9syo9twq5qEzvVgj3imtyRA2SKYXu6Ku4ULvB
+         GhftVQtsoBF8gz74ZheQ36iPmtt+vD3JmGaNHokJEmblpm3NCn5IH7Pd2e1YMotxkULk
+         LPYfMoQTzBIjKX+pjvJfq7ZL8HdqdKNg//r3EYVkogq36VQlELV2vsZgIPD5WIxmEX88
+         LBCzBKN1LhgDkVh4IuDN/b8xvtevmOZkilepAhEkVwm+h24QnPDoF54TNv5+CAG/REX+
+         8aoQ==
+X-Forwarded-Encrypted: i=1; AKwUvByBtSSOo5e1EsRon81Oq6cgZWbNdrU6IRkBYTlTxGWttMOtaY+vPa/YOYsmOjOLZqD7coXvbtQaolvawuQhNAGT3Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++lUai74j+YCgZh24r860swdsf7AfCxeaTdXS2Rb3sWpeRb/0GW6
+	1TEEcxvcKbk3/51GqcOgZDwi9Orwf/im17bkXFp12g2zTwlwAxf0r8ScxOIrcaaitKpUvo6h1to
+	q
+X-Received: from plvv1.prod.google.com ([2002:a17:902:d081:b0:2ca:ceab:34a3])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f612:b0:2d8:d4dd:24c0
+ with SMTP id d9443c01a7336-2dd6c7e1a9fmr128970685ad.21.1789460409250; Tue, 15
+ Sep 2026 01:20:09 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:34 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -61,8 +61,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-23-morbo@google.com>
-Subject: [PATCH 22/28] media: si2165: Use snprintf() to format frontend name
+Message-ID: <20260915081910.4142719-18-morbo@google.com>
+Subject: [PATCH 17/28] MIPS: cmdline: Refactor bootcmdline_append() to use snprintf()
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
@@ -123,17 +123,22 @@ Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-si2165_probe() constructs the frontend name by appending the chip name and
-supported delivery system suffixes (" DVB-T", " DVB-C") to
-state->fe.ops.info.name using multiple strlcat() calls.
+bootcmdline_append() passes "max" (the maximum length of the source
+string "s") as the destination buffer size argument to strlcat(). Because
+strlcat() expects the total size of the destination buffer
+(COMMAND_LINE_SIZE), it fails to append anything whenever "max" is smaller
+than the current length of boot_command_line, and could overflow
+boot_command_line if "max" exceeds COMMAND_LINE_SIZE.
 
-In preparation for removing the deprecated strlcat() API[1], format the
-complete frontend name in a single snprintf() call.
+In preparation for removing the deprecated strlcat() API[1], replace the
+strlcat() calls with snprintf() using the "%.*s" precision specifier. This
+bounds the read from "s" to at most "max" bytes while properly respecting
+the remaining space in boot_command_line.
 
 Link: https://github.com/KSPP/linux/issues/370 [1]
 Cc: codemender-patching+linux@google.com
-Assisted-by: Developer:Gemini [editor_update_file, make_kernel_build_single=
-_file, shell_command_run]
+Assisted-by: SecurityEngineer:Gemini2.5Pro [editor_update_file, shell_comma=
+nd_run, make_kernel_build_single_file, test_runner_run_kunit_test]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -247,42 +252,45 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- drivers/media/dvb-frontends/si2165.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ arch/mips/kernel/setup.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-front=
-ends/si2165.c
-index f1241b63aa5c..bd15eb58fc84 100644
---- a/drivers/media/dvb-frontends/si2165.c
-+++ b/drivers/media/dvb-frontends/si2165.c
-@@ -1243,20 +1243,17 @@ static int si2165_probe(struct i2c_client *client)
- 		chip_name, rev_char, state->chip_type,
- 		state->chip_revcode);
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 1ae6d0c0e1d6..0d9c2137d675 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -518,13 +518,28 @@ static void __init check_kernel_sections_mem(void)
 =20
--	strlcat(state->fe.ops.info.name, chip_name,
--		sizeof(state->fe.ops.info.name));
-+	snprintf(state->fe.ops.info.name, sizeof(state->fe.ops.info.name),
-+		 "Silicon Labs %s%s%s",
-+		 chip_name,
-+		 state->has_dvbt ? " DVB-T" : "",
-+		 state->has_dvbc ? " DVB-C" : "");
+ static void __init bootcmdline_append(const char *s, size_t max)
+ {
++	size_t len;
++	int prec;
++
+ 	if (!s[0] || !max)
+ 		return;
 =20
- 	n =3D 0;
--	if (state->has_dvbt) {
-+	if (state->has_dvbt)
- 		state->fe.ops.delsys[n++] =3D SYS_DVBT;
--		strlcat(state->fe.ops.info.name, " DVB-T",
--			sizeof(state->fe.ops.info.name));
--	}
--	if (state->has_dvbc) {
-+	if (state->has_dvbc)
- 		state->fe.ops.delsys[n++] =3D SYS_DVBC_ANNEX_A;
--		strlcat(state->fe.ops.info.name, " DVB-C",
--			sizeof(state->fe.ops.info.name));
--	}
+-	if (boot_command_line[0])
+-		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
++	len =3D strlen(boot_command_line);
++	if (len >=3D COMMAND_LINE_SIZE - 1)
++		return;
 =20
- 	/* return fe pointer */
- 	*pdata->fe =3D &state->fe;
+-	strlcat(boot_command_line, s, max);
++	if (len) {
++		if (COMMAND_LINE_SIZE - len < 3)
++			return;
++
++		prec =3D min_t(size_t, max, COMMAND_LINE_SIZE - len - 2);
++		snprintf(boot_command_line + len, COMMAND_LINE_SIZE - len, " %.*s",
++			 prec, s);
++	} else {
++		prec =3D min_t(size_t, max, COMMAND_LINE_SIZE - 1);
++		snprintf(boot_command_line, COMMAND_LINE_SIZE, "%.*s",
++			 prec, s);
++	}
+ }
+=20
+ #ifdef CONFIG_OF_EARLY_FLATTREE
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
