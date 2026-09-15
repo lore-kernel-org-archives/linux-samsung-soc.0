@@ -1,57 +1,57 @@
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F42546EC73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5138B46EC77
 	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 08:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460452; cv=none; b=ZTZ0BOH/MAVmHvlwvg4BGQMuv8C7P2R9vqQM5HsB4D9RkTRNMQII6MxVuG9BcyPL4sHXyWEFfA+3NXTixt8hDvSvP+hqGocPM3JpbA+yDvwDJIznrRQsPKkLy3WALlq0Cf+oLooZqGCU2bCiJ7WQv3dDWZ8WDc9O0sufnBJZU+8=
+	t=1789460452; cv=none; b=BBwpy5BtgeUm4ql6paoYVj7/odMO6BSAaoBr3nhAMLJsTHOgCrOcoaX/9sVwfZCwB6dBtYvnXQHIjhH+m92tyrnikNSkUIrb9hFjUrtb0rJds5X7anj3IPYbtWAGBIF9HExdAaWe8kAuomwRKS8fFAXPpMEhT5BoeEo2FIRx4tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789460452; c=relaxed/simple;
-	bh=OaAwr1sBjpntRvDMR8Yr1mj2+C2DlJcpETypf5U3EWo=;
+	bh=fYjlaDLOkIa3QdHbKJ4O6Lm/D5DFc2RNPQfGa04DsYY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J3vbRgoGeFFdYcgHXD5mI5XYrXyRN178QqArKmD8YyIAT+RFlSDLe4jct/CaF12qzaEoKMqW5ofrFpJewghHQh1CfOZ+JazA85EMsR3uEdiP9CO/l9s/hIYlERxiUy08dV0ThKPlgwkv+QbRk7UNQzZzeNZlfRtLeKeOZsdmhd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VtngEZwH; arc=none smtp.client-ip=209.85.216.70
+	 To:Cc:Content-Type; b=RousCeZKDBq4z6E7nZxYLRSvDV7IWhCbmiqXJByQy4o+HRRW7LKno/g6+/oNAMH9pdBJMdlH/kcxJJq22coMvtUl4FsQJuuRIghdV+TZ4Z4Oo3F1AQJ5IAdg/1swH0vq+rYMbzzfTLrccBn4YjvYYOdXNlSHn1LOBdXl7iupQ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UJpCNERr; arc=none smtp.client-ip=209.85.214.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VtngEZwH"
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38dbf293831so9420545a91.3
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UJpCNERr"
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2db3734d06dso80496875ad.0
         for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 01:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460399; x=1790065199; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460397; x=1790065197; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ANECGYJQk2+Ya+FPrAm+IsCBeyM6Er0meffRIzFfkVU=;
-        b=VtngEZwHywz6pB4/0vEVs9CVu+w8UDSvX5hiJVjqyUIsMmQ/wWU2M8gDB56Tq2OoI8
-         BE+KCjosqGB81nDRVcwFfSNexFz5T8al48RtsVmldHMkm0dfRW8jO3toPvoTZjPvTiXP
-         ziWxGh1pNSM/LuBTsGccw/+mmJgNidZSNWvrqqzF8DyWWRgCjU/tpFepKc3MYmFsnJQz
-         tQ8nelNJmcpqdLIaErt1k4fnWff6yx1BarW+2W8u48+VTNOeOqLHmMPlSIXjetcQ+jeK
-         Ax1/x2lG6VNZJx2C0YtPiL6nxdBXWbA/MvX0jUsO7DCJ5fjHAi5oRQx79IMeIRgdbHKT
-         skFA==
+        bh=GTPji740I5eKt5N5xuOCbc+sv4InPenFdSBTJb2/BeU=;
+        b=UJpCNERrdzYtz4V5R09zGVKFgv+zv0zOy7N27gSuHlIy3m5Yph0CI2MPfCGXePZJd5
+         1ZIiVab8C8ib6MmapDEdBuQ+PwWkOFuGOddUATAM/zdGKkmmm9pZ0zs2cWp/emSLqsyv
+         uen9wE+fVEPsweYpqcCws7mYicC1NCDhRrSdQB/BzujSlzeKEXiVx2NO/jbuMvLp3w3i
+         LwGz2+K7GUwK0c/Vxjys9USBYvyaEe7lKZAy0ceHYwpq6pJnrum8WDP9KFpIwI8TAOYy
+         wW5mg66ubvVyi22xMpjikyNwU/OKSLxOoKq/1cu174PqFlSea9SRer4U7FIzkUlD+uzm
+         1FYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460399; x=1790065199;
+        d=1e100.net; s=20260707; t=1789460397; x=1790065197;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ANECGYJQk2+Ya+FPrAm+IsCBeyM6Er0meffRIzFfkVU=;
-        b=DXUHf3CwqE+P/bMV4GDjdDtfFnH9KCUrM6XsOM8iuQk/Xg6uIw3Mj79z5D3fjlzv/I
-         VSlstAYddamtBBjr7MMVwZDL7pFEjRoRrPam3Lt+kS8WSA5C4D1J+03UcYfplHbyF3fz
-         ClwF8j5oRjroPACG7bPogBUfUSQ2KnQhddGBtUtHp9nU1914OAu0C1c51N4oDAr3b4D1
-         HEbvEa9B5IqrdiA13hfu1qlvzuLritEl/mSH2s0VhZ6gdXEtROXiUShW/pW6t91iBmuS
-         w92MsQqbSseoS9mZduc/Iwl54S3apXVu8Z6D3oxX1Cl9IVtNVEOxWe+o48a64+fyZA2B
-         xtVg==
-X-Forwarded-Encrypted: i=1; AKwUvBxcJzVpkXC5iQvem5h1XXhxvukU3T/y7JfVQ6SFct7oMiU0yFHVj3sabul6dvPb6h/uoxQwrkI9kXsDU8DrzJ5fMw==@vger.kernel.org
-X-Gm-Message-State: AFuF++mwyzOrQGhf2TpVdnm7GVWT8WlcCHmEZtM4E8alkzhk2TcfTnwn
-	JzsWlxHqFdjgRLc59a7jv7KUWhMpb1mxuIRPW/WNmG1crrgy86N7JPbpSmYEnsHmJYZkUnHBpVg
-	F
-X-Received: from pllj10.prod.google.com ([2002:a17:902:758a:b0:2dd:63c:daa3])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ccd1:b0:2dd:40cb:a04c
- with SMTP id d9443c01a7336-2dd8386925cmr476775ad.19.1789460398847; Tue, 15
- Sep 2026 01:19:58 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:29 +0000
+        bh=GTPji740I5eKt5N5xuOCbc+sv4InPenFdSBTJb2/BeU=;
+        b=hMPpCNGd2ZXhbc4YFj9md5QAfWGElNTvdrPkRXv7Rhn9XTxhqRFQSUyw4IyV0r6YDq
+         ItkkpPrE9GXBgXWq9VD1yESabWJ2sw1CedEzY62u5LYAt7L6afdb37gcRSXiRi9HvHMc
+         x2UxiFN3Sla6mXupEG8pFv0DilqbWqA1qfrks6faBEY/riNaGdRY2thfrJDWCvCp07vE
+         WioaYO5QcVik7cH42H4v2tChxz5gWcEyZeuNSwgHm7PWpJWaHjVTI56bdBQJ5QkvA7eY
+         yfzlNe6ZQ1BcFuENMS52RykjslQ9Z7DN6LMdoTQiAFkPADHCQlRp+3n5N799Kj21uWVG
+         Es2A==
+X-Forwarded-Encrypted: i=1; AKwUvBxJPSsbh/qvCdtOe3TjS9J/6iyxYuY0Lggt4s4gelx8Xm6xcagT63xMQsTlFGnnIB0nGmDtvlzVzU6nBmIzSFiRkg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kiO0EHhisR16PMlJ9tlQX2muAK7/Zo40dG+D87MxT7ZPTjYq4E
+	HqHBsZMumMYxQ5PmfFqCTeYO3UHMTsu7aM2fRbUQz0/uuKERTOz0dgU4QFMcw2BYAvmz5q4cEzx
+	A
+X-Received: from pltt2.prod.google.com ([2002:a17:902:d142:b0:2dd:5303:f006])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:244d:b0:2c8:248a:5dbb
+ with SMTP id d9443c01a7336-2dd6c5eecb7mr124092305ad.7.1789460396342; Tue, 15
+ Sep 2026 01:19:56 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:26 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -61,8 +61,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-13-morbo@google.com>
-Subject: [PATCH 12/28] fortify: Convert strlcat() to snprintf() in strcat()
+Message-ID: <20260915081910.4142719-10-morbo@google.com>
+Subject: [PATCH 09/28] drm/dp_mst: Refactor build_mst_prop_path() to use seq_buf
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
@@ -123,21 +123,18 @@ Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The fortified implementation of strcat() in include/linux/fortify-string.h
-currently relies on strlcat() to perform bounded concatenation and detect
-buffer overflows.
+build_mst_prop_path() constructs an MST property path by formatting port
+numbers into a temporary buffer and appending them to "proppath" with
+strlcat() in a loop.
 
-In preparation for removing the deprecated strlcat() API[1], replace the
-strlcat() call in strcat(). When the destination buffer size is unknown
-(SIZE_MAX), call __underlying_strcat() directly. Otherwise, determine the
-destination length with __fortify_strlen() and append the source string
-using __builtin_snprintf(), preserving the existing fortify_panic() check
-on overflow.
+In preparation for removing the deprecated strlcat() API[1], use struct
+seq_buf and seq_buf_printf() to format the path components directly into
+"proppath", eliminating the temporary buffer and repeated string scans.
 
 Link: https://github.com/KSPP/linux/issues/370 [1]
 Cc: codemender-patching+linux@google.com
-Assisted-by: SecurityEngineer:Gemini1.5Pro [editor_update_file, shell_comma=
-nd_run, test_runner_run_kunit_test]
+Assisted-by: Claude-3-5-Sonnet:20241022 [editor_update_file, make_kernel_bu=
+ild_single_file]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -251,30 +248,51 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- include/linux/fortify-string.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/display/drm_dp_mst_topology.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.=
-h
-index cf841dc71fef..0b489124bfcb 100644
---- a/include/linux/fortify-string.h
-+++ b/include/linux/fortify-string.h
-@@ -363,7 +363,12 @@ __FORTIFY_INLINE __diagnose_as(__builtin_strcat, 1, 2)
- char *strcat(char * const POS p, const char *q)
- {
- 	const size_t p_size =3D __member_size(p);
--	const size_t wanted =3D strlcat(p, q, p_size);
-+
-+	if (p_size =3D=3D SIZE_MAX)
-+		return __underlying_strcat(p, q);
-+
-+	const size_t p_len =3D __fortify_strlen(p);
-+	const size_t wanted =3D p_len + __builtin_snprintf(p + p_len, p_size - p_=
-len, "%s", q);
+diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/dr=
+m/display/drm_dp_mst_topology.c
+index 7ce9e212770a..229b5fec44bf 100644
+--- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
+@@ -29,6 +29,7 @@
+ #include <linux/kernel.h>
+ #include <linux/random.h>
+ #include <linux/sched.h>
++#include <linux/seq_buf.h>
+ #include <linux/seq_file.h>
 =20
- 	if (p_size <=3D wanted)
- 		fortify_panic(FORTIFY_FUNC_strcat, FORTIFY_WRITE, p_size, wanted + 1, p)=
-;
+ #if IS_ENABLED(CONFIG_DRM_DEBUG_DP_MST_TOPOLOGY_REFS)
+@@ -2216,19 +2217,21 @@ static void build_mst_prop_path(const struct drm_dp=
+_mst_branch *mstb,
+ 				char *proppath,
+ 				size_t proppath_size)
+ {
++	struct seq_buf s;
+ 	int i;
+-	char temp[8];
+=20
+-	snprintf(proppath, proppath_size, "mst:%d", mstb->mgr->conn_base_id);
++	seq_buf_init(&s, proppath, proppath_size);
++
++	seq_buf_printf(&s, "mst:%d", mstb->mgr->conn_base_id);
+ 	for (i =3D 0; i < (mstb->lct - 1); i++) {
+ 		int shift =3D (i % 2) ? 0 : 4;
+ 		int port_num =3D (mstb->rad[i / 2] >> shift) & 0xf;
+=20
+-		snprintf(temp, sizeof(temp), "-%d", port_num);
+-		strlcat(proppath, temp, proppath_size);
++		seq_buf_printf(&s, "-%d", port_num);
+ 	}
+-	snprintf(temp, sizeof(temp), "-%d", pnum);
+-	strlcat(proppath, temp, proppath_size);
++	seq_buf_printf(&s, "-%d", pnum);
++
++	seq_buf_str(&s);
+ }
+=20
+ /**
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
