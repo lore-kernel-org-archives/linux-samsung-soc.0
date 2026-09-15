@@ -1,95 +1,95 @@
 Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945F2434407
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAAD43744A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.140
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789447400; cv=pass; b=utw3/smHo1aokZ1i2uEcRTVmTg6vkX8wTFXFvV/I2G8zF6LuGOarkjkpvp9p+Cmcpn9aPuvcwYciO+YXIcmOYdnjRzX5aSSzYW1UwQ8/gg0W7Scc7IH28MFDikyasZlzZ9dREEhLLEoIoVCTrHiu141MqkC8QGE58fM8oeV45wg=
+	t=1789447485; cv=pass; b=dKT3wQ9fmN2qJx2MVUBh9FUovVyAo36O1NGLzmb4KzMClAPXrQ5fMl5AH+Hj5mtEcqBEHDi9ZdjD/VYDDT3ToVup7Z/K4syo+9Zdqjvynr7i4TvQsX7v2EAG6ZXhwrP0Wpzfeh7JQLgCM8NxBojRLWHDzJ54CI3zKy2fOWgjOgY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789447400; c=relaxed/simple;
-	bh=UoOAQKGYJOU9cLqt1H/9UiJiW7vYwYjslaP7yC1APho=;
+	s=arc-20240116; t=1789447485; c=relaxed/simple;
+	bh=OuAEPVCCSuU2/NfeOknYQEwV5oigOdlMWrN/kmgtJS8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z6D2pPYCJO0qjg02iQ40F0Q2LJ4JSHKf4t/6KxiKeUINY103foiSaY5KX3y0rPNh5TszRvVC9p0tluT/IunolDLE+4h2Xq3pu+2ta1bPhkifNTdkZFRN3LRq1umZZncJHl63RuxlbuWeI/H8ZIlkZ6jBq3/XkSzk8v8uvx9Zxww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQ8R94iD; arc=pass smtp.client-ip=74.125.228.140
+	 To:Cc:Content-Type; b=MnI0hMcgiqldaqf9x6sm2pGhKbPOFmCo/Hjp9SWeW3/ythNPNEqDHhobyb15Hc+VV/IyGDQXbkXBLS/oMCKdy4ZgjTvZqD+YVxmzRLHcZBX+YJmuJUIzsc0dh8O+UVdn1YPM3/znIakSoVSnmHwhz9zvMzIzPHpIpmfxoTBcFEs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZyfek/v; arc=pass smtp.client-ip=74.125.228.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQ8R94iD"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254f55eff0so345774366b.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:43:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789447397; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZyfek/v"
+Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254fa663bfso540183466b.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:44:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789447482; cv=none;
         d=google.com; s=arc-20260327;
-        b=ehQfTuqskszuV3k7VzPcXcJgA7y9wqGoC6yJj4XrpordFyx47tsNfIWf8Kdws/xvDW
-         l0owXI+z/cLOzYEUnpYrtMxX/SpXFG4Mg5mHpVGFLhJ9FhEC8+gi4vvw4cPmgPOp9c9e
-         xWK9b3X+CDC8heUTuVpsBvDCJ2mN06VuavjbVlJl4zD0qYiPm5z7bRDdn3bE8MtKUD+m
-         mX9XBaya0S6a/+Zc5u6skuN/DnxhhSsAfXhkm3YEE3Vf4c+1qoLGpBKTvI320Z9k2UUR
-         24YDVVPK8Fz78m0BYiEjwd9cF9lhQjAuRaydymek0tPCL3qn9lPm1wMZcNJfRsNOmGei
-         AYjA==
+        b=lm9NP5Fv5JawyljiF5buiQDBwqLZIyHs7fFIgybgWhLzt84TnKeypXhlmqAPoOnj1u
+         +XXZwJQzi17UgFXo67MCuIIAa2Dd34QxObqGX3JFsM3vcNSYKrGZQyA62h5vvTPnsffR
+         dXl82bfk0YI1gCCMPeN4lAZCgqakgJL7czDudKIoHKyF4+ABfu1OVQz2qmSduTCHd73a
+         xTVTX7r/wEITr9QT2Uc6jenWkqZBGZjeQygmWl3l++lRG0gzs3c7jlAETG3dMY8Qk6N2
+         L/ZaLf4vHG5eSGXaPHbZN0qrGFk1pT7UF+wSDrgNAxxj7kNAsJ+qbikLjoauxJOYCNCF
+         pBBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=UoOAQKGYJOU9cLqt1H/9UiJiW7vYwYjslaP7yC1APho=;
-        fh=evDemQrsv3JFRAkgeaqNBV5+s97XrSxadqp/PUrEeno=;
-        b=BT0Bafdxk5KZKSfRgCv0cv8VxWWCISPhpq4LwC9kOERVElXYp8TSguSMhd+dXdNtQX
-         jGocP2TPYuQaRwYIZT4KzH5Pry23Y2fhxv3gRwEXlSIayRBHn3d+S1ydBAt+S80E4QyU
-         6hA/LiJcWLAlw2DgRlcRG796L2ZSn/L+7QH2wSRRhovthP4NZoBUroZ3LTTa29ISODvr
-         3DkTLhozfFqwBbvd52+Ao0MRfcUwjSL15JpJL3Q5h5PB3/Pk9jG6ps/0YkSj6l3e2f9G
-         9ALUZ8ckhhedl0VbQi0xsj532jRFAVk+E4EZhYEFP4Uza3X7LMUmva/Mc+P/2fZmiU1I
-         y1IQ==;
+        bh=OuAEPVCCSuU2/NfeOknYQEwV5oigOdlMWrN/kmgtJS8=;
+        fh=a8m5mgmaDqV/M8Vc+/zflYgpnOZ/LmEghEZPeM6FbGk=;
+        b=NuOo4oPwApXwHs9nDekJZdLdaXO+12jcsC8ZqddV65nXoly8S66E+Yy3tyVntoLAeN
+         /JYnBjVptqaLPtRvRwb3qdi5uYj7oKjDypekUqdC+7ZmFAsyHWrdguGQjS8Ni8D4gReO
+         Tp6pA2lSN73Q3yrfNhSQ7XriwchVm+V63fuWBRHawzsjFi44paS5UHq+A5RxbunwPhKu
+         nYsFHipuHUzo2eGrHqN8PuE++I5LmbU6+cgAf3W25BqVWwqrnmGekdX9v/HwO/R8Yxo5
+         69iFr9uBR5gopVCxJvrpxLF20wyW7g0NuuUrDcY4MAJ+g5QxaQbflwVRYLpCeU0gv+l1
+         fudw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789447397; x=1790052197; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789447482; x=1790052282; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UoOAQKGYJOU9cLqt1H/9UiJiW7vYwYjslaP7yC1APho=;
-        b=TQ8R94iDFwXuJX7e14L8JdC4fweRv2qVAmZU/jAi6qsHVzhqAaj7nr+GXUKXCzvRoI
-         thn85S3kjCkA1cyuDHqjGcbqmKDE2+PAJk4Re+5yJPczSLI8X5G3v32HgYqLFD8nZVCd
-         QfXWZ0W3FMzavuYh+n6X+REVhPcer3q95CI/qoqRbRwfzFbZGTuEjFhYBEdVnjbsWl0U
-         4MHRNUZFeUXh5uFkHYoVKXxi60mCuSpdBV2DZTxWFXNtzLojwOfcUlXzp62RzO9YB03O
-         401yW1UPVYTxjXKZeKs7zsF2heAkCsciqeeQEfl5b45Sg/eVImKV6zds/cp1tAzbjMak
-         MiWQ==
+        bh=OuAEPVCCSuU2/NfeOknYQEwV5oigOdlMWrN/kmgtJS8=;
+        b=WZyfek/v0y5My/4Go6IzmI693eIU9JC3pQ7MpNoRTcFL6MMm4Qd1ROaWIa8qv7tuOp
+         zMqQqLd+fGiv03FI5L0jmfdNszWlJSB3Tw5mFonuCzYUjdwWJ5n7PdAXKvZucmNJtdMu
+         5DsUpPF9H6YoqH8dxVC5hq+cotHi7qUCI9SGgWEOUS+QhWObJrX6Idhf/XviUjQiFCE7
+         IQx4WOaIEDvleSTmlrQJsC9oCXSgvbXbUyZW0WtC3Iu9/uq18fvChD4nsO6UtC7bn1d8
+         MA/m1Xoopr9AOdvaku7r7qsFMRTDegDVQBB684gXzfCBUr4bhVkMpc2G1e3vAqBUGG8A
+         0vzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789447397; x=1790052197;
+        d=1e100.net; s=20260707; t=1789447482; x=1790052282;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=UoOAQKGYJOU9cLqt1H/9UiJiW7vYwYjslaP7yC1APho=;
-        b=KqPkx/c5hJDiAMdA4EnbN5gQL5WiXgUE4SWdHwYUudeKfh7feSKoLLGHQlo9QqMIhE
-         f8nheflwVEla1yFBmKxB5VmAFO90knt9j18B6iaBmqIoRGX9vuBH2iHP2GJ7hwPZaw7j
-         zc03iY9/RRVIiT5RJIeWAaTLpHPZPLvg6B7ksVg3TmjvcL7DzuA5BkGVRSoGvRqZfGGQ
-         r23pbl3/azozo4JoV/IEbCLgWpyXFUeuUfPf3sp3cGTsE1mIdKqb2HXVEyVg/IxRhQUA
-         J0czGxCDcZAJ6856ZG6s18HhLzUNsN1U2n8v+CVzRY5y3BJG8j2vcm9Eqjrohh8wxTfX
-         L22w==
-X-Forwarded-Encrypted: i=1; AKwUvBzIsv6Jb2pkIM8Y5nBfBzsVjJ353tKTsAWq04Ax5kKZQQBgL/hHpe/b3p+YneQlO3j2w/oA7GZ1qJg7DT0TL43IKw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lXTlGB0P8oRVw7zOkxeYlIFWRLSukYkK06dBC3RVL0dqYI7tH1
-	8oPc0kDZVII3nQT4A5Scf576YeEV2gTzNtmFl8rWQdAmoW8QaBuJfF6JsyrCRyv1At84l3VRZLd
-	9YY34WOWDQh0XLHqdFQ4jDSpB1N5WK6s=
-X-Gm-Gg: AYBFou3PXGBQrohMKNh62ad5tg1r5FJfMb/iYv5KIhQ0kZY+PVGkhCsRZ/uZPxx6vhH
-	37jTlgYAFQljmZevN3hg3y1qz7XfnTUU6sDFF/+DDH2HuIedmQpFOwOUx09cWc8aJX1xtvw2njv
-	zl+Yx5x4VUGiIyyOoyhuEW1Eey8nsQf62HcNeyU3NTtbJcQaeD1e1Xxo0GQFDtlJbl10OrBMRcH
-	66MPkS5dQnKN/MFTYDkE9GYfGT63rVsqWhuSMzn7+jiJH7TcuUgxtborSbxJZ1eSwBJ+tvqnvS/
-	uexA7F/pjA30i5JCQlAU8H+sjwEV19ry1X67LLnG7lZoGPGcbc4iJA==
-X-Received: by 2002:a17:907:1ca7:b0:c24:87e3:b8b8 with SMTP id
- a640c23a62f3a-c29b85faa3bmr342332266b.17.1789447396541; Mon, 14 Sep 2026
- 21:43:16 -0700 (PDT)
+        bh=OuAEPVCCSuU2/NfeOknYQEwV5oigOdlMWrN/kmgtJS8=;
+        b=txBbvx0ihjzuiGyYQHkILCNxsGZ5Z2anPEOsRvFuhoq8/bJgJ8YDwGUWZ0HV3IGwka
+         1jgVbw+SvtuPWnoJsPbMaKPvsnfSzOFs543gQeZN7crsRxzaYB66/J+d/wlQeMxNknM3
+         K/BiTD/1cTmcajc9DIFaW3CftQz0l3r4zWFvBuyVVOrL48eP65SGB8ngfy/Y7NNC57B9
+         Hgg+mp1THqv0MH3UlV04hYWkydH0U/COB45l8WmmLx84cp+ifKOi/FOGCRtVbTIz5dmS
+         SQWTVioBK13ciprtVhnOY26V0A65AZCJmYyuj3hTwS1PozAjprTsi7R8Sz3LEzApFEfw
+         89yQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxpTfylPQ1bTKYoj49HI2l9dGj1pFClQGuA/yLHdJeg63LJgQfAXtZcZ8ityv2jwABce9SXpi19G6NAWJygJJZnbg==@vger.kernel.org
+X-Gm-Message-State: AFuF++l+tx4x7ZOB/MNfJZJJjMd/XYh2fEkym6WAV3n+GPsO19XXOP8J
+	bokIX89CGIo2lwSw+ZWVh3bD12q3trztmK8/+ymvPi+WJS7iG/KEo68RCAF6dZNN2wwlXBU9bGA
+	hw6ISaDAsxzjoss3Hon67pmjld7IqaR8=
+X-Gm-Gg: AYBFou1wZHUsABTXaRnzCY4CJ12Dm+DCJxOgEt0nlT5ArUaC2JCIyzc5l/FFZ4CEKk5
+	sW1Q2D2kgVRTX1zM5v3hiYWICRq7SIL4y8FUTXYrbRRYRfSiy+7Sn4Jo/CRKBn7df+csR3Y+T7t
+	Fl1b5DVV8uYMNBEsc4zyEMBjELIhY2jQtALUBt4u4LieXsO04gN8BRiA+kyVe2cUWQwjNw1C8PK
+	4g2Nc8iLUxBD8Nbhl+ZTIEtRC+ihBbMGkVrAqWR+IoLfFk6OYa7kGyDkfVpW9cbI6CfZHm9TnBU
+	pt7iYTRiP1k3XqCDft9/XkNi/nvU/QqMNBciHU1XFa57etYkmi+PpA==
+X-Received: by 2002:a17:907:3e07:b0:c25:8c05:902f with SMTP id
+ a640c23a62f3a-c29b86b7559mr700042866b.13.1789447481668; Mon, 14 Sep 2026
+ 21:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913145905.9404-1-linux.amoon@gmail.com> <20260913145905.9404-6-linux.amoon@gmail.com>
- <5c24248e-bee2-4256-af8f-a80be6744431@kernel.org>
-In-Reply-To: <5c24248e-bee2-4256-af8f-a80be6744431@kernel.org>
+References: <20260913145905.9404-1-linux.amoon@gmail.com> <20260913145905.9404-9-linux.amoon@gmail.com>
+ <8d547f65-a260-4b8b-80e4-4695d4422497@kernel.org>
+In-Reply-To: <8d547f65-a260-4b8b-80e4-4695d4422497@kernel.org>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 15 Sep 2026 10:13:00 +0530
-X-Gm-Features: AcwNN1URmaKTajm5R0ygh2EGOJeV70g6e6uI0S2uQ6QQ5XvRrWbqrXu2Cftp_OY
-Message-ID: <CANAwSgR6sEz8am8Vd_32EhnNjfybZAr=JR1MUjLHidZ+5mdTww@mail.gmail.com>
-Subject: Re: [PATCH v9 5/9] thermal/drivers/exynos: Remove redundant
- base_second register resource
+Date: Tue, 15 Sep 2026 10:14:25 +0530
+X-Gm-Features: AcwNN1UE0alxnYRR3jtRD2u3dEd1ayGXdU2bhjTuNvTUC-ZbJLtS9W7X8MU3WLY
+Message-ID: <CANAwSgTEJf0gYQZKPQm+=90S5i2dRpJzOLv0gkyt+4ZmUTWZ=g@mail.gmail.com>
+Subject: Re: [PATCH v9 8/9] thermal/drivers/exynos: Add missing drvdata
+ assignment in Exynos TMU probe
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
 	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
@@ -103,21 +103,25 @@ Content-Type: text/plain; charset="UTF-8"
 Hi Krzysztof,
 
 Thanks for your review comments.
-On Mon, 14 Sept 2026 at 12:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Mon, 14 Sept 2026 at 12:31, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > On 13/09/2026 16:58, Anand Moon wrote:
-> > The Exynos5420 TRIMINFO register can be accessed through the main TMU
-> > register space, so a separate register mapping is not required.
+> > Add dev_set_drvdata(&pdev->dev, data) early in the probe function,
+> > ensuring that the driver data is properly registered and accessible
+> > throughout the lifecycle of the device.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 >
-> No, the address is misplaced. You completely ignored entire point for
-> second base, without any arguments, any data, anything, and just drop it
-> completely.
+> This is somehow confusing or completely incorrect code.
 >
-> NAK
-I removed base_second based on the observation that it is only used to access
-EXYNOS_TMU_REG_TRIMINFO for the CPU and GPU instances.
-It is not used for any other TMU register accesses in the driver.
-
+> Either this was needed by the driver or not. If it was, then why no bug
+> is being described? If this was not needed, then you are doing no-op
+> changes.
+>
+I was looking into other SoCs that use this while debugging the
+device-tree mapping issue,
+so I initially tried adding it. If it is not required, I will drop this change.
+>
 >
 > Best regards,
 > Krzysztof
