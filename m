@@ -1,95 +1,94 @@
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA2E439008
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601813D79E2
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Sep 2026 04:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789447523; cv=pass; b=Y6cvFqCuEeWfE+Fl8MKbOGU1kxK9W+GMqz/kz3ZJJf03m9UBsss2dT3kk9kxevjAxxxItUhsLuxpkdgX4yNshR3FGTPm3AWgufKLe9N1bqQC6WHy91+yGdtozxErHywfJXf/1cLhQQS4ZR9y7n16DWRPB7IvsTO3PfmLmGGqPSA=
+	t=1789447550; cv=pass; b=fS6MpZY1vmvGth9Lld9+MqqK05NwvBRRIJq4jGstG/oM4c7ijqi7a095AdjHKggKhVo0eOwQxShG1AuqD5n0bpJpVkwU46QUeIebZMq8zi612UhbeiuuN405MhL9x19z1bXmSbiMjEm+M1HFszCoqBvEsECFBTUpllrgLveXol4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789447523; c=relaxed/simple;
-	bh=1fCyBztB56Mbm6pG1VzHl6tMEqvrCbAMMCDlWGNMGAw=;
+	s=arc-20240116; t=1789447550; c=relaxed/simple;
+	bh=i8lUUtdcjqnzF0iI1zLV7fE+XgW1j6mCz00AP5bqSqw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AIKlblm7dPP26ysTuLGmpErcK7NTdp2Stk9kIESwZn9N13iyynZBCVIuX+6H5Flw++Mx2eG+Pogf/SrTgPNfe6NP+G60BEx4sbnncRMXPAmL1a4KTaA8ZLbLT9e9A0gnwuQ8V6VdPS1x9t0DQweIdSl5hhT3WnIHZiNhI71h2Vs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmCAew7o; arc=pass smtp.client-ip=74.125.228.140
+	 To:Cc:Content-Type; b=IeLi18euezKEXd22YAgfTIU6aBiTfD64TY4rLaf5DvSRp2fEbH09DA0tllswt0LpX3uJWvBG07e+bcX2ENKf8pOgNggtuJf1CmCvXgrGOgSC8duaDZP++9ype9ipPLhizfjLvBD9RKqrd0UuUCmFpY2JsbPmZpaBluXMpDWCoV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbttgRWh; arc=pass smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmCAew7o"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254f70553dso482441866b.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:45:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789447520; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbttgRWh"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c25b661d37dso574995766b.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Sep 2026 21:45:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789447544; cv=none;
         d=google.com; s=arc-20260327;
-        b=bE5aUCRhfOfkawVBCjgZxFiiEZjkfGEoLAQFbVzbrP24/1b/r6GjlKUkmtxDfpUJHM
-         SdGKirpvCvwtHu47hT+wcyga1aoOa2JVQWnNz+jjMt3r9fb6gRqiFhpfRI0QjCeqSlgp
-         RZinPyw8WkoSid/zpdTiLSJc3gR7gu9vNWpoFRGT5A+S5seC4vG/uTlli20u6yveWcv9
-         9coy6QYL+DZnswhHh/HkGYUqkRe3n3/jde0DG716e/BjBws2SJgMQSz8dKCRj6hYM+3N
-         dWNWRFCoGpPd99vfu+F3KA2mb8MtxjeEx/3d7B8T+4icmq/oseHkXK6jieTaf2mQnDZ+
-         hUUQ==
+        b=D8ymSccNeHf80gwYJOoPtItJKlA34d/irzVttukNwjynnnV7MWVw6xx3YNf9PGW1JB
+         u50U1i8Wer3c00XxkSHfqyKDfPqixVG8irLdBJA5RebCLLNlJRUtXYOfft72lvl27HKR
+         nnuRtoQkD8G9blrHG51QOvoGuysXl3hlCTe5WVS2tQabYUxFd4gnXc/br1KOkKr5Betw
+         /2E0ZwfMgJX2BHgc4u33VS9/OG0DmJzvotR1gT6y8pW81pMpXrvoBl1ih4Z2I6ka09Xn
+         wgJYQHqbkEPxJfsoIk+wz174bm1cOLjpYNpXhyJSnwzTHWMqGStL+hcbDXOuHt4vQIMe
+         2tMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=1fCyBztB56Mbm6pG1VzHl6tMEqvrCbAMMCDlWGNMGAw=;
-        fh=w3QrewPpTVxSwFFGZ4VeelfynahVpWRcYjq1bXLalTA=;
-        b=CKOCRt1o3BPi1wC3eIMdnwhrob8XePAF0F35k11XS8fUK+TwHmP5ve66pPau2rWpyd
-         Sni8Sd4gT3+4ETSzSJOSXT21lbrRJ7Ou75aR9IbOWwlXg2341J37GU9TCDqu4pxEF2vD
-         pBsVFe437mP3QvwIGBBdRFpo473l0M48jH5572BbkBQWnDUYOAXl2XaVfRKrJj2UE52L
-         aird7YJmBKx2tEKb98cX94Mo1QQb1pxCAR4490GGQw4k2wRp9Q0sKyMVDuQr0IBeDvdl
-         RkMnUzijTrawgEvItJ6iVbqTcLA5qhY9EifNvjz3Xv41aON5onpis6pYooocEeULsAgc
-         9ikQ==;
+        bh=AVj6OOuw8+ZpNkuoXFcXlRxfZ6JLOmksHtPRzEkYO3Y=;
+        fh=NerlM0LBTvdyrFFXdLlfkl76/UJ/dOn+Q/SUxyZY7+4=;
+        b=DxzzMuEsknkmbXIq321AQSGY9ZoJ1/kesXc5UsenH0PdSwm+XAX4Q6ahVpSYSmrYXp
+         CMfLNVie5ZJArRhnNvoFduSprPgavR9DhIAZycm1AFBzA80LmOG2z+mTvImUbAnkioIo
+         L2BM71TA/yTUUXp8nTNljFxXFJE4z5UtnzNJFiGg2x1y9DC0tCplVxxH9dKTCsHVYyOx
+         6GFVYy5u1L8M2m6AD8oYIIEt26xh+/zjMlQExjRqBilwPwXFf36tmk6QZiyK1NkpiRSs
+         f4vkPmPnSfF4CvcoNau341YPMREhK2togDPTOyuwJf56MKSV80sCBeFpNeG2hH+XvLj/
+         5csg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789447520; x=1790052320; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789447544; x=1790052344; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=1fCyBztB56Mbm6pG1VzHl6tMEqvrCbAMMCDlWGNMGAw=;
-        b=CmCAew7oGSIiROxNY4a4SIyUoXgYoX64btMSKyEAlSAD1OWObKj3xwLX/lEEpSrg/Q
-         A0OUZ/Cu/2gvLy1i4OGAPEeuBjSTS8qYGQ80vO8P3btG0ZjmrI3OBf3bD8c85WkWTIkn
-         owXGWJcUfYJ2VmHEUZd3FkEnw2yLdXi1gs26PJgrqoq1I9JYqO0Hmc1AV21zyuvNT1gQ
-         bwrWTyPvE7LVw+4YZ+3MhHHC48G2vA+09ePw6XMZEmdArvrVjqDHvV+qUL/nBx4oC2XU
-         Sg+0rx5P2WMVVcASS8hWRR8934LZGLlN+iq9W0qD1t6XWV/BoBPfx8gTujCCTTEdTGv4
-         C8Xw==
+        bh=AVj6OOuw8+ZpNkuoXFcXlRxfZ6JLOmksHtPRzEkYO3Y=;
+        b=CbttgRWhtvI0N9xtlUCmv54XHEUwLxuuRs2Gniep6j59kPcZbgPj71uyWJBSwDoS0D
+         Gy6CsWaqN17iZjEA4ohTnNdpeBkpOe0jpOFgyWCsaOEpxL2prsMtygtFAzp2I6j2NYrj
+         aImaRZeUykYMYUvTODe4Ae/lqRZPcixLB+7HtDuxY+dOmg7VH1WBbOD8Wd5IPcqOnJq7
+         aoBvKyX9F9M8F87sn1Zu5F++ssDnk6+J5M59ojf3/w1BhCZmp4nuaYbzD33yZE4JnJ6Q
+         fIo9IOtuS7V4Q5e7NW9kJJvtaQBIbD+3G3/bNU9X6zA4+kAVLQ8eS9OmcTUDPU0UJOUG
+         cpvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789447520; x=1790052320;
+        d=1e100.net; s=20260707; t=1789447544; x=1790052344;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=1fCyBztB56Mbm6pG1VzHl6tMEqvrCbAMMCDlWGNMGAw=;
-        b=OO2dP9PgONQpLRMwmaQkwUlDysCf+pOg2cfkIeLiUGsW2ctX201166umXtj9lRIxEN
-         aFlnCEz7P1egK7B1OBHn5/IUn8nuTE24ny8f19PLG1G8jVCgyvOuZUHybF6SajW1+b+G
-         afIumXcYiIDO/sBhfFdHtI1Vsbzx5msS/h+HUkxM7rEALmBdeLijyNWQwvy1Eevf6L59
-         De1iApOKVd2DlxUd4jA+tLDj9rSQKR+xW+OQQGpO9IIgKn7om6OST5JReE/5LzVoY9Bq
-         zySLQ5j53lYphTM4H5DQJE6KtsHOqBp7fqJ5itoaCY4VbKkwKYiOEGzMmnKnJjXMbEgk
-         MRQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzILpZpj6wDUsxUaghV05hmAOtcD3URUxOgyRcqHKlSM5Ku2FdLXjSklaNqsFP6wJNSCus/GWhX7GTtnPj0L06lXg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lNilXgSaAoN45cVaxg+Bh7GMdOsx7BjEC1KUXcoO8/3B6me1cf
-	hBJz/6StcLuRl4JoqscvXDpVuXE9cBbIDFKirq/Cqd2pSwTtqKSKPsmLhAoqL5hfAWd9MOqBIXR
-	W+nFYScYZyN9oeXuIBAdY4Uk/MbQtVnA=
-X-Gm-Gg: AYBFou2S1AA2yX4vhcpJIiBzKLBl41NHKG/l1DjrsC+B0FOd4hA04zFaz4gz/tN77hO
-	MTCqQ5WGtkX1k+iZA9g06cVw8lyyeexrTvKsAWrGvsEtCQvI33D/VKtMyxd0867mWpHV9UjC5+p
-	idqIPqbECamCRUVrwl7bY4WRX6SE+s38KDZCojF/95URZLmgFe1mEWLod/6KvOamUMsOKrhSyKG
-	hsuv5n1rN+Af6vIoTVh1bShNNVlxjh+Sy9AnPJ7aEv/xRZbGJ3Y7gm5VkJhwXIggAWFHDm1Sa7H
-	R/xvtaNKC8bH1zwVPPvOmk6qSU9cBSvIKh6bz+fZ1qbXOYnNWUK3tg==
-X-Received: by 2002:a17:907:7b85:b0:c26:36c4:858e with SMTP id
- a640c23a62f3a-c29b8726f8fmr326120966b.25.1789447519950; Mon, 14 Sep 2026
- 21:45:19 -0700 (PDT)
+        bh=AVj6OOuw8+ZpNkuoXFcXlRxfZ6JLOmksHtPRzEkYO3Y=;
+        b=vv8rM5YAiPykxVWg5t2wjYSD8Ww6Rw37ClHJGQd9/MSb2yFXJ/PeOZtGH9z+HTQedK
+         V6Z8sGqG4U8B5cbHdzmNCZjeUWAfubuKEbvJ5LymafnPsSE8hyU9xz3AGUk+3RUvse0M
+         VPREV3L4IWLv4ER1SKGTGsEDZUaZVJzsc+qWzlSPfZuVMqLva2zYAtaUOrRqYKcOPLHa
+         Kr6JBUzj754nGAZG52WDnrNj6JOn+t6wQ1ULd8BvCEGDKm2yzuwiRrMuvjp3mL+n6yTr
+         A2ZonvBb7QqpSuklI2mcKTZ6UsY9XL+wP+niopFwID2JPa9gtoBZcCFEnV3sxLVxXF7g
+         HimQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzlrlpYYX/tXNOUeYDNQwjrXZsqsZJlt+76lLM44H9MlDO2HkgxEvealRJ9bJd/g/yYaiAWe+tk83GCKvXbBO2+qA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mdiz8AvS/MyKxoQ0LhNyptQ8BBLB2Lx6vCBqO/mCycgqsqaeic
+	eZRQo2T2bGI9VDq22TfnnqTlX3/VrOEmhLawLLVv8cW1KCpA/YiL2zs1DGc3Fj756nMpyrPsUSQ
+	4a2z5Rn6w1MU7TFXzRl4i35PcJQ+jlo8=
+X-Gm-Gg: AYBFou11gzRGMvhILARxVxqEQHE5yOBcRB8F6xiQ/rXQ1/jz9FgfrXmrpvAO3IkcD2B
+	eI+GAj6WL3w3dSn4q/qewc8oQJ3S6PEfnvfLL+jBYCahZYahzZ/eQA4XQTok3Bx4t3SXfqddrZ1
+	oMkqnoCFExockgyIdbgT6qv3HNmEDMgOt6GES2urw1WS35LhAIpQ2LCXvPLRw9HI3fCQDy9YkvN
+	DcAmQra3FE9fyJ8bbirCLhkztSFLR+YDUvRZLiR+SpDrwjCcJI4rX5mt7FFf/LTVJvHTatz7U8Y
+	pXDbF3ghDClPrLx12CFEiaNwf4C8WVZhf6FKRNzMcwoXiUZbBz+/dbQ=
+X-Received: by 2002:a17:907:d8f:b0:c25:c54d:d1a2 with SMTP id
+ a640c23a62f3a-c29b864787dmr350678466b.18.1789447543614; Mon, 14 Sep 2026
+ 21:45:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913145905.9404-1-linux.amoon@gmail.com> <20260913145905.9404-4-linux.amoon@gmail.com>
- <a835cdf1-b0b5-4719-8b5e-226fee78b856@kernel.org>
-In-Reply-To: <a835cdf1-b0b5-4719-8b5e-226fee78b856@kernel.org>
+References: <20260913145905.9404-1-linux.amoon@gmail.com> <20260913145905.9404-10-linux.amoon@gmail.com>
+ <d4174f6c-2ced-4827-b579-c54b37619023@kernel.org>
+In-Reply-To: <d4174f6c-2ced-4827-b579-c54b37619023@kernel.org>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 15 Sep 2026 10:15:03 +0530
-X-Gm-Features: AcwNN1X6uQRHhT6qwboNgDZri63s8FVYRlQvpJVAgezJWpeLkP8LX7XyBkGQ7dE
-Message-ID: <CANAwSgRETNrPmwGvv2z8Q8EF--W19u6iB1goNZHUzKp64s3_Fg@mail.gmail.com>
-Subject: Re: [PATCH v9 3/9] thermal/drivers/exynos: Handle optional triminfo
- clock correctly
+Date: Tue, 15 Sep 2026 10:15:26 +0530
+X-Gm-Features: AcwNN1XnROT-wl_Pv4SIRl9gq2osyQZq9QJ7pS3eOAiL7xJk3WzBKCm1k8F3Pac
+Message-ID: <CANAwSgQ1Uno50rGMW3Mrtrmm_DW22fgOzbLZH7uHu=StQ8_t8g@mail.gmail.com>
+Subject: Re: [PATCH v9 9/9] thermal/drivers/exynos: Select thermal emulation support
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
 	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
@@ -103,23 +102,38 @@ Content-Type: text/plain; charset="UTF-8"
 Hi Krzysztof,
 
 Thanks for your review comments.
-On Mon, 14 Sept 2026 at 12:37, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Mon, 14 Sept 2026 at 12:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > On 13/09/2026 16:58, Anand Moon wrote:
-> > The triminfo clock is obtained using devm_clk_get_optional_prepared(),
+> > Select THERMAL_EMULATION when EXYNOS_THERMAL is enabled, as the Exynos
+> > TMU driver provides thermal emulation support.
+> >
+> > This ensures the thermal emulation framework is enabled whenever the
+> > Exynos TMU driver is built.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/thermal/samsung/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+> > index e1e8035d24fb..7d5590f78185 100644
+> > --- a/drivers/thermal/samsung/Kconfig
+> > +++ b/drivers/thermal/samsung/Kconfig
+> > @@ -4,6 +4,7 @@ config EXYNOS_THERMAL
+> >       depends on THERMAL_OF
+> >       depends on HAS_IOMEM
+> >       default ARCH_EXYNOS
+> > +     select THERMAL_EMULATION
 >
-> No, it is not. It is devm_clk_get().
+> No, drivers should not select user visible symbols and also this has
+> absolutely nothing to do with Exynos.
 >
-The data->clk_sec checks were changed to handle the NULL return
- from devm_clk_get_optional_prepared() its only used by Exynos5420.
-> Order your patches correctly or do not introduce bugs in patch #1 which
-> you then fixup in next patch.
+> NAK
 >
-I will reorder / fix the series so that the clock API conversion and
-the error NULL
-handling are introduced together.
->
+Many distros do not enable it, so I wanted this selected by default.
 > Best regards,
 > Krzysztof
+
 Thanks
 -Anand
