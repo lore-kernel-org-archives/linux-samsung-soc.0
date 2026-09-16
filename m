@@ -1,42 +1,41 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792604FB9CD;
-	Wed, 16 Sep 2026 13:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FECA509EFA
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 13:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789566439; cv=none; b=eYHKB4j1nsWnqQRo1yIedLdYOMwDme9KKDhzSzYeuOG+r3gxIgyG1Z5SlZy06bwM0EpSK4EkGrNV3s/g0P/O/IFDp8IM3KLJe+3oV/0j1sUuGQ9Dqpp3PV9RMqw+49D80imHyzf1RVDZFXloqxhF3yc1bpYfC4f0eXJ2hXZsqMY=
+	t=1789566449; cv=none; b=pdrKUgS/XB+YfzVXSc88CgiVUi9Gfr3Zbg9gtHKHRb7e1ZA5Ayq9pWf55KDCAU6lGibPgjs4dXo1KyGBFEVhvQqky9tOoPaUQDXdoFmLrQxcVj0nfWvG80Vy7XgYsSJdWcfq6gO9za5VrkccrlbfJ8MrmqwhWH4psxHv2ExBQas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789566439; c=relaxed/simple;
-	bh=zWt8ZXoDEyY+Isco3dtHwN/+LtN8dVpy8FvUIxlUBek=;
+	s=arc-20240116; t=1789566449; c=relaxed/simple;
+	bh=7HBTXOG+9JVl/hOKqf2kQnfCJZT7V4XzpggQ1Yhk7/k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GybfHFjPklh3hJbboLjxCt/bQVgr+wZecNKRxGm9jpEmi8SRlab25URlQRAkxdPzsvYtIzuaBnb6ASuLt56rZY4jcFZtrVrUVdfPJrANaH/UVaVOq/F8Lph16ednlHscV1Ik4QyCJAaiDf6PdRXQ1VT5QzKH3Ij9YwogHQt+1wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K0GCnw3i; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=CR21AwLTtpbqH1JeNWjCDzMx9jFWNbS5ZL/a7oeP9LDRMW5EGwt5q1Vv+XnI5d/mBYtn3kCsaPF7HzioTeVQwZKtXOUmy5wh8AQu5yjAoEG4x3ZXvLjN9+7n56WoCffQlfm16puc5FlfIpbgsFO/okRShazGxuD75qJmfrDLNkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cQmZkswO; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K0GCnw3i"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cQmZkswO"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 6AD0C1A07A8;
-	Wed, 16 Sep 2026 13:47:09 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id BCB331A08D9;
+	Wed, 16 Sep 2026 13:47:17 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3525E60337;
-	Wed, 16 Sep 2026 13:47:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 380E211C7B041;
-	Wed, 16 Sep 2026 15:46:59 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8DF5560337;
+	Wed, 16 Sep 2026 13:47:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3556A11C7B010;
+	Wed, 16 Sep 2026 15:47:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789566426; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1789566433; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=jSm15aEu8LMTkgjEDcY83AKYO/FAhIifYcjSr+uceZs=;
-	b=K0GCnw3iJUIIJEBk5d04XwNWx4yCPreArhb6pcIbW1Eow4P6spCGVFWsiku75QKgQrx9Oh
-	NWU+WPKhHDIWxMmdy0H7m8SKMS1dFLT/y1+vBcbzk9fusVyuaZ7sc5L7DAiOIg5iAm6Xi2
-	qz3qwJ4hHu9jGcatl1pSETQ7ZQVTuXyvSlB9h8QbhKLjaDNRQ98cXptgCTkZdxbFsJyuVB
-	H4wFymq2C4ZEXJN6i36nC7YmXkm7Y9UuUq6yWzaJmHZt6gGXxg0zNBaNuj9wqS/gvs7n46
-	PPHklhmhdxpd4FfudS0Hrj4KEenttlxJuUAnPdCuOKVyTvalRFk5aU9pF0eWew==
+	bh=lt+P2hfM1B9VSLV7z/VcpgI97WE51IIjwkLTEjmGwTo=;
+	b=cQmZkswOmGefbgPMgegXXD5h/lvNJGPTl+2w+JldvN3e5pzOO5HYwNmkkn8JhCQRiTofg7
+	1BeQSzlVI3tumoKcNAhFHC+tPV/CkGgz9Lulxxr+06MO+dBAJNtJlu2NpVmGNVWZA3twZX
+	R5YMftaXEGWbz6sORBBVOjUyZ3IOyjBlKcnF9xCh0uKS8t2LWhBzpYp4hR7gq1w9XdacJL
+	g5430sZU4vsT9yAnP5CUnqUwVHunvzeIT0mN8G0qqRgPPyKX1Jn+NmNLwD151zxrypaHJC
+	+HR8+xTu/MxlAPi5pT/rpgDIC3dSHfnKNQaullkA1qCEUu3sEjBbp6lREaiyGQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 16 Sep 2026 15:45:34 +0200
-Subject: [PATCH v3 10/19] drm/bridge: waveshare-dsi: don't create a
- panel_bridge
+Date: Wed, 16 Sep 2026 15:45:35 +0200
+Subject: [PATCH v3 11/19] drm/mcde: dsi: remove unused includes
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-drm-bridge-every-panel-v3-10-83afb4f1a707@bootlin.com>
+Message-Id: <20260916-drm-bridge-every-panel-v3-11-83afb4f1a707@bootlin.com>
 References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -82,72 +81,44 @@ Cc: Albert Esteve <aesteve@redhat.com>,
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-Now a panel_bridge is automatically created for every drm_panel and the
-panel-bridge API is just a deprecated wrapper to access it.
+The helpers are included but unused.
 
-Update and simplify the code by just getting a reference to the
-already-existing bridge using of_drm_get_bridge_by_endpoint().
-
-As of_drm_get_bridge_by_endpoint() returns a refcounted bridge, take care
-of putting the bridge reference by using bridge->next_bridge.
+However symbols from drm_atomic_helper.h are used, and were previously
+available as a side effect of drm_atomic_helper.h including
+drm_atomic_state_helper.h. Add drm_atomic_state_helper.h.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/bridge/waveshare-dsi.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/waveshare-dsi.c b/drivers/gpu/drm/bridge/waveshare-dsi.c
-index 420f3b870a74..2c40bfef2b45 100644
---- a/drivers/gpu/drm/bridge/waveshare-dsi.c
-+++ b/drivers/gpu/drm/bridge/waveshare-dsi.c
-@@ -16,11 +16,9 @@
+---
+
+New patch in v2
+---
+ drivers/gpu/drm/mcde/mcde_dsi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
+index ce078aa3910f..77cf253a2152 100644
+--- a/drivers/gpu/drm/mcde/mcde_dsi.c
++++ b/drivers/gpu/drm/mcde/mcde_dsi.c
+@@ -11,17 +11,15 @@
+ #include <linux/regulator/consumer.h>
+ #include <video/mipi_display.h>
+ 
+-#include <drm/drm_atomic_helper.h>
++#include <drm/drm_atomic_state_helper.h>
  #include <drm/drm_bridge.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_encoder.h>
  #include <drm/drm_mipi_dsi.h>
+-#include <drm/drm_modeset_helper_vtables.h>
  #include <drm/drm_of.h>
--#include <drm/drm_panel.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
+-#include <drm/drm_probe_helper.h>
  
- struct ws_bridge {
- 	struct drm_bridge bridge;
--	struct drm_bridge *next_bridge;
- 	struct backlight_device *backlight;
- 	struct device *dev;
- 	struct regmap *reg_map;
-@@ -89,7 +87,7 @@ static int ws_bridge_bridge_attach(struct drm_bridge *bridge,
- {
- 	struct ws_bridge *ws = bridge_to_ws_bridge(bridge);
- 
--	return drm_bridge_attach(encoder, ws->next_bridge,
-+	return drm_bridge_attach(encoder, ws->bridge.next_bridge,
- 				 &ws->bridge, flags);
- }
- 
-@@ -150,7 +148,6 @@ static struct backlight_device *ws_bridge_create_backlight(struct ws_bridge *ws)
- static int ws_bridge_probe(struct i2c_client *i2c)
- {
- 	struct device *dev = &i2c->dev;
--	struct drm_panel *panel;
- 	struct ws_bridge *ws;
- 	int ret;
- 
-@@ -164,14 +161,10 @@ static int ws_bridge_probe(struct i2c_client *i2c)
- 	if (IS_ERR(ws->reg_map))
- 		return dev_err_probe(dev, PTR_ERR(ws->reg_map), "Failed to allocate regmap\n");
- 
--	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, -1, &panel, NULL);
--	if (ret)
--		return dev_err_probe(dev, ret, "Failed to find remote panel\n");
--
--	ws->next_bridge = devm_drm_panel_bridge_add(dev, panel);
--	drm_panel_put(panel);
--	if (IS_ERR(ws->next_bridge))
--		return PTR_ERR(ws->next_bridge);
-+	ws->bridge.next_bridge = of_drm_get_bridge_by_endpoint(dev->of_node, 1, -1);
-+	if (IS_ERR(ws->bridge.next_bridge))
-+		return dev_err_probe(dev, PTR_ERR(ws->bridge.next_bridge),
-+				     "Failed to find remote bridge\n");
- 
- 	ws->backlight = ws_bridge_create_backlight(ws);
- 	if (IS_ERR(ws->backlight)) {
+ #include "mcde_drm.h"
+ #include "mcde_dsi_regs.h"
 
 -- 
 2.55.0
