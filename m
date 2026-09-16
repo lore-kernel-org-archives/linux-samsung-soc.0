@@ -1,334 +1,174 @@
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAC84E2F05
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 20:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789592176; cv=none; b=q8cX2xxD87PqfFBhRosNUHbRPgeyP2SU9KP86rGD1fL4qsc4x8Bi2qLA7NSRxuV5eW77glp2zVAKQWMN/aXZkGFOOrJjX+rU/NPOmTHv3Sk5hwKPYJXF3ZeEOv9JCXBkLJP6y6/1l6xzrwIXrImb5a9wrcZ4FGMuTcbfDOb6MC8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789592176; c=relaxed/simple;
-	bh=nFyiR39UMicVX9aYUjGi+ni+w6eRx60kOl5YoyeLqMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rkoy+aV5uE1eTgo1dMncsuSz22758SxaNoJ6XcyorinccYu+KST6Sit1r2k/PE37cDqjb0XYAfZsogRviFPdMGMOnTQyct7jK+T7JtzucFhZKLmdXbInlTRSwQlscoWr5d9FMql7M6bxma3kVf9QPamVWdcOWSAKcMiwYJzg7Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org; dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b=G1mRJR4V; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lineageos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.lineageos.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F7455171
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 21:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.226.204
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789595068; cv=pass; b=rVD9ysl1j/E5MBy1ZMqEGmG69nghRBZiDecik5eDH/FYctIGAnB2OoWUSP2YLngseXR8K7pLmqq54U8C02U0fYGEx8xsCCYrfJxgKqlmv27wA6xWi6cNAdzd4ZoqckL/aurjIyl9DSFbijFk5IlxVlWpTfpvGeOhnIOSSEyH4T8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789595068; c=relaxed/simple;
+	bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ql6PTSIJ4Vw6Wax96tRXdue2xWq6jGeyBEhPan2k4ZEumPnndm9O27+C/M6MsCndJxc4aVFo1AT+veohXM3xV3VdMUdJEEplXRw3XrtcgRMgOFoiXIv0sLPzE13LFuPwUx/LVLJ2oqvD5+VT/Ql+fTcfpd+fHkR552pJSVoZu3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhRvxyDc; arc=pass smtp.client-ip=74.125.226.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lineageos.org header.i=@lineageos.org header.b="G1mRJR4V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lineageos.org;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-2eefaa527c;
- t=1789592135; bh=0fKQ3LgrFx8+J421uQJCrt69RgRQl0uYZ6P+iMcW8dk=;
- b=G1mRJR4VTSqxcFM/CvExuKdQddBKvz+jQnHRyn52t3kg3leKs6V1cT4O8Tw+wgxd0n4vU0NZm
- RxzKzxd9NNlNs/87fn/2/wYzI9u+YyR7/SmQKgb6pwuEhd9AjwwTAgphRhTaXjJGNLSwSahdDjJ
- CYSj0I++1hUx18FtDUpOFcQ=
-X-Forward-Email-ID: 6aab024707c281602cddbf67
-X-Forward-Email-Sender: rfc822; tturner@lineageos.org,
- smtp.forwardemail.net, 121.127.44.73
-X-Forward-Email-Version: 2.14.2
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Thomas Turner <tturner@lineageos.org>
-To: krzk@kernel.org,
-	peter.griffin@linaro.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	semen.protsenko@linaro.org,
-	alexey.klimov@linaro.org
-Cc: alim.akhtar@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] arm64: dts: exynos: Add initial support for Samsung Galaxy A21s (SM-A217F)
-Date: Wed, 16 Sep 2026 21:55:22 +0100
-Message-ID: <20260916205522.159393-3-tturner@lineageos.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260916205522.159393-1-tturner@lineageos.org>
-References: <20260916205522.159393-1-tturner@lineageos.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhRvxyDc"
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c7bc5bfso48137241.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 14:44:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789595057; cv=none;
+        d=google.com; s=arc-20260327;
+        b=htCKaj+JpiGPFy5Gvv8Z65OHjL4EeQCvUs6U8lTh0RpQuBdu5UFW3g/d6Lqnn+PSE4
+         ZyDUrdVf+iNsOxDSNM9e84Ewe9MHZVi0D+znImj7K3a3E9XNeO5pL/Ykz6/1MCbMHJrz
+         aSCBquJvCQFqnb90RuQMz6i7/eR42h0TzGpZqiERqdhWKDbR3OSzEtlO/H5zjcMyxc/a
+         fRDhk/epEl9sH9Q4jVN8SFTThtXCf4OpfyNVeXaPIEitePwVV/ut1ovaGJ7SklrXby3Q
+         V9R3Te54FlhNs0VZetKKrTgNeB5tul7IoGmgrHFNlOq3GBEFMf9bJKaj+zaQ0YjK3ZfV
+         5ewg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
+        fh=6QdMJlJ51YOH0ZntIGV5iu8XsufnT0D/6bPywpGr67g=;
+        b=c/Ww0hSJjWYvnFljJPvUOeHHhl2g9qIrQOdOroBU8/PimZyAZ/imWJ6tsyH4D+aX42
+         YGsuNYH+930b5WSPegbcaGErfIrBV1JBvasCilMJ90WwomdZTfyzoTqD8QeD5gq5e3OU
+         +5RnuRb82zAgmh7VxuV4D740C5iQqL5eN97q+VVyC35Z3JRbAfDd3wZ6Ne/8mDuxfuyp
+         jFq4NIrkPdx0XvoaCmk5wfECNAXACS4gaiUK3L3AiTomnqYRrZuakfgPAnP7erT5v6iF
+         iZsi6Ybm6V+TLFBgZCm6ASkML9lLytteTMukS+vUWhOWJqUah/OVtTBUKrUdAWjzsL+S
+         Cbgg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1789595057; x=1790199857; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
+        b=PhRvxyDcEKpo82rz7bjO1wDQ8uBdzgmqFw/6qMLJ6ysl579NXOSm57qPRzt39pD3oV
+         RQb6cdMJNN/Ek0B5W2zGNfO0RqIoSKMqtIpUc7eAhIfyNHQGufGBDtCJwInLu+pX9hxn
+         J9cpThCkU1tmfCxsOJRLdZFf8wYm3kRlo/yoPwYzsu2PbhjQqcSKR20KyEdhLP8618yJ
+         5CmZfZeIm2+Na8mFl/ktZ3dXA1iPW6HhEYtD+ujAGpNgWXor7U3Ki4cMIqiM6LMBSHL9
+         ktggN+6MCwK15bvCxc3iBeUikkFZwpbRMOG0Pyt60U5y0YJFcb8fm4EhJ+LQPrX9SbDv
+         Tdmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789595057; x=1790199857;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
+        b=GrSxPdoVDitoUcttJkqtn/VGfxCNxkh/KtejYsJByBxiH17mKJEHOLMD6IzYFsmwyj
+         FsSbC+hfzjBydbOY2GBbxp1i18lnc373uZear6Pa6bxIfTdluK1bDdrLxhpMxmK9VQQb
+         H/tMqJpgha6c6u76aFCidsy5Z7WdGBck6xgZB4jUsQlYtjC/LHvPWa5JSf4oMM7hdBIV
+         HV1OLefmBYq/LCksQQ3g2SnRf+u6Wn+gq07699uXtkGGmQnQbZ94KjyTbhduaXJWI34p
+         RaIUw8azcrS11SJfc9i73v4s0vn2ZGmgHTbeXCxQWo8WmR8hDFSY0ac4hxGsFYq+NB1u
+         E3YA==
+X-Forwarded-Encrypted: i=1; AKwUvBwR4TVTZ9XpO458yrPeC1o9uFDyO75Ri2XnHSaVQQvGjX0LSfYXm16F17yycWL8E1jnFMfmmNUbc1styxjwqsW1Nw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nKxIwL6Dewed+5cni2ITNYbjzOtE7Jg7lmAayWmTAANp2zWnnu
+	RlUt15M8I+Km7NEbo9+xdvULkGM48DPgE3gLkVl+c90j3Pxv+8Y+Ei0cbKCvzcKlFmqkJz6snIw
+	BVFIf+kdtzAu/rRWwobIsk8+l+HMe6rK14qKo+N4=
+X-Gm-Gg: AYBFou0cKEdQiegI71uQi+i8EMb19mMwlw1dJKTAVCjFRURsaLufX9ZQDY9f6lPdlps
+	O6b27IBX0ra7Bfm+s39UdeZsLiF9oUHvtu51kYgfVlJn5DegyrsmMJ0lHCziWaLAT+H2ElMLfyb
+	DrLoKfm62AXbTWeNyWnOCK9u4dW1QHv8MWQxftjLzzvqLUlTqwZvUmfiEgOrQUuK9/1vS6LpNh7
+	2juYouKBXpb9whD+LdXbPBzVBDq5LyM/CkVa0d7MT+8sWO//i2ifZVhRhzE9OGiHuPfhtLUJ/DB
+	n+nKsfCztcrYP4gLcvB28TFwcoaX6O6TCmCu/zcNFmDW6jlk1aGu+SmpVyRuFnQ5yJYq2ShkI0J
+	VVznLi9RPCBIwy3SxvL3Y
+X-Received: by 2002:a05:6102:a85:b0:7a2:2a6b:e7b4 with SMTP id
+ ada2fe7eead31-7a22a6be8efmr62586137.2.1789595055938; Wed, 16 Sep 2026
+ 14:44:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260915081910.4142719-1-morbo@google.com> <20260915081910.4142719-26-morbo@google.com>
+ <202609151258.5FC01072@keescook> <20260916010945.GEaqnsWSZ-DTMyTO25@fat_crate.local>
+In-Reply-To: <20260916010945.GEaqnsWSZ-DTMyTO25@fat_crate.local>
+From: Bill Wendling <morbo@google.com>
+Date: Wed, 16 Sep 2026 14:43:59 -0700
+X-Gm-Features: AcwNN1XbboPOY3deKY79Gty15vkSErYIT9HTgeQdVXaDzFhBvm8_kiOA449bIqU
+Message-ID: <CAGG=3QVZRCJ94+DOfSsSDhsrXVYf-ec01NZBy299nYiCAYfXKg@mail.gmail.com>
+Subject: Re: [PATCH 25/28] EDAC/thunderx: Replace strlcat() with seq_buf
+To: Borislav Petkov <bp@alien8.de>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	codemender-patching+linux@google.com, Russell King <linux@armlinux.org.uk>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ian Abbott <abbotti@mev.co.uk>, 
+	H Hartley Sweeten <hsweeten@visionengravers.com>, Tony Luck <tony.luck@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Matthew Brost <matthew.brost@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Arend van Spriel <arend.vanspriel@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
+	Anil Gurumurthy <anil.gurumurthy@qlogic.com>, 
+	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "Martin K. Petersen" <mkp@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Simon Horman <horms@kernel.org>, Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Tom Talpey <tom@talpey.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Kanglong Wang <wangkanglong@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Qiang Ma <maqianga@uniontech.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Pengpeng Hou <pengpeng@iscas.ac.cn>, Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	Thorsten Blum <blum@kernel.org>, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lyude Paul <lyude@redhat.com>, 
+	Ashutosh Desai <ashutoshdesai993@gmail.com>, Imre Deak <imre.deak@intel.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Johan Hovold <johan@kernel.org>, 
+	Johannes Berg <johannes.berg@intel.com>, 
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Cryolitia PukNgae <cryolitia@uniontech.com>, Jiaming Zhang <r772577952@gmail.com>, 
+	Will Porter <mrwillporter@gmail.com>, Cen Zhang <zzzccc427@gmail.com>, 
+	=?UTF-8?Q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>, 
+	Rong Zhang <i@rong.moe>, Arun Raghavan <arunr@valvesoftware.com>, 
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linux-edac@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-input@vger.kernel.org, 
+	linux-media@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, devel@lists.orangefs.org, 
+	linux-hardening@vger.kernel.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add initial support for the Samsung Galaxy A21s (a21s) phone. It was
-launched in 2020, and it's based on the Exynos 850 SoC. It has multiple
-RAM configurations: 3GB, 4GB and 6GB.
+On Tue, Sep 15, 2026 at 6:11=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
+e:
+>
+> On Tue, Sep 15, 2026 at 01:00:00PM -0700, Kees Cook wrote:
+> > Seems like seq_buf would be better her? But yes, at the very least, thi=
+s
+> > needs to be scnprintf, not snprintf (or add the checks as you have
+> > here).
+> >
+> > The rest of the seq_buf conversions look right.
+>
+> This driver has been an orphan for a while now (we just made it official)=
+ so
+> I'd prefer it if we don't do anything here.
+>
+I'll remove those changes from future emails.
 
-Since our bootloader does not set up memory nodes beforehand, default to
-the 3GB variant. Custom bootloaders can be used to initialise other
-nodes per RAM configuration.
+> And yes, that mega CC list is just gross.
+>
+Apologies. :-(
 
-The Exynos DPU clocks required by simple-framebuffer are not kept
-enabled during boot. Add the DECON, DMA, DPP, PPMU and SSMU DPU clocks
-to the simple-framebuffer node so simpledrm maintains references to
-them. Without these clocks, the framebuffer fails to remain operational
-further into boot.
-
-This device tree adds support for the following:
-
-- SimpleFB
-- Buttons
-- 3GB RAM
-- Ramoops
-- GPU
-- MMC
-- USB
-- Watchdog
-
-Signed-off-by: Thomas Turner <tturner@lineageos.org>
----
-Changes in v3:
- - Add gpu node with dummy regulator
- - Re-order feature list in patch msg and mention GPU
- - Rebase patch on top of for-next
-
-Changes in v2:
- - Re-order properties/nodes to pass dt-check-style --mode strict
-
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../arm64/boot/dts/exynos/exynos850-a217f.dts | 200 ++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos850.dtsi     |   2 +-
- 3 files changed, 202 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-a217f.dts
-
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 8c48ce2e02e5..7534b773d28f 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos7870-j7xelte.dtb		\
- 	exynos7870-on7xelte.dtb		\
- 	exynos7885-jackpotlte.dtb	\
-+	exynos850-a217f.dtb		\
- 	exynos850-e850-96.dtb		\
- 	exynos8855-smdk.dtb		\
- 	exynos8895-dreamlte.dtb		\
-diff --git a/arch/arm64/boot/dts/exynos/exynos850-a217f.dts b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
-new file mode 100644
-index 000000000000..b5b66c015e1e
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos850-a217f.dts
-@@ -0,0 +1,200 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Samsung Galaxy A21s (a21s/SM-A217F) device tree source
-+ *
-+ * Copyright (c) 2026, Thomas Turner <tturner@lineageos.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos850.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "Samsung Galaxy A21s";
-+	compatible = "samsung,a217f", "samsung,exynos850";
-+
-+	chosen {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+
-+		framebuffer0: framebuffer@fa000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xfa000000 (720 * 1600 * 4)>;
-+			width = <720>;
-+			height = <1600>;
-+			stride = <(720 * 4)>;
-+			format = "a8r8g8b8";
-+			clocks = <&cmu_dpu CLK_GOUT_DPU_DECON0_ACLK>,
-+				 <&cmu_dpu CLK_GOUT_DPU_DMA_ACLK>,
-+				 <&cmu_dpu CLK_GOUT_DPU_DPP_ACLK>,
-+				 <&cmu_dpu CLK_GOUT_DPU_PPMU_ACLK>,
-+				 <&cmu_dpu CLK_GOUT_DPU_PPMU_PCLK>,
-+				 <&cmu_dpu CLK_GOUT_DPU_SMMU_CLK>;
-+		};
-+	};
-+
-+	/*
-+	 * RTC clock (XrtcXTI); external, must be 32.768 kHz.
-+	 *
-+	 * TODO: Remove this once RTC clock is implemented properly as part of
-+	 *       PMIC driver.
-+	 */
-+	rtcclk: clock-rtcclk {
-+		compatible = "fixed-clock";
-+		clock-output-names = "rtcclk";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-0 = <&key_voldown &key_volup>;
-+		pinctrl-names = "default";
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3c900000>,
-+		      <0x0 0xc0000000 0x20000000>,
-+		      <0x0 0xe0d00000 0x1f300000>,
-+		      <0x8 0x80000000 0x20000000>,
-+		      <0x8 0xa0000000 0x20000000>;
-+	};
-+
-+	/* TODO: Remove this once PMIC is implemented  */
-+	reg_dummy: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dummy_reg";
-+	};
-+
-+	reserved-memory {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+
-+		ramoops@f0000000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0xf0000000 0x200000>;
-+			record-size = <0x20000>;
-+			console-size = <0x20000>;
-+			ftrace-size = <0x100000>;
-+			pmsg-size = <0x20000>;
-+		};
-+
-+		cont_splash_mem: framebuffer@fa000000 {
-+			reg = <0x0 0xfa000000 (720 * 1600 * 4)>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&cmu_hsi {
-+	clocks = <&oscclk>, <&rtcclk>,
-+		 <&cmu_top CLK_DOUT_HSI_BUS>,
-+		 <&cmu_top CLK_DOUT_HSI_MMC_CARD>,
-+		 <&cmu_top CLK_DOUT_HSI_USB20DRD>;
-+	clock-names = "oscclk", "rtcclk", "dout_hsi_bus",
-+		      "dout_hsi_mmc_card", "dout_hsi_usb20drd";
-+};
-+
-+&gpu {
-+	mali-supply = <&reg_dummy>;
-+
-+	status = "okay";
-+};
-+
-+&mmc_0 {
-+	compatible = "samsung,exynos7-dw-mshc";
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	mmc-hs400-enhanced-strobe;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	bus-width = <8>;
-+
-+	pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
-+		     &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
-+	pinctrl-names = "default";
-+
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+
-+	status = "okay";
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa1-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
-+
-+&rtc {
-+	clocks = <&cmu_apm CLK_GOUT_RTC_PCLK>, <&rtcclk>;
-+	clock-names = "rtc", "rtc_src";
-+
-+	status = "disabled";
-+};
-+
-+&timer {
-+	/*
-+	 * Non-updatable, broken stock Samsung bootloader does not
-+	 * configure CNTFRQ_EL0
-+	 */
-+	clock-frequency = <26000000>;
-+};
-+
-+&usbdrd {
-+	vdd10-supply = <&reg_dummy>;
-+	vdd33-supply = <&reg_dummy>;
-+
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3 {
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+};
-+
-+&usbdrd_phy {
-+	status = "okay";
-+};
-+
-+&watchdog_cl0 {
-+	status = "okay";
-+};
-+
-+&watchdog_cl1 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 7fae8888952a..c8e4c234223c 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -160,7 +160,7 @@ psci {
- 		method = "smc";
- 	};
- 
--	timer {
-+	timer: timer {
- 		compatible = "arm,armv8-timer";
- 		/* Hypervisor Virtual Timer interrupt is not wired to GIC */
- 		interrupts =
--- 
-2.47.3
-
+-bw
