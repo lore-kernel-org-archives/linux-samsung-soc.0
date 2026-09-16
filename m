@@ -1,183 +1,179 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908542DCF45
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 20:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D5F4137AD;
+	Wed, 16 Sep 2026 20:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789591629; cv=none; b=Brpba1YKJGKdQCiTMHlxeTPVojYbWEkNQGEE37+pyY+ttV6Ie4ZZMjMPzEoMZ1ecklNGY3OStPmiSi+/cljBzyJOKCdtAk002PKTvH5nUxqSQgvZJnKs/33m1WKMccxT6BDiiGJI18yVYkRFuGzKumXScA3LUCb9PSemJgLQ52Y=
+	t=1789591979; cv=none; b=EB+db5su6yoJOQUiUwbW8PFjmA8w6uJ+Pvty7LeWSTpbFqJG8kog5W1+OYDqTdGbv6Q9SHK2Cd8x2kKcCn50V/AsahB0f0M48hkAM4XhEihdqKU8EeS3ZJYEOxblTJ0xFkM3QbgldX7NwDw3oH7Ie0RvgBlhnVFWQHbTlZB2VXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789591629; c=relaxed/simple;
-	bh=6GxNqUO2FgxW58rRGHvFpoo4MT/9X4scEBWR2BNwJxU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i4XwkcojaAJbTCLF2Sf9H3IHGxsRj2seT6oDKjQAhNw5QR5L5gidfnHVw/zgLGaxJkTodNZ7SWeGc7VFJHnabGeUIhJw1LTj2vR/hEzqhKnBSKtOvLu8OaR1GqKYwt4YdR+GMPdQ+rVfM8knqPk49/WLAFgIWsuHafG5T9gSKgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MUdlrjxT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cv9QSRE8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1789591979; c=relaxed/simple;
+	bh=GDTfEHCEYdoIiSxSM0zHJqljeJs2e/1qoXwchI9YfPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PQ9V6NMFXfEO/evrYwJLSxb3Jwky3phE26AWOGO4Xhwb2ymrbbYtHHN/pzmlCIIBi8FU5+oV9F9RwxKTflNWw1natwPlzOP8WrWFOKsLx6STIOPySBQVtmQCI9gY3G3CumDAE0SsEsfsPxKG5MOjG3KV27+oqLbLDAosltAaZHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouMR13hu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MUdlrjxT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cv9QSRE8"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68GFePhZ1855013
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 20:46:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lQBLZZIoByJkwhF/TFyPtlGrfpslHyh5fbM5pCr/2xk=; b=MUdlrjxT9MOtmtcv
-	od+86KLoClScwNI7pYxvIsPqZEE6lV3ft3+7ZRZiGPiclPQy+9C5WAX9O0acjz3F
-	A1MaU+7+tLz1OTZ129+qfXwFClpKxVu6b9wJzTSBzfrk3cAeDyjUXEUXxHFy6ODx
-	j/D32a7VSfCROqwFuC3uOmjpuKkGNBuGtYzLEnepWyM0AdlKBcKl8G8DSfOfpMj5
-	ArEmSNtzeJBkQEVtsI3X/NvfNtbZXVP5zKC6GaEQD9HCCQ4Xn6amCF78XLB32vpO
-	GKDEuG60TX2+/fSKHYJlTMNGYz2A9xVMyn5k/zsRT3muJRD1LO1OnHleV8vZSfni
-	oaRchA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gqqp3u65j-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 20:46:48 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93a2d361e1aso16091085a.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 13:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789591608; x=1790196408; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=lQBLZZIoByJkwhF/TFyPtlGrfpslHyh5fbM5pCr/2xk=;
-        b=cv9QSRE8+h/m4LOomwFnqu98a0LFEruS951w98v8Ac5edE/azyk6864RM3Yxr/64CO
-         NzfVwnvKLbkibWmdia64ozmByiISv8BcH4EizpVirVeaWHPVdVBC8wG6LypChcVmTepg
-         MZrf1sZX9eH1QRt/4ebxDEEdH+FPwFDBBOnB8SiV3a4pcGS5EQ2fkCvEDlk/mHnewRGy
-         epmvxgqB59D4NePIpGF5UTfpfbsKbwiv5Wg/8fVvKkHt5nMgoYTS3ujSWKVfWKvFoikh
-         ll0S+AzMmNd5TLEbZ6G3QZDYFtcUD192vbITkJCvFEUpXgku1UhQlaEuTHs+2y4JHE1v
-         G76A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789591608; x=1790196408;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lQBLZZIoByJkwhF/TFyPtlGrfpslHyh5fbM5pCr/2xk=;
-        b=AXCT/pvwkSTyTEO0ixRtqcmYvg3Mje71Z/xbxm/tJFg6cpwJLNPAeB4VpOMFy49dnM
-         LvXN8mG11MOQlyd5M1C92TlOF2qsXYZ9ne6m8vbzb/jjCWZEdAkKaC8igVfY71y8LyLP
-         HhQDeeEyDGHfgNJx7dGrLbdq7ego/PEQ6ujdcGuuq52lWf6uSGKuRmHLv+B8qnyr02z6
-         Edy1eS7tME3jCwlh0U9h+2VlI95YKrcst3SlS+Hby/vGQo+2/48ZDtzjDcL66EtmIh5G
-         2vjTHtp7eXrK0eYrptCMVzwqacFnPVB9EGHCxi5M9vVm+A//+fvKv9y2ydndXgdVStIh
-         ktfw==
-X-Forwarded-Encrypted: i=1; AKwUvBw4JTd8RnEtUptCVTGmX3gwu7lIIf+XLU4ui8CuLiq0+3f7I8Basv4hPuzujdHDCh6kOhm7GXX6j+5pVAglKv83rQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++npeXrpFTqTt3UvlDwYaNaapkL+2F/M2eHrz+7CK6evNE8ERrFa
-	biK5BztljK+SdvuiH8MM+9AREQAgHJekdOl0VtyCYIzK+mM1bKGcvTveosbnl7cRcw3QExQ+BxT
-	PjNVKfd+thPXMQzADl4l8tiWq1mqc5+BWjfK6ReWudQlBOGhh3fEACsOLAkFqqKkOgv5v6rEsaw
-	==
-X-Gm-Gg: AYBFou1QLl9AU9yxJq8hSwznjtoOwx0MnXkgXx7TgDv4Pdk529mjeO1ZvAMPU3mpnir
-	bMcVjPBKt6+vTTwOTE5oBKHQtpyEawcgdAI4Ph0og9eYaLuyaBx8aPmqAhRsio3ImyLi22RZ6No
-	9pr/1Hx2NB7Ftei2IVN+Qx6aYWjqUDAGrSO4zUy8xfuf3GjWC+2yENop4tAHTyVmkpMiisizksC
-	iBhd2T+qd0eFdnHtxeW6O4MhrxMehO204HA6RDQeNf+ciXjOFmOAsg+tzxTr+6aUytX6sQZuiuA
-	8Vw2iN9MzLPBOrITpk3Vd0DDuEanSlERifLCYh+ccuwCA2OW5TH8JrO62mtnBHxFnRKMOaTjfxy
-	GMSfeSFtwFZVsrAd1eYkTbKs=
-X-Received: by 2002:a05:620a:3910:b0:939:3a81:326 with SMTP id af79cd13be357-93bb78ec108mr717315685a.37.1789591607960;
-        Wed, 16 Sep 2026 13:46:47 -0700 (PDT)
-X-Received: by 2002:a05:620a:3910:b0:939:3a81:326 with SMTP id af79cd13be357-93bb78ec108mr717312085a.37.1789591607582;
-        Wed, 16 Sep 2026 13:46:47 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.214])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bf1fa7dsm9857077f8f.8.2026.09.16.13.46.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 13:46:46 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Wed, 16 Sep 2026 22:46:34 +0200
-Subject: [PATCH 3/3] arm64: dts: exynos5433: Suppress a few intentional
- redundant whitespaces
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouMR13hu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43EE21F000FF;
+	Wed, 16 Sep 2026 20:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789591962;
+	bh=Ey3W3pKciCj569G+4LgYiLWMcVQFEIDuHCi49VskP+U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ouMR13huu5OQMXLIi9ax5ZG63fAyvLf1MQXdqu3/bBaQNT1VysEngDLv5oAqXB6At
+	 T0kSNphFFGskAnHPTw50obhHLKuke4PAPLgm6neF2yLepzVEALpHq4Bzu07SPBVuGj
+	 Jb++QA0MpeievYbtMMlx4PDRXX1S/Z6PB0ZIbDLRrw9ZNX+kDgxy9K/ZM0BdMUvJvV
+	 oFqJ45zrHoCXOq5UD7ZL8m7BN5HcnGA4TnmrOP4WypR/zXSmen8okZCGYGo5runEix
+	 oo29j2+Iey/ty97LpRVPy3td13KxN6bXktmKFme/NhcLceD44vWRfUXvDnwsvGFPn2
+	 Nxm3He0YcAfNg==
+Message-ID: <c2dca0c1-6dd3-4601-be2f-e5409518bedd@kernel.org>
+Date: Wed, 16 Sep 2026 22:52:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-b4-dts-style-checker-suppress-v1-3-81b86685d068@oss.qualcomm.com>
-References: <20260916-b4-dts-style-checker-suppress-v1-0-81b86685d068@oss.qualcomm.com>
-In-Reply-To: <20260916-b4-dts-style-checker-suppress-v1-0-81b86685d068@oss.qualcomm.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: Suppress a few intentional
+ redundant whitespaces
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1100;
- i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=6GxNqUO2FgxW58rRGHvFpoo4MT/9X4scEBWR2BNwJxU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqqwAt5aTPfhhsYJ/7S7ksGmX63laaIX5Kywcv1
- gwg9bETL/yJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaqsALQAKCRDBN2bmhouD
- 12EED/9Sq772ZYxvx6Xr/M9kb/T8RvmMQ2f2TQ21UPoaItGwCDBvRQijdnDonosMMahZUtbQRzP
- 0q/0celNEjLYZyI7gxqcgFcUAdIkGBgHwf6DDidv1oVAG6goHc9VP0qopBiZPWs5lnmAX0LsHjm
- Xz85uI9y0W8jqnUK3gqq1I4b41GkR1i6q83tkDLOVXKy13JTJ9CaiVD6tQG46zLiDhAgoc+xPRQ
- ThEKQPXvaNd+bRhGlscwyDaW7lm9j13yDW8k+AnkQizQq5QI0pqYLTxwQWrN4E1CINtKUlV9lWU
- k4Dhk+P9t2AHUE6nWmUlMAiA1wsx1tnjbXFuEnCLGJiuy0Z9Fq/BOdg1V9UAaCI5gHfT5BidyJy
- ULnatIBD9OcLpuVAyxDFQXUhqL1CM/KOsSMJMP3VW1jHTL49YEp/A/KixLPIhxZfCYb/1y3hfMy
- bM2k2PjgxUBf8PdPO+LIVRtYwEskZPNCrY+m23IYWLomrZ+agYit7HhQsLvmltv1X4V6fRaIthQ
- JS/ZO5PQlco2N5GKmJPBnprfGaROuPIt5sxyAtapVinaRl8+LLNLCC6eec+avJ9puU83BPD4jm5
- DwdvduSPHzwZnslneOIfI8DfZYf0BC/Mk4LqvzPSe942bESua9YFQ+LzHSA9hynz8Ku5R8fYCh6
- msjUQd6S8pwTr/Q==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDI4OCBTYWx0ZWRfX5lnYkN7lomIb
- A0R/OU6valLwQmcLFUp4albp0jBkhoneiZgnmaHzNXGEWZJk300mWftBwdXoh18wDqMC02g0zAL
- /XRJ6gvPD/ZTvEGloGYk2DWWNUux96u31uqwZNOizp+F+/GFXeAz+55R+smZSB8PRqENEJyEAu2
- lxc46DX8WqVw5CjNHyeMF/HMSb7Cr3vH1TzlwF7OsMiCPFuGPrRgWC7zTc1MAc7dCj+1WjcLzP7
- X5Naa9GBf7StE0L9udzBZoFmsqBO0G0EF52Yu3qau9uJENdlNLJNt9I7evM94Zp8FrbYFfXdZVM
- 3ITFfIjMZkKBWo9Cz7uPLJPleAk77ncC4TBCR0BG+mbCjC9Su2Ws43M82Ir68lp0VCZJ7DIhx26
- W285SKsdfsrTrgm8KNvnx4oFVHJbz+7NJcwtw4d58B8J4FAmPzDK6dzvTM7xaJyKO2vCfethmDq
- 1fwWBs/xzg9GgPZ6JJA==
-X-Proofpoint-GUID: QbZWpw2Z-noHzs-NsZeeKAMATBakUqw5
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDI4OCBTYWx0ZWRfX5rakTRss7UnN
- KoYKJzMUQtiorGjpHwep5RA1yWoaHT/2zx+P6NOPe5KjSystgFuVN8/4UJ+EYFtr4QBEJ6g0aZD
- jq6B1nR1ZiiTFGd+0uJiuDOZ0DAv0fM=
-X-Proofpoint-ORIG-GUID: QbZWpw2Z-noHzs-NsZeeKAMATBakUqw5
-X-Authority-Analysis: v=2.4 cv=F/DC5ahN c=1 sm=1 tr=0 ts=6aab0038 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=EUspDBNiAAAA:8 a=M_DGnhg9fGpO6n-mJRQA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-16_03,2026-09-16_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015
- spamscore=0 phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609160288
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20260916-b4-dts-style-checker-suppress-v1-0-81b86685d068@oss.qualcomm.com>
+ <20260916-b4-dts-style-checker-suppress-v1-2-81b86685d068@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260916-b4-dts-style-checker-suppress-v1-2-81b86685d068@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Ignore ordering by address in entire Exynos5433 DTSI warnings from
-dt-check-style, because first (boot) CPU has to be cpu@100 and most of
-nodes in SoC are not going to be re-shuffled to avoid mess on backports.
+On 16/09/2026 22:46, Krzysztof Kozlowski wrote:
+> Ignore redundant whitespaces in a few places to suppress warnings from
+> `dt-check-style --mode relaxed` like:
+> 
+>   sc7280-herobrine.dtsi:357: [redundant-whitespace] extra whitespace after :
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 6 ++++++
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi           | 4 ++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> index 58ea0532c0fb..21179ca1219b 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> @@ -354,11 +354,13 @@ keyboard_backlight: led-0 {
+>  pp1256_s8b: &vreg_s8b_1p256 {};
+>  
+>  pp1800_l18b_s0: &vreg_l18b_1p8 {};
+> +/* dt-check-style disable=redundant-whitespace */
+>  pp1800_l18b:    &vreg_l18b_1p8 {};
+>  
+>  vreg_l19b_s0: &vreg_l19b_1p8 {};
+>  
+>  pp1800_alc5682: &vreg_l2c_1p8 {};
+> +/* dt-check-style disable=redundant-whitespace */
+>  pp1800_l2c:     &vreg_l2c_1p8 {};
+>  
+>  vreg_l4c: &vreg_l4c_1p8_3p0 {};
+> @@ -368,14 +370,17 @@ keyboard_backlight: led-0 {
+>  pp3000_l7c: &vreg_l7c_3p0 {};
+>  
+>  pp1800_prox: &vreg_l8c_1p8 {};
+> +/* dt-check-style disable=redundant-whitespace */
+>  pp1800_l8c:  &vreg_l8c_1p8 {};
+>  
+>  pp2950_l9c: &vreg_l9c_2p96 {};
+>  
+> +/* dt-check-style disable=redundant-whitespace */
+>  pp1800_lcm:  &vreg_l12c_1p8 {};
+>  pp1800_mipi: &vreg_l12c_1p8 {};
+>  pp1800_l12c: &vreg_l12c_1p8 {};
+>  
+> +/* dt-check-style disable=redundant-whitespace */
+>  pp3300_lcm:  &vreg_l13c_3p0 {};
+>  pp3300_mipi: &vreg_l13c_3p0 {};
+>  pp3300_l13c: &vreg_l13c_3p0 {};
+> @@ -384,6 +389,7 @@ keyboard_backlight: led-0 {
+>  
+>  vreg_edp_bl: &ppvar_sys {};
+>  
+> +/* dt-check-style disable=redundant-whitespace */
+>  ts_avdd:      &pp3300_left_in_mlb {};
+>  vreg_edp_3p3: &pp3300_left_in_mlb {};
+>  
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index ed3d29e13021..afeb6e57e0aa 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -2480,6 +2480,7 @@ swr3: soundwire@6ab0000 {
+>  			qcom,din-ports = <4>;
+>  			qcom,dout-ports = <9>;
+>  
+> +			/* dt-check-style disable=redundant-whitespace-strict */
+>  			qcom,ports-sinterval =		/bits/ 16 <0x07 0x1f 0x3f 0x07 0x1f 0x3f 0x18f 0x18f 0x18f 0x0f 0x0f 0xff 0x31f>;
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+The comment should be placed before node and is not really important
+here, because it is from 'strict' ruleset, unlike the herobrine ones.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index d318c87effaa..ff3f310da5f9 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -11,6 +11,10 @@
-  * Note: This file does not include device nodes for all the controllers in
-  * Exynos5433 SoC. As device tree coverage for Exynos5433 increases,
-  * additional nodes can be added to this file.
-+ *
-+ * First (boot) CPU has to be cpu@100, also most of nodes in SoC are not going
-+ * to be re-shuffled to avoid mess on backports:
-+ * dt-check-style disable=child-address-order
-  */
- 
- #include <dt-bindings/clock/exynos5433.h>
+I should have called this RFC to show intentions and whether this is the
+code we would like to maintain.
 
--- 
-2.53.0
+>  			qcom,ports-offset1 =		/bits/ 8 <0x01 0x03 0x05 0x02 0x04 0x15 0x00 0x00 0x00 0x06 0x0d 0xff 0x00>;
+>  			qcom,ports-offset2 =		/bits/ 8 <0xff 0x07 0x1f 0xff 0x07 0x1f 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
 
+
+Best regards,
+Krzysztof
