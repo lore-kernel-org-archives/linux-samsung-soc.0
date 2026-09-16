@@ -1,42 +1,51 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520294CDA27;
-	Wed, 16 Sep 2026 13:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60BF4DAF96;
+	Wed, 16 Sep 2026 16:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789566522; cv=none; b=OCJHPgKaw5BVBLu+sbH858bbEAkr8XJYADMKakhW+j73fjYg923nSWON209ZQOW5H9ul1DnFjUuLKFYfEbsJzO8LmG+86LrY2NGsANsjJmOJT8Jp5LmIOECt0yVR89vwsn8d6BN5hpDj1iW/SQrXaSURYr84rgVpje6mlDNGcIs=
+	t=1789577822; cv=none; b=XJ/IgPB+m8OMm64PiKPV/Z9lteo6F9Y1QvWSjGSSnSZAwK0otEoeDtCACCNFl6I4QFcXo9dHFWOWHHOo2cefuDLYTMMtXSbB2PWies5Re1o0ww1QKwAG3MoIXh5zJO7Ht+tcoieAsW56MTomjo2hBcxkp7AcLbEKJTygGvcR1S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789566522; c=relaxed/simple;
-	bh=5zCJ/EGPFGROemHcudBi6o6pDtxWs0QMeETsL/EZic8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aYZbPmzGau8CuzGuUPMLjkkliZjPbG6PGK/Aez8wUANbS+wJfZvGoODHhs5ZFWSjwNi9tcvs4OcZ9xr4UThyfDWCHh8BgcfhN9c8+a09YvKVzeVYAdo+toGGEL2rc/vPcH2J9krR1pz+fnqYOooArxoiOMf5hVVROBoYwxEfi9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lqMs18pt; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1789577822; c=relaxed/simple;
+	bh=YlqlMRGnzNGAZC4lPPA3j9bZiU9QS/U3iz/3ecJji9k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c0rKK13NQdpgmTEfko4tOCrRjdU4L7Ez5MdPLn4dWmKXCl5PN0/CS8ofmsKyP/nnma/D/8Dg0sToplZiB2MCi3oDjX9kA+jXTJygfXLX8rQx21zKUuExRKerfMfm4TjjbT4bpfnetS/wfNdQKYQkcZJyP4sMGH+OJgjH+X9trAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnx239Or; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lqMs18pt"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 23C4E1A08D9;
-	Wed, 16 Sep 2026 13:48:28 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E9E0B60337;
-	Wed, 16 Sep 2026 13:48:27 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4B60B11C7B031;
-	Wed, 16 Sep 2026 15:48:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789566501; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=MD4jPpx6j1WYD4nbW7d8UqWXM8K9b2WkM/tu92eB2HU=;
-	b=lqMs18ptXF8NUeKU+aI21TpbFbBcw1SoqWE6OMCl3CiiAOPaZ2r2AkiTc2GN1UMh6yMoMd
-	nHpD4gqZRQF51T9INEtHYF9r5v8vzyhTqH/xqmOYLb7fETXdA5YkCrkhB4qiBZQTWPJkmp
-	l1epuxUJcnn5aNIYwdG9nC6z25Ty4A9I3yCUvD81EDNhoZc+bqI9TPyoT5ormKNMLFTSww
-	H9zwhIf8a62TuSAbuEYuN5gbZcwErbWDIQzjy2RUzybhp0HDVBHRJGYSrfUxwPMZyc0QTz
-	CA6oWZsWkVSOEzQmAPDLNiWz1vhVCLauw7lDX8anlUJiulXnMLM4imFm64hYgA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 16 Sep 2026 15:45:43 +0200
-Subject: [PATCH v3 19/19] drm/bridge: analogix_dp: don't create a
- panel_bridge
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnx239Or"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC3A1F00899;
+	Wed, 16 Sep 2026 16:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789577807;
+	bh=opghePY1FwxuGa4eTmW6PxG2+LzGY5JdFT48BB1gByg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=lnx239Or0VM2t/CQsULRftCM+5HryO5ORO3P5reJLRYCr6p+1izEpOlwsemLRXhfp
+	 yBxzWQYacMB6IqUJC+06IpfoqAtdYmNCVWTnLEgw3ciHKoF8TPjmmD8KTnm1P6SVwE
+	 fBw3LtMENdeQ20cnNYeeStYFc5bntuGKou7l7C87BBGb4PcYFrFL5Mjh4/ivpxP0sH
+	 sE/WjEsTcD16BF5cGndwuBS/jrO/g7tAD88LJUMYMeP9WLg20rGJcPIKO3V4E5I6IS
+	 7q5GkmoHLln7Ab1XNOwWIdEy6TbytbOukvHBc5pMHTURSGG0mgcJa7lTluRAngn4E6
+	 bxnFR+Ypwajcw==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jesper Nilsson <jesper.nilsson@axis.com>, 
+ Lars Persson <lars.persson@axis.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260911-b4-dts-samsung-cleanup-strict-continued-v1-0-9aa55051c42b@oss.qualcomm.com>
+References: <20260911-b4-dts-samsung-cleanup-strict-continued-v1-0-9aa55051c42b@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 00/10] arm64: dts: exynos: Few strict
+ dt-style-check cleanups
+Message-Id: <178957780169.215106.2751361288260052803.b4-ty@b4>
+Date: Wed, 16 Sep 2026 18:56:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,267 +54,36 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-drm-bridge-every-panel-v3-19-83afb4f1a707@bootlin.com>
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
-In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
- Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>, 
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, Sean Paul <sean@poorly.run>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
- Randy Dunlap <rdunlap@infradead.org>
-Cc: Albert Esteve <aesteve@redhat.com>, 
- Anusha Srivatsa <asrivats@redhat.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
 X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
 
-Now a panel_bridge is automatically created for every drm_panel and the
-panel-bridge API is just a deprecated wrapper to access it.
 
-Update and simplify the code by just getting a reference to the
-already-existing bridge using of_drm_get_bridge_by_endpoint().
+On Fri, 11 Sep 2026 12:19:08 +0200, Krzysztof Kozlowski wrote:
+> Not yet complete, more files will follow. I probably won't re-order all
+> Exynos5433 soc nodes by unit address because it is way too disruptive.
+> 
+> Best regards,
+> Krzysztof
 
-As of_drm_get_bridge_by_endpoint() returns a refcounted bridge, take care
-of putting the bridge reference. This is not easily done in the remove path
-due to the different probe paths of the user drivers, so add a devm action
-to ensure the reference is put only when it was taken.
+Applied, thanks!
 
-Assisted-by: opencode:deepseek-v4-flash-0731
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/bridge/analogix/Kconfig            |  1 -
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 40 +++++++++++++---------
- drivers/gpu/drm/exynos/exynos_dp.c                 | 36 ++-----------------
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  9 -----
- include/drm/bridge/analogix_dp.h                   |  1 -
- 5 files changed, 25 insertions(+), 62 deletions(-)
+[01/10] arm64: dts: exynos: axis: Re-order nodes to match coding style
+        https://git.kernel.org/krzk/linux/c/6c864d06e81e325dccbdb06960cc697f763400df
+[02/10] arm64: dts: exynos: axis: Re-order properties to match coding style
+        https://git.kernel.org/krzk/linux/c/f145a6ce3746694a58229e828e3186a89dc43eeb
+[03/10] arm64: dts: exynos: gs101: Re-order properties to match coding style
+        https://git.kernel.org/krzk/linux/c/ae54981c41677b5d3b0479d9d01a663dcb2b0cd2
+[04/10] arm64: dts: exynos: gs101: Re-order nodes to match coding style
+        https://git.kernel.org/krzk/linux/c/a4479cbc18bc61c6f49a4fd79ccf41ee2481b0e6
+[05/10] arm64: dts: exynos2200-g0s: Drop chosen address/size cells
+        https://git.kernel.org/krzk/linux/c/7d7b0a58aa23a90a71beba9841c8149456f28fd3
+[06/10] arm64: dts: exynos2200-g0s: Re-order properties to match coding style
+        https://git.kernel.org/krzk/linux/c/f19b5942fc98932f1016a7e8f0e7d87b83b81ebb
+[07/10] arm64: dts: exynos2200: Drop redundant blank lines
+        https://git.kernel.org/krzk/linux/c/835875acbfd58fe6330c4755f17f5c02d85c43c3
+[10/10] arm64: dts: exynos7870: Re-order properties to match coding style
+        https://git.kernel.org/krzk/linux/c/6b68ca6fe0c855971b6dfefcbb287cc530f4774d
 
-diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
-index da156fd15764..5672d83cb4a1 100644
---- a/drivers/gpu/drm/bridge/analogix/Kconfig
-+++ b/drivers/gpu/drm/bridge/analogix/Kconfig
-@@ -33,7 +33,6 @@ config DRM_ANALOGIX_DP
- 	depends on DRM
- 	depends on OF
- 	select DRM_DISPLAY_DP_AUX_BUS
--	select DRM_PANEL
- 
- config DRM_ANALOGIX_ANX7625
- 	tristate "Analogix Anx7625 MIPI to DP interface support"
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 18e76d1e78e1..6df6963740d2 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -29,7 +29,6 @@
- #include <drm/drm_device.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_of.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- 
-@@ -1567,15 +1566,6 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 	if (ret)
- 		goto err_unregister_aux;
- 
--	if (dp->plat_data->panel) {
--		dp->plat_data->next_bridge = devm_drm_panel_bridge_add(dp->dev,
--								       dp->plat_data->panel);
--		if (IS_ERR(dp->plat_data->next_bridge)) {
--			ret = PTR_ERR(dp->plat_data->next_bridge);
--			goto err_unregister_aux;
--		}
--	}
--
- 	ret = drm_bridge_attach(dp->encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret) {
- 		DRM_ERROR("failed to create bridge (%d)\n", ret);
-@@ -1647,6 +1637,11 @@ struct drm_dp_aux *analogix_dp_get_aux(struct analogix_dp_device *dp)
- }
- EXPORT_SYMBOL_GPL(analogix_dp_get_aux);
- 
-+static void analogix_dp_put_bridge(void *data)
-+{
-+	drm_bridge_put(data);
-+}
-+
- static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
- {
- 	struct analogix_dp_device *dp = to_dp(aux);
-@@ -1655,14 +1650,25 @@ static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
- 	int ret;
- 
- 	/*
--	 * If drm_of_find_panel_or_bridge() returns -ENODEV, there may be no valid panel
--	 * or bridge nodes. The driver should go on for the driver-free bridge or the DP
--	 * mode applications.
-+	 * If of_drm_get_bridge_by_endpoint() returns -ENODEV, there may be no
-+	 * valid panel or bridge nodes. The driver should go on for the
-+	 * driver-free bridge or the DP mode applications.
- 	 */
--	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, port, 0,
--					  &plat_data->panel, &plat_data->next_bridge);
--	if (ret && ret != -ENODEV)
--		return ret;
-+	plat_data->next_bridge = of_drm_get_bridge_by_endpoint(dp->dev->of_node,
-+							       port, 0);
-+	if (IS_ERR(plat_data->next_bridge)) {
-+		if (PTR_ERR(plat_data->next_bridge) == -ENODEV)
-+			plat_data->next_bridge = NULL;
-+		else
-+			return PTR_ERR(plat_data->next_bridge);
-+	}
-+
-+	if (plat_data->next_bridge) {
-+		ret = devm_add_action_or_reset(dp->dev, analogix_dp_put_bridge,
-+					       plat_data->next_bridge);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return component_add(dp->dev, plat_data->ops);
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index e1c9e2946b8a..82c238829921 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -26,7 +26,6 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_of.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/exynos_drm.h>
-@@ -147,7 +146,6 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np;
- 	struct exynos_dp_device *dp;
- 
- 	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
-@@ -163,18 +161,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	 */
- 	platform_set_drvdata(pdev, dp);
- 
--	/* This is for the backward compatibility. */
--	np = of_parse_phandle(dev->of_node, "panel", 0);
--	if (np) {
--		dp->plat_data.panel = of_drm_find_panel(np);
--
--		of_node_put(np);
--		if (IS_ERR(dp->plat_data.panel))
--			return PTR_ERR(dp->plat_data.panel);
--
--		goto out;
--	}
--
- 	if (of_get_display_timings(dev->of_node)) {
- 		dp->plat_data.next_bridge = devm_drm_of_display_mode_bridge(dp->dev,
- 									dp->dev->of_node,
-@@ -189,19 +175,11 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.ops = &exynos_dp_ops;
- 
--out:
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
--	if (IS_ERR(dp->adp)) {
--		/*
--		 * The driver core does not invoke remove() for failed probes,
--		 * so release the probe-time panel reference here.
--		 */
--		if (dp->plat_data.panel)
--			drm_panel_put(dp->plat_data.panel);
-+	if (IS_ERR(dp->adp))
- 		return PTR_ERR(dp->adp);
--	}
- 
--	if (dp->plat_data.panel || dp->plat_data.next_bridge)
-+	if (dp->plat_data.next_bridge)
- 		return component_add(&pdev->dev, &exynos_dp_ops);
- 	else
- 		return analogix_dp_finish_probe(dp->adp);
-@@ -209,16 +187,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- static void exynos_dp_remove(struct platform_device *pdev)
- {
--	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
--
--	/*
--	 * Release the probe-time reference from of_drm_find_panel(). If bind
--	 * ran, the panel_bridge holds a second reference that devm cleanup
--	 * will release when the bridge is destroyed after remove() returns.
--	 */
--	if (dp->plat_data.panel)
--		drm_panel_put(dp->plat_data.panel);
--
- 	component_del(&pdev->dev, &exynos_dp_ops);
- }
- 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 587e60232ec7..071d31aa5288 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -28,7 +28,6 @@
- #include <drm/drm_bridge_connector.h>
- #include <drm/bridge/analogix_dp.h>
- #include <drm/drm_of.h>
--#include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- 
-@@ -488,14 +487,6 @@ static void rockchip_dp_remove(struct platform_device *pdev)
- {
- 	struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
- 
--	/*
--	 * Release the probe-time reference from of_drm_find_panel(). If bind
--	 * ran, the panel_bridge holds a second reference that devm cleanup
--	 * will release when the bridge is destroyed after remove() returns.
--	 */
--	if (dp->plat_data.panel)
--		drm_panel_put(dp->plat_data.panel);
--
- 	component_del(&pdev->dev, &rockchip_dp_component_ops);
- }
- 
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 0e0b87abee59..6033137b651e 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -35,7 +35,6 @@ static inline bool analogix_dp_is_rockchip(enum analogix_dp_devtype type)
- 
- struct analogix_dp_plat_data {
- 	enum analogix_dp_devtype dev_type;
--	struct drm_panel *panel;
- 	struct drm_bridge *next_bridge;
- 	struct drm_encoder *encoder;
- 	struct drm_connector *connector;
-
+Best regards,
 -- 
-2.55.0
+Krzysztof Kozlowski <krzk@kernel.org>
 
