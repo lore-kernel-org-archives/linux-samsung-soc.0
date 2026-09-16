@@ -1,42 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D419B4FDE5E;
-	Wed, 16 Sep 2026 13:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96CB5013D4
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 13:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789566376; cv=none; b=q5wvI7YY1xlijl9suYHYA3Yb3rx4avU1pUveGK0qkJCfQ899ZsFBGKxufg0qaKXzpn6LXlkRrXp2iGpGkcpABAEXP4QMvp0mL7Gd+oyU+Ov4fNhiFkMqcHUnDaqyc2yl9mtt6DR5NLzS8OoDexNf/BqaEa06/EmeAADNt9JMAfQ=
+	t=1789566384; cv=none; b=KqcxvAxPcTSal+6ifZVmpfxIK0fwwmrU32HHHOgGo9+YpBj/IsSjf7PI+oHQEf0ozU1W6BE/ReID/mgs0Pui8Irh+a5hd8QjL6DQPy2k15WdF4NjLBmk1EPPzty1huW/F74cUXNm+7Fty7+vbT4dvjDNNKdpwT53rqY7C2HGVtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789566376; c=relaxed/simple;
-	bh=gN5+a6KqvrdtldRZonuFTLKWp6zUO2wYua7rC14hM68=;
+	s=arc-20240116; t=1789566384; c=relaxed/simple;
+	bh=qIfFuTHP8ePts8lL0ucN58pNhgcmtx4GoCxe5BaxZ2o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dh19P/Phq49Zg28s2KjOaxddonAtfcJLfuiMiYFxYZ7KFhj5zcEsINba2vapwAKr32Sz7VOEbTrhQsJOqfKuOr308RfEmPghLlTO4BLYZncay+hRFT/AC0lZiluuSZM/0iCUASZCyXjM0UmemPAIlUVzLw72n2rtAC9JTQyrLWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IHySCgyn; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=VI952x7yzAQby4mNTe0+uGLsg2tMOiCPDGMpF/Bc8ZigCqSGgnRYZGQSv5MqAyOFuDVw1pOsh9VEUpnZxTruWXjbMPsJdTdWyakELKc3Npm0jH3LjSR5z3etV/FN5WOoMhh3mEmg/va18ZbbRRP6ZDSQnGi2h0hYNEO/A2aMbfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jcyziUB5; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IHySCgyn"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jcyziUB5"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id E153D4E40736;
-	Wed, 16 Sep 2026 13:45:54 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CA0C11A08E1;
+	Wed, 16 Sep 2026 13:46:07 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AF53C60337;
-	Wed, 16 Sep 2026 13:45:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 49AE611C7B010;
-	Wed, 16 Sep 2026 15:45:46 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 93E7660337;
+	Wed, 16 Sep 2026 13:46:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 680BF11C7B03A;
+	Wed, 16 Sep 2026 15:45:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789566352; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1789566365; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=zIb4y2X3SRcPHsShM1vvJKlerVb44YpM+iags7PiUSY=;
-	b=IHySCgynSIjcSNwyDcWS/dY62ItmEToFIs+v+NKzNQQ43eo9e5f4ixT8jFpW8C4EEOuUGj
-	7e/fcBCv7HT7U6T0B1RXl19QtYu5vLqJ1sYUPub9N1wS4kJDkHMWVch7SXEBFDn/Fqtj8w
-	nz+t/XFMQPERJs7gpFK6xbJnFckWTBCvDXUrxI5usPIQWKr7O5ggp+m6DK5v3yLcyQelNW
-	Ah7Jgu63RdOucGbReKSl/zLYYa1oQhd9ZcsA8Ux1/BeawM2PzQcJZPMkwnpvVsB8fuWNzk
-	dhG1cM9OKY5IUOWqclorbOhOsDIIiUs9BATw78PORpXAkIlxHkNNTdoLZ6LsUA==
+	bh=3E/DleiMuFSTLVuEtlsom3pL9KlwnB1jDhq/hJdTS2s=;
+	b=jcyziUB5f+XKLfGg0f90awIzxC9+e4tQ7SBLyDxK0rsPfvMLTF/a2qIzDM0NZi0kGUNKne
+	cbt+3Rru48IUeIruFPwUZUSISizy3iItoVOFjctwMItV1OpG03FznkKpmPBWIVom9xf+wI
+	EmagRqAsvGSlWwzMPa28+1FmoP6oE36mk31CxUyiG64POfR+CsxoVfGTmuelDsBIpgXTi7
+	ZYS75G+tvuFOeirSEfjvRdF0Nk3y/mEy5Q5JkFvoLefR7LzLlARB1MWqGHjEXOYlj+isor
+	HZ7SOc6wQ+B02C7cASkwslK1d+3XxFFOEpdT73v/qM70wTYvxFwamny/OmVmcQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 16 Sep 2026 15:45:25 +0200
-Subject: [PATCH v3 01/19] drm: of: move drm_of_find_panel_or_bridge() from
- drm_of.c to drm_panel.c
+Date: Wed, 16 Sep 2026 15:45:27 +0200
+Subject: [PATCH v3 03/19] drm/panel: move to a new module
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-drm-bridge-every-panel-v3-1-83afb4f1a707@bootlin.com>
+Message-Id: <20260916-drm-bridge-every-panel-v3-3-83afb4f1a707@bootlin.com>
 References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -82,410 +81,76 @@ Cc: Albert Esteve <aesteve@redhat.com>,
 X-Mailer: b4 0.16.0
 X-Last-TLS-Session-Version: TLSv1.3
 
-We want to move drm_panel.o from the main drm module to a new drm_panel
-module, but there is one function in the drm module that calls into
-drm_panel.c code:
+Work is in progress for every drm_panel to embed a drm_bridge, which will
+make the drm_panel code (currently in the drm module) depend on the
+drm_kms_helper module.
 
-  drm_of_find_panel_or_bridge() (drm_of.c, drm module)
-     -> calls of_drm_find_panel (drm_panel.c, future drm_panel module)
+To avoid the main drm module to depend on other drm modules and create a
+depepdency loop, move drm_panel.o to a new drm_panel module, so the module
+dependency will be drm_panel -> drm_kms_helper instead.
 
-Avoid this issue by moving drm_of_find_panel_or_bridge() to drm_panel.c.
-
-Update Kconfig symbols of drivers calling drm_of_find_panel_or_bridge() to
-select DRM_PANEL when this is not done already.
-
-No functional changes, just moving code around.
-
-Suggested-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/Kconfig          |  2 ++
- drivers/gpu/drm/bridge/analogix/Kconfig |  2 ++
- drivers/gpu/drm/drm_of.c                | 63 ---------------------------------
- drivers/gpu/drm/drm_panel.c             | 63 +++++++++++++++++++++++++++++++++
- drivers/gpu/drm/imx/dcss/Kconfig        |  1 +
- drivers/gpu/drm/ingenic/Kconfig         |  1 +
- drivers/gpu/drm/logicvc/Kconfig         |  1 +
- drivers/gpu/drm/mcde/Kconfig            |  1 +
- drivers/gpu/drm/pl111/Kconfig           |  1 +
- drivers/gpu/drm/rockchip/Kconfig        |  2 ++
- drivers/gpu/drm/stm/Kconfig             |  1 +
- drivers/gpu/drm/tidss/Kconfig           |  1 +
- drivers/gpu/drm/tve200/Kconfig          |  1 +
- include/drm/drm_of.h                    | 12 -------
- include/drm/drm_panel.h                 | 13 +++++++
- 15 files changed, 90 insertions(+), 75 deletions(-)
+ drivers/gpu/drm/Makefile      | 2 +-
+ drivers/gpu/drm/panel/Kconfig | 2 +-
+ include/drm/drm_panel.h       | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index f2db7f60d40f..89e87460aefc 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -151,6 +151,7 @@ config DRM_LONTIUM_LT8912B
- config DRM_LONTIUM_LT9211
- 	tristate "Lontium LT9211 DSI/LVDS/DPI bridge"
- 	depends on OF
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_MIPI_DSI
-@@ -498,6 +499,7 @@ config DRM_WAVESHARE_BRIDGE
- 	tristate "Waveshare DSI bridge"
- 	depends on OF
- 	depends on BACKLIGHT_CLASS_DEVICE
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_MIPI_DSI
-diff --git a/drivers/gpu/drm/bridge/analogix/Kconfig b/drivers/gpu/drm/bridge/analogix/Kconfig
-index 57bb2daa5aaf..da156fd15764 100644
---- a/drivers/gpu/drm/bridge/analogix/Kconfig
-+++ b/drivers/gpu/drm/bridge/analogix/Kconfig
-@@ -6,6 +6,7 @@ config DRM_ANALOGIX_ANX6345
- 	select DRM_DISPLAY_DP_HELPER
- 	select DRM_DISPLAY_HELPER
- 	select DRM_KMS_HELPER
-+	select DRM_PANEL
- 	select REGMAP_I2C
- 	help
- 	  ANX6345 is an ultra-low power Full-HD DisplayPort/eDP
-@@ -32,6 +33,7 @@ config DRM_ANALOGIX_DP
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index e635fcffd379..29c9c1d90c11 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -79,7 +79,6 @@ drm-$(CONFIG_DRM_CLIENT) += \
+ 	drm_client_modeset.o \
+ 	drm_client_sysrq.o
+ drm-$(CONFIG_COMPAT) += drm_ioc32.o
+-drm-$(CONFIG_DRM_PANEL) += drm_panel.o
+ drm-$(CONFIG_OF) += drm_of.o
+ drm-$(CONFIG_PCI) += drm_pci.o
+ drm-$(CONFIG_DEBUG_FS) += \
+@@ -96,6 +95,7 @@ drm-$(CONFIG_DRM_PANIC_SCREEN_QR_CODE) += drm_panic_qr.o
+ drm-$(CONFIG_DRM_RAS) += drm_ras.o drm_ras_nl.o drm_ras_genl_family.o
+ obj-$(CONFIG_DRM)	+= drm.o
+ 
++obj-$(CONFIG_DRM_PANEL) += drm_panel.o
+ obj-$(CONFIG_DRM_PANEL_ORIENTATION_QUIRKS) += drm_panel_orientation_quirks.o
+ obj-$(CONFIG_DRM_PANEL_BACKLIGHT_QUIRKS) += drm_panel_backlight_quirks.o
+ 
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 747f47347521..0a79a0558101 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_PANEL
+-	bool
++	tristate
  	depends on DRM
- 	depends on OF
- 	select DRM_DISPLAY_DP_AUX_BUS
-+	select DRM_PANEL
- 
- config DRM_ANALOGIX_ANX7625
- 	tristate "Analogix Anx7625 MIPI to DP interface support"
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index 2b53124ded68..411f258d9f91 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -264,69 +264,6 @@ int drm_of_get_panel_orientation(const struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(drm_of_get_panel_orientation);
- 
--/**
-- * drm_of_find_panel_or_bridge - return connected panel or bridge device
-- * @np: device tree node containing encoder output ports
-- * @port: port in the device tree node
-- * @endpoint: endpoint in the device tree node
-- * @panel: pointer to hold returned drm_panel, must not be NULL. On success
-- *         the caller must call drm_panel_put() when done with the panel
-- * @bridge: pointer to hold returned drm_bridge
-- *
-- * Given a DT node's port and endpoint number, find the connected node and
-- * return either the associated struct drm_panel or drm_bridge device.
-- *
-- * This function is deprecated and should not be used in new drivers. Use
-- * of_drm_get_bridge_by_endpoint() instead when not looking for a panel, or
-- * devm_drm_of_get_bridge() otherwise.
-- *
-- * Returns zero if successful, or one of the standard error codes if it fails.
-- */
--int drm_of_find_panel_or_bridge(const struct device_node *np,
--				int port, int endpoint,
--				struct drm_panel **panel,
--				struct drm_bridge **bridge)
--{
--	if (WARN_ON(!panel))
--		return -EINVAL;
--
--	*panel = NULL;
--	if (bridge)
--		*bridge = NULL;
--
--	/*
--	 * of_graph_get_remote_node() produces a noisy error message if port
--	 * node isn't found and the absence of the port is a legit case here,
--	 * so at first we silently check whether a graph is present in the
--	 * device-tree node.
--	 */
--	if (!of_graph_is_present(np))
--		return -ENODEV;
--
--	struct device_node *remote __free(device_node) =
--		of_graph_get_remote_node(np, port, endpoint);
--	if (!remote)
--		return -ENODEV;
--
--	*panel = of_drm_find_panel(remote);
--	if (!IS_ERR(*panel))
--		return 0;
--
--	*panel = NULL;
--
--	if (bridge) {
--		/* No panel found yet, check for a bridge next. */
--		*bridge = of_drm_find_bridge(remote);
--		if (*bridge)
--			return 0;
--
--		*bridge = NULL;
--	}
--
--	return -EPROBE_DEFER;
--}
--EXPORT_SYMBOL_GPL(drm_of_find_panel_or_bridge);
--
- enum drm_of_lvds_pixels {
- 	DRM_OF_LVDS_EVEN = BIT(0),
- 	DRM_OF_LVDS_ODD = BIT(1),
-diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index f8f6082e637f..e1f8a4ff37d2 100644
---- a/drivers/gpu/drm/drm_panel.c
-+++ b/drivers/gpu/drm/drm_panel.c
-@@ -498,6 +498,69 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
- 	return ERR_PTR(-EPROBE_DEFER);
- }
- EXPORT_SYMBOL(of_drm_find_panel);
-+
-+/**
-+ * drm_of_find_panel_or_bridge - return connected panel or bridge device
-+ * @np: device tree node containing encoder output ports
-+ * @port: port in the device tree node
-+ * @endpoint: endpoint in the device tree node
-+ * @panel: pointer to hold returned drm_panel, must not be NULL. On success
-+ *         the caller must call drm_panel_put() when done with the panel
-+ * @bridge: pointer to hold returned drm_bridge
-+ *
-+ * Given a DT node's port and endpoint number, find the connected node and
-+ * return either the associated struct drm_panel or drm_bridge device.
-+ *
-+ * This function is deprecated and should not be used in new drivers. Use
-+ * of_drm_get_bridge_by_endpoint() instead when not looking for a panel, or
-+ * devm_drm_of_get_bridge() otherwise.
-+ *
-+ * Returns zero if successful, or one of the standard error codes if it fails.
-+ */
-+int drm_of_find_panel_or_bridge(const struct device_node *np,
-+				int port, int endpoint,
-+				struct drm_panel **panel,
-+				struct drm_bridge **bridge)
-+{
-+	if (WARN_ON(!panel))
-+		return -EINVAL;
-+
-+	*panel = NULL;
-+	if (bridge)
-+		*bridge = NULL;
-+
-+	/*
-+	 * of_graph_get_remote_node() produces a noisy error message if port
-+	 * node isn't found and the absence of the port is a legit case here,
-+	 * so at first we silently check whether a graph is present in the
-+	 * device-tree node.
-+	 */
-+	if (!of_graph_is_present(np))
-+		return -ENODEV;
-+
-+	struct device_node *remote __free(device_node) =
-+		of_graph_get_remote_node(np, port, endpoint);
-+	if (!remote)
-+		return -ENODEV;
-+
-+	*panel = of_drm_find_panel(remote);
-+	if (!IS_ERR(*panel))
-+		return 0;
-+
-+	*panel = NULL;
-+
-+	if (bridge) {
-+		/* No panel found yet, check for a bridge next. */
-+		*bridge = of_drm_find_bridge(remote);
-+		if (*bridge)
-+			return 0;
-+
-+		*bridge = NULL;
-+	}
-+
-+	return -EPROBE_DEFER;
-+}
-+EXPORT_SYMBOL_GPL(drm_of_find_panel_or_bridge);
- #endif
- 
- /*
-diff --git a/drivers/gpu/drm/imx/dcss/Kconfig b/drivers/gpu/drm/imx/dcss/Kconfig
-index e014ed3ae66c..d278bebfc33c 100644
---- a/drivers/gpu/drm/imx/dcss/Kconfig
-+++ b/drivers/gpu/drm/imx/dcss/Kconfig
-@@ -6,6 +6,7 @@ config DRM_IMX_DCSS
- 	select DRM_DISPLAY_HELPER
- 	select DRM_BRIDGE_CONNECTOR
- 	select DRM_GEM_DMA_HELPER
-+	select DRM_PANEL
- 	select VIDEOMODE_HELPERS
- 	depends on DRM && ((ARCH_MXC && ARM64) || COMPILE_TEST)
  	help
-diff --git a/drivers/gpu/drm/ingenic/Kconfig b/drivers/gpu/drm/ingenic/Kconfig
-index 04ecfb0c5dd6..987ed42f6f7a 100644
---- a/drivers/gpu/drm/ingenic/Kconfig
-+++ b/drivers/gpu/drm/ingenic/Kconfig
-@@ -7,6 +7,7 @@ config DRM_INGENIC
- 	depends on COMMON_CLK
- 	select DRM_BRIDGE
- 	select DRM_CLIENT_SELECTION
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_DISPLAY_HELPER
-diff --git a/drivers/gpu/drm/logicvc/Kconfig b/drivers/gpu/drm/logicvc/Kconfig
-index 579a358ed5cf..53bd1ae61c83 100644
---- a/drivers/gpu/drm/logicvc/Kconfig
-+++ b/drivers/gpu/drm/logicvc/Kconfig
-@@ -6,6 +6,7 @@ config DRM_LOGICVC
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_DMA_HELPER
- 	select DRM_GEM_DMA_HELPER
-+	select DRM_PANEL
- 	select REGMAP
- 	select REGMAP_MMIO
- 	help
-diff --git a/drivers/gpu/drm/mcde/Kconfig b/drivers/gpu/drm/mcde/Kconfig
-index 3516c8d2a5d9..6ebfb930cbfa 100644
---- a/drivers/gpu/drm/mcde/Kconfig
-+++ b/drivers/gpu/drm/mcde/Kconfig
-@@ -9,6 +9,7 @@ config DRM_MCDE
- 	select DRM_CLIENT_SELECTION
- 	select DRM_MIPI_DSI
- 	select DRM_BRIDGE
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
-diff --git a/drivers/gpu/drm/pl111/Kconfig b/drivers/gpu/drm/pl111/Kconfig
-index 82e918820950..20201ec20aa7 100644
---- a/drivers/gpu/drm/pl111/Kconfig
-+++ b/drivers/gpu/drm/pl111/Kconfig
-@@ -9,6 +9,7 @@ config DRM_PL111
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
- 	select DRM_BRIDGE
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	help
- 	  Choose this option for DRM support for the PL111 CLCD controller.
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index e7f49fe845ea..1b4a87eeaf3f 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -124,6 +124,7 @@ config ROCKCHIP_LVDS
- 	depends on PINCTRL && OF
- 	select DRM_DISPLAY_HELPER
- 	select DRM_BRIDGE_CONNECTOR
-+	select DRM_PANEL
- 	help
- 	  Choose this option to enable support for Rockchip LVDS controllers.
- 	  Rockchip rk3288 SoC has LVDS TX Controller can be used, and it
-@@ -136,6 +137,7 @@ config ROCKCHIP_RGB
- 	depends on PINCTRL
- 	select DRM_DISPLAY_HELPER
- 	select DRM_BRIDGE_CONNECTOR
-+	select DRM_PANEL
- 	help
- 	  Choose this option to enable support for Rockchip RGB output.
- 	  Some Rockchip CRTCs, like rv1108, can directly output parallel
-diff --git a/drivers/gpu/drm/stm/Kconfig b/drivers/gpu/drm/stm/Kconfig
-index 635be0ac00af..1e3205aa2c7e 100644
---- a/drivers/gpu/drm/stm/Kconfig
-+++ b/drivers/gpu/drm/stm/Kconfig
-@@ -6,6 +6,7 @@ config DRM_STM
- 	select DRM_CLIENT_SELECTION
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select VIDEOMODE_HELPERS
- 	select FB_PROVIDE_GET_FB_UNMAPPED_AREA if FB
-diff --git a/drivers/gpu/drm/tidss/Kconfig b/drivers/gpu/drm/tidss/Kconfig
-index 31ad582b7602..52a64fa1ad5d 100644
---- a/drivers/gpu/drm/tidss/Kconfig
-+++ b/drivers/gpu/drm/tidss/Kconfig
-@@ -7,6 +7,7 @@ config DRM_TIDSS
- 	select DRM_DISPLAY_HELPER
- 	select DRM_BRIDGE_CONNECTOR
- 	select DRM_GEM_DMA_HELPER
-+	select DRM_PANEL
- 	help
- 	  The TI Keystone family SoCs introduced a new generation of
- 	  Display SubSystem. There is currently three Keystone family
-diff --git a/drivers/gpu/drm/tve200/Kconfig b/drivers/gpu/drm/tve200/Kconfig
-index a9d6fe535d88..c0746ae8f703 100644
---- a/drivers/gpu/drm/tve200/Kconfig
-+++ b/drivers/gpu/drm/tve200/Kconfig
-@@ -7,6 +7,7 @@ config DRM_TVE200
- 	depends on OF
- 	select DRM_BRIDGE
- 	select DRM_CLIENT_SELECTION
-+	select DRM_PANEL
- 	select DRM_PANEL_BRIDGE
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
-diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
-index ebebed14c611..402f5db11e47 100644
---- a/include/drm/drm_of.h
-+++ b/include/drm/drm_of.h
-@@ -51,10 +51,6 @@ int drm_of_encoder_active_endpoint(struct device_node *node,
- 				   struct of_endpoint *endpoint);
- int drm_of_get_panel_orientation(const struct device_node *np,
- 				 enum drm_panel_orientation *orientation);
--int drm_of_find_panel_or_bridge(const struct device_node *np,
--				int port, int endpoint,
--				struct drm_panel **panel,
--				struct drm_bridge **bridge);
- int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- 					  const struct device_node *port2);
- int drm_of_lvds_get_dual_link_pixel_order_sink(struct device_node *port1,
-@@ -112,14 +108,6 @@ static inline int drm_of_get_panel_orientation(const struct device_node *np,
- 	return -EINVAL;
- }
- 
--static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
--					      int port, int endpoint,
--					      struct drm_panel **panel,
--					      struct drm_bridge **bridge)
--{
--	return -EINVAL;
--}
--
- static inline int
- drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- 				      const struct device_node *port2)
+ 	  Panel registration and lookup framework.
 diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index b87323443f49..bf15e40fd796 100644
+index bf15e40fd796..34fcbcdda2c8 100644
 --- a/include/drm/drm_panel.h
 +++ b/include/drm/drm_panel.h
-@@ -33,6 +33,7 @@
- struct backlight_device;
- struct dentry;
- struct device_node;
-+struct drm_bridge;
- struct drm_connector;
- struct drm_panel_follower;
- struct drm_panel;
-@@ -337,11 +338,23 @@ int drm_panel_get_modes(struct drm_panel *panel, struct drm_connector *connector
+@@ -336,7 +336,7 @@ void drm_panel_disable(struct drm_panel *panel);
  
- #if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
+ int drm_panel_get_modes(struct drm_panel *panel, struct drm_connector *connector);
+ 
+-#if defined(CONFIG_OF) && defined(CONFIG_DRM_PANEL)
++#if defined(CONFIG_OF) && IS_ENABLED(CONFIG_DRM_PANEL)
  struct drm_panel *of_drm_find_panel(const struct device_node *np);
-+int drm_of_find_panel_or_bridge(const struct device_node *np,
-+				int port, int endpoint,
-+				struct drm_panel **panel,
-+				struct drm_bridge **bridge);
- #else
- static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
- {
- 	return ERR_PTR(-ENODEV);
+ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				int port, int endpoint,
+@@ -357,7 +357,7 @@ static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
  }
-+
-+static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
-+					      int port, int endpoint,
-+					      struct drm_panel **panel,
-+					      struct drm_bridge **bridge)
-+{
-+	return -EINVAL;
-+}
  #endif
  
- #if defined(CONFIG_DRM_PANEL)
+-#if defined(CONFIG_DRM_PANEL)
++#if IS_ENABLED(CONFIG_DRM_PANEL)
+ bool drm_is_panel_follower(struct device *dev);
+ int drm_panel_add_follower(struct device *follower_dev,
+ 			   struct drm_panel_follower *follower);
 
 -- 
 2.55.0
