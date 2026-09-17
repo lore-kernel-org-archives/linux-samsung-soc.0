@@ -1,174 +1,370 @@
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F7455171
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 21:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.226.204
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789595068; cv=pass; b=rVD9ysl1j/E5MBy1ZMqEGmG69nghRBZiDecik5eDH/FYctIGAnB2OoWUSP2YLngseXR8K7pLmqq54U8C02U0fYGEx8xsCCYrfJxgKqlmv27wA6xWi6cNAdzd4ZoqckL/aurjIyl9DSFbijFk5IlxVlWpTfpvGeOhnIOSSEyH4T8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789595068; c=relaxed/simple;
-	bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ql6PTSIJ4Vw6Wax96tRXdue2xWq6jGeyBEhPan2k4ZEumPnndm9O27+C/M6MsCndJxc4aVFo1AT+veohXM3xV3VdMUdJEEplXRw3XrtcgRMgOFoiXIv0sLPzE13LFuPwUx/LVLJ2oqvD5+VT/Ql+fTcfpd+fHkR552pJSVoZu3A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhRvxyDc; arc=pass smtp.client-ip=74.125.226.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6213F20FA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789622625; cv=none; b=RxZaAI84YBCFg4UcNZxJ3tmIZlcr2m5M6eGHEeWnrfIzQtBcURhqtFr2a3LpYqN+aiZ/J2Ttv837gQSSN8awcdJI/BPkGMJMU/zrJTSoehoQze1xW319wfJi0ISvC7Tz7emitG/uRZPzilmsCsyCeQjPTYGGTizZk3PSzREp02w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789622625; c=relaxed/simple;
+	bh=aTwtqSNm05OJSXGSGIVb0xW+X+nYCvqDgfSQuiaEtlQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PZmxWa3Bm09SFTsYhTgiWD2CAGp+qhLPq8VFen+m65KFdI/+cPAmeDpKuGbGcYfNFl29/hMJsSExQ2ZZkSVUI4xDeX1U+iVaAUiMnbg6mwymOlULMardGiEdA+SrzQRw0PXOeGg4iwXoZk6aBSaq0xemeWH7VNw0J67KUuTpHqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLCbrKDM; arc=none smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhRvxyDc"
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c7bc5bfso48137241.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 14:44:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789595057; cv=none;
-        d=google.com; s=arc-20260327;
-        b=htCKaj+JpiGPFy5Gvv8Z65OHjL4EeQCvUs6U8lTh0RpQuBdu5UFW3g/d6Lqnn+PSE4
-         ZyDUrdVf+iNsOxDSNM9e84Ewe9MHZVi0D+znImj7K3a3E9XNeO5pL/Ykz6/1MCbMHJrz
-         aSCBquJvCQFqnb90RuQMz6i7/eR42h0TzGpZqiERqdhWKDbR3OSzEtlO/H5zjcMyxc/a
-         fRDhk/epEl9sH9Q4jVN8SFTThtXCf4OpfyNVeXaPIEitePwVV/ut1ovaGJ7SklrXby3Q
-         V9R3Te54FlhNs0VZetKKrTgNeB5tul7IoGmgrHFNlOq3GBEFMf9bJKaj+zaQ0YjK3ZfV
-         5ewg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
-        fh=6QdMJlJ51YOH0ZntIGV5iu8XsufnT0D/6bPywpGr67g=;
-        b=c/Ww0hSJjWYvnFljJPvUOeHHhl2g9qIrQOdOroBU8/PimZyAZ/imWJ6tsyH4D+aX42
-         YGsuNYH+930b5WSPegbcaGErfIrBV1JBvasCilMJ90WwomdZTfyzoTqD8QeD5gq5e3OU
-         +5RnuRb82zAgmh7VxuV4D740C5iQqL5eN97q+VVyC35Z3JRbAfDd3wZ6Ne/8mDuxfuyp
-         jFq4NIrkPdx0XvoaCmk5wfECNAXACS4gaiUK3L3AiTomnqYRrZuakfgPAnP7erT5v6iF
-         iZsi6Ybm6V+TLFBgZCm6ASkML9lLytteTMukS+vUWhOWJqUah/OVtTBUKrUdAWjzsL+S
-         Cbgg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLCbrKDM"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469d249c5so333049b3a.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 22:23:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789595057; x=1790199857; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
-        b=PhRvxyDcEKpo82rz7bjO1wDQ8uBdzgmqFw/6qMLJ6ysl579NXOSm57qPRzt39pD3oV
-         RQb6cdMJNN/Ek0B5W2zGNfO0RqIoSKMqtIpUc7eAhIfyNHQGufGBDtCJwInLu+pX9hxn
-         J9cpThCkU1tmfCxsOJRLdZFf8wYm3kRlo/yoPwYzsu2PbhjQqcSKR20KyEdhLP8618yJ
-         5CmZfZeIm2+Na8mFl/ktZ3dXA1iPW6HhEYtD+ujAGpNgWXor7U3Ki4cMIqiM6LMBSHL9
-         ktggN+6MCwK15bvCxc3iBeUikkFZwpbRMOG0Pyt60U5y0YJFcb8fm4EhJ+LQPrX9SbDv
-         Tdmg==
+        d=gmail.com; s=20251104; t=1789622622; x=1790227422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EijacSJHF51C+Y/V/hsmLgSVvJjLIJnbhuq1HdPUqnQ=;
+        b=mLCbrKDMrBZfNIabYGDMCO/hXFO0oje1vBn3cP3OMYB39P/+Ql4xe1yzgmSxsCacU2
+         G2C8RCnLmVZZ1BPKu9pC/LN46h32igmqj4INvHfTZwSVEleQEEe5lbATlyllUZm/l4cw
+         dkt4tz7jWD0nBgjqnfS2Xcm2SZJINEM1AEQcaKAPgPiyHSOAn5ElNUrsF+f1lUmXUEJY
+         HXUM+9JVbNMnMCdCMu2y1jkK3eIQy0VqodTS7ms3oXAK5WXaoPbeElXHIFVUKQq1PXnc
+         VO6M0fQ/8cCVX71G5JRPuCFN5knW9nqUjIx8pqp2AESstvRa10lqzSpje3JbhdERnK4F
+         NgkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789595057; x=1790199857;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+TMWi8xF1c/GpLGSJWBDMGttEHh102/5Ofx0+5TAWdU=;
-        b=GrSxPdoVDitoUcttJkqtn/VGfxCNxkh/KtejYsJByBxiH17mKJEHOLMD6IzYFsmwyj
-         FsSbC+hfzjBydbOY2GBbxp1i18lnc373uZear6Pa6bxIfTdluK1bDdrLxhpMxmK9VQQb
-         H/tMqJpgha6c6u76aFCidsy5Z7WdGBck6xgZB4jUsQlYtjC/LHvPWa5JSf4oMM7hdBIV
-         HV1OLefmBYq/LCksQQ3g2SnRf+u6Wn+gq07699uXtkGGmQnQbZ94KjyTbhduaXJWI34p
-         RaIUw8azcrS11SJfc9i73v4s0vn2ZGmgHTbeXCxQWo8WmR8hDFSY0ac4hxGsFYq+NB1u
-         E3YA==
-X-Forwarded-Encrypted: i=1; AKwUvBwR4TVTZ9XpO458yrPeC1o9uFDyO75Ri2XnHSaVQQvGjX0LSfYXm16F17yycWL8E1jnFMfmmNUbc1styxjwqsW1Nw==@vger.kernel.org
-X-Gm-Message-State: AFuF++nKxIwL6Dewed+5cni2ITNYbjzOtE7Jg7lmAayWmTAANp2zWnnu
-	RlUt15M8I+Km7NEbo9+xdvULkGM48DPgE3gLkVl+c90j3Pxv+8Y+Ei0cbKCvzcKlFmqkJz6snIw
-	BVFIf+kdtzAu/rRWwobIsk8+l+HMe6rK14qKo+N4=
-X-Gm-Gg: AYBFou0cKEdQiegI71uQi+i8EMb19mMwlw1dJKTAVCjFRURsaLufX9ZQDY9f6lPdlps
-	O6b27IBX0ra7Bfm+s39UdeZsLiF9oUHvtu51kYgfVlJn5DegyrsmMJ0lHCziWaLAT+H2ElMLfyb
-	DrLoKfm62AXbTWeNyWnOCK9u4dW1QHv8MWQxftjLzzvqLUlTqwZvUmfiEgOrQUuK9/1vS6LpNh7
-	2juYouKBXpb9whD+LdXbPBzVBDq5LyM/CkVa0d7MT+8sWO//i2ifZVhRhzE9OGiHuPfhtLUJ/DB
-	n+nKsfCztcrYP4gLcvB28TFwcoaX6O6TCmCu/zcNFmDW6jlk1aGu+SmpVyRuFnQ5yJYq2ShkI0J
-	VVznLi9RPCBIwy3SxvL3Y
-X-Received: by 2002:a05:6102:a85:b0:7a2:2a6b:e7b4 with SMTP id
- ada2fe7eead31-7a22a6be8efmr62586137.2.1789595055938; Wed, 16 Sep 2026
- 14:44:15 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789622622; x=1790227422;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EijacSJHF51C+Y/V/hsmLgSVvJjLIJnbhuq1HdPUqnQ=;
+        b=eC1MrojcVAej9Uizdgxhco/iktt4VWC/NrsBm2gss2ntF85evKEDpkAuQF7MKK57yw
+         EEQ65pbj46mulVnIj8THLfix0FUNiLY8cvpPG3XNF2Aax9qEANU3GjMHQnZ6v6nCYW3a
+         Jl0Mfc0B8VMSpN9Qy/FoapqjSYePNcfapbaIwYmzcr6h2j31Mm2Q2Qg3wkkdqF2B13hu
+         gzDrX6rgWUP0jX6xwEYkhxzXhPdKseqttQnEs9jRBWHScRf9CT0j3cwLZLxZMtF/Vkf7
+         BzWQ5ToB0wbw/DdTV2PMnSYE8/80CWjW5sRPGIcPs7YxwTqTohm2dNZS/6ayaZZeQ1hR
+         Ah/Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzAPR3pNq6YAPFHsiQ0aXZs9xjCMzmiBaXet8x4woE7O0SE23ZynybzxWT7aEexLiYmEMvh9zygk0jj3nP1+NQp0w==@vger.kernel.org
+X-Gm-Message-State: AFuF++mnl1mZm/RAEU8QnUllez/tDsUdzwdlHhgzzXIhlrvwVlHevhUz
+	n8+o+vlNnCC+YeZjOFIqm8+r11Mp73TroXrr9KO4hv2juFvIbesRjBPMFN8pNV+x
+X-Gm-Gg: AYBFou3R60aam6DfFWfWzmd480BTn1Mqpwr2v/L0AMLaqhq4ksa6/XF+LRNpI5D9+MS
+	/m1VSGYPNdiXGJOtJrxNSgRwGqstqO9arZWvyVX8yJeVswlIyd0x62I2sUsUWVfroEqaNia4nh8
+	OjNRrsE+8J4zI0uOHWciTbUPAQL8E8rRadLza2icyurYs4ThY9/Zuc4w3lhn/Vo+nZgMMo4usBt
+	V+VCD1E2FahJ4JLq/zUyH/v7PwMwSz9Z7V8cI0JF5+c5mizbVlbsyTQYFm1SiySriSaEBZXdt4c
+	g9FVJaC+QVDbPzpU2UQS0Wvik41K04hHYRJo2TYGoS3rlTvj1kQ7yDlnB0wseCagahyqHW4EGWJ
+	WvgSH4eOuqxN8jk7/ywYhdSQ98ZhllGYZtPpJqPNxA9Wm8fMAqw6lK1EzPoqskc/kQo7gcUDOqR
+	d5osVazKSsPUlaCRvxTnyNKUjwMOcH5sCJiUyimDpJFNL74CS4G28FUe3jxxI+AdDQwNj052o0G
+	dTZqlOZb1OJ/jYXL67SJ6tpoQ==
+X-Received: by 2002:a05:6a21:7008:b0:3c3:b57b:627d with SMTP id adf61e73a8af0-3dd5f44a101mr14246154637.12.1789622622323;
+        Wed, 16 Sep 2026 22:23:42 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5aee8b0sm24486171eec.23.2026.09.16.22.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2026 22:23:41 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Botsz HUANG <huang.botsz@gmail.com>,
+	Nick Huang <sef1548@gmail.com>,
+	mfd@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4] mfd: Fix typos in comments
+Date: Thu, 17 Sep 2026 10:53:35 +0530
+Message-ID: <20260917052335.13288-1-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915081910.4142719-1-morbo@google.com> <20260915081910.4142719-26-morbo@google.com>
- <202609151258.5FC01072@keescook> <20260916010945.GEaqnsWSZ-DTMyTO25@fat_crate.local>
-In-Reply-To: <20260916010945.GEaqnsWSZ-DTMyTO25@fat_crate.local>
-From: Bill Wendling <morbo@google.com>
-Date: Wed, 16 Sep 2026 14:43:59 -0700
-X-Gm-Features: AcwNN1XbboPOY3deKY79Gty15vkSErYIT9HTgeQdVXaDzFhBvm8_kiOA449bIqU
-Message-ID: <CAGG=3QVZRCJ94+DOfSsSDhsrXVYf-ec01NZBy299nYiCAYfXKg@mail.gmail.com>
-Subject: Re: [PATCH 25/28] EDAC/thunderx: Replace strlcat() with seq_buf
-To: Borislav Petkov <bp@alien8.de>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	codemender-patching+linux@google.com, Russell King <linux@armlinux.org.uk>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ian Abbott <abbotti@mev.co.uk>, 
-	H Hartley Sweeten <hsweeten@visionengravers.com>, Tony Luck <tony.luck@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Arend van Spriel <arend.vanspriel@broadcom.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
-	Anil Gurumurthy <anil.gurumurthy@qlogic.com>, 
-	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "Martin K. Petersen" <mkp@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Simon Horman <horms@kernel.org>, Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Kanglong Wang <wangkanglong@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Qiang Ma <maqianga@uniontech.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Pengpeng Hou <pengpeng@iscas.ac.cn>, Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	Thorsten Blum <blum@kernel.org>, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lyude Paul <lyude@redhat.com>, 
-	Ashutosh Desai <ashutoshdesai993@gmail.com>, Imre Deak <imre.deak@intel.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Johan Hovold <johan@kernel.org>, 
-	Johannes Berg <johannes.berg@intel.com>, 
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, 
-	Cryolitia PukNgae <cryolitia@uniontech.com>, Jiaming Zhang <r772577952@gmail.com>, 
-	Will Porter <mrwillporter@gmail.com>, Cen Zhang <zzzccc427@gmail.com>, 
-	=?UTF-8?Q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>, 
-	Rong Zhang <i@rong.moe>, Arun Raghavan <arunr@valvesoftware.com>, 
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linux-edac@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-input@vger.kernel.org, 
-	linux-media@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, devel@lists.orangefs.org, 
-	linux-hardening@vger.kernel.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 15, 2026 at 6:11=E2=80=AFPM Borislav Petkov <bp@alien8.de> wrot=
-e:
->
-> On Tue, Sep 15, 2026 at 01:00:00PM -0700, Kees Cook wrote:
-> > Seems like seq_buf would be better her? But yes, at the very least, thi=
-s
-> > needs to be scnprintf, not snprintf (or add the checks as you have
-> > here).
-> >
-> > The rest of the seq_buf conversions look right.
->
-> This driver has been an orphan for a while now (we just made it official)=
- so
-> I'd prefer it if we don't do anything here.
->
-I'll remove those changes from future emails.
+Fix misspellings in comments across the MFD drivers and headers, found
+with scripts/checkpatch.pl using the list in scripts/spelling.txt.
 
-> And yes, that mega CC list is just gross.
->
-Apologies. :-(
+Since v1 this also corrects "wainting" and "comapletion" in
+include/linux/mfd/si476x-core.h, which checkpatch did not flag; Matti
+Vaittinen asked for "wainting" and "comapletion" is on the same line.
+The subject is also capitalised to match the MFD convention.
 
--bw
+v4 drops the two Acked-by tags that v3 added, as requested, keeping
+only Matti's Reviewed-by, and drops the Assisted-by trailer. The diff
+is unchanged from v2.
+
+Only touches comments, no code changes.
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+---
+ drivers/mfd/88pm800.c                |  2 +-
+ drivers/mfd/kempld-core.c            |  2 +-
+ drivers/mfd/max8998.c                |  2 +-
+ drivers/mfd/rave-sp.c                |  6 +++---
+ drivers/mfd/si476x-i2c.c             |  2 +-
+ include/linux/mfd/da9063/registers.h |  2 +-
+ include/linux/mfd/db8500-prcmu.h     | 32 ++++++++++++++--------------
+ include/linux/mfd/lp8788.h           |  2 +-
+ include/linux/mfd/max8998.h          |  2 +-
+ include/linux/mfd/palmas.h           |  2 +-
+ include/linux/mfd/rohm-bd71828.h     |  2 +-
+ include/linux/mfd/samsung/core.h     |  2 +-
+ include/linux/mfd/si476x-core.h      |  4 ++--
+ include/linux/mfd/twl.h              |  2 +-
+ 14 files changed, 32 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+index e9941da58b18..aac630322b3c 100644
+--- a/drivers/mfd/88pm800.c
++++ b/drivers/mfd/88pm800.c
+@@ -275,7 +275,7 @@ static int device_gpadc_init(struct pm80x_chip *chip,
+ 		goto out;
+ 
+ 	/*
+-	 * the defult of PM800 is GPADC operates at 100Ks/s rate
++	 * the default of PM800 is GPADC operates at 100Ks/s rate
+ 	 * and Number of GPADC slots with active current bias prior
+ 	 * to GPADC sampling = 1 slot for all GPADCs set for
+ 	 * Temprature mesurmants
+diff --git a/drivers/mfd/kempld-core.c b/drivers/mfd/kempld-core.c
+index b64729918dfd..47062f876e5d 100644
+--- a/drivers/mfd/kempld-core.c
++++ b/drivers/mfd/kempld-core.c
+@@ -37,7 +37,7 @@ static void kempld_get_hardware_mutex(struct kempld_device_data *pld)
+ 
+ static void kempld_release_hardware_mutex(struct kempld_device_data *pld)
+ {
+-	/* The harware mutex is released when 1 is written to the mutex bit. */
++	/* The hardware mutex is released when 1 is written to the mutex bit. */
+ 	iowrite8(KEMPLD_MUTEX_KEY, pld->io_index);
+ }
+ 
+diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
+index eb13bbaeda55..5032eab05bb4 100644
+--- a/drivers/mfd/max8998.c
++++ b/drivers/mfd/max8998.c
+@@ -146,7 +146,7 @@ static struct max8998_platform_data *max8998_i2c_parse_dt_pdata(
+ 
+ 	/*
+ 	 * ToDo: the 'wakeup' member in the platform data is more of a linux
+-	 * specfic information. Hence, there is no binding for that yet and
++	 * specific information. Hence, there is no binding for that yet and
+ 	 * not parsed here.
+ 	 */
+ 	return pd;
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 05d26d92df03..53c57bafea8f 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -331,7 +331,7 @@ static u8 rave_sp_reply_code(u8 command)
+ 		return command + 0x20;
+ 	case 0xE0 ... 0xEF:
+ 		/*
+-		 * Events emitted by all versions of the firmare use
++		 * Events emitted by all versions of the firmware use
+ 		 * least significant bit to get an ACK code
+ 		 */
+ 		return command | 0x01;
+@@ -544,7 +544,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
+ 				 * NOTE: The above means that only the
+ 				 * frame started by third SOF, sent
+ 				 * after this one will have a chance
+-				 * to get throught.
++				 * to get through.
+ 				 */
+ 				goto reset_framer;
+ 			case RAVE_SP_DLE:
+@@ -595,7 +595,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
+ 
+ 	/*
+ 	 * The only way to get out of the above loop and end up here
+-	 * is throught consuming all of the supplied data, so here we
++	 * is through consuming all of the supplied data, so here we
+ 	 * report that we processed it all.
+ 	 */
+ 	return size;
+diff --git a/drivers/mfd/si476x-i2c.c b/drivers/mfd/si476x-i2c.c
+index 9bce720a0a08..6351aef2d3bb 100644
+--- a/drivers/mfd/si476x-i2c.c
++++ b/drivers/mfd/si476x-i2c.c
+@@ -222,7 +222,7 @@ int si476x_core_stop(struct si476x_core *core, bool soft)
+ 	atomic_set(&core->is_alive, 0);
+ 
+ 	if (soft) {
+-		/* TODO: This probably shoud be a configurable option,
++		/* TODO: This probably should be a configurable option,
+ 		 * so it is possible to have the chips keep their
+ 		 * oscillators running
+ 		 */
+diff --git a/include/linux/mfd/da9063/registers.h b/include/linux/mfd/da9063/registers.h
+index 7b8364bd08a0..376c5d330599 100644
+--- a/include/linux/mfd/da9063/registers.h
++++ b/include/linux/mfd/da9063/registers.h
+@@ -14,7 +14,7 @@
+ #define DA9063_I2C_PAGE_SEL_SHIFT	1
+ #define	DA9063_EVENT_REG_NUM		4
+ 
+-/* Page selection I2C or SPI always in the begining of any page. */
++/* Page selection I2C or SPI always in the beginning of any page. */
+ /* Page 0 : I2C access 0x000 - 0x0FF	SPI access 0x000 - 0x07F */
+ /* Page 1 :				SPI access 0x080 - 0x0FF */
+ /* Page 2 : I2C access 0x100 - 0x1FF	SPI access 0x100 - 0x17F */
+diff --git a/include/linux/mfd/db8500-prcmu.h b/include/linux/mfd/db8500-prcmu.h
+index c939c9a1170a..87a28c4f1d81 100644
+--- a/include/linux/mfd/db8500-prcmu.h
++++ b/include/linux/mfd/db8500-prcmu.h
+@@ -337,31 +337,31 @@ enum sia_mmdsp_stat {
+  * @SYSCLKOK_ERR: The SYSCLK is not available in the given time
+  * @BOOT_ERR: Romcode has not validated the XP70 self reset in the given time
+  * @ROMCODESAVECONTEXT: The Romcode didn.t correctly save it secure context
+- * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transfered
++ * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transferred
+  *          through I2C has not been correctly executed in the given time
+- * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transfered
++ * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transfered through
++ * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transfered
++ * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transfered through
++ * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transfered
++ * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transfered through
++ * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VSAFEHPVALTO_ERR: The SAFE high power supply value transfered through I2C
++ * @VSAFEHPVALTO_ERR: The SAFE high power supply value transferred through I2C
+  *                         has not been correctly executed in the given time
+- * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transfered through I2C has
++ * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transferred through I2C has
+  *                             not been correctly executed in the given time
+- * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transfered through I2C has
++ * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transferred through I2C has
+  *                             not been correctly executed in the given time
+- * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transfered through
++ * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transfered through
++ * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transfered
++ * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transferred
+  *             through I2C has not been correctly executed in the given time
+  * @CURAPPWRSTISNOTBOOT:Generated when Arm want to do power state transition
+  *             ApBoot to ApExecute but the power current state is not Apboot
+@@ -376,11 +376,11 @@ enum sia_mmdsp_stat {
+  *                    been correctly executed in the given time
+  * @ARMREGU2VALTO_ERR: The ArmRegu2 value transferred through I2C has not
+  *                    been correctly executed in the given time
+- * @VAPEREGUVALTO_ERR: The VApeRegu value transfered through I2C has not
++ * @VAPEREGUVALTO_ERR: The VApeRegu value transferred through I2C has not
+  *                    been correctly executed in the given time
+- * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transfered through I2C has not
++ * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transferred through I2C has not
+  *                      been correctly executed in the given time
+- * @VMODREGUVALTO_ERR: The VModemRegu value transfered through I2C has not
++ * @VMODREGUVALTO_ERR: The VModemRegu value transferred through I2C has not
+  *                    been correctly executed in the given time
+  */
+ enum mbox_to_arm_err {
+diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
+index fd17bec2a33e..e8c50bd38a8a 100644
+--- a/include/linux/mfd/lp8788.h
++++ b/include/linux/mfd/lp8788.h
+@@ -34,7 +34,7 @@
+ #define LP8788_ALM_IRQ		"ALARM_IRQ"
+ 
+ enum lp8788_int_id {
+-	/* interrup register 1 : Addr 00h */
++	/* interrupt register 1 : Addr 00h */
+ 	LP8788_INT_TSDL,
+ 	LP8788_INT_TSDH,
+ 	LP8788_INT_UVLO,
+diff --git a/include/linux/mfd/max8998.h b/include/linux/mfd/max8998.h
+index 5473f1983e31..ad2ad24412fb 100644
+--- a/include/linux/mfd/max8998.h
++++ b/include/linux/mfd/max8998.h
+@@ -45,7 +45,7 @@ enum {
+ /**
+  * max8998_regulator_data - regulator data
+  * @id: regulator id
+- * @initdata: regulator init data (contraints, supplies, ...)
++ * @initdata: regulator init data (constraints, supplies, ...)
+  * @reg_node: DT node of regulator (unused on non-DT platforms)
+  */
+ struct max8998_regulator_data {
+diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
+index dabcc0dea802..1d872363820a 100644
+--- a/include/linux/mfd/palmas.h
++++ b/include/linux/mfd/palmas.h
+@@ -251,7 +251,7 @@ enum tps65917_regulators {
+ 	TPS65917_NUM_REGS,
+ };
+ 
+-/* External controll signal name */
++/* External control signal name */
+ enum {
+ 	PALMAS_EXT_CONTROL_ENABLE1      = 0x1,
+ 	PALMAS_EXT_CONTROL_ENABLE2      = 0x2,
+diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
+index 39fe275a8117..ea9b1a8f495f 100644
+--- a/include/linux/mfd/rohm-bd71828.h
++++ b/include/linux/mfd/rohm-bd71828.h
+@@ -186,7 +186,7 @@ enum {
+ #define BD71828_REG_RTC_ALM2		0x63
+ #define BD71828_REG_RTC_START		BD71828_REG_RTC_SEC
+ 
+-/* Charger/Battey */
++/* Charger/Battery */
+ #define BD71828_REG_CHG_STATE		0x65
+ #define BD71828_REG_CHG_FULL		0xd2
+ #define BD71828_REG_CHG_EN		0x6F
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 6191f409de94..e489ca0d55ed 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -106,7 +106,7 @@ struct sec_platform_data {
+ /**
+  * sec_regulator_data - regulator data
+  * @id: regulator id
+- * @initdata: regulator init data (contraints, supplies, ...)
++ * @initdata: regulator init data (constraints, supplies, ...)
+  */
+ struct sec_regulator_data {
+ 	int				id;
+diff --git a/include/linux/mfd/si476x-core.h b/include/linux/mfd/si476x-core.h
+index d9e3a322134c..3e924ca4db00 100644
+--- a/include/linux/mfd/si476x-core.h
++++ b/include/linux/mfd/si476x-core.h
+@@ -94,10 +94,10 @@ enum si476x_power_state {
+  * of the @rds_fifo_drainer.
+  * @rds_drainer_status_lock: Lock used to guard access to the
+  * @rds_drainer_is_working variable.
+- * @command: Wait queue for wainting on the command comapletion.
++ * @command: Wait queue for waiting on the command completion.
+  * @cts: Clear To Send flag set upon receiving first status with CTS
+  * set.
+- * @tuning: Wait queue used for wainting for tune/seek comand
++ * @tuning: Wait queue used for waiting for tune/seek command
+  * completion.
+  * @stc: Similar to @cts, but for the STC bit of the status value.
+  * @power_up_parameters: Parameters used as argument for POWER_UP
+diff --git a/include/linux/mfd/twl.h b/include/linux/mfd/twl.h
+index b31e07fa4d51..238d9dcefc35 100644
+--- a/include/linux/mfd/twl.h
++++ b/include/linux/mfd/twl.h
+@@ -739,7 +739,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base);
+ #define TWL4030_REG_VUSB3V1	19
+ 
+ /* TWL6030 SMPS/LDO's */
+-/* EXTERNAL dc-to-dc buck convertor controllable via SR */
++/* EXTERNAL dc-to-dc buck converter controllable via SR */
+ #define TWL6030_REG_VDD1	30
+ #define TWL6030_REG_VDD2	31
+ #define TWL6030_REG_VDD3	32
