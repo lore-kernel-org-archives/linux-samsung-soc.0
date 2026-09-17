@@ -1,62 +1,62 @@
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6213F20FA
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEF03BBFA5
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 05:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789622625; cv=none; b=RxZaAI84YBCFg4UcNZxJ3tmIZlcr2m5M6eGHEeWnrfIzQtBcURhqtFr2a3LpYqN+aiZ/J2Ttv837gQSSN8awcdJI/BPkGMJMU/zrJTSoehoQze1xW319wfJi0ISvC7Tz7emitG/uRZPzilmsCsyCeQjPTYGGTizZk3PSzREp02w=
+	t=1789623655; cv=none; b=iS4m8q0MnRvX5P1KSws6kGfYDSwSBpEI0bZcPSM+RZuwfpiaYgVctlDQLP9xq7q/ky0Xq5dmml2KAc2Wf8oxPnfgxD1wbLZzNZEuaYbmBeSj8v0kg2Iyz4YkTUIbj9ed+dsyk8h16YUZfnzGn1qWRvVPLWbHDAZq+LgxNAZNA3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789622625; c=relaxed/simple;
-	bh=aTwtqSNm05OJSXGSGIVb0xW+X+nYCvqDgfSQuiaEtlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PZmxWa3Bm09SFTsYhTgiWD2CAGp+qhLPq8VFen+m65KFdI/+cPAmeDpKuGbGcYfNFl29/hMJsSExQ2ZZkSVUI4xDeX1U+iVaAUiMnbg6mwymOlULMardGiEdA+SrzQRw0PXOeGg4iwXoZk6aBSaq0xemeWH7VNw0J67KUuTpHqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLCbrKDM; arc=none smtp.client-ip=74.125.228.41
+	s=arc-20240116; t=1789623655; c=relaxed/simple;
+	bh=zMB8BtNn5kNhUEXeNPqpwF2g5qlF0A5ZkPug210tldE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o22yBNXnZ1PTBMisLJ1P7ZgR8n9Dcq735dSYV922Tp0HAKBpBQynPa7yaC/ky6s5xKHKJO2vAqgOZBApAuYNsfGFzDnPXR705G72P1KRTEgC4u6IAsy3NC/GsXas98bYhAO+Zm+CbOhqAUqZdiqfCpXJ5Fq2dfsU3e4PpDtiO1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qGd9XZMX; arc=none smtp.client-ip=74.125.227.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLCbrKDM"
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469d249c5so333049b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 22:23:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qGd9XZMX"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccda24afso279252a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Sep 2026 22:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789622622; x=1790227422; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789623652; x=1790228452; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EijacSJHF51C+Y/V/hsmLgSVvJjLIJnbhuq1HdPUqnQ=;
-        b=mLCbrKDMrBZfNIabYGDMCO/hXFO0oje1vBn3cP3OMYB39P/+Ql4xe1yzgmSxsCacU2
-         G2C8RCnLmVZZ1BPKu9pC/LN46h32igmqj4INvHfTZwSVEleQEEe5lbATlyllUZm/l4cw
-         dkt4tz7jWD0nBgjqnfS2Xcm2SZJINEM1AEQcaKAPgPiyHSOAn5ElNUrsF+f1lUmXUEJY
-         HXUM+9JVbNMnMCdCMu2y1jkK3eIQy0VqodTS7ms3oXAK5WXaoPbeElXHIFVUKQq1PXnc
-         VO6M0fQ/8cCVX71G5JRPuCFN5knW9nqUjIx8pqp2AESstvRa10lqzSpje3JbhdERnK4F
-         NgkA==
+        bh=ULIWVdAV0jqU2cF413VZCETAT/3KHunB02MWjhzXSTg=;
+        b=qGd9XZMXf1LLW8pKLkgkVNjZmje36J0Nn5A7ljfafnsGHEP5D4kALq4ttJBURO5WKv
+         8aOsqezSsrUd0hpoxFyQALQlT2xWXgxMykvJIuvBJoC+CouQeFbc+nIjA0LW3Eugx6M3
+         f2DgcVnECAwcEHw0zU42MOY+vXtxzP1gEV4mY4ogzc3gl7tbPXr/6XABuhqmhe3ibKkc
+         ix2y/CPOPd0HCnb0FN2jkRaHA81BUZcRJ/XRruj405uwCqeLU+oSbdaauP4hKKrlCjB+
+         yQiCCzTxTJc4GNoaXfFG1jlV7Lh82V/T+U+XdrEDZiljjoKMAkOiZEHKicnS0QgnJyBq
+         32Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789622622; x=1790227422;
+        d=1e100.net; s=20260707; t=1789623652; x=1790228452;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=EijacSJHF51C+Y/V/hsmLgSVvJjLIJnbhuq1HdPUqnQ=;
-        b=eC1MrojcVAej9Uizdgxhco/iktt4VWC/NrsBm2gss2ntF85evKEDpkAuQF7MKK57yw
-         EEQ65pbj46mulVnIj8THLfix0FUNiLY8cvpPG3XNF2Aax9qEANU3GjMHQnZ6v6nCYW3a
-         Jl0Mfc0B8VMSpN9Qy/FoapqjSYePNcfapbaIwYmzcr6h2j31Mm2Q2Qg3wkkdqF2B13hu
-         gzDrX6rgWUP0jX6xwEYkhxzXhPdKseqttQnEs9jRBWHScRf9CT0j3cwLZLxZMtF/Vkf7
-         BzWQ5ToB0wbw/DdTV2PMnSYE8/80CWjW5sRPGIcPs7YxwTqTohm2dNZS/6ayaZZeQ1hR
-         Ah/Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzAPR3pNq6YAPFHsiQ0aXZs9xjCMzmiBaXet8x4woE7O0SE23ZynybzxWT7aEexLiYmEMvh9zygk0jj3nP1+NQp0w==@vger.kernel.org
-X-Gm-Message-State: AFuF++mnl1mZm/RAEU8QnUllez/tDsUdzwdlHhgzzXIhlrvwVlHevhUz
-	n8+o+vlNnCC+YeZjOFIqm8+r11Mp73TroXrr9KO4hv2juFvIbesRjBPMFN8pNV+x
-X-Gm-Gg: AYBFou3R60aam6DfFWfWzmd480BTn1Mqpwr2v/L0AMLaqhq4ksa6/XF+LRNpI5D9+MS
-	/m1VSGYPNdiXGJOtJrxNSgRwGqstqO9arZWvyVX8yJeVswlIyd0x62I2sUsUWVfroEqaNia4nh8
-	OjNRrsE+8J4zI0uOHWciTbUPAQL8E8rRadLza2icyurYs4ThY9/Zuc4w3lhn/Vo+nZgMMo4usBt
-	V+VCD1E2FahJ4JLq/zUyH/v7PwMwSz9Z7V8cI0JF5+c5mizbVlbsyTQYFm1SiySriSaEBZXdt4c
-	g9FVJaC+QVDbPzpU2UQS0Wvik41K04hHYRJo2TYGoS3rlTvj1kQ7yDlnB0wseCagahyqHW4EGWJ
-	WvgSH4eOuqxN8jk7/ywYhdSQ98ZhllGYZtPpJqPNxA9Wm8fMAqw6lK1EzPoqskc/kQo7gcUDOqR
-	d5osVazKSsPUlaCRvxTnyNKUjwMOcH5sCJiUyimDpJFNL74CS4G28FUe3jxxI+AdDQwNj052o0G
-	dTZqlOZb1OJ/jYXL67SJ6tpoQ==
-X-Received: by 2002:a05:6a21:7008:b0:3c3:b57b:627d with SMTP id adf61e73a8af0-3dd5f44a101mr14246154637.12.1789622622323;
-        Wed, 16 Sep 2026 22:23:42 -0700 (PDT)
+        bh=ULIWVdAV0jqU2cF413VZCETAT/3KHunB02MWjhzXSTg=;
+        b=1IzzS/h/VHskITiMwhCrN0b7gybyiKd0bsDXa91VVeWjvHmsqAXJFeG1AZFmxrqzQh
+         88Yc1t0wnQZt53IJAHkEubZVqJl1gtB3bHaob2wZasmh2BeYY2vwj5/tDPyTJdtxqfQN
+         JDHjb7J6wnvkPHTRVFgVF3MmJK1GRf1GM6hdpVXVMd7ysrygZT+eqckKRyxUQ1abgDDV
+         swXbEDgfdq8zTzkzlsffhZsZ1CvHz3x0u6d0/iJMNxERC69F0DnyrTk64ZdMscHLLOp6
+         DLIuLof8t+zBa/FhkEjurdqf89brFKpKj14p5KzEJYyEPzNbdGp+7wV1r5hc35Sz6dqc
+         yOTw==
+X-Forwarded-Encrypted: i=1; AKwUvByxOI5VpnZUVr1PVYoafzUxSQucC3+LJS8ubaF79CilFPKVgQXOaSK2HzaXlsMjhVWZXEWfcJdrrcKDM7NttMmgvA==@vger.kernel.org
+X-Gm-Message-State: AFuF++nzWMKLAcE++QzeMUjNdMLQh1SmwCybH2tilampqK31k8YP47hf
+	JgTSUDXU38u0xg1U966YJBqNLv9xidRDct2nohztgoVV9Ox8Kl3fLlPT
+X-Gm-Gg: AYBFou3svTrKTWipvUUtmJ4Lyp9CsIBLc3hK807p4rgY4e/p/3gyobEMejI3HuxYxRX
+	waEjtoLiWF1k4BmFkToi90xhdy3D6MICFRuMvmsUJJ/pgLiRwVx/Fac5d4WGFTwYdc2FkFVWq7s
+	z182uxnAzNoeAqkLAC8I2SZVIClJsnWl+YCxwQ2S5KKLUbvryeSPwn7T8Ba41Cyl345XEsW8AK+
+	JTUAlhZxJ/k8Mrjzk0rB/8o6tQTgVq73ejgqBqfTdxYWWo3kSR2Sc7vdYiEIWcImLkFmaKakrMS
+	ioCQiEMu3ZWmz8nECWt9xLPyiu5kwmdX4+GPbe1qz31QOgDMqmWWTq37ddcgXNsbqX2FA+1bgiz
+	IxlO3Leo59nM6Z+jPvxMofYmN40jBItAyJukszvDTSjgpYTxRX+4o1TW2z/HaJl+ZPST22/GwRQ
+	AomZf8UfJNvcb/XL7nCWBa51d3p3u4xwpMnZpAaxgyiaVD8hyU5CG1TwA09bVMWi21S8sbSSAu3
+	3cmpwmS8et5ebfOU1vsUtPSFhc=
+X-Received: by 2002:a17:90b:4d0e:b0:39e:17b:a13d with SMTP id 98e67ed59e1d1-39e1e539c36mr14946564a91.23.1789623652088;
+        Wed, 16 Sep 2026 22:40:52 -0700 (PDT)
 Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5aee8b0sm24486171eec.23.2026.09.16.22.23.38
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33c00ede586sm9663662eec.10.2026.09.16.22.40.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 22:23:41 -0700 (PDT)
+        Wed, 16 Sep 2026 22:40:51 -0700 (PDT)
 From: Hemanth Selam <hemanth.selam@gmail.com>
 To: Lee Jones <lee@kernel.org>,
 	Support Opensource <support.opensource@diasemi.com>,
@@ -68,9 +68,9 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	mfd@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v4] mfd: Fix typos in comments
-Date: Thu, 17 Sep 2026 10:53:35 +0530
-Message-ID: <20260917052335.13288-1-hemanth.selam@gmail.com>
+Subject: [PATCH v5] mfd: Fix typos in comments
+Date: Thu, 17 Sep 2026 11:10:45 +0530
+Message-ID: <20260917054045.15805-1-hemanth.selam@gmail.com>
 X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -83,20 +83,22 @@ Content-Transfer-Encoding: 8bit
 Fix misspellings in comments across the MFD drivers and headers, found
 with scripts/checkpatch.pl using the list in scripts/spelling.txt.
 
-Since v1 this also corrects "wainting" and "comapletion" in
-include/linux/mfd/si476x-core.h, which checkpatch did not flag; Matti
-Vaittinen asked for "wainting" and "comapletion" is on the same line.
-The subject is also capitalised to match the MFD convention.
-
-v4 drops the two Acked-by tags that v3 added, as requested, keeping
-only Matti's Reviewed-by, and drops the Assisted-by trailer. The diff
-is unchanged from v2.
-
 Only touches comments, no code changes.
 
 Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
 ---
+v5: no change to the diff; moved the version notes below the --- where
+    they belong rather than leaving them in the commit log.
+
+v4: dropped the two Acked-by tags that v3 added, keeping only Matti's
+    Reviewed-by, and dropped the Assisted-by trailer.
+
+v2: also corrects "wainting" and "comapletion" in
+    include/linux/mfd/si476x-core.h, which checkpatch did not flag;
+    "comapletion" sits on the same line as the "wainting" Matti asked
+    about.  Subject capitalised to match the MFD convention.
+
  drivers/mfd/88pm800.c                |  2 +-
  drivers/mfd/kempld-core.c            |  2 +-
  drivers/mfd/max8998.c                |  2 +-
