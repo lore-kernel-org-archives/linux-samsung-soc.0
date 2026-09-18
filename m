@@ -1,83 +1,81 @@
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com [74.125.228.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C35B37F00B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 08:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B93CAE84
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 08:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789720050; cv=none; b=bqFxE30LUKrteXsw7lJ2N8yLR0DT05kAFkroPDnBLRM/2cuOINSLuOFHQcpOG/DoVFV2u0gkpFxO38w9CXGArNlIdd6EeKJ3p39drs0hR6+QAUvkCfcbdM5LogW8x5oYjPEb6zIrIEsVrg34nPHP31BDew22F2pbofxg80bBkX8=
+	t=1789720385; cv=none; b=eEazXBESOEC9mqnG8fJRlG5GGRyOtiDWjwkCKbf3w6bHAfBkSzyZLT8VWKR8q+OtQKgUIfIJn7AAeVKXoWbbW/XudEg5oYhdwEtWB2Q14FxF25glE3DlnRkRb7vm3gmwbM3nLe3XhLoq0hpvs7OCv3jEUPHR1LRqpSQFPnQqh/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789720050; c=relaxed/simple;
-	bh=YeoWLTkt6g+7QQ/XCxHLmavHJDwmMxaxbM6DKy497OA=;
+	s=arc-20240116; t=1789720385; c=relaxed/simple;
+	bh=pKTzsHsh+KOl7XVkDAfUJy4MbfFG1awKeay+vTS1O6M=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dB1LtGac2WwrTfQDPJG9JyaYc0aHWE8zLbHutLlPtR8pBew6WcaD4D/RUCUDNzNQEhcDaHJ0E2rlONHxNvoPOhVQ1kAb1Q0Vxb7jn1zo9zXERIz9HC0oYndqo9gHFJUv6OPFzi9UKMe1omiTlJccUBdTkyKLkxGCJzwpZ3TFmrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dlBWdqDB; arc=none smtp.client-ip=74.125.228.140
+	 Content-Type:MIME-Version; b=gKYYSTRVMR3ohb1mMllDEkCwniw6U3kks/l5sMK1bG2d7xDY5XN6Em9HTwTLMvjs125IRBkOmqgKCSHe76Pzgu0aHwwd9j80lWgJWbkiL0ZGgSIgJCtDPXc97VuONlICZDXVBYP8XoITSCZjJbKJCuenaygpeE2KX31mnhUEm4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nfgSxmbP; arc=none smtp.client-ip=74.125.228.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dlBWdqDB"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254f55eff0so63980366b.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 01:27:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nfgSxmbP"
+Received: by mail-ed2-f35.google.com with SMTP id 4fb4d7f45d1cf-6aa1da63791so587791a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 01:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789720047; x=1790324847; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1789720381; x=1790325181; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=YeoWLTkt6g+7QQ/XCxHLmavHJDwmMxaxbM6DKy497OA=;
-        b=dlBWdqDB98VlAbFVyNLGHbECcRvQsOsIZQ3OuO2lBnzd3LAakvCtFxbX5dmkM7Dx6F
-         lSl1v8Bc/++kOkn3YYItf0PhlICnUE/+69zvJ33u+w1kg4yKaWPPZ1XoHLQry17/Zeeh
-         yYjQecRrwHo++gw3JEL7ZOQ+nzeHDuwKvkQDJ2ZgpMumZB45LHUUEJO1/6eGsMmTde3z
-         7JLMhnZIB0uvs245H8pcU0Q2108PfY8HPN4tVi7RDQbep4b+0/ZSzRg7txalCC0YtUZN
-         RjPiV2LENxGAJCS4G83ttbF1KyEGUDaOkKTJQgYBI2fq/oi9KLt62DAjiGppBOPCIGqV
-         oonA==
+        bh=pKTzsHsh+KOl7XVkDAfUJy4MbfFG1awKeay+vTS1O6M=;
+        b=nfgSxmbP5YP6RLt1l/C3o18goqydZY6Jye3F3+ZWnwOWeUSvRQLwsWBwpbUkljNEjl
+         U3Kogfx8Xzx5Xsp3GmlYo+KSbSlLLSSNjNwuJktBSjSGX8BX6woXR+xP6Ev9uaea5CSa
+         2gRzHkTLpP9tI1CHhNUFMqEhN3BG3U52EsZVoN9+pfbH2dfpmMUB8GolvMeBaH3doWh0
+         R+Dzw0FjkOxo5ILY4DA69NzUes/29fE6oHGKmjxqlH6v1xEzCt3kixkYR52BmuXEq2NN
+         bGnSGQa4YlulZr14sVkq1FRjCKroD9N2ZRGPH8EfQIkoaHi31ya+P3HM4/l2K1vMuSSp
+         IsBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789720047; x=1790324847;
+        d=1e100.net; s=20260707; t=1789720381; x=1790325181;
         h=mime-version:user-agent:content-transfer-encoding:content-type
          :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=YeoWLTkt6g+7QQ/XCxHLmavHJDwmMxaxbM6DKy497OA=;
-        b=E1NSWFHyOXR6xLk0VKAeiLV2wvpNrtsWmj2wXTyb81paMtVuppKiiifMGxLfKfHxEB
-         dkGTMsqjw2WawvHN0+5tkrcxajD5CZqWSQd5Zpj8gJJIMl92WChZZlRTFMegaE15JLFf
-         lbncAhl87MFZiCpA0hYTwzsR0xgdDRKi0EypNPClx2Cv6JNSsFJiTl2evdzCT5pJYOI7
-         lqlMbgYKK937ogv6xIQ9v9fa9vNvITng7Ow1KGXNE/fn8qodE7gGn6wnp1mXRi34Oyde
-         /0BKR6BPm8kHES4cdBK6wVtWuf3sAiQgoRE/z4gx/Uo1pdUTbm436lVF3ztg62UVt1E5
-         LAPg==
-X-Forwarded-Encrypted: i=1; AKwUvByYEFxHy+GX2M1loLseo6YC5qLIPpVktg+dYbxchzjfHRveOm72yaw+YtQsAv4tDj56WKPF1mhU6YcJ3l/xIgnEbg==@vger.kernel.org
-X-Gm-Message-State: AFuF++mKwtv9N5RRebJ6YZ2KvdrUz6qna2XtmXFkuyVDseDKyVlc4GRM
-	bMrw0NVbj69rByxz4EBtcaR46kKzNFmjs8ia8mOoXNQqRcBTWZ38SF4WGui9224G39E=
-X-Gm-Gg: AYBFou1FtsILJlgGYjsPCLbK4gynPjclm1Bba7bmuDQSbdscEaQ+PSr1DMLcqGjS6xQ
-	lcUz1zVCOHwBt5WMNUXVJbxY/DMuqgzUK+53stvoABHt/C7w/AjfIbsuSDH/a2+R5DE8kATlx+a
-	0kdLAwyiFO1rouGmdliytS3mDWy6uSQiFgmP6SwkhBB0ZpptCNAnY2qODlTgRfjlzA5bEBgQpzW
-	RyEG45fTRnTTtKSjZwKZIYHNqyykGAD67HhSAOUGaxMQ1ocL0HFEQKuwBNgsE9g43Azhb/9cEc6
-	TF0aY1OEaKKCeUXxHWyU0LtcIQntLRIIuO2xi49jo1Bdsa2bYS1lGBTxq1eBEKYudGpIn61syn4
-	RMIMWaDdroY2yIbGUPKJq2xrXSBlBjtp00WcHnkMyIYoy0kK/WOt9IULM1Qc0cIWwzvkUynee1x
-	MkL9AZiFIHvoHGCVUBazjMWs5GYq/0fmmgcJkFybXN3RW9jL0vV900xrm4S8kVfYna9oFfN+7DA
-	M8=
-X-Received: by 2002:a17:907:d01:b0:c26:1691:b364 with SMTP id a640c23a62f3a-c2a157c2f4cmr178472466b.29.1789720047299;
-        Fri, 18 Sep 2026 01:27:27 -0700 (PDT)
+        bh=pKTzsHsh+KOl7XVkDAfUJy4MbfFG1awKeay+vTS1O6M=;
+        b=zQIHiifajUQYXoDetNRafYDyKUwdOnpuFT2oxSPsf48V2N2BBcYu25/NGxpa9ipR6w
+         o3BdZGJYOpLyNgFL54Go36diwPhRZCti0UFRkC4UPbUVACXv9SMHGtJuDegboB7XtPXl
+         Lz/b7eMEZXgZQMW28kYG9EYVe+oio1UKdiD926Zs+Ppn4LXaabfIgfNX9cbUcVSLVnIZ
+         egxGc3P+L4NbL+4EQkA2oMXVxJLDUO7BNu1N8fMpJgYeHQJliqGWHHqeE6vw5Pbd7iLK
+         s1ZdgGibylbmVlkFEhWuxECTctE6CArrPQuJlwYqzSj3F36kM2A3pUZuyReN11sad0HQ
+         gaLg==
+X-Forwarded-Encrypted: i=1; AKwUvByfVSjyHIBIJL1KrmOAmtfFtF6m5yKGkaNdhbSLmYFm5O0jlXknWVkngDw8OpDlYJegyR/Dpmjatx8mhcJHmf5s7Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++m2hiOS/CcTfCRYfUcB1OkIGqNfToifKWowcRxBlczDmq2vXOTZ
+	V4DysrPGXyAZ7d1jSIIkJUr1oz72GcFxP+AaVpJ2L9tsGLSmRZpVoGMUA7E69eE4QlE=
+X-Gm-Gg: AYBFou3gI6Mxmlo/c2Y/NwRFs1Pd/y0MxBLchDc8UsaJhWnyCALnO3OTSca/UjYAfVR
+	TYD0d5JV+YDTWYK4H1ggHYPShtGw0o2cx+c5FZNpaczFfnlFw9om1JcIygjj4+1EKvU60Yd5I0U
+	cQmdsg2BmBYQF372m4KtvXDaMl668CbtX+0spwHpppsb9TsL7jmbU7SrYFhKANtln3ONZfKyBck
+	+cnpkHVTKt6KeGQO0O6hl6ZQ5JAZyoJOsPJ/3fdiY1VpAZPaDfYRTJZEcG/JIviU21Wq3Rn+p9E
+	QHUqyUUYu5BGELd1wB3/AXvfku4jCiNHVThF6KnfOCid/Jpmu6Wytp00ffwbxF2PdR7MbsRIWqO
+	JoY1GqVTPh2XRh/aZ73oVs+/3TOFytK4X2CfAVTgzmapDcI+zvYUIZZdSJ6ah8SGK8h8lb894en
+	M+pKdydipMz6laDzQXgij1kNoZkgwP4h3cxpfGGjX8xlVHBQC8ArhfM2lVMhOOGDWfl1g1xk10B
+	HY=
+X-Received: by 2002:a05:6402:4026:b0:6a8:e223:fee5 with SMTP id 4fb4d7f45d1cf-6aa531ef01fmr709732a12.44.1789720381295;
+        Fri, 18 Sep 2026 01:33:01 -0700 (PDT)
 Received: from draszik.lan ([109.255.181.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a1bb87e5dsm32871766b.36.2026.09.18.01.27.26
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aa59605618sm513138a12.11.2026.09.18.01.33.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 01:27:26 -0700 (PDT)
-Message-ID: <6c762160b22cc801d26de2f2186717e41f7e640a.camel@linaro.org>
-Subject: Re: [PATCH v2 0/2] arm64: dts: exynos: Few strict dt-style-check
- cleanups
+        Fri, 18 Sep 2026 01:33:00 -0700 (PDT)
+Message-ID: <950335110f9d9c22a026fa5174e492c4194299a5.camel@linaro.org>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
+ prevent OOB access
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Jesper
- Nilsson <jesper.nilsson@axis.com>, Lars Persson <lars.persson@axis.com>,
- Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley	 <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Ivaylo Ivanov
- <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- 	linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 18 Sep 2026 09:28:49 +0100
-In-Reply-To: <20260916-b4-dts-samsung-cleanup-strict-continued-v2-0-8e9d534ba5b8@oss.qualcomm.com>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>, vkoul@kernel.org, 
+	neil.armstrong@linaro.org, krzk@kernel.org, peter.griffin@linaro.org, 
+	alim.akhtar@samsung.com, pritam.sutar@samsung.com, kernel@lvkasz.us, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com, 
+	muhammed.ali@samsung.com, thiagu.r@samsung.com
+Date: Fri, 18 Sep 2026 09:34:24 +0100
+In-Reply-To: <20260831070309.158069-1-selvarasu.g@samsung.com>
 References: 
-	<20260916-b4-dts-samsung-cleanup-strict-continued-v2-0-8e9d534ba5b8@oss.qualcomm.com>
+	<CGME20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0@epcas5p4.samsung.com>
+	 <20260831070309.158069-1-selvarasu.g@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-9 
@@ -88,30 +86,33 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2026-09-16 at 19:06 +0200, Krzysztof Kozlowski wrote:
-> Changes in v2:
-> - Do not reorder CPUs because cpu@4 must be the first one/boot.
-> - Remove applied patches.
-> - Link to v1: https://patch.msgid.link/20260911-b4-dts-samsung-cleanup-st=
-rict-continued-v1-0-9aa55051c42b@oss.qualcomm.com
+On Mon, 2026-08-31 at 12:33 +0530, Selvarasu Ganesan wrote:
+> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
+> creating both UTMI and PIPE3 PHY instances regardless of the SoC
+> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
+> and ExynosAutoV920) provide phy_cfg arrays containing only a single
+> element.
 >=20
-> Not yet complete, more files will follow. I probably won't re-order all
-> Exynos5433 soc nodes by unit address because it is way too disruptive.
+> On these SoCs, when the loop reaches index 1, the driver reads past the
+> end of the rodata array, populating the second PHY instance with garbage
+> data. Since the configuration structure contains critical function
+> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
+> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
 >=20
-> Best regards,
-> Krzysztof
+> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
+> store the actual size of the phy_cfg array for each SoC. Update the
+> probe loop and the xlate function to bound their access against this
+> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
 >=20
+> Assisted-by: Claude:claude-sonnet-5
+
+Shouldn't this be 'Assisted-by: LLM'?
+
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 > ---
-> Krzysztof Kozlowski (2):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arm64: dts: exynos5433: Re-order nodes to =
-match coding style
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arm64: dts: exynos5433: Re-order propertie=
-s to match coding style
->=20
-> =C2=A0.../boot/dts/exynos/exynos5433-tm2-common.dtsi=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 93 +++++++++---------
-> =C2=A0arch/arm64/boot/dts/exynos/exynos5433.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 108 ++++++++++-----------
-> =C2=A02 files changed, 102 insertions(+), 99 deletions(-)
+> =C2=A0drivers/phy/samsung/phy-exynos5-usbdrd.c | 17 +++++++++++++++--
+> =C2=A01 file changed, 15 insertions(+), 2 deletions(-)
+
+Other than that:
 
 Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
