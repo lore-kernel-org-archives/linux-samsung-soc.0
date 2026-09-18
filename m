@@ -1,89 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD2243499F;
-	Fri, 18 Sep 2026 09:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBE6381E84
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 10:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789725534; cv=none; b=inVJjgDTUZvM9D6GuXly7XQsZYjRhRmCNYKau5l5DSllVJqlLB+1yKkdonzykt8fa9J5kmc9V/Z5PgM5lJKZRq2O6YQMBUwI0zYXu9E2q7GrxPMuiSHEp6UFTVyhdWK591hqL4aACRtY+bxD0kU6ojuK5K0bnaC5V8jPoDmdA74=
+	t=1789726879; cv=none; b=LUMk5Fz6U6frlSDvZdYvBB91QS3gi2kKmNDTUnNWvSw8tLvxQiEgLERjlmwyhy1jMTmlcHAXEHRTSdk3US1ir5y6AqIZ46fXghJJH4jj68AuHXu89fu0i+0Gq1VUXIbomLIJZnPkaOVl/yL26Mlm3q06Y/nyiF3hdZF+ZnGlYQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789725534; c=relaxed/simple;
-	bh=JsQggZigR/TcXmnx8/T+7z6r+BTFJnRQcEysKzuQRdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXB4D53XFU3V85o+QldPHc0b3Gq1kvVeOMv53pl3n6SS2CuNoTXFzk/ki5n3N6jV8nxffRuq7AT+hpFAgKGoLbw83N7zY1YJh5mmyaNLGdn0QRzQVwfMGs091nrE5ntZ4l3YkjMKbdKJcOKWsVp6bsM3DY4CHvymnc5jp2zAjtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzQGaa2w; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789726879; c=relaxed/simple;
+	bh=mG76quiYNz0AT0P7HQbuEU8wQLgXjM+PNjTABkJPj8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=FhuZs+5jG//i3hYyzl9TpFcHKvtn0vSuXCNRiYRTr1WdMHky1abloIBdpvKHUBDrCDA58fhAgTrVYvUcuq1pBq+LxS5igYynBvi3/QvOCYBd9yb6KRKj+v2sJ5zUkVb8DeAiRQHVVjcPVYtq0SCCpyrOQFcR1yiurz2YEUm3QzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=q5/rYOyz; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzQGaa2w"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB91C1F000FF;
-	Fri, 18 Sep 2026 09:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789725532;
-	bh=Ln1d4qHa7vdCKllJbzJ0Cgy2Evr00KW99XLnmyu9AZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lzQGaa2wc7pzdKv4ZpCrAfV29vqmfnYgdzyKRSmxaEI3AfqMIfSFutWS+AZPvkSF2
-	 GdevVH2V8K7hWaHcSqJB0R8WJs5Xz5mW5ttf0/Id00JR1Y+uo2I6kHaw8Y2J7I2y1i
-	 iapc6g9TCJqF+xSdzEicL/Hw13gqjY7TtT7pd5JqiM4rOIW7P0qrlFGm5eiLghqT4b
-	 Ov3UNovPiZ9GJgafv3w0tWTH+TU0jwaLigTapVYn4gGe4Yv23+pqZQFo6ci5xQgJvQ
-	 MUTb1pXh7zwXzsXY9YgTTr/+tqPq8nZBjFh5YelJfm4W9gKq8N5yRl1AF1ZdM5rzgP
-	 rG2Hz2OWtvtxA==
-Date: Fri, 18 Sep 2026 11:58:48 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: peter.griffin@linaro.org, alim.akhtar@samsung.com, 
-	gregkh@linuxfoundation.org, robh@kernel.org, conor+dt@kernel.org, Thinh.Nguyen@synopsys.com, 
-	mani@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, h10.kim@samsung.com, 
-	dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com, 
-	eomji.oh@samsung.com, shijie.cai@samsung.com, muhammed.ali@samsung.com, 
-	thiagu.r@samsung.com
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: add Samsung USB DT binding to
- ARM/SAMSUNG entry
-Message-ID: <20260918-eminent-wooden-shark-97b8be@quoll>
-References: <20260916122229.2604003-1-selvarasu.g@samsung.com>
- <CGME20260916122351epcas5p37666f1232d3b2bcc1d02a96ab0df4142@epcas5p3.samsung.com>
- <20260916122229.2604003-2-selvarasu.g@samsung.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q5/rYOyz"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260918102113epoutp0282015cfc0a75ccfe834c3b2ecc31cf75~WYxwJPdmA1686516865epoutp02k
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 10:21:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260918102113epoutp0282015cfc0a75ccfe834c3b2ecc31cf75~WYxwJPdmA1686516865epoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1789726874;
+	bh=mboPEqvEACJTAtKfdZ1iQemoHuICqAXG3If2FFLFlMA=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=q5/rYOyzAIRpwubUTigeHz6catvyr++oiaU0INH8BrZP7KLLV9GmF/P5lT+WyNEqy
+	 UjLYF4YCdC/VH4C7Haw4t0HWT7x0kdeA4NnZG3++Eq4dMR/OGK38YtBcwoHISHcvKG
+	 4qkctIkTlEfF4mqOP/2EOkD1nnjrUbES0DxJmT9w=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260918102113epcas5p2a37090873c7e08a5b15b0fecf005810b~WYxvgUOtV0355903559epcas5p2C;
+	Fri, 18 Sep 2026 10:21:13 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4hmTDS15Ysz6B9m7; Fri, 18 Sep
+	2026 10:21:12 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260918102111epcas5p202e3b90fcfd624683f76a2ee45f199d4~WYxt86RB51756317563epcas5p20;
+	Fri, 18 Sep 2026 10:21:11 +0000 (GMT)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260918102109epsmtip1577c944b77491d8b4992d17593276ce2~WYxrze7hA1639116391epsmtip1_;
+	Fri, 18 Sep 2026 10:21:09 +0000 (GMT)
+Message-ID: <32029c62-faad-42e3-b1bb-e66772ca8ac0@samsung.com>
+Date: Fri, 18 Sep 2026 15:51:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260916122229.2604003-2-selvarasu.g@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
+ prevent OOB access
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+	vkoul@kernel.org, neil.armstrong@linaro.org, krzk@kernel.org,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, pritam.sutar@samsung.com,
+	kernel@lvkasz.us, linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com,
+	muhammed.ali@samsung.com, thiagu.r@samsung.com
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <950335110f9d9c22a026fa5174e492c4194299a5.camel@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260918102111epcas5p202e3b90fcfd624683f76a2ee45f199d4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0
+References: <CGME20260831070349epcas5p4c62a4e46592dffe95723ddd51a6068e0@epcas5p4.samsung.com>
+	<20260831070309.158069-1-selvarasu.g@samsung.com>
+	<950335110f9d9c22a026fa5174e492c4194299a5.camel@linaro.org>
 
-On Wed, Sep 16, 2026 at 05:52:27PM +0530, Selvarasu Ganesan wrote:
-> Add the Samsung USB devicetree binding file path under the existing
-> ARM/Samsung SoC maintainership.
-> 
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a53620839407..87a1ab24a375 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3576,6 +3576,7 @@ F:	Documentation/devicetree/bindings/arm/samsung/
->  F:	Documentation/devicetree/bindings/hwinfo/samsung,*
->  F:	Documentation/devicetree/bindings/power/pd-samsung.yaml
->  F:	Documentation/devicetree/bindings/soc/samsung/
-> +F:	Documentation/devicetree/bindings/usb/samsung,*
 
-I think this is not really needed. First of all, files will be covered
-by N: pattern further in the entry. Second, patches for these should go
-via USB, but listing here the directory could create impression that
-Samsung SoC is responsible.
+On 9/18/2026 2:04 PM, André Draszik wrote:
+> On Mon, 2026-08-31 at 12:33 +0530, Selvarasu Ganesan wrote:
+>> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
+>> creating both UTMI and PIPE3 PHY instances regardless of the SoC
+>> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
+>> and ExynosAutoV920) provide phy_cfg arrays containing only a single
+>> element.
+>>
+>> On these SoCs, when the loop reaches index 1, the driver reads past the
+>> end of the rodata array, populating the second PHY instance with garbage
+>> data. Since the configuration structure contains critical function
+>> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
+>> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
+>>
+>> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
+>> store the actual size of the phy_cfg array for each SoC. Update the
+>> probe loop and the xlate function to bound their access against this
+>> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
+>>
+>> Assisted-by: Claude:claude-sonnet-5
+> Shouldn't this be 'Assisted-by: LLM'?
+You are correct. I will update the tag to 'Assisted-by: LLM' as per the 
+kernel documentation in the next version.
 
-This one entry is harmless, but if adding this, then next time we got 15
-more updates for each of Documentation/devicetree/bindings/*/samsung*
-files. Is it worth?
+Thank you for pointing this out.
 
-Interested people can add themselves to the bindings maintainers entry,
-that's always welcomed.
-
-Best regards,
-Krzysztof
-
+Thanks,
+Selva
+>
+>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>> ---
+>>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 17 +++++++++++++++--
+>>   1 file changed, 15 insertions(+), 2 deletions(-)
+> Other than that:
+>
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
