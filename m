@@ -1,142 +1,260 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013056.outbound.protection.outlook.com [52.101.72.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8A64FC8FD;
-	Fri, 18 Sep 2026 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789739741; cv=none; b=cBs5rCifM1AUElCm16j++NWcdigJX4l4xZCEgDNASkAi7tLrzcMs99k/p406a23yEne6qwMrfnrWZodHvE0BE83sL4eZdAYmP3bUM/k3FoslogOtpvPuheP235TN3PrYIFF6UvjL169JhtF1VMDtlP3YPiALPL67RSYexnbnHKY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789739741; c=relaxed/simple;
-	bh=UAuJCU0pw2Nu5bSntLgF8/EoGJnXnmDCWKL6Xwu+ayo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XCsSJkAEkAJlEp7w85gFLN8zgTGFF+LX6QRDKEDHEmPcEAEDrHCC2M9p8/SU5ChdZFIGENWilILNZZYo8JugswrnlOrxY/FmncCMCi6e5ZeplLXsKypr1HZxxMiRTt2wCEnqR7+9Lw9cAb3jXmMLw4fr894kh+8xry1tJz7ivXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp7GHdgQ; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38263A0B24;
+	Fri, 18 Sep 2026 14:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789741229; cv=fail; b=OARqu4TAlFjSJIaB3Lr7/9si95gzSjkyhoIEk9s0mlUCWflHeAeLVm3nUeoo32w2S2RvSBD3q2MlSmTHbMD/fFvfzHq4Tvsxpu5QWZC3zn38T2YdOUlI1rMliQkVd6utgYnm95hcGcBuzPE9tTdUEaU50oR8+tB7i828evwEecs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789741229; c=relaxed/simple;
+	bh=Ptu0orVI7KiexKbTb/vB9bfRcsjbOpbioX9b64k1v0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ji6WQgq+H9MkahKJFd4vUdey69naLFtjh1LfIm4Gl/DL1xmzHkcVUi3URoHClQb14+gZDb2e2hok5S9IzZna8RiKyGlShpukXEnQujCLXeZ9lgUmiyFZE3116tmrwgypfW+FiYMjEQo0dUSUgZHUL245LDTvBNKbKsN46joJpp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=E2zHen4o; arc=fail smtp.client-ip=52.101.72.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp7GHdgQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BC5E1F000FF;
-	Fri, 18 Sep 2026 13:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789739735;
-	bh=4D9ml57Ny1BqAHty5ellcRNOyN2FZuu+rb87VZTIWPs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=Cp7GHdgQHC3PjELiyZ/mh0eSXpOBXjfIkO/yU+3A6mUlh2xAP13wI79Zh+eBFb6L7
-	 KDiZpBQlzP/d8J7XHGEUKDbb2kU+A7iXq26QTDdsi8+5ErdxbBAjghlB22FEFdrSrZ
-	 AQRZaRA5lOc1yPVT/9n3Tjsrpyf1rsLPGggUXWnxAq20ckKFvP4NVF4XTgXPRpBfzL
-	 Kqd0yRxh1rcrW3myzAjRJGweiBQjmPERXU6QM50eZ/GFwd7GyB9oz0w86UGDJie0uj
-	 nqxmNXMHaFjjVF9/qmIJeVFBjOVM2iTjS75ZE0K1JkaTNE83/udzxHPt8mRmhCeS1j
-	 0MZKmN/6h4Kyw==
-Message-ID: <628a4ac0-135d-434a-b5c7-27453e96fdec@kernel.org>
-Date: Fri, 18 Sep 2026 15:55:25 +0200
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="E2zHen4o"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SGg1Xc3EeRqZoLcaiyMmCHpKgev27On0HtZ7PCIEWDtdL6361faNhzkdHcEaok1EcGi6JDwJ3XNCxZqjfViVzy2Yn1mSXjXn2S9T0VqphnA4P8WkrA7iBWV+2KMJFmrxFq6SLQzjVALHlxZbJschjQdOz6vPthg2VBmOKf6io6mw0yVuWZjd9y1fSVVd4tEQVsNWbVn6t+FmfAntRTiUr6PFWCOAxcwSSeqcECHHrEy1+9N6zhPk7EvoT0CS1jHgt5hIxvjoMmPR/6SZ4Z9FORvlPHRzD/6ZPozhtnJPM10y3qxT2OEj6VhspxGVZ+4xpVzHd9k2MZ+pKn6xm24P3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=42rUBtlyT3sfKuf88X+9wuo6WWnR0H9NnfhuXblCuJM=;
+ b=gdZj1xK1EGKGVZmk8ZJ7WgEmqaGqKvLQU4Yk/DQTw4DwD5Q5BqacMoMutzVOdI8KQhp7+d+e8BKXyOznqaaDprAD/3xdk8Wcmt9DGDWDVWJwY2xoTir8PXmNsVxbxQKJC6MgtGN6sYDBnXN6dYnl6bnLmF8GjNCCAsxVKIBxmSEjo70bWL/ATz9gF9/fg4VmVFPI5uu0jOXtXtAOU3eVaUqckKXRMs6+ar5SWTpHpdtg8QtkVdNA+X1baWRdzg8xXtEeLBEVLVhVGedGlDKqBvAdO/fA/czlPuoYhcxXOKRtWRaKRYQaJc4mxQ29o+aqdAUuhNy+uvWbxfQIYsZqig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=42rUBtlyT3sfKuf88X+9wuo6WWnR0H9NnfhuXblCuJM=;
+ b=E2zHen4o/E8YLbFoUJ0Lli2zmpOp2WSJpDdBR04jD7cRKdrGYbOX9SwMAUkN3ghtiYwCTb+14tNoyaBevU9TRNYPPMXxJUDYQ035pepetjK+1Xrl6zh75Xui3GgaCjblle7ZCPpqUoaK3/ezGpQ+emPZ+0f+b53dsQgFC9v9P4R2DWY1zTJ5mek/kDyMMC9XZ8c1faHjrCUCPeYCxZFLcFBhZ5xb/CJ8Hx3at+f+csxVnel/U1ElXF4zKzBE9iBnCnjxhlTIx3vuFuXLB9Ddx8A8jL4E2y2292JvIA+BT3jqK+czQgqeGAg6FmC939TLkRhXKabFBgbhKfrv1NAuDA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by ZR6PR04MB296659.eurprd04.prod.outlook.com (2603:10a6:910:e1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Fri, 18 Sep
+ 2026 14:20:24 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0428.011; Fri, 18 Sep 2026
+ 14:20:24 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Fan Wu <fanwu01@zju.edu.cn>
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] media: use assign_bit() where applicable
+Date: Fri, 18 Sep 2026 22:17:43 +0800
+Message-ID: <20260918141757.3023034-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0018.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::7) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: usb: Introduce samsung,snps-dwc3
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: peter.griffin@linaro.org, alim.akhtar@samsung.com,
- gregkh@linuxfoundation.org, robh@kernel.org, conor+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, mani@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, h10.kim@samsung.com,
- dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com,
- eomji.oh@samsung.com, shijie.cai@samsung.com, muhammed.ali@samsung.com,
- thiagu.r@samsung.com
-References: <20260916122229.2604003-1-selvarasu.g@samsung.com>
- <CGME20260916122354epcas5p401fd6470d6cef75951af732b03aa5970@epcas5p4.samsung.com>
- <20260916122229.2604003-3-selvarasu.g@samsung.com>
- <20260918-burgundy-marmoset-of-focus-c9b9a7@quoll>
- <fef2b2f5-3838-4eec-8118-d41f9ca0ed2f@samsung.com>
- <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|ZR6PR04MB296659:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7aa482d-0224-468b-66bb-08df158ffb16
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|7416014|376014|19092799006|1800799024|56012099006|10067099003|11063799006|921020|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	cZA/VEcZU01RiPkFSvOUx2hrej+LrEPcNYiWC7oW18eWe/43yBibvbZS7n06p1TccwVY4yimjg26JstdU4lado8OE7SwcyPZiI+J8kCsSR3nsX+yyDCWkjGgqTV5AAQfzgogCaZcIejM89BTjlfTZO585Ob5EUM9As+xnBlaAOdJkXCGAw3QUWxcVU5DtFVbKKNHBpT3ST/kE9ZzCp06D3pHONm9d2DnQG0W7QvQvAU5GVihoDpgwIU8qp8JBY10YrVqqJPYH1wCiUwdrSPsUt/OM5aRwSBoiUj3n/sDtusEPfTvHH94dNU7MLDYsQW74e8KW8nyqZRz8XwSSx0VoSdzXNwxg8rR8daWEhN6LXGePHUzb0pGs+QxUazETKvfuW5sbqr7Idp8uPir/XKRVEewYvCHcNHrjyXbjzXr9rjT1wZH4qcNvU1Odb6jzuL4GXl5C5KVCCGDsIXuxajeAuoEMyh1ru0J7fHPDriLcnjT+QBM+1LSp3n98sz5wBphqTC7g4uRvwSI9eP0DmTLs+8aKZOFiYGRpbRSt8rd1GhDOrd3cxo4DLSDKe+6yaRWdFb5NTHKsB5QeDv0YSW/+TzsIE1CiPwMjJtqJoT/i8U2V8jB30FYo49FGCDcR02RNMHYhlEu7hmSic5TPX6szzAOVeHWiKZCu0oFhQcpKxpzZIXfaFLftUu4OVDaPNXrmLRcPB/7NoVYw2pI5JkxKg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(7416014)(376014)(19092799006)(1800799024)(56012099006)(10067099003)(11063799006)(921020)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?470KHUl5fpcPan/Km0FPypbsSIx+5d3u5D3SDoxQ+U1dQT58b0i4KmuG3QFZ?=
+ =?us-ascii?Q?DDPhatyE2S4pK0TRbhJAn5OKI9iawy2UJDfrmjaHbX6yDOBJItopBBCeoxje?=
+ =?us-ascii?Q?ogtRwpAGTGPOmXG0iHLG8vtY9WIlFw8s6sEwr+DsoH57q3tYS4DzKYuexCxV?=
+ =?us-ascii?Q?LB357oWHUxt4uqXrI1YQlis4mfXeE/AmF6ZvAaoikW8w7AGXpQHmq4sKWUKm?=
+ =?us-ascii?Q?B2+bp87yatk6iW8zSdUm3e4LCN4hiu63dG8M9YiOE1qnDOREVhvOE7dFD98r?=
+ =?us-ascii?Q?CZMN7T3VnQXswM7AOVqMwAl0P6yBcGMHbycXHvWn1Bj73y8fDLmbqrApoTcy?=
+ =?us-ascii?Q?K0dwcXnacS6pjqexEbxosEW9pDgC3uo/AJMAmm2QBMMV9UGE05WVGM6qIAnS?=
+ =?us-ascii?Q?nzBAuHdE9ihto79D8otowK7twW41GtkAvEFlajouXJEHSg3X356nFT2fCfKm?=
+ =?us-ascii?Q?f6dlPI3NmuFcsO+gQ0FBmjp/m2vZVpRilNTg4Isd8odDPbxA6Pr0NGalD5q3?=
+ =?us-ascii?Q?rZoQI8MbSB15LDEJwJHVY8jt7epyXTX7h6tSyngvHFJEfx+SQND/3kd3hnR8?=
+ =?us-ascii?Q?uYvjFOtYYeiHNpXOvl3aFjLSRZ1Pv9DDRAPZd8zNsnzC1783PqGs2hUK0Bee?=
+ =?us-ascii?Q?OyiFADjuQ7SbRMF+b18aCUEgVPSZuD/fgllMtDFwKJUY2IVLZ8pTfiFbLyH9?=
+ =?us-ascii?Q?RkbQYU9lzEp/D5AcmugATocxpfEUrPdunJP3gTQ3+G4qGjiZbT6+NbX5n9S+?=
+ =?us-ascii?Q?kzmgWp59+IrpBwux7SOoZ6OYZzKQ1dQM+zvhL9dw9iQoU+4Q3LRoF8Ij0TIb?=
+ =?us-ascii?Q?nxm2KPKcRdGddaQBFyN+4Ohfwc4YNn08C1eiVtu+suolGeSPyuF7iLQ8xVDJ?=
+ =?us-ascii?Q?Q1Lsnr+29zx5PwFxWd28/2Ukx/VtdR5R2NBX6qJsS9Ec9KMV9sojhDR+DIYW?=
+ =?us-ascii?Q?Myq4UFjDZH0hs0KKGKmWhM0UsnI4w+y2lQKGdXHb2LGpiQVFbHDZEuHzftl/?=
+ =?us-ascii?Q?XKCmTnRkZILqriSA3INx6FVZtVOcojLOy5Ozja4r+rYN/yOTC9dFgzdHd19G?=
+ =?us-ascii?Q?ygDG5Hc0hYsa59fnLyoptyfKS/8IF5eSH35Fs+9ryTyuHsi07rAqYKbyR/QZ?=
+ =?us-ascii?Q?r5MWJLde6DKb+ial2Zs73+xH9JHn/YsJXvXAPCzjdCmSSuJiftLo8yp1ck2z?=
+ =?us-ascii?Q?WTnWUbNWih1du2iWG058RMa3t9MJColLxzxDC7iahKjb4c/kpOBrpAWmg+Bh?=
+ =?us-ascii?Q?ahVCwnepX07dHjOgddBCE3omMETiY66VQsGUvVPvcLnyyn92/tWz/ZDJWSWu?=
+ =?us-ascii?Q?QeoMNt6a3egmtJ9rqU1zUVMmP0RXM4CMcfnC4aW4svrCN2eBLANcvo/0vSjL?=
+ =?us-ascii?Q?CiKJbAVP2glyqSCBSJ+Cskvlc9km2Lg5Dr5nHhGcouhv1dJCcxyCzmpLMlRR?=
+ =?us-ascii?Q?kiD8MdXysOVbfGZ4p+NA3MjpYbt+PfF+OBpFbUp7JQ2zO6rBR98oBlQAMESa?=
+ =?us-ascii?Q?P02jht43Oy9MqD8CfO2f8jXrPANE3hr9CtClY5g2lpXj7Bl7Sgk8xlz96K/K?=
+ =?us-ascii?Q?qPGLBitvU9vwpaIQI0UvjAQ6R4Xv1oNwc/5Pky7Kin6W8oGRPGHvARaqgXi6?=
+ =?us-ascii?Q?mewnftx9toLVW2xJU5CH7JAQ2FOXnBlwqFyi7Y4fLIZRCFwq3XRsOBnRyf2o?=
+ =?us-ascii?Q?QIFVG+1pc1jerBnuGHf+R/pHNUm7vP52l2GjzeIq+0boac3429f/ULDXZwfS?=
+ =?us-ascii?Q?ay11alcTmoqCbDruGyPGgpWe777oVlioOhAS9H+SYYlsC/RuVKDz?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7aa482d-0224-468b-66bb-08df158ffb16
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2026 14:20:24.8876
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jCWe1mmO6441JHYUoiu+gJQNI4QKb5F1mS6ANFdx6gUfU0w1DnUfux2J7W1AMjcKKZGjv258jG0P1Kzm3Pt4R552Y8h72L2K1E+ybxxEstnoyYeqVhSwZIbPHSVwkWNA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR6PR04MB296659
 
-On 18/09/2026 15:46, Krzysztof Kozlowski wrote:
-> On 18/09/2026 15:36, Selvarasu Ganesan wrote:
-> 
->>
->> As seen in samsung,exynos-dwc3.yaml, our existing bindings already 
->> support multiple SoCs with diverse clock requirements within a single 
->> file. Similarly, we plan to use a single flattened Samsung binding to 
->> manage these diverse clock requirements. for different SoCs.
->>
->> Regarding the migration for current and future SoCs, would you prefer,
-> 
-> I do not understand how any of this is relevant to my review comment.
-> 
->>
->> Option A: A single flattened binding file using a common fallback 
->> compatible string (instead of samsung,snps-dwc3) to minimize 
->> of_match_table entries, and if/then constraints to handle diverse clock 
->> requirements.
->> Option B: Separate binding files for each individual SoCs.
->>
->> Could you please let us know your preferred approach? Once confirmed, we 
->> will address your other review comments based on the selected approach.
-> 
-> You do not have other bindings. You have one device. If you have more,
-> then post more. We are not making reviews based on imaginary future things.
+From: Peng Fan <peng.fan@nxp.com>
 
-OK, I guess you referred to my further comments about if:then: block
-here. When you have more devices, you can add them to the same binding,
-with proper constraints for each variant.
+Convert open-coded if/else with set_bit/clear_bit and their
+non-atomic __set_bit/__clear_bit variants to the assign_bit/__assign_bit
+API.
 
-https://elixir.bootlin.com/linux/v7.3-rc3/source/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml#L93
+Done with Coccinelle semantic patch:
+    // set_bit -> clear_bit => assign_bit
 
-If the difference is only in clocks, one binding file is usually good to
-hold many variants. If there are more differences, things are getting
-too messy and more files are useful (see commit
-c80dc8121d3af8f33413bb0f9ed9e81e2c576e1a for example).
+    @@
+    expression cond, bit, addr;
+    @@
 
-Best regards,
-Krzysztof
+    -if (cond)
+    -        set_bit(bit, addr);
+    -else
+    -        clear_bit(bit, addr);
+    +assign_bit(bit, addr, cond);
+
+    // clear_bit -> set_bit => assign_bit
+
+    @@
+    expression cond, bit, addr;
+    @@
+
+    -if (cond)
+    -        clear_bit(bit, addr);
+    -else
+    -        set_bit(bit, addr);
+    +assign_bit(bit, addr, !cond);
+
+    // __set_bit -> __clear_bit => __assign_bit
+
+    @@
+    expression cond, bit, addr;
+    @@
+
+    -if (cond)
+    -        __set_bit(bit, addr);
+    -else
+    -        __clear_bit(bit, addr);
+    +__assign_bit(bit, addr, cond);
+
+    // __clear_bit -> __set_bit => __assign_bit
+
+    @@
+    expression cond, bit, addr;
+    @@
+
+    -if (cond)
+    -        __clear_bit(bit, addr);
+    -else
+    -        __set_bit(bit, addr);
+    +__assign_bit(bit, addr, !cond);
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/media/dvb-frontends/rtl2830.c                    | 5 +----
+ drivers/media/dvb-frontends/rtl2832.c                    | 5 +----
+ drivers/media/platform/marvell/mcam-core.c               | 5 +----
+ drivers/media/platform/samsung/exynos4-is/fimc-capture.c | 5 +----
+ 4 files changed, 4 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/rtl2830.c b/drivers/media/dvb-frontends/rtl2830.c
+index 4c44e2d695f8..fadc12c6d6ae 100644
+--- a/drivers/media/dvb-frontends/rtl2830.c
++++ b/drivers/media/dvb-frontends/rtl2830.c
+@@ -612,10 +612,7 @@ static int rtl2830_pid_filter(struct dvb_frontend *fe, u8 index, u16 pid, int on
+ 	if (pid > 0x1fff || index >= 32)
+ 		return 0;
+ 
+-	if (onoff)
+-		set_bit(index, &dev->filters);
+-	else
+-		clear_bit(index, &dev->filters);
++	assign_bit(index, &dev->filters, onoff);
+ 
+ 	/* enable / disable PIDs */
+ 	buf[0] = (dev->filters >>  0) & 0xff;
+diff --git a/drivers/media/dvb-frontends/rtl2832.c b/drivers/media/dvb-frontends/rtl2832.c
+index b31cdb44b383..011c1366e0db 100644
+--- a/drivers/media/dvb-frontends/rtl2832.c
++++ b/drivers/media/dvb-frontends/rtl2832.c
+@@ -986,10 +986,7 @@ static int rtl2832_pid_filter(struct dvb_frontend *fe, u8 index, u16 pid,
+ 	if (pid > 0x1fff || index >= 32)
+ 		return 0;
+ 
+-	if (onoff)
+-		set_bit(index, &dev->filters);
+-	else
+-		clear_bit(index, &dev->filters);
++	assign_bit(index, &dev->filters, onoff);
+ 
+ 	/* enable / disable PIDs */
+ 	buf[0] = (dev->filters >>  0) & 0xff;
+diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media/platform/marvell/mcam-core.c
+index 2d0b8b60c509..074b86ae09c0 100644
+--- a/drivers/media/platform/marvell/mcam-core.c
++++ b/drivers/media/platform/marvell/mcam-core.c
+@@ -252,10 +252,7 @@ static inline int mcam_needs_config(struct mcam_camera *cam)
+ 
+ static void mcam_set_config_needed(struct mcam_camera *cam, int needed)
+ {
+-	if (needed)
+-		set_bit(CF_CONFIG_NEEDED, &cam->flags);
+-	else
+-		clear_bit(CF_CONFIG_NEEDED, &cam->flags);
++	assign_bit(CF_CONFIG_NEEDED, &cam->flags, needed);
+ }
+ 
+ /* ------------------------------------------------------------------- */
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+index d85811f4b8c5..1e34119ee117 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
+@@ -997,10 +997,7 @@ static void fimc_capture_mark_jpeg_xfer(struct fimc_ctx *ctx,
+ 	ctx->scaler.enabled = !jpeg;
+ 	fimc_ctrls_activate(ctx, !jpeg);
+ 
+-	if (jpeg)
+-		set_bit(ST_CAPT_JPEG, &ctx->fimc_dev->state);
+-	else
+-		clear_bit(ST_CAPT_JPEG, &ctx->fimc_dev->state);
++	assign_bit(ST_CAPT_JPEG, &ctx->fimc_dev->state, jpeg);
+ }
+ 
+ static int __fimc_capture_set_format(struct fimc_dev *fimc,
+-- 
+2.51.0
+
