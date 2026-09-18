@@ -1,98 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FBD2BDC28
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 15:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9873B71DF
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 03:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789658253; cv=none; b=FAxuYzzGrrmokyvgff/cQ1kqs6jK/beQVv2Uct3kVBdkjUvCzGO1ttVvDNEQeluVgCnL1dLoYJWW6sgqhzSZfwPrRdr+u+lxQOAyLZYRXWmuNvMqUAigG1MLcDlS4UKiCaycagDakZrjSTxSG1iV6DNJYWPB4s2uIYQ72ystXPI=
+	t=1789701942; cv=none; b=So5Mw0B1rmapKTPHk+tkrY8JM43OM5F4unDusxpX18YPOE4Ghiyte+IbaBS1MvsqgcI8g1XFlZZkcekXkkRZ4e2TWLz6EJvztpcO9n+m0AqPE+j5QNejqVhOh2oyp4p4wmcUGBaqPUKxoPckRftxFHki+DssRExcaedTLCWlyAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789658253; c=relaxed/simple;
-	bh=yokcjFoYaQjb2AXJXwiS2CgA9icNw4hd0m3OmDjYLh0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hW/VC65ExH5i6ARXNCFswRAVRQ8vLgu6OduUekyHvebqOwQeN6hSTC4QEeMUV37PNigbc8NGqrAlUUocd6DRnDmzAEE5a1RCgDQE4GtuvIEmDraO9fvdkzjgYC2VQ55fKK5Jc48sRGOCu5VIsJLpP5eXjC+vE/gp3gthqj5TOHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=At8LUqdd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789701942; c=relaxed/simple;
+	bh=EdQvZ61QalUJARA1z7MGMnRy/kwDRIhCjBePd5NVVQ0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=LRf8LpQuyMbd3Cuj/4gKTur3eXpHHNbdh+5QsiNzrYgdz7WRufGShck9DdpzIh+MqBmh+OOYyg55ilmKaNHlnD/WQ4SRKoDDPFosK+xrcwwtrWk3b1LG4mwS8nPfXb+ZiC2YMNXPvTChuZWpKF/E48iSXnoxmIZQ8YQm4TMhVAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RwXjMA+Z; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="At8LUqdd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85BC1F00899
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 15:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789658229;
-	bh=yokcjFoYaQjb2AXJXwiS2CgA9icNw4hd0m3OmDjYLh0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=At8LUqddcgj/KxcPmk0vSTvWQjCnUhjtO0vS8JQJIc8bAnngmVG80xHx+mPSp5cZb
-	 jJ3Do3mfLoV+PSeg4LaPinntyOnw1cdqumYBJp3rDJuBM09J0PhNQQk6lUPfpCsDFq
-	 iw7YR3RqogIg5KWdknsn5zQsJVe9nKGcCWyZlFmT4eaIPl/lRpGU4n5gMlkDnrTOmJ
-	 IN/Ve532pSpuNCKNDfvF2C3BddJmJPu/cX4vlYFX4GPHQzYB+yFRzeEvxNeWG3vLOK
-	 +0z8sb0sVp6UwSEJ/sXxGSiYe2+Prql4nbCRC8U8vAof48Em8d6AwZZip9zwv2tNqu
-	 YRbZ/kNoeRCKg==
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a60591ae52so1792372a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Sep 2026 08:17:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBy/arpweLNza3sD15131sFxkGDfIgBM/n+AYm24neGuAqzC5KZ2/hGDGyEl6zs1WPJHWqAgCfvLo/hIBgqPPXdIHQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++miM+qUg9wakqFP0YsKFVoh82TCBN5+vivJR0cnMlTckqtCVANN
-	ThzyORG9jlqWma7KTtk6Z468ubJfu1C7gMhKcykN58nORhJDfSfVSo70HhAy+mA1KhkltW0x0QG
-	q0EGX3WbYBFgPioPGkcp/oJ64UbNMQQ==
-X-Received: by 2002:a05:6402:460c:b0:6a6:8dd:c76b with SMTP id
- 4fb4d7f45d1cf-6aa22247992mr11552271a12.1.1789658228391; Thu, 17 Sep 2026
- 08:17:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RwXjMA+Z"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260918032537epoutp0327cc161214dd30b0def9e5ffca9a4ad2~WTG4K7X1F2131921319epoutp03N
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Sep 2026 03:25:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260918032537epoutp0327cc161214dd30b0def9e5ffca9a4ad2~WTG4K7X1F2131921319epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1789701937;
+	bh=EdQvZ61QalUJARA1z7MGMnRy/kwDRIhCjBePd5NVVQ0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=RwXjMA+ZDheh/JjJSjft4QdcZk4bIXCNxOnoeBinV65wU5Y/FqHCVlF7/hxl2RH4O
+	 IvASdMKrbOzORuVdTjRGGsRQztJYnMQYf+deW1dcEY7m1rTpFKAaBfQozIGJCyhzq0
+	 sHvcUqs1uKRWZZjQZMF5jxQcKlOcHlHF1HZnwmc4=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20260918032536epcas5p3c037713c8e6229d0e8726a6bb418f76d~WTG3LYZix1189811898epcas5p3j;
+	Fri, 18 Sep 2026 03:25:36 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4hmJ0v2SLNz6B9m5; Fri, 18 Sep
+	2026 03:25:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260918032534epcas5p1db19e612e5a173ae5f2eed6e817b6c37~WTG1XPfwn1605516055epcas5p1B;
+	Fri, 18 Sep 2026 03:25:34 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260918032531epsmtip134ab7e6ab681d7dddb7c7d095e9d4d06~WTGymFoR50136701367epsmtip14;
+	Fri, 18 Sep 2026 03:25:31 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Selvarasu Ganesan'" <selvarasu.g@samsung.com>, <krzk@kernel.org>,
+	<peter.griffin@linaro.org>, <gregkh@linuxfoundation.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>, <mani@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Cc: <jh0801.jung@samsung.com>, <h10.kim@samsung.com>,
+	<dh10.jung@samsung.com>, <akash.m5@samsung.com>, <hongpooh.kim@samsung.com>,
+	<eomji.oh@samsung.com>, <shijie.cai@samsung.com>,
+	<muhammed.ali@samsung.com>, <thiagu.r@samsung.com>
+In-Reply-To: <20260916122229.2604003-3-selvarasu.g@samsung.com>
+Subject: RE: [PATCH v2 2/3] dt-bindings: usb: Introduce samsung,snps-dwc3
+Date: Fri, 18 Sep 2026 08:55:30 +0530
+Message-ID: <058301dd471d$5d985170$18c8f450$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260917144134.459819-1-matyasdaniel006@gmail.com>
-In-Reply-To: <20260917144134.459819-1-matyasdaniel006@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 17 Sep 2026 10:16:56 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLyPK2rJVAyzCtGtrBSTwOKRZ_EAmE1Xd++9DFaxrrmDw@mail.gmail.com>
-X-Gm-Features: AcwNN1WrkKsI-hJClnXnbb72poP7rLqVHTc23ccK3T-HSnvYyjsVzuH4L2tWH2Y
-Message-ID: <CAL_JsqLyPK2rJVAyzCtGtrBSTwOKRZ_EAmE1Xd++9DFaxrrmDw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Expand flow lists to block lists
-To: Daniel Matyas <matyasdaniel006@gmail.com>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
-	Sen Wang <sen@ti.com>, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Dharma Balasubiramani <dharma.b@microchip.com>, 
-	Jeff LaBundy <jeff@labundy.com>, Simon Glass <sjg@chromium.org>, Linus Walleij <linusw@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Atish Patra <atishp@rivosinc.com>, 
-	Shawn Guo <shawn.guo@linaro.org>, Dmitry Osipenko <digetx@gmail.com>, 
-	Ibrahim Tilki <Ibrahim.Tilki@analog.com>, Okan Sahin <Okan.Sahin@analog.com>, 
-	devicetree@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	Ricard Wanderlof <ricardw@axis.com>, patches@opensource.cirrus.com, 
-	Lukas Wunner <lukas@wunner.de>, Eugen Hristev <ehristev@kernel.org>, mfd@lists.linux.dev, 
-	linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGcfDqIrCW7OKewQ35ZfbAvR1onfQHu4CTLAhM/jCu3NS/WcA==
+Content-Language: en-us
+X-CMS-MailID: 20260918032534epcas5p1db19e612e5a173ae5f2eed6e817b6c37
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260916122354epcas5p401fd6470d6cef75951af732b03aa5970
+References: <20260916122229.2604003-1-selvarasu.g@samsung.com>
+	<CGME20260916122354epcas5p401fd6470d6cef75951af732b03aa5970@epcas5p4.samsung.com>
+	<20260916122229.2604003-3-selvarasu.g@samsung.com>
 
-On Thu, Sep 17, 2026 at 9:41=E2=80=AFAM Daniel Matyas <matyasdaniel006@gmai=
-l.com> wrote:
->
-> Running dt_bindings_check returned:
-> [error] string value is redundantly quoted with any quotes (quoted-string=
-s)
->
 
-That false positive is fixed in newer versions of yamllint since at
-least a year and a half ago. There's also some other quoting checks
-I'd like to turn on, but that bumps the minimum version since unknown
-checks are an error in yamllint.
 
-> The files used quotation marks in flow lists because the strings had
-> commas and these commas were interpreted as separators. Convert flow
-> style lists to block style lists, so that there is no problems with the
-> commas.
+> -----Original Message-----
+> From: Selvarasu Ganesan <selvarasu.g=40samsung.com>
+> Sent: Wednesday, September 16, 2026 5:52 PM
+> To: krzk=40kernel.org; peter.griffin=40linaro.org; alim.akhtar=40samsung.=
+com;
+> gregkh=40linuxfoundation.org; robh=40kernel.org; conor+dt=40kernel.org;
+> Thinh.Nguyen=40synopsys.com; mani=40kernel.org;
+> selvarasu.g=40samsung.com; linux-arm-kernel=40lists.infradead.org; linux-
+> samsung-soc=40vger.kernel.org; linux-usb=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-kernel=40vger.kernel.org
+> Cc: jh0801.jung=40samsung.com; h10.kim=40samsung.com;
+> dh10.jung=40samsung.com; akash.m5=40samsung.com;
+> hongpooh.kim=40samsung.com; eomji.oh=40samsung.com;
+> shijie.cai=40samsung.com; muhammed.ali=40samsung.com;
+> thiagu.r=40samsung.com
+> Subject: =5BPATCH v2 2/3=5D dt-bindings: usb: Introduce samsung,snps-dwc3
+>=20
+> Add the Samsung Exynos8855 DWC3 binding using a flattened node
+> representation, where the DWC3 controller is directly addressable rather
+> than nested as a child node of a glue layer.
+>=20
+> This is the first Samsung Exynos binding using the flattened representati=
+on.
+> The existing samsung,exynos-dwc3 binding describes the parent and child
+> representation used by existing Exynos SoCs, which can be migrated to the
+> flattened model.
+>=20
+> Samsung Exynos SoCs sharing the same flattened model can be added by
+> using the samsung,snps-dwc3 fallback compatible and extending the
+> compatible enum with per SoC clock and property constraints.
+>=20
+> Co-developed-by: Muhammed Ali <muhammed.ali=40samsung.com>
+> Signed-off-by: Muhammed Ali <muhammed.ali=40samsung.com>
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g=40samsung.com>
+> ---
+Thanks for using flattened node representation. Are you planning to migrate=
+ other existing SoC as well?
 
-If we wanted to fix like this, we should probably just require block
-style everywhere, but I don't think we should do that.
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
-Rob
