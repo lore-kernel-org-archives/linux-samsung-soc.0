@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414A4502546;
-	Fri, 18 Sep 2026 13:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8A64FC8FD;
+	Fri, 18 Sep 2026 13:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789739194; cv=none; b=DG73qy/lfQE+wWFQzXfgrX80gkoevrX97YoOZu7O8sY1HFil7CDmmGoU1+D7cg/CVA/xfTURFRxx3GoHPkUQ0H4LO6+6HO1ja3yeaApiDHWSlofTJeAGyjD40aC4+IEV/pIdNyT8sHcYeRCnxKjNvxym6tTSYpm00sBHxdL0IDE=
+	t=1789739741; cv=none; b=cBs5rCifM1AUElCm16j++NWcdigJX4l4xZCEgDNASkAi7tLrzcMs99k/p406a23yEne6qwMrfnrWZodHvE0BE83sL4eZdAYmP3bUM/k3FoslogOtpvPuheP235TN3PrYIFF6UvjL169JhtF1VMDtlP3YPiALPL67RSYexnbnHKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789739194; c=relaxed/simple;
-	bh=OelAxWimRFDPn5HhsdYA23bs3HO0pbyUKTsTBvGWQxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NDgZf+B+dKj3/mw0gEzc5zwdY/otOC3CUgioQMFzysaoRg9jlPDSHG+dbIj6ITjhSXxfk/uLFpEGdOV57jKb0vH8ZML0WpUg5RywpHCVCkE2kwRqOiHTZ6gnfxME9MJ1q8DlvKIGa0a35iP5X/ZPG3gDwS7urVt0WUQCc2CETEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt0tzOwz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789739741; c=relaxed/simple;
+	bh=UAuJCU0pw2Nu5bSntLgF8/EoGJnXnmDCWKL6Xwu+ayo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XCsSJkAEkAJlEp7w85gFLN8zgTGFF+LX6QRDKEDHEmPcEAEDrHCC2M9p8/SU5ChdZFIGENWilILNZZYo8JugswrnlOrxY/FmncCMCi6e5ZeplLXsKypr1HZxxMiRTt2wCEnqR7+9Lw9cAb3jXmMLw4fr894kh+8xry1tJz7ivXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp7GHdgQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt0tzOwz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 993591F000FF;
-	Fri, 18 Sep 2026 13:46:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp7GHdgQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BC5E1F000FF;
+	Fri, 18 Sep 2026 13:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789739192;
-	bh=ymbnMK+8HyGQmBb3o9ET5vduF9wcW5sQOF2iKVjhYNw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Xt0tzOwz5qtIe7DP2AdR4q3xgGeGGZI+NCLGpZ+qOVY+gebui36VXqY2h5GGWy/lH
-	 ae/bCLuSSujJuKmgYAx3fjHElH/G9kw91Kup7sOFZKR0K34c+fqsLB+ccy2T1nqTBA
-	 SjQZK3Adbc0sOSauI+KLfBx8xLMLS6kxwYmExNMhW8uXKGmrhKPEn74xZqRLZt5IIC
-	 Kk1dvPmXafS2+fGeaZARasgwGYMZB8c6oCsABNjjrF70glhukaUdWmg1EnEj8IglhH
-	 Q4YqROK1PkoUMrUWYtznNMGi8t1Y+Dx5e2oMslqar8T/QZKkWqh3v+HRO1YtBr9E5J
-	 EfymYCC/FJvog==
-Message-ID: <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
-Date: Fri, 18 Sep 2026 15:46:22 +0200
+	s=k20260515; t=1789739735;
+	bh=4D9ml57Ny1BqAHty5ellcRNOyN2FZuu+rb87VZTIWPs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=Cp7GHdgQHC3PjELiyZ/mh0eSXpOBXjfIkO/yU+3A6mUlh2xAP13wI79Zh+eBFb6L7
+	 KDiZpBQlzP/d8J7XHGEUKDbb2kU+A7iXq26QTDdsi8+5ErdxbBAjghlB22FEFdrSrZ
+	 AQRZaRA5lOc1yPVT/9n3Tjsrpyf1rsLPGggUXWnxAq20ckKFvP4NVF4XTgXPRpBfzL
+	 Kqd0yRxh1rcrW3myzAjRJGweiBQjmPERXU6QM50eZ/GFwd7GyB9oz0w86UGDJie0uj
+	 nqxmNXMHaFjjVF9/qmIJeVFBjOVM2iTjS75ZE0K1JkaTNE83/udzxHPt8mRmhCeS1j
+	 0MZKmN/6h4Kyw==
+Message-ID: <628a4ac0-135d-434a-b5c7-27453e96fdec@kernel.org>
+Date: Fri, 18 Sep 2026 15:55:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 2/3] dt-bindings: usb: Introduce samsung,snps-dwc3
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Selvarasu Ganesan <selvarasu.g@samsung.com>
 Cc: peter.griffin@linaro.org, alim.akhtar@samsung.com,
  gregkh@linuxfoundation.org, robh@kernel.org, conor+dt@kernel.org,
@@ -51,7 +52,7 @@ References: <20260916122229.2604003-1-selvarasu.g@samsung.com>
  <20260916122229.2604003-3-selvarasu.g@samsung.com>
  <20260918-burgundy-marmoset-of-focus-c9b9a7@quoll>
  <fef2b2f5-3838-4eec-8118-d41f9ca0ed2f@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -96,102 +97,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <fef2b2f5-3838-4eec-8118-d41f9ca0ed2f@samsung.com>
+In-Reply-To: <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 18/09/2026 15:36, Selvarasu Ganesan wrote:
+On 18/09/2026 15:46, Krzysztof Kozlowski wrote:
+> On 18/09/2026 15:36, Selvarasu Ganesan wrote:
 > 
-> On 9/18/2026 3:24 PM, Krzysztof Kozlowski wrote:
->> On Wed, Sep 16, 2026 at 05:52:28PM +0530, Selvarasu Ganesan wrote:
->>> +maintainers:
->>> +  - Krzysztof Kozlowski <krzk@kernel.org>
->>> +  - Selvarasu Ganesan <selvarasu.g@samsung.com>
->>> +
->>> +description:
->>> +  Describes the DWC3 USB controller block implemented on Samsung Exynos SoCs.
->>> +
->>> +select:
->>> +  properties:
->>> +    compatible:
->>> +      contains:
->>> +        const: samsung,snps-dwc3
->>> +  required:
->>> +    - compatible
->> This select is not needed.
 >>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - samsung,exynos8855-dwc3
->>> +      - const: samsung,snps-dwc3
->> And this fallback is not really accurate. Samsung does not have snps
->> device, because snps is a vendor. Anyway, generic fallbacks should go
->> away, drop, so you are left with samsung,exynos8855-dwc3 only.
+>> As seen in samsung,exynos-dwc3.yaml, our existing bindings already 
+>> support multiple SoCs with diverse clock requirements within a single 
+>> file. Similarly, we plan to use a single flattened Samsung binding to 
+>> manage these diverse clock requirements. for different SoCs.
+>>
+>> Regarding the migration for current and future SoCs, would you prefer,
 > 
-> Hi Krzysztof,
+> I do not understand how any of this is relevant to my review comment.
 > 
-> Thanks for your review comments.
-> And We apologize for our repeated below explanation, but we wanted to 
-> ensure our intentions were clear for each point to avoid any 
-> misunderstanding.
+>>
+>> Option A: A single flattened binding file using a common fallback 
+>> compatible string (instead of samsung,snps-dwc3) to minimize 
+>> of_match_table entries, and if/then constraints to handle diverse clock 
+>> requirements.
+>> Option B: Separate binding files for each individual SoCs.
+>>
+>> Could you please let us know your preferred approach? Once confirmed, we 
+>> will address your other review comments based on the selected approach.
 > 
-> The original intent of the generic fallback was to support existing 
-> Exynos dwc3 bindings from a parent/child representation from 
+> You do not have other bindings. You have one device. If you have more,
+> then post more. We are not making reviews based on imaginary future things.
 
-How does it support existing bindings? I don't understand. There is no
-such fallback in existing bindings.
+OK, I guess you referred to my further comments about if:then: block
+here. When you have more devices, you can add them to the same binding,
+with proper constraints for each variant.
 
-> (samsung,exynos-dwc3.yaml), and upcoming SoCs (Exynos 8865, 9955, and 
-> 9965) can use this flattened representation without requiring a unique 
-> compatible string for every project in the dwc3-generic-plat driver 
+https://elixir.bootlin.com/linux/v7.3-rc3/source/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml#L93
 
-I did not forbid you to use fallbacks, so I do not understand why you
-would need unique compatible for every device in the driver.
-
-This is already heavily documented and explained in beginners docs.
-Please read writing bindings docs and maybe also DTS101 slides. I even
-gave the talk DTS101 two months ago in your timezone...
-
-
-> of_match_table. We referred to qcom,snps-dwc3 as a helpful reference for 
-> this approach.
-
-When people argue with me, they use more often poor examples as
-reference, not the good ones. Interesting pattern.
-
-And why you did not take the proper example you even mentioned here -
-Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml - as
-reference?
-
-Anyway, existing bug is not a reason to add new bug, don't you think?
-
-
-
-> 
-> As seen in samsung,exynos-dwc3.yaml, our existing bindings already 
-> support multiple SoCs with diverse clock requirements within a single 
-> file. Similarly, we plan to use a single flattened Samsung binding to 
-> manage these diverse clock requirements. for different SoCs.
-> 
-> Regarding the migration for current and future SoCs, would you prefer,
-
-I do not understand how any of this is relevant to my review comment.
-
-> 
-> Option A: A single flattened binding file using a common fallback 
-> compatible string (instead of samsung,snps-dwc3) to minimize 
-> of_match_table entries, and if/then constraints to handle diverse clock 
-> requirements.
-> Option B: Separate binding files for each individual SoCs.
-> 
-> Could you please let us know your preferred approach? Once confirmed, we 
-> will address your other review comments based on the selected approach.
-
-You do not have other bindings. You have one device. If you have more,
-then post more. We are not making reviews based on imaginary future things.
+If the difference is only in clocks, one binding file is usually good to
+hold many variants. If there are more differences, things are getting
+too messy and more files are useful (see commit
+c80dc8121d3af8f33413bb0f9ed9e81e2c576e1a for example).
 
 Best regards,
 Krzysztof
