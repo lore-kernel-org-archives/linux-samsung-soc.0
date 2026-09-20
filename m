@@ -1,54 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCDA46EF9E;
-	Sun, 20 Sep 2026 17:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795C6390999;
+	Sun, 20 Sep 2026 17:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789924142; cv=none; b=PzJc+5j8fVBVxV0x5hEc6oaWCLNzyeo2FcWgivCYY60uhCRCbvWFeeuc4qcSOqYk5CrleMi9hni0UeKsthep6HJq/yVxVf0ExcJyOaeVdpBjSQJI857ywQ4e0C1FO49PsRE6QLwgd0P5R7g4Pl449uVDDtHx52SudBi92WHbNRA=
+	t=1789924145; cv=none; b=S+i0/nq0nLU321dYouF7q5uMIeli4W2MvzIOUQvMX7oPRMAxeqOMPcrlwMvcFodTQq1hGEa94W0lA3tiTrpggkNUW2XSCxLp2wXqk2jarj9c3ox6kDiXkE040j/HnTXZ9GLi4iUi/RzUr/5PeHo+nEnZGaqBCkvsxNTaYap8WcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789924142; c=relaxed/simple;
-	bh=Cz8aAEHCET7PDGGZmUWTpZ615Ysgq5x24VBlftyT804=;
+	s=arc-20240116; t=1789924145; c=relaxed/simple;
+	bh=Z3uEuNBmQKwma9vxWujWTL5worfS8Jbi0ubAliPHrME=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yj9ikXysrAV2dRh16uMZSV6wGPSBM6KeyvTIWUdlw8KyAaY/PdKDSmfBcD5gY+S0F5dy2d64pm/Y+jqdZeID4NGWYaOcdWK8baboYXly3HY2kikYQYBrHpuPMktG8E3ou0139dC0ZHmtgeLnWBTrxcFLfPmcn5fzvlLbIISUPco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fn6OROla; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=szpG3gMNOxbpIvwmICzoq4bRhtBaXBsbVRz4K4dGh1EofJY6FQZ6lCwQim7WdXV9YwJFmepjko/N+nU5taBURfPC/tM4NvPOCnQQ9vjrg6mNxXNUpeQRGlytuw10NwJjBEF9p6zwnhysiYXA49uhpMm81tx5HRSjSk7ItGKcxkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTt+FY3X; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fn6OROla"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D291F000FF;
-	Sun, 20 Sep 2026 17:08:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTt+FY3X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 570571F00893;
+	Sun, 20 Sep 2026 17:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789924140;
-	bh=G0AIexTylDQKGyj0LYzgTbOpm1KgvzAAkXzvOx31f2g=;
+	s=k20260515; t=1789924144;
+	bh=HCdz1wdJC9OT+zficoFF7wL3rJKkBYpCcd00vySQmSE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Fn6OROla21N5vjU8yxB0ipK+L2QWLIs+pLIPLYjCgzSWZcnru7Ced/fczNV7D/yfM
-	 ntMcDxlhN23If1SiIAUFvoUa6H2YCoK33Q8VXDpUgFZwD7CaBtv+gJVGePod51Tu5O
-	 g1xboPxdzICBnC3n7AjHu5pBqOprJtyT6vxmMY71Z8j/IxRIQXB84t7M9t2S/1Z+pa
-	 DkC8LMDCoFVrie9BJA86PWHj6Msnyx2OBohJ4CffuiyOmEJ2sc1n/vMY7c+NJQ62G9
-	 /0xWHvbmM+CyrOvBOLA5R0PBqU7EZlI38sv0OKNVr4fdiYXoL5cXEpZw4MjAs2vcL4
-	 8ypTpYg2EwvNg==
+	b=WTt+FY3X0e3VfK5ZIxtZsFFwfHPXo+Q2G1REdEZuOMqR7YR7YExSSjvGtVrd8KfWk
+	 KUi10bPASdWNkO2100raKxwhToUCDf0j0g1SE/4B9z+BLQXmK2QohjinjJpKu3IdQx
+	 dDZj0QFRutamod5aohNmg4mBcE7biYaqDmBiIoeXm35Q586Fxo43cLQ/AehjiHQsrc
+	 XY7EXp60EqzUYHMYe7BqMUzEvR+C/lQXAX5kpFw1ZzJHi5g1s6KDIV80WI2e9EI3SB
+	 qx0emCe+hKGINnF3ejUzsnmZ9/ONOZQ9S52XFB2B/koRwLQW4jIG74enb0GItgxcbK
+	 sQTYXlFWZgcOw==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Sam Protsenko <semen.protsenko@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Initial support for Exynos850 SoC in ACPM clk driver
-Date: Sun, 20 Sep 2026 19:08:51 +0200
-Message-ID: <178992412361.36366.5238549762792308688.b4-ty@b4>
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v4 1/2] dt-bindings: sram: Document samsung,exynos850-acpm-sram
+Date: Sun, 20 Sep 2026 19:08:52 +0200
+Message-ID: <178992412363.36366.4345126158825411848.b4-ty@b4>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org>
-References: <20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org>
+In-Reply-To: <20260914-exynos850_sram-v4-1-253871de0f61@linaro.org>
+References: <20260914-exynos850_sram-v4-1-253871de0f61@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,30 +54,27 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=858; i=krzk@kernel.org; h=from:subject:message-id; bh=7wplxD/oR2Nq2GI6TJ66Ky2oI7HWOdnf/PCgl2pYFVU=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqsBMkGN/1aHzqtAW7baGS4zy9XIqjJ5RNw4WEP hLIY3IhFoOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCarATJAAKCRDBN2bmhouD 18RTEACCH5yxwdL9EGbg/5CYuO1NCNu4dDHyK42Gz0UpK2qh/KOiwbgMm3u0rj60fAvFizsDMga ntr0bAtKphpEG6Yjue2+5Zga+eq8aqAEVEr1u6RxwRA6YsG7b9PJz5fuCWNeiSaMdxR6lCf0g2C NkrOOpgrVnrx7cG6NuzuJuKIGXRw4UkvbQeWfJ3/1HAx/8M39a+7r1Po0xAqM24Y8UApbCcq0Kt B/Sh8Nt/Ph9RWlpGS2JnfilHfrx1q49ybout397QMeyRQiqrXw4Tvk392L4ShhT6FjuWJYWG2uz VUWrL7SneWNrvzAZQI60T7CNFdMUezGlfpML7K+EmPgQsJITMZxAx3U8AacCOtj0AXbMiya4UKO uVuhRaPp6go2LRiJy+mbwEUxTrPWHE22XwNMQvMxWyuMXJgMMfXrrcmcKconZKS2pqMpZtwrEYK a9Do2lfb3/+9ZWuZwuLQJKfAGkhiwAUXse8uY8uNVupqTvWWn6O638cw8IgruW1TVzAfbKPivub ynKk5G1cuMLjiqllOc7AtKAyJHTnNdl2IjRACBxSa4gLzKNiEXVdCZCmOfzaSeqLLDkRRomgh7f Qzi3HTb/cqEnRB/bV71QkVkpWYwkHfqvRpjr0v+BbSm/yYxujN4GZChVsAkcBR3//5SaKxlxpM3 Gwv9GEzqSopgwL
- w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=732; i=krzk@kernel.org; h=from:subject:message-id; bh=wOpdMdU3DF1mK2QyVbqdQ3Xb/N3uH3K53tS2Mz8dBc8=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqsBMl/GgAuARyHXtA4+qfMaSKoMGlGdUJEAnYa WJZ1S4bpiyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCarATJQAKCRDBN2bmhouD 112OD/9YYnniZyiMj2BLPJQLkMeB32hp+SuhzEWi3EgUOz4TMHKCgT6wxKoKeGH3AdQKC4AupLa iiKC1CWoHH5bk7ZVEsH7dabLaEfEqtF1+tLrQhDLKC5OtdyUcwKh9e4IfkwrcvoPg2HgLig4e8a qRmMbNH0OgU9VhIFAYSA54a1Ud0Vrg+jXdfNOpH+j89jWNKeNnUBNlflMcBI0UYPhLuSGlpnugy Xu2W1iI+X7V6xQ66h6monxJT1BnzOxaMX0ln0BYnNqzweGaIQrlmcn6pt4T/xDl21hoGkelh8JO P01qpdb3WcUXwXXqhgw4FP2sgpldWPZT25/Msvou2Qb8ez0iNgPvQvTeXdSHxt19a6FxkkIa7gE ktRA8o522xaDWA+BGTEA95yq43I+kLnRpn47u4+ysFwlPz+jYZv2cfT5IogJJA2m6WamVa0nrm2 04jdcLgn6vWQcIF/V/AZrp+2wMHVAK8wRhQ5OPk05xt8KD+iMvkhzuhibYGSLHppbG/8RAaZcih 7/QBdFxPJ91r2IuklYoNXWs2GLpCH45cCGDR1q4CiscdMb0usScYUnR0sasYF8l9OiJrMHqsnnw t6xyHgp9BHoXFVHEQo3YJKIofD3Aiv8SxQdfmqpncfvs0m/jbZPt+dPF9VOoxbYRv9/vGM7uMPi xOb5FC7SDzqNr+
+ A==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 15 Sep 2026 00:05:42 +0100, Alexey Klimov wrote:
-> This series adds support for the Exynos850 SoC to the Samsung ACPM clock
-> driver.
+On Mon, 14 Sep 2026 17:58:44 +0100, Alexey Klimov wrote:
+> Document "samsung,exynos850-acpm-sram" which represents an SRAM region used
+> for ACPM communication on Samsung-based SoCs.
 > 
-> Currently, the driver hardcodes the GS101 clock variants directly within
-> its probe() routine. To cleanly support Exynos850 (and potentially other
-> SoCs that utilize the ACPM protocol in future), this series first
-> refactors the driver a little bit to be SoC-agnostic, and then wires up
-> the new Exynos850 data.
+> The SRAM is consumed as a whole, is not split up using child nodes and
+> properties related to this are not required, that is why "mmio-sram"
+> compatible can't be used for ACPM purposes because it requires child nodes
+> to be declared, which are not needed and make no sense in case of ACPM.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] clk: samsung: acpm: introduce driver data for SoC-specific clocks
-      https://git.kernel.org/krzk/linux/c/802a1a97c41dff82a557223f7a43655fc02920bd
-[2/2] clk: samsung: acpm: add Exynos850 support
-      https://git.kernel.org/krzk/linux/c/13634cde9771811488847ef76cd64a785599fdb5
+[1/2] dt-bindings: sram: Document samsung,exynos850-acpm-sram
+      https://git.kernel.org/krzk/linux/c/ca4fb89e677527e32d16c5eb779eb34bccd2b967
 
 Best regards,
 -- 
