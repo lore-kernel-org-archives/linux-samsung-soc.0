@@ -1,137 +1,102 @@
-Received: from mail-m32117.qiye.163.com (mail-m32117.qiye.163.com [220.197.32.117])
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5F63EBF16;
-	Tue, 22 Sep 2026 08:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3C654281A;
+	Tue, 22 Sep 2026 12:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790067571; cv=none; b=n7dqiERqDrRDL3pfn2A3PMmIwyXg5NFQzrfjT2xbtm1kWKkDJhruMl+CJ8RCeX0BaLwV5FtfJ7TFxwOBjjnQqr8lDI1qKe7Q47uYqSsZwXT8h9XhkFDz509yvCje849H4mGOsVr04fLfi5sbXpDxZ36/lfJHV7Ycmj3RoDcm0xQ=
+	t=1790080712; cv=none; b=JwQFi2cfWZYqcyc2zZqrvYzSf8HqDRMXHOjBsZtvUja0XroPhcqcSO4SZ0JmUymyHmE5ab7Lh58Y9qkKj2J9iGbP4BJISA+bULfOVjNuZ5/LVaVoNSw/3ym924Pyy94u9jnklIaL4PJsvVtqOIEs/osy+eVsC3HbpSSJM/A4L5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790067571; c=relaxed/simple;
-	bh=vcNMnomZWeqP6vjShTxa6GHcvCFFwhc+yvEOTbCv3CU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FymCW7mUewrkV51OGxsTKeWiWtyuaY7RDPkZl6t/tPbAHKPbhq1sY5xHDceUqx6gILWB+7SCTZeBqEi29+PP1AffIUm3XtTmFAfxNW/bgKQRavBZkmNPYxqSGA1tqUoTW95hOpPfuwQ3rkHsUZDrvDQe/fKDpIww1Y8Ern1AN1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VUMZwH3Z; arc=none smtp.client-ip=220.197.32.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1790080712; c=relaxed/simple;
+	bh=FIDOhx16bKTnLhDsEzKck56HBIFnn9qu9WN0aTyG/g8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xajn0acjxdHbxlvQWyU0edJIlgeWELzQZdQsEf5ovsC86W7hkYksGR6PNedNZARhj6wVzPgJxR+Y7mkCFRv1mjdvMpFS/+bvtG7AoGov8nFypUccXeHf/5kIDTni0cGdO3DfEXbqiEqHLvCEDKnlUuG1jqwM3vrfMUH+DsmHPmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=1sXIa/iN; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VUMZwH3Z"
-Received: from [172.16.12.74] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4eb501a7b;
-	Tue, 22 Sep 2026 16:54:04 +0800 (GMT+08:00)
-Message-ID: <5a411d61-18f4-4d12-9acf-78320ab97d6b@rock-chips.com>
-Date: Tue, 22 Sep 2026 16:54:03 +0800
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="1sXIa/iN"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4hpzbB66Vhz7t7d;
+	Tue, 22 Sep 2026 14:16:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro; s=MBO0001;
+	t=1790079366;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TWtGuJsSnA6q09a1WdY7USh/zxzDAqnc0W6q2GxteG0=;
+	b=1sXIa/iNpsllNyxwkMqBMBw2hr9u8Pp3ChUwD3OE9mw+HbBoo3L2xitGuyqF9Jo65+Dhn3
+	QggpkO9IzXmQ1pzDuxM2GLL4KrkbBD+goQeKf6fwuJPIo0AaWWQmBAYpkRaEHsmz3FcwJ+
+	OKl8GjYCIwSavNikyt2wJXW1b4G682ig23SP7dBGTeR5+XxWHD5Acugr7VGXRiAwf1Qzkb
+	hxX16r89t70Aalzrx+eaj3Jg14ElzUlwjIyZJ5O5Irs2CTXNjpb/KSnq/3fo1VjbJCmDCp
+	gC0tJXUp6TEnqvmB7R9Ewxw7n73pt5kITWY66EHd7qVHzJW+vO0CRXobfEbz9g==
+From: Alexandru Chimac <alex@chimac.ro>
+Date: Tue, 22 Sep 2026 15:15:13 +0300
+Subject: [PATCH] dt-bindings: pinctrl: samsung: Require clocks for
+ Exynos9610 pinctrl nodes
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 19/19] drm/bridge: analogix_dp: don't create a
- panel_bridge
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
- Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>,
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Sean Paul <sean@poorly.run>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Randy Dunlap <rdunlap@infradead.org>
-Cc: Albert Esteve <aesteve@redhat.com>, Anusha Srivatsa
- <asrivats@redhat.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-19-83afb4f1a707@bootlin.com>
- <975a4d45-9a61-4858-b498-8bc0a1e44746@rock-chips.com>
- <96882735-091f-49c6-a47b-5da8be711818@rock-chips.com>
- <DLLOW2ROGP6L.3GTVT76VYPGAU@bootlin.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <DLLOW2ROGP6L.3GTVT76VYPGAU@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0c8527e9a03a8kunm0c11385e8262e
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCQk8YVh5KTU4fTBpIHUJPSVYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
-	pKQkxVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=VUMZwH3ZKyjnCH60Goi5U3Vl4nFl+MAx1A1qjQ4sQPJsJELH/axOKlZpuWVXdpUvCCP00441WDmikcC3zP82z6IUPyTAT3cyO6aUOORiTTynOxObIcFhdpn7WhshuvAgZWqwqWeg91ArKUw1BugGOb8+J2UJCAexwN2J2SQ4UZo=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=nxecp8OUY0Lx57p1dANxfv0uvDW3w9nGB0PrL1gdmKA=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260922-exynos9610-pinctrl-patch-v1-1-f6d816696591@chimac.ro>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y2NQQ6CMBBFr0Jm7Zi2JCBcxbAowyhjpGBbCIZwd
+ 6u4fMn7728Q2AsHqLMNPC8SZHQJ9CkD6q27M0qXGIwyhaqMQV7fbgxVoRVO4ij6J042Uo+siEq
+ tLx1VJaT55Pkm6y99bQ4Oc/tgit/e3/D8mtNnPDRobWCkcRgk1tlSnnP0lEOz7x87AquXqAAAA
+ A==
+X-Change-ID: 20260922-exynos9610-pinctrl-patch-e0cc7118dc97
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790079314; l=1196;
+ i=alex@chimac.ro; s=20250914; h=from:subject:message-id;
+ bh=FIDOhx16bKTnLhDsEzKck56HBIFnn9qu9WN0aTyG/g8=;
+ b=+yXOurx997N4Jd5a4koBFSR5j4JT4+C0xfTJcebVE2TZYaDznrzmZicOMCcbKqIsfB1XCg+pz
+ RY2i4KOLPrjAG53adnbI3g+b4UEwVuKXxMijPYG3jywtUZUGWWboAGs
+X-Developer-Key: i=alex@chimac.ro; a=ed25519;
+ pk=OKD+X09b7uEsyw05zyuqq14SLGg8B/X4xey5tJeYCig=
 
-On 9/22/2026 4:07 PM, Luca Ceresoli wrote:
-> Hello Damon,
-> 
-> On Mon Sep 21, 2026 at 8:34 AM CEST, Damon Ding wrote:
->> On 9/21/2026 11:07 AM, Damon Ding wrote:
->>> Hi Luca,
->>>
->>> On 9/16/2026 9:45 PM, Luca Ceresoli wrote:
->>>> Now a panel_bridge is automatically created for every drm_panel and the
->>>> panel-bridge API is just a deprecated wrapper to access it.
->>>>
->>>> Update and simplify the code by just getting a reference to the
->>>> already-existing bridge using of_drm_get_bridge_by_endpoint().
->>>>
->>>> As of_drm_get_bridge_by_endpoint() returns a refcounted bridge, take care
->>>> of putting the bridge reference. This is not easily done in the remove
->>>> path
->>>> due to the different probe paths of the user drivers, so add a devm
->>>> action
->>>> to ensure the reference is put only when it was taken.
->>>>
->>>> Assisted-by: opencode:deepseek-v4-flash-0731
->>>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->>>> ---
->>>>    drivers/gpu/drm/bridge/analogix/Kconfig            |  1 -
->>>>    drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 40 ++++++++++++
->>>> +---------
->>>>    drivers/gpu/drm/exynos/exynos_dp.c                 | 36 +
->>>> +-----------------
->>>>    drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  9 -----
->>>>    include/drm/bridge/analogix_dp.h                   |  1 -
->>>>    5 files changed, 25 insertions(+), 62 deletions(-)
->>>>
->>
->> [snip]
->>
->>>> @@ -488,14 +487,6 @@ static void rockchip_dp_remove(struct
->>>> platform_device *pdev)
->>>>    {
->>>>        struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
->>
->> The above unused &rockchip_dp_device could be also remved.
-> 
-> Ah, indeed!
-> 
-> I guess I can keep your review tags if applying this patch with only this
-> line removed. Correct?
-> 
+All Exynos9610 pin controllers (except PINCTRL_TOP) have clocks assigned
+to them, so force the nodes to have clocks assigned to them.
 
-Yeah, sure!
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+---
+Most Samsung Exynos9610 pin controllers (except TOP) have clocks
+designated for them, so allow the device tree node to include clock
+information for the driver.
+---
+ Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+index 1feb6a6fc690..e4fdedb29631 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+@@ -140,6 +140,7 @@ allOf:
+             enum:
+               - google,gs101-pinctrl
+               - samsung,exynos8890-pinctrl
++              - samsung,exynos9610-pinctrl
+     then:
+       required:
+         - clocks
+
+---
+base-commit: c2cd463d6ee7d55a3ec0719d93c49ff99022d58f
+change-id: 20260922-exynos9610-pinctrl-patch-e0cc7118dc97
 
 Best regards,
-Damon
+--  
+Alexandru Chimac <alex@chimac.ro>
 
