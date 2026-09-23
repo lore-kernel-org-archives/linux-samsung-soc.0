@@ -1,119 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CB642AFB1
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2026 07:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A33D1AB9;
+	Thu, 24 Sep 2026 08:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790236330; cv=none; b=refwhdtKpA4loa5fEx3ILBwqs+tREeVaTCJmZe/PIAn+uC3sol9R/e5wCFhzhcjSAJ/SLymTZBIQjgoF14oO0TLnByceCqBqWexMTwaF1UK3TQp5KIusgSt70tVaI2WWM835M+r5phwgeiREefvBoY56vIio1cdzm2pepPdSLaY=
+	t=1790238704; cv=none; b=OY/PA2zElso+OjVT5+r6NzCdcyR8mR7w1UiMH1bZicQx0LglbQyADYyhCyOY+pMWE4vztS0IlUqidcAvlu5vM2FimsTeI6OKilRdzCsADBCJrV4ELfXkHHfgBs3l21AtdzUzLNlAqMzsAvdBm6nRRApiKBrO6P7h4hnfCvJjzos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790236330; c=relaxed/simple;
-	bh=Q2w6LF4/zIJhMqgnul1q5Ke3T8Fce4xJ7qGlNUdJ/6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bE+Y0sh+rNGh4C+DHsbEA/rWYTy4lAM8+UC83ULN6ox8HP6MyEyFRD0Qrj0e0TpoOGoNTgIdatzkmqTwkDTAofQXsRWpS9UEFy8BpukbSDxa8J+zArclfBiriLuvCu8gdfEWKj93l1JIY3yDfir+R1a2SMX8iwwtu+ctNL1JZLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ptqlc8kx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790238704; c=relaxed/simple;
+	bh=2q/WlDjU9Q7ZIjVz14cix63PZ+BOmqngGSQfJ+4PJBk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=AHl7WsrrdPiZ8dbJKPw4zFlHHgDU+p/7FqjlSjpZN2Mq1nGqWqlyfTuAlbjZamUDjUq1/+Dr0eR633UFLXT5fHC7VnZ9BfCd4QNyHzqF0acegQBofOgjUs75QypTlGxxsH5UIDuI4ODDPTgWb3jaOhJWrqwvVvF7acSxiMWV3ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=PVZlWJk+; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ptqlc8kx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A561F008AB
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2026 07:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790236329;
-	bh=flhXc27wZ7lq+96q79C1lo9pyNK1W5OvD7SOTlgsYQY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ptqlc8kxRS/O4MemHmjZ01Ds3sA61fs3CTI+JusAagmLQsN1Akqn2+RqNvZW8Uu1B
-	 fkVtGl19o2GvoAfTGg+wN4khUgWOJ9FZX6ktZ8KPNQnifbt782gXCEup9k83OVKU2t
-	 EPotrLbjrIE8X+v32os82VcQO6ZZF9OCqIB3J9O376A1cE7zOP/KVOHPHmH04n7+6z
-	 tdkyUv/Up2f/Iz9O8fAfZSk8Nri0naYfsAwGJoOlvBHaXT1tsMl7JNC0kw9wS2Iska
-	 V2pq+RIOw9lvDpy2GpXUcGS99+p1HdKg7KmPutL/KHb/YUGMP+2Bo5mPAMtHNBa5Oe
-	 8VnDmcBpmgBvw==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1744eso1427196e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2026 00:52:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx9mFC+s5kwjxZMCYvLOmWxccfVp2f+5Vm9pBkUw0UVe7T+CbrWGjJbdD9g2ShIs3GB4kG6iyPVAsdU4f5Z3BSB5A==@vger.kernel.org
-X-Gm-Message-State: AFuF++nwt414xJcYQWETKzCP6/Ylo1HmWFSj6IYSrUdY9gO9BQhhm4wN
-	prGLKjpcavV4TuxeekrQRmcjdkh9Xv/AnPSybEw83ak5DASp3Knj0/VVE9hE+rEufcR/cc52kpX
-	EDd/jPtBrIzRdu32XiAP9MbQmZPmYmio=
-X-Received: by 2002:a05:6512:6c8:b0:5b8:b419:b7b with SMTP id
- 2adb3069b0e04-5b8e0a18d1cmr355916e87.49.1790236328001; Thu, 24 Sep 2026
- 00:52:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="PVZlWJk+"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4hqhrM1vZrz7vBk;
+	Wed, 23 Sep 2026 18:14:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro; s=MBO0001;
+	t=1790180099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ja10dpay0PFbmloo3P4uBr52vlFLWwA7lf07LoI1zL0=;
+	b=PVZlWJk+fZggLM32PaMTY84s7k2CUe8rduhWyYm4jR5cZouzL/3StaNPCV0OKs54bcurVM
+	C2SFhh+SLxxLgOwl7DwBdv0YIm2KR++LJ74wyTiECVXUa2OTX6UK2Xr1FdJvQkt5N4MqAs
+	fyD3p00myaKOn5IJn+7ulSDlut8sjB4nXLaPWpfh84HYi3cD94oI3NosjEdLCXY6GYK8ek
+	Oyns30ekLT0b77TxTZ7dltJqAeoqR2meW84PZSOhtPwaVPw1V5GnuSwg4dcBiBoVP1bSb2
+	Eyg9zYSq4InC94I4g42LXyuUR3Fs77iR0X78dL211bL0GMHez9d1VEescm58tQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of alex@chimac.ro designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=alex@chimac.ro
+Date: Wed, 23 Sep 2026 19:14:55 +0300 (EEST)
+From: Alexandru Chimac <alex@chimac.ro>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-ID: <1343593353.60484.1790180095661@app.mailbox.org>
+In-Reply-To: <d679c0e9-febe-4069-9c2f-a2173a5218aa@kernel.org>
+References: <20260922-exynos9610-pinctrl-patch-v1-1-f6d816696591@chimac.ro>
+ <d679c0e9-febe-4069-9c2f-a2173a5218aa@kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: Require clocks for
+ Exynos9610 pinctrl nodes
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
- <arInho2bsfJiCgjV@houat> <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
-In-Reply-To: <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 24 Sep 2026 09:51:53 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
-X-Gm-Features: AclHuK8rPixm6Txa-uGEDmLc8FjUZWkrHeBO_IgguNN-8bSfUZSDFWgY_JslL90
-Message-ID: <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
-Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
-	Paul Kocialkowski <paulk@sys-base.io>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Albert Esteve <aesteve@redhat.com>, 
-	Anusha Srivatsa <asrivats@redhat.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Rspamd-Queue-Id: 4hqhrM1vZrz7vBk
 
-Hi Luca,
+Hello!
+> On 09/23/2026 5:58 PM EEST Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>  
+> On 22/09/2026 14:15, Alexandru Chimac wrote:
+> > All Exynos9610 pin controllers (except PINCTRL_TOP) have clocks assigned
+> > to them, so force the nodes to have clocks assigned to them.
+> > 
+> > Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+> > ---
+> > Most Samsung Exynos9610 pin controllers (except TOP) have clocks
+> > designated for them, so allow the device tree node to include clock
+> 
+> I don't understand above. It's contradictory to commit msg which says
+> ALL. Here you say most.
+> 
 
-sorry for my slowness!
+On Exynos9610, only TOP pinctrl doesn't have a clock (as far as I'm
+aware; haven't found a clock for it), while the rest of the pin controller
+blocks do.
 
-On Thu, Sep 24, 2026 at 9:01=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
-n.com> wrote:
-> On Tue Sep 22, 2026 at 9:09 AM CEST, Maxime Ripard wrote:
+> 
+> Why two commit msgs?
 
-> >> -    } else if (bridge) {
-> >> +    if (!bridge) {
-> >> +            dev_err(dev, "no bridge\n");
-> >> +            return -ENODEV;
-> >> +    } else if (!drm_bridge_is_panel(bridge)) {
-> >>              /* TODO: AV8100 HDMI encoder goes here for example */
-> >>              dev_info(dev, "connected to non-panel bridge (unsupported=
-)\n");
-> >>              return -ENODEV;
-> >
-> > I wonder if we still need that branch. Every panel is a bridge now, and
-> > it looks like we don't have any specific panel handling in this driver,
-> > so I guess it supports bridges already?
-> >
-> > Linus, do you know why this condition was here in the first place?
->
-> I had the same thought while writing the patch, but I chose to be
-> conservative.
->
-> Linus, unless you have more info I'm going to apply the patch as
-> is. Removing this special case would be welcome as a later patch.
+The first message is the commit message, and the second one is the b4
+cover message. I wasn't actually sure how b4 handles that.
 
-I'd say go ahead as-is.
+> 
+> > information for the driver.
+> 
+> that's ABI break without reason.
+> 
 
-I do have the idea to code up and submit the AV8100 encoder
-and I have the hardware to test it, but every other user should
-be using panels directly, and I would be the only non-panel
-user so I can deal with it when it comes up.
+AFAIK there are no (publicly available) users of this device, so this
+change shouldn't break any currently available device trees.
 
-Yours,
-Linus Walleij
+The best (most correct imo) implementation would be having the clock
+properties be optional, pin controllers for Exynos9610 don't need
+to be controlled by Linux for suspend/restore (change is more for
+information(?) correctness anyway), since the CMUs should have HWACG
+enabled anyway.
+
+Regards,
+Alexandru Chimac <alex@chimac.ro
