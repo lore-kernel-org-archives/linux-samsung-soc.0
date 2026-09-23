@@ -1,113 +1,106 @@
-Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE2C4446E4
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Sep 2026 08:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0655A357D1A;
+	Wed, 23 Sep 2026 10:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790152671; cv=none; b=hxvLveMw6QBRCBkzodNFz7MR7g3Pf21iKbjzzSoK2s0KGP5sgzzpWprGud/7mps/5ls5K9wMNBeOwGOtc+1wuMFLtTA2KVIT0qHBvxByuIQ1kIJ9hCYh7t1+s8qBuRqhqO9/VgGsvUS42IdAFj8NvuvecOHUKnX1RQ8p0gSsqW0=
+	t=1790158776; cv=none; b=YrfF1YWt6SDvuUxQFHCi82se1m5TOIvjnIFhOk/7P1Xn78StusaMs5cj13GB4sdRvVSv2ZSEYY0bDmci1dCiSo9W7Bohc6hVk2lFPGt2XKy83g9eBbnEodLO9aTglhza9bxMgPATEuNuunKdWUZ3Lk/8cDORNL5kyCislvmJPmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790152671; c=relaxed/simple;
-	bh=qSILxap1uKVhTX57p7J/ogsFNjwWmTdF6dSR+ZntbEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nqRj7VIiKe7+X21Wj59xgTrlpk0zy51vLlQz2zIb40vwOK2veocYQN4YeXOKUTHQMbQzOE9rCsZh/q0JVO/tImqx8QrNy8HBWixBJv2rZemY0cRCTqBTdy/74Tcz5dKZ1eg0esvEEj6zQPVZjLnJuMNYNBxvzbrVn2KHgt9FRoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNjB6zx0; arc=none smtp.client-ip=74.125.227.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790158776; c=relaxed/simple;
+	bh=EM24E4sO7sV9a07DKnzcEJnvWBCdD2dnZrt+skAvdQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYo5GXCMuCMav4n2KheXtehH5W1ZY4I+T9Gw2m0zwuQ3HUwUPBpcK+b5hV0YVuEJBPKu5wRTuE3t2qEm7OwJ3CCRBaWbtKDZIZ6HcCPT2KEjlgXZPTuGqLIudmX9swK0ht4fvdQnZJMDV1UVBWCaEvuN1H0EhIhXGbomsN8dUd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPYelFyF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNjB6zx0"
-Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccb1a98fso503599a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Sep 2026 01:37:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790152658; x=1790757458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+bqb+VtEm4AKhCFkz+jnSq4qU2iI/9v5eFR8nmksBac=;
-        b=bNjB6zx0VsxUK8cW7lnz2tkr2AVo8fhSJU3+OczMf+S2+GDnNqwIjY+hO94u9EJxM7
-         PS9Y+2gRtXLFOebu2ClQwHiK2AlUGMZQ0uvpj8HOM/eK0bZXH1cPFUmESUZYgGnl4Y0i
-         ZNw7nL8CiRAs0f6sVHBnfDSkHMg45ad2oFJ9vxiUdffQiPbzAZANU+f5BXZM6UKM+BB3
-         M58cVsHNJk0XWY3IKQcSW95cQAeG085dPtdLak8nx21g1lUC8QVjhuqQM9eky6zo1C+K
-         PnF/aRVqfDE+BflpXJGI6ykex51RC+QcffHvALlX8QkBEOpxXQpXC5+CV/M/GRtUXVq3
-         vnzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790152658; x=1790757458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+bqb+VtEm4AKhCFkz+jnSq4qU2iI/9v5eFR8nmksBac=;
-        b=Zx+AGzEmb3SaHgPsiaU0Adb/EdEC+1HYEWD3vgxTNDT/rRYnNFdGXt+jw4e0Jbscow
-         mUJeTYKrnMh7WW32c/gouIJBB0VhwhSaAidE2FKzDdOTvL83WJQ4HPx+ovB+WUZ4TSbt
-         N0F+mGvlAdaocO1kfCthZLqNIYQeLh61B6waNx7wTCPdwxVlSWWWlGqZD/UpwOuAmQwl
-         73BH2UI0D/QnwP2D74wewo9k7kNf9emiGarubTzCq7Qv3X/L+KwHDRuXJYTWbSZrEg/w
-         fI1qXdN2rN1UmaYouX0ZcLR3by9PwPnMX49bljBlMk49g3LOb1tKQkzafAHZjguI9Y+t
-         7m0A==
-X-Forwarded-Encrypted: i=1; AKwUvBwPJX/5uhIoXg9apmDdvmiuvLb9CRr3iFQVt1Ya+67D+CBsJT4KkSsv1WqaKGmeSQ9DoMUZT/FSevvnK/Sex4Oh7Q==@vger.kernel.org
-X-Gm-Message-State: AFuF++kx543HMTZ0gNKY4wc6f2txySHg+hraEiP318poTsEFPVcKdkv2
-	SQEJpx8sK9Z9+SL2B54kOQd2iaqHmHJlXlMMzvpSs4SYTfFRps6Pb2gL
-X-Gm-Gg: AYBFou1nzsCEFV2WjqGof7HQWgc52Ym3KmMgU5rThopqNFykmFvTQPIHWGCHfNoG7No
-	IRlWOrEzw2WgeZU8HtApTWQGr6wyc6SG6CDjHLSZE4nvhF6T45ht3og774Wn1k/3fZxFoUrado9
-	O7uXAhAZYGN79fRdy6Bh31Wk1hj/zzPhlN7jkLFkhzSnGAiA0Uz30V/+Zq4VH5676siY4kpni4H
-	TlgQvXXsqnd+Zn4dK8+HadRFhXJ+xHeyWxGleE08QTqjf4eSUxiQt4svIQnhN20snDIfocpuTj7
-	g32+E43EceG2H4GLIhm3jx9AhnMNGYlse5KB3PpJEIobPlxWYYpvsEXmTGboxS3ugt4LvVw78P9
-	OQbkuvk1PRvgdfKu9k41ma1eNTbs84EpTEIUiLHEGnKlu/h9FAQ3acQdof7ymCC7JITF1DdgwaR
-	JSYvO1g0eh2RGzLZwHVZJEfnWyCDTZzlQmj+afEluIv0WYBFcem627kK3eP/YaB8fOqMXrMPe0m
-	vyq47ECxlMS6ryXvzLN0vtE+LNFM5CpbXP9yQw8G/bpNcsA13+w3G4JXmAsQz76083PJPOUVbcK
-	aPdKwKBJoeIn
-X-Received: by 2002:a17:90a:e704:b0:39e:6c6a:6579 with SMTP id 98e67ed59e1d1-3a07e695391mr1778896a91.60.1790152657874;
-        Wed, 23 Sep 2026 01:37:37 -0700 (PDT)
-Received: from localhost.localdomain (ec2-13-212-242-176.ap-southeast-1.compute.amazonaws.com. [13.212.242.176])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a07db883b5sm4314751a91.2.2026.09.23.01.37.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 23 Sep 2026 01:37:37 -0700 (PDT)
-From: Ginger Li <ginger.jzllee@gmail.com>
-To: s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Fix a race between s_stream(0) and the interrupt handler
-Date: Wed, 23 Sep 2026 16:37:29 +0800
-Message-ID: <20260923083729.64831-1-ginger.jzllee@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPYelFyF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E4C1F000FF;
+	Wed, 23 Sep 2026 10:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790158772;
+	bh=4yZu5k7G2mvUqwrOPUIO/yinZuuQ7b17GcD28NPiS80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kPYelFyFxfUtCbV2k9Wv6r2Bbl++2NQDwXrUaey1bJouX2XbhQSkcaY7UuDnd+Uc+
+	 pXgil+aij4Y/iAlt0ADBFxPuXY5yDowtVo+edi3OlpuuaWeDpglke9s7I2FOABl+q5
+	 Pd1lF0zEf/7HZoj/oOf/bWC4kqdo/tVEGO7g5JeDtPCL7RpqAdwbjGLXRsiwB4aaVv
+	 B50+3SrzoTxhYFMRBuCwmVNixyNG+ZCMV9GYc2G7chnCi/QqlU3vkm+vKczo3LogeR
+	 PpXA7lCQPoi3BzuDcFivVSqA/aDpTpxLN5I8UalvdClWhmxxrMQABbHICsLqLRT6JA
+	 Rgh3Ya0H2HIXA==
+Date: Wed, 23 Sep 2026 11:19:27 +0100
+From: Lee Jones <lee@kernel.org>
+To: Hemanth Selam <hemanth.selam@gmail.com>
+Cc: Support Opensource <support.opensource@diasemi.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Botsz HUANG <huang.botsz@gmail.com>, Nick Huang <sef1548@gmail.com>,
+	mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v5] mfd: Fix typos in comments
+Message-ID: <20260923101927.GC3864833@google.com>
+References: <20260917054045.15805-1-hemanth.selam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260917054045.15805-1-hemanth.selam@gmail.com>
 
-fimc_lite_subdev_s_stream(on = 0) sets ST_FLITE_OFF outside of the
-fimc->slock protected region and only then stops the capture in the hardware.
-flite_irq_handler() runs under fimc->slock and clears ST_FLITE_OFF, so an
-interrupt can be handled in between: the handler finds ST_FLITE_OFF already
-set, clears it and wakes up fimc->irq_queue before the capture has actually
-been stopped.  The wait_event_timeout() right after it then returns
-immediately and the driver continues as if the capture had stopped.
+On Thu, 17 Sep 2026, Hemanth Selam wrote:
 
-Set ST_FLITE_OFF in the same critical section that stops the capture, as
-fimc_lite_stop_capture() already does.
+> Fix misspellings in comments across the MFD drivers and headers, found
+> with scripts/checkpatch.pl using the list in scripts/spelling.txt.
+> 
+> Only touches comments, no code changes.
+> 
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+> ---
+> v5: no change to the diff; moved the version notes below the --- where
+>     they belong rather than leaving them in the commit log.
+> 
+> v4: dropped the two Acked-by tags that v3 added, keeping only Matti's
+>     Reviewed-by, and dropped the Assisted-by trailer.
+> 
+> v2: also corrects "wainting" and "comapletion" in
+>     include/linux/mfd/si476x-core.h, which checkpatch did not flag;
+>     "comapletion" sits on the same line as the "wainting" Matti asked
+>     about.  Subject capitalised to match the MFD convention.
+> 
+>  drivers/mfd/88pm800.c                |  2 +-
+>  drivers/mfd/kempld-core.c            |  2 +-
+>  drivers/mfd/max8998.c                |  2 +-
+>  drivers/mfd/rave-sp.c                |  6 +++---
+>  drivers/mfd/si476x-i2c.c             |  2 +-
+>  include/linux/mfd/da9063/registers.h |  2 +-
+>  include/linux/mfd/db8500-prcmu.h     | 32 ++++++++++++++--------------
+>  include/linux/mfd/lp8788.h           |  2 +-
+>  include/linux/mfd/max8998.h          |  2 +-
+>  include/linux/mfd/palmas.h           |  2 +-
+>  include/linux/mfd/rohm-bd71828.h     |  2 +-
+>  include/linux/mfd/samsung/core.h     |  2 +-
+>  include/linux/mfd/si476x-core.h      |  4 ++--
+>  include/linux/mfd/twl.h              |  2 +-
+>  14 files changed, 32 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+> index e9941da58b18..aac630322b3c 100644
+> --- a/drivers/mfd/88pm800.c
+> +++ b/drivers/mfd/88pm800.c
+> @@ -275,7 +275,7 @@ static int device_gpadc_init(struct pm80x_chip *chip,
+>  		goto out;
+>  
+>  	/*
+> -	 * the defult of PM800 is GPADC operates at 100Ks/s rate
+> +	 * the default of PM800 is GPADC operates at 100Ks/s rate
+>  	 * and Number of GPADC slots with active current bias prior
+>  	 * to GPADC sampling = 1 slot for all GPADCs set for
+>  	 * Temprature mesurmants
 
-Fixes: 6319d6a ("[media] fimc-lite: Add ISP FIFO output support")
-Signed-off-by: Ginger Li <ginger.jzllee@gmail.com>
----
- drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+While you are here, could we also fix 'Temprature mesurmants' on this line?
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-@@ -1209,9 +1209,8 @@ static int fimc_lite_subdev_s_stream(struct v4l2_subde
- 			spin_unlock_irqrestore(&fimc->slock, flags);
- 		}
- 	} else {
--		set_bit(ST_FLITE_OFF, &fimc->state);
--
- 		spin_lock_irqsave(&fimc->slock, flags);
-+		set_bit(ST_FLITE_OFF, &fimc->state);
- 		flite_hw_capture_stop(fimc);
- 		spin_unlock_irqrestore(&fimc->slock, flags);
- 
 -- 
-2.43.0
-
+Lee Jones
