@@ -1,593 +1,388 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88CE382368;
-	Thu, 24 Sep 2026 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D013A9D94
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2026 10:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790242282; cv=none; b=VwHYpK7j/41W5wWPKuhZvRP2mfK663lBnC/AN5OhqHg25ggu50te1t1uud6JsSUQ5UFQc2ihKI1PyMr2uZidQElmOwnsgknnD9JMAeAwVCXgTSIPEdZ+JSKNurQr6rvjSLDFb99OP0wxxuDDkUD/4ii7XqoFLHs/GXNIwvLFUwI=
+	t=1790245855; cv=none; b=pb7V2RjipTXYaLIMdB6bEZQM136vBk3AF9Bn102I+a/Dd+sqy69oX3ihfCAbJ6WlwCtxzuijjcRwMhfXZtFRADkFP3WftU0stocnuF3bJ0mS7UupF2fYVxeHVWLZxa4Ie8wmABhR44mGGs59A8Xeg/c9zTPFaTTvf5sGcxbJgmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790242282; c=relaxed/simple;
-	bh=SWD7UuNCHF3lQx+qt62KDyEwtR/jSPvgf92rCGQrzcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WGYiKKzsYdmdmS3k1dRi/OUjV6dYCDhJT1fBslV3n5cKdC7JfM6ATNrZ9eG5DO4XftmHHpGk1+6CnaMr4jfAla9ms2oktb2QoXNJgMtyc0hT6qTehxuzXSavt5mHPCfno0XJT9JQYZxeFZ+pZcFiMH63DtaSOxe5c49Zgs3GKQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p+BhUeAK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BU6fSTet; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J5OeEiSb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Bwzdt44s; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1790245855; c=relaxed/simple;
+	bh=X7+q633VBsOQWPfuyrYIU4KM3gkKmd4+z8AZDu05tlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I3AJvtO1sd/NOXKHEs2YSGiI6uNaI/SzxPhQQAk4Q+GKg6TS6I6BbRAkbmQDGgjwc1NSG1/8LQsxy1E6fWeITfom+3xkIAhjDWho2xaYZ5L5C3jooDCano1e2S/OPEFtoTDXI1IWU7bNk+KOchWwP2D2sM4a7704KCRjjYBGgPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PETSuA9R; arc=none smtp.client-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p+BhUeAK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BU6fSTet";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J5OeEiSb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Bwzdt44s"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 87AD921E7D;
-	Thu, 24 Sep 2026 09:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1790242252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B3LaegPwkv2RB4rLF8EsjDYl0Zo7A9//9lFJY8tWIo=;
-	b=p+BhUeAKwis+7Pveqn50Kd8hidhfMkAG7C98UjRPF6a9+wK0b8BTUJ5dnKXlki3xLp7KEl
-	IwRalfiKpSxB+EKUlfhd4mMaJOaohRFuySIjzBONTPDAcB3OXLPkL4caFkfDSmRlvolGe3
-	IiBKL+z+qRLKkNCGZ0EjukLKVxb3rmM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1790242252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B3LaegPwkv2RB4rLF8EsjDYl0Zo7A9//9lFJY8tWIo=;
-	b=BU6fSTet7EFkX8NjVcwtXqUjYYa8xFdNo2YEIZnIo/7TTUdvh2HMQRkY9lj/MpW6fQ/Qe4
-	mR4rkl4aGDEYC4BQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=J5OeEiSb;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Bwzdt44s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1790242248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B3LaegPwkv2RB4rLF8EsjDYl0Zo7A9//9lFJY8tWIo=;
-	b=J5OeEiSbj/uzEKnmiI+1p+gOzt3+JFQ814a1QUuhW9f+U8Is7OBmZdcgq1DYuJUhCospwL
-	Zf2TsO6gLInQ2nXpuVV8I02bhYTatip+DDxr1LNzd4USKsQVwVxNpPeZOmpQkFSp+4TVOR
-	znrFrf8FyfrxJa5tRE4MNQpmLExkPXY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1790242248;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4B3LaegPwkv2RB4rLF8EsjDYl0Zo7A9//9lFJY8tWIo=;
-	b=Bwzdt44s0b+M/jpkQAo4NrWHOp+t/YO/PZGq+NrBP7m3AgXaEYIARPGikj6WBDJeCkU2LD
-	a5t9D34CWmgy0qAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 96837136ED;
-	Thu, 24 Sep 2026 09:30:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2es5CcbttGp+IgAAD6G6ig:T3
-	(envelope-from <tzimmermann@suse.de>); Thu, 24 Sep 2026 09:30:47 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: jfalempe@redhat.com,
-	javierm@redhat.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jani.nikula@linux.intel.com,
-	Alexander.Deucher@amd.com
-Cc: dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	sashiko-reviews@lists.linux.dev,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH v2 2/2] drm/fbdev: Move fbdev helpers into client library
-Date: Thu, 24 Sep 2026 11:29:14 +0200
-Message-ID: <20260924093036.82356-3-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260924093036.82356-1-tzimmermann@suse.de>
-References: <20260924093036.82356-1-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PETSuA9R"
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-3115c4451c8so551507eec.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Sep 2026 03:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790245853; x=1790850653; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=FdzUGtWjlaSHGjfiY4nzNPdRN45L8PTOa5XPHowTwqk=;
+        b=PETSuA9RWFiWy6z9JIlW1iB/pS/xscoZTY1OcqbqIzo2Pyz5Ru3KZMrdJh2RnteGyr
+         FPdFh4N5BbPe6AEzwJc40Mb038pWLy4ImF+Kx2UG3919kX0lrNlJHKrvbPo/g30S33Sp
+         c7OU2cypH3fmnz68mV6XAxTlLbEoTI8XQqpoGSpIk6aLkxbmZqe76uKSNObP8/quLjx0
+         wc1IMIWecLxv8hNI6tX2I8mZlt+dmwRRTnpGoH6GYUaptBvRnEEKJpvyUm/8ZMZv3als
+         iGp9V2NzV6cB6S2eOTGErKwEETgHXAdQkojMlqzYCArcA9HK1a/94FyvX3fNp+zjaZVZ
+         XfJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790245853; x=1790850653;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=FdzUGtWjlaSHGjfiY4nzNPdRN45L8PTOa5XPHowTwqk=;
+        b=eOX7TYXli1lj3iK9OeKiDKkeKVINjcL07rwYEkEXGkHBznI7VHSoO5MxGgz7XG/c57
+         XX4OKgQhX1OGrw7KGZjcs7lqTOsG6ZWRP20xVgJ19NOVoZ7RGF/B80vaPr281dLgeeHm
+         CEMVeeJ0HAtgNDF1bIfw4NTcgdVVFO7dVXJEBYcG/PtZcocP82cgGjY8vNeZJZFEC8jo
+         NxoqWhPamuoH3ZfzMBEO8n2dORuj2N1LRvg7YSU+g+UzzMn/togzjrCk+X20ieAQ+Qd3
+         3LcpNhexJH4DJw+2faUTOvY+k8II3zz8vpbObtqdy74Zs+sBQi9TweRI22S6+Mg2jBE3
+         oM7g==
+X-Forwarded-Encrypted: i=1; AKwUvBz9NDwVqAug6XDMWJ151eFjg6BX4epiY8KEq1KcaYTPFAOQA6khfoK8U5q8B3GFdos+ZVkEskuovRiRYYwPKSd7Pw==@vger.kernel.org
+X-Gm-Message-State: AFuF++lYGVq0G8W3cYWOWi1s3EDxsTvQl+Yv5VMIajfuEQ+EAllv1UhM
+	6KSPkUUkdlGQdBIHCc0eAtLw5oD1PPBAfm54oWOvlSij/IC7CyUgiO9i
+X-Gm-Gg: AYBFou2XAU8D2CqwwacwPsEUcnrtCfEm+TV68xqWGBv7MbRrYaAaDkQp6fE0YXtk1ac
+	iunXG5XMMDuQ56l9od3kFBoDBnwH1MxolR8vllfo+W6xtOWrzAuQKJtDRguwebyS27pNj54Rse/
+	smWtN3zLZHzOS9/3n7gp7x7FGES8FIApXyPKAF2ejzuSRJYgKW92ruy7IVil/dnbbtVAEiimso9
+	7BD0mCW3H/ZKrWZyn3kabE6FXUOJeMH/C30eDP7himpXTr25OaHKnq9XuAhIDo320pZkaSI4idV
+	walavBebdzUsDJq10EViuzplEkoOoudsn4pRepM+JuuBW8S2rMUbZ9ly6vHJjBZk2lAQ1tMdXQH
+	QvAEUzegjzodmV2ewiTueQbRtSCp4LBtKtZMyGypghgd+LVYMgtdXP3EK/FI/mSXaR87d7lFk6I
+	gyUYI93APAigfzaDDPO+Eeb5FaHyUy2oy4fJrskBcDX36gxR5kXLMBzps5CGb4HEU/Y1PaHzHhy
+	z7LibV9NYiS5Dt+Y0pJVZHEyCyChn6DvUc=
+X-Received: by 2002:a05:693c:62cd:b0:339:851c:4c1 with SMTP id 5a478bee46e88-340059652f1mr1488941eec.18.1790245852691;
+        Thu, 24 Sep 2026 03:30:52 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e972395f9sm11553369eec.30.2026.09.24.03.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Sep 2026 03:30:52 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: lee@kernel.org,
+	support.opensource@diasemi.com,
+	mazziesaccount@gmail.com,
+	andre.draszik@linaro.org
+Cc: krzk@kernel.org,
+	mfd@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v6] mfd: Fix typos in comments
+Date: Thu, 24 Sep 2026 16:00:46 +0530
+Message-ID: <20260924103046.1709181-1-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 87AD921E7D
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,amd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,amd.com:email,suse.de:dkim,suse.de:email,suse.de:mid,intel.com:email];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RLgosu6qu4h11rje89ht7rjgg5)];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
 
-DRM's fbdev helpers are for the fbdev-emulation clients. Move them
-into the client-library module. Fix include statements throughout
-DRM drivers.
+Fix misspellings in comments across the MFD drivers and headers, found
+with scripts/checkpatch.pl using the list in scripts/spelling.txt.
 
-While at it, rename the files from drm_fb_helper to drm_fbdev_helper.
-The old name was too reminiscent of DRM's framebuffer code.
+Only touches comments, no code changes.
 
-The GEM support code for fbdev remains part of DRM's memory managers.
-
-v2:
-- update armada und docs
-
-Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: André Draszik <andre.draszik@linaro.org>
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
 ---
- Documentation/gpu/drm-kms-helpers.rst                       | 6 +++---
- drivers/gpu/drm/Makefile                                    | 1 -
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c                 | 2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c                     | 2 +-
- drivers/gpu/drm/armada/armada_fbdev.c                       | 2 +-
- drivers/gpu/drm/clients/Makefile                            | 3 ++-
- drivers/gpu/drm/clients/drm_fbdev_client.c                  | 2 +-
- .../gpu/drm/{drm_fb_helper.c => clients/drm_fbdev_helper.c} | 2 +-
- drivers/gpu/drm/drm_fbdev_dma.c                             | 2 +-
- drivers/gpu/drm/drm_fbdev_shmem.c                           | 2 +-
- drivers/gpu/drm/drm_fbdev_ttm.c                             | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c                   | 2 +-
- drivers/gpu/drm/gma500/fbdev.c                              | 2 +-
- drivers/gpu/drm/i915/display/intel_fbdev.c                  | 2 +-
- drivers/gpu/drm/msm/msm_debugfs.c                           | 2 +-
- drivers/gpu/drm/msm/msm_fbdev.c                             | 2 +-
- drivers/gpu/drm/nouveau/dispnv50/disp.c                     | 1 -
- drivers/gpu/drm/omapdrm/omap_debugfs.c                      | 2 +-
- drivers/gpu/drm/omapdrm/omap_fbdev.c                        | 2 +-
- drivers/gpu/drm/radeon/radeon_device.c                      | 2 +-
- drivers/gpu/drm/radeon/radeon_fbdev.c                       | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c                 | 2 +-
- drivers/gpu/drm/sitronix/st7571.c                           | 1 -
- drivers/gpu/drm/tegra/fbdev.c                               | 2 +-
- drivers/gpu/drm/vboxvideo/vbox_mode.c                       | 2 +-
- include/drm/{drm_fb_helper.h => clients/drm_fbdev_helper.h} | 4 ++--
- 26 files changed, 27 insertions(+), 29 deletions(-)
- rename drivers/gpu/drm/{drm_fb_helper.c => clients/drm_fbdev_helper.c} (99%)
- rename include/drm/{drm_fb_helper.h => clients/drm_fbdev_helper.h} (99%)
+v6: also fix "Temprature mesurmants" in drivers/mfd/88pm800.c, which Lee
+    Jones asked for.  It sits in the same comment as the "defult" fix and
+    is not in scripts/spelling.txt, which is why checkpatch did not flag
+    it.  No other change; André Draszik's Reviewed-by from v5 carried
+    over.
 
-diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/drm-kms-helpers.rst
-index 400cd0112713..65bc16b96f8f 100644
---- a/Documentation/gpu/drm-kms-helpers.rst
-+++ b/Documentation/gpu/drm-kms-helpers.rst
-@@ -109,13 +109,13 @@ VBLANK Helper Reference
- fbdev Helper Functions Reference
- ================================
+v5: no change to the diff; moved the version notes below the --- where
+    they belong rather than leaving them in the commit log.
+
+v4: dropped the two Acked-by tags that v3 added, keeping only Matti's
+    Reviewed-by, and dropped the Assisted-by trailer.
+
+v2: also corrects "wainting" and "comapletion" in
+    include/linux/mfd/si476x-core.h, which checkpatch did not flag;
+    "comapletion" sits on the same line as the "wainting" Matti asked
+    about.  Subject capitalised to match the MFD convention.
+
+ drivers/mfd/88pm800.c                |  4 ++--
+ drivers/mfd/kempld-core.c            |  2 +-
+ drivers/mfd/max8998.c                |  2 +-
+ drivers/mfd/rave-sp.c                |  6 +++---
+ drivers/mfd/si476x-i2c.c             |  2 +-
+ include/linux/mfd/da9063/registers.h |  2 +-
+ include/linux/mfd/db8500-prcmu.h     | 32 ++++++++++++++--------------
+ include/linux/mfd/lp8788.h           |  2 +-
+ include/linux/mfd/max8998.h          |  2 +-
+ include/linux/mfd/palmas.h           |  2 +-
+ include/linux/mfd/rohm-bd71828.h     |  2 +-
+ include/linux/mfd/samsung/core.h     |  2 +-
+ include/linux/mfd/si476x-core.h      |  4 ++--
+ include/linux/mfd/twl.h              |  2 +-
+ 14 files changed, 33 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+index e9941da58b18..7f3e312b8f73 100644
+--- a/drivers/mfd/88pm800.c
++++ b/drivers/mfd/88pm800.c
+@@ -275,10 +275,10 @@ static int device_gpadc_init(struct pm80x_chip *chip,
+ 		goto out;
  
--.. kernel-doc:: drivers/gpu/drm/drm_fb_helper.c
-+.. kernel-doc:: drivers/gpu/drm/clients/drm_fbdev_helper.c
-    :doc: fbdev helpers
+ 	/*
+-	 * the defult of PM800 is GPADC operates at 100Ks/s rate
++	 * the default of PM800 is GPADC operates at 100Ks/s rate
+ 	 * and Number of GPADC slots with active current bias prior
+ 	 * to GPADC sampling = 1 slot for all GPADCs set for
+-	 * Temprature mesurmants
++	 * Temperature measurements
+ 	 */
+ 	mask = (PM800_GPADC_GP_BIAS_EN0 | PM800_GPADC_GP_BIAS_EN1 |
+ 		PM800_GPADC_GP_BIAS_EN2 | PM800_GPADC_GP_BIAS_EN3);
+diff --git a/drivers/mfd/kempld-core.c b/drivers/mfd/kempld-core.c
+index b64729918dfd..47062f876e5d 100644
+--- a/drivers/mfd/kempld-core.c
++++ b/drivers/mfd/kempld-core.c
+@@ -37,7 +37,7 @@ static void kempld_get_hardware_mutex(struct kempld_device_data *pld)
  
--.. kernel-doc:: include/drm/drm_fb_helper.h
-+.. kernel-doc:: include/drm/clients/drm_fbdev_helper.h
-    :internal:
+ static void kempld_release_hardware_mutex(struct kempld_device_data *pld)
+ {
+-	/* The harware mutex is released when 1 is written to the mutex bit. */
++	/* The hardware mutex is released when 1 is written to the mutex bit. */
+ 	iowrite8(KEMPLD_MUTEX_KEY, pld->io_index);
+ }
  
--.. kernel-doc:: drivers/gpu/drm/drm_fb_helper.c
-+.. kernel-doc:: drivers/gpu/drm/clients/drm_fbdev_helper.c
-    :export:
+diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
+index eb13bbaeda55..5032eab05bb4 100644
+--- a/drivers/mfd/max8998.c
++++ b/drivers/mfd/max8998.c
+@@ -146,7 +146,7 @@ static struct max8998_platform_data *max8998_i2c_parse_dt_pdata(
  
- Draw Helper Functions Reference
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index f0c340aa2ec6..3a0f2095de3c 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -158,7 +158,6 @@ drm_kms_helper-y := \
- drm_kms_helper-$(CONFIG_DRM_PANEL_BRIDGE) += bridge/panel.o
- drm_kms_helper-$(CONFIG_DRM_PANIC_HELPER) += drm_panic_helper.o
- drm_kms_helper-$(CONFIG_DRM_PANIC_SCREEN_QR_CODE) += drm_panic_helper_qr.o
--drm_kms_helper-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fb_helper.o
- obj-$(CONFIG_DRM_KMS_HELPER) += drm_kms_helper.o
+ 	/*
+ 	 * ToDo: the 'wakeup' member in the platform data is more of a linux
+-	 * specfic information. Hence, there is no binding for that yet and
++	 * specific information. Hence, there is no binding for that yet and
+ 	 * not parsed here.
+ 	 */
+ 	return pd;
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 05d26d92df03..53c57bafea8f 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -331,7 +331,7 @@ static u8 rave_sp_reply_code(u8 command)
+ 		return command + 0x20;
+ 	case 0xE0 ... 0xEF:
+ 		/*
+-		 * Events emitted by all versions of the firmare use
++		 * Events emitted by all versions of the firmware use
+ 		 * least significant bit to get an ACK code
+ 		 */
+ 		return command | 0x01;
+@@ -544,7 +544,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
+ 				 * NOTE: The above means that only the
+ 				 * frame started by third SOF, sent
+ 				 * after this one will have a chance
+-				 * to get throught.
++				 * to get through.
+ 				 */
+ 				goto reset_framer;
+ 			case RAVE_SP_DLE:
+@@ -595,7 +595,7 @@ static size_t rave_sp_receive_buf(struct serdev_device *serdev,
  
- #
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 59ea338b554c..126bfd9bb89e 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -38,11 +38,11 @@
+ 	/*
+ 	 * The only way to get out of the above loop and end up here
+-	 * is throught consuming all of the supplied data, so here we
++	 * is through consuming all of the supplied data, so here we
+ 	 * report that we processed it all.
+ 	 */
+ 	return size;
+diff --git a/drivers/mfd/si476x-i2c.c b/drivers/mfd/si476x-i2c.c
+index 9bce720a0a08..6351aef2d3bb 100644
+--- a/drivers/mfd/si476x-i2c.c
++++ b/drivers/mfd/si476x-i2c.c
+@@ -222,7 +222,7 @@ int si476x_core_stop(struct si476x_core *core, bool soft)
+ 	atomic_set(&core->is_alive, 0);
  
- #include <linux/pci.h>
- #include <linux/pm_runtime.h>
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_modeset_helper.h>
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index f2f179421c4d..51a7a4091376 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -28,8 +28,8 @@
+ 	if (soft) {
+-		/* TODO: This probably shoud be a configurable option,
++		/* TODO: This probably should be a configurable option,
+ 		 * so it is possible to have the chips keep their
+ 		 * oscillators running
+ 		 */
+diff --git a/include/linux/mfd/da9063/registers.h b/include/linux/mfd/da9063/registers.h
+index 7b8364bd08a0..376c5d330599 100644
+--- a/include/linux/mfd/da9063/registers.h
++++ b/include/linux/mfd/da9063/registers.h
+@@ -14,7 +14,7 @@
+ #define DA9063_I2C_PAGE_SEL_SHIFT	1
+ #define	DA9063_EVENT_REG_NUM		4
  
- #include "amdgpu.h"
- #include <drm/amdgpu_drm.h>
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include "amdgpu_uvd.h"
- #include "amdgpu_vce.h"
- #include "atom.h"
-diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-index 8bbae94804f8..f35afec2125f 100644
---- a/drivers/gpu/drm/armada/armada_fbdev.c
-+++ b/drivers/gpu/drm/armada/armada_fbdev.c
-@@ -9,9 +9,9 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_print.h>
- 
-diff --git a/drivers/gpu/drm/clients/Makefile b/drivers/gpu/drm/clients/Makefile
-index c16addbc327f..1304ff358509 100644
---- a/drivers/gpu/drm/clients/Makefile
-+++ b/drivers/gpu/drm/clients/Makefile
-@@ -4,5 +4,6 @@ subdir-ccflags-y += -I$(src)/..
- 
- drm_client_lib-y := drm_client_setup.o
- drm_client_lib-$(CONFIG_DRM_CLIENT_LOG) += drm_log.o
--drm_client_lib-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fbdev_client.o
-+drm_client_lib-$(CONFIG_DRM_FBDEV_EMULATION) += drm_fbdev_client.o \
-+						drm_fbdev_helper.o
- obj-$(CONFIG_DRM_CLIENT_LIB) += drm_client_lib.o
-diff --git a/drivers/gpu/drm/clients/drm_fbdev_client.c b/drivers/gpu/drm/clients/drm_fbdev_client.c
-index 7574bd36f45e..eec463d19943 100644
---- a/drivers/gpu/drm/clients/drm_fbdev_client.c
-+++ b/drivers/gpu/drm/clients/drm_fbdev_client.c
-@@ -1,9 +1,9 @@
- // SPDX-License-Identifier: MIT
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_client.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_print.h>
- 
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/clients/drm_fbdev_helper.c
-similarity index 99%
-rename from drivers/gpu/drm/drm_fb_helper.c
-rename to drivers/gpu/drm/clients/drm_fbdev_helper.c
-index 76195410db60..fff3cf6a0aed 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/clients/drm_fbdev_helper.c
-@@ -32,9 +32,9 @@
- #include <linux/console.h>
- #include <linux/export.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-index 9412d9fdd74b..452f84400350 100644
---- a/drivers/gpu/drm/drm_fbdev_dma.c
-+++ b/drivers/gpu/drm/drm_fbdev_dma.c
-@@ -4,10 +4,10 @@
- #include <linux/fb.h>
- #include <linux/vmalloc.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fbdev_dma.h>
- #include <drm/drm_fb_dma_helper.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_print.h>
-diff --git a/drivers/gpu/drm/drm_fbdev_shmem.c b/drivers/gpu/drm/drm_fbdev_shmem.c
-index 458c899b5d4f..8eb05fe9bc98 100644
---- a/drivers/gpu/drm/drm_fbdev_shmem.c
-+++ b/drivers/gpu/drm/drm_fbdev_shmem.c
-@@ -3,9 +3,9 @@
- #include <linux/export.h>
- #include <linux/fb.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_fbdev_shmem.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_gem_shmem_helper.h>
-diff --git a/drivers/gpu/drm/drm_fbdev_ttm.c b/drivers/gpu/drm/drm_fbdev_ttm.c
-index 160bc35d8738..8eb59c2ac5ea 100644
---- a/drivers/gpu/drm/drm_fbdev_ttm.c
-+++ b/drivers/gpu/drm/drm_fbdev_ttm.c
-@@ -4,9 +4,9 @@
- #include <linux/moduleparam.h>
- #include <linux/vmalloc.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_print.h>
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 8641c9e84d4c..f412269d6323 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -10,9 +10,9 @@
- 
- #include <linux/fb.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_prime.h>
-diff --git a/drivers/gpu/drm/gma500/fbdev.c b/drivers/gpu/drm/gma500/fbdev.c
-index d1e93588234f..428912574f20 100644
---- a/drivers/gpu/drm/gma500/fbdev.c
-+++ b/drivers/gpu/drm/gma500/fbdev.c
-@@ -7,9 +7,9 @@
- 
- #include <linux/fb.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- 
- #include "gem.h"
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index db0e36dd8722..219ee17de3f6 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -38,10 +38,10 @@
- #include <linux/vga_switcheroo.h>
- 
- #include <drm/clients/drm_client_setup.h>
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/intel/display_parent_interface.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
-index f12701e286ec..d05307bfa123 100644
---- a/drivers/gpu/drm/msm/msm_debugfs.c
-+++ b/drivers/gpu/drm/msm/msm_debugfs.c
-@@ -9,8 +9,8 @@
- #include <linux/debugfs.h>
- #include <linux/fault-inject.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_debugfs.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_file.h>
- #include <drm/drm_framebuffer.h>
- 
-diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-index dd6d6c507d77..f37cc3f97a21 100644
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -6,9 +6,9 @@
- 
- #include <linux/fb.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_crtc_helper.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_file.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index add19d479ebe..e91130f93db6 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -40,7 +40,6 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_eld.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
-diff --git a/drivers/gpu/drm/omapdrm/omap_debugfs.c b/drivers/gpu/drm/omapdrm/omap_debugfs.c
-index 9edc1b3f9f95..1c40c489ed72 100644
---- a/drivers/gpu/drm/omapdrm/omap_debugfs.c
-+++ b/drivers/gpu/drm/omapdrm/omap_debugfs.c
-@@ -6,10 +6,10 @@
- 
- #include <linux/seq_file.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_file.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_print.h>
- 
-diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-index 4881777642d2..e1dcc3cb7c55 100644
---- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
-@@ -7,9 +7,9 @@
- #include <linux/fb.h>
- 
- #include <drm/clients/drm_client_setup.h>
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_crtc_helper.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_file.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
-index 9523240110a6..fdbdcefa84e7 100644
---- a/drivers/gpu/drm/radeon/radeon_device.c
-+++ b/drivers/gpu/drm/radeon/radeon_device.c
-@@ -33,11 +33,11 @@
- #include <linux/vga_switcheroo.h>
- #include <linux/vgaarb.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_cache.h>
- #include <drm/drm_client_event.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_device.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_file.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_probe_helper.h>
-diff --git a/drivers/gpu/drm/radeon/radeon_fbdev.c b/drivers/gpu/drm/radeon/radeon_fbdev.c
-index 3e243f5e2f44..e40c23d9dff2 100644
---- a/drivers/gpu/drm/radeon/radeon_fbdev.c
-+++ b/drivers/gpu/drm/radeon/radeon_fbdev.c
-@@ -29,9 +29,9 @@
- #include <linux/pm_runtime.h>
- #include <linux/vga_switcheroo.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_drv.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index 9a1dc9f12072..b55113a7a00b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -8,9 +8,9 @@
- #include <linux/iommu.h>
- #include <linux/vmalloc.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm.h>
- #include <drm/drm_dumb_buffers.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_gem.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_prime.h>
-diff --git a/drivers/gpu/drm/sitronix/st7571.c b/drivers/gpu/drm/sitronix/st7571.c
-index fc3ba5e8600f..5e60c4685671 100644
---- a/drivers/gpu/drm/sitronix/st7571.c
-+++ b/drivers/gpu/drm/sitronix/st7571.c
-@@ -20,7 +20,6 @@
- #include <drm/drm_damage_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_encoder.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fbdev_shmem.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
-diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-index 003e80cf7b9a..64c2e64f219b 100644
---- a/drivers/gpu/drm/tegra/fbdev.c
-+++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -11,9 +11,9 @@
- #include <linux/fb.h>
- #include <linux/vmalloc.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_crtc_helper.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-diff --git a/drivers/gpu/drm/vboxvideo/vbox_mode.c b/drivers/gpu/drm/vboxvideo/vbox_mode.c
-index bb3f7f0ad7c4..7c34299fa531 100644
---- a/drivers/gpu/drm/vboxvideo/vbox_mode.c
-+++ b/drivers/gpu/drm/vboxvideo/vbox_mode.c
-@@ -13,11 +13,11 @@
- #include <linux/iosys-map.h>
- #include <linux/export.h>
- 
-+#include <drm/clients/drm_fbdev_helper.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_blend.h>
- #include <drm/drm_edid.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_framebuffer.h>
- #include <drm/drm_gem_atomic_helper.h>
-diff --git a/include/drm/drm_fb_helper.h b/include/drm/clients/drm_fbdev_helper.h
-similarity index 99%
-rename from include/drm/drm_fb_helper.h
-rename to include/drm/clients/drm_fbdev_helper.h
-index 0c5e5ed7b5e7..7575aaf34c62 100644
---- a/include/drm/drm_fb_helper.h
-+++ b/include/drm/clients/drm_fbdev_helper.h
-@@ -27,8 +27,8 @@
-  *      Dave Airlie <airlied@linux.ie>
-  *      Jesse Barnes <jesse.barnes@intel.com>
+-/* Page selection I2C or SPI always in the begining of any page. */
++/* Page selection I2C or SPI always in the beginning of any page. */
+ /* Page 0 : I2C access 0x000 - 0x0FF	SPI access 0x000 - 0x07F */
+ /* Page 1 :				SPI access 0x080 - 0x0FF */
+ /* Page 2 : I2C access 0x100 - 0x1FF	SPI access 0x100 - 0x17F */
+diff --git a/include/linux/mfd/db8500-prcmu.h b/include/linux/mfd/db8500-prcmu.h
+index c939c9a1170a..87a28c4f1d81 100644
+--- a/include/linux/mfd/db8500-prcmu.h
++++ b/include/linux/mfd/db8500-prcmu.h
+@@ -337,31 +337,31 @@ enum sia_mmdsp_stat {
+  * @SYSCLKOK_ERR: The SYSCLK is not available in the given time
+  * @BOOT_ERR: Romcode has not validated the XP70 self reset in the given time
+  * @ROMCODESAVECONTEXT: The Romcode didn.t correctly save it secure context
+- * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transfered
++ * @VARMHIGHSPEEDVALTO_ERR: The ARM high speed supply value transferred
+  *          through I2C has not been correctly executed in the given time
+- * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transfered
++ * @VARMHIGHSPEEDACCESS_ERR: The command value of VarmHighSpeedVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transfered through
++ * @VARMLOWSPEEDVALTO_ERR:The ARM low speed supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transfered
++ * @VARMLOWSPEEDACCESS_ERR: The command value of VarmLowSpeedVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transfered through
++ * @VARMRETENTIONVALTO_ERR: The ARM retention supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transfered
++ * @VARMRETENTIONACCESS_ERR: The command value of VarmRetentionVal transferred
+  *             through I2C has not been correctly executed in the given time
+- * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transfered through
++ * @VAPEHIGHSPEEDVALTO_ERR: The APE highspeed supply value transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VSAFEHPVALTO_ERR: The SAFE high power supply value transfered through I2C
++ * @VSAFEHPVALTO_ERR: The SAFE high power supply value transferred through I2C
+  *                         has not been correctly executed in the given time
+- * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transfered through I2C has
++ * @VMODSEL1VALTO_ERR: The MODEM sel1 supply value transferred through I2C has
+  *                             not been correctly executed in the given time
+- * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transfered through I2C has
++ * @VMODSEL2VALTO_ERR: The MODEM sel2 supply value transferred through I2C has
+  *                             not been correctly executed in the given time
+- * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transfered through
++ * @VARMOFFACCESS_ERR: The command value of Varm ON/OFF transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transfered through
++ * @VAPEOFFACCESS_ERR: The command value of Vape ON/OFF transferred through
+  *                     I2C has not been correctly executed in the given time
+- * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transfered
++ * @VARMRETACCES_ERR: The command value of Varm retention ON/OFF transferred
+  *             through I2C has not been correctly executed in the given time
+  * @CURAPPWRSTISNOTBOOT:Generated when Arm want to do power state transition
+  *             ApBoot to ApExecute but the power current state is not Apboot
+@@ -376,11 +376,11 @@ enum sia_mmdsp_stat {
+  *                    been correctly executed in the given time
+  * @ARMREGU2VALTO_ERR: The ArmRegu2 value transferred through I2C has not
+  *                    been correctly executed in the given time
+- * @VAPEREGUVALTO_ERR: The VApeRegu value transfered through I2C has not
++ * @VAPEREGUVALTO_ERR: The VApeRegu value transferred through I2C has not
+  *                    been correctly executed in the given time
+- * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transfered through I2C has not
++ * @VSMPS3REGUVALTO_ERR: The VSmps3Regu value transferred through I2C has not
+  *                      been correctly executed in the given time
+- * @VMODREGUVALTO_ERR: The VModemRegu value transfered through I2C has not
++ * @VMODREGUVALTO_ERR: The VModemRegu value transferred through I2C has not
+  *                    been correctly executed in the given time
   */
--#ifndef DRM_FB_HELPER_H
--#define DRM_FB_HELPER_H
-+#ifndef DRM_FBDEV_HELPER_H
-+#define DRM_FBDEV_HELPER_H
+ enum mbox_to_arm_err {
+diff --git a/include/linux/mfd/lp8788.h b/include/linux/mfd/lp8788.h
+index fd17bec2a33e..e8c50bd38a8a 100644
+--- a/include/linux/mfd/lp8788.h
++++ b/include/linux/mfd/lp8788.h
+@@ -34,7 +34,7 @@
+ #define LP8788_ALM_IRQ		"ALARM_IRQ"
  
- struct drm_clip_rect;
- struct drm_fb_helper;
+ enum lp8788_int_id {
+-	/* interrup register 1 : Addr 00h */
++	/* interrupt register 1 : Addr 00h */
+ 	LP8788_INT_TSDL,
+ 	LP8788_INT_TSDH,
+ 	LP8788_INT_UVLO,
+diff --git a/include/linux/mfd/max8998.h b/include/linux/mfd/max8998.h
+index 5473f1983e31..ad2ad24412fb 100644
+--- a/include/linux/mfd/max8998.h
++++ b/include/linux/mfd/max8998.h
+@@ -45,7 +45,7 @@ enum {
+ /**
+  * max8998_regulator_data - regulator data
+  * @id: regulator id
+- * @initdata: regulator init data (contraints, supplies, ...)
++ * @initdata: regulator init data (constraints, supplies, ...)
+  * @reg_node: DT node of regulator (unused on non-DT platforms)
+  */
+ struct max8998_regulator_data {
+diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
+index dabcc0dea802..1d872363820a 100644
+--- a/include/linux/mfd/palmas.h
++++ b/include/linux/mfd/palmas.h
+@@ -251,7 +251,7 @@ enum tps65917_regulators {
+ 	TPS65917_NUM_REGS,
+ };
+ 
+-/* External controll signal name */
++/* External control signal name */
+ enum {
+ 	PALMAS_EXT_CONTROL_ENABLE1      = 0x1,
+ 	PALMAS_EXT_CONTROL_ENABLE2      = 0x2,
+diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
+index 39fe275a8117..ea9b1a8f495f 100644
+--- a/include/linux/mfd/rohm-bd71828.h
++++ b/include/linux/mfd/rohm-bd71828.h
+@@ -186,7 +186,7 @@ enum {
+ #define BD71828_REG_RTC_ALM2		0x63
+ #define BD71828_REG_RTC_START		BD71828_REG_RTC_SEC
+ 
+-/* Charger/Battey */
++/* Charger/Battery */
+ #define BD71828_REG_CHG_STATE		0x65
+ #define BD71828_REG_CHG_FULL		0xd2
+ #define BD71828_REG_CHG_EN		0x6F
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 6191f409de94..e489ca0d55ed 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -106,7 +106,7 @@ struct sec_platform_data {
+ /**
+  * sec_regulator_data - regulator data
+  * @id: regulator id
+- * @initdata: regulator init data (contraints, supplies, ...)
++ * @initdata: regulator init data (constraints, supplies, ...)
+  */
+ struct sec_regulator_data {
+ 	int				id;
+diff --git a/include/linux/mfd/si476x-core.h b/include/linux/mfd/si476x-core.h
+index d9e3a322134c..3e924ca4db00 100644
+--- a/include/linux/mfd/si476x-core.h
++++ b/include/linux/mfd/si476x-core.h
+@@ -94,10 +94,10 @@ enum si476x_power_state {
+  * of the @rds_fifo_drainer.
+  * @rds_drainer_status_lock: Lock used to guard access to the
+  * @rds_drainer_is_working variable.
+- * @command: Wait queue for wainting on the command comapletion.
++ * @command: Wait queue for waiting on the command completion.
+  * @cts: Clear To Send flag set upon receiving first status with CTS
+  * set.
+- * @tuning: Wait queue used for wainting for tune/seek comand
++ * @tuning: Wait queue used for waiting for tune/seek command
+  * completion.
+  * @stc: Similar to @cts, but for the STC bit of the status value.
+  * @power_up_parameters: Parameters used as argument for POWER_UP
+diff --git a/include/linux/mfd/twl.h b/include/linux/mfd/twl.h
+index b31e07fa4d51..238d9dcefc35 100644
+--- a/include/linux/mfd/twl.h
++++ b/include/linux/mfd/twl.h
+@@ -739,7 +739,7 @@ int twl4030_sih_setup(struct device *dev, int module, int irq_base);
+ #define TWL4030_REG_VUSB3V1	19
+ 
+ /* TWL6030 SMPS/LDO's */
+-/* EXTERNAL dc-to-dc buck convertor controllable via SR */
++/* EXTERNAL dc-to-dc buck converter controllable via SR */
+ #define TWL6030_REG_VDD1	30
+ #define TWL6030_REG_VDD2	31
+ #define TWL6030_REG_VDD3	32
+
+base-commit: e3513583cdb959bbf1370edcbaf3c0b014077742
 -- 
-2.55.0
+2.48.1
 
