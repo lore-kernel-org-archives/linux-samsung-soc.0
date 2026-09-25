@@ -1,117 +1,147 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242B54D0A1C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 16:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31D43E51E8
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 17:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790354020; cv=none; b=G1jU6WkzhiLHTRufKhAdT3e3q31GXya4EHG6fNl8/zBQSeCJwsDh3fdRzH0iCJQrGjrgEQvVfxTtsoDvUkbTAfrtDJixMziDooq1Pr0igUkWlSR2bPzK4nMJY99+XL0nHbiJF9rUZF7+A4/nz5F1V0KKXGem8srNSzetkXSdMg0=
+	t=1790357225; cv=none; b=W4TiiLZimlRzwW/EEcIMvecUQ0oNRGVGtyzn+5udx7rNrudG1t/aFdqqCmQGc+O4MwjI8WrqcDWhUGzbOpKMGx65gteflil9qfZcgoxDh/JfnsOAqX8DDUQQdwDuZC2Klpz0vzIfnNvb4oG9PBQjpzC/0Swb+mrFAngJzky39sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790354020; c=relaxed/simple;
-	bh=foA8UbomajTa22DkRxj3005Wjy2ttgaDybzSQGdZd1s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=eg/HOH+T6PNj8sfflTOFpmwXTRRuisydjdIO5PVgWUyonM9YmYcwnPvEbLaSdzDXLK4w7GI5uJMD6tn0cvwaF8aNRxczJqKBSNDGsdx9dYnsDAV19fkIiU9MpZwN5W1nfbN98SNlhvgpJ50pVGbHhlVZnR73ejbAzgt95mQfETQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UVIlKBXc; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790357225; c=relaxed/simple;
+	bh=xDh1Ss17oGJ0UYJjAazKqzsfdZ+kwOSaB4uaBWStnx4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oj//VIK4Ao0HiqlGQodD3LBn2/Rl/OWec0Vd9bxKgTIfuodHM4K9WaON2jZSE5JGttUMAfaO3PkwhWIYSzAYYqGPucqzdT6b7uOmjejt8Gmh+ZdPn7Ea+LiaXN5vX3pFBp6Ssop7Q9H5WNo9xfjr2oWoqGezlJ6NbU3TcczW5HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfFKqsvK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UVIlKBXc"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 430BE1A1022;
-	Fri, 25 Sep 2026 16:33:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EE3D46073B;
-	Fri, 25 Sep 2026 16:33:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A19C0102F1E2A;
-	Fri, 25 Sep 2026 18:33:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790354012; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=foA8UbomajTa22DkRxj3005Wjy2ttgaDybzSQGdZd1s=;
-	b=UVIlKBXcttrLLrKy6BGsauS7t/MyVySVo242G5oaPV7ZhSacbtUL9/V/bjZW7WNZtfq1nR
-	+p0xFsBSa6zjnsGOeaC4k55ZqS4p+L8CxFJ1kj9MDub7xt9b3MNbX/WBAAq8ZeIMvJrNJN
-	SfRoXd/ROpQ7w178tshiDhesA0DA7g37XVn2x5dwzGwQywmZcqUx40vWCBnfSSsYwE+JWR
-	RXubplVcLtikf8ywNM5oq/ITzF96yQOLn6ut5IGpZZm8xsnwWbfhqacoN8hxaeuPcZ74XL
-	FwQynJsoxdHzXMb8CFGKszltbAs2WVNKelNcVq7xoiwSgsz1TAy9wZGUtAtoEQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfFKqsvK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 978C91F0089A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 17:27:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790357224;
+	bh=nrCZY+w8ZAuOgUKyJ5bzQ3lA0kZX185uW8oYwG5RuQA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=UfFKqsvK75p5eO5B5LPWqx7YmtHZp5SiX1PFOsrb/Rw7u/0QFbVRoYO3MBcG/t5cL
+	 f0grYRNmRlCV/gnwPAuW3LI+ccOXT0MjTt7Y8FeHXxJ869jP4sIIJdGs5M2A3YPkRs
+	 ukh/P2eflHnEpauu+zEccKoAmEXT4qeEDi7o0bJS06Qz1CCYGEgXO5YqMpVQhl3no4
+	 lLRGB99pVq05PP0MRgcsH4//8wpFOz+qWgGYKGx2Z78V8f5l9jdhS4QzuPEDb8kFis
+	 pnJBNA0VYqlKgjIBYJuffADzzi0g5B+u1BB7AUPs4ANGSHG8KVd1IE7vW4tmTi93D2
+	 bENY6AcgbMT3A==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8c1b8d7b5so1059353e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 10:27:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByPCFIW3Q+JsbGJFZhfX1XLsKEM04+O9Hx9x/Bp0O1bb+WO7KjvDOZdxL3YMY3+KO9gUrSkXqSecBuk2kYLmCBkyg==@vger.kernel.org
+X-Gm-Message-State: AFuF++mLxEoUiUCZqsFVS3kqYW6uWH4WPOpHMpJ0cxOtBc+Hb8CVHGza
+	thsIgv+l+VRr+cF51w+FJe/viuJt2YT5HmllV8l6jBHcGPuxZCLtcmE8Bh4xchGLSVeddZ9kyp6
+	6+0zqfQsGS26xFw90scTKEV2aaXqs8cg=
+X-Received: by 2002:a05:651c:43dc:10b0:3a6:95a:52ab with SMTP id
+ 38308e7fff4ca-3a63c0e006emr12420831fa.18.1790357222990; Fri, 25 Sep 2026
+ 10:27:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20260912191156.185448-1-sumeet4linux@gmail.com> <20260912191156.185448-5-sumeet4linux@gmail.com>
+In-Reply-To: <20260912191156.185448-5-sumeet4linux@gmail.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Fri, 25 Sep 2026 19:25:25 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0inzDfF5zNba7BHnq=-xTH1ucHvBv-bJSKXW0dTF71Q0g@mail.gmail.com>
+X-Gm-Features: AclHuK-zkJzcW3eTrPbI8n4uwvaOkU97xV6DSlSAXWBceH5EJVI8blUeGSzDawM
+Message-ID: <CAJZ5v0inzDfF5zNba7BHnq=-xTH1ucHvBv-bJSKXW0dTF71Q0g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] thermal: Use %pe to print error pointers symbolically
+To: Sumeet Pawnikar <sumeet4linux@gmail.com>
+Cc: rafael@kernel.org, krzk@kernel.org, amit.kachhap@gmail.com, 
+	daniel.lezcano@kernel.org, thara.gopinath@gmail.com, talel@amazon.com, 
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org, mmayer@broadcom.com, 
+	viresh.kumar@linaro.org, sumitg@nvidia.com, peter.griffin@linaro.org, 
+	myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, 
+	Frank.Li@nxp.com, s.hauer@pengutronix.de, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, sven@kernel.org, j@jannau.net, 
+	marcan@marcan.st, casey.connolly@linaro.org, sre@kernel.org, wens@kernel.org, 
+	t.schramm@manjaro.org, bcm-kernel-feedback-list@broadcom.com, 
+	linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Sep 2026 18:33:15 +0200
-Message-Id: <DLOJIV124RG7.27SOPEOHBTA7W@bootlin.com>
-Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
-Cc: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Jessica Zhang" <jesszhan0024@gmail.com>, "Laurentiu
- Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
- <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
- Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
- "Inki Dae" <inki.dae@samsung.com>, "Jagan Teki"
- <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
- Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Albert Esteve" <aesteve@redhat.com>,
- "Anusha Srivatsa" <asrivats@redhat.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
- "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
- <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
- <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>
-To: "Linus Walleij" <linusw@kernel.org>, "Maxime Ripard"
- <mripard@kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.22.0
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
- <arInho2bsfJiCgjV@houat> <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
- <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
- <arTlpd-KAsVpj3UH@houat>
- <CAD++jLmktDoqn2EbXsNnyGRudo-q2NCxUf+9ZjeU+WrY4CBMWw@mail.gmail.com>
-In-Reply-To: <CAD++jLmktDoqn2EbXsNnyGRudo-q2NCxUf+9ZjeU+WrY4CBMWw@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Linus,
-
-On Fri Sep 25, 2026 at 6:25 PM CEST, Linus Walleij wrote:
-> On Thu, Sep 24, 2026 at 10:57=E2=80=AFAM Maxime Ripard <mripard@kernel.or=
-g> wrote:
->> On Thu, Sep 24, 2026 at 09:51:53AM +0200, Linus Walleij wrote:
+On Sat, Sep 12, 2026 at 9:13=E2=80=AFPM Sumeet Pawnikar <sumeet4linux@gmail=
+.com> wrote:
 >
->> > > Linus, unless you have more info I'm going to apply the patch as
->> > > is. Removing this special case would be welcome as a later patch.
->> >
->> > I'd say go ahead as-is.
->>
->> I'm fine with that, but I really want this removed at some point.
+> Replace PTR_ERR() and %ld with %pe and pass the original pointer directly
+> to pr_err() and dev_err(). The %pe format specifier prints a symbolic err=
+or
+> name (e.g. -ENOMEM) when CONFIG_SYMBOLIC_ERRNAME is enabled, otherwise it
+> falls back gracefully and prints the raw integer value. This makes messag=
+es
+> more readable without any functional change.
 >
-> If Luca wanna fix this up (drop this path) that's fine by me,
-> else send a patch immediately after this is applied and I'll
-> ACK it.
+> Signed-off-by: Sumeet Pawnikar <sumeet4linux@gmail.com>
+> ---
+>  drivers/thermal/cpufreq_cooling.c        | 4 ++--
+>  drivers/thermal/devfreq_cooling.c        | 4 ++--
+>  drivers/thermal/qcom/qcom-spmi-adc-tm5.c | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/thermal/cpufreq_cooling.c b/drivers/thermal/cpufreq_=
+cooling.c
+> index 768859a7aed0..856d619370db 100644
+> --- a/drivers/thermal/cpufreq_cooling.c
+> +++ b/drivers/thermal/cpufreq_cooling.c
+> @@ -661,8 +661,8 @@ of_cpufreq_cooling_register(struct cpufreq_policy *po=
+licy)
+>
+>                 cdev =3D __cpufreq_cooling_register(np, policy, em);
+>                 if (IS_ERR(cdev)) {
+> -                       pr_err("cpufreq_cooling: cpu%d failed to register=
+ as cooling device: %ld\n",
+> -                              policy->cpu, PTR_ERR(cdev));
+> +                       pr_err("cpufreq_cooling: cpu%d failed to register=
+ as cooling device: %pe\n",
+> +                              policy->cpu, cdev);
+>                         cdev =3D NULL;
+>                 }
+>         }
+> diff --git a/drivers/thermal/devfreq_cooling.c b/drivers/thermal/devfreq_=
+cooling.c
+> index 0330a8112832..9ada52cbf7dd 100644
+> --- a/drivers/thermal/devfreq_cooling.c
+> +++ b/drivers/thermal/devfreq_cooling.c
+> @@ -156,8 +156,8 @@ static unsigned long get_voltage(struct devfreq *df, =
+unsigned long freq)
+>                 opp =3D dev_pm_opp_find_freq_exact(dev, freq, false);
+>
+>         if (IS_ERR(opp)) {
+> -               dev_err_ratelimited(dev, "Failed to find OPP for frequenc=
+y %lu: %ld\n",
+> -                                   freq, PTR_ERR(opp));
+> +               dev_err_ratelimited(dev, "Failed to find OPP for frequenc=
+y %lu: %pe\n",
+> +                                   freq, opp);
+>                 return 0;
+>         }
+>
+> diff --git a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c b/drivers/thermal/q=
+com/qcom-spmi-adc-tm5.c
+> index af72db6299cd..4554a6fa55d1 100644
+> --- a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
+> +++ b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
+> @@ -680,8 +680,8 @@ static int adc_tm5_register_tzd(struct adc_tm5_chip *=
+adc_tm)
+>                                 continue;
+>                         }
+>
+> -                       dev_err(adc_tm->dev, "Error registering TZ zone f=
+or channel %d: %ld\n",
+> -                               adc_tm->channels[i].channel, PTR_ERR(tzd)=
+);
+> +                       dev_err(adc_tm->dev, "Error registering TZ zone f=
+or channel %d: %pe\n",
+> +                               adc_tm->channels[i].channel, tzd);
+>                         return PTR_ERR(tzd);
+>                 }
+>                 adc_tm->channels[i].tzd =3D tzd;
+> --
 
-To avoid postponing this series I plan to apply as is on Monday. I can send
-another patch later to remove the !panel case.
-
-Thanks for the feedback!
-
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied as 7.4 material, thanks!
