@@ -1,228 +1,515 @@
-Received: from mail-oo2-f38.google.com (mail-oo2-f38.google.com [74.125.231.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013051.outbound.protection.outlook.com [40.107.159.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011AE38945A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 19:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.231.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC003B9931;
+	Fri, 25 Sep 2026 20:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790365243; cv=pass; b=dJmc7QDxbWdrfbvJSlhNF6fP+lO6CrdMBbPcom7Tq9WW7NLYsM+L/Z2fv0oMfd3kOkNfZh1E/MT707BpygJlDecP+653+MRgbBeWh6VgP/ENZ47kk0eICCZzTr4kFnvDw6DtSc3hyCO/dIWjc1wgIlcmJHJ9lXodk4jhGQcgSrM=
+	t=1790366954; cv=fail; b=fW2ZH7ETHS01/k+a0j/MSI2B6ENGjycwU6+uahQzgrEUQmSsD/EEwoprJKVwPHY/151nFHJoQZEzsJh38jgkvtSJPW9Gad+atXBdwnNTZSqzA5YznIDiAFI/kyDAykLpsk956WV6ICpKB91P/CiIBq3w/qfkXRd2/RdzMGv9d7g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790365243; c=relaxed/simple;
-	bh=OiihpvIIlzoVJu2DCK6dCNo1iVpixAYRYF6mCtC37lg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kk3Lb/Jrqqbvj+e4mMB1xkWTD+60gOeBTWfU5+o8pcG2ymVfulXJDPBtMnPNktVUSnVyC+97T09lVXiyzsEsOdAdPAJrEl4qx1tn4CLnhmOZyc/8mUdYFzBsLlxs1x4aArB2jHlzDYe8ywXx3DqbaKgjF22/pNP370rKZI5m8aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QKxq5/VI; arc=pass smtp.client-ip=74.125.231.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1790366954; c=relaxed/simple;
+	bh=w0EHt8ZYtDKxAXbLOonoWCl3hFfwd9qGx6fxl9LOGpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=thICmPVDHTZSPr0rjPGPmYzCWmQyFVA1JSWnbMJOLIKqremciQ/lQ9Dj62t0ZNf/5LXbHLRYECQuHlmM6S6ZUc121mygLk60A5O8yMjGyMjfYdoczmoFg9evYwNhsZL/OMmxwSg+YUdneJwm+4T6cdvh+t+1TBIyu+LyFiJcWlA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=x0cyYGLg; arc=fail smtp.client-ip=40.107.159.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QKxq5/VI"
-Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-801a8bf8112so485110a34.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Sep 2026 12:40:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790365241; cv=none;
-        d=google.com; s=arc-20260327;
-        b=DfcZX/vkXOGugXBAWAc3GpBuSQhATOKCfVhxs9UW33wCFk1ALxWhmQXUt1CcrBOSvG
-         zL+Sosap/wYRErHaVdSMca+3MUXrFS4xw12ER1vgmfhxArrT8uejJL160rV8988+Zfoa
-         H6x/9GNM4DwBhbBtIfcEoeR1XX7JSdNX3PcG2pshv4x0DmjWIic/IqOLqX3X04kEbB4g
-         11UXcwFl7sGfNJ2/T5nrwM+dnR2cT+Mcz6EML8PvyVJmafOqxxqV5PR+qfeMQBXo8u2B
-         EnY8HFqhMIFNUzoc9oLJJax2E0eIU2hgB0yvlL0JI9irv6l+wa0AligoBnCZC/vk7MIP
-         IHHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=QRtQwrI36+tl+6Prwhx/Tagi3Pi4qOHQ7OtnSC5ifgE=;
-        fh=Y0CqHnyUs2C4oo2+IxVRSXWvvRwdJwotGHmvl7CZG7I=;
-        b=iF7CxQGXSmGhIUdaEH1apj+pn0rj9ahVOk95sknDILcCqkg6NarVBXVoyTTy81AkEa
-         3sydACyVYnm5bTNIv0e2ca0x4CFMkANmx96JwicItEZ9ysu/SZfHkYgHiCfWvTpU9B44
-         vX/N66KGQ9lBpLNS0ltNYuxsffLvM235U14L6vglls1/HsalFkgKA1i/+hnYmf+rPYss
-         z+qq09Tq5UVjd1JaACam37QtF8U03uI7xYjG4voOvseUHQxWrYiKJZvrG93Dwt9DadD3
-         g6EQimTCI906zj6DC3s5tCk8D0M58S/DCg4ZZTysJ2d55JbnSP/NJFisKithSeXveLNn
-         zV4Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1790365241; x=1790970041; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=QRtQwrI36+tl+6Prwhx/Tagi3Pi4qOHQ7OtnSC5ifgE=;
-        b=QKxq5/VIOaGIN3ETW2kO5BE585sPd3T+R5MlPhz1HBBqMb7Q0DuVytci+Yx0K8nW8Y
-         0eYnOUkUZrm9g2Nyg2yxQodVBsk5j4bjuCov1Z2mQZfAQLOkhdeNo7V7mim/K72ReJud
-         iIJ2d5WM0CqwqrurBwWtbGuBuFSJ/RidfX3DF9Ka9eO1vfzJ/RFqMe4EYcMpLUkUkT7Y
-         xSH2TlXtExBIwumqocbBTPbAaXcBIpAs/F37rzVGRFltgaUDu20YE5x7F6VjnCRs4GDh
-         I3NGZJQATYo1KnB+aV7j6vetPysdhhgXqbXZNFUbeQvrRK9mRN94T1VhRoTscaZFOAmM
-         ErgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790365241; x=1790970041;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=QRtQwrI36+tl+6Prwhx/Tagi3Pi4qOHQ7OtnSC5ifgE=;
-        b=JUqGklJzXYV4pUfXZi7o7pclKLZoaMVcU2TkFrPMvS6NeqoStMONk41dACLMSAe+p/
-         fWW3TVXDNJ8ROzQ/aBat26uVRO/2vyTXL+Vy6XGvgX+xlXmOWe1BWvpmXADYGduyQW0V
-         4KsgvmVhr/l1feXbwmvPVeEfT9OMoTSlhbyoPid8VImwYpWCaHr1eJ+0uknZHfx+9Ar6
-         agKcY4pPZPIKd43RF3Q3zQInQRbZa8S/8LKSgEFW++I/yoZF8CjBCOrKXe0XMY91l6CV
-         IQFCH6xjMGSnL2gKBCHX+BbzARwWg4HoBKAT/EIP2bB94lQyuKm20CU0nVA9WWn0ojQE
-         OvKA==
-X-Forwarded-Encrypted: i=1; AKwUvBymRmQsRjD2GR1FIFlGkZR0ZP2zydmUZiBCBBc8keI4+YQO0ZaQmOLuNxI2WBiheQCkIHOmH9r7HGlUwKwIXmx5eQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lQHcTvJprKampCJbmKMOlRC2EJylMlG9CCnuAP32bethEJsZcR
-	Cb3c2zNiry7ulc7287zeYk+nZq2zzgI4wyboT8a+SI3t6Fh/6BPJIxf3h9EBRYpnbf8Lj7E2kVH
-	+TpIM6qsi7TE4aW0wfgUwpQV+iOCZjL80gVBDeJXycfY/TLeyy0qEoDtLEtU=
-X-Gm-Gg: AYBFou1Yp7+SXBoAXA1PuhAkwtRd0T2pkBiAboLa2QbSMn5zj9DG+P1oEmWuXlYQzK/
-	W5P+O0lZIoWU2cIZg6gTv592d5g/O2HxBuZXILlBiSA4jEH6Qsi+b/pS+GEGfgSTrvFbOu74gTC
-	YZyBk+hO/04yD1zYLMlD4maDKTF/rFxvvO8gyCEJKF+RQUc8uL7QT4SLY41fWtEK3+gHcdhI04P
-	F1MHZ8WG0Zk+wtrphz1HJJYRI/IFE1+Oho4vNXCMsSd+gejT4smVXhwpkNPWBmXzT7cw8EFw40p
-	xBQTI75jBDLY5iPY1WEoEpkIfl1T0LWTPxud1atniRxZ38KzeC7EAZ4dX1tmOF53dP8AEOewyVy
-	uOpoOnI41TjOs
-X-Received: by 2002:a05:6808:30aa:b0:4d6:90f3:74ae with SMTP id
- 5614622812f47-4dc6606bcc9mr4067609b6e.46.1790365240133; Fri, 25 Sep 2026
- 12:40:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="x0cyYGLg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cG7j4Pt6s7q2xscBhfOlLDl/Hr4gGD5JBxo5ydcsblWd2z1RFssarFhVXKpiuK0i6p8sJFC9FgqAQPldDxnUuFHsrL0hv2bBESEvzLjGb3nxw+fhE//JLg8Jy2OvrlLX381bz0baozaQC227YOj1uPGFW1ZbRdzPSc+lMrKef1DPBnR1rSEkH+DuzMORn/anrkDSvZXdbNVYGdUUvXI1lFIjCdLcAQFVVthdZUprD67BeLPVLpAd8qlBI2Q5k8GBbO8L0vIdJ+FneZskT/dqnz/+Qs/JPS2uif9/W22JTNtp0SczXrIdvshN0cZcATG5Dezgrv5G0IV0jV28WbfYbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H7EjYyotsXIBmjrdrIh0zUAPbe/C/Q6QJHJbi4UIdkg=;
+ b=Gvc8huO1X7lGdayTPntmjpdAjeicBu1lHWqtH+3GAmjhuyNS/PPU/tD88N5Rww3Qk/mF0TOwViTBlVp8hZy4fLxuJ/UWibCCAC/ORA+dhjQCEqEkG/7aW4CpdwEpV+f642m+ho7T9S+byTxgjHVkk1xIof4OoruEKubn+i+7Bk/kpYxnigtm0/wr1z8TZ7uHmvjHoLC3698thpn9vvI/pwYC4b36G9mXHIIhuD0gfYxEdh7b8Eq3CyQuE/4OSdx2cNLxCpgEwahkeqWiKej/E1/QiODy1atKvgYmjIw0jyvxtS71TneOL6ba9iRdMLBRl1e7ifBF9Uotj2uV2+JtDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H7EjYyotsXIBmjrdrIh0zUAPbe/C/Q6QJHJbi4UIdkg=;
+ b=x0cyYGLgJyiwTIRbA9R0b1VKASI56jtWlNBsjailI+pUwQhnH6/kT5UmFGNJm4taJGKMJh8LfPsisA5NUIp2UIngKYPYSRH2rfZ/e09dUp54E2GbuH2fvyCajAL160MWHJ4iynFVMuJmV3tHlZAOF3AMOI/1QCqKbyDSffGB4W6r6Eyp1ODbFP6kQqzCPQwkhiudrqZX83u+1pcBEZr4919kQEwPJgL1k7krZvM+DXM7epNqvYAtJDeKL0llPzuhxLo/1cmRqia47FeYt5THJoymV3q7sV+5KkJYIJySymFPHQSWPkYrKBinEQHyx19S8p9/dj2JRMdo4CtKCJDPww==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by VI0PR04MB12352.eurprd04.prod.outlook.com (2603:10a6:800:322::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Fri, 25 Sep
+ 2026 20:09:08 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0451.014; Fri, 25 Sep 2026
+ 20:09:07 +0000
+From: Frank.Li@oss.nxp.com
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Cunhao Lu <1579567540@qq.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Raul E Rangel <rrangel@chromium.org>,
+	Moteen Shah <m-shah@ti.com>,
+	Kendall Willis <k-willis@ti.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Matthias Feser <mfe@KBSgmbhfr.onmicrosoft.com>,
+	Kartik Rajput <kkartik@nvidia.com>,
+	Fan Wu <fanwu01@zju.edu.cn>,
+	Karl Mehltretter <kmehltretter@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	=?UTF-8?q?Stefan=20D=C3=B6singer?= <stefandoesinger@gmail.com>,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Zhaoyang Yu <2426767509@qq.com>,
+	Kees Cook <kees@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	linux-kernel@vger.kernel.org (open list:TTY LAYER AND SERIAL DRIVERS),
+	linux-serial@vger.kernel.org (open list:TTY LAYER AND SERIAL DRIVERS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
+Cc: vkoul@kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH 1/2] serial: use dmaengine_get_dma_device() instead of chan->device->dev
+Date: Fri, 25 Sep 2026 16:08:30 -0400
+Message-ID: <20260925200850.1678179-1-Frank.Li@oss.nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR13CA0008.namprd13.prod.outlook.com (2603:10b6:930::26)
+ To GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260918222513.2633456-2-rdbabiera@google.com> <arF3fynAGG5khe3B@google.com>
-In-Reply-To: <arF3fynAGG5khe3B@google.com>
-From: RD Babiera <rdbabiera@google.com>
-Date: Fri, 25 Sep 2026 12:40:29 -0700
-X-Gm-Features: AclHuK_91DQZxLqN7uLYqBpJX2aYJ1LY4FTA5TNLS7LM4bAkU5HscFKOZ-tm8pA
-Message-ID: <CALzBnUEw4J1SB8a7is5Q-OKhkuQuPWUJcu9KHRrZO37k==FEOQ@mail.gmail.com>
-Subject: Re: [PATCH v7] phy: Add USB3 PHY support to Google Tensor SoC USB PHY driver
-To: Neill Kapron <nkapron@google.com>
-Cc: vkoul@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org, 
-	tudor.ambarus@linaro.org, p.zabel@pengutronix.de, neil.armstrong@linaro.org, 
-	badhri@google.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI0PR04MB12352:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2f1b205-d60b-46e7-becb-08df1b40dae0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|23010399003|1800799024|19092799006|921020|6133799003|10067099003|11063799006|56012099006|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	IosuMMYKujRudtFLRImfdw1bxe6HJ7cj2Fw4mMPIeuneAKWJCN6pKBBHfrIhSw1BO0qOgWDfNTOdQ2mR1cPalNdGctNd+f8CnBOuFlAwnuxLARyZrtXe3NYK6Psx7XqeR8HPQNjb+bAPG2SpHT4csUlQDymukHT0nut9PNnD6Q7wHRYgX3v5sEJP2HFF2mqs88J1yNMhA7wzJdbIhprsGtCW3yGpzLdN2THIMa5gETNVZ812PW7Rs6P0+wl6OXB5xHM+wQNeh3fz/xFaCD7eM3ABqUPNjUYHxLxz2iqLkgVXFrvq8N31iYQl8uDY3PIqCr4ywR8ZugKZi2RR6+U1PoP6LXwC23ymxnC/7PvWYRIJvs4IqaymsJtfsnsHK1ddZ5bukVgyF0SVLLwDmL99cyYJjj6+5cIHUViWpjjB8TfoIQu6/BF2AmrFNFneaNh4Mx90T9hY7km5Qxxe5BYgKbVIbFB+6Nk1aw35525pRLQnl7Ghw2dcnhhzBYy3Nl5O+xEibV/7QgT9yBNpjqs4h6Ok2pssiRBmk03cY5Dd2EvAqihg/hztKj3Ty3ABd8MFpsDSSZE26t0yrR6il+QD9GEvCuW1tUpRSSxaMJGJ2KEfB+QGhJefBqHnfwN9tm9uPmtpKWGNk7TodaA8Pqy9is5cNq49+rPydmuoj+ingPk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(23010399003)(1800799024)(19092799006)(921020)(6133799003)(10067099003)(11063799006)(56012099006)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qlQtk4P5+PsYwkifG2MLRTrCXZE+pJ7cyC0hP4En78/Jf0E1Q0nTv6aM7vMu?=
+ =?us-ascii?Q?XthD8UzeKsb/xSfJTuavWNKUHRTqvMfjtNToqBlfkW3wa7i0Sfr0PJ9rUdHS?=
+ =?us-ascii?Q?sMLCv6deVRrVVUDecr+NJwJCj8M20tuRnB5AFclU8b6k9jOtA31vq6gLuGre?=
+ =?us-ascii?Q?zpL2jzBIQ5MYZbzX18kIAhqRY1WR2BDGCTnYmpop04Y3aFE94DyKMS6hPQ5Y?=
+ =?us-ascii?Q?RF/R1tz1W1bC61uRIqShmJtn4RjL7O16A/AG+GUyoT6oRlbUR950RRV9NSZW?=
+ =?us-ascii?Q?2h3IxTvgmWQeHZMkKky5fybZzpngHs16ReMh/uGyKiEghWYcs9biFHCDzXMX?=
+ =?us-ascii?Q?6eZ1upnj2xtLW+2QDX45/PHFqsqkarSI5J65uOihvEePr7elbzQvjtKpdaex?=
+ =?us-ascii?Q?T8PM+IiIdNCyoTwl6iAlCwhDnlHAYcT/y8VBL3vgokVccNJQhnvQ8F+0XQPx?=
+ =?us-ascii?Q?eNxCSa8azAL+B75E3pYf7ylgVO+g8gu1bWVolAriRtByqmZ5AWS7IrftaGMA?=
+ =?us-ascii?Q?HD8lUhOxsGqC4nRyTuDcHi4GGIIFUiApWSBziHKXiWzAsRwZywXpHVijACFC?=
+ =?us-ascii?Q?IIx+NOIuclZmYjOPM7SZbZkH9CqskO9UxBKNLo07YqBWZSzR5N8V7/Z7rzOk?=
+ =?us-ascii?Q?YTe53/WqjrveAWiXPk6daG9z1p59R3i29ixonfjlSIan11g18DKmrC+0vFmg?=
+ =?us-ascii?Q?hUnXp5WqaQwTaFEvi3b78KM7pZqnaNt6393ate1vKjDu+95FpfgpEuKicI7s?=
+ =?us-ascii?Q?Jt6KahYXinugUFUkuZ5Jj8Ei4s5FNecPP60BSEe8ydgxRGyG+4IilVcQDHX0?=
+ =?us-ascii?Q?R8PjK/tT6f+S/N9DPREhn0Uvb6bXj0dSz/fqbu+d3MUQmhtMS3aSljD2mARX?=
+ =?us-ascii?Q?OJrE1zpb1ZYhFRN0gzsW6QoP8iEiFq9c++dRBVIgapmvfFzCca4bi464S3KK?=
+ =?us-ascii?Q?tn0OvnZ1A98yMJskZ+fblWtS/WAbgga34xY3lJrYXkfrAL/dzXA2Jf7/OE7v?=
+ =?us-ascii?Q?C8hhEO9gQO7btEBENw9pNoG59eSxWNFM4PyW8vRySgy8fTA8lzl5uNnScFRJ?=
+ =?us-ascii?Q?LxQuhLlV10nDwp6EkQevAVP4zgx5ESz2X1goAczBSY7WLcSiRgTN7BbGCwTl?=
+ =?us-ascii?Q?0mEI1igPF9VzmPWi2BuonqwO7dt3KYB7Ld6IHtwkZYdDSMxgZCspOpPNM7vE?=
+ =?us-ascii?Q?3S9k0Nv95OtfmWXNRU3IxiZv1UK67WsXSil73Zw2WiEmxXB9m5/QssuEg+gX?=
+ =?us-ascii?Q?ERMNwTVki93I9pgCsT8yLqRlqxK4YAHY1qd6LvUxbzcYLlvLvOB3LauvlI7i?=
+ =?us-ascii?Q?wy3C3KVxM9w3rzQTl5/HEr2UuELgXaZzKus48Y0d4AnlE9HTyfWzjf9oNBv9?=
+ =?us-ascii?Q?HsiAZuGCMOigBBw2vQieBnOhDFwZ1/dIcGIvWUf38bnpCqA/vCey+IBjNQfY?=
+ =?us-ascii?Q?hu7VaBeR8/LrIW20nuBoJgkfxkLSkAixXnIUjWvQfZqzLbS7bxnCNj3zMxwH?=
+ =?us-ascii?Q?5X0mW8PuqMzxjmOPoyQGTYaj8gM07mIAldwWiI1d7JiwzCk16ONDNxR/NtaW?=
+ =?us-ascii?Q?bQiC8RPbJwtkuCch02LHoQhm9CZF5zM7v5nG5CSSyd6/8BUKUJj35SiRkURe?=
+ =?us-ascii?Q?R2Y4lxJ75sHKy5RL3PlW6kFxOkPgkjciwSsCBj6ksKpIiJzqtzXccd33YlhF?=
+ =?us-ascii?Q?wS6amyvva777bZOWNB81tFdPEV1CPI7JCOHejAp/buUTgsQZXPkizgioBvxl?=
+ =?us-ascii?Q?e3XFrAD7dHWZCQ5GOeGDLrZEGdKbrXVEOvdDDS7Aw2IdiksZT/zN?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2f1b205-d60b-46e7-becb-08df1b40dae0
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2026 20:09:07.5875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 42RDZ/bEjne9JkJGtavjlJnpYxYwbVCHE+th6qrvQ+9PVfhG97XVAKHa5zh4e8efM81ohPZ/N5W6R4KQXc7JSmTwAChZSLrSXoFgPmf+euL0ps21YGM7T7fQzhuQOfZN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12352
 
-Hi Neill, thanks for the thorough review. Will send v8 out shortly.
+From: Frank Li <Frank.Li@nxp.com>
 
-On Mon, Sep 21, 2026 at 11:29=E2=80=AFAM Neill Kapron <nkapron@google.com> =
-wrote:
-> The driver is now using readl_poll_timeout() and
-> pm_runtime_get_if_active(), we should be including linux/iopoll.h and
-> linux/pm_runtime.h explicitly.
+Replace direct dma_chan::device::dev access with the proper
+dmaengine_get_dma_device() for consumer API
 
-Acknowledged.
+chan->device->dev is not always the device used for DMA mapping.
+Some DMA engines support per-channel IOMMU mappings, so different
+channels may use different DMA devices.  dmaengine_get_dma_device()
+returns the correct device for each channel.
 
-> > +#define TCA_CTRLSYNCMODE_CFG1_XA_TIMEOUT_VAL_100MS 0x1e85
-> > +#define TCA_PSTATE_0_OFFSET 0x50
-> > +#define TCA_PSTATE_0_UPCS_LANE0_PHYSTATUS BIT(8)
-> > +
-> > +#define GPHY_TCA_DELAY_US 10
-> > +#define GPHY_TCA_TIMEOUT_US 100000
->
-> With the addition of TCA_CTRLSYNCMODE_CFG1_XA_TIMEOUT_VAL_100MS, we
-> should consider bumping GPHY_TCA_TIMEOUT_US to be slightly larger (e.g.
-> 110000us) to ensure the hardware timeout is guaranteed to expire before
-> the software poll timeout.
+This also prepares for making the DMA engine provider data structures
+private. DMA consumers should not access DMA engine internals directly.
 
-Will change here.
+Assisted-by: LLM
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Check all unders driver/tty/ by rename device to _device in dma_chan struct
+with all yes config.
 
-> > +static const char * const u2phy_clk_names[] =3D {
-> > +     "usb2",
-> > +     "usb2_apb",
-> > +};
-> > +static const char * const u3phy_clk_names[] =3D {
-> > +     "usb3"
-> > +};
-> > +static const char * const u2phy_rst_names[] =3D {
-> > +     "usb2",
-> > +     "usb2_apb",
-> > +};
-> > +static const char * const u3phy_rst_names[] =3D {
-> > +     "usb3"
-> > +};
->
-> nit: checkpatch.pl --strict flags missing blank lines between these
-> array declarations (and the inline helper functions + DEFINE__FREE
-> macros below).
+Still few left, one for copy_align access, which need new API. some filter
+DMA channel, need new API to get provider devices.
 
-Will check.
+In https://lore.kernel.org/imx/67966b47-22cb-4b07-80c7-2044f557dbcb@app.fastmail.com/
+There are better idea to move map singe/sg into dma prep functions.
 
-> >  static int google_usb_set_orientation(struct typec_switch_dev *sw,
-> >                                     enum typec_orientation orientation)
-> >  {
-> >       struct google_usb_phy *gphy =3D typec_switch_get_drvdata(sw);
-> > +     int ret =3D 0;
-> >
-> >       dev_dbg(gphy->dev, "set orientation %d\n", orientation);
-> >
-> > -     gphy->orientation =3D orientation;
-> > +     guard(mutex)(&gphy->phy_mutex);
-> >
-> > -     if (pm_runtime_suspended(gphy->dev))
-> > -             return 0;
-> > +     gphy->orientation =3D orientation;
-> >
-> > -     guard(mutex)(&gphy->phy_mutex);
-> > +     if (IS_ENABLED(CONFIG_PM)) {
-> > +             if (pm_runtime_get_if_active(gphy->dev) <=3D 0)
-> > +                     return 0;
-> > +     }
-> >
-> >       set_vbus_valid(gphy);
-> >
-> > -     return 0;
-> > +     if (gphy->phy_state =3D=3D COMBO_PHY_TCA_READY && orientation !=
-=3D TYPEC_ORIENTATION_NONE)
-> > +             ret =3D program_tca_locked(gphy);
-> > +
-> > +     pm_runtime_put(gphy->dev);
-> > +
-> > +     return ret;
-> >  }
->
-> Previously, sashiko recommended moving to pm_runtime_get_if_active(),
-> which was done in v6. However I think this may have changed the behavior
-> of google_usb_set_orientation() and potentially introduced a regression
-> due to the pre-existing ordering of calls in gooogle_usb_phy_probe(),
-> causing this function to always take the early 'return 0' path.
->
-> In google_usb_phy_probe(), we call devm_phy_create() prior to calling
-> pm_runtime_enable(dev).
->
-> In drivers/phy/phy-core.c, devm_phy_create() calls phy_create(), which
-> has the following check:
->
->     if (pm_runtime_enabled(dev)) {
->         pm_runtime_enable(&phy->dev);
->         pm_runtime_no_callbacks(&phy->dev);
->     }
->
-> Therefore, the phy device never has pm_runtime_enabled, causing this
-> call to pm_runtime_get_if_active() to always return 0, and the function
-> exits prior to calling `set_vbus_valid()`.
->
-> I think moving the pm_runtime_enable(dev) call prior to
-> devm_phy_create() will resolve the issue, but we should audit power
-> managment in this driver to verify.
+But it takes more times, not straightforward works. Let replace this firstly,
+---
+ drivers/tty/serial/8250/8250_dma.c  | 21 +++++++++++++--------
+ drivers/tty/serial/8250/8250_omap.c |  4 ++--
+ drivers/tty/serial/amba-pl011.c     | 10 +++++-----
+ drivers/tty/serial/pch_uart.c       |  2 +-
+ drivers/tty/serial/samsung_tty.c    | 27 +++++++++++++++------------
+ drivers/tty/serial/sh-sci.c         | 14 ++++++++------
+ 6 files changed, 44 insertions(+), 34 deletions(-)
 
-The check here is called on gphy->dev as opposed to phy->dev. fw_devlink us=
-es
-FW_DEVLINK_FLAGS_RPM by default, so the dwc3 consumer controller holds
-DL_FLAG_PM_RUNTIME on the phy platform device. Every resume call on
-the dwc3 controller results in the supplier resuming as well under this
-model, so the runtime_get() call here passes.
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index 5a83e5269b415..dc7fb3db1584d 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -19,7 +19,7 @@ static void __dma_tx_complete(void *param)
+ 	unsigned long	flags;
+ 	int		ret;
+ 
+-	dma_sync_single_for_cpu(dma->txchan->device->dev, dma->tx_addr,
++	dma_sync_single_for_cpu(dmaengine_get_dma_device(dma->txchan), dma->tx_addr,
+ 				UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 
+ 	uart_port_lock_irqsave(&p->port, &flags);
+@@ -136,7 +136,7 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 
+ 	dma->tx_cookie = dmaengine_submit(desc);
+ 
+-	dma_sync_single_for_device(dma->txchan->device->dev, dma->tx_addr,
++	dma_sync_single_for_device(dmaengine_get_dma_device(dma->txchan), dma->tx_addr,
+ 				   UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 
+ 	dma_async_issue_pending(dma->txchan);
+@@ -223,6 +223,8 @@ EXPORT_SYMBOL_GPL(serial8250_rx_dma_flush);
+ int serial8250_request_dma(struct uart_8250_port *p)
+ {
+ 	struct uart_8250_dma	*dma = p->dma;
++	struct device *rx_dev;
++	struct device *tx_dev;
+ 	phys_addr_t rx_dma_addr = dma->rx_dma_addr ?
+ 				  dma->rx_dma_addr : p->port.mapbase;
+ 	phys_addr_t tx_dma_addr = dma->tx_dma_addr ?
+@@ -282,11 +284,14 @@ int serial8250_request_dma(struct uart_8250_port *p)
+ 
+ 	dmaengine_slave_config(dma->txchan, &dma->txconf);
+ 
++	rx_dev = dmaengine_get_dma_device(dma->rxchan);
++	tx_dev = dmaengine_get_dma_device(dma->txchan);
++
+ 	/* RX buffer */
+ 	if (!dma->rx_size)
+ 		dma->rx_size = PAGE_SIZE;
+ 
+-	dma->rx_buf = dma_alloc_coherent(dma->rxchan->device->dev, dma->rx_size,
++	dma->rx_buf = dma_alloc_coherent(rx_dev, dma->rx_size,
+ 					&dma->rx_addr, GFP_KERNEL);
+ 	if (!dma->rx_buf) {
+ 		ret = -ENOMEM;
+@@ -294,12 +299,12 @@ int serial8250_request_dma(struct uart_8250_port *p)
+ 	}
+ 
+ 	/* TX buffer */
+-	dma->tx_addr = dma_map_single(dma->txchan->device->dev,
++	dma->tx_addr = dma_map_single(tx_dev,
+ 					p->port.state->port.xmit_buf,
+ 					UART_XMIT_SIZE,
+ 					DMA_TO_DEVICE);
+-	if (dma_mapping_error(dma->txchan->device->dev, dma->tx_addr)) {
+-		dma_free_coherent(dma->rxchan->device->dev, dma->rx_size,
++	if (dma_mapping_error(tx_dev, dma->tx_addr)) {
++		dma_free_coherent(rx_dev, dma->rx_size,
+ 				  dma->rx_buf, dma->rx_addr);
+ 		ret = -ENOMEM;
+ 		goto err;
+@@ -326,14 +331,14 @@ void serial8250_release_dma(struct uart_8250_port *p)
+ 	/* Release RX resources */
+ 	dmaengine_terminate_sync(dma->rxchan);
+ 	dma->rx_running = 0;
+-	dma_free_coherent(dma->rxchan->device->dev, dma->rx_size, dma->rx_buf,
++	dma_free_coherent(dmaengine_get_dma_device(dma->rxchan), dma->rx_size, dma->rx_buf,
+ 			  dma->rx_addr);
+ 	dma_release_channel(dma->rxchan);
+ 	dma->rxchan = NULL;
+ 
+ 	/* Release TX resources */
+ 	dmaengine_terminate_sync(dma->txchan);
+-	dma_unmap_single(dma->txchan->device->dev, dma->tx_addr,
++	dma_unmap_single(dmaengine_get_dma_device(dma->txchan), dma->tx_addr,
+ 			 UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 	dma_release_channel(dma->txchan);
+ 	dma->txchan = NULL;
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index ceecb39fb82da..3a1473bf54d0f 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1076,7 +1076,7 @@ static void omap_8250_dma_tx_complete(void *param)
+ 	bool			en_thri = false;
+ 	struct omap8250_priv	*priv = p->port.private_data;
+ 
+-	dma_sync_single_for_cpu(dma->txchan->device->dev, dma->tx_addr,
++	dma_sync_single_for_cpu(dmaengine_get_dma_device(dma->txchan), dma->tx_addr,
+ 				UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 
+ 	guard(uart_port_lock_irqsave)(&p->port);
+@@ -1193,7 +1193,7 @@ static int omap_8250_tx_dma(struct uart_8250_port *p)
+ 
+ 	dma->tx_cookie = dmaengine_submit(desc);
+ 
+-	dma_sync_single_for_device(dma->txchan->device->dev, dma->tx_addr,
++	dma_sync_single_for_device(dmaengine_get_dma_device(dma->txchan), dma->tx_addr,
+ 				   UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 
+ 	dma_async_issue_pending(dma->txchan);
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index c4824c201e1c3..86729ddbdadc8 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -435,7 +435,7 @@ static int pl011_fifo_to_tty(struct uart_amba_port *uap)
+ static int pl011_dmabuf_init(struct dma_chan *chan, struct pl011_dmabuf *db,
+ 			     enum dma_data_direction dir)
+ {
+-	db->buf = dma_alloc_coherent(chan->device->dev, PL011_DMA_BUFFER_SIZE,
++	db->buf = dma_alloc_coherent(dmaengine_get_dma_device(chan), PL011_DMA_BUFFER_SIZE,
+ 				     &db->dma, GFP_KERNEL);
+ 	if (!db->buf)
+ 		return -ENOMEM;
+@@ -448,7 +448,7 @@ static void pl011_dmabuf_free(struct dma_chan *chan, struct pl011_dmabuf *db,
+ 			      enum dma_data_direction dir)
+ {
+ 	if (db->buf) {
+-		dma_free_coherent(chan->device->dev,
++		dma_free_coherent(dmaengine_get_dma_device(chan),
+ 				  PL011_DMA_BUFFER_SIZE, db->buf, db->dma);
+ 	}
+ }
+@@ -609,7 +609,7 @@ static void pl011_dma_tx_callback(void *data)
+ 
+ 	uart_port_lock_irqsave(&uap->port, &flags);
+ 	if (uap->dmatx.queued)
+-		dma_unmap_single(dmatx->chan->device->dev, dmatx->dma,
++		dma_unmap_single(dmaengine_get_dma_device(dmatx->chan), dmatx->dma,
+ 				 dmatx->len, DMA_TO_DEVICE);
+ 
+ 	dmacr = uap->dmacr;
+@@ -867,7 +867,7 @@ __acquires(&uap->port.lock)
+ 	dmaengine_terminate_async(uap->dmatx.chan);
+ 
+ 	if (uap->dmatx.queued) {
+-		dma_unmap_single(uap->dmatx.chan->device->dev, uap->dmatx.dma,
++		dma_unmap_single(dmaengine_get_dma_device(uap->dmatx.chan), uap->dmatx.dma,
+ 				 uap->dmatx.len, DMA_TO_DEVICE);
+ 		uap->dmatx.queued = false;
+ 		uap->dmacr &= ~UART011_TXDMAE;
+@@ -1249,7 +1249,7 @@ static void pl011_dma_shutdown(struct uart_amba_port *uap)
+ 		/* In theory, this should already be done by pl011_dma_flush_buffer */
+ 		dmaengine_terminate_sync(uap->dmatx.chan);
+ 		if (uap->dmatx.queued) {
+-			dma_unmap_single(uap->dmatx.chan->device->dev,
++			dma_unmap_single(dmaengine_get_dma_device(uap->dmatx.chan),
+ 					 uap->dmatx.dma, uap->dmatx.len,
+ 					 DMA_TO_DEVICE);
+ 			uap->dmatx.queued = false;
+diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
+index db5c62b0322f6..5e8540e835351 100644
+--- a/drivers/tty/serial/pch_uart.c
++++ b/drivers/tty/serial/pch_uart.c
+@@ -656,7 +656,7 @@ static bool filter(struct dma_chan *chan, void *slave)
+ 	struct pch_dma_slave *param = slave;
+ 
+ 	if ((chan->chan_id == param->chan_id) && (param->dma_dev ==
+-						  chan->device->dev)) {
++						  dmaengine_get_dma_device(chan))) {
+ 		chan->private = param;
+ 		return true;
+ 	} else {
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 63d0232dffc20..640f85e2d636b 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -300,7 +300,7 @@ static void s3c24xx_serial_stop_tx(struct uart_port *port)
+ 		dmaengine_pause(dma->tx_chan);
+ 		dmaengine_tx_status(dma->tx_chan, dma->tx_cookie, &state);
+ 		dmaengine_terminate_all(dma->tx_chan);
+-		dma_sync_single_for_cpu(dma->tx_chan->device->dev,
++		dma_sync_single_for_cpu(dmaengine_get_dma_device(dma->tx_chan),
+ 					dma->tx_transfer_addr, dma->tx_size,
+ 					DMA_TO_DEVICE);
+ 		async_tx_ack(dma->tx_desc);
+@@ -333,7 +333,7 @@ static void s3c24xx_serial_tx_dma_complete(void *args)
+ 	count = dma->tx_bytes_requested - state.residue;
+ 	async_tx_ack(dma->tx_desc);
+ 
+-	dma_sync_single_for_cpu(dma->tx_chan->device->dev,
++	dma_sync_single_for_cpu(dmaengine_get_dma_device(dma->tx_chan),
+ 				dma->tx_transfer_addr, dma->tx_size,
+ 				DMA_TO_DEVICE);
+ 
+@@ -435,7 +435,7 @@ static int s3c24xx_serial_start_tx_dma(struct s3c24xx_uart_port *ourport,
+ 	dma->tx_size = count & ~(dma_get_cache_alignment() - 1);
+ 	dma->tx_transfer_addr = dma->tx_addr + tail;
+ 
+-	dma_sync_single_for_device(dma->tx_chan->device->dev,
++	dma_sync_single_for_device(dmaengine_get_dma_device(dma->tx_chan),
+ 				   dma->tx_transfer_addr, dma->tx_size,
+ 				   DMA_TO_DEVICE);
+ 
+@@ -509,7 +509,7 @@ static void s3c24xx_uart_copy_rx_to_tty(struct s3c24xx_uart_port *ourport,
+ 	if (!count)
+ 		return;
+ 
+-	dma_sync_single_for_cpu(dma->rx_chan->device->dev, dma->rx_addr,
++	dma_sync_single_for_cpu(dmaengine_get_dma_device(dma->rx_chan), dma->rx_addr,
+ 				dma->rx_size, DMA_FROM_DEVICE);
+ 
+ 	ourport->port.icount.rx += count;
+@@ -631,7 +631,7 @@ static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
+ {
+ 	struct s3c24xx_uart_dma *dma = ourport->dma;
+ 
+-	dma_sync_single_for_device(dma->rx_chan->device->dev, dma->rx_addr,
++	dma_sync_single_for_device(dmaengine_get_dma_device(dma->rx_chan), dma->rx_addr,
+ 				   dma->rx_size, DMA_FROM_DEVICE);
+ 
+ 	dma->rx_desc = dmaengine_prep_slave_single(dma->rx_chan,
+@@ -1101,20 +1101,23 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ 		goto err_release_tx;
+ 	}
+ 
+-	dma->rx_addr = dma_map_single(dma->rx_chan->device->dev, dma->rx_buf,
++	struct device *rx_dev = dmaengine_get_dma_device(dma->rx_chan);
++	struct device *tx_dev = dmaengine_get_dma_device(dma->tx_chan);
++
++	dma->rx_addr = dma_map_single(rx_dev, dma->rx_buf,
+ 				      dma->rx_size, DMA_FROM_DEVICE);
+-	if (dma_mapping_error(dma->rx_chan->device->dev, dma->rx_addr)) {
++	if (dma_mapping_error(rx_dev, dma->rx_addr)) {
+ 		reason = "DMA mapping error for RX buffer";
+ 		ret = -EIO;
+ 		goto err_free_rx;
+ 	}
+ 
+ 	/* TX buffer */
+-	dma->tx_addr = dma_map_single(dma->tx_chan->device->dev,
++	dma->tx_addr = dma_map_single(tx_dev,
+ 				      p->port.state->port.xmit_buf,
+ 				      UART_XMIT_SIZE,
+ 				      DMA_TO_DEVICE);
+-	if (dma_mapping_error(dma->tx_chan->device->dev, dma->tx_addr)) {
++	if (dma_mapping_error(tx_dev, dma->tx_addr)) {
+ 		reason = "DMA mapping error for TX buffer";
+ 		ret = -EIO;
+ 		goto err_unmap_rx;
+@@ -1123,7 +1126,7 @@ static int s3c24xx_serial_request_dma(struct s3c24xx_uart_port *p)
+ 	return 0;
+ 
+ err_unmap_rx:
+-	dma_unmap_single(dma->rx_chan->device->dev, dma->rx_addr,
++	dma_unmap_single(dmaengine_get_dma_device(dma->rx_chan), dma->rx_addr,
+ 			 dma->rx_size, DMA_FROM_DEVICE);
+ err_free_rx:
+ 	kfree(dma->rx_buf);
+@@ -1143,7 +1146,7 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+ 
+ 	if (dma->rx_chan) {
+ 		dmaengine_terminate_all(dma->rx_chan);
+-		dma_unmap_single(dma->rx_chan->device->dev, dma->rx_addr,
++		dma_unmap_single(dmaengine_get_dma_device(dma->rx_chan), dma->rx_addr,
+ 				 dma->rx_size, DMA_FROM_DEVICE);
+ 		kfree(dma->rx_buf);
+ 		dma_release_channel(dma->rx_chan);
+@@ -1152,7 +1155,7 @@ static void s3c24xx_serial_release_dma(struct s3c24xx_uart_port *p)
+ 
+ 	if (dma->tx_chan) {
+ 		dmaengine_terminate_all(dma->tx_chan);
+-		dma_unmap_single(dma->tx_chan->device->dev, dma->tx_addr,
++		dma_unmap_single(dmaengine_get_dma_device(dma->tx_chan), dma->tx_addr,
+ 				 UART_XMIT_SIZE, DMA_TO_DEVICE);
+ 		dma_release_channel(dma->tx_chan);
+ 		dma->tx_chan = NULL;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 50ae9aae6b614..bd58bbfa65aa7 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1495,7 +1495,7 @@ static void sci_dma_rx_release(struct sci_port *s)
+ 	uart_port_unlock_irqrestore(port, flags);
+ 
+ 	dmaengine_terminate_sync(chan);
+-	dma_free_coherent(chan->device->dev, s->buf_len_rx * 2, s->rx_buf[0],
++	dma_free_coherent(dmaengine_get_dma_device(chan), s->buf_len_rx * 2, s->rx_buf[0],
+ 			  sg_dma_address(&s->sg_rx[0]));
+ 	dma_release_channel(chan);
+ }
+@@ -1591,7 +1591,7 @@ static void sci_dma_tx_release(struct sci_port *s)
+ 	s->chan_tx_saved = s->chan_tx = NULL;
+ 	s->cookie_tx = -EINVAL;
+ 	dmaengine_terminate_sync(chan);
+-	dma_unmap_single(chan->device->dev, s->tx_dma_addr, UART_XMIT_SIZE,
++	dma_unmap_single(dmaengine_get_dma_device(chan), s->tx_dma_addr, UART_XMIT_SIZE,
+ 			 DMA_TO_DEVICE);
+ 	dma_release_channel(chan);
+ }
+@@ -1676,7 +1676,7 @@ static void sci_dma_tx_work_fn(struct work_struct *work)
+ 		goto switch_to_pio;
+ 	}
+ 
+-	dma_sync_single_for_device(chan->device->dev, buf, s->tx_dma_len,
++	dma_sync_single_for_device(dmaengine_get_dma_device(chan), buf, s->tx_dma_len,
+ 				   DMA_TO_DEVICE);
+ 
+ 	desc->callback = sci_dma_tx_complete;
+@@ -1832,12 +1832,13 @@ static void sci_request_dma(struct uart_port *port)
+ 	chan = sci_request_dma_chan(port, DMA_MEM_TO_DEV);
+ 	dev_dbg(port->dev, "%s: TX: got channel %p\n", __func__, chan);
+ 	if (chan) {
++		struct device *dma_dev = dmaengine_get_dma_device(chan);
+ 		/* UART circular tx buffer is an aligned page. */
+-		s->tx_dma_addr = dma_map_single(chan->device->dev,
++		s->tx_dma_addr = dma_map_single(dma_dev,
+ 						tport->xmit_buf,
+ 						UART_XMIT_SIZE,
+ 						DMA_TO_DEVICE);
+-		if (dma_mapping_error(chan->device->dev, s->tx_dma_addr)) {
++		if (dma_mapping_error(dma_dev, s->tx_dma_addr)) {
+ 			dev_warn(port->dev, "Failed mapping Tx DMA descriptor\n");
+ 			dma_release_channel(chan);
+ 		} else {
+@@ -1853,12 +1854,13 @@ static void sci_request_dma(struct uart_port *port)
+ 	chan = sci_request_dma_chan(port, DMA_DEV_TO_MEM);
+ 	dev_dbg(port->dev, "%s: RX: got channel %p\n", __func__, chan);
+ 	if (chan) {
++		struct device *dma_dev = dmaengine_get_dma_device(chan);
+ 		unsigned int i;
+ 		dma_addr_t dma;
+ 		void *buf;
+ 
+ 		s->buf_len_rx = 2 * max_t(size_t, 16, port->fifosize);
+-		buf = dma_alloc_coherent(chan->device->dev, s->buf_len_rx * 2,
++		buf = dma_alloc_coherent(dma_dev, s->buf_len_rx * 2,
+ 					 &dma, GFP_KERNEL);
+ 		if (!buf) {
+ 			dev_warn(port->dev,
+-- 
+2.43.0
 
-> I think this introduces a regression between v6 and v7, as usb3_tca_base
-> may be accessed prior to the 'usb3' clock being enabled, and
-> furthermore, the call to reset_control_bulk_deassert() will clear this
-> value.
->
-> Therefore, I think we need to this after the call to
-> reset_control_bulk_deassert().
-
-usb3_tca_base is powered by a different clock as opposed to the 'usb3'
-one, so the register access will be safe as long as the platform driver's
-power domain is on. Register reads in either order both result in the
-same behavior during testing, but I would argue that writing before
-the call to reset_control_bulk_deassert() ensures that the parameter
-is applied on PoR.
-
-Best,
-RD
