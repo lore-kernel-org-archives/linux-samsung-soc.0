@@ -1,47 +1,47 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776913F4DDC
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 14:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B32B29D288
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 15:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790518391; cv=none; b=nlLRJ9Qm6C5DGbZpWL6lu1I8SqbTjOfWYOBGXgGoRalsy4S0WT58VCcCok0+QpG29CTFWVNu5dxHZzJsp3+MaMVEbeFgCxrAr75FZPCBZQLhEtyneDyFWGMSagbknCpJgBE/N7J3sUx0lzT78UrCfk96roryELGJ28D/7GZrwGY=
+	t=1790521787; cv=none; b=pI67p4XQIXpKjxGYE3ZFLj4KejI4GkBXJfoCz9mQ4MvYn0qQXpjbMoHYnwz6LNMI4fulTW43JnaDjZmHEaBq8gDzN52Q1sjja6XP55RZhUIXfwhW2rgKZYF/keArE4ewWdrAW54yMzm5jUv/ID8TSy6ZEfQUYpYin6GkGCYFPsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790518391; c=relaxed/simple;
-	bh=y2Pk+VKr2oWzmpdhICZM5jJqQo9EX4ZAox6PbNuyg78=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=JyVX8Ntz6/zuvFl73qP1nXLqmap7Bnf9xQrqJIAcyAIu1BCA2kPU06/r0o8DjYBpe2jTxp81XCGmqbA7Aa7IX0nJAt1AoonWeicjO/4AwL5zMaQNB7EigD6DvUgKYKJZVQl6Pm0eZVinlDgLYJTPnUeYr6o0IalfqVVmt37FkVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=afBaOezW; arc=none smtp.client-ip=203.254.224.34
+	s=arc-20240116; t=1790521787; c=relaxed/simple;
+	bh=p2QziX6Yr9oJV15zZupHjp39yfCoWC7cAf82zLLrkq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=gIF1QsnXbedoqjV3Zs5o6oBvhf9raOVZWzlpaAOieqZuJ/tf8ZCk1VJDk1PixNSktBPhuHQBLfcRCDHi0NI+CKxfba7IlP0rFQInyfOMEQ9yZ0slSU5oLuOXh/hLPoDhbaVrjkKPpqHLGmr3wlU3nzj/l/TZIE+HZxPy00gjyVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ReJH8wAH; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="afBaOezW"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260927141300epoutp0426e4b791898728266652cf4262ff1892~ZMvsX2FlZ1096010960epoutp04j
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 14:13:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260927141300epoutp0426e4b791898728266652cf4262ff1892~ZMvsX2FlZ1096010960epoutp04j
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ReJH8wAH"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260927150941epoutp014e9af5178acfc19c8ddbcacce67c69f5~ZNhLdolhm1244212442epoutp01R
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 15:09:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260927150941epoutp014e9af5178acfc19c8ddbcacce67c69f5~ZNhLdolhm1244212442epoutp01R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790518380;
-	bh=uMKj4B80Sj+8Bg+qrBU/19l1aInp+KXwFHG5XTBxbss=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=afBaOezWGhvlJdnORaSqNUQh9By8VMCyinqailm9Vx1asCcQ63/05tZFDr4nWQXFg
-	 dTCJLJh4YJ3hzoZbww+//T4ErMLx67PIFxe5BnkjDgMOD1TGqxdMK2HlSFTzA6HUcS
-	 oikebQMqmA8gh8T5MSA0cSEEX4sDUQtJ875DeBRE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260927141259epcas5p4034b101541745c9a2e401176e7e71a37~ZMvrMEn5L2456524565epcas5p4i;
-	Sun, 27 Sep 2026 14:12:59 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ht5xk6S7nz6B9m4; Sun, 27 Sep
-	2026 14:12:58 +0000 (GMT)
+	s=mail20170921; t=1790521781;
+	bh=Kq0uqHcRoNnQto0WFfv6vWxpkUwcedmqHSFRxchgAg0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ReJH8wAHFbUxVK5qWtrXhic8jmwE6i6OrzBoLA6hGgSFCd0dd5ptL/aF9yKShwRvH
+	 bDdX9vT5IzDHf6k89BUVL+VJZK5vOVE4nfQjxQNdNMoej6nVCTzI2w3ybJIydgVz+6
+	 04IUb6/ReJwjFR2uk1teNjTDl8A9dejPc5Mc9RkI=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260927150940epcas5p23b41e21afcd67c2a282f4400c672b0b3~ZNhKMW-RS0467104671epcas5p26;
+	Sun, 27 Sep 2026 15:09:40 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ht7C71SZnz2SSKY; Sun, 27 Sep
+	2026 15:09:39 +0000 (GMT)
 Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260927141258epcas5p12769f53e7911b72fd26dcbec15950b9b~ZMvqHdT_k2230922309epcas5p1Z;
-	Sun, 27 Sep 2026 14:12:58 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb~ZNhIvRgCp0736707367epcas5p3l;
+	Sun, 27 Sep 2026 15:09:38 +0000 (GMT)
 Received: from bose.samsungds.net (unknown [107.108.83.9]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260927141256epsmtip1857b0ce212901aefa21a5c8816ddaff9~ZMvoeVcMG2426324263epsmtip1L;
-	Sun, 27 Sep 2026 14:12:56 +0000 (GMT)
+	20260927150936epsmtip1fc634794beae369a5d211402f6f841ad~ZNhHGK8KU2057020570epsmtip1v;
+	Sun, 27 Sep 2026 15:09:36 +0000 (GMT)
 From: Alim Akhtar <alim.akhtar@samsung.com>
 To: krzk@kernel.org, peter.griffin@linaro.org, robh@kernel.org,
 	conor+dt@kernel.org, linusw@kernel.org
@@ -49,11 +49,11 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
 	linux@roeck-us.net, hajun.sung@samsung.com, wim@linux-watchdog.org, Alim
 	Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 2/2] watchdog: s3c2410_wdt: Add support for Exynos8855 SoC
-Date: Sun, 27 Sep 2026 20:01:00 +0530
-Message-Id: <20260927143100.3576195-2-alim.akhtar@samsung.com>
+Subject: [PATCH v2 1/2] dt-bindings: watchdog: Add Exynos8855 watchdog
+ compatible string
+Date: Sun, 27 Sep 2026 20:57:37 +0530
+Message-Id: <20260927152738.3673504-1-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260927143100.3576195-1-alim.akhtar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,91 +61,68 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260927141258epcas5p12769f53e7911b72fd26dcbec15950b9b
+X-CMS-MailID: 20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-543,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260927141258epcas5p12769f53e7911b72fd26dcbec15950b9b
-References: <20260927143100.3576195-1-alim.akhtar@samsung.com>
-	<CGME20260927141258epcas5p12769f53e7911b72fd26dcbec15950b9b@epcas5p1.samsung.com>
+X-CMS-RootMailID: 20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb
+References: <CGME20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb@epcas5p3.samsung.com>
 
-Watchdog IP on this SoC is similar to Exynos850/ExynosAutov{9/920}.
-This does not have CNT_EN_WDT bit in PMU and offset of RST_STAT is
-different then the previously support SoC.
-Reuse the offset as much as from already supported SoC
+Add the 'samsung,exynos8855-wdt' compatible string to the Samsung
+watchdog device tree binding documentation. The Exynos8855 watchdog
+nodes use two clocks (bus clock and source clock), require
+samsung,cluster-index and samsung,syscon-phandle properties, similar
+to Exynos850 watchdog implementation.
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/watchdog/s3c2410_wdt.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+* Changes in V2:
+ - Fixed Sashiko review comment
+	- [Low] dt-bindings: watchdog: missing comma in samsung,syscon-phandle description 
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 7053963fb0ac..8ce4ca3e2aa8 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -58,6 +58,7 @@
- #define S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+ Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+index a32c47831577..3f8c3e56ea07 100644
+--- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+@@ -25,6 +25,7 @@ properties:
+           - samsung,exynos5515-wdt
+           - samsung,exynos7-wdt                   # for Exynos7
+           - samsung,exynos850-wdt                 # for Exynos850
++          - samsung,exynos8855-wdt                # for Exynos8855
+           - samsung,exynos990-wdt                 # for Exynos990
+           - samsung,exynosautov9-wdt              # for Exynosautov9
+           - samsung,exynosautov920-wdt            # for Exynosautov920
+@@ -52,13 +53,13 @@ properties:
+     enum: [0, 1, 2]
+     description:
+       Index of CPU cluster on which watchdog is running (in case of Exynos850,
+-      Exynos990 or Google gs101).
++      Exynos8855, Exynos990 or Google gs101).
  
- #define EXYNOS5_RST_STAT_REG_OFFSET		0x0404
-+#define EXYNOS8855_RST_STAT_REG_OFFSET          0x10
- #define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
- #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET	0x040c
- #define EXYNOS850_CLUSTER0_NONCPU_OUT		0x1220
-@@ -281,6 +282,26 @@ static const struct s3c2410_wdt_variant drv_data_exynos850_cl1 = {
- 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
- };
+   samsung,syscon-phandle:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+       Phandle to the PMU system controller node (in case of Exynos5250,
+-      Exynos5420, Exynos5515, Exynos7, Exynos850, Exynos990 and gs101).
++      Exynos5420, Exynos5515, Exynos7, Exynos850, Exynos8855, Exynos990 and gs101).
  
-+static const struct s3c2410_wdt_variant drv_data_exynos8855_cl0 = {
-+	.mask_reset_reg = EXYNOS850_CLUSTER0_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS8855_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOS850_CLUSTER0_WDTRESET_BIT,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_DBGACK_BIT,
-+};
-+
-+static const struct s3c2410_wdt_variant drv_data_exynos8855_cl1 = {
-+	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN,
-+	.mask_bit = 2,
-+	.mask_reset_inv = true,
-+	.rst_stat_reg = EXYNOS8855_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
-+	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-+		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_DBGACK_BIT,
-+};
-+
- static const struct s3c2410_wdt_variant drv_data_exynos990_cl0 = {
- 	.mask_reset_reg = GS_CLUSTER0_NONCPU_INT_EN,
- 	.mask_bit = 2,
-@@ -400,6 +421,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
- 	  .data = &drv_data_exynos7 },
- 	{ .compatible = "samsung,exynos850-wdt",
- 	  .data = &drv_data_exynos850_cl0 },
-+	{ .compatible = "samsung,exynos8855-wdt",
-+	  .data = &drv_data_exynos8855_cl0 },
- 	{ .compatible = "samsung,exynos990-wdt",
- 	  .data = &drv_data_exynos990_cl0 },
- 	{ .compatible = "samsung,exynosautov9-wdt",
-@@ -723,6 +746,7 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
- 	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
- 	if (variant == &drv_data_exynos850_cl0 ||
- 	    variant == &drv_data_exynosautov9_cl0 ||
-+	    variant == &drv_data_exynos8855_cl0 ||
- 	    variant == &drv_data_gs101_cl0 ||
- 	    variant == &drv_data_exynosautov920_cl0 ||
- 	    variant == &drv_data_exynos990_cl0) {
-@@ -740,6 +764,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
- 		case 1:
- 			if (variant == &drv_data_exynos850_cl0)
- 				variant = &drv_data_exynos850_cl1;
-+			else if (variant == &drv_data_exynos8855_cl0)
-+				variant = &drv_data_exynos8855_cl1;
- 			else if (variant == &drv_data_exynosautov9_cl0)
- 				variant = &drv_data_exynosautov9_cl1;
- 			else if (variant == &drv_data_gs101_cl0)
+ required:
+   - compatible
+@@ -76,6 +77,7 @@ allOf:
+             enum:
+               - google,gs101-wdt
+               - samsung,exynos850-wdt
++              - samsung,exynos8855-wdt
+               - samsung,exynosautov9-wdt
+               - samsung,exynosautov920-wdt
+     then:
+
+base-commit: 4c253ac4b29b8c6cc6fdef8f92d4facde62e63b9
 -- 
 2.34.1
 
