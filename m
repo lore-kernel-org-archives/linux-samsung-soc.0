@@ -1,128 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy2-f42.google.com (mail-dy2-f42.google.com [74.125.229.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAFE37C926;
-	Sun, 27 Sep 2026 17:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B368E358381
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 19:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790529082; cv=none; b=BxvS9skLBi7xeYCiSL0WhDJvvrbsjY0EGtqNfouJ4k8ITl/zoe/CHoRGQIyDuO8ZB2gEoEhUDw7YHoJ1r+nH9XHld5Fycc3IhdTnat1Vz5/fogIrVX1GkLE5twQiQSZJZCYTWa1vwcx7Ym13JF7FaEU3eabIITHeMx7z1yJtmJ0=
+	t=1790536090; cv=none; b=Eggdd1bdHYD3GK8ynABs0B031Tzk0hYy7btmdkNDLW52CiJupLMD8XeOPzhLjZqsio5GmpUjClgv5nxGY5+CjlOiSrzNvvxhuxCV5nFmmqr4+C5BbgP+/iHreYezGKGyjvhKiZgUvjl3lZOba0w6ZiqCW4zFtae80pn/g6ba860=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790529082; c=relaxed/simple;
-	bh=Z+hfxocGGae1Sm1BeCS76gsysY0NtlZY5CQbiBlA/Ww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UtYChvnYAwDr7TlofonPtrtNyKT4GSZh3VcUCV+CcNy4LXeYFVcuFHv2TG86hPyj2xmZIU0lQtz8w7vB9qDOd3TY06Er8mKfpIqwIRbtcsoR41lNUyvCcD2dvsD4X25GEKhoeKLCxX67MLxpRcRRlZTefXAjdFD9/AboXnM/pGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgXFVKbT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790536090; c=relaxed/simple;
+	bh=h2liHw+Cb3T5OCreOlX8AWj3tP3/1dELU2ASsfx2NuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJxKXDyfqJWVZ8YlTJqJRg3d15uA8dKmQXA1dhRGiJqidPZazVUfeKdPGqgQ6payZlFfLKF0Ng++CF2ezr30jMVqn2Jqi+cAaR7ByJuDs4CEpMI0eMlpoAFNVMPdgTWxbalhXTYX3fFA/sqIq3El2LwWNWsdWN6vFoZ8DuJyIDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p3P73Cy0; arc=none smtp.client-ip=74.125.229.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgXFVKbT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5061F000FF;
-	Sun, 27 Sep 2026 17:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790529081;
-	bh=HMHjOtBobVS8CaY6HykD9+IH9k3hBKLUQhoPP98UUjc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=SgXFVKbT0MkKLU1DXNTloBPjM1Rn2uPdSswUDRGsiYgi0LnSmrCFg9ED6wx1HscLh
-	 Q2529458T8Hjrf1+rMF0L8pRGRkXqsuP02adTJ5hL5ohUNtuI5cpqrilFyLAivLq/X
-	 qO7yklE7X0PDXUk/VGdkPq52Ek4ChkXfL8BbqA1X8cK8G9MM9Ns1kTb17XvL6yJz6+
-	 9mIB7ahgiA4nPuFjfkv7U4guj32ViC1kFscaTOX3hTFZ2+gVyuPFo+Vxs3nJbzXOf4
-	 yLj3cPmZNYmUqL4ivgyIGR86JyqXELaBb0DUNCYSHv8EUeAv/1X88b2SFLC/yN+5mF
-	 VNV8BeXnjzq+w==
-Message-ID: <4cc0ca7d-82ae-493d-ac15-478cdd8f0e08@kernel.org>
-Date: Sun, 27 Sep 2026 19:11:14 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p3P73Cy0"
+Received: by mail-dy2-f42.google.com with SMTP id 5a478bee46e88-3411e0ace58so3339304eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Sep 2026 12:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790536088; x=1791140888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SDDgjq+FLrfVveApew+3CiL9S8tkEEemKYxqci8Nfsc=;
+        b=p3P73Cy0m/JAEVgMTPDvZ8gAy2t8YeP0+fMmxyFbB/6SvL2gYwvyvNfxRrWU2w6rEe
+         /ScO/8ONQ+2k/8+wtc/sLvOq5FtcIK2SVGLJq1WJhjT09D7CphPhi/+V2LQ4WaELU/hj
+         AQrK02teIAsEgiDDAUOtr3nS8h0US3f8VFumQ2PL5Lo3REUu4pw+FWt2KqcTA4awBdxi
+         liNfHb81WgY/M6oxn/itDLt9tQBoEHZWO3qo1PEpnc5qHly7oTSWkQ8Bq2nr65af4vfK
+         r+qm/yN1C7Am2IxIlD4itndRKt4EYbAUYIhnCIhSeIz3ljxewXvnMBPZCMyM880046mU
+         pBdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790536088; x=1791140888;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SDDgjq+FLrfVveApew+3CiL9S8tkEEemKYxqci8Nfsc=;
+        b=dVm1xDbjTUHqrvXjTPttRtcW18xINO5veFXa0DieS4ImwyW+ixO4DcNOLo6sxZjS93
+         HKLusD0pzMvZUhOp+520T9C3D5fGydNGvyErfqQz4olekE+G281nxixEj8D74rYG1lgR
+         OsviVeeSaokUj/AsEll7plofuZVRB2PuVxowF9s8rR14IH9AsxyKPFHI0rHK8C8vgj3e
+         OnUSQsRk9vfDa3OVFAVgbWWJhBzegn4Ppj47AQVYKSiQMwo48NzqZFy2y7pYkf7cgG1L
+         MfI63tpwi6vIv58RWIZaAqX0HrJOnS9Au0GNNmQWTaWw3u5mQubeaI75WAFhUkeVIDCE
+         dtiw==
+X-Forwarded-Encrypted: i=1; AKwUvBxBRAWqMDj55iGmXIs3JGX8PPdClL0TX/OhG/waP+7U9w5vW+J1NG6lACB9S95ZXL88tyMl45aa80yhUSBTmpOQ4A==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLoxEV4wucx5u9wc3f3sIf6mgobRPMmIKeCKckdR2SarqgGpFOL
+	PcjM2iX/22QVuuTaCbUdgxdRSqPQFcgSYhpmGjUVWWyKWhKF1/vv1fviEHav00eg
+X-Gm-Gg: AYBFou0TatZ9O/gr4tzqeIzAPJFNj9l3zr1bAcmfENIj9D6S3Aa50q3mZbVDOYJ+s34
+	WNISUvYeCeBZpia1eICRaAh/OSqaExhd/FZMLzZMorh2jBT8Dksi/DFSRKiRfpIl+obCA67SW2i
+	t1E+g/LRGSU9rkaeUXaTJCudYGQ3AiybE0Ps6lWMc41yijC28hogCsCe1FwTPKiPl1mwk8WXba+
+	1oTyf48oqkblas95gjNkfbW7JQeP7bfFKeifVXCY+Rjyr4kPna0NrX0SBenLpUYQ2R6Ild2D2Vv
+	RAaGy7oWP6bLLv8ExWBj0Sp6prUOr3EcicZfOZ7VLt8RnZO8cWuVSsBxLWo3JZ4koiZz7Lh+tbS
+	cNEncRoAKR+2hZV/OEiKRfeIVgSLsWa3KCyX8MpH1vteP544QrWkBjRDSpDkszIaEALQcE9+WVv
+	B/ktdJSLE7CVlM3wwF4tA55skeI3NtkwJvIvmh9AIpnCp6+8M966UPxMOzpDltr8oyQ5poJvyFS
+	tEhJeXqI+sLtbl+Jj2xERUCTOU1
+X-Received: by 2002:a05:7300:4f1c:b0:342:19b0:1c92 with SMTP id 5a478bee46e88-34273549d27mr7996388eec.35.1790536087021;
+        Sun, 27 Sep 2026 12:08:07 -0700 (PDT)
+Received: from homik.search.charter.net ([2603:8002:ad40:56f0:5bb1:340f:98dd:fd61])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-343580930e2sm13639702eec.16.2026.09.27.12.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Sep 2026 12:08:03 -0700 (PDT)
+From: Mariia Nikitash <nikitash.mariiaw@gmail.com>
+To: krzk@kernel.org,
+	s.nawrocki@samsung.com,
+	peter.griffin@linaro.org,
+	linusw@kernel.org
+Cc: alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	morbo@google.com,
+	kees@kernel.org,
+	justinstitt@google.com,
+	aleksandr.loktionov@intel.com,
+	codemender-patching+linux@google.com,
+	Mariia Nikitash <nikitash.mariiaw@gmail.com>
+Subject: [PATCH] pinctrl: samsung: Use snprintf() to construct pin bank names
+Date: Sun, 27 Sep 2026 12:07:58 -0700
+Message-ID: <20260927190758.609156-1-nikitash.mariiaw@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add Exynos8855 watchdog
- compatible string
-To: Alim Akhtar <alim.akhtar@samsung.com>, peter.griffin@linaro.org,
- robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux@roeck-us.net, hajun.sung@samsung.com, wim@linux-watchdog.org
-References: <CGME20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb@epcas5p3.samsung.com>
- <20260927152738.3673504-1-alim.akhtar@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260927152738.3673504-1-alim.akhtar@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/09/2026 17:27, Alim Akhtar wrote:
-> Add the 'samsung,exynos8855-wdt' compatible string to the Samsung
-> watchdog device tree binding documentation. The Exynos8855 watchdog
-> nodes use two clocks (bus clock and source clock), require
-> samsung,cluster-index and samsung,syscon-phandle properties, similar
-> to Exynos850 watchdog implementation.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
-> * Changes in V2:
->  - Fixed Sashiko review comment
-> 	- [Low] dt-bindings: watchdog: missing comma in samsung,syscon-phandle description 
-> 
->  Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> index a32c47831577..3f8c3e56ea07 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> @@ -25,6 +25,7 @@ properties:
->            - samsung,exynos5515-wdt
->            - samsung,exynos7-wdt                   # for Exynos7
->            - samsung,exynos850-wdt                 # for Exynos850
-> +          - samsung,exynos8855-wdt                # for Exynos8855
+From: Bill Wendling <morbo@google.com>
 
+samsung_banks_node_get() constructs each pin bank node name by copying
+bank->name with strscpy() and appending the suffix with strlcat().
 
-Just drop the comment like we did for 5515.
+In preparation for removing the deprecated strlcat() API[1], format the
+node name in a single snprintf() call, which preserves the existing
+truncation check against sizeof(node_name).
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Link: https://github.com/KSPP/linux/issues/370 [1]
+Cc: codemender-patching+linux@google.com
+Assisted-by: LLM
+Signed-off-by: Bill Wendling <morbo@google.com>
+Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Signed-off-by: Mariia Nikitash <nikitash.mariiaw@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 5ecc9ed4c44d..0d639eec689c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1155,8 +1155,7 @@ static void samsung_banks_node_get(struct device *dev, struct samsung_pinctrl_dr
+ 
+ 	bank = d->pin_banks;
+ 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
+-		strscpy(node_name, bank->name, sizeof(node_name));
+-		len = strlcat(node_name, suffix, sizeof(node_name));
++		len = snprintf(node_name, sizeof(node_name), "%s%s", bank->name, suffix);
+ 		if (len >= sizeof(node_name)) {
+ 			dev_err(dev, "Too long pin bank name '%s', ignoring\n",
+ 				bank->name);
+-- 
+2.43.0
+
