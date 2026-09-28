@@ -1,46 +1,46 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013042.outbound.protection.outlook.com [40.107.162.42])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011033.outbound.protection.outlook.com [52.101.70.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BDD5038F3;
-	Mon, 28 Sep 2026 22:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9D0503BE8;
+	Mon, 28 Sep 2026 22:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.33
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790635123; cv=fail; b=LmjVdGRwMbTPt98VPI2VaMLzrenqdi1wCIOpzx+t/EsDUharDO7++c1blM9ID7MVbECTL30oIHDxWmmyXggID6nh14JFHxv3u7h0c8GM9vcQMnWXZgKU+0r17A6jglYk5pl2ouwrdTHEvsX8JCGNF/8Ow5pD2g/2J4qosF8cdG8=
+	t=1790635124; cv=fail; b=Zb40V3zQ6+Hpng+VZQG9BRKhzD0p66fmBNU5WD0pZ3U5sX15k2P2w56zbS3S1eoFV7G9L7JWC2vLrcMNlYIrWkLBANN8/tu87VFwhoWKcPbyTs2QnSN1MhSdzUGhwMzsJFZPm2DBnSjlMG+OnHwOkuw/RIH8CIWtRALzxaQomZg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790635123; c=relaxed/simple;
-	bh=U2it34qoe8L4aufO96mAG6Qyg3jBUviegk1s0ObBmZg=;
+	s=arc-20240116; t=1790635124; c=relaxed/simple;
+	bh=+SJkCUSx1i9F8/JdQoRVqr/QdJf6AmMDFj4Spomn2tc=;
 	h=From:To:CC:Subject:In-Reply-To:References:Message-ID:Date:
-	 MIME-Version:Content-Type; b=aRr2ev6PaREahL/7op4tGrQEdOPKsbDiYUnEBciUUP/b8CSDJ+CsSiBcG7IZVKp9N1JVDqIsjzByW2QBVpuOvjIA2/jVOCsNfRBKS82KIT1XDWWGhNA11fldt/+jdMf1alk/Fw3nQABQ5PdcJEPWQ7X4Xa1E9t06Dvi7QBtoBho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=ohBCIadP; arc=fail smtp.client-ip=40.107.162.42
+	 MIME-Version:Content-Type; b=B4E/Jya+klfyrl4gRCN62LI0iGa83zsIzkDthQsJB8hzXc8vbi29odquFrSE/VBYgjCEI5MtVIvjPYA2SdGnUZFFKybPsGjFCyJLPEMRLcHyUg1JVTDq2JzlGsvlBTXD71KV9iz2OQUllf5CN4XrcGxNx1pALLdohJoH16qDmVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=CThyLgK7; arc=fail smtp.client-ip=52.101.70.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="ohBCIadP"
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="CThyLgK7"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NQ3sxQMUBFUYBiDbyjOrd6WxG8D+FQ7nXKuAfW7GKr7SsLmkholjM41DjxrTRFFGma/mVbwpNoK3UJ/XUpXNVYKVGsvBoBXnK+sCOiCj5KPNsje3Kv8KWUpKqmJXUbXvs+rh3olQghusyc64TLe34bKfxSUj83ElGCNqh4pZz6GqrZtPAXIwOXtNhQc4jdILwertQ4CXn1guBgojLVG0I25cN58u4vG1SahwY1HHO0lYUVsPLLMW6yrcFKluzjK1A9pyHODBoV0CTbSPrSqEgf2gIBF+jANFE1FopIip9CBRszAH29zw89TohnvGLNKMN23slyXgSZbNKocxT23xxQ==
+ b=geUQ2fXrnA8rer4AU2Y2LAerMs4voE3dXddK9N1HZGR7eoWKof6h1ThHTPO3favUiCj5+utQq8gvEvbjZvfQvWokMTTNzMY1pF3dpbHUhgjT6QBPtLO1iVpbJ3XIrLkmUCbMs56MKX755CmN/W+RQ8Z4WbvGI70WHSkRUCfnq8Rfdm742s6Sl89bQ8gh6ELSrqwRRwgHbt2A0N5Dg2kvKwJDHxhj/ZPCngibRL6sH0Ku5j32pEII9kuDh/ESwQzVKS9TAlOziSQnYuie0WzOi9Qsp6ZGR7GJKrjoBPCGLiGl8NOD15CqrlensSJHkFpzQbuqf2ENW6NgK4WpEl84Xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VVmqkhmFnXYXAb1La3pPrcIgCoNjBR9NYNQ9y0d8a3o=;
- b=E+y55Odwl14swREae3Pb6w/yyewRmm4nFaEdXViTEJxFvebiQGy9aATSvNx64n/Uh7qE/MwGhth6e7VGLELEL1MfFaocQ1guhVXuQe7N1FfEAx6jqtjScntQjBSDiE4Y+rB0NjtYdTOv8dhmi0asGdhQht6zoRfIejq7wYNywGed0jwjBe2kZN4jMLdnR1zBiRXk6Xv4tBHXIArRQ2YySTdCJjCfo86BQHWJoBacc9Pt1V8RbPhQ8Ttl+GODdafXI0UMCyJtyMFGP6V1/3SGctoprQ9DybXCnfnq9IFc/c4w205QAS+nzkt48CqJ3BPJPgLxLompgoAXfmt7xbqvnA==
+ bh=Qfyj9tfAbxeaD3KQoEbvF3k8IWTvrl4mHWgJRP+KqJ4=;
+ b=XdJMNu+Y/q/SJq5d8N9sEQevU7nodJgWy5fUC69Cpz57pxiPMrbo2F+Af+yBVRlVM7A8OOQ9mHSX7jrO0cizt34wEhNDcUOn+hz32eg3w3cX7UGlT4A3WbRqMjqRU3p06FGRmg3ul4Sm5O6nY3LRhhdOQ/Sg0+cJ97trrEW4wFkwFozfMyEgKEJJbxGaxQExpa8gM63y9swrjzacJiDNVcYaVKGRS5XDf0RWdq5z1Zdl3zY0spkZLB6xhWJgTxtdMHvK0aXTGyY1HyopCvTTtzAx1pLe8wINQjXSCnWk+IKU45Th70WuPaf0m1uGQSOTTewG6YVyannjBbGuLMqgfQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VVmqkhmFnXYXAb1La3pPrcIgCoNjBR9NYNQ9y0d8a3o=;
- b=ohBCIadPg9VuQ+XqBpkTmPrasFp/buUWUpVNwWwBbNFm/7gcC35eXcOEFFhtcpuY6E4j4cp3YR9TwyGPEmRH7P3RdkQ/Bv2Y9/ULGhK7PyZBZ54yGLlNqTdxbSc4//+aGOmrxSFWpKa3Lvigh2Vo7ZlzoubWIXer7L+UmaQUyxI=
-Received: from DU2PR04CA0355.eurprd04.prod.outlook.com (2603:10a6:10:2b4::34)
- by GV2PR02MB8748.eurprd02.prod.outlook.com (2603:10a6:150:74::8) with
+ bh=Qfyj9tfAbxeaD3KQoEbvF3k8IWTvrl4mHWgJRP+KqJ4=;
+ b=CThyLgK7XEKIqsEkEDWJjhbB4wC3nE0W0xWmoyWLh4uJ+sBebf0Uuaq3nmKJbXKzLfPdql4cpkfaNnGBlRwhg6yENFumfGsUK5Jr+tP3jjvegrAP756Ju+hyFMco3qzdw4IstO+PIuCS2a0j9ZPpst3MLyxhTLlkUUaGPDGQd7w=
+Received: from DU2PR04CA0358.eurprd04.prod.outlook.com (2603:10a6:10:2b4::31)
+ by DU5PR02MB10488.eurprd02.prod.outlook.com (2603:10a6:10:51c::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.18; Mon, 28 Sep
- 2026 22:38:34 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Mon, 28 Sep
+ 2026 22:38:38 +0000
 Received: from MAD0EPF000008AD.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4:cafe::67) by DU2PR04CA0355.outlook.office365.com
- (2603:10a6:10:2b4::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.23 via Frontend Transport; Mon,
- 28 Sep 2026 22:38:34 +0000
+ (2603:10a6:10:2b4:cafe::70) by DU2PR04CA0358.outlook.office365.com
+ (2603:10a6:10:2b4::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.24 via Frontend Transport; Mon,
+ 28 Sep 2026 22:38:38 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
  is 195.60.68.100) smtp.mailfrom=axis.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=axis.com;
@@ -50,25 +50,25 @@ Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
 Received: from mail.axis.com (195.60.68.100) by
  MAD0EPF000008AD.mail.protection.outlook.com (10.167.241.186) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Mon, 28 Sep 2026 22:38:33 +0000
+ 15.21.472.14 via Frontend Transport; Mon, 28 Sep 2026 22:38:38 +0000
 Received: from pc67007-2609 (10.4.0.13) by se-mail10w.axis.com (10.20.40.10)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.39; Tue, 29 Sep
- 2026 00:38:24 +0200
+ 2026 00:38:27 +0200
 From: Waqar Hameed <waqar.hameed@axis.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-CC: <kernel@axis.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+To: Peter Griffin <peter.griffin@linaro.org>, =?utf-8?Q?Andr=C3=A9_Draszik?=
+	<andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+CC: <kernel@axis.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 12/16] arm64: dts: exynosautov920: Add space before line
- comments
+Subject: [PATCH 15/16] arm64: dts: exynos: gs101: Use tabs for indentation
 In-Reply-To: <cover.1790629313.git.waqar.hameed@axis.com>
 References: <cover.1790629313.git.waqar.hameed@axis.com>
 User-Agent: a.out
-Message-ID: <6bfaeb9cee6a950bae71dbb2f529e97417e660dc.1790629313.git.waqar.hameed@axis.com>
-Date: Tue, 29 Sep 2026 00:38:23 +0200
+Message-ID: <2d6a35257c0356270788c00579c1fc6113dbd352.1790629313.git.waqar.hameed@axis.com>
+Date: Tue, 29 Sep 2026 00:38:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -80,70 +80,60 @@ X-ClientProxiedBy: se-mail11w.axis.com (10.20.40.11) To se-mail10w.axis.com
  (10.20.40.10)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAD0EPF000008AD:EE_|GV2PR02MB8748:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c600c70-ecad-4092-03a0-08df1db13aa5
+X-MS-TrafficTypeDiagnostic: MAD0EPF000008AD:EE_|DU5PR02MB10488:EE_
+X-MS-Office365-Filtering-Correlation-Id: f45f73ec-d689-4ebc-bca1-08df1db13d53
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700016|82310400026|23010399003|1800799024|11063799006|56012099006|10067099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|23010399003|82310400026|36860700016|22082099003|18002099003|56012099006|10067099003|11063799006;
 X-Microsoft-Antispam-Message-Info:
-	5zUR2isYDJsPeGRKqc3RrrT0lzO+GOfzJu5+AnlMiwX3cIohesvTDZmDepj71Dwa+SO+gcOyYSh0BrDVvwt92dW1WpeYD8dpv4tPpM/fhWaIw1v7+BjdGvcVUjTi1ltgcIPT26rZf56ljJXmq5pEOEH0Tuvf1MvBtPVy6kj0rdvWR33K+mUP4VcOoAAE1K7ng0wP1l8cKT0ulf2nfMumI7XmBSmSIkAnVmk2TfDfcKsOTO4nkzCBJDtAtE8gVDajrMH9KIntn6lAQ+z7TBWgQ7UKwSqYTyo9UY+VXZUkQJsALYhGpXMQcI6wp2Lav4NET4aHZfTqnfdpZSTwmNTla2IMlCsgLYW7fpR1vvFNg1mRilQeEflMAbfkf9zK0Cr5k5VHDbFsgsmSWDi6KN62g87KuuXqfsYX5fZO3FfoDFr8OztLxmffq8Ig8HzOohz3Bh22rReqtS9rAaDcZ79NL/XnGVg/vbUxC4xRnfOaTy19ORtNZ7uwXIyuInOuqETuMhnRLj2kAPkdJXjcfH2+9zcUvNjt73GDEI3P83T3fMhANv8ofzfKJqX2dDBXGjtkOFE+7mfxyib6lad62I+6Pnb67wMwwyKwjoLbI5mTL+huF7ajIEel7G1KCrEx03Ty+N2PGZG5f6iFv7pCLrGlwr+cKGZghBbI3Ru/42b+m1Kvi7LWkKWZ4LqoCIZ9NFoz1pdci8JaAbVNe33Ps2rWEw==
+	YldEREumEF4wRi7axXDVrfwVO1ZNlHz/KM9AQ3aS7GaIcexLAxn3OJKUM+STReAtJ5v9X4+t/gaNag9YFnIIW2+D3SPrnstcXfPjHUJWDj/W95vdwSeI6kXyFTmP9wE/IHgMLqXc4znXHYg0cKEcB1HlbUD6irsPyVcgIFdK5FtECqmpw1jETCP2J3XK70MvNKbhHAyrFjlsNsbShkebcQ84b+Lo2AOBFRslbWyZTr2vzpDuG6bY5b+T0gTYPEUT9nBtgVj+R+xoPlwI80TDQEs8vg8hyaXB0h2CqG1Kz5hrsqHN0d6zqQAHdZjtA3R4frWQZPWD9Jt3z3rDhn3bMXILC3rwI0eSXYV/dP7tfI7uZyUtRginnJp+KxQs9UXgmHaSRSACzrnFpIkshhK4HwWRRpNDCCrIZf5cAmppmepMjo4OMxC8ZyKYFV0nhidJ4bAhvFKlh5X8TSM56gPjP/ynapJLqLxxJcvGQ+qpJZGAOgvZ3QjCQ/YQWH0+8L15CT1iAt3u+BMQMdkZJHdzGMD9XLDU64RviPUNErLhDD0X38qCdaQJa4oXRDJ0n5N8+p/+Y9/Tj8HhvHQkmOlfSszZNqAl83fs1bCe0frSnvOxV7VrG7xXvAj98T74j1i8iO708xJmgNMZo7qT3u5uCOa87DvgFCoFz3cOxjkG4mpvCxvKCf/QiA2gaGej4FoyRgKtb5+Jl6A0GhKykxwkXw==
 X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(23010399003)(1800799024)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(23010399003)(82310400026)(36860700016)(22082099003)(18002099003)(56012099006)(10067099003)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	/SJgBRaqNadxNUNMM2T+5f+HxqDMA4/1nSnuao0EtKXR/KWVyYGNjG3JJkbQU1NQnm6A8T42gUtR1RRbOT0lIV50KrIT+240rRAtlXAfdxhQFmSs2CyjXDMUZAHqowuyvoOoicbCguIiejXVoDWaMSmeAWSmdCuAxinzMhlzWvkNpJwSynqSobe4/x50P5KgrsYDUxuu4AEJG19CiQimvpl84owpbs5Aux4FwRuqdiS57LjIAUF4y3rtwldtFcb5ib+mWt6Rs2R2ah0VERyxzBBQchMXnbUL+yuDn/HV6cAi3KgyiGco31DVYS3AdzNSYC9d1RCJ3Ul2U8wfgWW9gXx7rHJHPBM4b9Li96jJ8VthGS/5QQYlQE2fVKC/t1NIAl5r92ZEuYHP4a6dDcf4IbfUfJIemaQvUIb4b20WqLA23bOaBWsCAa0TA2FvEcMV
+	b4TGVr7UBaTU47aTk+kyDI0SOhPOQMyI2yA1P/w7KLjzyhGsDVE38AL5SqwWEewvKAMmb5lCMDQ3iA88glCek5tgYLdSF7yK8n22dGQ27L22R7M3K1om7k6VtaACTsFkF7Zu4Xk8senXLDtAazNi7exLqzt0d5///DVM8PtP1fEvIF+OkSVhMjgl+oBbXWA4m4GTVJYUoaEqPEseLFPOj14mlT60jpj6GL4qffy+joVcpck7j82mXqrXfMIWh3KKO0ij0DRxYRYG2KXvBe6v9J8To8C1uFQ93zJPOpkWkIS87vBJNpE1V1gfkHWdljS50lb9JI22FWi2yRfzUtqmGO5XpSih8fpoihdvc8VZl3imBaVGzCzQyiKoQZ2ODYMWBOiE3ioBGWxCFTEL1dwBjTricc4igqRM6fG5BStIl2yZWFIwkZMrUbCJ7QqXEFoB
 X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2026 22:38:33.8639
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2026 22:38:38.4221
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c600c70-ecad-4092-03a0-08df1db13aa5
+X-MS-Exchange-CrossTenant-Network-Message-Id: f45f73ec-d689-4ebc-bca1-08df1db13d53
 X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MAD0EPF000008AD.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB8748
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR02MB10488
 
-There should be a space before start of comment delimiter. Found/fixed
+Tabs should be used instead of whitespace for indentation. Found/fixed
 with dtfmt (Devicetree Source formatter).
 
 Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
 ---
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 399b56b4dbdd9..d2b694a7e6f9d 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -265,7 +265,7 @@ l3_cache_cl0: l3-cache0 {
- 			compatible = "cache";
- 			cache-level = <3>;
- 			cache-unified;
--			cache-size = <0x200000>;/* 2MB L3 cache for cpu cluster-0 */
-+			cache-size = <0x200000>; /* 2MB L3 cache for cpu cluster-0 */
- 			cache-line-size = <64>;
- 			cache-sets = <2048>;
- 		};
-@@ -274,7 +274,7 @@ l3_cache_cl1: l3-cache1 {
- 			compatible = "cache";
- 			cache-level = <3>;
- 			cache-unified;
--			cache-size = <0x200000>;/* 2MB L3 cache for cpu cluster-1 */
-+			cache-size = <0x200000>; /* 2MB L3 cache for cpu cluster-1 */
- 			cache-line-size = <64>;
- 			cache-sets = <2048>;
- 		};
-@@ -283,7 +283,7 @@ l3_cache_cl2: l3-cache2 {
- 			compatible = "cache";
- 			cache-level = <3>;
- 			cache-unified;
--			cache-size = <0x100000>;/* 1MB L3 cache for cpu cluster-2 */
-+			cache-size = <0x100000>; /* 1MB L3 cache for cpu cluster-2 */
- 			cache-line-size = <64>;
- 			cache-sets = <1365>;
- 		};
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index bfceea5486f46..b67d98ff99fc4 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -1928,11 +1928,11 @@ apm_sram: sram@2039000 {
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts =
+-		   <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
+-		   <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
+-		   <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
+-		   <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
+-		   <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>;
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
++			<GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>;
+ 	};
+ };
+ 
 -- 
 2.43.0
 
