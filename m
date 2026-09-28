@@ -1,74 +1,58 @@
-Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49227.qiye.163.com (mail-m49227.qiye.163.com [45.254.49.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884C33DA7FF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 13:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E66D4D4880;
+	Mon, 28 Sep 2026 13:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790600721; cv=none; b=R7bW7nO4Owyn1YvHsBgLyTHLr/JOj3mLcz6FyyoOo/oSYTPs9IRi464sUVvj66ABsmMBvvA+eWTxrfd5nZEiN/VAwQ8pT3OZIx/QDmISRUhT8Z3NeCTrfsn+D5bNXRWJyeG+3G26kHOGZ041bsGkvmjI/gh51BIPNGGWQ37PVf0=
+	t=1790603905; cv=none; b=pTbjh156YUOowWixIq4cTBp6R5UBCk1CgMoNltuQca/rBnKfXLCW7iLrFdVzgCnMkdts0LFMn22MjMaM/r34j3IUcWGRq6x0ltOIeE7Y8ikZ6uT5Mo3AVUK6raAsrKWhQ7xLFjVlKvad9vFKpRSo6/gBfU2Z0xaRGOpUXfuphaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790600721; c=relaxed/simple;
-	bh=+oa7FG84f0fyNCG+SMW70dUa7UGK5WiFfPLz8JWgVkc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a40/ITC8fWN7fREBXXdEA+N8hlwd8EmYviN+mcNUVfh0U/uozPjDRtL9kDIJk+/9PikZfLnUAzxJrj+qTkhIYd8hfUvXIOqDe4V4hN2RrNRiQ2ucRSSIzbQZmW2W+M0YYLhgh9GOeE/Yt7rVUGscd9+mvrayNFsA9a8RLg86N3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U37kuMdH; arc=none smtp.client-ip=74.125.228.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790603905; c=relaxed/simple;
+	bh=uzMmhbGcunUgHE96gQ5ra+XHvPN4hFsgzpBNWL6HZ0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=e9yrJORdofmgpOoX/Nsx+foPJsfz5qfKu2pf5I+NF5u+BVOZfAszNWPqyH64mlcBPai7UApq3CBLm8IKLLZFcS0v9bTRGOFtkCZox32vjzc9V/yXTdke+ihHicnzNoK/3IxRsPxQW3w8lVwSpSP9xgsPrcu8lbaRGnHkRFHkvag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SjHYE+56; arc=none smtp.client-ip=45.254.49.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U37kuMdH"
-Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-8631d0023daso1470299b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 06:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790600718; x=1791205518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=k2Kcx8g6kY/kQqDl0Mqqux8bu7JzTOoQQ3nn8/Jqdrk=;
-        b=U37kuMdHeYPIAALWg4zXPzfDl+T5ARaJRyDwTCRyH2q3vsp8mozMxJHZpBILEHRKHm
-         J7HsHm/uuEWaI76eFSHL5FtuH4TuoWUGU2k5cTtZlH6yOrfxZbIiORvMXdFhC81omIV7
-         aT9iame+S4rS0oMklyrmCh9io2Y9acMLFrz1hstm/k8LJHs8X8dYJBOdT7kj4V9SIYYS
-         gay8wenP7hQp+o8ledhn1AXF9I+C6tVCkl7qGKXp+QgQg3jRAt8us9nwfMUE10NJzd+q
-         g6YuBJLh5xAByoYSsph6SvUk5H6Co39afdupiiWb3NdDtPK30/Y/36BpJ2TA5SywkEUb
-         XVyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790600718; x=1791205518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=k2Kcx8g6kY/kQqDl0Mqqux8bu7JzTOoQQ3nn8/Jqdrk=;
-        b=KuCpLX6XnNclU4dnZxFLzyxPThQ64Qt2dXUrIcJWWYeF1wmhAXU3BihgWzMOOqaGIW
-         r8NN1v/L5z4TnlWWN3/IOi4+sZdIJRnSpsGPnYQjiYnhXDAq54gOfYfaEdV2svQdiU/Y
-         /O7YkCk4NNiaUu9HJmpE4YeMRd+P4/zRF7JhJD2mewkE3vCmo1nj9vgAzEEVSAhLDBj5
-         EecLztjrYoOXRs56o56UYmZhLYyOpgwzNckthONqnwnFB5VveHzr36nKWqQ53niRwNNF
-         aJYQ4NQtXaX2Q4s0oX+y+Z04wLTq3zo4Qe9G3Qu+8TsCR/EEPIduCq7i1o8ZXZbBuiR3
-         ayOw==
-X-Forwarded-Encrypted: i=1; AKwUvBzMqlIZbOmS+SA3uv5kcMbhpNuj/fqtREGTDPVT0Ew0m53elo+ZyEAsZHTYSY3cUE72Xl6vkmnR7IfClIO2knB8aw==@vger.kernel.org
-X-Gm-Message-State: AFuF++laqYxJlL/JF54d1ZHUA10KZHjJW054+RyAId7EsC4gGcucdMb2
-	NxdXviDQmT7zpqxno4Kbtm3gmyTIA2MFcGSYuOy0V4RDzYZpJe/CUv8rbNGQkg==
-X-Gm-Gg: AYBFou2G5cBeeyHg2hS7Mag4wZ+sxWoatlhF56E88+owVGwvGlCgNrRw6oZG01AH+wz
-	0bE1xN6E4J5K+xOhcvRiqSbCsRb5BZpVjWglpSKNute2yLtYnRJe8cW3340sI9h9jgCgTaKYWSs
-	FT9gmCSVQQEip1qmZJr6MgIddSDdDdGEpcvw1i/1gPrIlUJZWboGqTjTJ056eThCr6UMBtOLkNU
-	S7T2RDuhdGv+szaJb8bFV1KqfBNo90PJb69cNO3qlmJzvuFSRRiyZHTBDq1puBpNzGdIPgSBHSa
-	ow2qo8qsFjZcyvcJ1IzXBFiO2AyHfa5TkJnRpY6hZYv1OCC4Gj6AucBfZmfN8nAerz1FPAAvJhs
-	Nklj3Gv9dt/DGKoVWRYvc4RXinbTfrou+74G1VdSsBVbprlqUXGg9OX+xtpgDXQq4vQGj/8DcGy
-	YMvsgpvDrcif9H9+IdKwgGlR1EpGd8A0lBkI5Uwn/74bo4ZAch2AePH1cj6fU1F3RDDi1wSfujr
-	4Pv+fo1tammqD1LtC0RVZNGlhuOtunArAxZX73lC+Wdz6ukjni7drjidsEColdQw2QsBBYjga26
-	l2udNv5P
-X-Received: by 2002:a05:6a00:138d:b0:881:7ff5:606f with SMTP id d2e1a72fcca58-8817ff56367mr4741460b3a.43.1790600718146;
-        Mon, 28 Sep 2026 06:05:18 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87fea18f49csm4083555b3a.20.2026.09.28.06.05.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 06:05:17 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Mon, 28 Sep 2026 22:05:14 +0900
-Message-Id: <20260928130514.47167-1-inki.dae@samsung.com>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SjHYE+56"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e82;
+	Mon, 28 Sep 2026 16:15:10 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 07/14] drm/bridge: analogix_dp: Use platform-specific HPD detection scheme
+Date: Mon, 28 Sep 2026 16:14:11 +0800
+Message-Id: <20260928081418.3605775-8-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
+References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -76,56 +60,111 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa0e715079203a8kunm323e2b5437cf46
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTBpJVh9LTx9ITkxOS0hMGVYVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
+	JDQ0xVSktLVUtZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=SjHYE+56N6njEMERlvA7CzIvvttQUj+1DqOl5N+7vYVCDHNks5/VwpLpJwipHXqLp27AMonjVyXtHBUV3JDbbesPg/M4G2sKJZjfQHq5QmuDyiVDEkhjX4WiYzH86vsGeQUUX2JJ8bcBXKZSs3ByfXFgNYt7AO4aiDq4aNMr7dA=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=7ov5ZAWTee/V9ZBPtOKDaozcrk5oFd5f7m81BucbP6I=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Dave and Daniel,
+The Analogix DP controller provides two sets of interrupt sources for
+hotplug detection: HOTPLUG_CHG for any HPD level change, and the
+PLUG/HPD_LOST pair for connect/disconnect transitions respectively.
 
-This PR brings three fixes and cleanups for Exynos DRM, addressing a
-clock leak in FIMD, simplifying user memory handling in VIDI, and
-fixing a Sparse warning in FIMD.
+On Rockchip platforms, configure the HPD deglitch filter and use
+HOTPLUG_CHG interrupt for hotplug detection. Other platforms retain the
+original PLUG + HPD_LOST scheme with unchanged deglitch values.
 
-Major changes are:
-- fix a clock leak in the FIMD resume error path by disabling
-bus_clk when enabling lcd_clk fails,
-- replace the open-coded kmalloc() and copy_from_user() sequence
-in VIDI with memdup_user(),
-- fix Sparse address space warnings in fimd_trigger() by adding
-the missing __iomem annotation to timing_base.
+Move the HPD deglitch configuration into analogix_dp_reset() so that
+platform-specific values are set alongside the existing register
+defaults in a single location. Update the threaded IRQ handler to check
+the corresponding interrupt flag based on platform type.
 
-Please kindly let me know if there is any problem.
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Thanks,
-Inki Dae
+---
 
-The following changes since commit 2abe8e7e33973dda5dd24b89aa3ee52470a78265:
+Changes in v2:
+- Move ANALOGIX_DP_HPD_DEGLITCH_L/ANALOGIX_DP_HPD_DEGLITCH_H configs to
+  analogix_dp_reset().
 
-  Merge tag 'amd-drm-next-7.4-2026-09-24' of https://gitlab.freedesktop.org/drm/amdgpu/kernel into drm-next (2026-09-26 08:13:22 +1000)
+Changes in v3:
+- Modify the commit msg.
+- Replace macro HPD_IRQ with HPD_IRQ_ALL.
+---
+ .../drm/bridge/analogix/analogix_dp_core.c    |  9 ++++++--
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 22 ++++++++++++++++---
+ 2 files changed, 26 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index f88e3263ba0e..287fc16125ef 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -714,13 +714,18 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ {
+ 	struct analogix_dp_device *dp = arg;
+ 	u32 irq_type;
++	bool hpd_detected;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+ 	if (irq_type)
+ 		analogix_dp_clear_hotplug_interrupts(dp, irq_type);
+ 
+-	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
+-	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
++	if (!dp->hpd_gpiod && analogix_dp_is_rockchip(dp->plat_data->dev_type))
++		hpd_detected = irq_type & DP_IRQ_TYPE_HP_CHANGE;
++	else
++		hpd_detected = (irq_type & DP_IRQ_TYPE_HP_CABLE_IN) ||
++			       (irq_type & DP_IRQ_TYPE_HP_CABLE_OUT);
++	if (hpd_detected) {
+ 		dev_dbg(dp->dev, "Detected cable status changed!\n");
+ 		if (dp->drm_dev)
+ 			drm_helper_hpd_irq_event(dp->drm_dev);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 0f1406e4a5d3..025da25463a8 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -160,8 +160,13 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
+ 	writel(0x0, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+ 	writel(0x0, dp->reg_base + ANALOGIX_DP_HDCP_CTL);
+ 
+-	writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
+-	writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	if (analogix_dp_is_rockchip(dp->plat_data->dev_type)) {
++		writel(0x80, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
++		writel(0xbb, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	} else {
++		writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
++		writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	}
+ 
+ 	writel(0x10, dp->reg_base + ANALOGIX_DP_LINK_DEBUG_CTL);
+ 
+@@ -188,7 +193,18 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
+ 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
+ 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
+ 
+-	analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
++	/*
++	 * Either HOTPLUG_CHG interrupt or PLUG + HPD_LOST interrupt
++	 * pair can be used to implement hotplug detection.
++	 *
++	 * On Rockchip platforms, configuring HPD deglitch to 2ms and
++	 * using HOTPLUG_CHG interrupt for hotplug detection is proven
++	 * as a better solution via engineering verification.
++	 */
++	if (analogix_dp_is_rockchip(dp->plat_data->dev_type))
++		analogix_dp_unmute_hpd_interrupt(dp, DP_IRQ_TYPE_HP_CHANGE);
++	else
++		analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
+ }
+ 
+ /*
+-- 
+2.34.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v7.4
-
-for you to fetch changes up to d04392ce52d33bce4d532bd8b965151ed4ce8670:
-
-  drm/exynos: fimd: fix clock leak on resume error path (2026-09-28 21:44:02 +0900)
-
-----------------------------------------------------------------
-Exynos FIMD fixes
-- Fix clock leak on resume error path.
-- Fix Sparse warnings by adding missing __iomem annotation.
-
-Exynos VIDI cleanup
-- Replace kmalloc() and copy_from_user() with memdup_user().
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      drm/exynos/fimd: fix register offset type in fimd_trigger()
-
-Mohammad Shahid (1):
-      drm/exynos: vidi: use memdup_user() instead of kmalloc() and copy_from_user()
-
-jiawen (1):
-      drm/exynos: fimd: fix clock leak on resume error path
-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |  3 ++-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 12 ++++--------
- 2 files changed, 6 insertions(+), 9 deletions(-)
