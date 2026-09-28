@@ -1,56 +1,52 @@
-Received: from mail-m49229.qiye.163.com (mail-m49229.qiye.163.com [45.254.49.229])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0A34AC170;
-	Mon, 28 Sep 2026 11:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BB4B828A;
+	Mon, 28 Sep 2026 12:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790595874; cv=none; b=WjuS7M4qMgNvIqb4Kf5r0dw7abY0ooQC9MbMa10QmUiTwhoZlYVK2fgD/jQiT2Z5q+n/+0OVxLzLCnfNS1hWod3ZZpdZoqG1m/7gXc3hcv1/jF2vDNoagI2d250/MHISDZnArKyBrEOCaxErdtwe4JxHXoz9NeccYd+PO1rb6M4=
+	t=1790597005; cv=none; b=o7V0DPDo6T0arQoB86KezKOrQkSQQE67/iBPTaNnnPBLMpGpIXMXxA5zKF0LG32jt7toGWQzGQpsFUIZdxYUiWG2Vz3LdbO6yHUA7LpkZxIGUuQUJrg32d8kVadG2V/ZJxRgoXYPkRIQ7lPkCE16F6ZVdTt5RMIvkh9Cdg7DEJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790595874; c=relaxed/simple;
-	bh=Y0MsiQrYJDDSuydp8+WFnjB9TUx6dfjNvmhwJzV3kMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TrAj/r1IkBWy1lt+RJaHpYT8099XsZjHe9GY26ksKGni8ZuI0kHIlSu+q6wIclPe+fyzkpdNIh7r8jV91hH2L4W3BmHjcK3nNRXPPxXqSAB4/CNHSGXo+23RG0ec27Cr5fWcHRJKhfbNuS7Ny5P2QwDX4FHGoJJstT950pzpOhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=e9rUnIUn; arc=none smtp.client-ip=45.254.49.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1790597005; c=relaxed/simple;
+	bh=hIgXNSb+1LdNPzFyrPiOIc71YpY2oZSEoljN4A2bK/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cCXit6eFZz60TKr+oDDpL6nXXve3Vf1l1PAIcx2/ijV0XVJ/NF3j6Cn7Lbt2JdK/Hlu/EqOz6gL95hB/IXpUdM7hYrQrMOZ6Q9/C1yTXWhEMPIauhQ6UD8qAPQz5OLCkQeiBeBpQOr9c4MAhTOaPAXk7/+slgTNQGUT/ErUEYKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ECHJ3cZw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="e9rUnIUn"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e40;
-	Mon, 28 Sep 2026 16:15:02 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ECHJ3cZw"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=JS5dd5f9mWNpybqKgfuEd/QJ8IUXo+CpfbvRDEoiIGk=; b=ECHJ3cZwUWSupvEzyzR1mPXOLK
+	VK19JixYTDfT7fybYoFw9vuFW0SbnORD4Y9j8GdDG9U0x9ll+cMggmyyksZSibgyPky0jIZd9+52W
+	0htIfPxgQIkqF1zy95076+JaRF1wxQO8It9j4Ch+hEUzB/qGtobQbbooz+Of3zfmBVp9BCNTCcS5f
+	oZ/fo1tAlJA8vAJQG+hv1+g2hi8sxj6JDQmpbtgP6RN9UCZa2dRfAR4rfB4nuQ/Itfbs3LLphZKk8
+	UjHJNwa39/cTltFE+yjkzF6teFeYb8PsICQ/fTQpmq2Zx1djAdWIYGQsCxAErGU/HHsafXnccJO4L
+	ocKRP2tA==;
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Damon Ding <damon.ding@rock-chips.com>
 Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 01/14] drm/bridge: analogix_dp: Return bitmask from analogix_dp_get_irq_type()
-Date: Mon, 28 Sep 2026 16:14:05 +0800
-Message-Id: <20260928081418.3605775-2-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v3 00/14] Add HPD support for Rockchip Analogix DP
+Date: Mon, 28 Sep 2026 14:02:34 +0200
+Message-ID: <3772572.AiC22s8V5E@diego>
 In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
 References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
 Precedence: bulk
@@ -59,140 +55,44 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0e714eaeb03a8kunm323e2b5437cf01
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaSUlIVkJCT0pPHx1IHkJIS1YVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	JDQ0xVSktLVUtZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=e9rUnIUnggVntlM+VCCn3Pgkdao9uZAva/eyhDYkS+mpJG9kvFVs+UQiHBHj9uanrY95E6qMpW1TWQN2yXUCRx3lCupYRaGdilL+QImZUX58j6Nf8p1gib6hDpwyGY27P3ZS378dJuT2MjFTMCcmDRplArlaJ9yRXcHWo+75Yjw=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=fTbtcGZ0NiXRdk++xUkHW9KoNxxGSWE+RUMF8C782Oc=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Analogix DP controllers support two sets of interrupts for hotplug
-detection: HOTPLUG_CHG, and the pair PLUG / HPD_LOST. The current
-driver logic relies on PLUG/HPD_LOST and does not consume HOTPLUG_CHG,
-nor does it check for INT_HPD for IRQ_HPD events.
+Hi Damon,
 
-The existing analogix_dp_get_irq_type() returns on the first matched
-interrupt flag. This causes the hardirq handler to unconditionally mute
-all HPD interrupts, including HOTPLUG_CHG and INT_HPD, creating a
-limitation for future extensions.
+Am Montag, 28. September 2026, 10:14:04 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Damon Ding:
+> Rebase after the following two patch series:
+> [0] https://lore.kernel.org/all/20260915-drm-bridge-drm_panel-cleanup-v4-=
+0-30401d9406f3@bootlin.com/
+> [1] https://lore.kernel.org/all/20260916-drm-bridge-every-panel-v3-0-83af=
+b4f1a707@bootlin.com/
+>=20
+> This series improves the HPD (Hotplug Detect) interrupt handling in
+> the Analogix DP driver to enable reliable native HPD pin detection on
+> Rockchip platforms, and introduces platform-specific HPD detection
+> schemes with fine-grained interrupt control.
 
-To prepare fine-grained interrupt handling, convert the return type
-from enum dp_irq_type to a u32 bitmask. Accumulate all pending
-interrupt flags instead of returning early, and add detection for
-DP_IRQ_TYPE_IRQ_HPD. Remove DP_IRQ_TYPE_UNKNOWN sentinel; use zero
-to indicate no pending interrupts, which simplifies code and
-facilitates future extension for additional interrupt types.
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- .../gpu/drm/bridge/analogix/analogix_dp_core.c |  8 ++++----
- .../gpu/drm/bridge/analogix/analogix_dp_core.h |  4 ++--
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c  | 18 ++++++++++--------
- 3 files changed, 16 insertions(+), 14 deletions(-)
+on my eDP panel with gpio-hotplug via the dp-connector as before, I get
+a successful display output even on boot.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 6df6963740d2..079f2f01f33b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -701,10 +701,10 @@ static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
- {
- 	struct analogix_dp_device *dp = arg;
- 	irqreturn_t ret = IRQ_NONE;
--	enum dp_irq_type irq_type;
-+	u32 irq_type;
- 
- 	irq_type = analogix_dp_get_irq_type(dp);
--	if (irq_type != DP_IRQ_TYPE_UNKNOWN) {
-+	if (irq_type) {
- 		analogix_dp_mute_hpd_interrupt(dp);
- 		ret = IRQ_WAKE_THREAD;
- 	}
-@@ -715,7 +715,7 @@ static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
- static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
- {
- 	struct analogix_dp_device *dp = arg;
--	enum dp_irq_type irq_type;
-+	u32 irq_type;
- 
- 	irq_type = analogix_dp_get_irq_type(dp);
- 	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
-@@ -725,7 +725,7 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
- 			drm_helper_hpd_irq_event(dp->drm_dev);
- 	}
- 
--	if (irq_type != DP_IRQ_TYPE_UNKNOWN) {
-+	if (irq_type) {
- 		analogix_dp_clear_hotplug_interrupts(dp);
- 		analogix_dp_unmute_hpd_interrupt(dp);
- 	}
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 4560597604ad..3f40d95757c5 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -120,7 +120,7 @@ enum dp_irq_type {
- 	DP_IRQ_TYPE_HP_CABLE_IN  = BIT(0),
- 	DP_IRQ_TYPE_HP_CABLE_OUT = BIT(1),
- 	DP_IRQ_TYPE_HP_CHANGE    = BIT(2),
--	DP_IRQ_TYPE_UNKNOWN      = BIT(3),
-+	DP_IRQ_TYPE_IRQ_HPD      = BIT(3),
- };
- 
- struct video_info {
-@@ -195,7 +195,7 @@ void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- int analogix_dp_init_analog_func(struct analogix_dp_device *dp);
- void analogix_dp_init_hpd(struct analogix_dp_device *dp);
- void analogix_dp_force_hpd(struct analogix_dp_device *dp);
--enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp);
-+u32 analogix_dp_get_irq_type(struct analogix_dp_device *dp);
- void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
- void analogix_dp_reset_aux(struct analogix_dp_device *dp);
- void analogix_dp_init_aux(struct analogix_dp_device *dp);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index c1344a3f013a..49c1961e4326 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -412,8 +412,9 @@ void analogix_dp_force_hpd(struct analogix_dp_device *dp)
- 	writel(reg, dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- }
- 
--enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
-+u32 analogix_dp_get_irq_type(struct analogix_dp_device *dp)
- {
-+	u32 irq_type = 0;
- 	u32 reg;
- 
- 	if (dp->hpd_gpiod) {
-@@ -425,17 +426,18 @@ enum dp_irq_type analogix_dp_get_irq_type(struct analogix_dp_device *dp)
- 	} else {
- 		/* Parse hotplug interrupt status register */
- 		reg = readl(dp->reg_base + ANALOGIX_DP_COMMON_INT_STA_4);
--
- 		if (reg & PLUG)
--			return DP_IRQ_TYPE_HP_CABLE_IN;
--
-+			irq_type |= DP_IRQ_TYPE_HP_CABLE_IN;
- 		if (reg & HPD_LOST)
--			return DP_IRQ_TYPE_HP_CABLE_OUT;
--
-+			irq_type |= DP_IRQ_TYPE_HP_CABLE_OUT;
- 		if (reg & HOTPLUG_CHG)
--			return DP_IRQ_TYPE_HP_CHANGE;
-+			irq_type |= DP_IRQ_TYPE_HP_CHANGE;
-+
-+		reg = readl(dp->reg_base + ANALOGIX_DP_INT_STA);
-+		if (reg & INT_HPD)
-+			irq_type |= DP_IRQ_TYPE_IRQ_HPD;
- 
--		return DP_IRQ_TYPE_UNKNOWN;
-+		return irq_type;
- 	}
- }
- 
--- 
-2.34.1
+=2D plugged in on boot - display works / reported as connected
+    - plugged out - correctly reported as disconnected
+    - plugged in again - display works / reported as connected
+
+=2D unplugged on boot - correctly reported as disconnected
+    - plugged in - display works / reported as connected
+
+Multiple plugin/plugout operations afterwards also worked nicely.
+
+So
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+
+Will do reviewing of patches now ;-)
+
+
+Thanks for working on that
+Heiko
+
 
