@@ -1,170 +1,134 @@
-Received: from mail-m49227.qiye.163.com (mail-m49227.qiye.163.com [45.254.49.227])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E66D4D4880;
-	Mon, 28 Sep 2026 13:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5D377AB9
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790603905; cv=none; b=pTbjh156YUOowWixIq4cTBp6R5UBCk1CgMoNltuQca/rBnKfXLCW7iLrFdVzgCnMkdts0LFMn22MjMaM/r34j3IUcWGRq6x0ltOIeE7Y8ikZ6uT5Mo3AVUK6raAsrKWhQ7xLFjVlKvad9vFKpRSo6/gBfU2Z0xaRGOpUXfuphaE=
+	t=1790618972; cv=none; b=uWf2wSJegszJb2/cFzBj66bpHk7vudpzefu8LFYsVFfG8rqJS8Hy1xYSO2Q6Eh8EfK6teswGy+eiU4LHe2axmyBArHaVku98/tXKRNS7tx+D08OVqbIdT+AZMI+2Iu1x8NV/sdQ2ZETTyIqxw87um006sTbLQfcBsk2p/ct7xBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790603905; c=relaxed/simple;
-	bh=uzMmhbGcunUgHE96gQ5ra+XHvPN4hFsgzpBNWL6HZ0s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e9yrJORdofmgpOoX/Nsx+foPJsfz5qfKu2pf5I+NF5u+BVOZfAszNWPqyH64mlcBPai7UApq3CBLm8IKLLZFcS0v9bTRGOFtkCZox32vjzc9V/yXTdke+ihHicnzNoK/3IxRsPxQW3w8lVwSpSP9xgsPrcu8lbaRGnHkRFHkvag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SjHYE+56; arc=none smtp.client-ip=45.254.49.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1790618972; c=relaxed/simple;
+	bh=IJl8ZLVeSLK/3tm4qT2HpxIpgkaGExTUeW/aig9VFu8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=plXADwQ5E+/qN1cL0dedGKedfcr7Fi+D2RbZgYMA6QPqwpu6LtQ5FYZsVVSmcSWmT1ZLsSHOyTsKIf5adi+/YtDV33IoE+KOyDmB6nMSJW1JvzPd04CFsX+8in5orWTy3eOjlBQBlKZ/ZnWrhRBVe78iHruzG12dyGU+hG7Q3RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PJhbHkIR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYFbVzmm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SjHYE+56"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e82;
-	Mon, 28 Sep 2026 16:15:10 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 07/14] drm/bridge: analogix_dp: Use platform-specific HPD detection scheme
-Date: Mon, 28 Sep 2026 16:14:11 +0800
-Message-Id: <20260928081418.3605775-8-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
-References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJhbHkIR";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYFbVzmm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1790618969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+	b=PJhbHkIRBFID5cswJ92776vll2KD9fgt0nDXJiPT4OZ0f/SvgmDkX8UF87Anx6/UkrWjPP
+	5fzw94ZOd6SAHBX8zdIdHM+amGsRhWyLrT6KKRv9c8ZVZev/4ilzX8ghONdSJyg4rG8uGk
+	ohi3QePa1nJcfZw2sf5/pvMfBxfM0ZE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-176-3KGmCbszPGGO_i2XYkBpRQ-1; Mon, 28 Sep 2026 14:09:28 -0400
+X-MC-Unique: 3KGmCbszPGGO_i2XYkBpRQ-1
+X-Mimecast-MFC-AGG-ID: 3KGmCbszPGGO_i2XYkBpRQ_1790618967
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-49e7631c43aso34555915e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 11:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1790618967; x=1791223767; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+        b=PYFbVzmmvZVGu/BkEygo6A2l/I0inpwH16sicqv/jgL8kEyBqZBILrYckSlQswYwiE
+         n9DSKJordvyihg7YUPiR1aJO3+eGeSnXZxDznkw2o+4URA1bUudncN4zynoFiI4GOVbJ
+         oLUsXRR2HEb7FP+KWcWE/PdX9WOmclUFC/ANinFByD720twiuaFqh3/h4qU5YRmMqh7z
+         dq3IUVcB0BkeEzksBsvq+Ki8x4sYpZdNfvWGGyGp/t+VFT1/0xGo8ptIqcCxt7PJl9Be
+         YipQYntnPiPoVuD89Ed+vGA76K6FyG1v8Mxo4z/ZGWT+MPUWoiB7fPvEJlczVqMA84Zi
+         Kc0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790618967; x=1791223767;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+        b=e2V2iCnEl4JjchJ+T9riELr2qHBoeE079SUnaGrb2s80zf7nkOu3hPkYtAwBz4zjce
+         XPZ262cLVKGk6y1CVGhI7pRHT9gcXSFzFwFApY6ukyhWb0g38SM2KdjCJVOy0nbCglQ8
+         INlZ3k+LwYZiW0haPHh3oVYyuavVVzHEpN4IzcIhyB4lEysZIoj1JDY8j//hGbiWgzoT
+         gSYW9+QOQugX45BFhKU1qDG8oDe7oncFQpjEMxvaXHOiNv5m7wsWZ2++GvrHtktbr/hD
+         wjRg02uqcL2F7lPdVpogUJ8x/9YVE6P5C7MB1UC5ih5HqgRHF4Bw/MptY68Wmmme+MK8
+         Vx6g==
+X-Forwarded-Encrypted: i=1; AKwUvBy5vr5bnFlGFgDNyUW+nVEm2NDmwqqZZRL6fxjAlAnpVjTvAVu3tCICocYW/ce0rQ3iw20P6pi5Pt2rmbrt7nva6A==@vger.kernel.org
+X-Gm-Message-State: AFuF++mvwqmnpahpkuAZwv4CAr8GBp8bsM0JXQtZyxG+aBSJnyqHomP/
+	XbQUxqt0iDU0KP12HSaIY1diNL95TlewoVcAR80WGpIZbzq2VVrjWqTHvLWx28w41koGU/8Zw20
+	Cc4TgSilyt5fhJ6LUvaFJSfuRim+evAIc6f4AVMQGOGx2unyUG6GfENXSUnv+3qbO0H2zQKuo
+X-Gm-Gg: AYBFou39s35vehmKriUHtoVdp0QiVnEmlwgGL9h30cr/X9L/17d7lIgGnbHRMDuiVjH
+	KIicRUxnHVAqEAyoeu66bvQ+84xhxigRSDj5oijgjX5axgiO6oGohyYMVcNjBWeC/02nWyjlMni
+	fUF5fX56ppOOz4diStfyVTTzoFH3z+t6CuSp2k4LvarnS+JjTpgrz9WjVD1A3LW6ImF/PPTtvdS
+	mNnNAC+Jg9jlHzqyBQ4Vx/Erh7d8qoXfULe1xmi391Fl0QOPVknaihlF7BVpHOKry0PkcRdLYMj
+	c0nvY+rr1om7vyM/3p95QnvBvgjXWhv1A3C31mWQNO0tSONO5u1Hu02vJAg+S1HoZZXDpn3TNN5
+	r7QiWKbdmUwEZutSzJnUEs1n2Qg3wlcVoyisnTBPIGYnPdEKb54qEb7PIljYFq+QHEg==
+X-Received: by 2002:a05:600c:1389:b0:49f:dcc8:c735 with SMTP id 5b1f17b1804b1-49fe66f4c7dmr231739815e9.18.1790618966869;
+        Mon, 28 Sep 2026 11:09:26 -0700 (PDT)
+X-Received: by 2002:a05:600c:1389:b0:49f:dcc8:c735 with SMTP id 5b1f17b1804b1-49fe66f4c7dmr231739375e9.18.1790618966445;
+        Mon, 28 Sep 2026 11:09:26 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a00d10cb7dsm3533065e9.0.2026.09.28.11.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 11:09:25 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, jfalempe@redhat.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, jani.nikula@linux.intel.com, Alexander.Deucher@amd.com
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, sashiko-reviews@lists.linux.dev, Thomas
+ Zimmermann <tzimmermann@suse.de>, Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: [PATCH v4 1/2] drm/fbdev: Move fbdev module parameters next to
+ module init
+In-Reply-To: <20260928080323.23909-2-tzimmermann@suse.de>
+References: <20260928080323.23909-1-tzimmermann@suse.de>
+ <20260928080323.23909-2-tzimmermann@suse.de>
+Date: Mon, 28 Sep 2026 20:09:23 +0200
+Message-ID: <xlv133utfdt8.fsf@fmartine-thinkpadx1carbongen12.rmtes.csb>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0e715079203a8kunm323e2b5437cf46
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTBpJVh9LTx9ITkxOS0hMGVYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	JDQ0xVSktLVUtZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=SjHYE+56N6njEMERlvA7CzIvvttQUj+1DqOl5N+7vYVCDHNks5/VwpLpJwipHXqLp27AMonjVyXtHBUV3JDbbesPg/M4G2sKJZjfQHq5QmuDyiVDEkhjX4WiYzH86vsGeQUUX2JJ8bcBXKZSs3ByfXFgNYt7AO4aiDq4aNMr7dA=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=7ov5ZAWTee/V9ZBPtOKDaozcrk5oFd5f7m81BucbP6I=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain
 
-The Analogix DP controller provides two sets of interrupt sources for
-hotplug detection: HOTPLUG_CHG for any HPD level change, and the
-PLUG/HPD_LOST pair for connect/disconnect transitions respectively.
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-On Rockchip platforms, configure the HPD deglitch filter and use
-HOTPLUG_CHG interrupt for hotplug detection. Other platforms retain the
-original PLUG + HPD_LOST scheme with unchanged deglitch values.
+Hello Thomas,
 
-Move the HPD deglitch configuration into analogix_dp_reset() so that
-platform-specific values are set alongside the existing register
-defaults in a single location. Update the threaded IRQ handler to check
-the corresponding interrupt flag based on platform type.
+> Define the parameters for fbdev emulation in the source file with the
+> module-initialization and exit code of drm_kms_helper.ko. The parameters
+> control some aspects of DRM's fbdev emulation. Common usage looks like
+>
+>   drm_kms_helper.drm_fbdev_overalloc=200
+>
+> on the kernel's command line. This has been possible for many years
+> and changing it would likely upset users.
+>
+> The emulation code is supposed to be moved into the module for DRM
+> clients. Keeping the parameters in drm_kms_helper.ko avoids breaking
+> systems the use them in the way described above.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+> ---
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
----
-
-Changes in v2:
-- Move ANALOGIX_DP_HPD_DEGLITCH_L/ANALOGIX_DP_HPD_DEGLITCH_H configs to
-  analogix_dp_reset().
-
-Changes in v3:
-- Modify the commit msg.
-- Replace macro HPD_IRQ with HPD_IRQ_ALL.
----
- .../drm/bridge/analogix/analogix_dp_core.c    |  9 ++++++--
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 22 ++++++++++++++++---
- 2 files changed, 26 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index f88e3263ba0e..287fc16125ef 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -714,13 +714,18 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
- {
- 	struct analogix_dp_device *dp = arg;
- 	u32 irq_type;
-+	bool hpd_detected;
- 
- 	irq_type = analogix_dp_get_irq_type(dp);
- 	if (irq_type)
- 		analogix_dp_clear_hotplug_interrupts(dp, irq_type);
- 
--	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
--	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
-+	if (!dp->hpd_gpiod && analogix_dp_is_rockchip(dp->plat_data->dev_type))
-+		hpd_detected = irq_type & DP_IRQ_TYPE_HP_CHANGE;
-+	else
-+		hpd_detected = (irq_type & DP_IRQ_TYPE_HP_CABLE_IN) ||
-+			       (irq_type & DP_IRQ_TYPE_HP_CABLE_OUT);
-+	if (hpd_detected) {
- 		dev_dbg(dp->dev, "Detected cable status changed!\n");
- 		if (dp->drm_dev)
- 			drm_helper_hpd_irq_event(dp->drm_dev);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 0f1406e4a5d3..025da25463a8 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -160,8 +160,13 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
- 	writel(0x0, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
- 	writel(0x0, dp->reg_base + ANALOGIX_DP_HDCP_CTL);
- 
--	writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
--	writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
-+	if (analogix_dp_is_rockchip(dp->plat_data->dev_type)) {
-+		writel(0x80, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
-+		writel(0xbb, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
-+	} else {
-+		writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
-+		writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
-+	}
- 
- 	writel(0x10, dp->reg_base + ANALOGIX_DP_LINK_DEBUG_CTL);
- 
-@@ -188,7 +193,18 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
- 
--	analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
-+	/*
-+	 * Either HOTPLUG_CHG interrupt or PLUG + HPD_LOST interrupt
-+	 * pair can be used to implement hotplug detection.
-+	 *
-+	 * On Rockchip platforms, configuring HPD deglitch to 2ms and
-+	 * using HOTPLUG_CHG interrupt for hotplug detection is proven
-+	 * as a better solution via engineering verification.
-+	 */
-+	if (analogix_dp_is_rockchip(dp->plat_data->dev_type))
-+		analogix_dp_unmute_hpd_interrupt(dp, DP_IRQ_TYPE_HP_CHANGE);
-+	else
-+		analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
- }
- 
- /*
 -- 
-2.34.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
