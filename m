@@ -1,197 +1,151 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mail-m127162.xmail.ntesmail.com (mail-m127162.xmail.ntesmail.com [115.236.127.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B3D48C41A;
-	Mon, 28 Sep 2026 08:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4139948F01D;
+	Mon, 28 Sep 2026 09:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790585510; cv=none; b=V6mtUz9SCdMIlc9jTZmlI+ntfpYQm+LB2iO1VsndpuQy/QGfphP//iTabDLjmEh3P+ZUUafRlW1IsbQN24+iInqoN1WBjJv7YG+oX9GYk3KvWoLbO+kriRqyubzuSiA/mOkB4lp5DvplUiD82ZHttezf0dNDhokExgA6hf3KUzk=
+	t=1790587851; cv=none; b=W5Yl4EavYezCVHWShnTe3obch+JiPXksbsKeXGvXpKrjCyblKx6WftOG6er8dmmbQxArBNJ9csfa46WJJUbSeZCvxmUYQzMxhf4UlmK0HX/l+AmjI3i0CUpku0gK0JKJcwt0Dt7z/eYr1K5HWtUVHJ1uvGzJ84ROSozC+rnfGxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790585510; c=relaxed/simple;
-	bh=3vZcqVmSQEMWNm/6wA8Q5+WJp4wzHqrnz/xnjrdBwVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJpwdHuk0UfzCGtV5th5BWWV0BAPvq+F6K2qqXehgH5OVZAa+hhDNJROwisKL8QL/fZCJJiUVVsA3xglCe9jifwgQ6WOzMi6yuz4EHiYdQoC3rctXbqoWNqKKqDcD7JKbSec69lm4HcT2QcutBC6xGR1CrF5tkl4gKQdgjQUJQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMEynwQy; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790587851; c=relaxed/simple;
+	bh=QfxPITENy2U6ojm7wIy6exXOKnlaV3obKxwLB4O4yJw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EPJOIryaCmgpVWglKcZ3sUGJGw7M4yyElHBUZElASe7/i5M3XgUvwWgWGLJaCnMcxvJJwmdzarouNdLALcFjf7mLHI9zn6ILsm6em/a7TotxuME2BxBSuK1KlCxNjDZQsok0Z8qg8qEFpUchaIYEJzMqFIJBfZ9GKws3j51Nqfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Wfr60wMv; arc=none smtp.client-ip=115.236.127.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMEynwQy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790585508; x=1822121508;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3vZcqVmSQEMWNm/6wA8Q5+WJp4wzHqrnz/xnjrdBwVI=;
-  b=QMEynwQyTtzcaiRIlAhRfZYc/pTF1W/Aa4dzt+ZC5HNA917T+jOavITE
-   3KBC3c+cfSvR3yGUUGWdN0Gyf/TF5IhvSOhkmkPkEkNsd4fMqYdTWHrNJ
-   kfc8Lk94Sg0rR8+g8TLEfJFqgFy8SFTI2QlNEOkhC4JNK3B2zFyUFwQ+J
-   LxWCim3GgpwgxKmIaYyX6EZqlPRCKvHj/CEAoLH8RNz976l2rywFTIhqP
-   tbFs8Xd+wPrZtqxTmXn5q8yICKMEdyvvhc16i/nDWK5kAbiRE2iBXvJi5
-   b6Xf+DAQgOlSs3E9PMWBoRU4NWh88ZhcpudN4iznzzlf08pmTuBLkC3AF
-   w==;
-X-CSE-ConnectionGUID: 6n6ZwcuqTL6Q4U1tN9TxtA==
-X-CSE-MsgGUID: iii3wMnYQUKMdoXx28XDdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="90406437"
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="90406437"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:51:47 -0700
-X-CSE-ConnectionGUID: /8MRxcd/TbC4s+EB6M7Flw==
-X-CSE-MsgGUID: lQNZ3QzeRLW2dSSQDoL8wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="301275483"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.42])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:51:39 -0700
-Date: Mon, 28 Sep 2026 11:51:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Frank.Li@oss.nxp.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Wfr60wMv"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e5f;
+	Mon, 28 Sep 2026 16:15:05 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Cunhao Lu <1579567540@qq.com>, Frank Li <Frank.Li@nxp.com>,
-	Raul E Rangel <rrangel@chromium.org>, Moteen Shah <m-shah@ti.com>,
-	Kendall Willis <k-willis@ti.com>, Dhruva Gole <d-gole@ti.com>,
-	Matthias Feser <mfe@kbsgmbhfr.onmicrosoft.com>,
-	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
-	Karl Mehltretter <kmehltretter@gmail.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Zhaoyang Yu <2426767509@qq.com>, Kees Cook <kees@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>,
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-	vkoul@kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] serial: use dmaengine_get_dma_device() instead of
- chan->device->dev
-Message-ID: <aroqmVWSPd9YVDjM@ashevche-desk.local>
-References: <20260925200850.1678179-1-Frank.Li@oss.nxp.com>
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v3 03/14] drm/bridge: analogix_dp: Add IRQF_ONESHOT and simplify IRQ handling
+Date: Mon, 28 Sep 2026 16:14:07 +0800
+Message-Id: <20260928081418.3605775-4-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
+References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260925200850.1678179-1-Frank.Li@oss.nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa0e714f49203a8kunm323e2b5437cf1f
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCSUlOVkIaSUpNGB4ZGEsaQ1YVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
+	9PT0hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Wfr60wMvG2J8qXhOo+zFzALi2vXZTHnXnItUIGi80sunqP3uXezqTn20pSNXseZJpW14EPUORahf2X8lmgkjMQy2T0E3haipumge3QtefnLqRgtXcBC66qN5HZikwDMj0wARqUkZXwgFCjtPTlDh5i1Tyse4Ml1PBRn1DthkrPU=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=TeGRKIo9zN3ch77zMT+V+rC/6To7Yk8YMsagDBLa1v4=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Sep 25, 2026 at 04:08:30PM -0400, Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
-> 
-> Replace direct dma_chan::device::dev access with the proper
-> dmaengine_get_dma_device() for consumer API
-> 
-> chan->device->dev is not always the device used for DMA mapping.
-> Some DMA engines support per-channel IOMMU mappings, so different
-> channels may use different DMA devices.  dmaengine_get_dma_device()
-> returns the correct device for each channel.
-> 
-> This also prepares for making the DMA engine provider data structures
-> private. DMA consumers should not access DMA engine internals directly.
+The threaded IRQ is requested without IRQF_ONESHOT, allowing hardirq to
+preempt the threaded handler. This creates a read-modify-write race on
+HPD interrupt mask registers between the hardirq mute and thread unmute
+operations.
 
-...
+Add IRQF_ONESHOT to keep the IRQ line masked during thread execution,
+which eliminates the race and makes the per-event mute/unmute calls in
+hardirq and thread handlers redundant. Move interrupt status clearing
+to the beginning of the threaded handler, before
+drm_helper_hpd_irq_event(), to avoid losing events that arrive during
+the event handling.
 
->  	/* RX buffer */
->  	if (!dma->rx_size)
->  		dma->rx_size = PAGE_SIZE;
->  
-> -	dma->rx_buf = dma_alloc_coherent(dma->rxchan->device->dev, dma->rx_size,
-> +	dma->rx_buf = dma_alloc_coherent(rx_dev, dma->rx_size,
->  					&dma->rx_addr, GFP_KERNEL);
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Now one parameter can be moved up and positive outcome the split becomes logical
-(on a logic boundaries).
+---
 
->  	if (!dma->rx_buf) {
->  		ret = -ENOMEM;
+Changes in v3:
+- Split out a separate commit to improve the return value checking for
+  &analogix_dp_device.irq.(Sashiko)
+---
+ .../gpu/drm/bridge/analogix/analogix_dp_core.c  | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-...
-
->  	/* TX buffer */
-> -	dma->tx_addr = dma_map_single(dma->txchan->device->dev,
-> +	dma->tx_addr = dma_map_single(tx_dev,
->  					p->port.state->port.xmit_buf,
->  					UART_XMIT_SIZE,
->  					DMA_TO_DEVICE);
-
-You can fix indentation while at it.
-
-> -	if (dma_mapping_error(dma->txchan->device->dev, dma->tx_addr)) {
-> -		dma_free_coherent(dma->rxchan->device->dev, dma->rx_size,
-> +	if (dma_mapping_error(tx_dev, dma->tx_addr)) {
-> +		dma_free_coherent(rx_dev, dma->rx_size,
->  				  dma->rx_buf, dma->rx_addr);
->  		ret = -ENOMEM;
-
-...
-
->  	/* Release RX resources */
->  	dmaengine_terminate_sync(dma->rxchan);
->  	dma->rx_running = 0;
-> -	dma_free_coherent(dma->rxchan->device->dev, dma->rx_size, dma->rx_buf,
-> +	dma_free_coherent(dmaengine_get_dma_device(dma->rxchan), dma->rx_size, dma->rx_buf,
->  			  dma->rx_addr);
-
-And here the last parameter of the previous line can be moved to the next line.
-
-...
-
-> +	db->buf = dma_alloc_coherent(dmaengine_get_dma_device(chan), PL011_DMA_BUFFER_SIZE,
->  				     &db->dma, GFP_KERNEL);
-
-^^^ (1)
-
->  	if (!db->buf)
->  		return -ENOMEM;
-
-...
-
->  {
->  	if (db->buf) {
-> -		dma_free_coherent(chan->device->dev,
-> +		dma_free_coherent(dmaengine_get_dma_device(chan),
->  				  PL011_DMA_BUFFER_SIZE, db->buf, db->dma);
-
-Perhaps you want both (1) and this be consistent, either (1) be rewrapped,
-or this one
-
-		dma_free_coherent(dmaengine_get_dma_device(chan), PL011_DMA_BUFFER_SIZE,
-				  db->buf, db->dma);
-
->  	}
-
-...
-
->  	struct pch_dma_slave *param = slave;
->  
->  	if ((chan->chan_id == param->chan_id) && (param->dma_dev ==
-> -						  chan->device->dev)) {
-> +						  dmaengine_get_dma_device(chan))) {
-
-Even original code has broken indentation. What about rewrapping it?
-
-	if ((chan->chan_id == param->chan_id) &&
-	    (param->dma_dev == dmaengine_get_dma_device(chan))) {
-
->  		chan->private = param;
->  		return true;
-
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 27c9a764e25f..974be5b702dc 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -704,10 +704,8 @@ static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
+ 	u32 irq_type;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+-	if (irq_type) {
+-		analogix_dp_mute_hpd_interrupt(dp);
++	if (irq_type)
+ 		ret = IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return ret;
+ }
+@@ -718,6 +716,9 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 	u32 irq_type;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
++	if (irq_type)
++		analogix_dp_clear_hotplug_interrupts(dp);
++
+ 	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
+ 	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
+ 		dev_dbg(dp->dev, "Detected cable status changed!\n");
+@@ -725,11 +726,6 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 			drm_helper_hpd_irq_event(dp->drm_dev);
+ 	}
+ 
+-	if (irq_type) {
+-		analogix_dp_clear_hotplug_interrupts(dp);
+-		analogix_dp_unmute_hpd_interrupt(dp);
+-	}
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -1474,10 +1470,11 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 		 * that we can get the current state of the GPIO.
+ 		 */
+ 		dp->irq = gpiod_to_irq(dp->hpd_gpiod);
+-		irq_flags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_NO_AUTOEN;
++		irq_flags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_NO_AUTOEN |
++			    IRQF_ONESHOT;
+ 	} else {
+ 		dp->irq = platform_get_irq(pdev, 0);
+-		irq_flags = IRQF_NO_AUTOEN;
++		irq_flags = IRQF_NO_AUTOEN | IRQF_ONESHOT;
+ 	}
+ 
+ 	if (dp->irq < 0) {
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
