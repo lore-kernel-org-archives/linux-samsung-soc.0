@@ -1,187 +1,80 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE695463B9B;
-	Mon, 28 Sep 2026 08:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFDA37E5D4;
+	Mon, 28 Sep 2026 08:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790582645; cv=none; b=kZpqo7tYnd01lQTmXTwhv9mcr6Hhn0yZiNO+7j1+enMJRzyaoZjUQ2iIxmN1umobj8yrf+ClRdM/IOoguTMwNxvIKZmeDRWrPDMnq2/vW8OMFp5/SIRbJz9jGjTXz42THtkeaylBZwHFPM7JG2Taa30u5JbPdkAcHtl/J/hWtQw=
+	t=1790582812; cv=none; b=IFenQMEmXW57cu4+gnJPTYY9n/abUxWxFwXG9QmpWOVhwgBs8zE4ITC3CXNtpWVDduwi0nr75L9zsG0u1i9A+gTZpShD+yfEus+Wfwq739fykhkbUb+/hKko/o3aTKTjBMzgLWuwSp0nULtJaBl0FchEaQ6b7ky1chJlw5aO3Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790582645; c=relaxed/simple;
-	bh=cDsEDNjEIYcEnME7cLX5m2CT7mKhz7oYRCxANgcsenQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e7Jhb9sa2XBifKqu3qqxYcKcaLxVWFEkKfCHzFq8izV1aPmvk17nCbU5ajWmqszKb3Yk8cB6yfPz8SKQNuL9Qt2F5tZCP7yF3P7BkYjcx9pilAlH08eAslghz+ZMn02sJccg/SrOpv0pn8td08eOL+9hvpZGGXrQ9hcmDDO5QzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1ua2sRpc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=52CrCdTu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qAf7ExlU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qPraS+eD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1790582812; c=relaxed/simple;
+	bh=4vwtqCyUiKV43egwYrfwH/FgklQDsPaRT2gJsJdKh5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNv5171tHBF5IfO5iNqkZQVwJkuYb1A89Fki4Y7HSKu6UvIa5xRw0K6YM+QpqWjkDT7aQrB073XnLC/zcJOLd4uKHQDW6fSqGO9M/re2u7ChP0VMPvquczutY+MD1vjjvvnzXY0MJ8iQza7AApgC/RJ3HY/VFcdypYb9O/bs6BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbeF3uiC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1ua2sRpc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="52CrCdTu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qAf7ExlU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qPraS+eD"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3F02C22261;
-	Mon, 28 Sep 2026 08:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1790582614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=kmYVfCKDkAd4SbCiRkHNFQwJCnqKJd6ox50FWhc42Yg=;
-	b=1ua2sRpcqIDd0Oijf+IF02cBKLPxqxj5tmuxhcCEQO+s6VIGoN/tV2gKgagRDlN0zrHoU3
-	LWQcHEdIufpabOYDqrUPqBZREUeBfSR6U/nzCHncp1Hv7bxfe09x68FzuJF/Haww5D9sal
-	NzksfVa1fNVBtrCcTDKl+VgfASf9zuQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1790582614;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=kmYVfCKDkAd4SbCiRkHNFQwJCnqKJd6ox50FWhc42Yg=;
-	b=52CrCdTuknPBq2KMST9yyDXVP+bv0PB+Xx0tMYmfF7xfcxPDshquuGrD+r1R47U8GnV+ju
-	uvj89sH0wnXlL7Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1790582610; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=kmYVfCKDkAd4SbCiRkHNFQwJCnqKJd6ox50FWhc42Yg=;
-	b=qAf7ExlUyrNUcSjyDnTOUXS9apNmnZBOjeefhQD1qLdL/CcFIcXfgGxhj9qbOc4kmQifbf
-	at6GqXjinwuaY3UFe5rLNcLHzEFgORFoIsOsFIM+r5OoTp82prGkxyMZfYeiY9Rv9US3rU
-	jK+4Nm2G0OoqJefHqWA7RZDnuzX6nrM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1790582610;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=kmYVfCKDkAd4SbCiRkHNFQwJCnqKJd6ox50FWhc42Yg=;
-	b=qPraS+eD7dKSEWR2Xe0in4GJ1jZ762mYQ2OGg/nZd0KMRWaiPjOWc8fcE+hcLZzot+WvdR
-	xeJ2+PejIm/4YBAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 748EF133F1;
-	Mon, 28 Sep 2026 08:03:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LwPoBFEfumpBYQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 28 Sep 2026 08:03:29 +0000
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: jfalempe@redhat.com,
-	javierm@redhat.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jani.nikula@linux.intel.com,
-	Alexander.Deucher@amd.com
-Cc: dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	sashiko-reviews@lists.linux.dev,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v4 0/2] drm/fbdev: Move helpers to clients/ subdirectory
-Date: Mon, 28 Sep 2026 10:01:23 +0200
-Message-ID: <20260928080323.23909-1-tzimmermann@suse.de>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbeF3uiC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D4E1F000FF;
+	Mon, 28 Sep 2026 08:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790582810;
+	bh=ZDcqyyxfoB2phhYAUptIB1AuIJCG0bYrwp8n7NiGAXU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GbeF3uiC7F68XfE+smZpoGDufvzhVa7da72pazv7dSObq+MyMa/CFM9SEZTkq61Y/
+	 DP6tUYx5aG/foBSuSWxS8Z7pPrgPpAcM3OgIre54/R6EkRTL8Tkr5mQ7M6brcFVGOx
+	 0kPl4mXUbDw2bRJ2kQ3M94BXTAEYQJIXwg2Nen7qkPH7TGiUT5uDaP9cOsS9zIyVdG
+	 liN7Xpb6J5Z7nw8r6pOQ7LXlI/j3yHUmq0lajyeJfuPin0Ndt4MS5h6MsEPM/CBaH4
+	 kPlwqMj1z1g1tOPxzTK9VuvSxyBqmtX3hA9oKDbNNeQTVHgue2UfYxRLVcuwTSRuLE
+	 5+kKZ2GAhBjfA==
+Date: Mon, 28 Sep 2026 10:06:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexandru Chimac <alex@chimac.ro>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: Require clocks for
+ Exynos9610 pinctrl nodes
+Message-ID: <20260928-dynamic-durable-rook-1be9bc@quoll>
+References: <20260922-exynos9610-pinctrl-patch-v1-1-f6d816696591@chimac.ro>
+ <d679c0e9-febe-4069-9c2f-a2173a5218aa@kernel.org>
+ <1343593353.60484.1790180095661@app.mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,amd.com];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLq3cifbxyhc6qbbynzfc6amns)];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1343593353.60484.1790180095661@app.mailbox.org>
 
-Helpers for fbdev emulation are still linked into drm_kms_helper.ko,
-which is for mode setting. Move the source and header files to the
-clients/ subdirectory and link them into drm_client_lib.ko. This has
-some fallout throughout drivers, but it's all trivial.
+On Wed, Sep 23, 2026 at 07:14:55PM +0300, Alexandru Chimac wrote:
+> Hello!
+> > On 09/23/2026 5:58 PM EEST Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > 
+> >  
+> > On 22/09/2026 14:15, Alexandru Chimac wrote:
+> > > All Exynos9610 pin controllers (except PINCTRL_TOP) have clocks assigned
+> > > to them, so force the nodes to have clocks assigned to them.
+> > > 
+> > > Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+> > > ---
+> > > Most Samsung Exynos9610 pin controllers (except TOP) have clocks
+> > > designated for them, so allow the device tree node to include clock
+> > 
+> > I don't understand above. It's contradictory to commit msg which says
+> > ALL. Here you say most.
+> > 
+> 
+> On Exynos9610, only TOP pinctrl doesn't have a clock (as far as I'm
+> aware; haven't found a clock for it), while the rest of the pin controller
+> blocks do.
 
-There are 3 module parameters to drm_kms_helper.ko that control fbdev
-emulation. For compatibility with existing installations, leave them
-in this module.
+So how is it supposed to work if you require clock also for TOP pinctrl?
 
-v4:
-- fix the depedendencies from v3
-v3:
-- remove obsolete dependencies from Kconfig
-v2:
-- update armada and docs
-
-Thomas Zimmermann (2):
-  drm/fbdev: Move fbdev module parameters next to module init
-  drm/fbdev: Move fbdev helpers into client library
-
- Documentation/gpu/drm-kms-helpers.rst         |  6 +--
- drivers/gpu/drm/Kconfig                       |  7 ++--
- drivers/gpu/drm/Makefile                      |  1 -
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   |  2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c       |  2 +-
- drivers/gpu/drm/armada/armada_fbdev.c         |  2 +-
- drivers/gpu/drm/clients/Makefile              |  3 +-
- drivers/gpu/drm/clients/drm_fbdev_client.c    |  2 +-
- .../drm_fbdev_helper.c}                       | 34 +---------------
- drivers/gpu/drm/drm_crtc_helper_internal.h    |  9 +++++
- drivers/gpu/drm/drm_fbdev_dma.c               |  2 +-
- drivers/gpu/drm/drm_fbdev_shmem.c             |  2 +-
- drivers/gpu/drm/drm_fbdev_ttm.c               |  2 +-
- drivers/gpu/drm/drm_kms_helper_common.c       | 39 +++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |  2 +-
- drivers/gpu/drm/gma500/fbdev.c                |  2 +-
- drivers/gpu/drm/i915/display/intel_fbdev.c    |  2 +-
- drivers/gpu/drm/msm/msm_debugfs.c             |  2 +-
- drivers/gpu/drm/msm/msm_fbdev.c               |  2 +-
- drivers/gpu/drm/nouveau/dispnv50/disp.c       |  1 -
- drivers/gpu/drm/omapdrm/omap_debugfs.c        |  2 +-
- drivers/gpu/drm/omapdrm/omap_fbdev.c          |  2 +-
- drivers/gpu/drm/radeon/radeon_device.c        |  2 +-
- drivers/gpu/drm/radeon/radeon_fbdev.c         |  2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c   |  2 +-
- drivers/gpu/drm/sitronix/st7571.c             |  1 -
- drivers/gpu/drm/tegra/fbdev.c                 |  2 +-
- drivers/gpu/drm/vboxvideo/vbox_mode.c         |  2 +-
- .../drm_fbdev_helper.h}                       |  4 +-
- 29 files changed, 79 insertions(+), 64 deletions(-)
- rename drivers/gpu/drm/{drm_fb_helper.c => clients/drm_fbdev_helper.c} (97%)
- rename include/drm/{drm_fb_helper.h => clients/drm_fbdev_helper.h} (99%)
-
-
-base-commit: ff831af91674990f9f1814340860e96943d5df1a
-prerequisite-patch-id: c67e5d886a47b7d0266d81100837557fda34cb24
-prerequisite-patch-id: a5a973e527c88a5b47053d7a72aefe0b550197cb
-prerequisite-patch-id: b9adc9622920a3e70168e672c2c92795b3e3a106
-prerequisite-patch-id: 5030de433a01c2e99056cadb676a8e2ba35f055a
--- 
-2.55.0
+Best regards,
+Krzysztof
 
