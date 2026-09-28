@@ -1,79 +1,107 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD0A40B36D
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 07:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27713344DAE;
+	Mon, 28 Sep 2026 08:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790581671; cv=none; b=u8n5Jl4E5pPvdAE3F5MFlgbsfAbkhFhbYtp3D+EhZ3kAIVIz8q94hLPXULmKPeqvUU2RS3QKNCwPYzTVu+e+fMIw1h4JW7Dio+7eK3lBj7iwskBwXYq0dj9qUioHQ6l58kOklK6r2Jfbw6hgEQqGjxTvvm2ZTkCUPXrFEi1b2TQ=
+	t=1790582623; cv=none; b=RJEhWsU02Dx9z08l1BSo8m92sgWUhgQm2Zf/whUs6hfUYZ0PH/Yh1S2iR1o+tSiZFLSanNCKY0IezZ8JxxXkEHAcHHnS0CphRBoj2BCyIqqgMuSqmFl85bFkWXzApGfClBY8q0Ss/FkxtNu0VPHNCmlhyNWm5fJxElHPKblJ1Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790581671; c=relaxed/simple;
-	bh=fiMLttTfalhCTAYlHNGOdhisfxhBpO88GtQc6y2H3dE=;
+	s=arc-20240116; t=1790582623; c=relaxed/simple;
+	bh=Z3USjdlKI3EVMweaoe1SdyP2tejeJRK6vjJLDfi+7mM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IeM7fTY9PxW2vN97GRt1hFXNn6yrdNtKn8oRMv2gauiujFrZHukEA+kb5fUZgyfiIrqJCSFPmwi5EknQE0EsA1tlGO0y0lYiKaTF+ZhDiPmG+DafH6bKHiCHboiCsdGfm5b9VtsC+qelKdVR1ZSLagoV+lPGEQGTeEhcSK6r1UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyuUziL5; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version; b=kgZ6t5j/SLRFltlrbfHEkKGhxh9V5huv9naOPcHgC6mDS1mvwLiM4PNUytddPGsJV8SCrKPu4WfgbyRoYNn79RL5zkjkYfa5PYu+t53xSEV1IgEljD1bPm2CNyqKA0SfmqXrSKNZykBObCI+M329DqGF3cvB6piNskWft2l22Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GXXhTurq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sJ8mYUFP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aWsBPFXL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q8YhD5li; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyuUziL5"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d391aso19195645e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 00:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790581667; x=1791186467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=wAmEOBD3v0bnVlYcFrfguXtEbxOwMvuvxDB7riQNPhw=;
-        b=UyuUziL53Jh/NI9XmkFhvmTFCgjoO+za1rYZaWX2Cdvs3jGYeb0OuWUgjcWT67UurX
-         //4solEEw9Dx0wC0r/NkVD+mbfS/LOXu2ATiwdvH0wy7bLgRpoQu0/9CYjkrJ5/xa1XD
-         1JDCIRpPj5N/scpn884kLEnJWyA5Cbgxi3MQoi03K8k0Q5smPURG+NUjTGkSw2bwXn4q
-         +xUFnO+PWdyi9PO5n2L23vchOfS862XF2H+WAjyJHJD+DPaWa39QmpGei0ARfsjP1Nb+
-         yHaM6U2782UhxQWZ+vxkNjEvkr6iAzjjkCVhIBDSvUrzu36OO//VQr04USajcyMnLC8z
-         Puxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790581667; x=1791186467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wAmEOBD3v0bnVlYcFrfguXtEbxOwMvuvxDB7riQNPhw=;
-        b=Wv2DkmFJgN22RU7WH4bWQBVy3xusf/B+xFOIdrymJEoAR+gTaEmDWZKuYvFCDe0xpf
-         yaB+d/8NGz7EhoLgCvyAG/jaTbezqQKG4VA2f/IwNE8WQPmkAUQnCeHh01KWIO3G1/lp
-         e7C6Rf5/k6ZRVg8FPJNV8/0NyXQjaCoWP5bM+fxnXgemc5MaR9UTo3yTKoO21AGTRG3g
-         yv1zHIfLtw1WW7I6wI63YaYNmvC9hMG0Jsjhc0cdOf6W6hwFvmvWERcdQ3U7gN2HOe4g
-         +NUbzQiHLyu7aTEJiqXDG5itl0UyvZniPAXJs+oSl2A+LgCn8aZ2roSa/pzFF7RCncMK
-         s+GA==
-X-Forwarded-Encrypted: i=1; AKwUvBzxaHPUKiNBb/WCRtEtGaNCsBwqR/a3GeEn8BLB8WSXhxmSx/lbbBse1aLNEsSnAUwnCmDkPA7ADyev5osMpj3x3g==@vger.kernel.org
-X-Gm-Message-State: AFuF++lIqk6JjpAVk7hyxzRUBVSwaC8S6QqnyzBlRJBPger+fsk60Kcc
-	v2m+f5H01i4H+F7iPoV7qUXjOQi9bLd8nexivHbEYkHkBMZqJjkEzzOd
-X-Gm-Gg: AYBFou0iPcA/NbhzC4ixi5wCYF2P6M1ifbsxmjLmUPooQvcZ4IAmANTYHIT+qoYU+Uo
-	Wx8TdxIRC3WLUwzF+bXjkAx6dyRBCIIh01HlbuiLne9ruCElj960U1+YNNi6R8q2263yAkR2Tyr
-	yFY4fQb6UG2RZyb3NLXvz1Ft2F3RlNW/8pDNODabiOvv2CKO9I4VHYLOm1xYI1BMxDVRYi6wz/d
-	fPomgDG5JK/u1PmGs0xoPkM15pcF5mIM+W1x6Qi5OmqlNY+yFz7VQ4hVYJz/Ratg8nJPSnYmVvK
-	kFYEPAj0BlUMQzcyVjxVrgsy25XAsDf1nOJPtMbfML3WwMalmVMoQ/86ijgEsXwIG5h89eY2iPx
-	z/rgS4xKrijTw0l04TQE7wmwJYURhFcxipLG8PRVV6eiXGMGEnDB4rQr94Io3hdm5gre+f2KRq8
-	yls+TOGHKxinjgkcxSb8bcQQQvSdzDpfUaTMHLwcjBaKpbPfyK5zGxACfBUB96SW3rCSMnTGET2
-	bK1l1DmGm7hFFfEplBPZ3e5lgLqF33gqrQUgbHKrLVLyB/JDCa2mUJIQg==
-X-Received: by 2002:a05:600c:8b71:b0:4a0:328:43df with SMTP id 5b1f17b1804b1-4a0032847fcmr36162805e9.21.1790581666994;
-        Mon, 28 Sep 2026 00:47:46 -0700 (PDT)
-Received: from localhost.localdomain (host-081.salzburg-online.at. [213.153.56.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a64ef3asm25817668f8f.30.2026.09.28.00.47.45
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 28 Sep 2026 00:47:46 -0700 (PDT)
-From: Ginger Li <ginger.jzllee@gmail.com>
-To: s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GXXhTurq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sJ8mYUFP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aWsBPFXL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q8YhD5li"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C0A1D20084;
+	Mon, 28 Sep 2026 08:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790582614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=GXXhTurqn0eNGRiIbqULarONeNwsLXEHbtCFaCmbh5F5I7N62lMfcyQrqqOzAjgyNVAWCt
+	3zfrLw79iHSbgAKumtZ5MIvdm1l0v+apO1ShDmA6lQ2UK8jJdnsxeZD3R0fhAX4M7Z4eZJ
+	7MeEHmnEJV6qnodW7RwlxhdvYyphw3E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790582614;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=sJ8mYUFPoYV34sERWc4q0aqS+frf9qgcSFeuHXnPvsKFZpKTNulL8dXTvke3c/KzKCz9FI
+	kPVy44nSZwy/VdAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790582610; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=aWsBPFXLA45uA8dIR+Fk1L65MT0WfnhL7Ux3uvyBG4UEeMik66UH5qZBdMerwiMLHTT82k
+	Or9hBGJ7M1DmQ+FU9zbtAWeRrCD8Dj9+LfxbqLDCZ45y9XezzPWG3NPDsFJ2VpqGqh6xjk
+	LyIPQawDATSKeG/FAMafcsQmdVvUmaU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790582610;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=q8YhD5lisDHaeh1/ZcD1ISVQ3QRDoVTH+N/qMWXwmCu11o+bKq5Hv0fw2mPO8Cdx9ZoWiv
+	AZxC9uDLs15BLWAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F372F1340F;
+	Mon, 28 Sep 2026 08:03:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LwPoBFEfumpBYQAAD6G6ig:T2
+	(envelope-from <tzimmermann@suse.de>); Mon, 28 Sep 2026 08:03:29 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jani.nikula@linux.intel.com,
+	Alexander.Deucher@amd.com
+Cc: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Markus.Elfring@web.de,
-	stable@vger.kernel.org
-Subject: [PATCH v2] media: exynos4-is: Fix a race between s_stream(0) and the interrupt handler
-Date: Mon, 28 Sep 2026 09:47:44 +0200
-Message-ID: <20260928074744.23378-1-ginger.jzllee@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20260923083729.64831-1-ginger.jzllee@gmail.com>
-References: <20260923083729.64831-1-ginger.jzllee@gmail.com>
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH v4 1/2] drm/fbdev: Move fbdev module parameters next to module init
+Date: Mon, 28 Sep 2026 10:01:24 +0200
+Message-ID: <20260928080323.23909-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260928080323.23909-1-tzimmermann@suse.de>
+References: <20260928080323.23909-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -81,47 +109,180 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -6.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,amd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,amd.com:email,imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLq3cifbxyhc6qbbynzfc6amns)];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
 
-fimc_lite_subdev_s_stream(on = 0) sets ST_FLITE_OFF outside of the
-fimc->slock protected region, and only then stops the capture in the
-hardware.  flite_irq_handler() runs under fimc->slock and clears
-ST_FLITE_OFF, so an interrupt can be handled in between: the handler finds
-ST_FLITE_OFF already set, clears it and wakes up fimc->irq_queue before the
-capture has actually been stopped.  The wait_event_timeout() right after it
-then returns immediately and the driver continues as if the capture had
-stopped.
+Define the parameters for fbdev emulation in the source file with the
+module-initialization and exit code of drm_kms_helper.ko. The parameters
+control some aspects of DRM's fbdev emulation. Common usage looks like
 
-Set ST_FLITE_OFF in the same critical section that stops the capture, as
-fimc_lite_stop_capture() already does.
+  drm_kms_helper.drm_fbdev_overalloc=200
 
-Fixes: 6319d6a002be ("[media] fimc-lite: Add ISP FIFO output support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ginger Li <ginger.jzllee@gmail.com>
+on the kernel's command line. This has been possible for many years
+and changing it would likely upset users.
+
+The emulation code is supposed to be moved into the module for DRM
+clients. Keeping the parameters in drm_kms_helper.ko avoids breaking
+systems the use them in the way described above.
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 ---
-v2:
- - Fixes: expanded to 12 hex digits, as the media CI asks (the commit it
-   points at is unchanged)
- - Cc: stable@vger.kernel.org added; the bug goes back to a commit that is in
-   stable releases
- - commit message rewrapped to 75 columns
----
- drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/drm_crtc_helper_internal.h |  9 +++++
+ drivers/gpu/drm/drm_fb_helper.c            | 32 +-----------------
+ drivers/gpu/drm/drm_kms_helper_common.c    | 39 ++++++++++++++++++++++
+ 3 files changed, 49 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-@@ -1209,9 +1209,8 @@ static int fimc_lite_subdev_s_stream(struct v4l2_subde
- 			spin_unlock_irqrestore(&fimc->slock, flags);
- 		}
- 	} else {
--		set_bit(ST_FLITE_OFF, &fimc->state);
--
- 		spin_lock_irqsave(&fimc->slock, flags);
-+		set_bit(ST_FLITE_OFF, &fimc->state);
- 		flite_hw_capture_stop(fimc);
- 		spin_unlock_irqrestore(&fimc->slock, flags);
+diff --git a/drivers/gpu/drm/drm_crtc_helper_internal.h b/drivers/gpu/drm/drm_crtc_helper_internal.h
+index bae73936acf9..adcc9a2e24ee 100644
+--- a/drivers/gpu/drm/drm_crtc_helper_internal.h
++++ b/drivers/gpu/drm/drm_crtc_helper_internal.h
+@@ -29,6 +29,8 @@
+ #ifndef __DRM_CRTC_HELPER_INTERNAL_H__
+ #define __DRM_CRTC_HELPER_INTERNAL_H__
  
++#include <linux/types.h>
++
+ enum drm_mode_status;
+ struct drm_connector;
+ struct drm_crtc;
+@@ -36,6 +38,13 @@ struct drm_display_mode;
+ struct drm_encoder;
+ struct drm_modeset_acquire_ctx;
+ 
++/* drm_kms_helper_common.c */
++#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
++extern bool drm_fbdev_emulation;
++extern int drm_fbdev_overalloc;
++extern bool drm_leak_fbdev_smem;
++#endif
++
+ /* drm_probe_helper.c */
+ enum drm_mode_status drm_crtc_mode_valid(struct drm_crtc *crtc,
+ 					 const struct drm_display_mode *mode);
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d4664ed468b2..76195410db60 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -43,39 +43,9 @@
+ #include <drm/drm_vblank.h>
+ 
+ #include "drm_internal.h"
++#include "drm_crtc_helper_internal.h"
+ #include "drm_crtc_internal.h"
+ 
+-static bool drm_fbdev_emulation = true;
+-module_param_named(fbdev_emulation, drm_fbdev_emulation, bool, 0600);
+-MODULE_PARM_DESC(fbdev_emulation,
+-		 "Enable legacy fbdev emulation [default=true]");
+-
+-static int drm_fbdev_overalloc = CONFIG_DRM_FBDEV_OVERALLOC;
+-module_param(drm_fbdev_overalloc, int, 0444);
+-MODULE_PARM_DESC(drm_fbdev_overalloc,
+-		 "Overallocation of the fbdev buffer (%) [default="
+-		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
+-
+-/*
+- * In order to keep user-space compatibility, we want in certain use-cases
+- * to keep leaking the fbdev physical address to the user-space program
+- * handling the fbdev buffer.
+- *
+- * This is a bad habit, essentially kept to support closed-source OpenGL
+- * drivers that should really be moved into open-source upstream projects
+- * instead of using legacy physical addresses in user space to communicate
+- * with other out-of-tree kernel modules.
+- *
+- * This module_param *should* be removed as soon as possible and be
+- * considered as a broken and legacy behaviour from a modern fbdev device.
+- */
+-static bool drm_leak_fbdev_smem;
+-#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
+-module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
+-MODULE_PARM_DESC(drm_leak_fbdev_smem,
+-		 "Allow unsafe leaking fbdev physical smem address [default=false]");
+-#endif
+-
+ /**
+  * DOC: fbdev helpers
+  *
+diff --git a/drivers/gpu/drm/drm_kms_helper_common.c b/drivers/gpu/drm/drm_kms_helper_common.c
+index b5d5b469b444..1e55ecac4698 100644
+--- a/drivers/gpu/drm/drm_kms_helper_common.c
++++ b/drivers/gpu/drm/drm_kms_helper_common.c
+@@ -25,10 +25,49 @@
+  *
+  */
+ 
++#include <linux/export.h>
+ #include <linux/module.h>
++#include <linux/moduleparam.h>
+ 
++#include "drm_crtc_helper_internal.h"
+ #include "drm_panic_internal.h"
+ 
++#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
++bool drm_fbdev_emulation = true;
++EXPORT_SYMBOL(drm_fbdev_emulation);
++module_param_named(fbdev_emulation, drm_fbdev_emulation, bool, 0600);
++MODULE_PARM_DESC(fbdev_emulation, "Enable legacy fbdev emulation [default=true]");
++
++int drm_fbdev_overalloc = CONFIG_DRM_FBDEV_OVERALLOC;
++EXPORT_SYMBOL(drm_fbdev_overalloc);
++module_param(drm_fbdev_overalloc, int, 0444);
++MODULE_PARM_DESC(drm_fbdev_overalloc,
++		 "Overallocation of the fbdev buffer (%) [default="
++		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
++
++/*
++ * In order to keep user-space compatibility, we want in certain use-cases
++ * to keep leaking the fbdev physical address to the user-space program
++ * handling the fbdev buffer.
++ *
++ * This is a bad habit, essentially kept to support closed-source OpenGL
++ * drivers that should really be moved into open-source upstream projects
++ * instead of using legacy physical addresses in user space to communicate
++ * with other out-of-tree kernel modules.
++ *
++ * This module_param *should* be removed as soon as possible and be
++ * considered as a broken and legacy behaviour from a modern fbdev device.
++ */
++bool drm_leak_fbdev_smem;
++EXPORT_SYMBOL(drm_leak_fbdev_smem);
++#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
++module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
++MODULE_PARM_DESC(drm_leak_fbdev_smem,
++		 "Allow unsafe leaking fbdev physical smem address [default=false]");
++#endif
++
++#endif
++
+ static int __init drm_kms_helper_init(void)
+ {
+ 	return drm_panic_helper_init();
 -- 
-2.43.0
+2.55.0
 
