@@ -1,141 +1,95 @@
-Received: from mail-m118217.qiye.163.com (mail-m118217.qiye.163.com [115.236.118.217])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16DE46C836;
-	Mon, 28 Sep 2026 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DC048EC65;
+	Mon, 28 Sep 2026 08:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790584241; cv=none; b=lh1RcwzuRad5qnaXcPs9sb7xb5qpqfnY3u1OMNGlqOzFZXDkR/G6Wjnw9cVGrq0ujex34w9NG+jzt0GTwAdMOykpabMYRb3hCwPRBbwJIkBIjxJkLSK6DHpaUgpbfx7P/3YyMnwwG0yRtPPaQBHVDSF2DAsM2fhDLQHZaYMDGBo=
+	t=1790585327; cv=none; b=QUcirLuhaPQPCWAiFReQPV7L2DodverLl5bUJ/3kJ6HuQTs3EEtcgpZ8jnqCvkdAnWUC1dYAJLm6mNWdUU+/C6sSovE7b025JmSEXnHHg5/S63Gt3ymS5JMZPfC0hXu59UQh7ewTujW70ipIa+m7ezHHN6sq8wYGwTlILX4Wjn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790584241; c=relaxed/simple;
-	bh=56O1+XtCbBuMpsZY03ud511WNyyJck6lK7YOl8I3S/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vvq0BjPYTU+rktZM+B1AnSzLT3Q6I/Vd2TazRPTJb80j08tY4v/J7aZm9Y137/KqvRjskRRlaPgv4qEONDmQUJNzWOuO0ncZZe14W2dSADPXoWSjD4s+BD6bkVKI/mpZLzdkmdFvdZZ1YmhMiTWqIPegfL7ZB5HS/+xg4/+JLDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=FAHqU1AM; arc=none smtp.client-ip=115.236.118.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1790585327; c=relaxed/simple;
+	bh=4TrL1LK87jREhsshgj9afbV5g3GJEMSvHjNMsw4bwYc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=rTccrh4OdeG0T6D+4+wepa51RD/XQSt/8YutBGYSHWC57bg3Up4+nqgzQdXMC+ZUakB20Xcf8w6FwUvGeH+DmPday7YRgVzJNmlDCQUMb7zH1BZXowhfxCcp0DfXrs7Bd+Uh7KRPfB58G0OYwZrRJtbObyijokIPqZUSZ48fIJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZDa58Au2; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="FAHqU1AM"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e7e;
-	Mon, 28 Sep 2026 16:15:09 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 06/14] drm/bridge: analogix_dp: Simplify analogix_dp_config_interrupt()
-Date: Mon, 28 Sep 2026 16:14:10 +0800
-Message-Id: <20260928081418.3605775-7-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
-References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZDa58Au2"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EDECB4E41089;
+	Mon, 28 Sep 2026 08:48:40 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BA3E4601BD;
+	Mon, 28 Sep 2026 08:48:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B9ED0102F1EA6;
+	Mon, 28 Sep 2026 10:48:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790585317; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4TrL1LK87jREhsshgj9afbV5g3GJEMSvHjNMsw4bwYc=;
+	b=ZDa58Au2RHTizRo43gJ1JRUszIzTyZQkH6fdz231iZk+mFK47kmlmDY+0VETY5yPpnsekI
+	H2W47fDdg16ql/VlkfIClEu+3ESEBPzsHVxHQwSdkpqq7xS/LmLFAZ+c1Cwv0IKbwSw7wN
+	UNguMPFymrWlqGCyroCsOi8X9w+cBGPYBNKhNvYG1RBg11GdeNJxoWlU5ueicQVxlBuyqM
+	rssKNaxcGDmyEx8/mRYdRbY6UDDqUJjccvTKQdvCwKLp+ozx2FfNr7mFPECEsnr5mrfBuE
+	Qly9BUoYG+GYmxYZ6jpGEQOn3mIhX3sFqMhz33riAziOXByw/e3sDqg5nym3vw==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0e715032803a8kunm323e2b5437cf3f
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCS0wdVkoZHkodS0sZHh1KTVYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	JDQ0xVSktLVUtZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=FAHqU1AMFg6sHS+bmLPMNVPm4GWr2jNNA78d4/VKocxSkxEoUQOCbs7IHvYWMIQNEKWjnYM5uROq0b/DEZElOzLYT2ZmJ/GRUxkE69kmOofEekArRl5zc6UgrBuEmxm3OTL404gFDlrUGxuAzuYXd+O0Vw7pLnSi8RtSRPoTxug=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=uKF52fufhJOZnsTT21ImBLc4H+Rm8ECocgf/WYHaG+I=;
-	h=date:mime-version:subject:message-id:from;
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Sep 2026 10:48:20 +0200
+Message-Id: <DLQTIJA71AQ1.1RASTM0D6GMGX@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>,
+ "Lucas Stach" <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
+ "Linus Walleij" <linusw@kernel.org>, "Inki Dae" <inki.dae@samsung.com>,
+ "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 00/19] drm/panel: embed a drm_bridge into every
+ drm_panel
+Cc: "Albert Esteve" <aesteve@redhat.com>, "Anusha Srivatsa"
+ <asrivats@redhat.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
+ "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
+ <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+ <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>
+X-Mailer: aerc 0.22.0
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Remove local COMMON_INT_MASK and INT_STA_MASK macros. These constants
-are only used once inside this function and bring no reuse benefit.
+On Wed Sep 16, 2026 at 3:45 PM CEST, Luca Ceresoli wrote:
+> This series embeds a drm_bridge into every drm_panel, as previously
+> discussed [1][2] and in previous iterations.
 
-Replace open-coded register writes for COMMON_INT_MASK_1~3 with
-direct writel(0) calls.
+Series applied to drm-misc-next.
 
-Leverage analogix_dp_unmute_hpd_interrupt() using the full HPD_IRQ_ALL
-mask to initialize HPD interrupt state, removing duplicated register
-handling.
+Luca
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-
----
-
-Changes in v3:
-- Replace macro HPD_IRQ with HPD_IRQ_ALL.
----
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 25 +++----------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 6ac03a1aa512..0f1406e4a5d3 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -18,12 +18,6 @@
- #include "analogix_dp_core.h"
- #include "analogix_dp_reg.h"
- 
--#define COMMON_INT_MASK_1	0
--#define COMMON_INT_MASK_2	0
--#define COMMON_INT_MASK_3	0
--#define COMMON_INT_MASK_4	(HOTPLUG_CHG | HPD_LOST | PLUG)
--#define INT_STA_MASK		INT_HPD
--
- #define HPD_IRQ_ALL		(DP_IRQ_TYPE_HP_CABLE_IN | DP_IRQ_TYPE_HP_CABLE_OUT | \
- 				 DP_IRQ_TYPE_HP_CHANGE | DP_IRQ_TYPE_IRQ_HPD)
- 
-@@ -189,23 +183,12 @@ void analogix_dp_swreset(struct analogix_dp_device *dp)
- 
- void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
- {
--	u32 reg;
--
- 	/* 0: mask, 1: unmask */
--	reg = COMMON_INT_MASK_1;
--	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_1);
--
--	reg = COMMON_INT_MASK_2;
--	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
--
--	reg = COMMON_INT_MASK_3;
--	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
--
--	reg = COMMON_INT_MASK_4;
--	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_4);
-+	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_1);
-+	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
-+	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
- 
--	reg = INT_STA_MASK;
--	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
-+	analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
- }
- 
- /*
--- 
-2.34.1
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
