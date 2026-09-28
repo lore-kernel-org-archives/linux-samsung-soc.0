@@ -1,24 +1,24 @@
-Received: from mail-m1602365268.xmail.ntesmail.com (mail-m1602365268.xmail.ntesmail.com [160.236.52.68])
+Received: from mail-m121160.qiye.163.com (mail-m121160.qiye.163.com [115.236.121.160])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F8734FF62;
-	Mon, 28 Sep 2026 08:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.236.52.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3BA349CD1;
+	Mon, 28 Sep 2026 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.121.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790583333; cv=none; b=l4xdvePvtCpKLX9IvBGnDHg3bDAkhJJ+IYz6xeXQBHcmXf2QTC3t/TWcRyjR4l5Sf6OieQfOAKcGOtGA6wOm3EzXXN8jrDUOAZPAUfY8liLI0JtaVG1rbu7e9SR4X6EWr1+aZ6lsFw8J4sZ+oLuB9Y0Wq8qRWpeAk9GG9x2jD50=
+	t=1790583624; cv=none; b=Z4KU6857DUd4dULH36e3MDfSukM/N4vBUxEKG0151cZ5ctqiNd0fNZXH6gYEMbHoa4YAr0ac8rvcFRNTJdt3G0+eQjt2EECm7ohXaJQ2iWcsLObQeRekoYXKU4pNy4d9/8J/YaL+rTOdwXn5sH4fnpgV15isGGb6qI9LM3U/IrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790583333; c=relaxed/simple;
-	bh=JMouacOD4kg5BfNYYieauLXMgHzevMivAofQtnetiW8=;
+	s=arc-20240116; t=1790583624; c=relaxed/simple;
+	bh=YGKSRyjUQMjIHH+H14eJyY43GLqzetdydIJbuwiKpn4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QNiPP0fGlQf0MJrDLdvNEL9KqOQ2vwkUK2pSGXGxrM5X1szdsr2dGYKhW2bwirpm72hCoDT7470SZY4t5iSyU0vvzx/YyDb6VONqFTOWbsA6bDFQwwVYqPFuyOxJ0whfseYEm5tMJC495eQrFtkMIKfQKym7N+Xpg0f2FoxTTQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hTGmmnqZ; arc=none smtp.client-ip=160.236.52.68
+	 MIME-Version; b=gcjpTEjNBfD86/iD69GXbvj2OVRJw6/uhMZJNQWObOrhD7eMu/MQaNBx/HdtOn0um1eA23z/NEus1HuWC4UBg4p6I+R+rentDPETd3PDiOGIJhgec8dykkVkT+lcOWgKAuXgAgVawMKAgPPz7mGnAsWMTE3NknaYCybZIuCeSOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GVEoTm0n; arc=none smtp.client-ip=115.236.121.160
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hTGmmnqZ"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GVEoTm0n"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398ebc;
-	Mon, 28 Sep 2026 16:15:17 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4f5398e50;
+	Mon, 28 Sep 2026 16:15:04 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -46,10 +46,11 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v3 13/14] drm/bridge: analogix_dp: Handle HPD notification from downstream bridge
-Date: Mon, 28 Sep 2026 16:14:17 +0800
-Message-Id: <20260928081418.3605775-14-damon.ding@rock-chips.com>
+	Damon Ding <damon.ding@rock-chips.com>,
+	Sashiko <sashiko-bot@kernel.org>
+Subject: [PATCH v3 02/14] drm/bridge: analogix_dp: Check all negative return values for &analogix_dp_device.irq
+Date: Mon, 28 Sep 2026 16:14:06 +0800
+Message-Id: <20260928081418.3605775-3-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260928081418.3605775-1-damon.ding@rock-chips.com>
 References: <20260928081418.3605775-1-damon.ding@rock-chips.com>
@@ -60,158 +61,46 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0e715250003a8kunm323e2b5437cf8e
+X-HM-Tid: 0aa0e714efb803a8kunm323e2b5437cf11
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDT0IdVk8aSU4dGkMdQxlOQlYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaHx8eVh4ZSR5CTEIeSEoaSFYVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pOTE5VSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=hTGmmnqZb5yGxuXn2p2qejO7zOxaeJHa9vA6bAEzA14npWgUFZYP/Gj5HsuYcVOqo756ncmFDMQj4yCG+irGmhqDU8rzM8qc559Ei6xeeVEgOu1gzG0ug0ufF6oeVNDcZEchjFD7mSr75wbV0A8/auoVTyyAqO8IzUFAfCFVqp0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=u0/TV1n3TKQPLRepROlvuB5fzuWkUjMxDSRSqug2X4M=;
+	b=GVEoTm0niGiCpErUv1BiE3AwAKiCnomyyogm5KnAx/EelFq0P8nbkxorN9hP+U9AIlQzsN9JrbpwkpCYd9Em2GSzu3US2dIny9+3iWqLKp0x953A2OGmEOQjs4Y0iZUcKKcmz/z/8frjgY8F5V0zJ4j1kOKm41FSLE73nUc5hnM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=kq36aaWmtxNis0gWuJ3e4zUh00Bu1KsR9hnzmqki5yE=;
 	h=date:mime-version:subject:message-id:from;
 
-When the display pipeline includes a display-connector bridge with
-hpd-gpios configured, the connector's hotplug status is managed by the
-display-connector bridge through its GPIO, not by the Analogix DP
-controller's native HPD. In this configuration, the DP controller's
-internal HPD polling in analogix_dp_detect_hpd() does not reflect the
-actual connection state.
+Currently only -ENXIO is checked for dp->irq from gpiod_to_irq(),
+which ignores other possible error codes like -EPROBE_DEFER, -ENOENT.
 
-At attach time, detect whether a downstream bridge provides HPD events
-(DRM_BRIDGE_OP_HPD) while none of them provides detection
-(DRM_BRIDGE_OP_DETECT). When found, switch to hpd notify mode: cache
-the connection status reported through the .hpd_notify callback, mute
-the controller's native HPD interrupts and skip their initialization,
-and trust the cached status instead of polling the typically
-unconnected native HPD pin.
+Check for any negative value instead, and propagate the actual error
+code rather than hardcoding -ENODEV.
 
-Suggested-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://lore.kernel.org/all/5609825.iZASKD2KPV@diego/
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Link: https://lore.kernel.org/all/20260804083307.84ECA1F000E9@smtp.kernel.org/
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-
 ---
-
-Changes in v3:
-- Introduce hpd_notify_mode flag to skip native HPD operations when
-  HPD comes from a downstream bridge.
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 27 ++++++++++++++++++-
- .../drm/bridge/analogix/analogix_dp_core.h    |  2 ++
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c |  7 +++--
- 3 files changed, 33 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index df898f314254..90245d55d1d2 100644
+index 079f2f01f33b..27c9a764e25f 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -45,7 +45,7 @@ static const bool verify_fast_training;
- static bool analogix_dp_require_pm_for_hpd_irq(struct analogix_dp_device *dp)
- {
- 	return analogix_dp_is_rockchip(dp->plat_data->dev_type) && !dp->hpd_gpiod &&
--	       !dp->force_hpd;
-+	       !dp->force_hpd && !dp->hpd_notify_mode;
- }
- 
- static void analogix_dp_init_dp(struct analogix_dp_device *dp)
-@@ -936,6 +936,21 @@ static bool analogix_dp_bridge_force_connected(struct analogix_dp_device *dp)
- 	return force_connected;
- }
- 
-+static bool analogix_dp_has_downstream_hpd(struct analogix_dp_device *dp)
-+{
-+	bool hpd_bridge = false;
-+
-+	drm_for_each_bridge_in_chain_from(dp->bridge.next_bridge, bridge) {
-+		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-+			return false;
-+
-+		if (bridge->ops & DRM_BRIDGE_OP_HPD)
-+			hpd_bridge = true;
-+	}
-+
-+	return hpd_bridge;
-+}
-+
- static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 				     struct drm_encoder *encoder,
- 				     enum drm_bridge_attach_flags flags)
-@@ -964,6 +979,7 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
- 		 * accurate hotplug state.
- 		 */
- 		dp->force_connected_mode = analogix_dp_bridge_force_connected(dp);
-+		dp->hpd_notify_mode = analogix_dp_has_downstream_hpd(dp);
+@@ -1480,9 +1480,9 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 		irq_flags = IRQF_NO_AUTOEN;
  	}
  
- 	return 0;
-@@ -1260,6 +1276,14 @@ static void analogix_dp_bridge_atomic_post_disable(struct drm_bridge *bridge,
- 		DRM_ERROR("Failed to enable psr (%d)\n", ret);
- }
- 
-+static void analogix_dp_bridge_notify(struct drm_bridge *bridge, struct drm_connector *connector,
-+				      enum drm_connector_status status)
-+{
-+	struct analogix_dp_device *dp = to_dp(bridge);
-+
-+	dp->connection_notified = (status == connector_status_connected);
-+}
-+
- static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
-@@ -1272,6 +1296,7 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
- 	.attach = analogix_dp_bridge_attach,
- 	.edid_read = analogix_dp_bridge_edid_read,
- 	.detect = analogix_dp_bridge_detect,
-+	.hpd_notify = analogix_dp_bridge_notify,
- };
- 
- static int analogix_dp_dt_parse_lanes_map(struct analogix_dp_device *dp)
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 5f5698c73d88..9f25fb6545ad 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -171,6 +171,8 @@ struct analogix_dp_device {
- 	bool			fast_train_enable;
- 	bool			psr_supported;
- 	bool			force_connected_mode;
-+	bool			hpd_notify_mode;
-+	bool			connection_notified;
- 
- 	u8 dpcd[DP_RECEIVER_CAP_SIZE];
- 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index abbcdba1a438..4c5e18d40dad 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -193,7 +193,7 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
- 
--	if (dp->hpd_gpiod) {
-+	if (dp->hpd_gpiod || dp->hpd_notify_mode) {
- 		analogix_dp_mute_hpd_interrupt(dp, HPD_IRQ_ALL);
- 		return;
+-	if (dp->irq == -ENXIO) {
++	if (dp->irq < 0) {
+ 		dev_err(&pdev->dev, "failed to get irq\n");
+-		return ERR_PTR(-ENODEV);
++		return ERR_PTR(dp->irq);
  	}
-@@ -435,7 +435,7 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
- {
- 	u32 reg;
  
--	if (dp->hpd_gpiod)
-+	if (dp->hpd_gpiod || dp->hpd_notify_mode)
- 		return;
- 
- 	analogix_dp_clear_hotplug_interrupts(dp, HPD_IRQ_ALL);
-@@ -539,6 +539,9 @@ int analogix_dp_get_plug_in_status(struct analogix_dp_device *dp)
- 	if (dp->hpd_gpiod) {
- 		if (gpiod_get_value(dp->hpd_gpiod))
- 			return 0;
-+	} else if (dp->hpd_notify_mode) {
-+		if (dp->connection_notified)
-+			return 0;
- 	} else {
- 		reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- 		if (reg & HPD_STATUS)
+ 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
 -- 
 2.34.1
 
