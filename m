@@ -1,140 +1,93 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23364E780C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAAC3DCDB5;
+	Tue, 29 Sep 2026 09:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790672555; cv=none; b=qj5J3z1lYbTLNAZTnQS91L16kqMMmUabQRzTZpifO2bsLTJ2Z08HKwfpNFPupXFxMu3Wr8cHCTAftL3V+goj/EHLB3a8zmntMzwRrjduDKBwjGmngzfPhK5z2NZUT18P1MLFQZr7GUgi7TKXIB+JzoBFfHHogNp+DyQ0oXqDr6I=
+	t=1790674876; cv=none; b=lJDY7MTUFdIrGOp3e2LGECMvxGmcOUUv9UgabS08xnnpvVinLoKQVfSgCu/TigynkCddd47Ulp7Fhr+TjzLciVbU7oFT33GSDH0Z/C3jEAh67mClR3ki1U0b1GW4rGUGG2x3lg5J8zNv6lJztFmNWsOk//nl/mjR6a2cmcGT5cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790672555; c=relaxed/simple;
-	bh=+E8vF3OM2T9aBuCele2XoJ6uplIMu6dwqmf1wFybHOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2ZtTfe+TSTseTBnWxF1qtUAYCR2juVOi+mEfXFTdKhVdxykmgPFTZbutpzl8hZ8NIY12U3WkfoUAUjrkdabZc+bZCuraXiySnMArjSvRK21kxC+KB8ghQQ7w9wcG13/MABPBR31LrC1Ej0Rbzb659CgkXeEg6/nEhkwu46g9h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IE6Djk1J; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1790674876; c=relaxed/simple;
+	bh=HU7an8528N4aiVk6J/ZynRLoCHlTKnSIrJ26K63+oLw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SZ+i9SAxl6vp1GIBCtDUYr7GrLTqUVnAgY57/KbraG96RT8G4OErIEOF8PhPYiUNYpgq6P+EcgmeOtEwAOpFoLpUMGFzigo2knx+GyDwqt++VNI06PLHI+MIWP+pZaHnN1TYc942lYDebZQCaJONI++YFSs/ht5AcQ9dWQG2OxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTycSW45; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IE6Djk1J"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-48434392b02so3387618f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 02:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790672542; x=1791277342; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=BwJjdqcFj709Qv5LzibFkFCPgjMc0g1wC/gY1GLFeWU=;
-        b=IE6Djk1JwBkjZBnhb6zaOvVtY6qWfjaAZr8DYgMSr9fbfHPc5oAiQP3WfY8O6IBvlK
-         2pBa2FcqY9kCYXglwhYDTocIqIX3xAYv6LOYSvsoUTtvGoiJF9+gHKOVOy72616iZQIU
-         j6TXzFqJPIBl9mKXHRziWSE29clCi9L9fvzKq4qrbde2bFZ5V19jHIVDLRAdaLYyc6YF
-         SQKBhUcvTtZoIQIa/rry4ARk9mhOk0RNAae4Ri3b4tjObkdTlC6vBgkR6dKjHl/yZpsQ
-         /fBKLoxCWfeuwxWrhyDrK0/w+piuiFOg8STzKauGhp2UDu6At7dhMBlaBAG4L14Ar7sM
-         GHmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790672542; x=1791277342;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=BwJjdqcFj709Qv5LzibFkFCPgjMc0g1wC/gY1GLFeWU=;
-        b=TryN2PBkP6yEInr16VMg/DtCHU+92aatL51kkRBgAZ/cmiFYKikS13wrKvjLQXpDQi
-         lyczMyjHtxxtYoUghV6630vP5uvTN6aqSo1Q9GabUUTFqruJd62lK2/VbPXtEOU6y351
-         aCmh4K6CSFXV0fGS5yAd2eulbnuQx8HAIqab8jI8ichNwcJxlQNp1SwMx9tzpSuq71Gk
-         1Wk53ZXPy9ighPo3o8AngWy79U41tkUbSmAt9spNmO4RF6C4Hh8l6Y+5fnMz18TpmgBv
-         nASmi1W2ftf7Y7GwA9/6LNFVo1ukRhOOjd+vibcjk4xV3JgzMt0FpVJAHXbi9TNFucSG
-         yyxg==
-X-Forwarded-Encrypted: i=1; AKwUvBw37ZMfSSSv3SNRANjtk9WkSoKi0+iC7DKGzO/kTlH6OD039u6Q47ZpMTInn7hyR8SCZokKFvtSSqFYUNqzfil9DQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJr4ujl5jIpXo8N0R46F2Q4uEqSAywQw+hi+a47LDLO8GJy0e7M
-	5CiFMX4hUze3HSTx93V3Q2QJ22sOHSoxLglBL7MuLgJjmjdsE0pWmu7GDixlySpF1c0=
-X-Gm-Gg: AYBFou3a6enARRaRC24vw8mB0pDEOA4uSr84cit/cZ4dPtMnJ+jx5w4yinq4pdmCyHW
-	13Rl/cBTQ3LB9hACX77j2Eiz2P5SLbHqA8BwxlP03Iu/LEOvbojcDGP0HfhGOIPH0mhjCfg6H9K
-	G16GfxfgwomhE1NePZtO4vpn1VXza5pRAbEg+nvI3RXT2lI/ovKNXEJnLBG/Ku595XG49bsGpRT
-	qfuGXiquIA3WV4BoJvkQ3/DMVHmmAqhJOLodT0j4GM7ovqPJ+sVDr8mX8p4hT19tUjm7ZbO99sP
-	kszJ+jc/SDxC1YSWM+eJLCbbwSldNInqBCdJbZ2BhKl3NrwVwYLjgdInS/Vw4Na0KWKcGtZLDOF
-	89HBdbGYey1pldKrJvyzFMjhJCBcPup3D1H7ZOZfEaKrkDJB3SmCxt3+mTYpTu/RhxesFVHnIHX
-	lgBxDcGfVO7hv/axCAXlsOUkFPEanKEx+USX9t0LhFfGqg3GjdZsNJllxuijW+4tbdAGdDmOMtW
-	SHEnkSE
-X-Received: by 2002:a05:6000:4009:b0:487:92e:c608 with SMTP id ffacd0b85a97d-48af1b1cc9amr3124751f8f.1.1790672542160;
-        Tue, 29 Sep 2026 02:02:22 -0700 (PDT)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48af5058c52sm2748227f8f.19.2026.09.29.02.02.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2026 02:02:21 -0700 (PDT)
-Message-ID: <7b5dded4-c475-40dd-b5c4-5086bab4162e@linaro.org>
-Date: Tue, 29 Sep 2026 12:02:18 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTycSW45"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B868A1F000FF;
+	Tue, 29 Sep 2026 09:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790674875;
+	bh=wh/y+8ww4qgzVtVEmUDXThCVXr+h/XhtDr932zbuajk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=eTycSW45LWX7/MF/VprD1aZhTjRJiAnwtoSIPTcvI0ixyV2lo462dvvMoGBuXePXn
+	 RcHqZ96S4lKeUa+2akNWJzW7T7MSIELhVevIsTmR0R0/dHxbKkO56mPQPFzWtTBq5g
+	 5HUdFlp5nEQcsDhpTT5gSzE8BG9usfZegJKCptcAxCQPRztTkyySKoFLLzDOjMYcRm
+	 dmHRFlf7VVwKXPh+bPs2E7hHvymkou/rjr8QhyA0UaGCigsoYz5go0TIUmjdqh5MFc
+	 ibIChelswMAfcE2R7kWD7RSPpXJzdOsUz5/jpmC5cPcxTixG9lM8YnQ30llhP/bJpM
+	 TIum7PFha6skQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>, 
+ Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ soc@lists.linux.dev, Douglas Anderson <dianders@chromium.org>, 
+ Juan Yescas <jyescas@google.com>, RD Babiera <rdbabiera@google.com>, 
+ Brian Norris <briannorris@google.com>, 
+ William McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-serial@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Brian Norris <briannorris@chromium.org>
+In-Reply-To: <20260918-contrib-pg-pixel10-initial-dts-v4-0-745eaca28b1a@linaro.org>
+References: <20260918-contrib-pg-pixel10-initial-dts-v4-0-745eaca28b1a@linaro.org>
+Subject: Re: [PATCH v4 0/4] Add Laguna/Tensor G5 SoC and Frankel, Blazer &
+ Mustang boards
+Message-Id: <179067486422.102650.10176830320558486814.b4-ty@b4>
+Date: Tue, 29 Sep 2026 11:41:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: exynos850: Add ACPM firmware node
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Thomas Turner <tturner@lineageos.org>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260929-exynos850-acpm-node-cpufreq-v1-0-5a86c1d404b8@linaro.org>
- <20260929-exynos850-acpm-node-cpufreq-v1-1-5a86c1d404b8@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20260929-exynos850-acpm-node-cpufreq-v1-1-5a86c1d404b8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-Hi, Alexey,
 
-On 9/29/26 6:10 AM, Alexey Klimov wrote:
-> Add the ACPM firmware node with cpucl0 and cpucl1 clocks. ACPM firmware
-> protocol provides interface for all client drivers to actually use
-> features exposed by the APM co-processor.
+On Fri, 18 Sep 2026 19:05:01 +0000, Peter Griffin wrote:
+> This series adds initial basic support for Laguna (Tensor G5 SoC)
+> found in Frankel (Pixel 10), Blazer (Pixel 10 Pro) and Mustang (Pixel
+> 10 Pro XL) phones.
 > 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/exynos850.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> Whilst Tensor G1 to G4 SoCs (found in Pixel 6 to Pixel 9 and Pixel
+> 10a) were offshoots from the Samsung Exynos family. Laguna is an
+> entirely in-house Google designed SoC.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> index 8a4771899a8e..91c6cee8f483 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> @@ -11,6 +11,7 @@
->   */
->  
->  #include <dt-bindings/clock/exynos850.h>
-> +#include <dt-bindings/clock/samsung,exynos850-acpm.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/soc/samsung,exynos-usi.h>
->  
-> @@ -170,6 +171,18 @@ timer: timer {
->  		     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
->  	};
->  
-> +	firmware {
-> +		acpm_ipc: power-management {
-> +			compatible = "samsung,exynos850-acpm-ipc";
-> +			mboxes = <&ap2apm_mailbox>;
-> +			shmem = <&apm_sram>;
-> +			clocks = <&cmu_cpucl0 CLK_FOUT_CPUCL0_PLL>,
-> +				 <&cmu_cpucl1 CLK_FOUT_CPUCL1_PLL>;
+> [...]
 
-Why do you describe these clocks?
+Applied, thanks!
 
-Thanks,
-ta
+[1/4] dt-bindings: arm: google: Add dt bindings for frankel/blazer/mustang
+      https://git.kernel.org/krzk/linux/c/ecf6405fa6c503c34eb4e7e905957d70d4018e93
+[2/4] arm64: dts: google: Add dts directory for Google-designed silicon
+      https://git.kernel.org/krzk/linux/c/cf3df78629f24b40cd0cb2da74e3ea4a944bed82
+[3/4] arm64: dts: google: Add initial dts for frankel/blazer/mustang
+      https://git.kernel.org/krzk/linux/c/54edd8698bb1fb40c339d0cb2f15baad6993dd48
+[4/4] arm64: defconfig: enable Tensor G5 SoC family
+      https://git.kernel.org/krzk/linux/c/63f674fe8a0a8d6e4bee3e72f7ae658f0e9a0686
 
-> +			clock-names = "cpucl0", "cpucl1";
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-> +
->  	soc: soc@0 {
->  		compatible = "simple-bus";
->  		#address-cells = <1>;
-> 
+Best regards,
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
 
