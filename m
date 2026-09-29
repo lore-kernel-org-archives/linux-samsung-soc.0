@@ -1,81 +1,81 @@
 Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9F33C3787
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 10:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419313E4106
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 10:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.76
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790676609; cv=pass; b=HnbT58c1EACiOY6mIhk4FhzhvStHSi/YxiouD4oU058EwFUUyqniU+ndxaVEX8rCt3Ztm5WMuEgChPQNpjfgeMuMIoEHVZUktibyOZPIt+vDaj8LtoNf5T02w6Toz9jKK/4LgNa4pNy/z6cQ8HbKM5e3E1MYG5uBOHBqOmS39nA=
+	t=1790677010; cv=pass; b=gUSJ3+sgmadf3tFMHQoTdSelopzmFpg+ng5WoQMxaWoXyuY5LLdUp9KCUKaQBZ1DbflcDim1rKy1rzfw9EM7oagDhyBSy/nfTjFat74w9ZWfSLFZ/xBgNE1q/HFgzX/FeOLiYa42gAmmRvWLEt7DFIERMc8Q9JziciqX36e7wlY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790676609; c=relaxed/simple;
-	bh=ugqhqlW2+gdWnYyVA2uZcdO8IYtwk8wf07W/RuYSe7s=;
+	s=arc-20240116; t=1790677010; c=relaxed/simple;
+	bh=/pURnOfPd01iygyLUjpNk9X+T4L0SeXg5/g8Qb1SX8A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ThEiXkZBrYMYIP6i+jI1m/E1KuIuh8a7nCnX+j2VxwkeylDQ8KyQkKknaCleWzzDXlKMj2ty5piHqHZ/CPFNylTQ0PNOh0PgtLS4W5X6snxDtRIcmpfQKCrmWfLcEuQwtQgy5qtLRaZQuKA6cOYqxHlZcdkWTuO6XrzB8nqWdlA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eLfFruuz; arc=pass smtp.client-ip=74.125.228.76
+	 To:Cc:Content-Type; b=Z4Y0e7fVjjb7hvoNwKg8ouoNb7l/G4elW9+5dRpEaZWIDkVmyn+tINRQhXIEEsyFi5iNhNiJtkwq8JVL8PlumNKhInX7tWl4tET8s7EEreRQg9H9Ju9oq4EFYjSMjso33oHwhwLess13LR6pg5NMIsqh6hjVW2ce2P7cn2vfrYY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wpepKC9i; arc=pass smtp.client-ip=74.125.228.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eLfFruuz"
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a605c198fdso6407014a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 03:10:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790676598; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wpepKC9i"
+Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a60591ae54so6407808a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 03:16:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790676999; cv=none;
         d=google.com; s=arc-20260327;
-        b=holB8X3A39vqCDBOhTpFnEsU1VGwqDJXPrhldBw+MhuEQdyMbssDE2b/23B4iq6HX7
-         dwXcYBmNVnunJP6NnQYg/YrRAUWgKkoFlwfRjjIHdU/hdsewlEXp+E0gMuj4EEz1zEo0
-         ojidUFhvAxm+qyAnvY11ABUQCwvQ6EKezQf9BEqXe16UcJBGI04MV+ED3nF8ZI+djzSf
-         Brzh/Egl7liAxB6Z8CeN/yotbLyst7vRxqcqXfm7PckKjoNii+oA9F57Lzer1OGou7NR
-         xpu/MCcRQGp/auOvHot8kG6tDzIJu/U5niI1wlcoNaUX5OEWTpZbsYchvoA9Q7GX7Zkh
-         GuTA==
+        b=XOzDTtMpgfkUbPMyUnQeP8hPISj+RuSk/6aIDA6r/DDGc5yRaoSo85i1dU87ugiq8e
+         sAvDupRspgEjrp+A+zL9onnMJnud3w/8vEhS8gDGOZFEKFvBKwrXzMwbI03EYocawu23
+         9OBLd3LHzr6Q+pvcLoh8FLG+bzoJ218TXfZ4dLDzkFt1vRIts/DiZhO0jc8EfkOEloY8
+         R1aROCP2vcpO1vlHDHDHuaPLZ/3/RbPAgnvNJi9U20LNIx1dW5uVi2LGZlADX60v/wVB
+         P9MxbGUbi/PvCB9VJ674ufejx07YqWTg+Pd60pC+t1n/at/NQm1PC6MCJ+tFSmqMFjwV
+         1vFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=dCNfmYcGaMILR8c3Q+T+COx/KTeJ3JVks807vI/GCMc=;
-        fh=KZG4PKpl1nOq6oHXrm+hvaZRkhroY1LOPf0geIMy8pE=;
-        b=fKPlVmIWP1wHAyn78nhddT/CvtDIAyipKVbnp2Ei0ik7dYcPAg4/BpUyj7SR5O31Bg
-         BwNY8k3BXj+H7nITfkRZvxPbxzv0aDMdvIXYDvr49h5Sng/fB6UKPiENaYwyYsODo4zC
-         Sy+11ePYDKiSasq/IOca70kvkot/XQ57DzxVsR6wOxmAr8w8iCo18ORRGy4r6Cz1sMzB
-         XyLtPFJn/VD6bb0iWpHTCnz8NGY4SnIyApANCW7/zLqZGZ7kN6q0VpwKgIPxkBFF5Fx1
-         otjsASc+LuHyq+VLqmSMFcH2j6CB4T1qZ7ADyE3MH1WQhlV49c6jJ/CWepxCJkvQucoY
-         MEog==;
+        bh=+Y0oCiGlxm1oUL4ENFDzbHLN3RbL4NXvE+8S8i9hNs8=;
+        fh=/P6sLIQrFTOpZJv3QfyHf1u8FqEoGzrDY9fHz50/zp0=;
+        b=bEkw0/RMvUwd+fXVE082t+u7gAjXCFq7uOtjbNgFWcGG01BfeUlm6vITB5KEwbK6k4
+         jfWs9Xu/93Uzo/rXgMQzK2MoRJYKMVfy9W9rmMDEX3noRx0klKpC/zDTQr2AONWIIeS9
+         R5q0/1wi4MMLge+MOQDFaQlP/LbVAhf2TdMRMXVfX9qeINBC7Hr1WAe+1393TdLsjHJ0
+         VPVbGgC6eLc8w7JHG2Iw6FMvdu428rWxfWlw7YAHhv9rtnxMOC8Hr71Rxsyd9kLdXbA4
+         Awh7oGvD17kmF08eoL0tJ5K1mx1ualjXMzzTiRMvSDRKWBA+9HT/zwWkq+3yecG7MoiN
+         fBsw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790676598; x=1791281398; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1790676999; x=1791281799; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=dCNfmYcGaMILR8c3Q+T+COx/KTeJ3JVks807vI/GCMc=;
-        b=eLfFruuzSD6VK94I1ZOgecR5WuCkwCewUnqYwsZjijOYG6HQFD3oaRXZNY0rj7ALsm
-         LryYr0dwh1IQar9qi4TPHR11HNDoG8myw+R3WOYYZCWsoZ3NMCVeY6cbAeVFfpfYBp/Y
-         eqWmMP4MoUFMm1aJnepVHf+OXMIUap7E6Xz+CJwwlcTYt+oeEDPErANA+ryssPHYlJPN
-         DFtDmaleI3Z75Ob5ndQtSvFnoAgQJwh1oFid4CRAsDF/9kGJTgJX7QYM+xSfm6HixnCe
-         +BCT+knQ6pUGb8dcr36lqfoq1EVJC1hvfam2udhpMUvrPQnAsDC+q3x0MtRGyjH50P99
-         diQg==
+        bh=+Y0oCiGlxm1oUL4ENFDzbHLN3RbL4NXvE+8S8i9hNs8=;
+        b=wpepKC9ikfKPC9p4CqWROnwComFJNLSxxEXrD7zPrVfvREDbmv3nlsz74LOc9vR6sx
+         HgbesHRr1pF2xm3sZQbVhNX7NPp1QdwIJDe78id4bX212RhMbFkP+dX6Io/kLHSMct2M
+         50wcgkFmIirIqSUQtWfLjK2/X8NGPjPcU59gc55ztm4vH2ty7WS9CKkIPnTUp8k6y7VT
+         F5ozxPCBXrfwvIr+jMS1b2CSWto+90GHhuvzIpUCif8r+p4SE14qkDXtYHvAylxNLu0V
+         vZjITdskf6Z7GLtW5V+9bFhDCmlpo4u7DQygL2u8XbUEGj3NACCd73nCKB1oLsYSC+UD
+         hhDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790676598; x=1791281398;
+        d=1e100.net; s=20260707; t=1790676999; x=1791281799;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=dCNfmYcGaMILR8c3Q+T+COx/KTeJ3JVks807vI/GCMc=;
-        b=qLUrwokoqvCOn5mvBi9wn4NqzBERWe+dKdTQTv8o/qtUF4zotKcLPAXU++a8mI09KG
-         BkcZ1SLfly3wIg2oWLFrw2WsEQ26Fcq1VSk2iV45D1sPqa37TzUlz80neinDANHDSIUn
-         26H7Qf4Gz4SLzgIkl8Lodi+MiwdhEIlxkpwHn2rIEPUP2yHF4S2SsaupcANv8cui9u8t
-         vpOEbQiHnXb7CV2NoCzqc1PjGjrdEtQP3x8ByDN4QNAzCQUP8o8uH7oFqECJY6LhcevD
-         yXj1rVElvX8breovYIe9L1IHjPstj+IAcqghhMlnafHOuil9mSfi1qBR+4SqBXgN8BGg
-         ECgw==
-X-Forwarded-Encrypted: i=1; AKwUvBz0Ov1Hp4VXdWW6wxPxhV6WtEzuFa6SC3rj4AiMFVZDkbZIQsd/2NxMZf2RmK3JxreYo7zzDEK0sZXHZ2K0B6/scg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKLVQeCFFn2k96hsUzt4eEyiTFciP3/tdn3G9g6jZw3ofgl4i/n
-	CjVXPp6YTlAM1kpDagBKZYN1LlSdyoAe74IHMFcJUSRp8Tfr9BEhP1+IeEyInpTQoqjjumnyjGs
-	96vyNyRte3A6B+jHtbj8kATMK78tYfPmhLZRADQ2Asw==
-X-Gm-Gg: AYBFou0xxvx3/D3PEAwJgEi4rdixzQDPaPOuC0vrJ39iHExSFbTz/2oDXOo+Gg/f7od
-	Rg8RsQ6ywBWb6uchBGO5jBiBjyZDVEBldO4M4VwyoEuvC+LvKtqJwQKStiGDac8eya/5+05BZnm
-	oWFqweTiVELGYa5v4qQobrWsxyOwvG1g/fsPetwC0UL67ZKvrJxzmezW8GyvX59myFHIktsduYV
-	MSbkzw2TU7UH/Zmqlpc3FmNcy8MYM0FOBeNDLydolxRBB680vxiyNSt/gq9CgSyhoT5YRJGSNrV
-	IGayrGcNGCO7avjoBDUJPVHNlgxc8DdfDY7B+1ALoWwRzFQWVQxnqAJP6S41rjJpUVosfs1IMR0
-	QQBA4OnM0EUq+lufXqYYASOg=
-X-Received: by 2002:a05:6402:3059:b0:6aa:9f53:221b with SMTP id
- 4fb4d7f45d1cf-6aac8ecf650mr10133940a12.4.1790676598186; Tue, 29 Sep 2026
- 03:09:58 -0700 (PDT)
+        bh=+Y0oCiGlxm1oUL4ENFDzbHLN3RbL4NXvE+8S8i9hNs8=;
+        b=PuTYoSOTgY1QUcZMQS4Mzv1iW1KsNRyo1EEo09+mN7AlwF/NuH7izqMaoc6NK+1W7C
+         kr/J/wpgXa41QDkj3xlKVTKskx8hTAOlMVshPrQ33qixxdHgJMN8u9obO0E1gbVoiJqX
+         iJBjjuVso9ls81tnIFS00v0etaoAuVG60xMypIAYbugJCkCWMqUgve1ShVL0C9at6ROX
+         uGyGdiEIMf0ZnR5P0ar3BCpdAPhmlPyD1Re5yznN84XiI6zaewMV3XdAh3SHdd3t5Wyf
+         X7O99ULnrEj9I6WPnyR8sunqAYT2AVuVU2LdzHu07S1jGYAuC1u40YPyoG5uwnI7zoIk
+         IkJw==
+X-Forwarded-Encrypted: i=1; AKwUvBxdqjWn5zzcyaQnUzHHMGqItt0hzKr+hU9Mt7GcK+zLUPdHY34gCBCiPReq+uwrjvRi3ZdkoBTh/Vg/+KdGRl5BtQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIJv4v1oBSHg/skmouMmVuPh4Lgin2GiVnvClEVPjHHfLsL3OP6
+	MzmOuMxzh/ChwP1OzuEFVuCjTIPjGaj/h6zQdCO6zz+eW2XXHmxTilBdqdezXXY4NY3mBf2W5u4
+	GE2OQ59/jolciGg4m79XJHMQs5WYAsEQWXwSvBQBn2w==
+X-Gm-Gg: AYBFou1EUf/RVxm4Coy5kTzFzacMOj9RtnfapZyJ01yeQ+x6zXEsnwSi2ui54QgeT/X
+	aoPA9f4IjArHmarLmPNIanD8eHxM78NBnq21IEjp34pbCI0/p8o2fG0ivCI+OATxZ3zWEI2orMt
+	MKqJDmBtlKIViMOlZPGuleRK++IEDM+0wfx2ASzqwXs9u2ukM+YihiJYy2GZQSWfrSmPSBXzxrP
+	JvR9YLM3PUk6pBR+mt5xyurxuxy3vRbdeNq/bZlDLJui9hwx6rdhrFY9EUHOzofxFWlCCeEPJmk
+	7ab2jJyKjb20hAu9z4VX33V8ksOK4pWZ1fsunQm4DPIKNPxdE5zAb1MqXYYGeB9Hj8B8ai9fHtN
+	fY6HLwPSJxMYszsI4ahNghR0=
+X-Received: by 2002:a05:6402:c212:b0:6aa:e589:87de with SMTP id
+ 4fb4d7f45d1cf-6aae5898986mr6832193a12.20.1790676998743; Tue, 29 Sep 2026
+ 03:16:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -84,11 +84,12 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260918-contrib-pg-pixel10-initial-dts-v4-0-745eaca28b1a@linaro.org>
  <179067486422.102650.10176830320558486814.b4-ty@b4> <550a74bc-f0b9-4141-9fc8-db175bb0b1ae@kernel.org>
-In-Reply-To: <550a74bc-f0b9-4141-9fc8-db175bb0b1ae@kernel.org>
+ <CADrjBPo_V1YScLQkgbSrWCaq30k7JoF0GQQ0u5ouBiEipbEg4Q@mail.gmail.com>
+In-Reply-To: <CADrjBPo_V1YScLQkgbSrWCaq30k7JoF0GQQ0u5ouBiEipbEg4Q@mail.gmail.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 29 Sep 2026 11:09:45 +0100
-X-Gm-Features: AclHuK9WRHV7MmouzYCiFz5qe8OcNiIlPS3cNCTz_rrKcfw59IxyOBRtgpvUaFE
-Message-ID: <CADrjBPo_V1YScLQkgbSrWCaq30k7JoF0GQQ0u5ouBiEipbEg4Q@mail.gmail.com>
+Date: Tue, 29 Sep 2026 11:16:27 +0100
+X-Gm-Features: AclHuK9G694Ra3CWigev-SgKIG1dKrfnmFi4vSCyiq_Xo-NTi_Nls6PiXAbko7k
+Message-ID: <CADrjBPrErWJR_01+Qhuw6mu0Kpe8-tvBMjci=rBO13RaSqnfZQ@mail.gmail.com>
 Subject: Re: [PATCH v4 0/4] Add Laguna/Tensor G5 SoC and Frankel, Blazer &
  Mustang boards
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -112,46 +113,56 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Krysztof,
 
-On Tue, 29 Sept 2026 at 10:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Tue, 29 Sept 2026 at 11:09, Peter Griffin <peter.griffin@linaro.org> wrote:
 >
-> On 29/09/2026 11:41, Krzysztof Kozlowski wrote:
+> Hi Krysztof,
+>
+> On Tue, 29 Sept 2026 at 10:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > >
-> > On Fri, 18 Sep 2026 19:05:01 +0000, Peter Griffin wrote:
-> >> This series adds initial basic support for Laguna (Tensor G5 SoC)
-> >> found in Frankel (Pixel 10), Blazer (Pixel 10 Pro) and Mustang (Pixel
-> >> 10 Pro XL) phones.
-> >>
-> >> Whilst Tensor G1 to G4 SoCs (found in Pixel 6 to Pixel 9 and Pixel
-> >> 10a) were offshoots from the Samsung Exynos family. Laguna is an
-> >> entirely in-house Google designed SoC.
-> >>
-> >> [...]
+> > On 29/09/2026 11:41, Krzysztof Kozlowski wrote:
+> > >
+> > > On Fri, 18 Sep 2026 19:05:01 +0000, Peter Griffin wrote:
+> > >> This series adds initial basic support for Laguna (Tensor G5 SoC)
+> > >> found in Frankel (Pixel 10), Blazer (Pixel 10 Pro) and Mustang (Pixel
+> > >> 10 Pro XL) phones.
+> > >>
+> > >> Whilst Tensor G1 to G4 SoCs (found in Pixel 6 to Pixel 9 and Pixel
+> > >> 10a) were offshoots from the Samsung Exynos family. Laguna is an
+> > >> entirely in-house Google designed SoC.
+> > >>
+> > >> [...]
+> > >
+> > > Applied, thanks!
+> > >
+> > > [1/4] dt-bindings: arm: google: Add dt bindings for frankel/blazer/mustang
+> > >       https://git.kernel.org/krzk/linux/c/ecf6405fa6c503c34eb4e7e905957d70d4018e93
+> > > [2/4] arm64: dts: google: Add dts directory for Google-designed silicon
+> > >       https://git.kernel.org/krzk/linux/c/cf3df78629f24b40cd0cb2da74e3ea4a944bed82
+> > > [3/4] arm64: dts: google: Add initial dts for frankel/blazer/mustang
+> > >       https://git.kernel.org/krzk/linux/c/54edd8698bb1fb40c339d0cb2f15baad6993dd48
+> > > [4/4] arm64: defconfig: enable Tensor G5 SoC family
+> > >       https://git.kernel.org/krzk/linux/c/63f674fe8a0a8d6e4bee3e72f7ae658f0e9a0686
+> > >
 > >
-> > Applied, thanks!
+> > This introduces new warnings:
 > >
-> > [1/4] dt-bindings: arm: google: Add dt bindings for frankel/blazer/mustang
-> >       https://git.kernel.org/krzk/linux/c/ecf6405fa6c503c34eb4e7e905957d70d4018e93
-> > [2/4] arm64: dts: google: Add dts directory for Google-designed silicon
-> >       https://git.kernel.org/krzk/linux/c/cf3df78629f24b40cd0cb2da74e3ea4a944bed82
-> > [3/4] arm64: dts: google: Add initial dts for frankel/blazer/mustang
-> >       https://git.kernel.org/krzk/linux/c/54edd8698bb1fb40c339d0cb2f15baad6993dd48
-> > [4/4] arm64: defconfig: enable Tensor G5 SoC family
-> >       https://git.kernel.org/krzk/linux/c/63f674fe8a0a8d6e4bee3e72f7ae658f0e9a0686
+> > /home/buildbot/kernel/build/arch/arm64/boot/dts/google/lga.dtsi:368.37-391.5:
+> > Warning (avoid_unnecessary_addr_size):
+> > /soc@0/interrupt-controller@5880000: unnecessary
+> > #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg"
+> > or "ranges" property
 > >
->
-> This introduces new warnings:
->
-> /home/buildbot/kernel/build/arch/arm64/boot/dts/google/lga.dtsi:368.37-391.5:
-> Warning (avoid_unnecessary_addr_size):
-> /soc@0/interrupt-controller@5880000: unnecessary
-> #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg"
-> or "ranges" property
->
-> https://krzk.eu/#/builders/28/builds/845
->
-> Probably you wanted address-cells=0?
+> > https://krzk.eu/#/builders/28/builds/845
+> >
+> > Probably you wanted address-cells=0?
 
-Urgh, that must have happened because I removed "ranges". Let me take
-a look and get back to you.
+Yes, it should be:
 
-Peter
+#address-cells = <0>;
+
+and no size-cells line
+
+How would you like to handle it? Shall I send a v5, or would you
+prefer to fix it up locally since you already applied it?
+
+Peter.
