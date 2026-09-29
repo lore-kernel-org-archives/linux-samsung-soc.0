@@ -1,132 +1,167 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6874750AC2D;
-	Mon, 28 Sep 2026 22:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790635125; cv=fail; b=coj1t9Gs7h1SKkm9tm4VoydtL81RWWG3UpLeHrvCvk8n26jyRCeAeuzUa62i3p/zqSmLpT4tU64VaV5CyBmRSFIrPZjd+soVPMgXf3kYSgAq0LJL+LU2yLEgQFo0Ys2svN5U41W+AzuUzOqYPPUnOMVZgy307j4VmkYx6H2hHoQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790635125; c=relaxed/simple;
-	bh=zFmwXayU1cXfsqHBSquGbALfy31gATaMSDRMpFNB/Ig=;
-	h=From:To:CC:Subject:In-Reply-To:References:Message-ID:Date:
-	 MIME-Version:Content-Type; b=HGUiQqp8LXYP49VE9BD+TCaSc9LeQ6z2HblrpBvAGmwuxzveaetNB9Mnj82YwKQVcgL6oX+1A/+hse9GvzfiHi0PcIoW2eH1EwQzUha7Ia+1XScNtRLgaxXsLmHT6hty8DO77SbaWezFjaFaS7e0Xl8bDsISMBiDwv8IZWgI/8w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=M9IHvQfG; arc=fail smtp.client-ip=52.101.66.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872C73D6663
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Sep 2026 02:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790647885; cv=none; b=Qg6yWoi2NT7+2dlVIVfIZlkltc6i6E3kSGO1tU2boSGcrGMZxnRWswPKKYfcG2DqKBDryRtVVKpidZkKSBvAKVK8fiQUkHt47VIW/vJbYYd8uXvEX/s9wH2bXmgL0V1tL3n0aYqO+shopmJM8UrXV+Geu2th7XBBVvOlXmFQA2o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790647885; c=relaxed/simple;
+	bh=EgYDFi4BW+VDOoi1vU1rBzdgU+J7xutAceqa3gTkfTA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NWfZ1tGauGd4f2aVvl7f+1Oa+lSbbPbNBhe6VZVunsmX65PvO2vN/i6p1TSeFewVisfY6wtXLTavkhL6mp1iZcSnHEqHiOlpMcJkXACJegOcQWFDp/3hfV3+mW7HPspLhHtPoGtXiI+gzHubILQyQgvYbTwonKfmLdE0qkEcWG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B1VP28x3; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="M9IHvQfG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L/USXO4f+NMKbfgygAn2CTrBFUZ2Xneg4O3JqUI/JuphyKG0T55DUI0fqwfDooqEF8X3o+jT331UqJI4XxXArpTRyAR+DyunN+2A988VQofhqyc/scFh+bE6fuhYN1IV2xx/pjfs7Dn3d1aUE3CCNzRV3qRw0w++d2Ci0UyA0fq1mSCxFx1Pr7WaC7k/CTTe2AQUVxwRXkIuesx9B0TqKz+Yr1cxFMhFkEcGYQD/QHfSyv9qR5ie2AfQ4SewElBhz4PWbdMJ0bVZQ/QIZQaCXM5PqYYYKQdjTB5Ds9UbbTpvwoQ9NakjFmtYexTEw3eialk7m6SnlbTOOhuKuxZ3Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Taczx4EuxBhk6tbPphLZ4zBmKXAIBhM8RCEuArAq+Wg=;
- b=X3N6kh4MzELLBOiecr2H1Id3y3VYvWSDpKgFfLBzANOfqUvdNCpoqYP/Cz5+QknW6TldFD0t9O1VaUJ7jzZa1RLikLciU1wAbXhToVEjgTm0jxVGtUyHVmjn024uYkbIjIPviwYCacJ614XMDrZITbNI97oiuORtRTJWebaZAhr8cyTS4BwSMtFTuB0x2wsMRlMJYh5T3tcF561+T9ijUfde42+hji7+maI+YaCkPPUuvo9DYsik0V8GidHAhL/XjQaizIWxEvZ7dgO5lF7EdxGEHDQ3jQFZk6bXDq25FjFzfrc0+zGfog4JjHMOj+KXeKSG7TyARzQHfuGeEfcmYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Taczx4EuxBhk6tbPphLZ4zBmKXAIBhM8RCEuArAq+Wg=;
- b=M9IHvQfG1AVm5TGW0wfQVxiXGWrrdkZE/LTOAMLCktigC0StsIEXFqBd8OWWTzkgtOX3QXG3yhrp07pwoRjRmAIE+WjJHrNHyCAVzuV4DwPDJTvqVDO9D8mTMXhX4d6ugscm2qnPQGovjqwZQPQRRnuYUKzJq1NYfUw4PPk7Hto=
-Received: from DU2PR04CA0352.eurprd04.prod.outlook.com (2603:10a6:10:2b4::23)
- by DB5PR02MB10216.eurprd02.prod.outlook.com (2603:10a6:10:4a3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Mon, 28 Sep
- 2026 22:38:40 +0000
-Received: from MAD0EPF000008AD.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4:cafe::77) by DU2PR04CA0352.outlook.office365.com
- (2603:10a6:10:2b4::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.24 via Frontend Transport; Mon,
- 28 Sep 2026 22:38:40 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 195.60.68.100) smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- MAD0EPF000008AD.mail.protection.outlook.com (10.167.241.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Mon, 28 Sep 2026 22:38:40 +0000
-Received: from pc67007-2609 (10.4.0.13) by se-mail10w.axis.com (10.20.40.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.39; Tue, 29 Sep
- 2026 00:38:28 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Peter Griffin <peter.griffin@linaro.org>, =?utf-8?Q?Andr=C3=A9_Draszik?=
-	<andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-CC: <kernel@axis.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 16/16] arm64: dts: exynos: gs101: Add space before line
- comments
-In-Reply-To: <cover.1790629313.git.waqar.hameed@axis.com>
-References: <cover.1790629313.git.waqar.hameed@axis.com>
-User-Agent: a.out
-Message-ID: <2134325f4cc601585513ee5f95fc9ef2666064cd.1790629313.git.waqar.hameed@axis.com>
-Date: Tue, 29 Sep 2026 00:38:27 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B1VP28x3"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49ff9642c57so2294895e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Sep 2026 19:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1790647882; x=1791252682; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=xcqkEPYdqVvbehfVnfP1K4y2ZexuDH7FdOmjxY1X/hU=;
+        b=B1VP28x3fGfYrhgQYtrMvsTkaJeQG+t34MNnyKePWmjjOBnXlOjZ9dynXvsaMvIJcz
+         sa30CO0ycqoWiEnCAeY7dLvr9EaW5GC1BEBb5wyawK3oBT1vDhmyUMVrHk9YvBDgac+m
+         3ETm3v9sZnq18AInzc62oRYSKOwbhgdQt2nhuS6dBecTCx2G5jk10veVLKiC46cb7Co5
+         VP0wvONvkTu0A+7uWmD6VHp080rWa5S1GSmiN+mTsDDNTUPKWZhP5L4hu43y7VcVyqpf
+         eQkEbv8YAsfClPc+Cc4jXDuSbGAVas5WkUDc/ZQ3/8wDf1wfJWtVaU3Ze1yqKv5iNikE
+         9hmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790647882; x=1791252682;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=xcqkEPYdqVvbehfVnfP1K4y2ZexuDH7FdOmjxY1X/hU=;
+        b=VgfsKnSwarcRnaPJ6TtheH4jshTinDYkRpYGnIBdWiodhNgBAJzGdZ9nbuG2RsTblp
+         bvgGW9yHsvtjCw0TwjcB+iazHpsKw57967wmgbcSrJuF/PylktAeih2Ae8udGJq2UmVT
+         HvpLEaJhvkHwkOoJ2mFusC3gu1CmNb1hxeFFZCp1Ownj0CiI7i2pf6GdcpeApvKLrBXs
+         ucEzqKOLaFJuO7YtaqP8DrZp0yi7K9WBkdHoIsMWN0G7Qw/jhZcJP6ORDIIhwuQgHuNL
+         aN4kToEH0L8SESK+yQPoCuhnibyx2+Nl2AQYAj0WZZNmIJrxU8swkaGjpjyi6I7ydlvV
+         KqKw==
+X-Forwarded-Encrypted: i=1; AKwUvBzDHKraSe8QLlJRI/pHPveJqHPB0iQWU4upo00P2zC7+gYY4mSH/UoWQDfGC9h7ykJCsa3fzh7AWd8xuzpIFSznsg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nZtfj/axfjoykORoBw3LQJTlydLHnZ4I0RqgQcb0WbTLeW3hV3
+	1awrciJGtnmWpyJTmRV9P91LyYxIMM0Ci38B9yKjd/85jXl1qg1H5ECgZO+JXfatpNrfurffH5Y
+	uu24U8dM=
+X-Gm-Gg: AYBFou2fF1VgOggrsg6NOmgrDskNJmY18p7gk+zjnNPmaCkRzBs+VuU2f0Ab5hkDkOJ
+	txcovFoNl8ENACYLyeNtBiDdNaJbmrsRdUP3a/nBORj8poPufqzhhbm7r8dhRJ8bYBIpNoaRiYo
+	ycwZDgQILqsPy9ijuTJwx+s9WL3Kf9/oXlixnS406b0i1YuTqS6rWx5PVaiydNIJPyBwgWK8Sag
+	vKtwpLeGNAGeu56KiGQHM/UxxrraTl5e2sVx3sriFO1Is3xn0Lj3BQAfD3WV5X3/4ZQrYX0Fdp5
+	IGG0FJujd5QWnynMoVUBJEWfuGytEeanzmRxCXNId5weYRCwlDRdE4/mnQgUSzs+nVz9dddour+
+	HMO9ttkr0qInS1Q41A51W26Hx6uHeULoVCcBhfOzz4R+oE9oM0AlxN6B36chGbITRxVshSo5EZK
+	xa+xgAtJ6o09DPSjAfSgmKBsNA4GQcXBuJ8bv6Mnl6qiwRrFjDo7kauTHN3n2NZ3pdls/Xnu3V4
+	bnvyZ80s8XVsOS/Jy84HyQYVPVCKE/6NZTuwZx4QoiRhBbav+6covZn0K51qA==
+X-Received: by 2002:a05:600c:470d:b0:4a0:34a:588c with SMTP id 5b1f17b1804b1-4a00d778efemr13043205e9.14.1790647881718;
+        Mon, 28 Sep 2026 19:11:21 -0700 (PDT)
+Received: from [127.0.1.1] ([94.4.85.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a00d0f66cfsm42070145e9.14.2026.09.28.19.11.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 19:11:21 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH v3 0/2] Initial Exynos850 ACPM support for exynos-acpm
+Date: Tue, 29 Sep 2026 03:11:15 +0100
+Message-Id: <20260929-exynos850-acpm-firmware-support-v3-0-473a69fc8a3d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail11w.axis.com (10.20.40.11) To se-mail10w.axis.com
- (10.20.40.10)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAD0EPF000008AD:EE_|DB5PR02MB10216:EE_
-X-MS-Office365-Filtering-Correlation-Id: 333f6f43-fa99-440d-398f-08df1db13e57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700016|23010399003|260925021311599003|260925021911599003|56012099006|260925022911599003|10067099003|11063799006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	VzS/5knCQUE4htXPFFHe3PtRyNCS4j3pprQVhWe8vpZm4jyhdYIAFkU5LJENZT1DGhaClX4a2ZckWFVEeXjqQMyoO4YuDBVY1x+tRFjA9YqHz+RJJ2ApxWLun9LW428LFqnUHbIThqufor8ZI1ucsli7tBeXwhQNGpr6QyB4wgVbReSpVIQEh1lA/2xU5h/x1UNfb2jYyTXXR8+YE7R1TAuzwKrkOZZp+pr0flOlS3mp4x9p1kek6jR09+s/xrxzTag65pAIywHYKINwl2AvtMNnwZOyhy5M183c4l9SDzyzjD66D9q1F68BLZBSzq76/yCjOOWz6+oAoGb+2bCvToKk55gHNEBEvUXqgYwd+wV/MAjWyh6AkTt986qBmQKA7zveKKWeazrUN+/THWaRGF8PlLaBOGhmNoX0sfD+D09MDotsGJdctfWnCXxHTK8S7trjj8Ut96fFA16yaGz5DH0+Ntk1UATuX8aYDEmBUgbQSiCOmiGevM9LTsJAvPnFg9mJnUYTbYjUxy2oiQCGWgQuUkuIUhBar4wS3R545afzTYI4bNuD/ALJUhCShP11FwGLSHPxY7aQn4LxUhsp1m5wl8bovCMNsMtLwEw9ASd29AhFpm44BpCdfhC57VCz++2s/dfI4R6IUJu9pRFV/EsHeLDW9qnS3MyaKuqMIlC0JFj3knT156LKXzT7XC+o
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700016)(23010399003)(260925021311599003)(260925021911599003)(56012099006)(260925022911599003)(10067099003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	tyTLmSLFPeXX9zR7Xegrq+QOPkkq71l9+fMnx7Sr/zb+2yBVn6pGzBnJgk+b7WjoV0PF9g2BvA2d4YGf/fSumQsiFgH8c+DslO2g6/bMTdZYnX8pZdUBpVZXtxQObox6IBgQ2W3f0vlNX2Vw0/KYV9J47aLSh0RAy9ot8n2YX7vr60LXaKWDz/MxY/MU4md/Qi3Gy0CZcq3X5+xdFG2ORmaSwNpTQaEZu8O1nY/aiQ6133Etksn3XJHwErc1i50Wc6knRv6E+WPi8EHRuVIV/Z6C7dKsOnwbwflIpAfRpv8WuEjBTaaNOc6IRJ7zwmuz6YtSGa16alWg9MU+gza2Ybrf2uNLp6/ueT/rQ2uOlggPt8N2Z/PsbTFtLnEdehJCZkGi1rbW1nfsG2WaKDJ0Tm6Y6zwyiUIah5cOgA2Lo9+wVficKaMrxWjTTazVUJij
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2026 22:38:40.0050
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 333f6f43-fa99-440d-398f-08df1db13e57
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MAD0EPF000008AD.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR02MB10216
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEMeu2oC/4WOS27DMAxEr2JoXQb6+JtV71F0wShUQqC2XMpRE
+ wS+e1WnQNFVlm8weDN3lUiYktpXdyWUOXGcCriXSvkzTicCPhZWVttWN8YCXW9TTH2jAf08QmA
+ Zv1AI0mWeoyygkQKG2uj60KpimYUCX7eFt/cHC31eytDyCNUBE4GP48jLvsrdzoH4Rv10z5yWK
+ LftXDZb+feHe/ojG9Dg+qY/6qGj2rnXD55Q4i7KaZNn+yccbP9caIuwMx16CkPdDvhPuK7rN2A
+ at2pMAQAA
+X-Change-ID: 20260512-exynos850-acpm-firmware-support-0aefaf4104b6
+To: Sam Protsenko <semen.protsenko@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+X-Mailer: b4 0.14.3
 
-There should be a space before start of comment delimiter. Found/fixed
-with dtfmt (Devicetree Source formatter).
+This series adds support for the Exynos850 SoC to the Samsung ACPM
+firmware IPC driver.
 
-Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+The Exynos850 contains an APM co-processor that handles IPC messages for
+clocks, power, thermal management, and PMIC control. While it uses the
+same underlying ACPM communication machinery and protocols set as
+the GS101, the exact implementation details vary between the two SoCs.
+
+Those protocol-specific differences will be managed individually by the
+corresponding protocol drivers. However, a dedicated compatible string
+is still required for the core IPC driver because the Exynos850 firmware
+utilizes a different initialisation data base offset.
+
+First patch updates the google,gs101-acpm-ipc dt-bindings to include the
+new "samsung,exynos850-acpm-ipc" compatible string and adds clocks
+descriptions for clocks that can be controlled via ACPM or by Linux
+directly.
+
+Second patch adds the corresponding match data, base offset, and clock
+device name to the exynos-acpm firmware driver.
+
+There is a dependency for driver changes on clk-acpm exynos850 series
+which seems to be accepted/merged:
+https://lore.kernel.org/linux-samsung-soc/20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org/
+
+In v3 I updated the bindings to be more forgiving about missing clocks
+in DT to be actually be able to implement this in DT:
+
+firmware {
+	acpm_ipc: power-management {
+		compatible = "samsung,exynos850-acpm-ipc";
+		#clock-cells = <1>;
+		mboxes = <&ap2apm_mailbox>;
+		shmem = <&apm_sram>;
+		clocks = <&cmu_cpucl0 CLK_FOUT_CPUCL0_PLL>,
+			 <&cmu_cpucl1 CLK_FOUT_CPUCL1_PLL>;
+		clock-names = "cpucl0", "cpucl1";
+	};
+};
+
+and further add cpufreq support on top of these clocks.
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- converted clocks requirements in dt-bindings for e850 into enum instead
+  of consts, and added uniqueItems:true -- this allows to declare only
+  supported and tested clocks at this point;
+- Link to v2: https://lore.kernel.org/r/20260928-exynos850-acpm-firmware-support-v2-0-717acef9469a@linaro.org
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index b67d98ff99fc4..1af8087838467 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -661,7 +661,7 @@ gic: interrupt-controller@10400000 {
- 			#interrupt-cells = <4>;
- 			interrupt-controller;
- 			reg = <0x10400000 0x10000>, /* GICD */
--			      <0x10440000 0x100000>;/* GICR * 8 */
-+			      <0x10440000 0x100000>; /* GICR * 8 */
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
- 
- 			ppi-partitions {
+Changes in v2:
+- Re-worked bindings update by adding clocks descriptions and hence
+  re-wording the commit message and adding constraints for clocks
+  and not yet implemented pmic support;
+- Rebased and re-tested with cpufreq;
+- Link to v1: https://lore.kernel.org/r/20260513-exynos850-acpm-firmware-support-v1-0-3858d097e433@linaro.org
+
+---
+Alexey Klimov (2):
+      dt-bindings: firmware: google,gs101-acpm-ipc: document Exynos850 compatible
+      firmware: samsung: acpm: add Exynos850 support
+
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   | 56 +++++++++++++++++++++-
+ drivers/firmware/samsung/exynos-acpm.c             | 10 ++++
+ include/dt-bindings/clock/samsung,exynos850-acpm.h | 21 ++++++++
+ 3 files changed, 86 insertions(+), 1 deletion(-)
+---
+base-commit: 5a956dde5526a634dca7ccad27c051ebcc306089
+change-id: 20260512-exynos850-acpm-firmware-support-0aefaf4104b6
+
+Best regards,
 -- 
-2.43.0
+Alexey Klimov <alexey.klimov@linaro.org>
 
