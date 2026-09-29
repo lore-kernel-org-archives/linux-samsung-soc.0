@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14F83F23B1;
-	Tue, 29 Sep 2026 05:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702693F44C5;
+	Tue, 29 Sep 2026 05:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790660602; cv=none; b=GWEY1rbicbdAROXzWtGIirRc6aMWus+LgSt6Rq4etG+H2oT7Q8gsfTvEU2dKQRt5+mMnlmzrCAV7A0NnbqCTihyme/ofM9nJmmLM5IjK1kdBRwWIT0Z6tFuWglxVRZoeoQwva76vIR3A0qUM0HtLMyK4Jq3NaYO8qqYyH/OWrac=
+	t=1790660626; cv=none; b=l6qiSRQkK0yuPjRtAwiyuVHAShz+SpwFqzkklqD1djPeUiK5bG7ouKtULQwmQeTrCuUr+lL3r4h0R2rvKkXNOqqJfZRdsLT0HAX6Mt0RortIP56XH8hxno8m8QopgeJ1dtTiW9Vg5gyjkU5pxi2dZGWrHgfnHMskeH/3Mnw/qOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790660602; c=relaxed/simple;
-	bh=KBY0rfZa9w4lWDRkHNw1raeRvRbei4EVLl0Pyv0p0Pg=;
+	s=arc-20240116; t=1790660626; c=relaxed/simple;
+	bh=MG96Fpvq72MR5Vb6Hm+7ENNEVdoboCdtnvKX/g5WV4g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lm9AQh88aKUaRoQekOpZ2lYPU5RSdm4/tPYv/8b7rErSx8W0PvsAVqrwjkoEWAo9aVdCF2Y543h+TX/80GOQJismp2s+VNj5TSCBqmbEc4MVkkX2koorkP/FtTSUMDK3AJ68aJQOeDPEVZiSMYTbBtWXlKiFz8K0P2rz2dB/e+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrjqYJIE; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=Z7F6OgFagFmmEiv+2Ts7zNFvoQmh+UfyrkOiJMV5S9uegC5EznJaKu4ECuT2NC1BpQdKuv3SLFe51gH2DaONGdcpp7cAxwsulYu/jbO1zQJJ2KtVomhUP79gOm3GVRSvwnd97fPBFdN1cPIgNnY32llqZ5zPwie2gUiaDbM/exY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPfZ9mbr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrjqYJIE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7451F000FF;
-	Tue, 29 Sep 2026 05:43:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPfZ9mbr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971871F000FF;
+	Tue, 29 Sep 2026 05:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790660600;
-	bh=gtP8IqSzqQqjSXO/gR1w94Q4JndPAg4CmY6Ja2LAJvA=;
+	s=k20260515; t=1790660625;
+	bh=m4yQX+fqhwHs5ZsHqNqJS/2q+nx4lbtWQ5vxLSVbwUA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hrjqYJIEK/o/khodU8aWLL20wutTUKBgZeW7h5RR6G1GQT+RJW5CeT3WTMDRxbca0
-	 TjEpKCwvWDlIMudjWe4Ni1WfhzNDLeL4+l39lGtje2TAznHxWpDATkYWQLF0QmV9wg
-	 xFKrJr9CLCjRYLYqO7jJLXIyzqRMYnU5Hxl+OpGTMZjPt/d0vUNHfgk2gUPMIxUMyA
-	 99ylW5/HHin+A8/V7c01lHXU+0dQY8PYHaGjfNAA1IFhbLA72xfcWvzP0atUSTtEUp
-	 ywv/QapQ62ejszG+eoftl/VMOCNkfHESiaiJVjKrt5NGzVPVFUsWL89cWDDTjTa61w
-	 liiS6wwCTy0QQ==
-Message-ID: <ba1939f5-c528-42b8-971a-4b16998c37f9@kernel.org>
-Date: Tue, 29 Sep 2026 07:43:11 +0200
+	b=YPfZ9mbrlw5GsPvAqr4lVOSoY513OpXoTZ+5Q+gjw266gLpCjcsX9EcYZr9Vi25ZD
+	 zFKVqj9rp12Q7KV+KWdiJicYyXywa0M/tHfp9/PkO5JY1NCjLMQVRsKKs335vcIX9O
+	 nGmznRaVYPt93UJo9HPtBKW2c0BFRPrBqdv2jPti2X1AYP+9JAHG7JfL4sPxdBkHNp
+	 5zYXpoqb5AeIr6dyr9dIAvW4CMdpsT60Y38eZv0GKN8Mimd5muLeL929FtA6mTVjVc
+	 6VxCh8z9VkNxL582M/xNjglZvoT+gqOc4VCnzv4qyVohLXNaYK0m+IW99Mry1bDtNY
+	 wlAWu/BFynzMw==
+Message-ID: <f174b390-6f54-46a6-aeda-a7d9e6eb2f81@kernel.org>
+Date: Tue, 29 Sep 2026 07:43:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] arm64: dts: exynos: Format with dtfmt
+Subject: Re: [PATCH 01/16] arm64: dts: exynos2200: Remove empty line at end of
+ node
 To: Waqar Hameed <waqar.hameed@axis.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Konrad Dybcio <konradybcio@kernel.org>
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
 Cc: kernel@axis.com, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <cover.1790629313.git.waqar.hameed@axis.com>
+ <58f66e4612773be8c0391e3e963c72978aba58ae.1790629313.git.waqar.hameed@axis.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,22 +92,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <cover.1790629313.git.waqar.hameed@axis.com>
+In-Reply-To: <58f66e4612773be8c0391e3e963c72978aba58ae.1790629313.git.waqar.hameed@axis.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/09/2026 00:38, Waqar Hameed wrote:
-> I was looking through the notes for the last Devicetree microconference
-> at Linux Plumbers (LPC) 2025 [1], and realized that the tool I have been
-> working on might be of interest here: dtfmt - a Devicetree Source
-> formatter [2].
+> There shouldn't be an empty line at end of node definition. Found/fixed
+> with dtfmt (Devicetree Source formatter).
 > 
-> dtfmt uses a parser with lexical grammar (tree-sitter) directly ported
+> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi | 2 --
+>  arch/arm64/boot/dts/exynos/exynos2200.dtsi         | 1 -
+>  2 files changed, 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> index 5877da7baf5c4..d5aede3af15f7 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> @@ -702,7 +702,6 @@ uart20_bus_dual: uart20-bus-dual-pins {
+>  		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+>  		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+>  	};
+> -
+>  };
 
-We do not use dtfmt. I think you missed entire recent work and recent
-commits, where `git log` would point you.
-
-https://lore.kernel.org/all/20260911-b4-dts-samsung-cleanup-strict-continued-v1-0-9aa55051c42b@oss.qualcomm.com/
+There is no such code.
 
 Best regards,
 Krzysztof
