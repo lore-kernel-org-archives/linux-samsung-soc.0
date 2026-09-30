@@ -1,132 +1,120 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3BB371CF8
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2026 03:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0442E888A;
+	Wed, 30 Sep 2026 05:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790738730; cv=none; b=shGmW3YxQXKjFouwLKbiSidJIetVwx/C2Q1C689GjrIMB48jV/TO145srGppZZyoSANYZsGJ2zKTI2VbTRDamQOgOeVE7533eiOZUNhGu7NCw0VFizRkssk+D1B/qLAf8YzoB30jOPdIoMP6ypMm2Xs2dpax4XTxyHvO2Wcco6A=
+	t=1790745733; cv=none; b=OB37C+AbnzJlfkF5aLDZLF3x8JH/OoErVKzfVWvdfZxA8a+Sts4IdlnZI01wZnQ12yiGNl7tH3LlgIxWm8bfPeu3RuUtsEAK0beh1cOw9jsaQurdHK2ddXVA3RttyqroGYFoIqTCBOc9fKF6muGuYX5f0dPkE7oTFTFIZNlw/hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790738730; c=relaxed/simple;
-	bh=X93RA5rgWCekk+Xsp5aOujEMtC+NO/2XlXgFmidXf8A=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=fCX/SJ7jssWCdEctV2xlOAqYD7cZtLmFIec3z5VO3xFVPPY0faMjdLsEnQ07pCvjFkq0Jq3kmbvxQu6X79ZhL+jAG3WXKNbqWxafknrPjEr85YAzWs3ofYMKL8JK+mVM496aZcqou6UEV/zXvnjwQJKI3d1NWmC5XcO83EzpNzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YJ/7lv1N; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1790745733; c=relaxed/simple;
+	bh=CBbEQpGIpGuAv4Ic+fE9bMvQHiF3yEWMCXW5Zy4QjVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SnyLjyhQYmad/4mB391YwXhkigji0Y2OBt5agxNWYQ5/q66YkpayU5VxpqAHPWnnJl0UIRLsgB3R+X7mKE6Yxsgdirgp1rYQcwedEt9SCzJH9H7VhTpKt2mVaaOXNRyCpIpSzUvesNyWtRFzKWFTaeBgoshjpyUhby9TUTi4e2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzdYWA4t; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YJ/7lv1N"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260930032520epoutp04e3d514c8291b1a896fbb4c495fa11a0a~Z_2Dcnbuu2989829898epoutp04a
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Sep 2026 03:25:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260930032520epoutp04e3d514c8291b1a896fbb4c495fa11a0a~Z_2Dcnbuu2989829898epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790738720;
-	bh=qV/9he1CawIScaCGwp9M2kCWY31FQD0hOy1LYFGRfWQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=YJ/7lv1NTqkHWVZJBDhKZGIA6PI9CmYxFlGMYE3ZLIjz9PSymQqjaJJXw8+e1jNOO
-	 iQUVkyHFIu62a3ZiIVITzpGd5v3jOIa/YrZWD0KhNwtIL995PUH908SvuXnNQszqPR
-	 qJeHKVJrLJjI3TWIMTpxE4CYlBhmBfIJwgTOLMxg=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20260930032519epcas5p3ad47f970405abdcfcd06ac7290b08725~Z_2DDEJ9F0907109071epcas5p3Z;
-	Wed, 30 Sep 2026 03:25:19 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4hvgR1131Jz6B9m4; Wed, 30 Sep
-	2026 03:25:17 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260930032516epcas5p4d193b18297c922226d567018e738bf41~Z_1-jov4d1681816818epcas5p4X;
-	Wed, 30 Sep 2026 03:25:16 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260930032514epsmtip2aff10d7c9cb83aa870b567b932aff677~Z_199F3SY1916719167epsmtip2P;
-	Wed, 30 Sep 2026 03:25:14 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <peter.griffin@linaro.org>,
-	<robh@kernel.org>, <conor+dt@kernel.org>, <linusw@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-	<linux@roeck-us.net>, <hajun.sung@samsung.com>, <wim@linux-watchdog.org>
-In-Reply-To: <4cc0ca7d-82ae-493d-ac15-478cdd8f0e08@kernel.org>
-Subject: RE: [PATCH v2 1/2] dt-bindings: watchdog: Add Exynos8855 watchdog
- compatible string
-Date: Wed, 30 Sep 2026 08:55:12 +0530
-Message-ID: <13f401dd508b$4fac48b0$ef04da10$@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzdYWA4t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C9A1F000FF;
+	Wed, 30 Sep 2026 05:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790745732;
+	bh=7w5AGMWUEadxBPlxkT+1Es5xDLeETPZOPdv7c8XFHBQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=jzdYWA4tMexxLMIFTI4NG2c8BeNH74/5r3i002TLnXtHZc8Fk3bKJbtOOPUBE3LC4
+	 C+Um6R9W4QA+o7Xvg6lY48/gsCNdnpRAUaahhf/oGKKsSkACx5mMgEDrkDwWlKhOa2
+	 7x8M88viwpMd/uIWlkaHdzxAsYkrhBg3VJTmBHEivqjipt8hrAratIGw/m5yi9t1+M
+	 Kak6fpDENI2Sf+8wlXcK6sSkbgjwz5THcWdkDDLFXka9yasm8c/5KwfKyxZSAR/KjX
+	 ilQW4+6Im1kbZITKSB72EwPQ3f+Xr8qgg+v2SH8coG9nA+Amdd30r9KsFePWZISjrp
+	 37G7+x9QPsdlg==
+Message-ID: <e58235f1-2c9a-461e-8231-8729eb3e9c46@kernel.org>
+Date: Wed, 30 Sep 2026 07:22:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGT+8p9vB0AkaS/QifuXnNLP8ZDSgH+CJFiAV/CSEW3XjBwgA==
-Content-Language: en-us
-X-CMS-MailID: 20260930032516epcas5p4d193b18297c922226d567018e738bf41
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb
-References: <CGME20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb@epcas5p3.samsung.com>
-	<20260927152738.3673504-1-alim.akhtar@samsung.com>
-	<4cc0ca7d-82ae-493d-ac15-478cdd8f0e08@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: google: lga: fixup #size-cells DT warning
+To: Doug Anderson <dianders@chromium.org>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Brian Norris <briannorris@chromium.org>,
+ Juan Yescas <jyescas@google.com>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <20260929-pixel10-initial-dts-fixup-v1-1-b304868cc3e8@linaro.org>
+ <CAD=FV=VAiHf0-9sPvgGKji4j47rL38Ja3S2yiEfztubgZqBpjw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CAD=FV=VAiHf0-9sPvgGKji4j47rL38Ja3S2yiEfztubgZqBpjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Sunday, September 27, 2026 10:41 PM
-> To: Alim Akhtar <alim.akhtar@samsung.com>; peter.griffin@linaro.org;
-> robh@kernel.org; conor+dt@kernel.org; linusw@kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-watchdog@vger.kernel.org; linux@roeck-
-> us.net; hajun.sung@samsung.com; wim@linux-watchdog.org
-> Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add Exynos8855
-> watchdog compatible string
+On 29/09/2026 17:47, Doug Anderson wrote:
+> Hi,
 > 
-> On 27/09/2026 17:27, Alim Akhtar wrote:
-> > Add the 'samsung,exynos8855-wdt' compatible string to the Samsung
-> > watchdog device tree binding documentation. The Exynos8855 watchdog
-> > nodes use two clocks (bus clock and source clock), require
-> > samsung,cluster-index and samsung,syscon-phandle properties, similar
-> > to Exynos850 watchdog implementation.
-> >
-> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> > ---
-> > * Changes in V2:
-> >  - Fixed Sashiko review comment
-> > 	- [Low] dt-bindings: watchdog: missing comma in
-> > samsung,syscon-phandle description
-> >
-> >  Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 6
-> > ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > index a32c47831577..3f8c3e56ea07 100644
-> > --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > @@ -25,6 +25,7 @@ properties:
-> >            - samsung,exynos5515-wdt
-> >            - samsung,exynos7-wdt                   # for Exynos7
-> >            - samsung,exynos850-wdt                 # for Exynos850
-> > +          - samsung,exynos8855-wdt                # for Exynos8855
+> On Tue, Sep 29, 2026 at 4:11 AM Peter Griffin <peter.griffin@linaro.org> wrote:
+>>
+>> Fix newly introduced DT warnings:
+>> Warning (avoid_unnecessary_addr_size): /soc@0/interrupt-controller@5880000:
+>> unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or
+>> child "reg" or "ranges" property
+>>
+>> Fixes: 80f23487d554c7 ("arm64: dts: google: Add initial dts for frankel/blazer/mustang")
 > 
-> 
-> Just drop the comment like we did for 5515.
-> 
-Sure, will update in next version
+> Is the above git hash correct? In linuxnext, I see:
 
-> Reviewed-by: Krzysztof Kozlowski
-> <krzysztof.kozlowski@oss.qualcomm.com>
-> 
-Thanks for your review. 
+Yeah:
 
-> Best regards,
-> Krzysztof
+	WARNING: Unknown commit id '80f23487d554c7', maybe rebased or not pulled?
 
+I'll fix both when applied
+
+Best regards,
+Krzysztof
