@@ -1,78 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106525226BF;
-	Thu,  1 Oct 2026 19:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9993B9931
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Oct 2026 20:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790882457; cv=none; b=Y80IC7pxYIoBjR12o58md+yoRsk/o7/YHWgR/Jpfc25Z+uJNSCkOmQ831cTpBtGgKwDaHOvQNYfDV33Y+s2RL9hD/yOL/t7bQUhOZVu7wiGPNX7pi9kFfTi4Vvn+j2cDVXyFE53cwY/TMdk2QPir1ajkBzAKKH95EOQ0A+Qi7JE=
+	t=1790886404; cv=none; b=TVGUZYPo4yn4LeF7DHYKME8MSlxgnNmK55wSf4UerTUsQSptZkZ7kfEHTuTgVwOSU2qbpjmCspD3jQ5cCOFUdBwCxn7UF2OeHGCCosWTyh1VrxCV+IE3w9D549ygsjhz/b38YLzbeqvCysoXZojBWPhsP56aBUj1v9eCxx4vTog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790882457; c=relaxed/simple;
-	bh=x1MmOOCahg4e+YZf4G5N/altgnKA5qXFQq8wazzr6ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJqkYsvGf6CFW2JT/MM8i5l8RfRLpYxiA+mK/bPAg8UY+d+gL8tTKa5xEpMgOY/8Vl+gP9PBDME7XrqTFwZO13rfL7QnF98hvdGaiMS/uhgQ1umTkBhrVZI5NRLqqmU1n4C/mSbrFKJPrzsDXdGdEpLEG1tOksOm074uzESfgpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU1zxpq6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790886404; c=relaxed/simple;
+	bh=TDzyHBnvN6Az74PoI0viABsOFItZGrFL39Cl60uyHr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XVRT37HgVxBQbG46BPgXW/XfEFMfX+HfbU+imbm48Zd12bmD+HA0ANWzhbS+BY0nlSay7hpFUeX8HRQJpfUYJfGFpX4M84vp1Al+aJE8eXpgHbM7ax5F/BZUry5Hw778E+jg2EIWU3a5jrGpyXZXAO7nCKfJqwRJ2TDhQkVYVlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSQa0Q1T; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU1zxpq6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898EC1F000FF;
-	Thu,  1 Oct 2026 19:20:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSQa0Q1T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24D61F008A3
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Oct 2026 20:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790882455;
-	bh=x1MmOOCahg4e+YZf4G5N/altgnKA5qXFQq8wazzr6ds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jU1zxpq67EckGkyWPOprssSe5IBihl380Q9+To2nP7Bm5LiheBHEOvjKwjCZ3+2G7
-	 +O1SUjgIVFzEkeFddecxCtm0+KeEe+ao88XzdQOg9nurUhZhVh2mmjIZc/M+vnwR4w
-	 TmPLxoZmp+sJgdf2o7zNoIk+I0oeHWAH3UbSfPCORHxsrU4n/wa27l1KNrzBoDEgxC
-	 Rg7G3QuT9q/eMg4NFkd8z/fqAG7uAxMzJR3Lt7qwlrZEMgHVFlQ3VOtXeTYm0AAiLT
-	 tyX5i7Q3E0Y4e/QmfQJLtOshsyzsuLD8732oasRUK8IzarCaiTnEkPIVu3bAM7UNzg
-	 attYGZfDQ1o3g==
-Date: Thu, 1 Oct 2026 20:20:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: samsung,exynos: Add Exynos850
- compatible
-Message-ID: <20261001-ramrod-excess-af03490d5240@spud>
-References: <20261001-exynos850_adc-v1-0-791b3516bb9d@linaro.org>
- <20261001-exynos850_adc-v1-1-791b3516bb9d@linaro.org>
+	s=k20260515; t=1790886402;
+	bh=cuZLwo8L/Pz3tHEl/pgaDbc4NC6C8bTc4OVbV4XoCzU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=lSQa0Q1Tmp6AnEKgZnzPKAv/nZxq4L0eN0mmIfFPzFE5VKiKhEGw64PZ7Kest0yXV
+	 RzLDkDkLeYWVXbGEQfwzqJqjYVVNGGYhRgrR4HUFdg4s+OAustLvpWFzE92VIwrb0/
+	 9ZvmBbLQfjnX+M7swxzFDVVEoTPUkJDTYRC8dlpLkW7wTbrvs35hfgqRrt1jOTyFJd
+	 oyENsUwCm/haQNacO7s9VBgPOEqYf5dFgNjh3hFEAW74RIKj7XbxuV330RPHQVL+El
+	 +Ngt2IDbG2nLQoLI4gAr4xzgufiAHYXlwgqjBnar7jYmCiPqHE3X/YbOX++L6davvF
+	 fiRa2L2zsx+rQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3a20f06cce6so34848621fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Oct 2026 13:26:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy6t0BpjUISwjr/alqHuDtwvsSE2dlNHaps+NaxxCiI7ozYw33s2daOOZCRbzh9H6i6C4h+2Ept3bdcDYQjzJOsgA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKh7HhpBm8jF6k3Cn3N1Cdl/m6C7+ljROU/S/QRlFgZIY9Qunu4
+	TfP/DvYZprfhFCbR9RVozfMz5zGdgYp44Q5fzHrvC2DHh4urem1BbTCI5FOwXvgPehpUf4spGnf
+	d5qOc30hf9AGhq8XVuOnJWskcZWtk1Vo=
+X-Received: by 2002:a05:651c:982:b0:3a7:83fb:a2f4 with SMTP id
+ 38308e7fff4ca-3a783fba4b6mr9981301fa.15.1790886401618; Thu, 01 Oct 2026
+ 13:26:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BadlZsUMoxOv+uPT"
-Content-Disposition: inline
-In-Reply-To: <20261001-exynos850_adc-v1-1-791b3516bb9d@linaro.org>
+References: <20260918-contrib-pg-pixel10-initial-dts-v4-0-745eaca28b1a@linaro.org>
+ <20260918-contrib-pg-pixel10-initial-dts-v4-3-745eaca28b1a@linaro.org>
+In-Reply-To: <20260918-contrib-pg-pixel10-initial-dts-v4-3-745eaca28b1a@linaro.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 1 Oct 2026 22:26:27 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkCXt2jPps1+X3gmT-+o_ST59GOT1Huhqx70NK1RDCExQ@mail.gmail.com>
+X-Gm-Features: AclHuK-u9udZl77wTM7_r_7heAhhugb-sGNthmiZZXg0N5M_CZnxPf-YeiEWQxc
+Message-ID: <CAD++jLkCXt2jPps1+X3gmT-+o_ST59GOT1Huhqx70NK1RDCExQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] arm64: dts: google: Add initial dts for frankel/blazer/mustang
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Drew Fustini <fustini@kernel.org>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
+	Douglas Anderson <dianders@chromium.org>, Juan Yescas <jyescas@google.com>, 
+	RD Babiera <rdbabiera@google.com>, Brian Norris <briannorris@google.com>, 
+	William McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-serial@vger.kernel.org, Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---BadlZsUMoxOv+uPT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Sep 18, 2026 at 9:05=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+> From: Douglas Anderson <dianders@chromium.org>
+>
+> Add initial device trees for frankel (Pixel 10), blazer (Pixel 10
+> Pro) and mustang (Pixel 10 Pro XL). These device trees are enough to
+> boot to a serial prompt using an initramfs.
+>
+> Currently only Laguna B0 silicon found in mass production phones is
+> officially supported. Further revisions such as A0 silicon and EVT
+> devices maybe added in the future if they are useful. As of today,
+> these device trees boot fine on EVT devices with A0 silicon.
+>
+> A few things can be noted about these device trees:
+>
+> 1. They purposely choose to use the full 64-bit address and size cells
+>    for the root node and the `soc@0` node. Although I haven't tested
+>    the need for this, I presume the arguments made in
+>    commit bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address
+>    and size cells for soc") would apply here.
+> 2. Though it looks as if the UART is never enabled, the bootloader
+>    knows to enable the UART when the console is turned on. Baud rate
+>    is configurable in the bootloader so is never hardcoded in the
+>    device tree.
+>
+> Changes by Peter Griffin:
+>  - Remove dtbo overlay approach and add individual board dts
+>  - Update to lga-pixel-common naming like gs101-pixel-common
+>  - Reorder nodes alpha-numerically by the node name
+>  - Add ramoops reserved-memory (tested with console=3Dpstore)
+>  - Add reserved-memory for bootloader & gsa logs
+>  - Add reserved-memory for Android BootLoader ABL (used on Watchdog
+>    reset to extract boolotader logs / parse breadcrumbs / ramdump etc).
+>  - Add osc 38.4Mhz fixed-clock
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Co-developed-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Tested-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
 
---BadlZsUMoxOv+uPT
-Content-Type: application/pgp-signature; name=signature.asc
+I think I reviewed an older version of this yesterday or
+this morning.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCar6ykgAKCRB4tDGHoIJi
-0pcNAPkBIiypEFaEr9cRqf0+A/gpebZXEk4kvlJS5mOUfO3o4gEAsWasR8lY3yxW
-sflI+kUdUrN+nCczr4eOpUsogkPVdA8=
-=rh9C
------END PGP SIGNATURE-----
-
---BadlZsUMoxOv+uPT--
+Yours,
+Linus Walleij
