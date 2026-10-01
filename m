@@ -1,134 +1,194 @@
-Received: from mail-ed2-f43.google.com (mail-ed2-f43.google.com [74.125.228.107])
+Received: from mta0.migadu.com (out-93.mta0.migadu.com [91.218.175.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAE34BA9FB
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Oct 2026 09:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790847315; cv=pass; b=qpp5q2JfqpEroVuQH17BX4Qs2X2oa6koTCckNRHpEcwigBHaNjMI+05l+qP17d0NC61R63f7uoy3QrPKLLOVYtd/qtgimY6Kfadg1kfdPjeDYQ0Of9MpM1f5IAcmaifX7rsum9/EStxqPY+hJF6hPLq/cVisMwjEnC6VlP5yDdw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790847315; c=relaxed/simple;
-	bh=pGCU+YkLRfAjqDH/u84zLx49H7YX5I4bzZSwZUj/YFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VNvli8YsDHx9LAZ3BTuH+Nq4QS17/tKkK4kReJjaHnDrpEde3KO34Sw1w1twnyYm4IMp4NG2jg7z3pcKMUyDyPczA4kC6Zfr3Gi+d3g/TSpj00G9Co3cy2gJ71MghEN7mxKbeJINVYKxaMIoaEQmdig9taetfqFhEO624jr/Ues=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sd7T1gK8; arc=pass smtp.client-ip=74.125.228.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A504A8A3C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Oct 2026 09:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790848734; cv=none; b=CJeuYULiv4HLiFV6dumjhFeSwZzN/5H/AlN4K1Z1sWCm29zN8J9uqF9/4/entuePsVSRWmoRXfOcLwDe602aAxvL8dNTY5vS1mdVNzjdicJGCUwa0rDjOSgVhNj/kZ9wtzc1E+Tj5+ETmMzptX5jER1d0XikZTwhnbMj3UVxksA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790848734; c=relaxed/simple;
+	bh=VYkw38vXccedXe7/VFxScAzP/yByphJr6jcUEvgt6sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9g7HEeYs2PPL1b+3Em+4r/jQT+4pQUEiZjp6BUS7NC1MfDee+vVZve21AyEUeJZdMAZrlfIWhGn1kgHc3Nn8QDkx/8ycruoXfFNu4dJrGorf5SuQBbBT+kARzXFBlIMR7pqJLU1f4V+2vvzN9tA58gw+cVCD+aayKXejXNGQmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=gvIzqcsS; arc=none smtp.client-ip=91.218.175.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sd7T1gK8"
-Received: by mail-ed2-f43.google.com with SMTP id 4fb4d7f45d1cf-6ae19319854so2389469a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Oct 2026 02:35:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790847311; cv=none;
-        d=google.com; s=arc-20260327;
-        b=m0OjEqXIHuWVy/mdepx/Uul91lXMNnbqZjQfdfCVyhfE0198t40ni/eg9N6jUzMfl3
-         nmpjEE7whDCC84W3VFhl8mWsxwSvG8RSfD439vF9+BsavqjPhrWy810GBsvqYxHaTANN
-         pGFgl/ujvlxjMYz5BXqpUGXNFvMSoXhYVtBN+1Cg01ggdvxxze9KZ0lTTwj0czkqyT7B
-         AQQkO8qdH6JeoVnVYq3X128Li63vUsTfJwBNUcv1JiuBXMIQ7lmS1Sy+FALUKN8d+A9O
-         XUHUFMsXZhWEAbiq/9uo/YXJSw+aPIhXgSC0HTiDwhLGRcEFhHh0e7JRuARvZ9RRhJ1d
-         yTmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vYNfNqLHkMdvHAs749vvVhbZflan3bjWqgzofQ0smdo=;
-        fh=lTB9dvw5z57ctDJ8ik5VihHiTCU22CPxoMV5X9KNTdo=;
-        b=q9hzSXaX6/PGkdUxGsRbmD6J+Dbh6pATukTOJbnZ4qfvMDFUPbxMi6HqeBM84ODHsB
-         kzmHkE9XWoN6Lpp9IfE+V5pV8ElYsYRyZs+8Mcpr5KMFI5s/mopJBJkwTv/8h90Aoab+
-         +Em7UW8+xUJOiLJf/cDP1sKZpaIpYCGUQbjWLVcSYdiWY6JyF1diN3qLFicgT177DDix
-         /HfOzYZvpPkMiliUIJe3jKwFMDj7qTXgTz4V4eriQi6bI11jNwlJA75vPck/Dwt0N1P9
-         wv+AMEd7PAfu+MqAUp/PUlmauS7vEMEkeQNpnQFsgWd8bAgfTVVRqIk295hKC2YEtPId
-         NoEg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790847311; x=1791452111; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vYNfNqLHkMdvHAs749vvVhbZflan3bjWqgzofQ0smdo=;
-        b=Sd7T1gK87cHX73HpDC9wTDcnlwIIaXy5PqhY4c2sGOrCxmMdIx4rOvNbQn2CPEUDXu
-         gwE5IOMkEGtbfx4XkZim4q2TUpTZQzoRC0B8ZdmA4Z24Ix/KenG3YoHIwx3MAYaFmO+J
-         79eeOg7h9GHcm7IBIO1976lnq7QaaGro4G/ZEN/lpW0nvoYkF2YSu6jykQ7q4J7jIiB1
-         KUth2sGQZKhZykdCjBFqkO/n/FTtlLPZsXzSGeqcQDlrhypqqbLgQX5IgfO1V+Pgaqkn
-         Xd/rvmey5JbFXViUf+xiL9oe/0gDfyB2176JFotDsBCjn5ZgciXTBQmJ0DUTHucGgPPo
-         +rAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790847311; x=1791452111;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vYNfNqLHkMdvHAs749vvVhbZflan3bjWqgzofQ0smdo=;
-        b=mHqGJSyRl2DFPs3o7iJlhNY4oYIfa/SKBTsSdZ8ZXxlXZYDik91F8D1qxlMU7HQmrj
-         Mt9eb8ci9vGidYe4M/M1kB7iOkX8PXIGuu5x2t2X7+4PASZ00PH9hlIo0Nno8qwYEnMi
-         3ySMeqlkqnPWT4sUmW7XUfuItobDBU2rkgCwcv/MjMydQ9yFEZZuuC1DJd6XnAw8Fi3G
-         SLVjRSc+pXxPPu6Szx3BjZqklX7zjL9OlGXvpV9nm78mbB2G/moE/PFhu/hk4zG2nqkF
-         p23ZFbjTmgaTSNmgWyUpUfKRNKDh7pW6QzvQisWLiJTJmVTWH2So8u0P+yWSEbQhC6zy
-         aamg==
-X-Forwarded-Encrypted: i=1; AKwUvBzdota5WrnNwmhMSjLC87Mrxkkhs0zJRNc6dIgR+AxDA1SztySZsBr//vbA23s7N9Tk3z448rKv/d01lS5nFLp+8Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKpZSQwb7WRL7+MXk8nwD3+evZ1aWlugQN4Or3OQ1s04xZZLxgj
-	4vo65fI+cPNcNysG1P2Jr62n5FZ3byptCFb5NWtNixdQ6nJTZCvOKdzm4XckwPkR9ZFidu42ksF
-	RgPIT0dKTdEKYP90XJIqYl4+dT3Vdvg+TyWk+g6dq/g==
-X-Gm-Gg: AYBFou05BuhwQkBLfmbBcNq8JWBErsTyeJBNAZDiKTzy2PRlT6GmFu+JfBxXhZaFRbj
-	uFfXpXLlq+b7YQs9tucC0ZM2A0cM6p6QK4IcuaSa7oNyESmQZBdxCk6hIz/SRjj+26ObMj7dU8H
-	Oxkbz+gwkK/qk4+xmqXMR9xuzMiY3hCvdVoiHY/a94zHoB7xwrxpoA+/5SAMl7N8TlTYJlQG8g6
-	4k6/g2B2Cl4TFLSI2jDrPbsvtplimv6ic4hqNsWOMp5giS1Iqo+4EAzZwwUUpp4rcOpncGkzXrI
-	B2aVMSeEgRpi4ovYqj5hnhIFyyK8tFOLIK73dNSVUsZGfzKpfPQ+mNtg/PwkI63IdJXaBYv/Sw2
-	5u6by1cKgAYX2LQ==
-X-Received: by 2002:a05:6402:c4e:b0:6aa:490e:5506 with SMTP id
- 4fb4d7f45d1cf-6ae1996fd65mr3129163a12.39.1790847311405; Thu, 01 Oct 2026
- 02:35:11 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="gvIzqcsS"
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=VYkw38vXccedXe7/VFxScAzP/yByphJr6jcUEvgt6sI=;
+ c=simple/simple; d=grimler.se;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1790848727; v=1; x=1791453527;
+ b=gvIzqcsSpGGSd8xwJV8LAQidmX6DpJW8w3rXWgBLsrQjKn0CcozqHAA5bZhGQXJbQWoF2VCm
+ 9HT50gMS9iMtGeZYt/bnWorP1qqY8iAeMoy4Fg4emewtflElWuGDt/y4twkhsXkuWBrAHwZxDjc
+ mKvYg/3ZhqqHna25vhoxw3SI=
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+Received: by mta12.migadu.com with ESMTPS id 75f6aa3334aa47bb;
+	Thu, 01 Oct 2026 09:58:47 +0000
+X-Mizu-Trace-ID: 75f6aa3334aa47bb
+X-Migadu-Flow: FLOW_OUT
+Date: Thu, 1 Oct 2026 11:58:44 +0200
+From: Henrik Grimler <henrik@grimler.se>
+To: Kian <kianprogramer@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: Samsung Galaxy J7 Pro =?utf-8?Q?=28j7y?=
+ =?utf-8?B?MTdsdGUpIOKAlA==?= Upstream Linux support
+Message-ID: <20261001095838.GA26093@localhost>
+References: <CAC-nSOxO_9tSE8jNGGQZKPtiKPq0qn2sgGWppzD_8yu1q=Wamg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260929-pixel10-initial-dts-fixup-v1-1-b304868cc3e8@linaro.org>
- <CAD=FV=VAiHf0-9sPvgGKji4j47rL38Ja3S2yiEfztubgZqBpjw@mail.gmail.com> <e58235f1-2c9a-461e-8231-8729eb3e9c46@kernel.org>
-In-Reply-To: <e58235f1-2c9a-461e-8231-8729eb3e9c46@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 1 Oct 2026 10:34:58 +0100
-X-Gm-Features: AclHuK_YpgKbBYxkFtRgH6bLpQ_dPXQcVCNkRBcwgfpIDgIy_RrFnu-Dzk9rMWU
-Message-ID: <CADrjBPoppW+tAY3QXgawcCx7nvvSvWkQDKbP9R4r_4zAU3vWGg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: google: lga: fixup #size-cells DT warning
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Brian Norris <briannorris@chromium.org>, Juan Yescas <jyescas@google.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="b0uKHmnE8itGM4fo"
+Content-Disposition: inline
+In-Reply-To: <CAC-nSOxO_9tSE8jNGGQZKPtiKPq0qn2sgGWppzD_8yu1q=Wamg@mail.gmail.com>
+
+--b0uKHmnE8itGM4fo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Sept 2026 at 06:22, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 29/09/2026 17:47, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Tue, Sep 29, 2026 at 4:11=E2=80=AFAM Peter Griffin <peter.griffin@li=
-naro.org> wrote:
-> >>
-> >> Fix newly introduced DT warnings:
-> >> Warning (avoid_unnecessary_addr_size): /soc@0/interrupt-controller@588=
-0000:
-> >> unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" =
-or
-> >> child "reg" or "ranges" property
-> >>
-> >> Fixes: 80f23487d554c7 ("arm64: dts: google: Add initial dts for franke=
-l/blazer/mustang")
-> >
-> > Is the above git hash correct? In linuxnext, I see:
->
-> Yeah:
->
->         WARNING: Unknown commit id '80f23487d554c7', maybe rebased or not=
- pulled?
->
-> I'll fix both when applied
+Hi Kian,
 
-Thanks Krzysztof and also Doug for noticing.
+On Thu, Oct 01, 2026 at 10:33:42AM +0330, Kian wrote:
+> Hello,
+>=20
+> I am reaching out regarding mainline Linux support for the Samsung
+> Galaxy J7 Pro (SM-J730F, j7y17lte), which is based on the Samsung
+> Exynos 7870 SoC.
+>=20
+> The Exynos 7870 already has upstream Linux support and ongoing
+> community development, including Device Tree support for the SoC and
+> several devices based on it.
+>=20
+> There have also been several community projects and attempts
+> specifically targeting the J7 Pro. For example, there are existing
+> Device Tree sources such as exynos7870-j7y17lte.dts, previous attempts
+> to boot newer Linux kernels on the device, and Linux/postmarketOS work
+> targeting the actual J7 Pro hardware.
+>=20
+> These projects are useful starting points, but each of them has its
+> own limitations, missing functionality, or unresolved issues,
 
-Peter
+I think you are misunderstanding the community projects. They are
+missing features or have unresolved issues because no one has had
+time, or the skills, or the interest, to work on the
+features/issues. Issues or regressions happen with mainline linux as
+well, and there is no guarantee that anyone has time or interest to
+discover and investigate issues for older devices here
+either.
+
+> and none of them provides complete upstream support for the J7 Pro.
+
+"complete upstream support" would be the (un-achievable?) end-goal, of
+course none of them prove complete upstream support.
+
+> I can provide links to these projects and repositories so that the
+> existing work can be reviewed and compared.
+>=20
+> Rather than creating yet another unofficial downstream kernel or
+> another separate community project with its own limitations,
+
+Ok, but how will you test your patches? It seems a lot easier to test
+the kernel together with a community project rather than writing your
+own initfs and rootfs and essentially inventing yet another community
+project in the process.
+
+> I would like to try to bring the existing work together and work
+> toward proper upstream Linux support for the device.
+
+PostmarketOS (now re-branded as Nura [1]) encourages contributors to
+send their patches upstream, a lot of time has been spent on writing
+wiki pages about the upstreaming process, and creating a mainlining
+guide [2, 3]. I suggest you read the guide and reach out to the other
+people working on exynos7xxx devices.
+
+> Would someone familiar with the Exynos 7870 platform and Samsung
+> Device Trees be interested in reviewing the existing J7 Pro work and
+> assessing what is still required for mainline support?
+
+Rather than thinking about what is missing you should start testing a
+small barebone .dts for your device (maybe with uart/serial and/or
+framebuffer support and not much else), and add more features when you
+have had the time to properly test and verify them. This is where
+community projects are useful, you can collaborate with others that
+are working on the same or similar devices and test&develop features
+together.
+
+> I own a physical SM-J730F and have access to the actual device for
+> development and testing. I can provide the links to the existing
+> community projects, Device Tree sources, repositories, and other
+> relevant work.
+>=20
+> I am willing to do anything that is reasonably within my ability to
+> help with the upstreaming effort. I can perform hardware testing,
+> collect boot logs and dmesg output, investigate hardware and Device
+> Tree information, reproduce issues, test kernel and Device Tree
+> changes, test patches on the actual device, and provide reproducible
+> test results. If additional information or specific tests are needed,
+> I am also willing to carry them out and learn whatever is necessary to
+> help with the development process.
+
+Sounds great, only thing missing is then to create the dts for the
+device, and probably add support for your device to some drivers. Most
+likely no one here will prepare patches for you, so this is a great
+opportunity for you to learn how to do those things.
+
+Again, I suggest you get involved with a community project and learn
+=66rom, and together with, the other people interested in adding support
+upstream for similar devices. Nura(/PostmarketOS) for example has an
+active exynos-arm64 community that work on exynos7xxx and other arm64
+SOCs, please check out their matrix chat [4].
+
+[1] https://nura.eco/blog/2026/09/27/nura-rename/
+[2] https://wiki.nura.eco/wiki/Mainlining
+[3] https://wiki.nura.eco/wiki/Mainlining_Guide
+[4] https://matrix.to/#/#exynos-arm64-mainline:nope.chat
+
+Best regards,
+Henrik Grimler
+
+> I do not want to simply create another unofficial project for the J7
+> Pro. My goal is to make use of the work that already exists, identify
+> what is missing or needs to be fixed, and help move the device toward
+> a clean and maintainable upstream implementation.
+>=20
+> If there is interest in working on this, I can provide the relevant
+> project and repository links, Device Tree sources, logs, and any other
+> hardware information I have available.
+>=20
+> I would be very interested in helping bring the J7 Pro into the
+> upstream Linux ecosystem, and I am willing to contribute wherever I
+> can.
+>=20
+> Thank you for your time and for your work on Samsung Exynos support in
+> the Linux kernel.
+>=20
+> Best regards,
+>=20
+> A J7 Pro owner and contributor
+>=20
+
+
+--b0uKHmnE8itGM4fo
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFPBAEBCAA5FiEELH8prpeJH2QZqeLNsAduSQtxYWsFAmq+Ls8bFIAAAAAABAAO
+bWFudTIsMi41KzEuMTIsMywyAAoJELAHbkkLcWFrMpoH/3YTAonzJUvyMR20bMRs
+XLof7AyQYLp166+NuMBl+deKA43RWChRBVa/bSyYLk2PCKhBr2jLnTdCeytS9lw7
+W10wlz5ZuD/3BsfTOycoeMDv1P09quljdMHjPTUTHIcOIpGFlWPiO27m1jSYg9Pd
+02Tg5uFELeBSwUV6aAoS0P1V946aIGRZr+lne5gaSYqPAGdbk+HK3bNK1o09S4G4
+f0Ubi1KBzfNuvDZeQULuVwqM6eVPafkRP0Xsy/xC9vdXQWLr3cgJ7tUPrvIIseJX
+XjGRbMi5l9QchODnV0/32SFW88V5coUvL/54+NIkmZAv1MYMYaX9beGcYKMyMURk
+zWI=
+=xrL4
+-----END PGP SIGNATURE-----
+
+--b0uKHmnE8itGM4fo--
