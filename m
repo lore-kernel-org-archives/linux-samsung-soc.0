@@ -1,145 +1,147 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011000.outbound.protection.outlook.com [52.101.65.0])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BE84BD798;
-	Thu,  1 Oct 2026 08:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790844359; cv=fail; b=VgOzS7MZBcmShxlUbwtPNwpItPx+AJOuwGUWbtDdIjhJVXgtWA++lKwYsJ+HCm3Kow3RTkCApakczGLEqatCfEn/CdCNZmG6fd1iuuUMqi79EW7pGmL7mdescnUFnIzhj9D8TI5yV0TaChhfk5eH4O0Y7Yb8NrUf8EhZ8LFj0oI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790844359; c=relaxed/simple;
-	bh=Di/PKCIXPKzFI+j3A0bKuLQE/z/cnCPklUZDxXqHHMY=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IzXWN3QiMaNiPYz+l1LCtZwWKddTiOy+alv1O0jevqe9J9OUmKcvpU8gTRFlmmve8cHVmXhyehLFkkyqjuaf/Exq505WexWmN9YxsWByt+8E0XvBYCJ6ceGRlyXUCZpPKl/3sd33DOR1cy2cc+gpIchoZm2cq9dRzpf5EIL4fNA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=DtGa2OLm; arc=fail smtp.client-ip=52.101.65.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63B423BD02;
+	Thu,  1 Oct 2026 09:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790845590; cv=none; b=h8PyKWinxpQdAl83uGdMBUl0oMhEg4prSeAcD2lQOtd8pkKQd7lUylxaGj1YDD0P63NLaOLwytHE98OBN3Nxlm3UXZyDZZ5fr3s6mSxFz61ipvXuGQHNzzJw5qyHWAuZKC+AosJr3aFhrslDwpnPhLEv6wGZAv3lFNt9UXkqqwQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790845590; c=relaxed/simple;
+	bh=yJowZr7imZPJLXx+riHv97OPnbhou2rzCPOx6YJdjhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lvfvq4e06FrOGI7jo15sjmdbTkmHs3Dq18BzViTus056Ffpf58Rtuz/J5thCcZ1+nLraeM8Jf17twYfBhG+SsUN0fTH6axq60cB+MOuvFBB+XyoGn8vOXT41Gzrk+3cU9qvXa+t2uftuTwTbTf34yuMOdPnAJqq6hHcmV4H/jT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUMS20/N; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="DtGa2OLm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CJ1J/qcbb9cK9d8k/566yl9HjJ8g6pzbebgceVfOLzkL/qCVvZh39OepWMCJ1Q/93dCnypZX4ANzXASCNZed3pAY9Y5ENumC/wrBw4WZYI3JWhOgv1mSydM5WZ91YgWJNR9PuZmgDdCQIlVVqdQ3tdpJKwVz+ho00U7LdkE7CP8e9wJJX5t2fk1bMKEqMdyNlOCI82Er6S5Fq3uG9PeskakY6L28v+gxnlnlTOyVRlwUQ7bVrb2cfJi8/IjJtcvzgjUaw3hjwzS7QGkAECPxSFYIR5dRixhZeJ9I7SZg95Jkp5ILmC7Ogt0GX0HwSjqZ3zc8gcidW9aF3MRrjQudYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Xrs85Ebn0nGM0UWSvtiEb02s9P71GwQWjUWGiLgHJM=;
- b=kEU+5fuwnngqa7QL2EP90e8hU64Qp2++XX53f/c2syHdCbbZeaAB2ygf74a2uBaXJ6lP0boEk8Rv5xyJi23P6hFGFy8BPycZN3bBqLQGtGZ8bO8P1DrICPdCFa0deJQlGz2CAQhwmit0RBiw2rHQtaNjWmgOBbYyBqJWQOELEuM/n0Xt4cgnrVJPNv8Mvpzk/M3U3htTPe7C1tduGMgZeuPEZppBVFN5Aqrut2r6LtZbBnDuC31fWY36RYFDDKgkwP/wHAE4NsDNxvW6HKJ3vOvr8xAN7IJzXWmlQ07oz/xz09vd8rCNGs5sEY8GTKOxRtbrP96Pq6jtr0PtvafxVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Xrs85Ebn0nGM0UWSvtiEb02s9P71GwQWjUWGiLgHJM=;
- b=DtGa2OLmv9lqQSxGlRpL1ICCV8dhb1UjP6anhQaufGv2rzFaIrDuna/LzNO6jmQtLRVIf6IngbfzqleXW6uaPiGxbMVG+0SMX5LStjKfXWa/CtGm4oxo5UvGAqxW/XU8zdhj3SMRKegeLSKDB4C0bHOEqTIGx/pWV4T9cmVk7TY=
-Received: from GVYP280CA0043.SWEP280.PROD.OUTLOOK.COM (2603:10a6:150:f9::18)
- by AS8PR02MB9912.eurprd02.prod.outlook.com (2603:10a6:20b:617::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.15; Thu, 1 Oct
- 2026 08:45:44 +0000
-Received: from WA1PEPF00009B3A.eurprd05.prod.outlook.com
- (2603:10a6:150:f9:cafe::ac) by GVYP280CA0043.outlook.office365.com
- (2603:10a6:150:f9::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.16 via Frontend Transport; Thu, 1
- Oct 2026 08:45:44 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 195.60.68.100) smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- WA1PEPF00009B3A.mail.protection.outlook.com (10.167.242.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Thu, 1 Oct 2026 08:45:44 +0000
-Received: from pc67007-2609 (10.4.0.13) by se-mail10w.axis.com (10.20.40.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.39; Thu, 1 Oct
- 2026 10:45:41 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Peter Griffin <peter.griffin@linaro.org>, =?utf-8?Q?Andr=C3=A9?= Draszik
-	<andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, "Sam
- Protsenko" <semen.protsenko@linaro.org>, Ivaylo Ivanov
-	<ivo.ivanov.ivanov1@gmail.com>, <kernel@axis.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/16] arm64: dts: exynos: Format with dtfmt
-In-Reply-To: <ba1939f5-c528-42b8-971a-4b16998c37f9@kernel.org>
-References: <cover.1790629313.git.waqar.hameed@axis.com>
-	<ba1939f5-c528-42b8-971a-4b16998c37f9@kernel.org>
-User-Agent: a.out
-Date: Thu, 1 Oct 2026 10:45:41 +0200
-Message-ID: <pndy0chstai.a.out@axis.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUMS20/N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696321F000FF;
+	Thu,  1 Oct 2026 09:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790845589;
+	bh=V28/n0y8m1uAKc0ztfIGGgXOq/CEuFmzIcn2u0ST4H8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=oUMS20/NGz92pkS8lJxdSwArHn86VGhbKltdMFdUi7A3ngMzt9fD2qKVXUEiHq/p5
+	 xyM4uWRcAwNGZr1H50GY6P9EKUBILsubkXOmpAI9GA+2aNS4jZz/dFiaWIHGfznOR7
+	 T4xEgW0txgK+n8aLpi5nNUtF5HW0fP9QS3iOUHmtjfvLLcZ6qU3Uy+VBYf28spEJwY
+	 j0NqrwSvmnzMiXeb5qBOAXQXO3FZvb5ZCz7EkKL+S0HA4bIKv35nIvq3DG5KGnh93e
+	 Tgj60uL34Bt6u0pMpzrAX9UyUWGtUMn0BTm+m50QKQhgWeCLAQSCX1smgo5MTBT+Lk
+	 +ThbnlrpnsaGg==
+Message-ID: <d7bef9eb-144d-4476-b6bd-d4b14ec1059c@kernel.org>
+Date: Thu, 1 Oct 2026 11:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail10w.axis.com (10.20.40.10) To se-mail10w.axis.com
- (10.20.40.10)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: WA1PEPF00009B3A:EE_|AS8PR02MB9912:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb8c8d3e-f98c-4345-6dd0-08df1f9861bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|30052699003|23010399003|7416014|82310400026|376014|36860700016|22082099003|18002099003|13003099007|4143699003|10067099003|5023799004|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	Kf+sxnawRR9yPrHmDjSluSqPWjmQALnk54rVLpj/6T6XftonDXOpi+svcUj0GgEz9xTYdGlSUjIDuDX+CH4/Gooogxt1pwlVYDDBHPt6Z2SbFSxAh4cmU+oViyKb+lYEoJEzR9cdCz7DTbQLg7sPS25aEKnl4IUmOHy38/tWlvbqYsaoFpbietTgOPD41o8/OvBWlfkZH+XGViE8Q08b3p9SujENwUkq9mEHa5o3gfAKHYS8sVGV2nFgcbaT42+jb+BOElsuXQORZqv02xYVUWvodXyW5sK+VrMEVkW5a7/VTWiFhvgT9uKTpXBQXktVIy1CmAjcGrpzYkb3DhB6hL+ruGid+RWhrfQSd3GF8Gsk/2qTYkqj2W/szGV28i79ByhvTFURrTdFtWvufL2RoZWA3tJellyPjPi5SCJ1Vd7IHC5LVgaWNN0Zttn77m9y3tz3rX5vgde32V7AxWNS+O8xU+Qy2fDfLJaOFWlg0/fHQPxzH0DwynkveKC5JSK73vIFWHFWefZbqI9a9TQDLl3upkvKeyZpFFZLx40feTPLY6Td3HEHVB21fyIKdFMRDn2Uk7EZ99jjVQgRI6FJcO7zhOgtAYXO93pXteVju8mnAawv4ECy7DAwUg7Uohk/UEqE2tLisw6x211ofpwuiRLJJ1mXXMBb6Vxb+mNgLvdj9JvSlXE8rroo3zPs08/WlUIOvY5Z3R7SvMg3xoSozQ==
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(30052699003)(23010399003)(7416014)(82310400026)(376014)(36860700016)(22082099003)(18002099003)(13003099007)(4143699003)(10067099003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	o/JuxvyLFCEsMY/YH8z3AdiJnEw8MSsidM6ztnPdUCo8ibohu5LIxqLq6u+XigNY3ttHIPDQcdvS8DIGAPOMSfrVJUQIVCdH0v07Yn7ABH2NKXVdUZAKHG472V4USGUgN3xYlEoGgBLACD+m/ce9n38z4NrsnPTRtITM7U1Mr13PhXWG6fpv2NSmwL2joC9axBCA1wuYMtdTj/SBf3Fud+1Bu2PtjiMZfwzHB9XZjZVLd5GlyTRr7GkoJx6xyTUknqtoweABXTHYYxxbyHU/sy6+fhcgoDVn5bP7mTB2zAN56ONAmro3+EWzmi1trBxNdqU11A7/kCYYe6tTgx5hLngFJuZp1+ZZd/ANe5O8nDnQOusP42RRulHpnpEurfdBoHzHA+tUKjME4zlCcICbUdewBjMS/i7eRNgMv1t/LrYEYaeOX7PP4cnyFE6QuBCJ
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2026 08:45:44.4799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb8c8d3e-f98c-4345-6dd0-08df1f9861bf
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	WA1PEPF00009B3A.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB9912
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] arm64: dts: exynos: Format with dtfmt
+To: Waqar Hameed <waqar.hameed@axis.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1790629313.git.waqar.hameed@axis.com>
+ <ba1939f5-c528-42b8-971a-4b16998c37f9@kernel.org>
+ <pndy0chstai.a.out@axis.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <pndy0chstai.a.out@axis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 29, 2026 at 07:43 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 01/10/2026 10:45, Waqar Hameed wrote:
+> On Tue, Sep 29, 2026 at 07:43 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>> On 29/09/2026 00:38, Waqar Hameed wrote:
+>>> I was looking through the notes for the last Devicetree microconference
+>>> at Linux Plumbers (LPC) 2025 [1], and realized that the tool I have been
+>>> working on might be of interest here: dtfmt - a Devicetree Source
+>>> formatter [2].
+>>>
+>>> dtfmt uses a parser with lexical grammar (tree-sitter) directly ported
+>>
+>> We do not use dtfmt. 
+> 
+> Not sure what you mean here. We couldn't have used dtfmt since it didn't
 
-> On 29/09/2026 00:38, Waqar Hameed wrote:
->> I was looking through the notes for the last Devicetree microconference
->> at Linux Plumbers (LPC) 2025 [1], and realized that the tool I have been
->> working on might be of interest here: dtfmt - a Devicetree Source
->> formatter [2].
->> 
->> dtfmt uses a parser with lexical grammar (tree-sitter) directly ported
->
-> We do not use dtfmt. 
+I mixed it up with dt-tools from Axel.
 
-Not sure what you mean here. We couldn't have used dtfmt since it didn't
-exist until I published it? Are you maybe referring to "formatters" as
-in general?
 
-I'm not going to argue _why_ formatters (for Devicetree Source) are good
-thing to have, Konrad Dybcio did a very good job of that during his
-presentation [1].
+> exist until I published it? Are you maybe referring to "formatters" as
+> in general?
+> 
+> I'm not going to argue _why_ formatters (for Devicetree Source) are good
+> thing to have, Konrad Dybcio did a very good job of that during his
+> presentation [1].
+> 
+>> I think you missed entire recent work and recent
+>> commits, where `git log` would point you.
+>>
+>> https://lore.kernel.org/all/20260911-b4-dts-samsung-cleanup-strict-continued-v1-0-9aa55051c42b@oss.qualcomm.com/
+> 
+> I did a `git pull` on `master` and started from there. Nevertheless,
 
-> I think you missed entire recent work and recent
-> commits, where `git log` would point you.
->
-> https://lore.kernel.org/all/20260911-b4-dts-samsung-cleanup-strict-continued-v1-0-9aa55051c42b@oss.qualcomm.com/
+master from Linus? That's missing entire development for this cycle. The
+easiest is to work on recent linux-next.
 
-I did a `git pull` on `master` and started from there. Nevertheless,
-maybe it was good to "miss it" and do the "double work" here, to show
-what dtfmt caught that previous work missed.
+> maybe it was good to "miss it" and do the "double work" here, to show
+> what dtfmt caught that previous work missed.
+> 
+> Let me know if you want me to run it on `arch/arm/boot/dts/samsung` to
+> show some more examples. Or even better, you could play with it yourself
 
-Let me know if you want me to run it on `arch/arm/boot/dts/samsung` to
-show some more examples. Or even better, you could play with it yourself
-:)
+Sure, I left arm/samsung for the community to deal with, just note that
+Henrik Grimler mentioned in IRC he was working on that.
 
-[1] https://www.youtube.com/live/2Gput2daq4c?si=A4F2CvstRef1qD6e&t=28246
+Best regards,
+Krzysztof
