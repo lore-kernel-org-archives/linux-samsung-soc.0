@@ -1,128 +1,114 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com [74.125.228.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961EE3F104F
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Oct 2026 09:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790932901; cv=none; b=eK4fSgEU8HxJp9KJVE4wwtKuaadxdx6pCiAmSr3qYWWm5aY3ufRQG6zqcMT6xH03CCBxKk1QDr6iHWi9JWJWSylE+QHkIIc56KBtTRBnLGp4J4j6ho1biTuFmyuwKuubk/mYYevjkLE1LYpXpdGtAj46MBlVD98RMBJ+sHt0Hu4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790932901; c=relaxed/simple;
-	bh=O3Thk85sAHH5QJSY/mJodPK3iAZArYt5dGhHPaasDbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=gghy8rY0w+5rNT6wZmRxg1LOprtCPHskZkypUljEhuPAHKboeQ/AjRUcX/YA76XhOk+6X6BEoT5ncH3YN4guuvPsvcIUNx7HDxeB42pUYPHjCJXVVicGqLDL5Co41k9wsOP+nio3ecL0WpF/P8IdLDNDBfQNMnb3Bna1VFu0Uwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dN6qg1gu; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D43F488D8D
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Oct 2026 11:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790940303; cv=pass; b=Um5DDCKGlPy5urLkX1gT/LxK8I8fGSo7Pc8WYBhKG3SuHCBAs4eCcB0RTjcO9HsTOQaaoi37C9SsiSUqnOhkKEUecHxwsR8BRGTNs/2iIMj4cg3gGyWVWhPEk3B0otNdl+kvuZJLbkdRG+hBn/HhufrFcY71tZZsqXEKL3Hf0oI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790940303; c=relaxed/simple;
+	bh=keMbtcyNVQxdC0ctP+ZhAmBIOPGSUadXPIE/fKO00rU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uLaF81i2Uh2LnAMvXvqCRj4sQjmIoKyLa/hALKKkZqI44weuXM7Nq2xClcUd1sDLpLgUo11P2YhMbPLP7YbVxSFoEnIkA6H6afGS4RoK38RfCpeSwSKB5aGM8mclGEQlKTL4SA/6wNXPXMJfNmrEYSt4JhjgcfBe7pAYrn1lFJQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=efqCTgDg; arc=pass smtp.client-ip=74.125.228.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dN6qg1gu"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261002092130euoutp025a40c22fcede663dc0f883f91dc1b942~aq-meTEDD1198611986euoutp02w
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  2 Oct 2026 09:21:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261002092130euoutp025a40c22fcede663dc0f883f91dc1b942~aq-meTEDD1198611986euoutp02w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1790932890;
-	bh=wWIBM+vRTtRDKTeZi7RkFmomnPRhth9vGh3Bb1rqyRc=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=dN6qg1guHaU+q0LkGhogicm5nAkI6Z5vMmF80y1KcuzyW1A80rss3mfVZUO55aRdy
-	 c4KMU3xTuQMxvvm97TPj9yd2u6L0w8MhwOuNJlJqWjCLo4jsakD7gwOzMdo0/MEsef
-	 Uvp6wrtRmBbk4tl57RUPd8w2xYccMxxK1GRZWopQ=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261002092130eucas1p1bc0065c21bf1f1e0418ef5b845f72bc6~aq-mLbVUT2596625966eucas1p1B;
-	Fri,  2 Oct 2026 09:21:30 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261002092129eusmtip1104c6d782ba79a90563a90a49af2ab93~aq-l23EO23106231062eusmtip1P;
-	Fri,  2 Oct 2026 09:21:29 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>
-Subject: [PATCH] ASoC: samsung: i2s: enable op_clk in probe to balance
- runtime PM
-Date: Fri,  2 Oct 2026 11:21:12 +0200
-Message-ID: <20261002092116.585466-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="efqCTgDg"
+Received: by mail-ed2-f35.google.com with SMTP id 4fb4d7f45d1cf-6a605c198fdso11884355a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Oct 2026 04:25:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790940300; cv=none;
+        d=google.com; s=arc-20260327;
+        b=NKZoCkk0qx7JmFzGxsL3FAmXfEnScA8fwsySavEycq5Pys/3mIRWWmJlqPeZWUwL49
+         hqRlujG0ssN9xyZomSAZgD6s0V3Z/6XDyrbAOxZA3xsvJSnN8mg55Jp0HUpxrkV/LQuU
+         WQEtf2E83Ck7EqZ3LLRvcsHXQU75ng4U4OHyY0ByCf2bCyFC81R4aXo7TpZFS66gGgVB
+         njQywBqbNBO06N5xL1Myrd2SAnGQd0R3SCwLv7Am9Wp9QyP6bmEOxVv7UyaYPgifDEf5
+         LIEJraFWLISU3ALX45Z/i78pblDhtWezXbYwdRhHd+c/47UKbtOtyvOJNVEEaga6H2Wc
+         WVaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=keMbtcyNVQxdC0ctP+ZhAmBIOPGSUadXPIE/fKO00rU=;
+        fh=DQdvY65ikepNWhjCSG5QPN9UzzluWnJACXfSjmrn63A=;
+        b=O9V/urnpkCpUu+P2rwXEfrtgUGHsmvCwPaThojusVCyINm1sBD2d3s2CEhLM+LCk+S
+         BkW0fF6W4jnnZ46mvdGG5dbrHQE1GrP1D485NCoDsLUAjPWUqRjNqCRdYZa6GGEgyG41
+         rSsn/NbdKYYHLAlxgqZZ2x1QDM+sIGGloXnYbtcVJhU2Gyb7q+IqwwFGvcY89ZIicovD
+         Uf4FRt9UZpnozaPGMh77Xfm9q3LJxnpjNWUQO4f7Yww0Cd3XAZROAvMV6S+QkrOyVUO7
+         u/rESAY/ON/CpKkJfdg415302fdhBChTRVfmmPVXW5B5IYg2SZZJkUQ3XxrK0WcpbkrX
+         2aCQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1790940300; x=1791545100; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=keMbtcyNVQxdC0ctP+ZhAmBIOPGSUadXPIE/fKO00rU=;
+        b=efqCTgDg+rP7HorfXfAh2CddbMB3IpZ3nM2eASkyu88plQ/Icbem6nxQxZ8g8Nmis/
+         O3bQuprgqMODpxzcmS+8Q06gJB5ALqDCKv/W8YlhhtPv1FimY7f/u1b4Lrj3401BQa9J
+         y4uJB4tof9Axdt9wD6bD4ORqh6EsUjBvfU5Y1AenE60iB8ri7iibPNnrozPrTVEKQqdk
+         4dPbKKBkT507HvuE7BeJDisxLIiIOxm71GCWLYFu141ESNal2XIbkd3U9p5tplw3VrEa
+         Ni5lghwXSK7j0aOP4lbsgVBoOxDLiYb02QfpiK/K03IlSQUYsH6m4FKD3IWN/oSvXIaN
+         keyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790940300; x=1791545100;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=keMbtcyNVQxdC0ctP+ZhAmBIOPGSUadXPIE/fKO00rU=;
+        b=PD+6dN3WIIs/AjJ1CLkU2HiWW6N9qsYE9K1y0TTyI6obsc6nM2Ni9LpkP1Hl4OpvHe
+         s7TPzzMRdsMwzIeK6NM8Cd7R6vycx+b8hE3xIVNlq+btlvnQlPnwDhlhXMVi5GXsBsus
+         hTsnbQwlIO6ILmBHk3k2Qkcdf6FC2LuyNQevchp15+SvmMvLVVQulUeVY5BDshUhdIxc
+         3LnWnJiZ3hUeGGXBly/X8Xt7a9E4m1aATsPipuXgvfwZ+HA5KOQ24EFKyRhzHT8ktCj0
+         CGX3zeNCkRKYxOnwYDRXeVWvkPTzfRy2Noa+9lEfSdJ/rjRaAHobyCsctgkKX19L1364
+         eCcA==
+X-Forwarded-Encrypted: i=1; AKwUvBzPoPq7n6Rqt3QSz6kEGE+7nX9Cfhtc0wGIgEU0EC/wRIwZkjM+Ua7Cvim826DXiw2pgjlAl7oihA9WuuR6YScmCQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLT1llLQA/a0wj8DWIog8HV853TDWDdsRzGEHXQs3Y3hSbyrkHe
+	pbrexBMmIofoC3i8Nxy3bn3NaEWF+G+c7TtdMqYmdtjbiy/CIBVsJKMVfRGIVzqLIgFSaSw9Raz
+	cjfr0oXXf+L7CRN8+bJcoicSLvdHgxkHGwm8VJTLrTQ==
+X-Gm-Gg: AYBFou1ej4XPbh2rNVL4h/1XQXdM2HYj9A7RI0v+fwVoixT/WstXE6ETosaZnmSh6RK
+	GUx4Ox04QYnYLrN/QizeSJZoEacwHrPu/QimDOkLFkz6Y/9putB9JwmFzqFrtQmkqrrjjiX0yeI
+	NCqR23y2rjTiciBNEFMjbwnEz0PFENkn6ljXR2GHlolu3sLjxSDiO5LoWpckXJYsrl8KPN140aY
+	qKFIyzhTgwkh17dpN4qa8oGwZEeez5D860108lsLvyPmH/ynUK4jfb4KLDVmXOBJleUNayPujCe
+	/JDIZT7GkMOMtdTrK6m73et0doRQGMkec4NfXE9wQcjwKazxuyGFNQlOFNSPr2sEHeux8odN3RE
+	ZKQojOeReJcAbKwlTTBFwAZR4
+X-Received: by 2002:a05:6402:13cd:b0:6ac:8dce:5a86 with SMTP id
+ 4fb4d7f45d1cf-6af9e322b6cmr1463693a12.23.1790940300400; Fri, 02 Oct 2026
+ 04:25:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261002092130eucas1p1bc0065c21bf1f1e0418ef5b845f72bc6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261002092130eucas1p1bc0065c21bf1f1e0418ef5b845f72bc6
-X-EPHeader: CA
-X-CMS-RootMailID: 20261002092130eucas1p1bc0065c21bf1f1e0418ef5b845f72bc6
-References: <CGME20261002092130eucas1p1bc0065c21bf1f1e0418ef5b845f72bc6@eucas1p1.samsung.com>
+References: <CGME20260927150938epcas5p33b7d0495f8d9a8e84bf5f09c66e757fb@epcas5p3.samsung.com>
+ <20260927152738.3673504-1-alim.akhtar@samsung.com>
+In-Reply-To: <20260927152738.3673504-1-alim.akhtar@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 2 Oct 2026 12:24:46 +0100
+X-Gm-Features: AclHuK9DpXDu6p9otQ-T72J8vLpAXoibGWPs5vMvpbKJgOwvaV2nsGKYn1-NIrU
+Message-ID: <CADrjBPpG1nJ0Dg1jXhqLoR_dnRP+N+=QbYeyW8GJV4Xr=od1CQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add Exynos8855 watchdog
+ compatible string
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux@roeck-us.net, hajun.sung@samsung.com, wim@linux-watchdog.org
+Content-Type: text/plain; charset="UTF-8"
 
-The probe function puts the device into the runtime PM active state with
-only the "iis" bus clock enabled, but it also sets priv->op_clk to the
-parent of the RCLK_SRC mux without enabling it. The runtime PM suspend
-callback disables both clocks, so the first runtime suspend after probe
-disables op_clk once more than it was enabled.
+On Sun, 27 Sept 2026 at 16:09, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+> Add the 'samsung,exynos8855-wdt' compatible string to the Samsung
+> watchdog device tree binding documentation. The Exynos8855 watchdog
+> nodes use two clocks (bus clock and source clock), require
+> samsung,cluster-index and samsung,syscon-phandle properties, similar
+> to Exynos850 watchdog implementation.
+>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
 
-On Exynos5250 Arndale both clocks resolve to the same EXYNOS_I2S_BUS gate,
-so this triggers the following warning during boot:
+With Krzysztof's feedback addressed
 
- WARNING: drivers/clk/clk.c:1270 at clk_core_disable+0xe4/0x23c, CPU#0: kworker/u8:3/45
- i2s_bus already disabled
- ...
- Workqueue: pm pm_runtime_work
- Call trace:
-  ...
-  clk_core_disable from clk_disable+0x28/0x34
-  clk_disable from i2s_runtime_suspend+0x58/0x68 [snd_soc_i2s]
-  i2s_runtime_suspend [snd_soc_i2s] from genpd_runtime_suspend+0xc4/0x298
-  genpd_runtime_suspend from __rpm_callback+0x48/0x18c
-  __rpm_callback from rpm_callback+0x4c/0x50
-  rpm_callback from rpm_suspend+0xf4/0x718
-  rpm_suspend from pm_runtime_work+0x9c/0xa0
-  ...
-
-Fix this by enabling op_clk in probe right after getting it, so the clock
-state matches the runtime PM active state, and by disabling it in remove.
-
-Fixes: 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")
-Assisted-by: Claude Opus 5.5 <noreply@anthropic.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- sound/soc/samsung/i2s.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 3e76cb81462f..442e70b107da 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1534,9 +1534,16 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		goto err_disable_pm;
- 
- 	priv->op_clk = clk_get_parent(priv->clk_table[CLK_I2S_RCLK_SRC]);
-+	ret = clk_prepare_enable(priv->op_clk);
-+	if (ret < 0) {
-+		priv->op_clk = NULL;
-+		goto err_unregister_clk;
-+	}
- 
- 	return 0;
- 
-+err_unregister_clk:
-+	i2s_unregister_clock_provider(priv);
- err_disable_pm:
- 	pm_runtime_disable(&pdev->dev);
- err_del_sec:
-@@ -1559,6 +1566,7 @@ static void samsung_i2s_remove(struct platform_device *pdev)
- 
- 	i2s_unregister_clock_provider(priv);
- 	i2s_delete_secondary_device(priv);
-+	clk_disable_unprepare(priv->op_clk);
- 	clk_disable_unprepare(priv->clk);
- 
- 	pm_runtime_put_noidle(&pdev->dev);
--- 
-2.43.0
-
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
