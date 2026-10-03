@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA35306767;
-	Sat,  3 Oct 2026 14:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F9832B11C;
+	Sat,  3 Oct 2026 14:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791036843; cv=none; b=AgNWtmNxflw7NlSso1XC7C5RRuKNhehN9oTFlYsMvauJNHVDBd1TkK9QVJ5gPSdbqmQBeWOYj0LArCE89/1foqJOvWrt6F0Hyrs3hgXTngM4b4j7U/LzyIMv7YwyrOQkPwkxzbDkYguCw4u3ISD35mv1ZPQ0g06Ckkfy4CIyud8=
+	t=1791036909; cv=none; b=NKlGqW15WOplJj+INsRPICqK+3Y9Yz6E6KS0Xtc3aviAvDfYI3Hahhx2OgVYkW4f04Tnm5GzhK4ba6nF7rHjZ7/142swUDM9do95+2mC3cb/FZnfQZL9CpEsJ7/zP5fd0/qFUWSA2Ni4JiJ/4FAw0YJoaFvmrfZ0PYx0sHjZXNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791036843; c=relaxed/simple;
-	bh=IFP5d0Z+Gv8QWUPPd/FQnw8l4gkDCiKfYCYHfQq3XwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqPf89wBob7bMDsZi8cIGaib2Gy3RLDzhRfLaqc5hUhdNIWHefOSriX62LV77v0ZKqin3Cfjt4ob+v0ENSsxxOht2FTklR+TSbxxuyYXd+45J8IeICHY/QTnTRc+GOFg3qEQLKz9IeM887ch9jiLcMnlvgXfUVZeFvEwXnUgXLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ED9jen6y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791036909; c=relaxed/simple;
+	bh=TAAItWWIVHFH/c3RF9mRzGRDE1Bh3FDhCHQVu0dwpBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eOK/jnb+ZBiBaV1sL2zXPTphz+RLwKzBd88YQHt3mOnzxINqbqNNe8trd51v5+pt5watDoL0LYKw/WKVlvTJXSYIheVkB5oStIDCAZldSr57l1I/8pqM1r7Jjss4uzgk49BSfoFPXBNqeubphlUk9fwWvJV0K9ICs3oonw0BKeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNZoUpeY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ED9jen6y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0EDE1F0089B;
-	Sat,  3 Oct 2026 14:13:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNZoUpeY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9B91F0089B;
+	Sat,  3 Oct 2026 14:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791036842;
-	bh=BR3sE4c9XWone9rFuR5bM48qhAQYLIPPfD75FeLODH4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ED9jen6ypnY26FixKFJauvFjGbm7n9ZpIidlX5JkkUrYooB3AL9PphzLh5kytctd5
-	 M4AQkx/B24s+cvjOp1UXl1KAg0COo/nsG3QBpuTdDQ49jmM768dfqd4lhgLhLHN4Y9
-	 Gp/HKYmjNvUX50nM94tSf91WMZtwdAG2ldPNREuhVjKD4k3jznIZp6vvT8/JTOYXMR
-	 kAFASNzA+3FOkQ7IK0XkeVc7QWcKYxIZNeHQG4RZlsufWfrm6ZGF3MQjPew00egcOw
-	 FFdCS4vsLh9CTAd3hV2OsjSnhV13UurVF1qNQzBIeVm6DlVCSglTDV6uUaRcuaG+Zk
-	 2ESfEuovtsUMQ==
-Message-ID: <4d421941-4508-49f2-a1dc-a9f27d075982@kernel.org>
-Date: Sat, 3 Oct 2026 16:13:57 +0200
+	s=k20260515; t=1791036907;
+	bh=wLr4Gthn8kmw75l6iaGG4y5Zxf+aPQGpnPskN0Vov/c=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=jNZoUpeYFSVKW7N7mP5VUgrYrtxq1oK3TZuXj7mdXSLbypzdS/6M2FKZtD87r3lA6
+	 myrpLgZzf5EpslRsdD+lOd3nqZN2ryKRfuaTS+2gER2tsbf3vtWq8nbNdXLSeZV5ng
+	 BCHB4xTa6PvCSk66cBdFTvfXNY8SO6S/0lqQW+GHYlomHN2oXz4KuhOvhsevqTOATx
+	 MpiNzGr2pP5sM0jiK9BDH2rqkV972yHJmxgiCvt3vL0L3IeDoS3MzZzvqbu+1EHgkZ
+	 8MtjHv8BZ+e3aCSZFQ0uKigOArxhJ27dilFq2y06vMMA9DEiuIq642ADLfWqRkf3NP
+	 k4uNNNI5zUYjg==
+Message-ID: <45fbf350-9d75-4f44-927b-d37d7e4c3cd1@kernel.org>
+Date: Sat, 3 Oct 2026 16:15:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v7 6/6] arm64: dts: exynos850: add PMU interrupt
  generation node
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Peter Griffin <peter.griffin@linaro.org>,
  Alexey Klimov <alexey.klimov@linaro.org>
 Cc: Sam Protsenko <semen.protsenko@linaro.org>,
@@ -49,7 +50,7 @@ Cc: Sam Protsenko <semen.protsenko@linaro.org>,
 References: <20260930-exynos850-cpuhotplug-v7-0-203245826333@linaro.org>
  <20260930-exynos850-cpuhotplug-v7-6-203245826333@linaro.org>
  <CADrjBPrm0o5scen0vk2ZiCzGW6kdTWsciPvA9K7JW_yb+Mp8PA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <4d421941-4508-49f2-a1dc-a9f27d075982@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -94,24 +95,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <CADrjBPrm0o5scen0vk2ZiCzGW6kdTWsciPvA9K7JW_yb+Mp8PA@mail.gmail.com>
+In-Reply-To: <4d421941-4508-49f2-a1dc-a9f27d075982@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/10/2026 14:41, Peter Griffin wrote:
+On 03/10/2026 16:13, Krzysztof Kozlowski wrote:
+> On 02/10/2026 14:41, Peter Griffin wrote:
+>>>
+>>> +               pmu_intr_gen: syscon@11870000 {
+>>> +                       compatible = "samsung,exynos850-pmu-intr-gen", "syscon";
+>>> +                       reg = <0x11870000 0x10000>;
+>>> +               };
+>>> +
 >>
->> +               pmu_intr_gen: syscon@11870000 {
->> +                       compatible = "samsung,exynos850-pmu-intr-gen", "syscon";
->> +                       reg = <0x11870000 0x10000>;
->> +               };
->> +
+>> Since you are now creating your own custom regmap in exynos-pmu you
+>> should drop the syscon compatible here. That should avoid syscon.c
+>> ever creating an MMIO regmap (with the wrong spinlock). I've copied
+>> some of the commit text from my commit
 > 
-> Since you are now creating your own custom regmap in exynos-pmu you
-> should drop the syscon compatible here. That should avoid syscon.c
-> ever creating an MMIO regmap (with the wrong spinlock). I've copied
-> some of the commit text from my commit
+> Yes, there should be no syscon fallback.
 
-Yes, there should be no syscon fallback.
+... although not here, but for existing PMU node.
 
 Best regards,
 Krzysztof
