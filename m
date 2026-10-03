@@ -1,45 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912E17C203;
-	Sat,  3 Oct 2026 13:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F89289E13;
+	Sat,  3 Oct 2026 13:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791035222; cv=none; b=VXWtVNQL5e7VLnqV9TesVW59DX6U+GhxTTRq9fCiD+Jn0xXLlTyu3KCK5U9Nk79kXFVBwH1wYmleZXJ3xGuSYNa+hbkNhhXlNcRW3V8xIlqBUR0phw5fPkmjmedu4cxWTi5ROVyRSmAf3WpHV0i9bbyKj+Z6MF1dveYPlKQwqHw=
+	t=1791035224; cv=none; b=TjYKn+y/RZGqkkyX2v6SJkzINkjWQvmTF9d0Lgsj4qdMF0a8FNY/KUy6I1AfdJ3x2gQOmKGkESkRf6v7ZIgTgUGpmchTas3F4iZFWe9EXzAGjUO8Y6Za6cBKiZBAHyrLLX8SzzoYtVltu0m39MgI+Z0UncDKeS9+pxCPsJ4/d00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791035222; c=relaxed/simple;
-	bh=nd/ehcJvpp3XA3RM4s0itTllX+iZG1J44if+X3HPqhI=;
+	s=arc-20240116; t=1791035224; c=relaxed/simple;
+	bh=Xut+Lntpa/jRVZ1qBtTwTMTo0Ern+uyzdy6oYZB6rqY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hSmdD1y5Y59VvDlyBD+8sSnr9zB3j0HFmRH4XSwMvNqSt/pVu3gt4ktaLA74f4UoUV7XQFSsjV3whi23Vp1LQch4PaAeQv5R75O5iKPQPhWyy5tkFDlwkTTIf6ltYGn3sF2ygZDxMQ/Plo4l0axbp5L2oV4QrXuI//8S2BWjEXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKj/UHbM; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=Bkbe1p28AlLoC2HAyDe+4gGU4nQpMqB3o4bHMPyXe4+mnqLSh6lLQzK68bwFIk3tVocYHg96K1zheJzh8IJ/WwbwZyMnxsAZjY8A+fRA3UVIpQCgaK6elLFMVUs/eCRiLgeZ2dtd2/taf5lPoqRoSFdr0rj6d2QOinezcfQ+onc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mHYklXRY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKj/UHbM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128061F0089B;
-	Sat,  3 Oct 2026 13:46:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHYklXRY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8254C1F0089C;
+	Sat,  3 Oct 2026 13:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791035221;
-	bh=lT5VAqVxR7PF2pTcLLyyEAU4ZLvTK6F8FroUmVYH3Wo=;
+	s=k20260515; t=1791035222;
+	bh=ofZE+kb1r8+hvMIvcuxyOTAGuinMX21M/94Z27ADFBE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=lKj/UHbMzJwltpJAMI0y8f8w80V9bm1QR5NZOm55IupS366qaMJVDaHcKFWqe9YU1
-	 KhovnU3M9d0qMf0JRdyIY13I0JdxM7s96CI0Pp/ZEgwJs++d92ATBh3sifiAwUDAof
-	 fRsXTwQ4Qih3fZEqtS4Iw4W9pyAmttSoUlZ+4L/ttp4ESRHt9SOCu9VZ5u4t8++0iz
-	 XT6xBuyidX534AF5KGx09dvBiz12RPEvR01S2T9sUFiFmOMEzgj/d1tcxHwzM5BE17
-	 Ftehro2PHWaZAwhAiD+MGtbidwcBM3w512hfqguXaDpjyDkiNWkSHngS/YzuCvwPV5
-	 4yCveh2HdLolQ==
+	b=mHYklXRYPMv6RxvQhyiuDtRBe46DExSwR9/8GHCdBCQcQ8eNPtg7Wpj4u3rGC97t1
+	 W4AV9lk7Ld3mf8wgDmNthZDkenjgAjFNPGl9Oe4osu+feJ8zj4za+hsot6D1G4TTDW
+	 Q9TJMRKKzFz9BK5UJVBnI0pLMUSOEBlWEFnMr0EROwg/QQV1Ew6hMSZalGlGrZMv+M
+	 w9lCP0HIF7claHjnt4V/DNf3aBlOW/d8bVkrgXt+grSKu+oQWs4LsQTHHNgttxt3Y2
+	 m4XA2MykwUtdHWuNP4h0fLGh4KFuQ7NjgFYWhfLGk7BfgNGAGnPLwkRxhN1KbqDrfT
+	 3Sdl/+BqtrYMw==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Sashiko <sashiko-bot@kernel.org>
-In-Reply-To: <20260930-exynos-pmu-cpuhp-idle-fixes-v3-1-4269d8425978@linaro.org>
-References: <20260930-exynos-pmu-cpuhp-idle-fixes-v3-1-4269d8425978@linaro.org>
-Subject: Re: [PATCH v3] soc: samsung: exynos-pmu: fix error paths in
- cpuhotplug/idle states setup
-Message-Id: <179103521882.13392.16561640308024902589.b4-ty@b4>
-Date: Sat, 03 Oct 2026 15:46:58 +0200
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jaidev Shastri <jaidevshastri@vt.edu>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260921-mb-exynos-pmu-v1-1-4babb522ce0d@vt.edu>
+References: <20260921-mb-exynos-pmu-v1-1-4babb522ce0d@vt.edu>
+Subject: Re: [PATCH] soc: samsung: exynos-pmu: order pmu_base_addr before
+ the pmu_context gate
+Message-Id: <179103522127.13392.6192386924567242318.b4-ty@b4>
+Date: Sat, 03 Oct 2026 15:47:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,23 +49,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
 
 
-On Wed, 30 Sep 2026 00:50:31 +0100, Alexey Klimov wrote:
-> The setup_cpuhp_and_cpuidle() initialisation sequence currently ignores
-> the return values of cpuhp_setup_state(), cpu_pm_register_notifier(), and
-> register_reboot_notifier(). If any of these registrations fail during
-> probe() routine, the driver returns 0, leaving the driver partially
-> configured.
+On Mon, 21 Sep 2026 21:07:23 -0400, Jaidev Shastri wrote:
+> exynos_sys_powerdown_conf() returns early while pmu_context is NULL and
+> otherwise programs the PMU through pmu_raw_writel(), which uses the
+> separate global pmu_base_addr. exynos_pmu_probe() maps pmu_base_addr and
+> stores pmu_context afterwards, both with plain stores, and the reader
+> loads both plainly.
 > 
-> Furthermore, if anything after setup_cpuhp_and_cpuidle() fails in probe()
-> routine, for instance devm_mfd_add_devices(), the probe() lacks an error
-> path and leaves notifiers and cpu hotplug states registered.
+> Neither the two stores nor the two loads are ordered. The callers are
+> the Exynos cpuidle AFTR path and the suspend path on 32-bit Exynos,
+> which run on other CPUs, so a caller that sees pmu_context before
+> pmu_base_addr writes the power-down configuration through a NULL base.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] soc: samsung: exynos-pmu: fix error paths in cpuhotplug/idle states setup
-      https://git.kernel.org/krzk/linux/c/f7b2b6acf658be412b0c4746d07d210a9e18f13b
+[1/1] soc: samsung: exynos-pmu: order pmu_base_addr before the pmu_context gate
+      https://git.kernel.org/krzk/linux/c/682df6e2330123019fcdb9f6122f34a395082356
 
 Best regards,
 -- 
