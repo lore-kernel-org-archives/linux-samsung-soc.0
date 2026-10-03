@@ -1,32 +1,37 @@
-Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216F3A16AC;
-	Fri,  2 Oct 2026 18:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E562B1D63E4;
+	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790965414; cv=none; b=HHv5l8P/0byoe1KIF9zIu8qZ+g2IYOnFRdV3Am4E/uowCscmS8C/eWssQozP0dzlUOMLVM7NAFDzpN+FDq6wVrr43alj4kPOpsuI8gl1BGWVempP8SJryb2WnoB9e+1vji3967jQDeeFEa8v9qiOVCssldv1h+lXNlWotH1U45M=
+	t=1791010113; cv=none; b=V36rlzaTxwHKcT1rJjjiJuGduo3dxvSNyyzxqoADMcKPGJhLdE6pmjnzIBtbQMeoDUKUZXvxk/tGgxmTsG057ztArCEzr/uBz/u/gCkxhEiClSkDQ4k2x+kw+9uupeI9iuwPw1lXGcy0VJXTa1geln3EbqqPmFx26EQIisZ1vQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790965414; c=relaxed/simple;
-	bh=0P9F76FVBx2qhXy71sSOIagKjgFRrK/Pomv0R/cAf+o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHQTBh9oNUVj/qIEuSc9ZLr7ulECmpSJ+EiSXF0/LpYp1Msa49WqSlNbm/JEI9DgA847ghGRmrSrnKBmg2ApIKmWnXvYoJ+2SvMyTgTkzX907GRPHpAkaHA8Bej4mwpmBWT2Wo9r6qGp1TSuV2Lu2W+DKqW3hzdDXh6RAZ+ijYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyberchaos.dev; spf=pass smtp.mailfrom=cyberchaos.dev; dkim=pass (1024-bit key) header.d=cyberchaos.dev header.i=@cyberchaos.dev header.b=dq+xSeae; arc=none smtp.client-ip=195.39.247.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyberchaos.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyberchaos.dev
+	s=arc-20240116; t=1791010113; c=relaxed/simple;
+	bh=NdQJD1Tj0LELSIQOQS1qFVS9dPCSBkx/zL+wF4QNHmg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W7Pj5Q5tIj0ux+9CDtZ71XIFYJ66PHJlHh58EWSXya4IYPA9dErGDtJaLjXVCy5wm2+Y85q0aYbLcHbaUAVf/HC2Vx6iGTVIyXzqr6qlcwfEMmSAsNfm8Fa4PdoeugOr4xZmdWH5dBYHLvmkh7n/mIldTZ78uvFJXZRBvruv/Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKIUSyL2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cyberchaos.dev header.i=@cyberchaos.dev header.b="dq+xSeae"
-From: Yureka Lilian <yureka@cyberchaos.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyberchaos.dev;
-	s=mail; t=1790965404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xN3oFt0Y2IcujH1DIfbY1diyGBQXYknSa0KCk1kgoTY=;
-	b=dq+xSeaeu220bgEHFzL4IIAIwJhJgA3REhOqcS8Xdd6dURHZwreo+LE8noDf4Z0rUPdtWN
-	/5n7FhDPSdjx2r3qbdjFXdJq0/nHO7wuXw4Uj5hY9jON47tkyiAWG9FkG83Sv37wLKpgA3
-	RcwaUfTVWJeShC3SRTdV5/WmVWCPFbY=
-Date: Fri, 02 Oct 2026 20:23:15 +0200
-Subject: [PATCH RESEND] tty: serial: samsung: Fix S5L on Apple A18 Pro
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKIUSyL2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5763FC2BCB9;
+	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791010112;
+	bh=NdQJD1Tj0LELSIQOQS1qFVS9dPCSBkx/zL+wF4QNHmg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=NKIUSyL2jS+lI3SetSkUDs7xJUiuylU7G5CZo3wmUMhln/pPJ0k0VLGQRDvAawtt8
+	 XTFAb522VGpPuAmJOpqHG+yrs+qhyT0YoWGX1hQuQYzPO4PKni8uFPhptCQ/Y/r2XY
+	 vmQ82c66yCct/5XUsyXjo5zD0wSqrLUBNw7gVhOc4+XYoFdKmdPXajc3KfGogIqA+h
+	 JyvKU3Ew+RKb3chqd6GRKQzXo+BmdXzYcmXK/fCRf8hfRWeXjypCSIRWVlgnjF0d4h
+	 On2xP91/5dJW2R3euYjn+nvc5lwIfv49b0a/dne3R7KRwfz5YILi018UCjnDlxuhYj
+	 FbO4PB+9h9gXw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A42CA5FE3;
+	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
+From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
+Date: Sat, 03 Oct 2026 06:48:30 +0000
+Subject: [PATCH] arm64: dts: exynos: gs101-pixel-common: add USB-C PD timer
+ and revision properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,62 +40,72 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261002-apple-s5l-a18-pro-v1-1-4674726b4066@cyberchaos.dev>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32OvQ6CMBSFX8Xc2WvaUog4OcjqoKNhKHCRGkKbF
- hsJ4d0tuDuek+/8zODJafJw2s3gKGivzRAF3++g7tTwJNRN1CCYyFjOJCpre0Kf9qj4Ea0zmLa
- iSogrSVJBzFlHrf5snQ+4FffieoHy5/t39aJ6XAtXstN+NG7axgPf+D87gSNHmedpwgXLhGrO9
- VSRizeNPzQUoFyW5QvtDi660QAAAA==
-X-Change-ID: 20260904-apple-s5l-a18-pro-5f2b3e1a4e4a
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
+Message-Id: <20261003-gs101-typec-pd-timers-v1-1-4b6f3235133d@google.com>
+X-B4-Tracking: v=1; b=H4sIAD2lwGoC/x3MQQ5AMBBA0avIrE3SjiBcRSxoB7NA0xEh4u4ay
+ 7f4/wHlKKzQZg9EPkVl3xJsnoFbhm1mFJ8MZKgyDZU4qzUWjzuww+DxkJWjYj2YorBE3pUjpDZ
+ EnuT6v13/vh8/8mLRZwAAAA==
+X-Change-ID: 20260925-gs101-typec-pd-timers-7a033122dc5b
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev, 
- Yureka Lilian <yureka@cyberchaos.dev>
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Amit Sunil Dhamne <amitsd@google.com>, 
+ Badhri Jagan Sridharan <badhri@google.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791010111; l=1515;
+ i=amitsd@google.com; s=20241031; h=from:subject:message-id;
+ bh=9xbB2ye8jl4WfnS5MlyteCNYJFr2A78JZIik10iTwCg=;
+ b=hC9phi1LOSKX4eNRfH9g7m3NLpQtUFZflP+uQCU1uXXZYQSY8mqXKPNsFEnvcD4Aa/LZ/ruPX
+ +NjF2Io45P4D+hTVkQwCOo58CLimjLoqxAPNChOX78PDL5VUNQeL9rW
+X-Developer-Key: i=amitsd@google.com; a=ed25519;
+ pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
+X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
+ auth_id=262
+X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
+Reply-To: amitsd@google.com
 
-The UCON BIT(10) is set on boot on the S5L serials on Apple Silicon Macs
-of all generations and old iPhones [1]. It's unknown what it does
-exactly, but on the MacBook Neo (A18 Pro / T8140 SoC) clearing this bit
-breaks the uart and leads to garbled data in both directions.
-Add it to the APPLE_S5L_UCON_MASK to prevent it being cleared.
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-Link[1]: https://oftc.catirclogs.org/asahi-dev/2026-07-24#35537011
-Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
+Specify the tSinkWaitCap, tPSSourceOff and tCCDebounce timer values
+for the USB-C connector via the sink-wait-cap-time-ms,
+ps-source-off-time-ms and cc-debounce-time-ms properties, so that TCPM
+uses the values tuned for gs101 platform instead of the defaults.
+
+Also add the pd-revision property to advertise support for USB Power
+Delivery Specification Revision 3.1 Version 1.8.
+
+Assisted-by: LLM
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
 ---
- include/linux/serial_s3c.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/serial_s3c.h b/include/linux/serial_s3c.h
-index f54cb6e23f85..1732bc9240ff 100644
---- a/include/linux/serial_s3c.h
-+++ b/include/linux/serial_s3c.h
-@@ -247,10 +247,12 @@
- 				 S5PV210_UFCON_RXTRIG4)
- 
- #define APPLE_S5L_UCON_RXTO_ENA			9
-+#define APPLE_S5L_UCON_UNK			10
- #define APPLE_S5L_UCON_RXTO_LEGACY_ENA		11
- #define APPLE_S5L_UCON_RXTHRESH_ENA		12
- #define APPLE_S5L_UCON_TXTHRESH_ENA		13
- #define APPLE_S5L_UCON_RXTO_ENA_MSK		BIT(APPLE_S5L_UCON_RXTO_ENA)
-+#define APPLE_S5L_UCON_UNK_MSK			BIT(APPLE_S5L_UCON_UNK)
- #define APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK	BIT(APPLE_S5L_UCON_RXTO_LEGACY_ENA)
- #define APPLE_S5L_UCON_RXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_RXTHRESH_ENA)
- #define APPLE_S5L_UCON_TXTHRESH_ENA_MSK		BIT(APPLE_S5L_UCON_TXTHRESH_ENA)
-@@ -259,6 +261,7 @@
- 					 S3C2410_UCON_RXIRQMODE | \
- 					 S3C2410_UCON_RXFIFO_TOI)
- #define APPLE_S5L_UCON_MASK		(APPLE_S5L_UCON_RXTO_ENA_MSK | \
-+					 APPLE_S5L_UCON_UNK_MSK | \
- 					 APPLE_S5L_UCON_RXTO_LEGACY_ENA_MSK | \
- 					 APPLE_S5L_UCON_RXTHRESH_ENA_MSK | \
- 					 APPLE_S5L_UCON_TXTHRESH_ENA_MSK)
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+index a12f2b88d72d..8d2616832777 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+@@ -662,6 +662,10 @@ connector {
+ 			try-power-role = "sink";
+ 			op-sink-microwatt = <2600000>;
+ 			slow-charger-loop;
++			pd-revision = /bits/ 8 <0x03 0x01 0x01 0x08>;
++			cc-debounce-time-ms = <170>;
++			ps-source-off-time-ms = <870>;
++			sink-wait-cap-time-ms = <450>;
+ 			/*
+ 			 * max77759 operating in reverse boost mode (0xA) can
+ 			 * source up to 1.5A while extboost can only do ~1A.
 
 ---
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260904-apple-s5l-a18-pro-5f2b3e1a4e4a
+base-commit: 93f51579e7df248780214094418f205253383cc5
+change-id: 20260925-gs101-typec-pd-timers-7a033122dc5b
 
 Best regards,
---  
-Yureka Lilian <yureka@cyberchaos.dev>
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
+
 
