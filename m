@@ -1,111 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E562B1D63E4;
-	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE829377023;
+	Sat,  3 Oct 2026 08:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791010113; cv=none; b=V36rlzaTxwHKcT1rJjjiJuGduo3dxvSNyyzxqoADMcKPGJhLdE6pmjnzIBtbQMeoDUKUZXvxk/tGgxmTsG057ztArCEzr/uBz/u/gCkxhEiClSkDQ4k2x+kw+9uupeI9iuwPw1lXGcy0VJXTa1geln3EbqqPmFx26EQIisZ1vQw=
+	t=1791015011; cv=none; b=kfrIdSDI0ClWFz24/fHZLSxofteSsQAIVi6rgSNwjc8qYIg4TbuV/rHG2DnUhcW2hrhwjOzekBIJXfVTZAXZUZuVDbba4NDobAdhut31qUxnsPYjyURY7z9UZeqJaJ4jfOEtaKsA9st4hTTNcFWl4TXRkUk1Vo/3DbD0/s2H5UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791010113; c=relaxed/simple;
-	bh=NdQJD1Tj0LELSIQOQS1qFVS9dPCSBkx/zL+wF4QNHmg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W7Pj5Q5tIj0ux+9CDtZ71XIFYJ66PHJlHh58EWSXya4IYPA9dErGDtJaLjXVCy5wm2+Y85q0aYbLcHbaUAVf/HC2Vx6iGTVIyXzqr6qlcwfEMmSAsNfm8Fa4PdoeugOr4xZmdWH5dBYHLvmkh7n/mIldTZ78uvFJXZRBvruv/Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKIUSyL2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1791015011; c=relaxed/simple;
+	bh=qjEKhCqE+TQdyjHSzr+nF2KlqSaIdjbbIWUHI/erXPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mBDExcAk34awRTks6g9l2Ex0K3xEry2xZMxVKrSNQKgywoaWuGEbs7C4nF2K+FA4wkNHHjnMjA3+kPXUh/z4sxvt1VyV3Mw/EkdY4B6QOfasmKTP7OoJC/Mx6SnMKFXcrBcYF735BImW+36D56iJ/BVQsnScjnOtFcqv5R/yx+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QQ31iLkW; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKIUSyL2"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5763FC2BCB9;
-	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1791010112;
-	bh=NdQJD1Tj0LELSIQOQS1qFVS9dPCSBkx/zL+wF4QNHmg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=NKIUSyL2jS+lI3SetSkUDs7xJUiuylU7G5CZo3wmUMhln/pPJ0k0VLGQRDvAawtt8
-	 XTFAb522VGpPuAmJOpqHG+yrs+qhyT0YoWGX1hQuQYzPO4PKni8uFPhptCQ/Y/r2XY
-	 vmQ82c66yCct/5XUsyXjo5zD0wSqrLUBNw7gVhOc4+XYoFdKmdPXajc3KfGogIqA+h
-	 JyvKU3Ew+RKb3chqd6GRKQzXo+BmdXzYcmXK/fCRf8hfRWeXjypCSIRWVlgnjF0d4h
-	 On2xP91/5dJW2R3euYjn+nvc5lwIfv49b0a/dne3R7KRwfz5YILi018UCjnDlxuhYj
-	 FbO4PB+9h9gXw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A42CA5FE3;
-	Sat,  3 Oct 2026 06:48:32 +0000 (UTC)
-From: Amit Sunil Dhamne via B4 Relay <devnull+amitsd.google.com@kernel.org>
-Date: Sat, 03 Oct 2026 06:48:30 +0000
-Subject: [PATCH] arm64: dts: exynos: gs101-pixel-common: add USB-C PD timer
- and revision properties
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QQ31iLkW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=If
+	IDqJZfF08zWFt0Zzta+SmkT86Z+9Yztld18LGVYf8=; b=QQ31iLkWuxrMMLO7jZ
+	pvmDiuBrzfRF7idvp/0Z83/yMUZTBKEqpikvkZuvX7GR8LFTFzzW+KX/MSTfYMMK
+	kuMNas13fFH7FolzBOFKJI5fzD9mAn1HgWNVOAoMffV2ieCOalQU5cVyBF10f76/
+	MXMoNSt8vkS/VxH/O6owU3tEg=
+Received: from pc.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDX37c4uMBqHTY2CQ--.51768S2;
+	Sat, 03 Oct 2026 16:09:29 +0800 (CST)
+From: Jiale Yao <yaojiale02@163.com>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiale Yao <yaojiale02@163.com>
+Subject: [PATCH] drm/exynos: fimd: handle runtime resume failure for DP clock
+Date: Sat,  3 Oct 2026 16:09:26 +0800
+Message-Id: <20261003080927.430719-1-yaojiale02@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261003-gs101-typec-pd-timers-v1-1-4b6f3235133d@google.com>
-X-B4-Tracking: v=1; b=H4sIAD2lwGoC/x3MQQ5AMBBA0avIrE3SjiBcRSxoB7NA0xEh4u4ay
- 7f4/wHlKKzQZg9EPkVl3xJsnoFbhm1mFJ8MZKgyDZU4qzUWjzuww+DxkJWjYj2YorBE3pUjpDZ
- EnuT6v13/vh8/8mLRZwAAAA==
-X-Change-ID: 20260925-gs101-typec-pd-timers-7a033122dc5b
-To: Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Amit Sunil Dhamne <amitsd@google.com>, 
- Badhri Jagan Sridharan <badhri@google.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791010111; l=1515;
- i=amitsd@google.com; s=20241031; h=from:subject:message-id;
- bh=9xbB2ye8jl4WfnS5MlyteCNYJFr2A78JZIik10iTwCg=;
- b=hC9phi1LOSKX4eNRfH9g7m3NLpQtUFZflP+uQCU1uXXZYQSY8mqXKPNsFEnvcD4Aa/LZ/ruPX
- +NjF2Io45P4D+hTVkQwCOo58CLimjLoqxAPNChOX78PDL5VUNQeL9rW
-X-Developer-Key: i=amitsd@google.com; a=ed25519;
- pk=wD+XZSST4dmnNZf62/lqJpLm7fiyT8iv462zmQ3H6bI=
-X-Endpoint-Received: by B4 Relay for amitsd@google.com/20241031 with
- auth_id=262
-X-Original-From: Amit Sunil Dhamne <amitsd@google.com>
-Reply-To: amitsd@google.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX37c4uMBqHTY2CQ--.51768S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw17GFWUGF17Cry8tF4DCFg_yoW8XrWrpF
+	47JFyFkrWjq3y8KFW2yF129F98Ka17GFW8XrZ3G348uw1UAr1vq3yrCF1DtFn0vrZ7AF1j
+	vrs7Ja47CF1jyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piX189UUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzhkHQWrAuDnOcAAA3E
 
-From: Amit Sunil Dhamne <amitsd@google.com>
+fimd_dp_clock_enable() ignores runtime resume failures and still writes
+the DP clock register and updates dp_clk_enabled. This can access an
+unavailable device, record a state that was not applied to hardware,
+and later drop a runtime PM reference that was never acquired.
 
-Specify the tSinkWaitCap, tPSSourceOff and tCCDebounce timer values
-for the USB-C connector via the sink-wait-cap-time-ms,
-ps-source-off-time-ms and cc-debounce-time-ms properties, so that TCPM
-uses the values tuned for gs101 platform instead of the defaults.
+Return without changing the clock state when runtime resume fails.
 
-Also add the pd-revision property to advertise support for USB Power
-Delivery Specification Revision 3.1 Version 1.8.
-
-Assisted-by: LLM
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+Fixes: 5d91394f2361 ("drm/exynos: fimd: Guard display clock control with runtime PM calls")
+Signed-off-by: Jiale Yao <yaojiale02@163.com>
 ---
- arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index a12f2b88d72d..8d2616832777 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -662,6 +662,10 @@ connector {
- 			try-power-role = "sink";
- 			op-sink-microwatt = <2600000>;
- 			slow-charger-loop;
-+			pd-revision = /bits/ 8 <0x03 0x01 0x01 0x08>;
-+			cc-debounce-time-ms = <170>;
-+			ps-source-off-time-ms = <870>;
-+			sink-wait-cap-time-ms = <450>;
- 			/*
- 			 * max77759 operating in reverse boost mode (0xA) can
- 			 * source up to 1.5A while extboost can only do ~1A.
-
----
-base-commit: 93f51579e7df248780214094418f205253383cc5
-change-id: 20260925-gs101-typec-pd-timers-7a033122dc5b
-
-Best regards,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index b6abdc4f2b0a..ea2b961f0cbc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -1049,12 +1049,18 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
+ 	struct fimd_context *ctx = container_of(clk, struct fimd_context,
+ 						dp_clk);
+ 	u32 val = enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
++	int ret;
+ 
+ 	if (enable == ctx->dp_clk_enabled)
+ 		return;
+ 
+-	if (enable)
+-		pm_runtime_resume_and_get(ctx->dev);
++	if (enable) {
++		ret = pm_runtime_resume_and_get(ctx->dev);
++		if (ret < 0) {
++			dev_warn(ctx->dev, "failed to enable FIMD device: %d\n", ret);
++			return;
++		}
++	}
+ 
+ 	ctx->dp_clk_enabled = enable;
+ 	writel(val, ctx->regs + DP_MIE_CLKCON);
 -- 
-Amit Sunil Dhamne <amitsd@google.com>
-
+2.34.1
 
