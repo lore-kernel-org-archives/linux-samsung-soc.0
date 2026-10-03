@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F9832B11C;
-	Sat,  3 Oct 2026 14:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96F233947;
+	Sat,  3 Oct 2026 14:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791036909; cv=none; b=NKlGqW15WOplJj+INsRPICqK+3Y9Yz6E6KS0Xtc3aviAvDfYI3Hahhx2OgVYkW4f04Tnm5GzhK4ba6nF7rHjZ7/142swUDM9do95+2mC3cb/FZnfQZL9CpEsJ7/zP5fd0/qFUWSA2Ni4JiJ/4FAw0YJoaFvmrfZ0PYx0sHjZXNg=
+	t=1791037258; cv=none; b=qBkbqi6xSGLazuYwyJL+FKJd7vEqx2+DQiTi9whKmTqlQJGXTdp3CPs03CBej6Sug+/EuFGRZGejrGsEYSc3mXCfwmIDMeEZcS4BelfFiTxDCQu/jE/lai3mWACXDvE0OKXwGSnXg3RGh87SdweD76m8je6sYDMKeyByiS5/TH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791036909; c=relaxed/simple;
-	bh=TAAItWWIVHFH/c3RF9mRzGRDE1Bh3FDhCHQVu0dwpBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eOK/jnb+ZBiBaV1sL2zXPTphz+RLwKzBd88YQHt3mOnzxINqbqNNe8trd51v5+pt5watDoL0LYKw/WKVlvTJXSYIheVkB5oStIDCAZldSr57l1I/8pqM1r7Jjss4uzgk49BSfoFPXBNqeubphlUk9fwWvJV0K9ICs3oonw0BKeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNZoUpeY; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791037258; c=relaxed/simple;
+	bh=CdrDd7JPK9elI96Wjy/u4uu8qHnkL0bVpKh7QfklLtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h55hnp3XUKU/cp87UC1MF284wNwikkayz+SbPlzQT0gQFSFO38I2NGFLq/h8v0d1+lA333vf+DUwSuiVlZLcwLDuPBQMCc3on1f/Sh9vfvHBs6AQc3ThV85p8xadOuqG6cQooMraH3msamsMrrN3OuHPKwzQRI+ebQLDojJyD2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZnE2ebG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNZoUpeY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9B91F0089B;
-	Sat,  3 Oct 2026 14:15:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZnE2ebG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FEE91F0089B;
+	Sat,  3 Oct 2026 14:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791036907;
-	bh=wLr4Gthn8kmw75l6iaGG4y5Zxf+aPQGpnPskN0Vov/c=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=jNZoUpeYFSVKW7N7mP5VUgrYrtxq1oK3TZuXj7mdXSLbypzdS/6M2FKZtD87r3lA6
-	 myrpLgZzf5EpslRsdD+lOd3nqZN2ryKRfuaTS+2gER2tsbf3vtWq8nbNdXLSeZV5ng
-	 BCHB4xTa6PvCSk66cBdFTvfXNY8SO6S/0lqQW+GHYlomHN2oXz4KuhOvhsevqTOATx
-	 MpiNzGr2pP5sM0jiK9BDH2rqkV972yHJmxgiCvt3vL0L3IeDoS3MzZzvqbu+1EHgkZ
-	 8MtjHv8BZ+e3aCSZFQ0uKigOArxhJ27dilFq2y06vMMA9DEiuIq642ADLfWqRkf3NP
-	 k4uNNNI5zUYjg==
-Message-ID: <45fbf350-9d75-4f44-927b-d37d7e4c3cd1@kernel.org>
-Date: Sat, 3 Oct 2026 16:15:02 +0200
+	s=k20260515; t=1791037257;
+	bh=ow6apkaIyJs+FJhaTHcJqis3ptHtMY0hpYCLPyEYvBw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=jZnE2ebG5Q5iRuzUbWhR6ZpShVXxpL3k3mKvs+n23LBhgbiNJ67ZQDxiUbubyO9Qm
+	 BN0jjC/N1ewjIvCt6cwN0hGj/FqFovykTF1MAZ3KZ+t3WKtFyhodhT1x3yyl7HAIcK
+	 i0eTfoIOOI7t7TBGUkubGf6PVzM7CrkFacOHzESN/8FMD7Do6UQZqPM8k+NTOsTQ/a
+	 IZh45UZhIF4MGpOnMt6hAxWf9uGAVPZDJxMfRc0dmv0vq8OmqyHGXbrmjv04dUD9CY
+	 bLWAEP7lBv0DexqBwkWh9ZT/A/92hGp/duhbbC1geE3/CTr6KiLMf9ufLkaTZI7aeF
+	 kWEyJwqZxHzPQ==
+Message-ID: <c60662ba-f36c-4f6e-a6d6-289ca8c9286f@kernel.org>
+Date: Sat, 3 Oct 2026 16:20:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,22 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] arm64: dts: exynos850: add PMU interrupt
- generation node
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>,
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
- linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Andr=C3=A9_Draszik?=
- <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+Subject: Re: [PATCH v7 4/6] soc: samsung: exynos-pmu: add Exynos850 CPU
+ hotplug support
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Henrik Grimler <henrik@grimler.se>, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260930-exynos850-cpuhotplug-v7-0-203245826333@linaro.org>
- <20260930-exynos850-cpuhotplug-v7-6-203245826333@linaro.org>
- <CADrjBPrm0o5scen0vk2ZiCzGW6kdTWsciPvA9K7JW_yb+Mp8PA@mail.gmail.com>
- <4d421941-4508-49f2-a1dc-a9f27d075982@kernel.org>
+ <20260930-exynos850-cpuhotplug-v7-4-203245826333@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -95,27 +93,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <4d421941-4508-49f2-a1dc-a9f27d075982@kernel.org>
+In-Reply-To: <20260930-exynos850-cpuhotplug-v7-4-203245826333@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/10/2026 16:13, Krzysztof Kozlowski wrote:
-> On 02/10/2026 14:41, Peter Griffin wrote:
->>>
->>> +               pmu_intr_gen: syscon@11870000 {
->>> +                       compatible = "samsung,exynos850-pmu-intr-gen", "syscon";
->>> +                       reg = <0x11870000 0x10000>;
->>> +               };
->>> +
->>
->> Since you are now creating your own custom regmap in exynos-pmu you
->> should drop the syscon compatible here. That should avoid syscon.c
->> ever creating an MMIO regmap (with the wrong spinlock). I've copied
->> some of the commit text from my commit
-> 
-> Yes, there should be no syscon fallback.
+On 30/09/2026 02:12, Alexey Klimov wrote:
+> Add cpuhotplug support for Exynos850 platforms. This SoC requires
 
-... although not here, but for existing PMU node.
+Since I expect v8 due to DTS change, one nit below.
+
+
+>  		/* let syscon create mmio regmap */
+>  		regmap = syscon_node_to_regmap(dev->of_node);
+> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+> index 733e188fa2b1..4ecbf53cd4f7 100644
+> --- a/drivers/soc/samsung/exynos-pmu.h
+> +++ b/drivers/soc/samsung/exynos-pmu.h
+> @@ -104,6 +104,7 @@ extern const struct exynos_pmu_data exynos5250_pmu_data;
+>  extern const struct exynos_pmu_data exynos5420_pmu_data;
+>  #endif
+>  extern const struct exynos_pmu_data gs101_pmu_data;
+> +extern const struct exynos_pmu_data exynos850_pmu_data;
+
+Before gs101. Don't add to the end of such lists.
+
 
 Best regards,
 Krzysztof
