@@ -1,97 +1,75 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B01D39734A;
-	Sat,  3 Oct 2026 08:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912E17C203;
+	Sat,  3 Oct 2026 13:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791016367; cv=none; b=LHKTNTt568/Cb7c1b/J0kt2yKAs6X1cnqsgPlU7AZF5GScmZdz6CYXOKfGIYY5SmWzeoOV6R8f/m6JMWyXsxfcfe6VnNy1pgHQXFP7XA3+MuiwAINGvmKyu6J+qSdHfIoLKSiBfB6PDPMLzc7gCIE09Kgu+O125YRgX73CuyZek=
+	t=1791035222; cv=none; b=VXWtVNQL5e7VLnqV9TesVW59DX6U+GhxTTRq9fCiD+Jn0xXLlTyu3KCK5U9Nk79kXFVBwH1wYmleZXJ3xGuSYNa+hbkNhhXlNcRW3V8xIlqBUR0phw5fPkmjmedu4cxWTi5ROVyRSmAf3WpHV0i9bbyKj+Z6MF1dveYPlKQwqHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791016367; c=relaxed/simple;
-	bh=mTgsraDyaZwUNKNLUzIDplC+Yod0FrM7Z7ibjSoJow8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dCGM46iSRKaBmko5pj2CarxaGvrcEsjRrZF546nl4offGA6pKSDkwjoYvtCxTG7mgNGiT5mHy+3d1wT2OI4OWDYjA8GBxw5MOIWAbYyVyfvI4Ato5zVm35FBIOzHDPr3v64G6GdrQGH0VUhQmn337KQZnuEHvRl2Cto28m7fx0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FlqL+VRp; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1791035222; c=relaxed/simple;
+	bh=nd/ehcJvpp3XA3RM4s0itTllX+iZG1J44if+X3HPqhI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hSmdD1y5Y59VvDlyBD+8sSnr9zB3j0HFmRH4XSwMvNqSt/pVu3gt4ktaLA74f4UoUV7XQFSsjV3whi23Vp1LQch4PaAeQv5R75O5iKPQPhWyy5tkFDlwkTTIf6ltYGn3sF2ygZDxMQ/Plo4l0axbp5L2oV4QrXuI//8S2BWjEXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKj/UHbM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FlqL+VRp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=I0
-	96cPDAgu/rffSPuYsOvZ0nu9Fx4C52NqLyO2/RJjU=; b=FlqL+VRpdcFAWmYaMI
-	aBRL3FvMMPe/QiX2CUAF4I04Ad1aPvQq1ty4z3wpa34NEzKU6BQmE49Gt4YK3KGt
-	Hznk+wTN2Tni1nvvouOQjBmPnEhhXinvOzoZOSiPmeJkMVQ2YkZPFjZJS6PyO2TK
-	CaWxfYnp61Y77D9qxJ89SVtBo=
-Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S2;
-	Sat, 03 Oct 2026 16:32:04 +0800 (CST)
-From: Jiale Yao <yaojiale02@163.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH v2 0/4] pinctrl: free maps on DT mapping failures
-Date: Sat,  3 Oct 2026 16:31:53 +0800
-Message-Id: <20261003083200.459705-1-yaojiale02@163.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKj/UHbM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128061F0089B;
+	Sat,  3 Oct 2026 13:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791035221;
+	bh=lT5VAqVxR7PF2pTcLLyyEAU4ZLvTK6F8FroUmVYH3Wo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=lKj/UHbMzJwltpJAMI0y8f8w80V9bm1QR5NZOm55IupS366qaMJVDaHcKFWqe9YU1
+	 KhovnU3M9d0qMf0JRdyIY13I0JdxM7s96CI0Pp/ZEgwJs++d92ATBh3sifiAwUDAof
+	 fRsXTwQ4Qih3fZEqtS4Iw4W9pyAmttSoUlZ+4L/ttp4ESRHt9SOCu9VZ5u4t8++0iz
+	 XT6xBuyidX534AF5KGx09dvBiz12RPEvR01S2T9sUFiFmOMEzgj/d1tcxHwzM5BE17
+	 Ftehro2PHWaZAwhAiD+MGtbidwcBM3w512hfqguXaDpjyDkiNWkSHngS/YzuCvwPV5
+	 4yCveh2HdLolQ==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Sashiko <sashiko-bot@kernel.org>
+In-Reply-To: <20260930-exynos-pmu-cpuhp-idle-fixes-v3-1-4269d8425978@linaro.org>
+References: <20260930-exynos-pmu-cpuhp-idle-fixes-v3-1-4269d8425978@linaro.org>
+Subject: Re: [PATCH v3] soc: samsung: exynos-pmu: fix error paths in
+ cpuhotplug/idle states setup
+Message-Id: <179103521882.13392.16561640308024902589.b4-ty@b4>
+Date: Sat, 03 Oct 2026 15:46:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7trWrtw15tr4rtr4fAF1DKFg_yoW8GFyUpF
-	4fWFsIyrn8Jw42yF9xJw10yFyfGa1xCry5W3W3K34UZF45CFyDGr4Y9FWFqrWkCrW8Ww4f
-	tF45KFyDWr18AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEM5lnUUUUU=
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQRblWrAvYT77AAA3D
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-Several pinctrl drivers reserve map storage before appending mux and
-configuration entries while translating device tree nodes.  If a later
-operation fails, their error paths free only temporary configuration data
-and leave the partially built map allocated.
 
-Commit 17007cd70060 ("pinctrl: generic: free maps on
-pinctrl_generic_to_map() failure") fixed the same cleanup problem in the
-generic mapping helper.  These drivers use their own mapping callbacks and
-need equivalent error handling.
+On Wed, 30 Sep 2026 00:50:31 +0100, Alexey Klimov wrote:
+> The setup_cpuhp_and_cpuidle() initialisation sequence currently ignores
+> the return values of cpuhp_setup_state(), cpu_pm_register_notifier(), and
+> register_reboot_notifier(). If any of these registrations fail during
+> probe() routine, the driver returns 0, leaving the driver partially
+> configured.
+> 
+> Furthermore, if anything after setup_cpuhp_and_cpuidle() fails in probe()
+> routine, for instance devm_mfd_add_devices(), the probe() lacks an error
+> path and leaves notifiers and cpu hotplug states registered.
+> 
+> [...]
 
-Free the accumulated map on every failure path in the Spreadtrum, Renesas
-RZ/N1, Tegra XUSB, and Samsung drivers.  Each patch changes one driver and
-remains independently buildable.
+Applied, thanks!
 
-Changes in v2:
-- Add the Fixes tag and Baolin's Reviewed-by tag to patch 1.
-- Drop the unnecessary output parameter resets from all four patches and
-  update their commit messages accordingly.
+[1/1] soc: samsung: exynos-pmu: fix error paths in cpuhotplug/idle states setup
+      https://git.kernel.org/krzk/linux/c/f7b2b6acf658be412b0c4746d07d210a9e18f13b
 
-Jiale Yao (4):
-  pinctrl: sprd: free maps on DT map failure
-  pinctrl: renesas: rzn1: free maps on DT map failure
-  pinctrl: tegra: xusb: free maps on DT map failure
-  pinctrl: samsung: free maps on DT map failure
-
- drivers/pinctrl/renesas/pinctrl-rzn1.c     |  8 ++++++--
- drivers/pinctrl/samsung/pinctrl-samsung.c  | 24 ++++++++++++++--------
- drivers/pinctrl/sprd/pinctrl-sprd.c        |  3 +++
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c |  6 +++++-
- 4 files changed, 29 insertions(+), 12 deletions(-)
-
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzk@kernel.org>
 
