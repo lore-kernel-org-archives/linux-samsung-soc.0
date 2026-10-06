@@ -1,86 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BF8305683;
-	Tue,  6 Oct 2026 04:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5FD372B50
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Oct 2026 04:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791259708; cv=none; b=UucBzWJ3Bq3IM6q52n9dQ8YZOc4UyJon9jDlQa6xVKXgaYptWKF0FS/nbutPZE7i5pEsz6mTbJX7c5W9SPUhkBogGeWCXOYkKcjPeoe6Lg+HN430OtAkV8JfkdG1S4350l9du8ZmP14ejmsXqtX3KSf+vYUS6TUdorFnWqriFH4=
+	t=1791260927; cv=none; b=Wo4JMiul0asvSGInQZH+NtFlot9pSLR8TEbFFlxW87YtJJ8348S0Z6uqo+K7jpMq2YUWnt7qd8W8QS5lcHT3R8H6gR3mpuuotHpzBeUbqGPoLMdAGpixvNNxHPe+MqdrS7+OizViS2X7IUYZC59QMNCgwIGkh5PqXTkqRRyXuM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791259708; c=relaxed/simple;
-	bh=CiP2CXmlRiiTIGrOHYR5b+krmYPKC3wy3+K0rd51roM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yzzf+4DhPkvYDswl/roV718g4jqAK6gop3532cxmZD2JjxMYFU0OQjh2Y0/gnuPWGx0pExVPbm5Em/irjxjiOtO1zwEKcmRRyuTotSmA8F8JknB05hdsOo4xYVh48ChRK/U5UzX7zLLJJ0Bx2sYPYJpih+tytCvzZ2oaFD6Su/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbRsy+3K; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791260927; c=relaxed/simple;
+	bh=bo2X3hDeI4pBnunTcHhhTv7/UJwW6YG6gQ9h4NZtf1c=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=XA0T7Sx3AbmOi7oBt3btigixtkjQTY3+bVrt94JHSRANm9iJp8Kj7PSCJyb0RlSmedHop41zMJT/WMzvWXHNRQfFptb4FtluJoh86DWyCtBiged2x9jeuvQsuj2l2zyDmplQShFp9SLDrsId/S3Nnxz3Np/DAZvY6wMvO7JzxRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=az278A1A; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbRsy+3K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6032B1F000FF;
-	Tue,  6 Oct 2026 04:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791259707;
-	bh=RD8Ga2O8ARY1QtYUhUhQvuqFRUYNcYjPCatI11JRIN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PbRsy+3K3LGQmLw61u6nsXvfQG1eZ/iuVzupYDaEUN/YzOXYkfC2nB1tLYeDWex0M
-	 7jJqOIV2U0tVkE7KIbL6y9HYH3pBLXYMM9RVZIluPpKlf4j14DJbkgoQUgW2yITJqg
-	 Dd9ebEUVcd6EfgRGebjzj8ce1lV5sGl1PNZbtvbFASceHpl6MENDIa8sMtt2c7GUiu
-	 Xu71htWKgoyUatYMJ4EVjsBsMPCg45MSvp0aX9AZ1TZL0v4K/P048Klvws5oZqTqn8
-	 1pDZiWynwLQgEo3/OpHBgzXI93EdUuSsxmR2U/ETDmNzhgfPmGrvRjoR/byi5XKJvu
-	 tXd3W4ggv5j+Q==
-Date: Tue, 6 Oct 2026 06:08:21 +0200
-From: Brian Masney <masneyb@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] clk: samsung: drivers for v7.4
-Message-ID: <asR0NZ1VyI8k2NHo@x1g10>
-References: <20261005102459.35529-2-krzk@kernel.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="az278A1A"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261006042836epoutp03ccb5ec99ecbce5daa74f3c682732ec90~b1lAx6WLK1757117571epoutp03e
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Oct 2026 04:28:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261006042836epoutp03ccb5ec99ecbce5daa74f3c682732ec90~b1lAx6WLK1757117571epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1791260916;
+	bh=LgntyPCT6mbiDQeIW6B53O9DRHxz2wX1AyNTwm4lHi4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=az278A1AT5woz2LO9nCwKc56yOcJp2CKzCO033T58bFlnVZ5IbgAYglFDQcik64tV
+	 ssUF2dQgmftHgqF5d8kXAsQmDCq5esefw9ccB51LnrKLnGvb/RSPUQF8OYUtPCgpbj
+	 GgIz4lndLDTBNieNw+a/Xg02xCjbRZPagyx7S6hY=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20261006042835epcas5p24a08e2017b6d2f377eb2245a203597c7~b1k-SGrtO1183111831epcas5p2Z;
+	Tue,  6 Oct 2026 04:28:35 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4hzNYG2vjjz6B9mD; Tue,  6 Oct
+	2026 04:28:34 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20261006042833epcas5p4ce0e831af9c9d099e022ee6fc6e8ec79~b1k9_G1RV0768007680epcas5p4Y;
+	Tue,  6 Oct 2026 04:28:33 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261006042832epsmtip1b09d3016748e0b94bfd2d6f288100092~b1k8bE5mJ0554705547epsmtip10;
+	Tue,  6 Oct 2026 04:28:31 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>
+Cc: <krzk@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+	<linusw@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <linux@roeck-us.net>,
+	<hajun.sung@samsung.com>, <wim@linux-watchdog.org>
+In-Reply-To: <CADrjBPrXYX4_d9dJ=SUqHf-eMDyuSpSChkuTsrPHfo2ZNh2mMw@mail.gmail.com>
+Subject: RE: [PATCH v2 2/2] watchdog: s3c2410_wdt: Add support for
+ Exynos8855 SoC
+Date: Tue, 6 Oct 2026 09:58:30 +0530
+Message-ID: <18b901dd554b$259eb890$70dc29b0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261005102459.35529-2-krzk@kernel.org>
-User-Agent: Mutt/2.4.2 (2026-08-30)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJaA0b9OUQoKjNfig97L7/y+bvwowH+CJFiAXoAkAkBm/b0zbXN73ow
+Content-Language: en-us
+X-CMS-MailID: 20261006042833epcas5p4ce0e831af9c9d099e022ee6fc6e8ec79
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260927150943epcas5p1fb1720070f2bdca2c6cd32094dde895c
+References: <CGME20260927150943epcas5p1fb1720070f2bdca2c6cd32094dde895c@epcas5p1.samsung.com>
+	<20260927152738.3673504-1-alim.akhtar@samsung.com>
+	<20260927152738.3673504-2-alim.akhtar@samsung.com>
+	<CADrjBPrXYX4_d9dJ=SUqHf-eMDyuSpSChkuTsrPHfo2ZNh2mMw@mail.gmail.com>
 
-On Mon, Oct 05, 2026 at 12:24:44PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
-> 
->   Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-7.4
-> 
-> for you to fetch changes up to 13634cde9771811488847ef76cd64a785599fdb5:
-> 
->   clk: samsung: acpm: add Exynos850 support (2026-09-20 17:11:54 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung SoC clock drivers changes for v7.4
-> 
-> 1. New drivers for a new SoC: Exynos5515.
-> 2. ACPM driver: add support for Exynos850 (beside existing Google
->    GS101).
-> 
-> ----------------------------------------------------------------
-> Aiden Isik (3):
->       dt-bindings: clock: Add Exynos5515 SoC
->       clk: samsung: clk-pll: Add support for pll_309
->       clk: samsung: Introduce Exynos5515 clock driver
-> 
-> Alexey Klimov (2):
->       clk: samsung: acpm: introduce driver data for SoC-specific clocks
->       clk: samsung: acpm: add Exynos850 support
+Hi Peter
 
-Merged into clk-next.
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin@linaro.org>
+> Sent: Friday, October 2, 2026 8:32 PM
+> To: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: krzk@kernel.org; robh@kernel.org; conor+dt@kernel.org;
+> linusw@kernel.org; linux-samsung-soc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> watchdog@vger.kernel.org; linux@roeck-us.net; hajun.sung@samsung.com;
+> wim@linux-watchdog.org
+> Subject: Re: [PATCH v2 2/2] watchdog: s3c2410_wdt: Add support for
+> Exynos8855 SoC
+> 
+> On Sun, 27 Sept 2026 at 16:09, Alim Akhtar <alim.akhtar@samsung.com>
+> wrote:
+> >
+> > Watchdog IP on this SoC is similar to Exynos850/ExynosAutov{9/920}.
+> > This does not have CNT_EN_WDT bit in PMU and offset of RST_STAT is
+> > different then the previously support SoC.
+> > Reuse the offset as much as from already supported SoC
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > ---
+> 
+> Small nit: If you send another version, the last sentence could be updated
+> slightly for clarity. Something like "Reuse the offsets as much as possible
+> from already supported SoCs"
+> 
+Sure, will update
 
-Brian
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> 
+Thank you!
+
