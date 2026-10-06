@@ -1,76 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221E472782
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2026 10:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6734C4825CB;
+	Wed,  7 Oct 2026 11:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791369373; cv=none; b=Bdxc7OiQk9D+O4jvuNry1tOgFsG41iZS/NwARLLcLjjD91aO9WnN0bp+ZlvdB/L2CqKJdKzrj6KbS49BAS7Mj0Fdq3DDlQFE9hMsUsEESyI1oiNhfcMtvE/z2c3UBh01lZ6MWoFUpv50QCBQoyJACwr//eBRAzxMWdS07P8yhQ8=
+	t=1791371753; cv=none; b=mWmgGxpqFep9y5RE3FyrB/AMRLUSuNAem7TlE19vlEEpNxzthnuhlZdoAeFRHQnNcoJq0QLHSS1J63kUsYJFlyohEhcvcd3aFu9C7UsrxmZtpnUK87pDFIGqqMTDtazd9WftykEwIPnMYHYcmDeGVlmyf7yZrpZ7l/V7+JRq3j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791369373; c=relaxed/simple;
-	bh=gbXw/P13odUIJOlP0mZOEYL/A5Hj204/xec9+qFdyQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jCUy+GJ8yNM+jxRc9JeNI+VJKD7M2OBxhqCE8fY471QtzzgO/VfIoE6k6WejNe5A19KTTjy52cHNiBVU69d+xLKNOOfe+IQ8jlUx1ZbbmkHcdpim2KYkjb8ImzPtbdFxqTi18ptwtw+FUtpPoaCgPtZtfbA9/N7EjeP96z58vxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvoewflB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791371753; c=relaxed/simple;
+	bh=wf0zI6H8bcYyEFBdlZDq94pQEqoVauT/PfLam3NmUtA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HXuzUPNDGoveiDCZftQ8UfbXYyoNkQuuxgTwfCCAjT5v3e/m2h5HYsh8SxDrm3DNrt4XSRdr3W/zlYVPNalW6MW3SAC9Ya5Oozm3OSDMRXJqSCU6h4Xbf99Lao9lUVRqljpwifayxI/MLs1cvbON0uum/i5vSXrF6QsI8w9DFj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRagrg87; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvoewflB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41961F0089C
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Oct 2026 10:35:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRagrg87"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F4B1F0089C;
+	Wed,  7 Oct 2026 11:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791369345;
-	bh=bx6mWRdOWgIb9ye+nLE/tkjNc3nUXMNF7mOKMpqxWAw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ZvoewflBJxOXYhrH6N9dMuZRVH4BqVoFArQ2EiVqBeQfEpriWJLYDn9eXA8aeKjrr
-	 xHBMVyPdWWKjI8vDDaHGAebd+PH6Gh67PZhMHC2xlh9fbnNNuDdVB6XnbxnY6oiq/M
-	 5pWTjixqER7QC/m+Cxtl3zHHvE1Bmfnwp2OeT3QoGcLgYV4jhUJu+k7ORjhqWyXMJQ
-	 x/2M1My8oh1hvsv2fLcyZVg40XZUuFmeyrxSoDefsES1U+8YW00pN2k7OPWBBfV3VV
-	 bZErqZj15Yj0xFn9/BWsw/tGRI2yuYXxOP2igQIFIlvZPhbZxghvE9bpctbdGvDofG
-	 0v3eUTKq+qyAQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b8f5e2ce5eso1827316e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Oct 2026 03:35:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwr+Jwh1HuXLAf//Cv5tCSBWuuCgLXgcmhRCMFffQSbtBEKNbAZH11JSz+Pb9lDLteXl1bDyWsfS5DUsRQlgGyyZg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIL4sx+cbnT+VCZ9UMBouV5BacyVqs0K2p8HEef19EKFhtdVDum
-	R1pDByBYaKvbc9ejoHyN6md10bLxJ1nSnIUNdegMdVXvKQh9cwxYO2Oh+mZH9F4eL1BMK9UeHqk
-	179Rc+A+qStaFQGIJiI3Xb/oYdmfU4b8=
-X-Received: by 2002:a05:6512:250e:b0:5bc:b7f6:99af with SMTP id
- 2adb3069b0e04-5bcd0639aefmr556834e87.1.1791369344545; Wed, 07 Oct 2026
- 03:35:44 -0700 (PDT)
+	s=k20260515; t=1791371737;
+	bh=n/LrCgRxEO/wee64tkUGlclz4M68swR/BLIkBXXHUoQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=TRagrg87G5hDKepuqnz4uj9Iw1r+L00lqyAZjEV//YINPPF17/GV5eGWxRSLyKPyY
+	 ri2wOW77GWlkwS/tFw5KoTP8217wDiam3nTrWGalT5Zta+czdMq0X6rEAil7ATTbrv
+	 W3ytnES6ZJ7ypDVnlU3KxkcCmHi2Z5ctP8ZaldHdryZlBzRdiNvBuuj+KvfvPCx4EZ
+	 TjT4Ng9SDLGF3affnLRoE/Kq7RdxZR1l+l6T+QfEFqiBjaKXKs/IaHP8Dtm3urW0gX
+	 PomgN7r00RpsCirdZT1lVn50hl3CtpH+E5RTN3QnLfjc9C3+3TljNUN4NyKZpGCFry
+	 3Wbweej/W47Cw==
+From: Mark Brown <broonie@kernel.org>
+To: linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <20261002092116.585466-1-m.szyprowski@samsung.com>
+References: <20261002092116.585466-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH] ASoC: samsung: i2s: enable op_clk in probe to balance
+ runtime PM
+Message-Id: <179130030303.150114.3704660640001534414.b4-ty@b4>
+Date: Tue, 06 Oct 2026 17:25:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-5-yaojiale02@163.com>
-In-Reply-To: <20261003083200.459705-5-yaojiale02@163.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 7 Oct 2026 12:35:31 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=0CrXLdaq=0XW=dkctKpJN7LNZkobo3fry7O6J8wuVzg@mail.gmail.com>
-X-Gm-Features: AclHuK_GYh3LWvdqsu_xdCZ9-oDxmD2HZEJ8XaJYtg9uAMl6VGST9hL4DFl5ONo
-Message-ID: <CAD++jL=0CrXLdaq=0XW=dkctKpJN7LNZkobo3fry7O6J8wuVzg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] pinctrl: samsung: free maps on DT map failure
-To: Jiale Yao <yaojiale02@163.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1150; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=wf0zI6H8bcYyEFBdlZDq94pQEqoVauT/PfLam3NmUtA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqxinTepZwOFsSBefflSuIBDRLxKrBIukNAdQXB
+ P6BmNYc/qyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCasYp0wAKCRAk1otyXVSH
+ 0M5UB/9ytuNAqL+9UOSO7TgcW8m1U0SFYte/r73jmoFhxS74re92Bw8liP6ML6vTFvaJR/GYKgs
+ nczU3aw6xr6M/4X63WFIVgltwT4Q1cYxcJoSxVfFTr96r3kLEdPQ4qxFvb9UYyhjK5KXAnuh1v3
+ 702wNQ8V0lVA3IViB0RlIJLvXQY07VEcjZMCLUKMJYVYEeHq5/7nGEXxtBpRrtKFSSi2qnRzEi5
+ 1osTBrUgFk0WWMSCFQQDq43/Sk7rjd+zw7TEn3ZJNIizaXIJZErvBy4ZJpMMzpm/ixsNwwdKoKt
+ ejn0xGz0HfXUoNsh4X5cz3VSgyv8x1+usOq/Te/0pQEIWeCX
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Sat, Oct 3, 2026 at 10:32=E2=80=AFAM Jiale Yao <yaojiale02@163.com> wrot=
-e:
+On Fri, 02 Oct 2026 11:21:12 +0200, Marek Szyprowski wrote:
+> ASoC: samsung: i2s: enable op_clk in probe to balance runtime PM
 
-> samsung_dt_subnode_to_map() can reserve map storage before adding
-> configuration entries.  The no-child path returns its error directly, and
-> the child path frees mappings on failure.
->
-> Use one error path that frees the accumulated map in both cases.  The
-> caller ignores the output parameters when the mapping callback returns an
-> error, so they do not need to be reset after freeing the map.
->
-> Signed-off-by: Jiale Yao <yaojiale02@163.com>
+Applied to
 
-Peter will decide and merge this patch.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
 
-Yours,
-Linus Walleij
+Thanks!
+
+[1/1] ASoC: samsung: i2s: enable op_clk in probe to balance runtime PM
+      https://git.kernel.org/broonie/sound/c/752925401476
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
