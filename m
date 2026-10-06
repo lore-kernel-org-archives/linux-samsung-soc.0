@@ -1,53 +1,53 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013069.outbound.protection.outlook.com [52.101.72.69])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013043.outbound.protection.outlook.com [40.107.159.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2983E9F9D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69783EA979;
 	Tue,  6 Oct 2026 11:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.69
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791287907; cv=fail; b=ZsDul5jecIYJQxxAVQnMBE0SpXLFR1+28ScA3xSDBT65NK7XBCRRma5E833K2TwUTOZx9AdogJoUjgL99I+ZtV/AF2uxcrlyMGj9nskj6hBrdpSEDypKIqqd91PY3aJ2uenSdTsruUzV3DYHMJW5ZJxyL5Q160VTlQfnOWYotbk=
+	t=1791287910; cv=fail; b=trL+DkQ8xaWcHlx7ijjVc+R9ai9CzzP4Prw63Z8htHTCq8MWs+wRo9+A0zwTbvlk6pfe2lmPAZB8O3gaqog3A9UtS3n9B9ajFSl/CzSPceTXr/7KdpqNiC27oIt1HepgXcS00WODhpWJabgm5cSuVdRgs8rMuhLWbP1HboJnBvQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791287907; c=relaxed/simple;
-	bh=8YYKtA7CrbEe/oqSLIXWN5arZ6+yr9lXgdwkwf6Z0QE=;
+	s=arc-20240116; t=1791287910; c=relaxed/simple;
+	bh=12dBiPIPvNOyV5TSXtyJHrBKRlYTy6U/pCFKP/0of9U=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=S0rcphf14Q8Jqkxmmw1BR2qCo+vR1ZEyMBoOvJ9+apyB5EyVCHGuFvM6X3IiPNuyUp4u8EtRP9I+7Ro1F050TvT5RoUmcd5MDNmIQvYuxvtHSjCw9VxilJ6fEmGEEb9+5+2Mh/1VwQ9JkOTTzirv0Lf+8BHEE14GluE+/hvgRqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=qq1bXLiC; arc=fail smtp.client-ip=52.101.72.69
+	 To:Cc:MIME-Version; b=N+/09RdPYInOWRm4yi08olCr1ojhfl9PP03aD+XOCklCzQm2+5W+OhDl+R6jt4RLAlIL02tWmGnvxsG3QMbzTgbYUI8zX69Y+ITEPzozoo1jHtFQ/dGuWp80ZTbXbustD9uSRVJtpJs+cvbkD8reQuxs/UlJh5gWQy8vA9xyvzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Yn3a686Z; arc=fail smtp.client-ip=40.107.159.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="qq1bXLiC"
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Yn3a686Z"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IGBsDUJ+8B8w3U0FAR+X8IWvPqmwfgbkTsSwr15B/qp+ybSkAZC3hmop3dB03swmO9HRYpaGEPL4y/IqAqrIYIJhazKyePxXscL5H2N2Z887CpDT0/2odLOWWfREWsiF+PUTQHFlXChwSr6QE3EQNgCH2shwJ/FtaZaR8DN7bPpiOebak3ZS3/W6M9XuQP+cDUEe8KdUb0ZT7oCkxSn+knr9RxuUKWFUx+IbvcttKL427gWOfDT/YlQq4HBOBSCNIHUjvRT+FFHvPuajXEHyA6dywskRn4kESHUn23suA1h2xTzQLkRlkGCsEuRPXS8EkwczmJ15U3AXBmBmYIUu2g==
+ b=BNL1EkE5OUMrpx2XowSdF2RnBsjF7b4PN9fyIteRsu0gA177s4kvJcQ7P1F2CiVtvFWpJ+YKPgIBAhnldzC2APDEXCnbTcP76gFemyf7cFlMfidQPXbygqL2SGZMrBikuSTqk8KIqGDYQCEn+RJxTnl1IyOrdr9+DUvRoERVH5a3PpWyrbidRn2gc5eMOU7o2u9VsgueLi9ayuYfLCpWapWzIIsvShjSLiVYwpp+3oZfA01nvUa+3o5aK3D/upH4CG6XZG10wgOnJM1gO6e5YETsD6ycqkFy0kSx8ovxso7ZpVwOxAUQ3roaY7HTv6UkP2gVVYPOgYO7HEPkOuYGfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JY3ljlRSf2pHiTtXpArTuxLnmNlIc1QHxJQmZnui9xU=;
- b=viyhJzZncQlWeZfqlURHPXC8WEApUC21sbqjPCMdSfuMa/iUHe2lYNE5K4Ua4+HBuz1/rVEE05hYE5hPgcLUDDVYbhOyyrVNdq88i+amlxlSHyr1sgJ3NaFTYQIv1EHwYGq821Pvsmz8r7QPduGfTrGKm50zg51Nx5H11JydrAhQZjoLsU4eywfghXRsoyLlsLD7ZhzwdvN6P5jAcEMDHgk9ewmR0NLEmcNRLkXtEwmuu1eyVgJ3SZgIEPm6bU9s1tUb6QKldEMoBm4Lo235FSXoXBI2BwYZasx83G1BlHifvzczTOanAmrL3f0rU3c6Ln2ZR4Ut+3CwshiEJwv0KA==
+ bh=ZFDcVnIwA/5yJ8DHnUNx0lsJ9ki9JmtdAOVMqabk6gQ=;
+ b=opZn+srOulH6gBsBEAwduOv6qG2rj6O22qwfAuv68bDvqLD9VA5D5TvubbE1Fl98iDPmQ7h/31Hhvc5Gtp4FNG9YtSp9DPK3TyhdIej69ABWG3SrpqEa8QS/iemAAH1jOdeJ2s6kupnwxeY4jSELUbezx0wy5UOnLobO9MDQO05DlSR3QMLWMRQEvIo+9riw6E+2ACFApciqHzL+O4r+kWVC+WfOS8/4BJds/U+2zBvbL45fMbOSEkG6pvtCjOs1qSAzkyyn5hyVMzBRrrloh7HyWHPECEnWR6sOulxqEKLeLEuWSLe6vq63cEXlO77xJDigork3YiNdYlrRcYcEiQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
  dkim=pass header.d=axis.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JY3ljlRSf2pHiTtXpArTuxLnmNlIc1QHxJQmZnui9xU=;
- b=qq1bXLiCwVBORUkn3F/sskW0uBIeYs5sOLQ4Ll8XkjE2D6pz/SKlSMxssqBKdr06aevgtuQNBa244vTvZij/Oz+c3q9IS/8Dm//x8lMbgxOsVTpSLwyMw0OvwCeCW0lc6e+CwA5YGGuzndwhZ+L0ESnaVIffg/X37tmbP/4yBxM=
+ bh=ZFDcVnIwA/5yJ8DHnUNx0lsJ9ki9JmtdAOVMqabk6gQ=;
+ b=Yn3a686ZsRrZYpj13v4ihky5xmaPXh2bFb0pMo8rOV+qIz+V0q66cS8W3YSHzKkdDt2XZKlK0vjRDyjehO8pn1me6mcHozH/zrQLCaNtxHV6bZHUviSuGhlEGSN6dQsMyHneJ0FhaVxiOmfFi5R/eL5x0IfqYdT68AbmjrMUedo=
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=axis.com;
 Received: from GV2PPFBD14D17F4.eurprd02.prod.outlook.com
- (2603:10a6:158:401::5df) by AMBPR02MB11561.eurprd02.prod.outlook.com
- (2603:10a6:20b:736::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Tue, 6 Oct
- 2026 11:58:16 +0000
+ (2603:10a6:158:401::5df) by AS2PR02MB10002.eurprd02.prod.outlook.com
+ (2603:10a6:20b:606::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Tue, 6 Oct
+ 2026 11:58:12 +0000
 Received: from GV2PPFBD14D17F4.eurprd02.prod.outlook.com
  ([fe80::9ac:6f90:5998:69d6]) by GV2PPFBD14D17F4.eurprd02.prod.outlook.com
  ([fe80::9ac:6f90:5998:69d6%5]) with mapi id 15.21.0472.016; Tue, 6 Oct 2026
- 11:58:16 +0000
+ 11:58:12 +0000
 From: Henrik Grimler <henrik.grimler@axis.com>
-Date: Tue, 06 Oct 2026 13:57:25 +0200
-Subject: [PATCH v2 11/17] ARM: dts: samsung: exynos4210-i9100: sort
+Date: Tue, 06 Oct 2026 13:57:21 +0200
+Subject: [PATCH v2 07/17] ARM: dts: samsung: exynos4210: sort all
  properties
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261006-exynos-arm-cleanup-v2-11-e8e86a3c8c1f@axis.com>
+Message-Id: <20261006-exynos-arm-cleanup-v2-7-e8e86a3c8c1f@axis.com>
 References: <20261006-exynos-arm-cleanup-v2-0-e8e86a3c8c1f@axis.com>
 In-Reply-To: <20261006-exynos-arm-cleanup-v2-0-e8e86a3c8c1f@axis.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -58,20 +58,20 @@ Cc: devicetree@vger.kernel.org, waqar.hameed@axis.com,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Henrik Grimler <henrik.grimler@axis.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9363;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3393;
  i=henrik.grimler@axis.com; h=from:subject:message-id;
- bh=8YYKtA7CrbEe/oqSLIXWN5arZ6+yr9lXgdwkwf6Z0QE=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBqxOI7/ZP5pxgmYpN1zZy6r8+48c2h/wx7hAiPN
- bX2DjiHf6CJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCasTiOwAKCRCwB25JC3Fh
- a4nQB/9C+ERRqH666IeeN2+Jaxx0yYCtkydBAsKgivjNO6WrMsYT6kNqOYhwVNB4pYDL37PyWKF
- Ud8cBKoH5LHpAGvlVmrki7ektch7ASaRUN//m7+hnyFOvYjuGXKEBDhBtpKvLSbCRVAtzJD04ip
- zR40j8gdVgUKfnpAN3+9sGRhkuH/eN3oAtEiQPW4KfxpAqfvfXDOQPM+9oheLMd2/JTBHE0s3oL
- NGBmEgdO/oVaOZgvJZvwN32G1n/YQ4OJ9zc0TJuYkQfr3ZQLjujrbRrrqfh+/+9fAbKIbeR6Lfy
- gxvYK5StUrwGK95LOVJSMLhHWgy74u/nZ8gpjBASr3MDFEXE
+ bh=12dBiPIPvNOyV5TSXtyJHrBKRlYTy6U/pCFKP/0of9U=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBqxOI09KvCm5snvwUwD+g1F47GmJkRIlU5htDk9
+ LDvz+vTVe+JATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCasTiNAAKCRCwB25JC3Fh
+ a3d5B/4/sfvC0F9Jm9UiRW8gDx5+GwTnXP8gjpVni0gzx21D0CXP8nMri8NjgaUkt5eoMqprOfO
+ TOpb3C5TjMVHLTXL1Js4zSngVxvZi/AtRCu7rA1dj6UEnh8dKWTiBu0/cg0jjejh7gozuI8lJST
+ A43zt3g39l+UwGRqd8zCW6VEYoSfPkvsgWJo63ti91wDOfOj0jlDmcqYXsyuWEzuCNMk4M1WQ9S
+ B3S4t7IWVDoP9cIS/17I+u0Gw1V4PYIYNQv8psfXTnRzxrXPEKH+BUX5FIPjjxnXwjqszgQg7rW
+ 9cL88hXKMCgnLCd6H+wXr9TJvENB/6qSkNv5cdbc8P7ZraC+
 X-Developer-Key: i=henrik.grimler@axis.com; a=openpgp;
  fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-ClientProxiedBy: GVZP280CA0011.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:272::16) To GV2PPFBD14D17F4.eurprd02.prod.outlook.com
+X-ClientProxiedBy: BE1P281CA0239.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:8c::14) To GV2PPFBD14D17F4.eurprd02.prod.outlook.com
  (2603:10a6:158:401::5df)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -80,474 +80,165 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPFBD14D17F4:EE_|AMBPR02MB11561:EE_
-X-MS-Office365-Filtering-Correlation-Id: dac1bac1-95b8-4f40-117e-08df23a11af1
+X-MS-TrafficTypeDiagnostic: GV2PPFBD14D17F4:EE_|AS2PR02MB10002:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f75ddea-cf9d-4ba1-2ef2-08df23a11819
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|18002099003|22082099003|10067099003|11063799006|56012099006;
+	BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|10067099003|22082099003|18002099003|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	oRMUCuxWKMHEU3nJU2kdYw3MgkWf1JV+vaLZqcgu/bcKgJDdi7k2/76qEcdN7hDtJoZwjAadFe9gM9Fxz/W9EPPvZNoYrP36eM3xImwUbBS6A2qpAyRCkwh78ppu8Ifu1RRtvMeludUZq7STpNusJ3UFPIZ2glEt/iAi4OOAyMgJaVP1hIph9yweXBccGrdPMAbPaq0wdw/A16ox0fgbC2nf9lACmRqe3ZkpO0YR153uElGZfCGTVIlHq+KxifNO9aivm9dKULaveAqDSMGtDVsKbdIPN0rP181ckECjuL+lE2kI+/fFg7EAPmFo7RzE9kC5s+UF5UalwY07G8tSEyhRlv8GXqq8/Emphs7mnmf5PlkHak7Y1iLqpt1aYAeZBGIKJ/iLSyPIJwz5RGGs1X2/gjAxBhHu9+gsM8EO7o7Tb3GMBLVu/68XXNd/vwlitM+XwjF1blP242nYRwaWmRv248ahDfkBWX3Wvmj5PgF13hSJAvB51k8P2Ds5V+M0aCaGk51XN4GPiHXNVbDt8yYm5avEijViqn7qvndUe9yG2ENWP0IjLRkawX58XqYh9UpXduJz6GafPKFZ0IdXlfsrLWx1cRaGhrJvowMkV8/UEYq/DgLlgMXwzmDbTcTSLovX02Yuq+ybKW/I6uyhKDHf8LNis+pQkPTx9v7G1Tw=
+	kO9ktnpymLSSZoiHyhnMVn2k1Nxphgukv7Vaf39WGmnNaTBsDIYipwmgaqElFgVfvlPWmeNjVzYopKoqxmkNMgs/YkukLAiPO13A0wuoCg9rc6/EeT8/7caDffoLchrDptcwDdCCEQUH3mlJyIBYanCbJpiAknoMEMzJ+eZEH2tp+863rmTe3fXwPkDrM/q73y7n9KUJeS+UYKFeNwWGEHhu8VbIkwnenqHxt5WQVpdMPsoXZfP5AyYxnahPdsiZM8PRZ+GJOQfRfZUVrOaueAm83eNaxaWx20hO5w0O/cqxQzzaQiXwVcBuhWmnzP8XbZw3mP6yBAuGY1YnYeBxgLkBwcCJJVNDU48FqUhEfV4GWOT88M0JHnLF6ENfnbfdckBNf0rugxA10fzi9jSgnL6cYD5DoYE36o1KRHKQRS/8wzL0qNQym/tT2D5fF+9cQGbDVbyIYUDlK2zol9g2HTkBNZCCHk3yTkZQw6ccMHFcogWq5LRhppiOGX+s9D646blzgIqc/cvAUqg1jmuvtprRCPqMJYawGFklM4K8gkpWcC4eVAQ3MJshTyrJNzZKKfrAptpG7OX+I0JlM+Lt3/NlluyAyemJxcOME0e9P0oZileEnKMYf3BL3YlnQKQWW99Tg+V/GLPr6U3PUn6+O5koQZHNwVDNT0nF+Vz78Rs=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PPFBD14D17F4.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(18002099003)(22082099003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PPFBD14D17F4.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(10067099003)(22082099003)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MG9uMys3a3J0Nis0cTkwUStFSlBydFdWS0d1aDZOQWNxbTNGQklJdkFRaTIy?=
- =?utf-8?B?T2p5VXhqUWpyOTZRVkNNSFJYd0ZRWFAvSVdVQ3Q4SHFTZzB5ZFdOVlFPa1Ew?=
- =?utf-8?B?L1ZsVzZMVFFJOGcxaHQ2dXBxQVNweHl0YkxVTjdlSnNhemZ4ZUFURGdPeEpZ?=
- =?utf-8?B?cFJNTkR0cFVFbW9ZNFAyNWdlRUhUZVBSMDJiblZQY1dDa29tVzBIclpmdE0w?=
- =?utf-8?B?dmQzYlhEaHFrUDJ3ODkxb3hpcDVhWVlzYzMrNnhvNjM3SUkyUC9ZZEk2RC8y?=
- =?utf-8?B?cmVQU3EzQWJTbkhQQjJkZzBMUlZOQTJ4VGoxaFA3dUlqenJFNzhQR1RjeG9V?=
- =?utf-8?B?Wmxkb3hmNytVaXEyVkJZRVJZVFRyR3UxSFRlY2pUb1RXSWdySDdiaWRLcmxh?=
- =?utf-8?B?dExtRVY0WGJteEJsbjlBenpzQXFNc0hSWmV1eUxJc09FNlZMUG9tUUg1U0ZH?=
- =?utf-8?B?Nk1NakZ2VCtnSVVmdUZ1WVFxK0ZGNXROTXRoRFFTRkdlMm5obTMvcmtDaGhL?=
- =?utf-8?B?SjJmZFFPVFVHYUltTlFBRzgvVDlDcG1IcWo2ZHRwZFVoOE4xS2ZROXo0N2Mv?=
- =?utf-8?B?YWJHcXlvbjhBbHkwVW53OGtmempuOFA5UXVMbDZsV3V3a2R1MjNkV0NCTFRI?=
- =?utf-8?B?c25hYVRLdWYxR1RVRThlZ2YrN0xuOGpBcWZleUdHalEySU81eUx6U1RqNmZX?=
- =?utf-8?B?cEVwWVA5SjdBVWtMTU93NFBhRlNWNGxHeTF4U3lXZmZQbnpoQ08yMXF3Y3du?=
- =?utf-8?B?SzBqeU1Tbk9ZRFNBVktCdkYvRWlraVJ5eE51RVdxVkx6VEU5Y0p5TURTVk10?=
- =?utf-8?B?WmhJSnFldkIvYzVFM3pmbzVlRXYyT2VJRXVkMGFNa2ZQcDVPMC85dEI1TnRs?=
- =?utf-8?B?d2MyT1QzSHFIQjBFWjRQbVlEd2pqR01yekw3UFRyR3Y5RjNYOWhSM0FEcitz?=
- =?utf-8?B?MDY4TE5neTh6N3JPVWN2dXJiMFc5OGdrOUtjclpXMWVqWjZxQnFhOUlmTDhU?=
- =?utf-8?B?b3p3NlRXZy9hWTNBS1lTc0VkbCtlSHJ0YnQvSnFhVVFiMStSTW1RUkhGdEdy?=
- =?utf-8?B?TlhYTnJNV1pocG9mYUg5RWY4bTFvMkVzV1dFWlliZ25lTU81R3F1QysxNnVQ?=
- =?utf-8?B?bVZWTTFwNUVubnNWRk0wbTFSR0pJSWllUXlCcmRCNGVyN1BxQjJxblAyZEFW?=
- =?utf-8?B?em90cG1UdHhoT3QvM3NyZmszT1U4QklzakJnY1dJaWp2M0tLNHh2UDVKME5O?=
- =?utf-8?B?TG1LbzI2YW04RjlBOUhzTzRtTzBCRjFOWVZSOFl6Z0pLZ3h2aTllN245bDhU?=
- =?utf-8?B?TlFrQU9CWlhtck9LS01YSjdVbUNtRWtlaytGWE1vTmZrZlV2cXZ5QzB1SHZ5?=
- =?utf-8?B?Z3o3R0xQc2RLbC8wUmpoVU5mUU4vRDUvQmFEbk5MemlVdWRrM3JLT1ZyeVcr?=
- =?utf-8?B?U25tR2NrOVJiUW9OTGQzZVdDNlh4K1pZTy9tM0tlTEZFQndwZVZGVlJtaEFp?=
- =?utf-8?B?b2RRN2R2TGptdnY2b05WWU1XUDROVU1BT1djMm9oUkZHS05zUVAyajN0TFlZ?=
- =?utf-8?B?c3RGaGovNDdEUGU1Rk9CSXpRVDVGTEdlcE42YSt5L1NReGNkMkc1ckZuclcw?=
- =?utf-8?B?NGo0ell1WHl3cmJlMGFSZzU0SUZONlpUaC9iM2pRM0RxVDNRTTlxend4UUVU?=
- =?utf-8?B?ZlR2SGwzbS9iVHhMbU1HaHJ3b3h5MVRJSm1DWExzS2dUWmRKcElvd09YRGNE?=
- =?utf-8?B?YitsQ1oveGd3TFg2M1Q4STVCVzloOUYzUXhPZ3JtMU5CL3R6eXljdUdsdmFn?=
- =?utf-8?B?VndRNEl3eTZnVHVnMW5PakovOFh0Y1RkbEszb0tOUjlidXRZeCsvcUtRSzdW?=
- =?utf-8?B?YkZEQ1JJREFlK25kYTcyWGh2elBaR01jSHVJZGgzMVlvLzVGbnRtZTc2YzNo?=
- =?utf-8?B?MnRLVGRpUGFtRUFNUW4xeVZURmxwRk9kSnpPejhyZjF0RzJrSHFMMlFCSXgz?=
- =?utf-8?B?WUFXa2pjSFh1bXZJRm1ZQk5FSmxuKzNhRkxOd0RZWGRpaFM5VHZocCtvQXhT?=
- =?utf-8?B?dUNYeHV1MDVyMVorWkZZdVlxK2JnR3Vnd1c1TFhBUU1KQ01CQ2dvSU9jdGNP?=
- =?utf-8?B?RytjMzBvV3NsekVKSW5paVNuaDd1bC8zNDVXVk1UbGM3NlkxU01CS1QvTEN3?=
- =?utf-8?B?STFySVdxUkNIRHU2b2hPVE1ONHl6cXhLY0h4UGh4c0dUUUlaNmJOb0I4NGM2?=
- =?utf-8?B?eTJES3JPT2tHaUxsQzU5N244YVZ6eGlzWFZTL1kyVHJ4SHl1cGVScVdadE93?=
- =?utf-8?B?VmNVZ2YwWWY3YnRPcGpHbzE4MkhwVG9rVnpEeEh1NVhBOG1qMGpwZz09?=
+	=?utf-8?B?Yjl2SW50WlhWNUZQeHhWTDY1QmN0OFVYR3NyaVBONmZPSXo1ekZQU1RPSEZR?=
+ =?utf-8?B?cDJKNmZpNjBzU1lEV09oV2lraC9KYTdjOUFiQ0s4aTBaUzBDL2J5SEorK3R0?=
+ =?utf-8?B?cXhUV1JSb3JWY1N0c3YrcjBwNUJRWGJVbnRGZjNzTXFSaGV5Y3ROZ2h4YVFO?=
+ =?utf-8?B?Y0JPN3pMc2Y1WWY3ODdLNWRTVGF1bGJJclpRdm5PL3dRVFovaXd1VjNYbnR3?=
+ =?utf-8?B?UWtBMG1VRllyRm5NZE9mQnptSWpVNFdtdjhqNHprMHFsV3JZVWF2a0J5YStV?=
+ =?utf-8?B?b3h1Z2JaZkljaFBNTmtDekVVdTdPTXUrRG1DaHpCOXZaTmxkRCt2TWdJUEsv?=
+ =?utf-8?B?NlU3MHRWWkhqdFBnQk9EWUoxUUV3RXNNMWJCeFFOTitsT3FuR3dNNkROL0Z1?=
+ =?utf-8?B?cko2SC9WR2pXRDlWK3VHNGFWT0NXbmhMci9zVGZxaWtadmZOb3BxREhabUt1?=
+ =?utf-8?B?YjUvc0F5QnlJZTNLNG8wQ0pKWlZqWEhDanc1aFZwdFcvVnR1UTVxMmYwYmE5?=
+ =?utf-8?B?djVjbVVXSUtLOXQ2NDJoY0ltaFA0WVBmcC9Cc21XNEFPbFVNQ1ZLc2s0ajNl?=
+ =?utf-8?B?NWtWNEwxdlhwZjh0NG1BQjFXUXJJbHFEVVNmblY4Z3loOUZFQmlYUTNuempH?=
+ =?utf-8?B?cEVLbVRuRnkzUFdVNWNJbG5PRU5jYndsdm9GekFzRkZYRTk1OHlaOURzTWNS?=
+ =?utf-8?B?RUNIOWUvTkkzdlQrMlVZcHZRK1dlTzhvQnlhK3BkbWtMK0FGRVpRUWorZzlP?=
+ =?utf-8?B?ZGZVOEdQcG8yN0dqL0pZUUJkYkg0Q3RmdGxmVEo3TXVzeUpERHQxL1ZGdVZL?=
+ =?utf-8?B?MmhaSDlock1ScGRPVUljRjF4SW1Ra1AyOGxHbmNnc3VWdUFiM2JvRXZuMWNF?=
+ =?utf-8?B?VDJOb2ZkVDB4bjJDdWsyN3dCRTJCQ0Fqa0ZwaGZSQUJLUlZMSXVCU3pOS2ls?=
+ =?utf-8?B?bXpmcWYyTXNSdnh5amFDTHUxaUF5K2tESStkVEphQWlva1l6NzNLaldJcXpi?=
+ =?utf-8?B?RmM3dXZxb292SGcrY0FWQ21nS3V6ODJHZzhqOWZ2K1JmWE9HYmhCNm9taW9w?=
+ =?utf-8?B?ZEgxVnhoN1BxYWN1NVhOMmZCK291SEt5STVGZ2VRQzVVSXJ2UDY1REkvUWty?=
+ =?utf-8?B?MXUwTXhta3hZRldlRUNsd0tzakJJZU1Fa3FkVTZnNXZPZXB3dy94SWt0Q1dD?=
+ =?utf-8?B?MVhmbENseUgrbVVWVFUxUXpLeGd6K3ZjNkxrK3FhTWFGbkVORi9BMjNEVHdt?=
+ =?utf-8?B?RTR2QXdYcmZWSnBUVUlQeTBQejFHUnhFVFBjNTZnTFhyd1RhZW40T2lPTlNk?=
+ =?utf-8?B?bVRkUDFaZWo2WDFEM1R2Rnc0VWlrTkpCNE5NNElaWFI5R3FlTlcwaG9LbzJI?=
+ =?utf-8?B?NUpXR3grN0h4RXlIYTI2bkhFRlVmNE8wajFQdjFIZHRCSEtvQmlwMy9vK1FB?=
+ =?utf-8?B?b1R3MTlhNTNxeHYzaU1uVHd4dE8xVzU4ZnJQRTlnZWJMS3VzczBidWNkeHFl?=
+ =?utf-8?B?OVZYZDdRR01qNFV5ekEwNTJTaHp6L2RUdGJpSml2QXJ0SUMxM0FRT1F4eWJw?=
+ =?utf-8?B?ZUUrSFpVV0V2ZHlENFFNWWVJVlltb1VSOFZnSzZnbk9qTjR1bGtoeWNnMlNn?=
+ =?utf-8?B?eDVrQjFGbElWd1NhSVpaUHI3L2x3V2JFWWN2Wi9WektZNk9DVHE4eCt2VEVD?=
+ =?utf-8?B?d012ejlGeW5vRnQ2ais2TmpDMndrV1oxTGFMR2piWEpNOE9lckFsWEhsU3dX?=
+ =?utf-8?B?SlhWTTZ2aEJJMWRuU0FpSmYxRGRFU0kxM1FwK0ZSaC9QSk1LbmxqRE1wcmxm?=
+ =?utf-8?B?RW5GQUFYZjRQU05tZksxci9aOTRBSmQrTlRjRmp6VjhsUS9rTjFBeDhQV2lM?=
+ =?utf-8?B?Kys5OHJUUmhqZmlyZXVCMHNwWHFsODg1dzFSUFRXZG0vODJlcVhzSmxDcnFy?=
+ =?utf-8?B?TTBBWHV0ZGpEZDdNTE1mWFF6M2ZEeWVBTmw0bm9hZDZ1WldBdGl1OEhZY2ZC?=
+ =?utf-8?B?WnVjV2lVN3lkZTA4bmxjblRyOWN6Y0krWlY0Q21iN296SjNWVHArSGdQcEdo?=
+ =?utf-8?B?dnNrMnV3cVdSMGpPSDJxNXpvSG9FRmVBR2cva3phWnkxZ0s0UDhzNGNxNWZX?=
+ =?utf-8?B?cldPcnMvem1JOVlNRzhFckh1NTY0MEVHMU1zNXFrdkpCKzdwTk5iQVRsYWxV?=
+ =?utf-8?B?UHRNelphNEIwbU90TlFtNFc4VnluYlhXUmxDa2RvbXM1aEE5RXNsYngrMmMr?=
+ =?utf-8?B?K0pwV25yTmw3V200akxFVVFFOWYxS3JlM29yNWJUMUtUUlVSeUVMbyttaFpX?=
+ =?utf-8?B?NnhIeUJJQVZ1eXZtSlhYTkI3OFBpaFdYOEFyRHdkMm5SNkU2enBsdz09?=
 X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dac1bac1-95b8-4f40-117e-08df23a11af1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f75ddea-cf9d-4ba1-2ef2-08df23a11819
 X-MS-Exchange-CrossTenant-AuthSource: GV2PPFBD14D17F4.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 11:58:16.0034
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2026 11:58:11.2348
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G22r0U3QcYTtY7Tcbi+yF9IPJ0lnf/aogFPPuOG0ern5Qd5V73GmtbvYgvohr/pL32ltCdOjmzjcYPNX6HNW3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR02MB11561
+X-MS-Exchange-CrossTenant-UserPrincipalName: fz7+k7lM19ENujmAFtHVFKkrm4FZ2WsHlaDBO1vWoTxa98eQWxIf0WY9bZKUWdpdSX8NvdzS+NKRNnd5R7wPmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB10002
 
-And add or delete newlines where applicable, and sort properties
-according to the preferred style. Fixes warnings from dt-check-style
-like:
+Sort properties according to the preferred style for increased
+readability.
 
-  samsung/exynos4210-i9100.dts:275: [child-name-order] child node 'pmic-ap-clk' out of name order
-  samsung/exynos4210-i9100.dts:287: [required-blank-lines] "status" must be preceded by a blank line
-  samsung/exynos4210-i9100.dts:288: [property-order] property 'assigned-clocks' out of canonical order (should sort before 'status')
+Fixes dt-check-style property-order warnings in strict mode like:
 
-Also remove double spaces in max8997 buck dvs voltages list.
+  samsung/exynos4210.dtsi:393: [property-order] property 'reg' out of canonical order (should sort before 'interrupt-parent')
+  samsung/exynos4210.dtsi:440: [property-order] property 'interrupts' out of canonical order (should sort before 'samsung,combiner-nr')
+  samsung/exynos4.dtsi:745: [property-order] property 'interrupt-names' must be placed after 'interrupts'
 
 Signed-off-by: Henrik Grimler <henrik.grimler@axis.com>
 ---
- arch/arm/boot/dts/samsung/exynos4210-i9100.dts | 125 +++++++++++++------------
- 1 file changed, 65 insertions(+), 60 deletions(-)
+ arch/arm/boot/dts/samsung/exynos4210.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4210-i9100.dts b/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
-index b9a31714381c..85e4d334a5e6 100644
---- a/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
-+++ b/arch/arm/boot/dts/samsung/exynos4210-i9100.dts
-@@ -97,31 +97,31 @@ gpio-keys {
+diff --git a/arch/arm/boot/dts/samsung/exynos4210.dtsi b/arch/arm/boot/dts/samsung/exynos4210.dtsi
+index 66f35c4ae6b1..d37ac0c97dbc 100644
+--- a/arch/arm/boot/dts/samsung/exynos4210.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4210.dtsi
+@@ -267,9 +267,9 @@ soc: soc {
+ 		sysram: sram@2020000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0x02020000 0x20000>;
++			ranges = <0 0x02020000 0x20000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges = <0 0x02020000 0x20000>;
  
- 		key-vol-down {
- 			gpios = <&gpx2 1 GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_VOLUMEDOWN>;
- 			label = "volume down";
- 			debounce-interval = <10>;
-+			linux,code = <KEY_VOLUMEDOWN>;
+ 			smp-sram@0 {
+ 				compatible = "samsung,exynos4210-sysram";
+@@ -359,11 +359,11 @@ pinctrl_2: pinctrl@3860000 {
+ 
+ 		sysmmu_fimd1: sysmmu@12220000 {
+ 			compatible = "samsung,exynos-sysmmu";
+-			interrupt-parent = <&combiner>;
+ 			reg = <0x12220000 0x1000>;
++			interrupt-parent = <&combiner>;
+ 			interrupts = <5 3>;
+-			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_FIMD1>, <&clock CLK_FIMD1>;
++			clock-names = "sysmmu", "master";
+ 			power-domains = <&pd_lcd1>;
+ 			#iommu-cells = <0>;
  		};
- 
- 		key-vol-up {
- 			gpios = <&gpx2 0 GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_VOLUMEUP>;
- 			label = "volume up";
- 			debounce-interval = <10>;
-+			linux,code = <KEY_VOLUMEUP>;
+@@ -392,8 +392,8 @@ sysmmu_g2d: sysmmu@12a20000 {
+ 			reg = <0x12a20000 0x1000>;
+ 			interrupt-parent = <&combiner>;
+ 			interrupts = <4 7>;
+-			clock-names = "sysmmu", "master";
+ 			clocks = <&clock CLK_SMMU_G2D>, <&clock CLK_G2D>;
++			clock-names = "sysmmu", "master";
+ 			power-domains = <&pd_lcd0>;
+ 			#iommu-cells = <0>;
  		};
- 
- 		key-power {
- 			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <10>;
- 			wakeup-source;
-+			linux,code = <KEY_POWER>;
- 		};
- 
- 		key-ok {
- 			gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
--			linux,code = <KEY_OK>;
- 			label = "ok";
- 			debounce-interval = <10>;
-+			linux,code = <KEY_OK>;
- 		};
- 	};
- 
-@@ -141,6 +141,7 @@ i2c_max17042_fuel: i2c-9 {
- 
- 		battery@36 {
- 			compatible = "maxim,max17042";
-+			reg = <0x36>;
- 
- 			interrupt-parent = <&gpx2>;
- 			interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-@@ -148,7 +149,6 @@ battery@36 {
- 			pinctrl-0 = <&max17042_fuel_irq>;
- 			pinctrl-names = "default";
- 
--			reg = <0x36>;
- 			maxim,over-heat-temp = <700>;
- 			maxim,over-volt = <4500>;
- 		};
-@@ -284,21 +284,24 @@ pmic_ap_clk: pmic-ap-clk {
- &camera {
- 	pinctrl-0 = <&cam_port_a_clk_active>;
- 	pinctrl-names = "default";
--	status = "okay";
- 	assigned-clocks = <&clock CLK_MOUT_CAM0>, <&clock CLK_MOUT_CAM1>;
- 	assigned-clock-parents = <&clock CLK_XUSBXTI>, <&clock CLK_XUSBXTI>;
-+
-+	status = "okay";
+@@ -436,7 +436,6 @@ &camera {
  };
  
- &csis_1 {
--	status = "okay";
- 	vddcore-supply = <&vusb_reg>;
- 	vddio-supply = <&vmipi_reg>;
- 	clock-frequency = <160000000>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 
-+	status = "okay";
-+
- 	port@4 {
- 		reg = <4>;
-+
- 		csis1_ep: endpoint {
- 			remote-endpoint = <&s5k5bafx_ep>;
- 			data-lanes = <1>;
-@@ -317,6 +320,7 @@ map0 {
- 			/* Corresponds to 800MHz */
- 			cooling-device = <&cpu0 2 2>;
- 		};
-+
- 		map1 {
- 			/* Corresponds to 200MHz */
- 			cooling-device = <&cpu0 4 4>;
-@@ -325,62 +329,63 @@ map1 {
+ &combiner {
+-	samsung,combiner-nr = <16>;
+ 	interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+@@ -453,6 +452,7 @@ &combiner {
+ 		     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++	samsung,combiner-nr = <16>;
  };
  
- &ehci {
--	status = "okay";
--
- 	phys = <&exynos_usbphy 1>;
- 	phy-names = "host";
--};
- 
--&exynos_usbphy {
- 	status = "okay";
-+};
- 
-+&exynos_usbphy {
- 	vbus-supply = <&safe1_sreg>;
--};
- 
--&fimc_0 {
- 	status = "okay";
-+};
- 
-+&fimc_0 {
- 	assigned-clocks = <&clock CLK_MOUT_FIMC0>, <&clock CLK_SCLK_FIMC0>;
- 	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
- 	assigned-clock-rates = <0>, <160000000>;
-+
-+	status = "okay";
+ &fimc_0 {
+@@ -523,11 +523,11 @@ &mdma1 {
  };
  
- &fimc_1 {
--	/* Back camera not implemented */
--	status = "disabled";
--
- 	assigned-clocks = <&clock CLK_MOUT_FIMC1>, <&clock CLK_SCLK_FIMC1>;
- 	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
- 	assigned-clock-rates = <0>, <160000000>;
-+
-+	/* Back camera not implemented */
-+	status = "disabled";
+ &mixer {
+-	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp", "mout_mixer",
+-		      "sclk_mixer";
+ 	clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
+ 		 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>,
+ 		 <&clock CLK_MOUT_MIXER>, <&clock CLK_SCLK_MIXER>;
++	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp", "mout_mixer",
++		      "sclk_mixer";
  };
  
- &fimc_2 {
--	status = "okay";
--
- 	assigned-clocks = <&clock CLK_MOUT_FIMC2>, <&clock CLK_SCLK_FIMC2>;
- 	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
- 	assigned-clock-rates = <0>, <160000000>;
-+
-+	status = "okay";
+ &pmu {
+@@ -538,11 +538,11 @@ &pmu {
  };
  
- &fimc_3 {
--	/* Back camera not implemented */
--	status = "disabled";
--
- 	assigned-clocks = <&clock CLK_MOUT_FIMC3>, <&clock CLK_SCLK_FIMC3>;
- 	assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
- 	assigned-clock-rates = <0>, <160000000>;
-+
-+	/* Back camera not implemented */
-+	status = "disabled";
+ &pmu_system_controller {
+-	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
+-			"clkout4", "clkout8", "clkout9";
+ 	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
+ 		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
+ 		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
++	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
++			"clkout4", "clkout8", "clkout9";
+ 	#clock-cells = <1>;
  };
- 
- &fimd {
--	status = "okay";
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 
-+	pinctrl-0 = <&lcd_clk>, <&lcd_data24>;
-+	pinctrl-names = "default";
-+
- 	samsung,invert-vden;
- 	samsung,invert-vclk;
- 
--	pinctrl-0 = <&lcd_clk>, <&lcd_data24>;
--	pinctrl-names = "default";
-+	status = "okay";
- 
- 	port@3 {
- 		reg = <3>;
-@@ -392,26 +397,26 @@ fimd_dpi_ep: endpoint {
- };
- 
- &gpu {
--	status = "okay";
--
- 	mali-supply = <&vg3d_breg>;
--};
- 
--&hsotg {
- 	status = "okay";
-+};
- 
-+&hsotg {
- 	dr_mode = "otg";
- 	vusb_d-supply = <&vusb_reg>;
- 	vusb_a-supply = <&vusbdac_reg>;
--};
- 
--&i2c_1 {
- 	status = "okay";
-+};
- 
-+&i2c_1 {
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
- 	samsung,i2c-max-bus-freq = <100000>;
- 
-+	status = "okay";
-+
- 	lis3dh: accelerometer@19 {
- 		compatible = "st,lis3dh-accel";
- 		reg = <0x19>;
-@@ -423,14 +428,14 @@ lis3dh: accelerometer@19 {
- };
- 
- &i2c_3 {
--	status = "okay";
-+	pinctrl-0 = <&i2c3_bus>;
-+	pinctrl-names = "default";
- 
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
- 	samsung,i2c-max-bus-freq = <100000>;
- 
--	pinctrl-0 = <&i2c3_bus>;
--	pinctrl-names = "default";
-+	status = "okay";
- 
- 	touchscreen@4a {
- 		compatible = "atmel,maxtouch";
-@@ -442,14 +447,14 @@ touchscreen@4a {
- };
- 
- &i2c_5 {
--	status = "okay";
-+	pinctrl-0 = <&i2c5_bus>;
-+	pinctrl-names = "default";
- 
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
- 	samsung,i2c-max-bus-freq = <100000>;
- 
--	pinctrl-0 = <&i2c5_bus>;
--	pinctrl-names = "default";
-+	status = "okay";
- 
- 	pmic@66 {
- 		compatible = "maxim,max8997-pmic";
-@@ -458,6 +463,11 @@ pmic@66 {
- 		interrupts-extended = <&gpx0 7 IRQ_TYPE_NONE>,
- 				      <&gpx2 3 IRQ_TYPE_EDGE_FALLING>;
- 
-+		pinctrl-0 = <&max8997_irq>, <&otg_gp>, <&usb_sel>;
-+		pinctrl-names = "default";
-+
-+		charger-supply = <&charger_reg>;
-+
- 		max8997,pmic-buck1-uses-gpio-dvs;
- 		max8997,pmic-buck2-uses-gpio-dvs;
- 		max8997,pmic-buck5-uses-gpio-dvs;
-@@ -475,34 +485,28 @@ pmic@66 {
- 						 <1000000>, <950000>;
- 
- 		max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
--						 <950000>,  <900000>,
-+						 <950000>, <900000>,
- 						 <1100000>, <1000000>,
--						 <950000>,  <900000>;
-+						 <950000>, <900000>;
- 
- 		max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
- 						 <1200000>, <1200000>,
- 						 <1200000>, <1200000>,
- 						 <1200000>, <1200000>;
- 
--		pinctrl-0 = <&max8997_irq>, <&otg_gp>, <&usb_sel>;
--		pinctrl-names = "default";
--
--		charger-supply = <&charger_reg>;
--
- 		regulators {
- 			vadc_reg: LDO1 {
- 				regulator-name = "VADC_3.3V_C210";
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
--
- 			};
-+
- 			valive_reg: LDO2 {
- 				regulator-name = "VALIVE_1.1V_C210";
- 				regulator-min-microvolt = <1100000>;
- 				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
--
- 			};
- 
- 			vusb_reg: LDO3 {
-@@ -706,14 +710,14 @@ CHARGER_TOPOFF {
- };
- 
- &i2c_7 {
--	status = "okay";
-+	pinctrl-0 = <&i2c7_bus>;
-+	pinctrl-names = "default";
- 
- 	samsung,i2c-sda-delay = <100>;
- 	samsung,i2c-slave-addr = <0x10>;
- 	samsung,i2c-max-bus-freq = <400000>;
- 
--	pinctrl-0 = <&i2c7_bus>;
--	pinctrl-names = "default";
-+	status = "okay";
- 
- 	magnetometer@c {
- 		compatible = "asahi-kasei,ak8975";
-@@ -724,8 +728,8 @@ magnetometer@c {
- };
- 
- &pinctrl_0 {
--	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep0>;
-+	pinctrl-names = "default";
- 
- 	sleep0: sleep-state {
- 		gpa0-0-pin {
-@@ -822,36 +826,35 @@ tsp224_irq: tsp224-irq-pins {
- };
- 
- &rtc {
--	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&pmic_ap_clk>;
- 	clock-names = "rtc", "rtc_src";
--};
- 
--&sdhci_0 {
- 	status = "okay";
-+};
- 
-+&sdhci_0 {
- 	bus-width = <8>;
- 	non-removable;
- 	vmmc-supply = <&vemmc_reg>;
- 
- 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_bus8>;
- 	pinctrl-names = "default";
--};
- 
--&sdhci_2 {
- 	status = "okay";
-+};
- 
-+&sdhci_2 {
- 	bus-width = <4>;
- 	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
- 	vmmc-supply = <&vtf_reg>;
- 
- 	pinctrl-0 = <&sd2_clk>, <&sd2_cmd>, <&sd2_bus4>;
- 	pinctrl-names = "default";
--};
- 
--&sdhci_3 {
- 	status = "okay";
-+};
- 
-+&sdhci_3 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 
-@@ -861,8 +864,10 @@ &sdhci_3 {
- 	mmc-pwrseq = <&wlan_pwrseq>;
- 	vmmc-supply = <&vtf_reg>;
- 
--	pinctrl-names = "default";
- 	pinctrl-0 = <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
- 
- 	brcmf: wifi@1 {
- 		compatible = "brcm,bcm4330-fmac", "brcm,bcm4329-fmac";
-@@ -875,13 +880,13 @@ brcmf: wifi@1 {
- };
- 
- &serial_0 {
--	status = "okay";
--
--	pinctrl-names = "default";
- 	pinctrl-0 = <&bt_en>, <&bt_res>, <&uart0_data>, <&uart0_fctl>;
-+	pinctrl-names = "default";
- 
- 	uart-has-rtscts;
- 
-+	status = "okay";
-+
- 	bluetooth {
- 		compatible = "brcm,bcm4330-bt";
  
 
 -- 
