@@ -1,91 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6734C4825CB;
-	Wed,  7 Oct 2026 11:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425AD396D38;
+	Fri,  9 Oct 2026 03:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791371753; cv=none; b=mWmgGxpqFep9y5RE3FyrB/AMRLUSuNAem7TlE19vlEEpNxzthnuhlZdoAeFRHQnNcoJq0QLHSS1J63kUsYJFlyohEhcvcd3aFu9C7UsrxmZtpnUK87pDFIGqqMTDtazd9WftykEwIPnMYHYcmDeGVlmyf7yZrpZ7l/V7+JRq3j0=
+	t=1791517556; cv=none; b=X4CZ4poxs7P7rh3366rlAcs0BPkHeenIw8gwEMxgZ+/eafHyABiQoN6Y47XhaWu3lcgDxsErFsojiafsBjV5MtDggVqsvGbvppDUaqm4zH3NOSSmhklLrPoFgdqKkEBwM68fJZC+z0eG7ivScKuyPLbVDAtBHRYBGN1w3lgEKRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791371753; c=relaxed/simple;
-	bh=wf0zI6H8bcYyEFBdlZDq94pQEqoVauT/PfLam3NmUtA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HXuzUPNDGoveiDCZftQ8UfbXYyoNkQuuxgTwfCCAjT5v3e/m2h5HYsh8SxDrm3DNrt4XSRdr3W/zlYVPNalW6MW3SAC9Ya5Oozm3OSDMRXJqSCU6h4Xbf99Lao9lUVRqljpwifayxI/MLs1cvbON0uum/i5vSXrF6QsI8w9DFj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRagrg87; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRagrg87"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F4B1F0089C;
-	Wed,  7 Oct 2026 11:15:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791371737;
-	bh=n/LrCgRxEO/wee64tkUGlclz4M68swR/BLIkBXXHUoQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=TRagrg87G5hDKepuqnz4uj9Iw1r+L00lqyAZjEV//YINPPF17/GV5eGWxRSLyKPyY
-	 ri2wOW77GWlkwS/tFw5KoTP8217wDiam3nTrWGalT5Zta+czdMq0X6rEAil7ATTbrv
-	 W3ytnES6ZJ7ypDVnlU3KxkcCmHi2Z5ctP8ZaldHdryZlBzRdiNvBuuj+KvfvPCx4EZ
-	 TjT4Ng9SDLGF3affnLRoE/Kq7RdxZR1l+l6T+QfEFqiBjaKXKs/IaHP8Dtm3urW0gX
-	 PomgN7r00RpsCirdZT1lVn50hl3CtpH+E5RTN3QnLfjc9C3+3TljNUN4NyKZpGCFry
-	 3Wbweej/W47Cw==
-From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <20261002092116.585466-1-m.szyprowski@samsung.com>
-References: <20261002092116.585466-1-m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ASoC: samsung: i2s: enable op_clk in probe to balance
- runtime PM
-Message-Id: <179130030303.150114.3704660640001534414.b4-ty@b4>
-Date: Tue, 06 Oct 2026 17:25:03 +0200
+	s=arc-20240116; t=1791517556; c=relaxed/simple;
+	bh=AYhBaRoMZOhD6WvPcjiYZhPWcUHtt2P9Heu/65undLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ov4zNGL3iQojuZqLACvWuAfwkdvcuI/Q15YIvff7eFbWBZK1DK8DyAbGk5qNbBJedphQss1SVUjHPN1kxMGVR6pca6kjQZybuVHWEND4MJbPNsqbvdtb6PeiXohbyeKSRjH/fQp0noro8ZIS1ak//NRwVs61fu06Dqd4W6BJDpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from fc87d0ffb700.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowACnrjxgY8hqMAobCg--.2175S2;
+	Fri, 09 Oct 2026 11:45:37 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Joerg Roedel <jroedel@suse.de>
+Cc: iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/exynos: fix NULL pointer dereference on device_link_add() failure
+Date: Fri,  9 Oct 2026 11:45:39 +0800
+Message-Id: <20261009034539.3073100-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1150; i=broonie@kernel.org;
- h=from:subject:message-id; bh=wf0zI6H8bcYyEFBdlZDq94pQEqoVauT/PfLam3NmUtA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqxinTepZwOFsSBefflSuIBDRLxKrBIukNAdQXB
- P6BmNYc/qyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCasYp0wAKCRAk1otyXVSH
- 0M5UB/9ytuNAqL+9UOSO7TgcW8m1U0SFYte/r73jmoFhxS74re92Bw8liP6ML6vTFvaJR/GYKgs
- nczU3aw6xr6M/4X63WFIVgltwT4Q1cYxcJoSxVfFTr96r3kLEdPQ4qxFvb9UYyhjK5KXAnuh1v3
- 702wNQ8V0lVA3IViB0RlIJLvXQY07VEcjZMCLUKMJYVYEeHq5/7nGEXxtBpRrtKFSSi2qnRzEi5
- 1osTBrUgFk0WWMSCFQQDq43/Sk7rjd+zw7TEn3ZJNIizaXIJZErvBy4ZJpMMzpm/ixsNwwdKoKt
- ejn0xGz0HfXUoNsh4X5cz3VSgyv8x1+usOq/Te/0pQEIWeCX
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACnrjxgY8hqMAobCg--.2175S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw15ZFW3Cr17Kw1UAF47Arb_yoW8tw1xpF
+	W7CFy5ArWUXF1kWF17Xr4UuF1Sv3Z2ka4fur1fG3yDKr15try8Kay8X34Fv3Z5ArWkG3ya
+	y3yaqaykCFsxJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvEb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr
+	1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
+	evJa73UjIFyTuYvjxUqY0mUUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwQPA2rIJBHwaQAAsB
 
-On Fri, 02 Oct 2026 11:21:12 +0200, Marek Szyprowski wrote:
-> ASoC: samsung: i2s: enable op_clk in probe to balance runtime PM
+exynos_iommu_probe_device() stores the result of device_link_add() in
+data->link without checking it for failure, although device_link_add()
+returns NULL when the supplier is not PM initialized, on a dependency
+cycle or on allocation failure. exynos_iommu_release_device() then calls
+device_link_del() on that entry unconditionally, and device_link_del()
+dereferences link->flags, so a NULL data->link causes a NULL pointer
+dereference when the device is released.
 
-Applied to
+Check the returned device link for NULL, unwind the links that were
+already created and fail the probe instead.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.3
+Fixes: 7a974b29fe5d ("iommu/exynos: Rework runtime PM links management")
+Assisted-by: DeepSeek-V4.1-Flash
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/iommu/exynos-iommu.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] ASoC: samsung: i2s: enable op_clk in probe to balance runtime PM
-      https://git.kernel.org/broonie/sound/c/752925401476
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 874d05f4b396..ce0492691ef4 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1403,7 +1403,7 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
+ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ {
+ 	struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+-	struct sysmmu_drvdata *data;
++	struct sysmmu_drvdata *data, *tmp;
+ 
+ 	if (!has_sysmmu(dev))
+ 		return ERR_PTR(-ENODEV);
+@@ -1417,6 +1417,11 @@ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ 		data->link = device_link_add(dev, data->sysmmu,
+ 					     DL_FLAG_STATELESS |
+ 					     DL_FLAG_PM_RUNTIME);
++		if (!data->link) {
++			dev_err(dev, "Unable to link %s\n",
++				dev_name(data->sysmmu));
++			goto err_unlink;
++		}
+ 	}
+ 
+ 	/* There is always at least one entry, see exynos_iommu_of_xlate() */
+@@ -1424,6 +1429,13 @@ static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+ 				struct sysmmu_drvdata, owner_node);
+ 
+ 	return &data->iommu;
++
++err_unlink:
++	list_for_each_entry_continue_reverse(tmp, &owner->controllers,
++					     owner_node)
++		device_link_del(tmp->link);
++
++	return ERR_PTR(-ENODEV);
+ }
+ 
+ static void exynos_iommu_release_device(struct device *dev)
+-- 
+2.25.1
 
