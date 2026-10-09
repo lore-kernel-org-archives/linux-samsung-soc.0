@@ -1,55 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E5544C65C;
-	Fri,  9 Oct 2026 06:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C33F210B
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2026 08:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791527802; cv=none; b=GWbGc1OYqUUUGe+XPqXVTnM7/roCKQJ9OsrbvaUx76EBMrNNDGUSUaXm92iG1ZNba+sE3XpSAr7u7C7f53SOTXww2DE7nzAf/zJRbaAQzPkPIymE3TcZ7nMstPb8JVz3tAYIAU43vxVFOpu+yA3hn3Q2M879OKoUTJykoJ6Ke6s=
+	t=1791535336; cv=none; b=q3f+Zt209f5qr5k7rG/EgtPzc/NLCD2+qjCMifgl9HOnEO+EXnRTsKF5wd6RYe0Kvjlx1bCDZaXKrY9Jdg9/ZCG4PqQOMqbupjSn0DRkkME85ZmBQoJrSHTpp7CYWwRkE16J6mkGwCkg/UNBg3Xs84hBZXkGUmvj9hmiphxCJs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791527802; c=relaxed/simple;
-	bh=6a2jpBbdVOpf7H3trgEc/tTYPOnCEArKj8r/5oWzDvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6VLwPoqiofhAB2ImTZXwykU3A/himRRGB5Di0mbQEAP84S63mThpJiGQXvzEznMVFt0AtT1OxagBVGfWDEKHos+2Txd7OoONLJ9zhTaqzLFuaR4lYKOswTDRWaNsVzwYON54E8YSK03oUJnaAkyDwxwkYEy9mFinAKZ8uJlX7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1XutQIp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791535336; c=relaxed/simple;
+	bh=iQjeIeuE0TrRXjzq/4BN2JXwMS5sWSC0KsOOoHnJAa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PmACklvziFn2yeqbz/LFeO2E8cMO4M3g0rJopNwT+8OY7B8EvHFxJ4SDWwNzPj54f5IfTAWhem7OOv1UU4eD/gqnLDV6p8ODhICKdxp3SCl+dw5nV0HqQdga99LD+y1Deed7Z+CKLKPzw16jIzUbZl0Gw2gE/7W4FgLpBU+qNVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SBIPSvD/; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1XutQIp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A391F000FF;
-	Fri,  9 Oct 2026 06:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791527800;
-	bh=jx7npCcUuAQgxbfc2Agr3M33C2GZC5MXa2bHNjH9XTM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=V1XutQIpwwz5mwiG+zyoqyRx7m/dK2w1SNaRrVRJtlkY6r3AiFeSGSiykYCVe0ebY
-	 FuGrYGTsfUbrskqt3mmQz1oGnB9atvvwzruHWZb8BAFvTjhXbZLFIvQV+VNRMtl7FC
-	 gIQPi62qowHListw8Ht27F0wBc+Z2DAkoFuM5DQX5KNpnGhXVpnM6JfZWZxZJ4QOMM
-	 TFWhdFEtfoQdkFHE8auH52gS199INNOv3pqZPN+RjOJJtXq2m/BB9c7QgNHACDlVwn
-	 dB5v4TM0q+Blf4KWD7zOTXNFV1QGVlhKiCehkTPVSY8KNKDtDEPJnjljpta/9Uqtnz
-	 ZQn1eKEe5Ho0Q==
-Message-ID: <b1f088eb-7c77-4079-9b05-20729fcfd612@kernel.org>
-Date: Fri, 9 Oct 2026 08:36:32 +0200
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SBIPSvD/"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6ae14eecc64so9058829a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2026 01:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1791535333; x=1792140133; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=TpL9JdRnQWjZohyDj5gd2hk16XdjjZ4+ynUw0iwS7Uk=;
+        b=SBIPSvD/rJXg02G30MHmAvT6nPeNgpb/ZfXgAmAUEVRNVA99Ipi2BM9PICqmX6uUAH
+         hxBKrHu1/uy7WlG1dWzhXRvuB2iuUS0PDTwcirKdtJRUr59UQB9T6tzJxWiJMo0kKKGI
+         AIKqLW/ko1a6jsfPykbeAz74/ha0JDYtDhEjw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791535333; x=1792140133;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TpL9JdRnQWjZohyDj5gd2hk16XdjjZ4+ynUw0iwS7Uk=;
+        b=ua2YbHziPONwDJt0TPt9WHXsWMbLuY6IPkXtjKEOtKbS/ZMWGvb7QqBAP794iEsyii
+         SvNgw6isoQYdLKRDB02w50gGFtOohi937Na8miis7fNgOgHWnk0j7C4BM70Sa9H1OtCd
+         7ayU5G2dSyctsHnfXx/PoNGOLumzd+dpKazwCGaVLa5KJ5EpdDnpUe7remnq4TwyQILx
+         wfpvIux3XMTMdXbk+O8WEDo69jLX1TkDt5lyONdOQFb38F0R/QyJfLc/kcahhEpM4Pgu
+         mXF0ELV0zwtvOvRUkQoI5r8OXtWg47+BCS236O0DbAFPw/eTJNQVMiumWJalml091n1X
+         8G9w==
+X-Forwarded-Encrypted: i=1; AKwUvBx9phMAMq5LEeC6K+V3+cQ8tRKL3exMJH6s9tKhdliEZ7y/0OG6W8lRmKW8sZNAjdGw9koJengBSHKbSaXKCqrPrg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKjV88bAOIJ6ybG3WGavRYIh3UNOO23RoBpo9cLHUrr9yfKmCSO
+	YLqkfVocajw314nHlx4Ud8Q1TSXLjj2UzPY6ZuX3Dsx2KPzHPdgsNquJymW/v3o49GLW9Dwrwlq
+	vyGmbDA==
+X-Gm-Gg: AYBFou1XFH8teOTbL7bgnuLEey8JiZ2rWipXl5OdD8sYLeW2+twwW4vLYi0Q8O/Tf6r
+	Wd5wA8xVrgpYB/mUZTB3VG7WSGGVQaV7pqmIYMB+XLYg49wxa/27kS5CZX25LcyoTRob1Jdzofz
+	DpdIvv8b7oTlkb0PY5NiyeXLefUoKHxIiVJWE/zasOw3+jQa7bqDHbyZ0YUUSVo+7PElLmXmL4K
+	MMg1skE7z3NDacZtJ9ZkgHwfG+C81daiNaqtlOAW5GmDmF9/x6Yhawpwn07CjE7G1iEcgIaC7ri
+	l2Sqn80WoLVqAHHtjf8K2e0MEMLxUTVhPUyo3Yl+aTOQYJPIUo+13JHCBCeos4/OSQPKGa8A3nQ
+	a7OC5ifSRhA5tlnTm/bC/HnfTi8OzPiCRmmE0vyTdYpAgaezAcu/Il5Rnk6BD3cDzbFGURfviGu
+	bLE5CqOV8tnOw9P2c89N92F05g1cIH8p531+4jitQkqm6Df6TwJC+gapd2r5O1oJXkVFQ9kZuqK
+	Dk14sTsxHXPqNEtDTcXAXbYfBvZzshOUBdfwA==
+X-Received: by 2002:a05:6402:3226:b0:6ac:77c2:c418 with SMTP id 4fb4d7f45d1cf-6b17c1e0c18mr864399a12.1.1791535333244;
+        Fri, 09 Oct 2026 01:42:13 -0700 (PDT)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b1783dc9d1sm793730a12.0.2026.10.09.01.42.09
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Oct 2026 01:42:11 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-48afe75f055so5506910f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2026 01:42:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz8afhx9rZQ4g2z88nQfKYqI99RQaMSHVvH2BUSplNQzu+nUH4IallOrxZ/kqRifOLO+VGjIPU5nYgj7Jc3D/uJlA==@vger.kernel.org
+X-Received: by 2002:a05:600c:4ecb:b0:4a1:6916:798 with SMTP id
+ 5b1f17b1804b1-4a18e4a3f69mr19100085e9.14.1791535327953; Fri, 09 Oct 2026
+ 01:42:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] mailbox: goog-mba: Introduce the goog-mba mailbox
- driver
-To: Doug Anderson <dianders@chromium.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@kernel.org>
-Cc: Joonwon Kang <joonwonkang@google.com>,
- Subhash Jadavani <sjadavani@google.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Lucas Wei <lucaswei@google.com>,
- Brian Norris <briannorris@chromium.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>
 References: <20260714222338.2965707-1-dianders@chromium.org>
  <CAD=FV=X-fAJp=EG_yTAg+QQgNYRCt25947oHGHZuq-FEyirK0g@mail.gmail.com>
  <CABb+yY2CH5A1ixfX9czgtEwsP95FN-2JVzN_wmRDRNsSuZY5PQ@mail.gmail.com>
@@ -63,131 +84,144 @@ References: <20260714222338.2965707-1-dianders@chromium.org>
  <CABb+yY2Cc9YGKb0ej7CZ_LQLw-iMQOtcAwLPier+X2ej1fWcJQ@mail.gmail.com>
  <CAD=FV=U1DAuDN4eR_hZ2bbGoGkgkszDLPUDiosxh1aKg7Y1T=A@mail.gmail.com>
  <CABb+yY3n3QmxTPOyAuHz9JkOKbhRqKok+24THc_JfdxwzROWDw@mail.gmail.com>
- <CAD=FV=XGka_QqGt5iK53vU704ZsvCrXUWvJ9ewo1=TCiepfz-g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAD=FV=XGka_QqGt5iK53vU704ZsvCrXUWvJ9ewo1=TCiepfz-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <CAD=FV=XGka_QqGt5iK53vU704ZsvCrXUWvJ9ewo1=TCiepfz-g@mail.gmail.com> <b1f088eb-7c77-4079-9b05-20729fcfd612@kernel.org>
+In-Reply-To: <b1f088eb-7c77-4079-9b05-20729fcfd612@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 9 Oct 2026 01:41:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VSSEZykDpu48XVwDzNWKAhZjsPm3PNweTqeHv_DxiykQ@mail.gmail.com>
+X-Gm-Features: AclHuK_I9OeBRY02WEee3vuFJa_eA7foPBEu58USBohXW5y9EM2eolVWe-MVbbg
+Message-ID: <CAD=FV=VSSEZykDpu48XVwDzNWKAhZjsPm3PNweTqeHv_DxiykQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7] mailbox: goog-mba: Introduce the goog-mba mailbox driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Joonwon Kang <joonwonkang@google.com>, 
+	Subhash Jadavani <sjadavani@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Lucas Wei <lucaswei@google.com>, Brian Norris <briannorris@chromium.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/09/2026 23:34, Doug Anderson wrote:
-> 
-> ```C
-> static struct mbox_chan *goog_mba_fw_xlate(struct mbox_controller *mbox,
->                                       const struct fwnode_reference_args *sp)
-> {
->   int i;
-> 
->   if (sp->nargs)
->     return ERR_PTR(-EINVAL);
-> 
->   for (i = 0; i < mbox->num_chans; i++) {
->     if (!mbox->chans[i].cl)
->       return &mbox->chans[i];
->   }
-> 
->   return ERR_PTR(-EBUSY);
-> }
-> ```
-> 
-> Then the client loops around and requests the same channel over and
-> over again until it gets -EBUSY? Like:
-> 
-> ```C
-> for (i = 0; i < FIFO_MAX; i++) {
->   client
->   chan[i] = mbox_request_channel(client[i], TX_CHAN);
->   if (IS_ERR(chan[i]) && PTR_ERR(chan[i]) == -EBUSY)
->     break;
-> }
-> fifo_depth = i;
-> ```
-> 
-> I _guess_ that works, but it still feels like a bit of a hack to me.
-> You said you were worried about people abusing the "has_queue" API.
-> The above feels like it's abusing the "fw_xlate" API, turning it from
-> something that is normally a "lookup" into an allocator function.
-> 
-> +Rob, Saravana, and devicetree@vger.kernel.org. DT folks: is the above
-> something that looks right to you?
+Hi,
 
-There is no allocation in your xlate code above, so this is not that
-terrible as we talked on LPC.
+On Thu, Oct 8, 2026 at 11:36=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 28/09/2026 23:34, Doug Anderson wrote:
+> >
+> > ```C
+> > static struct mbox_chan *goog_mba_fw_xlate(struct mbox_controller *mbox=
+,
+> >                                       const struct fwnode_reference_arg=
+s *sp)
+> > {
+> >   int i;
+> >
+> >   if (sp->nargs)
+> >     return ERR_PTR(-EINVAL);
+> >
+> >   for (i =3D 0; i < mbox->num_chans; i++) {
+> >     if (!mbox->chans[i].cl)
+> >       return &mbox->chans[i];
+> >   }
+> >
+> >   return ERR_PTR(-EBUSY);
+> > }
+> > ```
+> >
+> > Then the client loops around and requests the same channel over and
+> > over again until it gets -EBUSY? Like:
+> >
+> > ```C
+> > for (i =3D 0; i < FIFO_MAX; i++) {
+> >   client
+> >   chan[i] =3D mbox_request_channel(client[i], TX_CHAN);
+> >   if (IS_ERR(chan[i]) && PTR_ERR(chan[i]) =3D=3D -EBUSY)
+> >     break;
+> > }
+> > fifo_depth =3D i;
+> > ```
+> >
+> > I _guess_ that works, but it still feels like a bit of a hack to me.
+> > You said you were worried about people abusing the "has_queue" API.
+> > The above feels like it's abusing the "fw_xlate" API, turning it from
+> > something that is normally a "lookup" into an allocator function.
+> >
+> > +Rob, Saravana, and devicetree@vger.kernel.org. DT folks: is the above
+> > something that looks right to you?
+>
+> There is no allocation in your xlate code above, so this is not that
+> terrible as we talked on LPC.
+>
+> >
+> >
+> > I researched whether other upstream drivers use of_xlate() /
+> > fw_xlate() as an "allocator" like this. I did find "exynos-mailbox,"
+> > which appears to be doing something similar. However, upon deeper
+> > digging it seems like "exynos-mailbox" isn't using this dynamic
+> > allocation for any compelling reason. It looks like, really,
+> > "exynos-mailbox" should just be returning one channel. The client
+> > (exynos-acpm) could just use the same channel for everything since:
+> > * It actually gets the _real_ channel ID out of the data.
+> > * It doesn't care about txdone.
+> > * All it does is ring a doorbell and there's no queueing.
+> >
+> >
+> > In any case, if using fw_xlate() as an allocator is truly the only way
+> > to proceed, I'll finish my prototype and send a v2, but I'm still
+>
+> Why fw_xlate() would be an allocator? Can you extend your code to show th=
+at?
+>
+> I think doing any allocation in xlate() is calls is fundamentally wrong.
+> These should not modify the state of the device, so no allocations, no
+> device_link_add() etc.
 
-> 
-> 
-> I researched whether other upstream drivers use of_xlate() /
-> fw_xlate() as an "allocator" like this. I did find "exynos-mailbox,"
-> which appears to be doing something similar. However, upon deeper
-> digging it seems like "exynos-mailbox" isn't using this dynamic
-> allocation for any compelling reason. It looks like, really,
-> "exynos-mailbox" should just be returning one channel. The client
-> (exynos-acpm) could just use the same channel for everything since:
-> * It actually gets the _real_ channel ID out of the data.
-> * It doesn't care about txdone.
-> * All it does is ring a doorbell and there's no queueing.
-> 
-> 
-> In any case, if using fw_xlate() as an allocator is truly the only way
-> to proceed, I'll finish my prototype and send a v2, but I'm still
+It's not _calling_ an allocator, it _is_ an allocator. It is walking
+through the array of channels and returning the first free one. Then
+that free channel is "allocated" to the client.
 
-Why fw_xlate() would be an allocator? Can you extend your code to show that?
 
-I think doing any allocation in xlate() is calls is fundamentally wrong.
-These should not modify the state of the device, so no allocations, no
-device_link_add() etc.
+> Why? There is simply no corresponding xlate_destroy() call. It's also
+> confusing, because the meaning is to translate from one domain resource
+> to another, not perform actual resource allocation.
 
-Why? There is simply no corresponding xlate_destroy() call. It's also
-confusing, because the meaning is to translate from one domain resource
-to another, not perform actual resource allocation.
+In this case, there is no leak because it's relying on knowledge of
+how the mailbox core will be using fw_xlate() to finish the allocation
+and then relying on the knowledge of the mailbox core to free. It
+works like this (simplfied, see mbox_request_channel() for full code):
 
-> skeptical that this is better than just adding queuing into the core.
-> Speaking of which, I actually want to go back to something you said
-> earlier. I asked a bit about this but I don't think I saw a response
-> (sorry if I missed it!):
+```
+scoped_guard(mutex, &con_mutex) {
+  list_for_each_entry(mbox, &mbox_cons, node) {
+    if (device_match_fwnode(mbox->dev, fwspec.fwnode)) {
+      // The below "allocates" the first free channel associated w/ the nod=
+e.
+      chan =3D mbox->fw_xlate(mbox, &fwspec);
+      if (!IS_ERR(chan))
+        break;
+    }
+  }
+  if (!IS_ERR(chan))
+    // This finishes the allocation.
+    chan->cl =3D client;
+}
+```
 
-Best regards,
-Krzysztof
+Said more simply, in the mailbox driver, there is an array of channels
+associated with a given "fw_node". These are "allocated" like this:
+1. mbox_request_channel() grabs its global lock.
+2. The mailbox driver's fw_xlate() is called to find the first "free"
+channel associated with the fw_node (a channel with no "client").
+3. mbox_request_channel() sets the "client" field in the channel to
+finish allocation.
+4. mbox_request_channel() drops its global lock.
+
+Does that make sense?
+
+Is that a design that looks good to you? If DT folks have no
+objections to that, I'll send a new patch that works like that.
+
+-Doug
