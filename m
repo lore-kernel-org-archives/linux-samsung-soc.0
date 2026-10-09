@@ -1,200 +1,155 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980154E80D8
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Oct 2026 15:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791560615; cv=pass; b=GhDwi8XNq1k5dy/lHjXJpK3Mk/fWtkCF8Vn3SxHb1dKm5yiNmT1jlSaE8hnMCoFVBlcezD8uhCPFmdpsySpHJ4K7c3IwNcyj4ml5FF/TLSD83vTyn1a3FUZwFxBrdefXK2oYicuL9o8P+iFwr3+crxY56yq9hCjW4vtl9JpvQgA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791560615; c=relaxed/simple;
-	bh=zx2j5RAhzB4SxO38lj6J7oJt413F43gvw2W6oYAdPvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MU3Lntt0jwgS8BmumucM/P+0Y9EMhIwQsYt2EQDG0DSjpfN0+jqa12ORgm0Kj5hEOUad+HcIcWxte5+CQWWEILf9U3DHeU5muetBTQmpV+ArRkpM6AA+jSa2+Aysx3eVjGTSbsf235WbduXEPIlcCHicG2T8k7k7fjU69rXJXBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2CjXMyh; arc=pass smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930674F30F2;
+	Fri,  9 Oct 2026 16:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791564187; cv=none; b=QevLFAbxzj+LLZRz3GO5aFrzrsuwlhmjSRZpgNLd+Fv/hzm+SjQVFN1duCljLFjjkXZGwqASTtE1ekVaybjD7iWxNkEMEGKZLDP3rRp0aKmhi+IjLNDNp1pMkwSddn9m+mM+3dqHDSaQadEHSWGNPSrsgxri94NtrjvN8toBUdo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791564187; c=relaxed/simple;
+	bh=HL4dLnQazmu9eond2oaF2ZCcsFOHB8BI0FASnIbUEk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p87vLqrF6fEDIwpjGZ3EWKX3pjStpmQza6z864I//w1/UmQTLggwMaJGD2kqYJdOnRkyOh9Inxp3RbJsdHzVIPz4sLLObjyuoG6/VSt6ubu5HDCRTLfvtOi14jNYhYEOgxeDCyoRo4wIqJed0sK3fjEd+d2MNQM++ha33PxdwQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drO0Mp0r; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2CjXMyh"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-81ba09a5d23so6347754a34.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Oct 2026 08:43:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791560612; cv=none;
-        d=google.com; s=arc-20260327;
-        b=QXqOFV7Kpc9MrcDWoR3fL1fZ8wppS1iWQ+agAOmErgy4nB3+zE5ZQR8o1mduwMVVRH
-         yhTS/pml+5rLrZ/ntINTPgh0cyh04Es3lAdMUhDZeFrBarQg44oYdxeVHydI6Th+IMb5
-         46FL3dMkIuWzfnjY4LLSRvzEhYv53soPMqM95MAQg0ZT5NYdd8ZyN06udVZXI7FX+My2
-         EV+syFi8FLrMqnuCi9pzy4ABWaA7AMRyn2+pA4hRErBNYFItch6NP5yfd2LmglGwlxt2
-         Qtg2Np2TfMLYPrbz2LLW/RW7dAWFNHl8yvfjuWgPtBautTEi15ZEuvjcNjb2QJCj01tB
-         h+0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=30V3aYAGacnfDe5Uw314wkUS1h4m5vyY1WpctMWa5as=;
-        fh=AnBnJlkOWRdrnkEtCZNZB9uZmIFIig/NsW8FK7KKj5Y=;
-        b=fydca5AkkPSjQHfgAn9Wp0MlHXMw+lRcpnijhZDcATu/hwa1jEw4OStn4U1ghtKn/V
-         gyl+cHgOaboVbRA8hxpcmpraMcgrmI0nDqqwC7q/A8C+K3BhIi9s1LRXz2xadEIXVcVQ
-         MsF1YQuKrrrj3m92wJArnFvPdWlPesyP6hYkWJ01eBorknCRzpq/ldsXOz27DVOgd+Ph
-         IT5hr1YNWcxB2gkI8dcuFj4QWJKpSiYARVartBsOS45UoAfTmsKzahYBxQCQMIv2UFiB
-         iczcl+uJfapHyaLWdPwYPCA18k4lwxlSQbuXmxm0T7Y/4SYLH3Qu7NILd07J4swhmO4M
-         Vx5A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791560612; x=1792165412; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=30V3aYAGacnfDe5Uw314wkUS1h4m5vyY1WpctMWa5as=;
-        b=H2CjXMyhqCC6QqV+f0sWmmLR3zKCPMX3+pvSiwM2n7GRHZ85zFjFRh0ei2srHnnGk8
-         oDRum1EF/wgjTZcwm2eyrGYXB7CSITG97li3/OBebvwFflNoTAjJXdNdEK9Gp8W0DZKp
-         d6dKPCgesx4Awq5FJzNBLcOGd5ODjTwRu24VY+5ediAvqG5L48kwhPxmR4wSvHGU1NVo
-         k217LVDV3i3Sl4+/epWLnxXY+5q4PnwaPrtaDRFlh1JHXLQReaTi21IHHlNw54nb6jcA
-         0DlynOtM5h6pfHHPsWMHGkdhpoVeP5zKf43ymkrldxvc0DT+xW+Mjiuxu8k43/mNO745
-         FUyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791560612; x=1792165412;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=30V3aYAGacnfDe5Uw314wkUS1h4m5vyY1WpctMWa5as=;
-        b=DpBn0u0CvEbZSR8C4OsQLslGyvmUAU8cUO9osa1FhEapTdy+bucN8BCf9QPkxjqcD1
-         KjxHV2XgC5FW2joeK7Z1sAglCOGnY90Dq4vCoD4XiWyUtKHuyRRq+MsTmlfn4tCrcrZH
-         0jRSgFbSw9PSR9KU53Cuiakfccr1cbfCdkt1fwDYgtdbHRHEPv5Z/FqGTiLo3bsDeO5X
-         num4eFKd4Yq/u78/yK54W6vrJ3F7iTfJ6poAKRwcbqKi3HbER2VHMEfa5czcqUPkCNXd
-         TIeIKD8VojHdLj7++ygTn5vwg2vdg2KXWFc/1gG9lHOfqg/7mfefnNiLgF9BnmuIm+Q7
-         ZOnQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx5KW9zy5DsFS6AHM/txJGnQ7bp3iTRmsI7zLQsfELmkO9Bx8ps2c6jI+iVGQBECqLxb8gNEuN5+Jp0Ocvl84G+dg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lYg5VArD5sv6EJRhCYPTajCCLC7diq3ndl+F/h3IH7bebRwI+A
-	jKnVF7b+buH9/TkqgRsylsWYaNlbLizjdfRwCCqV5obODWPD1EWxaUdAPK3aDtapLS5x5SPu7RK
-	yyKov+xLtsIQnMTKJEtgK17xpQrcHZ8s=
-X-Gm-Gg: AYBFou1EC8AP7M161fWqJYzZWhCV1AzO+A4s26fhcBVLuHn0s8n9ifdb1IF7sqiP7ww
-	OCOrMQ6VROUa9GWydDI1Hkyfekdzw86nSlAZMbVMYFiXQHw23fFCkpgZCUNoe37KjSuPrY9w5Fa
-	j2iO3LK21tG1qaBZ2kqXVYJbxuXNBMAZuOZZ4hyD0TeHYWOii5Vn8qKykRta+ijpfdKlavGsecQ
-	Fa4pHvBcsysUDJXeywkXMur1ksudi85HSvyTWz3qNcwe+jSKwvWPwDUyEsg5FzMRYsM+T7cMPat
-	diHQXfQAYvutMUoVN7DOirvvrcE4zCIToSSPpPFcyg4blXW6LAUcz5E=
-X-Received: by 2002:a05:6820:1992:b0:6e0:84b2:edb8 with SMTP id
- 006d021491bc7-6ef08c7c614mr1702776eaf.1.1791560612403; Fri, 09 Oct 2026
- 08:43:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drO0Mp0r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791564186; x=1823100186;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HL4dLnQazmu9eond2oaF2ZCcsFOHB8BI0FASnIbUEk8=;
+  b=drO0Mp0rpBtNc6uIThJsJKdGp5RjJ0VNoigfdMonSUgCwFa1UblGbR1k
+   G7m3MrFx4sF4Jyf9TMgztRkHUNb9xPFyl+fXrSdxiBVU1cPki0rcqDy3q
+   AyQYN3tmpNci8o++Eh0HCkmr5VQzemhw65K5fQq0hrSd3F5tf51GHJX44
+   z5t+62BoC7+s9lWimZ3RXyWOXtqchimQiuBA8j/p7nnnB4nj09SMxfhpB
+   509s2hldYDR9S/i6dL9i/Dy+0u+kLKDp3ijD2OdUf4yGtz93dKFlkY0rT
+   hfQtkSOqRSmlu/zYbTrBBKpLgPwd1RKzysEqWMy0vfqH63t73PgFZVJ5A
+   Q==;
+X-CSE-ConnectionGUID: fGSHYMugQVWW54xonw4j4A==
+X-CSE-MsgGUID: rFo4QJB6TaOeToerM+pcyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11930"; a="259597"
+X-IronPort-AV: E=Sophos;i="6.27,148,1787036400"; 
+   d="scan'208";a="259597"
+Received: from fmviesa013.fm.intel.com ([10.60.135.153])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2026 09:43:05 -0700
+X-CSE-ConnectionGUID: tUi5YPRHSZWPTE6paRwA/Q==
+X-CSE-MsgGUID: QM0uw6PORcuqyvHNUpy+Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,148,1787036400"; 
+   d="scan'208";a="2094648"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa013.fm.intel.com with ESMTP; 09 Oct 2026 09:43:02 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xFDgR-0000000061U-0JFK;
+	Fri, 09 Oct 2026 16:42:59 +0000
+Date: Sat, 10 Oct 2026 00:42:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haotian Zhang <vulab@iscas.ac.cn>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Joerg Roedel <jroedel@suse.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/exynos: fix NULL pointer dereference on
+ device_link_add() failure
+Message-ID: <202610100049.FvaUUeCb-lkp@intel.com>
+References: <20261009034539.3073100-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714222338.2965707-1-dianders@chromium.org>
- <CAD=FV=X-fAJp=EG_yTAg+QQgNYRCt25947oHGHZuq-FEyirK0g@mail.gmail.com>
- <CABb+yY2CH5A1ixfX9czgtEwsP95FN-2JVzN_wmRDRNsSuZY5PQ@mail.gmail.com>
- <CAD=FV=XiguzS7nH1sE=BkXt+7G6-hhqyz5u3sjc4zAA9H7KqJg@mail.gmail.com>
- <CABb+yY2_AvcnaTDmpL8gP4H2_Pp3HddrtNr5gvL4GCW2DPPvOw@mail.gmail.com>
- <CAD=FV=VzJCb1nz+q5EZ33G5U6KZM_tXi8snL=KbUM3C5yymG4g@mail.gmail.com>
- <CABb+yY2omp+g13UgZfiKWLux9J1P+=ed0U3F8AhS0iQK=kpN8w@mail.gmail.com>
- <CAD=FV=WA2wFbk0=qFE0aZs9E5jg-EXzcrkPCk6VOMhbDroOQCw@mail.gmail.com>
- <CABb+yY0W+244qaXqHdfEq9XFuQXBez7PVcDNrKooV9cFS8TS_Q@mail.gmail.com>
- <CAD=FV=VW2h1zWDYWQ6LknX3O+3=EY665jde35Ly+UQzuscXy=Q@mail.gmail.com>
- <CABb+yY2Cc9YGKb0ej7CZ_LQLw-iMQOtcAwLPier+X2ej1fWcJQ@mail.gmail.com>
- <CAD=FV=U1DAuDN4eR_hZ2bbGoGkgkszDLPUDiosxh1aKg7Y1T=A@mail.gmail.com>
- <CABb+yY3n3QmxTPOyAuHz9JkOKbhRqKok+24THc_JfdxwzROWDw@mail.gmail.com>
- <CAD=FV=XGka_QqGt5iK53vU704ZsvCrXUWvJ9ewo1=TCiepfz-g@mail.gmail.com>
- <b1f088eb-7c77-4079-9b05-20729fcfd612@kernel.org> <CAD=FV=VSSEZykDpu48XVwDzNWKAhZjsPm3PNweTqeHv_DxiykQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=VSSEZykDpu48XVwDzNWKAhZjsPm3PNweTqeHv_DxiykQ@mail.gmail.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Fri, 9 Oct 2026 10:43:20 -0500
-X-Gm-Features: AclHuK_n4jA48VU427LdptzIuvcXkvRmkA34iUq3fGa6NHmP0M26irsb0xZMW1I
-Message-ID: <CABb+yY0yaXZX7=0L8Tt5P4u-GTX=unmgBMePoNTVQ5BHKzLM3g@mail.gmail.com>
-Subject: Re: [PATCH 7/7] mailbox: goog-mba: Introduce the goog-mba mailbox driver
-To: Doug Anderson <dianders@chromium.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Joonwon Kang <joonwonkang@google.com>, 
-	Subhash Jadavani <sjadavani@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Lucas Wei <lucaswei@google.com>, Brian Norris <briannorris@chromium.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261009034539.3073100-1-vulab@iscas.ac.cn>
 
-Hi Doug,
+Hi Haotian,
 
-On Fri, Oct 9, 2026 at 3:42=E2=80=AFAM Doug Anderson <dianders@chromium.org=
-> wrote:
-> > >
-> > >   for (i =3D 0; i < mbox->num_chans; i++) {
-> > >     if (!mbox->chans[i].cl)
-> > >       return &mbox->chans[i];
-> > >   }
-> > >
-> > >   return ERR_PTR(-EBUSY);
-> > > }
-> > > ```
-> > >
-> > > Then the client loops around and requests the same channel over and
-> > > over again until it gets -EBUSY? Like:
-> > >
-> > > ```C
-> > > for (i =3D 0; i < FIFO_MAX; i++) {
-> > >   client
-> > >   chan[i] =3D mbox_request_channel(client[i], TX_CHAN);
-> > >   if (IS_ERR(chan[i]) && PTR_ERR(chan[i]) =3D=3D -EBUSY)
-> > >     break;
-> > > }
-> > > fifo_depth =3D i;
-> > > ```
-> > >
-> > > I _guess_ that works, but it still feels like a bit of a hack to me.
-> > > You said you were worried about people abusing the "has_queue" API.
-> > > The above feels like it's abusing the "fw_xlate" API, turning it from
-> > > something that is normally a "lookup" into an allocator function.
-> > >
-> > > +Rob, Saravana, and devicetree@vger.kernel.org. DT folks: is the abov=
-e
-> > > something that looks right to you?
-> >
-> > There is no allocation in your xlate code above, so this is not that
-> > terrible as we talked on LPC.
-> >
-> > >
-> > >
-> > > I researched whether other upstream drivers use of_xlate() /
-> > > fw_xlate() as an "allocator" like this. I did find "exynos-mailbox,"
-> > > which appears to be doing something similar. However, upon deeper
-> > > digging it seems like "exynos-mailbox" isn't using this dynamic
-> > > allocation for any compelling reason. It looks like, really,
-> > > "exynos-mailbox" should just be returning one channel. The client
-> > > (exynos-acpm) could just use the same channel for everything since:
-> > > * It actually gets the _real_ channel ID out of the data.
-> > > * It doesn't care about txdone.
-> > > * All it does is ring a doorbell and there's no queueing.
-> > >
-> > >
-> > > In any case, if using fw_xlate() as an allocator is truly the only wa=
-y
-> > > to proceed, I'll finish my prototype and send a v2, but I'm still
-> >
-> > Why fw_xlate() would be an allocator? Can you extend your code to show =
-that?
-> >
-> > I think doing any allocation in xlate() is calls is fundamentally wrong=
-.
-> > These should not modify the state of the device, so no allocations, no
-> > device_link_add() etc.
->
-> It's not _calling_ an allocator, it _is_ an allocator. It is walking
-> through the array of channels and returning the first free one. Then
-> that free channel is "allocated" to the client.
->
-You mean _assigned_.
-Allocation means when there are some resources reserved that must be
-released at some point later .... which is what the mailbox controller
-driver does in probe() and remove().
-In xlate() the platform just decides which channel to assign to the
-incoming request -- some platforms take the hint from device-tree,
-your platform has flexibility and can simply assign the first free
-found.
+kernel test robot noticed the following build warnings:
 
-I will try to explain in detail your questions in your last post, but
-I am still not convinced you need to modify the api.
+[auto build test WARNING on krzk/for-next]
+[also build test WARNING on arm-perf/for-next/perf pinctrl-samsung/for-next linus/master v7.3-rc6 next-20261008]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Regards,
-Jassi
+url:    https://github.com/intel-lab-lkp/linux/commits/Haotian-Zhang/iommu-exynos-fix-NULL-pointer-dereference-on-device_link_add-failure/20261009-114539
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20261009034539.3073100-1-vulab%40iscas.ac.cn
+patch subject: [PATCH] iommu/exynos: fix NULL pointer dereference on device_link_add() failure
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20261010/202610100049.FvaUUeCb-lkp@intel.com/config)
+compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 242243a5814307de825db3428662d67b064e2cbc)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261010/202610100049.FvaUUeCb-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610100049.FvaUUeCb-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iommu/exynos-iommu.c:1434:39: warning: variable 'tmp' is uninitialized when used here [-Wuninitialized]
+    1434 |         list_for_each_entry_continue_reverse(tmp, &owner->controllers,
+         |                                              ^~~
+   drivers/iommu/exynos-iommu.c:1406:35: note: initialize the variable 'tmp' to silence this warning
+    1406 |         struct sysmmu_drvdata *data, *tmp;
+         |                                          ^
+         |                                           = NULL
+   1 warning generated.
+
+
+vim +/tmp +1434 drivers/iommu/exynos-iommu.c
+
+  1402	
+  1403	static struct iommu_device *exynos_iommu_probe_device(struct device *dev)
+  1404	{
+  1405		struct exynos_iommu_owner *owner = dev_iommu_priv_get(dev);
+  1406		struct sysmmu_drvdata *data, *tmp;
+  1407	
+  1408		if (!has_sysmmu(dev))
+  1409			return ERR_PTR(-ENODEV);
+  1410	
+  1411		list_for_each_entry(data, &owner->controllers, owner_node) {
+  1412			/*
+  1413			 * SYSMMU will be runtime activated via device link
+  1414			 * (dependency) to its master device, so there are no
+  1415			 * direct calls to pm_runtime_get/put in this driver.
+  1416			 */
+  1417			data->link = device_link_add(dev, data->sysmmu,
+  1418						     DL_FLAG_STATELESS |
+  1419						     DL_FLAG_PM_RUNTIME);
+  1420			if (!data->link) {
+  1421				dev_err(dev, "Unable to link %s\n",
+  1422					dev_name(data->sysmmu));
+  1423				goto err_unlink;
+  1424			}
+  1425		}
+  1426	
+  1427		/* There is always at least one entry, see exynos_iommu_of_xlate() */
+  1428		data = list_first_entry(&owner->controllers,
+  1429					struct sysmmu_drvdata, owner_node);
+  1430	
+  1431		return &data->iommu;
+  1432	
+  1433	err_unlink:
+> 1434		list_for_each_entry_continue_reverse(tmp, &owner->controllers,
+  1435						     owner_node)
+  1436			device_link_del(tmp->link);
+  1437	
+  1438		return ERR_PTR(-ENODEV);
+  1439	}
+  1440	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
