@@ -1,122 +1,87 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CE54A2608
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2026 15:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9639890A;
+	Mon, 12 Oct 2026 16:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791820364; cv=none; b=U2W78HwHKinCEoFkkL+FOs3GaMGaxvV4DmWVFrqNEJhhowLowTjsSl5SlXC6199HZkxIAmYBnJV6UsX3yvx7nUDYfh1Hj1kEfJJlSQXemDO/E5yxl94nGqndYXgChDcEs15JdzvnsfXX9ML1Ecmu/TONFC7CYXl3zBt0HBQccmM=
+	t=1791821661; cv=none; b=MugyYpR6sG8q2yc/228HaC3sH+4RJDjxgbmYe3zOPUuagiNuhOVKEBFyxN2GYgv9VsHCOhTFDHZ58AjKKXA/Uht5oqBOqWdB7HcJAINh4/5DaAHTCHFnz+mq1g8nh5qhEl4y9nvfCc8TlNaSx6HzRrc1jUOE1G1SMvqGWNTu+jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791820364; c=relaxed/simple;
-	bh=xE2JB362It+KmbkVX14MVsk515VD8Prc1e4ZQqkz2jY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XVV//B3zsO0pUh84KPPcXg4tcWjJs35zDpTQ3NaFKVWkSL/kXaAYjdX6BP86eizzmWRdUciyFhPW2d1mYz18Cpn6A3ctXcg+VMu9+0fFjpkYKC8XEp6uAiMTUjjvOApQMGpE4aywEsC949oiFTai4C+ianUZ14/jZ8AhmjjHeGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jyQKaQT/; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1791821661; c=relaxed/simple;
+	bh=g/nhI0UvP/sibaQAzukFq2a4drK6+P0e0L2iBIv4Y1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceHU2tr+8bPaMvUH0eyqAD8o0YPtYerTM6cAk669ddTbF5oOK3rxIFWkJg/IEF+drb3lt2iFTtaznzCsDuibAWhXVJc6JsK1C6RbINTRWIhJrZx0jjaKjC/ssbL+Cb2H+WdX0+rbQ97nsGy1GA+6zzXjULIxZw7VuX6QspWTbMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axltw2Oz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jyQKaQT/"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c2055573c8cso242744066b.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2026 08:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1791820360; x=1792425160; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=gMm76zmK3ArrseSrDrnVi5kZ0suPc21HeqCjahf5xGU=;
-        b=jyQKaQT/iRjtqU393m5pa9pPT3cSrSm4aQ6230UuuRNzMr1LoS0NHtCHNfV+3pGd2O
-         Px4olBw/9TvRrOt3RXYnvxBPvEToqkbKONN5+JDiVZMmKNQiUMB5DQqZdEAyqeoA56CU
-         q81MlfN6gSA01avZFTDtJqsfdK3r2XRPWX7GY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791820360; x=1792425160;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gMm76zmK3ArrseSrDrnVi5kZ0suPc21HeqCjahf5xGU=;
-        b=nAqFQXdzmRfbh+V4wKzcsmh6EpL54K6ecwkkUxIUNH27YZDkRb6w4gpStp4UWBpgOf
-         UHE/Yy6ocvPNuwIJHDSPUUrjrke5Qx0pz9zNVfMp7tHolNX8nrW7bOJ25Kx8M/jjP3YP
-         Vn9PZOcAwoXmpJeGkAg26Nv+qOZQ8SsG0+Z0nSrPlTCc7AVKQLOkzavq96i03iEHB8Qq
-         xOyO8JkQhdE9GKdewg1AGGQQuP4YgUp1FfUbCXLFiAoaGAAoVQsq2RmVDUwVqCr51hY4
-         1Zp1aSY7c8ANqrMv5vuTQiiuFfk2BuOQN3qsYv1mAt4XJHBQs9BqCwtBMXMQURRUxUlK
-         H3qA==
-X-Forwarded-Encrypted: i=1; AKwUvBw1b0ZtXVW7Itw+OjUu7gvnHGkN35iMjJLI9c4gtGKQpPsHyTVTWp9oQtSwnNTXcOmDtgV5IgroF9X+nFR0UGjdgw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ/wirvSqGJJFJGgXmE9t/6DaYhd0CUxDK5LxRdg7NubxN5uutW
-	Oi1ybMsgTzED3TlSLEz8M82CeXuo2oM4l5ed9uGqGUdYJP8M6bSajVtfSYZTlPiOT4O9Sm9GKjf
-	cZV7hpg==
-X-Gm-Gg: AYBFou1fWf8LCui626fpFoh5562a0ftP+GyCN2vNwordWHEaM7eAdYGjPmJl9AqXF/0
-	SgQE5b7Qt/qxLvcMZa1gxcv/fD2HyrM+CtHxPvbzdN8MYs9VOJb3U5ENjYE+tr79wNGdTm9WVoz
-	3Dx8YEwCMRnpnKJ/gExwsz5W25MVYZgniXS2W3NjK3nffiSwP0Id+1G4fvauo1hs0IYpuiFM10u
-	zZ2IOYGqgXXNaiSVPjs1vdi/MrNy4o1Z9Rltlxmv0u3xO+wPjlYL7rfkFh1O1EYi7dGGhoDiFB2
-	zFnBqVVdliVLXaMzbvLUFVdikkvXi35Ib+NbsPYAGQ7oiKHYYiUQRHgkrv9SEbD7x9gXi6iya01
-	cL8AcOaszoBjEpNjZLJIkBpJIWkidpxwYOOZHLHcpuIrdCtuIP6IRLqj2Wqq8EFBzzDa1+I8/93
-	JkQwJ3CUZJBdJiRiMxDp/stbzzQzhjetC5/TfnfiB1+nlUbQL6S1zfNXeSYMHfGpMkbyqHKZPvY
-	TT+MU5kjJf1WsPTf3dNReuS9VA3V8u95twuKA==
-X-Received: by 2002:a17:907:3d4d:b0:c26:1649:47b2 with SMTP id a640c23a62f3a-c31a9fd82bcmr885109666b.40.1791820360481;
-        Mon, 12 Oct 2026 08:52:40 -0700 (PDT)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c31a9ac774esm473225666b.68.2026.10.12.08.52.37
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Oct 2026 08:52:37 -0700 (PDT)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48c4207ac26so1985145f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Oct 2026 08:52:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzu8/A6FrEQVHfzhPkzm8lw4ILxNFx2dlqhbXGUiDNK6t7tJtupvEBp6GjZ4GzsYNW6uBQ2eJkZ+2504RlyVmBCYw==@vger.kernel.org
-X-Received: by 2002:a05:6000:60c:b0:48d:df08:307c with SMTP id
- ffacd0b85a97d-48ddf083082mr1731696f8f.44.1791820356342; Mon, 12 Oct 2026
- 08:52:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axltw2Oz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAFB1F0089B;
+	Mon, 12 Oct 2026 16:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791821659;
+	bh=RFdw4NU0rqUdnwQkTW5jDTI2TrOvFLZe/E45ZXiDc1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=axltw2OzFfnLto8lDkWnN70zzds5Hzc+9r8r1oqBZPU0ch275Tc7K4iNf8MBEEkZ+
+	 ccKwY4IhxJtI0GUnsHXL6WZTobF2ZU9UFuo7FXRWAlaJjzfapOPDVfIfhz5m4y9+R8
+	 Qf8uGc5HAa78+rbJgPUVlFGwIkIPkv7vPFiN4gFLW5SDMHvGiKEKfLISv9bo9hVg5r
+	 uXUdQCqyJ4mCVBiXIr6g7JW4FAhem74cvuUDquwunje2NHvvz9oODV5HL2aJal5YcO
+	 Rpu6WZipcjdV8zbR02T2fZPbkqVDUAbsahyIVyCqeaH7j89Bj+E75itq6p1ohWeTKw
+	 9MW1TYxMr74/g==
+Date: Mon, 12 Oct 2026 21:44:07 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: vkoul@kernel.org, neil.armstrong@linaro.org, krzk@kernel.org, 
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, pritam.sutar@samsung.com, 
+	andre.draszik@linaro.org, kernel@lvkasz.us, pengpeng@iscas.ac.cn, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, 
+	h10.kim@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com, 
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com, 
+	muhammed.ali@samsung.com, thiagu.r@samsung.com
+Subject: Re: [PATCH v2] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
+ prevent OOB access
+Message-ID: <as0G-bk_TKRToOkv@debian>
+References: <CGME20260918103249epcas5p49c9b4bf6fd60c28f5f09f0b7b69828b6@epcas5p4.samsung.com>
+ <20260918103147.2628614-1-selvarasu.g@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714152138.7.I5cef580a62c86ba6c3465ad336fa509afbdf1476@changeid>
- <9099b92c-d456-4dbf-95c7-dcb3f1004066@web.de>
-In-Reply-To: <9099b92c-d456-4dbf-95c7-dcb3f1004066@web.de>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 12 Oct 2026 08:52:24 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U=kLK=p2xmcjP8mENApKNvtyU2L8OvTW1-EZM5+TMk4w@mail.gmail.com>
-X-Gm-Features: AclHuK8lwjKGleC0Qe7nH4WggNgPyU5z0A6glLw0RKkKSL75lGBBduv0_ttODd8
-Message-ID: <CAD=FV=U=kLK=p2xmcjP8mENApKNvtyU2L8OvTW1-EZM5+TMk4w@mail.gmail.com>
-Subject: Re: [PATCH 7/7] mailbox: goog-mba: Introduce the goog-mba mailbox driver
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	Jassi Brar <jassisinghbrar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Brian Norris <briannorris@chromium.org>, Joonwon Kang <joonwonkang@google.com>, 
-	Lucas Wei <lucaswei@google.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Subhash Jadavani <sjadavani@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260918103147.2628614-1-selvarasu.g@samsung.com>
 
-Hi,
+On Fri, Sep 18, 2026 at 04:01:47PM +0530, Selvarasu Ganesan wrote:
+> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
+> creating both UTMI and PIPE3 PHY instances regardless of the SoC
+> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
+> and ExynosAutoV920) provide phy_cfg arrays containing only a single
+> element.
+> 
+> On these SoCs, when the loop reaches index 1, the driver reads past the
+> end of the rodata array, populating the second PHY instance with garbage
+> data. Since the configuration structure contains critical function
+> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
+> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
+> 
+> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
+> store the actual size of the phy_cfg array for each SoC. Update the
+> probe loop and the xlate function to bound their access against this
+> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> Tested-by: Łukasz Lebiedziński <kernel@lvkasz.us>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-On Sat, Oct 10, 2026 at 3:15=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> =E2=80=A6
-> > +++ b/drivers/mailbox/goog-mba.c
-> > @@ -0,0 +1,567 @@
-> =E2=80=A6
-> > +static int goog_mba_send_data(struct mbox_chan *chan, void *msg)
-> > +{
-> =E2=80=A6
-> > +             spin_lock_irqsave(&goog_mbox->lock, flags);
-> > +             out_of_space =3D payload_words &&
-> > +                            (goog_mbox->outstanding_msgs >=3D
-> > +                             goog_mbox->msg_buffer_words / payload_wor=
-ds);
-> > +             spin_unlock_irqrestore(&goog_mbox->lock, flags);
-> =E2=80=A6
->
-> Under which circumstances would you become interested to apply a statemen=
-t
-> like =E2=80=9Cguard(spinlock_irqsave)(&goog_mbox->lock);=E2=80=9D?
-> https://elixir.bootlin.com/linux/v7.3-rc6/source/include/linux/spinlock.h=
-#L642-L645
+Since this patch fixes an OOB issue, it should have a Fixes tag and the stable
+list should be CCed for backporting.
 
-Sure. Once everything is resolved and I'm ready to send out a v2, I'll
-make sure to include that change.
+- Mani
 
--Doug
+-- 
+மணிவண்ணன் சதாசிவம்
