@@ -1,138 +1,186 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EE4503BD4
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Oct 2026 14:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149A4A5EC6
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Oct 2026 08:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791902293; cv=none; b=HItQfGzVpb5z5vrWEZxKuqjqagXDNoxhLCZDo9jxQLZcRASMQIzZYraQucZCcKzGYfCs1XVbuR+6Cw3H84p8hW2O+3gvPxhGm2oVpncWrehkUBY8VnPIVvExBbRfwqhEQkkCDggEVphWP6k/N4RRvLOH4uXMz5ZfcrxGXwV0lK0=
+	t=1791966080; cv=none; b=lW4bmh9VUkgghCqrpAAfRHi3QRYzfOzwf2+5qrakKmkE1xNSfLZ61sMLhN8biQznDMdkgUa5IeOQCRmXsD3Re0dO//Y9sNfikiZUNatzj6CTzPTHrO1O+BHEzmuKO/mdvvEPICzEetzKl7fEum/W1myjd+LJ+XuY+UiKX04j31c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791902293; c=relaxed/simple;
-	bh=Fy4hww/bwmxQbL1BwdmGfWhDcfwRm+UBIieq6CF5cl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkkmKpU86vJQ04w2V/YpNl8rNnQFETCxu+S1UcDn0tkqbcK3nnvAUZQaMAF5kPvHfBXoMm+mTb3X0q8zu9KoZ6SPNGrwHgZzGxBP0wMi8vsOyt3CwXbS9RwxbtHRsQvpe5KSl+bjcXtbXDWp9cRQmWpYUvm1/JsQd2/0PlymBc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b1pbe1si; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1791966080; c=relaxed/simple;
+	bh=f4Crb3c+dv8KnX89knlqIY/7BdSoK+Hx/YKrvclncpc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=igIcb4aD+GFli6VRqzjfWJvBrAvrYZWTRFB3HfYIvvwC/tJF8+TCrfYhRncqE6n7woz1JvY61bFn0k2rrTZt+WEpqyNdEYFbdwE9J1pmACOiwzHlH+8Sv6bvmrDCOxkGiV69ubyXi8gi3pWcN29zVpCNY+X/Ti20BxcdpTtEE/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YbyIAv97; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b1pbe1si"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4956869750eso23053295e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Oct 2026 07:38:11 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YbyIAv97"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3ab3260b35dso2418915a91.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Oct 2026 01:21:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791902290; x=1792507090; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Fy4hww/bwmxQbL1BwdmGfWhDcfwRm+UBIieq6CF5cl4=;
-        b=b1pbe1si2E3iCvTwpnUvD68ItEgscrvhe6z0QxoCT4Lk9Q+AaVPC8gosjyH+hNVD5Q
-         n6H3H6tqols9NIuIA8vK8bzggzNpPcL+1V0bGEPaLuHRCWItBkIAQ9vzqCMfqmI9duvB
-         W4nkhH6e2QrqNSUtASVrG5tSq1C/73+cYsWeXh21p6wpAk4IaeWDR2AYzCBBlFq2Mfm5
-         WqidzRV1LIfUgOjXwc/3uwZ6i0LFczf5l83yd8xX2eh0DMtOI7f9qpSpgmEdMI2xcC6k
-         1sQSRAWM9D/zdnr6eMD9aGPQINnLnByV1S5sQnfxZV16fDr/YLuB9ZZqSkP3XJTSPcm/
-         VGDA==
+        d=chromium.org; s=google; t=1791966078; x=1792570878; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=j8YsVbXOdF61Llj8qBDqVp2Fp9mYBbP2iNpUhV0IltE=;
+        b=YbyIAv97IqjvLGoQERwaAOsZvgnQuj1InwSqSY8ZDdnH2ekgpXjwCAkBG0DWIm25hP
+         aXA+QnP8GZaVYp3jqne2xaiLaOfkSMX73ByMowHfzpcCn4BzxROy9mZ3qSrDM9qgFlT+
+         I0UFTtlK/rgA/Hmzd6RnDH/c5ZATYlX0wvWC4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791902290; x=1792507090;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20260707; t=1791966078; x=1792570878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Fy4hww/bwmxQbL1BwdmGfWhDcfwRm+UBIieq6CF5cl4=;
-        b=snALpq0zad/KC9bsNOd8R7pklF1f2C3e/vEwzH+soDSjRexKYFV32WmZLIYAiOKct+
-         VtLODJcGMssr2JscjGToMEM6SiGoCjQUXZFyoWSj8CywMVLuB7L8pgJEwKlKZfHxO/Qq
-         gDjjpzCidZrtcc3oSo13vT9zu3zqlHKvbPe5+wTFXewb1uAWFiBusgvSTtBxdlWEEMvV
-         60PddAS2guvyJMy4pb+y4NScdzjREru09eqjpFknx/mLQKYoKN87T7lnjlktWel/K3GR
-         b1XyHUS1fYDojeRgWjLBEaX3rrCEzUy5FMjbI+pVOGkWoQxd/vw12OZl42lx7yAr+CC7
-         j4Lw==
-X-Forwarded-Encrypted: i=1; AKwUvByBj6352k66SUDb4wqEaHJREYje0L/Ec+B2SqzzYKILq3moUqjVXoGrjr9cAXfb3fCzSBXji/yQS9QzkHNl8UNS4Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKKyY16sSodnbGdHMnSsLyERY2/DwjJ30sLQbK9mHUR9R0SHhey
-	DBeWj+nTc84ZEDvjidJ2GokjfXDG80LanZoBjnjfkqWrwNSWyc8PfZHdJciY51bQYnY=
-X-Gm-Gg: AYBFou0esQJ8QszwYbPPRUedwmTVm56GPqJ18TfHLq+7XHXUrQofMJ6C35u8VXt0gdq
-	mixzgZ3ne29eyR/1nkwZbGmwCGEMJQmPF8xzQ855SxNzjDEbtmJuuRJWCmw9Os/Nb21WTfgew87
-	aSO4CVdVJUrC2UibYbf2bi75KzWBt9LyG4dEomBIduuJUt0Jls/OndBuWXOi5OJZqYfCz2sBXdM
-	6BCmagWdPlFCLSotx+DVYi0WDi62FJbuja7phXGJgBDMX5Hfns7olhzLOn9Af1dZ4Xstb9wVkf4
-	Kaa4+mdG2XOD2G8uNLaI7D3lYvqdtV3cHG3bXdbHMpOQYRyD1y1vpYGevdUhV4F+pOABPzSjWgS
-	szUIdmeB3+8EZ+hJs1VX5MMhvAhWilVG4Fy6Ny1Yh6BEWAEBS69Jwwktgl8KdMfgImG56AHI22Q
-	1wmNuMYC9lP0ZQ0oRGc7dOuQ4rWUuac2kSMmsXzclmpKbHj5r3r5pvpi8gvWiMP+4NdISHZuO+x
-	bmOQoRV
-X-Received: by 2002:a05:600c:310b:b0:4a1:813f:2a5b with SMTP id 5b1f17b1804b1-4a18e4a9da8mr235341925e9.14.1791902290063;
-        Tue, 13 Oct 2026 07:38:10 -0700 (PDT)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19c8244edsm198277585e9.2.2026.10.13.07.38.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Oct 2026 07:38:09 -0700 (PDT)
-Message-ID: <4576292d-2c3c-47db-8422-9f9e730cfecc@linaro.org>
-Date: Tue, 13 Oct 2026 17:38:06 +0300
+        bh=j8YsVbXOdF61Llj8qBDqVp2Fp9mYBbP2iNpUhV0IltE=;
+        b=sAVL2utEcclcm4E9MnfHhmzD5xpp+cw7sxasMQ5oxnw4tLjqZKnq3Y0N3lpmfuuU0p
+         U6A9smbM4yiFejJHAgKk+bl0ugIDNa843009KzFufWjUN1qR/Zqb0Za3CEyl3ySEHgb5
+         l3g/2Yo2O/tRfDgnRdB6grNje4rJs2U+h2X6Q5HsOQwBsQjXGz1MmX/NnzBEQwExKjol
+         j+55zlk2baCqLsVggpsbOrgzi9m9l2GJsO0D+l6MEbhAhS5OBa6QLQDvhtODtO1q1sIs
+         +vIFV6ZXXrb3VZbwuEGJPB274r1WadJPi0hxDIUA3RrKKtot4f61qzKYQdl5yjOuLsTk
+         1jIQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwxw03nokEGbOM1eB6fOzXaLHj91Pqv32XMxOPcEX3oRPwyXTe3OnnmiskVUvf78/MPZcPYBrgOORbOvIuiaOyNiw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKvNpbkoowntewPac+ftfs6mx+w5tcWgv9SdAokcEEU09dJ9jYP
+	W/me1F7dM62HnsdrohztcXmhIOUM100suffebE4phdyM/OSUWFsBD886VRSN6d52Pg==
+X-Gm-Gg: AYBFou1+RWHFK7LA9h0e4wkqY9CEQGuYf4DiAeWTUMxSweTWdpK1Oj9knHTZfrAlAuM
+	qh841qTzPc+9Lmf7HUDhXsjH04zdDT6F9Ch4nvGZIBp7taSoz0vw+zt5+MzUdp+yN2XUa7yPd2a
+	sR3chnGBkSjhbPRp0RsXNL1ibNW+m0868m63kNLva/Nb7Ck501b0uZkw/8w4m8h95um3xtdUl3A
+	xy9JelYFW/4w/mseb60My951/nS9YWaW9SyvVOWgagT9iwFA2obpsBtU2ty/5d776e9F8yMwyIM
+	1dNEAU8jExpbv9+oHIEEzBU4oNqAyOwr0feFSxW0ObbzI76mNXx0xCbG48tJ3VJ1o6uK2BjMJ8p
+	KubmANRPkXgNf6L0EDGsgP6HWNi12zrMLRuCcMBSkvn568Sjdn5RGH8TW8WR18vLOYbL1oI+b7z
+	rOGVO86CXM5oPmEyDxQoh89MzpkhGOyApA7t5kxmzRImdzsNYyCjUuzQd9DkJhy4D/JltTfQ9nT
+	rmptlXTSAl0ZWHVg2Ly5YZKSM0CeL6P1BouoRNmDv3Jj6x1jhTwKQwee/IUb8EARbW3
+X-Received: by 2002:a17:90b:4a45:b0:39d:f247:bab with SMTP id 98e67ed59e1d1-3ab3a2fe791mr12737876a91.6.1791966077891;
+        Wed, 14 Oct 2026 01:21:17 -0700 (PDT)
+Received: from wenst-7875.tpe.corp.google.com ([2a00:79e0:203d:7:373a:9eb7:c5ba:7b5c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ac5f04e324sm3682141a91.2.2026.10.14.01.21.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Oct 2026 01:21:17 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <balbi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Yixun Lan <dlan@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Wei Yang <yangwei1@eswincomputing.com>,
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>,
+	Hang Cao <caohang@eswincomputing.com>,
+	Li Jun <jun.li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Roy Luo <royluo@google.com>,
+	Yang Xiwen <forbidden405@foxmail.com>,
+	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Stanley Chang <stanley_chang@realtek.com>,
+	Ze Huang <huang.ze@linux.dev>,
+	Aswath Govindraju <a-govindraju@ti.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev,
+	linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: [PATCH 0/2] dt-bindings: usb: downstream host ports for hcd and dwc3
+Date: Wed, 14 Oct 2026 16:20:34 +0800
+Message-ID: <20261014082037.1774672-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.56.0.212.g129ede20d9-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/5] thermal: samsung: Add support for Google GS101 TMU
-To: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: jyescas@google.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260603-acpm-tmu-v8-0-0f1810a356e6@linaro.org>
- <8142519a-0062-4f0f-b978-980e049f99c1@oss.qualcomm.com>
- <fe159792-c58a-46a9-950b-6c21d2172601@linaro.org>
- <04a1331f-1375-471e-a674-87039aeb0328@oss.qualcomm.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <04a1331f-1375-471e-a674-87039aeb0328@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
+Hi folks,
 
-On 10/13/26 5:31 PM, Daniel Lezcano wrote:
-> On 10/13/26 16:26, Tudor Ambarus wrote:
->>
->>
->> On 10/13/26 4:33 PM, Daniel Lezcano wrote:
->>> Hi Tudor,
->>
->> Hi!
->>
->>>
->>> I noticed I picked up your series without notifying you
->>>
->>> However, I did not pay attention but picked also the dts files.
->>>
->>> Shall I drop them ? (AFAICS there is one comment) and let you handle them separately ?
->>>
->>
->> Yes, please. dts and defconfig patches shall go via the Samsung SoC tree.
->>
->> About the driver itself, I was about to send a v9, where I addressed
->> some issues sashiko spotted. Do you prefer to drop everything and wait
->> for my v9? Otherwise I can do incremental patches.
-> Well the v8 is in my tree since a while now and I'm about to send a PR. The patches can be dropped but the v9 will have to wait for the next release. If you want this v8 in, it depends on the sashiko report. Is it minor or major ?
+I mentioned to a couple people at LPC that the USB host controller
+bindings were missing downstream port definitions, and that the ones
+used for dwc3 don't align with USB hardware port numbering.
 
-They are minor corner-case races (an interrupt firing midway through
-system suspend after runtime PM is force-suspended, and module unload
-racing with a concurrent sysfs temperature read), plus a few small
-cleanups (adding `select REGMAP_MMIO`, implementing `.change_mode()`,
-and renaming the driver from "gs-tmu" to "exynos-acpm-tmu").
+The dwc3 discrepancy was originally noticed by Wei [1] and Konrad [2]
+while adapting my M.2 E-key USB support series [3][4] to Qualcomm devices.
 
-None of them affect normal operation, so please keep patches 1-3
-(dt-bindings, driver, MAINTAINERS) for your PR and just drop patches 4
-and 5 (dts and defconfig). I will send incremental patches on top to
-address those items.
+Here are the binding changes. If you were CC-ed, then you were listed as
+the maintainer of any one of the dwc3 implementations or platforms using
+it. So this change would affect you.
 
-Thanks!
-ta
+Patch 1 adds the "ports" definitions to the common USB host controller
+binding. This just follows what is used in usb-hub.yaml. Nothing
+special.
+
+Patch 2 "fixes" the port numbering used in the common dwc3 binding. The
+dwc3 includes an XHCI for host mode operation, and its port numbering
+should follow the common usb-hcd.yaml binding. This clashes with the
+existing arbitrary port numbering found in dwc3. I checked all the
+big projects, and it seems that only Linux is using them, and it doesn't
+care about the numbering anyway.
+
+So while the patches looks small, there are actually 26 other dwc3
+implementation bindings that are affected.
+
+And this series currently only has the binding changes. There are
+probably close to 500 dts files that need to be fixed as well. I asked
+LLM to help me fix the arm64 ones already, and it seemed to do a good
+job with some hand holding.
+
+Please have a look. I fully expect there to be a lot of hair pulling.
+
+
+Thanks
+ChenYu
+
+[1] https://lore.kernel.org/all/20260731073306.1895428-1-wei.deng@oss.qualcomm.com/
+[2] https://lore.kernel.org/all/c6526ba0-be08-46c6-a501-1b161939657c@oss.qualcomm.com/
+[3] v6: https://lore.kernel.org/all/20260721065413.2306137-1-wenst@chromium.org/
+[4] v9 (latest): https://lore.kernel.org/all/20260916075745.3549953-1-wenst@chromium.org/
+
+
+Chen-Yu Tsai (2):
+  dt-bindings: usb: hcd: Add downstream USB ports
+  dt-bindings: usb: snps,dwc3: Fix downstream port numbering
+
+ .../devicetree/bindings/usb/snps,dwc3-common.yaml      |  4 ++--
+ Documentation/devicetree/bindings/usb/usb-hcd.yaml     | 10 +++++++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+-- 
+2.56.0.212.g129ede20d9-goog
+
