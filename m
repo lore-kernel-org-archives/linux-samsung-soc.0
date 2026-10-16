@@ -1,92 +1,137 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mta1.migadu.com (out-14.mta1.migadu.com [95.215.58.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5E14A9D62
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2026 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984084779A1
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Oct 2026 11:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792065024; cv=none; b=HN/AAxeMoI6h4LZ3iPEcbkQJ3u/OlFTC/ZDhNdXcMzKDXsCcxwJR6yMRZru/ZvCAA58cdjin+zF8noLeOmfpjFQfaaRSec41qxZ+2v9GnapVTFmGb+nkXFWh9ZFio4EcVeV1BpEAh9A04trA8jGVK2o524xYUoYjFFq4/0LVu9c=
+	t=1792149712; cv=none; b=oda15Owz/NXSifi8jJhdD5L5SgmknuLFFMDxrZ7zqqpGdDHsPgRcg5y9U3Gswdnd2GeVDeHg0iGrSb1qB17/Vei4XrghVOnSYO3i++u8UE9bxNBYARLPAzzjtPOodsoCfPQtn7LytcmWmKmFrqc6bvEphBI0hTpssmdEOV9MJTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792065024; c=relaxed/simple;
-	bh=/mDHA4KJTGY3TrDLVzkgSXixkRLERv6h6F6Sa39ZjLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=NeEB/KALaAKZBt+LrtuUhz5gVgVFNlmsMMr7d1n4yrMd5xkhTfjNqYWjjgfE8RSFpfm+Oaic2Z3Lldgm7YmKecKw9aHyOldZKMXuejOBUEahl1vXpaY2nG8kKBibpkyonokZMPHIevQmgjVUajQXeIp0G93cYHFUT3fv8Edf+Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VFr349+G; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1792149712; c=relaxed/simple;
+	bh=oi/9EU6e5cYtwsWehZ2m7dnsSzMNmAFIFcZvso5J7l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y72j/Hlid8kpOQQyenYZY5++mvckiDtD5mS2Uc1+ZVeXJlXmZ9cehArVu9VhHOoKNpviyAi7KmCr8mgHk1t0BtKvoJlQtiSShfw6KSETt7OiGnnQg+ehCMyGg9plZWbvNq2K3A+WTRO/eM1ZWGcJmw1H9gdHv/s164Tzjno8g58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=STatmMgl; arc=none smtp.client-ip=95.215.58.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VFr349+G"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261015115020euoutp01e617afbbe8a638ddcc41ac8947400e2a~esaQ51fTD2874528745euoutp01L
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Oct 2026 11:50:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261015115020euoutp01e617afbbe8a638ddcc41ac8947400e2a~esaQ51fTD2874528745euoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1792065020;
-	bh=6UofuFpzzN1lK89cXgKUM2PbWKLz4kyridFu08qheMM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=VFr349+G7e6ImHFs2khnTSGiV4PpwlE4WWXhSpnpIZAowENa6SIi6/4b9qWPd7I3M
-	 ZpTETjjd4SOqYeatDrHEkwE5zPXLUxY3ZoCNPumGcss37WE3tN0zWeYOQRm2PbNecG
-	 +A/9IGub94sNEJNBbj/j9yUGduUgrHVvUW3+O1m0=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261015115020eucas1p1652dcb97079fc506b99422994680d76e~esaQeAUMW0106901069eucas1p1o;
-	Thu, 15 Oct 2026 11:50:20 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261015115019eusmtip2e8124c6771c12cfa08445087c6278001~esaP6ALnX0510405104eusmtip2_;
-	Thu, 15 Oct 2026 11:50:19 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
-	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>
-Subject: [PATCH] clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync()
- during probe
-Date: Thu, 15 Oct 2026 13:50:06 +0200
-Message-ID: <20261015115008.600082-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="STatmMgl"
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=oi/9EU6e5cYtwsWehZ2m7dnsSzMNmAFIFcZvso5J7l0=;
+ c=simple/simple; d=grimler.se;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1792149701; v=1; x=1792754501;
+ b=STatmMgl0PUwePx7zFZDkgygfjyzS6pZ09ylisLBkqLDCgaSYs7zPwFb83S+5j08K8Ze5gII
+ wAEjzWCN/A5GM7DbWfq8W8MP7NPyyzJqtrsQPLa79zYJdtuBxuxg6neRHusqUIzn5vgd4bV097N
+ yr2b9NjSZNRK26yQ4FPxqWWQ=
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+Received: by mta12.migadu.com with ESMTPS id d37b4f5d259aacf6;
+	Fri, 16 Oct 2026 11:21:40 +0000
+X-Mizu-Trace-ID: d37b4f5d259aacf6
+X-Migadu-Flow: FLOW_OUT
+Date: Fri, 16 Oct 2026 13:21:40 +0200
+From: Henrik Grimler <henrik@grimler.se>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Subject: Re: [PATCH] clk: samsung: exynos5-subcmu: Defer probe until power
+ domains are available
+Message-ID: <20261016112140.GA17404@localhost>
+References: <CGME20261013111847eucas1p24df37631cc74fa27879f7d979348a1e1@eucas1p2.samsung.com>
+ <20261013111840.3645724-1-m.szyprowski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-X-EPHeader: CA
-X-CMS-RootMailID: 20261015115020eucas1p1652dcb97079fc506b99422994680d76e
-References: <CGME20261015115020eucas1p1652dcb97079fc506b99422994680d76e@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261013111840.3645724-1-m.szyprowski@samsung.com>
 
-The clocks are registered right after pm_runtime_get(), which only
-schedules a resume asynchronously and doesn't guarantee the device (and
-its power domain) is active yet. Use pm_runtime_get_sync() to ensure the
-power domain is really on while the clock registers are accessed during
-the registration.
+Hi Marek,
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Oct 13, 2026 at 01:18:38PM +0200, Marek Szyprowski wrote:
+> Sub-CMU devices are added to their power domains with
+> of_genpd_add_device() during exynos5_clk_probe(). Its return value is
+> ignored, so if the power domain provider is not registered yet, the
+> sub-CMU device is silently left outside of its power domain.
+> 
+> Since commit c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular
+> platform driver"), power domain providers are registered only when their
+> platform devices are probed, which happens after exynos5_clk_probe() has
+> already been called.
+> 
+> When a sub-CMU device is outside of its power domain, its runtime PM
+> callbacks race with the power domain state changes, which might result in
+> losing the proper hardware state. In practice, some clock muxes are left
+> switched to the oscillator instead of the respective PLLs.
+> 
+> Fix this by deferring exynos5_clk_probe() until the platform devices for
+> all available power domains are instantiated.
+> 
+> Fixes: c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular platform driver")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 587fe6e3bbed..886836494838 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -104,7 +104,7 @@ static int __init exynos5_subcmu_probe(struct platform_device *pdev)
- 
- 	pm_runtime_set_suspended(dev);
- 	pm_runtime_enable(dev);
--	pm_runtime_get(dev);
-+	pm_runtime_get_sync(dev);
- 
- 	ctx->dev = dev;
- 	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
--- 
-2.43.0
+Reviewed-by: Henrik Grimler <henrik@grimler.se>
 
+I have noticed the same issue on my boards, and the fix looks good to
+me. Thanks for fixing it!
+
+Best regards,
+Henrik Grimler
+
+> ---
+>  drivers/clk/samsung/clk-exynos5-subcmu.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+> index 373129847301..587fe6e3bbed 100644
+> --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
+> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+> @@ -6,6 +6,7 @@
+>  
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_runtime.h>
+> @@ -155,11 +156,25 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
+>  
+>  static int __init exynos5_clk_probe(struct platform_device *pdev)
+>  {
+> +	static const char pd_node_name[] = "samsung,exynos4210-pd";
+>  	struct device_node *np;
+>  	const char *name;
+>  	int i;
+>  
+> -	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+> +	/* Defer until all needed power domains are registered */
+> +	for_each_compatible_node(np, NULL, pd_node_name) {
+> +		if (of_device_is_available(np)) {
+> +			struct platform_device *pd = of_find_device_by_node(np);
+> +
+> +			if (!pd) {
+> +				of_node_put(np);
+> +				return -EPROBE_DEFER;
+> +			}
+> +			put_device(&pd->dev);
+> +		}
+> +	}
+> +
+> +	for_each_compatible_node(np, NULL, pd_node_name) {
+>  		if (of_property_read_string(np, "label", &name) < 0)
+>  			continue;
+>  		for (i = 0; i < nr_cmus; i++)
+> -- 
+> 2.43.0
+> 
+> 
