@@ -1,63 +1,65 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622F499F04
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2D940F721
 	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2026 12:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792327506; cv=none; b=kw+UVipgTHj5vSiRnnwmV3k5zdHGjBXxPXpYjAOiEc6M6jcl8FJYfr6tQsANiEcnSgvWyu+1JsWjzt7zSbu6oNxVZvYqrCoPKBORQaZlIYpH1vY+V2yMRGhEGLdBSmI5EJbTKcfe9uIgEMKHaT6eg3V/X9+VYZjCR908Z5BC2v4=
+	t=1792327508; cv=none; b=kszKc+A7Pf5RZePqk4nzWlvI5cfEeZwZrgPR1GiQD4NacZra4w1mt52OHkA/bs+xtiRjfftFOfmJmMkE3fSNTz8sTQFK9Xpb+HSn8eGdz0gwbLb7oR19ct7Nr6wWySql+ZrmmcYGDBJby1HI5zIWsnd/MonmoQvW50ZqBLBzgHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792327506; c=relaxed/simple;
-	bh=3I+4yCTTMxYs+18mWdxArezIbQagU+UQBy7qTOwjZjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=az9ESrfpISJ9uAwkITr6xje1MZCkSuXYzl9x5epMyMykoS8mLpMmv9YkOlOMs1DLQLCZP9Eqw/ncFnoK6efS3tT6qL6uGYKlp6Y/eVf5OEz1l+K2BmCF3Nqj0Hw27eOWsEHT/WBoTYUKA2OI+Vl/alCSXfk6Eizad1XzTlI9Zvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8RDj1al; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1792327508; c=relaxed/simple;
+	bh=GJXPUmb1nhYAeZO1jC61HU5DtD36Hl8QiqEPkhTkC2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sQeEqWi017QXf3pAeCvXVJ4TmTptmtp8gZ/1ye/JvyOh9Z6UoIoSD8fleXAbDjaomRfDHxYxnR91EgpRlf3u8vqLXDpU+BZr98B/QL4DnHxsjg2bNmRsdmBuck1JmZQ1CLZRwPp2nvQi4P21UEbjkvyUsuXOmxjNCMs2Dkf3eoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCpjSDEn; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8RDj1al"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4956869750eso8545455e9.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCpjSDEn"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a16aaf2067so16027595e9.0
         for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2026 05:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792327501; x=1792932301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=cw9JnxKH2XB78dT3C90Gx+S2oqjKdyT1Kqbq/lUTLGQ=;
-        b=C8RDj1albbvMulghN4fv13ywPbmlZPvt410Ydr8ix/gJHRRHia9ws+7/viVDfO+ABu
-         cLMyn2KDL69d3cDUDXDfFI/KKppYtlONY0girYzsBHYaiRYqFRD/s7J79uv8TsLX2m2O
-         a7QLgcJW2waR5giClY1ZFyI4T8Dn2WM2T9iL4lSiDRRxgETbkfPAfcu+6F0JvNVd8snl
-         XQrC+EmBN2wCxC8hDYHoZdv4Y+uRYYzp/BVATu8PCMNz2C9NvA3mZK3x/C+SMXITJe7q
-         rGaRnEVLaPuvJ0vJP/R49iaIKGxSgTYFMjUyMlYLn3xDvi9IWOo1497Mnd0eTSOt2mbz
-         8qMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792327501; x=1792932301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792327502; x=1792932302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=cw9JnxKH2XB78dT3C90Gx+S2oqjKdyT1Kqbq/lUTLGQ=;
-        b=kYzPvWpdKiwcRj1t89VlHhQS22Ghw4C/fuSzQg0Z5O8IZZfcLR0Nuu9JVDgHT64A+A
-         rm9VPheMhhIGyL2yv/8I+t/XFjc6LeNNES76BY52V/+5hSAZOrXFFUfCm+7Hd2ILLdq3
-         PZja8quuW8jt06hxy09eTf1ltsJAOxv+nqgVl6KT1vz93wr5QyIqo4iP/lvgpbgZsgts
-         kUsWua/YouTyPF7aLG2FksBOUkUm+7z5KHhA3fpMkqqZSGf5VhKQe5EW0HNn6mhrIink
-         atyTH/MuoSp/UekyVHMXfd5MjWLAf7ZRsI/747BUv5A8LE78kKgjR0htHqh7NJdE/qzs
-         LV5w==
-X-Gm-Message-State: AFq9FYIzGc9iBXErgldFndbUzaITTFsxMgSF5T+tp7tcz/8fAWRS3P1m
-	+ZNXBPoBmXqZZpI+RFTj9GS0OcX+uhNd3q0wyBbsiNpzqIMT9iW5twLY
-X-Gm-Gg: AYBFou3CVWJYEgiD7Vy3qLpkRRdsruAnX0Z/6CG41siualDRnbeb+edUlFUIIP3Sztb
-	gbAALitV/TJINWkuq56EzUdrjl3VSF/py6KbCVRm0GiH26OwopqPrCqNHxZcSWii9ByXxEO3Mzz
-	+4f0ZeWpzCn2MFnD5Cm3j9rwmIPvdTsblTuwBKR645Z3rQpxnxFwXXlrAT4q/w1jzYT55RRKO1M
-	lnZEM47htz3rU4RJbwK/QvTj5g3yfGyzDpSDvrukQHVjZ5i8TCpM7EUVR/tCOdB3TRJLPYMwZY7
-	YkoSQrHZBxMSpr0aGETbM+zzijbhPC4nTMU46YHR3MJ4in+BTAYkyFJgr57BKGSMOJWgErrxtai
-	213knSTD7vxd6FYsoPUP/EMeAPp3gZkBiOUcI7Nja0inYx+2tAOgLzDoIbD5rb5ckueROXc92+s
-	6GVLvovA9ebmnPaGlyeWqAzztkS0XxmOPm8tHgGF6pP4qAFUCZRPDJGso1qjh+RytU1/BPIkCRQ
-	0BpYpmaZSExx7TyFNi0uqz8fPrnO/kJ9P6DIxfyONYOTG2RiPgyhGt3Mv7b70VgU09T0vSvmvUs
-	4uaiyF4U10pXF5rzcZHrytyBB3MMYCIfTEJRPvYMC/SOC+iBAbwaNPryFp9Xax0lo03ft2lXhjA
-	PlzoZeFEx/yjIE8VflUDe9h0=
-X-Received: by 2002:a05:600c:4e03:b0:49c:fa20:cbfc with SMTP id 5b1f17b1804b1-4a1d75ffbdamr115371105e9.19.1792327501266;
-        Sun, 18 Oct 2026 05:45:01 -0700 (PDT)
+        bh=KNCEdVV66HrkSQ0l9ShQ7AsH8sHo4b095xaP/Xe/EaA=;
+        b=cCpjSDEnY2FLf1brAYERoTqbIwAW0/Dlef4t08UL0FgjquvEf9ZdWx9prn0Pjwz6UR
+         SJsVmQYN9aM7SPslYbJE5dfuHbOjARXdmDb4Pnq7QXc7ijTRlHo3QuQrR7NYLsJAo51v
+         hGq903aETabcDmsnxr97btcyzrHSV91patwLIkeGG2sjq7cM9fii6yEaKFsqutKXsS3I
+         QSeCfg7qzBb8T9BAl2ZAv7r50Ufsfrve6CO5AXeyJyf8NmZq8qlL56DHs1cjGG0zaw/o
+         H94aFzhYn6uySGZG4F+xWtwxMLfYKNYD3RpXXMiPqEGX/uzIhLpdIsZu7EcrVKfl0+Sb
+         d6EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792327502; x=1792932302;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KNCEdVV66HrkSQ0l9ShQ7AsH8sHo4b095xaP/Xe/EaA=;
+        b=0zwMOZkfq0So8zpihuxfHfsao88TUptKnIS6BGN49S7gmTvXtoOT3SN9fx+2ls1kBg
+         5RYfxf8J6xwpaRqOF2bAu1HalAwAsPwtCnvX/VIIOAUSnF3siH2u7y4jzTHGKEPnZic9
+         LkEGNcLGaBafN9a+6djDUXRXOsFcT2w0kRqHCxCDwHl12hkj9Lljl/NSUMXn7WQaNKLx
+         ui67BGLT312kYnIysGJKS5yzF7P9RycklYPDL/vndKKaaWszjp2uciJkLdhHPdYmuWYi
+         8ErSboHx8Tp8dd/KI63+xetP0m0nlhAhvxm27xkBASOug/e6KGAPB3NgMIRcpygAtTev
+         PY/A==
+X-Gm-Message-State: AFq9FYLKTvE63siyJNubac17Ow46N2XB4xgmbqd+XnyFfytoANkfbT7B
+	mleBAXxHL7qHPSI182MHbMQXJzHL1wec7FaHl0qzHNKc7c/9if1bRTHP
+X-Gm-Gg: AYBFou3rlCxNg3fLsljyWTmVg/6zuG1DM5SGIGHO8ZQbcf3t8KIL6dgHZzWfO4W0r8l
+	Ygxb3QYiqBB1Jg0bVheNt0tYNqB7LAezB74VtTiWYWkvpO/a6J+zKZsf+6FKRFziR8a06Hfv5Ks
+	QoAGr2FdfTW1TCL23fQ2ABTsXvsHXN41fCb8rdfppgmpS7pfmKsIAxPqnuq8YxwPrIOsn511qGz
+	gRjnd2LUD63N9g5ZqQAwroc+/NRswxI3BYyYmt7UGE6HWvy/ooRtPyr5RJVn9Ftu8fgSaGn45mo
+	u/wwvvebdPt1sNJZ8R8eFeNKNLJ2vLDA/WAE70tnZGWosdzZxWx2+tIDVgQbZCC3NuKAY88TGtX
+	TFPhfbgmKcec+MsZfhZvb+eTPLly2nAe4IgZxfUrjZ44L5jWLAO/ajQ/EcbWEeInxQRbW5XsusR
+	/G26eGy9E2rgSwJqjGj1B9nwitePNf8Z+W/HHMqQUiL1vizycueXUqOTA3gQSPG5n9C/c8Slnie
+	fx+9w7eS1ZInIcXgNKEk0pwwyo/osEbUqyPSoSox7nVwWw1RDqQPOPYgy5qKZHsVHNPTMPPylVv
+	XAgvv2051AVvWab1TpqOi3b4izM9IvcxpkIG+XQkecoJtgHHM/hbScut71nX3nZqsQaF6VeBFD7
+	ZuAadhsoRStxgLI1xPbGCL2E=
+X-Received: by 2002:a05:600c:848d:b0:4a1:e722:a0a7 with SMTP id 5b1f17b1804b1-4a1e722a360mr3167745e9.30.1792327502114;
+        Sun, 18 Oct 2026 05:45:02 -0700 (PDT)
 Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-318a-f58b-5e43-a2b9.ipv6.o2.cz. [2a00:1028:8388:a84e:318a:f58b:5e43:a2b9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm16386408f8f.42.2026.10.18.05.45.00
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm16386408f8f.42.2026.10.18.05.45.01
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 18 Oct 2026 05:45:00 -0700 (PDT)
+        Sun, 18 Oct 2026 05:45:01 -0700 (PDT)
 From: Josef Schlehofer <pepe.schlehofer@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
@@ -68,10 +70,12 @@ Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] ARM: dts: samsung: Add support for Hardkernel ODROID-U2
-Date: Sun, 18 Oct 2026 14:44:57 +0200
-Message-ID: <20261018124459.3026-1-pepe.schlehofer@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: arm: samsung: Add Hardkernel ODROID-U2
+Date: Sun, 18 Oct 2026 14:44:58 +0200
+Message-ID: <20261018124459.3026-2-pepe.schlehofer@gmail.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20261018124459.3026-1-pepe.schlehofer@gmail.com>
+References: <20261018124459.3026-1-pepe.schlehofer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -80,52 +84,29 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series introduces device tree support for Hardkernel's ODROID-U2
-single board computer, based on the Samsung Exynos4412 Prime SoC.
+Add Hardkernel ODROID-U2 board compatible string.
 
-ODROID-U2 is the predecessor of ODROID-U3 and shares most of its hardware
-design (2 GB LPDDR2 RAM, LAN9730 10/100 Ethernet on HSIC0, USB3503A hub
-on HSIC1, MAX98090 audio codec with headphone jack and on-board MEMS DMIC,
-MAX77686 PMIC, PWM-controlled cooling fan header, blue heartbeat LED).
+The ODROID-U2 is an Exynos 4412 Prime (Cortex-A9) based single board
+computer featuring 2 GB LPDDR2 RAM, SMSC LAN9730 HSIC Ethernet, and
+MAX98090 audio codec.
 
-Key differences from ODROID-U3:
-- The micro-USB (DWC2 / hsotg) port does not have a VBUS supply switch,
-  so it operates only in peripheral mode (dr_mode = "peripheral").
-- The 3.5 mm jack is headphone only, and the board features an on-board
-  MEMS digital microphone (DMIC) rather than an analog mic input.
-- There is no expansion header with SPI.
+Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
+---
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hardware verification was performed on a physical ODROID-U2 board running
-Linux 6.12:
-- DWC2 USB: verified in peripheral mode via /sys/class/udc and dmesg.
-- Ethernet: SMSC LAN9730 detected on HSIC0, link up at 100 Mbps Full-Duplex.
-- Storage: microSD (mmcblk2) detected and functional. eMMC was not tested,
-  as no eMMC module was available.
-- Thermal: /sys/class/thermal/cooling_device0/type shows pwm-fan (no fan
-  was attached).
-- Audio:
-  * Stereo headphone playback verified with speaker-test and aplay.
-  * On-board digital MEMS microphone (DMIC) recording verified with:
-      amixer -c OdroidU2 cset name='DMIC Mux' DMIC
-      arecord -D hw:OdroidU2,0 -f S16_LE -r 48000 -c 2 -d 5 /tmp/dmic.wav
-      aplay -D hw:OdroidU2,0 /tmp/dmic.wav
-    Audio routing includes "Mixer DAI RX", "HiFi Capture" connecting the
-    MAX98090 codec capture to the Exynos I2S controller.
-- LED: blue:heartbeat blinking with heartbeat trigger.
-
-Josef Schlehofer (2):
-  dt-bindings: arm: samsung: Add Hardkernel ODROID-U2
-  ARM: dts: samsung: Add Hardkernel ODROID-U2
-
- .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
- arch/arm/boot/dts/samsung/Makefile            |   1 +
- .../dts/samsung/exynos4412-odroid-common.dtsi |   6 +-
- .../boot/dts/samsung/exynos4412-odroidu2.dts  | 139 ++++++++++++++++++
- 4 files changed, 144 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-
-
-base-commit: 58161ead29e50d70a317ea26b472e0c7508e69da
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 273464400477..f863803c84f8 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -86,6 +86,7 @@ properties:
+         items:
+           - enum:
+               - friendlyarm,tiny4412            # FriendlyARM TINY4412
++              - hardkernel,odroid-u2            # Hardkernel Odroid U2
+               - hardkernel,odroid-u3            # Hardkernel Odroid U3
+               - hardkernel,odroid-x             # Hardkernel Odroid X
+               - hardkernel,odroid-x2            # Hardkernel Odroid X2
 -- 
 2.54.0 (Apple Git-157)
 
