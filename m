@@ -1,76 +1,77 @@
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1887C377563
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2026 03:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622F499F04
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2026 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792295487; cv=none; b=DVTjvMXQ4oOcUSw+5pTkZh8pklp3iHWw982TUz+5ws02DZdIOiNHblzlvt2AQg3+OzAGbp/8waH5TPsqNwwlLyPU0TPsWKDC6b/dcZS3YkrVdFdJmAQ54KK7qYwpDpt8sgz5WCm/7a81Wmyyc1faJatjHv+FWvgS5M1+Rl+bcg0=
+	t=1792327506; cv=none; b=kw+UVipgTHj5vSiRnnwmV3k5zdHGjBXxPXpYjAOiEc6M6jcl8FJYfr6tQsANiEcnSgvWyu+1JsWjzt7zSbu6oNxVZvYqrCoPKBORQaZlIYpH1vY+V2yMRGhEGLdBSmI5EJbTKcfe9uIgEMKHaT6eg3V/X9+VYZjCR908Z5BC2v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792295487; c=relaxed/simple;
-	bh=VouvCuUd/6iJICZZJOMhr223Co3gy72m5EBeKMWsXXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=r/Cy15w0oR8DOccp4eZnOxmUbdOxj3OEv9MybKylqrtv1LvrSFHwWmkAkdRYHlodcu0bq7GS65syMzCg6QSr1uANlPdRX0G7oYr1QPmzSWI4nSk3/fIYnCjl0PUUdFXf9F8Z0WbWgSv2rUquE7akOCErhnrZbI6on32f3T4+q4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kn2cQIxf; arc=none smtp.client-ip=209.85.160.178
+	s=arc-20240116; t=1792327506; c=relaxed/simple;
+	bh=3I+4yCTTMxYs+18mWdxArezIbQagU+UQBy7qTOwjZjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=az9ESrfpISJ9uAwkITr6xje1MZCkSuXYzl9x5epMyMykoS8mLpMmv9YkOlOMs1DLQLCZP9Eqw/ncFnoK6efS3tT6qL6uGYKlp6Y/eVf5OEz1l+K2BmCF3Nqj0Hw27eOWsEHT/WBoTYUKA2OI+Vl/alCSXfk6Eizad1XzTlI9Zvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8RDj1al; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kn2cQIxf"
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-5351d76e1baso14324111cf.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 Oct 2026 20:51:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8RDj1al"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4956869750eso8545455e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Oct 2026 05:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792295485; x=1792900285; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:content-type:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=BAlfdGBaXEKTM4aRdqODW2suuLZt+2xf1jp0Ji6ORdA=;
-        b=Kn2cQIxfO64tBWXSZIr6Ui860cstgm9pqbmYzL+BJ5QiCo+QGBnmNXKYU0WvSS/KdK
-         MTytpV9Z+3ZycTQ3cUDImbKfTufNLi74WmczakqOdv9ZbEjlKLjfFEfD8XWO8owCHqnb
-         FIMua00NNA/+JJu82y2vCP542LIvCTq1W4Ipu9iQNNvYhxC8ALuvZ1DVwDGR4i0qLmuj
-         Rm2phoHt8+8m6cd9z0TXhGvzdqkpqLWuHtZ+wORFGf6ky0YvCxDcjLsSioT34NJWdVuv
-         gFh/09Hzsa+C+rezpaDRnY5/PmFCkUqLJk97nz9jyuNfBFZgVF32jHXAoJ1MEMUgytXl
-         2X4w==
+        d=gmail.com; s=20251104; t=1792327501; x=1792932301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=cw9JnxKH2XB78dT3C90Gx+S2oqjKdyT1Kqbq/lUTLGQ=;
+        b=C8RDj1albbvMulghN4fv13ywPbmlZPvt410Ydr8ix/gJHRRHia9ws+7/viVDfO+ABu
+         cLMyn2KDL69d3cDUDXDfFI/KKppYtlONY0girYzsBHYaiRYqFRD/s7J79uv8TsLX2m2O
+         a7QLgcJW2waR5giClY1ZFyI4T8Dn2WM2T9iL4lSiDRRxgETbkfPAfcu+6F0JvNVd8snl
+         XQrC+EmBN2wCxC8hDYHoZdv4Y+uRYYzp/BVATu8PCMNz2C9NvA3mZK3x/C+SMXITJe7q
+         rGaRnEVLaPuvJ0vJP/R49iaIKGxSgTYFMjUyMlYLn3xDvi9IWOo1497Mnd0eTSOt2mbz
+         8qMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792295485; x=1792900285;
-        h=content-transfer-encoding:mime-version:content-type:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=BAlfdGBaXEKTM4aRdqODW2suuLZt+2xf1jp0Ji6ORdA=;
-        b=w74dGqrY5TgR73xKiwujGGUG3dMUIXouS+xW0xbRjGqoc9Ut+7wKzApdt0AahYBSAU
-         9OVS5kofhfVNl4vVIRqwj2KYFQMQB6UOEszLyRCk+ROgQCiT/eLpt8PCVoIXYsNXap7L
-         RVv1nDLafRqzIcGwPwdtRRgCH5+MdPnwFKOiOTRP90jZW8ju8hO1dBx8KCnmAhDBEPDJ
-         d+QcKoujYxGq+82rU1rjhhXoFRPPjA+KbYowRDGoBPVWdg6028ZYDtFxtWqma9wIJORd
-         PkVkchvusdN7gUA7rvqBoa6dgom6c/eijdenhcusk4yKFa839q2yeSomuqeSs1JrZ6Zq
-         10wQ==
-X-Gm-Message-State: AFq9FYK4RVTqYyK9zLvhHgx+OtuofG/95M3/dsSxW7SjddO56aup+ys4
-	hpKitwHXIcwLn3b7S0d2XIM40yw8FBQYCbTGhVhjzEVOR+d6au82EDA=
-X-Gm-Gg: AYBFou2l2519Gc/OAXHgD5t+t8Z1pT5qDrNFCta1x9jvuJaGP9RrqftZUd4BD1pPfM1
-	Eg8sDoVuQaB7dujqCSrbVHpHuwoPeSRY8U1/Xu9Q8iVlOx+oDHW3zvCg7Rbux4urFlWARmuMR0E
-	YEclTeZzGbC4qQlTRoiVhoyz/cd73BPh3qelpfGVLdiwJsuGtMlMZ9RMd8OexnC26dKlwIxFawd
-	VXJvWvbOJeebBbN6e+v3504GMi9vBH4R8lZEsIx5Td9x0FuSiM09DYwf999M5ALRfSUFEKJZv3N
-	SmMOZXj2LRN1Ni4xMau/+g6oJ+PsBYVfCeZjBR71AtMXlN1VH7K1xYbq6x/cfYqN3/O3EYhg5aV
-	A07TFCP6154r0u2i0NRs2QjGCHnZpoQnH9B0xrGH+Dazq2z6Kret/motBgoP6lVk5sGtZPq+skO
-	jTqSVwQSZvg3uo/f0+IvPAFBLo6E9FJIbkernFdhlebiNYmOZ+zipzK05v7Or0bAaNDj5kyOkrc
-	GuR4cl2Gl303KP+1E3hHpcXC7/m0o4sKWNUeMZ4nWpV0CrDCtb6Fv2bMN5wskWJFK9FjIAPBtaK
-	7XDhQurYsPFONB5y8tr2IB3WcqEQ
-X-Received: by 2002:a05:622a:1813:b0:535:2110:a9f6 with SMTP id d75a77b69052e-5364600602cmr63576021cf.18.1792295484793;
-        Sat, 17 Oct 2026 20:51:24 -0700 (PDT)
-Received: from i4-gl-tmk5904-1.ad.psu.edu ([130.203.156.90])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-536660162efsm1032371cf.27.2026.10.17.20.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Oct 2026 20:51:23 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
+        d=1e100.net; s=20260707; t=1792327501; x=1792932301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=cw9JnxKH2XB78dT3C90Gx+S2oqjKdyT1Kqbq/lUTLGQ=;
+        b=kYzPvWpdKiwcRj1t89VlHhQS22Ghw4C/fuSzQg0Z5O8IZZfcLR0Nuu9JVDgHT64A+A
+         rm9VPheMhhIGyL2yv/8I+t/XFjc6LeNNES76BY52V/+5hSAZOrXFFUfCm+7Hd2ILLdq3
+         PZja8quuW8jt06hxy09eTf1ltsJAOxv+nqgVl6KT1vz93wr5QyIqo4iP/lvgpbgZsgts
+         kUsWua/YouTyPF7aLG2FksBOUkUm+7z5KHhA3fpMkqqZSGf5VhKQe5EW0HNn6mhrIink
+         atyTH/MuoSp/UekyVHMXfd5MjWLAf7ZRsI/747BUv5A8LE78kKgjR0htHqh7NJdE/qzs
+         LV5w==
+X-Gm-Message-State: AFq9FYIzGc9iBXErgldFndbUzaITTFsxMgSF5T+tp7tcz/8fAWRS3P1m
+	+ZNXBPoBmXqZZpI+RFTj9GS0OcX+uhNd3q0wyBbsiNpzqIMT9iW5twLY
+X-Gm-Gg: AYBFou3CVWJYEgiD7Vy3qLpkRRdsruAnX0Z/6CG41siualDRnbeb+edUlFUIIP3Sztb
+	gbAALitV/TJINWkuq56EzUdrjl3VSF/py6KbCVRm0GiH26OwopqPrCqNHxZcSWii9ByXxEO3Mzz
+	+4f0ZeWpzCn2MFnD5Cm3j9rwmIPvdTsblTuwBKR645Z3rQpxnxFwXXlrAT4q/w1jzYT55RRKO1M
+	lnZEM47htz3rU4RJbwK/QvTj5g3yfGyzDpSDvrukQHVjZ5i8TCpM7EUVR/tCOdB3TRJLPYMwZY7
+	YkoSQrHZBxMSpr0aGETbM+zzijbhPC4nTMU46YHR3MJ4in+BTAYkyFJgr57BKGSMOJWgErrxtai
+	213knSTD7vxd6FYsoPUP/EMeAPp3gZkBiOUcI7Nja0inYx+2tAOgLzDoIbD5rb5ckueROXc92+s
+	6GVLvovA9ebmnPaGlyeWqAzztkS0XxmOPm8tHgGF6pP4qAFUCZRPDJGso1qjh+RytU1/BPIkCRQ
+	0BpYpmaZSExx7TyFNi0uqz8fPrnO/kJ9P6DIxfyONYOTG2RiPgyhGt3Mv7b70VgU09T0vSvmvUs
+	4uaiyF4U10pXF5rzcZHrytyBB3MMYCIfTEJRPvYMC/SOC+iBAbwaNPryFp9Xax0lo03ft2lXhjA
+	PlzoZeFEx/yjIE8VflUDe9h0=
+X-Received: by 2002:a05:600c:4e03:b0:49c:fa20:cbfc with SMTP id 5b1f17b1804b1-4a1d75ffbdamr115371105e9.19.1792327501266;
+        Sun, 18 Oct 2026 05:45:01 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-318a-f58b-5e43-a2b9.ipv6.o2.cz. [2a00:1028:8388:a84e:318a:f58b:5e43:a2b9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48dfd500e75sm16386408f8f.42.2026.10.18.05.45.00
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 18 Oct 2026 05:45:00 -0700 (PDT)
+From: Josef Schlehofer <pepe.schlehofer@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] media: s5p_cec: release IRQ before deleting the adapter
-Date: Sat, 17 Oct 2026 23:51:21 -0400
-Message-ID: <179229547105.3971562.9800339494753406560.s5p-cec@gmail.com>
-X-Mailer: git-send-email 2.53.0
-Content-Type: text/plain; charset="utf-8"
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ARM: dts: samsung: Add support for Hardkernel ODROID-U2
+Date: Sun, 18 Oct 2026 14:44:57 +0200
+Message-ID: <20261018124459.3026-1-pepe.schlehofer@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -79,79 +80,52 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The threaded IRQ handler reports transmit and receive events through
-cec->adap. Adapter unregistration masks the hardware interrupts but does
-not wait for this handler. With no open device-node references, it can
-free the adapter while an already queued IRQ thread still uses it.
-Devres also unmaps the registers before releasing the IRQ, since the
-mapping was acquired after the IRQ.
+This series introduces device tree support for Hardkernel's ODROID-U2
+single board computer, based on the Samsung Exynos4412 Prime SoC.
 
-Free the managed IRQ before unregistering the adapter and disabling
-runtime PM. Request it only after the register mapping and adapter have
-been initialized, and free it on adapter registration failure before
-deleting the adapter. This also makes IRQ release precede MMIO release
-on probe unwind.
+ODROID-U2 is the predecessor of ODROID-U3 and shares most of its hardware
+design (2 GB LPDDR2 RAM, LAN9730 10/100 Ethernet on HSIC0, USB3503A hub
+on HSIC1, MAX98090 audio codec with headphone jack and on-board MEMS DMIC,
+MAX77686 PMIC, PWM-controlled cooling fan header, blue heartbeat LED).
 
-This issue was identified as part of our ongoing research while
-reviewing kernel code.
+Key differences from ODROID-U3:
+- The micro-USB (DWC2 / hsotg) port does not have a VBUS supply switch,
+  so it operates only in peripheral mode (dr_mode = "peripheral").
+- The 3.5 mm jack is headphone only, and the board features an on-board
+  MEMS digital microphone (DMIC) rather than an analog mic input.
+- There is no expansion header with SPI.
 
-Fixes: 1bcbf6f4b6b0 ("[media] cec: s5p-cec: Add s5p-cec driver")
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+Hardware verification was performed on a physical ODROID-U2 board running
+Linux 6.12:
+- DWC2 USB: verified in peripheral mode via /sys/class/udc and dmesg.
+- Ethernet: SMSC LAN9730 detected on HSIC0, link up at 100 Mbps Full-Duplex.
+- Storage: microSD (mmcblk2) detected and functional. eMMC was not tested,
+  as no eMMC module was available.
+- Thermal: /sys/class/thermal/cooling_device0/type shows pwm-fan (no fan
+  was attached).
+- Audio:
+  * Stereo headphone playback verified with speaker-test and aplay.
+  * On-board digital MEMS microphone (DMIC) recording verified with:
+      amixer -c OdroidU2 cset name='DMIC Mux' DMIC
+      arecord -D hw:OdroidU2,0 -f S16_LE -r 48000 -c 2 -d 5 /tmp/dmic.wav
+      aplay -D hw:OdroidU2,0 /tmp/dmic.wav
+    Audio routing includes "Mixer DAI RX", "HiFi Capture" connecting the
+    MAX98090 codec capture to the Exynos I2S controller.
+- LED: blue:heartbeat blinking with heartbeat trigger.
 
----
-Compile-tested with Clang, W=1. No hardware runtime testing.
+Josef Schlehofer (2):
+  dt-bindings: arm: samsung: Add Hardkernel ODROID-U2
+  ARM: dts: samsung: Add Hardkernel ODROID-U2
 
-Based on mainline 0fcb05b72344f40806cbe810de8872f1698bf053.
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm/boot/dts/samsung/Makefile            |   1 +
+ .../dts/samsung/exynos4412-odroid-common.dtsi |   6 +-
+ .../boot/dts/samsung/exynos4412-odroidu2.dts  | 139 ++++++++++++++++++
+ 4 files changed, 144 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
 
-diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-index 4a92d32..e83705f 100644
---- a/drivers/media/cec/platform/s5p/s5p_cec.c
-+++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-@@ -199,11 +199,6 @@ static int s5p_cec_probe(struct platform_device *pdev)
- 	if (cec->irq < 0)
- 		return cec->irq;
- 
--	ret = devm_request_threaded_irq(dev, cec->irq, s5p_cec_irq_handler,
--		s5p_cec_irq_handler_thread, 0, pdev->name, cec);
--	if (ret)
--		return ret;
--
- 	cec->clk = devm_clk_get(dev, "hdmicec");
- 	if (IS_ERR(cec->clk))
- 		return PTR_ERR(cec->clk);
-@@ -231,16 +226,24 @@ static int s5p_cec_probe(struct platform_device *pdev)
- 		goto err_delete_adapter;
- 	}
- 
--	ret = cec_register_adapter(cec->adap, &pdev->dev);
-+	ret = devm_request_threaded_irq(dev, cec->irq, s5p_cec_irq_handler,
-+					s5p_cec_irq_handler_thread, 0, pdev->name, cec);
- 	if (ret)
- 		goto err_notifier;
- 
-+	ret = cec_register_adapter(cec->adap, &pdev->dev);
-+	if (ret)
-+		goto err_free_irq;
-+
- 	platform_set_drvdata(pdev, cec);
- 	pm_runtime_enable(dev);
- 
- 	dev_dbg(dev, "successfully probed\n");
- 	return 0;
- 
-+err_free_irq:
-+	devm_free_irq(dev, cec->irq, cec);
-+
- err_notifier:
- 	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
- 
-@@ -253,6 +256,7 @@ static void s5p_cec_remove(struct platform_device *pdev)
- {
- 	struct s5p_cec_dev *cec = platform_get_drvdata(pdev);
- 
-+	devm_free_irq(&pdev->dev, cec->irq, cec);
- 	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
- 	cec_unregister_adapter(cec->adap);
- 	pm_runtime_disable(&pdev->dev);
+
+base-commit: 58161ead29e50d70a317ea26b472e0c7508e69da
+-- 
+2.54.0 (Apple Git-157)
+
