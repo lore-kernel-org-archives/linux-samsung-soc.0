@@ -1,138 +1,104 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4DA4F96B9;
-	Mon, 19 Oct 2026 14:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B554C461E;
+	Mon, 19 Oct 2026 14:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792419472; cv=none; b=rIRd0iy5NiEuBtD6HiWDOzWYFDgb5cbX6TtSyqJxxa1+N6Yo1uLkpytytz34yBR3iKRAzsqZUKxBMwTaReTBNNN+NgOz1Rr116MT5bkobS4xvp630H/KsUF7qE+cLjEHy5pm6BFOVlNGhkeNmnhzg0DXYbGEiaMTAnGbK2iz7SI=
+	t=1792420894; cv=none; b=kWtEN2uZadjYdJpJDFHe1127XlxlvEpIypjPj5lkjNnp7njZvKHAnWOH+pDKlZq1oxYnA/WZPhwW3P/JjcjDC+uAQQvkApeOZtLdWeAkNOWJmkwZR9f086/RakahDLoi4ECEsE7odFuDBV6rGkxIod3F6hWl5SkrReGLgew6DZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792419472; c=relaxed/simple;
-	bh=ybd3RMKLk8UzOSctVZ4igUBt2OoAf+H6jNbegGq1x9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcvS/wiX4u9ZNjQ9GLch2Q2edWHjfnPJs0BViPESCHTJdKxarDnFOhel9KQTsiAiH4dvNNuVL0644Jf58ZFKf2D2zMt/o02deXqgx/E5uacz08yYyBXrCJPiiSIX4+YYIdzJEwGeccIsZFlMGr0olUJSn7kktBDp9ZN4ZEZt9rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; dkim=pass (2048-bit key) header.d=timmermann.space header.i=@timmermann.space header.b=d9qmCoZw; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
+	s=arc-20240116; t=1792420894; c=relaxed/simple;
+	bh=qvOt3HHxIE5wGuN+4BoB73etZ0LxLru+TeLnprWKzoQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iM8pwdA5GaaN4v/3f/Suiixg6PhhxOlNkZeF70HUXMNiXJv0w5XjTzVs2jYo62lTLhvCWXrDuzPdmmBxx9Oa733bz6g4tl7o9p9y2p7uGVAfp7481zd47fWNwjMe43sm43UhDsu9Y9TwcpvjYIQvm2U1yxuZeD8YgsjvKA1F0Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMH6LPND; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timmermann.space header.i=@timmermann.space header.b="d9qmCoZw"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4j7d150VHmz8tVt;
-	Mon, 19 Oct 2026 16:17:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timmermann.space;
-	s=MBO0001; t=1792419465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6PLBPDXxkh3JA0G8W5MUw7ro8kFkYJAvC/ayKENpzFo=;
-	b=d9qmCoZwS9DveT8hVG6HQp79Uzj2L3tD254UNI9UmriRArjVLik7wgmIg6MHc6dX74SNz+
-	0BvIm3XNz4IVArbXEFWNyhzfbWeeDMwOqXwKx1pCr6YiP8/R2O+vc8VAJSjf4FT1QusDwi
-	XhyWBuFbiYfzawiua/wdgeLNQxlfiWbeTdeuSxS+G0TtB8bV9Eu4dzrPhbHVDAp5JAzDRz
-	S7dFgTFOJeAioa5fzCauvIp4VuYNSXVf43dk9JUrn96vOXathyLqcJjhgc92cjXD/87RCO
-	wdkDQS6Nl7/7EBTzPmpDYHCUkbOhkdXUME9mRtOvUJmD97CD/gjqmbJ+P3f5+w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=linux@timmermann.space
-Date: Mon, 19 Oct 2026 16:17:41 +0200
-From: Lukas Timmermann <linux@timmermann.space>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Lukas Timmermann <foss@timmermann.space>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: input: touchscreen: samsung,s6sy761:
- Add S6SY791 and reset GPIO
-Message-ID: <atYlyqHToGjAr22T@archstation>
-References: <20261011-lat3st-google-raven-touch-upstream-v1-0-2a9f55159b9e@timmermann.space>
- <20261011-lat3st-google-raven-touch-upstream-v1-1-2a9f55159b9e@timmermann.space>
- <0a486a08-8d6c-4ca5-8a54-e7499630095c@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMH6LPND"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D8AA6C2BCFC;
+	Mon, 19 Oct 2026 14:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1792420893;
+	bh=qvOt3HHxIE5wGuN+4BoB73etZ0LxLru+TeLnprWKzoQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=WMH6LPND7hWkslGEk9fPiBeXtEzk4LJTsyCzcXXHm9vJw1UGHFJpLTB7uBoBtuDnC
+	 HDF6eAatvtPuKH6Mwy/jzJP0Pv/VGjJZGcdtUAdHp+OmzHtHq5l+hUy9B5OEHWd2mz
+	 nwtbUC23wqhShacE3WmuFUKLxSUvvVjqj2Wuj4SLYROZrTFTNjad3fRx6UE8fcxh7y
+	 14KS2lkKZd4nbq+ns30LA/xDZYGAbpyxjTOtMg0818XhBKmPgPOpFXw2MY5HSm1Jb7
+	 Ng4m6aZGgxP+V/dcv6ono0S6bSJqJhsofJB0QqTqYndU/AalbLqlr0vakGwnHPu0PM
+	 7u3vv0Zua6RcA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94A7CCF2E7;
+	Mon, 19 Oct 2026 14:41:33 +0000 (UTC)
+From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
+Date: Mon, 19 Oct 2026 15:41:30 +0100
+Subject: [PATCH 1/3] dt-bindings: pinctrl: samsung: Add compatible for
+ Exynos5515
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a486a08-8d6c-4ca5-8a54-e7499630095c@kernel.org>
-X-Rspamd-Queue-Id: 4j7d150VHmz8tVt
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261019-for-next-lucky7-pinctrl-v1-1-0f77e94c70bc@member.fsf.org>
+References: <20261019-for-next-lucky7-pinctrl-v1-0-0f77e94c70bc@member.fsf.org>
+In-Reply-To: <20261019-for-next-lucky7-pinctrl-v1-0-0f77e94c70bc@member.fsf.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=844;
+ i=aidenisik@member.fsf.org; h=from:subject:message-id;
+ bh=wcMJv5MC9TAqtq4PfS0HwwKmDAbPXKFvyCt4uDAd3gs=;
+ b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1iwalT3DrmyIqPYLP3Z7S5COD3XtGVEIvxELp
+ cCUWs70fYSJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatYsGhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+u50hAAlqJrRNdYR/IhdgDR2Z4JKrlPojiSFZF
+ r4kSl4JfDqKJeVBbydVc+TRfP3AiSN/jpBtieHLGjPMSuCE+2/r0zSa5LSetSGq72tBEo8fE0DR
+ /4xc+peLKdp/oJjZxpbDS3Yoi0VUITPhjzy6zW6aGjfV4CtYYpCoN/TR6k2VK9fYAxkVKx4hqmV
+ 2Mrr4xla3sowMZ2zMsZasqg1leusJ8kLDcTuMKiSWiU8fRW7gGRiqYqNOrK5zsHZtRvK7j10IEE
+ 5P7c4sUjaTnV87ecrHA/JQLw/OAcvVdUKgjPGlXMzQbyU2PmV2m/dCu8LkupnMyuCOk8ObY3Far
+ prfwgZytOvlxXX2SnfquLe2ydvj8N65Q0PJpWPNU27ns8KGTmfzEkv2gLt/VWkXamO/EtDJITal
+ U8Pil1ONY0bdbgSlmPr0LcLWFZ6uUyihnS/dFAyzdnXUFNLnSt5QZNJdkzKP4FgZE0MmwBVkE3d
+ bG1czf3R99cmTjopp/VScbDKxv/N41mUtZdJIV/YhqEvql3/CxRTO3Lrl5fDoshV41e99wHKpvW
+ m2hF3agqVs3Zl0STBww2u5WbTlrx0t1BT5hpCt44YrQJei32adFTbsQCoyuEKm9uqGiMif5ye98
+ H7qqtq1Ts774mlTeE7w7N0qOQ6PiSeryjdrDUPCQgQaQTzhTamFo=
+X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
+ fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
+X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
+ auth_id=956
+X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
+Reply-To: aidenisik@member.fsf.org
 
-On Mon, Oct 12, 2026 at 01:30:48PM +0200, Krzysztof Kozlowski wrote:
-> On 11/10/2026 14:44, Lukas Timmermann wrote:
-> > S6SY791 is the SPI-based counterpart of S6SY761. The register map and
-> > commands are identical for the subset the kernel currently implements.
-> > Therefore add S6SY791 as a related touch controller.
-> > 
-> > Optionally, the reset line can be controlled on some boards,
-> > such as the Google Pixel 6 Pro (raven).
-> > 
-> > Also reference spi-peripheral-props for the SPI bus properties.
-> > 
-> > Signed-off-by: Lukas Timmermann <foss@timmermann.space>
-> > ---
-> >  .../input/touchscreen/samsung,s6sy761.yaml         | 37 +++++++++++++++++++++-
-> >  1 file changed, 36 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
-> > index 1ffd17af3c53..d24f35038934 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
-> > @@ -8,13 +8,17 @@ title: Samsung S6SY761 touchscreen controller
-> >  
-> >  maintainers:
-> >    - Andi Shyti <andi.shyti@kernel.org>
-> > +  - Lukas Timmermann <foss@timmermann.space>
-> >  
-> >  allOf:
-> >    - $ref: touchscreen.yaml#
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+From: Aiden Isik <aidenisik@member.fsf.org>
 
-Should I also hide this behind an if-else? 
+Document the Exynos5515 pinctrl compatible string.
 
-> >  
-> >  properties:
-> >    compatible:
-> > -    const: samsung,s6sy761
-> > +    enum:
-> > +      - samsung,s6sy761
-> > +      - samsung,s6sy791
-> >  
-> >    reg:
-> >      maxItems: 1
-> > @@ -22,9 +26,19 @@ properties:
-> >    interrupts:
-> >      maxItems: 1
-> >  
-> > +  reset-gpios:
-> > +    maxItems: 1
-> > +    description: GPIO connected to the reset pin of the controller
-> > +
-> >    avdd-supply: true
-> >    vdd-supply: true
-> >  
-> > +  spi-max-frequency: true
-> 
-> Drop
-> 
+Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+---
+ Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Noted.
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+index 1feb6a6fc690..7e49ca7b560a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+@@ -49,6 +49,7 @@ properties:
+       - samsung,exynos5410-pinctrl
+       - samsung,exynos5420-pinctrl
+       - samsung,exynos5433-pinctrl
++      - samsung,exynos5515-pinctrl
+       - samsung,exynos7-pinctrl
+       - samsung,exynos7870-pinctrl
+       - samsung,exynos7885-pinctrl
 
-> > +
-> > +  spi-cpha: true
-> > +
-> > +  spi-cpol: true
-> 
-> These two should be probably required for the new device.
-> 
+-- 
+2.54.0
 
-Thanks.
 
-Best regards,
-Lukas
