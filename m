@@ -1,88 +1,109 @@
-Received: from mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3083A63AC55
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 14:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F357C517BDA;
+	Mon, 19 Oct 2026 14:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418760; cv=none; b=oawzj1F1CRlKzJQLU3X58YjlVzIB52ryBrdyVeab+naqOYwIUc4iig//VLbv1+vs0ChnpZRVA5Hsig/MxxTqvd6zytieobe3dRiTDixy8i/i2wovYyGEKr2MweU9Y6kCkPsjze3kNo7VGSoputPC3gZJe+SDercO+IBg22/elKs=
+	t=1792419285; cv=none; b=R0N3p0UO22e9NV7C+xhSs8YQ3Uhqd7060VHtxujV06pZmjPVzRR41w6B5PQV7OqnVSJFeTBJNO5wrDfRaHvySFlo4LQ+UZJJB/A0esnFVxTeBFjBjHOcG/h2BWjC4LPYye/bjPD2LZr4Zam5d96mA7Xx6UBgtU0oObIdxFO6a1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418760; c=relaxed/simple;
-	bh=XW7BceGWPY9WiX1upsARm8MUVolkmVHvz8rIGu+9G9I=;
+	s=arc-20240116; t=1792419285; c=relaxed/simple;
+	bh=7TrOWvJdr4ZYeKMAdVNki72IA/NykHTapzzHHydK4MM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+E73kHhbX/1H4x8AoGSYeETmvkt8nAen/4XVYR2y9Kfut3OEHnoItssmL150MD2Wx62YhIfjeTrex+hBovhAss8YwUta9tiEK2Mw2eLhQKSSF29YmMLHwVbrkCxhJMSwKOwtogs0k8dZhibsyqkjx/0r8TH4LurX66kGNzIvwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=TE+vxoCE; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	 Content-Type:Content-Disposition:In-Reply-To; b=FY8XeDODqKWkhL07qSb72RutSUZywYCwwHsYB26xGdQZJBYnPFz+cHykiztSMulU+AIcGXt6B6RdrTTx/XuaW/N5H9uoLmgjYSbE6Ig1wiHJSQmBVVnIzHSPT4e4ywBl/PDdcU72QqwVJGaTe3Za34X98POQF5od7VWg+Y2vmuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; dkim=pass (2048-bit key) header.d=timmermann.space header.i=@timmermann.space header.b=FM9SJLpg; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="TE+vxoCE"
-X-Envelope-To: linux-samsung-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=XW7BceGWPY9WiX1upsARm8MUVolkmVHvz8rIGu+9G9I=;
- c=simple/simple; d=grimler.se;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1792418755; v=1; x=1793023555;
- b=TE+vxoCEf3stLXSEjVEUNU9n45xc88Ps16DW4AoK+qdwVrHUyg+myOFhZEjYfjekhMUPiop7
- U/1pHMarY1sm3fnKfRUqsk7hhxtsC52MHbKKMihjb21YemHHzBFo1s0Q/WvKLmwYJ/qIK8Ag4r0
- J+PEMZbBApEWCtrXaGZK4/Kk=
-X-Envelope-To: linux-samsung-soc@vger.kernel.org
-Received: by mta12.migadu.com with ESMTPS id 6aae6aeb5c5dc7b9;
-	Mon, 19 Oct 2026 14:05:35 +0000
-X-Mizu-Trace-ID: 6aae6aeb5c5dc7b9
-X-Migadu-Flow: FLOW_OUT
-Date: Mon, 19 Oct 2026 16:05:32 +0200
-From: Henrik Grimler <henrik@grimler.se>
-To: Josef Schlehofer <pepe.schlehofer@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: samsung: Add Hardkernel ODROID-U2
-Message-ID: <20261019140532.GB26863@localhost>
-References: <20261018124459.3026-1-pepe.schlehofer@gmail.com>
- <20261018124459.3026-2-pepe.schlehofer@gmail.com>
+	dkim=pass (2048-bit key) header.d=timmermann.space header.i=@timmermann.space header.b="FM9SJLpg"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4j7cxM4fPMzMlN2;
+	Mon, 19 Oct 2026 16:14:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timmermann.space;
+	s=MBO0001; t=1792419271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LWoutUeMhowA/cipLRcwpKdrrczuzzstTuE/CSmA4hI=;
+	b=FM9SJLpgUbXCjuJYfDwkpUT5we9FdMfdivEU9sQjw05tdwBkvuPPlbWJrneWYnrw34bViS
+	000VywhTR5vtp0UoBmbj+nV6EiN/hLoDXuxodJhGjM6x3Uh+I/BMyJn74s0YNZf8CwUubM
+	YRm8I/QEb8vAIWfrFRc75Rj/x06vkPWCAedeThvGLjNJ5DN6A17AQy79g2zheDnrmkxuNz
+	XYlAnwLFmMotGYbDjgSdcj02V1h/tZQpF3Iqj6OndXOiXrTXM2hnRYKpFVKRWizrn5vyHP
+	Ekver87u0iLZLdV0oSA7llOv+6VuTpuImOAlgpPfAv9p9XnAaJJaNf53a9UGKg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=linux@timmermann.space
+Date: Mon, 19 Oct 2026 16:14:27 +0200
+From: Lukas Timmermann <linux@timmermann.space>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Lukas Timmermann <foss@timmermann.space>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/7] Input: s6sy761 - split into core and I2C modules
+Message-ID: <atYkR_nJnsKtTTE-@archstation>
+References: <20261011-lat3st-google-raven-touch-upstream-v1-0-2a9f55159b9e@timmermann.space>
+ <20261011-lat3st-google-raven-touch-upstream-v1-2-2a9f55159b9e@timmermann.space>
+ <asy92cwqv8Xjc2PX@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20261018124459.3026-2-pepe.schlehofer@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <asy92cwqv8Xjc2PX@monoceros>
+X-Rspamd-Queue-Id: 4j7cxM4fPMzMlN2
 
-On Sun, Oct 18, 2026 at 02:44:58PM +0200, Josef Schlehofer wrote:
-> Add Hardkernel ODROID-U2 board compatible string.
+On Mon, Oct 12, 2026 at 01:04:36PM +0200, Uwe Kleine-König wrote:
+> On Sun, Oct 11, 2026 at 02:44:57PM +0200, Lukas Timmermann wrote:
 > 
-> The ODROID-U2 is an Exynos 4412 Prime (Cortex-A9) based single board
-> computer featuring 2 GB LPDDR2 RAM, SMSC LAN9730 HSIC Ethernet, and
-> MAX98090 audio codec.
+> Please don't add new usages of <linux/mod_devicetable.h>. <linux/i2c.h>
+> is enough to get the definition of of_device_id and i2c_device_id.
 > 
-> Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
+> I didn't look into the other patches of this series in detail, but I
+> suspect that the same holds true in your spi patch. <linux/spi/spi.h>
+> provides of_device_id and spi_device_id, so don't add
+> <linux/mod_devicetable.h> there either.
+> 
+> (If you want to go full iwyu, use the subsystem specific headers below
+> linux/device-id/.
+> 
 
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
+I see. I found some mails from you in regards to that topic. Thanks for
+explaining.
 
-Best regards,
-Henrik Grimler
+> > +static const struct of_device_id s6sy761_of_match[] = {
+> > +	{ .compatible = "samsung,s6sy761", },
+> > +	{ },
+> 
+> No trailing comma after the list terminator please.
+> 
 
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
->  1 file changed, 1 insertion(+)
+Noted.
+
+> > +};
+> > +MODULE_DEVICE_TABLE(of, s6sy761_of_match);
+> > +
+> > +static const struct i2c_device_id s6sy761_id[] = {
+> > +	{ "s6sy761" },
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index 273464400477..f863803c84f8 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -86,6 +86,7 @@ properties:
->          items:
->            - enum:
->                - friendlyarm,tiny4412            # FriendlyARM TINY4412
-> +              - hardkernel,odroid-u2            # Hardkernel Odroid U2
->                - hardkernel,odroid-u3            # Hardkernel Odroid U3
->                - hardkernel,odroid-x             # Hardkernel Odroid X
->                - hardkernel,odroid-x2            # Hardkernel Odroid X2
-> -- 
-> 2.54.0 (Apple Git-157)
+> please make this: { .name = "s6sy761" }
 > 
-> 
+> Best regards
+> Uwe
+
+Thank you. I will include your findings in v2.
+
+Best regards
+Lukas
