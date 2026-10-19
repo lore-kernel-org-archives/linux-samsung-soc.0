@@ -1,321 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m12766.qiye.163.com (mail-m12766.qiye.163.com [115.236.127.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2B44DA535;
-	Mon, 19 Oct 2026 10:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBC4D597F;
+	Mon, 19 Oct 2026 11:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792405440; cv=none; b=TGHnsREmUCfF6upXOjNRoR1wzVTjgmWI74GzfljZT4TnGnPL54C7I5egZc2VEog88E2iPgje8rf47gfG/J9n0/RkPZ3Hx76UkEKpvk8exwAOrDeeGXA5TyKtbpdkkpwhqt2xMgRE3JrYgQA2LTWdTR4UbYVFMgCPDMHYW6alQlE=
+	t=1792408909; cv=none; b=dnggJNIXAYY7yv+ZXLrZAb/+4+QK1VtMxff6E4Qvx3Es98nbfi5dwAppXcj18tMmESxku7u2zFkq/rl0efPaAiK9YLVVu70BIslJTZeTzTToHNSgvI1YB2ydVlgRf3/fllqMMnNQeTkNTIt8isxwBMzAxUybPrHijMlBTfJ+J58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792405440; c=relaxed/simple;
-	bh=8qymSggEgnpMRDFSvVRvp0rr2EkbrYT7HH8SBIpkDXo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z5Czzeo12mx7z8W/pJgUPKY7tJGwSvJAsmmyY3qDPtepyJ9o+EoIIrB4TuMK/WdSEMw3Qi34WuWcd3rPZ+fSzpNTpA+hwXCAirAVCKPKHwKH7nWW3J/XzDu3S9CcqMliTjEhHwjSpxuY4TUIqyc99/6aqjziOw6UTamAYtwEN98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/S0hHF1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1792408909; c=relaxed/simple;
+	bh=YzthQwTxZZZyGKXGe++Gkz+e5dtd76g7WaBpRqyOAsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GH48bHGAOZqV71zkD1RygCZzycWbz1OfWnKvVA10qNHo6XhZXbM3fGfjrxLyXZdOWBPK9vqZ9ZWOvSXV9Z5NRA565msAuTnsHkTsrbIic6G2ZiqLoOlcU1uIFNFTtazcoJ6myUmQkEd+Bc0hgMuxFZAf3SwUnu8j5BJ4PAIh+Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XAPLvrI9; arc=none smtp.client-ip=115.236.127.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/S0hHF1"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AF2EEC2BCFC;
-	Mon, 19 Oct 2026 10:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1792405439;
-	bh=8qymSggEgnpMRDFSvVRvp0rr2EkbrYT7HH8SBIpkDXo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=p/S0hHF1aR+hCrWAsqjI+FjaCMqkEjX5tHLC8Fd+6i9Nqm/2YF9h4Sdh4tdJLhIl5
-	 lsKTXMjKu9+z0BKi/J6IEYviEW8Mqq65LLRImuy+Dv92gwsPOstmWSIP6W4G+tpak1
-	 05nO/XC+db3nXcnC0fQN6vL7akku/eEltXIfQ9AC+c2YpbUcVEbXWyy3+MqzwmvZTS
-	 dMPElAVZCUoX/LIiL9ESO62pfhgVwLOzAIdqiKC2xkG057RvcctbHE/9wcXsLd6fcq
-	 Q6SzZ6F/mQpUnLH6bGEG9OnUfMLas1P78KRILJCfHNOcrtSxLiUVivi98L5K1uL22O
-	 DPOoYOtZidMwA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8728FCCF2D6;
-	Mon, 19 Oct 2026 10:23:59 +0000 (UTC)
-From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Date: Mon, 19 Oct 2026 11:23:51 +0100
-Subject: [PATCH v2 5/5] arm64: dts: exynos: Add initial support for Samsung
- Galaxy Watch FE
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XAPLvrI9"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5189b8614;
+	Mon, 19 Oct 2026 16:59:11 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v4 09/14] drm/bridge: analogix_dp: Move IRQ enable/disable to bind/unbind
+Date: Mon, 19 Oct 2026 16:58:31 +0800
+Message-Id: <20261019085836.3065008-10-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261019085836.3065008-1-damon.ding@rock-chips.com>
+References: <20261019085836.3065008-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261019-for-next-lucky7-v2-5-c4ecab4b1c4c@member.fsf.org>
-References: <20261019-for-next-lucky7-v2-0-c4ecab4b1c4c@member.fsf.org>
-In-Reply-To: <20261019-for-next-lucky7-v2-0-c4ecab4b1c4c@member.fsf.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4867;
- i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=FOKCeXOXBxhw0Q8L/8D3S7rg87yAZxUJT9zak2Y0VUI=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1e+7venDewHub2uoRbxOQPvrSOP1qhsGLMtvn
- k8jPetjdDOJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatXvuxsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+s4MBAAuEPsnJz8ZPZPjqlOdT+gXkSzxCk54Dr
- luMfazMmirxc6C3I85mGCEXBwDuUVzfbXjIi0jXzuhD3BuiqjL4GFlu8vcTv0vD1fNgejR0OHKd
- q7aCxSFRQ3I/zf0ydTsW6zrWZ+MfcF2fTtLsO8/2HU5MoVjNZrD0Cl6nSTnjwcny4yoy8KVWjht
- u4bVKeNDiBqjIvI1sFZ+KMgfzsXkelyL1ZrX7jxFXOcOQE8ZUkIvHIQbyd3GW6JpNWYaAZmcvbO
- 3/JxioetiCJF9MGVafO2XPcykHFUGeSLXQ5NmBvvthTxU5bk0iTr2g/Kc4rqbKtNqAo3/cufNry
- gwS244MGVecK0g+rvKlB9A4pBeTwchYMX91sEJD2eRDy/WKzKf6v1z29SDiMwO74vpYNprsp1zX
- 1EsgqV3D89t8ud9len6t7JlHALPV+6LZyyTATIPjMlN91hRkV5g1pAp3GAJx/Mzef8gjvsq9b42
- 4qXWhs6JtKFK/he9Kw57tXGSijx2izo20mQpwCLNq6y/Hdhk8M7vI/MVd+5DTYIkCT/1LUXI0xC
- FTWgdWtAVrs+R99gWY6tCWeC0WJyqyBUyXkpgIn9WlPQcoA5GhUxpGWacztblrP3xquus7iz0N8
- sLV/3pk0zGs203GtjCyOscBmQn/uZf8V8sfq3SaHzj7cN370VMi0=
-X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
- fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
-X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
- auth_id=956
-X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
-Reply-To: aidenisik@member.fsf.org
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa15362e16603a8kunm6ee755052eac52
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaTh9JVhoZHk9MH0xMGkpLS1YVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
+	9PT0hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=XAPLvrI9xGz4CDuDdPqj2XN6U+5rU5nXMfI1I3XZQQTWw1reduvAlKa1xGMHSfHbOCWZimvvp7WJb6+CXzH5FZsJ26gvrQrRWotyZQN3XT3LPszJVvJQ+AO4ixpxesnkIb5oBU1rSiGNVgpZzhhLcb/Fit34DaqRbVzNNWmtl9s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=NyN2pPC4Hh7ZjgeCYVaIxeVTEwGK+1q8bxHsqrEerMs=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Aiden Isik <aidenisik@member.fsf.org>
+Move enable_irq()/disable_irq() from bridge enable/disable handlers
+into analogix_dp_bind()/analogix_dp_unbind(). This keeps the IRQ
+active throughout the device lifecycle rather than only during display
+activity, which is a prerequisite for supporting HPD detection while
+the display pipeline is inactive.
 
-The Samsung Galaxy Watch FE (SM-R861/SM-R866), codenamed lucky7, is a
-smartwatch developed by Samsung and released in 2024. It has 1.5GiB RAM,
-16GiB of eMMC storage, an Exynos5515 (W920) SoC, and a 396x396 display.
+This is safe because the HPD interrupt sources are now managed
+explicitly:
+- Native HPD interrupt generation depends on the controller's power
+  domain and clock. When runtime PM has suspended the device, the
+  controller cannot produce interrupts, so the hardirq is never
+  entered on an unpowered device.
+- For GPIO HPD mode, the native HPD interrupts are muted in
+  analogix_dp_config_interrupt(), and the hardirq reads only the GPIO
+  line via gpiod_get_value(), which is safe while the controller is
+  suspended.
 
-Support for the following is added by this device tree:
-- Bootloader framebuffer
-- Memory
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
 ---
- arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts | 219 +++++++++++++++++++++++
- 1 file changed, 219 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts b/arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts
-new file mode 100644
-index 000000000000..e80a0f0948cb
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos5515-lucky7.dts
-@@ -0,0 +1,219 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Samsung Galaxy Watch FE (lucky7/SM-R861/SM-R866) device tree source
-+ *
-+ * Copyright (c) 2026 Aiden Isik <aidenisik+git@member.fsf.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos5515.dtsi"
-+
-+/ {
-+	compatible = "samsung,lucky7", "samsung,exynos5515";
-+	chassis-type = "watch";
-+	model = "Samsung Galaxy Watch FE (SM-R861/SM-R866)";
-+
-+	chosen {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+
-+		framebuffer@9e0cf000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x9e0cf000 (396 * 396 * 4)>;
-+			format = "a8r8g8b8";
-+			height = <396>;
-+			stride = <(396 * 4)>;
-+			width = <396>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3ea00000>,
-+		      <0x0 0xc0000000 0x20000000>;
-+	};
-+
-+	reserved-memory {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+
-+		/*
-+		 * Some of these misc-rmem regions belong to memory-mapped
-+		 * devices, and will be assigned to drivers as support
-+		 * is added.
-+		 *
-+		 * Other regions belong to the TrustZone firmware and should
-+		 * never be touched.
-+		 */
-+		misc-rmem@87000000 {
-+			reg = <0x0 0x87000000 0x200000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@87fff000 {
-+			reg = <0x0 0x87fff000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@8a000000 {
-+			reg = <0x0 0x8a000000 0x31000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@8d800000 {
-+			reg = <0x0 0x8d800000 0x180000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@8ffff000 {
-+			reg = <0x0 0x8ffff000 0x33000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@90100000 {
-+			reg = <0x0 0x90100000 0x200000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@98a00000 {
-+			reg = <0x0 0x98a00000 0x600000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@9a000000 {
-+			reg = <0x0 0x9a000000 0xc00000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@9b000000 {
-+			reg = <0x0 0x9b000000 0x400000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@9bd00000 {
-+			reg = <0x0 0x9bd00000 0x208000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@9c000000 {
-+			reg = <0x0 0x9c000000 0x20000>;
-+			no-map;
-+		};
-+
-+		framebuffer@9e0cf000 {
-+			/*
-+			 * Reserve up to the end of the final page of the
-+			 * framebuffer region, to prevent memory aliasing.
-+			 *
-+			 * size: align((396 * 396 * 4), 0x1000)
-+			 */
-+			reg = <0x0 0x9e0cf000 0x9a000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0000000 {
-+			reg = <0x0 0xa0000000 0x10000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0010000 {
-+			reg = <0x0 0xa0010000 0x400000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0510000 {
-+			reg = <0x0 0xa0510000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0900000 {
-+			reg = <0x0 0xa0900000 0x2000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0902000 {
-+			reg = <0x0 0xa0902000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@a0910000 {
-+			reg = <0x0 0xa0910000 0x3c000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@b0000000 {
-+			reg = <0x0 0xb0000000 0x200000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@b1000000 {
-+			reg = <0x0 0xb1000000 0x200000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@bbfff000 {
-+			reg = <0x0 0xbbfff000 0x1000000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@bcfff000 {
-+			reg = <0x0 0xbcfff000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@bd430000 {
-+			reg = <0x0 0xbd430000 0x1250000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@d0000000 {
-+			reg = <0x0 0xd0000000 0x5d00000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@dc444000 {
-+			reg = <0x0 0xdc444000 0x2bbc000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df005000 {
-+			reg = <0x0 0xdf005000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df008000 {
-+			reg = <0x0 0xdf008000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df009000 {
-+			reg = <0x0 0xdf009000 0x12000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df01b000 {
-+			reg = <0x0 0xdf01b000 0x21000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df03c000 {
-+			reg = <0x0 0xdf03c000 0x1000>;
-+			no-map;
-+		};
-+
-+		misc-rmem@df03d000 {
-+			reg = <0x0 0xdf03d000 0xfc3000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&watchdog {
-+	status = "okay";
-+};
+Changes in v3:
+- Move this patch after mute/unmute related modification and detail the
+  commit msg.
 
+Changes in v4:
+- Add Tested-by tag.
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index b92d28546192..addd319719de 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1018,7 +1018,6 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 		goto out_dp_init;
+ 	}
+ 
+-	enable_irq(dp->irq);
+ 	return 0;
+ 
+ out_dp_init:
+@@ -1160,8 +1159,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
+ 		return;
+ 
+-	disable_irq(dp->irq);
+-
+ 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 
+ 	pm_runtime_put_sync(dp->dev);
+@@ -1574,6 +1571,8 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+ 		goto err_unregister_aux;
+ 	}
+ 
++	enable_irq(dp->irq);
++
+ 	return 0;
+ 
+ err_unregister_aux:
+@@ -1585,6 +1584,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
+ 
+ void analogix_dp_unbind(struct analogix_dp_device *dp)
+ {
++	disable_irq(dp->irq);
+ 	drm_dp_aux_unregister(&dp->aux);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
 -- 
-2.54.0
-
+2.34.1
 
