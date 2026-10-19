@@ -1,151 +1,174 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mail-m1973184.qiye.163.com (mail-m1973184.qiye.163.com [220.197.31.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E73EA959
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850CC49A3AB;
+	Mon, 19 Oct 2026 08:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792392897; cv=none; b=IfVSL+tTpcEPwtpJGrOVpL7nP66PiQIeV9lsUMevI5zpNM9RhKkrg7tEEJLFdrKgXAz91iiXn6Wfa09fGJpqFUXE9WgvNxzsYkDo2la5mRsaK4Sn9fMSAKp9kYBIDMtf97Nge6z23jS18xG2S3cLVf3dlMumwv92/hnDE17j3O4=
+	t=1792400357; cv=none; b=GsZs4hNXJSBh0mbT+A9z4+N3BUJg2coPm/lYNUrBO61f252kUQBXSPk+SDBADoriNJGdMt/Vd7r/73pOgUjmapS9ppUZA3dsbJZf4OVxxbjmzQPTMGRKDX9f9KfoMgs7eV+svEy5aO9lmT9/BSsDn5gb84sdmFXmATGMbNzhym0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792392897; c=relaxed/simple;
-	bh=QReKZ8e5KNyKhGiZ/LM63xfIDlObB0PMTVvDcDsqJXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=HgxHBMiEG+RmNb1iJ8LaRROvsH+fOQADhIoqmI6nt0+SKab9pNHqeAB2YfecZjgx/Jm8tay8/aciUwR/D8krlaLULHFVNO2R2/rjZUoqQefSshljrjhclPRXHDJWKFS3TAYl66Mty4s0+wRtWKuaPsQFXFnCW2woMA16gP++siM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NxXciU8u; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1792400357; c=relaxed/simple;
+	bh=NBMyHwvePQDvrc8fPhe7ZlKSuLwV/VbFqaIechZYrKQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JaeK2qPLE96kOcOg25kXwQP8NH4+GpSEeuLNfZC/OrEc2cWFLYTynNh8XQMVAp1iA/oHJr955Bm+dpcDZWeSwEY2Js1kbnW3y2B3V7XsH6o7yjRuwAFwkBYpmVMY9Szu3vqISnKHOdZfPrtDCZfxDk3gtHri2Nm7ufbULXOlSfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVOWTD9Y; arc=none smtp.client-ip=220.197.31.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NxXciU8u"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261019065445euoutp02f3f1a7770c721bf3eae16ad4cc4b03e3~f29VELt9i3134731347euoutp02B
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 06:54:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261019065445euoutp02f3f1a7770c721bf3eae16ad4cc4b03e3~f29VELt9i3134731347euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1792392885;
-	bh=FhpaG9Vx59Vq4T4QWx8bk+E01NrR9IE2FS4HpRDXhFk=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=NxXciU8uMADYAkpk7fv9mlHGv1mat9rU7RS78vM7+D5byr4P8/q5tRy3kToduMe41
-	 efnb4AZ9zHYOBPaPXgeX2ss+hYcpYB2htCVqx9k8HpzoQdPj0rsig5dMj4Q4V+0wcb
-	 nb4Sgsy/qnvMsPeKzhS02TwmIuywAr7e07Rsw8+g=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261019065445eucas1p14ee963364b89f77ba3178fae382a1014~f29Uws2Vt2730627306eucas1p1e;
-	Mon, 19 Oct 2026 06:54:45 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261019065444eusmtip2ea7efda198c5f5be5a45eb7aeeea48fe~f29UXNOG81585015850eusmtip2B;
-	Mon, 19 Oct 2026 06:54:44 +0000 (GMT)
-Message-ID: <6c07141b-e2d7-49b2-8493-394d727c3a15@samsung.com>
-Date: Mon, 19 Oct 2026 08:54:44 +0200
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVOWTD9Y"
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5189b8603;
+	Mon, 19 Oct 2026 16:59:09 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v4 07/14] drm/bridge: analogix_dp: Use platform-specific HPD detection scheme
+Date: Mon, 19 Oct 2026 16:58:29 +0800
+Message-Id: <20261019085836.3065008-8-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261019085836.3065008-1-damon.ding@rock-chips.com>
+References: <20261019085836.3065008-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] media: s5p_cec: release IRQ before deleting the adapter
-To: Myeonghun Pak <mhun512@gmail.com>, Hans Verkuil <hverkuil@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <179229547105.3971562.9800339494753406560.s5p-cec@gmail.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261019065445eucas1p14ee963364b89f77ba3178fae382a1014
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261018035132eucas1p2ccd8f0233fd196fd8801506c1c213b39
-X-EPHeader: CA
-X-CMS-RootMailID: 20261018035132eucas1p2ccd8f0233fd196fd8801506c1c213b39
-References: <CGME20261018035132eucas1p2ccd8f0233fd196fd8801506c1c213b39@eucas1p2.samsung.com>
-	<179229547105.3971562.9800339494753406560.s5p-cec@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa15362d74d03a8kunm6ee755052eac3b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTRgZVk4aSx5OGElCQk5NS1YVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
+	JDQ0xVSktLVUtZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=MVOWTD9Yk9s6GZvSHDvzeweA5ltpKa0fIw91W9MbRT8u60Bv0yQNlAvWumWTm9lvGYX4OTwUM/zhkSFgdtnTYmTEZe/RuaJ00HPJELbeFzWGfhKC6eJKDAap12KVO3PzdIF5iC1bpS6WIlrWUukv0n5w7ZUczmbEsAgRJMuKKKs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=83I3DhMAQxj1+DdbooL/jQB//h01wJE8bOZJJ0agq3I=;
+	h=date:mime-version:subject:message-id:from;
 
-On 18.10.2026 05:51, Myeonghun Pak wrote:
-> The threaded IRQ handler reports transmit and receive events through
-> cec->adap. Adapter unregistration masks the hardware interrupts but does
-> not wait for this handler. With no open device-node references, it can
-> free the adapter while an already queued IRQ thread still uses it.
-> Devres also unmaps the registers before releasing the IRQ, since the
-> mapping was acquired after the IRQ.
->
-> Free the managed IRQ before unregistering the adapter and disabling
-> runtime PM. Request it only after the register mapping and adapter have
-> been initialized, and free it on adapter registration failure before
-> deleting the adapter. This also makes IRQ release precede MMIO release
-> on probe unwind.
->
-> This issue was identified as part of our ongoing research while
-> reviewing kernel code.
->
-> Fixes: 1bcbf6f4b6b0 ("[media] cec: s5p-cec: Add s5p-cec driver")
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
->
-> ---
-> Compile-tested with Clang, W=1. No hardware runtime testing.
->
-> Based on mainline 0fcb05b72344f40806cbe810de8872f1698bf053.
->
-> diff --git a/drivers/media/cec/platform/s5p/s5p_cec.c b/drivers/media/cec/platform/s5p/s5p_cec.c
-> index 4a92d32..e83705f 100644
-> --- a/drivers/media/cec/platform/s5p/s5p_cec.c
-> +++ b/drivers/media/cec/platform/s5p/s5p_cec.c
-> @@ -199,11 +199,6 @@ static int s5p_cec_probe(struct platform_device *pdev)
->  	if (cec->irq < 0)
->  		return cec->irq;
->  
-> -	ret = devm_request_threaded_irq(dev, cec->irq, s5p_cec_irq_handler,
-> -		s5p_cec_irq_handler_thread, 0, pdev->name, cec);
-> -	if (ret)
-> -		return ret;
-> -
->  	cec->clk = devm_clk_get(dev, "hdmicec");
->  	if (IS_ERR(cec->clk))
->  		return PTR_ERR(cec->clk);
-> @@ -231,16 +226,24 @@ static int s5p_cec_probe(struct platform_device *pdev)
->  		goto err_delete_adapter;
->  	}
->  
-> -	ret = cec_register_adapter(cec->adap, &pdev->dev);
-> +	ret = devm_request_threaded_irq(dev, cec->irq, s5p_cec_irq_handler,
-> +					s5p_cec_irq_handler_thread, 0, pdev->name, cec);
->  	if (ret)
->  		goto err_notifier;
->  
-> +	ret = cec_register_adapter(cec->adap, &pdev->dev);
-> +	if (ret)
-> +		goto err_free_irq;
-> +
->  	platform_set_drvdata(pdev, cec);
->  	pm_runtime_enable(dev);
->  
->  	dev_dbg(dev, "successfully probed\n");
->  	return 0;
->  
-> +err_free_irq:
-> +	devm_free_irq(dev, cec->irq, cec);
-There is no point in using devm_* API if one needs to manually free the
-resource for whatever reason.
+The Analogix DP controller provides two sets of interrupt sources for
+hotplug detection: HOTPLUG_CHG for any HPD level change, and the
+PLUG/HPD_LOST pair for connect/disconnect transitions respectively.
 
+On Rockchip platforms, configure the HPD deglitch filter and use
+HOTPLUG_CHG interrupt for hotplug detection. Other platforms retain the
+original PLUG + HPD_LOST scheme with unchanged deglitch values.
 
-> +
->  err_notifier:
->  	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
->  
-> @@ -253,6 +256,7 @@ static void s5p_cec_remove(struct platform_device *pdev)
->  {
->  	struct s5p_cec_dev *cec = platform_get_drvdata(pdev);
->  
-> +	devm_free_irq(&pdev->dev, cec->irq, cec);
->  	cec_notifier_cec_adap_unregister(cec->notifier, cec->adap);
->  	cec_unregister_adapter(cec->adap);
->  	pm_runtime_disable(&pdev->dev);
->
-Best regards
+Move the HPD deglitch configuration into analogix_dp_reset() so that
+platform-specific values are set alongside the existing register
+defaults in a single location. Update the threaded IRQ handler to check
+the corresponding interrupt flag based on platform type.
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+
+---
+
+Changes in v2:
+- Move ANALOGIX_DP_HPD_DEGLITCH_L/ANALOGIX_DP_HPD_DEGLITCH_H configs to
+  analogix_dp_reset().
+
+Changes in v3:
+- Modify the commit msg.
+- Replace macro HPD_IRQ with HPD_IRQ_ALL.
+
+Changes in v4:
+- Add Tested-by tag.
+---
+ .../drm/bridge/analogix/analogix_dp_core.c    |  9 ++++++--
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 22 ++++++++++++++++---
+ 2 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index f88e3263ba0e..287fc16125ef 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -714,13 +714,18 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ {
+ 	struct analogix_dp_device *dp = arg;
+ 	u32 irq_type;
++	bool hpd_detected;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+ 	if (irq_type)
+ 		analogix_dp_clear_hotplug_interrupts(dp, irq_type);
+ 
+-	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
+-	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
++	if (!dp->hpd_gpiod && analogix_dp_is_rockchip(dp->plat_data->dev_type))
++		hpd_detected = irq_type & DP_IRQ_TYPE_HP_CHANGE;
++	else
++		hpd_detected = (irq_type & DP_IRQ_TYPE_HP_CABLE_IN) ||
++			       (irq_type & DP_IRQ_TYPE_HP_CABLE_OUT);
++	if (hpd_detected) {
+ 		dev_dbg(dp->dev, "Detected cable status changed!\n");
+ 		if (dp->drm_dev)
+ 			drm_helper_hpd_irq_event(dp->drm_dev);
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 0f1406e4a5d3..025da25463a8 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -160,8 +160,13 @@ void analogix_dp_reset(struct analogix_dp_device *dp)
+ 	writel(0x0, dp->reg_base + ANALOGIX_DP_PKT_SEND_CTL);
+ 	writel(0x0, dp->reg_base + ANALOGIX_DP_HDCP_CTL);
+ 
+-	writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
+-	writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	if (analogix_dp_is_rockchip(dp->plat_data->dev_type)) {
++		writel(0x80, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
++		writel(0xbb, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	} else {
++		writel(0x5e, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_L);
++		writel(0x1a, dp->reg_base + ANALOGIX_DP_HPD_DEGLITCH_H);
++	}
+ 
+ 	writel(0x10, dp->reg_base + ANALOGIX_DP_LINK_DEBUG_CTL);
+ 
+@@ -188,7 +193,18 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
+ 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
+ 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
+ 
+-	analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
++	/*
++	 * Either HOTPLUG_CHG interrupt or PLUG + HPD_LOST interrupt
++	 * pair can be used to implement hotplug detection.
++	 *
++	 * On Rockchip platforms, configuring HPD deglitch to 2ms and
++	 * using HOTPLUG_CHG interrupt for hotplug detection is proven
++	 * as a better solution via engineering verification.
++	 */
++	if (analogix_dp_is_rockchip(dp->plat_data->dev_type))
++		analogix_dp_unmute_hpd_interrupt(dp, DP_IRQ_TYPE_HP_CHANGE);
++	else
++		analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
+ }
+ 
+ /*
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.34.1
 
