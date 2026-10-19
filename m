@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B554C461E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349C8491B23;
 	Mon, 19 Oct 2026 14:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792420894; cv=none; b=kWtEN2uZadjYdJpJDFHe1127XlxlvEpIypjPj5lkjNnp7njZvKHAnWOH+pDKlZq1oxYnA/WZPhwW3P/JjcjDC+uAQQvkApeOZtLdWeAkNOWJmkwZR9f086/RakahDLoi4ECEsE7odFuDBV6rGkxIod3F6hWl5SkrReGLgew6DZQ=
+	t=1792420894; cv=none; b=ON5BRhpYBUmWACgbf8xPlwKiOW3nc9SPvA+ycWMXUYyFrn60f7L6QTbdX2MKnyI1n2dhN4DY0xI6/wSFpn4zosWbUEvuLaj57FTc3XGWO9L9igdxGbTtDfRYbs/GcT8MOTEXwNkqoRntQq4DxlKAFO39yWt/xMc/ni51btdPp2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792420894; c=relaxed/simple;
-	bh=qvOt3HHxIE5wGuN+4BoB73etZ0LxLru+TeLnprWKzoQ=;
+	bh=D8zB/kA+w2k1XCoyZlUlZ9QcLmAIr0JRLjRxo3NOqfE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iM8pwdA5GaaN4v/3f/Suiixg6PhhxOlNkZeF70HUXMNiXJv0w5XjTzVs2jYo62lTLhvCWXrDuzPdmmBxx9Oa733bz6g4tl7o9p9y2p7uGVAfp7481zd47fWNwjMe43sm43UhDsu9Y9TwcpvjYIQvm2U1yxuZeD8YgsjvKA1F0Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMH6LPND; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=gDR/9lxJVLKr6BwAVHeDFur6FufxiOlNFg+531HgO/yq3APDgyEwvumKSnQmFaSxUvUndMmzUWK73PQKfxYt36uF3hV364EjuwBeykB4LTlIcYNQ3FWGBUUy0xi0YvQHZyfEBRuxYcE0NHqm8hDm7/6H2gj3aELUZE12o/BOQis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5XvKq5Q; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMH6LPND"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8AA6C2BCFC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5XvKq5Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2F24C2BCF7;
 	Mon, 19 Oct 2026 14:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1792420893;
-	bh=qvOt3HHxIE5wGuN+4BoB73etZ0LxLru+TeLnprWKzoQ=;
+	s=k20201202; t=1792420894;
+	bh=D8zB/kA+w2k1XCoyZlUlZ9QcLmAIr0JRLjRxo3NOqfE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=WMH6LPND7hWkslGEk9fPiBeXtEzk4LJTsyCzcXXHm9vJw1UGHFJpLTB7uBoBtuDnC
-	 HDF6eAatvtPuKH6Mwy/jzJP0Pv/VGjJZGcdtUAdHp+OmzHtHq5l+hUy9B5OEHWd2mz
-	 nwtbUC23wqhShacE3WmuFUKLxSUvvVjqj2Wuj4SLYROZrTFTNjad3fRx6UE8fcxh7y
-	 14KS2lkKZd4nbq+ns30LA/xDZYGAbpyxjTOtMg0818XhBKmPgPOpFXw2MY5HSm1Jb7
-	 Ng4m6aZGgxP+V/dcv6ono0S6bSJqJhsofJB0QqTqYndU/AalbLqlr0vakGwnHPu0PM
-	 7u3vv0Zua6RcA==
+	b=l5XvKq5QUX1pxWdINb0dR4gs6zOowd29x8d+RulSClRBhDv8hH8B/GNY/kkMTGYs1
+	 IPkVLU4q4CMvPO9EEPH92z1G1cSeGjtggBHO9zn+dy8+51z8meM6TRHIP4s9XiZr1T
+	 BqRbmg5zj05InDnU2E2aJs/2Q/Z8tfEkuLpFpOUHJQ2f8aFPXAgD+hN0RPLR9vcyG9
+	 3PbmXUQepAi0S6PLdR+XswghkYqk6I5E8pVGBze+tcmiWxSYYGllvNQp+WQem9HfcX
+	 0sQTAO0L4J6sxGaDCo74jcTZwjGP7BGhyvcKTj8/D4e8xoUWy6xPjx294BEMvlX38O
+	 8pW4nCZhUWgFg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94A7CCF2E7;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9E3CCF2E6;
 	Mon, 19 Oct 2026 14:41:33 +0000 (UTC)
 From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Date: Mon, 19 Oct 2026 15:41:30 +0100
-Subject: [PATCH 1/3] dt-bindings: pinctrl: samsung: Add compatible for
- Exynos5515
+Date: Mon, 19 Oct 2026 15:41:31 +0100
+Subject: [PATCH 2/3] dt-bindings: pinctrl: samsung: add
+ exynos5515-wakeup-eint compatible
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261019-for-next-lucky7-pinctrl-v1-1-0f77e94c70bc@member.fsf.org>
+Message-Id: <20261019-for-next-lucky7-pinctrl-v1-2-0f77e94c70bc@member.fsf.org>
 References: <20261019-for-next-lucky7-pinctrl-v1-0-0f77e94c70bc@member.fsf.org>
 In-Reply-To: <20261019-for-next-lucky7-pinctrl-v1-0-0f77e94c70bc@member.fsf.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -54,21 +54,21 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=844;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1047;
  i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=wcMJv5MC9TAqtq4PfS0HwwKmDAbPXKFvyCt4uDAd3gs=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1iwalT3DrmyIqPYLP3Z7S5COD3XtGVEIvxELp
- cCUWs70fYSJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatYsGhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+u50hAAlqJrRNdYR/IhdgDR2Z4JKrlPojiSFZF
- r4kSl4JfDqKJeVBbydVc+TRfP3AiSN/jpBtieHLGjPMSuCE+2/r0zSa5LSetSGq72tBEo8fE0DR
- /4xc+peLKdp/oJjZxpbDS3Yoi0VUITPhjzy6zW6aGjfV4CtYYpCoN/TR6k2VK9fYAxkVKx4hqmV
- 2Mrr4xla3sowMZ2zMsZasqg1leusJ8kLDcTuMKiSWiU8fRW7gGRiqYqNOrK5zsHZtRvK7j10IEE
- 5P7c4sUjaTnV87ecrHA/JQLw/OAcvVdUKgjPGlXMzQbyU2PmV2m/dCu8LkupnMyuCOk8ObY3Far
- prfwgZytOvlxXX2SnfquLe2ydvj8N65Q0PJpWPNU27ns8KGTmfzEkv2gLt/VWkXamO/EtDJITal
- U8Pil1ONY0bdbgSlmPr0LcLWFZ6uUyihnS/dFAyzdnXUFNLnSt5QZNJdkzKP4FgZE0MmwBVkE3d
- bG1czf3R99cmTjopp/VScbDKxv/N41mUtZdJIV/YhqEvql3/CxRTO3Lrl5fDoshV41e99wHKpvW
- m2hF3agqVs3Zl0STBww2u5WbTlrx0t1BT5hpCt44YrQJei32adFTbsQCoyuEKm9uqGiMif5ye98
- H7qqtq1Ts774mlTeE7w7N0qOQ6PiSeryjdrDUPCQgQaQTzhTamFo=
+ bh=q5YBELZSChcm5N+9fv9roR9m2IQnUyRk2ttRDDQKDEc=;
+ b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1iwajzFWg0aVeVqU+vV1FOodxeEllVHtW/OFH
+ 4mNd2Jlj++JAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatYsGhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+uaEBAAskBR84nnZ+fZUkuAU68wmG506UQBr2n
+ 3L2REb/7wvEQwpeyxuVH0eTvrWlytBIRzRVLQdTnRqIP0GpD5epet53OLL1NOLM/c5fvS5Hkclx
+ /2FjEVtmtVAPZaLWpwEQUmnMob2SVxMKr01Pu8xo2onFrHKT6TrkwH5cd8rQpBbGX+1XTddx20o
+ 7UxfziSl6+rebTl3o6sq/rWBYHH2WVZ3M2M41MS5S2tuRTq15AQpAPMGzcbR4gfBYh314jmQX7f
+ 9L+LAxhCTJKISzUQGHJBsHBmQ0caaaqXClGffewEmxSM74EFZB3ogtLOpR5Gvk6yeaODnF0wfZx
+ 3kFJYZhWpmNHxSSVwZ3X0Fb20v6RQ99k5SCLtsQvrQVRafgIG3ApT4bCgxTR2WAqQxBhYXoaNi6
+ bbZ2sBH8kbMHGk/1GkJw4Hi54jwU/DSaW+eDTPMqZoy+y2rvai2S+oxf4P8suKQeg3npJ34fKg/
+ O3hsqEr6G8oyoop7bpRMt+P8/1cORxpjfORzqCXBZ+PuQ42sz3b/UDB1jmmP3+W4f9yEgBN05+K
+ JZ/lR/Qsjhxxoe0LhVT1r6o8HZoW63uMYgh+WcMc98PWfZmtdLcy7nVuVYgkhh+F07TJ+HLH9oN
+ ZBqCDnyvCvkle9iaxgOjDhkr6KQxpyeETjzSpQE5G+hfHxnQmxkE=
 X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
  fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
 X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
@@ -78,25 +78,26 @@ Reply-To: aidenisik@member.fsf.org
 
 From: Aiden Isik <aidenisik@member.fsf.org>
 
-Document the Exynos5515 pinctrl compatible string.
+Add the pinctrl wakeup compatible for the Exynos5515 SoC. It is
+register-compatible with Exynos850, so document it as such.
 
 Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
 ---
- Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+ .../devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml    | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-index 1feb6a6fc690..7e49ca7b560a 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+index 802911e23aff..d5200b04a1dd 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
 @@ -49,6 +49,7 @@ properties:
-       - samsung,exynos5410-pinctrl
-       - samsung,exynos5420-pinctrl
-       - samsung,exynos5433-pinctrl
-+      - samsung,exynos5515-pinctrl
-       - samsung,exynos7-pinctrl
-       - samsung,exynos7870-pinctrl
-       - samsung,exynos7885-pinctrl
+           - enum:
+               - google,gs101-wakeup-eint
+               - samsung,exynos2200-wakeup-eint
++              - samsung,exynos5515-wakeup-eint
+               - samsung,exynos9610-wakeup-eint
+               - samsung,exynos9810-wakeup-eint
+               - samsung,exynos990-wakeup-eint
 
 -- 
 2.54.0
