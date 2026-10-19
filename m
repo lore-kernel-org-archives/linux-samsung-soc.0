@@ -1,58 +1,51 @@
-Received: from mail-m12766.qiye.163.com (mail-m12766.qiye.163.com [115.236.127.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBC4D597F;
-	Mon, 19 Oct 2026 11:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F454FD29F;
+	Mon, 19 Oct 2026 13:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792408909; cv=none; b=dnggJNIXAYY7yv+ZXLrZAb/+4+QK1VtMxff6E4Qvx3Es98nbfi5dwAppXcj18tMmESxku7u2zFkq/rl0efPaAiK9YLVVu70BIslJTZeTzTToHNSgvI1YB2ydVlgRf3/fllqMMnNQeTkNTIt8isxwBMzAxUybPrHijMlBTfJ+J58=
+	t=1792415412; cv=none; b=p+NDu7tpTJcA/ic4hRT+AeW6+PEQziMlwabwaM/3Or73+9SQFxiPhOzpxqsI0EUjmYkmM98ymqLxU0MUNgk8wrU0aMF5GZI89K1d3nLqvQ6ar0rGmFCHSJF5unqCkxnAlCZavfDhKXfY6gohCJOQ9CbpJhGcP27VBEYLKdhyOco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792408909; c=relaxed/simple;
-	bh=YzthQwTxZZZyGKXGe++Gkz+e5dtd76g7WaBpRqyOAsE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GH48bHGAOZqV71zkD1RygCZzycWbz1OfWnKvVA10qNHo6XhZXbM3fGfjrxLyXZdOWBPK9vqZ9ZWOvSXV9Z5NRA565msAuTnsHkTsrbIic6G2ZiqLoOlcU1uIFNFTtazcoJ6myUmQkEd+Bc0hgMuxFZAf3SwUnu8j5BJ4PAIh+Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XAPLvrI9; arc=none smtp.client-ip=115.236.127.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1792415412; c=relaxed/simple;
+	bh=gOc2iflYEYLam0Q6VPVzut2riggPOtkaY7ftQIo1ArI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ba+LMYlVDKmY9fzSO3TazhSMaiBlfUgzAxLaS8t3AlbnptSCs3/MZEuJr6kIQuSusq6ihWheYTkOddHDaYiMx3wPJIpKxIOx28A/lBHYGIIO/QD93w+Nbcd9zCfbkHVJa8B3dRiMv2OSC1HKoGimtPV4vJAHA3Zo+lpRY4n3O9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQfP/Wu/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XAPLvrI9"
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5189b8614;
-	Mon, 19 Oct 2026 16:59:11 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQfP/Wu/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E211F000C6;
+	Mon, 19 Oct 2026 13:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792415410;
+	bh=r6PkF4bnp6I0pVDOC8OuHY00fV+VdeZIgzJShsLaxsQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=RQfP/Wu/5UbTHx27ISIBvQBqbCm+3a/H+6MqmbDpIiq140xxhhCuWJGpTASB78+4w
+	 kwNn9qtpFHJDEYXI1WuuznYeWHwi6qUJDuK+xuyjLiqf/T6AIkMP3bB7o+MRSm1+wK
+	 zswGvgjCtBlSLOaXL18WF3VB7zyutByrJF8bwxccXrT+hAE5/eJScRWeqH2V1nxScQ
+	 WDbpEd086FTp+MTPhRKSz/lFlanDpF+JrGn34z2W8CJY+2zc/ObfZ8Zu7kC5Aczm0k
+	 ei+/ENwXcP432E6HX02g2Vs5kOdTKyv225a5aFx/ffU5sWskf7qfJDROnF3wWnMsJ2
+	 t4wr/36dYgeFA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Phil Auld <pauld@redhat.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Waiman Long <longman@redhat.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v4 09/14] drm/bridge: analogix_dp: Move IRQ enable/disable to bind/unbind
-Date: Mon, 19 Oct 2026 16:58:31 +0800
-Message-Id: <20261019085836.3065008-10-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261019085836.3065008-1-damon.ding@rock-chips.com>
-References: <20261019085836.3065008-1-damon.ding@rock-chips.com>
+	linux-samsung-soc@vger.kernel.org
+Subject: [RFC PATCH 22/49] clocksource/drivers/exynos_mct: Move CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING post stop_machine()
+Date: Mon, 19 Oct 2026 15:08:29 +0200
+Message-ID: <20261019130856.49711-23-frederic@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261019130856.49711-1-frederic@kernel.org>
+References: <20261019130856.49711-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -60,87 +53,50 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa15362e16603a8kunm6ee755052eac52
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaTh9JVhoZHk9MH0xMGkpLS1YVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	9PT0hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=XAPLvrI9xGz4CDuDdPqj2XN6U+5rU5nXMfI1I3XZQQTWw1reduvAlKa1xGMHSfHbOCWZimvvp7WJb6+CXzH5FZsJ26gvrQrRWotyZQN3XT3LPszJVvJQ+AO4ixpxesnkIb5oBU1rSiGNVgpZzhhLcb/Fit34DaqRbVzNNWmtl9s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=NyN2pPC4Hh7ZjgeCYVaIxeVTEwGK+1q8bxHsqrEerMs=;
-	h=date:mime-version:subject:message-id:from;
 
-Move enable_irq()/disable_irq() from bridge enable/disable handlers
-into analogix_dp_bind()/analogix_dp_unbind(). This keeps the IRQ
-active throughout the device lifecycle rather than only during display
-activity, which is a prerequisite for supporting HPD detection while
-the display pipeline is inactive.
+Between CPUHP_TEARDOWN_CPU and CPUHP_AP_OFFLINE, stop_machine executes
+all the teardown callbacks while stopping all CPUs in the system. This
+doesn't mix-up well with running RT or isolated tasks.
 
-This is safe because the HPD interrupt sources are now managed
-explicitly:
-- Native HPD interrupt generation depends on the controller's power
-  domain and clock. When runtime PM has suspended the device, the
-  controller cannot produce interrupts, so the hardirq is never
-  entered on an unpowered device.
-- For GPIO HPD mode, the native HPD interrupts are muted in
-  analogix_dp_config_interrupt(), and the hardirq reads only the GPIO
-  line via gpiod_get_value(), which is safe while the controller is
-  suspended.
+In order to transition smoothly from global stop_machine to finer
+grained synchronization between teardown callbacks and the other CPUs,
+a new stop machine post function has been introduced to be executed
+after the main one with IRQs still disabled while other CPUs can exit
+stop_machine().
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+The teardown callback here simply disables the IRQ and clears/ack the
+interrupt bit on the local device. All these operations can run
+concurrently with other CPUs.
 
+Move it to post stop_machine() accordingly.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
+ kernel/cpu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v3:
-- Move this patch after mute/unmute related modification and detail the
-  commit msg.
-
-Changes in v4:
-- Add Tested-by tag.
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index b92d28546192..addd319719de 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1018,7 +1018,6 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_init;
- 	}
- 
--	enable_irq(dp->irq);
- 	return 0;
- 
- out_dp_init:
-@@ -1160,8 +1159,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
--	disable_irq(dp->irq);
--
- 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
- 
- 	pm_runtime_put_sync(dp->dev);
-@@ -1574,6 +1571,8 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		goto err_unregister_aux;
- 	}
- 
-+	enable_irq(dp->irq);
-+
- 	return 0;
- 
- err_unregister_aux:
-@@ -1585,6 +1584,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- 
- void analogix_dp_unbind(struct analogix_dp_device *dp)
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index c08ef67e3499..27e6542fb6c4 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1275,7 +1275,7 @@ void clear_tasks_mm_cpumask(int cpu)
+ static int take_cpu_down(void *_param)
  {
-+	disable_irq(dp->irq);
- 	drm_dp_aux_unregister(&dp->aux);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+ 	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
+-	enum cpuhp_state target = max((int)st->target, CPUHP_AP_ARM_L2X0_STARTING);
++	enum cpuhp_state target = max((int)st->target, CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
+ 	int err, cpu = smp_processor_id();
+ 
+ 	/* Ensure this CPU doesn't handle any more interrupts. */
+@@ -1303,7 +1303,7 @@ static int take_cpu_down_post(void *_param)
+ 	enum cpuhp_state target = max((int)st->target, CPUHP_AP_OFFLINE);
+ 	int cpu = smp_processor_id();
+ 
+-	WARN_ON(st->state != CPUHP_AP_ARM_L2X0_STARTING);
++	WARN_ON(st->state != CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
+ 	/*
+ 	 * Invoke the former CPU_DYING callbacks. DYING must not fail!
+ 	 */
 -- 
-2.34.1
+2.53.0
 
