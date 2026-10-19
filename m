@@ -1,102 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F454FD29F;
-	Mon, 19 Oct 2026 13:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27444F474D;
+	Mon, 19 Oct 2026 13:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792415412; cv=none; b=p+NDu7tpTJcA/ic4hRT+AeW6+PEQziMlwabwaM/3Or73+9SQFxiPhOzpxqsI0EUjmYkmM98ymqLxU0MUNgk8wrU0aMF5GZI89K1d3nLqvQ6ar0rGmFCHSJF5unqCkxnAlCZavfDhKXfY6gohCJOQ9CbpJhGcP27VBEYLKdhyOco=
+	t=1792417088; cv=none; b=DRyN3U6sjGxk3/fAA5/4xy2aVeZ3etmeQRCJtzqpcOMSUgGPUsXBPOXMtGxQL5VgenAXUr4j0l2TQYIO222dyK+iePs8zlfbtKlstmY/n4GQ38RYbCqiLEPDP4JWY6ENUx4OWDF7McQ+tlJeLMUdrNY8yCnNmXt46sasSc66csk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792415412; c=relaxed/simple;
-	bh=gOc2iflYEYLam0Q6VPVzut2riggPOtkaY7ftQIo1ArI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ba+LMYlVDKmY9fzSO3TazhSMaiBlfUgzAxLaS8t3AlbnptSCs3/MZEuJr6kIQuSusq6ihWheYTkOddHDaYiMx3wPJIpKxIOx28A/lBHYGIIO/QD93w+Nbcd9zCfbkHVJa8B3dRiMv2OSC1HKoGimtPV4vJAHA3Zo+lpRY4n3O9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQfP/Wu/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792417088; c=relaxed/simple;
+	bh=H72UuwdPD6tynQBkJ++nrNG6UGsqGHoCTtCOjoUOuvA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=leUf4tqUo/Qsv1I/CtpKZMbwUFbjAy1mbnPzYf1TR2Tv6NwpqZnXF/4gb4dlZnAuF2hTC4t5+zmCV6aO9MSU+7Kn0hQavN4jX74+VMW1SaRM/rTXV37WQxV+iEXdLiyD4JEzOFfNU01RENDSXNWULXTt/UsjrVx+HPEPfHdmQoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b7vVP6bA; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQfP/Wu/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E211F000C6;
-	Mon, 19 Oct 2026 13:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792415410;
-	bh=r6PkF4bnp6I0pVDOC8OuHY00fV+VdeZIgzJShsLaxsQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=RQfP/Wu/5UbTHx27ISIBvQBqbCm+3a/H+6MqmbDpIiq140xxhhCuWJGpTASB78+4w
-	 kwNn9qtpFHJDEYXI1WuuznYeWHwi6qUJDuK+xuyjLiqf/T6AIkMP3bB7o+MRSm1+wK
-	 zswGvgjCtBlSLOaXL18WF3VB7zyutByrJF8bwxccXrT+hAE5/eJScRWeqH2V1nxScQ
-	 WDbpEd086FTp+MTPhRKSz/lFlanDpF+JrGn34z2W8CJY+2zc/ObfZ8Zu7kC5Aczm0k
-	 ei+/ENwXcP432E6HX02g2Vs5kOdTKyv225a5aFx/ffU5sWskf7qfJDROnF3wWnMsJ2
-	 t4wr/36dYgeFA==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Phil Auld <pauld@redhat.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [RFC PATCH 22/49] clocksource/drivers/exynos_mct: Move CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING post stop_machine()
-Date: Mon, 19 Oct 2026 15:08:29 +0200
-Message-ID: <20261019130856.49711-23-frederic@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261019130856.49711-1-frederic@kernel.org>
-References: <20261019130856.49711-1-frederic@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b7vVP6bA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792417087; x=1823953087;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=H72UuwdPD6tynQBkJ++nrNG6UGsqGHoCTtCOjoUOuvA=;
+  b=b7vVP6bAKT2lnrksjxrKNRp6Fcq/zGuBfEHaylFkmoO/hFlzrAXYV6gb
+   HNL3nnY3mLLYkM99/zaKZEek6LuMxDiVwprezypk6UCgsM7yGwzMu7oMn
+   1p6pggYDXHWzSI2zpCzecSIfPk42YTw+V/b2/ewhxp3mauayXoCLnllif
+   Q5/2FoiTzdAuCjj2ZTNTl2GdGJCEezeFt1RvN8X3eaEpCwwzydyNhUk7S
+   tEhAqablwBYWYZitplilD5RRq/7K6cR2fu4+ObVPysMo87B6s+Gbin+lO
+   KppuGO2T3HbMdNKdzvlSqWhfdVBo/OShZtcMbNotfj4s0DWMXDwPD+cNS
+   Q==;
+X-CSE-ConnectionGUID: Zd7UjRYwS0SRhoiWBS49gg==
+X-CSE-MsgGUID: 5OhGJ6jzQoW0nj8qBodSNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="994027"
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="994027"
+Received: from fmviesa012.fm.intel.com ([10.60.135.152])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 06:34:26 -0700
+X-CSE-ConnectionGUID: D4bkrAy7Tr6bze2QW4b/Cw==
+X-CSE-MsgGUID: xwg9x5xdT4KFrH58dQ8G/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,167,1787036400"; 
+   d="scan'208";a="4295026"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 06:32:17 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Avi Weiss <thnkslprpt@gmail.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+ <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Avi Weiss
+ <thnkslprpt@gmail.com>
+Subject: Re: [PATCH] drm/exynos: hdmi: free EDID on connector update failure
+In-Reply-To: <20261012064334.3193085-1-thnkslprpt@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
+ 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+References: <20261012064334.3193085-1-thnkslprpt@gmail.com>
+Date: Mon, 19 Oct 2026 16:32:14 +0300
+Message-ID: <e22eadd0ada0c8243cfdf7829580984fdf897498@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Between CPUHP_TEARDOWN_CPU and CPUHP_AP_OFFLINE, stop_machine executes
-all the teardown callbacks while stopping all CPUs in the system. This
-doesn't mix-up well with running RT or isolated tasks.
+On Mon, 12 Oct 2026, Avi Weiss <thnkslprpt@gmail.com> wrote:
+> If drm_edid_connector_update() fails, hdmi_get_modes() returns
+> without freeing the EDID allocated by drm_edid_read_ddc(). It's
+> an unlikely error path but nevertheless possible and should be
+> cleaned up fully.
+>
+> Free the EDID before returning, while keeping the existing return
+> value of 0.
+>
+> Fixes: f6e4f57fd90dc ("drm/exynos: hdmi: convert to struct drm_edid")
+> Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index d4fce39c2b61..386557a7f5e8 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -893,8 +893,10 @@ static int hdmi_get_modes(struct drm_connector *connector)
+>  	drm_edid = drm_edid_read_ddc(connector, hdata->ddc_adpt);
+>  
+>  	ret = drm_edid_connector_update(connector, drm_edid);
 
-In order to transition smoothly from global stop_machine to finer
-grained synchronization between teardown callbacks and the other CPUs,
-a new stop machine post function has been introduced to be executed
-after the main one with IRQs still disabled while other CPUs can exit
-stop_machine().
+You could just move the drm_edid_free() call here to avoid duplicating
+it.
 
-The teardown callback here simply disables the IRQ and clears/ack the
-interrupt bit on the local device. All these operations can run
-concurrently with other CPUs.
+> -	if (ret)
+> +	if (ret) {
+> +		drm_edid_free(drm_edid);
+>  		return 0;
+> +	}
+>  
+>  	cec_notifier_set_phys_addr(hdata->notifier, info->source_physical_address);
+>  
+>
+> base-commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907
 
-Move it to post stop_machine() accordingly.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index c08ef67e3499..27e6542fb6c4 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1275,7 +1275,7 @@ void clear_tasks_mm_cpumask(int cpu)
- static int take_cpu_down(void *_param)
- {
- 	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
--	enum cpuhp_state target = max((int)st->target, CPUHP_AP_ARM_L2X0_STARTING);
-+	enum cpuhp_state target = max((int)st->target, CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
- 	int err, cpu = smp_processor_id();
- 
- 	/* Ensure this CPU doesn't handle any more interrupts. */
-@@ -1303,7 +1303,7 @@ static int take_cpu_down_post(void *_param)
- 	enum cpuhp_state target = max((int)st->target, CPUHP_AP_OFFLINE);
- 	int cpu = smp_processor_id();
- 
--	WARN_ON(st->state != CPUHP_AP_ARM_L2X0_STARTING);
-+	WARN_ON(st->state != CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
- 	/*
- 	 * Invoke the former CPU_DYING callbacks. DYING must not fail!
- 	 */
 -- 
-2.53.0
-
+Jani Nikula, Intel
