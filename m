@@ -1,24 +1,24 @@
-Received: from mail-m12739.qiye.163.com (mail-m12739.qiye.163.com [115.236.127.39])
+Received: from mail-m127173.xmail.ntesmail.com (mail-m127173.xmail.ntesmail.com [115.236.127.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F244A3F1B;
-	Mon, 19 Oct 2026 09:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A8F392C32;
+	Mon, 19 Oct 2026 09:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792400665; cv=none; b=A5LFtx3IFxvG4GgtLdOh0wC4NXcWb6/RMFZr1c+gEbzCA3ar051H32g975ouRWuXGFK2N0PTyDgSNKWxJoiSRMT56WRe2drnqV6OLsS5rCCwFGgCqqWaKB5GRO1D01flakl1TP8wrgTw6yeH9yBwTZZxV0a9OY838402768eSLQ=
+	t=1792400680; cv=none; b=psIZ/CzZXZkmx2QEoUme1G05BLvrRbM2Y8jQt6727NETuHoRF9IO+UAtV/fmaq5cjVgOUgtOg7orOkfl8YnDDI5YcnbzBO9G7De/tq8PHmWHxWpSD14Tl221TWYpOyhZ7PCvIircE1pd/PzFmWh6ZGWNtaNBwDpVNTPZpUm5r2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792400665; c=relaxed/simple;
-	bh=3AtYw/BsRSkzhV5300BYfHgpULsAalCTQqNYj28KyiQ=;
+	s=arc-20240116; t=1792400680; c=relaxed/simple;
+	bh=b8J1D/ds98oZw+FdwRF2AjJohnVXj6QTYoo4I3FSxE4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PSNEyQNzL4yGXOdYctZ7G10v6auZEpKmkXM0Xi/yyqfiwycoV4icy2Ho7Dsp93aFVSzJUhH4C98J4xiqeuTB13bXsGyRm+rbAdBaqLAXWve2wM2xcleczpmVrj++j4X+mn+g96pewDZhElGz1Jz1FjVsYxWSMv+NrqwsHtScAvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hk3A1/Kl; arc=none smtp.client-ip=115.236.127.39
+	 MIME-Version; b=HHDSmW+gSGnHibTAW8TpkHjBxw82e1nW1dXUeMDYM1qGyMggtICkEKh6rkI2T+Uc3fdw6uHIxBeaLmaHjaMjM4DsRzRjBwT40/OXdEe5tKAXWZiAuyoSz58YX6WPYAVu711ea6CKjXFWaBKJiAxs6TV+7BKH0GPF9/Phq6UWltU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=fE+r9H21; arc=none smtp.client-ip=115.236.127.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hk3A1/Kl"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="fE+r9H21"
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5189b860c;
-	Mon, 19 Oct 2026 16:59:10 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5189b863d;
+	Mon, 19 Oct 2026 16:59:18 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -47,9 +47,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v4 08/14] drm/bridge: analogix_dp: Skip native HPD interrupt ops for GPIO HPD
-Date: Mon, 19 Oct 2026 16:58:30 +0800
-Message-Id: <20261019085836.3065008-9-damon.ding@rock-chips.com>
+Subject: [PATCH v4 14/14] MAINTAINERS: Add entry for Analogix DP controller bridge
+Date: Mon, 19 Oct 2026 16:58:36 +0800
+Message-Id: <20261019085836.3065008-15-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261019085836.3065008-1-damon.ding@rock-chips.com>
 References: <20261019085836.3065008-1-damon.ding@rock-chips.com>
@@ -60,81 +60,48 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa15362dcad03a8kunm6ee755052eac4a
+X-HM-Tid: 0aa15362faa303a8kunm6ee755052eac91
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaGBlLVhgdTkhNTEIZHxlLSFYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZHk9KVktLSh0fSh5KGEMfGFYVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
-	JDQ0xVSktLVUtZBg++
+	JDQkpVSktLVUtZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=hk3A1/Kl1OQ9FnfocQX7UYVDnkPSMJdD6ryZb3YNshPp8xdjErKlCjdhuNmdGtY2/WRUCaetl7HLC2B8AZyf7cFHTCVzIwktrTzgWGIlVil/BnDCFT2hw3wLU2Ke63DgSOGxALoD1zryxMBFxL/+uv/IMtxFVIrrzJKA0rGq6/E=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=w/AHABs7lpo2wt8m91XWoj05K09t8me1OuP0cukEO70=;
+	b=fE+r9H21RqBWhClUz0GSOjilrCJHV3Ej56qWSERb3oSqTddT4ubw/zm5cWhxFJq787kHkG3bBwcr34Rw43jKgiHpNWf3ghORP6XVDxVYqL+aiUkiuUtGfKTqrogTQYNd3+7oFcos6fTdJhR3Aimga+H8jJ86ZzNlBakTBSsPnNA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=PfFndZaVFmyUrI+kd6bT8WqUeL7pyt32bXHtU/pq9QY=;
 	h=date:mime-version:subject:message-id:from;
 
-GPIO HPD does not rely on DP controller internal native HPD interrupts.
-Skip native HPD register manipulations to avoid irrelevant operations.
+Add a MAINTAINERS entry for the Analogix DP controller bridge, covering
+the core bridge driver, its register helpers, the public header and the
+DT binding, so that get_maintainer.pl routes related patches correctly.
 
-Move the hpd_gpiod guard to its caller so the helper operates purely on
-the given bitmask, and mute all native HPD interrupts for GPIO mode.
-
-Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-
 ---
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Changes in v2:
-- Adapt to the newly added IRQF_ONESHOT related commit and expand the
-  commit msg.
-
-Changes in v3:
-- Reorganize the branch layout for hpd_gpiod check.
-- Simplify the commit msg.
-
-Changes in v4:
-- Add Tested-by tag.
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 2 +-
- drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c  | 7 ++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 287fc16125ef..b92d28546192 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -717,7 +717,7 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
- 	bool hpd_detected;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a08087fb6e67..6518cbbd578c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8037,6 +8037,17 @@ S:	Supported
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+ F:	drivers/gpu/drm/sun4i/sun8i*
  
- 	irq_type = analogix_dp_get_irq_type(dp);
--	if (irq_type)
-+	if (!dp->hpd_gpiod && irq_type)
- 		analogix_dp_clear_hotplug_interrupts(dp, irq_type);
- 
- 	if (!dp->hpd_gpiod && analogix_dp_is_rockchip(dp->plat_data->dev_type))
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 025da25463a8..af5e5a8ec88d 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -193,6 +193,11 @@ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
- 	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
- 
-+	if (dp->hpd_gpiod) {
-+		analogix_dp_mute_hpd_interrupt(dp, HPD_IRQ_ALL);
-+		return;
-+	}
++DRM DRIVER FOR ANALOGIX DISPLAYPORT BRIDGE
++M:	Damon Ding <damon.ding@rock-chips.com>
++L:	dri-devel@lists.freedesktop.org
++S:	Maintained
++T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
++F:	Documentation/devicetree/bindings/display/bridge/analogix,dp.yaml
++F:	drivers/gpu/drm/bridge/analogix/Kconfig
++F:	drivers/gpu/drm/bridge/analogix/Makefile
++F:	drivers/gpu/drm/bridge/analogix/analogix_dp_*
++F:	include/drm/bridge/analogix_dp.h
 +
- 	/*
- 	 * Either HOTPLUG_CHG interrupt or PLUG + HPD_LOST interrupt
- 	 * pair can be used to implement hotplug detection.
-@@ -415,7 +420,7 @@ void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp, u32 irq
- {
- 	u32 reg;
- 
--	if (dp->hpd_gpiod || !irq_type)
-+	if (!irq_type)
- 		return;
- 
- 	reg = analogix_dp_irq_type_to_common_int_sta4(irq_type);
+ DRM DRIVER FOR APPLE TOUCH BARS
+ M:	Aun-Ali Zaidi <admin@kodeit.net>
+ M:	Aditya Garg <aditya.garg@linux.dev>
 -- 
 2.34.1
 
