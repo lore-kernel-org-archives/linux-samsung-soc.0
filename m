@@ -1,49 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=109.224.244.28
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792499277;
-	b=bYX5uCghU5GznXB62IZ11+jw8Qdf/ogOmUtc8qd6RTAgsd2FK05oMPxsVz9uiYDhT43H
-	 5YqxcXTwwy+pmEyMnVi7OKdvN4zpboWKDLBPjqmGeSW/239VRXqPdrJr5qD45uWME0jH5
-	 swIsbMBxHsusrZFhRRuhNwI9HNBoamdpP0oKpDUbpAqukrC9TT8eb2IejiqSte49qzb7d
-	 8zJ4Am0A7XYQ/pZWfOr2q7Z/mChFJu/+/r9Sg5JVSoC2i4Un5IJX1by2MOZLXwLOfnBJt
-	 TMYjnAYeHwA84MaeTD6VlaCsZx+Gdr03+VSJBjTM+21h5D9Mu4Jk/uBfjXiANH1le9w==
+	t=1792501018;
+	b=fWTsAViDij4ZodFdvwqH6NpSRMhqS1IV5IcN8hvjI1CLbGyljgCt26l86hDvM2RZZ1K/
+	 HtpEnXxLzJ2Q/ZFyfaIC12MX5OGcD0O6nobeumVUu2hB/PBwFBapLE6/i7LwUo8+nvdua
+	 lzpVaEJpGjHm8VdEZ1F/KpVs14QEC9aP0VyxRDrVrMpJK24K3qzBr9y++RSfPiBzXY73i
+	 8jXajFRS0bcbssEZcAZrDUcpUAK+cSMdT9ab3fpBa/WgKwYDg76VRA0A08OyL+fU0E/hb
+	 KitPSEuZYT78wb9CVMFmcaAzke0fM5JHBUPFgFWnCs2yNRkQ8MUe8yJj3ovoYUooQ0Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792499277;
-	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=4fS8JsWi87lgCJfrvj9ZOh/iM3TaVnYX1NFeiZcZli4=;
-	b=RfLoctfI4EWknp9etnZq/s4mvEqG9GqpgLRH8LlPLkZs7MZLrFoTMwgi8OPAFRf/cia8
-	 UTO2Ud5uiay5Aa44EVdLVMGdD/i6wRAQfCkamF8ap3o3WACtZxXro0H1R83jg9ly52D9i
-	 uk6mH5RTsXz5vfc1UrKsHREiyRa/0RpKQmh/S9GOO7xHW3WPrp4smWv+xALiX1b7sx0it
-	 Ocd+GO8GfDoARpQsHaZBv4r7DAP7LV0Il3fUZBt5mTgA+9XV01LCnXcaLf1sCn2rfPLgA
-	 GRYYIDBKzZ4zo3KidQ+VLcxq2bvUJLPa4QIHp5zOIQoZQwDnVtdBDTIJKLo+Nvom0Cw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792501018;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=w/aZgrm7dgCOsexbLaT4aECuHA6/h9us0ehoDpa7RA0=;
+	b=Oler/xlpznARtkAZiZEidHHrN2luyZq2TysaCwQxSJKnBB1Na0T8Ml7QDa6NqPXfVBF+
+	 Nj4iyMQK0Fj0o7tE9j7KQth3RdH+/fGlJ/vGeevbMgY52iEoJBOFdKmoZ2sbTStWE4Iwg
+	 rtxhzgEwbWQ8E/GYpEwl0RdYvuZw32D1X68RGXxbeCRWoe79/kTO0ol9mKyJr0N+/Qi2P
+	 DomQeMY84If8Jgw7TvY/9sueklRbKXRFDPdv0Irk71h1FJfpTCOzOYNIo0JwZ7/TBvw0c
+	 J1HQAdUyjVP+Lb0SbIFLG3yc9HJMXHPcWgwCDpBLaTKFmbKrVQO2oFmqSl08tZSoLzQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=protonmail.com;
+	spf=pass smtp.mailfrom=protonmail.com;
+	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=Zpsirt15;
+	arc=none smtp.remote-ip=109.224.244.28
+Received: from mail-24428.protonmail.ch (mail-24428.protonmail.ch [109.224.244.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7A7606A31B
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 12:27:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DBF1F000C6;
-	Tue, 20 Oct 2026 12:27:54 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>,
-	Roy Luo <royluo@google.com>,
-	Naveen Kumar <mnkumar@google.com>
-Cc: linux-phy@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
-Date: Tue, 20 Oct 2026 14:27:51 +0200
-Message-ID: <90a172c2980073a09b4f01c21a251c3d0d2d6fe5.1792499240.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7697606A31F;
+	Tue, 20 Oct 2026 12:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E7697606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=Zpsirt15
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1792501014; x=1792760214;
+	bh=w/aZgrm7dgCOsexbLaT4aECuHA6/h9us0ehoDpa7RA0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Zpsirt15KyfTrH31JaJcCMcTT7NRbu+8WsdQXGrljWHUk0wPUCmI+c7cfUXvxOLhD
+	 ixLe55UCsM4AFHDxmvTpzIGdgLqeHTj7imPf8z7gq7Nsf4belrgBT2AIn+J7yc6hHB
+	 Wd8Re/jFOvMKNKZjNEHJ808PA7qPR8ho9KcIw2Yo1ydoPwLkMH1ENkD2SOWhR5Rtys
+	 /TMt30ne/rsY6s8/Im9uMZ/m2pF2ou+2sfLvlxzu088vi6yWciHQRckpmg7VcE467F
+	 93osPHsNTTzNc+nWK3Tz/4poHFsBafCwUnjp0HpKFyyFzp8kpa8ZTSFq7UmmYOJGM1
+	 hOUNOmYp6DNLw==
+Date: Tue, 20 Oct 2026 12:56:48 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>
+From: Aiden Isik <aidenisik@protonmail.com>
+Cc: Aiden Isik <aidenisik@member.fsf.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] arm64: dts: exynos: add initial support for Samsung Galaxy Watch FE
+Message-ID: <s4UILXDPoM5J79laZ-Kd-LqQhFFKEy6vh8axrHJUAQ2EP4R1HOmcCyV0xtu_LhKfTBHk49bkb3E9qD44d7LoeRAuIA8wzfEjPrF-sJ2xFnE=@protonmail.com>
+In-Reply-To: <e4af2bce-7bfa-463b-927c-9641d74e0e8e@kernel.org>
+References: <20261019-for-next-lucky7-v2-0-c4ecab4b1c4c@member.fsf.org> <20261020-eminent-juicy-woodlouse-c3fd24@quoll> <pyssceEfVM7C-RyMLXJw8UV4wTs-zyDxywEasLdafttU1LwckC7RjzO4BvAhElk2ExTaXVZYZ0NSQ82FcgBFXSrsGmj2TtBQ7HN0vv7gEOw=@protonmail.com> <5CDdVVnZEwA25WkRzHJtuO-Tw47UZGTEFrZ9SBbQ2ax1bG9_OUemLDoX5C-TzyFyS5WxuFauKFU11QGk08RM0_Nn_3HGrglq0AR7wr8IggU=@protonmail.com> <e4af2bce-7bfa-463b-927c-9641d74e0e8e@kernel.org>
+Feedback-ID: 46524699:user:proton
+X-Pm-Message-ID: b772592dfa4fb31ed61ac52e603a69298ce5b717
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -53,36 +64,15 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The Google Tensor SoC USB PHY is only present on Google Tensor G5
-(Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent asking
-the user about this driver when configuring a kernel without Google
-Tensor SoC support.
+> That was never the case. See maintainer soc profiles.
 
-Fixes: cbce66669c82ee9a ("phy: Add Google Tensor SoC USB PHY driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - ARCH_GOOGLE exists as of commit cf3df78629f24b40 ("arm64: dts:
-    google: Add dts directory for Google-designed silicon") in
-    soc/for-next.
----
- drivers/phy/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks. I have now read maintainer-soc.rst, and will drop the watchdog node
+until its compatible is fully in-tree.
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 105fbe408aa25b35..d151c05297d7e57a 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -93,6 +93,7 @@ config PHY_ECONET_PCIE
- 
- config PHY_GOOGLE_USB
- 	tristate "Google Tensor SoC USB PHY driver"
-+	depends on ARCH_GOOGLE || COMPILE_TEST
- 	select GENERIC_PHY
- 	depends on TYPEC
- 	help
--- 
-2.43.0
+Thanks for your patience with my patchsets.
 
+Kind regards,
+- Aiden Isik
