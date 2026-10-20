@@ -1,102 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792474680;
-	b=1ytQcrpdLLx2B53A6mttY7OAEQ6N1lQKRirPv+KJONTup9ch2oAMDP4xg3uuqbXBLHBv
-	 X0ftXV+JaGJvS3nKaSJV2Y7fGovxAKYpfrkRdxUTHI5lTd7c37J6VkBpFOmnIDdkRj2IG
-	 f+dfVfzHGSKtJp+8OSZ12nevpamum4irLuIBqEaZfvWFwSWEqf5aP6PqdkdkAnbVRO6Xr
-	 ZOcrq7bHtmK3n0c26dwzVvb7jXJ30+Pz8fpDguZg6ONBwJ4jEETceVOd3Ch/oZt1ttDqo
-	 uGBPe9YFKuSEzmHOW5J/ppTgaa+H/ci/FUSPV36SWe5B9ebLjYFfjYzinJ5jcfj5AEQ==
+	t=1792476053;
+	b=JEhpPIyMXEYyQ5yOP5/NlQE6Ph6dwhyRWRvmhQ5MZ1aJVmaqOnVfHq+4WhZhh+8Clhr2
+	 QCtVK5tOh+TEwJJw5/98mbqW2eUy54Zhj9XRA2vpEuaOPPUa8Of8mprfjLb3X+EgvDIhZ
+	 VALyNYjTofuBf9N1FJjE0GtBKNkJyVldgqa04MRzCbUShznqHLUNLexk1OmRrQ4wZ3X/J
+	 LJWjE0PjbGoy96Lkq9vrUKLWnnTd9XanzWMANnccQufa+a/s78SGQEDUew23FY3YCyLDo
+	 iqeYPevphEEWilTrCK5l5n/00psZm1R7bUYIryqT8KlT/w/uH5vsLjKMIU7vgQrgH/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792474680;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=AbQx3F5DeqIg01v5J1HMAoVNtPC3XJeQSCQTqpj8efU=;
-	b=LmX8lsFz6Bh9uQ3+a63tMsWXaTWImzaSv4m8fZURRN1AyNt+M1sNuwYqSGJXCkJzERI5
-	 rFu09egX/3BcLkvAOMuB6dZ7OHwCsqMQ7zvVZVSQcjz5cwuADuPrk6HcnZ3qhn4j6fyIj
-	 7mgLa6f34gwdvOVRME013cRjfFWS3WbtsDGs3MPc00cJq0jRNuA2iFvzsvK9vVCJN2ovA
-	 Nob8FdIvm2mxNhTI/iyW2OC/Q4YDbLYoWP4YQmA3onQklfhCOTHQ6emwPFo3tzTk7l86S
-	 +IWnzH30ORwaofznnb0uD6RVmek4wupd9ocipLnrKZ1upiZjG0K0WHeUWQtg8oJUufw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792476053;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=tjahWStJaWAkZdXXLpQF/IAPVZCHaZCufugG+xHQea0=;
+	b=YI3m260eL2eZODOlq+qjvyMta4feLl6zQp8+w+w6tYpWT1UPoRyJJ/UPY6AKv61iumIO
+	 ECLbfLq4k0YBSqR+s27A2GTgEyiNW30TjxndVkNWXACKcfqKQ0Y5gm7pXEZRZTbNB86+2
+	 N9MIxbJNRDsUl8P2FQ2KllSWvqYCDCmc/uKTeRybMmD2Jy6PV3drfFn11Jzz03rrsLIwK
+	 /uE7+Msm2BRKRDKjJuAlEoQkW83mbhVfkrkYI8L9szGWuKrDzCzwKzsVhKaAr2kccQNQM
+	 DaKQi0umO2N3x0FkDss8WwXCOkAVzteokkgCziJL1c0EQSqxc+vrVUyhL0G5BZt5d9Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RUgD4eHz;
-	arc=none smtp.remote-ip=192.198.163.9
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wjhl2gV9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9454C606A319;
-	Tue, 20 Oct 2026 05:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9454C606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB1D606A319;
+	Tue, 20 Oct 2026 06:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RUgD4eHz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792474678; x=1824010678;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CgbzEe28G1zTrLdrNfJYfgWctwC1jg4tju9+nzpN6Co=;
-  b=RUgD4eHzpPUBnKZVvbHMKd1EjVoOsXRWo6EQDyyqUB0lu9O/9vJu4qCU
-   mMteyl3wn7+JrFaj5kwOUJZ2mE1sR3dXQ56UubBuxDKTvZGd7Amn61jna
-   6CY4EUNUBvZHMJK+itmyRzXLD8ElYjfS58eUa/UzcAYcxDUu48Chn35wZ
-   vHppLPPXUG1U9YlokzMZlDofYpmzn66Ma+5B/2+1bTpTFfbJlilbQW6f0
-   JwfZoBcnwM0GaGTVGZXvHjb+5m3hl6caf4Sw/9F/RwrwR8qHbh3fFAEdb
-   szrftpmu8eOhW2J0bZtMpi0RtslsaOjgDX9KyZ7WDdq/raCxZr1dXehXI
-   A==;
-X-CSE-ConnectionGUID: tksN/plqRmmK9zUIYunwww==
-X-CSE-MsgGUID: eNyqFsdwTXymOylt9rTpag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1059050"
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1059050"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 22:37:57 -0700
-X-CSE-ConnectionGUID: LV6bCR60Sxa6Yc/YIXoDCg==
-X-CSE-MsgGUID: WFK0iYt7RvyviF8oI28nAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="2691338"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 19 Oct 2026 22:37:50 -0700
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xJ2Xh-00000000Mxi-3lzb;
-	Tue, 20 Oct 2026 05:37:45 +0000
-Date: Tue, 20 Oct 2026 13:37:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Damon Ding <damon.ding@rock-chips.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <lumag@kernel.org>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: Re: [PATCH v4 11/14] drm/bridge: analogix_dp: Use
- bridge->next_bridge instead of plat_data field
-Message-ID: <202610201323.RdqouIbq-lkp@intel.com>
-References: <20261019085836.3065008-12-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wjhl2gV9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62EE11F000C4;
+	Tue, 20 Oct 2026 06:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792476053;
+	bh=tjahWStJaWAkZdXXLpQF/IAPVZCHaZCufugG+xHQea0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Wjhl2gV9AJj254FHkZF+7CKdQCdvE20SmL91dGF/QylrOjGMzIG+pH0qGFHABSB9J
+	 pb78GQxC1NtOYNqDXATp+PfYyJ4N8CCZgMk6YPEDCoRgsazvhYQC0D+LtNa4OKNPYg
+	 wu6wGoWnWs/9fymyslDAFWwciUauiHXbyFxpICotOfa1aWeUaYmQ9ldFDyE/kZQ4jf
+	 HysdKsOtcRmJbDPGmoh37DtIJnMdCRV/Iv688KubOM/8N/FpV74m80N5ro0hXZp6m7
+	 4t3jbT+cf9L8lwuzizRyUWUKJsYGv/da/M0qNm9yQR/rzwxclTAoP3H/w7u/dSp8wq
+	 seB5wZccb2NzQ==
+Message-ID: <e43c4831-1a12-45b3-9614-97dbd2bc48d5@kernel.org>
+Date: Tue, 20 Oct 2026 08:00:47 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -106,38 +51,109 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261019085836.3065008-12-damon.ding@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] dt-bindings: input: touchscreen: samsung,s6sy761: Add
+ S6SY791 and reset GPIO
+To: Lukas Timmermann <linux@timmermann.space>,
+ Lukas Timmermann <foss@timmermann.space>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20261011-lat3st-google-raven-touch-upstream-v1-0-2a9f55159b9e@timmermann.space>
+ <20261011-lat3st-google-raven-touch-upstream-v1-1-2a9f55159b9e@timmermann.space>
+ <0a486a08-8d6c-4ca5-8a54-e7499630095c@kernel.org>
+ <atYlyqHToGjAr22T@archstation>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <atYlyqHToGjAr22T@archstation>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Damon,
+On 19/10/2026 16:17, Lukas Timmermann wrote:
+> On Mon, Oct 12, 2026 at 01:30:48PM +0200, Krzysztof Kozlowski wrote:
+>> On 11/10/2026 14:44, Lukas Timmermann wrote:
+>>> S6SY791 is the SPI-based counterpart of S6SY761. The register map and
+>>> commands are identical for the subset the kernel currently implements.
+>>> Therefore add S6SY791 as a related touch controller.
+>>>
+>>> Optionally, the reset line can be controlled on some boards,
+>>> such as the Google Pixel 6 Pro (raven).
+>>>
+>>> Also reference spi-peripheral-props for the SPI bus properties.
+>>>
+>>> Signed-off-by: Lukas Timmermann <foss@timmermann.space>
+>>> ---
+>>>  .../input/touchscreen/samsung,s6sy761.yaml         | 37 +++++++++++++++++++++-
+>>>  1 file changed, 36 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+>>> index 1ffd17af3c53..d24f35038934 100644
+>>> --- a/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+>>> +++ b/Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+>>> @@ -8,13 +8,17 @@ title: Samsung S6SY761 touchscreen controller
+>>>  
+>>>  maintainers:
+>>>    - Andi Shyti <andi.shyti@kernel.org>
+>>> +  - Lukas Timmermann <foss@timmermann.space>
+>>>  
+>>>  allOf:
+>>>    - $ref: touchscreen.yaml#
+>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> 
+> Should I also hide this behind an if-else?
 
-kernel test robot noticed the following build errors:
+Only if the other device is not SPI.
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on drm/drm-next]
-[cannot apply to daeinki-drm-exynos/exynos-drm-next linus/master v7.3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Damon-Ding/drm-bridge-analogix_dp-Return-bitmask-from-analogix_dp_get_irq_type/20261019-165823
-base:   https://gitlab.freedesktop.org/drm/misc/kernel.git drm-misc-next
-patch link:    https://lore.kernel.org/r/20261019085836.3065008-12-damon.ding%40rock-chips.com
-patch subject: [PATCH v4 11/14] drm/bridge: analogix_dp: Use bridge->next_bridge instead of plat_data field
-config: parisc-randconfig-1001-20261020 (https://download.01.org/0day-ci/archive/20261020/202610201323.RdqouIbq-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261020/202610201323.RdqouIbq-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202610201323.RdqouIbq-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: drivers/gpu/drm/bridge/analogix/analogix_dp.ko: symbol 'devm_drm_of_display_mode_bridge' undefined!
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
