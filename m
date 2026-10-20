@@ -1,85 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792451280;
-	b=VCgDl1tR981YtZTK3B/pxME8nNp6eAhErW0cI51ZH7o7ZMBNsw0/gm0o/MLuYg2LXp+D
-	 79B3vuOr6sBJcVOVZAlACpZkRMSVSVDr8jO1x7BHgJ+VGtAStOrMnaKg6iRK7hFG3DTTT
-	 pOVzJOFasiFvtHeRSS9MQQpNUb6RsOph3snKqZlPkk72V1Sb7CaXSVnc+u30KaYBoR+kK
-	 6QG99gNBVpZAHxb/TeDN8vDXHhnKxFfcg8lTYIBAs5rnbbtwzqiwXpBaCMr/DxmeNIaR9
-	 Vgzyqk1nxVe1BQoA9dmvHO6VkaJYa02cySTWiyM8wryMiw1ybE9gzpHzAxn3Bo9XuQQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792451280;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=/15IrbGrSqzjrFkWTCPOJpVsfqAYXsYamlcuLjCS3GU=;
-	b=0WoSfTwH5M1P8lVQecv6NgE0mgdUlWXet/hbDW3IcnxQi8pVX25INp6JF5wwktppCwkN
-	 6JOBE22i04sStpLbrgyHkbUa5278cQG4fO4/0RQ3wEou5ZdGpoRMenIG6KhBFAPZfCd74
-	 ju3TZ75vqX8gUb8d0jZp89WWRTZes13e3OhD/luYfvvc8l3FE/ZoHKf+5xdR0T1W3orqF
-	 hYTIU4xQC4LYVnnw3lf0bFD50UBb3FY5mpNrf03iUdJLiQTo4oiGOgiJUeJkSojwE6oI4
-	 tNqPz6LcT2K1LghszRCF4KnyQ2skbi63eEtDho+q2lPy/yetwFti5BDxQo+IO8hLkLg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ZRqGf34y;
-	arc=none smtp.remote-ip=209.85.128.41
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792454558;
+	b=Rtc0Qvk0ZVUaLdWTooYQvs6E7PAG1uMUR1aRbBjVznPFSpZ1FIaydu+TI+kRoapCW8N0
+	 8TeJ2lDWagFEokfh0BWfT6Ohf/U+Gi2ClQCQFO9XWqWMvWmSFOhOgpNWBifgukTekqRuL
+	 qbsE2F5aQxY3+ykqOzIqE9iej+AfZm0gdjCqgNB2X1oDjaNXrUuGR53IbvTQLovbP1/1x
+	 pHNmR+XdE7fHBaZOehFBPp2UixC2q/6+s11gHGU4MD6JYKsdc2d7buH9ARGEEzyxGdGQB
+	 hA5pYilhmQ3s0buXVA7gDVxtEzEY5uUYds8HnTDjqf5L7ZpwOe1VrtXGLbdsVDdFyNA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792454558;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=4VGVxw703OxUtr56IczmXP66ou7VnTSuoj3yV9sgxC0=;
+	b=CJzsDuXkTrvalaSh8yK23hEKsE5X2FMSUypJzRF+woVcUHpcyNT6so/RJXghCR01g0cP
+	 PlZXHsKukIo5HB0EeMiOzwyWRLTKOq/Nnvc6s8FE6yG3KEy42Bkgb88TCUXbftaO3+glZ
+	 /lkBZEoTgY++KKHYa9FArRFBgOZ86bqlh93q1X3vvQhhyDnBWB/6s156rfq8N8rS7lnds
+	 oS/m9DtVD5LeQbBZ+iPedUVlUxItOauEWUOCwf8d9OSTQ2Ay7OjSRsCiPZjqSsXO5UrIY
+	 Wp7vu9sYBsTj8JGLw/NbU1a07Euh5wHgsvZH++liVcSSvpCGYcshUYTLD/ZMCD75Eow==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ld0XHEdt;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48B8606A31A;
+	Tue, 20 Oct 2026 00:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ld0XHEdt
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1792454557;
+	b=Kb50vLFjpiT5uC3t8aM7lpJkekhXvCeu6WFmeiKd2u6ZLI46rQOK54zOlLGbT3TVMPpQ
+	 mupswpyeddAJishziN2od86TQqsgpejoLOUOmj/DH1MsgcL4jrMQI+YplIigZLIc0mW0k
+	 b7I5sftm3TdYlPNwKGbqRNB3s1ELXfqON3Cx1+2y6mesP6v0zyshteDm4ebMDqvCQw90K
+	 qJSO7xEyfoD50apV6Q9XON2YNHu7gYRc37cNFcdzIDgoFI63FRDB30536wE23bdgp7Vfi
+	 WPniIdHtJ8TO1gpD1AAY01W9WyqNccxTdTKA5rlexhy3VkPTpf+8EdTr3yeTZUc9x8w==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1792454557;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=4VGVxw703OxUtr56IczmXP66ou7VnTSuoj3yV9sgxC0=;
+	b=0UV7fTf36uLRq9IzMM5haxlhn4FXogLqHKog58MU6gS5Ca4+PB1osMQoCG9oJwun0NF/
+	 ysOcHW9Zn2XPWXq2e4JaMKtNpPSVntcSnOYu+VuHzblvUzLFX0r3TZ9+QD2kNJyK+XGqf
+	 SSDvmSawpwkq2EguScQ8C/E3BmKLZJNCPRVY1PcvwacIoP3TwQEjSMHlU/2b1XncMGl9i
+	 aT8RVozFDbd2NSkqzeHSPDtYX5hsl7f5TUxelgseXLXLoh2S9WaLXacJPOYO2ZvqY/pzF
+	 WWzMXdPCwC+ToDQzn35RFcNNYuAEkebTVgEcfEGF5ZboPwOhZwpZiLJvv8hSvpP0eKg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B51606A31B
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 23:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 10B51606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ZRqGf34y
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a1cef0439aso28568605e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 16:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1792451278; x=1793056078; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=/15IrbGrSqzjrFkWTCPOJpVsfqAYXsYamlcuLjCS3GU=;
-        b=ZRqGf34y0L2eaTOSXNXcCgx4ey13Hi7lSgKxcZ0hiG25fHhTSQI1FthwlV2MaYeOb5
-         glKUEdq7peqUf4MIHsxgmepWpSL62cxxCalMyUNXAIXpm4/OHELNEWv4/RcRn756OiSX
-         3/LVXdjrH1J961z8ZMv2m4VX3z3u+a4HsRcUfXfRnu+wWiSYJMxwy+woiMmcYh/SDi68
-         jZNeAy2zgEbYvvqax8+ubrDyE2idFkQRf79iV/w4mC9+K+sV+S7ers84/XK+ayYPU2FR
-         QEerbhnp9XwEwm4uolQzzkFRik5aEi7Bk5lVrJo4s/XLChGWFWgoHMlUnu7Yv+aRxfb2
-         +EUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792451278; x=1793056078;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=/15IrbGrSqzjrFkWTCPOJpVsfqAYXsYamlcuLjCS3GU=;
-        b=XtR6/j/xyKz09iO10ighXHoIsm5qliOTK03I8pYQ47i9ggtGsuZ5X2KXPgQBt/vUOL
-         DVRkz8MwOmbEbkoy8HfQXHP4Fd9wm3nE3dUmd2dt/0I5ff0bkl+RU+7xyAlggkIyizEi
-         sAHBxi3fnWvpPyoV7c88pDBDvSwowAgLhzCTd9zaME9E/JuyF2mLmdczEgEeNVtotHIv
-         8C07OAXJZjamnjAbYJJ8ArQYAV7RSY2oFFA+jDfDnuk4AlK8fYUDkVxkjdtsVqW0k4dG
-         a/rFPnR+nBmb9xEHfiqGgI7K9f4WChLojzMOIm0zrfPnusrPGJLd2K9MFRNWkvv6jTbb
-         PHVQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzHMkBOjxG42BRI4MsGCUmg7e/w74EJ5w2yWmd+iwrZ1SXGRkWejBolYHr7vhmG0rPlKgJ1b9bJo4r/VW0OlNhY5Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKbdnTuMISO9Tep21SKnqGl4xUJFko86ZeS/tW4aqT5nbTdXkMA
-	4j359QddTssOItlbrTvWifblzM+5gIlepLEHF0sPD+Yy1BpEI2FtWV+EdR2rvtDTxF0=
-X-Gm-Gg: AYBFou3JYNJLvMgNZ4lUYZX6XcTR+CRFLUjCvGBTx2t+yfQDoMxi82U14R/BkxtZwQz
-	LxcRaolyHOO04z5fBnO9w0hxn8XMKul42i0qyLiDZ5vU1bFX3W9Yfs35utTi9XclxJLOl1kp92w
-	yifeyHBrEFDa3gIVJwRrxWjeCjJt89N8v5EuqCP0nRxUYpR49LaKOcGtU+/5L+TiOv3bPGfjAUt
-	QU4Pt+lIimI4zSlT/95H7C3KeBBoCwBGQeOQl0VZrbA4gzLxsgz4tIeQy1svjZzh5joKuJ9x5Rr
-	Gvh+OjIfGoeB1Qu2iPkOQyztwgPPbvZhTsOfg0PX87/b0L0eYrJYkQ5VjB0La9WaeFUeqX6r20Y
-	12cnkuGwmHJA0raKSEX3/fWc4TMTUSo+oKPQ7rxlu/ttQ6ZE6H1EEdkUCmU45NujvY3jUWPSWnZ
-	lyRGz0+TOVVtLxBtP40oJ84ZSYpO/OPHei+ljBGIli8Omx7R11h917BYH7TgZ1AInaqr+jSXLy1
-	OLYs8YqAuU8e8SJewKc/pntZYUrxA8qETxK1bryImqfIS5SWxT735xjwZXy6A==
-X-Received: by 2002:a05:600c:5494:b0:4a1:e0e3:7fe0 with SMTP id 5b1f17b1804b1-4a1e0e3802emr144230465e9.12.1792451278361;
-        Mon, 19 Oct 2026 16:07:58 -0700 (PDT)
-Received: from [127.0.1.1] ([94.4.85.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a1f6631abfsm4083445e9.1.2026.10.19.16.07.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 16:07:57 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-Date: Tue, 20 Oct 2026 00:07:54 +0100
-Subject: [PATCH] thermal/drivers/samsung/acpm-tmu: fix platform_driver name
+	by smtp.kernel.org (Postfix) with ESMTPS id D50C21F000C5;
+	Tue, 20 Oct 2026 00:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792454557;
+	bh=4VGVxw703OxUtr56IczmXP66ou7VnTSuoj3yV9sgxC0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=Ld0XHEdtbg+hh2JS/Fx6OukGfBOz5J49FHCKoK0UkXj9ZbMqSVCMT6or/D7owwE/2
+	 Xx98JkxkndrMw4Yi1F1xvcJY5JIOIi8Ffr/gKY74u/hyxgCnk6YMzLbJquyUUTNSuK
+	 l9RdZErsKJHgleAh3FmvfvFrRvlIY1rW0FZ/t21B+hbh+VYN/IVpMToEo9ZADwdKXX
+	 xirgWdrLrXFsHZvwoXKBdYdPs3kJVnfBLLWn61D1mZO3Vhogm+XdaZxTd7D+nb30YF
+	 N32DPu1yUGgMqXWI8Vyuwtxe4piQQD0JzRVzueqtiF+IPEJMyXuMkRz23ChgeV2iTd
+	 OwQVqyEBUWv4Q==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 66E33406BF;
+	Tue, 20 Oct 2026 00:02:36 +0000 (UTC)
+From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
+Date: Tue, 20 Oct 2026 01:02:34 +0100
+Subject: [PATCH v2 1/3] dt-bindings: pinctrl: samsung: Add compatible for
+ Exynos5515
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -90,51 +84,65 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261020-for-next-lucky7-pinctrl-v2-1-b6b0e6065452@member.fsf.org>
+References: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
+In-Reply-To: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=844;
+ i=aidenisik@member.fsf.org; h=from:subject:message-id;
+ bh=wcMJv5MC9TAqtq4PfS0HwwKmDAbPXKFvyCt4uDAd3gs=;
+ b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1q+a/w4FRcf5pIs6c0cfBlyB/dkjDSTQKmwiM
+ TH8zZvr+s+JAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatavmhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+vJGw//b0cu6ODcpEuJLNZgfef0aE1babIjbA2
+ PLLn5RMb0w8dtLuW/BXzn1eLl8yfNCVvGuXkl9O56eRxLEt7+2hiLHMkOmUBLWRbxeYesE687MS
+ PerJIGgpMQcnfjLrTxH1ik2BHicO2QryifsnkWGRWT/a4SA2R8oE4Z/eGh1GQ9AJOnhh/HxvAOv
+ LpH0KvpWWeIxNghc88VzyKrLFwVRzivd3GJJM/2946pP7tmKB3stxI7eD0B9Kp6wfL5yTuexGin
+ JmOChISUzhDx85MA7e+QOSTygsi7grPY2Cpmngw1w4Xw846PDl4HVVjizOvVzgXacN3Zd2Sa1pv
+ iWcas2zRh/+JUYttInvWY9SUCwiW9ewShYRz0zd/uTfbt2Jd7G4/kyWPZxCDyD7KDSTYjPJKQ8L
+ PqkC/XwIu89vOGzkWKFCKxsNCyMABxFdjXH2zuyEfoSxx1tHPn9oAilLhpes16PDYPoXYSg/2n6
+ 6eNNSdgMzkmd79lmOVL8+X4bGQE35lLi+n9pITRP0JCdypGpOBoa74Tb+6SGsdqohnvn1rkWLvL
+ IvoUdukep641ZypoYYnhg2s2ebYreGn4Ebec8kXxbPSenulFZ4lmDGL7Jo/2P+v1WAsXxqJxNjM
+ uRW6gzWNoBkc00wm7+f1UM0UWDiwDegecHimvHpTGggqN1u57CPQ=
+X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
+ fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
+X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
+ auth_id=956
+X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
+Reply-To: aidenisik@member.fsf.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261020-acpm-thermal-drv-name-fix-v1-1-71f72280583b@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAMmi1moC/x2MSQqAMAwAvyI5G7AF16+Ih1ijBmyVVEQQ/27xO
- AMzD0RW4Qhd9oDyJVH2kMDkGbiVwsIoU2Kwha1MYVokd3g8V1ZPG056YSDPOMuNXLuG5tLVY2k
- h9Ydy0v+7H973AwXwlsNrAAAA
-X-Change-ID: 20261019-acpm-thermal-drv-name-fix-e7c8af5c7b52
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-X-Mailer: b4 0.14.3
 
-The platform driver name is set to "gs-tmu", likely a leftover from
-the downstream implementation. Update it to "acpm-tmu" to match the
-module and driver file name.
+From: Aiden Isik <aidenisik@member.fsf.org>
 
-Fixes: 50a2c5d4062a ("thermal/drivers/samsung: Add Exynos ACPM TMU driver GS101")
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Document the Exynos5515 pinctrl compatible string.
+
+Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
 ---
- drivers/thermal/samsung/acpm-tmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index f9802080acd7..4b89a2cfaaea 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -637,7 +637,7 @@ static const struct dev_pm_ops acpm_tmu_pm_ops = {
- 
- static struct platform_driver acpm_tmu_driver = {
- 	.driver = {
--		.name   = "gs-tmu",
-+		.name   = "acpm-tmu",
- 		.pm     = pm_ptr(&acpm_tmu_pm_ops),
- 		.of_match_table = acpm_tmu_match,
- 	},
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+index 1feb6a6fc690..7e49ca7b560a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+@@ -49,6 +49,7 @@ properties:
+       - samsung,exynos5410-pinctrl
+       - samsung,exynos5420-pinctrl
+       - samsung,exynos5433-pinctrl
++      - samsung,exynos5515-pinctrl
+       - samsung,exynos7-pinctrl
+       - samsung,exynos7870-pinctrl
+       - samsung,exynos7885-pinctrl
 
----
-base-commit: 3d229ce89862b8e82d71a9e11d6f840ca272a6d6
-change-id: 20261019-acpm-thermal-drv-name-fix-e7c8af5c7b52
-
-Best regards,
 -- 
-Alexey Klimov <alexey.klimov@linaro.org>
+2.54.0
+
 
