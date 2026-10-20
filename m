@@ -1,81 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.25
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792478184;
-	b=kGsOitF0zC5HJvb6EfcgAZ+EzHxF8ChcTkBboxgElYe/GFFu+kn9CZ6bfSCxMBOTeKNW
-	 xLR0JYXWlMTWacbgEs58PgsolFz/5WIqlT85zYSHAvVZ3LPy5luFnCBi43PTQGYPsMFeJ
-	 4lFhwT2Epcy48GnSiQRxZCgLnr6f4E9VSqW4RM+RS8fO0TBRnIQcF9i9yG2lUQ3W+BY0q
-	 LWyDUugygkqEvyXWFNnIwaUt3e5XpTlBVjcJAWt0NyUvwVFnO30eqZ6N0IqGmr7VaQoZk
-	 9b+t9OclEsU2wiB+6wu7adLaF0Ft2vbVD+fD3RncyecuofIy6Dqh4OR0D2Brwx6lIMQ==
+	t=1792478744;
+	b=4K+tCIcXppvelFMr6jVNXr47gTcOdJlLy7FpfBUllU8GjeQPWC8/4dDbuxLES1BCAl2b
+	 LTHD4Qc3KJhwvoBoWhW5iKp93qOs1+GlcyAZnKskPn+AN8ukdVnIhmz3za6th0qPyLyTJ
+	 mSYwTsC/qXfRWPp+j7DxRe8RJT3PGyR1nW6vhiE3ECyG4HeaoyfI3xs9NCF60Z6BvxDd3
+	 Og9Zpd9eCOiRVody5oAyvmwPumTONxQFYwN0vTuEYq8/4BYyi0EfHBfu7+R6zM3YYLu74
+	 it4k8RLB+VTfJie5XvlBtPot7RmRv2PzCGtxy0qF8PgJxFmHXeHY5/PI0gQD48lj3hg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792478184;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792478744;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
 	 Received:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 MIME-Version:Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:
-	 Content-Type:CMS-TYPE:cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:
-	 References;
-	bh=cMOyDvJ+4IZMD7M7ive4vsZM0ebqLEDD0cr3Jg1jYiA=;
-	b=r3nrGLLd3fF9Jb80BalEbZcVJDvrtZazbVUNs0VW6CFQIEJisZOUfV1ZPIn60bTV1f0A
-	 yTuUaweO4nh0/oLfTmuaOxmIBSC6/tZ/afs8bhWvCyXpLQqu29qUvN6p5dA6Rm+EP9GHs
-	 lM1/p+DfMdEmejuTlcT97J1LNnpHW+zQWcBnOz7SiPaZQYCu/M9o7UkN1mAxER0sgA44Y
-	 7CNfT/r/T2R4SLzJ1kK8IHNTwJ/7bRlqt04uIdXqtHMlKfOX3gv4/VtbIslLUXH5A7YeV
-	 KULZOkn3qhCEXzsJIH88QDq7xw1KtferGRw+Z+4s0+0MILhbeUXaTtoWdV2tNXU7ddg==
+	 Content-Type:X-Sendblock-Type:CMS-TYPE:cpgsPolicy:X-CFilter-Loop:
+	 X-CMS-RootMailID:References;
+	bh=PM96lafS/rwv826v2LZCH6guF3z+x32g3ULBEqHU5jk=;
+	b=ScXRa5YN8amvgx1ZxQd+wVmwkyA3TaosR0uZNMgiTQ3nVXD2PoyPwSXpHUrpf9TTB9mi
+	 XVtNSi6Bq4m8UQPP6YI+tkq2WbJqp33AHVCEHbd81s+OOw8mNhcZNZHNSOaveetoFg9dU
+	 /weEa+ZI5wI3TZQscbdbMRaddNGVaX0xN2MDR2Y9Vtc1t3VJMqFXT1OP34mpyz73eB6jV
+	 OCiMUNhH7uJ7ZPJ/f+4ui2Bh68F3tKv1CGP/FvF8M/FCq9m9xqsycvgUXpaHqXkBC8T9w
+	 ewEYsstmsELIC/RH53M3L9uizCfx39Xfy00RqNGseQOs9Xzd9EVKQz+gtphUu3pORGg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=DXurnG+O;
-	arc=none smtp.remote-ip=203.254.224.33
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=A+aZWDOQ;
+	arc=none smtp.remote-ip=203.254.224.25
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ADC606A323
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 06:36:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 49ADC606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFF0606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 06:45:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8DFF0606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=DXurnG+O
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=A+aZWDOQ
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261020063620epoutp03a8b0969090f7aa23558f7b832da7a327~gKWiHKquU2298022980epoutp03d
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 06:36:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261020063620epoutp03a8b0969090f7aa23558f7b832da7a327~gKWiHKquU2298022980epoutp03d
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20261020064534epoutp02d04cbe1b88952ce0cd0df215d12b4b02~gKemGKg521725817258epoutp02y
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 06:45:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20261020064534epoutp02d04cbe1b88952ce0cd0df215d12b4b02~gKemGKg521725817258epoutp02y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1792478180;
-	bh=cMOyDvJ+4IZMD7M7ive4vsZM0ebqLEDD0cr3Jg1jYiA=;
+	s=mail20170921; t=1792478734;
+	bh=PM96lafS/rwv826v2LZCH6guF3z+x32g3ULBEqHU5jk=;
 	h=From:To:Cc:Subject:Date:References:From;
-	b=DXurnG+OrImuFVOWre/IHvrEtrR52MixdRlAxE2Mybikle6I4OhJ9ttoIkS0h+vP9
-	 USuIKfMQIJoAvLz4KHwp6ditcFMCwWfD0XgwNgP2/3QoDjwebIggA3uQqtFobZn+pf
-	 WeBDmINrF3DqXaqMNUSkKI5nSxYDh/F2j3GdQGek=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20261020063619epcas5p3cbe87da155138f7d23f130a048e7700a~gKWhUrZDm0682806828epcas5p3G;
-	Tue, 20 Oct 2026 06:36:19 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4j82kB4tdfz6B9mB; Tue, 20 Oct
-	2026 06:36:18 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20261020063617epcas5p4ba00854fcd38bf211c573629ee062621~gKWfYcTjq3015130151epcas5p4j;
-	Tue, 20 Oct 2026 06:36:17 +0000 (GMT)
-Received: from vega.samsungds.net (unknown [107.108.73.84]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261020063614epsmtip2fdb85f2c138d315a3425597013416486~gKWcIzNpH1615316153epsmtip2_;
-	Tue, 20 Oct 2026 06:36:14 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: vkoul@kernel.org, neil.armstrong@linaro.org, mani@kernel.org,
-	krzk@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com,
-	pritam.sutar@samsung.com, andre.draszik@linaro.org, kernel@lvkasz.us,
-	pengpeng@iscas.ac.cn, kishon@kernel.org, linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, h10.kim@samsung.com, dh10.jung@samsung.com,
-	akash.m5@samsung.com, hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, muhammed.ali@samsung.com, thiagu.r@samsung.com,
-	Selvarasu Ganesan <selvarasu.g@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH v3] phy: exynos5-usbdrd: Use dynamic phy_cfg size to prevent
- OOB access
-Date: Tue, 20 Oct 2026 12:05:59 +0530
-Message-Id: <20261020063559.3530901-1-selvarasu.g@samsung.com>
-X-Mailer: git-send-email 2.17.1
+	b=A+aZWDOQfCxsTXBG59fgz4Yb6Zci8DGZwkUC1Gh3j4UXXwisTIzramkvRmR7mM6VP
+	 C4Ox0zjUoon8Qp7ngVcimWlr8qGKWsG0EfodnC5nDil6HosZRdowjBUtV+OTBtRzri
+	 1EkQ90nFTvArnZZN4QXbrSu69AQC4BAP4UiLk7hw=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20261020064533epcas5p4051fa2be1289b585cb16ce3f93314fd1~gKek5UybU3227532275epcas5p4U;
+	Tue, 20 Oct 2026 06:45:33 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4j82wr16ylz6B9mF; Tue, 20 Oct
+	2026 06:45:32 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261020063759epcas5p1e91cb3158cd6c9c8f23a251cfc33d420~gKX9z8PpP1099110991epcas5p1L;
+	Tue, 20 Oct 2026 06:37:59 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20261020063756epsmtip1cc87584145afe4f37d93fe220c01669a~gKX7La8pH3255632556epsmtip1k;
+	Tue, 20 Oct 2026 06:37:56 +0000 (GMT)
+From: Raghav Sharma <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, sboyd@kernel.org,
+	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org,
+	conor+dt@kernel.org, raghav.s@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com,
+	pokala.reddy@samsung.com
+Subject: [PATCH v3 00/14] Add clock support for Exynos8855 SoC
+Date: Tue, 20 Oct 2026 12:25:44 +0530
+Message-Id: <20261020065558.1829402-1-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -86,182 +83,78 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261020063617epcas5p4ba00854fcd38bf211c573629ee062621
+X-CMS-MailID: 20261020063759epcas5p1e91cb3158cd6c9c8f23a251cfc33d420
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
+cpgsPolicy: CPGSC10-543,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261020063617epcas5p4ba00854fcd38bf211c573629ee062621
-References: <CGME20261020063617epcas5p4ba00854fcd38bf211c573629ee062621@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20261020063759epcas5p1e91cb3158cd6c9c8f23a251cfc33d420
+References: <CGME20261020063759epcas5p1e91cb3158cd6c9c8f23a251cfc33d420@epcas5p1.samsung.com>
 
-The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
-creating both UTMI and PIPE3 PHY instances regardless of the SoC
-capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
-and ExynosAutoV920) provide phy_cfg arrays containing only a single
-element.
-
-On these SoCs, when the loop reaches index 1, the driver reads past the
-end of the rodata array, populating the second PHY instance with garbage
-data. Since the configuration structure contains critical function
-pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
-PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
-
-Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
-store the actual size of the phy_cfg array for each SoC. Update the
-probe loop and the xlate function to bound their access against this
-value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
-
-Fixes: 59025887fb08 ("phy: Add new Exynos5 USB 3.0 PHY driver")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Tested-by: Łukasz Lebiedziński <kernel@lvkasz.us>
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+This patch series adds clock support for below blocks
+found in Exynos8855 SoC
+TOP & PERIC
+PERIS
+HSI
+USB
+There are many other blocks, for which the support will be
+added in a forthcoming patch series.
+Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 ---
-
-Changes in v3:
-- Added Fixes and Stable tag
-- Link to v2:
-  https://lore.kernel.org/all/20260918103147.2628614-1-selvarasu.g@samsung.com/
-
+Chanegs in v3:
+ - Addressed Sashiko review comments
+ - Collected Reviewed-by tags
+ - In patch#2, added samsung,sysreg property to the binding,
+   somehow this was not cought by dt_binding_check
+   Have kept reviewed-by of Krzysztof on this patch  
 Changes in v2:
-- Updated 'Assisted-by' tag to follow the proper kernel documentation
-  format.
-- Link to v1:
-  https://lore.kernel.org/all/20260831070309.158069-1-selvarasu.g@samsung.com/
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+- Removed name duplicates login, as pointed by Krzysztof Kozlowski
+-Corrected the sequence of binding, driver and DT entries
+- Removed <linux/mod_devicetable.h>, as pointed by Uwe
+- Added all the TOP clocks in single patch
+- Organised the patches in the order: dt-bindings → clk-driver → dtsi
+- Added Automatic Clock Gating, as suggested by Peter Griffin
+-Since we are adding ACG, we need to add SYSREG, hence, added that
+- Followed the name mangling strategy as mentioned in clk-gs101
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 087d552eb511..f10cf7b6e0aa 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -477,6 +477,7 @@ struct exynos5_usbdrd_phy_config {
- 
- struct exynos5_usbdrd_phy_drvdata {
- 	const struct exynos5_usbdrd_phy_config *phy_cfg;
-+	int n_phy_cfg;
- 	const struct exynos5_usbdrd_phy_tuning **phy_tunes;
- 	const struct phy_ops *phy_ops;
- 	const char * const *clk_names;
-@@ -1173,7 +1174,7 @@ static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
- {
- 	struct exynos5_usbdrd_phy *phy_drd = dev_get_drvdata(dev);
- 
--	if (WARN_ON(args->args[0] >= EXYNOS5_DRDPHYS_NUM))
-+	if (WARN_ON(args->args[0] >= phy_drd->drv_data->n_phy_cfg))
- 		return ERR_PTR(-ENODEV);
- 
- 	return phy_drd->phys[args->args[0]].phy;
-@@ -2021,6 +2022,7 @@ static const char * const exynos5_regulator_names[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
- 	.phy_cfg		= phy_cfg_exynos2200,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos2200),
- 	.phy_ops		= &exynos2200_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS2200_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2034,6 +2036,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos2200_usb32drd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5420_USBDRD1_PHY_CONTROL,
-@@ -2047,6 +2050,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2059,6 +2063,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5433_USBHOST30_PHY_CONTROL,
-@@ -2072,6 +2077,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
- 	.phy_ops		= &exynos5_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2084,6 +2090,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos7870,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos7870),
- 	.phy_tunes		= exynos7870_tunes,
- 	.phy_ops		= &exynos7870_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
-@@ -2097,6 +2104,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos850,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
- 	.phy_ops		= &exynos850_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.clk_names		= exynos5_clk_names,
-@@ -2125,6 +2133,7 @@ static const struct exynos5_usbdrd_phy_tuning *exynos990_tunes[PTS_MAX] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos850,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
- 	.phy_ops		= &exynos850_usbdrd_phy_ops,
- 	.phy_tunes		= exynos990_tunes,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS990_PHY_CTRL_USB20,
-@@ -2661,6 +2670,7 @@ static const struct phy_ops exynosautov920_usb31drd_combo_ssphy_ops = {
- static const
- struct exynos5_usbdrd_phy_drvdata exynosautov920_usb31drd_combo_ssphy = {
- 	.phy_cfg		= usb31drd_phy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(usb31drd_phy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usb31drd_combo_ssphy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB31,
- 	.clk_names		= exynos5_clk_names,
-@@ -2691,6 +2701,7 @@ exynos5_usbdrd_phy_config usbdrd_hsphy_cfg_exynosautov920[] = {
- static const
- struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_combo_hsphy = {
- 	.phy_cfg		= usbdrd_hsphy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(usbdrd_hsphy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usbdrd_combo_hsphy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2719,6 +2730,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynosautov920[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata exynosautov920_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynosautov920,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynosautov920),
- 	.phy_ops		= &exynosautov920_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy	= EXYNOSAUTOV920_PHY_CTRL_USB20,
- 	.clk_names		= exynos5_clk_names,
-@@ -2895,6 +2907,7 @@ static const char * const gs101_regulator_names[] = {
- 
- static const struct exynos5_usbdrd_phy_drvdata gs101_usbd31rd_phy = {
- 	.phy_cfg			= phy_cfg_gs101,
-+	.n_phy_cfg			= ARRAY_SIZE(phy_cfg_gs101),
- 	.phy_tunes			= gs101_tunes,
- 	.phy_ops			= &gs101_usbdrd_phy_ops,
- 	.pmu_offset_usbdrd0_phy		= GS101_PHY_CTRL_USB20,
-@@ -3052,7 +3065,7 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 
- 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
- 
--	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
-+	for (i = 0; i < drv_data->n_phy_cfg; i++) {
- 		struct phy *phy = devm_phy_create(dev, NULL, drv_data->phy_ops);
- 
- 		if (IS_ERR(phy))
+Link to v2: https://lore.kernel.org/all/20261009120137.2801911-1-raghav.s@samsung.com/
+Link to v1: https://lore.kernel.org/all/20260728121111.2077860-1-raghav.s@samsung.com/
+
+Alim Akhtar (2):
+  dt-bindings: soc: samsung: Exynos8855 SYSREG compatibles
+  clk: samsung: clk-pll: Add support for pll_4313
+
+Raghav Sharma (12):
+  dt-bindings: clock: exynos8855: add top & peric clock definitions
+  dt-bindings: clock: exynos8855: add peris clock definitions
+  dt-bindings: clock: exynos8855: add hsi clock definitions
+  dt-bindings: clock: exynos8855: add usb clock definitions
+  clk: samsung: exynos8855: add block top and peric clock support
+  clk: samsung: exynos8855: add block peris clock support
+  clk: samsung: exynos8855: add block hsi clock support
+  clk: samsung: exynos8855: add block usb clock support
+  arm64: dts: exynos8855: add cmu_top & cmu_peric clock DT nodes
+  arm64: dts: exynos8855: add cmu_peris clock DT nodes
+  arm64: dts: exynos8855: add cmu_hsi clock DT nodes
+  arm64: dts: exynos8855: add cmu_usb clock DT nodes
+
+ .../clock/samsung,exynos8855-clock.yaml       |  196 +++
+ .../soc/samsung/samsung,exynos-sysreg.yaml    |    8 +
+ arch/arm64/boot/dts/exynos/exynos8855.dtsi    |   95 ++
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynos8855.c          | 1378 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   11 +-
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../dt-bindings/clock/samsung,exynos8855.h    |  233 +++
+ 8 files changed, 1922 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8855-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8855.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8855.h
+
+
+base-commit: b810335a0699d1810683796b0e3ffe8827ddfe6c
 -- 
-2.17.1
+2.34.1
 
