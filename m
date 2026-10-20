@@ -1,67 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.10
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792474011;
-	b=rDxbHbFdXLDUfWIYNGAkwiiSpUYLY04JDz5O+7p+VYUv0qtisjHveIkhr/Zev2SXqkJM
-	 PceOogHKYMTjWiMVyLwNKR7XoMB9qgKBG/VmKW7BP4ydmpkC0ugIix43jKXN1RrpScGch
-	 OH8mE/OLiDupkVI3nOkx5rt5KHOLJb/+gtB9u8mhLAjrpKg3wjmM1GtjSp511RQ2Kh2M8
-	 KqJfSzSlCl7PktWBqWAusGtLXvBHIMsOy5qkIKMTIsj8GVhG0F5lTtufO80HjtER+v1iO
-	 BjWGaTXvYVpF1WsSDsHIIiRjA6liSHhtpHWjkzO69avRCHwJFG9XMsL5gjId7JD0gVQ==
+	t=1792474618;
+	b=ucqTjdi9j6dlI6ZUcJC7+t/ZIUj2tk44c6c8PPclM04Zdpu1yWWfD0S8XAV0nzhE3rlP
+	 bYlpFpPXfDHPTqZq8sXFdEwDT6HT/rw15exiFK2TGI1Naq/YxSt9iCdlUNzgBt5C14Z2u
+	 ax+ke1cLMa5mu0fzHwKRMQrm4vNZWcQsm9IInJG0qe/OniOLbGNYp5Vv+GQKzAk5G0C73
+	 ULDf2/pB3ZCPOIrsSZeKRO/4vlcA1N3OdY3emsVnqHeTOCyiKo8+uZNa+nfqYO1SUCb+q
+	 ZkEasGGfgVyGz0AC5Y4Whe/yeDamEoKfFiDMMK1sGY+AuCg7bnSLh19Ga/Nsmk33XYg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792474011;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:
-	 Cc:Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:cpgsPolicy:
-	 X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=VBaqtAYhzt9vjT0IOaJ3LEbjNlh/6yFmqmAUZP/n84g=;
-	b=Wtr7qcaYEz/uYfBpw1gJ0mTyJZVRfeMfLOxa+Q67zWJq6EKP+Be5QPjs/TcFKPrfR9q8
-	 TTH5kkuz4M58b+EVpQjzxhAf2kppfPqZbpSEE5/ndvRXqVBeJk7w/UPHPlmcEWExjLJxn
-	 g/rWK3m2AT/BS5tdZd6XNPFSKFWVVUCsyhRf0jJ5pB99MtlViBr2LJOVlxCD9AmPzBW6i
-	 xCXKocyhphQOsl73gw+984M3s5qiMZrG0StiOvuy7hvLOEkhBv8j0SgXXCKnldckGtyh8
-	 zhGPacehRcnQgtxfWcnOTY+yA7Uj6uX3fqJva0h/LxuRIVjT5RhOUCVveJhJ4P48v/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792474618;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To;
+	bh=NjQe6HWmekq9HNWm5R7bB5TA0zGBiXEMJZ6wpJ0gEYA=;
+	b=RwBpmrMKax0vowjO3g3iLWdAPAz3+tBupUblp1ubJyDN5ONpdmuAx+6OVSCMaX3vb6Su
+	 8ZQz4VezH6QUEOGN6zmT4BiTpoJA3O57PwSfnmGNI8KJbY6asqQ1p/1SGcHK1254KVZzF
+	 O9vgehd3jFLHgmFfZ/4QWSTyD+x8+fX6vP7tRLjhlqD7QXB3Yt8bA0SdNzaFFYJaDw1he
+	 v/hgDxlJvIrOLSp+6TBzfREGkx/b9ljWdxP5Dykz3M9bxbyvpHjOqdUzQInLS/Aro3m2Y
+	 mzx4sDEMXcpB4wdVvRXtftyUki1gnNH9WtfyC8aZMxloBA1TliMX18q+iKhWKEP+OwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b="dYEGJLl/";
-	arc=none smtp.remote-ip=203.254.224.33
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=k8jsSQEz;
+	arc=none smtp.remote-ip=198.175.65.10
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9C5606A31A
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 05:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AA9C5606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D353E606A31A;
+	Tue, 20 Oct 2026 05:36:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D353E606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=dYEGJLl/
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261020052641epoutp038b6ee1bb2e97f48f172246b027753f91~gJZuFCo6G1936819368epoutp03Q
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 05:26:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261020052641epoutp038b6ee1bb2e97f48f172246b027753f91~gJZuFCo6G1936819368epoutp03Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1792474001;
-	bh=VBaqtAYhzt9vjT0IOaJ3LEbjNlh/6yFmqmAUZP/n84g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=dYEGJLl/XaI8YLA9R+Ob8BLNL4Oe4NEqVu0yZo7lPIWNUon5CtaJa5P+ABxEeLhKV
-	 RdokE3KZAgTDw4/1+B9Sq4zlulMxapQI/9OppFOFp4VWgAJIEdR+igm+327fNAyrrt
-	 qJWhR/yoLNGDAg38FHqOgluaTODXTEdRRGI7VbQ0=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20261020052640epcas5p27161ada23d6deba25cb84e6fcb0165b0~gJZtBVh9C2585725857epcas5p2s;
-	Tue, 20 Oct 2026 05:26:40 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4j819q3JvDz2SSKb; Tue, 20 Oct
-	2026 05:26:39 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261020052638epcas5p18ff9bffbddf4c8f106a4669f4810370f~gJZrnNRuA1711217112epcas5p1J;
-	Tue, 20 Oct 2026 05:26:38 +0000 (GMT)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261020052635epsmtip1b24d9cf98f9333c343d2bf34c031fda5~gJZoqwYIG2871028710epsmtip1g;
-	Tue, 20 Oct 2026 05:26:35 +0000 (GMT)
-Message-ID: <40a922b9-f56f-4fe1-88f5-5bb236735951@samsung.com>
-Date: Tue, 20 Oct 2026 10:56:34 +0530
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=k8jsSQEz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792474616; x=1824010616;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NaJiqPkqH2nAedLRE+95pl1WPOXe5cB3p9iVy/Z4kMI=;
+  b=k8jsSQEzd+SVS9XFaOgOSSnnFUi+adP4QJ9X/u6FgdCauxX4Jf0gCo62
+   wP1g4KOT5V8HgrNWgEYpmGkOfamRnm7TCDnaXn8VapZGzpDzSiIHBLf+P
+   fTKDkAybZxxDgEQpS3d8dPgUMIlWJG4Tw7xPgjd8fknWsi6qSFlTw7izF
+   1IRnfOUg7bWyHOKUotQPr1aP5+Nc/gImEBAPmdjqDCj8DKqH8Gar9WAaw
+   RWIHxDHiKki+EkKvz720tbtzpUKaT3dflItG/nE4FPcb/2587ko2uAV1Y
+   /cHvBaEXFMobQaW36ByOcn0mqKfd/d45U7YS9HdW+7iVPlSiat12YXFSc
+   Q==;
+X-CSE-ConnectionGUID: LO/IVdapSyCWwwoLnBTG0Q==
+X-CSE-MsgGUID: kKcxZKyfTKSOL+dulv4xzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1059261"
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="1059261"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2026 22:36:55 -0700
+X-CSE-ConnectionGUID: 9G3YAZlkQj2waR4JmZbv1A==
+X-CSE-MsgGUID: MzXHmm7cTBqL5aMo89B8cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
+   d="scan'208";a="2784862"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Oct 2026 22:36:50 -0700
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xJ2Wj-00000000Mxa-3KkM;
+	Tue, 20 Oct 2026 05:36:45 +0000
+Date: Tue, 20 Oct 2026 13:36:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Damon Ding <damon.ding@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Dmitry Baryshkov <lumag@kernel.org>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v4 11/14] drm/bridge: analogix_dp: Use
+ bridge->next_bridge instead of plat_data field
+Message-ID: <202610201309.w3JSXlP5-lkp@intel.com>
+References: <20261019085836.3065008-12-damon.ding@rock-chips.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -71,69 +106,78 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
- prevent OOB access
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: vkoul@kernel.org, neil.armstrong@linaro.org, krzk@kernel.org,
-	peter.griffin@linaro.org, alim.akhtar@samsung.com, pritam.sutar@samsung.com,
-	andre.draszik@linaro.org, kernel@lvkasz.us, pengpeng@iscas.ac.cn,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jh0801.jung@samsung.com, h10.kim@samsung.com, dh10.jung@samsung.com,
-	akash.m5@samsung.com, hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, muhammed.ali@samsung.com, thiagu.r@samsung.com
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <as0G-bk_TKRToOkv@debian>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261020052638epcas5p18ff9bffbddf4c8f106a4669f4810370f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260918103249epcas5p49c9b4bf6fd60c28f5f09f0b7b69828b6
-References: <CGME20260918103249epcas5p49c9b4bf6fd60c28f5f09f0b7b69828b6@epcas5p4.samsung.com>
-	<20260918103147.2628614-1-selvarasu.g@samsung.com> <as0G-bk_TKRToOkv@debian>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261019085836.3065008-12-damon.ding@rock-chips.com>
+
+Hi Damon,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm/drm-next next-20261019]
+[cannot apply to daeinki-drm-exynos/exynos-drm-next linus/master v7.3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Damon-Ding/drm-bridge-analogix_dp-Return-bitmask-from-analogix_dp_get_irq_type/20261019-165823
+base:   https://gitlab.freedesktop.org/drm/misc/kernel.git drm-misc-next
+patch link:    https://lore.kernel.org/r/20261019085836.3065008-12-damon.ding%40rock-chips.com
+patch subject: [PATCH v4 11/14] drm/bridge: analogix_dp: Use bridge->next_bridge instead of plat_data field
+config: nios2-randconfig-1000-20261020 (https://download.01.org/0day-ci/archive/20261020/202610201309.w3JSXlP5-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261020/202610201309.w3JSXlP5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202610201309.w3JSXlP5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   nios2-linux-ld: drivers/gpu/drm/bridge/analogix/analogix_dp_core.o: in function `analogix_dp_aux_done_probing':
+>> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1669:(.text+0xb80): undefined reference to `devm_drm_of_display_mode_bridge'
+>> drivers/gpu/drm/bridge/analogix/analogix_dp_core.c:1669:(.text+0xb80): relocation truncated to fit: R_NIOS2_CALL26 against `devm_drm_of_display_mode_bridge'
 
 
-On 10/12/2026 9:44 PM, Manivannan Sadhasivam wrote:
-> On Fri, Sep 18, 2026 at 04:01:47PM +0530, Selvarasu Ganesan wrote:
->> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
->> creating both UTMI and PIPE3 PHY instances regardless of the SoC
->> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
->> and ExynosAutoV920) provide phy_cfg arrays containing only a single
->> element.
->>
->> On these SoCs, when the loop reaches index 1, the driver reads past the
->> end of the rodata array, populating the second PHY instance with garbage
->> data. Since the configuration structure contains critical function
->> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
->> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
->>
->> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
->> store the actual size of the phy_cfg array for each SoC. Update the
->> probe loop and the xlate function to bound their access against this
->> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
->>
->> Assisted-by: LLM
->> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
->> Tested-by: Łukasz Lebiedziński <kernel@lvkasz.us>
->> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Reviewed-by: André Draszik <andre.draszik@linaro.org>
->> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Since this patch fixes an OOB issue, it should have a Fixes tag and the stable
-> list should be CCed for backporting.
+vim +1669 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 
-Hi Mani,
+  1660	
+  1661	static int analogix_dp_aux_done_probing(struct drm_dp_aux *aux)
+  1662	{
+  1663		struct analogix_dp_device *dp = to_dp(aux);
+  1664		struct analogix_dp_plat_data *plat_data = dp->plat_data;
+  1665		struct drm_bridge *bridge = &dp->bridge, *next_bridge;
+  1666		int port = plat_data->dev_type == EXYNOS_DP ? 0 : 1;
+  1667	
+  1668		if (plat_data->dev_type == EXYNOS_DP && of_get_display_timings(dp->dev->of_node)) {
+> 1669			next_bridge = devm_drm_of_display_mode_bridge(dp->dev, dp->dev->of_node,
+  1670								      DRM_MODE_CONNECTOR_eDP);
+  1671			if (IS_ERR(next_bridge))
+  1672				return PTR_ERR(next_bridge);
+  1673			bridge->next_bridge = drm_bridge_get(next_bridge);
+  1674	
+  1675			return component_add(dp->dev, plat_data->ops);
+  1676		}
+  1677	
+  1678		/*
+  1679		 * If of_drm_get_bridge_by_endpoint() returns -ENODEV, there may be no
+  1680		 * valid panel or bridge nodes. The driver should go on for the
+  1681		 * driver-free bridge or the DP mode applications.
+  1682		 */
+  1683		bridge->next_bridge = of_drm_get_bridge_by_endpoint(dp->dev->of_node, port, 0);
+  1684		if (IS_ERR(bridge->next_bridge)) {
+  1685			if (PTR_ERR(bridge->next_bridge) == -ENODEV)
+  1686				bridge->next_bridge = NULL;
+  1687			else
+  1688				return PTR_ERR(bridge->next_bridge);
+  1689		}
+  1690	
+  1691		return component_add(dp->dev, plat_data->ops);
+  1692	}
+  1693	
 
-Thanks for your reviewing patch.
-
-Sure, I will add fixes and stable tag in the next version.
-
-Thanks,
-Selva
->
-> - Mani
->
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
