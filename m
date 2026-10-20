@@ -1,79 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792454558;
-	b=NsMwVOPpcMdGbXilr11OZbvbq/Q7EkzW7sc/uSVnwN42KuerNxJNwXGBD8s7QcHPdc10
-	 KSJ75voxKRj1e4rNkQfCnRFgsb7+ry2XnQhFtKd8YWWhMFMkvbfHzlXmCgrYxQZP06j0b
-	 dMSJtfUiwq22HXkCu+yh65DVlGrr88T1ZZn124U7v1QDuxQKdQw/cDEbVREx76gX5htm3
-	 rHfJihbq5D+A5GYCJFgezu5y9XEbP2Oa6KJNyBObnRKCH6gV8gVrCXr6tTS9yA/gymMjs
-	 kIJKb3fAvjpTnTTjq/40oEDwvU4CRzxc1UhdUqwTRfvVOn9XcoupBgvJ1dIbAk51aOQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792454558;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=lO+3+LqztB4BslJMVbH4dbcSTzNROSTgAqtqiDIsCSk=;
-	b=P00x1Y7uoVb6h/ZAvsdpRRfinwUwKSoTwKX+aIhdqynHIf/mZtIhKgHUcXCOqWl4jhCH
-	 0IfCY+S9Ij6n7qCD6Bb9/9Cmn/8Ea1q8GaRDV660BcxnT8GhfCbWedtOXJIwdmmczwUfH
-	 7+v2cvOUi1PdueEGIKY7eVHWWyoWdPhGHl4pVg+x0cL74KjyQp6iHDvHCwPYYv2YC/eil
-	 mL143iVh6KW+Pnwh5T7bc35ppucTgh5lUP+fqqaO/LJWwVddBot1OaVU4gfJl87/XaE/X
-	 iniQCjwmOHd/DsYFKrKfN2sAjbeq4Uw8N+IpZAxhAkjK3ds10kaLy4V1zB694W/v56A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ickVuydR;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4838606A319;
-	Tue, 20 Oct 2026 00:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ickVuydR
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792454557;
-	b=1NZYaBd4qVcuxhrZtpzlqdpFdi2FGFej1ebuz4W31Nnq1neWRLz8ZM6lYhxecJDSh9PQ
-	 XiW8K26EeZGPgyJiKdP1o8VsFCbnhpUn7cGO2OlIAQKY3ZHuP6bnjFCFE+zlhvLQYlmV7
-	 2qFkKQJ6W00Y0Jfx0N5qcFQiJSoN80Tdp97x75vDaV8rAdMW0L7vNcOnhcRqKHlvIjigz
-	 5f885kVe7odgv5fbIn8bepr+eSg2T1ZQdXUf6AHoJAfGfDPuwNk91uyz3sdLfeiYGgP3Z
-	 ax6FRf7+vS4Dw1B6JPVZ5W22HdrELnJ21H5Ele+UwVjbLyCzYiHZT6hzmjgcv6G5z/g==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792454557;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=lO+3+LqztB4BslJMVbH4dbcSTzNROSTgAqtqiDIsCSk=;
-	b=UQ7/ubG+WTQWnxpI6lC80nRsN90dXyLoU9IJvWd6rReFjySBCq4Zm2kiio31fZwwRqEX
-	 0q89ZSJVLUZW5Ht478Eq4oa2mskugIGtboY0Q6O1WYjtreBP/UD2tltOzu5clPuqO3vpR
-	 gxPRXlF7ei9Y7G5kqo+vSEiS3goLxZ6OsV0Eyb6Ew3735X3bULOnw82XB3qS0EDyUYCqR
-	 JUKUSo4yf2sXzT50blGA5RhD8vOR1RHGoV6YeoqQFwPrF/GBU27AfLWeA6oz2JqPVlrkp
-	 aB2dzSXeLXUbQLaXeXbd0LO9Pc2cFAAvHLKGHAizotvKiIYrSwnrQMwHUasraaYiRRA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.178
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792459506;
+	b=nQHrPIhz2QD5u+qgomKJrMu/c3rgFAJ/WPYWwr5Tc3Puyg54hz2gkWo9at2Nhn5yG3Kk
+	 8RsMgU0wRL7i3RfNwF7yiK0mD36z0s8QlcbxW0iaLVYCvTkB5p0jEChZznDUCZEq2ORqL
+	 LAXn9xXOoJ1y0I5RNs0cTKLeDNEu3m5uq2rhBE/xer6ghifFSjwMVCKzezvdwWXdphXoP
+	 SlzE6GXsNw08oELcmtXOjen0Gk8fBDjfRKPqbioGaA7gGvLVaQu4/1hoTlNIzIxrGfqQ4
+	 78ocBCf4AOXZvhfNVtnCa9/WgM2YQx+XYRQJ7DcsztkW+9+gM+2J2v7EIPaH4gw0q7Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792459506;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Sender:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=G8hApdbjB2FWFRs0szr0ee40pXh05s3I5KLtI9DczSE=;
+	b=fNkSKXBczCbwqALh7X4aPsBcxkhQ58ZolGByfZMTI/0JTIhN+vkPZbYd3z1lHlMX8Fnb
+	 xaZ16Fd0bzKzXRrhvEp2IAG7D2ibryz4xdZESM4rEsbPGXMYzQlFqHPqHmPvFza7f85eQ
+	 QKG6oKhzQa6I2E1s77aNmc3GOAiDDULrwOQBBOPt+eoyluhWkq9NicZdd2d/lVsUJxIb/
+	 SMzRqB5K9gYvNi870MdYzgqJy6H1qQdbkPZV9ioPStfBpThv3DcTbkUrYTCOaZcAWHmCF
+	 0hog0HVHW8P/ZPWEcGL9CILAdATA13MLAwjRvio9wLmhBH9yrIxqZVyC0Kr/L284YZw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=roeck-us.net;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=GkRT5n2e;
+	arc=none smtp.remote-ip=209.85.214.178
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id CE4391F000C4;
-	Tue, 20 Oct 2026 00:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792454557;
-	bh=lO+3+LqztB4BslJMVbH4dbcSTzNROSTgAqtqiDIsCSk=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=ickVuydRBET84Hie5yemZFfCfMTWaFmHgCYNe2hjw5uH8Ip3CN4+l1rcKldMC78Hm
-	 Pmw/y3D56cmXGgI3Pto7wJUgwiVMhD2rxC0UpxhKvVXnddsVeck1Okh4Tj2qVVe+Y9
-	 EEKKSjdoFCxwRAxHtjf1ZKPfD9UrTjmlR4kY6t7nohpnsGbXg1T73DRSO1qWvipVeW
-	 6dGMXhP2zaif2IgJGRrFHk1acyrXxmow+dN7x1CjqgorX4QS+F6XW5+5zrhXW2mAZT
-	 GamGvJmK71WPl4RYMO2otXHhrXYr5zQLQkJciTRp61dtmpzGEZWGv/hZNX9YOOxUEc
-	 G/fJ2/chxiGIA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5F6DF406BE;
-	Tue, 20 Oct 2026 00:02:36 +0000 (UTC)
-From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Subject: [PATCH v2 0/3] Introduce Exynos5515 pinctrl support
-Date: Tue, 20 Oct 2026 01:02:33 +0100
-Message-Id: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739EE606A31B
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 01:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 739EE606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=GkRT5n2e
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2e98798cbddso10589205ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Oct 2026 18:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792459505; x=1793064305; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=G8hApdbjB2FWFRs0szr0ee40pXh05s3I5KLtI9DczSE=;
+        b=GkRT5n2exhVq/bZWWaWrZfPBL5AwA74qNvh5AAr/Cgsx40W5miy0tb90dSrybPiAoA
+         KYS5YrJMDwOJXQVm76DgepdKqhnCx6Iqsq4sLd3shwUGNj+OzN/wzokmuCk94+5xm1SN
+         G2jJJDfuyh1SPZWyN+0RBm6NMNTfrQ12kcYn0FR2vl2C3JS3yLPcfijVc77wQLPIm6vq
+         0pp+oKwJaT2ebEfzBfEgJGVN+hRbpSnPAW5glKNFeZaeYEtDVNk1g9RqbjKbqRNL7hXS
+         Z5BfSnwFx/NFDkivzx6gPW43iJAAXPY0qzt+svke0gxc94DfosSykVf9sF432y8JhxHn
+         aWHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792459505; x=1793064305;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=G8hApdbjB2FWFRs0szr0ee40pXh05s3I5KLtI9DczSE=;
+        b=qqCcpb8/vXNIZK/HlljQ6BfL9TMEvRNztfHrK2OJoWPbsK/7dNxntUamG3ldVLQwg/
+         RQKvFu5ggByP2S5Tq9Jj7WEqhriknOHp65k6P7Fnhd4hanAnrUKG7TOd4vi8Rsir+Nbr
+         MBpvKn+eCpJOc1IP3W+QkkgF03zutkc8DMjZ26NAxSAb2e3tS8DH3KAqJdFRwNS0tT1P
+         4TY6V2LOho19Mp2QqsGaRTKUU3YTG7hZqXmVWC8G0ctk8FXj70ZPl5mb1452zo7iGrJ/
+         J/Xs1cYyCejVyn8V6CuTwfx33hNRDX9LXSbJXHXysMLwcAfBomv3D3kcWXzItkYdkOhl
+         t88g==
+X-Forwarded-Encrypted: i=1; AKwUvBwIQAUuDIHJ6t9wsTz/EKS5e2oS5QdE9b7mTviumZth82EomxIMwzKqmUr5J2zSkdsTf7hyv2GGBlse6kNiYy7M7g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLB+d0Y9qFw8F3HG/MGu0xKcjzvXr6JznMEOD3LJkx8cyCUVe6i
+	/R5FP1T9rC7JaDrgRbCgRVxMXHVPD0X/fS8XF2j8gau4weAFe3CQLXLq
+X-Gm-Gg: AYBFou0cTFqB7kLniaZURizzT6EbNSLo6sNhe6c+R9tE+7dGfpd3RcBug3Qoq5A+HrB
+	yqHClMjK6P7Y3q+tUxcnbYj/hxXQoHAAzdq4M4zczBY5tmcneVJPLDbSQzFwQV1NHrgGiCPyC8a
+	j8hjPPHTRyhTXGz7y3IONvjDNTzzCTenReFDD5WgBh8KaNrpWrHtRRNQaqbwvzAedxzd5aD6ODC
+	qQbnA14DRiu99H8nz6PjuqqjPy7I9WLvPPI+JzZBDvON737kMNYt+yWwsSXPyOpcmzy/wV9mtgR
+	FUmX/EiXaW0xMvgunjaJBDUu8zug16qLZuZosVR5haUqBRU7pB3cj2mmmZZ6lxXG3wTkgd0J17t
+	ze9kUxIvDCtLripYEtuhLJpYOc/MQYBfzlUw7UF1aex0n/TuxvMXGNKIG2MKQbSSraRhXHTP3Gi
+	fQf9poYjPxu2Y7C6SRwmJWANi9TRhO/XfbAUI38zsgKjtWxLqyelLuPeTI5OaG4pAUF+VcJ6bMV
+	us0xq7EpW1U
+X-Received: by 2002:a17:902:f706:b0:2e8:2f95:764d with SMTP id d9443c01a7336-2e9a6f57a2emr77436145ad.59.1792459504698;
+        Mon, 19 Oct 2026 18:25:04 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ea14dec6f0sm6844815ad.30.2026.10.19.18.25.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2026 18:25:04 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 19 Oct 2026 18:25:03 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: krzk@kernel.org, peter.griffin@linaro.org, robh@kernel.org,
+	conor+dt@kernel.org, linusw@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	hajun.sung@samsung.com, wim@linux-watchdog.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: watchdog: Add Exynos8855 watchdog
+ compatible string
+Message-ID: <63cac66c-98a7-4174-86c3-68c1e2f15805@roeck-us.net>
+References: <CGME20261006160157epcas5p37b8a0053c489b051dfb415c9b72ba178@epcas5p3.samsung.com>
+ <360067785.01791340382096.JavaMail.epsvc@epcpadp2new>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -83,95 +102,74 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJmv1moC/4WNQQ6CMBBFr0K6dkhpgIIr72FY2DqFKrZkWgiEc
- HcBD+DyJe+/v7KAZDGwa7IywskG690O4pIw3T1ci2CfOzPBRZnxrAbjCRzOEfpRvxcJg3U6Ug9
- lrkyRF1VVi4Lt64HQ2Pks35sfh1G9UMcjdxidDdHTcl5P2eH9f5ky4MCNlFjnWnKlbx/8KKTUB
- JN6almzbdsXLHp/CdUAAAA=
-X-Change-ID: 20261019-for-next-lucky7-pinctrl-64bf54588925
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1902;
- i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=4CKTR/UrVUHdBxRcjY6+8KRZbZVbDeBQa9eE5DqMIL8=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq1q+awCvmX6gpGP3Hpt0PsTjwRibMBLQtV5I+X
- 6YInT7kCyuJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCatavmhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+s4zg/9HwQhJWCdTXqJukDRuhk+vd39ps25aAe
- lk2AQDbmWdvAyE7WJtOe7mrbU9d5ZbtVYo4iFV7x3J+mrpt/bg++9sr/UucEUUGGafzK6QAjfPQ
- ra+iy+mn80OWXWd8iYA74M4m7aumGYYM+RTF0q62pJZiYupOpwnz7upoO9lMoQZhbjCbT6lg+fv
- 0QcqwPPXbBE6aHscQC04uwnAql69PulTFvmEETT/WUeJze8xJQfnjIr2kpCmBY628RGwOlTjGdz
- Hh4ByZA/dI55gwlWEp/10Skg25Icr4K5qpwN2pxZxoQzLRBeXHd4evEP3Fv4ijDZM9nLZzMrYyQ
- OK9odh8Tv5xeUlIR8x0daJ1O/WvcopjglPchsZqKM1K0kCTNDLx6SAjBjnEaWXSo5ohQ1Gsqq58
- HkQAJD4UMSUHXTwovAXz/OuZEwSpykZP/20LBwKs7Vz2VLED03Iq+/qReNF1O0jzLQVDk6UsJGp
- AU9wd4jEgi3LowxpC4t9oYoXVH4jJfduQVy5tAUp5XumiQyMJXsgdzerAhGt8moU0dp0iwpQpAE
- 1cAPTbGfBDAGR0yJygvfo5/mRPv1u7wqRknXmxbPWwJ78Tyjr5kSniR7aWis79VVjQQ9t4wwplO
- ePr6kJrxqT/hdsbHayArzsQnn6NWuP5F+h15OAu+wZ8BKCKzw6D4=
-X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
- fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
-X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
- auth_id=956
-X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
-Reply-To: aidenisik@member.fsf.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <360067785.01791340382096.JavaMail.epsvc@epcpadp2new>
 
-Hi there,
+On Tue, Oct 06, 2026 at 09:50:03PM +0530, Alim Akhtar wrote:
+> Add the 'samsung,exynos8855-wdt' compatible string to the Samsung
+> watchdog device tree binding documentation. The Exynos8855 watchdog
+> nodes use two clocks (bus clock and source clock), require
+> samsung,cluster-index and samsung,syscon-phandle properties, similar
+> to Exynos850 watchdog implementation.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-This patchset introduces pinctrl support for the Exynos5515 SoC.
+Applied.
 
-It is very similar to the other Exynos SoCs, therefore we reuse the driver
-and for the most part the pinctrl bank macros. A couple
-Exynos5515-specific macros are also added.
+This missed the start of the commit window, so queued for v7.5.
+Sorry for the delay.
 
-Kind regards,
-- Aiden Isik
+Guenter
 
-Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
----
-Changes in v2:
-- Remove eint_gpio_init, suspend, and resume entries where they are wrong
-- Link to v1: https://patch.msgid.link/20261019-for-next-lucky7-pinctrl-v1-0-0f77e94c70bc@member.fsf.org
-
-To: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-To: Linus Walleij <linusw@kernel.org>
-To: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
----
-Aiden Isik (3):
-      dt-bindings: pinctrl: samsung: Add compatible for Exynos5515
-      dt-bindings: pinctrl: samsung: add exynos5515-wakeup-eint compatible
-      pinctrl: samsung: Add Exynos5515 pinctrl configuration
-
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
- .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 119 +++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-exynos.h           |  20 ++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
- 6 files changed, 144 insertions(+)
----
-base-commit: 993e1bec85faedf90c5d27480793084e54357c09
-change-id: 20261019-for-next-lucky7-pinctrl-64bf54588925
-
-Best regards,
---  
-Aiden Isik <aidenisik@member.fsf.org>
-
-
+> ---
+> * Changes in V3:
+>  - Removed comment "for exynos8855" as recommended by Krzysztof
+>  - Added Reviewed-by tag
+> 
+> * Changes in V2:
+>  - Fixed Sashiko review comment
+> 	- [Low] dt-bindings: watchdog: missing comma in samsung,syscon-phandle description 
+>  Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> 
+> base-commit: bf1ee2bd5c2da8992f33c8950ef194aaff74ed6c
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> index a32c47831577..37d9fc9b68f4 100644
+> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> @@ -25,6 +25,7 @@ properties:
+>            - samsung,exynos5515-wdt
+>            - samsung,exynos7-wdt                   # for Exynos7
+>            - samsung,exynos850-wdt                 # for Exynos850
+> +          - samsung,exynos8855-wdt
+>            - samsung,exynos990-wdt                 # for Exynos990
+>            - samsung,exynosautov9-wdt              # for Exynosautov9
+>            - samsung,exynosautov920-wdt            # for Exynosautov920
+> @@ -52,13 +53,13 @@ properties:
+>      enum: [0, 1, 2]
+>      description:
+>        Index of CPU cluster on which watchdog is running (in case of Exynos850,
+> -      Exynos990 or Google gs101).
+> +      Exynos8855, Exynos990 or Google gs101).
+>  
+>    samsung,syscon-phandle:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description:
+>        Phandle to the PMU system controller node (in case of Exynos5250,
+> -      Exynos5420, Exynos5515, Exynos7, Exynos850, Exynos990 and gs101).
+> +      Exynos5420, Exynos5515, Exynos7, Exynos850, Exynos8855, Exynos990 and gs101).
+>  
+>  required:
+>    - compatible
+> @@ -76,6 +77,7 @@ allOf:
+>              enum:
+>                - google,gs101-wdt
+>                - samsung,exynos850-wdt
+> +              - samsung,exynos8855-wdt
+>                - samsung,exynosautov9-wdt
+>                - samsung,exynosautov920-wdt
+>      then:
