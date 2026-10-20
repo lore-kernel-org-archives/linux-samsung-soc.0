@@ -1,79 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.178
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792510647;
-	b=mfQt67ORf+UdMvRsVnydxRpFDA9vW3gfSsSo76eNSSTUfJ4BSof+rwpwXNUv+1gP1STL
-	 dIfOCVhV2Zzun+ySDMhDxjGaEkifCTyrQbVpeMZfaiRljSrcHbuDC2kVJL4XoWB4iL5Eb
-	 Z+Yuiw9tx7L8U2cDhUjfKBBXS/lcWI9iYl+rm3lpVRlIYBRCnv0O9QYTodh5L7D6Gni1p
-	 rFAdM2AFzLyzAADeR8adiaWcQ6FP2qlnvtIK4UQGTKpGwxpslnIVA4gXn9g9XecLCFBSt
-	 pXs30wCBR03GHDy3na1hPtTc70FEU/O/u8r9yRcMw4AwFb3ciir4tQsAnn4OwThhGIg==
+	t=1792510668;
+	b=s9GiNwHzcrJthgtihTpc8ZGbShDLQVkirUneLsKyCR7d6fwQjz4Od8GJh67QCtJzBHcm
+	 1GMe891Yn09+/Fe51Hx86qUe+d2VfQV0OxU+ek//+eSs//Y2EHL9ZsB53EHbGOe7a+nkA
+	 dmajgBZQntqAzzPHI3/aMcsKxqH/qHQFGcGgYqcSr3WBdgwaLjI/3X4OOqdKfnPypuVGc
+	 dD790Ws4uIcO+AO7Fuyvl7sU/rpAiEyK5VDUWBo7B0wKV8y3m3jyvjqrtZ6nhFaJD8Vsc
+	 I9oLYWGKNQ+vQJCR7h2Dx97clHWhhsripR2fMg6A40lwA9H5biK21+yXXMXpi/Ii4og==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792510647;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792510668;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=ldWxVHDgUgQ18jFdtDAJ8jJd2yZcZSUNdb3f55SGTX0=;
-	b=pHMZingIPVzR5BRBZPJDm9B/KmmgbnYhme3+0R50vbA/t/YPhO3H4ENU5e/pFohgxAxN
-	 WJPNQMArP4jDgQc0eN1aNv4fekKnCwIU/n5onj5FqRiAmzviiwPG1IyX9UUz/C4/F/RX6
-	 kp1KJPrN+YogNSQPC3BbnSRh0KsLaOnnkEmQdkxbG4AMV8YFFh1yFYxeN/KcPU2f6Nk+E
-	 GQgWZgQvfUiUDAu1bg74SspIXQyTUQWGrPAetdkEgbYe8JFHS92MWXKz1Zq/QK09pIlJe
-	 gB2L0h4WCjdQBY9zy72dM9zqfpDULRsRFzF3smvlr/TdpxtyYRPOf0YHzI0vF4KggyA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=pEhsrPmovlqFhqyaT3oTm4Fh1ZVngCl2/NoPnSq3l5A=;
+	b=yN1ux5SQpSIunHAUxW5nXs+6vHyVpCzWFRZspWFvrwSc85tDEw8NT2ZlGru2dpMsT0yy
+	 D76/UEg6U1uOHrboyW0RCHmKQPzFDV1tpbl8gLEsWUWlq+PveZdpORLBl1jhl4/otK16M
+	 vGEqTqSkORGUmJQ0PcQgxMAppda7Agh2jLYq7WoSX/idrxKLdKoAZxGyWohd4NtCZDiXl
+	 3Fk31PVbMoyGulXcRv+yVR3A0q838xH7/PsVJ1FZPuTYJx2t5VRXtT93y1PsFtgmLDFkq
+	 94fnpTOUvZq2FfO2OyEx/1e1XaDPmHPl2ooem04T3AsD46T5WAEva2ZcOlFS9bj7GiA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b="Q/M4ohUy";
-	arc=none smtp.remote-ip=74.125.82.181
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=e2he3ntK;
+	arc=none smtp.remote-ip=74.125.82.178
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44695606A330
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 15:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44695606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A34D60A4AFE
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 15:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7A34D60A4AFE
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Q/M4ohUy
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-3535a54bed9so4650654eec.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 08:37:27 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=e2he3ntK
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-354ba08cfd1so6118727eec.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Oct 2026 08:37:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792510646; x=1793115446; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ldWxVHDgUgQ18jFdtDAJ8jJd2yZcZSUNdb3f55SGTX0=;
-        b=Q/M4ohUyAJ7ROEDRnEfif5lqm8SVj4WkJkIxKL1p4bokHsZuMxcjvvMPhVRNkEPoiR
-         j5yWwuiinUbY4oNVulXzeJxLzeXkFBbS4H4E5rlSdZ/O/Z6nTiJi5PNyn3Vb6ayxyQLe
-         DZha0CltkU3t+XeU2wkG4TuszL7LlwU10IXic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792510646; x=1793115446;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=chromium.org; s=google; t=1792510668; x=1793115468; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ldWxVHDgUgQ18jFdtDAJ8jJd2yZcZSUNdb3f55SGTX0=;
-        b=onuv3LbOXTFLlKplpUvgbq6qxVnNeUnUHrYw4k956eTtejJo+/8inST90/m5+Mye0c
-         iGxx3f/g26sIv+MUuVxLPab6IMEEwZJDU7q6AvaC51NjBi75OfSjIjp94AYHMe4uu8V2
-         vKk6UmCU2uAP+EXeFtqgDXVbKRR5Q/RTQpoaT0UTURZjxL4nhpFSJtbnZGmp8BpUoY+x
-         7smh5EfyU+WbPCNs0PT1X7yXpHakowDiIXtYJgB2sRLi7TiwbmzeJM4sKPp/SnoDY/eP
-         ldyvpmZzNA+1iRztWzCf762fHkN2qUiofVPD3MwkBgX9SdXL/465Cn7wOdhqzCF4RUlW
-         4o/A==
-X-Forwarded-Encrypted: i=1; AKwUvBzeIycrlyeeav3OVagwQgt9HVfTmDgyUe6RFXo3k4LqHI9Vxf9C+BCKeF7o22OSRI0nE6oDLTSfXdRct5WQTIW+Ng==@vger.kernel.org
-X-Gm-Message-State: AFq9FYK72/ba+t60bjsAAEMq8KNHJxrSFpgZF1Vls8u84cch0iTQLr6v
-	3tviU+7TzhzPV4mlAqHe3HCgXTgs1wF1RtFvv7Rn2KSMa+HeXY9G8EwKgU1sNe9HdA==
-X-Gm-Gg: AYBFou3U+VCgw3hXDS6+e5PDQVbjgmrbeLrlSx4NSExVDpI+arC8d5pW0hKIY22XPqN
-	jx9UHieL3Q0q3pMNEJUf9Qlth3EKTd08nR7MCq7Ol/Nk0t2Ej9OvXtN+wEQ93pUtY0XO+716DvI
-	jUZTq6gooJfV6dcQqN2ZB0Vp0Gwsl25/NTL3bDE5oUW/ncmlOJnG58hlGFpX/gTXhYnA6VjeDCQ
-	M58dqKChnwAxF0/daBa+wHqg9dFPO+lM0rIYGs1vAXShe/F2TRmaPjXWCMC80vOAR9a6eQlut9T
-	oXNUQhgjiH9dIPcrYTJX7NF2TVWyQVbZdJTi2JHnvNWXe6g3ufrFqfNkKpDjsml3tmvw28eFJ5I
-	1UEyI3fVNPIzo+ZQSZcz80hNSOo0VXrLsA0h8Xp2xu49Ea/sDZs+GycQtB35B0DwsAhMdpKDppF
-	LhB213b4dxvWp57baZSfH0GVPZVDt+WKxukwd7yUODMjJuk0Nm368CyWqPJcdysT+BagO9keOEd
-	Zxh+hiL5agQdl+lH6ELC4IFwfGPNb7An/MDZTLzHe++uJPjPK0+dOGrT9s=
-X-Received: by 2002:a05:7300:d409:b0:351:1e2e:da4d with SMTP id 5a478bee46e88-361a1f5019bmr16718087eec.23.1792510646054;
-        Tue, 20 Oct 2026 08:37:26 -0700 (PDT)
+        bh=pEhsrPmovlqFhqyaT3oTm4Fh1ZVngCl2/NoPnSq3l5A=;
+        b=e2he3ntKMdsitxFNgYNDH2KDtjT8SdoDD7kf2YzzKijEjtZurMVzswa+aZbKNL5uGm
+         17OTHiwqGo/Nxc6JdBmRcph0RqvrCYjNejHxlatn3WgJ6M8hKqqroMMwyHGrGOHpyEWm
+         iz+o22iwugbB6vjf7oDOITU8ifXxFLZNx7C1w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792510668; x=1793115468;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pEhsrPmovlqFhqyaT3oTm4Fh1ZVngCl2/NoPnSq3l5A=;
+        b=l86jCpvHhLAYfDc9xIjkxQot99dGNfB6Zj7YPpDW9MfLeug6OLVOrqigfURNHPOEav
+         gzHJsNt9YjXlTfa444cWIPFd6L0uNlNlOHW9dgrE1LU3bneTk9f8TGJwNh5B41sLnIK0
+         oIjL/fU/2ME3m0c4GTf1Lujc7CwzRQxjBLQvrLN6sJYiH0tNDPqf99kj7wbe3+JJ9qwP
+         SXkNivkv4EJc4L3mUsV7wp3PkqcYRHtUY5EmEoo3t58NzMINvkrk+vbaKhxIt1rdfMnO
+         dKNIHxznGItOjF7e/NfRusHOdd71PywhvNDXmHAfoHn1gt95cqvkAM2kMaDwmzMZq8+w
+         EUJQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwHh4xttIe83k5c2uMJhJqO0irWpBgqoQ5WpSHuyE/3n+Ex235ONqCIX3pYgtu95VjJJCidGj74mjGeYPNszic2tw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIQyxxUJFlYt8f3kw36N+gDAR+L3JIdGN5FEt+oJSgdtIZkA0+8
+	kDjDKjDYRVegchdkXU6adVB7/E9Oh1+7loWiKM4HO14nMx2cxjfDpu5o84NdHJi4Eg==
+X-Gm-Gg: AYBFou2AaexChIUuIwiBDy4sdkHUwtTyt/BDSSFrP+fqV7AiAecNKmNXqo+TMFZBtQM
+	UsoGuq9QsnOeDQOvGltNYAw80SAvmuISZgeWKAROZoVRo+Yt/LM66/khRmik90YmH39hS9MPI4g
+	IdHfBbURKXWWA4Ohoigrw1p39OxR6RoUuAL1hgDh7L7wXEIoD/eoYu6ntsqngUt45RHy4+rxlUg
+	VydBkXSQF6OdPRJ79oAd3USyobADRQqOCkYG135pwgRsIJkbHvn2/n2NJEoEURVrD6LE8LABHuF
+	fNbZhyAzG+5qUTgBWdDEBJUG+Xv54ooE1dveOiEIEtWJwwPbsFwdXQSBKcOKj46sMJ7z2r43yVm
+	oPbyM5eXDB4vDNKWqmGcY8pu6DRnv4IkRc0AHGCJtrnZpb1cn7bIj5bYlvXa+TciZ7/8rJGagwF
+	K8uHSfs2Q88Boj5hnt1a4P6UeURXqW5idlna+F7uxcuEN3MvdNkm2WGHJt3alMSOw7DgQTSC5Tc
+	tkN1Neq/iigfmzCX3XnI0wOxDWZC8WGoz0AzzmM7w6TvEgmJTP3c4xuC1qiWOTbwwSAPd6Bt1k/
+	toeNTBZTyrj+l9VdE5w55QwGj9Q/u/N4n+fdK+pg
+X-Received: by 2002:a05:7300:10d:b0:351:1e89:66ab with SMTP id 5a478bee46e88-361a0e85fc5mr16049994eec.7.1792510667340;
+        Tue, 20 Oct 2026 08:37:47 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:1eb1:e432:2cc7:349c])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3607ee0cab0sm51324714eec.3.2026.10.20.08.37.23
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3607ee0cab0sm51324714eec.3.2026.10.20.08.37.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 08:37:25 -0700 (PDT)
+        Tue, 20 Oct 2026 08:37:46 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: Devicetree-compiler@vger.kernel.org,
 	Rob Herring <robh@kernel.org>,
@@ -99,29 +101,14 @@ Cc: linux-kbuild@vger.kernel.org,
 	Michal Simek <michal.simek@amd.com>,
 	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Douglas Anderson <dianders@chromium.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andrew Jones <andrew.jones@linux.dev>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	David Sterba <dsterba@suse.com>,
-	Gary Guo <gary@garyguo.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Luis Augenstein <luis.augenstein@tngtech.com>,
-	Marco Elver <elver@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nick Terrell <terrelln@fb.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Rong Xu <xur@google.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	cros-qcom-dts-watchers@chromium.org,
 	devicetree@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [RFC PATCH 0/7] arm64: Add fit images for sc7180-trogdor and google,lga
-Date: Tue, 20 Oct 2026 08:35:18 -0700
-Message-ID: <20261020153652.2907186-1-dianders@chromium.org>
+Subject: [RFC PATCH 6/7] arm64: dts: google: lga: Add lga.its FIT image script
+Date: Tue, 20 Oct 2026 08:35:24 -0700
+Message-ID: <20261020083501.RFC.6.Idfb669fd6c518bc86e45d8555f159c0ec611a6f9@changeid>
 X-Mailer: git-send-email 2.56.0.212.g129ede20d9-goog
+In-Reply-To: <20261020153652.2907186-1-dianders@chromium.org>
+References: <20261020153652.2907186-1-dianders@chromium.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -134,81 +121,123 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Add an Image Tree Source (`lga.its`) describing the FIT image for Google
+Tensor G5 (LGA) Pixel 10 family boards (`lga-blazer.dtb`,
+`lga-frankel.dtb`, and `lga-mustang.dtb`) with board and SoC ID/revision
+metadata in the configuration descriptions, allowing the LGA FIT image
+to be built with:
 
-The end goal of this series is to move forward on producing a
-"universal" Pixel 10 boot image that can boot on a variety of Pixel
-10 devices (frankel, blazer, and mustang and eventually multiple
-revisions of each). At the moment, this is impossible since the Pixel
-10 bootloader:
-* Picks the base devicetree based on SoC ID information.
-* Picks an overlay devicetree based on Board ID information.
-* Needs metadata associated with each overlay to match it up.
+  make \
+    FIT_ITS=google/lga.its \
+    FIT_FACTOR_DTBS=1 \
+    FDTFACTOR_ARGS="--strip-local-fixups --single-base-dtb" \
+    image.fit
 
-Since we don't have per-board overlays and don't have per-board
-metadata, that means that today you need to pick exactly one revision
-of one board and build a boot image just for that.
+NOTE: At the moment, Pixel 10 doesn't directly boot from a FIT
+image. However, packaging scripts will be able to take an image as
+built above and convert it into a format that the bootloader can
+handle.
 
-How does this series help us?
-1. It uses a checked-in .its script to associate metadata with each
-   board's devicetree. Other tools can parse this metadata in order to
-   craft a package that the Pixel bootloader can understand.
-2. It integrates a call to the new `fdtfactor` tool [1], which results
-   in a "base dtb + board dtbo" that looks like what the bootloader
-   needs, at least as long as all the boards have the same SoC.
+It should also be noted that the "description" of the various
+configurations here is expected to be parsed to help figure out which
+configuration to use on which board. This idea came out of discussions
+at Linux Plumbers Conference 2026 and means we don't need "loader"
+info polluting device trees. Having a structured (and upstream) place
+to store this data is part of the motivation for landing this FIT
+image.
 
-What happens if everyone hates this series and it gets dropped on the
-floor? Honestly, everything here could just go out of tree and it
-would be "fine". IMO it's nice to have the Board ID / SoC ID
-information for each devicetree stored in the same repository as the
-devicetrees themselves are, but if this has to live somewhere else
-then so be it.
+Side note: at the moment, the Pixel bootloader can't handle picking
+overlays based on the soc_id and soc_rev (it only uses those to pick
+base dtb files), so for now we won't be able to support boards that
+might have different SoCs. I've included the soc_id and soc_rev in
+this FIT image in the hopes that we can improve the bootloader in the
+future, though.
 
-NOTE: from reading the above, you might wonder why the sc7180-trogdor
-.its script is part of this series. The answer: it's a board I was
-previously deeply involved in and it is a convenient way for me to
-prove out that the Chromebook use case works well. I did hack up some
-changes to the ChromeOS build system to use the provided FIT image and
-it worked great, but since I'm not on the ChromeOS team these days
-it's not something I personally plan to follow-up with. It sounds
-plausible that Chen-Yu may follow-up with it or post a similar change
-for some Mediatek Chromebooks.
+Assisted-by: Gemini:gemini-pro-prerelease
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+Note that building `image.fit` with `lga.its` requires the Pixel 10
+(`lga-blazer.dtb`, `lga-frankel.dtb`, and `lga-mustang.dtb`) device
+trees, which are currently in linux-next and not yet in mainline.
 
-[1] http://lore.kernel.org/r/20261015182221.2931742-1-dianders@chromium.org
-
-
-Douglas Anderson (7):
-  scripts/dtc: Add fdtget.c and fdtput.c to sync script
-  scripts/dtc: Update to upstream version v1.8.1-22-gf3451d12532b
-  scripts/dtc: Build fdtget and fdtput host tools
-  arm64: boot: Support building image.fit from a specified FIT_ITS
-    script
-  kbuild: fit: Add opt-in FIT_FACTOR_DTBS support using fdtfactor
-  arm64: dts: google: lga: Add lga.its FIT image script
-  arm64: dts: qcom: sc7180: Add sc7180-trogdor.its FIT image script
-
- Makefile                                    |   2 +-
- arch/arm64/Makefile                         |   3 +
- arch/arm64/boot/Makefile                    |   9 +-
- arch/arm64/boot/dts/google/lga.its          |  68 ++
- arch/arm64/boot/dts/qcom/sc7180-trogdor.its | 728 ++++++++++++++++++++
- scripts/Makefile.dtbs                       |  51 +-
- scripts/Makefile.lib                        |  67 +-
- scripts/dtc/.gitignore                      |   2 +
- scripts/dtc/Makefile                        |   6 +-
- scripts/dtc/checks.c                        |   2 +-
- scripts/dtc/fdtget.c                        | 207 +++---
- scripts/dtc/fdtput.c                        | 280 ++++++--
- scripts/dtc/libfdt/fdt_ro.c                 |   2 +
- scripts/dtc/libfdt/fdt_rw.c                 |  41 +-
- scripts/dtc/libfdt/fdt_sw.c                 |   3 +-
- scripts/dtc/libfdt/libfdt.h                 |  70 +-
- scripts/dtc/livetree.c                      |   2 +-
- scripts/dtc/update-dtc-source.sh            |   4 +-
- scripts/dtc/version_gen.h                   |   2 +-
- 19 files changed, 1322 insertions(+), 227 deletions(-)
+ arch/arm64/boot/dts/google/lga.its | 68 ++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
  create mode 100644 arch/arm64/boot/dts/google/lga.its
- create mode 100644 arch/arm64/boot/dts/qcom/sc7180-trogdor.its
 
+diff --git a/arch/arm64/boot/dts/google/lga.its b/arch/arm64/boot/dts/google/lga.its
+new file mode 100644
+index 000000000000..5ba19c0b5411
+--- /dev/null
++++ b/arch/arm64/boot/dts/google/lga.its
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++/dts-v1/;
++
++/ {
++	description = "Google Tensor G5 (LGA) kernel and device trees";
++	#address-cells = <1>;
++
++	images {
++		kernel-1 {
++			description = "Linux kernel";
++			data = /incbin/("arch/arm64/boot/Image");
++			type = "kernel_noload";
++			arch = "arm64";
++			os = "linux";
++			compression = "none";
++			load = <0>;
++			entry = <0>;
++		};
++		fdt-1 {
++			description = "lga-blazer.dtb";
++			data = /incbin/("arch/arm64/boot/dts/google/lga-blazer.dtb");
++			type = "flat_dt";
++			arch = "arm64";
++			compression = "none";
++			hash-1 {
++				algo = "sha1";
++			};
++		};
++		fdt-2 {
++			description = "lga-frankel.dtb";
++			data = /incbin/("arch/arm64/boot/dts/google/lga-frankel.dtb");
++			type = "flat_dt";
++			arch = "arm64";
++			compression = "none";
++			hash-1 {
++				algo = "sha1";
++			};
++		};
++		fdt-3 {
++			description = "lga-mustang.dtb";
++			data = /incbin/("arch/arm64/boot/dts/google/lga-mustang.dtb");
++			type = "flat_dt";
++			arch = "arm64";
++			compression = "none";
++			hash-1 {
++				algo = "sha1";
++			};
++		};
++	};
++
++	configurations {
++		conf-1 {
++			description = "Blazer (board_id=0x070406,board_rev=0x010000,soc_id=0x0005,soc_rev=0x010000)";
++			kernel = "kernel-1";
++			fdt = "fdt-1";
++		};
++		conf-2 {
++			description = "Frankel (board_id=0x070306,board_rev=0x010000,soc_id=0x0005,soc_rev=0x010000)";
++			kernel = "kernel-1";
++			fdt = "fdt-2";
++		};
++		conf-3 {
++			description = "Mustang (board_id=0x070506,board_rev=0x010000,soc_id=0x0005,soc_rev=0x010000)";
++			kernel = "kernel-1";
++			fdt = "fdt-3";
++		};
++	};
++};
 -- 
 2.56.0.212.g129ede20d9-goog
 
