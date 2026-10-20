@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792495215;
-	b=1Fh8oxK9gjkwLrpL0kPCml6bY1+13B240k6hwESAHOHMNbHsezP0seaVF+xTqm0znHzD
-	 fEVEgulQtEGlT9+jA7NNLFr0efXqHDHWUnTSxDZeD7jjhL34dw+JszWdnOz4KFuJ9mWAq
-	 J6sNnGFbJ9YteN6v5bIHKti2toAfpRXpjvHOpTZpFpU/e3i21cNneUV/B8QIsfskKatwp
-	 r8qAJBRCwm2eJ8SEpOqc1Ap6TAchmevsOfhd59/m6DMwsQZGII6mQbdYb3r2Uc2r1Ho1h
-	 6Dphc47bnEANxQpiFhCvBMCnqCUlbsbeaCifZUwpyORPZP+fDJw9RIsjoXguhXYjeog==
+	t=1792495961;
+	b=D67ryBRF8yy9IAZHxKSU9QfU+1LJN+RvjgKt+M0Ms58p3i5q8XrRsLgNUmExDlenLTiP
+	 CQBnK4NDPxWnMZSiLq7dptDKXek41+UYBBCJvvk4a5PMFnRmX6Gjye+uSrJRhsDzM2SGP
+	 ZahFFWxHAKtqT4TMVvK0oK8ZdnuayO/vWOJ8piZ9s2TLKBIa9WRQOt/V5XfDD1TeHv1eJ
+	 NSvPNOytnqlHDcZIyMqQ53nzTT8/XCkiOJ1zUYWiTzUPJkmM53EQpDQZ0AYrFJnz2ovVw
+	 OEoWA2k6zvzYMxmx7KnxTLR44TvEHCwbWDUDr9dJXikby1Ng2yTShcV2qPav4CL0zfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792495215;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792495961;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=ZFztjEr0ZQexLDh3Pann33lsXa1N2kU+5p5eWnif77Q=;
-	b=ckYJnSiCySMdn4AIfuVSSyR5J+8WhtQ5pgm9RRpcWP6FGHTEEb81s276CatFBJTGW9+5
-	 9IjEZ/xfEfKMCnk6UoUxcTvkF/cTdWYewqkOk4g9fdcp6bv9u0VRQ0X+pdttifqLc4ROJ
-	 XV0nId5mpglYtmcmqT5Lv5GxhLU0J/Q6WhESSWH5L7PqInZM/osVvj6gvp7XM7QjSua4F
-	 ey3rBFXWInGTEccIaYz9ZyFvpjQM7vCn3/2wNzcj4vcOuopeYtqXP5eBDwUBKk8SP/vUi
-	 NXsqs+3ZHqcZTfOyQR+4ZzEtJfFlKAZZgTcLJh3hmhgwR0hHr+HMQdiDI7pXYl/jkZw==
+	bh=Sp5oihtLvg49MCLp/n/qyNEd5ihDt74z2SKQHiNYLbE=;
+	b=wUrCHMlC+2cBDiN/o97kEqC36nP11jsJOH96Dngrl6NQgo9OIUTZ6Ypw79YncbLblWRX
+	 /SO4fXAaSqL6PNldqyxckMqwU7GCiW/rSTXxUeT3bx/CVj5BCz/m5eMGzp0ZRiD61PVeS
+	 QugVdCTeP6dgIFIQtbaFV3uWcVWEbUmnDYB9KRNDFH0RC6WM2GXbrRg90B4huKkdfoRoZ
+	 PcjD8SZ+z5Em78wClcgQhZNwb/P3VVOHORDmF8cvr+Ai9B9Ls+vmt8wSya08ScNLR1hHD
+	 LwP2na5/YHXtV0YbMOutNXCy7QR6wT1G2fmtYSVJ1dO1EY8+3cDLDTDIP8Ixjcpzztg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=opUOeqbF;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jpYqxBJB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BB960A2601;
-	Tue, 20 Oct 2026 11:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AAA606A31A;
+	Tue, 20 Oct 2026 11:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=opUOeqbF
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3701F000C5;
-	Tue, 20 Oct 2026 11:20:11 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jpYqxBJB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A301F000C4;
+	Tue, 20 Oct 2026 11:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792495214;
-	bh=ZFztjEr0ZQexLDh3Pann33lsXa1N2kU+5p5eWnif77Q=;
+	s=k20260515; t=1792495961;
+	bh=Sp5oihtLvg49MCLp/n/qyNEd5ihDt74z2SKQHiNYLbE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=opUOeqbFYWlPOxOu67WIYDyUVn8DxngW37Z/PJCmqakLjfBd7R03IrVqhVLn4Pxn1
-	 xXtjPDZtXPZ4+lVZh9LnYbXaPQxoNRVyNEUba4h5wRSi6MvAOfg/pkhkPV9FzntciH
-	 4DyEkhU8VlmkxeapIGBYTSSTTjEhSrNx4EAJQ9vlM3FbjtRod51UwKUAtaAa+Epcvk
-	 Jct/IxD/BUzRA5yGVQubYhWgKgzRd5goLLJiBZveR73XkzLUXDdoTcVYDtm4V5Lk4h
-	 uXrW9ebh4QUd0RyamHsOBC/8GTXfqWIfiofVBfoKncjsp7DZZaNgnbUaQfbO9/0lDQ
-	 q6d3gIcMf/w7w==
-Message-ID: <e4af2bce-7bfa-463b-927c-9641d74e0e8e@kernel.org>
-Date: Tue, 20 Oct 2026 13:20:09 +0200
+	b=jpYqxBJBSJIS/6C50M/aTHWoWlaB0rsoKl9Kb3tr/jlBhef/bLfaK48s8b7VFjrrU
+	 a2f2ImaCJU2kz0+GZmSj6mpWXl94MKI/0C31ePLDd7u3kikh8SyFD0ZYeHO4tZEqmc
+	 HBAaUBzRWJNqjbx83kwJ8xMQV0EOrNXzPSQYBEIbT00P6+GWnWrt0U8/MzTbEeN83t
+	 PonyHx/M+HdAwaoUU46b2dG9q9zLTeVlHz01ZEehRQnwes4t3PofyEGlzNwlZqsyk0
+	 Op4fsmVLJdutqfQiu2KzYwwZSqgFkz+lY5IZzLNKiGW/FwfWhuhiDBaZYtYTYEUBAq
+	 //USVk3tW0c6Q==
+Message-ID: <2fd0111b-8dc9-40e5-b705-d9f3d5265035@kernel.org>
+Date: Tue, 20 Oct 2026 13:32:28 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -52,19 +52,25 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] arm64: dts: exynos: add initial support for
- Samsung Galaxy Watch FE
-To: Aiden Isik <aidenisik@protonmail.com>
-Cc: Aiden Isik <aidenisik@member.fsf.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v2 2/3] dt-bindings: usb: Introduce samsung,snps-dwc3
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: peter.griffin@linaro.org, alim.akhtar@samsung.com,
+ gregkh@linuxfoundation.org, robh@kernel.org, conor+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, mani@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20261019-for-next-lucky7-v2-0-c4ecab4b1c4c@member.fsf.org>
- <20261020-eminent-juicy-woodlouse-c3fd24@quoll>
- <pyssceEfVM7C-RyMLXJw8UV4wTs-zyDxywEasLdafttU1LwckC7RjzO4BvAhElk2ExTaXVZYZ0NSQ82FcgBFXSrsGmj2TtBQ7HN0vv7gEOw=@protonmail.com>
- <5CDdVVnZEwA25WkRzHJtuO-Tw47UZGTEFrZ9SBbQ2ax1bG9_OUemLDoX5C-TzyFyS5WxuFauKFU11QGk08RM0_Nn_3HGrglq0AR7wr8IggU=@protonmail.com>
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, h10.kim@samsung.com,
+ dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com,
+ eomji.oh@samsung.com, shijie.cai@samsung.com, muhammed.ali@samsung.com,
+ thiagu.r@samsung.com
+References: <20260916122229.2604003-1-selvarasu.g@samsung.com>
+ <CGME20260916122354epcas5p401fd6470d6cef75951af732b03aa5970@epcas5p4.samsung.com>
+ <20260916122229.2604003-3-selvarasu.g@samsung.com>
+ <20260918-burgundy-marmoset-of-focus-c9b9a7@quoll>
+ <fef2b2f5-3838-4eec-8118-d41f9ca0ed2f@samsung.com>
+ <7fbcf497-a166-45d6-844d-faaece6f581c@kernel.org>
+ <ad11251d-6632-498d-95f6-04a7c6dade72@samsung.com>
+ <6643fece-aa39-42e6-8cd6-5264f15e12ff@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,25 +116,95 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <5CDdVVnZEwA25WkRzHJtuO-Tw47UZGTEFrZ9SBbQ2ax1bG9_OUemLDoX5C-TzyFyS5WxuFauKFU11QGk08RM0_Nn_3HGrglq0AR7wr8IggU=@protonmail.com>
+In-Reply-To: <6643fece-aa39-42e6-8cd6-5264f15e12ff@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/10/2026 12:42, Aiden Isik wrote:
->> Is it a wording issue? I don't depend on actual driver code in the DTS,
->> only bindings for the hardware they drive, so maybe I could make
->> that more clear?
+On 20/10/2026 10:02, Selvarasu Ganesan wrote:
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    items:
+>>>>>> +      - enum:
+>>>>>> +          - samsung,exynos8855-dwc3
+>>>>>> +      - const: samsung,snps-dwc3
+>>>>> And this fallback is not really accurate. Samsung does not have snps
+>>>>> device, because snps is a vendor. Anyway, generic fallbacks should go
+>>>>> away, drop, so you are left with samsung,exynos8855-dwc3 only.
+>>>> Hi Krzysztof,
+>>>>
+>>>> Thanks for your review comments.
+>>>> And We apologize for our repeated below explanation, but we wanted to
+>>>> ensure our intentions were clear for each point to avoid any
+>>>> misunderstanding.
+>>>>
+>>>> The original intent of the generic fallback was to support existing
+>>>> Exynos dwc3 bindings from a parent/child representation from
+>>> How does it support existing bindings? I don't understand. There is no
+>>> such fallback in existing bindings.
+>>
+>>
+>> Sorry for the misunderstanding, Yes there is no such a fallback in 
+>> existing bindings.
+>>
+>> Our intention was to use new proposed generic fallback compatible 
+>> string that will support USB dwc3 flatted node for all Samsung soc 
+>> when those are migrated in the future without adding SoC specific 
+>> compatible string in driver.
+>>
+>> Agreed, Here using generic fallback name (samsung,snps-dwc3 as a 
+>> reference of qcom,snps-dwc3) is incorrect as snps is vendor not a device.
+>>
+>> As per DTS101 slide , Now we clear that the future Exynos SoCs could 
+>> use  samsung,exynos8855-dwc3 as a fallback when they are compatible 
+>> with the Exynos8855 hardware definition, rather than introducing a 
+>> generic samsung,snps-dwc3 fallback. The dedicated compatible would 
+>> still describe any SoC specific differences, such as clocks.
+>>
+>> And Understood that we were mixing the current Exynos8855 binding with 
+>> the longer term migration plan for the existing Exynos SoCs and future 
+>> SoCs.
+>>
+>> We will drop the generic fallback and use SoC specific compatible 
+>> samsung,exynos8855-dwc3 (vendor,device), following 
+>> samsung,exynos-dwc3.yaml as the reference.
+>>
+>> Regarding the binding filename, if the flattened representation is 
+>> expected to support multiple Exynos SoCs where there is only 
+>> differences in clock in the future, similar to how 
+>> samsung,exynos-dwc3.yaml covers multiple SoCs with the legacy (parent 
+>> and child) node representation, should we use a common binding 
+>> filename for the flattened representation instead of a SoC specific 
+>> name like samsung,exynos8855-dwc3.yaml.
+>> For example,
+>>     samsung,exynos-dwc3-flattened.yaml.
 > 
-> To elaborate on this, I listed that as a dependency because that patch adds
-> the compatible string for the watchdog timer, and I was also under the
-> impression that drivers must be already in-tree before a DTS patch which
-> uses the hardware the drivers support can be applied (otherwise you
-> would be merging a DTS of which parts do not work as the prerequisite
-> drivers are not in the kernel).
 > 
-> Is this not the case?
+> HI Krzysztof,
+> 
+> I am writing to kindly follow up on my previous inquiry regarding the 
+> binding filename for the flattened representation.
 
-That was never the case. See maintainer soc profiles.
+I started to ignore overly long answers, because to me that means
+contributor expects me to devote a lot of time to their contribution. Or
+second option: LLM proxy. There is even a trend where people paste
+prompts or LLM-chat-confirmation-like answers. I often do not correct
+even such cases, just put the ignore list.
+
+
+> 
+> To recap, I would like to know if we should use a common binding 
+> filename, such as samsung,exynos-dwc3-flattened.yaml, instead of SoC 
+> specific names (e.g., samsung,exynos8855-dwc3.yaml). This would be 
+> consistent with how samsung,exynos-dwc3.yaml covers multiple SoCs in the 
+> legacy representation, especially if we expect to support multiple 
+> Exynos SoCs with only clock differences in the future.
+> 
+> I would appreciate your guidance or suggestions on the preferred naming 
+> convention for this implementation.
+
+Please use the naming expressed in on of the rules for writing bindings,
+so one matching the compatible or fallback compatible.
+
 
 Best regards,
 Krzysztof
