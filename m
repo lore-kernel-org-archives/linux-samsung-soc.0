@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1792687600;
-	b=cKSwD31HUZXoFWDHV3skUECIuypm67P/CDTt6IbqUhouyu3hCl3sznHfD2wA8Hy8lo50
-	 VLlE3Xd08kXznaM+G4UGY6equqi9hU1iMbRwwkvPJ/n9IYey6IhQNfpur+EA93ofzSQgx
-	 yKcn9VLqUhDApY3eXVoMym+OemycyC9XqFSNABo/Sc+LUDl1pSIVCQmLIMXzTw2W5coS2
-	 y/CzIPnqadNPzlK340RzEcqVa7Ml2CXZyPud8dfZ2uXkg2QqjfkwREU5Ivvs73egqde72
-	 e7sLxk+9w+SOeZjUKhhXD9qvWLYS95hlGeyFEIAzVMuHzJroeuVRxPQrj6CxzCRl6Kg==
+	b=W62rryGh52R9tLThJZ3c4L3B2hWIhKvckXLP/q+I4sCwyTtpV7sFbRrbfM3n7BB+qwLh
+	 rx7xc1x5k1i137B7N3lPFhVd9sAUl9XPGcT6zyRhspCGW4q9Z9FK9RVIjEZ8N+BtlD3fW
+	 OoypwOQMojIVZOA9mOslNc5LIEBCp7NYdZy1tbNqJM+UT6cJdRsuJb2mNuK/uc6llCICX
+	 hMI9BBlDLygKpwMBmnkveMIU6+jiiPynN8hqElUmMAplKXrKRDJdSeBGYE3RqAmum6Sds
+	 miWrcEhddrErj/L90jOf/kEsBqy4Wy+96I/c7sqc73QsNu3OVWiyojtr6gYbKxpNLFg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792687600;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=xOTUwgjwiqoVK48MuNeiJ5tobUcs3ededaPQ2qfxPUE=;
-	b=msQZyUKWMli5MtnnPSKlaHmDwJLu2PFzZuk0sstJRlj28NA9aRSf9OUI+Az5QJEMZxVg
-	 TuqkohEFZ+323vyt1xC9uuDHxb7IUUpL0Exm5REQ7Qr58xO2qW80klEG0zFFDetfRIeq6
-	 AU1p0vXkAHmvijtlCMD/jcJXk6QG5wpf9b1/56QjSxobd9V/zXQ5cua1Ovv4/0jeA0CVQ
-	 LuYde5bv0AjybL2PUa8OF5oyX83KrNSVhzvIadXyODXpq0ARGUXgDlyV+IIIre8Af1vYR
-	 V+xyUJHrG4P9h3GPagbOOHmHYZe9gIWOUMe8MhZTkcz+GYmzW2jezH2IqIdcyrIR0ew==
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
+	b=OKq5bqJtHLfiJ3QJoxuU9DpCzvHmMD+D5N2o/iCbQHHMvc6OkkXGptOpGLwTu3TBXbv8
+	 CxvgxWW9TuYLOdMZNeayUkV5LF4xEXnCtRwzcpUzfoEUR9cNbJscUrwE0lNw61ej9+4Ig
+	 DUgSFEb7HJiaZe6yYjIxRmqL9euueXCHM/RnF/q8IwoZe8s1SNX22N2OsfoGJZnKWOTRK
+	 +NuW49HzMu/CLEhG0Cau6f3glX1EmkCVbnWzM+Zp8UhXVgii88KiI67qScoiIUJrh0A9B
+	 J2erDtUaE1CdQU8/4NhFKkog1O6qcDgfL/kR+WarzJVeiWc3J4UVoH9xpklU4x1C+tg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b7XanTeE;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IbOhdxIe;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2B5606A31B;
-	Thu, 22 Oct 2026 16:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52832606A332;
+	Thu, 22 Oct 2026 16:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b7XanTeE
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IbOhdxIe
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1792687599;
-	b=wZAPmm3nhigupYSPPZpHXdED63UAVhULqOOIQfGY4UvvA6VpaHDmmJqqMaxJzE+QUWsh
-	 0BA5aewg15v0tjbAr2iRcgxHNjHoH74YlyZI5gfdsLzOcLmGS8CFJa6dsgpFT4EcjOLAr
-	 UAwvy8qSDnSDqmT0ChsxA+NKCNPkIeedx2YLYMCUeq8JvQFrypOiekf6KPH1PODHreGAu
-	 /f/Ht7AiLS0fD9VCBusg4yXB8LJqN/jxeEs7Oj7lZbTATf5zwNFlQrcZ1l2zNJEMd+EVl
-	 Oj9C/zkrXPzLRn1PLxrMeU0FdjanCmIAZG9/0aD7/QLXhwE1ocIL0KDbuqEUN3pQbdw==
+	b=2y+Wk8A4WlWscYoJu+mTGY1nAyZ5+dw8L+IqgiMgARBs5tcalNsi85fcQGPZGYitm2pp
+	 D4DHiZ4O5IN3cTQrMVIWtx2v1Kg8DqhBbAPXGTvczdZ6fHI2uPaF3Njd0jCpMD2Sx9/he
+	 W78v039lIHYX43AZ5oSnTuEOutta1TPb1oDhN2NfKYSr5nti7WMsHRzMhX+9v3cDcI7y6
+	 vp97afP7RD4uCdGswzi920IRy6tPwZhiiMao1GJwBTotbI0iiGYkE3rKP9zG9x9Cf6a2J
+	 WFL+I599Yg5rhgivDE81EEBaqUs1VKp4xq1267GHcOn6fWJnFNWwSgfJvR0uQ6z5ICw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1792687599;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=xOTUwgjwiqoVK48MuNeiJ5tobUcs3ededaPQ2qfxPUE=;
-	b=1Jw8Kcxd3LU9QF+QPzq8v8t4I6XUBjQnkZ0XVjbhP3i7vmWhk42Ig3IFbeudnzU5v7Dx
-	 ypeIeSkvltVg1glrpObDymfzZ0gcXN02J+JGdA7kcQ35JhqtGRX5KG+9c3f/ZnVFktzTl
-	 tvuK3PKyWn0ufZphjLZbU0y8uSr1GQ8IGit18bX1Yt4UNylD0f2IIw7rrTEO4T81sfPZ/
-	 YnMXSHtf0BMoAhkxuF6p74M27f/JSTw5Q30Jlc6Lx/hlpDQCO89j2paptuLQHioIdftUM
-	 xstx/XgQg8rDjC6PcQ3MMVnNFTDugpuTFawzPD4jvVBy3r/1FeIKuFEpOrBB1K8Ln8g==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
+	b=wbY0dNG62vTrHqXrx3UglHHMsqAtViUr8pEpA5eotwgE/+q2QRPPTlYcBU64RcsagjdZ
+	 JJArWUCfYiGSA0lm0HnkCMEQBP2vrL7P6i5o2wC4P8EDKRa74lkWp80HzDRNSGwbLPoOb
+	 /hIAA/Ev0tEhxn8fUVXCCkRu3qOkd+2Di8LLaTOXU9k/vulaCPWaUqoaqKGQi8Rk7jVeE
+	 pJhf2BjKRytnAjY8/rPYas0MhQxkFTZGsKspbXOTLZvomvZ04m01TTePOXzBQHcyBBs3m
+	 C5JHccqyK5kLi86rGMeE5LolvCvvdpMW2ysEjj2P5knuFKz6fhGyU3HSJ9RIfENBmng==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 9A91A1F01828;
+	by smtp.kernel.org (Postfix) with ESMTPS id 9AB1D1F01829;
 	Thu, 22 Oct 2026 16:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1792687599;
-	bh=xOTUwgjwiqoVK48MuNeiJ5tobUcs3ededaPQ2qfxPUE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=b7XanTeEkgtsXzleqBFNxp3n84XIRmr1QuQV7ky0pDNbu60roJ/sGOq5UZqwdNQEk
-	 o9PpxaWNN6Vz/SOOf6yNKY0LE+NROfRmHf+r5wYte2iH1e+9/7+N69NshNCWT0ZdwN
-	 34GN/+QkcUDAheguag9vT7r9HcZux5qhZCBdpMV9M4U6V3JK2fOX212ed6iVMcbpue
-	 5D2JBjd+REibPM+E+JVdO10NQnYwOckJiAuXbkuhhGandHlH5XMWSSbq89wFWBBlLR
-	 t1o8UAB8YCPmaa/6mfZMCyNURpPW/u+Iie1sgBYNE4t4EQt0qDfxDPp+rOq+wwIQLL
-	 Nl/bi7pciQH+A==
+	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=IbOhdxIeoYiTur9d8wLjrXRyNNq0SFkMet8Npxu/1fww9/0i0uj6qXa+8Qj4ewyL3
+	 Y7DDdNNCLAbSNq1CXy4cyllCBWtC4xjkBblmhAHokcC/HuqpNTji2Dc70LOlQFqGW4
+	 sVb/KqJiWpeknjns3Cm2UJXQcm0ZI0MW3SWw6y8+bMC9mZI1+6LQSXKcpZ0XFTvtyI
+	 HsMx1t3Iw0jUnIiDqpbmfMF1nTXShDoPjx8ZVBLRIr+jxyBbMZxeZTga5vZ6sLRm+w
+	 mFqeyrAOK4TmK6ONzaea12cLPTZhS8Uma0HIITYFPh16GVZ4SaIZNBncKk0tG57u8L
+	 YGIDMjBRi6dSQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 09FEA41E83;
-	Thu, 22 Oct 2026 16:46:38 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id E8F9441E73;
+	Thu, 22 Oct 2026 16:46:37 +0000 (UTC)
 From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Date: Thu, 22 Oct 2026 17:46:37 +0100
-Subject: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos5515
- usbdrd phy
+Subject: [PATCH 0/2] Add Exynos5515 USB PHY support
+Date: Thu, 22 Oct 2026 17:46:35 +0100
+Message-Id: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,9 +84,11 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org>
-References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
-In-Reply-To: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOs92moC/yXMQQ6CMBBA0auQWTsJTAhFr2Jc2DKFUVNIhxoI4
+ e5WWL7F/xsoR2GFW7FB5K+ojCGjuhTghmfoGaXLBiqpqUoi9GPEwMuMn+Teq8GkFqdhRWOori1
+ 5d20Zcj1F9rIc5/vjtCb7Yjf/d7DvP+kvrUl7AAAA
+X-Change-ID: 20261022-for-next-lucky7-usb-phy-77244b2fc98e
 To: Vinod Koul <vkoul@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>, 
  Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -101,102 +103,73 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  Aiden Isik <aidenisik@member.fsf.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2950;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1831;
  i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=Kiiu/e8JIBqj1FtLrHXUkttonZWwk3f0gSxzSjnt6Ys=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq2j3tvjE8eTgCSASSGRDwhLex1H6pqWKT0Iw0O
- pESfG41hkSJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCato97RsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+sMHhAAsUopH+oG44TXLb0KyNZ1uxDtgyammvw
- MARBRATeyeRUvvyAxR+ENdfAOfQYAoBKDAuo0s2R0jHI8CEzYvzkQ/w8it1CnQjU/j84Ni9j2k5
- o55ZGjUZggmKNDKtjIRG36rtrkQKcu9zWIN6A+55PfCf1c3FMXf78tKycXPO+pngBm9EgsDD5xd
- lAHyTOqxxV9EEjd30IQiq2Riey5A0R/5q37GgGPFhEyTzeIfIILPozVq7cg465VfEhpIxzb+zo4
- ZtYy5tJPU6FicZn1jGewertAY/IfcXQSbdg08kYcgT73zeBL1KXP+Zshiiu5kM+4SZ3Sp9dgoCd
- 1wS06y7CeLuyRsZHHUAnh348rqbp93z0cjKqhe9Ywz47kHjKBQGNr5Wp7Ar5DRNHtBs7WA9BEd6
- KH4nChgwGQLetqtmQowuge88XNMiiNmO8TmaQBJynxK5VurmCcWUjt3EL4JE4Kg7kezAWKHecA6
- izygaxwmaDEIzmRkjFFXY8EKbEtrtP2dzsKi6JPy8Ve0PgZ00daJgeo9Ugx5YQpxGMjOJfh30gG
- Cb/r58KUUZKVa0ujhjTyXzitf0CBPS2omURAxka7Z5Zilhcs5/a15xfc+3/dYTy1oH0vrF0sDwX
- iyiBUvLkOJ51XEsg4TRYNw1NlwjQyoDkVMe4V9ASelqVrhbv7u40=
+ bh=me8mjqkDEH3k+r4GPGLnzrCNkQZFbNxiQ3wp8aaLBNU=;
+ b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq2j3s5XBlupmzJ4a/zgSIyMg+7QLmOCmMMMq4H
+ 3sVdzbgdE+JAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCato97BsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+sJbBAAytJ84YhHRR+XnuUu8QYoumKEKfprYYg
+ Hu7gNBMqyPPPHZOWq0yopgsvDpLJnyL97ZhTkLK4OgNKhcugsq+Di+lbsY1wk9koHodBB+db4oP
+ yi7S+wwCkhx7PbKzcjJXPUvmlSdzl0uXnobwKUVPMCXj5oh2OlWNrwC6ropbfeNL+726eRAs9qZ
+ 9snYCyTj0W40RWvsc52Ye7x8aq3ath/iuJZwJMVk4JV7rnN7z2L4mKEu3sHHhfrymAi9EtxR6S/
+ tFk6lmv8gESSH65GXAvTPru8modWt3P5fwD/RpIDITiJe2gIppo9qrDuYTzBNaZtHHkqpMHWLCt
+ grFKLjfJ2JV+fENCrKd97EiH8qOZ4//rcUV29mMBnaKr0MvmYuj/ZO+JYFlfPnIWeFMxTIbFIvo
+ 1GvJveA7UxEwWiiOB8ORN+jndCA7tN317WgX6FotzhLtR4Lw6zS+hcvWmYTQrHR4/iOc/os1vjn
+ Q9U5NTQF/78j/MtfGUzJ4l5ZVCrwSmPxhGOHzrcQGed16K2t72oumof33ZaxrGamJSNXk7vpVjJ
+ dVFv8/SfR1te3m/6ldQBsaIFt0j1bz3uuQSUbnJo+Nph6bB8UxgdZPHBpB4uqwhG2+yajdXALfN
+ pLZjQS9P/GcCAW2U1HxJKsHDiczkCn8MgYw+WB9ZY3zE2traehEY=
 X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
  fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
 X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
  auth_id=956
 X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
 Reply-To: aidenisik@member.fsf.org
-Content-Transfer-Encoding: 7bit
 
-From: Aiden Isik <aidenisik@member.fsf.org>
+Hi there,
 
-The Exynos5515 USBDRD PHY is a USB PHY which supports USB Super-Speed
-and High-Speed. Add support for High-Speed (UTMI+) operation.
+This patchset adds support for the Exynos5515 USB PHY.
+
+The PHY supports High-Speed (UTMI+), and also appears to support
+Super-Speed (PIPE3) USB according to Samsung's own code to drive this PHY.
+However, none of the Exynos5515 hardware which I am aware of actually
+supports Super-Speed, therefore I am unable to test that part, hence PIPE3
+support being omitted.
+
+This patchset was tested on a Samsung Galaxy Watch FE using the USB serial
+gadget.
+
+This patchset also depends on [1], due to using an
+exynos5_usbdrd_phy_drvdata member (.n_phy_cfg) which was introduced to fix
+an out-of-bounds access bug.
+
+It also depends on [2] and [3] in that they are the clock and pinctrl
+drivers for Exynos5515, and without them this driver cannot talk to the
+PHY. It does however build without them. [2] should be close to being
+merged into Torvalds' tree, and [3] was just submitted by myself a few
+days ago.
+
+[1] - https://lore.kernel.org/all/20261020063559.3530901-1-selvarasu.g@samsung.com/
+[2] - https://lore.kernel.org/all/20260818-for-next-lucky7-clock-v2-0-cda0cc80f158@member.fsf.org/
+[3] - https://lore.kernel.org/all/20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org/
+
+Kind regards,
+- Aiden Isik
 
 Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 43 ++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Aiden Isik (2):
+      dt-bindings: phy: samsung,usb3-drd-phy: Add Exynos5515 compatible
+      phy: exynos5-usbdrd: Add support for the Exynos5515 usbdrd phy
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index f10cf7b6e0aa..8718e8f01e46 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -2075,6 +2075,46 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
- 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
- };
- 
-+static const struct exynos5_usbdrd_phy_tuning exynos5515_tunes_utmi_postinit[] = {
-+	PHY_TUNING_ENTRY_PHY(EXYNOS850_DRD_HSPPARACON,
-+			     (HSPPARACON_TXVREF | HSPPARACON_TXRISE |
-+			      HSPPARACON_TXRES |
-+			      HSPPARACON_TXPREEMPPULSE |
-+			      HSPPARACON_TXPREEMPAMP |
-+			      HSPPARACON_TXHSXV | HSPPARACON_TXFSLS |
-+			      HSPPARACON_SQRX | HSPPARACON_OTG |
-+			      HSPPARACON_COMPDIS),
-+			     (FIELD_PREP_CONST(HSPPARACON_TXVREF, 15) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXRISE, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXRES, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPPULSE, 0) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPAMP, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXHSXV, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_TXFSLS, 3) |
-+			      FIELD_PREP_CONST(HSPPARACON_SQRX, 7) |
-+			      FIELD_PREP_CONST(HSPPARACON_OTG, 2) |
-+			      FIELD_PREP_CONST(HSPPARACON_COMPDIS, 7))),
-+	PHY_TUNING_ENTRY_LAST
-+};
-+
-+static const struct exynos5_usbdrd_phy_tuning *exynos5515_tunes[PTS_MAX] = {
-+	[PTS_UTMI_POSTINIT] = exynos5515_tunes_utmi_postinit,
-+};
-+
-+static const struct exynos5_usbdrd_phy_drvdata exynos5515_usbdrd_phy = {
-+	.phy_cfg		= phy_cfg_exynos850,
-+	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
-+	.phy_ops		= &exynos850_usbdrd_phy_ops,
-+	.phy_tunes		= exynos5515_tunes,
-+	.pmu_offset_usbdrd0_phy	= EXYNOS990_PHY_CTRL_USB20,
-+	.clk_names		= exynos5_clk_names,
-+	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
-+	.core_clk_names		= exynos5_core_clk_names,
-+	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
-+	.regulator_names	= exynos5_regulator_names,
-+	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
-+};
-+
- static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
- 	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos5),
-@@ -2936,6 +2976,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos5433-usbdrd-phy",
- 		.data = &exynos5433_usbdrd_phy
-+	}, {
-+		.compatible = "samsung,exynos5515-usbdrd-phy",
-+		.data = &exynos5515_usbdrd_phy
- 	}, {
- 		.compatible = "samsung,exynos7-usbdrd-phy",
- 		.data = &exynos7_usbdrd_phy
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |  2 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 43 ++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+---
+base-commit: 5260a8a68459dd67262970d38f1b2496f0cad371
+change-id: 20261022-for-next-lucky7-usb-phy-77244b2fc98e
 
--- 
-2.54.0
+Best regards,
+--  
+Aiden Isik <aidenisik@member.fsf.org>
 
 
