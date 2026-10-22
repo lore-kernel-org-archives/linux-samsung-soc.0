@@ -1,101 +1,81 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.19
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792648338;
-	b=K5NRCs+Inkre8wROmQM5q/VOQ+lHcbkHxAwkRwaOMxNp8J8VkAuoZ5oLMvF/UYTaEMeX
-	 tH1KStPrpPe6QvbNEd0jnZD+kZO6zfMVCz1xGOObT1uHxUcko88D3j9neBHA4mGiawMLL
-	 Z4PPxWjH43qtCNcEcMYTTbXNABDQFF1aHyTbhrKzH+AYOtX0JaO9zu36DJLcjqu8qDQjB
-	 DC7u3Gp5Pqv+E1C9mECbenKvC7ea1Kh6JgCC5z0C7rZ5ZjkBk8UCvX8cpQ8Zql0iqOteT
-	 1EQAtPf+WxERaXzh08924WIg1Qu0YCkJqaVDKC+5d7yxCWmfvn2LAP7uE0BnAW7GdKg==
+	t=1792667509;
+	b=T37mC1wyClSyd1cfAi2QZGHRI6ZSBe9dxGteMD9d8X3IiCtvLhyO42RVrYlX0Z3NQZ3H
+	 3SCFNXJ7hYpPLuI+yTyRjxOtzyaPR/uGLtWwjRx36q15bVchi+qc2aC200cGSR0LGlir/
+	 SPM0tn/83fjQu4otmBQ9SLjmn84lNx047kFeJu+/ck/5CiNHl02d0W7UGw6w4COaKFgb1
+	 K9vl2ZSgz+hIkqGmmAlIjilnvQQtunX2eQ4NVWjgXS4QHPSwZqSKTIJGM9N8UnKD9gD0s
+	 m1ju+GuW0JB77cnxSL8uu0uchjPsZGEgPmp7O5q431eNFPU82N/hOpBJBdcLBOUZkng==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792648338;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=K2tWmEOG35vkyGU1OZ0Xjhu69P/i4beeqfklVuj2BQQ=;
-	b=vybs6GlIxiUySHA35qEaqxgDse2yYpuHLLoYZLsjh6mNFQJLZKZF2+D2T7G1mFtHPLbQ
-	 uzOy2FGKK/p4/mgN05h0xZdDOXOIGXcBKqycmxIWntALjWC0JdNHJJBRdNBegqCMRdczc
-	 lQpRX9CyM8HDciSKE7WzDpyxjOYMXRmnShocrTwfSZYvy2Q3dXzJRPIUVPwdqenw1ZUNG
-	 xcU6qWO3rOY3o9igmIl+weehBUCuUhUdz7W27o21Y2QT5kQMxpMy3VfogFm0JTtR0k9Tg
-	 Pb5oAK32qLVCu+qSk3UZ+4WiJe+/cU5notiSwMyGUP4jm5Hp97/t1LVpzGVsYwXMRZg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792667509;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
+	 In-Reply-To:Organization:References:Date:Message-ID:MIME-Version:
+	 Content-Type;
+	bh=vsa6iTKNUmWvs8sxmGkeNmkZFARnCBOsRh81xgEp4ZI=;
+	b=kQNoCR6amq1heL3rn7c346e3sr7GoYcgEvQohYwWlm3Bvv9RVuwzxjmdT6WLk5dG2gGt
+	 8ye2MzDygSzsbDfuQOYssBITARtW0qKPdGESIryVHTWlTHbb4NHvTOuFb6DCiITTrNrSJ
+	 0atifwQZtXXtrek5b1pZDJHqZyBDNoBAm0oMHJiJtERi/YgVeewE7lPH0B1+I+n5DguR7
+	 piI3YVwo7Ildv6YwB3hfn6HFBUNdWjWHJ+RGDAO9lFTnf68rTb7cVtKXiqq90mftIcxSX
+	 sZtu5Kb1CC63JYNC+n/nUfKstCSucX5SA4LhITCBw399XxNCIk/TtEFxwCg7NuX0KAA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=lQRJrQ8o;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IrUUD5Xg;
+	arc=none smtp.remote-ip=192.198.163.19
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55535606A337
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Oct 2026 05:52:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 55535606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61304606A31D;
+	Thu, 22 Oct 2026 11:11:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61304606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=lQRJrQ8o
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4980fe6b3beso2768995e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Oct 2026 22:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792648336; x=1793253136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=K2tWmEOG35vkyGU1OZ0Xjhu69P/i4beeqfklVuj2BQQ=;
-        b=lQRJrQ8oSQIwG/TXADRZHwRmstT2q0TjO16z5OTT96fmiSQTd6o12ffxSGR9Qm068g
-         pzhv7cqhlV9Tm6x6a+mTnPC9xRfu5h4TzAjEzHY8703+lU+B+7qeggJFI1clDAyeY0Ol
-         ANVMXtQYhkuh2vlxoDnD7BQ1ZQzv4vG4iXoZ3wWz2mcEUob133f+4o5Y4kIl+v0ky83m
-         eq++273wj+UbHBLwRnP4bh/ClwzKslu5w4QY5DF5ZNER68EBHe/mgcYTjGoMCC9rC/tX
-         A+nWzqak3oSm77fUD4DsbcSu9m3zTtzMpRUvntZ5hcgMrXCe6TkubULCoXce8uf1SzuM
-         cxgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792648336; x=1793253136;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=K2tWmEOG35vkyGU1OZ0Xjhu69P/i4beeqfklVuj2BQQ=;
-        b=vzGoqiWfA6GwZzAsO5FCQyemLwm47K23Cg5QG0Ct4DJnj+v83rWwvZT/Qk5wMODadT
-         Frcv6R31XTcbSqisNrHxjM2D81c1yw/2+vIFc9XpzIcVEDU1l5T8QbAMJ1VSJL4Wem5i
-         OE/PjxddEUcHt+yPXB9SUPJFIhhdx//YD8WbWS+6tMFX6QTERq1U+BnCghWzsg+jK9ZU
-         qV5AFav1/B2sG9auDzJP30DKF7iRt5FhfyN5bp+pzUrwhGWtD3R+KGAyCGpPFpNaufe6
-         A92x5v0SIO7cCSO+4P+UaT1DEexO340b4JWp1NCsAn4GD0L+fZAJ02F22L2KTvUs2dLu
-         woMA==
-X-Gm-Message-State: AFq9FYIgEryDvkaGzxW46VxHmkpCHJ2sWcAQaKaeUCa+HMtjr2RM7aeh
-	KlvrX9tY3IH6ExOVQxgq9pJ7VQbYnUHy4xZ+syMSKU+rOpWCbXvCzguS
-X-Gm-Gg: AYBFou1Eeg0rOn2NP0W70sbr0gNymGbSgujysGa1fKAi5i+LLCjl7Sl5+JaYh15Ol96
-	xi20/hSYeatmDqg6XBesEVzVEFZMM3JoBwPCF8G8Ss4y+iE+89Lj1tEm/GlHRRnBuHW2PCgMQSZ
-	yhaXZywQbZjFID9cpY6Xvzo+3ozSDnFLiguLm/3ORtACJ23WqH0cbkvJXilW49cB3N/VdRPZvzt
-	AjaMuHI140X8eYu1WHA+rBj0oHhOjZro9i+j4EMGBlgmN2VALSiktPWBtOT9Jw8An5nrcebP+vJ
-	TZq6GYhOn4pqtluAAEvfkoW54ey+QkaVxvbHR6vrsEfkFHKJPgWkngBAAzZYtWXJ9ocBqznu1eU
-	Lo/PhW9H3xWy9KaVlYUnMCe8OS3s+h5TtU6/CW0zgzX02ROZh8ejPfiXeTGMJkAoiQi6rKAueye
-	xiPCjsDs2+MCEvJJZqpYIh90ZdzB4Khhx5tNl8i2NHbOR2KrR1jJSJflarrxZwSsePateHnuq+e
-	LTD/d2OaeBERTTri+aAiF+rk2A4u8i8kDoiHRlNlRHbe98DMQAGt3Rl9OeN6q9L0caXTaYNDhs+
-	vE/p5wEhjq300GTqROmRZ9vx2jJZy8kPAkpIFkKBJph7i4rorT3iRzCge7oMFDVT2qElaT4kLYu
-	BmezCjK2bTGXBidi/YHXDPgw45o/72IR5u3P9bQocvygk5ph6y6YywHhEB9RwRwvOaXGDaAosgG
-	HAlkiT
-X-Received: by 2002:a05:600c:a49:b0:49f:ffa2:1c72 with SMTP id 5b1f17b1804b1-4a204b20321mr25966005e9.11.1792648335601;
-        Wed, 21 Oct 2026 22:52:15 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-a0a3-b57b-feb7-50dc.ipv6.o2.cz. [2a00:1028:8388:a84e:a0a3:b57b:feb7:50dc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a2038ddb20sm41312875e9.0.2026.10.21.22.52.14
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 21 Oct 2026 22:52:14 -0700 (PDT)
-From: Josef Schlehofer <pepe.schlehofer@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v2 2/2] ARM: dts: samsung: Add Hardkernel ODROID-U2
-Date: Thu, 22 Oct 2026 07:52:08 +0200
-Message-ID: <20261022055208.17746-3-pepe.schlehofer@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261022055208.17746-1-pepe.schlehofer@gmail.com>
-References: <20261022055208.17746-1-pepe.schlehofer@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=IrUUD5Xg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1792667503; x=1824203503;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=qNlFDcEQenP85zNi1o7zqNU9K1Z6Ek4cKmafavrAjfA=;
+  b=IrUUD5XgkBdJwYj8q46DoIbGlOrrbp0aVis4fqgXbQQcq6Cdx7QDTWjM
+   8UEr1czMZLfMoE8iTWrFud/gHQMlqB8v9IUUgZSizGwwsgLQ3DaeIMI62
+   xiHr+VRY+Oe5ykTn+QGZYVpDeSp+sWvQ60h4t/qk0qb0m0cO8/Q02Pd+n
+   hFUMmO/sJbC9isPAnOAkoXWdBxLqdWe13BuWxdgnFQDUfYDxplo2yjY71
+   3d4iDIrEDo4O6JzOYqDHjZmKFHADLVjqg46IeJGCERnPE8qBlwUcZmhp9
+   er7IT/z5u3emhpja87yDuWylAlWKjRmdSUFa8WPxk2W8hVsPq6uUEf7gp
+   Q==;
+X-CSE-ConnectionGUID: FiheloSlTAuzbaU0hh0bWw==
+X-CSE-MsgGUID: PZTtH10mS2eUAwPYs567EA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11942"; a="1517390"
+X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
+   d="scan'208";a="1517390"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 04:11:42 -0700
+X-CSE-ConnectionGUID: Zq9IXJ3HSSCCWvo4b2f83g==
+X-CSE-MsgGUID: gLECOAQiQdGQ+Fy6+680gA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,172,1787036400"; 
+   d="scan'208";a="3698061"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.5])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2026 04:11:40 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Avi Weiss <thnkslprpt@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: hdmi: free EDID on connector update failure
+In-Reply-To: <CAKOB7-Y0GTen0gYm-m4ixg8RjHuqEHsNgRTM4s3SbLg5J=vM3Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
+ 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+References: <20261012064334.3193085-1-thnkslprpt@gmail.com>
+ <e22eadd0ada0c8243cfdf7829580984fdf897498@intel.com>
+ <CAKOB7-Y0GTen0gYm-m4ixg8RjHuqEHsNgRTM4s3SbLg5J=vM3Q@mail.gmail.com>
+Date: Thu, 22 Oct 2026 14:11:35 +0300
+Message-ID: <0b3c43bb7dddd657e4eb3ba79bb4a75c86313625@intel.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -105,131 +85,64 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-ODROID-U2 is a single board computer from Hardkernel based on the
-Samsung Exynos4412 Prime SoC with 2 GB of LPDDR2 RAM. It is the
-predecessor of the ODROID-U3 and shares most of its design:
-- microSD card slot and eMMC module socket
-- SMSC LAN9730 10/100 Ethernet on HSIC0
-- SMSC USB3503A hub on HSIC1 with two USB 2.0 host ports
-- micro-HDMI port with CEC
-- MAX98090 audio codec with a 3.5 mm headphone jack and an on-board
-  digital microphone
-- MAX77686 PMIC
-- 2-pin header for an optional PWM controlled cooling fan
-- blue heartbeat LED
+On Tue, 20 Oct 2026, Avi Weiss <thnkslprpt@gmail.com> wrote:
+> Hi Jani,
+> This complicates the if (!drm_edid) a bit further down, so might not
+> be worth it.
+> What do you think? Leave it, or should I try to rework it?
 
-Unlike the ODROID-U3, the micro-USB port has no VBUS supply switch, so
-it can only work in peripheral mode, and there is no expansion header
-with SPI. The 3.5 mm jack is headphone only and the speaker outputs of
-the codec are not connected.
+Mmmh. Right, very few places actually check for
+drm_edid_connector_update() return value, or do anything about it.
 
-Add a device tree for the board that includes the ODROID-U3 one and
-describes only these differences, as the ODROID-X2 does with the
-ODROID-X, and update the comments in the common dtsi, as the LDO22 and
-BUCK8 constraints are now also used by the ODROID-U2.
 
-Also route "HiFi Capture" to "Mixer DAI RX", as on the ODROID-XU3. The
-odroid sound card driver adds only the playback routes for boards with
-a single CPU DAI, so without it the DPCM capture path to the I2S
-back-end is incomplete and recording from the digital microphone fails
-with "no backend DAIs enabled for Primary".
+> Cheers,
+> Avi
+>
+>
+> On Mon, 19 Oct 2026 at 16:38, Jani Nikula <jani.nikula@intel.com> wrote:
+>>
+>> On Mon, 12 Oct 2026, Avi Weiss <thnkslprpt@gmail.com> wrote:
+>> > If drm_edid_connector_update() fails, hdmi_get_modes() returns
+>> > without freeing the EDID allocated by drm_edid_read_ddc(). It's
+>> > an unlikely error path but nevertheless possible and should be
+>> > cleaned up fully.
+>> >
+>> > Free the EDID before returning, while keeping the existing return
+>> > value of 0.
+>> >
+>> > Fixes: f6e4f57fd90dc ("drm/exynos: hdmi: convert to struct drm_edid")
+>> > Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
+>> > ---
+>> >  drivers/gpu/drm/exynos/exynos_hdmi.c | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> > index d4fce39c2b61..386557a7f5e8 100644
+>> > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+>> > @@ -893,8 +893,10 @@ static int hdmi_get_modes(struct drm_connector *connector)
+>> >       drm_edid = drm_edid_read_ddc(connector, hdata->ddc_adpt);
+>> >
+>> >       ret = drm_edid_connector_update(connector, drm_edid);
+>>
+>> You could just move the drm_edid_free() call here to avoid duplicating
+>> it.
+>>
+>> > -     if (ret)
+>> > +     if (ret) {
+>> > +             drm_edid_free(drm_edid);
+>> >               return 0;
+>> > +     }
+>> >
+>> >       cec_notifier_set_phys_addr(hdata->notifier, info->source_physical_address);
+>> >
+>> >
+>> > base-commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907
+>>
+>> --
+>> Jani Nikula, Intel
 
-Link: https://www.hardkernel.com/shop/odroid-u2/
-Link: https://www.hardkernel.com/blog-2/odroid-u2-u-schematics/
-Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
----
- arch/arm/boot/dts/samsung/Makefile            |  1 +
- .../dts/samsung/exynos4412-odroid-common.dtsi |  6 +--
- .../boot/dts/samsung/exynos4412-odroidu2.dts  | 42 +++++++++++++++++++
- 3 files changed, 46 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-
-diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
-index e0143ee8c82d..2a173e4b3e1a 100644
---- a/arch/arm/boot/dts/samsung/Makefile
-+++ b/arch/arm/boot/dts/samsung/Makefile
-@@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
- 	exynos4412-i9305.dtb \
- 	exynos4412-itop-elite.dtb \
- 	exynos4412-n710x.dtb \
-+	exynos4412-odroidu2.dtb \
- 	exynos4412-odroidu3.dtb \
- 	exynos4412-odroidx.dtb \
- 	exynos4412-odroidx2.dtb \
-diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-index 93ddbd4b0a18..b56b92c78c1d 100644
---- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-@@ -414,8 +414,8 @@ ldo21_reg: LDO21 {
- 
- 			ldo22_reg: LDO22 {
- 				/*
--				 * Only U3 uses it, so let it define the
--				 * constraints
-+				 * Only U2 and U3 use it, so let them define
-+				 * the constraints
- 				 */
- 				regulator-name = "LDO22";
- 				regulator-boot-on;
-@@ -486,7 +486,7 @@ buck7_reg: BUCK7 {
- 			buck8_reg: BUCK8 {
- 				/*
- 				 * Constraints set by specific board: X,
--				 * X2 and U3.
-+				 * X2, U2 and U3.
- 				 */
- 				regulator-name = "BUCK8_2.8V";
- 			};
-diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-new file mode 100644
-index 000000000000..bc14df9be9f7
---- /dev/null
-+++ b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Hardkernel's Exynos4412 based ODROID-U2 board device tree source
-+ *
-+ * Copyright (c) 2026 Josef Schlehofer <pepe.schlehofer@gmail.com>
-+ *
-+ * Device tree source file for Hardkernel's ODROID-U2 board which is based
-+ * on Samsung's Exynos4412 SoC. The board is the predecessor of the
-+ * ODROID-U3, so only the differences from it are described here.
-+ */
-+
-+#include "exynos4412-odroidu3.dts"
-+
-+/ {
-+	model = "Hardkernel ODROID-U2 board based on Exynos4412";
-+	compatible = "hardkernel,odroid-u2", "samsung,exynos4412", "samsung,exynos4";
-+};
-+
-+/* No VBUS supply switch on the micro-USB port */
-+/delete-node/ &vbus_otg_reg;
-+
-+&hsotg {
-+	dr_mode = "peripheral";
-+	/delete-property/ vbus-supply;
-+};
-+
-+&sound {
-+	model = "Odroid-U2";
-+	audio-routing = "Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR",
-+			"DMICL", "DMIC",
-+			"DMICR", "DMIC",
-+			"Mixer DAI RX", "HiFi Capture";
-+	samsung,audio-widgets =
-+		"Headphone", "Headphone Jack",
-+		"Microphone", "DMIC";
-+};
-+
-+/* No expansion header with SPI */
-+&spi_1 {
-+	status = "disabled";
-+};
 -- 
-2.54.0 (Apple Git-157)
-
+Jani Nikula, Intel
