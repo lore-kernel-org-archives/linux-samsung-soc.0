@@ -1,64 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.197
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792749679;
-	b=RZUsvz2E8leiXR67Evg3KSVCgaPa0Tpff4n/LGt3bA+IUIASaG7zXo2tU9+TZHTvOFbW
-	 83+KVS2aTKdN/9oBgA1MuNEmXvXYW7s2ELM6RtZ623GKKVOwguj0116zveGS2ebTOepv6
-	 xKioX42UskB2DhMifwgtkjWKoP3WcLztZfjFr60LhjTg0+ZjNLn3bCW+Vhp1n6ygJ3HdY
-	 u8gexh1g+g6ZqBerqul/9mIjZRnxipwkciSlVhPyFc5G+MPlK4CJCyXXdZQX4efzVC8Gj
-	 5SQ/3fOPhelg85CgaFFZbDtKydOzTpiJxIjNVuQIZTOLNsOAU8XpswYI1p1u9XKGkRQ==
+	t=1792761351;
+	b=lLbPrjkao22W3NmANhj7a2lYs5dGSZaptMlR8vEXu+uKEVMadnpwZpoO8rKKyj1y0Toa
+	 CH0cwbjiXjt175Jqxd8CTwFSvbEmF6ZSRcz8pJeAlM/Q1sIa5S3NcRp0Th9dGP9Bfjs5C
+	 08Dc70MvqIZp2iL8ajm6JBJlIr1kUwGgfv2IvI9Weg5Dew9dzaieNfk5/DUcDRaKAA9eq
+	 swvN4OE4u7huNhu6Po0KL/rcEdkDOfnfrbHToRVXiyyTahdcadQ1zubUfKbub86Bqqeui
+	 BP/tlfuO033jDV61Hnmn9zGQCMpDxAaYOfUeSJk39MIG4hBrhaYCIhmtty/hu/XyHKA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792749679;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=M0s3SFlMeOGNR0VjX2ZhF+zTIKdV5x/45iKV7UcMLG0=;
-	b=5UCx7F7/7HrCuLvNnkKuDKnaKm0kgRwq/Mj6CM/hb9M5yttgSlDfdcDQ5jyuW8vp6yNz
-	 S8sxRg+lN1GTkjSmGa+FVkjVOGMULeRIcIdwYOwx6DNUBWsEsHDc7LhqgPsEsNqbHWd0B
-	 KiyNRIOizq6L2qqjHJbqRGHEo4mEcHg3OmKtNBDICK2PkLDBnZxqN0R/qSVaXFXt1bTE6
-	 gRrpjyyPUjTd6sUeADabgAtkHeSWUhsKmt4CHphUUDmIxHWMTbD7mQKsKjUPzslZGpEZ8
-	 3Mmc6bhYIs2nHlDlDDbAvtpRMczNGraXnZh2dQKk8BrNVj7xVqQvZvqgfcGIBSEHtyw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792761351;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Received:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 In-Reply-To:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
+	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
+	bh=cdpF+fVt2Hy2HfAcjpixN/WDxEX2Gn1Ra3OqY32SpVU=;
+	b=cIkZp4u+DB6xrni76IgIIUr9cUYPpDaNrxjctf1MDZhtZhs6sLPG9qNa9fnVAJsdjUWz
+	 ZLvJQ6FTJ6I2YpQJF1Bzr0sG1eHmUMFIA952rRtEOAieIalqekOqL4/2vqGdM7y9XZ5vG
+	 F57MlrLVK0nAG98PukAw8uZfvYHIBJ2JxEp2s6+nOnojo0d+XLq5AM1GgvAQgcsKd5Fao
+	 ZKQFeGSoiBXJCtTQbpa+wVdUq+NmZ/XCO9/UkBsozTQEp7GSmUBq33opT6Wx3N/iyASbO
+	 QAV5z62YDSmYj0Oawr5jjbtkKypNo9rj9myYRyIm3amSWWv6K+fSPM2it5TVSXKrnag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=grimler.se;
-	spf=pass smtp.mailfrom=grimler.se;
-	dkim=pass header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=l1z0FiUo;
-	arc=none smtp.remote-ip=95.215.58.197
-Received: from mta1.migadu.com (out-197.mta1.migadu.com [95.215.58.197])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=mVGGwHjl;
+	arc=none smtp.remote-ip=203.254.224.33
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F412B606A31A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2026 10:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F412B606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4273606A31A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2026 13:15:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4273606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=l1z0FiUo
-X-Envelope-To: linux-samsung-soc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=Sl832lwWv9q0+uztm4xFM++41k7qXCoKfbSb4C6WYFM=;
- c=simple/simple; d=grimler.se;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1792749675; v=1; x=1793354475;
- b=l1z0FiUo0EzYZ5/WiXjcU/n8db2gMYv3Qs5CzXmz7x4paclekKYJAoHmd7N4F4YdsfRr8B1d
- C+8jrLNs7HRHRWIIuKmawALtuA8BNR7m2CP731aCH6I5o1ILx0mUWcuzPLOLgA7Xw/sm7uL5RlO
- frNihZP4Fv0p8gCGuz2/Vhhg=
-X-Envelope-To: linux-samsung-soc@vger.kernel.org
-Received: by mta12.migadu.com with ESMTPS id 6fe652901f52c9d0;
-	Fri, 23 Oct 2026 10:01:15 +0000
-X-Mizu-Trace-ID: 6fe652901f52c9d0
-X-Migadu-Flow: FLOW_OUT
-Date: Fri, 23 Oct 2026 12:01:10 +0200
-From: Henrik Grimler <henrik@grimler.se>
-To: Josef Schlehofer <pepe.schlehofer@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: dts: samsung: Add Hardkernel ODROID-U2
-Message-ID: <20261023100110.GA24541@localhost>
-References: <20261022055208.17746-1-pepe.schlehofer@gmail.com>
- <20261022055208.17746-3-pepe.schlehofer@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=mVGGwHjl
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261023131548epoutp03341eab3210287afc07ac2a94e1551897~hKvK-FakQ3172631726epoutp03b
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2026 13:15:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261023131548epoutp03341eab3210287afc07ac2a94e1551897~hKvK-FakQ3172631726epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1792761348;
+	bh=cdpF+fVt2Hy2HfAcjpixN/WDxEX2Gn1Ra3OqY32SpVU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mVGGwHjlJfnuh/4+7+Ci5EO+0VrPVE/ID3N16GY7xk2HufMz8Zu7DApt4jlTHlBa7
+	 Kn2rzMwGmklvJWSYc8OYYp8/3WbazSLys/EwhLEjvJr5+KJNWo0S2D6LNDmPQCmemu
+	 Q41VhPDT0SfgZqQAvVd2It/p6hQFyxUGmb3YMlYo=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20261023131547epcas5p209499d6511be03591bb323d282998a0a~hKvJ8q5X10460604606epcas5p2V;
+	Fri, 23 Oct 2026 13:15:47 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4jB3Rk4SDdz2SSKY; Fri, 23 Oct
+	2026 13:15:46 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261023131545epcas5p1eff195129ccfb0fb476d3c78e6a507bc~hKvIRFYpW3047030470epcas5p1q;
+	Fri, 23 Oct 2026 13:15:45 +0000 (GMT)
+Received: from vega.samsungds.net (unknown [107.108.73.84]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261023131542epsmtip2ba58969fa0472da8c45d845928488ab5~hKvFhqAQp0806808068epsmtip2C;
+	Fri, 23 Oct 2026 13:15:42 +0000 (GMT)
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+To: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com,
+	Thinh.Nguyen@synopsys.com, selvarasu.g@samsung.com,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, h10.kim@samsung.com, dh10.jung@samsung.com,
+	akash.m5@samsung.com, hongpooh.kim@samsung.com, eomji.oh@samsung.com,
+	shijie.cai@samsung.com, muhammed.ali@samsung.com, thiagu.r@samsung.com
+Subject: [PATCH v3 1/2] dt-bindings: usb: Add Samsung Exynos8855 DWC3
+ controller binding
+Date: Fri, 23 Oct 2026 18:45:00 +0530
+Message-Id: <20261023131501.3157463-2-selvarasu.g@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20261023131501.3157463-1-selvarasu.g@samsung.com>
+X-CMS-MailID: 20261023131545epcas5p1eff195129ccfb0fb476d3c78e6a507bc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20261023131545epcas5p1eff195129ccfb0fb476d3c78e6a507bc
+References: <20261023131501.3157463-1-selvarasu.g@samsung.com>
+	<CGME20261023131545epcas5p1eff195129ccfb0fb476d3c78e6a507bc@epcas5p1.samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -67,151 +92,102 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261022055208.17746-3-pepe.schlehofer@gmail.com>
 
-Hi Josef,
+Add the Samsung Exynos8855 DWC3 binding using a flattened node
+representation, where the DWC3 controller is directly addressable
+rather than nested as a child node of a glue layer.
 
-On Thu, Oct 22, 2026 at 07:52:08AM +0200, Josef Schlehofer wrote:
-> ODROID-U2 is a single board computer from Hardkernel based on the
-> Samsung Exynos4412 Prime SoC with 2 GB of LPDDR2 RAM. It is the
-> predecessor of the ODROID-U3 and shares most of its design:
-> - microSD card slot and eMMC module socket
-> - SMSC LAN9730 10/100 Ethernet on HSIC0
-> - SMSC USB3503A hub on HSIC1 with two USB 2.0 host ports
-> - micro-HDMI port with CEC
-> - MAX98090 audio codec with a 3.5 mm headphone jack and an on-board
->   digital microphone
-> - MAX77686 PMIC
-> - 2-pin header for an optional PWM controlled cooling fan
-> - blue heartbeat LED
-> 
-> Unlike the ODROID-U3, the micro-USB port has no VBUS supply switch, so
-> it can only work in peripheral mode, and there is no expansion header
-> with SPI. The 3.5 mm jack is headphone only and the speaker outputs of
-> the codec are not connected.
-> 
-> Add a device tree for the board that includes the ODROID-U3 one and
-> describes only these differences, as the ODROID-X2 does with the
-> ODROID-X, and update the comments in the common dtsi, as the LDO22 and
-> BUCK8 constraints are now also used by the ODROID-U2.
-> 
-> Also route "HiFi Capture" to "Mixer DAI RX", as on the ODROID-XU3. The
-> odroid sound card driver adds only the playback routes for boards with
-> a single CPU DAI, so without it the DPCM capture path to the I2S
-> back-end is incomplete and recording from the digital microphone fails
-> with "no backend DAIs enabled for Primary".
-> 
-> Link: https://www.hardkernel.com/shop/odroid-u2/
-> Link: https://www.hardkernel.com/blog-2/odroid-u2-u-schematics/
-> Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
-> ---
->  arch/arm/boot/dts/samsung/Makefile            |  1 +
->  .../dts/samsung/exynos4412-odroid-common.dtsi |  6 +--
->  .../boot/dts/samsung/exynos4412-odroidu2.dts  | 42 +++++++++++++++++++
->  3 files changed, 46 insertions(+), 3 deletions(-)
->  create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-> 
-> diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
-> index e0143ee8c82d..2a173e4b3e1a 100644
-> --- a/arch/arm/boot/dts/samsung/Makefile
-> +++ b/arch/arm/boot/dts/samsung/Makefile
-> @@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
->  	exynos4412-i9305.dtb \
->  	exynos4412-itop-elite.dtb \
->  	exynos4412-n710x.dtb \
-> +	exynos4412-odroidu2.dtb \
->  	exynos4412-odroidu3.dtb \
->  	exynos4412-odroidx.dtb \
->  	exynos4412-odroidx2.dtb \
-> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> index 93ddbd4b0a18..b56b92c78c1d 100644
-> --- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-> @@ -414,8 +414,8 @@ ldo21_reg: LDO21 {
->  
->  			ldo22_reg: LDO22 {
->  				/*
-> -				 * Only U3 uses it, so let it define the
-> -				 * constraints
-> +				 * Only U2 and U3 use it, so let them define
-> +				 * the constraints
->  				 */
->  				regulator-name = "LDO22";
->  				regulator-boot-on;
-> @@ -486,7 +486,7 @@ buck7_reg: BUCK7 {
->  			buck8_reg: BUCK8 {
->  				/*
->  				 * Constraints set by specific board: X,
-> -				 * X2 and U3.
-> +				 * X2, U2 and U3.
->  				 */
->  				regulator-name = "BUCK8_2.8V";
->  			};
-> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-> new file mode 100644
-> index 000000000000..bc14df9be9f7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-> @@ -0,0 +1,42 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Hardkernel's Exynos4412 based ODROID-U2 board device tree source
-> + *
-> + * Copyright (c) 2026 Josef Schlehofer <pepe.schlehofer@gmail.com>
-> + *
-> + * Device tree source file for Hardkernel's ODROID-U2 board which is based
-> + * on Samsung's Exynos4412 SoC. The board is the predecessor of the
-> + * ODROID-U3, so only the differences from it are described here.
-> + */
-> +
-> +#include "exynos4412-odroidu3.dts"
-> +
-> +/ {
-> +	model = "Hardkernel ODROID-U2 board based on Exynos4412";
-> +	compatible = "hardkernel,odroid-u2", "samsung,exynos4412", "samsung,exynos4";
-> +};
-> +
-> +/* No VBUS supply switch on the micro-USB port */
-> +/delete-node/ &vbus_otg_reg;
-> +
-> +&hsotg {
-> +	dr_mode = "peripheral";
-> +	/delete-property/ vbus-supply;
-> +};
-> +
-> +&sound {
-> +	model = "Odroid-U2";
-> +	audio-routing = "Headphone Jack", "HPL",
-> +			"Headphone Jack", "HPR",
-> +			"DMICL", "DMIC",
-> +			"DMICR", "DMIC",
-> +			"Mixer DAI RX", "HiFi Capture";
-> +	samsung,audio-widgets =
-> +		"Headphone", "Headphone Jack",
-> +		"Microphone", "DMIC";
+This is the first Samsung Exynos binding using the flattened
+representation.
 
-Should be no need for newline after = for
-samsung,audio-widgets. Writing it as:
+Co-developed-by: Muhammed Ali <muhammed.ali@samsung.com>
+Signed-off-by: Muhammed Ali <muhammed.ali@samsung.com>
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+---
+ .../bindings/usb/samsung,exynos8855-dwc3.yaml | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung,exynos8855-dwc3.yaml
 
-	samsung,audio-widgets = "Headphone", "Headphone Jack",
-				"Microphone", "DMIC";
+diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos8855-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos8855-dwc3.yaml
+new file mode 100644
+index 000000000000..d8983c310d31
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/samsung,exynos8855-dwc3.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/samsung,exynos8855-dwc3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos8855 DWC3 USB controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Selvarasu Ganesan <selvarasu.g@samsung.com>
++
++description:
++  Describes the DWC3 USB controller block implemented on the Samsung
++  Exynos8855 SoC.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos8855-dwc3
++
++  reg:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    description: |
++      Two clocks are used:
++       - ref: Reference clock for SOF/ITP generation.
++       - bus: Bus (APB) clock for register access.
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: ref
++      - const: bus
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++
++allOf:
++  - $ref: snps,dwc3-common.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    usb@13200000 {
++        compatible = "samsung,exynos8855-dwc3";
++        reg = <0x13200000 0x10000>;
++        interrupts = <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&usb_clk 0>,
++                 <&usb_clk 1>;
++        clock-names = "ref", "bus";
++        dr_mode = "peripheral";
++        phys = <&usbdrd_phy 0>;
++        phy-names = "usb2-phy";
++        snps,quirk-frame-length-adjustment = <0x20>;
++        snps,dis-u2-freeclk-exists-quirk;
++        snps,gfladj-refclk-lpm-sel-quirk;
++    };
++...
+-- 
+2.17.1
 
-gives max width of 62 wide chars. With that fixed:
-
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
-
-Best regards,
-Henrik Grimler
-
-> +};
-> +
-> +/* No expansion header with SPI */
-> +&spi_1 {
-> +	status = "disabled";
-> +};
-> -- 
-> 2.54.0 (Apple Git-157)
-> 
