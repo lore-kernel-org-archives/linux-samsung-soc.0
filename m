@@ -1,79 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792687600;
-	b=W62rryGh52R9tLThJZ3c4L3B2hWIhKvckXLP/q+I4sCwyTtpV7sFbRrbfM3n7BB+qwLh
-	 rx7xc1x5k1i137B7N3lPFhVd9sAUl9XPGcT6zyRhspCGW4q9Z9FK9RVIjEZ8N+BtlD3fW
-	 OoypwOQMojIVZOA9mOslNc5LIEBCp7NYdZy1tbNqJM+UT6cJdRsuJb2mNuK/uc6llCICX
-	 hMI9BBlDLygKpwMBmnkveMIU6+jiiPynN8hqElUmMAplKXrKRDJdSeBGYE3RqAmum6Sds
-	 miWrcEhddrErj/L90jOf/kEsBqy4Wy+96I/c7sqc73QsNu3OVWiyojtr6gYbKxpNLFg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792687600;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
-	b=OKq5bqJtHLfiJ3QJoxuU9DpCzvHmMD+D5N2o/iCbQHHMvc6OkkXGptOpGLwTu3TBXbv8
-	 CxvgxWW9TuYLOdMZNeayUkV5LF4xEXnCtRwzcpUzfoEUR9cNbJscUrwE0lNw61ej9+4Ig
-	 DUgSFEb7HJiaZe6yYjIxRmqL9euueXCHM/RnF/q8IwoZe8s1SNX22N2OsfoGJZnKWOTRK
-	 +NuW49HzMu/CLEhG0Cau6f3glX1EmkCVbnWzM+Zp8UhXVgii88KiI67qScoiIUJrh0A9B
-	 J2erDtUaE1CdQU8/4NhFKkog1O6qcDgfL/kR+WarzJVeiWc3J4UVoH9xpklU4x1C+tg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IbOhdxIe;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52832606A332;
-	Thu, 22 Oct 2026 16:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IbOhdxIe
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1792687599;
-	b=2y+Wk8A4WlWscYoJu+mTGY1nAyZ5+dw8L+IqgiMgARBs5tcalNsi85fcQGPZGYitm2pp
-	 D4DHiZ4O5IN3cTQrMVIWtx2v1Kg8DqhBbAPXGTvczdZ6fHI2uPaF3Njd0jCpMD2Sx9/he
-	 W78v039lIHYX43AZ5oSnTuEOutta1TPb1oDhN2NfKYSr5nti7WMsHRzMhX+9v3cDcI7y6
-	 vp97afP7RD4uCdGswzi920IRy6tPwZhiiMao1GJwBTotbI0iiGYkE3rKP9zG9x9Cf6a2J
-	 WFL+I599Yg5rhgivDE81EEBaqUs1VKp4xq1267GHcOn6fWJnFNWwSgfJvR0uQ6z5ICw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1792687599;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
-	b=wbY0dNG62vTrHqXrx3UglHHMsqAtViUr8pEpA5eotwgE/+q2QRPPTlYcBU64RcsagjdZ
-	 JJArWUCfYiGSA0lm0HnkCMEQBP2vrL7P6i5o2wC4P8EDKRa74lkWp80HzDRNSGwbLPoOb
-	 /hIAA/Ev0tEhxn8fUVXCCkRu3qOkd+2Di8LLaTOXU9k/vulaCPWaUqoaqKGQi8Rk7jVeE
-	 pJhf2BjKRytnAjY8/rPYas0MhQxkFTZGsKspbXOTLZvomvZ04m01TTePOXzBQHcyBBs3m
-	 C5JHccqyK5kLi86rGMeE5LolvCvvdpMW2ysEjj2P5knuFKz6fhGyU3HSJ9RIfENBmng==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.197
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792749679;
+	b=RZUsvz2E8leiXR67Evg3KSVCgaPa0Tpff4n/LGt3bA+IUIASaG7zXo2tU9+TZHTvOFbW
+	 83+KVS2aTKdN/9oBgA1MuNEmXvXYW7s2ELM6RtZ623GKKVOwguj0116zveGS2ebTOepv6
+	 xKioX42UskB2DhMifwgtkjWKoP3WcLztZfjFr60LhjTg0+ZjNLn3bCW+Vhp1n6ygJ3HdY
+	 u8gexh1g+g6ZqBerqul/9mIjZRnxipwkciSlVhPyFc5G+MPlK4CJCyXXdZQX4efzVC8Gj
+	 5SQ/3fOPhelg85CgaFFZbDtKydOzTpiJxIjNVuQIZTOLNsOAU8XpswYI1p1u9XKGkRQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792749679;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=M0s3SFlMeOGNR0VjX2ZhF+zTIKdV5x/45iKV7UcMLG0=;
+	b=5UCx7F7/7HrCuLvNnkKuDKnaKm0kgRwq/Mj6CM/hb9M5yttgSlDfdcDQ5jyuW8vp6yNz
+	 S8sxRg+lN1GTkjSmGa+FVkjVOGMULeRIcIdwYOwx6DNUBWsEsHDc7LhqgPsEsNqbHWd0B
+	 KiyNRIOizq6L2qqjHJbqRGHEo4mEcHg3OmKtNBDICK2PkLDBnZxqN0R/qSVaXFXt1bTE6
+	 gRrpjyyPUjTd6sUeADabgAtkHeSWUhsKmt4CHphUUDmIxHWMTbD7mQKsKjUPzslZGpEZ8
+	 3Mmc6bhYIs2nHlDlDDbAvtpRMczNGraXnZh2dQKk8BrNVj7xVqQvZvqgfcGIBSEHtyw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=grimler.se;
+	spf=pass smtp.mailfrom=grimler.se;
+	dkim=pass header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=l1z0FiUo;
+	arc=none smtp.remote-ip=95.215.58.197
+Received: from mta1.migadu.com (out-197.mta1.migadu.com [95.215.58.197])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 9AB1D1F01829;
-	Thu, 22 Oct 2026 16:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792687599;
-	bh=VvpB1tM48A+liP8mzjt8BtWT/WMCCLO82+YYkxT8nvc=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=IbOhdxIeoYiTur9d8wLjrXRyNNq0SFkMet8Npxu/1fww9/0i0uj6qXa+8Qj4ewyL3
-	 Y7DDdNNCLAbSNq1CXy4cyllCBWtC4xjkBblmhAHokcC/HuqpNTji2Dc70LOlQFqGW4
-	 sVb/KqJiWpeknjns3Cm2UJXQcm0ZI0MW3SWw6y8+bMC9mZI1+6LQSXKcpZ0XFTvtyI
-	 HsMx1t3Iw0jUnIiDqpbmfMF1nTXShDoPjx8ZVBLRIr+jxyBbMZxeZTga5vZ6sLRm+w
-	 mFqeyrAOK4TmK6ONzaea12cLPTZhS8Uma0HIITYFPh16GVZ4SaIZNBncKk0tG57u8L
-	 YGIDMjBRi6dSQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E8F9441E73;
-	Thu, 22 Oct 2026 16:46:37 +0000 (UTC)
-From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Subject: [PATCH 0/2] Add Exynos5515 USB PHY support
-Date: Thu, 22 Oct 2026 17:46:35 +0100
-Message-Id: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F412B606A31A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Oct 2026 10:01:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F412B606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key, unprotected) header.d=grimler.se header.i=@grimler.se header.a=rsa-sha256 header.s=key1 header.b=l1z0FiUo
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=Sl832lwWv9q0+uztm4xFM++41k7qXCoKfbSb4C6WYFM=;
+ c=simple/simple; d=grimler.se;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1792749675; v=1; x=1793354475;
+ b=l1z0FiUo0EzYZ5/WiXjcU/n8db2gMYv3Qs5CzXmz7x4paclekKYJAoHmd7N4F4YdsfRr8B1d
+ C+8jrLNs7HRHRWIIuKmawALtuA8BNR7m2CP731aCH6I5o1ILx0mUWcuzPLOLgA7Xw/sm7uL5RlO
+ frNihZP4Fv0p8gCGuz2/Vhhg=
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+Received: by mta12.migadu.com with ESMTPS id 6fe652901f52c9d0;
+	Fri, 23 Oct 2026 10:01:15 +0000
+X-Mizu-Trace-ID: 6fe652901f52c9d0
+X-Migadu-Flow: FLOW_OUT
+Date: Fri, 23 Oct 2026 12:01:10 +0200
+From: Henrik Grimler <henrik@grimler.se>
+To: Josef Schlehofer <pepe.schlehofer@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] ARM: dts: samsung: Add Hardkernel ODROID-U2
+Message-ID: <20261023100110.GA24541@localhost>
+References: <20261022055208.17746-1-pepe.schlehofer@gmail.com>
+ <20261022055208.17746-3-pepe.schlehofer@gmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -83,93 +68,150 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOs92moC/yXMQQ6CMBBA0auQWTsJTAhFr2Jc2DKFUVNIhxoI4
- e5WWL7F/xsoR2GFW7FB5K+ojCGjuhTghmfoGaXLBiqpqUoi9GPEwMuMn+Teq8GkFqdhRWOori1
- 5d20Zcj1F9rIc5/vjtCb7Yjf/d7DvP+kvrUl7AAAA
-X-Change-ID: 20261022-for-next-lucky7-usb-phy-77244b2fc98e
-To: Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Aiden Isik <aidenisik@member.fsf.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1831;
- i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=me8mjqkDEH3k+r4GPGLnzrCNkQZFbNxiQ3wp8aaLBNU=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq2j3s5XBlupmzJ4a/zgSIyMg+7QLmOCmMMMq4H
- 3sVdzbgdE+JAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCato97BsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+sJbBAAytJ84YhHRR+XnuUu8QYoumKEKfprYYg
- Hu7gNBMqyPPPHZOWq0yopgsvDpLJnyL97ZhTkLK4OgNKhcugsq+Di+lbsY1wk9koHodBB+db4oP
- yi7S+wwCkhx7PbKzcjJXPUvmlSdzl0uXnobwKUVPMCXj5oh2OlWNrwC6ropbfeNL+726eRAs9qZ
- 9snYCyTj0W40RWvsc52Ye7x8aq3ath/iuJZwJMVk4JV7rnN7z2L4mKEu3sHHhfrymAi9EtxR6S/
- tFk6lmv8gESSH65GXAvTPru8modWt3P5fwD/RpIDITiJe2gIppo9qrDuYTzBNaZtHHkqpMHWLCt
- grFKLjfJ2JV+fENCrKd97EiH8qOZ4//rcUV29mMBnaKr0MvmYuj/ZO+JYFlfPnIWeFMxTIbFIvo
- 1GvJveA7UxEwWiiOB8ORN+jndCA7tN317WgX6FotzhLtR4Lw6zS+hcvWmYTQrHR4/iOc/os1vjn
- Q9U5NTQF/78j/MtfGUzJ4l5ZVCrwSmPxhGOHzrcQGed16K2t72oumof33ZaxrGamJSNXk7vpVjJ
- dVFv8/SfR1te3m/6ldQBsaIFt0j1bz3uuQSUbnJo+Nph6bB8UxgdZPHBpB4uqwhG2+yajdXALfN
- pLZjQS9P/GcCAW2U1HxJKsHDiczkCn8MgYw+WB9ZY3zE2traehEY=
-X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
- fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
-X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
- auth_id=956
-X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
-Reply-To: aidenisik@member.fsf.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261022055208.17746-3-pepe.schlehofer@gmail.com>
 
-Hi there,
+Hi Josef,
 
-This patchset adds support for the Exynos5515 USB PHY.
+On Thu, Oct 22, 2026 at 07:52:08AM +0200, Josef Schlehofer wrote:
+> ODROID-U2 is a single board computer from Hardkernel based on the
+> Samsung Exynos4412 Prime SoC with 2 GB of LPDDR2 RAM. It is the
+> predecessor of the ODROID-U3 and shares most of its design:
+> - microSD card slot and eMMC module socket
+> - SMSC LAN9730 10/100 Ethernet on HSIC0
+> - SMSC USB3503A hub on HSIC1 with two USB 2.0 host ports
+> - micro-HDMI port with CEC
+> - MAX98090 audio codec with a 3.5 mm headphone jack and an on-board
+>   digital microphone
+> - MAX77686 PMIC
+> - 2-pin header for an optional PWM controlled cooling fan
+> - blue heartbeat LED
+> 
+> Unlike the ODROID-U3, the micro-USB port has no VBUS supply switch, so
+> it can only work in peripheral mode, and there is no expansion header
+> with SPI. The 3.5 mm jack is headphone only and the speaker outputs of
+> the codec are not connected.
+> 
+> Add a device tree for the board that includes the ODROID-U3 one and
+> describes only these differences, as the ODROID-X2 does with the
+> ODROID-X, and update the comments in the common dtsi, as the LDO22 and
+> BUCK8 constraints are now also used by the ODROID-U2.
+> 
+> Also route "HiFi Capture" to "Mixer DAI RX", as on the ODROID-XU3. The
+> odroid sound card driver adds only the playback routes for boards with
+> a single CPU DAI, so without it the DPCM capture path to the I2S
+> back-end is incomplete and recording from the digital microphone fails
+> with "no backend DAIs enabled for Primary".
+> 
+> Link: https://www.hardkernel.com/shop/odroid-u2/
+> Link: https://www.hardkernel.com/blog-2/odroid-u2-u-schematics/
+> Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
+> ---
+>  arch/arm/boot/dts/samsung/Makefile            |  1 +
+>  .../dts/samsung/exynos4412-odroid-common.dtsi |  6 +--
+>  .../boot/dts/samsung/exynos4412-odroidu2.dts  | 42 +++++++++++++++++++
+>  3 files changed, 46 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
+> 
+> diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
+> index e0143ee8c82d..2a173e4b3e1a 100644
+> --- a/arch/arm/boot/dts/samsung/Makefile
+> +++ b/arch/arm/boot/dts/samsung/Makefile
+> @@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
+>  	exynos4412-i9305.dtb \
+>  	exynos4412-itop-elite.dtb \
+>  	exynos4412-n710x.dtb \
+> +	exynos4412-odroidu2.dtb \
+>  	exynos4412-odroidu3.dtb \
+>  	exynos4412-odroidx.dtb \
+>  	exynos4412-odroidx2.dtb \
+> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
+> index 93ddbd4b0a18..b56b92c78c1d 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
+> @@ -414,8 +414,8 @@ ldo21_reg: LDO21 {
+>  
+>  			ldo22_reg: LDO22 {
+>  				/*
+> -				 * Only U3 uses it, so let it define the
+> -				 * constraints
+> +				 * Only U2 and U3 use it, so let them define
+> +				 * the constraints
+>  				 */
+>  				regulator-name = "LDO22";
+>  				regulator-boot-on;
+> @@ -486,7 +486,7 @@ buck7_reg: BUCK7 {
+>  			buck8_reg: BUCK8 {
+>  				/*
+>  				 * Constraints set by specific board: X,
+> -				 * X2 and U3.
+> +				 * X2, U2 and U3.
+>  				 */
+>  				regulator-name = "BUCK8_2.8V";
+>  			};
+> diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
+> new file mode 100644
+> index 000000000000..bc14df9be9f7
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
+> @@ -0,0 +1,42 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Hardkernel's Exynos4412 based ODROID-U2 board device tree source
+> + *
+> + * Copyright (c) 2026 Josef Schlehofer <pepe.schlehofer@gmail.com>
+> + *
+> + * Device tree source file for Hardkernel's ODROID-U2 board which is based
+> + * on Samsung's Exynos4412 SoC. The board is the predecessor of the
+> + * ODROID-U3, so only the differences from it are described here.
+> + */
+> +
+> +#include "exynos4412-odroidu3.dts"
+> +
+> +/ {
+> +	model = "Hardkernel ODROID-U2 board based on Exynos4412";
+> +	compatible = "hardkernel,odroid-u2", "samsung,exynos4412", "samsung,exynos4";
+> +};
+> +
+> +/* No VBUS supply switch on the micro-USB port */
+> +/delete-node/ &vbus_otg_reg;
+> +
+> +&hsotg {
+> +	dr_mode = "peripheral";
+> +	/delete-property/ vbus-supply;
+> +};
+> +
+> +&sound {
+> +	model = "Odroid-U2";
+> +	audio-routing = "Headphone Jack", "HPL",
+> +			"Headphone Jack", "HPR",
+> +			"DMICL", "DMIC",
+> +			"DMICR", "DMIC",
+> +			"Mixer DAI RX", "HiFi Capture";
+> +	samsung,audio-widgets =
+> +		"Headphone", "Headphone Jack",
+> +		"Microphone", "DMIC";
 
-The PHY supports High-Speed (UTMI+), and also appears to support
-Super-Speed (PIPE3) USB according to Samsung's own code to drive this PHY.
-However, none of the Exynos5515 hardware which I am aware of actually
-supports Super-Speed, therefore I am unable to test that part, hence PIPE3
-support being omitted.
+Should be no need for newline after = for
+samsung,audio-widgets. Writing it as:
 
-This patchset was tested on a Samsung Galaxy Watch FE using the USB serial
-gadget.
+	samsung,audio-widgets = "Headphone", "Headphone Jack",
+				"Microphone", "DMIC";
 
-This patchset also depends on [1], due to using an
-exynos5_usbdrd_phy_drvdata member (.n_phy_cfg) which was introduced to fix
-an out-of-bounds access bug.
+gives max width of 62 wide chars. With that fixed:
 
-It also depends on [2] and [3] in that they are the clock and pinctrl
-drivers for Exynos5515, and without them this driver cannot talk to the
-PHY. It does however build without them. [2] should be close to being
-merged into Torvalds' tree, and [3] was just submitted by myself a few
-days ago.
-
-[1] - https://lore.kernel.org/all/20261020063559.3530901-1-selvarasu.g@samsung.com/
-[2] - https://lore.kernel.org/all/20260818-for-next-lucky7-clock-v2-0-cda0cc80f158@member.fsf.org/
-[3] - https://lore.kernel.org/all/20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org/
-
-Kind regards,
-- Aiden Isik
-
-Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
----
-Aiden Isik (2):
-      dt-bindings: phy: samsung,usb3-drd-phy: Add Exynos5515 compatible
-      phy: exynos5-usbdrd: Add support for the Exynos5515 usbdrd phy
-
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |  2 +
- drivers/phy/samsung/phy-exynos5-usbdrd.c           | 43 ++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
----
-base-commit: 5260a8a68459dd67262970d38f1b2496f0cad371
-change-id: 20261022-for-next-lucky7-usb-phy-77244b2fc98e
+Reviewed-by: Henrik Grimler <henrik@grimler.se>
 
 Best regards,
---  
-Aiden Isik <aidenisik@member.fsf.org>
+Henrik Grimler
 
-
+> +};
+> +
+> +/* No expansion header with SPI */
+> +&spi_1 {
+> +	status = "disabled";
+> +};
+> -- 
+> 2.54.0 (Apple Git-157)
+> 
