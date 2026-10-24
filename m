@@ -1,100 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792829846;
-	b=NpQSXU+g4fb1ObKJ7zv2jxs6T/LQ6nb/gOmH+2A04dbY5iiAhKNCGG47trae3y21Rrsy
-	 zu971kMn07vCqoMPLEHcoDj7EGNrMjv3loFueGN+HhM84gdTTRPK0qcsFhPHiyf8w3o03
-	 ge7guNijygiEtl+2pr1yauY+hd7c2i350iJBZbpCo6UKWy9QmQK99COick5xLpETBidjm
-	 80RFA89n+Ke38ON5OEh2VObjNEWTEjX996xT/jdkiYrZhKdPJmtn9rXYZAkzRoUi7EcGn
-	 pbr1P3HmzCtPYiJxdo7yb0NDY8rJdOJARiXLZnIcimo/Dp+DSXxmQM2u70nOxx0g9zw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792829846;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792874895;
+	b=G31ZQ1uphFlPD3bxnZbBWZB0krSYDFNsk9PSGaSSQDWETKNsi4KBYgQYafrUC6HhsvuR
+	 vaa9qDhTH3svI9aSoolOwUsAh8IKkylQ+G3FQAqRQdeQVzN1W0ZLZKXN2TwzxxQt7k8EF
+	 FwmVNI436+4Djojko4q1mzSCXxQrH9cC4RDsIugWLlKnVqU7b/LuXjhYYS7/8RamsYOlh
+	 kDMpjE5ZpsUCtveZVLxP62OeIk9YTnnmO9v7jPx3Rbi0S0q7HWq/74Anh990W1xwQeOnn
+	 EgxJvkAi4/Galdsjugw+gYrXMaO5bOPrPs0nxbskQghGFEZ7jTuhBSo3V5V0meGnX5A==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792874895;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:MIME-Version:In-Reply-To:References:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
-	b=k4wL10TMPx8979ShcxMuE4it3CrtfDEpV1KjZmcMun/i77CjnodWnyqhyhcyuCZJZhM0
-	 4D+dNSo9ar0jkBaIIBVZ6VmCeOoTtJ3qlyv1u+Avks+UI9TwCDfcLRNyUgCTL1kxlhRRz
-	 iCcD+PsYMFZAoS/VWJFwZ6vkzVD6PxHveCRQ7GybRGGXMAO/JsGi+oF55og93QRyaZysY
-	 6P9G6P52GL1khJYIsz7gzlk6REFkcB5JEcP5xT0R1zy/xr4njHTl9yZB42i6/3Wn6ud9c
-	 67G0rG0sG1VeL9vtN/gSKht1Fa31jnqIKU0Ujs3c52kphgb7ravf5CQAwgVd8knnAgQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=W+scGDok;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=jHvev2DHjFHkJ3V6zZIDP3Luuvx+DUDiyJHl84mF21M=;
+	b=TbSnmZWZlFmf/qiHzcpVpVy0HX8SI/sABhwUEQj/ueJHRifedJSwNEmT/eRGs2CwCwlj
+	 NUZ+wchafFeDd/gSc1Cz+Qche3gt1uVJSfxJLAeYbywEorMCbY98n4R+ai4lhm3Ehgkk0
+	 hkI4V2/4WWj8ZG056V22fVUWPQ2U029ePT+hJSt7aUbSxBxaHUmyvq0DMQhNuJFlLj7uV
+	 ZoLegMWj0lZlnS0XGXj/l7gUF69aqASIXZKlEFOpTdcYDrBmmjsx7sZQITCKtDBjE54I+
+	 UXOpApEK0z8tUEWrBLgJ6RaLDLs0pERo0tUjVedvu7uOxJ3HN2QK3OMmvR9Q5gmKG6Q==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=kff1vHAP;
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAB0606A325
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 08:17:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDAB0606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB199606A31A
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 20:48:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB199606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=W+scGDok
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3ac677668a9so1937466a91.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 01:17:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792829845; cv=none;
-        d=google.com; s=arc-20260327;
-        b=AZPizddOs6zZWdApOke0iXOOgbGjzDj5hgMSXA16g3lpypjfiHYv0afByw5F61BrMc
-         DH8NOJXIaVAckTurrRqeDCo+gqMrgfkSgaw48xlxSItvSUPsZ+F0h1yVZuMPfbuMVuuU
-         +8XeYUT8YjWJgd3x1faWQ+mhV3wToKp605+rZ3jkDykTj6i+mmzALRsPXVbYaWIrxZQ0
-         tf0WGiCilehIbIa/95k6lgWEtAgdPtw3sH0wno+yWBEWh4GM5PE6/O4au7zUXxrZdCh+
-         nhJyabJBtygZunMShq5tn9Rtaf7gznLLn8GQ8Wl+WhAD/Qd0soS78pU+O8ZY9CVo9/aj
-         hB0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature;
-        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
-        fh=clQE0a5MLZQW9X27QKpMg2FAAL9qbzDb7s6WDorclKY=;
-        b=nqEYInpWqgOhV3lzWrgkH2nEi6dxhD7ysefcR7Nsv3Zvtc36bA6oee3FoIdR6cA+6O
-         SxIE9dnSFaKV8OLfofluDeYd9Li9G3eNC4sKc4vtpEJnc/MOSXywrlbQFjo6T4p6ex5s
-         Jc+UR+b7rznak8UdYjdw8FgHeknC7jPPw3FQerpE/4HYLBntbOPybyH7bPFnaiY5XjN5
-         y1dlVaVbcq1cfdSXHCpcYCGf7iC7P83ncjx8uXHkpvPXO+n/zwMyQ0C78Mcv7bK1l2NF
-         AGaelpgo5xsrJ2mkDOcgX4cd9vncy4iTDaWuBkzH6LGPgyc4U9r4PD/fwWJv/uXM7xze
-         49kg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=kff1vHAP
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48afbd2c386so1067756f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 13:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792829845; x=1793434645; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20251104; t=1792874892; x=1793479692; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
-        b=W+scGDokeW8IVUlPw1qaHOR19xQPyTOtn+x7HYHtCqXqHaqa9rlnDqjOM+2Ceue7fL
-         Aju4fOv9xr3yNjCoA1fmjYX1vQStbRNTO4lyjJ+X0ScdnOQnU3gmpoLqAC4vffWd2TMB
-         smWVx5HbLNJaVGD3+OBLLSqtnKQQ46IxDRMvw=
+        bh=jHvev2DHjFHkJ3V6zZIDP3Luuvx+DUDiyJHl84mF21M=;
+        b=kff1vHAP2Nu0zIpudBmNBHn5KX0VBdzJXu4jvP58vSoo/pHneUWZCK+nIdNMuxPvmd
+         MMKZ9fKFKJ598ZVVeOJxR2XhwwlrIi+xTcPZLuLSYi9hw+QWQaRrGxZJX4Jd2/9vvNJ8
+         HRnEH0V5yPdn7Bw1r11dowTzcM5iZmlnh2ripLAHidxKlyxKokb6G2qRHcQfDDtnJXcK
+         kuA9zRcem1KIObpVQ6cqQJoDckpwyFj/Qxa1oC9rPRaYv5Cr4HjZMdUvWSNdXnWbSkPT
+         iw9YPGRPKMg1b/5GtNxGrHqmt+j9A+kbxt69Px7C1m49FxTKJLe6p3aTq+JcNmEIACw8
+         qQ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792829845; x=1793434645;
-        h=content-type:cc:to:subject:message-id:date:from:references
-         :in-reply-to:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
-        b=QSYr5rTMYsYT5uBUDlWOByQ3Jgap7QJZA/WBtTbO6+VbQFgvCfGPCrhXzZxjvEkKHf
-         Z/O0IEEghHExaoTtEbwcv8MqzD/E03k2cSH8B7spuf4ZATAbd4j7APbiFPFpOd8p4U1M
-         zD7LwUfV4LbjAVlrGw6p6W6QvokuO31Pe7E2pF++XeBgADlxz3BRug7krouslvsPxNGt
-         jeeuz1dgOc+YTH9fEY83HFR0EkKELUjz/Q/l2C10aULW7USsGdaw33xTwnBN8j/kczns
-         VEj/u4VjB5AKcPLZY9r2l+It6qy5Ha2pYhaTTbNn+X5RR0lBUm0lEhB0tqny5pSEb4w+
-         F8Sg==
-X-Forwarded-Encrypted: i=1; AKwUvBw7E47SbDYnQtH7OBQBEkxVfOh8wR7K7Flq+g+9znz+ZW3sPpt4OXchVjuVSUjBcCn5LstYrfOqHsLcuSgh4IvLzw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLLoUnUBNGUrNRpQ0WM2W+MHCMmwO3XKn6mqJRpU9+XGbz2LY4T
-	DOOBMP1x1W9hu/P8SYjJvWG1fRDW/sFNjpy+XF50ilIR5IcE9WpqjBa514Hu/qEaG93mKfXMbRS
-	3Q/W1dIj6d9s0IyOaPJO/l1+Ft2sJefkqtEG7VEkk
-X-Gm-Gg: AYBFou2722eKZ4gyqV8Y+gOoLnftmEett2uIOtbM/n0UqG1BhfgPXv70WG1610aQeEq
-	iE0WRN7RlvqvV5X/gM/NO86OSnLyQRgTvt2g9/hYXF/RNTqgq1/aU7AzlqnYp4B6z2qniVCv4XJ
-	LZAXNSrlOY9ylvrnS6qcEvmBa6/vcRsprVVLZdkunBP1avaBgg+w255KYppW3hxm7PqLzI+mFSV
-	E6xBi49/F+ZjriNKKlLpHhIPFGlC2BvghU9eO1dJUqGewRsac8WpP2VeufmOasVhIQenvbK3wYW
-	zBI4fNd9ofuvsst/Vx5B8esffZiOsYciJ0GNz4aoI7ZaJ/LlBUqNrhU63Sau6ZNTA8XKBo7QXoO
-	t8RvxLuBFkrd9AvYYJ/09H+pINUEhbjofGH0=
-X-Received: by 2002:a17:90b:4d09:b0:3ab:31e6:12fc with SMTP id
- 98e67ed59e1d1-3ade9475f03mr1281929a91.0.1792829845190; Sat, 24 Oct 2026
- 01:17:25 -0700 (PDT)
-Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 24 Oct 2026 01:17:19 -0700
-Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 24 Oct 2026 01:14:33 -0700
+        d=1e100.net; s=20260707; t=1792874892; x=1793479692;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=jHvev2DHjFHkJ3V6zZIDP3Luuvx+DUDiyJHl84mF21M=;
+        b=gyieYOdNQMZ598R13hsVgOOlfFAlQNkYggG2vDK0IZpyvCzl03sFJDSlKb3+djIY6/
+         aokxoCBksU9JnGfkS+i0ep+/nvVPPRI0M2x5ET+x/ikZVK1cHAnR6nE11uWPy79vwLg0
+         o6J/ce4uVb5GtqMmdCI+HySG14hBFWamlabrUoDXxiEISu7RJsxmjrkQFtbZqsw0MKDr
+         Jil9kouR/vyRppOX9eD55OyW2wdzmIEr4tQdMzzSyKM8PVgZ0/31LEGsTC/2vVGxJkJW
+         2Y2lAfKo8HYGSqXzKyzi8A0A/+P/m3nxDQ+wo29QsN2fjlXM/SO5zxFkciET/89uGr7y
+         DMAQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz43KGFpeR6nB7cdn/AG3iCteJOvO9M/y4bwHGFNSrXKSDDO7XCkmw7xJXKyoLoKHPGBxRqosZ3ms5edTQ+VhPF8g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLzAzAPmdo3gmjpbuw26dRh5vKKUtUqVeXRsAM5zIBI7ONcp0S1
+	2L19J/01EV55fLz2Nr/lG3bKa6QkR82QriR8HUVmVZXYVC5KHF69YmdxSuUmMix8tcOv4uK4
+X-Gm-Gg: AYBFou37BXLtuRYoKv18cIJEqLV3aUZzrizqpn1XBoYfkQzm1Y0oSJFuybN5RFb93hW
+	e0s46sgpPmO/oyVBJnargM54gr/8OtIgQVSmibs3l8yx11tiasshw4+R4vObtPwY50OV23Pk5fF
+	7vTbTsl9Y2shOselCQnAs7FidqYQZv57VlzS13+gmaqBQ0LGuVwliUh7Uc5ofJ972zau8IpP6zK
+	fOAQSxccultxlieqffWgfjaDdMc4VItxYo6AQxhXJneBCO3pJrfzr8FakdXDaIShqqqZbC3BtoB
+	OSINb0n1rON3RoQXB31z6eLgnu4Msvf06+Xtjr5KgW6yrgHeiSc1n6i1AOgvPahrzVyNAxfXl3b
+	tT6E5OZc5ZDkdBpbeyU67aUpVnbZCk2Su4Ir9ZG2+cv4QBiQOGE+JM2GMV8uzg3UDi5EbyIJAab
+	Wen5lDICEITTt3Q36CTXvrtAphgKT2y519YgTuqFvhoqVpYgHcF67c/wbNOaHNYln0GyXp4qtS1
+	XH5hytGJB+nCVTPUY96wB+rqg+/pIWlM4kyJk9srn4k8ldFGAuCN5wkXCDuOFi6OpU2tilA2AO6
+	R1dZ2DkT
+X-Received: by 2002:a05:600c:5397:b0:4a2:a9:ed56 with SMTP id 5b1f17b1804b1-4a35ac99b8fmr44041955e9.8.1792874892206;
+        Sat, 24 Oct 2026 13:48:12 -0700 (PDT)
+Received: from theSameSurfase.localdomain ([193.222.98.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebd49afsm6221793f8f.35.2026.10.24.13.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Oct 2026 13:48:11 -0700 (PDT)
+From: thesame-personal <thesame.personal@gmail.com>
+Date: Sat, 24 Oct 2026 22:48:04 +0200
+Subject: [PATCH] ARM: dts: samsung: exynos4412-p4note: allow powering off
+ the wifi card
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -104,92 +91,64 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-In-Reply-To: <20261020083501.RFC.6.Idfb669fd6c518bc86e45d8555f159c0ec611a6f9@changeid>
-References: <20261020153652.2907186-1-dianders@chromium.org> <20261020083501.RFC.6.Idfb669fd6c518bc86e45d8555f159c0ec611a6f9@changeid>
-From: Simon Glass <sjg@chromium.org>
-Date: Sat, 24 Oct 2026 01:17:19 -0700
-X-Gm-Features: AclHuK9OzNbsUxoUq8dndEPiTUrFf9OR8thbHVNZoTYdjjGKeFC-1VE0qwrhJ4E
-Message-ID: <CAFLszThr=rPCTxQxst2_Br6MWwaRFe_rHamzLXY=ua4Qr8mAeA@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/7] arm64: dts: google: lga: Add lga.its FIT image script
-To: dianders@chromium.org
-Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-kbuild@vger.kernel.org, 
-	Brian Norris <briannorris@chromium.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Simon Glass <sjg@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	Nicolas Schier <nsc@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Devicetree@vger.kernel.org, 
-	Julius Werner <jwerner@chromium.org>, Saravana Kannan <saravanak@kernel.org>, 
-	Will Deacon <will@kernel.org>, Michal Simek <michal.simek@amd.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261024-exynos4412-p4note-brcmfmac-v1-1-3d09e496c2c7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIMZ3WoC/x3MSw5AMBAA0KvIrE2iNT5xFbGgpsxCK60IEXfXW
+ L7NeyByEI7QZQ8EPiWKdwkqz8Cso1sYZU4GXehaFZqQr9v5SKQ07uT8wTgFs9ltNFi33BhVlhV
+ NFlKwB7Zy/Xk/vO8HJtVRYGwAAAA=
+X-Change-ID: 20261024-exynos4412-p4note-brcmfmac-68e7c13354bf
+To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Artem Utkin <thesame.personal@gmail.com>
+X-Mailer: b4 0.16.0
 
-Hi Doug,
+sdhci_3 serving BCM4334 was missing cap-power-off-card.
+On my N8000 this resulted in the following messages after sleeping:
+[305.759883] PM: suspend entry (deep)
+[306.514698] brcmfmac: brcmf_ops_sdio_suspend: Failed to set pm_flags 1
+[306.671504] brcmfmac: brcmf_sdio_htclk: HT Avail request error: -110
+[307.127267] PM: suspend exit
 
-On 2026-10-20T15:35:18, Douglas Anderson <dianders@chromium.org> wrote:
-> arm64: dts: google: lga: Add lga.its FIT image script
->
-> Add an Image Tree Source (`lga.its`) describing the FIT image for Google
-> Tensor G5 (LGA) Pixel 10 family boards (`lga-blazer.dtb`,
-> `lga-frankel.dtb`, and `lga-mustang.dtb`) with board and SoC ID/revision
-> metadata in the configuration descriptions, allowing the LGA FIT image
-> to be built with:
->
->   make \
->     FIT_ITS=google/lga.its \
->     FIT_FACTOR_DTBS=1 \
->     FDTFACTOR_ARGS="--strip-local-fixups --single-base-dtb" \
->     image.fit
->
-> NOTE: At the moment, Pixel 10 doesn't directly boot from a FIT
-> image. However, packaging scripts will be able to take an image as
-> built above and convert it into a format that the bootloader can
-> handle.
->
-> It should also be noted that the "description" of the various
-> [...]
->
->  arch/arm64/boot/dts/google/lga.its | 68 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
+The regression was triggered by commit 8c3170628a9c
+("wifi: brcmfmac: keep power during suspend if board requires it").
+Midas already has a fix in commit 2ff147fdfa99
+("ARM: dts: samsung: exynos4412-midas:
+turn off SDIO WLAN chip during system suspend").
+exynos4412-p4note.dtsi does not include exynos4412-midas.dtsi,
+so p4note did not automatically inherit the Midas fix.
 
-> diff --git a/arch/arm64/boot/dts/google/lga.its b/arch/arm64/boot/dts/google/lga.its
-> @@ -0,0 +1,68 @@
-> +		fdt-1 {
-> +			description = "lga-blazer.dtb";
-> +			data = /incbin/("arch/arm64/boot/dts/google/lga-blazer.dtb");
-> +			type = "flat_dt";
-> +			arch = "arm64";
-> +			compression = "none";
-> +			hash-1 {
-> +				algo = "sha1";
-> +			};
-> +		};
+Another affected board was fixed in commit 863d69923bdb ("ARM: dts:
+samsung: exynos4210-i9100: turn off SDIO WLAN chip during system
+suspend").
 
-Just to check, does fdtfactor recalculate hash-1 when it rewrites the
-fdt-N data? With FIT_FACTOR_DTBS=1 (as used in the commit message),
-mkimage computes the sha1 over the full lga-blazer.dtb and then the
-data is replaced by the base or overlay. If the hash is not updated,
-anything that verifies it will reject the image. I'm also not sure why
-the FDTs get a hash but kernel-1 does not. If the hashes are only
-there because the trogdor script has them, it might be simpler to drop
-them here, since the packaging scripts repack everything anyway.
+Signed-off-by: Artem Utkin <thesame.personal@gmail.com>
+---
+ arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> diff --git a/arch/arm64/boot/dts/google/lga.its b/arch/arm64/boot/dts/google/lga.its
-> @@ -0,0 +1,68 @@
-> +		conf-1 {
-> +			description = "Blazer (board_id=0x070406,board_rev=0x010000,soc_id=0x0005,soc_rev=0x010000)";
+diff --git a/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi b/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
+index 8d52aa13b8..03b514a82b 100644
+--- a/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi
+@@ -1232,6 +1232,7 @@ &sdhci_3 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+ 	non-removable;
++	cap-power-off-card;
+ 	bus-width = <4>;
+ 	mmc-pwrseq = <&wlan_pwrseq>;
+ 
 
-Since tools are expected to parse this string, please can you add a
-comment at the top of the file describing the format? For example: are
-the keys required or optional, can they come in any order, are the
-numbers always hex, and does the width matter (6 digits for board_id
-but 4 for soc_id)? Otherwise the format is whatever the first
-packaging script happens to accept, and anyone adding a board or
-revision has to copy the existing lines and hope. But I think we
-should get this into the FIT spec - will mention that on the cover
-letter.
+---
+base-commit: b47faa6004d86ade16b90d24fa1e1f179e6f7230
+change-id: 20261024-exynos4412-p4note-brcmfmac-68e7c13354bf
 
-Regards,
-Simon
+Best regards,
+--  
+Artem Utkin <thesame.personal@gmail.com>
+
