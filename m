@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792829818;
-	b=Msy7OrqmlhT8G0ckVovCKneAQcEVOXWTgF3WX0NW3df2Psm02rVEbRcrM/xBc5Ga8WWU
-	 1m2GxbTlfX46N06PFkErWWT7+ESshDZCgalBa04wU030wtkYpplXqSsph95M51chswuds
-	 hhNFgr7BhldJSNEhOhRcFQQk2EAFlFaUx5vmOkGolvMFUZO4IveRddw0HGz4HfhKyzKf/
-	 KIvf+U32Mle2rgKNjvO7+rv+KRks+zkH40+6q4me2VkMR4p/z1qYDsNNgF5lDqJR61PXr
-	 RWPrXuZiM673UzGKTNKqZ6FDa761C59Y3HbgponohEBqU/YCy1uECVBiOL2zT/DMlSA==
+	t=1792829846;
+	b=NpQSXU+g4fb1ObKJ7zv2jxs6T/LQ6nb/gOmH+2A04dbY5iiAhKNCGG47trae3y21Rrsy
+	 zu971kMn07vCqoMPLEHcoDj7EGNrMjv3loFueGN+HhM84gdTTRPK0qcsFhPHiyf8w3o03
+	 ge7guNijygiEtl+2pr1yauY+hd7c2i350iJBZbpCo6UKWy9QmQK99COick5xLpETBidjm
+	 80RFA89n+Ke38ON5OEh2VObjNEWTEjX996xT/jdkiYrZhKdPJmtn9rXYZAkzRoUi7EcGn
+	 pbr1P3HmzCtPYiJxdo7yb0NDY8rJdOJARiXLZnIcimo/Dp+DSXxmQM2u70nOxx0g9zw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792829818;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792829846;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Received:MIME-Version:In-Reply-To:References:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=lPv80ccJgYYw4AUwmqTrRtQb9q7abpSwK/Y4bqqZPDM=;
-	b=R6EIsbksR0lEgcnvEqOuU3k9e5JtHi/onDoIRB9aChpvvfEjCg+ZC7OrVRjLreLj8ghn
-	 0T43QjMs5OzjKD15jgik62SwjEn2oRxi/10j05jlE8MyWEYsjjzDMzuaoc1WfVeKGb1aj
-	 xHy7nDOr88wO3xiC/cuJGs3cZy7GXPcGanf14QQbdoFAjFGXkfPhcR7roQnOhec+Ovuzx
-	 BvgudhgnLrz7FG0jYuqBVgU4BZ28l0aLaH3DMTa16XvQ8L2t+wHpet8ZOs+3GfhV/jp69
-	 mNRVpJ1IsSUxE912OClksuBUtzRpUctoXgl7MY1AizXoFvMIuMCUXifMLdd6c8PxvSA==
+	bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
+	b=k4wL10TMPx8979ShcxMuE4it3CrtfDEpV1KjZmcMun/i77CjnodWnyqhyhcyuCZJZhM0
+	 4D+dNSo9ar0jkBaIIBVZ6VmCeOoTtJ3qlyv1u+Avks+UI9TwCDfcLRNyUgCTL1kxlhRRz
+	 iCcD+PsYMFZAoS/VWJFwZ6vkzVD6PxHveCRQ7GybRGGXMAO/JsGi+oF55og93QRyaZysY
+	 6P9G6P52GL1khJYIsz7gzlk6REFkcB5JEcP5xT0R1zy/xr4njHTl9yZB42i6/3Wn6ud9c
+	 67G0rG0sG1VeL9vtN/gSKht1Fa31jnqIKU0Ujs3c52kphgb7ravf5CQAwgVd8knnAgQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=J7SknmwT;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=W+scGDok;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.216.42
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D580606A31D
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 08:16:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D580606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAB0606A325
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 08:17:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BDAB0606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=J7SknmwT
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c4203bbb1e9so226355166b.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 01:16:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792829816; cv=none;
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=W+scGDok
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3ac677668a9so1937466a91.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Oct 2026 01:17:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792829845; cv=none;
         d=google.com; s=arc-20260327;
-        b=KVPKhYE3zeFIeUDSkRq5awCE1rxZscJrDY4BTnK5oB96MQPhq019aX7V+phs/N16+7
-         nj21xrg/SMF2z5RpYetvt/1D++3yVLAUgRuOJOdUaYddzfFYZRyy3mmS4U9jtcz43vyR
-         Ugt/m+VRbwdhLKxUOwz/PVbQjsmEHDsDxAPpbs06szW8DmpegQFHlxUg5CEaNBqbpsJD
-         jAiyWSR5YbXlekYd8lz2b0CqWz+R7xpLr29F308gdypc/rq7NIxglx8ZxAjXe0OmJa7j
-         2DH8LTyr94snC26oX1cPQ1VHv4gAAG/upEYdRY+CbpbS/dwYQsmHmNX3zLG892uVNJ6T
-         +Skg==
+        b=AZPizddOs6zZWdApOke0iXOOgbGjzDj5hgMSXA16g3lpypjfiHYv0afByw5F61BrMc
+         DH8NOJXIaVAckTurrRqeDCo+gqMrgfkSgaw48xlxSItvSUPsZ+F0h1yVZuMPfbuMVuuU
+         +8XeYUT8YjWJgd3x1faWQ+mhV3wToKp605+rZ3jkDykTj6i+mmzALRsPXVbYaWIrxZQ0
+         tf0WGiCilehIbIa/95k6lgWEtAgdPtw3sH0wno+yWBEWh4GM5PE6/O4au7zUXxrZdCh+
+         nhJyabJBtygZunMShq5tn9Rtaf7gznLLn8GQ8Wl+WhAD/Qd0soS78pU+O8ZY9CVo9/aj
+         hB0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature;
-        bh=lPv80ccJgYYw4AUwmqTrRtQb9q7abpSwK/Y4bqqZPDM=;
-        fh=55p6qdPmICDQgKaJQROzU+aPigByeAm1lH0gEZbP6Is=;
-        b=hCDlCd0iN2Ajd2T//JH+MaAGHmiivDpAK4i4AHroXaKVLeIz/1Piq7nvYSpyqgbHSH
-         FmYWUrOTwD9yfdXjZTeIdCUgE/ftI2VVzXvKi7snIp1axHAivqB6TowjpmqJ0JN4wS36
-         c05gEY9nwwN4USIzokkyNWLWKSuzO5GdFZM5TYzpjnFn9dAuWgPT0qJph/6Qx6ikYKt4
-         KnxqaCQYpgHpZBndeXmngj0iXEywrBwVdvqOQc7hUlSMkMjFPpwLqOifLdMCIv5x5dHK
-         3WshLTxANVBMzMOJECOBA4KUXY6ZQ+v4bv6WBM4NqP5WGehD2LDiTeozZiAn2ewJd0Fg
-         w+1w==;
+        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
+        fh=clQE0a5MLZQW9X27QKpMg2FAAL9qbzDb7s6WDorclKY=;
+        b=nqEYInpWqgOhV3lzWrgkH2nEi6dxhD7ysefcR7Nsv3Zvtc36bA6oee3FoIdR6cA+6O
+         SxIE9dnSFaKV8OLfofluDeYd9Li9G3eNC4sKc4vtpEJnc/MOSXywrlbQFjo6T4p6ex5s
+         Jc+UR+b7rznak8UdYjdw8FgHeknC7jPPw3FQerpE/4HYLBntbOPybyH7bPFnaiY5XjN5
+         y1dlVaVbcq1cfdSXHCpcYCGf7iC7P83ncjx8uXHkpvPXO+n/zwMyQ0C78Mcv7bK1l2NF
+         AGaelpgo5xsrJ2mkDOcgX4cd9vncy4iTDaWuBkzH6LGPgyc4U9r4PD/fwWJv/uXM7xze
+         49kg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1792829816; x=1793434616; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1792829845; x=1793434645; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=lPv80ccJgYYw4AUwmqTrRtQb9q7abpSwK/Y4bqqZPDM=;
-        b=J7SknmwTTzL7ECy7vAoxuDafrONez3XeCWql0X/0YXhgvAQE2BfBECDlTFWueGZ8Jh
-         klrfah4NQphtxV5+spcx32j1zY8Lj6vh+cJFzrPDn1Ptw8VqQ53UpyioqrJd6EaGMvWO
-         eSd9MJuHBLn7s+f0x+KjG9NHtf+4lfLEvhiOo=
+        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
+        b=W+scGDokeW8IVUlPw1qaHOR19xQPyTOtn+x7HYHtCqXqHaqa9rlnDqjOM+2Ceue7fL
+         Aju4fOv9xr3yNjCoA1fmjYX1vQStbRNTO4lyjJ+X0ScdnOQnU3gmpoLqAC4vffWd2TMB
+         smWVx5HbLNJaVGD3+OBLLSqtnKQQ46IxDRMvw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792829816; x=1793434616;
+        d=1e100.net; s=20260707; t=1792829845; x=1793434645;
         h=content-type:cc:to:subject:message-id:date:from:references
          :in-reply-to:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=lPv80ccJgYYw4AUwmqTrRtQb9q7abpSwK/Y4bqqZPDM=;
-        b=VscsGBZmbPYW/ceDY/XblEBbPzkt8SsbLtLg1nsk1IjLGIXnyHvCPdDfj1VTv6cxCp
-         xzlnnp+T4FO+Xta7LewEC1pFMWbyM+J5Oj1hTKZKZM3A6cjsBG513jL6v7KQf0aydOVU
-         0V3iwdiDImareWEpbpQg7rUZTHCkVA8tprRJVDkmS5MYUl9+1niu5s90ZaWXqECSPK5r
-         uNbShBtg9ABogkW5wzwyVH2u4KFeofpO7B6gyYlEYiLEGJyBdvuL1TjEjgqCH3SEEnrZ
-         fxDMgn9nR1/1EJqskjryTa0y37bUujB0oyY8czUQ0RP3TVJwwpLpXSJ9Fv6tA+mj0kF1
-         9b2g==
-X-Forwarded-Encrypted: i=1; AKwUvBy9b0BTOp+sg5j8Lw80k+JAydioaG+GvU+tPM06C/qybRfIYutRcytnrbw439IZdOoqLWSVp3IKzrxX0LweA5os0A==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLFfz1Mo5mGG4dmGXrka6YfNp2gjQcdwcZU4J4mPjdtS4+EN9dF
-	1kXnVlCFTSXVBKqsR23zznWFkEIxd07VQm5MbZBRWzaqK2jAFrS0d1Kbtx3zfjlqSKmQQ8XiJAX
-	b9pN1uXfRMuzEFU5wsoE/VbACldod4aWf0nCMws/a
-X-Gm-Gg: AYBFou0c3CSjUYnJru4kFBL2n416dMVIdMYf1xQjjdDCzgSLj69AcdT6ct0aBMgXmAX
-	dOmCScEWh2+WMJevbdkaWV1J5t/0IP5hIQER6iULzjjjESlR133vbVKHsdogt38Aq4mfHclxqs+
-	PCS5XRey+/gTNe5/vD4kdRiXHqQW1BIvKyShO442KmWLCNfa55skI6/HADm6EJvuLL0CNfYG5GZ
-	+Uhlt8m0YtGlkI+PRVgwMMSCF185t3t6Aa9cYn0AyG1OIYxN0WooqUz6ZGOU4pl4osBO8D3B82+
-	m6o91ZqAlNrcujDMi4SqnRW4t+eXagfHgue4loeDvhT8kNVyAM6pRjKnG4Xt3V6QEs0K9nmk3b3
-	+mmluRkpb/Twlpc136keqH706oYIoFl1p6xU=
-X-Received: by 2002:a17:906:9f84:b0:c44:494:692b with SMTP id
- a640c23a62f3a-c46bde198e0mr151110066b.22.1792829815874; Sat, 24 Oct 2026
- 01:16:55 -0700 (PDT)
+        bh=cyqk+XMSMcVf9vVXU4rdRbRmiDkDjXgnwovnotWECc4=;
+        b=QSYr5rTMYsYT5uBUDlWOByQ3Jgap7QJZA/WBtTbO6+VbQFgvCfGPCrhXzZxjvEkKHf
+         Z/O0IEEghHExaoTtEbwcv8MqzD/E03k2cSH8B7spuf4ZATAbd4j7APbiFPFpOd8p4U1M
+         zD7LwUfV4LbjAVlrGw6p6W6QvokuO31Pe7E2pF++XeBgADlxz3BRug7krouslvsPxNGt
+         jeeuz1dgOc+YTH9fEY83HFR0EkKELUjz/Q/l2C10aULW7USsGdaw33xTwnBN8j/kczns
+         VEj/u4VjB5AKcPLZY9r2l+It6qy5Ha2pYhaTTbNn+X5RR0lBUm0lEhB0tqny5pSEb4w+
+         F8Sg==
+X-Forwarded-Encrypted: i=1; AKwUvBw7E47SbDYnQtH7OBQBEkxVfOh8wR7K7Flq+g+9znz+ZW3sPpt4OXchVjuVSUjBcCn5LstYrfOqHsLcuSgh4IvLzw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLLoUnUBNGUrNRpQ0WM2W+MHCMmwO3XKn6mqJRpU9+XGbz2LY4T
+	DOOBMP1x1W9hu/P8SYjJvWG1fRDW/sFNjpy+XF50ilIR5IcE9WpqjBa514Hu/qEaG93mKfXMbRS
+	3Q/W1dIj6d9s0IyOaPJO/l1+Ft2sJefkqtEG7VEkk
+X-Gm-Gg: AYBFou2722eKZ4gyqV8Y+gOoLnftmEett2uIOtbM/n0UqG1BhfgPXv70WG1610aQeEq
+	iE0WRN7RlvqvV5X/gM/NO86OSnLyQRgTvt2g9/hYXF/RNTqgq1/aU7AzlqnYp4B6z2qniVCv4XJ
+	LZAXNSrlOY9ylvrnS6qcEvmBa6/vcRsprVVLZdkunBP1avaBgg+w255KYppW3hxm7PqLzI+mFSV
+	E6xBi49/F+ZjriNKKlLpHhIPFGlC2BvghU9eO1dJUqGewRsac8WpP2VeufmOasVhIQenvbK3wYW
+	zBI4fNd9ofuvsst/Vx5B8esffZiOsYciJ0GNz4aoI7ZaJ/LlBUqNrhU63Sau6ZNTA8XKBo7QXoO
+	t8RvxLuBFkrd9AvYYJ/09H+pINUEhbjofGH0=
+X-Received: by 2002:a17:90b:4d09:b0:3ab:31e6:12fc with SMTP id
+ 98e67ed59e1d1-3ade9475f03mr1281929a91.0.1792829845190; Sat, 24 Oct 2026
+ 01:17:25 -0700 (PDT)
 Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 24 Oct 2026 01:16:54 -0700
+ HTTPREST; Sat, 24 Oct 2026 01:17:19 -0700
 Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 24 Oct 2026 01:16:49 -0700
+ HTTPREST; Sat, 24 Oct 2026 01:14:33 -0700
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -104,13 +104,13 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-In-Reply-To: <20261020153652.2907186-1-dianders@chromium.org>
-References: <20261020153652.2907186-1-dianders@chromium.org>
+In-Reply-To: <20261020083501.RFC.6.Idfb669fd6c518bc86e45d8555f159c0ec611a6f9@changeid>
+References: <20261020153652.2907186-1-dianders@chromium.org> <20261020083501.RFC.6.Idfb669fd6c518bc86e45d8555f159c0ec611a6f9@changeid>
 From: Simon Glass <sjg@chromium.org>
-Date: Sat, 24 Oct 2026 01:16:54 -0700
-X-Gm-Features: AclHuK_VJyuusU7nyQWEvJVdBRj5rBge31M7RaY0GTXZjSe04p7xrEJjqvNNRK4
-Message-ID: <CAFLszTgzpQ-donjjtcPwy5T3pfWg_u83QMh0GcdpY2JCq_s75w@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] arm64: Add fit images for sc7180-trogdor and google,lga
+Date: Sat, 24 Oct 2026 01:17:19 -0700
+X-Gm-Features: AclHuK9OzNbsUxoUq8dndEPiTUrFf9OR8thbHVNZoTYdjjGKeFC-1VE0qwrhJ4E
+Message-ID: <CAFLszThr=rPCTxQxst2_Br6MWwaRFe_rHamzLXY=ua4Qr8mAeA@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/7] arm64: dts: google: lga: Add lga.its FIT image script
 To: dianders@chromium.org
 Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -123,55 +123,73 @@ Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>,
 	Julius Werner <jwerner@chromium.org>, Saravana Kannan <saravanak@kernel.org>, 
 	Will Deacon <will@kernel.org>, Michal Simek <michal.simek@amd.com>, 
 	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Andrew Jones <andrew.jones@linux.dev>, 
-	Bjorn Andersson <andersson@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	David Sterba <dsterba@suse.com>, Gary Guo <gary@garyguo.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Luis Augenstein <luis.augenstein@tngtech.com>, 
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Nick Terrell <terrelln@fb.com>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Rong Xu <xur@google.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	cros-qcom-dts-watchers@chromium.org, linux-samsung-soc@vger.kernel.org
+	linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Doug!
+Hi Doug,
 
 On 2026-10-20T15:35:18, Douglas Anderson <dianders@chromium.org> wrote:
+> arm64: dts: google: lga: Add lga.its FIT image script
+>
+> Add an Image Tree Source (`lga.its`) describing the FIT image for Google
+> Tensor G5 (LGA) Pixel 10 family boards (`lga-blazer.dtb`,
+> `lga-frankel.dtb`, and `lga-mustang.dtb`) with board and SoC ID/revision
+> metadata in the configuration descriptions, allowing the LGA FIT image
+> to be built with:
+>
+>   make \
+>     FIT_ITS=google/lga.its \
+>     FIT_FACTOR_DTBS=1 \
+>     FDTFACTOR_ARGS="--strip-local-fixups --single-base-dtb" \
+>     image.fit
+>
+> NOTE: At the moment, Pixel 10 doesn't directly boot from a FIT
+> image. However, packaging scripts will be able to take an image as
+> built above and convert it into a format that the bootloader can
+> handle.
+>
+> It should also be noted that the "description" of the various
+> [...]
+>
+>  arch/arm64/boot/dts/google/lga.its | 68 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 
-> 1. It uses a checked-in .its script to associate metadata with each
->    board's devicetree. Other tools can parse this metadata in order to
->    craft a package that the Pixel bootloader can understand.
+> diff --git a/arch/arm64/boot/dts/google/lga.its b/arch/arm64/boot/dts/google/lga.its
+> @@ -0,0 +1,68 @@
+> +		fdt-1 {
+> +			description = "lga-blazer.dtb";
+> +			data = /incbin/("arch/arm64/boot/dts/google/lga-blazer.dtb");
+> +			type = "flat_dt";
+> +			arch = "arm64";
+> +			compression = "none";
+> +			hash-1 {
+> +				algo = "sha1";
+> +			};
+> +		};
 
-One thing I'd like to check before this goes further. In lga.its the
-metadata is a string packed into the configuration description
-(board_id=...,board_rev=...,soc_id=...,soc_rev=...). The FIT spec
-treats 'description' as human-readable text, so this turns a
-free-form, undocumented string into an ABI that bootloaders and
-packaging tools must parse. I'd much prefer proper properties in the
-configuration node, defined in the FIT spec [1], so that every tool
-can rely on the same names and types. I'm happy to help get that into
-the spec. What do you think?
+Just to check, does fdtfactor recalculate hash-1 when it rewrites the
+fdt-N data? With FIT_FACTOR_DTBS=1 (as used in the commit message),
+mkimage computes the sha1 over the full lga-blazer.dtb and then the
+data is replaced by the base or overlay. If the hash is not updated,
+anything that verifies it will reject the image. I'm also not sure why
+the FDTs get a hash but kernel-1 does not. If the hashes are only
+there because the trogdor script has them, it might be simpler to drop
+them here, since the packaging scripts repack everything anyway.
 
-> How does this series help us?
+> diff --git a/arch/arm64/boot/dts/google/lga.its b/arch/arm64/boot/dts/google/lga.its
+> @@ -0,0 +1,68 @@
+> +		conf-1 {
+> +			description = "Blazer (board_id=0x070406,board_rev=0x010000,soc_id=0x0005,soc_rev=0x010000)";
 
-The FIT_ITS path is a second way to build image.fit alongside
-make_fit.py, and much of it repeats what make_fit.py already does: it
-puts the root compatible from each DTB into the configuration and
-compresses the DTBs. The series adds fdtget/fdtput, sed parsing of
-/incbin/ paths and a shell loop in Makefile.lib to do the same for a
-hand-written .its file, and the .its files repeat the DTB lists from
-the Makefiles. Have you thought about extending make_fit.py to take
-the per-board metadata (e.g. from a small file next to the DTs, or via
-FIT_EXTRA_ARGS) and to run fdtfactor itself? That would avoid the
-in-tree fdtget/fdtput, the mkimage dependency and most of the Makefile
-logic, and trogdor would come almost for free.
-
-The new FIT_ITS, FIT_FACTOR_DTBS and FDTFACTOR_ARGS variables aren't
-documented anywhere, including the image.fit entry in the arm64 'make
-help' output. Please can you add something, perhaps alongside wherever
-FIT_DECOMPOSE_DTBS ends up being described.
-
-[1] https://github.com/open-source-firmware/flat-image-tree
+Since tools are expected to parse this string, please can you add a
+comment at the top of the file describing the format? For example: are
+the keys required or optional, can they come in any order, are the
+numbers always hex, and does the width matter (6 digits for board_id
+but 4 for soc_id)? Otherwise the format is whatever the first
+packaging script happens to accept, and anyone adding a board or
+revision has to copy the existing lines and hope. But I think we
+should get this into the FIT spec - will mention that on the cover
+letter.
 
 Regards,
 Simon
