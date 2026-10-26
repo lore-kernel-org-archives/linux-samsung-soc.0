@@ -1,80 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793051104;
-	b=XsLpBMYNDuRKx1zIOwCWxjYG7hfrUF1TtA6BFEYRcBepNcjeLjFKhfV8C/QF7yRbAlqm
-	 99lFHyJcvt5hPjSmvHR7ts0ZkfBXoXgeXLhIqcJHdGx0mtICjEX2tJYVJQIcondhMng/2
-	 0ZUiBxhDVbb3p3cQhtcxE/JSEPzj5Gs8ADTcvLSQfxiikZtZvsZNJ5p2EpUcb552m8YCi
-	 VBF5OPpiz+RNIPQ8au7hGJ4hQVV3ZATFBSlTLTxs6t3SpNCEo3gfO4ewXuIzdj4pP3i9U
-	 uXpSQUDM5whc1O5X/ogxa+nCx9yPmzV2LmxmjUtr0zF/PSweixXS/4C26hyJaRX+9lQ==
+	t=1793051106;
+	b=rFsAvo8xdsUA1femk8AnJDew+pmeneAyrsyhEquPlYxm457ycCAeUkUslTYhLTxKVqB7
+	 QEa+oTUUkIM5htibi+tthuEZXKM2gdmyc0drurL8sC0+LTaCEPFnSYf/1qXazubaWi544
+	 8bQpVdHuTpr1wCIh6bRQr9FPBt1qoKsIaw43x5yqQ/H90go9SC9ejGJn+vtyhY5Z6MflV
+	 bAQllAWgwi7IGOgCkPY/ZmfC3F7876hamwcnhf1jkxo14t+qdUSVcvElnu5RrdPwKUsRm
+	 xI4bBo5ZgvmiuUhBT+B5mE6rmv/bs2lTyJUSsTuQun6eOVckacBKvLFu9kx9ZWJ+Tyw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793051104;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793051106;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
-	b=KsHrWeTK3VsEclUmJmeYj/W8fqL3iDL3c6do3rXK+OOLUcRg3PCDf0gnjjj7cMFJ3nLK
-	 q+O5D4ND7HhK89Du4xz9VlpatuN4/E/lwWJX4KBN4oeL+TG56UQStQkEuRZJz67BuzmT4
-	 OgyC40xUTWSjDGQUoKz9Orvfmf6x6OHVOkZJMtp1HUa/M5LUvtkMl8TId2Pujg7dcfHII
-	 F/jel77dLOkd/QKtF0RSPXobaBUK0H+IKrg9laQalxwrb+PDbpSc4qy40g44s3Zew2DfI
-	 NhLwzZ0fPpnZljEf8UJPBSxcHJbuheMG1rsT/k/np1E1wvJi5z+VOxwRP/wQrSzhjcA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=kNTRPGjk+JRlFS0l8T9G1tIUTUomkJSdQSP0R5ccDUE=;
+	b=w0C7w5PFwEPLCbQbo0Kdp2Vvz5/bYsMj+BHGarQpShbj8hsF6CeSKSEosTmKHwfBZqIT
+	 wtHOBF0GRLg/ZN6CTJ2VglYWppbojTy8aD5wn1C6bRcgIFPzveX9iwGilLb5Do7JSPW7R
+	 WuOGA0Z70QNy0C8AUT36EZ8eh9te4nJ+2uMWeLDESz2iHkQRYQgIb+VnU69oATBQIWoOj
+	 kzUWrFuWIoDVLLPEf5PTBpDT7lwdhiJUJR/lCH6AtwKeHVH49aokAU2G5dTrTcKS2OqjX
+	 5E8VQA8eVK5fBfYPG/iyRl2RCfP6y1CqvKE1tYPWQ9bGFZeFw3w/siPRFuoqgRBsspA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=apaSOd6E;
-	arc=none smtp.remote-ip=74.125.82.171
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=JbNZvUx3;
+	arc=none smtp.remote-ip=74.125.82.170
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71D606A323
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB71D606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405DE606A320
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 405DE606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=apaSOd6E
-Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso10203646eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:03 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=JbNZvUx3
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-3535a54bed9so5389010eec.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793051103; x=1793655903; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
-        b=apaSOd6Ekoo+DEflA5oHfTJf6VOoOiMlZXRwTF70d3IY4E4GRP+ZbRacJNfZM+B2fo
-         xG+HsSUUOYqogdVHfdxppnkHlRLHJDz6ngDnY54ry+xqZzbkkJ5oKfM/XEyGHYPHinQT
-         xOBuOlrd7Tz8n1CYEZiJpQOWitgMdz+XjDFWE=
+        d=chromium.org; s=google; t=1793051105; x=1793655905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=kNTRPGjk+JRlFS0l8T9G1tIUTUomkJSdQSP0R5ccDUE=;
+        b=JbNZvUx33IFVpa/fHUpO0fFj60GvDrTkv2Lf0UHCYArCUiYDKzse/SwIFTwUg4xTJB
+         kwTILExSh0hSwzeFIM/VIKL+P28Q2kpKNrretEhyLYIkfAPjiMOM0KAKlmCoA08nNeO8
+         u9rR/JihRYzitUwBjRhsROadxot2/RXAyswoE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793051103; x=1793655903;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
-        b=uXW3xrgVBePuYmFhua5MAFBcxLdsABmCaqkkkQKl1Wbg1++8W9ZHpXByH+7E8vFNNS
-         YL0L2ieqsPZZCrC1vzBi+aMt+BGE1cZZA+ePSUT+L5hFGQFyUwsghckDmqbgAKMUPQ9v
-         lH/l4WHsfTvd9JoZ+I1ZouqxtNWxjBQGBwYb9WayDKv+r6tc1N6UCo8r6lpBZvJIq6nQ
-         UPTQFiAT73pu2pR5QeZ+wL2zkSzdBSsmzr6u08aP2aSyh8AABorWPp2K0NA0NUKoI9ro
-         eunmdsOEtnFxbHGKsHBG1igyrL9CRSG2xzWABEfz4fGLT2SfKLO+TS/FYRWPLcQAXJI2
-         PlFg==
-X-Forwarded-Encrypted: i=1; AKwUvBxCgpvfRJnoHGeUlA19hxGU9tCHPTjzqFISg9lhW36abo5cR0xEWMoXKEw7KsDh43/VtM8iIgfc10P95qsu8pYnKQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIpjFbj6GPc3xTMhCv4Ev16Iikjj13yyyvpR5ttGNpLLZnvMcy8
-	22SxvFiGBNkasxx1GY9x9FEbQEdj6rB0MmRZPtvz5ipAdls+RzporwndxkKhSKfPAA==
-X-Gm-Gg: AYBFou2yXk6gdI6RkqboCYpC/Hbi8LaMM7Z62qjYNAyNKN9+Ur1DweuVnSh85Re1sNw
-	uAhzp530qPpaRcAVrCQPRXaqT/tfM9sc01XcNIbgciM72os9oit4OXWIYPD39uI0+W7ceT4Efl3
-	wzmWPd+LOLOpGOxxA3mo5wuOX8N6gc7QSKTT4541FMmB99nzb2mMjqIVC7q0kSqdPZ9712XJqZc
-	Jl49lm7Aevkgno4BUOTx23NPQ01udEqsb700bSdzHYU1FWuXO9Q2unZaqUdJsmScmq1pk1ureNg
-	q2MLNycThCZumq2yXqqcDSBdiMZgkBGH2VPxWmPDakVsXlBIinEexnahP9B6GZ8w3ml/wMVVxPx
-	8LmYsu3Gd/SYzYI04jwEyb5RQF8MYWhBUOiCMp/IMYmGyYl/E7PpJKGsgDO2BIbGWeLEGQ6XtUm
-	NX23WrEvw8sJiYfVK+MG8i4FyAKBLLutr0LGoU1ZoAf/lyIi6MIQ2zfcxeyh/iqtsQQECIX1H5S
-	V9VSJN3frtYR62WM6DtQ/KbQQck7b0f4qTJL1rqxD0ow4jysvl2QbPnvZdw4srwefiHWn6XXow/
-	vD3GnCf0J1ZpRzcMs7cw
-X-Received: by 2002:a05:693c:42dc:b0:35d:d9a9:e455 with SMTP id 5a478bee46e88-369e84d3650mr12944624eec.21.1793051102383;
-        Mon, 26 Oct 2026 14:45:02 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1793051105; x=1793655905;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=kNTRPGjk+JRlFS0l8T9G1tIUTUomkJSdQSP0R5ccDUE=;
+        b=dcqmtFDFVTgD7cMciM4woj1pAg3VQ4oVPUmfg/JFDyg0uJItNovCUkbbxc3PBOOXKJ
+         PsqdfY1Xakt7hVB+Y2S086/CsLxLCOqoTtA/iry3zgTBOfDCLKPDCKpHnA8Qbjm/yFN5
+         KZ4xImfBLl4CPv45n+rGf7zvrpXK3HoakVazc5JQFyeWftWjvYHhME3an6S9t1yAG63Y
+         hroXXnNxUpFZEf74NGFouMCKK09nXWOs8QroaaVsSyZqLAxliJ01h1WQvNVl4tau/OJB
+         QHPrsZHVUs+emuz4r6n2M4hsIqUFhw79BkJUykUkudgkZLVZeSn7SHCTaCqCr81OokVE
+         19HQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz0Gh07hsebW/Xpc08Iplu/EXQr5DAZle3FaO0DU41U1y0jvboS2PjHI4Od//b2sepAJPuFiEbcChbLXhCmSW5kXw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKjIo/NcJb8bREjwScoYjvAg5xxOKO8xmnhw9koPVeAdGbdeYan
+	CB/AeBi3Dyt0HEHglsFNpbbC32fIMpkK/0+pavuNcXbv1M2nh4jmc41KhNTRJorg5Q==
+X-Gm-Gg: AYBFou2EqsT4b96yUkFw1Ld/n91KhYrxVKgs8exuWipF/n7SQpwArsXyJJgHKo8uJ7I
+	U9ETv0TB7yVrk/VlxK2dsLQ+L/d9/RZD+w8ynjTdco0YJBpBtT/SvA2CtYmWYDAjFioh130NfR3
+	D1c9ymJJdPoj5KS5zuxJstGE/ZPPLJbkSr75T4xx32OZz4ZL/X1E3GRlKSra4z+JkTem6i/GqFX
+	5z8eCpww3vYytijr3QEcShRBb35amAH1ETGq18P7xORBaSF2Y2jBRp0tIUyaLPtylU9r7A7ihBn
+	OiFPaAND5aAvZKvAtN0WJQ+NjXudec90wYhMhMMmC/XeLGSAfAobwjFDHIsUT8ftVEJbsp/EhBp
+	i+5fbEUv744PpGxzRWQVlYNb56Vk9VOy0JrJA+26DwovctOw0Hcwv+3kq3zuTV0EkvBvYHhBQuS
+	vgZF2Cma5GQmfGKyGJbV9iBxk/b7JIe9y3kYmMwbobHjoqDa3l8MKBgYfssghsKSbDa1ApJ9rre
+	nogNkzzuaA4hxui2q8Raim3/0f4Io5z2BVUb03Wcn2DWEMRdrTV5mERX/sAXzIdTRsMqrIHJD9k
+	qq3wKamFdYjaVPHvVr0=
+X-Received: by 2002:a05:7301:2295:b0:361:1dd6:531b with SMTP id 5a478bee46e88-369e84943damr11389869eec.26.1793051105135;
+        Mon, 26 Oct 2026 14:45:05 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:79c5:9cd3:db14:7468])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36a026e04a0sm9389095eec.1.2026.10.26.14.45.00
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36a03bea5d4sm8375063eec.6.2026.10.26.14.45.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 14:45:01 -0700 (PDT)
+        Mon, 26 Oct 2026 14:45:04 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -99,10 +99,12 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
 	linux-clk@vger.kernel.org,
 	=?UTF-8?q?Jakub=20G=C5=82owacki?= <jglow@google.com>,
 	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 0/9] google: Add support for Laguna CPM
-Date: Mon, 26 Oct 2026 14:43:38 -0700
-Message-ID: <20261026214359.3122870-1-briannorris@chromium.org>
+Subject: [PATCH 1/9] arm64: dts: google: Add Laguna CPM mailbox array
+Date: Mon, 26 Oct 2026 14:43:39 -0700
+Message-ID: <20261026144346.1.Iaf8214205f496225013f482f6e0035e89ac624f2@changeid>
 X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
+In-Reply-To: <20261026214359.3122870-1-briannorris@chromium.org>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -112,140 +114,72 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The Central Power Manager (CPM) is a co-processor on the Google Tensor
-SoCs, as used on Pixel phones. CPM supports power-management and a
-number of other features.
+These are the request and response channels used for communicating with
+the Central Power Manager (CPM) found on the Google Tensor SoC known as
+Laguna.
 
-The Application Processor communicates with CPM over a pair of mailbox
-channels. CPM provides clock, power-domain, reset, and interrupt
-services.
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+Based on WIP bindings from:
 
-This series adds device tree bindings, DTS, and drivers to support CPM,
-and several of the basic services provided by CPM. These services are a
-minimal set needed to bootstrap many other components on the SoC --
-e.g., I have a working proof-of-concept PCIe driver running on top of
-this series + pinctrl (not included here). CPM provides some other
-components not yet included in this series (e.g., PMIC, RTC).
+  https://lore.kernel.org/all/20261023165211.v2.3.Ia186a29119b4b5c409815b755e0c2c3965b0495f@changeid/
+  [PATCH v2 3/4] dt-bindings: mailbox: goog-mba: Add goog-mba mailbox bindings
 
-This series depends on the bindings and mailbox-payload-definitions from
-this series:
+which is part of this series:
 
   https://lore.kernel.org/all/20261023235408.3063350-1-dianders@chromium.org/
   [PATCH v2 0/4] mailbox: Improve the mbox core then introduce the goog-mba driver
 
-So this series cannot be applied as-is yet. However, v1 of that series
-was under review for about 3 months, so I'd like to at least:
+The binding is still under review, but I include this anyway to help
+prove out a working solution. This patch should not be accepted until
+the binding is settled.
 
-  1) demonstrate its clients (this came up at
-     https://lore.kernel.org/all/CAD=FV=VW2h1zWDYWQ6LknX3O+3=EY665jde35Ly+UQzuscXy=Q@mail.gmail.com/,
-     for one); and
+ arch/arm64/boot/dts/google/lga.dtsi | 30 +++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-  2) start review for anything that isn't significantly impacted by
-     potential changes in the above mailbox series.
-
-With luck, the general design and DT bindings don't need to change, but
-even if so, I expect any changes should not significantly affect:
-
- (a) the CPM DT binding or DTS (apart from #mbox-cells)
-
- (b) the CPM interface (cpm_request_client(), cpm_send_message())
-
- (c) any of the CPM clients (irqchip, reset, clk, pmdomain)
-
-Thus, I think this falls somewhere between "PATCH" and "RFC".
-
-This series has been tested on a Pixel 10 Pro XL (a.k.a., Mustang) both
-as-is (plus the aforementioned mailbox patches), and also with minimal
-additional local patches to get other components running on top
-(pinctrl, PCIe, RTC), to prove out some more realistic use cases.
-
-- Brian
-
-
-Brian Norris (9):
-  arm64: dts: google: Add Laguna CPM mailbox array
-  dt-bindings: soc: google: Add Google Tensor CPM binding
-  soc: google: Add CPM over MailBox Array driver
-  pmdomain: google: Add CPM power-domain driver
-  clk: google: Add CPM clock driver
-  reset: google: Add CPM reset driver
-  irqchip/google-cpm: Add CPM IRQ driver
-  arm64: dts: google: Add Laguna CPM node
-  MAINTAINERS: Add entries for CPM drivers used on Tensor SoCs
-
- .../bindings/soc/google/google,lga-cpm.yaml   |  74 ++
- MAINTAINERS                                   |  14 +-
- arch/arm64/boot/dts/google/lga.dtsi           |  50 +
- drivers/clk/Kconfig                           |   1 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/google/Kconfig                    |  13 +
- drivers/clk/google/Makefile                   |   3 +
- drivers/clk/google/clk-cpm-internal.h         |  35 +
- drivers/clk/google/clk-cpm-lga.c              | 271 +++++
- drivers/clk/google/clk-cpm.c                  | 573 +++++++++++
- drivers/irqchip/Kconfig                       |  10 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-google-cpm.c              | 123 +++
- drivers/pmdomain/Kconfig                      |   1 +
- drivers/pmdomain/Makefile                     |   1 +
- drivers/pmdomain/google/Kconfig               |  14 +
- drivers/pmdomain/google/Makefile              |   2 +
- drivers/pmdomain/google/cpm-power-lga.h       | 467 +++++++++
- drivers/pmdomain/google/cpm-power-trace.h     |  80 ++
- drivers/pmdomain/google/cpm-power.c           | 637 ++++++++++++
- drivers/pmdomain/google/lpb_service.h         | 200 ++++
- drivers/reset/Kconfig                         |   1 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/google/Kconfig                  |  11 +
- drivers/reset/google/Makefile                 |   2 +
- drivers/reset/google/reset-cpm.c              | 367 +++++++
- drivers/soc/Kconfig                           |   1 +
- drivers/soc/Makefile                          |   1 +
- drivers/soc/google/Kconfig                    |  13 +
- drivers/soc/google/Makefile                   |   3 +
- drivers/soc/google/google-cpm-mba-trace.h     | 214 ++++
- drivers/soc/google/google-cpm-mba.c           | 964 ++++++++++++++++++
- drivers/soc/google/google-cpm-mba.h           |  30 +
- include/dt-bindings/clock/google,lga-cpm.h    | 191 ++++
- .../interrupt-controller/irq-cpm-google.h     |  16 +
- include/dt-bindings/power/google,lga-cpm.h    |  79 ++
- .../dt-bindings/reset/google,lga-cpm-reset.h  | 175 ++++
- include/dt-bindings/soc/google,lga-lpcm.h     |  54 +
- include/soc/google/goog_cpm_service_ids.h     |  84 ++
- include/soc/google/google-cpm-mba.h           | 147 +++
- 40 files changed, 4923 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml
- create mode 100644 drivers/clk/google/Kconfig
- create mode 100644 drivers/clk/google/Makefile
- create mode 100644 drivers/clk/google/clk-cpm-internal.h
- create mode 100644 drivers/clk/google/clk-cpm-lga.c
- create mode 100644 drivers/clk/google/clk-cpm.c
- create mode 100644 drivers/irqchip/irq-google-cpm.c
- create mode 100644 drivers/pmdomain/google/Kconfig
- create mode 100644 drivers/pmdomain/google/Makefile
- create mode 100644 drivers/pmdomain/google/cpm-power-lga.h
- create mode 100644 drivers/pmdomain/google/cpm-power-trace.h
- create mode 100644 drivers/pmdomain/google/cpm-power.c
- create mode 100644 drivers/pmdomain/google/lpb_service.h
- create mode 100644 drivers/reset/google/Kconfig
- create mode 100644 drivers/reset/google/Makefile
- create mode 100644 drivers/reset/google/reset-cpm.c
- create mode 100644 drivers/soc/google/Kconfig
- create mode 100644 drivers/soc/google/Makefile
- create mode 100644 drivers/soc/google/google-cpm-mba-trace.h
- create mode 100644 drivers/soc/google/google-cpm-mba.c
- create mode 100644 drivers/soc/google/google-cpm-mba.h
- create mode 100644 include/dt-bindings/clock/google,lga-cpm.h
- create mode 100644 include/dt-bindings/interrupt-controller/irq-cpm-google.h
- create mode 100644 include/dt-bindings/power/google,lga-cpm.h
- create mode 100644 include/dt-bindings/reset/google,lga-cpm-reset.h
- create mode 100644 include/dt-bindings/soc/google,lga-lpcm.h
- create mode 100644 include/soc/google/goog_cpm_service_ids.h
- create mode 100644 include/soc/google/google-cpm-mba.h
-
+diff --git a/arch/arm64/boot/dts/google/lga.dtsi b/arch/arm64/boot/dts/google/lga.dtsi
+index 3e670e524c4c..6ceb9ea6a100 100644
+--- a/arch/arm64/boot/dts/google/lga.dtsi
++++ b/arch/arm64/boot/dts/google/lga.dtsi
+@@ -365,6 +365,36 @@ soc: soc@0 {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+ 
++		cpm_ap_ns_mba: mailbox-array@5240000 {
++			compatible = "google,lga-mailbox-array";
++			reg = <0x0 0x05240000 0x0 0x00010000>,
++			      <0x0 0x05250000 0x0 0x00010000>;
++			ranges = <0x0 0x0 0x05260000 0x00020000>;
++
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			cpm_ap_ns_req_mba: mailbox@0 {
++				reg = <0x00000 0x1000>;
++				interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH 0>;
++
++				#mbox-cells = <0>;
++
++				google,tx-payload-words = <4>;
++				google,mba-queue-mode;
++			};
++
++			cpm_ap_ns_resp_mba: mailbox@1000 {
++				reg = <0x01000 0x1000>;
++				interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH 0>;
++
++				#mbox-cells = <0>;
++
++				google,rx-payload-words = <4>;
++				google,mba-queue-mode;
++			};
++		};
++
+ 		gic: interrupt-controller@5880000 {
+ 			compatible = "arm,gic-v3";
+ 			reg = <0x0 0x05880000 0x0 0x10000>,
 -- 
 2.56.0.307.g5fe7bd680c-goog
 
