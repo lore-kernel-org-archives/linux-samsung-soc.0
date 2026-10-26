@@ -1,67 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793010975;
-	b=4DTBSZopUwU8pPBgQJBuD/h/ZULs8jnkCsXe+HHA6KyCZFjaIJVtBZzKKcO2uNYuTwN9
-	 pPiy51bJn6cOmbX4cviA2+oGfP4ROuKXcHFrRvw7FztbQZ7kuho5QZfWlaDMdtPkNxesK
-	 WogEv235eOVoYvFmrkXdHQuJG99d/2VBnfaoVW9jwWZ4bjN62v1A2mMCS2NyG9Q8kd6M8
-	 WZNPwa1RQPliJ4vwo/6jzq0Cd106ipNLpCAZE5jYnALClyi+i5Gi6YuOV3628JgojTjS4
-	 TX/8wa+Np9p4f6t1EjlSbbbd8pHrJylmIiVdlXnef0D05fT8638IGnrUzdVR/xq60Tg==
+	t=1793013022;
+	b=QF74lNaEILxqwwedBpgJEfTfdUbOOAgCBkiKGVG9KFfZeGNj7J6LXHbbO0NSbLfWxz0l
+	 HY+RiAN52Vz3IP/54vM/9FUACzykom0YeoeU9e04jz1+PmeBNWHztFFwANTw9UC62THgt
+	 D6fq/tiacZW4ESaUZGh+FvpSGhfIe70GVQ+KiG9zd9HcK6YJNdyfkep6NFhcGG3VrjPv1
+	 spU/h+m9wqAh7UeA7nEVn7YsyGLj473JCLVOVTyJe1aQ5zmmjLAIwKGJlyLmokIBMKHUh
+	 w5hide/95v4kWt63qb2zpo9xDENCW98TtPWFFYkZ2A4QpuX8uPkz5/voNQOc7ilgPaQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793010975;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=bbh5aMhAUVje8+nBQ5tUpjMoe2nc/UoJeEY/heeOEBw=;
-	b=tg+Aff0GL6S4koPcbLy5PmmvmpHmc+XuolOA1tSjiobfUH4BLW1pnvuAudVPsRPlShSl
-	 w5lTFub1QmWc8tTbDuvP05DPC0xHn0KrketphlzQcCYcMZrNGMFOvCuYCctWqPl3o6d3C
-	 FnZkyz80lEd4SY0XgM59RVRKJmrJY7Vmd5JNOnydGRZhrAOE5JPyini7TL1SrG8XzoVXk
-	 4zUWkV3bqzvmXSK8vp2cm44khk9RnVj1CTeZAGih9KMZMCQzlLhN0750bfrBbVDYnB6LM
-	 OgSbb2CljgQUCcmr6ncyNDGRtS73mxef/LLX+SNBWo4p4TplAKrloDh7irr/8jBZ6FQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793013022;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+	b=nTrz944UlyHISbqdoWCHlxclx0JUYSa5brR77u83kvJS5sUeS5i+MLEsu0qlJfKTk8PQ
+	 1NIsfGdSrgZtZbcgUtcJ3s2ltSJwQ0GP0E6cm8JiTCP9ae63w+C1GhfudnL+MFRWIjrr/
+	 GtY6WAnhJE+Rhu7rOjAuVoMj5l0n5IhkfbuRRvBdOZqL5F1ivdaJbO1WLW0Vyq2txV+9C
+	 tAuLPm0dao6x01iFpJ7gqD8j0uSdZTbCUkXleTrPot3B7ZSHUJ9IWEukROOB1ZbqFdvjK
+	 SETVgnvM7yOntUYtDPXso3h0Gd6UQUhfd/5ICPSKjWrl/NBTk5hdNZHMeUEyq679Vig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b="ZtiP/d+u";
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ECUUVF06;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N+dG3hc9;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5700F606A32C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 10:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5700F606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4418D606A335
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4418D606A335
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=ZtiP/d+u
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261026103612euoutp01c06f3627e6cb50b4b1b55e27e7c6063d~iDframk571492214922euoutp01Y
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 10:36:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261026103612euoutp01c06f3627e6cb50b4b1b55e27e7c6063d~iDframk571492214922euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793010972;
-	bh=bbh5aMhAUVje8+nBQ5tUpjMoe2nc/UoJeEY/heeOEBw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=ZtiP/d+uoRlBu6hftodzfdwoLv56a69Mo08IySFzWXRgm1l7MrbFm0tfPIdGmwogE
-	 q0n+O1wC4yTW7DtNTWGD6px+r/kmUBW77S2dOJ2mWlsCeKTq6FZXApTahm8s1Z/eeW
-	 x22lqRRdO+k47ROJz3KWSRuulOa1TWmxx5+kFgxM=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261026103612eucas1p10fbe3777394cc604419299509c22a2e7~iDfq9csFi2421624216eucas1p1E;
-	Mon, 26 Oct 2026 10:36:12 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261026103611eusmtip260e29b6c5b3c35baab5baa5891a625e1~iDfqoulzd3169731697eusmtip21;
-	Mon, 26 Oct 2026 10:36:11 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH] ARM: dts: samsung: exynos4210-universal_c210: fix BCM4330
- Bluetooth GPIOs
-Date: Mon, 26 Oct 2026 11:36:05 +0100
-Message-ID: <20261026103607.968295-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=ECUUVF06;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N+dG3hc9
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAt4PF4132054
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GN8AjaZA2KV/dRc58kbCFK
+	DPB1a4uoE8ENNZKwDJCck=; b=ECUUVF066jvbqQJG9QaidJNgZqka7pJ7uTZDAf
+	l4jWr9mREvagPO1rBdPa/0vh1A6Oi6BYXcJ76lze5gh2H4snVK5z4taBubEEL6fw
+	efgMw/ggF8ufOEbjSPXjquIiojjAjQFe3mEc17+CwJCwc1wQTcmTW9sCwr7Yg78V
+	1mg2HfIFi01K3N/MYd9ER1Q/2f/mNYffrHO1osVJ95FwL6KMjK+X2vFoflwIfmvB
+	DZn0n2JKmfz6+sJGnknhumjjRFsT1KMiRigMZfId5NFp4uEZZTrGRxzT19hDaVLw
+	J5++pAlxiGOyLWqSxnLxPDIaLIrEWNKPukkz4Fc0rU8DN+8Q==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj53q055b-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:10:20 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93ecdc701a2so366111585a.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1793013020; x=1793617820; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+        b=N+dG3hc9I/VMdIS7abDa43eb3PforAkBmjJVxcWPaSLhLp4ZZ4UT4n61OqsMaW7SMd
+         b8vgH3SIiIcVLkWhTdrDFmJNMEvmAuGEzKdKFQfP9s5WTWAM4T/LxHBxYeuqb3QQh6Nd
+         +EClhftX7AITjSsaPtmL9z9XqBQp44cJYbfZOkQ9BVFpT2SxcVNtzwnKXPECWCj/e2wE
+         cN1RLxss9FOYi0t0MeOU8JSQLZJEAdwuPlP/GPRe9r6i0NwZCUL/gstnrLZhWJVT5rtX
+         9q30MSxTSD3q4Nfo1O81ThAVbZWaenFlHolyq8LdJcAz3uRoEFcsenriFlobc1G17mfk
+         4YDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793013020; x=1793617820;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=GN8AjaZA2KV/dRc58kbCFKDPB1a4uoE8ENNZKwDJCck=;
+        b=xu71m7rdal+7k3WKBi0ycXocfwasVgxrXJFQkRbdOdKFrgYpqYdun0U06VAyjYfYc4
+         BxAg3/RXjzaFocYpCKjHAgxlLTSrd6hbPh2uhPHDrx4l7Lg7R20uBqP0/Hp5CefCD0FG
+         itetmaYnT6d67mBcphHm15nEJVv7y9g3Ez1NmF1oaYZMTpNE7Sm04XVnqB49n+xGhwKY
+         VwDcUBIYKoBXYtMvjiW+fabKyqCVHWGZaSn6vZO7WPL7uQDqQesbPKS1E1oZmSJhM71D
+         dCcj9dItWCqCE0aFN8jrWFq32NHLy0skl14blvV5oJyS6y5mC8VkReKIDIGJtPnjdiq8
+         /ONQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy6dPhbGmI9MDvBnakrdr5QmfloiGvgZ1Sc2TqfKLxwKOFVsMESvQAXKH7w5dVjj822xO2VQjPW2k/vDGCVYCfknA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIDYbHIzuVeSU2NkzKAMnSKT9NlorUJ66Nj54iwfNmtmYgGytwq
+	kMe+7lbcrhbAAar5i3i59JX0zo8wjU0g38LKGUxuGCd7n702NEBGHbI5PMV4vJmil60wOUsMQiA
+	dw5Hf/fW1PUY5vfz1dfecGomt825tPdTEu1XMeUu1YqZxgEb6WSBHudXxuZURZzlqtFD9BrLiNA
+	==
+X-Gm-Gg: AYBFou3kMnSBXkdWMPC3HWaJnrn+AK+KuZfvJEZ4uYQEveQlPc5jEDl7PUUJbISzqEA
+	qRA1nI4kMMRNkJW5U7YMH5YUqEARxe+r6Nl7lss6SnigwYrrD7PwkDWciHOn8WZDcflHT+YHceM
+	J+lObCG9asajWxk/xHVQ/MF+jGwmUjewqdvxjKqY6W712MO/KoIvQOQ2DCHvcyTp8BzpMAjjroI
+	uwReIB3ROThuf3HmNkC0GYqymEtzrIebAEDwAtZ9v7xK+t5psyxEXiN5zuiX14EfLu6yDkVVnDr
+	ZzPq1RDIp+CIpZ9uESUoUITJoXBRRmAwyPJvlbtfFocTKp1I8/M5vR52kteL0q9ixb9bmBagsN3
+	0aJp+zltpj7zQ19DdehIELEXLzo4TO1v6TZiHs/qegyVoc6VTuKamn+9BbHZstlUvlk2TLIHmiO
+	PKdFr+fFm645jp
+X-Received: by 2002:a05:620a:4592:b0:93d:f7ac:4706 with SMTP id af79cd13be357-940ef7d3955mr1003489685a.9.1793013019285;
+        Mon, 26 Oct 2026 04:10:19 -0700 (PDT)
+X-Received: by 2002:a05:620a:4592:b0:93d:f7ac:4706 with SMTP id af79cd13be357-940ef7d3955mr1003477485a.9.1793013018435;
+        Mon, 26 Oct 2026 04:10:18 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.10.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 04:10:17 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH 00/35] drm/panel: let the panels use the atomic state
+Date: Mon, 26 Oct 2026 13:09:49 +0200
+Message-Id: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -71,89 +116,404 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261026103612eucas1p10fbe3777394cc604419299509c22a2e7
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261026103612eucas1p10fbe3777394cc604419299509c22a2e7
-X-EPHeader: CA
-X-CMS-RootMailID: 20261026103612eucas1p10fbe3777394cc604419299509c22a2e7
-References: <CGME20261026103612eucas1p10fbe3777394cc604419299509c22a2e7@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP4032oC/yXMTQqDMBBA4avIrDuQWPy9SunCJBMd0SiZWgTx7
+ o11+S3eO0AoMgm02QGRviy8hAT9yMAOXegJ2SVDrvJSK/1EF2dcu0AT+i1YQeWNLRrj6qpRkKo
+ 1kuf9f3y9b8tmRrKfawPn+QPncvtCcwAAAA==
+X-Change-ID: 20261013-drm-panel-funcs-0fbc59bd8790
+To: Douglas Anderson <dianders@chromium.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jyri Sarha <jyri.sarha@iki.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>,
+        Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+        =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alison Wang <alison.wang@nxp.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Igor Reznichenko <igor@reznichenko.net>,
+        Michael Walle <mwalle@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>,
+        =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Jerry Han <hanxu5@huaqin.corp-partner.google.com>,
+        Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Casey Connolly <casey.connolly@linaro.org>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Cristian Cozzolino <cristian_ci@protonmail.com>,
+        Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>,
+        Nickolay Goppen <setotau@mainlining.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Alexander Koskovich <akoskovich@pm.me>,
+        Markuss Broks <markuss.broks@gmail.com>,
+        Artur Weber <aweber.kernel@gmail.com>,
+        David Heidelberg <david@ixit.cz>,
+        Dzmitry Sankouski <dsankouski@gmail.com>,
+        Yedaya Katsman <yedaya.ka@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15762;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=WbLlzAO9RXIQix7Q1voClvMQtNLZHdIsKY6Rg/IyJX0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUBXY1ouoWCjChMbl7mPq8TiXrQG0qEmSuBj
+ cIC8Sn+ZbGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81AQAKCRCLPIo+Aiko
+ 1dQUB/9qeMU54/7a41w3LggyOuuJS2TWEjfaEkAz3vTHLeEOZdJEKcwwj/v6PiwY5h0mF7Z9qLi
+ 7i36b+iEFTnQ1p9fUulKSuzDYoHDSty8Pd6ZqJApSQuPeavAAwDjtidScu8A4alj2wvst2+zriN
+ cYEAVtja0KZSwkywSpgTy+RQDnRMy/bjOew6XlEnJ8EX0SP+w8uFxpa4ppk44/vv44+XmtSshzu
+ 6rzUjzgvFid2h1yBQLRvbtFrWG0UylcqILraFA8LqBVM6+HexmsPyQA6SCZRfOHRIHrhbnkGVec
+ vUw0rE6XdvS+rDC6BFfvPggvoUsrg6fblExDHIlL8p9NY2Hx
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX9NhQYXr+sE0e
+ VDueww4Xe5qlgc2/F3AltTMKAEhYmaB/IvHPmX1fxB0ShJihK6Sk/meQwpPbCjOEVWuSMCAsVdu
+ QhdxJiac4cJsSInAN6DKin+/KlXnulA=
+X-Proofpoint-ORIG-GUID: q0HlCpy8_ZPjBiuQ0mOCLCJ1oW42MG4f
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfXzlLwQZd/bLec
+ K6I5Wj9t+R5p2fPy2taTppkN3KUaUTeuS0GuWi0WzklEa98svxyk5gdzgIY71yckZta7XzkjbWs
+ VkLY+IwXYZ2s1JgUhDJKt9DPjNPDf2uUssMhXfkflw4icXzO1bs8eDsaNGwel97XCagG3VwiBln
+ AGBbGTW18H4rWIpmzw3wsXB1IW6XJ7JHbL8bzXyEAXafAYuzK6jeXKRB3OGNPb6tDlokei6YRrC
+ aHMMcDWOMfiGu3r90ZqcZg5wAR39q7KUFNqzSbG4dphhrFSF1RpSQOm+Rw6dTpHyC5KaudSOQH6
+ zCFyS0u2fVhINlcyXkTh+8/wC0cmkrWc9bObEc6ePt4q68Q5aJUNrzcDd5osWJKSVEuDdzkh13y
+ l0iyaCD9q6kIC2gXcZ55ujd/3XquEx9/52YRnX9BKt4y4TQGh+OktpNlPWfu8P8rQqLAcd8DbcG
+ sRFdIK86Hm8rq98cRUg==
+X-Authority-Analysis: v=2.4 cv=D93SufRj c=1 sm=1 tr=0 ts=6adf351c cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
+ a=scXMUnCTZPnnbQHXwmsA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: q0HlCpy8_ZPjBiuQ0mOCLCJ1oW42MG4f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260044
 
-BT_REG_ON (BT_EN) line of the BCM4330 WLAN/BT combo chip is connected to
-the XMMC1CMD pad (GPK1[1]), while the XMDMADDR_4 pad (GPE1[4]) is
-connected to BT_RST (BT_nRST). The Bluetooth node however used GPE1[4]
-as shutdown-gpios and left the real BT_REG_ON line undriven, so it was
-kept low by the default SoC pull-down.
+The panel is the only element of the display pipeline which never sees
+the atomic commit. Its prepare() and enable() callbacks get nothing but
+the panel, so a panel which has to be programmed differently depending
+on the mode can only guess it. The NT35950 driver, for example, saves
+the connector in get_modes() and reads connector->state->crtc->state
+while being prepared: without the locks, from the current state rather
+than from the one being committed, and with no way to reject a mode it
+doesn't know.
 
-This worked only by accident: the internal regulators of the BCM4330 are
-enabled when either WL_REG_ON or BT_REG_ON is high, so the Bluetooth core
-was powered via WL_REG_ON driven by the SDIO WLAN power sequence, while
-toggling GPE1[4] only released it from reset. Once 'cap-power-off-card'
-was added to the SDIO node, the MMC core started to power off the WLAN
-part (asserting WL_REG_ON low) whenever it was idle, what cut off the
-Bluetooth power as well and resulted in HCI command timeouts.
+Every panel has a struct drm_bridge embedded into it, and the bridge
+already has all the missing parts: atomic_check(), a state object which
+can be subclassed and the commit passed to the callbacks. Rather than
+growing struct drm_panel_funcs into a copy of that, let the panel driver
+provide struct drm_bridge_funcs for the embedded bridge. This is opt-in:
+the panels which have no use for the atomic state keep using struct
+drm_panel_funcs and are not touched by it.
 
-Fix this by using GPK1[1] as shutdown-gpios and describing GPE1[4] as
-active-low reset-gpios. While touching this, move the GPE1[4] pin
-configuration to the pinctrl_0 node, as GPE1 bank belongs to that pin
-controller, what fixes the following error:
+To get there the bridge callbacks become the entry point to the panel,
+with drm_panel_prepare() and friends calling them rather than the other
+way around. The panel core still has to track the panel state, notify
+the panel followers and handle the backlight, so the driver doesn't fill
+in the power callbacks directly, it wraps its functions with the macros
+doing that part. NT35950 is converted as the first user.
 
-  samsung-pinctrl 11000000.pinctrl: does not have pin group gpe1-4
+The bulk of the series is the cleanup of what the panel core and the
+bridge need from the panel driver, so that a panel providing the bridge
+callbacks doesn't need struct drm_panel_funcs for anything:
 
-Fixes: 8929d4a9d204 ("ARM: dts: exynos: Enable BlueTooth support for Universal C210 board")
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+- get_timings() had no callers.
+
+- The connector type was stored both in the panel and in its bridge, and
+  the display drivers could override it while creating the panel bridge.
+
+- The orientation was read from the DT, stored and returned by nearly
+  identical code in more than twenty panel drivers, and some of them
+  also had to set it on the connector from get_modes(), with a TODO
+  asking for a better place. The core reads it now. It is applied to the
+  connector from the new connector_init() bridge callback, which is not
+  specific to the panels: other bridges have properties to set up on the
+  connector being created too (HDCP, DP link properties), and currently
+  have nowhere to do it.
+
+- disable() and unprepare() returned an error which nobody could act on.
+  Worse, a failed unprepare() left the panel marked as prepared, so it
+  was never initialised again.
+
+Behaviour changes worth knowing about:
+
+- Panels with the rotation property whose driver ignored it now get the
+  orientation property. In the tree this is the Motorola Mapphone panel
+  (panel-dsi-cm).
+
+- sun6i_mipi_dsi, sti_dvo and the Tegra DSI get their panel after the
+  DRM device has been registered, which is too late to create the
+  property, so they lose the orientation which the panel drivers used to
+  set from get_modes(). None of the rotated panels in the tree are used
+  with them.
+
+- A panel implementing atomic_check() can only be driven through the
+  bridge chain. The display drivers calling drm_panel_prepare() directly
+  have no commit to pass.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
-This patch was developed with LLM assistance and have been tested on the
-real UniversalC210 board.
+Dmitry Baryshkov (35):
+      drm/panel: remove the get_timings() callback
+      drm/panel: remove the unused struct panel_bridge
+      drm/tidss: get the panel type from the embedded bridge
+      drm/bridge: lvds-codec: use devm_drm_panel_bridge_add()
+      drm/ingenic: use devm_drm_panel_bridge_add()
+      drm: mxsfb: use devm_drm_panel_bridge_add()
+      drm: rcar-du: use devm_drm_panel_bridge_add()
+      drm: rz-du: use devm_drm_panel_bridge_add()
+      drm/mcde: use drm_panel_bridge_add()
+      drm/pl111: use drm_panel_bridge_add()
+      drm/rockchip: lvds: use drm_panel_bridge_add()
+      drm/rockchip: rgb: use drm_panel_bridge_add()
+      drm/panel: remove the _typed() panel bridge functions
+      drm/panel: remove drm_panel.connector_type
+      drm/bridge: anx6345: set the panel orientation on the connector
+      drm/exynos: dpi: set the panel orientation on the connector
+      drm/fsl-dcu: set the panel orientation on the connector
+      drm/logicvc: set the panel orientation on the connector
+      drm/stm: lvds: set the panel orientation on the connector
+      drm/sun4i: set the panel orientation on the connector
+      drm/tegra: sor: set the panel orientation on the connector
+      drm/panel: drop the orientation workaround from get_modes()
+      drm/panel: read the panel orientation in the core
+      drm/panel: use the orientation from the panel core
+      drm/panel: remove the get_orientation() callback
+      drm/bridge: add the connector_init callback
+      drm/bridge-connector: let the bridges set up the connector
+      drm/panel: let the bridges set up the panel connector
+      drm/panel: set the orientation from the connector_init callback
+      drm/panel: make the disable and unprepare callbacks return void
+      drm/panel: don't hold the follower lock over the panel callbacks
+      drm/panel: route the panel calls through the bridge callbacks
+      drm/panel: let the panel drivers provide struct drm_bridge_funcs
+      drm/panel: novatek-nt35950: provide struct drm_bridge_funcs
+      drm/panel: novatek-nt35950: use the atomic state to select the mode
 
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+ Documentation/gpu/todo.rst                         |   1 -
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   5 +
+ drivers/gpu/drm/bridge/lvds-codec.c                |   3 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     |  12 +-
+ drivers/gpu/drm/drm_bridge.c                       |  31 +
+ drivers/gpu/drm/drm_connector.c                    |   8 +-
+ drivers/gpu/drm/drm_panel.c                        | 653 +++++++++++++--------
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   1 +
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |   5 +
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        |   7 +
+ drivers/gpu/drm/mcde/mcde_drv.c                    |   3 +-
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |   3 +-
+ drivers/gpu/drm/panel/panel-abt-y030xx067a.c       |   8 +-
+ drivers/gpu/drm/panel/panel-anbernic-td4310.c      |  18 +-
+ drivers/gpu/drm/panel/panel-arm-versatile.c        |   4 +-
+ .../gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c   |   4 +-
+ drivers/gpu/drm/panel/panel-auo-a030jtn01.c        |   8 +-
+ drivers/gpu/drm/panel/panel-boe-bf060y8m-aj0.c     |   4 +-
+ drivers/gpu/drm/panel/panel-boe-himax8279d.c       |  12 +-
+ drivers/gpu/drm/panel/panel-boe-td4320.c           |   4 +-
+ .../gpu/drm/panel/panel-boe-th101mb31ig002-28a.c   |  33 +-
+ drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c     |   4 +-
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c     |  30 +-
+ drivers/gpu/drm/panel/panel-chipone-icna35xx.c     |  24 +-
+ drivers/gpu/drm/panel/panel-chipwealth-ch13726a.c  |  24 +-
+ drivers/gpu/drm/panel/panel-dsi-cm.c               |  11 +-
+ drivers/gpu/drm/panel/panel-ebbg-ft8719.c          |   8 +-
+ drivers/gpu/drm/panel/panel-edp.c                  |  53 +-
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c       |  22 +-
+ drivers/gpu/drm/panel/panel-feixin-k101-im2ba02.c  |   8 +-
+ .../gpu/drm/panel/panel-feiyang-fy07024di26a30d.c  |   8 +-
+ drivers/gpu/drm/panel/panel-focaltech-ota7290b.c   |  21 +-
+ drivers/gpu/drm/panel/panel-himax-hx8279.c         |   8 +-
+ drivers/gpu/drm/panel/panel-himax-hx83102.c        |  22 +-
+ drivers/gpu/drm/panel/panel-himax-hx83112a.c       |   8 +-
+ drivers/gpu/drm/panel/panel-himax-hx83112b.c       |   4 +-
+ drivers/gpu/drm/panel/panel-himax-hx83121a.c       |   4 +-
+ drivers/gpu/drm/panel/panel-himax-hx8394.c         |  24 +-
+ drivers/gpu/drm/panel/panel-hydis-hv101hd1.c       |   8 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili7807s.c      |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili7836a.c      |  24 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c       |  12 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c       |   7 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9488.c       |  18 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9805.c       |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e-dsi.c  |  18 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e-spi.c  |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c      |  31 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c      |  24 +-
+ drivers/gpu/drm/panel/panel-innolux-ej030na.c      |   8 +-
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c      |  10 +-
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c   |  21 +-
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c       |   4 +-
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c      |  12 +-
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c     |   8 +-
+ drivers/gpu/drm/panel/panel-khadas-ts050.c         |  12 +-
+ drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c |  14 +-
+ drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c |   6 +-
+ drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c |   4 +-
+ drivers/gpu/drm/panel/panel-lg-lb035q02.c          |   4 +-
+ drivers/gpu/drm/panel/panel-lg-ld070wx3.c          |   4 +-
+ drivers/gpu/drm/panel/panel-lg-lg4573.c            |   4 +-
+ drivers/gpu/drm/panel/panel-lg-sw43408.c           |   7 +-
+ drivers/gpu/drm/panel/panel-lincolntech-lcd197.c   |   8 +-
+ drivers/gpu/drm/panel/panel-lvds.c                 |  25 +-
+ drivers/gpu/drm/panel/panel-lxd-m9189a.c           |   8 +-
+ .../gpu/drm/panel/panel-magnachip-d53e6ea8966.c    |   8 +-
+ drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c   |   8 +-
+ drivers/gpu/drm/panel/panel-motorola-mot.c         |   8 +-
+ drivers/gpu/drm/panel/panel-nec-nl8048hl11.c       |   4 +-
+ drivers/gpu/drm/panel/panel-newvision-nv3051d.c    |   6 +-
+ drivers/gpu/drm/panel/panel-newvision-nv3052c.c    |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35510.c      |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35532.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35560.c      |   6 +-
+ drivers/gpu/drm/panel/panel-novatek-nt35950.c      | 168 ++++--
+ drivers/gpu/drm/panel/panel-novatek-nt36523.c      |  24 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36532.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36536.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36672a.c     |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt36672e.c     |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt37700f.c     |   8 +-
+ drivers/gpu/drm/panel/panel-novatek-nt37801.c      |   4 +-
+ drivers/gpu/drm/panel/panel-novatek-nt39016.c      |  12 +-
+ drivers/gpu/drm/panel/panel-novatek-nt51021.c      |   4 +-
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c |   4 +-
+ drivers/gpu/drm/panel/panel-orisetech-ota5601a.c   |  12 +-
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c   |   8 +-
+ drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c |   8 +-
+ .../gpu/drm/panel/panel-panasonic-vvx10f034n00.c   |   7 +-
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  |   7 +-
+ drivers/gpu/drm/panel/panel-raydium-rm67191.c      |  16 +-
+ drivers/gpu/drm/panel/panel-raydium-rm67200.c      |   8 +-
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c      |   4 +-
+ drivers/gpu/drm/panel/panel-raydium-rm69220.c      |   4 +-
+ drivers/gpu/drm/panel/panel-raydium-rm692e5.c      |   8 +-
+ drivers/gpu/drm/panel/panel-raydium-rm69380.c      |   4 +-
+ drivers/gpu/drm/panel/panel-renesas-r61307.c       |   8 +-
+ drivers/gpu/drm/panel/panel-renesas-r63419.c       |  25 +-
+ drivers/gpu/drm/panel/panel-renesas-r69328.c       |   8 +-
+ drivers/gpu/drm/panel/panel-ronbo-rb070d30.c       |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-ams581vf01.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-ams639rq08.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-atna33xc20.c   |  14 +-
+ drivers/gpu/drm/panel/panel-samsung-db7430.c       |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-ld9040.c       |   7 +-
+ drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d16d0.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d27a1.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3fa7.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c   |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      |  16 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c      |   8 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   |  14 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63m0.c      |  13 +-
+ .../drm/panel/panel-samsung-s6e88a0-ams427ap24.c   |   4 +-
+ .../drm/panel/panel-samsung-s6e88a0-ams452ef01.c   |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      |   7 +-
+ .../panel/panel-samsung-s6e8aa5x01-ams561ra01.c    |   8 +-
+ .../gpu/drm/panel/panel-samsung-s6e8fc0-m1906f9.c  |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-sofef00.c      |   8 +-
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        |  22 +-
+ drivers/gpu/drm/panel/panel-sharp-lq079l1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-sharp-ls037v7dw01.c    |   7 +-
+ drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c    |   6 +-
+ drivers/gpu/drm/panel/panel-sharp-ls060t1sx01.c    |   4 +-
+ drivers/gpu/drm/panel/panel-simple.c               |  53 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c      |  28 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7703.c      |  22 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c     |  35 +-
+ drivers/gpu/drm/panel/panel-sony-acx565akm.c       |   4 +-
+ drivers/gpu/drm/panel/panel-sony-td4353-jdi.c      |   4 +-
+ .../gpu/drm/panel/panel-sony-tulip-truly-nt35521.c |   8 +-
+ .../gpu/drm/panel/panel-startek-kd070fhfid015.c    |   4 +-
+ drivers/gpu/drm/panel/panel-synaptics-r63353.c     |   4 +-
+ drivers/gpu/drm/panel/panel-synaptics-tddi.c       |   8 +-
+ drivers/gpu/drm/panel/panel-tdo-tl070wsh30.c       |   4 +-
+ drivers/gpu/drm/panel/panel-tpo-td028ttec1.c       |   8 +-
+ drivers/gpu/drm/panel/panel-tpo-td043mtea1.c       |   4 +-
+ drivers/gpu/drm/panel/panel-tpo-tpg110.c           |   4 +-
+ drivers/gpu/drm/panel/panel-truly-nt35597.c        |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-g2647fb105.c  |   4 +-
+ drivers/gpu/drm/panel/panel-visionox-r66451.c      |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-rm69299.c     |   4 +-
+ drivers/gpu/drm/panel/panel-visionox-rm692e5.c     |   8 +-
+ drivers/gpu/drm/panel/panel-visionox-vtdr6130.c    |  20 +-
+ drivers/gpu/drm/panel/panel-widechips-ws2401.c     |   8 +-
+ drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c   |   6 +-
+ drivers/gpu/drm/pl111/pl111_drv.c                  |   3 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c  |   5 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c   |   5 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_rgb.c            |   3 +-
+ drivers/gpu/drm/stm/lvds.c                         |   4 +
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |   2 +
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |   2 +
+ drivers/gpu/drm/tegra/sor.c                        |   2 +
+ drivers/gpu/drm/tidss/tidss_kms.c                  |   4 +-
+ include/drm/drm_bridge.h                           |  23 +
+ include/drm/drm_panel.h                            | 219 +++++--
+ 163 files changed, 1080 insertions(+), 1532 deletions(-)
 ---
- .../boot/dts/samsung/exynos4210-universal_c210.dts  | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+base-commit: 4305aa866f20288739b680c75fd44d9f029b0c0b
+change-id: 20261013-drm-panel-funcs-0fbc59bd8790
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4210-universal_c210.dts b/arch/arm/boot/dts/samsung/exynos4210-universal_c210.dts
-index 744039068e8f..79c0c27d9377 100644
---- a/arch/arm/boot/dts/samsung/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/samsung/exynos4210-universal_c210.dts
-@@ -537,7 +537,7 @@ &ohci {
- 
- &pinctrl_1 {
- 	bt_shutdown: bt-shutdown-pins {
--		samsung,pins = "gpe1-4";
-+		samsung,pins = "gpk1-1";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 	};
-@@ -572,6 +572,12 @@ i2c_ddc_bus: i2c-ddc-bus-pins {
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
-+
-+	bt_reset: bt-reset-pins {
-+		samsung,pins = "gpe1-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
- };
- 
- &pwm {
-@@ -641,9 +647,10 @@ bluetooth {
- 
- 		max-speed = <3000000>;
- 
--		pinctrl-0 = <&bt_shutdown &bt_device_wakeup &bt_host_wakeup>;
-+		pinctrl-0 = <&bt_shutdown &bt_reset &bt_device_wakeup &bt_host_wakeup>;
- 		pinctrl-names = "default";
--		shutdown-gpios = <&gpe1 4 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpk1 1 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpe1 4 GPIO_ACTIVE_LOW>;
- 		device-wakeup-gpios = <&gpx3 1 GPIO_ACTIVE_HIGH>;
- 		host-wakeup-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
- 	};
--- 
-2.43.0
+Best regards,
+--  
+With best wishes
+Dmitry
 
