@@ -1,80 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793051110;
-	b=shIEN4qPMDymllXbW+n/x31IjlUlsMDKffw7Ah0Nm9As3HXaRdEMS1yMcix9li20JqYz
-	 2opO+9Qxg2LSp2B9BWRytNjBN6OthJJ/0aiuJPNmLvHjB90/OAKLjoTIDCi6bJdIWwtaK
-	 fy90AT7hvYypAO6nP6LTC7TJtSdHUMAvUabSjYsmN4yedO8OLS8OGIZMW2lsXddu08QVS
-	 zJMCmwRquecvCzmU8dEbQHEU83h0J3gLdRaek2xxtcKlZ+oo2qZ2LJ8oZuw7wyBGdZKRn
-	 FlU+EaNp1cmC8oifvIBZrObIM2I4/SKUM4xo9qhX/fFJsiRKg5vPEEe77ZBPNG+nNUg==
+	t=1793051114;
+	b=agoumFfhRDZqFfYgckGvWFTLuAFYoyREg9Q1iZd77e0T/IePpN2ttlBqi9DLw2LccdAw
+	 Loa13Vev9Y/ndMavUEI2+Bv3lRTHASrUuG7ubN0ZyYoFPYKPTpqx2P5CgOoyHwYrTN9tE
+	 MkQx9wlFKyWzVIytQeUaMtotMjNPv+D1mRBfslmYKynPIc0ah1J9HTfinfE8rTpt22y8E
+	 BdJJT0J90oqdnWwjBenZrcUEMofPTUHhgtNbfCb05A87hF/kjvFN0pTtsXp+ciT9DIgpx
+	 QyfKUWe6/IbbFyBq2VDfSwA/fZKa9SI0uUTQxRPU2obxBp3JMkhFulOBT9sktEQqhMw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793051110;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793051114;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=6W2C5IplodH9p+zbg0ncY61FJ1aii/GuvQjvTf4ZsVE=;
-	b=BccPUD7EF6tTlianlbAAyOdeF51R3hlTUbsUjrajlXq7F/ThwvCCRxfMOMKnJAZHyzPb
-	 hkAowqboh6QBA452Dk5Or5YuZmZdcAwbCODJYI+hMoqzDEsQQAQkpGcJiqwPbufHPDuXJ
-	 9QdamuZWl2nl1k4TYKxBlsPBwiTsxrwhw0+URAKkIDMI3CvQOnrsCj+4uEz46raBax/QT
-	 b29wTwlcDgFnGEJoOqEU3oZU4UpxudLDbAs78fkuTy6SL4zORYRWB7iWdfR7pD8pnDpu/
-	 P7foGfgfzqPIORBvKYjpsITGSCZMXTRox5aib1bW9fW4ruTO9u15gRDfwihHAD7+nPg==
+	bh=PgsvjDUbnWS9QUhLLUSpL3kYkuj7C6kPZAZRitggftk=;
+	b=jTXL+ISgIkgGGmRM8+d4w9wHLHK1pcLd4qL3Oq7xzH7OOePoGLkK/FNkCAWzLRP+Al9o
+	 uv8LKWFw0jLXs0ugFBnK59/RmRZfyWDxAtDCp5YfHWpVraZ0XcfE8IkRxkMxT2l/t1ohZ
+	 fl30aMJj8JdG5d+Fl+n00Raq6cjDWAeFgz4ZALHTNC+ZHafDEWYWztbkfOoOHlRm7UZCk
+	 azNL85znr0KOdSp1Yl8ICFLaOvHguN/OnL0qJBu+cWYgf8FMRm0vYNZL9xUEwZLrZtanJ
+	 Vt11iLEmlOagg3RhC8MIefK2nUQO1yZ+NRrW+RIfsLu7sO0TxsVC+XWxjCf27WuCETA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=lbviEIMM;
-	arc=none smtp.remote-ip=74.125.82.169
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b="QTbV8/qk";
+	arc=none smtp.remote-ip=74.125.82.182
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730CE60A260C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 730CE60A260C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3147606A320
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D3147606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=lbviEIMM
-Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso10203830eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:09 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=QTbV8/qk
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-3645f0f3fcdso6490465eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793051109; x=1793655909; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1793051112; x=1793655912; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=6W2C5IplodH9p+zbg0ncY61FJ1aii/GuvQjvTf4ZsVE=;
-        b=lbviEIMMtwlSR27hH1gLuiEww03/6gUnquti3tjtSHbHIvz/450DkqVwxQFBN0bxNo
-         CKs7PmgcCx4ycdYMaw3/6TfDx8HdrZfFbKNOgM/GSkL6aQeDuXJfCi6UeX3V9Zy+IUZ0
-         fFOwnv4G7YBMlnwXjC5qBScX1E9WL2hFsLLhc=
+        bh=PgsvjDUbnWS9QUhLLUSpL3kYkuj7C6kPZAZRitggftk=;
+        b=QTbV8/qkDE53S0Dv417snDrXxhtkovA3YEtATrOx/6hSXPuBUGcaNkiq+WeHuesH+M
+         ta3ar12RrjR7K18vGYYWdS7CRGeOmVyI3fhKKSZxverXNSclsMOG7H/CuqUn8tIMQEb2
+         uXwgHJjARfyFHhSeUb7URjoDYuoBoV1s/wvbw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793051109; x=1793655909;
+        d=1e100.net; s=20260707; t=1793051112; x=1793655912;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=6W2C5IplodH9p+zbg0ncY61FJ1aii/GuvQjvTf4ZsVE=;
-        b=cj818QVSuWqa2jUQsUg2ZmfbbDoEActA9LegKQZ4q0E0SiVokBg/HnhTXYMgxuz657
-         AhbPvn7ruFDIDFJibAeSw1VLg851e0Ngq/IP6Ac4Amneic1J5kc3fsvffapFNGuqHmf3
-         lesn4WRy4t0aKHsxVUBtyoYvur6NA+B6P5gEZDlsAq+WYFvrxXeS+OrqHwVvwKHnjzDq
-         kVvVoNiqkrjWfCiOSc9IVO0n3cwedWHe2paJQ6/isj3IkdaEEHKeShhocq0+E7EjDNyR
-         6rGMbqMH3YEI76ufhs0ePVCJSSv570jtzFXHH+yaiemksCtG6+2o8rodKaZdyj2cE1eR
-         T8mg==
-X-Forwarded-Encrypted: i=1; AKwUvBw6F8Bl4Rhx5Oz43OvyMrZryznb6SxP/IyCXk0e6fqtWz1blJmvJWjy5eyN8dZxKD+oK++uOH/tbebIZh5AyzCDVQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ1SaCnU4a0XfipmXdEfopawJX3x1NIHcucz5nSSK9QPcB+ZzEU
-	Qxa5EpMLYiY111/OvXflTIYAJD59hQAGYE9nMe8NY5ECwgXT+aPs7qa8W21Ff1GdGg==
-X-Gm-Gg: AYBFou2ebxMv9xD3hytK4SCRncwZwvSjc1rLGEQUuOb5PE18zR7a+Gws65xtM0wHeh/
-	Mj6BC+M6ONSVx0X6DzOYtSrLySLI4hblNay9/p729B6eTky1FpxvLx3t4HcpuxkJDJNAp9pZSJ9
-	2eHkq5naAdohf9vSH6xg9fNM7e17ZhcfDvgRnNP8p9BK73x/M14MB7QrKNgQU6Aw3Tx3Z4edW9N
-	D3/fVIN4YxniRoyI/8zvm9H2lNenldLjj1d0zpYAbmt6JOaEtQJ8sXoisLTCloFLEAzjFi6ZHMf
-	iUwTkDyzhYZLGtmM6McGvUYjnsL2B2km7I5kZJAswLqC2p2KMwfRQI7rr2jGaytdRCivDrc8gYO
-	s8zg6OrJ/t0/O3Jo4JX+hEG4eHkpiqaQuX+rbsU8Faeh0MyDNCJ/4Pbji/Y+tbmi50ct3SFCdxb
-	+M88alk5omKK26JKctY80hDcxALz9tW4sFZn7eTt9pX55zUCT7WkzfdaqShFV2HBvXd/1Ka1uhl
-	syOCfC49DPyGuXHOHnRvUkEjRN3mR/bI84i3jLZFu2ssO+hcljsQtYVHvFZ8bhwv3s5r1UgBXTx
-	aKIRrw0WN6wypGG5Smg=
-X-Received: by 2002:a05:693c:87dc:20b0:350:2a5c:56c with SMTP id 5a478bee46e88-369e84b1873mr12192158eec.20.1793051108206;
-        Mon, 26 Oct 2026 14:45:08 -0700 (PDT)
+        bh=PgsvjDUbnWS9QUhLLUSpL3kYkuj7C6kPZAZRitggftk=;
+        b=RsZKZmLNTlAaQs4dvb/lNdAvTCaXQ8SAvPna3ZhWoTUuUYWBAF5AHAla/Zrr5AFguV
+         5798gVhzRjAqkhyaIwDCetnUmLej6gZF35pIxVQZN3eVuhvjV0xeBaeJHwToHjm9/9qt
+         dTfr18REDoCFTC3is9gCAWPuuWWO4hEkDEVFZzdyG4k5WNWkPSR8xfNUvl7IZ3213tvo
+         6KvsXPkawUAvU20kfaFZTkZSII7K/0S2hdj7e6W02sWuNwR/t60DHvQKDPo6SGVNpo+G
+         tum+Hps7Y8gELuSEDXWYihP/hHivhDTVwHmzEmAFbGxZIcubn3/tNT6iXcsB2D82ndLl
+         q80A==
+X-Forwarded-Encrypted: i=1; AKwUvBw4u6GmbBe0729y9VmOkF1r8bqeFUxGt8a1MrNMlfoZh9SsG7u5bZw0lJLPSIHv7w7rbpgM4h+fztgRTnSkFfWXUA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJUwWrZHTQEdwmBcLzGe9qDr+wRNMk4Hqpx6NPu7LYvbRpqtH/d
+	g7D1Bo/IglOBAjaoUIZD6ZYv/eoeNkvFFUx0KeQGuOWFIIYezaKvQtpDEduGoc4tag==
+X-Gm-Gg: AYBFou0lx9guj4IE67esHzTD7/0pHZdZbpvPQcAhwKuiBr9uOfcPrlTLt/QLbn5I5iI
+	7sdpxvMKezkuXY2oJohFTczTnIOQDJUN1DUhW5w+whTRMF6npJPzqDDoievtX2iizPRi4exkKnf
+	F93FaWTZeq4bDrVxtgLIluSWX/qRAqrvL++kVsX6/NjiAxkCn9oC4AmhR1n+fokCFjr+SUHst8g
+	acdTe2XXXh3KWQmch3wIoLYVqv4nXfuFPIRhuiC4UKLc8I+KZra21wENfG7UF2kSbYXdBx/FcPI
+	2DJhgIO6LUbmwMXPGgoFHAtlbsd4/AWAyV6UvEBSDtw2OKoKGEgeT1jSNagMboXFy+sVVBtR1B4
+	DcTNV0jAVWwi/ZovpS0m5Fpm7t64JzRdL8vaMdXzGhj3Qqez6tm+KnFwvDyz6DXoYoxjmSqlHvc
+	97eNz8tu9+RPKR37i5XWcubw9RNCDQUrVcPlTOnjRYrqHoiLbegVsxEUvQeomCCgi2QwJMLUI5V
+	5wQinu+bBfjrtlZ8NTDp9idufU5VSuhZN8t0QcNTVL2jXqEHAa8WlgsBctDyy0NkidQ1cIVNVj5
+	XaBcBbWssismEofrDrI=
+X-Received: by 2002:a05:693c:3944:b0:369:ec31:8fd5 with SMTP id 5a478bee46e88-369ec31a168mr16635741eec.3.1793051111553;
+        Mon, 26 Oct 2026 14:45:11 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:79c5:9cd3:db14:7468])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36a026e04a0sm9389605eec.1.2026.10.26.14.45.06
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-369e8ee71f5sm35739862eec.28.2026.10.26.14.45.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 14:45:07 -0700 (PDT)
+        Mon, 26 Oct 2026 14:45:10 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -99,9 +99,9 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
 	linux-clk@vger.kernel.org,
 	=?UTF-8?q?Jakub=20G=C5=82owacki?= <jglow@google.com>,
 	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM binding
-Date: Mon, 26 Oct 2026 14:43:40 -0700
-Message-ID: <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
+Subject: [PATCH 3/9] soc: google: Add CPM over MailBox Array driver
+Date: Mon, 26 Oct 2026 14:43:41 -0700
+Message-ID: <20261026144346.3.I7bc547c83b7bf677a62670099f481a91ac737073@changeid>
 X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
 In-Reply-To: <20261026214359.3122870-1-briannorris@chromium.org>
 References: <20261026214359.3122870-1-briannorris@chromium.org>
@@ -121,680 +121,1629 @@ SoCs, as used on Pixel phones. CPM supports power-management and a
 number of other features.
 
 The Application Processor communicates with CPM over a pair of mailbox
-channels. CPM provides clock, power-domain, reset, and interrupt
-services.
+channels (the "MailBox Array" (MBA)). CPM provides clock, power-domain,
+reset, interrupt services, and more.
 
-Notably, CPM manages other services that are not yet included in this
-binding -- some attached PMICs, an RTC, and more. For simplicity, we
-don't try to describe and support all features all at once.
+It's difficult to support all of these services within a single driver,
+in part because it's a lot of code to manage, but also because there can
+be complex relationships between the individual services. For example,
+clocks may have dependencies on power-domains. Instead, the CPM driver
+only handles some basic initialization, and otherwise creates child
+auxiliary_bus devices to handle each service. It also provides an API
+wrapper around the mailbox protocol, so clients don't have to worry
+about some of the details. This API assumes all users are children of
+the CPM device.
+
+Implementation note about the "session" handling: the mailbox API
+doesn't provide any timeouts or guarantees about a response message, but
+CPM clients would like an (optional) timeout. So there's a little bit of
+complexity around reference-counting a "session" (i.e., outstanding
+request still waiting on a response), as that session may outlive the
+client's timeout.
+
+Quick note about hardware queueing: this is implemented in our mailbox
+driver by allowing clients to request the "same" channel multiple times.
+A client is expected to keep requesting the channel until it sees
+-EBUSY, meaning we've requested all of them. We then utilize those
+channels in a round-robin fashion.
 
 Because it may be useful both for reviewers familiar with the downstream
 Linux support for these devices, or for future developers looking at
 adapting/improving/adding further features later on, it's worth noting
-some major deviations from downstream bindings:
+some major deviations from the downstream drivers:
 
- * CPM does not sit on the soc bus, and does not have any IO/reg region
-   of its own. The downstream bindings included some not-quite-related
-   hardware resources in the same "device", to aid doing some similar
-   things in the same driver. For instance, some power domains
-   (specifically, the GPU) are not managed by CPM, and instead are left
-   for direct-register-access. Such a domain should be described
-   separately, and not within the CPM node.
+ * This driver doesn't contain much of the queueing complexity from the
+   downstream driver. The mailbox driver was significantly rewritten
+   beneath us, to support most of the queueing there, and thus exposes a
+   simpler API to us.
 
- * Downstream bindings tended to describe every CPM-using service as its
-   own node, with a (fake) mailbox-phandle back to the CPM node. We try
-   as much as possible here to avoid separate nodes if we can help it.
-   And see the next point:
+ * No session pool; we just allocate sessions on-demand, enough to
+   handle timeouts while a response is still pending.
 
- * Downstream bindings tended to describe every individual clock, reset,
-   and power-domain as their own sub-node, with various
-   software-describing properties as part of each node. These properties
-   are inherent to the SoC, however, so we avoid sub-nodes and instead
-   just provide appropriate #{clock,power-domain,reset}-cells, and leave
-   the per-{power-domain,clock} properties to the driver.
+ * Use auxiliary_bus, with CPM services represented as child devices on
+   this bus. Downstream services tended to be a bunch of artificial
+   platform devices, with fake-mailbox phandles to the CPM "interface"
+   node. This is an atypical device tree structure, and most of those
+   platform devices came from device nodes that were less for describing
+   the hardware, and more for describing how we wanted software to look.
+   So far, I haven't found services that don't work as child auxiliary
+   devices. If we later have examples that need some combination of both
+   iomem resources and CPM resources (and so may need to live on the
+   platform bus), I'm sure we can add support for non-child (e.g.,
+   phandle) interface methods.
+
+ * Add devm_* client helpers, to make it easier for clients to clean up
+   properly. (Hint: most downstream clients did not clean up properly.)
+
+ * Reduce the surface area of exposed (EXPORTed, or header definitions)
+   protocol details, such as goog_mba_q_*() methods. Many such details
+   aren't used outside the CPM driver, so it's probably best to keep
+   them local until proven otherwise.
 
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
+Based on a WIP mailbox API from:
 
- .../bindings/soc/google/google,lga-cpm.yaml   |  74 +++++++
- include/dt-bindings/clock/google,lga-cpm.h    | 191 ++++++++++++++++++
- .../interrupt-controller/irq-cpm-google.h     |  16 ++
- include/dt-bindings/power/google,lga-cpm.h    |  79 ++++++++
- .../dt-bindings/reset/google,lga-cpm-reset.h  | 175 ++++++++++++++++
- include/dt-bindings/soc/google,lga-lpcm.h     |  54 +++++
- 6 files changed, 589 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml
- create mode 100644 include/dt-bindings/clock/google,lga-cpm.h
- create mode 100644 include/dt-bindings/interrupt-controller/irq-cpm-google.h
- create mode 100644 include/dt-bindings/power/google,lga-cpm.h
- create mode 100644 include/dt-bindings/reset/google,lga-cpm-reset.h
- create mode 100644 include/dt-bindings/soc/google,lga-lpcm.h
+  https://lore.kernel.org/all/20261023165211.v2.4.I5cef580a62c86ba6c3465ad336fa509afbdf1476@changeid/
+  [PATCH v2 4/4] mailbox: goog-mba: Introduce the goog-mba mailbox driver
 
-diff --git a/Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml b/Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml
+which is part of this series:
+
+  https://lore.kernel.org/all/20261023235408.3063350-1-dianders@chromium.org/
+  [PATCH v2 0/4] mailbox: Improve the mbox core then introduce the goog-mba driver
+
+That API consists of:
+
+ 1) a header (<linux/mailbox/goog-mba-message.h>), which so far seems
+    typical and uncontroversial and
+
+ 2) a strategy for supporting hardware queueing -- where the current
+    proposal is described in the commit message. I suppose this strategy
+    could still change, although it was discussed at length in v1 of
+    that series.
+
+Anyway, this patch should not be accepted until the above series is
+settled.
+
+ drivers/soc/Kconfig                       |   1 +
+ drivers/soc/Makefile                      |   1 +
+ drivers/soc/google/Kconfig                |  13 +
+ drivers/soc/google/Makefile               |   3 +
+ drivers/soc/google/google-cpm-mba-trace.h | 214 +++++
+ drivers/soc/google/google-cpm-mba.c       | 964 ++++++++++++++++++++++
+ drivers/soc/google/google-cpm-mba.h       |  30 +
+ include/soc/google/goog_cpm_service_ids.h |  84 ++
+ include/soc/google/google-cpm-mba.h       | 147 ++++
+ 9 files changed, 1457 insertions(+)
+ create mode 100644 drivers/soc/google/Kconfig
+ create mode 100644 drivers/soc/google/Makefile
+ create mode 100644 drivers/soc/google/google-cpm-mba-trace.h
+ create mode 100644 drivers/soc/google/google-cpm-mba.c
+ create mode 100644 drivers/soc/google/google-cpm-mba.h
+ create mode 100644 include/soc/google/goog_cpm_service_ids.h
+ create mode 100644 include/soc/google/google-cpm-mba.h
+
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 483cbdcae153..fbe6460424c7 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -10,6 +10,7 @@ source "drivers/soc/canaan/Kconfig"
+ source "drivers/soc/cirrus/Kconfig"
+ source "drivers/soc/fsl/Kconfig"
+ source "drivers/soc/fujitsu/Kconfig"
++source "drivers/soc/google/Kconfig"
+ source "drivers/soc/hisilicon/Kconfig"
+ source "drivers/soc/imx/Kconfig"
+ source "drivers/soc/ixp4xx/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 5a3efd68355c..6241e543dad7 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_MACH_DOVE)		+= dove/
+ obj-y				+= fsl/
+ obj-y				+= fujitsu/
+ obj-$(CONFIG_ARCH_GEMINI)	+= gemini/
++obj-y				+= google/
+ obj-y				+= hisilicon/
+ obj-y				+= imx/
+ obj-y				+= ixp4xx/
+diff --git a/drivers/soc/google/Kconfig b/drivers/soc/google/Kconfig
 new file mode 100644
-index 000000000000..546e6c7fff80
+index 000000000000..9cd04be63b23
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/google/google,lga-cpm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/soc/google/Kconfig
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0-only
 +
-+title: Google Central Power Manager (CPM)
-+
-+maintainers:
-+  - Brian Norris <briannorris@chromium.org>
-+
-+description: |
-+  The Central Power Manager (CPM) is an on-chip power management subsystem
-+  found on Google Tensor SoCs. It has a variety of responsibilities, from DVFS
-+  and power management to resets, PMIC control, and even RTC management. The
-+  Application Processor communicates with CPM over a set of mailbox channels.
-+
-+properties:
-+  compatible:
-+    const: google,lga-cpm
-+
-+  mboxes:
-+    items:
-+      - description: TX mailbox channel for sending requests to CPM
-+      - description: RX mailbox channel for receiving responses from CPM
-+
-+  '#power-domain-cells':
-+    const: 1
-+    description: See <dt-bindings/power/google,lga-cpm.h> for power domain IDs.
-+
-+  '#reset-cells':
-+    const: 2
-+    description:
-+      Each reset is specified by an LPCM ID (cell 1) and a reset ID (cell 2).
-+      See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
-+      <dt-bindings/reset/google,lga-cpm-reset.h> for reset IDs.
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 1
-+    description:
-+      Interrupt identifiers are assigned by CPM firmware. See
-+      <dt-bindings/interrupt-controller/irq-cpm-google.h> for interrupt IDs.
-+
-+  '#clock-cells':
-+    const: 2
-+    description:
-+      Each clock is specified by an LPCM ID (cell 1) and a clock ID (cell
-+      2). See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
-+      <dt-bindings/clock/google,lga-cpm.h> for clock IDs.
-+
-+required:
-+  - compatible
-+  - mboxes
-+  - '#clock-cells'
-+  - '#power-domain-cells'
-+  - '#reset-cells'
-+  - '#interrupt-cells'
-+  - interrupt-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cpm: cpm {
-+        compatible = "google,lga-cpm";
-+        mboxes = <&cpm_ap_ns_req_mba>, <&cpm_ap_ns_resp_mba>;
-+        #clock-cells = <2>;
-+        #power-domain-cells = <1>;
-+        #reset-cells = <2>;
-+        #interrupt-cells = <1>;
-+        interrupt-controller;
-+    };
-diff --git a/include/dt-bindings/clock/google,lga-cpm.h b/include/dt-bindings/clock/google,lga-cpm.h
++config GOOGLE_CPM_MBA
++	tristate "Google Tensor CPM MailBox Array Interface"
++	depends on ARCH_GOOGLE || COMPILE_TEST
++	depends on MAILBOX
++	select AUXILIARY_BUS
++	help
++	  Driver for interfacing with the Central Power Manager (CPM) MailBox
++	  Array (MBA) found on Google Tensor SoCs. The driver provides APIs for
++	  communication between the Application Processor and the CPM, and
++	  is required by CPM client drivers such as clock, reset, power
++	  domain, and more.
+diff --git a/drivers/soc/google/Makefile b/drivers/soc/google/Makefile
 new file mode 100644
-index 000000000000..6d5a5567226d
+index 000000000000..78f69932a377
 --- /dev/null
-+++ b/include/dt-bindings/clock/google,lga-cpm.h
-@@ -0,0 +1,191 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/soc/google/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
 +
-+#ifndef __DT_BINDINGS_CLOCK_GOOGLE_LGA_CPM_H
-+#define __DT_BINDINGS_CLOCK_GOOGLE_LGA_CPM_H
-+
++obj-$(CONFIG_GOOGLE_CPM_MBA) += google-cpm-mba.o
+diff --git a/drivers/soc/google/google-cpm-mba-trace.h b/drivers/soc/google/google-cpm-mba-trace.h
+new file mode 100644
+index 000000000000..a10687d0b83e
+--- /dev/null
++++ b/drivers/soc/google/google-cpm-mba-trace.h
+@@ -0,0 +1,214 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * LPCM clock ID's of each SSWRPs
-+ */
-+
-+#define LSIOS_GPIO_CLK			0
-+#define LSIOS_MCLK0_CLK			1
-+#define LSIOS_PWM_CLK			2
-+#define LSIOS_PWM_CFG_CLK		3
-+#define LSIOS_CLI0_CFG_CLK		4
-+#define LSIOS_CLI1_CFG_CLK		5
-+#define LSIOS_CLI2_CFG_CLK		6
-+#define LSIOS_CLI3_CFG_CLK		7
-+#define LSIOS_CLI4_CFG_CLK		8
-+#define LSIOS_CLI5_CFG_CLK		9
-+#define LSIOS_CLI6_CFG_CLK		10
-+#define LSIOS_CLI0_SPI_CLK		11
-+#define LSIOS_CLI1_SPI_CLK		12
-+#define LSIOS_CLI2_SPI_CLK		13
-+#define LSIOS_CLI3_SPI_CLK		14
-+#define LSIOS_CLI4_SPI_CLK		15
-+#define LSIOS_CLI5_SPI_CLK		16
-+#define LSIOS_CLI6_SPI_CLK		17
-+#define LSIOS_CLI0_I2C_CLK		18
-+#define LSIOS_CLI1_I2C_CLK		19
-+#define LSIOS_CLI2_I2C_CLK		20
-+#define LSIOS_CLI3_I2C_CLK		21
-+#define LSIOS_CLI4_I2C_CLK		22
-+#define LSIOS_CLI5_I2C_CLK		23
-+#define LSIOS_CLI6_I2C_CLK		24
-+#define LSIOS_CLI0_UART_CLK		25
-+#define LSIOS_CLI1_UART_CLK		26
-+#define LSIOS_CLI2_UART_CLK		27
-+#define LSIOS_CLI3_UART_CLK		28
-+#define LSIOS_CLI4_UART_CLK		29
-+#define LSIOS_CLI5_UART_CLK		30
-+#define LSIOS_CLI6_UART_CLK		31
-+#define LSIOS_CLI0_I3C_CLK		32
-+#define LSIOS_CLI1_I3C_CLK		33
-+#define LSIOS_CLI2_I3C_CLK		34
-+#define LSIOS_CLI3_I3C_CLK		35
-+#define LSIOS_CLI4_I3C_CLK		36
-+#define LSIOS_CLI5_I3C_CLK		37
-+#define LSIOS_CLI6_I3C_CLK		38
-+#define LSIOS_MCLK1_CLK			39
-+#define LSIOS_MCLK2_CLK			40
-+#define LSIOS_MCLK3_CLK			41
-+#define LSIOS_MCLK4_CLK			42
-+#define LSIOS_MCLK5_CLK			43
-+#define LSIOS_MCLK6_CLK			44
-+#define LSIOS_MCLK7_CLK			45
-+
-+#define LSION_GPIO_CLK			0
-+#define LSION_CLI_INT0_I2C_CLK		1
-+#define LSION_CLI_INT0_I3C_CLK		2
-+#define LSION_CLI_INT0_UART_CLK		3
-+#define LSION_CLI_INT0_SPI_CLK		4
-+#define LSION_CLI_INT0_CFG_CLK		5
-+#define LSION_CLI_INT1_I2C_CLK		6
-+#define LSION_CLI_INT1_I3C_CLK		7
-+#define LSION_CLI_INT1_UART_CLK		8
-+#define LSION_CLI_INT1_SPI_CLK		9
-+#define LSION_CLI_INT1_CFG_CLK		10
-+#define LSION_CLI_INT2_I2C_CLK		11
-+#define LSION_CLI_INT2_I3C_CLK		12
-+#define LSION_CLI_INT2_UART_CLK		13
-+#define LSION_CLI_INT2_SPI_CLK		14
-+#define LSION_CLI_INT2_CFG_CLK		15
-+#define LSION_CLI_INT3_I2C_CLK		16
-+#define LSION_CLI_INT3_I3C_CLK		17
-+#define LSION_CLI_INT3_UART_CLK		18
-+#define LSION_CLI_INT3_SPI_CLK		19
-+#define LSION_CLI_INT3_CFG_CLK		20
-+#define LSION_CLI_INT4_I2C_CLK		21
-+#define LSION_CLI_INT4_I3C_CLK		22
-+#define LSION_CLI_INT4_UART_CLK		23
-+#define LSION_CLI_INT4_SPI_CLK		24
-+#define LSION_CLI_INT4_CFG_CLK		25
-+#define LSION_CLI15_CFG_CLK		26
-+#define LSION_CLI16_CFG_CLK		27
-+#define LSION_CLI15_I2C_CLK		28
-+#define LSION_CLI16_I2C_CLK		29
-+#define LSION_CLI15_SPI_CLK		30
-+#define LSION_CLI16_SPI_CLK		31
-+#define LSION_CLI15_UART_CLK		32
-+#define LSION_CLI16_UART_CLK		33
-+#define LSION_CLI15_I3C_CLK		34
-+#define LSION_CLI16_I3C_CLK		35
-+
-+#define LSIOE_GPIO_CLK			0
-+#define LSIOE_CLI7_CFG_CLK		1
-+#define LSIOE_CLI8_CFG_CLK		2
-+#define LSIOE_CLI9_CFG_CLK		3
-+#define LSIOE_CLI10_CFG_CLK		4
-+#define LSIOE_CLI11_CFG_CLK		5
-+#define LSIOE_CLI12_CFG_CLK		6
-+#define LSIOE_CLI13_CFG_CLK		7
-+#define LSIOE_CLI14_CFG_CLK		8
-+#define LSIOE_CLI7_SPI_CLK		9
-+#define LSIOE_CLI8_SPI_CLK		10
-+#define LSIOE_CLI9_SPI_CLK		11
-+#define LSIOE_CLI10_SPI_CLK		12
-+#define LSIOE_CLI11_SPI_CLK		13
-+#define LSIOE_CLI12_SPI_CLK		14
-+#define LSIOE_CLI13_SPI_CLK		15
-+#define LSIOE_CLI14_SPI_CLK		16
-+#define LSIOE_CLI7_I2C_CLK		17
-+#define LSIOE_CLI8_I2C_CLK		18
-+#define LSIOE_CLI9_I2C_CLK		19
-+#define LSIOE_CLI10_I2C_CLK		20
-+#define LSIOE_CLI11_I2C_CLK		21
-+#define LSIOE_CLI12_I2C_CLK		22
-+#define LSIOE_CLI13_I2C_CLK		23
-+#define LSIOE_CLI14_I2C_CLK		24
-+#define LSIOE_CLI7_UART_CLK		25
-+#define LSIOE_CLI8_UART_CLK		26
-+#define LSIOE_CLI9_UART_CLK		27
-+#define LSIOE_CLI10_UART_CLK		28
-+#define LSIOE_CLI11_UART_CLK		29
-+#define LSIOE_CLI12_UART_CLK		30
-+#define LSIOE_CLI13_UART_CLK		31
-+#define LSIOE_CLI14_UART_CLK		32
-+#define LSIOE_SPMI_CLK			33
-+#define LSIOE_CLI7_I3C_CLK		34
-+#define LSIOE_CLI8_I3C_CLK		35
-+#define LSIOE_CLI9_I3C_CLK		36
-+#define LSIOE_CLI10_I3C_CLK		37
-+#define LSIOE_CLI11_I3C_CLK		38
-+#define LSIOE_CLI12_I3C_CLK		39
-+#define LSIOE_CLI13_I3C_CLK		40
-+#define LSIOE_CLI14_I3C_CLK		41
-+
-+#define HSIOS_MPHY_REF_OSC_CLK		0
-+#define HSIOS_MPHY_REF_TCX0_CLK		1
-+#define HSIOS_GPIO_REF_OSC_CLK		2
-+#define HSIOS_GPIO_REF_TCX0_CLK		3
-+#define HSIOS_HCLK_CLK			4
-+#define HSIOS_SYS_CLK			5
-+#define HSIOS_T_CLK			6
-+#define HSIOS_LP_T_CLK			7
-+#define HSIOS_MPHY_CFG_CLK		8
-+#define HSIOS_UFS_CFG_CLK		9
-+#define HSIOS_PHY_FW_CLK		10
-+#define HSIOS_PCIE_REF_CLK		11
-+#define HSIOS_UFS_RESET_CLK		12
-+#define HSIOS_UFS_LP_RESET_CLK		13
-+#define HSIOS_UFS_ARESET_CLK		14
-+#define HSIOS_UFS_PHY_RESET_CLK		15
-+#define HSIOS_AUX_CLK			16
-+
-+#define HSION_USB_CLK			0
-+#define HSION_DP0_CLK			1
-+#define HSION_DP1_CLK			2
-+#define HSION_PHY_FW_CLK		3
-+#define HSION_PCIE_REF_CLK		4
-+#define HSION_U2PHY_REF_CLK		5
-+#define HSION_USBDP_SUSPEND_CLK		6
-+#define HSION_USBC_NON_STICKY_CLK	7
-+#define HSION_USBC_STICKY_CLK		8
-+#define HSION_USB_DRD_BUS_CLK		9
-+#define HSION_CSR_CLK			10
-+#define HSION_USB_TOP_CSR_CLK		11
-+#define HSION_DP_PCLK_CLK		12
-+#define HSION_DP_CFG_CLK		13
-+#define HSION_U2PHY_APB_CLK		14
-+#define HSION_DP_VCC_CLK		15
-+#define HSION_U3PHY_REF_CLK		16
-+#define HSION_USB2_PHY_RESET_CLK	17
-+#define HSION_USB3DP_PHY_RESET_CLK	18
-+#define HSION_EBU_CLK			19
-+
-+#define DPU_DP0_PIX_CLK			0
-+#define DPU_DP1_PIX_CLK			1
-+#define DPU_DSI0_PIX_CLK		2
-+#define DPU_DSI1_PIX_CLK		3
-+#define DPU_DSI1_PHY_CLK		4
-+#define DPU_FE0_CLK			5
-+#define DPU_FE1_CLK			6
-+#define DPU_BE_CLK			7
-+#define DPU_AON_CLK			8
-+
-+#define GPCM_DPU_PLL_DP_CLK		0
-+#define GPCM_HSION_PLL_DP_CLK		1
-+
-+#define CPU_SSWRP_TSS_CLK		1
-+
-+#endif /* __DT_BINDINGS_CLOCK_GOOGLE_LGA_CPM_H */
-diff --git a/include/dt-bindings/interrupt-controller/irq-cpm-google.h b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
-new file mode 100644
-index 000000000000..26d83bfe39af
---- /dev/null
-+++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * This header provides constants for CPM IRQ.
-+ *
 + * Copyright 2025-2026 Google LLC
-+ *
 + */
-+#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
-+#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM google_cpm_mba
 +
-+#define CPM_IRQ_RTC_ALARM_NO			0
-+#define CPM_IRQ_AOC_MIN				7
-+#define CPM_IRQ_AOC_MAX				156
-+#define CPM_IRQ_AP_GDMC_WAKE			157
++#if !defined(_GOOGLE_CPM_MBA_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _GOOGLE_CPM_MBA_TRACE_H
 +
-+#endif  /* _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H */
-diff --git a/include/dt-bindings/power/google,lga-cpm.h b/include/dt-bindings/power/google,lga-cpm.h
++#include <linux/tracepoint.h>
++#include <soc/google/google-cpm-mba.h>
++
++#include "google-cpm-mba.h"
++
++#define MAX_DEV_NAME 32
++
++#ifdef CREATE_TRACE_POINTS
++static inline void cpm_trace_clone_payload(u32 *header, u32 *payloads,
++					   const struct cpm_payload *payload)
++{
++	*header = payload->header;
++	memcpy(payloads, payload->payload, GOOG_MBA_PAYLOAD_SIZE * sizeof(*payloads));
++}
++#endif
++
++TRACE_EVENT(
++	cpm_request_client,
++
++	TP_PROTO(struct cpm_client *client),
++
++	TP_ARGS(client),
++
++	TP_STRUCT__entry(
++		__field(int, src_id)
++		__field(void *, host_tx_cb)
++		__array(char, dev_name, MAX_DEV_NAME)
++	),
++
++	TP_fast_assign(
++		scnprintf(__entry->dev_name, MAX_DEV_NAME, "%s", dev_name(client->dev));
++		__entry->src_id = client->src_id;
++		__entry->host_tx_cb = (void *)client->host_tx_cb;
++	),
++
++	TP_printk("dev=%s src_id=%d host_tx_cb=%ps", __entry->dev_name, __entry->src_id,
++		  __entry->host_tx_cb)
++);
++
++TRACE_EVENT(
++	cpm_free_client,
++
++	TP_PROTO(struct cpm_client *client),
++
++	TP_ARGS(client),
++
++	TP_STRUCT__entry(
++		__field(int, src_id)
++		__array(char, dev_name, MAX_DEV_NAME)
++	),
++
++	TP_fast_assign(
++		__entry->src_id = client->src_id;
++		scnprintf(__entry->dev_name, MAX_DEV_NAME, "%s", dev_name(client->dev));
++	),
++
++	TP_printk("dev=%s src_id=%d", __entry->dev_name, __entry->src_id)
++);
++
++TRACE_EVENT(
++	cpm_req_enqueue,
++
++	TP_PROTO(struct cpm_session *session, const struct cpm_request *req, int src_id),
++
++	TP_ARGS(session, req, src_id),
++
++	TP_STRUCT__entry(
++		__field(void *, session)
++		__field(unsigned long, tout_ms)
++		__field(u32, resp_context)
++		__field(int, src_id)
++	),
++
++	TP_fast_assign(
++		__entry->tout_ms = req->tout_ms;
++		__entry->resp_context = req->resp_context;
++		__entry->session = session;
++		__entry->src_id = src_id;
++	),
++
++	TP_printk("session=%p src_id=%d tout_ms=%lu resp_ctx=%#x",
++		  __entry->session, __entry->src_id, __entry->tout_ms,
++		  __entry->resp_context)
++);
++
++TRACE_EVENT(
++	cpm_submit_msg,
++
++	TP_PROTO(struct cpm_session *session, const struct cpm_payload *payload),
++
++	TP_ARGS(session, payload),
++
++	TP_STRUCT__entry(
++		__field(void *, session)
++		__field(u32, header)
++		__array(u32, payloads, GOOG_MBA_PAYLOAD_SIZE)
++	),
++
++	TP_fast_assign(
++		__entry->session = session;
++		cpm_trace_clone_payload(&__entry->header, __entry->payloads, payload);
++	),
++
++	TP_printk("session=%p: %#010x %#010x %#010x %#010x",
++		  __entry->session, __entry->header,
++		  __entry->payloads[0], __entry->payloads[1], __entry->payloads[2])
++);
++
++TRACE_EVENT(
++	cpm_req_tx_done,
++
++	TP_PROTO(struct cpm_session *session),
++
++	TP_ARGS(session),
++
++	TP_STRUCT__entry(
++		__field(void *, session)
++	),
++
++	TP_fast_assign(
++		__entry->session = session;
++	),
++
++	TP_printk("session=%p", __entry->session)
++);
++
++TRACE_EVENT(
++	cpm_resp_cb,
++
++	TP_PROTO(struct cpm_session *session, const struct cpm_payload *payload),
++
++	TP_ARGS(session, payload),
++
++	TP_STRUCT__entry(
++		__field(void *, session)
++		__field(u32, header)
++		__array(u32, payloads, GOOG_MBA_PAYLOAD_SIZE)
++	),
++
++	TP_fast_assign(
++		__entry->session = session;
++		cpm_trace_clone_payload(&__entry->header, __entry->payloads, payload);
++	),
++
++	TP_printk("session=%p: %#010x %#010x %#010x %#010x",
++		  __entry->session, __entry->header,
++		  __entry->payloads[0], __entry->payloads[1], __entry->payloads[2])
++);
++
++TRACE_EVENT(
++	cpm_send_message,
++
++	TP_PROTO(struct cpm_session *session, int ret),
++
++	TP_ARGS(session, ret),
++
++	TP_STRUCT__entry(
++		__field(void *, session)
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__entry->session = session;
++		__entry->ret = ret;
++	),
++
++	TP_printk("session=%p ret=%d",
++		  __entry->session, __entry->ret)
++);
++
++TRACE_EVENT(
++	cpm_handle_host_tx,
++
++	TP_PROTO(int dst_id, u32 resp_context, const struct cpm_payload *payload),
++
++	TP_ARGS(dst_id, resp_context, payload),
++
++	TP_STRUCT__entry(
++		__field(int, dst_id)
++		__field(u32, resp_context)
++		__field(u32, header)
++		__array(u32, payloads, GOOG_MBA_PAYLOAD_SIZE)
++	),
++
++	TP_fast_assign(
++		__entry->dst_id = dst_id;
++		__entry->resp_context = resp_context;
++		cpm_trace_clone_payload(&__entry->header, __entry->payloads, payload);
++	),
++
++	TP_printk("dst_id=%d resp_context=%#x: %#010x %#010x %#010x %#010x",
++		  __entry->dst_id, __entry->resp_context,
++		  __entry->header, __entry->payloads[0],
++		  __entry->payloads[1], __entry->payloads[2])
++);
++
++#endif /* _GOOGLE_CPM_MBA_TRACE_H */
++
++/* This part must be outside protection */
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../drivers/soc/google/
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE google-cpm-mba-trace
++#include <trace/define_trace.h>
+diff --git a/drivers/soc/google/google-cpm-mba.c b/drivers/soc/google/google-cpm-mba.c
 new file mode 100644
-index 000000000000..4b35c59df2cc
+index 000000000000..629a071e202c
 --- /dev/null
-+++ b/include/dt-bindings/power/google,lga-cpm.h
-@@ -0,0 +1,79 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/soc/google/google-cpm-mba.c
+@@ -0,0 +1,964 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Google MailBox Array (MBA) CPM Interface
++ *
++ * Copyright 2023-2026 Google LLC
++ */
 +
-+#ifndef __DT_BINDINGS_POWER_GOOGLE_LGA_CPM_H
-+#define __DT_BINDINGS_POWER_GOOGLE_LGA_CPM_H
++#include <linux/auxiliary_bus.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/cleanup.h>
++#include <linux/completion.h>
++#include <linux/device.h>
++#include <linux/jiffies.h>
++#include <linux/kref.h>
++#include <linux/list.h>
++#include <linux/lockdep.h>
++#include <linux/mailbox/goog-mba-message.h>
++#include <linux/mailbox_client.h>
++#include <linux/mailbox_controller.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
 +
-+/* AOC */
-+#define LGA_PD_SSWRP_AOC		0
-+#define LGA_PD_AOC_CORE			1
++#include <soc/google/google-cpm-mba.h>
 +
-+/* AURORA */
-+#define LGA_PD_SSWRP_AURORA		2
-+
-+/* CODEC_3P */
-+#define LGA_PD_SSWRP_CODEC_3P		3
-+
-+/* DPU */
-+#define LGA_PD_DPU_DP			4
-+#define LGA_PD_SSWRP_DPU		5
-+#define LGA_PD_DPU_FE0			6
-+#define LGA_PD_DPU_FE1			7
-+#define LGA_PD_DPU_DSI0			8
-+#define LGA_PD_DPU_DSI1			9
-+
-+/* EH */
-+#define LGA_PD_SSWRP_EH			10
-+
-+/* G2D */
-+#define LGA_PD_SSWRP_G2D		11
-+#define LGA_PD_G2D_CORE			12
-+
-+/* GPDMA */
-+#define LGA_PD_SSWRP_GPDMA		13
-+
-+/* GPU */
-+#define LGA_PD_SSWRP_GPU		14
-+
-+/* GSW */
-+#define LGA_PD_SSWRP_GSW		15
-+
-+/* HSIO_N */
-+#define LGA_PD_SSWRP_HSIO_N		16
-+#define LGA_PD_HSIO_N_USB		17
-+#define LGA_PD_HSIO_N_USB_PSW		18
-+#define LGA_PD_HSIO_N_PCIE		19
-+#define LGA_PD_HSIO_N_DP		20
-+#define LGA_PD_HSIO_N_EBU		21
-+#define LGA_PD_HSIO_N_EBU_CORE		22
-+
-+/* HSIO_S */
-+#define LGA_PD_SSWRP_HSIO_S		23
-+#define LGA_PD_HSIO_S_UFS_PREP		24
-+#define LGA_PD_HSIO_S_UFS		25
-+#define LGA_PD_HSIO_S_PCIE		26
-+#define LGA_PD_HSIO_S_SD		27
-+
-+/* ISPBE */
-+#define LGA_PD_SSWRP_ISPBE		28
-+
-+/* ISPFE */
-+#define LGA_PD_SSWRP_ISPFE		29
-+#define LGA_PD_ISPFE_PIPE		30
-+#define LGA_PD_ISPFE_CSIS		31
-+
-+/* LSIO_E */
-+#define LGA_PD_SSWRP_LSIO_E		32
-+#define LGA_PD_LSIO_E_CLI_GPIO		33
-+
-+/* LSIO_N */
-+#define LGA_PD_SSWRP_LSIO_N		34
-+#define LGA_PD_LSIO_N_CLI_GPIO		35
-+
-+/* LSIO_S */
-+#define LGA_PD_SSWRP_LSIO_S		36
-+#define LGA_PD_LSIO_S_CLI_GPIO		37
-+
-+/* TPU */
-+#define LGA_PD_SSWRP_TPU		38
-+
-+#endif /* __DT_BINDINGS_POWER_GOOGLE_LGA_CPM_H */
-diff --git a/include/dt-bindings/reset/google,lga-cpm-reset.h b/include/dt-bindings/reset/google,lga-cpm-reset.h
-new file mode 100644
-index 000000000000..d147296dbffc
---- /dev/null
-+++ b/include/dt-bindings/reset/google,lga-cpm-reset.h
-@@ -0,0 +1,175 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+
-+#ifndef __DT_BINDINGS_RESET_GOOGLE_LGA_CPM_RESET_H
-+#define __DT_BINDINGS_RESET_GOOGLE_LGA_CPM_RESET_H
-+
-+/* HSION */
-+#define HSION_PCIE_PERST_RST			0
-+#define HSION_PCIE_APP_HOLD_PHY_RST		1
-+#define HSION_PCIE_INIT_RST			2
-+#define HSION_PCIE_PWR_UP_RST			3
-+#define HSION_USB_DP_CFG_RST			4
-+#define HSION_DP_PCLK_RST			5
-+#define HSION_USB_TOP_CSR_RST			6
-+#define HSION_PIXEL_CK0_RST			7
-+#define HSION_PIXEL_CK1_RST			8
-+#define HSION_U2PHY_APB_RST			9
-+#define HSION_USBC_NON_STICKY_RST		10
-+#define HSION_USBC_STICKY_RST			11
-+#define HSION_USB_DRD_BUS_RST			12
-+#define HSION_USB2_PHY_RESET			13
-+#define HSION_USB3DP_PHY_RESET			14
-+#define HSION_EBU_RST				15
-+
-+/* HSIOS */
-+#define HSIOS_PCIE_PERST_RST			0
-+#define HSIOS_PCIE_APP_HOLD_PHY_RST		1
-+#define HSIOS_PCIE_PWR_UP_RST			2
-+#define HSIOS_UFS_PHY_RST			3
-+#define HSIOS_PCIE_INIT_RST			4
-+
-+/* LSIOS */
-+#define LSIOS_CLI0_I2C_IC_CFG_RST		0
-+#define LSIOS_CLI0_I3C_IC_CFG_RST		1
-+#define LSIOS_CLI0_UART_IC_CFG_RST		2
-+#define LSIOS_CLI0_SPI_IC_CFG_RST		3
-+#define LSIOS_CLI1_I2C_IC_CFG_RST		4
-+#define LSIOS_CLI1_I3C_IC_CFG_RST		5
-+#define LSIOS_CLI1_UART_IC_CFG_RST		6
-+#define LSIOS_CLI1_SPI_IC_CFG_RST		7
-+#define LSIOS_CLI2_I2C_IC_CFG_RST		8
-+#define LSIOS_CLI2_I3C_IC_CFG_RST		9
-+#define LSIOS_CLI2_UART_IC_CFG_RST		10
-+#define LSIOS_CLI2_SPI_IC_CFG_RST		11
-+#define LSIOS_CLI3_I2C_IC_CFG_RST		12
-+#define LSIOS_CLI3_I3C_IC_CFG_RST		13
-+#define LSIOS_CLI3_UART_IC_CFG_RST		14
-+#define LSIOS_CLI3_SPI_IC_CFG_RST		15
-+#define LSIOS_CLI4_I2C_IC_CFG_RST		16
-+#define LSIOS_CLI4_I3C_IC_CFG_RST		17
-+#define LSIOS_CLI4_UART_IC_CFG_RST		18
-+#define LSIOS_CLI4_SPI_IC_CFG_RST		19
-+#define LSIOS_CLI5_I2C_IC_CFG_RST		20
-+#define LSIOS_CLI5_I3C_IC_CFG_RST		21
-+#define LSIOS_CLI5_UART_IC_CFG_RST		22
-+#define LSIOS_CLI5_SPI_IC_CFG_RST		23
-+#define LSIOS_CLI6_I2C_IC_CFG_RST		24
-+#define LSIOS_CLI6_I3C_IC_CFG_RST		25
-+#define LSIOS_CLI6_UART_IC_CFG_RST		26
-+#define LSIOS_CLI6_SPI_IC_CFG_RST		27
-+#define LSIOS_CLI0_SPI_IC_RST			28
-+#define LSIOS_CLI1_SPI_IC_RST			29
-+#define LSIOS_CLI2_SPI_IC_RST			30
-+#define LSIOS_CLI3_SPI_IC_RST			31
-+#define LSIOS_CLI4_SPI_IC_RST			32
-+#define LSIOS_CLI5_SPI_IC_RST			33
-+#define LSIOS_CLI6_SPI_IC_RST			34
-+#define LSIOS_CLI0_SPI_CFG_RST			35
-+#define LSIOS_CLI1_SPI_CFG_RST			36
-+#define LSIOS_CLI2_SPI_CFG_RST			37
-+#define LSIOS_CLI3_SPI_CFG_RST			38
-+#define LSIOS_CLI4_SPI_CFG_RST			39
-+#define LSIOS_CLI5_SPI_CFG_RST			40
-+#define LSIOS_CLI6_SPI_CFG_RST			41
-+#define LSIOS_PWM_IC_RST			42
-+#define LSIOS_PWM_CFG_RST			43
-+#define LSIOS_GPIO_IC_RST			44
-+
-+/* LSION */
-+#define LSION_CLI15_I2C_IC_CFG_RST		0
-+#define LSION_CLI15_I3C_IC_CFG_RST		1
-+#define LSION_CLI15_UART_IC_CFG_RST		2
-+#define LSION_CLI15_SPI_IC_CFG_RST		3
-+#define LSION_CLI16_I2C_IC_CFG_RST		4
-+#define LSION_CLI16_I3C_IC_CFG_RST		5
-+#define LSION_CLI16_UART_IC_CFG_RST		6
-+#define LSION_CLI16_SPI_IC_CFG_RST		7
-+#define LSION_CLI17_INT0_I2C_IC_CFG_RST		8
-+#define LSION_CLI17_INT0_I3C_IC_CFG_RST		9
-+#define LSION_CLI17_INT0_UART_IC_CFG_RST	10
-+#define LSION_CLI17_INT0_SPI_IC_CFG_RST		11
-+#define LSION_CLI18_INT1_I2C_IC_CFG_RST		12
-+#define LSION_CLI18_INT1_I3C_IC_CFG_RST		13
-+#define LSION_CLI18_INT1_UART_IC_CFG_RST	14
-+#define LSION_CLI18_INT1_SPI_IC_CFG_RST		15
-+#define LSION_CLI19_INT2_I2C_IC_CFG_RST		16
-+#define LSION_CLI19_INT2_I3C_IC_CFG_RST		17
-+#define LSION_CLI19_INT2_UART_IC_CFG_RST	18
-+#define LSION_CLI19_INT2_SPI_IC_CFG_RST		19
-+#define LSION_CLI20_INT3_I2C_IC_CFG_RST		20
-+#define LSION_CLI20_INT3_I3C_IC_CFG_RST		21
-+#define LSION_CLI20_INT3_UART_IC_CFG_RST	22
-+#define LSION_CLI20_INT3_SPI_IC_CFG_RST		23
-+#define LSION_CLI21_INT4_I2C_IC_CFG_RST		24
-+#define LSION_CLI21_INT4_I3C_IC_CFG_RST		25
-+#define LSION_CLI21_INT4_UART_IC_CFG_RST	26
-+#define LSION_CLI21_INT4_SPI_IC_CFG_RST		27
-+#define LSION_CLI15_SPI_IC_RST			28
-+#define LSION_CLI16_SPI_IC_RST			29
-+#define LSION_CLI17_INT0_SPI_IC_RST		30
-+#define LSION_CLI18_INT1_SPI_IC_RST		31
-+#define LSION_CLI19_INT2_SPI_IC_RST		32
-+#define LSION_CLI20_INT3_SPI_IC_RST		33
-+#define LSION_CLI21_INT4_SPI_IC_RST		34
-+#define LSION_CLI15_SPI_CFG_RST			35
-+#define LSION_CLI16_SPI_CFG_RST			36
-+#define LSION_CLI17_INT0_SPI_CFG_RST		37
-+#define LSION_CLI18_INT1_SPI_CFG_RST		38
-+#define LSION_CLI19_INT2_SPI_CFG_RST		39
-+#define LSION_CLI20_INT3_SPI_CFG_RST		40
-+#define LSION_CLI21_INT4_SPI_CFG_RST		41
-+#define LSION_GPIO_IC_RST			42
-+
-+/* LSIOE */
-+#define LSIOE_CLI7_I2C_IC_CFG_RST		0
-+#define LSIOE_CLI7_I3C_IC_CFG_RST		1
-+#define LSIOE_CLI7_UART_IC_CFG_RST		2
-+#define LSIOE_CLI7_SPI_IC_CFG_RST		3
-+#define LSIOE_CLI8_I2C_IC_CFG_RST		4
-+#define LSIOE_CLI8_I3C_IC_CFG_RST		5
-+#define LSIOE_CLI8_UART_IC_CFG_RST		6
-+#define LSIOE_CLI8_SPI_IC_CFG_RST		7
-+#define LSIOE_CLI9_I2C_IC_CFG_RST		8
-+#define LSIOE_CLI9_I3C_IC_CFG_RST		9
-+#define LSIOE_CLI9_UART_IC_CFG_RST		10
-+#define LSIOE_CLI9_SPI_IC_CFG_RST		11
-+#define LSIOE_CLI10_I2C_IC_CFG_RST		12
-+#define LSIOE_CLI10_I3C_IC_CFG_RST		13
-+#define LSIOE_CLI10_UART_IC_CFG_RST		14
-+#define LSIOE_CLI10_SPI_IC_CFG_RST		15
-+#define LSIOE_CLI11_I2C_IC_CFG_RST		16
-+#define LSIOE_CLI11_I3C_IC_CFG_RST		17
-+#define LSIOE_CLI11_UART_IC_CFG_RST		18
-+#define LSIOE_CLI11_SPI_IC_CFG_RST		19
-+#define LSIOE_CLI12_I2C_IC_CFG_RST		20
-+#define LSIOE_CLI12_I3C_IC_CFG_RST		21
-+#define LSIOE_CLI12_UART_IC_CFG_RST		22
-+#define LSIOE_CLI12_SPI_IC_CFG_RST		23
-+#define LSIOE_CLI13_I2C_IC_CFG_RST		24
-+#define LSIOE_CLI13_I3C_IC_CFG_RST		25
-+#define LSIOE_CLI13_UART_IC_CFG_RST		26
-+#define LSIOE_CLI13_SPI_IC_CFG_RST		27
-+#define LSIOE_CLI14_I2C_IC_CFG_RST		28
-+#define LSIOE_CLI14_I3C_IC_CFG_RST		29
-+#define LSIOE_CLI14_UART_IC_CFG_RST		30
-+#define LSIOE_CLI14_SPI_IC_CFG_RST		31
-+#define LSIOE_CLI7_SPI_IC_RST			32
-+#define LSIOE_CLI8_SPI_IC_RST			33
-+#define LSIOE_CLI9_SPI_IC_RST			34
-+#define LSIOE_CLI10_SPI_IC_RST			35
-+#define LSIOE_CLI11_SPI_IC_RST			36
-+#define LSIOE_CLI12_SPI_IC_RST			37
-+#define LSIOE_CLI13_SPI_IC_RST			38
-+#define LSIOE_CLI14_SPI_IC_RST			39
-+#define LSIOE_CLI7_SPI_CFG_RST			40
-+#define LSIOE_CLI8_SPI_CFG_RST			41
-+#define LSIOE_CLI9_SPI_CFG_RST			42
-+#define LSIOE_CLI10_SPI_CFG_RST			43
-+#define LSIOE_CLI11_SPI_CFG_RST			44
-+#define LSIOE_CLI12_SPI_CFG_RST			45
-+#define LSIOE_CLI13_SPI_CFG_RST			46
-+#define LSIOE_CLI14_SPI_CFG_RST			47
-+#define LSIOE_GPIO_IC_RST			48
-+#define LSIOE_SPMI_RST				49
-+
-+#endif /* __DT_BINDINGS_RESET_GOOGLE_LGA_CPM_RESET_H */
-diff --git a/include/dt-bindings/soc/google,lga-lpcm.h b/include/dt-bindings/soc/google,lga-lpcm.h
-new file mode 100644
-index 000000000000..d1944afff2b9
---- /dev/null
-+++ b/include/dt-bindings/soc/google,lga-lpcm.h
-@@ -0,0 +1,54 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+
-+#ifndef __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
-+#define __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
++#include "google-cpm-mba.h"
 +
 +/*
-+ * LPCM IDs of each SSWRP.
++ * Header of queue mode message defines fields for type, src_id and dst_id.
++ *
++ *  31 30     29  24      20    16     8     0
++ *  +---+------+---+-------+-----+-----+-----+
++ *  | V | Type | R | Token | Seq | Src | Dst |
++ *  +---+------+---+-------+-----+-----+-----+
++ *
++ *  Bit 31 is valid bit:	Must be 1.
++ *  Bits 30-29 are type:	The message type can be one of the following values:
++ *				0x0 One-way message
++ *				0x1 Requests (expect response)
++ *				0x2 Response (to a previous request)
++ *  Bits 28-24 are reserved.
++ *  Bits 23-20 are token:	Reserved for transport layer module.
++ *  Bits 19-16 are seq:		Reserved for transport layer module.
++ *  Bits 15-8 are source id.
++ *  Bits 7-0 are destination id.
 + */
-+#define LGA_LPCM_CPM			0
-+#define LGA_LPCM_AOC			1
-+#define LGA_LPCM_LSIO_E			2
-+#define LGA_LPCM_LSIO_N			3
-+#define LGA_LPCM_LSIO_S			4
-+#define LGA_LPCM_HSIO_N			5
-+#define LGA_LPCM_HSIO_S			6
-+#define LGA_LPCM_GPCA			7
-+#define LGA_LPCM_FABHBW			8
-+#define LGA_LPCM_MEMSS			9
-+#define LGA_LPCM_FABMED			10
-+#define LGA_LPCM_FABRT			11
-+#define LGA_LPCM_FABSTBY		12
-+#define LGA_LPCM_FABSYSS		13
-+#define LGA_LPCM_CPU			14
-+#define LGA_LPCM_CPU_MAIN		15
-+#define LGA_LPCM_CPU_CCM0		16
-+#define LGA_LPCM_CPU_CCM1A		17
-+#define LGA_LPCM_CPU_CCM1B		18
-+#define LGA_LPCM_CPU_CCM2		19
-+#define LGA_LPCM_EH			20
-+#define LGA_LPCM_AURORA			21
-+#define LGA_LPCM_CODEC_3P		22
-+#define LGA_LPCM_G2D			23
-+#define LGA_LPCM_GSW			24
-+#define LGA_LPCM_ISPBE			25
-+#define LGA_LPCM_ISPFE			26
-+#define LGA_LPCM_INF_TCU		27
-+#define LGA_LPCM_GPU			28
-+#define LGA_LPCM_GPU_REMOTE_FLL		29
-+#define LGA_LPCM_GPU_REMOTE_SENSOR	30
-+#define LGA_LPCM_TPU			31
-+#define LGA_LPCM_TPU_REMOTE		32
-+#define LGA_LPCM_BMSM			33
-+#define LGA_LPCM_CPUACC			34
-+#define LGA_LPCM_DPU			35
-+#define LGA_LPCM_GDMC			36
-+#define LGA_LPCM_GMC0			37
-+#define LGA_LPCM_GMC1			38
-+#define LGA_LPCM_GMC2			39
-+#define LGA_LPCM_GMC3			40
-+#define LGA_LPCM_GPCM			41
-+#define LGA_LPCM_GPDMA			42
-+#define LGA_LPCM_GSA			43
 +
-+#endif /* __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H */
++#define GOOG_MBA_Q_DST_ID_MASK		GENMASK(7, 0)
++#define GOOG_MBA_Q_SRC_ID_MASK		GENMASK(15, 8)
++#define GOOG_MBA_Q_SEQ_MASK		GENMASK(19, 16)
++#define GOOG_MBA_Q_TOKEN_MASK		GENMASK(23, 20)
++#define GOOG_MBA_Q_TYPE_MASK		GENMASK(30, 29)
++#define GOOG_MBA_Q_VALID_MASK		GENMASK(31, 31)
++
++#define GOOG_MBA_Q_MAX_SRC_ID_VAL	0xff
++#define GOOG_MBA_Q_MIN_SEQ_VAL		1
++#define GOOG_MBA_Q_MAX_SEQ_VAL		13
++#define GOOG_MBA_Q_MAX_TOKEN_VAL	16
++
++#define GOOG_MBA_Q_INIT_PROTO_VAL	0x100
++
++#define GOOG_MBA_Q_TYPE_ONEWAY		0x0
++#define GOOG_MBA_Q_TYPE_REQUEST		0x1
++#define GOOG_MBA_Q_TYPE_RESPONSE	0x2
++
++static inline u32 goog_mba_q_get_dst_id(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_DST_ID_MASK, *msg);
++}
++
++static inline u32 goog_mba_q_get_src_id(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_SRC_ID_MASK, *msg);
++}
++
++static inline u32 goog_mba_q_get_seq(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_SEQ_MASK, *msg);
++}
++
++static inline u32 goog_mba_q_get_token(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_TOKEN_MASK, *msg);
++}
++
++static inline u32 goog_mba_q_get_type(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_TYPE_MASK, *msg);
++}
++
++static inline u32 goog_mba_q_get_valid(const u32 *msg)
++{
++	return FIELD_GET(GOOG_MBA_Q_VALID_MASK, *msg);
++}
++
++static inline void goog_mba_q_set_dst_id(u32 *msg, u32 dst_id)
++{
++	*msg &= ~GOOG_MBA_Q_DST_ID_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_DST_ID_MASK, dst_id);
++}
++
++static inline void goog_mba_q_set_src_id(u32 *msg, u32 src_id)
++{
++	*msg &= ~GOOG_MBA_Q_SRC_ID_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_SRC_ID_MASK, src_id);
++}
++
++static inline void goog_mba_q_set_seq(u32 *msg, u32 seq)
++{
++	*msg &= ~GOOG_MBA_Q_SEQ_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_SEQ_MASK, seq);
++}
++
++static inline void goog_mba_q_set_token(u32 *msg, u32 token)
++{
++	*msg &= ~GOOG_MBA_Q_TOKEN_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_TOKEN_MASK, token);
++}
++
++static inline void goog_mba_q_set_type(u32 *msg, u32 type)
++{
++	*msg &= ~GOOG_MBA_Q_TYPE_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_TYPE_MASK, type);
++}
++
++static inline void goog_mba_q_set_valid(u32 *msg, bool is_valid)
++{
++	u32 val = is_valid ? 1 : 0;
++	*msg &= ~GOOG_MBA_Q_VALID_MASK;
++	*msg |= FIELD_PREP(GOOG_MBA_Q_VALID_MASK, val);
++}
++
++static inline u32 goog_mba_q_create_hdr(u32 src_id, u32 dst_id, u32 seq,
++					u32 token, u32 type)
++{
++	return FIELD_PREP(GOOG_MBA_Q_SRC_ID_MASK, src_id) |
++	       FIELD_PREP(GOOG_MBA_Q_DST_ID_MASK, dst_id) |
++	       FIELD_PREP(GOOG_MBA_Q_SEQ_MASK, seq) |
++	       FIELD_PREP(GOOG_MBA_Q_TOKEN_MASK, token) |
++	       FIELD_PREP(GOOG_MBA_Q_TYPE_MASK, type) |
++	       FIELD_PREP(GOOG_MBA_Q_VALID_MASK, 1);
++}
++
++struct cpm_session {
++	struct kref refcount;
++	struct completion complete;
++	struct cpm_payload req_msg;
++	struct cpm_payload resp_msg;
++	struct goog_mba_tx_msg req_mba_msg;
++};
++
++#define CREATE_TRACE_POINTS
++#include "google-cpm-mba-trace.h"
++
++#define MBOX_IDX_REQ			0
++#define MBOX_IDX_RESP			1
++
++struct cpm_mbox_chan_info {
++	struct mbox_client client;
++	struct mbox_chan *chan;
++	struct list_head entry;
++};
++
++/**
++ * struct cpm_data - Core data for the CPM interface module
++ * @dev: The device structure associated with this CPM interface.
++ * @client_list_head: List of registered client handles.
++ * @lock: Spinlock for protecting critical sections.
++ * @seq_num: Sequence number for debugging.
++ * @resp_pending: Array for sessions awaiting responses from the CPM host.
++ * @resp_pending_size: Number of @resp_pending entries in use.
++ * @req_chans: Circular list of request mailbox channels (rotated round-robin).
++ * @resp_chan: Response mailbox channel.
++ */
++struct cpm_data {
++	struct device *dev;
++	struct list_head client_list_head;
++
++	/*
++	 * Protect queue operations including token, resp_pending, req_chans,
++	 * and resp_chan.
++	 */
++	spinlock_t lock;
++	int seq_num;
++	struct cpm_session *resp_pending[GOOG_MBA_Q_MAX_TOKEN_VAL];
++	int resp_pending_size;
++	struct list_head req_chans;
++	struct cpm_mbox_chan_info resp_chan;
++};
++
++static const struct of_device_id cpm_of_match_table[] = {
++	{ .compatible = "google,lga-cpm" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, cpm_of_match_table);
++
++static inline bool cpm_is_request_msg(const struct cpm_request *req)
++{
++	return req->msg_type == REQUEST_MSG;
++}
++
++static inline bool cpm_is_oneway_msg(const struct cpm_request *req)
++{
++	return req->msg_type == ONEWAY_MSG;
++}
++
++static inline bool cpm_is_response_msg(const struct cpm_request *req)
++{
++	return req->msg_type == RESPONSE_MSG;
++}
++
++static inline bool cpm_is_request_header(const void *msg)
++{
++	return goog_mba_q_get_type(msg) == GOOG_MBA_Q_TYPE_REQUEST;
++}
++
++static inline bool cpm_is_oneway_header(const void *msg)
++{
++	return goog_mba_q_get_type(msg) == GOOG_MBA_Q_TYPE_ONEWAY;
++}
++
++static inline bool cpm_is_response_header(const void *msg)
++{
++	return goog_mba_q_get_type(msg) == GOOG_MBA_Q_TYPE_RESPONSE;
++}
++
++static inline bool cpm_is_init_header(const void *msg)
++{
++	return *(const u32 *)msg == GOOG_MBA_Q_INIT_PROTO_VAL;
++}
++
++static void cpm_session_release(struct kref *kref)
++{
++	struct cpm_session *session = container_of(kref, struct cpm_session, refcount);
++
++	kfree(session);
++}
++
++DEFINE_FREE(session_put, struct cpm_session *, if (_T) kref_put(&_T->refcount, cpm_session_release))
++
++/**
++ * cpm_add_pending_resp - add session to pending table to wait for host response
++ * @cpm: Core driver data.
++ * @session: Client's session waiting for response.
++ *
++ * Return: 0 on success, -EBUSY if no token is available.
++ */
++static int cpm_add_pending_resp(struct cpm_data *cpm, struct cpm_session *session)
++{
++	struct device *dev = cpm->dev;
++	int token;
++
++	lockdep_assert_held(&cpm->lock);
++
++	for (token = 0; token < GOOG_MBA_Q_MAX_TOKEN_VAL; token++) {
++		if (!cpm->resp_pending[token]) {
++			goog_mba_q_set_token(&session->req_msg.header, token);
++			kref_get(&session->refcount);
++			cpm->resp_pending[token] = session;
++			cpm->resp_pending_size++;
++			return 0;
++		}
++	}
++
++	dev_err(dev, "Failed to find available entries in resp_pending (size:%d)\n",
++		cpm->resp_pending_size);
++
++	return -EBUSY;
++}
++
++/**
++ * cpm_remove_pending_resp - remove session entry from pending table after received response
++ * @cpm: Core driver data.
++ * @msg_payload: Used to resolve embedded token value to remove corresponding
++ *	entry of pending table.
++ *
++ * Return: True if a matching session was found and removed, false otherwise.
++ */
++static bool
++cpm_remove_pending_resp(struct cpm_data *cpm,
++			const struct cpm_payload *msg_payload)
++{
++	struct cpm_session *session;
++	int token = goog_mba_q_get_token(&msg_payload->header);
++
++	lockdep_assert_held(&cpm->lock);
++
++	session = cpm->resp_pending[token];
++	if (!session)
++		return false;
++
++	cpm->resp_pending[token] = NULL;
++	cpm->resp_pending_size--;
++
++	if (cpm_is_response_header(msg_payload)) {
++		trace_cpm_resp_cb(session, msg_payload);
++		session->resp_msg = *msg_payload;
++		complete(&session->complete);
++	}
++
++	kref_put(&session->refcount, cpm_session_release);
++
++	return true;
++}
++
++static void
++cpm_remove_pending_by_session(struct cpm_data *cpm,
++			      struct cpm_session *session)
++{
++	int token;
++
++	lockdep_assert_held(&cpm->lock);
++
++	for (token = 0; token < GOOG_MBA_Q_MAX_TOKEN_VAL; token++) {
++		if (cpm->resp_pending[token] == session) {
++			cpm->resp_pending[token] = NULL;
++			cpm->resp_pending_size--;
++			kref_put(&session->refcount, cpm_session_release);
++			return;
++		}
++	}
++}
++
++/**
++ * cpm_set_seq_number - assign sequential number in valid range
++ * @cpm: Core driver data.
++ * @req_msg: Request payload to write sequence number to.
++ */
++static inline void cpm_set_seq_number(struct cpm_data *cpm,
++				      struct cpm_payload *req_msg)
++{
++	int seq_num;
++
++	seq_num = cpm->seq_num;
++	goog_mba_q_set_seq(&req_msg->header, seq_num);
++	if (seq_num == GOOG_MBA_Q_MAX_SEQ_VAL)
++		cpm->seq_num = GOOG_MBA_Q_MIN_SEQ_VAL;
++	else
++		cpm->seq_num++;
++}
++
++static struct cpm_client *
++cpm_search_client_by_id(struct cpm_data *cpm, int id)
++{
++	struct cpm_client *client;
++
++	if (id < 0 || id > GOOG_MBA_Q_MAX_SRC_ID_VAL)
++		return ERR_PTR(-EINVAL);
++
++	list_for_each_entry(client, &cpm->client_list_head, entry) {
++		if (client->src_id == id)
++			return client;
++	}
++
++	return NULL;
++}
++
++struct cpm_client *cpm_request_client(struct device *dev,
++				      int src_id,
++				      cpm_cb_t cpm_cb,
++				      void *priv)
++{
++	struct cpm_client *client;
++	struct cpm_data *cpm;
++
++	if (!dev_is_auxiliary(dev)) {
++		dev_err(dev, "Device is not an auxiliary device\n");
++		return ERR_PTR(-EINVAL);
++	}
++
++	if (WARN_ON(!of_match_node(cpm_of_match_table, dev->parent->of_node))) {
++		dev_err(dev, "Parent device is not CPM: %s\n", dev_name(dev->parent));
++		return ERR_PTR(-EINVAL);
++	}
++
++	cpm = dev_get_drvdata(dev->parent);
++	if (WARN_ON(!cpm))
++		return ERR_PTR(-ENODEV);
++
++	client = kzalloc_obj(*client, GFP_KERNEL);
++	if (!client)
++		return ERR_PTR(-ENOMEM);
++
++	INIT_LIST_HEAD(&client->entry);
++	client->dev = dev;
++	client->src_id = src_id;
++	client->host_tx_cb = cpm_cb;
++	client->priv = priv;
++
++	scoped_guard(spinlock_irqsave, &cpm->lock) {
++		if (src_id) {
++			struct cpm_client *existing;
++
++			existing = cpm_search_client_by_id(cpm, src_id);
++			if (IS_ERR(existing)) {
++				dev_err(dev, "src_id(%d) out of valid range\n", src_id);
++				kfree(client);
++				return existing;
++			}
++
++			if (existing) {
++				kfree(client);
++				return ERR_PTR(-EBUSY);
++			}
++		}
++		list_add(&client->entry, &cpm->client_list_head);
++	}
++
++	trace_cpm_request_client(client);
++
++	return client;
++}
++EXPORT_SYMBOL_GPL(cpm_request_client);
++
++void cpm_free_client(struct cpm_client *client)
++{
++	struct cpm_data *cpm = dev_get_drvdata(client->dev->parent);
++
++	trace_cpm_free_client(client);
++
++	scoped_guard(spinlock_irqsave, &cpm->lock)
++		list_del(&client->entry);
++
++	kfree(client);
++}
++EXPORT_SYMBOL_GPL(cpm_free_client);
++
++static void devm_cpm_client_release(void *data)
++{
++	struct cpm_client *client = data;
++
++	cpm_free_client(client);
++}
++
++struct cpm_client *devm_cpm_request_client(struct device *dev,
++					   int src_id,
++					   cpm_cb_t cpm_cb,
++					   void *priv)
++{
++	struct cpm_client *client;
++	int ret;
++
++	client = cpm_request_client(dev, src_id, cpm_cb, priv);
++	if (IS_ERR(client))
++		return client;
++
++	ret = devm_add_action_or_reset(dev, devm_cpm_client_release, client);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return client;
++}
++EXPORT_SYMBOL_GPL(devm_cpm_request_client);
++
++static u32 cpm_req_get_header(struct cpm_client *client, struct cpm_request *cpm_req)
++{
++	u32 header = 0;
++
++	if (cpm_is_oneway_msg(cpm_req)) {
++		header = goog_mba_q_create_hdr(client->src_id, cpm_req->dst_id,
++					       0, 0, GOOG_MBA_Q_TYPE_ONEWAY);
++	} else if (cpm_is_request_msg(cpm_req)) {
++		header = goog_mba_q_create_hdr(client->src_id, cpm_req->dst_id,
++					       0, 0, GOOG_MBA_Q_TYPE_REQUEST);
++	} else if (cpm_is_response_msg(cpm_req)) {
++		goog_mba_q_set_type(&cpm_req->resp_context,
++				    GOOG_MBA_Q_TYPE_RESPONSE);
++		header = cpm_req->resp_context;
++	}
++
++	return header;
++}
++
++static int cpm_try_submit(struct cpm_data *cpm, struct cpm_session *session)
++{
++	struct device *dev = cpm->dev;
++	struct cpm_payload *req_msg = &session->req_msg;
++	struct cpm_mbox_chan_info *mbox_chan_info;
++	int ret;
++
++	lockdep_assert_held(&cpm->lock);
++
++	if (!cpm_is_init_header(req_msg)) {
++		session->req_mba_msg.init = false;
++		if (cpm_is_request_header(req_msg)) {
++			ret = cpm_add_pending_resp(cpm, session);
++			if (ret < 0)
++				return ret;
++		}
++		cpm_set_seq_number(cpm, req_msg);
++	} else {
++		session->req_mba_msg.init = true;
++	}
++
++	mbox_chan_info = list_first_entry(&cpm->req_chans,
++					  struct cpm_mbox_chan_info, entry);
++
++	/* Get ref for request channel TX completion before submit */
++	kref_get(&session->refcount);
++
++	session->req_mba_msg.payload = (u32 *)req_msg;
++	session->req_mba_msg.payload_words =
++		sizeof(*req_msg) / sizeof(*session->req_mba_msg.payload);
++
++	ret = mbox_send_message(mbox_chan_info->chan, &session->req_mba_msg);
++	trace_cpm_submit_msg(session, req_msg);
++	if (ret < 0) {
++		dev_err(dev, "mbox_send_message failed to send (ret:%d)\n", ret);
++		dev_err(dev, "header: %#x, payload: [%#x, %#x, %#x]\n",
++			req_msg->header, req_msg->payload[0],
++			req_msg->payload[1], req_msg->payload[2]);
++		dev_err(dev, "[mbox_chan] msg_count:%u, msg_free:%u\n",
++			mbox_chan_info->chan->msg_count,
++			mbox_chan_info->chan->msg_free);
++		if (!cpm_is_init_header(req_msg) && cpm_is_request_header(req_msg))
++			cpm_remove_pending_resp(cpm, req_msg);
++		/* Put ref for request channel since submit failed */
++		kref_put(&session->refcount, cpm_session_release);
++
++		return ret;
++	}
++
++	list_rotate_left(&cpm->req_chans);
++
++	return 0;
++}
++
++static int __cpm_send_message(struct cpm_data *cpm,
++			      struct cpm_request *cpm_req,
++			      u32 header, int src_id)
++{
++	unsigned long wait = MAX_SCHEDULE_TIMEOUT;
++	int ret;
++
++	struct cpm_session *session __free(session_put) = kzalloc_obj(*session, GFP_KERNEL);
++	if (!session)
++		return -ENOMEM;
++
++	cpm_req->req_msg->header = header;
++
++	/* Initialize session */
++	kref_init(&session->refcount);
++	init_completion(&session->complete);
++
++	session->req_msg = *cpm_req->req_msg;
++
++	trace_cpm_req_enqueue(session, cpm_req, src_id);
++
++	scoped_guard(spinlock_irqsave, &cpm->lock) {
++		ret = cpm_try_submit(cpm, session);
++		if (ret < 0)
++			return ret;
++	}
++
++	if (cpm_req->tout_ms)
++		wait = msecs_to_jiffies(cpm_req->tout_ms);
++
++	if (wait_for_completion_timeout(&session->complete, wait) == 0) {
++		ret = -ETIMEDOUT;
++		/* Clean up pending response mapping on timeout */
++		scoped_guard(spinlock_irqsave, &cpm->lock)
++			cpm_remove_pending_by_session(cpm, session);
++	} else if (cpm_is_request_msg(cpm_req) && cpm_req->resp_msg) {
++		*cpm_req->resp_msg = session->resp_msg;
++	}
++	trace_cpm_send_message(session, ret);
++
++	return ret;
++}
++
++static bool cpm_iface_is_valid_req(struct cpm_data *cpm,
++				   struct cpm_request *cpm_req)
++{
++	struct device *dev = cpm->dev;
++
++	if (!cpm_req) {
++		dev_err(dev, "cpm_req is NULL\n");
++		return false;
++	}
++
++	if (!cpm_req->req_msg) {
++		dev_err(dev, "cpm_req->req_msg is NULL\n");
++		return false;
++	}
++
++	if (cpm_req->msg_type > RESPONSE_MSG || cpm_req->msg_type < ONEWAY_MSG) {
++		dev_err(dev, "Invalid msg_type: %d\n", cpm_req->msg_type);
++		return false;
++	}
++
++	if (cpm_is_request_msg(cpm_req) && !cpm_req->resp_msg) {
++		dev_err(dev, "cpm_req->resp_msg is NULL when msg_type is REQUEST_MSG\n");
++		return false;
++	}
++
++	if (cpm_is_response_msg(cpm_req)) {
++		if (!goog_mba_q_get_valid(&cpm_req->resp_context)) {
++			dev_err(dev, "Invalid valid bit in resp_context: %#x\n",
++				cpm_req->resp_context);
++			return false;
++		}
++
++		if (!cpm_is_response_header(&cpm_req->resp_context)) {
++			dev_err(dev, "Invalid response type in resp_context: %#x\n",
++				cpm_req->resp_context);
++			return false;
++		}
++	}
++
++	return true;
++}
++
++int cpm_send_message(struct cpm_client *client, struct cpm_request *cpm_req)
++{
++	struct cpm_data *cpm;
++	u32 header;
++
++	if (!client)
++		return -EINVAL;
++
++	cpm = dev_get_drvdata(client->dev->parent);
++	if (!cpm)
++		return -ENODEV;
++
++	if (!cpm_iface_is_valid_req(cpm, cpm_req))
++		return -EINVAL;
++
++	header = cpm_req_get_header(client, cpm_req);
++	if (!header)
++		return -EINVAL;
++
++	return __cpm_send_message(cpm, cpm_req, header, client->src_id);
++}
++EXPORT_SYMBOL_GPL(cpm_send_message);
++
++/**
++ * cpm_req_tx_done - callback function from request channels
++ * @client: Pointer to the mailbox client structure.
++ * @msg: Pointer to the transmitted mailbox message.
++ * @r: Status of the transmission.
++ */
++static void cpm_req_tx_done(struct mbox_client *client, void *msg, int r)
++{
++	struct cpm_session *session;
++
++	if (!msg)
++		return;
++
++	session = container_of(msg, struct cpm_session, req_mba_msg);
++
++	trace_cpm_req_tx_done(session);
++
++	if (cpm_is_oneway_header(&session->req_msg) ||
++	    cpm_is_response_header(&session->req_msg))
++		complete(&session->complete);
++
++	kref_put(&session->refcount, cpm_session_release);
++}
++
++static inline u32 cpm_iface_prepare_resp_context(u32 header)
++{
++	u32 src_id = goog_mba_q_get_dst_id(&header);
++	u32 dst_id = goog_mba_q_get_src_id(&header);
++	u32 token = goog_mba_q_get_token(&header);
++
++	return goog_mba_q_create_hdr(src_id, dst_id, 0, token,
++				     GOOG_MBA_Q_TYPE_RESPONSE);
++}
++
++static void cpm_handle_host_tx(struct cpm_data *cpm, const void *msg)
++{
++	struct device *dev = cpm->dev;
++	const struct cpm_payload *msg_payload = msg;
++	struct cpm_client *client;
++	int dst_id = goog_mba_q_get_dst_id(msg);
++	u32 resp_context = 0;
++
++	if (cpm_is_request_header(msg))
++		resp_context = cpm_iface_prepare_resp_context(msg_payload->header);
++
++	scoped_guard(spinlock_irqsave, &cpm->lock) {
++		client = cpm_search_client_by_id(cpm, dst_id);
++		if (IS_ERR_OR_NULL(client) || !client->host_tx_cb) {
++			dev_err(dev, "No available client callback (id:%d).\n Payload Info:\n",
++				dst_id);
++			print_hex_dump(KERN_ERR, dev_name(dev), DUMP_PREFIX_NONE, 16, 4,
++				       msg_payload, sizeof(*msg_payload), false);
++			return;
++		}
++
++		client->host_tx_cb(resp_context, msg_payload, client->priv);
++	}
++
++	trace_cpm_handle_host_tx(dst_id, resp_context, msg_payload);
++}
++
++/**
++ * cpm_resp_cb - Handles incoming messages on response channels
++ * @mbox_client: Pointer to the mailbox client structure.
++ * @param: Pointer to the received mailbox message (&struct goog_mba_rx_msg).
++ *
++ * This callback is invoked when a message arrives on a response channel. It
++ * handles the following scenarios:
++ *
++ * 1. CPM Response to Client Request: Processes a response from the CPM to a
++ *    previously issued client request.
++ * 2. CPM-Initiated Request: Processes a new request initiated by the CPM and
++ *    dispatches it to the appropriate client handler.
++ * 3. Invalid Message Type: Handles unexpected message types.
++ */
++static void cpm_resp_cb(struct mbox_client *mbox_client, void *param)
++{
++	struct goog_mba_rx_msg *rx_msg = param;
++	const void *msg = rx_msg->payload;
++	struct cpm_mbox_chan_info *chan_info =
++		container_of(mbox_client, struct cpm_mbox_chan_info, client);
++	struct cpm_data *cpm = container_of(chan_info, struct cpm_data, resp_chan);
++	struct device *dev = cpm->dev;
++
++	if (cpm_is_init_header(msg)) {
++		/*
++		 * This is unexpected. If we see this, we may need to initiate
++		 * our own (re)init message -- cpm_init_q_mode().
++		 */
++		dev_err(dev, "Reset message received from the remote\n");
++		return;
++	}
++
++	if (cpm_is_response_header(msg)) {
++		const struct cpm_payload *msg_payload = msg;
++		bool found;
++
++		scoped_guard(spinlock_irqsave, &cpm->lock)
++			found = cpm_remove_pending_resp(cpm, msg_payload);
++		if (!found)
++			dev_err(dev,
++				"No token:%u found for response payload: %#10x %#10x %#10x %#10x\n",
++				goog_mba_q_get_token(&msg_payload->header),
++				msg_payload->header, msg_payload->payload[0],
++				msg_payload->payload[1], msg_payload->payload[2]);
++	} else if (cpm_is_request_header(msg) || cpm_is_oneway_header(msg)) {
++		cpm_handle_host_tx(cpm, msg);
++	} else {
++		dev_err(dev, "Unknown message type: %u\n", goog_mba_q_get_type(msg));
++	}
++}
++
++static void cpm_iface_free_chan_action(void *data)
++{
++	struct cpm_mbox_chan_info *chan = data;
++
++	mbox_free_channel(chan->chan);
++}
++
++static int
++cpm_init_channel(struct cpm_data *cpm,
++		 struct cpm_mbox_chan_info *chan_info,
++		 int idx,
++		 void (*txdone_callback)(struct mbox_client *client, void *msg, int r),
++		 void (*rx_callback)(struct mbox_client *client, void *msg))
++{
++	struct device *dev = cpm->dev;
++	struct mbox_client *client;
++
++	client = &chan_info->client;
++	client->dev = dev;
++	client->rx_callback = rx_callback;
++	client->tx_done = txdone_callback;
++
++	chan_info->chan = mbox_request_channel(client, idx);
++	if (IS_ERR(chan_info->chan))
++		return PTR_ERR(chan_info->chan);
++
++	return devm_add_action_or_reset(dev, cpm_iface_free_chan_action, chan_info);
++}
++
++/**
++ * cpm_init_req_channels - Request all available TX mailbox channels
++ * @cpm: Core driver data.
++ *
++ * The Linux mailbox core only allows a single in-flight message per channel.
++ * To utilize the underlying mailbox controller's hardware queue, the
++ * controller exposes one mailbox channel per hardware queue slot (N channels
++ * total) for the same devicetree node (with #mbox-cells = <0>) and hands out
++ * the next unbound channel on each mbox_request_channel() call. Repeatedly
++ * request MBOX_IDX_REQ until all hardware queue slots have been claimed
++ * (-EBUSY).
++ *
++ * cpm_try_submit() then rotates through @cpm->req_chans round-robin under
++ * @cpm->lock. Because the hardware queue is strictly FIFO, the m-th message is
++ * always assigned to channel (m mod N):
++ * - When fewer than N messages are in flight in hardware, the next channel in
++ *   the rotation is guaranteed to already be idle and submits straight to
++ *   hardware.
++ * - When all N hardware slots are busy, the next channel in the rotation holds
++ *   the oldest in-flight message and will be the first to complete, so
++ *   queuing into that channel's mailbox-core software queue drains messages
++ *   into hardware in FIFO order.
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++static int cpm_init_req_channels(struct cpm_data *cpm)
++{
++	struct device *dev = cpm->dev;
++	int ret;
++
++	while (true) {
++		struct cpm_mbox_chan_info *chan_info;
++
++		chan_info = devm_kzalloc(dev, sizeof(*chan_info), GFP_KERNEL);
++		if (!chan_info)
++			return -ENOMEM;
++
++		ret = cpm_init_channel(cpm, chan_info, MBOX_IDX_REQ,
++				       cpm_req_tx_done, NULL);
++		if (ret) {
++			devm_kfree(dev, chan_info);
++			if (ret == -EBUSY && !list_empty(&cpm->req_chans))
++				return 0;
++			return dev_err_probe(dev, ret,
++					     "Failed to request TX mailbox channel\n");
++		}
++
++		list_add_tail(&chan_info->entry, &cpm->req_chans);
++	}
++}
++
++static int cpm_init_q_mode_proto(struct cpm_data *cpm)
++{
++	struct cpm_payload msg_payload = {};
++	struct cpm_request req = {
++		.msg_type = ONEWAY_MSG,
++		.req_msg = &msg_payload,
++	};
++
++	return __cpm_send_message(cpm, &req, GOOG_MBA_Q_INIT_PROTO_VAL, 0);
++}
++
++static int cpm_init_q_mode(struct cpm_data *cpm)
++{
++	int ret;
++
++	ret = cpm_init_q_mode_proto(cpm);
++	if (ret < 0)
++		return ret;
++
++	cpm->seq_num = GOOG_MBA_Q_MIN_SEQ_VAL;
++
++	return 0;
++}
++
++static void cpm_adev_release(struct device *dev)
++{
++	struct auxiliary_device *adev = to_auxiliary_dev(dev);
++
++	of_node_put(dev->of_node);
++	kfree(adev);
++}
++
++static void cpm_unregister_adev_action(void *data)
++{
++	struct auxiliary_device *adev = data;
++
++	auxiliary_device_delete(adev);
++	auxiliary_device_uninit(adev);
++}
++
++static int cpm_register_adev(struct cpm_data *cpm, const char *name)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = kzalloc_obj(*adev, GFP_KERNEL);
++	if (!adev)
++		return -ENOMEM;
++
++	adev->name = name;
++	adev->id = 0;
++	adev->dev.parent = cpm->dev;
++	adev->dev.release = cpm_adev_release;
++	device_set_of_node_from_dev(&adev->dev, cpm->dev);
++
++	ret = auxiliary_device_init(adev);
++	if (ret) {
++		of_node_put(adev->dev.of_node);
++		kfree(adev);
++		return ret;
++	}
++
++	ret = auxiliary_device_add(adev);
++	if (ret) {
++		auxiliary_device_uninit(adev);
++		return ret;
++	}
++
++	return devm_add_action_or_reset(cpm->dev, cpm_unregister_adev_action, adev);
++}
++
++static const char * const cpm_adev_names[] = {
++	"reset",
++	"power-controller",
++	"clk",
++	"irq",
++};
++
++static int cpm_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct cpm_data *cpm;
++	int ret;
++
++	cpm = devm_kzalloc(dev, sizeof(*cpm), GFP_KERNEL);
++	if (!cpm)
++		return -ENOMEM;
++
++	cpm->dev = dev;
++	platform_set_drvdata(pdev, cpm);
++
++	spin_lock_init(&cpm->lock);
++	INIT_LIST_HEAD(&cpm->client_list_head);
++	INIT_LIST_HEAD(&cpm->req_chans);
++
++	ret = cpm_init_req_channels(cpm);
++	if (ret)
++		return ret;
++
++	ret = cpm_init_channel(cpm, &cpm->resp_chan, MBOX_IDX_RESP,
++			       NULL, cpm_resp_cb);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Failed to request RX mailbox channel\n");
++
++	ret = cpm_init_q_mode(cpm);
++	if (ret < 0)
++		return ret;
++
++	for (int i = 0; i < ARRAY_SIZE(cpm_adev_names); i++) {
++		ret = cpm_register_adev(cpm, cpm_adev_names[i]);
++		if (ret) {
++			dev_err(dev, "failed to register %s auxiliary device: %d\n",
++				cpm_adev_names[i], ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static struct platform_driver cpm_driver = {
++	.probe = cpm_probe,
++	.driver = {
++		.name = "google-cpm-mba",
++		.of_match_table = cpm_of_match_table,
++	},
++};
++
++module_platform_driver(cpm_driver);
++
++MODULE_DESCRIPTION("Google MBA CPM interface");
++MODULE_AUTHOR("Lucas Wei <lucaswei@google.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/soc/google/google-cpm-mba.h b/drivers/soc/google/google-cpm-mba.h
+new file mode 100644
+index 000000000000..425fe3171085
+--- /dev/null
++++ b/drivers/soc/google/google-cpm-mba.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright 2023-2026 Google LLC
++ */
++
++#ifndef _GOOGLE_CPM_MBA_PRIV_H_
++#define _GOOGLE_CPM_MBA_PRIV_H_
++
++#include <linux/device.h>
++#include <linux/list.h>
++#include <linux/types.h>
++#include <soc/google/google-cpm-mba.h>
++
++/**
++ * struct cpm_client - Represents a registered CPM interface client
++ * @dev: The client's associated device.
++ * @src_id: The client's source ID within the CPM system.
++ * @host_tx_cb: Callback function invoked for CPM-initiated transactions.
++ * @entry: Internal field for managing the list of active clients.
++ * @priv: Client-specific data passed to the @host_tx_cb callback.
++ */
++struct cpm_client {
++	struct device *dev;
++	int src_id;
++	cpm_cb_t host_tx_cb;
++	struct list_head entry;
++	void *priv;
++};
++
++#endif /* _GOOGLE_CPM_MBA_PRIV_H_ */
+diff --git a/include/soc/google/goog_cpm_service_ids.h b/include/soc/google/goog_cpm_service_ids.h
+new file mode 100644
+index 000000000000..c28766fe6ba8
+--- /dev/null
++++ b/include/soc/google/goog_cpm_service_ids.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright 2022-2026 Google LLC
++ */
++
++#ifndef __GOOG_CPM_SERVICE_ID_H
++#define __GOOG_CPM_SERVICE_ID_H
++
++enum apc_common_mba_service_id {
++	APC_COMMON_SERVICE_FIRST		= 0x0,
++	APC_COMMON_SERVICE_ID_RESERVED		= 0x0,
++	APC_COMMON_SERVICE_ID_PING		= 0x1,
++	APC_COMMON_SERVICE_ID_CPMLOG		= 0x2,
++	APC_COMMON_SERVICE_ID_GMC		= 0x3,
++	APC_COMMON_SERVICE_ID_GSLC		= 0x4,
++	APC_COMMON_SERVICE_ID_CPM_TRACEPOINT	= 0x5,
++	APC_COMMON_SERVICE_ID_PF_STATE_CPM	= 0x6,
++	APC_COMMON_SERVICE_ID_POWER_CONTROLLER	= 0x7,
++	APC_COMMON_SERVICE_ID_MIPM		= 0x8,
++	APC_COMMON_SERVICE_LAST			= 0x37,
++};
++
++#define MBA_COMMON_MIN_SERVICE_ID		0x38
++#define MBA_COMMON_MAX_SERVICE_ID		0x70
++
++enum cpm_common_mba_service_id {
++	CPM_COMMON_SERVICE_FIRST		= 0x0,
++	/* Test service */
++	CPM_COMMON_PING_SERVICE			= 0x0,
++	/* Used for extracting logs */
++	CPM_AP_COMMON_LOG_SERVICE		= 0x1,
++	/* Interact with tracepoint library */
++	CPM_AP_COMMON_TRACEPOINT_SERVICE	= 0x2,
++	/* Control GSLC CPM functions */
++	CPM_AP_COMMON_GSLC_MB_SERVICE		= 0x3,
++	/* Control GMCCPM functions */
++	CPM_AP_COMMON_GMC_MB_SERVICE		= 0x4,
++	/* Control LPB peripheral */
++	CPM_COMMON_LPB_SERVICE			= 0x5,
++	/* System reset service */
++	CPM_COMMON_RESET_SERVICE		= 0x6,
++	/* ODPM API service for AP */
++	CPM_AP_COMMON_ODPM_MB_SERVICE		= 0x7,
++	/* LPCM service. */
++	CPM_COMMON_LPCM_SERVICE			= 0x8,
++	/* Control and modify SoC power states */
++	CPM_COMMON_POWER_STATE_SERVICE		= 0x9,
++	/* PMIC related services */
++	CPM_COMMON_PMIC_SERVICE			= 0xA,
++	/* MIPM interface */
++	CPM_COMMON_MIPM_SERVICE			= 0xB,
++	/* Thermal services - emul temps, loops, config, etc */
++	CPM_COMMON_THERMAL_SERVICE		= 0xC,
++	/* Pull PIF history status over LMF. */
++	CPM_COMMON_PIF_HISTORY_SERVICE		= 0xD,
++	/* Pwrblk/SSWRP based service */
++	CPM_COMMON_PWRBLK_SERVICE		= 0xE,
++	/* CPM command line service */
++	CPM_COMMON_COMMAND_LINE_SERVICE		= 0xF,
++	/* GDMC->CPM special message */
++	CPM_GDMC_PMIC_SERVICE			= 0x10,
++	/* SMMU initial register configuration service */
++	CPM_SMMU_SERVICE			= 0x11,
++	/* BCL service */
++	CPM_COMMON_BCL_SERVICE			= 0x12,
++	CPM_COMMON_THERMAL_V2_SERVICE		= 0x15,
++	/* Pixel firmware tracepoint service */
++	CPM_COMMON_FWTP_SERVICE			= 0x17,
++	CPM_COMMON_SERVICE_LAST			= 0x37,
++};
++
++enum cpm_ap_ns_mba_service_id {
++	CPM_AP_NS_MAILBOX_SERVICE_LAST		= 0x38,
++	CPM_AP_NS_SSRAM_SERVICE			= 0x66,
++	CPM_AP_NS_SPMI_SERVICE			= 0x67,
++	CPM_AP_NS_POWER_DASH_MB_SERVICE		= 0x68,
++	CPM_AP_NS_ODPM_MB_SERVICE		= 0x69,
++	CPM_AP_NS_IRQ_SERVICE			= 0x6E,
++	/* Control latency library CPM functions */
++	CPM_AP_NS_LTC_MB_SERVICE		= 0x70,
++	CPM_AP_NS_MAILBOX_SERVICE_FIRST		= 0x70,
++};
++
++#endif /* __GOOG_CPM_SERVICE_ID_H */
+diff --git a/include/soc/google/google-cpm-mba.h b/include/soc/google/google-cpm-mba.h
+new file mode 100644
+index 000000000000..16789f71a624
+--- /dev/null
++++ b/include/soc/google/google-cpm-mba.h
+@@ -0,0 +1,147 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright 2023-2026 Google LLC
++ */
++
++#ifndef _GOOGLE_CPM_MBA_H_
++#define _GOOGLE_CPM_MBA_H_
++
++#include <linux/types.h>
++
++struct cpm_client;
++
++/**
++ * enum cpm_msg_type - Specifies the type of message for CPM interface transactions
++ * @ONEWAY_MSG:   A one-way message that does not expect a response. The @resp_msg
++ *                field in &struct cpm_request is ignored.
++ * @REQUEST_MSG:  A request message that expects a response.
++ * @RESPONSE_MSG: A response message to a previous request.
++ */
++enum cpm_msg_type {
++	ONEWAY_MSG,
++	REQUEST_MSG,
++	RESPONSE_MSG,
++};
++
++#define GOOG_MBA_PAYLOAD_SIZE 3
++
++/**
++ * struct cpm_payload - Represents a payload for CPM messages
++ * @header:  A header containing message metadata (e.g., type, destination).
++ *           Client shouldn't fill the header.
++ * @payload: An array of 32-bit words representing the actual payload data.
++ */
++struct cpm_payload {
++	u32 header;
++	u32 payload[GOOG_MBA_PAYLOAD_SIZE];
++};
++
++/**
++ * struct cpm_request - Represents a request within the CPM interface
++ * @msg_type:     Specifies the message type (see &enum cpm_msg_type).
++ * @req_msg:      The request message payload.
++ * @resp_msg:     Buffer to receive a response (effective when @msg_type is REQUEST_MSG).
++ * @dst_id:       Destination service ID within the CPM host.
++ * @tout_ms:      Request timeout in milliseconds (0 indicates no timeout).
++ * @resp_context: Context for responding to CPM-initiated messages (used when
++ *                @msg_type is RESPONSE_MSG).
++ */
++struct cpm_request {
++	enum cpm_msg_type msg_type;
++	struct cpm_payload *req_msg;
++	struct cpm_payload *resp_msg;
++	int dst_id;
++	unsigned long tout_ms;
++	u32 resp_context;
++};
++
++/**
++ * typedef cpm_cb_t - Callback invoked for CPM-initiated transactions
++ * @context:   Context value provided by the CPM host.
++ *             0 for oneway request, otherwise client need to respond.
++ * @msg:       Pointer to the message payload received from the CPM host.
++ * @priv:      Client's private data (registered via cpm_request_client()).
++ *
++ * A client may register a callback while calling cpm_request_client(). Clients
++ * will be notified for CPM initiated request that match their src_id. @context
++ * indicates whether clients need to respond to CPM's request: ONEWAY_MSG for
++ * one-way requests from CPM; otherwise, clients needs to respond with msg_type
++ * assigned to RESPONSE_MSG.
++ *
++ * Callbacks may be called in an atomic context.
++ */
++typedef void (*cpm_cb_t)(u32 context, const struct cpm_payload *msg, void *priv);
++
++/**
++ * cpm_request_client() - Registers a client with the CPM interface
++ * @dev:       Client's device structure.
++ * @src_id:    Client's service ID for identification by CPM (optional).
++ *             Register client's service ID (1 to 255)
++ *             with callback in @cpm_cb to handle CPM initiated request.
++ *             Otherwise, specify 0.
++ * @cpm_cb:    Callback function invoked for CPM-initiated requests (optional).
++ * @priv:      Private data passed to the callback function (optional).
++ *
++ * This function initializes a CPM interface handle for the client, allowing the
++ * client to interact with the CPM. The handle encapsulates client-specific
++ * information for use by the CPM interface.
++ *
++ * Requirements:
++ *  * The client device must be an auxiliary_device child of the CPM device.
++ *  * Call cpm_free_client() when the handle is no longer needed, or just use
++ *    the devm_* variant.
++ *
++ * Return: A &struct cpm_client handle on success, or an ERR_PTR() on failure.
++ *         -ENODEV: invalid device structure (see details in kernel log).
++ *         -EBUSY: client has registered with the same @src_id.
++ *         -EINVAL: client bind to wrong phandle that CPM interface don't support.
++ *         -ENOMEM: memory allocation failed.
++ */
++struct cpm_client *cpm_request_client(struct device *dev,
++				      int src_id,
++				      cpm_cb_t cpm_cb,
++				      void *priv);
++
++/**
++ * devm_cpm_request_client() - Managed version of cpm_request_client()
++ * @dev:       Client's device structure.
++ * @src_id:    Client's service ID for identification by CPM (optional).
++ * @cpm_cb:    Callback function invoked for CPM-initiated requests (optional).
++ * @priv:  Private data passed to the callback function (optional).
++ *
++ * Return: A &struct cpm_client handle on success, or an ERR_PTR() on failure.
++ *         See cpm_request_client() for details.
++ */
++struct cpm_client *devm_cpm_request_client(struct device *dev,
++					   int src_id,
++					   cpm_cb_t cpm_cb,
++					   void *priv);
++
++/**
++ * cpm_free_client() - Free resources and refcount from CPM interface device
++ * @client: Handle of &struct cpm_client used for CPM message operations.
++ */
++void cpm_free_client(struct cpm_client *client);
++
++/**
++ * cpm_send_message() - Send a payload to CPM host
++ * @client:      Client handle obtained from cpm_request_client().
++ * @cpm_req:     Request structure containing message parameters.
++ *
++ * This function enables clients to transmit messages to the CPM host. It handles
++ * the following scenarios:
++ *
++ * * **One-way Messages:**        Returns after Tx done or timeout.
++ * * **Request Messages:**        Returns after receiving a response or timeout.
++ * * **CPM-Initiated Responses:** Transmits a response using the provided `resp_context`.
++ *
++ * Important Notes:
++ * * The first word of the request payload is used by the transport layer.
++ * * For request messages, the `resp_msg` field will hold the CPM host's response.
++ * * Do not call this function from atomic contexts due to potential blocking.
++ *
++ * Return: 0 on success; negative error code on failure.
++ */
++int cpm_send_message(struct cpm_client *client, struct cpm_request *cpm_req);
++
++#endif /* _GOOGLE_CPM_MBA_H_ */
 -- 
 2.56.0.307.g5fe7bd680c-goog
 
