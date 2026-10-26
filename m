@@ -1,101 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793047320;
-	b=yBeRU8DVUD5tFbDMID4pxm6kfDSKyZaSFGwCQ6jkyPc051jswqZcADh3eYgABBu5+9cr
-	 +uNSouONxi9FWxVUV3lFsTNnt4Dg776TgtFRwPEsrb342hf2cNnXnvQ0XbEvexl8zpIpj
-	 OUNuYxYrhzc86gl/S3GgCY6uAknqhq4okJ7RwW2bIsRf0366W5UPm7+8eSzArb1wvl1lU
-	 dQmZBeVMK3WkF20MAIaOxNo5N4tUvrKh/Fl02oIbSkXGyTHG/iNUi95n6W791LNdxMsVD
-	 1/A8SG6WLnfcKua42gp7MGfsfK4LZEfRVwFtBmEg2pMFzoVNrZ3bLuDiPs3Xi+V8+tw==
+	t=1793051104;
+	b=XsLpBMYNDuRKx1zIOwCWxjYG7hfrUF1TtA6BFEYRcBepNcjeLjFKhfV8C/QF7yRbAlqm
+	 99lFHyJcvt5hPjSmvHR7ts0ZkfBXoXgeXLhIqcJHdGx0mtICjEX2tJYVJQIcondhMng/2
+	 0ZUiBxhDVbb3p3cQhtcxE/JSEPzj5Gs8ADTcvLSQfxiikZtZvsZNJ5p2EpUcb552m8YCi
+	 VBF5OPpiz+RNIPQ8au7hGJ4hQVV3ZATFBSlTLTxs6t3SpNCEo3gfO4ewXuIzdj4pP3i9U
+	 uXpSQUDM5whc1O5X/ogxa+nCx9yPmzV2LmxmjUtr0zF/PSweixXS/4C26hyJaRX+9lQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793047320;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793051104;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=uNPrYlA+DnonfWUvT/WXv31GUY54FKsXFffmLPGjc3U=;
-	b=MXpseaJynk1qsgDSuz9F5zXTe4NzanPl9Q0TeRoCog9Jua9REAiQbrcGOYpGyZm8oL6d
-	 oSMZXD8kMuTZSbv61iWII46jHHHXW7bvJoOwZWkUjs7pUckMy+OKClPxJ5Gv8AeQrAVlT
-	 7Aoj0dtbAGg+LGP46+kmrFCmo1b0tTTPRZ1zOoPRUkVDv9VV7J4ZLU3OnKZQHHWVO/ZtY
-	 dHcOF+ihEZ0NHjHvNo4m0q9c3tMiktzNbwHDQlzYRWTwSQlbbr/MwkcDK1CpFSkfVYZMr
-	 wU8s8NM7ApCippaflriTuusKzqbtirBqBSRkIv8GuQ/bCbpnCggFO9UEWjbOCgSC2Ww==
+	bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
+	b=KsHrWeTK3VsEclUmJmeYj/W8fqL3iDL3c6do3rXK+OOLUcRg3PCDf0gnjjj7cMFJ3nLK
+	 q+O5D4ND7HhK89Du4xz9VlpatuN4/E/lwWJX4KBN4oeL+TG56UQStQkEuRZJz67BuzmT4
+	 OgyC40xUTWSjDGQUoKz9Orvfmf6x6OHVOkZJMtp1HUa/M5LUvtkMl8TId2Pujg7dcfHII
+	 F/jel77dLOkd/QKtF0RSPXobaBUK0H+IKrg9laQalxwrb+PDbpSc4qy40g44s3Zew2DfI
+	 NhLwzZ0fPpnZljEf8UJPBSxcHJbuheMG1rsT/k/np1E1wvJi5z+VOxwRP/wQrSzhjcA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=D2u1l+51;
-	arc=none smtp.remote-ip=209.85.221.45
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=apaSOd6E;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C76606A327
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 20:41:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C0C76606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71D606A323
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB71D606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=D2u1l+51
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48df8fe8513so3214836f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 13:41:59 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=apaSOd6E
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso10203646eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793047318; x=1793652118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uNPrYlA+DnonfWUvT/WXv31GUY54FKsXFffmLPGjc3U=;
-        b=D2u1l+51ww8RaMZptAI7B2SQPsbabz0R1hDbaoLcihdpMnClUig+O2jy2SiOn6eCJy
-         JP0e/6Y8IEo/e6RUNAR5tjAWURStvxGEa4z/0tw6qzs1npH1Oac7ytoJwqXL64BQOHZ5
-         eXjxwfgAztA1AqLXQypQ96peyGJb+MBQhTCDHmUZfWXT5IcMmtlIlx1vmH2qfFdHEfgJ
-         uj59hHB7bYa9KpH08mXvwZi7Y6sCqk0LWrOry9IUWjW4edsqo/avSYZ0pMS06WjSmUbp
-         1lXiuqrDhTiatpBYX9dANzQ4xNyajc8C2+bgRsJE/6IKDJi3DdtJLqWeonuvPpgw8Gzl
-         u5ag==
+        d=chromium.org; s=google; t=1793051103; x=1793655903; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
+        b=apaSOd6Ekoo+DEflA5oHfTJf6VOoOiMlZXRwTF70d3IY4E4GRP+ZbRacJNfZM+B2fo
+         xG+HsSUUOYqogdVHfdxppnkHlRLHJDz6ngDnY54ry+xqZzbkkJ5oKfM/XEyGHYPHinQT
+         xOBuOlrd7Tz8n1CYEZiJpQOWitgMdz+XjDFWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793047318; x=1793652118;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uNPrYlA+DnonfWUvT/WXv31GUY54FKsXFffmLPGjc3U=;
-        b=OfiEn9VjY/jB17JWs0u1++rEXJg0p5Mra6qvCeLLygW86PtVe4oIpp9Nzb80ss4FCk
-         9zMBUSCHdbTeP7YpwoB3Y3CQE2yOTSM6ZsrwB5xHzgThNdM7ZRlazvwcpVRz0xpsDX0b
-         UsmOQlXKhu4gxA/c5oMbJP591htZVCH0zeWe6ftb8GeSUbJF4qsfkJuOelaF6DEcQLED
-         nNSl9uS7M4czNphPFdCwwgTSKU/hetL2O8IJUVBONdStsUXLtu1Vh1/ieTYINVJN7mEd
-         752mw1PqfIcshiLSpVrKpL+W2tPJ8tRLcoRJGduCAbxEdxbJf6aAwrsL8e2VIx9LyOP8
-         CRKA==
-X-Gm-Message-State: AFq9FYItfp+0sRLVUSQJFQl5PdotM+W1h2SV2CJdzmwnFYPf2eOEsPz8
-	QNFiiEsnYXbuhd6uNfPkEM6g+kkxVkbmUddKZSsHS88QMGfKDrEj4pWm
-X-Gm-Gg: AYBFou2Ecf6tiv933b2mvlrtiB9mgSMDZ/YNR/hRZOSApmHB79O9M1wp3hj4h6OVxMO
-	DIawUtjG4h1qboYex5VrJDOpvTJUzgqCkwJzXM1t7pSujOaQ++p+KSJRGGXbpk+yHP50nWFaxKS
-	5SGeeuaHRvn6czprEj/bfjhZbfSTGS8hC5WjYgyPHwg1TgH4BiMgBxZmdSdWe1Waj9qvjxYtytu
-	fjybqjhNhV1fOlTqD5hGvFOidSjvx8h0AP+YzIhinMXwM1fU+RgTzHncGZdd6ZOIXupO+iEQKy9
-	+gOwxlc+2JX2ByYHpYAh310JhtgugOsaNi9RorEN4ltE+Mki1HWXD9Z4lfFZ9USx++dD8LIK5tX
-	wTks3cqe3HUR+//fhBnE3EViYvetNgWlQ7f0nnByNs/leFto7mqLQ9iV4ltwoPPywJPi7qSjJox
-	T90jSqVfeKM0UP9jl87P2st3BtLcLi4htANCOdcQbAhjNBbDI1pPnWhukrqp1K2Av69lDdfR3+/
-	oKfzeihasg2PjpbtxFMFzOh/HzzbgK3r3+lTzxyXE5DQNSB0gAHQkR4ST0J4dEyMRx7BqtSqO5l
-	xCSh31IRh1PvJkVU5Q5IA022LbG0L7x78wj7bU6ZihRYmcRAjQ9La5256iRGCsvSGAMyKcUpK3I
-	gKlGW1/xrI8maDKMneDhx8aY2wyDH3QXYO5tWOf+26/hXop2ONC+Hxt3HvbzZgptCrB59dzhVSb
-	nNOHQ1
-X-Received: by 2002:adf:f284:0:b0:48e:2980:d396 with SMTP id ffacd0b85a97d-48e3eb8d6a5mr12409485f8f.37.1793047318143;
-        Mon, 26 Oct 2026 13:41:58 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-8ce1-bbf6-5949-b0f3.ipv6.o2.cz. [2a00:1028:8388:a84e:8ce1:bbf6:5949:b0f3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc39b3sm19053152f8f.10.2026.10.26.13.41.57
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 26 Oct 2026 13:41:57 -0700 (PDT)
-From: Josef Schlehofer <pepe.schlehofer@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
+        d=1e100.net; s=20260707; t=1793051103; x=1793655903;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=w7Lnrq2N9PiE0AD2+3kvHV/FsHEM97WfxRe5sl0QfQU=;
+        b=uXW3xrgVBePuYmFhua5MAFBcxLdsABmCaqkkkQKl1Wbg1++8W9ZHpXByH+7E8vFNNS
+         YL0L2ieqsPZZCrC1vzBi+aMt+BGE1cZZA+ePSUT+L5hFGQFyUwsghckDmqbgAKMUPQ9v
+         lH/l4WHsfTvd9JoZ+I1ZouqxtNWxjBQGBwYb9WayDKv+r6tc1N6UCo8r6lpBZvJIq6nQ
+         UPTQFiAT73pu2pR5QeZ+wL2zkSzdBSsmzr6u08aP2aSyh8AABorWPp2K0NA0NUKoI9ro
+         eunmdsOEtnFxbHGKsHBG1igyrL9CRSG2xzWABEfz4fGLT2SfKLO+TS/FYRWPLcQAXJI2
+         PlFg==
+X-Forwarded-Encrypted: i=1; AKwUvBxCgpvfRJnoHGeUlA19hxGU9tCHPTjzqFISg9lhW36abo5cR0xEWMoXKEw7KsDh43/VtM8iIgfc10P95qsu8pYnKQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIpjFbj6GPc3xTMhCv4Ev16Iikjj13yyyvpR5ttGNpLLZnvMcy8
+	22SxvFiGBNkasxx1GY9x9FEbQEdj6rB0MmRZPtvz5ipAdls+RzporwndxkKhSKfPAA==
+X-Gm-Gg: AYBFou2yXk6gdI6RkqboCYpC/Hbi8LaMM7Z62qjYNAyNKN9+Ur1DweuVnSh85Re1sNw
+	uAhzp530qPpaRcAVrCQPRXaqT/tfM9sc01XcNIbgciM72os9oit4OXWIYPD39uI0+W7ceT4Efl3
+	wzmWPd+LOLOpGOxxA3mo5wuOX8N6gc7QSKTT4541FMmB99nzb2mMjqIVC7q0kSqdPZ9712XJqZc
+	Jl49lm7Aevkgno4BUOTx23NPQ01udEqsb700bSdzHYU1FWuXO9Q2unZaqUdJsmScmq1pk1ureNg
+	q2MLNycThCZumq2yXqqcDSBdiMZgkBGH2VPxWmPDakVsXlBIinEexnahP9B6GZ8w3ml/wMVVxPx
+	8LmYsu3Gd/SYzYI04jwEyb5RQF8MYWhBUOiCMp/IMYmGyYl/E7PpJKGsgDO2BIbGWeLEGQ6XtUm
+	NX23WrEvw8sJiYfVK+MG8i4FyAKBLLutr0LGoU1ZoAf/lyIi6MIQ2zfcxeyh/iqtsQQECIX1H5S
+	V9VSJN3frtYR62WM6DtQ/KbQQck7b0f4qTJL1rqxD0ow4jysvl2QbPnvZdw4srwefiHWn6XXow/
+	vD3GnCf0J1ZpRzcMs7cw
+X-Received: by 2002:a05:693c:42dc:b0:35d:d9a9:e455 with SMTP id 5a478bee46e88-369e84d3650mr12944624eec.21.1793051102383;
+        Mon, 26 Oct 2026 14:45:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:79c5:9cd3:db14:7468])
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-36a026e04a0sm9389095eec.1.2026.10.26.14.45.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Oct 2026 14:45:01 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v3 2/2] ARM: dts: samsung: Add Hardkernel ODROID-U2
-Date: Mon, 26 Oct 2026 21:41:54 +0100
-Message-ID: <20261026204154.26378-3-pepe.schlehofer@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261026204154.26378-1-pepe.schlehofer@gmail.com>
-References: <20261026204154.26378-1-pepe.schlehofer@gmail.com>
+	Radu Rendec <radu@rendec.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Mariano Marciello <mmarciello@google.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-clk@vger.kernel.org,
+	=?UTF-8?q?Jakub=20G=C5=82owacki?= <jglow@google.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 0/9] google: Add support for Laguna CPM
+Date: Mon, 26 Oct 2026 14:43:38 -0700
+Message-ID: <20261026214359.3122870-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -105,131 +112,140 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-ODROID-U2 is a single board computer from Hardkernel based on the
-Samsung Exynos4412 Prime SoC with 2 GB of LPDDR2 RAM. It is the
-predecessor of the ODROID-U3 and shares most of its design:
-- microSD card slot and eMMC module socket
-- SMSC LAN9730 10/100 Ethernet on HSIC0
-- SMSC USB3503A hub on HSIC1 with two USB 2.0 host ports
-- micro-HDMI port with CEC
-- MAX98090 audio codec with a 3.5 mm headphone jack and an on-board
-  digital microphone
-- MAX77686 PMIC
-- 2-pin header for an optional PWM controlled cooling fan
-- blue heartbeat LED
+The Central Power Manager (CPM) is a co-processor on the Google Tensor
+SoCs, as used on Pixel phones. CPM supports power-management and a
+number of other features.
 
-Unlike the ODROID-U3, the micro-USB port has no VBUS supply switch, so
-it can only work in peripheral mode, and there is no expansion header
-with SPI. The 3.5 mm jack is headphone only and the speaker outputs of
-the codec are not connected.
+The Application Processor communicates with CPM over a pair of mailbox
+channels. CPM provides clock, power-domain, reset, and interrupt
+services.
 
-Add a device tree for the board that includes the ODROID-U3 one and
-describes only these differences, as the ODROID-X2 does with the
-ODROID-X, and update the comments in the common dtsi, as the LDO22 and
-BUCK8 constraints are now also used by the ODROID-U2.
+This series adds device tree bindings, DTS, and drivers to support CPM,
+and several of the basic services provided by CPM. These services are a
+minimal set needed to bootstrap many other components on the SoC --
+e.g., I have a working proof-of-concept PCIe driver running on top of
+this series + pinctrl (not included here). CPM provides some other
+components not yet included in this series (e.g., PMIC, RTC).
 
-Also route "HiFi Capture" to "Mixer DAI RX", as on the ODROID-XU3. The
-odroid sound card driver adds only the playback routes for boards with
-a single CPU DAI, so without it the DPCM capture path to the I2S
-back-end is incomplete and recording from the digital microphone fails
-with "no backend DAIs enabled for Primary".
+This series depends on the bindings and mailbox-payload-definitions from
+this series:
 
-Link: https://www.hardkernel.com/shop/odroid-u2/
-Link: https://www.hardkernel.com/blog-2/odroid-u2-u-schematics/
-Reviewed-by: Henrik Grimler <henrik@grimler.se>
-Signed-off-by: Josef Schlehofer <pepe.schlehofer@gmail.com>
----
- arch/arm/boot/dts/samsung/Makefile            |  1 +
- .../dts/samsung/exynos4412-odroid-common.dtsi |  6 +--
- .../boot/dts/samsung/exynos4412-odroidu2.dts  | 41 +++++++++++++++++++
- 3 files changed, 45 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
+  https://lore.kernel.org/all/20261023235408.3063350-1-dianders@chromium.org/
+  [PATCH v2 0/4] mailbox: Improve the mbox core then introduce the goog-mba driver
 
-diff --git a/arch/arm/boot/dts/samsung/Makefile b/arch/arm/boot/dts/samsung/Makefile
-index e0143ee8c82d..2a173e4b3e1a 100644
---- a/arch/arm/boot/dts/samsung/Makefile
-+++ b/arch/arm/boot/dts/samsung/Makefile
-@@ -16,6 +16,7 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
- 	exynos4412-i9305.dtb \
- 	exynos4412-itop-elite.dtb \
- 	exynos4412-n710x.dtb \
-+	exynos4412-odroidu2.dtb \
- 	exynos4412-odroidu3.dtb \
- 	exynos4412-odroidx.dtb \
- 	exynos4412-odroidx2.dtb \
-diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-index 93ddbd4b0a18..b56b92c78c1d 100644
---- a/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4412-odroid-common.dtsi
-@@ -414,8 +414,8 @@ ldo21_reg: LDO21 {
- 
- 			ldo22_reg: LDO22 {
- 				/*
--				 * Only U3 uses it, so let it define the
--				 * constraints
-+				 * Only U2 and U3 use it, so let them define
-+				 * the constraints
- 				 */
- 				regulator-name = "LDO22";
- 				regulator-boot-on;
-@@ -486,7 +486,7 @@ buck7_reg: BUCK7 {
- 			buck8_reg: BUCK8 {
- 				/*
- 				 * Constraints set by specific board: X,
--				 * X2 and U3.
-+				 * X2, U2 and U3.
- 				 */
- 				regulator-name = "BUCK8_2.8V";
- 			};
-diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-new file mode 100644
-index 000000000000..8a18e65de30c
---- /dev/null
-+++ b/arch/arm/boot/dts/samsung/exynos4412-odroidu2.dts
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Hardkernel's Exynos4412 based ODROID-U2 board device tree source
-+ *
-+ * Copyright (c) 2026 Josef Schlehofer <pepe.schlehofer@gmail.com>
-+ *
-+ * Device tree source file for Hardkernel's ODROID-U2 board which is based
-+ * on Samsung's Exynos4412 SoC. The board is the predecessor of the
-+ * ODROID-U3, so only the differences from it are described here.
-+ */
-+
-+#include "exynos4412-odroidu3.dts"
-+
-+/ {
-+	model = "Hardkernel ODROID-U2 board based on Exynos4412";
-+	compatible = "hardkernel,odroid-u2", "samsung,exynos4412", "samsung,exynos4";
-+};
-+
-+/* No VBUS supply switch on the micro-USB port */
-+/delete-node/ &vbus_otg_reg;
-+
-+&hsotg {
-+	dr_mode = "peripheral";
-+	/delete-property/ vbus-supply;
-+};
-+
-+&sound {
-+	model = "Odroid-U2";
-+	audio-routing = "Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR",
-+			"DMICL", "DMIC",
-+			"DMICR", "DMIC",
-+			"Mixer DAI RX", "HiFi Capture";
-+	samsung,audio-widgets = "Headphone", "Headphone Jack",
-+				"Microphone", "DMIC";
-+};
-+
-+/* No expansion header with SPI */
-+&spi_1 {
-+	status = "disabled";
-+};
+So this series cannot be applied as-is yet. However, v1 of that series
+was under review for about 3 months, so I'd like to at least:
+
+  1) demonstrate its clients (this came up at
+     https://lore.kernel.org/all/CAD=FV=VW2h1zWDYWQ6LknX3O+3=EY665jde35Ly+UQzuscXy=Q@mail.gmail.com/,
+     for one); and
+
+  2) start review for anything that isn't significantly impacted by
+     potential changes in the above mailbox series.
+
+With luck, the general design and DT bindings don't need to change, but
+even if so, I expect any changes should not significantly affect:
+
+ (a) the CPM DT binding or DTS (apart from #mbox-cells)
+
+ (b) the CPM interface (cpm_request_client(), cpm_send_message())
+
+ (c) any of the CPM clients (irqchip, reset, clk, pmdomain)
+
+Thus, I think this falls somewhere between "PATCH" and "RFC".
+
+This series has been tested on a Pixel 10 Pro XL (a.k.a., Mustang) both
+as-is (plus the aforementioned mailbox patches), and also with minimal
+additional local patches to get other components running on top
+(pinctrl, PCIe, RTC), to prove out some more realistic use cases.
+
+- Brian
+
+
+Brian Norris (9):
+  arm64: dts: google: Add Laguna CPM mailbox array
+  dt-bindings: soc: google: Add Google Tensor CPM binding
+  soc: google: Add CPM over MailBox Array driver
+  pmdomain: google: Add CPM power-domain driver
+  clk: google: Add CPM clock driver
+  reset: google: Add CPM reset driver
+  irqchip/google-cpm: Add CPM IRQ driver
+  arm64: dts: google: Add Laguna CPM node
+  MAINTAINERS: Add entries for CPM drivers used on Tensor SoCs
+
+ .../bindings/soc/google/google,lga-cpm.yaml   |  74 ++
+ MAINTAINERS                                   |  14 +-
+ arch/arm64/boot/dts/google/lga.dtsi           |  50 +
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/google/Kconfig                    |  13 +
+ drivers/clk/google/Makefile                   |   3 +
+ drivers/clk/google/clk-cpm-internal.h         |  35 +
+ drivers/clk/google/clk-cpm-lga.c              | 271 +++++
+ drivers/clk/google/clk-cpm.c                  | 573 +++++++++++
+ drivers/irqchip/Kconfig                       |  10 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-google-cpm.c              | 123 +++
+ drivers/pmdomain/Kconfig                      |   1 +
+ drivers/pmdomain/Makefile                     |   1 +
+ drivers/pmdomain/google/Kconfig               |  14 +
+ drivers/pmdomain/google/Makefile              |   2 +
+ drivers/pmdomain/google/cpm-power-lga.h       | 467 +++++++++
+ drivers/pmdomain/google/cpm-power-trace.h     |  80 ++
+ drivers/pmdomain/google/cpm-power.c           | 637 ++++++++++++
+ drivers/pmdomain/google/lpb_service.h         | 200 ++++
+ drivers/reset/Kconfig                         |   1 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/google/Kconfig                  |  11 +
+ drivers/reset/google/Makefile                 |   2 +
+ drivers/reset/google/reset-cpm.c              | 367 +++++++
+ drivers/soc/Kconfig                           |   1 +
+ drivers/soc/Makefile                          |   1 +
+ drivers/soc/google/Kconfig                    |  13 +
+ drivers/soc/google/Makefile                   |   3 +
+ drivers/soc/google/google-cpm-mba-trace.h     | 214 ++++
+ drivers/soc/google/google-cpm-mba.c           | 964 ++++++++++++++++++
+ drivers/soc/google/google-cpm-mba.h           |  30 +
+ include/dt-bindings/clock/google,lga-cpm.h    | 191 ++++
+ .../interrupt-controller/irq-cpm-google.h     |  16 +
+ include/dt-bindings/power/google,lga-cpm.h    |  79 ++
+ .../dt-bindings/reset/google,lga-cpm-reset.h  | 175 ++++
+ include/dt-bindings/soc/google,lga-lpcm.h     |  54 +
+ include/soc/google/goog_cpm_service_ids.h     |  84 ++
+ include/soc/google/google-cpm-mba.h           | 147 +++
+ 40 files changed, 4923 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/google/google,lga-cpm.yaml
+ create mode 100644 drivers/clk/google/Kconfig
+ create mode 100644 drivers/clk/google/Makefile
+ create mode 100644 drivers/clk/google/clk-cpm-internal.h
+ create mode 100644 drivers/clk/google/clk-cpm-lga.c
+ create mode 100644 drivers/clk/google/clk-cpm.c
+ create mode 100644 drivers/irqchip/irq-google-cpm.c
+ create mode 100644 drivers/pmdomain/google/Kconfig
+ create mode 100644 drivers/pmdomain/google/Makefile
+ create mode 100644 drivers/pmdomain/google/cpm-power-lga.h
+ create mode 100644 drivers/pmdomain/google/cpm-power-trace.h
+ create mode 100644 drivers/pmdomain/google/cpm-power.c
+ create mode 100644 drivers/pmdomain/google/lpb_service.h
+ create mode 100644 drivers/reset/google/Kconfig
+ create mode 100644 drivers/reset/google/Makefile
+ create mode 100644 drivers/reset/google/reset-cpm.c
+ create mode 100644 drivers/soc/google/Kconfig
+ create mode 100644 drivers/soc/google/Makefile
+ create mode 100644 drivers/soc/google/google-cpm-mba-trace.h
+ create mode 100644 drivers/soc/google/google-cpm-mba.c
+ create mode 100644 drivers/soc/google/google-cpm-mba.h
+ create mode 100644 include/dt-bindings/clock/google,lga-cpm.h
+ create mode 100644 include/dt-bindings/interrupt-controller/irq-cpm-google.h
+ create mode 100644 include/dt-bindings/power/google,lga-cpm.h
+ create mode 100644 include/dt-bindings/reset/google,lga-cpm-reset.h
+ create mode 100644 include/dt-bindings/soc/google,lga-lpcm.h
+ create mode 100644 include/soc/google/goog_cpm_service_ids.h
+ create mode 100644 include/soc/google/google-cpm-mba.h
+
 -- 
-2.54.0 (Apple Git-157)
+2.56.0.307.g5fe7bd680c-goog
 
