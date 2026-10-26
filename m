@@ -1,113 +1,113 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793013088;
-	b=oiDbnYCU4efWuZ6RwPHEAbXniIP29eSJyygigzSM2n/6FlscqkkBn7YijouAaa/gP88u
-	 vUtprEjt77FJDDE1y8JqP2AC4IwBBEIuoutsSEO/b8va3U2oc/710U0pPogZI5khHKqDT
-	 zorJFfLce23BoAIw3ILCBo5hauTgpgVUh+aAkGV7XedDk2NBtCsw9euFqRKFMaQeOX0to
-	 4X7FO0QB+NBQpE7z9I/TYwE40kPCRp8lxcj0ENbpRed3HL1nI6jCu6uKUQDAj/XjGRWJ+
-	 onkUUFHPyPxEeR0wMKjgU4whrqyX4qcMtJV+M1qeJZNbWrniZJSgzdk3EioyUX+JrRw==
+	t=1793013094;
+	b=uQ0B+hchPLiZVEB5Oa0tHAlrgdC54x5rK/H2bI9Rqkog4xGSNyc2FqyE81uOAxJlHKgQ
+	 sieggXUIAOCRagAYvAeqgezUKlHPL9dMoaEwxe3aj8efbjjTXyAkP1t9c2JkUG7bM7qKI
+	 wNh9Qzz1mpxjq0IADV/Xz0VO/zUVCPqepTHtCuVmsB0J5ZndAFS0VQN3nLzA50Vkq+tNx
+	 isk4a/Q1MRJZ+K5+em+CroYwt+BA0Ea8cGw2jebCdmSaNqkgjrjvOvLCTJ+SR3pWwOduh
+	 6IrxvrKxgzCoaQUzkod3teaWlLgUdjl+en0IEscZGdHA0rHJGKAr4ffDAajYn+Yvasw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793013088;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793013094;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=2EQ/MiWnWG0HlXQbsW/EZMMH51V/jq2046f8+siL5Mk=;
-	b=vI7V7JgRN3QMJv+qknGyVAgvp+hrO3NCVby5ueg4UYm1MgOubWSlU+eAvMq1w3hmflEb
-	 NuEIUdvAxKo0oqcKBi9SMDuDWOkcimSwSIDeXJakW8q2xaTA4SE34Q+mNP4DO87w5EcNz
-	 Py0xVC+75bXUtZK4lKOfBWNOHqjak44YQoi5v7TjG+tCA/D63MlAf7oZ9id3QQFQoGF+P
-	 Uj3TM0z7cUa5ys7S4QGER/w/+uYYUqfg+CUlMk8C7tFUqUREnsPXzg/1aSlKmgEbjK786
-	 6getPX8ixzkOgRobSI3FNuE6lYBtp05YkOGMvnOg6GPn1Zdis+W1ztVtEdkAzVtFWuQ==
+	bh=4O9H3HrRsFsbm+GWGewBaANCzC7cmfTIgsKp8aEhS6o=;
+	b=VZP8vek3MJeI9VuwNeibHA72qHe4rGU4s0rWru/uyvDE5t6U7YPD+7UajVu9eL7yb6CG
+	 OEkH7Fp46nyM1Y5Tq9g5aru/s8Gq9i8OAZeOU1O5hPXeZn25RKf5dVRlNEHuhjWmALdBb
+	 aBGkNN3KFDgzn5VDWaNBSKemRUFELuKOhMe65V6unUc9Hp5SkRfyqb5hTxeHtJjRRJC0O
+	 Pbj9kDRXi3W0IFx9Y3Bqr3aXPJ1aSVgNL6K3f5RfMnknEKl3QRBqfMtEHwEJztEmuwu9W
+	 F9yMwEuzHs4G1k5SQ3+cm4zgEQ8LzjPpMorZHrmJdwqU9pom8qKMU36Nlw/AO2THFHg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=DlfoBBMQ;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dwE5k2dg;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=N5M+Dq9Q;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kWXti5+p;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA7760A2618
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7DA7760A2618
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E331C606A93D
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E331C606A93D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=DlfoBBMQ;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=dwE5k2dg
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAtK7n2541814
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:28 GMT
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=N5M+Dq9Q;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kWXti5+p
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69QAt1Js3562064
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2EQ/MiWnWG0HlXQbsW/EZMMH51V/jq2046f8+siL5Mk=; b=DlfoBBMQdu+gGpBp
-	HLTsmsjMT+cbwrSvkEyj/YVEWR34HlP8VGa6IPytShHDFswEtICWVO/mOuGvCLB7
-	SSqcmkfg5Pyv3vCFQqr3jeubg0fA5H8OXxXyUEg3fR7s4zxN4424clUcrIbbYheu
-	xppxXBdrQaeJT4wkJd5nBYu9lJAH4el8agc39XXo80NAwDova8QMSxp571ZvUzzO
-	dB+kECVSUh35GpildXscuG7N+qwXX6COEHqPUhWQZEc0wtXGQT0m4cT802a5a/Xy
-	oLPaQxNH43SixV82JSNLTDQBJgJQArY4ctWuAHebEbQgAPfoDsXiBQIhRgkgNkA/
-	YkgcpQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hhsjda5sd-1
+	4O9H3HrRsFsbm+GWGewBaANCzC7cmfTIgsKp8aEhS6o=; b=N5M+Dq9QVP1joRjl
+	WOUq4psI4+CY8GNnh5ovkeh0EjwtPJFHVRKK/tD7tqJ2vyokaIeaSa2GtYnfEhYE
+	wtmD/fSJz9EG/DdBBzW5imhl5QJa3jQjaT0PAR019W4Z/LuC4Q0TUV+hdRayDe+a
+	Y6v46RQN+6Xmx285U3kQqjYiYN4J7RfcCQqcLXBOdyYbdLeDZvzDZZXLYXfuOeFy
+	HLGIdcEsylbH3Z0NZ/SwEPINqy+TSHFn92GL89WZ4GMEp1R66RRvPHJa/V0dv0mS
+	JJza3RTtU/0W6vzvRM2jmm1Mqf8GyvduwIU9KMoS9XKkQGaE3lyRE5VQUfylk6/K
+	ZXUf1w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hj4s90958-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:27 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93f20addba1so571338585a.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:11:27 -0700 (PDT)
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 11:11:31 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-934963b2bc0so552729785a.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 04:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793013087; x=1793617887; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1793013091; x=1793617891; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=2EQ/MiWnWG0HlXQbsW/EZMMH51V/jq2046f8+siL5Mk=;
-        b=dwE5k2dg/LsrUq+1qFMDzoZleAKfYyaRNfo7Ms6P7LlnxVTADfqpmehB0vI9zKdx2X
-         034U/Tq5XPzthpY+T1QCtAFQij6ya6Xn9cwgLlJYP6bsEuwSwmOMaJmfsd/mI2i9vTHM
-         PZjCf0mY7EE/zVsKcFuaf5PaO/yudkCoJhfwWEY+ji3vzYDBP+l0L/GL8Z1ZspjkpL7z
-         0/2vqrKDk7n+yO8vGv5Ve5wuyf/QehbjbAcMJIPrcfO67ahPc1CMOO+EVZ9UyfBvehQJ
-         yOgrEXl4drSpqO4fJeycQ8VcMD1QPO7ysOU0bVZsu70UhItO/G0dZYUACeZcAM3QVF17
-         xfHQ==
+        bh=4O9H3HrRsFsbm+GWGewBaANCzC7cmfTIgsKp8aEhS6o=;
+        b=kWXti5+pPGs/+pwgDRIngFn7aQgSC+sUuQyvurnKGH5vi24QJtFEkjwS9kk/Fde8XC
+         NHWqipYFwxZhv+D/2TfWzOKnOEZKi3a45TSLs2FHConJl5NKx6sBbWU7F4lgV8jsGaJq
+         8vRQ5qcUFOFm+nyCcn7wR2hui855asoVqfv82sItmXcPmlOo7GRerPq4C4Dcp/paZfiz
+         nhr6LrPUEosZ5mw9tigKY4oWIHJAyrenNG3xpAJH0ivxw6S6IfElqABWluJ5D8Db0sWp
+         3lvMRF7PcC0Bxt1884+Batyxd9qglaqKDD3zWC3rPwL8KaH253Vi5/+cCoSiACDRU3mK
+         FFFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793013087; x=1793617887;
+        d=1e100.net; s=20260707; t=1793013091; x=1793617891;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2EQ/MiWnWG0HlXQbsW/EZMMH51V/jq2046f8+siL5Mk=;
-        b=mYAToHXCr8dUQIDxJZ5/0XekYL5DwhWMxqN9D+XP86SkT2zbhyXfwVzSbJYIlRCy6B
-         jPLjE/UMogqcShQ28+AKha3wIHstrxcQbQOAyJ+JJullUwbhcYfQQgBA5awAuJbPkxQn
-         NOcc8/r1MSY3GooIN428XZhb1Z0x+9LN4LI5WGb5754V1HLCiQi1Fccst223dtG5kAFn
-         kH0trrwgF2TYwxX+LgPSHkWtnHpT1M+4y7LEscVNfNRhQbLa5Dj3WuUCmRg1KpxEMCQ0
-         F+VTj9KRnjkS8wvy5V1vfEwRrfy4QY1mcy9KrJcJJFI32DoVDD0Pf3kRYeMCKHe+aWZU
-         YY8w==
-X-Forwarded-Encrypted: i=1; AKwUvBwGxJZ1JF/pW/npm0fEfRrOsPxx46Ft2zF3KYX/1RjbExhUfnIe4EjoGEaST9MRfqcbOeXqa4IZbxuNPU4jSAJ5yQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKJfm7VFv1nNxCPXVdzEQatqqfqlx5zo+fFcMUAWGImbKgvt9X+
-	9wBW/AqEvkyFHaaHm5e/X7kQeY1h94vtDcuTmPjugV3inHpOSAp0ECZO4RJ6gU4GKXChkEshJsA
-	+0B62pDQmlQOthBf1LPchiIhaq1QTaIpkwu08pws1ltqcgBjDoFSFqUQ95m9Ee8gTdqJr1K4d/w
+        bh=4O9H3HrRsFsbm+GWGewBaANCzC7cmfTIgsKp8aEhS6o=;
+        b=SLQ1OucNCwOL59JV2x/EZaASCnRcB+JooYVFndLNxnos92IhFLWRG0tkw43pm+Q7t0
+         us5AJbWTfdDvS/+vAmXefMUdMQpSPPPOftDq12JbKbDyHeUmZ/6mCII7QBC+9GVhCNWF
+         ku/yKpIVZwp+z9FR22TPZWj+a8nnNQnupnJlEn/7bRSTRQROz21hrVhuK/gbwr/9it1j
+         VkHC5sJ6dpF7jibQekVsVq37OyoTxYl/vr9d5QnHXVZ50XrnkEydFTQWxI8tLuhvSr+t
+         CsVuo0vP6aZ36F7o1w/EPzgqdSLL7nAn/OoUpg+i/Dna9eucjdv+li8sUxB6xRxcXQ4Z
+         tAew==
+X-Forwarded-Encrypted: i=1; AKwUvBxfPGdK9bUFW3IUPF8kBKHIbP/EE7Chev+NvsLZHYo6QlQxTZ0ELacTQGPSkQTYZbfVU5rn15Gk/FCyEATc34JZCg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLz+R/L3k7K4/4KRa9SFuIyC27mBUxGyPQdUh/IpWYelVelXj9q
+	GTBGlkaCQvLQkD5g9LHfRjxwje+WN1WpRJsvrOd4dcVFL/5mn5uvyS1ozzPq84NVG3OfJUUYJnf
+	/lBKKowuZkvwvaxIVKCYPC9AhCubnA7DY5B1yJvmpeGBQPbX+jxLJSKvtudxvdr8eT5EOgdQ15g
 	==
-X-Gm-Gg: AYBFou1EyUTOFKc4PCWmAMXN9bXWJxqCzYHJTRotzXXf0ENUEzOoNPBKCXAYL7y4FEn
-	3d+H+n+jmk1M22MWyTAzbdfZ2V6duQ1aT60SvnuiT8KZ4NbJOQxRAqaH0NQgZ1/1OxtAeHjtKAO
-	D0YHtT93zqTOXMaU9/HSqOIX5E7psQC6BUTpvkY8gza375g97ohG5PO03KqyUQIxuGEmLKsvRLl
-	LvV8ty+3LawTqdFLe0fUIirPBzzwlfttWsu5PXG8nkz6jwB62PE6Ap3wyxGOxmAPh0u0u9HnHLN
-	Zq1pLFaKKQmrgElJNb5PaytWC90YRiysnVJCq8Cep6iMCEw17JcLxPiDzhNg5/K67LEMMMjjJUz
-	DIrb2/BJiqv63qfOajy0g6InVF94+MW2lJPCq3Ul5FUlzWyuMn6ARjts1vk7iM/57DttLN12xFM
-	uG54mAFrfY0E4M
-X-Received: by 2002:a05:620a:470d:b0:93f:1af1:7952 with SMTP id af79cd13be357-940ef7b1ab3mr947043785a.4.1793013086631;
-        Mon, 26 Oct 2026 04:11:26 -0700 (PDT)
-X-Received: by 2002:a05:620a:470d:b0:93f:1af1:7952 with SMTP id af79cd13be357-940ef7b1ab3mr947033785a.4.1793013085856;
-        Mon, 26 Oct 2026 04:11:25 -0700 (PDT)
+X-Gm-Gg: AYBFou0ov4B5LcV/fHZynIylTFBpfcpWXYZXmLmHr0liQnDVophfAPQN+lDkIZZHqAJ
+	JBn1MPswtYYbDKcVDphGXxeCbWzwLpHk1aVI0bOtP/mKr3svoNR8+RiwyluFsP4uywfiHpdCE+S
+	SnX9DGij8Xxp//vH2tMQW81paq9tPH5jlz2ThOY6gPBelV0xwIi5HCxqHPmzASvDyn0zkTXcWX2
+	ovTPKzj38s40AszIqbfs5DzDwfCU70/Q4H9EtyWUcuAVyVJ46CBgCkHCs6u1UAt46FqDNCEnkiH
+	gPJ3GHs2yJipVSzjOJrSpvHaDWopVvYpkXtinTqexY63VIlFikPiZ1Wfk4DAyco4l/VZrWDu/99
+	t1vLbTiq5FLBLAYYzIxOhbUXVHfdZcLqTeuEx3yiQT7+bii1OBWR+SaUzWlpRTaoMWsOettD1LE
+	c3+droDFScIth4
+X-Received: by 2002:a05:620a:40c9:b0:93e:58a1:3da6 with SMTP id af79cd13be357-940ef988008mr907343985a.60.1793013090722;
+        Mon, 26 Oct 2026 04:11:30 -0700 (PDT)
+X-Received: by 2002:a05:620a:40c9:b0:93e:58a1:3da6 with SMTP id af79cd13be357-940ef988008mr907336285a.60.1793013090085;
+        Mon, 26 Oct 2026 04:11:30 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.11.22
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5bfb7a950a3sm1455459e87.68.2026.10.26.04.11.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 04:11:23 -0700 (PDT)
+        Mon, 26 Oct 2026 04:11:27 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Mon, 26 Oct 2026 13:10:14 +0200
-Subject: [PATCH 25/35] drm/panel: remove the get_orientation() callback
+Date: Mon, 26 Oct 2026 13:10:15 +0200
+Subject: [PATCH 26/35] drm/bridge: add the connector_init callback
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -119,7 +119,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261026-drm-panel-funcs-v1-25-5e3070a3478f@oss.qualcomm.com>
+Message-Id: <20261026-drm-panel-funcs-v1-26-5e3070a3478f@oss.qualcomm.com>
 References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 In-Reply-To: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
 To: Douglas Anderson <dianders@chromium.org>,
@@ -204,106 +204,151 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
         linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2246;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4134;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=memBQqdrrl5gcxOviNjOVq9PVZkJuaYQ1rBpSIUkLCI=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBq3zUSN7gXcQBFypwp2wbYmPQOc6iEpCWG/CNlo
- kn/D0pCyeiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCat81EgAKCRCLPIo+Aiko
- 1fcCB/9gZLyPxzsZldrayRHV7F5rm0+1qyUFB8jDX8vfiOt67qT3HspHI8OlWm/FeJztv+a6pWR
- NZi/SaDcdAdzcoFoecPe5f955PMcqmIc7W8YrxSTjTJXgXUVCUD3aB7foCr3F22dVWOUMPPpBDN
- 0INFvfjJf5b1Vf6BI4QOsesiEXm8dje/GftQMPt3WftrY9aXIEk5wVzR50QrVNFpww+7oXq8qLX
- EM8lKIqcgs1qg1F06ctP91i1DL/XvHJ6WDWR8c1FkDFMV/6vh2KROf5hzdd7QzDbPCJxWIrDJ6r
- 63RbPGf/yxG80b0e7eaBfscwIPmhMZPu4tQcIyPztXV8vcNK
+ bh=+p5RUZhLB9ONjVanI2ibjcGEHsUQQIR/tz46EaICKxU=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ9Z9U+G8B/d3ZcYmPZx/LdvE79ePBTwP3d9ZBOfGxZiob
+ L7Xtq64k9GYhYGRi0FWTJHFp6Blasym5LAPO6bWwwxiZQKZwsDFKQAT+SnP/j/poEUE35Pj9Vxs
+ 8m7ui3yZtjG8/NGacaK4509uhDp3jP3Jkya/lr/Xy97wVJjhpaTk+ltHUj5ce/RYOOGja2Le/0w
+ huVK3mh/HnnXXPdPd+EKhL/NlOPdxQ+Wnxqkbfh48GFq9oly17vgj78WlB2dt9jghmuy33vKJRo
+ 9q3zaJkKNLPzDwi7+vuldfqBWeeTv1mgT7vDnGB++02zYkxLvn2bIbxiv/thC1dFNxmyRydQOj7
+ 8qjMxu/KfntywvzMbnqIRZQEfPuwaRjuU1vqtszs2vWKlbZcv61EZU+eE27pG6iqKdCrIjbye4U
+ fv6u54bK5ysLQkM/fnEy+HdcJ3yZ1uZtVmclFr37dqMGAA==
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-ORIG-GUID: k8h4OqQqzrPe2pQeasq7qXQ14fae7pOE
-X-Proofpoint-GUID: k8h4OqQqzrPe2pQeasq7qXQ14fae7pOE
-X-Authority-Analysis: v=2.4 cv=a4elZkSF c=1 sm=1 tr=0 ts=6adf355f cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX9malG4aDcfPf
+ 8dyOuItMHcr1WIbFWSQx1HJjNaTjp/Zceft7KwFAWat2eZNX8B0xwJbOeXaVg7YUTl/sGezI2/j
+ d6rujzgBnHZoI3lDGjlZncDhj1QgjlGgJxo4ndj4wzCFPrwMg6j0m273oBicBULo/e54eeGZPj9
+ RjrVTkPqPHMpMu+KtNEM2PVlDkk4MHVjGsVaBzjY/IRnBcCPE6Jdva3mPXXb0IFbMJskxZw6ALT
+ KtJ3vmQdH3P2aDe8PScahJuJ8GZxkYOpuHqtS81usjc+lderDzernqBUG49yLEgKw0VsGaDkRzV
+ MbUUhe0DKd8Q4QgHNpif+5mkA+AmOQME8+oQa1LWut3diV0COQ7cnxa3nuc009xlVE8FSajskJt
+ 0r4nyaVq+X/dGGQYDFs2khRZIneCOi5Fm0sfd4HB6wNjRfZUOSHrM3Wm6rdFelaYNcv/ajk3UYC
+ 8bDrX2h/LY45SZVaFCA==
+X-Proofpoint-ORIG-GUID: IeAy1ljX_W0_PugNXfpDUplC8mjrOeM1
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX4DvgEopFOVxT
+ g/8sRiVeIhiXLwM+bJDIJsMAa8SlZTV7Z5gBRVEnbCpSZp8OTIle46p1df1cgLJ1TMxbFeIfmHX
+ a2Xqsw6Z+pepZhNd5WwNc0qig69RJfA=
+X-Proofpoint-GUID: IeAy1ljX_W0_PugNXfpDUplC8mjrOeM1
+X-Authority-Analysis: v=2.4 cv=HKhWhYtv c=1 sm=1 tr=0 ts=6adf3563 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=EUspDBNiAAAA:8
- a=NYfc6Exo7QqhNbPHc2kA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX8AQ1/MmFSgXA
- UkeFe9ASsyXYM1jYZ7+mwgDA8Y4KdbV/YjSy1mPqzWTS2gxhrUWJLF8QdBZq0FgtdriBn1I91Tr
- aep+fo46yLQ6f/6QN58NL9ejaKTonCU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI2MDA0NCBTYWx0ZWRfX2pPwSJyA70L4
- vSu0vSEcmUWIX020nTCclKO1uQwuZ711jF51eDcqvQ5NV2/hCDwmmOuwHV++3sUZoLoBnFVNAY3
- DyxihHgvw+v7QuOXmTmQ1w3uPe3mBDeeIoNgPQVq/cq5y/iKB5KC8lUvqmoOM2bqaoG9ahPI0p7
- UmKIoIBd6kAgb4RG/2bGomxvivPWb/5jd8/I6v9UKNqECEsGwsjxT+1mgnJTgM90KzjYLf2+nBS
- hffaIkPu13W77LV3Wuir6Eud4ZvL08kcePaHmc+WKlC3kfB+cAvdRBbvwgzfTK8QfLjDE5mjbEf
- TVOvQJOLqbbEDzX0hBiHAji86LSxoFQ1UDRZ18TbVjqOlp8/4mEV3STp6TUMl28+hR5oTvQaEdg
- hU2W2HU+DKmsfMQ34Gh4ff11HG/pPdZc/nVqDUaxFZq/TXz9NAr6qNs5xFEoHq7pIjbNbkcD2EO
- pLYYoEjPoTz0jF7S8xg==
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=0bT5yVRSAMwfGHIoJaMA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-10-26_02,2026-10-21_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610260044
 
-All implementations were copies of the code that lives in the panel core
-now, and none is left.
+A bridge has no way to take part in setting up the connector created for
+its chain. Whatever a bridge needs on the connector ends up special-cased
+in the code creating it: drm_bridge_connector looks for a panel bridge in
+order to set the panel orientation and checks the dedicated
+drm_bridge.support_hdcp flag to attach the content protection property,
+the msm DP driver attaches the DP subconnector property after creating
+the bridge connector. A DP bridge which is not a part of the display
+driver cannot get the DP properties attached at all.
+
+Add an optional callback for that and a function calling it for the
+whole chain. The function is separate from drm_bridge_connector, so that
+the drivers creating the connector on their own can use it too.
+
+Only the panel orientation is going to be converted for now,
+support_hdcp and the DP properties are left for later.
 
 Assisted-by: LLM
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/drm_connector.c | 9 +++------
- include/drm/drm_panel.h         | 9 ---------
- 2 files changed, 3 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/drm_bridge.c | 31 +++++++++++++++++++++++++++++++
+ include/drm/drm_bridge.h     | 23 +++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index efcf1ce979a9..f630c9cd7a8e 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -3392,13 +3392,12 @@ EXPORT_SYMBOL(drm_connector_set_panel_orientation_with_quirk);
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index e7f9e6d58927..10c8388594a3 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -846,6 +846,37 @@ void drm_bridge_chain_mode_set(struct drm_bridge *first_bridge,
+ }
+ EXPORT_SYMBOL(drm_bridge_chain_mode_set);
  
++/**
++ * drm_bridge_chain_connector_init - let the bridges set up a connector
++ * @encoder: encoder the connector has been created for
++ * @connector: the connector
++ *
++ * Calls &drm_bridge_funcs.connector_init for all the bridges in the encoder
++ * chain, starting from the first bridge to the last. It should be called by
++ * the code creating a connector for the chain, after the connector has been
++ * initialized and before it is registered.
++ *
++ * RETURNS:
++ * 0 on success, a negative error code on failure
++ */
++int drm_bridge_chain_connector_init(struct drm_encoder *encoder,
++				    struct drm_connector *connector)
++{
++	drm_for_each_bridge_in_chain(encoder, bridge) {
++		int ret;
++
++		if (!bridge->funcs->connector_init)
++			continue;
++
++		ret = bridge->funcs->connector_init(bridge, connector);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_bridge_chain_connector_init);
++
  /**
-  * drm_connector_set_orientation_from_panel -
-- *	set the connector's panel_orientation from panel's callback.
-+ *	set the connector's panel_orientation from the panel.
-  * @connector: connector for which to init the panel-orientation property.
-  * @panel: panel that can provide orientation information.
-  *
-  * Drm drivers should call this function before drm_dev_register().
-- * Orientation is obtained from panel's .get_orientation() callback, falling
-- * back to &drm_panel.orientation if the panel doesn't implement it.
-+ * Orientation is obtained from &drm_panel.orientation.
-  *
-  * Returns:
-  * Zero on success, negative errno on failure.
-@@ -3409,9 +3408,7 @@ int drm_connector_set_orientation_from_panel(
- {
- 	enum drm_panel_orientation orientation;
+  * drm_atomic_bridge_chain_disable - disables all bridges in the encoder chain
+  * @bridge: bridge control structure
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 1981d24a700d..470b9c6cb12a 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -881,6 +881,27 @@ struct drm_bridge_funcs {
+ 				    struct drm_connector *connector,
+ 				    bool enable, int direction);
  
--	if (panel && panel->funcs && panel->funcs->get_orientation)
--		orientation = panel->funcs->get_orientation(panel);
--	else if (panel)
-+	if (panel)
- 		orientation = panel->orientation;
- 	else
- 		orientation = DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index dc4fbeac796b..d643434037d9 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -121,15 +121,6 @@ struct drm_panel_funcs {
- 	int (*get_modes)(struct drm_panel *panel,
- 			 struct drm_connector *connector);
- 
--	/**
--	 * @get_orientation:
--	 *
--	 * Return the panel orientation set by device tree or EDID.
--	 *
--	 * This function is optional.
--	 */
--	enum drm_panel_orientation (*get_orientation)(struct drm_panel *panel);
--
++	/**
++	 * @connector_init:
++	 *
++	 * Called when a connector is created for the encoder chain containing
++	 * this bridge, before the connector is registered. This lets the bridge
++	 * set up the parts of the connector it knows about, e.g. attach
++	 * properties.
++	 *
++	 * The callback is invoked through drm_bridge_chain_connector_init(),
++	 * it is not tied to the bridge being the last one in the chain or to
++	 * the &drm_bridge.ops of the bridge. The bridge chain is locked while
++	 * it runs, so it must not attach or detach bridges.
++	 *
++	 * This callback is optional.
++	 *
++	 * Returns:
++	 * 0 on success, a negative error code otherwise
++	 */
++	int (*connector_init)(struct drm_bridge *bridge,
++			      struct drm_connector *connector);
++
  	/**
  	 * @debugfs_init:
  	 *
+@@ -1484,6 +1505,8 @@ enum drm_mode_status
+ drm_bridge_chain_mode_valid(struct drm_bridge *bridge,
+ 			    const struct drm_display_info *info,
+ 			    const struct drm_display_mode *mode);
++int drm_bridge_chain_connector_init(struct drm_encoder *encoder,
++				    struct drm_connector *connector);
+ void drm_bridge_chain_mode_set(struct drm_bridge *bridge,
+ 			       const struct drm_display_mode *mode,
+ 			       const struct drm_display_mode *adjusted_mode);
 
 -- 
 2.47.3
