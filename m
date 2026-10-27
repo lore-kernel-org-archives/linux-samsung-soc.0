@@ -1,60 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793087356;
-	b=izcbkKxN2KkmOu4kUiLZBcIpVCqNRuBcUEI/EcCWJ8qtvDX+InGgt6FJQhtZF4oms0RC
-	 e7qY4eXeE4LjtTdM9xW0TYiwOqtzDKN8FlaHDLAQlVPqbBvlIFhkp7Lxk6CO3kVdFz1Vr
-	 nf21bA/d1m8tX3Hyn47ts2TFsP4m4TCXM/g1/Nk3uTQcV8Sgl4dslrmLInIqQNndOproP
-	 tql0OekyKKeJ2R0FBKn4+Jh59LLzV4eYcue3pCTFdhmgzAzPfEc5rS7lk/RoCZTeiwpm2
-	 nRIWxMQ3tNZDtffSrpNdUEYLJ1MpyB0qb9cSrs8y/Zk4Vf7QOVH5uoyFoZeW8zOO5XA==
+	t=1793095555;
+	b=olGEgi79ShOKb9KgqDjsOXNkeHyWq84FBnLfbyrnrrgUbxv+jj6MRZFpE4jmHbJ/xCU6
+	 6yCfi/6BMivY1E4LsEdSU3Rjt7J88QhCLBxHzVnxPl8F19i91/fs43idWEvc7TJY69ljI
+	 Bt+8G5feUttpG9nI+jlUi307FqMV4i/Wp2/fEOXjoHfzl5sVSNqe1VTo1Bo2S3XYNr7NJ
+	 NK96BugDbl3GYGAlsmLvsEWorB+u58H1/jthRyv0cnUN2PzuqIViO2sajbxwy54OSIxf/
+	 eE1QmTPPXb+NvtZUD8OD4PGhQhD2nRCwR6lb+B9rTKw1bethzdDM6l+m0FrqV2Lr1lw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793087356;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793095555;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=V2unCDaCesF7t0tCAr5s7QNJEM7FuHcgeX7X/YYseTs=;
-	b=L1xRioo1H0/zf7yaECpsLVZ49VPxPEJyCy4HlN7Bas4i13zupmyGd0Su4mGGCyDRfuVE
-	 bDUYwMIhUrNxDVGlYKV463vzN02rUXCj71Sc9Ta+BDPkr/M+JBnF07jK4Jy23JgJiKnRv
-	 3rrplOAcR0ujQTzyDyCtPNrqGMlnRdUXxUlIBifmDy9nB4Dgom3GZXRhMqb85hp5R5zQg
-	 HmtBr1goBN8jE8VNtaChhMWs04mLxx1vyyg2sswGa167tA+p+Oyh9RhvvVn+BguZg7+0a
-	 IUUrUPvUL6x8ZrPV+KRbQ80kUnZ3htY0/kra0bkQ5dZQyUAqe7fab5PDF0Jg2myrqnw==
+	bh=oyUjBB6oJFyp1IO71ofZ8tStrZCd29m9RWKeAe2qToI=;
+	b=BBoi/psGCfOvTTd1ohw0zaIrh69fSAj/TP26aUiubxFvk7GblnhGdopMNPEx/dkK7ugH
+	 6alqh6tmhYwIGVg2utdL8Ju4B4x3Iy7siQoAN8PxN3LPUBfM2NVhGqeqbeUtG1isOMsKj
+	 DgDS6JVb37rjEl35KFYiFSYduf5pYnLS6NOD2bUHedftEdlNOmi9/dRX9A5NmRNMjYSLo
+	 w1R3FlvKcfk5DJVwZLPgEL6GiaJ4i2F4EcD9zcHF/nPmRFHlYdVrhvlEmwvuBJ34QO65f
+	 VLT9IyljfMlGlLqdGkBKmNlEo5zQmXI7W+jc21vQoNy+hyqNWcGzwVkoSw0Noyyy1FQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iBCmDAOO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y5KlNVyN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A16E606A31D;
-	Tue, 27 Oct 2026 07:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751AC606A31A;
+	Tue, 27 Oct 2026 10:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iBCmDAOO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB37C1F01825;
-	Tue, 27 Oct 2026 07:49:14 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y5KlNVyN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851671F01825;
+	Tue, 27 Oct 2026 10:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793087356;
-	bh=V2unCDaCesF7t0tCAr5s7QNJEM7FuHcgeX7X/YYseTs=;
+	s=k20260515; t=1793095555;
+	bh=oyUjBB6oJFyp1IO71ofZ8tStrZCd29m9RWKeAe2qToI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iBCmDAOO67sb0Djvtmfo2ldqbCyvm8yU4IKQCZ0pEs1bcqtdhkQpD1mqApsbC459t
-	 Q58V4/XW1cdGmDbFH97Gm8uafVK1fo+0D6kn+l+acHSMgmgXQXx9o6AORojhYEhZcs
-	 vuZyxZWH1WvaWypWG99Hsf3xZTTHHhONQp11BRuIlwuAstD5fk+fkhmBRr3NNbmOyo
-	 K3gEn/Eta5KdV54q8nZl+AmZgggSDdD/FBqHQKO/SKgaSUUz0AncpaMg6gSIELsNnY
-	 jSFY5keXFW5mbplvc03P6LxKCcbA8PAG0APF7xsG0qaUeumkdD82i73H8We1al44k1
-	 TFcNJKYZGUBHQ==
-Date: Tue, 27 Oct 2026 08:49:12 +0100
+	b=Y5KlNVyNVIUIyqglh5jwznCe1GB/mi3Q1fSFhPw1xEfS5ffznBWc6GIX29nJ0zBl7
+	 XX//Nk3878WurTyps5rLbf486eiL+ryBJdtJfuv0dtBhyhoRAt1sYqqjPp+13DNiLA
+	 fPn9kOhaKltxWOJmQgYGMGRUp1f6qxTarhpJVWM5heRTcwHUL+MdZbhIHmueZWSrG0
+	 HRah2A3/1iqCL/Igf2L10Vt+VcbMggXVzYhEk+HQWjM8/lLZx/WsibPZKVdyk4l75r
+	 /ugGkjS81XZ3fekHUmpGCNGKqUorwVLWpUMGCv/zXvOFk7cYw2P29Vrpw21S+hU9+z
+	 pcPPW2dfmzyZw==
+Date: Tue, 27 Oct 2026 11:05:51 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aiden Isik <aidenisik@member.fsf.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: samsung,usb3-drd-phy: Add
- Exynos5515 compatible
-Message-ID: <20261027-misty-artificial-nuthatch-9fd82b@quoll>
-References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
- <20261022-for-next-lucky7-usb-phy-v1-1-2e47f8484bf4@member.fsf.org>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com, 
+	Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jh0801.jung@samsung.com, h10.kim@samsung.com, dh10.jung@samsung.com, akash.m5@samsung.com, 
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com, 
+	muhammed.ali@samsung.com, thiagu.r@samsung.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: usb: Add Samsung Exynos8855 DWC3
+ controller
+Message-ID: <20261027-puzzling-didactic-polecat-ae02af@quoll>
+References: <20261026135715.33071-1-selvarasu.g@samsung.com>
+ <CGME20261026135751epcas5p42c28c8315cd25554a11032714b85bbed@epcas5p4.samsung.com>
+ <20261026135715.33071-2-selvarasu.g@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -66,17 +66,23 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261022-for-next-lucky7-usb-phy-v1-1-2e47f8484bf4@member.fsf.org>
+In-Reply-To: <20261026135715.33071-2-selvarasu.g@samsung.com>
 
-On Thu, Oct 22, 2026 at 05:46:36PM +0100, Aiden Isik wrote:
-> Add the compatible string for exynos5515-usbdrd-phy. This PHY is
-> compatible with the Exynos5420 PHY when running in High-Speed mode,
-> in that it uses two clocks, phy and ref, so document it as such.
+On Mon, Oct 26, 2026 at 07:27:14PM +0530, Selvarasu Ganesan wrote:
+> Add the Samsung Exynos8855 DWC3 binding using a flattened node
+> representation, where the DWC3 controller is directly addressable
+> rather than nested as a child node of a glue layer.
 > 
-> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+> This is the first Samsung Exynos binding using the flattened
+> representation.
+> 
+> Co-developed-by: Muhammed Ali <muhammed.ali@samsung.com>
+> Signed-off-by: Muhammed Ali <muhammed.ali@samsung.com>
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 > ---
->  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../bindings/usb/samsung,exynos8855-dwc3.yaml | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/samsung,exynos8855-dwc3.yaml
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
