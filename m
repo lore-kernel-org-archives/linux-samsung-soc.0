@@ -1,87 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793136607;
-	b=d6bX9o5vpz4sjUXqJTk/Da9v0LYkV1tmIzg9MAPzGABFZCMJnTbsEl1RiOm2WK7wQC3M
-	 2+7dEnMWXRooM7R+0n1O71GRwp+AKFgy7oIelhQmcJ4dAYz4AbmXcR71SzCclbhnJuU4x
-	 TFPGqzywsf5w9YSmKGdCUpzx0iBovXzhEDJ4WJE3Uoijgy9M2gmTDEMGWdeaCKSYP5Qf/
-	 QdaOuTpv1G4Fmba/KjYd1ll2qdnQFWBJ9sPQIY8/gfnf5sOlvkVu+F1pJas74E4PkrRBi
-	 dNufkKT0zN00rPtpeqbPcStxe5Dpa6UuS7yJkEsBzpckxGwK5hiYATYsyhWJeBqtveg==
+	t=1793136609;
+	b=2O3X8PrEZVWZNjZpm0/oSj9GpL5YUnQSQJKMQXVSwP3QeDO52VoY/fJPPk4uK2Lga63f
+	 eH6tTSGg54skzWx6EPB3pUqZaYdI+k4uvQAQZg76Ukp0cP3ZUPRWkTqugGB7WWJTSnWi1
+	 BMiUZMPbqMTsrWxbTGSrdEbl2jT/BaQWHaIiha1jwwLkCjBQl5QXiotxMcoBd85hCTm8P
+	 +C2Ed4mxTHln8V+qrWTWZsftOPNLk+T+y3hq4/VwsZ1ZfXC0YxC3YjZfAMBGzQcnJGG3d
+	 W2vROfaaLnk86OtpsoK8QRSTeX2phOiK+YM9yI32ZefOiXet8qVNa4FlXCaVBkWURyQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793136607;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793136609;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=OiJECdRwrBggLX0qC5GoLm74oh31RZcT2ypnA2Xk9xY=;
-	b=VzG5Ef3WG3fQCVc2+5hVgrSoG+ruZE4bw1HGJWOuCPej/ssN5u4Yyp9Z/Iv/tFuncCot
-	 BbZ79ap9YYUJKPwpYPIUzmbl2IM4ogMk9zff63t+AYPQdF2xwCU6OeVmy1yJRQhlwUKTc
-	 Ciht9VAhvbn7Uc1lzG8PmeSNOZ9uOXCkv1zcQGn+ZFVvnxYdR936GHvnvAM3FIImcoYkl
-	 mP3F8Luq3kRY/LAVnTZ5/o6MB7/JTm9UjKV6WYJ0yw4W9/frcqyWfyMrYk96DsOMt3g8F
-	 VIh2elLzht36jKeO9styaOpfD6ixZC8h3gXLrCGQw7eF7teX6tDdBpfuitjxtEupXHQ==
+	bh=7NV11o9zfXhIcPZKIoXcovhiq2SO0KZWmadsYuDbCBE=;
+	b=q59zYKnRl2xU4yXSFBwCPkeEHME79GPba8cZ7hlHbVeAOahpHbTIhp+fKOkibhAFGGjq
+	 cXLlBF8OhdpfPbknqMsow1yvs/q8JK0M3xlYLp/w6CS3JDLyXcjcGmaUTqLgHAmKqKTzl
+	 tfGj4yDXco4TUM2+K4PLYX84X5dor9Se0SmnUgaKX6x045mFvAk3GwzeUPzdOl4gSEk4s
+	 WY0PzxjcXn37E2FyKybl6jfbLYmpWB8HOmaQ9x82W8Eq2AI2DNy3f8cHlLfbsFqGhUrGM
+	 kyIPOU1uMbRBil6NwlWZUbUSs+haQXNh8fDc/E+tIUeuy2kiaV4URect6hVVXRkDQUw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dHG7Pmec;
-	arc=none smtp.remote-ip=74.125.82.42
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OBSog2+j;
+	arc=none smtp.remote-ip=74.125.82.48
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4323606A32D
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 21:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4323606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1DE606A31F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 21:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C1DE606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dHG7Pmec
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-188406bb948so252455c88.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:30:06 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OBSog2+j
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-15943c9c005so389164c88.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:30:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793136606; x=1793741406; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793136608; x=1793741408; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=OiJECdRwrBggLX0qC5GoLm74oh31RZcT2ypnA2Xk9xY=;
-        b=dHG7PmecE16x/RcVjLseOKKCtgaHBa2if6/USFFopGtvDk4YtOlweEuZGK67QVEshx
-         IHfenRRtxKW8gga1r3GzsxR9cvvks1X4EaGGhljcjMQg+1G8s/dEx1pppjNH5a2A8XjX
-         fj4Ndm5ij8sRuU/goam05fnC7qwQOaQ08js2WJttdem9dCxEVyVlDmEUdIPavHh3UKzB
-         TPiFzhKEl35B/Yzb62Jzar7s72XmQsOAozrmNsqfdgpQzhYO15+9tKYc7JEAG/9PVSZU
-         WZISR5NLziJMUKlX2opgIxmmOLiGHTjfjkAgNDbfnLxspuR/0ik7JPV5NSu/EUiLR8GG
-         XTBA==
+        bh=7NV11o9zfXhIcPZKIoXcovhiq2SO0KZWmadsYuDbCBE=;
+        b=OBSog2+jN3r2rpNx9Xur5CeMY7NcIR5nhY5nwyK5qJTv6vsdEg/uwgSE84O/EDLBkT
+         dJCpUYAcLnsDNmAHrCKz7b5pUdWe8t1tWQSmyRLFn8QaXRRxrIMXExJo/2i3r5u2XBtS
+         w/sZtdo9mdegFqammTnz2fEVF0F+8gXcVzc/9OPKXoT/C4jfzK2EPDziW+pDE7ZP5NUd
+         BJ+ECGh6UJjAuDhDJ5xcThQPfAFmRnpOxVHF1E+sj+UpWqFBn3uY2PZHGfM4CvVkIDCK
+         LyidrJWMh/jMOpb29NDXNuODzODR4TJ9kPSrdAzax3Ym9RBcBG9sH4pmt9YWtpxa/bGn
+         7m9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793136606; x=1793741406;
+        d=1e100.net; s=20260707; t=1793136608; x=1793741408;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=OiJECdRwrBggLX0qC5GoLm74oh31RZcT2ypnA2Xk9xY=;
-        b=NkmrgAkGeHxpcleCzp1eBKURLqsmPFzTEiwsRvtVq882vwjZmHq5OsW+ra46zo+bmp
-         t4rkEHId0xevgpTYCvWEsYijXKE0gwwg8XNmVdAB32XVoT3mHPFvfEXbRBVAks4jgJfR
-         CiAt3KWVuY0OVoYxYudML4B7MwIpSgBPNlSTPE3p6Wz/K5hU8xn4iyNU+MD1FrP6pihe
-         8XM2tHH4rcoYjt5QBSImMi9pTd71Z+02qDemoPI/flCLGNtL3huDhbHCphChyY8c2Dmr
-         Ekl4/xBK0zCqyx8bpb6cdOejF4Vun2MT3IyTZzEdqImTRqVXyUvg2WTFneKF/uCfNhXW
-         OLgg==
-X-Forwarded-Encrypted: i=1; AKwUvBzJR+420CHzhWqKgpzvN3AJ2OfuW263x0pS2xzc9xXM8hpKdM64lUbhd1AEVmPqpU1OFvqBdoHFbwVU2iYMYXyrPA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJG1hbdJjGQcINsT9WMRBvdKi8OFfqeRJycjH9ZpUUZCqBix+Zs
-	14H6A+76YJAuusZvt73Nu6T5iYQYtiXrOpX+26C2SYmemFgfsuNO7sen
-X-Gm-Gg: AYBFou098Wzh7oInCXIqB7qcrnCvz1xGnpQ4IDNv+GmZLsjd16qjPBeC6GoUvFXsYrw
-	YOqKynGsJqYibeuMKIFwvpDLbGQFdFdhhR3XpAjgXDPuuMEWPA1jdd6pjZycp58Z597rW0kaWb4
-	KoJonX1dBwY/ZWI2f2mlTJEzSGibzF1x1knQElDhOXg4LHBtj3kLdCSyAM4qAreuCCeqrsm5KDs
-	sbErvvjgxFdHSyep82OgbKNB0IHz0qSiAnNVaivEypN6oC4gYtaisMkTuEo29fwVXKC/GUleHzq
-	GWxOE7TEVDfJ7OAg7q+TNd3MNaI8N9idvA2fyiPuyVChffP/nvdPAuyRq1Ts8o5HVN5qSFHnXOx
-	rk5kKpW1xljHCxIiFiIh/zgGinsdtwXDAL8O+rtQaCVltccImnp0pB3ccjgrM1HCQ9kSaphW2Ry
-	hRfY8VAX667JR4v0g9S7KRdnns0K3TVvxMThwcf7WZRPbrpm5o+soX07F11NUptRVSUfXU0M/cr
-	a2PzEjQzK0+tfz89KR5d/2M/w+lp35g5e5GGfUh/KJNikmyikIY1uR5EUA2nia9Db4FmEk8zs86
-	C0nU0Pgv0M8jbJWlK4tVmIQBHDCBrcmF+xmc59YULA9S
-X-Received: by 2002:a05:701b:250e:b0:15d:f053:18b6 with SMTP id a92af1059eb24-1a6cd77ed7fmr527467c88.9.1793136605933;
-        Tue, 27 Oct 2026 14:30:05 -0700 (PDT)
+        bh=7NV11o9zfXhIcPZKIoXcovhiq2SO0KZWmadsYuDbCBE=;
+        b=IN23I5PJhUr28nGLG0twDaO9aUMoTwi3LuouooOHhwd7PBjt1o/8Dm7Zd1dA7TEAhJ
+         bSs3pnSAm4rz+LSzbRFRhYtt8C9LYRKDMJKXblN2NjPNwwb0JEHvi9bDW4hOQsw2nGwI
+         hhfbEU8g3csepDikBMpq+6tmcbMrXT2BHMotAFc9kXa8vNA3FDyK4rnUNYHjHqD53igm
+         f2yxJXYvW1kjubGGZw2bFtOKStRlD5VmiLKMlW39I3PYtrF67jZ+tH5WjJTmAVqf4BL6
+         eepv/b4TLGiiYHhM2GaXUrNGCb8ar33YZTBBdGC+DLdNVbGqTbC/7xxenrftDMOM0ka2
+         inNg==
+X-Forwarded-Encrypted: i=1; AKwUvBzPLcaXHJMP7Bx6zsVKWJcIrhxy1hWNTYLUEqfBE3Jc6cOzxnBKo8UHBOsQkTiSoyn3Wuih/gF+voZ/NiywUSiuuQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYINsQEgMpPsAoMoYQyfsaHsTK8DumTwtP7VoRvFWUaZ3qHW3s53
+	oIlM1Bm8nDpdhnZ1+SmtHsHRoPzjzOrpnEogmZ73m/gB12fI1O4psBSp
+X-Gm-Gg: AYBFou0/oXTOvRQ2Mjg/CEYE7qZQ32fpCoNBSNDx03bfpJg2advHr52c1rUJ8lhOSQP
+	hs1E5738fjEQw+GfdPDhkYp5MWt8bx1ootgN5TQ6+McGpk79BIfqRqt/yiSS75c2StHchr8SqWV
+	8ussIittLN+jQPZPj/0w12XCoW07LVjPQLWFCY2jWPISmY4EUjn/aYAYNziL1UosJYR9Op7oBCH
+	OT7p2GEYmkGKTUQONUg9U+yOFK3Hc/CLrsxvoMwh4A466aMrl66Ybd3vgA3TqIA8TAmKNcD6Gvq
+	HFiM5s/mPpjYVe07sv+stu+y0+OlVJ/j3u+tVmdpgQ40iSCTfdam2FkBGEc+zTo0pYpTX8T/Zjo
+	gey8o+FI0lFJRhILKXbQpb8TGLNYwHs3ewzyDAq3mA6krgy2ds3UyV9EZ7yIW2j2s6PEaKerOPF
+	gEftd/8YoU7+iB52MfiVY199E5KY9hAAXI85REIDXe6q/Wv3xmN3k3TnaEMz/V5RGblsKZsNSNZ
+	hqzOyTpA/xleT2Pr7W9rZ2CAl8qA5tU8Kh/4AEsHvrz6SdxxbwvRPie97e4Y4dCyMGpdKoHrui9
+	A5ZcggvtrbqWMr7aiJKZQ6Mdqkg60sT0e4Uh9uh2ryF2
+X-Received: by 2002:a05:701b:280e:b0:1a5:52f6:db9a with SMTP id a92af1059eb24-1a6cced4b3dmr557529c88.22.1793136607833;
+        Tue, 27 Oct 2026 14:30:07 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:9958:9525:7799:82b5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1a6d7ed488fsm723725c88.7.2026.10.27.14.30.04
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1a6d7ed488fsm723725c88.7.2026.10.27.14.30.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 14:30:05 -0700 (PDT)
+        Tue, 27 Oct 2026 14:30:06 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 27 Oct 2026 14:29:56 -0700
-Subject: [PATCH 2/4] ARM: s3c: crag6410: drop unused CODEC_GPIO_BASE
+Date: Tue, 27 Oct 2026 14:29:57 -0700
+Subject: [PATCH 3/4] ARM: s3c: crag6410-module: drop empty wm0010 platform
+ data
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -93,7 +94,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261027-crag6410-module-swnode-v1-2-2f885799b6ad@gmail.com>
+Message-Id: <20261027-crag6410-module-swnode-v1-3-2f885799b6ad@gmail.com>
 References: <20261027-crag6410-module-swnode-v1-0-2f885799b6ad@gmail.com>
 In-Reply-To: <20261027-crag6410-module-swnode-v1-0-2f885799b6ad@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -109,58 +110,55 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.17-dev-e56a4
 
-No consumer references codec GPIOs by global GPIO number anymore.
-Remove .gpio_base initializers from wm8994_pdata, wm5102_reva_pdata,
-and wm5102_pdata so gpio-wm8994 and gpio-arizona use dynamic GPIO
-base allocation (-1), and drop the now-unused CODEC_GPIO_BASE macro
-from crag6410.h.
+The wm0010_pdata instance in the board file has had no fields
+initialized since commit b53d47775651 ("ASoC: wm0010: Convert to GPIO
+descriptors"). Because the wm0010 driver already handles NULL platform
+data identically, drop the unused platform data and header include.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/arm/mach-s3c/crag6410.h             | 1 -
- arch/arm/mach-s3c/mach-crag6410-module.c | 3 ---
- 2 files changed, 4 deletions(-)
+ arch/arm/mach-s3c/mach-crag6410-module.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/crag6410.h b/arch/arm/mach-s3c/crag6410.h
-index f39ea2ca7a75..1fc7a8598c76 100644
---- a/arch/arm/mach-s3c/crag6410.h
-+++ b/arch/arm/mach-s3c/crag6410.h
-@@ -14,7 +14,6 @@
- #define BANFF_PMIC_IRQ_BASE		(IRQ_BOARD_START + 64)
- 
- #define PCA935X_GPIO_BASE		GPIO_BOARD_START
--#define CODEC_GPIO_BASE			(GPIO_BOARD_START + 8)
- #define GLENFARCLAS_PMIC_GPIO_BASE	(GPIO_BOARD_START + 32)
- #define BANFF_PMIC_GPIO_BASE		(GPIO_BOARD_START + 64)
- #define MMGPIO_GPIO_BASE		(GPIO_BOARD_START + 96)
 diff --git a/arch/arm/mach-s3c/mach-crag6410-module.c b/arch/arm/mach-s3c/mach-crag6410-module.c
-index 471a1ea967e6..6443c816d111 100644
+index 6443c816d111..55f55e9b9a46 100644
 --- a/arch/arm/mach-s3c/mach-crag6410-module.c
 +++ b/arch/arm/mach-s3c/mach-crag6410-module.c
-@@ -217,7 +217,6 @@ static struct regulator_init_data wm8994_ldo2 = {
+@@ -20,7 +20,6 @@
+ 
+ #include <linux/regulator/machine.h>
+ 
+-#include <sound/wm0010.h>
+ #include <sound/wm2200.h>
+ #include <sound/wm5100.h>
+ #include <sound/wm8996.h>
+@@ -45,10 +44,6 @@ static const struct software_node wm0010_swnode = {
+ 	.properties = wm0010_properties,
  };
  
- static struct wm8994_pdata wm8994_pdata = {
--	.gpio_base = CODEC_GPIO_BASE,
- 	.micb2_delay = 150,
- 	.gpio_defaults = {
- 		0x3,          /* IRQ out, active high, CMOS */
-@@ -249,7 +248,6 @@ static const struct i2c_board_info wm1277_devs[] = {
+-static struct wm0010_pdata wm0010_pdata = {
+-	/* Intentionally left blank */
+-};
+-
+ static struct spi_board_info wm1253_devs[] = {
+ 	[0] = {
+ 		.modalias	= "wm0010",
+@@ -57,7 +52,6 @@ static struct spi_board_info wm1253_devs[] = {
+ 		.chip_select	= 0,
+ 		.mode		= SPI_MODE_0,
+ 		.irq		= S3C_EINT(4),
+-		.platform_data	= &wm0010_pdata,
+ 		.swnode		= &wm0010_swnode,
+ 	},
  };
- 
- static struct arizona_pdata wm5102_reva_pdata = {
--	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.micd_rate = 6,
- 	.gpio_defaults = {
-@@ -287,7 +285,6 @@ static struct spi_board_info wm5102_reva_spi_devs[] = {
+@@ -70,7 +64,6 @@ static struct spi_board_info balblair_devs[] = {
+ 		.chip_select	= 0,
+ 		.mode		= SPI_MODE_0,
+ 		.irq		= S3C_EINT(4),
+-		.platform_data	= &wm0010_pdata,
+ 		.swnode		= &wm0010_swnode,
+ 	},
  };
- 
- static struct arizona_pdata wm5102_pdata = {
--	.gpio_base = CODEC_GPIO_BASE,
- 	.irq_flags = IRQF_TRIGGER_HIGH,
- 	.gpio_defaults = {
- 		[2] = 0x10000, /* AIF3TXLRCLK */
 
 -- 
 2.56.0.307.g5fe7bd680c-goog
