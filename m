@@ -1,99 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793112805;
-	b=l2642nJOIb24swz+F//SjIkpAnPiOtxRN9rqmxkHbJQaHSWOYotbcbegddf/bTCOS4Em
-	 Gz9ZrJ3LM0oG28Bq6h358kkTq5oRl1d9pwneF8T5smc1e2+LG9iu65FDIJPwGlttsrZR4
-	 lGym8NhB0ohZfCgsOQ4mQFd+HXrhvgVs72XmF4qxxMghU5sgp4VGjLdBIqNXdVESCuPFn
-	 DRSXTywWkuLBmqcljHDXphU3J6MrHmJ6rFmaDsrKYfm17yppvgbJe6dVprzAxmN22bQb4
-	 zQh4piOkhBxXi6NmHcgKwNvxiQRa1Duxt3gxXhEdFfS0UfdUlzbDEQCC+fJjvp4ph8g==
+	t=1793115170;
+	b=EzqFoS3H8miA2YPVTSEuxT5ipo15tzajVdgkvN31zDH/ur2ZxkCke6ux1Rx8M1DU2Sqt
+	 bHd5F3orCie9WxaGs74Q5PZaZfUXPw8/jGxYUV/uFkPcH5nN1AbRENE79PqedkWFouf3P
+	 O72zCMv6zB01AV2jyyCw9B3JB1ex0TnpS/sCSL27kJwGnbaHi+Yopxq7dw4TScmpCK31t
+	 Nia+N8aYm8RRpLzdLoklAjroTlhGylZXkKEDPd+d6O2BScWcRA8hKLImoyF8GXwLguUUk
+	 nqHO2KB10mghRRyLlI69l5lcF6s6RkJ2Jw/Y8kk6QDZ8BMXMwPZ9VX8voFmxUC09e/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793112805;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=MpIBWf7/b2ks94p+dnClhdfP917IQaGrC6d3ELQJeOU=;
-	b=xyRSrRseEadS7FqAHBsUTdviMdDptF4pVUKkgzAxXWdrE04aDLE6MgbP3Oc++TWz4PwG
-	 y4Zp7Eh0ivDDhXsZG+Ox+ZFttCch0D4aoabmbtxLvdjS7SmDMQzH6dyo0q73fmTx9eeq6
-	 WpPR0GrO8mmtGgpsfsbp1QrrdtPwTaxGc3VSABBxlgSkyIPx/LcSKwOq20KWBsjS2L4ZJ
-	 p5Wx66vaIpfVNJCXlj1e8hqRT8heCPCGe7Hj33gIP7WPcZqnZaCG8/h4xAlJgaDiJShsz
-	 XlY63wk8HHn1+/iqDEFniwX84GQw+FVWVD4WhsxUaS8+WR5zLGm2q2jsEBZqCtMaVdQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793115170;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:From:
+	 Subject:To:Cc:References:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=+0oWagLcvTtnewCSM432qJhSUImGZTNxgsC62eUA90o=;
+	b=uotcF8SQbRHfYPKmTS2U1Nfd3v6t8RHeKxClVjb5INFlrmCa8NL6r0ivcVy70Rb7sl+v
+	 7rkBPU3L3aJ8IstmQNdKDvd5jx4vUy263qOp/IWRXoy/eVsjNB3ylA4gvBJib62jg2XPn
+	 4MnZOHQhXqVImAESW0swmGhuGpuSI6+iIpoZgCs2QTF4k6M/tga7U4zF2h+WYPzPBeaKb
+	 0+FqjG/W0RGN5DHiPFFB/0QRhKerv0GULtJYIlhlvwQlFltIpo4T55vbG0QdHf6JHuP8s
+	 WWzFZOCXTuEheZeTL7ttoQhct1r1kQQ3K03JfR9aPKJU6mqvdeOBnKLvdRsXZ74o+EQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PL0uNvOF;
-	arc=none smtp.remote-ip=209.85.215.172
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dtEwIKUU;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9B9606A31B
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F9B9606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A857F606A31B;
+	Tue, 27 Oct 2026 15:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PL0uNvOF
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-cc4be0e5351so15054a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793112804; x=1793717604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=MpIBWf7/b2ks94p+dnClhdfP917IQaGrC6d3ELQJeOU=;
-        b=PL0uNvOF6KtmytVx/LyM6gB7gFM05V7MDTXiIU/jNVGVrb8h0a4YBmqrVAgfzJYkM/
-         XIIlEJw0YrfmwpzCxmxqRPuPBrSO/A+mN3FRztpVogzN5DyzY3Sq8CWDatzUvbLI2rzi
-         PEoaPyAY2SHhTTr0iu4XDHOxPytwusNn66/D7hbTLGkaFvARqeP3wSVvxPrg+czWBFbi
-         RvThogGY40pn9hSgBkEgfoaZM+UFVgqyOpQbxAV+BfMI+qMCM7/3D1R4tD+tval28tEb
-         ebUXb/xw8hrtyeGU568eNfHW+R/Qs73nxMAMBtE4IOYI4JVt4Tzz/h41aFppjGK698YZ
-         ta7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793112804; x=1793717604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=MpIBWf7/b2ks94p+dnClhdfP917IQaGrC6d3ELQJeOU=;
-        b=wm7l2UZIPoArhvGWI+S9LgQuU9mFYGpbbYne/Br0kqjD2A4ecyWZ5wbpK3LVOmj+X1
-         NvCmDjbnrtOuQ6tiodkp6XM6lGhAoZFN5UoODbn/9cq8LN3IRUH4HiXu065tluGqKsZI
-         70pXL0RJVDEO5wxpy/ifFMpKbJeygP4hqW9E5uJnr6RB9PR8TNTVdnBJEWzNC7Mn4LCU
-         4d2JYTSwJ47Pc7Ra5d8tvufJQoZDtTC8WsX2bF1aODQZ1vzzjuFO1ah2T/v8zsskLcKj
-         2lM7+Y09YewmNXa2hx508wWJps+Air7lv05Bqq70Smk6xddZsqCSRWP3H/EpHQePMf1j
-         k/aA==
-X-Forwarded-Encrypted: i=1; AKwUvBz30XBksAZy0eHqr1tgStsB1uurWEUNRFFE/qE/FfM8K8tAns0KC+Ocifvx3ljRReIAbOUNPShTz1GHnbDvtLmZLQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLUwQN9xyRmmT6N+fKYz3mpwFgMNRJu01r7t1AOlqsSgtyZBvp9
-	tV31LD0K7U9umuhQ6E3sglFEpaY46HgQUp+9Ma3pRm4hx8yvpjg+EY/q
-X-Gm-Gg: AYBFou0xkqD0TOH1ZZmjXbzS6OuWILEAECpS69NwXIMTyHtESzmx5yQ2ZoiIJpVFgj8
-	zLjEJktqWXnRpihWHZ++xt9+h8VS17E5GkRpRHERKX//7MnEYnKNA5cpYtob//uh+j9ktB0zOqc
-	hpWetUGOaoCpnDaiK0XDHt55GXW4r+RwUa1WV1QuQ4i+8s7JdrVzuaIvNh244zbg8eGVdDLpl02
-	wWQ36M9hAXGmqZJ7agyAUwo7UL1gysCVEYwYxU1ycoHIimnjWFpMeppcYn3BYNowt52mdFw7+GI
-	QrhEWPLMNM8XnmAAzJuR1PnPTQcLLolg62SyEPgp10OoUJfrSLVmTpJTHG7RH5kEcLI6Svtouik
-	GEEJbg1MWd3J+ehMXUC7RlaWu2rgR5/g9dMAI2IeRhbnkC01dEYkY1SXUojmR1kA5pTjJkdbJqq
-	KsDCOugLAPDb/75qdJs2cFcf/KHwVL7pnyNF/RYLqdIAVloupHFNeIiDDnjq8a2H51hC3R01NtS
-	EehJi2NHErxR8fVv+8dQntAsocZCRS1vjA8IV9FcGYUd5PBFKFD4Q==
-X-Received: by 2002:a17:90a:b896:b0:3ab:b39f:41c8 with SMTP id 98e67ed59e1d1-3adead4dce8mr5470253a91.46.1793112804486;
-        Tue, 27 Oct 2026 07:53:24 -0700 (PDT)
-Received: from lgs.. ([101.76.249.61])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae40614d7dsm4093349a91.3.2026.10.27.07.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 07:53:23 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: fix DMA memory double free
-Date: Tue, 27 Oct 2026 22:53:13 +0800
-Message-ID: <20261027145313.136305-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dtEwIKUU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0452A1F01825;
+	Tue, 27 Oct 2026 15:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793115169;
+	bh=+0oWagLcvTtnewCSM432qJhSUImGZTNxgsC62eUA90o=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=dtEwIKUUeNK/0V3q72RuhjcM3XB9lvACZ3yKUhInj8Zf+PtknFhFFKjhNFk5Efdkp
+	 xpANNTMa9TXxqHgWiccafR7WvvDydpYotUzIOI5DNnocm2KagZ4TLJqbciqwQLDZM9
+	 vcWbnU+CUX/0GkNzKsFrWSl5vheOnQzevABytfwin/U9fc9d2YLjHBknOiunYPulRo
+	 cBVAKaLp9o6rAcYW5iz4YSXOWSHlIIREcpLNS5k89b9hozEB09uf6sUB7Cf0yCLiTk
+	 8/qgCOZRxIDRGOiNCcAcboen3xq2yxLY8oYoZ7dfpniILZNhE0t/9FMlMBhKPcSfrz
+	 qaGSp5cSzwymQ==
+Message-ID: <f7d242b6-a401-4ea0-bfac-e988f1497bc0@kernel.org>
+Date: Tue, 27 Oct 2026 16:32:44 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -103,41 +51,89 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-fimc_is_alloc_cpu_memory() frees the coherent DMA buffer when its
-DMA address does not satisfy the firmware alignment requirement,
-but leaves is->memory.vaddr non-NULL.
-
-Because firmware loading is asynchronous, this error path may run
-after probe has returned successfully. A later remove can then
-attempt to free the same DMA allocation again.
-
-Set is->memory.vaddr to NULL after freeing the buffer so the
-existing NULL check in fimc_is_free_cpu_memory() skips the
-already-freed allocation.
-
-This issue was found by our static analysis tool under development.
-
-Fixes: db47622c13ae ("media: platform: exynos4-is: remove all references to physical addresses")
+User-Agent: Mozilla Thunderbird
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] media: exynos4-is: fix DMA memory double free
+To: Guangshuo Li <lgs201920130244@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/media/platform/samsung/exynos4-is/fimc-is.c | 1 +
- 1 file changed, 1 insertion(+)
+References: <20261027145313.136305-1-lgs201920130244@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <20261027145313.136305-1-lgs201920130244@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-index b7d9bfedd590..9fdc352abfe4 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-@@ -346,6 +346,7 @@ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
- 			(u32)is->memory.addr);
- 		dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
- 				  is->memory.addr);
-+		is->memory.vaddr = NULL;
- 		return -EIO;
- 	}
- 
--- 
-2.43.0
+On 27/10/2026 15:53, Guangshuo Li wrote:
+> fimc_is_alloc_cpu_memory() frees the coherent DMA buffer when its
+> DMA address does not satisfy the firmware alignment requirement,
+> but leaves is->memory.vaddr non-NULL.
+> 
+> Because firmware loading is asynchronous, this error path may run
+> after probe has returned successfully. A later remove can then
+> attempt to free the same DMA allocation again.
+> 
+> Set is->memory.vaddr to NULL after freeing the buffer so the
+> existing NULL check in fimc_is_free_cpu_memory() skips the
+> already-freed allocation.
+> 
+> This issue was found by our static analysis tool under development.
+> 
+> Fixes: db47622c13ae ("media: platform: exynos4-is: remove all references to physical addresses")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+> ---
 
+More of postings by bot ignoring any feedback.
+
+Best regards,
+Krzysztof
