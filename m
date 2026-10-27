@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.224.81.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.34
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793107714;
-	b=oyJ6dlE65GlPkjfLfZ3gWjISua9BcmpuUDmIYVvAzLc2TI7o/07kruiB8YlyrrPeQ8Kf
-	 b0Pvm7aoENkXedPrjB7u5GL2Hdp+Z2L04048XjeZUsVUKtMmm1WDTcRV6xn9kQfTLP6Bq
-	 BxNq7kgL4H2TlzNvjb+OOMIK4CMbN4qehE8yTnA0hvvTiPa7ddILnaSNb9hcYICyMt4hF
-	 pipD18cQEE5fj9fc9phCSbtcOEVSFYmNCkiUwqsUnXmmnIW5rw/7RIiZkYYxh8XCeiBhO
-	 izg6L6+t6Ojb2OwfrvR/CClOHdK4JMp54af0Lz0opwSBAmn36ZXERpewdPfsDsenhWw==
+	t=1793107720;
+	b=m+tf2Dyz6Qh4jANMdTfQWsBxldTEhwo6Kkntft/KIoiDFDpR6Z88qnFd3p8D3MX9Xuxa
+	 ivDkN23K8W7x8L1Ltc8XhaHdfdPp5qoaDGykl5vh1b7kia/mXsiyolKs+Ta1drm5v520p
+	 oT8jE/8lUy6msRcAjHxjfv/qKxdayfhEHC8LyrhAI+V686JZCLUS8tmc328YD7/pS8jw5
+	 gcMqvS9oZfTnWgx29c9mcAW2CtcQd8JMmZrJG8FT1m+HbyaBk64M2rTEHDv54pqt1RTUj
+	 +kMMc0b45NHHFvRA+SiSCKZQCbrs5weEqwAPeDDsN88DbvmVV4dhsVAYAnPeYlJ4pGA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793107714;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793107720;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=SXX6rcJ6t7qO3AFMfJUNJ/O/a3edu/GbWoqukjcSVpk=;
-	b=Krz0SqLVm12H/FtADInp+vHkWCSXi3tqb7Z2nyeR7hcyeq+QcKM7vJ77I//yhYmKC5qg
-	 m8l/xlCd2F1TlhsqBdhYY8Ll72hskRNeigBsCr3oDfCKoQL9Q9LNgztqcyp0okgW1In8m
-	 qrVb9zzwaTeZU6ya2RklkvEna3C5pOz3x+AtxCJpKCZynckoFrNw8SzRM3eX1F5ysxBOd
-	 1uztMn0OwZ45WriJIOGnGLUwZYhh1wmGs5Fb4SUo7uvokL6GKEzhL8ALncsq+CclnpLYq
-	 fajrUlk/q3Mh3KEzIP2Gs+A82AB+C3INqQRPtigQJi7IFAKuDkUhH/jN6eQFm03l8hA==
+	bh=CAzYdmJLVepJ08iaC2Wrs5PVOHKqjdTppJaoKTJ86Pw=;
+	b=eu9BRKSghSn++O9w01HLU1WjcyM+xct++dBmZNB4iMdXAE8vT0F84ZZfFP/yu5VBAQqU
+	 HD+XZR7VhBIu5dyPBBSciNWPbz/j1dj6C6KTET6amGaG5phbx0QAfRd87QyE3JFpw57+d
+	 AZ8ZnD9YPp4quGD6OEJ5e1B6ectwCusaH2LjCp/0BvV/qFaxRv2WrKUtKCl0ikz21KsPM
+	 o3YNpmRYs65qpB5YvfhOH/CW2EpFLtkhHLDdtcPnhkZ5wFmGL5diaLQ82Y4t96RSxsiTT
+	 3ta8bxswbb+GjbWlETeS9ds9fy3vC8veopNwqv0dZy3Wtjd2/+ReJbJjkb5a8qZzTOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=RpqB08MI;
-	arc=none smtp.remote-ip=156.224.81.49
-Received: from mail-m8149.xmail.ntesmail.com (mail-m8149.xmail.ntesmail.com [156.224.81.49])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=IrIPNZFm;
+	arc=none smtp.remote-ip=210.79.60.34
+Received: from mail-m6034.netease.com (mail-m6034.netease.com [210.79.60.34])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B956460A261C;
-	Tue, 27 Oct 2026 13:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B956460A261C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E27606A33F;
+	Tue, 27 Oct 2026 13:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 26E27606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=RpqB08MI
+	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=IrIPNZFm
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 528777a30;
-	Tue, 27 Oct 2026 21:28:23 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 528777a3a;
+	Tue, 27 Oct 2026 21:28:29 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -65,9 +65,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v5 07/18] drm/bridge: analogix_dp: Extend clear_hotplug_interrupts to accept IRQ bitmask
-Date: Tue, 27 Oct 2026 21:27:59 +0800
-Message-Id: <20261027132810.1746118-8-damon.ding@rock-chips.com>
+Subject: [PATCH v5 12/18] drm/rockchip: analogix_dp: Unbind bridge when connector init fails
+Date: Tue, 27 Oct 2026 21:28:04 +0800
+Message-Id: <20261027132810.1746118-13-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261027132810.1746118-1-damon.ding@rock-chips.com>
 References: <20261027132810.1746118-1-damon.ding@rock-chips.com>
@@ -81,129 +81,41 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa17d8c354503a8kunm87c266213d5701
+X-HM-Tid: 0aa17d8c4e3903a8kunm87c266213d571c
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZGEgZVh9JGR9LHU0fHU5JT1YVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZTxlPVh8eSExKHU9LGh9NS1YVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
 	9PT0hVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=RpqB08MIsuy6X75yLHWMwS+YQGDkSTRb9Z4FFEJIm7aIClEjlnLf3WZMIbygRh+77nMPjFrW/Xa4Kj6c1G7emHDym4DQ1br21WpPahCkJE9CkNhpq6pBvNzVr6XEdTPAcJT876TCBzItvC/o3vh0SsowIOlMG1WT46R03qufVIs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=SXX6rcJ6t7qO3AFMfJUNJ/O/a3edu/GbWoqukjcSVpk=;
+	b=IrIPNZFmBwH0pCXfzEJEHVZQ+NPQJV3GTxc4VylSkHaNrwqoEwgl2idGW+YR345A8NS4ScPfWZiCUC8qOhoYYht00k8nZIAQSFFtrX4Wi4yiUJOSAvfWNdNODA9UT0hEYA7G1nsvasW8jqXDrabZt1xk0YMi4s9aBm2uhr7+bcs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=CAzYdmJLVepJ08iaC2Wrs5PVOHKqjdTppJaoKTJ86Pw=;
 	h=date:mime-version:subject:message-id:from;
 
-Update analogix_dp_clear_hotplug_interrupts() to take an irq_type
-bitmask argument. Instead of clearing all hotplug interrupt bits
-unconditionally, only clear the interrupt flags corresponding to the
-triggered events.
+The rockchip_dp_bind() returns without unwinding analogix_dp_bind()
+when drm_bridge_connector_init() fails.  The aux device registered by
+analogix_dp_bind() is then left behind with a dangling drm_dev
+pointer, which could be accessed on later AUX transfers.
 
-Pass the detected IRQ bitmask from the irq thread handler, and use the
-full HPD_IRQ_ALL mask during HPD initialization.
+Call analogix_dp_unbind() in the error path to release the aux device.
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-
 ---
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-- Add separate patch for IRQF_ONESHOT to resolve interrupt mask issues
-  triggered by interrupt preemption. (Sashiko)
-
-Changes in v3:
-- Rename newly added macro HPD_IRQ to HPD_IRQ_ALL.
-
-Changes in v4:
-- Add Tested-by tag.
----
- .../drm/bridge/analogix/analogix_dp_core.c    |  2 +-
- .../drm/bridge/analogix/analogix_dp_core.h    |  2 +-
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 28 +++++++++++++------
- 3 files changed, 22 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 8dcfde38a61a..97a943f29cf1 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -720,7 +720,7 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index 38c78360842f..e6310d66e8e3 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -419,6 +419,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+ 	if (IS_ERR(connector)) {
+ 		ret = PTR_ERR(connector);
+ 		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
++		analogix_dp_unbind(dp->adp);
+ 		goto err_cleanup_encoder;
+ 	}
  
- 	irq_type = analogix_dp_get_irq_type(dp);
- 	if (irq_type)
--		analogix_dp_clear_hotplug_interrupts(dp);
-+		analogix_dp_clear_hotplug_interrupts(dp, irq_type);
- 
- 	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
- 	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index cc3466304531..068be3464521 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -197,7 +197,7 @@ int analogix_dp_init_analog_func(struct analogix_dp_device *dp);
- void analogix_dp_init_hpd(struct analogix_dp_device *dp);
- void analogix_dp_force_hpd(struct analogix_dp_device *dp);
- u32 analogix_dp_get_irq_type(struct analogix_dp_device *dp);
--void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp);
-+void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp, u32 irq_type);
- void analogix_dp_reset_aux(struct analogix_dp_device *dp);
- void analogix_dp_init_aux(struct analogix_dp_device *dp);
- int analogix_dp_get_plug_in_status(struct analogix_dp_device *dp);
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index 49c1961e4326..2c1d4655114b 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -24,6 +24,11 @@
- #define COMMON_INT_MASK_4	(HOTPLUG_CHG | HPD_LOST | PLUG)
- #define INT_STA_MASK		INT_HPD
- 
-+#define HPD_IRQ_ALL		(DP_IRQ_TYPE_HP_CABLE_IN | DP_IRQ_TYPE_HP_CABLE_OUT | \
-+				 DP_IRQ_TYPE_HP_CHANGE | DP_IRQ_TYPE_IRQ_HPD)
-+#define COMMON_INT_4_HPD_IRQ	(DP_IRQ_TYPE_HP_CABLE_IN | DP_IRQ_TYPE_HP_CABLE_OUT | \
-+				 DP_IRQ_TYPE_HP_CHANGE)
-+
- void analogix_dp_enable_video_mute(struct analogix_dp_device *dp, bool enable)
- {
- 	u32 reg;
-@@ -375,18 +380,25 @@ int analogix_dp_init_analog_func(struct analogix_dp_device *dp)
- 	return 0;
- }
- 
--void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp)
-+void analogix_dp_clear_hotplug_interrupts(struct analogix_dp_device *dp, u32 irq_type)
- {
--	u32 reg;
-+	u32 reg = 0;
- 
--	if (dp->hpd_gpiod)
-+	if (dp->hpd_gpiod || !irq_type)
- 		return;
- 
--	reg = HOTPLUG_CHG | HPD_LOST | PLUG;
--	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_STA_4);
-+	if (irq_type & COMMON_INT_4_HPD_IRQ) {
-+		if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN)
-+			reg |= PLUG;
-+		if (irq_type & DP_IRQ_TYPE_HP_CABLE_OUT)
-+			reg |= HPD_LOST;
-+		if (irq_type & DP_IRQ_TYPE_HP_CHANGE)
-+			reg |= HOTPLUG_CHG;
-+		writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_STA_4);
-+	}
- 
--	reg = INT_HPD;
--	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA);
-+	if (irq_type & DP_IRQ_TYPE_IRQ_HPD)
-+		writel(INT_HPD, dp->reg_base + ANALOGIX_DP_INT_STA);
- }
- 
- void analogix_dp_init_hpd(struct analogix_dp_device *dp)
-@@ -396,7 +408,7 @@ void analogix_dp_init_hpd(struct analogix_dp_device *dp)
- 	if (dp->hpd_gpiod)
- 		return;
- 
--	analogix_dp_clear_hotplug_interrupts(dp);
-+	analogix_dp_clear_hotplug_interrupts(dp, HPD_IRQ_ALL);
- 
- 	reg = readl(dp->reg_base + ANALOGIX_DP_SYS_CTL_3);
- 	reg &= ~(F_HPD | HPD_CTRL);
 -- 
 2.34.1
 
