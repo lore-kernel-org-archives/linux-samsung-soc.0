@@ -1,111 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.182
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793051131;
-	b=OsOCcXRuuJD3feqPM7429r0toC2wUslPDqAINilypvD8XbKEldeimSU/ODeRjNBhemJF
-	 +a4xyIfINconoYPfpFfDG7ebUBI6GDE+LE+ZQcqCd7XWopDrbazcM4caPvjo7TJlHi0WY
-	 NX3ApMiVpC19mWRZXITImvlJiOGJT0CAxOpMEqXu4wi/rLnS4ezD+Icy91tNuUadjtazl
-	 xT5KwmItiycAXUogZAxSwd2O/5r9Udjw9IjF1Q15jU8GBAY7PCI5bJzbzHjlxObCjZ1lK
-	 nPG2hjG7eQ+vQWBsmNTxrOBHzPHYjnd4FDoYt/Ygc0HqzJyFel+aIvrFsXugI/N4nNQ==
+	t=1793063234;
+	b=n/7wlYZHRyUM9JpnI5Q84+0LGVu4osCHXjFxrDjAN+c5LT/f5s8mqCN+p4UkH0vMwpvZ
+	 dz5AJUr9rilkii5/aFYaZTtvDYM4Nrd/XAopCZvOlpFEWueQxQt5FtaUNcZCqQ4Y9qgSx
+	 zeTJcf0SO5C2JlVPHTosbdchX1cj+K9gOAyjqEa1rJetD6PYQ63IiYOZtOjatbYxeJvA7
+	 ILWFVKjmNDhZipAentb7HgPmuEsWbojY7d9cl1mmPdVbgxLnjkhgyRsjX5gO0vKIG39d0
+	 J1TT0KH2SAUx22aMb9gEJq/QaTdIq/Yt1z9LnNXsh0m+fJXUNhNeCu8swxNfeE8Y2EQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793051131;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793063234;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=RxRxbLBQ5S84nbJ2Z24j8qYmciKanlUFlKBok3xXqSM=;
-	b=CL8GWBR+aNuymxXOH4qpOfNjjCU+aryZjOGGbu61XVZ1Qv+a3HQucf7tsb9awZxJWHn7
-	 tGIQRkqhU5J16O/c7SS4VYh7BFPDcBf75m7+HuKyydEXmKbtqvcRJ7mEULl2HSJtthxUP
-	 6pRdUUXzZT6ZHBENamByukaHAF+wexk5PbQj5JFA9Mve2Mlaz1L4HhnCQKCmQjiDfvvXl
-	 An7M0ROAxZPkdqTqFHmbSGPQ4twNThinNYRY90l6bfghX4DLC+iBQj3aBEPwSE2mbb9JX
-	 uZscyUBv1utQ4h125Bnsc1SwGmavnCdvTCsfDnRUL/2Gq8kF8qdT4MinjydggyotyCA==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=vBhaO6Es9PKt4idPNg62EPh8XgJdwaGm+jmpwXvFRC8=;
+	b=Vuga2dlGS0ywh8WxISbsseZJCD6kcI9uIqEeAnTZk5rt7CG50hTEI71pYJZl4wbNS0Pl
+	 eSrs436XBvJd+Y3XOfQk3bGa8hVOX2GwLdJj5O0Lhm4UIry2cCNmLlqGZrmvzSOoiRJ3M
+	 lF1MWgmOvyZcA3kLmxgD/gJAEGFT8fW4tScjcizfT3YSGMEQEKh6fWTEyTZEcBq0FIaC/
+	 dXTsqS1WV7x94PamG3Cd+0Vmkj4jrm5/2gjrcVkll/uqElBNp/H0sLxf7Y70C80r5v3f7
+	 V/I76N5MMYK8AQXqCroLLIqMVgCpO5wrMyLzW+I586jhP9+xO31v8vhr9vf/LdaElCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=M3BEGRGA;
-	arc=none smtp.remote-ip=74.125.82.175
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PVYnLtwm;
+	arc=none smtp.remote-ip=74.125.82.182
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5A60A2600
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 21:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 84A5A60A2600
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A727606A31D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 01:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A727606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=M3BEGRGA
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-35cd4e8bdbdso5692552eec.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 14:45:30 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=PVYnLtwm
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-35829219da8so610673eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Oct 2026 18:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793051130; x=1793655930; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1793063233; x=1793668033; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=RxRxbLBQ5S84nbJ2Z24j8qYmciKanlUFlKBok3xXqSM=;
-        b=M3BEGRGAH/Vn2SxAJ2DzND9XWJaEthgW/2MXtbTOVBhxXeA9DgmqzFakwsDvTIr4Nm
-         7cB3fF0bUrpubPo+WWG22t5+1qoyUQRWDdijeDyKfjB/xcFfTQSWEy42gLuAnCIwTIE0
-         PBlq477/agmjQqRSYYXMAKswTErSit3gwmpSc=
+        bh=vBhaO6Es9PKt4idPNg62EPh8XgJdwaGm+jmpwXvFRC8=;
+        b=PVYnLtwm70tT95O4Uv7YMB8Et9uODxOHNv+T6a3NrEqKIDvU4e5NW/3X1s/nZW/eR1
+         miRhvrwaPJy7I+3t/q9nz3y5ghFBQXE35M1yzkRI/SlelyVbU6s8eDoPEE4VX6YYskfY
+         eebLieAqnTfWJBwzDQxr77P1M+U1A/gM6Re54SHmAi2WUA/yBgRCHtkgLeZw8Nh11/Eq
+         6rbUJo0nKwH7PjFGdf2H9601QL5yOKS1Dprb5s0qOo834w2oy4EO86MunCM5F6caTmNK
+         HcoLVCojp3gvIwrCmy9u1ZnKNEBeCkTGnQQfVYsirAe3vyrl8uvhwYFS4rA7AwlRC3Zw
+         1+8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793051130; x=1793655930;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1793063233; x=1793668033;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=RxRxbLBQ5S84nbJ2Z24j8qYmciKanlUFlKBok3xXqSM=;
-        b=sn5iZ2Mn7dXI1Fziuw6NxynpcsOc1XAbM3F5ZXrJVMlNlGNZ7sIWoKlteEW43dPhEI
-         1+WaqV2Z9+SFbNHUMUsfkJp7STlVHvK5bNGt1NCpQiQSNN+hktIYl4nDRgl8JYO06A+e
-         I5w+oit5GFQBk+FjeJzCrZABe3cxgyi915m44X8PYxJ/lIgdbhww+wX+vVA3QdbIN9TR
-         3UrVbNnCzXAG0G3k1HndPV+GY/QAj6IjVn0X4qpxvGdnbUCjhvw7F8KGoBbf8r+HUGoI
-         /jQgssisz6eAVyDgR+CW1GmPgZmUJBE4ScgHAZmIGLEv7C3sg7QviluiYkPaMZctub8r
-         +1mg==
-X-Forwarded-Encrypted: i=1; AKwUvBxnmo/cBGWAWFM9lJSfro7VMd46srUOgmsfEsEl3BV1p5gkB3W2Srfzo9OiEcXHa84zrqJ6dn0G5wz8/xzpod4N5Q==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIQW4wA8XF011OX4/O1P1QC9bjW+vPvvMMReVkdU5dvlmeK9U6t
-	v6pIi4hx80qhJQ8FPu5VNGcT0F2R8Xa4JUqUEjWiy955E562VbZASAyUqfQko6VzAw==
-X-Gm-Gg: AYBFou3XzC+P1WDhWhZ13PpN1aqlib0LvVz35IY+vqxd4J3foOYdIhxj+cZEUhjnPBB
-	rQBz19wF2n1JqRTkBpsZ+EnzN7DxbfKMze1N5fKf0df8MELuXyzKDCC+lIKkk/4faO1myv+ctdl
-	9HaZGqVMC4G5URRukOA/FQecz0jBN4LOHxrCUSKDdH/Z1QAKSpTQLuOsPX54iV1a+5VSVf4j1Lx
-	ZgHrKQnk7hCHEFMzPIN+fnlrj7EmMyCeV/NnSrdBF+cvtw3PkemBThC/iRPnm/r1SbD/SlKL5sD
-	pfqGPN7jOtJFaarcbYb0YkjuzlV34vc4bcNamlGWK8VRPiBRnYK3m3+EGFxt/RYPP/5aUy1Svk2
-	aBvU5Hkja3650OzxjI51+mr8W1fugxSGvGNFiLlYanIkvdS+FKkkl2Npuq9fUMJs62y9L/Jfb6E
-	geq93s7i8bCjLa/opqsWGb6+HTcWcM/hmOiLiv5f2m0Is2tBAwQwUKTbQ9hIA5n4CKjIyTvBzwY
-	8y4b/sT117s4vDYnOJt/ouP+SSPFDTP25rMhjIsLyocKu2HAUcNvFP7AJIMc31ohS0BW4YVboTA
-	IVlB8qA9uvViuSWvsoA=
-X-Received: by 2002:a05:7022:eb57:10b0:165:55e2:2d69 with SMTP id a92af1059eb24-199377d8c73mr12569336c88.46.1793051129456;
-        Mon, 26 Oct 2026 14:45:29 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:79c5:9cd3:db14:7468])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-198a0f81ea9sm32064575c88.11.2026.10.26.14.45.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2026 14:45:28 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
-	devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Radu Rendec <radu@rendec.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Mariano Marciello <mmarciello@google.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-clk@vger.kernel.org,
-	=?UTF-8?q?Jakub=20G=C5=82owacki?= <jglow@google.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 9/9] MAINTAINERS: Add entries for CPM drivers used on Tensor SoCs
-Date: Mon, 26 Oct 2026 14:43:47 -0700
-Message-ID: <20261026144346.9.Ibb4a0adecf127291198c372da631ff62b483a795@changeid>
-X-Mailer: git-send-email 2.56.0.307.g5fe7bd680c-goog
-In-Reply-To: <20261026214359.3122870-1-briannorris@chromium.org>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
+        bh=vBhaO6Es9PKt4idPNg62EPh8XgJdwaGm+jmpwXvFRC8=;
+        b=sJi2IfIFaU0hgG0Gyg8Zvl9jXw0wEg0Dcno9Qr0JxhpSxY1xXhq7a8tN+eo8ezk1Vw
+         XPD3wQ7uDYiHEUmqS01uFMI0p2fNbnGLAO+ItQny8jskBK/yZwlf7UB2jibWycZKxrIS
+         z+e8hVnPfMJWZfJ5MwhjUvm+XFcL6/GFAeapDJstaeHRYv0YUtaWsRm3+toj+iyI+/zg
+         kCzFJiEe3K0pXCiMHgxhCFxNwTwD9lJChbV2nOkIYKAF82is9ndBbt8tfnOysUqsAvOx
+         9hcLpURVwlbV202ypAiQhAMYUkjMB/rXZSI4J0HQeaFD/WOJ4voA1NAkYqbAENQ1j0ps
+         3hoQ==
+X-Forwarded-Encrypted: i=1; AKwUvByuExRwQkdB3EDZCKG41tdj7OamCUx47l6pn+0HB2EfK1pNCla/hPRdPQTkIQ7lVeJptgnE1OUW8joRIUMQP81big==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ0+wTbwYWapIvxhqRYJRg3TyC9dCBxCvONcPoVSNn5oeIPQ6kh
+	4acI0Gpa2MANAleONuEO5DoLYFG92NNG9qWV3Qxwp/uYzk53Mz/Qxrd9
+X-Gm-Gg: AYBFou1NSn28/PDZoOhpC9bgb1zX59uZqICK0tb1yn4/xem3bwJsGZQNg9Qhb/GYOIc
+	zXKZS0hxZE1BhiClZIz/CVr+r27cROxByeAOuLRYzmPOvA8icgg1E9zUtEw1hPUD+GKSUKXaSOi
+	M/fc8mcXaPZAgBNhMJZFhDCUAJeVa3A7hIzOs+jXqEjHIrgSyXRV5QT/sD63GRIUKEE17I2m8HN
+	jlUPd4NLqcVvxKheVGrzmvY/UjrP/teOeH/DHnRAr+iJ096pPC+FDMgzUNZIB4MwTYn3PLodUCp
+	tSBrk6ohQgvpfU6RQjVRBi9hY1of+rmMEYUfWJs8TFoIuZAiotVrQdPmOdRTLEJn1Nfi3MFwtyH
+	hFfVPDZ25VW2FY+g7BtKyiW2+I/CzaAwnExvHWX5xvMxfScGEUmGI/0J4gcrS/b+VL5fEudszhq
+	Wt8UCJzRSqUspsje+vaQ6DV1j9xON16eEdFUanQdOIHuYWhGUMFTyKsE+n8cl3z1Jw4dnb7JsCJ
+	uF+czB4aYxbQ8A4YEZPh8QjDppu6U6Ptyeu4U3T95AdCeLpFnmJzE1TTlFicn7boBS0gapqmR7h
+	weyK9LY0DmPCXJOzxdeoH38=
+X-Received: by 2002:a05:7023:c013:b0:17a:a3d4:8b17 with SMTP id a92af1059eb24-1a3c485419amr1593552c88.12.1793063232714;
+        Mon, 26 Oct 2026 18:07:12 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:2dc1:2e1d:6b4d:5a9a])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-19894d59f90sm27239759c88.3.2026.10.26.18.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Oct 2026 18:07:12 -0700 (PDT)
+Date: Mon, 26 Oct 2026 18:07:08 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, mfd@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v4 0/4] ARM: s3c: crag6410: Convert to software nodes and
+ properties
+Message-ID: <at_45tVmsWaYAv7W@google.com>
+References: <20261024-samsung-kp-v4-0-e21253295e68@gmail.com>
+ <a6df6043-9f0d-4b03-8efc-d3e47a82f096@app.fastmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -115,55 +103,54 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6df6043-9f0d-4b03-8efc-d3e47a82f096@app.fastmail.com>
 
-The Google Tensor SoC known as Laguna introduces a variety of new
-drivers, with Google-designed IP. Add entries to the GOOGLE TENSOR SoC
-SUPPORT entry to cover the new drivers that interface with the Central
-Power Manager (CPM).
+On Mon, Oct 26, 2026 at 02:51:16PM +0100, Arnd Bergmann wrote:
+> On Sun, Oct 25, 2026, at 06:03, Dmitry Torokhov wrote:
+> > Hi,
+> >
+> > This series converts the Cragganmore 6410 board to generic software nodes
+> > and device properties, allowing the removal of legacy GPIO lookup tables.
+> >
+> > We add software node propagation support to the wm831x MFD core to route
+> > DVS GPIOs to the PMIC regulator, and convert the peripherals on the
+> > Cragganmore board (PMIC DVS GPIO, basic-mmio-gpio, LEDs, WM1250, and SPI0)
+> > from legacy GPIO lookup tables to software nodes and properties. This
+> > eliminates the legacy GPIO lookup tables on the board and fixes incorrect
+> > GPIO chip names from previous conversions.
+> >
+> > Hopefully Krzysztof can finish merging the series through the soc tree
+> > once Lee acks the MFD part.
+> 
+> Hi Dmitry,
+> 
+> This all looks good to me,
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> I'm a bit unsure about how this fits into your wider plan, i.e. why it
+> is helpful to replace the lookup tables with device properties in
+> this file:
+> Are you working towards eliminating all gpio lookup tables from
+> the ~50 files currently defining them, or is there an immediate
+> benefit to doing this one in particular even without the others?
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
+Yes, I would like to eventually remove the lookup tables and rely only
+on software nodes. How quickly I can do that is a big question, but
+I'll try ;)
 
- MAINTAINERS | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> Do you plan to also eliminate the uses of the legacy gpio
+> interfaces in mach-s3c, e.g. the hardcoded numbers
+> in {pca953x,wm831x}_platform_data, crag6410_lcd_power_set(),
+> crag6410_machine_init(), or the pin config in
+> s3c64xx_i2s_cfg_gpio()?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 20bd4e03bb54..c997d23e377d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11424,18 +11424,28 @@ C:	irc://irc.oftc.net/pixel6-kernel-dev
- F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
- F:	Documentation/devicetree/bindings/mailbox/google,lga-mailbox-array.yaml
- F:	Documentation/devicetree/bindings/phy/google,lga-usb-phy.yaml
--F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
-+F:	Documentation/devicetree/bindings/soc/google/
- F:	Documentation/devicetree/bindings/usb/google,lga-dwc3.yaml
- F:	arch/arm64/boot/dts/exynos/google/
- F:	arch/arm64/boot/dts/google/
-+F:	drivers/clk/google/
- F:	drivers/clk/samsung/clk-gs101.c
-+F:	drivers/irqchip/irq-google-*
- F:	drivers/mailbox/goog-mba*
- F:	drivers/phy/phy-google-usb.c
-+F:	drivers/pmdomain/google/
-+F:	drivers/reset/google/
-+F:	drivers/soc/google/
- F:	drivers/soc/samsung/gs101-pmu.c
- F:	drivers/phy/samsung/phy-gs101-ufs.c
- F:	drivers/usb/dwc3/dwc3-google.c
--F:	include/dt-bindings/clock/google,gs101*
-+F:	include/dt-bindings/clock/google,*
-+F:	include/dt-bindings/interrupt-controller/irq-cpm-google.h
-+F:	include/dt-bindings/power/google,*
-+F:	include/dt-bindings/reset/google,*
-+F:	include/dt-bindings/soc/google,*
- F:	include/linux/mailbox/goog-mba-message.h
-+F:	include/soc/google/
- K:	[gG]oogle.?[tT]ensor
- 
- GPD FAN DRIVER
+Let me take a look.
+
+Thanks.
+
 -- 
-2.56.0.307.g5fe7bd680c-goog
-
+Dmitry
