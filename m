@@ -1,76 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.209.128.35
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793107718;
-	b=V4r98K1QvB23mNaAxE+Rpmdj0/vyEZWz8Q2Fcsuc+mmtgeqLNkkfvZ5gV+yTHNTcRqAB
-	 QaWJihgFHNa8EXM8I+grE1BHAD+TCdjurhao/i/vqpeVztdzoZwEyLRjjjuWy36aYeCRQ
-	 ptA8eSyr36VcdRnMUkp0BxRf2aksMwTpdTwtgTtif7Iqv9ni2e/qq79C+sw1RFxPGdFcj
-	 wUfvYxXjmRItqGSYQkB0RG8CS/0nEcsZvz8lfIBe6dJUcgZEZWXGZXZz1c/gzVsCefj5h
-	 v9EWYOdkyF5H9qqndlrLAc4bSwBIaGrXyVTNaS7aPhsu0V+XNfjzOMfGVZJPYAvxy5Q==
+	t=1793110455;
+	b=zzKjVrIA435JyiitdlimBWCGg0eEi3p+S1j6yOTEYyciXivaOgDRiRL46SFfabAAXW1w
+	 LjukBZtMyuRosYLaJunjtakreniI0ykW/0JdiX1x4C0wXaGZfIN5JpJUhiYkYT0ORHOI9
+	 Tjyfvz80SecEXauhHUMNx00yXKlzwhFcrV2v6wJ+mQ4CEw6yqgub3xXrK5kaAyuZeJB5Z
+	 jexTBdv/04DIXCU6TzUf2iiPIABpwPJ5KWjNJzasMDQyT9WOTtChpRtAR6HvSSaL5YshV
+	 TUoyFPRtCDhKtqbwOxuHL9HFZV6G+/RFA+TO1AymGtcYREZ0+vQHdoIlZn7D3OS2Iww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793107718;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
-	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=St4/4mnCdCjluMqmoUgrK/rtao/LPuMowCjAK3GrScU=;
-	b=itqWJjFrmVTpsqWxJxALBXSjpWjCgdndAWsUckWQuRPrLqq7I561nYLETTFqiS4o0ig/
-	 ZZJgNZ5CM0GdgTNE6Env7hF8fOcv+MkHnnI//BrLdy6XT+Vw9Uq17MjWosfHJ/bYyLfdw
-	 1lNS3h66rWX8zPDNgjqX+eSkQ2dFxO5qY/RYxsGG4M0NzapPNmhqRuxfYWTxpju/0hoyR
-	 lXzs72XDwtB/RKqyMbYhilWTdi76Nqs4bATwpPb/ickKjrtODJZPZutv5BYtjCReXdNR6
-	 nrxsE4VbaauCzZ/Qv30DRVuBjcoppYceiM/knP++K6P3BCucnGPPeKooLxun5A5DxYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793110455;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	b=DubnxVgAf421Gb+lw+J/oOZMHB06423fDtAc9jDVzx+g4qFeUvNYvyg4KNY7yehaoDYg
+	 X5vHcyAY0j3NGU0L8oluawMZSayxdRjTFi1bhvS2tjh988Ng1UF3SeTM06oKdhRtUmkF4
+	 tK7eI2bU0yrX+KzBttWgRaQzDsVPA2AfP6LuVmUc1pMfRpU1M/5n/uSWpnewHMIsGaGCG
+	 BIkni6InlB8/pEqTe6GLpc6vxpHHZ9nDCzuFzXV06qDEs9IsC7jUzXMQvqIArAUnKstnO
+	 xGpZY9Qxc92mzGjTjmFMJMBJTmz72FW/yLsTXES3pj6O5q1peHX4/6eoScENpDlml5w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rock-chips.com;
-	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=jRDNTGI8;
-	arc=none smtp.remote-ip=103.209.128.35
-Received: from mail-m12835.netease.com (mail-m12835.netease.com [103.209.128.35])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794CB606A339;
-	Tue, 27 Oct 2026 13:28:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 794CB606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3981606A323
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=jRDNTGI8
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 528777a42;
-	Tue, 27 Oct 2026 21:28:33 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sandy Huang <hjc@rock-chips.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v5 15/18] drm/bridge: analogix_dp: Manage pm runtime and IRQ for native HPD pin detection
-Date: Tue, 27 Oct 2026 21:28:07 +0800
-Message-Id: <20261027132810.1746118-16-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261027132810.1746118-1-damon.ding@rock-chips.com>
-References: <20261027132810.1746118-1-damon.ding@rock-chips.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C75E1F031E8
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793110454;
+	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=nOHXFD9io0Ru2PaYz+V6smtGs0WntNANVygH/FG21ay5l6eXVd/Fv0/Tv/05f5lHN
+	 ro4iu7gr3151Nom7znD+w9DtyJZyWfUd1ugqFnU4sroYLuBrr059kaYzOqg3LHyBNE
+	 Nq5slenfftrhf+jQMKg2z4tHzFnbsIy48BStIJ4xgz9ShxnCKOCF83cSRLUB1U0tDm
+	 g3peUTLWKcVDShNXN+mUP1xR1HMK/LuErofPe2xUAZAdWO0fFLSPuWwNBeF/MoBv5J
+	 AbW/DgyYr644yxz8kE3Ve5Rjs1Wa91W5XlLBIEfFPMWntO1C6QOqcmg7216oQhQAET
+	 L21vjkzNFgP8A==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-48e94879f02so1305210fac.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:14:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw2C0IEbfrItUg0MXnk/whBymTqCttG8e+kGRefH3w9Q6+EkwacNGjExF4QZUxOR5/MkJ/sfPQf3Nhxax1OQXnIvg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJWWXrswHNLFlkJU4fZfOdQtyuxWtjQpT4crU4dsafTjR7JHGU1
+	k7SHTOetyqB656OLpC7q+WAj9Uw/h/WIQzyf8Bo9RtGc22+EnbJ1/a7LAz+u+ANMcJKUhUVBy50
+	hgxgJT4rWET446XqZHxuwigUnHnXh3+g=
+X-Received: by 2002:a05:6870:c69e:b0:49d:c8ab:967b with SMTP id
+ 586e51a60fabf-4a83f542697mr5910295fac.47.1793110453054; Tue, 27 Oct 2026
+ 07:14:13 -0700 (PDT)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -80,112 +59,83 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa17d8c5caf03a8kunm87c266213d5730
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaTx9PVh8eHU9DGk8dSR5CTFYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
-	pKQk1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=jRDNTGI8fLUMXnd7atKt9kquMeHKoqudGsZtZXz8wz+RzAk0PcmqvKtG/Yv2CeOfRvMqxPJqHSAGKtVFnepKLDyrnQwsgnEXC3rr0fgNdZW7UHacr1azhxaJJAH1/aE8cbkYA1P+ez9VgzuUWVC8zA8IArVM5QCscbR/1K+vP+o=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=St4/4mnCdCjluMqmoUgrK/rtao/LPuMowCjAK3GrScU=;
-	h=date:mime-version:subject:message-id:from;
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 27 Oct 2026 15:13:57 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
+X-Gm-Features: AclHuK8ruqZCGkf4O-7fY-Pys0rgaueWTZBuD-NGSUOyqWUpd7La4hdhioD434w
+Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
+Subject: Re: [PATCH 09/35] drm/mcde: use drm_panel_bridge_add()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
+	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Rockchip platforms, the Analogix DP native HPD pin IRQ requires the
-DP controller to remain powered and clocked to generate plug/unplug
-interrupts. Without a runtime PM reference, the controller suspends
-when the display pipeline is inactive, disabling HPD detection.
+On Mon, Oct 26, 2026 at 12:10=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-Acquire a runtime PM reference in analogix_dp_bind() and release it in
-analogix_dp_unbind() for native HPD pin mode. This keeps the controller
-alive throughout the device lifecycle for continuous hotplug detection.
+> The connector type passed to drm_panel_bridge_add_typed() has been
+> ignored since commit b7797081ccfe ("drm/panel: embed a drm_bridge into
+> every drm_panel"), the bridge always has the type of the panel.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Persistent power is only necessary for native HPD pin mode on the
-RK3576 and RK3588 platforms, which are the only ones confirmed to
-support the DP mode hotplug detection, as it relies on their HDPTX PHY.
-It is not needed for the GPIO HPD mode, the force HPD mode or the fixed
-panels, which need no such detection.  Add helper
-analogix_dp_require_pm_for_hpd_irq() to identify those configurations.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Thanks for driving this patch series Dmitry!
 
----
-
-Changes in v2:
-- Split IRQ enable/disable logic, handle native HPD pin and
-  GPIO/force-HPD modes separately to avoid unbalanced enable_irq()
-  calls. (Sashiko)
-
-Changes in v3:
-- Modify the commit msg according to the previous commit for moving IRQ
-  enabling/disabling.
-
-Changes in v4:
-- Add Tested-by tag.
-
-Changes in v5:
-- Limit the runtime PM holding to the RK3576/RK3588 platforms, which
-  are the only ones confirmed to support the DP mode hotplug
-  detection, and exclude the boards with a fixed panel, so that the
-  runtime suspend still works when the screen is blanked. (Sashiko)
-- Add a new commit declaring DRM_BRIDGE_OP_HPD on the Analogix DP
-  bridge and reporting the hotplug events via drm_bridge_hpd_notify().
-  (Sashiko)
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 50177d1ccb5c..009567da5f17 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -42,6 +42,20 @@
- 
- static const bool verify_fast_training;
- 
-+/*
-+ * Only the RK3576 and RK3588 platforms are confirmed to support the
-+ * DP mode hotplug detection for now, which relies on their HDPTX PHY
-+ * and requires the controller to stay powered and clocked.  So the
-+ * runtime PM reference is held only for them, and not for the GPIO
-+ * HPD mode, the force HPD mode or the fixed panels, which need no
-+ * such detection.
-+ */
-+static bool analogix_dp_require_pm_for_hpd_irq(struct analogix_dp_device *dp)
-+{
-+	return (dp->plat_data->dev_type == RK3576_EDP || dp->plat_data->dev_type == RK3588_EDP) &&
-+	       !dp->hpd_gpiod && !dp->force_hpd && !dp->force_connected_mode;
-+}
-+
- static void analogix_dp_init_dp(struct analogix_dp_device *dp)
- {
- 	analogix_dp_reset(dp);
-@@ -1611,6 +1625,12 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		goto err_unregister_aux;
- 	}
- 
-+	if (analogix_dp_require_pm_for_hpd_irq(dp)) {
-+		ret = pm_runtime_resume_and_get(dp->dev);
-+		if (ret)
-+			goto err_unregister_aux;
-+	}
-+
- 	enable_irq(dp->irq);
- 
- 	return 0;
-@@ -1625,6 +1645,10 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
- 	disable_irq(dp->irq);
-+
-+	if (analogix_dp_require_pm_for_hpd_irq(dp))
-+		pm_runtime_put_sync(dp->dev);
-+
- 	drm_dp_aux_unregister(&dp->aux);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
--- 
-2.34.1
-
+Yours,
+Linus Walleij
