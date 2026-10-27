@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.224.83.251
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=154.81.10.224
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793107722;
-	b=3L1L/L+OPcRzF6iDy0vzlCupZ0MO5qXl9DTWfvJ70zTvXGlm2+OqMXwbCY5e61Iw9JCz
-	 jEegtz4SvmyaS5M2Lvl7NnfDBCvOG/f5FIhVx5szv31uvNsPU6YIiXMtzmcZlD/JCAVv2
-	 2QCjcMPCmAjCqujgCYNyE5goPzdvGl2QopzdkQpw3SB8ylrsfMIlfyhoELYDXZkAuLxj5
-	 oH4JbLgpKwTEqisDnAtM6h22/02GolkZ4TDPNau/KHszilrkCXeG7331COUXFqNaRV40J
-	 kbOcG4NyoiryMLf79MOs59AH2G6y2BI97nvKkdkLcW1ILY6QJu5PSACtB0dHlWe4nWA==
+	t=1793107714;
+	b=cVPM2CdLFfi1LSZnl9w/bWMJE3DnRo6kQL1FYPv6h/CqrkTEVbF6LwXCW7VtWZAlZGU3
+	 8eOzde6iQSSaTb1GhbFDv8dB0qaFmbNMPRLvkzWtO3HfVDEVkHZojHlLfeEL8rU9fdOTQ
+	 k9raqPtNqgxQ65xJoQurAYosesjYJHTVbPgiMj03FLtf0KujtkcqmH10AYYm7Le6Emrng
+	 w24TufIhVoe3znlBBGBT4vyiVd3UfvC3w4z+G/HAoZuZviwWy1vS4WTujjULudW5gPQvP
+	 N9sZshIoPTFsNuGTGymaE1G+zPTT1BwQ8WiWhbrZ5vipE1PKhS9jP+qP1dl7JjWtrgQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793107722;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793107714;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=RUbnQZd01npFxSkYgQ+GOJK5rQ+b+UxFGoQp+0x6DuA=;
-	b=AtGPfW6i/CcQy1JPqC27VJLx3tzdCvSJYjwGutjWZroWvJsMqCmYiR+5PHEnKYGscx2e
-	 +WIMGwKilJ84cBij6aU3vSIoy9QsUiQ1qZW3+kVeP0qOGxOwLjqtaXRjY5N+fMQzUZI0o
-	 xj4hQBL2djQQYNVWntlQuSr8VSopv9dNzjN8+nB5wm/AyH94lAEK2aYCqz1T1ZDjVvP0d
-	 VWHB/qO1/GE7Sm+yU4uBVsu9uhAdxZ3krWowAF8yy+6aOHSEFJHqrlnFQ6cyF3tPA877I
-	 53YoVVVwYhlHYASEDuWVLKCrSevEd98t5/51OuuQqn87EfzNFEwok/H9IpKEBjgEnaA==
+	bh=erePLVWI93sKKQTFEkn0u40V225YwPgGf1tPT/VMGqs=;
+	b=zeVzC5Bfi44CpYcZD40i/sWF6KrHVUnlcp5X4ImiHZjA7t7Ws2AtABopFDry9nSbMke7
+	 JUoxDaxCYg0tmqTN5h/PvC3pOZG8dRKYPtL//ZBNoMotT3Rch/xj76HgjwFn/2eKO8NfE
+	 q3pxALcsLzqtSq2hnppdhrbs3fu+pqv0eg1ngri6rYGKJN3Lvly7YZX0fFYJfoV175Qst
+	 6Yvt1+3Jl0pmFvPubUCGQD5yMeVydMsJ4miBm9GF4Am0bQ4sp9DvUPoXC0IW26t/yAj/J
+	 UrGBrTvQRSpbNSDzBN7qGIYvHIMnMVZKO0Wd5TS5bH1MVJkCBV9lYKcf0RFOE0Nr9Iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=NPirnYZl;
-	arc=none smtp.remote-ip=156.224.83.251
-Received: from mail-m83251.xmail.ntesmail.com (mail-m83251.xmail.ntesmail.com [156.224.83.251])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Jg+DksY4;
+	arc=none smtp.remote-ip=154.81.10.224
+Received: from mail-m10224.netease.com (mail-m10224.netease.com [154.81.10.224])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C25060A2610;
-	Tue, 27 Oct 2026 13:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C25060A2610
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBE860A2605;
+	Tue, 27 Oct 2026 13:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BFBE860A2605
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=NPirnYZl
+	dkim=pass (1024-bit key, unprotected) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Jg+DksY4
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 528777a3c;
-	Tue, 27 Oct 2026 21:28:30 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 528777a2d;
+	Tue, 27 Oct 2026 21:28:21 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -65,9 +65,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v5 13/18] drm/exynos: exynos_dp: Unbind bridge when connector init fails
-Date: Tue, 27 Oct 2026 21:28:05 +0800
-Message-Id: <20261027132810.1746118-14-damon.ding@rock-chips.com>
+Subject: [PATCH v5 06/18] drm/bridge: analogix_dp: Add IRQF_ONESHOT and simplify IRQ handling
+Date: Tue, 27 Oct 2026 21:27:58 +0800
+Message-Id: <20261027132810.1746118-7-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261027132810.1746118-1-damon.ding@rock-chips.com>
 References: <20261027132810.1746118-1-damon.ding@rock-chips.com>
@@ -81,41 +81,96 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa17d8c52f403a8kunm87c266213d5720
+X-HM-Tid: 0aa17d8c302c03a8kunm87c266213d56f7
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDGkxPVkNPGR9PGR8YSEtOTFYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCGRlDVkNLSkxNTk8YHk1KSFYVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSU
 	9PT0hVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=NPirnYZlPG1sPdOJ5EysWzLUSSCEHtFIgB4DXt/ssBfk0at08VF3GnSiY76pbuE/rtTgcYFnf15hXLyPoBrmpnCHy9hF8hmFpJ/rg687Tg/cFw2qqsx14CD9OFFAbvH+O1NuKTejTQ8VeR5WTcUo279jB6ahUcdjy/qHBR8x0fg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=RUbnQZd01npFxSkYgQ+GOJK5rQ+b+UxFGoQp+0x6DuA=;
+	b=Jg+DksY4b1BRMGrS/GpOeUhLzd0pqZJ2LQNDcemaqK0qqvx+8r5T5Bri8LFcn9IzJgqA4jxXq99Q4gPOwQplZIu838LKTN4FaJMAny9rkuERzs6R5Eha92W8bp0qjXI6nz65CVFOvYj309V+wcsdWJd7QpralvhYHJKc3mKZOOg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=erePLVWI93sKKQTFEkn0u40V225YwPgGf1tPT/VMGqs=;
 	h=date:mime-version:subject:message-id:from;
 
-The exynos_dp_bind() returns without unwinding analogix_dp_bind() when
-drm_bridge_connector_init() fails.  The aux device registered by
-analogix_dp_bind() is then left behind with a dangling drm_dev
-pointer, which could be accessed on later AUX transfers.
+The threaded IRQ is requested without IRQF_ONESHOT, allowing hardirq to
+preempt the threaded handler. This creates a read-modify-write race on
+HPD interrupt mask registers between the hardirq mute and thread unmute
+operations.
 
-Call analogix_dp_unbind() in the error path to release the aux device.
+Add IRQF_ONESHOT to keep the IRQ line masked during thread execution,
+which eliminates the race and makes the per-event mute/unmute calls in
+hardirq and thread handlers redundant. Move interrupt status clearing
+to the beginning of the threaded handler, before
+drm_helper_hpd_irq_event(), to avoid losing events that arrive during
+the event handling.
 
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- drivers/gpu/drm/exynos/exynos_dp.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index b1e130278ecc..032c50d56179 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -121,6 +121,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	if (IS_ERR(connector)) {
- 		ret = PTR_ERR(connector);
- 		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
-+		analogix_dp_unbind(dp->adp);
- 		return ret;
+---
+
+Changes in v3:
+- Split out a separate commit to improve the return value checking for
+  &analogix_dp_device.irq. (Sashiko)
+
+Changes in v4:
+- Add Tested-by tag.
+---
+ .../gpu/drm/bridge/analogix/analogix_dp_core.c  | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index c40ab7419f08..8dcfde38a61a 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -707,10 +707,8 @@ static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
+ 	u32 irq_type;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+-	if (irq_type) {
+-		analogix_dp_mute_hpd_interrupt(dp);
++	if (irq_type)
+ 		ret = IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return ret;
+ }
+@@ -721,6 +719,9 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 	u32 irq_type;
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
++	if (irq_type)
++		analogix_dp_clear_hotplug_interrupts(dp);
++
+ 	if (irq_type & DP_IRQ_TYPE_HP_CABLE_IN ||
+ 	    irq_type & DP_IRQ_TYPE_HP_CABLE_OUT) {
+ 		dev_dbg(dp->dev, "Detected cable status changed!\n");
+@@ -728,11 +729,6 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 			drm_helper_hpd_irq_event(dp->drm_dev);
  	}
  
+-	if (irq_type) {
+-		analogix_dp_clear_hotplug_interrupts(dp);
+-		analogix_dp_unmute_hpd_interrupt(dp);
+-	}
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -1513,10 +1509,11 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 		 * that we can get the current state of the GPIO.
+ 		 */
+ 		dp->irq = gpiod_to_irq(dp->hpd_gpiod);
+-		irq_flags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_NO_AUTOEN;
++		irq_flags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_NO_AUTOEN |
++			    IRQF_ONESHOT;
+ 	} else {
+ 		dp->irq = platform_get_irq(pdev, 0);
+-		irq_flags = IRQF_NO_AUTOEN;
++		irq_flags = IRQF_NO_AUTOEN | IRQF_ONESHOT;
+ 	}
+ 
+ 	if (dp->irq < 0) {
 -- 
 2.34.1
 
