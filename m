@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793110455;
-	b=zzKjVrIA435JyiitdlimBWCGg0eEi3p+S1j6yOTEYyciXivaOgDRiRL46SFfabAAXW1w
-	 LjukBZtMyuRosYLaJunjtakreniI0ykW/0JdiX1x4C0wXaGZfIN5JpJUhiYkYT0ORHOI9
-	 Tjyfvz80SecEXauhHUMNx00yXKlzwhFcrV2v6wJ+mQ4CEw6yqgub3xXrK5kaAyuZeJB5Z
-	 jexTBdv/04DIXCU6TzUf2iiPIABpwPJ5KWjNJzasMDQyT9WOTtChpRtAR6HvSSaL5YshV
-	 TUoyFPRtCDhKtqbwOxuHL9HFZV6G+/RFA+TO1AymGtcYREZ0+vQHdoIlZn7D3OS2Iww==
+	t=1793110493;
+	b=XeD4rOU4gYwRog4HaG08YvgHjX3aCYBFOm+WzJsG385lqli3LQLeYxYzIIGBStgPOWEv
+	 /NDcYTl4RqMJDKCJWEHiOzrlayVLuJPUm9lR65qHzKkXXF+baoEbk6xjTojMquMTcnZNr
+	 PdcZyV2+Cgka9oCZvEI8PVKBjyZQxjkcMg71mOyXq+gZclJ2xkyAYCvuwN5jX0EJhOXXe
+	 VxRzMC2womc3nzjDWKh4QW5hWnH0tTVK9LkJ90ER5SwAA9e6xez3QDbe1u2lH1A+Hj7xf
+	 +6eM2ip2oL9SLGLIhTpKH942PM59tzHze/C+sg+BZLBEJoX/mInyKtp/k0QAMQv0AdA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793110455;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793110493;
 	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
-	b=DubnxVgAf421Gb+lw+J/oOZMHB06423fDtAc9jDVzx+g4qFeUvNYvyg4KNY7yehaoDYg
-	 X5vHcyAY0j3NGU0L8oluawMZSayxdRjTFi1bhvS2tjh988Ng1UF3SeTM06oKdhRtUmkF4
-	 tK7eI2bU0yrX+KzBttWgRaQzDsVPA2AfP6LuVmUc1pMfRpU1M/5n/uSWpnewHMIsGaGCG
-	 BIkni6InlB8/pEqTe6GLpc6vxpHHZ9nDCzuFzXV06qDEs9IsC7jUzXMQvqIArAUnKstnO
-	 xGpZY9Qxc92mzGjTjmFMJMBJTmz72FW/yLsTXES3pj6O5q1peHX4/6eoScENpDlml5w==
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
+	b=yythcCdqyfeeFWpaanQxDXCgXCKWVoum4oWp72xjZAqG1+nCn7CGyhYRbXBZCHsSUyBs
+	 qr8bE4HLPJHJY8A7ymReB0aadLWdUFe8GM03VE8WTtc2zOvpSVFWNrMhRENNL+jZ2JZAw
+	 g6SzuppUmut08OXQEkwhnqlZZLTA9y3rCJK6yvpxQtHr/QCIXHHN7SluM0W7md/inx5eL
+	 wZjsxF+dkkwRzUGtOA+6qnrXeQaLLkcsqXyGgBKWO73DQ0y4pw9iLOdN4cMLXrYTSuBHl
+	 JhbmKq+OvlM2Cj7NPM6ITUQkgvza19lJ2p/jK2eX2iuxsjbshf2Mj5nngxYiGwX+Kww==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3981606A323
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231F606A323
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nOHXFD9i
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C75E1F031E8
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:14 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VexdIKwR
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01951F01389
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 14:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793110454;
-	bh=ULtd9LbkaeiBjJrJ74ty1dyVfksSuVPpssfCtnxbGQs=;
+	s=k20260515; t=1793110492;
+	bh=GaS9DIAzMYp6Tb26jgRNliWQoK7YtOPDgti3i8/xKo0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=nOHXFD9io0Ru2PaYz+V6smtGs0WntNANVygH/FG21ay5l6eXVd/Fv0/Tv/05f5lHN
-	 ro4iu7gr3151Nom7znD+w9DtyJZyWfUd1ugqFnU4sroYLuBrr059kaYzOqg3LHyBNE
-	 Nq5slenfftrhf+jQMKg2z4tHzFnbsIy48BStIJ4xgz9ShxnCKOCF83cSRLUB1U0tDm
-	 g3peUTLWKcVDShNXN+mUP1xR1HMK/LuErofPe2xUAZAdWO0fFLSPuWwNBeF/MoBv5J
-	 AbW/DgyYr644yxz8kE3Ve5Rjs1Wa91W5XlLBIEfFPMWntO1C6QOqcmg7216oQhQAET
-	 L21vjkzNFgP8A==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-48e94879f02so1305210fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:14:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw2C0IEbfrItUg0MXnk/whBymTqCttG8e+kGRefH3w9Q6+EkwacNGjExF4QZUxOR5/MkJ/sfPQf3Nhxax1OQXnIvg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJWWXrswHNLFlkJU4fZfOdQtyuxWtjQpT4crU4dsafTjR7JHGU1
-	k7SHTOetyqB656OLpC7q+WAj9Uw/h/WIQzyf8Bo9RtGc22+EnbJ1/a7LAz+u+ANMcJKUhUVBy50
-	hgxgJT4rWET446XqZHxuwigUnHnXh3+g=
-X-Received: by 2002:a05:6870:c69e:b0:49d:c8ab:967b with SMTP id
- 586e51a60fabf-4a83f542697mr5910295fac.47.1793110453054; Tue, 27 Oct 2026
- 07:14:13 -0700 (PDT)
+	b=VexdIKwRzOvQEEgvmO8caE4nbf6xorObDq11NXYDvDa2mjeHckRll+Nx4EKxJD8ht
+	 W4KblFOO6y2af+SJ9nHUVFfDbKNeYcztIFgJWMAPsIy9N1QOvtFFKP0BwXuQ+Pz1Oq
+	 PU638njjn8Fyn5tTjko7v2pOLaNRMNrq1KUOtcwLu54gCfmwSIJkMaA3Tt4mtBszUY
+	 jK4rZKNgVSfkDM6vYqEpQDMMbEruHEMg4wX16UMopLSeUCvdYbUshewmZdxFr4vMsQ
+	 k2dDIfevo2EjeDJmoMRMUFEBreWAsQ6h7m2er3IkNb2RpM4W6NQJkmSB+FLbqt353i
+	 k7gwr/P6ceULQ==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-49de8ea072cso1771160fac.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Oct 2026 07:14:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwauurTxftwzBa5nUItttYJB8tzmBsT4EYoxCP3LYCi0m4F8zE97gWOKQvX96VL/Qlm699sTPifUn6BoxfLaaeV1g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLCY0N26/gt67a/C+ZkP43izFU3QFPi7VUfW7Me9eixB3O5fTQk
+	RdHRC1tZqWLrNKm3eiSCbpPxmr4ZMVUvyrpZkRJ5/AU5qheSekdbgVOwsqx58E+pCTD6sf+Lu8s
+	qiNUlnPg1NUW6diMh6cIUSz+qkLIC9zA=
+X-Received: by 2002:a05:6870:2189:b0:4a7:5508:c526 with SMTP id
+ 586e51a60fabf-4a83f42f572mr6040267fac.21.1793110491448; Tue, 27 Oct 2026
+ 07:14:51 -0700 (PDT)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -59,14 +59,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-9-5e3070a3478f@oss.qualcomm.com>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-10-5e3070a3478f@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 27 Oct 2026 15:13:57 +0100
-X-Gmail-Original-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-X-Gm-Features: AclHuK8ruqZCGkf4O-7fY-Pys0rgaueWTZBuD-NGSUOyqWUpd7La4hdhioD434w
-Message-ID: <CAD++jL=2zsU8xOQWURD7HFOiCYwCNwW9ece1=PoVci2qNM8Ykw@mail.gmail.com>
-Subject: Re: [PATCH 09/35] drm/mcde: use drm_panel_bridge_add()
+Date: Tue, 27 Oct 2026 15:14:29 +0100
+X-Gmail-Original-Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+X-Gm-Features: AclHuK9bjg1W8yVOv6xb18mY_G1euLOiDqjDsy95KUm0kaVExInNMT0MB46F2ok
+Message-ID: <CAD++jLnmuXaoKDLyCsPzUBYohOxqjVGVndz0047vmhZFgvvo6A@mail.gmail.com>
+Subject: Re: [PATCH 10/35] drm/pl111: use drm_panel_bridge_add()
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
 	Jessica Zhang <jesszhan0024@gmail.com>, 
@@ -134,8 +134,6 @@ On Mon, Oct 26, 2026 at 12:10=E2=80=AFPM Dmitry Baryshkov
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Thanks for driving this patch series Dmitry!
 
 Yours,
 Linus Walleij
