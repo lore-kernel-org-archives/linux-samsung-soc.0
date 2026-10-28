@@ -1,61 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793180306;
-	b=rmr+TwX7Q/OIZAZ5rKhCCL8fqP0R1/xVsr6aMLXYRmMvaFmAZYqGG6HFNHHaDCQNkQSU
-	 S858XOGen+L/5U1LteIKt1hMmbWlT0VhiOP7dlVpZQGDwrhe+ku8/c33zyZaGhjdq4717
-	 xvzzU0eElghbr/35/bbvGHxPzifL9VAU0B0+0oyh+ptT9mLyMr+eWxeIwc+2MrzFios7i
-	 yiD4cGzK8oShiXHdR8SvKNZ6a/qxVrBvFGBf19mSA3A0WcbqOI58Hrf8ygP4ZzH+3LbXw
-	 dBws6tN15wEKMQswf9IUwylg/vSUYY+JubWHsDzmI1c4C/DDceuFoPHhZ8LNoW1DeeA==
+	t=1793180606;
+	b=nWzoepCJVrvSNUTeGtrtE0b+g89PfnqrawwY038k7sBRGneOi9/1lAEnQD40Hp11X7RN
+	 f4GdL7MuMrbcs8YmnoTQZ4Zn1Gpx6AdbtoL7TLLjHVb5TvJMwHdPsxXF2mX2nQYPweLwY
+	 X6LUS/5oQPPWEtEiehxBD9768JMfQG1o/bNE4mWaybnSiE/3dVajU4iFW5RRN4ekdvjZL
+	 J14jce8hyT5Eg7yugT3TpItrhVbSDLiRqzu2alou4XXjdKOkV6/DKN9etkrYyNY6uPWIU
+	 JAS2PXgWlqHz6fcQ5qEn2H9oErB3PyNJpI/efG9uJHTNYRyuYF7aEQ2KekShLjaBg/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793180306;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:Received:Received:From:In-Reply-To:
-	 MIME-Version:References:Date:X-Gmail-Original-Message-ID:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=wOpo207OEwIctZbL0yPki45XtYqA5r1JdptjDpx6mIo=;
-	b=TeUEbr5XQG3YDamFTvkepcHYxBdjvfhgKSu2Xf5jub59as5dJsOkE/kbrVppQw8e1u1M
-	 bn9NTEhIlM0qWIYyp/mZvLUpxWCk9aXpT9SHQPNgDmJoFtjnZIHsApwru/XnVDGSOpFS7
-	 eoAR+GfF209di0Rhaz86xf47yqjfLxuIfmbsbyIO5XsLitPTL51wMxXp6P9sgPDJ8V8dR
-	 bept8vB6S2k8kAhlI1Anta9XJ28+lGUwRUxrMWKtCXwWEIaOFpgFSUb8+u+e+L4JG+3mF
-	 JJLTUUCwNcHwWlT6EC4SZ5m1PcKj03GO7rydwe56JmN2VR24HrurtUygIqCz3kO2YXA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793180606;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
+	 Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=535aXf9H9rC26a6zJhJ1r2DGySEkl3W8qtDu8csDPOg=;
+	b=X8cQNdEeNjzEO+UghIbrZNFageZ4rJE5WzlbMO4b+X+mnciBMI4DHmDD9oE7TY3IZthu
+	 2PTNL0as1wUYVLV4+UUs68eHxjvTbZNYr8I52jAs/7m+wqEVFVHomXtXm4ATy0eVlmqJm
+	 VfHyzSm0VRl7czH1lagLe5qJvJz73reQ00zIWJ2DuesMlBS/gJXAQRvRUOXg4vO7/1nS4
+	 1HzYeYsocp0x1RVj50mOpz+IW2FXNNtesd325AZ/tzYaCV25z5kQhgkpN4LZ5yNLe9fBq
+	 851MguwCwHPaACBCCqM85+Gig0AkGxXryTD8otqZIXsmNr0G9FTkp/4zH6NqfmCybCQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fTz4ccFy;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=a7d59F50;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE64606A320
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560AB606A327
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:43:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 560AB606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fTz4ccFy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDC61F031E8
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793180305;
-	bh=wOpo207OEwIctZbL0yPki45XtYqA5r1JdptjDpx6mIo=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=fTz4ccFygFqrLoGtnIUHOqwYAG6fYE83eAzaKKKFTGrFdbqiyeG/xOdDlpbWljBj5
-	 5V6xdBINwYU5kocYciXsQsl86nG4vrMADyaBoGICOH5SM52l6lMFMVsUuePcwpd0nk
-	 dqsLjl1bgVEXkSKvvBlyt/4fvoEGoZPymlRX6HulIa2tbiCQvsXUeYPp4K3IUVrqRU
-	 pYkgAmPxiymSttYf90sD3iHqe3+rcjhblkBwBr3nhPmk5/7ostKSP2aFHP8Aoo6ME5
-	 BA5mvwUjZk8wNBLra4DsKT3qmgjZC2uJF2DNqeQ9/eHo66ETgnyVIkVrdJ4CTpoy8c
-	 oOvJG1pWVoFTA==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3a9787a156eso6176541fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2026 02:38:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz80JlLklz+EgFM/McUKHLP/fY/SIuvzUvNDAKvNqx1iXDG0SN3ZEjholKS1FN6Sut9V1KfE3vAAUQGv5XljEy4Gg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ88yJC4xpbODXI+CpWqXz3Gi+8prU2zyJxGXdDbL5m+Gg+blBd
-	TmkcjJHL7DG4hQ3RGTtNuZnOoxctu+AlpP043SLSBfAwL7iyJLfclap+V4gCeyfMSeQOP1/Lmq5
-	YFQaLiSEgHWX7s5XuGTPJbOqLCWJPw3xvOXkEb8P2bQ==
-X-Received: by 2002:a05:651c:1593:b0:3a6:95a:52a6 with SMTP id
- 38308e7fff4ca-3ac9cf82d06mr3952511fa.20.1793180304502; Wed, 28 Oct 2026
- 02:38:24 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 05:38:23 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Oct 2026 05:38:23 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20261024-samsung-kp-v4-1-e21253295e68@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=a7d59F50
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261028094322euoutp0202ab280aeca9a624b6b4e4014ea4ba3f~iqEHc_NDT2256522565euoutp029
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Oct 2026 09:43:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261028094322euoutp0202ab280aeca9a624b6b4e4014ea4ba3f~iqEHc_NDT2256522565euoutp029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793180602;
+	bh=535aXf9H9rC26a6zJhJ1r2DGySEkl3W8qtDu8csDPOg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=a7d59F50iU2RybF1FZVJqqGsE3wBZnUx83olzWf9UshxkFtBkMZrd0pWcCFJO28T1
+	 y21F90VMdNgopBhMFS6MCvjzrzjfAW/IjeWOlktb3ToXTWBDwdco3WzX9hyNYuYEB9
+	 KLBtztKS/jn9c4RuVm5YYsSPQ1xaeQi55awmhSMA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261028094322eucas1p290e530066640b90b39ad9d5066c4e273~iqEHDwUBM1968019680eucas1p2Y;
+	Wed, 28 Oct 2026 09:43:22 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261028094321eusmtip243f9cf93d775eb983c0129e973fe4e33~iqEGJK6bi1976119761eusmtip2D;
+	Wed, 28 Oct 2026 09:43:21 +0000 (GMT)
+Message-ID: <6b89446c-c1a7-42c2-a557-53059cef03a8@samsung.com>
+Date: Wed, 28 Oct 2026 10:43:20 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -65,33 +64,74 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261024-samsung-kp-v4-0-e21253295e68@gmail.com> <20261024-samsung-kp-v4-1-e21253295e68@gmail.com>
-Date: Wed, 28 Oct 2026 05:38:23 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Mf9fcYRZcqGnNeg+sz4bo8n7AngbWkb8jPBXKwzUqpE5g@mail.gmail.com>
-X-Gm-Features: AclHuK-0IY-K4Sj4xF2g0AMS5-uqQjH_1YFYYyMfdx08al6vG1--BGlVHEhA67A
-Message-ID: <CAMRc=Mf9fcYRZcqGnNeg+sz4bo8n7AngbWkb8jPBXKwzUqpE5g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] mfd: wm831x: Support software nodes for DCDC regulators
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: mfd@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, 
-	linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] media: exynos4-is: fix DMA memory double free
+To: Guangshuo Li <lgs201920130244@gmail.com>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin
+	<peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Hans
+	Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20261027145313.136305-1-lgs201920130244@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20261028094322eucas1p290e530066640b90b39ad9d5066c4e273
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261027145330eucas1p1b07eaac7858482b12d90a342fae36f2f
+X-EPHeader: CA
+X-CMS-RootMailID: 20261027145330eucas1p1b07eaac7858482b12d90a342fae36f2f
+References: <CGME20261027145330eucas1p1b07eaac7858482b12d90a342fae36f2f@eucas1p1.samsung.com>
+	<20261027145313.136305-1-lgs201920130244@gmail.com>
 
-On Sun, 25 Oct 2026 06:03:12 +0100, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> said:
-> Allow passing software nodes to wm831x DCDC regulators via PMIC platform
-> data. This is useful for non-DT/non-ACPI platforms that want to
-> associate device properties (like DVS GPIOs) with the regulator devices
-> using software nodes.
+On 27.10.2026 15:53, Guangshuo Li wrote:
+> fimc_is_alloc_cpu_memory() frees the coherent DMA buffer when its
+> DMA address does not satisfy the firmware alignment requirement,
+> but leaves is->memory.vaddr non-NULL.
 >
-> Add software node pointers to the PMIC platform data and have the MFD
-> core assign them to the buckv cells.
+> Because firmware loading is asynchronous, this error path may run
+> after probe has returned successfully. A later remove can then
+> attempt to free the same DMA allocation again.
 >
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Set is->memory.vaddr to NULL after freeing the buffer so the
+> existing NULL check in fimc_is_free_cpu_memory() skips the
+> already-freed allocation.
+>
+> This issue was found by our static analysis tool under development.
+>
+> Fixes: db47622c13ae ("media: platform: exynos4-is: remove all references to physical addresses")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+but I would relax a bit the severity of this issue. I'm not sure if it
+makes sense to bother stable team with it and I would add 'potential'
+word to the subject. In practice this case would not happen.
+
+
 > ---
+>  drivers/media/platform/samsung/exynos4-is/fimc-is.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> index b7d9bfedd590..9fdc352abfe4 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+> @@ -346,6 +346,7 @@ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
+>  			(u32)is->memory.addr);
+>  		dma_free_coherent(dev, is->memory.size, is->memory.vaddr,
+>  				  is->memory.addr);
+> +		is->memory.vaddr = NULL;
+>  		return -EIO;
+>  	}
+>  
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
