@@ -1,104 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.70.183.197
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793296540;
-	b=k7fml7t7+ktAZYMwu5e+uTOYN8Hlzq7owSy5QACOu8rRB8Za23jgLH1PMsnBrTetfjMh
-	 06KAahYP82ogR37NBvC6MEf3ZpurORz2VFbcdg+USD2Qjtxlnqw+3ogjLo+fXBXydv7oa
-	 yW+9dpjYrLMR/rDJtitd26j/hS0mAYd5jMCvZc1FzBYaa5rCBlI/PNSJ90pf71h8irczd
-	 WFLiIL0Qv06R4dFAvW0hjx0PXpn4YlV1XUsyhsyQi2SNGjY5gfPjjcyJBRuX5YGEzuCmH
-	 Q10o5JX5YcNtalTX5kckdBtzmm9soFQkVlbCoKr3KQzzAwI/LKksL7238ToPFzPPfrw==
+	t=1793307347;
+	b=LW/OSikPlh9NjniDGfdVi4VGUnVkZyXoDiZFxjRW0tD4ZorceHGWfqxAWRBXFMVeIVlZ
+	 VKWWo+DnAT0Um3FaYLc0In6IKBQzlBGnAqEmCcS2cofOeoEhZf0+9WFIdJlK+xJgzM3qT
+	 g6SHXexuErC3jV9gonEOhZCANX3eAGysOtvrbb5jZ2rxbTCalYM4E4gvvCzKzw0KZyvFf
+	 +D/5gkdkRvV+0SOQMwk5l7Ig0pPwgyVGlG0IaWa/20Tt/z34JDVtKPQc5oQikDr1T/n2B
+	 JUTtuX5bmSf6WihzasJ7Ba6DnXdb+90RPiK4O+KIqC6iGmgyAL21Sx2l+PV0Iv47FbA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793296540;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=8cM/p2K3K2tPOM9+U7FKmROE+HQamkMu7RKKZe0hh5U=;
-	b=joXHFn6mbMv4XDGtwhD4iqfGV/sAO5+icDVVtPqn2g5BkWwLx1gy0XJ5EAWB5ibUPWkb
-	 Mhb/EWdZvfY06JWqEfcDdtxRgwWjnESbVRJTD1aMgvTY0tHh9WjdG3ZmehLu5BlAM8Snh
-	 W2gKMR0ClA4uGe/QDuXVgjsD48VCQ/RKgu00T0K1o7YpjWOlGf6TLR4V78NckoV5FgibU
-	 cvMBVjHp7GdJhWc6AqfBNvd03QcSveRRAxGYPllrdUN1Uhxk2k2UraQcs20GYVj5Pwl3I
-	 vYUKMk5ESFNtdwWOFz0cQXY/GoQYENnMmRaoWIIcAj/QB+N/PvN7wrChA2NteyGFh8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793307347;
+	h=DMARC-Filter:Received:DKIM-Signature:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To:X-GND-Sasl:X-GND-State:
+	 X-GND-Score:X-GND-Cause;
+	bh=BCeY9APsxfmvH+XIUoqxjY0kS3crPoTx7BAYNg4i0WY=;
+	b=Y7gfIJHJOxmeIulEWQgF3y2q+47TZ/dDp/RJWRl9SVGjLXcA00Y5Bsug6tYiPAePtpZk
+	 q+P1QSL8wIKnzOcany4TKb/Hi1Bznzyj+v5r0p9Tzh5KpXdZQviVRnZ4HAmxr8y6Mr6LO
+	 pdUCWHAEH60uNUQ8HVazyOMZdlDijGqsaHRVGJlFkV24ZopTDYHDzFkrTNZIzSu05eZWl
+	 X4dfsjQtasBVZkzm8eaUMp7aB44PYT8d2TC5j1OHiFH8Wue4iMS7bvOLXpYbxlS0QIr3g
+	 IW28kWGmLB1e6a78FT9Cccs5av/iKPtbr0jTivTz6cGAsbZy+CZaId6iGtkJS7xY0Bw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ovix1tNS;
-	arc=none smtp.remote-ip=74.125.82.47
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=a-marquet.fr;
+	spf=pass smtp.mailfrom=a-marquet.fr;
+	dkim=pass header.d=a-marquet.fr header.i=@a-marquet.fr header.a=rsa-sha256 header.s=gm1 header.b="fHNPpS6/";
+	arc=none smtp.remote-ip=217.70.183.197
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF394606A32F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Oct 2026 17:55:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CF394606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBDD606A31C;
+	Thu, 29 Oct 2026 20:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9CBDD606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=a-marquet.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a-marquet.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Ovix1tNS
-Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-19305bcb72cso2333164c88.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Oct 2026 10:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793296539; x=1793901339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=8cM/p2K3K2tPOM9+U7FKmROE+HQamkMu7RKKZe0hh5U=;
-        b=Ovix1tNSn8hCX5YIXLiItWNSEnanw+QFnNUMhzt6oz/zDXhi7DkFfa66BybD02277n
-         ihwh+m81VvLCFpe3HUjbUzE5W6yKuei5r4+xdQvGguQwjkI4S9ukTJPv6e/ufepbyB47
-         dCMDEjEX8jAsgDfj0s71uO4E/Dg5UVS9pHxm9I00WmeJSwA1fanYvJZgNX8Ak9iV7iEi
-         xr0Bpd3TK/ZcNVC4L+UvPQ0Oj2NPmOzA+CnCHEtOxxRrvmmc76urIMFVUcX+hN8Kodsv
-         YE4763Xc0vyNT5FqP26WW7KhAAPZnIEAcVYpGRnvVxZc8gsGUqXUGYRGh81NR4fJwWJr
-         I9uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793296539; x=1793901339;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8cM/p2K3K2tPOM9+U7FKmROE+HQamkMu7RKKZe0hh5U=;
-        b=OP4Ir573xQJdGSr98EUIW+qsvtM1dEGXbh384SyjJq3oNU0cwbaT2MUQ+GJ2xA6rWJ
-         WEd3np/5kcRhl9GpAPNlU6/9QQbSEhGUxEJWIFe2bENKThChK1Ab/jsn6K48xf20yg8r
-         0ZpMpHyKWz1BAW1ZHnHDlfkTVVl28ej+9Z8wjSd2swIn5F9FZHHuTkhGo1EcES97Rh+k
-         1YtlBz/0wX9AtYzeIThVjcDlZg+bt1nhG/GLB2YDhnRxsJY+iuG9BCmvmyX2Qq7tx/sR
-         z4mgVMb6LFycS4sNaOb4N1TnsSPCrL+iH9pLVihu4xbbriNuhjyTRmXpPCsBxrj2I+ec
-         okYg==
-X-Forwarded-Encrypted: i=1; AKwUvBx7MRrqKIJH7bRBXIUN7Re6o8HukSiRYhMH7C9ya9bwcPyPKk/Oz/yfw003oKGSZppPnRDO8OiKaAS1PRo/tf0uCA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYLQ2aki7uAv0npDad6wZutMZ3WhHNuoeymgyHU+cBlhTLHfHjN4
-	2FNvnc6AwBRGd52FN1rvFhbQw+SrAUC4g8W67tWbIVU/vvqt5jGvhWZi
-X-Gm-Gg: AYBFou03BtzwxD39LKNGn3AnEA5kJqpjpqjxJbGMEQi9v54OBVgyJcgdlHi3sg6ooVf
-	6pDkxOiGI4yUFErU/T7RF4MX8SJWjiL2Jlv1cqsZDy5Rvdj1/Wv/CY4ss/jUfvksjNDBT8dl10f
-	2XoGWtmazXCIe5tBHsQJHAbykB2JI6IQmSzSBDUdHcZJ58jB4d4NL/O1O8OX1pMS327JacpTYyv
-	jj1ctc2GJJpm9xxMtaz+SUUAOIclXFS6TAzoHFVMM8o7566UkdynEw5l6l4NY1xC60ItXgX0EZ3
-	6ZiXpBcYt3ImdFL+bJobLiaIPb2FjTLxo2Yc2/SQVw6XEI/V504mc0znnRcZgXBYRhiJmcQMstp
-	jRCcbQGaxJSUGbNAC/WViZRoL01uBd0yF9/gM+0ODWQPLSgGCoGhRHaM1RC2cGsbjtILLW25qyM
-	JYMS921PSTXBQCGBnnlt2PDnXQsXCOW1TTEUsLTQIKsUI/T4+51QNWRN98piR6dJw0HeSTzxgZ4
-	Hkb0e6t2AMA/V2Vft+c8kNGN9cSU0Fl7+bQuQsgLCJPTn1JT+VSKL0ksrPmq1AhAPhN4CghYPpV
-	E4DZL0pNCaXOyDcbJSTUOwBNKLTBYrcJcnNey1CBcT0me4GzrM0=
-X-Received: by 2002:a05:7022:b903:b0:199:4f68:7710 with SMTP id a92af1059eb24-1a6c86c607bmr7367119c88.2.1793296538669;
-        Thu, 29 Oct 2026 10:55:38 -0700 (PDT)
-Received: from localhost.localdomain ([103.178.205.79])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1ac0e738445sm392417c88.0.2026.10.29.10.55.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2026 10:55:38 -0700 (PDT)
-From: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
-To: sreekuttan2156239@gmail.com
-Cc: alim.akhtar@samsung.com,
-	bhelgaas@google.com,
-	jingoohan1@gmail.com,
-	krzk@kernel.org,
-	kwilczynski@kernel.org,
+	dkim=pass (2048-bit key, unprotected) header.d=a-marquet.fr header.i=@a-marquet.fr header.a=rsa-sha256 header.s=gm1 header.b=fHNPpS6/
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7616D3E80D;
+	Thu, 29 Oct 2026 20:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=a-marquet.fr;
+	s=gm1; t=1793307337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BCeY9APsxfmvH+XIUoqxjY0kS3crPoTx7BAYNg4i0WY=;
+	b=fHNPpS6/zRSIqBqW0irfQrba/Am6sjIe0bCyOZ9wSRemRCscDo88TA3tfrFBbE3GiwLt7Y
+	3N2SPdppcp308rVqUai92uPlqYhZ2+K7xx2g3fU2BJBc0gu678ikHavLC1XVPHyuhgefGe
+	bO4hpOZI0hRgDI8/Y3PMkNZbc9EJre/iDTusQ4JjL5D0Qp5MoX8xAEGKoN57kHc73WreZF
+	yOKACCtkSVpBV93+2aE7HCiA9B8Z6xFbDEDmKBkyUDlByz+4RlGKVCu3ew6Lw0l3QWDkAb
+	vsPhIrkW4Z/XKdY0nYZfv4nqknWlG9Uj0F0HoWNoRRQb7/3emhfS8AzB7w5VMg==
+Date: Thu, 29 Oct 2026 21:55:32 +0100
+From: Alexandre Marquet <tb@a-marquet.fr>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	lpieralisi@kernel.org,
-	mani@kernel.org,
-	peter.griffin@linaro.org,
-	robh@kernel.org
-Subject: [PATCH v2] PCI: exynos: Handle PCIe PHY initialization errors
-Date: Thu, 29 Oct 2026 17:54:39 +0000
-Message-ID: <20261029175439.8490-1-sreekuttan2156239@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
-References: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
+	Lukas Timmermann <linux@timmermann.space>,
+	Henrik Grimler <henrik@grimler.se>,
+	Hendrik Noack <hendrik-noack@gmx.de>
+Subject: Re: [PATCH 3/3] drm/panel_edp: Add SEC LTL101DL02-002 panel
+Message-ID: <auOyxKTuSNysAA3X@laptop-218>
+References: <20261027-drm-misc-next-manta-auxbus-v1-0-3a45c3cf531d@a-marquet.fr>
+ <20261027-drm-misc-next-manta-auxbus-v1-3-3a45c3cf531d@a-marquet.fr>
+ <CAD=FV=XmfYM8diBOh3UidN7xEuB3n+n9oAm_zhopfFLERC2QpQ@mail.gmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -108,158 +89,90 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XmfYM8diBOh3UidN7xEuB3n+n9oAm_zhopfFLERC2QpQ@mail.gmail.com>
+X-GND-Sasl: tb@a-marquet.fr
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: dmFkZTGxku9aeGpo+7YMc4F4PvFpGsua428LZyVCxiu3ZWgW8HsKPegYmks3ajh0iP00ZRx4hi8T0K5ZaS2j9uikJ2QuMOT4yOHAarDYQ/vvPPSXaxQ9YiezR0t+7oZ4eh+B2zE3r6eUVUGyZ4uHSUMJMLGkL5aA4rnWYnOn1rXAzjdxtLJYHY2/1ABQODzEWZ8Hsc7aJohKnNtreJrq+OmZqVnNI8IRujZJfkJEWTPHT+wHz4/6JwmKHothvuxNPxfv+OzFjhdGR/x3mRLNO8Us1THXppONAs77llR98XJUNrwxrIX1oHy352yibAosFmCGLOfypPxGom41RVBtm+fdli5ujOvJQavDP2e89f6vc94LNpZV9nkW3fVkbnwbgEuHhI/I/HU2RCRXG9Tv398eMl8ZjQFZwyZjflbVReLRZktwQMzPf5y7ZVduqvKlncYQl+nTgz8yq3LfzYyl9/mwIXjhlTSJaK/7j3/iF1GiEFXV5di1y4SOk54XmIQS5AQQnYu1pDadCFAw820n9VCVyOsPIKS8p+rEdIJKtBNAd0twExBKmSKGj2sR9yv/YyvIllvM4E3dZcEP6Gavj7CtndjrBC2LM5kvfWOYkw5l09gJrhEnRg0K1g73dxTDZpW/An+kRuYkG3K/LN9NJDjxtOIjVmlmLbaQsmwOPwGeEBb35w
 
-Check the return values of "phy_init()" and "phy_power_on()" to
-avoid continuing PCIe host initialization when PHY setup fails.
+Hi,
 
-Track the PHY initialization and power state to ensure cleanup is
-performed only when appropriate, avoiding double calls to
-"phy_exit()" on probe failure.
+Thank you for your feedback.
 
-Also check the return value of "exynos_pcie_host_init()" during
-resume and abort the resume sequence if initialization fails,
-disabling the regulators before returning the error.
+Le Wed, Oct 28, 2026 at 09:34:15AM -0700, Doug Anderson a écrit :
+> Hi,
+> 
+> On Tue, Oct 27, 2026 at 5:01 AM Alexandre Marquet via B4 Relay
+> <devnull+tb.a-marquet.fr@kernel.org> wrote:
+> >
+> > From: Alexandre Marquet <tb@a-marquet.fr>
+> >
+> > Add an entry for the eDP SEC LTL101DL02-002 panel used in
+> > google-manta.
+> >
+> > Raw EDID dump:
+> >
+> > 00 ff ff ff ff ff ff 00 4c a3 0f 9c 00 00 00 00
+> > 05 0e 01 03 80 21 19 78 0a 87 fe 98 57 51 8c 27
+> > 21 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> > 01 01 01 01 01 01 14 69 00 a0 a0 40 2e 60 30 20
+> > 36 00 1e d6 10 00 00 19 00 00 00 00 00 00 00 00
+> > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 9e
+> >
+> > Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
+> > ---
+> >  drivers/gpu/drm/panel/panel-edp.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> 
+> nit: subject doesn't quite fit the pattern of recent commits (_ vs -).
 
-Signed-off-by: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
----
-v2:
-- Track PHY initialization and power state to prevent duplicate cleanup.
-- Handle host initialization failures during resume.
+Apologies for not noticing. I will fix that in v2.
 
- drivers/pci/controller/dwc/pci-exynos.c | 77 ++++++++++++++++++++++---
- 1 file changed, 68 insertions(+), 9 deletions(-)
+> 
+> 
+> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+> > index 94bc54c3833a..c92985363093 100644
+> > --- a/drivers/gpu/drm/panel/panel-edp.c
+> > +++ b/drivers/gpu/drm/panel/panel-edp.c
+> > @@ -2198,6 +2198,8 @@ static const struct edp_panel_entry edp_panels[] = {
+> >         EDP_PANEL_ENTRY('L', 'G', 'D', 0x0778, &delay_200_500_e200_d200, "134WT1"),
+> >         EDP_PANEL_ENTRY('L', 'G', 'D', 0x07fe, &delay_200_500_e200_d200, "LP116WHA-SPB1"),
+> >
+> > +       EDP_PANEL_ENTRY('S', 'E', 'C', 0x9c0f, &delay_200_500_e50, "LTL101DL02-002"),
+> > +
+> 
+> It would also be good to note in the commit message where you got the
+> timings from. Datasheet? Downstream code? Guessing?
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index e3c05ade381b..f6b87c26ab36 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -55,6 +55,8 @@ struct exynos_pcie {
- 	struct clk_bulk_data		*clks;
- 	struct phy			*phy;
- 	struct regulator_bulk_data	supplies[2];
-+	bool phy_initialized;
-+	bool phy_powered;
- };
- 
- static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
-@@ -225,13 +227,23 @@ static int exynos_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct exynos_pcie *ep = to_exynos_pcie(pci);
-+	int ret;
- 
- 	pp->bridge->ops = &exynos_pci_ops;
- 
- 	exynos_pcie_assert_core_reset(ep);
- 
--	phy_init(ep->phy);
--	phy_power_on(ep->phy);
-+	ret = phy_init(ep->phy);
-+	if (ret)
-+		return ret;
-+
-+	ep->phy_initialized = true;
-+
-+	ret = phy_power_on(ep->phy);
-+	if (ret)
-+		return ret;
-+
-+	ep->phy_powered = true;
- 
- 	exynos_pcie_deassert_core_reset(ep);
- 	exynos_pcie_enable_irq_pulse(ep);
-@@ -323,7 +335,16 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- 	return 0;
- 
- fail_probe:
--	phy_exit(ep->phy);
-+	if (ep->phy_powered) {
-+		phy_power_off(ep->phy);
-+		ep->phy_powered = false;
-+	}
-+
-+	if (ep->phy_initialized) {
-+		phy_exit(ep->phy);
-+		ep->phy_initialized = false;
-+	}
-+
- 	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
- 
- 	return ret;
-@@ -335,8 +356,17 @@ static void exynos_pcie_remove(struct platform_device *pdev)
- 
- 	dw_pcie_host_deinit(&ep->pci.pp);
- 	exynos_pcie_assert_core_reset(ep);
--	phy_power_off(ep->phy);
--	phy_exit(ep->phy);
-+
-+	if (ep->phy_powered) {
-+		phy_power_off(ep->phy);
-+		ep->phy_powered = false;
-+	}
-+
-+	if (ep->phy_initialized) {
-+		phy_exit(ep->phy);
-+		ep->phy_initialized = false;
-+	}
-+
- 	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
- }
- 
-@@ -345,8 +375,17 @@ static int exynos_pcie_suspend_noirq(struct device *dev)
- 	struct exynos_pcie *ep = dev_get_drvdata(dev);
- 
- 	exynos_pcie_assert_core_reset(ep);
--	phy_power_off(ep->phy);
--	phy_exit(ep->phy);
-+
-+	if (ep->phy_powered) {
-+		phy_power_off(ep->phy);
-+		ep->phy_powered = false;
-+	}
-+
-+	if (ep->phy_initialized) {
-+		phy_exit(ep->phy);
-+		ep->phy_initialized = false;
-+	}
-+
- 	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
- 
- 	return 0;
-@@ -364,10 +403,30 @@ static int exynos_pcie_resume_noirq(struct device *dev)
- 		return ret;
- 
- 	/* exynos_pcie_host_init controls ep->phy */
--	exynos_pcie_host_init(pp);
-+	ret = exynos_pcie_host_init(pp);
-+	if (ret)
-+		goto err_cleanup;
-+
- 	dw_pcie_setup_rc(pp);
- 	exynos_pcie_start_link(pci);
--	return dw_pcie_wait_for_link(pci);
-+	ret = dw_pcie_wait_for_link(pci);
-+	if (ret)
-+		goto err_cleanup;
-+
-+	return 0;
-+
-+err_cleanup:
-+	if (ep->phy_powered) {
-+		phy_power_off(ep->phy);
-+		ep->phy_powered = false;
-+	}
-+
-+	if (ep->phy_initialized) {
-+		phy_exit(ep->phy);
-+		ep->phy_initialized = false;
-+	}
-+	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+	return ret;
- }
- 
- static const struct dev_pm_ops exynos_pcie_pm_ops = {
--- 
-2.55.0
+Both downstream code and guessing, as I could not get my hand on a
+datasheet. I will add an explanation to the commit description.
 
+Basically, the downstream code waits: at least 500ms before toggling the LCD_EN
+GPIO for power on; and 200ms after. I matched the 200ms to the hpd_absent
+delay, since in panel-edp.c, hpd_absent is also the delay that happens
+right after enabling the LCD regulator (or toggling the enable GPIO, as
+appropriate). Similarly, the unprepare delay is called just before
+enabling the LCD regulator, through panel_edp_wait(), which matches the
+way the 500ms delay is used in the downstream code.
+
+For the enable delay, I went with the smallest value that would still
+work, but I admit that I did not try anything below 50ms.
+
+> 
+> I had my AI agent take a look for itself. It found evidence suggesting
+> the enable delay should be 97ms, not 50ms. The other ones seem to be
+> OK.
+
+In the downstream code, 97ms is the delay used before setting the
+backlight on. My understanding is that this should be used elsewhere
+(e.g.: in the backlight node of the device's DTS).
+
+> 
+> -Doug
+Best regards,
+Alex.
