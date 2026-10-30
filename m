@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793346817;
-	b=aNyEocNHQwjNkbNPcLzTT9OTp52MGFTkw2GzWVcpQus7huV2nJq0Cn1HaKQaz04hJqzI
-	 hEy8W7iS8GhqiIoac25gK64fN47vUCYcCfDu5rAuPTxtv1jiV+r/1wuaO7rClG7CvSS4h
-	 Utr+OlScQ6KAQvWyyqrYnmdrNbD4RaRK84x5os2CnV5EPi4ZQ/jBUrK/dWnWBuMDRA0zJ
-	 Z5UPcX4dHQmXlBbxzBEKWu+gZEFCcH5lt9GwVlRZD01HbrpCFPP3KSnDvTItVB1Q7KsqD
-	 VFQbbRN+4G4a/UrsP9V04NTWXh7H8oDUuaRp5JnPAH6dN9oGDxfHL7dhpkGfJEGltDw==
+	t=1793346818;
+	b=2EeuGbfQV9thQ54U196E3x5GAVMAZsVdfYXo/VNycRbKq46e8wSf0P73uhaOtwpVa67I
+	 GBMJAYRAr0e9kN7/7iSpG9OWeTLsDjurzgii0JhfrOIvAKkDJiOMkjsZitpDgUd0nfQSb
+	 Af95XKKiopMxy/fWGpuclKoXP9VXdyysfk88zd4M4hteTYqJeyOf0ZrujGr+BEvHoB2Pd
+	 hPoOoOTvunvFxTrqQ0y6/zI5wlMznKV1ZBXmW/OboflcCXOw8WeR12quqzRi/r9L/qUj4
+	 eQookA/w+1fBZejXsujj7lelGcEsPpidIcX9mXrBuXb7wgjo4DKOQmprwGwayoAyP2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793346817;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793346818;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:MIME-Version:
 	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
 	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=LXqnjPVoIvX80Y2AzOOGeUQEC4Xg6CbGHN9TjzLorQc=;
-	b=euDJWeDej8SRWQm8QKDD+n1qlMiGlRlfcC4u5bgRDSWuGN9kUUAbhPed9CzhXNG4YyJH
-	 bzuIMDX1Ub4vA1uNcC2i+E5YGZDY9FW2/zL7HVrYLQjwhZ9vqoEq1S7pmCtRqm/AVyC3U
-	 9nYhk59+QKcvUhcLV8M9SSwTUM0UJR31A2erSoXbJ8cwX54sing1VKd7YqQ1DlKFFbEGw
-	 mzfn8dmTAWOG2nMijbfUcqxzUyV4N9dp79ZV6qwclA48JRj4hbAdQ63W7j8IeazUE9cn1
-	 2IKOaOBRG2fjNHKNDxQqk5ATHed8JagCGGeJYDisaPCLHE0qQspQBfAHfoEJM+HlQjg==
+	bh=0z8I7+VZAbfeTmBO2ZoCkH8Xj6XUxaC9cA+avhAcoWY=;
+	b=UU2jI0jLlcNSiZbqj0fxGMKBToimIYvKDhhPWGl/6jlhaumBNk2dGWXzWD+RKPWdNEgz
+	 AJiUbu8bxGSUL68mD+PcyPLZrd4yL0jybZycGa/PGgfWWCG/m7Cbvda4wQX48lQ6dHjvg
+	 kcuJnx1lnZTMVjZH15vjQN+QaFoXq1UsRXRK5pm1R+P4191E/+OZ7xfrANyKKIJn3PEOP
+	 o8lCHSyNG6PvZMA1ctod8tI9iHPW25QzluB9fAsLgI20U3VvM55uQvR7IqWwvBUh48PNQ
+	 z2IYWIjKyadEaK5cFTFX09SOWt7+PA6jyd/1A5MomhiwTl9K1fjVcay0ij5lJv2pHPA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=VkG8BhgB;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=sDTVPC0R;
 	arc=none smtp.remote-ip=210.118.77.11
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FD9606A31D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C039F606A322
 	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:53:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 43FD9606A31D
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C039F606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=VkG8BhgB
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261030075333euoutp015b16ca78e9163c67490844b822fcc7c5~jP2zwcrDl0364403644euoutp01H
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261030075333euoutp015b16ca78e9163c67490844b822fcc7c5~jP2zwcrDl0364403644euoutp01H
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=sDTVPC0R
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261030075334euoutp010e937b2de018d514d84647707cca723e~jP20W04KK0215602156euoutp01p
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:53:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261030075334euoutp010e937b2de018d514d84647707cca723e~jP20W04KK0215602156euoutp01p
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793346813;
-	bh=LXqnjPVoIvX80Y2AzOOGeUQEC4Xg6CbGHN9TjzLorQc=;
+	s=mail20170921; t=1793346814;
+	bh=0z8I7+VZAbfeTmBO2ZoCkH8Xj6XUxaC9cA+avhAcoWY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VkG8BhgBE3ry6YvdmaSaHgOGtlV9oik14Tb7T2ZIzfaeOtw081vGlqRqAVFB3MdrD
-	 z9b2r4NUuJilhzHO0vbeNOxD572eKJXKHefEVYrZYpMzl2KA+KKSdjGT+0dJPMyFrB
-	 0g1ou0Pt1nHS/0p3ZDDHO/qdb8OxH/vVS+KXnjf0=
+	b=sDTVPC0RwMbkcj6UpduZQr+0F9N2vx6Do+DSc5m4+cvtxP4PapbtVpVDRgJKIHWfr
+	 biGymmlJRooiJEoi/MRxpDSh/tX0ylW1vGAvDKLmgDJbESE08+Dyfr0hfpBUUaQBNL
+	 njjnbyr9oCwAfzYTv6Kx5Wlrip0ewodDMsl5ZHIg=
 Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55~jP2zaCV4A0356003560eucas1p2u;
-	Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261030075334eucas1p14657a963949b4a32165d667f387a9389~jP20GmseG0285002850eucas1p1S;
+	Fri, 30 Oct 2026 07:53:34 +0000 (GMT)
 Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
 	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075332eusmtip2cb3cfd6011c45526ccce1e7e135f69ad~jP2yyvwt42924129241eusmtip2c;
-	Fri, 30 Oct 2026 07:53:32 +0000 (GMT)
+	20261030075333eusmtip2051c75c7cdf265268d7f2176c28496c3~jP2zfZX5N3101431014eusmtip25;
+	Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
@@ -60,10 +60,10 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
 	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
 	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Henrik Grimler <henrik@grimler.se>, stable@vger.kernel.org
-Subject: [PATCH v3 1/3] clk: samsung: exynos-audss: Propagate -EPROBE_DEFER
- from input clocks
-Date: Fri, 30 Oct 2026 08:53:14 +0100
-Message-ID: <20261030075325.517182-2-m.szyprowski@samsung.com>
+Subject: [PATCH v3 2/3] clk: samsung: exynos5-subcmu: Use
+ pm_runtime_get_sync() during probe
+Date: Fri, 30 Oct 2026 08:53:15 +0100
+Message-ID: <20261030075325.517182-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261030075325.517182-1-m.szyprowski@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -76,101 +76,41 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-CMS-MailID: 20261030075334eucas1p14657a963949b4a32165d667f387a9389
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-RootMTR: 20261030075334eucas1p14657a963949b4a32165d667f387a9389
 X-EPHeader: CA
-X-CMS-RootMailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-CMS-RootMailID: 20261030075334eucas1p14657a963949b4a32165d667f387a9389
 References: <20261030075325.517182-1-m.szyprowski@samsung.com>
-	<CGME20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55@eucas1p2.samsung.com>
+	<CGME20261030075334eucas1p14657a963949b4a32165d667f387a9389@eucas1p1.samsung.com>
 
-exynos_audss_clk_probe() fetches the optional pll_ref/pll_in/cdclk/
-sclk_audio/sclk_pcm_in input clocks with devm_clk_get() and only
-checks IS_ERR() before falling back to a default parent clock name.
-This means a transient -EPROBE_DEFER (e.g. because the clock provider
-behind "pll_in" has not registered its real clock yet) is silently
-treated the same as the clock simply not being present, so the
-mout_audss/mout_i2s muxes get permanently registered with the wrong
-parent name.
+The clocks are registered right after pm_runtime_get(), which only
+schedules a resume asynchronously and doesn't guarantee the device (and
+its power domain) is active yet. Use pm_runtime_get_sync() to ensure the
+power domain is really on while the clock registers are accessed during
+the registration.
 
-Fix this by checking for -EPROBE_DEFER on each of these clocks right
-after fetching them, before anything is registered, and bailing out
-of probe so it gets retried once the real clocks are available.
-
-Fixes: 547f33509ccc ("clk: exynos-audss: allow input clocks to be specified in device tree")
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
 Cc: stable@vger.kernel.org
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-audss.c | 33 +++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index e11ac67819ef..950c67491dad 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -152,7 +152,25 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	clk_table = clk_data->hws;
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index 373129847301..1d7eb98b72cf 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -103,7 +103,7 @@ static int __init exynos5_subcmu_probe(struct platform_device *pdev)
  
- 	pll_ref = devm_clk_get(dev, "pll_ref");
-+	if (PTR_ERR(pll_ref) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
- 	pll_in = devm_clk_get(dev, "pll_in");
-+	if (PTR_ERR(pll_in) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	cdclk = devm_clk_get(dev, "cdclk");
-+	if (PTR_ERR(cdclk) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	sclk_audio = devm_clk_get(dev, "sclk_audio");
-+	if (PTR_ERR(sclk_audio) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
-+	if (PTR_ERR(sclk_pcm_in) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
- 	if (!IS_ERR(pll_ref))
- 		mout_audss_p[0] = __clk_get_name(pll_ref);
- 	if (!IS_ERR(pll_in)) {
-@@ -169,6 +187,12 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 			}
- 		}
- 	}
-+	if (!IS_ERR(cdclk))
-+		mout_i2s_p[1] = __clk_get_name(cdclk);
-+	if (!IS_ERR(sclk_audio))
-+		mout_i2s_p[2] = __clk_get_name(sclk_audio);
-+	if (!IS_ERR(sclk_pcm_in))
-+		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_enable(dev);
+-	pm_runtime_get(dev);
++	pm_runtime_get_sync(dev);
  
- 	/*
- 	 * Enable runtime PM here to allow the clock core using runtime PM
-@@ -185,12 +209,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
- 
--	cdclk = devm_clk_get(dev, "cdclk");
--	sclk_audio = devm_clk_get(dev, "sclk_audio");
--	if (!IS_ERR(cdclk))
--		mout_i2s_p[1] = __clk_get_name(cdclk);
--	if (!IS_ERR(sclk_audio))
--		mout_i2s_p[2] = __clk_get_name(sclk_audio);
- 	clk_table[EXYNOS_MOUT_I2S] = clk_hw_register_mux(dev, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
-@@ -224,9 +242,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
--	sclk_pcm_in = devm_clk_get(dev, "sclk_pcm_in");
--	if (!IS_ERR(sclk_pcm_in))
--		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
- 	clk_table[EXYNOS_SCLK_PCM] = clk_hw_register_gate(dev, "sclk_pcm",
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+ 	ctx->dev = dev;
+ 	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
 -- 
 2.43.0
 
