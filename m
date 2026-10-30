@@ -1,70 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793346817;
-	b=Q9q9+BSngkhXoSz+2igRxrdus0jlgBwDTL0Fw9kvSVACe4/mCG9xZaVF0JGG1aAKj2WC
-	 hS/lqKyJrkJEwdud95DL/LUdYE9UAm7yInTEoEo7VfKP0GtfLzFNWO3kfsVQ28ea8cI5t
-	 lDQahd8gdAIP/M7sQzngCthO+TYrfhLvZopkdLqqEckA4c29VgKPFrulEjiTgahutI7Yr
-	 hCEJy49bZlC0glSyd4z6rO7Fgyo3CCpLX9SEOyE4D6eb/7PxfS9Ka1XudRVytoi/E2Qzl
-	 MowLWK8frQ47syBWudWIBBQKzA1VQQgkJFsLAyOmWCSh55pOW0ortH6n/a/mUyEoHEw==
+	t=1793357327;
+	b=bz7BMQfKZhpc7PpHBoM0Hik8Ja2sXrYdS1Gw4yX1CqJPqZdPch4zaMgqZ9LLFvmzRdxm
+	 jGnSdOvWqe4h+YDnxJ6Y+Mstd97c+RrMvNrxiw+Wokly4RnoN51v9IGbRWKpnlq50bKqx
+	 CtpsvgYTAXhLpsoE7Xe44l3dt4w9yAYdVOEsJKGOgtJntkLcR/7Fq9UVtgA42gZVBPJlH
+	 AJxStrsQjUROlv0Q73E3xmz76M2kjKhoOOzigK36L7wuVSlF3zq2fn2sZurDJ5dimZLrG
+	 c8w/W9WkMMptwzc5cPOoJkUmqfz5p3zRcCcxgSzC4C8mn6ki6tcDU7cqGSc1GrAWojQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793346817;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=zWdTOaLSFbgjXbA4YqXHKurOnWycAqU6MfmvJJox40k=;
-	b=u985UNvnP2glhmh8vtdqXFr9R1UgrqgLEweYm6PEY2YQrMkowfXvcI/DT5kqL5s2woPU
-	 OKZfHlrAy+lonZldfVfGDamghhx97x/uIacPX/jV7Irdc1cYr3pjfGl7N7SGDJmoco2St
-	 +HAXc5TMdS1rJ1aFkhCaeMFTqcBMJ3+GsIMcsINYd/gvHCzezi9SprhB1z2ypOV2kv1Sv
-	 wc8hT1f8ggo3d0jEyhZ3BTmU7Ih58BnsKgkKHQuSSpEcRXBs42r8YIwlDU4z3npWhNS3L
-	 FW8tysTEIe0ypt+PJfVBTqpbDzxUAsMJqcgHYrGj4S48ycyPTxRncmCRoslhr2EP1wA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793357327;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=TNiX7MAgORnhNq15HmODad+Hr6noQTrwj5f5jdgl51A=;
+	b=ZOG5oLgF+5S8DHZY07ZSTxrqV0CKQyA2KC2LG26SrKiWj7iIxADDhn+wcL0ICTqFGdKP
+	 ZpjzAbWOnV5VmuFCb/4IDX4bXU5Jn9LuhFz2fRNJC0RnpDPIiqkOhupOGdb1q01eUcQs7
+	 QvLW9Tx1/TfjUG5Cc0SMvT72+gYFmNPgHril4XHjq65IJo0eMEPQJRKMA3MQlNuXYr/Gt
+	 lR6C30cA+PZLof+QAXgwP8AJhxRAyU41loQ46q06qsjJFKhNRXeFqx1zYOg5uxzFl0UpZ
+	 as8H9FFTCMQLdI5mGUA2namHvu3KpnYnaFE2gIeBlaRpyav5Kpi9av2EAlQA2InXzcg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=oHUz8VNT;
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="kZ7I/7Ng";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44093606A31E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:53:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44093606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4FA606A33F;
+	Fri, 30 Oct 2026 10:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=oHUz8VNT
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261030075333euoutp01e0980cdb430f8fce5436bdaf45da0bb2~jP2zF38620215602156euoutp01n
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:53:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261030075333euoutp01e0980cdb430f8fce5436bdaf45da0bb2~jP2zF38620215602156euoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793346813;
-	bh=zWdTOaLSFbgjXbA4YqXHKurOnWycAqU6MfmvJJox40k=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=oHUz8VNT6qVte98OCe2vlbCzYcrkBpiGxyuZJA718vyh9uiKHPmEPPDWrPBaVC9CN
-	 Y6kMmNjYr0och6CpH5uo/OKIlvjP5aaoVtTqDLdppXiJzohHt8q28MnTRxfh+EAAB2
-	 jUXihL3N6AQlUkyFqRYDg+EnM9rz0PuYrh0kWf0U=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075332eucas1p16331988bd7df20db9538066a613a42f2~jP2ytTOMr3249332493eucas1p1d;
-	Fri, 30 Oct 2026 07:53:32 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261030075332eusmtip2166041f016f1c2f6009dab75eb4bb9b4~jP2yIhYnT3096130961eusmtip27;
-	Fri, 30 Oct 2026 07:53:31 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Brian
-	Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH v3 0/3] clk: samsung: fix probe-ordering races in
- exynos5-subcmu
-Date: Fri, 30 Oct 2026 08:53:13 +0100
-Message-ID: <20261030075325.517182-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kZ7I/7Ng
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479ED1F000C1;
+	Fri, 30 Oct 2026 10:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793357326;
+	bh=TNiX7MAgORnhNq15HmODad+Hr6noQTrwj5f5jdgl51A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kZ7I/7NgbOrLtfxupPns58mCsz986hH3wi+7BppUh5UbJASTVJpYtn6xzS/z8VPJ9
+	 tn4Ih+DziQWb/8wJF2YDCxZh/4KrIdPnkZ+RtTvaTF02JeLellY5pOr6saj+rIFSs2
+	 taNEeMn2j0HD7aiz5RchHQ6isPLqeq3H/H5vbJxvsPyRIZ98lYuBb33fbFa0RZEi1d
+	 qUEtUlOFVr/7qoJV8rgAM0KmNTnsJBnSs/fVSnd8rXvnCwugwZbRm9rPasxIwrBfS5
+	 mRgwEz29tOK2utF2hkqHcg6U6hqb85P2MT/HOtzhp5bsos6UkIf8KUvduPA63R8Eu0
+	 XZTrbjcFz2baw==
+Date: Fri, 30 Oct 2026 11:48:42 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
+	Joonwon Kang <joonwonkang@google.com>, Subhash Jadavani <sjadavani@google.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Lucas Wei <lucaswei@google.com>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Brian Norris <briannorris@chromium.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] dt-bindings: mailbox: goog-mba: Add goog-mba
+ mailbox bindings
+Message-ID: <20261030-terrific-quartz-bumblebee-e36da1@quoll>
+References: <20261023235408.3063350-1-dianders@chromium.org>
+ <20261023165211.v2.3.Ia186a29119b4b5c409815b755e0c2c3965b0495f@changeid>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -74,59 +63,147 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
-X-EPHeader: CA
-X-CMS-RootMailID: 20261030075332eucas1p16331988bd7df20db9538066a613a42f2
-References: <CGME20261030075332eucas1p16331988bd7df20db9538066a613a42f2@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261023165211.v2.3.Ia186a29119b4b5c409815b755e0c2c3965b0495f@changeid>
 
-This series fixes a group of related issues around power-domain
-availability and probe ordering on Exynos5 platforms (observed on
-Exynos5800, e.g. Odroid XU3/XU4), which can leave clock muxes stuck on
-the oscillator instead of their intended PLL parent.
+On Fri, Oct 23, 2026 at 04:52:20PM -0700, Douglas Anderson wrote:
+> +properties:
+> +  compatible:
+> +    const: google,lga-mailbox-array
+> +
+> +  reg:
+> +    minItems: 1
+> +    items:
+> +      - description: Host registers (not accessible to client)
+> +      - description: Global registers (not present on newer IP blocks)
 
-The issue was analyzed and patches were prepared with LLM assistance.
-The whole patchset was tested on the real Odroid XU3, XU4 and Chromebook
-Peach-Pit and Peach-Pi boards.
+That's still confusing. Last time you said:
+1. You identified 4x instances of MBA
+2. Each of the instance has global registers (quotting: "Each of these 4
+MBA instances has its own "global" registers."), then why does the
+binding say otherwise?
 
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+You repeat here again "newer IP blocks" so how many versions does your SoC have?
 
+> +
+> +  ranges: true
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  "^mailbox@[0-9a-f]+$":
+> +    type: object
+> +    description:
+> +      Each sub-node is a single-channel mailbox.
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      "#mbox-cells":
+> +        const: 0
+> +
+> +      google,rx-payload-words:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        maximum: 256
+> +        default: 0
+> +        description:
+> +          The number of 32-bit words in each mailbox message from the remote
+> +          processor. May be 0 for doorbell-only. If not specified this is
+> +          assumed to be 0.
+> +
+> +      google,tx-payload-words:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        maximum: 256
+> +        default: 0
+> +        description:
+> +          For queue-mode only, the number of 32-bit words in each message we
+> +          send to the remote processor. If not specified, this is assumed to
+> +          be 0. This is only for queue mode where we need to divide up the
+> +          message buffer into chunks.
+> +
+> +      google,mba-queue-mode:
+> +        type: boolean
+> +        description:
+> +          The remote processor is expecting the shared memory to be treated
+> +          as a circular queue and that there may be several outstanding
+> +          messages at once. Only usable on instances with counted doorbell
+> +          interrupts.
+> +
+> +    dependencies:
+> +      google,tx-payload-words: ['google,mba-queue-mode']
+> +
+> +    required:
+> +      - reg
+> +      - interrupts
+> +      - "#mbox-cells"
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - ranges
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      mailbox-array@5240000 {
+> +        compatible = "google,lga-mailbox-array";
+> +        reg = <0x0 0x05240000 0x0 0x00010000>,
+> +              <0x0 0x05250000 0x0 0x00010000>;
+> +        ranges = <0x0 0x0 0x05260000 0x00020000>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        mailbox@0 {
+> +          reg = <0x0000 0x1000>;
+> +          interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH 0>;
+> +
+> +          #mbox-cells = <0>;
+> +
+> +          google,tx-payload-words = <4>;
+> +          google,mba-queue-mode;
+> +        };
+> +
+> +        mailbox@1000 {
+> +          reg = <0x1000 0x1000>;
+> +          interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH 0>;
+> +
 
-Changelog:
+Please make the example complete. Last time you wrote:
 
-v3:
-- instead of removing more __init annotations, simply fail driver probe after
-  the init sections have been freed; this should not happen anyway
+"If we tried to represent the mailbox array as a single mailbox with a
+bunch of channels, each instance would have a different number of
+"reg" entries and a different number of interrupts."
 
-v2: https://lore.kernel.org/all/20261029125118.3191455-1-m.szyprowski@samsung.com/
-- added exynos-audss-clk driver fix, as the exynos5-subcmu change exposed
-  an issue in it
-- removed __init annotations in exynos5-subcmu to make the driver deferred
-  probe safe
-- grouped all patches into one patchset
+and I do not see that. I see each instance having exactly one reg entry,
+exactly one interrupt with difference in RX and TX.
 
-v1:
-https://lore.kernel.org/all/20261015115008.600082-1-m.szyprowski@samsung.com/
-https://lore.kernel.org/all/20261013111840.3645724-1-m.szyprowski@samsung.com/
+The DTS here:
+https://lore.kernel.org/all/20261026144346.1.Iaf8214205f496225013f482f6e0035e89ac624f2@changeid/
 
+has the same.
 
-Patch summary:
-
-Marek Szyprowski (3):
-  clk: samsung: exynos-audss: Propagate -EPROBE_DEFER from input clocks
-  clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync() during probe
-  clk: samsung: exynos5-subcmu: Defer probe until power domains are
-    available
-
- drivers/clk/samsung/clk-exynos-audss.c   | 33 +++++++++++++++++-------
- drivers/clk/samsung/clk-exynos5-subcmu.c | 27 ++++++++++++++++---
- 2 files changed, 47 insertions(+), 13 deletions(-)
-
--- 
-2.43.0
+Best regards,
+Krzysztof
 
