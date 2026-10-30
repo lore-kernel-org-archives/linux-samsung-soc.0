@@ -1,55 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793329631;
-	b=U0trmq2bZIVsXkW/qMvHCANWQhzvd3xF/dUAqsUtc4/1PyummRXT3zyfzPF0czZRDV1Z
-	 Mb5Uzg0jav136txSL2TYy+0Ge8tHs6ErSp1k1e6QYSeKXpbM1h9R0nIV27j0w0vz7Byd4
-	 w9wFOzn7a/nV2/u64oWWlJV8tTJ/KpSXPXYB43iqHNSi39Qlkg2ZlPKAdlnW8eJ3CIOG/
-	 rP5j3TXNErbH98Zn0EyegchN7LebjH8FX56Qpz1EWlB+AT7vcxIx8Z+mf5Jmv/4VYS4Z/
-	 sYaCtHdnmZw7w9uWkBsn+glrLX6QZf4siRybMvBgSeFuQta8dZTmtwiInu4nXmIk25A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793329631;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.41
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793345321;
+	b=1mRB070VJ85gIdCdhZlYBHetdJEzD7BE5LggEtlp/b/p1IAMFSLTpIyjoJr8q8hT+MGl
+	 xKK+Nm5APpMD2on1HkkyVFos6d3+o4VhAoXe83OP/c5xl4+jvlAcXqlB88duFmR0DLCVY
+	 2AoDZ0YZta72Va3SA8e9/iQxyTT4wlgp0yHvS/5AMNgmygOztaZb5m1aNNZpAFKCE5fEs
+	 25kuBmSNySxzMKYp5t6dLFy6MRL/00ovlRihUMRuALlLNihgvriP18FI2Ci1Jb2traVLk
+	 kqdGVmY+nkWBvMXaOB+fH+p0m1rEnhd9WGKrPCK5je8d2YUHkM4BLpAuPyikwEGj7Fw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793345321;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
-	b=pXWLiAqbzMbTmDiUOR1eGQKZxJibAgTXXQsm6yVY3Al1od7YuhoyCIRerMVaDvvTZsFf
-	 hYnSz4Yhooi7SEqxv8+J11JdzQSIUYwmyZK52zaVXeY8hWlKQ6KBcggu0GHuRcXUmj/8w
-	 eudPvu9LUCLNMRwPb1RGqDOVy6+mxqfXq3p6Q7pAsWoO5FSS9NtodrUnP/hYr+LoMyLBV
-	 qvYdw0KEqs4UxLuS1/9xP+8zGZUeBC/+am/5LMgzib8hNc2QSLY5f8TOtkYhpEO5wF6FS
-	 scc4ts9ByhvMKwrkfI2LIKbE8Z5Bb+dnmOq1Jc9Fyg9VBU0wgEoiSiUMVV9FEsEO2cg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ddQQ3JmK;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	bh=7PxPIeRuNsvElsGXImQTEuL1CpgybTHblbxvuB0DOLI=;
+	b=1vCqPvYiCFH8BoJ9H4Qyr2I5oc6v9hkMLiwl6wYPqAXDNuHpnIVpEmAhCfB/J1H1j9DD
+	 pah9Cg7zLJG1s0Zpe4TTuebHCCAy2l/tPJU/I8UL24dgG8EGyr6fRBBkO9Vxyu9AfHd9j
+	 Lv9LdKbPuxzuyEWwz40FCbnw52tJ2g/HaLlJozPIBmJLwscROyvRptjfn0GAz8Nc+it0s
+	 4cXNYJpn6qBNA/NrX4GNX/IFSCxMgBi9ndVCiGJMQ6qhis7A0+uRyY8H8ajyhsA6P+4K0
+	 idkffLQW3MWfQxVoV1Gse+IlKAoQArSM2Mb6QthSKQ1u4o7kOt6N/xSd9kgZsnUEObg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b="IKy+T/qh";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.41
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4555D606A31E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30034606A31E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 07:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30034606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ddQQ3JmK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 197951F00A1B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 03:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793329631;
-	bh=/uSzGTnG/yOJTh9JMU3hh2HWfIlei95qLPy/XlUKvmg=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=ddQQ3JmKouA4YGpCK4YMsb9b1QZ10lYotkLxEDQKIjVfT2ShfOg+rZdD2LADq5izl
-	 n1xfdzYLY3lIUIUwP+M7OxaDQXgoScqrzZNNwEHkB3ofnl9HCNGixxPXKbpwN7Jgey
-	 aTAjpTR90yfrSYghW9/ItgZWA+Wh0UiiBvYCVorsZb/WebuCP4SpnvIMZZlys+eas7
-	 j33nkDsHxIpExGAYh0HICAbv8/orJEnpxWP6RnohfGg52o+q9xIMAeaVdHxs0NcFxH
-	 K0oEvilXMOWmGc0y5F5B5t7kNRNXu2/2MPh+JOod9MW8+ONPrcVgb0qY393Yce2ogr
-	 cSGs44VNOAnuQ==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3a49a022221so1949631fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Oct 2026 20:07:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwC9/1W1vRq3rUUPskdrSpSN5dqTGtxQ0LgEsKiPR5Nsz4WAH9BaZOre/UCNxv189ko6qLsITmwnuEeRC+DcL8cGQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIxkHnXgSEsRgg14rWCdSLp1kgoxcXjQpNV0g9uvO5lAs8Z6x/N
-	kanGzL2/dzCNuVMhOk2Wo+hKh7bEO+q1Nm2Am0qhtnVNLr6zyOjD0j3y1yD6OSXW1ce3/E5o5+S
-	v8qwWyhK+/EzjU7jntbvRI60xTLBz/jk=
-X-Received: by 2002:a05:651c:2120:b0:3aa:f617:5c85 with SMTP id
- 38308e7fff4ca-3acb7aa5561mr1702801fa.12.1793329629127; Thu, 29 Oct 2026
- 20:07:09 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=IKy+T/qh
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6798c43a3d6so258937d50.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 00:28:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1793345320; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VR0qRfcXc6QFkcEqWSIH+XSSYyGuqUEPR1Nmk918xWWdNSVviCVM78AOXOeJhfD9Q9
+         Ai8KvV2pr7xhgLea1obbFb3WZtlrnxqbHfaiZgIIhmHBvYIZVj4a6xWg/HDBcf6gZvoh
+         pRwqGgJIlnhV9ldP1oI9peiFqh0LGa6JyW3gfFDtvZQGfPq1UyunNLBJa4d0hbTFwSlC
+         u9Sbn6FjRmu9iCPs4UXOnNu0kYnQlifdKIbs3RBoy0NipBIiq1OpC7KP26fWY9Qagkma
+         mK1XFob8xS/3cDTF0P1gxwJg2mACbgd/9aBRDYXvMOBiTIR6ChwnQf2I4ZDdzfB23lNl
+         9l1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=7PxPIeRuNsvElsGXImQTEuL1CpgybTHblbxvuB0DOLI=;
+        fh=Qjp9Wj1J34jR8Mu7mlur4mMTeL2Tis+NT9Yjy6Z1YTg=;
+        b=lgShWX4VgEMmJH9pb9yXya2XHY84MXo/VbniApkZGhmAS25sV80PtGb1uZpDLJSR18
+         dxJ+rDwdJECo602o3DSuXLM6bZgomCGBbvYrP3vSYgR9FCF6MDLIFSYPEpiIGoYuo8BU
+         yFq10aX0Z/G1jp6CzAx6J+FzuGLHdP1ehXqnUnu4S1FjV6desPuPvTY5MBxldcIzyDxy
+         801+Un8pSEhrYaHztZut/al6uRWmpsCdf7l/Q7KooJMa6KYDCM/rw2pF0HuAlXZhzGpA
+         pIvEV0tHIAR6hvZWy8dFWig51TNdYz1ZpJg4Ux8roPNHWqsGGFy+tAWCo7KW4VdXWqYR
+         qEQw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1793345320; x=1793950120; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7PxPIeRuNsvElsGXImQTEuL1CpgybTHblbxvuB0DOLI=;
+        b=IKy+T/qhhIrUOzchV2V4rsBprme/Hu+3Hl6zCa01nFTCsOY9pKmewlMrEn4BQLOwW9
+         feJJmNQO23DQ3rGjEzuWcIeZR34xo5NfY4KNRYFVsQwIp9ColIO/GW+PGca/8KtFU+/f
+         l1bdJasJc0Tz9mTRQCSooUk0FYHVl951kJDfI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793345320; x=1793950120;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7PxPIeRuNsvElsGXImQTEuL1CpgybTHblbxvuB0DOLI=;
+        b=IAauxDOdr6XZNUvyAi1i39Hsx1CRdZ9o8minU8yGtIbhV4t5BTLaOZtk4Y3NADB6HS
+         XUQ95IQHYhqO00ulEUEbjZ9RiAmZMVr5z3Sk5hv9HRk9VMwkeYkJWLlG345iR0s1zQrR
+         aikbP369hHScitFLQ+THHuIsZAfVyNhnYzC6iF8UEGJQX4zFMsrkcEYexOq3rO5ogTxc
+         qRxa/3/GRPxcW9CEkhMjxCCi2D5VxmnKnAJd7QQq9i4d0LP+iQjYKI29Tqh8BuqXoxAU
+         tXo4WyzZzAuaLECPHHuH2tFEDthzprrPdZjPKXstFcmmMKnfioUFVm2Cu4huuHZIpDVn
+         hStw==
+X-Forwarded-Encrypted: i=1; AKwUvBx98quVKiwl9HDz0Tpy89TaAwUVO7oEJkGAaBuXo7R0NCmYB9DXbso3Cvqb3kdYUs+yJi8PNpdGyVQaKhYLID2fgQ==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKwjPrSKPWM7MNWGjDrCu6eVAcPDIAmKyuoWO5fhvSMJ8G4akzo
+	/KTfxgCW9VfUy7k/Z1a/uUtECp8Y8bRG1y+wOqWqrv0TyzIWExfu9zaNHDt+ETw55AMYPGrAnUH
+	U6fNp2xiNYqB5/LnmNsI2/neZM1h7F8zTOpdpRrND
+X-Gm-Gg: AYBFou0wV3E5zmZafwiBIF6dpZyyryJSHdj3jskmH6D1LtuZLZBOBn583v8LjcnmRrP
+	s10sSAkUI3pBgbSRigxKjQDawa2ZKbHrf9HrYrnQexirqFteC1wmOs4wK34n4dEX28oQwc378AT
+	BggCnJmNNqs41bFixF/wlq0rqlsfhkLP+OFKrcG/1yPxEQnb3whRe/KU8QLGx5VAfglB0CcNVz+
+	VxAu52/xHHU/uZt6/F4ISWOIvuUYQDWZ81u+KoR3YkbNvOz7sx9TdJZxAl18xJPkVMa2t3BgnD8
+	5bCVFvkywem6b3+w0DcrYSmSzPs5Lg1Gcrl1KSWOXa1wG0nlFzqB4q+KaF1grmvj55039s1FzDV
+	171H6ieD3u7rny11hJQ+efM7m8PpO7/MVEYWX7JEM3D8QykRe1iLqSIPSUAaKhqW5XTE=
+X-Received: by 2002:a53:ac8a:0:b0:679:9afd:c0c7 with SMTP id
+ 956f58d0204a3-67ba508d24fmr864212d50.126.1793345320085; Fri, 30 Oct 2026
+ 00:28:40 -0700 (PDT)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -59,119 +101,111 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
-In-Reply-To: <20261026-drm-panel-funcs-v1-20-5e3070a3478f@oss.qualcomm.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 30 Oct 2026 11:06:54 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
-X-Gm-Features: AclHuK9xiSETdonY9_QkznCRV7eL1jeHCdIOBKyx8OeAMXLApY8qfRj6-NRV9No
-Message-ID: <CAGb2v66GV0mu+iKHs2+mZPxJmbdgm60j8srtKLuux7BdAC9BZQ@mail.gmail.com>
-Subject: Re: [PATCH 20/35] drm/sun4i: set the panel orientation on the connector
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+References: <20261014082037.1774672-1-wenst@chromium.org> <20261014082037.1774672-3-wenst@chromium.org>
+ <7020a7a6-332e-4fd0-a659-d82eb768614c@linaro.org> <CAGXv+5G1kgyumbj7wGf6rPFbg3spSO0zYmEkn-hZT4qUdJbytA@mail.gmail.com>
+ <03375a31-0ac6-47a4-b0dc-6327080e1622@linaro.org> <b4c0761b-34f2-42ad-97e7-ab34ae776281@oss.qualcomm.com>
+ <8d4d3ec2-3c97-4a46-97f8-048fdf81b853@linaro.org> <CAGXv+5G_ig=k-eH8Cp0ES70WxTHcBS2TVj9VmHaG9caROiAuQQ@mail.gmail.com>
+ <8ceba969-91d2-4b43-81d0-b26e7139664b@oss.qualcomm.com>
+In-Reply-To: <8ceba969-91d2-4b43-81d0-b26e7139664b@oss.qualcomm.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 30 Oct 2026 15:28:28 +0800
+X-Gm-Features: AclHuK87PpF6mvOIXqHCbuY1WKimiNRH2tQGnceMsfo-UR5TI782gxdvYJm286Q
+Message-ID: <CAGXv+5GFogx_kS=N1t8-SFTp+HyxLtoHzhnL6t8Zn0GBiqMoKw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: usb: snps,dwc3: Fix downstream port numbering
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Sven Peter <sven@kernel.org>, 
+	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Ryan Chen <ryan_chen@aspeedtech.com>, 
+	Billy Tsai <billy_tsai@aspeedtech.com>, Michal Simek <michal.simek@amd.com>, 
 	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
 	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Linus Walleij <linusw@kernel.org>, 
-	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Samuel Holland <samuel@sholland.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>, Jagan Teki <jagan@edgeble.ai>, 
-	Jianhua Lu <lujianhua000@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
-	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
-	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
-	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
-	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
-	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
-	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org
+	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Yixun Lan <dlan@kernel.org>, 
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>, Minda Chen <minda.chen@starfivetech.com>, 
+	Shyam Pandey <radhey.shyam.pandey@amd.com>, Wei Yang <yangwei1@eswincomputing.com>, 
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>, Hang Cao <caohang@eswincomputing.com>, 
+	Li Jun <jun.li@nxp.com>, Peng Fan <peng.fan@nxp.com>, Roy Luo <royluo@google.com>, 
+	Yang Xiwen <forbidden405@foxmail.com>, 
+	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, 
+	Robert Marko <robert.marko@sartura.hr>, Xu Yang <xu.yang_2@nxp.com>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Stanley Chang <stanley_chang@realtek.com>, 
+	Ze Huang <huang.ze@linux.dev>, Aswath Govindraju <a-govindraju@ti.com>, 
+	Roger Quadros <rogerq@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-aspeed@lists.ozlabs.org, imx@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, Mathias Nyman <mathias.nyman@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 26, 2026 at 7:11=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@oss.qualcomm.com> wrote:
+On Wed, Oct 21, 2026 at 5:44=E2=80=AFPM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
 >
-> The panel is used directly, without the panel bridge, so nothing sets
-> its orientation on the connector apart from the workaround in the
-> get_modes() of some panel drivers, which runs too late.
+> On 10/15/26 11:00 AM, Chen-Yu Tsai wrote:
+> > (Cc-ed Mathias, the xHCI driver maintainer in case I misunderstood xHCI=
+.)
+> >
+> > On Thu, Oct 15, 2026 at 4:44=E2=80=AFPM Neil Armstrong
+> > <neil.armstrong@linaro.org> wrote:
+> >>
+> >> On 10/14/26 18:36, Konrad Dybcio wrote:
+> >>> On 10/14/26 11:44 AM, Neil Armstrong wrote:
+> >>>> On 10/14/26 11:29, Chen-Yu Tsai wrote:
+> >>>>> On Wed, Oct 14, 2026 at 5:28=E2=80=AFPM Neil Armstrong
+> >>>>> <neil.armstrong@linaro.org> wrote:
 >
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> [...]
+>
+>
+> >> How about the USB4, does it use the USB3.0 port ?
+> >
+> > I'm not familiar with USB4. A quick search says that it can tunnel
+> > USB 3.x, DP, and PCIe, and it doesn't have its own USB HCI defined.
+> >
+> > So I'm thinking the USB4 controller would be more like a nexus node
+> > or multiplexing node, or perhaps like a USB C connector. It has input
+> > ports for all the protocols it can tunnel, connected to their respectiv=
+e
+> > controllers (XHCI, DP, PCIe). The binding probably would be very messy
+> > if one controller supported multiple outgoing ports, as each downstream
+> > port has a 3-to-1 relationship with its respective upstream protocol
+> > interfaces.
+>
+> Yeah that is more or less it.
+>
+> There needs to be a connection between the USB4 router and the native
+> (USB3 *port*, not hub | PCIe *port*, not RC | DPTX) protocol adapter
+> where the tunneled packets end up at to create a PM devlink between it
+> and the USB4 router.
+>
+> ACPI does that by adding a `usb4-host-interface =3D &reference_to_router`
+> property, for DT that's still undecided:
+>
+> https://github.com/devicetree-org/dt-schema/pull/196
+>
+> As far as the Qualcomm implementation goes, I was hoping we could
+> go forward with base1 numbering as the DWC3 is an XHCI controller:
+>
+> https://lore.kernel.org/linux-usb/20260929-topic-dwc3_tunneling_state-v4-=
+0-63e296346d57@oss.qualcomm.com/
 
-Acked-by: Chen-Yu Tsai <wens@kernel.org>
+I don't have DWC3 manuals, but assuming its internal numbering follows
+that of XHCI, you can't just use "udev->portnum - 1" in patch 4. That
+is the logical port number on the root hub.
 
-> ---
->  drivers/gpu/drm/sun4i/sun4i_lvds.c | 2 ++
->  drivers/gpu/drm/sun4i/sun4i_rgb.c  | 2 ++
->  2 files changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_lvds.c b/drivers/gpu/drm/sun4i/s=
-un4i_lvds.c
-> index 6b98d20a8890..448e8a70b1aa 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_lvds.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_lvds.c
-> @@ -153,6 +153,8 @@ int sun4i_lvds_init(struct drm_device *drm, struct su=
-n4i_tcon *tcon)
->                         goto err_cleanup_connector;
->                 }
->
-> +               drm_connector_set_orientation_from_panel(&lvds->connector=
-,
-> +                                                        lvds->panel);
->                 drm_connector_attach_encoder(&lvds->connector,
->                                                   &lvds->encoder);
->         }
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/su=
-n4i_rgb.c
-> index 3da9a9283c6e..5414afcb10b5 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-> @@ -245,6 +245,8 @@ int sun4i_rgb_init(struct drm_device *drm, struct sun=
-4i_tcon *tcon)
->                         goto err_cleanup_connector;
->                 }
->
-> +               drm_connector_set_orientation_from_panel(&rgb->connector,
-> +                                                        rgb->panel);
->                 drm_connector_attach_encoder(&rgb->connector,
->                                                   &rgb->encoder);
->         }
->
-> --
-> 2.47.3
->
+Instead you need
+
+    raw_port =3D usb_hcd_find_raw_port_number(bus_to_hcd(hub->bus), port1);
+
+to get the 1-based port number for XHCI.
+
+
+ChenYu
