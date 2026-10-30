@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1793392453;
-	b=LPwa85vBmQtFGPy50Xu0Ey3lpKY/7qUj7GipCEb0RTZNz1thEVH7+B6tDoXlsaiuw2zD
-	 yAdJHRYd1L1W1N7119cfGxX8kvqYvpyRtnIGSNaJg8KjLzbnioG2f5A5NG8tMJZaUcZoT
-	 Jwvavte+KZ+CDxIrH3nTbEluUyMc8FnMB6+2bfBNkmhYhz7tM9QIYjkJv+EOBDmYMoghf
-	 ElJe0VJkpP4JYf29yCK3Rkhv/szYlLBpVzISwu+m4Xpe517w/BV5uufYBkT+k/0KVdpMc
-	 5Y8R+MVoefye+mChLgGu9E6/jZi3J+ubi/Any12JBfX4bykjelvVIsZ7g9EVlKSLHKQ==
+	b=njqHv1HQFR/KAizLVJ+Bbu8bmeP7OkC9sYV8AY66D0EqgntgCt89NDgFE7K4DLqZSWdd
+	 w7C0+EpYk3Ihsi4oNYjYijwsxzcMC4yEpgX6yZpwW/9wtWeihsUBOa6rWDbBC11zCyOoo
+	 ik86AiwlxruGG0CrW6/S0x4xxxGN2KxZp6iPs5HtK/IuDnAoYe1yL/gAPj5+XsfaeCqoL
+	 RWtIR2GwRfGDTNfu0ww6+DAWvDtEFIH4dAUG24rMdxf1bpWDyHnAOr401OCkA+XXdto0R
+	 Zc1Zu/J7JaJAPZcUGtfZP4hgXWe31KgtZ3Ygu6lrLlaDmyO44/uTxGNKD8PnYkS96dA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793392453;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=soIhMh1dJ9HVRlujdDktbU1BG+4MBhLl+PUVrnyOGB0=;
-	b=WJcrUSUUo7lnu29xbjT9UIHIwOMYMwXa0jZG1Dmd7hPIQwAt2YnobPkmNEu7NVJ+w8E6
-	 Bg5TC4JCQuO7ydi5fWnI7X4H+VTM/63bJiuEf64lwMnGHpRiwr4bWbJR4Y0+aHnfWyLv2
-	 04G1grsQ45TrbZZqO6J44Ix0rUhypPJNHTpfFarWikHYmYLoaokVqwtCg3c+dg1PebRRy
-	 +s3zH0Kkh9INKo5zZ8xgXVP3ODjxAKv/hT8evtPIAX+0qSujAYZpyEk6sEZ8bzpMBvdvV
-	 7F9E8w+BbpVcPLSNsPX+bNe+ldIIvQF2Gc2QcJEO+otiZbrEtKny2dMuvwXYsKU96Pw==
+	bh=VSr45EekwXT7Gn8RorAXchQ8TsB4e3wg2k48aCXq1sA=;
+	b=nHrV8uXUIj5aZxoEyN4d+oXzn6dzVVUPVmtoaHFI17edLEVaA8hh1xuDInQ/7cqlIK1f
+	 tigCoMqP6kFQgYgZFVr5TQtjYXV5GoWql57JB/vldWVbW3sH0JyLvu2VGuqZYbarv5CRW
+	 JNiHlP5ltX/RS3DrB3ID/0UrDclsywE6/zoTcr7oVglj68zajwCijDZY0lkAtWBWnjp/e
+	 d8Hq+sOWz8c8l5f6g4zKFFR/yBBTa+WV1PkrwzSy5AodZZpntw5zTo8uHZnVL2BzG4BwI
+	 PFnyvlRLWA6dtgJLEqr4BP5ch+IzPwPWvY7Oryxr68QWm199XwT5ThhlgqViZVB7IYg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmIcvfgw;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BdVxPylt;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57450606A332;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6E5606A31A;
 	Fri, 30 Oct 2026 20:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EmIcvfgw
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BdVxPylt
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793392452;
-	b=NFzbHwRF//zl2Xyj1HSwPKvAuFp8RKnz6GgaRrghHcha0ISS3eTiQWl+5gowbVXz+YLv
-	 DPyTBZadBHOyFU59m+8u5KaDkuUk1DUPtqZ6O2v7Z3Uu4lvwFtZdxikH0wZf+a/8dWcj8
-	 HOT10ULRdLIPO+ttBt3XxD2oQDGRL8FfX4GxT+S4pECGwPqHaM99ZRSsEci52UHMkjDQL
-	 Lri4oHhGxcxnKB0R9radglTXySug4rxINeeLHPe6SNo3iCsXnGdcCShnyWAv5oDg1Hxfk
-	 8lpsj4iyXJW55m5Lz/ibbjMB4q370TFgUFd/RWfNM0l4uj8GCpy236EPL2kaX01RkIA==
+	t=1793392453;
+	b=GVaSaOr0nT7xk7aPDmQCLCMNiVO0aH47kqT57HLI5ob2oiw0pamoaVUCOrkOp11AgFWr
+	 kgsjmM90P35tgpALydetPFWYG0LlcjdWD5yIRkZo0CElH6We7luvpWYvvywmMqzY60+4V
+	 cJe/8T4wbxMqDbXcsbqNipjBPzmpRgSqgV87xUECmx/a8NAHw946GKS6LBAw9Lx3SZE+C
+	 i6pwXeSxx960MWAAm2IpS3v0cJ5bLShlZ9Aqduj7SH3DaRYHGCgwIDrLx0Izxko7SEOEA
+	 9H+edNzP+0kggNlv7ZiwKYpReNIe0sxfCe8i+oZmJPseiTv5UY0y1tgr23PKS1or/sw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793392452;
+	c=relaxed/relaxed; t=1793392453;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=soIhMh1dJ9HVRlujdDktbU1BG+4MBhLl+PUVrnyOGB0=;
-	b=Omy9BHE1zrFC6arZhYGHOA+mP+AVMEePu/pPUtgNaXns/B6cVcikWyDeULt3KIxAnm6E
-	 TZVteDysp9O2FJdBV0v17lw2B/GIAMML/Oew/f5hC0gFF9ivAk+AbokwmWwjiEmL8igRj
-	 qH3XjAthMAbOWhNlhr19FhxDPnyB9NJCFvWuShsya3gmSEhmU0LO0C+rCGgsnHyT8Y2LQ
-	 Km07/9aJICQc2scrPE3oExyaq+W6qmpBQsanLAna0fe/pb3tHUhShNw8B1//+McGdl3NM
-	 k617gUSazI54wsCJwt4+Jo6q10LQUG0oRnZLNkKn/nsKqBjXo0KcShahNzTNatNB/dQ==
+	bh=VSr45EekwXT7Gn8RorAXchQ8TsB4e3wg2k48aCXq1sA=;
+	b=MghrYpLwiRAzOyW0gye3Mv4RsblDIMQziCw4JZ8QRS4cvMxAsJZKda8Zka3QcLpqCwjv
+	 n+36gwOCFuAH+FvM2VLbVymrBdAp8duhpxRjXSmz7wuiJk1gX7F3NY+dB93rHLYYwRn4E
+	 U142UaopRwRnlff43ikXIZH57okEWemrh2eypxGqCqcRKk/oxFu6WCXIuSh7+hEPm0458
+	 6ayIwhmEIst0f1WBqVL+0Aq/557h4VeoJtHF0Elaatb9xhsYlygjeAm9cxMPY+hYR6jK8
+	 P6kQNIQiCbqhCn7jiKyQwKhIvQsLKK13T+HhBL1cM6FVOFYjtRYK/ohRLHk4Kmgn7fw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 4455E1F00A17;
+	by smtp.kernel.org (Postfix) with ESMTPS id 454991F00A02;
 	Fri, 30 Oct 2026 20:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793392452;
-	bh=soIhMh1dJ9HVRlujdDktbU1BG+4MBhLl+PUVrnyOGB0=;
+	s=k20260515; t=1793392453;
+	bh=VSr45EekwXT7Gn8RorAXchQ8TsB4e3wg2k48aCXq1sA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=EmIcvfgwXeHxHmykw8dAguK01MfyJSqWqDPAllGKxY6xTE7hTfmFcHPYpJ4Xel/fk
-	 VR9UHe4X+Ryp14f2LJYvJWOnPlgMffFICwocBeHlohvaLPj8o2GDAD+sDsGGiiL2Ln
-	 qo1u+8TCoi0o3abJm9lBNQx6KC8tAqeMtkfZ1c56Jc70q/dIctlr9OA6Ts5kbnxIps
-	 5nLHCx7wJvdUfRPxljGB0AGBpP+MBuBMnEHGgXDteLEX76X5cZWIuF7P5TZCNMSOXK
-	 ZZhGSJGTYV4qruC9fhMZrFhbnTL5WHUZzOQXrmeT0Lmi/E9iyLnfXGR2LDmrQpdZdc
-	 93QJw1PRqMrog==
+	b=BdVxPylt3UyLK4YSMW9XMYqaTq64XNwhPcI529DPbeuAF2qswBmejXqC49q9L6a3b
+	 c2UWx7S4fGZ3ynnb+Saa/MI7eFOdiLBjQs2CQzhyUs1cBYC7NZWTovMpz8Nl5b2gXK
+	 bnVKmzG34OrJIAL9w3szwlAMbciOsJpzPRO/d2CbhfqVw3nxeBb6C8/rprIPdEuoF8
+	 xERBFIm+iPIzmpp1xXHQGVypUJA3/vRueYXwFAWJ//HSM1zPkW7ixuFgTdOjU7PVUS
+	 TAwuRfBhTEpk54CELT9uI+S/P0HaO8lOGdnBB/l6zOBG4vTrFNEK0e9xTek/3NQ1fw
+	 5WloBR5tphWzw==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A59D04425E;
+	by lkml.kernel.org (Postfix) with ESMTP id BC81B44287;
 	Fri, 30 Oct 2026 20:34:11 +0000 (UTC)
 From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
-Date: Fri, 30 Oct 2026 20:33:56 +0000
-Subject: [PATCH v3 1/5] dt-bindings: soc: samsung: exynos-sysreg: Add
- compatibles for Exynos5515
+Date: Fri, 30 Oct 2026 20:33:58 +0000
+Subject: [PATCH v3 3/5] dt-bindings: arm: samsung: Add lucky7 board binding
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261030-for-next-lucky7-v3-1-81e02272ce69@member.fsf.org>
+Message-Id: <20261030-for-next-lucky7-v3-3-81e02272ce69@member.fsf.org>
 References: <20261030-for-next-lucky7-v3-0-81e02272ce69@member.fsf.org>
 In-Reply-To: <20261030-for-next-lucky7-v3-0-81e02272ce69@member.fsf.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -95,21 +94,21 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Aiden Isik <aidenisik@member.fsf.org>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1491;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1084;
  i=aidenisik@member.fsf.org; h=from:subject:message-id;
- bh=QtI7rR1JE5JZ0IsGeNkyOHtQG1QoQSmhMzQKfhBONkY=;
- b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq5P9BRwnhwKnh1lcLA8zegpISzuoxVtpp5hFSk
- J2zaklXBzqJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCauT/QRsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+sUcw/+KAI+HUyt1z+19ZMIG5gRCEjE44sucKH
- KNHTSOx64D+bNnnirR/IWS6DGiL4OCtHgBLgaaYoTu2rcjjPkARscI3n1BFNH3qknQNcNVLPagG
- JEdMikMNvIjTYc0+RKLMTV4hOAKGxNdk5ycDH5P/d0aWZNi4LZzS9DeC/ID+KJg5TyYWBhZv1hM
- mzi+Jq65JmDFFAcZ0hKi+hS7gJHMgzP9ewAwwRQor464RYTR66m/eGMbXCSKNJc+HgY+ErFpXH/
- lTk3aD6t4CdFYYN+SxUKbtbJqZydCMmEZVWBAoFn7VfD7loooEx6BknS65WU0cT1HeeD8J/J//e
- bRgPFtQm0bQgKesqdoccbIxtlW+Kl9w0tuR1tXn/BxCpL6dZ+QH9gGbK0eSMxx/1atIHAQAPL14
- HheUfUJM5JsInrfZyVBtGqDXlF1IPkJv+Y6912ZctsOSkCejwHcJ72MSe+Wc7nO5kZivxgc02Et
- 86RTXf9QUjRMUWwQQ3cb9QXpxVGsiOJ9nLE9cvXU0CgGaAhGhTdseWBH78WC9vVhk6MUbHTm2va
- S289sjykEYRGVGW6Qxkcle8PBMO6/LulZ6ijDXmCpedKRWsfu7JPYBhDD4N/1EMvqpVAEN/WNEf
- iD+X7Wg83J2zPnp5nq5rKGNiCrr4sTqk6Qo6OQaCioJNT+st9uk0=
+ bh=7JvUn6Gsqc0cxhWub/oalXTSGokInna58PtxHScXffE=;
+ b=owEBiQJ2/ZANAwAIAUknAbLEetfrAcsmYgBq5P9BHMKBNh4IQyDh63QQ1k4O5B7iuUyB1RWst
+ LQX8wp+4zqJAk8EAAEIADkWIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCauT/QRsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQSScBssR61+t2URAAyZpdL0VPHA7tNOV/jR4IN13ZZjCE5rk
+ U+2fOx7l6sFhM+bm/CXkpLAdlxnq8DYJBBMY+c9v4RDYvRAWfNwSdhBnj1vhiP82NEDomFkwN1U
+ 1QrAQ0FCSps9MWrONQ9aLkVkvA8KmXqXLQI+kzdmHtA/KQUHB/JgKPYEwdw33Tr3CIy90MPrGmD
+ 3K2cDQ3cVdtAXUtUIEUH3ZQwD2kPxtV298RhVAdpbId+CLw1fYETEdHz+/3WVLZQtcbjgfwH9P7
+ QJvmZ5mEMmAzwGUXBstlTWT/Ma+n6A3wDiXEEUvQ0LwCzMDqg7GxrDdSkWjiyWQwYFZTQc/Y5WG
+ GJYkI2XAdnxItD8uX0PAaFvJZi/D6R6vs6CLr0m6NG8QE0Cpb5hKjizpH3oquemGwOfPmNdch8i
+ 1pVV2nCidNIZppWMmYSucV48h7VmdGBfKdtzZNlwFZfh+O5TNoAMh+N7t6qo/ctF6QDhJNYkhv/
+ o7e4J9s9sgFZi2LEujp/Ibr8CdeefOtzJPam5pr2UDo0WAJutthUbiiAC78VoiIVWOzZcIlVJJ8
+ Kq0PRTrAVnlO4jDuqL3EW4szSyo7fwo8Z+MFBk7ijS6E8FTknoWkrHSbwXIi8CVi9dClc5oVxDW
+ Y7n6uAqG74JaOAafywKRTbnVVo3O3Ocscc137xcAFTJPerl7C3mI=
 X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
  fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
 X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
@@ -120,39 +119,31 @@ Content-Transfer-Encoding: 7bit
 
 From: Aiden Isik <aidenisik@member.fsf.org>
 
-Add Exynos5515 compatibles for the following sysreg controllers:
-- top
-- peri
-- fsys
+Add device tree binding for the Samsung Galaxy Watch FE (SM-R861/SM-R866)
+board, based on the Exynos5515 SoC.
 
 Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
 ---
- .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml       | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index fcdb9ffd2644..9e698d065820 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -29,6 +29,9 @@ properties:
-               - samsung,exynos3-sysreg
-               - samsung,exynos4-sysreg
-               - samsung,exynos5-sysreg
-+              - samsung,exynos5515-fsys-sysreg
-+              - samsung,exynos5515-peri-sysreg
-+              - samsung,exynos5515-top-sysreg
-               - samsung,exynos7870-cam0-sysreg
-               - samsung,exynos7870-disp-sysreg
-               - samsung,exynos8895-fsys0-sysreg
-@@ -100,6 +103,8 @@ allOf:
-               - google,gs101-misc-sysreg
-               - google,gs101-peric0-sysreg
-               - google,gs101-peric1-sysreg
-+              - samsung,exynos5515-fsys-sysreg
-+              - samsung,exynos5515-peri-sysreg
-               - samsung,exynos850-cmgp-sysreg
-               - samsung,exynos850-peri-sysreg
-               - samsung,exynos850-sysreg
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index db19a686f490..c80fac4fad7a 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -157,6 +157,12 @@ properties:
+           - const: samsung,exynos5420
+           - const: samsung,exynos5
+ 
++      - description: Exynos5515 based boards
++        items:
++          - enum:
++              - samsung,lucky7                  # Samsung Galaxy Watch FE (SM-R861/SM-R866)
++          - const: samsung,exynos5515
++
+       - description: Google Peach Pit Boards (Rev 6+)
+         items:
+           - const: google,pit-rev16
 
 -- 
 2.54.0
