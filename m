@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793378254;
-	b=5F6WUTwSnn4pJm19pi29/DwsuDzj65HElGnmTuT2GKPutWcMVZOz9MyN52GEhvOgr2Lb
-	 GjTxbpXxSeV7Emxzrt11EpbdvKprLFyVyyCqDE9/SbhDkslM850ywKUgscYUsnwoJG0Iu
-	 FIuS630BDz3SjtkDEQG0FfVjkCeIqfBbYpfuzPclU2pREVuLkAxg8H3oFBmTf9b3+8FHs
-	 d6mUK1Xqrs6ZtTapLX6cSJ5GvyqkdhanZkBe2/tQeGSTMDGDPAVhBAYTsMMYSvQP8pYQi
-	 0oLAJ49dbQaa1A8bjzFy/Eso+Ah0qrNJk7s+hgTAsg45PfzEohNLbIi1HK4568hJPyA==
+	t=1793381091;
+	b=HnmBggQbPXwc0YBgIULyt57P11md9bjE4m+piaBUf/9EdedJoT9iMoLOkYEDVKPLjlYn
+	 ZE6coOD8uotNi6wIrpblhN7MA7bfhA1G42o6jnn21/uQmvye+JU5X41QC8+ZRVlSt/IZ/
+	 JG0+m0Z3C/EDJPXp+3sMdiRsYTI/nJFU5eYdi8ZbBeAbSJiwXxH86qQHWQbaHd/2agAAw
+	 /OeFDIo7ZAFcQjGncEB1WkCf2rcLC3LfMwRLfj2q+tdxOgI759S2GF15A4LAOgkLn6pNY
+	 WcDQ86uyQrU0KoJWl4p6bH0eUtAm/6TBj5MNn0GCxGKGPf6EOovrXbRU9pnRq7SD/wA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793378254;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793381091;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=XcZ9lbstnk1GTs2qJHkiYVcgAWVuc0rERzcXapVspqI=;
-	b=Wsr5LE+KgfI+gxck8EAqAvo9E0qnToQxruL8bK5TRdvTHiO26bng9FWZj5DUJBu4z52a
-	 +/5/HgLl1Le92PkmOZtZwBsXRSocSzG8wu0eg8+VUPgkeZkXe0No7Zer/EdpKvXLPMZEx
-	 RdqYdXJJgwYZJ79Wb6GpUsgzqYRL8v9V2aPX1FJJbwIQybRg6NrS2jZ5ORDiIGozpt/T6
-	 LBz4HNzA14/QZLauh701sW4Hc1pPf+oXy98yas/cmTZraFQfMccLExprwB02T+MFjAcAD
-	 u9Pu1/wWiRXHMzJnulE8Kik3bN+bmJa+ADf2RZmyxMS0hdYE0lfjkaXTUvwlvNqNS0w==
+	bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
+	b=WH3uyGxUmk0r3GAdwUYT/ey7ShCJcU6njswmqq+NdQcZJ3jawaUR5E0TStM8qYiKt2f4
+	 GlgPe4mn9KkG9xrGIif7kslqyK2C2dhdWE8v7xXAAvQhB1MiyPUWQAzBPFfRUInNagKUE
+	 XkHstIGDhFTwZAcLTTPmsVVd0jzojeFbLKBeNr56ZR+pGefXgREh5LpJlK7D1cXPP0xNy
+	 +ezNurPEF6yHQueiZj4e5UU2CTj3W88HMTCxQ/pzYlzuZB9Ft8cs5cqCtYd8NUWBudIMv
+	 EKDo2XYi0PIanqEqzYa5xrcK5utv/lNMzE51NMP6ux7qzTo+OGLSGVAXHNcbvvDiMWA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EDTIGh6t;
-	arc=none smtp.remote-ip=74.125.82.170
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7VZ5hUe;
+	arc=none smtp.remote-ip=74.125.82.48
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE50606A32E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 16:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EE50606A32E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72625606A320
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 17:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 72625606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=EDTIGh6t
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-3550c917fd3so1306386eec.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 09:37:33 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7VZ5hUe
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-170135e43c7so1444551c88.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 10:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793378253; x=1793983053; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793381090; x=1793985890; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=XcZ9lbstnk1GTs2qJHkiYVcgAWVuc0rERzcXapVspqI=;
-        b=EDTIGh6t3kgeWK6ADWnUzoLCmhtmB9/PL04H+WPsDvVHeo1HknTrMTUYkoAW1mQTQT
-         p698ah5LqbJiQY1Rc8Q22G5bo5pWUaPrBs+eYXQ4Xr5MtRfzeDQqJ5+oR940dKjS1OWk
-         0iIfu1Pau7DmBW/IJVoADYLGOdzwUZOd3k2fI8P5TPiBf7xHsbrC4ag0CqphbLB8FUZQ
-         lgzuDLUttlJkp2dzun+dgTa7sbgoBnuyL+DTGkfjs0eSW4bpF6Tnj8Em97MHXxAe7LK2
-         QXMqCJem/1yEYcL5Xj5QQdGSQLj/He0fZWjp9R8U2Q2gmSb44qDhsPR+VN3WnpQo8GBy
-         QBpA==
+        bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
+        b=L7VZ5hUeHT/COIuMC1fXHEZVV2cfpe3m+2Q+eR5JmKHaltAe4tdJZGUCfAlApu1Sg6
+         t+qNw80aX6Vh7xJ3Z11DvRyovT/uws97TIVyDpEwHVjK/9lrtmDPG5hrtWWxlExcbijG
+         5wqRvuTzLlMODE/Tu0HmwRbvK/jwhbVieCypRfswSR2D1nMJzYiewCsa1KGKua7D3xzO
+         +XsaO4lQR7e1Rm+RxiPoTbhcmt93Y3lpLsztEYuAe6nObV9LM9nZMc/68uI3qWF4D9vh
+         yrCcGb8p/ea5Bt5BD2LKsVH7YD7OC4Td/2NsZHdD26mjcT+mMc4PYhRnzdyjYc5KUVnX
+         cVPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793378253; x=1793983053;
+        d=1e100.net; s=20260707; t=1793381090; x=1793985890;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=XcZ9lbstnk1GTs2qJHkiYVcgAWVuc0rERzcXapVspqI=;
-        b=De5U1PXUJzU2EjBatb4ntmIBe7VD3GyzSxpWuIs4quupkY4HOqmX4ymdm0k8d5+nR/
-         tfKml6KY68TmU1uqfMS5UEfgVJk9kNMDl/YGzMwgK1VFBKDRXI2gJ4GpFtTF6S5+b4lF
-         zThINVQMPofDHlD5eB1xcxX9DNzTI4jcAOevLJt+mUFb4flwXePNttDlUGbx5IW6D21w
-         Q3+PrLEEQ5XpDZDqJLVbp+GmxSNFyprhyZ79PzYKEnxCBPViAdUpYQU4fmCXlbZwuOCF
-         qjsVGr72/gyKwEjgJkFHB9lC3pQ9fioLGICh1rnXlfZ8NQ1nW7HSDrX1pSJl9DwDEUEg
-         7rqA==
-X-Forwarded-Encrypted: i=1; AKwUvBzudIMbPy4zmGpkdqrR/iNs2TlyE6bRTyjxQRetF4ghd3uJYVB8DoofSNirBK3cZ74BwWVCQqW3dJx6fYrj3oIBHw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKloB6DrtpD0zCAY6PCKUFXf/06wpIQCKSc310DfrcMc8+5xljp
-	RB/XGbZaubGyuA8o912I9hmV9OtNz3/fganJssI2EbKD2rk/VRGvXFbRzzPNPQ==
-X-Gm-Gg: AYBFou0mngtp3tNc6cAoKoawGVahhAQG1vp166JopFtq7vA3vjO7MP0S6YgdiLG2lBS
-	zyxGlgGPiZsBUx0KsYq8UZU436ISqo5uW1aj/Q/YE8PzsaIDuYLZWEV8MBwct2dOrKpbbcwtrR0
-	Xsi8Z5X+BL+g6Ih8+ZxUy8yko+str0FgmRw792h6bkN94E2Aw42BycUMIuGtAqu0729Q08DFQP+
-	k7wrEVGKGLNITwdKoxtwTI0Mnw8Y7V2HprQf+GbDMW4xRDCIjfnlFnOAib5/1bUPyilLfAq26zz
-	6ScfG8p3RNbe8UpH+BkOVmI4IyKl5Zmj/+kaSdc4zzVJPEzdBbQjNxPKelihtMQZJQnwPeqmDNK
-	3UkY6bwWBOlJv/A5kZGQ4r4BJQpfk4Ba0/QvpAnH9cIwR8KaetB3B2fwMXKXxyWb3yOop9ywsRd
-	HaGt221yWvMLHmiRfH9UfTyv1mNFaxsFU5OwefcF5srSQB59M5Gv2dQFjm4AmvhtzfSfsE9dlDW
-	6N2vF11vb/q/QdYkqdio23zcxcFpeP0br3PaXbBzvvBo+BpEvBi160Uhb6bccYDfY3yZkrfT0jC
-	RAag8pE/4g4W1D4NRiV9nOYi455xNXR7cB5PrmeUapU5/q6s+g==
-X-Received: by 2002:a05:7300:fe41:b0:34c:fb30:3e30 with SMTP id 5a478bee46e88-36a42401960mr3906559eec.7.1793378252415;
-        Fri, 30 Oct 2026 09:37:32 -0700 (PDT)
+        bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
+        b=t8fTIbG0NdPBKUP9ZvryNA0MhrWh4dcQ4Nj8NrwKw7dTKUQ9VUj6JRFZ4GWYSUHmLN
+         hJzoG6+dXpkrSc43ohDAmzV/fIhf2I4N0UmKQKbuBUNZSn5COYRzZrvjMd9aTvsJ2T7w
+         I5G5DGL1ovL/c638Lu7/ByeoBbNJy8SC1tskHXmGVWjCvlXR9Z2VvDm2bmhOTGMPBYOj
+         zewzmxPmj4yI5VE4G5ZBlviIO5jDVXj6KgjJnbywVL15z0Z/NVS86J3UEGY6xrUWZr6B
+         j+PBQsq6L+Q364KHFIcwgFrah607UWhRfhGkAaA6B8W748UzvEKG1C8rYsEHWpT9BmS/
+         +0GQ==
+X-Forwarded-Encrypted: i=1; AKwUvBynBncRGL3lPDfBHlv3aLR3d5OUuGw845su8ATa5kRx5zNRY6mlNQ9Kn2sA4Y9axRnhozo15BvMNIjvhdOCgHrKdg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJPaf82D9kWuU8vl3Y00QqzXS8yq+HoGS1JHym5vKh79D0jjz4C
+	3gYkuMCySgOYfIL6YIN7rmQB/b7WnDCSwnKRN6IYA0EuZ80Lo5RtKwSt
+X-Gm-Gg: AYBFou0oKNi3nsNinxyoT5GPqtoZFF5ZcoyQzCpUNCJ7bQ/APB1bs4R9T88HnlV+6TV
+	nP2QypIdyuwUizlQ4YxgUWEpcVXNBvX4FPiE8T7AglQNPJho0Qdg3xEK6Bl7AM00Ta5UH9XkVCQ
+	4oKJgG8lxtTX0VWsqe24jfm6uWCh9HfwuAfyEgfxp72kHypz3KcAASOJE48nof+v9Jm+LlHuKRH
+	YVVEkSeNZpw6CA53HIijVQiIB8273OXsQ+3PYjCZXEBfMe3EXu+8SFGDc9rJGu2bnx9b91mKxbH
+	FUmbuOi+WtdfxOs9K5O4eEvNVg3EHOZwPzf+Eqsndw+uqSzNkkW682KtiFHgocjXFmDonmL9vla
+	gXu3QxfnJNrEmhHMrdh2a1zVHIJwkvL2peFq7aMwe+AuClBQ78HsazCkYeNH2uE9PfL9pwfAJy8
+	5M+ZXmuDF62xoQLdKlZm0QeVKJWZqnZi3bmrR5nKiCHQ1PXafcJcN9UVUFfmiiA0H3u0aVBJaHb
+	XCw7wEF4cmTy3O0j+8vyTu57Zfbqk2gt4q4faaX1z7tbzGG7Ohcoyvjp18TEUW7PgtH1fBwuaWd
+	Hz6mssnThOlAG5nMaT/GbKZ+g9zun+/D1SXj+62k+1JDQc+/4w==
+X-Received: by 2002:a05:701b:4502:10b0:18d:96e8:b913 with SMTP id a92af1059eb24-1ac5f64afcbmr3801453c88.47.1793381090306;
+        Fri, 30 Oct 2026 10:24:50 -0700 (PDT)
 Received: from localhost.localdomain ([103.170.55.71])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a4294419dsm8458708eec.18.2026.10.30.09.37.26
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a428c17bdsm8709248eec.6.2026.10.30.10.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 09:37:31 -0700 (PDT)
+        Fri, 30 Oct 2026 10:24:49 -0700 (PDT)
 From: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
 To: sreekuttan2156239@gmail.com
 Cc: alim.akhtar@samsung.com,
@@ -93,9 +93,9 @@ Cc: alim.akhtar@samsung.com,
 	mani@kernel.org,
 	peter.griffin@linaro.org,
 	robh@kernel.org
-Subject: [PATCH v4] PCI: exynos: Handle PCIe PHY initialization errors
-Date: Fri, 30 Oct 2026 16:36:54 +0000
-Message-ID: <20261030163654.2733-1-sreekuttan2156239@gmail.com>
+Subject: [PATCH v5] PCI: exynos: Handle PCIe PHY initialization errors
+Date: Fri, 30 Oct 2026 17:23:50 +0000
+Message-ID: <20261030172350.2624-1-sreekuttan2156239@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
 References: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
@@ -122,6 +122,10 @@ resume and abort the resume sequence if PHY initialization fails.
 
 Signed-off-by: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
 ---
+v5:
+ - Avoid PM core state desynchronization in exynos_pcie_suspend_noirq()
+ by logging teardown errors and returning 0 instead of aborting suspend
+ on teardown failure
 v4:
  - Fix invalid return in void exynos_pcie_remove() and ensure regulator cleanup
  - Add core reset deassertion on error in exynos_pcie_suspend_noirq()
@@ -133,11 +137,11 @@ v2:
  - Track PHY initialization and power state to prevent duplicate cleanup
  - Handle host initialization failures during resume
 
- drivers/pci/controller/dwc/pci-exynos.c | 115 +++++++++++++++++++++---
- 1 file changed, 104 insertions(+), 11 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 111 +++++++++++++++++++++---
+ 1 file changed, 100 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index e3c05ade381b..5b8d8f1ce8dc 100644
+index e3c05ade381b..d82bdfea1f17 100644
 --- a/drivers/pci/controller/dwc/pci-exynos.c
 +++ b/drivers/pci/controller/dwc/pci-exynos.c
 @@ -11,6 +11,7 @@
@@ -239,7 +243,7 @@ index e3c05ade381b..5b8d8f1ce8dc 100644
  
  	return ret;
  }
-@@ -332,24 +381,48 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+@@ -332,22 +381,42 @@ static int exynos_pcie_probe(struct platform_device *pdev)
  static void exynos_pcie_remove(struct platform_device *pdev)
  {
  	struct exynos_pcie *ep = platform_get_drvdata(pdev);
@@ -276,25 +280,19 @@ index e3c05ade381b..5b8d8f1ce8dc 100644
 +
 +	ret = exynos_pcie_phy_exit(ep);
 +	if (ret)
-+		goto err_deassert_reset;
++		dev_err(dev, "failed to exit PCIe PHY during suspend: %d\n", ret);
 +
 +	if (ep->supplies_enabled) {
 +		ret = regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
 +		if (ret)
-+			goto err_deassert_reset;
-+
-+		ep->supplies_enabled = false;
++			dev_err(dev, "failed to disable regulators during suspend: %d\n", ret);
++		else
++			ep->supplies_enabled = false;
 +	}
  
  	return 0;
-+
-+err_deassert_reset:
-+	exynos_pcie_deassert_core_reset(ep);
-+	return ret;
  }
- 
- static int exynos_pcie_resume_noirq(struct device *dev)
-@@ -358,13 +431,33 @@ static int exynos_pcie_resume_noirq(struct device *dev)
+@@ -358,13 +427,33 @@ static int exynos_pcie_resume_noirq(struct device *dev)
  	struct dw_pcie *pci = &ep->pci;
  	struct dw_pcie_rp *pp = &pci->pp;
  	int ret;
