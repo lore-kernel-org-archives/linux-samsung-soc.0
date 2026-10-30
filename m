@@ -1,104 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793381091;
-	b=HnmBggQbPXwc0YBgIULyt57P11md9bjE4m+piaBUf/9EdedJoT9iMoLOkYEDVKPLjlYn
-	 ZE6coOD8uotNi6wIrpblhN7MA7bfhA1G42o6jnn21/uQmvye+JU5X41QC8+ZRVlSt/IZ/
-	 JG0+m0Z3C/EDJPXp+3sMdiRsYTI/nJFU5eYdi8ZbBeAbSJiwXxH86qQHWQbaHd/2agAAw
-	 /OeFDIo7ZAFcQjGncEB1WkCf2rcLC3LfMwRLfj2q+tdxOgI759S2GF15A4LAOgkLn6pNY
-	 WcDQ86uyQrU0KoJWl4p6bH0eUtAm/6TBj5MNn0GCxGKGPf6EOovrXbRU9pnRq7SD/wA==
+	t=1793381350;
+	b=nZuui9yiaFy7aGIkROs2QhGwAFZQOwRbhYv5+Yi2C+P4d9txoQHK1wBx4AGg3kw041+s
+	 /80cOqQDYonEH7nPbdJTYYwC0fohbJMN4w26sbitZ1DyQ9bsLwriq/QO39ji9YZG86raQ
+	 2nA7mOU5oA66mqX15k649XVLuBi6yCSXgrIb8jRl9n9/AE0UAWv67FIz1HAYyhe9DYhFn
+	 uC361oF2eFBbNbyz8TI43zVlhPdICpSS/md1MJSSrbXFLUG8Ju0lPXkN1lreQ9ewfzuP+
+	 SXZZ2KpXKNXboeGxLCHxVxgZIX8d1DrniD5ErPOZUJq3yloLPl9WtAxZYenIvkjtRNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793381091;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
-	b=WH3uyGxUmk0r3GAdwUYT/ey7ShCJcU6njswmqq+NdQcZJ3jawaUR5E0TStM8qYiKt2f4
-	 GlgPe4mn9KkG9xrGIif7kslqyK2C2dhdWE8v7xXAAvQhB1MiyPUWQAzBPFfRUInNagKUE
-	 XkHstIGDhFTwZAcLTTPmsVVd0jzojeFbLKBeNr56ZR+pGefXgREh5LpJlK7D1cXPP0xNy
-	 +ezNurPEF6yHQueiZj4e5UU2CTj3W88HMTCxQ/pzYlzuZB9Ft8cs5cqCtYd8NUWBudIMv
-	 EKDo2XYi0PIanqEqzYa5xrcK5utv/lNMzE51NMP6ux7qzTo+OGLSGVAXHNcbvvDiMWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793381350;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
+	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
+	b=El+qlNRyalCGTQY9VThE2wsEGJ/hvaEX7FSh/2U8DwsVXU+eT2YTNvodWqr5oOB0Dyop
+	 6Cp3fXByxk/aWo7gIXSF6hzqd1L8dYqYOexHodRhBDDEjaidOlUHJB22m1a4ddi2JUs6R
+	 +0sBPO2aDan3ssZI24r/pf7ogD/xyH24m+dj4MN/jt4igQdqcSpJ/F/HKKFolGWz5LAcw
+	 CHEXNdXnFCXY5GYEnU6ZCLztVY/wXOdBvZDFnrUpgjoDGt+bww045QNq4FRK90IZNK9MP
+	 bH/m7qEoHtFAZ+3s+QhfS8cs6NWGcJ44gOEMq8dN7byc50K0hWoWXvanVucBBO51Nkw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7VZ5hUe;
-	arc=none smtp.remote-ip=74.125.82.48
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg;
+	arc=none smtp.remote-ip=185.246.85.4
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72625606A320
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 17:24:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 72625606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B3A606A31D;
+	Fri, 30 Oct 2026 17:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6B3A606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L7VZ5hUe
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-170135e43c7so1444551c88.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Oct 2026 10:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793381090; x=1793985890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
-        b=L7VZ5hUeHT/COIuMC1fXHEZVV2cfpe3m+2Q+eR5JmKHaltAe4tdJZGUCfAlApu1Sg6
-         t+qNw80aX6Vh7xJ3Z11DvRyovT/uws97TIVyDpEwHVjK/9lrtmDPG5hrtWWxlExcbijG
-         5wqRvuTzLlMODE/Tu0HmwRbvK/jwhbVieCypRfswSR2D1nMJzYiewCsa1KGKua7D3xzO
-         +XsaO4lQR7e1Rm+RxiPoTbhcmt93Y3lpLsztEYuAe6nObV9LM9nZMc/68uI3qWF4D9vh
-         yrCcGb8p/ea5Bt5BD2LKsVH7YD7OC4Td/2NsZHdD26mjcT+mMc4PYhRnzdyjYc5KUVnX
-         cVPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793381090; x=1793985890;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hcKqjCTq0DJH38P6NIRF0JVakJV4MgJlFw7OcfaJQp0=;
-        b=t8fTIbG0NdPBKUP9ZvryNA0MhrWh4dcQ4Nj8NrwKw7dTKUQ9VUj6JRFZ4GWYSUHmLN
-         hJzoG6+dXpkrSc43ohDAmzV/fIhf2I4N0UmKQKbuBUNZSn5COYRzZrvjMd9aTvsJ2T7w
-         I5G5DGL1ovL/c638Lu7/ByeoBbNJy8SC1tskHXmGVWjCvlXR9Z2VvDm2bmhOTGMPBYOj
-         zewzmxPmj4yI5VE4G5ZBlviIO5jDVXj6KgjJnbywVL15z0Z/NVS86J3UEGY6xrUWZr6B
-         j+PBQsq6L+Q364KHFIcwgFrah607UWhRfhGkAaA6B8W748UzvEKG1C8rYsEHWpT9BmS/
-         +0GQ==
-X-Forwarded-Encrypted: i=1; AKwUvBynBncRGL3lPDfBHlv3aLR3d5OUuGw845su8ATa5kRx5zNRY6mlNQ9Kn2sA4Y9axRnhozo15BvMNIjvhdOCgHrKdg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJPaf82D9kWuU8vl3Y00QqzXS8yq+HoGS1JHym5vKh79D0jjz4C
-	3gYkuMCySgOYfIL6YIN7rmQB/b7WnDCSwnKRN6IYA0EuZ80Lo5RtKwSt
-X-Gm-Gg: AYBFou0oKNi3nsNinxyoT5GPqtoZFF5ZcoyQzCpUNCJ7bQ/APB1bs4R9T88HnlV+6TV
-	nP2QypIdyuwUizlQ4YxgUWEpcVXNBvX4FPiE8T7AglQNPJho0Qdg3xEK6Bl7AM00Ta5UH9XkVCQ
-	4oKJgG8lxtTX0VWsqe24jfm6uWCh9HfwuAfyEgfxp72kHypz3KcAASOJE48nof+v9Jm+LlHuKRH
-	YVVEkSeNZpw6CA53HIijVQiIB8273OXsQ+3PYjCZXEBfMe3EXu+8SFGDc9rJGu2bnx9b91mKxbH
-	FUmbuOi+WtdfxOs9K5O4eEvNVg3EHOZwPzf+Eqsndw+uqSzNkkW682KtiFHgocjXFmDonmL9vla
-	gXu3QxfnJNrEmhHMrdh2a1zVHIJwkvL2peFq7aMwe+AuClBQ78HsazCkYeNH2uE9PfL9pwfAJy8
-	5M+ZXmuDF62xoQLdKlZm0QeVKJWZqnZi3bmrR5nKiCHQ1PXafcJcN9UVUFfmiiA0H3u0aVBJaHb
-	XCw7wEF4cmTy3O0j+8vyTu57Zfbqk2gt4q4faaX1z7tbzGG7Ohcoyvjp18TEUW7PgtH1fBwuaWd
-	Hz6mssnThOlAG5nMaT/GbKZ+g9zun+/D1SXj+62k+1JDQc+/4w==
-X-Received: by 2002:a05:701b:4502:10b0:18d:96e8:b913 with SMTP id a92af1059eb24-1ac5f64afcbmr3801453c88.47.1793381090306;
-        Fri, 30 Oct 2026 10:24:50 -0700 (PDT)
-Received: from localhost.localdomain ([103.170.55.71])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36a428c17bdsm8709248eec.6.2026.10.30.10.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Oct 2026 10:24:49 -0700 (PDT)
-From: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
-To: sreekuttan2156239@gmail.com
-Cc: alim.akhtar@samsung.com,
-	bhelgaas@google.com,
-	jingoohan1@gmail.com,
-	krzk@kernel.org,
-	kwilczynski@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	lpieralisi@kernel.org,
-	mani@kernel.org,
-	peter.griffin@linaro.org,
-	robh@kernel.org
-Subject: [PATCH v5] PCI: exynos: Handle PCIe PHY initialization errors
-Date: Fri, 30 Oct 2026 17:23:50 +0000
-Message-ID: <20261030172350.2624-1-sreekuttan2156239@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
-References: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=man1ZzCg
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2BCB54E413A2;
+	Fri, 30 Oct 2026 17:29:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id C48FE6076B;
+	Fri, 30 Oct 2026 17:29:05 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7157410328D09;
+	Fri, 30 Oct 2026 18:28:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1793381338; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=EP5Qg4kA7YkpBNe+5FytJYCH0Xni6F9c0BjnYp2EtOk=;
+	b=man1ZzCgBezoTOgt0FHPVjh/CIVwcOSzEDfVqdfhmcK4lyIuelFADmw1OdPt5Qmi+L9xn0
+	CbkZ8EYJMp5JLvq/AZykdWTBgBeTt7DiIc1LhG2yPIm/xxPpNCPeErkzEYlmkfGT30bmNf
+	GDzXSWk/J6wiChEPIM6stPXccXq4t7C0yOvoLZrDuhGFLrNe8nUitRtHmv9x4einGaHDZz
+	4Lz3wuBOrycCH2vU23aZw+RDywbSEpy37zW3YNdOLz/fkVYP8D8kxmxBw9b/tPS/S09ij+
+	lIJDHXXRttC/Ko+7Yi7R3vEw3GWdoexeJWWH7ugbfvNNAyNxelvyrNXY+nXjpQ==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -108,225 +59,102 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 01/35] drm/panel: remove the get_timings() callback
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, 
+ Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Purism Kernel Team <kernel@puri.sm>, 
+ Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+ Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+ Michael Trimarchi <michael@amarulasolutions.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ Michael Tretter <m.tretter@pengutronix.de>, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>, 
+ Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>, 
+ Nickolay Goppen <setotau@mainlining.org>, 
+ Stefan Mavrodiev <stefan@olimex.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Robert Chiras <robert.chiras@nxp.com>, 
+ Alexander Koskovich <akoskovich@pm.me>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+In-Reply-To: <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
+ <20261026-drm-panel-funcs-v1-1-5e3070a3478f@oss.qualcomm.com>
+Date: Fri, 30 Oct 2026 18:28:25 +0100
+Message-Id: <179338130509.3009485.3123201175903177487.b4-review@b4>
+X-Mailer: b4 0.16.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-Check the return values of "phy_init()" and "phy_power_on()" to
-avoid continuing PCIe host initialization when PHY setup fails.
+> Nothing has ever called get_timings() since it was introduced in commit
+> 2938931f3732 ("drm/panel: Add display timing support"). Remove it
+> together with its three implementations.
 
-Track the PHY initialization and power state to ensure cleanup is
-performed only when appropriate, avoiding double calls to
-"phy_exit()" on probe failure.
+Ah, interesting!
 
-Also check the return value of "exynos_pcie_host_init()" during
-resume and abort the resume sequence if PHY initialization fails.
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Signed-off-by: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
----
-v5:
- - Avoid PM core state desynchronization in exynos_pcie_suspend_noirq()
- by logging teardown errors and returning 0 instead of aborting suspend
- on teardown failure
-v4:
- - Fix invalid return in void exynos_pcie_remove() and ensure regulator cleanup
- - Add core reset deassertion on error in exynos_pcie_suspend_noirq()
- - Prevent regulator leaks in exynos_pcie_resume_noirq() error recovery path
-v3:
- - Address review feedback on PHY and regulator state tracking
- - Avoid powering down the controller when link detection fails
-v2:
- - Track PHY initialization and power state to prevent duplicate cleanup
- - Handle host initialization failures during resume
-
- drivers/pci/controller/dwc/pci-exynos.c | 111 +++++++++++++++++++++---
- 1 file changed, 100 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index e3c05ade381b..d82bdfea1f17 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -55,8 +56,34 @@ struct exynos_pcie {
- 	struct clk_bulk_data		*clks;
- 	struct phy			*phy;
- 	struct regulator_bulk_data	supplies[2];
-+	bool phy_initialized;
-+	bool phy_powered;
-+	bool supplies_enabled;
- };
- 
-+static int exynos_pcie_phy_exit(struct exynos_pcie *ep)
-+{
-+	int ret;
-+
-+	if (ep->phy_powered) {
-+		ret = phy_power_off(ep->phy);
-+		if (ret)
-+			return ret;
-+
-+		ep->phy_powered = false;
-+	}
-+
-+	if (ep->phy_initialized) {
-+		ret = phy_exit(ep->phy);
-+		if (ret)
-+			return ret;
-+
-+		ep->phy_initialized = false;
-+	}
-+
-+	return 0;
-+}
-+
- static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
- {
- 	writel(val, base + reg);
-@@ -225,13 +252,23 @@ static int exynos_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct exynos_pcie *ep = to_exynos_pcie(pci);
-+	int ret;
- 
- 	pp->bridge->ops = &exynos_pci_ops;
- 
- 	exynos_pcie_assert_core_reset(ep);
- 
--	phy_init(ep->phy);
--	phy_power_on(ep->phy);
-+	ret = phy_init(ep->phy);
-+	if (ret)
-+		return ret;
-+
-+	ep->phy_initialized = true;
-+
-+	ret = phy_power_on(ep->phy);
-+	if (ret)
-+		return ret;
-+
-+	ep->phy_powered = true;
- 
- 	exynos_pcie_deassert_core_reset(ep);
- 	exynos_pcie_enable_irq_pulse(ep);
-@@ -314,6 +351,7 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ep->supplies_enabled = true;
- 	platform_set_drvdata(pdev, ep);
- 
- 	ret = exynos_add_pcie_port(ep, pdev);
-@@ -323,8 +361,19 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- 	return 0;
- 
- fail_probe:
--	phy_exit(ep->phy);
--	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+	if (exynos_pcie_phy_exit(ep))
-+		dev_err(&pdev->dev, "failed to exit PCIe PHY\n");
-+
-+	if (ep->supplies_enabled) {
-+		int err;
-+
-+		err = regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+		if (err)
-+			dev_err(&pdev->dev, "failed to disable regulators: %d\n", err);
-+		else
-+			ep->supplies_enabled = false;
-+
-+	}
- 
- 	return ret;
- }
-@@ -332,22 +381,42 @@ static int exynos_pcie_probe(struct platform_device *pdev)
- static void exynos_pcie_remove(struct platform_device *pdev)
- {
- 	struct exynos_pcie *ep = platform_get_drvdata(pdev);
-+	int ret;
- 
- 	dw_pcie_host_deinit(&ep->pci.pp);
- 	exynos_pcie_assert_core_reset(ep);
--	phy_power_off(ep->phy);
--	phy_exit(ep->phy);
--	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+
-+	ret = exynos_pcie_phy_exit(ep);
-+	if (ret)
-+		dev_err(&pdev->dev, "failed to exit PCIe PHY: %d\n", ret);
-+
-+	if (ep->supplies_enabled) {
-+		ret = regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+		if (ret)
-+			dev_err(&pdev->dev, "failed to disable regulators: %d\n", ret);
-+		else
-+			ep->supplies_enabled = false;
-+	}
- }
- 
- static int exynos_pcie_suspend_noirq(struct device *dev)
- {
- 	struct exynos_pcie *ep = dev_get_drvdata(dev);
-+	int ret;
- 
- 	exynos_pcie_assert_core_reset(ep);
--	phy_power_off(ep->phy);
--	phy_exit(ep->phy);
--	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+
-+	ret = exynos_pcie_phy_exit(ep);
-+	if (ret)
-+		dev_err(dev, "failed to exit PCIe PHY during suspend: %d\n", ret);
-+
-+	if (ep->supplies_enabled) {
-+		ret = regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+		if (ret)
-+			dev_err(dev, "failed to disable regulators during suspend: %d\n", ret);
-+		else
-+			ep->supplies_enabled = false;
-+	}
- 
- 	return 0;
- }
-@@ -358,13 +427,33 @@ static int exynos_pcie_resume_noirq(struct device *dev)
- 	struct dw_pcie *pci = &ep->pci;
- 	struct dw_pcie_rp *pp = &pci->pp;
- 	int ret;
-+	int err;
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
- 	if (ret)
- 		return ret;
- 
-+	ep->supplies_enabled = true;
-+
- 	/* exynos_pcie_host_init controls ep->phy */
--	exynos_pcie_host_init(pp);
-+	ret = exynos_pcie_host_init(pp);
-+	if (ret) {
-+		err = exynos_pcie_phy_exit(ep);
-+		if (err)
-+			dev_err(dev, "failed to exit PCIe PHY during resume error: %d\n", err);
-+
-+		if (ep->supplies_enabled) {
-+			err = regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
-+			if (err)
-+				dev_err(dev, "failed to disable regulators: %d\n", err);
-+			else
-+				ep->supplies_enabled = false;
-+		}
-+
-+		return ret;
-+
-+	}
-+
- 	dw_pcie_setup_rc(pp);
- 	exynos_pcie_start_link(pci);
- 	return dw_pcie_wait_for_link(pci);
 -- 
-2.55.0
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
