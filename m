@@ -1,55 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793443812;
-	b=01kSh7+0jIjQcCZl5567FTlWmbm6DznRlinU54oS8vUCaqdR5/O0MlADqwgmlMT4tclL
-	 DD0km+t0yPwzHZwpnxfiyCsAXDDz0k0+m/upsP5emuhYrFnAjLX95S1Qj3pV5bB5GdIPE
-	 SL1xuemhIr8/PUOe6UB2/1e4Enf8lZkaaAcCEn7M8Yb/MDjfRzuTZAiA6A8dSKUxc0dKl
-	 iapnovNiLThOg46yzgBfMVVQ6YLEiyYcVSTmOFz0CXDKhzacQQsbax2NWDUrUJIiUT0wW
-	 SO4uxXDV338G0aKbAi0CQsG4f2a5BRYHA9FJbZM6cb65JXth1e5neRTfX/I+asDVTXQ==
+	t=1793450360;
+	b=TA9cQt9UtDEsF59cOc0M8y6gDuuZUu3nntQTxpilxRINULtvVYhhg4D3bvQhtGEwTrD/
+	 EyamBJUwyl6IjAijvUKWwfVJdYPiFDO1rdCrg/i1Mg2aInFWF3uOw4HvYKapXwKFnZrhf
+	 uEBYusH/rM7JS9wigcLU0TOefjqETk7DxvmD8ruFpevVJSR+0rgzaMgK2flLwYMpeXKoV
+	 MEMMgjuFVQE6QZmrCp5FHoj+mlj/GyQdTi1WjqzAzxiG6DczXf2IDjhpEiFuwage/aK7b
+	 eQgnGVd5QBo6hIn1KtiM6yGWE7v1k7gqkM/VYP9OpqEvijTBPltV5fVvl5+Q2OdasTQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793443812;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id:X-Mailer:X-Last-TLS-Session-Version;
-	bh=wfW2viipMB+TYAZ+Y4DJ13i/34AHklnHI0K1OUw0+KM=;
-	b=Vhd/O/DVaXu58U/Te5QTrCnglL83fn9ofQGIZHDYeU3tbiFZ52fPtwzRFhrBmT4xgMZM
-	 kLaA45KGjZovAy/VhVQg2UUKqNjn+n94SUP5OeKyOt+PJd/FKfKFQ0m4/xkv0DgtbIj82
-	 Kw9ztEPxR1HrQB/qfgbPxNq6sJFwPjWQ0L70mW0KoUwclAzMWWkAI6oJ+OHT49bNjgpO2
-	 1qiNEUiQ6ff7GSlj/ivl6tZ0q+79zo5vtgF7yRtvJEllwrAvslUgrJLza7QJUWcQswdm6
-	 Yu3CAEnDewspN3GpEjoV4s9MShJUdwKZIEWltCeLBrTu+8F2oRsoJXQFIv2fy7ZPNAQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793450360;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=p+SP5aC6kFf2m6+Y0UAcy1XbuoZimqxQ+Qboov/RQdw=;
+	b=09RhsfqBIzZJzC89tgGEdK7Azdqohp18UXXhsuI9nzXgArsCLY1lCKeRjWE6fZt/ZZvU
+	 ZukjULR0wMIKSfDK/dyq0RBBJ5/ESG8YWlWs9RUda84F+CkOQuXEE5ays8Z2iND46cTP0
+	 s3QQF1HxkCcfbdyB2ej4q0DdlIu/lnXGOBxgiu5tEgjfIe+pCmTTjCCYEmyp3JaYpnPTu
+	 ezcDZRMWVrGiL54s3rNaABX3I6VyWyJlDxn0dmHzhdhfPtod+pqIf6Dj5uD55IfIOqndJ
+	 423Ztjo7s0FSH3wpBPJY+4LLtKUGj3x4A0S18EzIa59XVFBf7f96JWgJUEOTIC/DEfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=jdJxIjJ3;
-	arc=none smtp.remote-ip=185.171.202.116
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xKL4FZYZ;
+	arc=none smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406C4606A31F;
-	Sat, 31 Oct 2026 10:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 406C4606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C04606A322
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Oct 2026 12:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 68C04606A322
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=jdJxIjJ3
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id BA5D3C5147C;
-	Sat, 31 Oct 2026 10:51:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8A10C6076B;
-	Sat, 31 Oct 2026 10:50:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F1C9410328D83;
-	Sat, 31 Oct 2026 11:49:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1793443803; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wfW2viipMB+TYAZ+Y4DJ13i/34AHklnHI0K1OUw0+KM=;
-	b=jdJxIjJ3ChsL6d8hPAAPLvEecTqPISyKSGZRNxVtOxAwke8yKEgptsX4zZFKhMRL9hdxOw
-	BfK+XfFcbLUgMPqReS3H5MRyf2rvpoxSGy7ZozjCFRFAB/63KAsQK86vaIIXuO4Bwysabu
-	tj/Kgdyqa6XTfdrkGoYypbDhxnJQ0JnOhRvFVGJoWpyincax4aThygQbABx52TtBKB26Kp
-	1EtoW4BbWsFv0Kd58ffGuzr7DzUy/o5tVHMGGqcG2HxifVJgMrieCogibzySGKJnJD7kEW
-	5nPDyJUmtSOatVCdoMD9KOU7CMA5bx3Q7q44WxILZpLDr/XTKaPUjBBiiotsSw==
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xKL4FZYZ
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-35829219da8so3139584eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 31 Oct 2026 05:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793450359; x=1794055159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=p+SP5aC6kFf2m6+Y0UAcy1XbuoZimqxQ+Qboov/RQdw=;
+        b=xKL4FZYZxZ2DMFO63mud1fJJvL8ljHKd1cSzKueTBjZ5KWdT9ssOnP0v+oXC+Q0hZo
+         Qs+PHJ9Klrp7eA+ZXpy9jf3Dvec5+bt97LOlRXjZ2Q/ZQk3duWOE8JWGvfSgl57vgWch
+         JCwhFXX9MgJGW590FuwNWfZumZRtLkpFT5T7+6Bz4lAo+aIOdOUI37/Kc3CAmRyY4HcK
+         W41yN4QDz1O5X8AHfcEF+5+xoVAARl8Hp+FsH+KuRBB/WuH0FK/KGowokkDV3UY6/ekT
+         v7y6LWO5F42Vjer5ob4L76hFwBAGTlmtyimH5jt8uYFW8EL+iFHLnr9Tu8b/QEml5OWf
+         mHPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793450359; x=1794055159;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=p+SP5aC6kFf2m6+Y0UAcy1XbuoZimqxQ+Qboov/RQdw=;
+        b=ifiTotEXBByunQ/phS+anDVYzoxDne4XSPnBHQCKw8VA0eEc6+jJjC4habUDu5j/F1
+         jQh1a5nP/+ZGSwuIDqSH7XxUCtLNUh7axr3qZY27dPzjpmYUNjacFmVAVrnGPm8p8/qc
+         1XwWvbOczqR9mGqfs5Sd93ptQWiTqq6/OdOTYdz241L/ggreYLGGt7DmKmdeJOa0XblI
+         P9+FDI1idCAyCkpyN91MrlTSCur4mW2LuxKPBfua7qWXU8/tNYzh/NzUc5yy34kAMmCy
+         sHZJoerUfnyGiP4+oIJJS8/L+/heXiW+MTT7Q/wGmvM+Hu6SRv6EcauRJDbOB5+gAFvZ
+         lXhQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwsA0VUeRE2xaCUuAnC+GraKMQrxfDmQerbm8ngbh5XBNJgp1+oej3cH/YW/44a4Bq7aiUVt4YVjYcpOY62LM4xoA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYL3CE208mtkp0HOGbAu5Cr+SiE8vaRUOuz9JIYFtUlG8TRZU+SW
+	DutTUZ4hXNyjdUb693xY3mShezoc6UnaUxHh9pdh7TgK+/v3xtLYfwPu
+X-Gm-Gg: AYBFou05bJWYI7YmFW5ivDngMrxQX0vAtnJOOVpCPEoUr/DlrUMflXWSejaUI3BgDHl
+	BVNkl54IoQguL/fyqfuQZLYxJKSnKrBOV6JEVQodnff/c5fNVvb7wx3mXYet7JE74gvr4kbIate
+	8LLsp4qyHk7qdD44At3Zal9m+8+TVxcQOwQ/yQnwJrCQ2jnK8bNc9XE1ty+AdWH54j12TCOpFWD
+	r3X3itw+r8VkjAt8CH0P5aSMuo2VHorjxjhYBdJkSoUThTtMl9+dmKi1B8sv7TMqowARZZy429M
+	ETy1uzvFXL8VKPghZFlh/YM4oHVjhCv8jd3DdF6hV9PPG7FHFzfavG/2WojbYIgH2fh0Z0K3XI3
+	5QtL7lynAicpw8V2JS3akXDvIph8GNXwdCd0maoWGtLSOgyYb7dp+aOzJAToi934Fr6287r3VLq
+	gPWc21lC6G1lC0Aah/gqk3yLZxbZxM7grYy4o0Y4Y45vGItBGQIkmq5Vu9njSVyIabxDhCfe7Ge
+	52KFlRC6/MOv757CA0JVbtAb7UKIiabK4aJR6nG1QWyHqKfBEuNCGAnhNvLUkJU2u/44iMxeIfu
+	aJoEZY6+YjJzQ+Z4/UO1SjHMg8h9KxcYCSHgJd1tyjJRSDdqvdTOUTQyxZDWE6aQGrqOv8LH6tN
+	mCMg7o69OY2KaxA4tTu27Ki3YM2JBzpWeC4kV2oWhQlmVOHU/YEzC+oRPEOtAT4MkgfLkgDPUkK
+	CCr5KHr2QCd2R9vA==
+X-Received: by 2002:a05:7022:f507:b0:1ab:90a8:87a2 with SMTP id a92af1059eb24-1ad1077e9a6mr5123543c88.11.1793450359362;
+        Sat, 31 Oct 2026 05:39:19 -0700 (PDT)
+Received: from brev-9gdpyq8lp.ap-south-1.compute.internal (ec2-3-110-210-194.ap-south-1.compute.amazonaws.com. [3.110.210.194])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1ac1854da78sm21566039c88.6.2026.10.31.05.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Oct 2026 05:39:18 -0700 (PDT)
+From: Samarth Narang <samarth.colleges@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Samarth Narang <samarth.colleges@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	linux-serial@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] serial: fix TX kfifo underflow on flush in five drivers
+Date: Sat, 31 Oct 2026 12:39:06 +0000
+Message-Id: <20261031123911.3784690-1-samarth.colleges@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261031004733.3345841-1-samarth.colleges@gmail.com>
+References: <20261031004733.3345841-1-samarth.colleges@gmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -59,122 +115,57 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 16/35] drm/exynos: dpi: set the panel orientation on
- the connector
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jyri Sarha <jyri.sarha@iki.fi>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, 
- Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, 
- Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
- Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Casey Connolly <casey.connolly@linaro.org>, 
- Michael Tretter <m.tretter@pengutronix.de>, 
- Cristian Cozzolino <cristian_ci@protonmail.com>, 
- Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>, 
- Nickolay Goppen <setotau@mainlining.org>, 
- Stefan Mavrodiev <stefan@olimex.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Robert Chiras <robert.chiras@nxp.com>, 
- Alexander Koskovich <akoskovich@pm.me>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
- linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-In-Reply-To: <20261026-drm-panel-funcs-v1-16-5e3070a3478f@oss.qualcomm.com>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
- <20261026-drm-panel-funcs-v1-16-5e3070a3478f@oss.qualcomm.com>
-Date: Sat, 31 Oct 2026 11:48:44 +0100
-Message-Id: <179344372468.9825.13949889516138830334.b4-review@b4>
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-> The panel is used directly, without the panel bridge, so nothing sets
-> its orientation on the connector apart from the workaround in the
-> get_modes() of some panel drivers, which runs too late.
->
-> Assisted-by: LLM
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> index 74d3a2bebb74..05014c2e7d92 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> @@ -109,6 +109,7 @@ static int exynos_dpi_create_connector(struct drm_encoder *encoder)
->  	}
->
->  	drm_connector_helper_add(connector, &exynos_dpi_connector_helper_funcs);
-> +	drm_connector_set_orientation_from_panel(connector, ctx->panel);
+This series addresses the TX kfifo underflow reported in the parent
+thread, where uart_flush_buffer() resets the transmit kfifo but a
+completion callback from an earlier DMA transfer may still call
+uart_xmit_advance() using the byte count from before the flush.
 
-Patches 15-21 are quite inconsistent in terms of error checking:
+The fixes take two approaches depending on how each driver manages its
+TX DMA mappings. In samsung and tegra, which map the TX buffer once,
+samsung's new flush_buffer() terminates the outstanding transfer, as
+tegra's already does, following the approach introduced in 8250 by
+9e512eaaf8f4. A completion already in progress skips the kfifo update if
+the transfer has since been retired by flush_buffer() or stop_tx().
 
- * some don't check for errors (like this one)
- * some do and return silently on error
- * some do and log an error before returning
+In sprd, msm, and pch_uart, which map each transfer separately,
+terminating DMA there would leave the flush hook to unmap a buffer the
+controller may still be reading. These drivers therefore leave the
+transfer running and mark it as flushed, allowing the completion
+callback to unmap the buffer without advancing the kfifo. This means
+that the data already queued for DMA before the flush may still be
+transmitted.
 
-I don't see a good reason, so I'd make them all log and return on error.
+All five patches have only been compile-tested with arm64 defconfig and
+the relevant drivers enabled, including pch_uart through COMPILE_TEST,
+using W=1 with no new warnings. I do not have access to the affected
+hardware, so testing by someone with suitable devices would be
+appreciated.
 
-Luca
+One race remains, which is also present in the 8250 fix: a completion
+may already be running when the flush occurs but acquire the port lock
+only after a new transfer has started, potentially mistaking the new
+transfer's state for its own. Preventing this would require tracking
+individual transfers, for example with a generation counter, which I
+have left out of this series to keep the changes focused.
 
+Samarth Narang (5):
+  tty: serial: samsung: fix TX kfifo underflow on flush
+  serial: tegra: don't advance the TX kfifo for a flushed transfer
+  serial: sprd: fix TX kfifo underflow on flush
+  tty: serial: msm: fix TX kfifo underflow on flush
+  serial: pch_uart: fix TX kfifo underflow on flush
+
+ drivers/tty/serial/msm_serial.c   | 19 ++++++++++++++++++-
+ drivers/tty/serial/pch_uart.c     | 27 +++++++++++++++++++++++++--
+ drivers/tty/serial/samsung_tty.c  | 22 ++++++++++++++++++++++
+ drivers/tty/serial/serial-tegra.c |  8 ++++++++
+ drivers/tty/serial/sprd_serial.c  | 24 ++++++++++++++++++++++--
+ 5 files changed, 95 insertions(+), 5 deletions(-)
+
+
+base-commit: 36aad21d50d1af3f6954bb0c988257a908202477
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.34.1
 
