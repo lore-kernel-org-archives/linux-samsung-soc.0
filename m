@@ -1,47 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793559844;
-	b=aA8niiCLWuaf2z1FFyrWSr+mqKwTzS76t5wKKdCTjQfKwF6jdwqPX5dVQrAnlOcileIx
-	 a6ITxRdoz2bVsGbnkP2qnVtH96B7c3tBLzoQ2Iywh2DuYq8fcDo7AO5cxchfXqxUSb1Ap
-	 Vtkm2yNkfY29L6EAo3JX1NLVNdm6wteos3xGYMn/8MLciCUX7TZ/tr1hoqpxiWDkZWY1A
-	 l6x3itFZRJQ6oscVncB9f/2SzhTFy3g2WVP4iOebvFDavc25RKXytz6RPoQ6eUbEUnlm8
-	 aRt+frp2ldLrsZYq+yEW4sjsr8uawpJAOqeBVj8+2bHQHFexKclTSM+c6PDQ+7wJWbA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793559844;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=+HMwpUfB8ay0HCVzyQtDjx+Bglc8FVckNh23f+3Ozis=;
-	b=L0urXGdDDNSHXai+Zb5hGE1a9JPa3+2c3nQpE2Kccn72N1UpXNoO+f1DJMXloBHD7Oc9
-	 Uup11kX6ZcXNftg6RM2FAhmY1Op5/QIkjxMb/YRyUf/UAcW0ZdZGaw+WJwe+B01M1DxFP
-	 NyuLHzbUEWtKck/3tQE64I94bhqlcDQG/9smUdgPQ4bXt0u9ukxZaQgyxYY5LobZsUf8z
-	 rzefBCyIQr8ki88+zRpCSQblwZ30jHRojcPysApnQu+mcbj2cYAV2RAC8HHElx/dINeWP
-	 22xi3tHLD1zbU5q5omzDMPqMxaj2VTk+ZqEzUMPSf7XXnuSKms/pemwy8/1hJrFuC+g==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flX7k7f2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793561696;
+	b=4FsZNxYR1SCjZEoU/VznR/pNBE7KBbzJAFQIZHjmexEqJYQzPVXZihafhFccgOCeAuJs
+	 8Yr8s270eOTbbBqfjpRS94ZklTYvxgq7c9xOuoMXN0itonb9bGwFzKvUx/s/4gDWUYE+x
+	 CjXqWPYy21Rl6VXBB7EE7JrIYNXy5HLR3GGdukqBVjaSqupF0eIJMsZKZ77N8w75t7yB7
+	 v5gKAURHrhuAY0bOKlRlJQ3A2m3zFJ+WLyg9da+ZqEuoTWAWhegM7wqP9+fW+15seBnjf
+	 EhekUjOttj4XRyv1o1RnoQ4eitHis5WzNSUdgsC+0zyOjTLM+p0uutuH1Mg7/bwoFYw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793561696;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Received:MIME-Version:from:In-Reply-To:References:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
+	b=w+s4JhoMTgyyekNNGIuaMd/h3wmqiPlNgn1vSYqxYzKPbNTjH3R6yzZbwC2lj0whsq/i
+	 y43fgC9/mknFJXRVLiX9M6CFAYg/onMMoiKAiatlhe1O4U9jzZDQQCtXtEMnN5vHiKkrY
+	 +uUb2PeIv1wnFSpQ6uhY6lqbB/KO9DADcwjUhI5fKJ4vGYllItHoBHD6qu9ZBiuF6SjSM
+	 3FPbaoC00Dc/nXvELw7hYOzLSRxLfmNE6HTHSaqRlLiUyLlbkHaETtkT8xWy9DpSjBTyV
+	 R+JyejObutoxhln9n0QKUdVazXIUyA8zARPWlDJbCjYN/4f2zXTmHuL9DoChtwSViwg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Lfqcc5GG;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59082606A324;
-	Sun,  1 Nov 2026 19:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4172606A329
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Nov 2026 19:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4172606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=flX7k7f2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443F21F00919;
-	Sun,  1 Nov 2026 19:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793559843;
-	bh=+HMwpUfB8ay0HCVzyQtDjx+Bglc8FVckNh23f+3Ozis=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=flX7k7f2kTjkvxmo4GlpNrSgku0vYZbg8UwezrN95hyyfvFjPbvctbYKMZG2SloEb
-	 nM2okHOm3XE49iuC8kmfyoKO13tHziqz0w3qDMpheyy03zxx+v7FNnacKmNSsvVPLr
-	 IPr9P5rhEU35I0szPRdJ8Io8+t5hyhs+dZIlfVRs2WpZrt8NiMjrbtevAeIFTcXKvS
-	 XiSny7pk9pviPj1U8YlnvL1j23XpVijNHD8PpRshnDLuGTLghaAxQMY91JIMjjT/62
-	 YlAJIPzkVq+9Mdl36VImA57gNYalONwgzE83aJS4DiI/lRVMET+V141cuZi/QlBGf3
-	 zQsmdnVErVJGw==
-Message-ID: <af5958f9-5a76-47bb-b78e-b17de38d66ee@kernel.org>
-Date: Sun, 1 Nov 2026 20:03:57 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Lfqcc5GG
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b4a13789b0so3192932a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2026 11:34:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793561694; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OL8mmZrB/5BwwJ58LV7iTOPqLCniNiO4kGfFcezUtLWjazAecEvSEjAcfMPTN+/Oin
+         SbbQ8DdhxmnyJsvP2vVGVMNKxs9JQg2G6ejx3W3A3h8zumbE77fhoMBFj9y1C++PJoSL
+         bBRMfB1xt9w7cqMRYbOYapjiFJV+LmL5KQQkXsSruV+MOlU719JhXAlNOV9K9cX05i8k
+         eP+DKGG1CXE0ww35dXckHwwMY4uNC44t/g+0k6lLqsMHkjREiI0ct4ytwo2//HXNcJf6
+         3AHYug/WsdsE2kimnJDJEqkKBcDrfmnapVqJ4GS2g8M5nddn9LL8xSxL/ZZCzuobtY6t
+         IRCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:references:in-reply-to:from
+         :mime-version:dkim-signature;
+        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
+        fh=0avlaGVCfai4Ps83I4pNskedo8enTFX56Z+/9Dwnlm4=;
+        b=e5tknBD7UcPgYwLRdWcc8v3NZmNSuGoSIpPkz1kbvQaPSMNd5GW99Jmvzi/TSG1t2i
+         Z6z4pKQ9nKGwN1ak2FZDK4l17kW/v1VVN/0hL9O3UsGNF+YQzrdMHBnuB2MACPnQpjtY
+         HMZU+XjoDxsAXxo0y5BrZyYoSimWkDW1qmFvuScWLfWQKZDw6lve0OivIgiJsH9ujj4P
+         wK+/pcDiAvr/WV1Eo3lr5Jcboa3ou+QpJyep+QnulAtNECdjg2PQEEM195zznHcNnck1
+         eOVSwT4nNBAwOJTPGYeooBCV6GPVrIObKlNjd6wfmu5rSlpZ1QSNYtTTlTSz7fyVwfrU
+         Chig==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1793561694; x=1794166494; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+         :from:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
+        b=Lfqcc5GG/SwjR7rhF6i9wN+51zewpGS58ukrmB9LGRdbbpKdip3M+YroJNl6U5AaZ4
+         rF//L/DV6VSxmy/1UQsFeJhmoDWwkPFReDLBiC+oRpU55av1FrMnZVBw20fY7l4UynL3
+         HVfRKiNvpd9FUkbDQyR76hW+g1Owj32N3MUEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793561694; x=1794166494;
+        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
+         :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
+        b=L+3RfUAo47vNy4hUVWpO4tfu0GbExGNHKvAf+OdPWWevZIOAfQ3EjqXEFD7tZbz49t
+         czoLSvaKr17mbTyr8tbc7YXdFN/P/mAPWUMOwnpMUbMNniSNl8aeFjbav9oTlMoW1eY3
+         ZOdMhH8zCB+bE3ZeI3kaQQcWCew1iSghAj65XAQ1OxRJrx8NiQ34i/5D5EXg5BDyNuHZ
+         agD282273THwluKunZmHPWwjYrMDujB7YARFtV/leifYuGL/c6EgkyOUkfXgsE/ty2v1
+         MYiI4mcGsZMwAnEWTmf/kXETZi0QaMAj+lqvXsvLK+6JbglHCqS1LU502ZiSr5rL3Aej
+         zpiQ==
+X-Forwarded-Encrypted: i=1; AKwUvBywuYdNtXHYFFqFCl70B7MlfoA1cL7ng5kgNgT4xHzUgM5b5xccAm+qJ+hBUoBgHTM3sqQ8ZwirQx0Q5IBi6D1yVQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8OSTBOeahonYUnfFyaRCQeoItzSFV3ui74oUPLOAUfodmDkRso
+	PaWX8gfeatHP5ISxTOmEovsGk9SA6suEF78/ib+3YpvHNqJMCzus3m0hVT+GWVYKe5QqlF+Yt/x
+	9QpqE8mgYUK6d1U92WEiwlVEzoh+8y0u4z3TiK+o7
+X-Gm-Gg: AYBFou102Y/kUjLskwZ9DB6IIDVZb5khA0UeIgBIEYoKg4PyB7i+3nfg7M5vIRaWIWl
+	sAexCWanXJyBKta3PwXE8c9Et3+/eqp2ci6ElZEFbuD5BOnm9+PhSunG94Ftq4EphC2VP7KxaUF
+	WQ62nOTu+klGYqe5dGpQpNJMKg23XWRPiX8xC3BAKRHiG9MZi4XigeTHuYfPghi6EEqiScptANV
+	YxQw5fggGiYqIRnhTiaeiDkQI+prUzRvRIjnAhB7sy/EpH3FxOKclhwwg29V2BLg/VXIYqJ7Ndz
+	sNTxpzQzqENI46NFnbpkffa5b5/AeNic3cAZB0qKDDsjlj4/Pp2yWH/jb5wrRFd6ihSEFPDZLAg
+	BbFk1PDRikqmkTD3PTz5EpgtgCoUJZDpiuwKiqaa8ywXfZ560oa0ZMVeMh2gBdbOEy2JWgF+T
+X-Received: by 2002:aa7:da45:0:b0:6b3:e89b:128f with SMTP id
+ 4fb4d7f45d1cf-6b4d4d6d938mr4052419a12.9.1793561694122; Sun, 01 Nov 2026
+ 11:34:54 -0800 (PST)
+Received: from 415065739583 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 1 Nov 2026 11:34:51 -0800
+Received: from 415065739583 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 1 Nov 2026 11:34:38 -0800
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,91 +104,92 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] clk: samsung: fix probe-ordering races in
- exynos5-subcmu
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Henrik Grimler <henrik@grimler.se>
-References: <CGME20261030075332eucas1p16331988bd7df20db9538066a613a42f2@eucas1p1.samsung.com>
- <20261030075325.517182-1-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261030075325.517182-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+from: Simon Glass <sjg@chromium.org>
+In-Reply-To: <CAD=FV=Vt6hgGJuYtv1_mBSQztWQBjmDN9CwLtVxrXcyECGx2-A@mail.gmail.com>
+References: <20261020153652.2907186-1-dianders@chromium.org>
+ <CAFLszTgzpQ-donjjtcPwy5T3pfWg_u83QMh0GcdpY2JCq_s75w@mail.gmail.com> <CAD=FV=Vt6hgGJuYtv1_mBSQztWQBjmDN9CwLtVxrXcyECGx2-A@mail.gmail.com>
+Date: Sun, 1 Nov 2026 11:34:51 -0800
+X-Gm-Features: AclHuK-OENc2MfogrHTK6nr_VXdYPKQaHTgRVjZY6Us3vAfjaHxM1Qejmm0CbCs
+Message-ID: <CAFLszTh8geCqamVZwO00fx6t8SDfVHCFP1Fx9PnA2x9TosDKqg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] arm64: Add fit images for sc7180-trogdor and google,lga
+To: Doug Anderson <dianders@chromium.org>
+Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-kbuild@vger.kernel.org, 
+	Brian Norris <briannorris@chromium.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	Nicolas Schier <nsc@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Devicetree@vger.kernel.org, 
+	Julius Werner <jwerner@chromium.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Will Deacon <will@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Andrew Jones <andrew.jones@linux.dev>, 
+	Bjorn Andersson <andersson@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	David Sterba <dsterba@suse.com>, Gary Guo <gary@garyguo.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Luis Augenstein <luis.augenstein@tngtech.com>, 
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Nick Terrell <terrelln@fb.com>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Rong Xu <xur@google.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	cros-qcom-dts-watchers@chromium.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 30/10/2026 08:53, Marek Szyprowski wrote:
-> This series fixes a group of related issues around power-domain
-> availability and probe ordering on Exynos5 platforms (observed on
-> Exynos5800, e.g. Odroid XU3/XU4), which can leave clock muxes stuck on
-> the oscillator instead of their intended PLL parent.
-> 
-> The issue was analyzed and patches were prepared with LLM assistance.
-> The whole patchset was tested on the real Odroid XU3, XU4 and Chromebook
-> Peach-Pit and Peach-Pi boards.
-> 
-> Best regards
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
-> 
-> Changelog:
-> 
-> v3:
-> - instead of removing more __init annotations, simply fail driver probe after
->   the init sections have been freed; this should not happen anyway
-> 
+Hi Doug,
 
-I guess you did not pick up review tag(s) from v1 because patches changed?
+Doug Anderson <dianders@chromium.org> wrote:
 
-Best regards,
-Krzysztof
+> Putting the metadata in the configuration's `description` property came
+> out of discussions with Michal Simek at LPC 2026 (where Xilinx/AMD
+> already uses configuration descriptions for similar board matching).
+
+Thanks for the background. The Xilinx case is a bit different, though:
+the same project writes the string (the binman .dts) and parses it
+(board.c), so it can change both sides together. Here the kernel would
+write the string and the Pixel bootloader and outside packaging tools
+would parse it. That makes it a cross-project ABI, and I'd rather that
+ABI were typed properties than an unwritten string format.
+
+> The proposal I've tried to push a few times is that it's OK that
+> different loaders have different types of information available
+> to them, but people don't like that. They want a universal standard,
+> which nobody can come up with.
+
+I agree with you here. We don't need a universal set. I've sent a
+proposed spec change [1] which lets a configuration node hold one or
+more match sub-nodes. Each one names its scheme with a vendor-prefixed
+compatible string and carries the properties that scheme defines, for
+example:
+
+    conf-1 {
+        compatible = "google,lga-...";
+        ...
+        match-1 {
+            compatible = "google,board-id";
+            board-id = <...>;
+            board-rev = <...>;
+            soc-id = <...>;
+            soc-rev = <...>;
+        };
+    };
+
+Trogdor would use its own scheme (board name as a string, rev and SKU
+as u32), and Michal's loader could do the same. Each loader still gets
+what it needs, the types are explicit, and nobody has to parse
+'description'. Please can you take a look and comment there? If it
+works for you, you can point to it in v2.
+
+> Should I give it a shot for v2?
+
+Yes please. The DTB list already reaches make_fit.py from the Makefile
+through the @file argument, so the new file only has to say which DTBs
+to include and what metadata each one gets. We'll need a simple
+per-platform file next to the .dts files, passed with a new option
+through FIT_EXTRA_ARGS
+
+Running fdtfactor can then be another make_fit.py option, like --decompose-dtbs
+
+[1] https://github.com/open-source-firmware/flat-image-tree/pull/66
+
+Regards,
+Simon
