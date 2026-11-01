@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793529778;
-	b=GACoARljyO0LQKHxiD5LjIWo4je+xicnzDCVVxP56MMJcTTuM3jH5IyzJZmDJEwYwutp
-	 B2RX2UXrsMkfR4/5XUpqXtecxv6QDVorMznsp1j2XGT7ieFPqFOiqrJddTUjIfdEH4Gpx
-	 Kl3g8Sl1ZVTU+NUUagEPtPBaGqnZ3xjXfV5IwU0Oit+h89PErAcjGYkNvGto7rhzMtS7S
-	 A+imYVPCmecipFfZnGg8+82G3TmWze7wpNGYsM6LtnRS+EBk3lYaep/VHiPpizDqkU5nd
-	 1ZfM0ORYsmxvkS4Fg8JQeceaCF+x4SDfKPm92XHGnonbzLC0M1I4Wd0iJ3c0qbY3XSw==
+	t=1793530026;
+	b=EsrM3a6V3fsnfB9N6b8JKX8sllqKwUhoZkoB/NxMj+nwzCjRygd6GyF4ecbhfTF/0vFy
+	 a6Jq6AdQhqvgYAX6aAXkt2kxpGchxSiUdvwvuYhHtpQIBYcEVCqrJpRW/kgQHMLiw4R9q
+	 POJcL3nwnXCJq5BT0C0ROeryQ3tGC6v5VAsFO0Ozv0EAY734B/W2aBGEDpNzLguNxkkUE
+	 aY1dprFf0zUXEubPmq0OFIVXIUxpJjIeeGrN3am9bvRgKgO+AVg20IhNNcMeotahZFBdG
+	 ARCLT+Ehl+XRk6ANT5HuDVMbTXSCkvImG40epnkZZ5b8fMkY9x6iwEUiqCgO8ncZC2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793529778;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793530026;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=PBPRx2QNJQ+QM0zRSUMWWFQHyRX2kqxgGvHiKxzQ5A8=;
-	b=yxz8V2K7UAbjqOv5PkCwc5VDzTq2rnvOXQ9jfCPl22N7nyEOT40akfiJFqaQIak/k2bf
-	 Uz0Fc3v8f+TF6r//7bGq5kKBjrNvvu1mOAVQ230UR6cuCdnjYMgEAyEfqeGGWvhKkuSOz
-	 VRpQ7Zm9BsBSwOVpXgT6jJKEiCNsd1Lo0CAg0Wrt+NrTDllL7E9M8Q4iSOxKOhIlhPqUn
-	 bUj7dHqrOkiAtltJOQ6Wh2yCJpb/Xsu/0aUFir5r0N3sX2KXEcglBn9+TMfTrrC+JFe/E
-	 DqLJReX0r8NoWhDkMvb7uO9Bf9a/Mlkw3CIjXXWbkj3DcYXTj1iQ6aWugnCtWMl8Ggw==
+	bh=ciP3TE41VRL5tjg8DAT2gTyP12gWWUmxTZcVY7OvJgY=;
+	b=2uymR0l5kUng64nfpo7UjCOKlJqOnKqsCxoQUApbAFmuV/YrHPU57zaCtcYmI9hCi1Ew
+	 8dH6tnHgz3uii+RocnTWMfqzW8/jgPDpV/yQQ8KUJlxMy17C81fpkFYgqrtiaBxxw2Ll+
+	 voQzGDri65xfRAr7AKp2VHnVb2SUNmXuEym803pj+H/X7ZEWvqdpOEZWQnM7/B5UYtN3r
+	 dcPKm5Uhy1mMqLAKArRjz0InttHsRkjFh/UDyfH5dneAjOmsjZSNvyk9Tccjo+cb/YW4e
+	 Fkgg6FOYbHv0UDKKaQGLqQbEfXtBelJgq6hJAsv1Fcw+7N7JyzgUcI6BuySbp5N737A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nAVAyA4K;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gPQ8viCB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E564E606A324;
-	Sun,  1 Nov 2026 10:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B248606A32D
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Nov 2026 10:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nAVAyA4K
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A576E1F000C1;
-	Sun,  1 Nov 2026 10:42:51 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gPQ8viCB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 130B71F00A1C;
+	Sun,  1 Nov 2026 10:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793529777;
-	bh=PBPRx2QNJQ+QM0zRSUMWWFQHyRX2kqxgGvHiKxzQ5A8=;
+	s=k20260515; t=1793530025;
+	bh=ciP3TE41VRL5tjg8DAT2gTyP12gWWUmxTZcVY7OvJgY=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=nAVAyA4K5Ip5V7nDF+Ddov3KzTwTkvAZnBZmkLfMpOZqAe1W8jpTswCxwjxApOF2d
-	 uWEVT6cMj8ncY8daPZBjhBEsqO36OInN7OvrtgfGMYcEfXIHWf3p3l+FVp2YMsGk94
-	 ADLlsbdSH1CJd+nTCA4eagDj8bsKHs9bylLi+IjC9xYXiz3hhHMz7pRnmCbP7YpkNy
-	 MWZD/MKOHPMKK+MgJupBNVZJfyBIyoUT+6PQA27VGQK9fHw6Fayu36ch16MWpstNKK
-	 m39RSM/CnvSIv1hS1043R9jz73UwfFFwsliLHPUAuI6PWz8fYp7jXis93pieVx7Tzm
-	 1Cbehw7Uvr+6w==
+	b=gPQ8viCB4Ijdtj/k6DT14L5vKt68azQvaBCmfH6mY6rEwPQ+JOw36FMZdzBO5JbCT
+	 2FxN6rRrkwiLY8ck1MOLtgyBgx+gSRkAEKBYvC5k2aJZTD2lzHmKDS3kSBw4po1ZUM
+	 hLA62Q5qGf9MJ8wNegrrh0Ao2UWbGj6Q6O1x99R8PqYdHbIBg2L5KnBCi9QhmiHzQK
+	 +4sSzs+qyyioHVAZFj87+YNVxnMseb7VBn1xiiErYTmApQt/TWT6Kje4OCrSsO1JZf
+	 mc4SZvWtAG/tOcVyifdgqEAx1OaA6mZX4dAXwI2MQSFgb9SsqmZGK7QARBeKpM9/IE
+	 29G0hJmxIz2cg==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,59 +51,43 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
- prevent OOB access
+Subject: Re: [PATCH v2] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
 From: Manivannan Sadhasivam <mani@kernel.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: vkoul@kernel.org, neil.armstrong@linaro.org, mani@kernel.org, 
- krzk@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com, 
- pritam.sutar@samsung.com, andre.draszik@linaro.org, kernel@lvkasz.us, 
- pengpeng@iscas.ac.cn, kishon@kernel.org, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, h10.kim@samsung.com, 
- dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com, 
- eomji.oh@samsung.com, shijie.cai@samsung.com, muhammed.ali@samsung.com, 
- thiagu.r@samsung.com, stable@vger.kernel.org
-In-Reply-To: <20261020063559.3530901-1-selvarasu.g@samsung.com>
-References: <CGME20261020063617epcas5p4ba00854fcd38bf211c573629ee062621@epcas5p4.samsung.com>
- <20261020063559.3530901-1-selvarasu.g@samsung.com>
-Date: Sun, 01 Nov 2026 16:12:49 +0530
-Message-Id: <179352976902.2955.854677236716853573.b4-reply@b4>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Joy Chakraborty <joychakr@google.com>, Roy Luo <royluo@google.com>, 
+ Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <90a172c2980073a09b4f01c21a251c3d0d2d6fe5.1792499240.git.geert+renesas@glider.be>
+References: <90a172c2980073a09b4f01c21a251c3d0d2d6fe5.1792499240.git.geert+renesas@glider.be>
+Date: Sun, 01 Nov 2026 16:17:00 +0530
+Message-Id: <179353002024.2955.6740233289022296167.b4-reply@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1272; i=mani@kernel.org;
- h=from:subject:message-id; bh=Q6hkz49Y7C/46IdSVDugqi0a1zuCwlweH00ODBFmM68=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq5xeqiK17PAEwdnRzSQo+D+kWeupWASL+RwRYy
- NV3WdPKLxiJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaucXqgAKCRBVnxHm/pHO
- 9XGwB/93eMHO8R0XGhK/8k4EB0U2PnmWNCJCVbfPamNyDOKKBeiGai1NuYr6zulXn84LOYsKIPS
- eJ91TdkDlTCufw8wuxVITUBLc0xvlUXosHjAN8pWjLaHVSDeJc7dxWgZ6UD90LLJeV5GFzdHl/H
- d3G2K8pVPbv+Ot4vEAPJ0PJx+TUpvudlXs/9XLkEAqpvSEzdFcD8ZOBxKkJCcDU1Sga2/Rbr4Nv
- agRLt8rVuQYShZjkpqsFyQv3KDguFeokBg+zG2igGGZpNzAhI2hlobQezJZJn1hZNRqL727FwZ8
- j5e6gLrC2VPPr6dv/uXfFA+4y/BR+1PNQmP0DMHC0QPp+FgJ
+X-Developer-Signature: v=1; a=openpgp-sha256; l=522; i=mani@kernel.org;
+ h=from:subject:message-id; bh=u68oHDWGblhruYjLSJx3Jv32NsrVXxV9GQhKtKCHDxo=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq5xim4E4sFKagT25ik3q1L/btEmtp4J5NC9Dsf
+ UZiDt9q8dOJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaucYpgAKCRBVnxHm/pHO
+ 9SW0B/44Apffz+7OVHoYH9pH9J3ihL2WQSqT/ZCjV6rQFEPHF9qI1YhioOnGALvFodaDOcFI8dj
+ TXIZhJ9NidcjujK7zDLglaKV7FsWmclAj9ch05ML8rlVnrIaxEjSlq2hnqQjCvLYSktFVguE0WI
+ LT2LsgNUXNFvdLD2dP1Hav8gSiaCqdfbq25jmr+ktrRU5p0RNxhbKOPRCgbbXCfpOgCFZk5ROPV
+ wleR0IuHLEQupJcAQkSD/sX38yqMTC8E02KXMC9gPJSf3ilvJaLtLcbzihCDC5jkMOVGrPt5LXp
+ mXo9Rd7YQSRAvqXwhgrpki0/SZ8ZNPZK5MdcWwRprhn7p7Fn
 X-Developer-Key: i=mani@kernel.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-10-20 12:05 +0530, Selvarasu Ganesan wrote:
-> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
-> creating both UTMI and PIPE3 PHY instances regardless of the SoC
-> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
-> and ExynosAutoV920) provide phy_cfg arrays containing only a single
-> element.
+On 2026-10-20 14:27 +0200, Geert Uytterhoeven wrote:
+> The Google Tensor SoC USB PHY is only present on Google Tensor G5
+> (Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent asking
+> the user about this driver when configuring a kernel without Google
+> Tensor SoC support.
 > 
-> On these SoCs, when the loop reaches index 1, the driver reads past the
-> end of the rodata array, populating the second PHY instance with garbage
-> data. Since the configuration structure contains critical function
-> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
-> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
-> 
-> Fix this by adding 'n_phy_cfg' to struct exynos5_usbdrd_phy_drvdata to
-> store the actual size of the phy_cfg array for each SoC. Update the
-> probe loop and the xlate function to bound their access against this
-> value instead of the hardcoded EXYNOS5_DRDPHYS_NUM.
-> 
-> Fixes: 59025887fb08 ("phy: Add new Exynos5 USB 3.0 PHY driver")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> Fixes: cbce66669c82ee9a ("phy: Add Google Tensor SoC USB PHY driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
