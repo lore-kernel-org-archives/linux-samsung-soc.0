@@ -1,100 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793561696;
-	b=4FsZNxYR1SCjZEoU/VznR/pNBE7KBbzJAFQIZHjmexEqJYQzPVXZihafhFccgOCeAuJs
-	 8Yr8s270eOTbbBqfjpRS94ZklTYvxgq7c9xOuoMXN0itonb9bGwFzKvUx/s/4gDWUYE+x
-	 CjXqWPYy21Rl6VXBB7EE7JrIYNXy5HLR3GGdukqBVjaSqupF0eIJMsZKZ77N8w75t7yB7
-	 v5gKAURHrhuAY0bOKlRlJQ3A2m3zFJ+WLyg9da+ZqEuoTWAWhegM7wqP9+fW+15seBnjf
-	 EhekUjOttj4XRyv1o1RnoQ4eitHis5WzNSUdgsC+0zyOjTLM+p0uutuH1Mg7/bwoFYw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793561696;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.51
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793569410;
+	b=ZispMzBnCSHaqO88c32dP2mlJcTq5nErFIftOez28HDNiCaIk3ek+CFSpPc5Uk3BaBTx
+	 pgD7eGr7awoi+wbH05kXEfXcFWFd0+jinWQbCxj67Nf3C6EkSzAvb778v77W6hWbCAflR
+	 zLW/cZh5k5ife+h41aLpp5ZwbtzZDEZFgysuU7GcK7LCAxDzdblF/FIYWT+FW11QITo90
+	 nWziFQ0rfIY5yaN8sJbnaoxQHH6CKKhddyzpQg4wn7/oU5Em+zz+tjVwZ753Qd/14sez5
+	 cRx1W4RmJDmJITn6shEKzho76G07SvSLs0PMwOPSV/tGDLfnGByejJAdwU6uKug3y9Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793569410;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Received:MIME-Version:from:In-Reply-To:References:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
-	b=w+s4JhoMTgyyekNNGIuaMd/h3wmqiPlNgn1vSYqxYzKPbNTjH3R6yzZbwC2lj0whsq/i
-	 y43fgC9/mknFJXRVLiX9M6CFAYg/onMMoiKAiatlhe1O4U9jzZDQQCtXtEMnN5vHiKkrY
-	 +uUb2PeIv1wnFSpQ6uhY6lqbB/KO9DADcwjUhI5fKJ4vGYllItHoBHD6qu9ZBiuF6SjSM
-	 3FPbaoC00Dc/nXvELw7hYOzLSRxLfmNE6HTHSaqRlLiUyLlbkHaETtkT8xWy9DpSjBTyV
-	 R+JyejObutoxhln9n0QKUdVazXIUyA8zARPWlDJbCjYN/4f2zXTmHuL9DoChtwSViwg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	 Received:X-Forwarded-Encrypted:X-Received:MIME-Version:References:
+	 In-Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=y+s8DhqIO5ki4BPjT0hMEJ5bMlWwwKI5gQlDegeYWw4=;
+	b=yV80XYydGp/S+yeYA/P/Q1P35EzaM2qvsU0hU9zZVS6BYbiWaDFKQScr16rphAWmQP87
+	 /tIADfWkrWX/kGWYF5u1L02Zgczv7AVpVLWzjHjeMmXKOfTeNavS2C4AqWhB2KE/ibX6n
+	 WlxIlx+TdfiPSCHu1aDEkzopLB69kYKJ2mD/uGtEzvgXq8fg2dWtiCD0GfumwY7ZlR2ON
+	 lKQgjMbwCHy+kUMLUT2QJIRGbGlLkN3VLYB/RFg72Z/D0YfZuuwF3frFQNeN4EGH50cYC
+	 IR0OoIDtkTvlI4DNNknnPa9sG2fjvUScxlET4cxUek76l4dr0YfH0gmPricAlHVX3BQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Lfqcc5GG;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=VoxCo65h;
+	arc=none smtp.remote-ip=209.85.218.51
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4172606A329
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Nov 2026 19:34:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C4172606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80630606A324
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Nov 2026 21:43:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80630606A324
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=Lfqcc5GG
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b4a13789b0so3192932a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2026 11:34:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793561694; cv=none;
-        d=google.com; s=arc-20260327;
-        b=OL8mmZrB/5BwwJ58LV7iTOPqLCniNiO4kGfFcezUtLWjazAecEvSEjAcfMPTN+/Oin
-         SbbQ8DdhxmnyJsvP2vVGVMNKxs9JQg2G6ejx3W3A3h8zumbE77fhoMBFj9y1C++PJoSL
-         bBRMfB1xt9w7cqMRYbOYapjiFJV+LmL5KQQkXsSruV+MOlU719JhXAlNOV9K9cX05i8k
-         eP+DKGG1CXE0ww35dXckHwwMY4uNC44t/g+0k6lLqsMHkjREiI0ct4ytwo2//HXNcJf6
-         3AHYug/WsdsE2kimnJDJEqkKBcDrfmnapVqJ4GS2g8M5nddn9LL8xSxL/ZZCzuobtY6t
-         IRCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:references:in-reply-to:from
-         :mime-version:dkim-signature;
-        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
-        fh=0avlaGVCfai4Ps83I4pNskedo8enTFX56Z+/9Dwnlm4=;
-        b=e5tknBD7UcPgYwLRdWcc8v3NZmNSuGoSIpPkz1kbvQaPSMNd5GW99Jmvzi/TSG1t2i
-         Z6z4pKQ9nKGwN1ak2FZDK4l17kW/v1VVN/0hL9O3UsGNF+YQzrdMHBnuB2MACPnQpjtY
-         HMZU+XjoDxsAXxo0y5BrZyYoSimWkDW1qmFvuScWLfWQKZDw6lve0OivIgiJsH9ujj4P
-         wK+/pcDiAvr/WV1Eo3lr5Jcboa3ou+QpJyep+QnulAtNECdjg2PQEEM195zznHcNnck1
-         eOVSwT4nNBAwOJTPGYeooBCV6GPVrIObKlNjd6wfmu5rSlpZ1QSNYtTTlTSz7fyVwfrU
-         Chig==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=VoxCo65h
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c43fbcb4393so355585466b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2026 13:43:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793561694; x=1794166494; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
-         :from:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
-        b=Lfqcc5GG/SwjR7rhF6i9wN+51zewpGS58ukrmB9LGRdbbpKdip3M+YroJNl6U5AaZ4
-         rF//L/DV6VSxmy/1UQsFeJhmoDWwkPFReDLBiC+oRpU55av1FrMnZVBw20fY7l4UynL3
-         HVfRKiNvpd9FUkbDQyR76hW+g1Owj32N3MUEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793561694; x=1794166494;
-        h=content-type:cc:to:subject:message-id:date:references:in-reply-to
-         :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=chromium.org; s=google; t=1793569408; x=1794174208; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=wdJlAy0M0lu3nCDv3njq9XZb0WjIsN4409XaMh24jfs=;
-        b=L+3RfUAo47vNy4hUVWpO4tfu0GbExGNHKvAf+OdPWWevZIOAfQ3EjqXEFD7tZbz49t
-         czoLSvaKr17mbTyr8tbc7YXdFN/P/mAPWUMOwnpMUbMNniSNl8aeFjbav9oTlMoW1eY3
-         ZOdMhH8zCB+bE3ZeI3kaQQcWCew1iSghAj65XAQ1OxRJrx8NiQ34i/5D5EXg5BDyNuHZ
-         agD282273THwluKunZmHPWwjYrMDujB7YARFtV/leifYuGL/c6EgkyOUkfXgsE/ty2v1
-         MYiI4mcGsZMwAnEWTmf/kXETZi0QaMAj+lqvXsvLK+6JbglHCqS1LU502ZiSr5rL3Aej
-         zpiQ==
-X-Forwarded-Encrypted: i=1; AKwUvBywuYdNtXHYFFqFCl70B7MlfoA1cL7ng5kgNgT4xHzUgM5b5xccAm+qJ+hBUoBgHTM3sqQ8ZwirQx0Q5IBi6D1yVQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8OSTBOeahonYUnfFyaRCQeoItzSFV3ui74oUPLOAUfodmDkRso
-	PaWX8gfeatHP5ISxTOmEovsGk9SA6suEF78/ib+3YpvHNqJMCzus3m0hVT+GWVYKe5QqlF+Yt/x
-	9QpqE8mgYUK6d1U92WEiwlVEzoh+8y0u4z3TiK+o7
-X-Gm-Gg: AYBFou102Y/kUjLskwZ9DB6IIDVZb5khA0UeIgBIEYoKg4PyB7i+3nfg7M5vIRaWIWl
-	sAexCWanXJyBKta3PwXE8c9Et3+/eqp2ci6ElZEFbuD5BOnm9+PhSunG94Ftq4EphC2VP7KxaUF
-	WQ62nOTu+klGYqe5dGpQpNJMKg23XWRPiX8xC3BAKRHiG9MZi4XigeTHuYfPghi6EEqiScptANV
-	YxQw5fggGiYqIRnhTiaeiDkQI+prUzRvRIjnAhB7sy/EpH3FxOKclhwwg29V2BLg/VXIYqJ7Ndz
-	sNTxpzQzqENI46NFnbpkffa5b5/AeNic3cAZB0qKDDsjlj4/Pp2yWH/jb5wrRFd6ihSEFPDZLAg
-	BbFk1PDRikqmkTD3PTz5EpgtgCoUJZDpiuwKiqaa8ywXfZ560oa0ZMVeMh2gBdbOEy2JWgF+T
-X-Received: by 2002:aa7:da45:0:b0:6b3:e89b:128f with SMTP id
- 4fb4d7f45d1cf-6b4d4d6d938mr4052419a12.9.1793561694122; Sun, 01 Nov 2026
- 11:34:54 -0800 (PST)
-Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 1 Nov 2026 11:34:51 -0800
-Received: from 415065739583 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 1 Nov 2026 11:34:38 -0800
+        bh=y+s8DhqIO5ki4BPjT0hMEJ5bMlWwwKI5gQlDegeYWw4=;
+        b=VoxCo65hHGxCLFt6EDapKGY1f1ThCsresiLxsnX1x3XxbHe8pUB9HXyn8nGSuo/Kwi
+         h4r2UmNd1xMxVPrA4gPZxrqOh6G+Ca73s9xWZvTrlrZ2JjbjLqsb5OXhtyoAbqt+VHI6
+         RO7YoymdzkWyqjUdn8+07TiEKOjfsyDNpRewQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793569408; x=1794174208;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=y+s8DhqIO5ki4BPjT0hMEJ5bMlWwwKI5gQlDegeYWw4=;
+        b=vkEg+SnX+wTWuTYJ2a8ITzKTsfG1QgZsu+RDLAhwBTwqKqzwD/4um5JzHvbLWcd7W5
+         4e9KaS/vveY6wlSEAGO5NsWPmsLYPSqGBLpPfmP8pNabQfd4izxbERrt7QNEZ4TkH+Yb
+         0eS7hBFzEqPuHv3XB7ULzj4Hz+e0A0BpUXG3b+VjFAXQzWxVnsWBVxZkSVpZ3o4IYiYg
+         5M2FqJuUTx6QlVNgx77UUXVp3+avGXxayZa2d4wrsXQKBpa9H/IygZFvf+s59SbOal2z
+         tIcTLk3eSunGhTpt3IiL8INBZQiOx5JvNMO3ZohWYLdnyP+jFPoHmnKp+953V0TKUeY6
+         VmZw==
+X-Forwarded-Encrypted: i=1; AKwUvBxplDqiLycr2hasku4e6uUBFa9RolaxLY17S105sP0sj6e54YFYfCYtiGMJYBRhTSLdRAciWVwgzns0xoMlOCo9Fw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLjfFTo8F76hL/mnYXEidnCnEPIPJOe4DzOhOhzyed3wqzPZesc
+	CA2P1BkCOirAZyllFnjiCCTOdMh5/EKSaTbypbKt1DGCkEviL9Mb//4iHetxY9b99WJKuO1S6Iy
+	pm0VTuA==
+X-Gm-Gg: AYBFou16yrFbY4wFah6nWaFWAR/Cjbpk2AhjS6V5sXt2xRJRxv7mwkkxh+sLu3UVF17
+	gyyXnjMBPCj5xgun8dnXTK/kvAH8RdG9f4d/LaRA1VreSmfbNX5SP24Je93nZJ29nBhkPNgAygm
+	c/PH9NriWSLTn/YeKhSpR2H1xzeDw7xK/h3Eb4psAVAJg7mqr/wOn87n8UhzhJDI7+jRQpCJ1MI
+	HowMO2AtESsNuBrObj7C7kiicOhTielpggUcc7wwFlBJDdrQpw9D3Ha1OpwUfL9btwnhz8hUDu6
+	7H/Pbvy5hfDatbC9TLLdHtMQonEiXoC6+huWBc+e/yPFGHulezXHzdTWxB5WeOX2DDz11Ogql7m
+	l0NoodM/LDNBslu/+IfXIRdgfPkq2I+0C9yOCzksodss9veiHp70hdEFhyn8kZtd2UCUUXmu3OL
+	zaxi16Y63+ekgT9tex7SKMkhJJHw96d6+OTMY4a1mpnJBFAER63s/DyMdk3CbyNu4iIm9Z4Xz5F
+	vkqPeRQWrdLtehY1XJVV6865JzIv6zC4XN8dmAnokYHrFJBVJ7hnixxAIAeCNkn0uHdpNCFAcIy
+	FX8OTVwWivFkO8c2VIvJMOAAVCwaG+JFmx3r2U1ounmvnOsW2WeZIYu7TTMhvzrMpqk=
+X-Received: by 2002:a17:907:6d29:b0:c33:dbe8:291c with SMTP id a640c23a62f3a-c4ca7a4dd2fmr691437766b.20.1793569407954;
+        Sun, 01 Nov 2026 13:43:27 -0800 (PST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4cabe5006dsm310582266b.64.2026.11.01.13.43.26
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Nov 2026 13:43:26 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b4883643ccso3065925a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Nov 2026 13:43:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBxZ+mg1GgzS7I6J1H/qRDtiX7zKSPyjqL5Jm+2a+gCe6H0wWARszMbpk1XbCzInY6dX5zhytXBwKG14mBFLlaV1LQ==@vger.kernel.org
+X-Received: by 2002:a05:6000:41d9:b0:48e:646e:fb61 with SMTP id
+ ffacd0b85a97d-48e6e305b9emr20425341f8f.34.1793569013833; Sun, 01 Nov 2026
+ 13:36:53 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -104,15 +94,17 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-from: Simon Glass <sjg@chromium.org>
-In-Reply-To: <CAD=FV=Vt6hgGJuYtv1_mBSQztWQBjmDN9CwLtVxrXcyECGx2-A@mail.gmail.com>
 References: <20261020153652.2907186-1-dianders@chromium.org>
- <CAFLszTgzpQ-donjjtcPwy5T3pfWg_u83QMh0GcdpY2JCq_s75w@mail.gmail.com> <CAD=FV=Vt6hgGJuYtv1_mBSQztWQBjmDN9CwLtVxrXcyECGx2-A@mail.gmail.com>
-Date: Sun, 1 Nov 2026 11:34:51 -0800
-X-Gm-Features: AclHuK-OENc2MfogrHTK6nr_VXdYPKQaHTgRVjZY6Us3vAfjaHxM1Qejmm0CbCs
-Message-ID: <CAFLszTh8geCqamVZwO00fx6t8SDfVHCFP1Fx9PnA2x9TosDKqg@mail.gmail.com>
+ <CAFLszTgzpQ-donjjtcPwy5T3pfWg_u83QMh0GcdpY2JCq_s75w@mail.gmail.com>
+ <CAD=FV=Vt6hgGJuYtv1_mBSQztWQBjmDN9CwLtVxrXcyECGx2-A@mail.gmail.com> <CAFLszTh8geCqamVZwO00fx6t8SDfVHCFP1Fx9PnA2x9TosDKqg@mail.gmail.com>
+In-Reply-To: <CAFLszTh8geCqamVZwO00fx6t8SDfVHCFP1Fx9PnA2x9TosDKqg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Sun, 1 Nov 2026 13:36:42 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WGtmBxQhc+ujm3qtVgftfKupqtp9sUpg_ubeQ=-_QG-A@mail.gmail.com>
+X-Gm-Features: AclHuK83p4a2Vbxf-q7Oyea7vApFkqc_qnBlge2O9IlGicuQhVVmFjLkwyEXh7A
+Message-ID: <CAD=FV=WGtmBxQhc+ujm3qtVgftfKupqtp9sUpg_ubeQ=-_QG-A@mail.gmail.com>
 Subject: Re: [RFC PATCH 0/7] arm64: Add fit images for sc7180-trogdor and google,lga
-To: Doug Anderson <dianders@chromium.org>
+To: Simon Glass <sjg@chromium.org>
 Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Konrad Dybcio <konradybcio@kernel.org>, linux-kbuild@vger.kernel.org, 
@@ -134,62 +126,111 @@ Cc: Devicetree-compiler@vger.kernel.org, Rob Herring <robh@kernel.org>,
 	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
 	cros-qcom-dts-watchers@chromium.org, linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Doug,
+Hi,
 
-Doug Anderson <dianders@chromium.org> wrote:
+On Sun, Nov 1, 2026 at 11:34=E2=80=AFAM Simon Glass <sjg@chromium.org> wrot=
+e:
+>
+> Hi Doug,
+>
+> Doug Anderson <dianders@chromium.org> wrote:
+>
+> > Putting the metadata in the configuration's `description` property came
+> > out of discussions with Michal Simek at LPC 2026 (where Xilinx/AMD
+> > already uses configuration descriptions for similar board matching).
+>
+> Thanks for the background. The Xilinx case is a bit different, though:
+> the same project writes the string (the binman .dts) and parses it
+> (board.c), so it can change both sides together. Here the kernel would
+> write the string and the Pixel bootloader and outside packaging tools
+> would parse it. That makes it a cross-project ABI, and I'd rather that
+> ABI were typed properties than an unwritten string format.
 
-> Putting the metadata in the configuration's `description` property came
-> out of discussions with Michal Simek at LPC 2026 (where Xilinx/AMD
-> already uses configuration descriptions for similar board matching).
+OK, fair enough.
 
-Thanks for the background. The Xilinx case is a bit different, though:
-the same project writes the string (the binman .dts) and parses it
-(board.c), so it can change both sides together. Here the kernel would
-write the string and the Pixel bootloader and outside packaging tools
-would parse it. That makes it a cross-project ABI, and I'd rather that
-ABI were typed properties than an unwritten string format.
 
-> The proposal I've tried to push a few times is that it's OK that
-> different loaders have different types of information available
-> to them, but people don't like that. They want a universal standard,
-> which nobody can come up with.
+> > The proposal I've tried to push a few times is that it's OK that
+> > different loaders have different types of information available
+> > to them, but people don't like that. They want a universal standard,
+> > which nobody can come up with.
+>
+> I agree with you here. We don't need a universal set. I've sent a
+> proposed spec change [1] which lets a configuration node hold one or
+> more match sub-nodes. Each one names its scheme with a vendor-prefixed
+> compatible string and carries the properties that scheme defines, for
+> example:
+>
+>     conf-1 {
+>         compatible =3D "google,lga-...";
+>         ...
+>         match-1 {
+>             compatible =3D "google,board-id";
+>             board-id =3D <...>;
+>             board-rev =3D <...>;
+>             soc-id =3D <...>;
+>             soc-rev =3D <...>;
+>         };
+>     };
+>
+> Trogdor would use its own scheme (board name as a string, rev and SKU
+> as u32),
 
-I agree with you here. We don't need a universal set. I've sent a
-proposed spec change [1] which lets a configuration node hold one or
-more match sub-nodes. Each one names its scheme with a vendor-prefixed
-compatible string and carries the properties that scheme defines, for
-example:
+Sure. For now I might just leave the "match-" out for Trogdor and
+simply have the config file simply be a list of DTBs. Trogdor
+currently boots OK with the "compatible" strings. Maybe Chen-Yu will
+want to propose something for a newer Chromebook where he can take
+full advantage of it. :-)
 
-    conf-1 {
-        compatible = "google,lga-...";
-        ...
-        match-1 {
-            compatible = "google,board-id";
-            board-id = <...>;
-            board-rev = <...>;
-            soc-id = <...>;
-            soc-rev = <...>;
-        };
-    };
 
-Trogdor would use its own scheme (board name as a string, rev and SKU
-as u32), and Michal's loader could do the same. Each loader still gets
-what it needs, the types are explicit, and nobody has to parse
-'description'. Please can you take a look and comment there? If it
-works for you, you can point to it in v2.
+> and Michal's loader could do the same. Each loader still gets
+> what it needs, the types are explicit, and nobody has to parse
+> 'description'. Please can you take a look and comment there? If it
+> works for you, you can point to it in v2.
 
-> Should I give it a shot for v2?
+That looks reasonable to me. Do I need to respond directly to the
+github proposal, or is my response here OK?
 
-Yes please. The DTB list already reaches make_fit.py from the Makefile
-through the @file argument, so the new file only has to say which DTBs
-to include and what metadata each one gets. We'll need a simple
-per-platform file next to the .dts files, passed with a new option
-through FIT_EXTRA_ARGS
+Yeah, I can point to it in v2.
 
-Running fdtfactor can then be another make_fit.py option, like --decompose-dtbs
 
-[1] https://github.com/open-source-firmware/flat-image-tree/pull/66
+> > Should I give it a shot for v2?
+>
+> Yes please. The DTB list already reaches make_fit.py from the Makefile
+> through the @file argument, so the new file only has to say which DTBs
+> to include and what metadata each one gets.
 
-Regards,
-Simon
+FWIW, I still liked the idea of limiting the DTBs that were actually
+compiled based on the list of DTBs included in the FIT image. My
+current v2 draft still has that feature. It adds an argument to
+make_fit.py where we can give it the "fitconfig" file and it can spit
+out the list of dtbs. Then the kernel Makefiles use this to limit
+things. If you don't like that idea, though, it wouldn't be the end of
+the world to (slightly wastefully) compile a bunch of DTBs that we
+don't need.
+
+
+> We'll need a simple
+> per-platform file next to the .dts files, passed with a new option
+> through FIT_EXTRA_ARGS
+
+At the moment my v2 draft doesn't just use the FIT_EXTRA_ARGS but uses
+something like this (which will be documented).
+
+FIT_CONFIG=3Dgoogle/lga.fitconfig
+
+Hopefully that looks good.
+
+
+> Running fdtfactor can then be another make_fit.py option, like --decompos=
+e-dtbs
+>
+> [1] https://github.com/open-source-firmware/flat-image-tree/pull/66
+
+I don't think it buys us anything to have make_fit call fdtfactor
+directly, does it? The kernel build can just call it. That also makes
+it easier for people to pass non-standard options into fdtfactor if
+they want (via FDTFACTOR_ARGS)
+
+-Doug
