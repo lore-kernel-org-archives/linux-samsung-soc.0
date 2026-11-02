@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793646848;
-	b=wWihUATqbKc4/bsREcABc3pwSL2ZMflB1CI69cAEkxwFirltPb8mUMC59wv75KhEFVUQ
-	 MNPE4GWoO7PQzlXJtPqjP65ga+bepp0ivChccmEZl2xvIkAVQLX4sPkAgs66KPcbpypdh
-	 F+eHnrwxrHUsSavEGk2Nt1g0XgTqbm8dqvpcxpHoyTZ+ixXlMu3Kf5bPqAH7gFWZie9Ba
-	 8vXjFZPuDlYKVBvw8RGmBZW0NpEwiNPBu4pUDotDnlI5hTZrnApN2+yXdt4u7lPrYInP4
-	 2VGCuknYUph/VmSoTw3pirw8g6iI6uDXmisFWR4GUCelN7GkJGVFqT9WfNfxQG7qMVg==
+	t=1793646876;
+	b=tz8B9VMeYnTa8ns4hjFTw9ywbUD+0OSVW3Gm4tyKeKIDcGs/Taaj5DkmzE+RXzkDYpgT
+	 6tVgHghWvVV/XTK9JkbQJvBnrDAFd2ZHB7C6qC+bxHRFMG23OSMKNbqpGqDFoo21RrO/h
+	 hGd+qWWAqKCgqFvhm+f0hXArMCb9XZx0aTqpcPMeXmCN7zK4+pAKvXmcZ/2/1SZathtlY
+	 XUGSMYVdOTTTC9KB4PbjKgRfYRA8S3q39TjC3wKLOjrs/Yn54C53gV1bC7SATavSkvff9
+	 6ez60Llnl65TFntJ0b4JtNjVbT+AqtKAAkHGR1ZDxBXH9Aj7rzaiAir/B9FGpZRy+3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793646848;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793646876;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
 	 From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
 	 Content-Transfer-Encoding:X-Mailer:Thread-Index:Content-Language:
 	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
 	 X-CMS-RootMailID:References;
-	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
-	b=oIBIoWUk9+DHVDEyYpSj03iC6bf5H0Bc5Qi4lgm3RQHodevQX3m0V7yPLKxYHM0x5o2P
-	 eOy5FvKa9sg87uy+qi4Ff3RbWiYHWyARXlMCmZL60zBEBDFuZnsEkCb505nQrVsY6tucl
-	 /yEZyryJVnfF/U2TjP+g3GDZrIsfwSdPLWdzDGLhg/CMgl1f/tkovJCcz51M+tYmqYXYA
-	 en12+OFAi39xGNMRCNImkanu0ce5p6XHgQKZcBP14MKk+EN3pH5xe8XxpZvFbMKo7Khcm
-	 PCfeFq0W6d/aYrTZltPNqFBPUHjwvyk9CdRD7GKIpgRh2CqyfOC/ppguTd2VahxMZCA==
+	bh=K5vnM8YhB4kIhJqnDANi3dlcipt70T+QjZRu0IBl/g0=;
+	b=UA+zYLLCj0wF3uapS5IZBnYU3plk3/sbCm4rIcbLtLBip53g1akIxKd9CayXKXlEuDCk
+	 Hgsr1CbzPaZnkcKDjQ6faMVYg2LyfbQWnBswcthAtr9bBsBOOBai4xsdj3Z4+ESKoexYa
+	 mnxyFAAL69Gdd/XCUoUAV1jxdD35bbniIaLpbQtZlQOX5MjvGl/bFJxHnbyw9hbFX8vXD
+	 fLC3EagkDcwoh5DzB1ZPDeCiEM11tZi4PTuqOmfvCspyQRxzVVdLTxJib+3BBPBaGAJMg
+	 IveM8zh0mxyEDzwczrxgbpbfWwMsa15Nr2L5lWtmyFK+mbzzczSqTd2rkgF/M1xMXkg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=ekETOlMv;
 	arc=none smtp.remote-ip=210.118.77.12
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987F2606A329
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 987F2606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E728E606A327
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E728E606A327
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261102191404euoutp028cfd876c3b8c0b2b9bb89186d0fea523~kUE1ETdZn0307803078euoutp02l
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261102191404euoutp028cfd876c3b8c0b2b9bb89186d0fea523~kUE1ETdZn0307803078euoutp02l
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=ekETOlMv
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261102191433euoutp020eb16aa226c87d09c237e2ff63506bbf~kUFP9ApME0304803048euoutp02f
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261102191433euoutp020eb16aa226c87d09c237e2ff63506bbf~kUFP9ApME0304803048euoutp02f
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793646844;
-	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
+	s=mail20170921; t=1793646873;
+	bh=K5vnM8YhB4kIhJqnDANi3dlcipt70T+QjZRu0IBl/g0=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=IDdfODWA9YvYANVuwxFWdiih5hEGTdWMuYui9lTZYzfL2x5YdYnD+xy8ZYVpVr7rm
-	 uORYJfOt7+ALFxDN5DkexOLuMdzOuZO2WZxmw5dEKItqmMl+AL2JMjlTWPBSvre5xR
-	 oWBuNjbRfG8KMDTLi48jUo4DxVGHZ4lbbAT26sbs=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261102191403eucas1p143816f92365b447ec95071d46346e3d6~kUE0nHbmq2938329383eucas1p1Q;
-	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
-Received: from AMDN5751 (unknown [106.210.134.141]) by eusmtip1.samsung.com
+	b=ekETOlMvR9vpydy2eIaoNAz5KlfbKjyS86Myo14mxXMXqeTLQAJl8S9amQyADCe+u
+	 vfc94yFZTJa57++NJUL8xlQanldvxSG/YlwhmY/YQBlr5yR686SdarpFEpLgTLSlWD
+	 7+kpgZg1QKOkZzxGE3kt0rVBe00qN2+uHahtlee8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261102191432eucas1p256fd745ae052f1039f94f890a7b1456d~kUFPsNo2B1897418974eucas1p2t;
+	Mon,  2 Nov 2026 19:14:32 +0000 (GMT)
+Received: from AMDN5751 (unknown [106.210.134.141]) by eusmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20261102191403eusmtip1f42027cdbbe547c1d58e82c8ae5ad0d7~kUE0IlKdS2525825258eusmtip1r;
-	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
+	20261102191432eusmtip20a3287f66e83265d7cdaeb472b33180a~kUFPNnUSm0447204472eusmtip2_;
+	Mon,  2 Nov 2026 19:14:32 +0000 (GMT)
 From: "Sylwester Nawrocki" <s.nawrocki@samsung.com>
 To: "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
 	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
@@ -62,11 +62,11 @@ Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Chanwoo Choi'"
 	<sboyd@kernel.org>, "'Brian	Masney'" <bmasney+clk@redhat.com>, "'Jerome
  Brunet'" <jbrunet+clk@baylibre.com>, "'Henrik Grimler'" <henrik@grimler.se>,
 	<stable@vger.kernel.org>
-In-Reply-To: <20261030075325.517182-2-m.szyprowski@samsung.com>
-Subject: RE: [PATCH v3 1/3] clk: samsung: exynos-audss: Propagate
- -EPROBE_DEFER from input clocks
-Date: Mon, 2 Nov 2026 20:14:03 +0100
-Message-ID: <000001dd6afe$5302e900$f908bb00$@samsung.com>
+In-Reply-To: <20261030075325.517182-3-m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3 2/3] clk: samsung: exynos5-subcmu: Use
+ pm_runtime_get_sync() during probe
+Date: Mon, 2 Nov 2026 20:14:32 +0100
+Message-ID: <000101dd6afe$64582a80$2d087f80$@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -78,17 +78,17 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKpVTperXi7BFRv9rlREf4hmhkl4wFbmI8MAoPLQMe1ZFafoA==
+Thread-Index: AQKpVTperXi7BFRv9rlREf4hmhkl4wHG2DCpAVSLecC1ancaoA==
 Content-Language: pl
-X-CMS-MailID: 20261102191403eucas1p143816f92365b447ec95071d46346e3d6
+X-CMS-MailID: 20261102191432eucas1p256fd745ae052f1039f94f890a7b1456d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-RootMTR: 20261030075334eucas1p14657a963949b4a32165d667f387a9389
 X-EPHeader: CA
-X-CMS-RootMailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-CMS-RootMailID: 20261030075334eucas1p14657a963949b4a32165d667f387a9389
 References: <20261030075325.517182-1-m.szyprowski@samsung.com>
-	<CGME20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55@eucas1p2.samsung.com>
-	<20261030075325.517182-2-m.szyprowski@samsung.com>
+	<CGME20261030075334eucas1p14657a963949b4a32165d667f387a9389@eucas1p1.samsung.com>
+	<20261030075325.517182-3-m.szyprowski@samsung.com>
 
 > -----Original Message-----
 > From: Marek Szyprowski <m.szyprowski=40samsung.com>
@@ -101,24 +101,16 @@ ter=20Griffin=20<peter.griffin=40linaro.org>;=20Alim=0D=0A>=20Akhtar=20<ali=
 m.akhtar=40samsung.com>;=20Stephen=20Boyd=20<sboyd=40kernel.org>;=20Brian=
 =0D=0A>=20Masney=20<bmasney+clk=40redhat.com>;=20Jerome=20Brunet=0D=0A>=20<=
 jbrunet+clk=40baylibre.com>;=20Henrik=20Grimler=20<henrik=40grimler.se>;=0D=
-=0A>=20stable=40vger.kernel.org=0D=0A>=20Subject:=20=5BPATCH=20v3=201/3=5D=
-=20clk:=20samsung:=20exynos-audss:=20Propagate=20-EPROBE_DEFER=0D=0A>=20fro=
-m=20input=20clocks=0D=0A>=20=0D=0A>=20exynos_audss_clk_probe()=20fetches=20=
-the=20optional=20pll_ref/pll_in/cdclk/=0D=0A>=20sclk_audio/sclk_pcm_in=20in=
-put=20clocks=20with=20devm_clk_get()=20and=20only=0D=0A>=20checks=20IS_ERR(=
-)=20before=20falling=20back=20to=20a=20default=20parent=20clock=20name.=0D=
-=0A>=20This=20means=20a=20transient=20-EPROBE_DEFER=20(e.g.=20because=20the=
-=20clock=20provider=0D=0A>=20behind=20=22pll_in=22=20has=20not=20registered=
-=20its=20real=20clock=20yet)=20is=20silently=0D=0A>=20treated=20the=20same=
-=20as=20the=20clock=20simply=20not=20being=20present,=20so=20the=0D=0A>=20m=
-out_audss/mout_i2s=20muxes=20get=20permanently=20registered=20with=20the=20=
-wrong=0D=0A>=20parent=20name.=0D=0A>=20=0D=0A>=20Fix=20this=20by=20checking=
-=20for=20-EPROBE_DEFER=20on=20each=20of=20these=20clocks=20right=0D=0A>=20a=
-fter=20fetching=20them,=20before=20anything=20is=20registered,=20and=20bail=
-ing=20out=0D=0A>=20of=20probe=20so=20it=20gets=20retried=20once=20the=20rea=
-l=20clocks=20are=20available.=0D=0A>=20=0D=0A>=20Fixes:=20547f33509ccc=20(=
-=22clk:=20exynos-audss:=20allow=20input=20clocks=20to=20be=20specified=20in=
-=0D=0A>=20device=20tree=22)=0D=0A>=20Cc:=20stable=40vger.kernel.org=0D=0A>=
-=20Signed-off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>=0D=0A=
-=0D=0AReviewed-by:=20Sylwester=20Nawrocki=20<s.nawrocki=40samsung.com>=0D=
-=0A=0D=0A
+=0A>=20stable=40vger.kernel.org=0D=0A>=20Subject:=20=5BPATCH=20v3=202/3=5D=
+=20clk:=20samsung:=20exynos5-subcmu:=20Use=0D=0A>=20pm_runtime_get_sync()=
+=20during=20probe=0D=0A>=20=0D=0A>=20The=20clocks=20are=20registered=20righ=
+t=20after=20pm_runtime_get(),=20which=20only=0D=0A>=20schedules=20a=20resum=
+e=20asynchronously=20and=20doesn't=20guarantee=20the=20device=20(and=0D=0A>=
+=20its=20power=20domain)=20is=20active=20yet.=20Use=20pm_runtime_get_sync()=
+=20to=20ensure=20the=0D=0A>=20power=20domain=20is=20really=20on=20while=20t=
+he=20clock=20registers=20are=20accessed=20during=0D=0A>=20the=20registratio=
+n.=0D=0A>=20=0D=0A>=20Fixes:=20b06a532bf1fa=20(=22clk:=20samsung:=20Add=20E=
+xynos5=20sub-CMU=20clock=20driver=22)=0D=0A>=20Cc:=20stable=40vger.kernel.o=
+rg=0D=0A>=20Signed-off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.c=
+om>=0D=0A=0D=0AReviewed-by:=20Sylwester=20Nawrocki=20<s.nawrocki=40samsung.=
+com>=0D=0A=0D=0A
