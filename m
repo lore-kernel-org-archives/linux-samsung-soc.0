@@ -1,55 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793646772;
-	b=a3quHF96U4ZXdbMAHC+lUe8aj3Hq9DYcu+u4GIjuJcK4o7DzELaQpXODgJTo++oqKoCv
-	 QZiW2/pGhxzJITiI3+I3fldf3LxI9gHE0b45mcf3Uhpjsh++Xu4J9rYHthdKtc2xK2aUv
-	 6bNw/ZFjVWKPhYxHLeZDhCuAaxhDK0Pt+xRKMsj7ZP+Trwwr+wooiScarVWGRQPuBEtyG
-	 vQAEkdvuGvNpla44TQdPuvLDv7/AUefZTeEKaiEecj82xKgBkI/x6jE/5ZKyjSsSRcf63
-	 UM17KpY6jL07acIgK0im5UahLuQLeLOvotVdOrU8At3tlC1Kn5F/XYO+OlBWDp/1c0A==
+	t=1793646848;
+	b=wWihUATqbKc4/bsREcABc3pwSL2ZMflB1CI69cAEkxwFirltPb8mUMC59wv75KhEFVUQ
+	 MNPE4GWoO7PQzlXJtPqjP65ga+bepp0ivChccmEZl2xvIkAVQLX4sPkAgs66KPcbpypdh
+	 F+eHnrwxrHUsSavEGk2Nt1g0XgTqbm8dqvpcxpHoyTZ+ixXlMu3Kf5bPqAH7gFWZie9Ba
+	 8vXjFZPuDlYKVBvw8RGmBZW0NpEwiNPBu4pUDotDnlI5hTZrnApN2+yXdt4u7lPrYInP4
+	 2VGCuknYUph/VmSoTw3pirw8g6iI6uDXmisFWR4GUCelN7GkJGVFqT9WfNfxQG7qMVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793646772;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=jiTkIxHuhAkziw0ro13jvW8WYMk3a+CT3sljb5fNVfs=;
-	b=HE6gFXEe4e0VrzI9zXEjEPNRHgqqnAo9umvSyZ7rovWf4UjxIodP1iraXTEaevYGu2op
-	 owzILLqbgxgAKAAINmuqEVsasScOjZkLfIkX9idC6RqXkqIG+fx3A9+a8MOgObNfRo6en
-	 UpgW+1BcfllYvh5g7etOfwX6GAP1FJzKvljh32LqzPuMEnzSOLBB/hV/rQy29DZI+WHD4
-	 fVu9hlNDFovGyW8s5ERSRoqgZBN1et9dWv+pgl2V0YPqvarZqu0IenkewDyMKMYEyQN9c
-	 5Yc3EwCbUH0BiCIxTT676Zv6jSbE3Jvxk/Rp3lkf3B14MCg8jpHEgUG4fRtULTq5IWA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793646848;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:X-Mailer:Thread-Index:Content-Language:
+	 X-CMS-MailID:X-Msg-Generator:Content-Type:X-RootMTR:X-EPHeader:
+	 X-CMS-RootMailID:References;
+	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
+	b=oIBIoWUk9+DHVDEyYpSj03iC6bf5H0Bc5Qi4lgm3RQHodevQX3m0V7yPLKxYHM0x5o2P
+	 eOy5FvKa9sg87uy+qi4Ff3RbWiYHWyARXlMCmZL60zBEBDFuZnsEkCb505nQrVsY6tucl
+	 /yEZyryJVnfF/U2TjP+g3GDZrIsfwSdPLWdzDGLhg/CMgl1f/tkovJCcz51M+tYmqYXYA
+	 en12+OFAi39xGNMRCNImkanu0ce5p6XHgQKZcBP14MKk+EN3pH5xe8XxpZvFbMKo7Khcm
+	 PCfeFq0W6d/aYrTZltPNqFBPUHjwvyk9CdRD7GKIpgRh2CqyfOC/ppguTd2VahxMZCA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ggir4WL2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA710606A329
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987F2606A329
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 987F2606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ggir4WL2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D2B1F00A1C
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793646771;
-	bh=jiTkIxHuhAkziw0ro13jvW8WYMk3a+CT3sljb5fNVfs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ggir4WL2ENvsjGBc0Dunfrx15FRVSzPAYHhJCAnJccJhU5tldMV9gI8IqcAdNUZiR
-	 2UA+zEf/4YNXOFqguwEvBo6Ycdv1LFLGR67utf391GnrSh3fWG1npEeRL22FdtWBGU
-	 dRORbuEHJ0QdCHKiKtc59NNFow9sUVjPjPsuGhS3KcdBBxbjucmAwbooedJWPoERm8
-	 HBOXPWruv3GhbnqPxO1C+D1nmA5y3Mi9nWo4sv9E4sNreP3D4oxJg0qJ5+O2a9YYnX
-	 710mvIJV1YnfILddxx7kxqov+tp9VwVjaZUpMKd/GGrIWqckR2216ZSYt6UquMKCqf
-	 8zxg1czW6VuBg==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c247f6687dcso590006966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2026 11:12:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBwtDBGQj3a8KxQoQNWpFV/Zc/te1BWtrQ4tfHBKUSjveUkkZDLRZX+6p6Q8vPkW8mg3UGat37iXyf/8WkzvsNZz9w==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIfToaHGw3iA3MsI37/lslB+jpxuKjE7+WGSQhyOrYUoU+s4ews
-	9nXSe3HuZ4DHxL+PTSHY2O588OnHFd9ETuwVCUiqx1fuZ23viJwEC0PwzUlj9ftm0ooSO57FHcW
-	WhGF641mmu4Dn/4Cj1GFuqyNKdPhkkA==
-X-Received: by 2002:a17:906:eec9:b0:c26:1648:a076 with SMTP id
- a640c23a62f3a-c4ca7abf2aemr893729966b.49.1793646769977; Mon, 02 Nov 2026
- 11:12:49 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IDdfODWA
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261102191404euoutp028cfd876c3b8c0b2b9bb89186d0fea523~kUE1ETdZn0307803078euoutp02l
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Nov 2026 19:14:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261102191404euoutp028cfd876c3b8c0b2b9bb89186d0fea523~kUE1ETdZn0307803078euoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1793646844;
+	bh=s2e7rhOdqB7ux1alseBahOqoYTov3xDVLS0bIJyRYu0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=IDdfODWA9YvYANVuwxFWdiih5hEGTdWMuYui9lTZYzfL2x5YdYnD+xy8ZYVpVr7rm
+	 uORYJfOt7+ALFxDN5DkexOLuMdzOuZO2WZxmw5dEKItqmMl+AL2JMjlTWPBSvre5xR
+	 oWBuNjbRfG8KMDTLi48jUo4DxVGHZ4lbbAT26sbs=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261102191403eucas1p143816f92365b447ec95071d46346e3d6~kUE0nHbmq2938329383eucas1p1Q;
+	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
+Received: from AMDN5751 (unknown [106.210.134.141]) by eusmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261102191403eusmtip1f42027cdbbe547c1d58e82c8ae5ad0d7~kUE0IlKdS2525825258eusmtip1r;
+	Mon,  2 Nov 2026 19:14:03 +0000 (GMT)
+From: "Sylwester Nawrocki" <s.nawrocki@samsung.com>
+To: "'Marek Szyprowski'" <m.szyprowski@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Peter Griffin'" <peter.griffin@linaro.org>,
+	"'Alim	Akhtar'" <alim.akhtar@samsung.com>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, "'Brian	Masney'" <bmasney+clk@redhat.com>, "'Jerome
+ Brunet'" <jbrunet+clk@baylibre.com>, "'Henrik Grimler'" <henrik@grimler.se>,
+	<stable@vger.kernel.org>
+In-Reply-To: <20261030075325.517182-2-m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3 1/3] clk: samsung: exynos-audss: Propagate
+ -EPROBE_DEFER from input clocks
+Date: Mon, 2 Nov 2026 20:14:03 +0100
+Message-ID: <000001dd6afe$5302e900$f908bb00$@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -59,51 +76,49 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261026102658.968138-1-m.szyprowski@samsung.com> <179362278569.150793.16322788098732007689.b4-ty@b4>
-In-Reply-To: <179362278569.150793.16322788098732007689.b4-ty@b4>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 2 Nov 2026 13:12:38 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ7mkOL6kBwjDV=-A99zpmHWTFdc+8TunXG5EfueiFDrQ@mail.gmail.com>
-X-Gm-Features: AclHuK8yGh3NSN4CvPkoAvulZs_KXn319zDDRWAbtCSGLwxtYjAagwVTktYpSvU
-Message-ID: <CAL_JsqJ7mkOL6kBwjDV=-A99zpmHWTFdc+8TunXG5EfueiFDrQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: exynos: tm2: fix wm5110 reset/ldoena GPIO properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKpVTperXi7BFRv9rlREf4hmhkl4wFbmI8MAoPLQMe1ZFafoA==
+Content-Language: pl
+X-CMS-MailID: 20261102191403eucas1p143816f92365b447ec95071d46346e3d6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+X-EPHeader: CA
+X-CMS-RootMailID: 20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55
+References: <20261030075325.517182-1-m.szyprowski@samsung.com>
+	<CGME20261030075333eucas1p21e27f19273b7e71c53d6ef620e52bf55@eucas1p2.samsung.com>
+	<20261030075325.517182-2-m.szyprowski@samsung.com>
 
-On Mon, Nov 2, 2026 at 6:34=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
->
-> On Mon, 26 Oct 2026 11:26:56 +0100, Marek Szyprowski wrote:
-> > The wm5110 audio-codec node uses the legacy "wlf,reset" and
-> > "wlf,ldoena" property names without the standard "-gpios" suffix.
-> > gpiolib-of.c only recognizes these bare names as aliases for the
-> > correct "wlf,reset-gpios"/"wlf,ldoena-gpios" properties, and that
-> > alias support is compiled in only when CONFIG_MFD_ARIZONA and
-> > CONFIG_REGULATOR_ARIZONA_LDO1 are enabled. When those options are
-> > disabled, devm_gpiod_get() fails to find the GPIOs, leaving the
-> > codec without a working reset/LDO enable line.
-> >
-> > [...]
->
-> Applied, thanks!
->
-> [1/1] arm64: dts: exynos: tm2: fix wm5110 reset/ldoena GPIO properties
->       https://git.kernel.org/krzk/linux/c/76ef3ed714ac178cda84ef39733d4f7=
-12e682081
-
-Now in next:
-
-arch/arm64/boot/dts/exynos:2:1
-   Schema warnings:1
-      2 audio-codec@0 (wlf,wm5110): Unevaluated properties are not
-allowed ('wlf,ldoena-gpios', 'wlf,reset-gpios' were unexpected)
-
-sashiko pointed this out.
-
-Rob
+> -----Original Message-----
+> From: Marek Szyprowski <m.szyprowski=40samsung.com>
+> Sent: pi=C4=85tek,=2030=20pa=C5=BAdziernika=202026=2008:53=0D=0A>=20To:=
+=20linux-samsung-soc=40vger.kernel.org;=20linux-clk=40vger.kernel.org=0D=0A=
+>=20Cc:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>;=20Krzysztof=20=
+Kozlowski=0D=0A>=20<krzk=40kernel.org>;=20Sylwester=20Nawrocki=20<s.nawrock=
+i=40samsung.com>;=20Chanwoo=0D=0A>=20Choi=20<cw00.choi=40samsung.com>;=20Pe=
+ter=20Griffin=20<peter.griffin=40linaro.org>;=20Alim=0D=0A>=20Akhtar=20<ali=
+m.akhtar=40samsung.com>;=20Stephen=20Boyd=20<sboyd=40kernel.org>;=20Brian=
+=0D=0A>=20Masney=20<bmasney+clk=40redhat.com>;=20Jerome=20Brunet=0D=0A>=20<=
+jbrunet+clk=40baylibre.com>;=20Henrik=20Grimler=20<henrik=40grimler.se>;=0D=
+=0A>=20stable=40vger.kernel.org=0D=0A>=20Subject:=20=5BPATCH=20v3=201/3=5D=
+=20clk:=20samsung:=20exynos-audss:=20Propagate=20-EPROBE_DEFER=0D=0A>=20fro=
+m=20input=20clocks=0D=0A>=20=0D=0A>=20exynos_audss_clk_probe()=20fetches=20=
+the=20optional=20pll_ref/pll_in/cdclk/=0D=0A>=20sclk_audio/sclk_pcm_in=20in=
+put=20clocks=20with=20devm_clk_get()=20and=20only=0D=0A>=20checks=20IS_ERR(=
+)=20before=20falling=20back=20to=20a=20default=20parent=20clock=20name.=0D=
+=0A>=20This=20means=20a=20transient=20-EPROBE_DEFER=20(e.g.=20because=20the=
+=20clock=20provider=0D=0A>=20behind=20=22pll_in=22=20has=20not=20registered=
+=20its=20real=20clock=20yet)=20is=20silently=0D=0A>=20treated=20the=20same=
+=20as=20the=20clock=20simply=20not=20being=20present,=20so=20the=0D=0A>=20m=
+out_audss/mout_i2s=20muxes=20get=20permanently=20registered=20with=20the=20=
+wrong=0D=0A>=20parent=20name.=0D=0A>=20=0D=0A>=20Fix=20this=20by=20checking=
+=20for=20-EPROBE_DEFER=20on=20each=20of=20these=20clocks=20right=0D=0A>=20a=
+fter=20fetching=20them,=20before=20anything=20is=20registered,=20and=20bail=
+ing=20out=0D=0A>=20of=20probe=20so=20it=20gets=20retried=20once=20the=20rea=
+l=20clocks=20are=20available.=0D=0A>=20=0D=0A>=20Fixes:=20547f33509ccc=20(=
+=22clk:=20exynos-audss:=20allow=20input=20clocks=20to=20be=20specified=20in=
+=0D=0A>=20device=20tree=22)=0D=0A>=20Cc:=20stable=40vger.kernel.org=0D=0A>=
+=20Signed-off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>=0D=0A=
+=0D=0AReviewed-by:=20Sylwester=20Nawrocki=20<s.nawrocki=40samsung.com>=0D=
+=0A=0D=0A
