@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793622424;
-	b=nDbZNo9Vw3h3WXBYfUN+9T2bmZjUs+I5rr5jvBKSOHrBHnnK4tke2pHTy20aAF2Lh6yL
-	 5MQ1Hi/xRNSRmaSILaJU44MVYdPF2YtvwmuQyFY+/odTxHxeMha6bF2++C9TI4i+K5mVu
-	 0IB7uJpA3c7k0V9tOMLZtZRA6dU4xXM+WQTWZXjRsn7SZB6Db6r0ARRXniRCeZbr1L7Vx
-	 sqf0uKHgyraEm8+FtYp1OtZ99nYuxcUY0i8vmZlrpffLUPZJLWcd/oT6MmXnzvKkVF8S+
-	 9j5F9AizQyd9itVJcBCPNW7zIT2+OBwW8BX3XZ3BiIReJyarh9M82/WxHPyhzsWmq2g==
+	t=1793622493;
+	b=z3XP7YyNbY7068ksb9ErYPrB+O5IClAXfoJ7T45s2uRLV1CjPTHvrC3LnKWu1khDBzHI
+	 UhW+xmRWgbFhtcki6WiNM3yJq9J6umynUQLHL/5Z1XqGsF5H/su3odJPNdQn/0nisrJBX
+	 gOSOO14jQ75mmO/5Agugvv4aZPBM8GFgwBl03QwoWAqPZnGL+a/ShOmZxjbUdQ8f3FHdc
+	 /Zw3VCQdWg5FzwI44S4XSQMcvalq/vkqrLAjdaIGfszBzekm3ljf+wg1vZJrrb17ZJ6mD
+	 5Tv/wKjUchwTmb4OScuPzbLu045CZqi/F4kmqUZA2xnmxLS942D0zRVyemVyIy04v3w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793622424;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793622493;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=vNNddRAdMLxK0ANAKEMUtJ2LppMU0bveEB1/Y3XdFzc=;
-	b=0WQP3UUKPnupmwlTQtKZDj5fybUgvKKcwiXFvSUnxgghZGGxDu9TEovlYtT71jkmi/yS
-	 +QBxwaGPYCqo99BkHGAyRyPMm1eLcNUzhFqUNj/91NVJ2d4QiezgrpfO955VBMwQydXhq
-	 GSu4Yx2l2XEHH5V+7h3pweCID+Y7I7GOUugiFRo+12W7tAMLhMeI2ha5qPZVYJ4qDD632
-	 eirmwlzkWQ7HwNQVBsGastZ7aKJlxzVHEkL9pGO6nzIgfGw8yqt7JLSOGShn2ihOiwZOA
-	 2rI6+wrqjYwmpbWbfAMKZ2KooBbhnFuW6kF3konaPoSbCEJQdThV4Kw4+mnwMQRp40w==
+	bh=4X3VkScTDGjLaIOcWr8h5itegyLdzGxm82n+db9CBE8=;
+	b=SGBUZX3z+fe55yVlzXHMvkMZE6sejSngvkhJZ7JLH4yq2egbNlTsVPzZlhfgLggnLaaL
+	 miozREVO0Ih6XrgnhRH8ZOhzivGkXmLZwSsnMyrGM3FKMupIXoj4RKAsUBO32D6LxBzS7
+	 zxgUAbQi2/SIKwA+AeloUkstvaVzsW9NR1pwW3dOs9mue8Jp1Xg68LRMIs8H0y16DHvXq
+	 jGdhJ9S7pLjyKIZQ5HTyl8DffDCWytuWRX2rV58tO3N9WApUGU5/XiKQ2MAeVxFPiBMZK
+	 V4ooiDcuHLah6EFqeYqkjuK8KUr6msgMNGLZskMhIeqW4edVHeBrapFoLwA83dON7+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=omsEJ1Sv;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mW9gyDUB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7618606AA33;
-	Mon,  2 Nov 2026 12:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA39606A32C;
+	Mon,  2 Nov 2026 12:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=omsEJ1Sv
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9A01F00A16;
-	Mon,  2 Nov 2026 12:27:00 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mW9gyDUB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF2791F00A16;
+	Mon,  2 Nov 2026 12:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793622423;
-	bh=vNNddRAdMLxK0ANAKEMUtJ2LppMU0bveEB1/Y3XdFzc=;
+	s=k20260515; t=1793622492;
+	bh=4X3VkScTDGjLaIOcWr8h5itegyLdzGxm82n+db9CBE8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=omsEJ1SvO/+LOhonjiNRdB6u7UNG+jPypFLSjmzfHPCNJoptNkpvGVY1GSLVktE1p
-	 LQj2RdXSSuDRiXb8vdq7wxNXTebCUKykwbxy0oKDNlvFWR1NBEx4MUmB+fswhTjfYs
-	 IEed13ubqIcp2yJoCtstO/kaOpo2Q2dI6Oemi4S75QaXdm6NAHkdUPcnJZ0LkdQKi8
-	 Xq+u3E//g0r3u3ahG3h+WkP3ei+9yunpUfAv3d/R9dhTGAsTmKGmD3HHEgsoVXx4Vs
-	 q8HFO/z1nMNtRrpcNV0zD0moMK/gPX0TC8F1+pQM2m8YelJ0Nh8SrAmLcq46WitN02
-	 h4TTcYkU4f3KA==
-Message-ID: <eeca871d-ca1f-4cd4-b40a-570f0805dbd1@kernel.org>
-Date: Mon, 2 Nov 2026 13:26:58 +0100
+	b=mW9gyDUBHbks9XJTS4RNb5ybmVqoKT57U32q8MC7yuPdhs0/mqYYyE7RDwPrcBb4p
+	 jnN30S8rPofjXpH6iMDk3iAb9MnGt8QuqDrOvIwHcSqou8dOuAiN3iYviF12rqQbLH
+	 gSDEH5eST53x3Ghkt53Fe7dNkaOKk6WcA8ukqKjsRdIXttz6c85FHfiGbulQJD8fsy
+	 MpPylsZhpZr/P6/Srdp9G6dLPiZR/eesh47pL/ZTp5Fsvdf3/j9lUG9B+KszFesTkv
+	 U4Z13nKfyavB+daW1TrbRcxuhWODS0MNZ6oVA3Erc+rZcNhlkGyhU5eCzso43/iW21
+	 rNvHXE5Jeb8Jw==
+Message-ID: <8ab6e4fd-6a84-4a9b-9f2f-311d8a754158@kernel.org>
+Date: Mon, 2 Nov 2026 13:28:07 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -52,15 +52,15 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: samsung: exynos4210-universal_c210: fix BCM4330
+Subject: Re: [PATCH] ARM: dts: samsung: exynos4210-trats: fix BCM4330
  Bluetooth GPIOs
 To: Marek Szyprowski <m.szyprowski@samsung.com>,
  linux-samsung-soc@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Peter Griffin <peter.griffin@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, stable@vger.kernel.org
-References: <CGME20261026103612eucas1p10fbe3777394cc604419299509c22a2e7@eucas1p1.samsung.com>
- <20261026103607.968295-1-m.szyprowski@samsung.com>
+References: <CGME20261026103600eucas1p25b6792a9a244d71a5f2ca8d06c9e79f8@eucas1p2.samsung.com>
+ <20261026103555.968273-1-m.szyprowski@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,35 +106,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261026103607.968295-1-m.szyprowski@samsung.com>
+In-Reply-To: <20261026103555.968273-1-m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/10/2026 11:36, Marek Szyprowski wrote:
-> BT_REG_ON (BT_EN) line of the BCM4330 WLAN/BT combo chip is connected to
-> the XMMC1CMD pad (GPK1[1]), while the XMDMADDR_4 pad (GPE1[4]) is
-> connected to BT_RST (BT_nRST). The Bluetooth node however used GPE1[4]
-> as shutdown-gpios and left the real BT_REG_ON line undriven, so it was
-> kept low by the default SoC pull-down.
+On 26/10/2026 11:35, Marek Szyprowski wrote:
+> According to the board schematic, BT_REG_ON (BT_EN) line of the BCM4330
+> WLAN/BT combo chip is connected to GPL0[4], while GPL1[0] is connected
+> to BT_RST (BT_nRST). The Bluetooth node however used GPL1[0] as
+> shutdown-gpios and left the real BT_REG_ON line undriven, so it was kept
+> low by the default SoC pull-down.
 > 
 > This worked only by accident: the internal regulators of the BCM4330 are
 > enabled when either WL_REG_ON or BT_REG_ON is high, so the Bluetooth core
 > was powered via WL_REG_ON driven by the SDIO WLAN power sequence, while
-> toggling GPE1[4] only released it from reset. Once 'cap-power-off-card'
+> toggling GPL1[0] only released it from reset. Once 'cap-power-off-card'
 > was added to the SDIO node, the MMC core started to power off the WLAN
 > part (asserting WL_REG_ON low) whenever it was idle, what cut off the
-> Bluetooth power as well and resulted in HCI command timeouts.
+> Bluetooth power as well and resulted in HCI command timeouts:
 > 
-> Fix this by using GPK1[1] as shutdown-gpios and describing GPE1[4] as
-> active-low reset-gpios. While touching this, move the GPE1[4] pin
-> configuration to the pinctrl_0 node, as GPE1 bank belongs to that pin
-> controller, what fixes the following error:
+>   Bluetooth: hci0: Opcode 0x0c03 failed: -110
 > 
->   samsung-pinctrl 11000000.pinctrl: does not have pin group gpe1-4
+> Fix this by using GPL0[4] as shutdown-gpios and describing GPL1[0] as
+> active-low reset-gpios, together with the respective pin configuration.
 > 
-> Fixes: 8929d4a9d204 ("ARM: dts: exynos: Enable BlueTooth support for Universal C210 board")
+> Fixes: 2fd18f0a8de6 ("ARM: dts: exynos: add bluetooth support for midas & trats boards")
 
-Unknown SHA.
+Another unknown SHA.
 
 Best regards,
 Krzysztof
