@@ -1,70 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=79.135.106.104
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793616417;
-	b=Yq+2jL5VXgOyTYCv0prgBwYWIUqR04XRzrWDOtua23R9YlT0c/5Z0uITNyM31HFt+Xsp
-	 pY3qcf9rlmCcyJgWVI1+na8XAAfAB8a68gOCQBe/KztGHPx2VMiPPwDYhiTxwQPtmMIVI
-	 k7EKGZ0vEVFbsr7/YJszaR1JFkzFh65ed5lr1iruo7ac+AQXjjhMfo57f3S34h7GF4EcS
-	 mrfjiCJl9+0fKsHmOGwtMZauj8oA0Fgh2sDyhsYxkkkgh6ayWz8jUB0w1dRyFRy9bwEfP
-	 F2rCPYsEijaAgOi0c5jl3+zeTyOjJNZKHbAzK4hR9y7oyNAMNudRnNYJua7fJ7dCKRg==
+	t=1793617173;
+	b=1CosMDcqxKQAALYzvl63jwKd/g9a2VzcxjBtbw5LwFKyHOsKSGt0zeM1/tbdyz7bOImX
+	 3ODT/2Jyh+KGltM9JXT1OlfLFq+PrMPGRqTaShRjX/GPJ1pivq9NmobbUm5qpKZgGccNm
+	 SPENH7UO9Bjo/DIDzs0FTYqXFfo3dKtYsS1vrpWYtN86dRwl0vcIVnM9m1U6reLJulFuU
+	 hYV06dFipkupJ4IIYJczX/C5hKx9afvym07aC+Xb1xPEMHUx0yinLty0x/+hla0FRqOqb
+	 fyyzKS3dkfG2+H2iJc+8xMJTmkSdRYE1RH90B2g75SLY5lba2kYw6x29tlJ8YG2xhkQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793616417;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=QNbxn5h8QNjJDlO/0mupScqA4MSrl0V3heOJR9Pyfuo=;
-	b=PmyLzPAmntQe8EykoKEW1cuqnQWpX1huFDeIV9sMCpbsnb1YN1sOg24cIuPQmsJ5nxmT
-	 JO6P6iaz345vNMqz/FrxQLTJj6PDGl3+hcx3vjN4mx+6RrjimM+P/XgTmenHIzMcsRrrv
-	 tM9b+TUJHvFJm7SFb847/L1lYYznPVymTDiJ4Rmy56PoiJ21dvpnizNGlbAoGhImk1OR6
-	 RRi1d60iJhRKqw56bU8dnvJqYNx9tvW4VmrDYaCCEXOqnhnQO7zlvUktXD5Ls4OVwzvcQ
-	 8NUX7LjcbgrHduIR972LQel0WokVckmW3nvhn/ZT41HUZSQDROUifoY7i9RwN/aJ98w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793617173;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=ee+0w4xlD5ELK5Ml16S7G83YFTChVMAe2H1W94F6EnM=;
+	b=hwfkMzCC92J0sa8/ICYQtmxOBVNtHzpFu9OJDNwlZeoNAsrtgfzl2xZ40NB614aU5goo
+	 9EAu2n6bBPDtvRELQOOSN8o1Y1erIzY5A4QH0NfO7BRwdBvKsvrOJMpNcRq06nyF1h87G
+	 scGLiiSqJZhFV6kqMZdYEcHfV3wRr5Zg1Y+1snxMJwelmPLQUAPbMEVt7G8ZmoqqWzMUw
+	 8Wxw3IMtOa+T59GkE7XDJpN9oQlUyNsn7nde4SuvUmlAkqGqS6OiMo7VsA3uuKrhQ/DSV
+	 pQkeTjEdXMpM2HKZPbNbEkPVc0yul3jDMTaVLUyZRPa3h7/YXo4Y15hPWeG6p7n392A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	arc=none smtp.remote-ip=111.22.67.135
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0478606A329;
-	Mon,  2 Nov 2026 10:46:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E0478606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=tYsq9oqLM+7lQixDkQIKNZ9ALsqlBAjVve+XIkTCo+JGrX3FUzK6n+179pwhUDdGT0oMGSFz4bLc4
-	 bovP/6OxE8/bxIetjBHmPVji0o5ySYe9wzVHd2lON7qoLwd+CJlgzJ5vkpOtP2snhJyj7sLFjOnDBD
-	 zz2MW7hnTuYO2W5I=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76ae86a0e758-8aa82;
-	Mon, 02 Nov 2026 18:46:45 +0800 (CST)
-X-RM-TRANSID:2ee76ae86a0e758-8aa82
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from DESKTOP-3K8GUTQ (unknown[223.108.79.98])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea6ae86a14bfd-7b547;
-	Mon, 02 Nov 2026 18:46:45 +0800 (CST)
-X-RM-TRANSID:2eea6ae86a14bfd-7b547
-From: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
-Subject: [PATCH] drm/exynos: scaler: Fix runtime PM reference leak in scaler_commit
-Date: Mon,  2 Nov 2026 18:46:42 +0800
-Message-ID: <20261102104642.925-1-laixiangwu@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
+	dmarc=pass header.from=protonmail.com;
+	spf=pass smtp.mailfrom=protonmail.com;
+	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=xn2yY9af;
+	arc=none smtp.remote-ip=79.135.106.104
+Received: from mail-106104.protonmail.ch (mail-106104.protonmail.ch [79.135.106.104])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C845D606A32E;
+	Mon,  2 Nov 2026 10:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C845D606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=xn2yY9af
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1793617170; x=1793876370;
+	bh=ee+0w4xlD5ELK5Ml16S7G83YFTChVMAe2H1W94F6EnM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=xn2yY9afilndurnQVUzn0jI13yubFLI6FMDwLqagV7p+nij579en7Klu7t1WVe8Hm
+	 ExXZYZIXdK+UrDTVMwCufafhY4cXP2JJiDm3nx35hEZ4BzZ+9qa45sGU0xXpy3DQjD
+	 y42H+q59cwtaTpIoVU62T6oK8CyDFEUwWfi+s8OtfKoPZzt4jW6U9LgniWg64hrsrx
+	 bC1hY90/E0Bma2soBSfDGkpjwPUZ/y4nQWinrHqD94H2odsVSrmjqQ7XpKacXy9bFa
+	 jTBIKkMX+pukMz3NmL4/bvYMEgxUg7ruOIigNncH109C7/t3P3Ak4RBv9NPLJJ2Tlk
+	 qPFVYHpwI+YoQ==
+Date: Mon, 02 Nov 2026 10:59:23 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>
+From: Aiden Isik <aidenisik@protonmail.com>
+Cc: Aiden Isik <aidenisik@member.fsf.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] dt-bindings: arm: samsung: Add lucky7 board binding
+Message-ID: <oQggKJyvPN7MEiO3hqH401UfQAGPL5C5o7_Ybg1EXSh_m6aq_d3hKX9bwovgUqDkOTf0zCtHXZjaBHMc7tY261ze6m3AeufMxCi2iUg8ro0=@protonmail.com>
+In-Reply-To: <20261102-origami-shoebill-of-fortitude-ddf566@quoll>
+References: <20261030-for-next-lucky7-v3-0-81e02272ce69@member.fsf.org> <20261030-for-next-lucky7-v3-3-81e02272ce69@member.fsf.org> <20261102-origami-shoebill-of-fortitude-ddf566@quoll>
+Feedback-ID: 46524699:user:proton
+X-Pm-Message-ID: eff9712326438b909497253eeb7a4054cbeb4443
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -74,43 +64,17 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-scaler_commit() calls pm_runtime_resume_and_get(), but when the
-scaler_reset() soft reset does not complete it returns -EIO directly
-without dropping the reference.  On the success path the reference is
-only dropped from the frame-end interrupt handler, and scaler->task
-is not yet assigned on the error path, so the interrupt handler will
-not drop it either.
+Hi Krzystof,
 
-Each failed scaler commit therefore leaks one runtime PM reference and
-the scaler can never runtime suspend afterwards.
+> This looks misplaced. Entries are sorted by the fallback compatible.
 
-This restores the pm_runtime_put() call that was already present in
-the error path before the conversion to
-pm_runtime_resume_and_get().
+I'll keep this ordering convention in mind for future board/soc additions.
+I was trying to order by description (ExynosXXXX-based boards).
 
-Fixes: 445d3bed75de ("drm/exynos: use pm_runtime_resume_and_get()")
-Signed-off-by: Xiangwu Lai <laixiangwu@cmss.chinamobile.com>
----
- drivers/gpu/drm/exynos/exynos_drm_scaler.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Will fix in v4, next merge window. Thanks.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index c8a1b6b0a..dc8189685 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -372,8 +372,10 @@ static int scaler_commit(struct exynos_drm_ipp *ipp,
- 	if (ret < 0)
- 		return ret;
- 
--	if (scaler_reset(scaler))
-+	if (scaler_reset(scaler)) {
-+		pm_runtime_put(scaler->dev);
- 		return -EIO;
-+	}
- 
- 	scaler->task = task;
- 
-
-
+Kind Regards,
+- Aiden Isik
