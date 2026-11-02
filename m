@@ -1,64 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793622889;
-	b=RBlNMcM+4gjZ3B9PjHwAuGgw5c33iOkE3MfQpag5rdGkD9nPDYOml1VlMFDB7FVkOETD
-	 FKJbkrWYyjxqS9+tW3j3fPOHuubvXctKzAbjUtP4NRXstqHp0rWiDAZmsUsvTU/uB3m8R
-	 jigz/q+4Yqh0WRmhaGryGwV8NLxS14UhDCbBMkYgWgS9/syPELtStb9khYHNEyVduXtdv
-	 KLwD6MSddjK+8Gx28HuAPK2iaYy93VSuLkJYwvwkFM9J2AZD9xS5l6thMqVOA6QDTnY+P
-	 W1BN/GBXso++vhgtaiNYEo4obpftTEuLa8wAvmsDh9iBhF4OU4HX0Qx9aIsd0f/aW+A==
+	t=1793622897;
+	b=FHa7xZHhT+WGaRcg/Eq71XrwBwvDC2TzunNgAjO38W76o9wkduAjVT782FEnDM05CzVR
+	 DRj1LJrKvakHEfC/a8KTutrMaBGsLg8OBQ9A0m0QYVyA2FU6iezDemofZPyWXZmUJ8UiZ
+	 R3V1cMqyq54tSee4+shGzFUQ9cbJscqPK2EntKYCgJG7J5tycFUSFErUk+a/DEuKZRpGK
+	 nlviKbi9vEn5vcFiZ3HzVpgJIJ3R0/GtnbQO2dPw1QhHKFcQ9SRDPG6Mwhl07IwglUAMl
+	 5FouRpO9H/joDP4bGpr5G/5C78RtZE4fYWqVeUj/NJ+oi1OeaZwkTOKrP+/WrsOCXkg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793622889;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793622897;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
-	bh=6q+eFjvqbBvXFHcS7dxJTRr6kdAEN9WI+0gOxHxbKNg=;
-	b=omFUDLCHdJarn87XotdVG1CWhBGX6IfBOizG8J8cJPNSPZzrxQ/2lRUiujXO0kkKLEZ0
-	 MgoDTdvDW+A1dSgQdow6PH/Vy3/TW7fgzlYJvtKU9hb467F9uBH3QuMsi4HrmRUFcWCdp
-	 nBBpXqOiBdS+L+zbTqzsSXbV9FCDzNeVJhC0N/1F6+AgLpTBbH9WPdkefM8GPWs8QRlHk
-	 baH9DnBJjdHS4AIihwLGmv29u1/TfLX8wo2W83qD1D7L3r0GC99NOENvk9USub5JulGys
-	 J/IgkiK5GAkCdUWMwfKVI7B8dP/3yMKo0RCgnBmM5454jDg24hKojsPPgzXOxzPKEvg==
+	bh=RzVoRzg9xe4PHgIpm+qEezcjZDbm/lhClesTNi1L61Q=;
+	b=b3QhXnll90J+4DRb4z5Ak8TluB9PeFc2hPJZfyFm2Oztwj51cS/wPq/Ty1LuRydgGQsD
+	 K3eKH02h13J8FQUua26Dh2FNfkI4WOSobMiKn6tm54+bNZPpHn79+MM223GrI0e9iyzdy
+	 ESLjVtMK3Tt39n1V/OSiMk0aw5Hq9zxcGzdeqvsy551w2dySOT3GW5vFpgifmBmWDXaEm
+	 Wn/18AOw0IiM8GVxSbv9EMk952yUKpacpdUGL6yOcX1e+kslTNHMS583hnquJwc5DFVkF
+	 tkZPt3FLw6hjS3jLsxeDLIFj4F8fwIPeUhpbxSaRZjyqXSx03JzZVnXhPJECtITMmUQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrBLDhp2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yg28mQrp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A86260A380A;
-	Mon,  2 Nov 2026 12:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC7260A2626;
+	Mon,  2 Nov 2026 12:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VrBLDhp2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405D01F00A17;
-	Mon,  2 Nov 2026 12:34:44 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yg28mQrp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B2A31F00A17;
+	Mon,  2 Nov 2026 12:34:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793622888;
-	bh=6q+eFjvqbBvXFHcS7dxJTRr6kdAEN9WI+0gOxHxbKNg=;
+	s=k20260515; t=1793622896;
+	bh=RzVoRzg9xe4PHgIpm+qEezcjZDbm/lhClesTNi1L61Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VrBLDhp2Kn6Bc/qqyJoSWlRGetCXyH9Jo034bt7Yu+3IuBPby46//Yw5EvIx13m3F
-	 NQbJhhu2h1JYjX+3Ip2JEACJDRAXhNON3SaXy/VxlTIPKfTKIBau6+0kMtjh1m1Iuu
-	 YhbTu3dDeInOnqKjGljY7wj/g8cnGwKg7wossdaV30nKyvIl3p2cKuGHA8JdbmgjuS
-	 SIFoivJZin8RjzplBtTMrS4uTi4VJb9P3VABaadGv2rE9B0CAlc1iPo5uaV5QhXLqh
-	 DO1qO1FDu6oFIY5nrbzibMtYFB9oY7c09Xk9G3P7zy/erTafeV7hp2UPUF7jv0lfAD
-	 cEOvIh7d/hAtA==
+	b=Yg28mQrpwDmuTMuJ+UgdYXOZ+dvc8Ebni/8dbFPNPslIaBxVdejVKto8c+TPsWCDe
+	 hvS/GxsNJSluYIryH69FWRSv0ShsB+egJeQLn1/HlpApu4Gj//s+3rmmOZgUvZdoBH
+	 Cbm4SuiDPcty9IN6wl+7e/icJD46sf9rjhgOwQ2XXeSFqho35T+z0mZHfqNpJ0xkKF
+	 /Tn74maVWVZFTMCHEL6zZ6hyh+ShYNqlILevG60Tfz05Uv5pfY+Lcn0BB73BvAcKtX
+	 eOqK0C+jwh5gysfprcKFc9putRFr2fvzDTRWKRPFqUE0ksXwFDQxjUtTG+jZUArQ10
+	 Yoil6Md2cv3Cw==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
+To: Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Henrik Grimler <henrik@grimler.se>
-Subject: Re: [PATCH v3 0/3] clk: samsung: fix probe-ordering races in exynos5-subcmu
-Date: Mon,  2 Nov 2026 13:34:10 +0100
-Message-ID: <179362278564.150793.3026517244814507054.b4-ty@b4>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Artem Utkin <thesame.personal@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	stable@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: samsung: exynos4412-p4note: allow powering off the wifi card
+Date: Mon,  2 Nov 2026 13:34:12 +0100
+Message-ID: <179362278567.150793.8365404184056648906.b4-ty@b4>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261030075325.517182-1-m.szyprowski@samsung.com>
-References: <20261030075325.517182-1-m.szyprowski@samsung.com>
+In-Reply-To: <20261026-exynos4412-p4note-brcmfmac-v2-1-14b372972163@gmail.com>
+References: <20261026-exynos4412-p4note-brcmfmac-v2-1-14b372972163@gmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -69,32 +69,26 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1098; i=krzk@kernel.org; h=from:subject:message-id; bh=C1XqwyDRUMOQuSCJdpHNmrSdOZICGoEXkbLJb+jN4XY=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBq6INCRb/7CZK6zewrZhCK0uD1zTqICzByGR0DY pNfQ8iUSY2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCauiDQgAKCRDBN2bmhouD 17dgD/9lsUdAAUc0nc5J8QiPb4qkKY4Ntn6Z+lg4NQTxC6FfUIgAklv6GFaEGWsyqQhyzJPj0OY ZAcOVGsI0tgDgVNbWtjw/CXUtw0KPjxGeD/HTwgvreCTM6yUwHgu2TlsyKnpKHzAuHf3/C1Nrdl P89HRhGGs3ayRCQ2yfZeaydHAvcvy/MdP6PYP7ZOg3bN1ffi4z4YTptakubtxRT3//0cO9AQSat jpOfwAWoUanDX+BUeoPiYE3VcAW/NpTByZYuVHv32TMNGhNq7PnXyBDmpy80Ywo95kclkCE6bQm ngRHcAS9DBGbM/pGXI/G7qEMf3U6Wn75h6AdwdIrQ7J32wvtOzFQ+PwED9+3VHwgVJkgmOpQyKC 0PpquT7gSymABIlLacpp+8PgcNNLW/9TXUYowAnCjwTZuMLjDRDypWUej2IofU97194mZ0uCnou XYyZEYa9X3W5cpDsG5hjIMWZAWXJ4XM9h8gu7izHhDqiKV1UQ2oDlU4hKXFKKBU34geKBjCkPsF Ak0UOoilkBvj0Gi0rbraJm8bn1rroFr+ofXJ6rlkUhTSpAILvizEHHnZjXqZWEkzcINVRSiYsFU rcr2h0Ku6mBqg7gJe/7OKtnFcnM0JcvB5f+GFfu5B76e/VH/BQ4RHxWbEBj7ihvAGQbjEP2ZQu7 0SrQ2+mAVWed4
- +g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=666; i=krzk@kernel.org; h=from:subject:message-id; bh=etaCVO/+UgYS7WSwutu5o7cRUm5LN13s38rYuQKONgE=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBq6INES3aj/pbzo71zEV6fwLpMh5E6nbYpHinso OZsrqDuuAKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCauiDRAAKCRDBN2bmhouD 12HID/9lN6oLnGgySgl9mJeJssysWKx24Jq0f5lwe5NUKNe4At4gIJRrjFQkyCCm/ifblAyWhaV JAYy/NAr2K5MB29iS0HX9n2TL3Q+gqAxcqSOEvp2axGrCno/IWYuYb0dwJpIraXPk0XbUB69Hhn vojCCoMlhTHgpVJIOVSsGpmSIG/4+Xv1aIvdMPCuRk2GYgX1n1f1XFY7NKBX2A3Tz3/xfEx6uTt lRZn+c036BfGvDKLwl/N7ueQh+fISnnfPuUxsnmcO71mExrq+RBEcX881rl/C6YK3eYq5dQi2S7 3IzbbHoiR4NvftY6wVmPO6w6SHHKvwneJNd3EVQstmOAHBrsvftsiusgYJBctcEB8r6r8WnEKVn V6W4kL5luk2nzkmMw69cU5S2pMVl4CNfHS36ZOGuTH4Wl7U1JNIIpaKSk9ApGQ7QF0pUsTnyKEf ym1y0Hdbu34vJjL/GDEyatn+c6g5ONHJiBx+zn8e/P2CQThRjptfixD+d1O5Afw5xGtPXL6S1p9 Ky3iePsCFEtI51mn/ka8SFVE8LcvJqukHBoTxxN95Y6cJMs3B2dBFcYXSgTtZVRTnjzArrni5vy 4oCeTQkrRYoCCPgK0a1FLa6o52/E/JQvZKaYoKeSVmEvdkIiTPWgnXkgCFpxmK54lFi0mMCWEz/ rjzgsFOUBnLMJu
+ g==
 X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 30 Oct 2026 08:53:13 +0100, Marek Szyprowski wrote:
-> This series fixes a group of related issues around power-domain
-> availability and probe ordering on Exynos5 platforms (observed on
-> Exynos5800, e.g. Odroid XU3/XU4), which can leave clock muxes stuck on
-> the oscillator instead of their intended PLL parent.
-> 
-> The issue was analyzed and patches were prepared with LLM assistance.
-> The whole patchset was tested on the real Odroid XU3, XU4 and Chromebook
-> Peach-Pit and Peach-Pi boards.
+On Mon, 26 Oct 2026 17:09:14 +0100, Artem Utkin wrote:
+> sdhci_3 serving BCM4334 was missing cap-power-off-card.
+> On my N8000 this resulted in the following messages after sleeping:
+> [305.759883] PM: suspend entry (deep)
+> [306.514698] brcmfmac: brcmf_ops_sdio_suspend: Failed to set pm_flags 1
+> [306.671504] brcmfmac: brcmf_sdio_htclk: HT Avail request error: -110
+> [307.127267] PM: suspend exit
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] clk: samsung: exynos-audss: Propagate -EPROBE_DEFER from input clocks
-      https://git.kernel.org/krzk/linux/c/e7fbde7216d28b3638120457ab830d22f7b83156
-[2/3] clk: samsung: exynos5-subcmu: Use pm_runtime_get_sync() during probe
-      https://git.kernel.org/krzk/linux/c/73cb3b59548acce1d9fcf6d5a8c3468391dc4580
-[3/3] clk: samsung: exynos5-subcmu: Defer probe until power domains are available
-      https://git.kernel.org/krzk/linux/c/5fbe2d229bd3738ed63c7c9177466ad6bc130f18
+[1/1] ARM: dts: samsung: exynos4412-p4note: allow powering off the wifi card
+      https://git.kernel.org/krzk/linux/c/41fb0e8f340f5b883b67786549a48ff60bcecca0
 
 Best regards,
 -- 
