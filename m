@@ -1,47 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793697423;
-	b=2uiPluJ2kqErY3bT9t0+Bg0m5wlP8kH18QHPf8nJqsoTCgHkKtIw/HXe7NFi024Hp4dy
-	 ljhtmqpxQMbY/mmmmgnnXhZ6q4AQqZFmPg71+uMOgCWSwdc8VONthOJ9jQ8k4F5ni0BPG
-	 5waWqzoEbI+jBJNZWm//vfzXeOgppQ0f2EOGU38KwqMxSQWlxmdA2AmHWf5Mhu9Fz0+EX
-	 ryGN2dmCayXlr2GeZ4Xt32rNvlwUvQvI2Dc+PHRpvzpaqVSmfSVUTgLJdeSa23sOwTA71
-	 g19s+bXmAdalOw0s3vjiDmGtkrY6YPMzDgNCUg83JCcviRmbFKoctD4i8hDbfnuR0GQ==
+	t=1793699174;
+	b=dKkaAOqH7pqCmyo1Qh90v47MUUyy5ylaRbT15e+3qU9gD42I0Nv53G4ry1YM1aKXQuwF
+	 F9ggu5ZJ+ZjmGq9WD4WvnzREABJVq6UaxCFdO9rueY44JhEE6+snWQcbclBOnCCEH/F0b
+	 YoDVnjCvjwk9HU/zx1YSQXGDWh9W+kLu7BuWHDU9/kddjRfuNqdYJsJYJWv8hGhdlzl/B
+	 I2mdWNlD2hEsBtyC8d0upYr5O7GB6sPagImp81DtjlW/w4BUUvDSfyVZq6e5M7sAhvvGg
+	 /Vm6MPbe1xZMqYRZ7HekTZu6f7Q09hPn0zS/8JNwDepRdy+4FmNe1qgB7pM0o+xSuoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793697423;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=w2H8MyAJaO3E0Y/5RKb2VsySWe5qpJSMhyxRnp7Mk58=;
-	b=ZXnQ3TfiaVGI7MDa8bAYc5aIb8Zib8VCpD07nXIE23mB1dFx3hG7sTep3q9imrz8Gg5Z
-	 gORsojk/TsaV7gupxTaH5A15ZQcDWmS5D2OnOPzNWCwEU4zujivybVEWwec+2vpGk0bSk
-	 oeXTVUwObSQTbU4lIdw9kRmxUlkxmL/Rr8yGA1HsVxflLLioNeCeTPlolXE3xwgbeP5Uh
-	 PiVWAs7nRAbLCQKzxPqjks1dyYMmsY3LO3otd5IJ08GteT7s1EnM3o/QC8JfJ8iLTnJ8w
-	 BX42u9cEieC7MdR8nJyjyMAV0wrvDzDe479JWmbKQ6LB32HHHk1Qy1kw3XTg4H9CfTg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793699174;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
+	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
+	bh=Ot6CzOZAn1GOQoPIqCwwJChn4IeZFkB52U4Nrf4WrVU=;
+	b=CP/gwWXyUjSjWWtI2yZYYTPn4/wtOMaUPjlYSWyGUSXINhY9zQjczLfODknKRc7UfYJF
+	 5PKeUDJHfqDPHSW2jOtkL3mRAT006isZxf3RKhJTApPcR1oZs/goPxj/DDLwAx2TXIpp1
+	 MYlRKq4th9QUtUVKMzAWf6vfDDyvMvMAmqMktUOjXNxE7oFhFK5IVaNiAuROcq53ywLXc
+	 /tFxSTzBew0VHs8W5b3aJOREvwIsPsRfWu5EyMZGlH4oAmFQOuyrNY/0rNFNDVnEYXqO+
+	 wim4Lmg/moJCDxzp6kX8KSIOqVMvnu7HRu7j5RnqAP+cCQPzHWI/ysqlqKyqePe0/6g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ADG+UeTy;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=iscas.ac.cn;
+	spf=pass smtp.mailfrom=iscas.ac.cn;
+	arc=none smtp.remote-ip=159.226.251.81
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE30606A324;
-	Tue,  3 Nov 2026 09:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ADG+UeTy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A50B1F000C1;
-	Tue,  3 Nov 2026 09:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793697422;
-	bh=w2H8MyAJaO3E0Y/5RKb2VsySWe5qpJSMhyxRnp7Mk58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ADG+UeTyNPhwM/GZoqzHgTDZJCfYwjqY8aScLzrXTC/0s0ss/4SAuLUDPAP5HH303
-	 dYmwK3Q0nGyYjdiEnQ45vz2CqcEM67GAq8IitvWL+d3dfW5kgLN9Y8bHjd/t5/RWSQ
-	 B58dn4Cggzc9fR8cKFAhIiyWM5JbgjMaHzIifneEdttGUVMfZ0zWbyb4r3tJRVqe/q
-	 FA8MQnHKpSpjDHn+1Mvzoa0Og/MbX2hfDEEapi1XaPCPIoAusN59GaxzjY13PTmEDg
-	 9YsD00rebhNrwdNmZrPCVTvCVrffRHamO5ikUsJ0WacKDTBpH5PAd1KxtyVYt+bbYR
-	 2hOSBSBPQt/Dg==
-Message-ID: <9ad64922-e6f3-49fe-9715-3efba48a8677@kernel.org>
-Date: Tue, 3 Nov 2026 10:16:56 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727A606D82F;
+	Tue,  3 Nov 2026 09:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0727A606D82F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowAC3xZZfrelqzk47AA--.2329S2;
+	Tue, 03 Nov 2026 17:46:07 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: exynos4-is: Free control handler if ISP subdev init fails
+Date: Tue,  3 Nov 2026 09:46:16 +0000
+Message-Id: <20261103094616.1289357-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,80 +58,56 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: exynos4-is: Release clocks if enabling the bus
- clock fails
-To: Wentao Liang <vulab@iscas.ac.cn>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20261103090653.1208652-1-vulab@iscas.ac.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261103090653.1208652-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3xZZfrelqzk47AA--.2329S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4xCFyDGF4DKFWUKrWDtwb_yoW8GrWkpr
+	s7X3s7ArZ8GF1Uta1UAw1a9FW3C3WfWFWDWrZ7u348Zws0qFn3A34xGa1ruFnxAr18Z3W3
+	XF10qFy3CF4Yvr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr1j6rxdMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VU8jQ6JUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwIAA2rpnO5OKgABsS
 
-On 03/11/2026 10:06, Wentao Liang wrote:
-> fimc_clk_get() acquires and prepares all of the FIMC clocks.  If the
-> subsequent clk_set_rate() or clk_enable() call on the bus clock fails,
-> fimc_probe() returns immediately without calling fimc_clk_put(), leaking
-> the clock references and leaving the clocks prepared.
-> 
-> Jump to a common cleanup label that releases the clocks on both failures.
-> 
-> Fixes: b71b56b264ae ("[media] s5p-fimc: Check return value of clk_enable/clk_set_rate")
-> Cc: stable@vger.kernel.org
-> Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+fimc_isp_subdev_create() initializes isp->ctrls.handler and creates a
+number of standard controls. If any of them cannot be created,
+handler->error is set and the function returns after cleaning up the
+media entity only. The control handler still owns the memory allocated
+for its buckets and for the controls created before the failure, and
+neither fimc_isp_subdev_destroy() nor the caller's cleanup runs on this
+error path, so that memory is leaked.
 
-You just don't bother to read replies, right?
+Free the control handler before returning the error.
 
-Best regards,
-Krzysztof
+Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+Cc: stable@vger.kernel.org
+Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/media/platform/samsung/exynos4-is/fimc-isp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-isp.c b/drivers/media/platform/samsung/exynos4-is/fimc-isp.c
+index a0a9093081dd..7790541a2a7a 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-isp.c
+@@ -761,6 +761,7 @@ int fimc_isp_subdev_create(struct fimc_isp *isp)
+ 
+ 	if (handler->error) {
+ 		media_entity_cleanup(&sd->entity);
++		v4l2_ctrl_handler_free(handler);
+ 		return handler->error;
+ 	}
+ 
+-- 
+2.34.1
+
