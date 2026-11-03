@@ -1,47 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.198
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793649384;
-	b=kNWljvkqoiMH6mAMwydlV4LEq1iXb6COLKgbVqPRWi0W7WGxSkQh73kxvchghC9Umid6
-	 48hUKNpiMbDwc2d14gPpqnrB65abY1yxAWtQghwzbFLu36y/ee5q28sYPuvtqDh4NHwYA
-	 Gg14X1Rci7vin+ZCaHa+XP0wS1ydMperpW61onfgjOwj1qPlBGG182oU18MBOgeYUZPww
-	 5Fhy6RXR1GJzhh/ZCgciColf5OdkBRQGQeZLJRZrwaTQuMaDUg8njvc0v8h4TqHkBaWBl
-	 gBJ6WVK7fIdcL49aNOBbcxAe96CZX9jqobRpU7b20lhmtPdzaaHzWyOM2JKrKcAdTQA==
+	t=1793666756;
+	b=IpIq2tk0ZVsEVJUyfpn0PgvWlAVqgQY2LUDBDuwcadQ7UwGI6Q6kxP+BlsTZF+Q8EB3f
+	 6UpHQ0eIgXMM5Sznuq1DETo2YkEfXBDP2x7rX52jBuG7MWc0PNZQvqNJyhxt9flKjO/JS
+	 uwADpX32UcsPIGMEAgC/JzH6fhvILW/Ave4tXZp4kbqOFds6LA9ytYhJvELgfaafEQL1g
+	 Z1dR8V/82nwg4dHCVEJ8L4DgB6TAPrcTfVRkHGjZFZfCbNWacQMxzDGc5Dr+ArEA83JQ4
+	 CLITGIQhhzYXkmvcy1j3pioIYSIkIewZvB2ehAC3rNpcdlMPeBoKl7y6zRKZwDaJGqA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793649384;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=vkPZCke7hJTQZvbapbGPiCbZtFfQN8ihxhANSyaamAE=;
-	b=yOGSYk7HMBX2a8BqhS0+xKYWj5NF3+bfE+va97YIeGc+bQyxhBGj3vGOmORi1CciuP3E
-	 uagUU8qPLYYbBjiVXnd2lt1nbI15SXuF4Yjxc1QrPN+h4swsftzRxy5MYm+2+eAHHsTEr
-	 rv4s0Ji4QmZ3jj1iSUbJgbeF9rH3E9Y12mRpUVkaBIlvgTS0tsGUvZSaMWjugTwGcwHnt
-	 ZitCR9VxCGh9hAa7LPzUDHotAWeH3YS4UyzAgskwRLo6o8o9E5zG9i8SZVGhEy7gDNRGe
-	 xQ4mIUUJo9D3GmZJKMEFFe0IIPezRR7qPD/G3OqZuV20Nus4/WV0KUmtq3zDVBJ0vdQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793666756;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
+	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
+	bh=kFcT8W+2UTHSKifaLK0InKSMUNNzp4iqDnKoB68nIR0=;
+	b=iTti6mwZWmjlqkezNPi3QMMIrwN4nTywlXBKs8bgd0KPcfVgkXXxvqKaIFTF/uIm2cl8
+	 0ZPHU6LDQKA337qeIGJ+4Uxw6Hbmugb8IgfWkdLWZbnjnexLPeVJDI2YkV3a0loDrwuQ/
+	 qMeGHf4oE3rl1sAtic9x7Tj26NVkOLSUV9gOKXWLAW16a5OuRye2ALtbsMAM3BSfgf5/A
+	 JXZ/fluqqKylnkXDnp4x2WO2lWLzzF2Iiq2kxsyKAtZIkADOEM6CVuaNoK9UbTofLw7wh
+	 Ot0EzW3xuegBaQqRzhsMf7uD/KmXa6o95BpTq3NujnLs/RUkJuENCaDBqsuei/cwoQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W18AJjqn;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mail.sdu.edu.cn;
+	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
+	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b="UWuKA/lD";
+	arc=none smtp.remote-ip=45.254.49.198
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18932606A32D;
-	Mon,  2 Nov 2026 19:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98490606A327;
+	Tue,  3 Nov 2026 00:45:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98490606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=W18AJjqn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6295F1F00A24;
-	Mon,  2 Nov 2026 19:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793649383;
-	bh=vkPZCke7hJTQZvbapbGPiCbZtFfQN8ihxhANSyaamAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=W18AJjqn4zDwx3IwFZr0vMut0PvhGu9cc2jaTbjjO8tihCu2L4BNKKsRo4m2YokZE
-	 dNafS2EKeUjsfDkpcL/J6V8PyOjvzBefc5vSiUdcJyE3LreRdEm9kSJbmaQsiqFVUv
-	 F8pdYmsylQcF/dfL+E/0ETMr/9Nuf7fgrd0blq6n4/JbDH162o82qx4jUzbbIpHeje
-	 axA84wR5lSHglb58Zgd3Qij6NK/f1JHM8h+VBZCcoGdQobhkAipBAeL+WL2q9MXKUx
-	 F6d+adNM1vX+qnl2MLdIk67tkvD/3W5Kt1Z+je+2w/BZ9Ef2BtNwulOhop+cwQAAK7
-	 jel3BI83VbKBQ==
-Message-ID: <acd5e8bd-7577-42ab-89c1-6f406b3f3004@kernel.org>
-Date: Mon, 2 Nov 2026 20:56:17 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=UWuKA/lD
+Received: from lgs.. (unknown [101.76.249.61])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 533e14b12;
+	Tue, 3 Nov 2026 08:45:51 +0800 (GMT+08:00)
+From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Tushar Behera <tushar.behera@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH 2/2] tty: serial: samsung: Fix potential NULL dereference on removal
+Date: Tue,  3 Nov 2026 08:45:47 +0800
+Message-ID: <20261103-cmc-tty-2-683dcb126b@mail.sdu.edu.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261103-cmc-tty-0-f5f5ec0841@mail.sdu.edu.cn>
+References: <20261103-cmc-tty-0-f5f5ec0841@mail.sdu.edu.cn>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,101 +63,57 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynos: tm2: fix wm5110 reset/ldoena GPIO
- properties
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-References: <20261026102658.968138-1-m.szyprowski@samsung.com>
- <179362278569.150793.16322788098732007689.b4-ty@b4>
- <CAL_JsqJ7mkOL6kBwjDV=-A99zpmHWTFdc+8TunXG5EfueiFDrQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAL_JsqJ7mkOL6kBwjDV=-A99zpmHWTFdc+8TunXG5EfueiFDrQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa19ede9a5903a1kunm33c27c80118226
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZH0NDVh0ZSU1JHxlJQh9ITFYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWUtVS1VLVUtZBg
+	++
+DKIM-Signature: a=rsa-sha256;
+	b=UWuKA/lDrlecki3KggJEW/DWLReYqRDsN4s6bcrPtfGTOAOgtzyZa0lINfL2C2JM5ST6rqgO8AV9w47NTmnmF2Dl7s5WNwJ3s1QWYgtCppTF8WU+7Byc9N4W1gV95MAm6HFImK5DRtO2jV0j/RX3pl+IsyYpWXdBMKyig9f7xTM=; s=default; c=relaxed/relaxed; d=mail.sdu.edu.cn; v=1;
+	bh=kFcT8W+2UTHSKifaLK0InKSMUNNzp4iqDnKoB68nIR0=;
+	h=date:mime-version:subject:message-id:from;
 
-On 02/11/2026 20:12, Rob Herring wrote:
-> On Mon, Nov 2, 2026 at 6:34 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->>
->> On Mon, 26 Oct 2026 11:26:56 +0100, Marek Szyprowski wrote:
->>> The wm5110 audio-codec node uses the legacy "wlf,reset" and
->>> "wlf,ldoena" property names without the standard "-gpios" suffix.
->>> gpiolib-of.c only recognizes these bare names as aliases for the
->>> correct "wlf,reset-gpios"/"wlf,ldoena-gpios" properties, and that
->>> alias support is compiled in only when CONFIG_MFD_ARIZONA and
->>> CONFIG_REGULATOR_ARIZONA_LDO1 are enabled. When those options are
->>> disabled, devm_gpiod_get() fails to find the GPIOs, leaving the
->>> codec without a working reset/LDO enable line.
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [1/1] arm64: dts: exynos: tm2: fix wm5110 reset/ldoena GPIO properties
->>       https://git.kernel.org/krzk/linux/c/76ef3ed714ac178cda84ef39733d4f712e682081
-> 
-> Now in next:
-> 
-> arch/arm64/boot/dts/exynos:2:1
->    Schema warnings:1
->       2 audio-codec@0 (wlf,wm5110): Unevaluated properties are not
-> allowed ('wlf,ldoena-gpios', 'wlf,reset-gpios' were unexpected)
-> 
+Removing one port unregisters the shared UART driver and clears its
+state even when other ports remain registered. Removing another port
+then dereferences the cleared state.
 
-So no information about binding changes, no dependency and... I have no
-clue how this passed tests, so actually never even verified against
-bindings.
+Keep the UART driver registered until all platform devices are removed
+at module exit. Retain registration on first probe.
 
-My CI is still working on this, but based on the report - dropping.
+This issue was found by our static analysis tool under development.
 
-Best regards,
-Krzysztof
+Fixes: 6f134c3c7703 ("serial: samsung: Move uart_register_driver call to device probe")
+Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+---
+Build-tested the affected object with arm64 defconfig and LLVM
+(W=1). No hardware or fault-injection testing was performed.
+
+ drivers/tty/serial/samsung_tty.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 640f85e2d636..9768effbd39f 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2058,7 +2058,6 @@ static void s3c24xx_serial_remove(struct platform_device *dev)
+ 	if (port)
+ 		uart_remove_one_port(&s3c24xx_uart_drv, port);
+ 
+-	uart_unregister_driver(&s3c24xx_uart_drv);
+ }
+ 
+ /* UART power management code */
+@@ -2684,6 +2683,8 @@ static int __init samsung_serial_init(void)
+ static void __exit samsung_serial_exit(void)
+ {
+ 	platform_driver_unregister(&samsung_serial_driver);
++	if (s3c24xx_uart_drv.state)
++		uart_unregister_driver(&s3c24xx_uart_drv);
+ 	s3c24xx_serial_unregister_console();
+ }
+ 
+-- 
+2.43.0
+
