@@ -1,106 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793673383;
-	b=bcwApTVtPiw9JEndj+eyAJqrVn1WZ0hkmvGL+vIGKPRqt9DYE3TWoK/lUHfzDSAQSbWo
-	 9i67Q9fKurF4Q2oshSb67EzQtafJ50Zkanu0m0ewltci+g6ctOG+/s33zdU9wVluL09Sj
-	 weQOL3q4bh8qa58Zuad/rXZwZDGmaU7p0W3Rajxd9V6EZCIZMmGlo+mdHKK+TXbBYR6E1
-	 +HFVrYgTXzuq/AM2cwM5gqxqeItf9FENtkM70QjkvUmeg5hqOjb4FmggcL0G5pC9N0M5h
-	 3Oiu31MSlJsBMIE32z06PJ5BVIbxY8xkvjwripGY7/uOXt5GoGkELP5y7IB5IwEIpSA==
+	t=1793696666;
+	b=Bvcdjs+rS/Wge5NocCitF+IeU6esuzw8/a932NucQPBrYE5uPbsxFZ1qKaYGxJ8K6QW3
+	 4ifXjYpnXzkiCPEG5h5tHEH18EKX/QXhF3GNTbEBKzU7EoUk+ZhZKRkCwfKYPCB5FbGlU
+	 4tnVVRC/1D6pw++jLBDMDwyx8R9bH4Xle/bPL09Howbti2DwIHy13aU0NhuzVyObr8ZqF
+	 HmM8f+QA1NgeC/D9MbRfVWhhfpsZGY88nf11pRrfEZeHIu5d15U0UbiDvU5jAK8RY38rp
+	 GqOzX+tpPVgBVfgEmvOiZYjqHG7uj6SbjHI/6DQ5e0HPPYmiJQtvLHQR6SsAsB8G0uQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793673383;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=9Jlikt+rNAof8xPAw+Y9FynKuu4c36ojLvpof3Ekays=;
-	b=VVb8UY0WHrfHblpAbNB2KmLk7KlBW9s1rWWvNZAwXaMof9zmFjyB87M012YZur5NsA2U
-	 ITXhJWRUNlDBMHDdb2rrAB7Ol5soz71YuUg/jWQwNqLb6wSmovgBCDv6lHDICCUu13dYk
-	 VIPoprRYzAw9wmvpIo1LunFpSnQGNg1ksFThVV3Mgs3sIjOAICI0zudkgse6pWW4XJR32
-	 /L/EruZwjm9vXnerJie1SVlqTON2Mykoi7etkDzEHg9DEMmnGgYkXUZXJYDmbL+BJzVek
-	 jNxp0FAJyE0rkkGhnbbfQlVRuclIckW3NXATDRo2PCAyCYZv0vKZso9rDLvHV0jGovw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793696666;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=oqcwif+o3u40FPToGAPLvgMZ6cthmDqENUhGefULOww=;
+	b=XBudkX3cFbpLcZN2Ad96N1JdiGHWXX0S6fmK/tYU0gO6e09JwdIeWXayij3gt1QCZhb6
+	 R0v4z3NEL7ynbQU36hxImyzifYWqBgGGYQQoMaRX26VQg/pwcnc/T23ODNAzyavU0R1RL
+	 DAdlbUu+MbY6mwH+c+fR/iSiclpIVidYZnZHf7C3mZTP57QQanVRhjecLgKl2mRCVYNkk
+	 ZfU5CGMfbJPr3eyjHBJO80bkjEWROMcfNQtfyauvKu1gDSvO5cTd2dg0H8PJ3W5duWv1i
+	 fiAKmTTCTgbUhZyz2smoEv1uSiEXBS7M5h4i5iMx69fpr7o8tfc37tW+/Gmk3uGMyDA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chromium.org;
-	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=a4TvgsYw;
-	arc=none smtp.remote-ip=74.125.82.44
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h1xKU2tT;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37A606A32C
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2026 02:36:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7D37A606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B133606A32F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2026 09:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=a4TvgsYw
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-15dd124bbe7so5117224c88.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2026 18:36:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1793673381; x=1794278181; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=9Jlikt+rNAof8xPAw+Y9FynKuu4c36ojLvpof3Ekays=;
-        b=a4TvgsYwUyyS0K9tedfdNHQcVmmTszna7pZdCPWDEUtUfS8eazt+3tw7+E0fRMUfaS
-         fbpUnYPgGgifY/ZvHRVF5OLPg2c30UiopXSfMUiyig6a/tRPEeKoYjvQSV6xLBEBDqii
-         FCwYWgrkpqBCRUi49rZFN8p0cYjDCfC5cmtpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793673381; x=1794278181;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9Jlikt+rNAof8xPAw+Y9FynKuu4c36ojLvpof3Ekays=;
-        b=MNYeS/tHAM7bsAY96dKSwER61aEoSg62uWfuuLYy/HO/dECptz210sWhfCha/aH7NN
-         uDn53n4ugpUGd8rxPdTJTzuYfzOvrJsOwea4lXFaKcTWo/M55wPqM3UD34PKLLAjdjVy
-         QxHCLXvKIizs6cas6ILJxPO1+KhIspqSNkutqx4BeBzMAu20x6plfQVRm1JhEJO/YXXG
-         n3MoAfru0T+LqacGRaog8IKYcXFwF3VynN4TB6CwCTMs2JSpuoI2jzy8XZx6QLzSOpC+
-         XiGjK921bWMe8jWu35ATxzcTuKV91G0pgDlIpST/78VUJn8mz91Q/MFbH9715heq/FXA
-         ArzQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzngW1GzNd2cjNalAG3G9LqW28h8qtDTeZ5B6UsCMUaqAYz9eiUwrnfI7/66x1MADsjqiooVt7aBRL5R03WRurkTA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIofVytILDp7mq0R92UUgev7VtzTauZNvpzjNNIoYAluV882fP0
-	lC4nrSI/dBV2c419/CgefZ+FdBk5QQPPMrrdI8i0oA/a3F23ZnEEn01mRMxtwrbYUg==
-X-Gm-Gg: AYBFou2hv1vUxU4WliA7XuHdelTRyQ2T8YhcHGmVNQfgGsK4KP2Rmf2Jqp0SseCHe4c
-	BRDuJFRtuehcYDMiOh4yIGJ2NUbwsVOsW6AWONLmEA+Es4e1rViz3GknVgMjCNfqXIQYmsirhtg
-	WKDaYRsRKHp4AWwvFYLA9Z7n5bcZ+c4dMInFYNleckZDTo6s7hF9nZKaq9rrDS8Qki1fsi4++Qc
-	mg6mnZPL86JB3Vf82K+6lK53Bsf0aC+/LxuiFrikzfvSfg6H2wGSFioqSziqPPJIWj3uLypTW/+
-	+6biVugdctUgITzTtpU8iJ0drWHhdfNwc4z3pvQr3/iCXidTRqkrxb8Y2kCHccEoozY634505sW
-	/O1ol7jSHIHTmKk+EuHNNI5y44GTtsx1QNRlReAZ8fCqJqzakD9oeomsg8O3BMP4X5lTkWnETTY
-	fhDjaC43fKcmOvvkH4KlAgwfaK8K/U5PInyq7+ZX3W+esxHkxoeYzrKvLgeixH80Js3aP6Ke/vc
-	NcUzilFEIcMT97I0TTz7TfiVz9UerMk88kTm+0oXKgJZaGGIODEkytZXyXT6Jc/Eg+uN+to4PKZ
-	kksuAhvSOR85WnWIgxtiJrTf5OQIhTt66FcK4+xtP1hZfrJk/oCzu5SnBpFPtGHPAaA=
-X-Received: by 2002:a05:7022:1110:b0:14d:c9e:a356 with SMTP id a92af1059eb24-1ac59dd07f5mr17524614c88.12.1793673381373;
-        Mon, 02 Nov 2026 18:36:21 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e7c:8:c57d:c93d:3543:aab5])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-1ac1abcd6f1sm37000499c88.20.2026.11.02.18.36.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2026 18:36:20 -0800 (PST)
-Date: Mon, 2 Nov 2026 18:36:18 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Mariano Marciello <mmarciello@google.com>,
-	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
-	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
-Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
- binding
-Message-ID: <aulIoq2oVjJ3DVzL@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
- <20261028-rapid-daffodil-rat-0adc6a@quoll>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h1xKU2tT
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F341F00A02
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2026 09:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793696665;
+	bh=oqcwif+o3u40FPToGAPLvgMZ6cthmDqENUhGefULOww=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=h1xKU2tThc+PCjMmTSQl98ISc5OnxMMDKFMUPOC9vnlb9lQ4xXhBteZ2gpKXpRt7I
+	 w9lfHpMOf3jD7ltyrds0TP7N7c/b/Jj6B+osimdzSS0PSO++Rw2BGlJCslQ8ZoGQrh
+	 s035XhlTsRnNeYdvANd09qtbbDad5FtIteTxYMMEyv2lCo+HSmzUARhSS9QlY0zjzV
+	 N4+Kg7jXHxMi3kiA9ATievIktcA60E+48pt0/InTqwfA0sOKN1kO3xUiAcccV8xDT+
+	 +8Vutoj+WhzleMS5uiq6PG8imke4kD2NTobGiKFljbN6hq0teze7QLoDKWlRhqdiy5
+	 celxtNibeT47g==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ab3b29a1d0so31190851fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2026 01:04:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzQtSXtBIrQw90g2xuJYlACcQWntvySlbz0yIlaZyrdCOlwvKTg+EUPsxaK5ViZjaITWBGAB2bTVim7AgdJSu5+dQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8LmnsZz9XZLs9K2WepxUMVfGtvRlfB75IhSv8OIKEn4N3JNrYb
+	f05w5WQhjA6rNcBnOGSJIkND+WXBwqJPaO0ivEJdlqwoKV9mzDattHXw3bJm7kGPAibXjge0w6G
+	mmnsl7uuaGG0C7cBcg7kVTEJpl8VEW3I=
+X-Received: by 2002:a05:651c:198e:b0:3ac:4da3:864f with SMTP id
+ 38308e7fff4ca-3acb7a9e0f3mr31016591fa.4.1793696664148; Tue, 03 Nov 2026
+ 01:04:24 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -110,97 +59,69 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261028-rapid-daffodil-rat-0adc6a@quoll>
+References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
+In-Reply-To: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 3 Nov 2026 10:04:10 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmoy=--GE4MScaTOa=x9+HAuvhHC7ixA_GYVme2vrcgZQ@mail.gmail.com>
+X-Gm-Features: AclHuK8feuY0PnTZqOb4xpNbcV0UYLP8c4l3kas742sFixN6cKUvbMAmIcJa7DE
+Message-ID: <CAD++jLmoy=--GE4MScaTOa=x9+HAuvhHC7ixA_GYVme2vrcgZQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
+To: Frank.Li@oss.nxp.com
+Cc: Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>, 
+	Ryan Wanner <ryan.wanner@microchip.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
+	Haibo Chen <haibo.chen@nxp.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Yixun Lan <dlan@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, 
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, vkoul@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
+On Mon, Nov 2, 2026 at 6:40=E2=80=AFPM <Frank.Li@oss.nxp.com> wrote:
 
-> > --- /dev/null
-> > +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
-> > @@ -0,0 +1,16 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +/*
-> > + * This header provides constants for CPM IRQ.
-> > + *
-> > + * Copyright 2025-2026 Google LLC
-> > + *
-> > + */
-> > +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
-> > +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
-> > +
-> > +#define CPM_IRQ_RTC_ALARM_NO			0
-> 
-> Keep naming consistent. Clocks has _CLK suffix, so this should not use
-> prefix.
-> 
-> 
-> > +#define CPM_IRQ_AOC_MIN				7
-> 
-> Anyway, ABI constants should be indexed from 0 and incremented by 1.
+> From: Frank Li <Frank.Li@nxp.com>
+>
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across SPI bus drivers.
+>
+> No functional change intended. Prepare make to struct
+> dma_async_tx_descriptor private to the DMA engine.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-What do you mean by this? Do I need to make up names for the
-unused IDs between 0 and 7? On an initial search, I don't believe they
-have any meaning at all. Does that mean I should make up some kind of
-"RESERVED_<N>" naming here?
+Makes sense.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Between 7 and 156, these are just ... 150 different "service numbers"
-within the AOC (Always On Connectivity) subsystem. I can name them
-AOC_0, AOC_1, ... AOC_149 if that helps.
-
-Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
-into 0-151? I thought it was valuable to directly use the firmware
-indexing where possible; if I change those, then the indexing loses its
-inherent meaning, and we also have to add another layer of translation.
-
-> > +#define CPM_IRQ_AOC_MAX				156
-> > +#define CPM_IRQ_AP_GDMC_WAKE			157
-> > +
-> > +#endif  /* _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H */
-
-
-> > --- /dev/null
-> > +++ b/include/dt-bindings/soc/google,lga-lpcm.h
-> > @@ -0,0 +1,54 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +
-> > +#ifndef __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
-> > +#define __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
-> > +
-> > +/*
-> > + * LPCM IDs of each SSWRP.
-> > + */
-> > +#define LGA_LPCM_CPM			0
-> 
-> What are all these?
-
-The binding doc says:
-
-      Each reset is specified by an LPCM ID (cell 1) and a reset ID (cell 2).
-      See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
-      <dt-bindings/reset/google,lga-cpm-reset.h> for reset IDs.
-
-and
-
-      Each clock is specified by an LPCM ID (cell 1) and a clock ID (cell
-      2). See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
-      <dt-bindings/clock/google,lga-cpm.h> for clock IDs.
-
-These are the IDs used in the firmware interface to talk about these
-things, as many of the SoC resources involved (clocks, resets, power
-domains) are grouped in this way (by subsystem (SSWRP / LPCM), and then
-with indexing within each subsystem).
-
-In reading again, I see that the definitions and explanation of these
-terms and the SoC organization are split a bit between the pmdomain
-commit message and the binding doc. Where would you prefer I elaborate
-more? In the binding doc, the comments here, or both?
-
-Or are you suggesting these IDs should be allocated/structured
-differently?
-
-Brian
-
-> Best regards,
-> Krzysztof
+Yours,
+Linus Walleij
