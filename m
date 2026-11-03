@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793701620;
-	b=fATPUCaDOOL9bZ7gG/iSdD4iC0QuEKTPyuOnX5o6aWsvJROtnihesODff2bcwK138Dk6
-	 CcMDbfScBfDPf8kcrkDOOHR0rmpRdxz1QdjkDu7LnOmLiFuPjOt2vNnh85WW/FFzIcJWC
-	 foa0DU8nLaW897QAERsDLD5261oeY0p3suWPAL+BTdwCWtYR+aR8yF61pjUl/d7dv3yOW
-	 fZHEex8QyjEtcEeGr1UTuEONBAOdJ+snOWlKaQdBYhv0nmS/jJcelcdcI29xlh1Du9g5N
-	 +k59yfJIIFvUJVuv9dVhyRbAGGibYQkbounOJv/b5bEaCc8mAncJ6K6OuLi2G6JZ89Q==
+	t=1793701616;
+	b=EWRVqzYmhX4doLqyrQjUp+h0hZGCnCYGvFMQA4kOxGTOw6l+4llUXw7TREU5HAneBdnx
+	 f5hesDHpeZlHczM3f1yfLWYdntPAQDIHBXL6kE0khD23I9PpUI3T4/QsqmtQqQbOCejre
+	 vnLvDpQDC/VI9yeqy32COTByiHvFJzOpC48434kudEzTFXr66MFszhKAPx/SenRhcSSpz
+	 jgREy4rMecIurpJGKygMHLjX8Or7iBpwWy0+Xoee5pxBwYok49FIPaUj45eJbbYqUzoci
+	 unHpCy/8TD7QnLiIBE8RTyKRrfjonhfDx3+l4Rix/38DK37BU9ae8MjCNI1qO7m+Hog==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793701620;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701616;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=RcMnyr+QZreXmLDunbGYb1afaYzZsEF958MXJawqWo4=;
-	b=jU8aasIqnyqwHsVetvTbAeQ/B96tjfNNABF92rfsgY1R/z5S3r+1u17ZaLuujt3UAXkm
-	 y/6DfyAaXzNcZI+6cPRIhyV+UXmJTylP0CjDJ+RaHKTMEpev/DxahW5+L771GVJAwtCRt
-	 6sPv83WjNBZoUUMbD0B0Zh+Z38EdG6R/2YjVLhHNpsxpN7xYRKAlh6UaKwztuwfeWi1Um
-	 McC8S9KCYw3NJSewf70Wp0lGS9WhABRqLlQi3oJpgb5+h6wCMAV5XhpROuBlWgFsBKQMZ
-	 PeA4Pybai4pCVJCZDfD0nE+2lhW8b06ViHACIF8hsxDYVsKEvM6uW0Hv7fc5h/IBTQA==
+	bh=vF8xG9Wg0/iR0LYUbbIhgD9MY7+21+7qiT7sQpnMXI8=;
+	b=d+cUViFGs93QHMRwWLIkKWmr5gjA523S0plBw23dBJstdW4X9qZFwQhxSIpmMyF1RYim
+	 qdXKIWGtGx8GcZ8qiC/TzbdG+VzZBRlVUX9X15SL9whCVJAvarMKhZxuZ/j+eR5m9iNiP
+	 6VTriROCJ9fLznG55vv8f2ncql6G9c4oUjjk3Lmy7DXnyQGsr2G+SLjoTwfVydFruJCf6
+	 rN8osM6axMIqsJ1QxRC6nRMrsIKS2gPw6IsP264E7NiX58c/3ziHzKjM2ovg4A+c0Wrwl
+	 3ZSbggY7Vz/FoMzFM0DzhknR3c6FJsJHqZW4Xpoq9tge6bjtyOK9UWwIuZ8IlNngETA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cm4ZB0H6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgGIuc3i;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19777606C593;
-	Tue,  3 Nov 2026 10:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCA1606C580;
+	Tue,  3 Nov 2026 10:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cm4ZB0H6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A3F1F00A02;
-	Tue,  3 Nov 2026 10:26:58 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AgGIuc3i
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B98A1F00919;
+	Tue,  3 Nov 2026 10:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793701619;
-	bh=RcMnyr+QZreXmLDunbGYb1afaYzZsEF958MXJawqWo4=;
+	s=k20260515; t=1793701616;
+	bh=vF8xG9Wg0/iR0LYUbbIhgD9MY7+21+7qiT7sQpnMXI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cm4ZB0H6xvIjRkLwWHZrUWyyBc0FJ+PTttq5RDfq4yuewGn7EE9KyGRoxJ328hYYc
-	 Gsad/KkeMKRTb5dAEUjv9LCFoMi/OZpjQELOYLvTywguTspaAM/oWotQ/LPFYIHfYQ
-	 u32u705QUwmxzD6pNADK2gs3V7lclzEJtmvwHn2IgikCJMBNVnHEBnd4vbiN1G5p+2
-	 V+Q4H36KfhsLUyVnfN3S8PcaN8cjd0VO+D8NpQuXdr1tj5rlPtU7V76UYWBhjSolkL
-	 GAQSI7BiUnh0GlMVVFs5HBevmkHmNnVfuc0QAMeI0RH7YBQYKtsWz0WejFlgDekFDY
-	 whZj99QsP/3vg==
-Date: Tue, 3 Nov 2026 11:26:57 +0100
+	b=AgGIuc3i/+pEZMq8Ko91aA5O3SOhC42Fu/wTLmdPjmQWZKruH/btztx6oYySW/I1E
+	 dPqizGAIInK3ymc/fa7u93E38cbR93+Z6Ar7k1Yas2EE44BW46sESs8AzjtvodKU7p
+	 TfBqBXMjj12KDWMnYZQF8IgIQAnj3BGQPUZCnwAweYmWpwd+FNHC9DsiS3Ou4Q5dms
+	 AayCEZnMuqJbcWWmhEB+y6MJok5KTbnFfuilA96pwxF0bDaYOyibDJdyvfMnq/TCM2
+	 v5CLb0WmpgrufPTbYiGDLWP2/gdDh3lb1BTzDZw+CNp9KqkYZ2VOg9+t75Eua3PP7I
+	 GdKWemYdsJeZQ==
+Date: Tue, 3 Nov 2026 11:26:54 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: linux-kernel@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Subject: Re: [PATCH] media: exynos4-is: Free control handler if ISP subdev
- init fails
-Message-ID: <20261103-sandy-giraffe-of-coffee-b4ab6f@quoll>
-References: <20261103094616.1289357-1-vulab@iscas.ac.cn>
+Cc: Peter Griffin <peter.griffin@linaro.org>, linux-media@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] media: exynos4-is: Free control handler if fimc-lite
+ subdev init fails
+Message-ID: <20261103-macho-determined-woodlouse-b1ba77@quoll>
+References: <20261103094617.1289377-1-vulab@iscas.ac.cn>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -61,26 +61,26 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261103094616.1289357-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261103094617.1289377-1-vulab@iscas.ac.cn>
 
 
-On Tue, 03 Nov 2026 09:46:16 +0000, Wentao Liang wrote:
-> fimc_isp_subdev_create() initializes isp->ctrls.handler and creates a
-> number of standard controls. If any of them cannot be created,
-> handler->error is set and the function returns after cleaning up the
-> media entity only. The control handler still owns the memory allocated
-> for its buckets and for the controls created before the failure, and
-> neither fimc_isp_subdev_destroy() nor the caller's cleanup runs on this
-> error path, so that memory is leaked.
+On Tue, 03 Nov 2026 09:46:17 +0000, Wentao Liang wrote:
+> fimc_lite_create_capture_subdev() initializes fimc->ctrl_handler and adds
+> a control to it. If the control cannot be created, handler->error is set
+> and the function returns after cleaning up the media entity only. The
+> control handler still owns the memory allocated for its buckets and for
+> any control created before the failure, and fimc_lite_probe() does not
+> call fimc_lite_unregister_capture_subdev() on this error, so that memory
+> is leaked.
 > 
 > Free the control handler before returning the error.
 > 
-> Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+> Fixes: 4af813108b88 ("[media] s5p-fimc: Add support for Exynos4x12 FIMC-LITE")
 > Cc: stable@vger.kernel.org
 > Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
 > Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 > ---
->  drivers/media/platform/samsung/exynos4-is/fimc-isp.c | 1 +
+>  drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
