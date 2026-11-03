@@ -1,54 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793699172;
-	b=nJ+MVE2jQ4/S9sRvwEkRy8NNMpCemDEBrstBVhPJCP2eWdlSVYPMqtMrAFlm1/4l71ur
-	 TddewK1K691jxVZIxUAmNbzjMwlNz6h4xDwcsodeBpAB5v68qWOIe3LTYPq3AOM3QQrFE
-	 6YtRR5koyzMDNDs9YY6SxFwyXkmXe4NwSklpCULRVCqdgjrrHrv+elzg7qmQ4edPCasDl
-	 GMGstEcCOLlth3IKB68aJIS1An2Rm5XCVc7NcODSOcqgdqfw67qds1DrZ9WsMAqZwKVgb
-	 VNEHrAS8HmMLdYIt39q5u73DIcvurmHHfF2xVMovUGthsVmD0Ke1fVL0kdksVcnA1aw==
+	t=1793701620;
+	b=fATPUCaDOOL9bZ7gG/iSdD4iC0QuEKTPyuOnX5o6aWsvJROtnihesODff2bcwK138Dk6
+	 CcMDbfScBfDPf8kcrkDOOHR0rmpRdxz1QdjkDu7LnOmLiFuPjOt2vNnh85WW/FFzIcJWC
+	 foa0DU8nLaW897QAERsDLD5261oeY0p3suWPAL+BTdwCWtYR+aR8yF61pjUl/d7dv3yOW
+	 fZHEex8QyjEtcEeGr1UTuEONBAOdJ+snOWlKaQdBYhv0nmS/jJcelcdcI29xlh1Du9g5N
+	 +k59yfJIIFvUJVuv9dVhyRbAGGibYQkbounOJv/b5bEaCc8mAncJ6K6OuLi2G6JZ89Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793699172;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=lv/56oXPRXQPRp6JeV1O5YcHVayyCW8jY8QcD0pgPIM=;
-	b=Rlg5KV7eemdViO425tijXPHtztwThxBJqCJOCIntXB+tyCs3+ylbRtpaHS9IW3M5KL0l
-	 Swn8UBCXmdX5lb99unG7azB7jUcikCdCPaoxl5b46JJxnIaZu8fk2LqmtXbNIXeML425h
-	 fPgFMmPH4tLrro4QYw61o/FQoUJy9O3RSLrpoP3oV2bShlJGQfqlTYxVHSFo9TQrEpF4a
-	 s5UXiZ1jSnzFMYU4jB1ye5+vzfUK/3+gPcvgBFb4AM/fmHfUOfU7fCQM1l5zjv0KMp61Y
-	 s+uGyKdB9ljBcitAyzwicMjD+dW9PZy3geFJl8Efxg8VYHOB4ygx1OePAka6z8Rw8SQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793701620;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=RcMnyr+QZreXmLDunbGYb1afaYzZsEF958MXJawqWo4=;
+	b=jU8aasIqnyqwHsVetvTbAeQ/B96tjfNNABF92rfsgY1R/z5S3r+1u17ZaLuujt3UAXkm
+	 y/6DfyAaXzNcZI+6cPRIhyV+UXmJTylP0CjDJ+RaHKTMEpev/DxahW5+L771GVJAwtCRt
+	 6sPv83WjNBZoUUMbD0B0Zh+Z38EdG6R/2YjVLhHNpsxpN7xYRKAlh6UaKwztuwfeWi1Um
+	 McC8S9KCYw3NJSewf70Wp0lGS9WhABRqLlQi3oJpgb5+h6wCMAV5XhpROuBlWgFsBKQMZ
+	 PeA4Pybai4pCVJCZDfD0nE+2lhW8b06ViHACIF8hsxDYVsKEvM6uW0Hv7fc5h/IBTQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.81
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cm4ZB0H6;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9916A606A331;
-	Tue,  3 Nov 2026 09:46:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9916A606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowAAnOJlarelqh047AA--.2594S2;
-	Tue, 03 Nov 2026 17:46:03 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Free the control handler if fimc_ctrls_create() fails
-Date: Tue,  3 Nov 2026 09:46:12 +0000
-Message-Id: <20261103094612.1289226-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19777606C593;
+	Tue,  3 Nov 2026 10:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cm4ZB0H6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A3F1F00A02;
+	Tue,  3 Nov 2026 10:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793701619;
+	bh=RcMnyr+QZreXmLDunbGYb1afaYzZsEF958MXJawqWo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=cm4ZB0H6xvIjRkLwWHZrUWyyBc0FJ+PTttq5RDfq4yuewGn7EE9KyGRoxJ328hYYc
+	 Gsad/KkeMKRTb5dAEUjv9LCFoMi/OZpjQELOYLvTywguTspaAM/oWotQ/LPFYIHfYQ
+	 u32u705QUwmxzD6pNADK2gs3V7lclzEJtmvwHn2IgikCJMBNVnHEBnd4vbiN1G5p+2
+	 V+Q4H36KfhsLUyVnfN3S8PcaN8cjd0VO+D8NpQuXdr1tj5rlPtU7V76UYWBhjSolkL
+	 GAQSI7BiUnh0GlMVVFs5HBevmkHmNnVfuc0QAMeI0RH7YBQYKtsWz0WejFlgDekFDY
+	 whZj99QsP/3vg==
+Date: Tue, 3 Nov 2026 11:26:57 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: linux-kernel@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] media: exynos4-is: Free control handler if ISP subdev
+ init fails
+Message-ID: <20261103-sandy-giraffe-of-coffee-b4ab6f@quoll>
+References: <20261103094616.1289357-1-vulab@iscas.ac.cn>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -58,57 +59,71 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAnOJlarelqh047AA--.2594S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWkGF1kKF4kGw1kWF4DJwb_yoW8GF47pr
-	Z3X3s3ArZ8Wa1qvayUG342kay3C3WrGrWDWrZxuw13Awsaqa1fAw18Ga1UuFZrAr1xK3W5
-	Xr18JFy3CFs0vwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWxJr0_GcWlOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfU7TmhDUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAIAA2rpnOFIXQABsn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261103094616.1289357-1-vulab@iscas.ac.cn>
 
-v4l2_ctrl_handler_init() allocates the handler's bucket array, and each
-subsequent v4l2_ctrl_new_std() call allocates a control.  When one of
-those calls fails it only records the error in handler->error.
-fimc_ctrls_create() returns that error with ctrls->ready left false, so
-neither caller calls fimc_ctrls_delete(), and that function would not
-free the handler in that state anyway.  The bucket array and the
-controls created so far are leaked.
 
-Free the handler before returning the error.
+On Tue, 03 Nov 2026 09:46:16 +0000, Wentao Liang wrote:
+> fimc_isp_subdev_create() initializes isp->ctrls.handler and creates a
+> number of standard controls. If any of them cannot be created,
+> handler->error is set and the function returns after cleaning up the
+> media entity only. The control handler still owns the memory allocated
+> for its buckets and for the controls created before the failure, and
+> neither fimc_isp_subdev_destroy() nor the caller's cleanup runs on this
+> error path, so that memory is leaked.
+> 
+> Free the control handler before returning the error.
+> 
+> Fixes: 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+> Cc: stable@vger.kernel.org
+> Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/media/platform/samsung/exynos4-is/fimc-isp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Fixes: 9448ab7dec30 ("[media] s5p-fimc: Add color effect control")
-Cc: stable@vger.kernel.org
-Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index b36812ad25c0..8e6dd602aa79 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -606,6 +606,8 @@ int fimc_ctrls_create(struct fimc_ctx *ctx)
- 	if (!handler->error) {
- 		v4l2_ctrl_cluster(2, &ctrls->colorfx);
- 		ctrls->ready = true;
-+	} else {
-+		v4l2_ctrl_handler_free(handler);
- 	}
- 
- 	return handler->error;
--- 
-2.34.1
+
+Multiple things here:
+1. Your team ignored completely previous feedback. Multiple times.
+
+2. You use multiple identities with this email address, thus I doubt that we
+   speak with an actual person.
+
+3. Your bot does not even bother running checkpatch, right?
+
+4. Nothing of this was reproduced nor tested.
+
+5. Finally, the same feedback:
+You sent multiple independent patches, to multiple independent
+subsystems. The amount of these patches clearly suggest this was
+AI generated and most likely not tested.
+
+More importantly, you sent all this work without properly organizing
+relevant patches into patchsets. This makes reviewing difficult
+and might cause multiple reviewers to address the same issue.
+Replying to the entire set is impossible and requires handling each
+patch independently, instead of applying or discarding the set.
+Maintainers also won't see the bigger picture of your work. Quite
+worrying.
+
+This is on the verge of hostile patch: bomb us with so many
+contributions, we won't be able to handle them in efficient manner,
+like responding ONCE to ask you to slow down.  Considering all this
+is untested and LLM generated, I have even more doubts whether this
+should be considered for review.
+
+Please read kernel documentation BEFORE posting more work. It will
+explain you how to identify subsystems, how to organize your work per
+subsystem (so a patchset grouping multiple patches with a short cover
+letter), how to document the issue discovery method and what was
+or was not tested.
+
+Best regards,
+Krzysztof
+
+
+
 
