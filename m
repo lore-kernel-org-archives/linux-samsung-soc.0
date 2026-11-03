@@ -1,55 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793696666;
-	b=Bvcdjs+rS/Wge5NocCitF+IeU6esuzw8/a932NucQPBrYE5uPbsxFZ1qKaYGxJ8K6QW3
-	 4ifXjYpnXzkiCPEG5h5tHEH18EKX/QXhF3GNTbEBKzU7EoUk+ZhZKRkCwfKYPCB5FbGlU
-	 4tnVVRC/1D6pw++jLBDMDwyx8R9bH4Xle/bPL09Howbti2DwIHy13aU0NhuzVyObr8ZqF
-	 HmM8f+QA1NgeC/D9MbRfVWhhfpsZGY88nf11pRrfEZeHIu5d15U0UbiDvU5jAK8RY38rp
-	 GqOzX+tpPVgBVfgEmvOiZYjqHG7uj6SbjHI/6DQ5e0HPPYmiJQtvLHQR6SsAsB8G0uQ==
+	t=1793696814;
+	b=fFdy11JVjPOzev8/eSKEk8dATFeEJ37DWsHoWzAqUid3RxYUH6ZMsYtY0b7dYTZOhO5e
+	 73VCf41K5S+1BmJ6DNohbAVuiWXZlVxaF7PM0vEimhwVQ3XblXFto/+WkRF+qsLkHCxQV
+	 HsaYaziPapCO8zbrj7flQOdrZsrVy7OdgtUGpZCx72zmyDvHndvZ4U0LUMxFg2O0ZyRx1
+	 Wfup80N4nk8L6LowKkfwrhI+ZKUpQGXiWeplFeK7baRX6W7YeJs3WCke1WceFRg4Wa9Ip
+	 JA2Sr+oThQX6C7jubeKY2G1rHnf2QJeFSwSqKjHTZBt4QIh5dElQSyyval2fo19Sbsg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793696666;
-	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
-	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
-	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=oqcwif+o3u40FPToGAPLvgMZ6cthmDqENUhGefULOww=;
-	b=XBudkX3cFbpLcZN2Ad96N1JdiGHWXX0S6fmK/tYU0gO6e09JwdIeWXayij3gt1QCZhb6
-	 R0v4z3NEL7ynbQU36hxImyzifYWqBgGGYQQoMaRX26VQg/pwcnc/T23ODNAzyavU0R1RL
-	 DAdlbUu+MbY6mwH+c+fR/iSiclpIVidYZnZHf7C3mZTP57QQanVRhjecLgKl2mRCVYNkk
-	 ZfU5CGMfbJPr3eyjHBJO80bkjEWROMcfNQtfyauvKu1gDSvO5cTd2dg0H8PJ3W5duWv1i
-	 fiAKmTTCTgbUhZyz2smoEv1uSiEXBS7M5h4i5iMx69fpr7o8tfc37tW+/Gmk3uGMyDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793696814;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
+	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
+	bh=XOEYJGmIGDL8E6PA4Nkpk9qtz9s8zhGdrWi/akM3QSI=;
+	b=ZLMkKYTslzhAAM+j4clAXJHDh8CyD+SeVW6W32PnnenoEZJZj8hps/28yjDYnHkSVI19
+	 AkzcuLR+E6iUERwjlL8EpEsxxwGwii9NWLczWXQrGypgywALwFhiVPmzUfvlit0qH4F+X
+	 ZGb87z5mA+2rFVIzFbsZ6LEpvXQfD8ndQXi0cN2sMP5HD3yMy5qWUzncuX9DuCTWUMnRb
+	 PxWyTvIDFFQk4lu/FkewsNAnop7u9rw/dmXJFk/XVqm7NY3JcLVt/TMExviQOKzb0fuq+
+	 6w6ewtM2A465n9211nxoMMw/zLdutgJ2yly8jt47MGS9Qi0usv/GWntahSIFr5HfuBA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h1xKU2tT;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=iscas.ac.cn;
+	spf=pass smtp.mailfrom=iscas.ac.cn;
+	arc=none smtp.remote-ip=159.226.251.81
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B133606A32F
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2026 09:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=h1xKU2tT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F341F00A02
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Nov 2026 09:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793696665;
-	bh=oqcwif+o3u40FPToGAPLvgMZ6cthmDqENUhGefULOww=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=h1xKU2tThc+PCjMmTSQl98ISc5OnxMMDKFMUPOC9vnlb9lQ4xXhBteZ2gpKXpRt7I
-	 w9lfHpMOf3jD7ltyrds0TP7N7c/b/Jj6B+osimdzSS0PSO++Rw2BGlJCslQ8ZoGQrh
-	 s035XhlTsRnNeYdvANd09qtbbDad5FtIteTxYMMEyv2lCo+HSmzUARhSS9QlY0zjzV
-	 N4+Kg7jXHxMi3kiA9ATievIktcA60E+48pt0/InTqwfA0sOKN1kO3xUiAcccV8xDT+
-	 +8Vutoj+WhzleMS5uiq6PG8imke4kD2NTobGiKFljbN6hq0teze7QLoDKWlRhqdiy5
-	 celxtNibeT47g==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ab3b29a1d0so31190851fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Nov 2026 01:04:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBzQtSXtBIrQw90g2xuJYlACcQWntvySlbz0yIlaZyrdCOlwvKTg+EUPsxaK5ViZjaITWBGAB2bTVim7AgdJSu5+dQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8LmnsZz9XZLs9K2WepxUMVfGtvRlfB75IhSv8OIKEn4N3JNrYb
-	f05w5WQhjA6rNcBnOGSJIkND+WXBwqJPaO0ivEJdlqwoKV9mzDattHXw3bJm7kGPAibXjge0w6G
-	mmnsl7uuaGG0C7cBcg7kVTEJpl8VEW3I=
-X-Received: by 2002:a05:651c:198e:b0:3ac:4da3:864f with SMTP id
- 38308e7fff4ca-3acb7a9e0f3mr31016591fa.4.1793696664148; Tue, 03 Nov 2026
- 01:04:24 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA973606A324;
+	Tue,  3 Nov 2026 09:06:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA973606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowAAHGJkkpOlq2+k6AA--.1851S2;
+	Tue, 03 Nov 2026 17:06:44 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: exynos4-is: Release clocks if enabling the bus clock fails
+Date: Tue,  3 Nov 2026 09:06:53 +0000
+Message-Id: <20261103090653.1208652-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -59,69 +58,67 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
-In-Reply-To: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 3 Nov 2026 10:04:10 +0100
-X-Gmail-Original-Message-ID: <CAD++jLmoy=--GE4MScaTOa=x9+HAuvhHC7ixA_GYVme2vrcgZQ@mail.gmail.com>
-X-Gm-Features: AclHuK8feuY0PnTZqOb4xpNbcV0UYLP8c4l3kas742sFixN6cKUvbMAmIcJa7DE
-Message-ID: <CAD++jLmoy=--GE4MScaTOa=x9+HAuvhHC7ixA_GYVme2vrcgZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
-To: Frank.Li@oss.nxp.com
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>, 
-	Ryan Wanner <ryan.wanner@microchip.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Yixun Lan <dlan@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, 
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, 
-	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>, 
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, vkoul@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAHGJkkpOlq2+k6AA--.1851S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr48Zry8Aw1DCF1DJr43ZFb_yoW8WF1kpF
+	Z7JFZ3AFy5Xw1vq34Ut3W5ZF90y3WfJFy7urZxC34rZwn8ta9rA348Ca4UZFWqyFWIyay5
+	Zry8tFZ7AFWYvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr1j6rxdMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VU8jQ6JUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwAAA2rpnO4nhgAAsU
 
-On Mon, Nov 2, 2026 at 6:40=E2=80=AFPM <Frank.Li@oss.nxp.com> wrote:
+fimc_clk_get() acquires and prepares all of the FIMC clocks.  If the
+subsequent clk_set_rate() or clk_enable() call on the bus clock fails,
+fimc_probe() returns immediately without calling fimc_clk_put(), leaking
+the clock references and leaving the clocks prepared.
 
-> From: Frank Li <Frank.Li@nxp.com>
->
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across SPI bus drivers.
->
-> No functional change intended. Prepare make to struct
-> dma_async_tx_descriptor private to the DMA engine.
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Jump to a common cleanup label that releases the clocks on both failures.
 
-Makes sense.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Fixes: b71b56b264ae ("[media] s5p-fimc: Check return value of clk_enable/clk_set_rate")
+Cc: stable@vger.kernel.org
+Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/media/platform/samsung/exynos4-is/fimc-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+index 57e573949e54..b36812ad25c0 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
+@@ -977,11 +977,11 @@ static int fimc_probe(struct platform_device *pdev)
+ 
+ 	ret = clk_set_rate(fimc->clock[CLK_BUS], lclk_freq);
+ 	if (ret < 0)
+-		return ret;
++		goto err_clk_put;
+ 
+ 	ret = clk_enable(fimc->clock[CLK_BUS]);
+ 	if (ret < 0)
+-		return ret;
++		goto err_clk_put;
+ 
+ 	ret = devm_request_irq(dev, irq, fimc_irq_handler,
+ 			       0, dev_name(dev), fimc);
+@@ -1012,6 +1012,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 	fimc_unregister_capture_subdev(fimc);
+ err_sclk:
+ 	clk_disable(fimc->clock[CLK_BUS]);
++err_clk_put:
+ 	fimc_clk_put(fimc);
+ 	return ret;
+ }
+-- 
+2.34.1
+
