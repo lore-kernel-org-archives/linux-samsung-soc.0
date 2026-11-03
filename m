@@ -1,54 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.81
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793696814;
-	b=fFdy11JVjPOzev8/eSKEk8dATFeEJ37DWsHoWzAqUid3RxYUH6ZMsYtY0b7dYTZOhO5e
-	 73VCf41K5S+1BmJ6DNohbAVuiWXZlVxaF7PM0vEimhwVQ3XblXFto/+WkRF+qsLkHCxQV
-	 HsaYaziPapCO8zbrj7flQOdrZsrVy7OdgtUGpZCx72zmyDvHndvZ4U0LUMxFg2O0ZyRx1
-	 Wfup80N4nk8L6LowKkfwrhI+ZKUpQGXiWeplFeK7baRX6W7YeJs3WCke1WceFRg4Wa9Ip
-	 JA2Sr+oThQX6C7jubeKY2G1rHnf2QJeFSwSqKjHTZBt4QIh5dElQSyyval2fo19Sbsg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793696814;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
-	bh=XOEYJGmIGDL8E6PA4Nkpk9qtz9s8zhGdrWi/akM3QSI=;
-	b=ZLMkKYTslzhAAM+j4clAXJHDh8CyD+SeVW6W32PnnenoEZJZj8hps/28yjDYnHkSVI19
-	 AkzcuLR+E6iUERwjlL8EpEsxxwGwii9NWLczWXQrGypgywALwFhiVPmzUfvlit0qH4F+X
-	 ZGb87z5mA+2rFVIzFbsZ6LEpvXQfD8ndQXi0cN2sMP5HD3yMy5qWUzncuX9DuCTWUMnRb
-	 PxWyTvIDFFQk4lu/FkewsNAnop7u9rw/dmXJFk/XVqm7NY3JcLVt/TMExviQOKzb0fuq+
-	 6w6ewtM2A465n9211nxoMMw/zLdutgJ2yly8jt47MGS9Qi0usv/GWntahSIFr5HfuBA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=iscas.ac.cn;
-	spf=pass smtp.mailfrom=iscas.ac.cn;
-	arc=none smtp.remote-ip=159.226.251.81
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793697261;
+	b=E+sBaKWJKm0XPvtSuxhN0F39NmbQAghu1n+lgWL8k+19/zBaBQwytxMiC9YBx5o4CS/q
+	 Sn00Gx15EVbcXObehxPNpL+rtKX2kE5E3bowgCZf9WYv8qcVxKpPJmVQVn44482ew+ghj
+	 j3DCqZEE8I2cy87U9IAKqJTZ17BP0DYKoiNzo7UuLpAy9A8HDbcU9PFMSXMUepFxUoKPa
+	 Mh4p44DcCHnlnKPkMFpZnW3KqkqSUYxUB+65R6EZk/FD3WdddZg4EySp46O6NTXFKtmM1
+	 x9ifW47b2sOXGNjttt1MqtZW8vkjasU6cGq0UJup+9yK1vngi7lH4whI9hIbB0iPLWQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793697261;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
+	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
+	 User-Agent:MIME-Version;
+	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
+	b=vEW3OyDTqdkJxDAMVs/AGBsZ+ZcEjrvA+di6RWih+AcWhEC2MTA4s7NNMLqYfmqAcwEw
+	 QV9FPEvtVgy2LNfRepoEaTHP6riKmLZczDwVR+bN9P0H81+NuoTE1RurpU2JEAd4mlTD9
+	 8m/Nz0UkajwnLLICi6I8W7BQ+q0KP2h72a4kuUYREkEWQokPdZLTtorUjqjKyhz/s4w17
+	 cN31zncz8rs5Dr9UwfE2UoNIAK1pYUqw7fRLPs5nt4SPtabgADAEnwPc5tAvvXc8IoQI8
+	 gAFK3yTUwUeK+Z4Oeur2LciZg9yjly0HMwku0c7+bg9hQruLffqZU64L/XY90lxwCJw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Az16B1NT;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA973606A324;
-	Tue,  3 Nov 2026 09:06:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA973606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowAAHGJkkpOlq2+k6AA--.1851S2;
-	Tue, 03 Nov 2026 17:06:44 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Release clocks if enabling the bus clock fails
-Date: Tue,  3 Nov 2026 09:06:53 +0000
-Message-Id: <20261103090653.1208652-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794B4606A324;
+	Tue,  3 Nov 2026 09:14:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 794B4606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Az16B1NT
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id A9E7320103C;
+	Tue, 03 Nov 2026 10:14:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793697257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
+	b=Az16B1NT/o8u9bVz4Vr+qtoUJMO3XnS5rLrEvivYNfOeg/KeYGFKJa8LvN/V523v7lH/79
+	dKjT1Dj0L2tkZoPLOQYbfdaLEiI4+49lt+e0MAxy8rJLme1LJMizWuHIj3IuJqhIdplKzl
+	bLdN24LfJoTlqzgYGPzLR7nqq8CoC8dBkvg2VKgJL1LKp2XvwAUqf3Q/cBzK8GgB83tSLq
+	iJQT7CebcWCXUevcw24RNeD62XHc1PVw01VapBpiNKtOAGGnKnBK9rgWhkCY3EnEB6J/J/
+	TZDqOnUvRwt7btSCyUqCt3QOIkm1cCXRPqacLNsX22HxcLv1l68DnXQC2AxoCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793697257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xCKzQnE8sR8qGnyIMcveJ64Ln+A33qIBzCr/8Ncna5s=;
+	b=IeFNgT0IVHiRepot8IhD9+8MZxksgKp8QtZ0Q+NkRQKSzRW3F1st38bGCwY408Qds7atpb
+	ASrtbeQfpuAnNb5kkd7A+fbJ8ddafXqTtv0cWMMKVkgzhTPcwxdGEQURAVF1Bq9QZ0rgTg
+	9Vy3wLWnvjju/NCLna2Jd9dKEalVQTk8EXyJGFG8zWnPj2aNmEqFl0MlVN2ji7XxzsVrsT
+	WQO+2MIY9f1v0UNM0UDw6LyRIoKSSMVnq3fAMy5ZR/NKyOiIELMNjRr/xIJYmGGI4VnjHD
+	4JiOPXyDQ1eksy1+MAANficJxkHsVtWHcA8cTuH9WeEIu9XiQesit2LyMZgpcA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793697257; a=rsa-sha256;
+	cv=none;
+	b=MqelqDHcu32UrtpOsw3KKZGLgLnFSR66JSukkrD0iM4rky+LVtOW4DCdHiERKyp0wwyUUR
+	GpeDDOCAgBKM7K8U1C36Gv6NbS5q0c332HXHoL93qzyNgEhptnCF4Q7rWM42PJSwcutHq7
+	hj+C8jujlg6ifEOlQI652m1MHSw4+zhWckIyPos4F8hrlN7763yEA8xzS9Aogizms7TF/z
+	N9uxspC3AcdMXAscx5zzdN40nfJrBNAnohLxQCGiVeRKE+pr0x0NTROgrjV/fgvjOKINoW
+	XQbjuGVpvakYsEUAjDsft9Ml7OavlmNny2MoEjyxe4tOnmtQ082HCtQPFGF80g==
+Message-ID: <88963fd1fd87123496a55e2002bc8b0dc2466bd4.camel@pengutronix.de>
+Subject: Re: [PATCH 6/9] reset: google: Add CPM reset driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney <bmasney+clk@redhat.com>,  Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,  Peter
+ Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, Tudor
+ Ambarus <tudor.ambarus@linaro.org>,  =?ISO-8859-1?Q?Andr=E9?= Draszik	
+ <andre.draszik@linaro.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Radu Rendec	
+ <radu@rendec.net>, linux-arm-kernel@lists.infradead.org, Mariano Marciello	
+ <mmarciello@google.com>, Douglas Anderson <dianders@chromium.org>, 
+	linux-clk@vger.kernel.org, Jakub =?UTF-8?Q?G=C5=82owacki?=
+ <jglow@google.com>
+Date: Tue, 03 Nov 2026 10:14:17 +0100
+In-Reply-To: <aukyyYhDCBUdIH16@google.com>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+	 <20261026144346.6.I0b1ad34a718a9b5f667d2481041970ea45989dd3@changeid>
+	 <8d57f0a1dc8a07838bf1320f9b79588196264ff5.camel@pengutronix.de>
+	 <aukyyYhDCBUdIH16@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -58,67 +105,68 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAHGJkkpOlq2+k6AA--.1851S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr48Zry8Aw1DCF1DJr43ZFb_yoW8WF1kpF
-	Z7JFZ3AFy5Xw1vq34Ut3W5ZF90y3WfJFy7urZxC34rZwn8ta9rA348Ca4UZFWqyFWIyay5
-	Zry8tFZ7AFWYvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr1j6rxdMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VU8jQ6JUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwAAA2rpnO4nhgAAsU
 
-fimc_clk_get() acquires and prepares all of the FIMC clocks.  If the
-subsequent clk_set_rate() or clk_enable() call on the bus clock fails,
-fimc_probe() returns immediately without calling fimc_clk_put(), leaking
-the clock references and leaving the clocks prepared.
+On Mo, 2026-11-02 at 17:03 -0800, Brian Norris wrote:
+> Hi Philipp,
+>=20
+> On Wed, Oct 28, 2026 at 03:03:24PM +0100, Philipp Zabel wrote:
+> > On Mo, 2026-10-26 at 14:43 -0700, Brian Norris wrote:
+[...]
+> > > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_assert_debugfs_fops, NULL,
+> > > +			 goog_cpm_rst_debugfs_assert_set, "%llu\n");
+> > > +
+> > > +DEFINE_DEBUGFS_ATTRIBUTE(goog_cpm_rst_deassert_debugfs_fops, NULL,
+> > > +			 goog_cpm_rst_debugfs_deassert_set, "%llu\n");
+> > > +
+> > > +static void goog_cpm_rst_add_debugfs(struct goog_cpm_rst_debugfs_ent=
+ry *entry,
+> > > +				     struct dentry *debugfs_root,
+> > > +				     const char *name)
+> > > +{
+> > > +	struct dentry *d =3D debugfs_create_dir(name, debugfs_root);
+> > > +
+> > > +	debugfs_create_file("assert", 0220, d, entry,
+> > > +			    &goog_cpm_rst_assert_debugfs_fops);
+> > > +	debugfs_create_file("deassert", 0220, d, entry,
+> > > +			    &goog_cpm_rst_deassert_debugfs_fops);
+> > > +}
+> >=20
+> > Please drop the debugfs functionality or explain what it is needed for.
+>=20
+> Ack. I think I'll probably go with "drop", but some notes:
+>=20
+> There's no real way to test and validate a "reset" driver without a
+> consumer. There is no direct (even for debug) interface into the reset
+> API, unlike in some other subsystems (e.g., GPIO). I believe the main
+> purpose here on Pixel drivers has been hardware+driver testing, so one
+> can test reset functionality before hooking it up to real client
+> drivers, and without adding fake drivers or extra debug code (a la
+> "printf debugging").
+>=20
+> (One might observe these results either via /dev/mem-like access to
+> registers, or even through external debug peripherals/consoles that can
+> monitor the status of the underlying component that is being reset.)
+>=20
+> This all would generally be in an early hardware bringup scenario, so
+> admittedly it probably doesn't have as much of a use case in the
+> upstream kernel  -- it's a long shot for this kind of hardware/product
+> development to *actually* work directly on an upstream kernel, with
+> upstream drivers.
+>=20
+> ...but if I were imagining a better way to do this without bypassing
+> reference counting: perhaps it could be useful to a have a
+> debug-oriented "reset client" driver, that could bind to arbitrary reset
+> devices, if they're not already owned, and expose a sysfs or debugfs
+> interface like this? That could fill similar use cases for this sort of
+> hardware testing/validation area.
+>=20
+> But anyway, I understand such a proposal should definitely come
+> separately from this driver submission.
 
-Jump to a common cleanup label that releases the clocks on both failures.
+Thank you for explaining anyway. With that use case in mind, I think
+"drop" is the right choice for now. This functionality can be
+implemented in the core and use reset controls like any other consumer
+driver.
 
-Fixes: b71b56b264ae ("[media] s5p-fimc: Check return value of clk_enable/clk_set_rate")
-Cc: stable@vger.kernel.org
-Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index 57e573949e54..b36812ad25c0 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -977,11 +977,11 @@ static int fimc_probe(struct platform_device *pdev)
- 
- 	ret = clk_set_rate(fimc->clock[CLK_BUS], lclk_freq);
- 	if (ret < 0)
--		return ret;
-+		goto err_clk_put;
- 
- 	ret = clk_enable(fimc->clock[CLK_BUS]);
- 	if (ret < 0)
--		return ret;
-+		goto err_clk_put;
- 
- 	ret = devm_request_irq(dev, irq, fimc_irq_handler,
- 			       0, dev_name(dev), fimc);
-@@ -1012,6 +1012,7 @@ static int fimc_probe(struct platform_device *pdev)
- 	fimc_unregister_capture_subdev(fimc);
- err_sclk:
- 	clk_disable(fimc->clock[CLK_BUS]);
-+err_clk_put:
- 	fimc_clk_put(fimc);
- 	return ret;
- }
--- 
-2.34.1
-
+regards
+Philipp
