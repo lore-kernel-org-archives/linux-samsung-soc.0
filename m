@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793776642;
-	b=fKgZ6iLLvmETBfG+s249bNUbhYWb05afmCGEHJBA4NLGN8SedXP4PE302RTXv0nWfd3n
-	 /FTGdLkbZCUHxLuYSfu4782lbFJwzW5yq7Mvpx10zYhtrktZKKiD8SKufBI0hfBCbN9DP
-	 M31aPYIwj8EXYfj4aZm408NpB3gbxWJ3LKSK7hPGGUapkYN0UBvrx7KerbAP5u+xb7Z+v
-	 ctTf2j95WnXUqAEeubnIxbckhy66TntwQ0a1iQztUqHQHV1qKU6aLQXpiU164+oOuQ312
-	 kaoe0Fx9reOVv3l0xwUWOj0lZaCuBoAxohvxKq5L9R/FH1D+Xfp14mBYDZgQEGJZZGg==
+	t=1793776867;
+	b=t9aRMgO8zJkXWNObosXOGT4F2QUQzCRbRcdRRL2z9JMFoyGfg8muMsPbbhrtdD/Zt04R
+	 R0sTZULYPM66lfCvZDJZKGucoM/0s76diVx0YBejryPwkae8RgBKtz1XZZlmGkLSlX099
+	 TnInN5iSVs+3nA0gCzbuHtdD5IZ0kJ9Bo1cUNvoSHtnTjQk2fTwoD1ypA/DmoPXkoi4KC
+	 fzoomPwnG93MCMY6xQq8V1w9W1qHGUfSkiaD7Or9GE26SNvmddp/K+vUxaOB2BmU+Y0Qa
+	 HOes8uKtb8plUab64VGwxNucFHq1K2XFR4muEA/gV5ApV6mRYg7QQYf0pHEywhMUrpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793776642;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793776867;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=dXW6RV+t4KHCnubdiDX2n9d9RxYGIOM38IIglGMwwkk=;
-	b=me2cyuI3hnUwCDTKatFpjruow7bXY8RaGIf9AaFyFegWSCxETYP0SXrO9DPDX3yZhXg5
-	 h2xzj9oqez3F8wd42xbQR2m7XR4DrF7yZ+5FwurTtACzxr1aIj+pPPriUcDsvRzYUUd+g
-	 vTbj3auIrgrJd7kiDdwpr/yMSt4gRgxPhEtTfzrv54AxDNhOYV9jnVPnN++sIjb6afoE0
-	 yalBUJd9Vfpt04S40PKqu2XzYZ28IL7c7LAl/6ePU3g43R7uP+vhdRvZx74Z6hv7VAH85
-	 /GkFdyBMinzvN4CbAjvbDlcJbwCzLG72gQV9X+tWXea0G1iYGA4H7PFRcpZ2XBeoTNg==
+	bh=L0psWKRkASGm46CunD1oZXPWrrP9V2HqWj0pDQuxulg=;
+	b=5tjs0GM8EuIIBLRCddlxqM+1Xw5I2AeafhSEJLGk54XcESEzEhPSromehDnoWW0q74OM
+	 Uk64Tm6smQgQPTxceM6LMzELzz9ygEY2OKAwS0tL3sI0N6EHJXqB498HpQRcKsMYog0+u
+	 3q712RVorSuRz7ZN3Iqjcv4qY0gdYciyh9uIR5bOkbTRq3J8dB92RsvX8WHXRp1gV7lQ6
+	 qfYk9TdBUcitmPYCfYHlIroI2WmqFeT1HF/X76lE5kGG360TQdg613pskRtDvs1YVQ06r
+	 uTflRo04YfImjurXbsWk/g0AyLDhMfW+zVCpNgAIHq3b7d7uil3wLEt/JfJuuVEQhvA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VbtAXAT+;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k9RCxh64;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16304606A31B
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2026 07:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6842606A328;
+	Wed,  4 Nov 2026 07:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VbtAXAT+
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A6C1F00A18;
-	Wed,  4 Nov 2026 07:17:18 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k9RCxh64
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0CD91F000C1;
+	Wed,  4 Nov 2026 07:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793776641;
-	bh=dXW6RV+t4KHCnubdiDX2n9d9RxYGIOM38IIglGMwwkk=;
+	s=k20260515; t=1793776866;
+	bh=L0psWKRkASGm46CunD1oZXPWrrP9V2HqWj0pDQuxulg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=VbtAXAT+s+nlfi6Vy/Vz88tCljm9zecwHthWZySfHDTvuxE9Z34yeMxQZE+UfH6IZ
-	 3whbxDJTWaUu3MUYWkcr6zLjpOXSlO8kvMwRuP2E8MKkLLEgicmOZWm5R7qulFFSum
-	 dVOu12u1BDe97gvwlkTAmbSjTLaFcdw1f0h7R7HSvK9d/f4OaDb7XaUidKHoKcAc9q
-	 G0ZspHR6SOPqQxCcQUpepu1kzyXcPnTlMcxuHHAHRSy1f3enk72AvyENcys4LhNDsc
-	 fsDcXjUjOpWrA1Qso3UPhsn7uWAyc3tSqPVcu4hoTSzw0h+BNtgySqKtLXZ7xJetr0
-	 85Hu7EyyfoYbA==
-Message-ID: <a46a7710-0c2f-4fd3-9116-7678adca9390@kernel.org>
-Date: Wed, 4 Nov 2026 08:17:18 +0100
+	b=k9RCxh64i0WDXkNSfepE9eHTvVOorBjZpHTpacgODRluwSmtEoFSbunhpgyG54Q5U
+	 mFsURCkoO62yW411T+TN8trzrlaoZUQ/EuAkCXyQNfnmofEyAxEKcnTamRK07ss6Mh
+	 DNCJVniW1Ru1rLQCXMaG40FfpVrqIPyacSxEWoQUijK+HJJKXmPZ40iPFV/hqx172h
+	 q1aCqrVggefYeB57vDP91mLheS14+HwgsALAp/Bgn+830h7DScDGOA7Rlut8QMmLr2
+	 j+NVbh/fxdcDRqe+kZLyX9gsTHyMzaaempaf07LzQxCg00NdX5W/o9+nM8eLsk5V7y
+	 o2ht7P4ZCwZfw==
+Message-ID: <cf62f2f9-08e1-4f0c-820f-5e129e4c7de0@kernel.org>
+Date: Wed, 4 Nov 2026 08:21:00 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -52,15 +52,17 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/exynos: dpi: fix panel node reference leak
-To: Wentao Liang <vulab@iscas.ac.cn>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Peter Griffin <peter.griffin@linaro.org>,
+Subject: Re: [PATCH] media: exynos4-is: Free the control handler if
+ fimc_ctrls_create() fails
+To: Wentao Liang <vulab@iscas.ac.cn>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20261104024057.1508839-1-vulab@iscas.ac.cn>
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20261103094612.1289226-1-vulab@iscas.ac.cn>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,26 +108,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261104024057.1508839-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261103094612.1289226-1-vulab@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/11/2026 03:40, Wentao Liang wrote:
-> exynos_dpi_parse_dt() stores a reference to the remote panel node
-> obtained with of_graph_get_remote_node(). Nothing ever drops it:
-> exynos_dpi_probe() only needs it to look the panel up with
-> of_drm_find_panel(), and the two parse error paths return without
-> releasing it either.
+On 03/11/2026 10:46, Wentao Liang wrote:
+> v4l2_ctrl_handler_init() allocates the handler's bucket array, and each
+> subsequent v4l2_ctrl_new_std() call allocates a control.  When one of
+> those calls fails it only records the error in handler->error.
+> fimc_ctrls_create() returns that error with ctrls->ready left false, so
+> neither caller calls fimc_ctrls_delete(), and that function would not
+> free the handler in that state anyway.  The bucket array and the
+> controls created so far are leaked.
 > 
-> Release the reference once the panel has been looked up, and on the
-> error paths before returning.
+> Free the handler before returning the error.
 > 
-> Fixes: 86418f90a4c1 ("drm: convert drivers to use of_graph_get_remote_node")
+> Fixes: 9448ab7dec30 ("[media] s5p-fimc: Add color effect control")
 > Cc: stable@vger.kernel.org
 > Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
 > Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 
-Pure bot spam.
+This is another posting of bot ignoring feedback and probably
+introducing vilnerabilities hidden in big spam posting.
 
 Best regards,
 Krzysztof
