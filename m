@@ -1,53 +1,46 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.248.49.38
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793735388;
-	b=yNtJRUfeJQQhYGEGGX8ANiD8Y015hezzhNN66NXYKjoR2pO8YN3z1H5rPWYIsacv+oxY
-	 rov2z9NSVntuir/EFET14aLCBmzZkiaPWkTXyP3YPp/CFEyYSoqHUMUgbG3d1JwyVK+Y0
-	 6wyG/GySiU6EncJ0kR/Ps2nJA4009/Jyjq7mjaq8sMEaMrrpUb3DNweIBbkMoYHJLpqYN
-	 gjjvxGGG/oN/i9rrh2yK5sxpNiPpJS0tk8LgeXJvynjrbQRVDDgrjLj51S0L1bEje3UO7
-	 1X8JNfx6e09SfQ4xIaxs2lZb6j2L/35uej2H1nXMHzdHBvMr2cQGTptt0GONu2k+kGA==
+	t=1793757528;
+	b=QqZ6LcR4WJRhEwy33m+F752VquxlE74RQrzNWGbmLJhulrg+59rAgljvAang05Lcf5ys
+	 0csW4SWIM2XMOcTjZKYLhq8kXqXRyCQ6jUD7iUJqN7i5IUtkFhNz8jPKLY6fozqME9mHN
+	 Q4IJsNyWRt2Wn3jbgA3T2BQMRZ4gYfgy/JDFG9ptNvTlvLw9IQlnygZychUu0pTUNNt6u
+	 MR7Sfqc0X2KZu9t5vrfHVKX5jjohdGBbMvdVx3P6LDY0Vz03l/84EsNKkTTvK9px+9EDY
+	 FA44yxNGC1mOSetxMRFj+OLJFuMTDuuu927dXrrma8iZd9Jkny0GoZkob8nyZW8oPeQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793735388;
-	h=DMARC-Filter:Received:Received:Received:X-Zmail-TransId:X-Mailer:
-	 Message-ID:Date:Mime-Version:From:To:Cc:Subject:Content-Type:X-MAIL:
-	 X-TLS:X-ENVELOPE-SENDER:X-SOURCE-IP:X-CLEAN:
-	 X-Fangmail-Anti-Spam-Filtered:X-Fangmail-MID-QID;
-	bh=wr1vBxqOwzVVeBlfORJLdh2wU2b9XxfZ/Zk2+hfs9Rs=;
-	b=f6bvV/NJknGdy8/xXmotPeHkBTeSIxMRwIF22rhDoXWUbkOeBYNq0O6vODauDhOKYtCv
-	 C48lbVyg4N7h4yII2CPNSgmfmxGP0GUN+LYuL6W5VjjLQwoq+aAVyorjzy8lkDU0JD/3y
-	 lbSiTUvYaoNp/dznxFDWyjPNXvXUDrw+XKq4tflsfYqjtUmgmIkLq3NkPWdzWe97jN4De
-	 rKQE4IzrQc1LS5HdP42Y36nCJI0vETgoi3dWGj4vN3J3/x/8n4DvOKDTOPQVLgbdnVW48
-	 dr0CudhvvexL4vv1DwPAsioca60hKdezt3W8KDc+EIZHjIvpOjRIagPncAFYIVn8E3g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793757528;
+	h=DMARC-Filter:X-CSE-ConnectionGUID:X-CSE-MsgGUID:Received:Received:
+	 Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:
+	 Cc:References:Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=UvegszKUf4IaIJ/QuCVPEk47kgTcKGMaW+NqPDlxBzk=;
+	b=eKMeEQvxz13xSABE4O9obTi8CTq0HOrVtzX0tSx+UekxwjGwYCGYyBYUsX6OUm2jXk1H
+	 ZE35GLh7hsF2iwpeyUHN5mm2ciM8ZLcf4aBRKkuBs4mQOlPIuy8h0WDv7qj6DLtSykB9g
+	 yAknivbVvbYbu7eaLUwlN/Xl3NbZgNGbU+GYpWWDUFh45aQeZKf68Ru/gdklZ7pawljOq
+	 lP78uzd3UhDzEk0qniAp1/1utJ46n8A9R0W5VPTXthnd1h5LMSe7wj3fi39h3FeKQjK82
+	 GQhkYH3qclTFgBbrLN2zxl/uGekbhAnEmGClT6UejUxb01CYLTqNZjP0c6i+XtczMVg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=zte.com.cn;
-	spf=pass smtp.mailfrom=zte.com.cn;
-	arc=none smtp.remote-ip=183.62.165.209
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFAE606A32C;
-	Tue,  3 Nov 2026 19:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8FFAE606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4jJzgD4KJGz57KTr;
-	Wed, 04 Nov 2026 03:49:44 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 6A3JnbwE052245;
-	Wed, 4 Nov 2026 03:49:37 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 4 Nov 2026 03:49:40 +0800 (CST)
-X-Zmail-TransId: 2afc6aea3ad43f2-f7913
-X-Mailer: Zmail v1.0
-Message-ID: <20261104034940800qG8bny1y_TdrfjLr-KGpv@zte.com.cn>
-Date: Wed, 4 Nov 2026 03:49:40 +0800 (CST)
+	dmarc=pass header.from=socionext.com;
+	spf=pass smtp.mailfrom=socionext.com;
+	arc=none smtp.remote-ip=202.248.49.38
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3A606A32F;
+	Wed,  4 Nov 2026 01:58:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DEE3A606A32F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+X-CSE-ConnectionGUID: slblM3GaRwSFS81cHQZTvA==
+X-CSE-MsgGUID: R3YAIBrWRw6W663eQVcqqQ==
+Received: from unknown (HELO iyokan3-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 04 Nov 2026 10:58:46 +0900
+Received: from mail.mfilter.local (mail-arc02.css.socionext.com [10.213.46.40])
+	by iyokan3-ex.css.socionext.com (Postfix) with ESMTP id A622E2094543;
+	Wed,  4 Nov 2026 10:58:46 +0900 (JST)
+Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Wed, 4 Nov 2026 10:58:46 +0900
+Received: from [10.212.247.157] (unknown [10.212.247.157])
+	by iyokan3.css.socionext.com (Postfix) with ESMTP id 3244E10FA4D;
+	Wed,  4 Nov 2026 10:58:45 +0900 (JST)
+Message-ID: <3e430c3c-283d-4c1a-97e7-c5de7f8a8c10@socionext.com>
+Date: Wed, 4 Nov 2026 10:58:47 +0900
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -56,82 +49,88 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <martin.petersen@oracle.com>, <alim.akhtar@samsung.com>,
-        <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>
-Cc: <james.bottomley@hansenpartnership.com>, <peter.griffin@linaro.org>,
-        <beanhuo@micron.com>, <stanleyjhu@google.com>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYzXSBzY3NpOiB1ZnM6IGV4eW5vczogVXNlIEJJVCgpIGZvciB0aGUgbmV4dXMgdHlwZSB0YWcgbWFzaw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 6A3JnbwE052245
-X-TLS: YES
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SOURCE-IP: 10.5.228.133 unknown Wed, 04 Nov 2026 03:49:44 +0800
-X-CLEAN: YES
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6AEA3AD8.000/4jJzgD4KJGz57KTr
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
+To: Frank.Li@oss.nxp.com
+Cc: vkoul@kernel.org, Mark Brown <broonie@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
+ Ryan Wanner <ryan.wanner@microchip.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
+ <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
+ Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Laxman Dewangan
+ <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
+ "moderated list:ARM/Microchip (AT91) SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
+ "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
+ <linux-renesas-soc@vger.kernel.org>,
+ "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
+ "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+ "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+ "moderated list:ARM/STM32 ARCHITECTURE"
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
+Content-Language: en-US
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+In-Reply-To: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+On 2026/11/03 2:39, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
+> 
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across SPI bus drivers.
+> 
+> No functional change intended. Prepare make to struct
+> dma_async_tx_descriptor private to the DMA engine.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-exynos_ufs_specify_nexus_t_xfer_req() and
-exynos_ufs_specify_nexus_t_tm_req() set and clear the nexus type mask
-with '(1 << tag)'.  Commit 01aad16c2257 ("scsi: ufs: exynos: Fix
-programming of HCI_UTRL_NEXUS_TYPE") converted the same expression in
-exynos_ufs_post_link() to BIT() and noted that the UTMRL access should be
-changed as well; the four remaining mask computations were missed.
+(snip)
 
-Use BIT() there too, matching the rest of the driver.  The transfer
-request tag is in 0..nutrs-1, and nutrs can be 32, so BIT() makes the
-width of the shift explicit; the task management tag is in 0..nutmrs-1
-(at most 7), so only the transfer side can reach bit 31.  No functional
-change.
+>   drivers/spi/spi-uniphier.c        | 6 ++----
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+Thank you,
+
 ---
-v3:
-- Make this a standalone cleanup: no Fixes: and no Cc: stable.  The
-  kernel is built with -fno-strict-overflow, under which GCC and Clang
-  both define the signed shift here and neither trips the shift
-  sanitizer, so there is no runtime bug to backport.
-- nutrs counts UTP transfer request slots and nutmrs counts task
-  management request slots; only the former can be 32.
-- Capitalize the subject verb.
-
- drivers/ufs/host/ufs-exynos.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 3bcbc9ebbb28..ee47958253bb 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -997,9 +997,9 @@ static void exynos_ufs_specify_nexus_t_xfer_req(struct ufs_hba *hba,
- 	type =  hci_readl(ufs, HCI_UTRL_NEXUS_TYPE);
- 
- 	if (is_scsi_cmd)
--		hci_writel(ufs, type | (1 << tag), HCI_UTRL_NEXUS_TYPE);
-+		hci_writel(ufs, type | BIT(tag), HCI_UTRL_NEXUS_TYPE);
- 	else
--		hci_writel(ufs, type & ~(1 << tag), HCI_UTRL_NEXUS_TYPE);
-+		hci_writel(ufs, type & ~BIT(tag), HCI_UTRL_NEXUS_TYPE);
- }
- 
- static void exynos_ufs_specify_nexus_t_tm_req(struct ufs_hba *hba,
-@@ -1013,13 +1013,13 @@ static void exynos_ufs_specify_nexus_t_tm_req(struct ufs_hba *hba,
- 	switch (func) {
- 	case UFS_ABORT_TASK:
- 	case UFS_QUERY_TASK:
--		hci_writel(ufs, type | (1 << tag), HCI_UTMRL_NEXUS_TYPE);
-+		hci_writel(ufs, type | BIT(tag), HCI_UTMRL_NEXUS_TYPE);
- 		break;
- 	case UFS_ABORT_TASK_SET:
- 	case UFS_CLEAR_TASK_SET:
- 	case UFS_LOGICAL_RESET:
- 	case UFS_QUERY_TASK_SET:
--		hci_writel(ufs, type & ~(1 << tag), HCI_UTMRL_NEXUS_TYPE);
-+		hci_writel(ufs, type & ~BIT(tag), HCI_UTMRL_NEXUS_TYPE);
- 		break;
- 	}
- }
+Best Regards
+Kunihiko Hayashi
