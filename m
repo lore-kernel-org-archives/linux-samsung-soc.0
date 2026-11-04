@@ -1,55 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=159.226.251.21
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793757630;
-	b=sxcpx413zCLkRfb2idleXcIFFtmkyi8EjYN53PZEoknpomYkeGnQr6oYUEokNHgzuXYW
-	 a6Qx1tjrFFTz0KqPh4+YYLWl56S1R26ZTa5QkjamaWKA91F/VsT562gTSQpl6HGf2syIm
-	 8O4dqh3VPKJuQUmvvMCwWE+l2I1B9BHiQmMH+iXMcnY5vhQbfZbfAGqPqjVK02DfEz3d+
-	 /rgw3M7781oJYxxOxFHlttZbyU3plt/jxBPwmi6LNT6IoVZn+HPORUIDpCmmZ2ZdmHOHC
-	 JZxYsUrS+nA1UVUSQqx3uLONRO1sXaiB1D3HIz6XasbtumLfTQUo//81y0E3Y4Gbe2w==
+	t=1793760056;
+	b=b6GPLUucevkOPOZiNEVvLSn6hTAamX7HwfOaxzzsLWMPN05Kzh0t68wL3j9B7cnliZCS
+	 Sv+o/wlxFIDVeIi4oFg4b8wBIVjzjvSs+irKbwuUNiEl3jP69faRpyz8G27aCpY0Cg8OF
+	 cK+7tenYGoFTVN3V8llnWvzN2RO7RjpSkj2BWI4OvM0wxDsAvfxW7mYT1sOZTcS2tO8xr
+	 UqdhUwga4MNBmc27sJsCz0DiFQ3KVCZ+7a6oMc3VaivCoP2Qes5a3QFbkDXvoeCosdqT4
+	 MJ6Lf7w3LqhS/9EWmNJc9WTra35FvJtateshlHFYMaGkDTGcw131SfPNJmAiJcbRxTA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793757630;
-	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
-	 X-QQ-SSF:X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:Mime-Version:
-	 Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 Content-Transfer-Encoding:X-Mailer:References:In-Reply-To:
-	 X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:X-QQ-XMRINFO:X-QQ-RECHKSPAM;
-	bh=ID6BIMHIs5dozQ7uo2Zz7lMx53/Uma4fVMefg73C8Wc=;
-	b=XhXLVmvqLhCf12ASWxmqy0Cby0bukb7pohxMnHON/lmtBA7aHtkSJlZ1jYFRmK4zxT3+
-	 xnaeZ3bsZ/pNyv3zep0N5Bp9clOUd4TUjPFMMoBeaZ8Qqe6WZJmx2aJjoi1TkiSJL/M4U
-	 EkHB7enc/AxV/Op6nSqCxpfarycZE4LTZikhuiuigP7WW3PDrvrHvrnfmZQOvVVO8P+8H
-	 CBnm3ogl2wi8lIFoVCJvrnHbn8zzoCi0S6cFM4tZnT1hNusyEanCkbyGyi5DX93PQPOBF
-	 0l+q6uU1Jmd/VV8vPU2RxlDF1xkHRW8OL7HJQrlWJqb4DjUkhcCPpKTM6qB/mppXaCA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793760056;
+	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding:X-CM-TRANSID:
+	 X-Coremail-Antispam:X-Originating-IP:X-CM-SenderInfo;
+	bh=4LVdAh7jFKz1/5D+uYBEuLTvX7Jj6VNWI0HOhAsYnms=;
+	b=VnPlC4v6Tgh5lEfEM/AebpZCuE3VtGI/Zp03Ai7jObi8dLN4WDsZZ2jaTFhH/MlGIg7Q
+	 gxnSuiatBDUpahjQ+w+hDnJTj72wDB/Oou2mV6y624cQ8kbanaceLYuTwpOMK/GzC5ESs
+	 yLxMHS5tjlN7Q/M1TpnSYElhaxkAOPS1U8Lm79tGCDRrr4ydIsGQwMne734IsWyclmLLj
+	 5tybNnyETzYLaM+zZROb4ktJbA1F41z7MG8eFHBGeoY4+rf8H4RNUu8xcLqHeIvAhz5X0
+	 8opVHcDVj6WfZbrleO5hAvAGms64zoUW9UgMmzfpzu6wY1/TDevkEBwQ0X0O1EH8Gmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=linux.spacemit.com;
-	spf=none smtp.mailfrom=linux.spacemit.com;
-	dkim=pass header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b="NR6/RAAt";
-	arc=none smtp.remote-ip=54.204.34.129
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=none header.from=iscas.ac.cn;
+	spf=pass smtp.mailfrom=iscas.ac.cn;
+	arc=none smtp.remote-ip=159.226.251.21
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A0606A31B;
-	Wed,  4 Nov 2026 02:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2A1A0606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.a=rsa-sha256 header.s=mxsw2412 header.b=NR6/RAAt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1793757606;
-	bh=ID6BIMHIs5dozQ7uo2Zz7lMx53/Uma4fVMefg73C8Wc=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=NR6/RAAtadCxMT4aZNlWPKRVIcS8Uk+8x0Dzwevvs6B9RgwZ7gNVgfqgw2V6jccY2
-	 diZt/zl8uph3tIhysVhM5N/Yu8QvYwWUDPYY1qlQnLcFnuzUtdu8OZw0KH4ezoDL8p
-	 E2DgEks2Bd8LbYe+KH6+erZz2fFcbxQrJtZNGXkc=
-X-QQ-mid: zesmtpsz9t1793757596tb1b7ee28
-X-QQ-Originating-IP: MD06nJQTuVrERiBp4eZOuk/3YdF/RHaLSj82pRQMepc=
-Received: from = ( [58.254.68.27])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 04 Nov 2026 09:59:52 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13434004078560652839
-EX-QQ-RecipientCnt: 60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52357606A31B
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Nov 2026 02:40:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 52357606A31B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-01 (Coremail) with SMTP id qwCowADnEPswm+pq5bk+AA--.9653S2;
+	Wed, 04 Nov 2026 10:40:48 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] drm/exynos: dpi: fix panel node reference leak
+Date: Wed,  4 Nov 2026 02:40:57 +0000
+Message-Id: <20261104024057.1508839-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -58,123 +57,74 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=491fac0dacb0df51633230a215ca837ce7256ffa833a7a70182b3d999b4d;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 04 Nov 2026 09:04:38 +0800
-Message-Id: <DMM0TNL4VAOH.JFJQU10EQHE4@linux.spacemit.com>
-Cc: <vkoul@kernel.org>
-Subject: Re: [PATCH 1/1] spi: use dmaengine_desc_set_callback()
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: <Frank.Li@oss.nxp.com>, "Mark Brown" <broonie@kernel.org>, "Nicolas
- Ferre" <nicolas.ferre@microchip.com>, "Alexandre Belloni"
- <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
- <claudiu.beznea@tuxon.dev>, "Radu Pirea" <radu_nicolae.pirea@upb.ro>, "CL
- Wang" <cl634@andestech.com>, "Ryan Wanner" <ryan.wanner@microchip.com>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>, "Ray Jui"
- <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>, "Broadcom
- internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Vladimir Oltean" <olteanv@gmail.com>, "Frank Li" <Frank.Li@nxp.com>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Han Xu"
- <han.xu@nxp.com>, "Haibo Chen" <haibo.chen@nxp.com>, "Linus Walleij"
- <linusw@kernel.org>, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Daniel Mack" <daniel@zonque.org>, "Haojian Zhuang"
- <haojian.zhuang@gmail.com>, "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Heiko Stuebner" <heiko@sntech.de>, "Fabrizio Castro"
- <fabrizio.castro.jz@renesas.com>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Yixun Lan" <dlan@kernel.org>, "Troy
- Mitchell" <troy.mitchell@linux.spacemit.com>, "Maxime Coquelin"
- <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
- <alexandre.torgue@foss.st.com>, "Alain Volmat" <alain.volmat@foss.st.com>,
- "Chen-Yu Tsai" <wens@kernel.org>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Laxman
- Dewangan" <ldewangan@nvidia.com>, "Thierry Reding"
- <thierry.reding@kernel.org>, "Jonathan Hunter" <jonathanh@nvidia.com>,
- "Sowjanya Komatineni" <skomatineni@nvidia.com>, "Kunihiko Hayashi"
- <hayashi.kunihiko@socionext.com>, "Masami Hiramatsu" <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, "moderated
- list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>, "open list"
- <linux-kernel@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835
- ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, "open
- list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, "open list:ARM/QUALCOMM
- MAILING LIST" <linux-arm-msm@vger.kernel.org>, "open list:ARM/Rockchip SoC
- support" <linux-rockchip@lists.infradead.org>, "open list:RENESAS RZ/V2H(P)
- RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, "open list:SAMSUNG SPI
- DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open list:RISC-V SPACEMIT
- SoC Support" <linux-riscv@lists.infradead.org>, "open list:RISC-V SPACEMIT
- SoC Support" <spacemit@lists.linux.dev>, "moderated list:ARM/STM32
- ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, "open
- list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, "open
- list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-reader-ipc4
-References: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
-In-Reply-To: <20261102174005.3933649-1-Frank.Li@oss.nxp.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NbUg+6sDJYMNBkr7RPGMw9gJVR1hBVris0TKaVpTaTYyOWUOCid/CZ0e
-	ewmMLoQWVMqriHSh05rNNVdhGp6glTGBsIB3pFFM3mry/TO+93T7MjN6tqt53efaBfeREcY
-	/Ly5r6Ta8tQUxmke6C6vi4MPyUoVvFFH8t8StiFG9XmwETB8YtfRxQIxHjgKGF1TkFTLv5L
-	o/HnpwzC+d+r0zG1wI/tAKXXEyr8jdLcs9nOxOo3I2wQE4scoIJhQNiVI1RfpSxszpEQplk
-	0pyO8LpNmYKi/ui9Xe0q0sQDctj+46yJG/E8aMDpWSUy568yzqPWvhUYbtbKL1eoJJQh3dm
-	zIvg/Rucg2A9+fzq2dmOq0khzLFZLjZ1nGmEn5OwAYuwzgJHNLuuxnKfmpwq4/LDnWSnwqo
-	qXg983HYVporMTDKy/EOrdPKnEjCUtmnyj1BXd8Y1Mcn98ij8yUXgkSJrkMuVL7lGK/TK4y
-	rx5R0lvMYOFSrPuSCIrkmLBBted0dcbm/NQp5vyL5N7T7SvVcujByxzQGS1SXFuBN863pQG
-	TuZGb3cbsn0C8AqtjHakmCPZDUSwAOkCjxT67NVu58C9akhy7CfaxS8UEl4UQPDwyteyPYP
-	m59td7YhzdewAMaoFbKNlptfnba34JQhVXAXfyH3wb9r4BVDXFaiLyzKkgkUraebsJMAQb6
-	6md2E45/dylq763+53uqj37YaH6q26GD5rOhdq7RBabsMjO2m4MgWjp5A4nx4sklv8RUj1S
-	E1QK03DznZphP2r++0/Qu+DiGe+1Vkg0iizvQaCXA8IJXBE3qaglmmzn9AoQnCo4JtGZVi/
-	VJYUE8PaOXtlKEbXci+FW+jKhdzNmhV1hqyjb2dGXGvluSPgTXDJF9Wr9vUXOr2fkXEOvGD
-	XmXl0rjJercXo4Q2L8FyYqV3N5wadqT9rrvgMII2x7/HDJnGtmcpGTyXZXGS7UnkES7bdyC
-	iAbZ2kwlVo2oKrFmT905C00hoZgjdI2BMnbttGuhcAWeejHqeCcKbXzx6p8dECsLVXLPwel
-	BlZ1ywg8NPbo3DyHUU2ZTkUWicB+CDpmuBmZAKa/Gus14OMe+KJlz3Zg3rnYIq7gKlIqA0R
-	n+0fQwogXGpz1NhCpf/+hZ4kyfTkYtDRQ==
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADnEPswm+pq5bk+AA--.9653S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF18GF4UXr1ktr1kGw1UGFg_yoW8WF4UpF
+	47Cry3Ary5XrW7GFy0vF1DAFyaya4IkrZa9FZ3CwnrZwn8Xr1UX3W5ZFW5KFy5AryrGFyY
+	yr4DJF13A3WUCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Eb7Iv0xC_KF4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2
+	AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v2
+	6r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14
+	v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xf
+	McIj6xIIjxv20xvE14v26rWY6Fy7McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r48ZrWUJr1UMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267
+	AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU0c6pPUUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwYBA2rqZFjVVAAAs+
 
---491fac0dacb0df51633230a215ca837ce7256ffa833a7a70182b3d999b4d
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+exynos_dpi_parse_dt() stores a reference to the remote panel node
+obtained with of_graph_get_remote_node(). Nothing ever drops it:
+exynos_dpi_probe() only needs it to look the panel up with
+of_drm_find_panel(), and the two parse error paths return without
+releasing it either.
 
-On Tue Nov 3, 2026 at 1:39 AM +08, Frank.Li wrote:
-> From: Frank Li <Frank.Li@nxp.com>
->
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across SPI bus drivers.
->
-> No functional change intended. Prepare make to struct
-> dma_async_tx_descriptor private to the DMA engine.
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/spi/atmel-quadspi.c       | 3 +--
+Release the reference once the panel has been looked up, and on the
+error paths before returning.
 
-[...]
+Fixes: 86418f90a4c1 ("drm: convert drivers to use of_graph_get_remote_node")
+Cc: stable@vger.kernel.org
+Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
->  drivers/spi/spi-spacemit-k1.c     | 3 +--
-For spi-spacemit-k1.c:
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 74d3a2bebb74..b9417529b38e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -174,12 +174,15 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
+ 		of_node_put(np);
+ 
+ 		vm = devm_kzalloc(dev, sizeof(*ctx->vm), GFP_KERNEL);
+-		if (!vm)
++		if (!vm) {
++			of_node_put(ctx->panel_node);
+ 			return -ENOMEM;
++		}
+ 
+ 		ret = of_get_videomode(dn, vm, 0);
+ 		if (ret < 0) {
+ 			devm_kfree(dev, vm);
++			of_node_put(ctx->panel_node);
+ 			return ret;
+ 		}
+ 
+@@ -241,6 +244,8 @@ struct drm_encoder *exynos_dpi_probe(struct device *dev)
+ 
+ 	if (ctx->panel_node) {
+ 		ctx->panel = of_drm_find_panel(ctx->panel_node);
++		of_node_put(ctx->panel_node);
++		ctx->panel_node = NULL;
+ 		if (IS_ERR(ctx->panel))
+ 			return ERR_CAST(ctx->panel);
+ 	}
+-- 
+2.34.1
 
-
---=20
-Troy Mitchell
-
-
---491fac0dacb0df51633230a215ca837ce7256ffa833a7a70182b3d999b4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIYEABYKAC4WIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCauqEphAcdHJveUBrZXJu
-ZWwub3JnAAoJEJgJ74D5MzQvbm4A/3HANvkYXGwCFgtSV4A5x/SL0RIfjNSYBzhT
-PnYB++eVAQDPfgYcXc7pJv333Y0YE7vFp8FUIkC1g+Aqf+cidgd9CA==
-=y0Nc
------END PGP SIGNATURE-----
-
---491fac0dacb0df51633230a215ca837ce7256ffa833a7a70182b3d999b4d--
