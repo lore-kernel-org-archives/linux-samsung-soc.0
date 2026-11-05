@@ -1,47 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793833362;
-	b=TSH/p1JVJ88AB8MpHboUF0ZBdQ0dSL4HN8KDh7hjVRaIS/UqvBmHx/ZUJdQELVE5zbPw
-	 4rsu7brwfBkAMEB4UPwuIlHLd90uNItx7gQS4AatvXDz4pz4tOLR5Hl8z+nMPFEuVj2i5
-	 Jw6MnmjV7KwOSGVNoIrEigz7+A+C0XSLXA6NzalnXOllNQ/gxYT7ho8lDLIFFhqTp8AKo
-	 6WCDkdhB2JyUyPfM3gP2EBWiFPsC/OLuiuyXIjrgl3kSg9s1ETewdJRUGtFxLCbVS4Rms
-	 LWLBF+InWsX4wafs18GyUZ7UCgOEsISllxe5Z0m2wANf+0YxAna/Htyqxic2zdXgDow==
+	t=1793841346;
+	b=jPYnQl4V0JiUjwUUpH6MpAUW+1IHgF2nZK8Rvo8wdp+fZGMhwL2EYRgN2hOx4HaxfyuA
+	 BsRjxlVLINji6iYxVjdlF4z355yomqRByFiHitcmJEDI7gGBhM2PWrPeaprM3iT44sjDJ
+	 r0p5gAgJx44PBYb6UwdOsLmzIKR01X5Bgr9gbHzsFAiipOqOsHNPvX/eY7zUaVAvAb7bA
+	 i2Uo//77Bn28s+bNaDWQYjJnNVMA9z9SkMLykKf+pO8o0b2q+z2DYs0jzgx0IE8Z6Vnd5
+	 IRmQ1LEkh30qhdk7jmmwHssDVj4pwRBcmrsCnf8T2bGalplGgMXgHqQFFToPGNqqVoQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793833362;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=faVYG+5p25QPZ5jO9MjUiu/Ltiks8UpOg4pXnPN3sY4=;
-	b=llFxx4Utk0W+ZNQGgogqD38jZJIdMF5Bup9tRe2aHw3PFPyJMRqEIyxJltpebMgn9OAY
-	 jTtO+L8IljRTYSeH4oqiDgl9OgMhnxNIJAlgVgwpjVxXQHd3eAFAbdO++HSZJ81BAerUn
-	 P2KxwK/Rw+L1jg+OzeNRMmf+O5H0gmt8eRCY9wo1OFXsFommLCUNBSSu0q1eUdVTD76Mm
-	 AhGnJCSq6FcroLnZ5nZJvXjRuoIoDVpwOtJ6R7xylzbm9Zi8JJmfSFGH+n0OE0VcsU9Pe
-	 U5aW/8ZOuXVnhQfTepIkF7RjpIFYPSSP+3WQ/iviym3ypJaQOV6Crxldmv4ZpqJJzMg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793841346;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Content-Disposition;
+	bh=hofK0JryGgKL/fZhmAQm61x9/fz9wA6S77HE9ruycGk=;
+	b=cMj9TRsFuEI0RR39Q8UdcMJf00dOpCs6Zfeaz3LlZemnsaZCE+RJvTdf3PQSpjUt1jVt
+	 U+/LXWu0+C+5EvTIx24kv5SHHv03Nvk1t1a4iYeTzOnTXoqQ1ta4cbsiaQTUiH7iWfBWS
+	 3KuiKFjTP0KRgM6qLO9RpYvFfNF7Si3ufR5iqi2NxVo0EvAyuuuouIa8QpmwveNH5i8ng
+	 pCA8xfvBkqojIuY2kOZM03x+EqteAZE9k3o796W4sUBNGwRpuMDa8Ku6LaZ2HPjDEYoLQ
+	 lJDQ8NrRDDKi0QXcbw2NmbKdyMz4rP2L+LE/KzF04B16YRkQZf6vWkOBeyKlj/C79UA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AffaDmK1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Thn65rFN;
+	arc=none smtp.remote-ip=74.125.82.50
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA909606D831;
-	Wed,  4 Nov 2026 23:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B846C606A329
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 01:15:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B846C606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AffaDmK1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCD91F00A18;
-	Wed,  4 Nov 2026 23:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793833361;
-	bh=faVYG+5p25QPZ5jO9MjUiu/Ltiks8UpOg4pXnPN3sY4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=AffaDmK1nAJFIZOcKFXhI7ch/PjsnP05KdrAgKQZEp0GZxvC8P8mAoNxhBYDNJjgU
-	 nCAIj5t25AYXI9KGygKBLo5baE4wkhhsoEha81JuexT/xyEi2Zr++TchPgoCymcDef
-	 r3ZZBRICCyliFRdQW/gb90PWic3BEY1oQQr7xnQqhaFHMccTlCBhFJcSbMeieg7HW9
-	 rk8I8oAhTJS7C6RFfg5PrRSiDryhmpg4zNj1rs6IbOuwVLoj/CSHbkdY+4dccrv5ti
-	 SeaN5K5vRzV5lM4KNj4VXdDQKev+Wqm+CphEC4lmHL3H+WC0SN/q5UFVSJBoIGqEPj
-	 WRW4500FxKHNg==
-Message-ID: <fbcb650d-0f60-468d-b1cc-255ea8a93db3@kernel.org>
-Date: Thu, 5 Nov 2026 00:02:21 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Thn65rFN
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-14394530ec6so1912892c88.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2026 17:15:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793841345; x=1794446145; darn=vger.kernel.org;
+        h=content-disposition:content-transfer-encoding:content-type
+         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=hofK0JryGgKL/fZhmAQm61x9/fz9wA6S77HE9ruycGk=;
+        b=Thn65rFNnfU39wpnb0DfsmIXLStMu7RKnNYuvpHDRtU6JVvxnukMuvKSAidvGssVKL
+         vIJvSfvTMC2u+i/HAu9oD7aLejbh/tHFVFxTqnoTPET+eLQnKWRIl0PKP8znLr7ROYDQ
+         /qspSxKOMesAmRDz55csl0EIOM/lm5wKy/6vkF+TqAYoFdaaJcr6IySem886KFpGJNn9
+         l231bzWscPyyudb8VHxifP33p8RfOQel86ck8oTQJTIaKqOmiYaKPiiOxOcmPnkz/NaT
+         zP5YEH6dBftECPlZP0eXh9GHZriS/O5LNO4T/QxDjHXrDQvwip6q242mESeHQvJ86Hxq
+         MiHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793841345; x=1794446145;
+        h=content-disposition:content-transfer-encoding:content-type
+         :mime-version:references:in-reply-to:subject:cc:to:from:message-id
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=hofK0JryGgKL/fZhmAQm61x9/fz9wA6S77HE9ruycGk=;
+        b=ePudXQjtMYhIS0L6Ln51DKXBUTtcVhuJb0tw8sCyseOkkpQrYmYQFT0JWDNk6qXcN/
+         fUW0KOJJTO1CuuDyQXPUcM7t0g5MUsfKnLF3lvTymY1K3GZkoXhwn5cUVDDeC6JdVAp1
+         bXOATpRmvKs+V3jVVBS66J10SugAExIYZrWMM5eQCnbQGHJl2l70+T2IqOD7lMmqBCV9
+         4ma9KushaDzIbI5pG9/U8N6qFL12rdiL3/S16+bJ45UuWDBcCr3cCX8wBfOqXBi6eaTG
+         sgomIY0/hZwv1C7Q1ECKN2bFNACvFYSGzZtr34hCVy8+mPT0AMs+i3Cp0qH//ygm6FB8
+         dtsA==
+X-Forwarded-Encrypted: i=1; AKwUvByr3B+yaK+PmawflBxrdt81f9oRW+lGxqi4jfqQNrp/CjP3I0NePOcDq9m02PpdfQRaZlTSWNyoFfilJ5HWsjHNAg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8tkl1CUD2L4F8BQo0yZbxHev7Sb1Sz3HcoletU2VGNYecS+PZi
+	ZkX+6WAC1eCaXRRzOAr4uIvQBvnUBrKw29ecUtPGBSrGaJi+MfAhAt2d
+X-Gm-Gg: AYBFou2Sn8FHro06FP1R5lUt1XW9uh38gTPd26gGLa5fZTzesNIcHBeIlsVzJ7TrsfR
+	xgLLF+mDN7G6gs+9UXOUHrdMgWg60jWYJ7+45CXnl0sSwAgyPPV8mKquC7AAsXXXCNChOcOqbZc
+	W1DM8vEXFzpj5BMm4C8H/jreuhqMU3O6nZoks8LPKe8UfqfvCXCQWU85A6SjZSUBOA2OEtpM/MC
+	G6OQ//ze+Ccv/HLfknIVRZ6GT7i/xHkakS9rIT8C7SOqbSWJey25l8vKFju0GED1IZP/ySqs7Yu
+	1CPkp+QG7G0EDb34hTQ9hEFbOM/KU0XMYiVXKaUWe1qeHGDJu8DinsJpGJXwHMy9eoMwKST5ZIR
+	zxx61TzO7oIzcO5RPKdFd4i3FqFJJOHO8Fdy3BJnbon9NVy67WdPX8D9vPRpSHXme27eRSmod76
+	npTM8KvUD13KDI+DQDV+UViGcza8Sk5TQQZj2/zSi0jF7tD8pfqBRfLjlCsisIV4rVEzJPvgAk6
+	4mLcGluXBSdRJTnt36h0aBBdPROy0xocYrtEPXwLmw8Y4URwuCneK+yLiHqQGLGb9yx4gXujdlz
+	zbjjwjrDm2n1H5HGmTEbJxehnwjmGudHZUWEcmLwwjXTX737yOfAI8gVRujQkrQu7igcqw==
+X-Received: by 2002:a05:7022:3c87:b0:1ad:4ef5:ffed with SMTP id a92af1059eb24-1aea05f4bcfmr18283181c88.38.1793841344539;
+        Wed, 04 Nov 2026 17:15:44 -0800 (PST)
+Received: from localhost ([2a00:79e0:2ebe:8:c8f4:b7d9:252f:4483])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b245c1c283sm12146627c88.4.2026.11.04.17.15.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 17:15:43 -0800 (PST)
+Date: Wed, 04 Nov 2026 17:15:42 -0800
+Message-ID: <ad02069b0cdede7ae191e4a3df57f33a@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Mark Brown <broonie@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Arnd Bergmann <arnd@arndb.de>,
+	mfd@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] mfd: wm831x: Support software nodes for DCDC regulators
+In-Reply-To: <20261104181429.GE1650678@google.com>
+References: <20261024-samsung-kp-v4-0-e21253295e68@gmail.com> <20261024-samsung-kp-v4-1-e21253295e68@gmail.com> <20261104181429.GE1650678@google.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,143 +110,91 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean
- <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Heiko Stuebner <heiko@sntech.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
- "moderated list:ARM/Microchip (AT91) SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:RENESAS RZ/V2H(P) RSPI DRIVER"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
- "open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
- "open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Thierry Reding <treding@nvidia.com>
-References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
- <b656861c-a087-4087-952e-91fd15fadd52@kernel.org>
- <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-On 04/11/2026 21:44, Andy Shevchenko wrote:
->> Andy,
->> These three lines look correct.
->>
->> LGTM:
->>
->> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> As
-> 
->   Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # atmel-quadspi
-> 
-> Note, it's in your power to ask the author to split out what you maintain
-> to a separate change. So, it's your choice what to do, Ack the full patch,
-> give a partial Rb, ask for a split, ignore reviewing (often means silent
-> agreement when maintainer just applies that kind of a patch)
+Hi Lee,
 
-The "# note" after the tag solves the problem partially, if people were
-actually using it. Solves people looking at the Git commit and being
-mislead by partial review applying to entire commit. Does not solve
-credits, because Rb for three lines is not the same as for 100.
+On Wed, Nov 04, 2026 at 06:14:29PM +0000, Lee Jones wrote:
+> On Sat, 24 Oct 2026, Dmitry Torokhov wrote:
+> > +static int wm831x_add_devices(struct wm831x *wm831x, int wm831x_num,
+> > +			      const struct mfd_cell *cells, int num_cells)
+> > +{
+> > +	struct wm831x_pdata *pdata = &wm831x->pdata;
+> > +	int i;
+> > +
+> > +	struct mfd_cell *local_cells __free(kfree) =
+> > +		kmemdup_array(cells, num_cells, sizeof(*cells), GFP_KERNEL);
+> > +	if (!local_cells)
+> > +		return -ENOMEM;
+> > +
+> > +	for (i = 0; i < num_cells; i++) {
+> > +		struct mfd_cell *cell = &local_cells[i];
+> > +
+> > +		if (strcmp(cell->name, "wm831x-buckv") == 0) {
+> > +			int id = cell->id - 1;
+> > +
+> > +			if (id >= 0 && id < WM831X_MAX_DCDC)
+> > +				cell->swnode = pdata->dcdc_swnodes[id];
+> > +		}
+> > +	}
+>
+> I can't begin to tell you how much I hate this.
+>
+> Why are we duplicating massive static const structs just to add a S/W
+> node?  Is there no other way we can do this statically?
 
-From v1 of this patch, four people (Alain, Lab, Troy, Kunihiko) did not
-use it even though reviewing only part. Only Wolfram, so 20% of partial
-reviews, used that syntax. Without that syntax, b4 will pick up Rb tag
-like it was for entire commit.
+The software node itself is defined statically in the board file
+(crag_dcdc1_swnode in arch/arm/mach-s3c/mach-crag6410.c in patch 2/4),
+as it describes board-specific and PMIC-instance-specific wiring -
+specifically the host SoC GPIO wired to the PMIC's DVS pin (GPK(0) on
+Cragganmore 6410).
 
-So I do repeat - if one does not want to use that syntax, then just Ack,
-instead of creating false impression of reviewing everything.
+Because wm831x-core.c is a generic PMIC driver that can be instantiated
+on different boards or even multiple times on the same board (for
+example, Cragganmore 6410 has two WM831x PMIC instances, only one of
+which has a DVS GPIO wired to DCDC1), the shared static mfd_cell arrays
+in wm831x-core.c cannot point to a board's software node at compile
+time.
 
-Best regards,
-Krzysztof
+Note that local_cells is annotated with __free(kfree), so the duplicate
+array only lives for the duration of the mfd_add_devices() call (which
+makes its own per-device copy of each mfd_cell anyway) and is freed
+immediately before wm831x_add_devices() returns.
+
+> Since pdata is being populated already, why not just pass that on to the
+> consuming child device (the regulator)?
+
+The regulator driver (wm831x_buckv_dvs_init() in
+drivers/regulator/wm831x-dcdc.c) acquires the DVS GPIO using
+devm_gpiod_get(&pdev->dev, "dvs", ...). When converting the board file
+away from legacy gpiod_lookup_table to software nodes (to drop the
+fragile MFD device name matching and fix the GPIO chip label lookup),
+gpiolib resolves the "dvs-gpios" property against the consumer device's
+fwnode (&pdev->dev), so the software node needs to be attached to the
+wm831x-buckv platform device.
+
+In v2 of this series I actually tried passing the software_node pointer
+through wm831x_buckv_pdata and attaching it to &pdev->dev inside the
+regulator driver's probe() [1]. However, attaching a software node to
+an already-registered platform device inside probe() is awkward and
+requires manual teardown in the child driver, whereas mfd-core already
+has built-in support for cell->swnode in mfd_add_device() (attaching
+the node via device_add_software_node() before platform_device_add(),
+and cleaning it up via device_remove_software_node() on error or
+removal). Populating cell->swnode lets mfd-core manage the software
+node lifecycle cleanly and keeps the regulator driver untouched.
+
+If you prefer not to kmemdup the full cell table, another option would
+be to split the buckv cells out of the main wm831x cell arrays and
+register them via a separate mfd_add_devices() call, though that seemed
+more intrusive across wm8310/wm8311/wm8312/wm8320. Please let me know
+what you would prefer here.
+
+[1] https://lore.kernel.org/all/20260708-samsung-kp-v2-7-3c6ed4c9b3b6@gmail.com/
+
+Thanks.
+
+-- 
+Dmitry
