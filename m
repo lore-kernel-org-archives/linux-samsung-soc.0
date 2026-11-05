@@ -1,47 +1,99 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793889766;
-	b=O5YhpmuOBf6+h7aGsN0XGD6Bi5E62Gq17chOe7NTsSqLl+h71uNAxvNQTXmIHeD/x3dq
-	 LZPXdQM019RgLGBiudEMoyigaF4Fv8iQs4KNCYgV6mcoJ3PE8whpa4vrVXgvIA01lcJpQ
-	 5dvvdKlFDSIzPKxnmfk4gb7gr7OPH7xYrzjfD0LB8e4kR8wz6r8eBwPiJGr8XQU+SRQeM
-	 hEctpif63LiisXLswsINz92eZEkAx3sTuXqmp1eXyKCcuX+HXwiXnC7U+xhieSq6J+wTa
-	 s3BIG9qTDEbe1zprlHL2us17qBWQQkGWdNOigOsF7VKmZ5VgQQhp5e4miVDxfD84B6A==
+	t=1793892183;
+	b=GBdNC6rmNtkSNVdrjVtIxmy4AqtmDUKcqPM+udIJfYRSko4ZhLcvEYdl005qn9r+QbFQ
+	 /4jcOH6KUhuVYusMUJDQVhIA/NBL0fMoJuNtD+FsS3Ohx94mX8DFq8miFJxM7Q0sv98N6
+	 AlIcr4aJC5KS8M1J+p7oscaXK7/sTtBsTefA5vDagpzpgbFcxvTl5PsPAYBgqLGmgYzQY
+	 irDXMG+HwGSgkb7zGTYBKqnFkBpSBBupKsqEkl4i5w/aGkD8PSZKA22y21rOLQdGGW8ce
+	 7NO+Qp0glC8a9dR+h1KT/yJMyoztwq9WDRPHIx11SoSe26YghfGYaCzUk4kJOhBYNZg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793889766;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=ZL/hz+Nepjx94olTOPhIcVJMRm52prSBkVRVs4qZOx8=;
-	b=2fuFm3E/EXE8zrQRQvFcORbTjyUKmtF8bHdLjYNwHiycn07vIRucmE7LgXjVOePM6iOw
-	 lmeZhtTCjgHegCeDnQD2CtZdiJbnArqmzZeTb48Th5TokAXichH775Vbh76LLEqHo3wDe
-	 3grkeMS5dwbe4w9FIgSe/En3M8QZYGaI8msKKe3TQ28vpxDNAHAtU0ybRkABbzTFCorOX
-	 XZdKcZIeTMYXvCIN+/JlaXlZUIvrvd4NXZrhFDfsOr31kTqILQMtm9Xx/2KFcnaG2tAEJ
-	 InAtNSHqMc89dtI1kC7WBUQu1dhUQ9aeLF3YdLHWAliGNg7Q4saE4CffB1uaROSXUtg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793892183;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=7v4V8/4X0TjPkcYr+xi2naJa0ss/5ymYdMLn3Qm3uOs=;
+	b=JZdUGveRPlT/7JqXKbpyCl0G++t1pxPZRggYlEhESCSSJrFcqin85sTpSrHszPUzkGKh
+	 S3ZR2NHRDKK1ljGi5tgZH8J3CJqyqmZ3jEDjBifOgj1mW3HTGM5DQwmGBv5UlEnQ+vY11
+	 dSfpmfy2iKts2Ef7GN4AFTTlEQNnbX1HWHluqQCYynP1fP/+eOxYCK+zofrVXrL2A574T
+	 6J6gRb9V/rVd3Q3RcAnBsPXUN56Ue5VB0SD5QOlrM8PPsDpePLhAntbeNn/LDnjK8PEDT
+	 eJr2J+uvl4Dgy+Wa65Zxlmzi3qAAkku63AbMHrZAtm2HLlG/vOGfgaw4JwV0loZz6RQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bcogTeHL;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XEZbSxVP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809B7606A328;
-	Thu,  5 Nov 2026 14:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49430606A329;
+	Thu,  5 Nov 2026 15:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bcogTeHL
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05CF1F000C1;
-	Thu,  5 Nov 2026 14:42:39 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XEZbSxVP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0B21F000C1;
+	Thu,  5 Nov 2026 15:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793889766;
-	bh=ZL/hz+Nepjx94olTOPhIcVJMRm52prSBkVRVs4qZOx8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=bcogTeHLSTgb7MGVcVWzpGaT1TgIE1ugPGn42mKAPnsuNTSU9bznghrb7qV8nPFaz
-	 DSh+6UuDLpahP5tjLiW0DxYesTxk8FQb6MARS3orD0j6ZL+nytLslzfP7tcGP6OElr
-	 uLt24cj79V54XbXWhaJRMYlmkss3GtwppzfIhKDd9K9un+2FZNtpjMxtyacvO3ZvZY
-	 7RftsFFXAwry/QBFzpwJeAt1uMtlnc8ANQKd3lNQ5WroEqUjJ5DbWpKYrduZMRAUov
-	 MdwaC05/ls/aMIuc5cRY02pDO0XcUKA5gv+A8xPh75VgxiGQhNPPTS/oRHowDAE7GL
-	 nDVESWQYF07Ow==
-Message-ID: <5c1c0b7f-392e-4ce2-9852-63cf8454520a@kernel.org>
-Date: Thu, 5 Nov 2026 15:42:37 +0100
+	s=k20260515; t=1793892182;
+	bh=7v4V8/4X0TjPkcYr+xi2naJa0ss/5ymYdMLn3Qm3uOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=XEZbSxVPp7P+6DCvBeS1fYcBTKKFA8Ha7Jl4bhp/kBeJ54vGatjc+bX6k0kObz436
+	 CtPqzd+USA6qX5S1JHghC/mr7XsPM49vwBPA16wkGqmmeKQyES5OJNLYzYo3wZTQhb
+	 Tin5ClkzUFqrLlL8Fq9wLBDURSGpbKOpheR4ywJBmZjfHFE7slfW94G3B6wTCDyKpN
+	 Yblpifrc40qgpV2v2Y0e3U+8UngGO6t2tzPs8pZml9XwqwrafVxnDSh95z7CTTAF5u
+	 sa71q+OIVZ3i1ZoRXRHp0l35vB4tCkO30gN9LLgRP4rYSnybLSamdn6kjtVuGbSuUl
+	 yhtA+C90f8gFw==
+Date: Thu, 5 Nov 2026 16:22:59 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Linus Walleij <linusw@kernel.org>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
+	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, 
+	Jerry Han <hanxu5@huaqin.corp-partner.google.com>, Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Robert Chiras <robert.chiras@nxp.com>, 
+	Alexander Koskovich <akoskovich@pm.me>, Markuss Broks <markuss.broks@gmail.com>, 
+	Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
+	Dzmitry Sankouski <dsankouski@gmail.com>, Yedaya Katsman <yedaya.ka@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH 27/35] drm/bridge-connector: let the bridges set up the
+ connector
+Message-ID: <auyfJAn3f-is-eXX@houat>
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
+ <20261026-drm-panel-funcs-v1-27-5e3070a3478f@oss.qualcomm.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,77 +103,63 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/14] dt-bindings: clock: exynos8855: add top & peric
- clock definitions
-To: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, peter.griffin@linaro.org, alim.akhtar@samsung.com,
- sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
- robh@kernel.org, conor+dt@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com,
- pokala.reddy@samsung.com, cpgs@samsung.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <CGME20261020065546epcas5p35f2faba15dd3ba959a66cc9b7df8daa8@epcas5p3.samsung.com>
- <973576304.21792479783510.JavaMail.epsvc@epcpadp2new>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <973576304.21792479783510.JavaMail.epsvc@epcpadp2new>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="nvlajszkdnqh6lds"
+Content-Disposition: inline
+In-Reply-To: <20261026-drm-panel-funcs-v1-27-5e3070a3478f@oss.qualcomm.com>
 
-On 20/10/2026 09:13, Raghav Sharma wrote:
-> Add device tree clock binding definitions for CMU_TOP & CMU_PERIC
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 
-Two weeks, I am still waiting on a proper resend... Your posting misses
-threading.
+--nvlajszkdnqh6lds
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 27/35] drm/bridge-connector: let the bridges set up the
+ connector
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On Mon, Oct 26, 2026 at 01:10:16PM +0200, Dmitry Baryshkov wrote:
+> Call drm_bridge_chain_connector_init() once the connector is initialized,
+> so that the bridges implementing the connector_init callback get to set
+> up their part of it.
+>=20
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu=
+/drm/display/drm_bridge_connector.c
+> index 81f3e26f6fdf..2d982c7109b5 100644
+> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> @@ -1141,6 +1141,10 @@ struct drm_connector *drm_bridge_connector_init(st=
+ruct drm_device *drm,
+>  		connector->polled =3D DRM_CONNECTOR_POLL_CONNECT
+>  				  | DRM_CONNECTOR_POLL_DISCONNECT;
+> =20
+> +	ret =3D drm_bridge_chain_connector_init(encoder, connector);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+>  	if (panel_bridge)
+>  		drm_panel_bridge_set_orientation(connector, panel_bridge);
+
+I don't really mind this change, but we should have a user for it and it
+doesn't look like you have any in this series?
+
+Maxime
+
+--nvlajszkdnqh6lds
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCauyfTAAKCRAnX84Zoj2+
+dlpBAX9vmlt6LO/z8/cZ2e9AdKjYtQICZ+l2BzUxUnN/1vgtuPBo4ZauhGowfRnu
+dCnXGMoBf0dGFfOI0idM2rRpYmxj//Dz342c5BaFpa3YCCrW5V+qnd1vuLuKWMX4
+8+jAJrTriw==
+=Icn+
+-----END PGP SIGNATURE-----
+
+--nvlajszkdnqh6lds--
