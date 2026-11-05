@@ -1,59 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793892259;
-	b=zBtr3oASSfErxq6ef0LUxDa/Q6INNrjfq7A2Afo84uK4NOgQUAyquXXqX8QUh5AlJGTV
-	 5GdvfkLGfJcxIHf0E6UVH5S2GUIPY/1PhgyoFwtBCfSZGBJ3e25oyTgf3liXHP9hE3pRt
-	 wxs5wy3rO2E3ipt8weflWnV7H2pxAhuZQ7VYNbkMpVQavyQNY4v+MEJ7UjvJROn6FdZS1
-	 niPrSGRB87lLcSa0UI2zI22wSuzh8blWTFBaAiYvRJTvaZC5+l0hWDhnuZqX7u7Wj1tRJ
-	 ESoUf4wjmn1JrEHHynBHYBn+TIWc7+p3JirGeMz5t9IzA5406Oj3xJ40MM5ajLeOGmg==
+	t=1793892280;
+	b=bTpMItQ3kHm4CrZ4k42ZUiX9a2lqDf3o7nkN0cpilNuuPybVp/tX56yst8Vr9Z4cP274
+	 AISeP7P/3SMTzkfMQ9fIJCioYdnt3qPlGBDbjAOi/KjJ6DaIqj47aj+EtWALwKd/SMY/k
+	 qcHxnqXu9TwxxhUW9sgMKsHD0EiiN4RROP6aAnokUFCdlI9uh5Z2n9VnyMbfkEU0ndpc1
+	 3oiJ7pvj1UYdG3CGN2AIU0xc04v9aKPvHedwmjGz9umKlQvM99VpJazuT1R9UFVGrN4sY
+	 zWz0gRdPTtOe/5jQauyO3X+nopdq8odu0AISkScO8m0bxSJvS9mdHBOzZ8QNJvO8QNw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793892259;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793892280;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=J6+TRHT0fPj4a1Bf7OUNcK1tDs18NfRgn9ubKZdBdOU=;
-	b=haATiCiArCFYUriVyX2R6F39ze1uz8CfXUO37l5ODHBePWIdPDwKe96CS/TEwQ73QHth
-	 rDeNkE24vFE9kk3sLmiyKrRGFhEaxxlwrgPhzyjA4yIllFLWZ+Z6+B4EkJCUkfWYZD5LJ
-	 3fElT02ztEAQT5PMzOVa6eihl6TglqO65JwI0cdfbxkhzbV92j8qWJK6wlmViHvo4MnR4
-	 Mn6hmhkbWr25Irs6ltdfP19t/XDUNizJsrAhcXJTA2dLfkPnl4RBBTx+irn6iOv2vslBS
-	 UW+GKWQMSivZf0X/v+P6MJkvBxqBhx4TItovgfJaXqunxV70XmLSOQ0Ob4vjelfdtXA==
+	bh=NLTVzjwW/Q8HtLH8gl2VVrDwo7+tJCjngM5BFqgJeRw=;
+	b=oMPfCybT8RxMfmpXM7TUgKtIRGHCzbJRU1Spshomk510gZFNX8fWTEUoyS0F+8BKp80I
+	 gYq4QHNVrmO+8+zxXkAEvcATf9bvCO/NI24OnCg1qsUD8I90k/L+zw1/PtzSvf3cPscSS
+	 dIfe991Fj3FKqgj0Ga4Nbv6AA7LvVffq1sIQ7by5fkrClYMBXEa9UynIhHjsx633Y0oNm
+	 E+36l05hdilAMZq75e01rTmEsTMaCJloM1HogPVmSo0c5UVyipVFbzKJMlIuyttR+uY6M
+	 tqiBVRuDqMiVsAbvV4rSjdSamvBWi76hYo4ROI5u3KYqcz0ZL3Vjkak0glJNUlHyPgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Rn0+o/u3";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QaJX4OVc;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F1D606A32D;
-	Thu,  5 Nov 2026 15:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFE4606A32E;
+	Thu,  5 Nov 2026 15:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Rn0+o/u3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82531F000C1;
-	Thu,  5 Nov 2026 15:24:15 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QaJX4OVc
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B422F1F000C1;
+	Thu,  5 Nov 2026 15:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793892258;
-	bh=J6+TRHT0fPj4a1Bf7OUNcK1tDs18NfRgn9ubKZdBdOU=;
+	s=k20260515; t=1793892279;
+	bh=NLTVzjwW/Q8HtLH8gl2VVrDwo7+tJCjngM5BFqgJeRw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Rn0+o/u3wb7vjgps6rsQku1SIVGcwBW77XRmVlD/Pg3Zz9P7GJgl8tbCq57ueWInN
-	 qunl6YTKOzW+nqxJhs3XkYtHUDLqm5z46C/b69OE6Mu/c6vU9rBsB0VRhdbS9UyxnP
-	 opXTrGzP7L8ictun1rVh1AZw9HZHctnuxSzJGqHheg8FtByiuGxa9TFK8aMFvzb8QQ
-	 C58DV5hBa+AAGFQzzNjiKEvxLl7v714/vxNfvEtD/ZaCVxzdVZjD5q4U1vX+ogH9d+
-	 0d3IWyY6ShVBz68eNVQNa1XfGehE+jhX2pcF1KVDxggRLK3nyPQweixS6rvT8NysOr
-	 44RXew2NIxNJA==
+	b=QaJX4OVcR4eoG7cyCHhaOrMz4sMVB7jv8h2TgNzAZVvI6jNX9MA5ebeGtKYcA2/1a
+	 bCTL/BwG7zfUz/CnX2BpF7vEoX81H9Dx+rbyBSJyztlPDeodCg10GG/rcnQBtbJZ/q
+	 lYbF0esaQaWSyiniY9m2TlZozQ2JLX6sLQY2HdTR2kOUvtmtIdz5aBYmbB7rjFBTA5
+	 Vn0vZ0YWlnQQ05I3I4tY+C3iyUOEIJBl9h5+thPSPDZRrd79UjJU95b9gzM/3pve1a
+	 fRG01wV99xrWT/XHDEOjejY0fMJndIOcSco2DJ3Q7sLrL7UrEgXvTeN1ox4DrfvhVi
+	 0N1qB3KdsXoqA==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Tomasz Figa <tomasz.figa@gmail.com>, Aiden Isik <aidenisik@member.fsf.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
-References: <20261020-for-next-lucky7-pinctrl-v2-0-b6b0e6065452@member.fsf.org>
-Subject: Re: [PATCH v2 0/3] Introduce Exynos5515 pinctrl support
-Message-Id: <179389225540.696044.4640598390040264702.b4-ty@b4>
-Date: Thu, 05 Nov 2026 16:24:15 +0100
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Josef Schlehofer <pepe.schlehofer@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Henrik Grimler <henrik@grimler.se>
+In-Reply-To: <20261026204154.26378-1-pepe.schlehofer@gmail.com>
+References: <20261026204154.26378-1-pepe.schlehofer@gmail.com>
+Subject: Re: [PATCH v3 0/2] ARM: dts: samsung: Add support for Hardkernel
+ ODROID-U2
+Message-Id: <179389227745.696540.5942397677891715381.b4-ty@b4>
+Date: Thu, 05 Nov 2026 16:24:37 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -68,26 +68,25 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
 
 
-On Tue, 20 Oct 2026 01:02:33 +0100, Aiden Isik wrote:
-> This patchset introduces pinctrl support for the Exynos5515 SoC.
+On Mon, 26 Oct 2026 21:41:52 +0100, Josef Schlehofer wrote:
+> This series adds the Hardkernel ODROID-U2, the predecessor of the
+> ODROID-U3, based on the Samsung Exynos4412 Prime SoC.
 > 
-> It is very similar to the other Exynos SoCs, therefore we reuse the driver
-> and for the most part the pinctrl bank macros. A couple
-> Exynos5515-specific macros are also added.
-> 
-> Kind regards,
-> - Aiden Isik
+> As with other closely related boards, such as the ODROID-X2 and the
+> ODROID-X, the ODROID-U2 device tree includes the ODROID-U3 one and
+> describes only the differences: the micro-USB port is peripheral only,
+> as there is no VBUS supply switch, there is no expansion header with
+> SPI, and the 3.5 mm jack is headphone only, with an on-board digital
+> microphone instead.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: pinctrl: samsung: Add compatible for Exynos5515
-      https://git.kernel.org/pinctrl/samsung/c/e0a07b3e54f762774a604c39275afe3575bf8352
-[2/3] dt-bindings: pinctrl: samsung: add exynos5515-wakeup-eint compatible
-      https://git.kernel.org/pinctrl/samsung/c/c5ec9b1c5f95b4af91811fbbd86c83d0f5f240ad
-[3/3] pinctrl: samsung: Add Exynos5515 pinctrl configuration
-      https://git.kernel.org/pinctrl/samsung/c/6bb1aa75bc2c85a89ee7856b9557b519fb7428cf
+[1/2] dt-bindings: arm: samsung: Add Hardkernel ODROID-U2
+      https://git.kernel.org/krzk/linux/c/c3386407c5c0c6b02601f9c232f21a4e64cc268c
+[2/2] ARM: dts: samsung: Add Hardkernel ODROID-U2
+      https://git.kernel.org/krzk/linux/c/a312b2f6ce258fce3d8e89b939227932380b6017
 
 Best regards,
 -- 
