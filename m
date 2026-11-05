@@ -1,67 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793881324;
-	b=sztbfAPxA5UaOV1L+o3oF2yvwIPb6p4vxxhXnWl76sItGDzp+JTyR5bnMqWxUOmnVMNr
-	 w965Hlyc+bVlMJSyeXEJ+QxxUfJtu5m7AEQELjoKGH7Da7ILzzuHKh2ElJfaXXKO/ZOSZ
-	 VUut3XKbNboPLza5xytdrXQMombUnIYqVucG/27ZvbcoolA4NfTyQpQY+lbmGwEqBw5CR
-	 099EmxeqqVrcAVvt1L0AXYWDtho7rccQ01vhoaDbFib8gADWt5QnnZmCUXlpKkvXfPyya
-	 LlKu3mfCi95nYIwjDqNp73VwRGxzk3hvJh8nhgCrwN5lW6O833EwF/iWtlKhW7IhW7w==
+	t=1793881730;
+	b=R2Dxk+jsMTJxnnE/CUAujzZznwn1dpbqnOGOJB6COFSk8suRrRWzUHzoNKOmXu1MPP0Q
+	 zTILGLj2433DvL1MGlqQscXXpFttY6ujk4Zk1wK28yE2RcEgPYS8StuNlXP2yN+k9llPA
+	 LTdxwNhTxm6bojEU3PS2aeFg1uZUrH8nr44JhzRIK0vDAr7gt3iEUQmOlan9zJ+WvDxqd
+	 /HCko26xjTCFKXdqa4eWirrBkfvIDgkaSnRRf6TS/La4aDQ4u7ZXEHBnyPP9+uNkhhAaR
+	 yYyDuIR0oMPyj40wi2WsxFhOfK9aRWjSLb/MpdaEizCbyDeYPT0CYXPvbPhtC3BGbIw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793881324;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Received:Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:
-	 Cc:Content-Language:From:In-Reply-To:Content-Transfer-Encoding:
-	 X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:cpgsPolicy:
-	 X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=cNjLxshjbldmtVi7ezW8lx2AJPpiQwNaAFoiNC9ElWA=;
-	b=eQ5/G5yeIhbEiXn/skNy8HofIUMmv6au+0KNE+5u+tXhJvl/zy0uA0KKeQqtpsnyxGBf
-	 2bPsMwVTDe9UFcAVFaTA+IwvIRnlEI0bRc07il7cRW+YPV2fM9J8ZUVk76CH0uqexGIXJ
-	 nwejVnEyqQC/5/xsPh9hsIMQJ0MnD2zRD3M7q2jz6GGg3TVzMjPVDF1VR0r1z5TkWHNXL
-	 WuI/KD93M7zqnl/qBsl+f/tse4h6F8LwXguhTET4F1UDFY1/YU/B/ABbTaVT0W43KC3q6
-	 TYETeae1iQhhaLfwEFQn6yPSD8hq6/onv+L2xcgGLuR+XnJR2H48GpEkFB/8RMoueBw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793881730;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=FsZqO5FR4mq2gQTlk44IBTsOMir2UzDLRvKhXJMYJ80=;
+	b=MwkADVsrD8ehGzlUvpNFSIxdAtD5tPooiZzXTsJT6BzQtovEweXVf6XbvhdPZpvbv5GF
+	 rJqfZsmQvWt5LolWpVOQjarJGWoybBxhxokv6v+H/JMbSBU2cQcK8j3VkHseYvHJQ5/7T
+	 QbiLb9Dh0o6lAds/jp8jnxOekQAtGl37m+QVfzCGWrnobP5JloUUbB/hv4Xh4v7IwJFB2
+	 FPDL5dts64MwCv8DTve83ETz70Rimr2F1oHFepAH/ESTBHvDHBBB58hfrqnygdH7PizPw
+	 jduI/iVRcJIIyimXARet2aCzdvbDsc0Y3g1k5EFQsCF6oCmpDOrcthAAGANZ9H1Y+Nw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=HTtx2Z5m;
-	arc=none smtp.remote-ip=203.254.224.25
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yz82hJKk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE0A606A32C
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 12:22:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1AE0A606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F01606A331;
+	Thu,  5 Nov 2026 12:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=HTtx2Z5m
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20261105122200epoutp0245ed08aa5d26ab2c7f8e4a8b81a269a3~lJY5rNOMM2189721897epoutp02P
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 12:22:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20261105122200epoutp0245ed08aa5d26ab2c7f8e4a8b81a269a3~lJY5rNOMM2189721897epoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1793881320;
-	bh=cNjLxshjbldmtVi7ezW8lx2AJPpiQwNaAFoiNC9ElWA=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=HTtx2Z5mL5rvw12jKQfhGYsXeW0lv32F1V8xMP3ap5FBhTtpo3kuHw1+yZzRg1wZV
-	 UwWZwe8TfhWpt3XO0P/UV0lTP43yhFt36z1VOjtPhD8H9td/Aus80y9xuD7TDgPfxt
-	 b9ohh/fSY/FipVYMt8BU/Qaqtfkr+dZWa1X0babg=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20261105122158epcas5p41fe17543c8abcd4c86815bcdcfa554d8~lJY4Xi13h2387123871epcas5p40;
-	Thu,  5 Nov 2026 12:21:58 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4jL1dd5nMXz3hhTC; Thu,  5 Nov
-	2026 12:21:57 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261105122157epcas5p1320966a69d34521faeaabda354501162~lJY2_W1Ae2240322403epcas5p1F;
-	Thu,  5 Nov 2026 12:21:57 +0000 (GMT)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261105122154epsmtip29c3fc114ce1213d5c87c233119230900~lJY0PNi8z0501305013epsmtip2l;
-	Thu,  5 Nov 2026 12:21:54 +0000 (GMT)
-Message-ID: <b68297b5-58cb-4dd6-ac2e-07d6bd408c1c@samsung.com>
-Date: Thu, 5 Nov 2026 17:51:46 +0530
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Yz82hJKk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE90C1F00919;
+	Thu,  5 Nov 2026 12:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793881729;
+	bh=FsZqO5FR4mq2gQTlk44IBTsOMir2UzDLRvKhXJMYJ80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Yz82hJKkMymEJOScjv8sYjss2OQ1kINPiDdkaHg5ad9RyZEWOiGaO7o1lbpp8pQ4e
+	 9epzUzeGty9sRCXEfCTqC0fJFd/C1ie8YzBRyCUTfi3SMPvSHQFrQ9bQAMK8nD9/Kl
+	 myWGH8iuE8WJEibwJzc39kqDQnnaTND68Xynk1OcHrcs7ZIA4JjiJ8NbRuvXOf4gub
+	 c+dgetCSx67SZN1w9wXrmlf5ohPmNlEByvteNCZFdHa2+C65WPzFbhCkmz0/GXWZHr
+	 5XPvRBgsUc9cyKC805nfy5Nxa7Lc6dyz6auCKc3CEq1uAfCdSwc7NkApLxKvWmzHAh
+	 Ni5TNSAsINLPg==
+Date: Thu, 5 Nov 2026 13:28:46 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Frank.Li@oss.nxp.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Russell King <linux@armlinux.org.uk>, 
+	Richard Genoud <richard.genoud@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>, 
+	Yenchia Chen <yenchia.chen@mediatek.com>, Zhiyong Tao <zhiyong.tao@mediatek.com>, 
+	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>, Kendall Willis <k-willis@ti.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>, 
+	Nicolai Buchwitz <nb@tipi-net.de>, Karl Mehltretter <kmehltretter@gmail.com>, 
+	Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>, Shitalkumar Gandhi <shital.gandhi45@gmail.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>, 
+	John Ogness <john.ogness@linutronix.de>, Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>, 
+	Robin Gong <yibin.gong@nxp.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu <2426767509@qq.com>, 
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>, Haoxiang Li <haoxiang_li2024@163.com>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Myeonghun Pak <mhun512@gmail.com>, 
+	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>, 
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>, 
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>, 
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, vkoul@kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+Message-ID: <aux2VKHnVLwq_wzi@orome>
+References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -71,95 +89,68 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Exynos8855 to the generic
- platform driver
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"peter.griffin@linaro.org" <peter.griffin@linaro.org>,
-	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "jh0801.jung@samsung.com"
-	<jh0801.jung@samsung.com>, "h10.kim@samsung.com" <h10.kim@samsung.com>,
-	"dh10.jung@samsung.com" <dh10.jung@samsung.com>, "akash.m5@samsung.com"
-	<akash.m5@samsung.com>, "hongpooh.kim@samsung.com"
-	<hongpooh.kim@samsung.com>, "eomji.oh@samsung.com" <eomji.oh@samsung.com>,
-	"shijie.cai@samsung.com" <shijie.cai@samsung.com>,
-	"muhammed.ali@samsung.com" <muhammed.ali@samsung.com>,
-	"thiagu.r@samsung.com" <thiagu.r@samsung.com>
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <auvcLYl-ZnagU-7H@vbox>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20261105122157epcas5p1320966a69d34521faeaabda354501162
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261026135755epcas5p4efa15a5e7540d91b4411a7b324aeaa5d
-References: <20261026135715.33071-1-selvarasu.g@samsung.com>
-	<CGME20261026135755epcas5p4efa15a5e7540d91b4411a7b324aeaa5d@epcas5p4.samsung.com>
-	<20261026135715.33071-3-selvarasu.g@samsung.com> <auvcLYl-ZnagU-7H@vbox>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i6ogfjkah26q6ktw"
+Content-Disposition: inline
+In-Reply-To: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
 
 
-On 11/5/2026 7:04 AM, Thinh Nguyen wrote:
-> On Mon, Oct 26, 2026, Selvarasu Ganesan wrote:
->> Add the "samsung,exynos8855-dwc3" compatible string to dwc3-generic-plat
->> so the Exynos8855 DWC3 controller can probe through the generic DWC3
->> platform glue. While at it, alphabetically reorder the existing entries.
-> Please split the reordering into a separate patch, or just add the new
-> entry without it. There are other pending additions to this driver, and
-> the reorder will likely cause conflicts.
->
-> Thanks,
-> Thinh
+--i6ogfjkah26q6ktw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
+MIME-Version: 1.0
 
+On Mon, Nov 02, 2026 at 12:54:48PM -0500, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
+>=20
+> Replace open-coded assignments to callback and callback_param fields
+> of struct dma_async_tx_descriptor with calls to the
+> dmaengine_desc_set_callback() helper across serial drivers.
+>=20
+> No functional change intended. Prepare to make struct
+> dma_async_tx_descriptor private to the DMA engine.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
+>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
+>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
+>  drivers/tty/serial/amba-pl011.c     | 6 ++----
+>  drivers/tty/serial/atmel_serial.c   | 6 ++----
+>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
+>  drivers/tty/serial/imx.c            | 6 ++----
+>  drivers/tty/serial/msm_serial.c     | 6 ++----
+>  drivers/tty/serial/mxs-auart.c      | 6 ++----
+>  drivers/tty/serial/pch_uart.c       | 6 ++----
+>  drivers/tty/serial/samsung_tty.c    | 6 ++----
+>  drivers/tty/serial/serial-tegra.c   | 6 ++----
+>  drivers/tty/serial/sh-sci.c         | 9 +++------
+>  drivers/tty/serial/sprd_serial.c    | 3 +--
+>  drivers/tty/serial/stm32-usart.c    | 6 ++----
+>  15 files changed, 29 insertions(+), 58 deletions(-)
 
-Hi Thinh,
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thanks for your feedback.
+--i6ogfjkah26q6ktw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-We posted new patchset with drop the alphabetical reorder of 
-dwc3_generic_of_match and just add our new entry.
+-----BEGIN PGP SIGNATURE-----
 
-https://lore.kernel.org/all/20261105121401.1661711-1-selvarasu.g@samsung.com/
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrsdnwACgkQ3SOs138+
+s6FFLRAAsArTl7ZnP2uWe8E8No/HaZXTw2qwzanL18HSrQ99Y5LTIiGMUG2lNlh4
+g4SVAB5ZpAe1Ji8Irltia/BRsUboLVvofPgbGh8AvBrhByWtDx75pNBJGwlxzDsn
+/oYyAQ6U+6BZob6VZ/1hVv5xt6UtjqRjcOQGM/Eebu+IsJ1bXUzcfwOt+p6oJuDe
+bipFPggDf4w54a/AdsicEctD3BZABAPpOkemtHUrKCZ0pq/Qcws/7tPdpV2NU6SD
+p3j35THe6Jr8VUMni10amNN28l476GcajsPWb53gIjQaxKdbNaiJunTLw3lbjuIw
+jH3LKXaKXy0mxXm70YGNdZfOKwsVxEClwBuxV3s+TD6hhCkf6Xi9GizuqgdtqLEZ
+AMAjAOH+7VKVIqAFeKXPlABN6RR7TVhJf1knWwm8FzFmFdfstBFjFIeeSptCQ+To
+r9+rxI4r4O6hD2u6IKFLHYBU4iZVd0x7osDD59Cjkwi1CQgp07bK+WcFtf4rjV+6
+oaROTq/FTtv1JlpaJ/LPiV97e0OxAs4aVGYO/PFsfVDFHPaeJAYdM2ZbwbOyNNZp
+mn8EhmbQatX8t4zSy4bCo46/VdBeOAIJYs+nCZBq/yZrxziIWbjxg6dKPrwre0Co
+iBi6BCt/mumt4uPdViNg3N5fwgBmPT/t1IxjJuOjXCR9B17XeKg=
+=NGc/
+-----END PGP SIGNATURE-----
 
-
-Thanks,
-Selva
->
->> Co-developed-by: Muhammed Ali <muhammed.ali@samsung.com>
->> Signed-off-by: Muhammed Ali <muhammed.ali@samsung.com>
->> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->> ---
->>   drivers/usb/dwc3/dwc3-generic-plat.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
->> index ca69ac0eb07c..d57496716204 100644
->> --- a/drivers/usb/dwc3/dwc3-generic-plat.c
->> +++ b/drivers/usb/dwc3/dwc3-generic-plat.c
->> @@ -232,10 +232,11 @@ static const struct dwc3_generic_config eic7700_dwc3 =  {
->>   };
->>   
->>   static const struct of_device_id dwc3_generic_of_match[] = {
->> +	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
->> +	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
->> +	{ .compatible = "samsung,exynos8855-dwc3", },
->>   	{ .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
->>   	{ .compatible = "spacemit,k3-dwc3", },
->> -	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
->> -	{ .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
->>   	{ .compatible = "starfive,jhb100-dwc3", },
->>   	{ /* sentinel */ }
->>   };
->> -- 
->> 2.17.1
+--i6ogfjkah26q6ktw--
