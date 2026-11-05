@@ -1,133 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793901871;
-	b=mMVdFFzgcWQ6DXmasfeqFOXGoel28gPZr8tmQfDNiheJ4gOmzLR3dHs2kQ4umkKDkcRL
-	 ApCpqc5kDADdAuDwlqdW3X9+6NKajIwJ7zdzTeApS+3WPNVtG0CrOrG1BkLkarA3jYOdD
-	 ct7wXtJ2IFJ8azxM1PLoG+tfxC//Jwa6gHRR/MqZsyAwSpTQTnzoZr3Rv7J5n4/uVrJcY
-	 g0FkjJv5WlUCLQwW0+RwpKMBkgCaOAalWXlXCvTwmgaMZ7fZcnx36YDqr3OQzcyw/DVXL
-	 f0uBjQykxelI1yca9kq581cmcBy5192OY5mrLQL7XWJ4dj3snyAmSv2pwVDJSG9o/Og==
+	t=1793902032;
+	b=UUbJV+8kHZ5VmueOefkNBDAGP4jCT6JqGGh1qIKmVzp7wHtLOgMbdQIbaEXpR8qw+zwV
+	 kQNMex6WYIffK93/m9NkLlKLVs+Q5mSnYh8uURviFimUJR9THWAB6B08KxGCdxgtZvjMP
+	 x7CO2w6b7VpuyNf3pIxUhJkmANcGYscVCsCGGD53SBD7TvtCN6VjxQveHlqxp7OXXpJIR
+	 5ZcTz5ha8KEYhJ54aoAapg1DmcNUub0im3EymEv1UnYhRxL7I7FLa24DC1UOyYGY2J/7G
+	 TUm6y7/5VIfqSPa9dZEbvZKSiYmxQtzxu1/KA//C3HjMjVlYh8alzkWC2OHv94YJT+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793901871;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=UY8nz4Aqcfrs8TMTR+vcYN7VMZs4wGxQCWcDHSOttJc=;
-	b=NiK2ZvWcxM/ezu2n+PJNt+qI/VUwbiUFu/QxW7Vc3giWhWUEpTl5xG1qh3SUtrhm7gak
-	 vaSOCnOylL1UKYS74S83MU9Vv3syjHaZ41ujDQnb45mBbPGQYnj1SRxOGeOSGEhFt3a0S
-	 zkAkYZ6L+gQGw42WQP+ICkzZGR6EjaPO2XITUd3+44apbW3E41iHBG1t+1Hp3KaWs8Xtv
-	 BGR1P3JS/Sz5sZQU+OEKdqiMaJaejo4QqsZeMhPrp9B4Stzs55cCzdStmRMUPCM4zQHDA
-	 tAYYv4AVi0THfFcSlw4VxeaTr20GB+fscDlCtRFZKNtd8Y6ZqZnqkCqXnJ98dblMXhw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793902032;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=WNyoqfFkSiqIaDnNr0KZB++i/w4miVNCO0u6spo9AfQ=;
+	b=fbTXSwwKdk/JmcFfBAUxcHsbnA/QOK6A0nuamk12owoHENRA9tehm5RyV1ci+K205Crb
+	 J/xPRU+AVbuOcQqcdZUFMuEnSSq3uYFTi79foWbb39ZKO9UL+yuVNF+u2tJYAgJRYjbay
+	 H2ValDT3gTSaJnatYP5b96i/G3OLqkORmZAvMj6NUNfxypZX0UeoDCBGL0Ff5nSR2+Vcs
+	 AbAC1n6GNThsvir+loXPbkToo1zYWFPhalFKTm1dWMDOZ69qCl83JOY43t67F+0FH8xhc
+	 KYh+5jQUGRXXnqJOx+Iiwh2a4QbaCqB1Eqh91T0mfiWBhfU78EAn1JdfhBo4XLFVFrQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ce7ueDI5;
-	arc=none smtp.remote-ip=192.198.163.16
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=U5UCTITv;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3A6606A31B;
-	Thu,  5 Nov 2026 18:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CC3A6606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B19606A328
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 18:07:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 20B19606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=ce7ueDI5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793901871; x=1825437871;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mB+/MQQhJQVeGV4JbRgy/ORiYRC7GgvinmAy4COuNBM=;
-  b=ce7ueDI5PwFJh+Fe/qewFUYMbFUieLKlnW3EaxdUhCU/xlOsMqXcEtRR
-   s77HhuqAt4XW5po5eWqUj4r7/M7EFDthG1oUVy71H84eTfrxZA3cXjk/C
-   FLTAsDdZEiaPpYH7wTJs0m7J+GNV+W3DvHnXDSJWjYHC/+k+8xuy+Erhr
-   9XuMeMpzc4cWI97k/FKb2Lo9l+9ciSz1PfTcMBVV01CMi2pGZoGqD5efj
-   UNEA9/VWtiSdNFQp01h8R2LX9VlIspvd3Pje0WBwU97q6gaNhgAFMn8qQ
-   WvOoLD9gqj0mZNPx9bx9YwB59zDOA5x0RqFM0DCC9lwbw/mSp8pfLv0ul
-   w==;
-X-CSE-ConnectionGUID: stOyJFEbS861NFPvf1j/nw==
-X-CSE-MsgGUID: Pbcu+lJIRX+bH7MLS61H/g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2724890"
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="2724890"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 10:02:51 -0800
-X-CSE-ConnectionGUID: jhDE0fjjTqa54XFJuRu5ww==
-X-CSE-MsgGUID: m0EeljFZT++7vJEePZQ3VA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
-   d="scan'208";a="7090663"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 10:02:37 -0800
-Date: Thu, 5 Nov 2026 20:02:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Frank.Li@oss.nxp.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
-	Yenchia Chen <yenchia.chen@mediatek.com>,
-	Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
-	Kendall Willis <k-willis@ti.com>,
-	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
-	Nicolai Buchwitz <nb@tipi-net.de>,
-	Karl Mehltretter <kmehltretter@gmail.com>,
-	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
-	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Zhaoyang Yu <2426767509@qq.com>,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	vkoul@kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-Message-ID: <auzEupFd_Ek2HpLG@ashevche-desk.local>
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
- <aux2VKHnVLwq_wzi@orome>
- <auyQEVmA2KeGu9DL@ashevche-desk.local>
- <auyiAE3lhnFahBK2@orome>
- <auysTnqWgz2kE7e9@ashevche-desk.local>
- <2209947d-0b9b-417f-9ffb-1c81790af9db@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=U5UCTITv
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-36dbde64409so2031641eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 10:07:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793902031; x=1794506831; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WNyoqfFkSiqIaDnNr0KZB++i/w4miVNCO0u6spo9AfQ=;
+        b=U5UCTITvXWwFAMjd4xA/eex0qYwQOmYLDActLa+N1l7D8a8wyRtF7hpXuTcLzb83hW
+         OpYR7T0gTEzY/xFfgSBaFHKkGyyWC19rgNGY4YnMVY963R5LNu+6Ysa7GJfhgKd9tbCH
+         k2D+OaUerwk0ehLHWWQRQj8ebKEn5Gi2t1LkLfuNudcN4yyXYz/ohhmBjXYDxz40o0o4
+         aHJArNw3iM08FnigMyp7t/hUxZcRNzPtUNGBrlsNk8ZcgOl8VwvTzt+rei5o9QCXTpk7
+         GqWvwKJajtiw/IPmJnF5PnREMj0Tuw55QuXIan9StpKXScRuqpDfmBl+orpP5KizUVP2
+         ABNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793902031; x=1794506831;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WNyoqfFkSiqIaDnNr0KZB++i/w4miVNCO0u6spo9AfQ=;
+        b=1Rkn5PU41Z1STb+9VkipAciSba8ds5PVDEcPBH+RjEjNksEZixO0NWDbCYGm14T/Nx
+         QxsX8OxbsLDXRNaSt78pfjXH5REwAv7uI6e1z5Q04d6XBL7eHd79OoNwZvDV//C8xD7H
+         i0e69cIm+u1BhjttzMG933FkE3kp1driM3zgKGl6ZcSHSyJWWvVpt2pTF1lcpOHjpcVD
+         kh6SbUv7F5XPcj3dFE543q7gkS5m/tbq3mOyOqTrhYg2P0uuB/004hykAWUHa7BdEVvr
+         YduSaQQvPK47imyUaeCpNCzT380tBUp4DE/EykRErODhZQowtosa7bv+D/JC1I3FfMZz
+         dv7w==
+X-Forwarded-Encrypted: i=1; AKwUvBzcI2yohvp8WNHhORNQ4MxejXOwtiCMlNERybybFzwFsNKQX0dKyOLnqE9m3h4lU5+PaNevjslbOx85QJSXO7LqRg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8h6a4ZRy1TaLRVNAxY1EGvE+FlMykFNpKpxd2TLu+fsOuk3cu1
+	fEtCUF5WAekur5zXumAZvAdahtxkBVV8NyjA2UpsS6+ogMJveWYuKqwH
+X-Gm-Gg: AYBFou11sUFYa7ZWg2UJQZS2qLdU5yysuPVnS31z1j1TGtfiOSJhzh1GmKlAVEckyPl
+	pvYyk3sw3lVuioJgrGhCR00diPD7dOQL7fYfaBDdBH0ldx8FSRj7zlrGkqY5WrymAwblQgXN3XL
+	BtAhikeRKHKi1Z9qSXms2Tn8OwGYR6CpUZOpsbFXFr40DT4kXWjQJj4GJMYL41SINHkTuriamjQ
+	Dkh8WwNjOsqm/dRacBWHSu255OUXv8j24gaYJOwZiGCcz7sCru1xsGNpRWFBDABX5WqLzQ+gq0k
+	OEVE8fG5I0YBff1toh6J32LJe0kw4L2k+YdriCa6Pn+t47FCc+1iZ49Pw+XIQp66AZGaU4y6ZO9
+	SFhjuJoTvIEMBGEXIpkgqomtjCzabKV1mI9cDdzeE4vZ4saH3x/QQ1N7MpjTyTQ2FyChwhTDqdO
+	eD+KNzpRK5Gspt5mziFfZFY4g7VWQl2ZIN9KXQbiidinFbh2UnouUqBWioKG2K1OgYQcGAzz5F5
+	l6s9MqlqZUc0yOJjl9HPEnzb8M7QwxkutsePFj2olFbk4a+Cvn04Radn3glZGD2jhPs1SIW4Mdn
+	eLjNu5l74O1iBqwfm3bz3kcXCAMA082czMZT++TiKZONQngjHiURUm6uFR5gc0bXCTrhLA==
+X-Received: by 2002:a05:7300:e9cd:10b0:36a:ac68:c745 with SMTP id 5a478bee46e88-36aac68c84amr14869976eec.25.1793902030913;
+        Thu, 05 Nov 2026 10:07:10 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:c8f4:b7d9:252f:4483])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36db94376b1sm12512067eec.10.2026.11.05.10.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 10:07:09 -0800 (PST)
+Date: Thu, 5 Nov 2026 10:07:06 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, mfd@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] mfd: wm831x: Support software nodes for DCDC
+ regulators
+Message-ID: <auzFQkIPZScADEeb@google.com>
+References: <20261024-samsung-kp-v4-0-e21253295e68@gmail.com>
+ <20261024-samsung-kp-v4-1-e21253295e68@gmail.com>
+ <20261104181429.GE1650678@google.com>
+ <ad02069b0cdede7ae191e4a3df57f33a@gmail.com>
+ <20261105085321.GG1650678@google.com>
+ <85817548-28f8-45ed-987d-a4996c2bc4ce@app.fastmail.com>
+ <auy4Qbxg-pW_X37E@google.com>
+ <ad9ec396-aab1-4950-8ea6-dd72d8938464@sirena.org.uk>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -139,79 +110,42 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2209947d-0b9b-417f-9ffb-1c81790af9db@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <ad9ec396-aab1-4950-8ea6-dd72d8938464@sirena.org.uk>
 
-On Thu, Nov 05, 2026 at 05:21:06PM +0100, Krzysztof Kozlowski wrote:
-> On 05/11/2026 17:18, Andy Shevchenko wrote:
-> > On Thu, Nov 05, 2026 at 04:36:38PM +0100, Thierry Reding wrote:
-> >> On Thu, Nov 05, 2026 at 04:17:53PM +0200, Andy Shevchenko wrote:
-> >>> On Thu, Nov 05, 2026 at 01:28:46PM +0100, Thierry Reding wrote:
-> >>>> On Mon, Nov 02, 2026 at 12:54:48PM -0500, Frank.Li@oss.nxp.com wrote:
-> >>>>>
-> >>>>> Replace open-coded assignments to callback and callback_param fields
-> >>>>> of struct dma_async_tx_descriptor with calls to the
-> >>>>> dmaengine_desc_set_callback() helper across serial drivers.
-> >>>>>
-> >>>>> No functional change intended. Prepare to make struct
-> >>>>> dma_async_tx_descriptor private to the DMA engine.
-> >>>>>
-> >>>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> >>>>> ---
-> >>>>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
-> >>>>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
-> >>>>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
-> >>>>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
-> >>>>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
-> >>>>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
-> >>>>>  drivers/tty/serial/imx.c            | 6 ++----
-> >>>>>  drivers/tty/serial/msm_serial.c     | 6 ++----
-> >>>>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
-> >>>>>  drivers/tty/serial/pch_uart.c       | 6 ++----
-> >>>>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
-> >>>>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
-> >>>>>  drivers/tty/serial/sh-sci.c         | 9 +++------
-> >>>>>  drivers/tty/serial/sprd_serial.c    | 3 +--
-> >>>>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
-> >>>>>  15 files changed, 29 insertions(+), 58 deletions(-)
-> >>>>
-> >>>> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> >>>
-> >>> Krzysztof, now look at this case. I would argue that this is even less fit than
-> >>> # subpart(s) case, because it might imply anything. Again the problem is the
-> >>> bundle, and for such a case (when tons of independent changes are bundled in
-> >>> the same stuff, *every* Rb tag has to be explained on what has been reviewed!
-> >>
-> >> It may be a bit subtle, but the placement of the tag indicates that it
-> >> applies to the entirety of the changes. I didn't crop the list of
-> >> changed files, nor did I omit the summary.
-> > 
-> > This doesn't clarify the question. Wordless Rb tag on a bundles is an oddity.
+On Thu, Nov 05, 2026 at 05:19:30PM +0000, Mark Brown wrote:
+> On Thu, Nov 05, 2026 at 09:12:38AM -0800, Dmitry Torokhov wrote:
+> > On Thu, Nov 05, 2026 at 02:43:17PM +0100, Arnd Bergmann wrote:
 > 
-> No, it's perfectly normal and typical. I would not expect anything else,
-> because writing "LGTM" is pointless. We are experienced reviewers and we
-> do understand what Reviewer's statement of oversight means, thus giving
-> the tag is obvious, explicit and not odd.
+> > > As far as I understand the situation, wm831x was used on the
+> > > reference board (Samsung smdk6410, removed in 2019) in addition
+> > > to crag6410 but never anywhere else upstream. The question
+> > > then is whether we'll ever see a DT conversion of crag6410.
+> > > This would require finding someone willing to actually do
+> > > the work, and coming up with a way to handle the autodetection
+> > > in mach-crag6410-module.c so the correct spi/i2c codec
+> > > child devices are probed.
 > 
-> > 
-> >> That bit of meta-data obviously isn't picked up into the tag line, but
-> >> I think the default meaning of Reviewed-by is that it applies to the
-> >> entire thing.
-> > 
-> > And I interpret it otherwise, because this is a set of independent changes
-> > bundled into a single patch!
+> > So I guess the question then: do we need to keep this board at all? Or
+> > it is time for it to go the way of the dodo? And then we could drop some
+> > more drivers as well.
 > 
-> It's not set of independent changes, but even if it was then it would
-> not matter. We review the code regardless how we actually judge the
-> atomicity of a patch.
+> I don't really have a great replacement for it.
+> 
+> > My goal for the series was to move along legacy gpio API conversions, as
+> > well as move away from the GPIO lookup tables (ideally I want them gone
+> > now that we have software nodes supporting describing GPIOs).
+> 
+> It is a bit hard to get enthused about software nodes :/
 
-And I confront exactly that! When the patch may be split it has to. This is
-seems the outcome of this discussion to me. From now on I think I will NAK
-any bundle patch until piece that I in charge to is split from the bundle.
+Hopefully you do not need to pay too much attention to them as they are
+hidden in the legacy board code.
+
+The benefit is that using them makes the driver exercise the same code
+paths as it would on DT system (unless you insist that the driver is
+very special and should only use of_* API) and allows dropping support
+for bespoke platform data (in most cases).
+
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Dmitry
