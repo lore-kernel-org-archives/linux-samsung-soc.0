@@ -1,76 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793870144;
-	b=pAyvuf3jZk98ZHjHxZ3iejs3B2mEty/X1ntkC3Fv7VPtXWnJ6Y4Itk5cjaeCVdMqUdgy
-	 m5xyAQr3LNqTxeVVMiGcmYW9uzaU2GMDyUbhID+UsXlJSVwtOxZZEwgUnVOomG+tojIOQ
-	 s1E1GdzCD4whuwkR1ZkauwFTLcuXeUXCHt7hXTmQBPwQsRbQm8plco3UWlfuJOkyDRPti
-	 gpugjnVZRWLNoRRW4vp8Kq7wqosEG0lC54TufQmI2NYr1Xdu5Cs0q2+k6kU6aCfoINPjz
-	 JrzbjV2RPiC3wInCKNdWBdiItR3SSnQkzuzk4qZxfVAQsyXADcvxtarOUwgTucXWAWw==
+	t=1793870194;
+	b=IMIIe5kZNA294ZVj3hh8QLJPoNODyRjz67U66UWF/lKK7PyhEmyHxcTVWmNBJkTct0Wr
+	 Ttic1GEBsSWTVhuRqKprB4iAHDPm3IDNMrShoEahRPjKmxBfBnH7KKdcd3Bj8C5bCCrY7
+	 cpPxmh/HxLIfZXbNme7Bw1lE+A6ax5IxNUegSlKdEWcVWHFBp/7ouFmC7yvH+vMcknfXI
+	 ht8davnJa14eqr55vJo9Na/scoiEHL4h8SF5pfEoQMuzqQwPnxTHtnPaLt0oD60RZOFwJ
+	 B3tuk7T7bGYLuElkPDisn1EA1HVJS4YHNQqZPd7cQDqQuls5I4WVgDC1gYYISbE8iHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793870144;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793870194;
 	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
 	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
 	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
 	 Subject:To:Cc:Content-Type;
-	bh=gp+XvZ8u5ZE7X4dajdQ+NYbiZBnTVLgwCjJL4l80lxA=;
-	b=ndzwliqOyJ97P0TVKpF8Uu81bAwkwc2b/xtCgPaz8xPaJe/SDx9yQDkkD5zuI84h2Fjd
-	 EQ1MRTPeSjNPkODEB+v9v6+OvT73WRnE0fpbQbW+Nbbes8WDYT3ihhsKB5xEttAzIhLc6
-	 dP6oHNSqcAIBKdQyfK2DRo0DLJrHg4g4FNpqFbrZ9De+ijl8N3WTPJhbPed6G2kES8thy
-	 p/4Fzz8LymkpizJ3T4e0dZ6FSujqCgBdIDbrhf5K8t94doZocLXpbP9G0c7OI9R9XpTAF
-	 NWgdhgHwYIco4rXdTuDjbp6Z3fW+Vtlywy09PGInpevhcpkbuc826Jz6H6KGF6Dfdrg==
+	bh=pdLSFARJtZZaOSy89wvFfnir+tkCHpND5r/hzAKJUn0=;
+	b=J126TQIcOaHjRVmzyyuru+DloTR6zk6h0dYZEs1H5XiDsU5pxo7I8dl5rvWu2V+RHzEW
+	 bvkwxR8R5X9+C4uvLOPjyI3iTVkZb91Ad0/2GTE5tefRDFYi2juNrIVJxq8tt8nfCS3in
+	 sPNlTf3A3RJexB2TCO2OGnCdB1Qs6w+1KLGcvubAauGeamDoJhAOaJM/FtKkNJzFZmfZY
+	 roj0cgfZ5q3vj+frGlewHLexzO6caV/xeDiE3XHCdwnhgmYVt99wNwgIhstgLgaoBmIOW
+	 Gb7JWSHACDywQbMDQD8oFVrFR3vA2OjZajOVE9O3EdemXhIegva6GrXonQNJuBJPO/w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=linux-m68k.org;
 	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.160.180
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	arc=none smtp.remote-ip=209.85.221.172
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21AE606A326
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 09:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C21AE606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA58B606A326
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Nov 2026 09:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA58B606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-5364042eecfso22176731cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 01:15:43 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5eab93a9862so388111e0c.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 01:16:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793870143; x=1794474943;
+        d=1e100.net; s=20260707; t=1793870193; x=1794474993;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=gp+XvZ8u5ZE7X4dajdQ+NYbiZBnTVLgwCjJL4l80lxA=;
-        b=I1rRVwEKbQpULxnImG/XcH/YcW9DGHEOViTNxCmprFGgds6RApLaoiVBFQ+1C1EmnT
-         6ONVzgaYAWeEYyig3lDaFZ0i7/YjVbfKf4+9NthO2jbZkC+xpesGZBZLWZ3dD72+T/X+
-         BstdpxNDmA8c9+EzPFIzhNSPyGCFDNtad7e2ryDiRX56EcPSUDWSl8xeNA+W0jIAw87F
-         G+ZK3jZzGORODe7n5mTJh/cFsa4UEbI3QZ56b59iqo+Li/arhdXfP/5HTHe0+EAWGg9t
-         /VskZH/IpdTfVOnSiCP5wljHLyF98Puvkqcr5yUkrhMYYT718bESl6lAFyKjYKyvFk9k
-         BK4Q==
-X-Forwarded-Encrypted: i=1; AKwUvBx8Wpj8C3HIpMisxRqce0D7pAngHk2WrCCHFUdjysZ8t2Qzq1Ieq0QleiPInj5vY3z9BeTgrNSKEeGBBolmphqvZQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9jTZ2ojTk+ANac1CBiY02rTlniRW55loyd+O1Yz2N/cRuqE5cR
-	LFjBm6gaQhbZ0Ruc+rdI77tPAVY1GFbiyxZ7OgMlC5CPTDh8P/mfWsyz9xeTXwVgD+s=
-X-Gm-Gg: AYBFou364FZKsYN/fBZDEPAEAHnK0JUULJbfbcTmIxJFmXqbhpqba7wQUcBVhTk0Yrj
-	rbDqmouPWz+RqEATeydJc0EzUU+BH9M73aVdp2cBqT/YWgOxnUn/Bw36NrMpVnuLmgY9kdYCN4n
-	/++Wv/4ZH9MfdgqHbQVOrZrSskJ3lxHtmeWKCK36iGm3mtFhNHMnS++s47TcVygBO6xl5Cv1qtU
-	s59hPxFpnfudDS2ZjdwFPSRI5mhwMPxjhluNq7+vORV0VNyLK0sqW+M5Agdd/xZRoSxkNFTsojj
-	2t59302ItS0rNu7sjq8lX0BhHfD7gMTiM2O+DNXt6zTzeFn2/prEYp6wPJR3o7wrbUzJNtqHMro
-	spvqOZYCoNqA47kRkD/d3HxHe8RXaozjXA/U1QFBO3RZZg1pV0VeE879qa5salSPBggynOGQAGa
-	qvdEjhsO1qXUf8vBsKlZTPw47MMj1LE/SLLX3tyEWzvCNvaIpQwcfLYFLEctYqcfv37KdnjF67R
-	bUuc57nX+o4c09dt/XWQH1TnP2nVXG8U2R4FxVaFcCeGd7fgeP9eBxeLHEtlNZgl9aUdNgJMo/1
-	Q1hYPTzagOKwAcEB2fIlD7T7f/JBcK0FSwHl7gbVdTUChIOr3pdZzhT/8YmlzNxeTqE=
-X-Received: by 2002:a05:622a:aac9:10b0:535:a5f7:d586 with SMTP id d75a77b69052e-54ba24ee263mr48373371cf.64.1793870142562;
-        Thu, 05 Nov 2026 01:15:42 -0800 (PST)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com. [209.85.219.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91e9ab6558dsm8616746d6.10.2026.11.05.01.15.41
+        bh=pdLSFARJtZZaOSy89wvFfnir+tkCHpND5r/hzAKJUn0=;
+        b=2uRmCzVrg8I0VhPD1zjXXHQ+HbYxMAessVdfUmxfW++KH7FWbMsD/HYG4Ysvb2hU8M
+         gIot1/RHwhWxmovDrvfnq5KUiYrbfSBPdn0s6lN0xxlLmyUI9el8x4Qnogs5s7GnlJHv
+         PS7Z6VGyvMnO7pU4Yam2PWMUqbgAB5B9qCKekmsiDxbdUm5q2oOwhEyWwO/GLAvvrPSt
+         yvBvxRND7k6VJe8chbeEH/DCWBtgsd33RXT5ChXiFNIVUr3lhQiSO+p8hg9+Z9nvk4+k
+         oAyHFXa+UHvlpxetPb8BmT5KwnnanrdtkP9ASclXxlezB7Z6cnd1owJ7omU29gRwuE1x
+         ZilQ==
+X-Forwarded-Encrypted: i=1; AKwUvByLfKUAsm6IqJajBgmREyVLtZCBCX5Bieonq41IEojDPUyCsp3XrTlOugtoY/yZe7+If+1o5+IzAmZSzbvq4ybdVg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9DgPvEYCk5iMJTVy+mWxMAl0i+SXKUDbiHtoDUzw+P/GMx6Eo6
+	PeEJxu78EoQ2rUDecjzBFCbCYZZL2OHpUQApwhNvSOXa49Dgp9wO+KQY1gdk+Rb0JyQ=
+X-Gm-Gg: AYBFou3T1pSQwP+mU/iAy6gYynAQgei+OZGiuxoLEOcjeK/Vu76KwmpnQ48Pj3cL/eR
+	RTNKLPx/wMkxhfwnGeyPU6oDv/TmRUP3JIKpqrVmdN0E0/4kBdBubyHgmkpG8aU6gJuRWRpoc5n
+	tOJ4Njn4UEcZZIDjHamq5IsgsQ/stspN0coOJ7XdXE+0ii7okJ0Tr30Hq2Uq0McBPiDGgCKqlyE
+	jrmMgz/E34X8qzlmtIlIyTXcgPoz7wpMW9kploI8yb2bvIGOktfBi0LOayJtmUN7dAJgWaaUM9P
+	rw60urdtIi6zw4QhY3Lcl3JUK3VoqUQGq+IHMkv/cVmlu6OOo6yvFGwtRI7jwxLsdB7rRqAK0q3
+	Md1fG31DN7BLP5WpdYg4G3A1oTnTRVAIxpZ8yVvpUNekb6f6W7bbuIeZ/GoRUoBaaWp+IhDwPTU
+	Iw0fVXk5DMtxJDtnomN9nF1IwQk023g4ElJ8PBEroaMnDDmFlBkXPHKTnZOcIMG4J2aEGVZTiUn
+	wxGeSoqVPlEUN07B72RjT0akaL4DoI23dW9Y6DwuN1Od/yKHNgajBwfIm/U5zJNT/NKitJFk+qS
+	RLBs8GL199bZzchvnSyVxsd3Nu0N8aZlsC2NKP7eBipkcHPIqs/qyaBblZ+MbxTaNg==
+X-Received: by 2002:a05:6122:1da8:b0:5ea:a0d9:e5d6 with SMTP id 71dfb90a1353d-5ec6895f2a2mr8433073e0c.17.1793870192694;
+        Thu, 05 Nov 2026 01:16:32 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5ecb6d79d9fsm1190723e0c.7.2026.11.05.01.16.27
         for <linux-samsung-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Nov 2026 01:15:41 -0800 (PST)
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-91c5e31bea9so22587366d6.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 01:15:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AKwUvBy/V+IusurPs4HbWEIfyLCC6eSlS0olacMkylzmzh/zvkM5FgxnWDhO73Jb7avyf3uvA2Qp3fAZ3ff/LWTifY2sgw==@vger.kernel.org
-X-Received: by 2002:a05:6102:c4f:b0:7cc:3eb0:6ece with SMTP id
- ada2fe7eead31-7d072d53fa3mr9146730137.33.1793869733877; Thu, 05 Nov 2026
- 01:08:53 -0800 (PST)
+        Thu, 05 Nov 2026 01:16:29 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-7cc0892f92cso515159137.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 01:16:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBzZph9HHlOYmrl1ekfmpueOCeRi4ulI7sd9Tq/IlUcbKkXvgRva0jbX3jOESGSJt+WGcryUDDtl2XKAyhXbXwrdlg==@vger.kernel.org
+X-Received: by 2002:a05:6102:3711:b0:7c8:1fd5:82b5 with SMTP id
+ ada2fe7eead31-7d072695e4emr7033715137.14.1793870187629; Thu, 05 Nov 2026
+ 01:16:27 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -80,70 +80,106 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
-In-Reply-To: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
+References: <20261104152253.3279052-1-Frank.Li@oss.nxp.com>
+ <b656861c-a087-4087-952e-91fd15fadd52@kernel.org> <auuZHTvr5UI9Q9Q4@ashevche-desk.local>
+ <fbcb650d-0f60-468d-b1cc-255ea8a93db3@kernel.org> <auxF9RT5aljXkfh7@ashevche-desk.local>
+ <auxGdYgJvjq9EBu6@ashevche-desk.local>
+In-Reply-To: <auxGdYgJvjq9EBu6@ashevche-desk.local>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 5 Nov 2026 10:08:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWHyQhJwFHd5dguORb0=KTeQPT8AwMr0Uo6UAJRcn-fsg@mail.gmail.com>
-X-Gm-Features: AclHuK-Joxo1A4dnmlO7hQLoxC6QCg3Be9nelvt7mgpbpsg01EIWZ9Dok6aJ4CQ
-Message-ID: <CAMuHMdWHyQhJwFHd5dguORb0=KTeQPT8AwMr0Uo6UAJRcn-fsg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-To: Frank.Li@oss.nxp.com
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Russell King <linux@armlinux.org.uk>, Richard Genoud <richard.genoud@bootlin.com>, 
+Date: Thu, 5 Nov 2026 10:16:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUkzXMsv_4KHP20qidmH1B4Ew3=VuTJ8jqfqvx4_+pm4Q@mail.gmail.com>
+X-Gm-Features: AclHuK9751j09IKd6_4EIkqyFvn0FA5bsvqOYkEgIDax6KzLeXviQYPveqzIsxk
+Message-ID: <CAMuHMdUkzXMsv_4KHP20qidmH1B4Ew3=VuTJ8jqfqvx4_+pm4Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Konstantin Ryabitsev <mricon@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>, 
 	Nicolas Ferre <nicolas.ferre@microchip.com>, 
 	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Radu Pirea <radu_nicolae.pirea@upb.ro>, CL Wang <cl634@andestech.com>, 
+	Ryan Wanner <ryan.wanner@microchip.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Vladimir Oltean <olteanv@gmail.com>, 
 	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Cunhao Lu <1579567540@qq.com>, 
-	Raul E Rangel <rrangel@chromium.org>, Yenchia Chen <yenchia.chen@mediatek.com>, 
-	Zhiyong Tao <zhiyong.tao@mediatek.com>, Carlo Caione <ccaione@baylibre.com>, 
-	Moteen Shah <m-shah@ti.com>, Kendall Willis <k-willis@ti.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Kartik Rajput <kkartik@nvidia.com>, 
-	Fan Wu <fanwu01@zju.edu.cn>, Nicolai Buchwitz <nb@tipi-net.de>, 
-	Karl Mehltretter <kmehltretter@gmail.com>, =?UTF-8?Q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>, 
-	Shitalkumar Gandhi <shital.gandhi45@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	Sherry Sun <sherry.sun@nxp.com>, John Ogness <john.ogness@linutronix.de>, 
-	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>, Robin Gong <yibin.gong@nxp.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, Zhaoyang Yu <2426767509@qq.com>, 
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>, Haoxiang Li <haoxiang_li2024@163.com>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Myeonghun Pak <mhun512@gmail.com>, 
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>, 
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>, 
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>, 
+	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Heiko Stuebner <heiko@sntech.de>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Yixun Lan <dlan@kernel.org>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>, 
 	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>, 
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, 
 	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, vkoul@kernel.org
+	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Thierry Reding <treding@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2 Nov 2026 at 18:56, <Frank.Li@oss.nxp.com> wrote:
-> From: Frank Li <Frank.Li@nxp.com>
+On Thu, 5 Nov 2026 at 10:04, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Thu, Nov 05, 2026 at 11:01:55AM +0200, Andy Shevchenko wrote:
+> > On Thu, Nov 05, 2026 at 12:02:21AM +0100, Krzysztof Kozlowski wrote:
+> > > On 04/11/2026 21:44, Andy Shevchenko wrote:
+> > > >> Andy,
+> > > >> These three lines look correct.
+> > > >>
+> > > >> LGTM:
+> > > >>
+> > > >> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > >
+> > > > As
+> > > >
+> > > >   Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org> # atmel-quadspi
+> > > >
+> > > > Note, it's in your power to ask the author to split out what you maintain
+> > > > to a separate change. So, it's your choice what to do, Ack the full patch,
+> > > > give a partial Rb, ask for a split, ignore reviewing (often means silent
+> > > > agreement when maintainer just applies that kind of a patch)
+> > >
+> > > The "# note" after the tag solves the problem partially, if people were
+> > > actually using it. Solves people looking at the Git commit and being
+> > > mislead by partial review applying to entire commit. Does not solve
+> > > credits, because Rb for three lines is not the same as for 100.
+> > >
+> > > From v1 of this patch, four people (Alain, Lab, Troy, Kunihiko) did not
+> > > use it even though reviewing only part. Only Wolfram, so 20% of partial
+> > > reviews, used that syntax. Without that syntax, b4 will pick up Rb tag
+> > > like it was for entire commit.
+> > >
+> > > So I do repeat - if one does not want to use that syntax, then just Ack,
+> > > instead of creating false impression of reviewing everything.
+> >
+> > +Konstantin, then we need to teach `b4` not to break that or convert it to
+> > something like
+> >
+> >   [FirstName: reviewed only ...]
+> >   Reviewed-by: FirstName LastName <...>
 >
-> Replace open-coded assignments to callback and callback_param fields
-> of struct dma_async_tx_descriptor with calls to the
-> dmaengine_desc_set_callback() helper across serial drivers.
->
-> No functional change intended. Prepare to make struct
-> dma_async_tx_descriptor private to the DMA engine.
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> And Ack is not the same as Rb, when I *reviewed* patch, I have *reviewed* it,
+> even if it was partial one.
 
->  drivers/tty/serial/sh-sci.c         | 9 +++------
+Exactly.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # sh-sci
+Ab means I won't take it through my tree, please take it through a
+different tree.
 
 Gr{oetje,eeting}s,
 
