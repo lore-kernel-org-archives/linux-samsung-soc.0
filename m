@@ -1,47 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.129.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793905025;
-	b=qmvp0LGC81d2okCHK4oUVKLq09ySukuyfrVgoTSlcfNKkjbhWzFA+gBj3lp6cr2IF0wR
-	 kshRs/sf2/Ddf+oB7BGmeMRTgxE9JD0RGHIhSc/b3qQd/TIFbZqbNYiL29ZCYiOI+Wv/u
-	 z8GOlyIyy4w1vV8Gpaqyxbke2e0Hv9FAolcpGreAiXBi2AuZYHmpN0u+9HILll0W4UkKn
-	 gDtz6qggA8urRQInpVM5RMiH9y24lb/CtKZ3YdwgQOIwpWK1JWR8olYLxBQURko0FMYq1
-	 IgYEB3MTHsJLQZvsQ4SIGbQblot9EwwFHv7Cxb7c8pQaDIpK9mS+TLPxNYFeZBqt0qQ==
+	t=1793928587;
+	b=fby74QqFp9A+1iOxTZ3Xz7nHsl6sjDFR07REbIx2qly+iCR9K0g9gGke8LDMvH3C5NaE
+	 8v7vSY+K1eXSeEprOmy7uw7v/BNKyR2CH8DcNriRz1+M4OmxMuy9Zn7PoEoC7Jp7Y6Ycw
+	 T1ZPGIYKWAIlhjoLNYg/jbgz9h2yytrOHqEgDHp1Iq1h8G0OryZmMRY9Wu87Lwj8pDrCR
+	 4D4YNUmF44P09zoVQ/Q9jHTvwThdKL1/+kf/6N4ULjho4XZovYuOob63E92tp29P5bp2Y
+	 KpoCJXJtVzIF5Hhgh0t4IvNjFuZaE831J4bUHLJQvlVle14iF7OmKSKz2w/klBWN0fg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793905025;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=WQ9sffyuRp/irYxXc7dRPeziYbjvSyitG8dEJ6yeqEg=;
-	b=TssEsm2WRLgvOoh7e3GIcFoDmxN5cKqge227ploT94et4jkwvnBnzb8AI2JUVkIE38El
-	 faCxr4h2N20tGtvJ3xmpOe0lhwjunCfSm9jq8brjCLNlnqunml8RvmiS0V6HtxNuj5+JB
-	 ljJBn6h3jFM6VonBg8OmDY4sBDlrsNKGe9a/ERgMsVQdkti2inyvNyZh1uQPJFcY1kfl9
-	 s2l4K0vrvd/WvwJGxuELcolMv8Wc6XU23GcSGwLAoX26ObleltJ/GQuem4v6ZNXfff2x7
-	 tDylc6XC/4/KTEb4culLsQnXopw135RlVNmC1fmxSI+JkZxnlvpbdaEbhL+M+yFMyRw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793928587;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
+	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+	b=1InTsXIY5yenbYrKv5sNCP008NGAbNeu6pqr1S7I4Ts+IqUIM5ePiD8rzIRWNw4davVX
+	 2MvGDXOqoCQ/0ljgQnIXKpAfYGMJrPe0QdKyYhDhBQ5qWQBxxfkwqMyxrTWEbSJ7Pmznq
+	 NaXB1uJdpfPa8uZJMBVokvzlkA82sYxC8s0dD4AduE1diJehupICPmj0vLwD/4cD8R7rb
+	 rB1v3E9+jPXWnX6wXbu+pl7R5hZsRouhvgTI9mu0NzC6ltEcZtHSSCARbOI4NCRNR5o9b
+	 drGKLXl8aMPIdRzveO+oFhcAsNk8RzWkf9aDXzGX9TcrwoCA8BZMaXWdqdjM6tbo5lQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nSRL7qeZ;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hoPrTfof;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=QwD0Vx9h;
+	arc=none smtp.remote-ip=170.10.129.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B877E606A31B;
-	Thu,  5 Nov 2026 18:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8E606A328
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2026 01:29:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 65C8E606A328
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nSRL7qeZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3C31F00919;
-	Thu,  5 Nov 2026 18:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793905024;
-	bh=WQ9sffyuRp/irYxXc7dRPeziYbjvSyitG8dEJ6yeqEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nSRL7qeZefZsFlhbewfbotp8isdhCFKOicgcQPuFTjUejyFw8L89bYizUJWdyBeeX
-	 DSl3dtsx64ZntdIq0Euec2b587YGxISmGsI+JBa80+upYr7n0EMYVeA6a87B4QpCib
-	 E4DlTWWHYVyAyF6o6QGbkxDvFJhiEfXmvA6ZDQrse+l0HP0KWkyhM/XEHlkp/0+qDO
-	 uPv/qhdVQp7R8IMPu0vCr4Pnz6mLKt2wblai4ewjnD0U48c/s+Tyqm2tfW35BuFrqu
-	 qLfEWbX+bBsVRRzhWsEVR6+tFQgbtuJHbwMC6YtW+xyLsNiqQIDSbGocuQxtu3JRt8
-	 GfRbkJEVmHNow==
-Message-ID: <4e393e6f-34d4-4d8d-a12a-270aea843f17@kernel.org>
-Date: Thu, 5 Nov 2026 19:56:53 +0100
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=hoPrTfof;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=QwD0Vx9h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1793928586;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+	b=hoPrTfofoMsSl7OeMsycpnEnzDm8UuZ6O+VLNIr1lzc5Ho07GhZX07cZpoUnZNMJRwjDe+
+	//10HURb7DJP4lvLQzabDPTngZHf+HnpazDIbhmsbpxaz1YAdnbB5hNB3M1xmCCSPo6ZZe
+	xtw+CM+CQmVoMcbQM87lHXXaMrORivU=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-339-bK8U5NC_PnO3L1sLZFMSNw-1; Thu, 05 Nov 2026 20:29:45 -0500
+X-MC-Unique: bK8U5NC_PnO3L1sLZFMSNw-1
+X-Mimecast-MFC-AGG-ID: bK8U5NC_PnO3L1sLZFMSNw_1793928585
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-53661e036a2so2184031cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Nov 2026 17:29:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1793928585; x=1794533385; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+        b=QwD0Vx9heJ8ZA0a+BD5thbuly7isyqRUk3YlLrnVWd9shSxHYeVSBFmMScFu57BwX4
+         gNj4q5fMGOHMVk1zkWJ2MCP4K3ZdVZB6az9KbaJgVr+ucq93gQv1QepMA1OQPFLOhoda
+         vCOKm+YbEwiblATk7lKUoZff9IjvFiO+iy0gx8wHBikXeLU3lqniVrwPWWNjvKntYbbS
+         kw39OZegONbCrCUfJdijJo2g0X0jnPeCarRli24FjJhbp5qt2VYb5M6BA7UAWvTyG/hz
+         gy9ND2jqg1OHHThoKrjMTQejjh26LbWOLBeGuj9Ia2Ee9pmV0qVGVDl9j9EqOIHB2Yxr
+         EQqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793928585; x=1794533385;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=AX4jtNNignF/+yCJApxGo0phvhtY6ezMkAKbj47wwJ4=;
+        b=viEIsG1yor/ksSwzV04PXYYdsu5vdezAnGKFFJqcA+uO4LCHcTJLU/80ixgCNMW4Yz
+         7vxKYlde5uHj1Sz1ymfRZ5we1LmzotGZ36qCo0UEGNIm/VFNftk8A6dNTBdTyLcX7iGU
+         Wn+OPtcnkOxVaGJ3DqSsQQKy+Lf5ulLuLnmV0ro5nQQERS5NkiCmP5L/cp9ZUpPfzU2k
+         KkXzy84BsZ2w/M5UQgzwUrNFmnaRisHid9Vq+HYhah6AsrCjBou2SxhBLELt3DJb5OcT
+         0KiGk1ot0wPly2s3om8BeQ3XcnpoIOnAIK1yjMlpBvbyte32zTx7F8IoY11j7wia2zW4
+         +F8Q==
+X-Gm-Message-State: APuU4Z96MHOncQMiKr9LHA7JJ6LrudUjCXmS+L+Yzy+H1pS62LKr8bCk
+	90kmanQdtzKDE1YGDL5St/XcVeIbZ1cNaSrSL5Dxf0k+Da0c3jZeolSFb8CH7df6yAh/Ijw6dW8
+	ves+tnE3WDOHP+9Gj0rfyYo0CnRNymnJZFo3VJvJRwLbOL/OQjMNsAckhVxF0yOXai4BSXFgo
+X-Gm-Gg: AYBFou3Rn3Le6hNZh9LAzYPYW7WXZIieBGHHcWDYU38vPgwZuwqJ4Vxr7mjIEfKSUWQ
+	U4z7jgjOhH8ljidRZfBoM0HKI86IHlFAuVkAUIThfv3Nq103gA6laSaabTBROmmCRK/65SbuRpq
+	GcIrrpSVA1YwqepY/v2dqg+/GAnMUy4gH+azAqQ1HRn1YUKBLUiBpav7M3pm1zwM+NP8/G3Q6MW
+	tx6Wzhgz5MkRuaERQ6FXKCSMNegUOulbMh/IbiPzA7aqsLtfLtz8oX7hmaunhi1KTd/JgUt+qEv
+	C47cqfwKOSU1tQiPNG+b961vyQbknwTGA7cc5Vm2SYdRXcPPwds03auUeZhakytWQG/xqf/xy+H
+	lHeZw04hxI+Sw7qVR8I2N48JQ8Ffqcn35sZuAk8Da40sgU4pdEltj1ffGqC+4FciFp8nPGQ5HUP
+	2VD1bkI+gzkkBzZzVu
+X-Received: by 2002:a05:622a:353:b0:536:65fb:fff5 with SMTP id d75a77b69052e-54e1596c231mr17839171cf.60.1793928584514;
+        Thu, 05 Nov 2026 17:29:44 -0800 (PST)
+X-Received: by 2002:a05:622a:353:b0:536:65fb:fff5 with SMTP id d75a77b69052e-54e1596c231mr17838791cf.60.1793928583742;
+        Thu, 05 Nov 2026 17:29:43 -0800 (PST)
+Received: from bmasney-x1.rmtuswv.csb ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-54e26f1bd64sm7404091cf.23.2026.11.05.17.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2026 17:29:42 -0800 (PST)
+From: Brian Masney <bmasney@redhat.com>
+Date: Thu, 05 Nov 2026 20:29:27 -0500
+Subject: [PATCH] clk: samsung: exynos3250: convert to
+ subsys_platform_driver_probe()
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,119 +110,66 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] google: Add support for Laguna CPM
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
- linux-arm-kernel@lists.infradead.org,
- Mariano Marciello <mmarciello@google.com>,
- Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261028-armored-glistening-cheetah-6f3070@quoll>
- <aulBrFWi54E6a7Br@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
- /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
- s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
- EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
- rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
- DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
- IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
- vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
- oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
- sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
- vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
- Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
- BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
- 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
- f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
- WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
- XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
- IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
- YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
- p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
- GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
- YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
- vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
- ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
- QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
- +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
- wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
- c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
- K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
- n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
- qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <aulBrFWi54E6a7Br@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20261105-clk-subsys-v1-1-993c474e7860@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ5AMBCF4avIrDXRCsFVxKLawSBIByHi7orll
+ 7z3X8DoCBmK4AKHOzHNk4cMAzCdnloUZL1BRSqVMkqEGQfBW80nC6tsbrM4zoxW4A+Lw4aOL1Z
+ Wv/2yR7O+BbjvB+zBcuhuAAAA
+X-Change-ID: 20261105-clk-subsys-d2d9d8338ca2
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.17-dev-d96cb
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1153; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=7ycUhYaTHTijLETgf34xYgBmPS7y03e26r0FoL8ptEI=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLe6jZ+3Syw76dB9vH8aLXHwRdfqzR/tl6m6Wv57V/1l
+ RJ3E63fHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAExEbhLD/8o5AYtijIRnM2W+
+ PCXU0K3huJuJv/u/k9WpNfMleSa9lWD4X3E+quGxUEJjlMKOTBshycnPN5t21InbX/0a7XMrtPY
+ aHwA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 03/11/2026 03:06, Brian Norris wrote:
-> On Wed, Oct 28, 2026 at 02:24:35PM +0100, Krzysztof Kozlowski wrote:
->> Either you expect review or not. RFC means no.
-> 
-> OK, PATCH.
-> 
->> If that's patch, then at
->> the top level of cover letter, as the most important thing, you explain
->> the dependency and merging proposal of this.
-> 
-> OK, I'll try to move it up. To be fair though, every change that has any
-> dependency is clearly noted in its below-the-fold notes.
-> 
->> You combined here like 5
->> different subsystens...
-> 
-> What do you recommend here? I believe the general principles of DT
-> binding development suggest there should be a single binding doc for
-> describing the "Central Power Manager" (and the services it supports).
-> CPM supports functionality covered by many subsystems.
+Reduce boilerplate code in this driver and convert it over to use the
+macro subsys_platform_driver_probe().
 
-Standard upstreaming process for new SoCs.
-https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c858ee3724c83c
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-and the perfect example:
-https://lore.kernel.org/all/20231121-topic-sm8650-upstream-dt-v3-0-db9d0507ffd3@linaro.org/
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 32d12658e1a9..bf36d2f2a3f8 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -1093,10 +1093,6 @@ static struct platform_driver exynos3250_cmu_isp_driver __initdata = {
+ 	},
+ };
+ 
+-static int __init exynos3250_cmu_platform_init(void)
+-{
+-	return platform_driver_probe(&exynos3250_cmu_isp_driver,
+-					exynos3250_cmu_isp_probe);
+-}
+-subsys_initcall(exynos3250_cmu_platform_init);
++subsys_platform_driver_probe(exynos3250_cmu_isp_driver,
++			     exynos3250_cmu_isp_probe);
+ 
 
-> 
-> While in theory, bindings can be written without corresponding software
-> support (drivers), in practice it usually works out better to develop
-> them together, to prove that the binding describes the hardware/firmware
-> sufficiently.
-> 
-> And even if the binding goes separately, I don't think I can 100% split
-> the driver support by subsystem, as they all require the same underlying
-> CPM helpers, and those helpers don't have much meaning without their
-> clients. So some multi-subsystem work is still necessary IMO.
-> 
-> So I don't really see how I can address your complaint. But I'm open to
-You don't know how to split patchset per respective subsystems? Somehow
-Linaro, Qualcomm and many other people managed to do that, so just ask
-them. Linaro folks might be easiest to reach, through Peter Griffin for
-example.
-
+---
+base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+change-id: 20261105-clk-subsys-d2d9d8338ca2
 
 Best regards,
-Krzysztof
+--  
+Brian Masney <bmasney@redhat.com>
+
