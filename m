@@ -1,73 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.27
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793974061;
-	b=rsorPETMQ9cIE6pNxQbmEQREi47zCGtAx/NjBSCBeGeBjWnnA8bB62lSddipidmEgktM
-	 1MQ0f8Cl8/yjPiQuP4+QZGETZSN3kOgQcqPTJMFz/0nrNOGqMNTefhxLI0Z9Q3QzYy0B7
-	 38gJi5Z9Emrif/RHxOMz9Y/44xGYAnwtDkGmJQOb27YEGJe8dgaKAg0u0OW3B7vu/dT7z
-	 Tkf+J2A9j3rIMAi/bZKlf+UsWww/69gY9aXjYRphmG9jDGDCWHc9ILGDA/rgBpbCeZVU5
-	 N5IMSruePXSxpo/WZo/rXXaqM2buO1bQ+N25nD5V40xBLYrhoNJaXhVdVKH67w+WHxQ==
+	t=1793976353;
+	b=IvGgb77p2qX0bV4td5eULa2np9VBbgs7+TdJS0tUgtlN22tPUhzgN7M2e7/uGLuTD+f5
+	 lurCEOa5KPWZLGb1K3CqMzIhVJ1bWnWk1WokKpjYLzpC7MdRObTMxnvB+LRQoAo/O1Ha0
+	 IZK/cyHUwBCpA6ZFhyAT0dogeVbJU9hAaMOJH9Wg5Un1U187o4Xb7Bp016TsjnztkqXCj
+	 hH3xHGm4QyHQZOy93BRksa+KDGMzkXZ0+GqZBx5EyUBOXKUPH84rFwAVg0wzvq8sH0BuC
+	 e+PVnBcemW52S8cZkrwS0FpkhWQOfFFkECd+3DvK/qX/ykipyd+7QXVLutkntOgvw6g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793974061;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-Cookie;
-	bh=QzOeMyW9XoRvbL1S4yq9b+nOF7kq8iH2OCoxesNStc0=;
-	b=R/v6AEz4NSEucJ7FWGBf2j5G9pTO9goRctVf3A/jcXbbpuMPBx8EQS12fQc+z3qC3F0L
-	 Bkw2YsG56jbq/yWz6b2ZXG0mm+gfTYBpeESM2vPWsKb/8QnIdoZ9ULDVvWOk+yOgik1Il
-	 +1jLBt+weC5J9DMWSiIRzofYlLM9TzzsySPFn7n4wJrL+TKEf6xlCcCiM7KibQT/uxJqD
-	 lkEwNqzlH64eRn1J2janjMryepPVcfyyi+ABVI39wdcLginaK7nkQWHry0HKC1t/RVEiF
-	 GwQbe9iKA3PMT/h9nLKXrGinzuHJX0uyfxQwBv9LS2HGmQBYeyDmD4yBOIo5+h2CYuw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793976353;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=nXpHtbwIXWqa0CUduYYty9A7kDwxd+/CalGYDzCTKjw=;
+	b=sqmz6Z0rFKOGduh+XfuaIr6xOhTsFb7E1ykhwFfXBA3b9LRp++I97HcGH6hXIMfVD2HJ
+	 Rrcs8UvekTli49uO/Wv9+Zmo2+2rUqLDFIERspQnq7O8iUlauVzJlfjy+r9hgR4PKxl1b
+	 wAvfqFifTErO2hcvsMUV0eMBU9bjp7GnZynJIQOWRTmH3UGrn4uPREV2klIRgJ2d/LoLi
+	 cAMphKRP88vfaKrQ7UsIvGujmN07cGCdXN6emmN3t2YVytkMbHsL21kGC3qRZfi8lzXH4
+	 ddczTkMvuPFtZOcgdukAJFLOUBab0mKYT9G8JCIUAJ5F3AhadKfixQ02MhyukdcSnRg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qhno8iJx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=grimler.se;
+	spf=pass smtp.mailfrom=grimler.se;
+	arc=none smtp.remote-ip=91.218.175.27
+Received: from mta0.migadu.com (out-27.mta0.migadu.com [91.218.175.27])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAB2606A326;
-	Fri,  6 Nov 2026 14:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Qhno8iJx
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E7731F0089F;
-	Fri,  6 Nov 2026 14:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793974060;
-	bh=QzOeMyW9XoRvbL1S4yq9b+nOF7kq8iH2OCoxesNStc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Qhno8iJxw2PadLSFZky+/AlnZ7Q017lTPrVDL4fbT2GTUeVao5XPwtcZB2VCgWfhc
-	 MBRRIYCwqMu0/IoTN09+hRzXBRaUw0UBz2V1T2wx96q9sfp9jGAZLOYLr8FiIM+2mz
-	 nasuwKznXigrY+jESlC7T7o4DgaVeyn7W/PMPbucwWG+8T6ipieOurAtwQIq+Qgos7
-	 6VqhUgNCRHeWo65aKfH1OozZK64et5f+BNt5//V53/V8MlRLSoJrI8t3T6/wrhSvfk
-	 ETcY8XsjE8FnJCoSaY2A8IHQGbEJRNMxDnbsrIvzDJQ7Jmyt/Iq7LpNXLDWEIczxNH
-	 /pRtG8PiDOhLA==
-Received: by traversing.sirena.org.uk (Postfix, from userid 1000)
-	id C8ED22808F5E; Fri, 06 Nov 2026 14:07:31 +0000 (GMT)
-Date: Fri, 6 Nov 2026 14:07:31 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DA6606A33A
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Nov 2026 14:45:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E8DA6606A33A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=dsRJ/0z/yE/5s58BMhmlVSFV04GmqnxwznaEjY/5328=;
+ c=simple/simple; d=grimler.se;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1793976343; v=1; x=1794581143;
+ b=kADcVJZMgmNCz98SwUVAOSfSrkz7gIzWbzN1tnaTaC/CyM5NEQ9+X5mynXCfvmbkw7XuInM9
+ NAROZSBHoV0/9CqgXDtzIomW7cYT/ppqX/Fhy/LhrHWO5UoPgPn3onXSrZp9k+rthRSGL4m1cHm
+ gD0Trg+KBvMvns8fnRoJ1Jmg=
+X-Envelope-To: linux-samsung-soc@vger.kernel.org
+Received: by mta12.migadu.com with ESMTPS id cf432eae1467532f;
+	Fri, 06 Nov 2026 14:45:39 +0000
+X-Mizu-Trace-ID: cf432eae1467532f
+X-Migadu-Flow: FLOW_OUT
+Date: Fri, 6 Nov 2026 15:45:36 +0100
+From: Henrik Grimler <henrik@grimler.se>
+To: Young-Jun Hong <nirvanah@nirvanahyj.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, mfd@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] mfd: wm831x: Support software nodes for DCDC
- regulators
-Message-ID: <c159ace7-17b8-46ae-9551-d0eec6e051be@sirena.org.uk>
-References: <20261024-samsung-kp-v4-0-e21253295e68@gmail.com>
- <20261024-samsung-kp-v4-1-e21253295e68@gmail.com>
- <20261104181429.GE1650678@google.com>
- <ad02069b0cdede7ae191e4a3df57f33a@gmail.com>
- <20261105085321.GG1650678@google.com>
- <85817548-28f8-45ed-987d-a4996c2bc4ce@app.fastmail.com>
- <auy4Qbxg-pW_X37E@google.com>
- <ad9ec396-aab1-4950-8ea6-dd72d8938464@sirena.org.uk>
- <auzFQkIPZScADEeb@google.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: samsung: exynos5420: add VPLL rates for 650,
+ 700 and 750 MHz
+Message-ID: <20261106144536.GA3678@localhost>
+References: <20261106054210.2893230-1-nirvanah@nirvanahyj.com>
+ <20261106054210.2893230-3-nirvanah@nirvanahyj.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -77,44 +70,58 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ThW1+an2rN+EXP3+"
-Content-Disposition: inline
-In-Reply-To: <auzFQkIPZScADEeb@google.com>
-X-Cookie: Whoever dies with the most toys wins.
-
-
---ThW1+an2rN+EXP3+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20261106054210.2893230-3-nirvanah@nirvanahyj.com>
 
-On Thu, Nov 05, 2026 at 10:07:06AM -0800, Dmitry Torokhov wrote:
+Hi Young-Jun,
 
-> Hopefully you do not need to pay too much attention to them as they are
-> hidden in the legacy board code.
+On Fri, Nov 06, 2026 at 02:41:49PM +0900, Young-Jun Hong wrote:
+> The VPLL drives the G3D (Mali) clock on Exynos 5420/5422. Its rate table
+> stops at 600 MHz, so GPU OPPs above 600 MHz cannot be reached:
+> clk_set_rate() silently keeps fout_vpll at 600 MHz.
+> 
+> Add the 650, 700 and 750 MHz rows (VCO 1300/1400/1500 MHz, using the same
+> P/M/S style as the APLL rows).
 
-Which does get reduced error checking and questionable readability
-benefits :/
+What you mean with "using the same P/M/S style as the APLL rows"?
 
-> The benefit is that using them makes the driver exercise the same code
-> paths as it would on DT system (unless you insist that the driver is
-> very special and should only use of_* API) and allows dropping support
-> for bespoke platform data (in most cases).
+> Tested on Samsung ARTIK 10 (Exynos 5422): with these rows the G3D devfreq
+> reaches 700 and 750 MHz, and the OpenCL accuracy suite passes 96/96 at
+> 750 MHz with a board-specific 1.35 V OPP.
+> 
+> The analysis, the code and this changelog were produced with Claude
+> Code (Anthropic), a coding assistant.
 
-IIRC all those drivers handle DT by parsing it into a platform data
-struct or just don't have DT bindings anyway, and it's worth being aware
-that ACPI has some rather different ideas about how audio should look to
-DT.
+Was it tested by a human?
 
---ThW1+an2rN+EXP3+
-Content-Type: application/pgp-signature; name="signature.asc"
+> Signed-off-by: Young-Jun Hong <nirvanah@nirvanahyj.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 400a5c59815c..1b4b0ae16765 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1451,6 +1451,9 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>  };
+>  
+>  static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
+> +	PLL_35XX_RATE(24 * MHZ, 750000000U,  125, 2, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 700000000U,  175, 3, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 650000000U,  325, 6, 1),
 
------BEGIN PGP SIGNATURE-----
+Do you have any references, like vendor kernel sources, to back up
+these choices of dividers and scalar?
 
-iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCau3fIwAKCRAv73Ows9A4
-ifRsAP4tUq7tN/TDsRfXjjcTur1dwpJtgrTdWOmPwnkeVlQY3gD/QkqMpRqix/0Z
-tBrIqRL9sg0hSaLIScndH+eFnbaH1g4=
-=t+xL
------END PGP SIGNATURE-----
+Best regards,
+Henrik Grimler
 
---ThW1+an2rN+EXP3+--
+>  	PLL_35XX_RATE(24 * MHZ, 600000000U,  200, 2, 2),
+>  	PLL_35XX_RATE(24 * MHZ, 543000000U,  181, 2, 2),
+>  	PLL_35XX_RATE(24 * MHZ, 480000000U,  160, 2, 2),
+> -- 
+> 2.47.3
+> 
+> 
