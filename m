@@ -1,59 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794234613;
-	b=sIbkYIJEfO4u7RWo+7/upDW3AxOg7N6rfxd2s7NbxKp/doTlFXuOvAY9h8ypWgITOa2T
-	 Xrv2o7wB0GYFv4WUMj3TNuS3gdW9ul0bDiRTFfhn7Gq/UdXqnHfTLcYrwmhr9iPhvXzQW
-	 VmyWI7GFeIhI2K4ySZx4lkEOSE/h6FNbr9jPKUENFgtBumVzlr2r9xkQNOVqeqyPD55fZ
-	 3YurTSpwW5eMvVqa0azb5b0atjRkyM5YDbvYwjO9X7bcFF4991NIobldoyND/XP1V1uiw
-	 w9j3mGDiKd+Qj52EdnNI/Ijq8OyhSDgrNxZZETho6niQTM66e1FmBcsT3IVuENnTZtA==
+	t=1794234620;
+	b=5sM50uCb/FMYTAuwkfTPrNamF0OTTdt4OVbp7GLfsI2ofTtTKDQGeiKnHeblV2wli9V+
+	 byuktxb6mER5k4Fg2kHF/ayvpWZcrN/F+L7P7PYSy1oh2hjS/nmnvvM+4Qm3WIxIgWUPQ
+	 MOveFy5ZH6j5NeLK5mcOqINUWjXkX0Sd3wVPtlfbbBzguBtaPJXbCnO3mQd4wY5RW+gnF
+	 L2n7WR3h2kMyTUk7aSXgqjFHvBDQxI249RCpRXX0abUXj6ZeeXvbht6ngj48wcDR9iE/M
+	 tlALH1xurB1ZIVMnWs58gPTuDVad3yOpwSyA5dcBpNyr7kFUNicvuhPajBYIuYQ/0MA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794234613;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794234620;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=hLE7zIODsl5Dn1F3z+eZFGB0/u3q24th+XRZBDiUu3w=;
-	b=eXhoei2N+iYUXbCQIaZ02CriH+jIr/2wyoLQ5oWJKYdlGuZzmE2fxjD4ySUzwIUfvnCm
-	 sU/KdyPsR4gblnnlxPt6tNXytBX+/7S4mv9iV8LRzyP/SQ2Vmyt5sY8u44GBoBS2K5znR
-	 rPAWwubSydwQlXpAy2guXPjjpHtT5y8frpgf81dd7hUlVWvX/NSGivoocBJp3Gmv5OAUb
-	 Jr9L/3lnJfoerQnaXHimE8vSnCtVveU8XFSsdOvmizeMhzaRaGl44GAuYSgB6r/aZeLo/
-	 zxxAekLOJTSYmWoN3fkUpnNGfhSwiNL0KxxiPGysgSC0x03Ztt9+WRJLxrFzQv3tZIw==
+	bh=SVWYYLhxeEIhjDuhTBIlUZL/L6SyEXLXw2BhtSeMLfk=;
+	b=VWUq0M+CIimrvgNgv/uRiZ0COJ0gVJYund1iltQsjmsWdiULkZOGKl1tj0wtEHauziZs
+	 sBmn+5vml1PO3iy1Gh4AH4/Ey2PS8W+Bq9CvuA58hMHfFeG7VgjyuRZNWroQ7w96tR3YG
+	 Cq5PTnMokQnnhuDzpG8Pmj2+7UxEWpQjxlIf1/Q/dOAnP2gQ3s5skLQOlU9A0pgWg5FmO
+	 BU8lJvx14WMH3W/D+5Vco5uSj2xhtJCbXi313FO6Eo8Q/Y5bIBpmMjedwE1yd55D9OqsT
+	 1NaSmIBq2sl7hV1eKBinUAmTzno6vkFc5UEXZ8xZ6CfJQP5j5bkSCrqhYwZngu5D5Iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NSFWTKFb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xm7J10wM;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9818606A323;
-	Mon,  9 Nov 2026 14:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA89606A333;
+	Mon,  9 Nov 2026 14:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NSFWTKFb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08601F0089F;
-	Mon,  9 Nov 2026 14:30:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Xm7J10wM
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1DEE1F008A5;
+	Mon,  9 Nov 2026 14:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794234612;
-	bh=hLE7zIODsl5Dn1F3z+eZFGB0/u3q24th+XRZBDiUu3w=;
+	s=k20260515; t=1794234619;
+	bh=SVWYYLhxeEIhjDuhTBIlUZL/L6SyEXLXw2BhtSeMLfk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=NSFWTKFbtkVnPZgIm7p1bxRv3wCfECzuvW31hmUQz1bVcZmeUdBAy/6SveeDBQ393
-	 QvtccfH5T4gSYdYqZGQ2iLSLE0ic1blqo4ypapFPKVuOZs+EYeeVHsoF3gbo03ML7Z
-	 1XzAg6es7+xTcUvthSmbIEMM9xjmrrgNr1NJnSLbmBJsCpMwl797BGEl0nYSKFTGhp
-	 HsbrLHNGrYLG1KU5ppvJD1YxJvdJXwMHUryFzsGZs/AgkUIDZhQttH7FzfJxWg7b8r
-	 dfwy5Lw8P034O1ImZ710nKZZ0wxsGjECvSIogKSMVTENhwzD33joPr4bVMh8MIZda3
-	 E7dvJ/K2q+ngg==
+	b=Xm7J10wMj12w44NK9f7GVywB07zNdzQmqnyvrSOaL3WiwURoulSVND+vccHcMiRvz
+	 0TUtso/FoX3DrzMQiuQ1KQDANXLiQak4DTfzi9hOYavJ8KPP3QgkK/FDt2OLJG4ntw
+	 TX6snFA1fb0kmiK9pL8aDslQFlw5PhfREauamO4BrGXt22GnXXfRXW0M3urVLZqZQu
+	 W6aviJa6KEtprUcsfgNIGyx+lHSJEnLLKEeKYYMWitiocXpT6WzY7YeijWvTL/ei/g
+	 veKsVjNHOSb3x6M8mO8fFDzRY/PEcv89UOpSTBGeIRp9lpv18SDRWwWbk1yzQ1PPOJ
+	 z7dE78pY+6AeA==
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: s.nawrocki@samsung.com, peter.griffin@linaro.org, linusw@kernel.org, 
- Mariia Nikitash <nikitash.mariiaw@gmail.com>
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- morbo@google.com, kees@kernel.org, justinstitt@google.com, 
- aleksandr.loktionov@intel.com, codemender-patching+linux@google.com
-In-Reply-To: <20260927190758.609156-1-nikitash.mariiaw@gmail.com>
-References: <20260927190758.609156-1-nikitash.mariiaw@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Use snprintf() to construct pin bank
- names
-Message-Id: <179423460743.181703.6000020720951856731.b4-ty@b4>
-Date: Mon, 09 Nov 2026 15:30:07 +0100
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Brian Masney <bmasney@redhat.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261105-clk-subsys-v1-1-993c474e7860@redhat.com>
+References: <20261105-clk-subsys-v1-1-993c474e7860@redhat.com>
+Subject: Re: [PATCH] clk: samsung: exynos3250: convert to
+ subsys_platform_driver_probe()
+Message-Id: <179423461620.181759.13684411783134376117.b4-ty@b4>
+Date: Mon, 09 Nov 2026 15:30:16 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -68,20 +69,14 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
 
 
-On Sun, 27 Sep 2026 12:07:58 -0700, Mariia Nikitash wrote:
-> samsung_banks_node_get() constructs each pin bank node name by copying
-> bank->name with strscpy() and appending the suffix with strlcat().
-> 
-> In preparation for removing the deprecated strlcat() API[1], format the
-> node name in a single snprintf() call, which preserves the existing
-> truncation check against sizeof(node_name).
-> 
-> [...]
+On Thu, 05 Nov 2026 20:29:27 -0500, Brian Masney wrote:
+> Reduce boilerplate code in this driver and convert it over to use the
+> macro subsys_platform_driver_probe().
 
 Applied, thanks!
 
-[1/1] pinctrl: samsung: Use snprintf() to construct pin bank names
-      https://git.kernel.org/pinctrl/samsung/c/a47853cef90c0553457e690df693a6cc806a3849
+[1/1] clk: samsung: exynos3250: convert to subsys_platform_driver_probe()
+      (no commit info)
 
 Best regards,
 -- 
