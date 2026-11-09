@@ -1,135 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.9
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794247364;
-	b=b4OWW67ffupy/FsUxfnHvU4i/x+Gq1SwWjoFQS76S5bCYApb+BVjvPXoVEHe1gS6RKrD
-	 qK29UPnwf7Y6B2eLjRv40rVKiA8mSXq8Vazb7UBTvRQHgFleWzEYcX7//VeKMNLq7jb3l
-	 h+ymWqiKSK3pvaR6XQtTP4UhzjmOL97uuQh1Tgtvp1UfjMe2UqvuhJCgAKGhKEibvin/r
-	 05qhAQFyym/6DIg4/U0qROeCIw3EEJUJLA7zY4Cxgy1LztAhQefvNKYCd+7+AhN72uHwP
-	 qmk/Z7PtJSR94+tjZI1QT4+xHspEm/RTIjEWZO5E7TCV7QDQaLA1DVxCtUFDT4Vgg5A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794247364;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=qBL546n84kVw8zSWbG66JT4Kv5FLqZ7Q9evIqEtakAI=;
-	b=Q8G6SWchbnoWwtiyriNMIV56wMtXGba+7ZlUQ5+OlPywGvVmT4jehEqGwMC7oEyp7Wbv
-	 dhVTGdbi1/5clYtnt5lKgzFIluXl/DzwNZxCwiYY6knvJXcYCvLHqGJuwWwLCVHnENNGW
-	 D7tcju+6LL6eg7lcBz/E8dFfLK845C91bzQBjFo2go6k9KiTMhUxL4LCGrNsmK/0Iphi3
-	 RJZiDx5iMu8Ig1zxlE7PHV62YTG2Uu7STq+nxp7fbMmZyCIlqE5w8xFuwIj2yqfPpJ6Cn
-	 ColJGCWi6oCHaA6wO76C4kxg17/XxBYPXYYw5Eobbgi+/4YhhE4JEUuge5cnCVLD7HQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hPUAT6pN;
-	arc=none smtp.remote-ip=198.175.65.9
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794254828;
+	b=fzQrUEeWq1g+slEjssEpx9mqBWAHr/CyJ4/sgS8Bd+YdoDd3wbp4LOazOiEZyxotQlkQ
+	 Ej2g/8dFLPzHPeCxhhIES5B4nLeTczTP+rXgiDdm4Bsw1DGhM4y2fSvEh0i7OipvVkjUg
+	 L1sZoLHbFMJPGFJOHU5JW5NcjAVtzzvKTOEUbTz2ci1InPMRrCt5UD6eRsZa2oxMxqOeU
+	 Ca1UwSaJBpssDS4sQwmWOj/1T8ERiapq/kGaHRDMDFFMBejA6xSXJGpBDaj10UelKc4MC
+	 /M9BdOaRNWWrVgRkHDMRYeBvnpzwEBR0JQbDkPFslOgCNMToi/nRXPtkTFMkCrdFViw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794254828;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UYW1wrkZr6Ve325KimyEhngJfnF/nxRsNmxSJ9VLYKA=;
+	b=DEsYg0JrAJagluJf+X6qPqDXBINivR/03H/i9Q+LeAA9o+erD2VbCGZEq/u98GVwZUgs
+	 dJtpIaYUks+BU2QHxoQRBlXnCuSPxeq6AokthEdtRW8wynDIxmiSaVprbh9ibZHsFAMR8
+	 eI4BSyP0MN232lcA4CXoGrjy+pMz3rW5zcwObo5kZp/neDE96C3iKH+gy8HEwOrr7uRx2
+	 4hhSz3vua3Bo59o77R4c+AMxe25ZPXJ2b8cGVanrwkPDiR0aG9/NK7R+SrrKLwL9pzgGr
+	 Esu/wF0zu72sLWtuu7vrL+/1iR8px7+f/GfTN7fS51+86uz3Gojp/BU3uS8SWGso3Fg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NqCTYuMN;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1703606A31C;
-	Mon,  9 Nov 2026 18:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1703606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D57606A321;
+	Mon,  9 Nov 2026 20:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=hPUAT6pN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794247364; x=1825783364;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lTSpr2GI78io7MkEyt4FUNnh+Ze4ac0+NixA3FDB8nQ=;
-  b=hPUAT6pNnAAXuCbbSaMn7A7ZCgJeYFp4TqWM/FQSenOO+rFJQnnJFzaZ
-   fj+D4UpxG59VfudicEQQx3szJXRsC9uhrCN+iNVgVEBb9AFyMAGloMy4j
-   7nE8OugbUDRLcggkaRjxxjtdaLW6DeUbhivQJbzE5TRSieIcOiDORoqrH
-   0eZzUpzXz41x2EE7b2wjdqlVZzVJ+rMaBH3QVtKoTBeT7IaCiHVTYJe6g
-   /JBBjxSJOQYx37yDyTLBPADZeuHCu+ncEcxNVB2Ekjw9KyOko5WQ31QZ2
-   UdgBwXxayhyuS+HdvtiS9L2sUjaDkilPA1cj0VM6XyqFNOd8GnPnLT7ml
-   Q==;
-X-CSE-ConnectionGUID: DAeR/2IJSKy2IuQuaol87Q==
-X-CSE-MsgGUID: yoEV1Q2SSO23ROYphxvXIA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="2877428"
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="2877428"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 10:02:43 -0800
-X-CSE-ConnectionGUID: kh6S7vkjRge2Au/8/Y2xMw==
-X-CSE-MsgGUID: Z/nSAtfmRl2XXURKPF7N5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="8243221"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 10:02:29 -0800
-Date: Mon, 9 Nov 2026 20:02:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@oss.nxp.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Cunhao Lu <1579567540@qq.com>, Raul E Rangel <rrangel@chromium.org>,
-	Yenchia Chen <yenchia.chen@mediatek.com>,
-	Zhiyong Tao <zhiyong.tao@mediatek.com>,
-	Carlo Caione <ccaione@baylibre.com>, Moteen Shah <m-shah@ti.com>,
-	Kendall Willis <k-willis@ti.com>,
-	Kartik Rajput <kkartik@nvidia.com>, Fan Wu <fanwu01@zju.edu.cn>,
-	Nicolai Buchwitz <nb@tipi-net.de>,
-	Karl Mehltretter <kmehltretter@gmail.com>,
-	Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>,
-	Shitalkumar Gandhi <shital.gandhi45@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>, Sherry Sun <sherry.sun@nxp.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Pan Chuang <panchuang@vivo.com>, Petr Mladek <pmladek@suse.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Zhaoyang Yu <2426767509@qq.com>,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Wenhua Lin <Wenhua.Lin@unisoc.com>, Cixi Geng <cixi.geng@linux.dev>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	"open list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	vkoul@kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: use dmaengine_desc_set_callback()
-Message-ID: <avIKs_b3cxRLXpGm@ashevche-desk.local>
-References: <20261102175527.3957740-1-Frank.Li@oss.nxp.com>
- <aux2VKHnVLwq_wzi@orome>
- <auyQEVmA2KeGu9DL@ashevche-desk.local>
- <auyiAE3lhnFahBK2@orome>
- <auysTnqWgz2kE7e9@ashevche-desk.local>
- <2209947d-0b9b-417f-9ffb-1c81790af9db@kernel.org>
- <auzEupFd_Ek2HpLG@ashevche-desk.local>
- <au3GYOP5P7B90-bX@orome>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NqCTYuMN
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794254828;
+	b=B8SmZYrxmpRa2dFKX1uf/k2AixEZrULsJs8/xQcAeBNwxpmYSim/MXdcn8kNO3xAQwM2
+	 rAyuHXFTWkQNaw6R9eKBEr7akJ9bBIeKAgAG55zAd4YOAzXN1zF6qfLv+zJ6DnmioJR1X
+	 b89dqb4brvOpgMu54ItKgra9Am/G9Y6b08z7CjmmwTiootdHjFqfr2d/1v/oLf+atun+x
+	 vop5+/wLvkmN3N7z1HpOcK4ZYBQkp+E4SeG3W7HzLR2czPOR3TXTjlAAMW6YMs2J7J6h4
+	 JCvFJ/zaFFadofW2n2y+YNL9YEWeHVCboivOh22IdwqJFqdLdPxqCCy3ZfvGSyFuYyA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794254828;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UYW1wrkZr6Ve325KimyEhngJfnF/nxRsNmxSJ9VLYKA=;
+	b=NFpAeNnZHts6bhmW0n1c+dNPSNOL3J+Ee7Vq5/cWjTzKoawgcYtr7L1XGnPwJzRgBeIn
+	 6R4GVhSQtXPPJVlmgqrbeaedbXWfueDHBwX0CoW80QqueYJ15U3vv3XHBrC39FaRNEEg/
+	 495D1wk1xdul+nr/DWeehra49o5vjGSwV28q5cTNtF0ksI6exEfXeBSGtjYtlPcxdD8DH
+	 G3wf5HrJNOpyL0Fz1c6u6o74DtjRg3Mvaa+fqPXSYqkZWBYZT70sT4lr8TH1r9B7PqXha
+	 wz3ut8SeKq5I3bmR6mG5oYT9NZclBsUlqP8dDt3c9JR0Hpgc/clWJ8G+oMOweUK+nnw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 1A25B1F008A2;
+	Mon,  9 Nov 2026 20:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794254828;
+	bh=UYW1wrkZr6Ve325KimyEhngJfnF/nxRsNmxSJ9VLYKA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=NqCTYuMNsI5bOix0FJYUSlgiUlJbo3p+6ZqDK1vIT/l6zHlC5nPgSbks9k7JoKKfK
+	 uDDt2A9+d/HPzXC5+dGjf6ExHngoBXDrSyDbSl5CBhJtv92Hgz7Wo9rY1qvSESFrPT
+	 pRbPhZDupJsUzWBUkNgIJW7ZaNCgatEd5vh0f83+B8cPk0tUuUupkNggWXV5lLlmLC
+	 wUhTUI/3QtcHdNtU8UO/KCCw245HCA7JkxpG7E2tSxTUQsrt7ScjvyAHbQrAq8Aizq
+	 Rgaxe30qzzlU1/oCffwy78DukK8GPcQH3SgXXO755hPaoo2V9Eaj6lQ0Hmp5VY81in
+	 mNfrT4D0xH8eA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 939B148630;
+	Mon,  9 Nov 2026 20:07:06 +0000 (UTC)
+From: Umer Uddin via B4 Relay <devnull+umer.uddin.mentallysanemainliners.org@kernel.org>
+Date: Mon, 09 Nov 2026 20:07:06 +0000
+Subject: [PATCH 2/2] arm64: exynos: Add initial support for Samsung Galaxy
+ Tab A 10.1 (2019, 4G)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -139,126 +83,201 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <au3GYOP5P7B90-bX@orome>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261109-gta3xllte-support-v1-2-dc0c4bfa8b44@mentallysanemainliners.org>
+References: <20261109-gta3xllte-support-v1-0-dc0c4bfa8b44@mentallysanemainliners.org>
+In-Reply-To: <20261109-gta3xllte-support-v1-0-dc0c4bfa8b44@mentallysanemainliners.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Umer Uddin <umer.uddin@mentallysanemainliners.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794254826; l=4320;
+ i=umer.uddin@mentallysanemainliners.org; s=20261109;
+ h=from:subject:message-id;
+ bh=+LL3c8/ipkqWVv9r1KZLMf00kFeNiLI3tGaS/IhfK9M=;
+ b=1kcjAI2er2E/jruRzNf2zvKZqzyiw+XYus1gGcAgQ2acyyMcd1aNiyOmUIXlsCD2XHRwvi2Iz
+ Qkz61dJ2YHIC5f5Xxk/8vUV3LDCgTxMrvwqS7Z3qwA+FGzR1DS7nJYb
+X-Developer-Key: i=umer.uddin@mentallysanemainliners.org; a=ed25519;
+ pk=Hsgrt4A72CFTe27AI1AAWlnLsiQrlb4+T+cbrfWDhUA=
+X-Endpoint-Received: by B4 Relay for
+ umer.uddin@mentallysanemainliners.org/20261109 with auth_id=1466
+X-Original-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Reply-To: umer.uddin@mentallysanemainliners.org
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 06, 2026 at 01:40:15PM +0100, Thierry Reding wrote:
-> On Thu, Nov 05, 2026 at 08:02:34PM +0200, Andy Shevchenko wrote:
-> > On Thu, Nov 05, 2026 at 05:21:06PM +0100, Krzysztof Kozlowski wrote:
-> > > On 05/11/2026 17:18, Andy Shevchenko wrote:
-> > > > On Thu, Nov 05, 2026 at 04:36:38PM +0100, Thierry Reding wrote:
-> > > >> On Thu, Nov 05, 2026 at 04:17:53PM +0200, Andy Shevchenko wrote:
-> > > >>> On Thu, Nov 05, 2026 at 01:28:46PM +0100, Thierry Reding wrote:
-> > > >>>> On Mon, Nov 02, 2026 at 12:54:48PM -0500, Frank.Li@oss.nxp.com wrote:
-> > > >>>>>
-> > > >>>>> Replace open-coded assignments to callback and callback_param fields
-> > > >>>>> of struct dma_async_tx_descriptor with calls to the
-> > > >>>>> dmaengine_desc_set_callback() helper across serial drivers.
-> > > >>>>>
-> > > >>>>> No functional change intended. Prepare to make struct
-> > > >>>>> dma_async_tx_descriptor private to the DMA engine.
-> > > >>>>>
-> > > >>>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > >>>>> ---
-> > > >>>>>  drivers/tty/serial/8250/8250_dma.c  | 6 ++----
-> > > >>>>>  drivers/tty/serial/8250/8250_mtk.c  | 3 +--
-> > > >>>>>  drivers/tty/serial/8250/8250_omap.c | 6 ++----
-> > > >>>>>  drivers/tty/serial/amba-pl011.c     | 6 ++----
-> > > >>>>>  drivers/tty/serial/atmel_serial.c   | 6 ++----
-> > > >>>>>  drivers/tty/serial/fsl_lpuart.c     | 6 ++----
-> > > >>>>>  drivers/tty/serial/imx.c            | 6 ++----
-> > > >>>>>  drivers/tty/serial/msm_serial.c     | 6 ++----
-> > > >>>>>  drivers/tty/serial/mxs-auart.c      | 6 ++----
-> > > >>>>>  drivers/tty/serial/pch_uart.c       | 6 ++----
-> > > >>>>>  drivers/tty/serial/samsung_tty.c    | 6 ++----
-> > > >>>>>  drivers/tty/serial/serial-tegra.c   | 6 ++----
-> > > >>>>>  drivers/tty/serial/sh-sci.c         | 9 +++------
-> > > >>>>>  drivers/tty/serial/sprd_serial.c    | 3 +--
-> > > >>>>>  drivers/tty/serial/stm32-usart.c    | 6 ++----
-> > > >>>>>  15 files changed, 29 insertions(+), 58 deletions(-)
-> > > >>>>
-> > > >>>> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > > >>>
-> > > >>> Krzysztof, now look at this case. I would argue that this is even less fit than
-> > > >>> # subpart(s) case, because it might imply anything. Again the problem is the
-> > > >>> bundle, and for such a case (when tons of independent changes are bundled in
-> > > >>> the same stuff, *every* Rb tag has to be explained on what has been reviewed!
-> > > >>
-> > > >> It may be a bit subtle, but the placement of the tag indicates that it
-> > > >> applies to the entirety of the changes. I didn't crop the list of
-> > > >> changed files, nor did I omit the summary.
-> > > > 
-> > > > This doesn't clarify the question. Wordless Rb tag on a bundles is an oddity.
-> > > 
-> > > No, it's perfectly normal and typical. I would not expect anything else,
-> > > because writing "LGTM" is pointless. We are experienced reviewers and we
-> > > do understand what Reviewer's statement of oversight means, thus giving
-> > > the tag is obvious, explicit and not odd.
-> > > 
-> > > > 
-> > > >> That bit of meta-data obviously isn't picked up into the tag line, but
-> > > >> I think the default meaning of Reviewed-by is that it applies to the
-> > > >> entire thing.
-> > > > 
-> > > > And I interpret it otherwise, because this is a set of independent changes
-> > > > bundled into a single patch!
-> > > 
-> > > It's not set of independent changes, but even if it was then it would
-> > > not matter. We review the code regardless how we actually judge the
-> > > atomicity of a patch.
-> > 
-> > And I confront exactly that! When the patch may be split it has to. This is
-> > seems the outcome of this discussion to me. From now on I think I will NAK
-> > any bundle patch until piece that I in charge to is split from the bundle.
-> 
-> I'd like to caution against this. There's effectively one change in this
-> patch and it converts all the drivers in the same way. This was probably
-> generated using a script or semantic patch. Requiring this to be split
-> up is going to make the author spend a lot of time creating 15 patches
-> instead of just one. They will have to write the same commit message
-> with tiny variations, which they'll most likely just use a script for
-> because it's tedious. Or they don't use a script and likely get at least
-> one commit message wrong. And then we're not reviewing a patch for
-> technical correctness anymore but waste a lot of time on nit-picking on
-> a subject or commit message. Each of these commit messages is not going
-> to add any new information either, so the only thing you really achieve
-> is to increase the signal-to-noise ratio.
-> 
-> That's completely absurd.
-> 
-> Also, reviewing 15 miniature patches is going to take much more time
-> that reviewing this monolithic one, so I suspect potential reviewers are
-> more likely to just stay away from it to begin with.
-> 
-> In the end you make life miserable for everyone. Well, except for
-> individual driver maintainers that want a quick and easy way to slap
-> their approval onto only the one driver change that they really care
-> about.
-> 
-> But there's already a way that they can do that. Acked-by can just mean
-> "I maintain this driver and I agree with the direction, but I haven't
-> bothered to do a full technical review". That's what most of these
-> "partial" Reviewed-bys are, so why not just use that existing tool?
-> 
-> And I'm saying all of this without judgement, because sometimes you do
-> not have the time to do a full review but you still want to lend your
-> support to ongoing work. I do that quite often myself.
-> 
-> But at other times I do want to look at something in more detail, or
-> just ended up looking thoroughly enough for it to count as a full review
-> and when I do I'll let people know with a Reviewed-by.
+From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 
-Okay, the only way I see now is to ignore bundles where patches have different
-maintainers. Or NAK, or request to split (depending on the content).
+Add initial support for Samsung Galaxy Tab A 10.1 (2019) is a tablet that
+is based on Exynos7885, this patch adds support for the LTE variant.
 
-Ignoring is an easy way out, of course. Makes me more time for something more
-useful. Thanks folks, for the fruitful discussion.
+This device tree adds support for the following:
+
+- SimpleFB
+- 2GB RAM
+- Buttons
+- Internal eMMC
+
+Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+---
+ arch/arm64/boot/dts/exynos/Makefile                |   1 +
+ .../arm64/boot/dts/exynos/exynos7885-gta3xllte.dts | 130 +++++++++++++++++++++
+ 2 files changed, 131 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 7534b773d28f..f1946a95cb42 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos7870-j6lte.dtb		\
+ 	exynos7870-j7xelte.dtb		\
+ 	exynos7870-on7xelte.dtb		\
++	exynos7885-gta3xllte.dtb	\
+ 	exynos7885-jackpotlte.dtb	\
+ 	exynos850-a217f.dtb		\
+ 	exynos850-e850-96.dtb		\
+diff --git a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
+new file mode 100644
+index 000000000000..0e4e6c0b20e1
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung Galaxy Tab A 10.1 (2019, 4G) (gta3xllte/SM-T515) device tree source
++ *
++ * Copyright (c) 2026, Umer Uddin <umer.uddin@mentallysanemainliners.org>
++ */
++
++/dts-v1/;
++#include "exynos7885.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	model = "Samsung Galaxy Tab A 10.1 (2019, 4G)";
++	compatible = "samsung,gta3xllte", "samsung,exynos7885";
++	chassis-type = "handset";
++
++	aliases {
++		mmc0 = &mmc_0;
++		serial0 = &serial_0;
++		serial1 = &serial_1;
++		serial2 = &serial_2;
++	};
++
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		framebuffer0: framebuffer@ec000000 {
++			compatible = "simple-framebuffer";
++			reg = <0 0xec000000 0x01400000>;
++			width = <1200>;
++			height = <1920>;
++			stride = <(1200 * 4)>;
++			format = "a8r8g8b8";
++		};
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		cont_splash_mem: framebuffer@ec000000 {
++			reg = <0 0xec000000 0x01400000>;
++			no-map;
++		};
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x3dd00000>,
++		      <0x0 0xc0000000 0x40000000>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&key_volup &key_voldown &key_power>;
++
++		volup-key {
++			label = "Volume Up";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpa1 5 GPIO_ACTIVE_LOW>;
++		};
++
++		voldown-key {
++			label = "Volume Down";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpa1 6 GPIO_ACTIVE_LOW>;
++		};
++
++		power-key {
++			label = "Power";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpa1 7 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++	};
++};
++
++&mmc_0 {
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	cap-mmc-highspeed;
++	non-removable;
++	mmc-hs400-enhanced-strobe;
++	card-detect-delay = <200>;
++	clock-frequency = <800000000>;
++	bus-width = <8>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <2 4>;
++	samsung,dw-mshc-hs400-timing = <0 2>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk_fast_slew_rate_3x &sd0_cmd &sd0_rdqs
++		     &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++
++	status = "okay";
++};
++
++&oscclk {
++	clock-frequency = <26000000>;
++};
++
++&pinctrl_alive {
++	key_volup: key-volup-pins {
++		samsung,pins = "gpa1-5";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
++	key_voldown: key-voldown-pins {
++		samsung,pins = "gpa1-6";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
++	key_power: key-power-pins {
++		samsung,pins = "gpa1-7";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++};
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.56.0
 
 
