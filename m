@@ -1,100 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794197858;
-	b=4j3YX+POIk6MJu8TpJ1Fl0YRS/oXtiqGJc3SnPE/jQOugI77fnBrbsc+sXBG3fNvoSQZ
-	 kqQK1tLXguGp7l8fy0D4Gui+PjPYQDwL92kzKgwXcgzLLHqzTY47eteBH52Sj6MHUvYeJ
-	 qMyA8WrS5xTaxfEet5RAXuPQg1IPdlk3QEq64GWc618kvwMTG5rYnGBbOyQtLdF7eKzWR
-	 ukU3Gfzwn4wkyV5h2XzxdSjD+3H5HMsgB29BwHaZkWCZVk59SXBC9KPmkID+JzbEGALBD
-	 6/X5ClaIYJxO+B2RYkks7U2yX3xBKEFU1viUn/nQ5BGPe984et+5FY1zO79TL045K7Q==
+	t=1794198842;
+	b=SVVY5iDc/cpNHLjoDeJC/Xk6qRrStH7QO+Ulvu5nspyOh0dw8NceZbk+F+NmAE8qOx+y
+	 APBAd08spqnQ5tCXiYtBCPyPiEOAQk8RBiOCOYrLaXCMPFb6P4XzwFKwil577IZaZ2Quh
+	 sEZ7M2B54Uvn9Ium4+iBzD0MuQ4B78HzzpAznA8y5SWSg3RVFLuPSq4pNFb7YrKOqvXDh
+	 R+TdIl6vxvKkb4b26079cTYQYX9rvAFTKrTkjuoCz224uSmmWBKx46savgjroyQExeZtk
+	 mn5AnygLN9qHO9JpOsmhXL+UsBNdZSHeCu2jnPevY+Vx3vMboJugFBgw2jp1grvySbw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794197858;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794198842;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=LoqW5deJGeRyx4LL4mvcaMizyiaP0FzBVvAer8RqNLI=;
-	b=1U5nU8vmaDFDwzPDjc3wuWDrlKRxD5UFCKFoEyhokCFr5+W+ljH7oJj1aZCBbRcky74d
-	 Nw6HUQRIKTEcVieKRO1a/ZauLz4rKPhgz1q9aIBP7dRZad9/i6lBt6iWUU6TrFkeR9Zd7
-	 DVa51I5mjYfdXmZqd7fFlwxx6+4BDL5wHritEkrcqbZXz3/ST/P4ep1Uwroq90Wz9cIsV
-	 TxURrfTkNEaDH+jH0M7pImRnbTiTqNMe735hfKkyC7EsqPensRmFgCognUbfw+a8ObWyQ
-	 PweUSvUWL9RX++RGEpFfItv4fjX9K0Ezg2SyAo3Y64cgp6di5MYZmLl2446TFouC31g==
+	bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
+	b=yGTytfyQBQZJvE4NMGZeQMXZmoiQ8et2TV/rK/WE02gPM4poeHjtdEWONwvgL/TXL2nb
+	 W2x/dFg0p6A2kRG+a2S6t6G3VdfUyir8h7E4tkOBsSV0iLSZP6XsVkKcHU2pm0bjwBprr
+	 mCd+Z1MtfYCGq6XoMSMYNtirOxMSOcb72KqHe40QDvYTIxCbmjOIqcfboz2jF+zY7unUc
+	 SwdX9iiW2KpIOnAaEiLfXPzCWiKwv91B3ZMuNxjIbhZY2m5o2bNy6pkdC9/fhmyiD0PRO
+	 1rieJfAFkny5ZXC6Qs/41mw0tkP4hY1j5InH6+TEtLiOkMvxdaAofPAoPjNI6noTgog==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PmSN4ObZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.47
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cE+TvgUh;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1004606A321
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:17:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1004606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBE2606A33F
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CBE2606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PmSN4ObZ
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-c4322d310e7so57340366b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:17:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794197856; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cE+TvgUh
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c4ceaee6770so57898266b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:34:01 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794198840; cv=none;
         d=google.com; s=arc-20260327;
-        b=ry7PIrAZRdVfI1kHgmazJVN1XlUk+x5lEM2biVrw4TENKtXjN2vc7FLIILDl/UzWes
-         rd0aduHHjuEkQm+9AXzaxJHs/5rX5QGLcZgY+qymfipoJ4yNZk2YlaNKh8/yq2v47moi
-         PRfjzk5Jyf40/96AgewoBAux0bvsu+9fG8GTK4Ll6KWfNpkFRp7BctOz4VuOo7iUcYEy
-         zIp2woFuMjWI+LeBG4kUSAthydsBIo3GQW+0fH0Q+ginxw+vgtKq6YrQKy5J0bhkuuSh
-         chyyYUqqSUdQeoBDWij4xWeQ5xGm4WYv3UYM6HtvD8rBKiFz8uBpWFmwKxexYYOtP5gV
-         mUYA==
+        b=aH/lhSOV+QT12YPNSGTTTtCkdeqWqMc0DOB2/9wVXTk8Czd/SMCvytlkbqJnidIIEc
+         p2aRc6UAebAPBucshapjWQYZe81/DLTbtPnhPkuDSD/VUEdYKOcqEFxRKgssF7oxzyaR
+         QmTjl/mjiJXxjFnqZxE3t3gPTOxuMIw4hzEx/rB+ASYVaW0zYvjBhaVarSRBdIgJYqQC
+         BqiMxbZwJfyCJ8BpQSrJijUMXpzF6llvu5/BLUBchtm2dUBeGgOnQrk75f6DWKXT2y9R
+         scNZ/Toam7IONOOFuy/a6xlsnztz8s0u37E4cw4uBsvZtjSjvbx6c4Q7fyKkgeOiwumH
+         Tb4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=LoqW5deJGeRyx4LL4mvcaMizyiaP0FzBVvAer8RqNLI=;
-        fh=BoX4asisLIW2LEy0y0wfZZyiNC4lzw8LihTb2ckV7Kw=;
-        b=jWy/tAyXadCdBWrQs7IuOKJrhiMDtqn5qIsbJs2AhyC/qhfgzYAYSVuMFj7HBvU3m7
-         n2o8cbg3mefC9B3YmWfszcjcKuLp8HG/6FCzQf/ZtBcjGUJ1NYlhvKgYDvP4mSkjX4pf
-         NsSR0AnKkt4e6u172PCP6LAcPQOM/6NbXjidP3VWthmtbqf03xOVLr40LlC+PWgTiv+b
-         Calw4fUqXN8mF9cDrbQq3WE8+UvxJ2xFnvMYIbX3qPqrstIKhUZoYkH8xpLneQpDx7gX
-         NRXoUL4QWcfB8dkGlpFJz7FEn40qZPOcDbEHN4jDkciHEzi3mH9W6ErdS+oNmpnO9vi0
-         Iwug==;
+        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
+        fh=6nP9BLrHBGbEy9Z8bUwHoZNY4Ae+kDV0T1z6qbYiY6o=;
+        b=jRGNrsKcrxEpVuP0uijxuseF/LG29fWhzY+Tqm9zTU4oc9Q3Ut3ziou31rcGGH2ZKI
+         9LLhEM2HjL4z0rnpVSevyO7lEL2wm61vklMVyp0qwCTKLp84dFoZwnMd0lf9wttKpJXK
+         Q/w7gd98ckXRxaM/fuST9ND8bquYTUrWG984cdyIgSyAf4NAPWjfBX7Z3CledoRQ5LDc
+         C/+hs9uN6ndHOXBLUOQ0ABzJcGnrFlW+q25JD+MXdSzOYtAED+iRoSKeU8YKWAtKE5Ec
+         lc3tnc+L6W0W9G08ikB0bMGr31swC8OxGymMvmNFG9mGNC7B1q+1hcQEyNzlg7sPx7yC
+         80tQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794197856; x=1794802656; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794198840; x=1794803640; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=LoqW5deJGeRyx4LL4mvcaMizyiaP0FzBVvAer8RqNLI=;
-        b=PmSN4ObZyYPLpgkLPob3BwxwnjhSSVKm6R4cgQb949Q/3+WwiXY3ZLG4e9hWWLi/9i
-         jjMDRJMsyYXPFhPouQqoxSM5R1SdITIPKdU5G17DrnXMpFhT0BEoz7yV4jGeUndhqEbK
-         A5oD0TgnUtevbcbdl+X6a6drvERlZQUaetOig8Pw/zuZFNbfOpsVbJFwjjeXw0PVOQdz
-         r2CFmSAt4CB96uopyN2+LyaE/g/8eh1WYvK7qoZuWL3hTY7TuWxYXC0rAzpP+/Z0J5uD
-         AeznEtoSkPaz8GMYkamMZORPU8DuLMZ5w54cJyxhAqviPtqqigmjejH6S+br6KiejkWM
-         uV8Q==
+        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
+        b=cE+TvgUhFThTLr3JE+C1ZlQ+Q55N6LLNa0OrEiv09d8eghwiw2yMa6WZV12mkUrdMl
+         6Mvy1LGFKpPerf4MWw5xwfnNBxN2q7iDFIUUYYvKZUI5mNWTU29YtpXqsIEYqb38YrVC
+         87R94ilSNUWGde3/XNm3SoMTaPSPkCN/sD4icSKv0BxLBA0NndnohpeajtrujTTERf+o
+         cyPO5iVi7O4afFUufZoGNOdUi+2WtqRUVXk7xsGwOd/glIUVjMg4D9DmY/t4Kk7N0J6E
+         5sl3Ulzmz8xDP4ew87+pN+PBjCzZsZyUUn/faa1N5nFEUcx6Hbk6sgeo4HN371cKMSG+
+         kM9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794197856; x=1794802656;
+        d=1e100.net; s=20260707; t=1794198840; x=1794803640;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=LoqW5deJGeRyx4LL4mvcaMizyiaP0FzBVvAer8RqNLI=;
-        b=rrRwnbv6xwJ/sXVXLZevvNHRhwPqDWNbml76ZVsKObfFanaWVX3+acqjzH0UMI9T0m
-         mwrq0w+h64qU4KO6c3rztITbqJ/Qx0VUOdQtQ8+gJ/SViIFidv9LDU8/HM4fI641ijF9
-         Qy3H2uDSiJxKaHqXC23YkNa3XeAkM2wyU4NtsHiBRpvrs7cKMXrMg8l0bmtCSjraGzcm
-         EflA1jpcWmpbb/FAhL6XMETRRNTUd1oXpnirEOJ8tWoeSmCKBCYhntFgfhezHihV96SH
-         OKd6KGyq7WwSsYNd1/0zmP53dgIE30NKQjqWfViYxXmYTzJhqF4lPyikxbNO4xM0CTiO
-         V3Ww==
-X-Forwarded-Encrypted: i=1; AL+hErHJHWrTicBYjr5zdjmCvCsH4RQe8Zt610/OGKlpOyXJ+DnTdo8W5xKPB0k7ORUdZZWq5F7VLJJn4Qc/lAmAi7Rdbw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9qxuRs+5KXj69egf3B5LmLyUj5EbgEW/Xs0DGc6xuo2W47aqo6
-	BFxb2YZk5eo6QUwTqw/87YsJzQSal6VDiaZoXuS2S3IunTdgFVD3ajglX/P4TLD5tukJXZ7heis
-	ihI1JXjzAlZgGym/vB1WmWc8vShlhUq4=
-X-Gm-Gg: AYBFou3UdTOTG2axfWpH64yLT2b4SixlfF9aXOQzOJ4IzZUUSYsYR6J5Q1ctj4eGSZm
-	dDHbtZZeKyiB/K/Yl2roxqAJFCeWQBZ8xpdri6yEiZs/moqMj0HyRWZYFghnb4MJ3USHQXPTjnh
-	PAgJQXELw51dt4VhvDce8oZYOF4xgVOmpk2wgpAWuLQz3UCGZmhb7KxlQBSZDvwbKBgIMxn6vaT
-	YziCFZVcUo/RhchfltL4pOBF0pQdAkptoNxvjw2+USpOaJZXXYBtWgaC7DX63ej068PtR0gzbuA
-	ZA2mT10PvWxA272g4jfe2sEtq8guGVhxO4doAsJ2RXD2egDvbVVDIQkxqFd3MvwqlyHQUP7cFJe
-	KcHEd3mJvEopcdgndiE+LcLdEonVZZtPynN2P6WRVPT48IH5GNOrWFRNA4jki3fl9y6M=
-X-Received: by 2002:a17:907:6d1f:b0:c31:7495:e5b with SMTP id
- a640c23a62f3a-c4d6d4a3b57mr182492066b.10.1794197856252; Sun, 08 Nov 2026
- 20:17:36 -0800 (PST)
+        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
+        b=ROYq7RBcSkQOiPs4+DkZ0h4Jtajf8Ug55CBuH+g+Te6lZx1uFN9tEmCZWYG5G0Hbx0
+         +uGbXR38askbh3MhVdmi+fgNqO+I5OiEC++hvrWMPok9jujcwPPi73PYLtQsKf/pgEAu
+         mjaPuk1J3AmsljwVsmR9899fZlM16vGsI+HBzpzfGd1bM5Zmu3dBIyu1aVWP6+kQbDwY
+         vViNhYncy0jTNIPIQ5P5P+pkSLFJPVQVZJgQm3Mm5MDnqtL7DZkMfs2SvxmCSbmKwRoU
+         6qA2kFJ1S3ZUVTemP8mZT361ZfJNtWQ803T1hr8S9Ee1BcWAuNBQMvynUg7Pcx/U4HVx
+         y0sA==
+X-Forwarded-Encrypted: i=1; AL+hErHH9BKmRDXtIH4ZEZtjkhB5wFi0yB8MqSeaWIkOxHPbuX+xn/mmHS/yuJGYBAqVINlYQIA7f/Ntk236sjIXYyatpw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+oqe81BsrOBAJy4LMYOW/DfsFLMIoWo3wXxjcvf8/JdZGyRCRd
+	LaBQA/wlK90K0HsV6R9pkfS4KZPY88oXvOFFEhndhP0Jpqshlf7gn+UqyuDVesX5Ja5E4ayJMN8
+	KNwitqfRor7jn+adt6zJn95i6lKKsLVo=
+X-Gm-Gg: AYBFou1RK/pAjhX3Qk7tn1905UFWxC+rvQ09eyo2/2Gwj0A1zwfBoXf0JJkujN9ifyZ
+	pNPYcpU4Ds6j0uq8cSApCal/2xQ1rX6jALQ0T/ywsuEU/7HY3th+Uoh4sidNrq3nV5kmEICWo68
+	0DpqzUcVQ+dlfL51P/BQw+e/zNbdPWCFG0ZLQ2cWENemVE1+Csmfs5aNOU3PKPeuhJBtM0MKd6p
+	E7cByKU7xJ06sKfLIQJLUYPhsn8TKZvpoB4rq/LlmKLzuHycsYLIfbmWFy9Ro2KJgrMqRVGMwz9
+	/dZVwuLwUtfEAma7k5jZR23awvzep5UllAnTIoOunmpXWSV7IAYaviHufLBAGZsJfNH9bxF+Rw/
+	VZwBvhgvjdQH7W0eiO00eVHG/L0rRXUhJ5uM6pn3J3Xx1vrZMc7QGxjgqc8myp/21KLNmK4SWLM
+	9o1/KxNgp8BdlS
+X-Received: by 2002:a17:907:72c2:b0:c2e:4292:d268 with SMTP id
+ a640c23a62f3a-c4d6daf7c64mr226694166b.16.1794198840452; Sun, 08 Nov 2026
+ 20:34:00 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -104,83 +105,125 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261003080927.430719-1-yaojiale02@163.com>
-In-Reply-To: <20261003080927.430719-1-yaojiale02@163.com>
+References: <20261005001118.576198-1-rosenp@gmail.com>
+In-Reply-To: <20261005001118.576198-1-rosenp@gmail.com>
 From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 9 Nov 2026 13:17:00 +0900
-X-Gm-Features: AclHuK_-J55s4cWgSUjxGa52TLLl1osPNTJb75kFDeEkQ09-Bw0YuPtbJyTYZXU
-Message-ID: <CAAQKjZM991J2BoFkqnsyP35Lv91FYmmdpN93vqRVxRsTV-pu8A@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: fimd: handle runtime resume failure for DP clock
-To: Jiale Yao <yaojiale02@163.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 9 Nov 2026 13:33:24 +0900
+X-Gm-Features: AclHuK8JGFlUXZkSE5CgvPvR5Q5pqnVQnyO-MTmGLdNc0lY8Yjx1OxeFaWmjmHc
+Message-ID: <CAAQKjZObmQm1X28cbpjd+dEVx93wfBwKNaaaxpU08o8JeFaZfA@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: fimc: allocate formats as a flexible array member
+To: Rosen Penev <rosenp@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be|_ptr)?b" <linux-hardening@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-HI,
+Hi,
 
-2026=EB=85=84 10=EC=9B=94 3=EC=9D=BC (=ED=86=A0) =EC=98=A4=ED=9B=84 5:13, J=
-iale Yao <yaojiale02@163.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+2026=EB=85=84 10=EC=9B=94 5=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 9:11, R=
+osen Penev <rosenp@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> fimd_dp_clock_enable() ignores runtime resume failures and still writes
-> the DP clock register and updates dp_clk_enabled. This can access an
-> unavailable device, record a state that was not applied to hardware,
-> and later drop a runtime PM reference that was never acquired.
+> The formats array is allocated separately with devm_kcalloc() and only
+> referenced through the fimc_context. Make it a flexible array member at
+> the end of the context and allocate both in one go with struct_size().
 >
-> Return without changing the clock state when runtime resume fails.
+> Annotate it with __counted_by(num_formats) so the array accesses can be
+> bounds checked with FORTIFY_SOURCE and UBSAN_BOUNDS.
 >
-> Fixes: 5d91394f2361 ("drm/exynos: fimd: Guard display clock control with =
-runtime PM calls")
-> Signed-off-by: Jiale Yao <yaojiale02@163.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/e=
-xynos/exynos_drm_fimd.c
-> index b6abdc4f2b0a..ea2b961f0cbc 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -1049,12 +1049,18 @@ static void fimd_dp_clock_enable(struct exynos_dr=
-m_clk *clk, bool enable)
->         struct fimd_context *ctx =3D container_of(clk, struct fimd_contex=
-t,
->                                                 dp_clk);
->         u32 val =3D enable ? DP_MIE_CLK_DP_ENABLE : DP_MIE_CLK_DISABLE;
-> +       int ret;
->
->         if (enable =3D=3D ctx->dp_clk_enabled)
->                 return;
->
-> -       if (enable)
-> -               pm_runtime_resume_and_get(ctx->dev);
-> +       if (enable) {
-> +               ret =3D pm_runtime_resume_and_get(ctx->dev);
-> +               if (ret < 0) {
-> +                       dev_warn(ctx->dev, "failed to enable FIMD device:=
- %d\n", ret);
-> +                       return;
-> +               }
-> +       }
+> Assisted-by: LLM
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-The early return on runtime resume failure avoids accessing the FIMD
-register while the device is unavailable. It also leaves
-dp_clk_enabled unchanged, so a later disable will not drop a PM
-reference that was never acquired. The change looks good to me.
-Merged.
+The allocation size, initialization order, and format array lifetime
+look correct to me.
+checkpatch.pl reports an error for Assisted-by: LLM like below. Please
+describe the AI assistance in the commit message instead of using this
+trailer.
+
+WARNING: Non-standard signature: Assisted-by:
+#57:
+Assisted-by: LLM
+
+ERROR: Unrecognized email address: 'LLM'
+#57:
+Assisted-by: LLM
+
 
 Thanks,
 Inki Dae
 
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c | 17 +++++------------
+>  1 file changed, 5 insertions(+), 12 deletions(-)
 >
->         ctx->dp_clk_enabled =3D enable;
->         writel(val, ctx->regs + DP_MIE_CLKCON);
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/e=
+xynos/exynos_drm_fimc.c
+> index 09e33a26caaf..079d24d0671c 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> @@ -99,7 +99,6 @@ struct fimc_context {
+>         void            *dma_priv;
+>         struct device   *dev;
+>         struct exynos_drm_ipp_task      *task;
+> -       struct exynos_drm_ipp_formats   *formats;
+>         unsigned int                    num_formats;
+>
+>         void __iomem    *regs;
+> @@ -108,6 +107,7 @@ struct fimc_context {
+>         struct fimc_scaler      sc;
+>         int     id;
+>         int     irq;
+> +       struct exynos_drm_ipp_formats   formats[] __counted_by(num_format=
+s);
+>  };
+>
+>  static u32 fimc_read(struct fimc_context *ctx, u32 reg)
+> @@ -1273,20 +1273,16 @@ static int fimc_probe(struct platform_device *pde=
+v)
+>         if (exynos_drm_check_fimc_device(dev) !=3D 0)
+>                 return -ENODEV;
+>
+> -       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +       num_formats =3D ARRAY_SIZE(fimc_formats) + ARRAY_SIZE(fimc_tiled_=
+formats);
+> +       ctx =3D devm_kzalloc(dev, struct_size(ctx, formats, num_formats),=
+ GFP_KERNEL);
+>         if (!ctx)
+>                 return -ENOMEM;
+>
+> +       ctx->num_formats =3D num_formats;
+> +       formats =3D ctx->formats;
+>         ctx->dev =3D dev;
+>         ctx->id =3D of_alias_get_id(dev->of_node, "fimc");
+>
+> -       /* construct formats/limits array */
+> -       num_formats =3D ARRAY_SIZE(fimc_formats) + ARRAY_SIZE(fimc_tiled_=
+formats);
+> -       formats =3D devm_kcalloc(dev, num_formats, sizeof(*formats),
+> -                              GFP_KERNEL);
+> -       if (!formats)
+> -               return -ENOMEM;
+> -
+>         /* linear formats */
+>         if (ctx->id < 3) {
+>                 limits =3D fimc_4210_limits_v1;
+> @@ -1320,9 +1316,6 @@ static int fimc_probe(struct platform_device *pdev)
+>                 formats[j].num_limits =3D num_limits;
+>         }
+>
+> -       ctx->formats =3D formats;
+> -       ctx->num_formats =3D num_formats;
+> -
+>         /* resource memory */
+>         ctx->regs =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(ctx->regs))
 > --
-> 2.34.1
+> 2.56.0
 >
 >
