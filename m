@@ -1,102 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794201649;
-	b=ED0rQJfEPDKMOtzADeDKJXLksSrwo4rlzLbVqh3101ctBaMCn/wHxLyWU3ajfKE5Thm9
-	 lKWDSOzOCikCTccZjMmLhunIKJdU4JuiHqeLG0RUWpd8ytMzfM0IumsSV6E9ovnT5+ezi
-	 90NIItWbdx7Hq8Ql+1zQWQ6g1BEHZmMNvvrA+LpnaL2VbNBGn83t22BgpYHdL0ykCFtba
-	 n5zbr0wiKiwGLAmurP4heQUsccSJezvt4/7seMQIV+296YZovnBjgG9CYf4SDN3cPIZaZ
-	 M6V0k2rp9EOtjHNgiWkxPHvN2VeO9lEcqQ/CojC8L6uB9M4uCkgmMFDSRwlZVIvUGgQ==
+	t=1794201788;
+	b=3PIfhWgyRvxOXpYHIJmgetvXwhZEpQoLVOIl/mMm3FnnV3UjQQb09t7XqZuB/8Bc3CFe
+	 rAgERQhE6jfLOr4RSuSMkGxxPkh1DXZL0QhbxY7ud1PbG/JKkNrQyHieosA+pdsGZx7VK
+	 Eo3sS1Y5o12VBbwMYC+J+lc3q8oluLJXzIIxqvUWkGBb/fD01cQBPqV33gTzMA00bBxTF
+	 YfejXM27IWc0qMmfCvbmAA5E7p7OvyoDiMOmTbW1bvyRgl0UbHLe49jOrebyeMkhZ05MY
+	 MAzmvxJHA5B0ps59cdwVGmnbJ48H8axTix58hZ+NBa/4jwlqG6bGW+x0+xqiaXeUoXg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794201649;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794201788;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=WHqXmw0GVc1+mZ62lwJeX+opySq3aWGZVirYtpV1Hks=;
-	b=pepsTlefv1nbSMyLqXXJPmyj8HR4b2PY7Y8qSzhfPRj5SLnBNDpZxtCg7sw39aLZ4tP9
-	 sNiaynjhG5eAZoF153RzW2QYzjZKM/XNb35eTejjlwR7Rl8qZ0NcYVGu63lmv4CNAOlxa
-	 V4mIXjGnjy7SPPnnFocHfkNajI4RVcrnRFXxho7pPGWA+X90MoVUXnWDlLLMjvCSZdeLK
-	 gYwkJmNaFxxp/c7x8WiGmKUytpveqRXeQJL0Zy0cm1V0WYw3rtT73OFQdCugrGyAOwaT+
-	 207PbOwRtA4WUTa9cFZXtLkzco9BV8JwkiaEtY2fs0H3HSiX3U+2NZYgEB1gMG7uuKA==
+	bh=WIf0dJI3704E56UOzqLD2NIWJwb6NLuXPSl2wIJw8fs=;
+	b=QOD+rBPL+iifOPkWywjoPiIKqmS8M26bi9kleDfs+3103dxT5Gp6vRzXzJJ9mO8wviHv
+	 9JKFkn+Bq8/FxA4DjVhh5sZhjEuYsiKGubT6Gv6FtQJHR+N2yh31gTFa9k9vOHrQhernG
+	 3mKfuf8zG6pBQJ9VMwcJ2TxtJWooYvuPUuyHZar+kFrpPM9xkuSCUYABUu+TWbHdcunsO
+	 oN1LCei5uikLvKY/BK1svKlK90SO/jwbwvcpsFi6CI5CLiKRVLVZnYX6Ad3P18tO+v9B3
+	 wyALzjSxNrdugUA+Qvs914vbplW+3UPeMKp0QFe/KkqzTN2WXjyVfzbTqT7JaPLVEoQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rLQ3CpVu;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=beAqg+sY;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9438A606A339
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 05:20:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9438A606A339
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3A0606A322
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 05:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A3A0606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rLQ3CpVu
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b429f71dbeso475029a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 21:20:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794201647; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=beAqg+sY
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c43373ae89aso64737166b.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 21:23:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794201787; cv=none;
         d=google.com; s=arc-20260327;
-        b=A2ijTAs9wnyNy0TaFU5vD7ov2u32OQjP0APbe7amoi2XJRP9CeOFVPJXixR2M2a+31
-         gHt69LlYprf4nehUwt8J5KNG52TZt3jKaCa0QLJULw55n8aaFi15LMWIb2tgC4Ji6+6q
-         rodCsTiPzGOvVLtM2WNfnI7qGy+zY1q3MpyMv3JhyxVD7bmY7VrhWor12Yy0zRHY8snT
-         z9xae47DOr7pW65zA8ZuM+NxXtgAchyIDpxRWsYTq6vBt82H/2x6Ef6nN2WZUrokD9P3
-         5QwioqRN/lX0ewAR/nWsCBGaEsCBq+/JDv/PlALGwBwkjZEhIKxBGYGaZC9k617TrxCy
-         x46Q==
+        b=S+nQuSN/bUVdikW4dGrVKMPadpxM2BGFuO2QoTwCedOVO3A24zJpehzKt4mpAeIucG
+         HshbAUOnm8EKmdj/aLE/ekiZVdsEdmTme4s/3XH52xaznCD2n8Ppdd9FY/sjhtGh8feC
+         0eBD99hudxmECweaNFvnJqh7ftfu92unnLrOvXnZIKhoy1962h1WRiF0yJeskBf+2vyM
+         Fnsyq2c8zaPlOn2eVD9Y/5t/yLfps+sx3gwzHoE05yQNcMm7iC3aQuZ+MlRBq9atp82v
+         8YR46Mu9DcwF+VUCI6CuX9usMPIq3YOCHp/nW34OGyLEmhiS4Xxd346PHEcwQNyMdlfe
+         lR1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=WHqXmw0GVc1+mZ62lwJeX+opySq3aWGZVirYtpV1Hks=;
-        fh=qJ089bhsLjsER8e1WOKPFyQpoPgJjTUY3T8ENeHPfBY=;
-        b=Eat4f4ZfOh9v3VNaMcpwicPsBM8x2h9wDjWQ1mygodXqn2G72ez1INHmtjI+4nLA9+
-         qiAhBiMFT/hNMGcrcoVzpBZbOXpC8+5fQa+KpJ6OC/YIHCiAt0PkGCy3KaCYIEx481zh
-         u8MNRg4HszAQPyjims3X/kDz5Ta0o659IHbWkcfkJD0klU8gXpEJqYl0/vb58uOe893X
-         Ql6ju8M599YkJUI7Xy3qGHuILCnhel3dO6ZuI5/uYG4ScNAw1XI7O4Bh8rYO/tQZD6Bv
-         MVXolX6EfKo/7c7OUIcYKuKhjyOllYEIsv2rvxEkhmulZm7VeY+IQ8FInL+jORjjEqkb
-         rN3g==;
+        bh=WIf0dJI3704E56UOzqLD2NIWJwb6NLuXPSl2wIJw8fs=;
+        fh=UjZ4y71cgp91s48DBfo9Eky+B/MRNeoX0ZtGSnZeDwM=;
+        b=A53P7SrL0kkksO4VsHn7gWEwS00ohi72X5doYCzq3lIuq/ew6dBxXV82cuahdQauzu
+         QkZDyMCSc4x+DBGnhLrf+Wg/sXbs5cGRpDY22flJFF48NLe0BlJA0UV4uXPbEYTHRPiz
+         nEDzH3b7OxzrahfJmBph9exB8bHk9TMkV2nkRtPZaGL+2YkpefipCh+uTqj0Ex7qhSpa
+         ip6oBIi0F5IDHuXXsgoQLkTRHYQhCQjSQgaPn3OQrEfUxKgeZMcQfbXdYF/NORmYzwkq
+         9hfQ5iaKufjm0pXnfbzr8d1NO5Okz0GjA0pMJrdcmPVfcLNo9tKNDEF9EdOXI9MN261z
+         8vDg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794201647; x=1794806447; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794201787; x=1794806587; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=WHqXmw0GVc1+mZ62lwJeX+opySq3aWGZVirYtpV1Hks=;
-        b=rLQ3CpVuTbT1dCl9LaJTjjKpvxV/Pd2DtsaX8crhoYCT5R3s/JdBhHA78HZiPAZS/8
-         KoU9XA+q5I8jpGHV5bOs4oyK795ZZUFPm+Ntd+PNcjXvYQdBg3ssd2OLidnZrecjcPrj
-         A0HfkLCCg2zuN5Rb54y+6iKIzvnfyzx0k8oP2D0dySWtEZz8x6Fd7mdZ9grSkvOCxrqV
-         kmBKAY7y/Wp0qIlptLY8wyI38yQl1E6mnM6tpiNd3bUtefby9cCRXBtA2fI4c9MIdh4p
-         BaPLgUnIAtwtUjO+I1uax7d/oj5moqwWBagQIYS1IFhM9G4jZ3YbvtLz5z2F1ExUYmVr
-         jUig==
+        bh=WIf0dJI3704E56UOzqLD2NIWJwb6NLuXPSl2wIJw8fs=;
+        b=beAqg+sYyt9qCgMR0MefwQJHBP6F3SNo43T/wNyMBSEtHybyQhjG5gUFzzxSyuxY9t
+         lOP9HNFhByeoXGWnyFtmQtJGoKbvYv27Fc+IImspICCuxHoOxsqFgtvzTrLVv0a2kRxt
+         gcafF1RMy0rM41sE5/qBa9epTQEYsDyWEk0iM43/fVSDGODhDxrWHItr3W4F1Gt5rXE5
+         w36K0YBsoNnk3P+PgGkS29t5KyBzL1BIZd+eKDGeAflsDuiFMizH/mtF4JHpYVKZnSR0
+         jd31xfSekQQmsH2hD1qXZXAiVeBQ1SVw5ZrDj4yTcoZ80x5UJ5GoUpcX1d95e/8AoaFU
+         TwTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794201647; x=1794806447;
+        d=1e100.net; s=20260707; t=1794201787; x=1794806587;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WHqXmw0GVc1+mZ62lwJeX+opySq3aWGZVirYtpV1Hks=;
-        b=oGc3lZ0K4Dlx84PGkJvl/Ot2PjEDXT9XRLG+E/La/c189DKA97g+GPG/mvzF4qvrmJ
-         qyLTU6T5udmOfMh9F9cqG7jCc67K/wKiU5D9mPr6bmMq1BFCKh/OKk+lemL8kBuppqp4
-         2Ck7v4h1AsxLmV2+JjImA/fjelOrLnKq2ZEnrSKQzBF0Q1cOMbq+bRP+2eE+JgGT17cZ
-         co894XF+M00/Iv2UMPkIoOaqPu4XbnCtZXXpr9s8brGBx/g5pDCqJERLwf2h/yGgwxMQ
-         g5+xcgFJ3OyrHy44ZgZuOf10aNCCZ1qwZpSqeR9qq7bYecAfld9R6GloxJwizPKNed9/
-         EmCA==
-X-Forwarded-Encrypted: i=1; AL+hErG/mbYzIL1vJrk9jxrpWw38wng9OTMaKjXIOBnCRG6rcYPL2TalRD4ai2L6dyEYtYHasE4Shw1LgVVeGuSrbeFHRQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9j/R6ri6/MFR9zpBsMwpu0g1WJAfFjt/WiEib9cJC3JKB+gEah
-	JHjonGcaeuNNwdwmKGZrxGafjVgM4wtWBe6VSfqfCkXo/GeZ9aTSJ7z3sdlP2B6pQQjPLozKFh0
-	iqvMJgAP16Egib+9d4MmC/G/8bulnZiA=
-X-Gm-Gg: AYBFou2N2a4ZBKnKndtawSu8lvFtmlLRapC1H75DAc2MkqF6UpOpQMY77JvlvFAsrmr
-	T3B+4673PipEip0ljymEZ9z7aU2674o9FRiG1Cfm+EL3AJyiQp2nPV9BoZgL81MHPzN8jdxwwVM
-	ueBdBu0KDXKBV1oViFeGVQPB07RKFlSIhPX8vwpykvvBzoDA8lLqVTjD32r2WURQTMBqmuo/MTC
-	CVP/ovZl/bCYRTk9mzlHNGxQM80IzNkcyneKPp0K0pJCAD+x4uGiwiHV0jD87RZm+6jiSg40VSf
-	KHtMOFWhVWxq6PIEPegA0NNzlbfvjLIElDSd5iRcf0CYjuYkbdQWlnP9pUp/r/Vmz6/FNGODHKr
-	ao7iDtJgwde7Om3WcySSDynM0KBDWvpuQdl2lJdgePBMJrNBaHEU7iDmJ9JW/oiuCn0O6TBdR7j
-	BIiqzSnxrK2zcdFHWVWpD1yONmPDaEKISzUarhfJMi+KZvSURZNwk+3TK0Gz90Sgmjff+hOAuKw
-	HmujKVRnrQcSbIlY5RRVezU00rIHI1bfnvo8kVKuyyvFC6C4A==
-X-Received: by 2002:a05:6402:2349:b0:6b1:d2ee:392f with SMTP id
- 4fb4d7f45d1cf-6b722462c10mr1849087a12.25.1794201646678; Sun, 08 Nov 2026
- 21:20:46 -0800 (PST)
+        bh=WIf0dJI3704E56UOzqLD2NIWJwb6NLuXPSl2wIJw8fs=;
+        b=e/N+bW5dyIOaDrpDa2lEr/p5lfh8I9S1nAcYPTnB0dxsjJLBLsEG363dHjiRkIqIcp
+         DEXY24FVQUZ8QRWyBT4wv6JRd5vyQ6q8ge1CMOGqc3VQxeCTujiiNHeJlhcMJFd7QBTg
+         pJ4VmJYeQJUgHOkCVkxT1NVdJnxA8Tn0Dx2fHBpiTrsw8eVimWZknSmfw+5ilANbb+z+
+         zQOmtHR8gtrkjBpNW6Tsn/RyF41lX3aRvCawZ1a+bhG8M+CIRhWVziqSZlBC84KvbHab
+         LmvQd5jFqnX8HHwjA+xMtS0R1JX1kUeSfw3u7X6S1jV88ErGeHrSPsoAuDujNZ59r1Ec
+         kwiQ==
+X-Forwarded-Encrypted: i=1; AL+hErFKnt2FsXMi8kZDt+HjP1wpgpU0RVSzu0ygv2UXxD/v46eoa5VTTSEmslTTbIGIAMxSXO3LgLWXqhL57tfEymagvg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+VWSmkvX44yfpYLTVYHjp5kJN+VQFHSt6Rp0quD8TFsy0T+hdq
+	9qKUnR1gmFlbOAPR1kYg75zHQMRqi5mP7TDS4O7x6cba+RttgFuhBuPIipdTuabf/Y26prgXEE4
+	Q5rhMiuqafyeYh3obQci1Di0yJ9QSVBs=
+X-Gm-Gg: AYBFou0wV0DNXU+YJQdP8WYE4yadAXiHLUEy50azGTi/eb7wBqwLlgVf4imd+GXhDKY
+	0coz3CsHnRwogMg9ZawIIP5+/GKvrUA0w+rswAL6wv+90Mh0ka5p9A2ATYXNyp9lpsIxTbA4cNH
+	GZkPphCi5B4+NzqFdMmB+KR9ikwWzbhfulaekhuit8bNUxinOeaNayHThhs/N7S4/B7APug4W+D
+	V0GU9+2VOqI7ywZi1XNgRSpx3cFia8hcFf8SyZ2jigERFGP9Yuv5EoweipO9TobiOXs0egh5s06
+	wYlj73Lskg2ebdjb+ThEHg9o02N51Bk4bj0VohHpvso2di4bvpofmskG0xyHLWl0MBkBdxSlHyc
+	Sm1hbj0BfaWE0/IdDpaU21gv182zejm+dK2OQ1JCsiFc8uD6gr6llQoGPhgF4YWMzyRZi
+X-Received: by 2002:a17:906:99c4:b0:c40:80eb:c541 with SMTP id
+ a640c23a62f3a-c4d6d162393mr200408166b.2.1794201786662; Sun, 08 Nov 2026
+ 21:23:06 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -106,124 +104,151 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261005001143.576737-1-rosenp@gmail.com> <CAAQKjZOm5vA+38XVo5D4qV5B9eRT1seOShk-eFk_Jg_EQPdaOg@mail.gmail.com>
-In-Reply-To: <CAAQKjZOm5vA+38XVo5D4qV5B9eRT1seOShk-eFk_Jg_EQPdaOg@mail.gmail.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Sun, 8 Nov 2026 21:20:34 -0800
-X-Gm-Features: AclHuK-SIIyleRJSywdY0Z0pO7le2Nv4F_kttBOVsLQnGOrWIxGto2xb9JrsOXE
-Message-ID: <CAKxU2N9a6+0DXxtTxNwxWm6yBxmZS+AHpBLzyNBsvfRBasgAWQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: gsc: allocate formats as a flexible array member
-To: Inki Dae <daeinki@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+References: <20261027-drm-misc-next-manta-auxbus-v1-0-3a45c3cf531d@a-marquet.fr>
+ <20261027-drm-misc-next-manta-auxbus-v1-2-3a45c3cf531d@a-marquet.fr>
+In-Reply-To: <20261027-drm-misc-next-manta-auxbus-v1-2-3a45c3cf531d@a-marquet.fr>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 9 Nov 2026 14:22:29 +0900
+X-Gm-Features: AclHuK81atJWOGvLDgXq9hG63fw54it5ISsaMjIoBGuiYyjTASlvmDvAtFTGEpY
+Message-ID: <CAAQKjZNBb4CnhBn-TSD=8zbrOtWbu7fdpJDjOOvfAZQmAhNcYw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm/exynos: exynos_dp: change poweron/off to encoder enable/disable
+To: tb@a-marquet.fr
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
 	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be|_ptr)?b" <linux-hardening@vger.kernel.org>
+	Douglas Anderson <dianders@chromium.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	Lukas Timmermann <linux@timmermann.space>, Henrik Grimler <henrik@grimler.se>, 
+	Hendrik Noack <hendrik-noack@gmx.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 8, 2026 at 8:41=E2=80=AFPM Inki Dae <daeinki@gmail.com> wrote:
+Hi,
+
+2026=EB=85=84 10=EC=9B=94 27=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 9:09, =
+Alexandre Marquet via B4 Relay
+<devnull+tb.a-marquet.fr@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> Hi,
+> From: Alexandre Marquet <tb@a-marquet.fr>
 >
-> 2026=EB=85=84 10=EC=9B=94 5=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 9:11,=
- Rosen Penev <rosenp@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
-> >
-> > The formats array is allocated separately with devm_kcalloc() and only
-> > referenced through the gsc_context. Make it a flexible array member at
-> > the end of the context and allocate both in one go with struct_size().
-> >
-> > Annotate it with __counted_by(num_formats) so the array accesses can be
-> > bounds checked with FORTIFY_SOURCE and UBSAN_BOUNDS.
-> >
-> > Assisted-by: LLM
+> Current functions exynos_dp_poweron()/exynos_dp_poweroff(), that
+> supposedly powers on/off the device, actually only enable the encoder
+> clock. This cause issues where poweron() calls fail silently in
+> analogix_dp_probe(), leading in some cases to a state were the encoder
+> is never enabled but the rest of the driver assumes that it is.
+
+Moving the FIMD DP output clock control to the encoder callbacks makes
+sense. Analogix runtime resume can occur for AUX access before
+encoder->crtc is assigned, so its power_on callback is not a reliable
+place to enable the display pipeline clock. The DRM atomic helpers
+call encoder enable before enabling the bridge, and encoder disable
+after disabling the bridge. That ordering keeps the clock on while the
+display link needs it.
+The change looks good to me.
+
+Thanks,
+Inki Dae
+
 >
-> The allocation and lifetime changes look reasonable to me, but
-> Assisted-by: LLM causes checkpatch.pl to report a non-standard
-> signature and an unrecognized email address. Please describe the AI
-> assistance in the commit message prose instead.
-It just wrote the description. No actual code. I'll use
-devm_kzalloc_flex in the next one.
+> Signed-off-by: Alexandre Marquet <tb@a-marquet.fr>
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp.c | 40 +++++++++++++-------------------=
+------
+>  1 file changed, 13 insertions(+), 27 deletions(-)
 >
-> Thanks,
-> Inki Dae
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/=
+exynos_dp.c
+> index 82c238829921..16b00aacd55b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+> @@ -43,39 +43,27 @@ struct exynos_dp_device {
+>         struct analogix_dp_plat_data plat_data;
+>  };
 >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 17 ++++++-----------
-> >  1 file changed, 6 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/=
-exynos/exynos_drm_gsc.c
-> > index d9637ddfcfc4..f1807ef664e1 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> > @@ -99,7 +99,6 @@ struct gsc_context {
-> >         void            *dma_priv;
-> >         struct device   *dev;
-> >         struct exynos_drm_ipp_task      *task;
-> > -       struct exynos_drm_ipp_formats   *formats;
-> >         unsigned int                    num_formats;
-> >
-> >         void __iomem    *regs;
-> > @@ -110,6 +109,7 @@ struct gsc_context {
-> >         int     id;
-> >         int     irq;
-> >         bool    rotation;
-> > +       struct exynos_drm_ipp_formats   formats[] __counted_by(num_form=
-ats);
-> >  };
-> >
-> >  /**
-> > @@ -1222,21 +1222,19 @@ static int gsc_probe(struct platform_device *pd=
-ev)
-> >         struct gsc_context *ctx;
-> >         int num_formats, ret, i, j;
-> >
-> > -       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> > +       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_=
-formats);
-> > +       ctx =3D devm_kzalloc(dev, struct_size(ctx, formats, num_formats=
-), GFP_KERNEL);
-> >         if (!ctx)
-> >                 return -ENOMEM;
-> >
-> > +       ctx->num_formats =3D num_formats;
-> > +       formats =3D ctx->formats;
-> > +
-> >         driver_data =3D device_get_match_data(dev);
-> >         ctx->dev =3D dev;
-> >         ctx->num_clocks =3D driver_data->num_clocks;
-> >         ctx->clk_names =3D driver_data->clk_names;
-> >
-> > -       /* construct formats/limits array */
-> > -       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_=
-formats);
-> > -       formats =3D devm_kcalloc(dev, num_formats, sizeof(*formats), GF=
-P_KERNEL);
-> > -       if (!formats)
-> > -               return -ENOMEM;
-> > -
-> >         /* linear formats */
-> >         for (i =3D 0; i < ARRAY_SIZE(gsc_formats); i++) {
-> >                 formats[i].fourcc =3D gsc_formats[i];
-> > @@ -1256,9 +1254,6 @@ static int gsc_probe(struct platform_device *pdev=
-)
-> >                 formats[j].num_limits =3D driver_data->num_limits;
-> >         }
-> >
-> > -       ctx->formats =3D formats;
-> > -       ctx->num_formats =3D num_formats;
-> > -
-> >         /* clock control */
-> >         for (i =3D 0; i < ctx->num_clocks; i++) {
-> >                 ctx->clocks[i] =3D devm_clk_get(dev, ctx->clk_names[i])=
+> -static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *pla=
+t_data,
+> -                               bool enable)
+> -{
+> -       struct exynos_dp_device *dp =3D to_dp(plat_data);
+> -       struct drm_encoder *encoder =3D &dp->encoder;
+> -
+> -       if (!encoder->crtc)
+> -               return -EPERM;
+> -
+> -       exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), enable)=
 ;
-> > --
-> > 2.56.0
-> >
-> >
+> -
+> -       return 0;
+> -}
+> -
+> -static int exynos_dp_poweron(struct analogix_dp_plat_data *plat_data)
+> +static void exynos_dp_mode_set(struct drm_encoder *encoder,
+> +                              struct drm_display_mode *mode,
+> +                              struct drm_display_mode *adjusted_mode)
+>  {
+> -       return exynos_dp_crtc_clock_enable(plat_data, true);
+>  }
+>
+> -static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+> +static void exynos_dp_crtc_clock_enable(struct drm_encoder *encoder,
+> +                                       bool enable)
+>  {
+> -       return exynos_dp_crtc_clock_enable(plat_data, false);
+> +       if (encoder->crtc)
+> +               exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc),=
+ enable);
+>  }
+>
+> -static void exynos_dp_mode_set(struct drm_encoder *encoder,
+> -                              struct drm_display_mode *mode,
+> -                              struct drm_display_mode *adjusted_mode)
+> +static void exynos_dp_enable(struct drm_encoder *encoder)
+>  {
+> +       exynos_dp_crtc_clock_enable(encoder, true);
+>  }
+>
+> -static void exynos_dp_nop(struct drm_encoder *encoder)
+> +static void exynos_dp_disable(struct drm_encoder *encoder)
+>  {
+> -       /* do nothing */
+> +       exynos_dp_crtc_clock_enable(encoder, false);
+>  }
+>
+>  static const struct drm_encoder_funcs exynos_dp_encoder_funcs =3D {
+> @@ -84,8 +72,8 @@ static const struct drm_encoder_funcs exynos_dp_encoder=
+_funcs =3D {
+>
+>  static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_fu=
+ncs =3D {
+>         .mode_set =3D exynos_dp_mode_set,
+> -       .enable =3D exynos_dp_nop,
+> -       .disable =3D exynos_dp_nop,
+> +       .enable =3D exynos_dp_enable,
+> +       .disable =3D exynos_dp_disable,
+>  };
+>
+>  static int exynos_dp_bind(struct device *dev, struct device *master, voi=
+d *data)
+> @@ -171,8 +159,6 @@ static int exynos_dp_probe(struct platform_device *pd=
+ev)
+>
+>         /* The remote port can be either a panel or a bridge */
+>         dp->plat_data.dev_type =3D EXYNOS_DP;
+> -       dp->plat_data.power_on =3D exynos_dp_poweron;
+> -       dp->plat_data.power_off =3D exynos_dp_poweroff;
+>         dp->plat_data.ops =3D &exynos_dp_ops;
+>
+>         dp->adp =3D analogix_dp_probe(dev, &dp->plat_data);
+>
+> --
+> 2.43.0
+>
+>
+>
