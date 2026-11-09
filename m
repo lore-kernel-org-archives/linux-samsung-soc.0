@@ -1,101 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.42
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794203056;
-	b=wzuW7gu3vtEgQyaFApLeRAmriBzJdEwY3NSaHUIyihpY1P2Re9ZxF53SioDXJuhbOhVe
-	 cUGLrEEQ53mlUlzzM8wDw/D8ELrIbwDMY96TaM9e7v6HkcayYeJXROHwdMsKJnfiFfwz7
-	 3sXXG2vCB76Qdb2LUyjNnDIR8p5ayJmTmaD55/4iotI5CsMUYucIosptjSNSadLuiIHNk
-	 fvztLZ0EoyGG8N8p/caU/eDXU/vOqc2pQ9AlmiDic7FV2vEd1bmkskFx8hJaG5QXXsaUJ
-	 hQzZCDPonqoFYdXCPyeguNPgwVakfC+8iSUaQWmOQfC2XgkWAMoVjg2Wm6z0EwNN2pQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794203056;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.172
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794220398;
+	b=jMXF6YIY94Y5ExZjFsezB3e6R/6ksm1ffk0urg9wYuZM6SC+UfApikLyRl7u34O6+CFA
+	 krfKCXlc3HD4CaY+AuMbd6yaktjWsfOSRF/RnoW46tc+958mgpXlSCIFhcOCdXJVkQMfF
+	 9mEuH+XzJlSLrPuYIp4GOlhPDJtiv11D/MbTG+/klqeGFWFRqU0pWyyloSVPnKpbZTvKp
+	 YdlGYUdnyHpdj8TYyJekhQwJ0glnkCKEi8tYFKG0jsg2ftM3tKMPXWnfIXUNLa8lh5P9i
+	 OP8AN9v0bgUMI32h7byauoO/aYbiiq11/3mVXsqScVIKPBTDwK2XMbbks/Xp/JygTKw==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794220398;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=GaHnyYDJUGL+w/bA52PUwEBtFj3m3UWp7S/56d6GX2s=;
-	b=CklkxnqlXA09OnicuA9zrtawcqYAsTM/zYHPrzRp879vmSJe0dxjlPg4un/bgrfqt7b8
-	 1QNM3CZzZZgDecbmOeNDu5k1khFfI2rHjuC0xxT/J6DbQE9f49NX3k+FoB8SpUBdA1rPq
-	 oAISXBNwUZjpfrq+fe6d8aec1LhDxMq91wj9o1HEIV3Q4HGhOQyTxTxHQS8MR4ZxFVsOm
-	 9grBqs/RZgflGj5Q4+UrR/b5K4YK5ZMVQ2v7aVoqTwp9b8f7JQVBzoLHfzTPBUFHMvwx5
-	 ruzy6KN4IwkssLqjBlFvthXvLBC/ZyK2+tmWb6VD4sX6qbaJ1vrIxIntWkbVFa1Z8yg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Sender:From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=QfIpduHoe8eeZDLf/6O89XnVTMfwvHnF7GrEmwVWOqo=;
+	b=kNnfasdJ5gyxo2x2hqaCgAQLIc5aLi+z80rb5z+iaEdQZjrc9dZnSUOz3IMXGqvR0cSQ
+	 t249SpSEMkJlT3AenyfxNvTvSzGM/hS4rOKHD1VclYDZywrbxCe+061wPTU/Pm7JBYoVO
+	 vWbrYjXcpNSvT9z3yup4rN8HyI+fN5YqL2Z74Imb2/hOFFvD75HaiDExS7K/Eg6Use2qg
+	 sc2Vxsyogw+X7ZrGw4Zx3Mr9yQsrsD+tiVbyfIrJp5IqMJoFvZtctWhqZzzG803gSWmuk
+	 8hmhiZ9xr6k3hfz/HsXX9Zcg8XDqZI820l/M6+/8q/+TIRZffLv+lkr978VECjMB9rQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=fail header.from=samsung.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zjYECXCa;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.42
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GGNwGiO0;
+	arc=none smtp.remote-ip=74.125.82.172
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02D606A321
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 05:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9A02D606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EAA606A31C
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 10:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7EAA606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zjYECXCa
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b429f71dbeso486247a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 21:44:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794203054; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ey18YqxGCNtChdtDxk0o6sz7wKKM5yF1jS1eKtoKpMb8N9FugO/quwSR+f/jzAhU1Z
-         wnoumv0kudSVRGHQ/U3bnZrdjaL9lq9GbnmVxgGWoSumJ18DjxWURHw1wQKnNa+5AEWX
-         NBF8eiTeMeLhLS7la6SLY6VPdD0k2owqBxWeVEi+fc7NYrmlq/d8IpjU42o5RwnNNAS+
-         HbwiGmbVOH2epM7qny56akNxFS97k+3wI8rdGA3Aq5QzkTjto0tTylOX/5H0oZ27VDV/
-         i2ePi/NZSZ1fz9KNfKiuMgcoWsHWayxoND9cPRL+YC9YFJc2L49vwi1U84URZd84FARK
-         oDqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=GaHnyYDJUGL+w/bA52PUwEBtFj3m3UWp7S/56d6GX2s=;
-        fh=cLqjPUas3ClQbScoThnItToceIHmSgZRohiSS6+F20Y=;
-        b=Gd+iCKeVl+LYSo15Wn4fP21tEP5ehMkA/6XvUVW7sPr7r5H6iMPZTkowOymT3QCyAX
-         6iSC/mJiXNoowhTcwQTkGfvJe0dAfamr5vsB3fYtwRtipRPyRQnRm4zGMxk9rxX2Vpys
-         qH+KXuTsUoNDqvotm9+dJW8aAlZrfvt+Hhj6ntf0uebYvunpaZTuWCGjwzRMii32fprq
-         wvtfpdDjlxp81AwZiO0myuY2+EitYIq2I2xiOXMNs+tQq/kLRAzH00SF1wFW3PP1ERUP
-         u/de5LxuIcLuV4LKCjF9jK/lIKdgGcFZH0ZecpVe2gAyQ10OAa1My83o5OcwKgZh6Eql
-         houA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GGNwGiO0
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-36fc0a3fe93so1454851eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Nov 2026 02:33:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794203054; x=1794807854; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=GaHnyYDJUGL+w/bA52PUwEBtFj3m3UWp7S/56d6GX2s=;
-        b=zjYECXCacixsKh4w1x/IPCowGrIdbqDiKWl2+tgp3A1ou3pVOqCMYSuCYg8OYhAx5S
-         fN57ox4JIHVBxhOKf2z1yn1W6QUrXIgsqAq7wkFYFWhtB5rj3Wq9RRs89R/Fup+I+s9z
-         PAqnbFngiu+8AxW4buU4r9AEU/qlp+6oNj4mY3I1DVE/Z6Gd0IknaQ7K0bO2nRx18ZJH
-         T8J1mk9V9KnlusHFFd796YDpkDWXfLut8MXRT6L6U+OyvzmK1zCHvhilgW7KTs7lnPh0
-         jHKZL9ZQgO6r8QI/D/oP1gJfbsjMbtE/AaFxJlIjzLcc03aq21W0/+TF8plrn+zoOKOU
-         REdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794203054; x=1794807854;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1794220397; x=1794825197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=GaHnyYDJUGL+w/bA52PUwEBtFj3m3UWp7S/56d6GX2s=;
-        b=YBdPiXdxLN1fc7cdja9u+APYU1vGT/qqCRirdIi04HIFYOMbLzpqKOeknQ2RX6crte
-         jyBKsyJifbu1ubCEjOUMLlBrvPDrqiLG03KsjnLcMTqBuDW4iJPXB9U9gHJv75UJkEan
-         JltC9dn/FB2IMU1Go6Jcl3wnVd2aknUZAvXC0kZCSvnzSO1ZWh7WhMNNW/WmuPR+vjgv
-         s3PdYbVt1+ENYQnYc61lFDHhp4fm8bLwbO5ERmJbDoM9SJ9m/51ub2AaCSQmWGlTVxOA
-         QIdAQI/9BF9RJrft8R6RxdqWaVPX+g7fYy3j50PWZ6pVmSCwZYujO4EEGF54m6plbtKQ
-         MBoQ==
-X-Forwarded-Encrypted: i=1; AL+hErEc2GkkA8NAC7W3OZWiQuxvD7McrNbrfzP29vxL7IyCChJfkkoP3ENIwzLhyrRJyblsLxEHQff3cwqrt4EqTDgw4Q==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Y8XLdrB8rbHtjUSYlglThDdwZMsKZms/Yhl/6qKW89823pWVl
-	2dP+0KvFkX6J0plquZoeQYmYH15iNpVWrAcgkgVYKQvcPn2j5VohCZ6sAj8liQmH/tvEqyFL+3V
-	x6qxtC1Ysk+9Y2HDC7ReewiiTEjz1pr0=
-X-Gm-Gg: AYBFou1BScljgKb7/BgPP2E2FsKGy14M1CLf7Y6bpPQQS23rw3w792ts39deatUe7kL
-	WXiv0romxIp3rSQm7ZQ7flF9WK6asOE0JEYABDr0fxeR4uIVcSrcUH68VY2J6ZPm/QxiMgHtz21
-	WZ3Ul7gL4F8RUsczP36J99ErgQ/Dfs47fuJso+fVOCBuYSB8WFEfV+cSgFu7g1y5VjzyxMV9Nzy
-	uLDuuN1mHk5OAGG9G5SgQ6q+4YwOhAc66rC+MoFjgfbdUlkZwQVRXtpmZVgCQoZZCi2zzaaqB4X
-	Avk6c/7vK4lk7X9iAvx64HKrU6TKRqtRAftJ8KnT5mMkuKkG7RVXLJFRyeQf40dKAIzKhTuNUUK
-	USUf3yqJtdvJCwvw1AK/RsCdCFqWI7LaZWniApbfRr6NNf53cvA8omGbfbDPCvwB8+yOWXkYGM2
-	i1IMfXjWRlMiCN
-X-Received: by 2002:a05:6402:1950:b0:6b6:ef7f:600d with SMTP id
- 4fb4d7f45d1cf-6b722450928mr1861820a12.21.1794203053889; Sun, 08 Nov 2026
- 21:44:13 -0800 (PST)
+        bh=QfIpduHoe8eeZDLf/6O89XnVTMfwvHnF7GrEmwVWOqo=;
+        b=GGNwGiO025HhEZpDhCIfI7f9L5AhfrCjErReDxEkk7qQZrY99QyQ3Krh8ykVvtuua7
+         GYcKsYcRIbFKLtSpT/Vh+X//f65N3P94hanAKtMMX9Z+YT+rOVUYqMQkorXnkjgmzCfv
+         PST5yGM/uw00Jk7hrtT+bqC5s22vAAgLuUpM+G1IeVNdWuaoBQBCrAp5csodfBcaFlCd
+         Yke5+sXu+h26QX8CMpNG0yQLAXwz6fxqWqF8XoP4PEeWl0kfEcq062Wg6xnLXT27qSyA
+         6IYCRzlhLEqY94Ery3StbHka9QtF5QotlfZjLtjunr8DaZ8mstYEvLWozxP4hI2amk7C
+         CMow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794220397; x=1794825197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QfIpduHoe8eeZDLf/6O89XnVTMfwvHnF7GrEmwVWOqo=;
+        b=l/7EXJEDVvFXAbSlQXnZWOtammpEN6iUxHAbXytKjL2J9YwHIMRa8krsIrgAlnbGIb
+         29bOTFr1VYrs77ha1T3ZTRVC7jDIRdr6Yf3wF+QCr/A+52jOSTbedSan8lncYok2blBp
+         wTMjZ3wdlYkWMfhZSSKrLeRY2RZU0TZWVRvh+E1vOifzCPNNIdsJkZfb8IEacJKlN85j
+         52/kP7g/2gUJEJpNfmjwHVXr1DYim/9Jj+1RTc4O9vlWC/7N7X5trQRR149d9NRgTOuv
+         da++yC7C44oSLUSfxKYHlCiEIWpurtqu/R5kKkXE8LAybyG1BDBKQ4y54+h9Pz0/nDRf
+         a28A==
+X-Forwarded-Encrypted: i=1; AL+hErH29nwcYbwDpmsXS/UTXtioj9qHxEf8yfIKUJyUmu3I/jHplFJ4ELk1MI3MRV8+5mB22HtsuyqLfPNdUGp+jv6/OA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+9eS9P/HW/54a/qBbNxp2fXBSOf416/VBuRddvUd8V/tSv3WQm
+	YlBj4V5F+SaDGQ8NBSs6hMIVjevjR2hcOtKSmrbV8EUoE1bi75G5edzrCSbfVtd7PDc=
+X-Gm-Gg: AYBFou12FdOo8aeK0vGHzdjHplZjCOkYXd0b97Fdn3JNwRDsO29fu6ish/cMD8NEe4o
+	4Ivq0Q0Wci7KYTuS0wGuweUS/+QFtjOwkgi4jVlVezzaJVY9i6t2bhUXDZ6Xooj2W/tV1OBtmgw
+	kbFCJEbL6v+Ue8sLOBZ7IVKAf5jaLRdyvIgnFl76fNJB14dpCq7b28G8vRvdnVxtQt+dtiYucMZ
+	jJ/1XfSsRFLt9WT/wjcrUmdH/y87Vk0jSpRqoUBDkuJqT72jUrviKj0h69v3QwfoX1Y2ZL9f35u
+	jjde/q19+UPm4LvqAeJ4CxjdS+Gk4HITbaQaTa0nh48zMM0+Ct7JYEHRlR2Wxzxamy+7mYG7Va8
+	CbIV8kVZQQan8jpA8/56Og4Ddv8R8zmifpZG20A+6/gXRVZ1K1uqW/1qpJlxUkHPsYf8bwg2qUL
+	9EttNPwP3OlvaHKtAW7uZL3TAeNM9DCu9tPkj1uJIW8TcYndxdTaA+uICQCUkkv+MrI71p+7mlb
+	MhNZwE+eNDS9+XqgaVX08Wjc3W1iXY9yS5fLONQ+L7v1Pchg+Kksiaw1txsmfrI/xxvuXUqza/7
+	SpnI+xLomskhvqBYbEjZKh2YMjXaon6eWiUjfUWVmvT51GlBmFGtmbtPtbVSAwCxAD/2JyDaDre
+	GMeodysgDt33031+o/YRYPrzqfOAb
+X-Received: by 2002:a05:7300:10a:b0:369:f70e:bd40 with SMTP id 5a478bee46e88-37256bf1a40mr7451845eec.16.1794220396780;
+        Mon, 09 Nov 2026 02:33:16 -0800 (PST)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-372656187f8sm11267999eec.5.2026.11.09.02.33.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Nov 2026 02:33:16 -0800 (PST)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Mon,  9 Nov 2026 19:33:12 +0900
+Message-Id: <20261109103312.7235-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -105,84 +98,53 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20260916072012.1967169-1-vulab@iscas.ac.cn> <rc-review-20261105-14-00955ac4adbd@gmail.com>
-In-Reply-To: <rc-review-20261105-14-00955ac4adbd@gmail.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 9 Nov 2026 14:43:36 +0900
-X-Gm-Features: AclHuK-P9ELAlBzpu3kDklHAW6kBOMQIDNRsiWYypfDAoEI-hiru14eAfArO-Rw
-Message-ID: <CAAQKjZP_djWPUxr+B8jH_m_=MAPFcWmxst7fR727uNbP59xagw@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: dpi: release the node after looking up the panel
-To: Yige Jiang <yigejiang86@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Dave and Daniel,
 
-2026=EB=85=84 11=EC=9B=94 5=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 5:07, Y=
-ige Jiang <yigejiang86@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> exynos_dpi_parse_dt() acquires the remote panel node. The posted
-> display-timings fix releases it on that branch, but the panel lookup
-> path still retains it on success and failure, including deferred
-> probe. of_drm_find_panel() does not consume the node reference.
->
-> Put the node immediately after the lookup and clear the unused
-> pointer. This covers both lookup outcomes while leaving the
-> separate panel reference and its existing remove-time put unchanged.
->
-> Fixes: 14b6873a0198 ("drm/exynos: restore parallel output interface suppo=
-rt")
-> Link: https://patchwork.kernel.org/series/1166158/
-> Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
-> ---
-> Based on linux-next next-20261102 (2637bdec0535).
-> Compile-tested: arm64, GCC 14.2.0, W=3D1, CONFIG_OF_DYNAMIC=3Dy.
-> COMPILE_TEST=3Dy.
-> Baseline and patched target objects built from this exact base.
-> No full kernel/module-link, hardware or runtime test was performed.
-> AI assistance was used for analysis and patch preparation.
->
-> This is an incremental patch based on the following posted fixes:
->   [PATCH 10/20] drm/exynos: dpi: Fix OF node leak in exynos_dpi_parse_dt(=
-)
->   <20260916072012.1967169-1-vulab@iscas.ac.cn>
->
->  drivers/gpu/drm/exynos/exynos_drm_dpi.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_dpi.c
-> index 92e8bbe9d35b..e98a9be0a705 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> @@ -243,6 +243,8 @@ struct drm_encoder *exynos_dpi_probe(struct device *d=
-ev)
->
->         if (ctx->panel_node) {
->                 ctx->panel =3D of_drm_find_panel(ctx->panel_node);
-> +               of_node_put(ctx->panel_node);
-> +               ctx->panel_node =3D NULL;
+   This pull request handles FIMD DP clock runtime resume failures and fixes
+   a scaler runtime PM reference leak. It also fixes HDMI EDID and DPI panel
+   node reference leaks.
 
-
-A patch covering this same of_node_put() change in exynos_dpi_probe()
-was posted earlier by Wentao Liang[1].
-
-[1] https://lore-kernel.gnuweeb.org/linux-arm-kernel/a46a7710-0c2f-4fd3-911=
-6-7678adca9390@kernel.org/T/
+   Please kindly let me know if there is any problem.
 
 Thanks,
 Inki Dae
 
->                 if (IS_ERR(ctx->panel))
->                         return ERR_CAST(ctx->panel);
->         }
->
-> base-commit: 2637bdec0535a2044cd830eba9a79363651d9043
-> prerequisite-patch-id: 8f90819fd9f71f55560dc3af57c5a0bad07bc568
->
+The following changes since commit 19e67d977d3d4d0c54f03906ef578578190db9e1:
+
+  Merge tag 'amd-drm-fixes-7.4-2026-11-05' of https://gitlab.freedesktop.org/drm/amdgpu/kernel into drm-fixes (2026-11-06 10:43:59 +1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v7.4-rc3
+
+for you to fetch changes up to 869fdc8ba846ee6fec452cc34cf104f9f7142113:
+
+  drm/exynos: dpi: fix panel node reference leak (2026-11-09 15:09:05 +0900)
+
+----------------------------------------------------------------
+Fixups
+- Handle runtime resume failures before enabling the FIMD DP clock.
+- Free the EDID when the HDMI connector update fails.
+- Release the scaler runtime PM reference when reset fails.
+- Release panel node references after lookup and on DPI parse errors.
+
+----------------------------------------------------------------
+Avi Weiss (1):
+      drm/exynos: hdmi: free EDID on connector update failure
+
+Jiale Yao (1):
+      drm/exynos: fimd: handle runtime resume failure for DP clock
+
+Wentao Liang (1):
+      drm/exynos: dpi: fix panel node reference leak
+
+Xiangwu Lai (1):
+      drm/exynos: scaler: Fix runtime PM reference leak in scaler_commit
+
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c    |  7 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c   | 10 ++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c |  4 +++-
+ drivers/gpu/drm/exynos/exynos_hdmi.c       |  4 +++-
+ 4 files changed, 20 insertions(+), 5 deletions(-)
