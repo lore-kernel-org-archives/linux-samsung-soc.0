@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794199309;
-	b=BMRxJF9Z8IZKSYAoIJ3Kk5zWKNNCaAHWgqkIIm4MOzfmMVJxIsyEnNut7o4MKRcTbkBu
-	 M3PL/H0ZxLXmSwGcxjryagxLWDxV7XgU1oyAYSkF0CXmiCzyckp23CfMJuEf9ui6njN2Z
-	 A9SxQhR+39B4qv2N728ZACRdKigOmOvS1/Dh+M/6ColjpiUHmXLpHZiEKO9RWtojLm00M
-	 e5eBv8ZCOfagK75Js/FpmKhQY5Vhq8ZQ/idATskeP4vHU46n+84rfvDXIwsrlWH2EjgLP
-	 7sufa3Ox+PEKVIx/LBG8XMdv9A9mOfk7e7INW5SvDFWqlEO30n7lEeQqfU1uF5VF59A==
+	t=1794199628;
+	b=OYrlJEYBG6oPmAK67YTFIfgpGK2n8i4IYPKqGeD/Srbbwk8jNnfWHjJQUDgAEdCvsEJG
+	 z3tzW9mvBR0gKypIG0xkMlrBHRxCnM0TY9DaNL9Xfbnr5UamxYmfpMVxiZiVB60uT6yYI
+	 //VcxFm6iS1jXPImU9amwDiXJuDBQuoTcJuqt0QRC467ZrWHBk2zY1ePMpBPb+L0CW4/2
+	 Ns8ZB/2gPnlD2iGly72nPtJOebzEP5iUAEyyFmrUgfa62S/3/C5OGpuQdi54H76njae4T
+	 dxTwn3ctx3VkUasN/Q/fzvCBxhq5aFSjs/N84mmBDCV5mDpT0TYR7FwdogOEztiSVYg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794199309;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794199628;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
-	b=JeNzMqQf+B0zTC2lb4+f/7KbDjKy6nuJy18X8a8MgbLfVliNgGzfg4/2nM+fivkCJjWq
-	 QTwZ+lGElIMNB8AeDco2HdocenduNT22ucOvgpR7wH7ZGuURHMDg4X6oOZhlMBrliNN5L
-	 Of2Y5pwKpD5/1M3FDm0VpFaDMvVNr6+x8oUadVlUoO18j2yOoMe/WQ0h8zUguaIgstccc
-	 yHIKZ9OhofCSBoE9eTYYjiNydMs7+oiUp3d+dXncxVs8rx1BDmEJbQrv9/XtNtzNFKHom
-	 qqS772jTmNRnpb9D1J8CeYcdXjDzbRAQkFnikB1S16H1/pDqI3uux3sjCPoj5HZgBIg==
+	bh=CrfIutPa9zzmKoZjuVxyntYvgSPp8Myo4B82If1gVcQ=;
+	b=rgjhdRcYhkwscZzdXcP+z2TgZDvBdr7Ax5xYSwWAKqM1IGwv9r3X0c9hUfM0L1mTUUFX
+	 /NJV5G/F1488QkN4nDGfNFMouhPybYhRA+TUpHGMMuC1RC59LkW2WVrjzdgqX7fuDcV4m
+	 qY9h6Jj7zB9oK8DQWGZW2mOhjRXFVx7FMLuFwdWRwwRfMZAPrQG3QiE0fB7JmHj6LGXqP
+	 EzDP+7aztznMciBMFdze6kjDf+ZJ7vWw7Nb5lh11VauJgAuuSp4RhjzXbMy+DuRug/DCV
+	 8Cr2eMUdjIZY5107FMQpSuMCrXytocprkFfEiXxeVj4vm01uCObt4UVv8Iq3fhCHa2g==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XL67E+6C;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IohIZ1oA;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC09606A32A
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:41:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CEC09606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738E9606A31C
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 738E9606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XL67E+6C
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4d473cfff6so57599766b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:41:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794199307; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=IohIZ1oA
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c4c9abc1824so63683466b.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:47:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794199626; cv=none;
         d=google.com; s=arc-20260327;
-        b=poctat/P2e1vtMuipN6dvZ7EYnrtw7ZlNAzPlr7/Ey9vZzAF9D05CKbN9mHgTvF7KY
-         KXoIs4EOfZFiOaUsu5Fid+2Zy8jOF0EEf8thDJhNQBBm3AQT4v8utbtjfu/KkhoFCwse
-         oeWPXLZ2jmF/1NGvaYju2HWJ/dqp8atwD839TY6VhqMilr8kaWruzzSZDNQruEqBFP23
-         9AfvCq8osxbzDad7YcmTqaoov9aB2bX5tUtJzxGhGLYmziNReS2EoJMaY3qqxufJsRXc
-         A54D5KgA/fRrP27hL621NzeyATAnt8KLTrOSdQQ04gp3hI9cPxmYOOLX6TnDh5xKYOM7
-         q03w==
+        b=PuuJHMdegP6h21qk36FYiI6d3bZIL4TieIqVIR7jJrGvze3w1KGobyk9CDins3ePXo
+         bzsAZc90Rob91JZD3Ppa3fPS/EGSj3SD7VV+E1BjaFk/A7enqsdE/jmBzVw/fHl8Xlw1
+         B+SjTc2ZbTpD7XdXrDwzxRjxx0+TaClaRqT+fP+LO1YN2lnhcUq19THePzYHNgB3nvyp
+         Ci74iKEyvqAXM4uVKo7vMHfs4RJ4hOi9HFlGotvy2CIab0nIjXLaDQS/h39+iVBwsk99
+         y7XYy0pG1/89y2GA4dPugcdbAvElQAbTkiHrwQyjfo8DleuX682nme1bffxJE27N+fq6
+         4k2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
-        fh=lZ/34jbSpbu7eO0Nsk9VdjKlnbqQfa/ut6RZ7F+V74o=;
-        b=K2Y8F9Ibt8SQI8BGFlIImh7IVmgr8aS/A1nNEF1smNJCM/NDi62OES8HU+MwSQS7GH
-         ERcxYdqfA//OqfLLSjqxF3pj1fHbveqxFYhRGT+m4vIW+lISoXMR/GMf9MiLHjI27Loy
-         DkKhu4MaXt/sFkH8gP78ykOGhhVHTGJFMOIJA+pyfQrNq7++5XtxoXGKHbR+PgG6g9O2
-         2Y1Cz+QfIalHwu0CH3s1bcmZld9tWT73F7ptJ9Kl7ttxR3iB0QdKAWxva4RkMebypPUV
-         zjgqG1Q2fXZJLwHu2/2AYfhq1nqra8v8oETrTj3DuviPHsjIsAzubM3AIsOs43c2ZOx4
-         5eVA==;
+        bh=CrfIutPa9zzmKoZjuVxyntYvgSPp8Myo4B82If1gVcQ=;
+        fh=gI6JF0up5z19jy7IXwpRyiaLnxY31lYFDDm7VDuUekk=;
+        b=S0zZbcuPw6P5vgZzKEJ4OmQ9qFJkZFeD0nNQfX7J1xjeJh2/kPLpYMPtZT2asqU2Y1
+         HZXKsuxqaDiomKOpRrMpWXghaPC3+MwyxPp6eNupZKb7rNfR1D2F4qxy5rRLInUInwny
+         Rwi3WxrtMJvwDhA0KvWG+ER7389dh+/KG0X0wiKH+av8RGChbdFX/VCsiWP203vMK7RN
+         yb7hzyL5M10y49GTLJLCH4XsT0KYZaNSsANVojLBKFYi9SMg+LLkMHfQ3UegRwVmEoad
+         V69zcyDOKf3zNoqUC8y/ka8ysz6ziZPg69hwSaoFSCY+oFEgCJ0rwOdImX3PxYmXiO2M
+         Sv3w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794199307; x=1794804107; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794199626; x=1794804426; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
-        b=XL67E+6CWlgF6TMSKOxYtrmXheerI7gxjQHnzgaJ8fObVIn9fOePSsXpAm4jOuofTF
-         JUa9+99lY+OsAfdXl17zL3hpp5FHvDYFIf9QjfViZnwYD0NNrDWWEqJ4hlW67FAJMPQB
-         dQYuwABZR3fG8/wG3BSpt4hD2vPDv0MQ4bZ3WCwMGSQ0wz7vDhFUYrfW6deENy/fRobF
-         G+5XDXtDBwA9XC5kYyw3Mv+ab8M405NnZp86LZuTYErY080guobrxmbyglJuPwyWkK8/
-         xZTCgu0NmSgTNnE2WBiHipzOOotnAdFJ4HoM8GEXJYJWF51slx7oNW8Yovbo8OhkbFHu
-         mwhg==
+        bh=CrfIutPa9zzmKoZjuVxyntYvgSPp8Myo4B82If1gVcQ=;
+        b=IohIZ1oAwy8qOm0JxhUCeKZegb1kHdjo/t+cANf/7fLgydjScBayHwnnUgDHSaLttm
+         ple64bi6DGayMz1A8qOjG5ZT5ElqNiHTJPRimMGyBfL69snqjvHBAvjMcF+lmwevaDEM
+         mfjTVEkJpfFs+Agk8+p1UQhV0hfmFZjhKNmvNxosswdeVzQ5K7RMDrx02PeVM+Bw9cqT
+         BXCwAxVD7IJ5X5rr4/Ca8rNUADx2YwiN9y1Cecgk1c/PGIQKIU562xEeOKEdwq9PUBLF
+         6+cXV5ozk8gOVkPd5awDEtgCxpqZmhiu8GZE5szOcK7w0G4MHzx9ZsMlQadyurlDscTl
+         TJPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794199307; x=1794804107;
+        d=1e100.net; s=20260707; t=1794199626; x=1794804426;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
-        b=TSuKLaNyLbziNbskwa1BbLvq8L51gsTP+n9pOkjDqo2hKTH00lPu1ngOePwm3HoqmB
-         SW7Y/93PcGYfQrbh1rxut5//4MUFvW+AU21nRLHNJAsfQaVT4zPp1fAQI9C3mhf0KYSr
-         5z5kNGmi5RjxKQ+g8+CNsGbB9xde2pAjMzDtBv/awRNrzLgsQg+BoffYAV5fH1m0LaDz
-         LaxqciAeEiD1Ov42l6GbiHx5zRW9anMsMswviPg2PvEN/3JF5Se3X1lUlyXxqnWIOb00
-         8/BQCc1sWv1RsCEwd9iy6Tq3ePbhhomwntekImKnnUCGPZmsVGz9VupDNgJe2JyBbqQU
-         yT6g==
-X-Forwarded-Encrypted: i=1; AL+hErFMTl4qE3HHq6Pjl+5jISizWhesaXRJXPz5Orx4bB2ziRH4ZWRcMhCfPxwBzqIva1pznxcSvrtXsDzwDtD3Xbx1dA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8o1z5cEeUyv/jRLhm7dQ0MmkLsPJN9RP9ZDkKyAb6ST2x9oCHb
-	nAqsqecPU06+4SbRidfZhkVcxRQhtqYAG3A/tcIXaTm0RQqdEbYBOzOV8QdaGFaw6GQbIhdO26G
-	YNfsQEnu20V10KugRx0mlx//jnh1Ypobhj5EwMY8rVg==
-X-Gm-Gg: AYBFou2IJlw2QTyZ33BoP/aM0svy0cR63jnlS4nIapfFztTiZ9NsX95sUxoLJ+BhgA+
-	UKgqTEB6eybmZhiBHnBHuuKSMSgd0/UbaoAMbIeXV9UzSCGWMsocjfyFYZf7yOb9IdZHHOng6AH
-	qwE4FvVnpW3cOzvCkqieYv/EsgjUlauqDZV59uYVSAPxE0bpCWXKEOctPDZwT9JGHvWy2+kDd2i
-	8Sn6gnkmHOidwRYwmLRaY6cZA8+0f2uo1Xr/2dFlcnbzM7EZvFoEbDUittmF4F09ISt5JgWlc+c
-	E48outKNTDhb6p9tFCMctqoMHFRyWDpMCl5PZDBuGSEGPnNrOSCCFmv884M65I2EqFsYZCn7iEv
-	3PJ2W7jUJYa5ZlM9t9xdw3R3L+2SXPd25gMAsV4J1QyhiAk8/hmTl6ZD9l0qo07sIlVY=
-X-Received: by 2002:a17:907:2d93:b0:c26:19de:9aec with SMTP id
- a640c23a62f3a-c4d6dd8cb24mr224378766b.43.1794199307082; Sun, 08 Nov 2026
- 20:41:47 -0800 (PST)
+        bh=CrfIutPa9zzmKoZjuVxyntYvgSPp8Myo4B82If1gVcQ=;
+        b=Njv7D7Cf1ud4iPyFHnvjxZlOIy/t766phnLDU9wlo/tt1BDB2fR6YD17xy0rLEcVq2
+         jnoNg/CbAZykAuV7Gp1YAGUIDRzGGtTbDx/2Rj+uLMUxQ1/nMuGbRBKxGvVPVy8xXnjj
+         cX3bQxO27Qu0Hf++5sP1QVM/3DFTJnc7y42RDq/HWVHK2OlqKdnu+NjIGlpaDK2RngWW
+         POaLKxWnp0MI+Krpoy5Va0r2ZxRCjevSFMo0JDvmXGmL73S6EAbIs+2VbAxhFl1pgrpW
+         XXInzE0/EBMRsDHuLJECZOXEUL5fRpfPAe38AJF+NI/UfyqeyUpJf8lBvFXOkmsoAfbQ
+         +2Dg==
+X-Forwarded-Encrypted: i=1; AL+hErGv32XGg4PA3G/H2X26+T4Wj3oInqVVQjYE5uzx05F+ZptHmZ/VCJYDbBGXSUd/7EmcXaLTRviXnn9z3wI9f5GuhQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/9/wwsqbp+/cxZk3pytiGS6Xr6Pb0LldmT3Ckh9e6btemMZ2vn
+	1X+4l13yc/tvFjxz86CbueTVNyLlpfwbj5Rpgsa9EHBjNJAIq4e+wrDoEXbR3I6pV+4PuVh82ME
+	NQkFmcCTi6hp/kAfWrJoCWTbqcSQDJHE=
+X-Gm-Gg: AYBFou1RVhwIpHiNpvs9MZEzYI8PMyZ8Nklv9+K2baqffIcer0UaGnOQHq+Q32nsgeF
+	wDFgk77k/Y6XIZwGhDUb/aXOA6fNn9NQUJqBMJt8y0XzuZcPDFpoq6pmA3ARSZ5OOBILC28XVY2
+	kj3mXKiN3qa47GpnyADttAhSoLlaDfcBGVM6wJAF2QYkPGP9SMioiTrUFb7zB9AzDT6JX+deLRJ
+	qlv5rRUoL00CKcStyB85C8/rW/MfUE3V0QqtYS9e3gLiuFYe9i/U6pLGf211dWU+/igr0rGwHHn
+	8zkXG8Z81ckEoJGTPf7ntC+9SEXaNYBK7LAN3z47vOwRtznKVVdbWXrW0FstZkPbOpYWb7wq3dA
+	W19iSzNy3O9Ke32F9QM29+hmOYpINb5wqiuokPP5LI8ukY3OXv8XL01uxsnshYm67dYg=
+X-Received: by 2002:a17:907:3d91:b0:c3f:d8f2:f08e with SMTP id
+ a640c23a62f3a-c4d6db3a64emr196944966b.44.1794199625715; Sun, 08 Nov 2026
+ 20:47:05 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -104,118 +104,67 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261005001143.576737-1-rosenp@gmail.com>
-In-Reply-To: <20261005001143.576737-1-rosenp@gmail.com>
+References: <20261012064334.3193085-1-thnkslprpt@gmail.com>
+In-Reply-To: <20261012064334.3193085-1-thnkslprpt@gmail.com>
 From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 9 Nov 2026 13:41:10 +0900
-X-Gm-Features: AclHuK-aAUizeCRuM8WnAlvp8mvibSB9oiekBPg9ucUpGQvhhZ0l_iKHx8QZ7R4
-Message-ID: <CAAQKjZOm5vA+38XVo5D4qV5B9eRT1seOShk-eFk_Jg_EQPdaOg@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: gsc: allocate formats as a flexible array member
-To: Rosen Penev <rosenp@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_by(_le|_be|_ptr)?b" <linux-hardening@vger.kernel.org>
+Date: Mon, 9 Nov 2026 13:46:28 +0900
+X-Gm-Features: AclHuK-TjmziQBVGGqzRv77wQmyocEKBYuMMJR_pnwJjtYpt4X-8bxATAwTIBkE
+Message-ID: <CAAQKjZMYrG6C5KWkbqcZX9Jdu0TVVimRksV7xNe=G=653S5PsA@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: hdmi: free EDID on connector update failure
+To: Avi Weiss <thnkslprpt@gmail.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-2026=EB=85=84 10=EC=9B=94 5=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 9:11, R=
-osen Penev <rosenp@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+2026=EB=85=84 10=EC=9B=94 12=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 3:44, =
+Avi Weiss <thnkslprpt@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> The formats array is allocated separately with devm_kcalloc() and only
-> referenced through the gsc_context. Make it a flexible array member at
-> the end of the context and allocate both in one go with struct_size().
+> If drm_edid_connector_update() fails, hdmi_get_modes() returns
+> without freeing the EDID allocated by drm_edid_read_ddc(). It's
+> an unlikely error path but nevertheless possible and should be
+> cleaned up fully.
 >
-> Annotate it with __counted_by(num_formats) so the array accesses can be
-> bounds checked with FORTIFY_SOURCE and UBSAN_BOUNDS.
->
-> Assisted-by: LLM
+> Free the EDID before returning, while keeping the existing return
+> value of 0.
 
-The allocation and lifetime changes look reasonable to me, but
-Assisted-by: LLM causes checkpatch.pl to report a non-standard
-signature and an unrecognized email address. Please describe the AI
-assistance in the commit message prose instead.
+Merged.
 
 Thanks,
 Inki Dae
 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>
+> Fixes: f6e4f57fd90dc ("drm/exynos: hdmi: convert to struct drm_edid")
+> Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_gsc.c
-> index d9637ddfcfc4..f1807ef664e1 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -99,7 +99,6 @@ struct gsc_context {
->         void            *dma_priv;
->         struct device   *dev;
->         struct exynos_drm_ipp_task      *task;
-> -       struct exynos_drm_ipp_formats   *formats;
->         unsigned int                    num_formats;
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exyno=
+s/exynos_hdmi.c
+> index d4fce39c2b61..386557a7f5e8 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -893,8 +893,10 @@ static int hdmi_get_modes(struct drm_connector *conn=
+ector)
+>         drm_edid =3D drm_edid_read_ddc(connector, hdata->ddc_adpt);
 >
->         void __iomem    *regs;
-> @@ -110,6 +109,7 @@ struct gsc_context {
->         int     id;
->         int     irq;
->         bool    rotation;
-> +       struct exynos_drm_ipp_formats   formats[] __counted_by(num_format=
-s);
->  };
+>         ret =3D drm_edid_connector_update(connector, drm_edid);
+> -       if (ret)
+> +       if (ret) {
+> +               drm_edid_free(drm_edid);
+>                 return 0;
+> +       }
 >
->  /**
-> @@ -1222,21 +1222,19 @@ static int gsc_probe(struct platform_device *pdev=
-)
->         struct gsc_context *ctx;
->         int num_formats, ret, i, j;
+>         cec_notifier_set_phys_addr(hdata->notifier, info->source_physical=
+_address);
 >
-> -       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_fo=
-rmats);
-> +       ctx =3D devm_kzalloc(dev, struct_size(ctx, formats, num_formats),=
- GFP_KERNEL);
->         if (!ctx)
->                 return -ENOMEM;
 >
-> +       ctx->num_formats =3D num_formats;
-> +       formats =3D ctx->formats;
-> +
->         driver_data =3D device_get_match_data(dev);
->         ctx->dev =3D dev;
->         ctx->num_clocks =3D driver_data->num_clocks;
->         ctx->clk_names =3D driver_data->clk_names;
->
-> -       /* construct formats/limits array */
-> -       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_fo=
-rmats);
-> -       formats =3D devm_kcalloc(dev, num_formats, sizeof(*formats), GFP_=
-KERNEL);
-> -       if (!formats)
-> -               return -ENOMEM;
-> -
->         /* linear formats */
->         for (i =3D 0; i < ARRAY_SIZE(gsc_formats); i++) {
->                 formats[i].fourcc =3D gsc_formats[i];
-> @@ -1256,9 +1254,6 @@ static int gsc_probe(struct platform_device *pdev)
->                 formats[j].num_limits =3D driver_data->num_limits;
->         }
->
-> -       ctx->formats =3D formats;
-> -       ctx->num_formats =3D num_formats;
-> -
->         /* clock control */
->         for (i =3D 0; i < ctx->num_clocks; i++) {
->                 ctx->clocks[i] =3D devm_clk_get(dev, ctx->clk_names[i]);
+> base-commit: 24a19b953e2a3d0ea5a8c4951a0ab8f32720c907
 > --
-> 2.56.0
+> 2.43.0
 >
 >
