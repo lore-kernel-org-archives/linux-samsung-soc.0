@@ -1,101 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794198842;
-	b=SVVY5iDc/cpNHLjoDeJC/Xk6qRrStH7QO+Ulvu5nspyOh0dw8NceZbk+F+NmAE8qOx+y
-	 APBAd08spqnQ5tCXiYtBCPyPiEOAQk8RBiOCOYrLaXCMPFb6P4XzwFKwil577IZaZ2Quh
-	 sEZ7M2B54Uvn9Ium4+iBzD0MuQ4B78HzzpAznA8y5SWSg3RVFLuPSq4pNFb7YrKOqvXDh
-	 R+TdIl6vxvKkb4b26079cTYQYX9rvAFTKrTkjuoCz224uSmmWBKx46savgjroyQExeZtk
-	 mn5AnygLN9qHO9JpOsmhXL+UsBNdZSHeCu2jnPevY+Vx3vMboJugFBgw2jp1grvySbw==
+	t=1794199309;
+	b=BMRxJF9Z8IZKSYAoIJ3Kk5zWKNNCaAHWgqkIIm4MOzfmMVJxIsyEnNut7o4MKRcTbkBu
+	 M3PL/H0ZxLXmSwGcxjryagxLWDxV7XgU1oyAYSkF0CXmiCzyckp23CfMJuEf9ui6njN2Z
+	 A9SxQhR+39B4qv2N728ZACRdKigOmOvS1/Dh+M/6ColjpiUHmXLpHZiEKO9RWtojLm00M
+	 e5eBv8ZCOfagK75Js/FpmKhQY5Vhq8ZQ/idATskeP4vHU46n+84rfvDXIwsrlWH2EjgLP
+	 7sufa3Ox+PEKVIx/LBG8XMdv9A9mOfk7e7INW5SvDFWqlEO30n7lEeQqfU1uF5VF59A==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794198842;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794199309;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
-	b=yGTytfyQBQZJvE4NMGZeQMXZmoiQ8et2TV/rK/WE02gPM4poeHjtdEWONwvgL/TXL2nb
-	 W2x/dFg0p6A2kRG+a2S6t6G3VdfUyir8h7E4tkOBsSV0iLSZP6XsVkKcHU2pm0bjwBprr
-	 mCd+Z1MtfYCGq6XoMSMYNtirOxMSOcb72KqHe40QDvYTIxCbmjOIqcfboz2jF+zY7unUc
-	 SwdX9iiW2KpIOnAaEiLfXPzCWiKwv91B3ZMuNxjIbhZY2m5o2bNy6pkdC9/fhmyiD0PRO
-	 1rieJfAFkny5ZXC6Qs/41mw0tkP4hY1j5InH6+TEtLiOkMvxdaAofPAoPjNI6noTgog==
+	bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
+	b=JeNzMqQf+B0zTC2lb4+f/7KbDjKy6nuJy18X8a8MgbLfVliNgGzfg4/2nM+fivkCJjWq
+	 QTwZ+lGElIMNB8AeDco2HdocenduNT22ucOvgpR7wH7ZGuURHMDg4X6oOZhlMBrliNN5L
+	 Of2Y5pwKpD5/1M3FDm0VpFaDMvVNr6+x8oUadVlUoO18j2yOoMe/WQ0h8zUguaIgstccc
+	 yHIKZ9OhofCSBoE9eTYYjiNydMs7+oiUp3d+dXncxVs8rx1BDmEJbQrv9/XtNtzNFKHom
+	 qqS772jTmNRnpb9D1J8CeYcdXjDzbRAQkFnikB1S16H1/pDqI3uux3sjCPoj5HZgBIg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cE+TvgUh;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.44
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XL67E+6C;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.54
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBE2606A33F
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2CBE2606A33F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC09606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Nov 2026 04:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CEC09606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cE+TvgUh
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c4ceaee6770so57898266b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:34:01 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794198840; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=XL67E+6C
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c4d473cfff6so57599766b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2026 20:41:48 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794199307; cv=none;
         d=google.com; s=arc-20260327;
-        b=aH/lhSOV+QT12YPNSGTTTtCkdeqWqMc0DOB2/9wVXTk8Czd/SMCvytlkbqJnidIIEc
-         p2aRc6UAebAPBucshapjWQYZe81/DLTbtPnhPkuDSD/VUEdYKOcqEFxRKgssF7oxzyaR
-         QmTjl/mjiJXxjFnqZxE3t3gPTOxuMIw4hzEx/rB+ASYVaW0zYvjBhaVarSRBdIgJYqQC
-         BqiMxbZwJfyCJ8BpQSrJijUMXpzF6llvu5/BLUBchtm2dUBeGgOnQrk75f6DWKXT2y9R
-         scNZ/Toam7IONOOFuy/a6xlsnztz8s0u37E4cw4uBsvZtjSjvbx6c4Q7fyKkgeOiwumH
-         Tb4g==
+        b=poctat/P2e1vtMuipN6dvZ7EYnrtw7ZlNAzPlr7/Ey9vZzAF9D05CKbN9mHgTvF7KY
+         KXoIs4EOfZFiOaUsu5Fid+2Zy8jOF0EEf8thDJhNQBBm3AQT4v8utbtjfu/KkhoFCwse
+         oeWPXLZ2jmF/1NGvaYju2HWJ/dqp8atwD839TY6VhqMilr8kaWruzzSZDNQruEqBFP23
+         9AfvCq8osxbzDad7YcmTqaoov9aB2bX5tUtJzxGhGLYmziNReS2EoJMaY3qqxufJsRXc
+         A54D5KgA/fRrP27hL621NzeyATAnt8KLTrOSdQQ04gp3hI9cPxmYOOLX6TnDh5xKYOM7
+         q03w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
-        fh=6nP9BLrHBGbEy9Z8bUwHoZNY4Ae+kDV0T1z6qbYiY6o=;
-        b=jRGNrsKcrxEpVuP0uijxuseF/LG29fWhzY+Tqm9zTU4oc9Q3Ut3ziou31rcGGH2ZKI
-         9LLhEM2HjL4z0rnpVSevyO7lEL2wm61vklMVyp0qwCTKLp84dFoZwnMd0lf9wttKpJXK
-         Q/w7gd98ckXRxaM/fuST9ND8bquYTUrWG984cdyIgSyAf4NAPWjfBX7Z3CledoRQ5LDc
-         C/+hs9uN6ndHOXBLUOQ0ABzJcGnrFlW+q25JD+MXdSzOYtAED+iRoSKeU8YKWAtKE5Ec
-         lc3tnc+L6W0W9G08ikB0bMGr31swC8OxGymMvmNFG9mGNC7B1q+1hcQEyNzlg7sPx7yC
-         80tQ==;
+        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
+        fh=lZ/34jbSpbu7eO0Nsk9VdjKlnbqQfa/ut6RZ7F+V74o=;
+        b=K2Y8F9Ibt8SQI8BGFlIImh7IVmgr8aS/A1nNEF1smNJCM/NDi62OES8HU+MwSQS7GH
+         ERcxYdqfA//OqfLLSjqxF3pj1fHbveqxFYhRGT+m4vIW+lISoXMR/GMf9MiLHjI27Loy
+         DkKhu4MaXt/sFkH8gP78ykOGhhVHTGJFMOIJA+pyfQrNq7++5XtxoXGKHbR+PgG6g9O2
+         2Y1Cz+QfIalHwu0CH3s1bcmZld9tWT73F7ptJ9Kl7ttxR3iB0QdKAWxva4RkMebypPUV
+         zjgqG1Q2fXZJLwHu2/2AYfhq1nqra8v8oETrTj3DuviPHsjIsAzubM3AIsOs43c2ZOx4
+         5eVA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794198840; x=1794803640; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794199307; x=1794804107; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
-        b=cE+TvgUhFThTLr3JE+C1ZlQ+Q55N6LLNa0OrEiv09d8eghwiw2yMa6WZV12mkUrdMl
-         6Mvy1LGFKpPerf4MWw5xwfnNBxN2q7iDFIUUYYvKZUI5mNWTU29YtpXqsIEYqb38YrVC
-         87R94ilSNUWGde3/XNm3SoMTaPSPkCN/sD4icSKv0BxLBA0NndnohpeajtrujTTERf+o
-         cyPO5iVi7O4afFUufZoGNOdUi+2WtqRUVXk7xsGwOd/glIUVjMg4D9DmY/t4Kk7N0J6E
-         5sl3Ulzmz8xDP4ew87+pN+PBjCzZsZyUUn/faa1N5nFEUcx6Hbk6sgeo4HN371cKMSG+
-         kM9g==
+        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
+        b=XL67E+6CWlgF6TMSKOxYtrmXheerI7gxjQHnzgaJ8fObVIn9fOePSsXpAm4jOuofTF
+         JUa9+99lY+OsAfdXl17zL3hpp5FHvDYFIf9QjfViZnwYD0NNrDWWEqJ4hlW67FAJMPQB
+         dQYuwABZR3fG8/wG3BSpt4hD2vPDv0MQ4bZ3WCwMGSQ0wz7vDhFUYrfW6deENy/fRobF
+         G+5XDXtDBwA9XC5kYyw3Mv+ab8M405NnZp86LZuTYErY080guobrxmbyglJuPwyWkK8/
+         xZTCgu0NmSgTNnE2WBiHipzOOotnAdFJ4HoM8GEXJYJWF51slx7oNW8Yovbo8OhkbFHu
+         mwhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794198840; x=1794803640;
+        d=1e100.net; s=20260707; t=1794199307; x=1794804107;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=+KZfMQTyVl02e8ANbgPdMXZ52kWV3/1B9wyIuCkTXxg=;
-        b=ROYq7RBcSkQOiPs4+DkZ0h4Jtajf8Ug55CBuH+g+Te6lZx1uFN9tEmCZWYG5G0Hbx0
-         +uGbXR38askbh3MhVdmi+fgNqO+I5OiEC++hvrWMPok9jujcwPPi73PYLtQsKf/pgEAu
-         mjaPuk1J3AmsljwVsmR9899fZlM16vGsI+HBzpzfGd1bM5Zmu3dBIyu1aVWP6+kQbDwY
-         vViNhYncy0jTNIPIQ5P5P+pkSLFJPVQVZJgQm3Mm5MDnqtL7DZkMfs2SvxmCSbmKwRoU
-         6qA2kFJ1S3ZUVTemP8mZT361ZfJNtWQ803T1hr8S9Ee1BcWAuNBQMvynUg7Pcx/U4HVx
-         y0sA==
-X-Forwarded-Encrypted: i=1; AL+hErHH9BKmRDXtIH4ZEZtjkhB5wFi0yB8MqSeaWIkOxHPbuX+xn/mmHS/yuJGYBAqVINlYQIA7f/Ntk236sjIXYyatpw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+oqe81BsrOBAJy4LMYOW/DfsFLMIoWo3wXxjcvf8/JdZGyRCRd
-	LaBQA/wlK90K0HsV6R9pkfS4KZPY88oXvOFFEhndhP0Jpqshlf7gn+UqyuDVesX5Ja5E4ayJMN8
-	KNwitqfRor7jn+adt6zJn95i6lKKsLVo=
-X-Gm-Gg: AYBFou1RK/pAjhX3Qk7tn1905UFWxC+rvQ09eyo2/2Gwj0A1zwfBoXf0JJkujN9ifyZ
-	pNPYcpU4Ds6j0uq8cSApCal/2xQ1rX6jALQ0T/ywsuEU/7HY3th+Uoh4sidNrq3nV5kmEICWo68
-	0DpqzUcVQ+dlfL51P/BQw+e/zNbdPWCFG0ZLQ2cWENemVE1+Csmfs5aNOU3PKPeuhJBtM0MKd6p
-	E7cByKU7xJ06sKfLIQJLUYPhsn8TKZvpoB4rq/LlmKLzuHycsYLIfbmWFy9Ro2KJgrMqRVGMwz9
-	/dZVwuLwUtfEAma7k5jZR23awvzep5UllAnTIoOunmpXWSV7IAYaviHufLBAGZsJfNH9bxF+Rw/
-	VZwBvhgvjdQH7W0eiO00eVHG/L0rRXUhJ5uM6pn3J3Xx1vrZMc7QGxjgqc8myp/21KLNmK4SWLM
-	9o1/KxNgp8BdlS
-X-Received: by 2002:a17:907:72c2:b0:c2e:4292:d268 with SMTP id
- a640c23a62f3a-c4d6daf7c64mr226694166b.16.1794198840452; Sun, 08 Nov 2026
- 20:34:00 -0800 (PST)
+        bh=27RG8D8CerxM4BmQ9ucwQVVSwZlvRge1TEEkPaNQ8Qk=;
+        b=TSuKLaNyLbziNbskwa1BbLvq8L51gsTP+n9pOkjDqo2hKTH00lPu1ngOePwm3HoqmB
+         SW7Y/93PcGYfQrbh1rxut5//4MUFvW+AU21nRLHNJAsfQaVT4zPp1fAQI9C3mhf0KYSr
+         5z5kNGmi5RjxKQ+g8+CNsGbB9xde2pAjMzDtBv/awRNrzLgsQg+BoffYAV5fH1m0LaDz
+         LaxqciAeEiD1Ov42l6GbiHx5zRW9anMsMswviPg2PvEN/3JF5Se3X1lUlyXxqnWIOb00
+         8/BQCc1sWv1RsCEwd9iy6Tq3ePbhhomwntekImKnnUCGPZmsVGz9VupDNgJe2JyBbqQU
+         yT6g==
+X-Forwarded-Encrypted: i=1; AL+hErFMTl4qE3HHq6Pjl+5jISizWhesaXRJXPz5Orx4bB2ziRH4ZWRcMhCfPxwBzqIva1pznxcSvrtXsDzwDtD3Xbx1dA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8o1z5cEeUyv/jRLhm7dQ0MmkLsPJN9RP9ZDkKyAb6ST2x9oCHb
+	nAqsqecPU06+4SbRidfZhkVcxRQhtqYAG3A/tcIXaTm0RQqdEbYBOzOV8QdaGFaw6GQbIhdO26G
+	YNfsQEnu20V10KugRx0mlx//jnh1Ypobhj5EwMY8rVg==
+X-Gm-Gg: AYBFou2IJlw2QTyZ33BoP/aM0svy0cR63jnlS4nIapfFztTiZ9NsX95sUxoLJ+BhgA+
+	UKgqTEB6eybmZhiBHnBHuuKSMSgd0/UbaoAMbIeXV9UzSCGWMsocjfyFYZf7yOb9IdZHHOng6AH
+	qwE4FvVnpW3cOzvCkqieYv/EsgjUlauqDZV59uYVSAPxE0bpCWXKEOctPDZwT9JGHvWy2+kDd2i
+	8Sn6gnkmHOidwRYwmLRaY6cZA8+0f2uo1Xr/2dFlcnbzM7EZvFoEbDUittmF4F09ISt5JgWlc+c
+	E48outKNTDhb6p9tFCMctqoMHFRyWDpMCl5PZDBuGSEGPnNrOSCCFmv884M65I2EqFsYZCn7iEv
+	3PJ2W7jUJYa5ZlM9t9xdw3R3L+2SXPd25gMAsV4J1QyhiAk8/hmTl6ZD9l0qo07sIlVY=
+X-Received: by 2002:a17:907:2d93:b0:c26:19de:9aec with SMTP id
+ a640c23a62f3a-c4d6dd8cb24mr224378766b.43.1794199307082; Sun, 08 Nov 2026
+ 20:41:47 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -105,13 +104,13 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261005001118.576198-1-rosenp@gmail.com>
-In-Reply-To: <20261005001118.576198-1-rosenp@gmail.com>
+References: <20261005001143.576737-1-rosenp@gmail.com>
+In-Reply-To: <20261005001143.576737-1-rosenp@gmail.com>
 From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 9 Nov 2026 13:33:24 +0900
-X-Gm-Features: AclHuK8JGFlUXZkSE5CgvPvR5Q5pqnVQnyO-MTmGLdNc0lY8Yjx1OxeFaWmjmHc
-Message-ID: <CAAQKjZObmQm1X28cbpjd+dEVx93wfBwKNaaaxpU08o8JeFaZfA@mail.gmail.com>
-Subject: Re: [PATCH] drm/exynos: fimc: allocate formats as a flexible array member
+Date: Mon, 9 Nov 2026 13:41:10 +0900
+X-Gm-Features: AclHuK-aAUizeCRuM8WnAlvp8mvibSB9oiekBPg9ucUpGQvhhZ0l_iKHx8QZ7R4
+Message-ID: <CAAQKjZOm5vA+38XVo5D4qV5B9eRT1seOShk-eFk_Jg_EQPdaOg@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: gsc: allocate formats as a flexible array member
 To: Rosen Penev <rosenp@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
 	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
@@ -131,43 +130,33 @@ Hi,
 osen Penev <rosenp@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
 > The formats array is allocated separately with devm_kcalloc() and only
-> referenced through the fimc_context. Make it a flexible array member at
+> referenced through the gsc_context. Make it a flexible array member at
 > the end of the context and allocate both in one go with struct_size().
 >
 > Annotate it with __counted_by(num_formats) so the array accesses can be
 > bounds checked with FORTIFY_SOURCE and UBSAN_BOUNDS.
 >
 > Assisted-by: LLM
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-The allocation size, initialization order, and format array lifetime
-look correct to me.
-checkpatch.pl reports an error for Assisted-by: LLM like below. Please
-describe the AI assistance in the commit message instead of using this
-trailer.
-
-WARNING: Non-standard signature: Assisted-by:
-#57:
-Assisted-by: LLM
-
-ERROR: Unrecognized email address: 'LLM'
-#57:
-Assisted-by: LLM
-
+The allocation and lifetime changes look reasonable to me, but
+Assisted-by: LLM causes checkpatch.pl to report a non-standard
+signature and an unrecognized email address. Please describe the AI
+assistance in the commit message prose instead.
 
 Thanks,
 Inki Dae
 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c | 17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/e=
-xynos/exynos_drm_fimc.c
-> index 09e33a26caaf..079d24d0671c 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -99,7 +99,6 @@ struct fimc_context {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_gsc.c
+> index d9637ddfcfc4..f1807ef664e1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -99,7 +99,6 @@ struct gsc_context {
 >         void            *dma_priv;
 >         struct device   *dev;
 >         struct exynos_drm_ipp_task      *task;
@@ -175,23 +164,23 @@ xynos/exynos_drm_fimc.c
 >         unsigned int                    num_formats;
 >
 >         void __iomem    *regs;
-> @@ -108,6 +107,7 @@ struct fimc_context {
->         struct fimc_scaler      sc;
+> @@ -110,6 +109,7 @@ struct gsc_context {
 >         int     id;
 >         int     irq;
+>         bool    rotation;
 > +       struct exynos_drm_ipp_formats   formats[] __counted_by(num_format=
 s);
 >  };
 >
->  static u32 fimc_read(struct fimc_context *ctx, u32 reg)
-> @@ -1273,20 +1273,16 @@ static int fimc_probe(struct platform_device *pde=
-v)
->         if (exynos_drm_check_fimc_device(dev) !=3D 0)
->                 return -ENODEV;
+>  /**
+> @@ -1222,21 +1222,19 @@ static int gsc_probe(struct platform_device *pdev=
+)
+>         struct gsc_context *ctx;
+>         int num_formats, ret, i, j;
 >
 > -       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +       num_formats =3D ARRAY_SIZE(fimc_formats) + ARRAY_SIZE(fimc_tiled_=
-formats);
+> +       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_fo=
+rmats);
 > +       ctx =3D devm_kzalloc(dev, struct_size(ctx, formats, num_formats),=
  GFP_KERNEL);
 >         if (!ctx)
@@ -199,30 +188,33 @@ formats);
 >
 > +       ctx->num_formats =3D num_formats;
 > +       formats =3D ctx->formats;
+> +
+>         driver_data =3D device_get_match_data(dev);
 >         ctx->dev =3D dev;
->         ctx->id =3D of_alias_get_id(dev->of_node, "fimc");
+>         ctx->num_clocks =3D driver_data->num_clocks;
+>         ctx->clk_names =3D driver_data->clk_names;
 >
 > -       /* construct formats/limits array */
-> -       num_formats =3D ARRAY_SIZE(fimc_formats) + ARRAY_SIZE(fimc_tiled_=
-formats);
-> -       formats =3D devm_kcalloc(dev, num_formats, sizeof(*formats),
-> -                              GFP_KERNEL);
+> -       num_formats =3D ARRAY_SIZE(gsc_formats) + ARRAY_SIZE(gsc_tiled_fo=
+rmats);
+> -       formats =3D devm_kcalloc(dev, num_formats, sizeof(*formats), GFP_=
+KERNEL);
 > -       if (!formats)
 > -               return -ENOMEM;
 > -
 >         /* linear formats */
->         if (ctx->id < 3) {
->                 limits =3D fimc_4210_limits_v1;
-> @@ -1320,9 +1316,6 @@ static int fimc_probe(struct platform_device *pdev)
->                 formats[j].num_limits =3D num_limits;
+>         for (i =3D 0; i < ARRAY_SIZE(gsc_formats); i++) {
+>                 formats[i].fourcc =3D gsc_formats[i];
+> @@ -1256,9 +1254,6 @@ static int gsc_probe(struct platform_device *pdev)
+>                 formats[j].num_limits =3D driver_data->num_limits;
 >         }
 >
 > -       ctx->formats =3D formats;
 > -       ctx->num_formats =3D num_formats;
 > -
->         /* resource memory */
->         ctx->regs =3D devm_platform_ioremap_resource(pdev, 0);
->         if (IS_ERR(ctx->regs))
+>         /* clock control */
+>         for (i =3D 0; i < ctx->num_clocks; i++) {
+>                 ctx->clocks[i] =3D devm_clk_get(dev, ctx->clk_names[i]);
 > --
 > 2.56.0
 >
