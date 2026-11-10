@@ -1,135 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794264090;
-	b=qJa3bGwUYZuG3TXwXCZT4j59xWjLYLVkVMFpvYGDu6zXDlsXjKFRz5+fiH0CZg9noXQJ
-	 h/WS8CDUr/vZjZV3XjDaoUo/N+gJBQkcTJlx0FE8/rqukoL5UfxR+semgxCYQoGc59/5d
-	 W1EcFaagYiRAU4Wuxc1hPsXIqCrTFI2itvGTY3hO/VIry/Ae62JG6sC67zuxqzXJVLR+y
-	 ZFTkotngGyxdYTnAmZ7h7Q11rjghWC9Uz0h5lJRKS3hLCb+PjvoT2+tixuuRdkjtyR964
-	 ZT8UTdeCmWQ+2Ty0SIg9GKnmC+c9WqqKFU9c+pPVVIPaIkd/lDlr7NIoKlF4siZMrEA==
+	t=1794312329;
+	b=3RZCHyZbkjMpwxeh46XHRv/YFQdfDd52xxXCRsy4zcz4R2i7jM4D9eUKSrpOGIc2WpWm
+	 xdmbxzyHFf0dZELynPSOxxjyxVsrscKsrkLuU2AFxVglD6zfsbsJ2SG8ty3T8G9YGFCe1
+	 wB7JzoA+fPLi4APhRP7hg8yR6ZHpullfq0CNKecyF2o8vvlfP94ChkJCUIzWeyGqTNVxk
+	 NqtQZM7rCaf4xpXIIlUeR3om7euU2T3mYaKNqRDyX9LLvzxf3OSb0I8bdkmNLIh93nA3o
+	 lSqaj7kf++IT/VhmjEEtuzR4Rsitl7QdvEJRjmyCfntQ3RsypqnpU6u+9SojCh4AKww==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794264090;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=vbe6nTsdDhg8Mlze/ClcUGDvjt9uDhFUXXWTuvVdSok=;
-	b=yuaDMYqFb8I/t2z+WxVzoKgqM57N+6r3kNFiWpZtfAxyfnyGKx9Qqvzo88dUXvD31jhU
-	 5ftV1/1BOx3Ja7LonVLgd1H2WJk9YnK5TL1PrgJlkNMWhn1S7PK4AkBenTh6zLMz9BSq+
-	 DLT+j7YO710s0JVuNBg+oymkw3aKRNmC2e+lfzTksIFvRfvigUHA34MvNpu96QTI7oBsc
-	 8zVPRFSikoIsHCiTv6biRiYNctKK/I/n/P94kHcj6DT6NIGcyaKa9FLsrv5q2JDKFwIfl
-	 wbZax3Z5QiRnZTr4eiT3HUhiSvnxQx+FsyH3k/cG3OIVTmp+w5Htu+iZwopwhDJHphQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794312329;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=I5T5peH0PUnCrtzemSjuLVp2+YwXJuyEpiqwvId8VNA=;
+	b=3m883nlvZlku+3VCx1A9+8x05a4rkaKd6Sx0a8aCQSqDrKlDCkVvqjMzVzJtmATbq1z8
+	 CWEVyyjF01e87RVLjlhDnOX9yboEqKntzjBgOkX9eY5GqTPqex05yG+J9sq3FG7P4vmUA
+	 lpJKEX/pa/ctQ7Cn4XTNcwx/tUac4bPUa+6nnNJ+oItq0MvoBXaGeNShz5itKbdaVr2Zc
+	 CbLqrnZ0wsaoxumf+XpILxqINFiyrD6e7yEezEggy+a0NLn7E5sU5kqzE0eb5X9E4ISOz
+	 5vBk40F28a4G3fD/mnWHrX9uQ3zvE+9QvXrhopqr6M1lHEs8qrtc7i2NXQmcQb/BLzw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Rj0Rk2FE;
-	arc=none smtp.remote-ip=198.175.65.18
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=eZ43syDN;
+	arc=none smtp.remote-ip=209.85.208.174
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6090C606A31C;
-	Mon,  9 Nov 2026 22:41:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6090C606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4F606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Nov 2026 12:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6AB4F606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=Rj0Rk2FE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1794264090; x=1825800090;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=loGujMBTdlkfiQk5hWwMHTl07E+9259CEaRMomFVuEY=;
-  b=Rj0Rk2FE7T+NWrkWn326px4ZqLreSM+p93yD36ZR3CaYVpaLxPXFeour
-   y2eiuRXazbcjyLCun02quor2RULbeLyZ1aeraTrdb6K/nT1RvjJjrkC3I
-   duTukWNPQaksAkNBeXaPWF982oD19GHKymcaNdEjDoUxbhyu5hhB9f1E9
-   jjjjre5ptP8tSkT1LaqhXgTrhCafOs0RBQT715zqTlOnhqgwwbFBRoSpA
-   e9Gnc01Pnc16N1fuodfR1ZBduswE1Le0GrSxHj+N2MNaNyMlj6BGzjgUP
-   qIN9HRgizNypPLvyWtT+FNsSegTRYv4zT25jK/xJqzvP4xj5QC3Fb9Lux
-   A==;
-X-CSE-ConnectionGUID: LPR5BJtyTLOO201ZhtgoJg==
-X-CSE-MsgGUID: TrInIqIIR5qc74GJ54Z7oA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3012356"
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="3012356"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 14:41:29 -0800
-X-CSE-ConnectionGUID: WiiU066RQsK4uk0B5ylzZQ==
-X-CSE-MsgGUID: 0Xjwhd9LQHC9A95XLjHjGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,204,1787036400"; 
-   d="scan'208";a="8169672"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2026 14:41:16 -0800
-Date: Tue, 10 Nov 2026 00:41:14 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Frank.Li@oss.nxp.com, Mark Brown <broonie@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Radu Pirea <radu_nicolae.pirea@upb.ro>,
-	CL Wang <cl634@andestech.com>,
-	Ryan Wanner <ryan.wanner@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Han Xu <han.xu@nxp.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, Yixun Lan <dlan@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"open list:FREESCALE DSPI DRIVER" <imx@lists.linux.dev>,
-	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
-	"open list:RENESAS RZ/V2H(P) RSPI DRIVER" <linux-renesas-soc@vger.kernel.org>,
-	"open list:SAMSUNG SPI DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 1/1] spi: use dmaengine_desc_set_callback()
-Message-ID: <avJMCrlbmV6uq9NK@ashevche-desk.local>
-References: <autqC143h7Qf1R9H@ashevche-desk.local>
- <9e39502a-dd17-4fa2-98a3-9019523cb5e8@kernel.org>
- <auuYcS7-YqJKcUbE@ashevche-desk.local>
- <63c24437-4261-4a51-be7e-31ac0759a095@kernel.org>
- <auxGom0XR-Hax9b3@ashevche-desk.local>
- <00390a20-7630-4066-9779-06c8f915a176@kernel.org>
- <auxNmE8yZVP-wL2e@ashevche-desk.local>
- <3dc7277e-2f6b-44a6-9085-2e33d989c1c9@kernel.org>
- <avIJhv7p2v30U8H9@ashevche-desk.local>
- <78833267-f204-4387-9f8c-c7e0d5df59a5@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=eZ43syDN
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3acef9307c7so15208421fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Nov 2026 04:05:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794312326; x=1794917126; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=I5T5peH0PUnCrtzemSjuLVp2+YwXJuyEpiqwvId8VNA=;
+        b=eZ43syDN2nk04TvvWXBmfsqm56sABgP6OslmMZzl4XUYv1Kf8t+BjBWbvNlgK6V2g/
+         7y1hf2vLh4S7d/qbNqFNN/T3URlge1l2qlVnKEofkynJ8lsH2D1Vl2+PzGCWLgb7Xk0a
+         L8a+bpaUTqE09dXf9IalxUi/0gvMaEBWiijLQHoo/0rSuF+hd6NNkVp0OOnjrYkQ/Axw
+         Qs8hP7MaS/jz9JN8y/9jxYqB3c4K/dy6FaaBSQAQwRbuTz14Hr/dynQx3fcFd1qBSB8j
+         KKancvYE/5/oJ1Nn0OmK0X9rknhMAYZFuitGv6bP2IHL/Dz9SdZWhaU40bfFVc9okJgX
+         u0/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794312326; x=1794917126;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=I5T5peH0PUnCrtzemSjuLVp2+YwXJuyEpiqwvId8VNA=;
+        b=pYVLy9OHWsqpqlISBndOq+qyzAavzXihz275E+AKGVhpGeAS8yR0bDcszJLLTDMm2e
+         LaFEz96K7tMzLinexHF5YYSbT5eFYjQht8X3f7VBsv0afzNKBlfBQAtJsZTVKRfHWl1m
+         Ir6KNHHmgOGDZS1c9shY2HRnbrhasFL1c/8QVFHzy7Bh35cCJQmSpQ493WDdzN0RIinv
+         ubWiLR40aqZp0SS7CEV3skMjJu7BEtnarH9IpHaxbpVyVPlhJjdkFsxKf+Al5fy3mbbp
+         SFy0lRpi52EVq7v6bw3XOLEtYgJMEzHAC7BumHCwQzJp7HIRmXp8nqqw/6OCnQjxjaX/
+         Nrzg==
+X-Forwarded-Encrypted: i=1; AL+hErEufMzflbUXB758V7f/ogRdsyYZYYydyIAmlg/x3GXh8QltD1jD4ZXamjhW0ii0OYSDoAfjtW3zmrJkteGi1pTiyQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/PMd9HH0xQKQB7cSHxAPB8L8AQQfEjATu64EPcBnPHjWhuBVYQ
+	Dw4xBj+zUwQXk1wCKV7uKMjLUvksD9C9iRRn5mLORJmGappAa3aQOCQY
+X-Gm-Gg: AYBFou2Rd4sWV67Vvacl+jyrEbkiDAVjQoHWwnqQL+rwHGLi9S4PWBTmX2AcpFoDVNh
+	Qfnqa/FZdzuvBxIaufstm3VN1I7h3Ak1qBU2PQcapnQMM4F2egC3Eb8MtnQksyGXHxVfh/l0MM6
+	Fsy2ALLYKyfIknwB+gM4nH1y3HcL8iT9KlIEMPIUSIFQzOttSVTMzzWlYHeQTvOzSNT2NGrxf7A
+	VqUGFxotP0GIF26NHH+OWD31e1QF4eXd+SuE0NDSfhiYfYCjTuqccd4boeaCGq6DN147FRv7fQn
+	ipXSCgWUgHGvasiaXLelvdwsF685dJMQx5wy7p9MK78JxQX336ndYPmkNhFG3LwylnPYF3hMBE+
+	Q1VALDPwZbs9O1R0WM/vElvMGQI6PyaWqr+xT2JaA6IA7uejo5RfgV6+SE89j3cLL0aLNTfGQex
+	RcBxUUFCp/MfIsUg4Y4tFeSM/+6Ha6UH/TxdQFSUw0dNp69F69KPJvzLI27UhiV5J/gEivDeElU
+	JxjJrU0kfi+UG6I9EWlhj/gkCjqoeZ8tMEMlSIldNbgtT/ttYfmIrFM4igM40gszSBu16iE2Gcw
+	kvrO5annMJd0tTdETK0k+RwwB/tai1qOfm9A2/P9XOFKQxRLm5B34Ac=
+X-Received: by 2002:a05:6512:1302:b0:5c0:4e3:a416 with SMTP id 2adb3069b0e04-5c156e375a3mr617826e87.1.1794312326336;
+        Tue, 10 Nov 2026 04:05:26 -0800 (PST)
+Received: from [10.127.122.226] ([5.195.0.150])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c159702ae0sm240512e87.20.2026.11.10.04.05.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Nov 2026 04:05:25 -0800 (PST)
+Message-ID: <91a4fdf2-638c-442b-be29-59e05c8ba396@gmail.com>
+Date: Tue, 10 Nov 2026 16:05:22 +0400
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -139,40 +92,78 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78833267-f204-4387-9f8c-c7e0d5df59a5@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix HS phy init count imbalance on
+ Exynos2200
+To: Soheyb <soheyb_boulaa@proton.me>, Vinod Koul <vkoul@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20261109221522.2796426-1-soheyb_boulaa@proton.me>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20261109221522.2796426-1-soheyb_boulaa@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 09, 2026 at 11:10:38PM +0100, Krzysztof Kozlowski wrote:
-> On 09/11/2026 18:57, Andy Shevchenko wrote:
-> > On Fri, Nov 06, 2026 at 08:20:33AM +0100, Krzysztof Kozlowski wrote:
-> >>>>
-> >>>> Statement of oversight DOES NOT include "part of the patch".
-> >>>
-> >>> So, it means I MUST from now on REQUIRE a split before reviewing.
-> >>> Right?
-> >>
-> >> Why "from now on"? The reviewer's statement of oversight is worded like
-> >> that since beginning? Also nothing stops you from reviewing parts. We
-> >> discuss the statement of oversight and its result: giving Rb tag. The Rb
-> >> tag is not output of some review, but agreement with statement of
-> >> oversight and performing what is stated there.
-> >>
-> >> You can review parts, but you do not provide Rb tag.
-> > 
-> > No, I'm not going to review something that I may not put Rb tag on.
-> > I can NAK or ignore (or Ack without viewing, but it equals to ignore to me).
-> 
-> That's your call, but you put it on yourself, so do not blame us for "I
-> MUST from now on REQUIRE"...
+On 11/10/26 02:15, Soheyb wrote:
+> exynos2200_usbdrd_utmi_init() calls phy_init() on the high-speed phy,
+> but exynos2200_usbdrd_phy_exit() never calls phy_exit() on it. The init
+> count of the high-speed phy therefore never drops back to zero: after
+> the first init, every later phy_init() of it returns early, and its
+> clocks and supplies stay enabled across an exit of the UTMI phy.
+>
+> When the high-speed phy loses power while the controller is suspended,
+> it is thus not set up again on resume, and the DWC3 core soft reset
+> times out:
+>
+>    dwc3 11210000.usb: DWC3 controller soft reset failed
+>
+> Exit the high-speed phy when the UTMI phy exits, first, in the reverse
+> order of the init.
+>
+> Fixes: cc52a697f87e ("phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm controller")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Soheyb <soheyb_boulaa@proton.me>
+> ---
+> Tested on a Google Pixel 9 (Tensor G4) with an out-of-tree port that
+> uses the Exynos2200 phy ops and powers the USB block off in system
+> sleep: without this change the soft reset failed on the first resume;
+> with it, USB came back after each of two system sleeps. Not tested on
+> Exynos2200 hardware.
+>
+>   drivers/phy/samsung/phy-exynos5-usbdrd.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index 087d552..0bee928 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -1486,6 +1486,13 @@ static int exynos2200_usbdrd_phy_exit(struct phy *phy)
+>   	u32 reg;
+>   	int ret;
+>   
+> +	/*
+> +	 * The UTMI init initializes the high-speed phy; exit it in turn, so
+> +	 * that the next init sets it up again after it lost power.
+> +	 */
 
-No, I don't blame you. It's purely documentation and terminology issue in my
-opinion.
+I think the function is pretty self-explanatory, so could drop the
+comment. Otherwise looks good to me, nice catch!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 
+Best regards,
+Ivaylo
+
+> +	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
+> +		phy_exit(phy_drd->hs_phy);
+> +
+>   	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
+>   	if (ret)
+>   		return ret;
 
