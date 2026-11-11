@@ -1,88 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.238.236.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794391356;
-	b=3TRnP6contuj4VeEBQ+FAmraLpJSrLUzRAABcqB9jADTIxLm4wQimcUqIWXqvdSoHyCu
-	 od7ZLO4ezAGNtkHYsxfl/u8J1WPpqHZkhYbhLpTVOuAfYQ9FPR2bJoGfO0G0qQQK5Oqrb
-	 YqwVE6hUWnpy0ErnuPSnydpZnAycgSGPBIf8B6vA7H6Zl9LXXVXyiwMXUG3G9s+wJMDHS
-	 XFfU+okroekmKQ+AM+BBT9SYSV43Eo7HDdZE4+9nCNkqkMuriPFrcLP8K3Y3+GsrVeGkC
-	 WhU6BdyrzT6jlA3bcUsraal96jFWe4YBgv8Uto18VbnP2ydWEMktgPoWfqk8UlrGsfA==
+	t=1794395988;
+	b=4XeGfvHcCvvw9oMXiqaGTUMxUW9T11Ah3YTQhYLTfMcxPokZhPLd2ctC42MSRjKBgw0i
+	 iuw/PPlCx/HxqWL+2K4IN0Q3JJbbgMOZcr9mmt0Kf+rFsM2j+Zw3wUQPJetpES0z6NJfT
+	 8jqMARN+BrFsfEZH9fbtvGPjd6AmdKuQMcJRVrCzRqvSifxO9DAfF8ZNi+gNxrZIqTDHV
+	 Cyx3tRabqtiHL4DG264YyT+6hCkF+cKaHG3aUOAYPPUFpUPCLqrtYnnQMrctwLdHiOLNU
+	 Oh+EwRuCFHDTTqEuGKvkikdGckNojNm8KQe6tOTDAkuz1ECa0fSexGb+MpKwI5UKiKw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794391356;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794395988;
+	h=DMARC-Filter:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
-	b=acSoLl4ejIFrSJweq7MYHsW4Va70Kg3jIMdtjRpVUYBAcBD9/ShLbmw7qtGRt3NHD45g
-	 wjPCO/Yr4zZ6goXmDZdRERzApJqGtyeWSeIEPmRWET5CYXooKVjf4C74I/rLxNC4AfqzE
-	 btRZq6N02KdppuROlUPGvCYY9KzTbtftK7FDWEDuriNAdtYRe+9UIKnLLU3WOFhF4qJDX
-	 gd0NyVHSprOIR0hcpjc9yRr3SpKCgXGNENexHEZQ8El7H2uNxVXZAg/X5SwbkXyzLFMpa
-	 3q0BMcfplRDKCEsZwXXU08PuEc+yUPOnAx7QZDj0HqeBpPa/dCkU3I8Nh/htcTWes0Q==
+	bh=UGGOSnoQOa8uQR6vbajtQptujNdknjBUZcDCmSIDNdo=;
+	b=5TL6NjrmVTrzwcA+KCiF7blRqQ+tlV5SKvIPt4ozJvKzos/Bakb2Bt7ywaY6wRwyheXe
+	 bt5qTgd0xCzgsfYsTYLEI5FOvdBZpM42KmJQVq+dwg0uevdyXK9eFDjyZxPg8UWfiWm3T
+	 9Ot5KvFwyysRQHfcWhW/CVtbAIs/fQhNtyiadgel2EqN9bDaD2rwNIM3zqQLifOG5L2JR
+	 eap85DsGPhgwyUamMFkqY9+/ErNeL+20tG3G/rYuqeoQfx6+cYiJkRJNZDUoCFFcE1uDx
+	 kPWRMT9ea9YhzmaveoSK/efsudlu5mnMUKxEe1mOkn/ppaeT2gM7C354ryCnyccsfSA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=h0U2KI9H;
-	arc=none smtp.remote-ip=209.85.221.44
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=kemnade.info;
+	spf=pass smtp.mailfrom=kemnade.info;
+	dkim=pass header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QBOWFM3N;
+	arc=none smtp.remote-ip=178.238.236.174
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A7C606A880
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2026 10:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09A7C606A880
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CEF606A321;
+	Wed, 11 Nov 2026 11:19:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 32CEF606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=h0U2KI9H
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48dee593f18so2204043f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2026 02:02:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794391354; x=1794996154; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
-        b=h0U2KI9Ho3jaYsUkDK5Fn9tyFwbypvCXXUNlfq5rS+pYSn4ZWsgiwyV/pdkqvTjDA+
-         z6ZKvdaYbjQ17EYoNNC+EFELKj1jdE59psVlK6fnVag4qu+cTVc6XqNnmtFgh7Vy5Z7X
-         QnwyOkRLsdL4Jc1XSO2j/x3bC7y820cojw8HTyVPpGZTFHQFG3cIdL3eKPfWolG22ZTT
-         uFnol787+UL2MgjSwk6ipu8tWjxFiAh7ey2AtVznp1Q6dsl1U8qFxm1aLzHWt8Qi7DVt
-         MuAgEQ+Md/6RetRneZV8tKuZd+0Ywx02jhUTmncLH4XCZC2HC1En7KBC5mEhZLsjKlEI
-         Unjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794391354; x=1794996154;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
-        b=CK1Q0oZG9f8QFABN1jPxwA7nqK9gLe6ypsxEexVNHlZVLo7fEBfrYRSCvK+pyxzeQ3
-         IMCn557mAUkKmV3bi/q3vpbAYvbWdlzVcq5z52ThS8mCrSLV38mMxYWU3ZTvoV4LXlnI
-         XRybjRGlid7hWpCvf+VzGH/KNaT+62BljbafV22hlHi8ZxUxYB5jykkNHdLLsAtpew/d
-         f9zAIxZnA9iXo3VrjRSuzXBhO4MCjsfUg3HfsiHRPkBs3U0eAzxt+2aUkbcoWp06lrh2
-         5/cO0mSffrlitg8pHUv+8zKEzqBBi1TejXl6xORTdIDqxxsaowlZP0k14kbkR2Ol68BT
-         6Whw==
-X-Forwarded-Encrypted: i=1; AL+hErHc89ilUE86IZ3VuqjtzJBxYylOtBqIbBhvymQGPKEnZROYcnp+kM2Slz8XL8ychfYze+XVtyCFHaWgnZJBdDW0Mw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8QTeha3AOSt7YfeqbomfzrwKRkP47MGS8bp4O+WMF+yRJYsp1q
-	0kSY179buP5yWT8/PsKQjdOSGhUvgCDjqUDfEy/lWvUoowLjw3wGetkbB5HWuFhdOJY=
-X-Gm-Gg: AYBFou2q9ySiZw49RP5FxSHH2Yv++e7VcMgtdtRnLDld76D+loyD5AeUcTn+cKaNvI8
-	3Ep/ATCHePm+bdb6Zmb1JG7xcA++IzEs9BFCnQlMv10ng6KWnSxpre4RdYExkw1QcvgQUooa43P
-	palB8TV1fLp5sQnMdjsuSJRIeBDbc+paIa1nGoUKR7A6WMIZN5Gd0xxI+KHiY/kWMAKsqWnkmdw
-	MhCBzaLYGXeS4Znwxr0yLtKAKds0pHOntRmSao95bR3vqKUhaY6AzCoscKrfJXFxPrUZZCvzXnr
-	73mm1ywuRaUGmWHHJhgYHWFluUSePG7ztOJLT/e7nmglPKtwGDAo+NuWKWaeIUCAQsSFVIGX19j
-	ZWpxxhE4rdddSO3WtyoQCOGfE5eqam2fO03XiXQ8pujRxD+hhZt71oJjC4oqwzy3qdbCr2Z0EUq
-	cx8JtLxWvGCf5jK3YpZNGzvhU5Kijcji/b1Zac9Xzam8E/YN8DgGyfLAmn8Oconk3t8yubGEJOf
-	HijMW5Ecl/QsFZbDfriXkPr1j+RC/wIj3KyRpMAK2/fNamhfPr0lD9TLQh1uNI3tDAZMQ32t1T1
-	eFBXu3B4mdmmJfCHXm7zdfRZXjFS96H7ln1cqbQ6DlPMvA6n4+VvS2QOF2rlUA==
-X-Received: by 2002:a5d:64e3:0:b0:48d:ff71:dd9d with SMTP id ffacd0b85a97d-499c903d741mr3207711f8f.23.1794391354282;
-        Wed, 11 Nov 2026 02:02:34 -0800 (PST)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-499823761f5sm4941304f8f.2.2026.11.11.02.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Nov 2026 02:02:33 -0800 (PST)
-Message-ID: <e7621060-bf25-4677-bfaf-2549fc5e6ea1@linaro.org>
-Date: Wed, 11 Nov 2026 12:02:31 +0200
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.a=rsa-sha256 header.s=20220719 header.b=QBOWFM3N
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=UGGOSnoQOa8uQR6vbajtQptujNdknjBUZcDCmSIDNdo=; t=1794395987; x=1795605587; 
+	b=QBOWFM3NmCqXcWpeEpiAe1sLa7w9smTt2ygsWJvoDwexClILCEuyimAjy2Dszrb3lsYu4Acc/Uu
+	2c6vYi4oIu+hgg+ymTO9QaAf7UP7ZP3OL3Tax6Zb8rzT9A7pywLwZCQnNXt8ysE66/Br8fzvZ1ZWA
+	EW3f7wb/10m3DojJt++RZ/cJIBx/4TDW8smgJurrgvL3p7fLP1eUX3PrmqPN5sOTKz/YStz3jaL4H
+	20DoIqZoybcHHvr0hpzBJjr71aTMyS5F4hLjaIEd1yoM5CspZlFMsTqAliqzPNQgcdKYx3ff/z2Hp
+	I8VsFee+B2mi0pf6N1osXzG9wsT9UQPsgmjQ==;
+Date: Wed, 11 Nov 2026 12:19:24 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ tomi.valkeinen@ideasonboard.com
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Paul Cercueil
+ <paul@crapouillou.net>, Paul Kocialkowski <paulk@sys-base.io>, Linus
+ Walleij <linusw@kernel.org>, Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Albert
+ Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>, Dmitry
+ Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 17/19] drm/omap: dss: don't create a panel_bridge
+Message-ID: <20261111121924.0e54e7e8@kemnade.info>
+In-Reply-To: <20260916-drm-bridge-every-panel-v3-17-83afb4f1a707@bootlin.com>
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+	<20260916-drm-bridge-every-panel-v3-17-83afb4f1a707@bootlin.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,91 +88,132 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [thermal: thermal/linux-next] thermal/drivers/samsung: acpm-tmu:
- Rename platform driver to "exynos-acpm-tmu"
-To: Alexey Klimov <alexey.klimov@linaro.org>, linux-pm@vger.kernel.org,
- Daniel Lezcano <daniel.lezcano@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20261026-acpm-tmu-fixes-v1-11-0637431b7268@linaro.org>
- <179389375857.1009794.283716939057872036.tip-bot2@tip-bot2>
- <DMRYQFZGG5ZI.2T97YA5MCL74Y@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <DMRYQFZGG5ZI.2T97YA5MCL74Y@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 16 Sep 2026 15:45:41 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-
-On 11/11/26 2:42 AM, Alexey Klimov wrote:
-> On Thu Nov 5, 2026 at 3:49 PM GMT, thermal-bot for Tudor Ambarus wrote:
->> The following commit has been merged into the thermal/linux-next branch of thermal:
->>
->> Commit-ID:     ba446bdd27d4a2a6c0cb267f51a6ecc47cf19cf9
->> Gitweb:        https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git//ba446bdd27d4a2a6c0cb267f51a6ecc47cf19cf9
->> Author:        Tudor Ambarus <tudor.ambarus@linaro.org>
->> AuthorDate:    Mon, 26 Oct 2026 16:01:28 
->> Committer:     Daniel Lezcano <daniel.lezcano@kernel.org>
->> CommitterDate: Tue, 03 Nov 2026 19:51:51 +01:00
->>
->> thermal/drivers/samsung: acpm-tmu: Rename platform driver to "exynos-acpm-tmu"
+> Now a panel_bridge is automatically created for every drm_panel and the
+> panel-bridge API is just a deprecated wrapper to access it.
 > 
-> Also, the fix for this problem was sent here earlier:
-> https://lore.kernel.org/linux-samsung-soc/20261020-acpm-thermal-drv-name-fix-v1-1-71f72280583b@linaro.org/
+> Update and simplify the code by just getting a reference to the
+> already-existing bridge using of_drm_get_bridge_by_endpoint().
 > 
-> Why taking this one and ignoring the fix that was sent earlier -- this
-> should be at least explained.
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-I guess it slipped through the cracks, as it did for me.
+This breaks the display on GTA04/OMAPDRM.
+
+Panel is panel-tpo-td028ttec1 attached via DPI, controlled
+via spi_gpio.
+
+I get
+[   12.050201] omapdrm omapdrm.0: [drm] No compatible format found
+[   12.050231] omapdrm omapdrm.0: [drm] Cannot find any crtc or sizes
+
+Workaround:
+rmmod omapdrm
+modprobe omapdrm
+
+Regards,
+Andreas
+
+> ---
+>  drivers/gpu/drm/omapdrm/dss/omapdss.h |  1 -
+>  drivers/gpu/drm/omapdrm/dss/output.c  | 42 ++++-------------------------------
+>  2 files changed, 4 insertions(+), 39 deletions(-)
 > 
->> Rename the platform driver from "gs-tmu" to "exynos-acpm-tmu" to reflect
->> that the ACPM TMU architecture is shared across Samsung Exynos SoCs
->> (such as GS101, AutoV920, and Exynos850) rather than being specific to
->> GS101, matching "exynos-acpm-protocol" in drivers/firmware/samsung/.
->>
->> Suggested-by: Alexey Klimov <alexey.klimov@linaro.org>
+> diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> index 4c22c09c93d5..e3e685c931f1 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> +++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+> @@ -204,7 +204,6 @@ struct omap_dss_device {
+>  	struct dss_device *dss;
+>  	struct drm_bridge *bridge;
+>  	struct drm_bridge *next_bridge;
+> -	struct drm_panel *panel;
+>  
+>  	struct list_head list;
+>  
+> diff --git a/drivers/gpu/drm/omapdrm/dss/output.c b/drivers/gpu/drm/omapdrm/dss/output.c
+> index 6e9bc605ee22..36d37deac802 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/output.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/output.c
+> @@ -12,7 +12,6 @@
+>  #include <linux/of_graph.h>
+>  
+>  #include <drm/drm_bridge.h>
+> -#include <drm/drm_panel.h>
+>  
+>  #include "dss.h"
+>  #include "omapdss.h"
+> @@ -20,40 +19,16 @@
+>  int omapdss_device_init_output(struct omap_dss_device *out,
+>  			       struct drm_bridge *local_bridge)
+>  {
+> -	struct device_node *remote_node;
+> +	struct drm_bridge *bridge;
+>  	int ret;
+>  
+> -	remote_node = of_graph_get_remote_node(out->dev->of_node,
+> -					       out->of_port, 0);
+> -	if (!remote_node) {
+> +	bridge = of_drm_get_bridge_by_endpoint(out->dev->of_node, out->of_port, 0);
+> +	if (IS_ERR(bridge)) {
+>  		dev_dbg(out->dev, "failed to find video sink\n");
+>  		return 0;
+>  	}
+>  
+> -	out->panel = of_drm_find_panel(remote_node);
+> -	if (IS_ERR(out->panel))
+> -		out->panel = NULL;
+> -
+> -	if (!out->panel)
+> -		out->bridge = of_drm_find_and_get_bridge(remote_node);
+> -
+> -	of_node_put(remote_node);
+> -
+> -	if (out->panel) {
+> -		struct drm_bridge *bridge;
+> -
+> -		bridge = drm_panel_bridge_add(out->panel);
+> -		drm_panel_put(out->panel);
+> -		if (IS_ERR(bridge)) {
+> -			dev_err(out->dev,
+> -				"unable to create panel bridge (%ld)\n",
+> -				PTR_ERR(bridge));
+> -			ret = PTR_ERR(bridge);
+> -			goto error;
+> -		}
+> -
+> -		out->bridge = drm_bridge_get(bridge);
+> -	}
+> +	out->bridge = bridge;
+>  
+>  	if (local_bridge) {
+>  		if (!out->bridge) {
+> @@ -65,11 +40,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+>  		out->bridge = drm_bridge_get(local_bridge);
+>  	}
+>  
+> -	if (!out->bridge) {
+> -		ret = -EPROBE_DEFER;
+> -		goto error;
+> -	}
+> -
+>  	return 0;
+>  
+>  error:
+> @@ -79,10 +49,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+>  
+>  void omapdss_device_cleanup_output(struct omap_dss_device *out)
+>  {
+> -	if (out->bridge && out->panel)
+> -		drm_panel_bridge_remove(out->next_bridge ?
+> -					out->next_bridge : out->bridge);
+> -
+>  	drm_bridge_put(out->next_bridge);
+>  	drm_bridge_put(out->bridge);
+>  }
 > 
-> I don't recall suggesting this. Reporting -- yes, but not renaming to
-> "exynos-acpm-tmu".
 
-my apologies, it wasn't intended. If you have a strong opinion on the
-tag type, I guess Daniel can drop it.
-
-> 
-> This was reported months ago and was never fixed in the updated
-> series for acpm-tmu.c.
-> 
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@kernel.org>
->> Link: https://patch.msgid.link/20261026-acpm-tmu-fixes-v1-11-0637431b7268@linaro.org
->> ---
->>  drivers/thermal/samsung/acpm-tmu.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
->> index 42b338d..2324efc 100644
->> --- a/drivers/thermal/samsung/acpm-tmu.c
->> +++ b/drivers/thermal/samsung/acpm-tmu.c
->> @@ -597,7 +597,7 @@ static const struct dev_pm_ops acpm_tmu_pm_ops = {
->>  
->>  static struct platform_driver acpm_tmu_driver = {
->>  	.driver = {
->> -		.name   = "gs-tmu",
->> +		.name   = "exynos-acpm-tmu",
-> 
-> It is minor but it potentially clashes with exynos-acpm-tmu firmware
-
-There's no driver name for the firmware tmu commands helpers but I see
-your point.
-
-> file name. All other names in file acpm-tmu.c are "acpm-tmu".
-
-I think "exynos-acpm-tmu" is fine, it aligns with "exynos-acpm-protocol"
-from drivers/firmware/samsung/exynos-acpm.c. I guess you may rename
-"acpm-clocks" (drivers/clk/samsung/clk-acpm.c) to "exynos-acpm-clocks",
-but I wouldn't bother too much. If you have a strong opinion on
-"acpm-tmu" send a patch on top please.
-
-Cheers,
-ta
