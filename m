@@ -1,60 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.84.56
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794367443;
-	b=BpgB9PvtpVgeckBwmvl4pT3iluO/qNC/mB/TuDHckmXyLAOEhWdcoltgHQ2nX3WPJONZ
-	 K9H6fAtf/fZc461ZDl/HJrHTaoBfRZs1SgDP9LSEbAGyIt/9qUuxkLQyyFemuwwYrU8RR
-	 KM6EyvqGddMDqdX+rviSwgA/d++x9wND7YQcINHMsEu1xiFJgKXaX16PUv4mWhdQ97JMe
-	 8dqXK3BdOLjzzvRLjElzwwnv/ccIENHb4L/OkvLqJddi7Ev6V4a7y4bSkI+I07MsrPd/7
-	 sHipiVtW289LviiZzcvgHGSXRVUGyTvLZSJCXoKuir6/VgDiqYyiY/FF3YTL1dp5Jbg==
+	t=1794376503;
+	b=TxARNOFsCqGj2NoFfAhDUW5AbOgIQ0IIVbYW89vFeDu0AXsrWqRr3CeaxaA9q4bzsIF8
+	 /bWL0Ax/v88ASl/zmVLhYJ1a9H+5J67Rx4aIDdgqDxcpLFothGdTGQ95CC2FQd1sgSjpp
+	 zHOigoip974WhIkuq78HolD7D6Qc8M+G57DuGRRqY0CorlIIihlNlAGavz6H83AZ185WT
+	 iIE6sZtSwfLK0/HjiVgKgSTyFikXB9GttHh2IFi5fdfsFcFRzUheBPRgy+Fv2zGCG/cI4
+	 ieWj3HBEqlY08xsU6S05qxzd+pH9TX3N2U7lprSly16BtVqBfe7RhX8ZxrVr98V5gKQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794367443;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=0P2VV1oALOP/3gmFL87eTvjlTzFKQUaWGHBRZ3suqaQ=;
-	b=23N6F/yFsw3lPIznXq95ghOvanSh6RQceiBlLZ4bwfjTdX6uvNUwN9z7D+Bhocy6jID+
-	 86K8rpu1vzhnIEAQhf33T8B67BCVtGTWiFmkXdgjzIWxrMs+7HZSpJZ1dMd1im3amdqnI
-	 C5/SxlaZ4i9scp4O/c9KPr6GtuKe5k0QCTpGhroi1z/8z6d3rwaSUDR9LAgkhg+0rx6bJ
-	 iL5fBtYWDQ1o3XQFQZ3CVKoJrmmeM+MuvTTsYAf6bRaVzZsxPCEzumJVoG0ptzoI5VOED
-	 iqZG2X2MQmpn7Qth+eo+skZJs9mj2It0dfdzg1GVX8hvAC4Haehj16ry5IFVe1u1qiw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794376503;
+	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:Mime-Version:
+	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:Cc:To:From:
+	 Subject:X-Mailer:References:In-Reply-To:X-Last-TLS-Session-Version;
+	bh=pfbacooIO8f3wisdaRiyyaGqgo+54PzHGy2pQaUsY+c=;
+	b=FH+DLemYAr8oIYr/FchCRcMgUxW92IrW2QINWXRFKEykqfhryq1H7g/km5gIiqti4xp2
+	 ighC+dNrf9EI3XmUO9e/+HIkoeMRZHzwfy5tMtC20M0w0b9JF1QOS5vyBjW4dmn3+YVKJ
+	 d8LAvAEOgaw7YXfuInuaVRFBM6aY9TnfO4VbWunxCRQKDAWaKy6I4W5eLFc3ohTOGt8dA
+	 JypIpSlI3b0T03vN+Q4cGdmxCtLFHFVUfbMCfSwnXXZWTex6f3pLjDV+3UQxxKmhKtgmL
+	 0SMzEIu8PsPYPWLIF1DWhfUbauJk9oibC481aRpJ4AgoVVTIktNhHMerjFvCkxwB9AQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=proton.me;
-	spf=pass smtp.mailfrom=proton.me;
-	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=sXl6Ca3B;
-	arc=none smtp.remote-ip=185.70.43.16
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dmarc=pass header.from=bootlin.com;
+	spf=pass smtp.mailfrom=bootlin.com;
+	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=yNbP9gNq;
+	arc=none smtp.remote-ip=185.246.84.56
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37357606A32A;
-	Wed, 11 Nov 2026 03:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 37357606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6342B606A326;
+	Wed, 11 Nov 2026 05:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6342B606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=sXl6Ca3B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1794367441; x=1794626641;
-	bh=0P2VV1oALOP/3gmFL87eTvjlTzFKQUaWGHBRZ3suqaQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=sXl6Ca3BJ9dUwcv9XKERie1ur21D2I+R7/jLiIire0v4jz94N9xKkpmbV1b8lgJ1C
-	 CXkNHxXQpSWaMck0+AnNTKXX2uJ9dNj93hmQbOKZOOctAOGpidmgKTcyy+NhArS2s+
-	 l7WcDv/b7PkAqjKwj1edYX59Ut1IfAfA3VAvj4lyyTRdSjsgdVgojIcZEGTsrC7L0O
-	 aordiuNL98xNSlPVdkfbxOkdxQfcxCA+2jXBtDZgTBaB4AG67UQYty23wcIphIpxhk
-	 7ZnIJatD/KMBeeMyuRKiRmMP8QCTsOJ1vlmCO2D7SNFnslld8+Q2EWKBD4cGWwxgNL
-	 wCVeTfhhELVeA==
-Date: Wed, 11 Nov 2026 03:23:55 +0000
-To: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-From: Soheyb <soheyb_boulaa@proton.me>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Soheyb <soheyb_boulaa@proton.me>, stable@vger.kernel.org
-Subject: [PATCH v2 3/3] phy: exynos5-usbdrd: fix HS phy init count imbalance on Exynos2200
-Message-ID: <20261111032309.3365794-4-soheyb_boulaa@proton.me>
-In-Reply-To: <20261111032309.3365794-1-soheyb_boulaa@proton.me>
-References: <20261111032309.3365794-1-soheyb_boulaa@proton.me>
-Feedback-ID: 140697376:user:proton
-X-Pm-Message-ID: 5d696f9f01aced19a70b4608e0bcbfc155d0b32a
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=yNbP9gNq
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 061011A161B;
+	Wed, 11 Nov 2026 05:54:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B7121601AD;
+	Wed, 11 Nov 2026 05:54:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA75111BC0758;
+	Wed, 11 Nov 2026 06:54:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1794376491; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=pfbacooIO8f3wisdaRiyyaGqgo+54PzHGy2pQaUsY+c=;
+	b=yNbP9gNqUTcBluDPTUGVBT9Sv+/GUwXc/OVvJz1InwCOkT3SDXmol6kIyZj6kX3Yq1NzGH
+	m+7vDJygTh4Aeo6ekK8CD2u9W7d6Fobhkef2pBoshtjxbvwZhaFK264cj/tLT7fgNV6x78
+	ZUPWtjg+/hKGnEpqW3ry2LwfenlL1Vnpfsx+Duk2T3/ZhtgEL63TIp90jEpCcqg3mwkQte
+	XvhXHpQreSW8ZhjjAEgEfPu3744zKJ6yYUnEtxerbgkrN+nhLUAP2VnK8ZqLwE40Hqa9Gw
+	2IyI3JXe2VizQhauO617rdUjCPI8djrehwuV7EPN2sl1qfiuh+n75Opl2PpZow==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -63,64 +58,96 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Nov 2026 06:54:25 +0100
+Message-Id: <DMS5DC411M21.387583J8N08R0@bootlin.com>
+Cc: "Linus Walleij" <linusw@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, "Chen-Yu Tsai" <wens@kernel.org>, "Florian
+ Fainelli" <florian.fainelli@broadcom.com>, "Broadcom internal kernel review
+ list" <bcm-kernel-feedback-list@broadcom.com>, "Ray Jui"
+ <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>, "Marek Vasut"
+ <marek.vasut+renesas@gmail.com>, "James Ogletree"
+ <jogletre@opensource.cirrus.com>, "Fred Treven" <fred.treven@cirrus.com>,
+ "Ben Bright" <ben.bright@cirrus.com>, "David Rhodes"
+ <david.rhodes@cirrus.com>, "Richard Fitzgerald" <rf@opensource.cirrus.com>,
+ "Support Opensource" <support.opensource@diasemi.com>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Tim Harvey"
+ <tharvey@gateworks.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Charles Keepax" <ckeepax@opensource.cirrus.com>, "Sven Peter"
+ <sven@kernel.org>, "Janne Grunau" <j@jannau.net>, "Neal Gompa"
+ <neal@gompa.dev>, "Chanwoo Choi" <cw00.choi@samsung.com>, "Mathieu
+ Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Saravanan Sekar" <sravanhome@gmail.com>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Frank Li" <Frank.Li@nxp.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>,
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "Aaro
+ Koskinen" <aaro.koskinen@iki.fi>, "Andreas Kemnade" <andreas@kemnade.info>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Roger Quadros" <rogerq@kernel.org>,
+ "Tony Lindgren" <tony@atomide.com>, "Matti Vaittinen"
+ <mazziesaccount@gmail.com>, "Orson Zhai" <orsonzhai@gmail.com>, "Baolin
+ Wang" <baolin.wang@linux.alibaba.com>, "Chunyan Zhang"
+ <zhang.lyra@gmail.com>, "Fabrice Gasnier" <fabrice.gasnier@foss.st.com>,
+ "Maxime Coquelin" <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
+ <alexandre.torgue@foss.st.com>, "Jernej Skrabec"
+ <jernej.skrabec@gmail.com>, "Samuel Holland" <samuel@sholland.org>, "Liviu
+ Dudau" <liviu.dudau@arm.com>, "Sudeep Holla" <sudeep.holla@kernel.org>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Heiko
+ Stuebner" <heiko@sntech.de>, <mfd@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <patches@opensource.cirrus.com>, <linux-rpi-kernel@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <asahi@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
+ <imx@lists.linux.dev>, <linux-omap@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
+ <linux-rockchip@lists.infradead.org>
+To: =?utf-8?b?VXdlIEtsZWluZS1Lw7ZuaWcgKFRoZSBDYXBhYmxlIEh1Yik=?=
+ <u.kleine-koenig@baylibre.com>, "Lee Jones" <lee@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v4 19/20] mfd: Unify style of of_device_id arrays
+X-Mailer: aerc 0.22.0
+References: <cover.1794347059.git.u.kleine-koenig@baylibre.com>
+ <2cd7c4695edff6b711f8c77ae468d295bb910cdb.1794347059.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <2cd7c4695edff6b711f8c77ae468d295bb910cdb.1794347059.git.u.kleine-koenig@baylibre.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-exynos2200_usbdrd_utmi_init() calls phy_init() on the high-speed phy,
-but exynos2200_usbdrd_phy_exit() never calls phy_exit() on it. The init
-count of the high-speed phy therefore never drops back to zero: after
-the first init, every later phy_init() of it returns early, and its
-clocks and supplies stay enabled across an exit of the UTMI phy.
+On Tue Nov 10, 2026 at 10:54 PM CET, Uwe Kleine-K=C3=B6nig (The Capable Hub=
+) wrote:
+> These arrays already mostly match the most used and generally
+> recommended coding style. That is:
+>
+>  - no comma after the list terminator;
+>  - a comma after an initializer if (and only if) the closing } is not
+>    directly following;
+>  - no explicit zeros in the list terminator;
+>  - a space after an opening { and before a closing }, a single space in
+>    the list terminator;
+>
+> Adapt the offenders accordingly.
+>
+> Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org> # for Maxim MA=
+X77759
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+> Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> # =
+max7360
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@b=
+aylibre.com>
 
-When the high-speed phy loses power while the controller is suspended,
-it is thus not set up again on resume, and the DWC3 core soft reset
-times out:
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # max*
 
-  dwc3 11210000.usb: DWC3 controller soft reset failed
-
-Exit the high-speed phy when the UTMI phy exits, last, once the rest of
-the exit has succeeded: the phy core counts a failed exit as no exit,
-so the high-speed phy has to stay initialized along with the UTMI phy.
-
-Fixes: cc52a697f87e ("phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm co=
-ntroller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Soheyb <soheyb_boulaa@proton.me>
----
-v2: the high-speed phy exits last, once the rest of the exit has
-succeeded, after Sashiko's review of v1; v1 exited it first. The comment
-is dropped, after Ivaylo's review of v1. His Acked-by of v1 is left
-out, since the exit has moved.
-
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung=
-/phy-exynos5-usbdrd.c
-index cf0597a..041a555 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1510,8 +1510,15 @@ static int exynos2200_usbdrd_phy_exit(struct phy *ph=
-y)
- =09clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-=20
- =09exynos5_usbdrd_phy_isol(inst, true);
--=09return regulator_bulk_disable(phy_drd->drv_data->n_regulators,
--=09=09=09=09      phy_drd->regulators);
-+=09ret =3D regulator_bulk_disable(phy_drd->drv_data->n_regulators,
-+=09=09=09=09     phy_drd->regulators);
-+=09if (ret)
-+=09=09return ret;
-+
-+=09if (inst->phy_cfg->id =3D=3D EXYNOS5_DRDPHY_UTMI)
-+=09=09return phy_exit(phy_drd->hs_phy);
-+
-+=09return 0;
- }
-=20
- static const struct phy_ops exynos2200_usbdrd_phy_ops =3D {
---=20
-2.56.0
-
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
