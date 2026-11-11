@@ -1,89 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794378658;
-	b=Nhtv/avZ9Eouvw3L39CuiqkLj/kEqbUaVinqxzXzXv7XLDT4YfDfAsS3dTlaP8Yz9z3+
-	 LVhbScwzNtDbrHfQmej/lX07HQ7muhEJ6Wu5CDC3cbz4fqNYioz1vhehPP7P4zEVG1U0q
-	 Fgc7Xsj8jHkN6bAO3d0lbuJXEqkARsk4HDHBk5t/obBqX4Mmj1/50WzcQE+W/TdEX2aKs
-	 vs+nUkovYDeRNO55/iKH3CYp5a+i1ytWE2QWp23SDypmyIlTi2ffj8DTsPlYzFwO6XlY6
-	 TWrmOlYP8zoGBrE4dCl3Zd5ybZNoL7fu9L/PaDX+34K0eEAfSOtDSeGSHKzxPDG5YfQ==
+	t=1794391356;
+	b=3TRnP6contuj4VeEBQ+FAmraLpJSrLUzRAABcqB9jADTIxLm4wQimcUqIWXqvdSoHyCu
+	 od7ZLO4ezAGNtkHYsxfl/u8J1WPpqHZkhYbhLpTVOuAfYQ9FPR2bJoGfO0G0qQQK5Oqrb
+	 YqwVE6hUWnpy0ErnuPSnydpZnAycgSGPBIf8B6vA7H6Zl9LXXVXyiwMXUG3G9s+wJMDHS
+	 XFfU+okroekmKQ+AM+BBT9SYSV43Eo7HDdZE4+9nCNkqkMuriPFrcLP8K3Y3+GsrVeGkC
+	 WhU6BdyrzT6jlA3bcUsraal96jFWe4YBgv8Uto18VbnP2ydWEMktgPoWfqk8UlrGsfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794378658;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794391356;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=UkJcxjLHhm0Y+CDL9JRRl5rrZMoXUbMeNekZv0BizMY=;
-	b=UooVy9ieVEYKtU10XAsvMPu4wtIGEegw6rOF5vC/tbZ4AATtPxag6mvGVBni7eSBz9DK
-	 EHX7FdTQ1mDreud43VPhc98PeIOpJqK7wf3LgEvQjyUJJ8rSMpwtEFPoLMU38j1xIdMMc
-	 hg7CS5HYNvqdWbjYBGBi6e5yqhChknnirpajzN6kGPMCn36X0dPgFBLdaW88zp4ulVYzw
-	 l5QG1iSY7Q2hQSTHywO1Z5PQVkwW30tVCh0Gj4PKUub7LmhdxHybaW7FgDElZeH1BY4jV
-	 /0SZAoDCCG5Dwrck8utIHD1FaRbn5pR5YJTQMEcXtnVinmozv/UcrS7dbWMmjG3dxVQ==
+	bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
+	b=acSoLl4ejIFrSJweq7MYHsW4Va70Kg3jIMdtjRpVUYBAcBD9/ShLbmw7qtGRt3NHD45g
+	 wjPCO/Yr4zZ6goXmDZdRERzApJqGtyeWSeIEPmRWET5CYXooKVjf4C74I/rLxNC4AfqzE
+	 btRZq6N02KdppuROlUPGvCYY9KzTbtftK7FDWEDuriNAdtYRe+9UIKnLLU3WOFhF4qJDX
+	 gd0NyVHSprOIR0hcpjc9yRr3SpKCgXGNENexHEZQ8El7H2uNxVXZAg/X5SwbkXyzLFMpa
+	 3q0BMcfplRDKCEsZwXXU08PuEc+yUPOnAx7QZDj0HqeBpPa/dCkU3I8Nh/htcTWes0Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=q8MfenWJ;
-	arc=none smtp.remote-ip=209.85.167.46
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=h0U2KI9H;
+	arc=none smtp.remote-ip=209.85.221.44
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5AB606A339
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2026 06:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC5AB606A339
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A7C606A880
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2026 10:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 09A7C606A880
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=q8MfenWJ
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5bccb867d6fso3483376e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Nov 2026 22:30:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=h0U2KI9H
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-48dee593f18so2204043f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Nov 2026 02:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794378656; x=1794983456; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794391354; x=1794996154; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UkJcxjLHhm0Y+CDL9JRRl5rrZMoXUbMeNekZv0BizMY=;
-        b=q8MfenWJx5XY+TGwTQqOMA9IioS/+jQFrJaSOqEj2B2Nw0EST+CsNCV/0H0YPfNEL9
-         nHqE3QYt1KORTKw1S86eT58Z4jXoa6fAXerpgL7M43F/OOJwDBM3pGqrF83epX2NtvOj
-         /cghsAKcKAg75f47lM8eZWkNHCzqBzn8OusFM26vIo8157GDB336VSbC3kqoOOx21AG6
-         65Hkl3s/ajLT/mG1GuuyfqGwlxPeqbPCPKN3Q9u+Biz5EinXSwBWEdeBuzsmiYfa0juK
-         SiwD/4+l1X+DWBP5foJhYz73lqI0X0pkWnNvgjIe9fM5na0OecKldRa7exDPBQvTZr0d
-         GswQ==
+        bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
+        b=h0U2KI9Ho3jaYsUkDK5Fn9tyFwbypvCXXUNlfq5rS+pYSn4ZWsgiwyV/pdkqvTjDA+
+         z6ZKvdaYbjQ17EYoNNC+EFELKj1jdE59psVlK6fnVag4qu+cTVc6XqNnmtFgh7Vy5Z7X
+         QnwyOkRLsdL4Jc1XSO2j/x3bC7y820cojw8HTyVPpGZTFHQFG3cIdL3eKPfWolG22ZTT
+         uFnol787+UL2MgjSwk6ipu8tWjxFiAh7ey2AtVznp1Q6dsl1U8qFxm1aLzHWt8Qi7DVt
+         MuAgEQ+Md/6RetRneZV8tKuZd+0Ywx02jhUTmncLH4XCZC2HC1En7KBC5mEhZLsjKlEI
+         Unjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794378656; x=1794983456;
+        d=1e100.net; s=20260707; t=1794391354; x=1794996154;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=UkJcxjLHhm0Y+CDL9JRRl5rrZMoXUbMeNekZv0BizMY=;
-        b=Cw/S1kYuc9r1pdyvCNu+tDSYQNwTfG0YIUFOc5AkfhFhS+NW0mVoMgD3Pzl5Snt7RJ
-         kL+8CJvUC0iIPQhvRIt/5aWuLmWYc3Bt2uAtLRZ3glB7bhBaDYRuowYef43687F6/k7V
-         8sSUvKFBmkFchayqCXIi7bvYoKeeuM6Vd0aGdKXmo5mBC86Pj2aWZjnRCn9MaxB+p+wM
-         eUbdisv7j/9OXMyvJQtOcgz6E1hdjoXi0FO5Ar36Pd4Lp3eLGjsFP5amm670u6uwr+RX
-         jktMs2neU/Y9QLu79OY0Zj5Hj5/8j++N3jVTCErOTy1Ymju8sXkIb1jjL7UYU37/2qPQ
-         f/zg==
-X-Forwarded-Encrypted: i=1; AL+hErGEUGXjL7VmrflJ4KMDECPbvePMP1rNQfT2/fFQvEeij3Aa7fflSmK51cIcZwTU/yvQkeR/7BbbVtBHzKRqRgZT5g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/wQVk42p2+sUjZtD25Vxb2iQBNUMTyO2vkiRbno40h28Xs9k5Q
-	hsBPhNYu4wsJVETgzgTdw7Z6fNcKESItDiHXRlb62i7lzL7jrd0NSmD1
-X-Gm-Gg: AYBFou3T4bwrn2EtZo9tsFIB2dA7NnlC1qoEYyBRq7q2jxjaPWHP0xVFSxCYJkz4jmJ
-	hvx7IVO/CELmpDeR15tfiN9g/CWCCeY1TuhMsEsbUxvJtppFYsseCqSk11a2bJ2BA/fXOpeDCgv
-	nELGuHn/BTdYnIWvvl6+3foKmSBepzWfa3HuZK/iWJXG9sgCUM/dDsXK/AcJ+b99f1SPAzSmNB0
-	wHXwvbEmNNSUbBAWaOLdVqVF1lMVEE4xkgXaBnGGw1Dyoha2NhVOgbytbbXpKt8GAqHTZAT2O5d
-	/7+wGwHehD+oGZJk8XOxv8qmZqxOaO0bxLHgKqwkp9IAYUzee+sNA8R2xIohtNgECqaqSokDVfN
-	8jJlQBaEOOW7uYIC546sZVcC4DMzdKo1LWtAiJ95o3Qzny85fWBS0NR+L91SOqv/Uqhc8T0ho1u
-	+vtBdR7hA0rweJ/sgpPgKLmI3leB5rn1FaZm10ggohHe5JTn1OVGQt8j10PO/kTHQ031f/ysgdO
-	L5JVLrGzWiML1pmQoZwhZhFoowwaw2LjlNwkNtfs6otT1Fv6Ygr6fbkO3uR4vFp4pOoplYr0uDG
-	PnKJ8uN+PBLOtXkQ3SL3cj6dqDsrSlB9mKiH58/T74eubzRG/3RGuuoCPmOkMJ9dmO0iI0fULf+
-	K4NGZiMbzXQ==
-X-Received: by 2002:ac2:51ce:0:b0:5c1:5974:8a54 with SMTP id 2adb3069b0e04-5c15d545536mr529421e87.5.1794378655623;
-        Tue, 10 Nov 2026 22:30:55 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c157bb7529sm811767e87.66.2026.11.10.22.30.51
+        bh=6Uf8NjTATLaSx0T6xJbOfk8n0GZJkRQt+2l2OmlV7/s=;
+        b=CK1Q0oZG9f8QFABN1jPxwA7nqK9gLe6ypsxEexVNHlZVLo7fEBfrYRSCvK+pyxzeQ3
+         IMCn557mAUkKmV3bi/q3vpbAYvbWdlzVcq5z52ThS8mCrSLV38mMxYWU3ZTvoV4LXlnI
+         XRybjRGlid7hWpCvf+VzGH/KNaT+62BljbafV22hlHi8ZxUxYB5jykkNHdLLsAtpew/d
+         f9zAIxZnA9iXo3VrjRSuzXBhO4MCjsfUg3HfsiHRPkBs3U0eAzxt+2aUkbcoWp06lrh2
+         5/cO0mSffrlitg8pHUv+8zKEzqBBi1TejXl6xORTdIDqxxsaowlZP0k14kbkR2Ol68BT
+         6Whw==
+X-Forwarded-Encrypted: i=1; AL+hErHc89ilUE86IZ3VuqjtzJBxYylOtBqIbBhvymQGPKEnZROYcnp+kM2Slz8XL8ychfYze+XVtyCFHaWgnZJBdDW0Mw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8QTeha3AOSt7YfeqbomfzrwKRkP47MGS8bp4O+WMF+yRJYsp1q
+	0kSY179buP5yWT8/PsKQjdOSGhUvgCDjqUDfEy/lWvUoowLjw3wGetkbB5HWuFhdOJY=
+X-Gm-Gg: AYBFou2q9ySiZw49RP5FxSHH2Yv++e7VcMgtdtRnLDld76D+loyD5AeUcTn+cKaNvI8
+	3Ep/ATCHePm+bdb6Zmb1JG7xcA++IzEs9BFCnQlMv10ng6KWnSxpre4RdYExkw1QcvgQUooa43P
+	palB8TV1fLp5sQnMdjsuSJRIeBDbc+paIa1nGoUKR7A6WMIZN5Gd0xxI+KHiY/kWMAKsqWnkmdw
+	MhCBzaLYGXeS4Znwxr0yLtKAKds0pHOntRmSao95bR3vqKUhaY6AzCoscKrfJXFxPrUZZCvzXnr
+	73mm1ywuRaUGmWHHJhgYHWFluUSePG7ztOJLT/e7nmglPKtwGDAo+NuWKWaeIUCAQsSFVIGX19j
+	ZWpxxhE4rdddSO3WtyoQCOGfE5eqam2fO03XiXQ8pujRxD+hhZt71oJjC4oqwzy3qdbCr2Z0EUq
+	cx8JtLxWvGCf5jK3YpZNGzvhU5Kijcji/b1Zac9Xzam8E/YN8DgGyfLAmn8Oconk3t8yubGEJOf
+	HijMW5Ecl/QsFZbDfriXkPr1j+RC/wIj3KyRpMAK2/fNamhfPr0lD9TLQh1uNI3tDAZMQ32t1T1
+	eFBXu3B4mdmmJfCHXm7zdfRZXjFS96H7ln1cqbQ6DlPMvA6n4+VvS2QOF2rlUA==
+X-Received: by 2002:a5d:64e3:0:b0:48d:ff71:dd9d with SMTP id ffacd0b85a97d-499c903d741mr3207711f8f.23.1794391354282;
+        Wed, 11 Nov 2026 02:02:34 -0800 (PST)
+Received: from [10.11.12.111] ([79.115.63.240])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-499823761f5sm4941304f8f.2.2026.11.11.02.02.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Nov 2026 22:30:54 -0800 (PST)
-Message-ID: <0a520efd-ac3a-47bc-b37b-11df8263fb5f@gmail.com>
-Date: Wed, 11 Nov 2026 08:30:51 +0200
+        Wed, 11 Nov 2026 02:02:33 -0800 (PST)
+Message-ID: <e7621060-bf25-4677-bfaf-2549fc5e6ea1@linaro.org>
+Date: Wed, 11 Nov 2026 12:02:31 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -94,97 +93,90 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 19/20] mfd: Unify style of of_device_id arrays
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
- <u.kleine-koenig@baylibre.com>, Lee Jones <lee@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Chen-Yu Tsai <wens@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- James Ogletree <jogletre@opensource.cirrus.com>,
- Fred Treven <fred.treven@cirrus.com>, Ben Bright <ben.bright@cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Support Opensource <support.opensource@diasemi.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Tim Harvey <tharvey@gateworks.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Charles Keepax <ckeepax@opensource.cirrus.com>, Sven Peter
- <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Saravanan Sekar <sravanhome@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
- <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
- mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
- linux-rpi-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-rockchip@lists.infradead.org
-References: <cover.1794347059.git.u.kleine-koenig@baylibre.com>
- <2cd7c4695edff6b711f8c77ae468d295bb910cdb.1794347059.git.u.kleine-koenig@baylibre.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <2cd7c4695edff6b711f8c77ae468d295bb910cdb.1794347059.git.u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [thermal: thermal/linux-next] thermal/drivers/samsung: acpm-tmu:
+ Rename platform driver to "exynos-acpm-tmu"
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-pm@vger.kernel.org,
+ Daniel Lezcano <daniel.lezcano@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20261026-acpm-tmu-fixes-v1-11-0637431b7268@linaro.org>
+ <179389375857.1009794.283716939057872036.tip-bot2@tip-bot2>
+ <DMRYQFZGG5ZI.2T97YA5MCL74Y@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <DMRYQFZGG5ZI.2T97YA5MCL74Y@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/11/2026 23:54, Uwe Kleine-König (The Capable Hub) wrote:
-> These arrays already mostly match the most used and generally
-> recommended coding style. That is:
+
+
+On 11/11/26 2:42 AM, Alexey Klimov wrote:
+> On Thu Nov 5, 2026 at 3:49 PM GMT, thermal-bot for Tudor Ambarus wrote:
+>> The following commit has been merged into the thermal/linux-next branch of thermal:
+>>
+>> Commit-ID:     ba446bdd27d4a2a6c0cb267f51a6ecc47cf19cf9
+>> Gitweb:        https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git//ba446bdd27d4a2a6c0cb267f51a6ecc47cf19cf9
+>> Author:        Tudor Ambarus <tudor.ambarus@linaro.org>
+>> AuthorDate:    Mon, 26 Oct 2026 16:01:28 
+>> Committer:     Daniel Lezcano <daniel.lezcano@kernel.org>
+>> CommitterDate: Tue, 03 Nov 2026 19:51:51 +01:00
+>>
+>> thermal/drivers/samsung: acpm-tmu: Rename platform driver to "exynos-acpm-tmu"
 > 
->   - no comma after the list terminator;
->   - a comma after an initializer if (and only if) the closing } is not
->     directly following;
->   - no explicit zeros in the list terminator;
->   - a space after an opening { and before a closing }, a single space in
->     the list terminator;
+> Also, the fix for this problem was sent here earlier:
+> https://lore.kernel.org/linux-samsung-soc/20261020-acpm-thermal-drv-name-fix-v1-1-71f72280583b@linaro.org/
 > 
-> Adapt the offenders accordingly.
+> Why taking this one and ignoring the fix that was sent earlier -- this
+> should be at least explained.
+
+I guess it slipped through the cracks, as it did for me.
 > 
-> Reviewed-by: André Draszik <andre.draszik@linaro.org> # for Maxim MAX77759
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> # max7360
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+>> Rename the platform driver from "gs-tmu" to "exynos-acpm-tmu" to reflect
+>> that the ACPM TMU architecture is shared across Samsung Exynos SoCs
+>> (such as GS101, AutoV920, and Exynos850) rather than being specific to
+>> GS101, matching "exynos-acpm-protocol" in drivers/firmware/samsung/.
+>>
+>> Suggested-by: Alexey Klimov <alexey.klimov@linaro.org>
+> 
+> I don't recall suggesting this. Reporting -- yes, but not renaming to
+> "exynos-acpm-tmu".
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+my apologies, it wasn't intended. If you have a strong opinion on the
+tag type, I guess Daniel can drop it.
 
+> 
+> This was reported months ago and was never fixed in the updated
+> series for acpm-tmu.c.
+> 
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@kernel.org>
+>> Link: https://patch.msgid.link/20261026-acpm-tmu-fixes-v1-11-0637431b7268@linaro.org
+>> ---
+>>  drivers/thermal/samsung/acpm-tmu.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
+>> index 42b338d..2324efc 100644
+>> --- a/drivers/thermal/samsung/acpm-tmu.c
+>> +++ b/drivers/thermal/samsung/acpm-tmu.c
+>> @@ -597,7 +597,7 @@ static const struct dev_pm_ops acpm_tmu_pm_ops = {
+>>  
+>>  static struct platform_driver acpm_tmu_driver = {
+>>  	.driver = {
+>> -		.name   = "gs-tmu",
+>> +		.name   = "exynos-acpm-tmu",
+> 
+> It is minor but it potentially clashes with exynos-acpm-tmu firmware
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+There's no driver name for the firmware tmu commands helpers but I see
+your point.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+> file name. All other names in file acpm-tmu.c are "acpm-tmu".
+
+I think "exynos-acpm-tmu" is fine, it aligns with "exynos-acpm-protocol"
+from drivers/firmware/samsung/exynos-acpm.c. I guess you may rename
+"acpm-clocks" (drivers/clk/samsung/clk-acpm.c) to "exynos-acpm-clocks",
+but I wouldn't bother too much. If you have a strong opinion on
+"acpm-tmu" send a patch on top please.
+
+Cheers,
+ta
