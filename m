@@ -1,61 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.166
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794482828;
-	b=brfcWLOnNafDyaM9eJVMx1ZCb+KVvnE+ZUBbexNuP3W9Gd1tbfGz2PIerW/hJT8p36fz
-	 xN0EN7PpU5vUVMvPk0KDurmykcU89h5bhil3tlYZnSHL6Y1ODbaRwOr+v2tk20HpvsBqe
-	 mOYcsSr9Lblj4mKcqiUHeqHQBAbdTEhdCOvyQywv65QqLyEEtLGYUvAfNO0jytxENypHv
-	 MTb0x36C0LTPAFSxN3THRJtb5quxYAw+mtQEr+Gonq+7YDjAqYRVJBE6RK4ZmL9ggyWuR
-	 N0Eou5HKOuZraNsJnriah0uF2aU5gcxa/RZ0lghtQffwFJcVI6i/0XDnZq1sgy8FEQQ==
+	t=1794488000;
+	b=ofYdlhXGD+Q9UWHkwom9Om+96LYpKeSvzzb1XlgDGUkSS+uok0bIOJ6WokrLaOZswvfN
+	 FFZA+d6o4HorFH25zOW0BXptbllgcu9M2ul8y0Gn54Wm6VdU6pIjQxocLn5WuEdmzxThY
+	 deFDMx/67qL2yGa2Bh8kBu+8UKp5sKNSZ9+AOip6EBsDNwsG5Y5RbcuFnkUmaIynRBXte
+	 6iMrA75nfR+LTly8agDG99TLeShv4sXtUIT6gFIYy+/DJlyFR1Q/E1aaPHTJBfyN8zb4r
+	 YEziOEP4QgJ1FiDjvs8T7hE3QIPL5RNaSHeKgUXTvxAinBMH3Fx551r7UDsPtO2DDhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794482828;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=/oEd/Rx7z61vzKiE7TrZNxTBqcUG5YHAydriCm6gOsA=;
-	b=YJ/5suQM07rHT8wPqZIONMP711HRGs3D0P6wY8sP/QxFwsxHGgZJLffDGpGfRZOCmkdA
-	 otqS771HNPTf08S74utQJ0W2FRnhejmhsNGYtf7DpJri0skiK11E7nty5JIucMHwPxjaK
-	 T3bFtlWLYwJyizorO9AIIMV29DlwvpR5eK9ylQLGjEOI8xGaOmEnGdGH2M9lqN1d9ki3i
-	 mWC9aZS5E/q0fGelTeRT28LOyXGArCaKvg7aLZYB7cKN+ziTH5e/07Sz67gW2jLC/b8He
-	 3NpxDrTtydRG3Avok0/kxR/NIS+Frb6wDcm4QaX1eWE1tuT4Z1OkZiuqU9m3EBIwxUQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794488000;
+	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
+	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=jGP1b9jLSQAhw1LFbHdnVE1Cm2LzDCydg1pHvlgHSlU=;
+	b=Sj9x83KclBtY8NKcDBSieVHmnzi1fEGcU3M9HSiU4OP+EKNK48dbdwNUzQPc9rDurIs3
+	 6xtt3EYJkQW67LGUc06IuxE8R+5GkpMw+Lxd643SpfqfJUIW5/7buzhdhpvrRtPJjW0nK
+	 vaTkdPsudv52twM6dVp/RgsuTB7qYGDLDUSxcpIEQtm/bhCMGv9YXBS9Ji0JfQjKvqKV9
+	 Ftx+P8J5s+4VthXQyztSI8/ajyqGQko76xVa02sYdvzwUBLsEvsJHw6aGij6kLQZrndlo
+	 HKa4qPsVQcoynMR4/oYn7NjPVEObuJVvD5YTzGU8wpwNMY7wKvhEZ02X7B/xtV2jU2g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lHOIVamz;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=protonmail.com;
+	spf=pass smtp.mailfrom=protonmail.com;
+	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=m0BvharU;
+	arc=none smtp.remote-ip=185.70.43.166
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E81606B349
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2026 11:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1976606A32A;
+	Thu, 12 Nov 2026 12:53:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1976606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lHOIVamz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C691F00A05;
-	Thu, 12 Nov 2026 11:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794482827;
-	bh=/oEd/Rx7z61vzKiE7TrZNxTBqcUG5YHAydriCm6gOsA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=lHOIVamzl2HbE2kYl6t1Hi/fSLUIo5a5kdanxjhNZXwjar2Q3xFo7LP69tPoT8FoD
-	 j3Y3zsgNV1Jrkd7xcKNNC6Vfkn0Z29wjdb5h9pWjXgfitk6gJN8htyOqX1zzwLe+/J
-	 wuosM1b5oWfzkAUTuE1V6kVtPrCwuQBQ13KgRfWML/k7R5dVS3We3zNdiG0T8g79yr
-	 OPYcLErMrgOspm9X5kpCjyRxXvaRlc6nQDmtfSgFnKEp7KQdSMuXRLjORLaDscXkBc
-	 1jOye5p9Bi+6AkJ+pQkHJCGING5VpDMNYsGIO3YysGk5RHxqYg+acjTmdQm+x7dwD8
-	 TuBDhhUIRDN7Q==
-From: Vinod Koul <vkoul@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Joy Chakraborty <joychakr@google.com>, Roy Luo <royluo@google.com>, 
- Naveen Kumar <mnkumar@google.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <90a172c2980073a09b4f01c21a251c3d0d2d6fe5.1792499240.git.geert+renesas@glider.be>
-References: <90a172c2980073a09b4f01c21a251c3d0d2d6fe5.1792499240.git.geert+renesas@glider.be>
-Subject: Re: [PATCH v2] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
-Message-Id: <179448282346.507383.17246536028374736454.b4-ty@kernel.org>
-Date: Thu, 12 Nov 2026 16:57:03 +0530
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=m0BvharU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1794487998; x=1794747198;
+	bh=jGP1b9jLSQAhw1LFbHdnVE1Cm2LzDCydg1pHvlgHSlU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=m0BvharUtArG4OstXIzrvNfYNCC4VZhvXTlvV9msTyo7x6bfiVWEAQE3QcXUBin17
+	 ub8mMN8L6PHCPEYXlNqEhJS7oBDtkHv3VVY5cd/r7f1MAqwfu7EMSRcowTj2HnZtnl
+	 LU/ZuilRJb+1nmqI6MvC5mGv8VCGVWCVpgKVgIRozLTAo6XVcdxBqwKtgsMlhC+y3v
+	 vR995jHgD6DhGvPmkZrSkwqnulBRwduA0fs4FezDJJJpflEH0e5gELUVYFkWTQ+hMV
+	 No907ESqdTkXIgLwP98X69v9GqQNY3NLuAhM+BkS2IPvKHYpetIGwegv/3QMr8da3o
+	 SLmaVZkaNGGFA==
+Date: Thu, 12 Nov 2026 12:53:13 +0000
+To: Vinod Koul <vkoul@kernel.org>
+From: Aiden Isik <aidenisik@protonmail.com>
+Cc: aidenisik@member.fsf.org, Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos5515 usbdrd phy
+Message-ID: <Dhrinh2IqyBByHLyFp_SHX9igTjQgKk4G62C1vp6tHdO8QkM4kiFDLaExxnZeljVMXJ8YksFrLRDRT9voAj6LiJYqPvrUg3nFVNFzi7C9Bc=@protonmail.com>
+In-Reply-To: <avWeJqbpbLcWgq_R@parshuram>
+References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org> <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org> <avWeJqbpbLcWgq_R@parshuram>
+Feedback-ID: 46524699:user:proton
+X-Pm-Message-ID: cb3b8ddeefb938cd47e6dcf3bc37b5939fef5922
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -65,26 +64,25 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi Vinod,
 
-On Tue, 20 Oct 2026 14:27:51 +0200, Geert Uytterhoeven wrote:
-> The Google Tensor SoC USB PHY is only present on Google Tensor G5
-> (Laguna) SoCs.  Hence add a dependency on ARCH_GOOGLE, to prevent asking
-> the user about this driver when configuring a kernel without Google
-> Tensor SoC support.
-> 
-> 
+> .n_phy_cfg does not exist.. Please fix this
 
-Applied, thanks!
+As stated in the cover letter, this is introduced by dependency [1]:
 
-[1/1] phy: PHY_GOOGLE_USB should depend on ARCH_GOOGLE
-      commit: 518d5bc7a636696969e3f4a7f9c66483e4f35e1e
+> This patchset also depends on [1], due to using an
+> exynos5_usbdrd_phy_drvdata member > (.n_phy_cfg) which was introduced to =
+fix
+> an out-of-bounds access bug.
 
-Best regards,
--- 
-~Vinod
+> [1] - https://lore.kernel.org/all/20261020063559.3530901-1-selvarasu.g@sa=
+msung.com/
 
+Which has since been merged by yourself. I assume you just
+looked at these patches in a different order so saw mine first?
 
+Kind Regards,
+- Aiden Isik
