@@ -1,63 +1,65 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794480865;
-	b=I5qr3Iu7OYZpCx5TzsLBWHUtRPys3aeB6Rp3kLZIZGGBig2F0kQ/JLjV4L6gX64e4Sbj
-	 MUQTdyQyZgnc971FnCF6Vko4855D+7VyzVVnaSlj2VDkXSyl0IL+zCUj+Pm4a/0jUEhuT
-	 YbIGrH/DpbvtadI6pSv/jzprwEidf0+Zwig8kqazR0Qv24gplOYRJ4kNkCE9eKOiigaSX
-	 Rx7qxP6acUgEohduUV/eYx5yOsIoov2AuJY2pEYq6JcxcyHLYTDuI7rh7t1rFmkiMTAkY
-	 AlIgl7VzKg0oPF+UpvPBh9LYmga4GQc8/FC2asMH1iYSL2niituH/Hpk5o9r0778H7g==
+	t=1794481706;
+	b=VF185SZnGc+Jkomwh4U82T99kSrymmYEdOcvE+VIOSnAGWuHPTH6By6fuYZWog6vNVxL
+	 UfLWIkEtkaY15PdCIJwaoKAEVA1YoV4QcDUlW/sQFGfbMKSmzIm2BQf/oH3b4M0V5Jln1
+	 mW+HWH8y46SHILBqcHpdNlt9Gs1giv6Kth2LhOc96kdUh3Am04tm6IHqOicsmCm7BENlH
+	 0zCDWwDlEEukUboQJlJdt1J38K7L4WTRBXMUEwPNNcYdva36v8/l9T+0rKcKAMj4LA1Kc
+	 TNOn2Sz6UTZibxRXLkMRrFFPbV6ezbs1fCw7YHnYjLGrqpYqbKhNxm8zyiv1EZe9tLQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794480865;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
-	bh=Nzr1i8kmgcqILZlSzSWseg8RY9ufaj9ibgqjyLSLbkg=;
-	b=I/5a4B8ulr+WWVUvkIiPHtiqDETQJPqAMykN3eQdQzD2pBmF9HmccSIhEKDkh/IiNfag
-	 iiQFFuCzPUmjC8ePjqlA1dsiwNLO3KP5vPzzAO7d2jcwhkbQ32g2uZQi9jGnRYqPRlxCP
-	 RAu/4VV6Ml7NjeRrildK7r8T3/vXD6bY6azizzohXQYj7VyxE7eChA4HeBvQWQHHPV5o8
-	 QVuhXGV4izaXQ88BlTxTfHhW4kbG+YRSnNLYX+P32DdSQBVBOVwZNoeDeY49VgaopCjlb
-	 rXsaNJGCgX6CFHfCeAHZOAZDP1zVqjvclTJSHc68J70kUo78njLJqruZA0edbPETnoA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794481706;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=CwOsftxfNPZqsPWmATYl8H3Jcuwt3wJErixQ5+qMlpE=;
+	b=ykd+fLSKQS5xFbmU04Yw1oaINwbfoBy+XF2UkZvFibfQZj8Tu41JPIKDZ9U+mm5yw245
+	 X+RJmCt2sbatP0sOSq2QGDoFyY+bS0A1mUmEVV1qCxrF5v3DNEAMmVrlLCtpdGFTbI4mz
+	 9d9i4Iye+pxv+z2OIZMhMcdcHFT9KaktHcUE5xYHIp4X5qi/bp9y195DmQAYmkWJ5oJqz
+	 UtpCtDOHb+75qwdQj7LvAnw+RDj1pJgGvFMXrK0WdILAr5BYfycwXjR+9jrW7+XrNk7Fr
+	 KE/veMYr/ezh7SPkAp2rRKPsSiwo6bjb7dSaYLgwZ0M93Qc/I9U0roWH7zbFadmOzGQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nnyaW9fu;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DyW/n0qa";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E401D606A327;
-	Thu, 12 Nov 2026 10:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB5606A327;
+	Thu, 12 Nov 2026 11:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nnyaW9fu
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 219031F00A05;
-	Thu, 12 Nov 2026 10:54:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DyW/n0qa
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1711F00A05;
+	Thu, 12 Nov 2026 11:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794480864;
-	bh=Nzr1i8kmgcqILZlSzSWseg8RY9ufaj9ibgqjyLSLbkg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=nnyaW9fuM4QMfEs07StEF0ZXXF5G+Pmg+xGPZPoCbCplbHS3SywWWgJowBdyU9Wce
-	 ZZxuOVQkxtJ0nZxojNilzoTZH2uH4ZNmwtefwlqvaaFEKA7T+8DkHbVYC9mGuWAI6h
-	 atqB1VCCVgovVHA0zWvAexLyzzX+aPFoRB9f+Wg1akpS4586Xp2PiifqrQWrcHqhyT
-	 WJEYQtFrVP4sVZa9gAG4L/+eiUSEB8BnAENojDQNLwM2Y6T+Y7H96jt4ZEHfUnk/+x
-	 3NooBYNei3UAoCrLdXO8UBaU+YaUDd8ctgtiJalbzqcN9n/3cWLKdHeHI4FLZCCCi+
-	 Pk9w1YxvKtgRQ==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
+	s=k20260515; t=1794481706;
+	bh=CwOsftxfNPZqsPWmATYl8H3Jcuwt3wJErixQ5+qMlpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DyW/n0qa91KOXYIdySgHj3eIEbcxiNLeNpFJQeJIhuco7rqZhcUrZWt85zW2HvkZ9
+	 2wHcJEktysymXTF6HagokqiVhCbjwDWD8yix6rDxMSGsopa8pZHnoxnrvLe/8Hz+2u
+	 /Oeg3+Wul0MlRp1g521fXX3TFW07X/L5HX5Qvh0aSubdGVt08DH7GwnuO2LSJ2KXau
+	 RPAXXyI2D8ChNftplFJpDpNSn2iMeD5JkQihuDtFyl16gS3OoJJvQR25xqK55OoY+3
+	 gzGIr1nwOPmi+95UfGmefDWE5eByHd4cmfi1D0Ti6MIdqFXLTfEYjZ7WsHvUTpW7GR
+	 EzmSUwBmBxA8g==
+Date: Thu, 12 Nov 2026 16:38:22 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: aidenisik@member.fsf.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Umer Uddin <umer.uddin@mentallysanemainliners.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Add support for Samsung Galaxy Tab A 10.1 (2019, 4G)
-Date: Thu, 12 Nov 2026 11:54:15 +0100
-Message-ID: <179448080494.71722.17775679288828912464.b4-ty@b4>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261109-gta3xllte-support-v2-0-85c31b6efebd@mentallysanemainliners.org>
-References: <20261109-gta3xllte-support-v2-0-85c31b6efebd@mentallysanemainliners.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos5515
+ usbdrd phy
+Message-ID: <avWeJqbpbLcWgq_R@parshuram>
+References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
+ <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -67,35 +69,60 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=799; i=krzk@kernel.org; h=from:subject:message-id; bh=/UDUY46rb+THvC5XKdaD5CIzIRZSc9hvKG7hXVQOvHU=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBq9ZrXtBre9ERaktNJORcTcKjnI82iK0zZMGsfr K9VYECADsWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCavWa1wAKCRDBN2bmhouD 1x7tEACPOvFgrInugGpJchVAQ1S0WkbfrDJM5d/ENDyzsvj2xBvRKrQS2lreM5YGUlfR527J/6W zHwHXN0VGIddV4MuqzdWZ+tyt8Ea+QfvwVmCcmQIWSGMdbdXXyHM4Kb7PDd+qC7zzY1/tkLixCX BgQ6bbUcfo6Gyzd+EZtYXkZ7lkq/PtWMD1azW1PcWJxZg9XX5ZEBj8kO5NNtujBNOlTV7KEN2oC rRpVglv7Vei+fegrCVS2CCSfr75AUhPBPZDzrU5w5dnYZu305QDDdvoiPP01OEgSD+qZ8BAi75H ba6rb/3anG0ar+ErhNe/ks2BGyy0nHFhu7iY0xhIM0oA+qcz04VwueYXXfS//am3zIMGL9XYIel 4Cydfpy4wt/9Gevb13TasmVQ0l/ftjv0gImD+4PstFQMWcrWq+/F5V+XcC5Zxw55LHv1TymeSvz vOhFfPBAlrDqwj9HHXZvLzIjKU5JLqeTUNe+5eKYz9pyT72yqeetzt4HqE3TkrLwAwb4+cMKbaJ 4BbOBl3MxJqqX7dnQfLKQNdGfX/2KBi9LT9dQjXNDQvmY03P+HFRJZCepOwTBY3jJNVZcABK17h TrLfSKv9SIiORuj1cpKOxIjSGy4I5Uywlc2CMkVc1Z3fbWvjyfA0eCBUpjDEjUbUCRH0apnG3D8 +7XQfsA2ExnxCy
- w==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org>
 
-
-On Mon, 09 Nov 2026 21:02:01 +0000, Umer Uddin wrote:
-> This series adds support for Samsung Galaxy Tab A 10.1 (2019, 4G).
+On 22-10-26, 17:46, Aiden Isik via B4 Relay wrote:
+> From: Aiden Isik <aidenisik@member.fsf.org>
 > 
-> The device trees have been tested with dtbs_check W=1 and scripts/dtc/dt-check-style
-> with --mode strict flag and both results in no warnings.
+> The Exynos5515 USBDRD PHY is a USB PHY which supports USB Super-Speed
+> and High-Speed. Add support for High-Speed (UTMI+) operation.
 > 
-> This initial bringup consists of:
->  * pinctrl
->  * internal eMMC
->  * gpio-keys
->  * simple-framebuffer
+> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+> ---
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 43 ++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
 > 
-> [...]
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index f10cf7b6e0aa..8718e8f01e46 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -2075,6 +2075,46 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
+>  	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
+>  };
+>  
+> +static const struct exynos5_usbdrd_phy_tuning exynos5515_tunes_utmi_postinit[] = {
+> +	PHY_TUNING_ENTRY_PHY(EXYNOS850_DRD_HSPPARACON,
+> +			     (HSPPARACON_TXVREF | HSPPARACON_TXRISE |
+> +			      HSPPARACON_TXRES |
+> +			      HSPPARACON_TXPREEMPPULSE |
+> +			      HSPPARACON_TXPREEMPAMP |
+> +			      HSPPARACON_TXHSXV | HSPPARACON_TXFSLS |
+> +			      HSPPARACON_SQRX | HSPPARACON_OTG |
+> +			      HSPPARACON_COMPDIS),
+> +			     (FIELD_PREP_CONST(HSPPARACON_TXVREF, 15) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXRISE, 3) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXRES, 3) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPPULSE, 0) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPAMP, 3) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXHSXV, 3) |
+> +			      FIELD_PREP_CONST(HSPPARACON_TXFSLS, 3) |
+> +			      FIELD_PREP_CONST(HSPPARACON_SQRX, 7) |
+> +			      FIELD_PREP_CONST(HSPPARACON_OTG, 2) |
+> +			      FIELD_PREP_CONST(HSPPARACON_COMPDIS, 7))),
+> +	PHY_TUNING_ENTRY_LAST
+> +};
+> +
+> +static const struct exynos5_usbdrd_phy_tuning *exynos5515_tunes[PTS_MAX] = {
+> +	[PTS_UTMI_POSTINIT] = exynos5515_tunes_utmi_postinit,
+> +};
+> +
+> +static const struct exynos5_usbdrd_phy_drvdata exynos5515_usbdrd_phy = {
+> +	.phy_cfg		= phy_cfg_exynos850,
+> +	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
 
-Applied, thanks!
+.n_phy_cfg does not exist.. Please fix this
 
-[1/2] dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-T515 board
-[2/2] arm64: exynos: Add initial support for Samsung Galaxy Tab A 10.1 (2019, 4G)
-
-Both are here:
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/commit/?h=next/dt64&id=a7e7ce777ab5ccb24a4906b79e1a3645e191dc9b
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzk@kernel.org>
+~Vinod
