@@ -1,60 +1,192 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794488000;
-	b=ofYdlhXGD+Q9UWHkwom9Om+96LYpKeSvzzb1XlgDGUkSS+uok0bIOJ6WokrLaOZswvfN
-	 FFZA+d6o4HorFH25zOW0BXptbllgcu9M2ul8y0Gn54Wm6VdU6pIjQxocLn5WuEdmzxThY
-	 deFDMx/67qL2yGa2Bh8kBu+8UKp5sKNSZ9+AOip6EBsDNwsG5Y5RbcuFnkUmaIynRBXte
-	 6iMrA75nfR+LTly8agDG99TLeShv4sXtUIT6gFIYy+/DJlyFR1Q/E1aaPHTJBfyN8zb4r
-	 YEziOEP4QgJ1FiDjvs8T7hE3QIPL5RNaSHeKgUXTvxAinBMH3Fx551r7UDsPtO2DDhA==
+	t=1794490338;
+	b=dBbTQVg9FKf32B9WLZbZzJkJgNMA/1JgsqOpcf/dAoPjELJ5Zde8PYUXj7cnN4CFkQHn
+	 WIDutEH5+3/IDbxCu/8vprSm4kOl2X3F7IWXo/csz8q9fjxH/pK07bLm5hp50IYItjmIM
+	 jeuC0vDZKeHwbi4FUa4lGpHeV2QYgQfAsqZepA6vmDbWas4X7n0gH8tdri/D3z1lhxwSN
+	 J1r4PJDu0s82fuJYcs1HGe7y0m1ykckIPmq6VKwHhPW0UZ4tY0U1X1DEyfWG8QlLPF9CO
+	 hCHjOVUbzInGXzuapCpnzNd8JGVg/LQjyfunkLqUCnBVxyBRO+X8f8QJEraI8oVo85w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794488000;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=jGP1b9jLSQAhw1LFbHdnVE1Cm2LzDCydg1pHvlgHSlU=;
-	b=Sj9x83KclBtY8NKcDBSieVHmnzi1fEGcU3M9HSiU4OP+EKNK48dbdwNUzQPc9rDurIs3
-	 6xtt3EYJkQW67LGUc06IuxE8R+5GkpMw+Lxd643SpfqfJUIW5/7buzhdhpvrRtPJjW0nK
-	 vaTkdPsudv52twM6dVp/RgsuTB7qYGDLDUSxcpIEQtm/bhCMGv9YXBS9Ji0JfQjKvqKV9
-	 Ftx+P8J5s+4VthXQyztSI8/ajyqGQko76xVa02sYdvzwUBLsEvsJHw6aGij6kLQZrndlo
-	 HKa4qPsVQcoynMR4/oYn7NjPVEObuJVvD5YTzGU8wpwNMY7wKvhEZ02X7B/xtV2jU2g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794490338;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=r6ZiRY3FXltBOTurpbapfkXrVhZHo2axQtDyRtG/+Kg=;
+	b=eDwvbQvHfU7MNUk/ZOEuXN9ow8WA+f6iaHSQRBFsDq0Ypw+GnSCN8PcBX9jvLYVvYLGX
+	 NprXp1LdFV4ZgaVwyd3NIJyJYkwgL7qHpP0Bc4e8peh3i/XM94KMb9I5pSx2pUpxFcT57
+	 RySAjV6QyOebRnmgM4mtrT/VEVLfeAwyynvY5HOs7iPXuGGvx16jC9uBMNodXB7O7Thb4
+	 oaXKvfBUOuZ+wBzhMouGsWvK6MDAmKRlgwVXbrPx2K5OumlhQsPYG5BGeWQh5CJfi++1z
+	 4a+C1bRrSE/Tcr8U3EgEkQsN9g3nCa6hQqldMXszP1p2R+hZIW5FHjg7g7qhZI8AVYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=protonmail.com;
-	spf=pass smtp.mailfrom=protonmail.com;
-	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=m0BvharU;
-	arc=none smtp.remote-ip=185.70.43.166
-Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wy8GlGPy;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1976606A32A;
-	Thu, 12 Nov 2026 12:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1976606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C5C606A334;
+	Thu, 12 Nov 2026 13:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=m0BvharU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1794487998; x=1794747198;
-	bh=jGP1b9jLSQAhw1LFbHdnVE1Cm2LzDCydg1pHvlgHSlU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=m0BvharUtArG4OstXIzrvNfYNCC4VZhvXTlvV9msTyo7x6bfiVWEAQE3QcXUBin17
-	 ub8mMN8L6PHCPEYXlNqEhJS7oBDtkHv3VVY5cd/r7f1MAqwfu7EMSRcowTj2HnZtnl
-	 LU/ZuilRJb+1nmqI6MvC5mGv8VCGVWCVpgKVgIRozLTAo6XVcdxBqwKtgsMlhC+y3v
-	 vR995jHgD6DhGvPmkZrSkwqnulBRwduA0fs4FezDJJJpflEH0e5gELUVYFkWTQ+hMV
-	 No907ESqdTkXIgLwP98X69v9GqQNY3NLuAhM+BkS2IPvKHYpetIGwegv/3QMr8da3o
-	 SLmaVZkaNGGFA==
-Date: Thu, 12 Nov 2026 12:53:13 +0000
-To: Vinod Koul <vkoul@kernel.org>
-From: Aiden Isik <aidenisik@protonmail.com>
-Cc: aidenisik@member.fsf.org, Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos5515 usbdrd phy
-Message-ID: <Dhrinh2IqyBByHLyFp_SHX9igTjQgKk4G62C1vp6tHdO8QkM4kiFDLaExxnZeljVMXJ8YksFrLRDRT9voAj6LiJYqPvrUg3nFVNFzi7C9Bc=@protonmail.com>
-In-Reply-To: <avWeJqbpbLcWgq_R@parshuram>
-References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org> <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org> <avWeJqbpbLcWgq_R@parshuram>
-Feedback-ID: 46524699:user:proton
-X-Pm-Message-ID: cb3b8ddeefb938cd47e6dcf3bc37b5939fef5922
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Wy8GlGPy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227E61F00A06;
+	Thu, 12 Nov 2026 13:32:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794490338;
+	bh=r6ZiRY3FXltBOTurpbapfkXrVhZHo2axQtDyRtG/+Kg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Wy8GlGPynbdgDuFWN722xaQwNevNtmZMEu0BUn6KzojIS2khSDKExmF3/xNVEdtLl
+	 eg+MrKwjSLQKSwX6KGIm3YdAvMrdpehkw2SEwXk5ITkqGQcbqHO3TpHS2uV2Am897/
+	 10/dPietBwB77+JGc07RnvIwJDQCioeWxjJS5APKr5zv02KG/1GvxTvI2xPg8l2nj9
+	 8rVb9kzBJiR4zpdkhL90XWtOFJlNgS29gDuGDeXDl5g8bz1BkEPEanNxu3FAmYKlIF
+	 uvbMxLrCr7ffOATZvlIHAx+q1QfPvgRNTBbsvWHfJ7CKtkZD92nfbknljW1KTrGL27
+	 2KvO5+WPab9Vw==
+From: Maxime Ripard <mripard@kernel.org>
+To: David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Janne Grunau <j@jannau.net>,
+	Sasha Finkelstein <k@chaosmail.tech>,
+	asahi@lists.linux.dev,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dave Airlie <airlied@redhat.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dharma Balasubiramani <dharma.b@microchip.com>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Alison Wang <alison.wang@nxp.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Ruben Wauters <rubenru09@aol.com>,
+	Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Yongbang Shi <shiyongbang@huawei.com>,
+	John Stultz <jstultz@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Xinliang Liu <xinliang.liu@linaro.org>,
+	Yongqin Liu <yongqin.liu@linaro.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Liu Ying <victor.liu@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	imx@lists.linux.dev,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-mips@vger.kernel.org,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jianmin Lv <lvjianmin@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Qianhai Wu <wuqianhai@loongson.cn>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Linus Walleij <linusw@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Marek Vasut <marex@denx.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lyude Paul <lyude@redhat.com>,
+	nouveau@lists.freedesktop.org,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	spice-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Sandy Huang <hjc@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	David Lechner <david@lechnology.com>,
+	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
+	Alex Lanzano <lanzano.alex@gmail.com>,
+	LiangCheng Wang <zaq14760@gmail.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Zack Rusin <zack.rusin@broadcom.com>,
+	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Aditya Garg <aditya.garg@linux.dev>,
+	Andy Yan <andyshrk@163.com>
+Subject: Re: (subset) [PATCH RESEND 00/83] drm: Switch drivers to drm_mode_config_create_initial_state
+Date: Thu, 12 Nov 2026 14:32:12 +0100
+Message-ID: <179449030440.677082.2648325087165275258.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
+References: <20261105-drm-no-more-config-reset-v1-0-1f58d1e33380@kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -64,25 +196,69 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Vinod,
+On Thu, 05 Nov 2026 16:29:09 +0100, Maxime Ripard wrote:
+> drm_mode_config_reset() has a dual role: it creates the initial KMS
+> state at probe time, and resets hardware and software state during
+> suspend/resume cycles. However, the two roles need different
+> behaviors, notably for objects like drm_private_obj that must persist
+> across suspend/resume and are excluded from drm_mode_config_reset()
+> by design.
+> 
+> [...]
 
-> .n_phy_cfg does not exist.. Please fix this
+Applied to misc/kernel.git (drm-misc-next)
 
-As stated in the cover letter, this is introduced by dependency [1]:
+[03/83] drm/appletbdrm: Switch to drm_mode_config_create_initial_state
+        commit: 24f5141d0266b391fda87dd3458aad31c26e28df
+[04/83] drm/komeda: Switch to drm_mode_config_create_initial_state
+        commit: 95b07f6f1f820601f9bc4f9dd8cb01e008c4441d
+[06/83] drm/malidp: Switch to drm_mode_config_create_initial_state
+        commit: b0507da85fdd7060decd29d35f5819259718f741
+[08/83] drm/aspeed: Switch to drm_mode_config_create_initial_state
+        commit: fe87bfb1dfa04dd73bb89e60820ced02967faee8
+[10/83] drm/atmel-hlcdc: Switch to drm_mode_config_create_initial_state
+        commit: b36f26eb85d8032b458fab7c6912650c0e5b5561
+[13/83] drm/gud: Switch to drm_mode_config_create_initial_state
+        commit: a53dc66784822a101541c54e1e7e471bbad3e8ee
+[15/83] drm/hisilicon/kirin: Switch to drm_mode_config_create_initial_state
+        commit: 1e8db0d2a2383ce3fb96ea1db26180350d972786
+[17/83] drm/imx/dc: Switch to drm_mode_config_create_initial_state
+        commit: 39283d6d8fbaca8d7bb7e98f7406dad5286bfc6e
+[18/83] drm/imx/dcss: Switch to drm_mode_config_create_initial_state
+        commit: dc54c1bc909873caf0f910677f3de899cdf3b62d
+[24/83] drm/mcde: Switch to drm_mode_config_create_initial_state
+        commit: 046b692dc7d3910b6a85d71e5e941c712bad30ee
+[26/83] drm/meson: Switch to drm_mode_config_create_initial_state
+        commit: a26760da1f8bebdcc7fe6fdcb5df5c6ca007e4cc
+[29/83] drm/lcdif: Switch to drm_mode_config_create_initial_state
+        commit: 0f3e257909538e9cce0213c2d1b9d3a7edf8f348
+[30/83] drm/mxsfb: Switch to drm_mode_config_create_initial_state
+        commit: 99da25e15ccbfb1d0717de28d3b6f45f72958127
+[33/83] drm/pl111: Switch to drm_mode_config_create_initial_state
+        commit: 4b9008133a7b14dbb1eeab84266926062d126ba7
+[38/83] drm/rockchip: Switch to drm_mode_config_create_initial_state
+        commit: c07d0dfba08808c90ab8ccc23a1f0ce9aafae536
+[43/83] drm/ssd130x: Switch to drm_mode_config_create_initial_state
+        commit: d7938a168f56608626d62a7015b448da1cee4dba
+[48/83] drm/corebootdrm: Switch to drm_mode_config_create_initial_state
+        commit: 207a0f90ce3953131806ead64bb512364de260c4
+[49/83] drm/efidrm: Switch to drm_mode_config_create_initial_state
+        commit: 8fa2e7e1b3642113677a6a77f81aa186f3b16293
+[50/83] drm/ofdrm: Switch to drm_mode_config_create_initial_state
+        commit: 1fd3ed4c330b8f56bbcd7d2684e1dae5961ee8ab
+[51/83] drm/simpledrm: Switch to drm_mode_config_create_initial_state
+        commit: cde728838797cdce3bc488acb1338c1dc20c24d2
+[52/83] drm/vesadrm: Switch to drm_mode_config_create_initial_state
+        commit: 705557cddfcbea6c6ee2e50057394c6c6fc2ab8b
+[74/83] drm/tve200: Switch to drm_mode_config_create_initial_state
+        commit: 4b40cfa3178f00188314a1da55dd899e635d2d73
+[77/83] drm/vc4: Switch to drm_mode_config_create_initial_state
+        commit: 6d8d9311bc9daac0e5acc3e5d34ca067abdd1fe4
+[80/83] drm/vkms: Switch to drm_mode_config_create_initial_state
+        commit: 63a80293361bc276fb07cd68511b5f887ff5fa41
 
-> This patchset also depends on [1], due to using an
-> exynos5_usbdrd_phy_drvdata member > (.n_phy_cfg) which was introduced to =
-fix
-> an out-of-bounds access bug.
-
-> [1] - https://lore.kernel.org/all/20261020063559.3530901-1-selvarasu.g@sa=
-msung.com/
-
-Which has since been merged by yourself. I assume you just
-looked at these patches in a different order so saw mine first?
-
-Kind Regards,
-- Aiden Isik
+Thanks!
+Maxime
