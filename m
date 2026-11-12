@@ -1,65 +1,63 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794481706;
-	b=VF185SZnGc+Jkomwh4U82T99kSrymmYEdOcvE+VIOSnAGWuHPTH6By6fuYZWog6vNVxL
-	 UfLWIkEtkaY15PdCIJwaoKAEVA1YoV4QcDUlW/sQFGfbMKSmzIm2BQf/oH3b4M0V5Jln1
-	 mW+HWH8y46SHILBqcHpdNlt9Gs1giv6Kth2LhOc96kdUh3Am04tm6IHqOicsmCm7BENlH
-	 0zCDWwDlEEukUboQJlJdt1J38K7L4WTRBXMUEwPNNcYdva36v8/l9T+0rKcKAMj4LA1Kc
-	 TNOn2Sz6UTZibxRXLkMRrFFPbV6ezbs1fCw7YHnYjLGrqpYqbKhNxm8zyiv1EZe9tLQ==
+	t=1794482823;
+	b=GRQ8nSIjluv+wWevV9JrF8MSDkxnmT/9D7I8bVPizq8udoUQvoLrzLdOx8AlQlC6Z6yc
+	 FHiZ99R2eoknLfwe1phxvmLuXJZWPMiaM1LN97qHaUYvm7t8WH8sCT3WgvdxlKzrj+DEM
+	 WFnQbaWE3EB7/JOiD/JJHcA+U4wSnftTn0txUaZOVNd7fNgj1SKX2F/xFtMOONCY2PEch
+	 DRo5obpgQDNchCuaQy/naLEUTYD7eExUWzCleB91xyz9p0whzXGOBf2Oj6RvcHgNn5+yW
+	 6V/8vQw95bbZdaEdI0QWrVNrcbwTMB0OXiiP3RoJg94MYWYWcmJyw9FBDGEfpTkU9DA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794481706;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=CwOsftxfNPZqsPWmATYl8H3Jcuwt3wJErixQ5+qMlpE=;
-	b=ykd+fLSKQS5xFbmU04Yw1oaINwbfoBy+XF2UkZvFibfQZj8Tu41JPIKDZ9U+mm5yw245
-	 X+RJmCt2sbatP0sOSq2QGDoFyY+bS0A1mUmEVV1qCxrF5v3DNEAMmVrlLCtpdGFTbI4mz
-	 9d9i4Iye+pxv+z2OIZMhMcdcHFT9KaktHcUE5xYHIp4X5qi/bp9y195DmQAYmkWJ5oJqz
-	 UtpCtDOHb+75qwdQj7LvAnw+RDj1pJgGvFMXrK0WdILAr5BYfycwXjR+9jrW7+XrNk7Fr
-	 KE/veMYr/ezh7SPkAp2rRKPsSiwo6bjb7dSaYLgwZ0M93Qc/I9U0roWH7zbFadmOzGQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794482823;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=O4AXPfiKbyDpre+CB6uNRY4elkcJBCP9G8bvuRhJYmw=;
+	b=XnyxEjfMkdezLuKHwfdpoBrIGHarBUaDbT+GG8+ktWfE/xLYeKvXY/nse5k7KIyg02f7
+	 DDa9n1XfgRFU9tn0McFABObvs6RHOLLBC3Iat+D7kTmDdz7RqbDXGNrki3h6kfdFOSWQ6
+	 Q7nouzaupjiLarAH4nDAc3XOujmbRPPTzlH8cWrMD+RKz85vuvWO+lwQFAQWuuOgiMCk3
+	 1lP9pX/hyCGv8XGJGeTbXHrhTA6/fsaw90E5BT/UoLSKbKF6RcLcskV2l73dW2N46bfkm
+	 eOjB3ST5YiYy+eNi5TscFnqg7z7P2hs7758x8EJUDk4HCxDPCnesXDSsQIRV9oaYWZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DyW/n0qa";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ybcb8Dfv;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEB5606A327;
-	Thu, 12 Nov 2026 11:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3975606A331;
+	Thu, 12 Nov 2026 11:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DyW/n0qa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B1711F00A05;
-	Thu, 12 Nov 2026 11:08:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Ybcb8Dfv
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F951F00A05;
+	Thu, 12 Nov 2026 11:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794481706;
-	bh=CwOsftxfNPZqsPWmATYl8H3Jcuwt3wJErixQ5+qMlpE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DyW/n0qa91KOXYIdySgHj3eIEbcxiNLeNpFJQeJIhuco7rqZhcUrZWt85zW2HvkZ9
-	 2wHcJEktysymXTF6HagokqiVhCbjwDWD8yix6rDxMSGsopa8pZHnoxnrvLe/8Hz+2u
-	 /Oeg3+Wul0MlRp1g521fXX3TFW07X/L5HX5Qvh0aSubdGVt08DH7GwnuO2LSJ2KXau
-	 RPAXXyI2D8ChNftplFJpDpNSn2iMeD5JkQihuDtFyl16gS3OoJJvQR25xqK55OoY+3
-	 gzGIr1nwOPmi+95UfGmefDWE5eByHd4cmfi1D0Ti6MIdqFXLTfEYjZ7WsHvUTpW7GR
-	 EzmSUwBmBxA8g==
-Date: Thu, 12 Nov 2026 16:38:22 +0530
+	s=k20260515; t=1794482823;
+	bh=O4AXPfiKbyDpre+CB6uNRY4elkcJBCP9G8bvuRhJYmw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Ybcb8DfvJJta43gpnhAApzXPdEbGDIo6BxvlEiV3cgQi+hMbTguU8+tzxFY970n8H
+	 lAf0aUSMrjjvueWzhwLzG6mzZKi1ac+ij1FlV70wuRR5ENj6eVsvPW97/aZ4JFDl9P
+	 SItvqxet/FaHTHTzOGOQ8X46vnSiZhtIqp/d45EAvfiRzPqQ9lddb9AxQllWdN6taf
+	 PueIJHjQIdLyGkXJSDlJ6OZjXr6Ii+w6sH4Sht/6omTTRlRL3Z9FM4Mi0E+9GpHbpw
+	 vuNphCR0M9x69chCkgI4+VW8ChioDcN9xpBRgREkpqLRjhMuLpd49bcMFxfoV2WSiH
+	 vO4Hfn6M5Wqnw==
 From: Vinod Koul <vkoul@kernel.org>
-To: aidenisik@member.fsf.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: exynos5-usbdrd: Add support for the Exynos5515
- usbdrd phy
-Message-ID: <avWeJqbpbLcWgq_R@parshuram>
-References: <20261022-for-next-lucky7-usb-phy-v1-0-2e47f8484bf4@member.fsf.org>
- <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org>
+To: neil.armstrong@linaro.org, mani@kernel.org, krzk@kernel.org, 
+ peter.griffin@linaro.org, alim.akhtar@samsung.com, pritam.sutar@samsung.com, 
+ andre.draszik@linaro.org, kernel@lvkasz.us, pengpeng@iscas.ac.cn, 
+ kishon@kernel.org, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: jh0801.jung@samsung.com, h10.kim@samsung.com, dh10.jung@samsung.com, 
+ akash.m5@samsung.com, hongpooh.kim@samsung.com, eomji.oh@samsung.com, 
+ shijie.cai@samsung.com, muhammed.ali@samsung.com, thiagu.r@samsung.com, 
+ stable@vger.kernel.org
+In-Reply-To: <20261020063559.3530901-1-selvarasu.g@samsung.com>
+References: <CGME20261020063617epcas5p4ba00854fcd38bf211c573629ee062621@epcas5p4.samsung.com>
+ <20261020063559.3530901-1-selvarasu.g@samsung.com>
+Subject: Re: [PATCH v3] phy: exynos5-usbdrd: Use dynamic phy_cfg size to
+ prevent OOB access
+Message-Id: <179448281584.507383.1286765834477602323.b4-ty@kernel.org>
+Date: Thu, 12 Nov 2026 16:56:55 +0530
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -69,60 +67,33 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261022-for-next-lucky7-usb-phy-v1-2-2e47f8484bf4@member.fsf.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 22-10-26, 17:46, Aiden Isik via B4 Relay wrote:
-> From: Aiden Isik <aidenisik@member.fsf.org>
-> 
-> The Exynos5515 USBDRD PHY is a USB PHY which supports USB Super-Speed
-> and High-Speed. Add support for High-Speed (UTMI+) operation.
-> 
-> Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
-> ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 43 ++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index f10cf7b6e0aa..8718e8f01e46 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -2075,6 +2075,46 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5433_usbdrd_phy = {
->  	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
->  };
->  
-> +static const struct exynos5_usbdrd_phy_tuning exynos5515_tunes_utmi_postinit[] = {
-> +	PHY_TUNING_ENTRY_PHY(EXYNOS850_DRD_HSPPARACON,
-> +			     (HSPPARACON_TXVREF | HSPPARACON_TXRISE |
-> +			      HSPPARACON_TXRES |
-> +			      HSPPARACON_TXPREEMPPULSE |
-> +			      HSPPARACON_TXPREEMPAMP |
-> +			      HSPPARACON_TXHSXV | HSPPARACON_TXFSLS |
-> +			      HSPPARACON_SQRX | HSPPARACON_OTG |
-> +			      HSPPARACON_COMPDIS),
-> +			     (FIELD_PREP_CONST(HSPPARACON_TXVREF, 15) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXRISE, 3) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXRES, 3) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPPULSE, 0) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXPREEMPAMP, 3) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXHSXV, 3) |
-> +			      FIELD_PREP_CONST(HSPPARACON_TXFSLS, 3) |
-> +			      FIELD_PREP_CONST(HSPPARACON_SQRX, 7) |
-> +			      FIELD_PREP_CONST(HSPPARACON_OTG, 2) |
-> +			      FIELD_PREP_CONST(HSPPARACON_COMPDIS, 7))),
-> +	PHY_TUNING_ENTRY_LAST
-> +};
-> +
-> +static const struct exynos5_usbdrd_phy_tuning *exynos5515_tunes[PTS_MAX] = {
-> +	[PTS_UTMI_POSTINIT] = exynos5515_tunes_utmi_postinit,
-> +};
-> +
-> +static const struct exynos5_usbdrd_phy_drvdata exynos5515_usbdrd_phy = {
-> +	.phy_cfg		= phy_cfg_exynos850,
-> +	.n_phy_cfg		= ARRAY_SIZE(phy_cfg_exynos850),
 
-.n_phy_cfg does not exist.. Please fix this
+On Tue, 20 Oct 2026 12:05:59 +0530, Selvarasu Ganesan wrote:
+> The probe loop currently iterates using EXYNOS5_DRDPHYS_NUM (2),
+> creating both UTMI and PIPE3 PHY instances regardless of the SoC
+> capability. Several SoCs (Exynos2200, Exynos7870, Exynos850, Exynos990,
+> and ExynosAutoV920) provide phy_cfg arrays containing only a single
+> element.
+> 
+> On these SoCs, when the loop reaches index 1, the driver reads past the
+> end of the rodata array, populating the second PHY instance with garbage
+> data. Since the configuration structure contains critical function
+> pointers (phy_isol, phy_init, set_refclk), any subsequent access to this
+> PHY instance via exynos5_usbdrd_phy_xlate could result in a kernel oops.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] phy: exynos5-usbdrd: Use dynamic phy_cfg size to prevent OOB access
+      commit: ba6618a1e7c02f384069f7817133ff8cb5c793b8
+
+Best regards,
 -- 
 ~Vinod
+
+
