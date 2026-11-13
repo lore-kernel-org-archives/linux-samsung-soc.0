@@ -1,65 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794567187;
-	b=NlNYJytM2G+W4o3C1SKcuwpmbRohoqgZd7490i5tG+ZibI2++ycNj6c8GsyTuHg59los
-	 ZV/Kz5K7U2milbABS4nQv6uKHQD1j480gXRjg2r6xaaBedZEqlMkjiOudr6x+bRGwTIS6
-	 PKH1inJK61TJU7345pv4Xdj4Qt/XTOwf55H1jXOthk4loc2HMkRiHOpVlg0XBzX4A28Z6
-	 OXUdR3PUv3yNwg9aWd2HyVldqhAIwZHdOg80zZOutLuTudCGLISIkKtGyRnONtwsIEMOH
-	 HYavzVDtyaU5yKr1PXD5G1GIppHtXqvAzIFsUZQ9TJ7XjiwuI/CUbrkM63Ssf4kqHUQ==
+	t=1794567225;
+	b=ZM0bPuDKHqj22f3+IeXBmnFGHzXEfm8kBq4xVRkM1OuaD/HCMxoqIvqCkpAlhrdup3a5
+	 UwyM4BJgVClqpfW5FCTPpalRqdRPajTatC8WiH2ebKdp1Jfqs8xU6RAWjb4HRh2gpSbqN
+	 Fs1IRdO9usC8nLghMVSDBwWGxqwJyFzoUOEgfjFlA/ev0IOS9lowsKC7r1oDeufCUmB9X
+	 6CQuhxzPlUssYTAGX5IffRs9E3DUCo9hxUrOdXntqY8dlTHWNCK3KsDnDQDuQE8Ljlk6I
+	 lgcsOwkq2ESBtrMqTgJQ2522ldwOtGviv6X3QOTAIu5Nhw2McPDyZqSGcYORpG6j16A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794567187;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794567225;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
 	 Received:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:MIME-Version:Content-Transfer-Encoding:X-CMS-MailID:
 	 X-Msg-Generator:Content-Type:X-Sendblock-Type:CMS-TYPE:X-CPGSPASS:
 	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=xZPonB6Lbb0k2OXAWHkAdkEguf5JX+UcZL6exprUdC8=;
-	b=onxPyt61HQxOxcuAQV5BR5fXxrcLTz+t1ehoXT45c/TUF2Ni5YK64y4bOLTR43e6E5TT
-	 qwrE8x/0iyTc39HdmzxZpcOmqvmlJ35ALFud4fQIP7Ge2GBOAGqPJbbXKGr7ccbcWQh/T
-	 QB0MLeRkAhkQHzY7i5OM/uRW8plQB6s95UnyntKKBLOI/hiNRGerUvAEKblflb4C4QOAV
-	 9oZOta08danqWWKtqaDTlhP6dSYsVGoGIvQDcqz+FmtzMCPRr1ICKrIi+ZBkwuKr0lJ6r
-	 NPxdQrjxjdoZYeaDX5tdmd4urR174DuQQOdZyQBx869vAqKaXBDQU1iJ//qFDbc2dyQ==
+	bh=+NP2Sc9QfAH27QKUaoXkjp0qHnyNnKKBhYsb0OsmWbM=;
+	b=qZZVllVTC2j8lZFLt5LrbtiPu19Tp5Bdh0J4hXcvPz+le6PHdGgRNsTvvX55ISorhXS3
+	 KkHkTZu3YrGnd7DFqhUHaXLgbXDJ1R8yM1lg64Xl3grqc08zkPNej4aNZNcD4FjOWxUNJ
+	 aQmocq3aTRZ7y/b7BJp16MEV9CLw8I9z5l7uwMNjnpGfaUOhHB4AL4dYrjU2XLmxPgtzt
+	 QQvr91Tu0E44PkRCn8gOBedauP/xomGyiWQ3OI6Lec/Uh9lyGo1+JqMXTclmuWaW1Z0OF
+	 3Apnba0zKQLNGn+LqqH1sNxOUgN+mRCv7b5EG/5Mp1nbWcQDymdPBtJbuBsD6lFW14A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=KkkrUPls;
-	arc=none smtp.remote-ip=203.254.224.34
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=rRDNizMD;
+	arc=none smtp.remote-ip=203.254.224.33
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E2B606A31C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 10:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E1E2B606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF0960A261C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 10:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DDF0960A261C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=KkkrUPls
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20261113105259epoutp04473a8bacae3e0294d343c285d232066d~nlVd16ntE0750907509epoutp04b
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 10:52:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20261113105259epoutp04473a8bacae3e0294d343c285d232066d~nlVd16ntE0750907509epoutp04b
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=rRDNizMD
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261113105343epoutp03f7180941a272226bacd583231096c8c9~nlWGtj_oD0673706737epoutp03X
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 10:53:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261113105343epoutp03f7180941a272226bacd583231096c8c9~nlWGtj_oD0673706737epoutp03X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1794567179;
-	bh=xZPonB6Lbb0k2OXAWHkAdkEguf5JX+UcZL6exprUdC8=;
+	s=mail20170921; t=1794567223;
+	bh=+NP2Sc9QfAH27QKUaoXkjp0qHnyNnKKBhYsb0OsmWbM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KkkrUPlsBtC0ji0UbJU4fmGmbYQ+7cNpAIj+Q414Jg2D3TgaoM3E9pFJdhSebZ+uG
-	 XZ+iPm+0pMKw8mc+YKFyBHOYxBAjjD9SBPn8xUBHW3brNlQOvldsJWYHPv4fZNXEQM
-	 wp2h7PJR/W3XzL4DzQMvajIjxBIJIyJHVwexZEIE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20261113105257epcas5p16bd10862e221c5e0052930bf487d41c0~nlVcdI3-d0130901309epcas5p10;
-	Fri, 13 Nov 2026 10:52:57 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4jQvHD6X0Qz6B9m9; Fri, 13 Nov
-	2026 10:52:56 +0000 (GMT)
+	b=rRDNizMDhuC0YrE80JfrzGWKuj4stjsLCQYyetT1AIWQm59bTMUMusplHw5J6vc3r
+	 cmhT9kpSisjzrLaG/r3G3jNBNgyp9YDs//BziIf/ELYlyFnlgO7qY4MyJxArpW+0xF
+	 DYGwjpxl+9FZH61zWvBLAXqCBsvTPNihLZLsiWQQ=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20261113105342epcas5p23b9906156baf48daf6def2360cc7a3de~nlWFu0ori1645616456epcas5p2Z;
+	Fri, 13 Nov 2026 10:53:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4jQvJ53n0Qz2SSKX; Fri, 13 Nov
+	2026 10:53:41 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20261113104832epcas5p4e1e9a3dedeb0c9c60cb80c23eb5d930d~nlRlBPkNl0561205612epcas5p4u;
-	Fri, 13 Nov 2026 10:48:32 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261113104847epcas5p1d970255218f1ca78b19690bfd097f303~nlRy0o_DM0455004550epcas5p1g;
+	Fri, 13 Nov 2026 10:48:47 +0000 (GMT)
 Received: from bose.samsungds.net (unknown [107.108.83.9]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261113104829epsmtip288867f1635f2f9c4a284fec461722d48~nlRipOvDs2501325013epsmtip2F;
-	Fri, 13 Nov 2026 10:48:29 +0000 (GMT)
+	20261113104844epsmtip2f002bc3207e882b2bbec4d82de94f3f1~nlRwQ9dOK2503625036epsmtip2I;
+	Fri, 13 Nov 2026 10:48:44 +0000 (GMT)
 From: Raghav Sharma <raghav.s@samsung.com>
 To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
 	peter.griffin@linaro.org, alim.akhtar@samsung.com, sboyd@kernel.org,
@@ -69,10 +69,10 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com,
 	pokala.reddy@samsung.com
-Subject: [PATCH v3 01/14 RESEND] dt-bindings: soc: samsung: Exynos8855
- SYSREG compatibles
-Date: Fri, 13 Nov 2026 16:35:59 +0530
-Message-Id: <20261113110612.3265841-2-raghav.s@samsung.com>
+Subject: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for
+ pll_4313
+Date: Fri, 13 Nov 2026 16:36:04 +0530
+Message-Id: <20261113110612.3265841-7-raghav.s@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113110612.3265841-1-raghav.s@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -85,7 +85,7 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261113104832epcas5p4e1e9a3dedeb0c9c60cb80c23eb5d930d
+X-CMS-MailID: 20261113104847epcas5p1d970255218f1ca78b19690bfd097f303
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
@@ -93,46 +93,64 @@ CMS-TYPE: 105P
 X-CPGSPASS: Y
 cpgsPolicy: CPGSC10-543,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261113104832epcas5p4e1e9a3dedeb0c9c60cb80c23eb5d930d
+X-CMS-RootMailID: 20261113104847epcas5p1d970255218f1ca78b19690bfd097f303
 References: <20261113110612.3265841-1-raghav.s@samsung.com>
-	<CGME20261113104832epcas5p4e1e9a3dedeb0c9c60cb80c23eb5d930d@epcas5p4.samsung.com>
+	<CGME20261113104847epcas5p1d970255218f1ca78b19690bfd097f303@epcas5p1.samsung.com>
 
 From: Alim Akhtar <alim.akhtar@samsung.com>
 
-Add exynos8855 sysreg compatibles in bindings
+PLLs 4313 are found in the Exynos8855 SoC and it is similar
+to pll_531x except for CON8 offset, so re-using code for
+pll_4313
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 ---
- .../bindings/soc/samsung/samsung,exynos-sysreg.yaml       | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/samsung/clk-pll.c | 11 ++++++++++-
+ drivers/clk/samsung/clk-pll.h |  1 +
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index fcdb9ffd2644..845e0caba15a 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -31,6 +31,10 @@ properties:
-               - samsung,exynos5-sysreg
-               - samsung,exynos7870-cam0-sysreg
-               - samsung,exynos7870-disp-sysreg
-+              - samsung,exynos8855-hsi-sysreg
-+              - samsung,exynos8855-peric-sysreg
-+              - samsung,exynos8855-peris-sysreg
-+              - samsung,exynos8855-usb-sysreg
-               - samsung,exynos8895-fsys0-sysreg
-               - samsung,exynos8895-fsys1-sysreg
-               - samsung,exynos8895-peric0-sysreg
-@@ -103,6 +107,10 @@ allOf:
-               - samsung,exynos850-cmgp-sysreg
-               - samsung,exynos850-peri-sysreg
-               - samsung,exynos850-sysreg
-+              - samsung,exynos8855-hsi-sysreg
-+              - samsung,exynos8855-peric-sysreg
-+              - samsung,exynos8855-peris-sysreg
-+              - samsung,exynos8855-usb-sysreg
-               - samsung,exynos8895-fsys0-sysreg
-               - samsung,exynos8895-fsys1-sysreg
-               - samsung,exynos8895-peric0-sysreg
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 3d837bd74355..7b0756127306 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1306,7 +1306,15 @@ static unsigned long samsung_pll531x_recalc_rate(struct clk_hw *hw,
+ 	u64 mdiv, fout = parent_rate;
+ 
+ 	pll_con0 = readl_relaxed(pll->con_reg);
+-	pll_con8 = readl_relaxed(pll->con_reg + 20);
++	if (pll->type == pll_4313) {
++		/* Offset for PLL_CON8 which hold FDIV different for PLL_4313
++		 * which is PLL_LOCKTIME_OFFSET - 0x4
++		 */
++		pll_con8 = readl_relaxed(pll->lock_reg - 4);
++	} else {
++		pll_con8 = readl_relaxed(pll->con_reg + 20);
++	}
++
+ 	mdiv = (pll_con0 >> PLL531X_MDIV_SHIFT) & PLL531X_MDIV_MASK;
+ 	pdiv = (pll_con0 >> PLL531X_PDIV_SHIFT) & PLL531X_PDIV_MASK;
+ 	sdiv = (pll_con0 >> PLL531X_SDIV_SHIFT) & PLL531X_SDIV_MASK;
+@@ -1729,6 +1737,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	case pll_309:
+ 	case pll_531x:
+ 	case pll_4311:
++	case pll_4313:
+ 		init.ops = &samsung_pll531x_clk_ops;
+ 		break;
+ 	case pll_1031x:
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 2457cf47c109..4825e1f5b9db 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -49,6 +49,7 @@ enum samsung_pll_type {
+ 	pll_0718x,
+ 	pll_0732x,
+ 	pll_4311,
++	pll_4313,
+ 	pll_1017x,
+ 	pll_1031x,
+ 	pll_a9fracm,
 -- 
 2.34.1
 
