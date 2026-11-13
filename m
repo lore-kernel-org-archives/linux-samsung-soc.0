@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=47.88.81.145
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.195.24.57
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794558223;
-	b=fw40dq08Kz8ls7R+yyHgWSr3Il4J4pi/ysGwQ3dFjWz3X+dRFlbxD8bPH7oFFwtcGF8w
-	 cGBZbAYai9Ls+NKoOQdm7z8+997vV45/ukPoOBn6hk5j64fj8yvK38ZhO1yBwS9kg/kVA
-	 Wsz85b9F0axZJVxa7oVltTN/Q8KNYGZm2tcXQj8NsOBIGmJ33E3iiLzg0K71UaiGIXzNt
-	 9nmCQRW2Ptc/jOHUzBZvhNat5CHN3YMhsRoBZlLB1brmokajTRMGY2Nq0On+1uDbdoGDM
-	 v3JkMfrKfPAG6acJzc97KjmZKFQoQva7vM82XkKqlwI5GsTNA4HUrzfhunXWwdnrraQ==
+	t=1794558224;
+	b=SuPXAKwIs0BCcGGOBafl9RHNhXNdPUr/6OL32GsnXJ2AL18TNzrq8gTG+E1h3TyJtgpd
+	 VwK2KyNba6r16MR4Wo/tDN+u/q51DMUnza3/DGHqxaAkLKH1Dx4/ovzAMZMKRLGXgznZa
+	 iZyjvXEw3w9nCleVMX2W+Aczfuxqd5gtVZU7Rcq/Wqf03gcoRobbwWhdOi7GbscodhSfB
+	 ET1tAWZuHPNcvxUs7FfrkXtfROmmr4NbWzO/BaHt9wcSnkV6+gphogsHKMqC5jakCUyPO
+	 Q0Bz4XQ4zoDKt2xtqKv3DWXK/hSMvKYIV1EDR5SsGjZvH4LOEQ2IQ8QQKh5TqRWcJeA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794558223;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794558224;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=ec6awz2rPOwPo3s2ojMeeQLtGJuhRw+MMLiAWSlyn1k=;
-	b=tTG5UxcnnLeFy+3lbgRs1IBHq6OUhLe26kSJcuUmPC7UUUFq0rnJEnsxd5oGhxM+QxAt
-	 +TOD7kPPOYjeSv0PXYReT6fhY6NLfIgyD5X05JjaCUIgyGyLJK8qMm145RhNt9XUS9xf9
-	 5CB70hpczjnlZJZ4QYvNkdm0RD4xFp8KzCaHeypi8MPdfuauis5LrAADRSodJb0CMFgQv
-	 QaseG+SH9QAFU3RtHRelew6rHvQQh/+qutLum8Rh4uAJy3xIAYZB/lxs32FJ+dqlDQedU
-	 tcG0DHpJYAP80sD8EwkoS3F5cODX5iupDOhofymukRC/+CfJhKUZG+ixG5ExMLAcZbQ==
+	bh=DekORoAGOSqODtCTN3k+su3EjPXM6F+iIpkaRyqo9rU=;
+	b=O4Vk9l1hVpZ2YYNUvyPeV4IyBWiGAn0hLTK86kLUGrovxlE/eogX0JiTl2OO8Hf5OqLU
+	 Y0nrFgngrn5WNY9vyzu89woDOqXHEd5RCmtPb4h9ecMpGYAh9UL5SJo/8v0W/m5qL6GLg
+	 fnDBPItwjLfMhY70Si7Aa7MALwhnVx1GVL2AbSvsB4MeGeYSup/jMQvqoWQGgBleYLj43
+	 cKrTH6ktjh3ZGoLsSeqzM+I4Od5zFV+O+xQafzap+OEWiKrBA6pf8zB6C7CDRDw4uc2IO
+	 k3P93GjO5GdashtGFNjZ1l0SQkHDW/g4GhX2mi7eSUnDf/NPa7dlun7cfLPgk4fmgkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Hvj2q2Tn;
-	arc=none smtp.remote-ip=47.88.81.145
-Received: from mail-m81145.netease.com (mail-m81145.netease.com [47.88.81.145])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=X+ud+el7;
+	arc=none smtp.remote-ip=45.195.24.57
+Received: from mail-m2457.xmail.ntesmail.com (mail-m2457.xmail.ntesmail.com [45.195.24.57])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D14B606BDF0;
-	Fri, 13 Nov 2026 08:23:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D14B606BDF0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F83E606B604;
+	Fri, 13 Nov 2026 08:23:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F83E606B604
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Hvj2q2Tn
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=X+ud+el7
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be64;
-	Fri, 13 Nov 2026 16:23:32 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be6e;
+	Fri, 13 Nov 2026 16:23:33 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 12/18] drm/rockchip: analogix_dp: Unbind bridge when connector init fails
-Date: Fri, 13 Nov 2026 16:22:59 +0800
-Message-Id: <20261113082305.541652-13-damon.ding@rock-chips.com>
+Subject: [PATCH v6 13/18] drm/exynos: exynos_dp: Unbind bridge when connector init fails
+Date: Fri, 13 Nov 2026 16:23:00 +0800
+Message-Id: <20261113082305.541652-14-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113082305.541652-1-damon.ding@rock-chips.com>
 References: <20261113082305.541652-1-damon.ding@rock-chips.com>
@@ -83,25 +83,25 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1d401381b03a8kunm073aab0481ac3
+X-HM-Tid: 0aa1d4013d3b03a8kunm073aab0481ad0
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCSR9IVhlLThhCSkwfSU9MQ1YVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTE0dVh9IHkNIGEhNQ0pIQlYVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pKQk1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=Hvj2q2TnZ38x1P+LwuO1t72YWtriPL8ZTvFkvOesdFMfz3JZ8qze28OKz7H3FIgbOwPCPacJKTlkVSYf3uKvUbmFiREj/i+IhqTg4P6a0HvL+latrvhaSHoQBJKrqTJ1Z/TI9JuFjwOE54ML6Qn3TYZFo0RMI9isV7KA2a6EhZE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=ec6awz2rPOwPo3s2ojMeeQLtGJuhRw+MMLiAWSlyn1k=;
+	b=X+ud+el7kYt42ANScFp2NsA99RK/r8irjQ8YNIk5r44GkjMRBrZQX0Cpeeqa86FvSE9l1cS97Arwl3h4r1RMixD58BM55y+WI9qVQcobXVOw0UtAQIxMWEUj7pp3NmrZQxT+WtgfXlUCEOPhnb3/g/hto5iZd5p12Tr8RDAfkRM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=DekORoAGOSqODtCTN3k+su3EjPXM6F+iIpkaRyqo9rU=;
 	h=date:mime-version:subject:message-id:from;
 
-The rockchip_dp_bind() returns without unwinding analogix_dp_bind()
-when drm_bridge_connector_init() fails.  The aux device registered by
+The exynos_dp_bind() returns without unwinding analogix_dp_bind() when
+drm_bridge_connector_init() fails.  The aux device registered by
 analogix_dp_bind() is then left behind with a dangling drm_dev
 pointer, which could be accessed on later AUX transfers.
 
 Call analogix_dp_unbind() in the error path to release the aux device.
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
 ---
@@ -109,19 +109,19 @@ Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 Changes in v6:
 - Add Tested-by tag.
 ---
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 1 +
+ drivers/gpu/drm/exynos/exynos_dp.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 635146746b42..39eca3ec7160 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -419,6 +419,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 572e261e09da..86dc53014fff 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -121,6 +121,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
  	if (IS_ERR(connector)) {
  		ret = PTR_ERR(connector);
  		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
 +		analogix_dp_unbind(dp->adp);
- 		goto err_cleanup_encoder;
+ 		return ret;
  	}
  
 -- 
