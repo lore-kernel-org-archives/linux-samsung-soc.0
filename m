@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794525980;
-	b=qW3mRVJ6R3oGS6GdL8HT1VZkhhJ1Pe8o8wLm2LQvw1vDozbNVG+uXv/8Me3BaYuhOcCP
-	 d6YIIehM1YmpdkObWvXPTKfKrVdYmQPsvkWk2hycImlGTNZMrw6rZ2VQzHsJbfLEJyAuL
-	 bFExII56x+AL7NLZUPHFlAKQJizgHqTdeNx3AwdObSGzE8UVdkqaqCqC7tjnJhz592kDe
-	 IHYvT6UwcUALYz2IquV9/pFzTJS0YXi0OH3jsnoO3q/wKpyWPDCBmIJM6k43jiPCon7xx
-	 IXjgB/SldWPxek1I+4pMXz3+WB0DEuX5BRPP1KoJtxSwZs8fHlYJKccioLXoLz6r0Qg==
+	t=1794532483;
+	b=4jHDfKdlxpj5Uq8u/HyGhpzI60ZoLbNKNshEpGV41grjtdKUhNXGwi4m/Lbo/yeaURkV
+	 1/HSq9xX0yDAjvfiLeRnV0H+kQbHwvtoGMX+6Um+VMYpG7RqnFRgUEUU7D1M4mxI5qc7M
+	 d77Isa+mlSBBl9Dc49si8PbBJcO4rFuNBElepAe3tWJW7jePaEhFpbfZ4TQ+zCCunJdLz
+	 SRY15YKbEkJX5IORedSb39mdPfIVKrRpoaDvqzkRCuqUusKCenAP/peM/BMSpaWWbTq9E
+	 qFbO9UzKSydmKqnVUv6Druk2ZlymUuuwftf3dy46w8JMef8vJo7MVffrWAW9mKSd1wQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794525980;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794532483;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=meZuQntashJTcd7s3yiRtBHxVh9sQmthI/UbfhQzfC0=;
-	b=qBGO9s5j08Pr5tUvCPOl9gNJEyYfcqcostcmArIUP99WCm7zWKEcXFRvMtdz92E2Oulu
-	 y3rQ+nZfNYEiLQv/n6WFnVNncKkxp7ZxRdZ9CbyVv2CRrBTsmsTtar3KpDjhshrmHjIak
-	 z7jXIQlfU1Z3sSiIfY5G9LR6T0gKNOI35wWNQubxQ8Xx+28QGhSIbG4pWVkJc89jOBTPB
-	 U+H12HJYRfWluIDoVQKY2z5eDzTupQYwshtEJhllmOJDdlg4jQ79DqCzjttLgM6+Hz3zV
-	 B8yBY15VThXjXIFEUa7a7BR/arasuO15M7S3ae5ja8XkeH+/wgWDOZ7ArWsVX1kwezg==
+	bh=3rjAI+sJDwgrDrNdAFFa1hcjaCbxcDShwUBEuorOLOg=;
+	b=bWd2lDQi++lyGx292rR+aldX8kCGCVs4xwZQKQLJe3hDz9V0bUdmOaLCSFNuBXbYp0d0
+	 qXLJQY3rcR6WjDVEhEXyZKP8Dr5db3iloMWPMp2LrqsYL944v2iZwOpgyRHUVTKwKEERJ
+	 vaho3qsgJJI2GV0s4scGPsoQoy6DdUsmAJEd0PhXi2xyba9seorxP3B/c32q07hi3Rwqu
+	 odQV357cIMXXkPOruOxmpFgHBH1ci789I1SKFrUTGpiETibZeMfka9OWvNLmyqbgRyG9Q
+	 V9y1+t6tlrGQjucq/9p8n45GWNgYN8LwwUi3yNUhhm/UIPLMpu1AAQDV+Mq9BysHttQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chromium.org;
 	spf=pass smtp.mailfrom=chromium.org;
-	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=MieY4qOQ;
-	arc=none smtp.remote-ip=209.85.215.174
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=QRPrL000;
+	arc=none smtp.remote-ip=74.125.82.43
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5356B606A32D
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2026 23:26:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5356B606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D640606A323
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 01:14:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D640606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=MieY4qOQ
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-cc758830601so518535a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2026 15:26:20 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=QRPrL000
+Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-15ea896ddc8so491062c88.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Nov 2026 17:14:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1794525979; x=1795130779; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1794532482; x=1795137282; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=meZuQntashJTcd7s3yiRtBHxVh9sQmthI/UbfhQzfC0=;
-        b=MieY4qOQ6pZCIr5Q+lFQVjXxwPdVfoiH5Y7ie0qONvaiteOGiCfww5p+6jOvUxjJi/
-         i6QJTbx3moiDt0L3+PJqL6CYnAMPOi8AfnlB7SFJvPN6+n2dywupbWkGGew0uyqFtqb5
-         9GF2qkhHJ+rQK7uZ3IcX2rxFEGjwg2CttKgzE=
+        bh=3rjAI+sJDwgrDrNdAFFa1hcjaCbxcDShwUBEuorOLOg=;
+        b=QRPrL0000yqqXjBWHqNbRcWasjWbFOVo9y3hyLWAJfY5LWYvqk7Wu6LE0XENCCaS2a
+         2gDKt9Tmj+gDju+E4i8Ox0fY6gAs66i9q++F5eYp07XycK2OqpdK+ddESitSF1AQz2BC
+         1fy3zZ1rbxWPfFY32jKlkMebj26wY+vxNJZuc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794525979; x=1795130779;
+        d=1e100.net; s=20260707; t=1794532482; x=1795137282;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=meZuQntashJTcd7s3yiRtBHxVh9sQmthI/UbfhQzfC0=;
-        b=1NBIT3kLFkPGFSsJQYSjbZ1xBNSD84b40KrhA22EqBkSn3dQXDPnCoDczE2kAQFMLw
-         h3IiCBEWl1BaSCKPyH5iSFT6KKNDPzi0gbHQEdwNBsVaAhL68LcF1dVUctbnDLwTxO4g
-         4Q9fsg2PdkSXpzGz7BwDLvWoO3T32n9SIeGJMoJdT0VQWKEhCaWrP9rL5ArHbJh1Cpwz
-         sBP2i+B6Dkh15VsOfuNhmS6tei+yJsLfox1/atlL0JNk0ksMnRiS9014s9dylPh9iUOw
-         dwrAqJJhlDS6FCEBMrP+xTA5RL4rzqUcriEnF2dNBj4jfPBKirbdBRI5XdM+RkWzbNgT
-         dODg==
-X-Forwarded-Encrypted: i=1; AL+hErHpmey2xj44faMO1eGFRQ3QLgGSt2NeB2MKAavwgqYIWdN8w6/R1Sltyxmf9a9W6PBEsxqRD1qLRcF+lKYqLzLeVg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+AXPzU9EqpFVmpGNI4G5bBlplBD8/MQRmvl4PL4l/QSqBRyGCK
-	Q1tbXjCuXcra2QSakGswKW6ls0CXWcf98FckkCL2namNMSpX5iGJ6JUGwTgK5fL/0Q==
-X-Gm-Gg: AYBFou0tTJBsHppJoXG9NVvQwMRYdpj/W4s0BBux0nfgfl7lvYd4J1RkMgMQ8WAVcqm
-	bRHrI/YozjSf6MVaC8JVMpn22Qqr3rsuMGGk9qC4c6OX+O3pdu5dac1wLhhGriDLPxMnIzLuHyB
-	cDLbFqvqrSKBuVVR/gs8qnxahWfqTA1l+Ru8yOLoXyYCz77+M77leb1evtlsuXwgFYjgK+x69vj
-	v2QJi7s+0oEX/NANlFJI9Agoa0LGYycoIsp/f897s4ZSuNracX4TEaFs3VwMR/wZ9NJkQyWktk/
-	CgY8kG9UUkurO4jGWnCYLakoX95f1KN0AuhGizRW5czHKwlhTAzOSGcNBJHGW/Bwhtkq8bMf2dO
-	1qdAa8Qx7RmNzU7w3q/3SLPoYHEjRUW2KxFFMihrwZ2lkQnf/0WzjSAlCUSt26cyxg/JdDrYlCH
-	MClrDSE5eyvHCHZzIsFHr4oHDBR5wn+Xs1zV/+hrEHPseRKyvCcsrZ3z6n38ZL+l6eT8/jmgzPb
-	9RU/kP3GGgyAU7w9ZPDm0/GeHIq8yA+yIrHjYIoU+QW0JwlJBvXqi2JjBOtZTQ+RE3hB0xufKMc
-	Yu7jF7MWuAfY8qFoYNX7XverUwDoC8p0AmDOdvbeQQMck8dNKL4/ne+sWlaZ2OyjAW8wSXxK71C
-	rt2zXrYgnHc2mJA==
-X-Received: by 2002:a05:7301:b07:b0:369:4c3f:8a5 with SMTP id 5a478bee46e88-37966a5b9eamr527768eec.14.1794525979231;
-        Thu, 12 Nov 2026 15:26:19 -0800 (PST)
+        bh=3rjAI+sJDwgrDrNdAFFa1hcjaCbxcDShwUBEuorOLOg=;
+        b=UMSNinPmYVyB0OwJ2G546zv4kxKPTFz43MIGHEhwg+4eewewDy9Pov/e+Caz/GstCy
+         zbze4aTnd3Lq2RWVDXAkANMpTqZCxDROgS+b9+QQnvJvm2Umicc8Y02fSQd+9jwUnC83
+         3TJGM5JZxeS1nEx4IKmlk2ORG4WCENxCyFyGOfvls3xJvreln1ZJ8bk1MJJ68CUWLS/z
+         +oy3nNpOMJ3lsrWZ96sPccfjCoK3893xp12COAY6V4DYSt3rifijsszCDJMR9omyevQn
+         zeU0Cc60r1vkgvtN69rhsfMZ/9C4fbhGM93QmHEFQuBi3bTVolqxIkvMvZ5qoFXe+GEK
+         3nTg==
+X-Forwarded-Encrypted: i=1; AL+hErG8637GaOJERLipa5isLUzF6QiFuTne/niAlNACdff0QsVo0uph2kEWSK9ma5MXEyLw+YeKMO3r57WJ2Q2e+w0Tzw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8QL2wVIovIzDe4CYU2kjLPOf8SwDMs2WhYDJA6icxxFUDRTsx0
+	6OohvG0k+ZuqudeYKrWANa++zU/hLAaWPadvt/9yzt4ugrrsrxlLTjCIfqLDPX8r/Q==
+X-Gm-Gg: AYBFou0hGr0dwDB8aC9VdDrbjornpI+6NycAkn6WxywQ7Cde19tuH930uwBGmjIzo2f
+	qBg+YWgae53Axe7Kix/i2hDFGGAer0Jkm0Xvg7yiXFng2DJvZCqytkVp2dXRPROvMgN/s0nlpit
+	ShT85yLydGjTmcY0LX225y6nVIbspJ6JjkZdZkfxH6rjZXP6a5fOnCN7aZPaM8zW9pRaUwz41sH
+	HME63Q+yKxkgqH0Hw1eGfYrc8lTyGXUWU3dqqJkYSXPV0MCFxZFuexQRSmS5MAbui5525DMYx0j
+	pVepvadX+1swHj988ge/AAIsP/fwGu7a+2WkVFRH77NJyV6akYtF3dUcj9K9+5iL/woM4Tjk9EU
+	GMgWOOg1xs4n+jjIwyKA7AGK/LIJ5ZqVzFFCiu5Yzcm9S1VVZBg/Y105qxpZmIdKTUIIneSWFFB
+	iA/lDBL3mTnXhPtB+zbG0YmTOQOgeDHQwsyJeckYm92uis56C4YzAzg+dSiXZIg7mNNtI7EnPzj
+	aF7LUL0jqhrHqXBuyUU9n1e4MHfLcmiJdJYpAV+U55PIXRbecjq23Enp+nXpBvMuO8yuvaG6T1C
+	kX+cFK72+Gcs2pjN34jv/syOL2vRc5ZMNDTU/Yi/F+FfhLH8rI4savL7GO23Qp8DTDjah/uKkOF
+	7nVNkaoyMraiOjA==
+X-Received: by 2002:a05:7023:a41:b0:183:e993:7901 with SMTP id a92af1059eb24-1b5030abd48mr1019806c88.17.1794532482087;
+        Thu, 12 Nov 2026 17:14:42 -0800 (PST)
 Received: from localhost ([2a00:79e0:2e7c:8:616b:3e06:cec4:c2f9])
-        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-3795591f4f8sm1521913eec.13.2026.11.12.15.26.17
+        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-1b50309b2b5sm2265698c88.1.2026.11.12.17.14.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2026 15:26:18 -0800 (PST)
-Date: Thu, 12 Nov 2026 15:26:16 -0800
+        Thu, 12 Nov 2026 17:14:41 -0800 (PST)
+Date: Thu, 12 Nov 2026 17:14:38 -0800
 From: Brian Norris <briannorris@chromium.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -96,11 +96,14 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Mariano Marciello <mmarciello@google.com>,
 	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
 	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
-Subject: Re: [PATCH 5/9] clk: google: Add CPM clock driver
-Message-ID: <avZLGHs0OPoC_VGb@google.com>
+Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
+ binding
+Message-ID: <avZkfg6WMlMzOxpn@google.com>
 References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.5.I82dc05365979021379fe730d6d52792a87ff15ed@changeid>
- <179372634472.2573818.17532943286609086157.b4-review@b4>
+ <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
+ <20261028-rapid-daffodil-rat-0adc6a@quoll>
+ <aulIoq2oVjJ3DVzL@google.com>
+ <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -112,130 +115,138 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <179372634472.2573818.17532943286609086157.b4-review@b4>
+In-Reply-To: <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
 
-Hi Jerome,
+Hi Krzysztof,
 
-Thanks for the review, and sorry for some delay. There was a lot to dig
-into here.
-
-On Tue, Nov 03, 2026 at 06:19:04PM +0100, Jerome Brunet wrote:
-> > Google Tensor SoCs (used on Pixel phones) manage many resources
-> > (including most clocks) using a Central Power Manager (CPM)
-> > co-processor. We communicate with CPM using mailboxes, abstracted in the
-> > cpm_request_client(), etc., API.
+On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
+> On 03/11/2026 03:36, Brian Norris wrote:
+> > On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
+> >> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
 > > 
-> > The clock tree is largely not represented fully by this driver, because
-> > CPM hides most of the divider, mux, and parent details, instead
-> > maintaining its own internal table of mappings for divider and mux
-> > values. The one exception is for some of the DPU clocks, where several
-> > clocks and dividers are exposed directly, and the firmware API works on
-> > divider values instead of clock rates. I attempt to represent this
-> > properly with dividers and parents, although I don't have the full
-> > display stack running to verify everything yet.
-> >
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
+> >>> @@ -0,0 +1,16 @@
+> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>> +/*
+> >>> + * This header provides constants for CPM IRQ.
+> >>> + *
+> >>> + * Copyright 2025-2026 Google LLC
+> >>> + *
+> >>> + */
+> >>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+> >>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+> >>> +
+> >>> +#define CPM_IRQ_RTC_ALARM_NO			0
+> >>
+> >> Keep naming consistent. Clocks has _CLK suffix, so this should not use
+> >> prefix.
+> >>
+> >>
+> >>> +#define CPM_IRQ_AOC_MIN				7
+> >>
+> >> Anyway, ABI constants should be indexed from 0 and incremented by 1.
+> > 
+> > What do you mean by this? Do I need to make up names for the
+> > unused IDs between 0 and 7? On an initial search, I don't believe they
+> > have any meaning at all. Does that mean I should make up some kind of
+> > "RESERVED_<N>" naming here?
 > 
-> As you say, the clock tree is not fully represented here. Beyond that, CPM
-> owns the clocks themselves, as the driver acknowledges by setting
-> CLK_GET_RATE_NOCACHE.
+> No, I meant CPM_IRQ_AOC_MIN is 1.
 > 
-> The driver keeps a partial copy of CPM's state in the kernel:
+> > 
+> > Between 7 and 156, these are just ... 150 different "service numbers"
+> > within the AOC (Always On Connectivity) subsystem. I can name them
+> > AOC_0, AOC_1, ... AOC_149 if that helps.
+> > 
+> > Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
+> > into 0-151? I thought it was valuable to directly use the firmware
+> > indexing where possible; if I change those, then the indexing loses its
+> > inherent meaning, and we also have to add another layer of translation.
 > 
-> - Rate tables below hard-code what the FW has (or should have) instead
->   of rounding the rate, even though there seems to be a ROUND_RATE_OP_ID.
+> We do not use hardware numbers as bindings and ABI, because that's
+> pointless - no benefits, only risks. Similarly you do not define GIC
+> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
+> of these bind anything between DTS and software, so not a binding.
 
-Aaah, ROUND_RATE would be lovely except ... the firmware implementation
-has a giant "TBD" / "error: not supported" instead :(
+OK, I see your point about the distinction between hardware numbers and
+bindings. So are firmware-protocol-defined numbers more like hardware
+numbers or bindings?
 
-If there are major must-haves (or, very-nice-to-haves) in this firmware
-API, I can see if we can get them added, but that's usually easier on
-not-yet-launched products, whereas Pixel 10 is more than a year old
-already. I'll see what's possible though.
+> There are some exceptions like SCMI firmware, but that's not the case here.
 
-> - kernel handles PLL parenting and divider math for the DP clocks, while the
->   firmware can also switch them to what looks like the oscillator, out of
->   the kernel's view. So the math is likely duplicated as well
+It's funny you mention that, because that's exactly what Jerome compared
+this to in the clk, reset, and pmdomain portions.
 
-I'd have to do a little more research to be sure to what extent the
-firmware actually changes any of these behind the scenes. I'd imagine
-that for the only divider-exposed clock (DP), it probably doesn't, but
-I'm not sure at the moment.
+These values are used literally in the firmware interface, so I'd
+consider them very similar to SCMI firmware protocol IDs (and, not that
+different to hardware IDs, if you consider the "firmware" as essentially
+unchangeable). And if I change this to *not* be literal firmware IDs,
+then Jerome's suggestions on patch 5 (to imitate SCMI, and to defer more
+control to the firmware) become more difficult.
 
-I get your point though; it's certainly not beautiful, and may be
-difficult or impossible to maintain in general.
+If I do keep these as literal firmware IDs: does that mean you'd prefer
+these not be in dt-bindings/? Many of them (especially the IRQ IDs
+you're pointing at) are not needed at all in the kernel side; they serve
+more as naming documentation than anything else. I can just inline them
+into the DTS. But I'd prefer having macro names for LPCM IDs and
+similar, as it vastly helps DTS readability.
 
-> This middle ground cannot be kept consistent. CCF assumes it knows the
-> topology and computes rates from it, but the firmware makes the actual
-> decisions. The DP clocks already show it: the tree can report a parent the
-> hardware does not use, and .recalc_rate()/.determine_rate() can disagree
-> with what CPM programmed.
+> > 
+> >>> +#define CPM_IRQ_AOC_MAX				156
+> >>> +#define CPM_IRQ_AP_GDMC_WAKE			157
+> >>> +
+> >>> +#endif  /* _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H */
+> > 
+> > 
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/soc/google,lga-lpcm.h
+> >>> @@ -0,0 +1,54 @@
+> >>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>> +
+> >>> +#ifndef __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
+> >>> +#define __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
+> >>> +
+> >>> +/*
+> >>> + * LPCM IDs of each SSWRP.
+> >>> + */
+> >>> +#define LGA_LPCM_CPM			0
+> >>
+> >> What are all these?
+> > 
+> > The binding doc says:
+> > 
+> >       Each reset is specified by an LPCM ID (cell 1) and a reset ID (cell 2).
+> >       See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
+> >       <dt-bindings/reset/google,lga-cpm-reset.h> for reset IDs.
+> > 
+> > and
+> > 
+> >       Each clock is specified by an LPCM ID (cell 1) and a clock ID (cell
+> >       2). See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
+> >       <dt-bindings/clock/google,lga-cpm.h> for clock IDs.
+> > 
+> > These are the IDs used in the firmware interface to talk about these
+> > things, as many of the SoC resources involved (clocks, resets, power
+> > domains) are grouped in this way (by subsystem (SSWRP / LPCM), and then
+> > with indexing within each subsystem).
+> > 
+> > In reading again, I see that the definitions and explanation of these
+> > terms and the SoC organization are split a bit between the pmdomain
+> > commit message and the binding doc. Where would you prefer I elaborate
+> > more? In the binding doc, the comments here, or both?
 > 
-> I would advise to follow a model closer SCMI. What you are doing here looks
-> a lot like it.
-> (see drivers/firmware/arm_scmi/clock.c and drivers/clk/clk-scmi.c)
-> 
->  - Put the LPCM service protocol (request word layout, dst_id, timeout,
->    error translation) in the CPM firmware/soc driver, behind a small API
->    shared by clk and reset. Philipp asked for the error helper on 6/9; the
->    whole request encoding is common, not just the errors.
+> I just try to understand their placement. Bindings should not be in the
+> soc directory, except a few things without clear subsystem owner. If
+> this applies for both clocks and resets, maybe this could be firmware,
 
-I'll try to do some more sharing similar to what you're suggesting. But
-full disclosure: the similarities are still somewhat rare in general.
-Within a given service (so in this case, you're talking about
-CPM_COMMON_LPCM_SERVICE, used by clock, reset, and *part* of pmdomain),
-the protocol is largely shared.
-
-But this series also touches CPM_COMMON_LPB_SERVICE (also in pmdomain)
-and hints at some CPM_COMMON_PMIC_SERVICE support (RTC and PMIC); and
-there are at least 5 more defined servies, as well as a few other
-bespoke protocols. Those each have distinct request and response/status
-encodings. (Unfortunately.)
-
-So, I'll try to consolidate what I can, but it probably won't go super
-far.
-
->  - Make the clock driver a thin CCF adapter: each CPM clock is an opaque
->    endpoint, and gate/rate requests go to the firmware. Get rates from the
->    firmware (round-rate op) instead of local tables. Model no topology the
-
-As mentioned above, round-rate is a no-go :(
-
-I also don't see any way to query firmware for supported rates. Off the
-top of my head, the best I can come up with is sweeping through rates
-on SET_RATE and guessing, until we find something that doesn't return
-INVALID_ARGS...
-
->    kernel does not own. If parents must be exposed, the firmware should
->    describe them, as SCMI does, rather than the kernel hard-coding them.
-
-I also do not think topology description is possible with any existing
-firmware. I would think if we were revisiting how to do this more
-sanely, it would make sense to stop exposing the topology at all, but
-TBD.
-
-Anyway, thanks for your thoughts. I'll see what I can do about
-ROUND_RATE, but also am interested in your opinion on the best way
-forward with the existing firmware API.
-
-For some positive notes:
-
-The vast majority of these clocks do not actually support multiple rates
-(at least, not in the tables here), nor do they expose any topology. So
-I think I can just remove their rate table, and only rely on
-(1) GET_RATE or
-(2) SET_RATE, which will only succeed if you get the exact supported rate.
-
-On some other clocks that support multiple rates (e.g.,
-HSIOS_MPHY_REF_TCX0_CLK), I don't believe we ever need clk_set_rate().
-We only use clk_get_rate(). So, probably same story as the 1-rate
-tables.
-
-A few others (DSI0/DSI1) seem to never use any get/set_rate operations,
-at least on any Pixel drivers. So that probably can also be omitted.
-
-I think that _only_ leaves DP clocks.
-
-All in all, maybe I can strip a lot of this down quite a bit, and work
-on DP separately.
+Maybe firmware, maybe power? LPCM is "Local Power and Clock Manager",
+and I believe there's essentially 1 LPCM (microcontroller) within each
+top-level power domain.
 
 Brian
+
+> but another point is that you should not need these in DTS. Somehow you
+> split one clock/reset ID into two - LPCM ID and clock/reset ID. Just
+> don't, unless you want to say that for example LSION_CLI16_UART_CLK is
+> in multiple LPCM places?
