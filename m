@@ -1,99 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794574883;
-	b=Hls1cJvt/HVW9WdpA1Otrh1Ez8NlwUwuy1rHGAKWKKg5uvE2NUAQCaXIFG5CFdSlqi1P
-	 XIsSoInJvGf45wpUvNOidR7iK4v2YNv8Se1WToOfWjMZrxDlmuYLFKRkWZ99r/oNHRs8a
-	 h0GhIQId16sMcVP8gQPQE8QNU8s/tRFpPNNDxyIDL6vMynH7XFj7vlhf59Fh1wzoyf/fe
-	 SDz5x5ZPHLzUIsTOjDJWEBEDIxriQML+Ka3FLEE+L2k9hxlikqZxCiUEQeonmL+MUU8na
-	 z3+nOyWChAj09wEQ4jCH/hXpi6iTGuyEnfUl4CAFLew730hEVINlxcNLMK3+6zPflrQ==
+	t=1794574910;
+	b=dtzge2IlgQhTwfuVBtWCZKPPcKMHdrQn02SC3M0fi/DvvMdZF/DwLUin+pG3cqj0pLHV
+	 Dt9vJvV4age8xDJTDQC/XpNFo+h+bZ4EgBnlxC1P2TzX0FmzORV02VUYhplu0GH8psRh1
+	 Eb54roXEbWpwHzNJsPICu3onDZXHf666j/D0fBTKZyHJ6UjP09JmYSebg9KWrwUC8dp3c
+	 eBdcTQw266RrswnbdjXteD96dfwfoAnU6cSFnk3NTnsJUydL4rTToFBCzFbsN3o4lBxbp
+	 8VaEPp7zecYGPfM+DJmTWtY7O+R4KEd9iF+eSK7fpL2sNTYRWRowIxqJMwb9I5iUz9Q==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794574883;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794574910;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=ywPc1l09QxhJDqxQfGcJwVMg9RdA5INvScw4QBFAubA=;
-	b=aTuPPMQlQ7vH2IXnflD+43lR4+9y4XK96ay2MboMoBjL8zG6TxHhgNhFyWBREYWoTn4Q
-	 QcS1NfJsw6zhwE82XWeHXbIUamFurQGGCXsNae9nxMrnxMXJQPtrsVvq+dnW4x9+yr751
-	 xkuSHUBUSSlRi2JzYezRAlNJRr9v6+ujWYDAPsUc23S9p1J78O+hWPV3IsBVmx+8ga9uD
-	 HLHxp15IyoVg4eFOzYELTHSQrOBG4xhBX6MKJfafwIEPgvWHgMU9lMJgcdgn8wHeVd2gr
-	 yAh1AB/bOj2XN5wxF21vsy959VB8FX+dmvU4FzXk6k1O8Crs3NqWLR5CeEtKMvunlDA==
+	bh=Q8FGB4086VuPZeeikLpOs/k6Gqozfd2JXZ+7h0mLYa8=;
+	b=07QeKjuTmK3Z0gSCZKyL96oz7HpHdNmMWNVa/Dg3hl152Ppu5CrbEPCWsYtGlf7ohf7F
+	 Nk0L4IgYN1HADP7kc+lZZquKNBBvrle+ou31zDoRjyzulWDvKua5yugFBPrzZ38aFdt/a
+	 8vAuecORV0EPUeI+vf4CwN9jKSxZ1syuuoFqD2mBtze8HIFOyjwj/cNS2+L6ggjVN+//n
+	 W/+B4jjJ5fMaTvUk/W6K4shARiRSLdCFgosOYYGdzZonVuR8CcZx8IrNj0o7yeUCFnQVQ
+	 ARoekMWigMJidXFRRVUeyg+IllI9xwf/Xr0M76tBA8jph4LnveUBUs40mlu3t+hvePA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=MQJaXd6Y;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.51
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Yg2aVHZM;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B1606A323
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 13:01:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E83B1606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FC6606A334
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 13:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D5FC6606A334
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=MQJaXd6Y
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b79f5115c0so2043783a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 05:01:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794574881; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Yg2aVHZM
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b6e8b6d424so2066958a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 05:01:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794574908; cv=none;
         d=google.com; s=arc-20260327;
-        b=rkMYIaSp56Jez33BFmJ8gYePkcJRZq1JOhi+qZlWpRFMellhKeS2N8qKaVnBahun7i
-         50m9m8DwmdklNuS57KUyf3yUHW2Lss/qffJKRUtGlaUKlCqlU7QxvqtP6RjDek+RrxW7
-         E2jfuDZH8tQ96BnjM5nvz5iWTGuAtHjdS5pFwK/BVXbostUculD6hiegpdTO3pmpRpiO
-         uBY3HZZqmhLOBiw3KNnkqsNH56O3i1NGVpffc1PAVCF6jNwCy3tPfXl4+JCIS4acaI7x
-         a3p6pHXC5684+7d4W5gly17nRDl8JkJGKzTKAR1x/A2Sk4S0Kgl8A60EAI4AHwkYlvz0
-         1VVg==
+        b=GSqe9EMjKf7F9jUBe8Mg8bcsC+6Dm1EtUxUbNqQ6EaFoSS/mguAvif5zMcukcNXg1I
+         5PoARVfjHnqRJzLZ40G0rHlgVwG4EgwAZIDdV/6mqcpYGsG7NM1gvz9FZvOQmhTbTXge
+         9qBCkY+NmHX+jhzl0u7OqHtzZucMNwq4JnHOGWC4/jHxoZySR8wDu4n3fyriYjpepQJF
+         +hTPRJ6Bf7mWPCCUYYJugbhDvmgpJiTO4l1393mIF9ihh4li83sjANgDPZQSKtzaRyIE
+         UvjvE2L5YdMbQDBHj33m6Vs/GMV3Cd072YKuZJTOasaDcLPv3Lnc9kumdNP+xXojGym5
+         qIew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=ywPc1l09QxhJDqxQfGcJwVMg9RdA5INvScw4QBFAubA=;
-        fh=RKPdqHNMgyG1s7m8pUWmWpkX66tPxWDpiLJfDu3WqkY=;
-        b=lHyGoNGBKzVJon9FIF6HkDIT87eMEuUSiZfBH/3VkH9hoyRwK0a6f35H93uzoXz6jm
-         K8tUT+IiDJ/kZgXB9TViIXG6Y+RPN/bcPiVh80jXV/jmnzcZ+Aa0Yy6VlaV7+Askr/K7
-         pzYmjsvFUe4bUn6V49JUi3I1bqsMDfFH8zgeYLDJoYjz97QTXb2RPLLQrcSEZs40oGr7
-         8Z7lIP8bwAvvGwRN0Iegtd1YFf9dFqKrqvR2KSgowP/POiUE213nYIrrNlL9GevM5HZa
-         44bPqebKtSVh/Nxp2HD6l7LxRFwze2EGmWxXy2E3aXlvW8Ka4YoP/CogjUiE8fKCzYts
-         1FmQ==;
+        bh=Q8FGB4086VuPZeeikLpOs/k6Gqozfd2JXZ+7h0mLYa8=;
+        fh=5zmW22PPmw4reVRODbqIPkzjr+xlIdjV4L5J37ag60A=;
+        b=YlWej/Maxn3/i22QBEI1TnrQ+b60cwoXQb8T69NFYDTyD1lE+7NSWOLW+HWuX38bFE
+         Oz0Cg53Z794Bc03n5s+3TfgrjSuUz84Do/AwAtvHuKz6UuEuxYEaRmYV1dfB7vkyl+3+
+         f1apiRrvjF/jU5ZYT3xIlWIuYVs+m2YDnTRUrwqrsLssF97Fiecq9OnfcWY1twspTSEk
+         If6buH/owYezklkoEAs4kt9Mqqv8S6aMH0B5M2ex1Mg/37d2IW4nMsW8NDuQJ0yYj5m5
+         Q+8gO33B9a+d3YoRl9LFGWPb7byeYmxYzKSjj0ZuZu/dLkzBTJOkZM+V7bDy09AlPjHX
+         Uy3Q==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794574881; x=1795179681; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794574908; x=1795179708; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ywPc1l09QxhJDqxQfGcJwVMg9RdA5INvScw4QBFAubA=;
-        b=MQJaXd6YKRL3+jL6Uj5NN96CNwxl3sZHlJScFPSK0J7BOSDoGA2vh5ElOAO11rI60h
-         onBUy6vf2FZk/6Q2PYow/u/817Ui+QGZ+BVMKfxJ9Aw1j6o5mxRxw226PKd3ySoN5W4E
-         A4tQHaCY8lJjN1NdLW/Qrv+Ux+kT11fIJ8x9QXwkiFgL1rxDC0fcevS/gtg++L6Bbgbi
-         qaei+0mh8tnJCVQA5JS1OpYyKpgRTVsOSzaYIrLq9VgooIS5bpweBl/95jlN65c6qXdI
-         RyJQ+nZLlXFFY5bqK/iytO+V2G8O52BAsQrRO/YqwvIg4lfU+ud3S0iLEzM7Tx0o+iVz
-         AUlw==
+        bh=Q8FGB4086VuPZeeikLpOs/k6Gqozfd2JXZ+7h0mLYa8=;
+        b=Yg2aVHZMqVneHiwckm8fshswVKEjDDg3fGYweaRCKQ1LB9kEeHc6ZUBTWrZ5zrajdJ
+         J3NPx7N1IBwiFn3kf/z+OWrivkdXO3HXB3dfv5rj+U4TIcjbk6cYVuzy+P2MV5ekJJwu
+         8mbKTjvtDFhdMaPe73boK5BYZG2vc1ztHGioC7fHt9PF4VWSHzLLJGHNtTIXK4kQHSE8
+         G/Q1J5GPEhayhXwyaqWCVR6Br9Mr5QQ4Iym9DA2hCmJbB2UfCfdQ/gNlywTUKQJ3Dmw2
+         1GFDfHlzu1UeX+VxcENlq/ApQPoKOzw4Nqa86TH8RiHalCLTxsl1w6jY7JREjRcZ6tCg
+         HZwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794574881; x=1795179681;
+        d=1e100.net; s=20260707; t=1794574908; x=1795179708;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ywPc1l09QxhJDqxQfGcJwVMg9RdA5INvScw4QBFAubA=;
-        b=gEb2rR7YOQPCqVzn57d1/6KIVb5BtE2NL18hLTB1KS0cMeK5sB5375NhdCeVvUlebw
-         iRK5vkitSDeZQQU+gwFAq+2kc5O7yXoc1zzmPWcniXOob6QpcTApVqFA9w4KU7uC5sh2
-         4Nz584SIrAWTtlEqumFMJBveIJDofrUKXadoba53UerTx/UlTnfHzjCcZwlh9yCLwbHd
-         5bxOWaNt4SdfLH+H20CexS1pCgg3JRrUw2xWYvRwqkirY1bG5E6TFlYGVjYEv745SzXH
-         STzNfuSRlHNMwlvEWjG1qQdHOAtTw/Xi0RCu6QX40aX49Re/w8R6eceEn/29D2kZo5jA
-         OgrQ==
-X-Forwarded-Encrypted: i=1; AL+hErGvBj1Kfq8L1IN68nq5gqq03oW8o6XpMJqZj11ygVMFVrnmBcL7vki+a/2pNZkrUYI1JKKsxNzriy8vXwLEi8lp5w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z98764AtGuY0lV8sKHl8DtaggbQ0l4ZMHlbW4Z1HaUj6hSXyUsS
-	6/YiFwRfQ4QLTH8GEv7nShLhMvsxDfxKu6Qr2touc9OCAE3Y2lTJbDPJc5P7q0jOudfi8NgskQ2
-	HdR3QTjIWLj1ouI0OSgnONhcERNllAW+B+XqpxHop/Q==
-X-Gm-Gg: AYBFou390cGFSI1Y3t6KAYSGYjxW9+XQtyLMpWE8E5sxnXCd3QHGa1e41tfhLIGcRSo
-	qQwED47e4bIZMvQE1lkLHz9Ncxe0rU0UfC3REwUODj4aGJIwds8aSHWztKTrk7Z97QDVNwBftDi
-	rKqBC3e9B77+OyCPj9C5ndito6iF2aoPkU54g1AIiuzfYnGjt59jkxcLF7rwsgp2qTJXLVK50he
-	PtR3yhRpKg3AuWUb+dsaPWyYgc+bFw3kwvPVsVEX8tEAW8p/yAxa9OtALB8PXbA8kDrLlo77ooU
-	Nt/ImVkAc1QP3rxQHGuyssV5D+4mysbZ+udsLMRXxDSlMA3rVgyfgdlGXj+wmNVO3lgIoeNoEeU
-	oejG1EjyyLmmmWGl0OI4zOEYiu6anzAr0xeYACTSSTLeP/yEXM2xxStPu5LMsLxH2C8uGag==
-X-Received: by 2002:a05:6402:4413:b0:6b5:9150:edf3 with SMTP id
- 4fb4d7f45d1cf-6b7c0d144a7mr2186142a12.43.1794574880970; Fri, 13 Nov 2026
- 05:01:20 -0800 (PST)
+        bh=Q8FGB4086VuPZeeikLpOs/k6Gqozfd2JXZ+7h0mLYa8=;
+        b=dfui3lSBGDI8HBSDNmWlfUT3IHPYcLMvnkgLBVMugmxS0Z3joqh8wGJgk8YC/bbyte
+         /KDAkSxg89leO81aPR0dQwfx+coXLuVLCCC5qxYDVK5tQ1H/I+PbwbEdNOXm8bLeyC+K
+         QXC4SIFjDpCPy+/LMD5cNEmB50LP3yZRnKuMc/eZIDAXuwvX0Ob/rrSpWmiqKZQWUGEf
+         IskKex6PFwOoee2y+AO+BeyUdtWHUmtXLfzz7P9t1grTB+eJcosNqOytdUZwf5iSbrc5
+         CUJPfE695mn3DuKELMQ6GdCr6NTt1Z7qNh5Zw/KWx1UB8PoQLAUoydxJUKlH09KFMesM
+         xIoA==
+X-Forwarded-Encrypted: i=1; AL+hErGtjvqIYB3S7LMk/qclkGZUPuwiCJ/8rqmWLCORrh6VS1wzgLmhfwBRB8mq5Kdgh7vVxEHjLTHZcJH7TOZzQb8GXw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+cUosJF4h2YLWaUWSCLP0mgIh28qkf7U7rANvnJn82UDBWSE00
+	pdcbK+ltTcqdpzKO5xBu3S4rsQf0suVk9ZoQ8kOUQm0giiLQtHHqd2CBoVtMro5p5/ZUcZUK5YX
+	iasxMScHJMfkny3STPrjI57+t5GjT4enmboz6cSOCPw==
+X-Gm-Gg: AYBFou12E9jM3ebqZ4lLw6I0mEC8lZwrqq3Dv7AlttokqXULEHmWKFbw7deAR75eRs1
+	gQnJJn2Abg/44ode8jVP880K46EE2Z96F+Y2J2zIwLZyoViaCfkTiW589ApMeTM/weSZcMaKJNe
+	5plj//2u+JXQcqkZUV8La+sXE0tiZY4twxeD5u668ixAyZEGeAuQGCNWvrzhXFAOkLn5UTLPTcV
+	AS2dImV3znxhechOgG/VSLpjqBCGveyh4aoLXISCkrgpC9Jx4N/Z49ozmw+xblRISTKY6MztYpH
+	Q7CSJfb85TzaZrP8+KIio3VB7T2nsRADnOiKsgsJjcgGZ0cQYPyoD/qd3cv93Y/lX6R8j8b6uFM
+	57UacqTgcQ/MTeelQdHMBQTkm3kpP05LA1s+whC8QBqX5PcNGOoAKPMW/jkOeQnHgDa/C4w==
+X-Received: by 2002:aa7:df02:0:b0:6b1:e4cb:a23e with SMTP id
+ 4fb4d7f45d1cf-6b7c0953c22mr1651047a12.14.1794574908159; Fri, 13 Nov 2026
+ 05:01:48 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -103,14 +103,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CGME20261113104906epcas5p462308ef9eec80f8b7a5f81b64e72b24d@epcas5p4.samsung.com>
- <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-14-raghav.s@samsung.com>
-In-Reply-To: <20261113110612.3265841-14-raghav.s@samsung.com>
+References: <CGME20261113104909epcas5p1d1b81b4e800e8a1d1cf830f21e52499a@epcas5p1.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-15-raghav.s@samsung.com>
+In-Reply-To: <20261113110612.3265841-15-raghav.s@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Nov 2026 13:01:09 +0000
-X-Gm-Features: AclHuK-DofCQ80IZzIK-whDWDx-7N4O3mu6ydJD4FcVZrdGUzptZd5Yy1pZ4bbc
-Message-ID: <CADrjBPqormg=jcKYZh5q61MiwZaRB-ZqtV+R2CFNP7o6Jd-SKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/14 RESEND] arm64: dts: exynos8855: add cmu_hsi clock
+Date: Fri, 13 Nov 2026 13:01:35 +0000
+X-Gm-Features: AclHuK9jDSyMiIFILSiBUttwKXmQ1n1NCQzZgnrbYNenJcyQXOWeJVgUA5tGPQ0
+Message-ID: <CADrjBPrA1WZO_7bjV4jbOGB6MRZMG6=8UTTAtf-v_ZRq06MxpQ@mail.gmail.com>
+Subject: Re: [PATCH v3 14/14 RESEND] arm64: dts: exynos8855: add cmu_usb clock
  DT nodes
 To: Raghav Sharma <raghav.s@samsung.com>
 Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
@@ -124,9 +124,9 @@ Content-Type: text/plain; charset="UTF-8"
 
 On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s@samsung.com> wrote:
 >
-> Add required dt node for cmu_hsi block, while at it add
-> sysreg_hsi node which contians bits for DRCG and MEMCLK
-> which are used by clock driver
+> Add required dt node for cmu_usb block, while at this
+> add sysreg_usb which contains bits for DRCG and MEMCLK
+> which are used by clk driver
 >
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
@@ -138,37 +138,37 @@ Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 >  1 file changed, 21 insertions(+)
 >
 > diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> index b461de6a7548..3dd7a4c4c609 100644
+> index 3dd7a4c4c609..dcf1e58c6367 100644
 > --- a/arch/arm64/boot/dts/exynos/exynos8855.dtsi
 > +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> @@ -241,6 +241,27 @@ pinctrl_pericmmc: pinctrl@154f0000 {
->                         interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>;
+> @@ -192,6 +192,27 @@ pinctrl_cmgp: pinctrl@12030000 {
+>                         interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
 >                 };
 >
-> +               cmu_hsi: clock-controller@17000000 {
-> +                       compatible = "samsung,exynos8855-cmu-hsi";
-> +                       reg = <0x17000000 0x10000>;
+> +               cmu_usb: clock-controller@13000000 {
+> +                       compatible = "samsung,exynos8855-cmu-usb";
+> +                       reg = <0x13000000 0x10000>;
 > +                       #clock-cells = <1>;
 > +
 > +                       clocks = <&oscclk>,
-> +                                <&cmu_top CLKCMU_DOUT_HSI_NOC>,
-> +                                <&cmu_top CLKCMU_DOUT_HSI_UFS_EMBD>;
+> +                                <&cmu_top CLKCMU_DOUT_USB_NOC>,
+> +                                <&cmu_top CLKCMU_DOUT_USB_USB20DRD>;
 > +                       clock-names = "oscclk",
 > +                                     "bus",
-> +                                     "ufs_embd";
-> +                       samsung,sysreg = <&sysreg_hsi>;
+> +                                     "usb20drd";
+> +                       samsung,sysreg = <&sysreg_usb>;
 > +               };
 > +
-> +               sysreg_hsi: syscon@17020000 {
-> +                       compatible = "samsung,exynos8855-hsi-sysreg",
+> +               sysreg_usb: syscon@13020000 {
+> +                       compatible = "samsung,exynos8855-usb-sysreg",
 > +                                     "syscon";
-> +                       reg = <0x17020000 0x10000>;
-> +                       clocks = <&cmu_hsi CLK_GOUT_SYSREG_HSI>;
+> +                       reg = <0x13020000 0x10000>;
+> +                       clocks = <&cmu_usb CLK_GOUT_SYSREG_USB>;
 > +               };
 > +
->                 pinctrl_hsi_ufs: pinctrl@17040000 {
->                         compatible = "samsung,exynos8855-pinctrl";
->                         reg = <0x17040000 0x1000>;
+>                 cmu_top: clock-controller@13900000 {
+>                         compatible = "samsung,exynos8855-cmu-top";
+>                         reg = <0x13900000 0x10000>;
 > --
 > 2.34.1
 >
