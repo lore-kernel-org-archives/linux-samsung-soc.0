@@ -1,99 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794579583;
-	b=zMFsKR09ygh2++RBrfks2nCdOSahX0a8mH/UtRlJe044+I1GloKTtWusJMqIJWZUtowR
-	 D7IsxMXo7iTWKfGHCbWLMM4IzE46pgSp2IYoLaAqOIL/zTDKh0UMIqXigmzADJ+OHENCL
-	 C8gDiSm/8cUQ/4lkUMtvdgAZe8vXtGqPbx4jXhyX8jTDX5bov27Zbi/jogPxNBVPIeBRE
-	 +pEXN79+AUiqMITkVWC6/QLNp5/u9hFuZMIfHNIxQdMZwaWwj0dU7+lOLq5Wox2CuMBUa
-	 Fk0YDgsuBO2zd/zjezO3WHk1aULFMGfcCJs/KhyhDzxvMEoYdlnG4acku91AKOaReAw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794579583;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=UQz+H7cn2Le9wS7K0KEa2cZaaDDd18moRjfqMi19tl8=;
-	b=1Z8HjeJHrGhTGJQc91GPiSJiGDfvR8UANA6JTXt76METf3eT3RC+xde9GG6KTt3NQPAI
-	 xuzI4iCBWrfSR3OiEXG+1iL5YN8qrcKQdsDxMfZx7E61NGtFbw0VEMKFgFfg7GpA1A3ix
-	 bFAA33ncw1fnpyzyU5DubnCnp91EPDjTgGAitFdHOaTtQjg4/X5ar4Ahr/7fGwoMEAvFk
-	 hvA1QZGXhWlycTYYz7ADOT9bP8vAAPfhecMgA69d2j/wrGlcWY8wnkxjOtYJPlbzBPMLc
-	 0fzUffhTLBiaX2fouyc+1crgyUVLjLxb+PMyukbJViBuX8wW/JKqdmJ1778OjQQTl2w==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=CuGpuG2K;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.50
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794580499;
+	b=qrUvsFyi9DM9qxga9pbHqN+eRO1BvLRB6uUyOPGnwtRW+DYpes72ZZy9uqhgirzwxfzj
+	 xq6VamTH92mCj3le4qtjMxTE4bGqc450WgHpIAmcmG/ruqTuL59HSRMkM5YKu5gds/LzV
+	 GI94xvNmXgYMI8zp8i14j5PK028aY6yc+Bvx7qwOc+U0e3Rr1au1/P2mbhaGGD4hDSR2f
+	 moTr/lJ8BID/b4FQ2lrtIYTEahTTSuI8irHnvg/nihVKHAQQ5HJ8SQ15kQSsY0V40E+1A
+	 8Mg4iGyejKmRARKgFZrOaBNrCI+hmYypOQYFFkYRsqTBW2s4/83UBpPGkWJiDPmNMPg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794580499;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
+	b=AwtcTBaDdfYGIQSEHGb806RK7023aISFJq9sQaMbEpvoWCRpYpnhmwje2TN1cf8it7DU
+	 lAsBIPUC6T72pZO33RA6MD1zeS4tmCONcu+zMYoh3Uvrd0oHCNXhHeo0PlZjKPXdjHxyo
+	 OnkgDj5yALBcEGKKQ+8AixjAUu//r/8uJdCxve0yYEyWilvi/WgZhgR3DfrSSP5e1IElD
+	 ipK7E4nnhNwIi5kI1u1Cw0Gs6tw3kjjjQazrlOWkmpBIJvpNMZ0DKEXWsx+TPuGAWvYGW
+	 RFgH1CWa3kaxyTExwmF3iQqpLRisBLS3or6lXL2/GjxTTaI1t0cwRm2+R3zarX/nrTA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2522606A331
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 14:19:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2522606A331
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3C3606A32E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=CuGpuG2K
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6b70192ebceso2687911a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 06:19:42 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794579581; cv=none;
-        d=google.com; s=arc-20260327;
-        b=QKA9UQSW3S0v9eJ4EjDq+Ty08EUvpAyY8JSvq8/0zI++PvUGf9VtZjiIjMAp2eT3Lf
-         K0cd2WIKMQpcPweO1CPfKkaHGx8F0FO66CjCq1aptraqt1ra61II6udITAEG7RHLq3CY
-         sqi0kVq8OpYffuJycsXmNDtw5IvADE1vngLbD0HZItIsIpClG7b28+NinpjAkMxMM9Ki
-         ewK8bQ+1n3hGI3FATKgs8NLKZITxv14NQxbyhbdmPn1GF5Ja7Yf3XftyiYtaTF19HVyE
-         t75BQkUc62DjY8pVCvPOtc4UjVzrnHP9FfPAUe/1aH3LR7RDP6YfGtTWaIX8dtcgvzve
-         uu1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=UQz+H7cn2Le9wS7K0KEa2cZaaDDd18moRjfqMi19tl8=;
-        fh=hOY+F5Adh3Dje6slgsEnSPTSK9wIX4WZiJQi3Q72SUw=;
-        b=ZKc00iEgEmpFOpr5eCgRwMkFSp2M2An4ci77rhbT7Hiboqkey56tUTIU2mhKuJaUwa
-         zEqvte4QhebEXT4hk1AO1MFQStAJLXFxJYiOPVy/KRBcMlZAfo3CdQCeXlunjqk10gdr
-         TorpNEvEhH1yFi69Pi7IDqH+6Pk4OQJGqaroxxkV4qa2JNApaPRmN8BZQ4Te1t25gUSU
-         iviKQeTy/0fM6ix784M1uOu2m8yTWxk8e5Fy/waLm2T7+CVm66VGsPyXc0E6Fy/JDJGO
-         YW2F5nM3zxOnlwv0l3ADG1q8G+DFezzlMICPxHhOr3f5j372M6y803O7ttb4E5Gnd1u9
-         miyQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794579581; x=1795184381; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UQz+H7cn2Le9wS7K0KEa2cZaaDDd18moRjfqMi19tl8=;
-        b=CuGpuG2KrPPwcJdQD8Mt4QLipSoESTVXmGWzGuhZt8UmoCgk+cMoOBoU5i9VRwNi4w
-         rh2Zg3s0Qlf8jDtUgOWkJovpMlnNGIKgGnRxk15hcW02DhYIdQd7kHVNzO4nP2kmBYuY
-         JO5na0F2kV6uQXP1SDKHOaTGx8kevs75jbmgy7joxXBX0QNEok1leCrTJA8Nu7gZ255a
-         7CBFWO2oXC4Q8ggcij+pFbu5AYxoSXoDL73541MhIxQko8FsqYlhTe4A3Ma59QcjXblC
-         qu0eJh3jxnWjLKplHD9g2cxma+qPJBK817xqdFV81tftlroFD3zKtakJjJNPfITIznsI
-         Gx9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794579581; x=1795184381;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=UQz+H7cn2Le9wS7K0KEa2cZaaDDd18moRjfqMi19tl8=;
-        b=EoYAx4BnKDYaP8tibGPIGwo4dLeNDAx1CsS9IzJdPHhPaSdLVwFwFfVQ40r0650qrG
-         UB4+dRS15UKTOTfTQgCBXUp70jaEb45Luj3FvyOvvDCUu20vUkZqtzqV7peuGlwB0Yu3
-         2+AUG3PQatiMmMgAHhI9PBKKyyQchTyR9m/JfGAbfvFHYnzyQBuSTu7yFOqZm9Tq6n4f
-         jPZAjsoAWmV4MS7tbhfMs6NkdDWz012lQT1GdpF6r806wInm4DWtxVf1GaTZRCRDj5MG
-         1MpNq0VDuu7qXJpnC2A1RJvAt8cXTsPvozUS1QBkOHTwxquc61DDf0faqrr7hQ5aX2t3
-         mAQA==
-X-Forwarded-Encrypted: i=1; AL+hErFZbN0TBp10Vx3YjXbbbmpQw+/1MhwpiMWLOjkSU2LP+EU/zZtUMNO8jS2hP689qJ49OXhVTJbr3IaK1i8Zdpsj4A==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9HuAw3LcrXy2LwviKxgAfyKJokGlpVfb9YG9EZ2A6OhXbjpTQa
-	q2ilW6lHBfCUqvc5PHuo0w6riEUpr+XpKHefRy89XHyGB0JrlUpu/9DNyLMPfNI3nUfH8ijmZ/L
-	z0TGF28Kmh9rRW+rS0ppvXWf0R3e3Ap3GIHwgbr2+5g==
-X-Gm-Gg: AYBFou3J/aBmzhZ3ffJcOl8UcCU+MWBlqWr2TJM3yzukT3GMiH3aQ6PWrbxFKtTzhF/
-	Z2r6f5rlXAk8IUZqgdJMZXPCP1JwKzg0fdv+PUm1fkLXzlHWfX4aFWk9Tx7Ojjd93a6P96A5N9E
-	UD3QXmHX350dkd35fdpqTwoVP3ao47CvlP7ZrD0SXd9hE2iZEtENMrQD1Ac1U6Yov0RcbQtz81P
-	rEgltCeC9lyw5pwp19GZ4RA33wAwRUJDVOnwdhNT5/CSab4NsGGeNSF1TbBfF4hq54k1msSUTmC
-	teC9q/ARDQC5w0OQ5yGhFA87jxtopUNrJd2+BPtj86IC9pLE3PCj3OQ+HiucGOTHUc5hi4zg4uq
-	iLzq0OF6xsM5+thHCsU1x/nbY9oaoc6hW9XFptd4jcjIU53XqYmqwY8YDCTVwTPRZBRqlWg==
-X-Received: by 2002:a05:6402:a6cb:20b0:6b7:aca7:2264 with SMTP id
- 4fb4d7f45d1cf-6b7c0be4e2amr1723925a12.9.1794579581264; Fri, 13 Nov 2026
- 06:19:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zs+kdfNJ
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7FE1F000CD
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 14:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794580499;
+	bh=PF7x+WHFDlFjFzclJMmi7Uvb2yYXpjZa21XSXBNN68Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Zs+kdfNJoLMkl/WkGe794yJ/6X4epq2Y0S9osHqwtoywyGWWo5acUIiHSXv04wbm7
+	 jT/Lpt5RBcdJ4H/5KDckMWd11BZlN7NY3J7Kg4iq8zkmjv3UmtVQtTTmcZMdsogjpK
+	 /1Ix/X/H1c1uvRoR9KuN41hX+QgC/q+/2BNBCz7ObiJCI0w4gNTmmxdBrBdzTVUyF7
+	 HnaUrlhe6B3NCHoXhN4Wqcuj0NTPB0p51y5t28+X1h+4dJZJZlYqqyXqKnErGu3tCE
+	 IT+KTIx9lAc5aSvhJMluLkZ+uS5+IzI807cN03nbgP9G38DTbnXDsJDnODPry9L/NQ
+	 3PZRqmJoROLXA==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6d290b10a35so351013eaf.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Nov 2026 06:34:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErFqEDf/5/2uLDdCTOzOjF5CMgOtodN8Rthk+odkKOTDbou+Ztbox4pIrau36U9hHx1y/31T0weAOhVq1h8NGWBuTQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+5SFJVF1lhn+eZcyJ99FR59vQWsjcioD5DR2t0RZ9t0E6C+46f
+	tWNug/DjgOWn7iTVTujRYChxxkzAB2YQSjYOKICPkpUH1mt+TfRVKkQsAx6dUrG6n9hiF+LR2M4
+	hDTY2P18fbYRKCZ2yRhDB3qmZRnPm6s4=
+X-Received: by 2002:a05:6820:238b:b0:6f4:d9d4:3948 with SMTP id
+ 006d021491bc7-71ab50535a7mr1136848eaf.45.1794580497611; Fri, 13 Nov 2026
+ 06:34:57 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -103,53 +59,89 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <CGME20261105121432epcas5p30c05ba935557ad6dd59514ef4d834e96@epcas5p3.samsung.com>
- <20261105121401.1661711-1-selvarasu.g@samsung.com> <20261105121401.1661711-3-selvarasu.g@samsung.com>
-In-Reply-To: <20261105121401.1661711-3-selvarasu.g@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Nov 2026 14:19:29 +0000
-X-Gm-Features: AclHuK9BtJmzcgRQKlrlAtXVpG8_cOgWPWRM5bnocNCGOV2wnBohhrKZoowVukc
-Message-ID: <CADrjBPruky8SZYpX=MgsMjiKGUJhOhVu9j3Z+9JgJbizmcxSjw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] usb: dwc3: Add Exynos8855 to the generic platform driver
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, alim.akhtar@samsung.com, Thinh.Nguyen@synopsys.com, 
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com, h10.kim@samsung.com, 
-	dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com, 
-	eomji.oh@samsung.com, shijie.cai@samsung.com, muhammed.ali@samsung.com, 
-	thiagu.r@samsung.com
+References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com> <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
+In-Reply-To: <20261026-drm-panel-funcs-v1-22-5e3070a3478f@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 13 Nov 2026 15:34:42 +0100
+X-Gmail-Original-Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
+X-Gm-Features: AclHuK879_MUVY4wh3-oLFktJApN7IrvQSuSi80dujOkyN3zJSTWDVcOyRF70LI
+Message-ID: <CAD++jLmME3b35ipG0N9agoe+5P1J6dsDiy3hoT9MJ9vyRwBA7A@mail.gmail.com>
+Subject: Re: [PATCH 22/35] drm/panel: drop the orientation workaround from get_modes()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Igor Reznichenko <igor@reznichenko.net>, 
+	Michael Walle <mwalle@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
+	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Casey Connolly <casey.connolly@linaro.org>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Cristian Cozzolino <cristian_ci@protonmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
+	Ryan Brue <ryanbrue.dev@gmail.com>, Nickolay Goppen <setotau@mainlining.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Robert Chiras <robert.chiras@nxp.com>, Alexander Koskovich <akoskovich@pm.me>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	David Heidelberg <david@ixit.cz>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Yedaya Katsman <yedaya.ka@gmail.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 5 Nov 2026 at 12:14, Selvarasu Ganesan <selvarasu.g@samsung.com> wrote:
->
-> Add the "samsung,exynos8855-dwc3" compatible string to dwc3-generic-plat
-> so the Exynos8855 DWC3 controller can probe through the generic DWC3
-> platform glue.
->
-> Co-developed-by: Muhammed Ali <muhammed.ali@samsung.com>
-> Signed-off-by: Muhammed Ali <muhammed.ali@samsung.com>
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> ---
+On Mon, Oct 26, 2026 at 12:11=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Setting the orientation from get_modes() was a stopgap for the display
+> drivers not calling drm_connector_set_orientation_from_panel(). It is
+> also too late: by then the connector is registered and the property can
+> no longer be attached properly.
+>
+> drm_bridge_connector and the panel bridge set the orientation on their
+> own, and the drivers using a panel directly do it when creating the
+> connector now. The exceptions are sun6i_mipi_dsi, sti_dvo and the Tegra
+> DSI, which get the panel only after the DRM device has been registered.
+> None of the in-tree boards using them has a rotated panel.
+>
+> Assisted-by: LLM
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
->  drivers/usb/dwc3/dwc3-generic-plat.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-> index ca69ac0eb07c..069b265c9808 100644
-> --- a/drivers/usb/dwc3/dwc3-generic-plat.c
-> +++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-> @@ -236,6 +236,7 @@ static const struct of_device_id dwc3_generic_of_match[] = {
->         { .compatible = "spacemit,k3-dwc3", },
->         { .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
->         { .compatible = "eswin,eic7700-dwc3", &eic7700_dwc3},
-> +       { .compatible = "samsung,exynos8855-dwc3", },
->         { .compatible = "starfive,jhb100-dwc3", },
->         { /* sentinel */ }
->  };
-> --
-> 2.17.1
->
+Makes sense.
+Acked-by: Linus Walleij <linusw@kernel.org>
+
+Yours,
+Linus Walleij
