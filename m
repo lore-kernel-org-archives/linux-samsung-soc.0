@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.195.24.57
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.209.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794558224;
-	b=SuPXAKwIs0BCcGGOBafl9RHNhXNdPUr/6OL32GsnXJ2AL18TNzrq8gTG+E1h3TyJtgpd
-	 VwK2KyNba6r16MR4Wo/tDN+u/q51DMUnza3/DGHqxaAkLKH1Dx4/ovzAMZMKRLGXgznZa
-	 iZyjvXEw3w9nCleVMX2W+Aczfuxqd5gtVZU7Rcq/Wqf03gcoRobbwWhdOi7GbscodhSfB
-	 ET1tAWZuHPNcvxUs7FfrkXtfROmmr4NbWzO/BaHt9wcSnkV6+gphogsHKMqC5jakCUyPO
-	 Q0Bz4XQ4zoDKt2xtqKv3DWXK/hSMvKYIV1EDR5SsGjZvH4LOEQ2IQ8QQKh5TqRWcJeA==
+	t=1794558228;
+	b=WtJtwqQP0B8Jv8hXfKg6z/p8J0WDEa8DkvM+CLGCKsuhtDByJTYqD1/A0U8HfGdbpmHd
+	 nu++1qH//YM68zwkZ8mNm5tjkmNI9oX/sk6CqhauGK5hobOuIK8HPf6UeU2SS5D90D5Q8
+	 RIprQWCnuEuEo2D+5Wftw4NvzFKeuBzcc59ilf13acsMJe+6/hWKl5jsBlcKJ6RmvXXY7
+	 ogu/61OlEfxKY50FWx/Xim12X+c16hlh+fIvFEm0zqU4nD/OGElOUehoIsZ8u2eCXwCkO
+	 fNQTcZVwOq287HqGSiN08IPGxkkrw+LR6jbkzkMWTuWWp5k8Kk0wunKPQNFLMxNAbhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794558224;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794558228;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=DekORoAGOSqODtCTN3k+su3EjPXM6F+iIpkaRyqo9rU=;
-	b=O4Vk9l1hVpZ2YYNUvyPeV4IyBWiGAn0hLTK86kLUGrovxlE/eogX0JiTl2OO8Hf5OqLU
-	 Y0nrFgngrn5WNY9vyzu89woDOqXHEd5RCmtPb4h9ecMpGYAh9UL5SJo/8v0W/m5qL6GLg
-	 fnDBPItwjLfMhY70Si7Aa7MALwhnVx1GVL2AbSvsB4MeGeYSup/jMQvqoWQGgBleYLj43
-	 cKrTH6ktjh3ZGoLsSeqzM+I4Od5zFV+O+xQafzap+OEWiKrBA6pf8zB6C7CDRDw4uc2IO
-	 k3P93GjO5GdashtGFNjZ1l0SQkHDW/g4GhX2mi7eSUnDf/NPa7dlun7cfLPgk4fmgkQ==
+	bh=k0zfd1t3RbeiRh+jucdDQDdi9+GxCQr9ja3JyGKL3j4=;
+	b=MRqpxxxwURiftYF8PmAWO1qCuZEvPpCgXcmvc2CriDw5qSMEYM/ce62AWRAztLkECeK0
+	 nR8TJA2V1y/VFEYbK84hvW+s/rBmmGTYfPBdNkTO3mJTatT7GMCznVuqQ+CyLkX6nhSDL
+	 rdphe5ypwpx+VBw0+H+VA97QOCTNbAHC+ai2jAlUc3a8IkQAfkpffwOgzSunA2yjT6GIF
+	 aUi7Ig6lSlLC+7esAasyMpqiux+KHnXGvHWb4QSXf9HgscO+hszD+QWyYs+Vw4AkI5hzI
+	 DRNqwHv29Sw9yjKvp5vm16/IMah7h875t0trFCK+FzrIk4lBn3YFEn8zWt7gzSfrTqg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=X+ud+el7;
-	arc=none smtp.remote-ip=45.195.24.57
-Received: from mail-m2457.xmail.ntesmail.com (mail-m2457.xmail.ntesmail.com [45.195.24.57])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b="C4dFxGL/";
+	arc=none smtp.remote-ip=103.209.128.44
+Received: from mail-m12844.netease.com (mail-m12844.netease.com [103.209.128.44])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F83E606B604;
-	Fri, 13 Nov 2026 08:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3F83E606B604
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0F2606C994;
+	Fri, 13 Nov 2026 08:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C0F2606C994
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=X+ud+el7
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=C4dFxGL/
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be6e;
-	Fri, 13 Nov 2026 16:23:33 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be89;
+	Fri, 13 Nov 2026 16:23:37 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 13/18] drm/exynos: exynos_dp: Unbind bridge when connector init fails
-Date: Fri, 13 Nov 2026 16:23:00 +0800
-Message-Id: <20261113082305.541652-14-damon.ding@rock-chips.com>
+Subject: [PATCH v6 16/18] drm/bridge: analogix_dp: Declare DRM_BRIDGE_OP_HPD for hotplug reporting
+Date: Fri, 13 Nov 2026 16:23:03 +0800
+Message-Id: <20261113082305.541652-17-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113082305.541652-1-damon.ding@rock-chips.com>
 References: <20261113082305.541652-1-damon.ding@rock-chips.com>
@@ -83,47 +83,103 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1d4013d3b03a8kunm073aab0481ad0
+X-HM-Tid: 0aa1d4014cad03a8kunm073aab0481afd
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTE0dVh9IHkNIGEhNQ0pIQlYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTk4ZVk0aGUpMHUJNHk5KT1YVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pKQk1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=X+ud+el7kYt42ANScFp2NsA99RK/r8irjQ8YNIk5r44GkjMRBrZQX0Cpeeqa86FvSE9l1cS97Arwl3h4r1RMixD58BM55y+WI9qVQcobXVOw0UtAQIxMWEUj7pp3NmrZQxT+WtgfXlUCEOPhnb3/g/hto5iZd5p12Tr8RDAfkRM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=DekORoAGOSqODtCTN3k+su3EjPXM6F+iIpkaRyqo9rU=;
+	b=C4dFxGL/vMrezT5uRAlEBMmqTfCbz08v6XgUk2GcLizlr5puouqrTuAddVcFpEWGV8jg4YFkF3JvAof27C+b90z2BB00jDulPEJ9x9/oUYxRHHRoXIZKX6MCXuHQL684CjxN3WQ9f9haURhfs9iEpPm0OHUgHEbFfpNZMPS2Uaw=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=k0zfd1t3RbeiRh+jucdDQDdi9+GxCQr9ja3JyGKL3j4=;
 	h=date:mime-version:subject:message-id:from;
 
-The exynos_dp_bind() returns without unwinding analogix_dp_bind() when
-drm_bridge_connector_init() fails.  The aux device registered by
-analogix_dp_bind() is then left behind with a dangling drm_dev
-pointer, which could be accessed on later AUX transfers.
+This commit declares DRM_BRIDGE_OP_HPD for the analogix_dp bridge,
+adds the hpd_enable/hpd_disable bridge callbacks and reports the
+hotplug events through drm_bridge_hpd_notify() with the status read
+from the HPD GPIO pin or the controller registers.
 
-Call analogix_dp_unbind() in the error path to release the aux device.
+The DRM_BRIDGE_OP_HPD capability is declared only for the platforms
+which support hotplug detection (the GPIO HPD mode, or the native HPD
+mode on RK3576 and RK3588), since the drm core stops polling the
+connector once DRM_BRIDGE_OP_HPD is declared.
 
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
 ---
 
 Changes in v6:
+- Declare DRM_BRIDGE_OP_HPD only for the platforms which support
+  hotplug detection, since the drm core stops polling the connector
+  once DRM_BRIDGE_OP_HPD is declared. (Sashiko)
 - Add Tested-by tag.
 ---
- drivers/gpu/drm/exynos/exynos_dp.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 21 ++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 572e261e09da..86dc53014fff 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -121,6 +121,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	if (IS_ERR(connector)) {
- 		ret = PTR_ERR(connector);
- 		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
-+		analogix_dp_unbind(dp->adp);
- 		return ret;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index d72b66be6874..9f50163aecf9 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -31,7 +31,6 @@
+ #include <drm/drm_edid.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_print.h>
+-#include <drm/drm_probe_helper.h>
+ 
+ #include <video/of_display_timing.h>
+ 
+@@ -760,9 +759,13 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 		hpd_detected = (irq_type & DP_IRQ_TYPE_HP_CABLE_IN) ||
+ 			       (irq_type & DP_IRQ_TYPE_HP_CABLE_OUT);
+ 	if (hpd_detected) {
++		enum drm_connector_status status;
++
+ 		dev_dbg(dp->dev, "Detected cable status changed!\n");
+-		if (dp->drm_dev)
+-			drm_helper_hpd_irq_event(dp->drm_dev);
++
++		status = analogix_dp_get_plug_in_status(dp) == 0 ? connector_status_connected :
++								   connector_status_disconnected;
++		drm_bridge_hpd_notify(&dp->bridge, status);
  	}
  
+ 	if (!dp->hpd_gpiod) {
+@@ -1301,6 +1304,14 @@ static void analogix_dp_bridge_atomic_post_disable(struct drm_bridge *bridge,
+ 		DRM_ERROR("Failed to enable psr (%d)\n", ret);
+ }
+ 
++static void analogix_dp_bridge_hpd_enable(struct drm_bridge *bridge)
++{
++}
++
++static void analogix_dp_bridge_hpd_disable(struct drm_bridge *bridge)
++{
++}
++
+ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+@@ -1313,6 +1324,8 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+ 	.attach = analogix_dp_bridge_attach,
+ 	.edid_read = analogix_dp_bridge_edid_read,
+ 	.detect = analogix_dp_bridge_detect,
++	.hpd_enable = analogix_dp_bridge_hpd_enable,
++	.hpd_disable = analogix_dp_bridge_hpd_disable,
+ };
+ 
+ static int analogix_dp_dt_parse_lanes_map(struct analogix_dp_device *dp)
+@@ -1634,6 +1647,8 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+ 	}
+ 
+ 	bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
++	if (analogix_dp_supports_hpd(dp))
++		bridge->ops |= DRM_BRIDGE_OP_HPD;
+ 	bridge->of_node = dp->dev->of_node;
+ 	bridge->type = DRM_MODE_CONNECTOR_eDP;
+ 	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
 -- 
 2.34.1
 
