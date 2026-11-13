@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=47.88.81.196
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794558219;
-	b=mtz3rQAlCzfwSUm9RgW1vdklv58OummThWS/BbsHauEEXNDCOLQ8+lKZdZ4XZTeamJab
-	 l3Y9+VlfXjux5kKLrfPvmVg/K5GjsUmrvxQETl786RNY0A29XV6MFkTWSth0j0qJVgwIp
-	 uie3azFllutLSVvg4g89p4vGzbI3UBOjFt9wifvm6/1Wnyxf0DRxBw8oVUvj4HCJCzuQR
-	 EPFaEtND6Efxqy5zbpQV8+2Dy1IjRIZ6aPmzmFLdlqeDmSGfokMg/AhvXRv8Tc3glyhic
-	 8O93W7WDTokwET7fnJRJj9ggZkqyfXyVwsYGFxksZLWaFafeXaUCnt/r8hDgzYnoB9g==
+	t=1794558220;
+	b=yH2djKLPAEhIdNogYLMpWwfU5CXeVP40MUi3n67Wjby290kbMKc8Majlgk+TbumW/Gng
+	 ojRNCC6kxV9Lkf+iQWEkvk/+CZgRo34mECHBbJt2dysM1i0gNXXkPkS3KzlxlEOh5CQ7x
+	 ibHM90KZHXM9Nv+WF12GXE8sOAFlbHUmC4nXrTdK5flpsZWjUl5RK8zoRB/Cw1rQ/xoy3
+	 le74Twk79M8YxFIOGVQo0O5SwK2w2jckVrrngwGOpei2q8BWlVUesKfjd1A0B+BG3LI4V
+	 9lqBx/7HqLWvLompwHSs3Z7mPkk6wHRu/R/grX3gOrTMCxm+91xtcm4xDfkQbn/o2/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794558219;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794558220;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=ut3BDmCWOauFsURzlyD7adGSwi9BnGWrMNMiar1oKBY=;
-	b=ljeZdOlI49rKnPxZc7GgXK2nK8Iv7JqVJneuU9o8KwfUTcuyuAIhmGEKE86CyaXikDqj
-	 9KDc5tOGguO3ddiqVWOgPhAIYOVHtpxoMqZqGAHNF3f7LOwFdKh1F+2F3OVHvYLZuIvhX
-	 X55oSiSlyMX9WhPlns7PZGzULNlE1dUQIyrG4DOdLM0NipL2Hj1YdWncTFTU7loqNp/Ir
-	 YA8L86x9tmRA1O0h39fLXe0yznJ6G3xBVPhS2Wc1V61McgkSNxPukxCkZ3irPaaYsdOB4
-	 T1Jazv5YDNbJTmPRgXZ+RlWlg+IVl/gWXtEmmc1hPJCCf61W1znc0OaImUZaipwqVRw==
+	bh=ybHIHgPqplEUJRoppMm7glS9jAlf6L3WssQnCO+s3Qc=;
+	b=VlFU27dQyzPQ+5WfVa5GBg26+sNZmupH3eOrnwh4f8oW0dRqPSnKYs0AedpNgHyvZvm0
+	 1s3EnqGuQfPio+xgul4E0nCivroFJtopQEDcwA0dSurlEMG69kgg1XKTHtZrNTgGOkAU4
+	 WhxlX88LMCIa+msBoKnsX2bAFpYn7Zfu2n22UTzC+d8kfmK5A0eq6HY4G3xde8cP86gAh
+	 ez29VYpc3R6h+01Db+s74JeYsFpJbOGW12FdeIM44cRj1TrRIW6SgKA+g9o4auQqeY+dN
+	 Zxp5UitOnxLDHAO9u2kRb85TwrcRJZIhuLIjafulihnR8MO28vsKbPrUC9RG/wrqLCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=WG6g1gcX;
-	arc=none smtp.remote-ip=210.79.60.64
-Received: from mail-m6064.netease.com (mail-m6064.netease.com [210.79.60.64])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b="cwS8AC/I";
+	arc=none smtp.remote-ip=47.88.81.196
+Received: from mail-m81196.netease.com (mail-m81196.netease.com [47.88.81.196])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02BE60A6F65;
-	Fri, 13 Nov 2026 08:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C02BE60A6F65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB24660A6F60;
+	Fri, 13 Nov 2026 08:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB24660A6F60
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=WG6g1gcX
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=cwS8AC/I
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be77;
-	Fri, 13 Nov 2026 16:23:34 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 54921be4d;
+	Fri, 13 Nov 2026 16:23:28 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 14/18] drm/bridge: analogix_dp: Move IRQ enable/disable to bind/unbind
-Date: Fri, 13 Nov 2026 16:23:01 +0800
-Message-Id: <20261113082305.541652-15-damon.ding@rock-chips.com>
+Subject: [PATCH v6 09/18] drm/bridge: analogix_dp: Simplify analogix_dp_config_interrupt()
+Date: Fri, 13 Nov 2026 16:22:56 +0800
+Message-Id: <20261113082305.541652-10-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261113082305.541652-1-damon.ding@rock-chips.com>
 References: <20261113082305.541652-1-damon.ding@rock-chips.com>
@@ -83,26 +83,22 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa1d401420c03a8kunm073aab0481adf
+X-HM-Tid: 0aa1d401289203a8kunm073aab0481a98
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDTBkYVksYTk5MTUhCGB4dTlYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDSR1NVkJOHkNPTUNJGUhCT1YVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pKQk1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=WG6g1gcXu+aUNJ1ZRCs7jXip7vt+pv0FuHYVMYkbQSGeSSkic5/SfedWsaQpGUGI6mMViNhGvgC5rfQVmUCE7Zs896Sx3qRRI0C1F7ACZjSdOYrk8Yca0LG1vpc/2AUroBcpxATAcnsdCNjlqWfVQhORCY8Wa45FMaErimcc73w=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=ut3BDmCWOauFsURzlyD7adGSwi9BnGWrMNMiar1oKBY=;
+	b=cwS8AC/IVZq1uEz3/DIcl+w6W22UmkykI56E2Q2CrCRubq+i7TQMzyV0CIvrviNojPLQYlcUwAfP4KYKVuyPdZ27EMAwlNec39veMkP0Q1spUC9zAmn0tlXBw2ut2Lc02Vc+99LieL9+gG3Eq1pWY3NXheIi7iP9mIJ8OqQOAF4=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=ybHIHgPqplEUJRoppMm7glS9jAlf6L3WssQnCO+s3Qc=;
 	h=date:mime-version:subject:message-id:from;
 
-Move enable_irq()/disable_irq() from bridge enable/disable handlers
-into analogix_dp_bind()/analogix_dp_unbind(). This keeps the IRQ
-active throughout the device lifecycle rather than only during display
-activity, which is a prerequisite for supporting HPD detection while
-the display pipeline is inactive.
-
-Make the interrupt fully threaded and hold a runtime PM reference in
-the threaded handler, so that no register is accessed while the
-controller is runtime suspended.
+Simplify analogix_dp_config_interrupt() by removing the local
+COMMON_INT_MASK and INT_STA_MASK macros, replacing the open-coded
+writel(0) calls for COMMON_INT_MASK_1~3, and leveraging
+analogix_dp_unmute_hpd_interrupt() with the full HPD_IRQ_ALL mask to
+initialize the HPD interrupt state.
 
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -111,126 +107,65 @@ Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 ---
 
 Changes in v3:
-- Move this patch after mute/unmute related modification and detail the
-  commit msg.
+- Replace macro HPD_IRQ with HPD_IRQ_ALL.
 
 Changes in v4:
 - Add Tested-by tag.
 
 Changes in v5:
-- Use a pure threaded IRQ handler and hold a runtime PM reference in
-  it, so that no MMIO happens on the unclocked controller after
-  runtime suspend. (Sashiko)
-- Add prep patches to call analogix_dp_unbind() when
-  drm_bridge_connector_init() fails, so that the IRQ enabled across
-  the bind lifetime gets properly disabled on bind failures. (Sashiko)
+- Simplify the commig msg.
 
 Changes in v6:
-- Skip the runtime PM reference in the IRQ thread for the GPIO HPD
-  mode, since it only reads the GPIO level. (Sashiko)
 - Add Tested-by tag.
 ---
- .../drm/bridge/analogix/analogix_dp_core.c    | 40 +++++++++++--------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+ .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 25 +++----------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index b14a8aa12394..7f6346d45a01 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -700,24 +700,25 @@ static int analogix_dp_enable_scramble(struct analogix_dp_device *dp,
- 	return ret < 0 ? ret : 0;
- }
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+index 6ac03a1aa512..0f1406e4a5d3 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+@@ -18,12 +18,6 @@
+ #include "analogix_dp_core.h"
+ #include "analogix_dp_reg.h"
  
--static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
--{
--	struct analogix_dp_device *dp = arg;
--	irqreturn_t ret = IRQ_NONE;
--	u32 irq_type;
+-#define COMMON_INT_MASK_1	0
+-#define COMMON_INT_MASK_2	0
+-#define COMMON_INT_MASK_3	0
+-#define COMMON_INT_MASK_4	(HOTPLUG_CHG | HPD_LOST | PLUG)
+-#define INT_STA_MASK		INT_HPD
 -
--	irq_type = analogix_dp_get_irq_type(dp);
--	if (irq_type)
--		ret = IRQ_WAKE_THREAD;
--
--	return ret;
--}
--
- static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ #define HPD_IRQ_ALL		(DP_IRQ_TYPE_HP_CABLE_IN | DP_IRQ_TYPE_HP_CABLE_OUT | \
+ 				 DP_IRQ_TYPE_HP_CHANGE | DP_IRQ_TYPE_IRQ_HPD)
+ 
+@@ -189,23 +183,12 @@ void analogix_dp_swreset(struct analogix_dp_device *dp)
+ 
+ void analogix_dp_config_interrupt(struct analogix_dp_device *dp)
  {
- 	struct analogix_dp_device *dp = arg;
- 	u32 irq_type;
- 	bool hpd_detected;
-+	int ret;
-+
-+	/*
-+	 * The device may have been runtime suspended since the interrupt was
-+	 * raised. Hold a runtime PM reference before touching the registers,
-+	 * as the controller clocks are only guaranteed to be enabled while
-+	 * the device is runtime PM active. The GPIO HPD mode needs no such
-+	 * reference, since it only reads the GPIO level.
-+	 */
-+	if (!dp->hpd_gpiod) {
-+		ret = pm_runtime_resume_and_get(dp->dev);
-+		if (ret)
-+			return IRQ_HANDLED;
-+	}
- 
- 	irq_type = analogix_dp_get_irq_type(dp);
- 	if (!dp->hpd_gpiod && irq_type)
-@@ -734,6 +735,11 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
- 			drm_helper_hpd_irq_event(dp->drm_dev);
- 	}
- 
-+	if (!dp->hpd_gpiod) {
-+		pm_runtime_mark_last_busy(dp->dev);
-+		pm_runtime_put_autosuspend(dp->dev);
-+	}
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -1056,7 +1062,6 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_init;
- 	}
- 
--	enable_irq(dp->irq);
- 	return 0;
- 
- out_dp_init:
-@@ -1198,8 +1203,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
--	disable_irq(dp->irq);
+-	u32 reg;
 -
- 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 	/* 0: mask, 1: unmask */
+-	reg = COMMON_INT_MASK_1;
+-	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_1);
+-
+-	reg = COMMON_INT_MASK_2;
+-	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
+-
+-	reg = COMMON_INT_MASK_3;
+-	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
+-
+-	reg = COMMON_INT_MASK_4;
+-	writel(reg, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_4);
++	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_1);
++	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_2);
++	writel(0, dp->reg_base + ANALOGIX_DP_COMMON_INT_MASK_3);
  
- 	pm_runtime_put_sync(dp->dev);
-@@ -1527,7 +1530,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
--					analogix_dp_hardirq,
-+					NULL,
- 					analogix_dp_irq_thread,
- 					irq_flags, "analogix-dp", dp);
- 	if (ret)
-@@ -1613,6 +1616,8 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
- 		goto err_unregister_aux;
- 	}
- 
-+	enable_irq(dp->irq);
-+
- 	return 0;
- 
- err_unregister_aux:
-@@ -1624,6 +1629,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- 
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
-+	disable_irq(dp->irq);
- 	drm_dp_aux_unregister(&dp->aux);
+-	reg = INT_STA_MASK;
+-	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
++	analogix_dp_unmute_hpd_interrupt(dp, HPD_IRQ_ALL);
  }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+ 
+ /*
 -- 
 2.34.1
 
