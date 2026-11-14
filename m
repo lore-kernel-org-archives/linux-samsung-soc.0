@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794657379;
-	b=uZHOLNa8DsCUQ4szNRh3ngPpBjioBRqv/Z1IfX7N457ZHBGKvFcvbEaLGoUjHpRan2WL
-	 TDCrNdSI8L63FdazD0xz8GhWM3iF88mzZYF9lVJSflxpfhs9dr9yCF7Kjw+q25nkO1wvd
-	 XhIkU45ixS+QD/qr/bmMiiB+hQ430pc9gqWOEVvzwmsPeNLIzVWsgKRtcxYk+ShUj8rBN
-	 jbRC9AuRegiM+sknutFlWenbHwwwg+XH/0jDThBpIUpMiA7H4+o09VB7e4monr3I76dXZ
-	 oD1B2PpC0VAu8j0A5XJCFWTYmeXLcvDt5+A5kzvgNqHl4OG6HSuWZJCw4nDeHcrqAbA==
+	t=1794657376;
+	b=2K/6TvN2mKWkzSotzBEydmcbznYLRd/o9B+U3rjCyhNOgyCeTjiRV1/hxiJDysLMadCV
+	 nvKUWw4MBKnigOtj8IQSitEdWHO/MMN5b4/ejl26Cj3vtiEhWlSngzVZGNIsSbRoSlRzp
+	 ZJFswTKvAULz+9NKtGzYEeWy5zbuO7r/Jykw1+6pFbbGsIL6qMctOPCPgkpQ7E5zDaaZh
+	 saEQEXJ6CEYs8BdWJNO74wl3CamybIhVrLePDZuP2WYN5P/IUq9VXSXOzfFAWyUAiuDUL
+	 16ZmVP/vILi8v/BVIbdwnvC6ntleztcwaBG92aHhI6Mj0nBvlrNwjE477DXiue7TEpQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794657379;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=HWk0WYN5IVoXtxxzPx740RbTnpR7la1Mc7st0qczOJw=;
-	b=SD84A3SH/pb4sixUb8ziXF9hG+5MaGA9lpuF2iHgrRC7qOptO6bC635w0+0Q1vyVCEey
-	 iHK4lfS11Ev3wEcx0UgeoSA2QoT2aKqVlGUn/ZT2nRqziGWw/W6/vuLFUCXTon9v+BDd9
-	 mgiKRnQJsmdFZodtyacuhgATjsZlB2rUn3K3gCKG6WJN2qlXFjoCddEltknJG24rqrV+k
-	 ZZNgALAEnzLHjEkn6FIeGrOwS2H43qdLW1+xEW2cKVvlEu2WCPpA0Sv9cfisFdluNUweF
-	 Tsn5RavF7S+65q9NUBICTxUdn4ov+PaTbzXWKx5GKBht1/v9tJ6CdBlLrEkeH90Jpqg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794657376;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=rDZ4Pxdt5ClCbIhoRS2OD+LCpKwjINtmk9PJJBvhNRM=;
+	b=RBkq/ZqQktCkngi1h2av07STzmvKi5UdtObUGbCG8i+fIUhIsx0ZGh4Gm6Ox/++kERKd
+	 zB2UmiDlmyyH1KDqlb1zbIb+icK5ztU7dtxMIJCasiEZZWhfg2tO/ic/gx+ZUBQwbN7m9
+	 RuVRJEMdGKSUcS4+L0JHk7fSy2CRqCOu4Dr/rZ1vlAqxWQa1ff2scR32f8jElOzm/MZfW
+	 niF29eQF6b3+DjJsnmUsdbYafPyRkx9Cy2FKRIHtnN61WxNIv3AlGF74JMbaDabSpWXbQ
+	 lQoYMBKKzvttaxfPT4deV9qTU0R1BiFDENP01fque0div4ZVMd5o2Uoio6LEs6MsMTQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="EVR/izhe";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nf+7kkM+;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9972560A5BE2;
-	Sat, 14 Nov 2026 11:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56CA606A8AD;
+	Sat, 14 Nov 2026 11:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EVR/izhe
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Nf+7kkM+
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794657379;
-	b=CW7TppYNmwwwNw/nlZnkhmc1mIIHcXRhJ8vV7/yEz+Og9hp5K4Z/r6T6QFTRzXdqtvR2
-	 oH3OFG0rzgEl/pqm6kerIny+QHbEfs6pp7zxZHFAqiqavlbZuZ3+/UqQ1L4vydTxWnUBd
-	 TpiO6Sm2GI7svG/ZoSakkqCxnQuoUmR28gHAimviUfbj0yeEX/jTHvoaskJ8oDfqm1HcR
-	 8fT0aRiFzObpAS2tFjbf3zgLWrxUAygn/4XAAoIdbM0WX+k33sox3QtBHv5j4PAmSXtq1
-	 SyTSWmLwZiiXSDM+yjssycym674pAkuvgarT4lAZTUTFauYIeOJBrcToeYJsx1C5J8g==
+	t=1794657376;
+	b=ucUkC8L2nTAIL/T7EjNrv7K4PwwS3B15ZAvNYQIaZSVeVwrddPHal38f+bsOlRT6OIth
+	 v1RHpF1P2K9ptleD6sj5c7H3Ny5dzr5+JOJsrZBG8RREH7/L4ICRRhI3DnDxk5cvgGjHJ
+	 cFBnp0cwzbSGBCUYs3XLMuc1NApSFKhPfUjQMJ8TPfCqFS6nwpgbKY7E4+X7prjVJmgUK
+	 uEldtvKjd7SaYeaHoz4caUGOliCXjV9zBrZLUATC2xa+wKjDDPf+Ucs7jEeI7ntJehESi
+	 lEOH7bYM2m/ZHUlIB6unjh3zI7O9Ex9hCdBu/cJQ/bGs8nWKD+eCQFnXo046sIWuCOw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794657379;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=HWk0WYN5IVoXtxxzPx740RbTnpR7la1Mc7st0qczOJw=;
-	b=X5cSS/PfRH3FtvLW+kvIEUbnRlXETMyy1OP5rMImxGwbBNNlTn5HWw75+ZhjC4PNUhdX
-	 6GAQXSDc2xnvqAakxNeLxkq7rkQ74liFJYTJecS7+Jsqa6l4KL72Eylh+spIvhInMWHpg
-	 ZUaGyi7uhWg4jPFLWgjMYTOysrbPgawFjmt2o4HuPb0tI68syN3/RtONcFujZAOuCV2EV
-	 AYnpGxHLBYhHwpJqole8BmRp81wfPr3RJoOCftWrXfVUrja4LJoX2mTaVn0TCpCAgQ+Ap
-	 VKB+L+6YyakZ7UwLeMxSzpfMBNI5f4baWb+x26jzA6A2b4m29R1Ma0o84/1uz4SWocQ==
+	c=relaxed/relaxed; t=1794657376;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=rDZ4Pxdt5ClCbIhoRS2OD+LCpKwjINtmk9PJJBvhNRM=;
+	b=CmSodZ6F48/iyOq2RqV6++rKxR6bhLuBIhV8EeI3JKSI76Qi8zndJmuWDlylicK7fF1g
+	 zYqXQhcvbI6IvlyZXSFRkWQ7hnbk10UYa04QmQl0Lcil8aKDFhpdGdqyv3zGdWFS2G8yK
+	 Aw9qgqHa82tUW7VYqsmM546R7bRZ7//gPcPpJByoOzqrbo6if8TjumMzhjjq//XXh1w7J
+	 Egl4fGumj6ibvk0vbpizlHMtKZmxIIJcpUBbuidJW8DhZu7/T7eousvKMRTATmWL1g7BD
+	 EZQhN1tFO372gZqCmI2gBmBXa7dOvm8xWJ7HRLtUBrN2VtsEgV0DEEjogkCaHknAAkw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 2B4021F000C4;
-	Sat, 14 Nov 2026 11:56:17 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 9745D1F000C5;
+	Sat, 14 Nov 2026 11:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794657379;
-	bh=HWk0WYN5IVoXtxxzPx740RbTnpR7la1Mc7st0qczOJw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=EVR/izheucfSV6bwkNJXd6zuJcnfa10bTMVE8QA0ZqYy25Kz0hxkY/0SG+v6W+ya9
-	 U6dPL0BplDV4DjC8B0mIln3W+jsx5gn3CXaKVCikc53ZGAD/+j2lafYm51u/6KtQYD
-	 GjQVPxyPoNzL0YbP4sguqj7Uu4EP8IGEzYUaeSOJK83IN2LPBEPFvJzlrpF9ct667k
-	 e8VZuPEU0w5FM+4TUdkd/3iY4Re0zWwFPtQhhfIwzmhuv0La5oW5PTsrOS/vDYN69k
-	 M9ED/5qxNIrW8o/JAXQ+xx6Fes3nyy5G8pFxf92sDVqEUDXjorTeX6fBPFzLFhRu9n
-	 fxBjmt3Od8blA==
+	s=k20260515; t=1794657376;
+	bh=rDZ4Pxdt5ClCbIhoRS2OD+LCpKwjINtmk9PJJBvhNRM=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=Nf+7kkM+o36sHAIUv2GoNWCTKgHGEuTQVvHYX9is9RnxnS6JJZWX19p9ldsx/9OYa
+	 IIDkJNpsErykgfDv0VXRch1MF1k8ngstY9ms0/vxhCLDGUNH9L9JHvj7mj55emo3p5
+	 kCuydo9bLustqqdbtUcpq+fg++WKySLhvc1KIYVU6qGn4y82xULh5DMzSEhr0jm6ks
+	 EcU8DZ4+ZBnlbyugPEb74YNocgvrfAmvDVf2G5PNzGJ4eNV24R5wzP1anYqyM7PjrS
+	 hgicpvQB6rpHt+ZwQcIq5qy8aFkTXcry9TGP/bBpKzhci8EmtUalNPo0+fzGgo54rT
+	 0r2Oua12fAQ3g==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 25F3D49D95;
-	Sat, 14 Nov 2026 11:56:14 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id E4C3F49D67;
+	Sat, 14 Nov 2026 11:56:12 +0000 (UTC)
 From: Larisa Grigore via B4 Relay <devnull+larisa.grigore.oss.nxp.com@kernel.org>
-Date: Sat, 14 Nov 2026 12:55:45 +0100
-Subject: [PATCH v11 13/14] ufs: s32n7: Add NXP S32N79 UFS host controller
- driver
+Subject: [PATCH v11 00/14] Add S32N79RDB UFS support
+Date: Sat, 14 Nov 2026 12:55:32 +0100
+Message-Id: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,9 +84,11 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-b4-ufs-s32n7-v11-13-dc36e11919d5@oss.nxp.com>
-References: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
-In-Reply-To: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADdM+GoC/yWMQQqDMBAAvyJ77oIbNSl+pXhI7KrrIS1ZFUH8e
+ 1M9zsDMAcpJWKEtDki8iconZiB6FNBPPo6M8s4CTGksEdUYalwHRa1MdBiezlamsey9g5x8Ew+
+ yX79Xd7OuYeZ++T/gPH+mTF1pcQAAAA==
+X-Change-ID: 20261114-b4-ufs-s32n7-b8763256eaa7
 To: "Martin K. Petersen" <mkp@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, Bart Van Assche <bvanassche@acm.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -114,706 +116,369 @@ Cc: devicetree@vger.kernel.org, Ajay Neeli <ajay.neeli@amd.com>,
  Orson Zhai <orsonzhai@gmail.com>, aruizrui@redhat.com, 
  linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657371; l=22610;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657368; l=16666;
  i=larisa.grigore@oss.nxp.com; s=20261114; h=from:subject:message-id;
- bh=xbAbcxciMPvd5T3SKK/F/H6GWDptVGMOJckCeOlOURI=;
- b=ctu81nbxnW7aJXIV1DhvsrqtOYcOHZ3dWvgcXggjPS29ByjyoRPSfBEXd+tifZG8GmJtOVtrD
- w1ppmnysIPhBGkSlxXMwHiHVK8zdY8ryRpPKtCs3dyc8vsl+Ym8bSl8
+ bh=Z2ebGh0OO+u6N438XmaUV9uV7rHt73kB6jypnvtGAAk=;
+ b=FVby0cBFzH73DWJzbfFCHut2lJ/4tHOdL+sKwVHHSXgc/kP+umI1OYjqu9NrAD3211rRTNUKb
+ GSgobxMA08FA+hZnpQ5QtcGxdy21cmxqYATAUaJcoKgRgwxcoLjzmfI
 X-Developer-Key: i=larisa.grigore@oss.nxp.com; a=ed25519;
  pk=Jpt52sb6ETKTtvWjUzhz5Sv5FjB9AEg9QKCcbpWFx3w=
 X-Endpoint-Received: by B4 Relay for larisa.grigore@oss.nxp.com/20261114
  with auth_id=1522
 X-Original-From: Larisa Grigore <larisa.grigore@oss.nxp.com>
 Reply-To: larisa.grigore@oss.nxp.com
-Content-Transfer-Encoding: 7bit
 
-From: Larisa Grigore <larisa.grigore@oss.nxp.com>
+This series adds support for the UFS host controller found on the NXP S32N79
+platform. The controller is based on the Synopsys DesignWare (DWC) UFS host
+architecture and requires S32N79-specific M-PHY initialization/calibration
+sequence. It is compliant with JESD-223D "Universal Flash Storage Host
+Controller Interface" v3.0, and supports up to HS-Gear 4 speed grade. It is
+compatible with UFS 2.1, 3.0 and 3.1 devices. The MIPI UniPro is compliant with
+"MIPI Alliance Specification for Unified Protocol", v1.8. The MIPI M-PHY is
+compliant to version 4.1.
 
-Add support for the UFS host controller on the NXP S32N79 SoC, built on
-the Synopsys DesignWare (DWC) UFS architecture, using the UFSHCD DWC and
-UFSHCD platform glue.
+In order to keep the S32N79 platform driver small and avoid duplicating common
+DWC code across platform glue drivers, the series also refactors and exports a
+few reusable DWC helpers. In particular, M-PHY CREG (CBCREG*) register access
+helpers and the shared M-PHY CR bitfield definitions are moved from the
+existing AMD Versal2 glue driver into the common ufshcd-dwc layer, and are then
+used by the platform drivers. The series also introduces a generic Hibern8
+TX-FSM polling helper so that multiple platforms can reuse the same pre-link
+checks.
 
-This controller requires S32N79-specific initialization prior to
-UIC_LINKSTARTUP, including:
-  - programming SCM.ONE_US_TICK and HC.HCLKDIV based on the core clock,
-  - applying the vendor-defined M-PHY calibration sequence,
-  - selecting the M-PHY rate series and applying the RX rate-select
-    override before each switch to an HS power mode, and
-  - clearing the DWC BUSTHRTL low-power gating enables (LP_PGE and
-    LP_AH8_PGE) and clock gating (CGE) after each HCE enable, because
-    clock and power gating are not supported on this platform.
+Device tree binding documentation for the S32N79 UFS controller is included.
+The SoC and board DTS updates that instantiate and enable the controller are
+no longer part of this series and will be posted separately.
 
-The M-PHY supports several boot modes for loading its firmware. Only the
-mode where the firmware runs from the internal ROM is supported for now.
+Changes in v11:
 
-The connection setup done after link startup follows the Synopsys
-recommended sequence for this HC/M-PHY integration.
+ufs: dwc: Move shared M-PHY CR bitfield macros to ufshcd-dwc.h:
+- New patch. Move the FAST_FLAGS, FW_CALIB_CCFG, RX_OVRD_IN_1 and RX_PCS_OUT
+  bitfield macros from the AMD Versal2 driver to ufshcd-dwc.h, so the S32N7
+  driver can use them instead of raw values.
 
-UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE is set because the link_startup
-PRE_CHANGE hook resets, re-initializes and re-calibrates the M-PHY. A
-single DME_LINKSTARTUP is sufficient on this platform, and issuing it a
-second time would needlessly repeat this sequence on an already
-established link.
+ufs: pltfrm: Add a flags argument to ufshcd_pltfrm_init():
+- New patch. Let glue drivers request optional behavior from the common
+  platform code. All existing callers pass 0, no functional change.
 
-The "core" clock has a fixed rate set by the clock provider. Pass
-UFSHCD_PLTFRM_FIXED_RATE_CLKS to ufshcd_pltfrm_init() so that the UFS
-core enables and gates it without an OPP table or freq-table-hz.
+ufs: pltfrm: Add a flag to manage fixed rate clocks:
+- New patch. Add UFSHCD_PLTFRM_FIXED_RATE_CLKS. When it is set and neither
+  freq-table-hz nor operating-points-v2 is present, register the clocks
+  listed in clock-names with a 0 Hz min/max rate, so the UFS core enables
+  and gates them without scaling. This replaces the dummy single 0 Hz
+  operating-points-v2 table used in v10.
 
-During system suspend the firmware removes power from the whole UFS
-block, so neither the device nor the link state can be retained. Set
-spm_lvl to UFS_PM_LVL_5 (device powered off, link off) so the core does a
-full re-initialization on resume.
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Dropped operating-points-v2 from the required properties and the OPP
+  table from the example, the fixed rate core clock is now handled by
+  UFSHCD_PLTFRM_FIXED_RATE_CLKS.
+- Reworded the commit message accordingly.
 
-Assisted-by: LLM
+ufs: s32n7: Add NXP S32N79 UFS host controller driver:
+- Pass UFSHCD_PLTFRM_FIXED_RATE_CLKS to ufshcd_pltfrm_init() so the UFS
+  core manages the fixed rate "core" clock without an OPP table.
+- Also clear the DWC BUSTHRTL clock gating enable (CGE) after each HCE
+  enable, as clock gating is not supported on this platform. Added the
+  DWC_UFS_BUSTHRTL_CGE definition to ufshci-dwc.h.
+- Moved the local N_DeviceID programming from the link startup POST_CHANGE
+  to the PRE_CHANGE hook, before DME_LINKSTARTUP, as in the recommended
+  sequence. Kept the local-only CPort 0 setup instead of
+  ufshcd_dwc_connection_setup(), which programs different settings (it
+  clears the host N_DeviceID_valid and sets the device T_PeerDeviceID
+  to 1). This additional context is provided here rather than in the commit
+  message, as it explains why the suggested alternative was not used rather
+  than the change itself.
+- Defined the CBREFCLKCTRL2 ref_clk_en_unipro and ref_clk_en_app override
+  enable bits in ufshcd-dwc.h, next to the existing ref_clk_gating_support
+  one.
+- Embedded the variant ops in struct s32n7_soc_data and recovered the SoC data
+  in init() with container_of_const(), so device_get_match_data() is only
+  called once, in probe().
+- Documented why SCM_STATUS is first written back to its reset value: each
+  M-PHY start-up sequence must start with the PHY in reset, and the PHY may
+  still be running on the host reset / error recovery paths.
+- Replaced the raw M-PHY values with the shared bitfield macros, including
+  the CBREFCLKCTRL2 override enable bits.
+- Updated the commit message for the CGE and fixed rate clock changes.
+- Dropped the Reviewed-by tag of Frank Li.
+
+- Link to v10: https://lore.kernel.org/all/20261103133215.1385823-1-larisa.grigore@oss.nxp.com/
+
+Changes in v10:
+
+All patches:
+- Dropped the "scsi:" subject prefix.
+
+ufs: core: Return a negative errno from WLUN suspend/resume:
+- New patch. __ufshcd_wl_suspend() and __ufshcd_wl_resume() may return a
+  positive result code, e.g. from ufshcd_link_startup(). The runtime PM core
+  treats it as a failure, but rpm_get_suppliers() only checks for a negative
+  value, so the LUs consuming the WLUN are reported as resumed while the host
+  is in the error state. Convert positive values to -EIO at the WLUN PM
+  callback boundary, as ufshcd_init() already does. This replaces the
+  Fixes: rationale previously carried by the dwc link_is_up() patch and
+  covers every source of positive values, not only the DWC glue.
+
+ufs: dwc: Return a negative error if the link is down:
+- Dropped the Fixes: tag. The PM-boundary issue is now fixed in the core;
+  this patch is a cleanup so the helper returns an errno before it is
+  exported.
+
+ufs: unipro: Add TX/RX FSM state attributes:
+- Fixed the commit message: AMD Versal2 has no header with these
+  definitions, only users in the .c file.
+
+ufs: core: Add common Hibern8 TX FSM polling helper:
+- Changed the subject prefix from "ufs: host:" to "ufs: core:".
+- Fixed the helper name in the commit message.
+- Renamed the internal per-lane poller from ufshcd_poll_tx_hibern8_lanes()
+  to ufshcd_tx_lanes_in_hibern8().
+- Log the TX_FSM_STATE of each lane that did not reach Hibern8 on timeout.
+- Moved the prototype to the non-extern declarations and dropped "extern".
+- Report a positive UIC result from DME_GET as -EIO, so the helper really
+  returns a negative errno as documented.
+- Fixed checkpatch --strict alignment checks.
+- Dropped the Reviewed-by tags of Frank Li and Stanley Jhu, as the patch
+  changed significantly.
+
+ufs: dwc: Move Versal2 M-PHY CREG access helpers into ufshcd-dwc:
+- Reworded the commit message and explained the static array race.
+- Use the "name() - description" kernel-doc style like the rest of the
+  file.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Restricted lanes-per-direction to 2, matching the driver.
+- Explained in the commit message why clock-names and the single 0 Hz
+  operating-points-v2 entry are required.
+
+ufs: s32n7: Add NXP S32N79 UFS host controller driver:
+- Changed the subject prefix to "ufs: s32n7:".
+- Added <linux/bitfield.h> and <linux/bits.h>.
+- Reject lanes-per-direction other than 2.
+- Dropped redundant error messages and the remove() wrapper.
+- Used u32 for the ufshcd_dme_get() result, aligned register offset style,
+  clarified the SCM_STATUS comments.
+- Documented the PERFORM_LINK_STARTUP_ONCE quirk and spm_lvl in the commit
+  message, and updated the HS rate-select bullet.
+- Documented in the commit message that the DWC BUSTHRTL power gating is
+  disabled because it is not supported on this platform.
+
+Changes in v9:
+
+ufs: unipro: Move Tx/Rx FSM state definitions to unipro.h:
+- Prefixed the RX_STATE_* and TX_STATE_* enum constants with UFS_ to avoid
+  polluting the global namespace, and updated the existing users
+  (AMD Versal2, HiSilicon, Qualcomm).
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Use the renamed UFS_TX_STATE_HIBERN8 constant.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Added Reviewed-by: Frank Li.
+
+MAINTAINERS: Add NXP S32N7 UFS host controller entry:
+- Added the imx@lists.linux.dev mailing list.
+
+arm64: dts: freescale: s32n79: Add UFS host controller:
+arm64: dts: freescale: s32n79-rdb: Enable UFS:
+- Dropped from this series, as requested; they will be sent separately.
+
+Changes in v8:
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Added Reviewed-by: Stanley Jhu.
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Let the UFS core manage the core reference clock: declare it in DT via
+  clock-names/operating-points-v2 so the core adds it to hba->clk_list_head
+  and gates it across system suspend and runtime idle. Dropped the manual
+  devm_clk_get_enabled() and the struct s32n7_ufs core_clk member, and now
+  read the clock rate from the core clock list.
+- Dropped the ufs_s32n7_calculate_us_tick() wrapper and inlined the division.
+- Dropped the unused struct s32n7_ufs hba member.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Added the required clock-names and operating-points-v2 properties.
+- Dropped the Reviewed-by and Acked-by tags.
+
+arm64: dts: freescale: s32n79: Add UFS host controller:
+- Added clock-names = "core" and an operating-points-v2 table with
+  opp-hz = <0> (fixed-rate clock) so the UFS core manages (and gates) the
+  core reference clock.
+
+Changes in v7:
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Wrapped .prepare/.complete in pm_sleep_ptr() instead of pm_ptr().
+- Fixed code alignment issues.
+
+Changes in v6:
+
+scsi: ufs: dwc: Return a negative error if the link is down:
+- Translate a positive UIC command result from ufshcd_dme_get() into -EIO.
+- Declare dme_result as u32 to match the ufshcd_dme_get() parameter type.
+
+scsi: ufs: dwc: Sort CBCRCTRL and CBREFCLKCTRL2 by offset:
+- Added Reviewed-by: Frank Li.
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Added Reviewed-by: Frank Li.
+
+Changes in v5:
+
+scsi: ufs: dwc: Sort CBCRCTRL and CBREFCLKCTRL2 by offset:
+- New patch. Split the macro reorder into its own cleanup.
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Return the real poller error on timeout, not a forced -ETIMEDOUT.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Dropped the jedec,ufs-2.0 fallback.
+- Removed the select: block and the clocks description.
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Documented the timeout values as driver-defined bounds.
+- Wrapped .prepare/.complete in pm_ptr().
+
+arm64: dts: freescale: s32n79: Add UFS host controller:
+- Dropped the jedec,ufs-2.0 fallback.
+
+Changes in v4:
+
+scsi: ufs: dwc: Return a negative error if the link is down:
+- New patch. ufshcd_dwc_link_is_up() now returns a negative errno on failure
+  instead of a positive value.
+
+ufs: unipro: Move Tx/Rx FSM state definitions to unipro.h
+- Added Reviewed-by: Frank Li.
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Refactored ufshcd_dme_check_tx_hibern8() to use read_poll_timeout().
+
+scsi: ufs: Move Versal2 M-PHY CREG access helpers into ufshcd-dwc:
+- Added Reviewed-by: Frank Li.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Added Reviewed-by: Frank Li.
+
+Changes in v3:
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Use -EAGAIN while polling and only normalize to -ETIMEDOUT on timeout, so
+  real attribute-read errors are returned instead of masked.
+- Drop the stray delay.h include in ufshcd-pltfrm.c; the helper lives in
+  ufshcd.c.
+- Drop the now-redundant dev_err() after the check in the HiSilicon driver.
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Use devm_clk_get_enabled() to enable the core reference clock.
+- Rename the family-level identifiers from the s32n_ prefix to s32n7_
+  (structs and functions), keeping the s32n79_ prefix only for the
+  chip-specific data.
+
+Changes in v2:
+
+ufs: unipro: Move Tx/Rx FSM state definitions to unipro.h:
+- Improved the enum comments. They now cite the MIPI M-PHY v6.0 tables.
+
+ufs: unipro: Add TX/RX FSM state attributes:
+- Added Reviewed-by: Frank Li.
+
+ufs: host: Add common Hibern8 TX FSM polling helper:
+- Moved the helper into the UFS core (ufshcd.c).
+- Split out an inner per-lane poller, ufshcd_poll_tx_hibern8_lanes().
+- Expanded the commit message to document the -ETIMEDOUT normalization done
+  when converting the qcom/hisi checks to the helper. No code behaviour change.
+
+scsi: ufs: Move Versal2 M-PHY CREG access helpers into ufshcd-dwc:
+- Made the DME attribute arrays const. They are now initialized inline instead
+  of by later field assignments.
+
+scsi: ufs: dwc: Export common clock divider and link status helpers:
+- Added Reviewed-by: Frank Li.
+
+dt-bindings: ufs: Add NXP S32N79 UFS host controller:
+- Renamed the patch subject and simplified the commit message.
+- Renamed the binding file to nxp,s32n79-ufshc.yaml so it matches the
+  nxp,s32n79-ufshc compatible string.
+- Removed the nxp,mphy-boot-mode property.
+- Made reg-names and clocks required.
+- Removed the conditional if/then/else schema.
+- Removed clock-names.
+- Changed the compatible from jedec,ufs-3.0 to jedec,ufs-2.0.
+- Updated the example clocks to <&clks 0x92>.
+
+scsi: ufs: Add NXP S32N79 UFS host controller driver:
+- Removed the nxp,mphy-boot-mode handling and the mphy_boot_mode enum. The
+  M-PHY firmware always runs from ROM now.
+- Added a struct s32n_soc_data for SoC match data.
+- Moved the calibration writes out to static const tables.
+- Renamed struct phy_reg_cfg to s32n_phy_reg.
+- Moved the rate-select sequence out of link_startup_post_change() into a new
+  pwr_change_notify() pre-change path.
+- Used devm_clk_get(dev, NULL) and dropped the redundant core_clk NULL check.
+- Switched to *_PM_OPS() macros and pm_ptr() for the PM ops.
+- Clarified the Hibern8 poll timeout comment.
+- Enabled Auto-Hibern8 instead of setting UFSHCD_QUIRK_BROKEN_AUTO_HIBERN8.
+- Reworked and improved the M-PHY initialization sequence.
+
+arm64: dts: freescale: s32n79: Add UFS host controller:
+- Changed the compatible from jedec,ufs-3.0 to jedec,ufs-2.0.
+- Removed clock-names.
+
+arm64: dts: freescale: s32n79-rdb: Enable UFS:
+- Removed the nxp,mphy-boot-mode property.
+
 Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
 ---
- drivers/ufs/host/Kconfig         |  12 +
- drivers/ufs/host/Makefile        |   1 +
- drivers/ufs/host/ufs-nxp-s32n7.c | 546 +++++++++++++++++++++++++++++++++++++++
- drivers/ufs/host/ufshcd-dwc.h    |  12 +
- drivers/ufs/host/ufshci-dwc.h    |   8 +
- 5 files changed, 579 insertions(+)
+Larisa Grigore (14):
+      ufs: core: Return a negative errno from WLUN suspend/resume
+      ufs: dwc: Return a negative error if the link is down
+      ufs: unipro: Move Tx/Rx FSM state definitions to unipro.h
+      ufs: unipro: Add TX/RX FSM state attributes
+      ufs: core: Add common Hibern8 TX FSM polling helper
+      ufs: dwc: Move Versal2 M-PHY CREG access helpers into ufshcd-dwc
+      ufs: dwc: Export common clock divider and link status helpers
+      ufs: dwc: Sort CBCRCTRL and CBREFCLKCTRL2 by offset
+      ufs: dwc: Move shared M-PHY CR bitfield macros to ufshcd-dwc.h
+      ufs: pltfrm: Add a flags argument to ufshcd_pltfrm_init()
+      ufs: pltfrm: Add a flag to manage fixed rate clocks
+      dt-bindings: ufs: Add NXP S32N79 UFS host controller
+      ufs: s32n7: Add NXP S32N79 UFS host controller driver
+      MAINTAINERS: Add NXP S32N7 UFS host controller entry
 
-diff --git a/drivers/ufs/host/Kconfig b/drivers/ufs/host/Kconfig
-index ff170c0b6da0..e8ee7dd05f1a 100644
---- a/drivers/ufs/host/Kconfig
-+++ b/drivers/ufs/host/Kconfig
-@@ -168,3 +168,15 @@ config SCSI_UFS_AMD_VERSAL2
- 
- 	  Select this if you have UFS controller on AMD Versal Gen 2 SoC.
- 	  If unsure, say N.
-+
-+config SCSI_UFS_S32N7
-+	tristate "NXP S32N7 platform driver"
-+	depends on SCSI_UFSHCD_PLATFORM && (ARCH_S32 || COMPILE_TEST)
-+	help
-+	  This selects the S32N7 specific additions on top of the UFSHCD DWC
-+	  and UFSHCD platform driver. UFS host on S32N79 needs some vendor
-+	  specific configurations like PHY and vendor specific register accesses
-+	  before accessing the hardware.
-+
-+	  Select this if you have UFS controller on an S32N7 based board.
-+	  If unsure, say N.
-diff --git a/drivers/ufs/host/Makefile b/drivers/ufs/host/Makefile
-index 7d8db67eb23c..a2f4a1d0b3ae 100644
---- a/drivers/ufs/host/Makefile
-+++ b/drivers/ufs/host/Makefile
-@@ -4,6 +4,7 @@ CONTEXT_ANALYSIS := y
- 
- obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) += tc-dwc-g210-pci.o ufshcd-dwc.o tc-dwc-g210.o
- obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-dwc-g210.o
-+obj-$(CONFIG_SCSI_UFS_S32N7) += ufs-nxp-s32n7.o ufshcd-dwc.o
- obj-$(CONFIG_SCSI_UFS_CDNS_PLATFORM) += cdns-pltfrm.o
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFS_EXYNOS) += ufs-exynos.o
-diff --git a/drivers/ufs/host/ufs-nxp-s32n7.c b/drivers/ufs/host/ufs-nxp-s32n7.c
-new file mode 100644
-index 000000000000..8d73a7179d99
---- /dev/null
-+++ b/drivers/ufs/host/ufs-nxp-s32n7.c
-@@ -0,0 +1,546 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
-+/*
-+ * Copyright 2026 NXP
-+ *
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+
-+#include "ufshcd-pltfrm.h"
-+#include "ufshcd-dwc.h"
-+#include "ufshci-dwc.h"
-+
-+/* SCM Register Offsets. */
-+#define SCM_ONE_US_TICK			0x2C
-+#define SCM_STATUS			0x30
-+
-+/* SCM_ONE_US_TICK Register. */
-+#define SCM_ONE_US_TICK_MASK		GENMASK(8, 0)
-+
-+/* SCM_STATUS (MPHY_RAM_CONFIG_STATUS in the RM) register fields. */
-+#define SCM_STATUS_PHY_RESET_MASK		BIT(0)
-+#define SCM_STATUS_SRAM_BYPASS_MASK		BIT(1)
-+#define SCM_STATUS_SRAM_EXT_LD_DONE_MASK	BIT(2)
-+#define SCM_STATUS_SRAM_INIT_DONE_MASK		BIT(16)
-+
-+#define SCM_STATUS_PHY_RESET(val)		\
-+	FIELD_PREP(SCM_STATUS_PHY_RESET_MASK, val)
-+
-+#define SCM_STATUS_SRAM_BYPASS(val)		\
-+	FIELD_PREP(SCM_STATUS_SRAM_BYPASS_MASK, val)
-+
-+/* Driver-defined upper bound for the M-PHY SRAM init to complete: 3 s. */
-+#define CFG_MPHY_INIT_TIMEOUT_VALUE_US	3000000
-+/* Driver-defined poll interval while waiting for SRAM_INIT_DONE: 1 ms. */
-+#define CFG_MPHY_INIT_POLL_INTERVAL_US	1000
-+
-+/* Clock validation limits. */
-+#define MAX_VALID_ONE_US_TICK		SCM_ONE_US_TICK_MASK
-+
-+/* CPort definitions */
-+#define CPORT_0				0
-+
-+/* Driver-defined upper bound for completing a Hibern8 transition: 1 s. */
-+#define HBRN8_POLL_TOUT_MS		1000
-+
-+/* The M-PHY sequences below program exactly two lanes per direction. */
-+#define S32N7_NUM_LANES			2
-+
-+/**
-+ * struct s32n7_phy_reg - PHY CR (config-register) write entry
-+ * @reg: Register offset/address
-+ * @val: Value to write
-+ */
-+struct s32n7_phy_reg {
-+	u32 reg;
-+	u32 val;
-+};
-+
-+/**
-+ * struct s32n7_soc_data - SoC-specific configuration data
-+ * @vops: UFS host controller variant operations
-+ * @reset_config: MPHY reset DME attributes (programmed while PHY held in reset)
-+ * @reset_config_count: number of entries in @reset_config
-+ * @calib_mphy_disabled: CR calibration writes performed while the MPHY is disabled
-+ * @calib_mphy_disabled_count: number of entries in @calib_mphy_disabled
-+ * @calib_mphy_enabled: CR calibration writes performed while the MPHY is enabled
-+ * @calib_mphy_enabled_count: number of entries in @calib_mphy_enabled
-+ */
-+struct s32n7_soc_data {
-+	struct ufs_hba_variant_ops vops;
-+	const struct ufshcd_dme_attr_val *reset_config;
-+	size_t reset_config_count;
-+	const struct s32n7_phy_reg *calib_mphy_disabled;
-+	size_t calib_mphy_disabled_count;
-+	const struct s32n7_phy_reg *calib_mphy_enabled;
-+	size_t calib_mphy_enabled_count;
-+};
-+
-+/**
-+ * struct s32n7_ufs - S32N7 UFS host controller data
-+ * @reg_scm: SCM register base address
-+ * @soc_data: SoC-specific configuration data
-+ */
-+struct s32n7_ufs {
-+	void __iomem *reg_scm;
-+	const struct s32n7_soc_data *soc_data;
-+};
-+
-+/**
-+ * ufs_s32n7_phy_write_sequence - Write a sequence of PHY registers
-+ * @hba: UFS host controller instance
-+ * @cfg: Array of register configurations
-+ * @count: Number of entries in the array
-+ *
-+ * Return: 0 on success, error code on failure
-+ */
-+static int ufs_s32n7_phy_write_sequence(struct ufs_hba *hba,
-+					const struct s32n7_phy_reg *cfg,
-+					size_t count)
-+{
-+	int ret;
-+	size_t i;
-+
-+	for (i = 0; i < count; i++) {
-+		ret = ufshcd_dwc_phy_reg_write(hba, cfg[i].reg, cfg[i].val);
-+		if (ret) {
-+			dev_err(hba->dev,
-+				"Failed to write PHY reg 0x%x = 0x%x (step %zu)\n",
-+				cfg[i].reg, cfg[i].val, i);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int ufs_s32n7_configure_clocks(struct ufs_hba *hba)
-+{
-+	struct s32n7_ufs *ufs = ufshcd_get_variant(hba);
-+	struct device *dev = hba->dev;
-+	struct ufs_clk_info *clki;
-+	unsigned long clk_rate = 0;
-+	unsigned long one_us_tick;
-+
-+	/*
-+	 * The core reference clock is managed by the UFS core (it is listed in
-+	 * the DT via clock-names as a fixed rate clock and added to
-+	 * hba->clk_list_head). Read its rate from there to derive
-+	 * ONE_US_TICK/HCLKDIV.
-+	 */
-+	list_for_each_entry(clki, &hba->clk_list_head, list) {
-+		if (!IS_ERR_OR_NULL(clki->clk) &&
-+		    !strcmp(clki->name, "core")) {
-+			clk_rate = clk_get_rate(clki->clk);
-+			break;
-+		}
-+	}
-+
-+	if (!clk_rate) {
-+		dev_err(dev, "Failed to get valid clock rate.\n");
-+		return -EINVAL;
-+	}
-+
-+	one_us_tick = clk_rate / USEC_PER_SEC;
-+	if (one_us_tick == 0 || one_us_tick > MAX_VALID_ONE_US_TICK) {
-+		dev_err(dev, "Invalid one_us_tick value: %lu (clk_rate: %lu Hz).\n",
-+			one_us_tick, clk_rate);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dev, "Core clock rate: %lu Hz, one_us_tick = %lu.\n",
-+		clk_rate, one_us_tick);
-+
-+	/*
-+	 * Configure the micro-second tick rate generator based on core
-+	 * clock rate.
-+	 */
-+	writel(one_us_tick, ufs->reg_scm + SCM_ONE_US_TICK);
-+	ufshcd_dwc_program_clk_div(hba, one_us_tick);
-+
-+	return 0;
-+}
-+
-+static int ufs_s32n7_hce_enable_notify(struct ufs_hba *hba,
-+				       enum ufs_notify_change_status status)
-+{
-+	u32 reg;
-+
-+	if (status != POST_CHANGE)
-+		return 0;
-+
-+	/*
-+	 * Clear the DWC low-power gating (BUSTHRTL) so a doorbell write can
-+	 * wake the link out of hibernate. LP_PGE (generic low-power) and
-+	 * LP_AH8_PGE (Auto-Hibern8) both reset to 1.
-+	 * Clock gating is not supported either, so also clear CGE (resets
-+	 * to 1) to stop the core from generating ufs_idle_ind.
-+	 */
-+	reg = ufshcd_readl(hba, DWC_UFS_REG_BUSTHRTL);
-+	reg &= ~(DWC_UFS_BUSTHRTL_CGE | DWC_UFS_BUSTHRTL_LP_PGE |
-+		 DWC_UFS_BUSTHRTL_LP_AH8_PGE);
-+	ufshcd_writel(hba, reg, DWC_UFS_REG_BUSTHRTL);
-+
-+	return 0;
-+}
-+
-+static int ufs_s32n7_phy_initial_calib(struct ufs_hba *hba)
-+{
-+	struct s32n7_ufs *ufs = ufshcd_get_variant(hba);
-+	int ret;
-+
-+	/* Calibrations that must run while the MPHY is disabled. */
-+	ret = ufs_s32n7_phy_write_sequence(hba, ufs->soc_data->calib_mphy_disabled,
-+					   ufs->soc_data->calib_mphy_disabled_count);
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(VS_MPHYCFGUPDT, 0), 0x1);
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(VS_MPHYDISABLE, 0), 0x0);
-+	if (ret)
-+		return ret;
-+
-+	/* Calibrations that must run while the MPHY is enabled. */
-+	ret = ufs_s32n7_phy_write_sequence(hba, ufs->soc_data->calib_mphy_enabled,
-+					   ufs->soc_data->calib_mphy_enabled_count);
-+	if (ret)
-+		return ret;
-+
-+	return ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(VS_MPHYCFGUPDT, 0), 0x1);
-+}
-+
-+static int ufs_s32n7_link_startup_pre_change(struct ufs_hba *hba)
-+{
-+	struct s32n7_ufs *ufs = ufshcd_get_variant(hba);
-+	struct device *dev = hba->dev;
-+	int ret;
-+	u32 reg;
-+
-+	ret = ufs_s32n7_configure_clocks(hba);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Each MPHY start-up sequence must begin with the PHY held in reset.
-+	 * The PHY may still be running here (host reset / error recovery), so
-+	 * first restore the register to its reset value (PHY_RESET = 1) before
-+	 * changing the SRAM configuration. No delay or readback is required
-+	 * between the two writes.
-+	 */
-+	writel(SCM_STATUS_PHY_RESET(1), ufs->reg_scm + SCM_STATUS);
-+
-+	/*
-+	 * The M-PHY firmware runs from the internal ROM:
-+	 *  SCM_STATUS.SRAM_BYPASS = 1
-+	 *  SCM_STATUS.SRAM_EXT_LD_DONE = 0
-+	 */
-+	writel(SCM_STATUS_PHY_RESET(1) | SCM_STATUS_SRAM_BYPASS(1),
-+	       ufs->reg_scm + SCM_STATUS);
-+
-+	/* MPHY reset configuration: vendor attributes set while PHY in reset. */
-+	ret = ufshcd_dwc_dme_set_attrs(hba, ufs->soc_data->reset_config,
-+				       ufs->soc_data->reset_config_count);
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(VS_MPHYCFGUPDT, 0), 0x1);
-+	if (ret)
-+		return ret;
-+
-+	/* Release PHY_RESET. */
-+	writel(readl(ufs->reg_scm + SCM_STATUS) & ~SCM_STATUS_PHY_RESET_MASK,
-+	       ufs->reg_scm + SCM_STATUS);
-+
-+	/* Wait until SRAM_INIT_DONE = 1. */
-+	ret = readl_poll_timeout(ufs->reg_scm + SCM_STATUS, reg,
-+				 reg & SCM_STATUS_SRAM_INIT_DONE_MASK,
-+				 CFG_MPHY_INIT_POLL_INTERVAL_US,
-+				 CFG_MPHY_INIT_TIMEOUT_VALUE_US);
-+	if (ret) {
-+		dev_err(dev, "UFS MPHY init not done!\n");
-+		return ret;
-+	}
-+
-+	/* Start of initial calibration */
-+	ret = ufs_s32n7_phy_initial_calib(hba);
-+	if (ret) {
-+		dev_err(dev, "UFS MPHY initial calibration failed!\n");
-+		return ret;
-+	}
-+
-+	/* Network layer: set Local DeviceID. */
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(N_DEVICEID, 0), 0x0);
-+	if (ret)
-+		return ret;
-+
-+	/* End of Gear1 settings */
-+
-+	return ufshcd_dme_check_tx_hibern8(hba, hba->lanes_per_direction,
-+					   HBRN8_POLL_TOUT_MS);
-+}
-+
-+static int ufs_s32n7_link_startup_post_change(struct ufs_hba *hba)
-+{
-+	static const struct ufshcd_dme_attr_val cport_setup[] = {
-+		{ UIC_ARG_MIB_SEL(T_CONNECTIONSTATE, CPORT_0),
-+				CPORT_IDLE, DME_LOCAL },
-+		{ UIC_ARG_MIB_SEL(T_CPORTFLAGS, CPORT_0),
-+				CPORT_DEF_FLAGS, DME_LOCAL },
-+		{ UIC_ARG_MIB_SEL(T_CONNECTIONSTATE, CPORT_0),
-+				CPORT_CONNECTED, DME_LOCAL },
-+	};
-+	u32 data = 0;
-+	int ret;
-+
-+	/* Set Connection State to IDLE (it allows CPort Attributes to be set). */
-+	ret = ufshcd_dwc_dme_set_attrs(hba, cport_setup, ARRAY_SIZE(cport_setup));
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_dme_get(hba, UIC_ARG_MIB_SEL(T_CONNECTIONSTATE, CPORT_0), &data);
-+	if (ret)
-+		return ret;
-+
-+	if (data != CPORT_CONNECTED) {
-+		dev_err(hba->dev, "CPort 0 not connected (state %u)\n", data);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ufs_s32n7_link_startup_notify(struct ufs_hba *hba,
-+					 enum ufs_notify_change_status status)
-+{
-+	int err;
-+
-+	if (status == PRE_CHANGE)
-+		return ufs_s32n7_link_startup_pre_change(hba);
-+
-+	/* POST_CHANGE */
-+	err = ufshcd_dwc_link_is_up(hba);
-+	if (err) {
-+		dev_err(hba->dev, "Link is not up.\n");
-+		return err;
-+	}
-+
-+	return ufs_s32n7_link_startup_post_change(hba);
-+}
-+
-+static int ufs_s32n7_pwr_change_pre_change(struct ufs_hba *hba,
-+					   const struct ufs_pa_layer_attr *pwr)
-+{
-+	/*
-+	 * RX rate-select override sequence: assert the override, then deassert
-+	 * the value, then drop the override enable so normal operation resumes.
-+	 */
-+	static const struct s32n7_phy_reg pwr_change_phy_regs[] = {
-+		{ RX_OVRD_IN_1(0), MPHY_RX_OVRD_EN | MPHY_RX_OVRD_VAL },
-+		{ RX_OVRD_IN_1(1), MPHY_RX_OVRD_EN | MPHY_RX_OVRD_VAL },
-+		{ RX_OVRD_IN_1(0), MPHY_RX_OVRD_EN },
-+		{ RX_OVRD_IN_1(1), MPHY_RX_OVRD_EN },
-+		{ RX_OVRD_IN_1(0), 0x0 },
-+		{ RX_OVRD_IN_1(1), 0x0 },
-+	};
-+	u32 rate;
-+	int ret;
-+
-+	/* Rate change only applies to the HS power modes. */
-+	if (!ufshcd_is_hs_mode(pwr))
-+		return 0;
-+
-+	/*
-+	 * Select the M-PHY rate (rate series) that matches the mode the core
-+	 * has negotiated with the device.
-+	 */
-+	rate = (pwr->hs_rate == PA_HS_MODE_B) ? CB_RATE_B : CB_RATE_A;
-+
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(CBRATESEL, 0), rate);
-+	if (ret)
-+		return ret;
-+
-+	ret = ufshcd_dme_set(hba, UIC_ARG_MIB_SEL(VS_MPHYCFGUPDT, 0), 0x1);
-+	if (ret)
-+		return ret;
-+
-+	/* Apply the RX rate-select override now that the target rate is set. */
-+	return ufs_s32n7_phy_write_sequence(hba, pwr_change_phy_regs,
-+					   ARRAY_SIZE(pwr_change_phy_regs));
-+}
-+
-+static int ufs_s32n7_pwr_change_notify(struct ufs_hba *hba,
-+				       enum ufs_notify_change_status status,
-+				       struct ufs_pa_layer_attr *pwr)
-+{
-+	int err = 0;
-+
-+	if (status == PRE_CHANGE) {
-+		err = ufs_s32n7_pwr_change_pre_change(hba, pwr);
-+		if (err)
-+			dev_err(hba->dev, "Power mode pre-change failed (%d).\n",
-+				err);
-+	}
-+
-+	return err;
-+}
-+
-+static int ufs_s32n7_init(struct ufs_hba *hba)
-+{
-+	struct device *dev = hba->dev;
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct s32n7_ufs *ufs;
-+
-+	ufs = devm_kzalloc(dev, sizeof(*ufs), GFP_KERNEL);
-+	if (!ufs)
-+		return -ENOMEM;
-+
-+	ufs->soc_data = container_of_const(hba->vops, struct s32n7_soc_data, vops);
-+
-+	if (hba->lanes_per_direction != S32N7_NUM_LANES)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "unsupported lanes-per-direction %u (expected %u)\n",
-+				     hba->lanes_per_direction, S32N7_NUM_LANES);
-+
-+	hba->quirks |= UFSHCD_QUIRK_PERFORM_LINK_STARTUP_ONCE;
-+	hba->spm_lvl = UFS_PM_LVL_5;
-+
-+	ufs->reg_scm = devm_platform_ioremap_resource_byname(pdev, "scm");
-+	if (IS_ERR(ufs->reg_scm))
-+		return dev_err_probe(dev, PTR_ERR(ufs->reg_scm),
-+				     "ioremap failed for SCM registers.\n");
-+
-+	ufshcd_set_variant(hba, ufs);
-+
-+	return 0;
-+}
-+
-+/*
-+ * MPHY reset configuration: vendor DME attributes programmed while the PHY is
-+ * held in reset. Programs the reference-clock, RX squelch, RX Rhold and
-+ * CR-parallel control attributes.
-+ */
-+static const struct ufshcd_dme_attr_val s32n79_reset_config[] = {
-+	/*
-+	 * Disable reference clock gating support and override the UniPro and
-+	 * application reference clock enable inputs to 0.
-+	 */
-+	{ UIC_ARG_MIB_SEL(CBREFCLKCTRL2, 0),
-+		CBREFREFCLK_GATE_OVR_EN | CBREFCLK_EN_UNIPRO_OVR_EN |
-+		CBREFCLK_EN_APP_OVR_EN, DME_LOCAL },
-+	/* RX squelch control. */
-+	{ UIC_ARG_MIB_SEL(RXSQCONTROL, SELIND_LN0_RX), 0x1, DME_LOCAL },
-+	{ UIC_ARG_MIB_SEL(RXSQCONTROL, SELIND_LN1_RX), 0x1, DME_LOCAL },
-+	/* RX Rhold control option. */
-+	{ UIC_ARG_MIB_SEL(RXRHOLDCTRLOPT, SELIND_LN0_RX), 0x2, DME_LOCAL },
-+	{ UIC_ARG_MIB_SEL(RXRHOLDCTRLOPT, SELIND_LN1_RX), 0x2, DME_LOCAL },
-+	/* CR parallel selection. */
-+	{ UIC_ARG_MIB_SEL(CBCRCTRL, 0), 0x1, DME_LOCAL },
-+};
-+
-+/* Calibrations that must run while the MPHY is disabled. */
-+static const struct s32n7_phy_reg s32n79_calib_mphy_disabled[] = {
-+	/* Bypass RX AFE calibration. */
-+	{ FAST_FLAGS(0), MPHY_FAST_RX_AFE_CAL },
-+	{ FAST_FLAGS(1), MPHY_FAST_RX_AFE_CAL },
-+};
-+
-+/* Calibrations that must run while the MPHY is enabled. */
-+static const struct s32n7_phy_reg s32n79_calib_mphy_enabled[] = {
-+	/* Write ATT offset compensation code to internal DAC. */
-+	{ RX_DAC_CTRL_OVRD(0), 0x1 },
-+	{ RX_DAC_CTRL_OVRD(1), 0x1 },
-+	{ RX_DAC_CTRL(0), 0x8E },
-+	{ RX_DAC_CTRL(1), 0x91 },
-+	{ RX_DAC_CTRL_SEL(0), 0x1 },
-+	{ RX_DAC_CTRL_SEL(1), 0x1 },
-+	{ RX_DAC_CTRL_EN(0), 0x1 },
-+	{ RX_DAC_CTRL_EN(1), 0x1 },
-+	{ RX_DAC_CTRL_OVRD(0), 0x0 },
-+	{ RX_DAC_CTRL_OVRD(1), 0x0 },
-+	/* Write CTLE offset compensation code to internal DAC. */
-+	{ RX_DAC_CTRL_OVRD(0), 0x1 },
-+	{ RX_DAC_CTRL_OVRD(1), 0x1 },
-+	{ RX_DAC_CTRL(0), 0x71 },
-+	{ RX_DAC_CTRL(1), 0x7F },
-+	{ RX_DAC_CTRL_SEL(0), 0x2 },
-+	{ RX_DAC_CTRL_SEL(1), 0x2 },
-+	{ RX_DAC_CTRL_EN(0), 0x1 },
-+	{ RX_DAC_CTRL_EN(1), 0x1 },
-+	{ RX_DAC_CTRL_OVRD(0), 0x0 },
-+	{ RX_DAC_CTRL_OVRD(1), 0x0 },
-+	/* FW Calibration configuration. */
-+	{ FW_CALIB_CCFG(0), MPHY_FW_CALIB_CFG_VAL },
-+	{ FW_CALIB_CCFG(1), MPHY_FW_CALIB_CFG_VAL },
-+};
-+
-+static const struct s32n7_soc_data s32n79_soc_data = {
-+	.vops = {
-+		.name = "s32n79",
-+		.init = ufs_s32n7_init,
-+		.link_startup_notify = ufs_s32n7_link_startup_notify,
-+		.hce_enable_notify = ufs_s32n7_hce_enable_notify,
-+		.pwr_change_notify = ufs_s32n7_pwr_change_notify,
-+	},
-+	.reset_config = s32n79_reset_config,
-+	.reset_config_count = ARRAY_SIZE(s32n79_reset_config),
-+	.calib_mphy_disabled = s32n79_calib_mphy_disabled,
-+	.calib_mphy_disabled_count = ARRAY_SIZE(s32n79_calib_mphy_disabled),
-+	.calib_mphy_enabled = s32n79_calib_mphy_enabled,
-+	.calib_mphy_enabled_count = ARRAY_SIZE(s32n79_calib_mphy_enabled),
-+};
-+
-+static const struct of_device_id ufs_s32n7_match[] = {
-+	{
-+		.compatible = "nxp,s32n79-ufshc",
-+		.data = &s32n79_soc_data,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ufs_s32n7_match);
-+
-+static int ufs_s32n7_probe(struct platform_device *pdev)
-+{
-+	const struct s32n7_soc_data *soc_data;
-+
-+	soc_data = device_get_match_data(&pdev->dev);
-+	if (!soc_data)
-+		return -ENODEV;
-+
-+	return ufshcd_pltfrm_init(pdev, &soc_data->vops,
-+				  UFSHCD_PLTFRM_FIXED_RATE_CLKS);
-+}
-+
-+static const struct dev_pm_ops ufs_s32n7_pm_ops = {
-+	SYSTEM_SLEEP_PM_OPS(ufshcd_system_suspend, ufshcd_system_resume)
-+	RUNTIME_PM_OPS(ufshcd_runtime_suspend, ufshcd_runtime_resume, NULL)
-+	.prepare	= pm_sleep_ptr(ufshcd_suspend_prepare),
-+	.complete	= pm_sleep_ptr(ufshcd_resume_complete),
-+};
-+
-+static struct platform_driver ufs_s32n7_driver = {
-+	.probe = ufs_s32n7_probe,
-+	.remove = ufshcd_pltfrm_remove,
-+	.driver	= {
-+		.name	= "ufs-s32n7",
-+		.pm	= pm_ptr(&ufs_s32n7_pm_ops),
-+		.of_match_table	= ufs_s32n7_match,
-+	},
-+};
-+
-+module_platform_driver(ufs_s32n7_driver);
-+
-+MODULE_AUTHOR("Larisa Grigore <larisa.grigore@oss.nxp.com>");
-+MODULE_DESCRIPTION("NXP S32N7 UFS Host Controller platform driver");
-+MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/ufs/host/ufshcd-dwc.h b/drivers/ufs/host/ufshcd-dwc.h
-index a76009b42088..214f7a67bf88 100644
---- a/drivers/ufs/host/ufshcd-dwc.h
-+++ b/drivers/ufs/host/ufshcd-dwc.h
-@@ -13,6 +13,8 @@
- #include <ufs/ufshcd.h>
- 
- /* RMMI Attributes */
-+#define RXSQCONTROL		0x8009
-+#define RXRHOLDCTRLOPT		0x8013
- #define CBC10DIRECTCONF2	0x810E
- #define CBRATESEL		0x8114
- #define CBCREGADDRLSB		0x8116
-@@ -26,8 +28,18 @@
- #define CBREFCLKCTRL2		0x8132
- 
- #define CBREFREFCLK_GATE_OVR_EN		BIT(7)
-+#define CBREFCLK_EN_UNIPRO_OVR_EN	BIT(3)
-+#define CBREFCLK_EN_APP_OVR_EN		BIT(1)
-+
-+/* CBRATESEL: 0 - rate A, 1 - rate B. */
-+#define CB_RATE_A		0x0
-+#define CB_RATE_B		0x1
- 
- /* M-PHY registers */
-+#define RX_DAC_CTRL(n)		(0x10AF + ((n) * 0x100))
-+#define RX_DAC_CTRL_OVRD(n)	(0x10B0 + ((n) * 0x100))
-+#define RX_DAC_CTRL_SEL(n)	(0x10B1 + ((n) * 0x100))
-+#define RX_DAC_CTRL_EN(n)	(0x10B8 + ((n) * 0x100))
- #define RX_OVRD_IN_1(n)		(0x3006 + ((n) * 0x100))
- #define RX_PCS_OUT(n)		(0x300F + ((n) * 0x100))
- #define FAST_FLAGS(n)		(0x401C + ((n) * 0x100))
-diff --git a/drivers/ufs/host/ufshci-dwc.h b/drivers/ufs/host/ufshci-dwc.h
-index 6c290e272106..a62fa56355e9 100644
---- a/drivers/ufs/host/ufshci-dwc.h
-+++ b/drivers/ufs/host/ufshci-dwc.h
-@@ -12,9 +12,17 @@
- 
- /* DWC HC UFSHCI specific Registers */
- enum dwc_specific_registers {
-+	DWC_UFS_REG_BUSTHRTL	= 0xC0,
- 	DWC_UFS_REG_HCLKDIV	= 0xFC,
- };
- 
-+/* Clock Gating Enable: core generates the ufs_idle_ind signal. */
-+#define DWC_UFS_BUSTHRTL_CGE		BIT(12)
-+/* Low-Power Power Gating Enable. */
-+#define DWC_UFS_BUSTHRTL_LP_PGE		BIT(16)
-+/* Low Power - AH8 Power Gating Enable. */
-+#define DWC_UFS_BUSTHRTL_LP_AH8_PGE	BIT(17)
-+
- /* Clock Divider Values: Hex equivalent of frequency in MHz */
- enum clk_div_values {
- 	DWC_UFS_REG_HCLKDIV_DIV_62_5	= 0x3e,
+ .../devicetree/bindings/ufs/nxp,s32n79-ufshc.yaml  |  58 +++
+ MAINTAINERS                                        |   9 +
+ drivers/ufs/core/ufshcd.c                          | 101 +++-
+ drivers/ufs/host/Kconfig                           |  12 +
+ drivers/ufs/host/Makefile                          |   1 +
+ drivers/ufs/host/cdns-pltfrm.c                     |   2 +-
+ drivers/ufs/host/tc-dwc-g210-pltfrm.c              |   2 +-
+ drivers/ufs/host/ufs-amd-versal2.c                 | 106 +---
+ drivers/ufs/host/ufs-exynos.c                      |   2 +-
+ drivers/ufs/host/ufs-hisi.c                        |  50 +-
+ drivers/ufs/host/ufs-hisi.h                        |   6 -
+ drivers/ufs/host/ufs-mediatek.c                    |   2 +-
+ drivers/ufs/host/ufs-nxp-s32n7.c                   | 546 +++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.c                        |  44 +-
+ drivers/ufs/host/ufs-qcom.h                        |   2 -
+ drivers/ufs/host/ufs-renesas.c                     |   2 +-
+ drivers/ufs/host/ufs-rockchip.c                    |   2 +-
+ drivers/ufs/host/ufs-sprd.c                        |   2 +-
+ drivers/ufs/host/ufshcd-dwc.c                      |  86 +++-
+ drivers/ufs/host/ufshcd-dwc.h                      |  50 +-
+ drivers/ufs/host/ufshcd-pltfrm.c                   |  61 ++-
+ drivers/ufs/host/ufshcd-pltfrm.h                   |  12 +-
+ drivers/ufs/host/ufshci-dwc.h                      |   8 +
+ include/ufs/ufshcd.h                               |   2 +
+ include/ufs/unipro.h                               |  22 +
+ 25 files changed, 949 insertions(+), 241 deletions(-)
+---
+base-commit: 7e1392a42ea288d70a266f6553fe06f57f8647ea
+change-id: 20261114-b4-ufs-s32n7-b8763256eaa7
 
--- 
-2.43.0
+Best regards,
+--  
+Larisa Grigore <larisa.grigore@oss.nxp.com>
 
 
