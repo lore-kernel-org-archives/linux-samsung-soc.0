@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794657378;
-	b=TRKl4J7NPz+zd6gD7qQpLo/T9jaRB0ao9A80XEC4rKupfV5ab9+TLHoVi4G71EX68av1
-	 hqb59q5nlw/MMEX4o0fgEPrhHFa4ANPZ6ZahrIPdYRxzvozKVZzrOicb2GlqWDYYM1IP3
-	 0/XYaQND0tCmHefXw3CIol0vWgdZnpIE6KvR2EdJKj3gi1z9mZCaaJr8Pcwc2Csd+0tkL
-	 7bTPLASkSnAdZ4d0YRdiSAhShCKMixRuhcrv30Rr3FecRgSQjvaK0H8UfFwhCe2SVwhLy
-	 JYSI0bX5XUkAMBarkYBMy6qmIwzsIuUFRsDMe7boHNJ3aL8wdyXUi+eSX7YDbApoNdg==
+	b=0rO2SsibxQR6NiVMxFL1NMYZLjMJDs7BSw+IbBxjFYAVISEOCX1xV6l5YjEK5jJW9d7M
+	 VcElAYroYMRvjZ9JdYTJCoO15P/uYpULBrZPhjE5jfApmfRld0JZBXnGSby1yLEhKbKm0
+	 vbIVVqf2kGM2dZWMagSG4jPUoGsfxGvPphs0AyDVLy6uXpv0h4JxzqWVwSvfbCox+8ewp
+	 x3DZPyswx1mZYUGGtnNcZPDye/8qHUGOhpvEi6IrkdwbW5opZCZnKdmtn0Ty9gt46tNUO
+	 1lYolRb1pl2wmgWWIeG8olCGfCCssIPYfkNGJJp1VpCmmoEP2+t3q88ClBOCFb2TLqw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794657378;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=9OQmEHykAQ2R39AIIxgEl7/iSUIXzW+Cm4JhQ4PShDs=;
-	b=IxjFaE5F6eJjxaaNtVamUyBba4igcnEIkDnvWicnNxdQN78OrEo1ysIwSiBIFKr7TZRL
-	 rC4tLZGMYTpD6h1TL8og+5LlVG1F0Az0h29d/O7Gdczzc/nsdWtYbUhrpy7Zd9OaizJZ1
-	 Sr+HaE4keq3ze3gsImiC9YMRtNLpLg//fenybWeZWX7bbcOkZCLOHGgtIwGx9WCZrluLH
-	 hJ0pJc69/7i4zQ8LJFAQyw4O8LCGNmbdsscdjKMHEOXbAdVCI/EXeG66c+md4v1vywhgM
-	 vdGKUD7BIzUv1HbNZWqORL1uqWNfNL7mVBgVEopOwwzkUhJxmCd6BvEGBQ9OYUd5XjA==
+	bh=gvxclcujdulxuOzNB06B2gMDxqEIGkemCRahDgIKSr4=;
+	b=W01NyCKievKT2itQeO4N/OoRHlIGzPhrdYPfltykh/CRW8NjMphaw/DGotM4Gg/aR5Io
+	 sggQbLJl8qVqE0Yf1XOVx2YrTLdZhSPBobpA1+5Lq2mgnAoEPmKH9JwDxmhE5YzkG2Wnb
+	 jM4iAKKOrJtabW0WIoUpgwPdaQq+8w5pm1MgiHXoe4MPQWikLiywacnrq8HoppfSLIQU+
+	 2PaNqC5rWXEQVC7l3wsRQoToUeKLpvcoXzf4YQkDxaHAaMhjDygk9vJ0JwbWALx6QcK9z
+	 TFwDMj85H3Aw4aUh5PtlqHR1SIW4VTtLDAM2UaU6hTzexJNn2EPbCsT58tSbSPNb/Sg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=On+uf3D0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DndSCsDd;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7BC60A3807;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E4A60A381C;
 	Sat, 14 Nov 2026 11:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=On+uf3D0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DndSCsDd
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794657378;
-	b=lvKPgFV5ItIaG+qLmKOoiGYm0ln+Zos8uKaPSjuXdZNZp0IqfCVPAto4bf5Tea2LD5vg
-	 wo8Yw7c/3TaQ8LrfWQxqWtNiYNOZYGShODzNzaLeJb2Kmv8YyTHHuPKF6GpDvj/CwoVXa
-	 PHOz5r/SAiO4/LMD/jkAk+VTJcjGQkegwJpIKyT4AGNv3LqfHrdYRj5Cp2MWWzqUSYV+9
-	 joC3CFBWczb/E4hWFETM7++/XvvyN2m2eufQc3k+kI8n/Lc9wxxAxuAKZdsSlUq2u/NeK
-	 kv8swLcgvrFhtk2MwV995eH4c/O5ZasBlGcc1KfgG0M5ufKolwCpxdul5dr+KB6xnKA==
+	b=hlUhCOnHgqcY4WKXOD4XVbL9eU1DNO6P8gxly4BO4hWme0mp9pNnj29C/fXqzLcJ49DH
+	 Ck3vBPLXB84gvq1LL11GTOgGrAwUQXiu+9vsFwIXo3rAa1nbuuphuFxlHD4LkGDusUfmg
+	 Mx6qJybFaD+NwtXC8yEUf/i68FF1Fp8qUf/B8wM19sK4bJjL1a+FT8LKiiCBhh7vFL9nK
+	 kpQP4AWetwgUgnF6K+CNrsQOa5yKO7Hhm6Ee3Y8H5KWHk6vwhT/7+9rL+cPpHGMNt/t/+
+	 LA6w2ZHnPBpWRdvhlbPtx8j1I1QqXMQAMaH7ovm9qEek1sb+mUsPx6v6EjAzg4q75RQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794657378;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=9OQmEHykAQ2R39AIIxgEl7/iSUIXzW+Cm4JhQ4PShDs=;
-	b=h7uyCaYRI2kUAvzSyAHE7ZkfxT6Rg8O96K+QP9nDk0cnCIgKxXmfZrCGBVNPviqwJVsG
-	 8nLSy0cnsG1EGM3b9oU/8DL6jA1mL3dCyicRJcRrIiJCQ1pOCwXb9EcZr4TlxjgGW0qja
-	 El+RXJ0whPQblYZybLZI4b6oUVeiFO7criY//j0ErvHtos9aqFYsMBCCr04PDqjvqaIeQ
-	 qu4IpdIouJr2uqWweoA/cDG4e5OKr2UMLYWR1Z7PH7l5WcwKEWZxw5kynyMBlrBQMuq6p
-	 +QCJwFkyaN3E56HDjdboSwK6Xv7K0lRDWzG7VtSUTokOwjD/NtknrLK9GDRwisSO5IA==
+	bh=gvxclcujdulxuOzNB06B2gMDxqEIGkemCRahDgIKSr4=;
+	b=EPoZQZ3pm+6rpVMSPttFOPhxaxLcBsC8bIsGKOLkmXzC8xnWfv+yRN3Y/VE/RoKF09hh
+	 OfsCewj/RjTYGg1vByOu7X6NkT6pQuNVVW4BWOjeqagmpP/F/8N4GH940PzVXjFp5wXDO
+	 OsRjd/9gBuh03e4Nu+ZErWNuN38/2LtDM1AzjOLLvKm41A2Dv4bttvPSckxe5D78FWR4L
+	 WsuTFQqac+WS9LbIHMoztRfBSkkqdgqzNrnxD9FconGDqmllbGp2Nwmf6n+TubPMWJ1ww
+	 Di3UvFYUsbNrPw2q7UFACQK8KgH3cUdBxyl59hFVBSbF+F0rvOUx5HOg2rx7MkLWNJQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E7E851F000D2;
-	Sat, 14 Nov 2026 11:56:15 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 3092A1F00923;
+	Sat, 14 Nov 2026 11:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794657378;
-	bh=9OQmEHykAQ2R39AIIxgEl7/iSUIXzW+Cm4JhQ4PShDs=;
+	bh=gvxclcujdulxuOzNB06B2gMDxqEIGkemCRahDgIKSr4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=On+uf3D0eMfvLrgxgjrVgsHPqB0XWWCtVKkj03Q/0BH+q/CV0vkmm4lzbdM5J/hgl
-	 xXkQUyskVpxGkIF83MOuGm0FV16d0frXwIc2Gz6HnvxViwq9eEthPdtCoULH+eKmdu
-	 dEX0u6i0mjPXv0iWL+zSlRUlLS5dZZ3UXU+rgattk4MAs2wfiuEwTn24H56Y+Mk5Is
-	 c68il4MwURZDDoGmkdKBJsXKdF/ht6CiBeB3UiHgxN3M4KyjcD4e53f9KZPYEROhY6
-	 vJepK/XD12GVV/8n/IKbyIIWZHaMKCVO54aTlxUDJ+UlzBS26o64lXdEm4pU5+B6li
-	 Is/xiduCPl46A==
+	b=DndSCsDdYMMbjVHc4XfUyFbQJGkH/34L/Wj+VDDb/K0f17GcO5JMup4rZ7v/IU1Bv
+	 8tLcK+rA6RWg/60SrxCY8O1S6fIHhcAGekMyOwNCdyzTWesIkdQYN55Eh6rY1ZUk2N
+	 GiWLulgEaUjfhS4wXbVHkdAB50OS9eBkNV5/WDvncM7YYvZ7Jd+ie7UIg1w/Kn0MLR
+	 kjqBKyzLxiCioLq9Z2H8XhSuGrHqE592NddehPddv1ZRbDsxL7UmrMuSYfs+/sFfcG
+	 +0XuvUSb0+rRB6+vOyIqTdjuGurgybSzhDzxbx4+KBat7DrqOcXqFeqtyrc9ByicjA
+	 dNaDR8yovkOvg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id D6E3349D89;
-	Sat, 14 Nov 2026 11:56:13 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 0FFBB49D91;
+	Sat, 14 Nov 2026 11:56:14 +0000 (UTC)
 From: Larisa Grigore via B4 Relay <devnull+larisa.grigore.oss.nxp.com@kernel.org>
-Date: Sat, 14 Nov 2026 12:55:42 +0100
-Subject: [PATCH v11 10/14] ufs: pltfrm: Add a flags argument to
- ufshcd_pltfrm_init()
+Date: Sat, 14 Nov 2026 12:55:44 +0100
+Subject: [PATCH v11 12/14] dt-bindings: ufs: Add NXP S32N79 UFS host
+ controller
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-b4-ufs-s32n7-v11-10-dc36e11919d5@oss.nxp.com>
+Message-Id: <20261114-b4-ufs-s32n7-v11-12-dc36e11919d5@oss.nxp.com>
 References: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
 In-Reply-To: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
 To: "Martin K. Petersen" <mkp@kernel.org>, 
@@ -114,11 +114,11 @@ Cc: devicetree@vger.kernel.org, Ajay Neeli <ajay.neeli@amd.com>,
  Orson Zhai <orsonzhai@gmail.com>, aruizrui@redhat.com, 
  linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657370; l=7753;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657370; l=2031;
  i=larisa.grigore@oss.nxp.com; s=20261114; h=from:subject:message-id;
- bh=uqwIomSzy0PEvlFV96Px59Ss9lbqTn7kBdME7ujSvaY=;
- b=whX7ZIwJN+OZzdu4rmY09TRleffoMpPhI7rIA8tJWx2+DRO8Gmg9KRRXSF/y/PY+j8hr72525
- ldG1FaMSFdRCUCBfN3mC6WO4GyGpdibAJ9AYzSNbEc+FRutle4ZWGev
+ bh=YYl3EEWAWWlWf9vgv8+hTMcxMkUxXw0sNyAAv7y+7v8=;
+ b=grj4bxHay3UiQwY3Y+llZRPNOlqdy8VVUdF16qhNA9OBB9J1gnpkTxGSpk2iFsF/YT5/poww7
+ UeW88SqJX0DCQwKl1+ROR3qJEHpBDKFlw3Jdzl21NOrxH1i0nkoCzJv
 X-Developer-Key: i=larisa.grigore@oss.nxp.com; a=ed25519;
  pk=Jpt52sb6ETKTtvWjUzhz5Sv5FjB9AEg9QKCcbpWFx3w=
 X-Endpoint-Received: by B4 Relay for larisa.grigore@oss.nxp.com/20261114
@@ -129,192 +129,84 @@ Content-Transfer-Encoding: 7bit
 
 From: Larisa Grigore <larisa.grigore@oss.nxp.com>
 
-Add a flags argument to ufshcd_pltfrm_init() so that glue drivers can
-request optional behavior from the common platform code without
-affecting the other users of the helper.
+Document the UFS host controller on the NXP S32N79 SoC.
 
-No flags are defined yet, so all callers pass 0. No functional change.
+The S32N79 M-PHY has two data lanes per direction, so restrict
+lanes-per-direction to 2.
 
-Assisted-by: LLM
+The controller has a single functional clock, "core", whose rate is set
+by the clock provider and is not scaled.
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
 ---
- drivers/ufs/host/cdns-pltfrm.c        | 2 +-
- drivers/ufs/host/tc-dwc-g210-pltfrm.c | 2 +-
- drivers/ufs/host/ufs-amd-versal2.c    | 2 +-
- drivers/ufs/host/ufs-exynos.c         | 2 +-
- drivers/ufs/host/ufs-hisi.c           | 2 +-
- drivers/ufs/host/ufs-mediatek.c       | 2 +-
- drivers/ufs/host/ufs-qcom.c           | 2 +-
- drivers/ufs/host/ufs-renesas.c        | 2 +-
- drivers/ufs/host/ufs-rockchip.c       | 2 +-
- drivers/ufs/host/ufs-sprd.c           | 2 +-
- drivers/ufs/host/ufshcd-pltfrm.c      | 4 +++-
- drivers/ufs/host/ufshcd-pltfrm.h      | 3 ++-
- 12 files changed, 15 insertions(+), 12 deletions(-)
+ .../devicetree/bindings/ufs/nxp,s32n79-ufshc.yaml  | 58 ++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/drivers/ufs/host/cdns-pltfrm.c b/drivers/ufs/host/cdns-pltfrm.c
-index 3ef62acb04fa..f6a19a5d7f14 100644
---- a/drivers/ufs/host/cdns-pltfrm.c
-+++ b/drivers/ufs/host/cdns-pltfrm.c
-@@ -292,7 +292,7 @@ static int cdns_ufs_pltfrm_probe(struct platform_device *pdev)
- 	vops = (struct ufs_hba_variant_ops *)of_id->data;
- 
- 	/* Perform generic probe */
--	err = ufshcd_pltfrm_init(pdev, vops);
-+	err = ufshcd_pltfrm_init(pdev, vops, 0);
- 	if (err)
- 		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
- 
-diff --git a/drivers/ufs/host/tc-dwc-g210-pltfrm.c b/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-index 454ac88c357d..5ac1bc8ee7ce 100644
---- a/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-+++ b/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-@@ -62,7 +62,7 @@ static int tc_dwc_g210_pltfm_probe(struct platform_device *pdev)
- 	vops = (struct ufs_hba_variant_ops *)of_id->data;
- 
- 	/* Perform generic probe */
--	err = ufshcd_pltfrm_init(pdev, vops);
-+	err = ufshcd_pltfrm_init(pdev, vops, 0);
- 	if (err)
- 		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
- 
-diff --git a/drivers/ufs/host/ufs-amd-versal2.c b/drivers/ufs/host/ufs-amd-versal2.c
-index dcca6be5dad0..061666125fa3 100644
---- a/drivers/ufs/host/ufs-amd-versal2.c
-+++ b/drivers/ufs/host/ufs-amd-versal2.c
-@@ -444,7 +444,7 @@ static int ufs_versal2_probe(struct platform_device *pdev)
- 	int ret;
- 
- 	/* Perform generic probe */
--	ret = ufshcd_pltfrm_init(pdev, &ufs_versal2_hba_vops);
-+	ret = ufshcd_pltfrm_init(pdev, &ufs_versal2_hba_vops, 0);
- 	if (ret)
- 		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", ret);
- 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 265e01467a9b..c96ebf12c218 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -2137,7 +2137,7 @@ static int exynos_ufs_probe(struct platform_device *pdev)
- 	if (drv_data && drv_data->vops)
- 		vops = drv_data->vops;
- 
--	err = ufshcd_pltfrm_init(pdev, vops);
-+	err = ufshcd_pltfrm_init(pdev, vops, 0);
- 	if (err)
- 		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
- 
-diff --git a/drivers/ufs/host/ufs-hisi.c b/drivers/ufs/host/ufs-hisi.c
-index 5217e2e294f8..8537602a594a 100644
---- a/drivers/ufs/host/ufs-hisi.c
-+++ b/drivers/ufs/host/ufs-hisi.c
-@@ -528,7 +528,7 @@ static int ufs_hisi_probe(struct platform_device *pdev)
- 
- 	of_id = of_match_node(ufs_hisi_of_match, pdev->dev.of_node);
- 
--	return ufshcd_pltfrm_init(pdev, of_id->data);
-+	return ufshcd_pltfrm_init(pdev, of_id->data, 0);
- }
- 
- static void ufs_hisi_remove(struct platform_device *pdev)
-diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-index 7691349c502a..2e1992e0125a 100644
---- a/drivers/ufs/host/ufs-mediatek.c
-+++ b/drivers/ufs/host/ufs-mediatek.c
-@@ -2438,7 +2438,7 @@ static int ufs_mtk_probe(struct platform_device *pdev)
- 
- skip_phy:
- 	/* perform generic probe */
--	err = ufshcd_pltfrm_init(pdev, &ufs_hba_mtk_vops);
-+	err = ufshcd_pltfrm_init(pdev, &ufs_hba_mtk_vops, 0);
- 	if (err) {
- 		dev_err(dev, "probe failed %d\n", err);
- 		goto out;
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 979d223230a6..301dbf4f5d88 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -2974,7 +2974,7 @@ static int ufs_qcom_probe(struct platform_device *pdev)
- 		vops = &ufs_hba_qcom_vops;
- 
- 	/* Perform generic probe */
--	err = ufshcd_pltfrm_init(pdev, vops);
-+	err = ufshcd_pltfrm_init(pdev, vops, 0);
- 	if (err)
- 		return dev_err_probe(dev, err, "ufshcd_pltfrm_init() failed\n");
- 
-diff --git a/drivers/ufs/host/ufs-renesas.c b/drivers/ufs/host/ufs-renesas.c
-index e418c5878038..4267202185d8 100644
---- a/drivers/ufs/host/ufs-renesas.c
-+++ b/drivers/ufs/host/ufs-renesas.c
-@@ -535,7 +535,7 @@ MODULE_DEVICE_TABLE(of, ufs_renesas_of_match);
- 
- static int ufs_renesas_probe(struct platform_device *pdev)
- {
--	return ufshcd_pltfrm_init(pdev, &ufs_renesas_vops);
-+	return ufshcd_pltfrm_init(pdev, &ufs_renesas_vops, 0);
- }
- 
- static void ufs_renesas_remove(struct platform_device *pdev)
-diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
-index 8ce6534a73de..600460aa118f 100644
---- a/drivers/ufs/host/ufs-rockchip.c
-+++ b/drivers/ufs/host/ufs-rockchip.c
-@@ -253,7 +253,7 @@ static int ufs_rockchip_probe(struct platform_device *pdev)
- 	if (!vops)
- 		return dev_err_probe(dev, -ENODATA, "ufs_hba_variant_ops not defined.\n");
- 
--	err = ufshcd_pltfrm_init(pdev, vops);
-+	err = ufshcd_pltfrm_init(pdev, vops, 0);
- 	if (err)
- 		return dev_err_probe(dev, err, "ufshcd_pltfrm_init failed\n");
- 
-diff --git a/drivers/ufs/host/ufs-sprd.c b/drivers/ufs/host/ufs-sprd.c
-index 8c0a13e95556..fbd53cc4d3c8 100644
---- a/drivers/ufs/host/ufs-sprd.c
-+++ b/drivers/ufs/host/ufs-sprd.c
-@@ -415,7 +415,7 @@ static int ufs_sprd_probe(struct platform_device *pdev)
- 	const struct of_device_id *of_id;
- 
- 	of_id = of_match_node(ufs_sprd_of_match, dev->of_node);
--	err = ufshcd_pltfrm_init(pdev, of_id->data);
-+	err = ufshcd_pltfrm_init(pdev, of_id->data, 0);
- 	if (err)
- 		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
- 
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
-index c238f6073ad0..f8b2d64b6b4b 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.c
-+++ b/drivers/ufs/host/ufshcd-pltfrm.c
-@@ -641,11 +641,13 @@ EXPORT_SYMBOL_GPL(ufshcd_init_host_params);
-  * ufshcd_pltfrm_init - probe routine of the driver
-  * @pdev: pointer to Platform device handle
-  * @vops: pointer to variant ops
-+ * @flags: bitmask of UFSHCD_PLTFRM_* flags
-  *
-  * Return: 0 on success, non-zero value on failure.
-  */
- int ufshcd_pltfrm_init(struct platform_device *pdev,
--		       const struct ufs_hba_variant_ops *vops)
-+		       const struct ufs_hba_variant_ops *vops,
-+		       unsigned int flags)
- {
- 	struct ufs_hba *hba;
- 	void __iomem *mmio_base;
-diff --git a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
-index 0a18a8aed94d..0dc48c8d89d5 100644
---- a/drivers/ufs/host/ufshcd-pltfrm.h
-+++ b/drivers/ufs/host/ufshcd-pltfrm.h
-@@ -31,7 +31,8 @@ int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
- void ufshcd_init_host_params(struct ufs_host_params *host_params);
- void ufshcd_parse_gear_limits(struct ufs_hba *hba, struct ufs_host_params *host_params);
- int ufshcd_pltfrm_init(struct platform_device *pdev,
--		       const struct ufs_hba_variant_ops *vops);
-+		       const struct ufs_hba_variant_ops *vops,
-+		       unsigned int flags);
- void ufshcd_pltfrm_remove(struct platform_device *pdev);
- int ufshcd_populate_vreg(struct device *dev, const char *name,
- 			 struct ufs_vreg **out_vreg, bool skip_current);
+diff --git a/Documentation/devicetree/bindings/ufs/nxp,s32n79-ufshc.yaml b/Documentation/devicetree/bindings/ufs/nxp,s32n79-ufshc.yaml
+new file mode 100644
+index 000000000000..ffd8ab98e9cc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ufs/nxp,s32n79-ufshc.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ufs/nxp,s32n79-ufshc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP S32N79 Universal Flash Storage (UFS) Controller
++
++maintainers:
++  - Larisa Grigore <larisa.grigore@oss.nxp.com>
++
++properties:
++  compatible:
++    const: nxp,s32n79-ufshc
++
++  reg:
++    items:
++      - description: UFS Host Controller registers
++      - description: System Control Module registers
++
++  reg-names:
++    items:
++      - const: ufshc
++      - const: scm
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: core
++
++  lanes-per-direction:
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - clocks
++  - clock-names
++
++allOf:
++  - $ref: ufs-common.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    ufshc@4ac80000 {
++        compatible = "nxp,s32n79-ufshc";
++        reg = <0x4ac80000 0x1000>, <0x4ac40000 0x1000>;
++        reg-names = "ufshc", "scm";
++        interrupt-parent = <&irqsteer_coss>;
++        interrupts = <211>;
++        clocks = <&clks 0x92>;
++        clock-names = "core";
++    };
 
 -- 
 2.43.0
