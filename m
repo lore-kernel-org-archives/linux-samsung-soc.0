@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1794657378;
-	b=NBr6D6FSZSe557ZxHX53wyrFDyg4Wy4TBEbqrDzTf78TOJ3PzIgafz2FKXshUd2gPGtz
-	 dIjusLoAa17+3Vu1+auWT+3UVgvmrIdrrHgXyD2sQrQ+ZP/ElKw7nzN434l4K5PtKE3L3
-	 eiVk7f5HpcRLqCoHdT9lDPq8xhhNYfbdU1NykNdqIK7tdbhmDgNOKG8YnDdguAmxsPikD
-	 joWmTKtiqrD11eoxA+tejPO9qHX25vsQx+NoUE3a/yGMNQvuoZmNQMv0SLsHfnTb0+wOV
-	 3aGx1toYOudfn0Xrlj9Fi5yc7FbpwxfJADEMSCSxd+NEmAmCzOmsL1lKCQujJFUEjbA==
+	b=1sI49BaTsVpQQ2gvG5Tk6x0fOHgNdhwk/zkr8hQSaO1NVmpEI/RwBtGC9R30hSuEuPn2
+	 wjv4MSW/wmVOsK0Alkyd4yB0sNG0s1H00m+bJDQY5dqHiZiG75I8AHi0X8EqdnxE7SuhG
+	 NiSnizlv6mYHOOtJFf9F/dT0kx7zqClkd3y2UunHxfnKXs6pJwIMi2OQXaH6RAkhdOOH+
+	 Knj8lO2nHQbi2W+QgKhppcRV8EwPnvV+sm2diNBPDA9VnzxhyU6eHlF/1VKOpUPgReqHj
+	 Qet4uluFdJ3FF4KgOSXpQCSzzeNlLZsagUcjlgmmaZOE8gYbdbtu+yKnT3vaNknHx9g==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794657378;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=/2hjrB65D30vCvt5YWlJ2EoRPo0VzzXwxqoyF2Wo8n8=;
-	b=zUPvCsBJAOEqn8P6INUdvc+sN0+i6t1W22/yr9O4SkmO2uWevBhuVde8ZC9BWqlXNyec
-	 O9uFTVPVVrnS0boQwUncWDX3SAJW3a60zVpV+psH69IaC71G5YMiQtiumuNmea5k+tZLF
-	 2TsuOQA+8KY/GRH7gcB/r0hY10h4K0evTGlkGoj4VKqRQ4hIWJBmg65gaXD/f3dJZrKtz
-	 bXr7RKLB8bu110OSm/XWQNcD4feApxMrejVhLkObIoM+98DS9mjB/q19bpTOdDwQvJBWC
-	 Upj1TKVLU+h5u8JF0zP3SXt1nMHYfY9KzrTX6QWj2UWGuFXtS+co7O+D1el0KW3gKcg==
+	bh=QXT25GfABHQ7dGUKCmyGeYY4yAxmb7F7mN+bb7k+BXM=;
+	b=5S2/jWzjafaUkbszFPMj7MLW8J19u9TecAqqhKZBBIpcM1mOL5gKMaKg7AG8kGIuheBP
+	 SOZ+7+ZLkCantM4hH6XGAMkf8/oucdZZqHM/YRSZZgpO/U+er8W/I+NVaUxBHQsag63YG
+	 EzadAcLd1O8S+GHWLnB/A0+S7jq6WRSSOjUObkcDX1/vcYxvR9DJgG/itHSVuhTrkuWZe
+	 8uFLtVH4YGyGRRm5xTq2S3gBVpcrCvHHSDR7ZpwxPQkDHQBOLrUteAaLzy6DrpKjol0p5
+	 lLtLtvxhkdjtClTQ4AploBejqHNbY/rWOCUjuEoYLIHEP3QHwFcIvzKh1JO62Q1fPXg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XRJKy710;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cbAPQuwb;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F060A262C;
-	Sat, 14 Nov 2026 11:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C23460A3803;
+	Sat, 14 Nov 2026 11:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XRJKy710
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cbAPQuwb
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794657377;
-	b=X9w88yv2cVMn690pprbfKgcB9kiPM2Qca4FoSCLjUwAYACkYc9YRwIIlhwo6WTHLkA2g
-	 tXG6e2wHbVs1fQ372uo5z4rPhRLObHef5hDFWnuQTAC4CkmkyObcAtciaVes9A3uWFpVh
-	 RPRuIhAtx61qkdp92Eyecj0QlZNmqrheUBswdwpZ1h6vHF5l757FrKXJ17NF2yyZsCiJq
-	 Sv7F2NhF50UfPtT4p2NcH7S8/xO9f0BJtLq5bfDzgS93PtyMbrCK6N08PjB/WGM96LKdZ
-	 O3MswlYuHqNPdrr9MhHY8zHXV/dcmuwmdg2c3/mqHld5v7zq6C+/90EUi+o6c/5c7Ew==
+	t=1794657378;
+	b=Tdrv/duaBqEDHPXaqJvuixIJacxvu49PXgffaQWIV5aORndGSBIwwaGctXlem37Tlmuy
+	 LDNFhmtmeK2Oaoh95ViEUDn3EVR9+Gu6Tm/OUHsM+dE26Neq1y8J0HFck8hYvY05BAsNZ
+	 PazgBBxOmXeVmyQ9AcEgbz7WvZDnsth1jR7F/niPeFYhpmhlR87MKgJebOxQC++qctRKR
+	 OMs9pj7BxU9j2pqFyh2oXc57To7VTdEAt9YK/IuHZiujzBiTTlAuq+g6jTNdrVXa7keSs
+	 W98GIOfYsRl6/sewnZnLYnwUljuZfLeqJuyH21uY50NFHaHUmLQDRL/2eScdonfI3NQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794657377;
+	c=relaxed/relaxed; t=1794657378;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=/2hjrB65D30vCvt5YWlJ2EoRPo0VzzXwxqoyF2Wo8n8=;
-	b=QeIutcXurMmZcBtNSScXag3uEh5ChX0W0EeGopFM8IFWYPmjF/DCcNjTwJ/NBNkR+pnz
-	 +SLs1LsJKo9NOlT/uo+IYDFs+9cZA5Po078NvLzSrB5t1KTOsQEqtcaEVCu3yYmYyTWJ8
-	 vCATrBCK6sGc7cuP359M04tw9v68RQnGh1K1oHET3IJp0zf6ac51mE++9rVVOvqIFTe6N
-	 swBFlI40/F6BZhfxGs9NW/LOc8t3Y+PsxGdr2s7z1OE0WomO+Lh/b9OAX364LY1keNAvG
-	 tFXYgdk+PlVzP4eXkwAv0FgYBlV3qOXyIljhbXXK4fMas9VxBAycpIWizoBR3e88Ntg==
+	bh=QXT25GfABHQ7dGUKCmyGeYY4yAxmb7F7mN+bb7k+BXM=;
+	b=F8LuH2i2y3jlQNcLNasjVWnBAPouKlnmAC10pj/Px1t9RXg9gwdeQdGLVGpYGurfAPIt
+	 pTRAzqrVaX/7tfZu4bOORi09G8LOdx+BrspPbECmBWTA3nHrm2f1fd9FeS6k4TIKM4fEC
+	 UmmaZB9HP1BJ4LawEwzyOIk97qEwAyw4x4ZYbeQM3toFFZY5EZKSKgtQquH16RhWeojAW
+	 4okyz16mWfJpx+Fx9vc08ob+WaiQ+50HfobW6R9dPg0QFwatY8gvqkm+EpmFIUw6/jkWt
+	 YfZl/90ok//M10GEvPDYv3Zxs/E4uEVm59vCA8fyfSa/lILSA8+L2osL+nirdFwtUQw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 91FF31F000CC;
-	Sat, 14 Nov 2026 11:56:15 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 283211F000D3;
+	Sat, 14 Nov 2026 11:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794657377;
-	bh=/2hjrB65D30vCvt5YWlJ2EoRPo0VzzXwxqoyF2Wo8n8=;
+	s=k20260515; t=1794657378;
+	bh=QXT25GfABHQ7dGUKCmyGeYY4yAxmb7F7mN+bb7k+BXM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=XRJKy710p3Q3Vy9N2rLX7+O0oSzynf3BvVGFFPy1/U8mHEqxZjqyaW+lXtNO9+tgG
-	 msFXEkXuPEnDE/2K9JbBeSEQhYvIzyuh4x6RtAdn8ihXZaschKQ4nMRUA1N+Fnff3Z
-	 Fc7iFRWdCLY2ZVA5uQGKhqoHhSuKwILrk/Ko3D3ZNscLe+PiiDCEZ2s49QkMMCa0Y0
-	 qwaIlswDHZLPmcmvOBnDeQ83nm+evqH/lTusGpPcGwt293V4rTHXYz/KgxSFjllvhH
-	 oabXXb2NMLhZ0tAC5eGBxFyr/MSg/2wUPqrX9/sLZbNfNqZOUDhjC++n+BXg85VrJ2
-	 bXptoHXs6WTUA==
+	b=cbAPQuwbsyLhrO2Om7Nm+a6dvPfGd8VWlPCH2XS/hvJLsvgmy7bZJmjOYZIQBp9Bt
+	 uTtTBodRWv2gCyXKHvlzYOxphitBr6uhrTE5JDFFKRNLznUXO4fQVRhsSgcSj6jfHv
+	 N4smTHLW25I8AXPLywkxvbl6gF3EyueJUGIsBc6/o6j2+3+Cel4jsjlI4beGgO5VAe
+	 zQ2dg/E0eUWjnc8VthYqSS4W/kv7NH7NP4T2qV/Y8DSp6ru3s5lHuQ6XHGJwkwtdW8
+	 QZccfzilQSVBEoKM/9oaIiWjucjPFD5pmWgMwAubj07/l92vBnkSX0KkTpcU1calmD
+	 iUs3QX9fid2rg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A895849D82;
+	by lkml.kernel.org (Postfix) with ESMTP id EEC3649D8D;
 	Sat, 14 Nov 2026 11:56:13 +0000 (UTC)
 From: Larisa Grigore via B4 Relay <devnull+larisa.grigore.oss.nxp.com@kernel.org>
-Date: Sat, 14 Nov 2026 12:55:40 +0100
-Subject: [PATCH v11 08/14] ufs: dwc: Sort CBCRCTRL and CBREFCLKCTRL2 by
- offset
+Date: Sat, 14 Nov 2026 12:55:43 +0100
+Subject: [PATCH v11 11/14] ufs: pltfrm: Add a flag to manage fixed rate
+ clocks
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261114-b4-ufs-s32n7-v11-8-dc36e11919d5@oss.nxp.com>
+Message-Id: <20261114-b4-ufs-s32n7-v11-11-dc36e11919d5@oss.nxp.com>
 References: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
 In-Reply-To: <20261114-b4-ufs-s32n7-v11-0-dc36e11919d5@oss.nxp.com>
 To: "Martin K. Petersen" <mkp@kernel.org>, 
@@ -114,11 +114,11 @@ Cc: devicetree@vger.kernel.org, Ajay Neeli <ajay.neeli@amd.com>,
  Orson Zhai <orsonzhai@gmail.com>, aruizrui@redhat.com, 
  linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657370; l=1160;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794657370; l=5794;
  i=larisa.grigore@oss.nxp.com; s=20261114; h=from:subject:message-id;
- bh=jFPb09TEw+o0co3IKimWFQwdujSqoSGN2BKqE5DQhEI=;
- b=ixpsDc5UGD5DMWn3XWZWIo71JIdLStTqgwVuwD42MliFUu4v4d8dPwsTNw9xryPPVqxhBXeFW
- B+Cnmgy6MATB1HDgNV7Osmu4wXB0v9u16j7fle2yFFwau9gIp59++8f
+ bh=gfpDkcJvEuz9ohkYzalTe5JXhCA/VTTkJXlX970pQDU=;
+ b=o1tlKOyaboHDGeDGhpmh3x4nGW0otGNWGbqfiXBQ0n0U/gzpzUz43PtRaIkF+qw47BCvRW8KU
+ ho70Z9Qj3ZtDkP9m/+ELCNqFq+O1bVFQtCXo0Gf7h0LuaRtowpustei
 X-Developer-Key: i=larisa.grigore@oss.nxp.com; a=ed25519;
  pk=Jpt52sb6ETKTtvWjUzhz5Sv5FjB9AEg9QKCcbpWFx3w=
 X-Endpoint-Received: by B4 Relay for larisa.grigore@oss.nxp.com/20261114
@@ -129,41 +129,170 @@ Content-Transfer-Encoding: 7bit
 
 From: Larisa Grigore <larisa.grigore@oss.nxp.com>
 
-The RMMI attribute defines in ufshcd-dwc.h are otherwise listed in
-ascending register-offset order, but CBREFCLKCTRL2 (0x8132) and
-CBCRCTRL (0x811F) were placed at the top out of order. Move them down
-into their sorted position next to the other CBCREG* attributes.
+Some UFS host controllers have clocks whose rate is set by the clock
+provider and is never scaled. ufshcd_parse_clock_info() registers the
+clocks listed in clock-names only when freq-table-hz is present, and
+ufshcd_parse_operating_points() only when operating-points-v2 is
+present. On such platforms the UFS core therefore neither enables the
+clocks at probe nor gates them on idle and on suspend.
 
-Pure cleanup, no functional change.
+Describing these clocks with a dummy operating-points-v2 table, or with
+the deprecated freq-table-hz property, only to make the core manage
+them is not desirable.
 
+Registering the clocks unconditionally is not possible either: some
+glue drivers list clocks without a frequency table and manage them
+themselves (e.g. ufs-rockchip on rk3576), and the core would then start
+to enable, gate and possibly scale the same clocks.
+
+Add UFSHCD_PLTFRM_FIXED_RATE_CLKS. When a glue driver passes it to
+ufshcd_pltfrm_init() and neither freq-table-hz nor operating-points-v2
+is present, register the clocks from clock-names with min_freq and
+max_freq set to 0. ufshcd_init_clocks() then leaves their rate
+unchanged, and the UFS core enables and gates them like any other
+clock. The flag is not meant to be combined with
+UFSHCD_CAP_CLK_SCALING.
+
+Assisted-by: LLM
 Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/ufs/host/ufshcd-dwc.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ufs/host/ufshcd-pltfrm.c | 57 ++++++++++++++++++++++++----------------
+ drivers/ufs/host/ufshcd-pltfrm.h |  9 +++++++
+ 2 files changed, 44 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/ufs/host/ufshcd-dwc.h b/drivers/ufs/host/ufshcd-dwc.h
-index 53b523ef59df..1abf2b1deac4 100644
---- a/drivers/ufs/host/ufshcd-dwc.h
-+++ b/drivers/ufs/host/ufshcd-dwc.h
-@@ -13,8 +13,6 @@
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+index f8b2d64b6b4b..50afc2816dc7 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.c
++++ b/drivers/ufs/host/ufshcd-pltfrm.c
+@@ -21,7 +21,7 @@
+ 
+ #define UFSHCD_DEFAULT_LANES_PER_DIRECTION		2
+ 
+-static int ufshcd_parse_clock_info(struct ufs_hba *hba)
++static int ufshcd_parse_clock_info(struct ufs_hba *hba, unsigned int flags)
+ {
+ 	int ret = 0;
+ 	int cnt;
+@@ -51,32 +51,43 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 
+ 	sz = of_property_count_u32_elems(np, "freq-table-hz");
+ 	if (sz <= 0) {
+-		dev_info(dev, "freq-table-hz property not specified\n");
+-		goto out;
+-	}
++		/*
++		 * Without a frequency table the clocks are either registered by
++		 * ufshcd_parse_operating_points() or managed by the glue driver,
++		 * unless the glue driver asked for fixed rate clocks.
++		 */
++		if (!(flags & UFSHCD_PLTFRM_FIXED_RATE_CLKS) ||
++		    of_property_present(np, "operating-points-v2")) {
++			dev_info(dev, "freq-table-hz property not specified\n");
++			goto out;
++		}
+ 
+-	if (sz != 2 * cnt) {
++		dev_dbg(dev, "no frequency table, using fixed rate clocks\n");
++		sz = 0;
++	} else if (sz != 2 * cnt) {
+ 		dev_err(dev, "%s len mismatch\n", "freq-table-hz");
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+-	clkfreq = devm_kzalloc_objs(dev, *clkfreq, sz);
+-	if (!clkfreq) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (sz) {
++		clkfreq = devm_kzalloc_objs(dev, *clkfreq, sz);
++		if (!clkfreq) {
++			ret = -ENOMEM;
++			goto out;
++		}
+ 
+-	ret = of_property_read_u32_array(np, "freq-table-hz",
+-			clkfreq, sz);
+-	if (ret && (ret != -EINVAL)) {
+-		dev_err(dev, "%s: error reading array %d\n",
++		ret = of_property_read_u32_array(np, "freq-table-hz",
++						 clkfreq, sz);
++		if (ret && (ret != -EINVAL)) {
++			dev_err(dev, "%s: error reading array %d\n",
+ 				"freq-table-hz", ret);
+-		return ret;
++			return ret;
++		}
+ 	}
+ 
+-	for (i = 0; i < sz; i += 2) {
+-		ret = of_property_read_string_index(np,	"clock-names", i/2,
++	for (i = 0; i < cnt; i++) {
++		ret = of_property_read_string_index(np,	"clock-names", i,
+ 						    &name);
+ 		if (ret)
+ 			goto out;
+@@ -87,8 +98,10 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 			goto out;
+ 		}
+ 
+-		clki->min_freq = clkfreq[i];
+-		clki->max_freq = clkfreq[i+1];
++		if (clkfreq) {
++			clki->min_freq = clkfreq[2 * i];
++			clki->max_freq = clkfreq[2 * i + 1];
++		}
+ 		clki->name = devm_kstrdup(dev, name, GFP_KERNEL);
+ 		if (!clki->name) {
+ 			ret = -ENOMEM;
+@@ -97,8 +110,8 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 
+ 		if (!strcmp(name, "ref_clk"))
+ 			clki->keep_link_active = true;
+-		dev_dbg(dev, "%s: min %u max %u name %s\n", "freq-table-hz",
+-				clki->min_freq, clki->max_freq, clki->name);
++		dev_dbg(dev, "%s: min %u max %u name %s\n", __func__,
++			clki->min_freq, clki->max_freq, clki->name);
+ 		list_add_tail(&clki->list, &hba->clk_list_head);
+ 	}
+ out:
+@@ -670,7 +683,7 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 
+ 	hba->vops = vops;
+ 
+-	err = ufshcd_parse_clock_info(hba);
++	err = ufshcd_parse_clock_info(hba, flags);
+ 	if (err) {
+ 		dev_err(dev, "%s: clock parse failed %d\n",
+ 				__func__, err);
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
+index 0dc48c8d89d5..1f612734507c 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.h
++++ b/drivers/ufs/host/ufshcd-pltfrm.h
+@@ -5,6 +5,7 @@
+ #ifndef UFSHCD_PLTFRM_H_
+ #define UFSHCD_PLTFRM_H_
+ 
++#include <linux/bits.h>
  #include <ufs/ufshcd.h>
  
- /* RMMI Attributes */
--#define CBREFCLKCTRL2		0x8132
--#define CBCRCTRL		0x811F
- #define CBC10DIRECTCONF2	0x810E
- #define CBRATESEL		0x8114
- #define CBCREGADDRLSB		0x8116
-@@ -24,6 +22,8 @@
- #define CBCREGRDLSB		0x811A
- #define CBCREGRDMSB		0x811B
- #define CBCREGRDWRSEL		0x811C
-+#define CBCRCTRL		0x811F
-+#define CBREFCLKCTRL2		0x8132
+ #define UFS_PWM_MODE 1
+@@ -25,6 +26,14 @@ struct ufs_host_params {
+ 	u32 desired_working_mode;
+ };
  
- #define CBREFREFCLK_GATE_OVR_EN		BIT(7)
- 
++/*
++ * Register the clocks listed in clock-names even when neither freq-table-hz
++ * nor operating-points-v2 is present. Their rate is set by the clock provider
++ * and is not scaled, but the UFS core enables and gates them. Not meant to be
++ * combined with UFSHCD_CAP_CLK_SCALING, as there is nothing to scale.
++ */
++#define UFSHCD_PLTFRM_FIXED_RATE_CLKS	BIT(0)
++
+ int ufshcd_negotiate_pwr_params(const struct ufs_host_params *host_params,
+ 				const struct ufs_pa_layer_attr *dev_max,
+ 				struct ufs_pa_layer_attr *agreed_pwr);
 
 -- 
 2.43.0
