@@ -1,60 +1,60 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.70.43.22
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794638671;
-	b=LiMisQoZGn83fsISUCDvO9h3LkhjD5MKsNqZUISU3ZAQ0Ze9UecD2BLpGBy3e42uWWHB
-	 l5domQdTWrRHCoKWAZ69q9QkHbop0XFyK9KwubIIpkNNgCpryoj3CZbUKxvliydrlb9Sv
-	 EIcC19w3qGz7SM6o/0VUzab8n3fsr4cWktBjQ2jfEVL/Bs6ilCTklu2IUMUcKUSgvwW98
-	 TLQvTD2M5KfdHv6j1afmxMQbRil+wV+qSsumRtqVL33nD7TfmGu2TTUDWXz1VtRD1mCcV
-	 +wszVju6yL0pxV+GW1DRzTUasp9vBIU5vCWgftfFprCZly23jt+xGHwP2Ijb0iKaGdQ==
+	t=1794638680;
+	b=Pfzc8N2OfSWyAZpPGJpRzsLi/cWJWQJSEYX9nFJBRe0pglc2QkiF9UCQtT7dJ5o8cUfK
+	 L2gIRbHjcaSdP7iDCJ+RvU7SUFfTbB35eKILYGGQEaSPar5EKaG5hwcYkNQkhQdh2WzB/
+	 zC1KH+ePdIgHnNI4E86LEs2LrEmyMmD2n32s7WcOSppIKfgMlEa4Sctc8S7HmLYeEyUNT
+	 qVg5dco+nW4DwmS3HHd4e8Xd0130gqBSWQYrQlPtuPS1Dq+iTHTt/RCzqwnPFvQljMRrF
+	 0fL4aofkw/tt+eiEiZAIIPTViXt1mh/PPCjkI09oFe2gBMTd9v7QnHDzgbTwnQmgDnQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794638671;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794638680;
 	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
 	 In-Reply-To:References:Feedback-ID:X-Pm-Message-ID:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=GQtdBeiFOXP728SD4q3k0TWUdrvTTTXxrXqVYnu7l4k=;
-	b=Q/Ear70bdVCW1vLAANxrm//WFsyR4N1NQdTWTpIaZiTqoDdutE5eBPykgDqfho2YGgYT
-	 pSPF28IpJjo9tzeEQX3Zes8rKRRhkBFp+1j+lBwzZK1oogl27bioAM0cGcgK0eBmbHvCJ
-	 xJIlqY3oGSoDhXt9iMM181cfgSseiVFup5PbqsnT3jugBONQCBYBDk60SuncKS4AAsD4j
-	 wAfQx/pPnvWVtxSEoyM+Yi5oJsE3StZqm5OA0z+1xdjHDZvPhQJByf26slcaVyR6wWo5o
-	 TYKZwWQ9j7fk2pfbvgz0liQF2nerbbKRDHTHrdj+lKt+muyGXh5944/S9qcVBv16Pjg==
+	bh=ZpIIK3dqxKsFZUnNSQhKVfovtKH1SOLlQ24EdB4Z7pw=;
+	b=vl+3hNYHr/BYTx+MDHiOMsB/yYf/8bc7PCu4zCIlhtUNumTRPz6ubSBiEElTWk03oc+T
+	 hVKJ4OaKtsm5ROj0sNgHANGoMlpSOLKDelKOzc8boY7oBmT9GjJHqXakaGo5E6DwXD6/I
+	 Ok4BxQT4S2BdmsySNi9UpEtQS1sNYjKm/00s+42JrLDDc1R3FQMTXQ1Odebzvmug+7kIh
+	 xWmbRNuDrgqYFcnQgx81OB1qfyRWZiQvBHG9fl5drF7hgI/GU6XNEwvJTZ1thUerSlB9H
+	 qfOmT7lUqSXLTTrG1JTZqjwjUSPsaDKmSJZOgc0n0OoN9CS0KkxA4BYoCxAxzhJAEJg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=proton.me;
 	spf=pass smtp.mailfrom=proton.me;
-	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=mVxvbNwo;
-	arc=none smtp.remote-ip=185.70.43.16
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=yS6dwJEU;
+	arc=none smtp.remote-ip=185.70.43.22
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D23606A323;
-	Sat, 14 Nov 2026 06:44:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B2D23606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AC8606A327;
+	Sat, 14 Nov 2026 06:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 61AC8606A327
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=mVxvbNwo
+	dkim=pass (2048-bit key, unprotected) header.d=proton.me header.i=@proton.me header.a=rsa-sha256 header.s=protonmail2 header.b=yS6dwJEU
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail2; t=1794638667; x=1794897867;
-	bh=GQtdBeiFOXP728SD4q3k0TWUdrvTTTXxrXqVYnu7l4k=;
+	s=protonmail2; t=1794638677; x=1794897877;
+	bh=ZpIIK3dqxKsFZUnNSQhKVfovtKH1SOLlQ24EdB4Z7pw=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=mVxvbNwoQ2fLHFpZy8VDIpt7Sfr0JRryBGhX2h6oZlv2edn/kMNqa17j+XRJUQsLZ
-	 LJ0cBxT9ZumVd5w59stkhKSM7R5MakEL2+o2KXpYPmn3/cmUGy5yAUHqqLyfcCH7H/
-	 ToRp8BaJa5nqbHBLtgAIUExqeQznjJCC988tfWzVKqPAHL9l/+EZHtevivBh6Js2z1
-	 YSwodNAiUpbngiMQ2L9VFzjx6kg+saq8zcgTCjmtcvxop98mCOpY83R16OohTx65yi
-	 W7ElhL/GGvWC8+2rnsjUADndrmsAIKQc4dWM2sWzFj6V5MHaXQFfToOlD2eHX1y1zj
-	 07fBwsNX8Z8JA==
-Date: Sat, 14 Nov 2026 06:44:23 +0000
+	b=yS6dwJEUnYBic0svj0PG82ZGSOpm/4MnUh5DLYoDnroUVgjOHcNFE1hA1ffxsE/Pi
+	 qTub8YWh7t0NVDVU2Lt9WnZci2oBPbvX3H/KuPnS2OSxLL0/BloiGRDtNkx93HgvLq
+	 1uK/287WZrNakicQttKOEamInSUG5tYLqBhh5TSjZetASO4ulJ2BdrHF+7kcu22d9U
+	 708eK6hQFMQI9PtqjuWR1YSrrnL5ocEa7BWU1/hqT0l80gtr7iBagItuB102EbLRvp
+	 PWvcpsYyt1fJuL9lQr8J2/BJvce62QYRyfeBQkyuH7ZEgE5iz4gXtLyhpkChflC6Uk
+	 uiaT4/XEATDEw==
+Date: Sat, 14 Nov 2026 06:44:33 +0000
 To: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 From: Soheyb Boulaa <soheyb_boulaa@proton.me>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Soheyb Boulaa <soheyb_boulaa@proton.me>, stable@vger.kernel.org
-Subject: [PATCH v3 1/3] phy: exynos5-usbdrd: power the Exynos2200 phy down when its init fails
-Message-ID: <20261114064400.45572-2-soheyb_boulaa@proton.me>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Soheyb Boulaa <soheyb_boulaa@proton.me>, Sashiko <sashiko-bot@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH v3 2/3] phy: exynos5-usbdrd: return the Exynos2200 high-speed phy init error
+Message-ID: <20261114064400.45572-3-soheyb_boulaa@proton.me>
 In-Reply-To: <20261114064400.45572-1-soheyb_boulaa@proton.me>
 References: <20261114064400.45572-1-soheyb_boulaa@proton.me>
 Feedback-ID: 140697376:user:proton
-X-Pm-Message-ID: b61ff92e42010bfa9a4b2839dd5c983310e9ecf9
+X-Pm-Message-ID: edf1f5acecabee915d33b18b7ffcd701489f56d5
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -67,64 +67,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-exynos2200_usbdrd_phy_init() enables the regulators of the UTMI phy and
-takes the phy out of isolation in the PMU before it enables the clocks.
-When clk_bulk_prepare_enable() fails, it returns without undoing
-either. The phy core does not count a failed init, so no exit undoes
-them later: the phy stays out of isolation, and its supplies stay
-enabled, until an init and an exit succeed.
+exynos2200_usbdrd_utmi_init() ignores the result of phy_init() on the
+high-speed phy and returns 0. When the high-speed phy fails to
+initialize, the UTMI phy thus counts as initialized, and the controller
+goes on with a high-speed phy that is not set up.
 
-Isolate the phy again and disable the UTMI regulators when the clocks
-or the phy-specific init fail. The phy-specific init does not fail yet;
-the next patch makes the UTMI init return the result of the init of the
-high-speed phy.
+Return the result of phy_init(), so that a failed init of the
+high-speed phy fails the init of the UTMI phy. The next patch, which
+exits the high-speed phy with the UTMI phy, relies on it: an exit after
+a failed init would otherwise take the init count of the high-speed
+phy below zero.
 
 Fixes: cc52a697f87e ("phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm co=
 ntroller")
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://lore.kernel.org/linux-phy/sashiko-outbox-205724@kernel.org/
 Cc: stable@vger.kernel.org
 Signed-off-by: Soheyb Boulaa <soheyb_boulaa@proton.me>
 ---
 v3: full name in From and Signed-off-by.
-v2: new patch.
+v2: new patch, after Sashiko's review of v1.
 
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung=
 /phy-exynos5-usbdrd.c
-index 087d552..a6fe779 100644
+index a6fe779..cf0597a 100644
 --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1462,7 +1462,7 @@ static int exynos2200_usbdrd_phy_init(struct phy *phy=
-)
-=20
- =09ret =3D clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clk=
-s);
- =09if (ret)
--=09=09return ret;
-+=09=09goto power_down;
-=20
- =09/* Set up the link controller */
- =09exynos2200_usbdrd_link_init(phy_drd);
-@@ -1475,6 +1475,17 @@ static int exynos2200_usbdrd_phy_init(struct phy *ph=
-y)
-=20
- =09clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
-=20
-+=09if (ret)
-+=09=09goto power_down;
-+
-+=09return 0;
-+
-+power_down:
-+=09exynos5_usbdrd_phy_isol(inst, true);
-+=09if (inst->phy_cfg->id =3D=3D EXYNOS5_DRDPHY_UTMI)
-+=09=09regulator_bulk_disable(phy_drd->drv_data->n_regulators,
-+=09=09=09=09       phy_drd->regulators);
-+
- =09return ret;
+@@ -1369,9 +1369,7 @@ static const struct phy_ops exynos7870_usbdrd_phy_ops=
+ =3D {
+ static int exynos2200_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ {
+ =09/* Configure non-Samsung IP PHY, responsible for UTMI */
+-=09phy_init(phy_drd->hs_phy);
+-
+-=09return 0;
++=09return phy_init(phy_drd->hs_phy);
  }
 =20
+ static void exynos2200_usbdrd_link_init(struct exynos5_usbdrd_phy *phy_drd=
+)
 --=20
 2.56.0
 
