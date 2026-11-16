@@ -1,87 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794840771;
-	b=LHXCCXm2M9wyeKQN2C+Sbbz3VC7RFQWGLcyB/7Y90mi9YefIyOKQUEGQqo80SXdgYObR
-	 XC7yKz5iBk7pk3EoHj143OEUJrVOHvLA6gW96Y/fIv77FgeByYCdbi3bB/OXVHKRMNKI4
-	 ktaK1ilb2e5qgxKTrusrSRueyxgEn7VE+wAmFP9s5MutuSpqUU6ezn14uQaF1hYu3nG5o
-	 8BmSujgeBThjtYX90PNUzSZbhDC6nzzEc4yZS7nPuOsdKFJm+N44BBvAFlrp35psydSLY
-	 9c+ZYPjBJcxnH67fDEdB0517yCWQPFkYc04pHJsFlutC+X/XMpKJkfupbJoj6y5YDPQ==
+	t=1794840775;
+	b=e2PptXGHbAOyBidB6d9eY8TIzW5bVkkubOvqaxK8YfuWDEZHaj8fUOT2QQMb68zFF2Cr
+	 /mRZ6qkB5jCIqFHOK+SdCTRComRJ1TDh7zDntUydGkU7LSgaPnTGdUpe+UucmAVVEAgVE
+	 LwPADimdiJqh+67m42emdd2//C53be/BcjovUU8cwK33JVFS22mcRI13N0AT4C8EsVA8B
+	 cOAqDxt3PagcEeJ/Ikz/QV1Vzf1hvgqBp+O+N3CNqIFUEhahrjxaUGv3b5sZdONzSbNV6
+	 Yi1gJfudyCINcfFiSs3Id3jTqGUVMLHtYz849HnP0BaP1a+X5+POiCVH4Z+TprBgb7A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794840771;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794840775;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=You1mkFXga/vHh9B3JqFjojHJL5bf7S7RuEKx8WEhTk=;
-	b=4b3+9BEPYtWQgSg92u/BbeWaHzaaZcZpg0DeR08zO28yxIDa3ZbVQmMhQ/2pV4t1TRf+
-	 ILt2QwxR7usq8QGqlWYU5twtGJStjt1wDpA0SHPOUFs22SE2aCXF86Ipw7YU+QCMXfnZv
-	 zgfxwNihbUP8zHUyX3WCTF1jO8wnwUggT159poMjYgf/YJI9WRNcC8hD5xgl9G92/vLf/
-	 0m6qjaUZvwz2yJqyQGSt9PGK3EB0ZWop/ATrOZtLKocUY+Mo1u+Icq4TUfV718NOol8Vr
-	 za40S7ns0rlE4IHalORTgXgCyGd/pl/yUROw3kcVBkRIv97NzQrBFtAcXJ6aYWFmZFA==
+	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
+	bh=Op6Celd0vr0W4RZ4RM+PObegGMYvdt9q1CeYgOR1cR0=;
+	b=tp9cduaNRx+4cq3wbitC0yhVKX18sq0pp1X7wTJAWf51Pg57UsIPajs7wU62dkdb+dSl
+	 GAEYqJDPDj7e4/TaVoMRwYkxiJP2MlN6qUAL4T2v/5cWempiPRSCxI43J20DztCgcJLO3
+	 9JmRjL9WufPsWF6JAVfCQAylQb9p8oRGYjC4a8bURwwrxWSfuqotfO+zwNs//crarbtqi
+	 1YK+P4Tkzk31kuVl8GPYqQDd7cjOKyXgs84Jjw+mcWP2BEBDM+nA5KgSZ8jbw9dCkVyiN
+	 JXk1bw5ZpG8Hdym45qrXJw3Bgjzj27FS7e64INLrbd5S7w/imvjUUloIxw4am3PDdsg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tRAVzwhy;
-	arc=none smtp.remote-ip=74.125.82.48
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JXHbl2eA;
+	arc=none smtp.remote-ip=74.125.82.171
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25913606A323
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 14:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25913606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FFF606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 14:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A0FFF606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=tRAVzwhy
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-1a8cc11ac42so3321705c88.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 06:52:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JXHbl2eA
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-36eb1cb7aabso4316873eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 06:52:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794840770; x=1795445570; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=You1mkFXga/vHh9B3JqFjojHJL5bf7S7RuEKx8WEhTk=;
-        b=tRAVzwhyktdqOvWHpQdxG5sbdIMyaBiNIGxVgNZFrga7aNRFMoNXwde9T2fxsiB/mw
-         Z4fwtUpZixvFTeBoA6N18nQ9t9T0OBAbUPklo1N97D9JWaSkSNIfUH7t/9MigK8cG+oq
-         a+UYpYW0C567CI0dCPwzU3J0p15EqCETaTNxw16bMMcnzXjOQqNdY0EYTssU04UGLeBI
-         y/tm18FdC0bvXJTXbT69cEc7Na7NO4bH4PcYsxF8hkiyTuF2LfACQS51xAFZqtA+yxI7
-         v1ReBP8u5oDreaiLPSUh2bEjSWOy2piRrBMBXBC/PJupTcZ+skhvoIQsCUN930VFyXPH
-         3I6Q==
+        d=gmail.com; s=20260707; t=1794840774; x=1795445574; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Op6Celd0vr0W4RZ4RM+PObegGMYvdt9q1CeYgOR1cR0=;
+        b=JXHbl2eAJPxkWt+l++ykB67rQRdfT4dR7ea73HpyIH2a0aW0Aexq0JbEJX60h1i4xp
+         tolBGgs4g6vV/aF6Nng/KX7bF2zJwaiHsW8v+E4SB4w8ceRJhI8aXufF8LTPNQLFQpBH
+         DpRCOeSjvK/wgASIcAs2RB/zYo2drCL0FJ6KmgcaBi1hqwDbe76PqPGWKFa3QqWHgL1Z
+         aRr0SfaQRhsmGvqRkLL7TkuNS7xpBTGYsJXOEtIFCNcaQEMDFORP76t+3Sbi99m/EuXp
+         HgBOGBJDeA/JPbwIrQsV0B+fQilgpzxTHK6Gi7BubArD0TjRVK6thcG7J+LL1sDZBN//
+         Rd7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794840770; x=1795445570;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=You1mkFXga/vHh9B3JqFjojHJL5bf7S7RuEKx8WEhTk=;
-        b=tAFMuaAM8DIJf2T6wewQjunx59J6Yq/3FCK/xgYsxMzPxvHnBcKsrVlTDxA6Z1THDw
-         dFrp92kfNCSHTh7sxd/yntTNHHWeZXPv1e3IFV9tS4hlicX/IXT9UMjTJifhvAIGp/4a
-         AbrRtDOf/A06bzCxadQgHHwuil6zpYHe/ktgURk0Gwl7dljijUlX0uoP/2o5JSF12XvM
-         ZE70s1tbhRGgxKKUjcTo6HpMzMrY8GRV0nKPJQyrewBsW2YL+IVV08ztO3cfFVdmn5tn
-         BEVGMHeNrBtstfKXL88v7+lg+e3nTYxW4xTdZkM0tNQUit66MBmyG8cd5Y9GkE/dFqGJ
-         SvFQ==
-X-Forwarded-Encrypted: i=1; AL+hErEXsIDnFA2IJB/sCOfbRsODOaz8BgVM2BU3BKSFeJVOXHhvUxE6qG5c06wUDcZekFs+i/zcPz7yqqA7Xee5p5oBvA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9+FSYeaaKJj2oamj891aHscJFZuIhHFEe0kDW61jnCL+P55S3Z
-	5HT9SVmdn+bWSyhLS4E0zgZ/91Y8Bq6yUYUxzusV7FdAIvs2X7GzuTs7
-X-Gm-Gg: AYBFou36Xsqe7JwpdRAvzfHj9Vq2djJL9roHC64rqu1PY9nPAwWl8T8H41yrtXrcvm1
-	Q7JrYkUuIS4kTsFiF+eA+TvBmzs67Hz239oamZVvOqFlS8mB/LrXb8Yt8X+KVqagCjJP8lgvEja
-	tjyQfCWM5F8qy7eHwPc4hddty8vjOhXIHJAq1W9ivRFk67pbv/vZjdiP3l7hdmVAiSBkwWDsJEs
-	jn1Of03zz8XDB7dYOEDhDA7eHO6beeM99iCA1z0z+VeU7/dSTCRs8WtVdjpL3wYXAaKVDeLUIAj
-	ZKYDhRXFRZppZCxkW6toaztcvTpFeJ520MLCceq9wyDV9wf7Y51OL/5x1GK0SxOpNMwQuoxcb9W
-	ninGqpWVx6uyFzgyCLQAxw5+8m1qWIOBZEVx7gNp8Yt6VIkzrNySWhXtIZs8E5s4XOnU3xdqMXq
-	ctBi3DIEQGlXXfMkPybxbl3/Gh2NsEjlUHb6gF2ujFxsoItgYdWE2bgsRWP4eAvqdnMvr2MS4o0
-	0OTrdZ4X+jdmiJ+yhszYRffKLuhVj1EBZiqV4QBEekXtovG+vx83Z7MsOW0IRUKHqlDRou9Priu
-	HJ3OFIKBUB2ePmjncGEn8EtUJgaZybP1yjeMhmDAeb//bu8=
-X-Received: by 2002:a05:7022:7f14:b0:1b5:1c22:6fea with SMTP id a92af1059eb24-1b53275f63dmr2698971c88.0.1794840770041;
-        Mon, 16 Nov 2026 06:52:50 -0800 (PST)
+        d=1e100.net; s=20260707; t=1794840774; x=1795445574;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Op6Celd0vr0W4RZ4RM+PObegGMYvdt9q1CeYgOR1cR0=;
+        b=jgR1sO869gmsdk3YA7F3WbAhZA/PZ4UcMsp1MxCnAjk1F677AtEJFKCUUnrPKlHkJs
+         TYspH1i1bbZMRo3ktlowGLJXmO9/vb+fIJGwd1ARYQmIX8z3xpGIdws3f+/Gg4HnSI/i
+         CCfEHt7IjFkNuPsC1+HDAR5lDOeV842XhjT9ftS/76tGbRYhGaW/euAX9CclHBoROe8C
+         ngt0+jza0SlzLGnpwTgYjxWUEFxnO68IEGqqxW8pQH+gNN2unY/+gqSkDzJr/OUob1/S
+         dshi362Jj+mNkH6UNuxW8ODgLG3e+ZsomAY1xq5oYiIBx8XjOtVSUjbzvQ5EzxRQLXKy
+         I8ZA==
+X-Forwarded-Encrypted: i=1; AL+hErFMCt6vTR7/ZIqnMARXBjf7Cm5Q4lns3tTU3fyRAprzdE118zkoyQB/WnF1sIcyLROXu//UUlkpj4Se+id5E5SlTQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+74jGHNwOn6gBunXfZ8iaeoQmLcHOazq6kF0VT/NmQg92ogv52
+	CTAFiwAbK+UCn1TnyFO/Nb9n2Vp7W5cFkbcF4ySTAgbe3GtkM5BXPhN2
+X-Gm-Gg: AZFdTZflxuIRy+ORwp8JxG6b1BuNMWo9GShHMFoWwMXbGQ3Ccg7LVV3YNq5tCwNkbC1
+	yFGIxbGJ7Ef+mgOH4d0GXOyAeaJP0/3FMGv2a6xI3GVIuOjeH6XiWhW+1QtFXHymwWHCt+kWZ3N
+	uO9intfocRsDpFiK+fZaqtw329rDEbvwCZYog7NDmT1flU+Kc2aka+2DRJx2gwt3GLNiBTtlS5/
+	oxARzBf/GgdNe5/wtegYCM6bmA5kN2kRqTJDGQJLdOyI5L7pSCwdRyF/J1vuClrmwWNtFJhuzjg
+	INIV1SeZCZaTVV1qCQnOtfiqyb7rmgogTWquvuQXBO6FfEFGYuKT28Nj3GzZCdIjOE98g+j0Uqh
+	dHn0OhDPRLOsbKyg8RsOywOXxt2tPK05shbBbgWVwS83WqLECqqwnjIPYy5np/Sv7pkiuZsQYmi
+	o4kVXgQzTpxS4uAYJW6PVM0llbUjtINBkihMZAvoFNrcyXHe/aax+EmZVRzYBnz9Fw/Ju9BzrTk
+	HrnJo/pB4C9dAKoL3cnQAYu5nOAC7LA5M1gYtvD5WTDsjkX+qgA9K4c9YFMlXzimSDw+WE/BjWr
+	PmWaQBJbCRZGD2trdC6gsn57
+X-Received: by 2002:a05:7300:cca2:b0:36e:371:8255 with SMTP id 5a478bee46e88-379603825bemr9856188eec.0.1794840773662;
+        Mon, 16 Nov 2026 06:52:53 -0800 (PST)
 Received: from [0.0.0.1] ([1.54.0.190])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-379563df84fsm69003540eec.20.2026.11.16.06.52.45
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-379563df84fsm69003540eec.20.2026.11.16.06.52.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 06:52:48 -0800 (PST)
+        Mon, 16 Nov 2026 06:52:53 -0800 (PST)
 From: nhansp <nhan.094.vn@gmail.com>
-Subject: [PATCH 0/2] Add support for Samsung Galaxy Note8 (SM-N950N)
-Date: Mon, 16 Nov 2026 21:50:32 +0700
-Message-Id: <20261116-upstream-greatlte-dts-v1-0-768d49fb7d85@gmail.com>
+Date: Mon, 16 Nov 2026 21:50:33 +0700
+Subject: [PATCH 1/2] dt-bindings: arm: samsung: Document greatlte board
+ binding
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -93,10 +94,9 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADgY+2oC/yXMMQ6DMAyF4asgz7VUZwikV0EdAjHgqgUUm6oS4
- u6k7fKkb3j/DspZWOFW7ZD5LSrLXECXCvopziOjpGJwV+eJyOO2qmWOLxzL2tMYkykOLtTBJfJ
- NiFC+a+ZBPr9ue/9bt+7BvX1jcBwnMK+8tXkAAAA=
-X-Change-ID: 20261116-upstream-greatlte-dts-f29792d1689a
+Message-Id: <20261116-upstream-greatlte-dts-v1-1-768d49fb7d85@gmail.com>
+References: <20261116-upstream-greatlte-dts-v1-0-768d49fb7d85@gmail.com>
+In-Reply-To: <20261116-upstream-greatlte-dts-v1-0-768d49fb7d85@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Peter Griffin <peter.griffin@linaro.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
@@ -108,57 +108,27 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  nhansp <nhan.094.vn@gmail.com>
 X-Mailer: b4 0.16.0
 
-Hi,
+Add a compatible for the Samsung Galaxy Note8 (SM-N950N), codenamed
+greatlte, which is based on the Exynos 8895 SoC.
 
-This series adds initial support for the Samsung Galaxy Note8
-(SM-N950N), codenamed greatlte. It uses the same Exynos 8895 SoC as the
-Galaxy S8 (dreamlte), which is already supported.
-
-The device tree enables:
- * simple-framebuffer
- * 6GB RAM
- * pstore/ramoops
- * gpio-keys
-
-This is enough to boot to a shell in an initramfs. More support will
-follow.
-
-The keys, framebuffer and ramoops region match dreamlte, but the board
-gets its own file instead of a dtsi shared with it. I only have this
-device, so I can't fully check how the bootloader lays out memory on
-the other 8895 phones.
-
-Like dreamlte, it boots through uniLoader [1], which sets the DECON
-trigger control so that the framebuffer keeps refreshing.
-
-dt_binding_check, dtbs_check W=1 and dt-check-style in strict and
-stricter mode report nothing. On the device I booted next/dt64 with the
-arm64 defconfig, plus ramoops, simpledrm and fbcon built in. All eight
-CPUs come up and the kernel sees all 6GB. The console runs on the
-framebuffer and all four keys report events. A panic triggered through
-sysrq was still in pstore after the reboot.
-
-The test image was flashed to the RECOVERY partition and booted from
-there, with this kernel command line:
-
-  console=tty0 fbcon=font:TER16x32 clk_ignore_unused pd_ignore_unused panic=15 rdinit=/init
-
-[1] https://github.com/ivoszbg/uniLoader
-
+Signed-off-by: nhansp <nhan.094.vn@gmail.com>
 ---
-nhansp (2):
-      dt-bindings: arm: samsung: Document greatlte board binding
-      arm64: dts: exynos: Add initial support for Samsung Galaxy Note8
+ Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/arm/samsung/samsung-boards.yaml       |   1 +
- arch/arm64/boot/dts/exynos/Makefile                |   1 +
- arch/arm64/boot/dts/exynos/exynos8895-greatlte.dts | 124 +++++++++++++++++++++
- 3 files changed, 126 insertions(+)
----
-base-commit: 65ffdae53a6d522519fbd66d3cabbb4622e3e5bc
-change-id: 20261116-upstream-greatlte-dts-f29792d1689a
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 6ac7f895351e..088995a32a03 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -247,6 +247,7 @@ properties:
+         items:
+           - enum:
+               - samsung,dreamlte                # Samsung Galaxy S8 (SM-G950F)
++              - samsung,greatlte                # Samsung Galaxy Note8 (SM-N950N)
+           - const: samsung,exynos8895
+ 
+       - description: Exynos9810 based boards
 
-Best regards,
---  
-nhansp <nhan.094.vn@gmail.com>
+-- 
+2.43.0
 
