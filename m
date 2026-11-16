@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794823305;
-	b=XFw2b2CSg0dc9tqwfr49u65k57gyV0e05gbRdYeCT+WAT2Jc7ewdzdyQxLBfoVlXaBjR
-	 eZAjEzs082qMZf7baQ0H2Og4tyWaj+TLoJQMNbUAa7xcjObQd2NUxfwNn01C1lyOvFXI9
-	 lXnGRrYKrXRHUdf4YezEYI1/5KUOdBQVq+SpBAOWJDwex1DojDETGgzP9tttIOt7jmdSP
-	 j9kCod1ygpemXWQioPUcj8lkjwVR6AF4tBrKEJM/8e1OVVAkiZgJbwbBLDaBdoKmn4CVP
-	 OhRa2xQwaGI/WLek45W3BeVQHgQ+HehM0EyEHRBkNGQIq2d76nb3w1Z/S6ovHve8hnA==
+	t=1794823312;
+	b=H5wO4nloywVVGqKVlTn6eLuyBxSnau5sW4inK9OpxSbIynj6O2N1Ys2xLb9PiksGvhMf
+	 Cbd/Is3vEKFnsDOua408WqPFCwdznyUkR17/UtPH3/gtpMUreY5ntQDIgwBn3G6xB7LVe
+	 P13GPBxfIXsWdZacShq9yQYHNAjxXPPi1ENwWr6N3eli5f26GeE8b2vLg6wM5lPU6CC9j
+	 jmWeLxmO+eTSg1f1FESiEtmHVOalU6OJVWIYBkFBiyTh1MiYHXzmYsYuLWrZ0ZC5xJ8TO
+	 DAeNbUj+33hZdRXwjGanVzaOsgn1VT9xmD5JDTxc/smlgL2LBFqS7LVuSwwjxyPZWCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794823305;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794823312;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=WGx4yjZhEde7TvTLPPi9oLKwIm2f2ZhCwsVI7E4TU3s=;
-	b=dBMxKxx+z6TB8REapraEiGNs1wKfk11b8W+zrwYvgOw8nF7gy37Ln1yLtaHG4SaSHxuQ
-	 cz0915eo09g/Vilr1/IsQ20JUfcyEffdhxoVevXSAPrOuC8A4NuZ/aQtCz1I+eMblZJk8
-	 ZfUYF5z0IMDNB3tDPVecMadJnZoDu7sG6eJlf9S1m/mokggHu9YaCcde2hXrrI1qSTVID
-	 1vVHFz24ppfIuucINhIMl/1Bv30JjSpRfOVS9EE6YQbSS15YeERoqcAHS3SPPC2KBosef
-	 lkRQrdNFRvcAvs50SZ+gwn4twB9UvGN87r/Lk5r4nhd+cwUY+m5Y/CC99JB2ZOUJsEQ==
+	bh=KWrIH6Ghtq3+JL+RWvfyphsNLu+Dv8di3CE3m4jvDoE=;
+	b=f01ZvGqH/5gllevroOGWvxmVWn13tDvi6uCO2lId19jnEFjrMQQuxGev+N0NTsozkrTN
+	 EPyVamW2fvzd20dz7hn2eOECVwc7rEwnJ07grqlB7maMDWHh8gmnjrmUrNZax4KMxRTJ1
+	 Xeo+weTyKqjrkOy61XvlfH9zRIoAUEO+lhKDmAsdsk5iNtwye4QbnK+2SSy4yW/G7rOGk
+	 E3rdZlWQAd0980F+hUZJrPY1bR3N6W+N+NVetbDPyGZKzl+q52yOgNa6OiZ9z8EhZA3iL
+	 fwyNxt/tLg0dIxoIfZI27i8X6IgWdSFez0tk+JwxJj3Di4YjoRknTdCSmGI2znqKdpg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fu8tBIfc;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Az8RloN0;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7099C606A31C;
-	Mon, 16 Nov 2026 10:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5D3606A31C;
+	Mon, 16 Nov 2026 10:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fu8tBIfc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BAD1F000C4;
-	Mon, 16 Nov 2026 10:01:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Az8RloN0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABA61F000C4;
+	Mon, 16 Nov 2026 10:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794823305;
-	bh=WGx4yjZhEde7TvTLPPi9oLKwIm2f2ZhCwsVI7E4TU3s=;
+	s=k20260515; t=1794823311;
+	bh=KWrIH6Ghtq3+JL+RWvfyphsNLu+Dv8di3CE3m4jvDoE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=fu8tBIfcVgM+sIFEkI+nzsaLohduaXylLOLdJs7oPhIpZCaDgGRyDIwJM7KV3Aoad
-	 BmtIT2/JFmw6YO1hF/rcga34joJ5I9WOraeQnrA5cUA4EUn+s7uBOF2TmHaoYsGuBz
-	 Y+nhu+yln62MU5CXk7p/hBiGCeKX/JMC4lH6TfAIksvDn3i2iekbooR3cehX+Jw3U5
-	 s8IQo0YnfGwghCMROSe2atJSsqTagxds9e/Rgmq+6plXldjiO1JO8v9OVmCe9iXiBZ
-	 nEzmb9iSUus4zrJZrkWPB6RDr6faY95ftNVNp/4YW56Bg6rzNz3RoVROlSPb1T/To9
-	 AaOv3q662vvBQ==
+	b=Az8RloN0EyVusDn0tcUCCxPCZ5CQgMycNlLs+pMFYC6nGf0jt5NKUr9prLtC1tOY8
+	 QmJV8yy/IvfRO20rx0UJCJlzCSQLB4orbSV43nbdKAg84a0Bl75kDMV7yuAGoNtQjE
+	 4xiJKQAdnDFzoCIdfYLJKw5iLiIqy9J4cLYdmNbbjHZUSoYRGPupIRm1/Anjr/tyTT
+	 FZ9i/QC6ApekL1wL3FYGhboDMrns1+STdmQ52o/beejpqs93k+gV5ga99XMF5aO1Np
+	 LRTcsKntz6MmRCxI1vyqKTKSArJBtL+iifCFgoi55Ci9f1f8Czk9ScvJBzYn+lNnn7
+	 pyr8ZF4LCw/7Q==
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: s.nawrocki@samsung.com, cw00.choi@samsung.com, peter.griffin@linaro.org, 
  alim.akhtar@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
@@ -49,12 +49,12 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
  pokala.reddy@samsung.com
-In-Reply-To: <20261113110612.3265841-2-raghav.s@samsung.com>
-References: <20261113110612.3265841-2-raghav.s@samsung.com>
-Subject: Re: (subset) [PATCH v3 01/14 RESEND] dt-bindings: soc: samsung:
- Exynos8855 SYSREG compatibles
-Message-Id: <179482329921.39377.1080590759697882936.b4-ty@b4>
-Date: Mon, 16 Nov 2026 11:01:39 +0100
+In-Reply-To: <20261113110612.3265841-1-raghav.s@samsung.com>
+References: <20261113110612.3265841-1-raghav.s@samsung.com>
+Subject: Re: (subset) [PATCH v3 00/14 RESEND] Add clock support for
+ Exynos8855 SoC
+Message-Id: <179482330541.39377.15409353994638408556.b4-ty@b4>
+Date: Mon, 16 Nov 2026 11:01:45 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -69,13 +69,28 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
 
 
-On Fri, 13 Nov 2026 16:35:59 +0530, Raghav Sharma wrote:
-> Add exynos8855 sysreg compatibles in bindings
+On Fri, 13 Nov 2026 16:35:58 +0530, Raghav Sharma wrote:
+> This patch series adds clock support for below blocks
+> found in Exynos8855 SoC
+> TOP & PERIC
+> PERIS
+> HSI
+> USB
+> There are many other blocks, for which the support will be
+> added in a forthcoming patch series.
+> 
+> [...]
 
 Applied, thanks!
 
-[01/14] dt-bindings: soc: samsung: Exynos8855 SYSREG compatibles
-        (no commit info)
+[11/14] arm64: dts: exynos8855: add cmu_top & cmu_peric clock DT nodes
+        https://git.kernel.org/krzk/linux/c/14a87bfb0614d87b04134156e090d7b00590d2b2
+[12/14] arm64: dts: exynos8855: add cmu_peris clock DT nodes
+        https://git.kernel.org/krzk/linux/c/99eb8abc95341047451f5c53d70d044fa4481af0
+[13/14] arm64: dts: exynos8855: add cmu_hsi clock DT nodes
+        https://git.kernel.org/krzk/linux/c/1d0231f292d437328ab97c24e052ab6a30d82bf1
+[14/14] arm64: dts: exynos8855: add cmu_usb clock DT nodes
+        https://git.kernel.org/krzk/linux/c/65ffdae53a6d522519fbd66d3cabbb4622e3e5bc
 
 Best regards,
 -- 
