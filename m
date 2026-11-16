@@ -1,105 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.99
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794853630;
-	b=CQXIExK6DPp4ypWxl9EbSYQsl/I49YRR3hNRrUipjGMfjGpAEv5hXOXO93jsDIfTnvMy
-	 ItXqkmU3tloANH7gkAr1oRcdheEMCnFoZRrCK/zs0i+y+Hy6WUDivzXFs48zusruHIo/7
-	 ffYvrBK2BAAJkKYqWthh/GttWadUDBdZqlaDMch2Q8WcMHHBeqHGSrRW5ZCiQCh5tFeVN
-	 0Lcm/98+I4JKECLoC2y+vA1n+Kmw27jnM4JlLJmHOr0j5PTF9h6gI14BNPD31VB0GkrSW
-	 DRjChJDZBm8d0020XxLyPpIOHizDsCqPn5d17trrp7aLt2KBjBY8xJS9T9OovbMiR4A==
+	t=1794870789;
+	b=oUTmjMiaA7xUI0Q7SXPaLaXEqeTYLbNT4Ju67Ga2qOhD+tOEF2mXJ/Igqj0Q/bDYkRmf
+	 9cNPk8M7xMnI9gaPXsWQAyegj69xNFmJ2Ixmu3JK1sspKVwDv28EPXjsr8623tHfUq73C
+	 bXxzUjUQDKcGw+SmcPT3QnK2qVnw/g/hbkzgjXcjK6Duo+A9Oxc9LoXcmGuMlk82DMMUm
+	 JQA1I96Xp49lx4RE4n0weIVNe3GlhOLJXoQBrVNG75/af2/QcDmSvEc4PemDjNWUXxtg2
+	 OvHofj7W4TDpDmAQmqPmlXHEm5XxTe/sAwPYJ8gvCZ6zYcDE1UqR/Wrg7ALN3ttVOpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794853630;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=i0+NdK/YeASsZuhz7coPXNHnm1YViQRZlPGWrC7m3dY=;
-	b=gWp3iMRNhmsQDsQs8J4NQD5s//HlXhFxcgSqYpUrfNjrd/xwrHKO3TBv1mLMjyKIH6Pr
-	 4V7l67a1n6B0VDIZK1yMhwZPbp3hADHlNSDZKbYCojgH9xJyuBt4cJrqZXilyKs93paI2
-	 UaW2t7iAtDQMKWJrXEYp3LflVSJcoNURVUK1Wu1ZPZbl9CRmaazE0Awgkc49DMT9+jKcy
-	 aiRDG1C4mc3dNb+RphBIyO7SS0/tq0Lr0KajG79x38adlMQPaUv5KQP2MtvYgHt/R6Egy
-	 M0+0A2+1vUg1D8ykXnNJijHF91PnUSOIMa96I6n7Usv9CjowqI91IBwEOjuh61586/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794870789;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:X-Relaying-Domain:
+	 X-CFilter-Loop:Received:DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Received:X-Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 X-DetectorID-Processed;
+	bh=39KnhmpTvzW3NJqrAH4c7S3DWPwV9FJJvA+CtiAQvpY=;
+	b=X13gDZhuSteZfU2ck1+q7G2BiLjHEcqxBjaK1UEtL5q3fKJCBfi4/ZY9dQdxwuaj0xFo
+	 acciZMdNpzGLWrRR0wPU4EXUa+v/zQ13DqzPwsuLbPRnalXJ/1dF5y1o+yN4TbdZyvsK0
+	 vhRU9lK5A0Ri4K3G1LgQnmb3T3xXVbXL6hLGeTmvikzxrQRLll5hrlK334e7IsOB/4wUA
+	 CvLIjTkAOycQvpjIRZe3h6O2UkNUz93dgqptdf798gu8nrlC1JugzDtPHZrEyN+/Pq/GO
+	 goilZQBhjE2cZKXpcmRxK8/d/SJ9oPzqC64yr5mYCpzDZcyD3+WlXoH531SM4bd+tpw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=google.com;
-	spf=pass smtp.mailfrom=google.com;
-	dkim=pass header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=Qr4RejGE;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dmarc=pass header.from=broadcom.com;
+	spf=fail smtp.mailfrom=broadcom.com;
+	dkim=pass header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=Ks84OXuH;
+	arc=none smtp.remote-ip=209.85.216.99
+Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com [209.85.216.99])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11138606A32C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 18:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 11138606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289F6606A329
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 23:13:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 289F6606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.a=rsa-sha256 header.s=20260707 header.b=Qr4RejGE
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a018493d57so3875e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 10:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20260707; t=1794853628; x=1795458428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=i0+NdK/YeASsZuhz7coPXNHnm1YViQRZlPGWrC7m3dY=;
-        b=Qr4RejGEWeUwI0wtVtMolfzVWYPmWIxJfwOGpJssQTLxQ3Mj/VhD1UlHy6KuHOqqSL
-         FAhSyKSey47XQIUuhSJXQbSTECFAINqlpr7/7qz5DW+httFcF+CMGLNOtgzd54S2NPZD
-         gaYYo7UV+pUGwsrSh92T+ex26qSG4aSqT7wc7dx/KPUlexjlDCGlXRITajRZHc5SQ75y
-         Im8W3+17t5eoEn6NCo6Tn1skt3YZ06Y4WqUafzX4HamVJrzpOfAS4DHGVUYPM58W268f
-         kZp1ypdqLR5WfqzYfbKZH5hfqAhrIim+UYp5zeRV7adDftPXx1l5DEcincnjDx9eAFsr
-         AGKg==
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.a=rsa-sha256 header.s=google header.b=Ks84OXuH
+Received: by mail-pj1-f99.google.com with SMTP id 98e67ed59e1d1-3b094e649d3so3397886a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 15:13:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794853628; x=1795458428;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=1e100.net; s=20260707; t=1794870788; x=1795475588;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=39KnhmpTvzW3NJqrAH4c7S3DWPwV9FJJvA+CtiAQvpY=;
+        b=TA1Q4pmxwRGhWxV3pm8U8jqdy5jOM3+kj7PWDBggBSsvrC2MRt8p/njVIFSRXaf0fS
+         ldgGX96oh55PmlVkCKoV9V5FAr2HSj30Dl+fS9lT13btdDBCu1NMwTXUM3Kv2Pn/zzgy
+         ePV8oOhyUVJRPF19xNRWEpGaZD4mZD2kqDrpNpR8bwPpx5Kp2I3fZdQXpLnLEmO5cAXC
+         xpzF38Bj4bDZaAH7HVrX936ei0/IruDZRRW0KKE6/I2sxFRP0NJ8+nRTWC+BhYRYYycz
+         nhPPq91BCxqf1XT7wp0WSZSLbjdzjS20bKWF/sbES+X/Z86+gj7HO/eyZQg1539n60jo
+         UZ3Q==
+X-Forwarded-Encrypted: i=1; AL+hErEH41HnYF142Iigov7Y+iq4Qow0DpsFEzZsJTtcxANSfe425L1OhnDtra9V1c96AWnrLnd3B4jmT8lRT0TDepVAgA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9rjE7FApxn5qicRNhgeEGLiHR12qkIXEPfAzCHkqL2LTiPenWN
+	nkYrzrLfPZ1+NVKHvilDgx7/2kxfkZczEy9fQXy+QOQHteNa/Fdf8kvDCokV2y7R8TSAak8sd6L
+	8xLgcWaS0lZLc0CIrn38hkAgPj05R3BKPlu7pqNX5ti0jp27+YLIpJe0Y2MJ8WHGzo48C1iXiew
+	sjTmWV0OZnKJIi+/cTLQiXFmb6IP8PhCaAWM8nmw4INS/fUpEdcjrl4qeUczGlFfUS13dL0nOuu
+	hIrddHZzH8pG1+602SkoB2Tx/pgZx8=
+X-Gm-Gg: AZFdTZdoK02b9bLeHVLHFgqNFmkZ+4tDjzH6upq6DxYG7DvHqM3DdcA2frPhg0BWc5O
+	xNFzNATkV8hiZ8WBar6OrJamgaAT5pcNIjpWV45tEHzobO39Rk2pn1U5zAAq/ExfhPtAw7nlb7v
+	eqqPhtNXX/tKKKKwGD1+HzLrKStAmlR5658EanhnN4j9PqDbbnv+xk0ZdC2DR62RnEbR92ukDXl
+	HvTcw7tDF9ncddq5ToY3KHoiqywagy2t/cNZUDhEd5TZVQVUuNx0zmp4R79pSbJsdScj12IpO9w
+	ti06lP+eb+Aba706ur4oJW2Kj1GODHei6cd08i9TK5cxeEYJUqTWmXMHJ8jZrzkYExu1oVmfC5/
+	ghZ5h582J+B8r6VcPlpRqqjyoX75G4jRqgm2gbMYbW5k1ZNWTYC3/G2Iu+Q5WiODKUZg6XxzWJo
+	yspwF/Yc0CqptdP3nzacapLYBZWNcHBsmSpn3hW47S
+X-Received: by 2002:a17:90b:1b06:b0:3ad:aa1a:312e with SMTP id 98e67ed59e1d1-3b1b087a639mr12124971a91.3.1794870788292;
+        Mon, 16 Nov 2026 15:13:08 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-26.dlp.protect.broadcom.com. [144.49.247.26])
+        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-3b3abb97be4sm544803a91.1.2026.11.16.15.13.07
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Nov 2026 15:13:08 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-91ea5866643so35504516d6.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Nov 2026 15:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1794870787; x=1795475587; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=i0+NdK/YeASsZuhz7coPXNHnm1YViQRZlPGWrC7m3dY=;
-        b=FMFXxjfvT1g2/dAPL/Xp1kbGnYDTOJwXBtAtXSLvICihuuQNXpEqLxN+fERXlqNkkt
-         S6hr6raOp7KA9Xl6IcM4EkMIJ34up+92aPDKzwYaCHAqsnezp3/zgU+qCyQhJQRcLa+2
-         EZh/g3KqUHQZBFOdtcsLTayWlK7wvX2fmvBPCtYLqf1c3z9izlA+Ht8mIl/E1/cIM5/v
-         tQKUFeXhiB60zm9Niy03hPCMb7FXJZFP+71QgrwvcXo7hTPguWUr18XOlLyFvgo2eflu
-         udGrwsQlo+uh6+vAat76jrBf2QYT5qRSS0cw/S7BLyEuXeLm5igLodU3JMKF19Qf0cLB
-         D4Eg==
-X-Forwarded-Encrypted: i=1; AL+hErHnB25ApBM7jeNcT7ezskSFk3DaBfFK98X8DtK1ZtRq32NCJEd/Fh28JU6e11HtdBX1UJIDOZTWr3wotwlj0lKzyg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9NimApPOn+TUUqWL7Ji235+i9mKqf3Cwl58LS1JI1b2lRjgcwy
-	zpReFKtMgrzH0BctRS3pk6h3PoK/EZNpskFz2ae26G7eIHlGgisDPRa/uM3k9pRJWg==
-X-Gm-Gg: AYBFou3FTedf8yXDr2N58rwqNA5LvShD8QUS24+Y0CaeyPN2vKu3/1JmkqN3sg+bYLQ
-	UfuDKokdXtZxDNarRvOmZTP7VkiefhxCK9THOKDxgfNCZU9y9CIj/ZDve+0qC0RyXEy19/L8vHB
-	aNhmPYgRBhAf5J+pELfpJBO9gSjyECGhhFbNyi+k8OOLZEHfeawQb+bRuoFQQ0wy7uaF7diPeRr
-	lHwTyoyWltRIRKA1MQmQY4BH0DHGB0LAg01gq1pNT23d5GIfY+yl8j4kg8xjJdvdjCq3LwK/SI0
-	2LpzfMR7aXVJ4ZD4nyk5q+rjMKSy2GqCNWtaYe8W6m1nw0gZZ/FCfEt/eEE8okNaEN79vCf+G7M
-	Meao+CnZlB6OF/gBKZ3L90rFD2Ymbnzzr1A/p5KutyeBIwJWOx04vYxk/ezknjMtf5S68fWRjGf
-	Ir6+J4O8phjnF1z9VMfjKNIflCUEECpspbABPzzrbNhWapCXWrUR+yuC/2J+Fn3DqUu7hFx62LC
-	5U9ZbAHr1++NRZS2rLW/LtmkH+/QLyiHkS2yaY2E5Qu8nmFbmgzqDaFlcUoMytQLJhgK2GdLsYt
-	jIMR8a2AWuqHLf4ymgEn8iGj6RLCKvM8uj7rm/qvFtB7VpHVOdT3nXzjTi5NJpome0g+7KgyMj6
-	2rmvjFauMeTna02OP
-X-Received: by 2002:a05:600c:491c:b0:4a1:d2f2:9fbd with SMTP id 5b1f17b1804b1-4bb7894d9bfmr42925e9.0.1794853627708;
-        Mon, 16 Nov 2026 10:27:07 -0800 (PST)
-Received: from google.com (250.192.189.35.bc.googleusercontent.com. [35.189.192.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c5f1c1968sm24006935f8f.10.2026.11.16.10.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 10:27:06 -0800 (PST)
-Date: Mon, 16 Nov 2026 18:27:02 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Daniel Mentz <danielmentz@google.com>,
-	Juan Yescas <jyescas@google.com>, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] iommu: Add iommu.passthrough_devs early command line
- parameter
-Message-ID: <avtK9qMAjIIwD84k@google.com>
-References: <20261116-b4-iommu-passthrough-devs-v1-1-dc5b493f7551@linaro.org>
+        bh=39KnhmpTvzW3NJqrAH4c7S3DWPwV9FJJvA+CtiAQvpY=;
+        b=Ks84OXuHKcDj1m0yqe2j4zQcIXuj7e0bt67frusWZUnW2uI2jckkhYFxJvypHWImpV
+         PXMf8rXIHKj8yjqz5p8qurErMp8qkmaRM7uuRBsuBNBmJAi3WkvGrcHOY+QtOkB59qjp
+         sH7wmu6bTin/bfJxp028Qws+PMsF4InONId9c=
+X-Forwarded-Encrypted: i=1; AL+hErHX5SGQyqT1xGZJHtyW8ZhoYF738GNxj2Bx2l4izk1lw8rQgm6wXVkafyYiOj4O+NrN5jrhLpu4myLGjY/XlBUjjg==@vger.kernel.org
+X-Received: by 2002:a05:6214:2623:b0:921:201:e835 with SMTP id 6a1803df08f44-9210201ebefmr2037976d6.27.1794870786518;
+        Mon, 16 Nov 2026 15:13:06 -0800 (PST)
+X-Received: by 2002:a05:6214:2623:b0:921:201:e835 with SMTP id 6a1803df08f44-9210201ebefmr2037266d6.27.1794870785971;
+        Mon, 16 Nov 2026 15:13:05 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91f23d7ba48sm96715216d6.28.2026.11.16.15.12.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Nov 2026 15:13:05 -0800 (PST)
+Message-ID: <2ad1cc65-0381-478c-959e-9bee1a597110@broadcom.com>
+Date: Mon, 16 Nov 2026 15:12:57 -0800
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -109,268 +106,124 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261116-b4-iommu-passthrough-devs-v1-1-dc5b493f7551@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] irqchip: Convert chained handlers to guard_chained_irq()
+To: Peng Fan <peng.fan@linux.dev>, Thomas Gleixner <tglx@kernel.org>,
+ Radu Rendec <radu@rendec.net>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Ryan Chen <ryan_chen@aspeedtech.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Billy Tsai <billy_tsai@aspeedtech.com>,
+ Tan Siewert <tan.siewert@9elements.com>, Eddie James
+ <eajames@linux.ibm.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Caleb James DeLisle <cjd@cjdns.fr>,
+ Marc Zyngier <maz@kernel.org>, Miodrag Dinic <miodrag.dinic@mips.com>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Herve Codina <herve.codina@bootlin.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
+ Qin Jian <qinjian@cqplus1.com>,
+ Changhuang Liang <changhuang.liang@starfivetech.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Michal Simek <michal.simek@amd.com>,
+ Anirudha Sarangi <anirudha.sarangi@amd.com>,
+ Tushar Nimkar <tushar.nimkar@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org,
+ linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ imx@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev, git@amd.com, linux-arm-msm@vger.kernel.org,
+ Peng Fan <peng.fan@nxp.com>
+References: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Mon, Nov 16, 2026 at 05:37:45PM +0000, Peter Griffin wrote:
-> Currently, the generic IOMMU core only provides an all-or-nothing global
-> switch ('iommu.passthrough={0,1}' and CONFIG_IOMMU_DEFAULT_PASSTHROUGH)
-> to configure default DMA domains in passthrough (IOMMU_DOMAIN_IDENTITY)
-> mode at boot time.
+On 11/14/26 07:06, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Add an 'iommu.passthrough_devs=<dev_name>[,<dev_name>...]' early
-> command-line parameter. When allocating the default domain for a group in
-> iommu_group_alloc_default_domain(), if no mandatory domain type override
-> is present, check whether any device in the group (or any of its
-> parent/bridge devices via dev->parent) matches 'iommu.passthrough_devs'
-> and request IOMMU_DOMAIN_IDENTITY, warning and falling back to
-> IOMMU_DOMAIN_DMA if identity domains are unsupported (consistent with
-> 'iommu.passthrough=1').
+> Use the scope-based guard_chained_irq() helper in all chained handlers
+> under drivers/irqchip/ so that chained_irq_exit() is always invoked when
+> the handler returns. Handlers that duplicated the exit call on an error
+> path or jumped to a common exit label simply return now and rely on the
+> guard.
 > 
-> Device names match dev_name(), such as PCI BDFs ('0000:01:00.0'),
-
-I believe BDFs are not reliable as they can change based on how Linux
-enumerates the bus and hotplug.
-Probably we'd need something as pci_dev_str_match() which is used
-in other cmdline options.
-
-Thanks,
-Mostafa
-
-> Device Tree platform devices ('3c400000.ufs'), or ACPI platform
-> devices ('AMDI0010:00'). Walking dev->parent also allows specifying a
-> parent PCIe host controller or root port (e.g. '3c500000.pcie' or
-> '0000:00:1c.0') to cover its downstream endpoints.
+> No functional changes.
 > 
-> Note: Untrusted PCI devices ('pdev->untrusted') and explicit IOMMU
-> driver '.def_domain_type' requirements continue to take precedence.
-> 
-> Configuring per-device passthrough mode at boot is needed for several
-> use cases:
-> 
-> - Performance tuning and benchmarking: high-throughput storage
->   workloads (e.g. fio benchmarks on UFS) can incur measurable
->   IOPS/latency and CPU overhead from IOMMU page table management and
->   TLB invalidations. Selective device passthrough allows bypassing
->   translation for these devices while keeping IOMMU isolation enabled
->   for other devices in the system.
-> 
-> - SoC/board bringup and debugging: isolating whether a DMA fault or
->   regression is caused by a specific device's IOMMU translation without
->   disabling the IOMMU globally across the entire platform.
-> 
-> Implementing this in the generic IOMMU core allows it to work with
-> ACPI and Device Tree (DT) systems as well as across all IOMMU drivers.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-> Hi folks,
+> With [1] now merged in irq/drivers, convert the chained IRQ handlers in
+> drivers/irqchip/ to use guard_chained_irq(). This removes the explicit
+> chained_irq_exit() calls and the gotos that only existed to reach them,
+> reducing boilerplate.
 > 
-> This patch follows up on a conversation with Jason Gunthorpe at
-> Linux Plumbers regarding how to upstream support for configuring
-> per-device IOMMU passthrough (IOMMU_DOMAIN_IDENTITY) at boot without
-> abusing Device Tree properties.
+> I use a script to do the job, and after that, do mannual checking.
 > 
-> Downstream on Google Pixel G5 Laguna platforms, we have historically
-> carried a custom 'iommu-idmapped' DT property parsed by the arm-smmu-v3
-> driver to place specific client devices into bypass mode. As discussed
-> at Plumbers, Device Tree seems the wrong place for this because choosing
-> passthrough vs. translation for a given device can sometimes be an OS
-> policy trade-off where we choose device peak performance at the expense
-> of DMA isolation. This is the case for UFS and PCIe WLAN on Laguna,
-> which share a common SMMU instance with other peripherals (such as DMA
-> controllers, VPU, and ISP) where we want DMA isolation to remain
-> enabled.
+> No functional changes.
 > 
-> A secondary benefit is it could be useful during device bringup and
-> debugging for fault isolation and to work around firmware/device issues
-> before a proper driver quirk is in place.
-> 
-> Instead, I propose handling this in the generic IOMMU core via a
-> kernel command-line parameter. This makes it available uniformly
-> across both Device Tree and ACPI systems and across all IOMMU drivers.
-> 
-> In terms of upstream Laguna support, initial DT support has already
-> landed in tree, along with USB and phy support. Other support for
-> mailbox, clocks, powerdomains, reset is under review in the following
-> series with more to follow.
-> 
-> https://lore.kernel.org/lkml/20261023235408.3063350-1-dianders@chromium.org/
-> https://lore.kernel.org/lkml/20261026214359.3122870-1-briannorris@chromium.org/
-> 
-> Feedback and suggestions are very welcome.
-> 
-> Thanks,
-> 
-> Peter
+> [1] https://lore.kernel.org/all/179417458323.2093942.14330197609841896598.tip-bot2@tip-bot2/#t
 > ---
->  Documentation/admin-guide/kernel-parameters.txt | 11 ++++
->  drivers/iommu/iommu.c                           | 76 +++++++++++++++++++++++--
->  2 files changed, 82 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index c343bc9a0d28..926380cb1e99 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2689,6 +2689,17 @@ Kernel parameters
->  			1 - Bypass the IOMMU for DMA.
->  			unset - Use value of CONFIG_IOMMU_DEFAULT_PASSTHROUGH.
->  
-> +	iommu.passthrough_devs=
-> +			[KNL,EARLY] Configure DMA to bypass the IOMMU by default
-> +			for specific devices.
-> +			Format: <dev_name>[,<dev_name>...]
-> +			Specify a comma-separated list of device names (matching
-> +			dev_name() of the client device or any of its parent/bridge
-> +			devices) whose IOMMU groups should default to passthrough
-> +			(identity) mode (e.g. "0000:01:00.0" for PCI,
-> +			"3c400000.ufs" for Device Tree, or
-> +			"AMDI0010:00" for ACPI).
-> +
->  	iommu.debug_pagealloc=
->  			[KNL,EARLY] When CONFIG_IOMMU_DEBUG_PAGEALLOC is set, this
->  			parameter enables the feature at boot time. By default, it
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index b486b8bbd1fc..0a7796e0311e 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -33,6 +33,7 @@
->  #include <trace/events/iommu.h>
->  #include <linux/sched/mm.h>
->  #include <linux/msi.h>
-> +#include <linux/string.h>
->  #include <uapi/linux/iommufd.h>
->  #include <linux/generic_pt/iommu.h>
->  
-> @@ -43,9 +44,12 @@ static struct kset *iommu_group_kset;
->  static DEFINE_IDA(iommu_group_ida);
->  static DEFINE_IDA(iommu_global_pasid_ida);
->  
-> +#define IOMMU_PASSTHROUGH_DEVS_MAX_LEN	256
-> +
->  static unsigned int iommu_def_domain_type __read_mostly;
->  static bool iommu_dma_strict __read_mostly = IS_ENABLED(CONFIG_IOMMU_DEFAULT_DMA_STRICT);
->  static u32 iommu_cmd_line __read_mostly;
-> +static char iommu_passthrough_devs[IOMMU_PASSTHROUGH_DEVS_MAX_LEN] __read_mostly;
->  
->  /* Tags used with xa_tag_pointer() in group->pasid_array */
->  enum { IOMMU_PASID_ARRAY_DOMAIN = 0, IOMMU_PASID_ARRAY_HANDLE = 1 };
-> @@ -805,6 +809,27 @@ static int __init iommu_set_def_domain_type(char *str)
->  }
->  early_param("iommu.passthrough", iommu_set_def_domain_type);
->  
-> +static int __init iommu_set_passthrough_devs(char *str)
-> +{
-> +	size_t len;
-> +
-> +	if (!str || !*str)
-> +		return -EINVAL;
-> +
-> +	len = strlen(iommu_passthrough_devs);
-> +	if (len + (len ? 1 : 0) + strlen(str) >= IOMMU_PASSTHROUGH_DEVS_MAX_LEN) {
-> +		pr_warn("Too long list of device names for 'iommu.passthrough_devs'!\n");
-> +		return -EINVAL;
-> +	}
-> +	if (len)
-> +		iommu_passthrough_devs[len++] = ',';
-> +
-> +	strscpy(iommu_passthrough_devs + len, str,
-> +		IOMMU_PASSTHROUGH_DEVS_MAX_LEN - len);
-> +	return 0;
-> +}
-> +early_param("iommu.passthrough_devs", iommu_set_passthrough_devs);
-> +
->  static int __init iommu_dma_setup(char *str)
->  {
->  	int ret = kstrtobool(str, &iommu_dma_strict);
-> @@ -1750,14 +1775,45 @@ __iommu_group_alloc_default_domain(struct iommu_group *group, int req_type)
->  	return ERR_PTR(-EINVAL);
->  }
->  
-> +static bool iommu_is_passthrough_dev(struct device *dev)
-> +{
-> +	for (; dev; dev = dev->parent) {
-> +		const char *name = dev_name(dev);
-> +
-> +		if (name && *name &&
-> +		    parse_option_str(iommu_passthrough_devs, name))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static struct device *iommu_group_passthrough_dev(struct iommu_group *group)
-> +{
-> +	struct group_device *gdev;
-> +
-> +	if (!iommu_passthrough_devs[0])
-> +		return NULL;
-> +
-> +	for_each_group_device(group, gdev) {
-> +		if (iommu_is_passthrough_dev(gdev->dev))
-> +			return gdev->dev;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  /*
->   * req_type of 0 means "auto" which means to select a domain based on
-> - * iommu_def_domain_type or what the driver actually supports.
-> + * iommu.passthrough_devs, iommu_def_domain_type, or what the driver
-> + * actually supports.
->   */
->  static struct iommu_domain *
->  iommu_group_alloc_default_domain(struct iommu_group *group, int req_type)
->  {
->  	const struct iommu_ops *ops = dev_iommu_ops(iommu_group_first_dev(group));
-> +	unsigned int def_type = iommu_def_domain_type;
-> +	struct device *pt_dev = NULL;
->  	struct iommu_domain *dom;
->  
->  	lockdep_assert_held(&group->mutex);
-> @@ -1777,19 +1833,29 @@ iommu_group_alloc_default_domain(struct iommu_group *group, int req_type)
->  		return __iommu_group_alloc_default_domain(group, req_type);
->  
->  	/* The driver gave no guidance on what type to use, try the default */
-> -	dom = __iommu_group_alloc_default_domain(group, iommu_def_domain_type);
-> -	if (!IS_ERR(dom))
-> +	if (def_type != IOMMU_DOMAIN_IDENTITY) {
-> +		pt_dev = iommu_group_passthrough_dev(group);
-> +		if (pt_dev)
-> +			def_type = IOMMU_DOMAIN_IDENTITY;
-> +	}
-> +
-> +	dom = __iommu_group_alloc_default_domain(group, def_type);
-> +	if (!IS_ERR(dom)) {
-> +		if (pt_dev && dom != group->default_domain)
-> +			dev_info(pt_dev,
-> +				 "Setting default IOMMU domain to passthrough via command line\n");
->  		return dom;
-> +	}
->  
->  	/* Otherwise IDENTITY and DMA_FQ defaults will try DMA */
-> -	if (iommu_def_domain_type == IOMMU_DOMAIN_DMA)
-> +	if (def_type == IOMMU_DOMAIN_DMA)
->  		return ERR_PTR(-EINVAL);
->  	dom = __iommu_group_alloc_default_domain(group, IOMMU_DOMAIN_DMA);
->  	if (IS_ERR(dom))
->  		return dom;
->  
->  	pr_warn("Failed to allocate default IOMMU domain of type %u for group %s - Falling back to IOMMU_DOMAIN_DMA",
-> -		iommu_def_domain_type, group->name);
-> +		def_type, group->name);
->  	return dom;
->  }
->  
-> 
-> ---
-> base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
-> change-id: 20261106-b4-iommu-passthrough-devs-03b7c957ac69
-> 
-> Best regards,
-> -- 
-> Peter Griffin <peter.griffin@linaro.org>
-> 
+
+>   drivers/irqchip/irq-bcm2836.c              | 4 +---
+>   drivers/irqchip/irq-bcm6345-l1.c           | 4 +---
+>   drivers/irqchip/irq-bcm7038-l1.c           | 4 +---
+>   drivers/irqchip/irq-bcm7120-l2.c           | 4 +---
+>   drivers/irqchip/irq-brcmstb-l2.c           | 4 +---
+
+For those drivers above:
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
