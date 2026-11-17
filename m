@@ -1,61 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794904520;
-	b=UqLUleYN0Xwuwq97agFwpmFBOd9Uil6fn47ZTh4HvPML/7CjLARvHBfp0McgauuYnaX0
-	 m9zzJJiji3fCaX8tHjisyFJzxISAWNsnbwGeJtgnEUNYwSXpPNd4lX0yRkXAJNEf36wJe
-	 FTIJSyEzzur/jXY+ndrqfm2F9gPMzeE0FVRYmzT+aV7IO35FERE6RLOcP2vawZLqSjiUT
-	 c1qqRo9UmTLQLaGKmAsDR7GX7JYyIGzVnE6LINHWBCHrQVg65HmEsE3Sdex8cAiPJdVeH
-	 zGrJ9e4TuVYAmSi+KQaUK+b136ZuJy4EmBlrk5WHrjIQhcHJwFP0lUeFqm5hLpSME4A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794904520;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:From:To:Cc:Subject:
-	 Date:Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=agk/A3LWw5a2lEDhtnhF8EnN5eBx0hVoD8HiwFb2c/c=;
-	b=HWjwFtxboXPBSYF6Rt2Tk8EiYwV/INAewqXh1SyuXk+r7IEi7pwUPIDjDAY5eZOm32fm
-	 0F+NVEjh6BrvafeNejJOiH4EQlPAJs7Pzf9uaQxyrTdpRyoivyy7yDd6DPVWjjw2myYA3
-	 JjZiq4QhZt5+2ZcBJx4eyKb+bWlhzJxQ8PbPSm7ZtG8a1+2XQgfwDpLskkKrOWawCfUyU
-	 yX4f5iJqyT5n0thggM5/1Y2x6ECXPFn5RI6K1EaPQQUW/Wku7xzxMXJ+8AJZ0x/vTJzWu
-	 3Py7nae9j3UiaSZYhRU84aWqky/hpI6mK2MxZsLvyxLuf1Cj2EIJP+j6O9GfLUueamg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=TWY4x2Uj;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5DA606A898;
-	Tue, 17 Nov 2026 08:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE5DA606A898
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.48
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794917999;
+	b=Ed94XAvZSnSEoi3/7qCK2VlAW443/3FguSVd295MTtMHPwYm14KlhSs2WjcbXjsenmDh
+	 rciAWaJrHteFbjtohcGtSFonZ4D1d1kCwNp4bexV21ZIDDnN7jBqvrq7xAV4m5Rolxwei
+	 U+dAcnMr3GjoPR+BoWlAg1gALCT7oDqho0vaVH2kwy6nL6xOWBqMg6Zg9WoA1/NG9IQNz
+	 Jfobd7eYGZeDdlqouhZdI0ogSLt9s4F6mlcmjQ0KlzlsImJl9xewo8QDSFPYo2YjKJOU5
+	 1HKks0iAXpqgtT56QOCDKweWBE0JGIUtGsnXFgGlaF55o+8l07LN9AwlOypSBN4+1gA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794917999;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=ZFVJi+i+sc9nYgluytKQGXSriWb6Sc1xPMl64Y6JsfM=;
+	b=uxIvMO6kl5G+8dLJlMhT2EGBIjzRmZTl+l1GtOMNmb2L84DUFQLaKL0ly0PWpKpnlUrQ
+	 ZsVwTnzzGapdY3GvUPvfxZzMWveuZ9zP59GClLZCEi3Z9a2SSPXSzrXlMnnZ+BLZZd8VU
+	 VOoz9F6UVpGqJoPpzZwfs0nLzaCWKbkb/7/ED6qDbFssyncurhBd/etuBIb9FcLmWpHIY
+	 sJib9ATdlRbLlu+jZfnnQOtbpgnRB8oWT3xzmU2OuFmCPuvgKeb0aflBoYVE2mtgAA8R5
+	 QaSPMhhQmJvzTfqYMCQ8N4tzl9KItc+D1iznchPd3eh5EAt/hOtbYSJ/spZU/TwA5xQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=oz3feJS1;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.48
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD19606A883
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Nov 2026 12:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BBD19606A883
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=TWY4x2Uj
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E64191476;
-	Tue, 17 Nov 2026 00:35:14 -0800 (PST)
-Received: from e127648.cambridge.arm.com (e127648.arm.com [10.0.130.226])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2B6593F673;
-	Tue, 17 Nov 2026 00:35:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1794904517; bh=JugGxAZr1qpyxmpUOLtk7kz41B+FkAk/NDLgG3gX4GY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TWY4x2Ujr70vxmXCSeeYqW263KE53eJqHCQr8Bi7oedmwg1fDNAB7JeCs2XOIGrFH
-	 6JOV+LOTtntyqbcNENoOyV05gskpKksGW414A0eTLg6SIR022ndmhHjTPC1EJe3O6k
-	 Cp9UqLu9pLmmw/MgqpOeGdYUcdgUaHAUN82VyDsI=
-From: Christian Loehle <christian.loehle@arm.com>
-To: tudor.ambarus@linaro.org,
-	bzolnier@gmail.com
-Cc: krzk@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@kernel.org,
-	lukasz.luba@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
-Date: Tue, 17 Nov 2026 08:34:42 +0000
-Message-Id: <20261117083442.830549-1-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=oz3feJS1
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6b757029223so5589570a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Nov 2026 04:19:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794917997; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VsTLm16E0BhL0iZPWDnqwBXivXNvOX4RozLA1qb0Le4IRuVGHz1fhKASldj2YExNHg
+         F/J7n5Dp5Iyu7KzyEuCqqh/A+4grlzBSwP0JV+k1I/086roIBM1a0gzgfVLQXFCzUi3B
+         CatEiqbqNSBchUF3goV9uOyTZIaBIhnedRAVkmCaWRgE+etl5e6tBRQEncAqHjSiASac
+         r9lhLTLvTItd0HYVq8NVbEP/V03Gq5/16XiiEHAQ3PSDz0Woii6pAOTH5jkl0rs3bs7p
+         2CFUYtGnrCv2Ab4IpX/FuzuJqfrv1UlkTQd+dzR2DlH3VhvQ/1jmzufkdCR4Wqqa0n/+
+         DjNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=ZFVJi+i+sc9nYgluytKQGXSriWb6Sc1xPMl64Y6JsfM=;
+        fh=NHgtVmbuAQPN2XlE9WIy2WbcALrKLO3xaHDIQBgAnJA=;
+        b=hsvDKVgYx0o5yRibnFtncwYmIjuRt/lqrkUjilCXFOraZXt9CaXr+U0AMQt4wgS7Ph
+         CTRmJAF1kR8Wntc9Ov23pbKJw4VmzTlj8P/ouUBRuLuWZQqcjw55V8pWACA+QRvPoa08
+         ALLtS8Ib8GJZDDfoxKv/HhCiNbz24wCVl1uSiP36Jy67u3fs3Gfzqm/ZrOym49EeJZED
+         BgqIkGLe4EgHmOgAax+Cab0JIzdzMDKwdXknJYAG/L1kb93fI5ECeZvlQ/eStGIFCaDo
+         DRSrkwomG49kSegk/Mx7DG/7oj3hZtqTi4LiqhhpFpLWh6fyuLzY5Tx3P49Swm4OcSWZ
+         YbGw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1794917997; x=1795522797; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ZFVJi+i+sc9nYgluytKQGXSriWb6Sc1xPMl64Y6JsfM=;
+        b=oz3feJS1iAIJQC7p7Mwm1JmwyC1qiU6R72jdHYTvotIELPBf9qMxlog1xtibjUkxgU
+         3zG+MEu723WNTYbZ5YYZ8Df56Vtx50NLmAXa5i++s8nTZ2uAI4gVwwNpLP/o2CMOe4eg
+         lF9+9E/74uoDjUdpcR1MCP2KgEwHgeOmiBdyGWB0q2UqyXLTtn4QTeLYg3nPdTtix8Qh
+         DRZkorWs7NAj+2mcAE1YNat0DZsk868MZmh+EYRECG3mmX9gLw65JkdgO2RlO30SdaLL
+         0D5aKyBpnYENo+0zdqGX4kjkEDJ3fKeUAVtbkK/FnkbcHPAiBvFkvzVrHIIKxVHXw2aq
+         sd8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794917997; x=1795522797;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ZFVJi+i+sc9nYgluytKQGXSriWb6Sc1xPMl64Y6JsfM=;
+        b=ypOJWJAHwvF+GRyhtmzcg6VvepRYq2qfEnwAESiZE6zWcSzWbktaJ2tHLfwoCEBDFZ
+         o8GCAPAWqbVDdQkHuyVQhO0/UuiJ7q8rmEg3UVP2VdN/ZNPoh2Gg6oK+KwyHG2izaRCz
+         9/8lCwL2jxhK/dhD9GzFFDMGX27vXIwT2wRebDIjK/c08PZ3wyao+rz41FsEA4T2/D2M
+         03yy4e2i9TlIw7WicgWDikmc9q/u6ijeRmvnkhlS88xiJ4j12YOJ9Ita3lY+76LmqSFq
+         iqwQ42MSAyTy5T1ER9Wq2I21oyVc7v8NueWsHKpTwhLVmjFK+0XW+gVnVK+pcsqJHFLq
+         Zs/Q==
+X-Forwarded-Encrypted: i=1; AL+hErEUMjacnMtYedMffy7DYoC8j78PsRzU+B1twYLwqQExhMyjKHpgaI/Q2k7Iv+fFgus4GtDmvP8+hsn0dhE9jO3O7A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8teSHFt/IwqFkIY9i3n9erNCtKeuBY85BaJvpXtO/qedlNMU36
+	0e9p0i5Jw2uj7kR5/qbA5RzPUKqSmqwbl4n5FcrA6xf2/K/8bHlpYKuU4eRatfzDgTdArYRgank
+	IhmJ46U523eb+YHCXcwtDaSVAs284DiZH3vPNvo9lYA==
+X-Gm-Gg: AYBFou10PTo9i9Pys4Qm48456eEICKNciOIsb+tPwVRIv5E1h3tMKBwOFgIu2YH6lTO
+	+8ydzK5JfdQ94FlmO+EBpWvnjPsD5xVhUXl3SL1zGk/WUL5eyxNKnkUrNmY/fIDAwhUA7RgfyU1
+	2BhdpBvuQoK/ltCKZ1ORJEKceyGXmHk5Z6X00ojMhvEXj8z0awIwAL/tkfEd85ZIK6kVzyD0ZHJ
+	tl7lLYc7X5UNeKkWRYKBXeib/b6B6ZP1hjX9pzvTWUOZERm2hjosjCQ2zXqLJ8HL4T0Zrr4bHNB
+	hrTV3GnzZkjNiLgPV6nzNGKRIWlIwgFjNvQtxxbwO6mbV+Y7SlqN6lT7JsSOpsLsu2o/IknrpVx
+	aDTyB9edndlz0gDLmAogdpfPi9X2CEJ/7rJAh0/qer2L2lM/IWHSIjmp1zjWjIbmr/CbrD0M3E1
+	OXXnpK/Q30WpzS9HPK
+X-Received: by 2002:a05:6402:1ed5:b0:6b7:e861:8f50 with SMTP id
+ 4fb4d7f45d1cf-6b7e8619543mr6865668a12.37.1794917996838; Tue, 17 Nov 2026
+ 04:19:56 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -65,173 +104,53 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261116-b4-iommu-passthrough-devs-v1-1-dc5b493f7551@linaro.org> <20261116174238.GC2299285@ziepe.ca>
+In-Reply-To: <20261116174238.GC2299285@ziepe.ca>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 17 Nov 2026 12:19:45 +0000
+X-Gm-Features: AclHuK_ulY4P51VnkuhR_K0XogE5A7oe02gNjInWa6kLbfDjJ1Wh2QAX_5471Bc
+Message-ID: <CADrjBPpyhKcvdH=jxiGSN46SZoFahaBdH4fAQ5KEzRvH_C3AJA@mail.gmail.com>
+Subject: Re: [PATCH] iommu: Add iommu.passthrough_devs early command line parameter
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Mostafa Saleh <smostafa@google.com>, 
+	Daniel Mentz <danielmentz@google.com>, Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-acpm_tmu_set_trips() supplies two thresholds, but the ACPM command
-writes all eight slots, zero-filling the rest. On GS101, slot 7
-controls autonomous CPU throttling even when its interrupt is masked.
-Programming it to 0 C limits all three CPU clusters to about 200 MHz
-on Pixel 6, while cpufreq continues to report the requested
-frequencies.
+Hi Jason,
 
-Program slot 7 from the zone's critical trip before enabling the
-sensor and preserve it when updating the low/high interrupt window.
-Cache the three temperatures so a writable critical trip can update
-the hardware without changing that window.
-Reject critical temperatures that cannot be represented by the
-firmware's unsigned degree-Celsius byte.
+Thanks for the review feedback.
 
-Fixes: 50a2c5d4062a ("thermal/drivers/samsung: Add Exynos ACPM TMU driver GS101")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- drivers/thermal/samsung/acpm-tmu.c | 62 ++++++++++++++++++++++++++----
- 1 file changed, 55 insertions(+), 7 deletions(-)
+On Mon, 16 Nov 2026 at 17:42, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Mon, Nov 16, 2026 at 05:37:45PM +0000, Peter Griffin wrote:
+>
+> > Instead, I propose handling this in the generic IOMMU core via a
+> > kernel command-line parameter. This makes it available uniformly
+> > across both Device Tree and ACPI systems and across all IOMMU drivers.
+>
+> Something like this could be useful, but also Leon's series will allow
+> userspace to do it from the initrd too. IDK if that is more/less
+> interesting to Android.
 
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index b86dfa3c3ddb..1d8076f91fe7 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -37,6 +37,8 @@
- 				  EXYNOS_TMU_SENSOR(2))
- 
- #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
-+#define GS101_TMU_THRESHOLD_COUNT	8
-+#define GS101_TMU_CRITICAL_THRESHOLD	7
- 
- enum {
- 	P0_INTPEND,
-@@ -68,6 +70,9 @@ struct acpm_tmu_sensor {
- 	struct thermal_zone_device *tzd;
- 	struct acpm_tmu_priv *priv;
- 	struct mutex lock; /* protects sensor state */
-+	int low;
-+	int high;
-+	int critical;
- 	bool enabled;
- };
- 
-@@ -250,7 +255,7 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
- }
- 
- static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
--				      u8 thresholds[2], u8 inten)
-+				      u8 thresholds[GS101_TMU_THRESHOLD_COUNT], u8 inten)
- {
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct acpm_handle *handle = priv->handle;
-@@ -260,7 +265,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	bool was_enabled;
- 	int ret, restore_ret;
- 
--	guard(mutex)(&sensor->lock);
-+	lockdep_assert_held(&sensor->lock);
- 
- 	was_enabled = sensor->enabled;
- 
-@@ -271,7 +276,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	}
- 
- 	ret = ops->set_threshold(handle, mbox_chan_id, acpm_sensor_id,
--				 thresholds, 2);
-+				 thresholds, GS101_TMU_THRESHOLD_COUNT);
- 	if (!ret) {
- 		ret = ops->set_interrupt_enable(handle, mbox_chan_id,
- 						acpm_sensor_id, inten);
-@@ -289,15 +294,21 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	return ret;
- }
- 
--static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+static int acpm_tmu_set_thresholds(struct acpm_tmu_sensor *sensor,
-+				   int low, int high, int critical)
- {
--	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct device *dev = priv->dev;
--	u8 thresholds[2] = {};
-+	u8 thresholds[GS101_TMU_THRESHOLD_COUNT] = {};
- 	u8 inten = 0;
- 	int ret;
- 
-+	if (critical < 0 || critical > 255 * MILLIDEGREE_PER_DEGREE)
-+		return -EINVAL;
-+
-+	/* Slot 7 throttles CPU clocks independently of the interrupt mask. */
-+	thresholds[GS101_TMU_CRITICAL_THRESHOLD] = critical / MILLIDEGREE_PER_DEGREE;
-+
- 	/* If a valid lower bound exists, set the threshold and enable its interrupt */
- 	if (low > -INT_MAX) {
- 		thresholds[0] = clamp_val(low / MILLIDEGREE_PER_DEGREE, 0, 255);
-@@ -315,15 +326,43 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- 		return ret;
- 
- 	ret = acpm_tmu_update_thresholds(sensor, thresholds, inten);
-+	if (!ret) {
-+		sensor->low = low;
-+		sensor->high = high;
-+		sensor->critical = critical;
-+	}
- 
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
- }
- 
-+static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+
-+	guard(mutex)(&sensor->lock);
-+
-+	return acpm_tmu_set_thresholds(sensor, low, high, sensor->critical);
-+}
-+
-+static int acpm_tmu_set_trip_temp(struct thermal_zone_device *tz,
-+				  const struct thermal_trip *trip, int temp)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+
-+	if (trip->type != THERMAL_TRIP_CRITICAL)
-+		return 0;
-+
-+	guard(mutex)(&sensor->lock);
-+
-+	return acpm_tmu_set_thresholds(sensor, sensor->low, sensor->high, temp);
-+}
-+
- static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
- 	.get_temp = acpm_tmu_get_temp,
- 	.set_trips = acpm_tmu_set_trips,
-+	.set_trip_temp = acpm_tmu_set_trip_temp,
- };
- 
- static int acpm_tmu_has_pending_irq(struct acpm_tmu_sensor *sensor,
-@@ -469,6 +508,7 @@ static int acpm_tmu_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < priv->num_sensors; i++) {
- 		struct acpm_tmu_sensor *sensor = &priv->sensors[i];
-+		int critical;
- 
- 		mutex_init(&sensor->lock);
- 		sensor->group = &data->sensor_groups[i];
-@@ -488,8 +528,16 @@ static int acpm_tmu_probe(struct platform_device *pdev)
- 			goto err_rollback;
- 		}
- 
-+		ret = thermal_zone_get_crit_temp(sensor->tzd, &critical);
-+		if (ret) {
-+			ret = dev_err_probe(dev, ret, "Sensor %d has no critical trip\n", i);
-+			goto err_rollback;
-+		}
-+
- 		mutex_lock(&sensor->lock);
--		ret = acpm_tmu_op_tz_control(sensor, true);
-+		ret = acpm_tmu_set_thresholds(sensor, -INT_MAX, INT_MAX, critical);
-+		if (!ret)
-+			ret = acpm_tmu_op_tz_control(sensor, true);
- 		mutex_unlock(&sensor->lock);
- 		if (ret) {
- 			ret = dev_err_probe(dev, ret, "Failed to enable sensor %d\n", i);
--- 
-2.34.1
+Could you point me to the series you are referring to? I want to be
+sure I'm looking at the right patches :)
 
+>
+> >  static unsigned int iommu_def_domain_type __read_mostly;
+> >  static bool iommu_dma_strict __read_mostly = IS_ENABLED(CONFIG_IOMMU_DEFAULT_DMA_STRICT);
+> >  static u32 iommu_cmd_line __read_mostly;
+> > +static char iommu_passthrough_devs[IOMMU_PASSTHROUGH_DEVS_MAX_LEN] __read_mostly;
+>
+> We can allocate memory at this point.. No need for a fixed array.
+
+Will fix.
+
+Thanks,
+
+Peter
