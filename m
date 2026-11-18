@@ -1,128 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794998515;
-	b=BuiwPBzRT2LP5Kl+1hP5Csf3Fw3qXmbtQD+gBoTyLDj+krpnROlH3HzScVb4d0rD3ncW
-	 cUVmWqiTQx4krIDEXeocqIUGe09y7EZBHS9Vlx8ud8hCOQi5uasuOzzcArLhKBjJhZf/P
-	 JEbu2KASF0sr+FSXC/7zropyWAhafA64ecWkJidA1lQJzI5/kvPq6yVlEptHubgZpXr3r
-	 qXClUD8j3tXbqloPiK7RAyUDEaieXxnkcbPiuAL0c7I8SdnmQ0XcL+EP6n3h0dhHuW2UA
-	 rw1GntVAIwxBY6v/iJ/V2ERRBh/Lcr5abaMthEqk2cKiuZJC67IPXFhc0Cp9GokrZ7w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794998515;
-	h=Received:DKIM-Signature:Received:Date:Message-ID:From:To:Cc:Subject:
-	 In-Reply-To:References:User-Agent:MIME-Version:Content-Type:
-	 X-SA-Exim-Connect-IP:X-SA-Exim-Rcpt-To:X-SA-Exim-Mail-From:
-	 X-SA-Exim-Scanned;
-	bh=sY+sAZbrr9MFv4Pz0Kc/4nMk77/MPigr7GAG+Y6LLrw=;
-	b=actYOc5W42wBtGaFxK9wEg/Eo5Fc+wvI74rO2hY7gURxn16YLKi1QlThAZ97DYKCEZJG
-	 ygbxSau5z1JBMk1M5TfjqF5LqkaxzxGKx4qgmdgYQAG9J0rgrg3skRC7QO8luVDy0jSF/
-	 hHggmX3bJEt/oQyRvYfoqCfb4AubiDgKBmbE7v0B373qFBMfSNGxg3QAo8e/hq1B9nwHl
-	 Qnh9ZE1V1NLBWhG/pxoqTWTDEYCthXXMuISWWjDj5fAWiNssmQxpd1PMGhxCmTZVFoJTg
-	 ttyPW8JUm9mZNbrpCpOxfDC9ms0b/fSfHocf+XczWN391ZcEj/lcFG+lbzIgDqRMIqg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TxYrnDyp;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794999082;
+	b=Bnzh0TOmNC/1jKxJBVQDCDEVuQWErbmDyRPz8dCLaQEvhKeVfYwdfL5jxWt6+6Xioc/8
+	 LWpWtQznUb+Q5bURLHG6iO2RCwwDXsek5xqzyqwGsBj3L5AmampjRbwuSGISRGEdqUgmU
+	 oxh5MGh6K34at/y+C/lA62XgSBAlCVkvK/WgYx4NDtCyoMZl/LChgQ2DLtE98EO9uz7Qd
+	 vb2zRV5SaliXZ7ZsEuxO9gH69Pi+dlIKxvrBDhx/3SEsIGtL+ST9dSNLPRaz7FQ4cXDC1
+	 9J6hDr9CTJA0H/0AmfsXVX7pLUg3pGFKX9WSXBeOeG4BJJr6+gzIUm4CbstuPd7hJbA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794999082;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=NxBauOBs5u/lRY3weFSh8Hak/XwuA3xMwWhu9MLIEUI=;
+	b=IKK1FXU2PRvJvHIVZtoLAcRWLWbwwa6bIJWbCNWliOCmkwr07JCtwZqhkpM822WqTA6p
+	 JEwRQfCIqdOSjSRz9e+5MwX6e43nj4eFter1Iy0a3hqXgnue6hFnZPyxWVIgr0lt522bb
+	 H99wEoF/qJY8tZBd76+l9yJd1Gd4wnXGbkmMBRvF/d9JoXT4qIIRpPGVoJRYDOpVaE6uR
+	 hlxt6uLPS7x16wUgzRKN6e4b11S7DC5lW3+vth47Hlk2CH71ukrozrsQBq01AtNd9gm3r
+	 MnNQd156MmRav8H3d5S4RrN8uOXgGQ3RpwUprdncZzNF4km+un2X+0bzu64v3WanxfA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=uzGy7acL;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.45
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A044606A320;
-	Wed, 18 Nov 2026 10:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C58606A320
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 10:51:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 87C58606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TxYrnDyp
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC87E1F000C4;
-	Wed, 18 Nov 2026 10:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794998515;
-	bh=sY+sAZbrr9MFv4Pz0Kc/4nMk77/MPigr7GAG+Y6LLrw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=TxYrnDypzM3e7JBSIBnX6AyKkQsKfwPrA2ry8lUYErmw0JQx/G6r0ttoymBx7BOsI
-	 +4Rzx3e4tzmRz0NgS9WalY9CgjAQ1+jgJ9RXg6eDZbqtcqbarNOBAMQmMDCOJgBtGG
-	 J1AFOpijvxM2Htv+gQshgrr9dWtcl1BcIF89mLPZAn0XRrZdYy0lqitEKV1B8pUXfz
-	 C6le5T+lKrAuCnLO24LwFAcFoOvI2RRnFuhSBkFdNsGlgG3rFuWCLhm9EMgP+pR04I
-	 kG0IKZhfATgM5jbDRYxYQ+rZTkFTH2LRoBdT5SBaNoFf9oVaaQf+JhXlGMnPeu/0b3
-	 jWTdpSnCWZgVw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1xTd6u-0000000HTLD-08Oa;
-	Wed, 18 Nov 2026 10:41:52 +0000
-Date: Wed, 18 Nov 2026 10:41:50 +0000
-Message-ID: <868q2q1kwh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Peng Fan <peng.fan@linux.dev>
-Cc: Thomas Gleixner <tglx@kernel.org>,
-	Radu Rendec <radu@rendec.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Tan Siewert <tan.siewert@9elements.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Caleb James DeLisle <cjd@cjdns.fr>,
-	Miodrag Dinic <miodrag.dinic@mips.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Qin Jian <qinjian@cqplus1.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Anirudha Sarangi <anirudha.sarangi@amd.com>,
-	Tushar Nimkar <tushar.nimkar@amd.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	imx@lists.linux.dev,
-	loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	git@amd.com,
-	linux-arm-msm@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] irqchip: Convert chained handlers to guard_chained_irq()
-In-Reply-To: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
-References: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=uzGy7acL
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6b87a1a2babso2270189a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 02:51:21 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794999080; cv=none;
+        d=google.com; s=arc-20260327;
+        b=e0NrOkrAfG4hkvkBlVfPMBsiB6WHOL5M1Ii0SI+czfIaiX/nEkYD1qiJYlPCdC0f6J
+         nPM8y5cTbxlnluDdo0SAKXJRrsKWdSoz+QWaP5n4mqWfWmMzaGxWUTfNc3v4JrS5O8Vg
+         KcgVW+lz+ymONtVjbLzkXV1y2SVqccpcDgXTBOfncIx4Rvp1SyoTni9Y3lUH0dz3rpuQ
+         oWzcJoCnNYGK6iDLPJqaYvTCDafE6/eCvQBi1lY9+zK0kZa8JOJSdEjwnQDNP0TRDQoP
+         +x+0yB9FK8neD4saWZJwYmKJXC6sax/YaUt5cAvVgqfWD1HySp97fmi70BQHfyYBNryl
+         2D6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=NxBauOBs5u/lRY3weFSh8Hak/XwuA3xMwWhu9MLIEUI=;
+        fh=pUUu3qndKJQE76KWh40b2XJGJNgpYXcd3kEYyNw6zWQ=;
+        b=Rb9LnhF+FyEbRMBSmVMP+hMPCPdT4aGao1JPjq+9KYbi+HH1r52VbVKunaqeCUuVm/
+         Yj8GukE1fyvK8xXn+3z/4cwwlLZRBAU2kmOqhor8T0DD/Aybt0vWW8KNpU/8SFCLPUOU
+         i9d3jIUr0OcnWyyEZknksKRKeO+Exsna3rDEwKMEzQqzMXC+PT4A3NNTFJxty1wAc5+5
+         YEJ77hGASle5En7KEFjG2ZJOapbtl9Sw+1QrDfINzZjp3mi3R1rzUWOk1KnHQIuy9am6
+         OhdsP9ikZ2R7QErczrRw/rJEWuuFHYSqijPqIuj8BLTNAiUOZHJRoPSAOLxdCCD2ENBw
+         v3Fw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1794999080; x=1795603880; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=NxBauOBs5u/lRY3weFSh8Hak/XwuA3xMwWhu9MLIEUI=;
+        b=uzGy7acL7JuuRoYHzLCV05CAVl256ema53eZwWGcIfsJ4ScGO3EcF4VCAxcAkoruNC
+         wU6VGwNFXzYXBni75pukdRy1iA4xaO096szSWrf2aN6iDVGhs59LzMJwxxYbPhru7CJu
+         9fzolDtFEd+ybxINOVJ/7oI48WxDFqdb8pw3SPTKyU0zBdypMFGcuGEo7kojCBQ0+OWV
+         z4lftMdE3Tinu0jTJWiy8vAgPZEr1elRKk4fKNxpPDTdNow67v/0gQR/jezZDRDQSc18
+         PEeioPSLmy14kn0e16zukPCiTWmvXsqU3wfSZHBU36kOatBY6iBDfcEgUVdwwHSQ7Ucw
+         N04Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794999080; x=1795603880;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NxBauOBs5u/lRY3weFSh8Hak/XwuA3xMwWhu9MLIEUI=;
+        b=a5q0N7E2MAEagYaMDabpJVenxYh1MLgGKhcak732L7HtiA76hiCpXEjhHeUEKmENQT
+         73dSHOruli4v4Lh77IIBuXkv+sd2C7fjpD8S2V2muMIGyaDQ4qL4x1CtI8r+FvRYf0CS
+         k3Pfdwc8h0HA8G/k4SqV35i1iuxvrgNN8IB99sB4ivcUHMqT1XiQS6g/ti6FbwCp8fRx
+         J5EuCVFc5UsV5kPicb3IWxc0BTaF+s/v/lNn8C5LrXIzHpaIHWjAnlj6E3Cwvs85SKIU
+         5yxlhhK7EN3490NBvI/vpoeW/IKEpA5I3YBF7EEhE7SQhtF3Z7sj+/w5oZJFJtova0R6
+         HuGw==
+X-Forwarded-Encrypted: i=1; AL+hErGa8UfX6T+j8s4xrow/HdGzPeagPrgZ6bMMCKPSiBoVjwDUFvEfvV9Tk4DUQjz0vuui/Y+w5pfBaToI2ZboCTPzBQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9UANESnmVWKqN88mK3iFuoGRfjVKG+WJsrgcEAqRSyB2ZUsbuK
+	jc02ujFZzyAVMGagyQ4dQoXQY8LESEsRFPsbUdVc9yuFnf0EWeukJqwzuaGAkQZeRokHqoLPi3K
+	/gkjJEOzU+CKFqvgbRFmlP+bAao9PH0RyUkHuGqHdMA==
+X-Gm-Gg: AYBFou0aD59W24e+3UNqGCtSfxH6tkG7TtCfgKhCllj4+5W5lCvCkvevyCCWfVx2g8/
+	cQWGjmDO1iuFzdQ4XKFlSm0uQq+mPV+oTK6CMRyHkLiP38KM/nbxdyIiHJN36w5wwkFcsgvTt03
+	bKKbDsxQey42sMq6GRfSwobqJlLr9KKuGm77w5UcJt/+f9J9TD5bWgGkZrId4apssCi17L2TzA2
+	1CGbDNdMVb/s5ZgbAehSmf4JVjammo8aILNtaKHDkKYg/BAmLNNypBVAD7W1yyQ/oOdDuhtDkSg
+	utp0Vm9I/2248VkTr0K+BLRBczC1tWy2DLqq954ii5EyacyaqoqOzL9fFtL4T1ApmjJwGPVni1b
+	araZlbzySaG/gFUTmcJS0E6w6oclv6nCxpBKYYBFtPDWL4fNcc1/JbPK2hwZWIyOnKRP8SY8=
+X-Received: by 2002:a05:6402:a513:20b0:6b7:a647:d6ec with SMTP id
+ 4fb4d7f45d1cf-6b887f0d11amr1156171a12.5.1794999079857; Wed, 18 Nov 2026
+ 02:51:19 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -131,32 +103,52 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: peng.fan@linux.dev, tglx@kernel.org, radu@rendec.net, krzk@kernel.org, peter.griffin@linaro.org, alim.akhtar@samsung.com, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, ryan_chen@aspeedtech.com, benh@kernel.crashing.org, joel@jms.id.au, andrew@codeconstruct.com.au, billy_tsai@aspeedtech.com, tan.siewert@9elements.com, eajames@linux.ibm.com, florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, cjd@cjdns.fr, miodrag.dinic@mips.com, Frank.Li@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, herve.codina@bootlin.com, chenhuacai@kernel.org, kernel@xen0n.name, jiaxun.yang@flygoat.com, vz@mleia.com, piotr.wojtaszczyk@timesys.com, anup@brainfault.org, pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, samuel.holland@sifive.com, qinjian@cqplus1.com, changhuang.liang@starfivetech.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.co
- m, wens@kernel.org, jernej.skrabec@gmail.com, nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, linusw@kernel.org, michal.simek@amd.com, anirudha.sarangi@amd.com, tushar.nimkar@amd.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org, imx@lists.linux.dev, loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, git@amd.com, linux-arm-msm@vger.kernel.org, peng.fan@nxp.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20261118-upstream-greatlte-dts-v2-0-bc2f23ce81c6@gmail.com> <20261118-upstream-greatlte-dts-v2-2-bc2f23ce81c6@gmail.com>
+In-Reply-To: <20261118-upstream-greatlte-dts-v2-2-bc2f23ce81c6@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 18 Nov 2026 10:51:07 +0000
+X-Gm-Features: AclHuK-Y9_U7OVUZSj7mMfHViEYJaBBmRFeKE5RJI3gsS9G5CebJQE_OwkvnRns
+Message-ID: <CADrjBPph5r0rjZPLz7db9-QtmN5+7S2Ft8Zgn1oi+C0Okvas_w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy Note8
+To: =?UTF-8?B?VHLhuqduIFRydW5nIE5ow6Ju?= <nhan.094.vn@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 14 Nov 2026 15:06:15 +0000,
-Peng Fan <peng.fan@linux.dev> wrote:
-> 
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Use the scope-based guard_chained_irq() helper in all chained handlers
-> under drivers/irqchip/ so that chained_irq_exit() is always invoked when
-> the handler returns. Handlers that duplicated the exit call on an error
-> path or jumped to a common exit label simply return now and rely on the
-> guard.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Hi Tr=E1=BA=A7n,
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+On Wed, 18 Nov 2026 at 08:43, Tr=E1=BA=A7n Trung Nh=C3=A2n <nhan.094.vn@gma=
+il.com> wrote:
+>
+> Samsung Galaxy Note8 (SM-N950N), codenamed greatlte, is a mobile phone
+> from 2017. It features 6GB RAM, 64GB, 128GB or 256GB UFS 2.1, Exynos
+> 8895 SoC and a 1440x2960 Super AMOLED display.
+>
+> This initial device tree enables SimpleFB, PSTORE and GPIO keys.
+>
+> Signed-off-by: Tr=E1=BA=A7n Trung Nh=C3=A2n <nhan.094.vn@gmail.com>
+> ---
 
-	M.
+[..]
 
--- 
-Without deviation from the norm, progress is not possible.
+> +
+> +       memory@80000000 {
+> +               device_type =3D "memory";
+> +               reg =3D <0x0 0x80000000 0x3c800000>,
+> +                     <0x0 0xc0000000 0x40000000>,
+> +                     <0x8 0x80000000 0x80000000>,
+> +                     <0x9 0x00000000 0x80000000>;
+> +       };
+
+Does the Samsung bootloader not pass a correctly populated memory node
+for the device? Or is this required because UniLoader doesn't pass
+along the memory node it received from the previous stage bootloader?
+
+Peter.
