@@ -1,97 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795020681;
-	b=IFRmScdadAgYEfr428N8CgaYMjqNItjjij+bZ04+Az4J2WCPg60lAEqPX1iJYYRjkoHX
-	 tl96Dhp5CuECaJVhrxIPfh1395j/TvOuqSAyPp3jnelCVUOklo39FuxP2ZKkKp9LYwB5l
-	 YH++c1vLiWME/j3CliA7IE7sVQXg2YXWs3aJaUr7Xmi3U3ndpPJsCMSoxtR7mZvi6vl3R
-	 QD4NalvCP4u7Ha5RX6JMqULDyAQuCWmPELvnP6aWLFaz4C4FgQqjE1Lnmd+HVxhWBduFX
-	 yYpUMXnfldFLGga30Oz5gWNfjVsUaUbwjFJBPfHFLbtsVrzGR6EqStt0HSFMEnytrnQ==
+	t=1795029169;
+	b=gw+2H6eGyP+XCh4HOORkjmMRnQMeq14kmdwLJdSrcfF5awQapNzPc8jzmhvRHd5/obJK
+	 9P3VPNSsnCrbm+Ha25fYNg52O4Mx9/IaqREAxUko2JoNaKyHAkAtCaPT1sJ8b4dHG9WdZ
+	 /RI+JX2bF6pBuH8TqRQuBUhMRNTwnLVso0HVqIznunEl8bFnGYSe3pzIKPikXE+T9lXvB
+	 ir9urp8DQOCuA6Uxmwu5GevNtpTvsr/LFnusC/gu1kVsEY86ioveJp2gjV9Ud3XuYttZ1
+	 GdF5Sj7FR7+D7CS/BqSUokFjd8jyaRFrR0ly1LbHwbuINrkUGrDZkvXWnpNyGHJKamw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795020681;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:To:Cc:Subject:
-	 In-Reply-To:Organization:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=/cUldU1e2XAI/ZxV0Ch4uDE5FUyxfirjC3SAjGA4JrA=;
-	b=CyUbE72caLUy1bK+i/tGIMqgbB4C9eQZC8V54OesqUNiJaecwMt1Llqbg03BeRgApxUJ
-	 j5KX6AAcw7EfGzVrQiRh43jAxqDnvIxAPFKTf4MgXhJ+cEWO41Nt6HbWkH80tStujoAd3
-	 TrSOIDEtexhCU7KMsQRAwHG7Uh+7/HfAGcbH+1+nayv34pWKfCPwTtpGnhHu46YYq0omm
-	 3CvDtkPvBsklccnHYYtxrDdAkAHm1EjsgLbc2SnbZImyJfPjWHAgTbZpTbLN3mLVgUK/M
-	 Ga2IYVm7nwKutvhryEd6PElEv40UePKPI+yPxGhNq0VQxj2h3VXxrQb23G35EDj2RfQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795029169;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
+	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
+	bh=pQnJmWW6nPDVDbiKnkWy2swOvfjrmQ+u4ZBhr5A3f7M=;
+	b=vonBFL5IVnMO0kClgnJ9Loio81ty9ytj4BvggodjKvyy/LHu/k/7lxCHW9845rBCgrVA
+	 aN6J/LjQ7um8msbaZA+2iIKefXgXIVFedVFdZ/P9zMvoCaiup080bvqcEo66lj2PtEj5R
+	 HDXfPX7QSSznxOAb5cDJs2r+iGskvvYDPBwJ01UojfYkjIZgbjPFe0iXjxKT8X/ZZjHLV
+	 ovG/nzbv2OcnhuLJvUpV4yYzC3zOucuMN2VV+XYKbLRGK9/aYWJfAOVHGg1XiPfiGdy5W
+	 jn4wpVXPgn1rCLrqyMN0x2vrub71vwQR1OcGu9nrgM6yrnOiJjX/ffSBnTUxKFGQaIA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mP4DwPyz;
-	arc=none smtp.remote-ip=192.198.163.7
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=neTfT88U;
+	arc=none smtp.remote-ip=210.118.77.11
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CC8606A31C;
-	Wed, 18 Nov 2026 16:51:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67CC8606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7450606A334
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 19:12:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B7450606A334
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=mP4DwPyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795020681; x=1826556681;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=ajDnh0zw+64dcFPrEUfvS5sWfWZYQWJZbcQwO+AcVNs=;
-  b=mP4DwPyzA12OflFAs7cqsLyFUlGk851Vd/gqVwVcN25x8BrQL+i7AmOL
-   8mYJpmast9tqACSNx8lBA4jZ4/q1QzUvavsA4vMpmrO4kXPI5tmgD7UvX
-   RIKZkYtrXgFcDgMSDp8+RxF/Qsk0Pdt1zP/11+VRi9zgvwFg2kn0/zAaJ
-   juFRnpN5gAXJQ16xhWq2lvyYTb3qIRMVB9Yj0aB5dYr71LMGSI/TCUXfu
-   Q/vbbt3vkm3f9HlNHt84ek7qFjbaO9159QwvU9BrlJgluRx7ACzWJzJJs
-   wtZ+6YyX/GEjAKJa7Ohka54I7IWU1FNw+PjgE6WXf82fCJhvvI5wWCOY1
-   w==;
-X-CSE-ConnectionGUID: yYAGCVSMTg6M25CjyfDLmA==
-X-CSE-MsgGUID: LYFLKgNuRWmddYtKFddu0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11970"; a="3699707"
-X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="3699707"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 08:50:31 -0800
-X-CSE-ConnectionGUID: k/DCmaX/Qp2q9S20vakyDw==
-X-CSE-MsgGUID: YVFQiz1BSVmcIhLrCJbvrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,219,1787036400"; 
-   d="scan'208";a="9985477"
-Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.187])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2026 08:50:21 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sasha
- Finkelstein <k@chaosmail.tech>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, dri-devel@lists.freedesktop.org,
- asahi@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-riscv@lists.infradead.org, etnaviv@lists.freedesktop.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, imagination@lists.freedesktop.org,
- linux-mips@vger.kernel.org, lima@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
-In-Reply-To: <av2rKJQ0AKU9CFZI@monoceros>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
-References: <cover.1795002467.git.ukleinek@kernel.org>
- <a2d5ce256b8ec150de4a6494c177b19693a33222.1795002467.git.ukleinek@kernel.org>
- <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
- <av2rKJQ0AKU9CFZI@monoceros>
-Date: Wed, 18 Nov 2026 18:50:19 +0200
-Message-ID: <8ebe3b7219ffd963a498cccbcfe6cefc92717f0c@intel.com>
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=neTfT88U
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261118191240euoutp01f000a8bb61b0f2323e612699426127f4~pOYLBoKeA1782117821euoutp01r
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 19:12:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261118191240euoutp01f000a8bb61b0f2323e612699426127f4~pOYLBoKeA1782117821euoutp01r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795029160;
+	bh=pQnJmWW6nPDVDbiKnkWy2swOvfjrmQ+u4ZBhr5A3f7M=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=neTfT88UtZtb8+MzvLHLB7HJ5OGTAmn+qJocvu/auOYis5WAlCO36FGGoLnhACRtd
+	 9eCrS03nfKWw/hjY+ZGPO556QcKgRsknSNojWaY0tti8QiivCYvqdoAIm46aqse5aw
+	 PEX7b2cP1tcEcGuAycAmZ+mige/oUlvTgKKNkcAA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261118191239eucas1p1054471efd4b07967555d34a2aed994c0~pOYKdupe21910519105eucas1p1J;
+	Wed, 18 Nov 2026 19:12:39 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20261118191239eusmtip2489642b72e5eb3c0cdd84cb7d9d30c28~pOYKCR2S62280122801eusmtip2w;
+	Wed, 18 Nov 2026 19:12:39 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Vinod Koul
+	<vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Manivannan
+	Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Peter
+	Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] phy: samsung: exynos5250-sata: fix unreliable PLL lock
+ timeout
+Date: Wed, 18 Nov 2026 20:12:31 +0100
+Message-ID: <20261118191233.376139-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -101,92 +72,104 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
+X-EPHeader: CA
+X-CMS-RootMailID: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
+References: <CGME20261118191239eucas1p1054471efd4b07967555d34a2aed994c0@eucas1p1.samsung.com>
 
-On Wed, 18 Nov 2026, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> w=
-rote:
-> Hello Jani,
->
-> On Wed, Nov 18, 2026 at 03:27:40PM +0200, Jani Nikula wrote:
->> > [...]
->> >  drivers/gpu/ipu-v3/ipu-common.c               |   8 +-
->> >  drivers/gpu/ipu-v3/ipu-pre.c                  |   4 +-
->> >  drivers/gpu/ipu-v3/ipu-prg.c                  |   4 +-
->> >  254 files changed, 1155 insertions(+), 940 deletions(-)
->>=20
->> How do you expect a patch of this size be merged?
->
-> Using b4 am :-) Honestly, in the cover letter I wrote about an immutable
-> branch and offered to rebase to 7.4-rc1. When trying to apply this
-> series on top ov 7.4-rc1 there are only 6 conflicts (1x modify/delete
-> and 5x content); these are all not so hard to resolve (and even dropping
-> the respective hunks (i.e. resolving using `git checkout HEAD`) is fine
-> for me.)
->
->> > diff --git a/drivers/gpu/drm/i915/i915_pci.c b/drivers/gpu/drm/i915/i9=
-15_pci.c
->> > index 84a7dc6ab5db..faceb3de4fa3 100644
->> > --- a/drivers/gpu/drm/i915/i915_pci.c
->> > +++ b/drivers/gpu/drm/i915/i915_pci.c
->> > @@ -870,7 +870,7 @@ static const struct pci_device_id pciidlist[] =3D {
->> >  	INTEL_ATS_M_IDS(INTEL_VGA_DEVICE, &ats_m_info),
->> >  	INTEL_ARL_IDS(INTEL_VGA_DEVICE, &mtl_info),
->> >  	INTEL_MTL_IDS(INTEL_VGA_DEVICE, &mtl_info),
->> > -	{}
->> > +	{ }
->>=20
->> Personally, I would *always* use {} instead of { }, and would rather not
->> change.
->>=20
->> Across the tree, {} is slightly more common than { }. IMO changing them
->> is pointless churn.
->
-> It depends on how you count. My statistic looks as follows (on top of
-> next-20261117):
->
-> 	$ git grep -l device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/de=
-vice_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | sort | u=
-niq -c
-> 	      2 	}
-> 	      2 {
-> 	      6 {  }
-> 	   2598 { }
-> 	   1262 {}
->
-> So over all *_device_id { } is more common by a factor of > 2. This
-> series fixes one {  } and reduces the number of {} by 37. For only
-> pci_device_id it's:
->
-> 	$ git grep -l pci_device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if =
-m/pci_device_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | =
-sort | uniq -c
-> 	    159 { }
-> 	     32 {}
->
-> Without the context of an array initializer there are many empty
-> code blocks (function bodys or `do {} while (0)`), empty dt nodes, and
-> {} in Rust code, which IMHO have to be considered off-topic for this
-> statistic.
+On Arndale boards the SATA PHY occasionally fails to initialize, which
+makes the AHCI controller probe fail and the attached disk disappear:
 
-I realize my phrasing was careless.
+  phy phy-12170000.sata-phy.11: PHY PLL locking failed
+  phy phy-12170000.sata-phy.11: phy init failed --> -14
+  ahci-dwc 122f0000.sata: probe with driver ahci-dwc failed with error -14
 
-My point was not so much about one being more common than the other, but
-rather that there are *thousands* of instances of both, specifically as
-C compound literals with empty initializer list. I think it's pointless
-to convert one to other, regardless of whether you're adding or removing
-a space.
+The PLL lock is polled by wait_for_reg_status() with a timeout of
+usecs_to_jiffies(1000). On ARM with the default HZ=100 that rounds up to
+a single jiffy, so the effective timeout is anything between almost zero
+and 10ms, depending on where in the tick period the wait starts. The
+loop also does not re-check the status after the deadline has passed,
+so an interrupt or preemption during polling can turn an already locked
+PLL into a reported failure. Finally, -EFAULT is a misleading error code
+for a timeout.
 
-I mentioned my preference, because if I were to go on a style fixing
-spree, I'd go the other direction. But I think that too would be
-pointless.
+Replace the open-coded loop with readl_poll_timeout(), which measures
+time with ktime, performs a final read after the timeout, and returns
+-ETIMEDOUT. Use a 10ms timeout, matching the upper bound of the
+previous behaviour with HZ=100.
 
-I suggest to just accept either.
+Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This patch has been developed with LLM assistance and have been tested
+on the real Exynos5250-based Arndale board.
 
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/phy/samsung/phy-exynos5250-sata.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-BR,
-Jani.
+diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
+index a88534eba2be..b55cbb3c47b3 100644
+--- a/drivers/phy/samsung/phy-exynos5250-sata.c
++++ b/drivers/phy/samsung/phy-exynos5250-sata.c
+@@ -10,6 +10,7 @@
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/i2c.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -43,7 +44,8 @@
+ #define EXYNOS5_SATA_PHSATA_STATM	0xf0
+ #define PHSTATM_PLL_LOCKED		BIT(0)
+ 
+-#define PHY_PLL_TIMEOUT (usecs_to_jiffies(1000))
++#define PHY_PLL_POLL_US		10
++#define PHY_PLL_TIMEOUT_US	10000
+ 
+ struct exynos_sata_phy {
+ 	struct phy *phy;
+@@ -53,19 +55,6 @@ struct exynos_sata_phy {
+ 	struct i2c_client *client;
+ };
+ 
+-static int wait_for_reg_status(void __iomem *base, u32 reg, u32 checkbit,
+-				u32 status)
+-{
+-	unsigned long timeout = jiffies + PHY_PLL_TIMEOUT;
+-
+-	while (time_before(jiffies, timeout)) {
+-		if ((readl(base + reg) & checkbit) == status)
+-			return 0;
+-	}
+-
+-	return -EFAULT;
+-}
+-
+ static int exynos_sata_phy_power_on(struct phy *phy)
+ {
+ 	struct exynos_sata_phy *sata_phy = phy_get_drvdata(phy);
+@@ -142,9 +131,9 @@ static int exynos_sata_phy_init(struct phy *phy)
+ 	val |= RESET_CMN_RST_N;
+ 	writel(val, sata_phy->regs + EXYNOS5_SATA_RESET);
+ 
+-	ret = wait_for_reg_status(sata_phy->regs,
+-				EXYNOS5_SATA_PHSATA_STATM,
+-				PHSTATM_PLL_LOCKED, 1);
++	ret = readl_poll_timeout(sata_phy->regs + EXYNOS5_SATA_PHSATA_STATM,
++				 val, val & PHSTATM_PLL_LOCKED,
++				 PHY_PLL_POLL_US, PHY_PLL_TIMEOUT_US);
+ 	if (ret < 0)
+ 		dev_err(&sata_phy->phy->dev,
+ 			"PHY PLL locking failed\n");
+-- 
+2.43.0
 
-
---=20
-Jani Nikula, Intel
