@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794990103;
-	b=xuA801NTUYIkGoV90kXh17Jsa4vgV+DeYVPh/dRz13Tvb5GNkB7+3A6C/vSyOBpdaW5W
-	 sHxtqsNSPZQLOAI8Clm6K3PgyhbG31bbIc/9leG/6UeFp8y+WB+DLgMg6NejQ0OtPe7xW
-	 nHQHvod0sYqM6xaNkwa0Hmn3N/dljI1iNfU221BQpVS5xQrGh722QiYFXIfOq8QGe4RjW
-	 R1gjxT5ujz1/5XR+dflcPxJVj9iIedQKQGZ6tebIpQqTeZzHOR9CgBnllYapy85bLIyKX
-	 dhFI7YGPOo6rRigX2GOPuMSMyVfw0C470St7Wyh6yecD6vbrFQy7gJRlU5ei8x+GdvA==
+	t=1794990236;
+	b=XV7Q+WGoZgF8gq1QuEBAXIpf+dcmJpTlgDjOYXsH5dOgy4S8b7vxjfkUWg9Y2/ruUEaG
+	 NGWH8rtUX3YclnT7VipvzhakYTrN1RubtbmIdpgLURXuATWY5CyROT7qDBHZ0IeX50SJN
+	 5Nb85xtNwmvQD/UwJBBuOvn/9Zpnr1RDf9f53fRP7s9DSpLaJCs/UWLr4Qa1ht541SfJB
+	 vYbK7pW0/ax54oDtb/w3kmlcABmZI47YqqKH64k8LSPC2QtNaR2WoB/n/ARCkz1fjnHYi
+	 4SvWvLHxHhWRxVTUVVniaWerfhEWIklcP8g/nzAcFmpS72ai647KXq8BjJMfUkhQT0w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794990103;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794990236;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=fDgvd2bO7Xp9qpMeR7EvFEr4dO1CNV2TCx7+94vVafk=;
-	b=PObEag7ZWWTe8x5/+NMdgXXyrUofZfiwySOU604HdDh4vhhyVhcj0VEv8y1Glx7ojbTf
-	 IzcyQcPZlQT3mjgScDfpLE+aBmdpJ6LCYEL+jxGxIiEwlnwtnCwHfPma5/cSkEJd5+D6w
-	 YQKLdjdMcf8YAvPB0OStxZ4tooHburH3fQvKWfie9o9PPPdF5/2jgIQRFXbyPnFnT2VWQ
-	 zMUDsvdW+2QjaLd6s2sT41vbh+Hx5h8KcNFeH86xRCu3nZbvj+thG1vSToU9p+so23hwl
-	 r1L7i4bWG3+T9dJsNHaCi5y6RD9Pu7/A/7rE0qfBRSGXiSuGdgFk9+nEDdnFNxqI7Ow==
+	bh=W34DDB2cLnsAExSKGg1C86iBQOL5I+MWli8p7NMuBbs=;
+	b=F+9dk54KD4mf7CsZdjw+aeUVoOSH09CEJ84hlxcl82EENChS1cPJ9vEn03790txuE/Az
+	 87fxqmiJCjhzYn+5P8LDnYO3mnto/tU4gBaQSnMijHNQXGqQb29GtsxvNdx8KhRD3vLdI
+	 PNePsCF2gN6TQ1AqrUwhBCFLJeYbBvDSBXO/nGYySONANO9XyOyyRZvwY6X1uU4J0QJdq
+	 cWfrIswWPMyXIlwq5afeTi7L90inLG3PQxBtv0OUPy3TlXn7kuJa2O2S33lf34djUHZrA
+	 Vwe6SxOb54+bLscL8RJdMtqyOPwXp0Z0ybJMxOAKL0rw+5F+m13WnVsOHXl8JSrN5EQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P+cY+lTo;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7l0I5Ut;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA3B606A31C;
-	Wed, 18 Nov 2026 08:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5893606A31C;
+	Wed, 18 Nov 2026 08:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=P+cY+lTo
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F7B1F000C4;
-	Wed, 18 Nov 2026 08:21:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T7l0I5Ut
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A84D1F000C4;
+	Wed, 18 Nov 2026 08:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794990103;
-	bh=fDgvd2bO7Xp9qpMeR7EvFEr4dO1CNV2TCx7+94vVafk=;
+	s=k20260515; t=1794990236;
+	bh=W34DDB2cLnsAExSKGg1C86iBQOL5I+MWli8p7NMuBbs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=P+cY+lToslaZalIsnJyT7cQJ8dOg6T2eNMw0sOcPi6FeVR7PRVeEvNFxCw0cgjsCg
-	 9x3ImY10mVKVdPd8QS/H7WO4AjwhFa7XlTCvUNBg4H/ZSmFIlXd8k9WQby9UewHwwx
-	 ojbFmmc7GBMw/dIEINlxzuzkbIN5j124FDP0DCXmH3EnG6DWNWiqLCcWS498AGCVPv
-	 8claF5gHCGrv8mt4lfBYmWmJo0nBDKRya1YH6MuzwIz6ZTqwiaBNPQSsyGJZ//J/JM
-	 lkzR25nqdlS4LcSG2r4+hnr+tao56xp1I4HbLvr16FBbufyc/ulsJUikhd/wx8lvQv
-	 AldS6b0GSC3vQ==
-Message-ID: <cd8934e9-8feb-43fb-92b6-9033fef92af7@kernel.org>
-Date: Wed, 18 Nov 2026 09:21:37 +0100
+	b=T7l0I5UtBLZnK2lk3AF7CxS691KFZVgFUzzAPZy8+aDGgoY1Eqg2ON+PtbMrOW6WX
+	 glYV6pPkUQc4SNPZjJrnZRJc4x3O1vXciX7pKs61CFGS0feijmNChr6C4L2omWHDN3
+	 pE7+Iph73a6OVRBC40p6jtkSkz/Rx/0Vt0vyEZ9snHls1EXA8I+Z1fYKSUuMjU5Wue
+	 1CopnkXs6qfUk3ICvFi4umn071UZ+0yfmOCn1cH/IJmniGAsQvPE+iLN/wMpKTtXdb
+	 cstPbKCQZNVDc1KVmVtFl/fBISEj4ATrzZs9LhfkGcFmur5FeXQf50Ed82E9tWLUgC
+	 A0aN6XIixOJyg==
+Message-ID: <27677095-4f84-453b-934e-4451d8c549c6@kernel.org>
+Date: Wed, 18 Nov 2026 09:23:48 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -52,17 +52,19 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: samsung: Document greatlte board
- binding
-To: nhansp <nhan.094.vn@gmail.com>, Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-References: <20261116-upstream-greatlte-dts-v1-0-768d49fb7d85@gmail.com>
- <20261116-upstream-greatlte-dts-v1-1-768d49fb7d85@gmail.com>
+Subject: Re: [PATCH v3 00/14 RESEND] Add clock support for Exynos8855 SoC
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Raghav Sharma <raghav.s@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, sboyd@kernel.org,
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, robh@kernel.org,
+ conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ is.gandhi@samsung.com, ts.amit@samsung.com, pokala.reddy@samsung.com
+References: <CGME20261113104829epcas5p13695795bc337b89816b05eec610a0dba@epcas5p1.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com>
+ <a7b901f4-59d1-4671-bfed-0d11f9e505e2@kernel.org>
+ <CADrjBPpecGbRo2PhH_zqGfNf3L=bNf81q3SMXnSvD2n0Lx-cbA@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,18 +110,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261116-upstream-greatlte-dts-v1-1-768d49fb7d85@gmail.com>
+In-Reply-To: <CADrjBPpecGbRo2PhH_zqGfNf3L=bNf81q3SMXnSvD2n0Lx-cbA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/11/2026 15:50, nhansp wrote:
-> Add a compatible for the Samsung Galaxy Note8 (SM-N950N), codenamed
-> greatlte, which is based on the Exynos 8895 SoC.
+On 16/11/2026 19:06, Peter Griffin wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: nhansp <nhan.094.vn@gmail.com>
+> On Mon, 16 Nov 2026 at 10:02, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 13/11/2026 12:05, Raghav Sharma wrote:
+>>> This patch series adds clock support for below blocks
+>>> found in Exynos8855 SoC
+>>> TOP & PERIC
+>>> PERIS
+>>> HSI
+>>> USB
+>>> There are many other blocks, for which the support will be
+>>> added in a forthcoming patch series.
+>>> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+>>> ---
+>>
+>>
+>> Thanks, entire set applied (even if b4 thank-you letters show partial).
+>> for-next will be updated later today after builds.
+>>
+> 
+> Just FYI, there were a couple of outstanding review points on this series.
+> https://lore.kernel.org/lkml/CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com/
+> https://lore.kernel.org/lkml/CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com/
+> https://lore.kernel.org/lkml/CADrjBPoAVMdxgU4P+shh+9O5rGJp+m3sRQMDd2c-7zbJ8qhiBQ@mail.gmail.com/
+> 
+> I guess the main thing that would be intrusive to fix in a follow up
+> patch was introducing a slightly different naming scheme (compared to
+> most existing Exynos SoCs). The clock names being
+> "gout_<IP-clock_name>-<block-name>" as opposed to
+> "gout_<block-name>_<IP-clock-name>" that we have for many SoCs. That
+> also applies to the dt-bindings header "CLK_GOUT_WDT0_PERIS" not
+> "CLK_GOUT_PERIS_WDT0" etc.
 
-Please read submitting patches and understand what you are signing off.
-We don't take anonymous contributions.
+Oh, I completely missed these. I'll drop the series.
 
 Best regards,
 Krzysztof
