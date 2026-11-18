@@ -1,88 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795008530;
-	b=daHt1RlvNrFXxcR7W46Tj0S00auIZgk3XktOUbIkCqEMqxZ9rw1sPNSot786uERoIgz2
-	 YAlAKnTGwCLIlYlUSjp7rRqnEZsDAzFGE9OI8KdMskf/IHYiQ502sppSVxPj99Hs4PFY0
-	 SoV9ENToJbZhjPtw/dOKYc85XsigRYdn+r4I//oBda6qkCzUOsxfsGwkj2cxH8l173vyC
-	 djIlHQNr+8ou6bMUdJD42uJpcGngjbGA3tpKQ5x998tf4YZ+Swlm4YBqQg22zGar2oatg
-	 0oiAUWiDMA4KX6WIHF91iNjwjdRE54KWPkD/KaliExR9yD2ZRAC7Vnaawtge6vyBk2g==
+	t=1795009518;
+	b=LIb2MqPLpvdyv95NCxVk1P5N/vtT2lY7ABnLN/BKLK/YWQA5gmr65IGjAP9CfY+uu+Xe
+	 KG+oLoz0kO4srmBbfANl9jzkH2LLi9jxsRqiX7I8doFM5WbEuYghqhCwviGTK/LDVKeqt
+	 bmsH6QaXYeop3FPTcArgWDFf+q+/IxLDNCFtrnaxT+7wzV2NV0+Hws3fqALo93G80zBzx
+	 WIwejuj2S8454YqBUc0OcSwkRyidAevO7Dw6Bgjd84xSkaLELIr2g2mQS3EQWSGn87c95
+	 8svre7Tkr530B3Yid/yN8T7dWo7aWbUkv1k6COo6tR4wBkYPxcEUBuUBQb16gWXTovQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795008530;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=/bUX1o10AeaLg2EvHKlQx3MEISY3ApyjT1Rh2bWzuqk=;
-	b=K5z9FuRcThE3QQb0bIVWpQQo3Lh7nvxufyR7F2fYOyAeNOc+W9gTYD0ODivx1T5qhtyl
-	 RiWyZJrTdVBL4rsgyH5SPLcAlRE/dsXAx49a18c7VpW8oJzR84wMB/ybQmam0vhAwe54E
-	 XbjXpjnYCDsCp04HJNCqDXW31vwkadwDdqL4lFlEfSddJshszrlOHo3/UFo6Ju26+D7wS
-	 N6GWgWAb1T072e9qVfTcRJtnbgPJrBJQZbFpvGj+W9VzJs1z0TWhckagJB98bktgcDMvX
-	 jD87CP9R4FbdA5jwJyaTGcJK5gseOp1jItkSeorZMQhN7pKGBTRiLHdNBcdWA25d9Bw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795009518;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=zbYI8uP1li72NzJh/wjWDJ72bmhe8G4M88p9Kdrkgp4=;
+	b=QJlG9t9ye4YYnlxGwxlZWeBF2cR95S3RoNASIS4HHMboXoEO8MjijctBphCTMzAry7Dj
+	 Wr1AA3nKEiUQCxJD9hpWKa4S7/3+w8SIniOijFo2Xuebxc6AUhhHtYmlk2WJ2PBjo9Hbp
+	 2t8Mbk9ucLgu7Y0lFl4FVKkL6Mtz8ZsoOS1m7toFdOtCVJRitNcZWeo3njsxG0BkgOHQO
+	 ClxjPB37NChBurKGO1WFpNFQz8ZrYF9U/TxK6Qb8tNYLkzRu+VMLmvcdoTquAD5P1yGO/
+	 aQsjvEDOosmK0UpY9uHoN5+4AeLEOM3zBgARgkdwNTUOo6HaDeWB/fIJYi3dWWsia9w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=qScRVsHn;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RxwDW1Jg;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50014606A33A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 13:28:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50014606A33A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD263606A325
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 13:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=qScRVsHn
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4ba013938d7so9084045e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 05:28:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795008527; x=1795613327; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/bUX1o10AeaLg2EvHKlQx3MEISY3ApyjT1Rh2bWzuqk=;
-        b=qScRVsHn8cSlX/3DL2rr9yiE2sN5/ZgLpiSyjB6ojZVGViN3m68W4dUYp9qrPLtEAp
-         Tmpmkfs205keydruSvyAJWphhGwh45T+tPQzJRsdFgfvjeED5u8e5SmEpmsqOvjI2OTF
-         6YbXMAT/9WhAQHpt9fzS3NjGfqiwSQMceXebHzPvliCmNvc9Dc+lG1foOSRz0jSL0Vu0
-         l5DbgrFdGkuokXt26LCuajKNpZzm8ssPt4d9M7q0XqLaYLDWHcsa9j1jD1DP2EyPCRlT
-         6AgUUia1VRqFQ8NUCPk6rkUUuHsVYuJc3BHL9NXpkqJLfCScTQ/piwJt4MGPgvI5quw7
-         /AVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795008527; x=1795613327;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=/bUX1o10AeaLg2EvHKlQx3MEISY3ApyjT1Rh2bWzuqk=;
-        b=BzgYuKbG2vK1rGGWh0HJI2HOWJnQpXj+9ZP5nj92uyrC3AZrm23CnfiHknISGSqu2+
-         tOXFJpqIwQJRR5IkPPv0zB96wWVp3XWpIx9D6Xd0etdZJjoaHGuWpsx+GR6Xl3vak7rR
-         ROjSzB10Zr6FizGxxqjuNo8yn+ZKP7r+7WwDqdgYu5yS//LKoyEvs1proFimYYJgciGg
-         ADKvuhWDdTGwozoxUcx5d+u4qgtNftb5frx0qt866aBe12oM9jiJRJ94oU8/lWopGc5m
-         pK/dNDgtE3TGYjUXx7LpMJmiB3lYIIOadLHWQt+LH7pVGVTihGF7+7Rd4Hwd1BQIepuM
-         e/Ew==
-X-Forwarded-Encrypted: i=1; AL+hErFH+PS1BcPMxUQwVsaq/MCbEddXi5gYa40jG8MZ/Ne+KzyCgOTJxloiITHmrQpIjkIqSvKu+fabbB34MEnhvb2m+g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9IQR/xr6dMMv5UUKhnun873rK9HdmURTT2DHLuk821nI0lEMfD
-	+CjBkGX+KZK3YbFHW74P2+gY0I05Jx6qIDBWXnMYs8uDtPUWtFUQYvl8V3I0v8xuKWI=
-X-Gm-Gg: AYBFou293VVTySAMe3e9v4KcqCrLFpT6w/buNYphhZUJ5J5rPkoxG87r0Qo2kIkvOB7
-	mWap3Pho4Ohsj4C6eR7d8/DVveo5IC3s+BUEUCPZ+VlldQGBBS0XpkBRS9um8ppL/2h/uSty14h
-	yWIfP1MQFfJYerboI/gygDX2x1GNHC0rRc8kbpO+UOaxk/fOxEfiwbXzT864AQKGUf6/NwHLnE9
-	OUaUZKUavKN+xIw8N7kgLPvttSDd/dm2roAkFHFsBhRYlLvTbfgcYnN4/3jnCz0nx45lTAa4wyJ
-	A6B55BI7FoOQkBZb130JkA5afPLoeLbos+itJBSCFpoDP9Q78riYSiSaGwQmF1r9vV5muzcyLzh
-	QqB66kllRJktvroTq+CaJF/mLQHizm01mii+Q54lKD7UEvJDAUEny0Hk6++5tO48How41Ji3mU3
-	su0TuJQO2+k4w8TUabibvTOozXJ3mGwXn0ul/kB9p7F5Whv1kBCGTeKfs0bXMIu78hOWgOODjmH
-	C8TEk/pKBI6EMjg2S9eyMJ7+B7oeoSEwLWEVhXMh8OITe2VzBdt9R2+UX2PIQ5qvIqTmXkRpj2F
-	N5A8ZIOpeROSHJSU/zbSlSUqv918lqVi3atJ88pinbMScoV6REoZRKaJDMqx
-X-Received: by 2002:a05:600c:4e44:b0:4a1:fba8:b13d with SMTP id 5b1f17b1804b1-4bb7da12957mr47322395e9.9.1795008527371;
-        Wed, 18 Nov 2026 05:28:47 -0800 (PST)
-Received: from [192.168.0.252] ([82.76.204.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb7df07ff6sm38205175e9.4.2026.11.18.05.28.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 05:28:46 -0800 (PST)
-Message-ID: <4d51fe5f-d233-44d4-a50e-ef168b6f0402@linaro.org>
-Date: Wed, 18 Nov 2026 15:28:45 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RxwDW1Jg
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87ED91F000CD
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 13:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795009518;
+	bh=zbYI8uP1li72NzJh/wjWDJ72bmhe8G4M88p9Kdrkgp4=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=RxwDW1JguCDucDNsShayzwrpopd1ZL9Qf2ZCAagnmVvg0zW+stUUkU79tiVnQB/Zo
+	 Pmp7J5O40OKniL5gftISQKy3xeMQgqfUbNtMIYx/OgRyH5+WyU2VySZ2IsBbRbmLyD
+	 Lcv2pp9ib1bXBYNArl1iETwXLKN6wdgElDCYFpz/BMJc+rZuNQ37QytMx+d2WMCe0H
+	 FOrOeLU8pFP47A4NCAla2ZZdXV5MbYDeQMlL1zoWCPwvU6TpWK/+ZlW3NnD/6hU3zj
+	 TjvzFKfPvmXqp86SHZoCLdg9t9YdEaZ5DJG81/QUfM4q8+rzPhOD6DXr9sxVvO3l1m
+	 hi3EWHj5PIRRg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3acd239776cso10201911fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 05:45:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErG0/sCDpAdsGwVYY23FHxnGxyMS2uEZNSOyVvFMlzBKNeyG8brJi/Ix0wQ6cY7aC4iFlSBN/6E7CJ0LYtkmJ+hiWw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8vG7EO6wuaWGR9im8UG/WW/sfhLASRYZFAmtS5rDlj1VP72dei
+	KCuT4dbazhdX+i6lvW23FlX98agV0T6C/bGbXBsiutLqMSNgbtXAqQJxtaS5Xq8KVXzW5tMz/Df
+	k/wU0210UBvS/BNEzX3dxuC/XTrs1gv4=
+X-Received: by 2002:a05:651c:b27:b0:3ab:3b73:4560 with SMTP id
+ 38308e7fff4ca-3ae670b2ef1mr8658421fa.11.1795009516447; Wed, 18 Nov 2026
+ 05:45:16 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,254 +59,122 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
-To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com,
- Daniel Lezcano <daniel.lezcano@kernel.org>
-Cc: krzk@kernel.org, rafael@kernel.org, lukasz.luba@arm.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, Juan Yescas <jyescas@google.com>
-References: <20261117083442.830549-1-christian.loehle@arm.com>
- <3ea5d94b-6913-4534-816a-3935c689225b@linaro.org>
- <56a7a762-7667-4186-973c-ca0fcb399ecc@arm.com>
- <b2b0ddc6-964f-4d8d-86d4-a0bc24d9022e@arm.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <b2b0ddc6-964f-4d8d-86d4-a0bc24d9022e@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
+In-Reply-To: <20261114-irqchip-cleanup-api-v1-1-4a9d598b0bdb@nxp.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 18 Nov 2026 21:45:03 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65uyYnE-sryit44oXBwstxkG7HRtYWip5nyuHeZ034TbQ@mail.gmail.com>
+X-Gm-Features: AclHuK_Ko1utGgb-Cp6pja7wJidoLs_raftCWPKZ3OajYizpg1rSK6L9ElxDv8s
+Message-ID: <CAGb2v65uyYnE-sryit44oXBwstxkG7HRtYWip5nyuHeZ034TbQ@mail.gmail.com>
+Subject: Re: [PATCH] irqchip: Convert chained handlers to guard_chained_irq()
+To: Peng Fan <peng.fan@linux.dev>
+Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ryan Chen <ryan_chen@aspeedtech.com>, 
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
+	Tan Siewert <tan.siewert@9elements.com>, Eddie James <eajames@linux.ibm.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Caleb James DeLisle <cjd@cjdns.fr>, 
+	Marc Zyngier <maz@kernel.org>, Miodrag Dinic <miodrag.dinic@mips.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Herve Codina <herve.codina@bootlin.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>, 
+	Qin Jian <qinjian@cqplus1.com>, Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Anirudha Sarangi <anirudha.sarangi@amd.com>, 
+	Tushar Nimkar <tushar.nimkar@amd.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, imx@lists.linux.dev, loongarch@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-sunxi@lists.linux.dev, git@amd.com, linux-arm-msm@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Nov 14, 2026 at 11:06=E2=80=AFPM Peng Fan <peng.fan@linux.dev> wrot=
+e:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Use the scope-based guard_chained_irq() helper in all chained handlers
+> under drivers/irqchip/ so that chained_irq_exit() is always invoked when
+> the handler returns. Handlers that duplicated the exit call on an error
+> path or jumped to a common exit label simply return now and rely on the
+> guard.
+>
+> No functional changes.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> With [1] now merged in irq/drivers, convert the chained IRQ handlers in
+> drivers/irqchip/ to use guard_chained_irq(). This removes the explicit
+> chained_irq_exit() calls and the gotos that only existed to reach them,
+> reducing boilerplate.
+>
+> I use a script to do the job, and after that, do mannual checking.
+>
+> No functional changes.
+>
+> [1] https://lore.kernel.org/all/179417458323.2093942.14330197609841896598=
+.tip-bot2@tip-bot2/#t
+> ---
+>  drivers/irqchip/exynos-combiner.c          | 7 ++-----
+>  drivers/irqchip/irq-aclint-sswi.c          | 4 +---
+>  drivers/irqchip/irq-armada-370-xp.c        | 4 +---
+>  drivers/irqchip/irq-aspeed-i2c-ic.c        | 4 +---
+>  drivers/irqchip/irq-aspeed-scu-ic.c        | 8 ++------
+>  drivers/irqchip/irq-ast2700-intc1.c        | 4 +---
+>  drivers/irqchip/irq-ath79-misc.c           | 5 +----
+>  drivers/irqchip/irq-bcm2836.c              | 4 +---
+>  drivers/irqchip/irq-bcm6345-l1.c           | 4 +---
+>  drivers/irqchip/irq-bcm7038-l1.c           | 4 +---
+>  drivers/irqchip/irq-bcm7120-l2.c           | 4 +---
+>  drivers/irqchip/irq-brcmstb-l2.c           | 4 +---
+>  drivers/irqchip/irq-dw-apb-ictl.c          | 4 +---
+>  drivers/irqchip/irq-econet-en751221.c      | 4 +---
+>  drivers/irqchip/irq-gic.c                  | 6 ++----
+>  drivers/irqchip/irq-goldfish-pic.c         | 4 +---
+>  drivers/irqchip/irq-idt3243x.c             | 4 +---
+>  drivers/irqchip/irq-imx-intmux.c           | 4 +---
+>  drivers/irqchip/irq-imx-irqsteer.c         | 7 ++-----
+>  drivers/irqchip/irq-imx-mu-msi.c           | 3 +--
+>  drivers/irqchip/irq-ingenic-tcu.c          | 4 +---
+>  drivers/irqchip/irq-lan966x-oic.c          | 3 +--
+>  drivers/irqchip/irq-loongarch-avec.c       | 4 +---
+>  drivers/irqchip/irq-loongson-eiointc.c     | 4 +---
+>  drivers/irqchip/irq-loongson-htpic.c       | 3 +--
+>  drivers/irqchip/irq-loongson-htvec.c       | 4 +---
+>  drivers/irqchip/irq-loongson-liointc.c     | 4 +---
+>  drivers/irqchip/irq-loongson-pch-lpc.c     | 3 +--
+>  drivers/irqchip/irq-lpc32xx.c              | 4 +---
+>  drivers/irqchip/irq-ls-scfg-msi.c          | 4 +---
+>  drivers/irqchip/irq-ls1x.c                 | 4 +---
+>  drivers/irqchip/irq-mmp.c                  | 7 ++-----
+>  drivers/irqchip/irq-mscc-ocelot.c          | 4 +---
+>  drivers/irqchip/irq-mvebu-pic.c            | 4 +---
+>  drivers/irqchip/irq-mvebu-sei.c            | 4 +---
+>  drivers/irqchip/irq-pruss-intc.c           | 4 +---
+>  drivers/irqchip/irq-realtek-rtl.c          | 7 ++-----
+>  drivers/irqchip/irq-riscv-aplic-direct.c   | 4 +---
+>  drivers/irqchip/irq-riscv-imsic-early.c    | 4 +---
+>  drivers/irqchip/irq-sifive-plic.c          | 8 ++------
+>  drivers/irqchip/irq-sp7021-intc.c          | 4 +---
+>  drivers/irqchip/irq-starfive-jhb100-intc.c | 4 +---
+>  drivers/irqchip/irq-stm32-exti.c           | 4 +---
 
+>  drivers/irqchip/irq-sunxi-nmi.c            | 3 +--
 
-On 11/18/26 2:06 PM, Christian Loehle wrote:
-> On 11/17/26 16:41, Christian Loehle wrote:
->> On 11/17/26 15:37, Tudor Ambarus wrote:
->>> Hi, Christian,
->>>
->>> Thanks for the patch!
->>>
->>> On 11/17/26 10:34 AM, Christian Loehle wrote:
->>>> acpm_tmu_set_trips() supplies two thresholds, but the ACPM command
->>>> writes all eight slots, zero-filling the rest. On GS101, slot 7
->>>> controls autonomous CPU throttling even when its interrupt is masked.
->>>> Programming it to 0 C limits all three CPU clusters to about 200 MHz
->>>> on Pixel 6, while cpufreq continues to report the requested
->>>> frequencies.
->>>
->>> Could you share how you discovered this? I don't have access to the
->>> ACPM firmware sources, and the downstream driver doesn't state it
->>> either.
->>
->> Neither do I, I discovered this randomly through running regression tests
->> on Energy-Aware Scheduling on the Pixel6 and acpm-tmu (7.4-rc1) causes a
->> massive energy regression (+~1000%) for the same workloads.
->> The reason is this DVFS throttling.
->>
->>>
->>> How did you measure the actual CPU frequency, given that cpufreq
->>> keeps reporting the requested one?
->>
->> PMU counters CPU_CYCLES
->>
->>>
->>> Do you know whether slots 2-6 have any side effects as well?
->>
->> I hadn't discovered any.
->>
->>>
->>> Also note that Daniel has already queued a set of acpm-tmu fixes in
->>> thermal/linux-next, so this patch will need to be reworked on top of
->>> them.
->>
->> will rebase then!
->>
->>>
->>>>
->>>> Program slot 7 from the zone's critical trip before enabling the
->>>> sensor and preserve it when updating the low/high interrupt window.
->>>> Cache the three temperatures so a writable critical trip can update
->>>> the hardware without changing that window.
->>>
->>> I think this can be handled with a smaller change: look up the
->>> critical trip in .set_trips() itself. The zone lock is held there, so
->>> for_each_thermal_trip() can be used. That avoids caching
->>> low/high/critical, the .set_trip_temp() callback and the probe changes.
->>
->> Ah yep you're right, will fix and resend.
->> Thanks!
-> 
-> Okay, maybe I'm missing something but AFAICS we have to do the set_trip_temp
-> because thermal core looks only at min/max and may skip set_trips() in case
-
-ah, you're right!
-
-> these are unchanged, missing a critical update.
-> So the minimal I see working is making 'critical' (again, this is my
-> interpretation of the value, if you want it named anything else, just shoot)
-> non-writable by failing it's set_trip_temp()?
-> Or is there another way?
-
-While I like it, the problem is that the trip is writable in sysfs but
-always failing.
-
-An alternative is to touch the core and let OF drivers mark trips
-read-only but maybe this is not suitable for a quick fix. We need to
-involve Daniel.
-
-So I think your v1 approach of caching and updating the hardware from
-.set_trip_temp() is the right one after all. I'd just look up the
-critical trip in .set_trips() instead of caching it from probe, and
-cache the last programmed thresholds and interrupt mask.
-
-Would something along the lines work?
-
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index 7c30401f8fc7..b2e5b1f6641a 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -39,6 +39,10 @@
- 
- #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
- 
-+#define ACPM_TMU_NUM_THRESHOLDS		8
-+/* Threshold 7 throttles the CPUs in hardware, regardless of the INTEN mask. */
-+#define ACPM_TMU_HW_TRIP_THRESHOLD	7
-+
- enum {
- 	P0_INTPEND,
- 	P1_INTPEND,
-@@ -70,6 +74,9 @@ struct acpm_tmu_sensor {
- 	struct acpm_tmu_priv *priv;
- 	struct mutex lock; /* protects sensor state */
- 	enum thermal_device_mode mode;
-+	/* Last programmed thresholds, protected by the thermal zone lock */
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS];
-+	u8 inten;
- 	bool enabled;
- };
- 
-@@ -228,7 +235,8 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
- }
- 
- static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
--				      u8 thresholds[2], u8 inten)
-+				      u8 thresholds[ACPM_TMU_NUM_THRESHOLDS],
-+				      u8 inten)
- {
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct acpm_handle *handle = priv->handle;
-@@ -249,7 +257,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	}
- 
- 	ret = ops->set_threshold(handle, mbox_chan_id, acpm_sensor_id,
--				 thresholds, 2);
-+				 thresholds, ACPM_TMU_NUM_THRESHOLDS);
- 	if (!ret) {
- 		ret = ops->set_interrupt_enable(handle, mbox_chan_id,
- 						acpm_sensor_id, inten);
-@@ -267,14 +275,56 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	return ret;
- }
- 
-+static int acpm_tmu_get_crit_temp(struct thermal_trip *trip, void *arg)
-+{
-+	int *temp = arg;
-+
-+	if (trip->type == THERMAL_TRIP_CRITICAL &&
-+	    trip->temperature != THERMAL_TEMP_INVALID)
-+		*temp = min(*temp, trip->temperature);
-+
-+	return 0;
-+}
-+
-+static int acpm_tmu_program_thresholds(struct acpm_tmu_sensor *sensor,
-+				       u8 thresholds[ACPM_TMU_NUM_THRESHOLDS],
-+				       u8 inten)
-+{
-+	struct device *dev = sensor->priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = acpm_tmu_update_thresholds(sensor, thresholds, inten);
-+	if (!ret) {
-+		memcpy(sensor->thresholds, thresholds, sizeof(sensor->thresholds));
-+		sensor->inten = inten;
-+	}
-+
-+	pm_runtime_put_autosuspend(dev);
-+
-+	return ret;
-+}
-+
- static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- {
- 	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
--	struct acpm_tmu_priv *priv = sensor->priv;
--	struct device *dev = priv->dev;
--	u8 thresholds[2] = {};
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS] = {};
-+	int crit = INT_MAX;
- 	u8 inten = 0;
--	int ret;
-+
-+	/*
-+	 * The firmware programs all thresholds at once. Set the hardware trip
-+	 * to the lowest critical trip temperature, so that it never fires
-+	 * below the point where the thermal core shuts the system down. If
-+	 * the zone has no critical trip, crit stays INT_MAX and is clamped to
-+	 * the highest threshold value.
-+	 */
-+	for_each_thermal_trip(tz, acpm_tmu_get_crit_temp, &crit);
-+	thresholds[ACPM_TMU_HW_TRIP_THRESHOLD] =
-+		clamp_val(crit / MILLIDEGREE_PER_DEGREE, 0, 255);
- 
- 	/* If a valid lower bound exists, set the threshold and enable its interrupt */
- 	if (low > -INT_MAX) {
-@@ -288,15 +338,28 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- 		inten |= BIT(1);
- 	}
- 
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret)
--		return ret;
-+	return acpm_tmu_program_thresholds(sensor, thresholds, inten);
-+}
- 
--	ret = acpm_tmu_update_thresholds(sensor, thresholds, inten);
-+static int acpm_tmu_set_trip_temp(struct thermal_zone_device *tz,
-+				  const struct thermal_trip *trip, int temp)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS];
- 
--	pm_runtime_put_autosuspend(dev);
-+	if (trip->type != THERMAL_TRIP_CRITICAL)
-+		return 0;
- 
--	return ret;
-+	/*
-+	 * The thermal core skips .set_trips() when the low/high window does
-+	 * not change, so update the hardware trip threshold here, keeping the
-+	 * last programmed window.
-+	 */
-+	memcpy(thresholds, sensor->thresholds, sizeof(thresholds));
-+	thresholds[ACPM_TMU_HW_TRIP_THRESHOLD] =
-+		clamp_val(temp / MILLIDEGREE_PER_DEGREE, 0, 255);
-+
-+	return acpm_tmu_program_thresholds(sensor, thresholds, sensor->inten);
- }
- 
- static int acpm_tmu_change_mode(struct thermal_zone_device *tz,
-@@ -329,6 +392,7 @@ static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
- 	.change_mode = acpm_tmu_change_mode,
- 	.get_temp = acpm_tmu_get_temp,
- 	.set_trips = acpm_tmu_set_trips,
-+	.set_trip_temp = acpm_tmu_set_trip_temp,
- };
- 
- static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
-
-
+Acked-by: Chen-Yu Tsai <wens@kernel.org> # sunxi-nmi
