@@ -1,86 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.44
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795010480;
-	b=GW9kfOb8+Gt9kfcwt/kbpm3krOqisWOJB8CWl/ub4eypGzBOoG7FTPey71kivrEt4xi8
-	 D4z5Lk6+C5moSPu+BuBkMfRlfTpoPNUiNgJLw/iPStENuKV3UaXSUbSVgI95s7wqQyABY
-	 U7/KdqpQ+6BywC5AfHFGZlyJxJ42sA3glDIoJzy4DYpPAI5Jou9wiKWlNSH7b+XgAEGO4
-	 IGqXueD5oSgr6WkOO56Loef8BLQZK2gvDBu51ESF3g3xTkW8hX54HrYrw1eTBxboWKy0P
-	 Xofhb+CiWHx0P/ca/JImCR2Lit+YfFB+3YIknzsXBXxmj5Rzga/TNp6Kc/e74YA1q0A==
+	t=1795010806;
+	b=rB8gnuIzVSTX1OyHGgrSZo4uKwtqQZ0Es8m8F2H5jfVzLJirtpAXHXwktLVZQZ8QdncS
+	 dQwsLrS5iMRaOYoIxgqRh306b11rYRuAnLfYmkvyPgMVerWHp2T+UF/gOQX78a10YkFBr
+	 163honbB8LzsKcYbt2s79fRxOgnYs9BSkzsPthymSdnIVN2GsSTpp80zXK0rf/x31go0F
+	 B/JLY4S3VCQl9rojkuQXhcDxm+OJ/uzogAmSPzFP4+9ejNQsCjk6YHiNd3vnDUFqf25c6
+	 mUpwy34BcSV7P8aQOtH4L+a3bewXLqXznirIpdIgYjLysVthevei+fLWvhvIozHp3Mg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795010480;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795010806;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:From:To:Cc:References:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=SQBL/pm8ssQ4h2Vnf/mf2PH79AlhPBjy2NJAi+slih8=;
-	b=AsXx5AW/ZC9J+IrjwQxHlQMWKSqoDqNVggWzW3iPDGQs/dewTlKf94T6HFWmt22hJ/pa
-	 D0aJBQ4314o7SLchud1cwx56hWNOXDXqnhYiPU91rOnGg0s36f1v8pmUazNwvl/NnPAjV
-	 bRMlB4g7bQjdy8j3R+cVzfDn6ovZD6ZXzTZVvFU0+5ie+rDnkiMO3vr1PKEmmGcYE0OX0
-	 YL36oGGPIxCkI61lYNESwqz9now7Cdf7xXTLrZeRBB477kucdsyCjxMEi5URAhN5gBMtP
-	 jgAWAS8vscZEUY97mUrFaCECzaoFI/IMjf23F7Aycr83wEtTklOOZpDeiIYQ4VbN6PQ==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+	b=Kdtqj55yQEUTwUQnsLYMlDFUbGS2By6JCxFycQygCObrOhNXXQMsohvpmDCyaN2EIyfY
+	 iali8lhwDxg1oTnKtZnj+7J6AWAH+sBisBqAXoWjRnfEGOwdqZj6GKb6OOzvqF0neU0lR
+	 hoKqZjBhqfWnUCT8p5hyoJ+x3KmMdFe4BzEhj9xM/ZE11LNP+HeZxF9LETup5qO/IIWaY
+	 sAWaTgBq0APoe78/fSht8Sbb1mfv3ChsIj+7CSM8tJVNcP31VEAV//f9naWXrY+zMsbNG
+	 sxkaVmpnocIJcmRBm2y0AucYYK3vS3x5v+rzhSjlExNY06dAm3zzzzsI6jrO8OxIkTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=jS4aIIkB;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hvB4iIuS;
+	arc=none smtp.remote-ip=209.85.128.44
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD51606A33D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 14:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CBD51606A33D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F240606A325
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 14:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8F240606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=jS4aIIkB
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4b467581b98so12054185e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 06:01:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hvB4iIuS
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4bb68c197c7so14096815e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 06:06:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795010478; x=1795615278; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=SQBL/pm8ssQ4h2Vnf/mf2PH79AlhPBjy2NJAi+slih8=;
-        b=jS4aIIkBn1GkKpz/AmCsxNZ8+ib0VEwLgKDAaLBW+jQXaz+OFbxh0AwL5jZSuzrnQA
-         6aYFUIXGUAbzIvTFy75MfykZeitXKFTE7m9ztElrn85/vV1Erx21+RSswv8q5dcXcynp
-         rLk+AZ4z9EUjWwtwyRDJNrU/qSpXgWn06BvctbmrolhMMz1SuhSM+C2QJe0cAAzWv4w3
-         gZqIa4dE2FfkcDAORc/hsit1wKMxpTzz+8OEA8oNNJr7dQwdP3PtyDmOtw1mIOshHSy6
-         D5scBVdjX7uXxl1+DRW8CkNvToZ4NnaVwTCKUMJE/r/vVpwIAfnK5c6SUj3/aYPdy7BR
-         1WUA==
+        d=baylibre.com; s=google; t=1795010804; x=1795615604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+        b=hvB4iIuS8DtMM18Ur596rOV7xllkzUpzo4bnzWY5k0fD7sJ/BrV+0/KQ18Tb6pH2GQ
+         Nn2XziESA7mgE+1ydj355M2ewaMPCB3cmzRLaf+4expSmHER9hyZhW0nCxUr2loegpzU
+         v2vTQH5dENOkhb4kscIg+aakWJcGbF9MAAkh4SZJI6rGEXhJQVQlImPEQVZy9D/uWfuh
+         lDrFchgZk3gMfEELQRtJ9+u3oShBMhztuAghg2t6cw5GK+Z0k/4AVTMUC4iL1yw8I5bG
+         i/Xdt4P+65LHR2xp+JkHPJ1b0MAuBhDHUI3DZNZG14O9PuuXWHSk3/UrorTKJtCBmPfK
+         xItw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795010478; x=1795615278;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=SQBL/pm8ssQ4h2Vnf/mf2PH79AlhPBjy2NJAi+slih8=;
-        b=X85DVoLv+b5cv0/o4jj59vjtfWu21h1E0ERi/O+Qt6dEEbx6OCB1jaYQwH7M4CHvt4
-         wvVGXdnScCjWanwKSeQrkV5MkeaYHW6CZzwkGHFdCvSvy4VYWVvQC7Xh+Vhorploy+q9
-         LSotb68tJxcNYCvjbLFREY+ULfUL/LJMbzs89Zg+VzZVdA4q1uch11oEKls5PAM9tO+j
-         o439cuceXDhQqC1etFlQn58wRHOx7vQQlDBLQgmtaQPk9iWbUJv9Y2ySUkUbOVuv8wet
-         SOmWMPGnzDmaWrTc84Bs+Gaer1I5lXKoIngEFM+zW9BRcgzodi4nii3RJQtQDbmOvPCJ
-         lXbw==
-X-Forwarded-Encrypted: i=1; AL+hErHx1dox5Ndj4imh8QN4zz3SVdoWpP/GuqJHo4mfMsU2hIlXsF2sGK3r8UGj/aKFsWSueexzFNanoNrvP4CsqfKu+Q==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8zdFnrd/344Zs21o1QaIW1F83RwHfQjYnSK8h0QqCVXIVjWJee
-	8wapFno29OapLIkUOrUcgSf3rCs6Ka24tV1p+PIddfFd63WcNi4Ip8u6w1kfMqhVAj8=
-X-Gm-Gg: AYBFou2TqjUNmmyakfMvY1wDxQHQlGt1RlE1DinVt1eFqxXsUUeVgMuKhvUULnXXZHY
-	tTvMLCg406oZgNjSKgQBo3NjyzuobIHfyOGiiec8IUPJXsEip6NKCzPj7lTiyBFqegncgmHc4lr
-	cte2BzR0Uqt45If+oflo4vuR/Zgjxoere4z0ZcsfwNLMF4i/NvO3QvEUy7uzpvjUHaMc/KWvtco
-	S95ysQAaVlLedVVC+xOEppF/ho8oIWXjIoaDbTGkpn4iueKBPJ2AcVxb3A1fw+YfBY9LA8beGDP
-	K6LHuALN1iwkkOa8PKlawrtbcK6ItxYTjG/dHWw7xInreo5pFMZ94U74xPWoMANxas/1OX4rbnD
-	8CJWDvzTm+V6J9HDbKJqXfaEcjZA4i784S/dNQxT3f8CqxU0veJBRAe4/DKFSKFj0nMaaYGyRHe
-	9cS6Dg1ibWk7UG9Q12i3nzW3dNo/UrmOaTtxKDT8kdIxXcE1ZveiAQQZCzxNU33vgOUr1/zLbrq
-	UN/HjAX9fQvPcm/7vJRTU20yd9g71ChPmraaLuTxAvFl3HIJqsbRtHKLobtCKdeZ4suSt0JFSJp
-	7qEAWbolxBA8WKVpc6NB4kfGNhSfNpiWAmj5XUw=
-X-Received: by 2002:a05:600c:6746:b0:4a5:87b3:ddc1 with SMTP id 5b1f17b1804b1-4bb7da19d44mr49686225e9.13.1795010477916;
-        Wed, 18 Nov 2026 06:01:17 -0800 (PST)
-Received: from [192.168.0.252] ([82.76.204.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4a656095f21sm4649341f8f.38.2026.11.18.06.01.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 06:01:17 -0800 (PST)
-Message-ID: <2cc6efc8-db35-4b40-ab71-815f08ed9dc9@linaro.org>
-Date: Wed, 18 Nov 2026 16:01:16 +0200
+        d=1e100.net; s=20260707; t=1795010804; x=1795615604;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=O8kUxWwNMGGKdJF+2JBGIvhWCx8VFS9Gq0fs2XPEP3c=;
+        b=SFgt0TnRSJrm7OdBGjLMuUhP2yIiHU5s/KvGZxtMLpNVKWXgZ+p7/5oXZ4TOcu96NG
+         XqgQrpsF5fWXNJ7Xqy/3YsB5V+G86fgXRHq2G8bD9+zBVUWczk1YeXoFjZzlzDMT3eNC
+         TsLtVo0g8/FRp4H+waUYBRdGn1SJAeylzEwLY3miREMFrw0MInt81h1YzE1u8lSIWu0Q
+         4kv5jwWwdgKcwJ/BrZhVa+h7OcSUuBNEWumNgHWQGHJsFFCZR27/j5O5ZK/5KgNmCujq
+         FMo4R5VNRsVro6tQbyRd6UAnbUXs5A8woq9DCT/N5tv3gshlXuhzjFJEeVlv8ezHBmS9
+         AEqw==
+X-Forwarded-Encrypted: i=1; AL+hErHjb60Nurn9VW+QxprQv/oJ0O+CR3YooyZn8Bp5QrZLLQYd9WEOGxO4285fgpUm2ETYa9YELBHabIO1AYTUHHfqdQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z9OihrmIumyf9DowVsxqJGC9w+zM+zdMQi0yZtE3JXoDGP2tF7E
+	YUYgYv8aKQ5TGCmtowU2YCSX4+Bg8Cyv3896PBu8f6XhS6ocRKHT7Q41xrOrjyRNwqQ=
+X-Gm-Gg: AYBFou1jb7SPVkv4DwjyseVGknPUuPikoHP6bQJQDgltZEBjxGFUhH+yXU/Hs+pIStN
+	JEVZREATqjRNxzomo9omLtxcRbDLwcaEOnz3W52wARftN4grncygvygow2UiQDWBMxKDJB2QYUK
+	hkLcfOHvVUe2bD4izpyargltzefDvIAcg6wq3VRB9pGsae65wR/xXdCU7y/y824ItlyuQS4SGNu
+	loyxThDMG8Rw77W1k3pk30YbuLxOHKDDzPsgBj76moSozlr7hz31EkLrF7JnrwxhBvPLZ6b5G0W
+	/Ki0k51i6q7Sy2K2ELTCW/XxVb+HjqOVXJs05sDNlLy61P5gwNnl9LSS1Fj23W32To9gA9GEQp/
+	RkA5VbcmtDzrG15TPCh94x00zIGDCwUweRUuVPKppOHhT9VX2Y/kZrUbvjKrUAHSylvfc6AOnQF
+	OPHNwaR9G2HpDrD5qKEjIlNT3TqY4gTXGqTeWd9NX7+VGIZ1uFJ6Kqd12Q4zs+/HqHqsi02+SaT
+	9SwCAyEv3CaSkSBM9gYDB4Dw9hNYqVMGvfFgB5svDYZ+6158SpsqOB4Qgn/JAubwdoqq2/yascu
+	4sRYhfAsbF4CHKurJwRQKkAwknfEdQG7oHo=
+X-Received: by 2002:a05:600c:3509:b0:4bb:68b9:f610 with SMTP id 5b1f17b1804b1-4bb7da03954mr52120315e9.9.1795010803953;
+        Wed, 18 Nov 2026 06:06:43 -0800 (PST)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb7d256f64sm61534715e9.1.2026.11.18.06.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 06:06:43 -0800 (PST)
+Date: Wed, 18 Nov 2026 15:06:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <k@chaosmail.tech>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+	linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	imagination@lists.freedesktop.org, linux-mips@vger.kernel.org, lima@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
+Message-ID: <av2rKJQ0AKU9CFZI@monoceros>
+References: <cover.1795002467.git.ukleinek@kernel.org>
+ <a2d5ce256b8ec150de4a6494c177b19693a33222.1795002467.git.ukleinek@kernel.org>
+ <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -90,182 +110,98 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com,
- Daniel Lezcano <daniel.lezcano@kernel.org>
-Cc: krzk@kernel.org, rafael@kernel.org, lukasz.luba@arm.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, Juan Yescas <jyescas@google.com>
-References: <20261117083442.830549-1-christian.loehle@arm.com>
- <3ea5d94b-6913-4534-816a-3935c689225b@linaro.org>
- <56a7a762-7667-4186-973c-ca0fcb399ecc@arm.com>
- <b2b0ddc6-964f-4d8d-86d4-a0bc24d9022e@arm.com>
- <4d51fe5f-d233-44d4-a50e-ef168b6f0402@linaro.org>
-Content-Language: en-US
-In-Reply-To: <4d51fe5f-d233-44d4-a50e-ef168b6f0402@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5c6ped4sw6nigwko"
+Content-Disposition: inline
+In-Reply-To: <7692c160e418e7ad0528739fcc879b11fbac8ab0@intel.com>
 
 
+--5c6ped4sw6nigwko
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 9/9] drm: Unify coding style for *_device_id arrays
+MIME-Version: 1.0
 
-On 11/18/26 3:28 PM, Tudor Ambarus wrote:
-> Would something along the lines work?
+Hello Jani,
 
-Thinking more about it, caching the window instead of the raw
-thresholds is simpler and closer to your v1, as inten derives from
-low/high anyway. Maybe this:
+On Wed, Nov 18, 2026 at 03:27:40PM +0200, Jani Nikula wrote:
+> > [...]
+> >  drivers/gpu/ipu-v3/ipu-common.c               |   8 +-
+> >  drivers/gpu/ipu-v3/ipu-pre.c                  |   4 +-
+> >  drivers/gpu/ipu-v3/ipu-prg.c                  |   4 +-
+> >  254 files changed, 1155 insertions(+), 940 deletions(-)
+>=20
+> How do you expect a patch of this size be merged?
 
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index 7c30401f8fc7..8422a7c970e7 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -39,6 +39,10 @@
- 
- #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
- 
-+#define ACPM_TMU_NUM_THRESHOLDS		8
-+/* Threshold 7 throttles the CPUs in hardware, regardless of the INTEN mask. */
-+#define ACPM_TMU_HW_TRIP_THRESHOLD	7
-+
- enum {
- 	P0_INTPEND,
- 	P1_INTPEND,
-@@ -70,6 +74,9 @@ struct acpm_tmu_sensor {
- 	struct acpm_tmu_priv *priv;
- 	struct mutex lock; /* protects sensor state */
- 	enum thermal_device_mode mode;
-+	/* Last programmed window, protected by the thermal zone lock */
-+	int low;
-+	int high;
- 	bool enabled;
- };
- 
-@@ -228,7 +235,8 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
- }
- 
- static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
--				      u8 thresholds[2], u8 inten)
-+				      u8 thresholds[ACPM_TMU_NUM_THRESHOLDS],
-+				      u8 inten)
- {
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct acpm_handle *handle = priv->handle;
-@@ -249,7 +257,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	}
- 
- 	ret = ops->set_threshold(handle, mbox_chan_id, acpm_sensor_id,
--				 thresholds, 2);
-+				 thresholds, ACPM_TMU_NUM_THRESHOLDS);
- 	if (!ret) {
- 		ret = ops->set_interrupt_enable(handle, mbox_chan_id,
- 						acpm_sensor_id, inten);
-@@ -267,12 +275,22 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	return ret;
- }
- 
--static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+static int acpm_tmu_get_crit_temp(struct thermal_trip *trip, void *arg)
- {
--	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
--	struct acpm_tmu_priv *priv = sensor->priv;
--	struct device *dev = priv->dev;
--	u8 thresholds[2] = {};
-+	int *temp = arg;
-+
-+	if (trip->type == THERMAL_TRIP_CRITICAL &&
-+	    trip->temperature != THERMAL_TEMP_INVALID)
-+		*temp = min(*temp, trip->temperature);
-+
-+	return 0;
-+}
-+
-+static int acpm_tmu_program_thresholds(struct acpm_tmu_sensor *sensor,
-+				       int low, int high, int crit)
-+{
-+	struct device *dev = sensor->priv->dev;
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS] = {};
- 	u8 inten = 0;
- 	int ret;
- 
-@@ -288,17 +306,61 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- 		inten |= BIT(1);
- 	}
- 
-+	/*
-+	 * The firmware programs all thresholds at once. Set the hardware trip
-+	 * to the critical trip temperature, so that it never fires below the
-+	 * point where the thermal core shuts the system down.
-+	 */
-+	thresholds[ACPM_TMU_HW_TRIP_THRESHOLD] =
-+		clamp_val(crit / MILLIDEGREE_PER_DEGREE, 0, 255);
-+
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return ret;
- 
- 	ret = acpm_tmu_update_thresholds(sensor, thresholds, inten);
-+	if (!ret) {
-+		sensor->low = low;
-+		sensor->high = high;
-+	}
- 
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
- }
- 
-+static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+	int crit = INT_MAX;
-+
-+	/*
-+	 * Use the lowest critical trip temperature. If the zone has no
-+	 * critical trip, crit stays INT_MAX and is clamped to the highest
-+	 * threshold value.
-+	 */
-+	for_each_thermal_trip(tz, acpm_tmu_get_crit_temp, &crit);
-+
-+	return acpm_tmu_program_thresholds(sensor, low, high, crit);
-+}
-+
-+static int acpm_tmu_set_trip_temp(struct thermal_zone_device *tz,
-+				  const struct thermal_trip *trip, int temp)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+
-+	if (trip->type != THERMAL_TRIP_CRITICAL)
-+		return 0;
-+
-+	/*
-+	 * The thermal core skips .set_trips() when the low/high window does
-+	 * not change, so update the hardware trip threshold here, keeping the
-+	 * last programmed window.
-+	 */
-+	return acpm_tmu_program_thresholds(sensor, sensor->low, sensor->high,
-+					   temp);
-+}
-+
- static int acpm_tmu_change_mode(struct thermal_zone_device *tz,
- 				enum thermal_device_mode mode)
- {
-@@ -329,6 +391,7 @@ static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
- 	.change_mode = acpm_tmu_change_mode,
- 	.get_temp = acpm_tmu_get_temp,
- 	.set_trips = acpm_tmu_set_trips,
-+	.set_trip_temp = acpm_tmu_set_trip_temp,
- };
- 
- static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
-@@ -479,6 +542,8 @@ static int acpm_tmu_probe(struct platform_device *pdev)
- 		mutex_init(&sensor->lock);
- 		sensor->group = &data->sensor_groups[i];
- 		sensor->priv = priv;
-+		sensor->low = -INT_MAX;
-+		sensor->high = INT_MAX;
- 
- 		tzd = devm_thermal_of_zone_register(dev, i, sensor,
- 						    &acpm_tmu_sensor_ops);
+Using b4 am :-) Honestly, in the cover letter I wrote about an immutable
+branch and offered to rebase to 7.4-rc1. When trying to apply this
+series on top ov 7.4-rc1 there are only 6 conflicts (1x modify/delete
+and 5x content); these are all not so hard to resolve (and even dropping
+the respective hunks (i.e. resolving using `git checkout HEAD`) is fine
+for me.)
 
+> > diff --git a/drivers/gpu/drm/i915/i915_pci.c b/drivers/gpu/drm/i915/i91=
+5_pci.c
+> > index 84a7dc6ab5db..faceb3de4fa3 100644
+> > --- a/drivers/gpu/drm/i915/i915_pci.c
+> > +++ b/drivers/gpu/drm/i915/i915_pci.c
+> > @@ -870,7 +870,7 @@ static const struct pci_device_id pciidlist[] =3D {
+> >  	INTEL_ATS_M_IDS(INTEL_VGA_DEVICE, &ats_m_info),
+> >  	INTEL_ARL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+> >  	INTEL_MTL_IDS(INTEL_VGA_DEVICE, &mtl_info),
+> > -	{}
+> > +	{ }
+>=20
+> Personally, I would *always* use {} instead of { }, and would rather not
+> change.
+>=20
+> Across the tree, {} is slightly more common than { }. IMO changing them
+> is pointless churn.
+
+It depends on how you count. My statistic looks as follows (on top of
+next-20261117):
+
+	$ git grep -l device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/devi=
+ce_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | sort | uni=
+q -c
+	      2 	}
+	      2 {
+	      6 {  }
+	   2598 { }
+	   1262 {}
+
+So over all *_device_id { } is more common by a factor of > 2. This
+series fixes one {  } and reduces the number of {} by 37. For only
+pci_device_id it's:
+
+	$ git grep -l pci_device_id | xargs -n 1 perl -g -n -e 'print "$1\n" if m/=
+pci_device_id\s*[a-zA-Z_0-9]*\[\]\s*=3D\s*{(?:\s*{[^}]*},\s*({\s*}))/' | so=
+rt | uniq -c
+	    159 { }
+	     32 {}
+
+Without the context of an array initializer there are many empty
+code blocks (function bodys or `do {} while (0)`), empty dt nodes, and
+{} in Rust code, which IMHO have to be considered off-topic for this
+statistic.
+
+Best regards
+Uwe
+
+--5c6ped4sw6nigwko
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmr9sOcACgkQj4D7WH0S
+/k4vggf+PQfM4MkbLgaQRCdXRWWsc4/Fa0tTMBQAl4gjx2p5NE/N7TDUO571o3+N
+oWcelzY5O1uRcc2qHZVnu3vAxFqzk4YHfGjsbGHsxQAibxnIFW7ttYTzt0w5a9NH
+v65V6+sebCdwLrPVE5ilcqzFFSgmnv1wTNm2vCEUxdKGacifySaGRmg4+ax+fLb1
+CL+RS7fM2EkQxG1k4iDEPv1Onrm9S4DtwTts0wxkK780rWYD9FoSLjHyX/x21Y8x
+SZKaXeNZlxtHJpQLq8ub8AL/t6k82nC020wYZOUbUmvPyqxhNoUuuS0/RVlz9xT6
+kXiliIwWzcMtAKt4ik8nbTRO5JERhQ==
+=0alU
+-----END PGP SIGNATURE-----
+
+--5c6ped4sw6nigwko--
