@@ -1,87 +1,32 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795085244;
-	b=cw+DY5/dwhMhPjMJP/3HswbDKuwU1K98jqJih3AIhm820ODHtQ2l/oWVdeOFv1KWW4yW
-	 9XGa1QNrfFyYiJ1R9SAE7JsxhhiB81JFRloGWjDVK3C3ej3VUvQWUW60Js5FIHcYJlsf7
-	 08u6+OrAMrvkDezyr3zWIctFuBCBbE2BNCmSZuD0Rw+za7z4EjEKHVikbWHqdQF2KOqo4
-	 /g9rkOzUo7qoueHfhU/pyHrmB5n9fMGe176kh28OxERYHrRnpzd9oSj7RK8mSMq/ForTk
-	 QKH0QThfCl+4Wewy1BQhKnM48nA6dc8foSV7mgvpZknTNkgi9wxyyH5ApXTtm+9wVQA==
+	t=1795085582;
+	b=mgroH0ao4uYurCetgfyEchyW8fUr+2XnowsBleF5F+UgrHt2H1pXRF5lphylsqFAsVIm
+	 jLE3ZupbUhA93Ln96j0aHnJSQVwgR9vSJBbWia6uaCkK9LCbEcxOxWmx85X3Pvz8lYM2d
+	 UG/QUFiPVWZ7J/Ffzoan8tPRurUOgkVqtUc4QHrRkJi4gEcrxo9t4eStDskcx8GhuX8/g
+	 h/XcPmj03VN5xeTL7W7ya6EPk7hOD5/4hpNetrKdnXtLas/bcf5nbtxHM2NlVdK1w9zfu
+	 EO+DBWic3kmIkxA+6qaiUECONgOUYpSkhL8elWDQ/SWAmdlk2cNEUMekBoI7fmSF+Qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795085244;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=8Has6+xC9RPzwVP2kqZn9jyid5dpYq0lsSdFVF0q6BI=;
-	b=ewQg1ws2nMLoqnQhFHbBKFNbM2TgeVRHosESBPtjbiYKFIO/2IvyenYNYNWc5FvLt8JO
-	 oi7J65UEUwPP9jxkgsa0ptYe5q7MHQ0wDuUgd5KlyD5WVYWwm+u9Hq9uMQag9FtobgdDz
-	 ma0Vo0BLBuQiP+Wpr1sYqg0OKXsf4AsI7fpK5/QzRLSRpvUE0UQakTer9AU5wLyYbBZ5Q
-	 3NmQST0GMJv+a5hpq+GhK3el4EllJDV4zpaVKy3q6/zgSS3uyES0cK3hUuv/Jn1o6J6/f
-	 NnA77uxL/71gA0fOs0v34HqH/061x9P+B5OYEhQVSrXhKYIiW3ul0u12KEguP9zyJkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795085582;
+	h=Received:MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:
+	 From:To:Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=p4ujRYqqmDAxwCH1lLG5Y1TyM4iee8k+HiSVgBJl0UA=;
+	b=W8CGcw7Mqhzi4retP7YmvaJUXQcVZ/We9MjmKdPLzQ6fqrCZsJcQvdbjOX0A1K4vfMEl
+	 km52WW4aYc4sdouLnHJmNj3ClsNi8WvZpRPmHPuLOQyosTcAb+3DP9Os5FHdLghxfb4iz
+	 F6ZAdQDtWv0RYYeD4Mo8FjUUWrC4NeiKWJFUJlk23xx180ggZ61OWtvbXODHmEUHu74hJ
+	 9CHLFrESjycbl3KFehdU6msxpG0PtmIjttUWiguCVO7pqbmQXvgDQggF0/VA8d2eOWNn9
+	 N0I16bg8u2qglIyBqpNDCDU6Xq+HW2yhatlRX8zEBqy7cTGCTNR4GiPjXy8LEv5r5ug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=oPcnUsR6;
-	arc=none smtp.remote-ip=209.85.208.43
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197AC606A33F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 10:47:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 197AC606A33F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=oPcnUsR6
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b8c60e0d39so1799288a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 02:47:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795085242; x=1795690042; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=8Has6+xC9RPzwVP2kqZn9jyid5dpYq0lsSdFVF0q6BI=;
-        b=oPcnUsR6Gr4jPgkqNEPh9je+5HMW5te7YYjWbe8KwCI29hks+TEvLrppeWePa1qkqr
-         PSrxJZGnzPDyXPYus31IvgkVgNQSI7vlwTO5SiuXKmt36yymUoJ54mny+CQ0mDbVF9Yo
-         jiHB/J24UQPI3qhQ1J89cGUKMPrZCRX5mLURxNXBMoJudvFVdTsLc15agC8LoxxUfCp1
-         SeoJqGvYBb9VAlPeVoOkodahj1QF9hPI6rkYX+aOAxSJb+SOvzQMEayTIZVzdLOJzYNo
-         zKVCKt49QgtlO1fWNvYyO3n9/z5AlXHvYFaypemMv1kmC7cL87p654wdUWJR8VX9MUJL
-         zq5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795085242; x=1795690042;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=8Has6+xC9RPzwVP2kqZn9jyid5dpYq0lsSdFVF0q6BI=;
-        b=s9qMFvek7xCY1K8UJ+Gc8mlDAeDFv9O81t6IJk+Q9vUDftqUDnI9mz48MwF9Vo4KmN
-         r/95ggKvhCk3VraKKmJ4KyVI8nfe/hKJPF3wpbCJW0xycAQIZ4x18ZgCCllcGy/CmI9J
-         dPVBqWHi5aPJGld/UB5tpPWPFImTEzHuaSYwsHz3xIGfF0SfxqG5SSewyHRiAeZc083H
-         UVgdygyX44k3HWfU/1KIWsiK521XsS3e3uQcpJKVn7DJ2p3KMStfi8EghsL0QApif63e
-         8yxM3tXRSaRtnf9rLDF5PWo1YjgxlsapwoRP4PruOuEZpP6JU/iC8jMxpWb2pzOIS5Sa
-         mCJw==
-X-Forwarded-Encrypted: i=1; AL+hErFTBTkuCrr+0H/V03i68+g4pXcYjKY0ZgJ8tNddXfAPkOiy/HwI3OvsKuMM4iFKVN5s/rOA3sCKNRRXQL+HlmylHA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9e70lXfpMWxYqbER3XsxKiIgvlhr+iQo+qTyLCd7YfLyrxd9in
-	KPfdxEagl/sKScXDjUGdvozMnATSYUNQnB5lIZFogUKfUdFhZj3tc9ZG4EsGL1AuXQY=
-X-Gm-Gg: AYBFou0sVm8syupmNt1lVbL4D++LCJYoxcKsZWEq0Qr2JHlj0oPL+0nzgyzqy8uhEM0
-	sEKycmmBq1pmSbiitwtMwyYwEfa91EoMK0YKUWpY+KuyA7LPGlopfzOqA+/3HVYFgnOu6d+ZInn
-	2bSXDBjGk93DVvlGNCGyAKVoOGkGFKyrBkQq5Op/niTueCKix8VkIji641uXuXQjreLKhALbBsJ
-	yr9NQI2E7fzzjL70/TEmCvQ7UnMKusdIr+D3ffWXONrvTtPLtg6mvXqeMFV44/cZ2U50jdY1y/Z
-	g3rZdSFoWL8LA0JhlL+dImYT0Lvo7uVHb81pWxpiMEMwajhUneQUOOOUQk7W2NVQV4ASxJqEi3S
-	1giPQMz0MZQjILBjl0V/YUJnFmvzF6eaD4pEh+BGZBjT6Tpf3Mrd6CmK/80W+UZUBj1u6YbWH6A
-	THqLhLdm+0lw5bm8GCiQXuFkAgwBzqsGHt2DGhtj0JeNMPPid87NG6RKz7SQkgyP/rsX9QeLMqs
-	Oh8iuqkza+h9zsbkALmHZL8yJBEJW6ut0Maea9JDA7DD/pSc4rBfPDufuX3RPQs8iPvw8Qq+N+l
-	bJr/H/SAQYwsIbJymX4HnJfNomDj2uI5UVaoMNMb9YAeVAm1rxyz5pC8d+IfrRon4Tr7fyPzDli
-	7hkRIweSxtTrPLK3vWw==
-X-Received: by 2002:a17:906:f5a5:b0:c48:1977:e1c3 with SMTP id a640c23a62f3a-c510e2ecf42mr554018366b.21.1795085242017;
-        Thu, 19 Nov 2026 02:47:22 -0800 (PST)
-Received: from puffmais2.c.googlers.com (226.124.90.34.bc.googleusercontent.com. [34.90.124.226])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c51234c9089sm93095666b.72.2026.11.19.02.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 02:47:21 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 19 Nov 2026 10:47:07 +0000
-Subject: [PATCH] phy: phy-google-usb: reset USB3 PHY before init
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E48606A325;
+	Thu, 19 Nov 2026 10:53:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B931F000C5;
+	Thu, 19 Nov 2026 10:52:59 +0000 (UTC)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,115 +37,67 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20261119-lga-usbphy-init-v1-1-1de4e0e6b191@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKvT/moC/x3MQQqAIBBA0avErBtIC6muEi2sRh0IC60opLsnL
- d/i/wSRAlOEvkgQ6OLIm88QZQGz094S8pINspJKCNHhajWecdrdg+z5QK1k09aKjJEKcrUHMnz
- /x2F83w+WqoWUYQAAAA==
-X-Change-ID: 20261119-lga-usbphy-init-a624836eff26
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, RD Babiera <rdbabiera@google.com>, 
- Neill Kapron <nkapron@google.com>
-Cc: Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-phy@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v9] PCI: exynos: Handle PCIe PHY initialization errors
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
+Cc: alim.akhtar@samsung.com, bhelgaas@google.com, jingoohan1@gmail.com, 
+ krzk@kernel.org, kwilczynski@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ lpieralisi@kernel.org, mani@kernel.org, peter.griffin@linaro.org, 
+ robh@kernel.org
+In-Reply-To: <20261031094911.3304-1-sreekuttan2156239@gmail.com>
+References: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
+ <20261031094911.3304-1-sreekuttan2156239@gmail.com>
+Date: Thu, 19 Nov 2026 11:52:53 +0100
+Message-Id: <179508557305.20612.514486261245057380.b4-reply@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1383;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=bo2o/m3xmhc0NHfbRYvN0+MKz7iNbWMaHqO6Ffi134E=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBq/tUGDxYT92TkFJ8h+M/UgumGXqTFY41DMP4c4
+ oCoGLS+Zn6JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCav7VBgAKCRBVnxHm/pHO
+ 9UdgCACNwn/rHgmgZW7N9z5xuwd/BcFD92q0D71p6SkcsMguN72bKKI/g1+xXy8+XjH2TxLb9Bi
+ ChgsRrTsCyn8Tb/vGIA1RT11JBgv3RMu6NpHhY3zVJq1AyVRiDL7uf6iaoRGQi1MDGhRd000zoz
+ IWEEsRJxJZZhAs+rynGJJDC73KcNNMpk+0qYyM/U08dzb1jo3qRrIrBBzzDItyaEBPT3Q6T5QKC
+ 5/iFYvJ93HsBoL5um8rAzVch8/rEuOhx4kK8xEpFHuzDyTW6HizxmCR6V79Cd14oZXKZ7RThWGZ
+ pU2j9fj2dcAukWuv7QeD2tYeqLf9g5L/9SUoYg2W7dhJij+0
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-google_usb3_phy_init() assumes that the PHY is in reset and that the
-Type-C Assist (TCA) block is in its power-on state. Neither is the
-case when the driver probes for the first time on Pixel 10, where the
-boot loader has used USB before: the PHY is out of reset and
-operational (lane0 phystatus is low right away, whereas it takes about
-12ms for a PHY that really was in reset), and the TCA has been
-switched to USB already (TCA_TCPC reads 0x1).
+On 2026-10-31 09:49 +0000, Sreeraj S Kurup wrote:
+> Check the return values of phy_init() and phy_power_on() to avoid
+> continuing PCIe host initialization when PHY setup fails.
+> 
+> Track PHY initialization, PHY power, and regulator enable state
+> across probe, remove, suspend, and resume to ensure cleanup is
+> performed only when appropriate and to prevent unbalanced
+> reference counts.
+> 
+> Assert core reset on probe failure after PHY initialization has
+> been reached, and handle cleanup errors during teardown and
+> suspend.
+> 
+> Also check the return value of exynos_pcie_host_init() during
+> resume and abort the resume sequence if PHY initialization fails.
+> 
+> Signed-off-by: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
 
-When the PHY is initialised in that state, the soft reset of the DWC3
-controller hangs in about one out of four boots on blazer (Pixel 10
-Pro, 12 of 50 boots), with DCTL.CSFTRST still set seconds later:
+NACK.
 
-    dwc3-google c400000.usb: DWC3 controller soft reset failed.
-    dwc3-google c400000.usb: error -ETIMEDOUT: failed to initialize core
+First of all, you are sending each version as a reply to the previous one, which
+is not recommended.
 
-In addition, google_usb3_phy_power_on() waits for the TCA to report
-that the transition to 'no connection' has completed. The TCA starts
-that transition by itself after a power-on reset (TCA_TCPC resets to a
-request for it). Without a power-on reset there is no such transition,
-and the wait only succeeds as long as the event is still pending from
-earlier. Just asserting the PHY resets before initialising the PHY is
-therefore not enough: the event was gone in 8 of 32 boots then, and
-powering on the PHY failed with "PoR->NC transition timeout".
+Second, you just ended up fixing all Sashiko reported issues without cross
+checking whether they are really valid or not and the patch just became noise
+now. For instance, this phy_init() can never fail on the only platform supported
+by this driver and there is no PHY power_on() callback (idk why phy_power_on()
+exists in the first place). So all the error handling you added for these APIs
+are dead code.
 
-So, before initialising the PHY:
-* assert its resets and drop the reference clock request, which is the
-  state google_usb3_phy_exit() leaves the PHY in
-* clear the TCA's events and request the transition to 'no
-  connection', so that google_usb3_phy_power_on() waits for a
-  transition that this initialisation has caused
+So please, do not blindly fix all the issues reported by Sashiko. Do your own
+homework!
 
-The resets are kept asserted for 1ms. That is the duration that has
-been tested, not a documented requirement.
-
-With this, USB came up in 20 of 20 boots on blazer, and in 25 of 25
-re-probes of the controller (unbind and bind of dwc3-google).
-
-Fixes: 8c2b331e6327 ("phy: Add USB3 PHY support to Google Tensor SoC USB PHY driver")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-For now, I've not added stable@ as the phy driver only exists since
-7.4-rc1. If this patch isn't applied before 7.4 comes out, it'll need
-the tag.
----
- drivers/phy/phy-google-usb.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
-index 2acdb2b0e534..4d70b2f1cfe3 100644
---- a/drivers/phy/phy-google-usb.c
-+++ b/drivers/phy/phy-google-usb.c
-@@ -8,6 +8,7 @@
- #include <linux/bitfield.h>
- #include <linux/cleanup.h>
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
-@@ -366,6 +367,25 @@ static int google_usb3_phy_init(struct phy *_phy)
- 		return 0;
- 	}
- 
-+	/*
-+	 * The PHY might be running already, e.g. because the boot loader has
-+	 * used USB. Start from the state google_usb3_phy_exit() leaves it in.
-+	 */
-+	ret = reset_control_bulk_assert(inst->num_rsts, inst->rsts);
-+	if (ret)
-+		return ret;
-+	set_pmgt_ref_clk_req_n(gphy, false);
-+	usleep_range(1000, 2000);
-+
-+	/*
-+	 * Request the transition to 'no connection' the TCA does by itself
-+	 * after a power-on reset, and clear the events of what happened
-+	 * before: google_usb3_phy_power_on() waits for it to complete.
-+	 */
-+	reg = readl(gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
-+	writel(reg, gphy->usb3_tca_base + TCA_INTR_STS_OFFSET);
-+	writel(TCA_TCPC_VALID, gphy->usb3_tca_base + TCA_TCPC_OFFSET);
-+
- 	reg = readl(gphy->usb3_tca_base + TCA_CTRLSYNCMODE_CFG1_OFFSET);
- 	reg &= ~TCA_CTRLSYNCMODE_CFG1_XA_TIMEOUT_VAL;
- 	reg |= FIELD_PREP(TCA_CTRLSYNCMODE_CFG1_XA_TIMEOUT_VAL,
-
----
-base-commit: 749a4de370409464cf8501ec5b2451df45c84eb4
-change-id: 20261119-lga-usbphy-init-a624836eff26
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+- Mani
 
