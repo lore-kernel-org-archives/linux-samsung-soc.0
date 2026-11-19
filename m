@@ -1,68 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.25
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795029169;
-	b=gw+2H6eGyP+XCh4HOORkjmMRnQMeq14kmdwLJdSrcfF5awQapNzPc8jzmhvRHd5/obJK
-	 9P3VPNSsnCrbm+Ha25fYNg52O4Mx9/IaqREAxUko2JoNaKyHAkAtCaPT1sJ8b4dHG9WdZ
-	 /RI+JX2bF6pBuH8TqRQuBUhMRNTwnLVso0HVqIznunEl8bFnGYSe3pzIKPikXE+T9lXvB
-	 ir9urp8DQOCuA6Uxmwu5GevNtpTvsr/LFnusC/gu1kVsEY86ioveJp2gjV9Ud3XuYttZ1
-	 GdF5Sj7FR7+D7CS/BqSUokFjd8jyaRFrR0ly1LbHwbuINrkUGrDZkvXWnpNyGHJKamw==
+	t=1795060368;
+	b=2/kpfEjWBgUhHEVCflwSw+m+NkjALD6W5m8PZ8Tx2UqPO02Z2h/oElqMyaGMhB1yfEtb
+	 Ugz/QK3uCahCSNCIQYQCkHzvZ4h74Hyw0rqsDGZRHezq2knSALM9EOp5ueHQSa5O5g6Hk
+	 sgoi1Lsh2r81LX7LiOPnWzn8J1yK+WomOTM8+fe42S+SDyZLdaKU4nvM3Mi5OxmnaOk0a
+	 HQsxO3UP3PNPfHSuq57FvDZO3T3/Wq00lNxiQ+n+jjly8zpuemiqNeCF7/q96imFH/9Ud
+	 9/IJ7EWb8aOcOtv4WNyPeNZmi1b/tH3+Ztwhomox/MADVg6WH+5Dkv73oTae4AcHKPw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795029169;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795060368;
 	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=pQnJmWW6nPDVDbiKnkWy2swOvfjrmQ+u4ZBhr5A3f7M=;
-	b=vonBFL5IVnMO0kClgnJ9Loio81ty9ytj4BvggodjKvyy/LHu/k/7lxCHW9845rBCgrVA
-	 aN6J/LjQ7um8msbaZA+2iIKefXgXIVFedVFdZ/P9zMvoCaiup080bvqcEo66lj2PtEj5R
-	 HDXfPX7QSSznxOAb5cDJs2r+iGskvvYDPBwJ01UojfYkjIZgbjPFe0iXjxKT8X/ZZjHLV
-	 ovG/nzbv2OcnhuLJvUpV4yYzC3zOucuMN2VV+XYKbLRGK9/aYWJfAOVHGg1XiPfiGdy5W
-	 jn4wpVXPgn1rCLrqyMN0x2vrub71vwQR1OcGu9nrgM6yrnOiJjX/ffSBnTUxKFGQaIA==
+	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
+	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
+	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
+	bh=GItsSVGA+hmlSb3pkjtiaee8VXcySXBDfV85yqW7yYo=;
+	b=tE+VheUn9DJu/4Ee4UAyVpHsquTn6q6v5r140DwXmi9xSv0KBnlM0chLNAoceJdtbPM9
+	 VdQQToVteNzruQyJDL/2lB+ESYIWQK9tWHs6qyMzhoOPvHX2MCAPsa84KkhIriy50OIbu
+	 4505Le3XO53PW4usqgBvOrTRkFtRvMXQWtWY7RlrmaGwASOLH67idlui2Bo/yGfJqLHNp
+	 x1sxW3hQPNlO0XQmbFXRDG0JWz7dSMaa50XTvygU7aaZCZLyzxcQ6VBWOOFY3HyMqh2LT
+	 F6+9J/mbxkufAD2JvUk1l8+4zu/y7wWPY9XGeAXHnlT3niUFHj6M44SkSO8FSbJ9ISA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=samsung.com;
 	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=neTfT88U;
-	arc=none smtp.remote-ip=210.118.77.11
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Jw+il9Pt;
+	arc=none smtp.remote-ip=203.254.224.25
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7450606A334
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 19:12:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B7450606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F14606A330
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 03:52:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 64F14606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=neTfT88U
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20261118191240euoutp01f000a8bb61b0f2323e612699426127f4~pOYLBoKeA1782117821euoutp01r
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2026 19:12:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20261118191240euoutp01f000a8bb61b0f2323e612699426127f4~pOYLBoKeA1782117821euoutp01r
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=Jw+il9Pt
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20261119035245epoutp025f009e7889bcdbc76dfb0051d9670bcb~pVeQvSpn12375923759epoutp02T
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 03:52:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20261119035245epoutp025f009e7889bcdbc76dfb0051d9670bcb~pVeQvSpn12375923759epoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795029160;
-	bh=pQnJmWW6nPDVDbiKnkWy2swOvfjrmQ+u4ZBhr5A3f7M=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=neTfT88UtZtb8+MzvLHLB7HJ5OGTAmn+qJocvu/auOYis5WAlCO36FGGoLnhACRtd
-	 9eCrS03nfKWw/hjY+ZGPO556QcKgRsknSNojWaY0tti8QiivCYvqdoAIm46aqse5aw
-	 PEX7b2cP1tcEcGuAycAmZ+mige/oUlvTgKKNkcAA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261118191239eucas1p1054471efd4b07967555d34a2aed994c0~pOYKdupe21910519105eucas1p1J;
-	Wed, 18 Nov 2026 19:12:39 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20261118191239eusmtip2489642b72e5eb3c0cdd84cb7d9d30c28~pOYKCR2S62280122801eusmtip2w;
-	Wed, 18 Nov 2026 19:12:39 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Vinod Koul
-	<vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Manivannan
-	Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Peter
-	Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] phy: samsung: exynos5250-sata: fix unreliable PLL lock
- timeout
-Date: Wed, 18 Nov 2026 20:12:31 +0100
-Message-ID: <20261118191233.376139-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	s=mail20170921; t=1795060365;
+	bh=GItsSVGA+hmlSb3pkjtiaee8VXcySXBDfV85yqW7yYo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Jw+il9PthKfh3IqMwmGtsWIPD//ksSCqHH0ZVR5r5m4rMRi5925BD+xyL+EB23VPB
+	 ycEbl0mIYXTGD4G/SdMW0nSfM87mtSVJVu20ugh+D4thUlKgT6fwKNQxqCApbe7VPC
+	 QjYRxTBelfcsZi+3wb5ygm7FpFqe2yd7cc4sQJl0=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20261119035243epcas5p454481e6b84a96f7d913461c10bffc693~pVePvEJsS1381613816epcas5p43;
+	Thu, 19 Nov 2026 03:52:43 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4jVPgb1Y6Xz6B9m5; Thu, 19 Nov
+	2026 03:52:43 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261119035242epcas5p24269dbcd55378604ded876d89bc24ace~pVeOoguQe1332113321epcas5p2V;
+	Thu, 19 Nov 2026 03:52:42 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261119035240epsmtip23b287ee79b550d5d99b705423479e030~pVeMci5IC1577115771epsmtip2A;
+	Thu, 19 Nov 2026 03:52:40 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
+	<raghav.s@samsung.com>
+Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
+	<robh@kernel.org>, <conor+dt@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
+	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
+In-Reply-To: <CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com>
+Subject: RE: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for
+ pll_4313
+Date: Thu, 19 Nov 2026 09:22:38 +0530
+Message-ID: <002901dd77d9$6ddef600$499ce200$@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -72,104 +84,110 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJMpPSZ0SyccmPoxB6lh4WTmmzUIwGxlKqAAl95c38DMT8uKrYcTHkw
+Content-Language: en-us
+X-CMS-MailID: 20261119035242epcas5p24269dbcd55378604ded876d89bc24ace
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
-X-EPHeader: CA
-X-CMS-RootMailID: 20261118191239eucas1p1054471efd4b07967555d34a2aed994c0
-References: <CGME20261118191239eucas1p1054471efd4b07967555d34a2aed994c0@eucas1p1.samsung.com>
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20261113104847epcas5p1d970255218f1ca78b19690bfd097f303
+References: <CGME20261113104847epcas5p1d970255218f1ca78b19690bfd097f303@epcas5p1.samsung.com>
+	<20261113110612.3265841-1-raghav.s@samsung.com>
+	<20261113110612.3265841-7-raghav.s@samsung.com>
+	<CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com>
 
-On Arndale boards the SATA PHY occasionally fails to initialize, which
-makes the AHCI controller probe fail and the attached disk disappear:
+Thanks Peter for review
 
-  phy phy-12170000.sata-phy.11: PHY PLL locking failed
-  phy phy-12170000.sata-phy.11: phy init failed --> -14
-  ahci-dwc 122f0000.sata: probe with driver ahci-dwc failed with error -14
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Friday, November 13, 2026 5:58 PM
+> To: Raghav Sharma <raghav.s=40samsung.com>
+> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
+> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
+> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
+> pokala.reddy=40samsung.com
+> Subject: Re: =5BPATCH v3 06/14 RESEND=5D clk: samsung: clk-pll: Add suppo=
+rt for
+> pll_4313
+>=20
+> Hi Raghav,
+>=20
+> On Fri, 13 Nov 2026 at 10:53, Raghav Sharma <raghav.s=40samsung.com>
+> wrote:
+> >
+> > From: Alim Akhtar <alim.akhtar=40samsung.com>
+> >
+> > PLLs 4313 are found in the Exynos8855 SoC and it is similar to
+> > pll_531x except for CON8 offset, so re-using code for
+> > pll_4313
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
+> > ---
+> >  drivers/clk/samsung/clk-pll.c =7C 11 ++++++++++-
+> > drivers/clk/samsung/clk-pll.h =7C  1 +
+> >  2 files changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-pll.c
+> > b/drivers/clk/samsung/clk-pll.c index 3d837bd74355..7b0756127306
+> > 100644
+> > --- a/drivers/clk/samsung/clk-pll.c
+> > +++ b/drivers/clk/samsung/clk-pll.c
+> > =40=40 -1306,7 +1306,15 =40=40 static unsigned long
+> samsung_pll531x_recalc_rate(struct clk_hw *hw,
+> >         u64 mdiv, fout =3D parent_rate;
+> >
+> >         pll_con0 =3D readl_relaxed(pll->con_reg);
+> > -       pll_con8 =3D readl_relaxed(pll->con_reg + 20);
+> > +       if (pll->type =3D=3D pll_4313) =7B
+> > +               /* Offset for PLL_CON8 which hold FDIV different for PL=
+L_4313
+> > +                * which is PLL_LOCKTIME_OFFSET - 0x4
+> > +                */
+> > +               pll_con8 =3D readl_relaxed(pll->lock_reg - 4);
+> > +       =7D else =7B
+> > +               pll_con8 =3D readl_relaxed(pll->con_reg + 20);
+> > +       =7D
+> > +
+>=20
+> This starts to feel a bit hacky (pll_con8 register being referenced as an=
+ offset
+> from lock_reg). Is the register really called pll_con8 on 8855? Or is it =
+called
+> something else, but happens to contain fdiv?
+>=20
+Yes, it is named as PLL_CON8_* on 8855, and contain fdiv bit.
 
-The PLL lock is polled by wait_for_reg_status() with a timeout of
-usecs_to_jiffies(1000). On ARM with the default HZ=100 that rounds up to
-a single jiffy, so the effective timeout is anything between almost zero
-and 10ms, depending on where in the tick period the wait starts. The
-loop also does not re-check the status after the deadline has passed,
-so an interrupt or preemption during polling can turn an already locked
-PLL into a reported failure. Finally, -EFAULT is a misleading error code
-for a timeout.
+> I think something like this would look cleaner:
+>=20
+> u32 fdiv_reg;
+Historically SFR name was used to match with databook naming convention.=20
+Few lines below it does indicate indeed pll_con8 contains fdiv.=20
+ fdiv =3D (pll_con8 & PLL531X_FDIV_MASK);
 
-Replace the open-coded loop with readl_poll_timeout(), which measures
-time with ktime, performs a final read after the timeout, and returns
--ETIMEDOUT. Use a 10ms timeout, matching the upper bound of the
-previous behaviour with HZ=100.
+I am ok with taking this suggestion.
+Only thing is should we change pll_con0 as well together, or in a separate =
+top-up patch?
 
-Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-This patch has been developed with LLM assistance and have been tested
-on the real Exynos5250-based Arndale board.
-
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
----
- drivers/phy/samsung/phy-exynos5250-sata.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
-index a88534eba2be..b55cbb3c47b3 100644
---- a/drivers/phy/samsung/phy-exynos5250-sata.c
-+++ b/drivers/phy/samsung/phy-exynos5250-sata.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/i2c.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -43,7 +44,8 @@
- #define EXYNOS5_SATA_PHSATA_STATM	0xf0
- #define PHSTATM_PLL_LOCKED		BIT(0)
- 
--#define PHY_PLL_TIMEOUT (usecs_to_jiffies(1000))
-+#define PHY_PLL_POLL_US		10
-+#define PHY_PLL_TIMEOUT_US	10000
- 
- struct exynos_sata_phy {
- 	struct phy *phy;
-@@ -53,19 +55,6 @@ struct exynos_sata_phy {
- 	struct i2c_client *client;
- };
- 
--static int wait_for_reg_status(void __iomem *base, u32 reg, u32 checkbit,
--				u32 status)
--{
--	unsigned long timeout = jiffies + PHY_PLL_TIMEOUT;
--
--	while (time_before(jiffies, timeout)) {
--		if ((readl(base + reg) & checkbit) == status)
--			return 0;
--	}
--
--	return -EFAULT;
--}
--
- static int exynos_sata_phy_power_on(struct phy *phy)
- {
- 	struct exynos_sata_phy *sata_phy = phy_get_drvdata(phy);
-@@ -142,9 +131,9 @@ static int exynos_sata_phy_init(struct phy *phy)
- 	val |= RESET_CMN_RST_N;
- 	writel(val, sata_phy->regs + EXYNOS5_SATA_RESET);
- 
--	ret = wait_for_reg_status(sata_phy->regs,
--				EXYNOS5_SATA_PHSATA_STATM,
--				PHSTATM_PLL_LOCKED, 1);
-+	ret = readl_poll_timeout(sata_phy->regs + EXYNOS5_SATA_PHSATA_STATM,
-+				 val, val & PHSTATM_PLL_LOCKED,
-+				 PHY_PLL_POLL_US, PHY_PLL_TIMEOUT_US);
- 	if (ret < 0)
- 		dev_err(&sata_phy->phy->dev,
- 			"PHY PLL locking failed\n");
--- 
-2.43.0
+>=20
+>        if (pll->type =3D=3D pll_4313) =7B
+>                /* fdiv in <insert name> register
+>                fdiv_reg =3D readl_relaxed(pll->lock_reg - 4);
+>        =7D else =7B
+>                /* fdiv in pll_con8 register */
+>                fdiv_reg =3D readl_relaxed(pll->con_reg + 20);
+>        =7D
+>=20
+> regards,
+>=20
+> Peter
 
