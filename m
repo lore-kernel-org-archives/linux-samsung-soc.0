@@ -1,47 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795090219;
-	b=cxr5eX/6kxrr0/wQG11uKwdkVoUVnHo0XZ+ASMoewQ6asinZwp09ZuaPspwa92q9maND
-	 lkabi+HoQGM50+s3WVhD6aieHqoMoXW/uMNs9O2nR7t6PEeV54iuCh4BdZluxI0qdE39H
-	 0F/njBC5ctO5OwMVfe6N9h68KxZ+JrJ9S93H3+mJsrK249TaBn3y2+3q/8uVY0NW6eoTF
-	 Y0nFfAsE5IJr6lwjJqiLqMt2eRFn23sDmquL4BB21LeBVvIHpHELtTNnLFFAE032xa3jE
-	 x4qAjkN4DKVkEYxTTARiwfaLjhM4cdV3LIwo//jJ5lEZ74RCBL1MKOCGMX3NZfEd4Uw==
+	t=1795090647;
+	b=OC0onTqy5M52vkfYsCjqFT6RxgDIGhA22M8YJkRzty9AAdCfSLmHrLnKsuILCELh88EB
+	 4FkHChRiTPsR08ZTS62oqbxfcOzoUCxkMb9P+kLGoTp/DgYoy6x1h0URnqsxqkgnyDJgw
+	 TC/4Ezm3eo7ylEUj/skwCixfKXWJbVuDImGYZGYOppNcFXzCuMtzg1jx+H4QijbfH2wNu
+	 Ea+Y5O16L69fCudTuE++a3OkQ8kx6lg25fG+dQh0L4axFqRKACpCMGwgwps8BmAIvZX4m
+	 a2CSWHeOCxiZy+y8zDJ4NNNFXNSSgWcvsqaIlCmNe09ketJhOw9UEYxC1bQfLRgTEoA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795090219;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=bVOglpsLdk42ZqnvQazF0A2L65y0wwaNXipQaLV5Dy8=;
-	b=PAH8b5cTspxbmAPOKkTBewhdEA5/ZMeXOfoNjPbZ4qag/Himu+cibGPGj4cBxyeL7AUi
-	 ynGmrJXCjUZ4G8l59BmUocoTExwpL7nQq/4tVmRGZniYTUZGG4jqS5Hpw3ol8wg8zgMbA
-	 ApOMR2/2HUnPUg/pQGkCiooYzDFKML7joqTlkd9fZ5JKh+OVxNyWx0Lx47K08kHOAjRbx
-	 ecwlPHnnSN3sqXTf34Dhg2WL2Y9GrvQC/WbgO5dQ73F4EEVFJHMuHZ1O1/H9N/C+ywRyL
-	 XsRF7toq9tGl30+Uzzqsm9sgj43SzKiXiE0vhx2I9Rlf1O5JWDQv5/KaHb3DgmC5RMQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795090647;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=UAJvdvXND8MFc/VoiTbz1OJtExB4AirxeFsvHI+V5hE=;
+	b=s49zWjUypekVoBG6CKnL+/zYWJM4zRKhlOO757dbgMxrg3z3JUmVgCmLse+21mVOiLhQ
+	 3J/WD06zzSt6fB/3nn2Hd1NQrPCuNjgnnz7l6ewUHXRGmEf5Rtagf4v2uBTBj9Gxll3T/
+	 duhZueJkGujHh7cPtU2ezh+qBuXeOcA1uQr9TYivExDyZ1X79evVifLSM26345KPGBW7N
+	 mRA2cfCJB21zQMd0yhhkW+jMk7Pk3kPSz9MT9M+po8wnUxhWTWqJnhWYH/qvv/Ux2fIO8
+	 yqyqBKmfd7Y8nKR8OE5wI9Gfvn6pErXXrlwg082agg18SvnZbHLsWpOIRi+Wd7D60aw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NV+nC0tB;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AwDuq+ea;
+	arc=none smtp.remote-ip=209.85.128.54
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A2C606A320;
-	Thu, 19 Nov 2026 12:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C664D606A338
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 12:17:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C664D606A338
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NV+nC0tB
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A691F000CF;
-	Thu, 19 Nov 2026 12:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795090219;
-	bh=bVOglpsLdk42ZqnvQazF0A2L65y0wwaNXipQaLV5Dy8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NV+nC0tB/l6vhGKhDUnMdket8HGsXsD2s6NkAQ5lTK+pSkt40z12z7xIN2oxvodPX
-	 8I0bHapymBU0bV4sTW/P1zFK3RGpPsfSzBxaIKdoF9Xt8FAio0fhSozZ/tCPaNOfqZ
-	 1BMAnW+XPjhi/XXY7MHMIZcwyDrRw867CCyrfuLvAZuo4/joPD7lomgVAUabA8ApRP
-	 Ql8Xl8VXLXxLqd7ER6L5AuT0Ii3B9Mu6khKMNirs/nSLepiQaMN8cc7zBqjMck/vcw
-	 VyLJH1AIxRxeruBK4WrvnVvPoFK6jQxdjkqiyKcNO6T0Y2uSuUFYEwxp3SVw9r3W/v
-	 7qOlSSNXpA4VQ==
-Message-ID: <0a3b7886-3800-42ee-8e22-80944114dfcf@kernel.org>
-Date: Thu, 19 Nov 2026 13:10:14 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AwDuq+ea
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so22516575e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 04:17:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795090645; x=1795695445; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=UAJvdvXND8MFc/VoiTbz1OJtExB4AirxeFsvHI+V5hE=;
+        b=AwDuq+eatSrAnL+zS/UWVIpORebaGiFOmF3Zop+PBpDwoqJ6Kw3hoA3EBsdk2qdqga
+         Zfgmtfwgufs1LbJZxWIOo/QWFyIMI4APCo0FIMViYjOFfCGJ/IDW6q/Tz76fg4Vt1bFO
+         dpZKj4il2SG53Nd0xEABt68MRqHCwRVHco9TfA9GFMc2DIpQ9kzuJt7OwwHoB0x2HHs5
+         H3OoSYqZZm+vt78i3RChOTOqwDIvQ0fGLe8K5CMIQbKkqMsD0oof5PlTw/taEKbcYzMP
+         FOtFFQ2noKsPwexDxy4DgIb/fMbY5SQE8Zh0T6U0sUVN0iWU3kuQJb7mVTQugjMZouSD
+         bo+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795090645; x=1795695445;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=UAJvdvXND8MFc/VoiTbz1OJtExB4AirxeFsvHI+V5hE=;
+        b=u/mW1jynQR1kEnoBrLs4GaNlFnzaqaN220y6P9K46lSVReFSviO4YBBlefISbktuZU
+         FVIoQGEVkkI0SvxBDJ1QYkmRrZENW0I/KjN7Dt9ghFX5tCrlOhLHxB3w6ILtPVoOI3YB
+         GbV3qRhjxlU3/ik8WSgtWCuKwEMRL+OMiKtyzU9ywCeuoTg4Sl2i7rXj40TN4/UP6Dvd
+         VMd37xhtzaVhHSz5qa8LT7+Nr/WtN/lZtBu3YPOCATes1c4GXMCXyFSbEJG4BLeIEbPW
+         fhLPpCKg+vkCr79mm70Wkv4fDF2BmGej25yTHfYOK3vH1mx+RqurqMl62PWLnHWI2SHg
+         WwPg==
+X-Forwarded-Encrypted: i=1; AL+hErH6LFV4i5oq0oisH9vgdy44txkdYK5XrXYFCkN1BtqsR2PYNJRfXK0v+Tl8kJCsw+xNJ4NM18PhyJXBzej2hMQeDw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8fRDBWqsgm9ZE6btwqPj0xOCsnBA1aqGFArjvTeQCpIPiUEAIj
+	eu22ygmavhQct6DUOEr8CDMYSHvKEMI2BR0rWbIAnsVirv6eCF9FePI+gDQzD+Sx0jE=
+X-Gm-Gg: AYBFou3ZobhWTMHYpQp5tocMGtD8k5BI5XLaLFB6yZfc5oMmJwMgiSbr4NWeBjjk9Ig
+	PeTEJg6YNhRRVASlX6ZQBLlS+Ez9laZIcOge873UFBaVP5H5grzEt3wyeMadoP0VGM0cmzWNE1E
+	9lpiPghTCYJXB0ck941c1pbTrFEVSFkCIboqGz1OF2ZqwjrSk26+/wqWcIV6yDjthOajNR5RMUd
+	4UW13EANT7fxSeQV1uopxvNW640rtoNwqCEFRpk2HBY1TKVstAIVgd392q265ls4itflxQr8ROc
+	TkdO86C4ITZSHHD7Y1WuDFYFlqvlmzwD9uFa70yz8Tg1QAGx+f5RjysMUFGo8i5VUiNhFvDNWtD
+	UQ3IoyUPKBoy7jixrINfm4ZPMcf3Yl9ulBwNPv0FKXNBr3GP60Y6dMf2hPCMsfZUupeThZyJmCq
+	eUANVTCPbq77ANqkhQd2Y6vMhDceDZijvVo9+//aO8kSgnQ796NkAo4sgDmH+0keL2I2dn0oQj0
+	c6tfegeG6CySaqfn1JqORLT27cA06uJHBvmgPAcU3cOd8UvpiSgAI5C+AuOrOmD84E78wvMhYng
+	z/lE+yG9z3YOmcHa5j9CdYtyzuOfShJPbgIH82tua4hxPAFXechD7g+Uj0Afuw==
+X-Received: by 2002:a05:600d:6011:b0:4a2:1050:aff with SMTP id 5b1f17b1804b1-4bb7da12dd2mr112140475e9.6.1795090644975;
+        Thu, 19 Nov 2026 04:17:24 -0800 (PST)
+Received: from [192.168.0.252] ([79.115.63.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4a65560882asm10866932f8f.27.2026.11.19.04.17.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Nov 2026 04:17:24 -0800 (PST)
+Message-ID: <29209163-a01a-4862-9824-90616da73f49@linaro.org>
+Date: Thu, 19 Nov 2026 14:17:23 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -52,99 +93,306 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] PCI: exynos: Handle PCIe PHY initialization errors
-To: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
-Cc: alim.akhtar@samsung.com, bhelgaas@google.com, jingoohan1@gmail.com,
- kwilczynski@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, lpieralisi@kernel.org, mani@kernel.org,
- peter.griffin@linaro.org, robh@kernel.org
-References: <20261029131006.2744-1-sreekuttan2156239@gmail.com>
- <20261031073548.3916-1-sreekuttan2156239@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/3] thermal: samsung: acpm-tmu: refactor SoC-specific
+ operations into driver data
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>,
+ Thomas Turner <tturner@lineageos.org>,
+ Peter Griffin <peter.griffin@linaro.org>, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20261118-acpm-tmu-e850-support-v2-0-19848c0d97e5@linaro.org>
+ <20261118-acpm-tmu-e850-support-v2-2-19848c0d97e5@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261031073548.3916-1-sreekuttan2156239@gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20261118-acpm-tmu-e850-support-v2-2-19848c0d97e5@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/10/2026 08:35, Sreeraj S Kurup wrote:
-> Check the return values of phy_init() and phy_power_on() to avoid
-> continuing PCIe host initialization when PHY setup fails.
+
+
+On 11/18/26 3:51 PM, Alexey Klimov wrote:
+> The current ACPM TMU driver assumes that all TMU operations (init,
+> threshold updates, and interrupt clearing) are handled exclusively
+> via ACPM IPC commands, which is true for the GS101.
 > 
-> Track PHY initialization, PHY power, and regulator enable state
-> across probe, remove, suspend, and resume to ensure cleanup is
-> performed only when appropriate and to prevent unbalanced
-> reference counts.
+> However, other Exynos platforms (like Exynos850) lack complete firmware
+> support for these operations and require direct MMIO register access
+> instead for missing ACPM TMU IPC calls.
 > 
-> Assert core reset on probe failure after PHY initialization has
-> been reached, and handle cleanup errors during teardown and
-> suspend.
+> Prepare the driver for multi-SoC support by moving the hardcoded GS101
+> IPC calls into SoC-specific callbacks: "tz_control", "tmu_init",
+> "tmu_update_thresholds" and "tmu_check_and_clear_irqs" within the
+> acpm_tmu_driver_data struct. Additionally, save the regmap pointer in
+> the private structure so that these callbacks can utilize it for other
+> SoCs.
 > 
-> Also check the return value of exynos_pcie_host_init() during
-> resume and abort the resume sequence if PHY initialization fails.
-> 
-> Signed-off-by: Sreeraj S Kurup <sreekuttan2156239@gmail.com>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
-> v8:
->  - Fix state desynchronization in exynos_pcie_phy_exit() by returning
->    early if phy_power_off() fails, preventing calls to phy_exit() on a
->    still-powered PHY
->  - Prevent PM core desynchronization and orphaned controller states
->    during suspend-abort sequences in exynos_pcie_suspend_noirq() by
->    logging teardown errors and returning 0 instead of aborting system
->    suspend
-> v7:
+>  drivers/thermal/samsung/acpm-tmu.c | 113 +++++++++++++++++++++++++++----------
+>  1 file changed, 82 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
+> index 4799ef518a7a..0def0ec09084 100644
+> --- a/drivers/thermal/samsung/acpm-tmu.c
+> +++ b/drivers/thermal/samsung/acpm-tmu.c
+> @@ -74,6 +74,8 @@ struct acpm_tmu_sensor {
+>  };
+>  
+>  struct acpm_tmu_priv {
+> +	const struct acpm_tmu_driver_data *data;
+> +	struct regmap *regmap;
+>  	struct regmap_field *regmap_fields[REG_INTPEND_COUNT];
+>  	struct acpm_handle *handle;
+>  	struct device *dev;
+> @@ -86,9 +88,18 @@ struct acpm_tmu_priv {
+>  
+>  struct acpm_tmu_driver_data {
+>  	const struct reg_field *reg_fields;
+> +	const struct regmap_config *regmap_config;
+>  	const struct acpm_tmu_sensor_group *sensor_groups;
+>  	unsigned int num_sensor_groups;
+>  	unsigned int mbox_chan_id;
+> +
+> +	/* SoC-specific TMU routines and values */
+> +	int (*tz_control)(struct acpm_tmu_sensor *sensor, bool on);
 
-How many of these are you going to send (even the same day...) till you
-get it right? The process is not random punching review system till you
-get it past it. Sending random code till bot stops to complain only
-proves that you do not understand what you sent.
+on e850 this sets CORE_EN, what this callback do is to enable or
+disable a sensor group
 
-I have zero confidence that you understand what you are doing and all
-this looks like LLM slop sent to us. Why would we want LLM slop?
+what do you think about:
 
-Best regards,
-Krzysztof
+int (*enable_sensor)(struct acpm_tmu_sensor *sensor, bool on);
+
+> +	int (*tmu_check_and_clear_irqs)(struct acpm_tmu_sensor *sensor,
+> +					bool *pending_irq);
+
+drop tmu prefixes, the struct is already acpm_tmu
+
+> +	int (*tmu_init)(struct acpm_tmu_priv *priv);
+> +	int (*tmu_update_thresholds)(struct acpm_tmu_sensor *sensor,
+> +				     u8 thresholds[2], u8 inten);
+>  };
+
+How about doing the following:
+
+struct acpm_tmu_soc_ops {
+	int (*init)(...);
+	int (*enable_sensor)(...);
+	int (*set_thresholds)(...);
+        bool (*clear_pending_irq)(...);
+};
+
+struct acpm_tmu_driver_data {
+	...
+	const struct acpm_tmu_soc_ops *ops;
+};
+
+static const struct acpm_tmu_soc_ops gs101_tmu_ops = {
+	.init			= gs101_init,
+	.enable_sensor		= gs101_enable_sensor,
+	.set_thresholds		= gs101_set_thresholds,
+	.clear_pending_irq	= gs101_clear_pending_irq,
+};
+
+>  
+>  #define ACPM_TMU_SENSOR_GROUP(_mask, _id)		\
+> @@ -131,24 +142,32 @@ static const struct regmap_config gs101_regmap_config = {
+>  	.max_register = GS101_REG_INTPEND(15),
+>  };
+>  
+> -static const struct acpm_tmu_driver_data acpm_tmu_gs101 = {
+> -	.reg_fields = gs101_reg_fields,
+> -	.sensor_groups = gs101_sensor_groups,
+> -	.num_sensor_groups = ARRAY_SIZE(gs101_sensor_groups),
+> -	.mbox_chan_id = 9,
+> -};
+> +static int gs101_tz_control(struct acpm_tmu_sensor *sensor, bool on)
+> +{
+> +	struct acpm_tmu_priv *priv = sensor->priv;
+> +	struct acpm_handle *handle = priv->handle;
+> +
+> +	return handle->ops->tmu.tz_control(handle, priv->mbox_chan_id,
+> +					   sensor->group->id, on);
+> +}
+> +
+> +static int gs101_tmu_init(struct acpm_tmu_priv *priv)
+> +{
+> +	struct acpm_handle *handle = priv->handle;
+> +
+> +	return handle->ops->tmu.init(handle, priv->mbox_chan_id);
+> +}
+>  
+>  static int acpm_tmu_op_tz_control(struct acpm_tmu_sensor *sensor, bool on)
+>  {
+>  	struct acpm_tmu_priv *priv = sensor->priv;
+> -	struct acpm_handle *handle = priv->handle;
+> -	const struct acpm_tmu_ops *ops = &handle->ops->tmu;
+>  	int ret;
+>  
+> -	ret = ops->tz_control(handle, priv->mbox_chan_id, sensor->group->id,
+> -			      on);
+> -	if (ret)
+> -		return ret;
+> +	if (priv->data->tz_control) {
+> +		ret = priv->data->tz_control(sensor, on);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+
+Both SoCs implement all the callbacks, and tmu_check_and_clear_irqs()
+is already called unconditionally. Please make all of them mandatory
+and drop the NULL checks. As it is, a missing tz_control() would still
+flip sensor->enabled.
+
+>  	WRITE_ONCE(sensor->enabled, on);
+>  
+> @@ -227,8 +246,8 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
+>  	return 0;
+>  }
+>  
+> -static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
+> -				      u8 thresholds[2], u8 inten)
+> +static int gs101_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
+> +				       u8 thresholds[2], u8 inten)
+
+This moves the SoC-independent part (sensor->lock, disabling the sensor
+and restoring its state) into the GS101 callback, and patch 3 then
+duplicates it for Exynos850. Please keep that part in the core and have
+the SoC callback only program the thresholds.
+
+>  {
+>  	struct acpm_tmu_priv *priv = sensor->priv;
+>  	struct acpm_handle *handle = priv->handle;
+> @@ -292,7 +311,8 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = acpm_tmu_update_thresholds(sensor, thresholds, inten);
+> +	if (priv->data->tmu_update_thresholds)
+> +		ret = priv->data->tmu_update_thresholds(sensor, thresholds, inten);
+>  
+>  	pm_runtime_put_autosuspend(dev);
+>  
+> @@ -331,12 +351,12 @@ static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
+>  	.set_trips = acpm_tmu_set_trips,
+>  };
+>  
+> -static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
+> +static int gs101_handle_irqs(struct acpm_tmu_sensor *sensor, bool *pending_irq)
+
+why not keeping the bool, the ret code is not used anyway.
+
+>  {
+>  	struct acpm_tmu_priv *priv = sensor->priv;
+>  	const struct acpm_tmu_ops *ops = &priv->handle->ops->tmu;
+>  	unsigned long mask = sensor->group->mask;
+> -	bool pending_irq = false;
+> +	bool pending = false;
+>  	int i, ret;
+>  	u32 val;
+>  
+> @@ -345,16 +365,16 @@ static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
+>  	for_each_set_bit(i, &mask, EXYNOS_TMU_SENSORS_MAX_COUNT) {
+>  		ret = regmap_field_read(priv->regmap_fields[i], &val);
+>  		if (ret)
+> -			return false;
+> +			return ret;
+>  
+>  		if (val) {
+> -			pending_irq = true;
+> +			pending = true;
+>  			break;
+>  		}
+>  	}
+>  
+> -	if (!pending_irq)
+> -		return false;
+> +	if (!pending)
+> +		return 0;
+>  
+>  	ret = ops->clear_tz_irq(priv->handle, priv->mbox_chan_id,
+>  				sensor->group->id);
+> @@ -362,10 +382,12 @@ static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
+>  		dev_err_ratelimited(priv->dev,
+>  				    "Sensor %u: failed to clear IRQ (%d)\n",
+>  				    sensor->group->id, ret);
+> -		return false;
+> +		return ret;
+>  	}
+>  
+> -	return true;
+> +	*pending_irq = true;
+> +
+> +	return ret;
+>  }
+>  
+>  static irqreturn_t acpm_tmu_thread_fn(int irq, void *id)
+> @@ -383,8 +405,13 @@ static irqreturn_t acpm_tmu_thread_fn(int irq, void *id)
+>  
+>  	for (i = 0; i < priv->num_sensors; i++) {
+>  		struct acpm_tmu_sensor *sensor = &priv->sensors[i];
+> +		bool pending_irq = false;
+>  
+> -		if (!sensor->tzd || !acpm_tmu_clear_pending_irq(sensor))
+> +		if (!sensor->tzd)
+> +			continue;
+> +
+> +		ret = priv->data->tmu_check_and_clear_irqs(sensor, &pending_irq);
+> +		if (ret || !pending_irq)
+>  			continue;
+>  
+>  		handled = true;
+> @@ -398,15 +425,30 @@ static irqreturn_t acpm_tmu_thread_fn(int irq, void *id)
+>  	return handled ? IRQ_HANDLED : IRQ_NONE;
+>  }
+>  
+> +static const struct acpm_tmu_driver_data acpm_tmu_gs101 = {
+> +	.reg_fields = gs101_reg_fields,
+> +	.regmap_config = &gs101_regmap_config,
+> +	.sensor_groups = gs101_sensor_groups,
+> +	.num_sensor_groups = ARRAY_SIZE(gs101_sensor_groups),
+> +	.mbox_chan_id = 9,
+> +	.tz_control = gs101_tz_control,
+> +	.tmu_check_and_clear_irqs = gs101_handle_irqs,
+> +	.tmu_init = gs101_tmu_init,
+> +	.tmu_update_thresholds = gs101_tmu_update_thresholds,
+> +};
+> +
+>  static const struct of_device_id acpm_tmu_match[] = {
+> -	{ .compatible = "google,gs101-tmu-top" },
+> +	{
+> +		.compatible = "google,gs101-tmu-top",
+> +		.data = &acpm_tmu_gs101
+> +	},
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, acpm_tmu_match);
+>  
+>  static int acpm_tmu_probe(struct platform_device *pdev)
+>  {
+> -	const struct acpm_tmu_driver_data *data = &acpm_tmu_gs101;
+> +	const struct acpm_tmu_driver_data *data;
+>  	struct acpm_handle *acpm_handle;
+>  	struct device *dev = &pdev->dev;
+>  	struct acpm_tmu_priv *priv;
+> @@ -414,6 +456,10 @@ static int acpm_tmu_probe(struct platform_device *pdev)
+>  	void __iomem *base;
+>  	int i, ret;
+>  
+> +	data = of_device_get_match_data(dev);
+> +	if (!data)
+> +		return dev_err_probe(dev, -ENODEV, "No matching driver data found\n");
+
+plain return -ENODEV would do too, dev_err_probe brings nothing here.
+
+Cheers,
+ta
+
