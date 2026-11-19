@@ -1,79 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795117763;
-	b=zIJ8XO2ySdNflsdUuz7Uv5lfxbhdOpzxVQksTdLm8AFDZfQoGeOprdL7yt7P2V+5tg0a
-	 90aClLniyq67lBdYIkB7zyrJ2XDrXASvOdMI3j0C3E+U6wuHHHzYv4ZfL3yDlTO2Grayy
-	 GAl4G72li6wtcF99o7zUJenJt1BRuriymsL5B0MVAL/THxX36xPgAe1OTIuV9XGr43u6H
-	 +R7w4+A5HleGplKoLctUs/3tWneGZpfzH4IUan9mfHe6X2AwMnBjmc4Z/4H96FQrQAfI1
-	 4CDFcoIZB3jmhTpjc5lcpTZQUhecBvDahShCsiHE5uwscD9AkasJmaUPvCvn6p5c9fw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795117763;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
-	b=Ya0poT7jrkDwdpcMHT2MnzILatN6OY1oWosbt2Ve2kmBC6n5wY52eUrfkf9zGVV9QDcA
-	 LPk3KYXBmoBdjVv4GOUB7YtoxeZUTHSnUIqf+dgWSzuxRwWcdHzEiQuoqHZD/P2TtZy5v
-	 DpNWq9PW+Z74b/uiRmKnWcJkCKQT9qAWyx9EoakA4uDwdoOfDEweRHuJy3JoJO0TbKCZ8
-	 f+yGjuywvotZ1GnLO7QqRRpGVKhbSL/I/sXkoDhxQTq1BaPdHENVmtAYGKLvc5oTi+veC
-	 8a8bYjc0vclJNvxnZOYInLU3I2ilJ4CIC0mQPmiIeXsaNblftPfR554PMGODHpVOU5g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BhNainQ7;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795127934;
+	b=cabk2qLrxKms+shL6y1VDZDJd+9WDwobInNeJTJVzvQbx6DOA8PJQyL7e0bBdhAWf3V0
+	 xYNZO8OFYHgJsJoBInzFx/FS8CIfL69oi4khDp3OC4vVcd3OBZ3ePDWbEmKbH6Be+RKQ9
+	 6nJE9RtzNT1hZAEB26KOb7oS57js/e1e/csUwA3Ckwkk3hpspY7n1CYkUtckTHbS9OmRb
+	 FdeZrnsm2JGb5OPyr7oLNbhcV3bD6ytvUstm5xtNmCzBUtdmi/+1aUo0dpHu55DMOvZqM
+	 Bkvhr6lN873A6hwUhwIIegeyZ3KKppHsL2Ovl2SAZA3hAdNpb6+xttoedqUMSNf/rYQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795127934;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
+	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
+	bh=IyhCtPxAOxrGyki28nMoGyyI3HRHwoX1RJn1wNBIqdM=;
+	b=g+YReKkMQ6BQdQgblSk8Giu2bO5w9vkbO4C0C9fQUBMrvLDFltA7OwzImEFatAKYM1eZ
+	 XeidWdlX2opCyYG3D9ZRll7I9ahQyKhJweJWLlJRgwJj5MeWZDUD/JuTsET4lCKi4yAtG
+	 gl7WpExFbAwMeK+5vdPHMDTSIISzXceBhUw1gN/jh2zwDvA8JxCWb/CofvwYWPMacsBWq
+	 Cavn4r3w/zI71DWagQ7MbYNL0HpCVj/E4HXnh1tWob9TSSkOKNO3hrQ2EhMV68Atl6hs2
+	 +HgeRGw4A2ZgIgIQWDdG8KWoKej39UutqeVS6vDZz35UqFqsNAO3YOaLWqZwg77XGEg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IU4FWGHU;
+	arc=none smtp.remote-ip=210.118.77.12
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C70660A262D;
-	Thu, 19 Nov 2026 19:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C079606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 22:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1C079606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BhNainQ7
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795117763;
-	b=xbN0wfuetxI9o7tITwX3XTqmCbUFV34EizETsMKuktfTzqHJful5xVPmiLzF1E74QdiQ
-	 0k/0+VcExVg56t1QBXGSp+C3hu20gRxtruVEHHRtcD5Vz+6Eb7E83JWs/RtaIn0IMZTDk
-	 8WlVd8/Oe0FiB4QgblbARBr8dM7MJnwqxxPKlaF0vu/rX9qTWct7f8gsEJVpgePdwV8AZ
-	 p51W175H/I35C5G32dJdx7ihyc32JhxlZ5uOZWswgpeHyTn7HWRRJaOJhBGZWf/iL451E
-	 6FC9Z2s6/Bpxw/YZvi0flc64DxGAI65rUDmANLEEE67kGJhaLx1rm1VQSgTjSPOfoRA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795117763;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
-	b=jwgaTFbehMP690PVdGc+AAVXWILpVwqp1gN2HrDF+/qmu/qdeymUxwiYHqXxeuDNatRU
-	 G+OWwPoxT40NjUwL2aDQbP8ahhkNrXhCKfEyMesDyRnMVugaDapaYIqCSZCO6Unt8bja9
-	 yXXMksqlj7DYP+IZCOSWqtp5npv1GoGRM7gkc3YPA+MydwYUt9FFHrMpGtgsIWwsDIJwT
-	 L5deioeYDFHcsacyGznQndcOMCp6Kl9eGey45fchZY/Y4D/zzgFoDHn68b+YHkkOx0ibB
-	 g+QKHkKAXWNfN3z0eR99X11UMXg6/TXYp08Tp7G7m4HR2q43jmstXUPX4S4/W5tOmnQ==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 70D061F000CB;
-	Thu, 19 Nov 2026 19:49:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795117763;
-	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=BhNainQ7RuGC5Xcmp9oIjCoZDtP9KgW8b/oFSBA2U2e5G76XdI5LZPtM2Ne15Wz44
-	 pvGj0LWhGFGrba2WmnKmRpRdZfLNln3dYAqj16CCtKa84alQzMjB9UtnWEc4+jNQaA
-	 QDTgGYftTWPLnln8xstBhwyLucBDn2jSBRZBJ0wWT4AORBiUvbprJFqAGufWY74Z5+
-	 Ni5EQkC0Ih+qXmIk6P6KrgU3iDPaAsAX/tE11ADwEWl5ZQRbcWQIsGuNaXTAVl+anr
-	 TJR4plFZX+v26JmwVr9h85yJjGu8ITTxU1w+jbf0bAnyeMGpD5Erm4G5bDQie1igQ/
-	 tRWP6MDLJ+eLg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id A38C54B414;
-	Thu, 19 Nov 2026 19:49:21 +0000 (UTC)
-From: Umer Uddin via B4 Relay <devnull+umer.uddin.mentallysanemainliners.org@kernel.org>
-Date: Thu, 19 Nov 2026 19:49:22 +0000
-Subject: [PATCH 6/6] arm64: dts: exynos: exynos7885-gta3xllte: Enable
- FuelGauge support
+	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IU4FWGHU
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261119223851euoutp02ea3a779c6f11aa7a5d98b2b4ea5245e7~pk1egu79s0813808138euoutp02b
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 22:38:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261119223851euoutp02ea3a779c6f11aa7a5d98b2b4ea5245e7~pk1egu79s0813808138euoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795127931;
+	bh=IyhCtPxAOxrGyki28nMoGyyI3HRHwoX1RJn1wNBIqdM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=IU4FWGHUfl0DbtLGw1Na3Qy++KX80T0mhcLMEqek1pq0/ZLaHPfoFZ+3YUSwtE+SM
+	 bq+ndUzSxhESdi0b8fffe6T7oZcogSWx66Yd2x8GWKmHNoViWh3nC3XnjSnWEpfQTK
+	 i5nqhOm00bF8ZypYhZh2Wdt3pa8N11HBjf1LWZQM=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00~pk1dY-Ne70286602866eucas1p1f;
+	Thu, 19 Nov 2026 22:38:49 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20261119223849eusmtip1b6e16b1a8f5c9c9b906a997dd4b263fd~pk1c-LZqP1774617746eusmtip1e;
+	Thu, 19 Nov 2026 22:38:49 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jingoo Han
+	<jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>
+Subject: [PATCH] drm/exynos: dp: Enable pipe clock from encoder
+ enable/disable callbacks
+Date: Thu, 19 Nov 2026 23:38:42 +0100
+Message-ID: <20261119223843.3694307-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -83,107 +72,146 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261119-gta3xllte-usb-battery-v1-6-0cf5f763522e@mentallysanemainliners.org>
-References: <20261119-gta3xllte-usb-battery-v1-0-0cf5f763522e@mentallysanemainliners.org>
-In-Reply-To: <20261119-gta3xllte-usb-battery-v1-0-0cf5f763522e@mentallysanemainliners.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Umer Uddin <umer.uddin@mentallysanemainliners.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795117759; l=1850;
- i=umer.uddin@mentallysanemainliners.org; s=20261109;
- h=from:subject:message-id;
- bh=8/qztykzuOZxhphrQU0aaqpVGh+Y9V0/eepwjkmIL64=;
- b=21d/ypEdBDsGYrW/vcomA2ptJ+BSgDPuTOUObjThbEmYwTq/Bf9mVhfYVzfITsCVthjbT19Q6
- lE79g+pF+x/A02WDaQ+kJJFTZNSLX4Ht+dfeEFqjN9i3PwmH85FBKKk
-X-Developer-Key: i=umer.uddin@mentallysanemainliners.org; a=ed25519;
- pk=Hsgrt4A72CFTe27AI1AAWlnLsiQrlb4+T+cbrfWDhUA=
-X-Endpoint-Received: by B4 Relay for
- umer.uddin@mentallysanemainliners.org/20261109 with auth_id=1466
-X-Original-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-Reply-To: umer.uddin@mentallysanemainliners.org
-Content-Transfer-Encoding: 7bit
+X-RootMTR: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
+X-EPHeader: CA
+X-CMS-RootMailID: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
+References: <CGME20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00@eucas1p1.samsung.com>
 
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+The FIMD -> DP video (pipe) clock is switched from the analogix_dp
+runtime PM callbacks through plat_data->power_on()/power_off(). This
+only works if the DP device runtime suspends while the encoder is still
+attached to the CRTC, i.e. synchronously from the bridge disable path,
+and runtime resumes from the bridge enable path. Otherwise power_off()
+bails out with -EPERM because encoder->crtc is already NULL, the FIMD
+driver keeps its cached dp_clk_enabled state set, and after FIMD loses
+power during system suspend the clock is never enabled again. Enabling
+the bridge on resume then fails on Exynos5250 Snow:
 
-The Samsung Galaxy Tab A 10.1 (2019) has a S2MU005 Multi Function Device
-(MFD). It contains PMIC, FG and EXTCON. This commit enables the FG, to be
-used with a simple battery device to allow for battery percentages to be
-reported.
+  exynos-dp 145b0000.dp-controller: Timeout of slave video streamclk ok
+  exynos-dp 145b0000.dp-controller: unable to config video
+  [drm:analogix_dp_bridge_atomic_enable [analogix_dp]] *ERROR* dp commit error, ret = -110
+  exynos-dp 145b0000.dp-controller: failed to set bridge, retry: 0
+  ...
+  exynos-dp 145b0000.dp-controller: too many times retry set bridge, give it up
 
-Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+This happens whenever the DP device stays runtime active across the
+display disable, for example when runtime PM is blocked by writing "on"
+to its power/control sysfs attribute. Since commit f2b556e3dad6 ("PM:
+runtime: Update last_busy before calling rpm_suspend() in rpm_idle()")
+it also happens by default, because pm_runtime_put_sync() in the bridge
+disable path now only schedules an autosuspend after the 100ms delay and
+the device is runtime suspended only later by
+pm_runtime_force_suspend().
+
+Tie the pipe clock to the display state instead of the DP device power
+state: enable it from the encoder .enable callback and disable it from
+the encoder .disable callback. The atomic helpers call them after the
+CRTC is enabled and before the bridge enable, and after the bridge
+disable and before the CRTC disable, so the FIMD is active, the clock
+is running when the analogix DP configures the video input, and
+encoder->crtc is valid in both cases. This also matches the other Exynos
+DRM drivers, which switch the pipe clock from their enable/disable
+callbacks.
+
+Fixes: 3424e3a4f844 ("drm: bridge: analogix/dp: split exynos dp driver to bridge directory")
+Fixes: 73f613908eb1 ("drm/bridge: analogix_dp: move platform and PHY power handling into runtime PM")
+Closes: https://lore.kernel.org/all/av9AkwQDhB7O4wgl@google.com/
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../arm64/boot/dts/exynos/exynos7885-gta3xllte.dts | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+This patch has been developed with LLM assistance and have been tested
+on the real Exynos5250-based Snow Chromebook device.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-index 57df878cb563..1c0af6f89396 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-@@ -22,6 +22,13 @@ aliases {
- 		serial2 = &serial_2;
- 	};
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/gpu/drm/exynos/exynos_dp.c | 41 +++++++-----------------------
+ 1 file changed, 9 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 4db7400c8a23..8beae1132dfa 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -32,8 +32,6 @@
  
-+	battery: battery {
-+		compatible = "simple-battery";
-+		charge-full-design-microamp-hours = <6000000>;
-+		voltage-min-design-microvolt = <3300000>;
-+		voltage-max-design-microvolt = <4350000>;
-+	};
-+
- 	chosen {
- 		ranges;
- 		#address-cells = <2>;
-@@ -86,6 +93,20 @@ cont_splash_mem: framebuffer@ec000000 {
- 	};
+ #include "exynos_drm_crtc.h"
+ 
+-#define to_dp(nm)	container_of(nm, struct exynos_dp_device, nm)
+-
+ struct exynos_dp_device {
+ 	struct drm_encoder         encoder;
+ 	struct drm_device          *drm_dev;
+@@ -43,39 +41,20 @@ struct exynos_dp_device {
+ 	struct analogix_dp_plat_data plat_data;
  };
  
-+&i2c_0 {
-+	status = "okay";
+-static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
+-				bool enable)
+-{
+-	struct exynos_dp_device *dp = to_dp(plat_data);
+-	struct drm_encoder *encoder = &dp->encoder;
+-
+-	if (!encoder->crtc)
+-		return -EPERM;
+-
+-	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), enable);
+-
+-	return 0;
+-}
+-
+-static int exynos_dp_poweron(struct analogix_dp_plat_data *plat_data)
+-{
+-	return exynos_dp_crtc_clock_enable(plat_data, true);
+-}
+-
+-static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
+-{
+-	return exynos_dp_crtc_clock_enable(plat_data, false);
+-}
+-
+ static void exynos_dp_mode_set(struct drm_encoder *encoder,
+ 			       struct drm_display_mode *mode,
+ 			       struct drm_display_mode *adjusted_mode)
+ {
+ }
+ 
+-static void exynos_dp_nop(struct drm_encoder *encoder)
++static void exynos_dp_enable(struct drm_encoder *encoder)
++{
++	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), true);
++}
 +
-+	fuel-gauge@3b {
-+		compatible = "samsung,s2mu005-fuel-gauge";
-+		reg = <0x3b>;
-+		interrupt-parent = <&gpa2>;
-+		interrupts = <4 IRQ_TYPE_EDGE_BOTH>;
-+		pinctrl-0 = <&fuel_irq>;
-+		pinctrl-names = "default";
-+		monitored-battery = <&battery>;
-+	};
-+};
-+
- &mmc_0 {
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
-@@ -112,6 +133,13 @@ &oscclk {
++static void exynos_dp_disable(struct drm_encoder *encoder)
+ {
+-	/* do nothing */
++	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), false);
+ }
+ 
+ static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
+@@ -84,8 +63,8 @@ static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
+ 
+ static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
+ 	.mode_set = exynos_dp_mode_set,
+-	.enable = exynos_dp_nop,
+-	.disable = exynos_dp_nop,
++	.enable = exynos_dp_enable,
++	.disable = exynos_dp_disable,
  };
  
- &pinctrl_alive {
-+	fuel_irq: fuel-irq-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
- 	key_power: key-power-pins {
- 		samsung,pins = "gpa1-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
-
+ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+@@ -170,8 +149,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 
+ 	/* The remote port can be either a panel or a bridge */
+ 	dp->plat_data.dev_type = EXYNOS_DP;
+-	dp->plat_data.power_on = exynos_dp_poweron;
+-	dp->plat_data.power_off = exynos_dp_poweroff;
+ 	dp->plat_data.ops = &exynos_dp_ops;
+ 
+ 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
 -- 
-2.56.1
-
+2.43.0
 
