@@ -1,68 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.118.77.12
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795127934;
-	b=cabk2qLrxKms+shL6y1VDZDJd+9WDwobInNeJTJVzvQbx6DOA8PJQyL7e0bBdhAWf3V0
-	 xYNZO8OFYHgJsJoBInzFx/FS8CIfL69oi4khDp3OC4vVcd3OBZ3ePDWbEmKbH6Be+RKQ9
-	 6nJE9RtzNT1hZAEB26KOb7oS57js/e1e/csUwA3Ckwkk3hpspY7n1CYkUtckTHbS9OmRb
-	 FdeZrnsm2JGb5OPyr7oLNbhcV3bD6ytvUstm5xtNmCzBUtdmi/+1aUo0dpHu55DMOvZqM
-	 Bkvhr6lN873A6hwUhwIIegeyZ3KKppHsL2Ovl2SAZA3hAdNpb6+xttoedqUMSNf/rYQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795127934;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding:X-CMS-MailID:X-Msg-Generator:Content-Type:
-	 X-RootMTR:X-EPHeader:X-CMS-RootMailID:References;
-	bh=IyhCtPxAOxrGyki28nMoGyyI3HRHwoX1RJn1wNBIqdM=;
-	b=g+YReKkMQ6BQdQgblSk8Giu2bO5w9vkbO4C0C9fQUBMrvLDFltA7OwzImEFatAKYM1eZ
-	 XeidWdlX2opCyYG3D9ZRll7I9ahQyKhJweJWLlJRgwJj5MeWZDUD/JuTsET4lCKi4yAtG
-	 gl7WpExFbAwMeK+5vdPHMDTSIISzXceBhUw1gN/jh2zwDvA8JxCWb/CofvwYWPMacsBWq
-	 Cavn4r3w/zI71DWagQ7MbYNL0HpCVj/E4HXnh1tWob9TSSkOKNO3hrQ2EhMV68Atl6hs2
-	 +HgeRGw4A2ZgIgIQWDdG8KWoKej39UutqeVS6vDZz35UqFqsNAO3YOaLWqZwg77XGEg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IU4FWGHU;
-	arc=none smtp.remote-ip=210.118.77.12
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795172850;
+	b=G8bdkBc+fh/hNqOy5xUdEqvo0+e9I4Fa0TdOkGS8r5nMIcldIVrp7P/Ra4YNrR3iRpyf
+	 VYLT7DAMhAL1djvdFI/wdW/EPlaIYSXZnp8wCsv0FEHDWYYDy6+bXrxFmebXOWDFJllng
+	 Kfa/A10yguZF2rIgrVyv3nInRdAyw9XHqhALxAADwA2w7rdluISx56dakOJndj+cWdy/w
+	 QBwtkpXtoaG5o+wxEJhoMYWApSiH8KCYBcTLi+W+yZdSr4xhjTK50C/wdlbe9OyUm/bzk
+	 0w4XcRbd2jxZrsX3SoxqvZ9mQrvGsMJoNHKaaeEbod2wFQPgHQWwbLY0ApX6EkiDm8A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795172850;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+	b=EtN19yr0hhCc3/FtgGOCoWiwbN9oAq3rpd0GPjhK5kC0a3zOY7e0dpNSxWqjouMYNQvz
+	 Ip5tDvNA1L5SkYT/ZF+DZxEeaWH01fZt7Liqm8KkpD/UpI1UzA+G/YyCEXpLsQfpiRvjZ
+	 0vv0rie4S5fFSGe3kB1o9tjqWhWdzc8ndy4Z/oAYPOHMto7IJK/9jrDG5jDHSa1XBw4i5
+	 knt5F+KHVmqCGteDTu1+WxPyyt45l24H8Md3J/Wy4Y9HA+OiXPgvx/AoKHsJlLURsgHNY
+	 ledQ9zUmE5UppRElV6Y31NxdK4yjql/W855MiL+CqaFQcnZHjl5HO8raRKlwcifrReQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=yXseSSBw;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.43
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C079606A32A
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 22:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1C079606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405560A3814
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2026 11:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F405560A3814
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=IU4FWGHU
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20261119223851euoutp02ea3a779c6f11aa7a5d98b2b4ea5245e7~pk1egu79s0813808138euoutp02b
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2026 22:38:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20261119223851euoutp02ea3a779c6f11aa7a5d98b2b4ea5245e7~pk1egu79s0813808138euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795127931;
-	bh=IyhCtPxAOxrGyki28nMoGyyI3HRHwoX1RJn1wNBIqdM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=IU4FWGHUfl0DbtLGw1Na3Qy++KX80T0mhcLMEqek1pq0/ZLaHPfoFZ+3YUSwtE+SM
-	 bq+ndUzSxhESdi0b8fffe6T7oZcogSWx66Yd2x8GWKmHNoViWh3nC3XnjSnWEpfQTK
-	 i5nqhOm00bF8ZypYhZh2Wdt3pa8N11HBjf1LWZQM=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00~pk1dY-Ne70286602866eucas1p1f;
-	Thu, 19 Nov 2026 22:38:49 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20261119223849eusmtip1b6e16b1a8f5c9c9b906a997dd4b263fd~pk1c-LZqP1774617746eusmtip1e;
-	Thu, 19 Nov 2026 22:38:49 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jingoo Han
-	<jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Subject: [PATCH] drm/exynos: dp: Enable pipe clock from encoder
- enable/disable callbacks
-Date: Thu, 19 Nov 2026 23:38:42 +0100
-Message-ID: <20261119223843.3694307-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=yXseSSBw
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b86bbce3d1so1008426a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2026 03:07:29 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795172848; cv=none;
+        d=google.com; s=arc-20260327;
+        b=JrBtnUY8C/9xWQcQQdN4banHinuZS6rmW61+DV93JAhppAYzrmdOAV+miLyT9UlGNp
+         7xKH2KAyk5Mk4fqhoC/PG9sJbRahW8AdtsLtGBguX3/ZgvEJY60FrjvBnbrjETvVbf/1
+         wic7vX31m8yTQowq99P1aoBL9MXAuwm+xil9SibYoEle1hQ13ormBllCNONiST+HTVtd
+         vuMmA/ecT26NtB8UxH25whJaII/aW50Rc5Erni3o1NKkRyA736FmAivt020zPqzqfTDF
+         0AOBmnlJukJE3f8+TeVCIweQ0XSldwWP+t7MYwov2cF1UNDi3bpjwl33TppsBkYfk2Gs
+         FNzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        fh=3g3KnRHjpzNV5T0d6iXTh2gTXJOGp3QbI0zJKmvOzvI=;
+        b=mTuUTbWjgDLXkyy/ksXnVFFrh7xHj+oZHeiXUSN0qxxYGIUFUA3DB5cH3boGP81Ryl
+         J+3iQo53olKIxPhxDg4ntZg+TvngP9fTgGFd/6QSgeaNyoZWQmU1fSFwo2MDQ8KuCKjx
+         74KBbTDcbhVKmxBSJFpqjSaScBfOMUwH++IXoi+A9C5ICzlSPd59Dgs8iW243ADKZkVh
+         BJ+O6Z+GZ2mwvU7DFA/lVWELJGV2kwG1evZn0Ui5RP68Yfj71lXk1WsbQJDqpTDG0VB+
+         QcjAxfW/8TrtUpkvGLIGczYWh0CRnn6L+bRrJvgmoaw4hOv5UJW8dkdBBrlsaGYtx8zt
+         rVFw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795172848; x=1795777648; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        b=yXseSSBwL667WWeqcwc21yoPcofDc/e/i/a0eCGiiUIrolXJjf8p5oc5Tb4mc6Ermj
+         bePnEkY54ZTwInl8DL26psq1wTSD/NFqBAe8CxTmiyBHp1H/jpU84o455nMMjQhhEdEa
+         lA1XN4iqiRUxyl9I8P8BVP5yyGg+CpqVfPuEtVWUJ3GwjYCturtgNWaBIXKDoI27wRMS
+         eZA2otDBZHbX3bSAsZq6wZS6p8uA816T6cXsXjW9BokYqZBj516ziReL7o4DVqv93sGi
+         YtmqSj33RCnGt5u/8A4nKw8q/PDc+udI289bWFav1ty6PHm9KHhQlgCApfj082PM3uVD
+         IKVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795172848; x=1795777648;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=vw1Za3j6nrNQlO8tUKSo+13HAPp3lg1xUs/OwXV+egE=;
+        b=iP+Y8j8lD/v8BnjjgofQehzwHSQWuvfsuzY47cwzXj4rS2LE39wzIO1EnHLH+Xcn/T
+         Ty6kFEqeZ851lyeLW9WLt8EczXcDjElNVlxaCmYgi3F8pz4zNo0zDDtVFLN/Td677fDb
+         uzyIFVhrDdoHU5X509nzFKv6Uq8hY8tjx5OBF5tczZwCjs2kCK7mur9e03iz8OwV+OhF
+         hBT7avI2mMX6dVCAXsR+IEH/KoFXAsXXr1mEJZ6uWx0HfoUmpFko9VweZHkDyuXcJlZh
+         swxngH5TWai/KK4gLkZWagEtQCm7Y8/YmcF1UI0niOaLff/Mtb1fm24WzBIu2jI7EUCf
+         A88w==
+X-Forwarded-Encrypted: i=1; AL+hErGmehIZTiP7CMFnISYl75//16JJS5X057mHXkbv2e6fSS3wKhY7nh8txhL3iu4B4vj57l1QVowMcxjEY/OQHaKZCg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8/1kzjmN7GpoRPI2LpFHvUEth07634STE1GRRQ59blv/U3+A8F
+	W+COXzT8ml8HHIq4T/azjyBcxcuywWFEYJdXsiX1MqL0866UxkP/hOl5f5B1d+zq8AIPpz5XiVB
+	qxNUmdOdu3Xceihxe8/JCOZL4mCisZSNr3MVBNGcl+g==
+X-Gm-Gg: AZFdTZfjMo3qqO99I1UR9lclPTnl06L/VOBEd/s5eWGqjhkredMMWfMUsQNmRzSKYHZ
+	SmNpQcOZacAcOv7D3dT4KlukSt/Z/QnxCPLM8n9HVpj0I/HAdlZuW+G+E/BmeB/b6N0V3b8uy3f
+	7JwhGUEhSjID3HnHVDeg1/lZn+8guBNiWSgLvlGHceDGddt5muxul/d7ZbQiqvTVqA5GGnHg0xl
+	JJfWMPPqrwi2a+RCQHQvHSVDgZtwlt27/5lwvkAXkMXrlZNNEQhXgOfeopzFVw8+yFe2Q7QNGX5
+	XiaB+SKUIFKY5iJ/txJQ38JX8fCV3/8lBJXu1sY5nXARN7/PwB15PkzeY/ymWe6wAKvIi0TJIt7
+	0YSXkbou+7Dci7U3X+WKOY3/sebjhZTUaAPal33lt6HCVQgzHxr3bZbfLs8B17vVetzMoHmw=
+X-Received: by 2002:a05:6402:3225:b0:6b5:79f4:8d52 with SMTP id
+ 4fb4d7f45d1cf-6ba37e6f806mr1953110a12.20.1795172848247; Fri, 20 Nov 2026
+ 03:07:28 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -72,146 +103,94 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
-X-EPHeader: CA
-X-CMS-RootMailID: 20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00
-References: <CGME20261119223849eucas1p1ead1f9ecc9bab76245a4cb6cb91d8e00@eucas1p1.samsung.com>
+References: <CGME20261113104847epcas5p1d970255218f1ca78b19690bfd097f303@epcas5p1.samsung.com>
+ <20261113110612.3265841-1-raghav.s@samsung.com> <20261113110612.3265841-7-raghav.s@samsung.com>
+ <CADrjBPoR7_LDZmxC_bOFigvqDaagVihmybfX5AdvSPr9-FVb8w@mail.gmail.com> <002901dd77d9$6ddef600$499ce200$@samsung.com>
+In-Reply-To: <002901dd77d9$6ddef600$499ce200$@samsung.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 20 Nov 2026 11:07:16 +0000
+X-Gm-Features: Aa3M54pTNJ_y_R-HLRUhtwnIbiMHdLsAfFF3Abu5bW9vYYJErrbwlv-VYU97Njc
+Message-ID: <CADrjBPrO43A6XaVK7_J3-y9=bOsjhNbyf8KA6fmyvLJ0O61gOw@mail.gmail.com>
+Subject: Re: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for pll_4313
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Raghav Sharma <raghav.s@samsung.com>, krzk@kernel.org, s.nawrocki@samsung.com, 
+	cw00.choi@samsung.com, sboyd@kernel.org, bmasney+clk@redhat.com, 
+	jbrunet+clk@baylibre.com, robh@kernel.org, conor+dt@kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, is.gandhi@samsung.com, ts.amit@samsung.com, 
+	pokala.reddy@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-The FIMD -> DP video (pipe) clock is switched from the analogix_dp
-runtime PM callbacks through plat_data->power_on()/power_off(). This
-only works if the DP device runtime suspends while the encoder is still
-attached to the CRTC, i.e. synchronously from the bridge disable path,
-and runtime resumes from the bridge enable path. Otherwise power_off()
-bails out with -EPERM because encoder->crtc is already NULL, the FIMD
-driver keeps its cached dp_clk_enabled state set, and after FIMD loses
-power during system suspend the clock is never enabled again. Enabling
-the bridge on resume then fails on Exynos5250 Snow:
+Hi Alim,
 
-  exynos-dp 145b0000.dp-controller: Timeout of slave video streamclk ok
-  exynos-dp 145b0000.dp-controller: unable to config video
-  [drm:analogix_dp_bridge_atomic_enable [analogix_dp]] *ERROR* dp commit error, ret = -110
-  exynos-dp 145b0000.dp-controller: failed to set bridge, retry: 0
-  ...
-  exynos-dp 145b0000.dp-controller: too many times retry set bridge, give it up
+On Thu, 19 Nov 2026 at 03:52, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>
+> Thanks Peter for review
+>
+> > -----Original Message-----
+> > From: Peter Griffin <peter.griffin@linaro.org>
+> > Sent: Friday, November 13, 2026 5:58 PM
+> > To: Raghav Sharma <raghav.s@samsung.com>
+> > Cc: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> > alim.akhtar@samsung.com; sboyd@kernel.org; bmasney+clk@redhat.com;
+> > jbrunet+clk@baylibre.com; robh@kernel.org; conor+dt@kernel.org; linux-
+> > samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; is.gandhi@samsung.com; ts.amit@samsung.com;
+> > pokala.reddy@samsung.com
+> > Subject: Re: [PATCH v3 06/14 RESEND] clk: samsung: clk-pll: Add support for
+> > pll_4313
+> >
+> > Hi Raghav,
+> >
+> > On Fri, 13 Nov 2026 at 10:53, Raghav Sharma <raghav.s@samsung.com>
+> > wrote:
+> > >
+> > > From: Alim Akhtar <alim.akhtar@samsung.com>
+> > >
+> > > PLLs 4313 are found in the Exynos8855 SoC and it is similar to
+> > > pll_531x except for CON8 offset, so re-using code for
+> > > pll_4313
+> > >
+> > > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > > Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> > > ---
+> > >  drivers/clk/samsung/clk-pll.c | 11 ++++++++++-
+> > > drivers/clk/samsung/clk-pll.h |  1 +
+> > >  2 files changed, 11 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/samsung/clk-pll.c
+> > > b/drivers/clk/samsung/clk-pll.c index 3d837bd74355..7b0756127306
+> > > 100644
+> > > --- a/drivers/clk/samsung/clk-pll.c
+> > > +++ b/drivers/clk/samsung/clk-pll.c
+> > > @@ -1306,7 +1306,15 @@ static unsigned long
+> > samsung_pll531x_recalc_rate(struct clk_hw *hw,
+> > >         u64 mdiv, fout = parent_rate;
+> > >
+> > >         pll_con0 = readl_relaxed(pll->con_reg);
+> > > -       pll_con8 = readl_relaxed(pll->con_reg + 20);
+> > > +       if (pll->type == pll_4313) {
+> > > +               /* Offset for PLL_CON8 which hold FDIV different for PLL_4313
+> > > +                * which is PLL_LOCKTIME_OFFSET - 0x4
+> > > +                */
+> > > +               pll_con8 = readl_relaxed(pll->lock_reg - 4);
+> > > +       } else {
+> > > +               pll_con8 = readl_relaxed(pll->con_reg + 20);
+> > > +       }
+> > > +
+> >
+> > This starts to feel a bit hacky (pll_con8 register being referenced as an offset
+> > from lock_reg). Is the register really called pll_con8 on 8855? Or is it called
+> > something else, but happens to contain fdiv?
+> >
+> Yes, it is named as PLL_CON8_* on 8855, and contain fdiv bit.
 
-This happens whenever the DP device stays runtime active across the
-display disable, for example when runtime PM is blocked by writing "on"
-to its power/control sysfs attribute. Since commit f2b556e3dad6 ("PM:
-runtime: Update last_busy before calling rpm_suspend() in rpm_idle()")
-it also happens by default, because pm_runtime_put_sync() in the bridge
-disable path now only schedules an autosuspend after the 100ms delay and
-the device is runtime suspended only later by
-pm_runtime_force_suspend().
+If the register is actually called PLL_CON8_ in the TRM then the
+current patch makes sense "as is". It just seemed odd at first reading
+that con8 wasn't an offset from con_reg on this SoC.
 
-Tie the pipe clock to the display state instead of the DP device power
-state: enable it from the encoder .enable callback and disable it from
-the encoder .disable callback. The atomic helpers call them after the
-CRTC is enabled and before the bridge enable, and after the bridge
-disable and before the CRTC disable, so the FIMD is active, the clock
-is running when the analogix DP configures the video input, and
-encoder->crtc is valid in both cases. This also matches the other Exynos
-DRM drivers, which switch the pipe clock from their enable/disable
-callbacks.
+Thanks,
 
-Fixes: 3424e3a4f844 ("drm: bridge: analogix/dp: split exynos dp driver to bridge directory")
-Fixes: 73f613908eb1 ("drm/bridge: analogix_dp: move platform and PHY power handling into runtime PM")
-Closes: https://lore.kernel.org/all/av9AkwQDhB7O4wgl@google.com/
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-This patch has been developed with LLM assistance and have been tested
-on the real Exynos5250-based Snow Chromebook device.
-
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
----
- drivers/gpu/drm/exynos/exynos_dp.c | 41 +++++++-----------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 4db7400c8a23..8beae1132dfa 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -32,8 +32,6 @@
- 
- #include "exynos_drm_crtc.h"
- 
--#define to_dp(nm)	container_of(nm, struct exynos_dp_device, nm)
--
- struct exynos_dp_device {
- 	struct drm_encoder         encoder;
- 	struct drm_device          *drm_dev;
-@@ -43,39 +41,20 @@ struct exynos_dp_device {
- 	struct analogix_dp_plat_data plat_data;
- };
- 
--static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
--				bool enable)
--{
--	struct exynos_dp_device *dp = to_dp(plat_data);
--	struct drm_encoder *encoder = &dp->encoder;
--
--	if (!encoder->crtc)
--		return -EPERM;
--
--	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), enable);
--
--	return 0;
--}
--
--static int exynos_dp_poweron(struct analogix_dp_plat_data *plat_data)
--{
--	return exynos_dp_crtc_clock_enable(plat_data, true);
--}
--
--static int exynos_dp_poweroff(struct analogix_dp_plat_data *plat_data)
--{
--	return exynos_dp_crtc_clock_enable(plat_data, false);
--}
--
- static void exynos_dp_mode_set(struct drm_encoder *encoder,
- 			       struct drm_display_mode *mode,
- 			       struct drm_display_mode *adjusted_mode)
- {
- }
- 
--static void exynos_dp_nop(struct drm_encoder *encoder)
-+static void exynos_dp_enable(struct drm_encoder *encoder)
-+{
-+	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), true);
-+}
-+
-+static void exynos_dp_disable(struct drm_encoder *encoder)
- {
--	/* do nothing */
-+	exynos_drm_pipe_clk_enable(to_exynos_crtc(encoder->crtc), false);
- }
- 
- static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
-@@ -84,8 +63,8 @@ static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
- 
- static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
- 	.mode_set = exynos_dp_mode_set,
--	.enable = exynos_dp_nop,
--	.disable = exynos_dp_nop,
-+	.enable = exynos_dp_enable,
-+	.disable = exynos_dp_disable,
- };
- 
- static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
-@@ -170,8 +149,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- 	/* The remote port can be either a panel or a bridge */
- 	dp->plat_data.dev_type = EXYNOS_DP;
--	dp->plat_data.power_on = exynos_dp_poweron;
--	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.ops = &exynos_dp_ops;
- 
- 	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
--- 
-2.43.0
-
+Peter
