@@ -1,107 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795287973;
-	b=w93sEgkirfW4SssYzVnhlKj2dtOhpuVq4Q2YQU9vCgrw4/bHH8nBomhmCHcH6ir43R17
-	 nuVspPVbjHmDHCukesEUGOjLTDZLRkNwKE8hM4z8PQDXpO9bbjA1zsRIf4OnMfE79kFGh
-	 U1QdfZJUhUrurRT4e5YFzBi/YaMPCMS1qvmztbzHtx96+T9x4IulcegCR7litklDwepIt
-	 be98147OBhP2vNqD6wkflu8H3kEhi8sW93Yo1892L8lvkUmvARBupNFgd6k2SkfpVZeK5
-	 bUMEk/Exa+tzssozi8rP5YNKqY6AokGYtsx3Im8+lZIrd3Q9r6o7yUgTjVk2PeRd5yQ==
+	t=1795288930;
+	b=p05lJHfvQq4U6pdeLNM6l7rq2vdaJf+GMOuQn20EtgVkfQP/LKOOEWAqQthjcp6Aq1PI
+	 y0a2P+DVqG7CTifCA4OKXN+EOsSDi4FuO79lYm8MJmLDeisu/uPACbxAleAPKFqqHTGsZ
+	 T9cZPYMPDuH3p2R5tQts7w0Hr0o6X3wQsuobjKuA7Cmnsazzr9pjg+kYj4fkuvy2gAwZR
+	 3F8j6kq1pJEmesAHKKh9Y9tFw1F89uherkR5j6xY0A3T03qSLgG4nmSRfpCimJl8Ux0NY
+	 dTWbGE+MknV8VEeq56HBR62WOb192kBDfOS5PxblexF5BxKBDPoT/vRRXQIVNj4OtHg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795287973;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795288930;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Content-Transfer-Encoding:User-Agent:MIME-Version;
-	bh=FpKHiV2uYxe7Ki0iO3VWKGByi0ydeGzhGSrgX6lNY+s=;
-	b=LFh1aXj7bdwnd4Ha2wJed0QzzG/pFP5s2wtulXubZnYLrJrSaKaRWX/lhvTzCOw3ejPH
-	 YIVmADLre87EmjIm3/jvIQXuowNtUACX/WzbTjXq0B9AYkY8FHwCGabYnarsG30a8GR8E
-	 EZbwMsewnWOKgvfeyhlGx4Ncn4fqUeG94P4OFLBkOYtg+Gktnzp2wWgAAST0TddhcElr6
-	 6MB41sXt+EUF20nd07GmIwKMXIhskYS9baLEVQz0mv5p1gKY1KS5H824i5b/8tZpswv7T
-	 yErug7G3gIhbK2z1K9WuKuKMw7zjCBuMWmxLgBUjlVWmolOTNEr3yMbS/H88YnGHBZQ==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=8aU0P4VqfqrMe/fjnlmGNnb/Fa/CsutnDC2e4seIbEs=;
+	b=2DhFaOSikMUkwUnr4W8pvBU3+DWK9OfGpWJoztVDs7rQ6FQzHB81ED7J4d0JyqIc/Xi/
+	 2wObyGEsSDrlCxZL3QbohSyMiNZgNGwewOYn3JEWJONbn6yEj2QwHYoiTatgAnx0ConO8
+	 9UxZNS/8AYCoz4Wi3bLXt2+Ap8jcGwfhWAe05iLh4o5+4Dy1AxJ/XNdOL6iZhkjER/KBv
+	 i6/I0v3Weq0vSdJT8IeRW1V0a0n1UF5BQn6QNaUBHGJRLo+FbwHVVwocD+WMbWjsl03bl
+	 ga3Mf1LvI7QtrBOwiduPWIvqDPmATrxRnaOL50tIEHxJXlQQqMZjiW/Wr20m6ejzDxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dRUFuQH8;
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cFmhlEpj;
+	arc=none smtp.remote-ip=209.85.128.41
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8106A606A330
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Nov 2026 19:06:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8106A606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFA1606A333
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Nov 2026 19:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CCFA1606A333
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=dRUFuQH8
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4bb6886d30aso19113385e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Nov 2026 11:06:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cFmhlEpj
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a9a8d6cea8so23362785e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Nov 2026 11:22:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795287972; x=1795892772; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=FpKHiV2uYxe7Ki0iO3VWKGByi0ydeGzhGSrgX6lNY+s=;
-        b=dRUFuQH8w4MMSrEuc/tUiHbAWm2e8J0TZVBrfHQOSMQQc0vMhH6D331bHZwmWI0nW2
-         lOwdSLLGhfXzgXbQEBKpcvr4+PI3b7XJh4mhRWqOQcNiR7cWa5aPNcNWAzqLnO4DfizM
-         opphh1/ieNCtEuzXfWV6VbBhb4yO6YmMnc8jznq9GO072dx30HONa2zs+cUSQbS8TJxV
-         m+4h+3WjdKBDkuVYBJ3KduUxejxMzvESrVOUs2AqVsUZ5dslRzyepHS7zppw82DxZaO1
-         rw9OiPKIfdAJwSEUOwttDjkpvJ5P6XfNisG/ZtDNOADkU2kxZdvnT4Ieor0Vy+9lLbUP
-         RBRg==
+        d=gmail.com; s=20260707; t=1795288928; x=1795893728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=8aU0P4VqfqrMe/fjnlmGNnb/Fa/CsutnDC2e4seIbEs=;
+        b=cFmhlEpjichdD5zcqPxkfjvyzXHT+7r4rHt6uWycqHgYc/JS8IxnzVQJuU9w9gdGrp
+         oBI7+8x7xexd946jZ/Y7Br3CnwmBCX+CX4TsSPRaprX/AFDBWNw0dYd46yr+MwIHRQJ7
+         Z5R/JwlKSJl6YnWCmQUBp+wW6bwdjdzqbquDeQS9EKHHkTPXPFD6NC4k4lvL3yVmJjjT
+         OLCl4OnxfnwiD4T8dcSzuDOebWSVh7/5VQHnZ0X2JWyiZSU88A9vVrBgrrFmuspLXSkh
+         BQKTo3bsturdbEg0DlfPez5q6/QBVEt3bwFwaVKm3XUlrzWFlhhniL2hWTtX0nOlKzSq
+         JK4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795287972; x=1795892772;
-        h=mime-version:user-agent:content-transfer-encoding:content-type
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FpKHiV2uYxe7Ki0iO3VWKGByi0ydeGzhGSrgX6lNY+s=;
-        b=PEUi2KnC3Anm5BFBq9FtjO79EokoYSM32hmFjs4y2yDH6s/ZOEktRHBDRxC1rcr6w0
-         kDM5qAf0VcvRAGV1VQgONvV3p4PHi1xt7PvquklPrXia9wnIUaE98ZPDvUhBUiLGPji6
-         Um5aiVgfMLtT+ZV6BmW5VZ+CRIQ+kp/RkSjNGblWF/96jxU6iKQwLFP8gXDqpaLIYk31
-         xFGwwxTsRbL4zWeOWwuWFN6FxIXGNrK5BHZuEyK8TDaEeTMiuNm4qGHvmhmasCnFE2Mo
-         JAC+QKDbKiiC876RjjO66Cw4zOCH8GGJ9ncVta/hcLkVw81eWbqvYDZU9EoLQVIdcCu2
-         ZQ9A==
-X-Forwarded-Encrypted: i=1; AL+hErG9mTNoIp+ySEPcrnrvewLojxY5WVHmNo81G/DJGNr8sNlsC4AYqXemcaUK7QmRRe07o/C2Gm1/ytMSOIJ9B5mx5A==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/lFwX3hat4c0JZrjZGF2hrwYlgauCew6MvLp9LDReJDc7SfMPu
-	98/hXSC+JTyHZF9mOZoZSZcInlxOtgBW1H9SY11WWuuS5jX9vs0zHkoW
-X-Gm-Gg: AZFdTZc325iDZHd1MtnDSBXclM3rpW8EDUxt8w9X3Z7iQI9uT9yhHXkd7b3W46hAxfG
-	VW0YMeT1khyKUuUOUHff9zHuhECE9ByNqfk33WFSmgHgJpfdswDS2NezZJpR0I4XAALnfM49IZ3
-	ayeRQF6bie6ubgrRglzbl3DkG3MurjQmrrvAkHMNV7HJU640h3iP6+DktXkofNG/QNG53H32lwD
-	sEBbVqO48+8cT+y2hCLILOwQurmZPMGdyFo33iI4eVHoq93JMvxlrzTjJ0BIdyqd8GwRXP+Aqlr
-	YxsweqrRbo/JneYqkLkGIGghLRAw9cidrzaoUj1sXxfr69k0OqBOdQ0bnX6TVOWgk584yY/Y2H7
-	zDi+wEYVTUsZhUPVttwflcqT0TaCrlEefDBi5eoPkwPsZQC0pdabJDonuZFEoxRv3p4dL3B3K7f
-	4Zdr+rox/FS/CeIQwKfj7xchsEFNKASce4C/ZisE5yhig5Icx87On6QljrCLBh52DGYsLNfGQ+W
-	kzu56XWxAXTMPUcz+NBDBnq4jnc/49o5+oX/BuTC4KiE63sITPJS2avNDrnr7r1PMLy8K98MEMn
-	f1WDfweIKV+mgZ0tDHWdOQa0iGECGSlmSeJIbVY9BjtCOPplE86sVSsFbr8glwVg+7TCrxQRFLc
-	4dP2X4P+iDy1rUeDhJF7kD4oHt1f1qw==
-X-Received: by 2002:a05:600c:46c4:b0:4bb:6a5a:7834 with SMTP id 5b1f17b1804b1-4bb888106damr154232025e9.20.1795287971698;
-        Sat, 21 Nov 2026 11:06:11 -0800 (PST)
-Received: from [192.168.0.10] (catv-78-139-0-46.catv.fixed.one.hu. [78.139.0.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8d4f9aa8sm148595925e9.4.2026.11.21.11.06.10
+        d=1e100.net; s=20260707; t=1795288928; x=1795893728;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8aU0P4VqfqrMe/fjnlmGNnb/Fa/CsutnDC2e4seIbEs=;
+        b=SBIeEmz/29uqVsZdcn3NJAPdCuaTTIk9V3qB/DhgW+q+4yfVT5w8MjPQogwIBVzj3P
+         aIm7oyMJ9AKMSFtd9q8s9KRvEf3Zypj0psnc7E7itsceiNyww9yDgnFlfmZj6tD8Yey7
+         q9Dprc+ga304VNNwcTbXvEKyD/a8oBENSa3BGIEPYYPWy/RAOdfODstP2F7kd0U+Mgyx
+         8VYpLhBXfiyxmImdgCv7JvO7SB3rRbBuZyWFdzMFdfUjLaLFI6Zihqf+S4E83Zi+i30X
+         e8rts/uB2F/3JsaSuRnYz3QTgl8auG7lW2+ihnH877zwOwzmUTTlpTXGo9l6HK+ZJIOl
+         Nn8A==
+X-Forwarded-Encrypted: i=1; AL+hErEfsS5lQP9QvaFSBl71Fh1w/awEtITrXGpu/RCzfGhbkpTxvlcfGtrAAmxFYipGglm+cS+mF3IwbmGbHPLYX5jZQA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+0stRZNP+WqS05QXtXeudUYmb2PcJ6bBiOVT6x6YpUy6316sE3
+	JWxz4lLDsuAbixlOsR+Yfa5vsH5YdRny/e6gCMvytoTlZB5/aSwZebfP
+X-Gm-Gg: AZFdTZeCKCS+1Sr/zynO8mBYV2FBETMltSSNS2bIYaGrjXJuvdl3wc7jrmqwbhc8xsJ
+	QgjjdAAlqxNOC+kVmJQ01QHO90Qu4hIarWyti2TGP3jSP9QtRdtK9lpeChxp0CiWbv/2kr/YTqY
+	G1L/1o+9GO4hPM8/qxwCjIvFxccSkpLcy/Wqr5ReJJrNuhoM912oKLf3vJVFOXwEzXIoIAsd2Fj
+	zfYy8Ik9Vf3d4N4AiFjfUydwjEVa2zLEL5tMRvA5K01/yG41uL9eWWFtE8vwlcGzwbTZ7qcDnjf
+	COvGFKeTdyG69h/Gdvg/5Xfglb1BZgiaBzhgectYdiSto0Sp4VkTn9qVgXM87fBFDV5iou+HKEr
+	EteomFuax5IWXIj8KF2P7oNxs1h+z5LXmlqitNzf1Li8JQqX2ZbrhwFbC5R4EbQnca8O+okffoN
+	y71XuUkDTMEs0JrOwvEQkysWI9lnPJmulZtfXTIMfHS8VzZgL5+3mM11NitAH0lrtHayD+oyNsG
+	72IsA9smjwYPH7ypKfkYaVEnXZDphy/j+dV1RdUGUG8PiP+czxb81XShN+RIE99bhieE7o3C7wt
+	wyhs27Hkteoi12f3VJ5S8qiWG5pJb4afN6ytr3C38IR5/oOOKnPOad2v8ZgEKeQYKg==
+X-Received: by 2002:a05:600c:828e:b0:4a2:526b:d40f with SMTP id 5b1f17b1804b1-4bb88785898mr160908755e9.0.1795288927966;
+        Sat, 21 Nov 2026 11:22:07 -0800 (PST)
+Received: from fedora.jkuat.ac.ke ([41.204.187.5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb906e4ce6sm67560085e9.4.2026.11.21.11.22.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2026 11:06:11 -0800 (PST)
-Message-ID: <6937fed688e4bf1d7cb81b004c179cc4912cf6e2.camel@gmail.com>
-Subject: Re: [PATCH 0/6] Add USB support for Exynos7885 and enable USB and
- FG on gta3xllte
-From: David Virag <virag.david003@gmail.com>
-To: umer.uddin@mentallysanemainliners.org, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Manivannan Sadhasivam
- <mani@kernel.org>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski	
- <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Griffin
- <peter.griffin@linaro.org>, Alim Akhtar	 <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Sat, 21 Nov 2026 20:06:10 +0100
-In-Reply-To: <20261119-gta3xllte-usb-battery-v1-0-0cf5f763522e@mentallysanemainliners.org>
-References: 
-	<20261119-gta3xllte-usb-battery-v1-0-0cf5f763522e@mentallysanemainliners.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.62.1 
+        Sat, 21 Nov 2026 11:22:07 -0800 (PST)
+From: Bramuel Barack <bramwelbarack89@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-serial@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bramuel Barack <bramwelbarack89@gmail.com>
+Subject: [PATCH] tty: serial: samsung_tty: fix -Wformat-overflow warnings for clk_name
+Date: Sat, 21 Nov 2026 22:21:58 +0300
+Message-ID: <20261121192158.44872-1-bramwelbarack89@gmail.com>
+X-Mailer: git-send-email 2.56.1
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -111,36 +101,62 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2026-11-19 at 19:49 +0000, Umer Uddin via B4 Relay wrote:
-> Hi guys, this patch series adds support for USB on Exynos7885. This
-> series
-> is based on David Virag's work[1] I had rebased it onto krzk's for-
-> next
-> tree and tested it on gta3xllte. This series also enables S2MU005 FG
-> on gta3xllte, which is also tested.
+MAX_CLK_NAME_LENGTH is currently 15, which only leaves room for a
+single-digit index after the 13-character "clk_uart_baud" prefix and
+terminating NUL byte. Because the clock indices (cnt, clk_num, clk_sel)
+are u8 values (0-255), building with W=1 triggers -Werror=format-overflow
+warnings at the sprintf() call sites.
 
-Hi, thanks for reviving my old patches
+Increase MAX_CLK_NAME_LENGTH to 17 to accommodate the full u8 range and
+replace the three sprintf() calls with snprintf().
 
-I actually have sent the patches before [1], got some reviews, but only
-ended up with the clock patches submitted and applied, and never
-actually got to submitting these patches with fixes based on the
-reviews (which have been sitting on my PC for quite a while).
+Signed-off-by: Bramuel Barack <bramwelbarack89@gmail.com>
+---
+ drivers/tty/serial/samsung_tty.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I think I will submit my fixed up patches (the ones you submitted still
-have some problems), and then your gta3xxlte patches can sit on top.
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 640f85e2d636..40a21e6825b8 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1336,7 +1336,7 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
+  *
+  */
+ 
+-#define MAX_CLK_NAME_LENGTH 15
++#define MAX_CLK_NAME_LENGTH 17
+ 
+ static inline u8 s3c24xx_serial_getsource(struct uart_port *port)
+ {
+@@ -1386,7 +1386,7 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+ 			!(ourport->cfg->clk_sel & (1 << cnt)))
+ 			continue;
+ 
+-		sprintf(clkname, "clk_uart_baud%d", cnt);
++		snprintf(clkname, sizeof(clkname), "clk_uart_baud%u", cnt);
+ 		clk = clk_get(ourport->port.dev, clkname);
+ 		if (IS_ERR(clk))
+ 			continue;
+@@ -1778,7 +1778,7 @@ static int s3c24xx_serial_enable_baudclk(struct s3c24xx_uart_port *ourport)
+ 		if (!(clk_sel & (1 << clk_num)))
+ 			continue;
+ 
+-		sprintf(clk_name, "clk_uart_baud%d", clk_num);
++		snprintf(clk_name, sizeof(clk_name), "clk_uart_baud%u", clk_num);
+ 		clk = clk_get(dev, clk_name);
+ 		if (IS_ERR(clk))
+ 			continue;
+@@ -2326,7 +2326,7 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
+ 		/* now calculate the baud rate */
+ 
+ 		clk_sel = s3c24xx_serial_getsource(port);
+-		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
++		snprintf(clk_name, sizeof(clk_name), "clk_uart_baud%u", clk_sel);
+ 
+ 		clk = clk_get(port->dev, clk_name);
+ 		if (!IS_ERR(clk))
+-- 
+2.56.1
 
-[1]
-https://lore.kernel.org/linux-samsung-soc/20240804215458.404085-1-virag.dav=
-id003@gmail.com/
-
->=20
-> Please note, I did drop enabling USB on jackpotlte, this is because I
-> don't have the device myself to test the changes personally and I
-> didn't
-> want to risk a regression on jackpotlte.
-
-I can confirm it does still work properly on jackpotlte.
-
-Best regards,
-David
