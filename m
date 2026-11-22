@@ -1,85 +1,109 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795322251;
-	b=inRaBe6neTZuBp5Uro/txjnojBOD+/a3qQv1MJDjJdLhwARE/I5IRVF9YcLUqAISik2j
-	 Vd4ruHMZOLEaDJGBiOjKoYG4BkVhLLJAMN7e5svX5JbzKyUe4K0Ih8ZnDpOkjheH6cqBL
-	 36CZzLXlkTg5zkQqDLpPKmZXWgt5zUcl7d3jcHP5VZvLPn7WWzoh5TSAvzcvz7Jnz4mCz
-	 3s4RHod/F+i/Pkpp4PtpZRKYhhE+26rrmii8bqTigjPZg/OVKSDPMpynb6Qm3jYfxGRAQ
-	 eWyLBK7BTQkdLk5nB0sHUAg4DyfhpiTKBHg5cg82MJKZzEc95iTQ2kLfuZSwTs1BUXQ==
+	t=1795335081;
+	b=A29ZG/F8b/Q80fGmntWD/PFe0iGNnhVAj8uqnERwXO6Eq8VSgri+kLhyiRgnkvMHY0/G
+	 9oK+KDTMzM9xRGEguQlGU6jU7MNAi3M7kCSqQwOtNx1oaWwYd2sN73JRe7+7tzOgjdUbG
+	 cqOyV7qazcKFlukaMEnc9XegyFhfr8Wkzy4pGk0KOI78N44Dgjgq9ruY0Sa4mHF3Ap7Ky
+	 9qjZK0i7wsXl0Fvgt5+Ewy5TAcfHakHd8FA5u2L3vh77cpQUCIQ36+3Qc+KnVrk8wEWsb
+	 X3KtcNmteGhhLp0Ong8ajm8xRwPR2VYsAnMtmS3RcKJlDuZEYzinlDyGdSiWw16e7Ag==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795322251;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
-	 Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To;
-	bh=TlzTHi+0VW6cnxsXzK9vRsLG/RZrcMxe7NzlbmPXEJ8=;
-	b=YCcIkL9z8Hwz9H4knExB01jXLZp67wWtxtAFzDG2hY+cGJxccB0YuCe+SwCNR+GoDgpS
-	 6+dQ9ASEcHWzWO1jc0FrMDFdVBcsIQA2sFuHjltX28ru+ES+g4+HJ9pt7SPsfqxwUd1nR
-	 tKR2yZeP5YX20hMYg955bJ/UToDgZy8HgURhCYU+YPlgEx+LjQoi0GSJ2BFjBz25WCFJJ
-	 9vuhkPPKcY9/9KZESMbY6Fe5+AgX2O3YKCPJBNi7InTcapaSXmww7idFuaue2gJCdaqRW
-	 Z4yPt10cXPERwf7MIH7TghrBb657uKKXa7zE8vPGsC6JfrIoD15yy8SIdOKjQL0RM8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795335081;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
+	b=rmMGv74hoFruPxS/p9z5/Czza8aMXhlvixqIWApyQ/iE1oWMp6F7jPR+PZOTaYnuVTUr
+	 QHXE6vIOgkQpsbozVy47wcF3jv1fAy38JUrCKIYrDlIvSBCOjb+yMaAj9HEHkKbk6X6cd
+	 9SqSdGUBlN4eQ6oM3np8if89Jy0WIhHHZAnnUwb0l/Emk2i4lpC9eWlsRVqk84RlvWwpW
+	 qecqQw9PhYrZ9VmbUePJiqPcuhd/dZpNVevX/ntI5+2GtJn39r730KzUDxxbu2C/lfOH5
+	 iUq1zrjyxdkutIzc0CYX4MlRovZ/8Ml7HA/ivS+ov/4au5eYHhq1vS/NISDEgE4/rqA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=intel.com;
-	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GrXwk0hc;
-	arc=none smtp.remote-ip=198.175.65.16
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="oZwX/836";
+	arc=none smtp.remote-ip=209.85.218.48
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C70606A32A;
-	Sun, 22 Nov 2026 04:37:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 57C70606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C89606A320
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 08:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 04C89606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=GrXwk0hc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1795322250; x=1826858250;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i/xRwtOnx0DXbMOqe/jKs//Rhfd679HI7L90EJzaxac=;
-  b=GrXwk0hcUNTMU8yFRYdIVRTGSMaVonul88sIjoiDu/qn66ZhMdPWkw2P
-   ZTzXA4hxxVe1M8NPtV3Xy0MFpLkwFEJZmOeS71xSImU4Lzfi/KUz1sEob
-   +8sl6VCVpTjDXz162ePodCmlGaxWKrl2uvDJkx7yuvIiruDcbyNomCzki
-   yM0CbIbXBh/FDoh25QKTW+SEtIJGit4di1ydccsOYhP2GZER2qPFioOu6
-   aH5bej4wi+l7jaFEOmfBzua3jo/aa9ji/fk6Me+eFGrmlA3yORTeIgV7p
-   7Eh5w8wG3+3Ygaf6B5ShE/ReamrV9eOOsQkBlvlSgqzBqxAXGtrRXUntU
-   w==;
-X-CSE-ConnectionGUID: abdrMbCpS9uy6yAK1cbpwQ==
-X-CSE-MsgGUID: xBy796Y3QhOGyIp7rSar6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11973"; a="4154136"
-X-IronPort-AV: E=Sophos;i="6.27,226,1787036400"; 
-   d="scan'208";a="4154136"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2026 20:37:29 -0800
-X-CSE-ConnectionGUID: gJT9oT1vTu6oBOV4lefT4g==
-X-CSE-MsgGUID: 86FdmE9XSYeQpVd3VxZ3Hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,226,1787036400"; 
-   d="scan'208";a="11342485"
-Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 21 Nov 2026 20:37:27 -0800
-Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1xUzKO-00000001L1b-1IfX;
-	Sun, 22 Nov 2026 04:37:24 +0000
-Date: Sun, 22 Nov 2026 12:37:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bramuel Barack <bramwelbarack89@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oZwX/836
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c247f6687dcso342063766b.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 00:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795335079; x=1795939879; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
+        b=oZwX/836jpKkwmXyKQm2gtxEgzcHo1dgYkrA7jXR4jQMF1yPkum9RA6/9zUBSIAHF2
+         qjaqvs5IcEc2p6grA9XhGOZgy6dHftV8EtcD/Ai8huCe1qJ/sacbhgBedTw0l/jvxOJu
+         FB8r8Yzj64R96CvD+pKxfp8l1+luLjUp8SIw/WVIekUhOZLY+SjJxR6XSWue/+4Qdlcd
+         gDNxqp8qTmuPWeyqD8+bkms9gaqO8/94Tzl8/t0XU7s8fZtLhtty7SIYCRBllnRzQWBv
+         KpfoopyukdLmMj4rs8+ZAHCCvjyPXpsHh4AfRXQdeBpHU7sBRq6P/vzU44mCr8B4ye5v
+         wMlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795335079; x=1795939879;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
+        b=KYNjy8mCKqYrvvff7NDuCwbvdaS9kqNabhwATVzGZeXhLy+acKL5dLf+mEH2AhsoRu
+         rq4suGCtcroxh6VUhNEeTCOtNb2EKoL80gpNxXGKVzcsjQ/K7MucggNCzYS6ScqLaNIG
+         R222OtLMvZVblLzgJsStOiKzHZTEL/mmxrAGcVbu8Kb+InQJMRBy6f06fAw82JsSP/Z8
+         SlNGpybPTBnuBEbD2M/id9u3C1/C4DGbaWpT/yIIIGel3GDGtWR3TqI88YyDbHeYEPKe
+         cPrrPJ9+j+9diB8hjPlz2MuUsIQOdEp0/sndXynMk3qfolV2Vi4UWkNvviyCDE4w8diK
+         kbBA==
+X-Forwarded-Encrypted: i=1; AL+hErHvVFtgCmihhjUqKajFiWsIC2dPkeSrXr7heV5+B5lNLc5hIX4JhKuVkeHZmMi1K33NfZ0Kn6R2c0tv4Y85b5SBgw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+zDsQYtZjBhKuLZ0MtXonijXWo3Z6CK6ILU190JLJgzw6ekfnK
+	6mJMq9hf6eDEIVHQky1AVj2Lj7e9lFjZKPLbofGSAeyKKyW+fojMxgrp
+X-Gm-Gg: AZFdTZd6Xq6K5+lRlihVyIBpz++7DcM/v9665+g0bfMHVZixKZ6wO4ABv5T06Ok/OX2
+	D9yaF55stLhQxLji88FDIDf29jKb/563kxXNzC4dCYQ9OTza5m9cuOYRqBRqawgeQ/kLlC0OOCM
+	1WM0DkNB8f/9diJ0vKeDAyIlqe6wGO56sTOORgfGBznMMm22lbOKCY1458VlPUSlvh/PrIigqbW
+	q5BVEhOln/2Zn/HWqcyXoeuyFcyKfBzSxhKYMPCu1ppl7Onhg8vqhUhbHmNL4Po38nEc6BAlmhV
+	TWYMMyZfQ5EPaqZcCtOgVk/FJqTDW37r7QytwnbvF9I+lkcdVSHO+rCuttfkq03aH1LOQLAJjbh
+	UwEuKa4LUKt7nvSbZJcTE6BUjlAozGdKy96/mouedB8QYToQziXo6Kqu56H6sNdwaF7F3gQG+Fr
+	SzsfmFS7hFkvM8HoTmcohk9lrYptiD4G5DCH3FE2ceb28z+p76AMprEMUM6CeUtITEgLcJ5f5YQ
+	Ksa5ZHvA9/gldw4gnAUk0fNe6DUktLSkYLPT7ahCo2vJ1lPZ2jRiqjTrUeWsRRyNm29avb0d1cH
+	pZS5aaOOVf4Wwo+afSx9DkDLPQ==
+X-Received: by 2002:a17:906:4fc7:b0:c40:9839:c892 with SMTP id a640c23a62f3a-c513a88a001mr676115566b.19.1795335079208;
+        Sun, 22 Nov 2026 00:11:19 -0800 (PST)
+Received: from dl360p ([195.155.168.55])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae679e3sm286835966b.22.2026.11.22.00.11.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2026 00:11:17 -0800 (PST)
+From: =?UTF-8?q?Adil=20H=C3=BCsrev=20Tepe?= <tadilhusrev@gmail.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bramuel Barack <bramwelbarack89@gmail.com>
-Subject: Re: [PATCH] tty: serial: samsung_tty: fix -Wformat-overflow warnings
- for clk_name
-Message-ID: <202611221200.BFeU1ULS-lkp@intel.com>
-References: <20261121192158.44872-1-bramwelbarack89@gmail.com>
+	Mateusz Majewski <m.majewski2@samsung.com>,
+	Thomas Turner <tturner@lineageos.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] thermal: samsung: acpm-tmu: Add Exynos850 support
+Date: Sun, 22 Nov 2026 11:11:14 +0300
+Message-ID: <20261122081114.2979414-1-tadilhusrev@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261118-acpm-tmu-e850-support-v2-0-19848c0d97e5@linaro.org>
+References: <20261118-acpm-tmu-e850-support-v2-0-19848c0d97e5@linaro.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -89,132 +113,85 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261121192158.44872-1-bramwelbarack89@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Hi Bramuel,
+Hi Alexey,
 
-kernel test robot noticed the following build warnings:
+On Wed, Nov 18, 2026 at 01:51:44PM +0000, Alexey Klimov wrote:
+> Tested with:
+>
+> tmu_top: thermal-sensor@100a0000 {
+> 	compatible = "samsung,exynos850-tmu-top";
+> 	reg = <0x10070000 0x800>;
 
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on tty/tty-testing tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v7.4-rc3 next-20261120]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Nit: the unit address doesn't match reg, it should be
+thermal-sensor@10070000.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bramuel-Barack/tty-serial-samsung_tty-fix-Wformat-overflow-warnings-for-clk_name/20261121-222158
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20261121192158.44872-1-bramwelbarack89%40gmail.com
-patch subject: [PATCH] tty: serial: samsung_tty: fix -Wformat-overflow warnings for clk_name
-config: parisc-randconfig-1000-20261122 (https://download.01.org/0day-ci/archive/20261122/202611221200.BFeU1ULS-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261122/202611221200.BFeU1ULS-lkp@intel.com/reproduce)
+I ran v2 on a retail Samsung Galaxy XCover5 (SM-G525F, Exynos850, stock
+Samsung bootloader and ACPM firmware), as a data point next to the
+E850-96. Base: v7.4-rc3 plus out-of-tree board support, Tudor's acpm-tmu
+fixes as queued in thermal/linux-next, then this series. Christian's
+threshold-7 fix doesn't apply on top of those fixes yet, so it isn't
+included; it only touches the GS101 path anyway. DT node as above, with
+the unit address fixed, and three interrupt-only zones (polling-delay = 0,
+an active trip at 50C with 2C hysteresis, critical at 110C).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202611221200.BFeU1ULS-lkp@intel.com/
+What works:
 
-All warnings (new ones prefixed by >>):
+- The TMU is accessible from the AP on this production device, so the
+  direct MMIO approach isn't blocked by the secure world there. The
+  bootloader leaves the block configured: two-point calibration
+  (CALIB_SEL=1; 25C/85C codes 288/346, 288/346, 287/346, 287/345 for
+  probes 0-3), CONTROL=0x9503, CONTROL1=0x00030000, AVG_CONTROL=0x00010016,
+  COUNTER_VALUE0/1=0x28a, TRIM0=0. exynos850_tmu_init() computes the same
+  values.
 
-   drivers/tty/serial/samsung_tty.c: In function 's3c24xx_serial_set_termios':
->> drivers/tty/serial/samsung_tty.c:1389:52: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
-      snprintf(clkname, sizeof(clkname), "clk_uart_baud%u", cnt);
-                                                       ^~
-   drivers/tty/serial/samsung_tty.c:1389:38: note: directive argument in the range [0, 2147483647]
-      snprintf(clkname, sizeof(clkname), "clk_uart_baud%u", cnt);
-                                         ^~~~~~~~~~~~~~~~~
-   drivers/tty/serial/samsung_tty.c:1389:3: note: 'snprintf' output between 15 and 24 bytes into a destination of size 17
-      snprintf(clkname, sizeof(clkname), "clk_uart_baud%u", cnt);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/tty/serial/samsung_tty.c: In function 's3c24xx_serial_probe':
-   drivers/tty/serial/samsung_tty.c:1781:54: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 4 [-Wformat-truncation=]
-      snprintf(clk_name, sizeof(clk_name), "clk_uart_baud%u", clk_num);
-                                                         ^~
-   drivers/tty/serial/samsung_tty.c:1781:40: note: directive argument in the range [0, 2147483647]
-      snprintf(clk_name, sizeof(clk_name), "clk_uart_baud%u", clk_num);
-                                           ^~~~~~~~~~~~~~~~~
-   drivers/tty/serial/samsung_tty.c:1781:3: note: 'snprintf' output between 15 and 24 bytes into a destination of size 17
-      snprintf(clk_name, sizeof(clk_name), "clk_uart_baud%u", clk_num);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- ACPM read_temp for groups 0/1/2 tracks the raw CURRENT_TEMP codes of
+  probes 1/2/3 within 1-2C.
 
+- Threshold interrupts work. The GPU zone got a rising update at 50C and
+  a falling one at 45C. After the CPU zones crossed 50C, their registers
+  were re-armed correctly (rise ~110C, fall ~47C, INTEN = RISE1|FALL1).
+  An 8-core load up to 83C caused no spurious updates.
 
-vim +1389 drivers/tty/serial/samsung_tty.c
+Two issues:
 
-  1370	
-  1371	static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
-  1372				unsigned int req_baud, struct clk **best_clk,
-  1373				u8 *clk_num)
-  1374	{
-  1375		const struct s3c24xx_uart_info *info = ourport->info;
-  1376		struct clk *clk;
-  1377		unsigned long rate;
-  1378		unsigned int baud, quot, best_quot = 0;
-  1379		char clkname[MAX_CLK_NAME_LENGTH];
-  1380		int calc_deviation, deviation = (1 << 30) - 1;
-  1381		u8 cnt;
-  1382	
-  1383		for (cnt = 0; cnt < info->num_clks; cnt++) {
-  1384			/* Keep selected clock if provided */
-  1385			if (ourport->cfg->clk_sel &&
-  1386				!(ourport->cfg->clk_sel & (1 << cnt)))
-  1387				continue;
-  1388	
-> 1389			snprintf(clkname, sizeof(clkname), "clk_uart_baud%u", cnt);
-  1390			clk = clk_get(ourport->port.dev, clkname);
-  1391			if (IS_ERR(clk))
-  1392				continue;
-  1393	
-  1394			rate = clk_get_rate(clk);
-  1395			if (!rate) {
-  1396				dev_err(ourport->port.dev,
-  1397					"Failed to get clock rate for %s.\n", clkname);
-  1398				clk_put(clk);
-  1399				continue;
-  1400			}
-  1401	
-  1402			if (ourport->info->has_divslot) {
-  1403				unsigned long div = rate / req_baud;
-  1404	
-  1405				/* The UDIVSLOT register on the newer UARTs allows us to
-  1406				 * get a divisor adjustment of 1/16th on the baud clock.
-  1407				 *
-  1408				 * We don't keep the UDIVSLOT value (the 16ths we
-  1409				 * calculated by not multiplying the baud by 16) as it
-  1410				 * is easy enough to recalculate.
-  1411				 */
-  1412	
-  1413				quot = div / 16;
-  1414				baud = rate / div;
-  1415			} else {
-  1416				quot = (rate + (8 * req_baud)) / (16 * req_baud);
-  1417				baud = rate / (quot * 16);
-  1418			}
-  1419			quot--;
-  1420	
-  1421			calc_deviation = abs(req_baud - baud);
-  1422	
-  1423			if (calc_deviation < deviation) {
-  1424				/*
-  1425				 * If we find a better clk, release the previous one, if
-  1426				 * any.
-  1427				 */
-  1428				if (!IS_ERR(*best_clk))
-  1429					clk_put(*best_clk);
-  1430				*best_clk = clk;
-  1431				best_quot = quot;
-  1432				*clk_num = cnt;
-  1433				deviation = calc_deviation;
-  1434			} else {
-  1435				clk_put(clk);
-  1436			}
-  1437		}
-  1438	
-  1439		return best_quot;
-  1440	}
-  1441	
+1) THERM_TRIP_EN is cleared in exynos850_tmu_init() and never set again.
+   CONTROL went from 0x9503 to 0x8503 after probe. The bootloader leaves
+   level 7 programmed at code 0x177 (about 115C) with the hardware trip
+   enabled, so after probe the hardware thermal trip is off. Samsung's
+   downstream driver for this SoC (exynos3830 in exynos_tmu_v2.c) sets
+   TRIP_EN together with CORE_EN when it enables the core. Should the
+   driver keep it, or set it again in tz_control()?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2) Runtime PM gates the TMU pclk (gout_busif_tmu_pclk) 100ms after each
+   access, but the ACPM firmware on E850 reads the TMU through that clock
+   too. An ACPM TMU read_temp sent while the pclk is gated hangs the SoC
+   until it resets, with nothing in the log. I hit this through an
+   out-of-tree ACPM consumer that calls read_temp without going through
+   acpm-tmu's runtime PM, so this series on its own does not trigger it:
+   acpm_tmu_get_temp() resumes the device before the IPC. It reproduced
+   both times with the clock gated, and the same read always works with
+   the device held active (power/control = on).
+
+   It does mean the clock is shared with the firmware, and gating it is
+   only safe if ACPM never touches the TMU on its own while the AP has it
+   gated. I can't rule that out from here: the bootloader leaves RISE7
+   enabled on probe 0. The downstream driver never gates this clock.
+   Would it be safer to keep it enabled while the device is bound on E850?
+
+Minor:
+
+- NUM_PROBE is set from priv->num_sensors (3 thermal zones). That happens
+  to match what the bootloader programs (3, covering probes 0-3; probe 3
+  keeps updating), but they are different quantities. Downstream reads
+  NUM_PROBE back from CONTROL1 instead.
+
+- About sashiko's temp_error2 point: all four probes on this unit have
+  non-zero 85C trims, so that fallback isn't exercised here.
+
+I'm happy to retest the next version on this phone.
+
+Thanks,
+Adil
