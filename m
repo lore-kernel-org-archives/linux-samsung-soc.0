@@ -1,62 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=121.254.168.203
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795335896;
-	b=KcCwMFq1TN25Y1SbyfDj00gCdvF/mBvvrV7rEW6+2YxQvM5V7cY4L8gmwgyjq84o8Cih
-	 cid93E51ubstRf2t530npkXysu4vBauVWTsquiSuYSPViYGcu0SdgLOiq4hoaEuuFC66l
-	 AHduGSoRdO+kaODLyeoRk/hhpxuVNiP8jC9fYqQ1LizPTlvxNbUCx1F1oF+S01p2OTKkW
-	 MN5iaBFf6g3DyFUpaavR4ZN8owRtND9edqNZpj+/xPok3p8e1jTDKVo1PGiZqg+GO3Sgb
-	 d67hXL2jRzC8LLu4UNHbXlxhWHwmiGQ69L8vyLC4R7qP9M2rrt+sJhlySMkzz7/Sdhg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795335896;
-	h=DMARC-Filter:Received:Received:Received:Received:Date:From:Reply-To:
-	 To:Cc:Message-ID:Subject:MIME-Version:Content-Type:X-Priority:
-	 X-Authinfo;
-	bh=AQXMVq/bY9pwRN/7bAmT7U0vAZ3Y/kk/NV7eqWTjsoU=;
-	b=jqmfwbFfbaHMPmQb2rUoen5MapGQB5OUkqn15rdC0aQqVin5L0Xxe5qyLsSzdjjFDNXN
-	 7AMkQwX90kSr3FkQ9OVZEbkb7kYGEn4Pn0jWEuAm4SEJETjkQ1JazNXbCQ1DTz1nCnhmC
-	 OgnlyNt1I7eLlCbi6OV+zW2uLe3mlq5rv2egqJ3P4bNRiXRleUriQgppW3xuZ+yaJKkQx
-	 BTo1Z2kbcozxfU1Zjg6g1A8kBnpUH0tJDc32oL6VMLbueCTUtZONkn6U1t8SnZVpsjvif
-	 zdgTZz8M1kYrtIX1eqPz3xM2nxnZj6oDBLnNTd/X4g2Vxwv4wLDRvZOqCmafRSrd2wA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=nirvanahyj.com;
-	spf=pass smtp.mailfrom=nirvanahyj.com;
-	arc=none smtp.remote-ip=121.254.168.203
-Received: from smtp4.hiworks.co.kr (smtp4.hiworks.co.kr [121.254.168.203])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795348533;
+	b=FKZjCBXDgl0XSmRUB431GMNRw3gVJBdayA1i3HQtzcPDHed12KEWbbt3m0NT8lVrIaXD
+	 sbvvfTFBHMsJjWY0EtVMoQjiAaPFiLTg5snMpWj1/LeegvWaN8lBz+eqktj2v/96WHoyJ
+	 XhhbD6jLPynE9rDCH1Z9y0GIhz9BHUX++IU611XrM7Ywo8pDGcmhrVNUI1crwpq9Fy2/b
+	 RErQ5WyiNAUVhuk4z/vh07dRDYEZ1CbsM+5p33n0chk3cHOnrD9vpfklxbvFGnBDvVhsr
+	 kfSbvBmWR7z6DTwhKuc4KFvkI+Lobk7J3p3QRRrYYqANhFnpVM4/U3N+yrCsNvGCijg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795348533;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=XsPczLgMwqRcGehK0Y36BZv739K0cQRsYfBty9hj0p0=;
+	b=Tl1Ii4Ll91+ZX45wFCUiB1ymuk03Gz1KGQ3zjur9vj3oQFChpH7ZSMNGygd+WBZkDLH4
+	 mxqic/E1ZYanKrLdNLfAO5QLiGw3qDzCBVG437h77zmdEgX3060HLmRIKVBTIICV4Xr39
+	 rgJ+vf6RqayvoiOBkIzkOPXPgCdSK3wtE7fpnUWMKHzXJjtfZ7oFPu+BbH65A443MbWJ1
+	 waG4hOJZHB4I48oOlZdvVudBKTHuGeNkdOYqzboXXpyD+SUSuVjlS+tlMp7tZzAN1TTkA
+	 4c9ZMMoEERAJqXezkxIWlgGoKFd4i71s/tP0FEmz97L6UsSf59cs6CcWu7MKIFllDmQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jtml9c5E;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C62606A338;
+	Sun, 22 Nov 2026 11:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jtml9c5E
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795348533;
+	b=I6QIRkZUPdPyTq3CvVfbcFXogDSwlZusGqmFDXJoDkDlns9bJjgJ/AT5L6GfTqixV2Kb
+	 ADGwuuY5Sf5GoRislouDijvai1+bK0ETS6K9x4jTYjjBAWPyVPA2gVd+ZmuSFfy0VCT4C
+	 2KLHz0I7uIUWrLrFMSPF3ElbcngkCLX9arXQIi+jDRta5D/pbkrD2ePv0mVM9BGjdjIE/
+	 SQGZe3OEwE8+fPxmWA4xRt6AIjhZLDtrC/r1FQrd4UIMjxFFQqnAZDGtu/+jhYxMON1vE
+	 mZu5aE6Yk5/Gb+7xV8PTXUSb0xNMpfd5igLi/SSjcuICsIOaKR2+Br1zVZmIv5PigVA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795348533;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=XsPczLgMwqRcGehK0Y36BZv739K0cQRsYfBty9hj0p0=;
+	b=FfU2I3C1xF4MyuBXHaAdfUnM24vydTjlIjrZdwr/zZhfJIQLjE8CHQdF48qE8o047RCb
+	 rhE0EKDD6qLWsh4ykg2iyj9JXSNUe7g1BgCmBcjOFkVXI6FVMoelTTPeAtcJQVuVaSTAE
+	 ON4stS7jJjR9SgL8WUKdeWf2g22ggkm7v+bnWFy+RouwTB6t0vljsFZfiHR+wIHB4UnTV
+	 Mc3VaNBAKrG6gKRU0nRA+wzVtgAvUdNEvu1CPheiTc8auOXau3+tuUU95O3BAx1uyENeY
+	 YhKZf67NZGw+ADxsGEIOoGurlInxEYq1e6qoEwWUg0NE2Us/ciqBaMtrMZ7BCyUxMCg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1436606A32A
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 08:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1436606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nirvanahyj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nirvanahyj.com
-Received: from hi-smtp-node2 (unknown [172.18.0.2])
-	by smtp4.hiworks.co.kr (Postfix) with ESMTPS id 4jXMZ65KRRzcHN1v
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
-Received: from hi-smtp-node2 (unknown [192.168.71.87])
-	by hi-smtp-node2 (Postfix) with ESMTP id 4jXMZ6556ZzQLN7R
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
-Received: from split.smtp.hiworks.com (amphora-3294b420-308a-4b9e-8a1d-bf25580dae1f.openstack.gabia.io)
- 	by hi-smtp-node2 with ESMTP id zhau7ts2lbcgb4py;
- 	Sun, 22 Nov 2026 17:24:46 +0900 (KST)
-Received: from hiworks-k8s (EHLO mail-api-v2-prod-574865655-x4kvt) (10.251.248.0) 	by 0 (smtp-channel-split) with SMTP; 	Sun, 22 Nov 2026 17:24:46 +0900
-Date: Sun, 22 Nov 2026 17:24:46 +0900 (KST)
-From: Young-Jun Hong <nirvanah@nirvanahyj.com>
-Reply-To: Young-Jun Hong <young.j.hong@kaist.ac.kr>
-To: Henrik Grimler <henrik@grimler.se>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-ID: <gab995302678.0.1795335886363@nirvanahyj.com>
-Subject: RE: Re: [PATCH 2/4] clk: samsung: exynos5420: add VPLL rates for
- 650, 700 and 750 MHz
+	by smtp.kernel.org (Postfix) with ESMTPS id 52C161F000D8;
+	Sun, 22 Nov 2026 11:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795348533;
+	bh=XsPczLgMwqRcGehK0Y36BZv739K0cQRsYfBty9hj0p0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=jtml9c5ECFeQ+BGhVAkIvLpEWS6e8lklEYwrT5PTndBPMMOj1eyGSp6xAhDQzHviU
+	 umoGE/ME6HaHuqpfv200XsRjY9qzmVOuPJYILLBTIMN9nA2CpwlxqEpeJpQCDKgKgv
+	 0DL/TL7Q2xLfxumgQabfmQTbnZh4xr+Cs8fTECGTVVkuaWjqB/q4KU8mNWorhn5GG2
+	 zsorp153Mc1r7IcMHsYPZpxdeh2BEb3oH9PCJt72ksbUuenCnPfJg64oARXOrYIukQ
+	 ZdXQtXo1+Xzx5UTQK/IJMDhU4YoEJla6YSl7NwO8NJsL/gNDumUZob1uay0d05j938
+	 72X1RSVW45o+A==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id D00A34C01F;
+	Sun, 22 Nov 2026 11:55:27 +0000 (UTC)
+From: Suyuan Wang via B4 Relay <devnull+shyckless.gmail.com@kernel.org>
+Date: Sun, 22 Nov 2026 11:55:27 +0000
+Subject: [PATCH 2/3] cpufreq: kirkwood: Put clocks on error and in remove
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -66,104 +82,113 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/mixed; 
-	boundary="----=_Part_3387072_306714675.1795335886363"
-X-Priority: 3
-X-Authinfo: HIWORKS WEB authenticated <nirvanah@nirvanahyj.com|114.203.237.180>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261122-cpufreq-leaks-v1-2-96fc17ff7339@gmail.com>
+References: <20261122-cpufreq-leaks-v1-0-96fc17ff7339@gmail.com>
+In-Reply-To: <20261122-cpufreq-leaks-v1-0-96fc17ff7339@gmail.com>
+To: rafael@kernel.org, viresh.kumar@linaro.org, krzk@kernel.org, 
+ peter.griffin@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-pm@vger.kernel.org, alim.akhtar@samsung.com, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795348526; l=2983;
+ i=shyckless@gmail.com; s=default; h=from:subject:message-id;
+ bh=skKpKTVz2FV0rjzQ/HU+MrfER9ugcIz07303IiHkuCA=;
+ b=0efWSpMpBy+Kwg3RseZTMMzQXoPPCXFeJhXVmatgvsOBKi5JFwCEgzHwH8uKjbTB/HwfBHtQK
+ C3De9J/sEVcA4JgERWuHneJbyfb1bPAC2aE2NUFMg2x9KdOHD6yrodU
+X-Developer-Key: i=shyckless@gmail.com; a=ed25519;
+ pk=pMtccVGiWES3bV+7YBFuBclkvq2n2HBHQ5azaBrK2lY=
+X-Endpoint-Received: by B4 Relay for shyckless@gmail.com/default with
+ auth_id=1498
+X-Original-From: Suyuan Wang <shyckless@gmail.com>
+Reply-To: shyckless@gmail.com
 
-------=_Part_3387072_306714675.1795335886363
-Content-Type: multipart/related; 
-	boundary="----=_Part_3387073_43970329.1795335886363"
+From: Suyuan Wang <stevewong@hust.edu.cn>
 
-------=_Part_3387073_43970329.1795335886363
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+kirkwood_cpufreq_probe() gets three clocks with of_clk_get_by_name():
+cpu_clk, ddrclk and powersave. None of them is ever released with
+clk_put(). The error paths only disable and unprepare the clocks, and
+kirkwood_cpufreq_remove() does the same. So the clock references leak
+when probe fails (for example on -EPROBE_DEFER) and on every unbind.
 
-SGkgSGVucmlrLAoKClRoYW5rcyBmb3IgdGhlIHJldmlldywgYW5kIHNvcnJ5IGZvciB0aGUgc2xv
-dyByZXBseS4KCk9uIEZyaSwgTm92IDA2LCAyMDI2IGF0IDAzOjQ1OjM2UE0gKzAxMDAsIEhlbnJp
-ayBHcmltbGVyIHdyb3RlOgo+IFdoYXQgeW91IG1lYW4gd2l0aCAidXNpbmcgdGhlIHNhbWUgUC9N
-L1Mgc3R5bGUgYXMgdGhlIEFQTEwgcm93cyI/CgpUaGF0IHdvcmRpbmcgaXMgdG9vIGxvb3NlLCBz
-b3JyeS4gTGV0IG1lIGV4cGxhaW4gaG93IHRoZSByb3dzIHdlcmUKY2hvc2VuLgoKV2h5IHRoZSBW
-UExMIG5lZWRzIG5ldyByb3dzIGF0IGFsbDogdGhlIEdQVSBjbG9jayBpcwpmb3V0X3ZwbGwgLT4g
-bW91dF9zY2xrX3ZwbGwgLT4gbW91dF9hY2xrX2czZCAtPiBkb3V0X2FjbGtfZzNkIChhIDMtYml0
-CmRpdmlkZXIsIENMS19TRVRfUkFURV9QQVJFTlQpIC0+IG1vdXRfc3cvdXNlcl9hY2xrX2czZCAt
-PiBnM2QuIFRoZQpkaXZpZGVyIGNhbiBvbmx5IGRpdmlkZSBkb3duLCBzbyBhIEczRCByYXRlIGFi
-b3ZlIDYwMCBNSHogbmVlZHMgYSBWUExMCnJvdyBmb3IgaXQ7IHdpdGhvdXQgb25lLCBjbGtfc2V0
-X3JhdGUoKSByb3VuZHMgdG8gdGhlIDYwMCBNSHogcm93LgoKVGhlIFZQTEwgaXMgYSBwbGxfMjU1
-MCAoUExMMzV4eC1zdHlsZSBpbnRlZ2VyIFBMTCksIHRoZSBzYW1lIHR5cGUgYXMgdGhlCkFQTEws
-IEtQTEwgYW5kIEJQTEwgaW4gdGhpcyBkcml2ZXI6CgrCoMKgRnJlZiA9IDI0IE1IeiAvIFAgwqAg
-wqAoUDogNiBiaXRzKcKgIMKgaW5wdXQgb2YgdGhlIHBoYXNlIGRldGVjdG9yCsKgwqBWQ08gwqA9
-IEZyZWYgKiBNIMKgIMKgIMKgKE06IDEwIGJpdHMpIMKgZmVlZGJhY2sgZGl2aWRlcgrCoMKgRm91
-dCA9IFZDTyAvIDJeU8KgIMKgIMKgKFM6IDMgYml0cynCoCDCoHBvc3QtZGl2aWRlciwgb3V0c2lk
-ZSB0aGUgbG9vcAoKU28gd2hhdCBkZWNpZGVzIHdoZXRoZXIgYSByb3cgaXMgcmVhc29uYWJsZSBp
-cyB0aGUgcGhhc2UgZGV0ZWN0b3IgaW5wdXQKKEZyZWYpIGFuZCB0aGUgVkNPIGZyZXF1ZW5jeTsg
-UyBvbmx5IGRpdmlkZXMgdGhlIFZDTyBvdXRwdXQuIEkgcGlja2VkCnJvd3Mgd2hvc2UgRnJlZiBh
-bmQgVkNPIGFyZSBib3RoIGFscmVhZHkgdXNlZCBieSBwbGxfMjU1MCByb3dzIGluCm1haW5saW5l
-OgoKwqDCoHJhdGUgwqBQIMKgTSDCoCDCoFMgwqBGcmVmIMKgIMKgVkNPwqAgwqAgwqAgwqBzYW1l
-IEZyZWYgLyBWQ08gYWxyZWFkeSB1c2VkCsKgwqA2NTDCoCDCoDYgwqAzMjUgwqAxIMKgNCBNSHrC
-oCDCoDEzMDAgTUh6IMKgQVBMTCAxMzAwIE1IeiByb3cgKDMyNSwgNiwgMCkKwqDCoDcwMMKgIMKg
-MyDCoDE3NSDCoDEgwqA4IE1IesKgIMKgMTQwMCBNSHogwqBBUExMIDcwMCBNSHogcm93ICgxNzUs
-IDMsIDEpOwrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoFZQTEwgMzUwIE1IeiByb3cgKDE3NSwgMywgMikKwqDCoDc1MMKgIMKgMiDCoDEyNSDC
-oDEgwqAxMiBNSHogwqAxNTAwIE1IeiDCoEZyZWY6IFZQTEwgNjAwLzU0My80ODAvNDIwIHJvd3Ms
-CsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-QVBMTCAxMjAwLzkwMDsgVkNPOiBBUExMIDE1MDAKCldoeSBTID0gMSBhbmQgbm90IFMgPSAyIGxp
-a2UgdGhlIGV4aXN0aW5nIFZQTEwgcm93czogd2l0aCBTID0gMiwgNjUwIHRvCjc1MCBNSHogd291
-bGQgbmVlZCBhIFZDTyBvZiAyNjAwIHRvIDMwMDAgTUh6LCBhYm92ZSB0aGUgaGlnaGVzdCBWQ08g
-YW55CnBsbF8yNTUwIHRhYmxlIGluIG1haW5saW5lIHVzZXMgKDI0MDAgTUh6LCBlLmcuIHRoZSBW
-UExMIDYwMCBNSHogcm93CjIwMCwgMiwgMikuIFdpdGggUyA9IDEgdGhlIFZDTyBzdGF5cyBhdCAx
-MzAwIHRvIDE1MDAgTUh6LCB0aGUgc2FtZSByYW5nZQp0aGUgZXhpc3RpbmcgVlBMTCByb3dzIHJ1
-biBpbiAoMzUwIE1IeiByb3c6IDE0MDAgTUh6OyAxNzcgTUh6IHJvdzogMTQxNjsKMTAwIE1IeiBy
-b3c6IDE2MDApLiBUaGF0IGlzIHdoYXQgInRoZSBzYW1lIFAvTS9TIHN0eWxlIGFzIHRoZSBBUExM
-IHJvd3MiCndhcyBtZWFudCB0byBzYXk7IEkgd2lsbCBzcGVsbCBpdCBvdXQgbGlrZSB0aGlzIGlu
-IHYyLgoKPiBXYXMgaXQgdGVzdGVkIGJ5IGEgaHVtYW4/CgpZZXMuIFRoZSBjb2RlIHdhcyBnZW5l
-cmF0ZWQgYnkgQ2xhdWRlIENvZGUsIGJ1dCBJIHNldCB0aGUgZGlyZWN0aW9uIG9mCnRoZSBleHBl
-cmltZW50cywgbG9va2VkIGF0IHRoZSByZXN1bHRzIG15c2VsZiwgYW5kIHJlcGVhdGVkIHRoZSBy
-dW5zIG9uCm15IEFSVElLIDEwIGJvYXJkIHVudGlsIHRoZSByZXN1bHRzIGhlbGQgdXAuCgpTb21l
-IGJhY2tncm91bmQ6IEkgYW0gZXZhbHVhdGluZyB0aGUgQVJUSUsgMTAgKEV4eW5vcyA1NDIyKSBh
-cyBhCnNtYWxsIGNvbXB1dGUgYm9hcmQuIFN0YXJ0aW5nIGZyb20gaXRzIGZhY3RvcnkgRmVkb3Jh
-IGltYWdlLCBJIG1vdmVkCml0IHRvIERlYmlhbiBhbmQgdHVuZWQgaXQgZm9yIGJlbmNobWFya2lu
-Zywgd2l0aCBDbGF1ZGUgQ29kZSB3cml0aW5nCm1vc3Qgb2YgdGhlIHNjcmlwdHMgYW5kIGNvbmZp
-Z3VyYXRpb24gY2hhbmdlcy4gSSBkZWZpbmVkIHRoZQpleHBlcmltZW50cyBhbmQgaG93IHRvIHZh
-bGlkYXRlIHRoZW0sIGFuYWx5emVkIHRoZSByZXN1bHRzIG15c2VsZiwKYW5kIGFjY2VwdGVkIGEg
-Y2hhbmdlIG9ubHkgYWZ0ZXIgaXQgcmVwcm9kdWNlZCBhY3Jvc3MgcmVwZWF0ZWQgcnVucwpvbiB0
-aGUgYm9hcmQuIEZvciB0aGlzIHBhdGNoLCB0aGF0IG1lYW5zIHRoZSBjbGtfc3VtbWFyeSByZWFk
-aW5ncyBhbmQKdGhlIGZpeGVkLWNsb2NrIEdQVSBydW5zIGRlc2NyaWJlZCBiZWxvdy4KCj4gRG8g
-eW91IGhhdmUgYW55IHJlZmVyZW5jZXMsIGxpa2UgdmVuZG9yIGtlcm5lbCBzb3VyY2VzLCB0byBi
-YWNrIHVwCj4gdGhlc2UgY2hvaWNlcyBvZiBkaXZpZGVycyBhbmQgc2NhbGFyPwoKTm90IGZyb20g
-YSB2ZW5kb3Iga2VybmVsIGZvciB0aGlzIFNvQzogdGhlIG9uZXMgSSBmb3VuZCBmb3IgdGhlIEV4
-eW5vcwo1NDIyIChIYXJka2VybmVsJ3MgT0RST0lELVhVMy9YVTQgMy4xMCBhbmQgNi4xIHRyZWVz
-KSBhbHNvIHN0b3AgdGhlIFZQTEwKdGFibGUgYXQgNjAwIE1IeiwgYW5kIHRoZSBtYWlubGluZSBW
-UExMIHRhYmxlIChiOTI5ODFkZTkyY2IsIDIwMTkpIGRvZXMKbm90IHNheSB3aGVyZSBpdHMgdmFs
-dWVzIGNhbWUgZnJvbS4KClRoZSBjbG9zZXN0IHJlZmVyZW5jZSBpcyBpbiBtYWlubGluZS4gY2xr
-LWV4eW5vczUyNjAuYyAoZDM5ZTU1ZTA2MzcxLApTYW1zdW5nLCAyMDE0KSBoYXMgb25lIHRhYmxl
-IHRoYXQgaXQgYXBwbGllcyB0byBhbGwgcGxsXzI1NTAgUExMcyBvZgp0aGF0IFNvQywgaW5jbHVk
-aW5nIGl0cyBHM0RfUExMLiBJdCBjb250YWlucyA3MDAgTUh6ID0gMTc1LCAzLCAxICh0aGUKc2Ft
-ZSByb3cgYXMgaGVyZSksIFMgPSAxIHJvd3MgZnJvbSA2MzMgdG8gMTIwMCBNSHogKFZDTyAxMjY2
-IHRvIDI0MDAKTUh6KSwgYW5kIHRoZSAxMzAwIGFuZCAxNTAwIE1IeiByb3dzICgzMjUsIDYsIDAg
-YW5kIDI1MCwgNCwgMCkuIFNvIGEKU2Ftc3VuZy13cml0dGVuIEczRCBQTEwgdGFibGUgb24gdGhl
-IHNhbWUgUExMIHR5cGUgYWxyZWFkeSBydW5zIHRoZSBWQ08KYXQgMTMwMCB0byAxNTAwIE1IeiB3
-aXRoIFMgPSAxLiBUaGUgdmVuZG9yIDMuMTAgdHJlZSBmb3IgdGhlIDU0MjIgYWxzbwp1c2VzIFMg
-PSAxIG9uIG90aGVyIHBsbF8yNTUwIGluc3RhbmNlcyAoSVBMTCA2NjYgTUh6ID0gUCA0LCBNIDIy
-MiwKUyAxOyBTUExMIDgwMCBNSHogPSBQIDMsIE0gMjAwLCBTIDEpLiBJIGRvIG5vdCBoYXZlIHRo
-ZSB1c2VyIG1hbnVhbCwKc28gSSBoYXZlIG5vdCBjaGVja2VkIHRoZSByb3dzIGFnYWluc3QgaXRz
-IFBMTCBsaW1pdHMuCgpPbiB0aGUgYm9hcmQsIGNsa19zdW1tYXJ5IHJlcG9ydHMgZm91dF92cGxs
-IGF0IDY1MCwgNzAwIGFuZCA3NTAgTUh6LAphbmQgR1BVIHRocm91Z2hwdXQgZm9sbG93cyB0aGUg
-Y2xvY2s6IGJldHdlZW4gYSBmaXhlZCA2MDAgTUh6IGFuZCBhCmZpeGVkIDc1MCBNSHosIGFuIE9w
-ZW5DTCBtYWQ0IGxvb3AgZ29lcyBmcm9tIDMxLjEgdG8gMzguNyBHRkxPUFMgYW5kIGFuCmZwNjQg
-bG9vcCBmcm9tIDExLjIgdG8gMTMuOSBHRkxPUFMgKHJhdGlvIDEuMjQgZm9yIGJvdGg7IDEuMjUK
-ZXhwZWN0ZWQpLgoKSW4gdjIgSSB3aWxsIGNoYW5nZSB0aGUgNzUwIE1IeiByb3cgdG8gMjUwLCA0
-LCAxICh0aGUgTS9QIG9mIHRoZQoxNTAwIE1IeiByb3cgb2YgdGhlIHBsbF8yNTUwIHRhYmxlKTog
-c2FtZSBWQ08gYW5kIG91dHB1dCwgRnJlZiA2Cmluc3RlYWQgb2YgMTIgTUh6LCBzbyBhbGwgdGhy
-ZWUgcm93cyByZXVzZSBhbiBleGlzdGluZyBNL1AgcGFpci4gSSByYW4KdGhhdCByb3cgb24gdGhl
-IGJvYXJkOiBmb3V0X3ZwbGwgYW5kIHRoZSBHUFUgY2xvY2sgcmVhZCA3NTAgTUh6LCB0aGUKZml4
-ZWQgY2xvY2sgcmVzdWx0cyBtYXRjaCB0aGUgb2xkIHJvdyAoZnA2NCAxMy44LTE0LjAgR0ZMT1BT
-IGF0IDc1MApNSHosIDExLjEgYXQgNjAwIE1IeiksIGFuZCBhIGRldmZyZXEgcnVuIGJldHdlZW4g
-YWxsIE9QUHMgc2hvd2VkIG5vIEdQVQpmYXVsdHMuIFRoZSA2NTAgTUh6IHJvdyAoMzI1LCA2LCAx
-KSBwYXNzZWQgdGhlIHNhbWUgdGVzdCAoZnA2NCAxMi4wCkdGTE9QUykuIFRoZSB2MiBjaGFuZ2Vs
-b2cgYWxzbyBkZXNjcmliZXMgdGhlIGNsb2NrIHBhdGggYW5kIHdoZXJlIHRoZQp2YWx1ZXMgY29t
-ZSBmcm9tLgoKQmVzdCByZWdhcmRzLApZSgoKLS0gCllvdW5nLUp1biBIb25nIGZyb20gSGl3b3Jr
-cw==
-------=_Part_3387073_43970329.1795335886363--
+Add the missing clk_put() calls to the error paths and to remove. The
+"Unable to prepare" paths now jump to new labels that only put the clock
+that failed to enable.
 
-------=_Part_3387072_306714675.1795335886363--
+Found with a static analysis tool and checked by hand.
+
+Fixes: 2a4bd9f0db24 ("cpufreq: kirkwood: Add a cpufreq driver for Marvell Kirkwood SoCs")
+Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
+Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
+---
+ drivers/cpufreq/kirkwood-cpufreq.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
+index 24b285cbeb8d..e85658081c07 100644
+--- a/drivers/cpufreq/kirkwood-cpufreq.c
++++ b/drivers/cpufreq/kirkwood-cpufreq.c
+@@ -125,7 +125,7 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 	err = clk_prepare_enable(priv.cpu_clk);
+ 	if (err) {
+ 		dev_err(priv.dev, "Unable to prepare cpuclk\n");
+-		goto out_node;
++		goto out_put_cpu;
+ 	}
+ 
+ 	kirkwood_freq_table[0].frequency = clk_get_rate(priv.cpu_clk) / 1000;
+@@ -140,7 +140,7 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 	err = clk_prepare_enable(priv.ddr_clk);
+ 	if (err) {
+ 		dev_err(priv.dev, "Unable to prepare ddrclk\n");
+-		goto out_cpu;
++		goto out_put_ddr;
+ 	}
+ 	kirkwood_freq_table[1].frequency = clk_get_rate(priv.ddr_clk) / 1000;
+ 
+@@ -153,7 +153,7 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 	err = clk_prepare_enable(priv.powersave_clk);
+ 	if (err) {
+ 		dev_err(priv.dev, "Unable to prepare powersave clk\n");
+-		goto out_ddr;
++		goto out_put_powersave;
+ 	}
+ 
+ 	err = cpufreq_register_driver(&kirkwood_cpufreq_driver);
+@@ -167,10 +167,16 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 
+ out_powersave:
+ 	clk_disable_unprepare(priv.powersave_clk);
++out_put_powersave:
++	clk_put(priv.powersave_clk);
+ out_ddr:
+ 	clk_disable_unprepare(priv.ddr_clk);
++out_put_ddr:
++	clk_put(priv.ddr_clk);
+ out_cpu:
+ 	clk_disable_unprepare(priv.cpu_clk);
++out_put_cpu:
++	clk_put(priv.cpu_clk);
+ out_node:
+ 	of_node_put(np);
+ 
+@@ -182,8 +188,11 @@ static void kirkwood_cpufreq_remove(struct platform_device *pdev)
+ 	cpufreq_unregister_driver(&kirkwood_cpufreq_driver);
+ 
+ 	clk_disable_unprepare(priv.powersave_clk);
++	clk_put(priv.powersave_clk);
+ 	clk_disable_unprepare(priv.ddr_clk);
++	clk_put(priv.ddr_clk);
+ 	clk_disable_unprepare(priv.cpu_clk);
++	clk_put(priv.cpu_clk);
+ }
+ 
+ static struct platform_driver kirkwood_cpufreq_platform_driver = {
+
+-- 
+2.34.1
+
+
