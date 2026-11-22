@@ -1,109 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=121.254.168.203
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795335081;
-	b=A29ZG/F8b/Q80fGmntWD/PFe0iGNnhVAj8uqnERwXO6Eq8VSgri+kLhyiRgnkvMHY0/G
-	 9oK+KDTMzM9xRGEguQlGU6jU7MNAi3M7kCSqQwOtNx1oaWwYd2sN73JRe7+7tzOgjdUbG
-	 cqOyV7qazcKFlukaMEnc9XegyFhfr8Wkzy4pGk0KOI78N44Dgjgq9ruY0Sa4mHF3Ap7Ky
-	 9qjZK0i7wsXl0Fvgt5+Ewy5TAcfHakHd8FA5u2L3vh77cpQUCIQ36+3Qc+KnVrk8wEWsb
-	 X3KtcNmteGhhLp0Ong8ajm8xRwPR2VYsAnMtmS3RcKJlDuZEYzinlDyGdSiWw16e7Ag==
+	t=1795335896;
+	b=KcCwMFq1TN25Y1SbyfDj00gCdvF/mBvvrV7rEW6+2YxQvM5V7cY4L8gmwgyjq84o8Cih
+	 cid93E51ubstRf2t530npkXysu4vBauVWTsquiSuYSPViYGcu0SdgLOiq4hoaEuuFC66l
+	 AHduGSoRdO+kaODLyeoRk/hhpxuVNiP8jC9fYqQ1LizPTlvxNbUCx1F1oF+S01p2OTKkW
+	 MN5iaBFf6g3DyFUpaavR4ZN8owRtND9edqNZpj+/xPok3p8e1jTDKVo1PGiZqg+GO3Sgb
+	 d67hXL2jRzC8LLu4UNHbXlxhWHwmiGQ69L8vyLC4R7qP9M2rrt+sJhlySMkzz7/Sdhg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795335081;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
-	b=rmMGv74hoFruPxS/p9z5/Czza8aMXhlvixqIWApyQ/iE1oWMp6F7jPR+PZOTaYnuVTUr
-	 QHXE6vIOgkQpsbozVy47wcF3jv1fAy38JUrCKIYrDlIvSBCOjb+yMaAj9HEHkKbk6X6cd
-	 9SqSdGUBlN4eQ6oM3np8if89Jy0WIhHHZAnnUwb0l/Emk2i4lpC9eWlsRVqk84RlvWwpW
-	 qecqQw9PhYrZ9VmbUePJiqPcuhd/dZpNVevX/ntI5+2GtJn39r730KzUDxxbu2C/lfOH5
-	 iUq1zrjyxdkutIzc0CYX4MlRovZ/8Ml7HA/ivS+ov/4au5eYHhq1vS/NISDEgE4/rqA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795335896;
+	h=DMARC-Filter:Received:Received:Received:Received:Date:From:Reply-To:
+	 To:Cc:Message-ID:Subject:MIME-Version:Content-Type:X-Priority:
+	 X-Authinfo;
+	bh=AQXMVq/bY9pwRN/7bAmT7U0vAZ3Y/kk/NV7eqWTjsoU=;
+	b=jqmfwbFfbaHMPmQb2rUoen5MapGQB5OUkqn15rdC0aQqVin5L0Xxe5qyLsSzdjjFDNXN
+	 7AMkQwX90kSr3FkQ9OVZEbkb7kYGEn4Pn0jWEuAm4SEJETjkQ1JazNXbCQ1DTz1nCnhmC
+	 OgnlyNt1I7eLlCbi6OV+zW2uLe3mlq5rv2egqJ3P4bNRiXRleUriQgppW3xuZ+yaJKkQx
+	 BTo1Z2kbcozxfU1Zjg6g1A8kBnpUH0tJDc32oL6VMLbueCTUtZONkn6U1t8SnZVpsjvif
+	 zdgTZz8M1kYrtIX1eqPz3xM2nxnZj6oDBLnNTd/X4g2Vxwv4wLDRvZOqCmafRSrd2wA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="oZwX/836";
-	arc=none smtp.remote-ip=209.85.218.48
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=none header.from=nirvanahyj.com;
+	spf=pass smtp.mailfrom=nirvanahyj.com;
+	arc=none smtp.remote-ip=121.254.168.203
+Received: from smtp4.hiworks.co.kr (smtp4.hiworks.co.kr [121.254.168.203])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C89606A320
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 08:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 04C89606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oZwX/836
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c247f6687dcso342063766b.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 00:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795335079; x=1795939879; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
-        b=oZwX/836jpKkwmXyKQm2gtxEgzcHo1dgYkrA7jXR4jQMF1yPkum9RA6/9zUBSIAHF2
-         qjaqvs5IcEc2p6grA9XhGOZgy6dHftV8EtcD/Ai8huCe1qJ/sacbhgBedTw0l/jvxOJu
-         FB8r8Yzj64R96CvD+pKxfp8l1+luLjUp8SIw/WVIekUhOZLY+SjJxR6XSWue/+4Qdlcd
-         gDNxqp8qTmuPWeyqD8+bkms9gaqO8/94Tzl8/t0XU7s8fZtLhtty7SIYCRBllnRzQWBv
-         KpfoopyukdLmMj4rs8+ZAHCCvjyPXpsHh4AfRXQdeBpHU7sBRq6P/vzU44mCr8B4ye5v
-         wMlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795335079; x=1795939879;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7LQKFHuvOFPNMCnvLDkMXQ86A6lGIMolZPD7spZrCmg=;
-        b=KYNjy8mCKqYrvvff7NDuCwbvdaS9kqNabhwATVzGZeXhLy+acKL5dLf+mEH2AhsoRu
-         rq4suGCtcroxh6VUhNEeTCOtNb2EKoL80gpNxXGKVzcsjQ/K7MucggNCzYS6ScqLaNIG
-         R222OtLMvZVblLzgJsStOiKzHZTEL/mmxrAGcVbu8Kb+InQJMRBy6f06fAw82JsSP/Z8
-         SlNGpybPTBnuBEbD2M/id9u3C1/C4DGbaWpT/yIIIGel3GDGtWR3TqI88YyDbHeYEPKe
-         cPrrPJ9+j+9diB8hjPlz2MuUsIQOdEp0/sndXynMk3qfolV2Vi4UWkNvviyCDE4w8diK
-         kbBA==
-X-Forwarded-Encrypted: i=1; AL+hErHvVFtgCmihhjUqKajFiWsIC2dPkeSrXr7heV5+B5lNLc5hIX4JhKuVkeHZmMi1K33NfZ0Kn6R2c0tv4Y85b5SBgw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+zDsQYtZjBhKuLZ0MtXonijXWo3Z6CK6ILU190JLJgzw6ekfnK
-	6mJMq9hf6eDEIVHQky1AVj2Lj7e9lFjZKPLbofGSAeyKKyW+fojMxgrp
-X-Gm-Gg: AZFdTZd6Xq6K5+lRlihVyIBpz++7DcM/v9665+g0bfMHVZixKZ6wO4ABv5T06Ok/OX2
-	D9yaF55stLhQxLji88FDIDf29jKb/563kxXNzC4dCYQ9OTza5m9cuOYRqBRqawgeQ/kLlC0OOCM
-	1WM0DkNB8f/9diJ0vKeDAyIlqe6wGO56sTOORgfGBznMMm22lbOKCY1458VlPUSlvh/PrIigqbW
-	q5BVEhOln/2Zn/HWqcyXoeuyFcyKfBzSxhKYMPCu1ppl7Onhg8vqhUhbHmNL4Po38nEc6BAlmhV
-	TWYMMyZfQ5EPaqZcCtOgVk/FJqTDW37r7QytwnbvF9I+lkcdVSHO+rCuttfkq03aH1LOQLAJjbh
-	UwEuKa4LUKt7nvSbZJcTE6BUjlAozGdKy96/mouedB8QYToQziXo6Kqu56H6sNdwaF7F3gQG+Fr
-	SzsfmFS7hFkvM8HoTmcohk9lrYptiD4G5DCH3FE2ceb28z+p76AMprEMUM6CeUtITEgLcJ5f5YQ
-	Ksa5ZHvA9/gldw4gnAUk0fNe6DUktLSkYLPT7ahCo2vJ1lPZ2jRiqjTrUeWsRRyNm29avb0d1cH
-	pZS5aaOOVf4Wwo+afSx9DkDLPQ==
-X-Received: by 2002:a17:906:4fc7:b0:c40:9839:c892 with SMTP id a640c23a62f3a-c513a88a001mr676115566b.19.1795335079208;
-        Sun, 22 Nov 2026 00:11:19 -0800 (PST)
-Received: from dl360p ([195.155.168.55])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae679e3sm286835966b.22.2026.11.22.00.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 00:11:17 -0800 (PST)
-From: =?UTF-8?q?Adil=20H=C3=BCsrev=20Tepe?= <tadilhusrev@gmail.com>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mateusz Majewski <m.majewski2@samsung.com>,
-	Thomas Turner <tturner@lineageos.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1436606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 08:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1436606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nirvanahyj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nirvanahyj.com
+Received: from hi-smtp-node2 (unknown [172.18.0.2])
+	by smtp4.hiworks.co.kr (Postfix) with ESMTPS id 4jXMZ65KRRzcHN1v
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from hi-smtp-node2 (unknown [192.168.71.87])
+	by hi-smtp-node2 (Postfix) with ESMTP id 4jXMZ6556ZzQLN7R
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from split.smtp.hiworks.com (amphora-3294b420-308a-4b9e-8a1d-bf25580dae1f.openstack.gabia.io)
+ 	by hi-smtp-node2 with ESMTP id zhau7ts2lbcgb4py;
+ 	Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+Received: from hiworks-k8s (EHLO mail-api-v2-prod-574865655-x4kvt) (10.251.248.0) 	by 0 (smtp-channel-split) with SMTP; 	Sun, 22 Nov 2026 17:24:46 +0900
+Date: Sun, 22 Nov 2026 17:24:46 +0900 (KST)
+From: Young-Jun Hong <nirvanah@nirvanahyj.com>
+Reply-To: Young-Jun Hong <young.j.hong@kaist.ac.kr>
+To: Henrik Grimler <henrik@grimler.se>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] thermal: samsung: acpm-tmu: Add Exynos850 support
-Date: Sun, 22 Nov 2026 11:11:14 +0300
-Message-ID: <20261122081114.2979414-1-tadilhusrev@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261118-acpm-tmu-e850-support-v2-0-19848c0d97e5@linaro.org>
-References: <20261118-acpm-tmu-e850-support-v2-0-19848c0d97e5@linaro.org>
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <gab995302678.0.1795335886363@nirvanahyj.com>
+Subject: RE: Re: [PATCH 2/4] clk: samsung: exynos5420: add VPLL rates for
+ 650, 700 and 750 MHz
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -113,85 +66,104 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_3387072_306714675.1795335886363"
+X-Priority: 3
+X-Authinfo: HIWORKS WEB authenticated <nirvanah@nirvanahyj.com|114.203.237.180>
 
-Hi Alexey,
+------=_Part_3387072_306714675.1795335886363
+Content-Type: multipart/related; 
+	boundary="----=_Part_3387073_43970329.1795335886363"
 
-On Wed, Nov 18, 2026 at 01:51:44PM +0000, Alexey Klimov wrote:
-> Tested with:
->
-> tmu_top: thermal-sensor@100a0000 {
-> 	compatible = "samsung,exynos850-tmu-top";
-> 	reg = <0x10070000 0x800>;
+------=_Part_3387073_43970329.1795335886363
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Nit: the unit address doesn't match reg, it should be
-thermal-sensor@10070000.
+SGkgSGVucmlrLAoKClRoYW5rcyBmb3IgdGhlIHJldmlldywgYW5kIHNvcnJ5IGZvciB0aGUgc2xv
+dyByZXBseS4KCk9uIEZyaSwgTm92IDA2LCAyMDI2IGF0IDAzOjQ1OjM2UE0gKzAxMDAsIEhlbnJp
+ayBHcmltbGVyIHdyb3RlOgo+IFdoYXQgeW91IG1lYW4gd2l0aCAidXNpbmcgdGhlIHNhbWUgUC9N
+L1Mgc3R5bGUgYXMgdGhlIEFQTEwgcm93cyI/CgpUaGF0IHdvcmRpbmcgaXMgdG9vIGxvb3NlLCBz
+b3JyeS4gTGV0IG1lIGV4cGxhaW4gaG93IHRoZSByb3dzIHdlcmUKY2hvc2VuLgoKV2h5IHRoZSBW
+UExMIG5lZWRzIG5ldyByb3dzIGF0IGFsbDogdGhlIEdQVSBjbG9jayBpcwpmb3V0X3ZwbGwgLT4g
+bW91dF9zY2xrX3ZwbGwgLT4gbW91dF9hY2xrX2czZCAtPiBkb3V0X2FjbGtfZzNkIChhIDMtYml0
+CmRpdmlkZXIsIENMS19TRVRfUkFURV9QQVJFTlQpIC0+IG1vdXRfc3cvdXNlcl9hY2xrX2czZCAt
+PiBnM2QuIFRoZQpkaXZpZGVyIGNhbiBvbmx5IGRpdmlkZSBkb3duLCBzbyBhIEczRCByYXRlIGFi
+b3ZlIDYwMCBNSHogbmVlZHMgYSBWUExMCnJvdyBmb3IgaXQ7IHdpdGhvdXQgb25lLCBjbGtfc2V0
+X3JhdGUoKSByb3VuZHMgdG8gdGhlIDYwMCBNSHogcm93LgoKVGhlIFZQTEwgaXMgYSBwbGxfMjU1
+MCAoUExMMzV4eC1zdHlsZSBpbnRlZ2VyIFBMTCksIHRoZSBzYW1lIHR5cGUgYXMgdGhlCkFQTEws
+IEtQTEwgYW5kIEJQTEwgaW4gdGhpcyBkcml2ZXI6CgrCoMKgRnJlZiA9IDI0IE1IeiAvIFAgwqAg
+wqAoUDogNiBiaXRzKcKgIMKgaW5wdXQgb2YgdGhlIHBoYXNlIGRldGVjdG9yCsKgwqBWQ08gwqA9
+IEZyZWYgKiBNIMKgIMKgIMKgKE06IDEwIGJpdHMpIMKgZmVlZGJhY2sgZGl2aWRlcgrCoMKgRm91
+dCA9IFZDTyAvIDJeU8KgIMKgIMKgKFM6IDMgYml0cynCoCDCoHBvc3QtZGl2aWRlciwgb3V0c2lk
+ZSB0aGUgbG9vcAoKU28gd2hhdCBkZWNpZGVzIHdoZXRoZXIgYSByb3cgaXMgcmVhc29uYWJsZSBp
+cyB0aGUgcGhhc2UgZGV0ZWN0b3IgaW5wdXQKKEZyZWYpIGFuZCB0aGUgVkNPIGZyZXF1ZW5jeTsg
+UyBvbmx5IGRpdmlkZXMgdGhlIFZDTyBvdXRwdXQuIEkgcGlja2VkCnJvd3Mgd2hvc2UgRnJlZiBh
+bmQgVkNPIGFyZSBib3RoIGFscmVhZHkgdXNlZCBieSBwbGxfMjU1MCByb3dzIGluCm1haW5saW5l
+OgoKwqDCoHJhdGUgwqBQIMKgTSDCoCDCoFMgwqBGcmVmIMKgIMKgVkNPwqAgwqAgwqAgwqBzYW1l
+IEZyZWYgLyBWQ08gYWxyZWFkeSB1c2VkCsKgwqA2NTDCoCDCoDYgwqAzMjUgwqAxIMKgNCBNSHrC
+oCDCoDEzMDAgTUh6IMKgQVBMTCAxMzAwIE1IeiByb3cgKDMyNSwgNiwgMCkKwqDCoDcwMMKgIMKg
+MyDCoDE3NSDCoDEgwqA4IE1IesKgIMKgMTQwMCBNSHogwqBBUExMIDcwMCBNSHogcm93ICgxNzUs
+IDMsIDEpOwrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoFZQTEwgMzUwIE1IeiByb3cgKDE3NSwgMywgMikKwqDCoDc1MMKgIMKgMiDCoDEyNSDC
+oDEgwqAxMiBNSHogwqAxNTAwIE1IeiDCoEZyZWY6IFZQTEwgNjAwLzU0My80ODAvNDIwIHJvd3Ms
+CsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+QVBMTCAxMjAwLzkwMDsgVkNPOiBBUExMIDE1MDAKCldoeSBTID0gMSBhbmQgbm90IFMgPSAyIGxp
+a2UgdGhlIGV4aXN0aW5nIFZQTEwgcm93czogd2l0aCBTID0gMiwgNjUwIHRvCjc1MCBNSHogd291
+bGQgbmVlZCBhIFZDTyBvZiAyNjAwIHRvIDMwMDAgTUh6LCBhYm92ZSB0aGUgaGlnaGVzdCBWQ08g
+YW55CnBsbF8yNTUwIHRhYmxlIGluIG1haW5saW5lIHVzZXMgKDI0MDAgTUh6LCBlLmcuIHRoZSBW
+UExMIDYwMCBNSHogcm93CjIwMCwgMiwgMikuIFdpdGggUyA9IDEgdGhlIFZDTyBzdGF5cyBhdCAx
+MzAwIHRvIDE1MDAgTUh6LCB0aGUgc2FtZSByYW5nZQp0aGUgZXhpc3RpbmcgVlBMTCByb3dzIHJ1
+biBpbiAoMzUwIE1IeiByb3c6IDE0MDAgTUh6OyAxNzcgTUh6IHJvdzogMTQxNjsKMTAwIE1IeiBy
+b3c6IDE2MDApLiBUaGF0IGlzIHdoYXQgInRoZSBzYW1lIFAvTS9TIHN0eWxlIGFzIHRoZSBBUExM
+IHJvd3MiCndhcyBtZWFudCB0byBzYXk7IEkgd2lsbCBzcGVsbCBpdCBvdXQgbGlrZSB0aGlzIGlu
+IHYyLgoKPiBXYXMgaXQgdGVzdGVkIGJ5IGEgaHVtYW4/CgpZZXMuIFRoZSBjb2RlIHdhcyBnZW5l
+cmF0ZWQgYnkgQ2xhdWRlIENvZGUsIGJ1dCBJIHNldCB0aGUgZGlyZWN0aW9uIG9mCnRoZSBleHBl
+cmltZW50cywgbG9va2VkIGF0IHRoZSByZXN1bHRzIG15c2VsZiwgYW5kIHJlcGVhdGVkIHRoZSBy
+dW5zIG9uCm15IEFSVElLIDEwIGJvYXJkIHVudGlsIHRoZSByZXN1bHRzIGhlbGQgdXAuCgpTb21l
+IGJhY2tncm91bmQ6IEkgYW0gZXZhbHVhdGluZyB0aGUgQVJUSUsgMTAgKEV4eW5vcyA1NDIyKSBh
+cyBhCnNtYWxsIGNvbXB1dGUgYm9hcmQuIFN0YXJ0aW5nIGZyb20gaXRzIGZhY3RvcnkgRmVkb3Jh
+IGltYWdlLCBJIG1vdmVkCml0IHRvIERlYmlhbiBhbmQgdHVuZWQgaXQgZm9yIGJlbmNobWFya2lu
+Zywgd2l0aCBDbGF1ZGUgQ29kZSB3cml0aW5nCm1vc3Qgb2YgdGhlIHNjcmlwdHMgYW5kIGNvbmZp
+Z3VyYXRpb24gY2hhbmdlcy4gSSBkZWZpbmVkIHRoZQpleHBlcmltZW50cyBhbmQgaG93IHRvIHZh
+bGlkYXRlIHRoZW0sIGFuYWx5emVkIHRoZSByZXN1bHRzIG15c2VsZiwKYW5kIGFjY2VwdGVkIGEg
+Y2hhbmdlIG9ubHkgYWZ0ZXIgaXQgcmVwcm9kdWNlZCBhY3Jvc3MgcmVwZWF0ZWQgcnVucwpvbiB0
+aGUgYm9hcmQuIEZvciB0aGlzIHBhdGNoLCB0aGF0IG1lYW5zIHRoZSBjbGtfc3VtbWFyeSByZWFk
+aW5ncyBhbmQKdGhlIGZpeGVkLWNsb2NrIEdQVSBydW5zIGRlc2NyaWJlZCBiZWxvdy4KCj4gRG8g
+eW91IGhhdmUgYW55IHJlZmVyZW5jZXMsIGxpa2UgdmVuZG9yIGtlcm5lbCBzb3VyY2VzLCB0byBi
+YWNrIHVwCj4gdGhlc2UgY2hvaWNlcyBvZiBkaXZpZGVycyBhbmQgc2NhbGFyPwoKTm90IGZyb20g
+YSB2ZW5kb3Iga2VybmVsIGZvciB0aGlzIFNvQzogdGhlIG9uZXMgSSBmb3VuZCBmb3IgdGhlIEV4
+eW5vcwo1NDIyIChIYXJka2VybmVsJ3MgT0RST0lELVhVMy9YVTQgMy4xMCBhbmQgNi4xIHRyZWVz
+KSBhbHNvIHN0b3AgdGhlIFZQTEwKdGFibGUgYXQgNjAwIE1IeiwgYW5kIHRoZSBtYWlubGluZSBW
+UExMIHRhYmxlIChiOTI5ODFkZTkyY2IsIDIwMTkpIGRvZXMKbm90IHNheSB3aGVyZSBpdHMgdmFs
+dWVzIGNhbWUgZnJvbS4KClRoZSBjbG9zZXN0IHJlZmVyZW5jZSBpcyBpbiBtYWlubGluZS4gY2xr
+LWV4eW5vczUyNjAuYyAoZDM5ZTU1ZTA2MzcxLApTYW1zdW5nLCAyMDE0KSBoYXMgb25lIHRhYmxl
+IHRoYXQgaXQgYXBwbGllcyB0byBhbGwgcGxsXzI1NTAgUExMcyBvZgp0aGF0IFNvQywgaW5jbHVk
+aW5nIGl0cyBHM0RfUExMLiBJdCBjb250YWlucyA3MDAgTUh6ID0gMTc1LCAzLCAxICh0aGUKc2Ft
+ZSByb3cgYXMgaGVyZSksIFMgPSAxIHJvd3MgZnJvbSA2MzMgdG8gMTIwMCBNSHogKFZDTyAxMjY2
+IHRvIDI0MDAKTUh6KSwgYW5kIHRoZSAxMzAwIGFuZCAxNTAwIE1IeiByb3dzICgzMjUsIDYsIDAg
+YW5kIDI1MCwgNCwgMCkuIFNvIGEKU2Ftc3VuZy13cml0dGVuIEczRCBQTEwgdGFibGUgb24gdGhl
+IHNhbWUgUExMIHR5cGUgYWxyZWFkeSBydW5zIHRoZSBWQ08KYXQgMTMwMCB0byAxNTAwIE1IeiB3
+aXRoIFMgPSAxLiBUaGUgdmVuZG9yIDMuMTAgdHJlZSBmb3IgdGhlIDU0MjIgYWxzbwp1c2VzIFMg
+PSAxIG9uIG90aGVyIHBsbF8yNTUwIGluc3RhbmNlcyAoSVBMTCA2NjYgTUh6ID0gUCA0LCBNIDIy
+MiwKUyAxOyBTUExMIDgwMCBNSHogPSBQIDMsIE0gMjAwLCBTIDEpLiBJIGRvIG5vdCBoYXZlIHRo
+ZSB1c2VyIG1hbnVhbCwKc28gSSBoYXZlIG5vdCBjaGVja2VkIHRoZSByb3dzIGFnYWluc3QgaXRz
+IFBMTCBsaW1pdHMuCgpPbiB0aGUgYm9hcmQsIGNsa19zdW1tYXJ5IHJlcG9ydHMgZm91dF92cGxs
+IGF0IDY1MCwgNzAwIGFuZCA3NTAgTUh6LAphbmQgR1BVIHRocm91Z2hwdXQgZm9sbG93cyB0aGUg
+Y2xvY2s6IGJldHdlZW4gYSBmaXhlZCA2MDAgTUh6IGFuZCBhCmZpeGVkIDc1MCBNSHosIGFuIE9w
+ZW5DTCBtYWQ0IGxvb3AgZ29lcyBmcm9tIDMxLjEgdG8gMzguNyBHRkxPUFMgYW5kIGFuCmZwNjQg
+bG9vcCBmcm9tIDExLjIgdG8gMTMuOSBHRkxPUFMgKHJhdGlvIDEuMjQgZm9yIGJvdGg7IDEuMjUK
+ZXhwZWN0ZWQpLgoKSW4gdjIgSSB3aWxsIGNoYW5nZSB0aGUgNzUwIE1IeiByb3cgdG8gMjUwLCA0
+LCAxICh0aGUgTS9QIG9mIHRoZQoxNTAwIE1IeiByb3cgb2YgdGhlIHBsbF8yNTUwIHRhYmxlKTog
+c2FtZSBWQ08gYW5kIG91dHB1dCwgRnJlZiA2Cmluc3RlYWQgb2YgMTIgTUh6LCBzbyBhbGwgdGhy
+ZWUgcm93cyByZXVzZSBhbiBleGlzdGluZyBNL1AgcGFpci4gSSByYW4KdGhhdCByb3cgb24gdGhl
+IGJvYXJkOiBmb3V0X3ZwbGwgYW5kIHRoZSBHUFUgY2xvY2sgcmVhZCA3NTAgTUh6LCB0aGUKZml4
+ZWQgY2xvY2sgcmVzdWx0cyBtYXRjaCB0aGUgb2xkIHJvdyAoZnA2NCAxMy44LTE0LjAgR0ZMT1BT
+IGF0IDc1MApNSHosIDExLjEgYXQgNjAwIE1IeiksIGFuZCBhIGRldmZyZXEgcnVuIGJldHdlZW4g
+YWxsIE9QUHMgc2hvd2VkIG5vIEdQVQpmYXVsdHMuIFRoZSA2NTAgTUh6IHJvdyAoMzI1LCA2LCAx
+KSBwYXNzZWQgdGhlIHNhbWUgdGVzdCAoZnA2NCAxMi4wCkdGTE9QUykuIFRoZSB2MiBjaGFuZ2Vs
+b2cgYWxzbyBkZXNjcmliZXMgdGhlIGNsb2NrIHBhdGggYW5kIHdoZXJlIHRoZQp2YWx1ZXMgY29t
+ZSBmcm9tLgoKQmVzdCByZWdhcmRzLApZSgoKLS0gCllvdW5nLUp1biBIb25nIGZyb20gSGl3b3Jr
+cw==
+------=_Part_3387073_43970329.1795335886363--
 
-I ran v2 on a retail Samsung Galaxy XCover5 (SM-G525F, Exynos850, stock
-Samsung bootloader and ACPM firmware), as a data point next to the
-E850-96. Base: v7.4-rc3 plus out-of-tree board support, Tudor's acpm-tmu
-fixes as queued in thermal/linux-next, then this series. Christian's
-threshold-7 fix doesn't apply on top of those fixes yet, so it isn't
-included; it only touches the GS101 path anyway. DT node as above, with
-the unit address fixed, and three interrupt-only zones (polling-delay = 0,
-an active trip at 50C with 2C hysteresis, critical at 110C).
-
-What works:
-
-- The TMU is accessible from the AP on this production device, so the
-  direct MMIO approach isn't blocked by the secure world there. The
-  bootloader leaves the block configured: two-point calibration
-  (CALIB_SEL=1; 25C/85C codes 288/346, 288/346, 287/346, 287/345 for
-  probes 0-3), CONTROL=0x9503, CONTROL1=0x00030000, AVG_CONTROL=0x00010016,
-  COUNTER_VALUE0/1=0x28a, TRIM0=0. exynos850_tmu_init() computes the same
-  values.
-
-- ACPM read_temp for groups 0/1/2 tracks the raw CURRENT_TEMP codes of
-  probes 1/2/3 within 1-2C.
-
-- Threshold interrupts work. The GPU zone got a rising update at 50C and
-  a falling one at 45C. After the CPU zones crossed 50C, their registers
-  were re-armed correctly (rise ~110C, fall ~47C, INTEN = RISE1|FALL1).
-  An 8-core load up to 83C caused no spurious updates.
-
-Two issues:
-
-1) THERM_TRIP_EN is cleared in exynos850_tmu_init() and never set again.
-   CONTROL went from 0x9503 to 0x8503 after probe. The bootloader leaves
-   level 7 programmed at code 0x177 (about 115C) with the hardware trip
-   enabled, so after probe the hardware thermal trip is off. Samsung's
-   downstream driver for this SoC (exynos3830 in exynos_tmu_v2.c) sets
-   TRIP_EN together with CORE_EN when it enables the core. Should the
-   driver keep it, or set it again in tz_control()?
-
-2) Runtime PM gates the TMU pclk (gout_busif_tmu_pclk) 100ms after each
-   access, but the ACPM firmware on E850 reads the TMU through that clock
-   too. An ACPM TMU read_temp sent while the pclk is gated hangs the SoC
-   until it resets, with nothing in the log. I hit this through an
-   out-of-tree ACPM consumer that calls read_temp without going through
-   acpm-tmu's runtime PM, so this series on its own does not trigger it:
-   acpm_tmu_get_temp() resumes the device before the IPC. It reproduced
-   both times with the clock gated, and the same read always works with
-   the device held active (power/control = on).
-
-   It does mean the clock is shared with the firmware, and gating it is
-   only safe if ACPM never touches the TMU on its own while the AP has it
-   gated. I can't rule that out from here: the bootloader leaves RISE7
-   enabled on probe 0. The downstream driver never gates this clock.
-   Would it be safer to keep it enabled while the device is bound on E850?
-
-Minor:
-
-- NUM_PROBE is set from priv->num_sensors (3 thermal zones). That happens
-  to match what the bootloader programs (3, covering probes 0-3; probe 3
-  keeps updating), but they are different quantities. Downstream reads
-  NUM_PROBE back from CONTROL1 instead.
-
-- About sashiko's temp_error2 point: all four probes on this unit have
-  non-zero 85C trims, so that fallback isn't exercised here.
-
-I'm happy to retest the next version on this phone.
-
-Thanks,
-Adil
+------=_Part_3387072_306714675.1795335886363--
