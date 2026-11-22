@@ -1,79 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795348538;
-	b=niKSKCgLAi90L6gxQbm6V2NTfPLjRd645mmMXg8H/rP2WCTgJ5G2mDWr7Ixd4amMqfnk
-	 8msPgu4A8HLKrFHgQappLjPXsCY6W74HyAY2apI+3SoBVG9C6bbujggfzQctuAPOE2Kw2
-	 iysrqncfGpnSfCYi2V+SxnN7d9QNx+qBl0LGNeIp0YATT3fxYxvm9Wi4dD/4YbPS5xnjL
-	 bn5NkWVlSVx83xleyEGhDZX17yY4xH7TLoDCCJ7PtrO1sFPO0haBvzgIq6XEA0Qm4+upU
-	 Kh7zMhgBVGGllkwwfmZtlMoE5tGEF3vn/iONXPJFkRuXo3pf2P18HMWCLCnCROdy5zw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795348538;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=xWLCRl31use0Fw2SVtV1S3RdawAt/eTZFqjV9KHlaWs=;
-	b=lq4n0xI8D+CXfVJpAzuAt4UWOaZkNda5IGYxNRY7Li6ODvcSNxGFOAp2hafQWaTmfvrl
-	 tOj8XmjMVOGTp7L5y1UhwLRyNsChmAnXITIaS5UZ+G469WVYzDWKiPOBfBcuk9HLTLr2l
-	 WvP26agzAiPXYyEEGGeTEH494lQYxvGYgAWT0nhs46aVntX6p2wIYOditymapiZ+xHRws
-	 b0hIa6lK7x8T/6yiaKP2uGkhsjX59mLIXkrBrGku3gbomiUQXOgcTOtVlRl1BNMbQgCOJ
-	 WcrLbBhGr/6kfOSYJj46ecfLjfMz2ouBNcfw2dllbKo2GizvCOK5BpDXWQLKK3o2mNQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nyVhlKcq;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795356816;
+	b=RUi/oVyDL03JpCFwk2ocBl4TFUMy0/Sr0SNgdXw1r3Q0jwOY8g0QadJgvwTP/+vDFeif
+	 DmQYjbp3on/yr2m1VDHMTd7aXVGb07uW3qmOxe/iDwKj4pyNBlO0t5X/YMGwR6uNen9R+
+	 aPnbbb5007x20m/ShTduzSCzlOVj9xxCq+F5igEdlw9SVCrL4re932RXwjuoE3zy1m8aW
+	 Hl7+NU6qqsM7UY3qV5r4OW6wlJR7ZDWk7X/0s65PC9EoyLihOdQ0qs6XHsm6wWK+tQ5Zp
+	 hbO1Yb/KIL0w6jnauTtjNGOaKb2K1D7QKRcJAUCdS1nITWH0s3sLxZxHiUEeOSVUtLQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795356816;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=+K7JzpGarS7XrVs3pF+iY9oQFFhgwWQ55zT/V6cOCBI=;
+	b=dQ0WJBeOJUgI6RhlShza1VMyjEzv2NW7qYx+AduOOnWPX36w5ASQIDJAI8qlrw8LzcdM
+	 QLZfc69WY15hvPkok5/h3PTKlb/PzLVfgZJJnFOwzsFdhs/Gd1op4tSjkszAJtJStsafi
+	 OyicqQEqGokw2sbyIint1CewLmHbkFITG8LxM51o8ePHid61wEV84nSk8i64tNzlkfArZ
+	 tD40A/XhdFZ9SHmbCYgEXWW8/5QcsJcF6QOKIbF9V6QcFEzsn0PAXSaSnrlOx47AWKipf
+	 kNNX92Pf1EewAZXxfwAS/TR3G9vylAZ4ZlmakxJ6zly9Qrg7qLtfTohtkuAP1Bt331g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MWRdvn6N;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9505D606A32A;
-	Sun, 22 Nov 2026 11:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBC1606A320;
+	Sun, 22 Nov 2026 14:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nyVhlKcq
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795348538;
-	b=eeSMl/6xo/MVuiGWHidHeJlDFLtg4AWkQvqHhXOj4Pvf4WeDiOcHhLRJiB4r8lXNkRy1
-	 FQObkAY7FU0hLg3Xh1gsI0Q33tU9rh6bYYKaL42KKYr+qe2yD64Q/OMGqfiYqC5VF3mSi
-	 BZsUvwSrmpKiDMzUA4gfNtrG6vpRA0RCyvYvylhr34kjIY+9pY2nTuvQWqBfN+TjdTVaH
-	 SSgVH2iXuyqb4i9s/1OXEFpxcuthaJ2NRPa/sEPil3ivkafY9PUxtPC2or1RQQQbtUeNZ
-	 KBsHNOHnPhH/+Lo2c+2iYXWhWXOOdNOh/CLewWyo16vvSuX6rIdtksCtTRKpZUUt3cw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795348538;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=xWLCRl31use0Fw2SVtV1S3RdawAt/eTZFqjV9KHlaWs=;
-	b=uPznE3LwzFWF4JNwkiN8RI+EXGvU9WsNJvufZ5EP6+may3nFmCEVSX44aeYbm3BMRwfr
-	 LloiZzTjZMawXWqPogaUhrekwGLwydpq7P0GiM8EQQyYU8SzSy6IbQWb3SPzhcDEUOyMK
-	 OE1XUpk38ZcOUZ9itA3IRNtvuZxvFAUTToGLhli2VM8CaVdt/VX/gqYRKED8BNfd0/UPa
-	 xjQeNHVDO0gihzvBuhbm6jozkZglDHa2SZdGfzh4eFSGNwsI1HKfz5Vays1LoyL7kIPqK
-	 ttPnRJR1E4iPQjdR+GTXxpjj2u3TLQ5oWdZp21zkvL56NbRQZGoXFIwCQZVx3stIRZA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 6F8A91F000E0;
-	Sun, 22 Nov 2026 11:55:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MWRdvn6N
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CB51F000C6;
+	Sun, 22 Nov 2026 14:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795348538;
-	bh=xWLCRl31use0Fw2SVtV1S3RdawAt/eTZFqjV9KHlaWs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=nyVhlKcqa23VbZ3Q2TF00cL6oulYecYVBjjdmH3zJoPXo3+c53A2+CqTC0dtCbPSa
-	 5UPQGpZ/Zxu5azwYGqriREmv6zS+BTA0UpbVU3CSkioj+VfFj2fVg/SNtl7JmqpERh
-	 EFCQyz3YgeYRoLLMRpwfbuCmBtYrzQHeulmTQZPwzmb3F9JiWwuG6hF/Wmj+SLSgpW
-	 I8qAOMhrwt1X5e58se2vZbsK6F5+AgZXFmvxrYAJtbwqAFdRDbmGasOB60XuTEUOE/
-	 i6xbZ2Lhv8ne0VBxXaddzE8zH+wuZB1nW9NoP96Yy7bHJgW5wNyu/vUbF558PqpEgi
-	 gTWGoFz/v0Vcg==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id EC1214C023;
-	Sun, 22 Nov 2026 11:55:27 +0000 (UTC)
-From: Suyuan Wang via B4 Relay <devnull+shyckless.gmail.com@kernel.org>
-Date: Sun, 22 Nov 2026 11:55:28 +0000
-Subject: [PATCH 3/3] cpufreq: s5pv210: Fix resource leaks on probe error
- paths
+	s=k20260515; t=1795356815;
+	bh=+K7JzpGarS7XrVs3pF+iY9oQFFhgwWQ55zT/V6cOCBI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=MWRdvn6NUr03DWerCYm39FLMtynw06Hlj798o8n0Qkw1PRZL1mlyxY4HrSMjPtNrV
+	 LsLmrTiTU8iM7UH6lo06NOfYAHtd4Nf0Fvd5d1vv4YjNuQznxKjTQ8eIuSxTNb6Utg
+	 zFABsUMpJ9wbK1sX4q6AWTYZP4EUvZWAnlg/TduRYAO0HyYV01Y0uZ0gJSVgDrQ4nq
+	 fO5xtWeveRBWfgXOzS5/GHDmIXwXWdRr1S2+lHz7tq/CZ70FCnqzrXkzh/XvIy44UH
+	 VCe6C7GTYbZnsJQFUIInR+XYCuAMRABsVCRIXqGNSaximR+3j5XeCrnD9XQ4sm7ixN
+	 wOVDtRBH3Xn/w==
+Message-ID: <614d1630-3009-4698-b1d6-e70650ec3223@kernel.org>
+Date: Sun, 22 Nov 2026 15:13:30 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -83,102 +51,76 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261122-cpufreq-leaks-v1-3-96fc17ff7339@gmail.com>
-References: <20261122-cpufreq-leaks-v1-0-96fc17ff7339@gmail.com>
-In-Reply-To: <20261122-cpufreq-leaks-v1-0-96fc17ff7339@gmail.com>
-To: rafael@kernel.org, viresh.kumar@linaro.org, krzk@kernel.org, 
- peter.griffin@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-pm@vger.kernel.org, alim.akhtar@samsung.com, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: serial: samsung_tty: fix -Wformat-overflow warnings
+ for clk_name
+To: Bramuel Barack <bramwelbarack89@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Peter Griffin <peter.griffin@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-serial@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795348526; l=2583;
- i=shyckless@gmail.com; s=default; h=from:subject:message-id;
- bh=u26GdNff9h8VDqjlemiKXHAuftopncbeRgVHJ/CpuKU=;
- b=CrzgHHiglo92NWgPpcnitjmDoIyGezX87Do2D12VT7kp6fyLOS0r3fq5gaaTll/JBZKRugRX3
- f5B2+44sqakD6BU6xI6LbdUulZpWYly5wOr4asrOv6uJ/lgLavdA7fG
-X-Developer-Key: i=shyckless@gmail.com; a=ed25519;
- pk=pMtccVGiWES3bV+7YBFuBclkvq2n2HBHQ5azaBrK2lY=
-X-Endpoint-Received: by B4 Relay for shyckless@gmail.com/default with
- auth_id=1498
-X-Original-From: Suyuan Wang <shyckless@gmail.com>
-Reply-To: shyckless@gmail.com
+References: <20261121192158.44872-1-bramwelbarack89@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261121192158.44872-1-bramwelbarack89@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Suyuan Wang <stevewong@hust.edu.cn>
+On 21/11/2026 20:21, Bramuel Barack wrote:
+> MAX_CLK_NAME_LENGTH is currently 15, which only leaves room for a
+> single-digit index after the 13-character "clk_uart_baud" prefix and
+> terminating NUL byte. Because the clock indices (cnt, clk_num, clk_sel)
+> are u8 values (0-255), building with W=1 triggers -Werror=format-overflow
 
-s5pv210_cpufreq_probe() returns the result of cpufreq_register_driver()
-directly:
+They are not 0-255.
 
-	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+https://lore.kernel.org/all/20240605040719.160778-1-k.son@samsung.com/
 
-	return cpufreq_register_driver(&s5pv210_driver);
+> warnings at the sprintf() call sites.
 
-If the registration fails, for example because s5pv210_cpu_init()
-fails, the resources taken by the probe itself are leaked: the two
-regulators and the clock and DMC register mappings. The reboot notifier
-also stays registered. (s5pv210_cpu_init() releases its own clocks on
-its error paths, and the cpufreq core tears down its own state.)
-
-Also, when a DMC node has a bad alias, the code jumps to err_clk_base
-and skips unmapping DMC registers that were already mapped for an
-earlier node.
-
-Unregister the reboot notifier and go through the existing unwind code
-when cpufreq_register_driver() fails, and jump to err_dmc on the alias
-error. The err_clk_base label has no users after this, so drop it.
-
-Found with a static analysis tool and checked by hand.
-
-Fixes: 6d4ed0f46af6 ("cpufreq: s5pv210: Make the driver multiplatform aware")
-Fixes: e0e5b2b4f427 ("cpufreq: s5pv210: Defer probe if getting regulators fail")
-Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
----
- drivers/cpufreq/s5pv210-cpufreq.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index e64e84e1ee79..29b1c5d71a8b 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -634,7 +634,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
- 			dev_err(dev, "failed to get alias of dmc node '%pOFn'\n", dmc);
- 			result = id;
--			goto err_clk_base;
-+			goto err_dmc;
- 		}
- 
- 		dmc_base[id] = of_iomap(dmc, 0);
-@@ -655,7 +655,14 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 
- 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
- 
--	return cpufreq_register_driver(&s5pv210_driver);
-+	result = cpufreq_register_driver(&s5pv210_driver);
-+	if (result)
-+		goto err_reboot_notifier;
-+
-+	return 0;
-+
-+err_reboot_notifier:
-+	unregister_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
- 
- err_dmc:
- 	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id)
-@@ -664,7 +671,6 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 			dmc_base[id] = NULL;
- 		}
- 
--err_clk_base:
- 	iounmap(clk_base);
- 
- err_clock:
-
--- 
-2.34.1
-
-
+Best regards,
+Krzysztof
