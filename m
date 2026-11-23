@@ -1,113 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795412927;
-	b=Kin41b/ap3WoilrYBmERrzWw5bpZLKAkXcLF/RInHjxSPstyuOtqVERwYT6+v0UYEYSr
-	 9wMtWH/UcEK8L9i1BEOjbpVz2vAFl0Dr+XYSQ3r+1zRi4eIpjZ1n6/Gi4+QI9RkAs6RAA
-	 zKbw8Vd3H2IBjd2lDtlsoJ+N3rVkNVwKthNu4bMr6hDa1oAgK5WmMl2Bz/efSMztVPx/3
-	 ttwcqte4tF4l1fZxbhpkboJlNpRdSpwFR5/9hYLNK3BW891U1ycydJSWjW1GoJmLTMR6w
-	 3qjf6GmmTSqqD3b0KpNASRD42ONMenZEBA1GrzV83pLK9RGj4dA+/k53EGnf7J7wkKQ==
+	t=1795413151;
+	b=ToA1QBgOtBom1h3N/0c3vwH+jItVi+22AoLEpHRLvi7ZDP3uacT/je9RUmw5JKg9DIc5
+	 v9IatHRutNbWGW/CEGpyCFJ0OXI7PMSnePc3BQCzWdoE9x8jt1n0GeFNig73Q+pBk6pm9
+	 OmjSAZoMbJTpyWkiqTvxItd+kImjm86T6y2DbRXZBKRC26h/J+NrLQoDsOwxM0AoIE1x/
+	 vntmpLcdoe9RxQPmWC12JYBZrI4juglP+uZyi+xKb0FVOJ6EEgZ8PYy9rIm3LhuJvvh0v
+	 8wnyqhH/EAItT05jkF0N1GpOmxiBcbVXmKOe6PZt9EK5igmOj6ThiMeQ+ObIjtlTejA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795412927;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-ORIG-GUID:X-Authority-Analysis:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=zlhuEsnEqWYtLQ39obGQbINHh9BrJT/OwpgUaV/SUKo=;
-	b=IqsOYKiqGnlachBYkibsqMYiWIklr+LHrmLBRPA7YqZZ1MOf2T1mJqJ87yA+8czXDsfY
-	 YYPNu5Xn8ahMdjBlTPqISwJF9hOF4ZttJyaRnCXFrwVNiB52QbJp4IPpxBZjUmSWsj6mc
-	 codQtk3Cq4q9rYVPGXiQk62lj3KPPz0KrCKSFCGEd3VfogenQHcVBx3/l9lZc23JESmAW
-	 vtVTP/fbwVzhDu49i2WIVsv+FYTJ82AWE2gQluvQDKkKpFFaCmHgP0S2dX4fGAL1l0/M0
-	 iNQqmBE+6xnl00iIPNGa+xCdm6KWRFZUffzyga0bbLYdoTe7nCBL9S7iM/JcD9a9k2w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795413151;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=SUu3oaJ8puWJKKOfHdRr4SqhOI+nPpr8oDOkprv0KLg=;
+	b=HYEDk3DqutvjmnWiJ0OU+jvEXURVhmy14DQjZXH1Jn6C/IqRUB1cI396G6EmAwFbDcHR
+	 ot4e6Qsz2aM5hir1zkIgpF9DLe3uJL2mrnqGn5oTWmdwyeLN/+h8XEDlovSPKfYNuzWzV
+	 yqP0cmz14v3YhEKPdApt5zKIc+z47spKAH8beyY54OQ8Wd4Uhq0ib85I68CLgTzm7ccFu
+	 15dUzUSirkn10z1fxd6sBKbxhPEXkaa1BnLvTF5j9oEKyHyhjZ1MaqMjc+58FosvXwNBC
+	 28pNvOFNm4GrAtLF/cVDvyPm1q/GW2kFUchw/Ho5mht6pXujI1qQy7lm2EHpsHl7fkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jrouaAOQ;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=R8BaWBFQ;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=C7ofIZlg;
+	arc=none smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71269606A320
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:48:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 71269606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1EE606A320
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:52:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E1EE606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jrouaAOQ;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=R8BaWBFQ
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AN51BTF3528081
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:48:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zlhuEsnEqWYtLQ39obGQbINHh9BrJT/OwpgUaV/SUKo=; b=jrouaAOQBkpXIBv0
-	p0KNvCgW1f7jEnIrr0Cy+Nnxx1dSw/Ay7K9cKDB6jBS47qatRVXeio/i+ZnrSdce
-	gBvTeLdlV9/MQQCSmS7LdOrlE7vDZX4bFFRCfyDuM7ZqzSoSn71dQ0hXnVj0wk+1
-	s+y7B8I9sJuwCvbI23laLvKIxRMGLO0iAMLdCB6h5N7c1eb/xD4m9VJLw3RxPJQA
-	Qi+HvSIp6t2+9bx0FSBoeNzjEhhIGqydVasOOXI22En4OTjNS7QihXk88Sy84ZG8
-	NXFa+AmgEzOrD50vCeO5kJlqHeOnun7pal3HL55qadLF2DfhM8mUHXNjdjAWD2ba
-	loRXjg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j30nnwqqm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:48:46 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2edd25534afso24249045ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 21:48:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=C7ofIZlg
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-33fb4680717so8163130eec.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Nov 2026 21:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795412925; x=1796017725; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=zlhuEsnEqWYtLQ39obGQbINHh9BrJT/OwpgUaV/SUKo=;
-        b=R8BaWBFQ3icyby0bVQZ+wDH4STMcAiTr9We+ZD4LfTFtdS7ujvgsJszYKbA3dzXP2O
-         rgWxpmQopwjF6af5BilwlMT7gp79swnLPQ6PGEzMwjVdMfr8oLKwWNQKf3vt9nzYNCY3
-         o2y9IUtxstsvK6Z8sT1zEcxifuBJuhRyj2Jz0GAFnri4v5q4jK8xKyHqmPQz0kLFS5dI
-         t1c9qjZwDIz9B7sMuoz3Zcv8k+I/IuFK+WEFO1j9gqxflsL52uhry7CT1lx5QqFD70uS
-         bs6MSSV/VP/io6w7y1izfPChjwjaElZxiP3UOzLw7cTLjMdiihwDIbjXvZxXl8h9mQvc
-         lddQ==
+        d=linaro.org; s=google; t=1795413150; x=1796017950; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=SUu3oaJ8puWJKKOfHdRr4SqhOI+nPpr8oDOkprv0KLg=;
+        b=C7ofIZlgBNILcEZpzytm5OfVAkteHyG3BUAnjDFQb98Kc3fmmIoSZLNwnkwPhPQosX
+         Mg5RDym7AVeH9WCbrUhXkG2ZKsiUnXdTu/VzRgrO/5sOwmCrxBwtkr0Y6ezzShspRJPb
+         +PDkCW1bKHuW7Xjr6vqEYYJVwD3iRtFtvcEmUj4HnoH/PtUMQcHz7m93QVCK0vRMoG1l
+         UtM+9cnNd6HTPlDv9EnedN7l7fJc8j4NRoAWPS1k6gxcLyObFPD0SVv9GGNayE+zcRIG
+         3hf9L/N6WT9KE8TomHCA9oUfdVRdCnQOjaCyZ50QQahJ0SPKGxbzp3KZvKpUIKAHWN+O
+         EamQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795412925; x=1796017725;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zlhuEsnEqWYtLQ39obGQbINHh9BrJT/OwpgUaV/SUKo=;
-        b=fVYSYFdTeYcKmrpzaDcwcJpEQ8MO0yoesUZY3S6AmVlcaFUX8Wfj+yjJcuwe5gZ//V
-         qQ6y26pCwHC5xAlnGHMPgdx8ZNxfdgFLXwXMIwpZlJmdYZKl0dQ1Vny2He4CQLhvGCbH
-         hO+qYSA+hKr9Hn+ytJERtDp7mafvVeBuQEnRb/AewoouYHYQEOt4pJrGTZzKiAMjUVMG
-         hL5CYotX3A1fgt7Meuv7JO8XwhAU8Fam8mYko4ZEZTcM06ne7HtxQPEVbXwpE8VQP68s
-         JYZZO66qWDiQUzEQuGIuwDxe/KK0h3BzbvPuvvVaRFrJmaNjZ8YCuEgXFe1/1+JJcDZB
-         zErw==
-X-Forwarded-Encrypted: i=1; AL+hErFL/1ZRQz44kuhN4NiI/I3Ndb8TF6xzmkaTGCrdIMFeHeYBm37oymOdQ2OQUwpP6LOsGNxVHx1rIEqvEGE8qN78+w==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/dAj3+KK11KQUW6elqWsayt2VFB+M5KBSFwlbK2JikN+92BA2k
-	SqG+DFv417+25/PIxiJoUiM+lRHsE2m4TnbbIGU+gS6fAnQU62OQ2TiHOIsX3TDjNd9tFQu83WQ
-	+dAp14ANvKaZrvdPZdvHGiaSj2gSGf5A3R3LEPlvMBPoeWbLa6xgdvBq7k4xqDiJaIqytO336zA
-	==
-X-Gm-Gg: AZFdTZehCAT5yl6B29KtHU9QB00XiQMlXWleoEndm/cF4Gcjtn31JecdxkXSvP4vAWM
-	n9lSS582E2mS14N4ZW2nYvYammcFGfryUKfCpucp6eT/j0dOFd4SU0uJRsDf0p+X6AkbZ7NuEjt
-	k3tdftKREQ/J+nB4G5Qu2NJMZU+xJHy4WscPRS5E+5HTr/0nNYoWQkeQgsf8pqZA15JmRZrDQHX
-	4R6gJEQF7WXfcowFxtDlif9kPH/wTZhca4SnEjd/OqzfR1iZxri6iiPr5T8CXGZtRZlxbN7QCg0
-	zAmFlTnqwkBbPxOmIs+lIZ7oi7vL/Yqle05VzirCbXSRd3C25vNnedxK45uRkBKb5wyCZUh5PjX
-	DNY91KSVbWooU9T74GyxvJHCP8ulbQEgGPq6M39OC6odOhNwghnfZFm5wkkK2KrUeo7MX4kbRVS
-	abtOeB8Zzt5pKV4/oCRKFE1rwtLFjMPe67jj0nZlcDj10a
-X-Received: by 2002:a17:902:f551:b0:2f0:2ba0:3b9a with SMTP id d9443c01a7336-2f03f1bfc54mr100526475ad.38.1795412925271;
-        Sun, 22 Nov 2026 21:48:45 -0800 (PST)
-X-Received: by 2002:a17:902:f551:b0:2f0:2ba0:3b9a with SMTP id d9443c01a7336-2f03f1bfc54mr100526295ad.38.1795412924773;
-        Sun, 22 Nov 2026 21:48:44 -0800 (PST)
-Received: from [10.133.33.103] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f03f1207f1sm46143615ad.64.2026.11.22.21.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Nov 2026 21:48:44 -0800 (PST)
-Message-ID: <bee69c86-2433-46bf-b842-0277b8f2b76e@oss.qualcomm.com>
-Date: Mon, 23 Nov 2026 13:48:40 +0800
+        d=1e100.net; s=20260707; t=1795413150; x=1796017950;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=SUu3oaJ8puWJKKOfHdRr4SqhOI+nPpr8oDOkprv0KLg=;
+        b=p1e9IIQTio4iaJxYznIWHPNZi4BZ7fIAIKUhMltI7e6DDKDwGY/Xqe9cENuRhC88K2
+         zOZaBmEmzoR3ir3JpS6tGUt+lhBUCOh6DQO+gs3X4myAvZdm0bgaX1ybAB6T8WNwSAJ3
+         F5LtVFiX4pTG4/2iGRw3rwQRbjALgimJfA8K9+r7mJOWfX2DTFDRk9AvVEDZ5Yq4aImd
+         ieD1bWC6MCTb8QCjZ7CsEfza/vnMMywTQ4yh3NRQyBFw9Q0/zh6vWo3Xpz2XyNpjS+v8
+         hkfElaRNK5uxMCMp3qaVwprzOFkhZGfZNrYuqszUHh9gdv0G7hp06lqOaOPGW1BBkBst
+         9grA==
+X-Forwarded-Encrypted: i=1; AL+hErEJHcsFGed1x/QH1xwnHIkvM8JLpw8mX4jMDRUMeeWtp9j/ptvB58k+KfjoGXjhd7yprBUpAMJ7sKFte8v79hOWIg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8FQ8vDYC3EvTNrCEhACDEk1KoMD4VcQZpFbMmzcWEOYQWQmlul
+	Z8eZer/Q/ofgQQUH9ro4im+8BRm07gcd9VTV7pQJpnykb3PgSU6Naz6YKmPPd3H5rvUT6lqr6nZ
+	d/vfw
+X-Gm-Gg: AZFdTZfMdIW85wpR/BtduxBBt+X+n/aZvL+aqoWOyHe52IWVH+QCLIszpvymoMQdUcN
+	wTAryzdXEuDjFi3aFCiIAvqtCmTJ0Z3YtQG/1Oj+Jt7zSalZG1nrnhPVA2/dBCSXidd31kejqGV
+	GUaDgUFvlM9HFz576iFklggANLwT8FhvU+JD2JSMKGAa49zQWzZ0zE4wfYlAJGlibUUvGe1qpyu
+	AwhPIqTZwyhnmRg4ZgOe5sFjMb9hVEbaz3TQxPbkqMS2G1WJaH5M2Mb06EoCbKm6uo9ndPEkN8J
+	RcNQxkkanBtad71r3KQUk4dcJm2TsvpRkVfddhEEcKqovU2tvTJMbCeqEKrrapXVSWH6zeERXvr
+	a9FMVkHrRL5jY7kAK5Jc6oS9TzjVK30UdvtV0Ztaili3apRz7NqJfaKW36oDmivd1ukdiZsliNz
+	zdw9kZv9XG/PwPnzfEDpAcN8KyKacJ8ekUKlEN82xtdfKkgIxCQGM0iazHomGqMOAxLV1X66uSO
+	FyxhY0ZNX2GB4Wqbk9SXfb7/UNl2tb3l4z6mwjfuXvMeRFjQugDViZfHsZTgNghqEf6WgMFKLjp
+	/ipoJe26xyOW1otD6ED/1bH1+RW+Kw==
+X-Received: by 2002:a05:701b:4555:20b0:190:8f72:445e with SMTP id a92af1059eb24-1b556877915mr12166436c88.11.1795413149986;
+        Sun, 22 Nov 2026 21:52:29 -0800 (PST)
+Received: from localhost ([122.172.83.36])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b5569bffd2sm23669790c88.0.2026.11.22.21.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2026 21:52:29 -0800 (PST)
+Date: Mon, 23 Nov 2026 11:22:26 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: shyckless@gmail.com
+Cc: krzk@kernel.org, peter.griffin@linaro.org, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, zhongqiu.han@oss.qualcomm.com,
+	alim.akhtar@samsung.com, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] cpufreq: Fix leaks on probe error paths in three
+ drivers
+Message-ID: <awPUmsmWWBKdVUyQ@vireshk-B250M-D3H>
+References: <20261123-cpufreq-leaks-v3-0-1f1e3f4f5a7b@gmail.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -117,129 +101,42 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] cpufreq: s5pv210: Fix resource leaks on probe
- error paths
-To: shyckless@gmail.com, viresh.kumar@linaro.org, krzk@kernel.org,
-        peter.griffin@linaro.org, rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-References: <20261123-cpufreq-leaks-v3-0-1f1e3f4f5a7b@gmail.com>
- <20261123-cpufreq-leaks-v3-3-1f1e3f4f5a7b@gmail.com>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <20261123-cpufreq-leaks-v3-3-1f1e3f4f5a7b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDAyMiBTYWx0ZWRfX65MlibnuguPB
- PpXoMEW8lknPdtvJn+xTv26xcFw/zEkiPa+mTWLHiLUfj7Y4gXsbpx8wjtn6JYD1qCc7rdxxjDT
- kIfTZDiVcYg2LNo0F/ejRzC9qg93MTKgdlqnarnRYMzVZrv2OrDe2xGyzkLRkf1gP4RFZXUOlBK
- k4Cdqd4zoTHhHvF/S61OrxMhB9YPJKMr1oxcyWOsCkq9nOZ3GWSoHyPyJv9uD+kaOaOEWBhjo4A
- mfvqJyK1XWHNk7KklddYwOEUCqYjcd3N1/WDk79mkuxjqzQGNJXcS1xrqfRj+S9v8/cVi9YqcwZ
- whBJFOKfNuubDAuAD8gS8/Z7DZxwSehgD7NcfLxjqSHJRyAZ89WNKZthSkvw7UPGEKDyVnhZMi9
- e0Ppn+aEZ1GV+h8QOreDgQbhINaWiFG5/M4q25tN6W25U9vwwd2qZ7Gx+rRSZ7ZNqSB4vt7U3RR
- cND3R3R3UTJFRnwZZEA==
-X-Proofpoint-ORIG-GUID: MnxdBVuExtFbSl68zrhHlqkNfTBUJRXx
-X-Authority-Analysis: v=2.4 cv=LITz05W9 c=1 sm=1 tr=0 ts=6b03d3be cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=M1YlFrUzwzMSSZYL3_kA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDAyMiBTYWx0ZWRfX769Gs94H3MQw
- 9ZRhcLULBt5URbjJ8ssV+wdK62WZDwVpjiATwTKuKz5nomktXyJ7lAb9SYQqIuFz2buyM4cY7h8
- RG4MM+YyiHrMWIs8q/NeHPxp5o4RzR4=
-X-Proofpoint-GUID: MnxdBVuExtFbSl68zrhHlqkNfTBUJRXx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-23_01,2026-11-22_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 phishscore=0 bulkscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611230022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261123-cpufreq-leaks-v3-0-1f1e3f4f5a7b@gmail.com>
 
-On 11/23/2026 1:40 PM, Suyuan Wang via B4 Relay wrote:
-> From: Suyuan Wang <stevewong@hust.edu.cn>
+On 23-11-26, 05:40, Suyuan Wang via B4 Relay wrote:
+> Three small fixes for resources that are not released when a cpufreq
+> driver fails to probe: the cpu clock in highbank, the three clocks in
+> kirkwood (also on unbind), and the regulators and register mappings in
+> s5pv210, and its reboot notifier, when cpufreq_register_driver() fails.
 > 
-> s5pv210_cpufreq_probe() returns the result of cpufreq_register_driver()
-> directly:
+> Found with a static analysis tool and checked by hand. Compile tested
+> on arm (W=1, multi_v5 for kirkwood); I don't have the hardware.
 > 
-> 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+> Changes in v3:
+> - Add Zhongqiu's Reviewed-by from v1 to 1/3 and 2/3 (Viresh).
+>   No other change.
 > 
-> 	return cpufreq_register_driver(&s5pv210_driver);
+> Changes in v2:
+> - 3/3: fix the Fixes tags. The regulator and reboot notifier leaks come
+>   from e8b4c1986efb and fe7f1bcbff91, and e0e5b2b4f427 did not add a
+>   leak (Zhongqiu Han). No code change.
+> - 1/3, 2/3: unchanged.
 > 
-> If the registration fails, for example because s5pv210_cpu_init()
-> fails, the resources taken by the probe itself are leaked: the two
-> regulators and the clock and DMC register mappings. The reboot notifier
-> also stays registered. (s5pv210_cpu_init() releases its own clocks on
-> its error paths, and the cpufreq core tears down its own state.)
-> 
-> Also, when a DMC node has a bad alias, the code jumps to err_clk_base
-> and skips unmapping DMC registers that were already mapped for an
-> earlier node.
-> 
-> Unregister the reboot notifier and go through the existing unwind code
-> when cpufreq_register_driver() fails, and jump to err_dmc on the alias
-> error. The err_clk_base label has no users after this, so drop it.
-> 
-> Found with a static analysis tool and checked by hand.
-> 
-> Fixes: e8b4c1986efb ("[CPUFREQ] S5PV210: Add arm/int voltage control support")
-> Fixes: fe7f1bcbff91 ("[CPUFREQ] S5PV210: Add reboot notifier to prevent system hang")
-> Fixes: 6d4ed0f46af6 ("cpufreq: s5pv210: Make the driver multiplatform aware")
-> Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-> Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-> Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
-
-Reviewed-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-
+> v2: https://lore.kernel.org/all/20261123-cpufreq-leaks-v2-0-29277f2f0ddd@gmail.com/
+> v1: https://lore.kernel.org/all/20261122-cpufreq-leaks-v1-0-96fc17ff7339@gmail.com/
 > ---
->   drivers/cpufreq/s5pv210-cpufreq.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
+> Suyuan Wang (3):
+>       cpufreq: highbank: Put cpu clock if clk notifier registration fails
+>       cpufreq: kirkwood: Put clocks on error and in remove
+>       cpufreq: s5pv210: Fix resource leaks on probe error paths
 > 
-> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> index e64e84e1ee79..29b1c5d71a8b 100644
-> --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> @@ -634,7 +634,7 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->   		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
->   			dev_err(dev, "failed to get alias of dmc node '%pOFn'\n", dmc);
->   			result = id;
-> -			goto err_clk_base;
-> +			goto err_dmc;
->   		}
->   
->   		dmc_base[id] = of_iomap(dmc, 0);
-> @@ -655,7 +655,14 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->   
->   	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
->   
-> -	return cpufreq_register_driver(&s5pv210_driver);
-> +	result = cpufreq_register_driver(&s5pv210_driver);
-> +	if (result)
-> +		goto err_reboot_notifier;
-> +
-> +	return 0;
-> +
-> +err_reboot_notifier:
-> +	unregister_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
->   
->   err_dmc:
->   	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id)
-> @@ -664,7 +671,6 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
->   			dmc_base[id] = NULL;
->   		}
->   
-> -err_clk_base:
->   	iounmap(clk_base);
->   
->   err_clock:
-> 
+>  drivers/cpufreq/highbank-cpufreq.c |  1 +
+>  drivers/cpufreq/kirkwood-cpufreq.c | 15 ++++++++++++---
+>  drivers/cpufreq/s5pv210-cpufreq.c  | 12 +++++++++---
+>  3 files changed, 22 insertions(+), 6 deletions(-)
 
-
+Applied. Thanks.
 -- 
-Thx and BRs,
-Zhongqiu Han
+viresh
