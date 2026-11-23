@@ -1,157 +1,174 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795428688;
-	b=YY+cZR/mlj+j5WrprgRpVDF/rfwuJjmd4NvICT3uLzx6Jr8+1L9HCMLMxplyck/WJfhH
-	 idV2f2c6cPbtetgwrNMpQoboPbtSHkx8D3nxe/tgPrLCyPMBjtvLq+Rc4n/3qlkp0moZV
-	 +xiuWgz1U7FCuGsdsHudqv4Tq43vbKWtha+Zgbz06Ai54BEJw566N2SChUkS4uAmale8F
-	 1nbJgC24Y4mQuGStirJwscZ0aQ2cVigvDE5m/YzYadBKMPP5RktADKzpUVfGaGzXw0vPc
-	 i0PrQahie7c22UmW+qbfHFOw9YTWugjMFNBrsgueP7eiV8WCKQ+tJiX89jF36atOZDg==
+	t=1795432740;
+	b=4/VEH8yfuuaSLz681fgao7iX8icq8X0Kxf9EAxeyRtFgFaZl4uh9RhNhgMf0JMqExkMY
+	 rk42dhmrp2NeLzV+KOVwvw6YX8nKXnx+YIIL4EPq8mtYJp/KmGBWDoMCA9nuU5RHNTbr/
+	 VIaFN6nrlo4Efsz8P4VIDqxDJYRKce5MQp6B3ig+shtFPO3ut26jIrCVE6qDxK1DfE1Ju
+	 HHlF2v+ou5DPC5t1uQvRDKgtf7PL8xE+W3lwTAzMrpd1eoBADeXHTXdg7CqE/Ci9mfJi/
+	 4V3yffb9N0fv7rqqVPz5W6U4QVPQSVG8GOhdR1SjB4pyVEdcGNw2ai/8KZQ+FJG8edg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795428688;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=rDFRLPy40I79JiGWrVFkLz2U4fAoPpBfu86dL+TJWTw=;
-	b=wF09ddiZSJOCZSpZuYWULsNgnWNyEA13/d0WOXLKPQ3G6GYKr9fKP0AN9ukVPozF8vxg
-	 H2UdjocQLh/GcI6ypJGSmCH+bJ5nJmwDQJOQJJRGfL5IB1dP/JOmpiCJ+Izx/jpE1KA05
-	 0rE56Lxi1Eccw6v5L8Ym9VBo8KvvTS96nyBq7Z+4kcsbB26GqJ2ls9AlXkJ46zzmxVVb2
-	 ZAZyD1YpPeqiUcS4u20aWDe6OfwGO1JmwYXAt9M7hvK3T6AMU7F8JQZ/3dggB3LQTOQnb
-	 CJeSP25XmrH1cajEcVEGlOPZSSLS4VZltqBVzSGe3WdKZqCSNVe6tWXI0rW6NJ/RmkQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795432740;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 X-Developer-Signature:X-Developer-Key:Content-Transfer-Encoding;
+	bh=+Bs54xR6o3UqWiUDInUdo2zlGVoF05rGerpAXaT2LIg=;
+	b=Q8nHrlUiE8XHLOfP+RuL6TXyKm7vB1lOk7qW4fUA6JnadMKpRkYBkhet84gOJnLPm7DU
+	 MvkaJl3rWktbX80eQ3qLYlzkbXMiYJcErgcAcSOygtStL2/nbpyUEUvpkPdT0yjN3KjXY
+	 88rl5EhljANw041ZRcXaWCDazkdUTKN1aYTfIav25Dn1+g55LKpH3d+ExviGpjerZksdp
+	 5fT9H3VHz1q7r152TdUrOQlD3Qb50JNTMwawxdXHX9y4cliQAkKdROIFCU/lT81wHLjSn
+	 1nEq+4qw8ZibwZ0UiGs18tmpzenStw+6BPsQolPokJeOo12G6WEsxeKsaqStjKsLZxQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQv8DoiR;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hR2dGhuN;
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836D606A331;
-	Mon, 23 Nov 2026 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA780606A337
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 11:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DA780606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQv8DoiR
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC1141F000EF;
-	Mon, 23 Nov 2026 10:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795428688;
-	bh=rDFRLPy40I79JiGWrVFkLz2U4fAoPpBfu86dL+TJWTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=EQv8DoiRck3gy8xgpS3BEeZCIVXlC+5twIrYuAJPvxyh+T6hLul9ehLPpI0/H8Ena
-	 EoHPb6kv2Z1NRHkQj923ovInemiLOUPSnbRP19n0hmOl3DYyi/0U2zQnqNlsdAYgQX
-	 yfIeKn1+n9OIoTJRvbp7rjlMj4wIsTr/xKlt8/kIiAVX5xbKrEtXbYSnqm7V+dLOrM
-	 VyoI9JSIUfP6xwxXeJf8XGivEo78xSGLAZFRbS/S+K2EDg0EQWkh2mc7W/lQNIsXSv
-	 CCH9QPsnErU7JRjGcCJBhGjJ2f+Q+uo3Lw7ckrw1kCFyKD4FZnZKjrPIy1KnGsdlwY
-	 rf74RydNSb3kw==
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	Janne Grunau <j@jannau.net>,
-	Sasha Finkelstein <k@chaosmail.tech>,
-	asahi@lists.linux.dev,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	sashiko-bot@kernel.org,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Dave Airlie <airlied@redhat.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Alison Wang <alison.wang@nxp.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Tian Tao <tiantao6@hisilicon.com>,
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-	Yongbang Shi <shiyongbang@huawei.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Long Li <longli@microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	imx@lists.linux.dev,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-mips@vger.kernel.org,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Qianhai Wu <wuqianhai@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=hR2dGhuN
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4b467581b98so29107395e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 03:18:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795432738; x=1796037538; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+Bs54xR6o3UqWiUDInUdo2zlGVoF05rGerpAXaT2LIg=;
+        b=hR2dGhuNyxswcDzcdX2ugBIYZrkxu7gRjZIBSfOOJ7/HDxQburGWyr91zQHPjvrSMq
+         ilxQAXa3VRS7IhmlXRvRn/hHig+EoNYz0LVQtrciODrOsrmpa/iPEpUTDVVxykQXFjpF
+         TxxPHWn+KFP226vGws3ADxhKVPomkAys202l91zVFIv7EUPtbt1dfsM5KlYvt49T9aWe
+         A6pMsJt8ArXTopU9d0KIuG3yZeT6tCE4csAT4yok9phPhklcEnXY9dx0I0A2ftJn8dob
+         plBl3cLYaTU+wJWi0Rzc5G18vT83Ye5hoj48B2gU0MFombYYakd2WKcRuVXoKQTk6saZ
+         PC1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795432738; x=1796037538;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+Bs54xR6o3UqWiUDInUdo2zlGVoF05rGerpAXaT2LIg=;
+        b=MEYAW1BnzWqLsprn+xXH3zLsuxmPZZqTK1kW+nXmvwv1mOvUDIIbm78rWc8KNj1V6f
+         ZLit9hUlFq7v0KvUkIlxakPKvn1On34Tv50doHDZYtcxoS2dnq7zYwbYxV7LSlaFP4tZ
+         K/tHA1WqlduENOt1p40pIdsOw0NuLQquDICjRT7VdBpgewjA22aST9eoi9z92hfJDoxv
+         G31sRrX8QHEfcriP2hQ+6UO3xV086n39jtEO5sre15cqSVQxgzx2xmo38329A2tprHXO
+         GEVOyabS9HwSET0Oxl6bCkA0A/GXvO5veH3fHPvVqvaO2d9MGTpk7pwGol8DMj7uO+Zi
+         XXJg==
+X-Forwarded-Encrypted: i=1; AL+hErHsjcc7bUuC57KsTMdY/S7U8P6uIde3HTeoOatKmo3BpXpT9GEWCdzXXgkwcjCgPfijuhphKd6gnE1xHHEymy/vTQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+X9uzIQDRqyFU+aJgDQ2e4R3HO1wiKccYd+8UQ4Oc51rdeGyco
+	jsOn6ZAeEmsHc3QwQZbAsgUM92y66xJsQ2XghWgPvZhKXaFkg59ufz7kGlaAJ2QvUJY=
+X-Gm-Gg: AZFdTZcL1pSIVlSzvCq/Z3ML/yHZCvL9ZvoEtUtMlwYWop1d/L0a9rBc5rS7HhwGWqH
+	yMM+8lcbWLTQrkaCOyZJaoLfhKhq7njiIUrUFkTAkR5HUiQ91CcbkDvFt18A++naJwpeWcbKn5I
+	bKAtNAaCtQU0sAiPKoxYAvQX9YY8lxjOyHme1emops1Dk/lBymhtf1Ltee+DCYskUR56F4KwBFI
+	7o84iNvubFKCNkxxIVVRJ20Gnp44dk8twkJOrAOKf5g+ezZGjCLhrzmawdzuhz7yN6LnnDOW74z
+	M2XDclyJ9TQGn/uaCrTtvMz4yoCLfEFZI54aI6JGJrq4Zu7k6/TEpNoD+yBkPBNOtMMsUQVzLrS
+	ZAJiZ1nEcJ9o2svolTdSXxhHHl0K85XQcKpdbG8aHG2COxu/990OjGNT8QfNgbpjuy5qD+ADeOs
+	YV0JgfG6MSpXaOp3nfRj6D7UONL9HLNa0D8LclkmC36Kie+53lCLxrOtUpEroFwaeGOGtdpl+nO
+	pCzam+d1UY6nVM+4wJ0K1rY4SSaei2BN6sJ3TOUuUhsdkeIqtj3zn5Tfun1ANCknCdZJavN+3nZ
+	eDquwl6wZmx7W9nr03KRld21Y5vD8u27J6K/ooVlZgemJrUub3bkXI6N91ulBjchUbA3DK24DtD
+	gdF/cl8B//P0DnX/2yIB9aEU/+Cztl9UQ+mwDAA==
+X-Received: by 2002:a05:600c:6708:b0:4ba:7e6:53d6 with SMTP id 5b1f17b1804b1-4bb88940848mr201826735e9.33.1795432737768;
+        Mon, 23 Nov 2026 03:18:57 -0800 (PST)
+Received: from localhost (p200300f65f19a90438645cebc2ee104e.dip0.t-ipconnect.de. [2003:f6:5f19:a904:3864:5ceb:c2ee:104e])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4bb884b7515sm470106375e9.13.2026.11.23.03.18.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 03:18:56 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	mfd@lists.linux.dev,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	Matthias Brugger <matthias.bgg@gmail.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lyude Paul <lyude@redhat.com>,
-	nouveau@lists.freedesktop.org,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	spice-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	James Ogletree <jogletre@opensource.cirrus.com>,
+	Fred Treven <fred.treven@cirrus.com>,
+	Ben Bright <ben.bright@cirrus.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	=?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Samuel Kayode <samkay014@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	patches@opensource.cirrus.com,
 	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	David Lechner <david@lechnology.com>,
-	Iker Pedrosa <ikerpedrosam@gmail.com>,
+	linux-sound@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Linus Walleij <linusw@kernel.org>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	linux@ew.tq-group.com,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Neal Gompa <neal@gompa.dev>,
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Saravanan Sekar <sravanhome@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	=?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-	Yannick Fertre <yannick.fertre@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	Samuel Holland <samuel@sholland.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	asahi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
 	linux-sunxi@lists.linux.dev,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	LiangCheng Wang <zaq14760@gmail.com>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-	Michal Simek <michal.simek@amd.com>
-Subject: Re: (subset) [PATCH v2 00/64] drm: Switch drivers to drm_mode_config_create_initial_state
-Date: Mon, 23 Nov 2026 11:11:22 +0100
-Message-ID: <179542861006.1136573.1196433498269800463.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
-References: <20261116-drm-no-more-config-reset-v2-0-0bb471f4d1e0@kernel.org>
+	linux-rockchip@lists.infradead.org,
+	Peter Tyser <ptyser@xes-inc.com>
+Subject: [PATCH v5 00/17] mfd: Use named initializers for arrays of *_device_data
+Date: Mon, 23 Nov 2026 12:17:58 +0100
+Message-ID: <cover.1795431460.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -161,125 +178,224 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9551; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=MGKcHdGed8cdYxfcD47xvikCz5El7VhAAvZbGXZ0H80=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBrBCDmLnAVuv90OgAYSoKkCYiFYXMo4ihUoAK3Y d1hQ2XqpZSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCawQg5gAKCRCPgPtYfRL+ Tm4uB/4rZI/lAiEuXDT7LfvXemVaA3M3+niMcTXjMkcyGQEX1ihFT+I4Q4ffrO+rGP/ob10jBUZ ZXzrNyyfoJXBMHCDKs5p2zpzDPqYh3N2/0R4c38EtEs2olSJLJ4hjBH73ZhIQ0KHzYOxl2lPtcH aA6lwXYHy87e3acCHGdkDrXD2iqPNIBcMWyMmeWn7ZntNnxxsishZb4Raenn63knuwpnwZxxYtX N+838V3v47+8ZEQHH0quOgD/l5vkYufDAckeeki15Jdhm1kaAgE5q37HtQEOrlaRY8avvEFSODE qowFlYVJo1AJ+ScANBSttk3L9gfou01all6UWmjWvcrDYId0
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Nov 2026 11:30:16 +0100, Maxime Ripard wrote:
-> drm_mode_config_reset() has a dual role: it creates the initial KMS
-> state at probe time, and resets hardware and software state during
-> suspend/resume cycles. However, the two roles need different
-> behaviors, notably for objects like drm_private_obj that must persist
-> across suspend/resume and are excluded from drm_mode_config_reset()
-> by design.
-> 
-> [...]
+Hello Lee,
 
-Applied to misc/kernel.git (drm-misc-next)
+there were two conflicting patch series with a similar goal:
 
-[01/64] drm/adp: Switch to drm_mode_config_create_initial_state
-        commit: d636d17d3b8ecda8a3db6a77874e652aabac4eb2
-[02/64] drm/amdgpu: Switch to drm_mode_config_create_initial_state
-        commit: 064bc83ffc6eb72ec8af2973517f130d81bcd9bb
-[04/64] drm/hdlcd: Switch to drm_mode_config_create_initial_state
-        commit: 18becfe9b42cb828fc7fcf9703319d34675cd9f1
-[05/64] drm/armada: Switch to drm_mode_config_create_initial_state
-        commit: 69cecb2d921b7ae098c2800cbfa67590c436c3c4
-[06/64] drm/ast: Switch to drm_mode_config_create_initial_state
-        commit: 76dacf729a8dd4a954a5a8457ca49b221055d346
-[07/64] drm/exynos: Switch to drm_mode_config_create_initial_state
-        commit: cbe6da900d937f0de4c73eb574c409c9e2f4a7e8
-[08/64] drm/fsl-dcu: Switch to drm_mode_config_create_initial_state
-        commit: 6a294a6bf06ed0d71a505998bd0fd3abe1e9ea87
-[09/64] drm/hisilicon/hibmc: Remove hibmc_unload() from the load error path
-        commit: f830550f85cd0f5bd955d5b9abdb795f95a25ff8
-[10/64] drm/hisilicon/hibmc: Switch to drm_mode_config_create_initial_state
-        commit: f935c8d2f8c6de0c4b95c5f63874ced18efe1de6
-[12/64] drm/imx/ipuv3: Switch to drm_mode_config_create_initial_state
-        commit: 8799786a618d2a56b8e3dc998b64fb28cb648ca6
-[13/64] drm/ingenic: Move the private object creation before the reset
-        commit: 5cc203c0dcd3352196d8ede54531afc2175193b0
-[14/64] drm/ingenic: Switch to drm_mode_config_create_initial_state
-        commit: 8636f44eb77f5f738708423a104ee2f225f84b97
-[15/64] drm/kmb: Switch to drm_mode_config_create_initial_state
-        commit: f4f4fd2ae13175ef7aa851cdeaa08bf29a0f38b1
-[16/64] drm/logicvc: Switch to drm_mode_config_create_initial_state
-        commit: 7f84f99fa2d9b068e4a51514df0e1f32ad3247aa
-[18/64] drm/mediatek: Switch to drm_mode_config_create_initial_state
-        commit: 333cf2d79ee32c5590787eeb6df1c3c1a9ad6a48
-[19/64] drm/mgag200: Switch to drm_mode_config_create_initial_state
-        commit: 2fb1383d1aed812e4830aec34b890547fe8d496e
-[20/64] drm/msm: Switch to drm_mode_config_create_initial_state
-        commit: 53556096b6e5e07a8c58fe19cfdf5f3d4e1197ab
-[21/64] drm/nouveau: Switch to drm_mode_config_create_initial_state
-        commit: 960f6b7c64cb9536c37e7995262fd465f2fc623b
-[22/64] drm/omap: Switch to drm_mode_config_create_initial_state
-        commit: cf34a54e91f99b80623fee78ad334871a7f39858
-[23/64] drm/qxl: Destroy the monitors object on the modeset init error path
-        commit: bf50dc68880788f9ad85f4411f2d3fa575139ceb
-[24/64] drm/qxl: Switch to drm_mode_config_create_initial_state
-        commit: f364abef006d3867174f9defa5f79c4c6585cead
-[26/64] drm/rz-du: Switch to drm_mode_config_create_initial_state
-        commit: 938dfe76a15263c5fac77ea1f99c265848c219f8
-[27/64] drm/shmobile: Switch to drm_mode_config_create_initial_state
-        commit: 588132787e6df07f0267983881f437990d56c5e8
-[28/64] drm/st7571: Switch to drm_mode_config_create_initial_state
-        commit: e03927d29003912052c64aad83df169243d43484
-[32/64] drm/sprd: Switch to drm_mode_config_create_initial_state
-        commit: 1af982780216d568a4e8ff6790b87de29e52ab90
-[33/64] drm/sti: Fix drm_atomic_helper_shutdown() on the bind error paths
-        commit: d3047688f4bc35ca827ee2994a014c81898d73cc
-[34/64] drm/sti: Move drm_mode_config_create_initial_state() before drm_dev_register()
-        commit: 2798c8d86bf4e4853cbc1b3e2a248d55e714a649
-[36/64] drm/sun4i: Switch to drm_mode_config_create_initial_state
-        commit: ad5e714a08a6d5f6fa39b589a438b40aaac9e2bf
-[38/64] drm/tests: drm_atomic_state_test: Switch to drm_mode_config_create_initial_state
-        commit: 019bfdeb119dc616303a173323fd69853fe99858
-[39/64] drm/tests: drm_atomic_test: Switch to drm_mode_config_create_initial_state
-        commit: 53f0931d45c029f97c611837b8f853c9fad7a82c
-[40/64] drm/tests: drm_bridge_test: Switch to drm_mode_config_create_initial_state
-        commit: 45472c059ac76f982e31f67ef87f9db3caef1f88
-[41/64] drm/tests: drm_hdmi_state_helper_test: Switch to drm_mode_config_create_initial_state
-        commit: 3db9197bbe3fc859fd5b7521d1f4cedd9d62cb8c
-[42/64] drm/tidss: Switch to drm_mode_config_create_initial_state
-        commit: d771b7c8577c0b847d401a22f49a6abc18680ed3
-[44/64] drm/arcpgu: Switch to drm_mode_config_create_initial_state
-        commit: 620165b05363bea94b72970884f6f27ccf7cee3f
-[45/64] drm/bochs: Switch to drm_mode_config_create_initial_state
-        commit: c67548948d8c5ebb422fa03fb5dd89e44e458f20
-[46/64] drm/cirrus-qemu: Switch to drm_mode_config_create_initial_state
-        commit: 10e37ab94f0f10a7fd729a063c26bf1a94e7f2b0
-[47/64] drm/gm12u320: Switch to drm_mode_config_create_initial_state
-        commit: ce7e27979d41b94bb9a1ed66b6957a300a5a8c0a
-[48/64] drm/hx8357d: Switch to drm_mode_config_create_initial_state
-        commit: d9abdda3a6bd4903af87a1ed6d02c1897035cf4e
-[49/64] drm/ili9163: Switch to drm_mode_config_create_initial_state
-        commit: 6fc964d0567e8303cf72adc45dad29e9415fe76c
-[51/64] drm/ili9341: Switch to drm_mode_config_create_initial_state
-        commit: 75269393962354820792fddfe3da359b3be85ca3
-[52/64] drm/ili9486: Switch to drm_mode_config_create_initial_state
-        commit: c4f2890c815c5ac8d68668a072806edf4f466a7e
-[53/64] drm/mi0283qt: Switch to drm_mode_config_create_initial_state
-        commit: dfa078305c262eae2b0449814392e429b6bd58ee
-[54/64] drm/panel-mipi-dbi: Switch to drm_mode_config_create_initial_state
-        commit: 38b37ce4bc5fc406f1e93a90ce9b2b8531c6f5cb
-[55/64] drm/pixpaper: Switch to drm_mode_config_create_initial_state
-        commit: d3cb39a976745195d2d388b5b9194d47bfd2eb41
-[56/64] drm/repaper: Switch to drm_mode_config_create_initial_state
-        commit: ce380404a74260b6bb178b24dfd4125a591e1069
-[57/64] drm/sharp-memory: Switch to drm_mode_config_create_initial_state
-        commit: d4b8b6e920779d568a085eb611c75dc4bb5805a8
-[58/64] drm/udl: Switch to drm_mode_config_create_initial_state
-        commit: 6358c0da712b0170a3f1470c5eb75ec95340875c
-[59/64] drm/vboxvideo: Switch to drm_mode_config_create_initial_state
-        commit: a932fa029dad6b23b4ff5b7fdb44e5819c098b6e
-[60/64] drm/verisilicon: Switch to drm_mode_config_create_initial_state
-        commit: f3b23268607094ff4461119d623a235a2bdc8608
-[61/64] drm/virtio: Switch to drm_mode_config_create_initial_state
-        commit: eb2c77198187b0283f12be28bdb770703da59dca
-[63/64] drm/xen: Switch to drm_mode_config_create_initial_state
-        commit: 51b3e01a42db6100976907b95d224636e6551c98
-[64/64] drm/xlnx: Switch to drm_mode_config_create_initial_state
-        commit: bb8391a1a8d00b11661ab692313a991456d391dd
+ - v4 of my series:
+   https://lore.kernel.org/cover.1794347059.git.u.kleine-koenig@baylibre.com 
 
-Thanks!
-Maxime
+ - Pawel's "mfd: use designated initializers for acpi_device_id"
+   https://lore.kernel.org/all/20261104-acpi-mfd-v2-0-64b9dee3baaf@thegoodpenguin.co.uk/
+
+Here comes the remainder of my series rebased to
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+
+I double checked no new arrays popped up needing adaption. Otherwise the
+things said about v4 stay valid:
+
+ - The objective is adding an anonymous union to the various *_device_id
+   structures, see
+   https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
+   for an example.
+
+ - "mfd: bcm2835-pm: Drop unused header" got review feedback vor v2 by
+   Stanimir Varbanov[1] asking to drop that patch as he intends to
+   rework the driver in a conflicting way "soon". That didn't happen
+   though since July, so I consider that request expired
+
+ - I'm happy about every applied patch. There are a few files that are
+   touched by more than one patch. If you apply the series partially and
+   conflicts happen (due to changes in your tree in the mean time or due
+   to skipped patches that you didn't like) just reverting to HEAD for
+   conflict resolution for the conflicting files is safe.
+
+ - The "Unify style of ... arrays" are only cosmetic. If you consider
+   these mostly churn, just drop them.
+
+Best regards
+Uwe
+
+[1] https://lore.kernel.org/b3d228fd-6138-4195-b63c-65b28691e18b@suse.de
+
+Uwe Kleine-König (The Capable Hub) (17):
+  mfd: bcm2835-pm: Remove member of struct bcm2835_pm that is only used
+    locally
+  mfd: bcm2835-pm: Drop unused header
+  mfd: kempld: Simplify device abstraction
+  mfd: lp87565: Explicitly set driver data for the generic dt compatible
+  mfd: mt6360: Drop irrelevant __maybe_unused
+  mfd: rt4831: Drop irrelevant __maybe_unused
+  mfd: Drop unused assignment of i2c_device_id driver data
+  mfd: Drop unused assignment of platform_device_id driver data
+  mfd: intel-m10-bmc-pmci: Use named initializers for dfl_device_id
+    array
+  mfd: Use named initializers for arrays of i2c_device_id
+  mfd: twl6030: Use named initializers for of_device_id
+  mfd: Use PCI_DEVICE* macros to initialize pci_device_id arrays
+  mfd: Use named initializers for platform_device_id array
+  mfd: Unify style of dmi_system_id arrays
+  mfd: Unify style of i2c_device_id arrays
+  mfd: Unify style of of_device_id arrays
+  mfd: Unify style of pci_device_id arrays
+
+ drivers/mfd/88pm800.c              |  4 +-
+ drivers/mfd/88pm805.c              |  4 +-
+ drivers/mfd/88pm860x-core.c        |  8 ++--
+ drivers/mfd/aat2870-core.c         |  2 +-
+ drivers/mfd/ab8500-core.c          |  8 ++--
+ drivers/mfd/ab8500-sysctrl.c       |  4 +-
+ drivers/mfd/ac100.c                |  2 +-
+ drivers/mfd/act8945a.c             |  8 ++--
+ drivers/mfd/adp5520.c              |  4 +-
+ drivers/mfd/altera-a10sr.c         |  2 +-
+ drivers/mfd/altera-sysmgr.c        |  2 +-
+ drivers/mfd/arizona-i2c.c          | 14 +++----
+ drivers/mfd/arizona-spi.c          |  2 +-
+ drivers/mfd/as3711.c               |  8 ++--
+ drivers/mfd/as3722.c               |  8 ++--
+ drivers/mfd/atmel-hlcdc.c          |  2 +-
+ drivers/mfd/atmel-smc.c            |  2 +-
+ drivers/mfd/axp20x-i2c.c           | 24 +++++------
+ drivers/mfd/axp20x-rsb.c           |  2 +-
+ drivers/mfd/bcm2835-pm.c           | 15 +++++--
+ drivers/mfd/bcm590xx.c             |  4 +-
+ drivers/mfd/bd9571mwv.c            |  6 +--
+ drivers/mfd/bq257xx.c              |  8 ++--
+ drivers/mfd/cgbc-core.c            |  2 +-
+ drivers/mfd/cros_ec_dev.c          |  2 +-
+ drivers/mfd/cs40l50-i2c.c          |  6 +--
+ drivers/mfd/cs40l50-spi.c          |  2 +-
+ drivers/mfd/cs42l43-i2c.c          |  2 +-
+ drivers/mfd/cs5535-mfd.c           |  2 +-
+ drivers/mfd/da903x.c               |  6 +--
+ drivers/mfd/da9052-i2c.c           | 12 +++---
+ drivers/mfd/da9055-i2c.c           |  4 +-
+ drivers/mfd/da9062-core.c          |  4 +-
+ drivers/mfd/da9063-i2c.c           | 11 ++---
+ drivers/mfd/da9150-core.c          |  4 +-
+ drivers/mfd/db8500-prcmu.c         |  4 +-
+ drivers/mfd/exynos-lpass.c         |  2 +-
+ drivers/mfd/gateworks-gsc.c        |  2 +-
+ drivers/mfd/hi6421-pmic-core.c     |  6 +--
+ drivers/mfd/hi655x-pmic.c          |  4 +-
+ drivers/mfd/intel-m10-bmc-pmci.c   |  2 +-
+ drivers/mfd/intel_quark_i2c_gpio.c |  6 +--
+ drivers/mfd/intel_soc_pmic_crc.c   |  2 +-
+ drivers/mfd/ioc3.c                 |  4 +-
+ drivers/mfd/janz-cmodio.c          | 14 +++----
+ drivers/mfd/kempld-core.c          | 66 ++++++++----------------------
+ drivers/mfd/khadas-mcu.c           |  2 +-
+ drivers/mfd/lm3533-core.c          |  2 +-
+ drivers/mfd/lochnagar-i2c.c        |  2 +-
+ drivers/mfd/lp3943.c               |  4 +-
+ drivers/mfd/lp873x.c               |  8 ++--
+ drivers/mfd/lp87565.c              |  9 ++--
+ drivers/mfd/lp8788.c               |  2 +-
+ drivers/mfd/lpc_ich.c              |  2 +-
+ drivers/mfd/macsmc.c               |  2 +-
+ drivers/mfd/madera-core.c          |  2 +-
+ drivers/mfd/madera-i2c.c           | 18 ++++----
+ drivers/mfd/max14577.c             |  6 +--
+ drivers/mfd/max7360.c              |  2 +-
+ drivers/mfd/max77541.c             |  4 +-
+ drivers/mfd/max77620.c             |  8 ++--
+ drivers/mfd/max77686.c             |  2 +-
+ drivers/mfd/max77693.c             |  4 +-
+ drivers/mfd/max77714.c             |  2 +-
+ drivers/mfd/max77759.c             |  4 +-
+ drivers/mfd/max77843.c             |  8 ++--
+ drivers/mfd/max8907.c              |  6 +--
+ drivers/mfd/max8925-i2c.c          |  6 +--
+ drivers/mfd/max8997.c              |  6 +--
+ drivers/mfd/max8998.c              |  6 +--
+ drivers/mfd/mc13xxx-spi.c          |  6 +--
+ drivers/mfd/menelaus.c             |  2 +-
+ drivers/mfd/menf21bmc.c            |  2 +-
+ drivers/mfd/mp2629.c               |  2 +-
+ drivers/mfd/mt6360-core.c          |  6 +--
+ drivers/mfd/mt6370.c               |  2 +-
+ drivers/mfd/mt6397-core.c          |  4 +-
+ drivers/mfd/mxs-lradc.c            |  4 +-
+ drivers/mfd/ntxec.c                |  4 +-
+ drivers/mfd/omap-usb-host.c        |  4 +-
+ drivers/mfd/palmas.c               |  8 ++--
+ drivers/mfd/pf1550.c               |  2 +-
+ drivers/mfd/qcom-pm8008.c          |  4 +-
+ drivers/mfd/qcom-pm8xxx.c          |  6 +--
+ drivers/mfd/rave-sp.c              |  4 +-
+ drivers/mfd/rc5t583.c              |  4 +-
+ drivers/mfd/rdc321x-southbridge.c  |  2 +-
+ drivers/mfd/retu-mfd.c             |  4 +-
+ drivers/mfd/rk8xx-i2c.c            |  2 +-
+ drivers/mfd/rk8xx-spi.c            |  2 +-
+ drivers/mfd/rohm-bd71828.c         |  4 +-
+ drivers/mfd/rohm-bd9576.c          |  6 +--
+ drivers/mfd/rsmu_i2c.c             | 18 ++++----
+ drivers/mfd/rsmu_spi.c             |  2 +-
+ drivers/mfd/rt4831.c               |  6 +--
+ drivers/mfd/rt5033.c               |  4 +-
+ drivers/mfd/rt5120.c               |  2 +-
+ drivers/mfd/rz-mtu3.c              |  2 +-
+ drivers/mfd/sec-acpm.c             |  6 +--
+ drivers/mfd/sec-i2c.c              | 22 +++++-----
+ drivers/mfd/si476x-i2c.c           |  8 ++--
+ drivers/mfd/simple-mfd-i2c.c       |  2 +-
+ drivers/mfd/sky81452.c             |  4 +-
+ drivers/mfd/sm501.c                |  4 +-
+ drivers/mfd/smpro-core.c           |  2 +-
+ drivers/mfd/sprd-sc27xx-spi.c      |  2 +-
+ drivers/mfd/ssbi.c                 |  2 +-
+ drivers/mfd/stm32-lptimer.c        |  4 +-
+ drivers/mfd/stm32-timers.c         |  4 +-
+ drivers/mfd/stmfx.c                |  4 +-
+ drivers/mfd/stmpe-i2c.c            | 34 +++++++--------
+ drivers/mfd/stmpe-spi.c            | 14 +++----
+ drivers/mfd/stpmic1.c              |  4 +-
+ drivers/mfd/stw481x.c              |  8 ++--
+ drivers/mfd/sun6i-prcm.c           |  2 +-
+ drivers/mfd/tc3589x.c              | 14 +++----
+ drivers/mfd/ti-lmu.c               | 10 ++---
+ drivers/mfd/timberdale.c           |  2 +-
+ drivers/mfd/tps6105x.c             |  6 +--
+ drivers/mfd/tps65010.c             | 10 ++---
+ drivers/mfd/tps6507x.c             |  6 +--
+ drivers/mfd/tps65086.c             |  4 +-
+ drivers/mfd/tps65090.c             |  6 +--
+ drivers/mfd/tps65217.c             |  6 +--
+ drivers/mfd/tps65218.c             |  8 ++--
+ drivers/mfd/tps65219.c             |  8 ++--
+ drivers/mfd/tps6586x.c             |  6 +--
+ drivers/mfd/tps65910.c             | 12 +++---
+ drivers/mfd/tps65912-i2c.c         |  4 +-
+ drivers/mfd/tps65912-spi.c         |  2 +-
+ drivers/mfd/tps6594-i2c.c          | 12 +++---
+ drivers/mfd/tps6594-spi.c          | 12 +++---
+ drivers/mfd/tqmx86.c               |  2 +-
+ drivers/mfd/twl-core.c             | 22 +++++-----
+ drivers/mfd/twl4030-audio.c        |  4 +-
+ drivers/mfd/twl4030-power.c        |  2 +-
+ drivers/mfd/twl6030-irq.c          |  6 +--
+ drivers/mfd/twl6040.c              |  4 +-
+ drivers/mfd/vexpress-sysreg.c      |  4 +-
+ drivers/mfd/vx855.c                |  2 +-
+ drivers/mfd/wm831x-core.c          |  2 +-
+ drivers/mfd/wm831x-i2c.c           | 14 +++----
+ drivers/mfd/wm8350-i2c.c           |  6 +--
+ drivers/mfd/wm8400-core.c          |  4 +-
+ drivers/mfd/wm8994-core.c          |  8 ++--
+ include/linux/mfd/bcm2835-pm.h     |  9 ----
+ include/linux/mfd/kempld.h         | 12 ------
+ 147 files changed, 430 insertions(+), 472 deletions(-)
+
+
+base-commit: 1cb7268b6638c411fc32f373e965eb8ba9e9b2b4
+-- 
+2.47.3
+
