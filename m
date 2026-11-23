@@ -1,88 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795443958;
-	b=EHFUxsdD6VtJREzwZ1gkdijzjCkJikci2lEzWuSriL/ULtH/PVSzxxdw7dYHAfERQNtT
-	 3KyXedxYxUY38WyefSbGdHcSjpL1Rt4b7r4UgEe7UOe/FsK9GhNGIvb8YAhjmtTsO1DTJ
-	 tOt4GR02bQ+V0omeG+BZPOC6PXp1nABxBHGp7BFE3lYDw9tsMBf70RRKTQcrkpNGF/fGb
-	 0yjc0AaiGqbAprpaLOzQKbIX9o/I6FKLCSwlTwePsoZ4vqhmfuwcaL01FsbvSyeVIRpSl
-	 QY2EUrUkZNy3aXWOBgUyswJlgWAI87s14QwNB5M0g5fqIa6DFonAXGxe67PtKsrWB1Q==
+	t=1795443991;
+	b=okPlCrtygvpI1j75UivS3BlHJ/tJttpuUjrt6lYws1u6EnUONVVS2s8s1H9OyjHqZL5h
+	 x87y7nfp1ztaOFbWLN5iYgp9COXB3n71CLIKACMIfcoeclg89dDhBkD3ayTKu0OtH6QoV
+	 Af5ZmNDVG2X3YgNcCcLzZq/TywIZketIxt9MEEb5HNGpEfPza5NX1p/VhDeR7E8Z50idu
+	 VMc2AAU45xhq3xNtTJ9shHPi0iZWNhC4rqJHXCthHbPC2QtERepbsgRG/n7YgQT3bCRh+
+	 bhiEZYQirQ/kOtmf8oebj5GQ6JuLYG9mDWNHIabE4a2qQZwIhTxogo4q71BjDyHaL3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795443958;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795443991;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer;
-	bh=uxmsdlRkwXKs6xHOy9xMbMTKjN7AQ/1XvZ4ccJmXMbM=;
-	b=MPWK/c4TS2asI2sAFFKnaRJQEfLogvfeT+4/DvlqvsNzBENd1OmWfiDbefczdhNP3ucU
-	 aqkFG95pOG1zS5JFoWE7CZ7Zpztr9y9754C+yd10mlYLW76ZCryoQnJ1MDQNVCeuR0A5t
-	 1kgRjHpseBI6tontdigODpW4OfTGlrApCUcpivRzftUJF7yWzWW/aVFOd8A686q+TR0C7
-	 v/W9AXMEy/tTKFb6fQRZzCWjpCd0wOGKzPuLneb0pWdYlQWyblassNJOUIns/O03AHoH0
-	 peLEKAszB69Eq/jDgLPdLIhv/d3cx8HeK5/22GU3VYuU5fEpr0BAfTEFVutJMutCG3A==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
+	b=bGO5d9YZmOdLA9qukStrqQffNGth55CdiA6bkeN85dmxoju14AtWFkQeshdLZNokKkl3
+	 rSUoZWXVa1jzaeijFMyHiFV2W+LunJehI0eVieKcePGZ3/hBEl9Br3TOnkPHD5H5mvBUI
+	 P/flHIyLQJk32Vm4Qf30WAfTfH1CAwukl3CeanSP41g+1WPKcn9Lunga/OqnCgY5wu6N6
+	 5kLF8w/OW+81U8KYFOnEF7n593ROBoXGKvAb0JnyPb6GVGNdew500D7xe7qcfEW+wfOrU
+	 4Fy0Jhym/r994sj1Mckjy2/Od4V5zwY4lCiw4/5VvQpC5OOGrnSJjI7onyYvPS4gu5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Wf+xxF8O;
-	arc=none smtp.remote-ip=209.85.218.53
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RUIY67PM;
+	arc=none smtp.remote-ip=209.85.208.170
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35447606A332
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 14:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 35447606A332
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E91606A32A
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 14:26:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 38E91606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Wf+xxF8O
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c511cdd5a82so375915266b.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 06:25:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RUIY67PM
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3adef977ad9so25180941fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 06:26:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795443956; x=1796048756; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uxmsdlRkwXKs6xHOy9xMbMTKjN7AQ/1XvZ4ccJmXMbM=;
-        b=Wf+xxF8OO5GuqvnQ2zIev3BeaWER3LI7P8xCIf8fXe+kg6oH3YbTcTloUcLNeFfSU5
-         CQYYWREsIe5p+ouwCQfiIlUSLH3FqqLldlcSaLozZbyTEqYne5psCLV2f8YYUW7feAaL
-         ASQMIoGHSQTW56eSLRxbTz8omtgd7ivtrZqRE/0QD1/iS3sxGjiXww+i/dwqUivfwUx9
-         BrWCq/BoabCXoDfMm37sHq4Gp8f4zcIjWoFYkDUyYlfLH5IFK0Cf5cg/Z+LkNnGc1fmm
-         T6/X7IMtij1Y/lAp4XQuWZC9XHiI4rPl0IDR6G534/ukOBys2U4qsZ9wQKym//zhfxsF
-         zuVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795443956; x=1796048756;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1795443988; x=1796048788; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uxmsdlRkwXKs6xHOy9xMbMTKjN7AQ/1XvZ4ccJmXMbM=;
-        b=zG9k5vr7w1Xs7y79blobpDWWR/J0Tzrs9eiu3Fr3aTPvhh0pSl7I6ZHB8ZKLO0+Lsx
-         3Q+helFEQQibAJJ8IYv37BUhS85Gcv5bNubmoCMceGxvj6evFxBCFHbMvGuzC34xol7h
-         eGAcS2dywq0EeedNxNYjRUXgZvzgsuXJ4WDP5bunW+nxYYNhb+Ar0S9ylk7ZmyrDjzAf
-         GCOMptPMZ6Fjdef55dJ6a39ytgIlbi/XSNHFOcDPg0zIgrz4WG6m6Wj0Lv90Grtiqu3q
-         XCK+MmigUhyn+SDDFOeO+QYOY4BOlmpPzbr6M05LbsZY2Rfer7+vKF0sUJ2/IEVScVz2
-         tGpQ==
-X-Forwarded-Encrypted: i=1; AL+hErGjAIBDl5HfsoTxMYGQxOVyzfulAX2LoKBmEJhL99Rw5uV0gil0EQlHwLVRFJX3c/yhb4/3i7suK+K8bkArJLTfeA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+u0Pcci+Y/oLAVDPTRK1BYeBMSAGx0KSo5XP5BUe4CAwvNz6gP
-	sF6VfjG2XiuGpRj2yUwHBZWGh89Rlm2h9VS/zb81xtVxTcIWCg1inarS64aKzvUdQ6g=
-X-Gm-Gg: AZFdTZd7geSzYprCl2yURtGt1WjKJMI55Wu7Qvb/EWB68EeAgu/MjHM3aX1JsXvwuQq
-	AfSuVU+GeKlfC9JPjcWJ70PFtoQgDRaBBk2I9DvNrNDedmv+R0LHauPDo7N9pCDSwCmREeZ76Vc
-	z5LccZbsfyscIuOZh+J/zbQRjP+wPq3g8XJE8x5tcOy1OICmLzVAj1w/Sl7f8WqF7F3FICihwuU
-	57NuM3bVr1v/ejvwJ8fdXgEPoLANqwe7+H5RUhrTYBhKVwYZ3TXmdSncOuRUDrepEsbwW2lGFP3
-	/qIKXMR+NyAMvChQ5u6bjm1l9Sfk+z5X+3oTMOJ8lEqqQkwVttjRkZEA81MNIl+obK2U0lc0w1N
-	b0oTArzXhKjCEKTNIhk+oQRx1E8UTgkzFlkmzjDldQbDztp/Yh5v+zx8bFrRmPu61VhWrrbeXah
-	HeCxb4EL7Tzh9PTAtTFn+ZonpbbZ16YvbL84jJr/vdBXZ2mYGzs5VS/fGxZtfKpnyoDahYhIiXC
-	QWocuUGFo0nafdff/7ezQLwbPAzPoqh5wL4ubFfsHXrB9Hxt3WjSx7ls31YPaP+QLFnO4rmGlFt
-	dCCOurCpkmRFxh6POZqzDMIIQbk2htZuZ6KOjOkjwMSWraDEj2NHBv64kFf6IR5d6PEAS6RIATq
-	wrI5b1UUqovJVNCiv8Q==
-X-Received: by 2002:a17:907:a890:b0:c41:266:68a7 with SMTP id a640c23a62f3a-c513aacd82cmr967497166b.10.1795443956585;
-        Mon, 23 Nov 2026 06:25:56 -0800 (PST)
-Received: from puffmais2.c.googlers.com (226.124.90.34.bc.googleusercontent.com. [34.90.124.226])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae67cbfsm428224366b.14.2026.11.23.06.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 06:25:56 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 23 Nov 2026 14:25:55 +0000
-Subject: [PATCH v2 2/2] phy: exynos5-usbdrd: apply gs101 postlock tuning
+        bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
+        b=RUIY67PMq1SQpC96Na5nTl3jAyRwEebw/mDWGod9yXt8IsGlmlTbbsyWn7X2cSb73L
+         dB/FORW/5mTkaB2haIysp91S+cFrM2WzVocyIJDpnJKRCsMAZh+2AMPv+Cb9qzJmnN/p
+         xVhtvboIzZKmLZuxYSV+bp9jXmGt/XGLsa3NkwIEjKhmnT/FmPcIYkZmo9USpV0+DVld
+         +T7wajOC1ZKDFwX45AVhUhuQXPjUbPPbDrQCtLMD5NyK6n3BloDQGZVPITo+qylDu4KF
+         qxWCPUIvWmu9AImsOgfgoOsXo6JqMQLDHrQeoNb3vm5Ivrwtz3Ew4LzO8OTKYYbraeQ+
+         bbhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795443988; x=1796048788;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=MpBy4DQUeAY3YB4hP8JJP2A0Pzqf+41bgmSv+sbuZU8=;
+        b=TXk/H9nLac9pPs2JmlzGiwDcwYM5WmPpSBf3l9hCi4rP0U+hKqOPh7SgVLIPaqEv1f
+         NrFaLdObUg8QIZg+e9qMri5ioKdk/xG+Xd1AyWWsrcPlR8b5JWSliYDQWJl1Wzrg7IJI
+         +CihCkRVICYhs1+mi4LYIpTz1pgqVXP4Oz8hFyKxdGQUv8Jo6z2G6YKS4r2LLdCIOOv9
+         4TuVHkInTKgizxhJmWOJOw/+ZpQA649SKxepZsenOIDk71PuzovfLXzDFzdzucJUgtLg
+         F0TNzXAZc13CZL6EUqLg0PONyNFlkH0yDRhhJoC32X3uBNphSWoKOo5wZrsddNDs6AJO
+         S9mA==
+X-Forwarded-Encrypted: i=1; AL+hErFAEPuaSnzSGAyM7DuBImYVxqSaBnQmg3Qk5P1MCUoRmoYT8XLoDFHwoNIQHewMeyzMO+k36PdihrWYTyzeVhVtmg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8fqkGRVGMFMgwYXeGZJgBJxcb/kl69upxGwAlZqPCZxq8DrdIx
+	TkBzh5DsAh+sy+phx7Vxgu02oD51Nmu9gtkSYNYWhmWHwTkQGWAX135r
+X-Gm-Gg: AZFdTZfnYvEDRaXtQpkqRhHEBT8yyITpT9JySjLWe/yQGLG3IoQbIgPhweQjVHw73ag
+	+FNtCpVYlUmaoN0ElwNiPE3ROrW/zTxut0W1bonmWQj09wueN1PpmWymW6Rwugw9NFCAD85vsir
+	THJVzTxxVqLMNFMQijuRQM/AhfHySdpif1WztIzFVmzdcde6CEMcnbjYi8ZVL8sNkttHTHZMUvu
+	CVbN/nF4kENfBUPbL2iwz0cVCnT6lSPfU9UdgON2bYnWesAfQShZyL4BJo9U6fZtok+2y3Za7ht
+	Kd7zw4MLY+LPzOW89VrPPMKCuf6ABY0ompmajN6lRuk05Lyn47HS558A9dTJeClKDAR6fxEb1xS
+	CYCWDJMWvxbTJjfKqiJgUkynsjTOD6X/DU8P5/sTwb0A5DT6zj5/E2pv0XpwhnvYoCuPzT5wTVG
+	VTsBHpe9s+Xo0PxUIHFS36CgmmNwJ//qR4Zu0CEVJVQt5n6hW2h57dwBo059sxR9KiJC36ysjUO
+	PDMLRgC9yKAevVDFGRI4t75uTp+9M/k6xDI3Gp+udsK7gwiFr7ZgSaKbYbiUC2IwBen2iYaGmVK
+	qvDC4EBRRfqQ68LRwuiAJyfiU3OYFuZxyrp9Q2o16q54nwaomCL3DkBDQGOygftWHWUj7Uu/GXg
+	tSYuSbhaPhw==
+X-Received: by 2002:a2e:ab0a:0:b0:3ac:e4b6:b93d with SMTP id 38308e7fff4ca-3ae7f9a072fmr31420641fa.8.1795443988058;
+        Mon, 23 Nov 2026 06:26:28 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3ae80536529sm33679491fa.27.2026.11.23.06.26.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2026 06:26:27 -0800 (PST)
+Message-ID: <bc178673-54dd-4811-acdf-cb6327ec2417@gmail.com>
+Date: Mon, 23 Nov 2026 16:26:25 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,58 +93,99 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 16/17] mfd: Unify style of of_device_id arrays
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Lee Jones <lee@kernel.org>
+Cc: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
+ Linus Walleij <linusw@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Chen-Yu Tsai <wens@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Marek Vasut <marek.vasut+renesas@gmail.com>,
+ James Ogletree <jogletre@opensource.cirrus.com>,
+ Fred Treven <fred.treven@cirrus.com>, Ben Bright <ben.bright@cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Tim Harvey <tharvey@gateworks.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>, Sven Peter
+ <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Saravanan Sekar <sravanhome@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
+ <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Liviu Dudau <liviu.dudau@arm.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com,
+ linux-rpi-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+ linux-rockchip@lists.infradead.org
+References: <cover.1795431460.git.u.kleine-koenig@baylibre.com>
+ <b69bcdcc394e46e0eb60947f23923e6241d24ff4.1795431460.git.u.kleine-koenig@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <b69bcdcc394e46e0eb60947f23923e6241d24ff4.1795431460.git.u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20261123-gs101-usb-phy-orientation-v2-2-3361fa5f7543@linaro.org>
-References: <20261123-gs101-usb-phy-orientation-v2-0-3361fa5f7543@linaro.org>
-In-Reply-To: <20261123-gs101-usb-phy-orientation-v2-0-3361fa5f7543@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- RD Babiera <rdbabiera@google.com>, Juan Yescas <jyescas@google.com>, 
- kernel-team@android.com, phone-devel@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.3
 
-Phy tunings to be applied after lock are never applied on gs101.
+On 23/11/2026 13:18, Uwe Kleine-König wrote:
+> From: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+> 
+> These arrays already mostly match the most used and generally
+> recommended coding style. That is:
+> 
+>   - no comma after the list terminator;
+>   - a comma after an initializer if (and only if) the closing } is not
+>     directly following;
+>   - no explicit zeros in the list terminator;
+>   - a space after an opening { and before a closing }, a single space in
+>     the list terminator;
+> 
+> Adapt the offenders accordingly.
+> 
+> Reviewed-by: André Draszik <andre.draszik@linaro.org> # for Maxim MAX77759
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+> Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> # max7360
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 
-On gs101, gs101_tunes_pipe3_postlock[] disables the high-speed squelch
-detector when in P3 / U3 to save some power. In U3 (USB3 suspend) there
-is no SuperSpeed data traffic to detect, and link wakeup uses LFPS
-through a separate low-frequency detector. Disabling the high-speed RX
-squelch detector in U3 avoids keeping it powered while the link is
-suspended.
-
-Apply PTS_PIPE3_POSTLOCK once the PLL and the CDR have locked.
-
-Fixes: 32267c29bc7d ("phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)")
-Cc: stable@vger.kernel.org
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index ccaf0f27c4c8..f647688c3bfb 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1745,6 +1745,8 @@ static int exynos5_usbdrd_gs101_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
- 	if (ret)
- 		return ret;
- 
-+	exynos5_usbdrd_apply_phy_tunes(phy_drd, PTS_PIPE3_POSTLOCK);
-+
- 	/*
- 	 * Set this while still holding phy_mutex, so that the orientation
- 	 * switch callback can't miss an orientation change.
+Reviewed-by: Matti Vaittinen <mazziesaccountw@gmail.com> # rohm
 
 -- 
-2.56.1.750.gf70dc682cf-goog
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductor
+Oulu Finland
 
+~~ When things go utterly wrong vim users can always type :help! ~~
