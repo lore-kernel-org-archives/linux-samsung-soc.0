@@ -1,88 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795440790;
-	b=C2mcVop4q7pPxFNTyRM91GhZvC7Q6nNuLqS97T/NKOp7dQPdhKApxuSHou7dK8vTyGS8
-	 1BGnAipUh799kOtBPohaQz41Gc485aX6klK8RNYfZbWLPQdm+R2sobMrY9NJu570W1mlj
-	 kv7e2Xa4qN86wDTpq32qHd8PX2N80nGTHkRbCAdBvg94enbrgnAk2Ti1DiQHj39uIvCFJ
-	 Vi3K+DCXu87uF7hBcE6PM5neC3S1GTdQOU8bmBiQ+iXB0jaNxUEouiuu4hGllSDU6j3ca
-	 LTj/ws3yMuXXS/paIFear2nRdOhgkTiiffXx2JHm8Kh4YdoapyXkSobqkum5fEcAh6A==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795440790;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
-	b=XW71yWj6t7wihwnYZOX5sFHncJ//0BNLxqQ5QZDLHVIOUm7JWBVPo4FE6kY/9obIzhEN
-	 BG23kZ9q1GGjw3ShCcPQcZF0YEJzt6p9fbHTdH9G6ZpvWYXiCV1h+K5x0k0iPgc0L3CCD
-	 my5XeXL8JD/BOMl56TG6o3EOINmb4QGw68nINtDmdJEZS5edsgda/WW2Eiu3D0S5PXSsb
-	 zLNgD74xav5eC1a2Jz9G+U4pOGdWhR2Sp1AtYepwtjjhITgAvAmhVO5wxk6gsqIAukxCR
-	 kgHxvxS8wzlpBcPV3OhfuirljsXYJb6oD7WF3RVtcbWxtQnh+DLjgKdoj+5kSkX0ZTA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=KwzhDLrr;
-	arc=none smtp.remote-ip=209.85.218.42
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795443512;
+	b=IE6yuKbVIs86GjaCyRNJJ/5rIMqYGkGipKhO4IyMwy4B8ChoU54SLsloCOHP2kRnFseE
+	 rDbNAdJJHhgkEwjBaW+plbTjSLnIpP2ejr+NxdGtqUuYqbTyf9txDRvxUc6ibwlieXDMc
+	 rE58E+h4CmYaMVAxXLTPX0IB+t6rnA0FLu2lpYrULKYNM3CUSYuhIQrR7l1Ux4JUwZtre
+	 PhgoyfDI43T8scL5nOv8RRjJIxNc5vzHlLa28YNvG1/PV+k7mGGAXfd26eN+g+B+033YF
+	 RojDbPAmMF6UQHbv8Gg9LcwU513IyFUWRa+4Mb3qjFlmbeL57ONB03ciUgiztPpSVAA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795443512;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=p038IxcP1LIpPQwiIMGTCY2lVaAX4hwB1WZdznpqdbk=;
+	b=dfyT9OWdErCLrNvYsW6ycCu5A4QoyrZP9/+Kbwr1dRPVKSgmrS+A6Hebg0UccDMLcbTX
+	 OxqO2QD+hAdXLKoEIZwzSuqrRlxf2+Ri0MzwSp1uGbSRS8TlcTHYAZiL7/bW3dBodNKjD
+	 DGnzcG6q5Y61Oqz4tKkWnrGZon/CSHGJwpNrJywvZ/BoXEShsQlbyEeCQueJlgIIa0/oi
+	 u9b0OOwv6TB6i9IuksTfWHeFU2/OibEYg/t+mGBlq1Alo7SyJYy9rb30m5YQVoFdzGVwi
+	 svymqHIz83Dpmn9kR1CQ7BdGUnXkffT5RUCWSmA6MbyAWL9mbnhV581Cx+sFp0hex8w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kzQCQe2K;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57D2606A31E;
+	Mon, 23 Nov 2026 14:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kzQCQe2K
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795443511;
+	b=nohEL4wH59/hQb78zNVpixLTz88KVIUEkCItcxK+NUT+z528sD41/vJwlyO5ER89OodP
+	 iD8LOYsi3e64/GBgyDfshpGR4NCv3YHgLyMVVAG8+01d8oGnRMsrPNjSAk/u4dlVUxFpQ
+	 E20XJWtgEgPQjbkoaUX8WLL/aCLXs5tLE/SN1X3TKsR/ntYC3V57oOM3F5gnHHMw5JR4V
+	 0uLBJbtZYctvjWbXO0TdP4HgZ9Az1UYASVg+/LDGPllAgbXtFua5/5ittRQbt2TCkZVfj
+	 2Uqd3e7KIqukooUW/k6vXgdvXVx+vzw2GAlIsR0BvurtgjX0ZexPtuMOoMVYfZykK3g==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795443511;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=p038IxcP1LIpPQwiIMGTCY2lVaAX4hwB1WZdznpqdbk=;
+	b=hJ1Of2ZS/4LrORbmx9T4ssokg2+GWtkdi4TXvKyxeRSRaYL8UVpOuDSMANcVmVT32GQC
+	 2B1wWEgbLL7BW7w/y7MVi6Vk9FNJc56a53nYdrBrsIR6e24EFMB58WZZ75LPzFWOYgZuO
+	 yCOHAczEU0Kw3UQK1KDBAZdSipO8MH8tQAi3fwvw6wVgRDE5wDV31b/UW2jbyC5ooR4Bb
+	 5Cymm8FcEWRa/IpxJeqRXFrAysp96nJhqhK7IFh+eU4P3dmzxLlJAUkZqTkd1EJRepA/k
+	 CTP53eLlgHldkvMm7CdMaekho/se1o9deSOwF0b53Q1fLn3nsqeyLD9MvOnJ7FhcLxA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F382606A321
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 13:33:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F382606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=KwzhDLrr
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c5188e17487so54722966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:33:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795440788; x=1796045588; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
-        b=KwzhDLrrYMrYN/9iLc3BK1W5Hw/5kWfO7v8nt+f+sJFsKTl1Utb0o6LSAQuZwIR1s+
-         tt5lwGKwMNdrDOq8C7yG05WzHnAREQMH/a67iCrgl7VqjOGup1YpS62k31plfLk6uhaQ
-         lsxlNAxVQejQuce3fZVLmhkFdeJIU0WnMT0LTblqiA9Fb6e5bm/wxHQbfZ+rfzTBltm3
-         7NqW3h+ZqSF2X+dPo9FFleSMpWAmyUqbjHRCqLl72GGPrp03dEabacwg7Omta5LIl9cO
-         8B3FpHWM9E0gt+hQooV6hy3b8p2xlRbnOI9FrvB4h02ajlvKAZPc/8EMI0aTxfTqiEXS
-         QELQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795440788; x=1796045588;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
-        b=nHooNxLDjEmcquzrPidQE0OC9AVK6hxvx4vOmL34g7WxkKKx59wiTgYojwZbiOTsct
-         25jNQT8WsZ4bykZuI1hQqMWJE81dWHjiD0edLpTpGA/QYX5SwftsY5XJMJKTbNMQ2DlW
-         0/1OYYJgWEQDvZmGgDTkjl3tF7dDh9ul+qBvEXjteN7jub2z0M4sc8c2dfH4b5E6/+aK
-         SD35M83+VqPdmkOr2elxFeWXxkbR3ry1K+ViJT0v/W1xnEykIfavyi6RVyCpgJCTlEY/
-         BiOQT6lq/JESm6jWk9yW6h4cuiBooHr9OT7w8owIvBnrwq4wwOCgywyhht4NONgBj0iV
-         vzMw==
-X-Forwarded-Encrypted: i=1; AL+hErGjLLfAPSuI7pOMPiwZSEOin/xEJi74A0Xhi7OQe6QP75iwojjQmg1OYOdhUg0oMrl03Ib3PxDYDMnoIqjTHKgoLQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+lFKA9UN3xPwsGGXJlPyqAS60nIlni8xtl54vn2GUMu8DyVs1H
-	+lrchJHV8Y2ZotlWaD35O/W1rOylCJ5aRo5dlCtRo5PPpkL8qVwioLHMGzvFpjOMdu4=
-X-Gm-Gg: AZFdTZdPGB+4Xy0x1UPiOiMYVprePMJyTVLzmTcLa9AcAfJ7N4qnx2yVjg22HxSRFUS
-	x9pY3LRqbjbdu098O83ZoVNn9lhz814cNC5svfvuQSfiPouNJUdSV85DFgw2mMsv+IpUfB501yZ
-	Qu25Q6XKhysMYB1EsLERlqZtp6Z6qYh/TYLcxy7tRzterfUa/1YYmW5rQrMlKA1yidjU+GJfAKZ
-	fNfG49StZVFO/RcuwcfbiWkSTsITog0wbAzRHTutw4el4QWk/Ss69308yfSf1qYefLyzJNgns/q
-	PpH7rlX92dhYqNr5NClrGISmNSN3IDQWOTugD1CDoj7JgDkKE1qIvxUSj11IZxDZwaj4qWQrx1S
-	TnxEX2h3xW9DXwp3hxBa/JobTRRr6qM6l+UOQZ+M03mEh5qAk9+9k51KmOEBGdQrXpgzJFxOs/q
-	p+9DtXiXMi0EBeTpcS34OaL9Nm8yMkOgW+wv8CZ3hpMO8ZbHr9Q7z78X2EfJ+feYWWIxykz/+h4
-	edR3dCSBGxBD70j7rqJaEfBlKFltL1MK37CX8WCT5cZu1dZHKc3wCkl8nbMvzSsczi5VGMt1lo4
-	4xcp4PGJ8/3XBCHeQq8b0nkVLw9HOXuCTOqZmYw=
-X-Received: by 2002:a17:906:a88c:b0:c29:22cf:b0f5 with SMTP id a640c23a62f3a-c513ab3ad84mr761410766b.33.1795440788381;
-        Mon, 23 Nov 2026 05:33:08 -0800 (PST)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae68788sm407213566b.29.2026.11.23.05.33.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2026 05:33:07 -0800 (PST)
-Message-ID: <c3200683-9d2c-4ab3-bc7a-d78452456bf3@linaro.org>
-Date: Mon, 23 Nov 2026 15:33:04 +0200
+	by smtp.kernel.org (Postfix) with ESMTPS id 05DCC1F00A3C;
+	Mon, 23 Nov 2026 14:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795443511;
+	bh=p038IxcP1LIpPQwiIMGTCY2lVaAX4hwB1WZdznpqdbk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=kzQCQe2KC6EFuSGrhtQLNA2bqn8lhkd9AK/8GJhC2lJLL5O0pyeZxcYwSGC05k9f+
+	 y49BmKI03nf0bqQvwbgvw+q0JHDRMLEmQjJu16bWtKnKwbLwDMHPi0uTF49kRVK73X
+	 2pBg0xtkQEMUHdCxB4VXvTB7mbyWCzPL35xgmV0zt3aFMak6FiVT+ct9nUqdKOeFqe
+	 8m6US2biNdlPdiyS5PaIEI9ziPQyuqPVH3M7jYt4gFnCKJ8pQiUN79oStxmDEf7uTq
+	 0Ijp9bJb4aInyDdqLXuWXUDReOMuMV87ZOcLPpEghIPBEUaN44ADe3Ll7mVlv/3Xp7
+	 wpH193M4h/z+Q==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 9045A4C4CC;
+	Mon, 23 Nov 2026 14:18:25 +0000 (UTC)
+From: Shigeaki Asai via B4 Relay <devnull+y-asai.0816.docomonet.jp@kernel.org>
+Date: Mon, 23 Nov 2026 23:18:23 +0900
+Subject: [PATCH RFC 1/2] clk: samsung: exynos-audss: defer probe until
+ pll_in is available
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,18 +83,72 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: samsung: acpm: Don't use pdev after putting it
- in acpm_get_by_node()
-To: shyckless@gmail.com, krzk@kernel.org, peter.griffin@linaro.org
-Cc: alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20261123-exynos-acpm-put-v1-1-447097ce7998@gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20261123-exynos-acpm-put-v1-1-447097ce7998@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261123-exynos5-subcmu-defer-v1-1-43aef47d4f2b@docomonet.jp>
+References: <20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
+In-Reply-To: <20261123-exynos5-subcmu-defer-v1-0-43aef47d4f2b@docomonet.jp>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Shigeaki Asai <y-asai.0816@docomonet.jp>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795443504; l=1456;
+ i=y-asai.0816@docomonet.jp; s=20261004; h=from:subject:message-id;
+ bh=0WAaBWSTBR/BaFm9s6nACS8IfkOWalo+FbjaB+ytfE0=;
+ b=ojdX6lEvfEj1MUJHgjI6r7HyjtQLZpgqI5HQW1eBkBLcHCNLBocqjpoWJlXr0HFqQp4hJI2QZ
+ O/BlN2Pwov+CIyNi8aS4+xZmIwXyf2TU4dDIhFaVg2uQoiU88ETYC6S
+X-Developer-Key: i=y-asai.0816@docomonet.jp; a=ed25519;
+ pk=jkd95ViSn8i/X3oPMHYG1A8mae8IOwOKGE64kzLqC5c=
+X-Endpoint-Received: by B4 Relay for y-asai.0816@docomonet.jp/20261004 with
+ auth_id=1110
+X-Original-From: Shigeaki Asai <y-asai.0816@docomonet.jp>
+Reply-To: y-asai.0816@docomonet.jp
 Content-Transfer-Encoding: 7bit
 
+From: Shigeaki Asai <y-asai.0816@docomonet.jp>
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+The "pll_in" clock is optional, so a failed devm_clk_get() is silently
+ignored and mout_audss is registered with pll_ref as its only parent.
+
+On Exynos5800 (and Exynos5422) "pll_in" is CLK_MAU_EPLL, a gate clock
+of the MAU sub-CMU. If the sub-CMU registration is deferred until the
+power domains are available, this clock is not registered yet when the
+audss clock controller probes. Audio then runs from the 24 MHz pll_ref
+and 48 kHz playback is about twice as fast as it should be
+("failed to reparent mout_audss to mau_epll: -22").
+
+Defer the probe when "pll_in" returns -EPROBE_DEFER.
+
+This patch was written with the help of Claude (claude-opus-5-5).
+
+Signed-off-by: Shigeaki Asai <y-asai.0816@docomonet.jp>
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index e11ac67819ef..7c06350111ed 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -153,6 +153,9 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 
+ 	pll_ref = devm_clk_get(dev, "pll_ref");
+ 	pll_in = devm_clk_get(dev, "pll_in");
++	if (pll_in == ERR_PTR(-EPROBE_DEFER))
++		return dev_err_probe(dev, -EPROBE_DEFER,
++				     "pll_in clock not ready\n");
+ 	if (!IS_ERR(pll_ref))
+ 		mout_audss_p[0] = __clk_get_name(pll_ref);
+ 	if (!IS_ERR(pll_in)) {
+
+-- 
+2.43.0
+
+
