@@ -1,136 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795438189;
-	b=M2DeEtGcT/1VY+QLnWMhcAwDQW30/R9Eog5TFRTShgZ+ehOohJf3Vku/Zt9RXpGAuFKf
-	 dUaPr6yEwKAm581JOlQk3VCrLqB3Lj5xwUFvTEbN7RnMakQIRpgKp1kozZI7pc6OUdQdJ
-	 kUp7gUieG6qSGCb1vyefIPxhW9yjTtoSabxFBO+RY3EtSabAQnDtSO2eiEeh46l8IqUk7
-	 yzOuP1xE+sdb43iDQvU1sEQ2i0YAtVh1kjEq8ZSVS0OwCCIuXOjWklndlTqmvzNbu2QKv
-	 1GG6m5llXMr0e70bTfmHMHgA7vipK3OCYN7Y3Cq83TDwGWK66VVO29CKt4m23iKRrNw==
+	t=1795440790;
+	b=C2mcVop4q7pPxFNTyRM91GhZvC7Q6nNuLqS97T/NKOp7dQPdhKApxuSHou7dK8vTyGS8
+	 1BGnAipUh799kOtBPohaQz41Gc485aX6klK8RNYfZbWLPQdm+R2sobMrY9NJu570W1mlj
+	 kv7e2Xa4qN86wDTpq32qHd8PX2N80nGTHkRbCAdBvg94enbrgnAk2Ti1DiQHj39uIvCFJ
+	 Vi3K+DCXu87uF7hBcE6PM5neC3S1GTdQOU8bmBiQ+iXB0jaNxUEouiuu4hGllSDU6j3ca
+	 LTj/ws3yMuXXS/paIFear2nRdOhgkTiiffXx2JHm8Kh4YdoapyXkSobqkum5fEcAh6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795438189;
-	h=DMARC-Filter:Received:Received:Received:DKIM-Signature:From:To:Cc:
-	 In-Reply-To:References:Subject:Message-Id:Date:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Mailer:
-	 X-Last-TLS-Session-Version;
-	bh=9S+zYbf1+35Bjw2Mrwh8qKAGonx8naAVwCL/M52lAos=;
-	b=xekW5UXjAQI8xey0S4SyOJuCcNeysKvz+43LG3Lzn7+VBZeNG7rRqqWfWYEtdXHnCyxf
-	 MckWwJ974kuuOP95ooWoxqxNRQB46NxO3xbyiiCzuix4PD623wvEEKSS/kvR77cy27C+i
-	 BFLfq964Qxoh5lydkLPUC7dCEQxxQr6TBQ6FXJrUwDSUHTzL2yh/pUCUifNgbMYhQbSgY
-	 OyIE3KvXOuWyB6KOv1OGkd4+TGS+ePDuIr31NVedpWMtpbCKpyC19rghMMhSrTVUsq5vw
-	 sbvIkTZ5F/FzKLUU069hOfryl1/TRG75xJ+v8SeoRWA7HIqHECvAl1+vPNA8GbD+3jA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795440790;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+	b=XW71yWj6t7wihwnYZOX5sFHncJ//0BNLxqQ5QZDLHVIOUm7JWBVPo4FE6kY/9obIzhEN
+	 BG23kZ9q1GGjw3ShCcPQcZF0YEJzt6p9fbHTdH9G6ZpvWYXiCV1h+K5x0k0iPgc0L3CCD
+	 my5XeXL8JD/BOMl56TG6o3EOINmb4QGw68nINtDmdJEZS5edsgda/WW2Eiu3D0S5PXSsb
+	 zLNgD74xav5eC1a2Jz9G+U4pOGdWhR2Sp1AtYepwtjjhITgAvAmhVO5wxk6gsqIAukxCR
+	 kgHxvxS8wzlpBcPV3OhfuirljsXYJb6oD7WF3RVtcbWxtQnh+DLjgKdoj+5kSkX0ZTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=bootlin.com;
-	spf=pass smtp.mailfrom=bootlin.com;
-	dkim=pass header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=2eVrJ5W7;
-	arc=none smtp.remote-ip=185.246.85.4
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=KwzhDLrr;
+	arc=none smtp.remote-ip=209.85.218.42
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A4C606A321;
-	Mon, 23 Nov 2026 12:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 69A4C606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F382606A321
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 13:33:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0F382606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.a=rsa-sha256 header.s=dkim header.b=2eVrJ5W7
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A2CAE4E41634;
-	Mon, 23 Nov 2026 12:49:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6C4BF601E1;
-	Mon, 23 Nov 2026 12:49:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58F5211E6A338;
-	Mon, 23 Nov 2026 13:49:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1795438180; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9S+zYbf1+35Bjw2Mrwh8qKAGonx8naAVwCL/M52lAos=;
-	b=2eVrJ5W7Q2n7kIAXCLAfrUUYblKTfODmq1QVOkzJvI7oWSJXMqLWa2QzpazEjogSDqKzLh
-	s8sAxDfXwnzYNVSFG3dkGdEGmdUXt3V6GstTnIqHqBxkh8XBlm+2KLChquHHZoUNIkU7IX
-	UQyATbEVJjrbrnmNMUfIVKumyb7j01Fkv0K91l3BkJ1SUMdQM9PgFOlheX31bjRmCLMnxw
-	cNWH2JioMQhckzm1o8iOFOfY5k1Uwqf3FjbPF3P5HeZId+1XNnPRN22o00uI7iYRkuBNtR
-	Ug/iv3lmeQrfv8sRhqI1i1om5BfRunNZelsRIHCwZoJKMWlALzPwJIKLHejLUg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jyri Sarha <jyri.sarha@iki.fi>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Paul Cercueil <paul@crapouillou.net>, Marek Vasut <marex@denx.de>, 
- Stefan Agner <stefan@agner.ch>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Linus Walleij <linusw@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
- Randy Dunlap <rdunlap@infradead.org>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Yannick Fertre <yannick.fertre@foss.st.com>, 
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
- Philippe Cornu <philippe.cornu@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Ondrej Jirman <megi@xff.cz>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Igor Reznichenko <igor@reznichenko.net>, Michael Walle <mwalle@kernel.org>, 
- Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
- Jagan Teki <jagan@edgeble.ai>, Jianhua Lu <lujianhua000@gmail.com>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, 
- Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
- Joel Selvaraj <jo@jsfamily.in>, Icenowy Zheng <icenowy@aosc.io>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Casey Connolly <casey.connolly@linaro.org>, 
- Michael Tretter <m.tretter@pengutronix.de>, 
- Cristian Cozzolino <cristian_ci@protonmail.com>, 
- Junjie Cao <junjie.cao@linux.dev>, Ryan Brue <ryanbrue.dev@gmail.com>, 
- Nickolay Goppen <setotau@mainlining.org>, 
- Stefan Mavrodiev <stefan@olimex.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Robert Chiras <robert.chiras@nxp.com>, 
- Alexander Koskovich <akoskovich@pm.me>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Artur Weber <aweber.kernel@gmail.com>, David Heidelberg <david@ixit.cz>, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Yedaya Katsman <yedaya.ka@gmail.com>, Andy Yan <andyshrk@163.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org
-In-Reply-To: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
-References: <20261026-drm-panel-funcs-v1-0-5e3070a3478f@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH 00/35] drm/panel: let the panels use the
- atomic state
-Message-Id: <179543814467.190741.17345151948628824699.b4-ty@b4>
-Date: Mon, 23 Nov 2026 13:49:04 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=KwzhDLrr
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c5188e17487so54722966b.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Nov 2026 05:33:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795440788; x=1796045588; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+        b=KwzhDLrrYMrYN/9iLc3BK1W5Hw/5kWfO7v8nt+f+sJFsKTl1Utb0o6LSAQuZwIR1s+
+         tt5lwGKwMNdrDOq8C7yG05WzHnAREQMH/a67iCrgl7VqjOGup1YpS62k31plfLk6uhaQ
+         lsxlNAxVQejQuce3fZVLmhkFdeJIU0WnMT0LTblqiA9Fb6e5bm/wxHQbfZ+rfzTBltm3
+         7NqW3h+ZqSF2X+dPo9FFleSMpWAmyUqbjHRCqLl72GGPrp03dEabacwg7Omta5LIl9cO
+         8B3FpHWM9E0gt+hQooV6hy3b8p2xlRbnOI9FrvB4h02ajlvKAZPc/8EMI0aTxfTqiEXS
+         QELQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795440788; x=1796045588;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+        b=nHooNxLDjEmcquzrPidQE0OC9AVK6hxvx4vOmL34g7WxkKKx59wiTgYojwZbiOTsct
+         25jNQT8WsZ4bykZuI1hQqMWJE81dWHjiD0edLpTpGA/QYX5SwftsY5XJMJKTbNMQ2DlW
+         0/1OYYJgWEQDvZmGgDTkjl3tF7dDh9ul+qBvEXjteN7jub2z0M4sc8c2dfH4b5E6/+aK
+         SD35M83+VqPdmkOr2elxFeWXxkbR3ry1K+ViJT0v/W1xnEykIfavyi6RVyCpgJCTlEY/
+         BiOQT6lq/JESm6jWk9yW6h4cuiBooHr9OT7w8owIvBnrwq4wwOCgywyhht4NONgBj0iV
+         vzMw==
+X-Forwarded-Encrypted: i=1; AL+hErGjLLfAPSuI7pOMPiwZSEOin/xEJi74A0Xhi7OQe6QP75iwojjQmg1OYOdhUg0oMrl03Ib3PxDYDMnoIqjTHKgoLQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+lFKA9UN3xPwsGGXJlPyqAS60nIlni8xtl54vn2GUMu8DyVs1H
+	+lrchJHV8Y2ZotlWaD35O/W1rOylCJ5aRo5dlCtRo5PPpkL8qVwioLHMGzvFpjOMdu4=
+X-Gm-Gg: AZFdTZdPGB+4Xy0x1UPiOiMYVprePMJyTVLzmTcLa9AcAfJ7N4qnx2yVjg22HxSRFUS
+	x9pY3LRqbjbdu098O83ZoVNn9lhz814cNC5svfvuQSfiPouNJUdSV85DFgw2mMsv+IpUfB501yZ
+	Qu25Q6XKhysMYB1EsLERlqZtp6Z6qYh/TYLcxy7tRzterfUa/1YYmW5rQrMlKA1yidjU+GJfAKZ
+	fNfG49StZVFO/RcuwcfbiWkSTsITog0wbAzRHTutw4el4QWk/Ss69308yfSf1qYefLyzJNgns/q
+	PpH7rlX92dhYqNr5NClrGISmNSN3IDQWOTugD1CDoj7JgDkKE1qIvxUSj11IZxDZwaj4qWQrx1S
+	TnxEX2h3xW9DXwp3hxBa/JobTRRr6qM6l+UOQZ+M03mEh5qAk9+9k51KmOEBGdQrXpgzJFxOs/q
+	p+9DtXiXMi0EBeTpcS34OaL9Nm8yMkOgW+wv8CZ3hpMO8ZbHr9Q7z78X2EfJ+feYWWIxykz/+h4
+	edR3dCSBGxBD70j7rqJaEfBlKFltL1MK37CX8WCT5cZu1dZHKc3wCkl8nbMvzSsczi5VGMt1lo4
+	4xcp4PGJ8/3XBCHeQq8b0nkVLw9HOXuCTOqZmYw=
+X-Received: by 2002:a17:906:a88c:b0:c29:22cf:b0f5 with SMTP id a640c23a62f3a-c513ab3ad84mr761410766b.33.1795440788381;
+        Mon, 23 Nov 2026 05:33:08 -0800 (PST)
+Received: from [10.11.12.111] ([79.115.63.240])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae68788sm407213566b.29.2026.11.23.05.33.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2026 05:33:07 -0800 (PST)
+Message-ID: <c3200683-9d2c-4ab3-bc7a-d78452456bf3@linaro.org>
+Date: Mon, 23 Nov 2026 15:33:04 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -140,59 +92,18 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: samsung: acpm: Don't use pdev after putting it
+ in acpm_get_by_node()
+To: shyckless@gmail.com, krzk@kernel.org, peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20261123-exynos-acpm-put-v1-1-447097ce7998@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20261123-exynos-acpm-put-v1-1-447097ce7998@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Last-TLS-Session-Version: TLSv1.3
 
 
-On Mon, 26 Oct 2026 13:09:49 +0200, Dmitry Baryshkov wrote:
-> The panel is the only element of the display pipeline which never sees
-> the atomic commit. Its prepare() and enable() callbacks get nothing but
-> the panel, so a panel which has to be programmed differently depending
-> on the mode can only guess it. The NT35950 driver, for example, saves
-> the connector in get_modes() and reads connector->state->crtc->state
-> while being prepared: without the locks, from the current state rather
-> than from the one being committed, and with no way to reject a mode it
-> doesn't know.
-> 
-> [...]
-
-Applied, thanks!
-
-[01/35] drm/panel: remove the get_timings() callback
-        commit: 874b9d3ad6e0087ea21aafcb2ada3f6a6a8c5a1c
-[02/35] drm/panel: remove the unused struct panel_bridge
-        commit: 83fa60df1302667ce139457208aee277067732db
-[03/35] drm/tidss: get the panel type from the embedded bridge
-        commit: eb5352d63fee9733f798f53e0418c17a5184d258
-[04/35] drm/bridge: lvds-codec: use devm_drm_panel_bridge_add()
-        commit: 4afe0e580a135dd4917486ccf7cff3442b6596ff
-[05/35] drm/ingenic: use devm_drm_panel_bridge_add()
-        commit: cfac2956bdaabec099fdc471ebd9ae9ac0defd65
-[06/35] drm: mxsfb: use devm_drm_panel_bridge_add()
-        commit: f88a377f94b03796ea5c7d62fb3b061f6a0bb040
-[07/35] drm: rcar-du: use devm_drm_panel_bridge_add()
-        commit: a57b24576b38dafdcd859aff8f129c0c0a29fd04
-[08/35] drm: rz-du: use devm_drm_panel_bridge_add()
-        commit: 666e1e77703cbcff43d48e77a24f72e4147510d8
-[09/35] drm/mcde: use drm_panel_bridge_add()
-        commit: 0f7bcd3b5439845acfa6a381a7cc314262b2d4fe
-[10/35] drm/pl111: use drm_panel_bridge_add()
-        commit: 3f603bf783886f681721218aae4c8c709ee961bf
-[11/35] drm/rockchip: lvds: use drm_panel_bridge_add()
-        commit: 8165f8e83c3a660b7311337aae0469d760ff5f26
-[12/35] drm/rockchip: rgb: use drm_panel_bridge_add()
-        commit: 66acc28d44cd41d9ad63be5840556450f84f6b50
-[13/35] drm/panel: remove the _typed() panel bridge functions
-        commit: bbdf706498e19c35c56e3d69178c3e833f014e06
-[14/35] drm/panel: remove drm_panel.connector_type
-        commit: 5888187709034391aaf7f1ab8d4910285f0b404f
-
-Best regards,
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
