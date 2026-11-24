@@ -1,62 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795526890;
-	b=P68+qkeEFFM6/JQJxtCh9ZDqZ+LmSYbIhXKJTl29q5N6yJff1RLo8k79P5gdN/TVRKD7
-	 byucrpoLEHvMhv6XXS8QQa7QCMx5tXCy3B6MTX5WseJykRh4+J+LhW8OzAFVoSOE+muEL
-	 RquK8nEdscSFiA5NzDxSCG1TU14fVYXBolkKFc7xLRF/7+I9ydGnmdECt9WVkNJBj5Xk4
-	 wm9BON3Se2bxMc9JTSNkOSKUA7OH9cHddaWOFOsE8j/XVKHlIOydKpcYLOyOzfU8x6O21
-	 MeIQvr+HxWUhny5s3S3LBEMXzZ1E9M9RGXFq4DEFhL0R50opKPBm2R7jVODJjUqRaww==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795526890;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:From:To:Cc:Subject:
-	 Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=ETQq20MuksAGlwb3NO4DBAjWNREDGehauvLDnlkj6/s=;
-	b=rnoDC7Ydsm76DbhJHIdlKhbDI8QYGF2/gDQ1H0BFFdYs3oLyfJwBEqZJxDlyPPi4F+Kj
-	 WZgQXB6jmP2KKaiDhzCEAzKnwNSyxOUFYZ5j62I71mXw2aYnaGUI3/eO2Ss736Kw/vHSh
-	 UOFE2amdUkgBgReSschyjAzXM0oAU8TTzPYgYSO+oaHYcQqqNa1EPmGp6OMYNGjyikR5L
-	 6k95zInbrXoe+UN2+lEk51O94UP/r9EsEyWyptHRGAsfQv2H0MlgKLY5Xio0+Q+V4BbLr
-	 wcJFIg14wd3hKuqr2WkbeOlM9G37bqDs6zgRInnxPnGMQC2HRA4r8KGUChYDG0pPN0A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=exDRlvWF;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9C5606A31E;
-	Tue, 24 Nov 2026 13:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9F9C5606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795540493;
+	b=axpoo8XHbSq/3kRv68U0NoJT76hRkGqC/mrFPWqv+lbb+N9dUQUUDl6CjEBgpplMPGFv
+	 BfMnN2MQUVQ8CgVIxTRO3REPRpPunTyqLqbeVBM26ZGr/rUVZrBym5uQa5LfA3ZeYVBQu
+	 Zuk1HIo7uKZA6oLHscFoyz62bIXXZ0e/phqhIBfUPrPmnkPF82xPg5HwbcdmIrX09HCTB
+	 gDLH7rkderfRUNVbd0qoZ7Fy+Yv/28Enw4Ew6yDED2Ufb3HFotW4rib+u/RYpQ5LjanTV
+	 L5a222ZxmHtmdXo1D3osd2nCQYAi/49lz1vR3M//79SpZS/z914rv9XXy7/RqU+2qLQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795540493;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
+	b=SW0igwskoM6UsEx7bcuIYGlFHXqC7GNruK3s2jwo+t5ih+RJn8BIygffIJ7q2lRW5WdY
+	 ozAeP/g5IHQ2rvZe4eVDsRSjBzC00ReXRWpzwMg9QjzDbDTJsFDLi7/1uPIxUMmHtqCih
+	 WTOon4is+O6X8S0ZOWYq6VmN0mYK3VPwwu7J+j5TxGaACS4kJam4MAoPWtXo0QN+Mwv7V
+	 xMvR3casQomykQ+6F+EB/bhPMvQm2Tf4+FZI6htYIdcSaYCIA2wEg8cBDdFgzYWMpEUz4
+	 ipyadlVnTlkVuqWPuTI61QFInaHBwTo8DuUmAVk09k8ENhhaBzBLvL/sDCE3Kj0psYQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WoyQEfYm;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB15D606A323;
+	Tue, 24 Nov 2026 17:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=exDRlvWF
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEB1D339;
-	Tue, 24 Nov 2026 05:28:05 -0800 (PST)
-Received: from e127648.arm.com (unknown [10.57.71.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 37AE33F882;
-	Tue, 24 Nov 2026 05:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795526888; bh=GVdatysqi0e4G0sd2VbmtUUpEO7i1Weoa/mvmiArCXg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=exDRlvWFwL12WP1PWCwZb4SIgXR8PW54RjYkiT2ssv8RNvSJ5I/lPj+aOvJ4OtwFF
-	 GsBx43FBNNCF1WAj3E++bM78yR8XjOoND1nSKuehWreq0DRpai3tXTslpv4Bdgn7D3
-	 NvvHSNiGSSSHGLIrsqvQNr5f3DOUhv7jhedaHEfc=
-From: Christian Loehle <christian.loehle@arm.com>
-To: tudor.ambarus@linaro.org,
-	bzolnier@gmail.com
-Cc: krzk@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@kernel.org,
-	lukasz.luba@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCHv2] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
-Date: Tue, 24 Nov 2026 13:27:56 +0000
-Message-Id: <20261124132756.1306906-1-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WoyQEfYm
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1795540492;
+	b=xW4lAlqwEZpkVT3HTSl7zcBNm3i9eRHLsKK0y2kPID1oSspSf/saeGCHka8C92YI+UyN
+	 IMOk/fl/Ic4RbE4ucRE4aPuzFYDkNy7IO6vKCMtl6t3mfRlu4OXC87Pb02yCUTzGibh2r
+	 xLMKZ99DCedj2hliq2n0874tam+fedspNoHx3WMIlj2rHptz9+wYKdNyxWzS8ax9kX1AP
+	 g14m9fHn9dJ1axBIN9ygnfYOY8Esy8GNOCnDYSCLaLafOvJp0Y3B5CyzjcLgHyPC2X0E/
+	 ro3K9DS42cDNA8zzKCNlgZb0xGqOKcsQ8syp29owBbTl8WmGweVSpR923zJAosJxfgA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1795540492;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
+	b=tvbX5NscNI4qokrSjptVRqbjTeT9gtUJzuYYYAh9hKg/Cgr5E2njc3jllSHIlfv5ahv5
+	 pBDKfR/zW3EIWe65OM6Ey660fz4frsdi3c+PWnFHdFGmzugu1XbaTymUQgj5PLMbFfEQG
+	 6sblXL4MjLaaR4iLzg2LFpRWUGBViSHnhnvjOyWPuxxY3sLy8yTIKevglgiaFO0mxjI3G
+	 J4gqKth9poj2rYbLny7wCs0rxovL8sUwNG8+E/fGcbxeX7B0WFs9CntmqbxASK1QzhgBG
+	 Vs+hJ9T8JhtCqF+VFHHWQIbSbh7Sc+VedWX1XK+t+lnXk0kLAjM0UakBwn8gYOWgsMg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.kernel.org (Postfix) with ESMTPS id 20AA81F01565;
+	Tue, 24 Nov 2026 17:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795540492;
+	bh=NLcacHh2AlI+z6F4X0aPUFEo3odgTr28TBoLjE+0958=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=WoyQEfYmKrPjFXaYNQaBhQMqoF6keGSuY3wQiVd+3yFdPU/dh6Cg57hVSUirdlL7X
+	 jQkXIjwV54sXFpUPUfzj/8LuAB+d3rnKvBvXRHtJpP7Rjm3wIo8RcIvwiWO9btVkse
+	 +lZoti9BFbTmGy57L0qMXUrOtyn707/s8v/8s0KrafGPyTqeZb+a7y9dQVcY09LCkB
+	 6XXBs9DuaPRZhRzeT/Kfz1fuG1WwNFJksM2PCD5vlfk33liencolapkX9Kc1CAaebt
+	 Z/R1t8qxkGVdtX8X9XLlC1snw3/5OXfBpP4uSmm00HvFR/nsAZg+kBCe8QT7IBIcRy
+	 B53I40GXwh+Nw==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id A1D734CB02;
+	Tue, 24 Nov 2026 17:14:35 +0000 (UTC)
+From: Umer Uddin via B4 Relay <devnull+umer.uddin.mentallysanemainliners.org@kernel.org>
+Date: Tue, 24 Nov 2026 17:14:33 +0000
+Subject: [PATCH v2 2/2] arm64: dts: exynos: exynos7885-gta3xllte: Enable
+ FuelGauge support
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -66,175 +83,108 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261124-gta3xllte-usb-battery-v2-2-80bdcb1753bb@mentallysanemainliners.org>
+References: <20261124-gta3xllte-usb-battery-v2-0-80bdcb1753bb@mentallysanemainliners.org>
+In-Reply-To: <20261124-gta3xllte-usb-battery-v2-0-80bdcb1753bb@mentallysanemainliners.org>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Henri Ommer <henri@ommer.net>, 
+ David Virag <virag.david003@gmail.com>, 
+ Umer Uddin <umer.uddin@mentallysanemainliners.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795540475; l=1850;
+ i=umer.uddin@mentallysanemainliners.org; s=20261109;
+ h=from:subject:message-id;
+ bh=8/qztykzuOZxhphrQU0aaqpVGh+Y9V0/eepwjkmIL64=;
+ b=xxN/SEUrsf6G7DRd8I0L5w+daJviKds2Eahv+vUd/iz34IS2lEXrKVYDWEwVRAzpwya3rwvqS
+ Cbv1s6dlKyhC8AzPDFguGL+FpCdY6gsbVNFnBdPLpThnm5NJygo6SSe
+X-Developer-Key: i=umer.uddin@mentallysanemainliners.org; a=ed25519;
+ pk=Hsgrt4A72CFTe27AI1AAWlnLsiQrlb4+T+cbrfWDhUA=
+X-Endpoint-Received: by B4 Relay for
+ umer.uddin@mentallysanemainliners.org/20261109 with auth_id=1466
+X-Original-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Reply-To: umer.uddin@mentallysanemainliners.org
+Content-Transfer-Encoding: 7bit
 
-acpm_tmu_set_trips() supplies two thresholds, but the ACPM command writes
-all eight slots, zero-filling the rest. On GS101, slot 7 limits CPU clocks
-independently of its interrupt mask. Setting it to 0 C limits all three
-clusters to about 200 MHz while cpufreq reports the requested frequencies.
-This was found through trial and error while tracking EAS regressions.
+From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 
-Program slot 7 from the lowest active critical trip. Cache the low/high
-window and update the critical limit from set_trip_temp(), because the
-thermal core skips set_trips() when that window is unchanged.
+The Samsung Galaxy Tab A 10.1 (2019) has a S2MU005 Multi Function Device
+(MFD). It contains PMIC, FG and EXTCON. This commit enables the FG, to be
+used with a simple battery device to allow for battery percentages to be
+reported.
 
-Suggested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Fixes: 50a2c5d4062a ("thermal/drivers/samsung: Add Exynos ACPM TMU driver GS101")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 ---
-Since v1:
-- Rebase onto linux-next, including Daniel’s queued ACPM TMU fixes.
-- Cache only low/high and look up the lowest active critical trip when programming. (Tudor)
-- Retain the requested window even if programming fails, matching the thermal core.
-- Handle critical-trip deactivation and zones without an active critical trip.
+ .../arm64/boot/dts/exynos/exynos7885-gta3xllte.dts | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
- drivers/thermal/samsung/acpm-tmu.c | 76 +++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index 4799ef518a7a..6923256af1f2 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -39,6 +39,10 @@
+diff --git a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
+index 57df878cb563..1c0af6f89396 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
+@@ -22,6 +22,13 @@ aliases {
+ 		serial2 = &serial_2;
+ 	};
  
- #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
- 
-+#define ACPM_TMU_NUM_THRESHOLDS		8
-+/* Threshold 7 throttles the CPUs in hardware, regardless of the INTEN mask. */
-+#define ACPM_TMU_HW_TRIP_THRESHOLD	7
++	battery: battery {
++		compatible = "simple-battery";
++		charge-full-design-microamp-hours = <6000000>;
++		voltage-min-design-microvolt = <3300000>;
++		voltage-max-design-microvolt = <4350000>;
++	};
 +
- enum {
- 	P0_INTPEND,
- 	P1_INTPEND,
-@@ -70,6 +74,9 @@ struct acpm_tmu_sensor {
- 	struct acpm_tmu_priv *priv;
- 	struct mutex lock; /* protects sensor state */
- 	enum thermal_device_mode mode;
-+	/* Last requested window, protected by the thermal zone lock */
-+	int low;
-+	int high;
- 	bool enabled;
+ 	chosen {
+ 		ranges;
+ 		#address-cells = <2>;
+@@ -86,6 +93,20 @@ cont_splash_mem: framebuffer@ec000000 {
+ 	};
  };
  
-@@ -228,7 +235,8 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
- }
- 
- static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
--				      u8 thresholds[2], u8 inten)
-+				      u8 thresholds[ACPM_TMU_NUM_THRESHOLDS],
-+				      u8 inten)
- {
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct acpm_handle *handle = priv->handle;
-@@ -249,7 +257,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	}
- 
- 	ret = ops->set_threshold(handle, mbox_chan_id, acpm_sensor_id,
--				 thresholds, 2);
-+				 thresholds, ACPM_TMU_NUM_THRESHOLDS);
- 	if (!ret) {
- 		ret = ops->set_interrupt_enable(handle, mbox_chan_id,
- 						acpm_sensor_id, inten);
-@@ -267,15 +275,40 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	return ret;
- }
- 
--static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+struct acpm_tmu_critical_trip {
-+	const struct thermal_trip *updated;
-+	int temperature;
++&i2c_0 {
++	status = "okay";
++
++	fuel-gauge@3b {
++		compatible = "samsung,s2mu005-fuel-gauge";
++		reg = <0x3b>;
++		interrupt-parent = <&gpa2>;
++		interrupts = <4 IRQ_TYPE_EDGE_BOTH>;
++		pinctrl-0 = <&fuel_irq>;
++		pinctrl-names = "default";
++		monitored-battery = <&battery>;
++	};
 +};
 +
-+static int acpm_tmu_get_crit_temp(struct thermal_trip *trip, void *arg)
-+{
-+	struct acpm_tmu_critical_trip *critical = arg;
-+
-+	if (trip->type == THERMAL_TRIP_CRITICAL && trip != critical->updated &&
-+	    trip->temperature != THERMAL_TEMP_INVALID)
-+		critical->temperature = min(critical->temperature, trip->temperature);
-+
-+	return 0;
-+}
-+
-+static int acpm_tmu_program_thresholds(struct thermal_zone_device *tz,
-+				       const struct thermal_trip *trip, int temp)
- {
- 	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
--	struct acpm_tmu_priv *priv = sensor->priv;
--	struct device *dev = priv->dev;
--	u8 thresholds[2] = {};
-+	struct device *dev = sensor->priv->dev;
-+	struct acpm_tmu_critical_trip critical = { trip, INT_MAX };
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS] = {};
-+	int low = sensor->low, high = sensor->high;
- 	u8 inten = 0;
- 	int ret;
- 
-+	/* Exclude the trip being updated until the proposed value is considered. */
-+	for_each_thermal_trip(tz, acpm_tmu_get_crit_temp, &critical);
-+	if (temp != THERMAL_TEMP_INVALID)
-+		critical.temperature = min(critical.temperature, temp);
-+	thresholds[ACPM_TMU_HW_TRIP_THRESHOLD] =
-+		clamp_val(critical.temperature / MILLIDEGREE_PER_DEGREE, 0, 255);
-+
- 	/* If a valid lower bound exists, set the threshold and enable its interrupt */
- 	if (low > -INT_MAX) {
- 		thresholds[0] = clamp_val(low / MILLIDEGREE_PER_DEGREE, 0, 255);
-@@ -299,6 +332,34 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- 	return ret;
- }
- 
-+static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+
-+	/* The core remembers this window even if programming fails. */
-+	sensor->low = low;
-+	sensor->high = high;
-+
-+	return acpm_tmu_program_thresholds(tz, NULL, INT_MAX);
-+}
-+
-+static int acpm_tmu_set_trip_temp(struct thermal_zone_device *tz,
-+				  const struct thermal_trip *trip, int temp)
-+{
-+	if (trip->type != THERMAL_TRIP_CRITICAL)
-+		return 0;
-+
-+	if (temp != THERMAL_TEMP_INVALID &&
-+	    (temp < 0 || temp > 255 * MILLIDEGREE_PER_DEGREE))
-+		return -EINVAL;
-+
-+	/*
-+	 * The core can skip .set_trips() when the window is unchanged and has
-+	 * not committed trip->temperature yet. Substitute the proposed value.
-+	 */
-+	return acpm_tmu_program_thresholds(tz, trip, temp);
-+}
-+
- static int acpm_tmu_change_mode(struct thermal_zone_device *tz,
- 				enum thermal_device_mode mode)
- {
-@@ -329,6 +390,7 @@ static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
- 	.change_mode = acpm_tmu_change_mode,
- 	.get_temp = acpm_tmu_get_temp,
- 	.set_trips = acpm_tmu_set_trips,
-+	.set_trip_temp = acpm_tmu_set_trip_temp,
+ &mmc_0 {
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
+@@ -112,6 +133,13 @@ &oscclk {
  };
  
- static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
-@@ -477,6 +539,8 @@ static int acpm_tmu_probe(struct platform_device *pdev)
- 		mutex_init(&sensor->lock);
- 		sensor->group = &data->sensor_groups[i];
- 		sensor->priv = priv;
-+		sensor->low = -INT_MAX;
-+		sensor->high = INT_MAX;
- 
- 		tzd = devm_thermal_of_zone_register(dev, i, sensor,
- 						    &acpm_tmu_sensor_ops);
+ &pinctrl_alive {
++	fuel_irq: fuel-irq-pins {
++		samsung,pins = "gpa2-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
+ 	key_power: key-power-pins {
+ 		samsung,pins = "gpa1-7";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
 
-base-commit: e8017d29067fd1310a65c3494ce1a1b492adbac6
 -- 
-2.34.1
+2.56.1
+
 
