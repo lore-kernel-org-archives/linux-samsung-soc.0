@@ -1,79 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795540493;
-	b=RZWUpzhd4D9FUXbg9P4yDA1/AzJliXf1IaTbk8XJ6W28qqQt8+7LCyH8sCzPyTHuntLo
-	 qxxeABsEovq8hVJbD+nmSDOaPqFML8S4qfc3bAniQarvG2kzcgvb5tKyawVHQbm3ns0l5
-	 lFa7PmKOqJefjjZzE7lufTxBkWQt+8b1/qgE/PRaHsT4pDFGLOkOF9PvrJVgZYC2V1CeQ
-	 9YBMkQHvpjQrjkCLueO1U7+QN5j73v0aplrzAxdaGdeW0P7vnHXJs/4gkDLrHtZrnYxZI
-	 yqfzRW4Qgvl1WskIgSS58sI+WFlJGKvL1BxK1VZKGHrICx997cVVDr7H1A/leQCSpLw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795540493;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=tGaSlh8WowCpjefQ9EPxD+050Ca7Fij70+0D6vHAq9o=;
-	b=4wW1xDcd0F6YVeiu1MIYvHPlNk9f6QPmr4au2EyXDkuVb7d0WaIv6BjfL/6ONulPRxuD
-	 3NCqQCwH3z5ZDhXPH4KQ3281dRSwM1otxoLEaC+FffdBlcaukRpBsjgfT+oWIF+W+IWtM
-	 ViSRpI7wzwe8bK0+zN3/oLMdEqBKT7JFUdwq7RicMtrBvkakEsbMHai3qre0jP9r8ySMh
-	 13FIsymWkUqvjSJnfmVSMOiOUXbscGZAx1WqWx5sFSWibm06X3L7Acxzq6FJWxDl6pnpr
-	 cT30PGK27Qiz0wVN5+y8+Umweyo19CT1WrrSxU3uim4NvVaaGv7ABL0Ho+s93+fjEwg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A9WCnkGf;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795546818;
+	b=G3RHqXu2JBaLoJ1Fc7efdlrfN2QpZMqCSxmOj5b6YM2QXk9eHMGyb7hW1FVkJRqo4paw
+	 XBpfdPKzrRhmOJXLm4+4u8WnQpa2k2RBMjtTXVR2KURmaG0wKEn8BGcA2zKxoVEb/JFJH
+	 GzQQEqKidjZREjCu49jziEU/VQod0u44t28UIqWbK6+jVutybq9FJmKxHoE2k5+VMv2X1
+	 lx8RSodSlXM0XpSnexLHPSevXxdNzipFmsRGz9BlWbfXKPgOIqP05e+ONpkFU/NrKLyUq
+	 v5Xhxv4cqQnDOT2AtLomRbrLYajDuxTBShkEqjPXMcJoByPJEDMGMt7rhcUPfk6eeZg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795546818;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=OfIXQRWoYznMpr75Y1t1EKHjE7dfreJB7BbbTEkR9WU=;
+	b=nHtcb1dwozfpoT5jShdD79QM6YQLzjMLfvEFguOJdD3c+PhZT2JJlm6GDtpJeJv5IJ/C
+	 ZekIqsyvL6HPnEg4RScCGpEJm1sUl3F4+f5+HMqFUijRvPKvbYOS3kb7KfBkSEAdsxf8+
+	 1qup0gdDYbh3Yh/ee7Ejbpb+F114+RyEvfYeVcOZ9gtAA1jkoipYjcH0a5GLtDN/2d0fx
+	 zzzVxgMOfifhKMX6DBRTocm6ltdnBmuuPk5yyC57W8Rq01YCqIHV3k4SQjmWCPSDTA5b5
+	 P+M5iPLl/8198BVNIS+vyOoQpUqJnX9tEE3eNrDg10fB76Mz95TfQ1QhZNl3avejEpg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ncKK1whx;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D5D606A332;
-	Tue, 24 Nov 2026 17:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49F2606A682;
+	Tue, 24 Nov 2026 19:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A9WCnkGf
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795540493;
-	b=qXMQcBTM6N/wJAZAsDGPo2yvnkaIqBroFSURQKmgO39gIht+AkAbr0Tjg85WHR95FKDB
-	 O2215f8oOtce+X874EbAvBzpfPg1sr0OljePfZQ8vqOcNz/ja8R5IHBkuh9peSPYz+utI
-	 Gjm+YqwbGhsiA1bJtleU0/4zWpmnw9C3EWInINV+mbPt7ntENIvgpVp1/aR/aD1Now+QK
-	 AURq5nHVj+rXxcbSMpVmDyPdmbr+ICT0y1h/17nsuHSZh10XgFrU8VIkNB1iP9OxT3YRk
-	 VY5jM992FQngzw7Xm9Fco6dgZVZSL1HCFclKb2XjmDIKPimV60ec6SNMvOh0IMOcEpw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795540493;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=tGaSlh8WowCpjefQ9EPxD+050Ca7Fij70+0D6vHAq9o=;
-	b=TnLUIfRfKXekXXvBBLVOe6ID6Odx/93/fJ4DpbV4v4Xz4Mkyo5FHCwgIJaHTUO2syIq7
-	 1rkDY7DE7UNhH2xoGHvqNu76tD30wIXU7xw99ldefPIjNVFkOVfnjJlpCb89X62wJBi5E
-	 5St897Wfei+o+HvkCPduLVsIcrQqs+exkKfiGJSe2AFHmir2Hhf0QWXgyh4iMOjIkZFSI
-	 1dtGITCoMG6+Ad7fm1JhhYmjnh8AS5noE8GYs41rlF8Bn4vIHfBxGDuZNj6GSBCYIg2Xq
-	 +IXO10uPzzDi9/zgI2od+PLYOb2uENpPSh3kPTLbW+nrEC821b2Hhg925Gt92hF0IKA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 0CA381F0156B;
-	Tue, 24 Nov 2026 17:14:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ncKK1whx
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA771F000C4;
+	Tue, 24 Nov 2026 19:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795540493;
-	bh=tGaSlh8WowCpjefQ9EPxD+050Ca7Fij70+0D6vHAq9o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=A9WCnkGfWsStu7pdPjuelGK7wBZTRen74um+zh+aP2TuBg0C/XQp37Z3l8tb1EMRA
-	 0E4sNLQFFPJy5VBtbFqJCDYoXshoyvQqd1KjMh5J0vhUfRHu8Uflv481ktErMJs+G+
-	 Dm67wZGQLKFPTjaGnN0BO7Esvp3MfQdHfDNpH3QPYHBikMb5m1N4nKWVITWtirlS6S
-	 qY7GHY6+mr1gIIs8FWKyNMRZc1nCBnvxdRPVaT6wxb/d6+jLmXZYEYKH3iAS8Hxlyc
-	 qM+A85rtJ8+sRhOsA9j22LiisCNgmPi3W8PLxLjRwv0SVfkpWxacJdG6I6LeH2UK1R
-	 AKHLVmVlZL1PA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 862804CAF7;
-	Tue, 24 Nov 2026 17:14:35 +0000 (UTC)
-From: Umer Uddin via B4 Relay <devnull+umer.uddin.mentallysanemainliners.org@kernel.org>
-Date: Tue, 24 Nov 2026 17:14:32 +0000
-Subject: [PATCH v2 1/2] arm64: dts: exynos: exynos7885-gta3xllte: Enable
- USB support
+	s=k20260515; t=1795546818;
+	bh=OfIXQRWoYznMpr75Y1t1EKHjE7dfreJB7BbbTEkR9WU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=ncKK1whxIxltl9w3NrjL8l4PDTlrCE/FzSAxmSG7NSaUmYQuWeH6L8sIqoWaoNvrw
+	 0/PeRp9VmjzBxclu9NKYtU+u3TYgQCHsL257kJ+cNY52LeOxS5SWVfKfP0WmIdoFVp
+	 yASCbkBMPQqX5sAXqFJbm02JZFNTVe/3d1gLzMTO27O5CVmnblzubVOthX6sna3aPp
+	 I+z99cPKoFG3wKJuOJ97BRWkLcmWMDKZV/jb9LgavqbrxZzgJNVi5uG1FDZ0eZxt2J
+	 DdD+dIyU28gy++Kug8HSdUdHyu1wQVI9BUVUj4mRBFPJ1ysICP9aOag+8SjMkiMWkj
+	 l1n8fJ1H4G3+w==
+From: Brian Masney <masneyb@kernel.org>
+To: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+ linux-riscv@lists.infradead.org, Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ "Zhao, Linaro" <richard.zhao@linaro.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Amit Daniel Kachhap <amit.daniel@samsung.com>, 
+ Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Chander Kashyap <k.chander@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Drew Fustini <fustini@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Frank Li <Frank.Li@nxp.com>, Heiko Stuebner <heiko@sntech.de>, 
+ imx@lists.linux.dev, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Joel Stanley <jms@oss.tenstorrent.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jsarha@ti.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Liam Beguin <lvb@xiphos.com>, Linaro Ltd <mturquette@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Lubomir Rintel <lkundrak@v3.sk>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Marian Mihailescu <mihailescu2m@gmail.com>, 
+ Maxime Coquelin <maxime.coquelin@st.com>, 
+ Mike Looijmans <mike.looijmans@topic.nl>, Peng Fan <peng.fan@nxp.com>, 
+ Pengpeng Hou <pengpeng@iscas.ac.cn>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Rosen Penev <rosenp@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Sergej Sawazki <ce3a@gmx.de>, 
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>, 
+ Brian Masney <masneyb@kernel.org>
+In-Reply-To: <20261123164834.3330320-1-lee@kernel.org>
+References: <20261123164834.3330320-1-lee@kernel.org>
+Subject: Re: (subset) [PATCH 00/10] clk: Assorted bug fixes across clock
+ core and drivers
+Message-Id: <179554678508.352639.3508427370180732943.b4-ty@b4>
+Date: Tue, 24 Nov 2026 13:59:45 -0500
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,94 +94,93 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261124-gta3xllte-usb-battery-v2-1-80bdcb1753bb@mentallysanemainliners.org>
-References: <20261124-gta3xllte-usb-battery-v2-0-80bdcb1753bb@mentallysanemainliners.org>
-In-Reply-To: <20261124-gta3xllte-usb-battery-v2-0-80bdcb1753bb@mentallysanemainliners.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Henri Ommer <henri@ommer.net>, 
- David Virag <virag.david003@gmail.com>, 
- Umer Uddin <umer.uddin@mentallysanemainliners.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795540475; l=1489;
- i=umer.uddin@mentallysanemainliners.org; s=20261109;
- h=from:subject:message-id;
- bh=2sc//xhMdQLxeTbKn3e0zeBob0QS6bolzRWDj8BhCrE=;
- b=o9CZzwH0fykt7/8/HjQfcWLgxRlRcPq8iqZ2/s6lVdr97PQOOvSlOul6xoVAVIbfyWATm2Ars
- +sC8rjeEMvZCe5EoZMWLE90xrlQ9bLL38+0KOydi/u2YfilSj5hbyr2
-X-Developer-Key: i=umer.uddin@mentallysanemainliners.org; a=ed25519;
- pk=Hsgrt4A72CFTe27AI1AAWlnLsiQrlb4+T+cbrfWDhUA=
-X-Endpoint-Received: by B4 Relay for
- umer.uddin@mentallysanemainliners.org/20261109 with auth_id=1466
-X-Original-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-Reply-To: umer.uddin@mentallysanemainliners.org
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.17-dev-8145e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3203; i=masneyb@kernel.org;
+ s=20250903; h=from:subject:message-id;
+ bh=Ag2AinISm4aFoF5s9EyCfBnaRyNhL06vGNk10A6iLlI=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJZ720tnJcTOVN5EVPBweUqLjvWLfm7rev3YcVz7FO6y
+ hcuWLU7uKOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJ/D/D8N9rsoXElmlecoVx
+ h3xSf/5sSY/XeCnxXCfY81/BklWy+usZ/teydF76fdXpYmPdscuXihu2CR2aIzFx3erNj5okavd
+ w7GUHAA==
+X-Developer-Key: i=masneyb@kernel.org; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 
-The Samsung Galaxy Tab A 10.1 (2019) has a USB-C port capable of USB 2.0
-speeds, used both as host and device, and is used for charging the
-tablet.
+On Mon, 23 Nov 2026 16:47:33 +0000, Lee Jones wrote:
+> clk: Assorted bug fixes across clock core and drivers
+> 
+> These issues were reported by Sashiko.
+> 
+> None of these changes have been tested on physical hardware.
+> 
+> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+> Cc: "Zhao, Linaro" <richard.zhao@linaro.org>
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Cc: Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>
+> Cc: Brian Masney <bmasney+clk@redhat.com>
+> Cc: Chander Kashyap <k.chander@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: Drew Fustini <fustini@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Cc: Frank Li <Frank.Li@nxp.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: imx@lists.linux.dev
+> Cc: Jerome Brunet <jbrunet+clk@baylibre.com>
+> Cc: Joel Stanley <jms@oss.tenstorrent.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Jyri Sarha <jsarha@ti.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: Liam Beguin <lvb@xiphos.com>
+> Cc: Linaro Ltd <mturquette@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Lubomir Rintel <lkundrak@v3.sk>
+> Cc: Lukasz Luba <lukasz.luba@arm.com>
+> Cc: Marian Mihailescu <mihailescu2m@gmail.com>
+> Cc: Maxime Coquelin <maxime.coquelin@st.com>
+> Cc: Mike Looijmans <mike.looijmans@topic.nl>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Rosen Penev <rosenp@gmail.com>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Sergej Sawazki <ce3a@gmx.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Thierry Reding <thierry.reding@kernel.org>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> 
+> [...]
 
-The port is controlled by an S2MU005 IC. Until support for it is
-added, only USB device functionality is available, so enable the USB
-controller and PHY in peripheral mode.
+Applied, thanks!
 
-Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
----
- .../arm64/boot/dts/exynos/exynos7885-gta3xllte.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+[02/10] clk: lmk04832: Validate child reg index in lmk04832_probe()
+        https://git.kernel.org/clk/linux/c/503fe32e46b5
+[03/10] clk: tegra: bpmp: Bound num_parents by MRQ_CLK_MAX_PARENTS
+        https://git.kernel.org/clk/linux/c/875e62416145
+[04/10] clk: composite: Initialise sub-hw pointers in determine_rate()
+        https://git.kernel.org/clk/linux/c/efa7603036b8
+[06/10] clk: gpio: Reject gate clocks with multiple parents
+        https://git.kernel.org/clk/linux/c/ac7fb1e8ffea
+[09/10] clk: cdce925: Use devm_of_clk_add_hw_provider() to avoid UAF on unbind
+        https://git.kernel.org/clk/linux/c/b0c22a496660
+[10/10] clk: mmp: audio: Use devm_of_clk_add_hw_provider() to prevent UAF
+        https://git.kernel.org/clk/linux/c/8b01bdbcd6ae
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-index 03476f8b1200..57df878cb563 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-gta3xllte.dts
-@@ -68,6 +68,12 @@ memory@80000000 {
- 		      <0x0 0xc0000000 0x40000000>;
- 	};
- 
-+	/* TODO: Remove this once PMIC is implemented */
-+	reg_dummy: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dummy_reg";
-+	};
-+
- 	reserved-memory {
- 		ranges;
- 		#address-cells = <2>;
-@@ -127,3 +133,19 @@ key_volup: key-volup-pins {
- 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
- 	};
- };
-+
-+&usbdrd {
-+	vdd10-supply = <&reg_dummy>;
-+	vdd33-supply = <&reg_dummy>;
-+
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3 {
-+	/* Force to peripheral until we have Type-C working */
-+	dr_mode = "peripheral";
-+};
-+
-+&usbdrd_phy {
-+	status = "okay";
-+};
-
+Best regards,
 -- 
-2.56.1
-
+Brian Masney <masneyb@kernel.org>
 
