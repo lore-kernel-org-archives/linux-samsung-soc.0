@@ -1,99 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.51
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795640360;
-	b=YJNuQrXAN+cOcFFOhsqkqiIIY/0Ss3JEKy+tYeilDoLIjmfGQa1v7nar4kIHHP2jpzna
-	 amrl6szCkT+JE9LSLwLJJ8BswlYYFppVE5meaNaXL1ofitrcGHnGxU9u2L0onvqnRsWIF
-	 aKft2QdXYP5t3bkOwIBLBTpJibYSVsIiUlnlng0w1bhejruBiV8a+3UqOV9RPs37iQWuh
-	 KKaA1mSivwAcXCTjHEzgeTy3UzdOQYCAqwvynHuFxMofQqQF2XXRed9mDHqPUtFIy7FTn
-	 MyVu/wYuknSz7EormkXZGUQ9T8haJupZMHz6cnRn3wqxuCe2edqBAHUNCPv/FWmtt5g==
+	t=1795640510;
+	b=Jif+Mmmvoac2a1yDCcpf7D5aVmKbxDSaTAz1pSz431/HpMHgekPYWkrEzRIldfYU05M5
+	 O2+smYCeYR7MLBmUXDUZY7182De3c03RY0vOpaTyyHiO2a8c6oQfUOWFuVP6GNHhczr9m
+	 KU93NYmUEFPszbHBG4M6JUMfXzCemqez3vVmRBmXxSTfCmxj5h5VQWVLOloq9EQ6EMPAY
+	 DDp9WKZH6HrpwUr6kVpDh/31oc1UsBIlFrF0hSelEF3sY3oMeGVtLn6l3aO60KbIS6+YQ
+	 Scbqrsxero6mQkMpRmYKIEBNb0joj0wcWbUAgQAr0K+f5zAht115ZfJf+gpchdWBDpA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795640360;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795640510;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
-	b=Dmh35pqEuBo+cXvoe43/cocqmFAc6xUVfiOQ6Zfe0/S71AesKX9m5fnFKvtc8Ow/+l0k
-	 cKeE7HZNTzRiULv+P3tq2i+XWOJAEOZ9BX7Zcv9LdjLgSjQdXsvHgpuLGwz14y2p+lucT
-	 iiInkoq9w2rxtd8dkZNmMNx62GvPwkLyniAiflawYcvKYb4E8qfNOt0g3dgPz/vRuBxlL
-	 Lljd3dvbZJ4CNL4P2tRY5TmbRL89glH42Xvhjl9UugIsjG8mfQCArUES0nXkG0pwVoKOQ
-	 3TuS3cbEoKjSVmHpOiG4QgurOwcLNNFN35a5oO8nwiVOvm64oGiVFwZeGM4T8W5cPqA==
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
+	b=znN1RfbYoKnFGu1RZbzzRtb1aX4SfHqQmCwH23yx1bb/Ud2R1v9vd8fWA/Qdr2juh5OY
+	 O1X5XMR44nqMllcv1p3+v438NW17CMyy6K98nzn7Nf0Vvulq6f0RlKs4YtmnwH2Ubht3O
+	 wEFzYOirYpi3qjHeSJp8nVriO8wEqugvIVxvjXukh7pPYcUijYU9WWxW3RlbokEIso6kL
+	 pt4hBCZRKXn3fUoIomtFmqgFG3WcQeSRRbDinv2hzBXwWXlqCpqna8CIu0gY7zYpxlcb4
+	 50lACyr7pA6S2gFGst8rQHjEcC/LFhCpTgctp3/q/3/f0j4RveVOpq0Qx8FctYIGLhw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=XX+oVSvl;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Rh656DFr;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.51
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C054606A321
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 20:59:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0C054606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CF5606A326
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 21:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60CF5606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=XX+oVSvl
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6bab377105dso4914634a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 12:59:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795640358; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Rh656DFr
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6b8a1f59d5eso8254935a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 13:01:49 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795640508; cv=none;
         d=google.com; s=arc-20260327;
-        b=l/qrkEZD3AoU8OD+XMNwRzkA8r4VVK4H2hLVL7Yw3UHgTZBk+df8/5D91ZRXST6Gic
-         kdYZV7ftFHOSBGcCjNg7Hnc649Qz7ZD/35+fbs4c3PR3ZAGrL1IDUVGYDUhGcAnY91dk
-         oTc/Szj/yHie0GSK5RsO79lwW7ONnKBNxOI+b1JTUaiilZIytVOWCNdSJYLAWmwisBzE
-         fVyTvOcDVcmCw4WVqRaMQYHX/7Z6dtapgeDkqVt4seMqdTXj/ghN7W8fp6YzEvfQJQ8U
-         i8zNP5KaO32uucSU5RJtWHxHbfhb/3xoVDxFlVOc4weY/Ow2XSaOlzeHUpVKFvK6jHuY
-         qGQw==
+        b=R27M0ksQXPbtqinAArhHofD2wHJU795Aox/7HOdkPhwmrjykOThEN+fVWbehHOM9tl
+         e2UcpYROvlwDDbANeVs9OdOjf/sTESJoLcPP8AK2vxYKecZPA5f/lfWpQP1XHuZ7K8ED
+         11liSgdvPvavAwojERWIZ+2tewn2fCA+IObqWgHX3njSuW+ZoYhjr+Tdbsb2krmPZUQG
+         dXzwy9dBQr2jLm6A/2KgypkPKnKqp5Y7vL5tL3gRk9EM/6B3y/mj+H4T2y54wIyzxqfr
+         zEgLd3JnhludGy/aqiQUw7L4nLvrhSa0l3yAUAWq5WPUAClIU2Y1iNvePa/ngu55TWxe
+         H3vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
-        fh=kz0bIWqAM3ZVxrjD6Hfbfl5to9U/85kY0+PhFig+YTw=;
-        b=S0T5fOOIim3gl2xUtx1JVbbxVFHwEXy+Q+lOUT7SxSvJe88AfYYkSq/6tI+8CYsRQ1
-         rvBw2ysPCBXZlvlvKH7Qsll869qU1yT7eAReoa13r7ys2IlC9kdoXAWt3cHrMg0rUDtL
-         WBa2oLUzNECzcy19hCdHPhM0ZwvotQtjn5SmTY7NrB2XobSjKH39UbPil0phpUZ1agrW
-         gv20SBjoAJw07kG/zriNobuLgXXAUZRDwDTKEelFXRrUJca5fVIcnC9DPiXMhl7eziK3
-         7AB7hvhEQovLKhpsx9i6VpjOYUmMPGY29owNUsbVTspym+r7IY/X3cIH509TIACzNnKB
-         62hg==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
+        fh=ub01JhyFP0DpD1gJyfB+TIb3P/6VPZbcMN01lWPH/JY=;
+        b=LyEOxc4lyoSpE1qE0xQSjQ5LzlhXGItV4brypNsZmgt+KJ0T85j5A0Dtbpv6d7o4oS
+         738DuY9bVboPfpwaPHRE/MUoEZ21zhjOSZxJQ6m3VfiHR0xVa9lQLxgr1X15uRQLy1vu
+         wbngdKQ02NXfKx/+vf8vACv1gi9dw3ChSaW6ZbwUlHijM7crJtazN4DJVe70+xcflztb
+         /S9m31EXyVNQ/XA/MB3xMyeEcFyhy1pkLhqSl8BT0vK+lrX4idkQSoB5ZpvbRboef4Hs
+         Er2oFBQEo+6/Ww7Z4gvZYABuq4KZGcs7ysYVeSuUkemAvTkhPzwfK2dXR/0slO71NkRK
+         csOA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795640358; x=1796245158; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
-        b=XX+oVSvlwbkZJl/q7Fv5V3x1hehf+uCE6xb9HMTUuDbF0ZguAJu6UzBvMyjr+3Fj+3
-         Nvvze0tQocy6EAVfwsaasTedqzOkcNCy/4uKy4ga9ffBNEU7meDWoVRIhaMd/gGGMdI7
-         lq5DNc74gydvwyL0KrWQjZceHBDyui3QPZeJfkBAj+1uk1bV6V6TfjBr0CGUgjMNGPgc
-         30FyNBH/PxEbZNh5NMMvBcC6d1IEiDTbCGmTdLvEdJHnoUn9P1A4ajQO/glmLAXbn1d/
-         mfEWoGHROTKpQHjsOwdD0NEQ3Fr4qoUCiHkHuoHNdnRzqEcdcHzI4Nnw4O/QDAzqRJsK
-         rQ8w==
+        d=linaro.org; s=google; t=1795640508; x=1796245308; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
+        b=Rh656DFrOJ38tdIvMqsn4aj9AH9Xbgikv38mEHthnHH+r1g04KWtfbAR0zMm6kA/BE
+         lXT+1MAftWmHDaTShS3OvlcMTJ7addo56b1XybMjaDn7z+J5/N/V/UV0vR2fhZUlExrX
+         famy6j5mA+2gQeJYlYsJ3YVDcnj8TYRWr9tARpMcbIpqLUKQRx8lm3ls5HsZYrT3kEJR
+         1ljJKYmiD1fsVJromPArbSc93rIhKFf9jdgnWbf0gG+4Yu+lrQ7cTdt4I4jMTOD+hF7j
+         0t+6S9HnL58sjenkJcnbABRt6sGLHE+87Wa0MFTjGfBiuGdx5hBvc14esLYtqQacXbR4
+         AeHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795640358; x=1796245158;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
-        b=HW9VV16/7iXNeCwfIL8GETHB6oNVhR3Mo1nzamddLhoKxUC1N6JQkWLIT3r/CcCmta
-         /zJA4NNbKX/XVUo3eN4AKprovDzJAwzdXclQVbSzPwC+BAWQIcVW9C9633vQpACKRFpJ
-         ezs5NWCchDW3A/biLAHYKAvELLLPh+Ebk1ETMQVJz+h3fuxD/X0McmverW8cAJ0ct1ed
-         e1XZusgor0FGnLvwnNQb8rWI1aMLndrmlbph2DLHDvp5AWesXlpK0jIpvhwOZLKRkfp3
-         9bfN4t8LedEn6l1BFVQm7P8917q5gcdrRhAtSDD1pJ7MDmrTfE4RCuNIZ9mV+ooMNVqA
-         yTaA==
-X-Forwarded-Encrypted: i=1; AL+hErGqqfY2XZiamWjnPvysbSsRhmmp7+b90nPw5YLd8bQXQ0FtEdQGugOMVyYHVbYnXeu77wXHMZdk44sWutnzJFFA7g==@vger.kernel.org
-X-Gm-Message-State: APuU4Z81fMF8j3kT4pS4UD3DFRBERxaW+lVNylot4n9aQX4U1/5OTkl9
-	d4bqEcU+3FGcwba2hVeLLAM4GBMo4HFZfnd246C6HQu3k/VJDu7U+17NqdB9KghvksQiYJtYho0
-	BlFiVERhtlaibrew5nxfxjpJoKnAv2ep8kD3VqehV6A==
-X-Gm-Gg: AZFdTZdS81J+6hkAEsLYczOxBjYmnx7pzqgq6w+l0dngPdnMxbzKwwatNUD7ND5o7Nc
-	2SAYEE4z4Jooyym9py1Wh0tDeU2rhSJXVypyGwh5KE43LlZG/Lk9CKfgb5KW5fpldMsCmUUr7kh
-	yfoxIwmuQDW4zcUkdS8F+vmEMsMyxWTrKMo9WxXKbDGXJcSwnp50XnYW9OdIJLGVnuupJnGvS2T
-	sTFzs4r3xHIAh1wfg3BbYrjqNt8kqF78/goP1yE0/pI+y6aN2mjDCEWiVr8qgbNkdIArCZ9oMxE
-	X+UF5lwfGjEdIDSNMMrPaajSbEZ9oonyXgjhcbYjiBRH7wBCHzRws0aciZ0xwGGSTqSaOZm/d5s
-	jZ0OyuqGyMzL/T3K46oqjYwdp1QZ/ArLxp0S4rV/8mFNbhaXvExORH/FxQtzPdcH2p1Y7Z5U=
-X-Received: by 2002:aa7:cf85:0:b0:6b1:a509:875 with SMTP id
- 4fb4d7f45d1cf-6ba37e66febmr9344235a12.20.1795640358409; Wed, 25 Nov 2026
- 12:59:18 -0800 (PST)
+        d=1e100.net; s=20260707; t=1795640508; x=1796245308;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/xql7PxzylbnNqUypNzqY66e+XcyUxvn+W/FfLvEXM8=;
+        b=aTOot3SoNzLzV6vQf2Y0lBIYGuxk7XLBeOPXXJx5ds2J23serDODeUP75HabtfIjVZ
+         99ZbfGoOFhywIxmJMOttQ3yjiNLdEJu3cJgsL/QIat/y15yxi1jdx9nWceIJacGfGaGZ
+         PvH3N8MsmDiJzpj0B35/nHeVK/RMzaYLdqMH+75VFwomZcnqZ3a9Uxh3Z/F1WUdCV+VR
+         cN3Lldxy0Itary47ibtuaclh+7WDEKAAh8D6hgWwFXJHkTmoC9SaUCqy+UpuAILYkJBK
+         p7KIf0TCTe7bejvyWJErch1CwjX5rfeOqECJORjppomLyh+AHE6m/Y+rlwPkQEPcXlOg
+         WQ9w==
+X-Forwarded-Encrypted: i=1; AL+hErFJW2ksrYJHOpWTfRWNo/HJkymoEU6JW6bjjS9Enfy+dbo6i4OEotIhIo/p4X67lDDd1wZYIPMouv7XWaLxjyHbwg==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+JmVmOUowwIDVauOq4/xcWR5rzOCIj1cFAIO6M51BxtjtgYp1v
+	dqSZ3mpXDIrJ4be2UxN8yqHzhX8gz5nelwGsVdB+AuG8vYCbHEto8n5y7Qej85KE1CYs8BqAFt7
+	+oH1ThvQToVSdiUg/J9QOySjFlOohCb9oH0q+rVJSyA==
+X-Gm-Gg: AZFdTZd7FVDyHxgvnEX8slopoGJjDhQQ0mhKL1QYxHiy8y3Kxp3AIKySi9Gleds4+K2
+	luenwljJfVJmoEs51VIyY8KJQDxOVhrnMmud+64zZ+dqMsm2Q0+LHrwarEQ5Nec02X10lt4L82I
+	deuaGUMY4XzqejhzjdGsuNaxJ5AEF/ST3yi+g/4tOzyhGfjs3J6BFIVevaWEC1/RmQFCZ27XrF6
+	82qAelEHymYeHHbwNxKy4OZyY3XhRwTg/8Nv1pR/3sPOn7rmVbKtepFJaEDX08L3gSdMxxJZmaE
+	cK8dFDz0wdYvgbXGoBUiNpow1BfZMqnF8KrAnPjGp9v8Wz9NMfTNMJqH/T3z0hHI0kwwqF7R1Wb
+	R537nigFz1M7eHWPA0WuiDuxmSmG+jE/qsL0694JKvAliTs+bH+0mltPyzHuCSViWi4nxSKU=
+X-Received: by 2002:a05:6402:3222:b0:6b2:2339:370d with SMTP id
+ 4fb4d7f45d1cf-6ba37ec485cmr16187328a12.39.1795640507528; Wed, 25 Nov 2026
+ 13:01:47 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -103,88 +104,663 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261123164834.3330320-1-lee@kernel.org> <20261123164834.3330320-8-lee@kernel.org>
-In-Reply-To: <20261123164834.3330320-8-lee@kernel.org>
+References: <20261123-samsung-pinctrl-busclk-v1-1-6732c10a7f48@linaro.org>
+In-Reply-To: <20261123-samsung-pinctrl-busclk-v1-1-6732c10a7f48@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 25 Nov 2026 20:59:06 +0000
-X-Gm-Features: Aa3M54qBKC7-tr-B2jw-93nT_AW_sr-oGI0v4yuTHgh0h7sm-7QQngWZhmScpnM
-Message-ID: <CADrjBPq2OmgLjzs8qYybQSKRDBC5QK5DTrO8Wy4gbUoo0Ydu6g@mail.gmail.com>
-Subject: Re: [PATCH 07/10] clk: samsung: exynos5420: Terminate PLL rate tables
- with sentinels
-To: Lee Jones <lee@kernel.org>
+Date: Wed, 25 Nov 2026 21:01:35 +0000
+X-Gm-Features: Aa3M54oXxYlXaOdRYB1cQuxq3Qps4EcCjGoYfXvMRW_bw_T0X2BdIFPg-0Amxy4
+Message-ID: <CADrjBPr9UJ0NzJ1tT2KY=H2ar4vUZBrzQvwfuT_Q_fSUe5x8KQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: keep bus clock enabled
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Abraham <thomas.ab@samsung.com>, 
-	Chander Kashyap <k.chander@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, 
-	Tomasz Figa <t.figa@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Marian Mihailescu <mihailescu2m@gmail.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Nov 2026 at 16:49, Lee Jones <lee@kernel.org> wrote:
+On Mon, 23 Nov 2026 at 15:59, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> _samsung_clk_register_pll() sizes each PLL rate table by scanning until
-> it encounters an entry with .rate == 0, then copies the counted entries
-> into pll->rate_table.  However, exynos5420_pll2550x_24mhz_tbl,
-> exynos5422_bpll_rate_table, exynos5420_epll_24mhz_tbl, and
-> exynos5420_vpll_24mhz_tbl all omit a terminating zero sentinel, causing
-> out-of-bounds reads into adjacent read-only data and populating
-> pll->rate_table with bogus entries.
+> With CONFIG_PROVE_RAW_LOCK_NESTING=3Dy, lockdep reports:
 >
-> Append a sentinel entry to each of the four PLL rate tables.
+>     [ BUG: Invalid wait context ]
+>     irq/130-1-0025/196 is trying to lock:
+>     (enable_lock){....}-{3:3}, at: clk_enable_lock+0x68/0x110
+>     other info that might help us debug this:
+>     context-{5:5}
+>     locks held by irq/130-1-0025/196: 1, on CPU#0:
+>      #0: (&irq_desc_lock_class){-.-.}-{2:2}, at: irq_finalize_oneshot
+>     Call trace:
+>      _raw_spin_lock_irqsave+0x60/0x98
+>      clk_enable_lock+0x68/0x110
+>      clk_disable+0x34/0x68
+>      exynos_irq_unmask+0xd8/0x1c0
+>      unmask_threaded_irq+0x58/0x80
+>      irq_finalize_oneshot.part.0+0x98/0x108
+>      irq_thread_fn+0x68/0xc0
+>      irq_thread+0xd0/0x1e0
+>      kthread+0x118/0x138
+>      ret_from_fork+0x10/0x20
 >
-> Fixes: ca5b40293822 ("clk: samsung: register exynos5420 apll/kpll configuration data")
-> Fixes: 9842452acd3d ("clk: samsung: exynos542x: Add EPLL rate table")
-> Fixes: 8b4a7acf7b30 ("clk: samsung: add BPLL rate table for Exynos 5422 SoC")
-> Fixes: b92981de92cb ("clk: samsung: exynos5420: Add VPLL rate table")
-> Closes: https://sashiko.dev/#/bug/linux-553831f9-0a7b-4e94-be60-222de60ca8c3
+> The driver enables the optional bus clock ("pclk") around each register
+> access using clk_enable() and clk_disable(). Both acquire the clock
+> framework's enable_lock, which is a spinlock_t. On PREEMPT_RT,
+> spinlock_t turns into a sleeping lock and must not be acquired in hard
+> interrupt context or while holding a raw_spinlock_t. Most register
+> accesses happen in such contexts:
+>
+> * The IRQ core invokes the irq_chip callbacks .irq_mask(),
+>   .irq_unmask(), .irq_ack() and .irq_set_type() with the raw_spinlock_t
+>   irq_desc::lock held.
+> * exynos_irq_demux_eint16_31() is a chained interrupt handler and runs
+>   in hard interrupt context.
+> * The gpio_chip callbacks don't sleep, so GPIO consumers may call them
+>   in hard interrupt context or with a raw_spinlock_t held.
+>
+> Lockdep reports this only when enable_lock is contended, because
+> clk_enable_lock() tries spin_trylock_irqsave() first and lockdep
+> doesn't check the wait context of trylocks.
+>
+> Enable the bus clock once during probe instead, keep it enabled for as
+> long as the driver is bound, and drop all per-access clk_enable() and
+> clk_disable() calls. Also revert samsung_pinmux_setup() back to void
+> and drop the now-unused pclk member of struct samsung_pinctrl_drv_data.
+>
+> This reverts only the per-access clk_enable()/clk_disable() portion of
+> commit f9c744747973 ("pinctrl: samsung: support a bus clock"). The
+> driver still has to acquire and enable the bus clock: without a
+> consumer, the clock framework turns off unused gate clocks on kernels
+> or DTs without automatic clock gating, and gs101's alive GPIO clocks
+> don't set CLK_IGNORE_UNUSED.
+>
+> The in-tree DTs provide this clock for Google Tensor gs101 only. Since
+> commit 298fac4f4b96 ("clk: samsung: Implement automatic clock gating
+> mode for CMUs"), the gs101 clock driver registers this clock as an
+> automatically gated clock, for which the enable and disable operations
+> are no-ops, so keeping the clock enabled doesn't stop the hardware from
+> gating it. Without automatic clock gating (in older kernels, and with
+> old DTs whose CMU register range size is not 0x10000), the clock stays
+> enabled for as long as the driver is bound.
+>
+> The DT binding requires this clock for Exynos8890 as well, but the tree
+> contains neither a DT nor a clock driver for Exynos8890.
+>
+> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
 > Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
 
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  drivers/clk/samsung/clk-exynos5420.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/pinctrl/samsung/pinctrl-exynos.c  |  80 ----------------------
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 106 +++---------------------=
+------
+>  drivers/pinctrl/samsung/pinctrl-samsung.h |   2 -
+>  3 files changed, 9 insertions(+), 179 deletions(-)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 400a5c59815c..35baeabf3ccb 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1419,6 +1419,7 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
->         PLL_35XX_RATE(24 * MHZ, 400000000,  200, 3, 2),
->         PLL_35XX_RATE(24 * MHZ, 300000000,  200, 2, 3),
->         PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
-> +       { /* sentinel */ }
->  };
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.c
+> index c45da9f13411..8adfeae96566 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -13,7 +13,6 @@
+>  // the Samsung pinctrl/gpiolib driver. It also includes the implementati=
+on of
+>  // external gpio and wakeup interrupt support.
 >
->  static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
-> @@ -1430,6 +1431,7 @@ static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
->         PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
->         PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
->         PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
-> +       { /* sentinel */ }
->  };
+> -#include <linux/clk.h>
+>  #include <linux/device.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irqdomain.h>
+> @@ -69,12 +68,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
+>         else
+>                 reg_mask =3D our_chip->eint_mask + bank->eint_offset;
 >
->  static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
-> @@ -1448,6 +1450,7 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->         PLL_36XX_RATE(24 * MHZ,  49152000U, 197, 3, 5, -25690),
->         PLL_36XX_RATE(24 * MHZ,  45158401U, 90, 3, 4, 20762),
->         PLL_36XX_RATE(24 * MHZ,  32768001U, 131, 3, 5, 4719),
-> +       { /* sentinel */ }
->  };
+> -       if (clk_enable(bank->drvdata->pclk)) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for masking IRQ\n");
+> -               return;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
 >
->  static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
-> @@ -1459,6 +1462,7 @@ static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
->         PLL_35XX_RATE(24 * MHZ, 266000000U,  266, 3, 3),
->         PLL_35XX_RATE(24 * MHZ, 177000000U,  118, 2, 3),
->         PLL_35XX_RATE(24 * MHZ, 100000000U,  200, 3, 4),
-> +       { /* sentinel */ }
->  };
+>         mask =3D readl(bank->eint_base + reg_mask);
+> @@ -82,8 +75,6 @@ static void exynos_irq_mask(struct irq_data *irqd)
+>         writel(mask, bank->eint_base + reg_mask);
 >
->  static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+> -
+> -       clk_disable(bank->drvdata->pclk);
+>  }
+>
+>  static void exynos_irq_ack(struct irq_data *irqd)
+> @@ -98,15 +89,7 @@ static void exynos_irq_ack(struct irq_data *irqd)
+>         else
+>                 reg_pend =3D our_chip->eint_pend + bank->eint_offset;
+>
+> -       if (clk_enable(bank->drvdata->pclk)) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock to ack IRQ\n");
+> -               return;
+> -       }
+> -
+>         writel(1 << irqd->hwirq, bank->eint_base + reg_pend);
+> -
+> -       clk_disable(bank->drvdata->pclk);
+>  }
+>
+>  static void exynos_irq_unmask(struct irq_data *irqd)
+> @@ -134,12 +117,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
+>         else
+>                 reg_mask =3D our_chip->eint_mask + bank->eint_offset;
+>
+> -       if (clk_enable(bank->drvdata->pclk)) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for unmasking IRQ\n");
+> -               return;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>
+>         mask =3D readl(bank->eint_base + reg_mask);
+> @@ -147,8 +124,6 @@ static void exynos_irq_unmask(struct irq_data *irqd)
+>         writel(mask, bank->eint_base + reg_mask);
+>
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+> -
+> -       clk_disable(bank->drvdata->pclk);
+>  }
+>
+>  static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
+> @@ -159,7 +134,6 @@ static int exynos_irq_set_type(struct irq_data *irqd,=
+ unsigned int type)
+>         unsigned int shift =3D EXYNOS_EINT_CON_LEN * irqd->hwirq;
+>         unsigned int con, trig_type;
+>         unsigned long reg_con;
+> -       int ret;
+>
+>         switch (type) {
+>         case IRQ_TYPE_EDGE_RISING:
+> @@ -192,20 +166,11 @@ static int exynos_irq_set_type(struct irq_data *irq=
+d, unsigned int type)
+>         else
+>                 reg_con =3D our_chip->eint_con + bank->eint_offset;
+>
+> -       ret =3D clk_enable(bank->drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for configuring IRQ type\=
+n");
+> -               return ret;
+> -       }
+> -
+>         con =3D readl(bank->eint_base + reg_con);
+>         con &=3D ~(EXYNOS_EINT_CON_MASK << shift);
+>         con |=3D trig_type << shift;
+>         writel(con, bank->eint_base + reg_con);
+>
+> -       clk_disable(bank->drvdata->pclk);
+> -
+>         return 0;
+>  }
+>
+> @@ -242,14 +207,6 @@ static int exynos_irq_request_resources(struct irq_d=
+ata *irqd)
+>         shift =3D irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+>         mask =3D (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+>
+> -       ret =3D clk_enable(bank->drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for configuring pin %s-%l=
+u\n",
+> -                       bank->name, irqd->hwirq);
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>
+>         con =3D readl(bank->pctl_base + reg_con);
+> @@ -259,8 +216,6 @@ static int exynos_irq_request_resources(struct irq_da=
+ta *irqd)
+>
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(bank->drvdata->pclk);
+> -
+>         return 0;
+>  }
+>
+> @@ -275,13 +230,6 @@ static void exynos_irq_release_resources(struct irq_=
+data *irqd)
+>         shift =3D irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+>         mask =3D (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+>
+> -       if (clk_enable(bank->drvdata->pclk)) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for deconfiguring pin %s-=
+%lu\n",
+> -                       bank->name, irqd->hwirq);
+> -               return;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>
+>         con =3D readl(bank->pctl_base + reg_con);
+> @@ -291,8 +239,6 @@ static void exynos_irq_release_resources(struct irq_d=
+ata *irqd)
+>
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(bank->drvdata->pclk);
+> -
+>         gpiochip_unlock_as_irq(&bank->gpio_chip, irqd->hwirq);
+>  }
+>
+> @@ -342,19 +288,11 @@ static irqreturn_t exynos_eint_gpio_irq(int irq, vo=
+id *data)
+>         unsigned int svc, group, pin;
+>         int ret;
+>
+> -       if (clk_enable(bank->drvdata->pclk)) {
+> -               dev_err(bank->gpio_chip.parent,
+> -                       "unable to enable clock for handling IRQ\n");
+> -               return IRQ_NONE;
+> -       }
+> -
+>         if (bank->eint_con_offset)
+>                 svc =3D readl(bank->eint_base + EXYNOSAUTO_SVC_OFFSET);
+>         else
+>                 svc =3D readl(bank->eint_base + EXYNOS_SVC_OFFSET);
+>
+> -       clk_disable(bank->drvdata->pclk);
+> -
+>         group =3D EXYNOS_SVC_GROUP(svc);
+>         pin =3D svc & EXYNOS_SVC_NUM_MASK;
+>
+> @@ -729,20 +667,6 @@ static void exynos_irq_demux_eint16_31(struct irq_de=
+sc *desc)
+>
+>         chained_irq_enter(chip, desc);
+>
+> -       /*
+> -        * just enable the clock once here, to avoid an enable/disable da=
+nce for
+> -        * each bank.
+> -        */
+> -       if (eintd->nr_banks) {
+> -               struct samsung_pin_bank *b =3D eintd->banks[0];
+> -
+> -               if (clk_enable(b->drvdata->pclk)) {
+> -                       dev_err(b->gpio_chip.parent,
+> -                               "unable to enable clock for pending IRQs\=
+n");
+> -                       goto out;
+> -               }
+> -       }
+> -
+>         for (i =3D 0; i < eintd->nr_banks; ++i) {
+>                 struct samsung_pin_bank *b =3D eintd->banks[i];
+>                 pend =3D readl(b->eint_base + b->irq_chip->eint_pend
+> @@ -752,10 +676,6 @@ static void exynos_irq_demux_eint16_31(struct irq_de=
+sc *desc)
+>                 exynos_irq_demux_eint(pend & ~mask, b->irq_domain);
+>         }
+>
+> -       if (eintd->nr_banks)
+> -               clk_disable(eintd->banks[0]->drvdata->pclk);
+> -
+> -out:
+>         chained_irq_exit(chip, desc);
+>  }
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
+samsung/pinctrl-samsung.c
+> index 0c91e1124a46..16980f4ef3b1 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -370,8 +370,8 @@ static void pin_to_reg_bank(struct samsung_pinctrl_dr=
+v_data *drvdata,
+>  }
+>
+>  /* enable or disable a pinmux function */
+> -static int samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned se=
+lector,
+> -                               unsigned group)
+> +static void samsung_pinmux_setup(struct pinctrl_dev *pctldev,
+> +                                unsigned int selector, unsigned int grou=
+p)
+>  {
+>         struct samsung_pinctrl_drv_data *drvdata;
+>         const struct samsung_pin_bank_type *type;
+> @@ -381,7 +381,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *p=
+ctldev, unsigned selector,
+>         unsigned long flags;
+>         const struct samsung_pmx_func *func;
+>         const struct samsung_pin_group *grp;
+> -       int ret;
+>
+>         drvdata =3D pinctrl_dev_get_drvdata(pctldev);
+>         func =3D &drvdata->pmx_functions[selector];
+> @@ -397,12 +396,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *=
+pctldev, unsigned selector,
+>                 reg +=3D 4;
+>         }
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(pctldev->dev, "failed to enable clock for setup\n=
+");
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>
+>         data =3D readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
+> @@ -411,10 +404,6 @@ static int samsung_pinmux_setup(struct pinctrl_dev *=
+pctldev, unsigned selector,
+>         writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
+>
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+> -
+> -       clk_disable(drvdata->pclk);
+> -
+> -       return 0;
+>  }
+>
+>  /* enable a specified pinmux by writing to registers */
+> @@ -422,7 +411,8 @@ static int samsung_pinmux_set_mux(struct pinctrl_dev =
+*pctldev,
+>                                   unsigned selector,
+>                                   unsigned group)
+>  {
+> -       return samsung_pinmux_setup(pctldev, selector, group);
+> +       samsung_pinmux_setup(pctldev, selector, group);
+> +       return 0;
+>  }
+>
+>  /* list of pinmux callbacks for the pinmux vertical in pinctrl core */
+> @@ -445,7 +435,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pct=
+ldev, unsigned int pin,
+>         u32 data, width, pin_offset, mask, shift;
+>         u32 cfg_value, cfg_reg;
+>         unsigned long flags;
+> -       int ret;
+>
+>         drvdata =3D pinctrl_dev_get_drvdata(pctldev);
+>         pin_to_reg_bank(drvdata, pin, &reg_base, &pin_offset, &bank);
+> @@ -457,12 +446,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pc=
+tldev, unsigned int pin,
+>         width =3D type->fld_width[cfg_type];
+>         cfg_reg =3D type->reg_offset[cfg_type];
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>
+>         mask =3D (1 << width) - 1;
+> @@ -482,8 +465,6 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pct=
+ldev, unsigned int pin,
+>
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         return 0;
+>  }
+>
+> @@ -574,22 +555,12 @@ static int samsung_gpio_set(struct gpio_chip *gc, u=
+nsigned int offset,
+>                             int value)
+>  {
+>         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
+> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
+>         unsigned long flags;
+> -       int ret;
+> -
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+>
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>         samsung_gpio_set_value(gc, offset, value);
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         return 0;
+>  }
+>
+> @@ -600,23 +571,13 @@ static int samsung_gpio_get(struct gpio_chip *gc, u=
+nsigned offset)
+>         u32 data;
+>         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
+>         const struct samsung_pin_bank_type *type =3D bank->type;
+> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
+> -       int ret;
+>
+>         reg =3D bank->pctl_base + bank->pctl_offset;
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+>         data =3D readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
+>         data >>=3D offset;
+>         data &=3D 1;
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         return data;
+>  }
+>
+> @@ -661,22 +622,13 @@ static int samsung_gpio_set_direction(struct gpio_c=
+hip *gc,
+>  static int samsung_gpio_direction_input(struct gpio_chip *gc, unsigned o=
+ffset)
+>  {
+>         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
+> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
+>         unsigned long flags;
+>         int ret;
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>         ret =3D samsung_gpio_set_direction(gc, offset, true);
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         return ret;
+>  }
+>
+> @@ -685,23 +637,14 @@ static int samsung_gpio_direction_output(struct gpi=
+o_chip *gc, unsigned offset,
+>                                                         int value)
+>  {
+>         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
+> -       struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
+>         unsigned long flags;
+>         int ret;
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>         samsung_gpio_set_value(gc, offset, value);
+>         ret =3D samsung_gpio_set_direction(gc, offset, false);
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         return ret;
+>  }
+>
+> @@ -1028,7 +971,6 @@ static int samsung_gpio_set_config(struct gpio_chip =
+*gc, unsigned int offset,
+>         struct samsung_pin_bank *bank =3D gpiochip_get_data(gc);
+>         struct samsung_pinctrl_drv_data *drvdata =3D bank->drvdata;
+>         unsigned int value;
+> -       int ret =3D 0;
+>         unsigned long flags;
+>
+>         switch (pinconf_to_config_param(config)) {
+> @@ -1045,19 +987,11 @@ static int samsung_gpio_set_config(struct gpio_chi=
+p *gc, unsigned int offset,
+>                 return -ENOTSUPP;
+>         }
+>
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev, "failed to enable clock\n");
+> -               return ret;
+> -       }
+> -
+>         raw_spin_lock_irqsave(&bank->slock, flags);
+>         samsung_gpio_set_pud(gc, offset, value);
+>         raw_spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       clk_disable(drvdata->pclk);
+> -
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  static const struct gpio_chip samsung_gpiolib_chip =3D {
+> @@ -1257,6 +1191,7 @@ static int samsung_pinctrl_probe(struct platform_de=
+vice *pdev)
+>         struct samsung_pinctrl_drv_data *drvdata;
+>         const struct samsung_pin_ctrl *ctrl;
+>         struct device *dev =3D &pdev->dev;
+> +       struct clk *pclk;
+>         int ret;
+>
+>         drvdata =3D devm_kzalloc_obj(dev, *drvdata);
+> @@ -1285,9 +1220,9 @@ static int samsung_pinctrl_probe(struct platform_de=
+vice *pdev)
+>                 }
+>         }
+>
+> -       drvdata->pclk =3D devm_clk_get_optional_prepared(dev, "pclk");
+> -       if (IS_ERR(drvdata->pclk)) {
+> -               ret =3D PTR_ERR(drvdata->pclk);
+> +       pclk =3D devm_clk_get_optional_enabled(dev, "pclk");
+> +       if (IS_ERR(pclk)) {
+> +               ret =3D PTR_ERR(pclk);
+>                 goto err_put_banks;
+>         }
+>
+> @@ -1335,13 +1270,6 @@ static int __maybe_unused samsung_pinctrl_suspend(=
+struct device *dev)
+>         struct samsung_pin_bank *bank;
+>         int i;
+>
+> -       i =3D clk_enable(drvdata->pclk);
+> -       if (i) {
+> -               dev_err(drvdata->dev,
+> -                       "failed to enable clock for saving state\n");
+> -               return i;
+> -       }
+> -
+>         for (i =3D 0; i < drvdata->nr_banks; i++) {
+>                 bank =3D &drvdata->pin_banks[i];
+>                 const void __iomem *reg =3D bank->pctl_base + bank->pctl_=
+offset;
+> @@ -1377,8 +1305,6 @@ static int __maybe_unused samsung_pinctrl_suspend(s=
+truct device *dev)
+>                         drvdata->suspend(bank);
+>         }
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
+>                 drvdata->retention_ctrl->enable(drvdata);
+>
+> @@ -1397,20 +1323,8 @@ static int __maybe_unused samsung_pinctrl_resume(s=
+truct device *dev)
+>  {
+>         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
+;
+>         struct samsung_pin_bank *bank;
+> -       int ret;
+>         int i;
+>
+> -       /*
+> -        * enable clock before the callback, as we don't want to have to =
+deal
+> -        * with callback cleanup on clock failures.
+> -        */
+> -       ret =3D clk_enable(drvdata->pclk);
+> -       if (ret) {
+> -               dev_err(drvdata->dev,
+> -                       "failed to enable clock for restoring state\n");
+> -               return ret;
+> -       }
+> -
+>         for (i =3D 0; i < drvdata->nr_banks; i++) {
+>                 bank =3D &drvdata->pin_banks[i];
+>                 if (drvdata->resume)
+> @@ -1448,8 +1362,6 @@ static int __maybe_unused samsung_pinctrl_resume(st=
+ruct device *dev)
+>                                 writel(bank->pm_save[type], reg + offs[ty=
+pe]);
+>         }
+>
+> -       clk_disable(drvdata->pclk);
+> -
+>         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
+>                 drvdata->retention_ctrl->disable(drvdata);
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/=
+samsung/pinctrl-samsung.h
+> index 7c60375d5924..5390c6d1d7a5 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> @@ -302,7 +302,6 @@ struct samsung_pin_ctrl {
+>   *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
+>   * @dev: device instance representing the controller.
+>   * @irq: interrpt number used by the controller to notify gpio interrupt=
+s.
+> - * @pclk: optional bus clock if required for accessing registers
+>   * @ctrl: pin controller instance managed by the driver.
+>   * @pctl: pin controller descriptor registered with the pinctrl subsyste=
+m.
+>   * @pctl_dev: cookie representing pinctrl device instance.
+> @@ -322,7 +321,6 @@ struct samsung_pinctrl_drv_data {
+>         void __iomem                    *virt_base;
+>         struct device                   *dev;
+>         int                             irq;
+> -       struct clk                      *pclk;
+>
+>         struct pinctrl_desc             pctl;
+>         struct pinctrl_dev              *pctl_dev;
+>
+> ---
+> base-commit: 749a4de370409464cf8501ec5b2451df45c84eb4
+> change-id: 20261123-samsung-pinctrl-busclk-7211f2c20f58
+>
+> Best regards,
 > --
-> 2.56.1.750.gf70dc682cf-goog
+> Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 >
