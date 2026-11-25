@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795616550;
-	b=Y3TXSjskWstyS7GzXhDkYAoYNuWjBdsxPXxwsZzr63pSIWQkfGahMA58roCSz6IZYthj
-	 5Iv6P2WgwCbnVK+1TexxbDx9+eH/ADQX4gci8ywwVbqxmK2CbyiLRoifeu8zDPnUYMzgv
-	 PnE8mS2rbdM9dEOydhCz3z3Gi99THmRbsYhfTQYL5GWYSCqsgEp2Nlcjb+CSr47NtQkp2
-	 KP7LEsNnr1NPAQTs2GBg9PUjPbkQystttxvY0dOpmRbjmWRKUMdmcO+dCqerxdOUEjmbx
-	 geEBR7pSDEKTYDqb0N8a3eI/UMcJb+soeUBxqpPXd6rfcz4zdbFS25U4x7cAkaeTqzA==
+	t=1795616622;
+	b=2J3meQusI4O8jcWCXldR2RJs1ggarn1w35mcaKqFgNLqzxGOR2huGl/fww9p00hwK9WA
+	 xW+EUHztr91GVHkrFBPrBmnI0tbZK6w75D+wOdpVt851x1dqMl5TOV1GN6bJUOq+/aou7
+	 +krjpQyd3fujhtUNsUIjDdno2g8yIvybSQU+JhQMoRn48ssW/Vq/ffRCVNI+MjDA63sc7
+	 QVPmARg3okbZe9xk3BghtevN9Z1ipM+c5cUr9dMvPcZg3DZV1FQ3o3Z+gGAZUtCbrDE4Z
+	 rcOKKEXGRYXnZKTB6mbIK20HLa7myO+RIL/kvYnac0BNDnU9SDmIzVgm1BxLmITTeaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795616550;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795616622;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
-	bh=GDvxlFRxYJ/hkyDYpmeqRD4w+SNrEBTiATTaXGwEUVg=;
-	b=ysyQurGVsydPhJboyirPX/iqnwmHW/P3oSuXcQQYcSHIlRVgfcu3xvXP9+LBfuUbY6Co
-	 QAhK4HbqoWSEQYaYuSvi/U5ffayTsJI2qRWpNyN+NRp9Yvs+bDwUelA+LxN0UTHcWjcWu
-	 J+5xIs9if6WOi/iLrGTHS9mcbTX5/Ibse+O1e9bgFiR9VGKGuAgLmxPnfVw64iwogPdEr
-	 dGVRZ1fZNDvfV+WHBC1Pd5EWW4TsvAR/bTdWXPUIV5roF2EuWlEHnoiTMzl4Bw+bnS1Yr
-	 SNeBKw5theB1iyW1KBj8nDfGGWyCwiaGnmRBnYO4TxfLYWILY1Ib2eT0XHib/8TGaWQ==
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=50gSt9hp6GSAIpuWnVDuHjwFxVGn5eyqx3CRupQkIy8=;
+	b=JJLijXrxHfuKvlJLndPpTXp33XC84Lh4QFro1oGJrBUGUzkin7ugQfjneJRAgxPPcZ/v
+	 ICS/5sZ8Tn94jB1PgXEX/IGopf131gjLjDtycqkMWpBABtf4slnaBZHaiIYKL8+gvzdM2
+	 1lUU7FwOMCPLf7KAtiZk3N6ecIF1ohI/itjYIyO8KedpMqqNEABZYYe1aw7OMH+AQhk02
+	 ylcgnY9i13u16NW6jpSOORaERS+CL9bd6Od6cb5KjdkzTHb+47MCV+7zhwf8f+Ry28pdR
+	 EEvp8kwyW/wnSZAwSHBjHftXcJd+T4ul6kyVb3cibRQDproP5nj3vxLveIv7wUZ3tNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=JBqiJyHV;
-	arc=none smtp.remote-ip=209.85.208.49
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=L1FwDLp3;
+	arc=none smtp.remote-ip=209.85.128.42
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F6B606A33C
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 14:22:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14F6B606A33C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4B8606A330
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 14:23:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7C4B8606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=JBqiJyHV
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b87a240de3so7333722a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 06:22:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=L1FwDLp3
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a3517554f7so53453935e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 06:23:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795616548; x=1796221348; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1795616620; x=1796221420; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=GDvxlFRxYJ/hkyDYpmeqRD4w+SNrEBTiATTaXGwEUVg=;
-        b=JBqiJyHVxbIaJhvX7CSXxgauJzThYhz2o9o5ZBtO+G/porJf6N7RAEpkZpWIShdHQu
-         KM5Qra5i5l6Xg9/rWu121XMDeXmc7077dP75qwmvB9/5YolJvMThPptG7jwOsn0RrPkm
-         2pkDiCST7wizNNkVZUmCTB/s9yx3Lp02qDRDvfIOLUIO1XZqv9zq2EB/LhDW2Sbd9AaP
-         J28Q3+TK3OTHI4giiyG1ZQyMJhl8fT1siMF/vfD66fvfHb5/61HXRGGFhlBahGPZDylB
-         xahKpqaEPYeghWRoUN7I3krrMItEuh+quY9s+/PaSzra/cDgjEG9yVRJU1Ad31w6LNOU
-         e74A==
+        bh=50gSt9hp6GSAIpuWnVDuHjwFxVGn5eyqx3CRupQkIy8=;
+        b=L1FwDLp3wHHSO7OHNJzAMqbMI3UzxX+e84R2IhF7FhA+JeTZBxBjUpwtiC4W1qd0jQ
+         6/P62yQTbdXtRzJ/Chi1+ZzOPqKzPLTswybBmQtyQWMvqZrkX6njoV4qLwo/KuXFaPMV
+         YP9bxcFGse8GqHNYMQfFAH8iONsqJ72HnCi9lmW8FWUD+rvAf/X4Kc3irkcnSyY+VfmW
+         PCee0ToykhFaayyMrnwgg0VGw/RYfzR0BeM/9aHsX9CpVscUFq3rPcwoMAEjNhOFW8E6
+         q793a99AUX52CWkhfNi2ZOiooz4UqjtVZHsdmGkJa72PfIVtOOYl20UWfx1uKGOzOjDL
+         XKHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795616548; x=1796221348;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=GDvxlFRxYJ/hkyDYpmeqRD4w+SNrEBTiATTaXGwEUVg=;
-        b=zytoiSoL7wu8/xpmnZPdMmiHUwdpKwyt0Pgmy58YZmsKpI7/B6rz6YNOpXE2jUbX7B
-         TERcGIoRFyyS9kfIvaM2zCOLbZ1SgvWAek6bCLn+qvaOGhCqvAHPLW+E/fKpx6HF1ptU
-         Jr/tjsNTtgqqlUbFHb6kaHGxjYX2g6CRMEcRGBcMAPj9BsFEEtlcj0MgydIwkDgVAWWl
-         eK4D/SHRkkswhiDfHpJliAdQtBbudtVpzxy1fD9E2RU1rcjUzqBpFa5tV9HDH/Zxrbsg
-         855SkvLc2vknH5bi0T8FPxneNB6EbT7jx2W1knH9oRasrgd1eNPe7syvXFSQK02dlZ19
-         xYvg==
-X-Forwarded-Encrypted: i=1; AL+hErGTg5WOolsm08hjmK8QJNNyD/9tbulJtlGqFlMRi1ts3bqzcXWvcAcbRkps+0GKwdK25xlIt9CSlH4ecL0K6E5lqQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z95Z1L0KVpS2/5f7DLBeFwCgTw0uW2syZeHI6X1ObiKIAXi0tjT
-	PvV6/D8t/cL3+kfA4bBISryZ4PathRK2usgjix7VYCBuxqydMUmd9H198DGfAh8uF5w=
-X-Gm-Gg: AZFdTZeN5Ns3Q3/CttmWWjEoDdaQmAivDHsVvcV//GTsYveA7NSEFp8bm7lysgAucaY
-	jfdkqFm0RcNT14fthg7L/Hp41o/vbb1qfpBj0PCQFglkzG/CX09wTY2RKgYGAPURoPIVwrq2NVD
-	lCih2cuyzFKkx+UxNkPm8pYv4ev65w01S/0xqIPlsaLjNriRPsNN+jDyyOD2vRRgPi1hdAdwYXq
-	kZiiAxCxLzgfO6QJwn3VZ3/Pyh882vqBNgu6FbQHsAjlDMTQ0y6VdnRZ4mM8iKcIgE0oPYPm5PH
-	UFtKksZoOFtkgXgjJr6KgLA8JVt1WqkLlcTtynJDVSg5mLWT+E9Nl0AVTeQLXk4vIOX8rxeXHdF
-	gehzTTfHyR5gYP+0629BNKa19LJ3sueU6qNj90zbquPVhqN7AfNL4IdSPA3Swi69byQqMHrhwkw
-	lI4VZwRAG8osmeB84sOGGKsP8j0O759Ic+/tRu6/P3IAouZ62PPqLgit891dkWk6iWpNvfXmruu
-	/VqzcvNIEKHw2QhFIbhNmLeGfdy54ofIrVLRcaLuC8vo/bW40/Y8xmFRxSmw0PIuZKmPE7ORaCX
-	qP36JI1eIdlPGKvFoLn9cQFKVH/rxngyOTb+iNJYqf54t+DnGUkr8tHLKWRsD9QEoku7jefP8SQ
-	HR/zdO9EKrbZfAgMbuw==
-X-Received: by 2002:a05:6402:1e92:b0:6b7:d55:87e4 with SMTP id 4fb4d7f45d1cf-6ba37e831demr13309656a12.25.1795616548357;
-        Wed, 25 Nov 2026 06:22:28 -0800 (PST)
-Received: from puffmais2.c.googlers.com (226.124.90.34.bc.googleusercontent.com. [34.90.124.226])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fbf0esm8315989a12.23.2026.11.25.06.22.27
+        d=1e100.net; s=20260707; t=1795616620; x=1796221420;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=50gSt9hp6GSAIpuWnVDuHjwFxVGn5eyqx3CRupQkIy8=;
+        b=Qotc7uPa6IRon9yrVIzUEm2WxwgGKQakv63PW5HCfwmMqKtFahlM0cPWloQjTo2Rib
+         sZjtn6xRQPp33kHJNB2G11wqb/PGgEzrQm5bUTk0UtHvVu6aDMo/QUTdTqwX727lg9JA
+         egkdn5Otc0yrUXJ8+3RQH2cVDhrKhYx4q5kK84e7YaIcRz/hHTU1fUUbOcw/Qdk/ZC4C
+         aRC9l80W+gtnf1XWNLYiW9rM2i0RNP3ue0I8GvoU9LPnJxDGUWa0EYUTooDb6hCP3WL+
+         3cQSmPlD1Sgu7vJAojA6EI+GogwP9yZRRZAyVlUx2gfM/Puvckc1CUFDJEW3mSnOQzvN
+         Xogw==
+X-Forwarded-Encrypted: i=1; AL+hErGkhCnimr828MI1V7A+w4+Jhdm8CUuX93j+k3BN5NB7F8y1kVZxxieoSJK1bJ5t+fJi39pRQ061dGiYWhQMboasBA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/Yzo9vX9LjGXA1LgkuoyHnO1Z3nqBLPcEkIoW9u8cJtR5/B2OB
+	LeF/kjEKyMD0yiD8+dD9dMdRdOWtyMsmEVGYH0AaY8b+k65lLqnaaPSzTL3K+R+s5+Y=
+X-Gm-Gg: AZFdTZeA/TghfOrACibdvqvjegKUP+BmXb0iqdHVpMnGAnPCyFT2PCtvjZDvxDcd26x
+	+A8NlLprb/5Efpb0HAJCnI5ft5xTcyUbTaUHj4hZlkIGVSA2Ng8WMmZ9kAyvUMwJT10ykrdP+qO
+	P17AVtzAQfqOoWYoQbwlsmpkgPs1xBVc0g3K8dy5B928hsXiK0/wN8XrfN1GN0qgFKpcnofLvDS
+	o8HsJc+drm6M0Ml+2B1Kwcpsiu7sEkZQnHWzJ/8ztlhrZ2B5nAnLpZf5g4dRTh/1QKZ3n7DJdWP
+	1c9dC2vzGQB4GvlHI42TOb8+w1xyt/kW5qVX8pT9FfaR5uztgSyGf0k4Qtov10R/6WWHludicPB
+	clfX+y/PvqREw7iBbSwjW+sFoj49bTd3VKakHgi+A+u53aHXugjASGRqlBf1bYSoIItUim8LcN2
+	JjLmZ3clEiYsDQSLW+El6sVvLtlQgzKz4d8dl2e1XglDM3tIM99Fvue7IbwWCYSewUcPOZ3bhPH
+	MS526A1PpwZPiWNQTAC7bp14stqeqGn1cbhxi/WKheCo+T44MgD1o+50xS0wzR/+xwKfXktQCdo
+	V27qn7/NwScNeicky6dCJV5dRLY3HgQWqZdAGvHR/GP2BpYQ8ArTfpv/Ymnvoly7M/cV52GRmey
+	GnTgd9ONeNNW1W/qXahUw8y/EIaPxVBsDrNySTv/k0Oc=
+X-Received: by 2002:a05:600c:848a:b0:4bb:6626:5a25 with SMTP id 5b1f17b1804b1-4bb88813462mr315204935e9.20.1795616619785;
+        Wed, 25 Nov 2026 06:23:39 -0800 (PST)
+Received: from [127.0.1.1] ([2a02:c7c:5e34:8000:720:5dc9:500c:65bb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6bc8ce06sm33638667f8f.47.2026.11.25.06.23.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 06:22:27 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 25 Nov 2026 14:22:26 +0000
-Subject: [PATCH] arm64: dts: exynos: gs101-pixel-common: add BC1.2
- completion time
+        Wed, 25 Nov 2026 06:23:39 -0800 (PST)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH v2 0/5] Exynos850 ADC support and soc thermistor
+Date: Wed, 25 Nov 2026 14:23:32 +0000
+Message-Id: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -93,61 +93,74 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20261125-gs101-bc12-completion-time-v1-1-8fed7a3a7f43@linaro.org>
-X-B4-Tracking: v=1; b=H4sIACHvBmsC/x3MywqAIBBA0V+JWTfgSA/oV6KF6WgDvdCIIPz3p
- OVZ3PtC4iicYKheiHxLkmMvoLoCu5g9MIorBq10R6RbDIkU4WxJoz22c+WrFHjJxmjZ+X42piF
- voAzOyF6efz5OOX/us8bmbAAAAA==
-X-Change-ID: 20261125-gs101-bc12-completion-time-cedf7baa41fa
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/13MQQqDMBCF4avIrJuSscSarnqPIiUmow6URJIii
+ uTuTe2uy//B+3ZIFJkS3KodIi2cOPgS9akCOxk/kmBXGmpZN4jYClo3H1Kr5NM4K7QdSDXaWNc
+ aKJ850sDr4T260hOnd4jbwS/4XX+SlPgnLSikuGrsLwqbvtfu/mJvYjiHOEKXc/4AEKyE9qsAA
+ AA=
+X-Change-ID: 20261118-exynos850_adc-9cfe569acd8a
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, 
+ Sam Protsenko <joe.skb7@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.3
 
-On hot-plug to a non-PD Rp-default charging port, TCPM can query the
-BC1.2 current limit before the MAX77759 TCPC finishes BC1.2 detection
-and read 0 mA.
+Hi all,
 
-TCPM reads the Rp-default current limit upon entering SNK_DISCOVERY,
-and the gs101-pixel-common USB-C connector node currently omits
-sink-bc12-completion-time-ms, so TCPM does not wait for BC1.2
-detection to complete before entering SNK_DISCOVERY.
+This small series adds support for the ADC block found in the Samsung
+Exynos850 SoC and enables the Murata NTC thermistor on the WinLink E850-96
+development board.
 
-Add sink-bc12-completion-time-ms = <500> to the USB-C connector node so
-TCPM delays entering SNK_DISCOVERY until BC1.2 detection finishes. Note
-that this adds a 500 ms delay to every sink attach, including PD.
+Exynos850 ADC is also called ADC v3 in downstream but my understanding is
+that SoC names are more prefered.
+It also relies on PMIC 1.8v regulator which currently represented as a
+dummy one.
 
-Verified on Pixel 6 with SDP, CDP, and DCP hot-plug and USB-C PD
-attach.
+First commit adds compatible for device tree bindings, the next two add
+the ->read_value() callback and Exynos850 support in the driver, and the
+last two place things in device tree files for WinLink E850-96 board.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+This was tested on mentioned above devboard by reading reported
+temperatures from thermistor.
+
+If dts patches should be split out as a separate series and should go
+separately please let me know.
+
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-index dc908dd7e1c6..13cc8a90a3b3 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-@@ -668,6 +668,7 @@ connector {
- 			cc-debounce-time-ms = <170>;
- 			ps-source-off-time-ms = <870>;
- 			sink-wait-cap-time-ms = <450>;
-+			sink-bc12-completion-time-ms = <500>;
- 			/*
- 			 * max77759 operating in reverse boost mode (0xA) can
- 			 * source up to 1.5A while extboost can only do ~1A.
+Changes in v2:
+- split the Exynos850 support patch into two patches: the first one adds
+  the ->read_value() callback and the second one adds Exynos850 support;
+- added an empty line in adc node before status = "disabled";
+- Link to v1: https://lore.kernel.org/r/20261001-exynos850_adc-v1-0-791b3516bb9d@linaro.org
 
 ---
-base-commit: 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
-change-id: 20261125-gs101-bc12-completion-time-cedf7baa41fa
+Alexey Klimov (5):
+      dt-bindings: iio: adc: samsung,exynos: Add Exynos850 compatible
+      iio: adc: exynos_adc: add ->read_value() callback
+      iio: adc: exynos_adc: add Exynos850 support
+      arm64: dts: exynos850: add ADC node
+      arm64: dts: exynos850-e850-96: add soc thermistor node
+
+ .../bindings/iio/adc/samsung,exynos-adc.yaml       |  1 +
+ arch/arm64/boot/dts/exynos/exynos850-e850-96.dts   | 22 ++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi          | 11 ++++
+ drivers/iio/adc/exynos_adc.c                       | 66 +++++++++++++++++++++-
+ 4 files changed, 98 insertions(+), 2 deletions(-)
+---
+base-commit: 7cfbf79c66c63e807ea452abf0546e6f6d6833a6
+change-id: 20261118-exynos850_adc-9cfe569acd8a
 
 Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+Alexey Klimov <alexey.klimov@linaro.org>
 
