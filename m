@@ -1,62 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.177
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795628410;
-	b=Fw2aKuEacLULsggRHJQ+vGB8VD2+Rb+LECwECJdK5nRchTJd8KfvbLVvdKR8AkMmaP6Z
-	 0WvvfrimG6ygpziAkXv+nQdB4AKv67B0f7L/DIzFdiQPgQb0xtFJ7davVDtu2HvP/pRgg
-	 CnIYXfK0HQuzxSKVFE/Y0XTiX2fwoedlxJBACcELTarwra0j/hyozchQFi1D5HWfid5ae
-	 j5vKNCYhn5FUo1vMslWEt23K6iaoC0X5NgepGS+7Ol4BlLzGNQ7Rq8pHmhzxrSGHsDazj
-	 dmeYcVfOdR+aAjDAGp0W95kEGOpdNBdEDzXKG+nleD2LS23liEZsFMBr8W7v0KdTR3Q==
+	t=1795633740;
+	b=ZsfLLkZFueEhaihv+u0UOLrI9SEMCNXX9pXJvnskEsTJItwExIS6Q08LhD66dDMR9LNv
+	 g+zHI/MhtLcXJdZGgCNPmiuORNGrr4oGHcKBqZTIggzXqG8BAOqCzCPbefYHaK7C5rkII
+	 9bafpEtpqhaieqjNTHVDDPYQWEbKnzpAEfHLBDtEXkwipcVJYyt2YVg4mus5RjrQFD0pH
+	 YTP9s/jivFn24LGN+9o0brK0YRM9k4ADDyQwI8uaaYGnGD5Ju/V9bRnlTV5K5laROdlvi
+	 l83y6jl/hv9Y92R0afB6xgSSJVRcM2IYXt3d4G4+umOEigpy2DYvB1ff9jGuvGOKMgw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795628410;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:From:To:Cc:Subject:
-	 Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Kv2CBvjOfycHlmjB6SC5hIbRJOSjsO3gZFs9cUX9YCg=;
-	b=xFvc+t0j8kMUz6YPlgZMdcK8RRkA8MVZHy1tboVjB4a6vlw8qkTXDASRsdqgDQEY1p3W
-	 AMXbd91JccPgBvsyn1scp5eN8Sb6dSneIvAKT8mWCHueFas+b1toiwuoO9YWaTi6v+5SL
-	 tXMVvtIQ7pS3HEh1tyHL96jUhGTPZ3Cq2j1dZIDOhXaw8ItzUrFfdyx4HFOTNdpcZSxUC
-	 QSDsV+0hoAvdOsUU+HQxkEUQ1R//ywhe3H8jiC+n1Mr8afSdF1I0CY0cJsYvvjPcoNw+U
-	 WZrnjYy4u4Lcxj0DW3wHR2E3jSUovqkHV+7Qa9HGgF8jngQB/T6rtncOCdMAE2mgppQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795633740;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=sUl61wz2FooKjKoGfr6HcICrxyIas91AkAkxcmRZVuk=;
+	b=VAhY6VTGM2KfCxkKFWZ9Q+wpySq+qdOQvQWjaaW7PN96GADbZrfobqNz/HSSjXlF+Oju
+	 kzCt1sokhuosO9pLpky7jsKTCJOACBTXEU1A5bF21lu91JmrAPLNa7HdCHDlXyjNRn8hG
+	 i7Tvj7OLlq1o9ihKNLG7WzmyfMuxgT8oxvr27d8g3Qeflqyswx88FqVXir9rPI7h5vkig
+	 uufEIaLSNR4h/ORbzS7y73xwV+vSF3rXCR58jvRJ4PZtYgQGkfNgoqs8U88580O24oPP0
+	 wljQyvgGwN051dnFa9FEcz0fDmsHFaudJol7lkk+zVQzxPWdFcPd0aDGbbOWrWcky+w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arm.com;
-	spf=pass smtp.mailfrom=arm.com;
-	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gs2zOBOl;
-	arc=none smtp.remote-ip=217.140.110.172
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5511C606A31E;
-	Wed, 25 Nov 2026 17:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5511C606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	dmarc=pass header.from=chromium.org;
+	spf=pass smtp.mailfrom=chromium.org;
+	dkim=pass header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=IIhBqlbW;
+	arc=none smtp.remote-ip=74.125.82.177
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A44606A327
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 19:09:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 30A44606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=gs2zOBOl
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E2E1339;
-	Wed, 25 Nov 2026 09:40:06 -0800 (PST)
-Received: from e127648.arm.com (unknown [10.57.72.178])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2807B3F86F;
-	Wed, 25 Nov 2026 09:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1795628409; bh=lnCsqy1vLk+wb0zjY+zvfVbFIS3udMzWV8kdwdEBezs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gs2zOBOlP2a7W7F3z6Txi0AVjIhtMECOWJP6Li483S4GOLUmvr3Cpa3jKzoPnuM8h
-	 FgGZGUeSIlvdeDGQ83SK+Zai8stpEbzin6kzjnmtW+ujiIC90O3sVKi+zpcQCpg3Du
-	 L4lZiDot6Q4/+1NSRQcx8hiSKoGd2pU1WEHvC7cA=
-From: Christian Loehle <christian.loehle@arm.com>
-To: tudor.ambarus@linaro.org,
-	bzolnier@gmail.com
-Cc: krzk@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@kernel.org,
-	lukasz.luba@arm.com,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCHv3] thermal/drivers/samsung/acpm-tmu: Fix spurious CPU throttling
-Date: Wed, 25 Nov 2026 17:39:59 +0000
-Message-Id: <20261125173959.2198116-1-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.a=rsa-sha256 header.s=google header.b=IIhBqlbW
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-386cf1041cdso2048809eec.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:09:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1795633739; x=1796238539; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=sUl61wz2FooKjKoGfr6HcICrxyIas91AkAkxcmRZVuk=;
+        b=IIhBqlbWbrprmxMZ+kWojREY0lc0WTXHSKBAg6UU/UXHe1Cnkm2qyYNQdRGc51qR0a
+         2pYUF3yT5QTuVLqTA2AxB9OD6cZy2UZg0W3D5M2AuJwlpxuiBSy7SBnJetpNQNpU20uB
+         fcUaQhiKZCVdLEj4zfd5cEMWGKjDXRdy1MJ20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795633739; x=1796238539;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=sUl61wz2FooKjKoGfr6HcICrxyIas91AkAkxcmRZVuk=;
+        b=ePCGPZhSXD7x3lVlcW/DHJj1atjEEy2wN1nOXGq879S9u4Hwgg3tg31U3x15WGMGYz
+         JjVpWEtJLdw+JaP5OEphSRq5B/Z3J9c/+tLRNVVtDbp4hdy+OPxC/wLDVfyTMCWuSffz
+         CmCUWJ8eMVqv/2ClS9NJkbmbw1AbbZYtn358/+X7Rak8SRU+x515BggMP6ZpGoR7DO70
+         CF3X1sQ03gVCRD3qI1LJZ2Iw67l94JM9OwTKaS30VZYnMi72ZD08rYq7ExhokFoOrQcw
+         LfYyAm30jNod7Z/ORSKuh4QUgnd9XJT/RTHRpSsOCsSFgyJol3j0R1WeL2BNLLHi/ZUC
+         93Rg==
+X-Forwarded-Encrypted: i=1; AL+hErFIZTbpY5JW5bOLs+APs0WFORxa1bsRhKDqZXR5nFEk+/YFSYdfbkA5aYcaXo+HRQc/2+dCOZRVt0wtRaHKqBXZ3w==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/lKxG+eiq7q6xZJVsGYHw78n5Qng4VzHtCEZzF+74mugX1OyKF
+	tomRjJQrbSSmxzjsAfK2cT23mAG4OvYw/4o/TfsCmP/hksQ4LkOGkVITt3i9gkD/Ag==
+X-Gm-Gg: AZFdTZeCMo82d4by9/TK8VjY8s/2fK2UIgp/ztIcQIvbgdvBcgaQG0n1wut6v/JzjC2
+	JctfsT/O22Z1U0qm7nrZbjGjhTAVsuYQzCCN+i2/Euam5xaygzJCtPQDQNhbX16+AM/xl3mtB48
+	KdzhXa/0xyhUNzNCsYwtaN3wGijHMeYGt6njTmtq0XeLfEQQih1bJWok2hd+SuU4oFQUUcmObgW
+	QYWfARLaNTsPZ0+7zy9p2mGTMOFw/A1lRmCiYGh8bGM/obFKEqHI1NxfOQJeR0GM97rTAwlgAl8
+	gCDFV5yjVIK0QFDlSYpZeHSJ2vtSszYn6XlQTe5MMt5inD6JdwF45uyosor1WTTF6jJ4A2ZkJx5
+	RL4xBcdZWbrzGw3P9R6cuSByLbcykldLwiuK79wbPPnuZpo0S8L7+R+/Yrv9nDArBZ+pFl7s664
+	7zqQRqj10iOBN4CMIlhRTFMusCtH2vP1s02c7/ZPnO2yEuoFBiqyQtQKVjlo5LbSunR1C66MDzW
+	e8tBH4ctnIN/00tXwJuDXR+GosdJ2iARrglnTlcsaGNNfM+8x08r3mQ0gtsYlh2SEG09AwUoFBg
+	8i1wtFKQXCASXLkWghRB2K9ZvFm+QKt7n/jhtRGeg+0VfRRokITfDTCgWGW6DRRhoKg=
+X-Received: by 2002:a05:693c:87d6:20b0:386:bc19:6a30 with SMTP id 5a478bee46e88-386bc196d10mr7852852eec.20.1795633739073;
+        Wed, 25 Nov 2026 11:08:59 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e7c:8:d0a2:f616:6ba:a1ce])
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-385665f21aesm68043117eec.4.2026.11.25.11.08.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Nov 2026 11:08:58 -0800 (PST)
+Date: Wed, 25 Nov 2026 11:08:56 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thomas Gleixner <tglx@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	devicetree@vger.kernel.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Mariano Marciello <mmarciello@google.com>,
+	Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
+	Jakub =?utf-8?B?R8WCb3dhY2tp?= <jglow@google.com>
+Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
+ binding
+Message-ID: <awcySI6q3O3_M7Gp@google.com>
+References: <20261026214359.3122870-1-briannorris@chromium.org>
+ <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
+ <20261028-rapid-daffodil-rat-0adc6a@quoll>
+ <aulIoq2oVjJ3DVzL@google.com>
+ <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
+ <avZkfg6WMlMzOxpn@google.com>
+ <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -66,176 +114,96 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
 
-acpm_tmu_set_trips() supplies two thresholds, but the ACPM command writes
-all eight slots, zero-filling the rest. On GS101, slot 7 limits CPU clocks
-independently of its interrupt mask. Setting it to 0 C limits all three
-clusters to about 200 MHz while cpufreq reports the requested frequencies.
-This was found through trial and error while tracking EAS regressions.
+Hi Krzysztof,
 
-Program slot 7 from the lowest active hot trip so hardware throttling can
-precede the critical trip's system shutdown. Cache the low/high window and
-update the hot limit from set_trip_temp(), because the thermal core skips
-set_trips() when that window is unchanged.
+On Wed, Nov 25, 2026 at 08:07:57AM +0100, Krzysztof Kozlowski wrote:
+> On 13/11/2026 02:14, Brian Norris wrote:
+> > Hi Krzysztof,
+> > 
+> > On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
+> >> On 03/11/2026 03:36, Brian Norris wrote:
+> >>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
+> >>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
+> >>>>> --- /dev/null
+> >>>>> +++ b/include/dt-bindings/soc/google,lga-lpcm.h
+> >>>>> @@ -0,0 +1,54 @@
+> >>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>>>> +
+> >>>>> +#ifndef __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
+> >>>>> +#define __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
+> >>>>> +
+> >>>>> +/*
+> >>>>> + * LPCM IDs of each SSWRP.
+> >>>>> + */
+> >>>>> +#define LGA_LPCM_CPM			0
+> >>>>
+> >>>> What are all these?
+> >>>
+> >>> The binding doc says:
+> >>>
+> >>>       Each reset is specified by an LPCM ID (cell 1) and a reset ID (cell 2).
+> >>>       See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
+> >>>       <dt-bindings/reset/google,lga-cpm-reset.h> for reset IDs.
+> >>>
+> >>> and
+> >>>
+> >>>       Each clock is specified by an LPCM ID (cell 1) and a clock ID (cell
+> >>>       2). See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
+> >>>       <dt-bindings/clock/google,lga-cpm.h> for clock IDs.
+> >>>
+> >>> These are the IDs used in the firmware interface to talk about these
+> >>> things, as many of the SoC resources involved (clocks, resets, power
+> >>> domains) are grouped in this way (by subsystem (SSWRP / LPCM), and then
+> >>> with indexing within each subsystem).
+> >>>
+> >>> In reading again, I see that the definitions and explanation of these
+> >>> terms and the SoC organization are split a bit between the pmdomain
+> >>> commit message and the binding doc. Where would you prefer I elaborate
+> >>> more? In the binding doc, the comments here, or both?
+> >>
+> >> I just try to understand their placement. Bindings should not be in the
+> >> soc directory, except a few things without clear subsystem owner. If
+> >> this applies for both clocks and resets, maybe this could be firmware,
+> > 
+> > Maybe firmware, maybe power? LPCM is "Local Power and Clock Manager",
+> > and I believe there's essentially 1 LPCM (microcontroller) within each
+> > top-level power domain.
+> 
+> How does it help you to have LPCM ID in the DTS? It's derivative from
+> the clock (or could be made derivative)?
 
-Fixes: 50a2c5d4062a ("thermal/drivers/samsung: Add Exynos ACPM TMU driver GS101")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
-Since v2:
-- Use hot instead of critical s.t. it precedes shutdown. (Tudor)
-Since v1:
-- Rebase onto linux-next, including Daniel’s queued ACPM TMU fixes.
-- Cache only low/high and look up the lowest active critical trip when programming. (Tudor)
-- Retain the requested window even if programming fails, matching the thermal core.
-- Handle critical-trip deactivation and zones without an active critical trip.
+For the record: in v2, the LPCM ID for clocks *is* made derivative of a
+single-cell clock binding.
 
+More info, in case you had other adjacent non-clock concerns: I settled
+on dropping LPCM IDs (and other firmware IDs) from the clock binding
+(and DTS) in v2. And LPCM IDs moved out of include/dt-bindings/
+entirely, even for resets. I thought this addressed your feedback (after
+a few weeks of waiting for further response/clarification) so I sent v2.
+I'd appreciate a look at whether v2 is more to your liking.
 
- drivers/thermal/samsung/acpm-tmu.c | 76 +++++++++++++++++++++++++++---
- 1 file changed, 70 insertions(+), 6 deletions(-)
+LPCM IDs remain in the DTS for resets though (as documentation [1]; but
+the driver never has to inspect them), because I still think they are
+the straightforward way to describe resets, and there's much less
+complexity that might imply any "risk" here (vs clocks or pmdomains).
 
-diff --git a/drivers/thermal/samsung/acpm-tmu.c b/drivers/thermal/samsung/acpm-tmu.c
-index 4799ef518a7a..08856d713d5d 100644
---- a/drivers/thermal/samsung/acpm-tmu.c
-+++ b/drivers/thermal/samsung/acpm-tmu.c
-@@ -39,6 +39,10 @@
- 
- #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
- 
-+#define ACPM_TMU_NUM_THRESHOLDS		8
-+/* Threshold 7 throttles the CPUs in hardware, regardless of the INTEN mask. */
-+#define ACPM_TMU_HW_TRIP_THRESHOLD	7
-+
- enum {
- 	P0_INTPEND,
- 	P1_INTPEND,
-@@ -70,6 +74,9 @@ struct acpm_tmu_sensor {
- 	struct acpm_tmu_priv *priv;
- 	struct mutex lock; /* protects sensor state */
- 	enum thermal_device_mode mode;
-+	/* Last requested window, protected by the thermal zone lock */
-+	int low;
-+	int high;
- 	bool enabled;
- };
- 
-@@ -228,7 +235,8 @@ static int acpm_tmu_get_temp(struct thermal_zone_device *tz, int *temp)
- }
- 
- static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
--				      u8 thresholds[2], u8 inten)
-+				      u8 thresholds[ACPM_TMU_NUM_THRESHOLDS],
-+				      u8 inten)
- {
- 	struct acpm_tmu_priv *priv = sensor->priv;
- 	struct acpm_handle *handle = priv->handle;
-@@ -249,7 +257,7 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	}
- 
- 	ret = ops->set_threshold(handle, mbox_chan_id, acpm_sensor_id,
--				 thresholds, 2);
-+				 thresholds, ACPM_TMU_NUM_THRESHOLDS);
- 	if (!ret) {
- 		ret = ops->set_interrupt_enable(handle, mbox_chan_id,
- 						acpm_sensor_id, inten);
-@@ -267,15 +275,40 @@ static int acpm_tmu_update_thresholds(struct acpm_tmu_sensor *sensor,
- 	return ret;
- }
- 
--static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+struct acpm_tmu_hot_trip {
-+	const struct thermal_trip *updated;
-+	int temperature;
-+};
-+
-+static int acpm_tmu_get_hot_temp(struct thermal_trip *trip, void *arg)
-+{
-+	struct acpm_tmu_hot_trip *hot = arg;
-+
-+	if (trip->type == THERMAL_TRIP_HOT && trip != hot->updated &&
-+	    trip->temperature != THERMAL_TEMP_INVALID)
-+		hot->temperature = min(hot->temperature, trip->temperature);
-+
-+	return 0;
-+}
-+
-+static int acpm_tmu_program_thresholds(struct thermal_zone_device *tz,
-+				       const struct thermal_trip *trip, int temp)
- {
- 	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
--	struct acpm_tmu_priv *priv = sensor->priv;
--	struct device *dev = priv->dev;
--	u8 thresholds[2] = {};
-+	struct device *dev = sensor->priv->dev;
-+	struct acpm_tmu_hot_trip hot = { trip, INT_MAX };
-+	u8 thresholds[ACPM_TMU_NUM_THRESHOLDS] = {};
-+	int low = sensor->low, high = sensor->high;
- 	u8 inten = 0;
- 	int ret;
- 
-+	/* Exclude the trip being updated until the proposed value is considered. */
-+	for_each_thermal_trip(tz, acpm_tmu_get_hot_temp, &hot);
-+	if (temp != THERMAL_TEMP_INVALID)
-+		hot.temperature = min(hot.temperature, temp);
-+	thresholds[ACPM_TMU_HW_TRIP_THRESHOLD] =
-+		clamp_val(hot.temperature / MILLIDEGREE_PER_DEGREE, 0, 255);
-+
- 	/* If a valid lower bound exists, set the threshold and enable its interrupt */
- 	if (low > -INT_MAX) {
- 		thresholds[0] = clamp_val(low / MILLIDEGREE_PER_DEGREE, 0, 255);
-@@ -299,6 +332,34 @@ static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
- 	return ret;
- }
- 
-+static int acpm_tmu_set_trips(struct thermal_zone_device *tz, int low, int high)
-+{
-+	struct acpm_tmu_sensor *sensor = thermal_zone_device_priv(tz);
-+
-+	/* The core remembers this window even if programming fails. */
-+	sensor->low = low;
-+	sensor->high = high;
-+
-+	return acpm_tmu_program_thresholds(tz, NULL, INT_MAX);
-+}
-+
-+static int acpm_tmu_set_trip_temp(struct thermal_zone_device *tz,
-+				  const struct thermal_trip *trip, int temp)
-+{
-+	if (trip->type != THERMAL_TRIP_HOT)
-+		return 0;
-+
-+	if (temp != THERMAL_TEMP_INVALID &&
-+	    (temp < 0 || temp > 255 * MILLIDEGREE_PER_DEGREE))
-+		return -EINVAL;
-+
-+	/*
-+	 * The core can skip .set_trips() when the window is unchanged and has
-+	 * not committed trip->temperature yet. Substitute the proposed value.
-+	 */
-+	return acpm_tmu_program_thresholds(tz, trip, temp);
-+}
-+
- static int acpm_tmu_change_mode(struct thermal_zone_device *tz,
- 				enum thermal_device_mode mode)
- {
-@@ -329,6 +390,7 @@ static const struct thermal_zone_device_ops acpm_tmu_sensor_ops = {
- 	.change_mode = acpm_tmu_change_mode,
- 	.get_temp = acpm_tmu_get_temp,
- 	.set_trips = acpm_tmu_set_trips,
-+	.set_trip_temp = acpm_tmu_set_trip_temp,
- };
- 
- static bool acpm_tmu_clear_pending_irq(struct acpm_tmu_sensor *sensor)
-@@ -477,6 +539,8 @@ static int acpm_tmu_probe(struct platform_device *pdev)
- 		mutex_init(&sensor->lock);
- 		sensor->group = &data->sensor_groups[i];
- 		sensor->priv = priv;
-+		sensor->low = -INT_MAX;
-+		sensor->high = INT_MAX;
- 
- 		tzd = devm_thermal_of_zone_register(dev, i, sensor,
- 						    &acpm_tmu_sensor_ops);
--- 
-2.34.1
+If you look at the v2 reset driver, you see that just like any hardware
+indices / GIC numbers in typical reset or IRQ drivers, the firmware IDs
+are a simple address scheme that are passed directly through. If I do
+the indirection you're asking for, then:
 
+1) I have to add extra indirection tables in the reset driver and
+2) the driver will now require per-SoC handling that otherwise is not
+   required.
+
+I see you had a separate semi-related question that gained its own
+sub-thread. I'll reply to that separately.
+
+Brian
+
+[1] Aligned with Chen-Yu's suggestion:
+    https://lore.kernel.org/all/CAGXv+5G5z75HGP8nv_i_nwEeSd3qkvyL_h_MYzV_XPT9BpR4jg@mail.gmail.com/
