@@ -1,89 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795619460;
-	b=nKvOvBXHVK2c74iSFlzr20J5YwK2QgDNKHM6E+mFdXqiRRdWkQi5UROlu/qVLQ0S9ymq
-	 Yxx9bfa733lXb/dkf0l6g3109+UkKOkqd2KoOzAwuT5/1eH8460JctHev5QV7/0BSk95J
-	 OXZMhMHYjtlACM9msK3r8zQPvNxM2oVEtlRHPPx4SYjBcw9a77/NZpppnbtkk5VVEp2Fa
-	 zzIyXzVzFmmcYOVSYtpokFhexCvrwB3f+UmmM227qsArvCbosQoI1R0mxUKD10hz6Mck7
-	 zgUZWux8tycHcLTbB0rqyzxaEAnL2XWh7k7qcAQy9S03T4OhOdYl1obw8A0oiKMGZcQ==
+	t=1795621636;
+	b=xcN4b2vpwDNw1/O5XFeB1KGxyORxiLLhW2dC+oPlD0TzX1kF445f97CxF1qocupyNgbY
+	 UC7VYPmNX/hS5R5BnW2ZIAx/kL+K8cszPfMR7Y12PwBE2tucQw+wlyjnskCBbM80Gb+xV
+	 X5kuIjzFpgW0eY+2WyCAkdx4FcUhuyyZgeYBJ0fCUdiofYH6xc4jWNzsqP12D4fwqjfBZ
+	 +ifS8vAIkL45IOQFvet2CssQoLizmEtriX+KffVoEyGLopn6ZRHWHnomBFK80+m4Mv0aI
+	 OLi61DEK65QltFfJbdnkc1wx9+KcQpLvoatAy6FkgzA0xGtXVL/ZSwcWyqkvDLiytDw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795619460;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
-	b=5rwRGPUCDJ4hWPDVhHkz40Js6g3thRHrNikRFFAfXG49khlVJnU+Sv5HbKM4ADaQAsbF
-	 Wk7kDPYnzVuaG13J0wxEyfAeMH+kYM3bIkxQZHfP+f/TSx76xHYw/2m6WY3OV3q2A6bW/
-	 ak5BIsQraJYU60MAbYJGn+pXbpORY40hWVNGsjVyvNZ2t357Hr7TgpHS4MI4plE9R3S+c
-	 EqyYUN+YzO9N1OH4MlAsuyo9aKySIX+KhSAVoe0ZTuQG9i+d1TjHZgqo2wIMcfQ1dYyVG
-	 lrLGcA38qh61x3JvS17JBq5ZuL/ffPMwZuZNBOHX5xVe2AUHXvxIJJU+BYZvdGfRJbw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795621636;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=fXi/ODkkDcS7yB3qAtaA6Va6+pHO+yh02Tn0NReGjdg=;
+	b=De69Dbjfvdfv31n4T3Ny/sWYAhSsXWK75Zcqfiw14aBO74tMRNAD3+Ayk2BEOF5rmAs2
+	 NPKvQfgNH9pZXsgZj0qmTyffPMpim4aWgmMelGHAwp+42Ox65/29GOmfac1vsmo8fPg3K
+	 FibXV00S1P76AbiNUsOL4+ObSxKSZ7iM0bDj9v05Mh5FZeLIPUIsvQtR60GpPIRgOFVmI
+	 l4dFJkoyqmkD4HBQzMdn2gbJfKWXmRAgDSYWZ0s+OMoL5CxXivBLxJzB/Y00XqaE/m/A0
+	 xh1fm83m0Fbcf7s9LACOAVcHiwJL1w91JqeLSg7v/vmRCE7UUpz+Lr0zPqpsvcFupwQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b="pvgO/YEk";
-	arc=none smtp.remote-ip=209.85.221.51
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AVLU3fxs;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFFC606A32D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 15:10:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0EFFC606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A67606A31E;
+	Wed, 25 Nov 2026 15:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=pvgO/YEk
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-498f5fa4f70so4817407f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 07:10:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795619458; x=1796224258; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
-        b=pvgO/YEkUdlTI28zuYZC8bFmQ0ov6Ytr8mgLvhlmdjJrFmun/YQy/s9ogNGEO3ScvE
-         y1yjxZFDIf0mZkflbv+NqwdMv1WaH5epqxsxN5igi76syFebxcbfpJOqB75BGxQKCSvw
-         ebLE1FXNu/ZtoIfutYBQOfokYl5xTtUhRQj+b8VJ7pNfWSwNv6xM6cOaIKoqFF6y7Sqx
-         MyuaLImm4IKg2FypDwXdX7El2lpChRMrsRTrDNzAqJwkVhnE+2rm8VWe8XNLMHWzVGzB
-         q3z9B5LxWMyh1VERl22N8/nBkejYHSL96cRVXEz2ncfq2mugX733q6F4Uuvwkf9LoyfJ
-         e9CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795619458; x=1796224258;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
-        b=N7T5xKc4Ful78cl234atvOQtmVpZwJ4bCNFpLc86HSlodLOFJbZUWIgoQsrtor4Neh
-         QfNXlwkositrb3k8/SI6YIXVyQQk577i00h2C0DvulPLymiaJXg8WicprB9u5U7jWNQd
-         s19P/z8bjz4FbjovZC4WlqcN8wIkZdxfrX+g4XOYvQKadBXtsqtsEcRTMDY2ZN/oNMSH
-         naXOAmo8S8W1l5paq5sRAat4rzhfFRzuYKlPOr9RjsERFlSzFWBTxSGCz5mXykEwxD3R
-         8VV5VnquDfQ81t1f7oF1mOXu/Y2TxsyicvNkZisgI5DFaFQEzgumyQAdUCKWuU2cFx2M
-         F59Q==
-X-Forwarded-Encrypted: i=1; AL+hErFv/un6F7dkpAQXLKTi0G89iCYtYnduqHp+JVmV/jmklR77iCL7g1IFTnrHNH9dKvW/tKRlyPY8yofGPkhhaISpgw==@vger.kernel.org
-X-Gm-Message-State: APuU4Z8VOdOx9Qerf3u8oqJeXGP53BHboN/XTKJfVz3J2EwfNUShcXbt
-	kq7wyV7nzEN3A/nhsikVRyIsmg+ILmCwu5FlHWTM0d+SAhsnN4ghtjlSKwKWOFB1wr1pDLBw/oJ
-	Qs9legi8=
-X-Gm-Gg: AZFdTZedFYWF+eKy2eGBqDW+sZOGR8uWoH0bt1/JlnZGdygocgmHrKsifPBQXX6ZVTn
-	JWg3CebO0Fgw7++AlAnYDxvmVpW7YkP0ETFK3y2+Na5vZD9hgmJ8kxp8fsAYwoqXeTjvxu81NU3
-	zuMM4Znsi2gFdePoFDyY5X56rf1iYk4xuNOUO1anEJEeN029XQ6C+ROYl7xqQDoKoM4YW2za62S
-	Fao1JBIZS2FDIWXvPNFhuwlB7fyrEA4Xz+0s0RpAhU59DzipYpQB3DzprKPTwGc8S4pQE44Z20K
-	nL/ie70Bm9cWKfquLaKGIKafFs2BZBQgAbNiT4rmYA8dK15kGmG85Zd0MypGaAyqPf5pwi0U0pT
-	OQo0aMLuTmore74c0XGEZb6gxZ8xgxpwJ4pEwHZ2e/hqdXMsFBf8LQRrIY83vmk+AIB3WPX5GaG
-	kkdDCAjuZfKlOSiacruqNDu40gR3OjNVyVNTILEEtK7GaTFZOqAm/XdMDrEh6Z9MpKz6EYW7NFS
-	ZmSR9zLL7Qh09qTUB5M4C/EXDDsoOtQeJj+W6FSyJ7s7julQ5SJMdaZlm/Ycs990bKw5qHi/IMy
-	ekYVsDtBfGkzPO/IwPCBIYOUUa9Uq6zqq76ZH0M=
-X-Received: by 2002:a05:6000:470e:b0:4aa:323a:d7b7 with SMTP id ffacd0b85a97d-4abb16e310bmr35276861f8f.23.1795619458249;
-        Wed, 25 Nov 2026 07:10:58 -0800 (PST)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110d56sm33656875f8f.40.2026.11.25.07.10.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Nov 2026 07:10:57 -0800 (PST)
-Message-ID: <2b369a93-d20b-4df7-b667-1775117e9470@linaro.org>
-Date: Wed, 25 Nov 2026 17:10:53 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AVLU3fxs
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABD31F000CF;
+	Wed, 25 Nov 2026 15:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795621636;
+	bh=fXi/ODkkDcS7yB3qAtaA6Va6+pHO+yh02Tn0NReGjdg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=AVLU3fxs7ziGskU4JNYWdlQtxTmX128cAa6+2hAlx4TdKTG6DpejbExUU/e/f/mKl
+	 c56wa48HrXsN1eBo78dwYI2aG/X/gryyefEWRFNhtrdKFewwrR9RqOrsPxY6uaR25H
+	 cJS/h2bkpoI1npa6t1zhZ6F/gqgcdbZhrrjyKd98lUgxpUEFgUWYlXKFYP+/9DVvfZ
+	 5fjWH3zBTer+CfZcpxFKJai2JGnZUeGQJ9hgFV1RvQAq2VJ9rgR/Yt47mZ8rXmp7sC
+	 s+1BpjyNR1g8Q7mVlMkgSmQq5DrE9oCEDcQv2uvYEKkD7CqK/28gTJQsF1eYJB3d0E
+	 rnWIb3oAb/gqA==
+Message-ID: <758f7d59-21fb-4441-977b-1ad90e227441@kernel.org>
+Date: Wed, 25 Nov 2026 16:47:10 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -94,55 +52,51 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
-To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com
-Cc: krzk@kernel.org, rafael@kernel.org, daniel.lezcano@kernel.org,
- lukasz.luba@arm.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20261124132756.1306906-1-christian.loehle@arm.com>
+Subject: Re: [PATCH 3/3] usb: dwc3: Allow glue drivers to override all
+ dwc3_properties
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Frank Li
+ <Frank.Li@nxp.com>, Janne Grunau <j@jannau.net>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Tejas Narendra Joglekar <Tejas.Joglekar@synopsys.com>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Neal Gompa
+ <neal@gompa.dev>, "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ Fabio Estevam <festevam@gmail.com>
+References: <cover.1795559405.git.Thinh.Nguyen@synopsys.com>
+ <b0b118ce86d1046d73fdbe297117f993df38cf20.1795559405.git.Thinh.Nguyen@synopsys.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20261124132756.1306906-1-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <b0b118ce86d1046d73fdbe297117f993df38cf20.1795559405.git.Thinh.Nguyen@synopsys.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi, Christian,
 
-I tested and I confirm the CPU throttling.
 
-The patch is looking good. I have a design question please.
-
-On 11/24/26 3:27 PM, Christian Loehle wrote:
-> acpm_tmu_set_trips() supplies two thresholds, but the ACPM command writes
-> all eight slots, zero-filling the rest. On GS101, slot 7 limits CPU clocks
-> independently of its interrupt mask. Setting it to 0 C limits all three
-> clusters to about 200 MHz while cpufreq reports the requested frequencies.
-> This was found through trial and error while tracking EAS regressions.
+On 24.11.26 23:59, Thinh Nguyen wrote:
+> struct dwc3_properties holds all glue-overridable properties, but glue
+> drivers can only set needs_full_reinit and gsbuscfg0_reqinfo.
 > 
-> Program slot 7 from the lowest active critical trip. Cache the low/high
-
-Do you think we shall program slot 7 from the hot trip rather than from
-the critical one? If we keep the hardware throttle and linux shutdown at
-the same temperature, the throttle only matters if linux fails to shut down.
-
-As you already noticed, downstream programms slot 7 from the zone's last trip,
-which is the hot trip (115 C), there's no critical trip defined in the zones.
-I can't tell why downstream misses a critical trip and why the hot one is
-in slot 7. But I guess it doesn't matter too much because in upstream,
-the critical trip doesn't need a threshold slot of its own (we use the
-low/high window in slots 0 and 1), so I think we could use the hot trip for
-slot 7, even if there are critical trips defined.
-
-> window and update the critical limit from set_trip_temp(), because the
-> thermal core skips set_trips() when that window is unchanged.
+> Replace the properties value in struct dwc3_probe_data with a
+> fixup_properties() hook. The core calls it after reading the DT
+> properties, so glue drivers can set properties that DT does not
+> provide, or override DT values, including clearing them, to correct
+> broken SoC settings. Convert imx and ls1028a to the hook.
 > 
-> Suggested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Signed-off-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> ---
 
-thank you, but it's not needed, let's drop it, I commented only on the
-implementation.
+Acked-by: Sven Peter <sven@kernel.org>
 
-In case you're going to send a v3. I guess Daniel prefers the subject line
-as "thermal/drivers/samsung/acpm-tmu:".
 
-Cheers,
-ta
+Sven
+
+
