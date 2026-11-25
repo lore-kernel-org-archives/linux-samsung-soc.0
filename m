@@ -1,107 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.41
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795635090;
-	b=tbQpBuWthE6JA1EpMxipmM1W+IUuAweVPB7eNFb2/lAFz76xL7ev7O98qfBBE8Cy8xUe
-	 kAAzQH2LbE0MY+PcDvcDz1vQmlBQQg9NZN+ZNYKTV9xxw4S1R33S2BwWMU6fXbp2cUsqd
-	 5Y7rGtdg880Qoz2Qu4geS6VT/lskShFKlSVH19fwCjRkZ78RNdh2DzCYWzFoyirakbGA9
-	 PgdXxzE1jqlsnnH0PQ0ED5joZVeo+ns3czMsFe6bQZ8MXPGdjT3tqevh5b8g+/73KDezA
-	 i5LPMiqe+hOiUSHqBTsZ+ZD46lVQS4C3U7dE8ax5HeXG6FWnFYX5hjmnCA1q7iWhuIA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795635090;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795640360;
+	b=YJNuQrXAN+cOcFFOhsqkqiIIY/0Ss3JEKy+tYeilDoLIjmfGQa1v7nar4kIHHP2jpzna
+	 amrl6szCkT+JE9LSLwLJJ8BswlYYFppVE5meaNaXL1ofitrcGHnGxU9u2L0onvqnRsWIF
+	 aKft2QdXYP5t3bkOwIBLBTpJibYSVsIiUlnlng0w1bhejruBiV8a+3UqOV9RPs37iQWuh
+	 KKaA1mSivwAcXCTjHEzgeTy3UzdOQYCAqwvynHuFxMofQqQF2XXRed9mDHqPUtFIy7FTn
+	 MyVu/wYuknSz7EormkXZGUQ9T8haJupZMHz6cnRn3wqxuCe2edqBAHUNCPv/FWmtt5g==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795640360;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=U1oBw4U+gjNk3iM5j42wuAngnRMfL1HrI9OahKdf/KQ=;
-	b=2JnKav3fOKQh9BNVbV6fAPUgPCYaXkfIJT57s2y1PuoPxRimeJvNSOKbf8SqugU7sfZO
-	 sNeCxYw2Vr1OU0wUhg3jrqFmSn+zG5LfO8aIR12I8RKv6gtUBhgtVPg/YRdQ+Sa4OLE/S
-	 18JDO6wpc7v05A5XH0TDXuyxRNzXB7SnR6yO6OWiXSFdhQhQuhjgYOHXhquqCJQ+xYODQ
-	 /qDqDgWFpDNcc/gcHd5UcghRpHSFwgtX0Pg2hVU2m+fP9aYYK0Y7nrTeE+S+c6yVc0vJv
-	 2aNYAZvMe1mg/8xCKMCF6RndrIEbuh4HTcciT0Ct763gB3mbbpe6ODi7gFeXTOTtsKg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0nHMyVEo;
-	arc=none smtp.remote-ip=209.85.208.41
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
+	b=Dmh35pqEuBo+cXvoe43/cocqmFAc6xUVfiOQ6Zfe0/S71AesKX9m5fnFKvtc8Ow/+l0k
+	 cKeE7HZNTzRiULv+P3tq2i+XWOJAEOZ9BX7Zcv9LdjLgSjQdXsvHgpuLGwz14y2p+lucT
+	 iiInkoq9w2rxtd8dkZNmMNx62GvPwkLyniAiflawYcvKYb4E8qfNOt0g3dgPz/vRuBxlL
+	 Lljd3dvbZJ4CNL4P2tRY5TmbRL89glH42Xvhjl9UugIsjG8mfQCArUES0nXkG0pwVoKOQ
+	 3TuS3cbEoKjSVmHpOiG4QgurOwcLNNFN35a5oO8nwiVOvm64oGiVFwZeGM4T8W5cPqA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=XX+oVSvl;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.52
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9854606A326
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 19:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E9854606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C054606A321
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 20:59:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0C054606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=0nHMyVEo
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6b596afb4c5so7297491a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 11:31:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=XX+oVSvl
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6bab377105dso4914634a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 12:59:19 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795640358; cv=none;
+        d=google.com; s=arc-20260327;
+        b=l/qrkEZD3AoU8OD+XMNwRzkA8r4VVK4H2hLVL7Yw3UHgTZBk+df8/5D91ZRXST6Gic
+         kdYZV7ftFHOSBGcCjNg7Hnc649Qz7ZD/35+fbs4c3PR3ZAGrL1IDUVGYDUhGcAnY91dk
+         oTc/Szj/yHie0GSK5RsO79lwW7ONnKBNxOI+b1JTUaiilZIytVOWCNdSJYLAWmwisBzE
+         fVyTvOcDVcmCw4WVqRaMQYHX/7Z6dtapgeDkqVt4seMqdTXj/ghN7W8fp6YzEvfQJQ8U
+         i8zNP5KaO32uucSU5RJtWHxHbfhb/3xoVDxFlVOc4weY/Ow2XSaOlzeHUpVKFvK6jHuY
+         qGQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
+        fh=kz0bIWqAM3ZVxrjD6Hfbfl5to9U/85kY0+PhFig+YTw=;
+        b=S0T5fOOIim3gl2xUtx1JVbbxVFHwEXy+Q+lOUT7SxSvJe88AfYYkSq/6tI+8CYsRQ1
+         rvBw2ysPCBXZlvlvKH7Qsll869qU1yT7eAReoa13r7ys2IlC9kdoXAWt3cHrMg0rUDtL
+         WBa2oLUzNECzcy19hCdHPhM0ZwvotQtjn5SmTY7NrB2XobSjKH39UbPil0phpUZ1agrW
+         gv20SBjoAJw07kG/zriNobuLgXXAUZRDwDTKEelFXRrUJca5fVIcnC9DPiXMhl7eziK3
+         7AB7hvhEQovLKhpsx9i6VpjOYUmMPGY29owNUsbVTspym+r7IY/X3cIH509TIACzNnKB
+         62hg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795635088; x=1796239888; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=U1oBw4U+gjNk3iM5j42wuAngnRMfL1HrI9OahKdf/KQ=;
-        b=0nHMyVEo+cHSBg/yZjo07YS7lm0nSu5aapXced69byeyWvlod6eZOHh3vHqbFwviLr
-         fXpsJZQXB8MYqRvheUfHH+u50BUewnvIXigX2sGoh1oBv0F9raAp1hdMWLRSKGQZGQI1
-         SQQk+CCM8hEOeYgk00xfrypTvmXRqtcUioIBzk0/arl1DHjQmysx9hYsi5u3I063SrFG
-         +8kYHx4giGHRVBYzeGw5tjEcknNPOtd1dXh2UMhaEQzFdLNIZyhcgBRDqr05SI1pzSPq
-         E5lNpN7bzrTvZr0k975+r8Blji+jn/Y2ahr5ord2EOCxrBjaO2ytOiaWdGmorD2eF3Mx
-         PhJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795635088; x=1796239888;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1795640358; x=1796245158; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=U1oBw4U+gjNk3iM5j42wuAngnRMfL1HrI9OahKdf/KQ=;
-        b=vK8xzOA67Br7iNeDHu6iDhy/cpffUU2gRudAvI0BZH3O6Ef+yOy/QOHKrzirUIsFZd
-         ottXCpg4lfF7UNBDAhwjeyvzIZUNNnYoiIpk8HtNt1r3EaNY6NW4lAaQri38Zp+hCg0z
-         ssEC0T3EUgN7yy4+9jIZxFNfhqxAglBaFPIyj2t8dLaMvky21J0X/M47rkCJfxE0JU2J
-         MK5hQPpZQVyOpzb7I/56b+0/sjtW5KdQd2t5lmsiIaBDSIw/7HBLCL/X7XefEBtoCQH1
-         ZD3THjgx3Cq29aDMNKfHpWaqNYwVKNdybyuOtWSGTCaOJpy31TfG35kZfHT8mTIR9sHA
-         qe0w==
-X-Forwarded-Encrypted: i=1; AL+hErGj07gtad+5T3QQRQbKPhWLCUNiL1pCpguY9CqfBHccfbx1C1faqJ7QfSFWxqAZsyjYy8w+d5BDqxdZ1+pxISpnyg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+WIqA1nrX/7Z7at0qpEfOFplIQVDmVX2j5bVr2h2mkhzTirzcE
-	0P3vUSNuIrq/nEBQfEkcwNwvJZmYj8WsJT8ftBKV184ezzWVBuaIJO6W
-X-Gm-Gg: AZFdTZd70B31tE95WAzZSzWtJfFQ2IDYL2yKLvSSb2F9GmbXbsfHZdWssArLID4xKb1
-	PtnHEi+L7GvNV3o8os3B0y+wTnNQLYT6pVigIcHYvaHKUJIcuZG8aD4OqeBBv4wO5zYwiN1r/UC
-	Ngxy6RXVmcqpnvWyIAeadBExq+kW0MZqjTeB2/VH+z20t7R2+n3SxVXF3x86z4SKwN7WPVOwJwE
-	8Qxo3jSOK1gAYsvn65yPwcRGn+4F1g0n9k+rRZtRmOlzWbGT4ORU45AOn+d698RnP/dpDvbfx8k
-	9WKegBPD6vDmqUiH38npTYdGd4JIpXOtS5Xc+FzltVWq2pfNJ1qJMNAvm12Vqaw1bR3bMa1oG0y
-	Y7DP2Kjau+L6v5ZrdJbfGYmNRSaafbD47gcNZnalMo0Erk1Oe2C2NBnMo7S4ASjxNbJ6WILk4tV
-	7BgcNY6Q4vqxa0V+6poF6eh+J+YLtSxuxYoLGkMBS2YHNB21wBFNlFB3D3ucKjGC7CFkzffYDQy
-	3vAAzYr6CkPjh5Ot5BqwubwIOoeepRb+ZxELlw3NkAMgJkCgvX/bupq1VsDjOcdoXhnt4fkoYvf
-	eFCojVXloU00/7CN41W7u/Wy9W+Fxd7BZDgC/fLR4Ij/6as=
-X-Received: by 2002:a05:6402:1f4b:b0:6bb:1203:487e with SMTP id 4fb4d7f45d1cf-6bb12034b21mr4236672a12.6.1795635087911;
-        Wed, 25 Nov 2026 11:31:27 -0800 (PST)
-Received: from localhost.localdomain ([195.155.168.135])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba371072f6sm8924419a12.28.2026.11.25.11.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 11:31:26 -0800 (PST)
-From: =?UTF-8?q?Adil=20H=C3=BCsrev=20Tepe?= <tadilhusrev@gmail.com>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Exynos850 ADC support and soc thermistor
-Date: Wed, 25 Nov 2026 22:31:23 +0300
-Message-ID: <20261125193122.747908-2-tadilhusrev@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
-References: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
+        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
+        b=XX+oVSvlwbkZJl/q7Fv5V3x1hehf+uCE6xb9HMTUuDbF0ZguAJu6UzBvMyjr+3Fj+3
+         Nvvze0tQocy6EAVfwsaasTedqzOkcNCy/4uKy4ga9ffBNEU7meDWoVRIhaMd/gGGMdI7
+         lq5DNc74gydvwyL0KrWQjZceHBDyui3QPZeJfkBAj+1uk1bV6V6TfjBr0CGUgjMNGPgc
+         30FyNBH/PxEbZNh5NMMvBcC6d1IEiDTbCGmTdLvEdJHnoUn9P1A4ajQO/glmLAXbn1d/
+         mfEWoGHROTKpQHjsOwdD0NEQ3Fr4qoUCiHkHuoHNdnRzqEcdcHzI4Nnw4O/QDAzqRJsK
+         rQ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795640358; x=1796245158;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=PXBgJMIY+nvFjiJk/u8SJDhKaneIc4smuRh4J/SjTx8=;
+        b=HW9VV16/7iXNeCwfIL8GETHB6oNVhR3Mo1nzamddLhoKxUC1N6JQkWLIT3r/CcCmta
+         /zJA4NNbKX/XVUo3eN4AKprovDzJAwzdXclQVbSzPwC+BAWQIcVW9C9633vQpACKRFpJ
+         ezs5NWCchDW3A/biLAHYKAvELLLPh+Ebk1ETMQVJz+h3fuxD/X0McmverW8cAJ0ct1ed
+         e1XZusgor0FGnLvwnNQb8rWI1aMLndrmlbph2DLHDvp5AWesXlpK0jIpvhwOZLKRkfp3
+         9bfN4t8LedEn6l1BFVQm7P8917q5gcdrRhAtSDD1pJ7MDmrTfE4RCuNIZ9mV+ooMNVqA
+         yTaA==
+X-Forwarded-Encrypted: i=1; AL+hErGqqfY2XZiamWjnPvysbSsRhmmp7+b90nPw5YLd8bQXQ0FtEdQGugOMVyYHVbYnXeu77wXHMZdk44sWutnzJFFA7g==@vger.kernel.org
+X-Gm-Message-State: APuU4Z81fMF8j3kT4pS4UD3DFRBERxaW+lVNylot4n9aQX4U1/5OTkl9
+	d4bqEcU+3FGcwba2hVeLLAM4GBMo4HFZfnd246C6HQu3k/VJDu7U+17NqdB9KghvksQiYJtYho0
+	BlFiVERhtlaibrew5nxfxjpJoKnAv2ep8kD3VqehV6A==
+X-Gm-Gg: AZFdTZdS81J+6hkAEsLYczOxBjYmnx7pzqgq6w+l0dngPdnMxbzKwwatNUD7ND5o7Nc
+	2SAYEE4z4Jooyym9py1Wh0tDeU2rhSJXVypyGwh5KE43LlZG/Lk9CKfgb5KW5fpldMsCmUUr7kh
+	yfoxIwmuQDW4zcUkdS8F+vmEMsMyxWTrKMo9WxXKbDGXJcSwnp50XnYW9OdIJLGVnuupJnGvS2T
+	sTFzs4r3xHIAh1wfg3BbYrjqNt8kqF78/goP1yE0/pI+y6aN2mjDCEWiVr8qgbNkdIArCZ9oMxE
+	X+UF5lwfGjEdIDSNMMrPaajSbEZ9oonyXgjhcbYjiBRH7wBCHzRws0aciZ0xwGGSTqSaOZm/d5s
+	jZ0OyuqGyMzL/T3K46oqjYwdp1QZ/ArLxp0S4rV/8mFNbhaXvExORH/FxQtzPdcH2p1Y7Z5U=
+X-Received: by 2002:aa7:cf85:0:b0:6b1:a509:875 with SMTP id
+ 4fb4d7f45d1cf-6ba37e66febmr9344235a12.20.1795640358409; Wed, 25 Nov 2026
+ 12:59:18 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -111,28 +103,88 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20261123164834.3330320-1-lee@kernel.org> <20261123164834.3330320-8-lee@kernel.org>
+In-Reply-To: <20261123164834.3330320-8-lee@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 25 Nov 2026 20:59:06 +0000
+X-Gm-Features: Aa3M54qBKC7-tr-B2jw-93nT_AW_sr-oGI0v4yuTHgh0h7sm-7QQngWZhmScpnM
+Message-ID: <CADrjBPq2OmgLjzs8qYybQSKRDBC5QK5DTrO8Wy4gbUoo0Ydu6g@mail.gmail.com>
+Subject: Re: [PATCH 07/10] clk: samsung: exynos5420: Terminate PLL rate tables
+ with sentinels
+To: Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Abraham <thomas.ab@samsung.com>, 
+	Chander Kashyap <k.chander@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, 
+	Tomasz Figa <t.figa@samsung.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Marian Mihailescu <mihailescu2m@gmail.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 25, 2026 at 02:23:32PM +0000, Alexey Klimov wrote:
-> This small series adds support for the ADC block found in the Samsung
-> Exynos850 SoC and enables the Murata NTC thermistor on the WinLink E850-96
-> development board.
+On Mon, 23 Nov 2026 at 16:49, Lee Jones <lee@kernel.org> wrote:
+>
+> _samsung_clk_register_pll() sizes each PLL rate table by scanning until
+> it encounters an entry with .rate == 0, then copies the counted entries
+> into pll->rate_table.  However, exynos5420_pll2550x_24mhz_tbl,
+> exynos5422_bpll_rate_table, exynos5420_epll_24mhz_tbl, and
+> exynos5420_vpll_24mhz_tbl all omit a terminating zero sentinel, causing
+> out-of-bounds reads into adjacent read-only data and populating
+> pll->rate_table with bogus entries.
+>
+> Append a sentinel entry to each of the four PLL rate tables.
+>
+> Fixes: ca5b40293822 ("clk: samsung: register exynos5420 apll/kpll configuration data")
+> Fixes: 9842452acd3d ("clk: samsung: exynos542x: Add EPLL rate table")
+> Fixes: 8b4a7acf7b30 ("clk: samsung: add BPLL rate table for Exynos 5422 SoC")
+> Fixes: b92981de92cb ("clk: samsung: exynos5420: Add VPLL rate table")
+> Closes: https://sashiko.dev/#/bug/linux-553831f9-0a7b-4e94-be60-222de60ca8c3
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Lee Jones <lee@kernel.org>
+> ---
 
-I tested patches 1-3 on a Samsung Galaxy XCover5 (SM-G525F, Exynos850),
-with an ADC node equivalent to patch 4 (same reg, interrupt and clock)
-and the board's three NTC channels.
-Readings match what I get with the vendor-style sequence (re-init around
-every conversion, SOFT_NON_RESET after reset) to 1-2 LSB on the static
-channels, the NTC channels follow the temperature, and 200 back-to-back
-reads per channel show no stale values. So initialising once at probe
-works fine here.
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-One small thing: channels 8 and 9 always read 0. The downstream driver
-uses 8 channels for this SoC, so MAX_ADC_V2_CHANNELS (10) may expose two
-channels that don't exist.
-
-For patches 1-3:
-Tested-by: Adil Hüsrev Tepe <tadilhusrev@gmail.com>
-
-Adil
+>  drivers/clk/samsung/clk-exynos5420.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 400a5c59815c..35baeabf3ccb 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1419,6 +1419,7 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>         PLL_35XX_RATE(24 * MHZ, 400000000,  200, 3, 2),
+>         PLL_35XX_RATE(24 * MHZ, 300000000,  200, 2, 3),
+>         PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+> +       { /* sentinel */ }
+>  };
+>
+>  static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+> @@ -1430,6 +1431,7 @@ static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+>         PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+>         PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+>         PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+> +       { /* sentinel */ }
+>  };
+>
+>  static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+> @@ -1448,6 +1450,7 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>         PLL_36XX_RATE(24 * MHZ,  49152000U, 197, 3, 5, -25690),
+>         PLL_36XX_RATE(24 * MHZ,  45158401U, 90, 3, 4, 20762),
+>         PLL_36XX_RATE(24 * MHZ,  32768001U, 131, 3, 5, 4719),
+> +       { /* sentinel */ }
+>  };
+>
+>  static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
+> @@ -1459,6 +1462,7 @@ static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
+>         PLL_35XX_RATE(24 * MHZ, 266000000U,  266, 3, 3),
+>         PLL_35XX_RATE(24 * MHZ, 177000000U,  118, 2, 3),
+>         PLL_35XX_RATE(24 * MHZ, 100000000U,  200, 3, 4),
+> +       { /* sentinel */ }
+>  };
+>
+>  static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+> --
+> 2.56.1.750.gf70dc682cf-goog
+>
