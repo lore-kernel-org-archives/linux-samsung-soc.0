@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=210.79.60.125
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.224.83.193
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795605743;
-	b=C7bYKWDr9VO2BJLzQrwPaWshzN2ERFaAGsRj4iholIXqHpjph3Bn3Q/Ygf1SG2TYq8W7
-	 rzoWSvXoSYYaBS0rq0OVZdOAQWGKP/Aq8/qoZNP6417AO75fxEgzB4/AuztlFlmqJ9BiW
-	 o+qpozVjgFuZJJnLjdcTnUgA7tyo9/f5cYrGg5+RS+Aa2qnbR27Yy635jtpdpCtvRK//k
-	 W5OCVw7wMpDxhlu3NV9s/cHXYdErqZXKMdmg4We2dJ5XjYETS6bhF5KFltvKFM5vroSf4
-	 xlcMLzHmbI4rvS99eWVhzXobDzv5pFsU2tUI4LMXesL8Q1pgjGsImCNniZR0SGtkLCw==
+	t=1795605746;
+	b=3jdXdLqScW3cckv+ptG/2Yh5P1zI59ZyAthLTx2xJJkQLTi+qiWbvPVxnyvlYSWM3vw4
+	 A3A0nGgrVSUD1lDZqRyhRkmRgdfDlHN4kefnQJmzB2kaA/R4G/Fgz3jhLcD0u3ZY+kAIc
+	 m/X4iXgIDc1GXsrGoRaBgx1JtiFTSAG0GO/JpA1GuTVrKhm7q4OhMZPAQaNdkgXNjnE/9
+	 WNy2PJqx7k0sPfUcTxp0Z2pOwSqtEb5GeUT/G23FmPV74CV739QLmJsoLR1ehEaaU8WaU
+	 NnKOZr8pzE44McHSAbcxarg8CNlb8mPe3Wcly7joa9uH8f634LekyfwNRHR1Fv4uPDA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795605743;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795605746;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=8wdlz0LG+mt5/jNeMcYINGDfpLpelVy5XiXlc9r/roo=;
-	b=PuvlqLMqWFC8vjESAaU+bhEQwqun62+uryUoOFJguh0j7NpYIwlbxK7cUSO7mFr0vdgb
-	 /VuVIdR6zuzw5UY4NBz2VyM1d8KFTjV7SnMAqnOlOGAnA24zIiLpqJyBVzGOGCIgq+iCx
-	 I4xDyqBCH7TiXH+rXKhCyT5DlduPPEWNjxus1Jb3H9JDWq9CeqysR2XyCcN2nm0cmjHdY
-	 25ZXjF219H/ifLvRqmXScUZSCX2rgmMhsHF5AV+TY1E40bBq69EdcuSQvr7Eyh+h0snRt
-	 hcVzQdbu5dA2BK9odwGNlCifLbRVhhaJMs8EoDbPVn3xFBIHGTMxmgYf7MxfjVbJFFg==
+	bh=HD9QCAlNGtAGCffBEYxRFXecwI8idwXSFHx/hgHiNdM=;
+	b=0gu/MNjHkzi7WWvgwRtpvBKCMe6pXp4a1OeIehc67zSPfPQAeFnCLdG2sy2gKJ9rEN7r
+	 FtpV80zVJiv7l3lMsG9rj7nH6CFv13Hpglnca/teS8pk6WYG6APRcWFdAVk9xfMA6UV2m
+	 CazJXrwEJNX/YbiuCv4iac1gBUxs7yBcHnyYu5fBhzZfpCtpLAChG200xjocnllrCdFI3
+	 6uyxbxfHgzc9eaWXK1WEpUuf5QvzTK2bcDcGqzGa5NUYvujFSELc6wbQ4DXB/w0OGlhvI
+	 YZGfWFm73CXYvwwIoe3AXj4kukj+UseKnp8OMrtVunrOQjQ7tphIP3OvMlkyHcxbnkA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Iwfl+96T;
-	arc=none smtp.remote-ip=210.79.60.125
-Received: from mail-m60125.netease.com (mail-m60125.netease.com [210.79.60.125])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=OAsj6kbv;
+	arc=none smtp.remote-ip=156.224.83.193
+Received: from mail-m83193.xmail.ntesmail.com (mail-m83193.xmail.ntesmail.com [156.224.83.193])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5672160A3814;
-	Wed, 25 Nov 2026 11:22:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5672160A3814
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF46606A689;
+	Wed, 25 Nov 2026 11:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2AF46606A689
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=Iwfl+96T
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=OAsj6kbv
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 55f816069;
-	Wed, 25 Nov 2026 19:22:12 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 55f816072;
+	Wed, 25 Nov 2026 19:22:15 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -67,9 +67,9 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v7 14/20] drm/rockchip: analogix_dp: Unbind bridge when connector init fails
-Date: Wed, 25 Nov 2026 19:21:35 +0800
-Message-Id: <20261125112141.1434903-15-damon.ding@rock-chips.com>
+Subject: [PATCH v7 16/20] drm/bridge: analogix_dp: Move IRQ enable/disable to bind/unbind
+Date: Wed, 25 Nov 2026 19:21:37 +0800
+Message-Id: <20261125112141.1434903-17-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261125112141.1434903-1-damon.ding@rock-chips.com>
 References: <20261125112141.1434903-1-damon.ding@rock-chips.com>
@@ -83,51 +83,157 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa212711e2703a8kunm17c230507758d2
+X-HM-Tid: 0aa21271284103a8kunm17c230507758e4
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZTx9IVklLHU1OS01CSEMYTFYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaSR5KVh9JTE1IQx9PTBkZTFYVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pKQk1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=Iwfl+96TVBGB7FAGE+rGSWA2yQq/vmKqPlgYhhIyBsga7Y1ekKEPBl0eYaVttVJua9OHTOLyzupetvuNEHhAJnBYytJNrlD3+Sv4h7TnqxXJGZmgq+/yWjCiqD1a6B27MrzUd8V3hrKvZVv1k8f7C/H5AKwIQvE9fxkJ23C91/A=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=8wdlz0LG+mt5/jNeMcYINGDfpLpelVy5XiXlc9r/roo=;
+	b=OAsj6kbvgBlKLLElEaBzaIFEzmN00kluE9wqa/zec5JimzgOIjgN2ZvbfcOL50uUDwDF417z5Zfcxyc+thIl8b+koVuDnsiPkrV5OnX6HLM4FXifmHmSP1BpOzHvIu0mQqpsSP1eJi/qGcweTWSp4PdpuJWT6HZKK41wLroOEZI=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=HD9QCAlNGtAGCffBEYxRFXecwI8idwXSFHx/hgHiNdM=;
 	h=date:mime-version:subject:message-id:from;
 
-The rockchip_dp_bind() returns without unwinding analogix_dp_bind()
-when drm_bridge_connector_init() fails.  The aux device registered by
-analogix_dp_bind() is then left behind with a dangling drm_dev
-pointer, which could be accessed on later AUX transfers.
+Move enable_irq()/disable_irq() from bridge enable/disable handlers
+into analogix_dp_bind()/analogix_dp_unbind(). This keeps the IRQ
+active throughout the device lifecycle rather than only during display
+activity, which is a prerequisite for supporting HPD detection while
+the display pipeline is inactive.
 
-Call analogix_dp_unbind() in the error path to release the aux device.
+Make the interrupt fully threaded and hold a runtime PM reference in
+the threaded handler, so that no register is accessed while the
+controller is runtime suspended.
 
-Fixes: 99a49ff5ef7a ("drm/bridge: analogix_dp: Apply drm_bridge_connector helper")
 Tested-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
 ---
 
+Changes in v3:
+- Move this patch after mute/unmute related modification and detail the
+  commit msg.
+
+Changes in v4:
+- Add Tested-by tag.
+
+Changes in v5:
+- Use a pure threaded IRQ handler and hold a runtime PM reference in
+  it, so that no MMIO happens on the unclocked controller after
+  runtime suspend. (Sashiko)
+- Add prep patches to call analogix_dp_unbind() when
+  drm_bridge_connector_init() fails, so that the IRQ enabled across
+  the bind lifetime gets properly disabled on bind failures. (Sashiko)
+
 Changes in v6:
+- Skip the runtime PM reference in the IRQ thread for the GPIO HPD
+  mode, since it only reads the GPIO level. (Sashiko)
 - Add Tested-by tag.
 
 Changes in v7:
-- Add Fixes tag.
+- Do not add the redundant pm_runtime_mark_last_busy() call, as
+  pm_runtime_put_autosuspend() updates the last busy stamp since
+  commit b3db492e8335.
 ---
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 38 ++++++++++---------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 635146746b42..39eca3ec7160 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -419,6 +419,7 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 	if (IS_ERR(connector)) {
- 		ret = PTR_ERR(connector);
- 		dev_err(dp->dev, "Failed to initialize bridge_connector\n");
-+		analogix_dp_unbind(dp->adp);
- 		goto err_cleanup_encoder;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index af855f33cf6f..46433ea73d67 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -700,24 +700,25 @@ static int analogix_dp_enable_scramble(struct analogix_dp_device *dp,
+ 	return ret < 0 ? ret : 0;
+ }
+ 
+-static irqreturn_t analogix_dp_hardirq(int irq, void *arg)
+-{
+-	struct analogix_dp_device *dp = arg;
+-	irqreturn_t ret = IRQ_NONE;
+-	u32 irq_type;
+-
+-	irq_type = analogix_dp_get_irq_type(dp);
+-	if (irq_type)
+-		ret = IRQ_WAKE_THREAD;
+-
+-	return ret;
+-}
+-
+ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ {
+ 	struct analogix_dp_device *dp = arg;
+ 	u32 irq_type;
+ 	bool hpd_detected;
++	int ret;
++
++	/*
++	 * The device may have been runtime suspended since the interrupt was
++	 * raised. Hold a runtime PM reference before touching the registers,
++	 * as the controller clocks are only guaranteed to be enabled while
++	 * the device is runtime PM active. The GPIO HPD mode needs no such
++	 * reference, since it only reads the GPIO level.
++	 */
++	if (!dp->hpd_gpiod) {
++		ret = pm_runtime_resume_and_get(dp->dev);
++		if (ret)
++			return IRQ_HANDLED;
++	}
+ 
+ 	irq_type = analogix_dp_get_irq_type(dp);
+ 	if (!dp->hpd_gpiod && irq_type)
+@@ -734,6 +735,9 @@ static irqreturn_t analogix_dp_irq_thread(int irq, void *arg)
+ 			drm_helper_hpd_irq_event(dp->drm_dev);
  	}
  
++	if (!dp->hpd_gpiod)
++		pm_runtime_put_autosuspend(dp->dev);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -1053,7 +1057,6 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+ 		goto out_dp_init;
+ 	}
+ 
+-	enable_irq(dp->irq);
+ 	return 0;
+ 
+ out_dp_init:
+@@ -1195,8 +1198,6 @@ static void analogix_dp_bridge_disable(struct drm_bridge *bridge)
+ 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
+ 		return;
+ 
+-	disable_irq(dp->irq);
+-
+ 	analogix_dp_set_analog_power_down(dp, POWER_ALL, 1);
+ 
+ 	pm_runtime_put_sync(dp->dev);
+@@ -1522,7 +1523,7 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ 	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+-					analogix_dp_hardirq,
++					NULL,
+ 					analogix_dp_irq_thread,
+ 					irq_flags, "analogix-dp", dp);
+ 	if (ret)
+@@ -1608,6 +1609,8 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+ 		goto err_unregister_aux;
+ 	}
+ 
++	enable_irq(dp->irq);
++
+ 	return 0;
+ 
+ err_unregister_aux:
+@@ -1619,6 +1622,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
+ 
+ void analogix_dp_unbind(struct analogix_dp_device *dp)
+ {
++	disable_irq(dp->irq);
+ 	drm_dp_aux_unregister(&dp->aux);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
 -- 
 2.34.1
 
