@@ -1,101 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795618570;
-	b=H/XmB50jeZxKAlem6xmlar/qiFzf5ZgtitYIpl8jIavxmuglfcP031nWMjhn+YvjBDpo
-	 9tVa3mxDblWFlwAYNE1hrrGkMRJZZHkLZtHlB0xQx4U6o1/3QMp3Ob2sYApffDPke4HQu
-	 WcJKAI56OTQ3aCqmhnmu1054Permt0aY6+t06WB0gRWxRi03Jg0OIHySd55mZELyFxTlQ
-	 eXnkoGAp6VBgcs13bgMajwyPIDvfCi0CNhMdMgBy0SMa31Xh/4yY5tEm2wIZqF6g6MGXk
-	 WGhTU/Yt+WHFYwIqu4F770pDaxZq73VtoZMv0uPKfYieJuPuIQExQrHfgZEg0iSiEtg==
+	t=1795619460;
+	b=nKvOvBXHVK2c74iSFlzr20J5YwK2QgDNKHM6E+mFdXqiRRdWkQi5UROlu/qVLQ0S9ymq
+	 Yxx9bfa733lXb/dkf0l6g3109+UkKOkqd2KoOzAwuT5/1eH8460JctHev5QV7/0BSk95J
+	 OXZMhMHYjtlACM9msK3r8zQPvNxM2oVEtlRHPPx4SYjBcw9a77/NZpppnbtkk5VVEp2Fa
+	 zzIyXzVzFmmcYOVSYtpokFhexCvrwB3f+UmmM227qsArvCbosQoI1R0mxUKD10hz6Mck7
+	 zgUZWux8tycHcLTbB0rqyzxaEAnL2XWh7k7qcAQy9S03T4OhOdYl1obw8A0oiKMGZcQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795618570;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795619460;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=Z9CHeC/4bOqmyR3r1N2caZAZe+JipBH+Y+dP5eqPLe8=;
-	b=aQJfdgyJINpSxa+Er7lm9Bn0vC+2b+KFynSeQiNluz5se7uXUR1UFvO0a21GmuzUlkuM
-	 19mRZ+jN4JhbanhxGjGNH4ktXGHgYnVUCrtOjfCY69XwOXvnLyTlNISh2FrTadGQelhJI
-	 y29PXFxBnpc7Vn1VmgjsphekVKDtL2xB9SZOzNPV7JsjJwQqeejdr1ptDxp/QKvMpOE6W
-	 1z23lRm1ZIlAWsWUqQHd/yfWKUiPCAAhw/jzVkvF61CZ+5vj8GbGf5LEeF6NnWNP2mCa6
-	 mJN4NmSy2kti1fRsqFeOIG8p4h74P468iAt7ZAwsuuMy8vnS4Y1ASTN/cd1/CLlvnqg==
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
+	b=5rwRGPUCDJ4hWPDVhHkz40Js6g3thRHrNikRFFAfXG49khlVJnU+Sv5HbKM4ADaQAsbF
+	 Wk7kDPYnzVuaG13J0wxEyfAeMH+kYM3bIkxQZHfP+f/TSx76xHYw/2m6WY3OV3q2A6bW/
+	 ak5BIsQraJYU60MAbYJGn+pXbpORY40hWVNGsjVyvNZ2t357Hr7TgpHS4MI4plE9R3S+c
+	 EqyYUN+YzO9N1OH4MlAsuyo9aKySIX+KhSAVoe0ZTuQG9i+d1TjHZgqo2wIMcfQ1dYyVG
+	 lrLGcA38qh61x3JvS17JBq5ZuL/ffPMwZuZNBOHX5xVe2AUHXvxIJJU+BYZvdGfRJbw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NyBp6Zzy;
-	arc=none smtp.remote-ip=209.85.128.52
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b="pvgO/YEk";
+	arc=none smtp.remote-ip=209.85.221.51
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8A5606A333
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 14:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6B8A5606A333
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFFC606A32D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 15:10:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0EFFC606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=NyBp6Zzy
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4a35ac4475dso43317775e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 06:56:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=pvgO/YEk
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-498f5fa4f70so4817407f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Nov 2026 07:10:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795618569; x=1796223369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Z9CHeC/4bOqmyR3r1N2caZAZe+JipBH+Y+dP5eqPLe8=;
-        b=NyBp6ZzybTgL5anA7PEentaRAANmzFTfxfpbAfB09gjk5clY6CenD3BlfincLQEiOf
-         3+7Udtjkd1LcHafzRTG0PPSuUmZqH92mByg2bepvLe/4Qhsz+DMX83b2Y9NVGOG0g7ts
-         t1qCFom9nM2irCvkukudEu9KaU8s7Jd8uuBwQwLpIh9bY8DN/dFXqxNF6XzA3ja7Usb3
-         6hFg3N9Tog1NWZAb+iQ8ZpOY1qe/Y7BB8tFgc0jmswKSAefPw8gOFTl8cqVmIY853W3X
-         rtt4ArDelubu9wxmlmA8q5jyBeP2wI/FFUgKM0aZ77nnifctX9fU/K0ZLZQ4YmoBmehm
-         0xsw==
+        d=linaro.org; s=google; t=1795619458; x=1796224258; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
+        b=pvgO/YEkUdlTI28zuYZC8bFmQ0ov6Ytr8mgLvhlmdjJrFmun/YQy/s9ogNGEO3ScvE
+         y1yjxZFDIf0mZkflbv+NqwdMv1WaH5epqxsxN5igi76syFebxcbfpJOqB75BGxQKCSvw
+         ebLE1FXNu/ZtoIfutYBQOfokYl5xTtUhRQj+b8VJ7pNfWSwNv6xM6cOaIKoqFF6y7Sqx
+         MyuaLImm4IKg2FypDwXdX7El2lpChRMrsRTrDNzAqJwkVhnE+2rm8VWe8XNLMHWzVGzB
+         q3z9B5LxWMyh1VERl22N8/nBkejYHSL96cRVXEz2ncfq2mugX733q6F4Uuvwkf9LoyfJ
+         e9CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795618569; x=1796223369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Z9CHeC/4bOqmyR3r1N2caZAZe+JipBH+Y+dP5eqPLe8=;
-        b=PlABHkArWXfjkmxiPC0YdB/czyI0fLSsNUy4KwTIREvr9B7oXbZaP5l2LCLibjieIR
-         p4hwqPhTqpQWBwTlAREBS0vo3KtuxXtK2ULqm27h3hg6RBSHCNYhf5K68oMxDY7umF2E
-         K2VZ3TEHNm9N0A6kxUVd30medJpizhSjC+816rt0tQbONK0DcG4cADtEACejW4eG5JEG
-         b/sLWhuu5Y+KIcd2XF/OyWaK9PQIjq2f1Eezzfdg79luHyPyB0vbRwdqG5PGtx7jbhS4
-         VeFxRXcZdtG7f7bJG3kvjx3e/tT453CJm97i5BN//3cWbnHoeJpGJMiJwZDzZQ/aGOYJ
-         Haiw==
-X-Forwarded-Encrypted: i=1; AL+hErFdsY+nLH9/sIqm+6VBBMC3omybz64cPYeGwTDvJXf5Rn/mEgGceiGvRsE7pW/FV20KUi8+4lKIjQTJ6HGe4xxeLQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z80v0daJ96aG7AZIObYYxloJaaaDUbdtX3Vls0Kv02NkcB3K1AB
-	ZMQlkybIBG4nVjB79SM8CbxePzfD4tH1z1yJnccRsweNvuPIOPjSQHa+DWjHzIXprFaLRQ==
-X-Gm-Gg: AZFdTZc5o9WndkCPL3OvkbQqGlPEgDvqtZyEA1LfCluZtHyRQ8opJmO6Q2Dqg9NMhXG
-	BmgPJLX64cVlf18e+c+L56uDhXJIPnpQ7z5XzojolAkaaQjYRzxEwhzRogpPOESiBVNGHq4bZoP
-	Ezz9907+nbs48TaGJjPpX7q8Ezk3F1CXZl/nm7Y61msjkzeADe2C9BbTefWV/CIzt2BQrDdArpJ
-	2Gqu4+QFKmM79vEn+aaJgmR1XZ8hW2LfPiLz5GWTRuZsZ98usgsd5fOH66hfqhwq0/ERQZgS7D6
-	QpzkhL5psRORKgzaK2y2NrGfsyWvf49dpsPPjUh5sVwlb3lrta8LjBRtPT+e4QuwbU1VT3E0VF2
-	v04qTxtnjocI7fwjF2pmN99jrfhKhCSvhfpIhodyLoYQXkR9g+r5WImHPRc4Y1+GFQL1EdUTRAV
-	y1acf6Rl53LFfm81IJKIkHEkutHZn2p2oeET3/yIrciW9eT71dGv0qoiLftEggoRZWMoWQ1/isK
-	k9nyr285fG5tB3wOIdR9I8NQIvl3gdL163ZS7ZvGheYlXc9xNcAAeMTnzzg1PdZgNvVUr9hRwzp
-	ZXhMowkvN+BiCRHRgclDIJfnOyecbjauz/VldAee2OG3Kre2wMYPHeysnhkOvyqnvtALl2o+xE6
-	I3ZhPjvZRNBk6ukxq9aUOzMHU/keUoFME40A=
-X-Received: by 2002:a05:600c:c8c:b0:4b7:6942:39bd with SMTP id 5b1f17b1804b1-4bb88820e06mr362757815e9.26.1795618568725;
-        Wed, 25 Nov 2026 06:56:08 -0800 (PST)
-Received: from DavidArch.internal (catv-78-139-0-46.catv.fixed.one.hu. [78.139.0.46])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4ab6b10b2c9sm36036139f8f.31.2026.11.25.06.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Nov 2026 06:56:08 -0800 (PST)
-From: David Virag <virag.david003@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	David Virag <virag.david003@gmail.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 5/5] arm64: dts: exynos: exynos7885-jackpotlte: Enable USB support
-Date: Wed, 25 Nov 2026 15:54:56 +0100
-Message-ID: <20261125145458.2594179-6-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <20261125145458.2594179-1-virag.david003@gmail.com>
-References: <20261125145458.2594179-1-virag.david003@gmail.com>
+        d=1e100.net; s=20260707; t=1795619458; x=1796224258;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JwlPeECvQEEIvvkRP2SoNRScUU29bdxsw2mOvi0iroI=;
+        b=N7T5xKc4Ful78cl234atvOQtmVpZwJ4bCNFpLc86HSlodLOFJbZUWIgoQsrtor4Neh
+         QfNXlwkositrb3k8/SI6YIXVyQQk577i00h2C0DvulPLymiaJXg8WicprB9u5U7jWNQd
+         s19P/z8bjz4FbjovZC4WlqcN8wIkZdxfrX+g4XOYvQKadBXtsqtsEcRTMDY2ZN/oNMSH
+         naXOAmo8S8W1l5paq5sRAat4rzhfFRzuYKlPOr9RjsERFlSzFWBTxSGCz5mXykEwxD3R
+         8VV5VnquDfQ81t1f7oF1mOXu/Y2TxsyicvNkZisgI5DFaFQEzgumyQAdUCKWuU2cFx2M
+         F59Q==
+X-Forwarded-Encrypted: i=1; AL+hErFv/un6F7dkpAQXLKTi0G89iCYtYnduqHp+JVmV/jmklR77iCL7g1IFTnrHNH9dKvW/tKRlyPY8yofGPkhhaISpgw==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8VOdOx9Qerf3u8oqJeXGP53BHboN/XTKJfVz3J2EwfNUShcXbt
+	kq7wyV7nzEN3A/nhsikVRyIsmg+ILmCwu5FlHWTM0d+SAhsnN4ghtjlSKwKWOFB1wr1pDLBw/oJ
+	Qs9legi8=
+X-Gm-Gg: AZFdTZedFYWF+eKy2eGBqDW+sZOGR8uWoH0bt1/JlnZGdygocgmHrKsifPBQXX6ZVTn
+	JWg3CebO0Fgw7++AlAnYDxvmVpW7YkP0ETFK3y2+Na5vZD9hgmJ8kxp8fsAYwoqXeTjvxu81NU3
+	zuMM4Znsi2gFdePoFDyY5X56rf1iYk4xuNOUO1anEJEeN029XQ6C+ROYl7xqQDoKoM4YW2za62S
+	Fao1JBIZS2FDIWXvPNFhuwlB7fyrEA4Xz+0s0RpAhU59DzipYpQB3DzprKPTwGc8S4pQE44Z20K
+	nL/ie70Bm9cWKfquLaKGIKafFs2BZBQgAbNiT4rmYA8dK15kGmG85Zd0MypGaAyqPf5pwi0U0pT
+	OQo0aMLuTmore74c0XGEZb6gxZ8xgxpwJ4pEwHZ2e/hqdXMsFBf8LQRrIY83vmk+AIB3WPX5GaG
+	kkdDCAjuZfKlOSiacruqNDu40gR3OjNVyVNTILEEtK7GaTFZOqAm/XdMDrEh6Z9MpKz6EYW7NFS
+	ZmSR9zLL7Qh09qTUB5M4C/EXDDsoOtQeJj+W6FSyJ7s7julQ5SJMdaZlm/Ycs990bKw5qHi/IMy
+	ekYVsDtBfGkzPO/IwPCBIYOUUa9Uq6zqq76ZH0M=
+X-Received: by 2002:a05:6000:470e:b0:4aa:323a:d7b7 with SMTP id ffacd0b85a97d-4abb16e310bmr35276861f8f.23.1795619458249;
+        Wed, 25 Nov 2026 07:10:58 -0800 (PST)
+Received: from [10.11.12.111] ([79.115.63.240])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110d56sm33656875f8f.40.2026.11.25.07.10.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Nov 2026 07:10:57 -0800 (PST)
+Message-ID: <2b369a93-d20b-4df7-b667-1775117e9470@linaro.org>
+Date: Wed, 25 Nov 2026 17:10:53 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -105,71 +93,56 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2] thermal: samsung: acpm-tmu: Fix spurious CPU throttling
+To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com
+Cc: krzk@kernel.org, rafael@kernel.org, daniel.lezcano@kernel.org,
+ lukasz.luba@arm.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20261124132756.1306906-1-christian.loehle@arm.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20261124132756.1306906-1-christian.loehle@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Samsung Galaxy A8 (2018) has an USB-C port capable of USB 2.0
-speeds, used both as host and device, and is used for charging the
-phone.
+Hi, Christian,
 
-The physical port is directly connected to an S2MU004 IC, but until we
-have support for it, we can still use the USB device funtionality.
+I tested and I confirm the CPU throttling.
 
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
-Changes in v2:
-  - None
+The patch is looking good. I have a design question please.
 
-Changes in v3:
- - Move status = "okay"; to the bottom of the usbdrd node to statisfy
-   dt-check-style checks.
- - Move maximum-speed property to device dts.
+On 11/24/26 3:27 PM, Christian Loehle wrote:
+> acpm_tmu_set_trips() supplies two thresholds, but the ACPM command writes
+> all eight slots, zero-filling the rest. On GS101, slot 7 limits CPU clocks
+> independently of its interrupt mask. Setting it to 0 C limits all three
+> clusters to about 200 MHz while cpufreq reports the requested frequencies.
+> This was found through trial and error while tracking EAS regressions.
+> 
+> Program slot 7 from the lowest active critical trip. Cache the low/high
 
- .../boot/dts/exynos/exynos7885-jackpotlte.dts | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Do you think we shall program slot 7 from the hot trip rather than from
+the critical one? If we keep the hardware throttle and linux shutdown at
+the same temperature, the throttle only matters if linux fails to shut down.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-index 4b1961ca365b..f93996e7321c 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-@@ -59,6 +59,12 @@ power-key {
- 			wakeup-source;
- 		};
- 	};
-+
-+	/* TODO: Remove this once PMIC is implemented  */
-+	reg_dummy: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dummy_reg";
-+	};
- };
- 
- &mmc_0 {
-@@ -112,3 +118,25 @@ key_power: key-power-pins {
- &serial_2 {
- 	status = "okay";
- };
-+
-+&usbdrd {
-+	vdd10-supply = <&reg_dummy>;
-+	vdd33-supply = <&reg_dummy>;
-+
-+	status = "okay";
-+};
-+
-+&usbdrd_dwc3 {
-+	/*
-+	 * SoC in theory supports SS but no known device (including this one)
-+	 * has it wired up.
-+	 */
-+	maximum-speed = "high-speed";
-+
-+	/* Force to peripheral until we have Type-C working */
-+	dr_mode = "peripheral";
-+};
-+
-+&usbdrd_phy {
-+	status = "okay";
-+};
--- 
-2.56.1
+As you already noticed, downstream programms slot 7 from the zone's last trip,
+which is the hot trip (115 C), there's no critical trip defined in the zones.
+I can't tell why downstream misses a critical trip and why the hot one is
+in slot 7. But I guess it doesn't matter too much because in upstream,
+the critical trip doesn't need a threshold slot of its own (we use the
+low/high window in slots 0 and 1), so I think we could use the hot trip for
+slot 7, even if there are critical trips defined.
 
+> window and update the critical limit from set_trip_temp(), because the
+> thermal core skips set_trips() when that window is unchanged.
+> 
+> Suggested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+thank you, but it's not needed, let's drop it, I commented only on the
+implementation.
+
+In case you're going to send a v3. I guess Daniel prefers the subject line
+as "thermal/drivers/samsung/acpm-tmu:".
+
+Cheers,
+ta
