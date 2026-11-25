@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795590487;
-	b=4KEKHN7yT//ZRtn09vJFyDq31LZbA6S5/9zRDluh5oKBTTxo873w5o6esuZHoqwnONFG
-	 pClExuOrUQzfBNGoOWdx1EmcFXPNpEqMFH5haV4kYEOqXdJA0X0DQUKDtzRu2mHKcqbVm
-	 PB70+vBE37CveVsAm6lAIq1cpLYlwoUjpojTn+AKUr41kx1FkeoX3YJx057074z8sdyif
-	 IfmAjNl+bje1upjyY+F4YL2O+4Yr0TAqzH0Y+S0sTd72/pVbUon+TbNgPgM/RBqnyeAN8
-	 yMMcgnlfZVkHTJpeR5+w3QEXrWd3cHWaYfNq4KhsnyhJ4QVqltEK+NY7R2OrpWDwxNw==
+	t=1795595523;
+	b=zYr767cYyiKyimrUx1Lv48m0QgRNDpreVUg/Kk7mZipZnnY7zS47HnMZxp48KTCEoovK
+	 fGkY6WG37Two938Le4LccYrubnqnxZHQ52gAIbDgKeD1MHOCfk9n0t6mptmRLhuiLJ7fv
+	 NFLJQ7yi9+Z9JaT7wb9g5I6OEVTYnCxtljqdr8hjzv30tgYJObXHHO8zGenQO2BsIsdkF
+	 xcM3NUeDX7IH2VYMlqlBD/mMe9MT+e7+x+czLSgwzJrBR1VXYbOpJTCJhEY9QGK2L0kYW
+	 mWFlhE2mOfdJMj1S5hAwf6qOrjPflF56t//3ISL86+vFQf8xj8dqPARO4IPKDxJv1oQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795590487;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795595523;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Subject:From:To:Cc:References:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=tmUcgq7m+W9QYzw0HuFeUjdIhKs2YAeRPnQeoTFJcp4=;
-	b=BKweXI42b3kdOwxALL/Zf76eEGlqOu9qLvA4JP5E8ci9B/EO2kneGOANjdm0KWGLDOD5
-	 ICps7zFp3kcv/Nsg/t5jDXsQLxFraFY3RbdsG1mdQhkJcBGQfpzcd/evp+zIHqnpxXP2X
-	 rEqzYyAl3cZVsgH2ydjmIifYtWbMdTn/Buw2nLIuy5UevX6Db5vgVlUUeiv0faqBpkP6b
-	 0LNtmAdLbvVZulhM+hRfT1BYA5BfMd9jQpfJlr+7rZYHyvf8G/XfJtkCqSnbzOB0yl7Tw
-	 u2i22gprWtn3re8k14aW28APXX2nGLPZIV1n4OnW+wHj85LZ6SjWq1RVlGI12s1BJHg==
+	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
+	b=er/sJTAqe2xaQshcVchj3kCRVc0dOIiZoUY2Hl/qUsMP62UIYy9UsDwSz2t884Ywh9Bz
+	 Cteh0Afy95TidLz4HUM0U+F1eRqq1IbQ14a3ZBuYJbXrVmqGdU1UKErVX315dDb+Mbdl9
+	 UEDQceumdVpBa2POOUqlInldqrsfL4EfJfO4Kh+SE4oLUi/4Fm0FNqN4LPMSRyhJ+42x4
+	 9hm0St0Zm9qz1YRbjX0/fLwOARkm+NhEFAY16CE3VU9OkYcyWP1pMzqxMjvNj/iZ2LmRN
+	 hbifh1S5IEn+EupW1nsOkT4AZXi01VXwWE88m75YqweiB391bGESMir4DItIwBb++NQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3+ZbNEb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8D7606A69B;
-	Wed, 25 Nov 2026 07:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B38606A31E;
+	Wed, 25 Nov 2026 08:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=S3+ZbNEb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBB21F000CA;
-	Wed, 25 Nov 2026 07:07:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B881F000C6;
+	Wed, 25 Nov 2026 08:31:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795590486;
-	bh=tmUcgq7m+W9QYzw0HuFeUjdIhKs2YAeRPnQeoTFJcp4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=S3+ZbNEbOdMqdPoDJevxhvINROtm1T+z2QF6gyVXULAHPYnWgnzQ+HCYDlHl4W4ki
-	 tsWyRQygR7/hIHxrX8i23/0n442IIlvIj042ahf6UTqQWrrQrtsjr9ha2vBYHYw8sD
-	 1JoXs2kcN7qLZloILPvn8pTulENH2LU1MlKM0rNRNH5kJeKOZ35cHKEIy6xtG17L7V
-	 2eD/cgFykREnCv4lY/I/C0qV+kv3tUbR2R6Pw0I1raj0P7BsZrAShg+HWEDhL37toA
-	 xlb2+sB4p7miEUa1UKMsjgUuC2J30og0lyx6MMhLSurXYUgOWfCG2+B8nISr0/+9aU
-	 Sn+OEgObJMrzw==
-Message-ID: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
-Date: Wed, 25 Nov 2026 08:07:57 +0100
+	s=k20260515; t=1795595523;
+	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=boAdVYoX6mzVRi523peA0iUwn//soWfCQzl+E94F2K/c/zZRfD3fiEix+n2i3hPES
+	 aXkQyPSDPAxStRt++4P0F7qi9974GWrBGgMaLskiSiUfb8g6C1RbBsYmcGREJtlpHG
+	 NJXGmZ8qL7Fx5S7hEjOUgoCZUSEQyQpJrNvQrwRoUq2nP8evB7moPrYoqosJBT1Ga1
+	 p2fzUN7xQq4fpTwW5jTr6PwuMFmdTlDfJzTxIDJ+9Gqy4xxwFmkxtbHYaRHtXHnVEu
+	 uq/4RbynOG/7r5eaVe7Ft98NQeb0m+cYS6NG6B41b/i9iobv4kYwL2JeyO2soXETeO
+	 l90JcBY8eo3Cg==
+Message-ID: <de65af39-3a9c-4b2e-bb82-2a84b8584731@kernel.org>
+Date: Wed, 25 Nov 2026 09:31:54 +0100
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -54,6 +54,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
  binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Brian Norris <briannorris@chromium.org>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -74,7 +75,7 @@ References: <20261026214359.3122870-1-briannorris@chromium.org>
  <20261028-rapid-daffodil-rat-0adc6a@quoll> <aulIoq2oVjJ3DVzL@google.com>
  <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
  <avZkfg6WMlMzOxpn@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -119,143 +120,81 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <avZkfg6WMlMzOxpn@google.com>
+In-Reply-To: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/11/2026 02:14, Brian Norris wrote:
-> Hi Krzysztof,
-> 
-> On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
->> On 03/11/2026 03:36, Brian Norris wrote:
->>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
->>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
->>>
->>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
->>>>> @@ -0,0 +1,16 @@
->>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>> +/*
->>>>> + * This header provides constants for CPM IRQ.
->>>>> + *
->>>>> + * Copyright 2025-2026 Google LLC
->>>>> + *
->>>>> + */
->>>>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>> +
->>>>> +#define CPM_IRQ_RTC_ALARM_NO			0
->>>>
->>>> Keep naming consistent. Clocks has _CLK suffix, so this should not use
->>>> prefix.
->>>>
->>>>
->>>>> +#define CPM_IRQ_AOC_MIN				7
->>>>
->>>> Anyway, ABI constants should be indexed from 0 and incremented by 1.
->>>
->>> What do you mean by this? Do I need to make up names for the
->>> unused IDs between 0 and 7? On an initial search, I don't believe they
->>> have any meaning at all. Does that mean I should make up some kind of
->>> "RESERVED_<N>" naming here?
+On 25/11/2026 08:07, Krzysztof Kozlowski wrote:
+> On 13/11/2026 02:14, Brian Norris wrote:
+>> Hi Krzysztof,
 >>
->> No, I meant CPM_IRQ_AOC_MIN is 1.
->>
+>> On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
+>>> On 03/11/2026 03:36, Brian Norris wrote:
+>>>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
+>>>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
+>>>>
+>>>>>> --- /dev/null
+>>>>>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
+>>>>>> @@ -0,0 +1,16 @@
+>>>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>>>>> +/*
+>>>>>> + * This header provides constants for CPM IRQ.
+>>>>>> + *
+>>>>>> + * Copyright 2025-2026 Google LLC
+>>>>>> + *
+>>>>>> + */
+>>>>>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+>>>>>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
+>>>>>> +
+>>>>>> +#define CPM_IRQ_RTC_ALARM_NO			0
+>>>>>
+>>>>> Keep naming consistent. Clocks has _CLK suffix, so this should not use
+>>>>> prefix.
+>>>>>
+>>>>>
+>>>>>> +#define CPM_IRQ_AOC_MIN				7
+>>>>>
+>>>>> Anyway, ABI constants should be indexed from 0 and incremented by 1.
+>>>>
+>>>> What do you mean by this? Do I need to make up names for the
+>>>> unused IDs between 0 and 7? On an initial search, I don't believe they
+>>>> have any meaning at all. Does that mean I should make up some kind of
+>>>> "RESERVED_<N>" naming here?
 >>>
->>> Between 7 and 156, these are just ... 150 different "service numbers"
->>> within the AOC (Always On Connectivity) subsystem. I can name them
->>> AOC_0, AOC_1, ... AOC_149 if that helps.
+>>> No, I meant CPM_IRQ_AOC_MIN is 1.
 >>>
->>> Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
->>> into 0-151? I thought it was valuable to directly use the firmware
->>> indexing where possible; if I change those, then the indexing loses its
->>> inherent meaning, and we also have to add another layer of translation.
+>>>>
+>>>> Between 7 and 156, these are just ... 150 different "service numbers"
+>>>> within the AOC (Always On Connectivity) subsystem. I can name them
+>>>> AOC_0, AOC_1, ... AOC_149 if that helps.
+>>>>
+>>>> Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
+>>>> into 0-151? I thought it was valuable to directly use the firmware
+>>>> indexing where possible; if I change those, then the indexing loses its
+>>>> inherent meaning, and we also have to add another layer of translation.
+>>>
+>>> We do not use hardware numbers as bindings and ABI, because that's
+>>> pointless - no benefits, only risks. Similarly you do not define GIC
+>>> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
+>>> of these bind anything between DTS and software, so not a binding.
 >>
->> We do not use hardware numbers as bindings and ABI, because that's
->> pointless - no benefits, only risks. Similarly you do not define GIC
->> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
->> of these bind anything between DTS and software, so not a binding.
+>> OK, I see your point about the distinction between hardware numbers and
+>> bindings. So are firmware-protocol-defined numbers more like hardware
+>> numbers or bindings?
+>>
+>>> There are some exceptions like SCMI firmware, but that's not the case here.
+>>
+>> It's funny you mention that, because that's exactly what Jerome compared
+>> this to in the clk, reset, and pmdomain portions.
+>>
+>> These values are used literally in the firmware interface, so I'd
+>> consider them very similar to SCMI firmware protocol IDs (and, not that
 > 
-> OK, I see your point about the distinction between hardware numbers and
-> bindings. So are firmware-protocol-defined numbers more like hardware
-> numbers or bindings?
-> 
->> There are some exceptions like SCMI firmware, but that's not the case here.
-> 
-> It's funny you mention that, because that's exactly what Jerome compared
-> this to in the clk, reset, and pmdomain portions.
-> 
-> These values are used literally in the firmware interface, so I'd
-> consider them very similar to SCMI firmware protocol IDs (and, not that
+> Sure, where is the source code of the firmware then?
 
-Sure, where is the source code of the firmware then?
-
-> different to hardware IDs, if you consider the "firmware" as essentially
-> unchangeable). And if I change this to *not* be literal firmware IDs,
-> then Jerome's suggestions on patch 5 (to imitate SCMI, and to defer more
-> control to the firmware) become more difficult.
-> 
-> If I do keep these as literal firmware IDs: does that mean you'd prefer
-> these not be in dt-bindings/? Many of them (especially the IRQ IDs
-> you're pointing at) are not needed at all in the kernel side; they serve
-> more as naming documentation than anything else. I can just inline them
-> into the DTS. But I'd prefer having macro names for LPCM IDs and
-> similar, as it vastly helps DTS readability.
-> 
->>>
->>>>> +#define CPM_IRQ_AOC_MAX				156
->>>>> +#define CPM_IRQ_AP_GDMC_WAKE			157
->>>>> +
->>>>> +#endif  /* _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H */
->>>
->>>
->>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/soc/google,lga-lpcm.h
->>>>> @@ -0,0 +1,54 @@
->>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>> +
->>>>> +#ifndef __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
->>>>> +#define __DT_BINDINGS_SOC_GOOGLE_LGA_LPCM_H
->>>>> +
->>>>> +/*
->>>>> + * LPCM IDs of each SSWRP.
->>>>> + */
->>>>> +#define LGA_LPCM_CPM			0
->>>>
->>>> What are all these?
->>>
->>> The binding doc says:
->>>
->>>       Each reset is specified by an LPCM ID (cell 1) and a reset ID (cell 2).
->>>       See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
->>>       <dt-bindings/reset/google,lga-cpm-reset.h> for reset IDs.
->>>
->>> and
->>>
->>>       Each clock is specified by an LPCM ID (cell 1) and a clock ID (cell
->>>       2). See <dt-bindings/soc/google,lga-lpcm.h> for LPCM IDs and
->>>       <dt-bindings/clock/google,lga-cpm.h> for clock IDs.
->>>
->>> These are the IDs used in the firmware interface to talk about these
->>> things, as many of the SoC resources involved (clocks, resets, power
->>> domains) are grouped in this way (by subsystem (SSWRP / LPCM), and then
->>> with indexing within each subsystem).
->>>
->>> In reading again, I see that the definitions and explanation of these
->>> terms and the SoC organization are split a bit between the pmdomain
->>> commit message and the binding doc. Where would you prefer I elaborate
->>> more? In the binding doc, the comments here, or both?
->>
->> I just try to understand their placement. Bindings should not be in the
->> soc directory, except a few things without clear subsystem owner. If
->> this applies for both clocks and resets, maybe this could be firmware,
-> 
-> Maybe firmware, maybe power? LPCM is "Local Power and Clock Manager",
-> and I believe there's essentially 1 LPCM (microcontroller) within each
-> top-level power domain.
-
-How does it help you to have LPCM ID in the DTS? It's derivative from
-the clock (or could be made derivative)?
+And if you do not have the source code, then not a binding, so you won't
+have case like:
+https://lore.kernel.org/all/20261124-qcom-adsp-shared-vmid-fixes-v1-1-f1a808dc41a5@mainlining.org/
 
 Best regards,
 Krzysztof
