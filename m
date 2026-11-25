@@ -1,47 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795595523;
-	b=zYr767cYyiKyimrUx1Lv48m0QgRNDpreVUg/Kk7mZipZnnY7zS47HnMZxp48KTCEoovK
-	 fGkY6WG37Two938Le4LccYrubnqnxZHQ52gAIbDgKeD1MHOCfk9n0t6mptmRLhuiLJ7fv
-	 NFLJQ7yi9+Z9JaT7wb9g5I6OEVTYnCxtljqdr8hjzv30tgYJObXHHO8zGenQO2BsIsdkF
-	 xcM3NUeDX7IH2VYMlqlBD/mMe9MT+e7+x+czLSgwzJrBR1VXYbOpJTCJhEY9QGK2L0kYW
-	 mWFlhE2mOfdJMj1S5hAwf6qOrjPflF56t//3ISL86+vFQf8xj8dqPARO4IPKDxJv1oQ==
+	t=1795605269;
+	b=N0uCl5sKTRCMGV2Rb06yGOO3Lys1ujPu3TK7r81LoxYWjGASjZL4WDsGbCtyQHpw3cYn
+	 x8w+oB1VP9xirWYKr9+N5biTrr3VfNUuWDVr9omJfzjus3PXPpJWvU+cb5OImlbpQifui
+	 4qYikXFp0cb5wawgwvRsNuS+xx+s6VAlqWpXJBILAP5XpvdvzrqlmeKHOAvbD/WMV5rsU
+	 FKbpjbtV5sXdUwSlZlx0plHulZdEzwhrojKk6QQ90pWFtsR8l4m4G745aWGgrxp2qMPtk
+	 M+X/QSw5HZDOwA7R+XfkU5GGlaBt97x1YttG6WSY72lIMRpqN//7n8p69cNfxn0nleQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795595523;
-	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:From:To:Cc:References:Content-Language:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
-	b=er/sJTAqe2xaQshcVchj3kCRVc0dOIiZoUY2Hl/qUsMP62UIYy9UsDwSz2t884Ywh9Bz
-	 Cteh0Afy95TidLz4HUM0U+F1eRqq1IbQ14a3ZBuYJbXrVmqGdU1UKErVX315dDb+Mbdl9
-	 UEDQceumdVpBa2POOUqlInldqrsfL4EfJfO4Kh+SE4oLUi/4Fm0FNqN4LPMSRyhJ+42x4
-	 9hm0St0Zm9qz1YRbjX0/fLwOARkm+NhEFAY16CE3VU9OkYcyWP1pMzqxMjvNj/iZ2LmRN
-	 hbifh1S5IEn+EupW1nsOkT4AZXi01VXwWE88m75YqweiB391bGESMir4DItIwBb++NQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795605269;
+	h=Received:DKIM-Signature:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
+	 Date:Message-Id:X-Mailer;
+	bh=6vlpmEXN4SupBIvviqVSLO43c+8YDnUBrUBvhVqcCAY=;
+	b=Rgw12lbD+01BoI3JPaOAx+agfF9zepZkIcPjOq9C0QpjLodBlKw4UKt+/8SbjYlOsi/5
+	 +DlgVh/I5KHhrIm59N87FDfRfIIR/AYfj3i/J5SYne1wJuHAkhtEDCAPO1eT++lvUMiLQ
+	 iIzpCg1SiaCly/mKVKT/pj4vcq49JLHzhfftIbbyPemzSBcCyllBQxmRUsudHeZS2VMBQ
+	 ha2FZiT38ji4b6XzZMAth/n91jBn6/TS/j8O1icudAaELL9H/J3SFywBk8ektAqHCmksL
+	 w+6pEGcwj/WIHCPuNHj9PVwxo6eYdwEC6MdMayUZPLFVq6ouzspG4cvfy1dFHlYhFTg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5DqkLCO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B38606A31E;
-	Wed, 25 Nov 2026 08:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B69606A31E;
+	Wed, 25 Nov 2026 11:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=boAdVYoX
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B881F000C6;
-	Wed, 25 Nov 2026 08:31:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=T5DqkLCO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F021F000CF;
+	Wed, 25 Nov 2026 11:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795595523;
-	bh=Xhprbp8vYgoK3W8l2CK0jpgqQyaq9WrszZ2gTi+N1FM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=boAdVYoX6mzVRi523peA0iUwn//soWfCQzl+E94F2K/c/zZRfD3fiEix+n2i3hPES
-	 aXkQyPSDPAxStRt++4P0F7qi9974GWrBGgMaLskiSiUfb8g6C1RbBsYmcGREJtlpHG
-	 NJXGmZ8qL7Fx5S7hEjOUgoCZUSEQyQpJrNvQrwRoUq2nP8evB7moPrYoqosJBT1Ga1
-	 p2fzUN7xQq4fpTwW5jTr6PwuMFmdTlDfJzTxIDJ+9Gqy4xxwFmkxtbHYaRHtXHnVEu
-	 uq/4RbynOG/7r5eaVe7Ft98NQeb0m+cYS6NG6B41b/i9iobv4kYwL2JeyO2soXETeO
-	 l90JcBY8eo3Cg==
-Message-ID: <de65af39-3a9c-4b2e-bb82-2a84b8584731@kernel.org>
-Date: Wed, 25 Nov 2026 09:31:54 +0100
+	s=k20260515; t=1795605268;
+	bh=6vlpmEXN4SupBIvviqVSLO43c+8YDnUBrUBvhVqcCAY=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=T5DqkLCOyfSlrv44SO4DIE6ySLO2afEJJ34f1lXt/V59ckTjsMBstO6qNUEXexsah
+	 YiC7L8F68AbF6uhNxR2p71S7+0sVlSqRzw5DMIgGL87+qgt6LmhGRoCk0SkU3//dCR
+	 1QVELYaeuFIMwmwMZYoMdTEcoknHLvuxl8XCkmmWXte6OeFSbJYi/AvnR2EUDXtAo/
+	 v+7blb7NOLvfyFk8EPjTRrPXSjwnzGK1xnMKMJTAYP3yzaJUtTBthveOzkH/BtAaTj
+	 r2+He7E9JbaNJIR+DM6QN/3hYUhzXgtDv98nCdmuerYBPcT3aWUZNzVzBBKP4tXQMn
+	 u76O5F2f6QPoQ==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,150 +49,49 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: soc: google: Add Google Tensor CPM
- binding
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Thomas Gleixner <tglx@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Radu Rendec <radu@rendec.net>,
- linux-arm-kernel@lists.infradead.org,
- Mariano Marciello <mmarciello@google.com>,
- Douglas Anderson <dianders@chromium.org>, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Jakub_G=C5=82owacki?= <jglow@google.com>
-References: <20261026214359.3122870-1-briannorris@chromium.org>
- <20261026144346.2.Ib692ddd35c1dbea1757d9b1db6c1c7e938fc4ea6@changeid>
- <20261028-rapid-daffodil-rat-0adc6a@quoll> <aulIoq2oVjJ3DVzL@google.com>
- <d4a430de-715a-4936-8adb-35ff57a52b5f@kernel.org>
- <avZkfg6WMlMzOxpn@google.com>
- <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <72ef7ef8-acc8-4ad5-9c09-76d9e944bf5c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 3/5] phy: exynos5-usbdrd: support Exynos7885 USB PHY
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: David Virag <virag.david003@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org, 
+ Umer Uddin <umer.uddin@mentallysanemainliners.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20261123092244.1792040-4-virag.david003@gmail.com>
+References: <20261123092244.1792040-1-virag.david003@gmail.com>
+ <20261123092244.1792040-4-virag.david003@gmail.com>
+Date: Wed, 25 Nov 2026 12:14:23 +0100
+Message-Id: <179560526391.84329.5543546580524948144.b4-review@b4>
+X-Mailer: b4 0.17-dev
 
-On 25/11/2026 08:07, Krzysztof Kozlowski wrote:
-> On 13/11/2026 02:14, Brian Norris wrote:
->> Hi Krzysztof,
->>
->> On Thu, Nov 05, 2026 at 07:54:22PM +0100, Krzysztof Kozlowski wrote:
->>> On 03/11/2026 03:36, Brian Norris wrote:
->>>> On Wed, Oct 28, 2026 at 02:19:23PM +0100, Krzysztof Kozlowski wrote:
->>>>> On Mon, Oct 26, 2026 at 02:43:40PM -0700, Brian Norris wrote:
->>>>
->>>>>> --- /dev/null
->>>>>> +++ b/include/dt-bindings/interrupt-controller/irq-cpm-google.h
->>>>>> @@ -0,0 +1,16 @@
->>>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>>>>> +/*
->>>>>> + * This header provides constants for CPM IRQ.
->>>>>> + *
->>>>>> + * Copyright 2025-2026 Google LLC
->>>>>> + *
->>>>>> + */
->>>>>> +#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>>> +#define _DT_BINDINGS_INTERRUPT_CONTROLLER_IRQ_CPM_H
->>>>>> +
->>>>>> +#define CPM_IRQ_RTC_ALARM_NO			0
->>>>>
->>>>> Keep naming consistent. Clocks has _CLK suffix, so this should not use
->>>>> prefix.
->>>>>
->>>>>
->>>>>> +#define CPM_IRQ_AOC_MIN				7
->>>>>
->>>>> Anyway, ABI constants should be indexed from 0 and incremented by 1.
->>>>
->>>> What do you mean by this? Do I need to make up names for the
->>>> unused IDs between 0 and 7? On an initial search, I don't believe they
->>>> have any meaning at all. Does that mean I should make up some kind of
->>>> "RESERVED_<N>" naming here?
->>>
->>> No, I meant CPM_IRQ_AOC_MIN is 1.
->>>
->>>>
->>>> Between 7 and 156, these are just ... 150 different "service numbers"
->>>> within the AOC (Always On Connectivity) subsystem. I can name them
->>>> AOC_0, AOC_1, ... AOC_149 if that helps.
->>>>
->>>> Or are you suggesting that I pack the actual use cases (so, 0 and 7-157)
->>>> into 0-151? I thought it was valuable to directly use the firmware
->>>> indexing where possible; if I change those, then the indexing loses its
->>>> inherent meaning, and we also have to add another layer of translation.
->>>
->>> We do not use hardware numbers as bindings and ABI, because that's
->>> pointless - no benefits, only risks. Similarly you do not define GIC
->>> interrupt numbers, pinctrl pin numbers, MMIO addresses as bindings. None
->>> of these bind anything between DTS and software, so not a binding.
->>
->> OK, I see your point about the distinction between hardware numbers and
->> bindings. So are firmware-protocol-defined numbers more like hardware
->> numbers or bindings?
->>
->>> There are some exceptions like SCMI firmware, but that's not the case here.
->>
->> It's funny you mention that, because that's exactly what Jerome compared
->> this to in the clk, reset, and pmdomain portions.
->>
->> These values are used literally in the firmware interface, so I'd
->> consider them very similar to SCMI firmware protocol IDs (and, not that
+> The Exynos7885 SoC has an Exynos USB PHY that theoretically supports
+> USB3 SuperSpeed, but all known devices using it only have USB2 and the
+> vendor driver has USB3 function stubbed out, so we'll only support USB2.
 > 
-> Sure, where is the source code of the firmware then?
+> Apart from this mysterius USB3 capability, it's the closest to Exynos850
+> out of those supported. Unlike other SoCs though, this one doesn't set
+> the reference clock by default, so we have to set it manually.
+> For this, create a set_ref_clk_rate property in drvdata that can be set
+> to a predefined value to set the clockrate to.
+> 
+> Co-developed-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+> Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+> Changes in v2:
+>  - Use unsigned long for set_ref_clk_rate
+>  - (from Umer Uddin:) Error-check clk_set_rate, and fail if returns an
+>    error.
+>  - Add Umer Uddin's Co-developed-by: tag for his improvement.
 
-And if you do not have the source code, then not a binding, so you won't
-have case like:
-https://lore.kernel.org/all/20261124-qcom-adsp-shared-vmid-fixes-v1-1-f1a808dc41a5@mainlining.org/
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
+
+-- 
+Krzysztof Kozlowski <krzk@kernel.org>
