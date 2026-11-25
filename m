@@ -1,41 +1,41 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=160.236.52.249
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=47.88.81.163
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795605735;
-	b=ZDOeo/3D0QmZY4P+JngMRjbwHie7/ZfXSm8xD28BQEAEWcetLbIIJSZMB8unhaOYrlHh
-	 P0utw2oEVvUXmQruuiIg0KjRqpQMAEapqGBF4Ya2OVA+aikt3lpGmgThmEUGcLiN9oJV/
-	 mxApUKWwG6A9vrEoyL7AZxT4ZojKO/4lRBv6DWYZNFKiart3nCLvRVZYBu/o8kfSGfsve
-	 hhhZVkD4yjBC2vaFgnK1FbijweIYgAYYZ9JNM+lrFmYT0V1k0hQ5U2eUl5erM8Q/1h6bz
-	 LegHcvmhsfNd6NyX7L72R4+BJznK7eZg23dtmkhRPXSI1ulf/zWyi8kByGjXZFw5ZLg==
+	t=1795605731;
+	b=cDsb8tDFskLgSuH+zrZjNVeNXVyuSJ6nrGbwSkfdjZpNuSx6lGfkGWQqe3e3kfPHSK0t
+	 ACxtctCslV8XWifVOgMI7p+13Ehf1umTBofDAKwi2DNJneONKq//uDV+qZSDWSB5zq6hp
+	 4wE/3BPJdkoOS0JTlVENXx472mYtWRaoHzjPCI7/6bOXacVq6zh3fiXI0hcXFaDgybOuI
+	 jEaWaQiRPRU6uCZwpcWBKTCZQny1B6+rqC7hB3nqsKzCjXMYU9hh+BCNsVbwZPT9FN/dA
+	 X11Yazq0BHg9F/E73h/G4zbE+rpBOhRNviXIdbb2N0tkABxaFwMY9GtiCVyf3SAvP9w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795605735;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795605731;
 	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:
 	 X-HM-Tid:X-HM-MType:X-HM-Spam-Status:DKIM-Signature;
-	bh=KB2UOnA2/AVxrvyPRngGKJQSFTHCDi7Mco+n8BMKsyE=;
-	b=uep5fBw03ncc8C50AF/5J5Z84zHBNTvwo37BDZzJmIpnrUlSJYoeYt4B1CFKxEUrWAYr
-	 y0MfV+cd/WqVyMwdGLIFEYHDCFq0MF18UdWE/kiYPq5qP27QmxEWej8teaLcsI0Gxyal4
-	 jIhygxPXbrE+OD1ov7hxvjSWGAzALeXjjvZdTYaoN9lPdZ1mtiQjD89TcScOR0lRJa0ct
-	 YCQ4TTzkRuBY6kjSj8FiyXRpGNvP2ZYOCoq6YwRsuvH7OFX7vh7dzxntHHCMDVA9fmut1
-	 eec709z5eX6FNdeXPnVSDbmb7hZsshqdjsI0gJlTFyRPuzHQBRPX21YGl9TQg4B1L4w==
+	bh=8OvgXfV5RW6MUZS7JD0F5QsbBBUeIDq2o+22mmfeqcQ=;
+	b=XHXPPpS2+PVAvGOzgAmoy1YlDgSR3fDiGb5Q/AioCOR7rVv+bgKl+S7u/OLGXAjXuGL/
+	 qI2XN/4VdXknb29IvC+sCVrJzLB32XZx5qkVIiUVTBAkI43+NttXgzM3oyiJDbz02SMRY
+	 pV2/FK2gi0Jns3PGRWWwMIAltatbQMjsPxxZcyVQhxOk+dcP01YbpehLMtkfmcEqpxxkW
+	 3ZZ2GdfR5VQmLPuVnCxfWLpdD6VqCtm74+Me9BTjeiSf8XD5RJCfZUsJedL62L9kwXFoh
+	 O1XQLFDbHfcQ5lQT9P1LuowNEghVXSwsmAlQ/Xw1yMsLgM+2EB8cISYwN3qdjwLarSw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rock-chips.com;
 	spf=pass smtp.mailfrom=rock-chips.com;
-	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=QrjM7ZR8;
-	arc=none smtp.remote-ip=160.236.52.249
-Received: from mail-m16023652249.xmail.ntesmail.com (mail-m16023652249.xmail.ntesmail.com [160.236.52.249])
+	dkim=pass header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=NHqTmngc;
+	arc=none smtp.remote-ip=47.88.81.163
+Received: from mail-m81163.netease.com (mail-m81163.netease.com [47.88.81.163])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB57C606A69B;
-	Wed, 25 Nov 2026 11:22:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB57C606A69B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14A7606A681;
+	Wed, 25 Nov 2026 11:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A14A7606A681
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=QrjM7ZR8
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.a=rsa-sha256 header.s=default header.b=NHqTmngc
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 55f816044;
-	Wed, 25 Nov 2026 19:22:03 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 55f816032;
+	Wed, 25 Nov 2026 19:21:59 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -66,11 +66,10 @@ Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: [PATCH v7 07/20] drm/bridge: analogix_dp: Check all negative return values for &analogix_dp_device.irq
-Date: Wed, 25 Nov 2026 19:21:28 +0800
-Message-Id: <20261125112141.1434903-8-damon.ding@rock-chips.com>
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v7 04/20] drm/bridge: analogix_dp: Restrict forced connected status to panel endpoints
+Date: Wed, 25 Nov 2026 19:21:25 +0800
+Message-Id: <20261125112141.1434903-5-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261125112141.1434903-1-damon.ding@rock-chips.com>
 References: <20261125112141.1434903-1-damon.ding@rock-chips.com>
@@ -84,75 +83,139 @@ List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa21270f97a03a8kunm17c23050775894
+X-HM-Tid: 0aa21270e9f203a8kunm17c2305077586e
 X-HM-MType: 1
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaQk1DVktIT0IdGU0YHU5DSlYVFA
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZGENJVh9KGh9CSBlDTxlKT1YVFA
 	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pKQk1VSktLVUpCWQY+
 DKIM-Signature: a=rsa-sha256;
-	b=QrjM7ZR8pJ3EzmPj0v56jPZq94jjwPvloVlv1Emt4EQmsMiU7/r43wrszU+dbY9O0nPWw0QXG8jQ3pXQlWNeUX83jbA/06oqNtsD8DkKnR5wkj4FZxG1Tkn2+UZiBrO7DyFPcVBEcYiiI/kdXjI7mihzZseaes9BAmThSBMyWUc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=KB2UOnA2/AVxrvyPRngGKJQSFTHCDi7Mco+n8BMKsyE=;
+	b=NHqTmngcY+9knpwqqjilDRMTn6qgHL372YH/6qgFpekxtCPGb6VPABhDUHwOuH/ZO0fV/c3FWigfTrpaqRZ7IYpXR/fTXDQ8HYos1KY/kM9EmGkJKtHgkVNcq9cIVnQn53Zrw0JbnCyyvu6VzAIPYIBHHV4TJcVSkzDeJKgjXiM=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=8OvgXfV5RW6MUZS7JD0F5QsbBBUeIDq2o+22mmfeqcQ=;
 	h=date:mime-version:subject:message-id:from;
 
-Currently only -ENXIO is checked for dp->irq from gpiod_to_irq(),
-which ignores other possible error codes like -EPROBE_DEFER, -ENOENT.
+Limit the forced connected status so that it only applies when the
+bridge chain ends with a panel and no downstream bridge supports
+DRM_BRIDGE_OP_DETECT, which is tracked by the new
+&analogix_dp_device.force_connected_mode.  For all the other cases,
+rely on analogix_dp_detect_hpd() to report the accurate hotplug
+state.
 
-Check for any negative value instead, and propagate the actual error
-code rather than hardcoding -ENODEV.
+Background for the special handling:
+- If the chain ends with a DP connector bridge, the connector relies
+  on Analogix DP to perform detection. We must avoid hardcoding
+  connected status here.
+- For intermediate bridges such as PS8625 / PTN3460 without detect
+  support [1], historically the bridge connector defaults to connected
+  via drm_helper_probe_detect() when no per-bridge detect callback
+  exists.
 
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Link: https://lore.kernel.org/all/20260804083307.84ECA1F000E9@smtp.kernel.org/
+[1] https://lore.kernel.org/all/4939d55e-b560-4235-8295-adf8e48d9b74@samsung.com/
+
+Reported-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://lore.kernel.org/all/5209243.oAaWjsssbx@diego/
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
 ---
 
+Changes in v3:
+- Add missing drm_bridge_put() after drm_bridge_chain_get_last_bridge()
+  to fix a reference count leak. (Sashiko)
+- Report panel endpoints as always connected from
+  analogix_dp_get_plug_in_status() via newly added
+  &analogix_dp_device.force_connected_mode.
+
 Changes in v4:
 - Add Tested-by tag.
 
 Changes in v5:
-- Change the type of &analogix_dp_device.irq from unsigned int to int
-  to fix the dead dp->irq < 0 check, which broke the probe deferral
-  for the HPD GPIO. (Sashiko)
+- Move the force_connected_mode check from
+  analogix_dp_get_plug_in_status() to analogix_dp_bridge_detect(), as
+  the hardware status reader is also used by the force HPD fallback
+  and the AUX HPD waiting paths. (Sashiko)
+- Hold a runtime PM reference in analogix_dp_bridge_detect(), since
+  analogix_dp_detect_hpd() may access the registers while the device
+  is runtime suspended. (Sashiko)
 
 Changes in v6:
 - Add Tested-by tag.
+
+Changes in v7:
+- Move the runtime PM reference handling in analogix_dp_bridge_detect()
+  to a separate patch.
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 29 ++++++++++++++++++-
+ .../drm/bridge/analogix/analogix_dp_core.h    |  1 +
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3ab1cf6b51d1..749d63e55d2a 100644
+index af7fc5afb8ec..46d4dd9d7cd7 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1514,9 +1514,9 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- 		irq_flags = IRQF_NO_AUTOEN;
+@@ -905,7 +905,7 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
+ 	struct analogix_dp_device *dp = to_dp(bridge);
+ 	enum drm_connector_status status = connector_status_disconnected;
+ 
+-	if (dp->bridge.next_bridge)
++	if (dp->force_connected_mode)
+ 		return connector_status_connected;
+ 
+ 	if (!analogix_dp_detect_hpd(dp))
+@@ -914,6 +914,24 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
+ 	return status;
+ }
+ 
++static bool analogix_dp_bridge_force_connected(struct analogix_dp_device *dp)
++{
++	struct drm_bridge *last_bridge;
++	bool force_connected = false;
++
++	drm_for_each_bridge_in_chain_from(dp->bridge.next_bridge, bridge) {
++		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
++			return false;
++	}
++
++	last_bridge = drm_bridge_chain_get_last_bridge(dp->encoder);
++	if (last_bridge)
++		force_connected = drm_bridge_is_panel(last_bridge);
++	drm_bridge_put(last_bridge);
++
++	return force_connected;
++}
++
+ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+ 				     struct drm_encoder *encoder,
+ 				     enum drm_bridge_attach_flags flags)
+@@ -933,6 +951,15 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+ 			dev_err(dp->dev, "failed to attach following panel or bridge (%d)\n", ret);
+ 			return ret;
+ 		}
++
++		/*
++		 * Only assume connected when the bridge chain ends with a panel.
++		 * Panel bridges lack a detect callback and historically rely on
++		 * this shortcut. For other next bridge types (e.g., DP connector
++		 * bridges), fall back to analogix_dp_detect_hpd() to report
++		 * accurate hotplug state.
++		 */
++		dp->force_connected_mode = analogix_dp_bridge_force_connected(dp);
  	}
  
--	if (dp->irq == -ENXIO) {
-+	if (dp->irq < 0) {
- 		dev_err(&pdev->dev, "failed to get irq\n");
--		return ERR_PTR(-ENODEV);
-+		return ERR_PTR(dp->irq);
- 	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, dp->irq,
+ 	return 0;
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index dc189f0b7a19..cc3466304531 100644
+index 4560597604ad..64aaba67e669 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -159,7 +159,7 @@ struct analogix_dp_device {
- 	struct drm_bridge	bridge;
- 	struct drm_dp_aux	aux;
- 	struct clk		*clock;
--	unsigned int		irq;
-+	int			irq;
- 	void __iomem		*reg_base;
+@@ -170,6 +170,7 @@ struct analogix_dp_device {
+ 	bool			force_hpd;
+ 	bool			fast_train_enable;
+ 	bool			psr_supported;
++	bool			force_connected_mode;
  
- 	struct video_info	video_info;
+ 	u8 dpcd[DP_RECEIVER_CAP_SIZE];
+ 
 -- 
 2.34.1
 
