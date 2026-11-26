@@ -1,88 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795691039;
-	b=dTdrxo/4kkghU07GFS64yiO+193AXaC7oz2S2D0cib2d2/5i1Zk2FuOYgvur+8XfzGRL
-	 jhT+vT6K5K+I+Wj/CP8gqpOIcyg4q/8W/5pWhkthOQ00RulqN/N4UPjHGq35YYE2LW398
-	 O0pFLUw1xfKT9QKHAsbdO0QCW+75SmEfILwMTfJ8sDNnUMfbPr1dlvbs0KCjYvgnEWb+N
-	 P/Q6pDVxgUbiHN6f+UE8FD+bxFZFwxvtJmlekVn5c/Lr7T2zB5B1SxJP+5BQ47Lqlg95X
-	 9QsPbsSURzbQVXZ8l6vkc/oimC2qOumeg3JcEjg3avFkVjP9Sp7rgZVwaxQx802rbsQ==
+	t=1795692823;
+	b=ImSODacB6Ee8u9IWAnn/qr+rCISqkMVv5PPYJ8g+0pF+PK4W/wDgvZQnX8E3Js4MNyww
+	 FDbWAVBLK3BZrbkPC4NM30TDFSoSKZQY2FYVClTNNtqvWiv4JXxTN9pOKTi/ADLAkm+Jx
+	 GMb0a9Z3XzFDGl6uw1hxwFncnJZuQlt3kvJysoerDHoHmTvhhzT5Q+Q28us3fwsy8YBcV
+	 hTvUpshMC0TMrcZr6z7Ku9zmvSBX475NpMMAWLX4Bwv3UYnEy2FYtp67oapVG8PVamxPI
+	 XsdlNemIRqMplgNs3eNSrO7/8D1IIvHId7lfc6kSsiyQ2v5Qdmh2ZgJGP3oGqGZfcwA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795691039;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795692823;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=wbMl1PZXioIhutwHjgEf/QKIJdTG6ISgm88fxtlS6O8=;
-	b=wanOihXj1NltQmajmH+XrQUhPPbZ0Umv6TyAENA7wsdE/dFs4wiKy3rOOWEzTgHO6VHZ
-	 aGZd44I8qZwffsHgTu/CQ6DKIb8xONeDL0LISYaLwCjOpa1Tv7w6ve/NR2WyedPQliCSU
-	 pvJJeYIFENKGZWPvacxWVp30JhmgR8vX20PWTQCwKHy3Hp7JXWRCUuVeaAmXfrIc6ThYM
-	 qArtdrK+IgFfChJn+DWZOr3M0Trv2t8s4iMACjdyylvOEwkQMJO865sRWDVnyXwa7hFyr
-	 aK0WvAAWzQRvWeaX0q5opT6cjitDugkGJWYoYAj6txOJvpcL0wHOQOf6PEs/dqLGqzA==
+	bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
+	b=gHUbid6/J9tS7haQsz6LXL1q8IfC84BcfOp+4zMaC/OHnXOdKBw8CceK2OszBlRRm189
+	 fBZx3jr1WZ/nwBQ8NYS54W9UWm24T04frSkotfXEYUxmhKg5A/ungfS3nk3ftrA4oCQCH
+	 X6j8RkYbWB5tAONY6lslg/trmdFYcH/PoOVm4V+Sp9H96lZLwgG4OuDTWLZiIGTBZM9mK
+	 /hc2qongsgVLb8eQGXVcP+8beMwTYQAC7Xkhbc78iPNiRcAwoJ0akpQuCDmpowm2cn/LQ
+	 AcGRxGfsvsB9kDcisrHyO8RNzlUanTwE6iq8g1gH64lj9KPODTQaSWllyOdjS2XaCYw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=L4jYK993;
-	arc=none smtp.remote-ip=209.85.128.47
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kgbgu55N;
+	arc=none smtp.remote-ip=209.85.128.46
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB450606A323
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB450606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E923606A32C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E923606A32C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=L4jYK993
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4bb69f5b161so44440925e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:03:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kgbgu55N
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb666304fdso68946015e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:33:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795691037; x=1796295837; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1795692821; x=1796297621; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=wbMl1PZXioIhutwHjgEf/QKIJdTG6ISgm88fxtlS6O8=;
-        b=L4jYK993lz2ish9adws/NpZ/TcP6lz8393v5p8wEDlb0hJqFvDYDz7zq51tf/uRk/Z
-         hfnSVjRNre5BdqiQXjFeSQ10XnmSqg03I81bLLP4eXRqz9wM3b2CH8ObMgWLiql3sdLK
-         uxLWOf9gxnWeIGon1rxiZznEZHE3KDIfPThlK8Hs5dbviLVZJUPm8WA4RmVuVBiriZ0F
-         x8V27cRrr9VYVEagZa5EBhBJrwIUCrDbjuDjP4+th4aBcjfzma6wVLaRJMd7Vm6zSpg5
-         yz85qvgYT/SJ0GW9BzQgXBhOEiOFh2LuQJicjN0CDKkM3MdGsBdilkzeBiJWmOvWfZBQ
-         0inQ==
+        bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
+        b=kgbgu55NJWqtsl819u2td1h3BTQU/9so27oCJxFth9UtpwHASiUMZJXPMU3X3DVX8a
+         XHYpyO1Bj9RCj0FdM3Cv42VJb77av4BgmPN4oKfcfnO+RQRyWv8i6HJOHdbIavx0s7OW
+         4vGwxmmNQFnOsfhlB2XpUcy6Xc3cMs8MusZr4djrwqMIJxhhSNL8j0W71saUumvV9TOR
+         nwTh2CHjddK8k6Y5/U20tmOc3A7iiYaVV6pCEq2FG5cH2GkBab7F+sc4HwMI0pylQotO
+         gMfaPP3WQLcBsf4nYys8Eok8jEEiJtdIniAXp9nQm/gXUO5Ie33WyjbOmXpd1Y1FmCS/
+         HYfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795691037; x=1796295837;
+        d=1e100.net; s=20260707; t=1795692821; x=1796297621;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=wbMl1PZXioIhutwHjgEf/QKIJdTG6ISgm88fxtlS6O8=;
-        b=UgFxL9RmPfalpe3md8IWGqzOf4/OvFO/vd1guEdxEL2eaZ2mJUg9zQEIRQK9toAsbV
-         Fm3ZQB647nNExkLgBwub/S21CoVZzSCSK+TgN3+llfFqtz58fm5KDtZxX9/2FgXDuiTG
-         X6vbF3waPskBLVNJYLDosWc7XnBGVml8263exVFYqmGzOXr8k7xyktsPxUXd5XgDWmtu
-         hhIOekVGqoAcA/yI8mEHirMLpX2l0Lp4keiNvmB+naGr6wDNLmKPCW/UOkwGj1M5dJzg
-         8tyMqXJLBU3f39eiLWxS7sLjttWcWiawf0Ia6al06vAUZo+mTQm5P3QD+aYWOJXSlq1u
-         OeRQ==
-X-Forwarded-Encrypted: i=1; AL+hErEIfPFj/K7WmDuRsYNJV+c4rHko+irZr2ZXTiI3SubqAPYQIik9s2ky2YOjqijVEUDLvz7g9AWq9ivrZMb3Ufx3yA==@vger.kernel.org
-X-Gm-Message-State: APuU4Z+jc6IgIK7QCIJRCnFlLXQ95TeGMNTnK4a5eRieDS8V+0DYWT4c
-	SvmZSbvwEYa3abG/Sr2ZYg+nZ/aXsZ9p9A5L1zv5HqvooFaFqcofouM50rVhPwF3+S0=
-X-Gm-Gg: AZFdTZf1O7j/5B9y+Y59XKhXvso0O+T1vh02Z3OoaFwV0U12YJ2YsCNXnPBtA8wwnDw
-	eM6ZxMQi3p6kwQfEYZqH4q3vSrIU7hjdrTEJeoCg0fMzjiP0t1akks+3AxWOLxbGt3oE8YKLy/w
-	6W05Ki1VjGcjkWUY0oQN3vu5OY0BV80gGpit+RyxOYmimys1JJu03MxV1/3JCr1U82V3VGn5/q2
-	C5u2Sd/aWESCeAdpib8xRuxjFSBLT9d376zY6ZTjhEK2FIA3ChVrMvBYcTtowOYFMR6WjoFqdAd
-	Re2dQvhOIuliMfJ5XQUUN2vhbbiGuZeNAFIfQ5PvZPvS3U7TtCJnsa+rdXxWz5yMibqjQPrDR8q
-	L5S2/2+M6kzqJhmARi5KRCNtL8mptCKDZlMQQIuU5uctxThMqnw2MR2DipWAMjQPy31WRx7zVoG
-	U6W8ozT+1XpWSgHIcmORkR9s5zpP6HG+7E5Q66VnMs4lHIemildtgWWoEgcM5bDbOtV0d7waGTE
-	UfiuKNDgsVlNFseM57Q26cpYRUCyTuPpsNq4dIpHwl2HMY6Xe46LKyeokCBomOtFq/sC6J1TIYa
-	9VoRrsJ5Fv1sm6AIdExzhqBGy1LQcbRkm9tvm0LZk1NylKw6+Ptk64LwUVFx
-X-Received: by 2002:a05:600c:848d:b0:4bb:694e:496c with SMTP id 5b1f17b1804b1-4bb88810b39mr439443445e9.22.1795691037195;
-        Thu, 26 Nov 2026 03:03:57 -0800 (PST)
+        bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
+        b=azo3nhiu5wqFZL4+o9ZjupWNChFxHlRONskd5nNhVuCzXwjm7ax2GBDxy9ihrRMKIU
+         PSrD4mVfA9kqLf/d0wgV7PEn0850797FFpeq72Qs67+S1Ix9R+6xVlMatCypLGHi0m3J
+         zYVv2RqE6ofoindoKaLLBXN/Abv3wPkE2rSMNJvZHX2flbrvhmd4uTF9vFp4CX96YsPG
+         GMuZQyPz4AqLL1YRpAafnkpXTAVaysHQvEjoPErnKZyA4JHNWFkaHvvjXAqQJ7ECe/HY
+         J4rAcH/NOWJW97BFghx20HNUXpuO6bMwVluV14G5GF+arBZFb6berQVWoQ4SFMAmYdZ9
+         x+vA==
+X-Forwarded-Encrypted: i=1; AL+hErEAKb3tbLuffL41Go5wla+1ClRbVfqiUUQaqHTBUICZONZE5Mx/hacbPHluMEV2IsQlFUd6P5dmxSGZSjDVbMT2+A==@vger.kernel.org
+X-Gm-Message-State: APuU4Z/n89zBIAPSxmVNxzPyYkgeYUdXFaTVl8Fck9Gugn3goF9+bjrD
+	jLqf+q2Ubf/82E3smvkoMA34ma2AyStqP7pfj4vFd2cWp6HyDZr8hCY+KRHUBRv6tQE=
+X-Gm-Gg: AZFdTZcdvq5GWdi8WJ6BeNBIIBmeAfeFZjvfDoHB3wACu/0rZvN1CR4HZ3MF6VWznAQ
+	rXXKAA/AEIGHyVfR9fqGzMFW/bo2DqjJNqTjAz7N6itbRj92C1/DtgW20JUts2W1JMRQLNHl+CW
+	BZ5GAtwb0toDwiIqKchbrrhpML33/Fe+CMMAg4yeaRQ26Eeg8ImV3YQZ+jnbVa4WG+BvRUM6tc2
+	234n9CHgukYcxgvl/KaJUH0pHpMai7N1z5Ym3JCmqW5o+ElD0gbW2g+T9xX5GpnH1c4wfwgVhA9
+	QUXfhCJR6LXN164JXxiGl32n22vgzI9AL0bgy6TFVlZnqrqsXVY4FasAaN6I/QQhIPL3HvlwyT0
+	mjKTPdWehlXdR2sCTZrjRXbuFyf7WXXF+epzT5j6O2g8YIAOvzmmp+dWeCtGPERV+3whI12ExIU
+	rxiHthoI+CSya8oIV4bR7mt9lU7KsVe3n06Qjd8PALHVmv0nooaz2tWAsp+gxi1eyOZIOWIRUUa
+	onWmFbvSDUD5Bo8oIze2pv/MDNOK7k+e0ytfz6uA0ZpP/Gvroxm5sCHn3tTk4wd/Wlu70to6t7H
+	c81HyYKfPE0CeK9j9q0wVdoPJyWzADi7JEioQw==
+X-Received: by 2002:a05:600c:16c9:b0:4bb:7ad9:311d with SMTP id 5b1f17b1804b1-4bb861692a1mr322942735e9.19.1795692821256;
+        Thu, 26 Nov 2026 03:33:41 -0800 (PST)
 Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6a68048esm41934052f8f.29.2026.11.26.03.03.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6a67fe48sm36638402f8f.23.2026.11.26.03.33.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2026 03:03:56 -0800 (PST)
-Message-ID: <1e474131-3013-44eb-b675-db532d9733ec@linaro.org>
-Date: Thu, 26 Nov 2026 13:03:46 +0200
+        Thu, 26 Nov 2026 03:33:40 -0800 (PST)
+Message-ID: <65f7bd9f-b8ea-46f9-94a1-5129268ead0f@linaro.org>
+Date: Thu, 26 Nov 2026 13:33:37 +0200
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -95,46 +95,25 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCHv3] thermal/drivers/samsung/acpm-tmu: Fix spurious CPU
  throttling
-To: Christian Loehle <christian.loehle@arm.com>,
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: bzolnier@gmail.com, krzk@kernel.org, rafael@kernel.org,
- daniel.lezcano@kernel.org, lukasz.luba@arm.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-pm@vger.kernel.org
+To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com
+Cc: krzk@kernel.org, rafael@kernel.org, daniel.lezcano@kernel.org,
+ lukasz.luba@arm.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+ Alexey Klimov <alexey.klimov@linaro.org>, Peter Griffin <gpeter@google.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Juan Yescas <jyescas@google.com>
 References: <20261125173959.2198116-1-christian.loehle@arm.com>
- <CANgGJDp02H7-wLv6DoaPMeiy4UvDUC2nvSR=+mngEZ+Z4Hqgog@mail.gmail.com>
- <2162b02c-642a-446c-973e-ca80607da294@arm.com>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <2162b02c-642a-446c-973e-ca80607da294@arm.com>
+In-Reply-To: <20261125173959.2198116-1-christian.loehle@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
+I tested the patch. With the driver loaded, all clusters now run at their
+maximum frequency (measured via CPU_CYCLES) instead of ~200 MHz. Lowering
+the hot trip via sysfs to 55 C reprograms threshold 7, and the hardware
+then holds the CPU cluster at ~55 C under full load.
 
-On 11/26/26 12:50 PM, Christian Loehle wrote:
-
->>> Program slot 7 from the lowest active hot trip so hardware throttling can
->>> precede the critical trip's system shutdown. Cache the low/high window and
->>> update the hot limit from set_trip_temp(), because the thermal core skips
->>> set_trips() when that window is unchanged.
->>
->> FWIW, Exynos850 control register for TMU has bits to enabled/disable
->> such behaviour (and it probably works).
->> Maybe gs101 also has it.
->> But it seems that cpufreq scaling feature itself is explicitly enabled.
-> 
-> Thanks for the hint Alexey!
-> THERM_TRIP_EN is bit12 on Exynos850, clearing that on gs101 still stays on 200MHz
-> for me. The downstream driver doesn't define it either.
-> Clearing bit16, i.e. 0x09003 instead of 0x19003 does indeed remove the throttling
-> even with all zeroes in slot7.
-> I would probably still go with $SUBJECT, as I'd say the risk of this having unwanted
-
-I prefer current patch. On GS101 the TMU control registers are owned by the
-ACPM firmware, which may rewrite CONTROL (e.g. on init, tz_control or resume),
-and clearing the bit would also drop the hardware throttling as a backstop,
-which downstream keeps enabled.
-
-Cheers,
-ta
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
