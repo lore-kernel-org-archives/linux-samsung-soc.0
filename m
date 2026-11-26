@@ -1,88 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.46
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795692823;
-	b=ImSODacB6Ee8u9IWAnn/qr+rCISqkMVv5PPYJ8g+0pF+PK4W/wDgvZQnX8E3Js4MNyww
-	 FDbWAVBLK3BZrbkPC4NM30TDFSoSKZQY2FYVClTNNtqvWiv4JXxTN9pOKTi/ADLAkm+Jx
-	 GMb0a9Z3XzFDGl6uw1hxwFncnJZuQlt3kvJysoerDHoHmTvhhzT5Q+Q28us3fwsy8YBcV
-	 hTvUpshMC0TMrcZr6z7Ku9zmvSBX475NpMMAWLX4Bwv3UYnEy2FYtp67oapVG8PVamxPI
-	 XsdlNemIRqMplgNs3eNSrO7/8D1IIvHId7lfc6kSsiyQ2v5Qdmh2ZgJGP3oGqGZfcwA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795692823;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.47
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795693934;
+	b=VkZEj6ypB4//YXxq8fS0nFX8AsUVyTzYTBzhTDNMtQToAebbe5jsbXbbdQMEaFkif1vr
+	 gSPc26l+8xBXFOZFNy79zGGganjaTR8Vpt5EwyT0Sy7ETIUnBx1dLxRNQaxMZ7n4JqRnn
+	 Jk9hsqdBCbZNrVhahrIEL/hknnHnlqD0I2r08hNUSo0TXC+9R2C7kBrOPtRCjTKVLKOGU
+	 ukH610xwB+GmrcH+XAq61LVq25wgGXA0At1qK93SFpQpsQRZOHWM5V1iapLrkddTrCnVB
+	 AlB+5LBe68HRzVewg0FSWkJfFJg4/u53S8mO1E3rC43KaHa2mg/6oLSQlYOCH560fMw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795693934;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
-	b=gHUbid6/J9tS7haQsz6LXL1q8IfC84BcfOp+4zMaC/OHnXOdKBw8CceK2OszBlRRm189
-	 fBZx3jr1WZ/nwBQ8NYS54W9UWm24T04frSkotfXEYUxmhKg5A/ungfS3nk3ftrA4oCQCH
-	 X6j8RkYbWB5tAONY6lslg/trmdFYcH/PoOVm4V+Sp9H96lZLwgG4OuDTWLZiIGTBZM9mK
-	 /hc2qongsgVLb8eQGXVcP+8beMwTYQAC7Xkhbc78iPNiRcAwoJ0akpQuCDmpowm2cn/LQ
-	 AcGRxGfsvsB9kDcisrHyO8RNzlUanTwE6iq8g1gH64lj9KPODTQaSWllyOdjS2XaCYw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=amuRKHtIxZCusSd7NYHmthsgJGB4hV/bj//XXqhJ184=;
+	b=d0pjkL0o11pEdLCicmsifn8XfLj3ZLfExxWfTxgaawSQohQy7SEf+lJkU+YjmkIz/of8
+	 hxkbmp0/REDtwNh3vfzZR8ocvpK3A8Gz80wPvlqD5DhxuAYJ6LMY2HUj5RQx5bjvcjw+A
+	 OsCqmH6sI70Ua4FzaLl8F2G+bLKr219iuFOgyVmjvhvmGo5wnuQVgxr3C7y/tgbLIneBd
+	 n/XcQ7QDWYJDX07xXNS722Eefwp9xPCTtpy1yAwT4DPiT0TwoABJNcTZx+eMOr6jzMRIw
+	 k5mMH1SCFDRcUvOm6sbLD6ERjuXqG7pw3VcahHExzPK4m7cOreVVAgZRrsALYxxJNbA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kgbgu55N;
-	arc=none smtp.remote-ip=209.85.128.46
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.224.47
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E923606A32C
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1E923606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411C9606A31C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 11:52:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 411C9606A31C
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=kgbgu55N
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4bb666304fdso68946015e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:33:42 -0800 (PST)
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-67daffde88dso4075329d50.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 03:52:09 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795693928; cv=none;
+        d=google.com; s=arc-20260327;
+        b=cfHRihKXXPm5LOUwfbhEi8kV2iTIvDNZh4Tz6Qf88AyIL9ViA+pSY/F/RVoyNEci8Z
+         TbwawLz52CKst7UugD4wKyDmxcMvROIJqOZh+zXv13NumB7C/drY2YT69iq22yDGWQlP
+         Zc7WqGzC/jNn6Awj6EOd0Kd7gaeuOjvEam0gUEtTX2iddYE6Y3JScOOp1q4OmxrFSm84
+         sW54OK5EBZlwaA28N0FgC/4J4zheWkj+B2FRhEXcUnAzNjitDo1igXkkMm10b2fwhfeB
+         v4k52ClBEclWm5yYBIyn/oqQ2/6nyCVxmwRisjv7c1Hxi2s2R9KbetEu8zARqCB+eDiE
+         sYRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=amuRKHtIxZCusSd7NYHmthsgJGB4hV/bj//XXqhJ184=;
+        fh=tkBPZk5BeVXlEvKPOMySJECoZtnJ0RVsrNf2IKw7/k4=;
+        b=o3kwUeQ3di8J7jt4kv8hG0B42jtucMELxIV9izwyoaqoV2wuwNjKb6r4sIzh4KbOfc
+         Obpv2ruJIpjgLH8mBodoiezslMJbF8B6UHivFBoa4vvwJV27Kv1AdlgMDkU5EWG3aGvT
+         iRPRmwun+tF8dywz+e2urSJ5i3UhodPDswZ+rBIFKBM2qaBM5W7UhC9WrY+C5T7CvddP
+         BDd78CN2UHQtpI1WmQUgzs5NBinuFhA5XYgnfBlqUytRD7P+gymqOup2GC6XYGcR1owx
+         ZLhfE9CT0mcwLHM7OkYEbEluoLX4wCn0NXgjbvlBeXEmSRTCviQs6w0jQD2/8rlLq6av
+         fhEw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795692821; x=1796297621; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
-        b=kgbgu55NJWqtsl819u2td1h3BTQU/9so27oCJxFth9UtpwHASiUMZJXPMU3X3DVX8a
-         XHYpyO1Bj9RCj0FdM3Cv42VJb77av4BgmPN4oKfcfnO+RQRyWv8i6HJOHdbIavx0s7OW
-         4vGwxmmNQFnOsfhlB2XpUcy6Xc3cMs8MusZr4djrwqMIJxhhSNL8j0W71saUumvV9TOR
-         nwTh2CHjddK8k6Y5/U20tmOc3A7iiYaVV6pCEq2FG5cH2GkBab7F+sc4HwMI0pylQotO
-         gMfaPP3WQLcBsf4nYys8Eok8jEEiJtdIniAXp9nQm/gXUO5Ie33WyjbOmXpd1Y1FmCS/
-         HYfw==
+        d=linaro.org; s=google; t=1795693928; x=1796298728; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=amuRKHtIxZCusSd7NYHmthsgJGB4hV/bj//XXqhJ184=;
+        b=JT06c3QKKCr3y0yVzTg+ate4KNvDPQLtPIUqXC2lnaoO1aKE1gjCZtRZ9qI2BWd8Mm
+         UishDTnalNfXIWDh1EGZLG49GSRHC8u0qeHLlJ7Vy0vED+jjnLxd5tkJBybcBu20cAUx
+         6DZXprA6wHS+OYNrVjq1zI18LZH1Bt8ZJ4LJobtqfLybwWovB37LpcwGK/D833KDbW8F
+         +VYBYEUbXjWAgP5hCkHBmku9c1uHOCOFZL6pNgeCtZYYsOfEhtCLPp8+LVLRfYO1BUl1
+         2cQujWKHYb+8iHKafr2QX++U+cY5W/FI0QcQK+gTIAdkKTJwphsDfqYlM3HhloKhU0QU
+         5l/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795692821; x=1796297621;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Z6b8XUkAe29Qbtx4GPrsYDuZ84bX6oCBHUSF9JuGiVE=;
-        b=azo3nhiu5wqFZL4+o9ZjupWNChFxHlRONskd5nNhVuCzXwjm7ax2GBDxy9ihrRMKIU
-         PSrD4mVfA9kqLf/d0wgV7PEn0850797FFpeq72Qs67+S1Ix9R+6xVlMatCypLGHi0m3J
-         zYVv2RqE6ofoindoKaLLBXN/Abv3wPkE2rSMNJvZHX2flbrvhmd4uTF9vFp4CX96YsPG
-         GMuZQyPz4AqLL1YRpAafnkpXTAVaysHQvEjoPErnKZyA4JHNWFkaHvvjXAqQJ7ECe/HY
-         J4rAcH/NOWJW97BFghx20HNUXpuO6bMwVluV14G5GF+arBZFb6berQVWoQ4SFMAmYdZ9
-         x+vA==
-X-Forwarded-Encrypted: i=1; AL+hErEAKb3tbLuffL41Go5wla+1ClRbVfqiUUQaqHTBUICZONZE5Mx/hacbPHluMEV2IsQlFUd6P5dmxSGZSjDVbMT2+A==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/n89zBIAPSxmVNxzPyYkgeYUdXFaTVl8Fck9Gugn3goF9+bjrD
-	jLqf+q2Ubf/82E3smvkoMA34ma2AyStqP7pfj4vFd2cWp6HyDZr8hCY+KRHUBRv6tQE=
-X-Gm-Gg: AZFdTZcdvq5GWdi8WJ6BeNBIIBmeAfeFZjvfDoHB3wACu/0rZvN1CR4HZ3MF6VWznAQ
-	rXXKAA/AEIGHyVfR9fqGzMFW/bo2DqjJNqTjAz7N6itbRj92C1/DtgW20JUts2W1JMRQLNHl+CW
-	BZ5GAtwb0toDwiIqKchbrrhpML33/Fe+CMMAg4yeaRQ26Eeg8ImV3YQZ+jnbVa4WG+BvRUM6tc2
-	234n9CHgukYcxgvl/KaJUH0pHpMai7N1z5Ym3JCmqW5o+ElD0gbW2g+T9xX5GpnH1c4wfwgVhA9
-	QUXfhCJR6LXN164JXxiGl32n22vgzI9AL0bgy6TFVlZnqrqsXVY4FasAaN6I/QQhIPL3HvlwyT0
-	mjKTPdWehlXdR2sCTZrjRXbuFyf7WXXF+epzT5j6O2g8YIAOvzmmp+dWeCtGPERV+3whI12ExIU
-	rxiHthoI+CSya8oIV4bR7mt9lU7KsVe3n06Qjd8PALHVmv0nooaz2tWAsp+gxi1eyOZIOWIRUUa
-	onWmFbvSDUD5Bo8oIze2pv/MDNOK7k+e0ytfz6uA0ZpP/Gvroxm5sCHn3tTk4wd/Wlu70to6t7H
-	c81HyYKfPE0CeK9j9q0wVdoPJyWzADi7JEioQw==
-X-Received: by 2002:a05:600c:16c9:b0:4bb:7ad9:311d with SMTP id 5b1f17b1804b1-4bb861692a1mr322942735e9.19.1795692821256;
-        Thu, 26 Nov 2026 03:33:41 -0800 (PST)
-Received: from [10.11.12.111] ([79.115.63.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6a67fe48sm36638402f8f.23.2026.11.26.03.33.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2026 03:33:40 -0800 (PST)
-Message-ID: <65f7bd9f-b8ea-46f9-94a1-5129268ead0f@linaro.org>
-Date: Thu, 26 Nov 2026 13:33:37 +0200
+        d=1e100.net; s=20260707; t=1795693928; x=1796298728;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=amuRKHtIxZCusSd7NYHmthsgJGB4hV/bj//XXqhJ184=;
+        b=xWqsHnblNpbjzrIis1uZZ9qN/7Nt5YrQEfk7IfVwYU2Obc5NXi/nJQGw8f90PpEGBE
+         W6T1y/CUm3ogbj5R3UNz44ugTZIjgzFM72SPnaMQFs6xWZ6JPE7sngwmohH6QAcPx6gX
+         MR7YW2Ih1yIZULxnhxA7B8lW/1e6kNELSxmk16KaatHRVOsfM2PBqGIxd/TVx6OaJ8BG
+         AdzqCoS+TvDh8QJVWSUyGPoqdATCWgZSOu9OiiVvrBD0XU7YUJBNGTx83IbdGNcFwFxT
+         rdENBg2EJIQV37J/EHLewWUVQMV8xuUA+mKnz3KrpIXh72rNWiwEt3NeE1ColbvReiCQ
+         01Bw==
+X-Forwarded-Encrypted: i=1; AL+hErE3qGGP98prJ55N4z5Ya0/jbuyi6HJA0C71LDs9O5BtiQUhz5C+m8JjzQ0mupLJiEvpnEYQ4YhJE/jyK3YOhYsHqQ==@vger.kernel.org
+X-Gm-Message-State: APuU4Z8haahQ2vBAdA1hUypxbvqny5izyXY9zyAWzaGnVsSw1q/ZGcwI
+	YSHygg1I72YjvevH+et2FtKTq5p9/8OLylLiZQLy5jMz/WGcr6nC8z9Tnhni10fv6HzQ41kRuQw
+	cai4ZTk1V3dSETUi42ONsSrC6AbsWh8XEh/ATBXFo8VGb3D4BkCntgTA=
+X-Gm-Gg: AZFdTZeWJdkVwKbSv+7Qmo8r3g8zbV5sv0+v4Y9QMwFCf6KOhWC3OznJOX4DpMrSReL
+	p51ZFaA25uXT9AHxdls2ptIGe4rWv8qMcG/iegpmoxRDpmQ0efEd5m7rU9bWDgg+lmgPyTmpa+E
+	mdmXi64WrXD0HIWtndkmSNL/CPhmtKw6wsw2UGOECxbqisCem37cI84881K0IUwjtT3aXdk4BAy
+	SqwKR2s82yiO4eJcMo56PY+8NMdvX2vQJ1iDIIOTab/ZbQmkIWgjSM9onPrraqi91Riu8fHbn1i
+	fCY9H2H9q2HejEcQP3SGp5n4IJn2mZMD0Psq/KZoruFGpzEPy9+TNU6ABVdMXTi4Q6EpCuGKZG7
+	nkR1QlhXH7/nSLs8PHXv1TGmsycHB88a2QV9+qacGSJ9f+FuPiRtkrA20NRwGLQos2UZUeoSXZ6
+	GvDaB8o3Jam1dv+Bn0CXSQzf9lwxr9dK6N4eZJNtrrnEt7CskDtf0B5w==
+X-Received: by 2002:a05:690e:11cf:b0:67d:c7c7:f906 with SMTP id
+ 956f58d0204a3-67df4551fa1mr7645191d50.158.1795693928129; Thu, 26 Nov 2026
+ 03:52:08 -0800 (PST)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,28 +102,51 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3] thermal/drivers/samsung/acpm-tmu: Fix spurious CPU
- throttling
-To: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com
-Cc: krzk@kernel.org, rafael@kernel.org, daniel.lezcano@kernel.org,
- lukasz.luba@arm.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
- Alexey Klimov <alexey.klimov@linaro.org>, Peter Griffin <gpeter@google.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Juan Yescas <jyescas@google.com>
 References: <20261125173959.2198116-1-christian.loehle@arm.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20261125173959.2198116-1-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <CANgGJDp02H7-wLv6DoaPMeiy4UvDUC2nvSR=+mngEZ+Z4Hqgog@mail.gmail.com> <2162b02c-642a-446c-973e-ca80607da294@arm.com>
+In-Reply-To: <2162b02c-642a-446c-973e-ca80607da294@arm.com>
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Thu, 26 Nov 2026 11:51:57 +0000
+X-Gm-Features: Aa3M54pjtUNnZ71ASyHQ6UnEf_ksRPjhBZS8ywckgTsHxI2GyTeeeUEsLldr4BU
+Message-ID: <CANgGJDrnH7R9aTXhH-nj710OjwNcUTfpxE7eWGSP=9a3eoUnug@mail.gmail.com>
+Subject: Re: [PATCHv3] thermal/drivers/samsung/acpm-tmu: Fix spurious CPU throttling
+To: tudor.ambarus@linaro.org
+Cc: Christian Loehle <christian.loehle@arm.com>, bzolnier@gmail.com, krzk@kernel.org, 
+	rafael@kernel.org, daniel.lezcano@kernel.org, lukasz.luba@arm.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 26 Nov 2026 at 10:50, Christian Loehle <christian.loehle@arm.com> w=
+rote:
+>
+> On 11/26/26 09:16, Alexey Klimov wrote:
+> > Hi Christian, Tudor,
+> >
+> > On Wed, 25 Nov 2026 at 17:40, Christian Loehle <christian.loehle@arm.co=
+m> wrote:
+> >>
+> >> acpm_tmu_set_trips() supplies two thresholds, but the ACPM command wri=
+tes
+> >> all eight slots, zero-filling the rest. On GS101, slot 7 limits CPU cl=
+ocks
+> >> independently of its interrupt mask. Setting it to 0 C limits all thre=
+e
+> >> clusters to about 200 MHz while cpufreq reports the requested frequenc=
+ies.
+> >> This was found through trial and error while tracking EAS regressions.
+> >
+> > Cpufreq reports the requested frequencies =E2=80=94 are these cached va=
+lues
+> > being reported?
+> > Or is this what the kernel gets via the ACPM call?
+>
+> Requested frequencies are reported. The 200MHz I only deduced from PMU co=
+unters.
 
-I tested the patch. With the driver loaded, all clusters now run at their
-maximum frequency (measured via CPU_CYCLES) instead of ~200 MHz. Lowering
-the hot trip via sysfs to 55 C reprograms threshold 7, and the hardware
-then holds the CPU cluster at ~55 C under full load.
+Tudor, your thoughts?
+Is ACPM reporting an incorrect rate or are those cached values?
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Thanks,
+Alexey
