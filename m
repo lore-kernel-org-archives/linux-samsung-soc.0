@@ -1,66 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795645441;
-	b=g6JiC+yEBVPqCbV4DHyQmzc0vfH/xoLYS/AoTiTs1EMT3uiA0fAwB3r3my4PMYy+4Wuj
-	 XUvCOrhq5Ws6Vw6eobMmrm9gwZkBPMPB+hhojFjSqEcVAnoXzEl9VRzV6F58kdV/EUGVe
-	 O/DfPI8iSKh3Fgmm/TjG7EjoW2PuKE3C6pI1+ARTpDEXQHK3GrVRr0MtuP5A4g6RMwiOt
-	 qxWII++Dgq92hQ07A3iPpyYFubym/zeHo4KIM6gezMFP69wv0u6+eJW3018LlD5NlMt97
-	 oWfQdicpzvhhau9gDI+R5ZzdudMIVkoq6faypqZbpA/jfQfKJDNTuS4KNEG1ClBM3WA==
+	t=1795657287;
+	b=O9V+eZoC9DpXLLWHtZncOci3fXk/QdlxvJZ0vTDI2hgom4u4t+bwbRSfrsblhhSJStqz
+	 4vFPMSRyplfzzXYL27tBP54Q1JWno+W9h2bwc+tmwAiEKLIajMIrSCk5l//wM45JGf7aB
+	 Fpkt4NzbG+xUfAyaEshgvdA6eEnwgOKrJfLJKwAxFQeYj1dn2udKBTSjFsGvQcx/hdjSC
+	 NNRVnU1BqIEYdtRpfOGUIHxprbVO568LfA25O5FIXC1LraXMrmAC5DhWffzAAJuRoIiGz
+	 0B5mTJmaKKQqWeFcfHyksfRWZAmaQ/Z3p7Z9vV5+39Q4Owd5LVVKS3aqKBx6qilXg/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795645441;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=VgTb4TX8hzSCfpylfGvwRlsr4/jJFplNoBwpIYBpwfY=;
-	b=BY/CPnd2LzIAivYGndxFKNjx475BstvVaWwKqUB4VuArCf8XLqKKegam0/kNA0AUMR4s
-	 J7vpJ/O9vqrUMDdjAVVr2A1PJOX7MsgJq6mZeiWIxnKL/HscOyOSzB36kzX7LYEHA7eri
-	 fJb53D/Un1ZQ31GfQNnKjjkleTn9y+VyEGf7yeSk1JIRrtrU0vAzlH6GMzSXXvVHATCrx
-	 P/cv4HUwyJk1/X5QBbaopeBq/dXXtWj1oM72vo3Uyy07NV7Mw4DDxiBOqO76ITpAUKxVP
-	 xWn1lri5Vwuv0qG0PoBZzMO93iGQgkA9YbebHiA587kQXzASOgAeYv5Q2XIvgbgBeKA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795657287;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=HbyBlYoSc4oQNkMHH7+GzwCjpt+AsrusHMpyq+R+lm8=;
+	b=zuStBusbgqQw0TwNYEUutWk+wfc8BBl+/QnyTgW5t4mVRx30rpu90Bbrj4YcIHHgir0Y
+	 HEBIj29ySg4VRtLle3AOFqhhz0pBPesHAiogpBO0NlnUkGL5Nu7ViomG99pOso31q9OpU
+	 h01lwYX2flm7SOizN1HuI19qZcJ3HwgmR9J73j87giAzdizO39Nrxj/xrRy++/1/Gk0tT
+	 55VmqpphPO+WEHXVQHhfEFbKAXNzowTuPzPGB+C+aaa9h5rRszGXyUm54/d511xnJZVay
+	 /tOO9cko1ZOjy8mfC2vZAhFTONKxVuLguo1gDgP+fTSexLBtMIQ+5TV7ep76GtjTH4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Td8JxagP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fGZMx2+9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC54E606A321;
-	Wed, 25 Nov 2026 22:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD743606A321;
+	Thu, 26 Nov 2026 01:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Td8JxagP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3978D1F000CF;
-	Wed, 25 Nov 2026 22:23:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fGZMx2+9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FDD71F000C4;
+	Thu, 26 Nov 2026 01:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795645441;
-	bh=VgTb4TX8hzSCfpylfGvwRlsr4/jJFplNoBwpIYBpwfY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Td8JxagPa5bb2bHNmmgTkt52zw2sMAOxNh1N23fgWTCqYSD7S4iOh/Ky/iOLiFBzz
-	 vENDskhM95lMdOquE8agfjRyZdn32sJa4PQVa+mR/uNp4EXLJkdDbyfHwFlzV5pIKP
-	 KtYFNkVmgev+MaZ8E/wVIDsMQvzKC6BdaWj14Z2Y8iDeG6nClYAwLd3B8OnzNa8MLv
-	 /hZvphcguSBXOhumrK0MtlRz8vHBE/8IafFOh8s9J20G7xExH6O21MjULLHNNwvbNi
-	 jpBcTq/UpEEGqIfqBIc8XxmT/myF/EJIzFY6wRtgE+0DX4c2VMCY/qCwzCs5YEk4v0
-	 W1Ab7snS2sm0g==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Phil Auld <pauld@redhat.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: [PATCH 22/47] clocksource/drivers/exynos_mct: Move CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING post stop_machine()
-Date: Wed, 25 Nov 2026 23:22:05 +0100
-Message-ID: <20261125222230.22508-23-frederic@kernel.org>
-X-Mailer: git-send-email 2.56.1
-In-Reply-To: <20261125222230.22508-1-frederic@kernel.org>
-References: <20261125222230.22508-1-frederic@kernel.org>
+	s=k20260515; t=1795657287;
+	bh=HbyBlYoSc4oQNkMHH7+GzwCjpt+AsrusHMpyq+R+lm8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=fGZMx2+9wN474RbdEH0dBdNmm7KD9n4vNxooWNmcLHTHs3/RU1zISmcGg1x8d9+Aw
+	 YeaOGlasmDT9e6xuUjxYcuE6nfNA2mW0OzePjygEI8QcSmZmQmbE66Nt7oIjI9YUVh
+	 xOsCrlzUvfw7kRo+1iZJMFRCu9eg68QjgUa/BVxNK5sTqwrZrEXbkNePnYN5+9aZOd
+	 GNwryei3TmXwO3sAUf70Z+R4Uubi9Ja5tNTXjKzfmqyYIwNfWMYlN62h3eYi2ERVJM
+	 6OZI5DN5qVUOOZXcx1MWQaJ8NjN1j6FtzjFJD06okBp48/DMH6QcCjQvBcK/ZeWr/p
+	 ddF6eTdhZ8Gyw==
+Date: Thu, 26 Nov 2026 01:41:18 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Adil =?UTF-8?B?SMO8c3Jldg==?= Tepe <tadilhusrev@gmail.com>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter
+ Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Exynos850 ADC support and soc thermistor
+Message-ID: <20261126014118.6eb12fea@jic23-hlaptop>
+In-Reply-To: <20261125193122.747908-2-tadilhusrev@gmail.com>
+References: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
+	<20261125193122.747908-2-tadilhusrev@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -70,52 +66,43 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Between CPUHP_TEARDOWN_CPU and CPUHP_AP_OFFLINE, stop_machine executes
-all the teardown callbacks while temporarily stopping/pausing all CPUs
-in the system. This doesn't mix well with running RT or isolated tasks.
+On Wed, 25 Nov 2026 22:31:23 +0300
+Adil H=C3=BCsrev Tepe <tadilhusrev@gmail.com> wrote:
 
-In order to transition smoothly from global stop_machine to finer
-grained synchronization between teardown callbacks and the other CPUs,
-a new stop machine post function has been introduced to be executed
-after the main one with IRQs still disabled while other CPUs can exit
-stop_machine().
+> On Wed, Nov 25, 2026 at 02:23:32PM +0000, Alexey Klimov wrote:
+> > This small series adds support for the ADC block found in the Samsung
+> > Exynos850 SoC and enables the Murata NTC thermistor on the WinLink E850=
+-96
+> > development board. =20
+>=20
+> I tested patches 1-3 on a Samsung Galaxy XCover5 (SM-G525F, Exynos850),
+> with an ADC node equivalent to patch 4 (same reg, interrupt and clock)
+> and the board's three NTC channels.
+> Readings match what I get with the vendor-style sequence (re-init around
+> every conversion, SOFT_NON_RESET after reset) to 1-2 LSB on the static
+> channels, the NTC channels follow the temperature, and 200 back-to-back
+> reads per channel show no stale values. So initialising once at probe
+> works fine here.
+>=20
+> One small thing: channels 8 and 9 always read 0. The downstream driver
+> uses 8 channels for this SoC, so MAX_ADC_V2_CHANNELS (10) may expose two
+> channels that don't exist.
 
-The teardown callback here simply disables the IRQ and clears/ack the
-interrupt bit on the local device. All these operations can run
-concurrently with other CPUs.
+Other than that thing to chase down this looks fine to me.  So I'll wait
+for Alexey to confirm if the magic channel pair exist before picking it up =
+;)
 
-Move it to post stop_machine() accordingly.
+Thanks for testing!
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Tested-by: Michael Kelley <mhklinux@outlook.com>
----
- kernel/cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Jonathan
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 498ff31b24cf..a4db04807aa7 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1275,7 +1275,7 @@ void clear_tasks_mm_cpumask(int cpu)
- static int take_cpu_down(void *_param)
- {
- 	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
--	enum cpuhp_state target = max((int)st->target, CPUHP_AP_ARM_L2X0_STARTING);
-+	enum cpuhp_state target = max((int)st->target, CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
- 	int err, cpu = smp_processor_id();
- 
- 	/* Ensure this CPU doesn't handle any more interrupts. */
-@@ -1303,7 +1303,7 @@ static int take_cpu_down_post(void *_param)
- 	enum cpuhp_state target = max((int)st->target, CPUHP_AP_OFFLINE);
- 	int cpu = smp_processor_id();
- 
--	WARN_ON(st->state != CPUHP_AP_ARM_L2X0_STARTING);
-+	WARN_ON(st->state != CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING);
- 	/*
- 	 * Invoke the former CPU_DYING callbacks. DYING must not fail!
- 	 */
--- 
-2.56.1
+>=20
+> For patches 1-3:
+> Tested-by: Adil H=C3=BCsrev Tepe <tadilhusrev@gmail.com>
+>=20
+> Adil
+>=20
 
