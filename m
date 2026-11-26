@@ -1,62 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=162.62.57.252
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795657287;
-	b=O9V+eZoC9DpXLLWHtZncOci3fXk/QdlxvJZ0vTDI2hgom4u4t+bwbRSfrsblhhSJStqz
-	 4vFPMSRyplfzzXYL27tBP54Q1JWno+W9h2bwc+tmwAiEKLIajMIrSCk5l//wM45JGf7aB
-	 Fpkt4NzbG+xUfAyaEshgvdA6eEnwgOKrJfLJKwAxFQeYj1dn2udKBTSjFsGvQcx/hdjSC
-	 NNRVnU1BqIEYdtRpfOGUIHxprbVO568LfA25O5FIXC1LraXMrmAC5DhWffzAAJuRoIiGz
-	 0B5mTJmaKKQqWeFcfHyksfRWZAmaQ/Z3p7Z9vV5+39Q4Owd5LVVKS3aqKBx6qilXg/w==
+	t=1795667147;
+	b=b5d4PpCp+Ko0i6bWMAFurx4AlKl//+FCRScYfS8D6D1gZCcQAiT1viJ4b99mZ6j04TcJ
+	 JYn9jcS35pwsMDFYMDqT/lBdUoyGlsFfjlOFeoNj5qYDti8/OVpzHwh6BEAVluqpXGAr6
+	 So3dbE9vhP2twtSkbRbQiH4MkKDwNP9l8W84HF74wyQWIH8RNLdQchINNP+M/zZZ6dR8C
+	 PIWE3BofPCm5a+eOBrdbrvuLwwLINTyw/fyHFTfJH6B9XyDpeBQEEH2j1L04tpykntLE9
+	 IGp5RY8nQKqEtjNsvu4NEkfdkrz+6kG3jAySlX24mEIGj8nVyOgQxuQhpK5CBbkzTSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795657287;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 In-Reply-To:References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=HbyBlYoSc4oQNkMHH7+GzwCjpt+AsrusHMpyq+R+lm8=;
-	b=zuStBusbgqQw0TwNYEUutWk+wfc8BBl+/QnyTgW5t4mVRx30rpu90Bbrj4YcIHHgir0Y
-	 HEBIj29ySg4VRtLle3AOFqhhz0pBPesHAiogpBO0NlnUkGL5Nu7ViomG99pOso31q9OpU
-	 h01lwYX2flm7SOizN1HuI19qZcJ3HwgmR9J73j87giAzdizO39Nrxj/xrRy++/1/Gk0tT
-	 55VmqpphPO+WEHXVQHhfEFbKAXNzowTuPzPGB+C+aaa9h5rRszGXyUm54/d511xnJZVay
-	 /tOO9cko1ZOjy8mfC2vZAhFTONKxVuLguo1gDgP+fTSexLBtMIQ+5TV7ep76GtjTH4w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795667147;
+	h=DMARC-Filter:DKIM-Signature:Received:X-QQ-mid:Message-ID:
+	 X-QQ-XMAILINFO:X-QQ-XMRINFO:From:To:Cc:Subject:Date:X-OQ-MSGID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=EAy5odJxUmWsVwFV/2vgUwhg7YG87ANK0oB0alQGxyQ=;
+	b=psB3ln/NlC9GZ8OJw0iCFdBocWgccCGTc3rPvwtKJbbx8QjCrL2n0N/nxn+SCpc9TpMi
+	 rM0MyLemOB3J0UsZunmtrRutbplQoeqNcxYcQdv8nbi047ih8VcglD8uji0Eu/cc4LILs
+	 MXh1LgNiAmVDq/1c9lTejoxJAB6AO/XcMGS63TF856BpPrAcrtVeSiiXXSEOrz+Ob7b6X
+	 VehYkPR6QvJW1VYe6bDklIU4XItHilDjS1xgZ5Xjgtzcolu1+/xLlxLPjaHDfH/3i7R0p
+	 mBREnhWqfM0r4lv4TmgCxcOnQQ2vy4cgyVHJkyi8Jo5AZDvZ8R+tUSJWUnQruEi6k4g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fGZMx2+9;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=qq.com;
+	spf=pass smtp.mailfrom=qq.com;
+	dkim=pass header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=sPDKV+iT;
+	arc=none smtp.remote-ip=162.62.57.252
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD743606A321;
-	Thu, 26 Nov 2026 01:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33DA606A31C;
+	Thu, 26 Nov 2026 04:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F33DA606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fGZMx2+9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FDD71F000C4;
-	Thu, 26 Nov 2026 01:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795657287;
-	bh=HbyBlYoSc4oQNkMHH7+GzwCjpt+AsrusHMpyq+R+lm8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=fGZMx2+9wN474RbdEH0dBdNmm7KD9n4vNxooWNmcLHTHs3/RU1zISmcGg1x8d9+Aw
-	 YeaOGlasmDT9e6xuUjxYcuE6nfNA2mW0OzePjygEI8QcSmZmQmbE66Nt7oIjI9YUVh
-	 xOsCrlzUvfw7kRo+1iZJMFRCu9eg68QjgUa/BVxNK5sTqwrZrEXbkNePnYN5+9aZOd
-	 GNwryei3TmXwO3sAUf70Z+R4Uubi9Ja5tNTXjKzfmqyYIwNfWMYlN62h3eYi2ERVJM
-	 6OZI5DN5qVUOOZXcx1MWQaJ8NjN1j6FtzjFJD06okBp48/DMH6QcCjQvBcK/ZeWr/p
-	 ddF6eTdhZ8Gyw==
-Date: Thu, 26 Nov 2026 01:41:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Adil =?UTF-8?B?SMO8c3Jldg==?= Tepe <tadilhusrev@gmail.com>
-Cc: Alexey Klimov <alexey.klimov@linaro.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter
- Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Exynos850 ADC support and soc thermistor
-Message-ID: <20261126014118.6eb12fea@jic23-hlaptop>
-In-Reply-To: <20261125193122.747908-2-tadilhusrev@gmail.com>
-References: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
-	<20261125193122.747908-2-tadilhusrev@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key, unprotected) header.d=qq.com header.i=@qq.com header.a=rsa-sha256 header.s=s201512 header.b=sPDKV+iT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1795667140; bh=EAy5odJxUmWsVwFV/2vgUwhg7YG87ANK0oB0alQGxyQ=;
+	h=From:To:Cc:Subject:Date;
+	b=sPDKV+iTt8//ILSpfTsE51bhO/7s0baTTCeKWuu64guwrzSQ3j2MqaRUGx50r8Ki1
+	 9vhG/JumJ5XrgHDHdkg03qg88CaYgo97xLl2Cd9QLEecfD1fodsAMZDW+MPQRLgXrv
+	 MSO/EJLvMPFBFqaWy/xbD2gsDxZydE9yXhkRG4h4=
+Received: from LAPTOP-A8STVENV ([117.147.100.214])
+	by newxmesmtplogicsvrszb43-0.qq.com (NewEsmtp) with SMTP
+	id 665AF093; Thu, 26 Nov 2026 12:25:37 +0800
+X-QQ-mid: xmsmtpt1795667137tj3jgb9h6
+Message-ID: <tencent_3D56658FAE8FA8158A1175935B194992D907@qq.com>
+X-QQ-XMAILINFO: NVJ0hJNx7N5SmnZarTRq6RbSHmOQt16wQiu1L9TiU5Wt3xTca+q2nOnJgjVqJ7
+	 2SMHaE4yp/WijRCOVk+uJmHSDyBQdItWX0NbCe3L95OHDrbYOZ9VuzDlRrcEQTHNUtFVo0+Mt8Ex
+	 ZkLgXtXLKoj8R5RyIcTsKtmCIhPPm9KlE/kGXwDAPqEnFfyhK4CV1po9UVoZlOrC4jSPI1DNCdKQ
+	 NXZw04EIJ/Gs9xRQbh8VFTrdJQUJ+E0SrVb7jcOkxss9dT/f7dA6dwd3kpIA9grDh3E3zUNkS3OL
+	 18NRRwLoMDfIJdp2DissuthIZ4R8DCfajvKslm7ZjPlaoNlMY4U/IbL/ATUpnG85KbcHpL8k+TFr
+	 zsuT/KcIIUwC4PtLhMw48gXmHP2gHBHB4Fs/f2/AeyE5PMyjRnMiyhMfxlBoF7uGfOyZgAcUDVnu
+	 kgBYUUKj1yl2jxT/Zl9JUp7CsuF0sJDsPE4Xq6hdkWauXRZlXLptKJodsuoZXemMjNTwXTCCtxin
+	 JXlr6cBT3bhrrr2x3DJ6LXRDslipT5FKbZhBHNrp7lbK1wA67EZHx1M7dN3lRz7Y+cGENYp1EgaJ
+	 cIrVrgm5Um+sacy5NPcNUOk5uFPEJECQ1iW6eiWOBuV0V7uQhoRL/fV+KhcSCNNXClW5bujWlLgB
+	 YgDKzTwY6UUB6eF3CVrB8UwQvqmNNNtJRbHxCTBwtMHAul/Rc4CQI4tgKEy9HhY2xV3tQSr0D56R
+	 F83H52nufOUMQQX6Sx/J/a3kB7aVYQxCE2p9v5NVeIGmA/MjW6uWF//FIIS4o7D5GMN+SoAXBuNt
+	 b4HEeiXunNidN4mVJShbNzY03Zx/UxIcMSxSSpMnqUlq4rAK6oM548N455fTNsp9Q9R9AcKi/GrY
+	 RwOL8XkFJCC+Whd2MXHMUQgtpO/rxqz0TxHkEt07IzBz0chk6h59m+YbJToU5xM6jiatQLHsLvlk
+	 xllO76PfLoWaDue7IS9aB83cG7IEj33wZuFVt+EAL2zuXqh6AR6Jl5Z+mBQnxyx71vaf4tBOSgd5
+	 pedWrr7onuG2ZYTxO1
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+From: Yuwei Chen <2522445001@qq.com>
+To: Ulf Hansson <ulfh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] pmdomain: samsung: fix device node leak in exynos_pd_probe()
+Date: Thu, 26 Nov 2026 12:25:37 +0800
+X-OQ-MSGID: <20261126042537.206-1-2522445001@qq.com>
+X-Mailer: git-send-email 2.53.0.windows.2
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -66,43 +80,45 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 25 Nov 2026 22:31:23 +0300
-Adil H=C3=BCsrev Tepe <tadilhusrev@gmail.com> wrote:
+exynos_pd_probe() looks up the parent power domain with
+of_parse_phandle_with_args(). The caller must of_node_put() the node
+returned in parent.np. of_genpd_add_subdomain() only compares that
+pointer, and probe never drops it, so each domain with a parent leaks
+one reference. child.np is assigned from dev->of_node and already
+belongs to the device.
 
-> On Wed, Nov 25, 2026 at 02:23:32PM +0000, Alexey Klimov wrote:
-> > This small series adds support for the ADC block found in the Samsung
-> > Exynos850 SoC and enables the Murata NTC thermistor on the WinLink E850=
--96
-> > development board. =20
->=20
-> I tested patches 1-3 on a Samsung Galaxy XCover5 (SM-G525F, Exynos850),
-> with an ADC node equivalent to patch 4 (same reg, interrupt and clock)
-> and the board's three NTC channels.
-> Readings match what I get with the vendor-style sequence (re-init around
-> every conversion, SOFT_NON_RESET after reset) to 1-2 LSB on the static
-> channels, the NTC channels follow the temperature, and 200 back-to-back
-> reads per channel show no stale values. So initialising once at probe
-> works fine here.
->=20
-> One small thing: channels 8 and 9 always read 0. The downstream driver
-> uses 8 channels for this SoC, so MAX_ADC_V2_CHANNELS (10) may expose two
-> channels that don't exist.
+The lookup runs from core_initcall. The extra reference pins that
+static parent node for the rest of the boot.
 
-Other than that thing to chase down this looks fine to me.  So I'll wait
-for Alexey to confirm if the magic channel pair exist before picking it up =
-;)
+Drop parent.np after the subdomain is registered and after the
+messages that print the node.
 
-Thanks for testing!
+Earlier trees keep this driver at drivers/soc/samsung/pm_domains.c, so
+this diff does not apply there.
 
-Jonathan
+Fixes: c09a3e6c97f0 ("soc: samsung: pm_domains: Convert to regular platform driver")
+Cc: stable@vger.kernel.org # v6.6+
+Signed-off-by: Yuwei Chen <2522445001@qq.com>
+---
+ drivers/pmdomain/samsung/exynos-pm-domains.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->=20
-> For patches 1-3:
-> Tested-by: Adil H=C3=BCsrev Tepe <tadilhusrev@gmail.com>
->=20
-> Adil
->=20
+diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
+index c8c2ea06e990..01017c406fe6 100644
+--- a/drivers/pmdomain/samsung/exynos-pm-domains.c
++++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+@@ -153,6 +153,7 @@ static int exynos_pd_probe(struct platform_device *pdev)
+ 		else
+ 			pr_info("%pOF has as child subdomain: %pOF.\n",
+ 				parent.np, child.np);
++		of_node_put(parent.np);
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+
+base-commit: 8d7fe9885c62fc9a95bf55d9db244d9672a8aadc
+-- 
+2.53.0.windows.2
 
