@@ -1,85 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795710199;
-	b=ijtaWhoDmkzbBk66ig5Abd6Yz0LUzh1gHID6eTKNXC+eYRuikVSrFLkRpJZBrxu0Y78M
-	 qWLwuE2ccidtLh2P5lOytiKFSqO4mytZ0MZh9ygjuP438iFHzI9PVqZoRhNfuEkTUwqwL
-	 Tb+zFPI43EoQUf1zP3nt2yKLhVYfPc3vLnp7iRzhPS0E/C9B17epnf+JCbo+dt084fvNC
-	 NK0AFttX/t/F280FDx/+WTkDOlC19xXX1FkphLftVOeMksWQe2F+bLm6SddtGNrUWthRg
-	 67lTwzjRTwOeISRv5E/3G4CVfuNSOn1OrB4rPLwN9uBZvwLgXpSUvAyCGjCxG98tR6g==
+	t=1795714528;
+	b=p7a26EQOAlO0hexfFyWRORZeJk5vk5wOns9X83RMDC/+cv7h8kAAz3w0d3QPG8e4vl75
+	 FN7otDJCUCqmeJtSjp0+eOrlXwkaTSZxrnwPY5uiI54QfRQBTgXA5RSI3QnzNjpHm/bre
+	 vpSCt3CZ21jEeRfliXd9Tei0ZBloPfUtEkmVjkF9YxyrzRw6HvCD7bZDevjsiWHlDBW9P
+	 DimDauYfBpia9IQ/R6UzWyov7zPVjXgKD0qIB7MQsvqmkMefHh9He6OzOv9DkXkUWE7nA
+	 wNUal0o0IXYoo50EO0y/OwxkpmKJDU6d+In9g1+xEY7fQsjXa+qilMZnLLNdvnEn+wQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795710199;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Message-Id:
-	 From:To:Cc:Subject:X-Mailer:References:In-Reply-To;
-	bh=Pg1T9Dulq0nwdntFgrBA2i597/7t38j7zfu/CiMvEbE=;
-	b=i6txsDuy01+b7yG2oHDW/q2D3jajEoHw7FN+vnG+YMgxN9BwZaP5XYy3MFlNLGWzFRe3
-	 Yy9ODHnXjY9fCylhhLZ09XJIa8qw2EZnkUpMP+JPi1yFVEaAWwP4ciWpomRFsfjAoH/uV
-	 duz/ZYgZz3HfSuXDgFAIwUABR/eriPiAanY5bN528yKWqi1y44rNVUskKavUn3Rm+ur1H
-	 Quemj30qVavuBTUO4z3RantsNjvAFN9EdH88+7QUUOowwl29OwteP0OuPfHCVoCDF3Mi1
-	 GloHzvAlRMgHqgZqsE+hF+SDpwRFmNfmlXevGUChuyhM9eDcUgctYXSq28K3kJYKL2w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795714528;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
+	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
+	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
+	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
+	b=cWdOnFTpzT+EqGaQdJKlMRfYvhB2fDX55yQbEDLfYZ0ZIIiaN3iOa7zr/TJnrgsvFVch
+	 +JhkNrrTkE6Zl2Zu6s3WSmQllZBQURPq+lx9OJ+R4q2U8zMwDepvoaebRMkA0ovCdsw+W
+	 touVOdhllfoSZKwaC3aA74JEncKHbyfSvoWewB/Ho5ki8hdP5u0H2IJv+ZNUUT4HfmfCE
+	 iDL8wpIymhA0hnILslD39AKw/1bmxMpUtVT6cpmQBOfNmX47GjsirSoL8TkW2qXvpAy6S
+	 rUYjq5U5zb3XX0JXTqgdM+DSyamxZwELujm2Ha2yD4FLw9jt5OkvevuMxtQPlBoMliw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=za0tUy5b;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS;
+	arc=none smtp.remote-ip=203.254.224.33
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA365606A31C
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 16:23:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DA365606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14803606A321
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 17:35:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14803606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=za0tUy5b
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a2153c8525so58461005e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 08:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795710197; x=1796314997; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Pg1T9Dulq0nwdntFgrBA2i597/7t38j7zfu/CiMvEbE=;
-        b=za0tUy5bDG6DeUVR8UOXXFv4wekZtvi6jD1JMYNdlmu6vgxWoOIVdG40c4k0jCsCkK
-         0xrpNS2Gr246iS5McYjs/kKq5cJoMhAKBpSuABY3v4SjI0/Bw2qPrI5ctzZU6zA5gz7A
-         T1eJ/jaQVTaete8XKxHl8kQ5iVOUahGjaAHEOo9RlkBpDqg3bxGiwUsSn044wn1G2WOc
-         YVYwc8ct7Y72VqPk/7/lDtZJ3TKMRQw6TrJWogVwJ1i1H1/3Gba2Nv7Hgp+GJLr+NlNe
-         V9ulQozkpE7KCSuOnrg86Fea1O+9JN+xkj6y/9EMeALFZwDYDF+Rgu5Hs1XuN+k6C0Bw
-         BTGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795710197; x=1796314997;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Pg1T9Dulq0nwdntFgrBA2i597/7t38j7zfu/CiMvEbE=;
-        b=q1v2Ojlx6UcVOFspJoYzOuHN30ZuL9XnM3SSgWF5Aabd6T6MQPF09OJwFhgSDs62wV
-         viH4WdFL/BSzG4K4DIOVZ4YsDLLfMo8UARiA1Vn0ldulVmNvm6BQb+cQbPgoXC6KQ+oS
-         iEqMtI+DKmqe96v//qRXAvVoCGNrOF2D4mfDpfyNoj0yAQZBHQpLMl4Z/pSpnPO7B/68
-         VM2vKLvKWkdOVlvihzKrnGupECQWHR022twh+gJTL5f7UVKe84FbZTHQdaF/kCXWqHQs
-         bVc6AjYTpEZd5ghlYMvICcnWP4eZS/Y+YoTHIjepPqDqcqonMRpCWPQ1FTJNzwJVs6Hr
-         8zdg==
-X-Forwarded-Encrypted: i=1; AL+hErHH9eY719UnlQ85jUuQi20l5bgvQ6p6W5gSclkTnaFI0w3Wy3iFJFJdYVIjqBz7CAtaJl4VyjUZBqK7bVLCBNXcsg==@vger.kernel.org
-X-Gm-Message-State: APuU4Z/hVQggcwSl5lKN4pr8cQHfymWZlLFHgLtE8G+hT4MXsZXlJ8AQ
-	tnV8m6oM0z5VRizQIwVRrS38sOSRUZLiFnNSEv+9anBHAGmnJ8NpfYuLPo7s+BudkFo=
-X-Gm-Gg: AZFdTZfbPrV0QtqjskH/MohOng/aK29vzLRyi0Ps/+x3vusuuknGsR3hVghwbbNl0nx
-	WYmcFY4K+3hX9nTjBPlrzgBUWwtcKGHRFpnYa1/ucCiyhbghH/J6ilC7rk6n4xjaHdLE0KLy9Zu
-	YjYB8uG3Xqfos9cKlSpZ5mMzXnx1GYFKrZJh8YkmPNnfRKxVjjgozXRKyva7KHAmplZjNtbvx9C
-	FuSzCrYvUBTGdhT8l+sImEK8BJ3h7tVR1fI32anZmEiejUxigwBSrvahFWDt+DhKjGOy0AtQ2vI
-	7zL/avVCSbWx8tz5Mkc3YUhWajQgTkE5IJfj5B9AhPGJ4zNnKC7JsqBIpNUky+BSY08D04Q9oOo
-	ixGocgLd34OZG6kyWfkwOllnsIyhjEjnmUDSuxqWRaxej5mD6ZY56bQUR/dwBbvVhZfj8HppHXJ
-	mvr8ugoOjwhYlqH2JM2cdvJt9pNLZU7ACywo8IrrcMOWKNsKTZsUYX69xNQ0IslihRP5Y/RTKdS
-	UBunWHfrBfPb+y8j5o7fMMA5+xlqLcdPSACuSTtQ0eBRufidrdUtdSir0QyToEoe9DL9vxojliB
-	YVLB7gJpfE6Sa0tkhkA0tqbuH4+hCwoWNVd4DE6UmOqNStTXB2mSNV6Qk500LM6yYoSJzN3HXx6
-	IvWF0lDMVZv5bEk223eM=
-X-Received: by 2002:a05:600c:a55:b0:49f:ce78:356d with SMTP id 5b1f17b1804b1-4bb88827db0mr461737765e9.30.1795710197214;
-        Thu, 26 Nov 2026 08:23:17 -0800 (PST)
-Received: from localhost ([2a00:2381:fd67:101:11a1:dfac:b1c2:1000])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110ba3sm34026626f8f.35.2026.11.26.08.23.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2026 08:23:16 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261126173525epoutp03358eb351d63100ad40da2dfc8fb123d6~rqNizsEFX1145311453epoutp03e
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 17:35:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261126173525epoutp03358eb351d63100ad40da2dfc8fb123d6~rqNizsEFX1145311453epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795714525;
+	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=aLJJauJSeqNDvNfBVu7tJRuYcVRWtjCl9qTUTv6yaZlIeTnaQsGAH0h9SweogNWFD
+	 iQVNy0fibJLCWMMlj1c7UXw5VIOHG/QSIEUdAVy8pV4ZNv353EKf2btaNIN/8q2DQB
+	 FjPuc/68bCae5mGTjeGQVQKP9DRKv0/KJxBKoX70=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20261126173524epcas5p46903feb70672bfbdf94648993741fb9a~rqNh0hkSC2895928959epcas5p44;
+	Thu, 26 Nov 2026 17:35:24 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4jb3bb175gz2SSKX; Thu, 26 Nov
+	2026 17:35:23 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261126173522epcas5p2518c8da061331e3cc701a8049530da95~rqNgRjAAK2027520275epcas5p2q;
+	Thu, 26 Nov 2026 17:35:22 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261126173520epsmtip11149f069be0767a3d84426c2390cf8eb~rqNeGBwwj2823428234epsmtip1g;
+	Thu, 26 Nov 2026 17:35:19 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
+	<raghav.s@samsung.com>
+Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
+	<robh@kernel.org>, <conor+dt@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
+	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
+In-Reply-To: <CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
+Subject: RE: [PATCH v3 08/14 RESEND] clk: samsung: exynos8855: add block
+ peris clock support
+Date: Thu, 26 Nov 2026 23:05:18 +0530
+Message-ID: <000101dd7dcc$835c0830$8a141890$@samsung.com>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -88,63 +83,207 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 26 Nov 2026 16:23:15 +0000
-Message-Id: <DN5A4ZMSEDUO.FUSGQTLBRYFN@linaro.org>
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: =?utf-8?q?Adil_H=C3=BCsrev_Tepe?= <tadilhusrev@gmail.com>
-Cc: "Jonathan Cameron" <jic23@kernel.org>, "David Lechner"
- <dlechner@baylibre.com>, =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- "Andy Shevchenko" <andy@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Peter Griffin" <peter.griffin@linaro.org>, "Alim
- Akhtar" <alim.akhtar@samsung.com>, "Sam Protsenko"
- <semen.protsenko@linaro.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] Exynos850 ADC support and soc thermistor
-X-Mailer: aerc 0.20.0
-References: <20261125-exynos850_adc-v2-0-26de1c6f1717@linaro.org>
- <20261125193122.747908-2-tadilhusrev@gmail.com>
-In-Reply-To: <20261125193122.747908-2-tadilhusrev@gmail.com>
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHlWUtnqVICpCIeTIEFEh+EoBRnawGxlKqAArMGWkMCaFOU4Lb6fmOA
+Content-Language: en-us
+X-CMS-MailID: 20261126173522epcas5p2518c8da061331e3cc701a8049530da95
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20261113104853epcas5p175c566a1ced2547e533c21b21e60e993
+References: <CGME20261113104853epcas5p175c566a1ced2547e533c21b21e60e993@epcas5p1.samsung.com>
+	<20261113110612.3265841-1-raghav.s@samsung.com>
+	<20261113110612.3265841-9-raghav.s@samsung.com>
+	<CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
 
-Hi Adil,
 
-On Wed Nov 25, 2026 at 7:31 PM GMT, Adil H=C3=BCsrev Tepe wrote:
-> On Wed, Nov 25, 2026 at 02:23:32PM +0000, Alexey Klimov wrote:
->> This small series adds support for the ADC block found in the Samsung
->> Exynos850 SoC and enables the Murata NTC thermistor on the WinLink E850-=
-96
->> development board.
->
-> I tested patches 1-3 on a Samsung Galaxy XCover5 (SM-G525F, Exynos850),
-> with an ADC node equivalent to patch 4 (same reg, interrupt and clock)
-> and the board's three NTC channels.
-> Readings match what I get with the vendor-style sequence (re-init around
-> every conversion, SOFT_NON_RESET after reset) to 1-2 LSB on the static
-> channels, the NTC channels follow the temperature, and 200 back-to-back
-> reads per channel show no stale values. So initialising once at probe
-> works fine here.
->
-> One small thing: channels 8 and 9 always read 0. The downstream driver
-> uses 8 channels for this SoC, so MAX_ADC_V2_CHANNELS (10) may expose two
-> channels that don't exist.
->
-> For patches 1-3:
-> Tested-by: Adil H=C3=BCsrev Tepe <tadilhusrev@gmail.com>
 
-Thank you for the testing!
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Friday, November 13, 2026 6:24 PM
+> To: Raghav Sharma <raghav.s=40samsung.com>
+> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
+> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
+> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
+> pokala.reddy=40samsung.com
+> Subject: Re: =5BPATCH v3 08/14 RESEND=5D clk: samsung: exynos8855: add bl=
+ock
+> peris clock support
+>=20
+> Hi Raghav,
+>=20
+> On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s=40samsung.com>
+> wrote:
+> >
+> > Register compatible and cmu_info data to support clocks.
+> > CMU_PERIS, this provides clocks for PERIS
+> >
+> > Co-developed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
+> > ---
+> >  drivers/clk/samsung/clk-exynos8855.c =7C 97
+> > ++++++++++++++++++++++++++++
+> >  1 file changed, 97 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
+> > b/drivers/clk/samsung/clk-exynos8855.c
+> > index dcf58f2459b0..12b5ae54b560 100644
+> > --- a/drivers/clk/samsung/clk-exynos8855.c
+> > +++ b/drivers/clk/samsung/clk-exynos8855.c
+> > =40=40 -18,7 +18,9 =40=40
+> >  /* NOTE: Must be equal to the last clock ID increased by one */
+> >  =23define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
+> >  =23define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
+> > +=23define CLKS_NR_PERIS                   (CLK_GOUT_WDT1_PERIS + 1)
+> >
+> > +=23define EXYNOS8855_PERIS_GATE_DBG_OFFSET      0x2004
+> >  =23define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
+> >  =23define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
+> >
+> > =40=40 -1092,6 +1094,98 =40=40 static const struct samsung_cmu_info
+> peric_cmu_info __initconst =3D =7B
+> >         .memclk_offset          =3D EXYNOS8855_MEMCLK_OFFSET,
+> >  =7D;
+> >
+> > +/* ---- CMU_PERIS
+> > +--------------------------------------------------------- */
+> > +
+> > +/* Register Offset definitions for CMU_PERIS (0x10030000) */
+> > +=23define CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER
+> 0x600
+> > +=23define CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC                    0x100=
+0
+> > +=23define CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER
+> 0x610
+> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP                   0x180=
+0
+> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP                    0x180=
+4
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK
+> 0x201c
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK  0x2040
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK
+> 0x2048
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK
+> 0x204c
+> > +=23define CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL                  0x800
+> > +
+> > +static const unsigned long peris_clk_regs=5B=5D __initconst =3D =7B
+> > +       CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER,
+> > +       CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC,
+> > +       CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER,
+> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
+> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
+> > +       CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL,
+> > +=7D;
+>=20
+> Same comment about preserving register state from the bootloader when
+> powering off/on PERIS block.
+>=20
+> > +
+> > +/* List of parent clocks for Muxes in CMU_PERIS */
+> > +PNAME(mout_clkcmu_peris_noc_user_p) =3D =7B =22oscclk=22,
+> > +=22dout_clkcmu_peris_noc=22 =7D;
+> > +PNAME(mout_clk_peris_gic_p) =3D =7B =22oscclk=22,
+> > +=22mout_clkcmu_peris_gic_user=22 =7D;
+> > +PNAME(mout_clkcmu_peris_gic_user_p) =3D =7B =22oscclk=22,
+> > +=22dout_clkcmu_peris_gic=22 =7D;
+> > +
+> > +static const struct samsung_mux_clock peris_mux_clks=5B=5D __initconst=
+ =3D =7B
+> > +       MUX(CLK_MOUT_PERIS_NOC_USER, =22mout_clkcmu_peris_noc_user=22,
+> > +           mout_clkcmu_peris_noc_user_p,
+> CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER, 4, 1),
+> > +       MUX(CLK_MOUT_PERIS_GIC, =22mout_clk_peris_gic=22,
+> > +           mout_clk_peris_gic_p,
+> CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC, 0, 1),
+> > +       MUX(CLK_MOUT_PERIS_GIC_USER, =22mout_clkcmu_peris_gic_user=22,
+> > +           mout_clkcmu_peris_gic_user_p,
+> > +CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER, 4, 1), =7D;
+> > +
+> > +static const struct samsung_div_clock peris_div_clks=5B=5D __initconst=
+ =3D =7B
+> > +       DIV(CLK_DOUT_PERIS_NOCP, =22dout_clkcmu_peris_nocp=22,
+> > +           =22mout_clkcmu_peris_noc_user=22,
+> CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
+> > +           0, 4),
+> > +       DIV(CLK_DOUT_PERIS_OTP, =22dout_clkcmu_peris_otp=22,
+> > +           =22oscclk=22, CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
+> > +           0, 4),
+> > +=7D;
+> > +
+> > +static const struct samsung_gate_clock peris_gate_clks=5B=5D __initcon=
+st =3D =7B
+> > +       GATE(CLK_GOUT_CMU_PERIS, =22gout_cmu_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_SYSREG_PERIS, =22gout_sysreg_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_WDT0_PERIS, =22gout_wdt0_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_WDT1_PERIS, =22gout_wdt1_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+>=20
+> The Linux clock name strings look wrong here. It looks like you've genera=
+lly
+> followed the clk-gs101 clock name mangling in this series so it should be
+> =22gout_<block-name>_<IP-clock-name>, but you have =22gout_IP-
+> clock_name>-<block-name>=22. I know there is some =22name diversity=22 in=
+-tree
+> for various SoCs, but with new SoCs using auto clocks I would like to kee=
+p the
+> naming scheme following a similar style to clk-gs101.
+>=20
+> Also I guess with auto clocks now enabled from the start you may never
+> need to expose all the CMU bus clocks, but I worry a bit you may have
+> mangled the names here a bit too much. If you do need to expose extra
+> gates you might get name collisions. For example in clk-gs101 we have bot=
+h
+>=20
+> gout_apm_apm_usi0_uart_ipclk
+> gout_apm_apm_usi0_uart_pclk
+>=20
+> So we kept the _pclk suffix in the Linux name to avoid a name collision.
+>=20
+Thanks for review, will change to gout_<block-name>_<IP-clock-name> convent=
+ion=20
+> Thanks,
+>=20
+> Peter
 
-Regarding number of channels. The Exynos850 spec says that ADC has 10
-channels and, looking at the registers, the ADC_CON2 register (offset 0x4)
-lists 10 channels as acceptable ones.
-ACH_SEL bits [3:0] field in this register wants to see numbers from 0b0000
-to 0b1001 (from 0 to 9) and lists numbers 1010 to 1111 as "Reserved".
-
-So, I tend to say it is fine to have it set to 10 if it doesn't trigger
-any hw issues.
-
-Best regards,
-Alexey
