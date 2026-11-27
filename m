@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795794459;
-	b=GkgSN8IsZgapg9OoVtsMFUxCW/kHyW01Eatsls0X5Y0nZ7GDOk5vM0WKfAl5L/7pKywb
-	 jCqxNRGgZ5ctjvdxUgq2pz4kgV9e6SmU2IYvma5i1hzniOuOOCamYa9yJU2sQ93mg+7ST
-	 +g2u7rsOX01Qgt+Tsv+IYg0Fw1OFKWg5elyCVVSpuJ0g8uEw2mse0+R0yv4QrmnUass8Z
-	 zre5WPU6dBllq7XIua7H/6ovrpiwMp7wx3D2RMUjdgNNrJ/N1z9sPup3KIrmjh6Rtm0A3
-	 ZKDkEFwp7vonDELP/a87mIe0yawatCoJ7tZwx6fxAJ6CZsyAhdvCVoq+0OyIZIwQ/DA==
+	t=1795795233;
+	b=RGV5TVb7uhXtkelvO7Hw7AiUUVWAcc+Sva0jv2YpFkCxmJVcCWwrfw4VN2jdRj4kkId2
+	 38ErmoidaXpDByrAwfyIK3u0D+eoA/ZJKVlF50CHMgcxL/lwia0k0o3dXhtXFPWl6dM3C
+	 5FasmqMIDmvT8SNf/YGeNS60ma18KhxFH8rr8JeEnYbSZmaGlzBEF9Axtk586YcfrYk9a
+	 HTjknaHIrAPCLbkVRZJUnQRRM+GwzakvWodemCjgkU4d79GvRp5Bu4ZLx/iFmCLzrSpEJ
+	 qEh3wRzkPTvAzUiBLs1YvpaDAUIKFij/aqAejvE91/Bzo+bC0Xso7MTcIFtvwZ6/Zhw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795794459;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795795233;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=O8pnsdU3vMqGq7ELmjvq5FdeahOXIlHE/MoodaIfQgo=;
-	b=rFogE9VsLBLBaI+a6vese8OdkT+QgLcuS6YprDDP9i2gz2ci0et0uYc+RX1i7e90Hgpd
-	 apHhZePflY+3YRMq5OT47ZLw2ynm/aKE3zePkhUyJrual/3Xkh/ENJDbxVarLeLj3glES
-	 EvVMfH+/IaFI+EeuNZAWp/8TBprulPMoPUUzZ3nOZgFu4Kb6pZQbTLA/chnQcP0oH0sb4
-	 f2GIa+o4QqZ7mQaTrC1MqUM6jjveYgaL4U/Tdrjs1tsB8IrTpeBkhduGUufWalpzLpAZX
-	 SQT1Gud21XYGmyGK7Jw6nJCWrh/d4KjmPJpiO0RITCvnENuuAJpRbbxhH5NMPnaqvfg==
+	bh=hdMQHOynBJNwr8LKSNm2gWtwDuDYeFA4vOj21hSPcy4=;
+	b=EegwB6/XuMZXJ1xBLdtEreSDMkiueCc2Zrqf/gv+FmbiqYobbZDIa6uD3yN4IjUPsDvW
+	 vOCyXfwISqZ4rNFQYaJXHoIrALqABh4lW8qEnJHIWzRZPTWkZYKszno//inH41MWkXopz
+	 G6WTGBw2F5leiS2wWgl7vq80cuI5QIWlitNmEU1WnkdPecJDaxe6pR3bn6FKMr1r/1lFq
+	 EocsrghrI/c4Hw6jrj3ArMIyCeNizEIzoiRpy0Zi7zV6Gf/DD4QoJsxSH0nhZl/yD/w8b
+	 19md8gZq4vb+/iS53Y2aNTiTKlFZ9TPXPyqmUuO3XZvruqBdO73Fip0w0WI5er+7rgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iWSl5ikj;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Cvx0brI8;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17879606A31C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2026 15:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC07606A334;
+	Fri, 27 Nov 2026 16:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iWSl5ikj
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BA51F0089C;
-	Fri, 27 Nov 2026 15:47:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Cvx0brI8
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112A91F000C1;
+	Fri, 27 Nov 2026 16:00:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795794458;
-	bh=O8pnsdU3vMqGq7ELmjvq5FdeahOXIlHE/MoodaIfQgo=;
+	s=k20260515; t=1795795232;
+	bh=hdMQHOynBJNwr8LKSNm2gWtwDuDYeFA4vOj21hSPcy4=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=iWSl5ikj8sFU5KxMqaRSyhp7KVRgAMSiocSR1PLgEVzvwIfi4WCTyC0AigbNbupxF
-	 gJHu3oNouhMl/rozFT5q4DpadukydxjvgLsAn2pfa4KiYPOwYERt3D5DtxL/H5eGO6
-	 H2ypwzUHz7l4x3T3Qi7S8YWzVzW5nk5Ko+Eba83/Ak61NBoOlR6Yqqt3GLJzmRv9Hl
-	 2WjAbdGqS3VRu1H43sqX0lFv8k1EMjLxd4DWnnrIdnph3RdCG87cseWTF9cpI2ate3
-	 bCOuvgVH14+PLMtpS8/zHsR25ax1GI+Rl5BodzdG1TKv4KTIBsf9Z71uJF0PEk2XKE
-	 bHSvfr+cLW16g==
+	b=Cvx0brI8+eNOiW3gWRyraep3Y/dVyJDu6O86uz1ZUmUXSEjdn1AmwZBDIF1PHduxl
+	 4MGiijFvLGtGXHdaqsamDtaWLJQkUOGrlKqh8trw5PQ+s9Dbl/JYqR+/fdKQk0b0s2
+	 KnybaUqfiIABt1sP3dJdB44eAoqCasFMFcB4/XhFIPudWAqDaAsG7gw7hFAiwi9C14
+	 U4fx2jPJ0xHFsJbzwOwePf6JAj87/W+4r9MYKdrhhQcmzH2YpuFTELDu5v/WcQKQ39
+	 fLjDqLJJQHtZPYZpElGGRx0riQMasjnpNImH3a4Ocl31+wcvvrZfpRO3WZxxAGvEah
+	 C7Vo/sFppatUg==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,73 +51,75 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] phy: phy-google-usb: reset USB3 PHY before init
+Subject: Re: [PATCH] phy: exynos5-usbdrd: gs101: re-init PIPE3 on
+ orientation change
 From: Manivannan Sadhasivam <mani@kernel.org>
 To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+Cc: Vinod Koul <vkoul@kernel.org>, 
  Neil Armstrong <neil.armstrong@linaro.org>, 
  Manivannan Sadhasivam <mani@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, RD Babiera <rdbabiera@google.com>, 
- Neill Kapron <nkapron@google.com>, Juan Yescas <jyescas@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org
-In-Reply-To: <20261119-lga-usbphy-init-v1-1-1de4e0e6b191@linaro.org>
-References: <20261119-lga-usbphy-init-v1-1-1de4e0e6b191@linaro.org>
-Date: Fri, 27 Nov 2026 21:17:30 +0530
-Message-Id: <179579445030.13164.13282265230853414841.b4-reply@b4>
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, RD Babiera <rdbabiera@google.com>, 
+ Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+ phone-devel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20261119-gs101-usb-phy-orientation-v1-1-bf3c4bbf328e@linaro.org>
+References: <20261119-gs101-usb-phy-orientation-v1-1-bf3c4bbf328e@linaro.org>
+Date: Fri, 27 Nov 2026 21:30:23 +0530
+Message-Id: <179579522342.13164.9446157230497523223.b4-reply@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2306; i=mani@kernel.org;
- h=from:subject:message-id; bh=fnovCDIUZdtvw2vTP29UBKPpf7kuHTKrlAWxg8QfSxM=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrCaYV3UsWw1F2M3UeRNjFwQqz9XcGW9J7j0s1V
- lc6og/PmOiJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawmmFQAKCRBVnxHm/pHO
- 9cd4B/9OuKmRIaV82B7CID7lApzBQDZSTm72kOMba5g28fwiBJ2mejOrdOYOorpUAIByv6Hz/4I
- WRxd71gfqT2sIm5fqU97Duwr298JHwIlBHiiqCdclMBEqnC5Hsdg5ckzzjpj4tj0C6/H44Rc3eJ
- v7b+QjT7xDBXR0ROUutXjAbgNjHAHXnyVPNuKLdja7VxmcURAvbVRhUoV4pUEFDhI6qXwVXrLK4
- PT/sjsFp2+PoVfR/cJKHdcLaOUBfuhlRttgj4CTiBr28i6CilTF+aDCWRKCpgmv/pk1G0Yirejp
- L+YvrHuVmafbq5yrtJinIANoZMtnqzPAHyqEBIZZo+Dy/Rdy
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2251; i=mani@kernel.org;
+ h=from:subject:message-id; bh=NADammu9OSZGhY7/SbAUT2FBnMbQq7XdjmIflYFSruI=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrCakaht52+9QaiSNtYMVLe3tEdYBh2LRAxyq5Z
+ 32P4zoSZIaJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawmpGgAKCRBVnxHm/pHO
+ 9YAzB/43msrN6YWdU/FJqkxLHEmi/GYqmazI1jqs582mdp/P1bOQvoQeSc0fvbJpjiFZ9djdcEb
+ Bzr8S4ufGnecXJC2yi6XJma4ZATNorF3Dx/yO2m59aZefHMgrKcnZQweKd2EEHHQYFmBCleUsov
+ KRw7L3+gShJ7yQ8aUABhEgan1lTQHOX1UXV2QCyk/nIDg79h7szJuPaDyw40lI7VpXIb+XgXm0Q
+ EqsW4JluUljcEMqH3AvhM59U8aS3KGc5ieIrIy1FVm3PJfafx/FPFpa7QZDGy/b8SrNdHr4G5MZ
+ qsqhMY5NVHTo42dlsbkZlkCwBLLvGRc90QDEghbTVd2KRmVb
 X-Developer-Key: i=mani@kernel.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-11-19 10:47 +0000, André Draszik wrote:
-> google_usb3_phy_init() assumes that the PHY is in reset and that the
-> Type-C Assist (TCA) block is in its power-on state. Neither is the
-> case when the driver probes for the first time on Pixel 10, where the
-> boot loader has used USB before: the PHY is out of reset and
-> operational (lane0 phystatus is low right away, whereas it takes about
-> 12ms for a PHY that really was in reset), and the TCA has been
-> switched to USB already (TCA_TCPC reads 0x1).
+On 2026-11-19 19:18 +0000, André Draszik wrote:
+> The SS lane mux on gs101 is programmed only when the PIPE3 phy is
+> initialized, based on the Type-C orientation known at that time.
+> The orientation switch callback just stores the new orientation and
+> relies on the USB controller to exit and re-initialize the phy, which
+> only happens if DWC3 enters runtime suspend.
 > 
-> When the PHY is initialised in that state, the soft reset of the DWC3
-> controller hangs in about one out of four boots on blazer (Pixel 10
-> Pro, 12 of 50 boots), with DCTL.CSFTRST still set seconds later:
+> If a cable is connected during boot, the phy is initialized before the
+> TCPC reports the orientation (e.g. ~4.0s vs. ~5.3s on Pixel 6), so the
+> lanes are programmed for TYPEC_ORIENTATION_NONE, i.e. as if reversed.
+> DWC3 doesn't runtime suspend while the cable stays connected (and
+> runtime PM is forbidden by default anyway), so the phy is never
+> re-initialized and the link comes up in high-speed only.
 > 
->     dwc3-google c400000.usb: DWC3 controller soft reset failed.
->     dwc3-google c400000.usb: error -ETIMEDOUT: failed to initialize core
+> Re-run the PIPE3 init from the orientation switch callback if the
+> PIPE3 phy is initialized and its lanes are programmed for the other
+> orientation. Rewriting the lane mux registers alone isn't sufficient,
+> the link still comes up in high-speed only with that. Re-initialize
+> before signalling VBUS valid, so that DWC3 only sees VBUS once the
+> lanes are right. A failure is only logged, so that the TCPM still
+> configures the USB role.
 > 
-> In addition, google_usb3_phy_power_on() waits for the TCA to report
-> that the transition to 'no connection' has completed. The TCA starts
-> that transition by itself after a power-on reset (TCA_TCPC resets to a
-> request for it). Without a power-on reset there is no such transition,
-> and the wait only succeeds as long as the event is still pending from
-> earlier. Just asserting the PHY resets before initialising the PHY is
-> therefore not enough: the event was gone in 8 of 32 boots then, and
-> powering on the PHY failed with "PoR->NC transition timeout".
+> Mark the PIPE3 phy as initialized in the same critical section that
+> programs the lanes, so that an orientation change can't get lost in
+> between.
 > 
-> So, before initialising the PHY:
-> * assert its resets and drop the reference clock request, which is the
->   state google_usb3_phy_exit() leaves the PHY in
-> * clear the TCA's events and request the transition to 'no
->   connection', so that google_usb3_phy_power_on() waits for a
->   transition that this initialisation has caused
+> Also stop storing TYPEC_ORIENTATION_NONE on unplug, so that the stored
+> orientation always describes the lanes: while the PIPE3 phy is
+> initialized, they stay programmed for it, and when the phy is
+> initialized again after phy_exit(), which gates its power, they are
+> programmed from it. This avoids re-initializing the PIPE3 phy when a
+> cable is plugged in again in the same orientation and the phy stayed
+> initialized.
 > 
-> The resets are kept asserted for 1ms. That is the duration that has
-> been tested, not a documented requirement.
-> 
-> With this, USB came up in 20 of 20 boots on blazer, and in 25 of 25
-> re-probes of the controller (unbind and bind of dwc3-google).
-> 
-> Fixes: 8c2b331e6327 ("phy: Add USB3 PHY support to Google Tensor SoC USB PHY driver")
+> Cc: stable@vger.kernel.org # 6.15.x: 2ef1e78ef722: phy: samsung: usbdrd: propagate GS101 PIPE3 lock failures
+> Cc: stable@vger.kernel.org # 6.15.x
+> Fixes: 09dc674295a3 ("phy: exynos5-usbdrd: subscribe to orientation notifier if required")
 > Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
