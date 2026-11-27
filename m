@@ -1,80 +1,89 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795714528;
-	b=p7a26EQOAlO0hexfFyWRORZeJk5vk5wOns9X83RMDC/+cv7h8kAAz3w0d3QPG8e4vl75
-	 FN7otDJCUCqmeJtSjp0+eOrlXwkaTSZxrnwPY5uiI54QfRQBTgXA5RSI3QnzNjpHm/bre
-	 vpSCt3CZ21jEeRfliXd9Tei0ZBloPfUtEkmVjkF9YxyrzRw6HvCD7bZDevjsiWHlDBW9P
-	 DimDauYfBpia9IQ/R6UzWyov7zPVjXgKD0qIB7MQsvqmkMefHh9He6OzOv9DkXkUWE7nA
-	 wNUal0o0IXYoo50EO0y/OwxkpmKJDU6d+In9g1+xEY7fQsjXa+qilMZnLLNdvnEn+wQ==
+	t=1795776026;
+	b=MMZ4vEEmr+Gz7zkvZ7iUlRr/FsZuFK5zNV5Asin7jSBE2NPPc6CRSaDho8TG1SiZxeWp
+	 5fL1K/dnX5279uFUwxKUIFSW4UqO2zeAkybHg0+jE8kWAlX9Nq3f0+3rZ6Ouq5KIRGr1D
+	 UMam8FASR3KQFO0raa9KIWbwaJ5kwG6cxxzJRgUY+0oTiN8/mJxxS5bQnVL3L1d+fFTcB
+	 0uD5hZZIVe7Mr026iCbhDSCLFExkUf0gtMy8/bejer9CaXYQjWWJaEwiAVCGfA7hStZqW
+	 JXWevVO4stPbqWavp+KyPh0aquVszFz0Rr8iqZ8oSqJNWMwABeyf+aHaSLVHK8p6l+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795714528;
-	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
-	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
-	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
-	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
-	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
-	b=cWdOnFTpzT+EqGaQdJKlMRfYvhB2fDX55yQbEDLfYZ0ZIIiaN3iOa7zr/TJnrgsvFVch
-	 +JhkNrrTkE6Zl2Zu6s3WSmQllZBQURPq+lx9OJ+R4q2U8zMwDepvoaebRMkA0ovCdsw+W
-	 touVOdhllfoSZKwaC3aA74JEncKHbyfSvoWewB/Ho5ki8hdP5u0H2IJv+ZNUUT4HfmfCE
-	 iDL8wpIymhA0hnILslD39AKw/1bmxMpUtVT6cpmQBOfNmX47GjsirSoL8TkW2qXvpAy6S
-	 rUYjq5U5zb3XX0JXTqgdM+DSyamxZwELujm2Ha2yD4FLw9jt5OkvevuMxtQPlBoMliw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795776026;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=2c6Rb/UBk4azewF8bkRw1dkEc/rmGwcJQDMivDwr1lA=;
+	b=i2W79nWVqITNMMpga5yOFjkCq+2xjw1u+sZxp0WKgaCsHG+gz5cmtxacwLc6XvBspGXx
+	 yoXK80EVsVBS3JFB/1Y31qSTCuXyjtLps7XMnTMJuwLfl80K/pLIDVBCmcVbbrVSwiTfu
+	 gn7zQuf6lFHZpdYtKKjjV5+kG+doAkysnb3bdh7pQPCFXZSnmu0qxNwtag6E72Oq2NhIP
+	 yzppTQEBuaxDLXT4Ce3pKn1KoTNnN+Zo0tVrKuTiB+MF1A7nZZtTPyF0xb1/CyJzamkx6
+	 PsKywUEiR68rUb2qrGz90ChJXUV+p1JJi1XlYbv4PizHGBmunleAzigyNwT6aFvkylA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=samsung.com;
-	spf=pass smtp.mailfrom=samsung.com;
-	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS;
-	arc=none smtp.remote-ip=203.254.224.33
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=A3N0j4LT;
+	arc=none smtp.remote-ip=209.85.208.52
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14803606A321
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 17:35:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14803606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D00606A31C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2026 10:40:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9D00606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261126173525epoutp03358eb351d63100ad40da2dfc8fb123d6~rqNizsEFX1145311453epoutp03e
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Nov 2026 17:35:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261126173525epoutp03358eb351d63100ad40da2dfc8fb123d6~rqNizsEFX1145311453epoutp03e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1795714525;
-	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=aLJJauJSeqNDvNfBVu7tJRuYcVRWtjCl9qTUTv6yaZlIeTnaQsGAH0h9SweogNWFD
-	 iQVNy0fibJLCWMMlj1c7UXw5VIOHG/QSIEUdAVy8pV4ZNv353EKf2btaNIN/8q2DQB
-	 FjPuc/68bCae5mGTjeGQVQKP9DRKv0/KJxBKoX70=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20261126173524epcas5p46903feb70672bfbdf94648993741fb9a~rqNh0hkSC2895928959epcas5p44;
-	Thu, 26 Nov 2026 17:35:24 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4jb3bb175gz2SSKX; Thu, 26 Nov
-	2026 17:35:23 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20261126173522epcas5p2518c8da061331e3cc701a8049530da95~rqNgRjAAK2027520275epcas5p2q;
-	Thu, 26 Nov 2026 17:35:22 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20261126173520epsmtip11149f069be0767a3d84426c2390cf8eb~rqNeGBwwj2823428234epsmtip1g;
-	Thu, 26 Nov 2026 17:35:19 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
-	<raghav.s@samsung.com>
-Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
-	<robh@kernel.org>, <conor+dt@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
-	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
-In-Reply-To: <CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
-Subject: RE: [PATCH v3 08/14 RESEND] clk: samsung: exynos8855: add block
- peris clock support
-Date: Thu, 26 Nov 2026 23:05:18 +0530
-Message-ID: <000101dd7dcc$835c0830$8a141890$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=A3N0j4LT
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6b8a2518f7cso9300859a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2026 02:40:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795776024; x=1796380824; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=2c6Rb/UBk4azewF8bkRw1dkEc/rmGwcJQDMivDwr1lA=;
+        b=A3N0j4LTDHB+nZov0bYOhdq+QD9ToDVXPLoAPfN5BMtkHjHrdYcQjXgk1TJD0C9Lgc
+         a2hwnkkvaDX/A9qcpXX9L9KsQwIPdRndlaQygfgxukcPIwXzBG6JI5mkfuKCO05ubFOa
+         JVflOniyJ2BLLDHn547HiucnguS0FXCkS9q0lsMWDbElJWYojSpxhnrumQG5q5wCjZU3
+         NujxT4+wlFkXa8eqdfwC50bqCBWuEN5IVsySm+1l2M+8krTGtOju2WDK5PuwkXwtW+oU
+         UVplpWpkZsHSUaCySe/IW6oegIM4eWFHgByQEwe0mK0rYsTKlDAoHUn2Cdy4oH4VhZw7
+         ZA7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795776024; x=1796380824;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=2c6Rb/UBk4azewF8bkRw1dkEc/rmGwcJQDMivDwr1lA=;
+        b=IZu83fZXjq1TRR+U43AsDwg+XDruiPD4PohADOFonvWx4Ow5Uyjm/IF/OVgfCFQ9bN
+         glWvV5tbPnN7Gzy+FzEqndnkdM/5HkbRV+BwMI0QqtYCL0k61ivNc/YNA0ai+r031k6A
+         +Pn7fQgee+wM6S05JGoi2yg6XaF+4gkRnHBc5lsQiWnheiV0ptO29I1uVizuM/8mzmLT
+         BShtk6yIYTYsDp1WVzx/iQWrDNjJEq035QH7nOy/X2FvQi8SXacpnVcuLmbx8sC4Nf4O
+         d1Gh+hCj9vXbxjmmYJzxgoTN6MmEv6pLzFPa3iuJ7P5tmFcEKx1oP17zdfVFpedCYksf
+         8/Vg==
+X-Forwarded-Encrypted: i=1; AL+hErHkuWlSj+Q6VGKT9oscyptYC+oT/oMZKr/UiHh7mvfrCtVd5WYDUk/3x5JbaAISKhVN9m3vLaR5JzHPe9R8FGHVlA==@vger.kernel.org
+X-Gm-Message-State: APuU4Z+2u1frvZe730+bRxe8e670lzAKlnITpNDBkXFQr2xq7OfNzyAY
+	VaEDj3jWpOMJY+6XlWwtTDgO/1dXPAuMF3XNx570Fqt/tlDmefs6PbJ81om8uX6w3J0=
+X-Gm-Gg: AZFdTZfHMPI8wkGaMWaxiqOsA03rZVzWvYmz92VeO0S4kNscymWJ3X+LsbOpuFMUcoX
+	5Sy0uDy3s1MqBXs8oQn9700iWKlnqOeVFVrlc2terQlAVwdfexwSKsLh/0xMlnIjc7lBiLLtnyT
+	5jfqSokBZTzTu7pdc+UeRSozmcWYIMgMGnoBW5R2n6Ww3+aLpXmv9RrjOw7dxLWSdygxhUI0JTJ
+	xHOpUUgjYx25Evhu9q+hGcbRFrTNj1NQHorBWCam6LL9l7cjxrXYfuK5kNWlxnOrBK2RaSRfLui
+	/Gb6GfdTiilTxqUw22lIR1Bvkd7WiPJzjkVKLHm4F3j29kk+JW8pgaEpZJHlJ1z8k9tWFof3KYW
+	PLTeCbwSCdMOTnKnGkFfzxlitmY/dWLfhcWVmosvPznL80jJSgo7NbY2hraWBrmibkNRA4J4Hh+
+	0UkkKJc1jMXPfbAAyci26T+vubrioVlz6NRba63Eox8Sw8i6keS9O7IKSEEBzfrbtFGJXigwePs
+	6XNNookiNAtEx2Pt1aI2Rq+dgoBDHBBhDvETKN6dOruVVI+YdbXHdY0vq6TA8WkiZGGMvnh1swD
+	8fmC3W+56sKPTQkbNbO4HgYyHuYEmsmwTFEju3aScyQqQZb2epZfpH3mhP+6t1wC7lruy2ur3rc
+	BhJ2eUQ8I4z1AC+mZBw==
+X-Received: by 2002:a05:6402:1492:b0:6b8:68fd:bf30 with SMTP id 4fb4d7f45d1cf-6ba37d5bf2dmr12996663a12.13.1795776024088;
+        Fri, 27 Nov 2026 02:40:24 -0800 (PST)
+Received: from puffmais2.c.googlers.com (226.124.90.34.bc.googleusercontent.com. [34.90.124.226])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6bb11ff543fsm3919199a12.2.2026.11.27.02.40.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 02:40:23 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] phy: samsung-ufs: fix gs101 OOB read and use counted
+ config tables
+Date: Fri, 27 Nov 2026 10:40:20 +0000
+Message-Id: <20261127-gs101-ufs-phy-oob-v1-0-144b0e04c3a8@linaro.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -84,206 +93,83 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHlWUtnqVICpCIeTIEFEh+EoBRnawGxlKqAArMGWkMCaFOU4Lb6fmOA
-Content-Language: en-us
-X-CMS-MailID: 20261126173522epcas5p2518c8da061331e3cc701a8049530da95
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20261113104853epcas5p175c566a1ced2547e533c21b21e60e993
-References: <CGME20261113104853epcas5p175c566a1ced2547e533c21b21e60e993@epcas5p1.samsung.com>
-	<20261113110612.3265841-1-raghav.s@samsung.com>
-	<20261113110612.3265841-9-raghav.s@samsung.com>
-	<CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABReCWsC/x3MSQqAMAxA0atI1gaaOiBeRVw4pG02VhoURby7x
+ eVb/P+AchJW6IsHEp+iErcMKgtYwrR5RlmzwRrbEtkGvZIhPJziHm6MccbOVKaa2oZcPUPu9sR
+ Orv85jO/7AcBI7qxjAAAA
+X-Change-ID: 20261125-gs101-ufs-phy-oob-80303a651f4b
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Juan Yescas <jyescas@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-hardening@vger.kernel.org, 
+ llvm@lists.linux.dev, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.3
 
+Hi,
 
+Booting a gs101 platform with generic KASAN enabled triggers a
+global-out-of-bounds read during UFS PHY calibration because
+tensor_gs101_pre_pwr_hs_config[] omits the END_UFS_PHY_CFG sentinel.
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin=40linaro.org>
-> Sent: Friday, November 13, 2026 6:24 PM
-> To: Raghav Sharma <raghav.s=40samsung.com>
-> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
-> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
-> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
-ux-
-> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> Subject: Re: =5BPATCH v3 08/14 RESEND=5D clk: samsung: exynos8855: add bl=
-ock
-> peris clock support
->=20
-> Hi Raghav,
->=20
-> On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s=40samsung.com>
-> wrote:
-> >
-> > Register compatible and cmu_info data to support clocks.
-> > CMU_PERIS, this provides clocks for PERIS
-> >
-> > Co-developed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos8855.c =7C 97
-> > ++++++++++++++++++++++++++++
-> >  1 file changed, 97 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
-> > b/drivers/clk/samsung/clk-exynos8855.c
-> > index dcf58f2459b0..12b5ae54b560 100644
-> > --- a/drivers/clk/samsung/clk-exynos8855.c
-> > +++ b/drivers/clk/samsung/clk-exynos8855.c
-> > =40=40 -18,7 +18,9 =40=40
-> >  /* NOTE: Must be equal to the last clock ID increased by one */
-> >  =23define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
-> >  =23define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
-> > +=23define CLKS_NR_PERIS                   (CLK_GOUT_WDT1_PERIS + 1)
-> >
-> > +=23define EXYNOS8855_PERIS_GATE_DBG_OFFSET      0x2004
-> >  =23define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
-> >  =23define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
-> >
-> > =40=40 -1092,6 +1094,98 =40=40 static const struct samsung_cmu_info
-> peric_cmu_info __initconst =3D =7B
-> >         .memclk_offset          =3D EXYNOS8855_MEMCLK_OFFSET,
-> >  =7D;
-> >
-> > +/* ---- CMU_PERIS
-> > +--------------------------------------------------------- */
-> > +
-> > +/* Register Offset definitions for CMU_PERIS (0x10030000) */
-> > +=23define CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER
-> 0x600
-> > +=23define CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC                    0x100=
-0
-> > +=23define CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER
-> 0x610
-> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP                   0x180=
-0
-> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP                    0x180=
-4
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK
-> 0x201c
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK  0x2040
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK
-> 0x2048
-> > +=23define
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK
-> 0x204c
-> > +=23define CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL                  0x800
-> > +
-> > +static const unsigned long peris_clk_regs=5B=5D __initconst =3D =7B
-> > +       CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER,
-> > +       CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC,
-> > +       CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER,
-> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> > +       CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL,
-> > +=7D;
->=20
-> Same comment about preserving register state from the bootloader when
-> powering off/on PERIS block.
->=20
-> > +
-> > +/* List of parent clocks for Muxes in CMU_PERIS */
-> > +PNAME(mout_clkcmu_peris_noc_user_p) =3D =7B =22oscclk=22,
-> > +=22dout_clkcmu_peris_noc=22 =7D;
-> > +PNAME(mout_clk_peris_gic_p) =3D =7B =22oscclk=22,
-> > +=22mout_clkcmu_peris_gic_user=22 =7D;
-> > +PNAME(mout_clkcmu_peris_gic_user_p) =3D =7B =22oscclk=22,
-> > +=22dout_clkcmu_peris_gic=22 =7D;
-> > +
-> > +static const struct samsung_mux_clock peris_mux_clks=5B=5D __initconst=
- =3D =7B
-> > +       MUX(CLK_MOUT_PERIS_NOC_USER, =22mout_clkcmu_peris_noc_user=22,
-> > +           mout_clkcmu_peris_noc_user_p,
-> CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER, 4, 1),
-> > +       MUX(CLK_MOUT_PERIS_GIC, =22mout_clk_peris_gic=22,
-> > +           mout_clk_peris_gic_p,
-> CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC, 0, 1),
-> > +       MUX(CLK_MOUT_PERIS_GIC_USER, =22mout_clkcmu_peris_gic_user=22,
-> > +           mout_clkcmu_peris_gic_user_p,
-> > +CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER, 4, 1), =7D;
-> > +
-> > +static const struct samsung_div_clock peris_div_clks=5B=5D __initconst=
- =3D =7B
-> > +       DIV(CLK_DOUT_PERIS_NOCP, =22dout_clkcmu_peris_nocp=22,
-> > +           =22mout_clkcmu_peris_noc_user=22,
-> CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
-> > +           0, 4),
-> > +       DIV(CLK_DOUT_PERIS_OTP, =22dout_clkcmu_peris_otp=22,
-> > +           =22oscclk=22, CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
-> > +           0, 4),
-> > +=7D;
-> > +
-> > +static const struct samsung_gate_clock peris_gate_clks=5B=5D __initcon=
-st =3D =7B
-> > +       GATE(CLK_GOUT_CMU_PERIS, =22gout_cmu_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_SYSREG_PERIS, =22gout_sysreg_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
-> CLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_WDT0_PERIS, =22gout_wdt0_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
-> > +       GATE(CLK_GOUT_WDT1_PERIS, =22gout_wdt1_peris=22,
-> > +            =22dout_clkcmu_peris_nocp=22,
-> > +
-> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
-> > +            21, 0, 0),
->=20
-> The Linux clock name strings look wrong here. It looks like you've genera=
-lly
-> followed the clk-gs101 clock name mangling in this series so it should be
-> =22gout_<block-name>_<IP-clock-name>, but you have =22gout_IP-
-> clock_name>-<block-name>=22. I know there is some =22name diversity=22 in=
--tree
-> for various SoCs, but with new SoCs using auto clocks I would like to kee=
-p the
-> naming scheme following a similar style to clk-gs101.
->=20
-> Also I guess with auto clocks now enabled from the start you may never
-> need to expose all the CMU bus clocks, but I worry a bit you may have
-> mangled the names here a bit too much. If you do need to expose extra
-> gates you might get name collisions. For example in clk-gs101 we have bot=
-h
->=20
-> gout_apm_apm_usi0_uart_ipclk
-> gout_apm_apm_usi0_uart_pclk
->=20
-> So we kept the _pclk suffix in the Linux name to avoid a name collision.
->=20
-Thanks for review, will change to gout_<block-name>_<IP-clock-name> convent=
-ion=20
-> Thanks,
->=20
-> Peter
+This series starts with the minimal fix suitable for backporting to
+stable kernels, followed by two hardening patches to prevent missing
+sentinels and out-of-bounds config table accesses in the future:
+
+- Fix the global-out-of-bounds read on gs101 by adding the missing
+  END_UFS_PHY_CFG terminator (tagged for stable).
+- Embed the per-SoC config pointer arrays in struct
+  samsung_ufs_phy_drvdata with fixed bounds and move them to .rodata.
+- Replace END_UFS_PHY_CFG sentinel iteration with ARRAY_SIZE()-counted
+  tables annotated with __counted_by_ptr().
+
+On arm64 (non-debug build), the two refactor patches shrink
+phy-exynos-ufs.o by 144 bytes overall (.text -160, .data -176,
+.rodata +192).
+
+Note that exynosautov9_ufs_phy.wait_for_cdr is never called (before or
+after this series), because exynosautov9 defines neither a
+CFG_POST_PWR_HS table nor hibern8 tables - this series preserves the
+existing wait_for_cdr behaviour.
+
+Tested on Pixel 6 (gs101) with generic KASAN and UBSAN_BOUNDS enabled,
+including UFS hibern8 enter/exit cycles.
+
+Cheers
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (3):
+      phy: samsung: gs101-ufs: terminate pre_pwr_hs config
+      phy: samsung-ufs: embed cfgs arrays in drvdata
+      phy: samsung-ufs: use counted config tables
+
+ drivers/phy/samsung/phy-exynos7-ufs.c        | 17 ++++------
+ drivers/phy/samsung/phy-exynosautov9-ufs.c   | 14 +++-----
+ drivers/phy/samsung/phy-exynosautov920-ufs.c | 25 +++++++--------
+ drivers/phy/samsung/phy-fsd-ufs.c            | 23 ++++++-------
+ drivers/phy/samsung/phy-gs101-ufs.c          | 26 ++++++---------
+ drivers/phy/samsung/phy-samsung-ufs.c        | 48 ++++++++++++++--------------
+ drivers/phy/samsung/phy-samsung-ufs.h        | 26 ++++++++++++---
+ 7 files changed, 87 insertions(+), 92 deletions(-)
+---
+base-commit: 3191063649dbf7c0d0b768e1f3655e4c5fc6edb5
+change-id: 20261125-gs101-ufs-phy-oob-80303a651f4b
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
