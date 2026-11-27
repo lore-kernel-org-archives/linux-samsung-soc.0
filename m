@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795787687;
-	b=BE8CkqgSIh4TASwfBXcIrrM6G2YFMgWzjr3nlnSWVbDZrzIZnVx+FjnRI+rZLncvFFAD
-	 BVYBT1QZBXvr38EFqsU7Kcj9Bkm0pSJF2X/7KYvWFR554YLXeQqERk1U/QC+r3KHnKtb1
-	 8psKa8uHu7HsD6ti2x1tcD21zEz4II1shUEOi2GdlWQKpIIKPaic1gPWHbGnhkEVoJAUv
-	 JFp+zIxPcE1aLJmRZw7v5D5UpMKjbrywZKJhuZGgn/6ASVBiJnNW5V7B1jGoq6BmOk18y
-	 eVHrp4wSPGl8ZyUVsH1sWeB9SdgjdgPrKQfAwi6B6iGNm0HhW+M28k/hBvhiyXUD77Q==
+	t=1795794016;
+	b=xwpxtyhqVT/DHql9pVdWlijFi4n+UPxdtUwXczbjT7QtAKaWJhiLRCdy1B3rWJ/fJeGT
+	 cAvBwsM4XPf4QZ0Z0WPkBnbrBxNZ5vobKuRGP4Gi8pX/BKbmCIxVDwY5PUFl5pJucsSu4
+	 kG9Eon+8xLt3Kwjq0Ff9gYtnUSXRzjR2b4O4iOYS004qEFc3IpEu732dYth+881F72A+8
+	 V6/YYFsVQJJAT5pQVs6fTDobFxYQxt8J8DpeWppxxylZqaoDab32ii4jBKoE6ZCoPfsIp
+	 h51w+tIK48qbIvNay3CooE2QlqfqUy7B7AeaHZJznigQNfDB5MXuiTh7i1WiiExDQ8A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795787687;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795794016;
 	h=Received:DKIM-Signature:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
 	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=ihaNk17hqENSXbY9COGf+8Q0e2XiJjXPQdUUyev7UHk=;
-	b=oNBartppeLGdQaIUGRo9PnwKtEQFV0djdE4eaWqdyJaMu+ETTk+myHpS74FTBC++9hae
-	 Q46NGPuOlJkoDHSjiLze9+pm/rJhiUYtf4/z9iKXRFEhPHKmRqHV5PwqIeVc9heQvXwbm
-	 7Ke6454acL/S8yJjojCs7aP/GzHx/5mjMe+p0jJLnM2uC51To4IhfBdaacrsN0s35TN9Y
-	 8hYxda6slgJkd2Ij+o/EUMU1F+6X7bffPN3ACbI16CKcVjxASZ8cx7SOjtadZGamCT9jh
-	 k87xl1x5oXFbicJkBfNQwvBQjQ8YUUVjHrL9Zee23VZIG4wnCvjl4GA2vukiveZPhTA==
+	bh=tKebX395MPBUtnrs1wapuNSuu9yDp888WscSsnZmE3g=;
+	b=TC5L7HZJ7U4WO8DWVZFMpeYuGk17SfADv81WVCVNt5IAzAvKQy3fVoOx6QsFLkGWhN0R
+	 ewn3uOdsAme8FhNA2FglGz72RIFehTajqugh/UPwiST8kJzxzhB0AsDqcUbC7OSP8AnGo
+	 HoINatFHVDT3q2XKAehTWWUo5eFvGmOwVu11VrGe+fpkPuM+DaeWj9/3nidsPp5xv5tdN
+	 GA4TX/VXjpd1s/hWqMJ5JChfBr/axWRzZ179pUXqBBHuTzftUY2D0KC5qP0GtSF3GWwqi
+	 BkaIPL7lMW0nbHhh0IV45zkAZvLgQToy3e7equEFz2+pzeDmbf+WlC4KSqeh1w6utQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EBrzati9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQXvaxss;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0684E606A32C;
-	Fri, 27 Nov 2026 13:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF60606A31E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Nov 2026 15:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EBrzati9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B21D1F00893;
-	Fri, 27 Nov 2026 13:54:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EQXvaxss
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E4531F000C1;
+	Fri, 27 Nov 2026 15:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795787686;
-	bh=ihaNk17hqENSXbY9COGf+8Q0e2XiJjXPQdUUyev7UHk=;
+	s=k20260515; t=1795794016;
+	bh=tKebX395MPBUtnrs1wapuNSuu9yDp888WscSsnZmE3g=;
 	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=EBrzati9JhcbB2R9MVAsDvs/3N6Vf1bh0Aooa1tg26NApbNA1dZUlgFy7q9FHDcxF
-	 pZTMotJWV+a6HtIPzZKNausCBV6Fg6CNo60U8ojPUYPIe62LoyXKaPshYUZKu1c0VN
-	 8bSRRe7DUvAJyO+wSnJRAA2S+Ph57kUimsl5vIy8YkkxJmepEq/UPFwqQzWbrYJmNl
-	 XuBFLMPPA26+L7aSjqmru2GCE0/rFUezd9LcOFx6xmlAW4AQDwLsAS+UCSXfvLrpF8
-	 CL3thFbuTn1DG17yeQ+wrRIpy6fPt+4dQ2P3d5vta4sqYiZB8q/EW8q6ZpQbcZP5MY
-	 NtTzH8tclBZbQ==
+	b=EQXvaxss2fZNA1aQjVWEty4gmAnbcXCQ7LXMsZavdxc6MN9KYGeuMME4Qmy0DdZLd
+	 wNAVt/GIZGAr9YF2QwZrnF7ZFpMOWpz05nBZTWrfors/BpujWyWR2Aq5MDqJJmwSsc
+	 xi8cnWTVsDUQU6LCIZfiQBhrk/8LTVd8fNx7Kb/nx/xkjuUe+pGQIQOlElu2Lf527b
+	 eNcOty4GHLATfuDWsAutQLp1fNi6TfipRa2csjbnh0lu4xzSfEWccg/ueW1nssGusK
+	 +OAvLXmA8urNGq+A3zJG4ooR2fjKJm19tgPOy0RZ76cSVWDhfatuTHVn35wW516hJG
+	 VEh0dmk+onNhg==
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -51,56 +51,58 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3 3/3] phy: exynos5-usbdrd: fix HS phy init count
- imbalance on Exynos2200
+Subject: Re: [PATCH] phy: samsung: exynos5250-sata: fix unreliable PLL lock
+ timeout
 From: Manivannan Sadhasivam <mani@kernel.org>
-To: Soheyb Boulaa <soheyb_boulaa@proton.me>
-Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-phy@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
  Manivannan Sadhasivam <mani@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
  Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20261114064400.45572-4-soheyb_boulaa@proton.me>
-References: <20261114064400.45572-1-soheyb_boulaa@proton.me>
- <20261114064400.45572-4-soheyb_boulaa@proton.me>
-Date: Fri, 27 Nov 2026 19:24:38 +0530
-Message-Id: <179578767823.13164.4595964054834995547.b4-reply@b4>
+ Alim Akhtar <alim.akhtar@samsung.com>
+In-Reply-To: <20261118191233.376139-1-m.szyprowski@samsung.com>
+References: <CGME20261118191239eucas1p1054471efd4b07967555d34a2aed994c0@eucas1p1.samsung.com>
+ <20261118191233.376139-1-m.szyprowski@samsung.com>
+Date: Fri, 27 Nov 2026 21:10:09 +0530
+Message-Id: <179579400918.13164.7642589711897506797.b4-reply@b4>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1130; i=mani@kernel.org;
- h=from:subject:message-id; bh=moU+LPCi/fmXx4hUo8rYp5XjV9/dvpjSZdoJhSaoZnI=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrCYuhDHABi5d4RO5C0tclXwG3gZMS18Mt9rZYQ
- xgayjpt5FSJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawmLoQAKCRBVnxHm/pHO
- 9UYYB/44Ifkb6x2lMRRwQqwm8z+PFDfp/Kd7Y7xK7P65lr4oG7LHKgHYysohIcfbkDRH7FGkR1f
- ecofjz7Fz18DVur6zlCgp9s19198l0YjtM5PpS8U3CWrfNCOWUg6dwH+VvO7lUifvZMlF2L9Tgw
- 2GtLfpsQ1q59Q4KuUbS6q9bVpWdUdYQX9aCn+osfepYzVxrfQbMyp5zObPdMOxYrv4Lhml4QfvP
- USFMxBhpc5RVplx0MurolHM9hgDG1V4l75Qr5tIR43aJUpnLEKIhMwj+4Ce/Hu59io8vCzaCs2c
- w7AVM5hiWTvDqdW+4My0Ii35ijvNrWu7CYG+DmUUpSq9Y6gp
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1415; i=mani@kernel.org;
+ h=from:subject:message-id; bh=4fnP70Hwi6oxs/49NcriEAR5sL3O4G7nAt6m7i5s4ks=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrCaRc320Fk4ATr3mRxwdqMXXQpeQlGisBquRvW
+ NqIHyk/pS+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawmkXAAKCRBVnxHm/pHO
+ 9bo/B/905D9IsfVrMtj+WvHvnGRygHeovcwNzp/hX/QSguBA8GcSRjj7J7HEEaw6rTzgc4RncDt
+ at+GWy80EImliinHzJwMpR3sWdlWbxMOex9N5PfosSNnk9a+4ZlA7794ofY7hkaY/l44fWYfkhy
+ 6q5SBL2e1zyXW9xuA368XVXvi9qK8eMNXIr42U3hisSsVNug0hWQ+3YWU4LKxNdQdXGlDqFx/K8
+ g1JFHr5wMQqughQWivLitCRdsrZXPWThWCoHuhCYy+zUDqJoSoAKQIa7qMQ+H7NelCOv4Bs3KS6
+ A+uMeeiYj6P2EAPrpKntNxWV5NHHx+ElNahxHO5C46Gq6EKx
 X-Developer-Key: i=mani@kernel.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-11-14 06:44 +0000, Soheyb Boulaa wrote:
-> exynos2200_usbdrd_utmi_init() calls phy_init() on the high-speed phy,
-> but exynos2200_usbdrd_phy_exit() never calls phy_exit() on it. The init
-> count of the high-speed phy therefore never drops back to zero: after
-> the first init, every later phy_init() of it returns early, and its
-> clocks and supplies stay enabled across an exit of the UTMI phy.
+On 2026-11-18 20:12 +0100, Marek Szyprowski wrote:
+> On Arndale boards the SATA PHY occasionally fails to initialize, which
+> makes the AHCI controller probe fail and the attached disk disappear:
 > 
-> When the high-speed phy loses power while the controller is suspended,
-> it is thus not set up again on resume, and the DWC3 core soft reset
-> times out:
+>   phy phy-12170000.sata-phy.11: PHY PLL locking failed
+>   phy phy-12170000.sata-phy.11: phy init failed --> -14
+>   ahci-dwc 122f0000.sata: probe with driver ahci-dwc failed with error -14
 > 
->   dwc3 11210000.usb: DWC3 controller soft reset failed
+> The PLL lock is polled by wait_for_reg_status() with a timeout of
+> usecs_to_jiffies(1000). On ARM with the default HZ=100 that rounds up to
+> a single jiffy, so the effective timeout is anything between almost zero
+> and 10ms, depending on where in the tick period the wait starts. The
+> loop also does not re-check the status after the deadline has passed,
+> so an interrupt or preemption during polling can turn an already locked
+> PLL into a reported failure. Finally, -EFAULT is a misleading error code
+> for a timeout.
 > 
-> Exit the high-speed phy when the UTMI phy exits, last, once the rest of
-> the exit has succeeded: the phy core counts a failed exit as no exit,
-> so the high-speed phy has to stay initialized along with the UTMI phy.
+> Replace the open-coded loop with readl_poll_timeout(), which measures
+> time with ktime, performs a final read after the timeout, and returns
+> -ETIMEDOUT. Use a 10ms timeout, matching the upper bound of the
+> previous behaviour with HZ=100.
 > 
-> Fixes: cc52a697f87e ("phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm controller")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Soheyb Boulaa <soheyb_boulaa@proton.me>
+> Fixes: bcff4cba41bc ("PHY: Exynos: Add Exynos5250 SATA PHY driver")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
