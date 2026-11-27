@@ -1,45 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.140.110.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795780754;
-	b=P5f22B0AvyO5Q7t9pENrhqTSfjp8Qh3HpW7z73MLNOL84c/qEhFRli4AeKmEtpENHCID
-	 FMO+ivBmrfWtRhO7Tophoj6mX340Poqg8zD+RoEJ78MIbA/Qg5a0lASl9R09hzUJLeNXH
-	 adz2LGHjg0k/4LpZV321XVZn7mvBVei0rwwcsMeDPCx7AzMD/94dqqt/Jaw7wey8TL0fn
-	 5SxqmhBS1rVkw8kHHq9bl/gNtJwyZPy3wdmAM/Ai65GCvG2rngJvOzNCROAo193mzJ8Qv
-	 RnvdtG7nGWjx6GwhD9qvYEc8cgZjPnkqXT5X0jm8YvWM9/wpYhZCsq6w0R2DcRX6nbw==
+	t=1795787454;
+	b=S47t3LZumjb0KyltgO11T8GHHLt13bhF3lP46NBvBb1u2cUd5Fg3JOES5IChZX0HUkQI
+	 lMZeL7qpNZSVHxF1N+VYSSV91uaSYJJhg3kSnmTAe/ZlYDgOkDs0+4csA6+xlMJ3USw/f
+	 EdI6bsyAMq8r3wyQXkJ4n6bO5AKnPDOwrx2s08xnehtiQ7sFckpEXqAW++grZGk6RXfqd
+	 QAQGKVuVfmNCDRJrzCsxemM4NI3EFvz5JRJUMMTy/QoDX1nc6MbtWdR+upcZEHk6BbYFX
+	 OTL6W/WcFVcHA3sJxykkrdEoY9SrC2n+O+OdMDS0IzFKVC1Lc5jVmBr0t95hXv0dx7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795780754;
-	h=Received:DKIM-Signature:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:References:
-	 Date:Message-Id:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	bh=X4kfaiVur+cv7ACUutyaSv/1OtD9q8Aja3Q/LtqseRo=;
-	b=t4CiQXYgK4/umfX3y1FzDazv6s9SoOSQlmfAaZraKYHM5gY3KUqbR1WXa6hxSe/l/sh1
-	 l5D2DWk+7QpnwxMpk/YHScQixZxBCimrJk0xdg+BkpyAyDe20d769tl1Xj/rQu4/4eCxM
-	 CLCrirR5CSLTdhTL382xrHeq/Xi0hzR4C0bkYHqhiqvRj0UxSVDIMhaq3w2haaqTr/IRe
-	 bejQHiw6jQrnEJ9ugfc/6RysQqTv77HEzop1RsdwmNu9ETUzBuIzeNikc6iWX9GjSt43L
-	 RF/dfvouxNqbumWV6Rpr1S92E5sMALRBA/Rxkm0e+IlI7T0qkyjj4LsuDlak/IAKBhQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795787454;
+	h=DMARC-Filter:Received:Received:DKIM-Signature:Message-ID:Date:
+	 MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=W2BLdFCLXqqGzqgzzWL5ZjqtGuQVWcPcrvfmmj2AsEQ=;
+	b=jKqSI4oDVoEP3hKqb7sY+V3Nn8c1QzS7BW2yfhNWquC/+qCX4hcC1tY6F/86JUfeJ1bm
+	 G7Zcm88NLFQMBmCLWS9AhKHf2a0Hpqj5gaHGxPc2Exzbe5+cr/DYwePjl1WHCrZjnQggN
+	 IbAuyH614gqyMmuoVw55l+4DDz1CSAgucJbIJEuoDz9s4SVY6u+laEBjQAHKM048ALBib
+	 4rKEEp+NPNJZnKn7TnWR6Zs4VYraQVdun+xD239wuW/cl9K8FNsJxZXrtBBR8hh+Zsn2f
+	 jV75zhBQcILna7bRWkLM4mT2cQlyixDgJ+90MLABBIkqTzlNpd94DRT9m/TZ05KtHMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqG3yN7n;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E5D606A33E;
-	Fri, 27 Nov 2026 11:59:14 +0000 (UTC)
+	dmarc=pass header.from=arm.com;
+	spf=pass smtp.mailfrom=arm.com;
+	dkim=pass header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=G2i4MnW1;
+	arc=none smtp.remote-ip=217.140.110.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93859606A31C;
+	Fri, 27 Nov 2026 13:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93859606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dqG3yN7n
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40D8F1F02809;
-	Fri, 27 Nov 2026 11:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795780753;
-	bh=X4kfaiVur+cv7ACUutyaSv/1OtD9q8Aja3Q/LtqseRo=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=dqG3yN7nISyTWtF1R2GwmK98IjcPUPf+g/u6Xa+7tGyAu9kGwKnSdd8+pR/OCTM5r
-	 C+MRnamg2GnJpQdCm9K8ZqZQ0XVy4O8Uc9hsptJSsOar7xU/8PakvVGrMMVW7Z1Xj7
-	 nrsUWYoCh904bs216H+OOK94HEL9/ozFGAlEgtr/2XGQBsov6ThBTzI6lX4nlYfmTs
-	 GeSDJAuuxzgx01KiytAAGWaSkZYOFwJ3SooyCh+HhLudozH4+laiTE2LL8JKYEFjOD
-	 UXhp3f74E9cQaacOLzQLKJtswJu3mnKtnhYfytrHk98ybqxSpqtVAyEcLF4xfCFtVi
-	 6fqewrC/vb/fA==
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.a=rsa-sha256 header.s=foss header.b=G2i4MnW1
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA5871570;
+	Fri, 27 Nov 2026 05:50:49 -0800 (PST)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 490133F632;
+	Fri, 27 Nov 2026 05:50:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1795787452; bh=InPRxVzDI2vjxwZEavNbuf666pud9/KmCUGG5pDASzY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G2i4MnW1cdxQ9bbPd/ojeNKVpcA7dVi9RkhkGSConJ8BzgFbXeYBGNRCBGuwf61lU
+	 ml0Lv82yEpVRg8e98RuLOswk6aoe1ZcEsrq2/a6sLK2R1Lphdv7Se62lzsAVVbdfBR
+	 NuR2cdtvGeeGB+KPF3cGWTNfPUOmOQZ8f7D+YShI=
+Message-ID: <f789bb4c-ad5c-455a-a51d-fc9fe67b1d13@arm.com>
+Date: Fri, 27 Nov 2026 13:50:38 +0000
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -49,89 +53,83 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/exynos: Disable runtime PM on registration failure
+To: Zhiqi Zhang <zhiqizhangg@gmail.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20261126045203.62181-1-zhiqizhangg@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20261126045203.62181-1-zhiqizhangg@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix HS phy init count imbalance
- on Exynos2200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Soheyb <soheyb_boulaa@proton.me>
-Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20261109221522.2796426-1-soheyb_boulaa@proton.me>
-References: <20261109221522.2796426-1-soheyb_boulaa@proton.me>
-Date: Fri, 27 Nov 2026 17:29:04 +0530
-Message-Id: <179578074498.13164.12931562027223515149.b4-reply@b4>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2175; i=mani@kernel.org;
- h=from:subject:message-id; bh=p6d2iEwVEUY+/j47JyZwmjKq5uIbHpo82iXyjlHo0f8=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBrCXCM24kKb+8h2Bep4TN9AXjsVrm4SL3mhUnSz
- vXEi2WOU/GJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCawlwjAAKCRBVnxHm/pHO
- 9dQBB/0WrkCe5N23g0EgwH46xNiAYn2oau5oIDzwdoaiNTY0dT5C0USIEWwisI6MZz+rl8gt/J7
- pTKxPbPQ0USEwZeyqgJ3r16Yz4Cd4yyJZ0pEHBpmNE+GZrBSATHRsDLjcxf424gLe/s29izVto8
- redXPK8wu/48rx32TsUgqD/yzR3fv5H4H/UNLukf3J3dmvpBeX+Hs6bUnemnp0Jjk1IEwRoTcVA
- IqUu20NINdpwqNn5q60FO0xVZ6sTBKBJQmc6oW9L9bJsioKSYbfTqw+9rqWnOXfGG0Kc+72ZSxn
- Iu3sjdAw4F27Jwv95OrJg/YYk81I+3uRm4VqpuAcmqknzZSJ
-X-Developer-Key: i=mani@kernel.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On 2026-11-09 22:15 +0000, Soheyb wrote:
-> exynos2200_usbdrd_utmi_init() calls phy_init() on the high-speed phy,
-> but exynos2200_usbdrd_phy_exit() never calls phy_exit() on it. The init
-> count of the high-speed phy therefore never drops back to zero: after
-> the first init, every later phy_init() of it returns early, and its
-> clocks and supplies stay enabled across an exit of the UTMI phy.
+On 26/11/2026 4:52 am, Zhiqi Zhang wrote:
+> exynos_sysmmu_probe() enables runtime PM and then registers the SysMMU
+> with the IOMMU core. If iommu_device_register() fails, the error path
+> currently only removes the sysfs entry before returning.
 > 
-> When the high-speed phy loses power while the controller is suspended,
-> it is thus not set up again on resume, and the DWC3 core soft reset
-> times out:
+> That leaves runtime PM enabled for a device whose probe failed.
+
+If that matters, then wouldn't the same theoretical reasoning also still 
+apply to module removal after a successful probe?
+
+> The same
+> path can also leave dma_dev pointing at this SysMMU when it was the first
+> one to initialize the global DMA helper device, so later domain allocation
+> may use a device that never finished probing.
 > 
->   dwc3 11210000.usb: DWC3 controller soft reset failed
+> Add an unwind label for iommu_device_register() failures. Disable runtime
+> PM there, clear dma_dev if this probe set it, and then remove the sysfs
+> entry as before.
 > 
-> Exit the high-speed phy when the UTMI phy exits, first, in the reverse
-> order of the init.
+> Found during static probe error-path review with help from OpenAI Codex.
+> The fix was build-tested with ARCH=arm exynos_defconfig and W=1 using an
+> arm-linux-gnueabihf GCC cross-compiler.
 > 
-> Fixes: cc52a697f87e ("phy: exynos5-usbdrd: support Exynos USBDRD 3.2 4nm controller")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Soheyb <soheyb_boulaa@proton.me>
+> Fixes: bbc4d205d93f ("iommu/exynos: Fix driver initialization sequence")
+> Cc: stable@vger.kernel.org # 6.2+
+> Signed-off-by: Zhiqi Zhang <zhiqizhangg@gmail.com>
 > ---
-> Tested on a Google Pixel 9 (Tensor G4) with an out-of-tree port that
-> uses the Exynos2200 phy ops and powers the USB block off in system
-> sleep: without this change the soft reset failed on the first resume;
-> with it, USB came back after each of two system sleeps. Not tested on
-> Exynos2200 hardware.
+>   drivers/iommu/exynos-iommu.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 > 
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 7c337ba96..18a536008 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -844,10 +844,14 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   
+>   	ret = iommu_device_register(&data->iommu, &exynos_iommu_ops, dev);
+>   	if (ret)
+> -		goto err_dma_set_mask;
+> +		goto err_iommu_register;
+>   
+>   	return 0;
+>   
+> +err_iommu_register:
+> +	pm_runtime_disable(dev);
+> +	if (dma_dev == &pdev->dev)
+> +		dma_dev = NULL;
+
+But what about other IOMMU instances that could have probed in parallel 
+and already observed dma_dev to be set? Sure the existing code is not 
+perfectly race-free to begin with, but this only makes the issue much 
+more obviously worse.
+
+Thanks,
+Robin.
+
+>   err_dma_set_mask:
+>   	iommu_device_sysfs_remove(&data->iommu);
+>   	return ret;
 > 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 087d552..0bee928 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -1486,6 +1486,13 @@ static int exynos2200_usbdrd_phy_exit(struct phy *phy)
->  	u32 reg;
->  	int ret;
->  
-> +	/*
-> +	 * The UTMI init initializes the high-speed phy; exit it in turn, so
-> +	 * that the next init sets it up again after it lost power.
-> +	 */
-
-Same comment as Ivaylo. Code is self explanatory, so comment here is a noise.
-LLMs tend to insert comments even when not needed. So you should trim them or
-ask them to not add comments where not really needed.
-
-With the comment removed,
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-
-Please respin.
-
-- Mani
-
+> base-commit: ebb7a8dc1e74c705daffe11c2faf38ec2628f838
 
