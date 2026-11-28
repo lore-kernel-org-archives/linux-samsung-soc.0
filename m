@@ -1,88 +1,62 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795873134;
-	b=5hPxA4E/y1z/2LTW3kMylRrT8mu029FRmKaV1jgZA7MK1DBYYq0zMA+U7ziIpsqNyJEH
-	 ZpWr0ff1XQ5pIzrha7Qkr+cyWmYp3pVDTzTHDR/w9asG5Poljro88sCLURc++VhC/aFm8
-	 YaoHLJUc/Stda8nXsvEZ7NyvttTdfpb4uuHeNFtWHrd45zu3EhxTZNVKysu+bbJPb9upk
-	 TTaknyR3cFkizIucE7sdmnwdUtXXbkPyIvDFeHHiaSrdCa83UXoOn4kmku5hwTFhLEJB1
-	 9/OjkXTxfOdxjMicoYFM6F6iKbKJXLPxxlb35ZHcfByeQztBWe1FJpNwwbF3z2l7/cA==
+	t=1795873903;
+	b=qWDb4YTQVyPddvNDlRi1t0B6weVsH2XT9N3ZcxlUvTpaPcMMpXZjC3GG4TIsQO8kDWjt
+	 +fqfC8EdMwehay43az9L+9PBe3GaI7ugCt5YhS9dTfwT8ns9vQ4wUV2YcbwJFI7ZAI/uK
+	 ybvb/8rSEtQUnXHe4LvchHicYW9CWo54PinHSdy8MMqx+EIgZ/hm/zo5jvPy2Hj9zLNXI
+	 PbxVwdRy2VEPpcJ/H1uyWr+F03OjKmvcSl9/Q3wSN3SP7mALQCUxe7Nvz1CPz7BhXHEJX
+	 x4XPHc83OzhTVp/kxlibO5S9MNFXWPU5/rVcjQaAOSDFm6vGLteMMDsC0OL7b7uKang==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795873134;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=dCmAGX2Omd/g9y7jDZCpeWTJ9I+W1z7gL0oCYL7gw10=;
-	b=YM94/Sx2SGiPHnfNQnXcgU6xx4GXPiXy0IvMaAkN4+IzwMZtjbybn2QPqOyaeJHI+3Ma
-	 WQo2S/wxqc0WH1J0fhcd9HtVIhHAS2h9deD/80xdMrBXxswoBNzzs3EOosHsv7BPkgxqG
-	 CSsq3hHdVs9WKhstiGU7noHXeAignOcDUhbsHvG0nfhh5tW2Ulv4P8f6RViKkj1dLhtw4
-	 H/91kLCfpoK3UdEJbPYDcU5/gLRiaWfo2gcDWOQwhsTqQHOc/NxlGnF6K4HHeExVTYtDk
-	 QwDffeVBX1rzwIoKO/YDWWdFbUucFizmNCV9lqVWKtcPyenjftSPjLHBN6TF1AC/7rg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795873903;
+	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Rspamd-Queue-Id;
+	bh=2a+Yri10/zFE3o9wz8FYNDHmwFSDAaf5+qNG/L9KbRg=;
+	b=zTuCRJOit4lysj34OF2e7GDm4IcWrgVMAhR3TKI0dXNEJLD+lMSgepWDApyN6AoyQYk/
+	 nXjdkvqOcUcO5Yd917ndI/ADQpjkSCB78qsW3RpAV0VR+oWu/w7trpK73dtOEF6NGG8v9
+	 70pTQ4U+toWYEetjC+3rjLiFJCsja8RxcfoJxi/abm/2UXgpo+Xu07E0p5cD9UeHBzbQC
+	 d12OSzElTdOH6ZaFWt2mgCPumDJDFg4EfoFoho2FIaYZ5kkHiLatSmGJdvCffpU0nOH1Q
+	 fcx/CI5jgAXyqmZ+ob2xhEZ9aGD7H6/7kchHpMxZ+dsSVBTrY8IsPQxKFmdIrMu7K6Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wTyeE1UY;
-	arc=none smtp.remote-ip=209.85.167.49
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=timmermann.space;
+	spf=pass smtp.mailfrom=timmermann.space;
+	dkim=pass header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=vuVekJQ6;
+	arc=none smtp.remote-ip=80.241.56.151
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106B1606A31F
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Nov 2026 13:38:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 106B1606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC96C606A31C;
+	Sat, 28 Nov 2026 13:51:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AC96C606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wTyeE1UY
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5c14f3dab09so4395967e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 28 Nov 2026 05:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795873132; x=1796477932; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=dCmAGX2Omd/g9y7jDZCpeWTJ9I+W1z7gL0oCYL7gw10=;
-        b=wTyeE1UYXKFFlRlLAUJLkr9C9/Brmuh5IhKjiX+lPzzs+/9twKhj5S3a4LKPpGRO1R
-         Z2KoeptxVlTXvErSql4Wy15JF/SLVpFMKE3Tj9EUe6EQhCTaBdAZKXYuA6NVcvs/TPa0
-         Qonbh/BnIA+78Piovo5I7+tHAke7nbjedz8z0p8bN8hdosjDNMQR9HylVUq+qa6g9rxE
-         hp2CX8u+SswX1VCZhDsVuBkYmC5Sh4ktO4nsAWbzXUuBQKmjxmqnJHPn5cEQB9AlR/ZP
-         vDK9sEvN9TUdDS84TIyfSlMdsXwGKBS2IG8Jh7QSnZPqoFUCIk77zqz4WPa+L0yWaCgr
-         0XBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795873132; x=1796477932;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dCmAGX2Omd/g9y7jDZCpeWTJ9I+W1z7gL0oCYL7gw10=;
-        b=kqoHZxaxHSp3ahKJ1Xj3dTqGaTIAxbYB5lEJOKTQKEyAYunMxnxM8IwnoxPrzinhk1
-         Y4YS1vGExdQvRMlWLH+/gnS+Hao1qVMhEySRgfafhGj66mpOgiUduxMn5a+gFnB9+sCm
-         itY+s0OEFBfDIBaoKHJ0RnBZEmSTFzp0ZMfI/5/mTVi05oKeqjHyMfZSKDhdmHrhvQPm
-         2Q5abBRQqU+asEiLbda8QinnLlu7zeOiglLOM3fmUYMEXBVW9Pq6pLUo19ylOblktRT1
-         UWig+gsFdRNxgXowCVmX6T+CWVIPIg6Xlej8PxJgHGKg104xG5mDKxANbwhfwgbI3RbD
-         F0hA==
-X-Forwarded-Encrypted: i=1; AL+hErE7h6vVRsaPOBR0FeAic4gCPrNHPs5fqoLUR1hKrUNncrNLbe3OK5f6CX6CuNPMAQMkg3ME+g0n/Oc8ogAO8ZQAtQ==@vger.kernel.org
-X-Gm-Message-State: APuU4Z9WfGDiS0GQqYmV38PIxjkEqTtm4Per0G25a/Hl4n7Dq+zk8mPJ
-	8LG58avV2XuUKJE3QZ5GCpDVIKc/yL0mt8BebnZDFoi6+UcLN3R9DWvQ
-X-Gm-Gg: AZFdTZeHR8OotX4EQVTXGayMko1mH1gRmP0CMCsSrwSiBA9+kinKWGOF5HBdeKOj4i2
-	Eq5hqJUuiQ/hV7UTfBkWLitBdnsg6ioQoQOSDZXDPGzFiuN9UChtII8fe53nmWPdC2BOVYlKz96
-	sFL8l5vapZBRSzLpqeVwZrVfo/LK6iLGKpAzG9N40r4P3dN4cXq6z+KOBrCsP1nu8ev1sI1/1f/
-	BcPA2LAUB5RcA05ju2iSIDzSGeIefjLy7McTfOSkqcW1Xm94seWIf3wI5i0kCkO3250mSIj+KL+
-	/93WFNcfLOWCVYkNaBA5mfDsgr1RN0o4y/ioX7V8IXOkTdOU5UdlJ+6yI3BznniF23F+QZMvVXW
-	qHKooxYDe2U6GXP1hzQuxGVqIXXbVMAz7F4o7hOK6NKgT2Zr2MxbuF2d196nSfpvMHeHdQ5usBB
-	Pd/V7rQpDoEAhkHyK/mgECNRhE5852veCevPWPqmEL1jb5YBV/0aRdldOSqOyNjBAZa336anfSz
-	NOdixNztuLVZcgDm1/XTwEp9WfP6e+uwydmPGmVzhXYaQbyTAsHrK8CXRBNufV/Yu3oaJ/azw7h
-	zv/Di3rqAtmIQcHvVmbLCjL3dnURIPQA8LYFRLdZVQfk
-X-Received: by 2002:a05:6512:3b89:b0:5c3:3dfd:c4e8 with SMTP id 2adb3069b0e04-5c33dfdc807mr1617419e87.2.1795873131953;
-        Sat, 28 Nov 2026 05:38:51 -0800 (PST)
-Received: from [10.127.127.83] ([5.195.0.145])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bcff8b82sm6968991e87.16.2026.11.28.05.38.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Nov 2026 05:38:50 -0800 (PST)
-Message-ID: <2528005e-67b5-4e23-a357-fbf853c2ff38@gmail.com>
-Date: Sat, 28 Nov 2026 17:38:44 +0400
+	dkim=pass (2048-bit key, unprotected) header.d=timmermann.space header.i=@timmermann.space header.a=rsa-sha256 header.s=MBO0001 header.b=vuVekJQ6
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4jcBXW1CdMz8tH9;
+	Sat, 28 Nov 2026 14:51:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timmermann.space;
+	s=MBO0001; t=1795873899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2a+Yri10/zFE3o9wz8FYNDHmwFSDAaf5+qNG/L9KbRg=;
+	b=vuVekJQ64sop22dz12YCBiw5cfW3TvTYZnX8Q0AL616Xp0OjwpByoeYPUcnfigAAyLD/CU
+	IwGoMtQIflxO29oAmD8Mcnruzg5PSLc0HYPDJV395jxfEQYJ9W6uhDNSPaXgdVprdu8HYi
+	IfYRhK8L4LFOvay+ZvOM12mSWeLshbijlNonSefhRABzibODqOAXfsLqcUnuFXdFsziNvI
+	HfI6aF0afY4c9iW+7iB4X4THIB2/8BD+wTUcqLKqXwZ9mMVqoOlytfCTF8nKAwqfn0R82+
+	T7rdnOj7V5F39TB9V+d1+XDY6J136L2ZQiRSmvUDuOLBERW5F6tTlrnAidhoQA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of foss@timmermann.space designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=foss@timmermann.space
+From: Lukas Timmermann <foss@timmermann.space>
+Subject: [PATCH v2 0/7] Input: s6sy761 - add SPI support for the S6SY791
+Date: Sat, 28 Nov 2026 14:51:27 +0100
+Message-Id: <20261128-lat3st-google-raven-touch-upstream-v2-0-1be5c1029087@timmermann.space>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Post: <mailto:linux-samsung-soc@vger.kernel.org>
@@ -92,67 +66,101 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-samsung-soc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/12] clk: samsung: exynos8895: Terminate PLL rate tables
- with sentinels
-To: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig_=28The_Capable_Hub=29?=
- <u.kleine-koenig@baylibre.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Danilo Krummrich <dakr@kernel.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20261127180416.3277544-1-lee@kernel.org>
- <20261127180416.3277544-11-lee@kernel.org>
-Content-Language: en-US
-From: ivaylo ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20261127180416.3277544-11-lee@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/5WOQQ6CMBBFr2K6dgxTg0ldeQ/DopQp1NCWdEqjI
+ dxdwBO4fMnLf38RTMkRi/tpEYmKYxfDBvJ8EmbQoSdw3cZCVvKGFSKMOl85Qx9jPxIkXShAjrM
+ ZYJ44J9IeLCptOpRopRHb0JTIuvcReTY/5rl9kcn78m4MjnNMn+NFwd37K1gQKpBa2brGWrWKH
+ tl5T8nrEC48aUOiWdf1C4JvBBrtAAAA
+X-Change-ID: 20261011-lat3st-google-raven-touch-upstream-f19acd121f2c
+To: Lukas Timmermann <foss@timmermann.space>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Rspamd-Queue-Id: 4jcBXW1CdMz8tH9
 
-On 11/27/26 22:03, Lee Jones wrote:
-> _samsung_clk_register_pll() sizes each PLL rate table by scanning until
-> it encounters an entry with .rate == 0, then copies the counted entries
-> into pll->rate_table.  However, pll_shared0_rate_table,
-> pll_shared1_rate_table, pll_shared2_rate_table, pll_shared3_rate_table,
-> and pll_shared4_rate_table all omit a terminating zero sentinel, causing
-> out-of-bounds reads into adjacent read-only data and populating
-> pll->rate_table with bogus entries.
->
-> Append a sentinel entry to each of the 5 PLL rate tables.
->
-> Fixes: 9174fac3b302 ("clk: samsung: Introduce Exynos8895 clock driver")
+This series adds SPI support to S6SY761 touch controllers, specifically
+S6SY791 devices. Also included are the necessary adjustments in the DTS
+for the Google Pixel 6 Pro (raven) which uses the aforementioned SPI
+version. As the mentioned board has a reset line wired, I also added that
+functionality to the bindings and driver. To implement SPI versions
+cleanly, the driver was split into core and bus transfer modules like
+seen in other drivers.
 
-Looks good to me. Thanks, nice catch!
+This series was successfully tested with a Google Pixel 6 Pro. The I2C
+transfer part was untested because I don't have a device with an
+S6SY761 controller.
 
-Reviewed-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Known issue: on gs101 the touchscreen probe at boot fails with -EIO
+because the very first SPI transfer is not understood by the controller
+(the reply is all zeros); rebinding the driver works. This looks like
+spi-s3c64xx applying CPOL/CPHA only in transfer_one(), after chip
+select has been asserted, but I have not verified this further. It is
+not addressed by this series.
 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->   drivers/clk/samsung/clk-exynos8895.c | 5 +++++
->   1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/clk/samsung/clk-exynos8895.c b/drivers/clk/samsung/clk-exynos8895.c
-> index 259481c4276e..daf337f47e4f 100644
-> --- a/drivers/clk/samsung/clk-exynos8895.c
-> +++ b/drivers/clk/samsung/clk-exynos8895.c
-> @@ -478,22 +478,27 @@ static const unsigned long top_clk_regs[] __initconst = {
->   
->   static const struct samsung_pll_rate_table pll_shared0_rate_table[] __initconst = {
->   	PLL_35XX_RATE(26 * MHZ, 2132000000U, 328, 4, 0),
-> +	{ /* sentinel */ }
->   };
->   
+Patches 1-4 and 7 are meant for the input tree, patches 5-6 for the
+Samsung SoC tree. The DTS patches depend on the binding in patch 1.
 
-...
+---
+Changes in v2:
+- Reworked dt-bindings to require properties for SPI variants
+- Fixed I²C variants having SPI properties allowed
+- Don't wait for devices without reset gpio to come out of reset
+  anymore
+- Remove includes of linux/mod_devicetable.h
+- Cleaned up array initialization around of_ids
+- Link to v1: https://patch.msgid.link/20261011-lat3st-google-raven-touch-upstream-v1-0-2a9f55159b9e@timmermann.space
+
+To: Lukas Timmermann <foss@timmermann.space>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+To: André Draszik <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-input@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+
+---
+Lukas Timmermann (7):
+      dt-bindings: input: touchscreen: samsung,s6sy761: Add S6SY791 and reset GPIO
+      Input: s6sy761 - split into core and I2C modules
+      Input: s6sy761 - add reset GPIO support
+      Input: s6sy761 - add SPI support for S6SY791
+      arm64: dts: exynos: gs101-pixel-common: add labels for touchscreen supplies
+      arm64: dts: exynos: gs101-raven: add S6SY791 touchscreen
+      MAINTAINERS: add entry for Samsung S6SY761 touchscreen driver
+
+ .../input/touchscreen/samsung,s6sy761.yaml         |  51 ++++-
+ MAINTAINERS                                        |   7 +
+ .../boot/dts/exynos/google/gs101-pixel-common.dtsi |   4 +-
+ arch/arm64/boot/dts/exynos/google/gs101-raven.dts  |  50 +++++
+ drivers/input/touchscreen/Kconfig                  |  20 +-
+ drivers/input/touchscreen/Makefile                 |   4 +-
+ .../touchscreen/{s6sy761.c => s6sy761_core.c}      | 228 ++++++++++-----------
+ drivers/input/touchscreen/s6sy761_core.h           |  34 +++
+ drivers/input/touchscreen/s6sy761_i2c.c            | 111 ++++++++++
+ drivers/input/touchscreen/s6sy761_spi.c            | 171 ++++++++++++++++
+ 10 files changed, 548 insertions(+), 132 deletions(-)
+---
+base-commit: 56beabeaf17aaf9acc6afc6d6d21ea28d8f67797
+change-id: 20261011-lat3st-google-raven-touch-upstream-f19acd121f2c
 
 Best regards,
-Ivaylo
+--  
+Lukas Timmermann <foss@timmermann.space>
+
